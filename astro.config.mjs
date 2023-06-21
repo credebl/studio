@@ -2,7 +2,7 @@ import { defineConfig } from 'astro/config';
 import deno from '@astrojs/deno';
 import sitemap from '@astrojs/sitemap';
 import tailwind from '@astrojs/tailwind';
-const DEV_PORT = 2121;
+const DEV_PORT = 8085;
 
 
 // https://astro.build/config
