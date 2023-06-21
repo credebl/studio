@@ -7,8 +7,8 @@ const DEV_PORT = 8085;
 
 // https://astro.build/config
 export default defineConfig({
-  site: process.env.CI ? 'https://themesberg.github.io' : `http://localhost:${DEV_PORT}`,
-  base: process.env.CI ? '/flowbite-astro-admin-dashboard' : undefined,
+  site: process.env.CI ? 'https://salty-weasel-93.deno.dev' : `http://localhost:${DEV_PORT}`,
+  base: process.env.CI ? '/dashboard' : undefined,
   output: 'server',
   /* Like Vercel, Netlify,… Mimicking for dev. server */
   // trailingSlash: 'always',
