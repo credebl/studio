@@ -8,7 +8,7 @@ const DEV_PORT = 8085;
 // https://astro.build/config
 export default defineConfig({
   site: process.env.CI ? 'https://salty-weasel-93.deno.dev' : `http://localhost:${DEV_PORT}`,
-  base: process.env.CI ? '/dashboard' : undefined,
+  base: process.env.CI ? '/' : undefined,
   output: 'server',
   /* Like Vercel, Netlify,… Mimicking for dev. server */
   // trailingSlash: 'always',
