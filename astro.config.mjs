@@ -2,6 +2,7 @@ import { defineConfig } from 'astro/config';
 import deno from '@astrojs/deno';
 import sitemap from '@astrojs/sitemap';
 import tailwind from '@astrojs/tailwind';
+import react from "@astrojs/react";
 const DEV_PORT = 8085;
 
 
@@ -19,6 +20,6 @@ export default defineConfig({
   },
   integrations: [
   //
-  sitemap(), tailwind()],
+  sitemap(), tailwind(), react()],
   adapter: deno()
 });
