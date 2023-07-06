@@ -82,14 +82,7 @@ export default function ShadowInputs() {
                             <p>
                                 I agree with the
                             </p>
-                            {/* <LinkComponent
-className="text-cyan-600 hover:underline dark:text-cyan-500"
-href="/forms"
->
-<p>
-terms and conditions
-</p>
-</LinkComponent> */}
+
                         </Label>
                     </div>
                     <Button type="submit"
