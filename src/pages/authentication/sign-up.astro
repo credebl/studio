@@ -1,13 +1,8 @@
 ---
 import LayoutStacked from '../../app/LayoutStacked.astro';
-import FormSignUp from '../../modules/FormSignUp.astro';
-import SignUpForm from '../../components/SignUpForm';
-import SignUpFormik from '../../components/SignUpFormik';
+import SignUpUser from '../../components/Authentication/SignUpUser'
 ---
 
 <LayoutStacked>
-	<div class="min-h-screen align-middle flex pb-[12vh]">
-		<SignUpFormik client:load/>
-
-	</div>
+	<SignUpUser client:load/>
 </LayoutStacked>
