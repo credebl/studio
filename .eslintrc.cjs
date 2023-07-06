@@ -24,9 +24,10 @@ module.exports = {
 				//
 				'eslint-plugin-tsdoc',
 				'@typescript-eslint',
+				'react'
 			],
 
-			parser: '@typescript-eslint/parser',
+			parser: ['@typescript-eslint/parser', 'babel-eslint'],
 			parserOptions: {
 				project: ['./tsconfig.json'] /* Specify it only for TypeScript files */,
 				ecmaVersion: 'latest',
@@ -88,12 +89,13 @@ module.exports = {
 				'plugin:astro/recommended',
 				'prettier',
 			],
-			parser: 'astro-eslint-parser',
+			parser: ['astro-eslint-parser', 'babel-eslint'],
 			parserOptions: {
 				/* Prevents "unresolved" when using "paths" */
 				// project: ['./tsconfig.json'],
 				parser: '@typescript-eslint/parser',
 				extraFileExtensions: ['.astro'],
+				sourceType: 'module',
 			},
 			rules: {
 				'import/no-absolute-path': 'off',
