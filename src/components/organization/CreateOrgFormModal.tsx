@@ -1,12 +1,13 @@
 import * as yup from "yup"
 
-import { Avatar, Button, Checkbox, Label, Modal, TextInput } from 'flowbite-react';
+import { Avatar, Button, Label, Modal } from 'flowbite-react';
 import { Field, Form, Formik, FormikHelpers } from 'formik';
-import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, imageSizeAccepted } from '../../config/CommonConstant'
-import { MouseEvent, useState } from "react";
-import { asset, url } from '../../lib/data.js';
+import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, apiStatusCodes, imageSizeAccepted } from '../../config/CommonConstant'
 import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
+import { useRef, useState } from "react";
 
+import type { AxiosResponse } from 'axios';
+import { asset } from '../../lib/data.js';
 import { createOrganization } from "../../services/organization";
 
 interface Values {
@@ -28,8 +29,15 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
         imagePreviewUrl: ""
     })
 
-    const [isImageEmpty, setIsImageEmpty] = useState(true)
+    const formikRef = useRef();
 
+    const [isImageEmpty, setIsImageEmpty] = useState(true)
+    const [initialOrgData, setOrgData] = useState({
+          name: '',
+          description: '',
+    })
+    const [loading, setLoading] = useState<boolean>(false)
+    const [erroMsg, setErrMsg] = useState<string | null>(null)
 
     const [imgError, setImgError] = useState('')
 
@@ -114,16 +122,14 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                 logoFile: "",
                 imagePreviewUrl: ""
             })
+            setOrgData(initialOrgData)
             props.setOpenModal(false)
         }
         }>
             <Modal.Header>Create Organization</Modal.Header>
             <Modal.Body>
                 <Formik
-                    initialValues={{
-                        name: '',
-                        description: '',
-                    }}
+                    initialValues={initialOrgData}
                     validationSchema={
                         yup.object().shape({
                             name: yup
@@ -142,25 +148,27 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                     validateOnChange
                     enableReinitialize
                     onSubmit={async (
-                        values: Values,
-                        { setSubmitting }: FormikHelpers<Values>
+                        values: Values,    
+                        {  resetForm }: FormikHelpers<Values>
                     ) => {
-                        // setTimeout(() => {
-                        //     alert(JSON.stringify(values, null, 2));
-                        //     setSubmitting(false);
-                        // }, 500);
 
-                        const data = {
+                        const orgData = {
                             name: values.name,
                             description: values.description,
                             logo: logoImage?.imagePreviewUrl as string || "",
                             website: ""
                         }
 
-                        const resCreateOrg = await createOrganization(data)
+                        const resCreateOrg = await createOrganization(orgData)
 
-                        console.log(`ORG CREATED::`, resCreateOrg);
-                        
+                        const { data } = resCreateOrg as AxiosResponse
+
+                        if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+                            alert(data?.message)
+                            resetForm()
+                        } else {
+                            setErrMsg(resCreateOrg as string)
+                        }
 
                     }}
                 >
@@ -168,7 +176,6 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
 
                         <Form className="space-y-6" onSubmit={
                             formikHandlers.handleSubmit
-                            // () => alert('SUBMITTED')
                         }>
                             <div
                                 className="mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
@@ -202,13 +209,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                                                 <input type="file" accept="image/*" name="file" id="exampleFile1" title=""
                                                     onChange={(event): void => handleImageChange(event)} />
                                             </div>
-
-                                            {/* <button
-                                                type="button"
-                                                className="py-2 px-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                                            >
-                                                Delete
-                                            </button> */}
+                                         
                                         </div>
                                     </div>
                                 </div>
@@ -225,6 +226,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                                 <Field
                                     id="name"
                                     name="name"
+                                    value={formikHandlers.values.name}
                                     required
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                     placeholder="OrgTech" />
@@ -243,6 +245,8 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                                 <Field
                                     id="description"
                                     name="description"
+                                    value={formikHandlers.values.description}
+                                    as='textarea'
                                     required
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                     placeholder="Description of your organization" />
@@ -250,21 +254,16 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                             </div>
 
                             <Button type="submit"
-                                className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
+                                className='float-right text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
                             >
-                                Create your organization
+                                Create
                             </Button>
                         </Form>
                     )}
 
                 </Formik>
             </Modal.Body>
-            {/* <Modal.Footer>
-                    <Button onClick={() => props.setOpenModal(false)}>I accept</Button>
-                    <Button color="gray" onClick={() => props.setOpenModal(false)}>
-                        Decline
-                    </Button>
-                </Modal.Footer> */}
+           
         </Modal>
     )
 }
