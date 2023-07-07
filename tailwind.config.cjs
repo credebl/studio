@@ -1,5 +1,8 @@
 /* eslint-disable global-require */
 /** @type {import('tailwindcss').Config} */
+
+const defaultTheme = require('tailwindcss/defaultTheme')
+
 module.exports = {
 	content: [
 		'./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}',
@@ -27,7 +30,7 @@ module.exports = {
 			},
 			fontFamily: {
 				sans: [
-					'Inter',
+					'Inter var', ...defaultTheme.fontFamily.sans,
 					'ui-sans-serif',
 					'system-ui',
 					'-apple-system',
@@ -108,7 +111,6 @@ module.exports = {
 	],
 
 	plugins: [
-		//
 		require('flowbite/plugin'),
 		require('flowbite-typography'),
 		require('tailwind-scrollbar')({ nocompatible: true }),

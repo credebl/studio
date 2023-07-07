@@ -204,9 +204,15 @@ const SignUpUser = () => {
 						)}
 					</Formik>
 					<div className="text-sm font-medium text-gray-500 dark:text-gray-400">
+<<<<<<< HEAD
 						Already have an account? 
                         <a 
                             href="/authentication/sign-in"
+=======
+				        Already registered? 
+                        &nbsp;<a 
+                            href="/"
+>>>>>>> 6896192dfc4a13fc5ca31ab20a1e4d30502af6a5
 					        className="text-primary-700 hover:underline dark:text-primary-500"
 					    >
                         {` Sing in here.`}
