@@ -42,7 +42,7 @@ const SignUpUser = () => {
 	   const { data } = userRsp as AxiosResponse
 	   setLoading(false)
 	   if(data?.statusCode === apiStatusCodes.API_STATUS_CREATED){
-		window.location.href = '/?signup=true'
+		window.location.href = '/authentication/sign-in?signup=true'
 	   }else{
          setErrMsg(userRsp as string)
 	   }
@@ -204,9 +204,9 @@ const SignUpUser = () => {
 						)}
 					</Formik>
 					<div className="text-sm font-medium text-gray-500 dark:text-gray-400">
-				        Already registered? 
-                        &nbsp;<a 
-                            href="/"
+						Already have an account? 
+                        <a 
+                            href="/authentication/sign-in"
 					        className="text-primary-700 hover:underline dark:text-primary-500"
 					    >
                         {` Sing in here.`}
