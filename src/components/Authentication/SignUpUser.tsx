@@ -21,6 +21,28 @@ interface Values {
 }
 
 const SignUpUser = () => {
+
+	const [loading, setLoading] = useState<boolean>(false)
+	const [erroMsg, setErrMsg] = useState<string | null>(null)
+
+	const submit = async(values: Values) =>{
+	  const payload: UserSignUpData ={
+		firstName: values.firstName,
+		lastName: values.lastName,
+		email: values.email,
+		password: passwordEncryption(values.password)
+	  }
+	   setLoading(true)
+       const userRsp = await registerUser(payload)
+	   const { data } = userRsp as AxiosResponse
+	   setLoading(false)
+	   if(data?.statusCode === apiStatusCodes.API_STATUS_CREATED){
+		window.location.href = '/authentication/sign-in?signup=true'
+	   }else{
+         setErrMsg(userRsp as string)
+	   }
+	} 
+
 	return (
 		<div className="min-h-screen align-middle flex pb-[12vh]">
 			<div className="w-full flex flex-col items-center justify-center px-6 pt-8 mx-auto pt:mt-0 dark:bg-gray-900">
@@ -164,7 +186,7 @@ const SignUpUser = () => {
 					<div className="text-sm font-medium text-gray-500 dark:text-gray-400">
 				        Already registered? 
                         <a 
-                            href="/"
+                            href="/authentication/sign-in"
 					        className="text-primary-700 hover:underline dark:text-primary-500"
 					    >
                         Sign In

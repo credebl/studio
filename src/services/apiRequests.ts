@@ -14,7 +14,8 @@ export const axoisGet = async({url, config}: APIParameters): Promise<AxiosRespon
         return response
     }
     catch (error) {
-       return error as AxiosResponse
+        const err = error as AxiosError
+        return HandleResponse(err.response ? err.response : err)
     }
 }
 
@@ -25,7 +26,8 @@ export const axoisPost = async({url, payload, config}: APIParameters): Promise<A
         return response
     }
     catch (error) {
-       return error as AxiosResponse
+       const err = error as AxiosError
+       return HandleResponse(err.response ? err.response : err)
     }
 }
 
@@ -36,7 +38,8 @@ export const axoisPatch = async({url, payload, config}: APIParameters): Promise<
         return response
     }
     catch (error) {
-       return error as AxiosResponse
+        const err = error as AxiosError
+        return HandleResponse(err.response ? err.response : err)
     }
 }
 
@@ -47,7 +50,8 @@ export const axoisPut = async({url, payload, config}: APIParameters): Promise<Ax
         return response
     }
     catch (error) {
-       return error as AxiosResponse
+        const err = error as AxiosError
+        return HandleResponse(err.response ? err.response : err)
     }
 }
 
@@ -58,6 +62,7 @@ export const axoisDelete = async({url, config}: APIParameters): Promise<AxiosRes
         return response
     }
     catch (error) {
-       return error as AxiosResponse
+        const err = error as AxiosError
+        return HandleResponse(err.response ? err.response : err)
     }
 }
