@@ -1,19 +1,40 @@
-import * as yup from "yup"
+'use client';
 
-import { Avatar, Button, Label, Modal } from 'flowbite-react';
-import { Field, Form, Formik, FormikHelpers } from 'formik';
-import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, apiStatusCodes, imageSizeAccepted } from '../../config/CommonConstant'
-import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
-import { useRef, useState } from "react";
-
-import type { AxiosResponse } from 'axios';
-import { asset } from '../../lib/data.js';
-import { createOrganization } from "../../services/organization";
+import { Button } from 'flowbite-react';
+import CreateOrgFormModal from "./CreateOrgFormModal";
+import { useState } from 'react';
 
 const OrganizationsList = () => {
+    const [openModal, setOpenModal] = useState<boolean>(false);
+    const props = { openModal, setOpenModal };
 
+    const createOrganizationModel = () => {
+        props.setOpenModal(true)
+    }
     return (
-    <h2>Organization List</h2>
+        <div className="px-4 pt-6">
+            <div>
+                <div
+                    className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
+                >
+                    <div className="flex items-center justify-center mb-4">
+                        <Button
+                            onClick={createOrganizationModel}
+                            className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+                        >
+                            Create Organization
+                        </Button>
+                    </div>
+
+                    {
+                        props.openModal &&
+                        <CreateOrgFormModal
+                            openModal={props.openModal}
+                            setOpenModal={props.setOpenModal} />
+                    }
+                </div>
+            </div>
+        </div>
     )
 }
 

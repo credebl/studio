@@ -29,14 +29,13 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
         imagePreviewUrl: ""
     })
 
-    const formikRef = useRef();
+    const [loading, setLoading] = useState<boolean>(false)
 
     const [isImageEmpty, setIsImageEmpty] = useState(true)
     const [initialOrgData, setOrgData] = useState({
-          name: '',
-          description: '',
+        name: '',
+        description: '',
     })
-    const [loading, setLoading] = useState<boolean>(false)
     const [erroMsg, setErrMsg] = useState<string | null>(null)
 
     const [imgError, setImgError] = useState('')
@@ -148,9 +147,11 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                     validateOnChange
                     enableReinitialize
                     onSubmit={async (
-                        values: Values,    
-                        {  resetForm }: FormikHelpers<Values>
+                        values: Values,
+                        { resetForm }: FormikHelpers<Values>
                     ) => {
+
+                        setLoading(true)
 
                         const orgData = {
                             name: values.name,
@@ -162,10 +163,12 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                         const resCreateOrg = await createOrganization(orgData)
 
                         const { data } = resCreateOrg as AxiosResponse
+                        setLoading(false)
 
                         if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
                             alert(data?.message)
-                            resetForm()
+                            props.setOpenModal(false)
+
                         } else {
                             setErrMsg(resCreateOrg as string)
                         }
@@ -209,7 +212,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                                                 <input type="file" accept="image/*" name="file" id="exampleFile1" title=""
                                                     onChange={(event): void => handleImageChange(event)} />
                                             </div>
-                                         
+
                                         </div>
                                     </div>
                                 </div>
@@ -254,6 +257,8 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                             </div>
 
                             <Button type="submit"
+                                isProcessing={loading}
+
                                 className='float-right text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
                             >
                                 Create
@@ -263,7 +268,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
 
                 </Formik>
             </Modal.Body>
-           
+
         </Modal>
     )
 }
