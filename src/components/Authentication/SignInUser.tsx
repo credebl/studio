@@ -139,7 +139,7 @@ const SignInUser = () => {
 					</Formik>
                     <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
 				        Not registered? 
-                        <a 
+								&nbsp;<a 
                             href="authentication/sign-up"
 					        className="text-primary-700 hover:underline dark:text-primary-500"
 					    >
