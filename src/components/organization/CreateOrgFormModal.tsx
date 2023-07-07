@@ -7,6 +7,8 @@ import { MouseEvent, useState } from "react";
 import { asset, url } from '../../lib/data.js';
 import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
 
+import { createOrganization } from "../../services/organization";
+
 interface Values {
     name: string;
     description: string;
@@ -109,9 +111,9 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
     return (
         <Modal show={props.openModal === true} onClose={() => {
             setLogoImage({
-        logoFile: "",
-        imagePreviewUrl: ""
-    })
+                logoFile: "",
+                imagePreviewUrl: ""
+            })
             props.setOpenModal(false)
         }
         }>
@@ -132,21 +134,34 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                                 .trim(),
                             description: yup
                                 .string()
-                                 .min(2, 'Organization name must be at least 2 characters')
-                                .max(255, 'Organization name must be at most 255 characters')                
+                                .min(2, 'Organization name must be at least 2 characters')
+                                .max(255, 'Organization name must be at most 255 characters')
                                 .required('Description is required')
                         })}
                     validateOnBlur
                     validateOnChange
                     enableReinitialize
-                    onSubmit={(
+                    onSubmit={async (
                         values: Values,
                         { setSubmitting }: FormikHelpers<Values>
                     ) => {
-                        setTimeout(() => {
-                            alert(JSON.stringify(values, null, 2));
-                            setSubmitting(false);
-                        }, 500);
+                        // setTimeout(() => {
+                        //     alert(JSON.stringify(values, null, 2));
+                        //     setSubmitting(false);
+                        // }, 500);
+
+                        const data = {
+                            name: values.name,
+                            description: values.description,
+                            logo: logoImage?.imagePreviewUrl as string || "",
+                            website: ""
+                        }
+
+                        const resCreateOrg = await createOrganization(data)
+
+                        console.log(`ORG CREATED::`, resCreateOrg);
+                        
+
                     }}
                 >
                     {(formikHandlers): JSX.Element => (
@@ -164,7 +179,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                                     {
                                         typeof (logoImage.logoFile) === "string" ?
                                             <Avatar
-                                            size="lg"
+                                                size="lg"
                                             /> :
                                             <img
                                                 className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
@@ -172,7 +187,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                                                 alt="Jese picture"
                                             />
                                     }
-                                  
+
                                     <div>
                                         <h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
                                             Organization Logo
@@ -181,7 +196,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                                             JPG, GIF or PNG. Max size of 1M
                                         </div>
                                         <div className="flex items-center space-x-4">
-                                           
+
 
                                             <div className="camera-btn">
                                                 <input type="file" accept="image/*" name="file" id="exampleFile1" title=""
