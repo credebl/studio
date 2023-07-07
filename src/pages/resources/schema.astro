@@ -1,0 +1,12 @@
+---
+import LayoutStacked from '../../app/LayoutStacked.astro';
+import LayoutCommon from '../../app/LayoutCommon.astro';
+import SideBar from '../../app/SideBar.astro';
+import LayoutSidebar from '../../app/LayoutSidebar.astro';
+import SchemaTable from '../../components/Resources/Schema/schema'
+---
+<LayoutSidebar>
+<!-- <SideBar> -->
+	<SchemaTable client:load/>
+<!-- </SideBar> -->
+</LayoutSidebar>
