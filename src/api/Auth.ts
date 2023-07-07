@@ -15,6 +15,10 @@ export interface UserSignInData {
     isPasskey:boolean, 
     password?: string
 }
+export interface EmailVerifyData {
+    verificationCode: string,
+    email: string
+}
 
 export const registerUser = async(payload: UserSignUpData) => {
     const details ={
@@ -42,6 +46,25 @@ export const loginUser = async(payload: UserSignInData) => {
     }
     try{
         const response = await axiosPost(details)
+        return response
+    }
+    catch(error){
+        const err = error as Error
+        return err?.message
+    }
+
+   
+}
+
+
+
+export const verifyUserMail = async(payload: EmailVerifyData) => {
+    const details ={
+        url:`${apiRoutes.auth.verifyEmail}?verificationCode=${payload?.verificationCode}&email=${payload?.email}`,
+        config: { headers: { "Content-type": "application/json" } }
+    }
+    try{
+        const response = await axiosGet(details)
         return response
     }
     catch(error){

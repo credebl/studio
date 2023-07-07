@@ -1,3 +1,6 @@
+import * as yup from 'yup';
+
+import { Button, Checkbox, Label, TextInput } from 'flowbite-react';
 import {
 	Field,
 	Form,
@@ -6,11 +9,10 @@ import {
 	FormikProps,
 	FormikValues,
 } from 'formik';
-import { Button, Checkbox, Label, TextInput } from 'flowbite-react';
-import * as yup from 'yup';
-import { Alert } from 'flowbite-react';
-import { useEffect, useState } from 'react';
 import { UserSignInData, loginUser, passwordEncryption } from '../../api/Auth';
+import { useEffect, useState } from 'react';
+
+import { Alert } from 'flowbite-react';
 import type { AxiosResponse } from 'axios';
 import { apiStatusCodes } from '../../config/CommonConstant';
 
@@ -45,8 +47,8 @@ const SignInUser = () => {
 	   setLoading(false)
 
 	   if(data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS){
-		localStorage.setItem('access_token', data?.data?.access_token);
-		window.location.href = '/dashboard'
+			localStorage.setItem('access_token', data?.data?.access_token);
+			window.location.href = '/dashboard'
 	   }else{
 		setFailur(loginRsp as string)
 	   }
