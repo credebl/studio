@@ -45,7 +45,8 @@ const SignInUser = () => {
 	   setLoading(false)
 
 	   if(data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS){
-
+		localStorage.setItem('access_token', data?.data?.access_token);
+		window.location.href = '/dashboard'
 	   }else{
 		setFailur(loginRsp as string)
 	   }

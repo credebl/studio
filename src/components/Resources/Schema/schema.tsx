@@ -14,13 +14,11 @@ const SchemaTable = () => {
   useEffect(() => {
     (async () => {
       const schemaList: any = await getAllSchemas();
-      console.log("schemaList9909", schemaList?.data?.data?.data)
       setSchemaList(schemaList?.data?.data?.data)
 
     })();
   }, []);
 
-  console.log("data::uoio", schemaList)
 
   return (
     <>
