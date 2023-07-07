@@ -1,8 +1,9 @@
 ---
 import LayoutSidebar from '../app/LayoutSidebar.astro';
-import DashBoard from '../modules/DashBoard.astro';
+// import DashBoard from '../modules/DashBoard.astro';
+import Dashboard from '../components/Dashboard'
 ---
 
 <LayoutSidebar>
-	<DashBoard />
+	<Dashboard client:load/>
 </LayoutSidebar>
