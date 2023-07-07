@@ -184,7 +184,7 @@ const SignUpUser = () => {
 						)}
 					</Formik>
 					<div className="text-sm font-medium text-gray-500 dark:text-gray-400">
-				        Already registered? 
+						Already have an account? 
                         <a 
                             href="/authentication/sign-in"
 					        className="text-primary-700 hover:underline dark:text-primary-500"
