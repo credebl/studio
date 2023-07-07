@@ -6,11 +6,16 @@ import {
 	FormikProps,
 	FormikValues,
 } from 'formik';
-import { Button, Checkbox, Label, TextInput } from 'flowbite-react';
+import { Alert, Button, Checkbox, Label, TextInput } from 'flowbite-react';
 import * as yup from 'yup';
 
 import { asset, url } from '../../lib/data.js';
-import { passwordRegex } from '../../config/CommonConstant.js';
+import { apiStatusCodes, passwordRegex } from '../../config/CommonConstant.js';
+import { UserSignUpData, passwordEncryption, registerUser } from '../../api/Auth.js';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useState } from 'react';
+import type { AxiosResponse } from 'axios';
 
 interface Values {
 	firstName: string;
@@ -21,12 +26,34 @@ interface Values {
 }
 
 const SignUpUser = () => {
+
+	const [loading, setLoading] = useState<boolean>(false)
+	const [erroMsg, setErrMsg] = useState<string | null>(null)
+
+	const submit = async(values: Values) =>{
+	  const payload: UserSignUpData ={
+		firstName: values.firstName,
+		lastName: values.lastName,
+		email: values.email,
+		password: passwordEncryption(values.password)
+	  }
+	   setLoading(true)
+       const userRsp = await registerUser(payload)
+	   const { data } = userRsp as AxiosResponse
+	   setLoading(false)
+	   if(data?.statusCode === apiStatusCodes.API_STATUS_CREATED){
+		window.location.href = '/?signup=true'
+	   }else{
+         setErrMsg(userRsp as string)
+	   }
+	} 
+
 	return (
 		<div className="min-h-screen align-middle flex pb-[12vh]">
 			<div className="w-full flex flex-col items-center justify-center px-6 pt-8 mx-auto pt:mt-0 dark:bg-gray-900">
 				<div className="w-full max-w-xl p-6 space-y-8 sm:p-8 bg-white rounded-lg shadow dark:bg-gray-800">
 					<h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-						Create Account
+						Create an account
 					</h2>
 
 					<Formik
@@ -69,7 +96,7 @@ const SignUpUser = () => {
 						enableReinitialize
 						onSubmit={(
 							values: Values,
-						) => {console.log(values)}}
+						) => {submit(values)}}
 					>
 						{(formikHandlers): JSX.Element => (
 							<Form className="mt-8 space-y-6"  onSubmit={formikHandlers.handleSubmit}>
@@ -152,8 +179,23 @@ const SignUpUser = () => {
                                         <span className="text-red-500 text-xs">{formikHandlers?.errors?.confirmPassword}</span>
                                     }
 								</div>
+								{
+									erroMsg &&
+									<Alert
+										color="failure"
+										onDismiss={()=>setErrMsg(null)}
+									>
+										<span>
+											<p>
+												{erroMsg}
+											</p>
+										</span>
+									</Alert>
+								}
 								<Button
 									type="submit"
+									isProcessing={loading}
+									color='bg-primary-800'
 									className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
 								>
 									Sign Up
@@ -162,12 +204,12 @@ const SignUpUser = () => {
 						)}
 					</Formik>
 					<div className="text-sm font-medium text-gray-500 dark:text-gray-400">
-				        Already registered? 
+						Already have an account? 
                         <a 
                             href="/"
 					        className="text-primary-700 hover:underline dark:text-primary-500"
 					    >
-                        Sign In
+                        {` Sing in here.`}
                         </a>
 			        </div>
 				</div>
