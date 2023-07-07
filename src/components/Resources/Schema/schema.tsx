@@ -1,18 +1,38 @@
 'use client';
 
+import type { AxiosResponse } from 'axios';
 import { Card, Table, } from 'flowbite-react';
+import { useEffect, useState } from 'react';
+import { getAllSchemas } from '../../../api/Schema';
 import SchemaCard from '../../../commonComponents/schemaCard';
 
 
 const SchemaTable = () => {
+  const [schemaList, setSchemaList] = useState([])
+
+
+  useEffect(() => {
+    (async () => {
+      const schemaList: any = await getAllSchemas();
+      console.log("schemaList9909", schemaList?.data?.data?.data)
+      setSchemaList(schemaList?.data?.data?.data)
+
+    })();
+  }, []);
+
+  console.log("data::uoio", schemaList)
+
   return (
     <>
-      <div>
-        <h1 className='p-4 font-bold underline'>
-          Schema List
-        </h1>
-        <div className='p-4'>
-          <SchemaCard schemaName="Identity Card" version="0.01"/>
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <h1 className='p-4 font-bold underline'>Schema List</h1>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(500px, 1fr))', gap: '1rem' }}>
+          {schemaList && schemaList.length > 0 &&
+            schemaList.map((element, key) => (
+              <div className='p-4' key={key}>
+                <SchemaCard schemaName={element['name']} version={element['version']} schemaId = {element['schemaLedgerId']} issuerDid = {element['issuerId']} attributes = {element['attributes']}/>
+              </div>
+            ))}
         </div>
       </div>
     </>
