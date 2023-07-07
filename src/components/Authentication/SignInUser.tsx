@@ -8,66 +8,27 @@ import {
 } from 'formik';
 import { Button, Checkbox, Label, TextInput } from 'flowbite-react';
 import * as yup from 'yup';
-import { Alert } from 'flowbite-react';
-import { useEffect, useState } from 'react';
-import { UserSignInData, loginUser, passwordEncryption } from '../../api/Auth';
-import type { AxiosResponse } from 'axios';
-import { apiStatusCodes } from '../../config/CommonConstant';
+
+import { asset, url } from '../../lib/data.js';
+import { passwordRegex } from '../../config/CommonConstant.js';
+import React from 'react';
+import { axoisGet } from '../../services/apiRequests.js';
 
 interface Values {
 	email: string;
     password:string,
 }
 
-const signUpSuccess = '?signup=true'
-
 const SignInUser = () => {
-   
-	const [success, setSuccess] = useState<string| null>(null)
-	const [failure, setFailur] = useState<string| null>(null)
-	const [loading, setLoading] = useState<boolean>(false)
-
-	useEffect(() => {
-		if(signUpSuccess === window?.location?.search){
-			setSuccess('Your request has been successfully accepted.Please verify your email.')
-		}
-	}, [])
 
     const verifyUser = async(values: Values) =>{
-		const payload: UserSignInData ={
-			email: values.email,
-			isPasskey: false,
-			password: passwordEncryption(values.password)
-		}
-	   setLoading(true)
-       const loginRsp = await loginUser(payload)
-	   const { data } = loginRsp as AxiosResponse
-	   setLoading(false)
-
-	   if(data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS){
-
-	   }else{
-		setFailur(loginRsp as string)
-	   }
+       
     }
-
+    
 	return (
 		<div className="min-h-screen align-middle flex pb-[12vh]">
 			<div className="w-full flex flex-col items-center justify-center px-6 pt-8 mx-auto pt:mt-0 dark:bg-gray-900">
 				<div className="w-full max-w-xl p-6 space-y-8 sm:p-8 bg-white rounded-lg shadow dark:bg-gray-800">
-					{
-						(success || failure) &&
-						<Alert
-							color={success? "success": "failure"}
-							onDismiss={()=>setSuccess(null)}
-						>
-							<span>
-								<p>
-								{success || failure}
-								</p>
-							</span>
-						</Alert>
-					}
 					<h2 className="text-2xl font-bold text-gray-900 dark:text-white">
 						Sign In
 					</h2>
@@ -128,7 +89,6 @@ const SignInUser = () => {
                                     }
 								</div>
 								<Button
-								    isProcessing={loading}
 									type="submit"
 									className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
 								>
@@ -139,11 +99,11 @@ const SignInUser = () => {
 					</Formik>
                     <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
 				        Not registered? 
-								&nbsp;<a 
+                        <a 
                             href="authentication/sign-up"
 					        className="text-primary-700 hover:underline dark:text-primary-500"
 					    >
-                         {` Create an account`}
+                        Create account
                         </a>
 			        </div>
 				</div>

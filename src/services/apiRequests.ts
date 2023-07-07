@@ -1,5 +1,5 @@
-import type { AxiosError, AxiosResponse } from 'axios';
-import axiosUser from './axiosIntercepter';
+import type { AxiosResponse } from 'axios';
+import axiosUser from './axoisIntercepter';
 
 export interface APIParameters {
     url: string,
@@ -7,7 +7,7 @@ export interface APIParameters {
     config?: Record<string, unknown>
 }
 
-export const axiosGet = async({url, config}: APIParameters): Promise<AxiosResponse> =>{
+export const axoisGet = async({url, config}: APIParameters): Promise<AxiosResponse> =>{
     try{
         const response = await axiosUser.get(url, config);
 
@@ -18,19 +18,18 @@ export const axiosGet = async({url, config}: APIParameters): Promise<AxiosRespon
     }
 }
 
-export const axiosPost = async({url, payload, config}: APIParameters): Promise<AxiosResponse> =>{
+export const axoisPost = async({url, payload, config}: APIParameters): Promise<AxiosResponse> =>{
     try{
         const response = await axiosUser.post(url, payload, config);
 
         return response
     }
     catch (error) {
-       const err = error as AxiosError
-    return HandleResponse(err.response ? err.response : err)
+       return error as AxiosResponse
     }
 }
 
-export const axiosPatch = async({url, payload, config}: APIParameters): Promise<AxiosResponse> =>{
+export const axoisPatch = async({url, payload, config}: APIParameters): Promise<AxiosResponse> =>{
     try{
         const response = await axiosUser.patch(url, payload, config);
 
@@ -41,7 +40,7 @@ export const axiosPatch = async({url, payload, config}: APIParameters): Promise<
     }
 }
 
-export const axiosPut = async({url, payload, config}: APIParameters): Promise<AxiosResponse> =>{
+export const axoisPut = async({url, payload, config}: APIParameters): Promise<AxiosResponse> =>{
     try{
         const response = await axiosUser.put(url, payload, config);
 
@@ -52,7 +51,7 @@ export const axiosPut = async({url, payload, config}: APIParameters): Promise<Ax
     }
 }
 
-export const axiosDelete = async({url, config}: APIParameters): Promise<AxiosResponse> =>{
+export const axoisDelete = async({url, config}: APIParameters): Promise<AxiosResponse> =>{
     try{
         const response = await axiosUser.delete(url, config);
 
@@ -62,12 +61,3 @@ export const axiosDelete = async({url, config}: APIParameters): Promise<AxiosRes
        return error as AxiosResponse
     }
 }
-
-const HandleResponse = (responseData: any): Promise<AxiosResponse> => {
-    if (responseData) {
-      return Promise.reject(new Error(responseData?.data?.error ? responseData?.data?.error : responseData?.data?.message ? responseData?.data?.message : responseData?.message ? responseData?.message : "Something went wrong, please try later..."))
-
-    } else {
-      return Promise.reject(new Error("Please check your internet connectivity and try again"))
-    }
-  }
