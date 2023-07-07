@@ -32,8 +32,8 @@ const SignInUser = () => {
 	   const { data } = loginRsp as AxiosResponse
 
 	   if(data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS){
-		    await setToLocalStorage(storageKeys.TOKEN, data?.data?.access_token)
-			getUserDetails(data?.data?.access_token)
+		localStorage.setItem('access_token', data?.data?.access_token);
+		window.location.href = '/dashboard'
 	   }else{
 		setLoading(false)
 		setFailur(loginRsp as string)

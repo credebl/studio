@@ -10,9 +10,9 @@ export const getAllSchemas = async() => {
           },
         },
       };
+      
     try{
         const response = await axiosGet(details)
-        console.log("response:::", response)
         return response
     }
     catch(error){
