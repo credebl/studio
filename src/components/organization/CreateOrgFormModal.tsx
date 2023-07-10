@@ -8,7 +8,7 @@ import { useRef, useState } from "react";
 
 import type { AxiosResponse } from 'axios';
 import { asset } from '../../lib/data.js';
-import { createOrganization } from "../../services/organization";
+import { createOrganization } from "../../api/organization";
 
 interface Values {
     name: string;
@@ -115,6 +115,30 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
         }
     }
 
+    const sumitCreateOrganization = async (values: Values) => {
+        setLoading(true)
+
+        const orgData = {
+            name: values.name,
+            description: values.description,
+            logo: logoImage?.imagePreviewUrl as string || "",
+            website: ""
+        }
+
+        const resCreateOrg = await createOrganization(orgData)
+
+        const { data } = resCreateOrg as AxiosResponse
+        setLoading(false)
+
+        if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+            alert(data?.message)
+            props.setOpenModal(false)
+
+        } else {
+            setErrMsg(resCreateOrg as string)
+        }
+    }
+
     return (
         <Modal show={props.openModal === true} onClose={() => {
             setLogoImage({
@@ -151,27 +175,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                         { resetForm }: FormikHelpers<Values>
                     ) => {
 
-                        setLoading(true)
-
-                        const orgData = {
-                            name: values.name,
-                            description: values.description,
-                            logo: logoImage?.imagePreviewUrl as string || "",
-                            website: ""
-                        }
-
-                        const resCreateOrg = await createOrganization(orgData)
-
-                        const { data } = resCreateOrg as AxiosResponse
-                        setLoading(false)
-
-                        if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-                            alert(data?.message)
-                            props.setOpenModal(false)
-
-                        } else {
-                            setErrMsg(resCreateOrg as string)
-                        }
+                        sumitCreateOrganization(values)
 
                     }}
                 >
