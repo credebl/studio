@@ -22,8 +22,10 @@ const SchemaTable = () => {
 
   return (
     <>
+    <div>
+    <h1 className='p-4 font-bold underline'>Schema List</h1>
+    </div>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <h1 className='p-4 font-bold underline'>Schema List</h1>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(500px, 1fr))', gap: '1rem' }}>
           {schemaList && schemaList.length > 0 &&
             schemaList.map((element, key) => (
