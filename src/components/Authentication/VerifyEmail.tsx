@@ -1,11 +1,10 @@
 import { Button, Card, Spinner } from 'flowbite-react';
+import { EmailVerifyData, verifyUserMail } from '../../api/Auth';
 import { useEffect, useState } from 'react';
 
-import { HiOutlineMail } from "react-icons/hi";
-import { EmailVerifyData, verifyUserMail } from '../../api/Auth';
 import type { AxiosResponse } from 'axios';
+import { HiOutlineMail } from "react-icons/hi";
 import { apiStatusCodes } from '../../config/CommonConstant';
-
 
 const VarifyEmail = () => {
     const [loading, setLoading] = useState<boolean>(true)
@@ -19,6 +18,8 @@ const VarifyEmail = () => {
 
         if(data?.statusCode ===  apiStatusCodes.API_STATUS_SUCCESS){
             setError(false)
+            setMessage(data?.message)
+
         }else{
             setError(true)
           setMessage(response as string)
