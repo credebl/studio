@@ -126,7 +126,8 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
         setLoading(false)
 
         if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-            alert(data?.message)
+            // console.log(`Org Message::`,data?.message)
+            
             props.setOpenModal(false)
 
         } else {
