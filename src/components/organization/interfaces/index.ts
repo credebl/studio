@@ -1,9 +1,9 @@
-export interface UserOrgData {
+export interface UserOrgRole {
     id: number
     userId: number
     orgRoleId: number
     orgId: number
-    organisation: Organisation
+    orgRole: OrgRole
 }
 
 export interface Organisation {
@@ -16,6 +16,18 @@ export interface Organisation {
     description: string
     logoUrl: string
     website: string
-    org_agents: object[]
-    orgInvitations: object[]
+    roles: string[]
+    userOrgRoles: UserOrgRole[]
+
+}
+
+export interface OrgRole {
+    id: number
+    name: string
+    description: string
+    createDateTime: string
+    createdBy: number
+    lastChangedDateTime: string
+    lastChangedBy: number
+    deletedAt: any
 }
