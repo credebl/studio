@@ -30,9 +30,9 @@ export const createOrganization = async (data: object) => {
     }   
 }
 
-export const getOrganizations = async () => {
+export const getOrganizations = async (pageNumber:number, pageSize: number, search='') => {
 
-    const url = apiRoutes.organizations.getAll
+    const url = `${apiRoutes.organizations.getAll}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
 
     const token = localStorage.getItem('access_token');
 
