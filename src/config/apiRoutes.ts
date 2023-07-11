@@ -3,5 +3,9 @@ export const apiRoutes = {
         signUp: '/users',
         sinIn: '/users/login',
         verifyEmail:'/users/verify'
+    },
+    organizations: {
+        create: '/organization',
+        getAll: '/organization',
     }
 }
