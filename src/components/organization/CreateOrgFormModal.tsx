@@ -7,7 +7,9 @@ import { MouseEvent, useState } from "react";
 import { asset, url } from '../../lib/data.js';
 import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
 
-import { createOrganization } from "../../services/organization";
+import type { AxiosResponse } from 'axios';
+import { asset } from '../../lib/data.js';
+import { createOrganization } from "../../api/organization";
 
 interface Values {
     name: string;
@@ -108,6 +110,30 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
         }
     }
 
+    const sumitCreateOrganization = async (values: Values) => {
+        setLoading(true)
+
+        const orgData = {
+            name: values.name,
+            description: values.description,
+            logo: logoImage?.imagePreviewUrl as string || "",
+            website: ""
+        }
+
+        const resCreateOrg = await createOrganization(orgData)
+
+        const { data } = resCreateOrg as AxiosResponse
+        setLoading(false)
+
+        if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+            alert(data?.message)
+            props.setOpenModal(false)
+
+        } else {
+            setErrMsg(resCreateOrg as string)
+        }
+    }
+
     return (
         <Modal show={props.openModal === true} onClose={() => {
             setLogoImage({
@@ -150,17 +176,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                         //     setSubmitting(false);
                         // }, 500);
 
-                        const data = {
-                            name: values.name,
-                            description: values.description,
-                            logo: logoImage?.imagePreviewUrl as string || "",
-                            website: ""
-                        }
-
-                        const resCreateOrg = await createOrganization(data)
-
-                        console.log(`ORG CREATED::`, resCreateOrg);
-                        
+                        sumitCreateOrganization(values)
 
                     }}
                 >
@@ -227,7 +243,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                                     name="name"
                                     required
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="OrgTech" />
+                                    placeholder="Your organization name" />
 
                             </div>
                             <div>

@@ -1,12 +1,12 @@
 [
 	{
 		"id": 1,
-		"name": "Neil Sims",
+		"name": "Ajay Jadhav",
 		"avatar": "neil-sims.png",
-		"email": "neil.sims@credebl.id",
-		"biography": "I love working with React and Flowbites to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
-		"position": "Front-end developer",
-		"country": "United States",
+		"email": "ajile@credebl.id",
+		"biography": "I love working with Astro & CREDEBL to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
+		"position": "Full-stack developer",
+		"country": "India",
 		"status": "Active"
 	},
 	{
@@ -14,7 +14,7 @@
 		"name": "Roberta Casas",
 		"avatar": "roberta-casas.png",
 		"email": "roberta.casas@credebl.id",
-		"biography": "I love working with React and Flowbites to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
+		"biography": "I love working with Astro & CREDEBL to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
 		"position": "Designer",
 		"country": "Spain",
 		"status": "Active"
@@ -24,7 +24,7 @@
 		"name": "Michael Gough",
 		"avatar": "michael-gough.png",
 		"email": "michael.gough@credebl.id",
-		"biography": "I love working with React and Flowbites to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
+		"biography": "I love working with Astro & CREDEBL to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
 		"position": "React developer",
 		"country": "United Kingdom",
 		"status": "Active"
@@ -34,7 +34,7 @@
 		"name": "Jese Leos",
 		"avatar": "jese-leos.png",
 		"email": "jese.leos@credebl.id",
-		"biography": "I love working with React and Flowbites to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
+		"biography": "I love working with Astro & CREDEBL to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
 		"position": "Marketing",
 		"country": "United States",
 		"status": "Active"
@@ -44,7 +44,7 @@
 		"name": "Bonnie Green",
 		"avatar": "bonnie-green.png",
 		"email": "bonnie.green@credebl.id",
-		"biography": "I love working with React and Flowbites to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
+		"biography": "I love working with Astro & CREDEBL to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
 		"position": "UI/UX Engineer",
 		"country": "Australia",
 		"status": "Offline"
@@ -54,7 +54,7 @@
 		"name": "Thomas Lean",
 		"avatar": "thomas-lean.png",
 		"email": "thomas.lean@credebl.id",
-		"biography": "I love working with React and Flowbites to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
+		"biography": "I love working with Astro & CREDEBL to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
 		"position": "Vue developer",
 		"country": "Germany",
 		"status": "Active"
@@ -64,7 +64,7 @@
 		"name": "Helene Engels",
 		"avatar": "helene-engels.png",
 		"email": "helene.engels@credebl.id",
-		"biography": "I love working with React and Flowbites to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
+		"biography": "I love working with Astro & CREDEBL to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
 		"position": "Product owner",
 		"country": "Canada",
 		"status": "Active"
@@ -74,7 +74,7 @@
 		"name": "Lana Byrd",
 		"avatar": "lana-byrd.png",
 		"email": "lana.byrd@credebl.id",
-		"biography": "I love working with React and Flowbites to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
+		"biography": "I love working with Astro & CREDEBL to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
 		"position": "Designer",
 		"country": "United States",
 		"status": "Active"
@@ -84,7 +84,7 @@
 		"name": "Leslie Livingston",
 		"avatar": "leslie-livingston.png",
 		"email": "leslie.livingston@credebl.id",
-		"biography": "I love working with React and Flowbites to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
+		"biography": "I love working with Astro & CREDEBL to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
 		"position": "Web developer",
 		"country": "France",
 		"status": "Offline"
@@ -94,18 +94,18 @@
 		"name": "Robert Brown",
 		"avatar": "robert-brown.png",
 		"email": "robert.brown@credebl.id",
-		"biography": "I love working with React and Flowbites to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
+		"biography": "I love working with Astro & CREDEBL to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
 		"position": "Laravel developer",
 		"country": "Russia",
 		"status": "Active"
 	},
 	{
 		"id": 11,
-		"name": "Neil Sims",
+		"name": "Ajay Jadhav",
 		"avatar": "neil-sims.png",
-		"email": "neil.sims@credebl.id",
+		"email": "ajile@credebl.id",
 		"position": "Front-end developer",
-		"biography": "I love working with React and Flowbites to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
+		"biography": "I love working with Astro & CREDEBL to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
 		"country": "United States",
 		"status": "Active"
 	},
@@ -114,7 +114,7 @@
 		"name": "Roberta Casas",
 		"avatar": "roberta-casas.png",
 		"email": "roberta.casas@credebl.id",
-		"biography": "I love working with React and Flowbites to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
+		"biography": "I love working with Astro & CREDEBL to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
 		"position": "Designer",
 		"country": "Spain",
 		"status": "Active"
@@ -124,7 +124,7 @@
 		"name": "Michael Gough",
 		"avatar": "michael-gough.png",
 		"email": "michael.gough@credebl.id",
-		"biography": "I love working with React and Flowbites to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
+		"biography": "I love working with Astro & CREDEBL to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
 		"position": "React developer",
 		"country": "United Kingdom",
 		"status": "Active"
@@ -134,7 +134,7 @@
 		"name": "Jese Leos",
 		"avatar": "jese-leos.png",
 		"email": "jese.leos@credebl.id",
-		"biography": "I love working with React and Flowbites to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
+		"biography": "I love working with Astro & CREDEBL to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
 		"position": "Marketing",
 		"country": "United States",
 		"status": "Active"
@@ -144,7 +144,7 @@
 		"name": "Bonnie Green",
 		"avatar": "bonnie-green.png",
 		"email": "bonnie.green@credebl.id",
-		"biography": "I love working with React and Flowbites to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
+		"biography": "I love working with Astro & CREDEBL to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
 		"position": "UI/UX Engineer",
 		"country": "Australia",
 		"status": "Offline"
@@ -154,7 +154,7 @@
 		"name": "Thomas Lean",
 		"avatar": "thomas-lean.png",
 		"email": "thomas.lean@credebl.id",
-		"biography": "I love working with React and Flowbites to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
+		"biography": "I love working with Astro & CREDEBL to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
 		"position": "Vue developer",
 		"country": "Germany",
 		"status": "Active"
@@ -164,7 +164,7 @@
 		"name": "Helene Engels",
 		"avatar": "helene-engels.png",
 		"email": "helene.engels@credebl.id",
-		"biography": "I love working with React and Flowbites to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
+		"biography": "I love working with Astro & CREDEBL to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
 		"position": "Product owner",
 		"country": "Canada",
 		"status": "Active"
@@ -174,7 +174,7 @@
 		"name": "Lana Byrd",
 		"avatar": "lana-byrd.png",
 		"email": "lana.byrd@credebl.id",
-		"biography": "I love working with React and Flowbites to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
+		"biography": "I love working with Astro & CREDEBL to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
 		"position": "Designer",
 		"country": "United States",
 		"status": "Active"
@@ -184,7 +184,7 @@
 		"name": "Leslie Livingston",
 		"avatar": "leslie-livingston.png",
 		"email": "leslie.livingston@credebl.id",
-		"biography": "I love working with React and Flowbites to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
+		"biography": "I love working with Astro & CREDEBL to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
 		"position": "Web developer",
 		"country": "France",
 		"status": "Offline"
@@ -194,7 +194,7 @@
 		"name": "Robert Brown",
 		"avatar": "robert-brown.png",
 		"email": "robert.brown@credebl.id",
-		"biography": "I love working with React and Flowbites to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
+		"biography": "I love working with Astro & CREDEBL to create efficient and user-friendly interfaces. In my spare time, I enjoys baking, hiking, and spending time with my family.",
 		"position": "Laravel developer",
 		"country": "Russia",
 		"status": "Active"
