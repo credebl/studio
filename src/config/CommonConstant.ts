@@ -14,3 +14,10 @@ export const apiStatusCodes = {
     API_STATUS_UNAUTHORIZED : 401,
     API_STATUS_NOT_FOUND : 404
 }
+
+export const staorageKeys = {
+    TOKEN : 'access_token',
+    ORG_ID : 'organization_id',
+    USER_PROFILE : 'user_profile',
+    PERMISSIONS: 'user_permissions' 
+}
