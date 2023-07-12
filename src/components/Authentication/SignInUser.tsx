@@ -6,14 +6,14 @@ import {
 	FormikProps,
 	FormikValues,
 } from 'formik';
-import { Button, Checkbox, Label, TextInput } from 'flowbite-react';
-import * as yup from 'yup';
+import { UserSignInData, getUserProfile, loginUser, passwordEncryption, setToLocalStorage } from '../../api/Auth';
+import { useEffect, useState } from 'react';
 
-import { asset, url } from '../../lib/data.js';
-import { passwordRegex } from '../../config/CommonConstant.js';
-import React from 'react';
-import { axoisGet } from '../../services/apiRequests.js';
-
+import { Alert } from 'flowbite-react';
+import type { AxiosResponse } from 'axios';
+import { apiStatusCodes, staorageKeys } from '../../config/CommonConstant';
+import astro  from '@astrojs/react'
+import * as deno from '@astrojs/deno';
 interface Values {
 	email: string;
     password:string,
@@ -22,9 +22,40 @@ interface Values {
 const SignInUser = () => {
 
     const verifyUser = async(values: Values) =>{
-       
+		const payload: UserSignInData ={
+			email: values.email,
+			isPasskey: false,
+			password: passwordEncryption(values.password)
+		}
+	   setLoading(true)
+       const loginRsp = await loginUser(payload)
+	   const { data } = loginRsp as AxiosResponse
+
+	   if(data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS){
+		    await setToLocalStorage(staorageKeys.TOKEN, data?.data?.access_token)
+			getUserDetails(data?.data?.access_token)
+	   }else{
+		setLoading(false)
+		setFailur(loginRsp as string)
+	   }
     }
-    
+
+	const getUserDetails = async(access_token: string) => {
+        const userDetails = await getUserProfile(access_token);
+		const { data } = userDetails as AxiosResponse
+		if(data?.data?.userOrgRoles?.length > 0){
+			const permissionArray: number|string[] = []
+			data?.data?.userOrgRoles?.forEach((element: { orgRole: { name: string } }) => permissionArray.push(element?.orgRole?.name));
+			await setToLocalStorage(staorageKeys.PERMISSIONS, permissionArray)
+			await setToLocalStorage(staorageKeys.USER_PROFILE, data?.data)
+
+			window.location.href = '/dashboard'
+		}else{
+			setFailur(userDetails as string)
+		}
+		setLoading(false)
+	}
+
 	return (
 		<div className="min-h-screen align-middle flex pb-[12vh]">
 			<div className="w-full flex flex-col items-center justify-center px-6 pt-8 mx-auto pt:mt-0 dark:bg-gray-900">

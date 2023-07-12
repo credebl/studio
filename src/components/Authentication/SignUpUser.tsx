@@ -189,7 +189,7 @@ const SignUpUser = () => {
                             href="/authentication/sign-in"
 					        className="text-primary-700 hover:underline dark:text-primary-500"
 					    >
-                        Sign In
+                        {` Sign in here.`}
                         </a>
 			        </div>
 				</div>

@@ -6,3 +6,18 @@ export const IMG_MAX_WIDTH = 500
 export const IMG_MAX_HEIGHT = 291
 
 export const schemaVersionRegex = /^\d{1,5}(?=.*[0-9])(?:\.\d{1,5})?(?:\.\d{1,5})?$/gm
+
+export const apiStatusCodes = {
+    API_STATUS_SUCCESS : 200,
+    API_STATUS_CREATED : 201,
+    API_STATUS_BAD_REQUEST : 400,
+    API_STATUS_UNAUTHORIZED : 401,
+    API_STATUS_NOT_FOUND : 404
+}
+
+export const staorageKeys = {
+    TOKEN : 'access_token',
+    ORG_ID : 'organization_id',
+    USER_PROFILE : 'user_profile',
+    PERMISSIONS: 'user_permissions' 
+}
