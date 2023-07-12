@@ -17,7 +17,7 @@ export default function ShadowInputs() {
                 href="#"
                 className="flex items-center justify-center mb-8 text-2xl font-semibold lg:mb-10 dark:text-white"
             >
-                <img src={asset('images/logo.svg')} alt="FlowBite Logo" className="mr-4 h-11" />
+                <img src={asset('images/logo.svg')} alt="CREDEBL Logo" className="mr-4 h-11" />
                 <span>CREDEBL</span>
             </a>
             <div
@@ -39,7 +39,7 @@ export default function ShadowInputs() {
                         </div>
                         <TextInput
                             id="email2"
-                            placeholder="name@flowbite.com"
+                            placeholder="name@credebl.id"
                             required
                             shadow
                             type="email"
