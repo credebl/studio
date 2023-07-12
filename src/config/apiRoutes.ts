@@ -2,8 +2,7 @@ export const apiRoutes = {
     auth:{
         signUp: '/users',
         sinIn: '/users/login',
-        verifyEmail:'/users/verify',
-        userProfile: 'users/profile',
+        verifyEmail:'/users/verify'
     },
     organizations: {
         create: '/organization',
