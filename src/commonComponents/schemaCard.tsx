@@ -37,7 +37,7 @@ const SchemaCard = (props: { schemaName: string, version: string, schemaId: stri
           Issuer DID:{props.issuerDid}
         </p>
       </div>
-      {/* <div className="flow-root">
+      <div className="flow-root">
         <ul className="divide-y divide-gray-200 dark:divide-gray-700">
           <li className="py-3 sm:py-4">
             <div className="flex items-center space-x-4">
@@ -51,20 +51,12 @@ const SchemaCard = (props: { schemaName: string, version: string, schemaId: stri
                   ))}
               </div>
 
-              <a
-            className="text-sm font-medium text-cyan-600 hover:underline dark:text-cyan-500"
-            href="#"
-          >
-            <p>
-              more...
-            </p>
-          </a>
             </div>
           </li>
          
         </ul>
-      </div> */}
-      <div className={`flow-root ${showAllAttributes ? 'h-auto' : 'h-14'}`}>
+      </div>
+      {/* <div className={`flow-root ${showAllAttributes ? 'h-auto' : 'h-14'}`}>
         <ul className="divide-y divide-gray-200 dark:divide-gray-700">
           <li className="py-3 sm:py-4 overflow-auto">
             <div className="flex items-center space-x-4">
@@ -97,7 +89,7 @@ const SchemaCard = (props: { schemaName: string, version: string, schemaId: stri
             </div>
           </li>
         </ul>
-      </div>
+      </div> */}
 
     </Card>
   )
