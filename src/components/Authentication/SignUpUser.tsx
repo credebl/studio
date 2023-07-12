@@ -209,7 +209,7 @@ const SignUpUser = () => {
                             href="/authentication/sign-in"
 					        className="text-primary-700 hover:underline dark:text-primary-500"
 					    >
-                        {` Sing in here.`}
+                        {` Sign in here.`}
                         </a>
 			        </div>
 				</div>
