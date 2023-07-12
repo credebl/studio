@@ -1,6 +1,6 @@
 import axios from 'axios'
 const instance = axios.create({
-    baseURL: `http://15.206.81.42/`
+    baseURL: `${import.meta.env.PUBLIC_BASE_URL}`
 })
 
 export default instance
