@@ -6,12 +6,13 @@ import {
 	FormikProps,
 	FormikValues,
 } from 'formik';
-import { UserSignInData, loginUser, passwordEncryption } from '../../api/Auth';
+import { UserSignInData, getUserProfile, loginUser, passwordEncryption, setToLocalStorage } from '../../api/Auth';
 import { useEffect, useState } from 'react';
 
 import { Alert } from 'flowbite-react';
 import type { AxiosResponse } from 'axios';
-import { apiStatusCodes } from '../../config/CommonConstant';
+import { apiStatusCodes, staorageKeys } from '../../config/CommonConstant';
+import astro  from '@astrojs/react'
 
 interface Values {
 	email: string;
@@ -29,15 +30,31 @@ const SignInUser = () => {
 	   setLoading(true)
        const loginRsp = await loginUser(payload)
 	   const { data } = loginRsp as AxiosResponse
-	   setLoading(false)
 
 	   if(data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS){
-			localStorage.setItem('access_token', data?.data?.access_token);
-			window.location.href = '/dashboard'
+		    await setToLocalStorage(staorageKeys.TOKEN, data?.data?.access_token)
+			getUserDetails(data?.data?.access_token)
 	   }else{
+		setLoading(false)
 		setFailur(loginRsp as string)
 	   }
     }
+
+	const getUserDetails = async(access_token: string) => {
+        const userDetails = await getUserProfile(access_token);
+		const { data } = userDetails as AxiosResponse
+		if(data?.data?.userOrgRoles?.length > 0){
+			const permissionArray: number|string[] = []
+			data?.data?.userOrgRoles?.forEach((element: { orgRole: { name: string } }) => permissionArray.push(element?.orgRole?.name));
+			await setToLocalStorage(staorageKeys.PERMISSIONS, permissionArray)
+			await setToLocalStorage(staorageKeys.USER_PROFILE, data?.data)
+
+			window.location.href = '/dashboard'
+		}else{
+			setFailur(userDetails as string)
+		}
+		setLoading(false)
+	}
 
 	return (
 		<div className="min-h-screen align-middle flex pb-[12vh]">
