@@ -56,3 +56,58 @@ export const getOrganizations = async (pageNumber:number, pageSize: number, sear
     }
 }
 
+export const getOrganizationById = async (orgId: string) => {
+
+    const url = `${apiRoutes.organizations.getById}/${orgId}`
+
+    const token = localStorage.getItem('access_token');
+
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+        }
+    }
+    const axiosPayload = {
+        url,
+        config
+    }
+
+    try {
+        return await axiosGet(axiosPayload);
+    }
+    catch (error) {
+        const err = error as Error
+        return err?.message
+    }
+}
+
+export const spinupAgent = async (data: object) => {
+
+    const url = apiRoutes.organizations.agentSpinup
+    const payload = data
+
+    const token = localStorage.getItem('access_token');
+
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+        }
+    }
+    const axiosPayload = {
+        url,
+        payload,
+        config
+    }
+
+    try {
+        return await axiosPost(axiosPayload);
+    }
+    catch (error) {
+        const err = error as Error
+        return err?.message
+    }
+}
+
+
