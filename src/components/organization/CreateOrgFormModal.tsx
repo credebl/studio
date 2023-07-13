@@ -6,6 +6,7 @@ import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, imageSizeAccepted } from '../../config/C
 import { MouseEvent, useState } from "react";
 import { asset, url } from '../../lib/data.js';
 import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
+import { useRef, useState, useEffect } from "react";
 
 import type { AxiosResponse } from 'axios';
 import { asset } from '../../lib/data.js';
@@ -34,6 +35,17 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
 
 
     const [imgError, setImgError] = useState('')
+
+    useEffect(()=>{
+       setOrgData({
+        name: '',
+        description: '',
+    })
+    setLogoImage({
+        logoFile: "",
+        imagePreviewUrl: ""
+    })
+    },[props.openModal])
 
 
     const ProcessImg = (e: any): string | undefined => {
@@ -136,7 +148,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
     }
 
     return (
-        <Modal show={props.openModal === true} onClose={() => {
+        <Modal show={props.openModal} onClose={() => {
             setLogoImage({
                 logoFile: "",
                 imagePreviewUrl: ""
