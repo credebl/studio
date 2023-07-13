@@ -1,6 +1,6 @@
 import { defineConfig } from 'astro/config';
+import deno from '@astrojs/deno';
 import node from "@astrojs/node";
-// import deno from '@astrojs/deno';
 import nodejs from '@astrojs/node';
 import react from "@astrojs/react";
 import sitemap from '@astrojs/sitemap';
@@ -21,10 +21,9 @@ export default defineConfig({
     port: DEV_PORT
   },
   integrations: [
-  //
   sitemap(), tailwind(), react()],
-  adapter: node({
-    mode: "standalone"
-  })
-  // adapter: deno()
+  // adapter: node({
+  //   mode: "standalone"
+  // })
+  adapter: deno()
 });
