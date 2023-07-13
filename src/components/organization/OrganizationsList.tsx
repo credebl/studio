@@ -127,15 +127,11 @@ const OrganizationsList = () => {
             </Button>
           </div>
 
-          {
-            props.openModal &&
-            <CreateOrgFormModal
+          <CreateOrgFormModal
               openModal={props.openModal}
               setOpenModal={
                 props.setOpenModal
               } />
-          }
-
           {loading
             ? <div className="flex items-center justify-center mb-4">
               <Spinner

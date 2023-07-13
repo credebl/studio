@@ -6,7 +6,7 @@ import type { AxiosResponse } from 'axios';
 import { HiOutlineMail } from "react-icons/hi";
 import { apiStatusCodes } from '../../config/CommonConstant';
 
-const VarifyEmail = () => {
+const VerifyEmail = () => {
     const [loading, setLoading] = useState<boolean>(true)
     const [message, setMessage] = useState<string>('')
     const [error, setError] = useState<boolean>(false)
@@ -71,4 +71,4 @@ const VarifyEmail = () => {
   )
 }
 
-export default VarifyEmail
+export default VerifyEmail
