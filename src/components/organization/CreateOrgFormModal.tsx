@@ -4,7 +4,7 @@ import { Avatar, Button, Label, Modal } from 'flowbite-react';
 import { Field, Form, Formik, FormikHelpers } from 'formik';
 import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, apiStatusCodes, imageSizeAccepted } from '../../config/CommonConstant'
 import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 import type { AxiosResponse } from 'axios';
 import { asset } from '../../lib/data.js';
@@ -39,6 +39,17 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
     const [erroMsg, setErrMsg] = useState<string | null>(null)
 
     const [imgError, setImgError] = useState('')
+
+    useEffect(()=>{
+       setOrgData({
+        name: '',
+        description: '',
+    })
+    setLogoImage({
+        logoFile: "",
+        imagePreviewUrl: ""
+    })
+    },[props.openModal])
 
 
     const ProcessImg = (e: any): string | undefined => {
@@ -141,7 +152,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
     }
 
     return (
-        <Modal show={props.openModal === true} onClose={() => {
+        <Modal show={props.openModal} onClose={() => {
             setLogoImage({
                 logoFile: "",
                 imagePreviewUrl: ""
