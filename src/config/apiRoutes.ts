@@ -7,5 +7,7 @@ export const apiRoutes = {
     organizations: {
         create: '/organization',
         getAll: '/organization',
+        getById: '/organization',
+        agentSpinup: '/agent-service/spinup'
     }
 }
