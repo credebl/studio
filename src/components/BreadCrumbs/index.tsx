@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { Breadcrumb } from 'flowbite-react';
-import { HiHome } from 'react-icons/hi';
+
+// import { HiHome } from 'react-icons/hi';
 
 interface BreadCrumbI {
     href: string;
@@ -39,7 +40,7 @@ export default function BreadCrumbs() {
 
             <Breadcrumb.Item
                 href="/dashboard"
-                icon={HiHome}
+                // icon={HiHome}
             >
                 <p>
                     Home
