@@ -33,6 +33,8 @@ const WalletSpinup = () => {
 
     const [agentType, setAgentType] = useState<string>(AgentType.SHARED);
 
+    const [loading, setLoading] = useState<boolean>(true)
+
     const [seeds, setSeeds] = useState<string>('')
 
     useEffect(() => {
@@ -44,7 +46,192 @@ const WalletSpinup = () => {
     const onRadioSelect = (type: string) => {
         setAgentType(type)
     }
-    return (
+
+    const submitDedicatedWallet = async (values: Values) => {
+
+    }
+
+    const submitSharedWallet = (values: ValuesShared) => {
+
+    }
+ 
+ 
+    const DidicatedAgentForm = () => (
+    <Formik
+        initialValues={{
+            seed: '',
+            name: '',
+            password: ''
+        }}
+        validationSchema={yup.object().shape({
+            name: yup
+                .string()
+                .min(6, 'Wallet name must be at least 6 characters')
+                .max(20, 'Wallet name must be at most 20 characters')
+                .trim()
+                .required('Wallet name is required')
+                .matches(
+                    /^[A-Za-z0-9-][^ !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]*$/,
+                    "Wallet name must be alphanumeric only"
+                )
+                .label("Wallet name"),
+            password: yup
+                .string()
+                .matches(passwordRegex, "Password must contain one Capital, Special character")
+                .required('Wallet password is required')
+                .label("Wallet password")
+        })}
+        validateOnBlur
+        validateOnChange
+        enableReinitialize
+        onSubmit={(values: Values) => submitDedicatedWallet(values)
+            // alert(JSON.stringify(values))
+        }
+    >
+        {(formikHandlers): JSX.Element => (
+            <Form className="mt-8 space-y-6 max-w-lg flex-col gap-4" onSubmit={formikHandlers.handleSubmit}>
+
+                <div>
+                    <div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
+                        <Label htmlFor="seed" value="Seed" />
+                        <span className='text-red-500 text-xs'>*</span>
+                    </div>
+                    <Field
+                        id="seed"
+                        name="seed"
+                        disabled={true}
+                        value={seeds}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        type="text"
+                    />
+                    {
+                        (formikHandlers?.errors?.seed && formikHandlers?.touched?.seed) &&
+                        <span className="text-red-500 text-xs">{formikHandlers?.errors?.seed}</span>
+                    }
+                </div>
+                <div>
+                    <div className="mb-1 block">
+                        <Label htmlFor="name" value="Wallet Name" />
+                        <span className='text-red-500 text-xs'>*</span>
+                    </div>
+
+                    <Field
+                        id="name"
+                        name="name"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        type="text"
+                    />
+                    {
+                        (formikHandlers?.errors?.name && formikHandlers?.touched?.name) &&
+                        <span className="text-red-500 text-xs">{formikHandlers?.errors?.name}</span>
+                    }
+                </div>
+
+                <div>
+                    <div className="mb-2 block">
+                        <Label htmlFor="password" value="Password" />
+                        <span className='text-red-500 text-xs'>*</span>
+                    </div>
+
+                    <Field
+                        id="password"
+                        name="password"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        type="password"
+                    />
+                    {
+                        (formikHandlers?.errors?.password && formikHandlers?.touched?.password) &&
+                        <span className="text-red-500 text-xs">{formikHandlers?.errors?.password}</span>
+                    }
+                </div>
+                <Button
+                    // isProcessing={loading}
+                    type="submit"
+                    className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+                >
+                    Setup Agent
+                </Button>
+            </Form>
+        )}
+    </Formik>
+)
+
+const SharedAgentForm = () => (
+    <Formik
+        initialValues={{
+            seed: '',
+            label: '',
+        }}
+        validationSchema={yup.object().shape({
+            seed: yup
+                .string()
+                .required('Seed is required')
+                .trim(),
+            label: yup
+                .string()
+                .required('Wallet label is required')
+                .trim(),
+        })}
+        validateOnBlur
+        validateOnChange
+        enableReinitialize
+        onSubmit={(values: ValuesShared) =>  submitSharedWallet(values)
+            // alert(JSON.stringify(values))
+        }
+    >
+        {(formikHandlers): JSX.Element => (
+            <Form className="mt-8 space-y-6 max-w-lg flex-col gap-4" onSubmit={formikHandlers.handleSubmit}>
+
+
+                <div>
+                    <div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
+                        <Label htmlFor="seed" value="Seed" />
+                        <span className='text-red-500 text-xs'>*</span>
+                    </div>
+                    <Field
+                        id="seed"
+                        name="seed"
+                        disabled={true}
+                        value={seeds}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        type="text"
+                    />
+                    {
+                        (formikHandlers?.errors?.seed && formikHandlers?.touched?.seed) &&
+                        <span className="text-red-500 text-xs">{formikHandlers?.errors?.seed}</span>
+                    }
+                </div>
+                <div>
+                    <div className="mb-1 block">
+                        <Label htmlFor="name" value="Wallet Label" />
+                        <span className='text-red-500 text-xs'>*</span>
+                    </div>
+
+                    <Field
+                        id="label"
+                        name="label"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        type="text"
+                    />
+                    {
+                        (formikHandlers?.errors?.label && formikHandlers?.touched?.label) &&
+                        <span className="text-red-500 text-xs">{formikHandlers?.errors?.label}</span>
+                    }
+                </div>
+
+                <Button
+                    // isProcessing={loading}
+                    type="submit"
+                    className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+                >
+                    Setup Agent
+                </Button>
+            </Form>
+        )}
+    </Formik>
+)
+
+   return (
         <div
             className="mt-4 flex-col p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
         >
@@ -101,8 +288,8 @@ const WalletSpinup = () => {
 
                 {
                     agentType === AgentType.SHARED
-                        ? <SharedAgentForm seedVal={seeds} />
-                        : <DidicatedAgentForm seedVal={seeds} />
+                        ? <SharedAgentForm />
+                        : <DidicatedAgentForm />
                 }
              </div>        
                 <WalletSteps />
@@ -111,6 +298,7 @@ const WalletSpinup = () => {
 
         </div>
     )
+
 
 }
 
@@ -155,184 +343,7 @@ const WalletSteps = () => (
     </ol>
 )
 
-const DidicatedAgentForm = (props: { seedVal: string }) => (
-    <Formik
-        initialValues={{
-            seed: '',
-            name: '',
-            password: ''
-        }}
-        validationSchema={yup.object().shape({
-            seed: yup
-                .string()
-                .required('Seed is required')
-                .trim(),
-            name: yup
-                .string()
-                .min(6, 'Wallet name must be at least 6 characters')
-                .max(20, 'Wallet name must be at most 20 characters')
-                .trim()
-                .required('Wallet name is required')
-                .matches(
-                    /^[A-Za-z0-9-][^ !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]*$/,
-                    "Wallet name must be alphanumeric only"
-                )
-                .label("Wallet name"),
-            password: yup
-                .string()
-                .matches(passwordRegex, "customPasswordMsg")
-                .required('Wallet password is required')
-                .label("Wallet password")
-        })}
-        validateOnBlur
-        validateOnChange
-        enableReinitialize
-        onSubmit={(values: Values) =>
-            alert(JSON.stringify(values))
-        }
-    >
-        {(formikHandlers): JSX.Element => (
-            <Form className="mt-8 space-y-6 max-w-lg flex-col gap-4" onSubmit={formikHandlers.handleSubmit}>
 
-                <div>
-                    <div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
-                        <Label htmlFor="seed" value="Seed" />
-                        <span className='text-red-500 text-xs'>*</span>
-                    </div>
-                    <Field
-                        id="seed"
-                        name="seed"
-                        disabled={true}
-                        value={props.seedVal}
-                        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                        type="text"
-                    />
-                    {
-                        (formikHandlers?.errors?.seed && formikHandlers?.touched?.seed) &&
-                        <span className="text-red-500 text-xs">{formikHandlers?.errors?.seed}</span>
-                    }
-                </div>
-                <div>
-                    <div className="mb-1 block">
-                        <Label htmlFor="name" value="Wallet Name" />
-                        <span className='text-red-500 text-xs'>*</span>
-                    </div>
-
-                    <Field
-                        id="name"
-                        name="name"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                        type="text"
-                    />
-                    {
-                        (formikHandlers?.errors?.name && formikHandlers?.touched?.name) &&
-                        <span className="text-red-500 text-xs">{formikHandlers?.errors?.name}</span>
-                    }
-                </div>
-
-                <div>
-                    <div className="mb-2 block">
-                        <Label htmlFor="password" value="Password" />
-                        <span className='text-red-500 text-xs'>*</span>
-                    </div>
-
-                    <Field
-                        id="password"
-                        name="password"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                        type="password"
-                    />
-                    {
-                        (formikHandlers?.errors?.password && formikHandlers?.touched?.password) &&
-                        <span className="text-red-500 text-xs">{formikHandlers?.errors?.password}</span>
-                    }
-                </div>
-                <Button
-                    // isProcessing={loading}
-                    type="submit"
-                    className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
-                >
-                    Setup Agent
-                </Button>
-            </Form>
-        )}
-    </Formik>
-)
-
-const SharedAgentForm = (props: { seedVal: string }) => (
-    <Formik
-        initialValues={{
-            seed: '',
-            label: '',
-        }}
-        validationSchema={yup.object().shape({
-            seed: yup
-                .string()
-                .required('Seed is required')
-                .trim(),
-            label: yup
-                .string()
-                .required('Wallet label is required')
-                .trim(),
-        })}
-        validateOnBlur
-        validateOnChange
-        enableReinitialize
-        onSubmit={(values: ValuesShared) =>
-            alert(JSON.stringify(values))
-        }
-    >
-        {(formikHandlers): JSX.Element => (
-            <Form className="mt-8 space-y-6 max-w-lg flex-col gap-4" onSubmit={formikHandlers.handleSubmit}>
-
-
-                <div>
-                    <div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
-                        <Label htmlFor="seed" value="Seed" />
-                        <span className='text-red-500 text-xs'>*</span>
-                    </div>
-                    <Field
-                        id="seed"
-                        name="seed"
-                        disabled={true}
-                        value={props.seedVal}
-                        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                        type="text"
-                    />
-                    {
-                        (formikHandlers?.errors?.seed && formikHandlers?.touched?.seed) &&
-                        <span className="text-red-500 text-xs">{formikHandlers?.errors?.seed}</span>
-                    }
-                </div>
-                <div>
-                    <div className="mb-1 block">
-                        <Label htmlFor="name" value="Wallet Label" />
-                        <span className='text-red-500 text-xs'>*</span>
-                    </div>
-
-                    <Field
-                        id="label"
-                        name="label"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                        type="text"
-                    />
-                    {
-                        (formikHandlers?.errors?.label && formikHandlers?.touched?.label) &&
-                        <span className="text-red-500 text-xs">{formikHandlers?.errors?.label}</span>
-                    }
-                </div>
-
-                <Button
-                    // isProcessing={loading}
-                    type="submit"
-                    className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
-                >
-                    Setup Agent
-                </Button>
-            </Form>
-        )}
-    </Formik>
-)
 
 
 export default WalletSpinup
