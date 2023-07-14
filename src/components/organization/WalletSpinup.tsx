@@ -65,7 +65,7 @@ const WalletSpinup = (
 
         setAgentSpinupCall(true)
 
-        const orgId = getFromLocalStorage(storageKeys.ORG_ID)
+        const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
 
         const payload = {
             walletName: values.name,
