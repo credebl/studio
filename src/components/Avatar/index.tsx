@@ -8,7 +8,8 @@ type Props = {
     size?: string,
     src?: string,
     className?: string,
-    props?: unknown
+    props?: unknown,
+    round?: boolean
 }
 
 interface ColorPair {
@@ -16,7 +17,7 @@ interface ColorPair {
     background: string
 }
 
-const CustomAvatar = ({ name, size, src, textSizeRatio, className, ...props }: Props): JSX.Element => {
+const CustomAvatar = ({ name, size, src, textSizeRatio, className, round, ...props }: Props): JSX.Element => {
     const avatarColorPairs: ColorPair[] = [
         {
             text: '#ea5455',
@@ -56,6 +57,7 @@ const CustomAvatar = ({ name, size, src, textSizeRatio, className, ...props }: P
             size={size ? size : "38"}
             textSizeRatio={textSizeRatio ? textSizeRatio : 2.5}
             src={src === undefined ? '' : src}
+            round={round || false}
             {...props} />
     )
 }
