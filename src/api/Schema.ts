@@ -94,10 +94,10 @@ export const createCredentialDefinition = async(payload:createCredDeffFieldName)
     } 
 }
 
-export const getCredDeffById = async(id:string) => {
+export const getCredDeffById = async(id:string, orgId:number) => {
   const token = await getFromLocalStorage(staorageKeys.TOKEN)
   const details = {
-    url: `${apiRoutes.schema.getCredDeffBySchemaId}?schemaId=${id}&orgId=4`,
+    url: `${apiRoutes.schema.getCredDeffBySchemaId}?schemaId=${id}&orgId=${orgId}`,
     config: {
       headers: {
         'Content-type': 'application/json',

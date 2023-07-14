@@ -54,9 +54,9 @@ const ViewSchemas = () => {
 
   }
 
-  const getCredentialDefinitionList = async (id: string) => {
+  const getCredentialDefinitionList = async (id: string, orgId:number) => {
     setCredDeffloader(true)
-    const credentialDefinitions: AxiosResponse = await getCredDeffById(id)
+    const credentialDefinitions: AxiosResponse = await getCredDeffById(id, orgId)
     if (credentialDefinitions.data.data.data) {
       setCredDeffList(credentialDefinitions.data.data.data)
       setCredDeffloader(false)
@@ -70,7 +70,7 @@ const ViewSchemas = () => {
       const str = window?.location?.search
       const schemaId = str.substring(str.indexOf('=') + 1);
       getSchemaDetails(schemaId, Number(organizationId))
-      getCredentialDefinitionList(schemaId)
+      getCredentialDefinitionList(schemaId, Number(organizationId))
     }
 
   }, [])
