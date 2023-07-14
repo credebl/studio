@@ -10,5 +10,12 @@ export const apiRoutes = {
         getAll: '/organization',
         getById: '/organization',
         agentSpinup: '/agent-service/spinup'
+    },
+    schema: {
+        create: '/schemas',
+        getAll: '/schemas',
+        getSchemaById:'/schemas/id',
+        createCredentialDefinition: '/credential-definitions',
+        getCredDeffBySchemaId: '/schemas/credential-definitions'
     }
 }
