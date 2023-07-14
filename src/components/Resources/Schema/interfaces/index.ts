@@ -36,4 +36,20 @@ type DataItem = {
     previousPage: number;
     lastPage: number;
   };
-  
+
+  export interface CredDeffFieldNameType {
+    tag: string;
+    revocable: boolean;
+    orgId: number; 
+    schemaLedgerId: string | undefined; 
+  }
+
+  export interface FieldName {
+  schemaName: string; 
+  schemaVersion: string; 
+  attributes: string[]; 
+  orgId: number; 
+}
+
+
+

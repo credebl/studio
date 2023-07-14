@@ -9,6 +9,7 @@ import SchemaCard from '../../../commonComponents/schemaCard';
 import * as yup from 'yup';
 import { schemaVersionRegex } from '../../../config/CommonConstant';
 import BreadCrumbs from '../../BreadCrumbs';
+import type { FieldName } from './interfaces';
 
 interface Values {
     schemaName: string;
@@ -18,17 +19,28 @@ interface Values {
 
 const CreateSchema = () => {
     const [erroMsg, setErrMsg] = useState<string | null>(null)
+    const [orgId, setOrgId] = useState<number>(0)
+    const [createloader, setCreateLoader] = useState<boolean>(false)
+
+    useEffect(() => {
+        const organizationId = localStorage.getItem('orgId');
+        setOrgId(Number(organizationId))
+
+    }, [])
+
 
     const submit = async (values: Values) => {
-        const fieldName: any = {}
-        fieldName['schemaName'] = values.schemaName
-        fieldName['schemaVersion'] = values.schemaVersion
-        fieldName['attributes'] = values.attribute
-        fieldName['orgId'] = 2
-        fieldName['orgDid'] = 'did:indy:bcovrin:2XKsaGBrgRoAqNcSycUvKK'
-        const createSchema: AxiosResponse = await addSchema(fieldName);
-        if(createSchema) {
-            window.location.href = `/schemas` 
+        setCreateLoader(true)
+        const schemaFieldName: FieldName = {
+            schemaName: values.schemaName,
+            schemaVersion: values.schemaVersion,
+            attributes: values.attribute,
+            orgId: orgId
+        }
+        const createSchema: AxiosResponse = await addSchema(schemaFieldName);
+        if (createSchema) {
+            setCreateLoader(false)
+            window.location.href = `/schemas`
         }
     }
 
@@ -131,18 +143,13 @@ const CreateSchema = () => {
                                                         <div className="d-flex justify-content-center align-items-center mb-1">
                                                             Attributes <span className="text-red-600">*</span>
                                                         </div>
-                                                        <div className='flex items-end'>
+                                                        <div className='flex content-center'>
                                                             {attribute.map((element: any, index: any) => (
                                                                 <div key={`attributeList-${index}`} className="">
                                                                     <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white pl-1">
                                                                         Attribute: {index + 1}
                                                                     </label>
                                                                     <div key={index} className="flex pl-1">
-                                                                        {/* <input
-                                                                        name={`attribute[${index}]`}
-                                                                        className="w-96 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                                                        placeholder="Enter attribute"
-                                                                    /> */}
 
                                                                         <Field
                                                                             id={`attribute[${index}]`}
@@ -153,20 +160,36 @@ const CreateSchema = () => {
                                                                         {index === 0 && attribute.length === 1 ? (
                                                                             ''
                                                                         ) : (
+                                                                            <div>
+                                                                                <Button
+                                                                                    data-testid="deleteBtn"
+                                                                                    type="button"
+                                                                                    color="primary"
+                                                                                    className="ml-1 "
+                                                                                    onClick={() => remove(index)}
+                                                                                    disabled={index === 0 && attribute.length === 1}
+                                                                                >
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                                                                    </svg>
+
+                                                                                </Button>
+                                                                            </div>
+                                                                        )}
+                                                                        {
+                                                                            index === attribute.length - 1 &&
                                                                             <Button
-                                                                                data-testid="deleteBtn"
+                                                                                className="attributes-btn pl-2 ml-1"
                                                                                 type="button"
                                                                                 color="primary"
-                                                                                className="ml-1"
-                                                                                onClick={() => remove(index)}
-                                                                                disabled={index === 0 && attribute.length === 1}
+                                                                                onClick={() => push('')}
+                                                                                outline
                                                                             >
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                                                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6">
+                                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                                                                                 </svg>
-
                                                                             </Button>
-                                                                        )}
+                                                                        }
                                                                     </div>
                                                                     {formikHandlers.errors && formikHandlers.errors.attribute && formikHandlers.touched.attribute && formikHandlers.errors.attribute[index] ? (
                                                                         <span className="text-red-500 text-xs">{formikHandlers.errors.attribute[index]}</span>
@@ -175,17 +198,7 @@ const CreateSchema = () => {
                                                                     )}
                                                                 </div>
                                                             ))}
-                                                            <Button
-                                                                className="attributes-btn pl-2 ml-1"
-                                                                type="button"
-                                                                color="primary"
-                                                                onClick={() => push('')}
-                                                                outline
-                                                            >
-                                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                                                                </svg>
-                                                            </Button>
+
                                                         </div>
                                                     </>
                                                 )
@@ -212,6 +225,7 @@ const CreateSchema = () => {
                                             type="submit"
                                             color='bg-primary-800'
                                             className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+                                            isProcessing={createloader}
                                         >
                                             Create
                                         </Button>
