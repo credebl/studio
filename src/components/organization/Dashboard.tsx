@@ -11,14 +11,12 @@ import { getFromLocalStorage } from '../../api/Auth';
 import { getOrganizationById } from '../../api/organization';
 
 const Dashboard = () => {
-    const organizationId = localStorage.getItem('orgId');
     const [orgData, setOrgData] = useState<Organisation | null>(null);
 
     const [walletStatus, setWalletStatus] = useState<boolean>(false);
 
     const fetchOrganizationDetails = async () => {
-
-        const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
+        const orgId = localStorage.getItem('orgId');
 
         const response = await getOrganizationById(orgId as string);
 
@@ -118,7 +116,7 @@ const Dashboard = () => {
                         <div
                             className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer"
                             onClick={() => {
-                                window.location.href = `/schemas?ordId=${organizationId}`;
+                                window.location.href = `/schemas`;
                             }}
                         >
                             <div className="w-full">
