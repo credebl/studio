@@ -5,7 +5,7 @@ import { Button, Card, Pagination, Spinner, Table, } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { getAllSchemas } from '../../../api/Schema';
-import SchemaCard from '../../../commonComponents/schemaCard';
+import SchemaCard from '../../../commonComponents/SchemaCard';
 import { storageKeys } from '../../../config/CommonConstant';
 import BreadCrumbs from '../../BreadCrumbs';
 import SearchInput from '../../SearchInput';
