@@ -16,7 +16,8 @@ const Dashboard = () => {
     const [walletStatus, setWalletStatus] = useState<boolean>(false);
 
     const fetchOrganizationDetails = async () => {
-        const orgId = localStorage.getItem('orgId');
+
+        const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
 
         const response = await getOrganizationById(orgId as string);
 
