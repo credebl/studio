@@ -8,10 +8,6 @@ export const apiRoutes = {
     organizations: {
         create: '/organization',
         getAll: '/organization',
-        getById: '/organization',
-        agentDedicatedSpinup: '/agent-service/spinup',
-        agentSharedSpinup: '/agent-service/tenant',
-        invitations: '/organization/invitations'
     },
     schema: {
         create: '/schemas',

@@ -1,17 +1,11 @@
 import { Card } from 'flowbite-react';
-import { useState } from 'react';
 
-
-
-const SchemaCard = (props: { schemaName: string, version: string, schemaId: string, issuerDid: string, attributes: any }) => {
-  const [showAllAttributes, setShowAllAttributes] = useState(false);
-
-  const handleToggleAttributes = () => {
-    setShowAllAttributes(!showAllAttributes);
-  };
+const SchemaCard = (props: { schemaName: string, version: string, schemaId: string, issuerDid: string, attributes: string[], created: string },) => {
   return (
-    <Card>
-      <div className="mb-4 flex items-center justify-between">
+    <Card onClick={() => {
+      window.location.href = `/schemas/view-schema?schemaId=${props.schemaId}`
+    }} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer' style={{ width: '485px', height: '240px' }}>
+      <div className="flex justify-between items-start">
         <div>
           <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
             {props.schemaName}
@@ -20,76 +14,50 @@ const SchemaCard = (props: { schemaName: string, version: string, schemaId: stri
             Version: {props.version}
           </p>
         </div>
-        <a
-          className="text-sm font-medium text-cyan-600 hover:underline dark:text-cyan-500"
-          href="#"
-        >
+        <div className='float-right ml-auto '>
           <p>
-            View
+            {new Date(props.created).toLocaleDateString('en-GB')}
           </p>
-        </a>
+        </div>
       </div>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-          Schema ID:{props.schemaId}
+        <p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
+          <span className="font-semibold">Schema ID:</span> {props.schemaId}
         </p>
-        <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-          Issuer DID:{props.issuerDid}
+        <p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
+          <span className="font-semibold">Issuer DID:</span> {props.issuerDid}
+        </p>
+        <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
+          <span className="font-semibold">Ledger:</span> {props.issuerDid.split(':')[2]}
         </p>
       </div>
+
       <div className="flow-root">
         <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-          <li className="py-3 sm:py-4">
+          <li className="py-3 sm:py-2">
             <div className="flex items-center space-x-4">
-              <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+              <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white overflow-hidden overflow-ellipsis">
                 Attributes:
-                {props.attributes && props.attributes.length > 0 &&
-
-                  props.attributes.map((element: string) => (
-
-                    <span className='m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300'> {element}</span>
-                  ))}
-              </div>
-
-            </div>
-          </li>
-         
-        </ul>
-      </div>
-      {/* <div className={`flow-root ${showAllAttributes ? 'h-auto' : 'h-14'}`}>
-        <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-          <li className="py-3 sm:py-4 overflow-auto">
-            <div className="flex items-center space-x-4">
-              <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                Attributes:
-                {props.attributes &&
-                  props.attributes.length > 0 &&
-                  props.attributes.map((element: string, index: number) => {
-                    if (!showAllAttributes && index >= 4) {
-                      return null;
-                    }
-                    return (
+                {props.attributes && props.attributes.length > 0 && (
+                  <>
+                    {props.attributes.slice(0, 4).map((element, index) => (
                       <span
                         key={index}
                         className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
                       >
                         {element}
                       </span>
-                    );
-                  })}
-                {props.attributes && props.attributes.length > 4 && (
-                  <a
-                    className={`text-sm font-medium ${showAllAttributes ? 'text-blue-600' : 'text-cyan-600'} hover:underline dark:text-cyan-500 cursor-pointer overflow-auto`}
-                    onClick={handleToggleAttributes}
-                  >
-                    <p>{showAllAttributes ? 'less...' : 'more...'}</p>
-                  </a>
+                    ))}
+                    {props.attributes.length > 4 && <span>...</span>}
+                  </>
                 )}
               </div>
             </div>
+
           </li>
+
         </ul>
-      </div> */}
+      </div>
 
     </Card>
   )
