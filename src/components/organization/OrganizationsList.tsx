@@ -68,11 +68,6 @@ const OrganizationsList = () => {
     setLoading(false)
   }
 
-  useEffect(() => {
-
-    getAllOrganizations()
-
-  }, [openModal, currentPage.pageNumber])
 
   //This useEffect is called when the searchText changes 
   useEffect(() => {
@@ -90,7 +85,7 @@ const OrganizationsList = () => {
     }
 
     return () => clearTimeout(getData)
-  }, [searchText])
+  }, [searchText, openModal, currentPage.pageNumber])
 
   //onCHnage of Search input text
   const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {

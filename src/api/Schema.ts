@@ -1,8 +1,9 @@
-import type { createCredDeffFieldName, createSchema, GetAllSchemaListParameter } from "../components/Resources/Schema/interfaces";
-import { apiRoutes } from "../config/apiRoutes";
-import { storageKeys } from "../config/CommonConstant";
+import type { GetAllSchemaListParameter, createCredDeffFieldName, createSchema } from "../components/Resources/Schema/interfaces";
 import { axiosGet, axiosPost } from "../services/apiRequests";
+
+import { apiRoutes } from "../config/apiRoutes";
 import { getFromLocalStorage } from "./Auth";
+import { storageKeys } from "../config/CommonConstant";
 
 export const getAllSchemas = async({ search, itemPerPage, sortBy, page }:GetAllSchemaListParameter, orgId:string) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
@@ -22,7 +23,7 @@ export const getAllSchemas = async({ search, itemPerPage, sortBy, page }:GetAllS
     }
     catch(error){
         const err = error as Error
-        throw err?.message
+        return err?.message
     }
 }
 
@@ -45,7 +46,7 @@ export const addSchema = async(payload:createSchema) => {
     }
     catch(error){
         const err = error as Error
-        throw err?.message
+        return err?.message
     } 
 }
 

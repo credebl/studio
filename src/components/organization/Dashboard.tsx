@@ -1,3 +1,4 @@
+import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { useEffect, useState } from 'react';
 
 import { Avatar } from 'flowbite-react';
@@ -6,7 +7,7 @@ import BreadCrumbs from '../BreadCrumbs';
 import type { Organisation } from './interfaces'
 import OrganizationDetails from './OrganizationDetails';
 import WalletSpinup from './WalletSpinup';
-import { apiStatusCodes } from '../../config/CommonConstant';
+import { getFromLocalStorage } from '../../api/Auth';
 import { getOrganizationById } from '../../api/organization';
 
 const Dashboard = () => {
@@ -15,7 +16,8 @@ const Dashboard = () => {
     const [walletStatus, setWalletStatus] = useState<boolean>(false);
 
     const fetchOrganizationDetails = async () => {
-        const orgId = localStorage.getItem('orgId');
+
+        const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
 
         const response = await getOrganizationById(orgId as string);
 
