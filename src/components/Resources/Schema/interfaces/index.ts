@@ -1,0 +1,39 @@
+import { Pagination } from 'flowbite-react';
+export interface GetAllSchemaListParameter {
+    itemPerPage: number,
+    page: number,
+    search: string,
+    sortBy: string
+}
+
+type DataItem = {
+    createDateTime: string;
+    name: string;
+    version: string;
+    attributes: string[];
+    schemaLedgerId: string;
+    createdBy: number;
+    publisherDid: string;
+    orgId: number;
+    issuerId: string;
+  };
+  
+  export type DataResponse = {
+    totalItems: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+    nextPage: number;
+    previousPage: number;
+    lastPage: number;
+    data: DataItem[];
+  };
+
+ export type PaginationData = {
+    totalItems: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+    nextPage: number;
+    previousPage: number;
+    lastPage: number;
+  };
+  
