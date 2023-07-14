@@ -7,7 +7,6 @@ import type { Organisation } from './interfaces'
 import OrganizationDetails from './OrganizationDetails';
 import WalletSpinup from './WalletSpinup';
 import { apiStatusCodes } from '../../config/CommonConstant';
-import { asset } from '../../lib/data';
 import { getOrganizationById } from '../../api/organization';
 
 const Dashboard = () => {
@@ -23,11 +22,8 @@ const Dashboard = () => {
         const { data } = response as AxiosResponse
 
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-            console.log(data?.data);
 
-            if(data?.data?.org_agents && data?.data?.org_agents?.length > 0){
-                console.log(`IF COndition`);
-                
+            if (data?.data?.org_agents && data?.data?.org_agents?.length > 0) {
                 setWalletStatus(true)
             }
             setOrgData(data?.data)
@@ -40,7 +36,7 @@ const Dashboard = () => {
     }, [])
 
     const setWalletSpinupStatus = (status: boolean) => {
-        setWalletStatus(status)
+        fetchOrganizationDetails()
     }
 
     return (
@@ -155,12 +151,12 @@ const Dashboard = () => {
                     </div>
                 </div>
                 {
-                    
+
                     walletStatus === true
-                    ? <OrganizationDetails orgData={orgData}/>                     
-                    : <WalletSpinup setWalletSpinupStatus={(flag) => setWalletSpinupStatus(flag)} />
+                        ? <OrganizationDetails orgData={orgData} />
+                        : <WalletSpinup setWalletSpinupStatus={(flag: boolean) => setWalletSpinupStatus(flag)} />
                 }
-                
+
             </div>
         </div>
     )

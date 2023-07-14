@@ -2,6 +2,7 @@
 
 import { Button, Card, Pagination, Spinner } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
+import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
@@ -9,8 +10,8 @@ import CreateOrgFormModal from "./CreateOrgFormModal";
 import CustomAvatar from '../Avatar'
 import type { Organisation } from './interfaces'
 import SearchInput from '../SearchInput';
-import { apiStatusCodes } from '../../config/CommonConstant';
 import { getOrganizations } from '../../api/organization';
+import { setToLocalStorage } from '../../api/Auth';
 
 const initialPageState = {
   pageNumber: 1,
@@ -97,7 +98,7 @@ const OrganizationsList = () => {
   }
 
   const redirectOrgDashboard = (orgId: number) => {
-          localStorage.setItem('orgId', orgId.toString())
+          setToLocalStorage(storageKeys.ORG_ID, orgId.toString())
     			window.location.href = '/organizations/dashboard'
   }
 
@@ -127,15 +128,11 @@ const OrganizationsList = () => {
             </Button>
           </div>
 
-          {
-            props.openModal &&
-            <CreateOrgFormModal
+          <CreateOrgFormModal
               openModal={props.openModal}
               setOpenModal={
                 props.setOpenModal
               } />
-          }
-
           {loading
             ? <div className="flex items-center justify-center mb-4">
               <Spinner
