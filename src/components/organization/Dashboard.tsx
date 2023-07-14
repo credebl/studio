@@ -14,6 +14,8 @@ const Dashboard = () => {
 
     const [orgData, setOrgData] = useState<Organisation | null>(null);
 
+    const [walletStatus, setWalletStatus] = useState<boolean>(false);
+
     const fetchOrganizationDetails = async () => {
         const orgId = localStorage.getItem('orgId');
         const response = await getOrganizationById(orgId as string);
@@ -22,6 +24,12 @@ const Dashboard = () => {
 
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
             console.log(data?.data);
+
+            if(data?.data?.org_agents && data?.data?.org_agents?.length > 0){
+                console.log(`IF COndition`);
+                
+                setWalletStatus(true)
+            }
             setOrgData(data?.data)
         }
 
@@ -30,6 +38,10 @@ const Dashboard = () => {
     useEffect(() => {
         fetchOrganizationDetails();
     }, [])
+
+    const setWalletSpinupStatus = (status: boolean) => {
+        setWalletStatus(status)
+    }
 
     return (
         <div className="px-4 pt-6">
@@ -135,14 +147,18 @@ const Dashboard = () => {
                             <h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
                                 {orgData?.name}
                             </h3>
+                            <p className='mb-1 text-base font-normal text-gray-900 dark:text-white'>
+                                {orgData?.description}
+                            </p>
 
                         </div>
                     </div>
                 </div>
                 {
-                    orgData?.org_agents.length === 0 
-                    ? <WalletSpinup /> 
-                    : <OrganizationDetails/>
+                    
+                    walletStatus === true
+                    ? <OrganizationDetails orgData={orgData}/>                     
+                    : <WalletSpinup setWalletSpinupStatus={(flag) => setWalletSpinupStatus(flag)} />
                 }
                 
             </div>
