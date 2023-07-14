@@ -25,8 +25,11 @@ const Dashboard = () => {
         const { data } = response as AxiosResponse
 
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+            console.log(data?.data);
 
-            if (data?.data?.org_agents && data?.data?.org_agents?.length > 0) {
+            if(data?.data?.org_agents && data?.data?.org_agents?.length > 0){
+                console.log(`IF COndition`);
+                
                 setWalletStatus(true)
             }
             setOrgData(data?.data)
@@ -38,12 +41,8 @@ const Dashboard = () => {
         fetchOrganizationDetails();
     }, [])
 
-    const redirectDashboardInvitations = () => {
-        window.location.href = '/organizations/invitations'
-    }
-
     const setWalletSpinupStatus = (status: boolean) => {
-        fetchOrganizationDetails()
+        setWalletStatus(status)
     }
 
     return (
@@ -161,9 +160,10 @@ const Dashboard = () => {
                     </div>
                 </div>
                 {
-                    orgData?.org_agents.length === 0
-                        ? <WalletSpinup />
-                        : <OrganizationDetails />
+                    
+                    walletStatus === true
+                    ? <OrganizationDetails orgData={orgData}/>                     
+                    : <WalletSpinup setWalletSpinupStatus={(flag) => setWalletSpinupStatus(flag)} />
                 }
 
             </div>
