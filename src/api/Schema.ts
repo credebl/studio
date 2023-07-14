@@ -1,4 +1,4 @@
-import type { GetAllSchemaListParameter } from "../components/Resources/Schema/interfaces";
+import type { createCredDeffFieldName, createSchema, GetAllSchemaListParameter } from "../components/Resources/Schema/interfaces";
 import { apiRoutes } from "../config/apiRoutes";
 import { staorageKeys } from "../config/CommonConstant";
 import { axiosGet, axiosPost } from "../services/apiRequests";
@@ -26,7 +26,7 @@ export const getAllSchemas = async({ search, itemPerPage, sortBy, page }:GetAllS
     }
 }
 
-export const addSchema = async(payload:any) => {
+export const addSchema = async(payload:createSchema) => {
   const token = await getFromLocalStorage(staorageKeys.TOKEN)
   const details = {
     url: apiRoutes.schema.create,
@@ -71,7 +71,7 @@ export const getSchemaById = async(id:string, orgId:number) => {
     } 
 }
 
-export const createCredentialDefinition = async(payload:any) => {
+export const createCredentialDefinition = async(payload:createCredDeffFieldName) => {
   const token = await getFromLocalStorage(staorageKeys.TOKEN)
   const details = {
     url: apiRoutes.schema.createCredentialDefinition,
