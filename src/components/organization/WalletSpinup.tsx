@@ -62,7 +62,10 @@ const WalletSpinup = (
 
 
     const submitDedicatedWallet = async (values: Values) => {
-        const orgId = localStorage.getItem('orgId')
+
+        setAgentSpinupCall(true)
+
+        const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
 
         const payload = {
             walletName: values.name,
