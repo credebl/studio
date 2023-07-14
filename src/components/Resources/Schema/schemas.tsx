@@ -3,8 +3,10 @@
 import type { AxiosResponse } from 'axios';
 import { Button, Card, Pagination, Spinner, Table, } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
+import { getFromLocalStorage } from '../../../api/Auth';
 import { getAllSchemas } from '../../../api/Schema';
 import SchemaCard from '../../../commonComponents/schemaCard';
+import { storageKeys } from '../../../config/CommonConstant';
 import BreadCrumbs from '../../BreadCrumbs';
 import SearchInput from '../../SearchInput';
 import type { PaginationData } from './interfaces';
@@ -13,7 +15,7 @@ import type { PaginationData } from './interfaces';
 const SchemaList = () => {
   const [schemaList, setSchemaList] = useState([])
   const [loading, setLoading] = useState<boolean>(true)
-  const [orgId, setOrgId] = useState<number>(0)
+  const [orgId, setOrgId] = useState<string>('')
   const [schemaPagination, setSchemaPagination] = useState<PaginationData>({
     hasNextPage:false,
     hasPreviousPage : false,
@@ -33,17 +35,11 @@ const SchemaList = () => {
 
   useEffect(() => {
     (async () => {
-      const organizationId = localStorage.getItem('orgId');
-      setOrgId(Number(organizationId))
-      let orgId
+      const organizationId =  await getFromLocalStorage(storageKeys.ORG_ID)
+      setOrgId(organizationId)
       setLoading(true)
-      if (window?.location?.search) {
-        const str = window?.location?.search
-         orgId = str.substring(str.indexOf('=') + 1);
-         setOrgId(Number(orgId))
-      }
      
-      const schemaList: AxiosResponse = await getAllSchemas(schemaListAPIParameter, Number(organizationId));
+      const schemaList: AxiosResponse = await getAllSchemas(schemaListAPIParameter, organizationId);
       if (schemaList?.data?.data?.data) {
         setSchemaList(schemaList?.data?.data?.data)
         setSchemaPagination(schemaList?.data?.data)

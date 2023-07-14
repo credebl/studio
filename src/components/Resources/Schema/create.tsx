@@ -7,9 +7,10 @@ import { useEffect, useState } from 'react';
 import { addSchema } from '../../../api/Schema';
 import SchemaCard from '../../../commonComponents/schemaCard';
 import * as yup from 'yup';
-import { schemaVersionRegex } from '../../../config/CommonConstant';
+import { schemaVersionRegex, storageKeys } from '../../../config/CommonConstant';
 import BreadCrumbs from '../../BreadCrumbs';
 import type { FieldName } from './interfaces';
+import { getFromLocalStorage } from '../../../api/Auth';
 
 interface Values {
     schemaName: string;
@@ -23,10 +24,14 @@ const CreateSchema = () => {
     const [createloader, setCreateLoader] = useState<boolean>(false)
 
     useEffect(() => {
-        const organizationId = localStorage.getItem('orgId');
-        setOrgId(Number(organizationId))
-
-    }, [])
+        const fetchData = async () => {
+          const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
+          setOrgId(Number(organizationId));
+        };
+      
+        fetchData();
+      }, []);
+      
 
 
     const submit = async (values: Values) => {
