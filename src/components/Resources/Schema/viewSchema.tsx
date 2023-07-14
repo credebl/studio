@@ -3,12 +3,13 @@ import { Field, FieldArray, Form, Formik } from 'formik';
 import { useEffect, useState } from 'react';
 import BreadCrumbs from '../../BreadCrumbs';
 import * as yup from 'yup';
-import { apiStatusCodes, schemaVersionRegex } from '../../../config/CommonConstant';
+import { apiStatusCodes, schemaVersionRegex, storageKeys } from '../../../config/CommonConstant';
 import SchemaCard from '../../../commonComponents/schemaCard';
 import CredDeffCard from '../../../commonComponents/credentialDefinitionCard';
 import { createCredentialDefinition, getCredDeffById, getSchemaById } from '../../../api/Schema';
 import type { AxiosResponse } from 'axios';
 import type { CredDeffFieldNameType } from './interfaces';
+import { getFromLocalStorage } from '../../../api/Auth';
 
 interface Values {
   tagName: string;
@@ -63,17 +64,22 @@ const ViewSchemas = () => {
     }
 
   }
+  
   useEffect(() => {
-    const organizationId = localStorage.getItem('orgId');
-      setOrgId(Number(organizationId))
-    if (window?.location?.search) {
-      const str = window?.location?.search
-      const schemaId = str.substring(str.indexOf('=') + 1);
-      getSchemaDetails(schemaId, Number(organizationId))
-      getCredentialDefinitionList(schemaId, Number(organizationId))
-    }
-
-  }, [])
+    const fetchData = async () => {
+      const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
+      setOrgId(Number(organizationId));
+  
+      if (window?.location?.search) {
+        const str = window?.location?.search;
+        const schemaId = str.substring(str.indexOf('=') + 1);
+        await getSchemaDetails(schemaId, Number(organizationId));
+        await getCredentialDefinitionList(schemaId, Number(organizationId));
+      }
+    };
+  
+    fetchData();
+  }, []);
 
 
   const submit = async (values: Values) => {
@@ -96,7 +102,7 @@ const ViewSchemas = () => {
       setFailur(createSchema as string)
       setCreateLoader(false)
     }
-    getCredentialDefinitionList(schemaDetails?.schemaId)
+    getCredentialDefinitionList(schemaDetails?.schemaId, orgId)
     setTimeout(() => {
       setSuccess('')
       setFailur('')

@@ -1,11 +1,11 @@
 import type { createCredDeffFieldName, createSchema, GetAllSchemaListParameter } from "../components/Resources/Schema/interfaces";
 import { apiRoutes } from "../config/apiRoutes";
-import { staorageKeys } from "../config/CommonConstant";
+import { storageKeys } from "../config/CommonConstant";
 import { axiosGet, axiosPost } from "../services/apiRequests";
 import { getFromLocalStorage } from "./Auth";
 
-export const getAllSchemas = async({ search, itemPerPage, sortBy, page }:GetAllSchemaListParameter, orgId:Number) => {
-  const token = await getFromLocalStorage(staorageKeys.TOKEN)
+export const getAllSchemas = async({ search, itemPerPage, sortBy, page }:GetAllSchemaListParameter, orgId:string) => {
+  const token = await getFromLocalStorage(storageKeys.TOKEN)
     const details = {
         url: `${apiRoutes.schema.getAll}?orgId=${orgId}&searchByText=${search}&pagepage=${page}&items_per_page=${itemPerPage}&schemaSortBy=${sortBy}&items_per_page=${itemPerPage}&schemaSortBy=${sortBy}`,
         config: {
@@ -27,7 +27,7 @@ export const getAllSchemas = async({ search, itemPerPage, sortBy, page }:GetAllS
 }
 
 export const addSchema = async(payload:createSchema) => {
-  const token = await getFromLocalStorage(staorageKeys.TOKEN)
+  const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
     url: apiRoutes.schema.create,
     payload,
@@ -50,7 +50,7 @@ export const addSchema = async(payload:createSchema) => {
 }
 
 export const getSchemaById = async(id:string, orgId:number) => {
-  const token = await getFromLocalStorage(staorageKeys.TOKEN)
+  const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
     url: `${apiRoutes.schema.getSchemaById}?schemaId=${id}&orgId=${orgId}`,
     config: {
@@ -72,7 +72,7 @@ export const getSchemaById = async(id:string, orgId:number) => {
 }
 
 export const createCredentialDefinition = async(payload:createCredDeffFieldName) => {
-  const token = await getFromLocalStorage(staorageKeys.TOKEN)
+  const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
     url: apiRoutes.schema.createCredentialDefinition,
     payload,
@@ -95,7 +95,7 @@ export const createCredentialDefinition = async(payload:createCredDeffFieldName)
 }
 
 export const getCredDeffById = async(id:string, orgId:number) => {
-  const token = await getFromLocalStorage(staorageKeys.TOKEN)
+  const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
     url: `${apiRoutes.schema.getCredDeffBySchemaId}?schemaId=${id}&orgId=${orgId}`,
     config: {
