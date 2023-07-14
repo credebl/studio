@@ -7,12 +7,13 @@ import type { Organisation } from './interfaces'
 import OrganizationDetails from './OrganizationDetails';
 import WalletSpinup from './WalletSpinup';
 import { apiStatusCodes } from '../../config/CommonConstant';
-import { asset } from '../../lib/data';
 import { getOrganizationById } from '../../api/organization';
 
 const Dashboard = () => {
 
     const [orgData, setOrgData] = useState<Organisation | null>(null);
+
+    const [walletStatus, setWalletStatus] = useState<boolean>(false);
 
     const fetchOrganizationDetails = async () => {
         const orgId = localStorage.getItem('orgId');
@@ -21,7 +22,10 @@ const Dashboard = () => {
         const { data } = response as AxiosResponse
 
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-            console.log(data?.data);
+
+            if (data?.data?.org_agents && data?.data?.org_agents?.length > 0) {
+                setWalletStatus(true)
+            }
             setOrgData(data?.data)
         }
 
@@ -30,6 +34,10 @@ const Dashboard = () => {
     useEffect(() => {
         fetchOrganizationDetails();
     }, [])
+
+    const setWalletSpinupStatus = (status: boolean) => {
+        fetchOrganizationDetails()
+    }
 
     return (
         <div className="px-4 pt-6">
@@ -135,16 +143,20 @@ const Dashboard = () => {
                             <h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
                                 {orgData?.name}
                             </h3>
+                            <p className='mb-1 text-base font-normal text-gray-900 dark:text-white'>
+                                {orgData?.description}
+                            </p>
 
                         </div>
                     </div>
                 </div>
                 {
-                    orgData?.org_agents.length === 0 
-                    ? <WalletSpinup /> 
-                    : <OrganizationDetails/>
+
+                    walletStatus === true
+                        ? <OrganizationDetails orgData={orgData} />
+                        : <WalletSpinup setWalletSpinupStatus={(flag: boolean) => setWalletSpinupStatus(flag)} />
                 }
-                
+
             </div>
         </div>
     )

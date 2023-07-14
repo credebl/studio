@@ -2,13 +2,13 @@ import { axiosGet, axiosPost } from "../services/apiRequests"
 
 import { apiRoutes } from "../config/apiRoutes";
 import { getFromLocalStorage } from "./Auth";
-import { staorageKeys } from "../config/CommonConstant";
+import { storageKeys } from "../config/CommonConstant";
 
 export const createOrganization = async (data: object) => {
 
     const url = apiRoutes.organizations.create
     const payload = data
-    const token = await getFromLocalStorage(staorageKeys.TOKEN)
+    const token = await getFromLocalStorage(storageKeys.TOKEN)
 
     const config = {
         headers: {
@@ -35,7 +35,7 @@ export const getOrganizations = async (pageNumber:number, pageSize: number, sear
 
     const url = `${apiRoutes.organizations.getAll}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
 
-    const token = await getFromLocalStorage(staorageKeys.TOKEN)
+    const token = await getFromLocalStorage(storageKeys.TOKEN)
 
     const config = {
         headers: {
@@ -61,7 +61,7 @@ export const getOrganizationById = async (orgId: string) => {
 
     const url = `${apiRoutes.organizations.getById}/${orgId}`
 
-    const token = await getFromLocalStorage(staorageKeys.TOKEN)
+    const token = await getFromLocalStorage(storageKeys.TOKEN)
 
     const config = {
         headers: {
@@ -88,7 +88,7 @@ export const spinupAgent = async (data: object) => {
     const url = apiRoutes.organizations.agentSpinup
     const payload = data
 
-    const token = await getFromLocalStorage(staorageKeys.TOKEN)
+    const token = await getFromLocalStorage(storageKeys.TOKEN)
 
     const config = {
         headers: {
