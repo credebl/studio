@@ -96,7 +96,8 @@ const OrganizationsList = () => {
     setSearchText(e.target.value);
   }
 
-  const redirectOrgDashboard = () => {
+  const redirectOrgDashboard = (orgId: number) => {
+          localStorage.setItem('orgId', orgId.toString())
     			window.location.href = '/organizations/dashboard'
   }
 
@@ -126,15 +127,11 @@ const OrganizationsList = () => {
             </Button>
           </div>
 
-          {
-            props.openModal &&
-            <CreateOrgFormModal
+          <CreateOrgFormModal
               openModal={props.openModal}
               setOpenModal={
                 props.setOpenModal
               } />
-          }
-
           {loading
             ? <div className="flex items-center justify-center mb-4">
               <Spinner
@@ -144,7 +141,7 @@ const OrganizationsList = () => {
             : <div className="mt-1 grid grid-cols-3 gap-4">
               {
                 organizationsList && organizationsList.map((org) => (
-                  <Card onClick={redirectOrgDashboard} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer'>
+                  <Card onClick={() => redirectOrgDashboard(org.id)} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer'>
                    
                     <div className='flex items-center'>
                       {(org.logoUrl) ? <CustomAvatar size='100' src={org.logoUrl} /> : <CustomAvatar size='100' name={org.name} />}

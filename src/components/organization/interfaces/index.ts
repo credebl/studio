@@ -18,7 +18,7 @@ export interface Organisation {
     website: string
     roles: string[]
     userOrgRoles: UserOrgRole[]
-
+    org_agents: Object[]
 }
 
 export interface OrgRole {
