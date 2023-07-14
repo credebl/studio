@@ -268,34 +268,17 @@ const ViewSchemas = () => {
                         Reset
                       </Button>
                     </div>
-                    {/* </div> */}
                   </Form>
                 )}
               </Formik>
             </div>
-            {/* <>
-                    {errorMessage && <CustomErrorComponent
-                        title=''
-                        message={errorMessage}
-                        alertType='danger'
-                    />}
-                </> */}
           </Card >
-
-
         </div>
       </div>
       <>
         <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white p-4">
           Credential Definitions
         </h5>
-        {/* {loading
-            ? <div className="flex items-center justify-center mb-4">
-              <Spinner
-                color="info"
-              />
-            </div>
-            : */}
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
             {credDeffList && credDeffList.length > 0 &&
@@ -314,7 +297,6 @@ const ViewSchemas = () => {
             />
           </div>
         </div>
-        {/* } */}
       </>
     </>
   )
