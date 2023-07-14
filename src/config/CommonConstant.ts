@@ -15,9 +15,9 @@ export const apiStatusCodes = {
     API_STATUS_NOT_FOUND : 404
 }
 
-export const staorageKeys = {
+export const storageKeys = {
     TOKEN : 'access_token',
-    ORG_ID : 'organization_id',
+    ORG_ID: 'orgId',
     USER_PROFILE : 'user_profile',
     PERMISSIONS: 'user_permissions' 
 }
