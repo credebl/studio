@@ -11,7 +11,7 @@ import { asset } from '../../lib/data';
 import { getOrganizationById } from '../../api/organization';
 
 const Dashboard = () => {
-
+    const organizationId = localStorage.getItem('orgId');
     const [orgData, setOrgData] = useState<Organisation | null>(null);
 
     const fetchOrganizationDetails = async () => {
@@ -102,7 +102,10 @@ const Dashboard = () => {
 
                         </div>
                         <div
-                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
+                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer"
+                            onClick={() => {
+                                window.location.href = `/schemas?ordId=${organizationId}`;
+                            }}
                         >
                             <div className="w-full">
                                 <h3 className="text-base font-normal text-gray-500 dark:text-gray-400">
@@ -140,11 +143,11 @@ const Dashboard = () => {
                     </div>
                 </div>
                 {
-                    orgData?.org_agents.length === 0 
-                    ? <WalletSpinup /> 
-                    : <OrganizationDetails/>
+                    orgData?.org_agents.length === 0
+                        ? <WalletSpinup />
+                        : <OrganizationDetails />
                 }
-                
+
             </div>
         </div>
     )

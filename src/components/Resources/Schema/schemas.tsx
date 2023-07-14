@@ -13,6 +13,7 @@ import type { PaginationData } from './interfaces';
 const SchemaList = () => {
   const [schemaList, setSchemaList] = useState([])
   const [loading, setLoading] = useState<boolean>(true)
+  const [orgId, setOrgId] = useState<number>(0)
   const [schemaPagination, setSchemaPagination] = useState<PaginationData>({
     hasNextPage:false,
     hasPreviousPage : false,
@@ -29,10 +30,20 @@ const SchemaList = () => {
     sortingOrder: "DESC"
   })
 
+
   useEffect(() => {
     (async () => {
+      const organizationId = localStorage.getItem('orgId');
+      setOrgId(Number(organizationId))
+      let orgId
       setLoading(true)
-      const schemaList: AxiosResponse = await getAllSchemas(schemaListAPIParameter);
+      if (window?.location?.search) {
+        const str = window?.location?.search
+         orgId = str.substring(str.indexOf('=') + 1);
+         setOrgId(Number(orgId))
+      }
+     
+      const schemaList: AxiosResponse = await getAllSchemas(schemaListAPIParameter, Number(organizationId));
       if (schemaList?.data?.data?.data) {
         setSchemaList(schemaList?.data?.data?.data)
         setSchemaPagination(schemaList?.data?.data)
@@ -56,7 +67,7 @@ const SchemaList = () => {
     const schemaList: AxiosResponse = await getAllSchemas({
       ...schemaListAPIParameter,
       search: event.target.value
-    });
+    }, orgId);
 
     setSchemaList(schemaList?.data?.data?.data)
 
@@ -81,7 +92,7 @@ const SchemaList = () => {
             />
             <Button
               onClick={() => {
-                window.location.href = '/schemas/create'
+                window.location.href = `/schemas/create?OrgId=${orgId}`
               }}
               className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
             >

@@ -8,6 +8,7 @@ import SchemaCard from '../../../commonComponents/schemaCard';
 import CredDeffCard from '../../../commonComponents/credentialDefinitionCard';
 import { createCredentialDefinition, getCredDeffById, getSchemaById } from '../../../api/Schema';
 import type { AxiosResponse } from 'axios';
+import type { CredDeffFieldNameType } from './interfaces';
 
 interface Values {
   tagName: string;
@@ -30,6 +31,7 @@ type SchemaData = {
 };
 
 
+
 const ViewSchemas = () => {
   const [schemaDetails, setSchemaDetails] = useState<SchemaData | undefined>(undefined);
   const [credDeffList, setCredDeffList] = useState<any>([]);
@@ -39,12 +41,12 @@ const ViewSchemas = () => {
   const [success, setSuccess] = useState<string | null>(null)
   const [failure, setFailur] = useState<string | null>(null)
   const randomString = Math.floor(1000 + Math.random() * 9000).toString();
+  const [orgId, setOrgId] = useState<number>(0)
 
 
-
-  const getSchemaDetails = async (id: string) => {
+  const getSchemaDetails = async (id: string, organizationId:number) => {
     setLoading(true)
-    const SchemaDetails: AxiosResponse = await getSchemaById(id)
+    const SchemaDetails: AxiosResponse = await getSchemaById(id, organizationId)
     if (SchemaDetails.data.data.response) {
       setSchemaDetails(SchemaDetails.data.data.response)
       setLoading(false)
@@ -62,10 +64,12 @@ const ViewSchemas = () => {
 
   }
   useEffect(() => {
+    const organizationId = localStorage.getItem('orgId');
+      setOrgId(Number(organizationId))
     if (window?.location?.search) {
       const str = window?.location?.search
       const schemaId = str.substring(str.indexOf('=') + 1);
-      getSchemaDetails(schemaId)
+      getSchemaDetails(schemaId, Number(organizationId))
       getCredentialDefinitionList(schemaId)
     }
 
@@ -74,12 +78,14 @@ const ViewSchemas = () => {
 
   const submit = async (values: Values) => {
     setCreateLoader(true)
-    const CredDeffFieldName: any = {}
-    CredDeffFieldName['tag'] = values.tagName
-    CredDeffFieldName['revocable'] = values.revocable
-    CredDeffFieldName['orgId'] = 2 //temp value
-    CredDeffFieldName['schemaLedgerId'] = schemaDetails?.schemaId
+    const CredDeffFieldName: CredDeffFieldNameType = {
+      tag: values.tagName,
+      revocable: values.revocable,
+      orgId: orgId,
+      schemaLedgerId: schemaDetails?.schemaId
 
+    }
+  
     const createSchema = await createCredentialDefinition(CredDeffFieldName);
     const { data } = createSchema as AxiosResponse
     if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
@@ -90,7 +96,7 @@ const ViewSchemas = () => {
       setFailur(createSchema as string)
       setCreateLoader(false)
     }
-    getCredentialDefinitionList(Number(schemaDetails?.schemaId))
+    getCredentialDefinitionList(schemaDetails?.schemaId)
     setTimeout(() => {
       setSuccess('')
       setFailur('')
@@ -126,7 +132,7 @@ const ViewSchemas = () => {
                   <div className='float-right ml-auto'>
                     <a
                       className="text-sm font-medium hover:underline"
-                      href={`http://test.bcovrin.vonx.io/ledger/domain?page=1&page_size=10&query=${encodeURIComponent(schemaDetails?.schemaId)}&type=101`}
+                      href={`http://test.bcovrin.vonx.io/browse/domain`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -182,7 +188,7 @@ const ViewSchemas = () => {
             <div>
               <Formik
                 initialValues={{
-                  tagName: `${schemaDetails?.schema.name}${randomString}`,
+                  tagName: `${schemaDetails?.schema.name ? schemaDetails?.schema.name + randomString : ''}`,
                   revocable: false
                 }}
                 validationSchema={yup.object().shape({
