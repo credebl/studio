@@ -1,5 +1,5 @@
 import { defineConfig } from 'astro/config';
-import deno from '@astrojs/deno';
+import Deno from '@astrojs/deno';
 import sitemap from '@astrojs/sitemap';
 import tailwind from '@astrojs/tailwind';
 import react from "@astrojs/react";
@@ -10,6 +10,7 @@ export default defineConfig({
   site: process.env.CI ? 'https://credebl-dev-ui.deno.dev' : `http://localhost:${DEV_PORT}`,
   base: process.env.CI ? '/' : undefined,
   output: 'server',
+  MYURL: process.env.CI ? process.env.PUBLIC_BASE_URL : '',
   /* Like Vercel, Netlify,… Mimicking for dev. server */
   // trailingSlash: 'always',
 
@@ -20,5 +21,5 @@ export default defineConfig({
   integrations: [
   //
   sitemap(), tailwind(), react()],
-  adapter: deno()
+  adapter: Deno()
 });
