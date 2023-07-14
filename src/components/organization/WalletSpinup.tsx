@@ -141,7 +141,7 @@ const WalletSpinup = (
 
 
 
-    const DidicatedAgentForm = () => (
+    const DedicatedAgentForm = () => (
         <Formik
             initialValues={{
                 seed: '',
@@ -381,7 +381,7 @@ const WalletSpinup = (
                     {
                         agentType === AgentType.SHARED
                             ? <SharedAgentForm />
-                            : <DidicatedAgentForm />
+                            : <DedicatedAgentForm />
                     }
                 </div>
                 <WalletSteps steps={walletSpinStep} agentSpinupCall={agentSpinupCall} />
