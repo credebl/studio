@@ -6,13 +6,7 @@
             "image": "%REPOSITORY_URI%:FRONTEND_v_%BUILD_NUMBER%",
             "cpu": 154,
             "memory": 307,
-            "portMappings": [
-                {
-                    "containerPort": 8085,
-                    "hostPort": 0,
-                    "protocol": "tcp"
-                }
-            ],
+            "portMappings": [],
             "essential": true,
             "environment": [],
             "environmentFiles": [
