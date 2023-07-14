@@ -1,28 +1,28 @@
 'use client';
 
-import type { AxiosResponse } from 'axios';
 import { Button, Card, Pagination, Spinner, Table, } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { getFromLocalStorage } from '../../../api/Auth';
-import { getAllSchemas } from '../../../api/Schema';
-import SchemaCard from '../../../commonComponents/SchemaCard';
-import { storageKeys } from '../../../config/CommonConstant';
-import BreadCrumbs from '../../BreadCrumbs';
-import SearchInput from '../../SearchInput';
-import type { PaginationData } from './interfaces';
+import type { GetAllSchemaListParameter, PaginationData } from './interfaces';
+import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
 
+import type { AxiosResponse } from 'axios';
+import BreadCrumbs from '../../BreadCrumbs';
+import SchemaCard from '../../../commonComponents/SchemaCard';
+import SearchInput from '../../SearchInput';
+import { getAllSchemas } from '../../../api/Schema';
+import { getFromLocalStorage } from '../../../api/Auth';
 
 const SchemaList = () => {
   const [schemaList, setSchemaList] = useState([])
   const [loading, setLoading] = useState<boolean>(true)
   const [orgId, setOrgId] = useState<string>('')
   const [schemaPagination, setSchemaPagination] = useState<PaginationData>({
-    hasNextPage:false,
-    hasPreviousPage : false,
-    lastPage:0,
-    nextPage:0,
-    previousPage:0,
-    totalItems:0
+    hasNextPage: false,
+    hasPreviousPage: false,
+    lastPage: 0,
+    nextPage: 0,
+    previousPage: 0,
+    totalItems: 0
   });
   const [schemaListAPIParameter, setSchemaListAPIParameter] = useState({
     itemPerPage: 9,
@@ -32,21 +32,30 @@ const SchemaList = () => {
     sortingOrder: "DESC"
   })
 
-
-  useEffect(() => {
-    (async () => {
-      const organizationId =  await getFromLocalStorage(storageKeys.ORG_ID)
+  const getSchemaList = async (schemaListAPIParameter: GetAllSchemaListParameter) => {
+     const organizationId = await getFromLocalStorage(storageKeys.ORG_ID)
       setOrgId(organizationId)
       setLoading(true)
-     
-      const schemaList: AxiosResponse = await getAllSchemas(schemaListAPIParameter, organizationId);
-      if (schemaList?.data?.data?.data) {
-        setSchemaList(schemaList?.data?.data?.data)
-        setSchemaPagination(schemaList?.data?.data)
+
+      const schemaList = await getAllSchemas(schemaListAPIParameter, organizationId);
+      const { data } = schemaList as AxiosResponse
+
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        if (data?.data?.data) {
+          setSchemaList(data?.data?.data)
+          setSchemaPagination(data?.data)
+          setLoading(false)
+        } else {
+          setLoading(false)
+        }
+      } else {
         setLoading(false)
       }
+  }
 
-    })();
+
+  useEffect(() => {
+   getSchemaList(schemaListAPIParameter)
   }, []);
 
   useEffect(() => {
@@ -60,13 +69,10 @@ const SchemaList = () => {
       search: event.target.value
     })
 
-    const schemaList: AxiosResponse = await getAllSchemas({
+    getSchemaList({
       ...schemaListAPIParameter,
       search: event.target.value
-    }, orgId);
-
-    setSchemaList(schemaList?.data?.data?.data)
-
+    })
 
   }
 
