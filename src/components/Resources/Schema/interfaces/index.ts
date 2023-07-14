@@ -51,5 +51,20 @@ type DataItem = {
   orgId: number; 
 }
 
+export interface createSchema {
+  schemaName: string;
+  schemaVersion: string;
+  attributes: string[];
+  orgId: number;
+}
+
+export interface createCredDeffFieldName {
+  tag: string;
+  revocable: boolean;
+  orgId: number;
+  schemaLedgerId: string;
+}
+
+
 
 
