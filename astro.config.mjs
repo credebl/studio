@@ -10,7 +10,6 @@ export default defineConfig({
   site: process.env.CI ? 'https://credebl-dev-ui.deno.dev' : `http://localhost:${DEV_PORT}`,
   base: process.env.CI ? '/' : undefined,
   output: 'server',
-  MYURL: process.env.CI ? process.env.PUBLIC_BASE_URL : '',
   /* Like Vercel, Netlify,… Mimicking for dev. server */
   // trailingSlash: 'always',
 
