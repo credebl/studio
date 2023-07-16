@@ -16,14 +16,6 @@ const SchemaList = () => {
   const [schemaList, setSchemaList] = useState([])
   const [loading, setLoading] = useState<boolean>(true)
   const [orgId, setOrgId] = useState<string>('')
-  const [schemaPagination, setSchemaPagination] = useState<PaginationData>({
-    hasNextPage: false,
-    hasPreviousPage: false,
-    lastPage: 0,
-    nextPage: 0,
-    previousPage: 0,
-    totalItems: 0
-  });
   const [schemaListAPIParameter, setSchemaListAPIParameter] = useState({
     itemPerPage: 9,
     page: 1,
@@ -33,32 +25,32 @@ const SchemaList = () => {
   })
 
   const getSchemaList = async (schemaListAPIParameter: GetAllSchemaListParameter) => {
-     const organizationId = await getFromLocalStorage(storageKeys.ORG_ID)
-      setOrgId(organizationId)
-      setLoading(true)
+    const organizationId = await getFromLocalStorage(storageKeys.ORG_ID)
+    setOrgId(organizationId)
+    setLoading(true)
 
-      const schemaList = await getAllSchemas(schemaListAPIParameter, organizationId);
-      const { data } = schemaList as AxiosResponse
+    const schemaList = await getAllSchemas(schemaListAPIParameter, organizationId);
+    const { data } = schemaList as AxiosResponse
 
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        if (data?.data?.data) {
-          setSchemaList(data?.data?.data)
-          setSchemaPagination(data?.data)
-          setLoading(false)
-        } else {
-          setLoading(false)
-        }
+    if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+      if (data?.data?.data) {
+        setSchemaList(data?.data?.data)
+        setLoading(false)
       } else {
         setLoading(false)
       }
+    } else {
+      setLoading(false)
+    }
   }
 
 
   useEffect(() => {
-   getSchemaList(schemaListAPIParameter)
+    getSchemaList(schemaListAPIParameter)
   }, []);
 
   useEffect(() => {
+    getSchemaList(schemaListAPIParameter)
 
   }, [schemaListAPIParameter])
 
@@ -89,10 +81,13 @@ const SchemaList = () => {
           className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
         >
           <div className="flex items-center justify-between mb-4">
-            <SearchInput
-              onInputChange={onSearch}
-            />
+            <div id='schemasSearchInput'>
+              <SearchInput
+                onInputChange={onSearch}
+              />
+            </div>
             <Button
+              id='createSchemaButton'
               onClick={() => {
                 window.location.href = `/schemas/create?OrgId=${orgId}`
               }}
@@ -117,14 +112,17 @@ const SchemaList = () => {
                     </div>
                   ))}
               </div>
-              <div className="flex items-center justify-end mb-4">
+              <div className="flex items-center justify-end mb-4" id="schemasPagination">
 
                 <Pagination
                   currentPage={1}
-                  onPageChange={() => {
-
+                  onPageChange={(page) => {
+                    setSchemaListAPIParameter(prevState => ({
+                      ...prevState,
+                      page: page
+                    }));
                   }}
-                  totalPages={schemaPagination.previousPage}
+                  totalPages={0}
                 />
               </div>
             </div>

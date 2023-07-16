@@ -34,7 +34,7 @@ type SchemaData = {
 
 
 const ViewSchemas = () => {
-  const [schemaDetails, setSchemaDetails] = useState<SchemaData | undefined>(undefined);
+  const [schemaDetails, setSchemaDetails] = useState<SchemaData>(undefined);
   const [credDeffList, setCredDeffList] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true)
   const [createloader, setCreateLoader] = useState<boolean>(false)
@@ -88,18 +88,18 @@ const ViewSchemas = () => {
       tag: values.tagName,
       revocable: values.revocable,
       orgId: orgId,
-      schemaLedgerId: schemaDetails?.schemaId
+      schemaLedgerId: schemaDetails.schemaId
 
     }
   
-    const createSchema = await createCredentialDefinition(CredDeffFieldName);
-    const { data } = createSchema as AxiosResponse
+    const createCredDeff = await createCredentialDefinition(CredDeffFieldName);
+    const { data } = createCredDeff as AxiosResponse
     if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
       setCreateLoader(false)
       setSuccess(data?.message)
     }
     else {
-      setFailur(createSchema as string)
+      setFailur(createCredDeff as string)
       setCreateLoader(false)
     }
     getCredentialDefinitionList(schemaDetails?.schemaId, orgId)
@@ -121,8 +121,7 @@ const ViewSchemas = () => {
         <div
           className="flex p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
         >
-
-          <Card className='w-1/2 h-64 bg-gradient-to-br from-blue-400 to-purple-400 mr-6'>
+          <Card className='w-1/2 h-64 bg-gradient-to-br from-blue-400 to-purple-400 mr-6' id="viewSchemaDetailsCard">
             {loading
               ? <div className="flex items-center justify-center mb-4">
                 <Spinner
@@ -138,7 +137,7 @@ const ViewSchemas = () => {
                   <div className='float-right ml-auto'>
                     <a
                       className="text-sm font-medium hover:underline"
-                      href={`http://test.bcovrin.vonx.io/browse/domain`}
+                      href={`http://test.bcovrin.vonx.io/browse/domain?query=${schemaDetails?.schemaId}`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -171,7 +170,7 @@ const ViewSchemas = () => {
                   <ul className="divide-y divide-gray-200 dark:divide-gray-700">
                     <li className="py-3 sm:py-4">
                       <div className="flex items-center space-x-4">
-                        <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                        <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white flex-wrap">
                           Attributes:
                           {schemaDetails?.schema?.attrNames && schemaDetails?.schema?.attrNames.length > 0 &&
                             schemaDetails?.schema?.attrNames.map((element: string) => (
@@ -185,7 +184,7 @@ const ViewSchemas = () => {
               </div>
             }
           </Card>
-          <Card className='w-1/2 h-64 ml-auto'>
+          <Card className='w-1/2 h-64 ml-auto' id="credentialDefinitionCard">
             <div>
               <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
                 Create Credential definition

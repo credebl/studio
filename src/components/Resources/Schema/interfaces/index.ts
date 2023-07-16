@@ -41,7 +41,7 @@ type DataItem = {
     tag: string;
     revocable: boolean;
     orgId: number; 
-    schemaLedgerId: string | undefined; 
+    schemaLedgerId: string; 
   }
 
   export interface FieldName {
