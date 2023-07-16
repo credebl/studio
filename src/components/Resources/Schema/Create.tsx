@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { addSchema } from '../../../api/Schema';
 import SchemaCard from '../../../commonComponents/SchemaCard';
 import * as yup from 'yup';
-import { schemaVersionRegex, storageKeys } from '../../../config/CommonConstant';
+import { apiStatusCodes, schemaVersionRegex, storageKeys } from '../../../config/CommonConstant';
 import BreadCrumbs from '../../BreadCrumbs';
 import type { FieldName } from './interfaces';
 import { getFromLocalStorage } from '../../../api/Auth';
@@ -19,19 +19,19 @@ interface Values {
 }
 
 const CreateSchema = () => {
-    const [erroMsg, setErrMsg] = useState<string | null>(null)
+    const [failure, setFailur] = useState<string | null>(null)
     const [orgId, setOrgId] = useState<number>(0)
     const [createloader, setCreateLoader] = useState<boolean>(false)
 
     useEffect(() => {
         const fetchData = async () => {
-          const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
-          setOrgId(Number(organizationId));
+            const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
+            setOrgId(Number(organizationId));
         };
-      
+
         fetchData();
-      }, []);
-      
+    }, []);
+
 
 
     const submit = async (values: Values) => {
@@ -42,10 +42,21 @@ const CreateSchema = () => {
             attributes: values.attribute,
             orgId: orgId
         }
-        const createSchema: AxiosResponse = await addSchema(schemaFieldName);
-        if (createSchema) {
-            setCreateLoader(false)
-            window.location.href = `/schemas`
+        const createSchema = await addSchema(schemaFieldName);
+        const { data } = createSchema as AxiosResponse
+        if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+            if (data?.data) {
+                setCreateLoader(false)
+                window.location.href = `/schemas`
+            } else {
+                setCreateLoader(false)
+            }
+        } else {
+            setCreateLoader(false)  
+            setFailur(createSchema as string)
+            setTimeout(() => {
+                setFailur(null)
+              }, 4000);
         }
     }
 
@@ -58,7 +69,7 @@ const CreateSchema = () => {
                 </h1>
             </div>
             <div>
-                <Card className='p-6 m-6'>
+                <Card className='p-6 m-6' id='createSchemaCard'>
                     <div>
                         <Formik
                             initialValues={{
@@ -92,8 +103,8 @@ const CreateSchema = () => {
                                 const updatedAttribute: Array<number> = []
                                 values.attribute.forEach((element) => {
                                     updatedAttribute.push(Number(element))
-                                    submit(values)
                                 })
+                                submit(values)
 
                             }}
                         >
@@ -145,7 +156,7 @@ const CreateSchema = () => {
                                                         <div className="d-flex justify-content-center align-items-center mb-1">
                                                             Attributes <span className="text-red-600">*</span>
                                                         </div>
-                                                        <div className='flex content-center'>
+                                                        <div className='flex content-center flex-wrap'>
                                                             {attribute.map((element: any, index: any) => (
                                                                 <div key={`attributeList-${index}`} className="">
                                                                     <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white pl-1">
@@ -162,7 +173,7 @@ const CreateSchema = () => {
                                                                         {index === 0 && attribute.length === 1 ? (
                                                                             ''
                                                                         ) : (
-                                                                            <div>
+                                                                            <div key={index}>
                                                                                 <Button
                                                                                     data-testid="deleteBtn"
                                                                                     type="button"
@@ -181,6 +192,7 @@ const CreateSchema = () => {
                                                                         {
                                                                             index === attribute.length - 1 &&
                                                                             <Button
+                                                                                id="addSchemaButton"
                                                                                 className="attributes-btn pl-2 ml-1"
                                                                                 type="button"
                                                                                 color="primary"
@@ -209,17 +221,19 @@ const CreateSchema = () => {
                                     </div>
 
                                     {
-                                        erroMsg &&
-                                        <Alert
-                                            color="failure"
-                                            onDismiss={() => setErrMsg(null)}
-                                        >
-                                            <span>
-                                                <p>
-                                                    {erroMsg}
-                                                </p>
-                                            </span>
-                                        </Alert>
+                                        failure &&
+                                        <div className='pt-1'>
+                                            <Alert
+                                                color="failure"
+                                                onDismiss={() => setFailur(null)}
+                                            >
+                                                <span>
+                                                    <p>
+                                                        {failure}
+                                                    </p>
+                                                </span>
+                                            </Alert>
+                                        </div>
                                     }
                                     <div className='float-right p-2'>
                                         <Button
