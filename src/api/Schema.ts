@@ -8,7 +8,7 @@ import { storageKeys } from "../config/CommonConstant";
 export const getAllSchemas = async({ search, itemPerPage, sortBy, page }:GetAllSchemaListParameter, orgId:string) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
     const details = {
-        url: `${apiRoutes.schema.getAll}?orgId=${orgId}&searchByText=${search}&pagepage=${page}&items_per_page=${itemPerPage}&schemaSortBy=${sortBy}&items_per_page=${itemPerPage}&schemaSortBy=${sortBy}`,
+        url: `${apiRoutes.schema.getAll}?orgId=${orgId}&searchByText=${search}&page=${page}&items_per_page=${itemPerPage}&schemaSortBy=${sortBy}&items_per_page=${itemPerPage}&schemaSortBy=${sortBy}`,
         config: {
           headers: {
             'Content-type': 'application/json',
