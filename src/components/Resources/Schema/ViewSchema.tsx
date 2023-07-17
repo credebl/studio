@@ -45,7 +45,7 @@ const ViewSchemas = () => {
   const [orgId, setOrgId] = useState<number>(0)
 
 
-  const getSchemaDetails = async (id: string, organizationId:number) => {
+  const getSchemaDetails = async (id: string, organizationId: number) => {
     setLoading(true)
     const SchemaDetails: AxiosResponse = await getSchemaById(id, organizationId)
     if (SchemaDetails.data.data.response) {
@@ -55,7 +55,7 @@ const ViewSchemas = () => {
 
   }
 
-  const getCredentialDefinitionList = async (id: string, orgId:number) => {
+  const getCredentialDefinitionList = async (id: string, orgId: number) => {
     setCredDeffloader(true)
     const credentialDefinitions: AxiosResponse = await getCredDeffById(id, orgId)
     if (credentialDefinitions.data.data.data) {
@@ -64,12 +64,12 @@ const ViewSchemas = () => {
     }
 
   }
-  
+
   useEffect(() => {
     const fetchData = async () => {
       const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
       setOrgId(Number(organizationId));
-  
+
       if (window?.location?.search) {
         const str = window?.location?.search;
         const schemaId = str.substring(str.indexOf('=') + 1);
@@ -77,7 +77,7 @@ const ViewSchemas = () => {
         await getCredentialDefinitionList(schemaId, Number(organizationId));
       }
     };
-  
+
     fetchData();
   }, []);
 
@@ -91,7 +91,7 @@ const ViewSchemas = () => {
       schemaLedgerId: schemaDetails.schemaId
 
     }
-  
+
     const createCredDeff = await createCredentialDefinition(CredDeffFieldName);
     const { data } = createCredDeff as AxiosResponse
     if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
@@ -110,7 +110,7 @@ const ViewSchemas = () => {
   }
 
   return (
-    <>
+    <div className="px-4 pt-6">
       <div className="mb-4 col-span-full xl:mb-2">
         <BreadCrumbs />
         <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
@@ -303,7 +303,7 @@ const ViewSchemas = () => {
           </div>
         </div>
       </>
-    </>
+    </div>
   )
 }
 

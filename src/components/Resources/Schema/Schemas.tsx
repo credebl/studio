@@ -69,7 +69,7 @@ const SchemaList = () => {
   }
 
   return (
-    <>
+    <div className="px-4 pt-6">
       <div className="mb-4 col-span-full xl:mb-2">
         <BreadCrumbs />
         <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
@@ -89,7 +89,7 @@ const SchemaList = () => {
             <Button
               id='createSchemaButton'
               onClick={() => {
-                window.location.href = `/schemas/create?OrgId=${orgId}`
+                window.location.href = `/organizations/schemas/create?OrgId=${orgId}`
               }}
               className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
             >
@@ -129,7 +129,7 @@ const SchemaList = () => {
           }
         </div>
       </div>
-    </>
+    </div>
 
   )
 }
