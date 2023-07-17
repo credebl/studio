@@ -83,9 +83,9 @@ export const getOrganizationById = async (orgId: string) => {
     }
 }
 
-export const spinupAgent = async (data: object) => {
+export const spinupDedicatedAgent = async (data: object) => {
 
-    const url = apiRoutes.organizations.agentSpinup
+    const url = apiRoutes.organizations.agentDedicatedSpinup
     const payload = data
 
     const token = await getFromLocalStorage(storageKeys.TOKEN)
@@ -110,5 +110,35 @@ export const spinupAgent = async (data: object) => {
         return err?.message
     }
 }
+
+export const spinupSharedAgent = async (data: object) => {
+
+    const url = apiRoutes.organizations.agentSharedSpinup
+    const payload = data
+
+    const token = await getFromLocalStorage(storageKeys.TOKEN)
+
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+        }
+    }
+    const axiosPayload = {
+        url,
+        payload,
+        config
+    }
+
+    try {
+        return await axiosPost(axiosPayload);
+    }
+    catch (error) {
+        const err = error as Error
+        return err?.message
+    }
+}
+
+
 
 
