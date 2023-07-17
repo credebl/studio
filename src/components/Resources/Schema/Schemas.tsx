@@ -78,7 +78,7 @@ const SchemaList = () => {
       </div>
       <div>
         <div
-          className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
+          className=""
         >
           <div className="flex items-center justify-between mb-4">
             <div id='schemasSearchInput'>
@@ -103,7 +103,7 @@ const SchemaList = () => {
               />
             </div>
             :
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div className='Flex-wrap' style={{ display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
                 {schemaList && schemaList.length > 0 &&
                   schemaList.map((element, key) => (
