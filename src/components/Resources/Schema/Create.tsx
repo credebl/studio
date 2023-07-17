@@ -47,7 +47,7 @@ const CreateSchema = () => {
         if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
             if (data?.data) {
                 setCreateLoader(false)
-                window.location.href = `/schemas`
+                window.location.href = `/organizations/schemas`
             } else {
                 setCreateLoader(false)
             }
