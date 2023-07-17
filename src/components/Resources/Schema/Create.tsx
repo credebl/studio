@@ -19,7 +19,7 @@ interface Values {
 }
 
 const CreateSchema = () => {
-    const [failure, setFailur] = useState<string | null>(null)
+    const [failure, setFailure] = useState<string | null>(null)
     const [orgId, setOrgId] = useState<number>(0)
     const [createloader, setCreateLoader] = useState<boolean>(false)
 
@@ -53,9 +53,9 @@ const CreateSchema = () => {
             }
         } else {
             setCreateLoader(false)  
-            setFailur(createSchema as string)
+            setFailure(createSchema as string)
             setTimeout(() => {
-                setFailur(null)
+                setFailure(null)
               }, 4000);
         }
     }
@@ -225,7 +225,7 @@ const CreateSchema = () => {
                                         <div className='pt-1'>
                                             <Alert
                                                 color="failure"
-                                                onDismiss={() => setFailur(null)}
+                                                onDismiss={() => setFailure(null)}
                                             >
                                                 <span>
                                                     <p>
