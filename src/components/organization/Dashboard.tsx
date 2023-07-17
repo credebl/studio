@@ -31,6 +31,12 @@ const Dashboard = () => {
         fetchOrganizationDetails();
     }, [])
 
+    const redirectDashboardInvitations = () => {
+        // localStorage.setItem('orgId', orgId.toString())
+              window.location.href = '/organizations/invitations'
+}
+
+
     return (
         <div className="px-4 pt-6">
 
@@ -87,7 +93,7 @@ const Dashboard = () => {
                         <div
                             className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
                         >
-                            <div className="w-full">
+                            <div className="w-full" onClick={redirectDashboardInvitations}>
                                 <h3 className="text-base font-normal text-gray-500 dark:text-gray-400">
                                     Invitations
                                 </h3>
