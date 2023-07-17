@@ -6,14 +6,14 @@ import {
     Form,
     Formik
 } from 'formik';
-import { apiStatusCodes, passwordRegex } from '../../config/CommonConstant';
+import { apiStatusCodes, passwordRegex, storageKeys } from '../../config/CommonConstant';
+import { getFromLocalStorage, passwordEncryption } from '../../api/Auth';
+import { spinupDedicatedAgent, spinupSharedAgent } from '../../api/organization';
 import { useEffect, useState } from 'react';
 
 import type { AxiosResponse } from 'axios';
 import SOCKET from '../../config/SocketConfig';
 import { nanoid } from 'nanoid'
-import { passwordEncryption } from '../../api/Auth';
-import { spinupAgent } from '../../api/organization';
 
 interface Values {
     seed: string;
@@ -75,7 +75,7 @@ const WalletSpinup = (
             clientSocketId: SOCKET.id
         }
         setLoading(true)
-        const spinupRes = await spinupAgent(payload)
+        const spinupRes = await spinupDedicatedAgent(payload)
         const { data } = spinupRes as AxiosResponse
 
         if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
@@ -91,25 +91,22 @@ const WalletSpinup = (
 
         setAgentSpinupCall(true)
 
+    const submitSharedWallet = async (values: ValuesShared) => {
+
         const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
 
         const payload = {
-            walletName: values.name,
+            label: values.label,
             seed: seeds,
-            orgId: Number(orgId),
-            walletPassword: passwordEncryption(values.password),
-            clientSocketId: SOCKET.id
+            orgId: Number(orgId)
         }
         setLoading(true)
-        const spinupRes = await spinupDedicatedAgent(payload)
+        const spinupRes = await spinupSharedAgent(payload)
         const { data } = spinupRes as AxiosResponse
 
         if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-            if(data?.data['agentSpinupStatus'] === 1){
-                setAgentSpinupCall(true)
-            } else {
-                setFailure(spinupRes as string);  
-            }
+            setLoading(false)            
+            props.setWalletSpinupStatus(true)
         } else {
             setLoading(false)
             setFailure(spinupRes as string)
@@ -166,7 +163,7 @@ const WalletSpinup = (
     const DedicatedAgentForm = () => (
         <Formik
             initialValues={{
-                seed: '',
+                seed: seeds,
                 name: '',
                 password: ''
             }}
@@ -269,11 +266,7 @@ const WalletSpinup = (
                 seed: '',
                 label: '',
             }}
-            validationSchema={yup.object().shape({
-                seed: yup
-                    .string()
-                    .required('Seed is required')
-                    .trim(),
+            validationSchema={yup.object().shape({                            
                 label: yup
                     .string()
                     .required('Wallet label is required')
@@ -350,7 +343,7 @@ const WalletSpinup = (
                         (success || failure) &&
                         <Alert
                             color={success ? "success" : "failure"}
-                            onDismiss={() => setSuccess(null)}
+                            onDismiss={() => setFailure(null)}
                         >
                             <span>
                                 <p>
@@ -359,7 +352,7 @@ const WalletSpinup = (
                             </span>
                         </Alert>
                     }
-                    <h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
+                    <h3 className="mb-1 mt-1 text-xl font-bold text-gray-900 dark:text-white">
                         Agent Spinup
                     </h3>
 
@@ -408,7 +401,11 @@ const WalletSpinup = (
                             : <DedicatedAgentForm />
                     }
                 </div>
-                <WalletSteps steps={walletSpinStep} agentSpinupCall={agentSpinupCall} />
+                   {
+                        agentType === AgentType.DEDICATED
+                           && <WalletSteps steps={walletSpinStep} agentSpinupCall={agentSpinupCall} />
+                    }
+                
             </div>
 
 
