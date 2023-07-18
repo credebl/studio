@@ -54,7 +54,7 @@ export default function BreadCrumbs() {
                     href={crumb.href}
                         key={idx}
                     >
-                        {crumb.text}
+                        {crumb.text.charAt(0).toUpperCase() + crumb.text.slice(1)}
                     </Breadcrumb.Item>
                 );
             })}

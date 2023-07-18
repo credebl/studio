@@ -1,0 +1,37 @@
+{
+    "family": "FRONTEND_UI_TASKDEF",
+    "containerDefinitions": [
+        {
+            "name": "frontend-ui",
+            "image": "%REPOSITORY_URI%:FRONTEND_v_%BUILD_NUMBER%",
+            "cpu": 154,
+            "memory": 307,
+            "portMappings": [
+                {
+                    "containerPort": 8085,
+                    "hostPort": 0,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "environmentFiles": [
+                {
+                    "value": "arn:aws:s3:::credebl2.0/ui.env",
+                    "type": "s3"
+                }
+            ],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "ulimits": []
+        }
+    ],
+   
+    "executionRoleArn": "arn:aws:iam::668004263903:role/ecsTaskExecutionRole",
+    "placementConstraints": [],
+    "requiresCompatibilities": [
+        "EC2"
+    ],
+    "cpu": "154",
+    "memory": "307"
+}

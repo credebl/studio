@@ -1,3 +1,4 @@
+import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { useEffect, useState } from 'react';
 
 import { Avatar } from 'flowbite-react';
@@ -6,22 +7,27 @@ import BreadCrumbs from '../BreadCrumbs';
 import type { Organisation } from './interfaces'
 import OrganizationDetails from './OrganizationDetails';
 import WalletSpinup from './WalletSpinup';
-import { apiStatusCodes } from '../../config/CommonConstant';
-import { asset } from '../../lib/data';
+import { getFromLocalStorage } from '../../api/Auth';
 import { getOrganizationById } from '../../api/organization';
 
 const Dashboard = () => {
-
     const [orgData, setOrgData] = useState<Organisation | null>(null);
 
+    const [walletStatus, setWalletStatus] = useState<boolean>(false);
+
     const fetchOrganizationDetails = async () => {
-        const orgId = localStorage.getItem('orgId');
+
+        const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
+
         const response = await getOrganizationById(orgId as string);
 
         const { data } = response as AxiosResponse
 
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-            console.log(data?.data);
+
+            if (data?.data?.org_agents && data?.data?.org_agents?.length > 0) {
+                setWalletStatus(true)
+            }
             setOrgData(data?.data)
         }
 
@@ -32,10 +38,12 @@ const Dashboard = () => {
     }, [])
 
     const redirectDashboardInvitations = () => {
-        // localStorage.setItem('orgId', orgId.toString())
-              window.location.href = '/organizations/invitations'
-}
+        window.location.href = '/organizations/invitations'
+    }
 
+    const setWalletSpinupStatus = (status: boolean) => {
+        fetchOrganizationDetails()
+    }
 
     return (
         <div className="px-4 pt-6">
@@ -91,7 +99,7 @@ const Dashboard = () => {
                             </svg>
                         </div>
                         <div
-                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
+                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer"
                         >
                             <div className="w-full" onClick={redirectDashboardInvitations}>
                                 <h3 className="text-base font-normal text-gray-500 dark:text-gray-400">
@@ -108,7 +116,10 @@ const Dashboard = () => {
 
                         </div>
                         <div
-                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
+                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer"
+                            onClick={() => {
+                                window.location.href = `/organizations/schemas`;
+                            }}
                         >
                             <div className="w-full">
                                 <h3 className="text-base font-normal text-gray-500 dark:text-gray-400">
@@ -141,16 +152,20 @@ const Dashboard = () => {
                             <h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
                                 {orgData?.name}
                             </h3>
+                            <p className='mb-1 text-base font-normal text-gray-900 dark:text-white'>
+                                {orgData?.description}
+                            </p>
 
                         </div>
                     </div>
                 </div>
                 {
-                    orgData?.org_agents.length === 0 
-                    ? <WalletSpinup /> 
-                    : <OrganizationDetails/>
+
+                    walletStatus === true
+                        ? <OrganizationDetails orgData={orgData} />
+                        : <WalletSpinup setWalletSpinupStatus={(flag: boolean) => setWalletSpinupStatus(flag)} />
                 }
-                
+
             </div>
         </div>
     )
