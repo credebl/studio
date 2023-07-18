@@ -110,7 +110,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
 
         const fieSize = Number((file[0]?.size / 1024 / 1024)?.toFixed(2))
         const extension = file[0]?.name?.substring(file[0]?.name?.lastIndexOf(".") + 1)?.toLowerCase()
-        if (extension === "png" || extension === "jpeg" || extension === "jpg" || extension === "svg") {
+        if (extension === "png" || extension === "jpeg" || extension === "jpg") {
             if (fieSize <= imageSizeAccepted) {
                 reader.onloadend = (): void => {
                     ProcessImg(event)
