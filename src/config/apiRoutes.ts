@@ -18,5 +18,16 @@ export const apiRoutes = {
         getSchemaById:'/schemas/id',
         createCredentialDefinition: '/credential-definitions',
         getCredDeffBySchemaId: '/schemas/credential-definitions'
+    },
+    fido: {
+        generateRegistration: 'fido/generate-registration-options',
+        verifyRegistration: 'fido/verify-registration/',
+        getDeviceList: 'fido/user-details/',
+        updateDeviceName: 'fido/device-name',
+        userUpdate: 'Fido/user-update',
+        fidoDevice: 'Fido/device',
+        fidoAuthentication: 'Fido/generate-authentication-options',
+        fidoVerifyAuthentication: 'Fido/verify-authentication/'
+
     }
 }
