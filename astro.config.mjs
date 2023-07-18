@@ -1,6 +1,6 @@
 import Deno from '@astrojs/deno';
 import { defineConfig } from 'astro/config';
-import Deno from '@astrojs/deno';
+import react from "@astrojs/react";
 import sitemap from '@astrojs/sitemap';
 import tailwind from '@astrojs/tailwind';
 const DEV_PORT = 3000;

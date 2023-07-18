@@ -38,17 +38,13 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
 
     const [imgError, setImgError] = useState('')
 
-    const [selectedImage, setSelectedImage] = useState(null);
-
-    const [fileSizeError, setFileSizeError] = useState('');
-
-
     useEffect(() => {
         setOrgData({
             name: '',
             description: '',
         })
         setLogoImage({
+            ...logoImage,
             logoFile: "",
             imagePreviewUrl: ""
         })
@@ -107,36 +103,14 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
 
 
     const handleImageChange = (event: any): void => {
-        setImgError("")
+        setImgError('')
         const reader = new FileReader()
-        const file = event?.target?.files[0]
-
-        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/svg', 'image/png'];
-
-        if (file) {
-            if (file.size <= 1 * 1024 * 1024) { // 1MB in bytes
-                if (allowedTypes.includes(file.type)) {
-              setSelectedImage(file.name);
-              setFileSizeError("");
-            } else {
-              setSelectedImage(null);
-              setFileSizeError('Invalid file format.Only JPG, SVG and PNG files are accepted.');
-            }
-          } else {
-            setSelectedImage(null);
-            setFileSizeError('File size cannot exceed 1 MB.');
-          }
-         } else {
-            setSelectedImage(null);
-            setFileSizeError("");
-          }
-
-        setSelectedImage(file ? file.name : null);
+        const file = event?.target?.files
         console.log(file);
 
         const fieSize = Number((file[0]?.size / 1024 / 1024)?.toFixed(2))
         const extension = file[0]?.name?.substring(file[0]?.name?.lastIndexOf(".") + 1)?.toLowerCase()
-        if (extension === "png" || extension === "jpeg" || extension === "jpg" ||extension === "svg") {
+        if (extension === "png" || extension === "jpeg" || extension === "jpg" || extension === "svg") {
             if (fieSize <= imageSizeAccepted) {
                 reader.onloadend = (): void => {
                     ProcessImg(event)
@@ -145,10 +119,10 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                 reader.readAsDataURL(file[0])
                 event.preventDefault()
             } else {
-                setImgError("Please check image size.")
+                setImgError("Please check image size")
             }
         } else {
-            setImgError("Invalid image type.")
+            setImgError("Invalid image type")
         }
     }
 
@@ -168,7 +142,6 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
         setLoading(false)
 
         if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-
             props.setOpenModal(false)
 
         } else {
@@ -252,7 +225,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                                             Organization Logo
                                         </h3>
                                         <div className="mb-4 text-sm text-gray-500 dark:text-gray-400">
-                                          JPG, JPEG, SVG and PNG . Max size of 1MB
+                                            JPG, JPEG and PNG . Max size of 1MB
                                         </div>
                                         <div className="flex items-center space-x-4">
 
@@ -264,9 +237,8 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                                                         id="organizationlogo" title=""
                                                         onChange={(event): void => handleImageChange(event)} />
                                                     {/* <span>{selectedImage || 'No File Chosen'}</span> */}
-                                                    {fileSizeError ? <div className="text-red-500">{fileSizeError}</div> : <span>{selectedImage || 'No File Chosen'}</span>}
+                                                    {imgError ? <div className="text-red-500">{imgError}</div> : <span className="mt-1">{logoImage.fileName || 'No File Chosen'}</span>}
                                                 </label>
-
 
                                             </div>
 
@@ -288,7 +260,6 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                                         htmlFor="name"
                                         value="Name"
                                     />
-                                    <span className="text-red-500 text-xs">*</span>
                                 </div>
                                 <Field
                                     id="name"
@@ -296,7 +267,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                                     value={formikHandlers.values.name}                                    
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                     placeholder="Your organization name" />
-                                {
+  {
                                     (formikHandlers?.errors?.name && formikHandlers?.touched?.name) &&
                                     <span className="text-red-500 text-xs">{formikHandlers?.errors?.name}</span>
                                 }
@@ -310,7 +281,6 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                                         htmlFor="description"
                                         value="Description"
                                     />
-                                    <span className="text-red-500 text-xs">*</span>
                                 </div>
 
                                 <Field
@@ -320,11 +290,10 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                                     as='textarea'                                    
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                     placeholder="Description of your organization" />
-                                {
+   {
                                     (formikHandlers?.errors?.description && formikHandlers?.touched?.description) &&
                                     <span className="text-red-500 text-xs">{formikHandlers?.errors?.description}</span>
                                 }
-
                             </div>
 
                             <Button type="submit"
