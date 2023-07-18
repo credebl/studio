@@ -2,30 +2,22 @@
 
 import { Button, Card, Pagination, Spinner } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
+import type { OrgRole, Organisation } from './interfaces'
+import { getOrganizationInvitations, getOrganizations } from '../../api/organization';
 
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
 import CreateOrgFormModal from "./CreateOrgFormModal";
 import CustomAvatar from '../Avatar'
-import type { Organisation } from './interfaces'
+import type { Invitation } from './interfaces/invitations';
 import SearchInput from '../SearchInput';
+import { TextTittlecase } from '../../utils/TextTransform';
 import { apiStatusCodes } from '../../config/CommonConstant';
-import { getOrganizations } from '../../api/organization';
 
 const initialPageState = {
     pageNumber: 1,
-    pageSize: 10,
-    total: 100,
-};
-
-const roles = [
-    'Owner',
-]
-
-
-const formatDate = (date: Date) => {
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
-    return new Intl.DateTimeFormat('en-US', options).format(date);
+    pageSize: 9,
+    total: 0,
 };
 
 
@@ -44,7 +36,7 @@ const Invitations = () => {
     };
     const [searchText, setSearchText] = useState("");
 
-    const [organizationsList, setOrganizationList] = useState<Array<Organisation> | null>(null)
+    const [invitationsList, setInvitationsList] = useState<Array<Invitation> | null>(null)
     const props = { openModal, setOpenModal };
 
     const createOrganizationModel = () => {
@@ -52,38 +44,27 @@ const Invitations = () => {
     }
 
     //Fetch the user organization list
-    const getAllOrganizations = async () => {
-        // setLoading(true)
-        // const response = await getOrganizations(currentPage.pageNumber, currentPage.pageSize, searchText);
-        // const { data } = response as AxiosResponse
+    const getAllInvitations = async () => {
+        setLoading(true)
+        const response = await getOrganizationInvitations(currentPage.pageNumber, currentPage.pageSize, searchText);
+        const { data } = response as AxiosResponse
 
-        // if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 
-        //   const totalPages = data?.data?.totalPages;
+            const totalPages = data?.data?.totalPages;
 
-        //   const orgList = data?.data?.organizations.map((userOrg: Organisation) => {
-        //     const roles: string[] = userOrg.userOrgRoles.map(role => role.orgRole.name)
-        //     userOrg.roles = roles
-        //     return userOrg;
-        //   })
+            const invitationList = data?.data?.invitations
+            setInvitationsList(invitationList)
+            setCurrentPage({
+                ...currentPage,
+                total: totalPages
+            })
+        } else {
+            setMessage(response as string)
+        }
 
-        //   setOrganizationList(orgList)
-        //   setCurrentPage({
-        //     ...currentPage,
-        //     total: totalPages
-        //   })
-        // } else {
-        //   setMessage(response as string)
-        // }
-
-        // setLoading(false)
+        setLoading(false)
     }
-
-    useEffect(() => {
-
-        getAllOrganizations()
-
-    }, [openModal, currentPage.pageNumber])
 
     //This useEffect is called when the searchText changes 
     useEffect(() => {
@@ -93,15 +74,15 @@ const Invitations = () => {
 
         if (searchText.length >= 1) {
             getData = setTimeout(() => {
-                getAllOrganizations()
+                getAllInvitations()
 
             }, 1000)
         } else {
-            getAllOrganizations()
+            getAllInvitations()
         }
 
         return () => clearTimeout(getData)
-    }, [searchText])
+    }, [searchText, openModal, currentPage.pageNumber])
 
     //onCHnage of Search input text
     const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -132,7 +113,7 @@ const Invitations = () => {
                             onInputChange={searchInputChange}
                         />
                         <Button
-                                className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+                            className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
                         >
                             Send Invitations
                         </Button>
@@ -149,54 +130,73 @@ const Invitations = () => {
                                 color="info"
                             />
                         </div>
-                        : <div className="mt-1 grid grid-cols-3 gap-4">
+                        : <div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
+                            {
+                                invitationsList && invitationsList.map((invitation) => (
+                                    <Card className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer'>
+                                       
+                                        <div className='flex items-center'>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" width="90px" height="70px">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                                            </svg>
 
-                            <Card className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer'>
 
-                                <div className='flex items-center'>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" width="90px" height="70px">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-                                    </svg>
+                                            <div className='ml-4'>
+                                                <h5 className="text-base font-medium tracking-tight text-gray-900 dark:text-white">
+                                                    <p>
+                                                        {invitation.email}
+                                                    </p>
+                                                </h5>
+                                                <span className='mt-1 flex'>
+                                                    Status:
+                                                    {
+                                                        invitation.status === 'pending'
+                                                            ? <p className='ml-1 text-orange-500'>
+                                                                {TextTittlecase(invitation.status)}
+                                                            </p>
+                                                            : invitation.status === 'accepted'
+                                                                ? <p className='ml-1 text-green-500'>
+                                                                    {TextTittlecase(invitation.status)}
+                                                                </p>
+                                                                : <p className='ml-1 text-red-500'>
+                                                                    {TextTittlecase(invitation.status)}
+                                                                </p>
 
+                                                    }
+                                                </span>
 
-                                    <div className='ml-4'>
-                                        <h5 className="text-sm font-normal tracking-tight text-gray-900 dark:text-white">
-                                            <p>
-                                                nishad.shirsat@ayanworks.com
-                                            </p>
-                                        </h5>
-                                        <div className="flow-root h-auto">
-                                            <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-                                                <li className="py-3 sm:py-4 overflow-auto">
-                                                    <div className="items-center space-x-4">
-                                                        <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                                            Roles:
-                                                            {roles &&
-                                                                roles.length > 0 &&
-                                                                roles.map((role: string, index: number) => {
-                                                                    return (
-                                                                        <span
-                                                                            key={index}
-                                                                            className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
-                                                                        >
-                                                                            {role}
-                                                                        </span>
-                                                                    );
-                                                                })}
-                                                        </div>
-                                                        <div className="flex items-end text-sm font-normal text-gray-500 dark:text-white fixed right-2 bottom-2">
-                                                           Invited on: {formatDate(new Date())}
-                                                        </div>
+                                                <div className="flow-root h-auto">
+                                                    <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+                                                        <li className="py-3 sm:py-4 overflow-auto">
+                                                            <div className="items-center space-x-4">
+                                                                <div className="inline-flex items-center text-base font-normal text-gray-900 dark:text-white">
+                                                                    Roles:
+                                                                    {invitation.orgRoles &&
+                                                                        invitation.orgRoles.length > 0 &&
+                                                                        invitation.orgRoles.map((role: OrgRole, index: number) => {
+                                                                            return (
+                                                                                <span
+                                                                                    key={index}
+                                                                                    className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
+                                                                                >
+                                                                                    {role.name.charAt(0).toUpperCase() + role.name.slice(1)}
+                                                                                </span>
+                                                                            );
+                                                                        })}
+                                                                </div>
+                                                                <div className="flex items-end text-sm font-normal text-gray-500 dark:text-white fixed right-2 bottom-2">
+                                                                    Created on: {invitation.createDateTime.split('T')[0]}
+                                                                </div>
 
-                                                    </div>
-                                                </li>
-                                            </ul>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </Card>
-
-
+                                    </Card>
+                                ))
+                            }
                         </div>
                     }
 

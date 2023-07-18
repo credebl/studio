@@ -7,11 +7,11 @@ import {
 	FormikValues,
 } from 'formik';
 import { UserSignInData, getUserProfile, loginUser, passwordEncryption, setToLocalStorage } from '../../api/Auth';
+import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { useEffect, useState } from 'react';
 
 import { Alert } from 'flowbite-react';
 import type { AxiosResponse } from 'axios';
-import { apiStatusCodes, staorageKeys } from '../../config/CommonConstant';
 import astro  from '@astrojs/react'
 
 interface Values {
@@ -32,7 +32,7 @@ const SignInUser = () => {
 	   const { data } = loginRsp as AxiosResponse
 
 	   if(data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS){
-		    await setToLocalStorage(staorageKeys.TOKEN, data?.data?.access_token)
+		    await setToLocalStorage(storageKeys.TOKEN, data?.data?.access_token)
 			getUserDetails(data?.data?.access_token)
 	   }else{
 		setLoading(false)
@@ -46,8 +46,8 @@ const SignInUser = () => {
 		if(data?.data?.userOrgRoles?.length > 0){
 			const permissionArray: number|string[] = []
 			data?.data?.userOrgRoles?.forEach((element: { orgRole: { name: string } }) => permissionArray.push(element?.orgRole?.name));
-			await setToLocalStorage(staorageKeys.PERMISSIONS, permissionArray)
-			await setToLocalStorage(staorageKeys.USER_PROFILE, data?.data)
+			await setToLocalStorage(storageKeys.PERMISSIONS, permissionArray)
+			await setToLocalStorage(storageKeys.USER_PROFILE, data?.data)
 
 			window.location.href = '/dashboard'
 		}else{

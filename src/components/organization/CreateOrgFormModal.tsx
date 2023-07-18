@@ -6,7 +6,7 @@ import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, imageSizeAccepted } from '../../config/C
 import { MouseEvent, useState } from "react";
 import { asset, url } from '../../lib/data.js';
 import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
-import { useRef, useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import type { AxiosResponse } from 'axios';
 import { asset } from '../../lib/data.js';
@@ -19,7 +19,8 @@ interface Values {
 
 interface ILogoImage {
     logoFile: string | File
-    imagePreviewUrl: string | ArrayBuffer | null | File
+    imagePreviewUrl: string | ArrayBuffer | null | File,
+    fileName: string
 }
 
 
@@ -28,7 +29,8 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
 
     const [logoImage, setLogoImage] = useState<ILogoImage>({
         logoFile: "",
-        imagePreviewUrl: ""
+        imagePreviewUrl: "",
+        fileName:''
     })
 
     const [isImageEmpty, setIsImageEmpty] = useState(true)
@@ -36,16 +38,17 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
 
     const [imgError, setImgError] = useState('')
 
-    useEffect(()=>{
-       setOrgData({
-        name: '',
-        description: '',
-    })
-    setLogoImage({
-        logoFile: "",
-        imagePreviewUrl: ""
-    })
-    },[props.openModal])
+    useEffect(() => {
+        setOrgData({
+            name: '',
+            description: '',
+        })
+        setLogoImage({
+            ...logoImage,
+            logoFile: "",
+            imagePreviewUrl: ""
+        })
+    }, [props.openModal])
 
 
     const ProcessImg = (e: any): string | undefined => {
@@ -79,7 +82,8 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                         fileUpdated = new File([blob], file.name, { type: file.type, lastModified: new Date().getTime() })
                         setLogoImage({
                             logoFile: fileUpdated,
-                            imagePreviewUrl: srcEncoded
+                            imagePreviewUrl: srcEncoded,
+                            fileName: file.name
                         })
                     }
                 }
@@ -102,7 +106,6 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
         setImgError('')
         const reader = new FileReader()
         const file = event?.target?.files
-        console.log(file);
 
         const fieSize = Number((file[0]?.size / 1024 / 1024)?.toFixed(2))
         const extension = file[0]?.name?.substring(file[0]?.name?.lastIndexOf(".") + 1)?.toLowerCase()
@@ -138,8 +141,6 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
         setLoading(false)
 
         if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-            // console.log(`Org Message::`,data?.message)
-            
             props.setOpenModal(false)
 
         } else {
@@ -151,7 +152,8 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
         <Modal show={props.openModal} onClose={() => {
             setLogoImage({
                 logoFile: "",
-                imagePreviewUrl: ""
+                imagePreviewUrl: "",
+                fileName:''
             })
             props.setOpenModal(false)
         }
@@ -222,14 +224,21 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                                             Organization Logo
                                         </h3>
                                         <div className="mb-4 text-sm text-gray-500 dark:text-gray-400">
-                                            JPG, GIF or PNG. Max size of 1M
+                                            JPG, JPEG and PNG . Max size of 1MB
                                         </div>
                                         <div className="flex items-center space-x-4">
 
+                                            <div>
+                                                <label htmlFor="organizationlogo">
+                                                    <div className="px-4 py-2 bg-blue-700 text-white text-center rounded-lg">Choose file</div>
+                                                    <input type="file" accept="image/*" name="file"
+                                                        className="hidden"
+                                                        id="organizationlogo" title=""
+                                                        onChange={(event): void => handleImageChange(event)} />
+                                                    {/* <span>{selectedImage || 'No File Chosen'}</span> */}
+                                                    {imgError ? <div className="text-red-500">{imgError}</div> : <span className="mt-1">{logoImage.fileName || 'No File Chosen'}</span>}
+                                                </label>
 
-                                            <div className="camera-btn">
-                                                <input type="file" accept="image/*" name="file" id="exampleFile1" title=""
-                                                    onChange={(event): void => handleImageChange(event)} />
                                             </div>
 
                                             {/* <button
@@ -254,9 +263,13 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                                 <Field
                                     id="name"
                                     name="name"
-                                    required
+                                    value={formikHandlers.values.name}                                    
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                     placeholder="Your organization name" />
+  {
+                                    (formikHandlers?.errors?.name && formikHandlers?.touched?.name) &&
+                                    <span className="text-red-500 text-xs">{formikHandlers?.errors?.name}</span>
+                                }
 
                             </div>
                             <div>
@@ -272,10 +285,14 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                                 <Field
                                     id="description"
                                     name="description"
-                                    required
+                                    value={formikHandlers.values.description}
+                                    as='textarea'                                    
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                     placeholder="Description of your organization" />
-
+   {
+                                    (formikHandlers?.errors?.description && formikHandlers?.touched?.description) &&
+                                    <span className="text-red-500 text-xs">{formikHandlers?.errors?.description}</span>
+                                }
                             </div>
 
                             <Button type="submit"

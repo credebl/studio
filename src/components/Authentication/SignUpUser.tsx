@@ -1,3 +1,8 @@
+import 'react-toastify/dist/ReactToastify.css';
+
+import * as yup from 'yup';
+
+import { Alert, Button, Checkbox, Label, TextInput } from 'flowbite-react';
 import {
 	Field,
 	Form,
@@ -6,11 +11,13 @@ import {
 	FormikProps,
 	FormikValues,
 } from 'formik';
-import { Button, Checkbox, Label, TextInput } from 'flowbite-react';
-import * as yup from 'yup';
-
+import { ToastContainer, toast } from 'react-toastify';
+import { UserSignUpData, passwordEncryption, registerUser } from '../../api/Auth.js';
+import { apiStatusCodes, passwordRegex } from '../../config/CommonConstant.js';
 import { asset, url } from '../../lib/data.js';
-import { passwordRegex } from '../../config/CommonConstant.js';
+
+import type { AxiosResponse } from 'axios';
+import { useState } from 'react';
 
 interface Values {
 	firstName: string;
@@ -189,7 +196,7 @@ const SignUpUser = () => {
                             href="/authentication/sign-in"
 					        className="text-primary-700 hover:underline dark:text-primary-500"
 					    >
-                        {` Sing in here.`}
+                        {` Sign in here.`}
                         </a>
 			        </div>
 				</div>

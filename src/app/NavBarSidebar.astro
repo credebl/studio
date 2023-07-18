@@ -5,6 +5,7 @@ import { asset } from '../lib/data.js';
 
 import ColorModeSwitcher from '../components/ColorModeSwitcher.astro';
 import GitHubButton from '../components/GitHubButton.astro';
+import OrgDropDwon from '../components/organization/OrgDropDown'
 import SearchInput from '../components/SearchInput.astro';
 ---
 
@@ -45,7 +46,7 @@ import SearchInput from '../components/SearchInput.astro';
 				</button>
 				<a href="/dashboard" class="flex ml-2 md:mr-24">
 					<img
-						src="/images/credebl-logo-icon.png"
+						src="/images/CREDEBL_ICON.png"
 						class="h-8 mr-3"
 						alt="CREDEBL Logo"
 					/>
@@ -56,9 +57,11 @@ import SearchInput from '../components/SearchInput.astro';
 				</a>
 
 			</div>
-
+			
 			<div class="flex items-center">
-				<GitHubButton repository="credebl/platform" />
+				<div class="hidden sm:block mr-5">
+					<OrgDropDwon client:visible/>
+				</div>
 
 				<!-- Search mobile -->
 				<button
@@ -79,7 +82,6 @@ import SearchInput from '../components/SearchInput.astro';
 							clip-rule="evenodd"></path></svg
 					>
 				</button>
-
 				<!-- Dropdown menu -->
 				<div
 					id="dropdownNavbar"
