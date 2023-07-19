@@ -61,4 +61,3 @@ export interface AgentsType {
     lastChangedBy: number
     agent: string
 }
-
