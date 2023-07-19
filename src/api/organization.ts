@@ -139,11 +139,11 @@ export const spinupSharedAgent = async (data: object) => {
     }
 }
 
-export const getOrganizationInvitations = async () => {
+export const getOrganizationInvitations = async (pageNumber: number, pageSize: number, search = '') => {
 
     const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
 
-    const url = `${apiRoutes.organizations.invitations}/${orgId}`
+    const url = `${apiRoutes.organizations.invitations}/${orgId}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
 
     const token = await getFromLocalStorage(storageKeys.TOKEN)
 

@@ -11,15 +11,14 @@ import CreateOrgFormModal from "./CreateOrgFormModal";
 import CustomAvatar from '../Avatar'
 import type { Invitation } from './interfaces/invitations';
 import SearchInput from '../SearchInput';
+import { TextTittlecase } from '../../utils/TextTransform';
 import { apiStatusCodes } from '../../config/CommonConstant';
 
 const initialPageState = {
     pageNumber: 1,
-    pageSize: 10,
-    total: 100,
+    pageSize: 9,
+    total: 0,
 };
-
-
 
 
 const Invitations = () => {
@@ -47,16 +46,18 @@ const Invitations = () => {
     //Fetch the user organization list
     const getAllInvitations = async () => {
         setLoading(true)
-        // const response = await getOrganizationInvitations(currentPage.pageNumber, currentPage.pageSize, searchText);
-        const response = await getOrganizationInvitations();
+        const response = await getOrganizationInvitations(currentPage.pageNumber, currentPage.pageSize, searchText);
         const { data } = response as AxiosResponse
 
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 
-            setInvitationsList(data?.data)
+            const totalPages = data?.data?.totalPages;
+
+            const invitationList = data?.data?.invitations
+            setInvitationsList(invitationList)
             setCurrentPage({
                 ...currentPage,
-                total: 0
+                total: totalPages
             })
         } else {
             setMessage(response as string)
@@ -64,12 +65,6 @@ const Invitations = () => {
 
         setLoading(false)
     }
-
-    useEffect(() => {
-
-        getAllInvitations()
-
-    }, [openModal, currentPage.pageNumber])
 
     //This useEffect is called when the searchText changes 
     useEffect(() => {
@@ -87,7 +82,7 @@ const Invitations = () => {
         }
 
         return () => clearTimeout(getData)
-    }, [searchText])
+    }, [searchText, openModal, currentPage.pageNumber])
 
     //onCHnage of Search input text
     const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -139,7 +134,7 @@ const Invitations = () => {
                             {
                                 invitationsList && invitationsList.map((invitation) => (
                                     <Card className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer'>
-
+                                       
                                         <div className='flex items-center'>
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" width="90px" height="70px">
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
@@ -147,11 +142,29 @@ const Invitations = () => {
 
 
                                             <div className='ml-4'>
-                                                <h5 className="text-base font-bold tracking-tight text-gray-900 dark:text-white">
+                                                <h5 className="text-base font-medium tracking-tight text-gray-900 dark:text-white">
                                                     <p>
                                                         {invitation.email}
                                                     </p>
                                                 </h5>
+                                                <span className='mt-1 flex'>
+                                                    Status:
+                                                    {
+                                                        invitation.status === 'pending'
+                                                            ? <p className='ml-1 text-orange-500'>
+                                                                {TextTittlecase(invitation.status)}
+                                                            </p>
+                                                            : invitation.status === 'accepted'
+                                                                ? <p className='ml-1 text-green-500'>
+                                                                    {TextTittlecase(invitation.status)}
+                                                                </p>
+                                                                : <p className='ml-1 text-red-500'>
+                                                                    {TextTittlecase(invitation.status)}
+                                                                </p>
+
+                                                    }
+                                                </span>
+
                                                 <div className="flow-root h-auto">
                                                     <ul className="divide-y divide-gray-200 dark:divide-gray-700">
                                                         <li className="py-3 sm:py-4 overflow-auto">
