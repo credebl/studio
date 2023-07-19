@@ -2,12 +2,15 @@ import { Alert, Avatar, Spinner } from 'flowbite-react';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { useEffect, useState } from 'react';
 
+import { Avatar } from 'flowbite-react';
+import CustomAvatar from '../Avatar';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
 import type { Organisation } from './interfaces'
 import OrganizationDetails from './OrganizationDetails';
 import WalletSpinup from './WalletSpinup';
 import { getFromLocalStorage } from '../../api/Auth';
+
 import { getOrganizationById } from '../../api/organization';
 
 const Dashboard = () => {
@@ -15,10 +18,7 @@ const Dashboard = () => {
 
     const [walletStatus, setWalletStatus] = useState<boolean>(false);
 
-    const [success, setSuccess] = useState<string | null>(null);
-    const [failure, setFailure] = useState<string | null>(null)
-
-    const [loading, setLoading] = useState<boolean | null>(true)
+    const [orgLogo, setOrgLogo] = useState<Array<Organisation> | null>(null)
 
     const fetchOrganizationDetails = async () => {
 
@@ -66,19 +66,49 @@ const Dashboard = () => {
         fetchOrganizationDetails()
     }
 
+    const redirectOrgUsers = () => {
+        // setToLocalStorage(storageKeys.ORG_ID, orgId.toString())
+        window.location.href = '/organizations/users'
+    }
+   
     return (
         <div className="px-4 pt-6">           
             <div className="mb-4 col-span-full xl:mb-2">
 
                 <BreadCrumbs />
                 <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-                    Organizations Dashboard
+
                 </h1>
             </div>
             <div>
+
                 <div
-                    className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
-                >                   
+                    className="mt-4 items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
+                >
+
+                    <div
+                        className="items-center sm:flex xl:block 2xl:flex sm:space-x-4 xl:space-x-0 2xl:space-x-4"
+                    ><div>
+                        </div>
+                        <div>
+                            {(orgData?.logoUrl) ? <CustomAvatar size='60' src={orgData?.logoUrl} /> : <CustomAvatar size='60' name={orgData?.name} />}
+                        </div>
+                        <div>
+                            <h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
+                                Dashboard:{orgData?.name}
+                            </h3>
+
+                            <p className='mb-1 text-base font-normal text-gray-900 dark:text-white'>
+                                {orgData?.description}
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    className="mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
+                >
                     <div
                         className="grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-3 2xl:grid-cols-4"
                     >
@@ -102,9 +132,9 @@ const Dashboard = () => {
 
                         </div>
                         <div
-                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
+                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer"
                         >
-                            <div className="w-full">
+                            <div className="w-full" onClick={redirectOrgUsers}>
                                 <h3 className="text-base font-normal text-gray-500 dark:text-gray-400">
                                     Users
                                 </h3>
@@ -159,39 +189,8 @@ const Dashboard = () => {
                     </div>
 
                 </div>
-                <div
-                    className="mt-4 items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
-                >
 
-                    <div
-                        className="items-center sm:flex xl:block 2xl:flex sm:space-x-4 xl:space-x-0 2xl:space-x-4"
-                    >
-                        <Avatar
-                            size="lg" />
-                        <div>
-                            <h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
-                                {orgData?.name}
-                            </h3>
-                            <p className='mb-1 text-base font-normal text-gray-900 dark:text-white'>
-                                {orgData?.description}
-                            </p>
 
-                        </div>
-                    </div>
-                </div>
-                  {
-                (success || failure) &&
-                <Alert
-                    color={success ? "success" : "failure"}
-                    onDismiss={() => setFailure(null)}
-                >
-                    <span>
-                        <p>
-                            {success || failure}
-                        </p>
-                    </span>
-                </Alert>
-            }
                 {
                     loading
                         ? (<div className="flex items-center justify-center m-4">

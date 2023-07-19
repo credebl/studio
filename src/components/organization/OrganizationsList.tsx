@@ -34,6 +34,7 @@ const OrganizationsList = () => {
   const [searchText, setSearchText] = useState("");
 
   const [organizationsList, setOrganizationList] = useState<Array<Organisation> | null>(null)
+  
   const props = { openModal, setOpenModal };
 
   const createOrganizationModel = () => {
