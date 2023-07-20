@@ -139,7 +139,31 @@ export const spinupSharedAgent = async (data: object) => {
     }
 }
 
-export const spinupSharedAgent = async (data: object) => {
+
+export const getOrganizationRoles = async () => {
 
 
+    const url = `${apiRoutes.organizations.orgRoles}`
+
+    const token = await getFromLocalStorage(storageKeys.TOKEN)
+
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+        }
+    }
+    const axiosPayload = {
+        url,
+        config
+    }
+
+    try {
+        return await axiosGet(axiosPayload);
+    }
+    catch (error) {
+        const err = error as Error
+        return err?.message
+    }
+}
 

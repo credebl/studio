@@ -1,7 +1,7 @@
+import { Alert, Avatar, Spinner } from 'flowbite-react';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { useEffect, useState } from 'react';
 
-import { Avatar } from 'flowbite-react';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
 import type { Organisation } from './interfaces'
@@ -15,7 +15,14 @@ const Dashboard = () => {
 
     const [walletStatus, setWalletStatus] = useState<boolean>(false);
 
+    const [success, setSuccess] = useState<string | null>(null);
+    const [failure, setFailure] = useState<string | null>(null)
+
+    const [loading, setLoading] = useState<boolean | null>(true)
+
     const fetchOrganizationDetails = async () => {
+
+        setLoading(true)
 
         const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
 
@@ -32,7 +39,10 @@ const Dashboard = () => {
                 setWalletStatus(true)
             }
             setOrgData(data?.data)
+        } else {
+            setFailure(response as string)
         }
+        setLoading(false)
 
     }
 
@@ -40,13 +50,24 @@ const Dashboard = () => {
         fetchOrganizationDetails();
     }, [])
 
+    useEffect(() => {
+        setTimeout(() => {
+            setSuccess(null)
+            setFailure(null)
+        }, 3000);
+    }, [success !== null, failure !== null])
+
+    const redirectDashboardInvitations = () => {
+        window.location.href = '/organizations/invitations'
+    }
+
     const setWalletSpinupStatus = (status: boolean) => {
-        setWalletStatus(status)
+        setSuccess('Agent spined up successfully')
+        fetchOrganizationDetails()
     }
 
     return (
-        <div className="px-4 pt-6">
-
+        <div className="px-4 pt-6">           
             <div className="mb-4 col-span-full xl:mb-2">
 
                 <BreadCrumbs />
@@ -57,7 +78,7 @@ const Dashboard = () => {
             <div>
                 <div
                     className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
-                >
+                >                   
                     <div
                         className="grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-3 2xl:grid-cols-4"
                     >
@@ -158,13 +179,32 @@ const Dashboard = () => {
                         </div>
                     </div>
                 </div>
+                  {
+                (success || failure) &&
+                <Alert
+                    color={success ? "success" : "failure"}
+                    onDismiss={() => setFailure(null)}
+                >
+                    <span>
+                        <p>
+                            {success || failure}
+                        </p>
+                    </span>
+                </Alert>
+            }
                 {
-                    
-                    walletStatus === true
-                    ? <OrganizationDetails orgData={orgData}/>                     
-                    : <WalletSpinup setWalletSpinupStatus={(flag) => setWalletSpinupStatus(flag)} />
-                }
+                    loading
+                        ? (<div className="flex items-center justify-center m-4">
+                            <Spinner
+                                color="info"
+                            />
+                        </div>)
+                        : walletStatus === true
+                            ? (<OrganizationDetails orgData={orgData} />)
+                            : (<WalletSpinup setWalletSpinupStatus={(flag: boolean) => setWalletSpinupStatus(flag)} />)
 
+                }
+              
             </div>
         </div>
     )
