@@ -8,7 +8,6 @@ import BreadCrumbs from '../BreadCrumbs';
 import CustomAvatar from '../Avatar'
 import type { Organisation } from './interfaces'
 import SearchInput from '../SearchInput';
-import SendOrgInvitationsModal from './SendOrgInvitationsModal'
 import { asset } from '../../lib/data';
 
 const Users = () => {
@@ -49,10 +48,7 @@ const Users = () => {
               onClick={()=>setOpenModal(true)}
             >
               Send Invitation
-            </Button>
-            <SendOrgInvitationsModal 
-                    openModal={openModal}
-                    setOpenModal= {setOpenModal} />
+            </Button>          
           </div>
           
           <div
