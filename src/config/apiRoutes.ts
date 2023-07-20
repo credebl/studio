@@ -11,7 +11,8 @@ export const apiRoutes = {
         getById: '/organization',
         agentDedicatedSpinup: '/agent-service/spinup',
         agentSharedSpinup: '/agent-service/tenant',
-        invitations: '/organization/invitations'
+        invitations: '/organization/invitations',
+        orgRoles: '/organization/roles'
     },
     schema: {
         create: '/schemas',
