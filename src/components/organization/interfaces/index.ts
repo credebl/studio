@@ -25,11 +25,11 @@ export interface OrgRole {
     id: number
     name: string
     description: string
-    createDateTime: string
-    createdBy: number
-    lastChangedDateTime: string
-    lastChangedBy: number
-    deletedAt: any
+    createDateTime?: string
+    createdBy?: number
+    lastChangedDateTime?: string
+    lastChangedBy?: number
+    deletedAt?: any
 }
 
 export interface OrgAgent {
@@ -61,4 +61,3 @@ export interface AgentsType {
     lastChangedBy: number
     agent: string
 }
-

@@ -104,7 +104,7 @@ const SchemaList = () => {
             </div>
             :
             <div className='Flex-wrap' style={{ display: 'flex', flexDirection: 'column' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+              <div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
                 {schemaList && schemaList.length > 0 &&
                   schemaList.map((element, key) => (
                     <div className='p-2' key={key}>

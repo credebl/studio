@@ -93,8 +93,8 @@ const OrganizationsList = () => {
   }
 
   const redirectOrgDashboard = (orgId: number) => {
-          setToLocalStorage(storageKeys.ORG_ID, orgId.toString())
-    			window.location.href = '/organizations/dashboard'
+    setToLocalStorage(storageKeys.ORG_ID, orgId.toString())
+    window.location.href = '/organizations/dashboard'
   }
 
 
@@ -124,30 +124,30 @@ const OrganizationsList = () => {
           </div>
 
           <CreateOrgFormModal
-              openModal={props.openModal}
-              setOpenModal={
-                props.setOpenModal
-              } />
+            openModal={props.openModal}
+            setOpenModal={
+              props.setOpenModal
+            } />
           {loading
             ? <div className="flex items-center justify-center mb-4">
               <Spinner
                 color="info"
               />
             </div>
-            : <div className="mt-1 grid grid-cols-3 gap-4">
+            : <div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
               {
                 organizationsList && organizationsList.map((org) => (
                   <Card onClick={() => redirectOrgDashboard(org.id)} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer'>
-                   
+
                     <div className='flex items-center'>
                       {(org.logoUrl) ? <CustomAvatar size='100' src={org.logoUrl} /> : <CustomAvatar size='100' name={org.name} />}
 
-                      <div className='ml-4'>                      
+                      <div className='ml-4'>
                         <h5 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
                           <p>
                             {org.name}
                           </p>
-                        </h5>                      
+                        </h5>
                         <div className="flow-root h-auto">
                           <ul className="divide-y divide-gray-200 dark:divide-gray-700">
                             <li className="py-3 sm:py-4 overflow-auto">
@@ -162,7 +162,7 @@ const OrganizationsList = () => {
                                           key={index}
                                           className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
                                         >
-                                          {role}
+                                          {role.charAt(0).toUpperCase() + role.slice(1)}
                                         </span>
                                       );
                                     })}
@@ -170,7 +170,7 @@ const OrganizationsList = () => {
                               </div>
                             </li>
                           </ul>
-                        </div>                        
+                        </div>
                       </div>
                     </div>
                   </Card>
