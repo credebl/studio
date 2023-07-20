@@ -70,7 +70,6 @@ const Dashboard = () => {
     }
 
     const redirectOrgUsers = () => {
-        // setToLocalStorage(storageKeys.ORG_ID, orgId.toString())
         window.location.href = '/organizations/users'
     }
    
@@ -98,7 +97,7 @@ const Dashboard = () => {
                         </div>
                         <div>
                             <h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
-                                Dashboard:{orgData?.name}
+                                {orgData?.name}
                             </h3>
 
                             <p className='mb-1 text-base font-normal text-gray-900 dark:text-white'>
