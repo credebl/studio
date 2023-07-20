@@ -50,10 +50,7 @@ const Users = () => {
               onClick={()=>setOpenModal(true)}
             >
               Send Invitation
-            </Button>
-            <SendOrgInvitationsModal 
-                    openModal={openModal}
-                    setOpenModal= {setOpenModal} />
+            </Button>          
           </div>
           
           <div
