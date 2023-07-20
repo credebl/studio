@@ -1,8 +1,9 @@
 ---
 import LayoutSidebar from '../../app/LayoutSidebar.astro';
-import Dashboard from '../../components/organization/Dashboard'
+import Dashboard from '../../components/organization/Dashboard';
+
 ---
 
 <LayoutSidebar>
-	<Dashboard client:load/>
+	<Dashboard client:visible/>
 </LayoutSidebar>

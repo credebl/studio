@@ -5,12 +5,11 @@ import { ChangeEvent, useEffect, useState } from 'react';
 
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
-import SendOrgInvitationsModal from './SendOrgInvitationsModal'
 import CustomAvatar from '../Avatar'
 import type { Organisation } from './interfaces'
 import SearchInput from '../SearchInput';
+import SendOrgInvitationsModal from './SendOrgInvitationsModal'
 import { asset } from '../../lib/data';
-
 
 const Users = () => {
   const [openModal, setOpenModal] = useState<boolean>(false);
@@ -43,9 +42,9 @@ const Users = () => {
           <div className="flex items-center justify-between mb-4">
             <SearchInput
               onInputChange={searchInputChange} />
-            <Button
-              
+            <Button              
               color='bg-primary-800'
+              disabled
               className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
               onClick={()=>setOpenModal(true)}
             >
@@ -140,12 +139,7 @@ const Users = () => {
                   </div>
                 </li>
                 
-              </ul>
-              <div>
-                <button
-                  className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-                >Save all</button>
-              </div>
+              </ul>          
             
           </div>
         </div>
