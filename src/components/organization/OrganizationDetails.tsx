@@ -16,7 +16,9 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
         <div
             className="mt-4 flex-col p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
         >
-
+            <h3 className="mb-1 mt-1 text-xl font-bold text-gray-900 dark:text-white">
+                Wallet Details
+            </h3>
             <div
                 className="items-center sm:flex xl:block 2xl:flex sm:space-x-4 xl:space-x-0 2xl:space-x-4"
             >
@@ -24,7 +26,7 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
                     <ul className="divide-y divide-gray-200 dark:divide-gray-700">
                         <li className="py-4">
                             <div className="flex items-center space-x-4">
-                               
+
                                 <div className="inline-flex min-w-0">
                                     <p
                                         className="text-base font-normal text-gray-500 truncate dark:text-gray-400"
