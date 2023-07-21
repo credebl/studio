@@ -5,6 +5,9 @@ export const apiRoutes = {
         verifyEmail:'/users/verify',
         userProfile: 'users/profile',
     },
+    users:{
+        invitations: 'users/invitations',
+    },
     organizations: {
         create: '/organization',
         getAll: '/organization',

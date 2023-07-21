@@ -351,7 +351,7 @@ const WalletSpinup = (
                         </Alert>
                     }
                     <h3 className="mb-1 mt-1 text-xl font-bold text-gray-900 dark:text-white">
-                        Agent Spinup
+                        Wallet &amp; Agent Spinup
                     </h3>
 
                 </div>

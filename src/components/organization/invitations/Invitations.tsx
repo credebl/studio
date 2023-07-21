@@ -28,6 +28,7 @@ const Invitations = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false)
     const [message, setMessage] = useState<string | null>(null)
+    const [error, setError] = useState<string | null>(null)
     const [currentPage, setCurrentPage] = useState(initialPageState);
     const timestamp = Date.now();
 
@@ -49,6 +50,7 @@ const Invitations = () => {
     //Fetch the user organization list
     const getAllInvitations = async () => {
         setLoading(true)
+
         const response = await getOrganizationInvitations(currentPage.pageNumber, currentPage.pageSize, searchText);
         const { data } = response as AxiosResponse
 
@@ -57,13 +59,17 @@ const Invitations = () => {
             const totalPages = data?.data?.totalPages;
 
             const invitationList = data?.data?.invitations
+
+            if (invitationList.length === 0) {
+                setError('No Data Found')
+            }
             setInvitationsList(invitationList)
             setCurrentPage({
                 ...currentPage,
                 total: totalPages
             })
         } else {
-            setMessage(response as string)
+            setError(response as string)
         }
 
         setLoading(false)
@@ -103,7 +109,7 @@ const Invitations = () => {
 
                 <BreadCrumbs />
                 <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-                    Invitations
+                    Send Invitations
                 </h1>
             </div>
             <div>
@@ -124,17 +130,18 @@ const Invitations = () => {
 
                     <SendInvitationModal
                         openModal={props.openModal}
-                        setMessage = {(data) => setMessage(data) }
+                        setMessage={(data) => setMessage(data)}
                         setOpenModal={
                             props.setOpenModal
                         } />
 
                     <AlertComponent
-                    message={message}
-                    type={'success'}
-                    onAlertClose = {() => {
-                        setMessage(null)
-                    }}
+                        message={message ? message : error}
+                        type={message ? 'success' : 'failure'}
+                        onAlertClose={() => {
+                            setMessage(null)
+                            setError(null)
+                        }}
                     />
                     {loading
                         ? <div className="flex items-center justify-center mb-4">
@@ -142,13 +149,13 @@ const Invitations = () => {
                                 color="info"
                             />
                         </div>
-                        : <div
+                        : invitationsList && invitationsList?.length > 0 && <div
                             className="p-2 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-3 dark:bg-gray-800"
                         >
                             <div className="flow-root">
                                 <ul className="divide-y divide-gray-200 dark:divide-gray-700">
                                     {
-                                        invitationsList && invitationsList.map((invitation) => (
+                                        invitationsList.map((invitation) => (
 
                                             <li className="p-4">
                                                 <div
@@ -156,7 +163,7 @@ const Invitations = () => {
                                                 >
                                                     <div className="flex space-x-4 xl:mb-4 2xl:mb-0">
                                                         <div>
-                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" width="70px" height="70px">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" width="60px" height="60px">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
                                                             </svg>
                                                         </div>
@@ -197,16 +204,23 @@ const Invitations = () => {
                                                     <span className='flex items-center'>
                                                         {
                                                             invitation.status === 'pending'
-                                                                ? <p className='text-lg font-normal text-red-500'>
+                                                                ? <span
+                                                                    className="bg-orange-100 text-orange-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-md border border-orange-100 dark:bg-gray-700 dark:border-orange-300 dark:text-orange-300"
+                                                                >
                                                                     {TextTittlecase(invitation.status)}
-                                                                </p>
+                                                                </span>
                                                                 : invitation.status === 'accepted'
-                                                                    ? <p className='text-lg font-normal text-red-500'>
+                                                                    ? <span
+                                                                        className="bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-md dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500"
+                                                                    >
                                                                         {TextTittlecase(invitation.status)}
-                                                                    </p>
-                                                                    : <p className='text-lg font-normal text-red-500'>
+                                                                    </span>
+                                                                    :
+                                                                    <span
+                                                                        className="bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-md border border-red-100 dark:border-red-400 dark:bg-gray-700 dark:text-red-400"
+                                                                    >
                                                                         {TextTittlecase(invitation.status)}
-                                                                    </p>
+                                                                    </span>
 
                                                         }
                                                     </span>

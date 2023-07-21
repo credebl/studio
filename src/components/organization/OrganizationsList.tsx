@@ -4,6 +4,7 @@ import { Button, Card, Pagination, Spinner } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 
+import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
 import CreateOrgFormModal from "./CreateOrgFormModal";
@@ -22,8 +23,8 @@ const initialPageState = {
 const OrganizationsList = () => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true)
-  const [message, setMessage] = useState<string>('')
-
+  const [message, setMessage] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(initialPageState);
   const onPageChange = (page: number) => {
     setCurrentPage({
@@ -34,6 +35,7 @@ const OrganizationsList = () => {
   const [searchText, setSearchText] = useState("");
 
   const [organizationsList, setOrganizationList] = useState<Array<Organisation> | null>(null)
+
   const props = { openModal, setOpenModal };
 
   const createOrganizationModel = () => {
@@ -56,13 +58,17 @@ const OrganizationsList = () => {
         return userOrg;
       })
 
+      if(orgList.length === 0){
+          setError('No Data Found')
+      }
+
       setOrganizationList(orgList)
       setCurrentPage({
         ...currentPage,
         total: totalPages
       })
     } else {
-      setMessage(response as string)
+      setError(response as string)
     }
 
     setLoading(false)
@@ -125,22 +131,31 @@ const OrganizationsList = () => {
 
           <CreateOrgFormModal
             openModal={props.openModal}
+            setMessage={(data) => setMessage(data)}
             setOpenModal={
               props.setOpenModal
             } />
+          <AlertComponent
+            message={message ? message : error}
+            type={message ? 'success' : 'failure'}
+            onAlertClose={() => {
+              setMessage(null)
+              setError(null)
+            }}
+          />
           {loading
             ? <div className="flex items-center justify-center mb-4">
               <Spinner
                 color="info"
               />
             </div>
-            : <div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
+            : organizationsList && organizationsList?.length > 0 && <div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
               {
-                organizationsList && organizationsList.map((org) => (
+                organizationsList.map((org) => (
                   <Card onClick={() => redirectOrgDashboard(org.id)} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer'>
 
                     <div className='flex items-center'>
-                      {(org.logoUrl) ? <CustomAvatar size='100' src={org.logoUrl} /> : <CustomAvatar size='100' name={org.name} />}
+                      {(org.logoUrl) ? <CustomAvatar size='80' src={org.logoUrl} /> : <CustomAvatar size='80' name={org.name} />}
 
                       <div className='ml-4'>
                         <h5 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">

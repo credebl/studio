@@ -1,4 +1,4 @@
-import type { OrgRole } from "."
+import type { OrgRole, Organisation } from "."
 
 export interface Invitation {
     id: number
@@ -12,4 +12,5 @@ export interface Invitation {
     status: string
     orgRoles: OrgRole[]
     email: string
+    organisation: Organisation
 }
