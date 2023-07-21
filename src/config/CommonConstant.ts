@@ -19,5 +19,6 @@ export const storageKeys = {
     TOKEN : 'access_token',
     ORG_ID: 'orgId',
     USER_PROFILE : 'user_profile',
-    PERMISSIONS: 'user_permissions' 
+    PERMISSIONS: 'user_permissions',
+    USER_EMAIL: 'user_email'
 }
