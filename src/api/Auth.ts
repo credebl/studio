@@ -12,7 +12,7 @@ export interface UserSignUpData {
 }
 
 export interface UserSignInData {
-    email: string, 
+    email: string | undefined, 
     isPasskey:boolean, 
     password?: string
 }

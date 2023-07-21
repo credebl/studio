@@ -24,8 +24,8 @@ export const apiRoutes = {
         verifyRegistration: 'fido/verify-registration/',
         getDeviceList: 'fido/user-details/',
         updateDeviceName: 'fido/device-name',
-        userUpdate: 'Fido/user-update',
-        fidoDevice: 'Fido/device',
+        userUpdate: 'fido/user-update',
+        fidoDevice: 'fido/device',
         fidoAuthentication: 'Fido/generate-authentication-options',
         fidoVerifyAuthentication: 'Fido/verify-authentication/'
 
