@@ -15,22 +15,27 @@ module.exports = {
 	theme: {
 		extend: {
 			colors: {
-				primary: {
-					50: '#eff6ff',
-					100: '#dbeafe',
-					200: '#bfdbfe',
-					300: '#93c5fd',
-					400: '#60a5fa',
-					500: '#3b82f6',
-					600: '#2563eb',
-					700: '#1d4ed8',
-					800: '#1e40af',
-					900: '#1e3a8a',
+				accentColor: '#20acdf',
+				
+				primary: {  
+					DEFAULT: '#3558A8',  
+					50: '#EDF1F9',  
+					100: '#DDE4F4', 
+					200: '#BECCEB', 
+					300: '#9FB3E1',  
+					400: '#809BD7',  
+					500: '#6182CD',  
+					600: '#426AC3',  
+					700: '#3558A8',  
+					800: '#28427D',  
+					900: '#1A2B53',  
+					950: '#13203D'
 				},
 			},
 			fontFamily: {
 				sans: [
-					'Inter var', ...defaultTheme.fontFamily.sans,
+					...defaultTheme.fontFamily.sans,
+					'Inter var', 
 					'ui-sans-serif',
 					'system-ui',
 					'-apple-system',

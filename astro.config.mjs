@@ -7,6 +7,15 @@ const DEV_PORT = 3000;
 
 // https://astro.build/config
 export default defineConfig({
+	experimental: {
+    viewTransitions: true,
+  },
+
+	redirects: {
+    '/login': '/authentication/sign-in',
+		'/register': '/authentication/sign-up',
+  },
+
   site: process.env.CI ? 'https://credebl-dev-ui.deno.dev' : `http://localhost:${DEV_PORT}`,
   base: process.env.CI ? '/' : undefined,
   output: 'server',
