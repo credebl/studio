@@ -1,7 +1,6 @@
 ---
 /* eslint max-lines: 'off' */
 
-import { url } from '../lib/data.js';
 ---
 
 <!-- TODO: Dynamic dropdowns -->
@@ -47,8 +46,8 @@ import { url } from '../lib/data.js';
 									type="text"
 									name="email"
 									id="mobile-search"
-									class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-200 dark:focus:ring-primary-500 dark:focus:border-primary-500"
-									placeholder="Search"
+									class="bg-gray-50 border border-gray-300 text-gray-900 text-sm roundedstroke-widthhing-primary-500 focus:border-primary-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-200 dark:focus:ring-primary-500 dark:focus:border-primary-500
+									placestroke-linecaph"
 								/>
 							</div>
 						</form>
@@ -72,6 +71,20 @@ import { url } from '../lib/data.js';
 									d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path></svg
 							>
 							<span class="ml-3" sidebar-toggle-item>Dashboard</span>
+						</a>
+					</li>
+					<li>
+						<a
+							href="/invitations"
+							class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
+						>
+							
+
+						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+							  <path d="M9.978 13.2329L19.37 6.56494C19.312 6.50191 19.2498 6.44278 19.184 6.38794L11.2 0.650939C10.8566 0.392942 10.4392 0.252371 10.0097 0.25003C9.58011 0.247688 9.16123 0.383702 8.815 0.637939L0.8 6.39994C0.726113 6.46135 0.65692 6.52821 0.593 6.59994L9.978 13.2329Z" fill="#6B7280"/>
+							  <path d="M11.181 14.8639C10.8416 15.1166 10.4292 15.2521 10.006 15.2499C9.57095 15.2509 9.14735 15.1106 8.799 14.8499L0 8.62694V17.9999C0 18.5304 0.210714 19.0391 0.585786 19.4142C0.960859 19.7892 1.46957 19.9999 2 19.9999H18C18.5304 19.9999 19.0391 19.7892 19.4142 19.4142C19.7893 19.0391 20 18.5304 20 17.9999V8.57294L11.181 14.8639Z" fill="#6B7280"/>
+							</svg>				
+									<span class="ml-3" sidebar-toggle-item>Received Invitations</span>
 						</a>
 					</li>
 					<li>
@@ -120,7 +133,7 @@ import { url } from '../lib/data.js';
 								<a
 									href="/organizations/invitations"
 									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
-									>Invitations</a
+									>Send Invitations</a
 								>
 							</li>
 							<li>
@@ -179,28 +192,28 @@ import { url } from '../lib/data.js';
 						<ul id="dropdown-ecosystem" class="hidden py-2 space-y-2">
 							<li>
 								<a
-									href={url('ecosystems')}
+									href='ecosystems'
 									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
 									>Ecosystems</a
 								>
 							</li>
 							<li>
 								<a
-									href={url('ecosystems/frameworks')}
+									href='ecosystems/frameworks'
 									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
 									>Trust Frameworks</a
 								>
 							</li>
 							<li>
 								<a
-									href={url('ecosystems/members')}
+									href='ecosystems/members'
 									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
 									>Members</a
 								>
 							</li>
 							<li>
 								<a
-									href={url('ecosystems/registries')}
+									href='ecosystems/registries'
 									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
 									>Trust Registries</a
 								>
@@ -210,7 +223,7 @@ import { url } from '../lib/data.js';
 					<li>
 						<!-- {{ if eq $page_slug "settings" }} -->
 						<a
-							href={url('settings')}
+							href='settings'
 							class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
 						>
 							<svg

@@ -6,6 +6,7 @@ import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, apiStatusCodes, imageSizeAccepted } from
 import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
 import { useEffect, useRef, useState } from "react";
 
+import { AlertComponent } from "../AlertComponent";
 import type { AxiosResponse } from 'axios';
 import { asset } from '../../lib/data.js';
 import { createOrganization } from "../../api/organization";
@@ -22,13 +23,12 @@ interface ILogoImage {
 }
 
 
-const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: boolean) => void }) => {
-
+const CreateOrgFormModal = (props: { openModal: boolean; setMessage: (message: string)=> void ; setOpenModal: (flag: boolean) => void }) => {
 
     const [logoImage, setLogoImage] = useState<ILogoImage>({
         logoFile: "",
         imagePreviewUrl: "",
-        fileName:''
+        fileName: ''
     })
 
     const [loading, setLoading] = useState<boolean>(false)
@@ -145,6 +145,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
         setLoading(false)
 
         if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+            props.setMessage(data?.message)
             props.setOpenModal(false)
 
         } else {
@@ -157,7 +158,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
             setLogoImage({
                 logoFile: "",
                 imagePreviewUrl: "",
-                fileName:''
+                fileName: ''
             })
             setOrgData(initialOrgData)
             props.setOpenModal(false)
@@ -165,6 +166,13 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
         }>
             <Modal.Header>Create Organization</Modal.Header>
             <Modal.Body>
+                 <AlertComponent
+                    message={erroMsg}
+                    type={'error'}
+                    onAlertClose = {() => {
+                        setErrMsg(null)
+                    }}
+                    />
                 <Formik
                     initialValues={initialOrgData}
                     validationSchema={
@@ -250,14 +258,16 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                                         htmlFor="name"
                                         value="Name"
                                     />
+                                    <span className='text-red-500 text-xs'>*</span>
+
                                 </div>
                                 <Field
                                     id="name"
                                     name="name"
-                                    value={formikHandlers.values.name}                                    
+                                    value={formikHandlers.values.name}
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                     placeholder="Your organization name" />
-  {
+                                {
                                     (formikHandlers?.errors?.name && formikHandlers?.touched?.name) &&
                                     <span className="text-red-500 text-xs">{formikHandlers?.errors?.name}</span>
                                 }
@@ -271,16 +281,18 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                                         htmlFor="description"
                                         value="Description"
                                     />
+                                    <span className='text-red-500 text-xs'>*</span>
+
                                 </div>
 
                                 <Field
                                     id="description"
                                     name="description"
                                     value={formikHandlers.values.description}
-                                    as='textarea'                                    
+                                    as='textarea'
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                     placeholder="Description of your organization" />
-   {
+                                {
                                     (formikHandlers?.errors?.description && formikHandlers?.touched?.description) &&
                                     <span className="text-red-500 text-xs">{formikHandlers?.errors?.description}</span>
                                 }
