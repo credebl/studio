@@ -1,8 +1,10 @@
 ---
 import { asset, url } from '../lib/data.js';
+import { ViewTransitions } from 'astro:transitions';
+
 ---
 
-<astro>
+<astro >
 	<div class="flex flex-col min-h-screen bg-white dark:bg-gray-900">
 		<header>
 			<nav
@@ -117,7 +119,7 @@ import { asset, url } from '../lib/data.js';
 				</div>
 			</nav>
 		</header>
-		<main class="grow">
+		<main class="grow" transition:animate="slide">
 			<section class="bg-white dark:bg-gray-900">
 				<div
 					class="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16 lg:px-12"
