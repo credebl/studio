@@ -167,3 +167,32 @@ export const getOrganizationRoles = async () => {
     }
 }
 
+//Get users of the organization
+export const getOrganizationUsers = async () => {
+
+    const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
+
+    const url = `${apiRoutes.users.fetchUsers}?orgId=${orgId}`
+
+    const token = await getFromLocalStorage(storageKeys.TOKEN)
+
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+        }
+    }
+    const axiosPayload = {
+        url,
+        config
+    }
+
+    try {
+        return await axiosGet(axiosPayload);
+    }
+    catch (error) {
+        const err = error as Error
+        return err?.message
+    }
+}
+

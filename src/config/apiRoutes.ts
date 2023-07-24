@@ -6,7 +6,8 @@ export const apiRoutes = {
         userProfile: 'users/profile',
     },
     users:{
-        invitations: 'users/invitations',
+        invitations: '/users/invitations',
+        fetchUsers: '/users',
     },
     organizations: {
         create: '/organization',
