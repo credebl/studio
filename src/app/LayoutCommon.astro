@@ -6,7 +6,7 @@ import { SITE_TITLE } from './constants.js';
 
 const { class: clazz } = Astro.props;
 
-import { ViewTransitions } from 'astro:transitions';
+// import { ViewTransitions } from 'astro:transitions';
 
 ---
 
@@ -16,7 +16,7 @@ import { ViewTransitions } from 'astro:transitions';
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>{SITE_TITLE} — v{pkg.version}</title>
-    <ViewTransitions fallback="swap"/>
+    <!-- <ViewTransitions fallback="swap"/> -->
 
 		<meta name="generator" content={Astro.generator} />
 		<meta name="description" content={pkg.description} />
@@ -46,7 +46,7 @@ import { ViewTransitions } from 'astro:transitions';
 			}
 		</script>
 	</head>
-	<body transition:animate="morph" 
+	<body 
 		class:list={[
 			//
 			clazz,
