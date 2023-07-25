@@ -1,8 +1,9 @@
 ---
 import LayoutStacked from '../../app/LayoutStacked.astro';
-import SignUpUser from '../../components/Authentication/SignUpUser'
+// import SignUpUser from '../../components/Authentication/SignUpUser'
+import SignUpFido from '../../components/Authentication/SignUpPasskey'
 ---
 
 <LayoutStacked>
-	<SignUpUser client:visible/>
+	<SignUpFido client:visible/>
 </LayoutStacked>
