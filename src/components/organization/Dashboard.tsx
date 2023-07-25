@@ -14,6 +14,10 @@ import User_Card from '../../assets/User_Card.svg';
 import WalletSpinup from './WalletSpinup';
 import { getFromLocalStorage } from '../../api/Auth';
 import { getOrganizationById } from '../../api/organization';
+import EditOrgdetailsModal from './EditOrgdetailsModal';
+
+// import EditOrgdetails from './EditOrgdetails';
+
 
 const Dashboard = () => {
     const [orgData, setOrgData] = useState<Organisation | null>(null);
@@ -26,7 +30,24 @@ const Dashboard = () => {
 
     const [loading, setLoading] = useState<boolean | null>(true)
 
+    const [openModal, setOpenModal] = useState<boolean>(false);
+    const props = { openModal, setOpenModal };
+
+    
+    const EditOrgDetails = () => {
+        props.setOpenModal(true)
+    }
+
+
+    const updateOrganizationData = (updatedData: Organisation) => {
+        setOrgData(updatedData);
+      };
+
+
+    
     const fetchOrganizationDetails = async () => {
+
+        
 
         setLoading(true)
 
@@ -60,6 +81,8 @@ const Dashboard = () => {
         }, 3000);
     }, [success !== null, failure !== null])
 
+    
+
     const redirectDashboardInvitations = () => {
         window.location.href = '/organizations/invitations'
     }
@@ -72,6 +95,10 @@ const Dashboard = () => {
     const redirectOrgUsers = () => {
         window.location.href = '/organizations/users'
     }
+    
+
+
+    
    
     return (
         <div className="px-4 pt-6">           
@@ -106,6 +133,44 @@ const Dashboard = () => {
 
                         </div>
                     </div>
+                    <div className="inline-flex items-center w-auto xl:w-full 2xl:w-auto">
+                    <button type="button" className="" 
+                   
+                    >
+            <svg aria-hidden="true" className="mr-1 -ml-1 w-5 h-5" 
+            fill="currentColor" viewBox="0 0 20 20"  
+            xmlns="http://www.w3.org/2000/svg" color='#3558A8' 
+            onClick={EditOrgDetails}><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"
+            >
+                </path><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"></path></svg>
+           
+        </button> 
+                    </div>
+                    {/* {
+                        props.openModal &&
+                        <EditOrgdetailsModal 
+                            openModal={props.openModal}
+                            setOpenModal={props.setOpenModal} setMessage={function (message: string): void {
+                                throw new Error('Function not implemented.');
+                            } } />
+                    } */}
+
+                    {/* Pass orgData and setOpenModal to the EditOrgdetailsModal component */}
+                    
+      {openModal && (
+        
+        <EditOrgdetailsModal
+          orgData={orgData}  
+          openModal={openModal}
+          setOpenModal={setOpenModal}
+          setMessage={(message: string) => {
+            throw new Error('Function not implemented.');
+          }}
+          
+        />
+      )}
+
+                    
                 </div>
 
                 <div
