@@ -7,8 +7,8 @@ export interface User {
     firstName: string
     lastName: string
     isEmailVerified: boolean
-    clientId: any
-    clientSecret: any
+    clientId: string
+    clientSecret: string
     keycloakUserId: string
     userOrgRoles: UserOrgRole[]
     roles: string[]
