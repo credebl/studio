@@ -4,6 +4,7 @@ export const apiRoutes = {
         sinIn: '/users/login',
         verifyEmail:'/users/verify',
         userProfile: 'users/profile',
+        checkUser:'/users/check-user/'
     },
     users:{
         invitations: 'users/invitations',

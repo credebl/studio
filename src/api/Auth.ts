@@ -87,6 +87,23 @@ export const verifyUserMail = async(payload: EmailVerifyData) => {
    
 }
 
+export const checkUserExist = async(payload: string) => {
+    const details ={
+        url:`${apiRoutes.auth.checkUser}${payload}`,
+        config: { headers: { "Content-type": "application/json" } }
+    }
+    try{
+        const response = await axiosGet(details)
+        return response
+    }
+    catch(error){
+        const err = error as Error
+        return err?.message
+    }
+
+   
+}
+
 export const passwordEncryption = (password: string): string => {
     const CRYPTO_PRIVATE_KEY: string = `${import.meta.env.PUBLIC_CRYPTO_PRIVATE_KEY}`
     const encryptedPassword: string = CryptoJS.AES.encrypt(JSON.stringify(password), CRYPTO_PRIVATE_KEY).toString()
