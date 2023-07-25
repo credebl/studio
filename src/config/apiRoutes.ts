@@ -7,7 +7,8 @@ export const apiRoutes = {
         checkUser:'/users/check-user/'
     },
     users:{
-        invitations: 'users/invitations',
+        invitations: '/users/invitations',
+        fetchUsers: '/users',
     },
     organizations: {
         create: '/organization',
@@ -16,7 +17,8 @@ export const apiRoutes = {
         agentDedicatedSpinup: '/agent-service/spinup',
         agentSharedSpinup: '/agent-service/tenant',
         invitations: '/organization/invitations',
-        orgRoles: '/organization/roles'
+        orgRoles: '/organization/roles',
+        editUserROle: '/organization/user-roles'
     },
     schema: {
         create: '/schemas',
