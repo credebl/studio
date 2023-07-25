@@ -60,9 +60,6 @@ const Dashboard = () => {
         }, 3000);
     }, [success !== null, failure !== null])
 
-    const redirectDashboardInvitations = () => {
-        window.location.href = '/organizations/invitations'
-    }
 
     const setWalletSpinupStatus = (status: boolean) => {
         setSuccess('Agent spined up successfully')
@@ -112,10 +109,10 @@ const Dashboard = () => {
                     className="mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
                 >
                     <div
-                        className="grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-3 2xl:grid-cols-4"
+                        className="grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-3 2xl:grid-cols-3"
                     >
                          <div
-                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${User_Card})`, minHeight:'122px' }} 
+                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${User_Card})`, minHeight:'133px' }} 
                         >
                             <div className="w-full" onClick={redirectOrgUsers}>
                                 <h3 className="text-base font-medium text-white">
@@ -127,24 +124,10 @@ const Dashboard = () => {
                                 >
 
                             </div>                          
-                        </div>
-                        <div
-                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${Invitation_Card})`, minHeight:'122px' }}
-                        >
-                            <div className="w-full" onClick={redirectDashboardInvitations}>
-                                <h3 className="text-base font-medium text-white">
-                                    Send Invitations
-                                </h3>
-                                <span
-                                    className="text-2xl font-semi-bold leading-none text-white sm:text-3xl dark:text-white"
-                                >134</span
-                                >
-                            </div>                         
-
-                        </div>
+                        </div>                     
                         
                         <div
-                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover"style={{ backgroundImage: `url(${Schema_Card})`, minHeight:'122px' }}
+                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover"style={{ backgroundImage: `url(${Schema_Card})`, minHeight:'133px' }}
                             onClick={() => {
                                 window.location.href = `/organizations/schemas`;
                             }}
@@ -163,7 +146,7 @@ const Dashboard = () => {
                         </div>
                         <div
                         
-                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${Credential_Card})`, minHeight:'122px' }} 
+                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${Credential_Card})`, minHeight:'133px' }} 
                             >
                                 
                             <div className="w-full" >

@@ -1,4 +1,4 @@
-import { axiosGet, axiosPost } from "../services/apiRequests"
+import { axiosGet, axiosPost, axiosPut } from "../services/apiRequests"
 
 import { apiRoutes } from "../config/apiRoutes";
 import { getFromLocalStorage } from "./Auth";
@@ -189,6 +189,40 @@ export const getOrganizationUsers = async () => {
 
     try {
         return await axiosGet(axiosPayload);
+    }
+    catch (error) {
+        const err = error as Error
+        return err?.message
+    }
+}
+
+// Edit user roles
+export const editOrganizationUserRole = async (userId: number, roles: number[]) => {
+
+    const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
+
+    const url = apiRoutes.organizations.editUserROle
+    const payload = {
+        orgId,
+        userId,
+        orgRoleId: roles
+    }
+    const token = await getFromLocalStorage(storageKeys.TOKEN)
+
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+        }
+    }
+    const axiosPayload = {
+        url,
+        payload,
+        config
+    }
+
+    try {
+        return await axiosPut(axiosPayload);
     }
     catch (error) {
         const err = error as Error

@@ -16,7 +16,8 @@ export const apiRoutes = {
         agentDedicatedSpinup: '/agent-service/spinup',
         agentSharedSpinup: '/agent-service/tenant',
         invitations: '/organization/invitations',
-        orgRoles: '/organization/roles'
+        orgRoles: '/organization/roles',
+        editUserROle: '/organization/user-roles'
     },
     schema: {
         create: '/schemas',
