@@ -92,8 +92,19 @@ const ReceivedInvitations = () => {
         setSearchText(e.target.value);
     }
 
-    const createInvitationsModel = () => {
-        props.setOpenModal(true)
+    const respondToInvitations = async (invite: Invitation, status: string) => {
+        setLoading(true)
+        const response = await acceptRejectInvitations(invite.id, invite.orgId, status);
+        const { data } = response as AxiosResponse
+
+        if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+            setMessage(data?.message)
+            setLoading(false)
+            window.location.href='/organizations'
+        } else {
+            setError(response as string)
+            setLoading(false)
+        }
     }
 
 
@@ -210,6 +221,34 @@ const ReceivedInvitations = () => {
                                                                 Received On: {invitation.createDateTime.split('T')[0]}
                                                             </p>
                                                         </div>
+
+
+                                                        <div>
+
+                                                        </div>
+                                                        <div className='flex'>
+                                                            <Button
+                                                                onClick={() => respondToInvitations(invitation, 'rejected')}
+                                                                color='bg-white'
+                                                                className='m-5 text-base font-medium text-center text-primary-700 bg-white border border-primary-700 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600  dark:focus:ring-primary-800 dark:bg-gray-800"'
+                                                            >
+                                                                <svg className="mr-1 h-6 w-6 text-primary-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                                </svg>
+
+                                                                Reject
+                                                            </Button>
+                                                            <Button
+                                                                onClick={() => respondToInvitations(invitation, 'accepted')}
+                                                                className='m-5 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+                                                            >
+                                                                <svg className="mr-1 h-6 w-6 text-white" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <path d="M5 12l5 5l10 -10" /></svg>
+                                                                Accept
+                                                            </Button>
+
+                                                        </div>
+
+
 
                                                     </div>
 
