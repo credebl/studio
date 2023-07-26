@@ -6,7 +6,8 @@ export const apiRoutes = {
         userProfile: 'users/profile',
     },
     users:{
-        invitations: 'users/invitations',
+        invitations: '/users/invitations',
+        fetchUsers: '/users',
     },
     organizations: {
         create: '/organization',
@@ -15,7 +16,8 @@ export const apiRoutes = {
         agentDedicatedSpinup: '/agent-service/spinup',
         agentSharedSpinup: '/agent-service/tenant',
         invitations: '/organization/invitations',
-        orgRoles: '/organization/roles'
+        orgRoles: '/organization/roles',
+        editUserROle: '/organization/user-roles'
     },
     schema: {
         create: '/schemas',
@@ -23,5 +25,16 @@ export const apiRoutes = {
         getSchemaById:'/schemas/id',
         createCredentialDefinition: '/credential-definitions',
         getCredDeffBySchemaId: '/schemas/credential-definitions'
+    },
+    fido: {
+        generateRegistration: 'fido/generate-registration-options',
+        verifyRegistration: 'fido/verify-registration/',
+        getDeviceList: 'fido/user-details/',
+        updateDeviceName: 'fido/device-name',
+        userUpdate: 'fido/user-update',
+        fidoDevice: 'fido/device',
+        fidoAuthentication: 'Fido/generate-authentication-options',
+        fidoVerifyAuthentication: 'Fido/verify-authentication/'
+
     }
 }

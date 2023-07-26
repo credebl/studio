@@ -1,8 +1,8 @@
 ---
 import LayoutSidebar from '../../app/LayoutSidebar.astro';
-import Users from '../../components/organization/Users';
+import Users from '../../components/organization/users/index'
 ---
 
 <LayoutSidebar>
-	<Users client:load/>
+	<Users client:visible/>
 </LayoutSidebar>

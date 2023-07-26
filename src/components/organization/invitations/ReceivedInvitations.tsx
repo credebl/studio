@@ -42,10 +42,6 @@ const ReceivedInvitations = () => {
     const [invitationsList, setInvitationsList] = useState<Array<Invitation> | null>(null)
     const props = { openModal, setOpenModal };
 
-    const createOrganizationModel = () => {
-        props.setOpenModal(true)
-    }
-
     //Fetch the user organization list
     const getAllInvitations = async () => {
         setLoading(true)
@@ -102,12 +98,11 @@ const ReceivedInvitations = () => {
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
             setMessage(data?.message)
             setLoading(false)
+            window.location.href='/organizations'
         } else {
             setError(response as string)
             setLoading(false)
         }
-        getAllInvitations()
-
     }
 
 
