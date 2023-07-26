@@ -1,16 +1,17 @@
-import { useEffect, useState } from 'react';
-import { getOrganizations } from '../../api/organization';
-import type { AxiosResponse } from 'axios';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
-import type { Organisation } from './interfaces'
-import CustomAvatar from '../Avatar'
 import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
+import { useEffect, useState } from 'react';
+
+import type { AxiosResponse } from 'axios';
 import { BiChevronDown } from "react-icons/bi";
+import CustomAvatar from '../Avatar'
+import type { Organisation } from './interfaces'
+import { getOrganizations } from '../../api/organization';
 
 const OrgDropDown = () => {
 	const [orgList, setOrgList] = useState<Organisation[]>([]);
 	const [activeOrg, setactiveOrg] = useState<Organisation | null>(null)
-	const [showModal, setShowModal] = useState(false);
+	
 
 
 	useEffect(() => {
@@ -28,8 +29,9 @@ const OrgDropDown = () => {
 		}
 	};
 
-	const goToOrgDashboard = async (orgId: number) => {
+	const goToOrgDashboard = async (orgId: number, roles: string[]) => {
 		await setToLocalStorage(storageKeys.ORG_ID, orgId.toString());
+		await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
 		window.location.href = '/organizations/dashboard';
 	};
 
@@ -43,7 +45,7 @@ const OrgDropDown = () => {
 
 	const redirectToCreateOrgModal = () => {
 		window.location.href = '/organizations?orgModal=true';
-		setShowModal(true);
+		
 	}
 
 	return (
@@ -85,22 +87,27 @@ const OrgDropDown = () => {
 						className="h-48 py-2 overflow-y-auto text-gray-700 dark:text-gray-200 text-sm"
 						aria-labelledby="dropdownUsersButton"
 					>
-						{orgList?.map((org) => (
-							<li key={org?.id} onClick={() => goToOrgDashboard(org?.id)}>
-								<a
-									href="#"
-									className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-								>
-									{org.logoUrl ? (
-										<CustomAvatar size="25" src={org?.logoUrl} round />
-									) : (
-										<CustomAvatar size="25" name={org?.name} round />
-									)}
+						{orgList?.map((org) => {
+							const roles: string[] = org.userOrgRoles.map(role => role.orgRole.name)
+							org.roles = roles
+							return (
+								<li key={org?.id} onClick={() => goToOrgDashboard(org?.id, org?.roles)}>
+									<a
+										href="#"
+										className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+									>
+										{org.logoUrl ? (
+											<CustomAvatar size="25" src={org?.logoUrl} round />
+										) : (
+											<CustomAvatar size="25" name={org?.name} round />
+										)}
 
-									<text className="ml-3">{org?.name}</text>
-								</a>
-							</li>
-						))}
+										<text className="ml-3">{org?.name}</text>
+									</a>
+								</li>
+							)
+						})
+						}
 					</ul>
 				) : (
 					<div className="text-black-100 text-sm text-center p-10">
