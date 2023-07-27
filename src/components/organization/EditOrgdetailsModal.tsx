@@ -4,12 +4,11 @@ import { Avatar, Button, Label, Modal } from 'flowbite-react';
 import { Field, Form, Formik, FormikHelpers } from 'formik';
 import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, apiStatusCodes, imageSizeAccepted } from '../../config/CommonConstant'
 import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
-import { useEffect, useRef, useState } from "react";
-
+import { useEffect, useState } from "react";
 import { AlertComponent } from "../AlertComponent";
 import type { AxiosResponse } from 'axios';
-import { asset } from '../../lib/data.js';
-import { createOrganization } from "../../api/organization";
+// import { asset } from '../../lib/data.js';
+import { updateOrganization } from "../../api/organization";
 import type { Organisation } from "./interfaces";
 
 interface Values {
@@ -27,6 +26,7 @@ interface EditOrgdetailsModalProps {
     openModal: boolean;
     setMessage: (message: string) => void;
     setOpenModal: (flag: boolean) => void;
+    onEditSucess?:() =>void;
     orgData: Organisation | null; 
   }
 
@@ -37,8 +37,6 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps)=> {
         fileName: ''
     })
 
-
- 
 
     const [loading, setLoading] = useState<boolean>(false)
 
@@ -157,30 +155,33 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps)=> {
         }
     }
 
-    const sumitCreateOrganization = async (values: Values) => {
-        setLoading(true)
+        const submitUpdateOrganization = async (values: Values) => {
+            setLoading(true)
 
-        const orgData = {
-            name: values.name,
-            description: values.description,
-            logo: logoImage?.imagePreviewUrl as string || "",
-            website: ""
+            const orgData = {
+                orgId: props?.orgData?.id,
+                name: values.name,
+                description: values.description,
+                logo: logoImage?.imagePreviewUrl as string || "",
+                website: ""
+            }
+
+            const resUpdateOrg = await updateOrganization(orgData)
+
+            const { data } = resUpdateOrg as AxiosResponse
+            setLoading(false)
+
+            if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+                if(props?.onEditSucess){
+                    props?.onEditSucess()
+                }
+                props.setOpenModal(false)
+
+            } else {
+                setErrMsg(resUpdateOrg as string)
+            }
         }
-
-        const resCreateOrg = await createOrganization(orgData)
-
-        const { data } = resCreateOrg as AxiosResponse
-        setLoading(false)
-
-        if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-            props.setMessage(data?.message)
-            props.setOpenModal(false)
-
-        } else {
-            setErrMsg(resCreateOrg as string)
-        }
-    }
-
+        
     return (
         <Modal show={props.openModal} onClose={() => {
             setLogoImage({
@@ -230,7 +231,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps)=> {
                         { resetForm }: FormikHelpers<Values>
                     ) => {
 
-                        sumitCreateOrganization(values)
+                        submitUpdateOrganization(values)
 
                     }}
                 >

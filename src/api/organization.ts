@@ -1,4 +1,4 @@
-import { axiosGet, axiosPost } from "../services/apiRequests"
+import { axiosGet, axiosPost, axiosPut } from "../services/apiRequests"
 
 import { apiRoutes } from "../config/apiRoutes";
 import { getFromLocalStorage } from "./Auth";
@@ -31,6 +31,34 @@ export const createOrganization = async (data: object) => {
         return err?.message
     }
 }
+
+export const updateOrganization = async (data: object) => {
+
+    const url = apiRoutes.organizations.update
+    const payload = data
+    const token = await getFromLocalStorage(storageKeys.TOKEN)
+
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+        }
+    }
+    const axiosPayload = {
+        url,
+        payload,
+        config
+    }
+
+    try {
+        return await axiosPut(axiosPayload);
+    }
+    catch (error) {
+        const err = error as Error
+        return err?.message
+    }
+}
+
 
 export const getOrganizations = async (pageNumber: number, pageSize: number, search = '') => {
 

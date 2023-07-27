@@ -97,9 +97,6 @@ const Dashboard = () => {
         window.location.href = '/organizations/users'
     }
     
-
-
-    
    
     return (
         <div className="px-4 pt-6">           
@@ -164,6 +161,7 @@ const Dashboard = () => {
           orgData={orgData}  
           openModal={openModal}
           setOpenModal={setOpenModal}
+          onEditSucess={fetchOrganizationDetails}
           setMessage={(message: string) => {
             throw new Error('Function not implemented.');
           }}
