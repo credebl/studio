@@ -10,6 +10,7 @@ export const apiRoutes = {
     },
     organizations: {
         create: '/organization',
+        update: '/organization',
         getAll: '/organization',
         getById: '/organization',
         agentDedicatedSpinup: '/agent-service/spinup',
