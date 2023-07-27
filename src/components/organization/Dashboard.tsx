@@ -139,7 +139,7 @@ const Dashboard = () => {
                         >
                             <div className="w-full">
                                 <h3 className="text-base font-medium text-white">
-                                    Invitations
+                                    Sent Invitations
                                 </h3>
                                 <span
                                     className="text-2xl font-semi-bold leading-none text-white sm:text-3xl dark:text-white"

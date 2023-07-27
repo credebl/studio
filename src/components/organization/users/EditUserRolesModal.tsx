@@ -27,7 +27,7 @@ interface RoleI {
 }
 
 
-const SendInvitationModal = (props: { openModal: boolean;  setMessage: (message: string)=> void ; setOpenModal: (flag: boolean)=> void }) => {
+const EditUserRoleModal = (props: { openModal: boolean;  setMessage: (message: string)=> void ; setOpenModal: (flag: boolean)=> void }) => {
 
     const [loading, setLoading] = useState<boolean>(false)
 
@@ -115,14 +115,14 @@ const SendInvitationModal = (props: { openModal: boolean;  setMessage: (message:
 
     return (
         <Modal
-            size="3xl"
+            size="2xl"
             show={props.openModal} onClose={() => {
                 setInvitations([])
                 setInvitationData(initialInvitationData)
                 props.setOpenModal(false)
             }
             }>
-            <Modal.Header>Sent Invitations</Modal.Header>
+            <Modal.Header>Send Invitations</Modal.Header>
             <Modal.Body>
                  <AlertComponent
                     message={erroMsg}
@@ -198,19 +198,19 @@ const SendInvitationModal = (props: { openModal: boolean;  setMessage: (message:
                     invitations.length > 0 &&
                     <div>
                         <div
-                            className="p-2 my-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-3 dark:bg-gray-800"
+                            className="p-2 my-2 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-2 dark:bg-gray-800"
                         >
                             <ul className="divide-y divide-gray-200 dark:divide-gray-700">
                                 {
                                     invitations.map((invitation) => (
 
-                                        <li className="p-4">
+                                        <li className="p-2">
                                             <div
                                                 className="flex justify-between xl:block 2xl:flex align-center 2xl:space-x-4"
                                             >
-                                                <div className="flex space-x-4 xl:mb-4 2xl:mb-0">
+                                                <div className="flex flex-wrap space-x-4 xl:mb-4 2xl:mb-0">
                                                     <div>
-                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" width="90px" height="70px">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" width="40px" height="40px">
                                                             <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
                                                         </svg>
                                                     </div>
@@ -265,4 +265,4 @@ const SendInvitationModal = (props: { openModal: boolean;  setMessage: (message:
     )
 }
 
-export default SendInvitationModal;
+export default EditUserRoleModal;

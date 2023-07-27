@@ -5,6 +5,10 @@ export const apiRoutes = {
         verifyEmail:'/users/verify',
         userProfile: 'users/profile',
     },
+    users:{
+        invitations: '/users/invitations',
+        fetchUsers: '/users',
+    },
     organizations: {
         create: '/organization',
         getAll: '/organization',
