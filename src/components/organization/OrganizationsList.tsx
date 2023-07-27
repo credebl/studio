@@ -93,6 +93,16 @@ const OrganizationsList = () => {
     return () => clearTimeout(getData)
   }, [searchText, openModal, currentPage.pageNumber])
 
+  useEffect(() => {
+    const queryParameters = new URLSearchParams( window?.location?.search)
+    const isModel =  queryParameters.get("orgModal") || ''
+
+    if(isModel !== ''){
+      props.setOpenModal(true)
+    }
+
+}, [])
+
   //onCHnage of Search input text
   const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
