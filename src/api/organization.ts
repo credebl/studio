@@ -2,6 +2,7 @@ import { axiosGet, axiosPost, axiosPut } from "../services/apiRequests"
 
 import { apiRoutes } from "../config/apiRoutes";
 import { getFromLocalStorage } from "./Auth";
+import { getHeaderConfigs } from "../config/GetHeaderConfigs";
 import { storageKeys } from "../config/CommonConstant";
 
 export const createOrganization = async (data: object) => {
@@ -188,6 +189,54 @@ export const getOrganizationRoles = async () => {
 
     try {
         return await axiosGet(axiosPayload);
+    }
+    catch (error) {
+        const err = error as Error
+        return err?.message
+    }
+}
+
+//Get users of the organization
+export const getOrganizationUsers = async () => {
+
+    const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
+
+    const url = `${apiRoutes.users.fetchUsers}?orgId=${orgId}`
+
+    const axiosPayload = {
+        url,
+        config: await getHeaderConfigs()
+    }
+
+    try {
+        return axiosGet(axiosPayload);
+    }
+    catch (error) {
+        const err = error as Error
+        return err?.message
+    }
+}
+
+// Edit user roles
+export const editOrganizationUserRole = async (userId: number, roles: number[]) => {
+
+    const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
+
+    const url = apiRoutes.organizations.editUserROle
+    const payload = {
+        orgId,
+        userId,
+        orgRoleId: roles
+    }
+  
+    const axiosPayload = {
+        url,
+        payload,
+        config: await getHeaderConfigs()
+    }
+
+    try {
+        return axiosPut(axiosPayload);
     }
     catch (error) {
         const err = error as Error

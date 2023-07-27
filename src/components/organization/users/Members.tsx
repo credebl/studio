@@ -1,18 +1,15 @@
 'use client';
 
-import { Button, Pagination, Spinner } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
+import { Pagination, Spinner } from 'flowbite-react';
+import { getOrganizationUsers, getOrganizations } from '../../../api/organization';
 
 import { AlertComponent } from '../../AlertComponent';
 import type { AxiosResponse } from 'axios';
-import type { Invitation } from '../interfaces/invitations';
-import type { OrgRole } from '../interfaces'
+import EditUserRoleModal from './EditUserRolesModal';
 import SearchInput from '../../SearchInput';
-import SendInvitationModal from './SendInvitationModal';
-import { TextTittlecase } from '../../../utils/TextTransform';
+import type { User } from '../interfaces/users';
 import { apiStatusCodes } from '../../../config/CommonConstant';
-import { getOrganizationInvitations } from '../../../api/invitations';
-import { getOrganizations } from '../../../api/organization';
 
 const initialPageState = {
     pageNumber: 1,
@@ -21,7 +18,7 @@ const initialPageState = {
 };
 
 
-const Invitations = () => {
+const Members = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false)
     const [message, setMessage] = useState<string | null>(null)
@@ -37,30 +34,41 @@ const Invitations = () => {
     };
     const [searchText, setSearchText] = useState("");
 
-    const [invitationsList, setInvitationsList] = useState<Array<Invitation> | null>(null)
+    const [usersList, setUsersList] = useState<Array<User> | null>(null)
+    const [selectedUser, setSelectedUser] = useState<User | null>(null)
     const props = { openModal, setOpenModal };
 
+    const createOrganizationModel = () => {
+        props.setOpenModal(true)
+    }
+
     //Fetch the user organization list
-    const getAllInvitations = async () => {
+    const getAllUsers = async () => {
         setLoading(true)
 
-        const response = await getOrganizationInvitations(currentPage.pageNumber, currentPage.pageSize, searchText);
+        const response = await getOrganizationUsers();
         const { data } = response as AxiosResponse
 
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 
             const totalPages = data?.data?.totalPages;
 
-            const invitationList = data?.data?.invitations
+            const usersList = data?.data?.users.map((userOrg: User) => {
+                const roles: string[] = userOrg.userOrgRoles.map(role => role.orgRole.name)
+                userOrg.roles = roles
+                return userOrg;
+            })
 
-            if (invitationList.length === 0) {
+            if (usersList.length === 0) {
                 setError('No Data Found')
             }
-            setInvitationsList(invitationList)
+
+            setUsersList(usersList)
             setCurrentPage({
                 ...currentPage,
                 total: totalPages
             })
+
         } else {
             setError(response as string)
         }
@@ -76,11 +84,11 @@ const Invitations = () => {
 
         if (searchText.length >= 1) {
             getData = setTimeout(() => {
-                getAllInvitations()
+                getAllUsers()
 
             }, 1000)
         } else {
-            getAllInvitations()
+            getAllUsers()
         }
 
         return () => clearTimeout(getData)
@@ -91,12 +99,13 @@ const Invitations = () => {
         setSearchText(e.target.value);
     }
 
-    const createInvitationsModel = () => {
+    const editUserRole = (user: User) => {
+        setSelectedUser(user)
         props.setOpenModal(true)
     }
 
-
-    return (    
+    return (
+       
             <div>
                 <div
                     className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
@@ -104,17 +113,12 @@ const Invitations = () => {
                     <div className="flex items-center justify-between mb-4">
                         <SearchInput
                             onInputChange={searchInputChange}
-                        />
-                        <Button
-                            onClick={createInvitationsModel}
-                            className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
-                        >
-                            Send Invitations
-                        </Button>
+                        />                     
                     </div>
 
-                    <SendInvitationModal
+                    <EditUserRoleModal
                         openModal={props.openModal}
+                        user={selectedUser as User}
                         setMessage={(data) => setMessage(data)}
                         setOpenModal={
                             props.setOpenModal
@@ -134,29 +138,25 @@ const Invitations = () => {
                                 color="info"
                             />
                         </div>
-                        : invitationsList && invitationsList?.length > 0 && <div
+                        : usersList && usersList?.length > 0 && <div
                             className="p-2 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-3 dark:bg-gray-800"
                         >
                             <div className="flow-root">
                                 <ul className="divide-y divide-gray-200 dark:divide-gray-700">
                                     {
-                                        invitationsList.map((invitation) => (
+                                        usersList.map((user) => (
 
                                             <li className="p-4">
                                                 <div
                                                     className="flex flex-wrap justify-between xl:block 2xl:flex align-center 2xl:space-x-4"
                                                 >
                                                     <div className="flex space-x-4 xl:mb-4 2xl:mb-0">
-                                                        <div>
-                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" width="60px" height="60px">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-                                                            </svg>
-                                                        </div>
+                                                       
                                                         <div className="flex-1 min-w-0">
                                                             <p
-                                                                className="text-base font-semibold text-gray-900 leading-none truncate mb-0.5 dark:text-white"
+                                                                className="text-base font-semibold text-gray-900 leading-none truncate dark:text-white"
                                                             >
-                                                                {invitation.email}
+                                                                {user.firstName} {user.lastName}
                                                             </p>
 
                                                             <div className="flow-root h-auto">
@@ -165,15 +165,15 @@ const Invitations = () => {
                                                                         <div className="items-center space-x-4">
                                                                             <div className="inline-flex items-center text-base font-normal text-gray-900 dark:text-white">
                                                                                 Roles:
-                                                                                {invitation.orgRoles &&
-                                                                                    invitation.orgRoles.length > 0 &&
-                                                                                    invitation.orgRoles.map((role: OrgRole, index: number) => {
+                                                                                {user.roles &&
+                                                                                    user.roles.length > 0 &&
+                                                                                    user.roles.map((role, index: number) => {
                                                                                         return (
                                                                                             <span
                                                                                                 key={index}
                                                                                                 className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
                                                                                             >
-                                                                                                {role.name.charAt(0).toUpperCase() + role.name.slice(1)}
+                                                                                                {role.charAt(0).toUpperCase() + role.slice(1)}
                                                                                             </span>
                                                                                         );
                                                                                     })}
@@ -188,35 +188,26 @@ const Invitations = () => {
 
                                                     <span className='flex items-center'>
                                                         {
-                                                            invitation.status === 'pending'
-                                                                ? <span
-                                                                    className="bg-orange-100 text-orange-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-md border border-orange-100 dark:bg-gray-700 dark:border-orange-300 dark:text-orange-300"
-                                                                >
-                                                                    {TextTittlecase(invitation.status)}
-                                                                </span>
-                                                                : invitation.status === 'accepted'
-                                                                    ? <span
-                                                                        className="bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-md dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500"
-                                                                    >
-                                                                        {TextTittlecase(invitation.status)}
-                                                                    </span>
-                                                                    :
-                                                                    <span
-                                                                        className="bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-md border border-red-100 dark:border-red-400 dark:bg-gray-700 dark:text-red-400"
-                                                                    >
-                                                                        {TextTittlecase(invitation.status)}
-                                                                    </span>
-
+                                                            user.email
                                                         }
                                                     </span>
 
+                                                    {
+                                                        !user.roles.includes('owner')
+                                                            ? <p
+                                                                onClick={() => editUserRole(user)}
+                                                                className="cursor-pointer mr-2 flex items-center text-sm font-medium text-gray-500 dark:text-gray-400"
+                                                            >
+                                                                <svg aria-hidden="true" className="mr-1 -ml-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd"></path></svg>
+                                                            </p>
+                                                            : <p
+                                                                onClick={() => editUserRole(user)}
+                                                                className="invisible cursor-pointer mr-2 flex items-center text-sm font-medium text-gray-500 dark:text-gray-400"
+                                                            >
+                                                                <svg aria-hidden="true" className="mr-1 -ml-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd"></path></svg>
+                                                            </p>
+                                                    }
 
-                                                    <p
-                                                        className="mr-2 flex items-center text-sm font-medium text-gray-500 dark:text-gray-400"
-                                                    >
-                                                        Invited On: {invitation.createDateTime.split('T')[0]}
-                                                    </p>
-                                                  
                                                 </div>
                                             </li>
                                         ))
@@ -236,8 +227,7 @@ const Invitations = () => {
                     </div>
                 </div>
             </div>
-       
     )
 }
 
-export default Invitations;
+export default Members;
