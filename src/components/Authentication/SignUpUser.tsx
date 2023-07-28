@@ -12,16 +12,14 @@ import { UserSignUpData, passwordEncryption, registerUser } from '../../api/Auth
 import { apiStatusCodes, passwordRegex } from '../../config/CommonConstant.js';
 
 import type { AxiosResponse } from 'axios';
-import { pathRoutes } from '../../config/pathRoutes.js';
-import { supabase } from '../../supabase.js';
 import { useState } from 'react';
 
 interface Values {
 	firstName: string;
 	lastName: string;
 	email: string;
-	password: string,
-	confirmPassword: string
+    password:string,
+    confirmPassword:string
 }
 
 const SignUpUser = () => {
@@ -29,33 +27,23 @@ const SignUpUser = () => {
 	const [loading, setLoading] = useState<boolean>(false)
 	const [erroMsg, setErrMsg] = useState<string | null>(null)
 
-	const submit = async (values: Values) => {
-
-		const { data, error } = await supabase.auth.signUp({
-			email: values.email,
-			password: values.password,
-		})
-
-		console.log(`SINUP:SUPA::`, data);
-		console.log(`ERROR:SUPA::`, error);
-		
-
-		//   const payload: UserSignUpData ={
-		// 	firstName: values.firstName,
-		// 	lastName: values.lastName,
-		// 	email: values.email,
-		// 	password: passwordEncryption(values.password)
-		//   }
-		//    setLoading(true)
-		//    const userRsp = await registerUser(payload)
-		//    const { data } = userRsp as AxiosResponse
-		//    setLoading(false)
-		//    if(data?.statusCode === apiStatusCodes.API_STATUS_CREATED){
-		// 	window.location.href = `${pathRoutes.auth.sinIn}?signup=true`
-		//    }else{
-		//      setErrMsg(userRsp as string)
-		//    }
-	}
+	const submit = async(values: Values) =>{
+	  const payload: UserSignUpData ={
+		firstName: values.firstName,
+		lastName: values.lastName,
+		email: values.email,
+		password: passwordEncryption(values.password)
+	  }
+	   setLoading(true)
+       const userRsp = await registerUser(payload)
+	   const { data } = userRsp as AxiosResponse
+	   setLoading(false)
+	   if(data?.statusCode === apiStatusCodes.API_STATUS_CREATED){
+		window.location.href = '/authentication/sign-in?signup=true'
+	   }else{
+         setErrMsg(userRsp as string)
+	   }
+	} 
 
 	return (
 		<div className="min-h-screen align-middle flex pb-[12vh]">
@@ -70,8 +58,8 @@ const SignUpUser = () => {
 							firstName: '',
 							lastName: '',
 							email: '',
-							password: '',
-							confirmPassword: ''
+                            password:'',
+                            confirmPassword:''
 						}}
 						validationSchema={yup.object().shape({
 							firstName: yup
@@ -105,44 +93,44 @@ const SignUpUser = () => {
 						enableReinitialize
 						onSubmit={(
 							values: Values,
-						) => { submit(values) }}
+						) => {submit(values)}}
 					>
 						{(formikHandlers): JSX.Element => (
-							<Form className="mt-8 space-y-6" onSubmit={formikHandlers.handleSubmit}>
+							<Form className="mt-8 space-y-6"  onSubmit={formikHandlers.handleSubmit}>
 								<div>
 									<div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-										<Label htmlFor="firstName" value="First name" />
-										<span className='text-red-500 text-xs'>*</span>
+										<Label htmlFor="firstName" value="First name"/>
+                                        <span className='text-red-500 text-xs'>*</span>
 									</div>
 									<Field
 										id="firstName"
 										name="firstName"
 										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 									/>
-									{
-										(formikHandlers?.errors?.firstName && formikHandlers?.touched?.firstName) &&
-										<span className="text-red-500 text-xs">{formikHandlers?.errors?.firstName}</span>
-									}
+                                    {
+                                        (formikHandlers?.errors?.firstName && formikHandlers?.touched?.firstName) &&
+                                        <span className="text-red-500 text-xs">{formikHandlers?.errors?.firstName}</span>
+                                    }
 								</div>
 								<div>
 									<div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
 										<Label htmlFor="lastName" value="Last name" />
-										<span className='text-red-500 text-xs'>*</span>
+                                        <span className='text-red-500 text-xs'>*</span>
 									</div>
 									<Field
 										id="lastName"
 										name="lastName"
 										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 									/>
-									{
-										(formikHandlers?.errors?.lastName && formikHandlers?.touched?.lastName) &&
-										<span className="text-red-500 text-xs">{formikHandlers?.errors?.lastName}</span>
-									}
+                                    {
+                                        (formikHandlers?.errors?.lastName && formikHandlers?.touched?.lastName) &&
+                                        <span className="text-red-500 text-xs">{formikHandlers?.errors?.lastName}</span>
+                                    }
 								</div>
 								<div>
 									<div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
 										<Label htmlFor="email2" value="Email" />
-										<span className='text-red-500 text-xs'>*</span>
+                                        <span className='text-red-500 text-xs'>*</span>
 									</div>
 									<Field
 										id="email"
@@ -150,15 +138,15 @@ const SignUpUser = () => {
 										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 										type="email"
 									/>
-									{
-										(formikHandlers?.errors?.email && formikHandlers?.touched?.email) &&
-										<span className="text-red-500 text-xs">{formikHandlers?.errors?.email}</span>
-									}
+                                    {
+                                        (formikHandlers?.errors?.email && formikHandlers?.touched?.email) &&
+                                        <span className="text-red-500 text-xs">{formikHandlers?.errors?.email}</span>
+                                    }
 								</div>
 								<div>
 									<div className="mb-2 block">
 										<Label htmlFor="password" value="Password" />
-										<span className='text-red-500 text-xs'>*</span>
+                                        <span className='text-red-500 text-xs'>*</span>
 									</div>
 
 									<Field
@@ -167,15 +155,15 @@ const SignUpUser = () => {
 										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 										type="password"
 									/>
-									{
-										(formikHandlers?.errors?.password && formikHandlers?.touched?.password) &&
-										<span className="text-red-500 text-xs">{formikHandlers?.errors?.password}</span>
-									}
+                                    {
+                                        (formikHandlers?.errors?.password && formikHandlers?.touched?.password) &&
+                                        <span className="text-red-500 text-xs">{formikHandlers?.errors?.password}</span>
+                                    }
 								</div>
 								<div>
 									<div className="mb-2 block">
 										<Label htmlFor="confirmPassword" value="Confirm password" />
-										<span className='text-red-500 text-xs'>*</span>
+                                        <span className='text-red-500 text-xs'>*</span>
 									</div>
 									<Field
 										id="confirmPassword"
@@ -183,16 +171,16 @@ const SignUpUser = () => {
 										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 										type="password"
 									/>
-									{
-										(formikHandlers?.errors?.confirmPassword && formikHandlers?.touched?.confirmPassword) &&
-										<span className="text-red-500 text-xs">{formikHandlers?.errors?.confirmPassword}</span>
-									}
+                                    {
+                                        (formikHandlers?.errors?.confirmPassword && formikHandlers?.touched?.confirmPassword) &&
+                                        <span className="text-red-500 text-xs">{formikHandlers?.errors?.confirmPassword}</span>
+                                    }
 								</div>
 								{
 									erroMsg &&
 									<Alert
 										color="failure"
-										onDismiss={() => setErrMsg(null)}
+										onDismiss={()=>setErrMsg(null)}
 									>
 										<span>
 											<p>
@@ -213,14 +201,14 @@ const SignUpUser = () => {
 						)}
 					</Formik>
 					<div className="text-sm font-medium text-gray-500 dark:text-gray-400">
-						Already have an account?
-						<a
-							href="/authentication/sign-in"
-							className="text-primary-700 hover:underline dark:text-primary-500"
-						>
-							{` Sign in here.`}
-						</a>
-					</div>
+						Already have an account? 
+                        <a 
+                            href="/authentication/sign-in"
+					        className="text-primary-700 hover:underline dark:text-primary-500"
+					    >
+                        {` Sign in here.`}
+                        </a>
+			        </div>
 				</div>
 			</div>
 		</div>

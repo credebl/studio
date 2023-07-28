@@ -1,26 +1,19 @@
 import * as yup from 'yup';
 
-import type { AxiosError, AxiosResponse } from 'axios';
-import { Button, Checkbox, Label, TextInput } from 'flowbite-react';
+import { Button, Label } from 'flowbite-react';
 import {
 	Field,
 	Form,
 	Formik,
-	FormikHelpers,
-	FormikProps,
-	FormikValues,
 } from 'formik';
 import { UserSignInData, getUserProfile, loginUser, passwordEncryption, setToLocalStorage } from '../../api/Auth';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
-import { generateAuthenticationOption, verifyAuthentication } from '../../api/Fido';
 import { useEffect, useState } from 'react';
 
 import { Alert } from 'flowbite-react';
-import astro from '@astrojs/react'
-import { axiosPost } from '../../services/apiRequests';
-import { pathRoutes } from '../../config/pathRoutes';
+import type { AxiosResponse } from 'axios';
+import { generateAuthenticationOption, verifyAuthentication } from '../../api/Fido';
 import { startAuthentication } from '@simplewebauthn/browser';
-import { supabase } from '../../supabase';
 
 interface emailValue {
 	email: string;
@@ -48,66 +41,25 @@ const SignInUser = () => {
 	}, [])
 
 	const signInUser = async (values: passwordValue) => {
-
 		const payload: UserSignInData = {
 			email: email?.email,
 			isPasskey: false,
-			password: values.password
+			password: passwordEncryption(values.password)
 		}
+		setLoading(true)
+		const loginRsp = await loginUser(payload)
+		const { data } = loginRsp as AxiosResponse
 
-		const formData = new FormData();
-		formData.append('email', email?.email);
-		formData.append('password', values.password);
-
-		const details = {
-			url: "/api/auth/signin",
-			payload,
-			config: { headers: { "Content-type": "application/json" } }
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			await setToLocalStorage(storageKeys.TOKEN, data?.data?.access_token)
+			getUserDetails(data?.data?.access_token)
+		} else {
+			setLoading(false)
+			setFailur(loginRsp as string)
+			setTimeout(() => {
+				setFailur(null)
+			}, 3000)
 		}
-
-		const { data, error } = await supabase.auth.signInWithPassword({
-			email: email?.email,
-			password: values.password
-		})
-
-		console.log(`SIGNIn:SUPA::`, data);
-
-		console.log(`ERROR:SUPA::`, error);
-
-		const response = await fetch("/api/auth/signin", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(data), // Your data to be sent in the request body
-		})
-
-		// const response = await axiosPost(details)
-
-		if (response.redirected) {
-			window.location.assign(response.url);
-		}
-
-
-		// const payload: UserSignInData = {
-		// 	email: email?.email,
-		// 	isPasskey: false,
-		// 	password: passwordEncryption(values.password)
-		// }
-		// setLoading(true)
-		// const loginRsp = await loginUser(payload)
-		// const { data } = loginRsp as AxiosResponse
-
-		// if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-		// 	await setToLocalStorage(storageKeys.TOKEN, data?.data?.access_token)
-		// 	getUserDetails(data?.data?.access_token)
-		// } else {
-		// 	setLoading(false)
-		// 	setFailur(loginRsp as string)
-		// 	setTimeout(() => {
-		// 		setFailur(null)
-		// 	}, 3000)
-		// }
 	}
 
 	const saveEmail = (values: emailValue) => {
@@ -124,7 +76,7 @@ const SignInUser = () => {
 			await setToLocalStorage(storageKeys.USER_PROFILE, data?.data)
 			await setToLocalStorage(storageKeys.USER_EMAIL, data?.data?.email)
 
-			window.location.href = pathRoutes.users.dashboard
+			window.location.href = '/dashboard'
 		} else {
 			setFailur(userDetails as string)
 		}
@@ -149,7 +101,7 @@ const SignInUser = () => {
 		}
 	}
 
-	const verifyAuthenticationMethod = async (verifyAuthenticationObj: unknown, userData: { userName: string }): Promise<string | AxiosResponse> => {
+	const verifyAuthenticationMethod = async (verifyAuthenticationObj:unknown, userData: { userName: string }): Promise<string | AxiosResponse> => {
 		try {
 			return await verifyAuthentication(verifyAuthenticationObj, userData);
 		} catch (error) {
@@ -163,7 +115,7 @@ const SignInUser = () => {
 		try {
 			setFidoLoader(true)
 			const generateAuthenticationResponse: any = await generateAuthenticationOption({ userName: email });
-			const challangeId: string = generateAuthenticationResponse?.data?.data?.challenge;
+			const challangeId:string = generateAuthenticationResponse?.data?.data?.challenge;
 			setFidoUserError(generateAuthenticationResponse?.data?.error);
 			const opts = generateAuthenticationResponse?.data?.data;
 			const attResp = await startAuthentication(opts);
@@ -367,7 +319,7 @@ const SignInUser = () => {
 										}}
 										className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
 									>
-										Login using passkey
+										Login with passkey
 									</Button>
 									<div className="text-sm font-medium text-gray-500 dark:text-gray-400 text-primary-700 hover:underline dark:text-primary-500 pt-4" onClick={() => {
 										setPasswordFlag(true)

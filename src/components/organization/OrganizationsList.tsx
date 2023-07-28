@@ -14,7 +14,6 @@ import SearchInput from '../SearchInput';
 import { getOrganizations } from '../../api/organization';
 import { pathRoutes } from '../../config/pathRoutes';
 import { setToLocalStorage } from '../../api/Auth';
-import getUserSession from '../../config/auth';
 
 const initialPageState = {
   pageNumber: 1,
@@ -45,11 +44,7 @@ const OrganizationsList = () => {
   }
 
   //Fetch the user organization list
-  const getAllOrganizations = async () => {
-
-    const session = await getUserSession()
-    console.log(`SESSION::`, session);
-    
+  const getAllOrganizations = async () => {    
 
     setLoading(true)
     const response = await getOrganizations(currentPage.pageNumber, currentPage.pageSize, searchText);
