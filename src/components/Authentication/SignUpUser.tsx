@@ -2,32 +2,27 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import * as yup from 'yup';
 
-import { Alert, Button, Checkbox, Label, TextInput } from 'flowbite-react';
+import { Alert, Button, Label } from 'flowbite-react';
 import {
 	Field,
 	Form,
-	Formik,
-	FormikHelpers,
-	FormikProps,
-	FormikValues,
-	useFormikContext,
+	Formik
 } from 'formik';
-import { ToastContainer, toast } from 'react-toastify';
-import { AddPasswordDetails, UserSignUpData, addPasswordDetails, checkUserExist, passwordEncryption, sendVerificationMail } from '../../api/Auth.js';
+import { UserSignUpData, passwordEncryption, registerUser } from '../../api/Auth.js';
 import { apiStatusCodes, passwordRegex } from '../../config/CommonConstant.js';
-import { asset, url } from '../../lib/data.js';
 
-import type { AxiosError, AxiosResponse } from 'axios';
-import { FormEvent, useState } from 'react';
-import { addDeviceDetails, generateRegistrationOption, verifyRegistration } from '../../api/Fido.js';
-import { startRegistration } from '@simplewebauthn/browser';
-import type { IdeviceBody, RegistrationOptionInterface } from '../Profile/interfaces/index.js';
-import uuid4 from "uuid4";
-import secureRandomPassword from 'secure-random-password';
+import type { AxiosResponse } from 'axios';
+import { pathRoutes } from '../../config/pathRoutes.js';
+import { supabase } from '../../supabase.js';
+import { useState } from 'react';
 
-
-
-
+interface Values {
+	firstName: string;
+	lastName: string;
+	email: string;
+	password: string,
+	confirmPassword: string
+}
 
 const SignUpUser = () => {
 
@@ -48,200 +43,32 @@ const SignUpUser = () => {
 	const [addfailure, setAddFailur] = useState<string | null>(null)
 	const [fidoError, setFidoError] = useState("")
 
-	const showFidoError = (error: unknown): void => {
-		const err = error as AxiosError
-		if (err.message.includes("The operation either timed out or was not allowed")) {
-			const [errorMsg] = err.message.split('.')
-			setFidoError(errorMsg)
-			setTimeout(() => {
-				setFidoError("")
-			}, 5000)
-		} else {
-			setFidoError(err.message)
-			setTimeout(() => {
-				setFidoError("")
-			}, 5000)
-		}
-	}
+	const submit = async (values: Values) => {
 
-	const submit = async (passwordDetails: passwordValues) => {
-		const payload = {
-			password: passwordEncryption(passwordDetails?.password),
-			isPasskey: false,
-			firstName: userDetails.firstName,
-			lastName: userDetails.lastName
-		}
-		setLoading(true)
-
-		const userRsp = await addPasswordDetails(payload, email)
-		const { data } = userRsp as AxiosResponse
-		setLoading(false)
-		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			window.location.href = '/authentication/sign-in?signup=true'
-		} else {
-			setErrMsg(userRsp as string)
-		}
-		return userRsp;
-	}
-
-	const VerifyMail = async (email: string) => {
-		try {
-			const payload = {
-				email: email
-			}
-			setVerifyLoader(true)
-			const userRsp = await sendVerificationMail(payload);
-			const { data } = userRsp as AxiosResponse;
-			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-
-				setVerificationSuccess(data?.message)
-				// window.location.href = '/authentication/sign-in?signup=true';
-				setVerifyLoader(false)
-			} else {
-				setErrMsg(userRsp as string);
-				setVerifyLoader(false)
-			}
-			setTimeout(() => {
-				setVerificationSuccess('')
-				setErrMsg('')
-			}, 5000);
-			return data;
-		} catch (error) {
-			console.error('Error occurred:', error);
-			setErrMsg('An error occurred. Please try again later.');
-			setVerifyLoader(false)
-		}
-	};
-
-
-
-	//Save email
-	const ValidateEmail = async (values: emailValue) => {
-		setLoading(true)
-		const userRsp = await checkUserExist(values?.email)
-		const { data } = userRsp as AxiosResponse
-		setLoading(false)
-		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			if (data.data === 'New User') {
-				setEmail(values?.email)
-				await VerifyMail(values?.email)
-			}
-			else if (data.data.isEmailVerified === true && data?.data?.isKeycloak !== true) {
-				setEmail(values?.email)
-				setNextFlag(true)
-				setEnableName(true)
-			}
-		} else {
-			setErrMsg(userRsp as string)
-		}
-		setTimeout(() => {
-			setErrMsg('')
-		}, 5000);
-	}
-
-
-
-	const createPasskey = async () => {
-
-		registerWithPasskey(true)
-
-	}
-
-
-	const registerWithPasskey = async (flag: boolean): Promise<void> => {
-		try {
-			const RegistrationOption: RegistrationOptionInterface = {
-				userName: email,
-				deviceFlag: flag
-			}
-			// Generate Registration Option
-			const generateRegistrationResponse = await generateRegistrationOption(RegistrationOption)
-			const { data } = generateRegistrationResponse as AxiosResponse
-			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				const opts = data?.data
-				const challangeId = data?.data?.challenge
-				if (opts) {
-					opts.authenticatorSelection = {
-						residentKey: "preferred",
-						requireResidentKey: false,
-						userVerification: "preferred"
-					}
-				}
-				setLoading(false)
-				const attResp = await startRegistration(opts)
-				const verifyRegistrationObj = {
-					...attResp,
-					challangeId
-				}
-
-				await verifyRegistrationMethod(verifyRegistrationObj, email);
-			} else {
-				setErrMsg(generateRegistrationResponse as string)
-			}
-		} catch (error) {
-			showFidoError(error)
-		}
-	}
-	const verifyRegistrationMethod = async (verifyRegistrationObj: any, OrgUserEmail: string) => {
-		try {
-			const verificationRegisterResp = await verifyRegistration(verifyRegistrationObj, OrgUserEmail)
-			const { data } = verificationRegisterResp as AxiosResponse
-			const credentialID = data?.data?.newDevice?.credentialID
-
-			if (data?.data?.verified) {
-				let platformDeviceName = ''
-
-				if (verifyRegistrationObj?.authenticatorAttachment === "cross-platform") {
-					platformDeviceName = 'Passkey'
-				} else {
-					platformDeviceName = navigator.platform
-				}
-
-				const deviceBody: IdeviceBody = {
-					userName: OrgUserEmail,
-					credentialId: credentialID,
-					deviceFriendlyName: platformDeviceName
-				}
-				await addDeviceDetailsMethod(deviceBody)
-			}
-		} catch (error) {
-			showFidoError(error)
-		}
-	}
-	const addDeviceDetailsMethod = async (deviceBody: IdeviceBody) => {
-		try {
-			const deviceDetailsResp = await addDeviceDetails(deviceBody)
-			const { data } = deviceDetailsResp as AxiosResponse
-			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				const password = secureRandomPassword.randomPassword({
-					characters: secureRandomPassword.lower + secureRandomPassword.upper + secureRandomPassword.digits,
-					length: 12,
-				  });
-				const fidoPassword = {
-					password: `${password}@`,
-					confirmPassword: `${password}@`
-				}
-               
-				submit(fidoPassword)
-			} else {
-				setAddFailur(deviceDetailsResp as string)
-			}
-			setTimeout(() => {
-				setAddSuccess('')
-				setAddFailur('')
-			}, 5000);
-		} catch (error) {
-			showFidoError(error)
-		}
-	}
-
-	const setNameValue = (values: nameValues) => {
-		setUserDetails({
-			firstName: values.firstName,
-			lastName: values.lastName
+		const { data, error } = await supabase.auth.signUp({
+			email: values.email,
+			password: values.password,
 		})
-		setContinuePasswordFlag(true)
-		setEnableName(false)
+
+		console.log(`SINUP:SUPA::`, data);
+		console.log(`ERROR:SUPA::`, error);
+		
+
+		//   const payload: UserSignUpData ={
+		// 	firstName: values.firstName,
+		// 	lastName: values.lastName,
+		// 	email: values.email,
+		// 	password: passwordEncryption(values.password)
+		//   }
+		//    setLoading(true)
+		//    const userRsp = await registerUser(payload)
+		//    const { data } = userRsp as AxiosResponse
+		//    setLoading(false)
+		//    if(data?.statusCode === apiStatusCodes.API_STATUS_CREATED){
+		// 	window.location.href = `${pathRoutes.auth.sinIn}?signup=true`
+		//    }else{
+		//      setErrMsg(userRsp as string)
+		//    }
 	}
 
 	return (
@@ -347,6 +174,9 @@ const SignUpUser = () => {
 						initialValues={{
 							firstName: '',
 							lastName: '',
+							email: '',
+							password: '',
+							confirmPassword: ''
 						}}
 						validationSchema={yup.object().shape({
 							firstName: yup
@@ -454,87 +284,61 @@ const SignUpUser = () => {
 						validateOnChange
 						enableReinitialize
 						onSubmit={(
-							values: passwordValues,
-						) => {
-							submit(values)
-						}}
+							values: Values,
+						) => { submit(values) }}
 					>
 						{(formikHandlers): JSX.Element => (
 							<Form className="mt-8 space-y-6" onSubmit={formikHandlers.handleSubmit}>
-								{enablePasswordField && <div>
-									<div>
-										<div className="mb-2 block">
-											<Label htmlFor="password" value="Password" />
-											<span className='text-red-500 text-xs'>*</span>
-										</div>
-										{/* Add show password method*/}
-										<Field
-											id="password"
-											name="password"
-											className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-											type="password"
-										/>
-										{
-											(formikHandlers?.errors?.password && formikHandlers?.touched?.password) &&
-											<span className="text-red-500 text-xs">{formikHandlers?.errors?.password}</span>
-										}
+								<div>
+									<div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+										<Label htmlFor="firstName" value="First name" />
+										<span className='text-red-500 text-xs'>*</span>
 									</div>
-									<div>
-										<div className="mb-2 block">
-											<Label htmlFor="confirmPassword" value="Confirm password" />
-											<span className='text-red-500 text-xs'>*</span>
-										</div>
-										<Field
-											id="confirmPassword"
-											name="confirmPassword"
-											className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-											type="password"
-										/>
-										{
-											(formikHandlers?.errors?.confirmPassword && formikHandlers?.touched?.confirmPassword) &&
-											<span className="text-red-500 text-xs">{formikHandlers?.errors?.confirmPassword}</span>
-										}
+									<Field
+										id="firstName"
+										name="firstName"
+										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+									/>
+									{
+										(formikHandlers?.errors?.firstName && formikHandlers?.touched?.firstName) &&
+										<span className="text-red-500 text-xs">{formikHandlers?.errors?.firstName}</span>
+									}
+								</div>
+								<div>
+									<div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+										<Label htmlFor="lastName" value="Last name" />
+										<span className='text-red-500 text-xs'>*</span>
 									</div>
-								</div>}
-								{nextflag && <>
-									<div className='pt-4'>
-										<div className='flex'>
-											<Button
-												onClick={() => {
-													createPasskey()
-												}}
-												color='bg-primary-800'
-												className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
-											>
-												Create Passkey
-											</Button>
-											{enablePasswordField &&
-												<Button
-													type="submit"
-													isProcessing={loading}
-													color='bg-primary-800'
-													className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 ml-auto'
-												>
-													Sign Up
-												</Button>
-											}
-										</div>
-										<div className="text-sm font-medium text-gray-500 dark:text-gray-400 text-primary-700 hover:underline dark:text-primary-500 pt-2 cursor-pointer" onClick={() => {
-											setEnablePasswordField(true)
-										}}>
-											{`Set password ?`}
-										</div>
+									<Field
+										id="lastName"
+										name="lastName"
+										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+									/>
+									{
+										(formikHandlers?.errors?.lastName && formikHandlers?.touched?.lastName) &&
+										<span className="text-red-500 text-xs">{formikHandlers?.errors?.lastName}</span>
+									}
+								</div>
+								<div>
+									<div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+										<Label htmlFor="email2" value="Email" />
+										<span className='text-red-500 text-xs'>*</span>
 									</div>
-								</>}
-								{/* <div className='pt-2 pb-2'>
-										<Button
-											type="submit"
-											isProcessing={loading}
-											color='bg-primary-800'
-											className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
-										>
-											Sign Up
-										</Button>
+									<Field
+										id="email"
+										name="email"
+										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+										type="email"
+									/>
+									{
+										(formikHandlers?.errors?.email && formikHandlers?.touched?.email) &&
+										<span className="text-red-500 text-xs">{formikHandlers?.errors?.email}</span>
+									}
+								</div>
+								<div>
+									<div className="mb-2 block">
+										<Label htmlFor="password" value="Password" />
+										<span className='text-red-500 text-xs'>*</span>
 									</div>
 									<div className="text-sm font-medium text-gray-500 dark:text-gray-400 text-primary-700 hover:underline dark:text-primary-500" onClick={() => {
 										setContinuePasswordFlag(false)
@@ -542,11 +346,58 @@ const SignUpUser = () => {
 										{`Passkey ?`}
 									</div> */}
 
+									<Field
+										id="password"
+										name="password"
+										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+										type="password"
+									/>
+									{
+										(formikHandlers?.errors?.password && formikHandlers?.touched?.password) &&
+										<span className="text-red-500 text-xs">{formikHandlers?.errors?.password}</span>
+									}
+								</div>
+								<div>
+									<div className="mb-2 block">
+										<Label htmlFor="confirmPassword" value="Confirm password" />
+										<span className='text-red-500 text-xs'>*</span>
+									</div>
+									<Field
+										id="confirmPassword"
+										name="confirmPassword"
+										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+										type="password"
+									/>
+									{
+										(formikHandlers?.errors?.confirmPassword && formikHandlers?.touched?.confirmPassword) &&
+										<span className="text-red-500 text-xs">{formikHandlers?.errors?.confirmPassword}</span>
+									}
+								</div>
+								{
+									erroMsg &&
+									<Alert
+										color="failure"
+										onDismiss={() => setErrMsg(null)}
+									>
+										<span>
+											<p>
+												{erroMsg}
+											</p>
+										</span>
+									</Alert>
+								}
+								<Button
+									type="submit"
+									isProcessing={loading}
+									color='bg-primary-800'
+									className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+								>
+									Sign Up
+								</Button>
 							</Form>
 						)}
-					</Formik>}
-
-					<div className="text-sm font-medium text-gray-500 dark:text-gray-400 pt-6">
+					</Formik>
+					<div className="text-sm font-medium text-gray-500 dark:text-gray-400">
 						Already have an account?
 						<a
 							href="/authentication/sign-in"

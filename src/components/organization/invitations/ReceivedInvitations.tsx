@@ -16,6 +16,7 @@ import { TextTittlecase } from '../../../utils/TextTransform';
 import { apiStatusCodes } from '../../../config/CommonConstant';
 import { getOrganizationInvitations } from '../../../api/invitations';
 import { getOrganizations } from '../../../api/organization';
+import { pathRoutes } from '../../../config/pathRoutes';
 
 const initialPageState = {
     pageNumber: 1,
@@ -100,7 +101,7 @@ const ReceivedInvitations = () => {
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
             setMessage(data?.message)
             setLoading(false)
-            window.location.href='/organizations'
+            window.location.href=pathRoutes.organizations.root
         } else {
             setError(response as string)
             setLoading(false)

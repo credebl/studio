@@ -11,6 +11,7 @@ import SchemaCard from '../../../commonComponents/SchemaCard';
 import SearchInput from '../../SearchInput';
 import { getAllSchemas } from '../../../api/Schema';
 import { getFromLocalStorage } from '../../../api/Auth';
+import { pathRoutes } from '../../../config/pathRoutes';
 
 const SchemaList = () => {
   const [schemaList, setSchemaList] = useState([])
@@ -102,7 +103,7 @@ const SchemaList = () => {
             <Button
               id='createSchemaButton'
               onClick={() => {
-                window.location.href = `/organizations/schemas/create?OrgId=${orgId}`
+                window.location.href = `${pathRoutes.organizations.createSchema}?OrgId=${orgId}`
               }}
               className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
             ><svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">

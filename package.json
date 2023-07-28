@@ -31,6 +31,7 @@
 		"@astrojs/tailwind": "^4.0.0",
 		"@faker-js/faker": "^7.6.0",
 		"@simplewebauthn/browser": "^7.2.0",
+		"@supabase/supabase-js": "^2.31.0",
 		"@tanstack/react-form": "^0.0.11",
 		"@types/react": "^18.2.14",
 		"@types/react-dom": "^18.2.6",
