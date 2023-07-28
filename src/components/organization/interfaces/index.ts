@@ -61,3 +61,10 @@ export interface AgentsType {
     lastChangedBy: number
     agent: string
 }
+
+export interface OrgDashboardI {
+    usersCount: number
+    schemasCount: number
+    credentialsCount: number
+    presentationsCount: number
+}
