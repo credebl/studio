@@ -29,16 +29,27 @@ const OrgDropDown = () => {
 
 	const goToOrgDashboard = async (orgId: number, roles: string[]) => {
 		await setToLocalStorage(storageKeys.ORG_ID, orgId.toString());
-		await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
 		window.location.href = '/organizations/dashboard';
 	};
 
 	const setActiveOrg = async (organizations: Organisation[]) => {
+		
+		let activeOrg: Organisation | null = null
+
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
 		if (orgId) {
-			const activeOrg = organizations?.find(org => org.id === Number(orgId))
+			activeOrg = organizations?.find(org => org.id === Number(orgId)) as Organisation
+			setactiveOrg(activeOrg || null)
+		} else {
+			activeOrg = organizations && organizations[0]
 			setactiveOrg(activeOrg || null)
 		}
+
+		const roles: string[] = activeOrg?.userOrgRoles.map(role => role.orgRole.name)
+		activeOrg.roles = roles
+
+		await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
+
 	}
 
 	return (

@@ -22,24 +22,6 @@ const OrganizationDetails = ({orgData}: {orgData: Organisation}) => {
             >
                 <div>
                     <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-                        <li className="py-4">
-                            <div className="flex items-center space-x-4">
-                               
-                                <div className="inline-flex min-w-0">
-                                    <p
-                                        className="text-base font-normal text-gray-500 truncate dark:text-gray-400"
-                                    >
-                                        Organization:
-                                    </p>
-                                    <p
-                                        className="ml-4 text-base font-semibold text-gray-900 truncate dark:text-white"
-                                    >
-                                        {orgData?.name}
-                                    </p>
-
-                                </div>
-                            </div>
-                        </li>
 
                         <li className="py-4">
                             <div className="flex items-center space-x-4">

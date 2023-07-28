@@ -6,16 +6,14 @@ import { Avatar } from 'flowbite-react';
 import CustomAvatar from '../Avatar';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
-import type { Organisation } from './interfaces'
+import Credential_Card from '../../assets/Credential_Card.svg';
+import CustomAvatar from '../Avatar';
+import Invitation_Card from '../../assets/Invitation_Card.svg';
+import type { Organisation, OrgDashboardI } from './interfaces'
 import OrganizationDetails from './OrganizationDetails';
 import WalletSpinup from './WalletSpinup';
 import { getFromLocalStorage } from '../../api/Auth';
-import Credential_Card from '../../assets/Credential_Card.svg';
-import User_Card from '../../assets/User_Card.svg';
-import Invitation_Card from '../../assets/Invitation_Card.svg';
-import Schema_Card from '../../assets/Schema_Card.svg';
-
-import { getOrganizationById } from '../../api/organization';
+import { getOrganizationById, getOrgDashboard } from '../../api/organization';
 import EditOrgdetailsModal from './EditOrgdetailsModal';
 
 // import EditOrgdetails from './EditOrgdetails';
@@ -26,12 +24,16 @@ const Dashboard = () => {
 
     const [walletStatus, setWalletStatus] = useState<boolean>(false);
 
-    const [orgLogo, setOrgLogo] = useState<Array<Organisation> | null>(null)
+    const [orgDashboard, setOrgDashboard] = useState<OrgDashboardI | null>(null)
+    const [success, setSuccess] = useState<string | null>(null);
+    const [failure, setFailure] = useState<string | null>(null)
+
+    const [loading, setLoading] = useState<boolean | null>(true)
 
     const [openModal, setOpenModal] = useState<boolean>(false);
     const props = { openModal, setOpenModal };
 
-    
+
     const EditOrgDetails = () => {
         props.setOpenModal(true)
     }
@@ -39,13 +41,11 @@ const Dashboard = () => {
 
     const updateOrganizationData = (updatedData: Organisation) => {
         setOrgData(updatedData);
-      };
+    };
 
 
-    
+
     const fetchOrganizationDetails = async () => {
-
-        
 
         setLoading(true)
 
@@ -71,8 +71,29 @@ const Dashboard = () => {
 
     }
 
+    const fetchOrganizationDashboard = async () => {
+
+        setLoading(true)
+
+        const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
+
+        const response = await getOrgDashboard(orgId as string);
+
+        const { data } = response as AxiosResponse
+
+        if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+            setOrgDashboard(data?.data)
+
+        } else {
+            setFailure(response as string)
+        }
+        setLoading(false)
+
+    }
+
     useEffect(() => {
         fetchOrganizationDetails();
+        fetchOrganizationDashboard()
     }, [])
 
     useEffect(() => {
@@ -82,7 +103,7 @@ const Dashboard = () => {
         }, 3000);
     }, [success !== null, failure !== null])
 
-    
+
 
     const redirectDashboardInvitations = () => {
         window.location.href = '/organizations/invitations'
@@ -96,10 +117,10 @@ const Dashboard = () => {
     const redirectOrgUsers = () => {
         window.location.href = '/organizations/users'
     }
-    
-   
+
+
     return (
-        <div className="px-4 pt-6">           
+        <div className="px-4 pt-6">
             <div className="mb-4 col-span-full xl:mb-2">
 
                 <BreadCrumbs />
@@ -132,44 +153,34 @@ const Dashboard = () => {
                         </div>
                     </div>
                     <div className="inline-flex items-center w-auto xl:w-full 2xl:w-auto">
-                    <button type="button" className="" 
-                   
-                    >
-            <svg aria-hidden="true" className="mr-1 -ml-1 w-5 h-5" 
-            fill="currentColor" viewBox="0 0 20 20"  
-            xmlns="http://www.w3.org/2000/svg" color='#3558A8' 
-            onClick={EditOrgDetails}><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"
-            >
-                </path><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"></path></svg>
-           
-        </button> 
+                        <button type="button" className=""
+
+                        >
+                            <svg aria-hidden="true" className="mr-1 -ml-1 w-5 h-5"
+                                fill="currentColor" viewBox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg" color='#3558A8'
+                                onClick={EditOrgDetails}><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"
+                                >
+                                </path><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"></path></svg>
+
+                        </button>
                     </div>
-                    {/* {
-                        props.openModal &&
-                        <EditOrgdetailsModal 
-                            openModal={props.openModal}
-                            setOpenModal={props.setOpenModal} setMessage={function (message: string): void {
+
+                    {openModal && (
+
+                        <EditOrgdetailsModal
+                            orgData={orgData}
+                            openModal={openModal}
+                            setOpenModal={setOpenModal}
+                            onEditSucess={fetchOrganizationDetails}
+                            setMessage={(message: string) => {
                                 throw new Error('Function not implemented.');
-                            } } />
-                    } */}
+                            }}
 
-                    {/* Pass orgData and setOpenModal to the EditOrgdetailsModal component */}
-                    
-      {openModal && (
-        
-        <EditOrgdetailsModal
-          orgData={orgData}  
-          openModal={openModal}
-          setOpenModal={setOpenModal}
-          onEditSucess={fetchOrganizationDetails}
-          setMessage={(message: string) => {
-            throw new Error('Function not implemented.');
-          }}
-          
-        />
-      )}
+                        />
+                    )}
 
-                    
+
                 </div>
 
                 <div
@@ -178,8 +189,8 @@ const Dashboard = () => {
                     <div
                         className="grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-3 2xl:grid-cols-4"
                     >
-                         <div
-                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${User_Card})` }} 
+                        <div
+                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${User_Card})`, minHeight: '133px' }}
                         >
                             <div className="w-full" onClick={redirectOrgUsers}>
                                 <h3 className="text-base font-medium text-white">
@@ -187,36 +198,14 @@ const Dashboard = () => {
                                 </h3>
                                 <span
                                     className="text-2xl font-semi-bold leading-none text-white sm:text-3xl dark:text-white"
-                                >2,340</span
+                                >{orgDashboard?.usersCount}</span
                                 >
 
                             </div>
-                            {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-10 h-10">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                            </svg> */}
-
-
                         </div>
-                        <div
-                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${Invitation_Card})` }}
-                        >
-                            <div className="w-full">
-                                <h3 className="text-base font-medium text-white">
-                                    Sent Invitations
-                                </h3>
-                                <span
-                                    className="text-2xl font-semi-bold leading-none text-white sm:text-3xl dark:text-white"
-                                >134</span
-                                >
-                            </div>
-                            {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-                            </svg> */}
 
-                        </div>
-                        
                         <div
-                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover"style={{ backgroundImage: `url(${Schema_Card})` }}
+                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${Schema_Card})`, minHeight: '133px' }}
                             onClick={() => {
                                 window.location.href = `/organizations/schemas`;
                             }}
@@ -227,46 +216,47 @@ const Dashboard = () => {
                                 </h3>
                                 <span
                                     className="text-2xl font-semi-bold leading-none text-white sm:text-3xl dark:text-white"
-                                >2,340</span
+                                >{orgDashboard?.schemasCount}</span
                                 >
 
                             </div>
-                            {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-10 h-10">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3" />
-                            </svg> */}
 
                         </div>
                         <div
-                        
-                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${Credential_Card})` }} 
-                            >
-                                
+
+                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${Credential_Card})`, minHeight: '133px' }}
+                        >
+
                             <div className="w-full" >
-                                
+
                                 <h3 className="text-base font-medium text-white">
-                                    
-                                    New Credentials
+
+                                    Credentials
                                 </h3>
                                 <span
-                                
+
                                     className="text-2xl font-semi-semi-bold leading-none text-white sm:text-3xl dark:text-white"
-                                >2,340</span
+                                >{orgDashboard?.credentialsCount}</span
                                 >
 
                             </div>
-                            {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-10 h-10">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 0V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v3" />
-                            </svg> */}
-
-
                         </div>
-                       
-                        
                     </div>
-
                 </div>
 
-
+                {
+                    (success || failure) &&
+                    <Alert
+                        color={success ? "success" : "failure"}
+                        onDismiss={() => setFailure(null)}
+                    >
+                        <span>
+                            <p>
+                                {success || failure}
+                            </p>
+                        </span>
+                    </Alert>
+                }
                 {
                     loading
                         ? (<div className="flex items-center justify-center m-4">
@@ -279,7 +269,7 @@ const Dashboard = () => {
                             : (<WalletSpinup setWalletSpinupStatus={(flag: boolean) => setWalletSpinupStatus(flag)} />)
 
                 }
-              
+
             </div>
         </div>
     )

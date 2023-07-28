@@ -83,3 +83,9 @@ export interface AgentsType {
     agent: string
 }
 
+export interface OrgDashboardI {
+    usersCount: number
+    schemasCount: number
+    credentialsCount: number
+    presentationsCount: number
+}
