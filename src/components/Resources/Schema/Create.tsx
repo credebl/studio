@@ -5,7 +5,6 @@ import { Alert, Button, Card, Label, Table, } from 'flowbite-react';
 import { Field, FieldArray, Form, Formik } from 'formik';
 import { useEffect, useState } from 'react';
 import { addSchema } from '../../../api/Schema';
-import SchemaCard from '../../../commonComponents/SchemaCard';
 import * as yup from 'yup';
 import { apiStatusCodes, schemaVersionRegex, storageKeys } from '../../../config/CommonConstant';
 import BreadCrumbs from '../../BreadCrumbs';
