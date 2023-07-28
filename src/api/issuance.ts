@@ -8,7 +8,24 @@ import { getFromLocalStorage } from './Auth';
 export const getIssuedCredentials = async (state: IssueCredential) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 	const url = `${apiRoutes.Issuance.getIssuedCredentials}?orgId=${orgId}&state=${state}`;
+    // const url = `${apiRoutes.organizations.getAll}?pageNumber=${1}&pageSize=${10}&search=${''}`
 
+	const axiosPayload = {
+		url,
+		config: await getHeaderConfigs(),
+	};
+
+	try {
+		return await axiosGet(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};
+
+export const getCredentialDefinitions = async (schemaId: string) => {
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+    const url = `${apiRoutes.Issuance.getCredDefBySchemaId}?schemaId=${schemaId}&orgId=${orgId}`;
 	const axiosPayload = {
 		url,
 		config: await getHeaderConfigs(),
