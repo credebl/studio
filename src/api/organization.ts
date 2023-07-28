@@ -112,6 +112,32 @@ export const getOrganizationById = async (orgId: string) => {
     }
 }
 
+export const getOrgDashboard = async (orgId: string) => {
+
+    const url = `${apiRoutes.organizations.getOrgDashboard}?orgId=${Number(orgId)}`
+
+    const token = await getFromLocalStorage(storageKeys.TOKEN)
+
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+        }
+    }
+    const axiosPayload = {
+        url,
+        config
+    }
+
+    try {
+        return axiosGet(axiosPayload);
+    }
+    catch (error) {
+        const err = error as Error
+        return err?.message
+    }
+}
+
 export const spinupDedicatedAgent = async (data: object) => {
 
     const url = apiRoutes.organizations.agentDedicatedSpinup
