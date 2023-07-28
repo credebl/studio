@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { pathRoutes } from '../config/pathRoutes';
 const instance = axios.create({
     baseURL: import.meta.env.PUBLIC_BASE_URL
 })
@@ -15,7 +16,7 @@ instance.interceptors.response.use(function (response) {
     const errorRes = error?.response;
 
     if(errorRes?.status === 401){
-        window.location.href = '/authentication/sign-in'
+        window.location.href = pathRoutes.auth.sinIn
     }
     
     return Promise.reject(error);

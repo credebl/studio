@@ -12,7 +12,9 @@ import CustomAvatar from '../Avatar'
 import type { Organisation } from './interfaces'
 import SearchInput from '../SearchInput';
 import { getOrganizations } from '../../api/organization';
+import { pathRoutes } from '../../config/pathRoutes';
 import { setToLocalStorage } from '../../api/Auth';
+import getUserSession from '../../config/auth';
 
 const initialPageState = {
   pageNumber: 1,
@@ -44,6 +46,11 @@ const OrganizationsList = () => {
 
   //Fetch the user organization list
   const getAllOrganizations = async () => {
+
+    const session = await getUserSession()
+    console.log(`SESSION::`, session);
+    
+
     setLoading(true)
     const response = await getOrganizations(currentPage.pageNumber, currentPage.pageSize, searchText);
     const { data } = response as AxiosResponse
@@ -100,7 +107,7 @@ const OrganizationsList = () => {
 
   const redirectOrgDashboard = (orgId: number) => {
     setToLocalStorage(storageKeys.ORG_ID, orgId.toString())
-    window.location.href = '/organizations/dashboard'
+    window.location.href = pathRoutes.organizations.dashboard
   }
 
 

@@ -1,4 +1,5 @@
 ---
+import { pathRoutes } from "../config/pathRoutes";
 /* eslint max-lines: 'off' */
 
 ---
@@ -59,7 +60,7 @@
 					</li>
 					<li>
 						<a
-							href="/dashboard"
+							href={pathRoutes.users.dashboard}
 							class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
 						>
 							<svg
@@ -75,7 +76,7 @@
 					</li>
 					<li>
 						<a
-							href="/invitations"
+							href={pathRoutes.users.invitations}
 							class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
 						>
 							
@@ -123,28 +124,28 @@
 						<ul id="dropdown-layouts" class="hidden py-2 space-y-2">
 							<li>
 								<a
-									href="/organizations"
+									href={pathRoutes.organizations.root}
 									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
 									>Organizations</a
 								>
 							</li>
 							<li>
 								<a
-									href="/organizations/invitations"
+									href={pathRoutes.organizations.invitations}
 									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
 									>Send Invitations</a
 								>
 							</li>
 							<li>
 								<a
-									href="/organizations/users"
+									href={pathRoutes.organizations.users}
 									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
 									>Users</a
 								>
 							</li>
 							<li>
 								<a
-									href="/organizations/credentials"
+									href={pathRoutes.organizations.credentials}
 									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
 									>Credentials</a
 								>
@@ -191,28 +192,28 @@
 						<ul id="dropdown-ecosystem" class="hidden py-2 space-y-2">
 							<li>
 								<a
-									href='ecosystems'
+									href={pathRoutes.ecosystems.root}
 									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
 									>Ecosystems</a
 								>
 							</li>
 							<li>
 								<a
-									href='ecosystems/frameworks'
+									href={pathRoutes.ecosystems.frameworks}
 									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
 									>Trust Frameworks</a
 								>
 							</li>
 							<li>
 								<a
-									href='ecosystems/members'
+									href={pathRoutes.ecosystems.members}
 									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
 									>Members</a
 								>
 							</li>
 							<li>
 								<a
-									href='ecosystems/registries'
+									href={pathRoutes.ecosystems.registries}
 									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
 									>Trust Registries</a
 								>
@@ -263,7 +264,7 @@
 						<span class="ml-3" sidebar-toggle-item>GitHub Repository</span>
 					</a>
 					<a
-						href="/docs"
+						href={pathRoutes.documentation.root}
 						target="_blank"
 						class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
 					>
