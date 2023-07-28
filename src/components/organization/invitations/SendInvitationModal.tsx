@@ -122,7 +122,7 @@ const SendInvitationModal = (props: { openModal: boolean;  setMessage: (message:
                 props.setOpenModal(false)
             }
             }>
-            <Modal.Header>Send Invitations</Modal.Header>
+            <Modal.Header>Sent Invitations</Modal.Header>
             <Modal.Body>
                  <AlertComponent
                     message={erroMsg}
