@@ -97,7 +97,7 @@ import { url } from '../lib/data.js';
 							<span class="ml-3" sidebar-toggle-item>Dashboard</span>
 						</a>
 					</li>
-					<li>
+					<!-- <li>
 						<a
 							href={pathRoutes.users.invitations}
 							class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
@@ -110,7 +110,7 @@ import { url } from '../lib/data.js';
 							</svg>				
 									<span class="ml-3" sidebar-toggle-item>Invitations</span>
 						</a>
-					</li>
+					</li> -->
 					<li>
 						<button
 							type="button"
@@ -243,9 +243,9 @@ import { url } from '../lib/data.js';
 							</li>
 						</ul>
 					</li>
-					<!-- <li>
-						 {{ if eq $page_slug "settings" }}
-						<a
+					<li>
+						<!-- {{ if eq $page_slug "settings" }} -->
+						<!-- <a
 							href="/settings"
 							class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
 						>
@@ -263,8 +263,8 @@ import { url } from '../lib/data.js';
 								></path>
 							</svg>
 							<span class="ml-3" sidebar-toggle-item>Settings</span>
-						</a>
-					</li>  -->
+						</a> -->
+					</li>
 
 				</ul>
 				<div class="pt-2 space-y-2">
@@ -287,7 +287,7 @@ import { url } from '../lib/data.js';
 						<span class="ml-3" sidebar-toggle-item>GitHub Repository</span>
 					</a>
 					<a
-						href={pathRoutes.documentation.root}
+						href="/docs"
 						target="_blank"
 						class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
 					>
@@ -302,8 +302,8 @@ import { url } from '../lib/data.js';
 								clip-rule="evenodd"></path></svg
 						>
 						<span class="ml-3" sidebar-toggle-item>Documentation</span>
-					</a> 
-					<!-- <a
+					</a>
+					<a
 						href="/alerts"
 						target="_blank"
 						class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
@@ -318,8 +318,8 @@ import { url } from '../lib/data.js';
 							></path></svg
 						>
 						<span class="ml-3" sidebar-toggle-item>FAQ's</span>
-					</a>  -->
-					 <a
+					</a>
+					<a
 						href="https://github.com/credebl/platform/issues"
 						target="_blank"
 						class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
@@ -335,7 +335,7 @@ import { url } from '../lib/data.js';
 								clip-rule="evenodd"></path></svg
 						>
 						<span class="ml-3" sidebar-toggle-item>Support</span>
-					</a> 
+					</a>
 				</div>
 			</div>
 		</div>

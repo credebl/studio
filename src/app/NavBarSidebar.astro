@@ -273,14 +273,35 @@ import SignOutButton  from '../components/SignOutButton/index'
 							<div class="text-sm font-medium text-gray-900 dark:text-white">
 								Sales
 							</div>
-						</a>
-						<a href="#" class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600">
-							<svg class="mx-auto mb-1 text-gray-500 w-7 h-7 dark:text-gray-400" fill="currentColor"
-								viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-								<path
-									d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z">
-								</path>
-							</svg>
+						</a> -->
+						<a
+						href="./invitations"
+						class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
+					>
+								<svg
+								class="mx-auto mb-1 text-gray-500 w-7 h-7 dark:text-gray-400"
+								 xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+									  <path d="M9.978 13.2329L19.37 6.56494C19.312 6.50191 19.2498 6.44278 19.184 6.38794L11.2 0.650939C10.8566 0.392942 10.4392 0.252371 10.0097 0.25003C9.58011 0.247688 9.16123 0.383702 8.815 0.637939L0.8 6.39994C0.726113 6.46135 0.65692 6.52821 0.593 6.59994L9.978 13.2329Z" fill="#6B7280"/>
+									  <path d="M11.181 14.8639C10.8416 15.1166 10.4292 15.2521 10.006 15.2499C9.57095 15.2509 9.14735 15.1106 8.799 14.8499L0 8.62694V17.9999C0 18.5304 0.210714 19.0391 0.585786 19.4142C0.960859 19.7892 1.46957 19.9999 2 19.9999H18C18.5304 19.9999 19.0391 19.7892 19.4142 19.4142C19.7893 19.0391 20 18.5304 20 17.9999V8.57294L11.181 14.8639Z" fill="#6B7280"/>
+									</svg>
+						
+						<div class="text-sm font-medium text-gray-900 dark:text-white">
+							Invitations
+						</div>
+					</a>
+						<a
+							href="./organizations/users"
+							class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
+						>
+							<svg
+								class="mx-auto mb-1 text-gray-500 w-7 h-7 dark:text-gray-400"
+								fill="currentColor"
+								viewBox="0 0 20 20"
+								xmlns="http://www.w3.org/2000/svg"
+								><path
+									d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"
+								></path></svg
+							>
 							<div class="text-sm font-medium text-gray-900 dark:text-white">
 								Users
 							</div>
@@ -373,8 +394,9 @@ import SignOutButton  from '../components/SignOutButton/index'
 
 				<!-- Profile -->
 				<div class="flex items-center ml-3">
-					<div>
-						<button type="button"
+					<div >
+						<button
+							type="button"
 							class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
 							id="user-menu-button-2" aria-expanded="false" data-dropdown-toggle="dropdown-2">
 							<span class="sr-only">Open user menu</span>
@@ -383,31 +405,36 @@ import SignOutButton  from '../components/SignOutButton/index'
 						</button>
 					</div>
 					<!-- Dropdown menu -->
-					<div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600"
-						id="dropdown-2">
-
-						<DisplayUser client:visible />
+					<div
+						class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600"
+						id="dropdown-2"
+					>
+						<DisplayUser client:visible/>
 						<ul class="py-1" role="none">
 							<li>
 								<a href={pathRoutes.users.dashboard}
 									class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
 									role="menuitem">Dashboard</a>
 							</li>
-							<li>
-								<a href="/settings"
+							<!-- <li>
+								<a
+									href="/settings"
 									class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-									role="menuitem">Settings</a>
-							</li>
+									role="menuitem">Settings</a
+								>
+							</li> -->
 							<li>
 								<a href={pathRoutes.users.profile}
 									class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
 									role="menuitem">Profile</a>
 							</li>
-							<li>
-								<a href="#"
+							<!-- <li>
+								<a
+									href="#"
 									class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-									role="menuitem">Earnings</a>
-							</li>
+									role="menuitem">Earnings</a
+								>
+							</li> -->
 							<li>
 							<SignOutButton client:load/>								
 							</li>
