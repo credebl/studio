@@ -1,4 +1,4 @@
-import { Alert, Avatar, Spinner } from 'flowbite-react';
+import { Alert, Spinner } from 'flowbite-react';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { useEffect, useState } from 'react';
 
@@ -9,14 +9,12 @@ import BreadCrumbs from '../BreadCrumbs';
 import Credential_Card from '../../assets/Credential_Card.svg';
 import CustomAvatar from '../Avatar';
 import Invitation_Card from '../../assets/Invitation_Card.svg';
-import type { Organisation, OrgDashboardI } from './interfaces'
+import type { Organisation, OrgDashboard } from './interfaces'
 import OrganizationDetails from './OrganizationDetails';
 import WalletSpinup from './WalletSpinup';
 import { getFromLocalStorage } from '../../api/Auth';
 import { getOrganizationById, getOrgDashboard } from '../../api/organization';
 import EditOrgdetailsModal from './EditOrgdetailsModal';
-
-// import EditOrgdetails from './EditOrgdetails';
 
 
 const Dashboard = () => {
@@ -24,7 +22,7 @@ const Dashboard = () => {
 
     const [walletStatus, setWalletStatus] = useState<boolean>(false);
 
-    const [orgDashboard, setOrgDashboard] = useState<OrgDashboardI | null>(null)
+    const [orgDashboard, setOrgDashboard] = useState<OrgDashboard | null>(null)
     const [success, setSuccess] = useState<string | null>(null);
     const [failure, setFailure] = useState<string | null>(null)
 
