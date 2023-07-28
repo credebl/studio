@@ -92,9 +92,7 @@ export const getUserInvitations = async (pageNumber: number, pageSize: number, s
 }
 
 // Accept/ Reject Invitations
-export const acceptRejectInvitations = async (invitationId: number, status: string) => {
-
-    const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
+export const acceptRejectInvitations = async (invitationId: number,orgId: number, status: string) => {
 
     const url = apiRoutes.users.invitations
     

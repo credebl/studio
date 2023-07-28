@@ -32,6 +32,34 @@ export const createOrganization = async (data: object) => {
     }
 }
 
+export const updateOrganization = async (data: object) => {
+
+    const url = apiRoutes.organizations.update
+    const payload = data
+    const token = await getFromLocalStorage(storageKeys.TOKEN)
+
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+        }
+    }
+    const axiosPayload = {
+        url,
+        payload,
+        config
+    }
+
+    try {
+        return await axiosPut(axiosPayload);
+    }
+    catch (error) {
+        const err = error as Error
+        return err?.message
+    }
+}
+
+
 export const getOrganizations = async (pageNumber: number, pageSize: number, search = '') => {
 
     const url = `${apiRoutes.organizations.getAll}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`

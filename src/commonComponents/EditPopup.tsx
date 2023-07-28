@@ -27,7 +27,7 @@ const EditModal = (props: { openModal: boolean; closeModal: (flag: boolean) => v
           validationSchema={yup.object().shape({
             name: yup
               .string()
-              .required('Email is required')
+              .required('Name is required')
               .trim()
           })}
           validateOnBlur
