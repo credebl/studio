@@ -49,10 +49,13 @@ const ViewSchemas = () => {
   const getSchemaDetails = async (id: string, organizationId: number) => {
     setLoading(true)
     const SchemaDetails: AxiosResponse = await getSchemaById(id, organizationId)
-    if (SchemaDetails.data.data.response) {
-      setSchemaDetails(SchemaDetails.data.data.response)
+    if (SchemaDetails?.data?.data?.response) {
+      setSchemaDetails(SchemaDetails?.data?.data?.response)
+      setLoading(false)
+    }else{
       setLoading(false)
     }
+    
 
   }
 
