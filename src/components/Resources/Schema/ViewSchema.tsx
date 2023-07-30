@@ -40,6 +40,7 @@ const ViewSchemas = () => {
   const [createloader, setCreateLoader] = useState<boolean>(false)
   const [credDeffloader, setCredDeffloader] = useState<boolean>(false)
   const [success, setSuccess] = useState<string | null>(null)
+  const [credDefListErr, setCredDefListErr] = useState<string | null>(null)
   const [failure, setFailur] = useState<string | null>(null)
   const randomString = Math.floor(1000 + Math.random() * 9000).toString();
   const [orgId, setOrgId] = useState<number>(0)
@@ -56,14 +57,26 @@ const ViewSchemas = () => {
   }
 
   const getCredentialDefinitionList = async (id: string, orgId: number) => {
-    setCredDeffloader(true)
-    const credentialDefinitions: AxiosResponse = await getCredDeffById(id, orgId)
-    if (credentialDefinitions.data.data.data) {
-      setCredDeffList(credentialDefinitions.data.data.data)
-      setCredDeffloader(false)
+    try {
+      setCredDeffloader(true);
+      const credentialDefinitions = await getCredDeffById(id, orgId);
+      const { data } = credentialDefinitions as AxiosResponse
+      if (data?.data?.data.length === 0) {
+        setCredDefListErr('No Data Found');
+      }
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        setCredDeffList(data?.data?.data);
+        setCredDeffloader(false);
+      }else{
+        setCredDefListErr(credentialDefinitions as string)
+        setCredDeffloader(false)
+      }
+    } catch (error) {
+      console.error('Error while fetching credential definition list:', error);
+      setCredDeffloader(false);
     }
+  };
 
-  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -284,6 +297,19 @@ const ViewSchemas = () => {
         <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white p-4">
           Credential Definitions
         </h5>
+        {
+          credDefListErr &&
+          <Alert
+            color={"failure"}
+            onDismiss={() => setCredDefListErr(null)}
+          >
+            <span>
+              <p>
+                {credDefListErr}
+              </p>
+            </span>
+          </Alert>
+        }
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
             {credDeffList && credDeffList.length > 0 &&

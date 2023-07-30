@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Card, Pagination, Spinner, Table, } from 'flowbite-react';
+import { Alert, Button, Card, Pagination, Spinner, Table, } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
 import type { GetAllSchemaListParameter, PaginationData } from './interfaces';
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
@@ -14,6 +14,7 @@ import { getFromLocalStorage } from '../../../api/Auth';
 
 const SchemaList = () => {
   const [schemaList, setSchemaList] = useState([])
+  const [schemaListErr, setSchemaListErr] = useState<string|null>('')
   const [loading, setLoading] = useState<boolean>(true)
   const [orgId, setOrgId] = useState<string>('')
   const [schemaListAPIParameter, setSchemaListAPIParameter] = useState({
@@ -25,24 +26,34 @@ const SchemaList = () => {
   })
 
   const getSchemaList = async (schemaListAPIParameter: GetAllSchemaListParameter) => {
-    const organizationId = await getFromLocalStorage(storageKeys.ORG_ID)
-    setOrgId(organizationId)
-    setLoading(true)
-
-    const schemaList = await getAllSchemas(schemaListAPIParameter, organizationId);
-    const { data } = schemaList as AxiosResponse
-
-    if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-      if (data?.data?.data) {
-        setSchemaList(data?.data?.data)
-        setLoading(false)
+    try {
+      const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
+      setOrgId(organizationId);
+      setLoading(true);
+  
+      const schemaList = await getAllSchemas(schemaListAPIParameter, organizationId);
+      const { data } = schemaList as AxiosResponse;
+  
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        if (data?.data?.data?.length === 0) {
+          setSchemaListErr('No Data Found');
+        }
+        if (data?.data?.data) {
+          setSchemaList(data?.data?.data);
+          setLoading(false);
+        } else {
+          setLoading(false);
+        }
       } else {
-        setLoading(false)
+        setLoading(false);
       }
-    } else {
-      setLoading(false)
+    } catch (error) {
+      console.error('Error while fetching schema list:', error);
+      setLoading(false);
+     
     }
-  }
+  };
+  
 
 
   useEffect(() => {
@@ -96,6 +107,19 @@ const SchemaList = () => {
               Create Schema
             </Button>
           </div>
+          {
+            schemaListErr &&
+            <Alert
+              color="failure"
+              onDismiss={() => setSchemaListErr(null)}
+            >
+              <span>
+                <p>
+                  {schemaListErr}
+                </p>
+              </span>
+            </Alert>
+          }
           {loading
             ? <div className="flex items-center justify-center mb-4">
               <Spinner
