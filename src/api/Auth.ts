@@ -7,11 +7,13 @@ import { apiRoutes } from '../config/apiRoutes'
 
 export interface UserSignUpData {
     email: string,
-    password: string,
-    firstName: string,
-    lastName: string,
 }
-
+export interface AddPasswordDetails {
+    password:string
+    isPasskey:boolean
+    firstName: string|null
+    lastName: string|null
+}
 export interface UserSignInData {
     email: string | undefined, 
     isPasskey:boolean, 
@@ -22,9 +24,9 @@ export interface EmailVerifyData {
     email: string
 }
 
-export const registerUser = async(payload: UserSignUpData) => {
+export const sendVerificationMail = async(payload:UserSignUpData) => {
     const details ={
-        url: apiRoutes.auth.signUp,
+        url: apiRoutes.auth.sendMail,
         payload,
         config: { headers: { "Content-type": "application/json" } }
     }
@@ -36,8 +38,6 @@ export const registerUser = async(payload: UserSignUpData) => {
         const err = error as Error
         return err?.message
     }
-
-   
 }
 
 export const loginUser = async(payload: UserSignInData) => {
@@ -95,6 +95,24 @@ export const checkUserExist = async(payload: string) => {
     }
     try{
         const response = await axiosGet(details)
+        return response
+    }
+    catch(error){
+        const err = error as Error
+        return err?.message
+    }
+
+   
+}
+
+export const addPasswordDetails = async(payload: AddPasswordDetails, email:string) => {
+    const details ={
+        url: `${apiRoutes.auth.addDetails}${email}`,
+        payload,
+        config: { headers: { "Content-type": "application/json" } }
+    }
+    try{
+        const response = await axiosPost(details)
         return response
     }
     catch(error){

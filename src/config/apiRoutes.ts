@@ -1,10 +1,11 @@
 export const apiRoutes = {
     auth:{
-        signUp: '/users',
+        sendMail: '/users/send-mail',
         sinIn: '/users/login',
         verifyEmail:'/users/verify',
         userProfile: 'users/profile',
-        checkUser:'/users/check-user/'
+        checkUser:'/users/check-user/',
+        addDetails:'/users/add/'
     },
     users:{
         invitations: '/users/invitations',
