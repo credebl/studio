@@ -63,10 +63,6 @@ const UserDashBoard = () => {
 
 			const orgList = data?.data?.organizations.filter((userOrg: Organisation, index: number) => index < 3)
 
-			if (orgList.length === 0) {
-				setError('No Data Found')
-			}
-
 			setOrganizationList(orgList)
 			setCurrentPage({
 				...currentPage,
