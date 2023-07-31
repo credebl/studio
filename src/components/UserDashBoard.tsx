@@ -34,9 +34,6 @@ const UserDashBoard = () => {
 			const totalPages = data?.data?.totalPages;
 
 			const invitationList = data?.data?.invitations
-			if (invitationList.length === 0) {
-				setError('No Data Found')
-			}
 
 			if (invitationList.length > 0) {
 				setMessage('You have some pending received invitations')
