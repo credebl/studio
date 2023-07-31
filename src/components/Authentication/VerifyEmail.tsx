@@ -29,8 +29,16 @@ const VerifyEmail = () => {
 
     }
 
-    const urlParams = new URLSearchParams(window.location.search);
-    //     urlParams.set('CreateOrgFormModal', 'true');
+     useEffect(() => {
+        const queryParameters = new URLSearchParams( window?.location?.search)
+        const payload: EmailVerifyData = {
+             verificationCode: queryParameters.get("verificationCode") || '',
+             email: queryParameters.get("email") || ''
+        }
+
+        verifyEmailSuccess(payload)
+
+    }, []);
     
     
   return (

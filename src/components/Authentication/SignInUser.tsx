@@ -1,21 +1,17 @@
 import * as yup from 'yup';
 
-import { Button, Checkbox, Label, TextInput } from 'flowbite-react';
+import { Button, Label } from 'flowbite-react';
 import {
 	Field,
 	Form,
 	Formik,
-	FormikHelpers,
-	FormikProps,
-	FormikValues,
 } from 'formik';
 import { UserSignInData, getUserProfile, loginUser, passwordEncryption, setToLocalStorage } from '../../api/Auth';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { useEffect, useState } from 'react';
 
 import { Alert } from 'flowbite-react';
-import type { AxiosError, AxiosResponse } from 'axios';
-import astro from '@astrojs/react'
+import type { AxiosResponse } from 'axios';
 import { generateAuthenticationOption, verifyAuthentication } from '../../api/Fido';
 import { startAuthentication } from '@simplewebauthn/browser';
 
@@ -317,13 +313,13 @@ const SignInUser = () => {
 										Login using passkey
 									</button> */}
 									<Button
-										isProcessing={loading}
+										isProcessing={''}
 										onClick={() => {
 											authenticateWithPasskey(email?.email)
 										}}
 										className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
 									>
-										Login using passkey
+										Login with passkey
 									</Button>
 									<div className="text-sm font-medium text-gray-500 dark:text-gray-400 text-primary-700 hover:underline dark:text-primary-500 pt-4" onClick={() => {
 										setPasswordFlag(true)

@@ -113,7 +113,7 @@ export const getCredDeffById = async (id: string, orgId: number) => {
   }
   catch (error) {
     const err = error as Error
-    throw err?.message
+    return err?.message
   }
 }
 

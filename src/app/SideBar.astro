@@ -1,4 +1,5 @@
 ---
+import { pathRoutes } from "../config/pathRoutes";
 /* eslint max-lines: 'off' */
 
 ---
@@ -59,7 +60,7 @@
 					</li>
 					<li>
 						<a
-							href="/dashboard"
+							href={pathRoutes.users.dashboard}
 							class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
 						>
 							<svg
@@ -75,7 +76,7 @@
 					</li>
 					<!-- <li>
 						<a
-							href="/invitations"
+							href={pathRoutes.users.invitations}
 							class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
 						>
 							
@@ -123,28 +124,28 @@
 						<ul id="dropdown-layouts" class="hidden py-2 space-y-2">
 							<li>
 								<a
-									href="/organizations"
+									href={pathRoutes.organizations.root}
 									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
 									>Organizations</a
 								>
 							</li>
 							<li>
 								<a
-									href="/organizations/invitations"
+									href={pathRoutes.organizations.invitations}
 									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
-									>Send Invitations</a
+									>Sent Invitations</a
 								>
 							</li>
 							<li>
 								<a
-									href="/organizations/users"
+									href={pathRoutes.organizations.users}
 									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
 									>Users</a
 								>
 							</li>
 							<li>
 								<a
-									href="/organizations/credentials"
+									href={pathRoutes.organizations.credentials}
 									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
 									>Credentials</a
 								>
@@ -158,7 +159,7 @@
 							aria-controls="dropdown-ecosystem"
 							data-collapse-toggle="dropdown-ecosystem"
 							data-collapse-toggle="dropdown-ecosystem"
-						>
+												>
 							<svg
 								class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
 								fill="currentColor"
@@ -191,28 +192,28 @@
 						<ul id="dropdown-ecosystem" class="hidden py-2 space-y-2">
 							<li>
 								<a
-									href='ecosystems'
+									href='featurecoming'
 									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
 									>Ecosystems</a
 								>
 							</li>
 							<li>
 								<a
-									href='ecosystems/frameworks'
+									href='featurecoming'
 									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
 									>Trust Frameworks</a
 								>
 							</li>
 							<li>
 								<a
-									href='ecosystems/members'
+									href='featurecoming'
 									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
 									>Members</a
 								>
 							</li>
 							<li>
 								<a
-									href='ecosystems/registries'
+									href='featurecoming'
 									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
 									>Trust Registries</a
 								>
@@ -263,7 +264,7 @@
 						<span class="ml-3" sidebar-toggle-item>GitHub Repository</span>
 					</a>
 					<a
-						href="/docs"
+						href={pathRoutes.documentation.root}
 						target="_blank"
 						class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
 					>
@@ -278,8 +279,8 @@
 								clip-rule="evenodd"></path></svg
 						>
 						<span class="ml-3" sidebar-toggle-item>Documentation</span>
-					</a>
-					<a
+					</a> 
+					<!-- <a
 						href="/alerts"
 						target="_blank"
 						class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
@@ -294,8 +295,8 @@
 							></path></svg
 						>
 						<span class="ml-3" sidebar-toggle-item>FAQ's</span>
-					</a>
-					<a
+					</a>  -->
+					 <a
 						href="https://github.com/credebl/platform/issues"
 						target="_blank"
 						class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
@@ -311,7 +312,7 @@
 								clip-rule="evenodd"></path></svg
 						>
 						<span class="ml-3" sidebar-toggle-item>Support</span>
-					</a>
+					</a> 
 				</div>
 			</div>
 		</div>

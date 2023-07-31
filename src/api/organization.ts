@@ -32,6 +32,34 @@ export const createOrganization = async (data: object) => {
     }
 }
 
+export const updateOrganization = async (data: object) => {
+
+    const url = apiRoutes.organizations.update
+    const payload = data
+    const token = await getFromLocalStorage(storageKeys.TOKEN)
+
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+        }
+    }
+    const axiosPayload = {
+        url,
+        payload,
+        config
+    }
+
+    try {
+        return await axiosPut(axiosPayload);
+    }
+    catch (error) {
+        const err = error as Error
+        return err?.message
+    }
+}
+
+
 export const getOrganizations = async (pageNumber: number, pageSize: number, search = '') => {
 
     const url = `${apiRoutes.organizations.getAll}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
@@ -77,6 +105,32 @@ export const getOrganizationById = async (orgId: string) => {
 
     try {
         return await axiosGet(axiosPayload);
+    }
+    catch (error) {
+        const err = error as Error
+        return err?.message
+    }
+}
+
+export const getOrgDashboard = async (orgId: string) => {
+
+    const url = `${apiRoutes.organizations.getOrgDashboard}?orgId=${Number(orgId)}`
+
+    const token = await getFromLocalStorage(storageKeys.TOKEN)
+
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+        }
+    }
+    const axiosPayload = {
+        url,
+        config
+    }
+
+    try {
+        return axiosGet(axiosPayload);
     }
     catch (error) {
         const err = error as Error

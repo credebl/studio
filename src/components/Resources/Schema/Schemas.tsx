@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Card, Pagination, Spinner, Table, } from 'flowbite-react';
+import { Alert, Button, Card, Pagination, Spinner, Table, } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
 import type { GetAllSchemaListParameter, PaginationData } from './interfaces';
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
@@ -11,9 +11,11 @@ import SchemaCard from '../../../commonComponents/SchemaCard';
 import SearchInput from '../../SearchInput';
 import { getAllSchemas } from '../../../api/Schema';
 import { getFromLocalStorage } from '../../../api/Auth';
+import { pathRoutes } from '../../../config/pathRoutes';
 
 const SchemaList = () => {
   const [schemaList, setSchemaList] = useState([])
+  const [schemaListErr, setSchemaListErr] = useState<string|null>('')
   const [loading, setLoading] = useState<boolean>(true)
   const [orgId, setOrgId] = useState<string>('')
   const [schemaListAPIParameter, setSchemaListAPIParameter] = useState({
@@ -25,24 +27,36 @@ const SchemaList = () => {
   })
 
   const getSchemaList = async (schemaListAPIParameter: GetAllSchemaListParameter) => {
-    const organizationId = await getFromLocalStorage(storageKeys.ORG_ID)
-    setOrgId(organizationId)
-    setLoading(true)
+    try {
+      const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
+      setOrgId(organizationId);
+      setLoading(true);
+  
+      const schemaList = await getAllSchemas(schemaListAPIParameter, organizationId);
+      const { data } = schemaList as AxiosResponse;
 
-    const schemaList = await getAllSchemas(schemaListAPIParameter, organizationId);
-    const { data } = schemaList as AxiosResponse
-
-    if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-      if (data?.data?.data) {
-        setSchemaList(data?.data?.data)
-        setLoading(false)
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        if (data?.data?.data?.length === 0) {
+          setSchemaListErr('No Data Found');
+        }
+        if (data?.data?.data) {
+          setSchemaList(data?.data?.data);
+          setLoading(false);
+        } else {
+          setLoading(false);
+          setSchemaListErr(schemaList as string)
+        }
       } else {
-        setLoading(false)
+        setLoading(false);
+        setSchemaListErr(schemaList as string)
       }
-    } else {
-      setLoading(false)
+    } catch (error) {
+      console.error('Error while fetching schema list:', error);
+      setLoading(false);
+     
     }
-  }
+  };
+  
 
 
   useEffect(() => {
@@ -89,13 +103,29 @@ const SchemaList = () => {
             <Button
               id='createSchemaButton'
               onClick={() => {
-                window.location.href = `/organizations/schemas/create?OrgId=${orgId}`
+                window.location.href = `${pathRoutes.organizations.createSchema}?OrgId=${orgId}`
               }}
               className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
-            >
-              Create Schema
+            ><svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
+            <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"/>
+          </svg>
+          
+              Create 
             </Button>
           </div>
+          {
+            schemaListErr &&
+            <Alert
+              color="failure"
+              onDismiss={() => setSchemaListErr(null)}
+            >
+              <span>
+                <p>
+                  {schemaListErr}
+                </p>
+              </span>
+            </Alert>
+          }
           {loading
             ? <div className="flex items-center justify-center mb-4">
               <Spinner
