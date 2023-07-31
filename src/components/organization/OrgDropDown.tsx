@@ -69,7 +69,7 @@ const OrgDropDown = () => {
 					}
 				</>
 
-				<BiChevronDown size={25} color='white' />
+				<BiChevronDown size={25} color='primary-700' />
 			</div>
 			<div
 				id="dropdownUsers"
