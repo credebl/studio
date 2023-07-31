@@ -1,8 +1,10 @@
-import type { AxiosError } from 'axios'
-import { apiRoutes } from '../config/apiRoutes'
 import {axiosGet, axiosPost} from '../services/apiRequests'
-import CryptoJS from "crypto-js"
 import { number, string } from 'yup'
+
+import type { AxiosError } from 'axios'
+import CryptoJS from "crypto-js"
+import { apiRoutes } from '../config/apiRoutes'
+import { storageKeys } from '../config/CommonConstant'
 
 export interface UserSignUpData {
     email: string,
@@ -152,6 +154,6 @@ export const setToLocalStorage = async (key: string, value: any) =>{
 
 export const getFromLocalStorage = async (key: string) =>{
     const value = await localStorage.getItem(key)
-    const convrtedValue = await decryptData(value)
-    return convrtedValue
+    const convertedValue = value ? await decryptData(value) : ''
+    return convertedValue
 }

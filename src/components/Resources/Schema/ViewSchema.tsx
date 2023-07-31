@@ -40,6 +40,7 @@ const ViewSchemas = () => {
   const [createloader, setCreateLoader] = useState<boolean>(false)
   const [credDeffloader, setCredDeffloader] = useState<boolean>(false)
   const [success, setSuccess] = useState<string | null>(null)
+  const [credDefListErr, setCredDefListErr] = useState<string | null>(null)
   const [failure, setFailur] = useState<string | null>(null)
   const randomString = Math.floor(1000 + Math.random() * 9000).toString();
   const [orgId, setOrgId] = useState<number>(0)
@@ -48,22 +49,37 @@ const ViewSchemas = () => {
   const getSchemaDetails = async (id: string, organizationId: number) => {
     setLoading(true)
     const SchemaDetails: AxiosResponse = await getSchemaById(id, organizationId)
-    if (SchemaDetails.data.data.response) {
-      setSchemaDetails(SchemaDetails.data.data.response)
+    if (SchemaDetails?.data?.data?.response) {
+      setSchemaDetails(SchemaDetails?.data?.data?.response)
+      setLoading(false)
+    }else{
       setLoading(false)
     }
+    
 
   }
 
   const getCredentialDefinitionList = async (id: string, orgId: number) => {
-    setCredDeffloader(true)
-    const credentialDefinitions: AxiosResponse = await getCredDeffById(id, orgId)
-    if (credentialDefinitions.data.data.data) {
-      setCredDeffList(credentialDefinitions.data.data.data)
-      setCredDeffloader(false)
+    try {
+      setCredDeffloader(true);
+      const credentialDefinitions = await getCredDeffById(id, orgId);
+      const { data } = credentialDefinitions as AxiosResponse
+      if (data?.data?.data.length === 0) {
+        setCredDefListErr('No Data Found');
+      }
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        setCredDeffList(data?.data?.data);
+        setCredDeffloader(false);
+      }else{
+        setCredDefListErr(credentialDefinitions as string)
+        setCredDeffloader(false)
+      }
+    } catch (error) {
+      console.error('Error while fetching credential definition list:', error);
+      setCredDeffloader(false);
     }
+  };
 
-  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -262,6 +278,9 @@ const ViewSchemas = () => {
                         color='bg-primary-800'
                         className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
                       >
+                         <svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
+                            <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"/>
+                          </svg>
                         Create
                       </Button>
                     </div>
@@ -270,6 +289,10 @@ const ViewSchemas = () => {
                         type="reset"
                         className="text-base font-medium text-center text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 sm:w-auto dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-700"
                       >
+                        <svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 20 20">
+  <path fill="#fff" d="M20 10.007a9.964 9.964 0 0 1-2.125 6.164 10.002 10.002 0 0 1-5.486 3.54 10.02 10.02 0 0 1-6.506-.596 9.99 9.99 0 0 1-4.749-4.477A9.958 9.958 0 0 1 3.402 2.525a10.012 10.012 0 0 1 12.331-.678l-.122-.355A1.135 1.135 0 0 1 16.34.057a1.143 1.143 0 0 1 1.439.726l1.11 3.326a1.107 1.107 0 0 1-.155.998 1.11 1.11 0 0 1-.955.465h-3.334a1.112 1.112 0 0 1-1.11-1.108 1.107 1.107 0 0 1 .788-1.043 7.792 7.792 0 0 0-9.475.95 7.746 7.746 0 0 0-1.451 9.39 7.771 7.771 0 0 0 3.73 3.37 7.794 7.794 0 0 0 9.221-2.374 7.75 7.75 0 0 0 1.63-4.75 1.107 1.107 0 0 1 1.112-1.109A1.112 1.112 0 0 1 20 10.007Z"/>
+</svg>
+
                         Reset
                       </Button>
                     </div>
@@ -284,6 +307,19 @@ const ViewSchemas = () => {
         <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white p-4">
           Credential Definitions
         </h5>
+        {
+          credDefListErr &&
+          <Alert
+            color={"failure"}
+            onDismiss={() => setCredDefListErr(null)}
+          >
+            <span>
+              <p>
+                {credDefListErr}
+              </p>
+            </span>
+          </Alert>
+        }
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
             {credDeffList && credDeffList.length > 0 &&

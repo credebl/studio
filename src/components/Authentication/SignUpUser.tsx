@@ -6,23 +6,17 @@ import { Alert, Button, Checkbox, Label, TextInput } from 'flowbite-react';
 import {
 	Field,
 	Form,
-	Formik,
-	FormikHelpers,
-	FormikProps,
-	FormikValues,
-	useFormikContext,
+	Formik
 } from 'formik';
-import { ToastContainer, toast } from 'react-toastify';
-import { AddPasswordDetails, UserSignUpData, addPasswordDetails, checkUserExist, passwordEncryption, sendVerificationMail } from '../../api/Auth.js';
+import { addPasswordDetails, checkUserExist, passwordEncryption, sendVerificationMail } from '../../api/Auth.js';
 import { apiStatusCodes, passwordRegex } from '../../config/CommonConstant.js';
 import { asset, url } from '../../lib/data.js';
 
 import type { AxiosError, AxiosResponse } from 'axios';
-import { FormEvent, useState } from 'react';
+import { useState } from 'react';
 import { addDeviceDetails, generateRegistrationOption, verifyRegistration } from '../../api/Fido.js';
 import { startRegistration } from '@simplewebauthn/browser';
 import type { IdeviceBody, RegistrationOptionInterface } from '../Profile/interfaces/index.js';
-import uuid4 from "uuid4";
 import secureRandomPassword from 'secure-random-password';
 
 
@@ -95,7 +89,6 @@ const SignUpUser = () => {
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 
 				setVerificationSuccess(data?.message)
-				// window.location.href = '/authentication/sign-in?signup=true';
 				setVerifyLoader(false)
 			} else {
 				setErrMsg(userRsp as string);
@@ -413,10 +406,8 @@ const SignUpUser = () => {
 												color='bg-primary-800'
 												className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
 											>
-												Submit
+												Next
 											</Button>
-											{/* {!continuePasswordFlag && <> */}
-											{/* <div className='float-right'> */}
 											<div className="text-bold font-medium text-gray-500 dark:text-gray-400 text-primary-700 hover:underline dark:text-primary-500 cursor-pointer ml-auto pt-3" onClick={() => {
 												setContinuePasswordFlag(true)
 												setEnableName(false)
@@ -427,8 +418,6 @@ const SignUpUser = () => {
 											}}>
 												{`Skip`}
 											</div>
-											{/* </div> */}
-											{/* </>} */}
 										</div>
 									</div>}
 								</Form>
@@ -467,7 +456,6 @@ const SignUpUser = () => {
 											<Label htmlFor="password" value="Password" />
 											<span className='text-red-500 text-xs'>*</span>
 										</div>
-										{/* Add show password method*/}
 										<Field
 											id="password"
 											name="password"
@@ -526,22 +514,6 @@ const SignUpUser = () => {
 										</div>
 									</div>
 								</>}
-								{/* <div className='pt-2 pb-2'>
-										<Button
-											type="submit"
-											isProcessing={loading}
-											color='bg-primary-800'
-											className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
-										>
-											Sign Up
-										</Button>
-									</div>
-									<div className="text-sm font-medium text-gray-500 dark:text-gray-400 text-primary-700 hover:underline dark:text-primary-500" onClick={() => {
-										setContinuePasswordFlag(false)
-									}}>
-										{`Passkey ?`}
-									</div> */}
-
 							</Form>
 						)}
 					</Formik>}

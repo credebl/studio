@@ -4,12 +4,12 @@ import { Avatar, Button, Label, Modal } from 'flowbite-react';
 import { Field, Form, Formik, FormikHelpers } from 'formik';
 import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, apiStatusCodes, imageSizeAccepted } from '../../config/CommonConstant'
 import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
-import { useEffect, useRef, useState } from "react";
-
+import { useEffect, useState } from "react";
 import { AlertComponent } from "../AlertComponent";
 import type { AxiosResponse } from 'axios';
-import { asset } from '../../lib/data.js';
-import { createOrganization } from "../../api/organization";
+// import { asset } from '../../lib/data.js';
+import { updateOrganization } from "../../api/organization";
+import type { Organisation } from "./interfaces";
 
 interface Values {
     name: string;
@@ -22,22 +22,48 @@ interface ILogoImage {
     fileName: string
 }
 
+interface EditOrgdetailsModalProps {
+    openModal: boolean;
+    setMessage: (message: string) => void;
+    setOpenModal: (flag: boolean) => void;
+    onEditSucess?:() =>void;
+    orgData: Organisation | null; 
+  }
 
-const CreateOrgFormModal = (props: { openModal: boolean; setMessage: (message: string)=> void ; setOpenModal: (flag: boolean) => void }) => {
-
+const EditOrgdetailsModal = (props: EditOrgdetailsModalProps)=> {
     const [logoImage, setLogoImage] = useState<ILogoImage>({
         logoFile: "",
-        imagePreviewUrl: "",
+        imagePreviewUrl: props?.orgData?.logoUrl || "",
         fileName: ''
     })
+
 
     const [loading, setLoading] = useState<boolean>(false)
 
     const [isImageEmpty, setIsImageEmpty] = useState(true)
+
     const [initialOrgData, setOrgData] = useState({
-        name: '',
-        description: '',
+        name: props?.orgData?.name || "",
+        description: props?.orgData?.description || "",
     })
+
+    useEffect(() => {
+        
+        if (props.orgData) {
+          setOrgData({
+            name: props.orgData.name || '',
+            description: props.orgData.description || '',
+          });
+          
+          setLogoImage({
+            logoFile: "",
+            imagePreviewUrl: props.orgData.logoUrl || "",
+            fileName: ''
+          });
+        }
+      }, [props.orgData]);
+    
+
     const [erroMsg, setErrMsg] = useState<string | null>(null)
 
     const [imgError, setImgError] = useState('')
@@ -129,30 +155,33 @@ const CreateOrgFormModal = (props: { openModal: boolean; setMessage: (message: s
         }
     }
 
-    const sumitCreateOrganization = async (values: Values) => {
-        setLoading(true)
+        const submitUpdateOrganization = async (values: Values) => {
+            setLoading(true)
 
-        const orgData = {
-            name: values.name,
-            description: values.description,
-            logo: logoImage?.imagePreviewUrl as string || "",
-            website: ""
+            const orgData = {
+                orgId: props?.orgData?.id,
+                name: values.name,
+                description: values.description,
+                logo: logoImage?.imagePreviewUrl as string || "",
+                website: ""
+            }
+
+            const resUpdateOrg = await updateOrganization(orgData)
+
+            const { data } = resUpdateOrg as AxiosResponse
+            setLoading(false)
+
+            if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+                if(props?.onEditSucess){
+                    props?.onEditSucess()
+                }
+                props.setOpenModal(false)
+
+            } else {
+                setErrMsg(resUpdateOrg as string)
+            }
         }
-
-        const resCreateOrg = await createOrganization(orgData)
-
-        const { data } = resCreateOrg as AxiosResponse
-        setLoading(false)
-
-        if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-            props.setMessage(data?.message)
-            props.setOpenModal(false)
-
-        } else {
-            setErrMsg(resCreateOrg as string)
-        }
-    }
-
+        
     return (
         <Modal show={props.openModal} onClose={() => {
             setLogoImage({
@@ -164,7 +193,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setMessage: (message: s
             props.setOpenModal(false)
         }
         }>
-            <Modal.Header>Create Organization</Modal.Header>
+            <Modal.Header>Edit Organization</Modal.Header>
             <Modal.Body>
                  <AlertComponent
                     message={erroMsg}
@@ -174,7 +203,12 @@ const CreateOrgFormModal = (props: { openModal: boolean; setMessage: (message: s
                     }}
                     />
                 <Formik
-                    initialValues={initialOrgData}
+                    initialValues={
+                        {
+                            name:props?.orgData?.name || "",
+                        description:props?.orgData?.description || "",
+                        }
+                    }
                     validationSchema={
                         yup.object().shape({
                             name: yup
@@ -197,7 +231,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setMessage: (message: s
                         { resetForm }: FormikHelpers<Values>
                     ) => {
 
-                        sumitCreateOrganization(values)
+                        submitUpdateOrganization(values)
 
                     }}
                 >
@@ -212,17 +246,26 @@ const CreateOrgFormModal = (props: { openModal: boolean; setMessage: (message: s
                                 <div
                                     className="items-center sm:flex xl:block 2xl:flex sm:space-x-4 xl:space-x-0 2xl:space-x-4"
                                 >
+
+
                                     {
-                                        typeof (logoImage.logoFile) === "string" ?
+                                       (typeof (logoImage.logoFile) === "string" && props?.orgData?.logoUrl) ?
+                                        <img
+                                        className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
+                                        src={props?.orgData?.logoUrl}
+                                        alt="Jese picture"
+                                    />
+                                    : typeof (logoImage.logoFile) === "string" ?
                                             <Avatar
                                                 size="lg"
                                             /> :
                                             <img
                                                 className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
-                                                src={typeof (logoImage.logoFile) === "string" ? asset('images/users/bonnie-green-2x.png') : URL.createObjectURL(logoImage.logoFile)}
+                                                src={URL.createObjectURL(logoImage?.logoFile)}
                                                 alt="Jese picture"
                                             />
                                     }
+
 
                                     <div>
                                         <h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
@@ -235,7 +278,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setMessage: (message: s
 
                                             <div>
                                                 <label htmlFor="organizationlogo">
-                                                    <div className="px-4 py-2 bg-primary-700 text-white text-center rounded-lg">Choose file</div>
+                                                    <div className="px-4 py-2 bg-blue-700 text-white text-center rounded-lg">Choose file</div>
                                                     <input type="file" accept="image/*" name="file"
                                                         className="hidden"
                                                         id="organizationlogo" title=""
@@ -300,13 +343,11 @@ const CreateOrgFormModal = (props: { openModal: boolean; setMessage: (message: s
 
                             <Button type="submit"
                                 isProcessing={loading}
-
-                                className='float-right text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-700 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
-                            ><svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
-                            <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"/>
-                          </svg>
-                          
-                                Create
+                                
+                                className='float-right text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
+                             
+                             >
+                               Edit
                             </Button>
                         </Form>
                     )}
@@ -318,4 +359,4 @@ const CreateOrgFormModal = (props: { openModal: boolean; setMessage: (message: s
     )
 }
 
-export default CreateOrgFormModal;
+export default EditOrgdetailsModal;

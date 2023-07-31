@@ -12,6 +12,7 @@ import CustomAvatar from '../Avatar'
 import type { Organisation } from './interfaces'
 import SearchInput from '../SearchInput';
 import { getOrganizations } from '../../api/organization';
+import { pathRoutes } from '../../config/pathRoutes';
 import { setToLocalStorage } from '../../api/Auth';
 
 const initialPageState = {
@@ -43,7 +44,8 @@ const OrganizationsList = () => {
   }
 
   //Fetch the user organization list
-  const getAllOrganizations = async () => {
+  const getAllOrganizations = async () => {    
+
     setLoading(true)
     const response = await getOrganizations(currentPage.pageNumber, currentPage.pageSize, searchText);
     const { data } = response as AxiosResponse
@@ -93,6 +95,16 @@ const OrganizationsList = () => {
     return () => clearTimeout(getData)
   }, [searchText, openModal, currentPage.pageNumber])
 
+  useEffect(() => {
+    const queryParameters = new URLSearchParams( window?.location?.search)
+    const isModel =  queryParameters.get("orgModal") || ''
+
+    if(isModel !== ''){
+      props.setOpenModal(true)
+    }
+
+}, [])
+
   //onCHnage of Search input text
   const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
@@ -100,13 +112,13 @@ const OrganizationsList = () => {
 
   const redirectOrgDashboard = (orgId: number) => {
     setToLocalStorage(storageKeys.ORG_ID, orgId.toString())
-    window.location.href = '/organizations/dashboard'
+    window.location.href = pathRoutes.organizations.dashboard
   }
 
 
   return (
     <div className="px-4 pt-6">
-      <div className="mb-4 col-span-full xl:mb-2">
+      <div className="pl-6 mb-4 col-span-full xl:mb-2">
 
         <BreadCrumbs />
         <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
@@ -123,9 +135,15 @@ const OrganizationsList = () => {
             />
             <Button
               onClick={createOrganizationModel}
-              className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+              className='text-base font-   text-center text-white bg-primary-700 rounded-lg hover:bg-accent-00 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
             >
-              Create Organization
+               <div className='pr-3'>
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
+  <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"/>
+</svg>
+</div>
+
+              Create
             </Button>
           </div>
 
@@ -175,7 +193,7 @@ const OrganizationsList = () => {
                                       return (
                                         <span
                                           key={index}
-                                          className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
+                                          className="m-1 bg-primary-50 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-primary-700"
                                         >
                                           {role.charAt(0).toUpperCase() + role.slice(1)}
                                         </span>

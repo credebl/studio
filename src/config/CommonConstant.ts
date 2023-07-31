@@ -18,6 +18,7 @@ export const apiStatusCodes = {
 export const storageKeys = {
     TOKEN : 'access_token',
     ORG_ID: 'orgId',
+    ORG_ROLES: 'org_roles',
     USER_PROFILE : 'user_profile',
     PERMISSIONS: 'user_permissions',
     USER_EMAIL: 'user_email'

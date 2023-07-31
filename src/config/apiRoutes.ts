@@ -13,8 +13,10 @@ export const apiRoutes = {
     },
     organizations: {
         create: '/organization',
+        update: '/organization',
         getAll: '/organization',
         getById: '/organization',
+        getOrgDashboard: '/organization/dashboard',
         agentDedicatedSpinup: '/agent-service/spinup',
         agentSharedSpinup: '/agent-service/tenant',
         invitations: '/organization/invitations',

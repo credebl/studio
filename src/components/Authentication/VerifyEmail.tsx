@@ -29,7 +29,7 @@ const VerifyEmail = () => {
 
     }
 
-    useEffect(() => {
+     useEffect(() => {
         const queryParameters = new URLSearchParams( window?.location?.search)
         const payload: EmailVerifyData = {
              verificationCode: queryParameters.get("verificationCode") || '',
@@ -38,7 +38,7 @@ const VerifyEmail = () => {
 
         verifyEmailSuccess(payload)
 
-    }, [])
+    }, []);
     
     
   return (
