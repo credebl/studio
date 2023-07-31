@@ -1,4 +1,4 @@
-import { Alert, Avatar, Spinner } from 'flowbite-react';
+import { Alert, Spinner } from 'flowbite-react';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { useEffect, useState } from 'react';
 
@@ -7,24 +7,41 @@ import BreadCrumbs from '../BreadCrumbs';
 import Credential_Card from '../../assets/Credential_Card.svg';
 import CustomAvatar from '../Avatar';
 import Invitation_Card from '../../assets/Invitation_Card.svg';
-import type { Organisation } from './interfaces'
+import type { Organisation, OrgDashboard } from './interfaces'
 import OrganizationDetails from './OrganizationDetails';
 import Schema_Card from '../../assets/Schema_Card.svg';
 import User_Card from '../../assets/User_Card.svg';
 import WalletSpinup from './WalletSpinup';
 import { getFromLocalStorage } from '../../api/Auth';
-import { getOrganizationById } from '../../api/organization';
+import { getOrganizationById, getOrgDashboard } from '../../api/organization';
+import EditOrgdetailsModal from './EditOrgdetailsModal';
+
 
 const Dashboard = () => {
     const [orgData, setOrgData] = useState<Organisation | null>(null);
 
     const [walletStatus, setWalletStatus] = useState<boolean>(false);
 
-    const [orgLogo, setOrgLogo] = useState<Array<Organisation> | null>(null)
+    const [orgDashboard, setOrgDashboard] = useState<OrgDashboard | null>(null)
     const [success, setSuccess] = useState<string | null>(null);
     const [failure, setFailure] = useState<string | null>(null)
 
     const [loading, setLoading] = useState<boolean | null>(true)
+
+    const [openModal, setOpenModal] = useState<boolean>(false);
+    const props = { openModal, setOpenModal };
+
+
+    const EditOrgDetails = () => {
+        props.setOpenModal(true)
+    }
+
+
+    const updateOrganizationData = (updatedData: Organisation) => {
+        setOrgData(updatedData);
+    };
+
+
 
     const fetchOrganizationDetails = async () => {
 
@@ -49,8 +66,29 @@ const Dashboard = () => {
 
     }
 
+    const fetchOrganizationDashboard = async () => {
+
+        setLoading(true)
+
+        const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
+
+        const response = await getOrgDashboard(orgId as string);
+
+        const { data } = response as AxiosResponse
+
+        if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+            setOrgDashboard(data?.data)
+
+        } else {
+            setFailure(response as string)
+        }
+        setLoading(false)
+
+    }
+
     useEffect(() => {
         fetchOrganizationDetails();
+        fetchOrganizationDashboard()
     }, [])
 
     useEffect(() => {
@@ -61,6 +99,11 @@ const Dashboard = () => {
     }, [success !== null, failure !== null])
 
 
+
+    const redirectDashboardInvitations = () => {
+        window.location.href = '/organizations/invitations'
+    }
+
     const setWalletSpinupStatus = (status: boolean) => {
         setSuccess('Agent spined up successfully')
         fetchOrganizationDetails()
@@ -69,9 +112,10 @@ const Dashboard = () => {
     const redirectOrgUsers = () => {
         window.location.href = '/organizations/users'
     }
-   
+
+
     return (
-        <div className="px-4 pt-6">           
+        <div className="px-4 pt-6">
             <div className="mb-4 col-span-full xl:mb-2">
 
                 <BreadCrumbs />
@@ -103,6 +147,35 @@ const Dashboard = () => {
 
                         </div>
                     </div>
+                    <div className="inline-flex items-center w-auto xl:w-full 2xl:w-auto">
+                        <button type="button" className=""
+
+                        >
+                            <svg aria-hidden="true" className="mr-1 -ml-1 w-5 h-5"
+                                fill="currentColor" viewBox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg" color='#3558A8'
+                                onClick={EditOrgDetails}><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"
+                                >
+                                </path><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"></path></svg>
+
+                        </button>
+                    </div>
+
+                    {openModal && (
+
+                        <EditOrgdetailsModal
+                            orgData={orgData}
+                            openModal={openModal}
+                            setOpenModal={setOpenModal}
+                            onEditSucess={fetchOrganizationDetails}
+                            setMessage={(message: string) => {
+                                throw new Error('Function not implemented.');
+                            }}
+
+                        />
+                    )}
+
+
                 </div>
 
                 <div
@@ -111,8 +184,8 @@ const Dashboard = () => {
                     <div
                         className="grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-3 2xl:grid-cols-3"
                     >
-                         <div
-                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${User_Card})`, minHeight:'133px' }} 
+                        <div
+                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${User_Card})`, minHeight: '133px' }}
                         >
                             <div className="w-full" onClick={redirectOrgUsers}>
                                 <h3 className="text-base font-medium text-white">
@@ -120,14 +193,14 @@ const Dashboard = () => {
                                 </h3>
                                 <span
                                     className="text-2xl font-semi-bold leading-none text-white sm:text-3xl dark:text-white"
-                                >2,340</span
+                                >{orgDashboard?.usersCount}</span
                                 >
 
-                            </div>                          
-                        </div>                     
-                        
+                            </div>
+                        </div>
+
                         <div
-                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover"style={{ backgroundImage: `url(${Schema_Card})`, minHeight:'133px' }}
+                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${Schema_Card})`, minHeight: '133px' }}
                             onClick={() => {
                                 window.location.href = `/organizations/schemas`;
                             }}
@@ -138,50 +211,47 @@ const Dashboard = () => {
                                 </h3>
                                 <span
                                     className="text-2xl font-semi-bold leading-none text-white sm:text-3xl dark:text-white"
-                                >2,340</span
+                                >{orgDashboard?.schemasCount}</span
                                 >
 
-                            </div>                          
+                            </div>
 
                         </div>
                         <div
-                        
-                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${Credential_Card})`, minHeight:'133px' }} 
-                            >
-                                
+
+                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${Credential_Card})`, minHeight: '133px' }}
+                        >
+
                             <div className="w-full" >
-                                
+
                                 <h3 className="text-base font-medium text-white">
-                                    
-                                    New Credentials
+
+                                    Credentials
                                 </h3>
                                 <span
-                                
+
                                     className="text-2xl font-semi-semi-bold leading-none text-white sm:text-3xl dark:text-white"
-                                >2,340</span
+                                >{orgDashboard?.credentialsCount}</span
                                 >
 
-                            </div>                         
-
-                        </div>                      
-                        
+                            </div>
+                        </div>
                     </div>
-
                 </div>
 
-                  {
-                (success || failure) &&
-                <Alert
-                    color={success ? "success" : "failure"}
-                    onDismiss={() => setFailure(null)}
-                >
-                    <span>
-                        <p>
-                            {success || failure}
-                        </p>
-                    </span>
-                </Alert>
-            }
+                {
+                    (success || failure) &&
+                    <Alert
+                        color={success ? "success" : "failure"}
+                        onDismiss={() => setFailure(null)}
+                    >
+                        <span>
+                            <p>
+                                {success || failure}
+                            </p>
+                        </span>
+                    </Alert>
+                }
                 {
                     loading
                         ? (<div className="flex items-center justify-center m-4">
@@ -194,7 +264,7 @@ const Dashboard = () => {
                             : (<WalletSpinup setWalletSpinupStatus={(flag: boolean) => setWalletSpinupStatus(flag)} />)
 
                 }
-              
+
             </div>
         </div>
     )
