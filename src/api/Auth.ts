@@ -157,11 +157,3 @@ export const getFromLocalStorage = async (key: string) =>{
     const convertedValue = value ? await decryptData(value) : ''
     return convertedValue
 }
-
-export const clearLocalStorage = async () => {
-    console.log(`CLEARING`);
-    
-    // localStorage.(); //try this to clear all local storage
-    localStorage.removeItem(storageKeys.TOKEN);
-    localStorage.removeItem(storageKeys.ORG_ID);
-}
