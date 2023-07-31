@@ -33,7 +33,7 @@ const SchemaList = () => {
   
       const schemaList = await getAllSchemas(schemaListAPIParameter, organizationId);
       const { data } = schemaList as AxiosResponse;
-  
+
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         if (data?.data?.data?.length === 0) {
           setSchemaListErr('No Data Found');
@@ -43,9 +43,11 @@ const SchemaList = () => {
           setLoading(false);
         } else {
           setLoading(false);
+          setSchemaListErr(schemaList as string)
         }
       } else {
         setLoading(false);
+        setSchemaListErr(schemaList as string)
       }
     } catch (error) {
       console.error('Error while fetching schema list:', error);
