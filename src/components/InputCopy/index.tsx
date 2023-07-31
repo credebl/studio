@@ -16,7 +16,6 @@ const InputCopy = ({ field, ...props }: InputProps) => {
 
     function copyTextVal() {
         const copyText = inputRef?.current;
-        console.log(`INPUT::`, copyText?.value);
 
         const copiedText: string = copyText?.value as string
         setIsCopied(true);
