@@ -47,8 +47,6 @@ export default function BreadCrumbs() {
             </Breadcrumb.Item>
 
             {breadcrumbList.map((crumb, idx) => {
-                console.log(crumb);
-
                 return (
                     <Breadcrumb.Item
                     href={crumb.href}
