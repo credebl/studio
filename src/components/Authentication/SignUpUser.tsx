@@ -2,19 +2,14 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import * as yup from 'yup';
 
-import { Alert, Button, Checkbox, Label, TextInput } from 'flowbite-react';
+import { Alert, Button, Label } from 'flowbite-react';
 import {
 	Field,
 	Form,
-	Formik,
-	FormikHelpers,
-	FormikProps,
-	FormikValues,
+	Formik
 } from 'formik';
-import { ToastContainer, toast } from 'react-toastify';
 import { UserSignUpData, passwordEncryption, registerUser } from '../../api/Auth.js';
 import { apiStatusCodes, passwordRegex } from '../../config/CommonConstant.js';
-import { asset, url } from '../../lib/data.js';
 
 import type { AxiosResponse } from 'axios';
 import { useState } from 'react';

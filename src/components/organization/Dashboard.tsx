@@ -13,6 +13,7 @@ import Schema_Card from '../../assets/Schema_Card.svg';
 import User_Card from '../../assets/User_Card.svg';
 import WalletSpinup from './WalletSpinup';
 import { getFromLocalStorage } from '../../api/Auth';
+import { pathRoutes } from '../../config/pathRoutes';
 import { getOrganizationById, getOrgDashboard } from '../../api/organization';
 import EditOrgdetailsModal from './EditOrgdetailsModal';
 
@@ -110,7 +111,7 @@ const Dashboard = () => {
     }
 
     const redirectOrgUsers = () => {
-        window.location.href = '/organizations/users'
+        window.location.href = pathRoutes.organizations.users
     }
 
 
@@ -202,7 +203,7 @@ const Dashboard = () => {
                         <div
                             className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${Schema_Card})`, minHeight: '133px' }}
                             onClick={() => {
-                                window.location.href = `/organizations/schemas`;
+                                window.location.href = pathRoutes.organizations.schemas;
                             }}
                         >
                             <div className="w-full">

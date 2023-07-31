@@ -1,21 +1,17 @@
 import * as yup from 'yup';
 
-import { Button, Checkbox, Label, TextInput } from 'flowbite-react';
+import { Button, Label } from 'flowbite-react';
 import {
 	Field,
 	Form,
 	Formik,
-	FormikHelpers,
-	FormikProps,
-	FormikValues,
 } from 'formik';
 import { UserSignInData, getUserProfile, loginUser, passwordEncryption, setToLocalStorage } from '../../api/Auth';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { useEffect, useState } from 'react';
 
 import { Alert } from 'flowbite-react';
-import type { AxiosError, AxiosResponse } from 'axios';
-import astro from '@astrojs/react'
+import type { AxiosResponse } from 'axios';
 import { generateAuthenticationOption, verifyAuthentication } from '../../api/Fido';
 import { startAuthentication } from '@simplewebauthn/browser';
 

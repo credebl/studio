@@ -7,6 +7,7 @@ import { BiChevronDown } from "react-icons/bi";
 import CustomAvatar from '../Avatar'
 import type { Organisation } from './interfaces'
 import { getOrganizations } from '../../api/organization';
+import { pathRoutes } from '../../config/pathRoutes';
 
 const OrgDropDown = () => {
 	const [orgList, setOrgList] = useState<Organisation[]>([]);
@@ -31,7 +32,7 @@ const OrgDropDown = () => {
 
 	const goToOrgDashboard = async (orgId: number, roles: string[]) => {
 		await setToLocalStorage(storageKeys.ORG_ID, orgId.toString());
-		window.location.href = '/organizations/dashboard';
+		window.location.href = pathRoutes.organizations.dashboard;
 	};
 
 	const setActiveOrg = async (organizations: Organisation[]) => {
@@ -42,9 +43,12 @@ const OrgDropDown = () => {
 		if (orgId) {
 			activeOrg = organizations?.find(org => org.id === Number(orgId)) as Organisation
 			setactiveOrg(activeOrg || null)
+			await setToLocalStorage(storageKeys.ORG_ID, orgId.toString());
 		} else {
 			activeOrg = organizations && organizations[0]
 			setactiveOrg(activeOrg || null)
+			await setToLocalStorage(storageKeys.ORG_ID, activeOrg.id.toString());
+
 		}
 
 		const roles: string[] = activeOrg?.userOrgRoles.map(role => role.orgRole.name)
@@ -95,7 +99,7 @@ const OrgDropDown = () => {
 			>
 				{orgList?.length > 0 ? (
 					<ul
-						className="h-48 py-2 overflow-y-auto text-gray-700 dark:text-gray-200 text-sm"
+						className="max-h-48 py-2 overflow-y-auto text-gray-700 dark:text-gray-200 text-sm"
 						aria-labelledby="dropdownUsersButton"
 					>
 						{orgList?.map((org) => {
