@@ -115,14 +115,13 @@ const EditUserRoleModal = (props: { openModal: boolean;  setMessage: (message: s
 
     return (
         <Modal
-            size="2xl"
-            show={props.openModal} onClose={() => {
-                setInvitations([])
-                setInvitationData(initialInvitationData)
-                props.setOpenModal(false)
-            }
-            }>
-            <Modal.Header>Send Invitations</Modal.Header>
+            show={props.openModal}
+            size={"5xl"}
+            onClose={() => {               
+                props.setOpenModal(false);
+            }}
+        >
+            <Modal.Header>Manage User Role</Modal.Header>
             <Modal.Body>
                  <AlertComponent
                     message={erroMsg}
@@ -153,11 +152,16 @@ const EditUserRoleModal = (props: { openModal: boolean;  setMessage: (message: s
                         resetForm({ values: initialInvitationData })
                     }}
                 >
-                    {(formikHandlers): JSX.Element => (
+                   
+                    <div className="space-y-6">
+                        <div>
+                            <div className="w-full">                              
 
-                        <Form className="mt-2 space-y-6" onSubmit={
-                            formikHandlers.handleSubmit
-                        }>
+                                <p
+                                    className="text-base font-semibold text-gray-700 leading-none truncate mb-0.5 dark:text-white"
+                                >
+                                    {props?.user?.firstName} {props?.user?.lastName}
+                                </p>
 
                             <div className="flex items-center justify-between">
 
@@ -190,17 +194,11 @@ const EditUserRoleModal = (props: { openModal: boolean;  setMessage: (message: s
 
                             </div>
 
-                        </Form>
-                    )}
-
-                </Formik>
-                {
-                    invitations.length > 0 &&
-                    <div>
-                        <div
-                            className="p-2 my-2 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-2 dark:bg-gray-800"
-                        >
-                            <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+                            <div className="mt-8 w-full">
+                                <div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                    Roles
+                                    <span className="text-red-500 text-xs">*</span>
+                                </div>
                                 {
                                     invitations.map((invitation) => (
 
@@ -259,6 +257,16 @@ const EditUserRoleModal = (props: { openModal: boolean;  setMessage: (message: s
                 }
 
 
+                <div className="flex justify-end">
+                    <Button
+                        onClick={editUserRole}
+                        color="bg-primary-800"
+                        isProcessing={loading}
+                        className="text-white px-6 py-1 items-center justify-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                    >
+                        Save
+                    </Button>
+                </div>
             </Modal.Body>
 
         </Modal>
