@@ -111,7 +111,7 @@ const EditUserRoleModal = (props: { openModal: boolean; user: User; setMessage: 
                 props.setOpenModal(false);
             }}
         >
-            <Modal.Header>Edit User Role</Modal.Header>
+            <Modal.Header>Manage User Role</Modal.Header>
             <Modal.Body>
 
                 <div
@@ -119,13 +119,13 @@ const EditUserRoleModal = (props: { openModal: boolean; user: User; setMessage: 
                 >
                    
                     <div className="space-y-6">
-                        <div className="flex flex-row justify-center">
+                        <div>
                             <div className="w-full">                              
 
                                 <p
                                     className="text-base font-semibold text-gray-700 leading-none truncate mb-0.5 dark:text-white"
                                 >
-                                    {props?.user?.firstName}{props?.user?.lastName}
+                                    {props?.user?.firstName} {props?.user?.lastName}
                                 </p>
 
                                 <span className='flex items-center'>
@@ -136,7 +136,7 @@ const EditUserRoleModal = (props: { openModal: boolean; user: User; setMessage: 
 
                             </div>
 
-                            <div className="w-full">
+                            <div className="mt-8 w-full">
                                 <div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     Roles
                                     <span className="text-red-500 text-xs">*</span>
@@ -176,9 +176,9 @@ const EditUserRoleModal = (props: { openModal: boolean; user: User; setMessage: 
                         onClick={editUserRole}
                         color="bg-primary-800"
                         isProcessing={loading}
-                        className="text-white w-40 items-center justify-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-2 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                        className="text-white px-6 py-1 items-center justify-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                     >
-                        Edit
+                        Save
                     </Button>
                 </div>
             </Modal.Body>
