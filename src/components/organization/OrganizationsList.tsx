@@ -17,7 +17,7 @@ import { setToLocalStorage } from '../../api/Auth';
 
 const initialPageState = {
   pageNumber: 1,
-  pageSize: 10,
+  pageSize: 9,
   total: 100,
 };
 
