@@ -122,7 +122,7 @@ const SendInvitationModal = (props: { openModal: boolean;  setMessage: (message:
                 props.setOpenModal(false)
             }
             }>
-            <Modal.Header>Sent Invitations</Modal.Header>
+            <Modal.Header>Send Invitations</Modal.Header>
             <Modal.Body>
                  <AlertComponent
                     message={erroMsg}
@@ -181,9 +181,12 @@ const SendInvitationModal = (props: { openModal: boolean;  setMessage: (message:
                                 <div className="w-1/3">
                                     <Button type="submit"
                                         color="gray"
-                                        className='mt-6 float-right border border-gray-400'
-                                    >
-                                        ADD +
+                                        className='mt-6 float-right text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-700 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
+                                        ><svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
+                                        <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"/>
+                                      </svg>
+                                                                      
+                                        ADD
                                     </Button>
                                 </div>
 

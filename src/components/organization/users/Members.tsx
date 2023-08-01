@@ -150,9 +150,9 @@ const Members = () => {
                                                 <div
                                                     className="flex flex-wrap justify-between xl:block 2xl:flex align-center 2xl:space-x-4"
                                                 >
-                                                    <div className="flex space-x-4 xl:mb-4 2xl:mb-0">
+                                                    <div className="min-w-[40%] flex space-x-4 xl:mb-4 2xl:mb-0">
                                                        
-                                                        <div className="flex-1 min-w-0">
+                                                        <div className="flex-1">
                                                             <p
                                                                 className="text-base font-semibold text-gray-900 leading-none truncate dark:text-white"
                                                             >
@@ -186,7 +186,7 @@ const Members = () => {
                                                         </div>
                                                     </div>
 
-                                                    <span className='flex items-center'>
+                                                    <span className='min-w-[35%] flex items-center justify-items-start'>
                                                         {
                                                             user.email
                                                         }
