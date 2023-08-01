@@ -13,7 +13,7 @@ import { apiStatusCodes, passwordRegex } from '../../config/CommonConstant.js';
 import { asset, url } from '../../lib/data.js';
 
 import type { AxiosError, AxiosResponse } from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { addDeviceDetails, generateRegistrationOption, verifyRegistration } from '../../api/Fido.js';
 import { startRegistration } from '@simplewebauthn/browser';
 import type { IdeviceBody, RegistrationOptionInterface } from '../Profile/interfaces/index.js';
@@ -40,7 +40,18 @@ const SignUpUser = () => {
 	})
 	const [addSuccess, setAddSuccess] = useState<string | null>(null)
 	const [addfailure, setAddFailur] = useState<string | null>(null)
+	const [emailAutoFill, setEmailAutoFill] = useState<string>('')
 	const [fidoError, setFidoError] = useState("")
+
+	useEffect(() => {
+		// if (signUpSuccess === window?.location?.search) {
+		// 	setSuccess('Hurry!! 🎉 You have successfully registered on CREDEBL 🚀')
+		// }
+		if(window?.location?.search.length > 7) {
+			setEmailAutoFill(window?.location?.search.split('=')[1])
+		}
+		console.log(" window?.location?.search::::::",  window?.location?.search)
+	}, [])
 
 	const showFidoError = (error: unknown): void => {
 		const err = error as AxiosError
@@ -58,7 +69,7 @@ const SignUpUser = () => {
 		}
 	}
 
-	const submit = async (passwordDetails: passwordValues) => {
+	const submit = async (passwordDetails: passwordValues, fidoFlag:boolean) => {
 		const payload = {
 			password: passwordEncryption(passwordDetails?.password),
 			isPasskey: false,
@@ -71,7 +82,7 @@ const SignUpUser = () => {
 		const { data } = userRsp as AxiosResponse
 		setLoading(false)
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			window.location.href = '/authentication/sign-in?signup=true'
+			window.location.href = `/authentication/sign-in?signup=true?fidoFlag=${fidoFlag}`
 		} else {
 			setErrMsg(userRsp as string)
 		}
@@ -215,7 +226,7 @@ const SignUpUser = () => {
 					confirmPassword: `${password}@`
 				}
                
-				submit(fidoPassword)
+				submit(fidoPassword, true)
 			} else {
 				setAddFailur(deviceDetailsResp as string)
 			}
@@ -290,7 +301,7 @@ const SignUpUser = () => {
 					</div>
 					{!nextflag && (<Formik
 						initialValues={{
-							email: ''
+							email: emailAutoFill ? emailAutoFill : ''
 						}}
 						validationSchema={yup.object().shape({
 							email: yup
@@ -314,7 +325,7 @@ const SignUpUser = () => {
 										<span className='text-red-500 text-xs'>*</span>
 									</div>
 									<Field
-										id="email"
+										id="Signupemail"
 										name="email"
 										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 										type="email"
@@ -326,6 +337,7 @@ const SignUpUser = () => {
 								</div>
 								<div className='pb-1'>
 								<Button
+								    id = 'signupemailnextbutton'
 									isProcessing={verifyLoader}
 									type=""
 									className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 float-right'
@@ -376,7 +388,7 @@ const SignUpUser = () => {
 												<Label htmlFor="firstName" value="First name" />
 											</div>
 											<Field
-												id="firstName"
+												id="signupfirstname"
 												name="firstName"
 												className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 											/>
@@ -390,7 +402,7 @@ const SignUpUser = () => {
 												<Label htmlFor="lastName" value="Last name" />
 											</div>
 											<Field
-												id="lastName"
+												id="signuplastname"
 												name="lastName"
 												className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 											/>
@@ -401,6 +413,7 @@ const SignUpUser = () => {
 										</div>
 										<div className='flex pt-4'>
 											<Button
+											    id = 'signupuserdetailsnextbutton'
 												type="submit"
 												isProcessing={""}
 												color='bg-primary-800'
@@ -445,7 +458,7 @@ const SignUpUser = () => {
 						onSubmit={(
 							values: passwordValues,
 						) => {
-							submit(values)
+							submit(values, false)
 						}}
 					>
 						{(formikHandlers): JSX.Element => (
@@ -457,7 +470,7 @@ const SignUpUser = () => {
 											<span className='text-red-500 text-xs'>*</span>
 										</div>
 										<Field
-											id="password"
+											id="signuppassword"
 											name="password"
 											className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 											type="password"
@@ -473,7 +486,7 @@ const SignUpUser = () => {
 											<span className='text-red-500 text-xs'>*</span>
 										</div>
 										<Field
-											id="confirmPassword"
+											id="signupconfirmpassword"
 											name="confirmPassword"
 											className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 											type="password"
@@ -488,16 +501,18 @@ const SignUpUser = () => {
 									<div className='pt-4'>
 										<div className='flex'>
 											<Button
+											    id = 'signupcreatepasskey'
 												onClick={() => {
 													createPasskey()
 												}}
 												color='bg-primary-800'
 												className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
 											>
-												Create Passkey
+												Create passkey
 											</Button>
 											{enablePasswordField &&
 												<Button
+												    id = 'signupbutton'
 													type="submit"
 													isProcessing={loading}
 													color='bg-primary-800'

@@ -22,7 +22,8 @@ interface emailValue {
 interface passwordValue {
 	password: string;
 }
-const signUpSuccess = '?signup=true'
+const signUpSuccessPassword = '?signup=true?fidoFlag=false'
+const signUpSuccessPasskey = '?signup=true?fidoFlag=true'
 
 const SignInUser = () => {
 	const [email, setEmail] = useState<emailValue | null>(null)
@@ -35,8 +36,11 @@ const SignInUser = () => {
 	const [fidoLoader, setFidoLoader] = useState<boolean>(false)
 
 	useEffect(() => {
-		if (signUpSuccess === window?.location?.search) {
+		if (signUpSuccessPassword === window?.location?.search) {
 			setSuccess('Hurry!! 🎉 You have successfully registered on CREDEBL 🚀')
+		}
+		else if (signUpSuccessPasskey === window?.location?.search) {
+			setSuccess('Hurry!! 🎉 You have successfully registered on CREDEBL with passkey')
 		}
 		setTimeout(() => {
 			setSuccess('')
@@ -239,7 +243,7 @@ const SignInUser = () => {
 										<span className='text-red-500 text-xs'>*</span>
 									</div>
 									<Field
-										id="email"
+										id="signinemail"
 										name="email"
 										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 										type="email"
@@ -250,6 +254,7 @@ const SignInUser = () => {
 									}
 								</div>
 								<Button
+								    id = 'signinnext'
 									isProcessing={loading}
 									type="submit"
 									className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 float-right'
@@ -259,6 +264,7 @@ const SignInUser = () => {
 								<div className="text-sm font-medium text-gray-500 dark:text-gray-400 pt-10">
 									Not registered?
 									&nbsp;<a
+									    id = 'navigatetosignup'
 										href="/authentication/sign-up"
 										className="text-primary-700 hover:underline dark:text-primary-500"
 									>
@@ -293,7 +299,7 @@ const SignInUser = () => {
 										</div>
 
 										<Field
-											id="password"
+											id="signinpassword"
 											name="password"
 											className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 											type="password"
@@ -304,6 +310,7 @@ const SignInUser = () => {
 										}
 									</div>
 									<Button
+									    id = 'signinsubmit'
 										isProcessing={loading}
 										type="submit"
 										className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 float-right'
@@ -314,13 +321,14 @@ const SignInUser = () => {
 								<div className='justify-self-auto'>
 
 									<Button
+									    id = 'loginwithpasskey'
 										isProcessing={''}
 										onClick={() => {
 											authenticateWithPasskey(email?.email)
 										}}
 										className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
 									>
-										Login with passkey
+									Login with Passkey
 									</Button>
 									<div className="text-sm font-medium text-gray-500 dark:text-gray-400 text-primary-700 hover:underline dark:text-primary-500 pt-4" onClick={() => {
 										setPasswordFlag(true)
