@@ -1,9 +1,10 @@
 import { Card } from 'flowbite-react';
+import { pathRoutes } from '../config/pathRoutes';
 
 const SchemaCard = (props: { schemaName: string, version: string, schemaId: string, issuerDid: string, attributes: string[], created: string },) => {
   return (
     <Card onClick={() => {
-      window.location.href = `/organizations/schemas/view-schema?schemaId=${props.schemaId}`
+      window.location.href = `${pathRoutes.organizations.viewSchema}?schemaId=${props.schemaId}`
     }} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer' style={{ width: '470px', height: '240px', maxWidth: '100%', maxHeight: '100%', overflow: 'auto' }}>
       <div className="flex justify-between items-start">
         <div>

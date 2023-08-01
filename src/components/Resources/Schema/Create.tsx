@@ -1,16 +1,19 @@
 'use client';
 
-import type { AxiosResponse } from 'axios';
+import * as yup from 'yup';
+
 import { Alert, Button, Card, Label, Table, } from 'flowbite-react';
 import { Field, FieldArray, Form, Formik } from 'formik';
-import { useEffect, useState } from 'react';
-import { addSchema } from '../../../api/Schema';
-import SchemaCard from '../../../commonComponents/SchemaCard';
-import * as yup from 'yup';
 import { apiStatusCodes, schemaVersionRegex, storageKeys } from '../../../config/CommonConstant';
+import { useEffect, useState } from 'react';
+
+import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../../BreadCrumbs';
 import type { FieldName } from './interfaces';
+import SchemaCard from '../../../commonComponents/SchemaCard';
+import { addSchema } from '../../../api/Schema';
 import { getFromLocalStorage } from '../../../api/Auth';
+import { pathRoutes } from '../../../config/pathRoutes';
 
 interface Values {
     schemaName: string;
@@ -47,7 +50,7 @@ const CreateSchema = () => {
         if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
             if (data?.data) {
                 setCreateLoader(false)
-                window.location.href = `/organizations/schemas`
+                window.location.href = pathRoutes.organizations.schemas
             } else {
                 setCreateLoader(false)
             }
