@@ -117,7 +117,10 @@ const UserDashBoard = () => {
 
 									{(org.logoUrl) ? <CustomAvatar size='30' src={org.logoUrl} /> : <CustomAvatar size='30' name={org.name} />}
 
-									<h3 className="pl-2.5"> {org.name}</h3>
+									<h3 className="pl-2.5 text-lg font-semibold text-gray-900 dark:text-white">
+										{org.name}
+									</h3>
+
 								</div>
 							})
 						}
