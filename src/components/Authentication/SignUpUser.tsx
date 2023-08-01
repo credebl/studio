@@ -11,8 +11,15 @@ import {
 import { UserSignUpData, passwordEncryption, registerUser } from '../../api/Auth.js';
 import { apiStatusCodes, passwordRegex } from '../../config/CommonConstant.js';
 
-import type { AxiosResponse } from 'axios';
-import { useState } from 'react';
+import type { AxiosError, AxiosResponse } from 'axios';
+import { useEffect, useState } from 'react';
+import { addDeviceDetails, generateRegistrationOption, verifyRegistration } from '../../api/Fido.js';
+import { startRegistration } from '@simplewebauthn/browser';
+import type { IdeviceBody, RegistrationOptionInterface } from '../Profile/interfaces/index.js';
+import secureRandomPassword from 'secure-random-password';
+
+
+
 
 interface Values {
 	firstName: string;
@@ -39,25 +46,213 @@ const SignUpUser = () => {
 	})
 	const [addSuccess, setAddSuccess] = useState<string | null>(null)
 	const [addfailure, setAddFailur] = useState<string | null>(null)
+	const [emailAutoFill, setEmailAutoFill] = useState<string>('')
 	const [fidoError, setFidoError] = useState("")
 
-	const submit = async(values: Values) =>{
-	  const payload: UserSignUpData ={
-		firstName: values.firstName,
-		lastName: values.lastName,
-		email: values.email,
-		password: passwordEncryption(values.password)
-	  }
-	   setLoading(true)
-       const userRsp = await registerUser(payload)
-	   const { data } = userRsp as AxiosResponse
-	   setLoading(false)
-	   if(data?.statusCode === apiStatusCodes.API_STATUS_CREATED){
-		window.location.href = '/authentication/sign-in?signup=true'
-	   }else{
-         setErrMsg(userRsp as string)
-	   }
-	} 
+	useEffect(() => {
+		// if (signUpSuccess === window?.location?.search) {
+		// 	setSuccess('Hurry!! 🎉 You have successfully registered on CREDEBL 🚀')
+		// }
+		if(window?.location?.search.length > 7) {
+			setEmailAutoFill(window?.location?.search.split('=')[1])
+		}
+		console.log(" window?.location?.search::::::",  window?.location?.search)
+	}, [])
+
+	const showFidoError = (error: unknown): void => {
+		const err = error as AxiosError
+		if (err.message.includes("The operation either timed out or was not allowed")) {
+			const [errorMsg] = err.message.split('.')
+			setFidoError(errorMsg)
+			setTimeout(() => {
+				setFidoError("")
+			}, 5000)
+		} else {
+			setFidoError(err.message)
+			setTimeout(() => {
+				setFidoError("")
+			}, 5000)
+		}
+	}
+
+	const submit = async (passwordDetails: passwordValues, fidoFlag:boolean) => {
+		const payload = {
+			password: passwordEncryption(passwordDetails?.password),
+			isPasskey: false,
+			firstName: userDetails.firstName,
+			lastName: userDetails.lastName
+		}
+		setLoading(true)
+
+		const userRsp = await addPasswordDetails(payload, email)
+		const { data } = userRsp as AxiosResponse
+		setLoading(false)
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			window.location.href = `/authentication/sign-in?signup=true?fidoFlag=${fidoFlag}`
+		} else {
+			setErrMsg(userRsp as string)
+		}
+		return userRsp;
+	}
+
+	const VerifyMail = async (email: string) => {
+		try {
+			const payload = {
+				email: email
+			}
+			setVerifyLoader(true)
+			const userRsp = await sendVerificationMail(payload);
+			const { data } = userRsp as AxiosResponse;
+			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+
+				setVerificationSuccess(data?.message)
+				setVerifyLoader(false)
+			} else {
+				setErrMsg(userRsp as string);
+				setVerifyLoader(false)
+			}
+			setTimeout(() => {
+				setVerificationSuccess('')
+				setErrMsg('')
+			}, 5000);
+			return data;
+		} catch (error) {
+			console.error('Error occurred:', error);
+			setErrMsg('An error occurred. Please try again later.');
+			setVerifyLoader(false)
+		}
+	};
+
+
+
+	//Save email
+	const ValidateEmail = async (values: emailValue) => {
+		setLoading(true)
+		const userRsp = await checkUserExist(values?.email)
+		const { data } = userRsp as AxiosResponse
+		setLoading(false)
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			if (data.data === 'New User') {
+				setEmail(values?.email)
+				await VerifyMail(values?.email)
+			}
+			else if (data.data.isEmailVerified === true && data?.data?.isKeycloak !== true) {
+				setEmail(values?.email)
+				setNextFlag(true)
+				setEnableName(true)
+			}
+		} else {
+			setErrMsg(userRsp as string)
+		}
+		setTimeout(() => {
+			setErrMsg('')
+		}, 5000);
+	}
+
+
+
+	const createPasskey = async () => {
+
+		registerWithPasskey(true)
+
+	}
+
+
+	const registerWithPasskey = async (flag: boolean): Promise<void> => {
+		try {
+			const RegistrationOption: RegistrationOptionInterface = {
+				userName: email,
+				deviceFlag: flag
+			}
+			// Generate Registration Option
+			const generateRegistrationResponse = await generateRegistrationOption(RegistrationOption)
+			const { data } = generateRegistrationResponse as AxiosResponse
+			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+				const opts = data?.data
+				const challangeId = data?.data?.challenge
+				if (opts) {
+					opts.authenticatorSelection = {
+						residentKey: "preferred",
+						requireResidentKey: false,
+						userVerification: "preferred"
+					}
+				}
+				setLoading(false)
+				const attResp = await startRegistration(opts)
+				const verifyRegistrationObj = {
+					...attResp,
+					challangeId
+				}
+
+				await verifyRegistrationMethod(verifyRegistrationObj, email);
+			} else {
+				setErrMsg(generateRegistrationResponse as string)
+			}
+		} catch (error) {
+			showFidoError(error)
+		}
+	}
+	const verifyRegistrationMethod = async (verifyRegistrationObj: any, OrgUserEmail: string) => {
+		try {
+			const verificationRegisterResp = await verifyRegistration(verifyRegistrationObj, OrgUserEmail)
+			const { data } = verificationRegisterResp as AxiosResponse
+			const credentialID = data?.data?.newDevice?.credentialID
+
+			if (data?.data?.verified) {
+				let platformDeviceName = ''
+
+				if (verifyRegistrationObj?.authenticatorAttachment === "cross-platform") {
+					platformDeviceName = 'Passkey'
+				} else {
+					platformDeviceName = navigator.platform
+				}
+
+				const deviceBody: IdeviceBody = {
+					userName: OrgUserEmail,
+					credentialId: credentialID,
+					deviceFriendlyName: platformDeviceName
+				}
+				await addDeviceDetailsMethod(deviceBody)
+			}
+		} catch (error) {
+			showFidoError(error)
+		}
+	}
+	const addDeviceDetailsMethod = async (deviceBody: IdeviceBody) => {
+		try {
+			const deviceDetailsResp = await addDeviceDetails(deviceBody)
+			const { data } = deviceDetailsResp as AxiosResponse
+			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+				const password = secureRandomPassword.randomPassword({
+					characters: secureRandomPassword.lower + secureRandomPassword.upper + secureRandomPassword.digits,
+					length: 12,
+				  });
+				const fidoPassword = {
+					password: `${password}@`,
+					confirmPassword: `${password}@`
+				}
+               
+				submit(fidoPassword, true)
+			} else {
+				setAddFailur(deviceDetailsResp as string)
+			}
+			setTimeout(() => {
+				setAddSuccess('')
+				setAddFailur('')
+			}, 5000);
+		} catch (error) {
+			showFidoError(error)
+		}
+	}
+
+	const setNameValue = (values: nameValues) => {
+		setUserDetails({
+			firstName: values.firstName,
+			lastName: values.lastName
+		})
+		setContinuePasswordFlag(true)
+		setEnableName(false)
+	}
 
 	return (
 		<div className="min-h-screen align-middle flex pb-[12vh]">
@@ -112,7 +307,7 @@ const SignUpUser = () => {
 					</div>
 					{!nextflag && (<Formik
 						initialValues={{
-							email: ''
+							email: emailAutoFill ? emailAutoFill : ''
 						}}
 						validationSchema={yup.object().shape({
 							email: yup
@@ -136,7 +331,7 @@ const SignUpUser = () => {
 										<span className='text-red-500 text-xs'>*</span>
 									</div>
 									<Field
-										id="email"
+										id="Signupemail"
 										name="email"
 										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 										type="email"
@@ -148,6 +343,7 @@ const SignUpUser = () => {
 								</div>
 								<div className='pb-1'>
 								<Button
+								    id = 'signupemailnextbutton'
 									isProcessing={verifyLoader}
 									type=""
 									className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 float-right'
@@ -201,7 +397,7 @@ const SignUpUser = () => {
 												<Label htmlFor="firstName" value="First name" />
 											</div>
 											<Field
-												id="firstName"
+												id="signupfirstname"
 												name="firstName"
 												className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 											/>
@@ -215,7 +411,7 @@ const SignUpUser = () => {
 												<Label htmlFor="lastName" value="Last name" />
 											</div>
 											<Field
-												id="lastName"
+												id="signuplastname"
 												name="lastName"
 												className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 											/>
@@ -226,6 +422,7 @@ const SignUpUser = () => {
 										</div>
 										<div className='flex pt-4'>
 											<Button
+											    id = 'signupuserdetailsnextbutton'
 												type="submit"
 												isProcessing={""}
 												color='bg-primary-800'
@@ -272,45 +469,77 @@ const SignUpUser = () => {
 						validateOnChange
 						enableReinitialize
 						onSubmit={(
-							values: Values,
-						) => {submit(values)}}
+							values: passwordValues,
+						) => {
+							submit(values, false)
+						}}
 					>
 						{(formikHandlers): JSX.Element => (
-							<Form className="mt-8 space-y-6"  onSubmit={formikHandlers.handleSubmit}>
-								<div>
-									<div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-										<Label htmlFor="firstName" value="First name"/>
-                                        <span className='text-red-500 text-xs'>*</span>
+							<Form className="mt-8 space-y-6" onSubmit={formikHandlers.handleSubmit}>
+								{enablePasswordField && <div>
+									<div>
+										<div className="mb-2 block">
+											<Label htmlFor="password" value="Password" />
+											<span className='text-red-500 text-xs'>*</span>
+										</div>
+										<Field
+											id="signuppassword"
+											name="password"
+											className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+											type="password"
+										/>
+										{
+											(formikHandlers?.errors?.password && formikHandlers?.touched?.password) &&
+											<span className="text-red-500 text-xs">{formikHandlers?.errors?.password}</span>
+										}
 									</div>
-									<Field
-										id="firstName"
-										name="firstName"
-										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-									/>
-                                    {
-                                        (formikHandlers?.errors?.firstName && formikHandlers?.touched?.firstName) &&
-                                        <span className="text-red-500 text-xs">{formikHandlers?.errors?.firstName}</span>
-                                    }
-								</div>
-								<div>
-									<div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-										<Label htmlFor="lastName" value="Last name" />
-                                        <span className='text-red-500 text-xs'>*</span>
+									<div>
+										<div className="mb-2 block">
+											<Label htmlFor="confirmPassword" value="Confirm password" />
+											<span className='text-red-500 text-xs'>*</span>
+										</div>
+										<Field
+											id="signupconfirmpassword"
+											name="confirmPassword"
+											className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+											type="password"
+										/>
+										{
+											(formikHandlers?.errors?.confirmPassword && formikHandlers?.touched?.confirmPassword) &&
+											<span className="text-red-500 text-xs">{formikHandlers?.errors?.confirmPassword}</span>
+										}
 									</div>
-									<Field
-										id="lastName"
-										name="lastName"
-										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-									/>
-                                    {
-                                        (formikHandlers?.errors?.lastName && formikHandlers?.touched?.lastName) &&
-                                        <span className="text-red-500 text-xs">{formikHandlers?.errors?.lastName}</span>
-                                    }
-								</div>
-								<div>
-									<div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-										<Label htmlFor="email2" value="Email" />
-                                        <span className='text-red-500 text-xs'>*</span>
+								</div>}
+								{nextflag && <>
+									<div className='pt-4'>
+										<div className='flex'>
+											<Button
+											    id = 'signupcreatepasskey'
+												onClick={() => {
+													createPasskey()
+												}}
+												color='bg-primary-800'
+												className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
+											>
+												Create passkey
+											</Button>
+											{enablePasswordField &&
+												<Button
+												    id = 'signupbutton'
+													type="submit"
+													isProcessing={loading}
+													color='bg-primary-800'
+													className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 ml-auto'
+												>
+													Sign Up
+												</Button>
+											}
+										</div>
+										<div className="text-sm font-medium text-gray-500 dark:text-gray-400 text-primary-700 hover:underline dark:text-primary-500 pt-2 cursor-pointer" onClick={() => {
+											setEnablePasswordField(true)
+										}}>
+											{`Set password ?`}
+										</div>
 									</div>
 									<Field
 										id="email"

@@ -10,6 +10,7 @@ const VerifyEmail = () => {
     const [loading, setLoading] = useState<boolean>(true)
     const [message, setMessage] = useState<string>('')
     const [error, setError] = useState<boolean>(false)
+    const [email, setEmail] = useState<string>('')
 
     const verifyEmailSuccess = async(payload: EmailVerifyData) => {
     
@@ -35,7 +36,7 @@ const VerifyEmail = () => {
              verificationCode: queryParameters.get("verificationCode") || '',
              email: queryParameters.get("email") || ''
         }
-
+        setEmail(payload?.email)
         verifyEmailSuccess(payload)
 
     }, []);
@@ -54,7 +55,7 @@ const VerifyEmail = () => {
                         <div className='w-full flex flex-col items-center justify-center px-12'>
                         <HiOutlineMail size={40} color='gray'/>
                         <p className={`${error?`text-red-500`:`text-green-500`} mt-4 text-lg`}>{message}</p>
-                        <a  href="/authentication/sign-up">
+                        <a  href={`/authentication/sign-up?email=${email}`}>
                         <Button
                             color='bg-primary-800'   
                             className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mt-8'
