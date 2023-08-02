@@ -1,8 +1,11 @@
 import { Alert, Avatar, Spinner } from 'flowbite-react';
 
 export const AlertComponent = ({ message, type, onAlertClose }: { message: string | null, type: string, onAlertClose: () => void }) => {
+    
+
     return message !== null ? <Alert
-        color={type === 'success' ? "success" : "failure"}
+        className='mb-4'
+        color={type}
         onDismiss={() => onAlertClose()}
     >
         <span>

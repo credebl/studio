@@ -2,7 +2,7 @@
 
 import { Button } from 'flowbite-react';
 import CreateOrgFormModal from "./organization/CreateOrgFormModal.js";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Dashboard() {
 
@@ -13,6 +13,7 @@ export default function Dashboard() {
         props.setOpenModal(true)
     }
 
+    
     return (
         <div className="px-4 pt-6">
             <div>
