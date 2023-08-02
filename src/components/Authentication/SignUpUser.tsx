@@ -221,11 +221,12 @@ const SignUpUser = () => {
 					characters: secureRandomPassword.lower + secureRandomPassword.upper + secureRandomPassword.digits,
 					length: 12,
 				  });
+				  
 				const fidoPassword = {
-					password: `${password}@`,
-					confirmPassword: `${password}@`
+					password: `${password}1@`,
+					confirmPassword: `${password}1@`
 				}
-               
+               console.log("fidoPassword:::", fidoPassword)
 				submit(fidoPassword, true)
 			} else {
 				setAddFailur(deviceDetailsResp as string)

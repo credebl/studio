@@ -15,7 +15,7 @@ import { pathRoutes } from '../../../config/pathRoutes';
 
 const SchemaList = () => {
   const [schemaList, setSchemaList] = useState([])
-  const [schemaListErr, setSchemaListErr] = useState<string|null>('')
+  const [schemaListErr, setSchemaListErr] = useState<string | null>('')
   const [loading, setLoading] = useState<boolean>(true)
   const [orgId, setOrgId] = useState<string>('')
   const [schemaListAPIParameter, setSchemaListAPIParameter] = useState({
@@ -31,7 +31,7 @@ const SchemaList = () => {
       const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
       setOrgId(organizationId);
       setLoading(true);
-  
+
       const schemaList = await getAllSchemas(schemaListAPIParameter, organizationId);
       const { data } = schemaList as AxiosResponse;
 
@@ -53,10 +53,10 @@ const SchemaList = () => {
     } catch (error) {
       console.error('Error while fetching schema list:', error);
       setLoading(false);
-     
+
     }
   };
-  
+
 
 
   useEffect(() => {
@@ -92,10 +92,10 @@ const SchemaList = () => {
       </div>
       <div>
         <div
-          className=""
+          className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
         >
-          <div className="flex items-center justify-between mb-4 pr-4">
-            <div id='schemasSearchInput'>
+          <div className="flex flex-col items-center justify-between mb-4 pr-4 sm:flex-row">
+            <div id='schemasSearchInput' className="mb-2 sm:mb-0">
               <SearchInput
                 onInputChange={onSearch}
               />
@@ -106,13 +106,14 @@ const SchemaList = () => {
                 window.location.href = `${pathRoutes.organizations.createSchema}?OrgId=${orgId}`
               }}
               className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
-            ><svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
-            <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"/>
-          </svg>
-          
-              Create 
+            >
+              <svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
+                <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+              </svg>
+              Create
             </Button>
           </div>
+
           {
             schemaListErr &&
             <Alert
