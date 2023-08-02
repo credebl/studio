@@ -17,6 +17,7 @@ import { apiStatusCodes } from '../../../config/CommonConstant';
 import { getOrganizationInvitations } from '../../../api/invitations';
 import { getOrganizations } from '../../../api/organization';
 import { pathRoutes } from '../../../config/pathRoutes';
+import { EmptyListMessage } from '../../EmptyListComponent';
 
 const initialPageState = {
     pageNumber: 1,
@@ -63,8 +64,6 @@ const ReceivedInvitations = () => {
                 ...currentPage,
                 total: totalPages
             })
-        } else {
-            setMessage(response as string)
         }
 
         setLoading(false)
@@ -101,7 +100,7 @@ const ReceivedInvitations = () => {
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
             setMessage(data?.message)
             setLoading(false)
-            window.location.href=pathRoutes.organizations.root
+            window.location.href = pathRoutes.organizations.root
         } else {
             setError(response as string)
             setLoading(false)
@@ -123,15 +122,12 @@ const ReceivedInvitations = () => {
                     className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
                 >
                     <div className="flex items-center justify-between mb-4">
-                        <SearchInput
-                            onInputChange={searchInputChange}
-                        />
-                        {/* <Button
-                            onClick={createInvitationsModel}
-                            className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
-                        >
-                            Send Invitations
-                        </Button> */}
+                        {invitationsList && invitationsList?.length > 0 ?
+
+                            <SearchInput
+                                onInputChange={searchInputChange}
+                            /> :
+                            null}
                     </div>
 
                     <SendInvitationModal
@@ -141,26 +137,19 @@ const ReceivedInvitations = () => {
                             props.setOpenModal
                         } />
 
-                    <AlertComponent
-                        message={message}
-                        type={'success'}
-                        onAlertClose={() => {
-                            setMessage(null)
-                        }}
-                    />
                     {loading
                         ? <div className="flex items-center justify-center mb-4">
                             <Spinner
                                 color="info"
                             />
                         </div>
-                        : <div
+                        : invitationsList && invitationsList?.length > 0 ? (<div
                             className="p-2 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-3 dark:bg-gray-800"
                         >
                             <div className="flow-root">
                                 <ul className="divide-y divide-gray-200 dark:divide-gray-700">
                                     {
-                                        invitationsList && invitationsList.map((invitation) => (
+                                        invitationsList.map((invitation) => (
 
                                             <li className="p-4">
                                                 <div
@@ -187,7 +176,7 @@ const ReceivedInvitations = () => {
                                                             <p
                                                                 className="text-base font-semibold text-gray-900 leading-none truncate mb-0.5 dark:text-white"
                                                             >
-                                                                {invitation.email}
+                                                                {invitation.organisation.name}
                                                             </p>
 
                                                             <div className="flow-root h-auto">
@@ -216,40 +205,12 @@ const ReceivedInvitations = () => {
                                                                 </ul>
 
                                                             </div>
-                                                            <p
+                                                            {/* <p
                                                                 className="mr-2 flex items-center text-sm font-medium text-gray-500 dark:text-gray-400"
                                                             >
                                                                 Received On: {invitation.createDateTime.split('T')[0]}
-                                                            </p>
+                                                            </p> */}
                                                         </div>
-
-
-                                                        <div>
-
-                                                        </div>
-                                                        <div className='flex'>
-                                                            <Button
-                                                                onClick={() => respondToInvitations(invitation, 'rejected')}
-                                                                color='bg-white'
-                                                                className='m-5 text-base font-medium text-center text-gray-00 bg-secondary-700 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600  dark:focus:ring-primary-800 dark:bg-gray-800"'
-                                                            >
-                                                                <svg className="mr-1 h-6 w-6 text-primary-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                                                </svg>
-
-                                                                Reject
-                                                            </Button>
-                                                            <Button
-                                                                onClick={() => respondToInvitations(invitation, 'accepted')}
-                                                                className='m-5 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
-                                                            >
-                                                                <svg className="mr-1 h-6 w-6 text-white" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <path d="M5 12l5 5l10 -10" /></svg>
-                                                                Accept
-                                                            </Button>
-
-                                                        </div>
-
-
 
                                                     </div>
 
@@ -259,16 +220,21 @@ const ReceivedInvitations = () => {
                                                     </div>
                                                     <div className='flex'>
                                                         <Button
-                                                            // onClick={createInvitationsModel}
+                                                            onClick={() => respondToInvitations(invitation, 'rejected')}
                                                             color='bg-white'
-                                                            className='m-5 text-base font-medium text-center text-primary-700 bg-white border border-primary-700 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600  dark:focus:ring-primary-800 dark:bg-gray-800"'
+                                                            className='m-5 text-base font-medium text-center text-gray-00 bg-secondary-700 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600  dark:focus:ring-primary-800 dark:bg-gray-800"'
                                                         >
+                                                            <svg className="mr-1 h-6 w-6 text-primary-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                            </svg>
+
                                                             Reject
                                                         </Button>
                                                         <Button
-                                                            // onClick={createInvitationsModel}
+                                                            onClick={() => respondToInvitations(invitation, 'accepted')}
                                                             className='m-5 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
                                                         >
+                                                            <svg className="mr-1 h-6 w-6 text-white" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <path d="M5 12l5 5l10 -10" /></svg>
                                                             Accept
                                                         </Button>
 
@@ -283,7 +249,10 @@ const ReceivedInvitations = () => {
                                     }
                                 </ul>
                             </div>
-                        </div>
+
+                        </div>) : (<EmptyListMessage
+                            message={'No Invitations'}
+                            description={`You don't have any invitation`} />)
                     }
 
                     <div className="flex items-center justify-end mb-4">
