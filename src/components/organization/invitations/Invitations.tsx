@@ -60,11 +60,16 @@ const Invitations = () => {
             const totalPages = data?.data?.totalPages;
 
             const invitationList = data?.data?.invitations
+
             setInvitationsList(invitationList)
             setCurrentPage({
                 ...currentPage,
                 total: totalPages
             })
+        }
+        else {
+            setError(response as string)
+
         }
     }
 
@@ -123,6 +128,15 @@ const Invitations = () => {
                     setOpenModal={
                         props.setOpenModal
                     } />
+
+                <AlertComponent
+                    message={message ? message : error}
+                    type={message ? 'success' : 'failure'}
+                    onAlertClose={() => {
+                        setMessage(null)
+                        setError(null)
+                    }}
+                />
 
                 {loading
                     ? <div className="flex items-center justify-center mb-4">
