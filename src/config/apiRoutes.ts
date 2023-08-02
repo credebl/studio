@@ -22,6 +22,9 @@ export const apiRoutes = {
         invitations: '/organization/invitations',
         orgRoles: '/organization/roles'
     },
+    connection: {
+        create: '/connections',
+    },
     schema: {
         create: '/schemas',
         getAll: '/schemas',
