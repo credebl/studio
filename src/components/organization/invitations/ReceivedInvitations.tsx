@@ -250,7 +250,8 @@ const ReceivedInvitations = () => {
                                 </ul>
                             </div>
 
-                        </div>) : (<EmptyListMessage
+                        </div>) 
+                        : invitationsList && (<EmptyListMessage
                             message={'No Invitations'}
                             description={`You don't have any invitation`} />)
                     }
