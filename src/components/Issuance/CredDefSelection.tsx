@@ -1,6 +1,7 @@
 'use client';
 
 import type { AxiosResponse } from "axios";
+import { Spinner } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { getFromLocalStorage } from "../../api/Auth";
 import { getCredentialDefinitions } from "../../api/issuance";
@@ -9,6 +10,7 @@ import DataTable from "../../commonComponents/dataTable";
 import type { TableData } from "../../commonComponents/dataTable/interface";
 import SchemaCard from "../../commonComponents/SchemaCard";
 import { apiStatusCodes, storageKeys } from "../../config/CommonConstant";
+import { pathRoutes } from "../../config/pathRoutes";
 import { dateConversion } from "../../utils/DateConversion";
 import BreadCrumbs from "../BreadCrumbs";
 
@@ -30,6 +32,7 @@ interface CredDefData {
 const CredDefSelection = () => {
 	const [schemaState, setSchemaState] = useState({ schemaName: '', version: '' })
 	const [loading, setLoading] = useState<boolean>(true)
+	const [schemaLoader, setSchemaLoader] = useState<boolean>(true)
 	const [error, setError] = useState<string | null>(null)
 	const [credDefList, setCredDefList] = useState<TableData[]>([])
 	const [schemaDetailsState, setSchemaDetailsState] = useState<SchemaState>({ schemaId: '', issuerDid: '', attributes: [], createdDateTime: '' })
@@ -52,6 +55,7 @@ const CredDefSelection = () => {
 	}, []);
 
 	const getSchemaDetails = async (schemaId: string) => {
+		setSchemaLoader(true)
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
 		const schemaDetails = await getSchemaById(schemaId, Number(orgId))
 		const { data } = schemaDetails as AxiosResponse
@@ -59,19 +63,11 @@ const CredDefSelection = () => {
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			if (data.data.response) {
 				const { response } = data.data
-				console.log('schemaDetails::', response);
-				const attributes: string[] = []
-				// if (response?.scheme?.attributes) {
-				// 	response?.scheme?.attributes?.map(ele =>(
-				// 		ele.
-				// 	))
-				// }
-				setSchemaDetailsState({ schemaId: response?.schemaId, issuerDid: response?.schema?.issuerId, attributes, createdDateTime: 'string' })
+				setSchemaDetailsState({ schemaId: response?.schemaId, issuerDid: response?.schema?.issuerId, attributes: response.schema.attrNames, createdDateTime: 'string' })
 
 			}
-			// const attributes = ['', '']
-			// setSchemaDetailsState({ schemaId: 'schemaId', issuerDid: 'issuerDid', attributes, createdDateTime: 'string' })
 		}
+		setSchemaLoader(false)
 	}
 
 	const header = [
@@ -88,15 +84,11 @@ const CredDefSelection = () => {
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const credDefs = data?.data?.data.map((ele: CredDefData) => {
-				console.log('ele::', ele);
 				return {
 					clickId: ele.credentialDefinitionId, data: [{ data: ele.tag ? ele.tag : 'Not available' }, { data: ele.tag ? ele.tag : 'Not available' },
 					{ data: ele.revocable === true ? <span className="text-blue-700 dark:text-white">Yes</span> : <span className="text-cyan-500 dark:text-white">No</span> }
 					]
 				}
-				// return [{ data: ele.tag ? ele.tag : 'Not available' }, { data: ele.tag ? ele.tag : 'Not available' },
-				// { data: ele.revocable === true ? <span className="text-blue-700 dark:text-white">Yes</span> : <span className="text-cyan-500 dark:text-white">No</span> }
-				// ];
 			})
 
 			if (credDefs.length === 0) {
@@ -116,7 +108,7 @@ const CredDefSelection = () => {
 
 	const selectCredDef = (credDefId: string | null | undefined) => {
 		if (credDefId) {
-			alert('Coming soon..')
+			window.location.href = `${pathRoutes.organizations.Issuance.connections}`
 		}
 	}
 
@@ -129,8 +121,14 @@ const CredDefSelection = () => {
 				</h1>
 			</div>
 			<div className="mb-4 col-span-full xl:mb-2 pb-3">
-				<SchemaCard schemaName={schemaState?.schemaName} version={schemaState?.version} schemaId={schemaDetailsState.schemaId} issuerDid={schemaDetailsState.issuerDid} attributes={schemaDetailsState.attributes} created={schemaDetailsState.createdDateTime}
-					onClickCallback={schemaSelectionCallback} />
+				{schemaLoader ?
+					<div className="flex items-center justify-center mb-4">
+						<Spinner
+							color="info"
+						/>
+					</div>
+					: <SchemaCard schemaName={schemaState?.schemaName} version={schemaState?.version} schemaId={schemaDetailsState.schemaId} issuerDid={schemaDetailsState.issuerDid} attributes={schemaDetailsState.attributes} created={schemaDetailsState.createdDateTime}
+						onClickCallback={schemaSelectionCallback} />}
 			</div>
 
 			<div className="mb-4 col-span-full xl:mb-2 pt-5">

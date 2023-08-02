@@ -19,256 +19,258 @@ import EditOrgdetailsModal from './EditOrgdetailsModal';
 
 
 const Dashboard = () => {
-    const [orgData, setOrgData] = useState<Organisation | null>(null);
+	const [orgData, setOrgData] = useState<Organisation | null>(null);
 
-    const [walletStatus, setWalletStatus] = useState<boolean>(false);
+	const [walletStatus, setWalletStatus] = useState<boolean>(false);
 
-    const [orgDashboard, setOrgDashboard] = useState<OrgDashboard | null>(null)
-    const [success, setSuccess] = useState<string | null>(null);
-    const [failure, setFailure] = useState<string | null>(null)
+	const [orgDashboard, setOrgDashboard] = useState<OrgDashboard | null>(null)
+	const [success, setSuccess] = useState<string | null>(null);
+	const [failure, setFailure] = useState<string | null>(null)
 
-    const [loading, setLoading] = useState<boolean | null>(true)
+	const [loading, setLoading] = useState<boolean | null>(true)
 
-    const [openModal, setOpenModal] = useState<boolean>(false);
-    const props = { openModal, setOpenModal };
-
-
-    const EditOrgDetails = () => {
-        props.setOpenModal(true)
-    }
+	const [openModal, setOpenModal] = useState<boolean>(false);
+	const props = { openModal, setOpenModal };
 
 
-    const updateOrganizationData = (updatedData: Organisation) => {
-        setOrgData(updatedData);
-    };
+	const EditOrgDetails = () => {
+		props.setOpenModal(true)
+	}
 
 
-
-    const fetchOrganizationDetails = async () => {
-
-        setLoading(true)
-
-        const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
-
-        const response = await getOrganizationById(orgId as string);
-
-        const { data } = response as AxiosResponse
-
-        if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-
-            if (data?.data?.org_agents && data?.data?.org_agents?.length > 0) {
-                setWalletStatus(true)
-            }
-            setOrgData(data?.data)
-        } else {
-            setFailure(response as string)
-        }
-        setLoading(false)
-
-    }
-
-    const fetchOrganizationDashboard = async () => {
-
-        setLoading(true)
-
-        const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
-
-        const response = await getOrgDashboard(orgId as string);
-
-        const { data } = response as AxiosResponse
-
-        if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-            setOrgDashboard(data?.data)
-
-        } else {
-            setFailure(response as string)
-        }
-        setLoading(false)
-
-    }
-
-    useEffect(() => {
-        fetchOrganizationDetails();
-        fetchOrganizationDashboard()
-    }, [])
-
-    useEffect(() => {
-        setTimeout(() => {
-            setSuccess(null)
-            setFailure(null)
-        }, 3000);
-    }, [success !== null, failure !== null])
+	const updateOrganizationData = (updatedData: Organisation) => {
+		setOrgData(updatedData);
+	};
 
 
 
-    const redirectDashboardInvitations = () => {
-        window.location.href = '/organizations/invitations'
-    }
+	const fetchOrganizationDetails = async () => {
 
-    const setWalletSpinupStatus = (status: boolean) => {
-        setSuccess('Agent spined up successfully')
-        fetchOrganizationDetails()
-    }
+		setLoading(true)
 
-    const redirectOrgUsers = () => {
-        window.location.href = pathRoutes.organizations.users
-    }
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
 
+		const response = await getOrganizationById(orgId as string);
 
-    return (
-        <div className="px-4 pt-6">
-            <div className="mb-4 col-span-full xl:mb-2">
+		const { data } = response as AxiosResponse
 
-                <BreadCrumbs />
-                <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 
-                </h1>
-            </div>
-            <div>
+			if (data?.data?.org_agents && data?.data?.org_agents?.length > 0) {
+				setWalletStatus(true)
+			}
+			setOrgData(data?.data)
+		} else {
+			setFailure(response as string)
+		}
+		setLoading(false)
 
-                <div
-                    className="mt-4 items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
-                >
+	}
 
-                    <div
-                        className="items-center sm:flex xl:block 2xl:flex sm:space-x-4 xl:space-x-0 2xl:space-x-4"
-                    ><div>
-                        </div>
-                        <div>
-                            {(orgData?.logoUrl) ? <CustomAvatar size='60' src={orgData?.logoUrl} /> : <CustomAvatar size='60' name={orgData?.name} />}
-                        </div>
-                        <div>
-                            <h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
-                                {orgData?.name}
-                            </h3>
+	const fetchOrganizationDashboard = async () => {
 
-                            <p className='mb-1 text-base font-normal text-gray-900 dark:text-white'>
-                                {orgData?.description}
-                            </p>
+		setLoading(true)
 
-                        </div>
-                    </div>
-                    <div className="inline-flex items-center w-auto xl:w-full 2xl:w-auto">
-                        <button type="button" className=""
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
 
-                        >
-                            <svg aria-hidden="true" className="mr-1 -ml-1 w-5 h-5"
-                                fill="currentColor" viewBox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg" color='#3558A8'
-                                onClick={EditOrgDetails}><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"
-                                >
-                                </path><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"></path></svg>
+		const response = await getOrgDashboard(orgId as string);
 
-                        </button>
-                    </div>
+		const { data } = response as AxiosResponse
 
-                    {openModal && (
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			setOrgDashboard(data?.data)
 
-                        <EditOrgdetailsModal
-                            orgData={orgData}
-                            openModal={openModal}
-                            setOpenModal={setOpenModal}
-                            onEditSucess={fetchOrganizationDetails}
-                            setMessage={(message: string) => {
-                                throw new Error('Function not implemented.');
-                            }}
+		} else {
+			setFailure(response as string)
+		}
+		setLoading(false)
 
-                        />
-                    )}
+	}
+
+	useEffect(() => {
+		fetchOrganizationDetails();
+		fetchOrganizationDashboard()
+	}, [])
+
+	useEffect(() => {
+		setTimeout(() => {
+			setSuccess(null)
+			setFailure(null)
+		}, 3000);
+	}, [success !== null, failure !== null])
 
 
-                </div>
 
-                <div
-                    className="mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
-                >
-                    <div
-                        className="grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-3 2xl:grid-cols-3"
-                    >
-                        <div
-                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${User_Card})`, minHeight: '133px' }}
-                        >
-                            <div className="w-full" onClick={redirectOrgUsers}>
-                                <h3 className="text-base font-medium text-white">
-                                    Users
-                                </h3>
-                                <span
-                                    className="text-2xl font-semi-bold leading-none text-white sm:text-3xl dark:text-white"
-                                >{orgDashboard?.usersCount}</span
-                                >
+	const redirectDashboardInvitations = () => {
+		window.location.href = '/organizations/invitations'
+	}
 
-                            </div>
-                        </div>
+	const setWalletSpinupStatus = (status: boolean) => {
+		setSuccess('Agent spined up successfully')
+		fetchOrganizationDetails()
+	}
 
-                        <div
-                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${Schema_Card})`, minHeight: '133px' }}
-                            onClick={() => {
-                                window.location.href = pathRoutes.organizations.schemas;
-                            }}
-                        >
-                            <div className="w-full">
-                                <h3 className="text-base font-medium text-white">
-                                    Schemas
-                                </h3>
-                                <span
-                                    className="text-2xl font-semi-bold leading-none text-white sm:text-3xl dark:text-white"
-                                >{orgDashboard?.schemasCount}</span
-                                >
+	const redirectOrgUsers = () => {
+		window.location.href = pathRoutes.organizations.users
+	}
 
-                            </div>
 
-                        </div>
-                        <div
+	return (
+		<div className="px-4 pt-6">
+			<div className="mb-4 col-span-full xl:mb-2">
 
-                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${Credential_Card})`, minHeight: '133px' }}
-                        >
+				<BreadCrumbs />
+				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 
-                            <div className="w-full" >
+				</h1>
+			</div>
+			<div>
 
-                                <h3 className="text-base font-medium text-white">
+				<div
+					className="mt-4 items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
+				>
 
-                                    Credentials
-                                </h3>
-                                <span
+					<div
+						className="items-center sm:flex xl:block 2xl:flex sm:space-x-4 xl:space-x-0 2xl:space-x-4"
+					><div>
+						</div>
+						<div>
+							{(orgData?.logoUrl) ? <CustomAvatar size='60' src={orgData?.logoUrl} /> : <CustomAvatar size='60' name={orgData?.name} />}
+						</div>
+						<div>
+							<h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
+								{orgData?.name}
+							</h3>
 
-                                    className="text-2xl font-semi-semi-bold leading-none text-white sm:text-3xl dark:text-white"
-                                >{orgDashboard?.credentialsCount}</span
-                                >
+							<p className='mb-1 text-base font-normal text-gray-900 dark:text-white'>
+								{orgData?.description}
+							</p>
 
-                            </div>
-                        </div>
-                    </div>
-                </div>
+						</div>
+					</div>
+					<div className="inline-flex items-center w-auto xl:w-full 2xl:w-auto">
+						<button type="button" className=""
 
-                {
-                    (success || failure) &&
-                    <Alert
-                        color={success ? "success" : "failure"}
-                        onDismiss={() => setFailure(null)}
-                    >
-                        <span>
-                            <p>
-                                {success || failure}
-                            </p>
-                        </span>
-                    </Alert>
-                }
-                {
-                    loading
-                        ? (<div className="flex items-center justify-center m-4">
-                            <Spinner
-                                color="info"
-                            />
-                        </div>)
-                        : walletStatus === true
-                            ? (<OrganizationDetails orgData={orgData} />)
-                            : (<WalletSpinup setWalletSpinupStatus={(flag: boolean) => setWalletSpinupStatus(flag)} />)
+						>
+							<svg aria-hidden="true" className="mr-1 -ml-1 w-5 h-5"
+								fill="currentColor" viewBox="0 0 20 20"
+								xmlns="http://www.w3.org/2000/svg" color='#3558A8'
+								onClick={EditOrgDetails}><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"
+								>
+								</path><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"></path></svg>
 
-                }
+						</button>
+					</div>
 
-            </div>
-        </div>
-    )
+					{openModal && (
+
+						<EditOrgdetailsModal
+							orgData={orgData}
+							openModal={openModal}
+							setOpenModal={setOpenModal}
+							onEditSucess={fetchOrganizationDetails}
+							setMessage={(message: string) => {
+								throw new Error('Function not implemented.');
+							}}
+
+						/>
+					)}
+
+
+				</div>
+
+				<div
+					className="mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
+				>
+					<div
+						className="grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-3 2xl:grid-cols-3"
+					>
+						<div
+							className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${User_Card})`, minHeight: '133px' }}
+						>
+							<div className="w-full" onClick={redirectOrgUsers}>
+								<h3 className="text-base font-medium text-white">
+									Users
+								</h3>
+								<span
+									className="text-2xl font-semi-bold leading-none text-white sm:text-3xl dark:text-white"
+								>{orgDashboard?.usersCount}</span
+								>
+
+							</div>
+						</div>
+
+						<div
+							className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${Schema_Card})`, minHeight: '133px' }}
+							onClick={() => {
+								window.location.href = pathRoutes.organizations.schemas;
+							}}
+						>
+							<div className="w-full">
+								<h3 className="text-base font-medium text-white">
+									Schemas
+								</h3>
+								<span
+									className="text-2xl font-semi-bold leading-none text-white sm:text-3xl dark:text-white"
+								>{orgDashboard?.schemasCount}</span
+								>
+
+							</div>
+
+						</div>
+						<div
+							onClick={() => {
+								window.location.href = pathRoutes.organizations.issuedCredentials;
+							}}
+							className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${Credential_Card})`, minHeight: '133px' }}
+						>
+
+							<div className="w-full" >
+
+								<h3 className="text-base font-medium text-white">
+
+									Credentials
+								</h3>
+								<span
+
+									className="text-2xl font-semi-semi-bold leading-none text-white sm:text-3xl dark:text-white"
+								>{orgDashboard?.credentialsCount}</span
+								>
+
+							</div>
+						</div>
+					</div>
+				</div>
+
+				{
+					(success || failure) &&
+					<Alert
+						color={success ? "success" : "failure"}
+						onDismiss={() => setFailure(null)}
+					>
+						<span>
+							<p>
+								{success || failure}
+							</p>
+						</span>
+					</Alert>
+				}
+				{
+					loading
+						? (<div className="flex items-center justify-center m-4">
+							<Spinner
+								color="info"
+							/>
+						</div>)
+						: walletStatus === true
+							? (<OrganizationDetails orgData={orgData} />)
+							: (<WalletSpinup setWalletSpinupStatus={(flag: boolean) => setWalletSpinupStatus(flag)} />)
+
+				}
+
+			</div>
+		</div>
+	)
 
 }
 

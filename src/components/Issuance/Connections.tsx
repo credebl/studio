@@ -2,6 +2,7 @@
 
 import BreadCrumbs from "../BreadCrumbs";
 import ConnectionList from "./ConnectionList";
+import EmailList from "./EmailList";
 
 const Connections = () => {
 
@@ -26,7 +27,7 @@ const Connections = () => {
 					<ConnectionList />
 				</div>
 				<div className="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
-					{/* l<Invitations /> */}
+				<EmailList />
 				</div>
 			</div>
 
