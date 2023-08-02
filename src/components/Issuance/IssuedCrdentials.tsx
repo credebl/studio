@@ -1,11 +1,10 @@
 'use client';
 
-import { Button, Pagination, Tooltip } from 'flowbite-react';
+import { Button, Pagination } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
-import type { Organisation } from '../organization/interfaces'
 import SearchInput from '../SearchInput';
 import DataTable from '../../commonComponents/dataTable';
 import { dateConversion } from '../../utils/DateConversion';
@@ -13,59 +12,49 @@ import type { TableData } from '../../commonComponents/dataTable/interface';
 import { getIssuedCredentials } from '../../api/issuance';
 import { IssueCredential } from '../../common/enums';
 import { AlertComponent } from '../AlertComponent';
-import CopyIcon from '../../assets/icons/copy-icon.svg';
-import { copyText } from '../../utils/TextTransform';
+import { pathRoutes } from '../../config/pathRoutes';
 
+interface IssuedCredential {
+	metadata: { [x: string]: { schemaId: string; }; };
+	connectionId: string;
+	updatedAt: string;
+	state: string;
+	isRevocable: boolean;
+}
 const CredentialList = () => {
 	const [loading, setLoading] = useState<boolean>(true)
 	const [error, setError] = useState<string | null>(null)
 	const [searchText, setSearchText] = useState("");
-	const [credentialsList, setCredentialList] = useState<TableData[]>([])
-
+	const [issuedCredList, setIssuedCredList] = useState<TableData[]>([])
 
 	//Fetch all issued credential list
 	const getIssuedCredDefs = async () => {
 		setLoading(true)
-		const response = await getIssuedCredentials(IssueCredential.credentialIssued);
+		const response = await getIssuedCredentials(IssueCredential.done);
 		const { data } = response as AxiosResponse
 
-		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-
-			const credentialList = data?.data?.organizations.map((issuedCredential: Organisation) => {
-				return {
-					clickId: null, data: [{
-						data: issuedCredential.website ? issuedCredential.website : 'Not available', subData:
-							<Tooltip
-								content="Copied"
-								trigger="click"
-								placement="right"
-							>
-								<div onClick={() => copyText('Did:Indy:bcovrin')} className="flex text-gray-500 cursor-pointer">{'Did:Indy:bcovrin'} &nbsp; <img src={CopyIcon} alt="Copy" className=""></img></div>
-							</Tooltip>
-					}, { data: issuedCredential.name }, { data: dateConversion(issuedCredential.lastChangedDateTime) },
-					{
-						data: <span
-							className={`bg-cyan-100 ${issuedCredential.website === IssueCredential.offerSent && 'text-blue-900'} ${issuedCredential.website === IssueCredential.credentialIssued && 'text-green-900'} text-xs font-medium mr-2 px-2.5 py-0.5 rounded-md dark:bg-gray-700 dark:text-white border border-cyan-100 dark:border-cyan-500`}>
-							Offer Sent</span>
-					}, {
-						data: issuedCredential.website ? <Button disabled
-							className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
-						>
-							Revoke
-						</Button>
-							: <span className='text-gray-400'>Non revocable</span>
-					}]
-				};
+		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+			const credentialList = data?.data?.map((issuedCredential: IssuedCredential) => {
+				const schemaName = issuedCredential.metadata["_anoncreds/credential"].schemaId ? issuedCredential.metadata["_anoncreds/credential"].schemaId.split(':').slice(2).join(':') : 'Not available'
+				return [{ data: issuedCredential.connectionId ? issuedCredential.connectionId : 'Not available' }, { data: schemaName }, { data: dateConversion(issuedCredential.updatedAt) },
+				{
+					data: <span
+						className={`bg-cyan-100 ${issuedCredential.state === IssueCredential.offerSent && 'text-blue-900'} ${(issuedCredential.state === IssueCredential.done || issuedCredential.state === IssueCredential.credentialIssued) && 'text-green-900'} text-xs font-medium mr-2 px-2.5 py-0.5 rounded-md dark:bg-gray-700 dark:text-white border border-cyan-100 dark:border-cyan-500`}>
+						{issuedCredential.state.replace(/_/g, ' ').replace(/\w\S*/g, (word: string) => word.charAt(0).toUpperCase() + word.substring(1).toLowerCase())}
+					</span>
+				}, {
+					data: issuedCredential?.isRevocable ? <Button disabled
+						className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+					>
+						Revoke
+					</Button>
+						: <span className='text-gray-400'>Non revocable</span>
+				}];
 			})
 
-			if (credentialList.length === 0) {
-				setError('No Data Found')
-			}
-
-			setCredentialList(credentialList)
+			setIssuedCredList(credentialList)
 		} else {
-			setError('Error occured')
-			// setError(response as string)
+			setError(response as string)
 		}
 
 		setLoading(false)
@@ -93,18 +82,17 @@ const CredentialList = () => {
 		setSearchText(e.target.value);
 	}
 
+	const schemeSelection = () => {
+		window.location.href = pathRoutes.organizations.Issuance.schema
+	}
+
 	const header = [
-		{ columnName: 'Email Id', subColumnName: 'DID' },
+		{ columnName: 'Connection Id' },
 		{ columnName: 'Schema Name' },
 		{ columnName: 'Date' },
 		{ columnName: 'Status' },
 		{ columnName: 'Action' }
 	]
-
-
-	const schemeSelection = () => {
-		window.location.href = '/organizations/issued-credentials/schemas'
-	}
 
 	return (
 		<div className="px-4 pt-6">
@@ -134,7 +122,7 @@ const CredentialList = () => {
 							setError(null)
 						}}
 					/>
-					<DataTable header={header} data={credentialsList} loading={loading}></DataTable>
+					<DataTable header={header} data={issuedCredList} loading={loading}></DataTable>
 				</div>
 			</div>
 		</div>

@@ -14,6 +14,7 @@ import SendInvitationModal from './SendInvitationModal';
 import { TextTittlecase } from '../../../utils/TextTransform';
 import { apiStatusCodes } from '../../../config/CommonConstant';
 import { getOrganizations } from '../../../api/organization';
+import { pathRoutes } from '../../../config/pathRoutes';
 
 const initialPageState = {
     pageNumber: 1,
@@ -98,7 +99,7 @@ const ReceivedInvitations = () => {
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
             setMessage(data?.message)
             setLoading(false)
-            window.location.href='/organizations'
+            window.location.href=pathRoutes.organizations.root
         } else {
             setError(response as string)
             setLoading(false)
@@ -108,7 +109,7 @@ const ReceivedInvitations = () => {
 
     return (
         <div className="px-4 pt-6">
-            <div className="mb-4 col-span-full xl:mb-2">
+            <div className="pl-6 mb-4 col-span-full xl:mb-2">
 
                 <BreadCrumbs />
                 <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
@@ -225,7 +226,7 @@ const ReceivedInvitations = () => {
                                                             <Button
                                                                 onClick={() => respondToInvitations(invitation, 'rejected')}
                                                                 color='bg-white'
-                                                                className='m-5 text-base font-medium text-center text-primary-700 bg-white border border-primary-700 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600  dark:focus:ring-primary-800 dark:bg-gray-800"'
+                                                                className='m-5 text-base font-medium text-center text-gray-00 bg-secondary-700 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600  dark:focus:ring-primary-800 dark:bg-gray-800"'
                                                             >
                                                                 <svg className="mr-1 h-6 w-6 text-primary-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />

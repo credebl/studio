@@ -114,7 +114,7 @@ const CredDefSelection = () => {
 
 	}
 
-	const selectCredDef = (credDefId: string | null) => {
+	const selectCredDef = (credDefId: string | null | undefined) => {
 		if (credDefId) {
 			alert('Coming soon..')
 		}

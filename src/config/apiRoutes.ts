@@ -1,9 +1,11 @@
 export const apiRoutes = {
     auth:{
-        signUp: '/users',
+        sendMail: '/users/send-mail',
         sinIn: '/users/login',
         verifyEmail:'/users/verify',
         userProfile: 'users/profile',
+        checkUser:'/users/check-user/',
+        addDetails:'/users/add/'
     },
     users:{
         invitations: '/users/invitations',
@@ -11,8 +13,10 @@ export const apiRoutes = {
     },
     organizations: {
         create: '/organization',
+        update: '/organization',
         getAll: '/organization',
         getById: '/organization',
+        getOrgDashboard: '/organization/dashboard',
         agentDedicatedSpinup: '/agent-service/spinup',
         agentSharedSpinup: '/agent-service/tenant',
         invitations: '/organization/invitations',
