@@ -61,15 +61,15 @@ const OrganizationsList = () => {
         return userOrg;
       })
 
-      if (orgList.length === 0) {
-        setError('No Data Found')
-      }
-
       setOrganizationList(orgList)
       setCurrentPage({
         ...currentPage,
         total: totalPages
       })
+    }
+    else{
+      setError(response as string)
+
     }
     setLoading(false)
   }
@@ -151,6 +151,16 @@ const OrganizationsList = () => {
             setOpenModal={
               props.setOpenModal
             } />
+
+          <AlertComponent
+            message={message ? message : error}
+            type={message ? 'success' : 'failure'}
+            onAlertClose={() => {
+              setMessage(null)
+              setError(null)
+            }}
+          />
+
           {loading
             ? <div className="flex items-center justify-center mb-4">
               <Spinner

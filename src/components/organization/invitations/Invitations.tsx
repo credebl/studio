@@ -56,14 +56,15 @@ const Invitations = () => {
 
             const invitationList = data?.data?.invitations
 
-            if (invitationList.length === 0) {
-                setError('No Data Found')
-            }
             setInvitationsList(invitationList)
             setCurrentPage({
                 ...currentPage,
                 total: totalPages
             })
+        }
+        else {
+            setError(response as string)
+
         }
     }
 
@@ -122,6 +123,15 @@ const Invitations = () => {
                     setOpenModal={
                         props.setOpenModal
                     } />
+
+                <AlertComponent
+                    message={message ? message : error}
+                    type={message ? 'success' : 'failure'}
+                    onAlertClose={() => {
+                        setMessage(null)
+                        setError(null)
+                    }}
+                />
 
                 {loading
                     ? <div className="flex items-center justify-center mb-4">
