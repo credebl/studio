@@ -130,7 +130,7 @@ export const getOrgDashboard = async (orgId: string) => {
     }
 
     try {
-        return axiosGet(axiosPayload);
+        return await axiosGet(axiosPayload);
     }
     catch (error) {
         const err = error as Error
@@ -235,7 +235,7 @@ export const getOrganizationUsers = async () => {
     }
 
     try {
-        return axiosGet(axiosPayload);
+        return await axiosGet(axiosPayload);
     }
     catch (error) {
         const err = error as Error
