@@ -270,3 +270,36 @@ export const editOrganizationUserRole = async (userId: number, roles: number[]) 
     }
 }
 
+//Create Connection
+
+
+export const createConnection = async (orgName: string) => {
+
+    const url = apiRoutes.connection.create
+
+    const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
+    
+    const data = {
+        label: orgName,
+        multiUseInvitation: true,
+        autoAcceptConnection: true,
+        orgId: Number(orgId)
+    }
+    const payload = data
+
+    const axiosPayload = {
+        url,
+        payload,
+        config: await getHeaderConfigs()
+    }
+
+    try {
+        return await axiosPost(axiosPayload);
+    }
+    catch (error) {
+        const err = error as Error
+        return err?.message
+    }
+}
+
+
