@@ -115,7 +115,6 @@ const SignInUser = () => {
 			return await verifyAuthentication(verifyAuthenticationObj, userData);
 		} catch (error) {
 			setFidoLoader(false)
-			console.error("Error while verifying authentication:", error);
 			throw error;
 		}
 	};

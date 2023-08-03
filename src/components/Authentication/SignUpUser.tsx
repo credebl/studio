@@ -46,13 +46,9 @@ const SignUpUser = () => {
 
 
 	useEffect(() => {
-		// if (signUpSuccess === window?.location?.search) {
-		// 	setSuccess('Hurry!! 🎉 You have successfully registered on CREDEBL 🚀')
-		// }
 		if (window?.location?.search.length > 7) {
 			setEmailAutoFill(window?.location?.search.split('=')[1])
 		}
-		console.log(" window?.location?.search::::::", window?.location?.search)
 	}, [])
 
 	const showFidoError = (error: unknown): void => {
@@ -113,7 +109,6 @@ const SignUpUser = () => {
 			}, 5000);
 			return data;
 		} catch (error) {
-			console.error('Error occurred:', error);
 			setErrMsg('An error occurred. Please try again later.');
 			setVerifyLoader(false)
 		}
