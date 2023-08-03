@@ -48,15 +48,17 @@ const SignUpUser = () => {
 	const [addfailure, setAddFailur] = useState<string | null>(null)
 	const [emailAutoFill, setEmailAutoFill] = useState<string>('')
 	const [fidoError, setFidoError] = useState("")
+	const [passwordVisible, setPasswordVisible] = useState(false);
+
 
 	useEffect(() => {
 		// if (signUpSuccess === window?.location?.search) {
 		// 	setSuccess('Hurry!! 🎉 You have successfully registered on CREDEBL 🚀')
 		// }
-		if(window?.location?.search.length > 7) {
+		if (window?.location?.search.length > 7) {
 			setEmailAutoFill(window?.location?.search.split('=')[1])
 		}
-		console.log(" window?.location?.search::::::",  window?.location?.search)
+		console.log(" window?.location?.search::::::", window?.location?.search)
 	}, [])
 
 	const showFidoError = (error: unknown): void => {
@@ -75,7 +77,7 @@ const SignUpUser = () => {
 		}
 	}
 
-	const submit = async (passwordDetails: passwordValues, fidoFlag:boolean) => {
+	const submit = async (passwordDetails: passwordValues, fidoFlag: boolean) => {
 		const payload = {
 			password: passwordEncryption(passwordDetails?.password),
 			isPasskey: false,
@@ -226,12 +228,12 @@ const SignUpUser = () => {
 				const password = secureRandomPassword.randomPassword({
 					characters: secureRandomPassword.lower + secureRandomPassword.upper + secureRandomPassword.digits,
 					length: 12,
-				  });
+				});
 				const fidoPassword = {
 					password: `${password}@`,
 					confirmPassword: `${password}@`
 				}
-               
+
 				submit(fidoPassword, true)
 			} else {
 				setAddFailur(deviceDetailsResp as string)
@@ -342,14 +344,14 @@ const SignUpUser = () => {
 									}
 								</div>
 								<div className='pb-1'>
-								<Button
-								    id = 'signupemailnextbutton'
-									isProcessing={verifyLoader}
-									type=""
-									className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 float-right'
-								>
-									Next
-								</Button>
+									<Button
+										id='signupemailnextbutton'
+										isProcessing={verifyLoader}
+										type=""
+										className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 float-right'
+									>
+										Next
+									</Button>
 								</div>
 							</Form>
 						)}
@@ -422,7 +424,7 @@ const SignUpUser = () => {
 										</div>
 										<div className='flex pt-4'>
 											<Button
-											    id = 'signupuserdetailsnextbutton'
+												id='signupuserdetailsnextbutton'
 												type="submit"
 												isProcessing={""}
 												color='bg-primary-800'
@@ -436,8 +438,8 @@ const SignUpUser = () => {
 												setContinuePasswordFlag(true)
 												setEnableName(false)
 												setUserDetails({
-													firstName:'',
-													lastName:''
+													firstName: '',
+													lastName: ''
 												})
 											}}>
 												{`Skip`}
@@ -482,12 +484,42 @@ const SignUpUser = () => {
 											<Label htmlFor="password" value="Password" />
 											<span className='text-red-500 text-xs'>*</span>
 										</div>
-										<Field
-											id="signuppassword"
-											name="password"
-											className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-											type="password"
-										/>
+										<div className="relative">
+
+											<Field
+												id="signuppassword"
+												name="password"
+												className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+												type={passwordVisible ? 'text' : 'password'}
+											/>
+											<button
+												type="button"
+												onClick={() => setPasswordVisible((prevVisible) => !prevVisible)}
+												className="bg-transparent absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-white hover:text-gray-800 dark:hover:text-white"
+											>
+												{passwordVisible ? (
+													<svg className="h-6 w-6 text-black" 
+													viewBox="0 0 24 24" fill="none" 
+													stroke="currentColor" 
+													stroke-width="2" 
+													stroke-linecap="round" 
+													stroke-linejoin="round">  
+													<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />  
+													<circle cx="12" cy="12" r="3" />
+													</svg>
+												) : (
+													<svg className="h-6 w-6 text-black" 
+													viewBox="0 0 24 24" 
+													fill="none" 
+													stroke="currentColor" 
+													stroke-width="2" 
+													stroke-linecap="round" 
+													stroke-linejoin="round">  
+													<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" /> 
+													<line x1="1" y1="1" x2="23" y2="23" />
+													</svg>)}
+											</button>
+										</div>
 										{
 											(formikHandlers?.errors?.password && formikHandlers?.touched?.password) &&
 											<span className="text-red-500 text-xs">{formikHandlers?.errors?.password}</span>
@@ -514,7 +546,7 @@ const SignUpUser = () => {
 									<div className='pt-4'>
 										<div className='flex'>
 											<Button
-											    id = 'signupcreatepasskey'
+												id='signupcreatepasskey'
 												onClick={() => {
 													createPasskey()
 												}}
@@ -525,7 +557,7 @@ const SignUpUser = () => {
 											</Button>
 											{enablePasswordField &&
 												<Button
-												    id = 'signupbutton'
+													id='signupbutton'
 													type="submit"
 													isProcessing={loading}
 													color='bg-primary-800'
