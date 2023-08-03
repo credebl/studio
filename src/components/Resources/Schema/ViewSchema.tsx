@@ -52,10 +52,10 @@ const ViewSchemas = () => {
     if (SchemaDetails?.data?.data?.response) {
       setSchemaDetails(SchemaDetails?.data?.data?.response)
       setLoading(false)
-    }else{
+    } else {
       setLoading(false)
     }
-    
+
 
   }
 
@@ -70,7 +70,7 @@ const ViewSchemas = () => {
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setCredDeffList(data?.data?.data);
         setCredDeffloader(false);
-      }else{
+      } else {
         setCredDefListErr(credentialDefinitions as string)
         setCredDeffloader(false)
       }
@@ -133,18 +133,17 @@ const ViewSchemas = () => {
           Schemas
         </h1>
       </div>
-      <div >
-        <div
-          className="flex p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
-        >
-          <Card className='w-1/2 h-64 bg-gradient-to-br from-blue-400 to-purple-400 mr-6' id="viewSchemaDetailsCard">
-            {loading
-              ? <div className="flex items-center justify-center mb-4">
-                <Spinner
-                  color="info"
-                />
+
+      <div
+        className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
+      >
+        <div className='flex flex-col sm:flex-row'>
+          <Card className='h-64 bg-gradient-to-br from-blue-400 to-purple-400 sm:w-1/2 p-2 mr-1 mb-1' id="viewSchemaDetailsCard">
+            {loading ? (
+              <div className="flex items-center justify-center mb-4">
+                <Spinner color="info" />
               </div>
-              :
+            ) : (
               <div>
                 <div className='flex space-between'>
                   <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
@@ -162,7 +161,6 @@ const ViewSchemas = () => {
                       </p>
                     </a>
                   </div>
-
                 </div>
                 <div className="">
                   <div>
@@ -178,11 +176,11 @@ const ViewSchemas = () => {
                   <p>
                     Schema ID: {schemaDetails?.schemaId}
                   </p>
-                  <p >
+                  <p>
                     Issuer DID: {schemaDetails?.schema.issuerId}
                   </p>
                 </div>
-                <div className="flow-root">
+                <div className="flow-root overflow-y-auto"> {/* Add 'overflow-y-auto' class to enable vertical scrolling */}
                   <ul className="divide-y divide-gray-200 dark:divide-gray-700">
                     <li className="py-3 sm:py-4">
                       <div className="flex items-center space-x-4">
@@ -198,9 +196,10 @@ const ViewSchemas = () => {
                   </ul>
                 </div>
               </div>
-            }
+            )}
           </Card>
-          <Card className='w-1/2 h-64 ml-auto' id="credentialDefinitionCard">
+
+          <Card className='h-64 sm:w-1/2 p-2 ml-1' id="credentialDefinitionCard">
             <div>
               <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
                 Create Credential definition
@@ -278,20 +277,20 @@ const ViewSchemas = () => {
                         color='bg-primary-800'
                         className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
                       >
-                         <svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
-                            <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"/>
-                          </svg>
+                        <svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                          <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+                        </svg>
                         Create
                       </Button>
                     </div>
                     <div className='float-right p-2'>
                       <Button
                         type="reset"
-                        className="text-base font-medium text-center text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 sm:w-auto dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-700"
+                        className="text-base font-medium text-center text-secondary-700 secondary-700 rounded-lg  focus:ring-4 focus:ring-blue-300 sm:w-auto"
                       >
                         <svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 20 20">
-  <path fill="#fff" d="M20 10.007a9.964 9.964 0 0 1-2.125 6.164 10.002 10.002 0 0 1-5.486 3.54 10.02 10.02 0 0 1-6.506-.596 9.99 9.99 0 0 1-4.749-4.477A9.958 9.958 0 0 1 3.402 2.525a10.012 10.012 0 0 1 12.331-.678l-.122-.355A1.135 1.135 0 0 1 16.34.057a1.143 1.143 0 0 1 1.439.726l1.11 3.326a1.107 1.107 0 0 1-.155.998 1.11 1.11 0 0 1-.955.465h-3.334a1.112 1.112 0 0 1-1.11-1.108 1.107 1.107 0 0 1 .788-1.043 7.792 7.792 0 0 0-9.475.95 7.746 7.746 0 0 0-1.451 9.39 7.771 7.771 0 0 0 3.73 3.37 7.794 7.794 0 0 0 9.221-2.374 7.75 7.75 0 0 0 1.63-4.75 1.107 1.107 0 0 1 1.112-1.109A1.112 1.112 0 0 1 20 10.007Z"/>
-</svg>
+                          <path fill="#fff" d="M20 10.007a9.964 9.964 0 0 1-2.125 6.164 10.002 10.002 0 0 1-5.486 3.54 10.02 10.02 0 0 1-6.506-.596 9.99 9.99 0 0 1-4.749-4.477A9.958 9.958 0 0 1 3.402 2.525a10.012 10.012 0 0 1 12.331-.678l-.122-.355A1.135 1.135 0 0 1 16.34.057a1.143 1.143 0 0 1 1.439.726l1.11 3.326a1.107 1.107 0 0 1-.155.998 1.11 1.11 0 0 1-.955.465h-3.334a1.112 1.112 0 0 1-1.11-1.108 1.107 1.107 0 0 1 .788-1.043 7.792 7.792 0 0 0-9.475.95 7.746 7.746 0 0 0-1.451 9.39 7.771 7.771 0 0 0 3.73 3.37 7.794 7.794 0 0 0 9.221-2.374 7.75 7.75 0 0 0 1.63-4.75 1.107 1.107 0 0 1 1.112-1.109A1.112 1.112 0 0 1 20 10.007Z" />
+                        </svg>
 
                         Reset
                       </Button>
@@ -301,8 +300,11 @@ const ViewSchemas = () => {
               </Formik>
             </div>
           </Card >
+
         </div>
+
       </div>
+
       <>
         <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white p-4">
           Credential Definitions
