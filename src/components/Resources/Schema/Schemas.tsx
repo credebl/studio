@@ -84,7 +84,7 @@ const SchemaList = () => {
     })
 
   }
-
+ 
   return (
     <div className="px-4 pt-6">
       <div className="mb-4 col-span-full xl:mb-2">
