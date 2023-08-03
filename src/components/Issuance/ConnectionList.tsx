@@ -1,11 +1,12 @@
 'use client';
 
+import { Button } from "flowbite-react";
 import { ChangeEvent, useEffect, useState } from "react";
 import DataTable from "../../commonComponents/dataTable";
 import type { TableData } from "../../commonComponents/dataTable/interface";
 import SearchInput from "../SearchInput";
 
-const ConnectionList = () => {
+const ConnectionList = (props: { selectConnection: (connections: TableData[]) => void; }) => {
 	const [connectionList, setConnectionList] = useState<TableData[]>([])
 	const [selectedConnectionList, setSelectedConnectionList] = useState<TableData[]>([])
 
@@ -101,14 +102,8 @@ const ConnectionList = () => {
 		{ columnName: 'Connection ID' }
 	]
 
-	const selectedConnectionHeader = [
-		{ columnName: 'User' },
-		{ columnName: 'Connection ID' }
-	]
 
 	const selectConnection = (user: string, connectionId: string, checked: boolean) => {
-		console.log('e.target.checked', checked);
-
 		if (checked) {
 			setSelectedConnectionList((prevList) => [...prevList, {
 				data: [
@@ -126,6 +121,11 @@ const ConnectionList = () => {
 		}
 	}
 
+	useEffect(() => {
+		props.selectConnection(selectedConnectionList);
+
+	}, [selectedConnectionList])
+
 	return (
 		<div>
 
@@ -142,16 +142,6 @@ const ConnectionList = () => {
 
 				<DataTable header={header} data={connectionList} loading={loading} ></DataTable>
 			</div>
-			<div className="flex items-center justify-between mb-4">
-				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-					Selected Users
-				</h1>
-			</div>
-			<div
-				className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-				<DataTable header={selectedConnectionHeader} data={selectedConnectionList} loading={false} ></DataTable>
-			</div>
-
 		</div>
 	)
 }
