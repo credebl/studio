@@ -1,0 +1,9 @@
+.w-footer {
+    width: calc(100% - 2rem);
+}
+
+@media screen and (min-width: 1024px) {
+    .w-footer {
+        width: calc(100% - 18rem);
+    }
+      }
