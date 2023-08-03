@@ -2,8 +2,10 @@
 
 import { Button } from "flowbite-react";
 import { useState } from "react";
+import { setToLocalStorage } from "../../api/Auth";
 import DataTable from "../../commonComponents/dataTable";
 import type { TableData } from "../../commonComponents/dataTable/interface";
+import { storageKeys } from "../../config/CommonConstant";
 import { pathRoutes } from "../../config/pathRoutes";
 import BreadCrumbs from "../BreadCrumbs";
 import ConnectionList from "./ConnectionList";
@@ -21,7 +23,9 @@ const Connections = () => {
 		setSelectedConnectionList(connections)
 	}
 
-	const continueToIssue =()=>{
+	const continueToIssue = async () => {
+		await setToLocalStorage(storageKeys.TOKEN, selectedConnectionList)
+
 		window.location.href = `${pathRoutes.organizations.Issuance.issuance}`
 	}
 
