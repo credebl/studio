@@ -35,7 +35,7 @@ const OrgDropDown = () => {
 	};
 
 	const setActiveOrg = async (organizations: Organisation[]) => {
-		
+
 		let activeOrg: Organisation | null = null
 
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
@@ -45,12 +45,23 @@ const OrgDropDown = () => {
 		} else {
 			activeOrg = organizations && organizations[0]
 			setactiveOrg(activeOrg || null)
+
 		}
 
-		const roles: string[] = activeOrg?.userOrgRoles.map(role => role.orgRole.name)
-		activeOrg.roles = roles
+		if (activeOrg) {
 
-		await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
+			await setToLocalStorage(storageKeys.ORG_ID, activeOrg.id.toString());
+			const roles: string[] = activeOrg?.userOrgRoles.map(role => role.orgRole.name)
+			activeOrg.roles = roles
+
+			await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
+		}
+
+
+	}
+
+	const redirectToCreateOrgModal = () => {
+		window.location.href = '/organizations?orgModal=true';
 
 	}
 
@@ -66,8 +77,8 @@ const OrgDropDown = () => {
 
 				<>
 					{
-						activeOrg ?
-							<>
+						activeOrg
+							? <>
 								{activeOrg.logoUrl ? (
 									<CustomAvatar size="20" src={activeOrg?.logoUrl} round />
 								) : (
@@ -127,8 +138,8 @@ const OrgDropDown = () => {
 					onClick={redirectToCreateOrgModal}
 				>
 					<svg xmlns="http://www.w3.org/2000/svg" className='pr-2 dark:text-white' width="24" height="24" fill="none" viewBox="0 0 24 24">
-  <path fill="currentColor" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"/>
-</svg>
+						<path fill="currentColor" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+					</svg>
 
 
 					Create Organization

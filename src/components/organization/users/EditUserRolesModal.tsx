@@ -10,14 +10,11 @@ import { apiStatusCodes } from "../../../config/CommonConstant";
 import { createInvitations } from "../../../api/invitations";
 import { getOrganizationRoles } from "../../../api/organization";
 
-interface Values {
-    email: string;
-}
-
-interface Invitations {
-    email: string;
-    role: string;
-    roleId: number;
+interface RoleI {
+    id: number
+    name: string,
+    checked: boolean
+    disabled: boolean
 }
 
 
@@ -49,9 +46,20 @@ const EditUserRoleModal = (props: { openModal: boolean;  setMessage: (message: s
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
             
             const roles: Array<RoleI> = data?.data.response
-
-            const memberRole = roles.find(role => role.name === 'member')
-            setMemberRole(memberRole as RoleI)
+            const filterRole = roles.filter(role => {
+                if (props?.user?.roles.includes(role.name)) {
+                    role.checked = true
+                    role.disabled = false
+                } else if (role.name === 'member') {
+                    role.checked = true
+                    role.disabled = true
+                } else {
+                    role.checked = false
+                    role.disabled = false
+                }
+                return !role.name.includes("owner") && !role.name.includes("holder");
+            })
+            setRoles(filterRole)
         } else {
             setErrMsg(resRoles as string)
         }
@@ -89,14 +97,9 @@ const EditUserRoleModal = (props: { openModal: boolean;  setMessage: (message: s
 
     const sendInvitations = async () => {
 
-         setLoading(true)
+        setLoading(true)
 
-        const invitationPayload = invitations.map(invitation => {
-            return {
-                email: invitation.email,
-                orgRoleId: [invitation.roleId]
-            }
-        })
+        const roleIds = roles?.filter(role => role.checked).map(role => role.id)
 
         const resCreateOrg = await createInvitations(invitationPayload)
 
@@ -113,11 +116,62 @@ const EditUserRoleModal = (props: { openModal: boolean;  setMessage: (message: s
 
     }
 
+    const onRoleChanged = (event: any, id: number) => {
+
+     if (
+            (event?.target?.name === 'issuer' && event?.target?.checked === true) || (event?.target?.name === 'verifier' && event?.target?.checked === true)
+
+        ) {
+            const updatesRoles: RoleI[] | null = roles && roles?.map(role => {
+                if (role.id === id) {
+                    role.checked = event?.target?.checked
+
+                } else if (role.name === 'verifier' && role.checked) {
+                    role.checked = true
+                }else if (role.name === 'issuer' && role.checked) {
+                    role.checked = true
+                }else if (role.name === 'member' && role.checked) {
+                    role.checked = true
+                }
+                 else {
+                    role.checked = false
+                }
+                return role
+            })
+            setRoles(updatesRoles)
+        } else  if (
+            (event?.target?.name === 'admin' && event?.target?.checked === true)
+        ) {
+            const updatesRoles: RoleI[] | null = roles && roles?.map(role => {
+                if (role.id === id) {
+                    role.checked = event?.target?.checked
+
+                }
+                else if (role.name === 'member' && role.checked) {
+                    role.checked = true
+                }
+                 else {
+                    role.checked = false
+                }
+                return role
+            })
+            setRoles(updatesRoles)
+        } else {
+            const updatesRoles: RoleI[] | null = roles && roles?.map(role => {
+                if (role.id === id) {
+                    role.checked = event?.target?.checked
+                }
+                return role
+            })
+            setRoles(updatesRoles)
+        }
+
+    }
+
     return (
         <Modal
             show={props.openModal}
-            size={"5xl"}
-            onClose={() => {               
+            onClose={() => {
                 props.setOpenModal(false);
             }}
         >
@@ -152,10 +206,10 @@ const EditUserRoleModal = (props: { openModal: boolean;  setMessage: (message: s
                         resetForm({ values: initialInvitationData })
                     }}
                 >
-                   
+
                     <div className="space-y-6">
                         <div>
-                            <div className="w-full">                              
+                            <div className="w-full">
 
                                 <p
                                     className="text-base font-semibold text-gray-700 leading-none truncate mb-0.5 dark:text-white"
@@ -219,19 +273,19 @@ const EditUserRoleModal = (props: { openModal: boolean;  setMessage: (message: s
                                                             {invitation.email}
                                                         </p>
 
-                                                        <div className="flow-root h-auto">
-                                                            <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-                                                                <li className="pt-3 sm:pt-3 overflow-auto">
-                                                                    <div className="items-center space-x-4">
-                                                                        <div className="inline-flex items-center text-base font-normal text-gray-900 dark:text-white">
-                                                                            Roles: Member
-                                                                        </div>
-
-                                                                    </div>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
+                                        {
+                                            roles.map(role => (
+                                                <div>
+                                                    <label>
+                                                        <input type="checkbox"
+                                                            id={`checkbox-${role.id}`}
+                                                            name={role.name}
+                                                            disabled={role.disabled}
+                                                            checked={role.checked}
+                                                            onChange={(event: any) => onRoleChanged(event, role.id)}
+                                                        />
+                                                        <span className={`ml-3 ${role.disabled ? 'text-gray-500' : ''}`}>{TextTittlecase(role.name)}</span>
+                                                    </label>
                                                 </div>
                                                 <span className="cursor-pointer" onClick={() => removeInvitation(invitation.email)}>
                                                     <svg className="text-red-400 dark:text-gray-500 w-6 h-8  mb-3.5 mx-auto" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
@@ -241,7 +295,10 @@ const EditUserRoleModal = (props: { openModal: boolean;  setMessage: (message: s
                                         </li>
                                     ))
                                 }
-                            </ul>
+
+
+                            </div>
+
                         </div>
                         <div className="mt-4 flex justify-end">
                             <Button
@@ -256,6 +313,8 @@ const EditUserRoleModal = (props: { openModal: boolean;  setMessage: (message: s
 
                 }
 
+                    </div>
+                </div>
 
                 <div className="flex justify-end">
                     <Button
