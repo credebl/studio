@@ -193,7 +193,7 @@ const OrganizationsList = () => {
                                       return (
                                         <span
                                           key={index}
-                                          className="m-1 bg-primary-50 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-primary-700"
+                                          className="m-1 bg-primary-50 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
                                         >
                                           {role.charAt(0).toUpperCase() + role.slice(1)}
                                         </span>
