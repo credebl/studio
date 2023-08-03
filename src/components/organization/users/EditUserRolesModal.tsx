@@ -11,6 +11,7 @@ interface RoleI {
     id: number
     name: string,
     checked: boolean
+    disabled: boolean
 }
 
 
@@ -34,8 +35,13 @@ const EditUserRoleModal = (props: { openModal: boolean; user: User; setMessage: 
             const filterRole = roles.filter(role => {
                 if (props?.user?.roles.includes(role.name)) {
                     role.checked = true
+                    role.disabled = false
+                } else if (role.name === 'member') {
+                    role.checked = true
+                    role.disabled = true
                 } else {
                     role.checked = false
+                    role.disabled = false
                 }
                 return !role.name.includes("owner") && !role.name.includes("holder");
             })
@@ -54,9 +60,9 @@ const EditUserRoleModal = (props: { openModal: boolean; user: User; setMessage: 
 
     const editUserRole = async () => {
 
-         setLoading(true)
+        setLoading(true)
 
-         const roleIds = roles?.filter(role => role.checked).map(role => role.id)
+        const roleIds = roles?.filter(role => role.checked).map(role => role.id)
 
         const response = await editOrganizationUserRole(props.user.id, roleIds as number[])
 
@@ -75,25 +81,47 @@ const EditUserRoleModal = (props: { openModal: boolean; user: User; setMessage: 
 
     const onRoleChanged = (event: any, id: number) => {
 
-        if (
-            (event?.target?.name === 'admin' && event?.target?.checked === true)
-            || (event?.target?.name === 'member' && event?.target?.checked === true)
+     if (
+            (event?.target?.name === 'issuer' && event?.target?.checked === true) || (event?.target?.name === 'verifier' && event?.target?.checked === true)
+
         ) {
             const updatesRoles: RoleI[] | null = roles && roles?.map(role => {
                 if (role.id === id) {
                     role.checked = event?.target?.checked
-                } else {
-                    role.checked = false
 
+                } else if (role.name === 'verifier' && role.checked) {
+                    role.checked = true
+                }else if (role.name === 'issuer' && role.checked) {
+                    role.checked = true
+                }else if (role.name === 'member' && role.checked) {
+                    role.checked = true
+                }
+                 else {
+                    role.checked = false
+                }
+                return role
+            })
+            setRoles(updatesRoles)
+        } else  if (
+            (event?.target?.name === 'admin' && event?.target?.checked === true)
+        ) {
+            const updatesRoles: RoleI[] | null = roles && roles?.map(role => {
+                if (role.id === id) {
+                    role.checked = event?.target?.checked
+
+                }
+                else if (role.name === 'member' && role.checked) {
+                    role.checked = true
+                }
+                 else {
+                    role.checked = false
                 }
                 return role
             })
             setRoles(updatesRoles)
         } else {
             const updatesRoles: RoleI[] | null = roles && roles?.map(role => {
-                if(role.name === 'member' || role.name === 'admin'){
-                    role.checked = false
-                } else  if (role.id === id) {
+                if (role.id === id) {
                     role.checked = event?.target?.checked
                 }
                 return role
@@ -106,8 +134,7 @@ const EditUserRoleModal = (props: { openModal: boolean; user: User; setMessage: 
     return (
         <Modal
             show={props.openModal}
-            size={"5xl"}
-            onClose={() => {               
+            onClose={() => {
                 props.setOpenModal(false);
             }}
         >
@@ -117,10 +144,10 @@ const EditUserRoleModal = (props: { openModal: boolean; user: User; setMessage: 
                 <div
                     className="mb-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800"
                 >
-                   
+
                     <div className="space-y-6">
                         <div>
-                            <div className="w-full">                              
+                            <div className="w-full">
 
                                 <p
                                     className="text-base font-semibold text-gray-700 leading-none truncate mb-0.5 dark:text-white"
@@ -152,10 +179,11 @@ const EditUserRoleModal = (props: { openModal: boolean; user: User; setMessage: 
                                                         <input type="checkbox"
                                                             id={`checkbox-${role.id}`}
                                                             name={role.name}
+                                                            disabled={role.disabled}
                                                             checked={role.checked}
                                                             onChange={(event: any) => onRoleChanged(event, role.id)}
                                                         />
-                                                        <span className="ml-3">{TextTittlecase(role.name)}</span>
+                                                        <span className={`ml-3 ${role.disabled ? 'text-gray-500' : ''}`}>{TextTittlecase(role.name)}</span>
                                                     </label>
                                                 </div>
                                             ))
@@ -164,11 +192,11 @@ const EditUserRoleModal = (props: { openModal: boolean; user: User; setMessage: 
                                 }
 
 
-                            </div>             
+                            </div>
 
                         </div>
 
-                    </div>                  
+                    </div>
                 </div>
 
                 <div className="flex justify-end">

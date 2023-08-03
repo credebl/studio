@@ -186,7 +186,7 @@ const Members = () => {
                                                         </div>
                                                     </div>
 
-                                                    <span className='min-w-[35%] flex items-center justify-items-start'>
+                                                    <span className='min-w-[35%] flex items-center justify-items-start text-gray-900 dark:text-white'>
                                                         {
                                                             user.email
                                                         }
