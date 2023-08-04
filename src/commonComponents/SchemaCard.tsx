@@ -4,8 +4,8 @@ import { dateConversion } from '../utils/DateConversion';
 const SchemaCard = (props: { schemaName: string, version: string, schemaId: string, issuerDid: string, attributes: string[], created: string, onClickCallback: (schemaId: string) => void; },) => {
   return (
     <Card onClick={() => {
-      props.onClickCallback(props.schemaId)
-    }} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer' style={{ width: '470px', height: '240px', maxWidth: '100%', maxHeight: '100%', overflow: 'auto' }}>
+      window.location.href = `${pathRoutes.organizations.viewSchema}?schemaId=${props.schemaId}`
+    }} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer' style={{ maxWidth: '100%', maxHeight: '100%', overflow: 'auto' }}>
       <div className="flex justify-between items-start">
         <div>
           <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
@@ -17,7 +17,7 @@ const SchemaCard = (props: { schemaName: string, version: string, schemaId: stri
         </div>
         <div className='float-right ml-auto '>
           <p className='dark:text-white'>
-            {dateConversion(props.created)}
+            Created no: {new Date(props.created).toLocaleDateString('en-GB')}
           </p>
         </div>
       </div>
