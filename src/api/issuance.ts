@@ -21,3 +21,19 @@ export const getIssuedCredentials = async (state: IssueCredential) => {
 		return err?.message;
 	}
 };
+
+export const getCredentialDefinitions = async (schemaId: string) => {
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+    const url = `${apiRoutes.Issuance.getCredDefBySchemaId}?schemaId=${schemaId}&orgId=${orgId}`;
+	const axiosPayload = {
+		url,
+		config: await getHeaderConfigs(),
+	};
+
+	try {
+		return await axiosGet(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};
