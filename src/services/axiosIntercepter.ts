@@ -1,8 +1,15 @@
 import axios from 'axios'
+import { envConfig } from '../config/envConfig';
 import { pathRoutes } from '../config/pathRoutes';
+
 const instance = axios.create({
-    baseURL: import.meta.env.PUBLIC_BASE_URL
+    baseURL: envConfig.PUBLIC_BASE_URL
 })
+
+instance.interceptors.request.use(async config => { 
+    config.baseURL = globalThis.baseUrl;    
+    return config; 
+}, error => Promise.reject(error));
 
 
 // Add a response interceptor
