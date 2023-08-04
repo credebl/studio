@@ -67,5 +67,3 @@ const SchemaCard = (props: { schemaName: string, version: string, schemaId: stri
 
 
 export default SchemaCard
-
-

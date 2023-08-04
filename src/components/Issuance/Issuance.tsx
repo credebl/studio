@@ -72,8 +72,7 @@ const IssueCred = () => {
 		const issuancePayload = selectedUsers.map(user => {
 			return {
 				userName: user.userName, connectionId: user.connectionId,
-				attributes: attrObj, credentialDefinitionId: credDefId, orgId,
-				comment: 'comment'
+				attributes: attrObj, credentialDefinitionId: credDefId, orgId
 			}
 		})
 		setIssuanceFormPayload(issuancePayload)

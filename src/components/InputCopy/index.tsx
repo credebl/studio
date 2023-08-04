@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { ChangeEventHandler, MouseEvent, MouseEventHandler, useRef, useState } from 'react';
 
 interface InputProps {
   field: {
@@ -14,7 +14,8 @@ const InputCopy = ({ field, ...props }: InputProps) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const [isCopied, setIsCopied] = useState(false);
 
-    function copyTextVal() {
+    function copyTextVal(event: React.MouseEvent<HTMLButtonElement>) {
+        event.preventDefault()
         const copyText = inputRef?.current;
 
         const copiedText: string = copyText?.value as string

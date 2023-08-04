@@ -23,6 +23,9 @@ export const apiRoutes = {
         orgRoles: '/organization/roles',
         editUserROle: '/organization/user-roles'
     },
+    connection: {
+        create: '/connections',
+    },
     schema: {
         create: '/schemas',
         getAll: '/schemas',

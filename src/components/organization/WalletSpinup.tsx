@@ -12,11 +12,11 @@ import { spinupDedicatedAgent, spinupSharedAgent } from '../../api/organization'
 import { useEffect, useState } from 'react';
 
 import type { AxiosResponse } from 'axios';
-import SOCKET from '../../config/SocketConfig';
-import { nanoid } from 'nanoid'
-import InputCopy from '../InputCopy';
 import DedicatedIllustrate from './DedicatedIllustrate';
+import InputCopy from '../InputCopy';
+import SOCKET from '../../config/SocketConfig';
 import SharedIllustrate from './SharedIllustrate';
+import { nanoid } from 'nanoid'
 
 interface Values {
     seed: string;
@@ -96,6 +96,7 @@ const WalletSpinup = (
 
     const submitSharedWallet = async (values: ValuesShared) => {
 
+        setLoading(true)
         const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
 
         const payload = {
@@ -103,7 +104,6 @@ const WalletSpinup = (
             seed: seeds,
             orgId: Number(orgId)
         }
-        setLoading(true)
         const spinupRes = await spinupSharedAgent(payload)
         const { data } = spinupRes as AxiosResponse
 
@@ -253,7 +253,7 @@ const WalletSpinup = (
                     <Button
                         isProcessing={loading}
                         type="submit"
-                        className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+                        className='float-right text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
                     >
                         Setup Agent
                     </Button>
@@ -323,7 +323,7 @@ const WalletSpinup = (
                     <Button
                         isProcessing={loading}
                         type="submit"
-                        className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+                        className='float-right text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
                     >
                         Setup Agent
                     </Button>
@@ -366,8 +366,7 @@ const WalletSpinup = (
 
                 <div>
                     {
-                        !agentSpinupCall
-                        && <div className="mt-4 flex max-w-lg flex-col gap-4">
+                        !agentSpinupCall && !loading && <div className="mt-4 flex max-w-lg flex-col gap-4">
                             <ul className="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                                 <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
                                     <div className="flex items-center pl-3">

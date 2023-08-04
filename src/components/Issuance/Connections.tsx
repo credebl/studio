@@ -3,8 +3,8 @@
 import { Button } from "flowbite-react";
 import { useState } from "react";
 import { setToLocalStorage } from "../../api/Auth";
-import DataTable from "../../commonComponents/dataTable";
-import type { TableData } from "../../commonComponents/dataTable/interface";
+import DataTable from "../../commonComponents/datatable";
+import type { TableData } from "../../commonComponents/datatable/interface";
 import { storageKeys } from "../../config/CommonConstant";
 import { pathRoutes } from "../../config/pathRoutes";
 import BreadCrumbs from "../BreadCrumbs";
