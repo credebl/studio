@@ -22,7 +22,8 @@ export const pathRoutes = {
 				Issuance: {
 					schema: '/organizations/issued-credentials/schemas',
 					credDef:'/organizations/issued-credentials/schemas/cred-defs',
-					connections:'/organizations/issued-credentials/schemas/cred-defs/connections'
+					connections:'/organizations/issued-credentials/schemas/cred-defs/connections',
+					issuance:'/organizations/issued-credentials/schemas/cred-defs/connections/issuance'
 				},
     },
     ecosystems: {

@@ -1,15 +1,16 @@
 'use client';
 
 import type { AxiosResponse } from "axios";
-import { ChangeEvent, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import { getConnectionsByOrg } from "../../api/connection";
 import DataTable from "../../commonComponents/datatable";
 import type { TableData } from "../../commonComponents/datatable/interface";
 import { apiStatusCodes } from "../../config/CommonConstant";
 import { AlertComponent } from "../AlertComponent";
 
+const ConnectionList = (props: { selectConnection: (connections: TableData[]) => void; }) => {
 
-const ConnectionList = () => {
+
 	const [connectionList, setConnectionList] = useState<TableData[]>([])
 	const [selectedConnectionList, setSelectedConnectionList] = useState<TableData[]>([])
 
@@ -36,7 +37,7 @@ const ConnectionList = () => {
 				return {
 					data: [{
 						data: <div className="flex items-center">
-							<input id="default-checkbox" type="checkbox" onClick={(event: React.MouseEvent<HTMLInputElement>) => {
+							<input id="default-checkbox" type="radio" name='connection' onClick={(event: React.MouseEvent<HTMLInputElement>) => {
 								const inputElement = event.target as HTMLInputElement;
 								selectConnection(userName, connectionId, inputElement.checked)
 							}}
@@ -63,23 +64,30 @@ const ConnectionList = () => {
 		{ columnName: 'Connection ID' }
 	]
 
-	const selectedConnectionHeader = [
-		{ columnName: 'User' },
-		{ columnName: 'Connection ID' }
-	]
 
 	const selectConnection = (user: string, connectionId: string, checked: boolean) => {
-
 		if (checked) {
-			setSelectedConnectionList((prevList) => [...prevList, {
+
+			// Needed for multiple connection selection
+			// setSelectedConnectionList((prevList) => [...prevList, {
+			// 	data: [
+			// 		{
+			// 			data: user,
+			// 		}, {
+			// 			data: connectionId,
+			// 		}]
+			// }]
+			// )
+
+			// It is for single connection selection
+			setSelectedConnectionList([{
 				data: [
 					{
 						data: user,
 					}, {
 						data: connectionId,
 					}]
-			}]
-			)
+			}])
 		} else {
 			setSelectedConnectionList((prevList) =>
 				prevList.filter((connection) => connection.data[1].data !== connectionId)
@@ -87,9 +95,13 @@ const ConnectionList = () => {
 		}
 	}
 
+	useEffect(() => {
+		props.selectConnection(selectedConnectionList);
+
+	}, [selectedConnectionList])
+
 	return (
 		<div>
-
 			<div className="flex items-center justify-between mb-4">
 				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 					Connection List
@@ -104,19 +116,8 @@ const ConnectionList = () => {
 			/>
 			<div
 				className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-
 				<DataTable header={header} data={connectionList} loading={loading} ></DataTable>
 			</div>
-			<div className="flex items-center justify-between mb-4">
-				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-					Selected Users
-				</h1>
-			</div>
-			<div
-				className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-				<DataTable header={selectedConnectionHeader} data={selectedConnectionList} loading={false} ></DataTable>
-			</div>
-
 		</div>
 	)
 }
