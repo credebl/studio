@@ -6,12 +6,13 @@ import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
 import SearchInput from '../SearchInput';
+import { dateConversion } from '../../utils/DateConversion';
 import { getIssuedCredentials } from '../../api/issuance';
 import { IssueCredential } from '../../common/enums';
 import { AlertComponent } from '../AlertComponent';
+import { pathRoutes } from '../../config/pathRoutes';
 import DataTable from '../../commonComponents/datatable';
 import type { TableData } from '../../commonComponents/datatable/interface';
-import { dateConversion } from '../../utils/DateConversion';
 
 interface IssuedCredential {
 	metadata: { [x: string]: { schemaId: string; }; };
@@ -24,7 +25,7 @@ const CredentialList = () => {
 	const [loading, setLoading] = useState<boolean>(true)
 	const [error, setError] = useState<string | null>(null)
 	const [searchText, setSearchText] = useState("");
-	const [organizationsList, setOrganizationList] = useState<TableData[][]>([])
+	const [issuedCredList, setIssuedCredList] = useState<TableData[]>([])
 
 	//Fetch all issued credential list
 	const getIssuedCredDefs = async () => {
@@ -51,7 +52,7 @@ const CredentialList = () => {
 				}];
 			})
 
-			setOrganizationList(credentialList)
+			setIssuedCredList(credentialList)
 		} else {
 			setError(response as string)
 		}
@@ -81,6 +82,10 @@ const CredentialList = () => {
 		setSearchText(e.target.value);
 	}
 
+	const schemeSelection = () => {
+		window.location.href = pathRoutes.organizations.Issuance.schema
+	}
+
 	const header = [
 		{ columnName: 'Connection Id' },
 		{ columnName: 'Schema Name' },
@@ -92,7 +97,6 @@ const CredentialList = () => {
 	return (
 		<div className="px-4 pt-6">
 			<div className="mb-4 col-span-full xl:mb-2">
-
 				<BreadCrumbs />
 				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 					Issued Credentials
@@ -105,7 +109,7 @@ const CredentialList = () => {
 						<SearchInput
 							onInputChange={searchInputChange}
 						/>
-						<Button
+						<Button onClick={schemeSelection}
 							className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
 						>
 							Issue
@@ -118,7 +122,7 @@ const CredentialList = () => {
 							setError(null)
 						}}
 					/>
-					<DataTable header={header} data={organizationsList} loading={loading}></DataTable>
+					<DataTable header={header} data={issuedCredList} loading={loading}></DataTable>
 				</div>
 			</div>
 		</div>
