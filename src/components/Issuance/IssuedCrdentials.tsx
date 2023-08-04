@@ -30,26 +30,28 @@ const CredentialList = () => {
 	//Fetch all issued credential list
 	const getIssuedCredDefs = async () => {
 		setLoading(true)
-		const response = await getIssuedCredentials(IssueCredential.done);
+		const response = await getIssuedCredentials(IssueCredential.credentialIssued);
 		const { data } = response as AxiosResponse
 
-		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const credentialList = data?.data?.map((issuedCredential: IssuedCredential) => {
 				const schemaName = issuedCredential.metadata["_anoncreds/credential"].schemaId ? issuedCredential.metadata["_anoncreds/credential"].schemaId.split(':').slice(2).join(':') : 'Not available'
-				return [{ data: issuedCredential.connectionId ? issuedCredential.connectionId : 'Not available' }, { data: schemaName }, { data: dateConversion(issuedCredential.updatedAt) },
-				{
-					data: <span
-						className={`bg-cyan-100 ${issuedCredential.state === IssueCredential.offerSent && 'text-blue-900'} ${(issuedCredential.state === IssueCredential.done || issuedCredential.state === IssueCredential.credentialIssued) && 'text-green-900'} text-xs font-medium mr-2 px-2.5 py-0.5 rounded-md dark:bg-gray-700 dark:text-white border border-cyan-100 dark:border-cyan-500`}>
-						{issuedCredential.state.replace(/_/g, ' ').replace(/\w\S*/g, (word: string) => word.charAt(0).toUpperCase() + word.substring(1).toLowerCase())}
-					</span>
-				}, {
-					data: issuedCredential?.isRevocable ? <Button disabled
-						className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
-					>
-						Revoke
-					</Button>
-						: <span className='text-gray-400'>Non revocable</span>
-				}];
+				return {
+					data: [{ data: issuedCredential.connectionId ? issuedCredential.connectionId : 'Not available' }, { data: schemaName }, { data: dateConversion(issuedCredential.updatedAt) },
+					{
+						data: <span
+							className={`bg-cyan-100 ${issuedCredential.state === IssueCredential.offerSent && 'text-blue-900'} ${(issuedCredential.state === IssueCredential.done || issuedCredential.state === IssueCredential.credentialIssued) && 'text-green-900'} text-xs font-medium mr-2 px-2.5 py-0.5 rounded-md dark:bg-gray-700 dark:text-white border border-cyan-100 dark:border-cyan-500`}>
+							{issuedCredential.state.replace(/_/g, ' ').replace(/\w\S*/g, (word: string) => word.charAt(0).toUpperCase() + word.substring(1).toLowerCase())}
+						</span>
+					}, {
+						data: issuedCredential?.isRevocable ? <Button disabled
+							className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+						>
+							Revoke
+						</Button>
+							: <span className='text-gray-400'>Non revocable</span>
+					}]
+				};
 			})
 
 			setIssuedCredList(credentialList)

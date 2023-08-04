@@ -3,17 +3,18 @@
 import type { AxiosResponse } from "axios";
 import { Spinner } from "flowbite-react";
 import { useEffect, useState } from "react";
-import { getFromLocalStorage } from "../../api/Auth";
+import { getFromLocalStorage, setToLocalStorage } from "../../api/Auth";
 import { getCredentialDefinitions } from "../../api/issuance";
 import { getSchemaById } from "../../api/Schema";
-import DataTable from "../../commonComponents/datatable";
-import type { TableData } from "../../commonComponents/datatable/interface";
 import SchemaCard from "../../commonComponents/SchemaCard";
 import { apiStatusCodes, storageKeys } from "../../config/CommonConstant";
 import { pathRoutes } from "../../config/pathRoutes";
-import { AlertComponent } from "../AlertComponent";
+import { dateConversion } from "../../utils/DateConversion";
 import BreadCrumbs from "../BreadCrumbs";
+import { AlertComponent } from "../AlertComponent";
 import type { SchemaState, CredDefData } from "./interface";
+import type { TableData } from "../../commonComponents/datatable/interface";
+import DataTable from "../../commonComponents/datatable";
 
 const CredDefSelection = () => {
 	const [schemaState, setSchemaState] = useState({ schemaName: '', version: '' })
@@ -24,21 +25,22 @@ const CredDefSelection = () => {
 	const [schemaDetailsState, setSchemaDetailsState] = useState<SchemaState>({ schemaId: '', issuerDid: '', attributes: [], createdDateTime: '' })
 
 	useEffect(() => {
-		if (window?.location?.search) {
-			const urlParams = new URLSearchParams(window.location.search);
-			const schemaIdParam = urlParams.get('schemaId');
-			if (schemaIdParam) {
-				getSchemaDetails(schemaIdParam)
-				getCredDefs(schemaIdParam)
-				const parts = schemaIdParam.split(":");
-				const schemaName = parts[2];
-				const version = parts[3];
-				setSchemaState({ schemaName, version })
-			} else {
-				setSchemaState({ schemaName: '', version: '' })
-			}
-		}
+		getSchemaAndCredDef()
 	}, []);
+
+	const getSchemaAndCredDef = async () => {
+		const schemaId = await getFromLocalStorage(storageKeys.SCHEMA_ID)
+		if (schemaId) {
+			getSchemaDetails(schemaId)
+			getCredDefs(schemaId)
+			const parts = schemaId.split(":");
+			const schemaName = parts[2];
+			const version = parts[3];
+			setSchemaState({ schemaName, version })
+		} else {
+			setSchemaState({ schemaName: '', version: '' })
+		}
+	}
 
 	const getSchemaDetails = async (schemaId: string) => {
 		setSchemaLoader(true)
@@ -88,12 +90,14 @@ const CredDefSelection = () => {
 
 		setLoading(false)
 	}
+
 	const schemaSelectionCallback = () => {
 
 	}
 
-	const selectCredDef = (credDefId: string | null | undefined) => {
+	const selectCredDef = async(credDefId: string | null | undefined) => {
 		if (credDefId) {
+			await setToLocalStorage(storageKeys.CRED_DEF_ID, credDefId)
 			window.location.href = `${pathRoutes.organizations.Issuance.connections}`
 		}
 	}
