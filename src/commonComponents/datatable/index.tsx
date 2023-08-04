@@ -1,11 +1,17 @@
-import CopyIcon from '../../assets/icons/copy-icon.svg';
-import { Spinner } from "flowbite-react";
-import type { TableData, TableHeader } from './interface';
+import type { TableData, TableHeader } from "./interface"
+import { Spinner, Tooltip } from "flowbite-react";
 
-const DataTable = (props: { header: TableHeader[], data: TableData[][], loading: boolean }) => {
-	const { header, data, loading } = props;
+interface DataTableProps {
+	header: TableHeader[];
+	data: TableData[];
+	loading: boolean;
+	callback?: (clickId: string | null | undefined) => void;
+}
+
+const DataTable: React.FC<DataTableProps> = ({ header, data, loading, callback }) => {
+
 	return (
-		<div className="flex flex-col mt-6">
+		<div className="flex flex-col ">
 			{loading
 				? <div className="flex items-center justify-center mb-4">
 					<Spinner
@@ -24,7 +30,7 @@ const DataTable = (props: { header: TableHeader[], data: TableData[][], loading:
 											header.map(ele => (
 												<th
 													scope="col"
-													className="p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white"
+													className={`p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white ${ele.width && ele.width}`}
 												>
 													<div>{ele.columnName}</div>
 													{ele.subColumnName && <div className="flex text-gray-500">{ele.subColumnName} </div>}
@@ -35,11 +41,11 @@ const DataTable = (props: { header: TableHeader[], data: TableData[][], loading:
 								</thead>
 								<tbody className="bg-white dark:bg-gray-800">
 									{data.length ? data.map((ele, index) => (
-										<tr className={`${index % 2 !== 0 ? 'bg-gray-50 dark:bg-gray-700' : ''}`}>
-											{ele.map(subEle => (
-												<td className="p-4 text-sm font-normal text-gray-900 whitespace-nowrap dark:text-white">
+										<tr className={`${index % 2 !== 0 ? 'bg-gray-50 dark:bg-gray-700' : ''} ${callback && ele.clickId ? 'cursor-pointer' : ''}`} onClick={() => callback ? callback(ele?.clickId) : ''}>
+											{ele.data.map(subEle => (
+												<td className={` p-4 text-sm font-normal text-gray-900 whitespace-nowrap dark:text-white align-middle	`}>
 													<div>{subEle.data}</div>
-													{subEle.subData && <div className="flex text-gray-500">{subEle.subData} &nbsp; {subEle.copySubData && <img src={CopyIcon} alt="Copy" className="cursor-pointer"></img>}</div>}
+													{subEle.subData && subEle.subData}
 												</td>
 											))}
 										</tr>
@@ -50,7 +56,7 @@ const DataTable = (props: { header: TableHeader[], data: TableData[][], loading:
 					</div>
 				</div>
 			}
-		</div>
+		</div >
 	)
 }
 
