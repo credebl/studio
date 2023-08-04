@@ -22,12 +22,12 @@ interface Invitations {
 
 
 interface RoleI {
-   id: number
-   name: string
+    id: number
+    name: string
 }
 
 
-const SendInvitationModal = (props: { openModal: boolean;  setMessage: (message: string)=> void ; setOpenModal: (flag: boolean)=> void }) => {
+const SendInvitationModal = (props: { openModal: boolean; setMessage: (message: string) => void; setOpenModal: (flag: boolean) => void }) => {
 
     const [loading, setLoading] = useState<boolean>(false)
 
@@ -47,7 +47,7 @@ const SendInvitationModal = (props: { openModal: boolean;  setMessage: (message:
         const { data } = resRoles as AxiosResponse
 
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-            
+
             const roles: Array<RoleI> = data?.data.response
 
             const memberRole = roles.find(role => role.name === 'member')
@@ -89,7 +89,7 @@ const SendInvitationModal = (props: { openModal: boolean;  setMessage: (message:
 
     const sendInvitations = async () => {
 
-         setLoading(true)
+        setLoading(true)
 
         const invitationPayload = invitations.map(invitation => {
             return {
@@ -124,13 +124,13 @@ const SendInvitationModal = (props: { openModal: boolean;  setMessage: (message:
             }>
             <Modal.Header>Send Invitations</Modal.Header>
             <Modal.Body>
-                 <AlertComponent
+                <AlertComponent
                     message={erroMsg}
                     type={'error'}
-                    onAlertClose = {() => {
+                    onAlertClose={() => {
                         setErrMsg(null)
                     }}
-                    />
+                />
                 <Formik
                     initialValues={initialInvitationData}
                     validationSchema={
@@ -180,12 +180,11 @@ const SendInvitationModal = (props: { openModal: boolean;  setMessage: (message:
 
                                 <div className="w-1/3">
                                     <Button type="submit"
-                                        color="gray"
-                                        className='mt-6 float-right text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-700 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
-                                        ><svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
-                                        <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"/>
-                                      </svg>
-                                                                      
+                                        className='mt-6 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
+                                    ><svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
+                                            <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+                                        </svg>
+
                                         ADD
                                     </Button>
                                 </div>
@@ -197,10 +196,10 @@ const SendInvitationModal = (props: { openModal: boolean;  setMessage: (message:
                     )}
 
                 </Formik>
-                {
-                    invitations.length > 0 &&
-                    <div>
-                        <div
+
+                <div>
+                    {
+                        invitations.length > 0 && <div
                             className="p-2 my-2 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-2 dark:bg-gray-800"
                         >
                             <ul className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -248,19 +247,19 @@ const SendInvitationModal = (props: { openModal: boolean;  setMessage: (message:
                                 }
                             </ul>
                         </div>
-                        <div className="mt-4 flex justify-end">
-                            <Button
-                                onClick={sendInvitations}
-                                isProcessing={loading}
-                                className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
-                            >
-                                Send
-                            </Button>
-                        </div>
+                    }
+
+                    <div className="mt-4 flex justify-end">
+                        <Button
+                            onClick={sendInvitations}
+                            disabled={invitations.length === 0}
+                            isProcessing={loading}
+                            className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+                        >
+                            Send
+                        </Button>
                     </div>
-
-                }
-
+                </div>
 
             </Modal.Body>
 

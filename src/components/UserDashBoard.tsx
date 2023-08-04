@@ -1,12 +1,13 @@
-import type { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
-import { getUserInvitations } from "../api/invitations";
-import { getOrganizations } from "../api/organization";
-import { apiStatusCodes } from "../config/CommonConstant";
-import { pathRoutes } from "../config/pathRoutes";
+
 import { AlertComponent } from "./AlertComponent";
-import type { Organisation } from "./organization/interfaces";
+import type { AxiosResponse } from "axios";
 import CustomAvatar from '../components/Avatar'
+import type { Organisation } from "./organization/interfaces";
+import { apiStatusCodes } from "../config/CommonConstant";
+import { getOrganizations } from "../api/organization";
+import { getUserInvitations } from "../api/invitations";
+import { pathRoutes } from "../config/pathRoutes";
 
 const initialPageState = {
 	pageNumber: 1,
@@ -17,6 +18,7 @@ const initialPageState = {
 const UserDashBoard = () => {
 
 	const [message, setMessage] = useState<string | null>(null)
+	const [viewButton, setViewButton] = useState<boolean>(false)
 	const [error, setError] = useState<string | null>(null)
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const [loading, setLoading] = useState<boolean>(false)
@@ -37,6 +39,7 @@ const UserDashBoard = () => {
 
 			if (invitationList.length > 0) {
 				setMessage('You have some pending received invitations')
+				setViewButton(true)
 			}
 
 			setCurrentPage({
@@ -91,6 +94,7 @@ const UserDashBoard = () => {
 				<AlertComponent
 					message={message ? message : error}
 					type={message ? 'warning' : 'failure'}
+					viewButton={viewButton}
 					onAlertClose={() => {
 						setMessage(null)
 						setError(null)
