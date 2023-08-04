@@ -35,13 +35,19 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 		const connections: TableData[] = [
 			{
 				data: [{
-					data: <div className="flex items-center">
-						<input id="default-checkbox" type="checkbox" onClick={(event: React.MouseEvent<HTMLInputElement>) => {
-							const inputElement = event.target as HTMLInputElement;
-							selectConnection('User1', 'ConnectionId1', inputElement.checked)
-						}}
-							value="" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 cursor-pointer" />
-					</div>,
+					data:
+						<div className="flex items-center">
+							{/* <input id="default-checkbox" type="checkbox" onClick={(event: React.MouseEvent<HTMLInputElement>) => {
+					 		const inputElement = event.target as HTMLInputElement;
+					 		selectConnection('User1', 'ConnectionId1', inputElement.checked)
+					 	}}
+					 		value="" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 cursor-pointer" /> */}
+							<input id="default-checkbox" type="radio" name='connection' onClick={(event: React.MouseEvent<HTMLInputElement>) => {
+								const inputElement = event.target as HTMLInputElement;
+								selectConnection('User1', 'ConnectionId1', inputElement.checked)
+							}}
+								value="" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 cursor-pointer" />
+						</div>,
 				}, {
 					data: 'User1',
 				}, {
@@ -51,10 +57,15 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 			{
 				data: [{
 					data: <div className="flex items-center">
-						<input id="default-checkbox" type="checkbox" onClick={(event: React.MouseEvent<HTMLInputElement>) => {
+						{/* <input id="default-checkbox" type="checkbox" onClick={(event: React.MouseEvent<HTMLInputElement>) => {
+							const inputElement = event.target as HTMLInputElement;
+							selectConnection('User2', 'ConnectionId2', inputElement.checked)
+						}} value="" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 cursor-pointer" /> */}
+						<input id="default-checkbox" type="radio" name='connection' onClick={(event: React.MouseEvent<HTMLInputElement>) => {
 							const inputElement = event.target as HTMLInputElement;
 							selectConnection('User2', 'ConnectionId2', inputElement.checked)
 						}} value="" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 cursor-pointer" />
+
 					</div>,
 				}, {
 					data: 'User2',
@@ -105,15 +116,27 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 
 	const selectConnection = (user: string, connectionId: string, checked: boolean) => {
 		if (checked) {
-			setSelectedConnectionList((prevList) => [...prevList, {
+
+			// Needed for multiple connection selection
+			// setSelectedConnectionList((prevList) => [...prevList, {
+			// 	data: [
+			// 		{
+			// 			data: user,
+			// 		}, {
+			// 			data: connectionId,
+			// 		}]
+			// }]
+			// )
+
+			// It is for single connection selection
+			setSelectedConnectionList([{
 				data: [
 					{
 						data: user,
 					}, {
 						data: connectionId,
 					}]
-			}]
-			)
+			}])
 		} else {
 			setSelectedConnectionList((prevList) =>
 				prevList.filter((connection) => connection.data[1].data !== connectionId)

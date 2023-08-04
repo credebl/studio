@@ -24,8 +24,10 @@ const Connections = () => {
 	}
 
 	const continueToIssue = async () => {
-		await setToLocalStorage(storageKeys.TOKEN, selectedConnectionList)
-
+		const selectedConnections = selectedConnectionList.map(ele =>{
+			return {userName: ele.data[0].data, connectionId:ele.data[1].data}
+	})
+		await setToLocalStorage(storageKeys.SELECTED_USER, selectedConnections)
 		window.location.href = `${pathRoutes.organizations.Issuance.issuance}`
 	}
 

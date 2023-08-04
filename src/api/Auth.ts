@@ -157,3 +157,8 @@ export const getFromLocalStorage = async (key: string) =>{
     const convertedValue = value ? await decryptData(value) : ''
     return convertedValue
 }
+
+export const removeFromLocalStorage = async (key: string) => {
+	await localStorage.removeItem(key);
+	return true;
+};
