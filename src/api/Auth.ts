@@ -147,8 +147,8 @@ export const decryptData = (value: any): string => {
 }
 
 export const setToLocalStorage = async (key: string, value: any) =>{
-    const convrtedValue = await encryptData(value)
-    const setValue = await localStorage.setItem(key, convrtedValue as string)
+    const convertedValue = await encryptData(value)
+    const setValue = await localStorage.setItem(key, convertedValue as string)
     return true
 }
 
@@ -157,3 +157,8 @@ export const getFromLocalStorage = async (key: string) =>{
     const convertedValue = value ? await decryptData(value) : ''
     return convertedValue
 }
+
+export const removeFromLocalStorage = async (key: string) => {
+	await localStorage.removeItem(key);
+	return true;
+};
