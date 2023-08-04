@@ -42,5 +42,8 @@ export const apiRoutes = {
         fidoAuthentication: 'Fido/generate-authentication-options',
         fidoVerifyAuthentication: 'Fido/verify-authentication/'
 
-    }
+    },
+		Issuance:{
+			getIssuedCredentials:'/issue-credentials'
+		}
 }
