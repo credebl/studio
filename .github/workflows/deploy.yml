@@ -1,9 +1,9 @@
 name: Deploy
 on:
   push:
-    branches: main
+    branches: deno-env-deploy
   pull_request:
-    branches: main
+    branches: deno-env-deploy
 
 jobs:
   deploy:
