@@ -1,12 +1,15 @@
 'use client';
 
+import { setToLocalStorage } from "../../api/Auth";
+import { storageKeys } from "../../config/CommonConstant";
 import { pathRoutes } from "../../config/pathRoutes";
 import SchemaList from "../Resources/Schema/SchemasList";
 
 const SchemaSelection = () => {
 
-	const schemaSelectionCallback = (schemaId: string) => {
-		window.location.href = `${pathRoutes.organizations.Issuance.credDef}?schemaId=${schemaId}`
+	const schemaSelectionCallback = async (schemaId: string) => {
+		await setToLocalStorage(storageKeys.SCHEMA_ID, schemaId)
+		window.location.href = `${pathRoutes.organizations.Issuance.credDef}`
 	}
 
 	return (

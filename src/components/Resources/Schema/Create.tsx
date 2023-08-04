@@ -4,6 +4,7 @@ import * as yup from 'yup';
 
 import { Alert, Button, Card, Label, Table, } from 'flowbite-react';
 import { Field, FieldArray, Form, Formik } from 'formik';
+import { addSchema } from '../../../api/Schema';
 import { apiStatusCodes, schemaVersionRegex, storageKeys } from '../../../config/CommonConstant';
 import { useEffect, useState } from 'react';
 
@@ -11,7 +12,6 @@ import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../../BreadCrumbs';
 import type { FieldName } from './interfaces';
 import SchemaCard from '../../../commonComponents/SchemaCard';
-import { addSchema } from '../../../api/Schema';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
 

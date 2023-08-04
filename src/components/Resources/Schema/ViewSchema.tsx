@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import BreadCrumbs from '../../BreadCrumbs';
 import * as yup from 'yup';
 import { apiStatusCodes, schemaVersionRegex, storageKeys } from '../../../config/CommonConstant';
-import SchemaCard from '../../../commonComponents/SchemaCard';
 import CredDeffCard from '../../../commonComponents/CredentialDefinitionCard';
 import { createCredentialDefinition, getCredDeffById, getSchemaById } from '../../../api/Schema';
 import type { AxiosResponse } from 'axios';

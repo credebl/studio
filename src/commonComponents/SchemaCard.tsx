@@ -1,5 +1,6 @@
 import { Card } from 'flowbite-react';
 import { dateConversion } from '../utils/DateConversion';
+import { pathRoutes } from '../config/pathRoutes';
 
 const SchemaCard = (props: { schemaName: string, version: string, schemaId: string, issuerDid: string, attributes: string[], created: string, onClickCallback: (schemaId: string) => void; },) => {
   return (
