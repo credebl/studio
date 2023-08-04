@@ -14,6 +14,7 @@ import SearchInput from '../SearchInput';
 import { getOrganizations } from '../../api/organization';
 import { pathRoutes } from '../../config/pathRoutes';
 import { setToLocalStorage } from '../../api/Auth';
+import { EmptyListMessage } from '../EmptyListComponent';
 
 const initialPageState = {
   pageNumber: 1,
@@ -44,7 +45,7 @@ const OrganizationsList = () => {
   }
 
   //Fetch the user organization list
-  const getAllOrganizations = async () => {    
+  const getAllOrganizations = async () => {
 
     setLoading(true)
     const response = await getOrganizations(currentPage.pageNumber, currentPage.pageSize, searchText);
@@ -60,19 +61,16 @@ const OrganizationsList = () => {
         return userOrg;
       })
 
-      if(orgList.length === 0){
-          setError('No Data Found')
-      }
-
       setOrganizationList(orgList)
       setCurrentPage({
         ...currentPage,
         total: totalPages
       })
-    } else {
-      setError(response as string)
     }
+    else{
+      setError(response as string)
 
+    }
     setLoading(false)
   }
 
@@ -96,14 +94,14 @@ const OrganizationsList = () => {
   }, [searchText, openModal, currentPage.pageNumber])
 
   useEffect(() => {
-    const queryParameters = new URLSearchParams( window?.location?.search)
-    const isModel =  queryParameters.get("orgModal") || ''
+    const queryParameters = new URLSearchParams(window?.location?.search)
+    const isModel = queryParameters.get("orgModal") || ''
 
-    if(isModel !== ''){
+    if (isModel !== '') {
       props.setOpenModal(true)
     }
 
-}, [])
+  }, [])
 
   //onCHnage of Search input text
   const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -135,13 +133,13 @@ const OrganizationsList = () => {
             />
             <Button
               onClick={createOrganizationModel}
-              className='text-base font-   text-center text-white bg-primary-700 rounded-lg hover:bg-accent-00 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+              className='text-base font-text-center text-white bg-primary-700 rounded-lg hover:bg-accent-00 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
             >
-               <div className='pr-3'>
-              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
-  <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"/>
-</svg>
-</div>
+              <div className='pr-3'>
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
+                  <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+                </svg>
+              </div>
 
               Create
             </Button>
@@ -153,6 +151,7 @@ const OrganizationsList = () => {
             setOpenModal={
               props.setOpenModal
             } />
+
           <AlertComponent
             message={message ? message : error}
             type={message ? 'success' : 'failure'}
@@ -161,13 +160,14 @@ const OrganizationsList = () => {
               setError(null)
             }}
           />
+
           {loading
             ? <div className="flex items-center justify-center mb-4">
               <Spinner
                 color="info"
               />
             </div>
-            : organizationsList && organizationsList?.length > 0 && <div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
+            : organizationsList && organizationsList?.length > 0 ? (<div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
               {
                 organizationsList.map((org) => (
                   <Card onClick={() => redirectOrgDashboard(org.id)} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer'>
@@ -193,7 +193,7 @@ const OrganizationsList = () => {
                                       return (
                                         <span
                                           key={index}
-                                          className="m-1 bg-primary-50 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-primary-700"
+                                          className="m-1 bg-primary-50 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
                                         >
                                           {role.charAt(0).toUpperCase() + role.slice(1)}
                                         </span>
@@ -209,8 +209,15 @@ const OrganizationsList = () => {
                   </Card>
                 ))
               }
-
-            </div>
+            </div>)
+              : organizationsList && (<EmptyListMessage
+                message={'No Organization'}
+                description={'Get started by creating a new Organization'}
+                buttonContent={'Create Organization'}
+                onClick={createOrganizationModel}
+                svgComponent={<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
+                  <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+                </svg>} />)
           }
 
           <div className="flex items-center justify-end mb-4">

@@ -1,18 +1,27 @@
-import { Alert, Avatar, Spinner } from 'flowbite-react';
+import { Alert } from 'flowbite-react';
 
-export const AlertComponent = ({ message, type, onAlertClose }: { message: string | null, type: string, onAlertClose: () => void }) => {
-    
+export const AlertComponent = ({ message, type, viewButton, onAlertClose }: { message: string | null, type: string, viewButton?: boolean, onAlertClose: () => void }) => {
+
 
     return message !== null ? <Alert
         className='mb-4'
         color={type}
         onDismiss={() => onAlertClose()}
     >
-        <span>
+        <span className='flex flex-wrap justify-between items-center'>
             <p>
                 {message}
             </p>
+
+            {
+                viewButton
+                && <p className='md:w-32 lg:w-48 text-base text-primary-700 text-right'>
+                    View more...
+                </p>
+            }
+           
         </span>
+
     </Alert>
-    : <></>
+        : <></>
 }
