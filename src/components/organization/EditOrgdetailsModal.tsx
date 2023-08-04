@@ -162,7 +162,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps)=> {
                 orgId: props?.orgData?.id,
                 name: values.name,
                 description: values.description,
-                logo: logoImage?.imagePreviewUrl as string || "",
+                logo: logoImage?.imagePreviewUrl as string || props?.orgData?.logoUrl,
                 website: ""
             }
 
