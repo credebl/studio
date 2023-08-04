@@ -6,7 +6,8 @@ import { SITE_TITLE } from './constants.js';
 
 const { class: clazz } = Astro.props;
 
-// import { ViewTransitions } from 'astro:transitions';
+const baseUrl = process.env.PUBLIC_BASE_URL || import.meta.env.PUBLIC_BASE_URL
+const encryptKey = process.env.PUBLIC_CRYPTO_PRIVATE_KEY || import.meta.env.PUBLIC_CRYPTO_PRIVATE_KEY
 
 ---
 
@@ -63,6 +64,11 @@ const { class: clazz } = Astro.props;
 <script>
 	import 'flowbite';
 	import 'flowbite/dist/datepicker.js';
+</script>
+
+<script define:vars={{ baseUrl, encryptKey }}>
+	globalThis.baseUrl = baseUrl;
+	globalThis.encryptKey = encryptKey;
 </script>
 
 <style is:global>
