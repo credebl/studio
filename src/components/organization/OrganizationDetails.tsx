@@ -1,16 +1,18 @@
-import type { OrgAgent, Organisation } from './interfaces'
+import type { Connection, OrgAgent, Organisation } from './interfaces'
 import { useEffect, useState } from 'react';
 
 import type { AxiosResponse } from 'axios';
 import { Spinner } from 'flowbite-react';
 import { apiStatusCodes } from '../../config/CommonConstant';
 import { createConnection } from '../../api/organization';
+import CustomQRCode from '../../commonComponents/QRcode';
 
 const OrganizationDetails = ({orgData}: {orgData: Organisation}) => {
 
     const { org_agents} = orgData
     const agentData: OrgAgent | null = org_agents.length > 0 ? org_agents[0] : null
     const [loading, setLoading] = useState<boolean>(true)
+    const [connectionData, setConnectionData] = useState<Connection | null>(null)
 
     const createQrConnection = async () => {
 
@@ -19,13 +21,10 @@ const OrganizationDetails = ({orgData}: {orgData: Organisation}) => {
         const { data } = response as AxiosResponse
 
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-            console.log(`COnnection::`, data);
 
-        } else {
-            console.log(`Connection ERR`, response as string);
+            setConnectionData(data?.data)
 
         }
-
         setLoading(false)
     }
 
@@ -106,15 +105,17 @@ const OrganizationDetails = ({orgData}: {orgData: Organisation}) => {
                     </div>
                 </div>
             </div>
-            <div className='w-1/2 flex items-center'>
-                 {
+            <div className='w-1/2 float-right flex items-center'>
+                {
                     loading
                         ? (
                             <Spinner
                                 color="info"
                             />
                         )
-                        : <div></div>
+                        : <div>
+                            <CustomQRCode value={connectionData?.connectionInvitation as string} size={180} />
+                        </div>
 
                 }
             </div>
