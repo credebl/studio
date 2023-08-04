@@ -5,19 +5,19 @@ const SchemaCard = (props: { schemaName: string, version: string, schemaId: stri
   return (
     <Card onClick={() => {
       window.location.href = `${pathRoutes.organizations.viewSchema}?schemaId=${props.schemaId}`
-    }} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer' style={{ width: '470px', height: '240px', maxWidth: '100%', maxHeight: '100%', overflow: 'auto' }}>
+    }} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer' style={{ maxWidth: '100%', maxHeight: '100%', overflow: 'auto' }}>
       <div className="flex justify-between items-start">
         <div>
           <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
             {props.schemaName}
           </h5>
-          <p>
+          <p className='dark:text-white'>
             Version: {props.version}
           </p>
         </div>
         <div className='float-right ml-auto '>
-          <p>
-            {new Date(props.created).toLocaleDateString('en-GB')}
+          <p className='dark:text-white'>
+            Created no: {new Date(props.created).toLocaleDateString('en-GB')}
           </p>
         </div>
       </div>

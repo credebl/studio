@@ -44,13 +44,10 @@ const SignUpUser = () => {
 	const [fidoError, setFidoError] = useState("")
 
 	useEffect(() => {
-		// if (signUpSuccess === window?.location?.search) {
-		// 	setSuccess('Hurry!! 🎉 You have successfully registered on CREDEBL 🚀')
-		// }
+		
 		if(window?.location?.search.length > 7) {
 			setEmailAutoFill(window?.location?.search.split('=')[1])
 		}
-		console.log(" window?.location?.search::::::",  window?.location?.search)
 	}, [])
 
 	const showFidoError = (error: unknown): void => {
@@ -81,7 +78,7 @@ const SignUpUser = () => {
 		const userRsp = await addPasswordDetails(payload, email)
 		const { data } = userRsp as AxiosResponse
 		setLoading(false)
-		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			window.location.href = `/authentication/sign-in?signup=true?fidoFlag=${fidoFlag}`
 		} else {
 			setErrMsg(userRsp as string)
@@ -222,8 +219,8 @@ const SignUpUser = () => {
 					length: 12,
 				  });
 				const fidoPassword = {
-					password: `${password}@`,
-					confirmPassword: `${password}@`
+					password: `${password}@1`,
+					confirmPassword: `${password}@1`
 				}
                
 				submit(fidoPassword, true)
