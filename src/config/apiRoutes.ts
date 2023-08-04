@@ -45,6 +45,7 @@ export const apiRoutes = {
 
     },
 		Issuance:{
-			getIssuedCredentials:'/issue-credentials'
+			getIssuedCredentials:'/issue-credentials',
+			getCredDefBySchemaId :'/schemas/credential-definitions'
 		}
 }
