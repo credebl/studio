@@ -11,22 +11,9 @@ import type { TableData } from "../../commonComponents/datatable/interface";
 import SchemaCard from "../../commonComponents/SchemaCard";
 import { apiStatusCodes, storageKeys } from "../../config/CommonConstant";
 import { pathRoutes } from "../../config/pathRoutes";
+import { AlertComponent } from "../AlertComponent";
 import BreadCrumbs from "../BreadCrumbs";
-
-
-interface SchemaState {
-	schemaId: string;
-	issuerDid: string;
-	attributes: string[];
-	createdDateTime: string;
-}
-
-interface CredDefData {
-	credentialDefinitionId: string;
-	revocable: boolean;
-	schemaLedgerId: string;
-	tag: string;
-}
+import type { SchemaState, CredDefData } from "./interface";
 
 const CredDefSelection = () => {
 	const [schemaState, setSchemaState] = useState({ schemaName: '', version: '' })
@@ -75,7 +62,7 @@ const CredDefSelection = () => {
 		{ columnName: 'Revocable?' }
 	]
 
-	//Fetch all issued credential list
+	//Fetch credential definitions against schemaId
 	const getCredDefs = async (schemaId: string) => {
 		setLoading(true)
 		const response = await getCredentialDefinitions(schemaId);
@@ -135,7 +122,13 @@ const CredDefSelection = () => {
 					Credential definitions
 				</h1>
 			</div>
-
+			<AlertComponent
+				message={error}
+				type={'failure'}
+				onAlertClose={() => {
+					setError(null)
+				}}
+			/>
 			<DataTable header={header} data={credDefList} loading={loading} callback={selectCredDef}></DataTable>
 		</div>
 	)
