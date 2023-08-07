@@ -70,7 +70,14 @@ export const axiosDelete = async ({ url, config }: APIParameters): Promise<Axios
 const HandleResponse = (responseData: any): Promise<AxiosResponse> => {
     if (responseData) {
 
-        return Promise.reject(new Error(responseData?.data?.error ? responseData?.data?.error : responseData?.data?.message ? responseData?.data?.message : responseData?.message ? responseData?.message : "Something went wrong, please try later..."))
+        return Promise.reject(new Error(
+            responseData?.data?.message
+              ? responseData?.data?.message
+              : responseData?.message
+                ? responseData?.message
+                : "Something went wrong, please try later..."
+          ));
+          
 
     } else {
         return Promise.reject(new Error("Please check your internet connectivity and try again"))
