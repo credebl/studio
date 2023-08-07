@@ -14,12 +14,17 @@ export const pathRoutes = {
         root: '/organizations',
         invitations: '/organizations/invitations',
         users: '/organizations/users',
-        credentials: '/organizations/credentials',
+        issuedCredentials: '/organizations/issued-credentials',
         schemas: `/organizations/schemas`,
         dashboard: '/organizations/dashboard',
         createSchema: '/organizations/schemas/create',
-        viewSchema: '/organizations/schemas/view-schema'
-
+        viewSchema: '/organizations/schemas/view-schema',
+				Issuance: {
+					schema: '/organizations/issued-credentials/schemas',
+					credDef:'/organizations/issued-credentials/schemas/cred-defs',
+					connections:'/organizations/issued-credentials/schemas/cred-defs/connections',
+					issuance:'/organizations/issued-credentials/schemas/cred-defs/connections/issuance'
+				},
     },
     ecosystems: {
         root: '/ecosystems',

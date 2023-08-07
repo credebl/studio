@@ -1,10 +1,10 @@
 import { Card } from 'flowbite-react';
-import { pathRoutes } from '../config/pathRoutes';
+import { dateConversion } from '../utils/DateConversion';
 
-const SchemaCard = (props: { schemaName: string, version: string, schemaId: string, issuerDid: string, attributes: string[], created: string },) => {
+const SchemaCard = (props: { schemaName: string, version: string, schemaId: string, issuerDid: string, attributes: string[], created: string, onClickCallback: (schemaId: string) => void; },) => {
   return (
     <Card onClick={() => {
-      window.location.href = `${pathRoutes.organizations.viewSchema}?schemaId=${props.schemaId}`
+      props.onClickCallback(props.schemaId)
     }} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer' style={{ maxWidth: '100%', maxHeight: '100%', overflow: 'auto' }}>
       <div className="flex justify-between items-start">
         <div>
@@ -17,7 +17,7 @@ const SchemaCard = (props: { schemaName: string, version: string, schemaId: stri
         </div>
         <div className='float-right ml-auto '>
           <p className='dark:text-white'>
-            Created no: {new Date(props.created).toLocaleDateString('en-GB')}
+            {dateConversion(props.created)}
           </p>
         </div>
       </div>
@@ -29,7 +29,7 @@ const SchemaCard = (props: { schemaName: string, version: string, schemaId: stri
           <span className="font-semibold">Issuer DID:</span> {props.issuerDid}
         </p>
         <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-          <span className="font-semibold">Ledger:</span> {props.issuerDid.split(':')[2]}
+          <span className="font-semibold">Ledger:</span> {props.issuerDid?.split(':')[2]}
         </p>
       </div>
 
@@ -66,5 +66,3 @@ const SchemaCard = (props: { schemaName: string, version: string, schemaId: stri
 
 
 export default SchemaCard
-
-
