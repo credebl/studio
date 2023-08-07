@@ -43,24 +43,30 @@ const ViewSchemas = () => {
   const [credDeffloader, setCredDeffloader] = useState<boolean>(false)
   const [success, setSuccess] = useState<string | null>(null)
   const [credDefListErr, setCredDefListErr] = useState<string | null>(null)
+  const [schemaDetailErr, setSchemaDetailErr] = useState<string | null>(null)
   const [failure, setFailur] = useState<string | null>(null)
   const [orgId, setOrgId] = useState<number>(0)
   const [credDefAuto, setCredDefAuto] = useState<string>('')
 
 
   const getSchemaDetails = async (id: string, organizationId: number) => {
-    setLoading(true)
-    const SchemaDetails: AxiosResponse = await getSchemaById(id, organizationId)
-    if (SchemaDetails?.data?.data?.response) {
-      setSchemaDetails(SchemaDetails?.data?.data?.response)
-      setCredDefAuto(`${SchemaDetails?.data?.data?.response?.schema?.name} ${nanoid(8)}`)
-      setLoading(false)
-    } else {
-      setLoading(false)
+    try {
+      setLoading(true);
+      const SchemaDetails = await getSchemaById(id, organizationId);
+      const { data } = SchemaDetails as AxiosResponse;
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        setSchemaDetails(data?.data?.response);
+        setCredDefAuto(`${data?.data?.response?.schema?.name} ${nanoid(8)}`);
+        setLoading(false);
+      } else {
+        setLoading(false);
+        setSchemaDetailErr(SchemaDetails as unknown as string)
+      }
+    } catch (error) {
+      console.error('Error while fetching schema details:', error);
+      setLoading(false);
     }
-
-
-  }
+  };
 
   const getCredentialDefinitionList = async (id: string, orgId: number) => {
     try {
@@ -104,10 +110,10 @@ const ViewSchemas = () => {
   const submit = async (values: Values) => {
     setCreateLoader(true)
     const CredDeffFieldName: CredDeffFieldNameType = {
-      tag: values.tagName,
-      revocable: values.revocable,
+      tag: values?.tagName,
+      revocable: values?.revocable,
       orgId: orgId,
-      schemaLedgerId: schemaDetails.schemaId
+      schemaLedgerId: schemaDetails?.schemaId
 
     }
 
@@ -144,9 +150,7 @@ const ViewSchemas = () => {
           <Card className='h-64 bg-gradient-to-br from-blue-400 to-purple-400 sm:w-1/2 p-2 mr-1 mb-1' id="viewSchemaDetailsCard">
             {loading ? (
               <div className="flex items-center justify-center mb-4">
-                <Spinner
-                  color="info"
-                />
+                <Spinner color="info" />
               </div>
             ) : (
               <div>
@@ -166,33 +170,32 @@ const ViewSchemas = () => {
                       </p>
                     </a>
                   </div>
-
                 </div>
                 <div className="">
                   <div>
                     <p>
-                      Name: {schemaDetails?.schema.name}
+                      Name: {schemaDetails?.schema?.name}
                     </p>
                   </div>
                   <div>
                     <p>
-                      Version: {schemaDetails?.schema.version}
+                      Version: {schemaDetails?.schema?.version}
                     </p>
                   </div>
                   <p>
                     Schema ID: {schemaDetails?.schemaId}
                   </p>
                   <p >
-                    Issuer DID: {schemaDetails?.schema.issuerId}
+                    Issuer DID: {schemaDetails?.schema?.issuerId}
                   </p>
                 </div>
-                <div className="flow-root overflow-y-auto"> {/* Add 'overflow-y-auto' class to enable vertical scrolling */}
+                <div className="flow-root overflow-y-auto">
                   <ul className="divide-y divide-gray-200 dark:divide-gray-700">
                     <li className="py-3 sm:py-4">
                       <div className="flex items-center space-x-4">
                         <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white flex-wrap">
                           Attributes:
-                          {schemaDetails?.schema?.attrNames && schemaDetails?.schema?.attrNames.length > 0 &&
+                          {schemaDetails?.schema?.attrNames && schemaDetails?.schema?.attrNames?.length > 0 &&
                             schemaDetails?.schema?.attrNames.map((element: string) => (
                               <span className='m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300'> {element}</span>
                             ))}
@@ -203,7 +206,19 @@ const ViewSchemas = () => {
                 </div>
               </div>
             )}
+
+            {/* Display the error message */}
+            {schemaDetailErr && (
+              <Alert color="failure" onDismiss={() => setSchemaDetailErr(null)}>
+                <span>
+                  <p>
+                    {schemaDetailErr}
+                  </p> 
+                </span>
+              </Alert>
+            )}
           </Card>
+
           <Card className='h-64 sm:w-1/2 p-2 ml-1' id="credentialDefinitionCard">
             <div>
               <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
@@ -292,7 +307,7 @@ const ViewSchemas = () => {
                     <div className='float-right p-2'>
                       <Button
                         type="reset"
-                        onClick={()=>{
+                        onClick={() => {
                           setCredDefAuto('')
                         }}
                         className="text-base font-medium text-center text-secondary-700 secondary-700 bg-blue-500 rounded-lg hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 sm:w-auto dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-700"
@@ -316,41 +331,41 @@ const ViewSchemas = () => {
         <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white p-4">
           Credential Definitions
         </h5>
-        
+
         {loading ? (<div className="flex items-center justify-center mb-4">
-              <Spinner
-                color="info"
-              />
-            </div>)
-            :credDeffList && credDeffList.length > 0 ?(
-        <div className='Flex-wrap' style={{ display: 'flex', flexDirection: 'column' }}>
-          <div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
-            {credDeffList && credDeffList.length > 0 &&
-              credDeffList.map((element, key) => (
-                <div className='p-2' key={key}>
-                  <CredDeffCard credDeffName={element['tag']} credentialDefinitionId={element['credentialDefinitionId']} schemaId={element['schemaLedgerId']} revocable={element['revocable']} />
-                </div>
-              ))
-              }
-          </div>
-          <div className="flex items-center justify-end mb-4">
-            <Pagination
-              currentPage={1}
-              onPageChange={() => {
-              }}
-              totalPages={0}
-            />
-          </div>
-        </div>):(<EmptyListMessage
-                message={'No credential definition'}
-                description={'Get started by creating a new credential definition'}
-                buttonContent={''}
-                svgComponent={<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
-                  <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
-                </svg>}
-                onClick={()=>{}}
-              />)
-}
+          <Spinner
+            color="info"
+          />
+        </div>)
+          : credDeffList && credDeffList.length > 0 ? (
+            <div className='Flex-wrap' style={{ display: 'flex', flexDirection: 'column' }}>
+              <div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
+                {credDeffList && credDeffList.length > 0 &&
+                  credDeffList.map((element, key) => (
+                    <div className='p-2' key={key}>
+                      <CredDeffCard credDeffName={element['tag']} credentialDefinitionId={element['credentialDefinitionId']} schemaId={element['schemaLedgerId']} revocable={element['revocable']} />
+                    </div>
+                  ))
+                }
+              </div>
+              <div className="flex items-center justify-end mb-4">
+                <Pagination
+                  currentPage={1}
+                  onPageChange={() => {
+                  }}
+                  totalPages={0}
+                />
+              </div>
+            </div>) : (<EmptyListMessage
+              message={'No credential definition'}
+              description={'Get started by creating a new credential definition'}
+              buttonContent={''}
+              svgComponent={<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
+                <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+              </svg>}
+              onClick={() => { }}
+            />)
+        }
       </>
     </div>
   )
