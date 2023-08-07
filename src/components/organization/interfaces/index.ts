@@ -68,3 +68,15 @@ export interface OrgDashboard {
     credentialsCount: number
     presentationsCount: number
 }
+
+export interface Connection {
+    id: number
+    orgId: number
+    agentId: number
+    connectionInvitation: string
+    multiUse: boolean
+    createDateTime: string
+    createdBy: number
+    lastChangedDateTime: string
+    lastChangedBy: number
+  }
