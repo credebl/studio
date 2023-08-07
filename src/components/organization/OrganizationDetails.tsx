@@ -1,16 +1,18 @@
-import type { OrgAgent, Organisation } from './interfaces'
+import type { Connection, OrgAgent, Organisation } from './interfaces'
 import { useEffect, useState } from 'react';
 
 import type { AxiosResponse } from 'axios';
 import { Spinner } from 'flowbite-react';
 import { apiStatusCodes } from '../../config/CommonConstant';
 import { createConnection } from '../../api/organization';
+import CustomQRCode from '../../commonComponents/QRcode';
 
 const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 
     const { org_agents } = orgData as Organisation
     const agentData: OrgAgent | null = org_agents.length > 0 ? org_agents[0] : null
     const [loading, setLoading] = useState<boolean>(true)
+    const [connectionData, setConnectionData] = useState<Connection | null>(null)
 
     const createQrConnection = async () => {
 
@@ -19,13 +21,10 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
         const { data } = response as AxiosResponse
 
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-            console.log(`COnnection::`, data);
 
-        } else {
-            console.log(`Connection ERR`, response as string);
+            setConnectionData(data?.data)
 
         }
-
         setLoading(false)
     }
 
@@ -37,7 +36,7 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
         <div
             className="mt-4 w-full flex-wrap p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
         >
-            <div className='w-1/2'>
+            <div className='w-full sm:w-1/2 mb-4 sm:mb-0 sm:pr-4'>
                 <h3 className="mb-1 mt-1 text-xl font-bold text-gray-900 dark:text-white">
                     Wallet Details
                 </h3>
@@ -52,12 +51,13 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 
                                     <div className="inline-flex min-w-0">
                                         <p
-                                            className="text-base font-normal text-gray-500 truncate dark:text-gray-400"
+                                            className="text-base font-normal text-gray-500 truncate dark:text-gray-400 w-20 md:w-32 lg:w-40"
                                         >
-                                            Wallet Name:
+                                            Wallet Name
                                         </p>
+                                        <p className="text-base font-normal text-gray-500 truncate dark:text-gray-400">:</p>
                                         <p
-                                            className="ml-4 text-base font-semibold text-gray-900 truncate dark:text-white"
+                                            className="ml-4 text-base font-semibold text-gray-900 truncate dark:text-white w-40 md:w-32 lg:w-80"
                                         >
                                             {agentData?.walletName}
                                         </p>
@@ -70,12 +70,14 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 
                                     <div className="inline-flex min-w-0">
                                         <p
-                                            className="text-base font-normal text-gray-500 truncate dark:text-gray-400"
+                                            className="text-base font-normal text-gray-500 truncate dark:text-gray-400 w-20 md:w-32 lg:w-40"
+
                                         >
-                                            Org DID:
+                                            Org DID
                                         </p>
+                                        <p className="text-base font-normal text-gray-500 truncate dark:text-gray-400">:</p>
                                         <p
-                                            className="ml-4 text-base font-semibold text-gray-900 truncate dark:text-white"
+                                            className="ml-4 text-base font-semibold text-gray-900 truncate dark:text-white w-40 md:w-32 lg:w-80"
                                         >
                                             {agentData?.orgDid}
                                         </p>
@@ -88,12 +90,14 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 
                                     <div className="inline-flex min-w-0">
                                         <p
-                                            className="text-base font-normal text-gray-500 truncate dark:text-gray-400"
+                                            className="text-base font-normal text-gray-500 truncate dark:text-gray-400 w-20 md:w-32 lg:w-40"
+
                                         >
-                                            Created On:
+                                            Created On
                                         </p>
+                                        <p className="text-base font-normal text-gray-500 truncate dark:text-gray-400">:</p>
                                         <p
-                                            className="ml-4 text-base font-semibold text-gray-900 truncate dark:text-white"
+                                            className="ml-4 text-base font-semibold text-gray-900 truncate dark:text-white w-40 md:w-32 lg:w-80"
                                         >
                                             {agentData?.agents_type.createDateTime.split("T")[0]}
                                         </p>
@@ -106,15 +110,17 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
                     </div>
                 </div>
             </div>
-            <div className='w-1/2 flex items-center'>
-                 {
+            <div className='w-full sm:w-1/2 flex flex-col justify-center text-wrap'>
+                {
                     loading
                         ? (
                             <Spinner
                                 color="info"
                             />
                         )
-                        : <div></div>
+                        : <div>
+                            <CustomQRCode value={connectionData?.connectionInvitation as string} size={180} />
+                        </div>
 
                 }
             </div>
