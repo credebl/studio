@@ -457,7 +457,7 @@ const SignUpUser = () => {
 							password: yup
 								.string()
 								.required('Password is required')
-								.matches(passwordRegex, 'customPasswordMsg'),
+								.matches(passwordRegex, 'Passwords must contain at least 8 characters, including uppercase, lowercase, numbers and special character'),
 							confirmPassword: yup
 								.string()
 								.required('Confirm Password is required')
@@ -539,7 +539,7 @@ const SignUpUser = () => {
 												onClick={() => setConfirmPasswordVisible((prevVisible) => !prevVisible)}
 												className="bg-transparent absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-white hover:text-gray-800 dark:hover:text-white"
 											>
-												{confirmPasswordVisible ? (
+												{passwordVisible ? (
 													<svg className="h-6 w-6 text-black"
 														viewBox="0 0 24 24" fill="none"
 														stroke="currentColor"
