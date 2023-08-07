@@ -208,7 +208,7 @@ const Dashboard = () => {
                                     window.location.href = pathRoutes.organizations.schemas;
                                 }
                             }}
-                        >
+                        > 
                             <div className="w-full">
                                 <h3 className="text-base font-medium text-white">
                                     Schemas
