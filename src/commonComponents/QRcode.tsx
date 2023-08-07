@@ -1,8 +1,7 @@
-import QRCode from "qrcode.react";
 import { useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import download from "downloadjs";
-
+import QRCode from "react-qr-code";
 
 const CustomQRCode = ({ value, size }: { value: string, size: number }) => {
     
@@ -39,7 +38,7 @@ const CustomQRCode = ({ value, size }: { value: string, size: number }) => {
     return (<div className="h-auto max-w-64 w-full flex flex-col items-center">
         <div 
         ref={contentRef}
-        className="bg-white p-4 border border-gray-200 rounded-lg shadow-sm dark:border-gray-700">
+        className="bg-white p-4 border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 overflow-hidden">
 
             <QRCode
                 size={size}
@@ -49,9 +48,9 @@ const CustomQRCode = ({ value, size }: { value: string, size: number }) => {
 
         </div>
         <p className="text-center mt-3">OR</p>
-        <p className="text-center mt-3">invite on URL</p>
+        <p className="text-center mt-3 ">Invitation URL</p>
         <div className="flex items-center text-center mt-1">
-            <p>{value}</p>
+            <p className="md: w-[240px] break-all truncate">{value}</p>
             <button
                 className=
                 {`${isCopied ? 'text-green-600' : ''}`} onClick={copyTextVal}>

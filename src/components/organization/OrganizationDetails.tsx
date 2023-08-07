@@ -36,7 +36,7 @@ const OrganizationDetails = ({orgData}: {orgData: Organisation}) => {
         <div
             className="mt-4 w-full flex-wrap p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
         >
-            <div className='w-1/2'>
+            <div className='w-full sm:w-1/2 mb-4 sm:mb-0 sm:pr-4'>
                 <h3 className="mb-1 mt-1 text-xl font-bold text-gray-900 dark:text-white">
                     Wallet Details
                 </h3>
@@ -51,12 +51,13 @@ const OrganizationDetails = ({orgData}: {orgData: Organisation}) => {
 
                                     <div className="inline-flex min-w-0">
                                         <p
-                                            className="text-base font-normal text-gray-500 truncate dark:text-gray-400"
+                                            className="text-base font-normal text-gray-500 truncate dark:text-gray-400 w-20 md:w-32 lg:w-40"
                                         >
-                                            Wallet Name:
+                                            Wallet Name
                                         </p>
+                                        <p className="text-base font-normal text-gray-500 truncate dark:text-gray-400">:</p>
                                         <p
-                                            className="ml-4 text-base font-semibold text-gray-900 truncate dark:text-white"
+                                            className="ml-4 text-base font-semibold text-gray-900 truncate dark:text-white w-40 md:w-32 lg:w-80"
                                         >
                                             {agentData?.walletName}
                                         </p>
@@ -69,12 +70,14 @@ const OrganizationDetails = ({orgData}: {orgData: Organisation}) => {
 
                                     <div className="inline-flex min-w-0">
                                         <p
-                                            className="text-base font-normal text-gray-500 truncate dark:text-gray-400"
+                                            className="text-base font-normal text-gray-500 truncate dark:text-gray-400 w-20 md:w-32 lg:w-40"
+
                                         >
-                                            Org DID:
+                                            Org DID
                                         </p>
+                                        <p className="text-base font-normal text-gray-500 truncate dark:text-gray-400">:</p>
                                         <p
-                                            className="ml-4 text-base font-semibold text-gray-900 truncate dark:text-white"
+                                            className="ml-4 text-base font-semibold text-gray-900 truncate dark:text-white w-40 md:w-32 lg:w-80"
                                         >
                                             {agentData?.orgDid}
                                         </p>
@@ -87,12 +90,14 @@ const OrganizationDetails = ({orgData}: {orgData: Organisation}) => {
 
                                     <div className="inline-flex min-w-0">
                                         <p
-                                            className="text-base font-normal text-gray-500 truncate dark:text-gray-400"
+                                            className="text-base font-normal text-gray-500 truncate dark:text-gray-400 w-20 md:w-32 lg:w-40"
+
                                         >
-                                            Created On:
+                                            Created On
                                         </p>
+                                        <p className="text-base font-normal text-gray-500 truncate dark:text-gray-400">:</p>
                                         <p
-                                            className="ml-4 text-base font-semibold text-gray-900 truncate dark:text-white"
+                                            className="ml-4 text-base font-semibold text-gray-900 truncate dark:text-white w-40 md:w-32 lg:w-80"
                                         >
                                             {agentData?.agents_type.createDateTime.split("T")[0]}
                                         </p>
@@ -105,7 +110,7 @@ const OrganizationDetails = ({orgData}: {orgData: Organisation}) => {
                     </div>
                 </div>
             </div>
-            <div className='w-1/2 float-right flex items-center'>
+            <div className='w-full sm:w-1/2 flex flex-col justify-center text-wrap'>
                 {
                     loading
                         ? (
