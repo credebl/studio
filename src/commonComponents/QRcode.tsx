@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
-import download from "downloadjs";
 import QRCode from "react-qr-code";
 import html2canvas from "html2canvas";
+import download from "downloadjs";
 
 const CustomQRCode = ({ value, size }: { value: string, size: number }) => {
     
