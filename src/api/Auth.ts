@@ -4,6 +4,7 @@ import { number, string } from 'yup'
 import type { AxiosError } from 'axios'
 import CryptoJS from "crypto-js"
 import { apiRoutes } from '../config/apiRoutes'
+import { envConfig } from '../config/envConfig'
 import { storageKeys } from '../config/CommonConstant'
 
 export interface UserSignUpData {
@@ -125,7 +126,7 @@ export const addPasswordDetails = async(payload: AddPasswordDetails, email:strin
 }
 
 export const passwordEncryption = (password: string): string => {
-    const CRYPTO_PRIVATE_KEY: string = `${import.meta.env.PUBLIC_CRYPTO_PRIVATE_KEY}`
+    const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`    
     const encryptedPassword: string = CryptoJS.AES.encrypt(JSON.stringify(password), CRYPTO_PRIVATE_KEY).toString()
     return encryptedPassword
 }
@@ -134,21 +135,21 @@ export const encryptData = (value: any): string => {
     if(typeof(value) !== 'string'){
         value = JSON.stringify(value)
     }
-    const CRYPTO_PRIVATE_KEY: string = `${import.meta.env.PUBLIC_CRYPTO_PRIVATE_KEY}`
+    const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`
     const convrtedValue: string = CryptoJS.AES.encrypt(value, CRYPTO_PRIVATE_KEY).toString()
     return convrtedValue
 }
 
 export const decryptData = (value: any): string => {
-    const CRYPTO_PRIVATE_KEY: string = `${import.meta.env.PUBLIC_CRYPTO_PRIVATE_KEY}`
+    const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`
     const bytes = CryptoJS.AES.decrypt(value, CRYPTO_PRIVATE_KEY)
     var originalValue: string = bytes.toString(CryptoJS.enc.Utf8);
     return originalValue
 }
 
 export const setToLocalStorage = async (key: string, value: any) =>{
-    const convrtedValue = await encryptData(value)
-    const setValue = await localStorage.setItem(key, convrtedValue as string)
+    const convertedValue = await encryptData(value)
+    const setValue = await localStorage.setItem(key, convertedValue as string)
     return true
 }
 
@@ -157,3 +158,8 @@ export const getFromLocalStorage = async (key: string) =>{
     const convertedValue = value ? await decryptData(value) : ''
     return convertedValue
 }
+
+export const removeFromLocalStorage = async (key: string) => {
+	await localStorage.removeItem(key);
+	return true;
+};

@@ -9,3 +9,10 @@ interface ImportMetaEnv {
 interface ImportMeta {
 	readonly env: ImportMetaEnv;
 }
+
+declare global {
+	var baseUrl: string;
+	var encryptKey: string;
+}
+
+export { };
