@@ -36,7 +36,10 @@ const SchemaList = () => {
 
       const schemaList = await getAllSchemas(schemaListAPIParameter, organizationId);
       const { data } = schemaList as AxiosResponse;
-
+      if (schemaList === 'Schema records not found') {
+        setLoading(false);
+        setSchemaList([]);
+      }
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         if (data?.data?.data?.length === 0) {
           setSchemaListErr('No Data Found');
@@ -52,6 +55,9 @@ const SchemaList = () => {
         setLoading(false);
         setSchemaListErr(schemaList as string)
       }
+     setTimeout(()=>{
+      setSchemaListErr('')
+     },5000 )
     } catch (error) {
       console.error('Error while fetching schema list:', error);
       setLoading(false);
@@ -108,8 +114,8 @@ const SchemaList = () => {
               onClick={createSchema}
               className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
             > <svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
-            <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
-          </svg>
+                <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+              </svg>
 
               Create
             </Button>
