@@ -5,7 +5,7 @@ const SchemaCard = (props: { schemaName: string, version: string, schemaId: stri
   return (
     <Card onClick={() => {
       props.onClickCallback(props.schemaId)
-    }} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer' style={{ width: '470px', height: '240px', maxWidth: '100%', maxHeight: '100%', overflow: 'auto' }}>
+    }} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer' style={{ maxWidth: '100%', maxHeight: '100%', overflow: 'auto' }}>
       <div className="flex justify-between items-start">
         <div>
           <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">

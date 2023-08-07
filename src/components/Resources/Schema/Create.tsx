@@ -52,14 +52,15 @@ const CreateSchema = () => {
                 setCreateLoader(false)
                 window.location.href = pathRoutes.organizations.schemas
             } else {
+                setFailure(createSchema as string)
                 setCreateLoader(false)
             }
         } else {
-            setCreateLoader(false)  
+            setCreateLoader(false)
             setFailure(createSchema as string)
             setTimeout(() => {
                 setFailure(null)
-              }, 4000);
+            }, 4000);
         }
     }
 
@@ -113,24 +114,46 @@ const CreateSchema = () => {
                         >
                             {(formikHandlers): JSX.Element => (
                                 <Form onSubmit={formikHandlers.handleSubmit}>
-                                    <div className=" flex items-center space-x-4">
-                                        <div className='w-1/3'>
+                                    <div className=" flex items-center space-x-4 ">
+                                        <div className='w-1/3 flex flex-col'>
                                             <div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                                 <Label htmlFor="schema" value="Schema" />
                                                 <span className='text-red-600'>*</span>
                                             </div>
-                                            <Field
-                                                id="schemaName"
-                                                name="schemaName"
-                                                placeholder="Schema Name eg. PAN CARD"
-                                                className="w-96 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                            <div className="flex flex-col"> {/* Wrap the field and error message in a flex container */}
+                                                <Field
+                                                    id="schemaName"
+                                                    name="schemaName"
+                                                    placeholder="Schema Name eg. PAN CARD"
+                                                   className="w-96 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                             />
-                                            {
-                                                (formikHandlers?.errors?.schemaName && formikHandlers?.touched?.schemaName) &&
-                                                <span className="text-red-500 text-xs">{formikHandlers?.errors?.schemaName}</span>
-                                            }
+                                                {formikHandlers.errors && formikHandlers.touched.schemaName && formikHandlers.errors.schemaName ? (
+                                                    <label className="pt-1 text-red-500 text-xs h-5">{formikHandlers.errors.schemaName}</label>
+                                                ) : (
+                                                    <label className="pt-1 text-red-500 text-xs h-5"></label>
+                                                )}
+                                            </div>
                                         </div>
-                                        <div className='w-1/3'>
+                                        <div className='w-1/3 flex flex-col'>
+                                            <div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                                <Label htmlFor="schema" value="Version" />
+                                                <span className='text-red-600'>*</span>
+                                            </div>
+                                            <div className="flex flex-col"> {/* Wrap the field and error message in a flex container */}
+                                                <Field
+                                                    id="schemaVersion"
+                                                    name="schemaVersion"
+                                                    placeholder="eg. 0.1 or 0.0.1"
+                                                    className="w-96 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                                />
+                                                {formikHandlers.errors && formikHandlers.touched.schemaVersion && formikHandlers.errors.schemaVersion ? (
+                                                    <label className="pt-1 text-red-500 text-xs h-5">{formikHandlers.errors.schemaVersion}</label>
+                                                ) : (
+                                                    <label className="pt-1 text-red-500 text-xs h-5"></label>
+                                                )}
+                                            </div>
+                                        </div>
+                                        {/* <div className='w-1/3'>
                                             <div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                                 <Label htmlFor="version" value="Version" />
                                                 <span className='text-red-600'>*</span>
@@ -143,9 +166,9 @@ const CreateSchema = () => {
                                             />
                                             {
                                                 (formikHandlers?.errors?.schemaVersion && formikHandlers?.touched?.schemaVersion) &&
-                                                <span className="text-red-500 text-xs">{formikHandlers?.errors?.schemaVersion}</span>
+                                                <span className="text-red-500 text-xs h-30">{formikHandlers?.errors?.schemaVersion}</span>
                                             }
-                                        </div>
+                                        </div> */}
                                     </div>
                                     <div className='pt-8'>
                                         <FieldArray
@@ -159,7 +182,7 @@ const CreateSchema = () => {
                                                         <div className="d-flex justify-content-center align-items-center mb-1">
                                                             Attributes <span className="text-red-600">*</span>
                                                         </div>
-                                                        <div className='flex content-center flex-wrap'>
+                                                        <div className='flex flex-col flex-wrap'>
                                                             {attribute.map((element: any, index: any) => (
                                                                 <div key={`attributeList-${index}`} className="">
                                                                     <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white pl-1">
@@ -244,10 +267,11 @@ const CreateSchema = () => {
                                             color='bg-primary-700'
                                             className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
                                             isProcessing={createloader}
-                                        ><svg className = 'pr-2' xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                        <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"/>
-                                      </svg>
-                                      
+                                            disabled={createloader}
+                                        ><svg className='pr-2' xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+                                            </svg>
+
                                             Create
                                         </Button>
                                     </div>
@@ -255,9 +279,9 @@ const CreateSchema = () => {
                                         <Button
                                             type="reset"
                                             className="text-base font-medium text-center text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 sm:w-auto dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-700"
-                                            >
+                                        >
                                             <svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 20 20">
-                                            <path fill="#fff" d="M20 10.007a9.964 9.964 0 0 1-2.125 6.164 10.002 10.002 0 0 1-5.486 3.54 10.02 10.02 0 0 1-6.506-.596 9.99 9.99 0 0 1-4.749-4.477A9.958 9.958 0 0 1 3.402 2.525a10.012 10.012 0 0 1 12.331-.678l-.122-.355A1.135 1.135 0 0 1 16.34.057a1.143 1.143 0 0 1 1.439.726l1.11 3.326a1.107 1.107 0 0 1-.155.998 1.11 1.11 0 0 1-.955.465h-3.334a1.112 1.112 0 0 1-1.11-1.108 1.107 1.107 0 0 1 .788-1.043 7.792 7.792 0 0 0-9.475.95 7.746 7.746 0 0 0-1.451 9.39 7.771 7.771 0 0 0 3.73 3.37 7.794 7.794 0 0 0 9.221-2.374 7.75 7.75 0 0 0 1.63-4.75 1.107 1.107 0 0 1 1.112-1.109A1.112 1.112 0 0 1 20 10.007Z"/>
+                                                <path fill="#fff" d="M20 10.007a9.964 9.964 0 0 1-2.125 6.164 10.002 10.002 0 0 1-5.486 3.54 10.02 10.02 0 0 1-6.506-.596 9.99 9.99 0 0 1-4.749-4.477A9.958 9.958 0 0 1 3.402 2.525a10.012 10.012 0 0 1 12.331-.678l-.122-.355A1.135 1.135 0 0 1 16.34.057a1.143 1.143 0 0 1 1.439.726l1.11 3.326a1.107 1.107 0 0 1-.155.998 1.11 1.11 0 0 1-.955.465h-3.334a1.112 1.112 0 0 1-1.11-1.108 1.107 1.107 0 0 1 .788-1.043 7.792 7.792 0 0 0-9.475.95 7.746 7.746 0 0 0-1.451 9.39 7.771 7.771 0 0 0 3.73 3.37 7.794 7.794 0 0 0 9.221-2.374 7.75 7.75 0 0 0 1.63-4.75 1.107 1.107 0 0 1 1.112-1.109A1.112 1.112 0 0 1 20 10.007Z" />
                                             </svg>
                                             Reset
                                         </Button>
