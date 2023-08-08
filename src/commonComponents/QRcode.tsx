@@ -1,16 +1,15 @@
 import { useRef, useState } from "react";
 import QRCode from "react-qr-code";
-import html2canvas from "html2canvas";
-import download from "downloadjs";
+import domtoimage from 'dom-to-image';
 
 const CustomQRCode = ({ value, size }: { value: string, size: number }) => {
-    
+
     const inputRef = useRef<HTMLInputElement>(null);
     const [isCopied, setIsCopied] = useState(false);
+
     function copyTextVal(e: React.MouseEvent<HTMLButtonElement>) {
 
         e.preventDefault()
-        const copyText = inputRef?.current;
 
         setIsCopied(true);
 
@@ -24,21 +23,21 @@ const CustomQRCode = ({ value, size }: { value: string, size: number }) => {
 
     }
 
-
-    const contentRef = useRef<HTMLDivElement>(null);
-
-    const handleDownload = async () => {
-        if (contentRef.current) {
-          const canvas = await html2canvas(contentRef.current);
-          const dataURL = canvas.toDataURL();
-          download(dataURL, "downloaded_image.png", "image/png");
-        }
+    const drawHtmlToCanvas = () => {
+        domtoimage.toJpeg(inputRef.current, { quality: 0.95 })
+        .then(function (dataUrl) {
+            var link = document.createElement('a');
+            link.download = 'my-image-name.jpeg';
+            link.href = dataUrl;
+            link.click();
+        });
       };
-    
+
+
     return (<div className="h-auto max-w-64 w-full flex flex-col items-center">
-        <div 
-        ref={contentRef}
-        className="bg-white p-4 border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 overflow-hidden">
+        <div
+            ref={inputRef}
+            className="bg-white p-4 border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 overflow-hidden">
 
             <QRCode
                 size={size}
@@ -62,14 +61,17 @@ const CustomQRCode = ({ value, size }: { value: string, size: number }) => {
 
         </div>
         <button
-        onClick={handleDownload}
-        className="text-sm content-center px-5 py-2.5 mt-6 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+            onClick={drawHtmlToCanvas}
+            className="text-sm content-center px-5 py-2.5 mt-6 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
         >
             Download
         </button>
 
     </div>)
 
-};
+}
+
 
 export default CustomQRCode;
+
+
