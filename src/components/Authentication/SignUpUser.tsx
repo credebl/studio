@@ -2,48 +2,23 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import * as yup from 'yup';
 
-import { Alert, Button, Label } from 'flowbite-react';
+import { Alert, Button, Checkbox, Label, TextInput } from 'flowbite-react';
+import type { AxiosError, AxiosResponse } from 'axios';
 import {
 	Field,
 	Form,
 	Formik
 } from 'formik';
-import { addPasswordDetails, checkUserExist, passwordEncryption, sendVerificationMail, setToLocalStorage } from '../../api/Auth.js';
-import { apiStatusCodes, passwordRegex, storageKeys } from '../../config/CommonConstant.js';
-import { asset, url } from '../../lib/data.js';
-
-import type { AxiosError, AxiosResponse } from 'axios';
-import { useEffect, useState } from 'react';
-import { addDeviceDetails, generateRegistrationOption, verifyRegistration } from '../../api/Fido.js';
-import { startRegistration } from '@simplewebauthn/browser';
 import type { IdeviceBody, RegistrationOptionInterface } from '../Profile/interfaces/index.js';
+import { addDeviceDetails, generateRegistrationOption, verifyRegistration } from '../../api/Fido.js';
+import { addPasswordDetails, checkUserExist, passwordEncryption, sendVerificationMail } from '../../api/Auth.js';
+import { apiStatusCodes, passwordRegex } from '../../config/CommonConstant.js';
+import { asset, url } from '../../lib/data.js';
+import { useEffect, useState } from 'react';
+
 import secureRandomPassword from 'secure-random-password';
-import SignUpUser2 from './signUpUser-names.js';
-import React from 'react';
-
-
-interface emailValue {
-	email: string;
-}
-
-interface passwordValues {
-
-	password: string,
-	confirmPassword: string
-}
-
-interface nameValues {
-	firstName: string;
-	lastName: string;
-}
-
-interface Values {
-	firstName: string;
-	lastName: string;
-	email: string;
-    password:string,
-    confirmPassword:string
-}
+import { startRegistration } from '@simplewebauthn/browser';
+import { supabase } from '../../supabase.js';
 
 const SignUpUser = () => {
 
@@ -92,23 +67,33 @@ const SignUpUser = () => {
 	}
 
 	const submit = async (passwordDetails: passwordValues, fidoFlag: boolean) => {
-		const payload = {
-			password: passwordEncryption(passwordDetails?.password),
-			isPasskey: false,
-			firstName: userDetails.firstName,
-			lastName: userDetails.lastName
-		}
-		setLoading(true)
+		// const payload = {
+		// 	password: passwordEncryption(passwordDetails?.password),
+		// 	isPasskey: false,
+		// 	firstName: userDetails.firstName,
+		// 	lastName: userDetails.lastName
+		// }
+		// setLoading(true)
 
-		const userRsp = await addPasswordDetails(payload, email)
-		const { data } = userRsp as AxiosResponse
-		setLoading(false)
-		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-			window.location.href = `/authentication/sign-in?signup=true?fidoFlag=${fidoFlag}`
-		} else {
-			setErrMsg(userRsp as string)
-		}
-		return userRsp;
+		// const userRsp = await addPasswordDetails(payload, email)
+		// const { data } = userRsp as AxiosResponse
+		// setLoading(false)
+		// if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+		// 	window.location.href = `/authentication/sign-in?signup=true?fidoFlag=${fidoFlag}`
+		// } else {
+		// 	setErrMsg(userRsp as string)
+		// }
+		// return userRsp;
+
+		const { data, error } = await supabase.auth.signUp({
+			email,
+			password: passwordDetails?.password,
+		})
+
+		console.log(`DATA::`, data);
+		console.log(`ERROR::`, error);
+		
+
 	}
 
 	const VerifyMail = async (email: string) => {
@@ -309,7 +294,97 @@ console.log("nextflag::::::", nextflag)
 									</Alert>
 								}
 
-									<div className='mt-28 mb-28'>
+											<Field
+												id="signuppassword"
+												name="password"
+												className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+												type={passwordVisible ? 'text' : 'password'}
+											/>
+											<button
+												type="button"
+												onClick={() => setPasswordVisible((prevVisible) => !prevVisible)}
+												className="bg-transparent absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-white hover:text-gray-800 dark:hover:text-white"
+											>
+												{passwordVisible ? (
+													<svg className="h-6 w-6 text-black"
+														viewBox="0 0 24 24" fill="none"
+														stroke="currentColor"
+														stroke-width="2"
+														stroke-linecap="round"
+														stroke-linejoin="round">
+														<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+														<circle cx="12" cy="12" r="3" />
+													</svg>
+												) : (
+													<svg className="h-6 w-6 text-black"
+														viewBox="0 0 24 24"
+														fill="none"
+														stroke="currentColor"
+														stroke-width="2"
+														stroke-linecap="round"
+														stroke-linejoin="round">
+														<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+														<line x1="1" y1="1" x2="23" y2="23" />
+													</svg>)}
+											</button>
+										</div>
+										{
+											(formikHandlers?.errors?.password && formikHandlers?.touched?.password) &&
+											<span className="text-red-500 text-xs">{formikHandlers?.errors?.password}</span>
+										}
+									</div>
+									<div>
+										<div className="mb-2 block">
+											<Label htmlFor="confirmPassword" value="Confirm password" />
+											<span className='text-red-500 text-xs'>*</span>
+										</div>
+										<Field
+											id="signupconfirmpassword"
+											name="confirmPassword"
+											className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+											type="password"
+										/>
+										{
+											(formikHandlers?.errors?.confirmPassword && formikHandlers?.touched?.confirmPassword) &&
+											<span className="text-red-500 text-xs">{formikHandlers?.errors?.confirmPassword}</span>
+										}
+									</div>
+								</div>}
+								{nextflag && <>
+									<div className='pt-4'>
+										<div className='flex'>
+											<Button
+												id='signupcreatepasskey'
+												onClick={() => {
+													createPasskey()
+												}}
+												color='bg-primary-800'
+												className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
+											>
+												Create passkey
+											</Button>
+											{enablePasswordField &&
+												<Button
+													id='signupbutton'
+													type="submit"
+													isProcessing={loading}
+													color='bg-primary-800'
+													className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 ml-auto'
+												>
+													Sign Up
+												</Button>
+											}
+										</div>
+										<div className="text-sm font-medium text-gray-500 dark:text-gray-400 text-primary-700 hover:underline dark:text-primary-500 pt-2 cursor-pointer" onClick={() => {
+											setEnablePasswordField(true)
+										}}>
+											{`Set password ?`}
+										</div>
+									</div>
+								</>}
+							</Form>
+						)}
+					</Formik>}
 
 										<div className="flex justify-center mb-4 text-center text-primary-700 text-blue-600 font-inter text-4xl font-bold leading-10 ">
 											Create an account
