@@ -53,8 +53,8 @@ const SignUpUser = () => {
 
 
 	useEffect(() => {
-		
-		if(window?.location?.search.length > 7) {
+
+		if (window?.location?.search.length > 7) {
 			setEmailAutoFill(window?.location?.search.split('=')[1])
 		}
 	}, [])
