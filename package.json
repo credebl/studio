@@ -38,6 +38,7 @@
 		"apexcharts": "^3.37.2",
 		"astro": "^2.9.0",
 		"axios": "^1.4.0",
+		"cookie": "^0.5.0",
 		"crypto-js": "^4.1.1",
 		"flowbite": "^1.7.0",
 		"flowbite-react": "^0.4.10",
@@ -59,6 +60,7 @@
 		"yup": "^1.2.0"
 	},
 	"devDependencies": {
+		"@types/cookie": "^0.5.1",
 		"@types/crypto-js": "^4.1.1",
 		"@types/eslint": "^8.21.1",
 		"@types/secure-random-password": "^0.2.1",
