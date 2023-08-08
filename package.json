@@ -41,6 +41,7 @@
 		"astro": "^2.9.0",
 		"axios": "^1.4.0",
 		"crypto-js": "^4.1.1",
+		"dom-to-image": "^2.6.0",
 		"downloadjs": "^1.4.7",
 		"flowbite": "^1.7.0",
 		"flowbite-react": "^0.4.10",
@@ -66,6 +67,7 @@
 	},
 	"devDependencies": {
 		"@types/crypto-js": "^4.1.1",
+		"@types/dom-to-image": "^2.6.4",
 		"@types/downloadjs": "^1.4.3",
 		"@types/eslint": "^8.21.1",
 		"@types/secure-random-password": "^0.2.1",
