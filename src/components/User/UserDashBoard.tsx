@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 
-import { AlertComponent } from "./AlertComponent";
+import { AlertComponent } from "../AlertComponent";
 import type { AxiosResponse } from "axios";
-import CustomAvatar from '../components/Avatar'
-import type { Organisation } from "./organization/interfaces";
-import { apiStatusCodes } from "../config/CommonConstant";
-import { getOrganizations } from "../api/organization";
-import { getUserInvitations } from "../api/invitations";
-import { pathRoutes } from "../config/pathRoutes";
+import CustomAvatar from '../Avatar'
+import type { Organisation } from "../organization/interfaces";
+import type { UserActivity } from "./interfaces";
+import { apiStatusCodes } from "../../config/CommonConstant";
+import { getOrganizations } from "../../api/organization";
+import { getUserActivity } from "../../api/users";
+import { getUserInvitations } from "../../api/invitations";
+import moment from "moment";
+import { pathRoutes } from "../../config/pathRoutes";
 
 const initialPageState = {
 	pageNumber: 1,
@@ -23,7 +26,7 @@ const UserDashBoard = () => {
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const [loading, setLoading] = useState<boolean>(false)
 	const [organizationsList, setOrganizationList] = useState<Array<Organisation> | null>(null)
-
+	const [activityList, setActivityList] = useState<Array<UserActivity> | null>(null)
 
 	const getAllInvitations = async () => {
 
@@ -79,9 +82,32 @@ const UserDashBoard = () => {
 	}
 
 
+	//Fetch the user recent activity
+	const getUserRecentActivity = async () => {
+
+		setLoading(true)
+		const response = await getUserActivity(5);
+		const { data } = response as AxiosResponse
+
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+
+			const activityList = data?.data;
+
+			setActivityList(activityList);
+
+		} else {
+			setError(response as string)
+		}
+
+		setLoading(false)
+	}
+
+
+
 	useEffect(() => {
 		getAllInvitations()
 		getAllOrganizations()
+		getUserRecentActivity()
 	}, [])
 
 	const redirectToInvitations = () => {
@@ -179,55 +205,40 @@ const UserDashBoard = () => {
 						<h3 className="pl-12 text-lg font-semibold text-gray-900 dark:text-white">
 							Recent Activity
 						</h3>
-						<a
+						{/* <a
 							href="#"
 							className="inline-flex items-center p-2 text-sm font-medium rounded-lg text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700"
 						>
 							View all
-						</a>
+						</a> */}
 					</div>
 					<ol className="relative border-l pl-8 border-gray-200 dark:border-gray-700">
-						<li className="mb-10 ml-4">
-							<div
-								className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -left-1.5 border border-white dark:border-gray-800 dark:bg-gray-700"
-							>
-							</div>
-							<time
-								className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500"
-							>April 2023</time
-							>
-							<h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-								Application UI design in Figma
-							</h3>
-							<p
-								className="mb-4 text-base font-normal text-gray-500 dark:text-gray-400"
-							>
-								Get access to over 20+ pages including a dashboard layout, charts,
-								kanban board, calendar, and pre-order E-commerce & Marketing pages.
-							</p>
+						{
+							activityList
+							&& activityList.map(activity => {
+								return <li className="mb-10 ml-4">
+									<div
+										className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -left-1.5 border border-white dark:border-gray-800 dark:bg-gray-700"
+									>
+									</div>
+									<time
+										className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500"
+									>{moment(activity.createDateTime).format('Do MMMM YYYY')}
+									</time>
+									<h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+										{activity.action}
+									</h3>
+									<p
+										className="mb-4 text-base font-normal text-gray-500 dark:text-gray-400"
+									>
+										{activity.details}
+									</p>
 
-						</li>
-						<li className="mb-10 ml-4">
-							<div
-								className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -left-1.5 border border-white dark:border-gray-800 dark:bg-gray-700"
-							>
-							</div>
-							<time
-								className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500"
-							>March 2023</time
-							>
-							<h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-								Marketing UI code in Flowbite
-							</h3>
-							<p
-								className="mb-4 text-base font-normal text-gray-500 dark:text-gray-400"
-							>
-								Get started with dozens of web components and interactive elements
-								built on top of Tailwind CSS.
-							</p>
+								</li>
+							})
+						}
 
-						</li>
-						<li className="mb-10 ml-4">
+						{/* <li className="mb-10 ml-4">
 							<div
 								className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -left-1.5 border border-white dark:border-gray-800 dark:bg-gray-700"
 							>
@@ -243,7 +254,7 @@ const UserDashBoard = () => {
 								Get started with dozens of web components and interactive elements
 								built on top of Tailwind CSS.
 							</p>
-						</li>
+						</li> */}
 					</ol>
 				</div>
 
