@@ -2,10 +2,10 @@ import type { Connection, OrgAgent, Organisation } from './interfaces'
 import { useEffect, useState } from 'react';
 
 import type { AxiosResponse } from 'axios';
+import CustomQRCode from '../../commonComponents/QRcode';
 import { Spinner } from 'flowbite-react';
 import { apiStatusCodes } from '../../config/CommonConstant';
 import { createConnection } from '../../api/organization';
-import CustomQRCode from '../../commonComponents/QRcode';
 
 const OrganizationDetails = ({orgData}: {orgData: Organisation}) => {
 
@@ -118,7 +118,7 @@ const OrganizationDetails = ({orgData}: {orgData: Organisation}) => {
                                 color="info"
                             />
                         )
-                        : <div>
+                        : connectionData && <div>
                             <CustomQRCode value={connectionData?.connectionInvitation as string} size={180} />
                         </div>
 
