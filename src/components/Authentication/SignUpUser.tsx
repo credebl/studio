@@ -47,8 +47,8 @@ const SignUpUser = () => {
 
 
 	useEffect(() => {
-		
-		if(window?.location?.search.length > 7) {
+
+		if (window?.location?.search.length > 7) {
 			setEmailAutoFill(window?.location?.search.split('=')[1])
 		}
 	}, [])
@@ -527,7 +527,7 @@ const SignUpUser = () => {
 												onClick={() => setConfirmPasswordVisible((prevVisible) => !prevVisible)}
 												className="bg-transparent absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-white hover:text-gray-800 dark:hover:text-white"
 											>
-												{passwordVisible ? (
+												{confirmPasswordVisible ? (
 													<svg className="h-6 w-6 text-black"
 														viewBox="0 0 24 24" fill="none"
 														stroke="currentColor"
