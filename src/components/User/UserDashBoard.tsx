@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { AlertComponent } from "../AlertComponent";
 import type { AxiosResponse } from "axios";
 import CustomAvatar from '../Avatar'
+import { EmptyListMessage } from "../EmptyListComponent";
 import type { Organisation } from "../organization/interfaces";
 import type { UserActivity } from "./interfaces";
 import { apiStatusCodes } from "../../config/CommonConstant";
@@ -195,9 +196,7 @@ const UserDashBoard = () => {
 				</div>
 			</div>
 
-			{/* 2 columns */}
 			<div className="">
-				{/* Activity Card */}
 				<div
 					className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800 xl:mb-0"
 				>
@@ -205,57 +204,46 @@ const UserDashBoard = () => {
 						<h3 className="pl-12 text-lg font-semibold text-gray-900 dark:text-white">
 							Recent Activity
 						</h3>
-						{/* <a
-							href="#"
-							className="inline-flex items-center p-2 text-sm font-medium rounded-lg text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700"
-						>
-							View all
-						</a> */}
+					
 					</div>
-					<ol className="relative border-l pl-8 border-gray-200 dark:border-gray-700">
-						{
-							activityList
-							&& activityList.map(activity => {
-								return <li className="mb-10 ml-4">
-									<div
-										className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -left-1.5 border border-white dark:border-gray-800 dark:bg-gray-700"
-									>
-									</div>
-									<time
-										className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500"
-									>{moment(activity.createDateTime).format('Do MMMM YYYY')}
-									</time>
-									<h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-										{activity.action}
-									</h3>
-									<p
-										className="mb-4 text-base font-normal text-gray-500 dark:text-gray-400"
-									>
-										{activity.details}
-									</p>
+					{
+						activityList
+							? <ol className="relative border-l pl-8 border-gray-200 dark:border-gray-700">
+								{
+									activityList
+									&& activityList.map(activity => {
+										return <li className="mb-10 ml-4">
+											<div
+												className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -left-1.5 border border-white dark:border-gray-800 dark:bg-gray-700"
+											>
+											</div>
+											<time
+												className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500"
+											>{moment(activity.createDateTime).format('Do MMMM YYYY')}
+											</time>
+											<h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+												{activity.action}
+											</h3>
+											<p
+												className="mb-4 text-base font-normal text-gray-500 dark:text-gray-400"
+											>
+												{activity.details}
+											</p>
 
-								</li>
-							})
-						}
+										</li>
+									})
+								}
 
-						{/* <li className="mb-10 ml-4">
-							<div
-								className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -left-1.5 border border-white dark:border-gray-800 dark:bg-gray-700"
-							>
-							</div>
-							<time
-								className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500"
-							>February 2023</time
-							>
-							<h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-								Marketing UI design in Figma
-							</h3>
-							<p className="text-base font-normal text-gray-500 dark:text-gray-400">
-								Get started with dozens of web components and interactive elements
-								built on top of Tailwind CSS.
-							</p>
-						</li> */}
-					</ol>
+							</ol>
+							: activityList && (<EmptyListMessage
+								message={'No Organization'}
+								description={'Get started by creating a new Organization'}
+								svgComponent={<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
+									<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+								</svg>} />)
+
+					}
+
 				</div>
 
 			</div>
