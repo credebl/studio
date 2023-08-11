@@ -32,6 +32,7 @@ const CredentialList = () => {
 		setLoading(true)
 		const response = await getIssuedCredentials(IssueCredential.credentialIssued);
 		const { data } = response as AxiosResponse
+console.log("datadata",data.data);
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const credentialList = data?.data?.map((issuedCredential: IssuedCredential) => {

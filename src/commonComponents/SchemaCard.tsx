@@ -1,7 +1,7 @@
 import { Card } from 'flowbite-react';
 import { dateConversion } from '../utils/DateConversion';
 
-const SchemaCard = (props: { schemaName: string, version: string, schemaId: string, issuerDid: string, attributes: string[], created: string, onClickCallback: (schemaId: string) => void; },) => {
+const SchemaCard = (props: {className:string ,schemaName: string, version: string, schemaId: string, issuerDid: string, attributes: string[], created: string, onClickCallback: (schemaId: string) => void; },) => {
   return (
     <Card onClick={() => {
       props.onClickCallback(props.schemaId)
@@ -15,11 +15,11 @@ const SchemaCard = (props: { schemaName: string, version: string, schemaId: stri
             Version: {props.version}
           </p>
         </div>
-        <div className='float-right ml-auto '>
+        {/* <div className='float-right ml-auto '>
           <p className='dark:text-white'>
             {dateConversion(props.created)}
           </p>
-        </div>
+        </div> */}
       </div>
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
