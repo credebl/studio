@@ -1,26 +1,56 @@
+import type { AxiosResponse } from "axios";
+import { getFromLocalStorage, getUserProfile, setToLocalStorage } from "../../api/Auth";
+import { apiStatusCodes, storageKeys } from "../../config/CommonConstant";
+import { useEffect, useState } from "react";
+import type { UserProfile } from "./interfaces";
+import CustomAvatar from '../Avatar'
+
+interface IProfileImage {
+    imagePreviewUrl: string | ArrayBuffer | null | File,
+}
 const DisplayUserProfile = ({ toggleEditProfile }: { toggleEditProfile: () => void }) => {
 
+    const [failure, setFailure] = useState<string | null>(null)
+	const [loading, setLoading] = useState<boolean>(false)
+	const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
+    const [logoImage, setLogoImage] = useState<IProfileImage>()
+
+    const displayUserDetails = async () => {
+
+        const token = await getFromLocalStorage(storageKeys.TOKEN)
+		const userDetails = await getUserProfile(token);
+		const { data } = userDetails as AxiosResponse
+        console.log(`User::`, data);
+        
+        if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+            setUserProfile(data?.data)          
+        } else {
+            setFailure(userDetails as string);
+        }
+        
+		setLoading(false)
+	}
+    
+    useEffect(() => {
+        displayUserDetails();
+    }, []);
+    
     return (
-        <div className="mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 md:p-8 dark:bg-gray-800">
+        <div className="pl-2 pt-2 lg:flex mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 md:p-8 dark:bg-gray-800">
 
             <div className="flow-root">
                 <ul>
 
                     <li className="flex items-start justify-between pb-4">
+                        <CustomAvatar size='90' name={userProfile?.firstName}/>
 
-                        <img
-                            className="mr-4 mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
-                            src="https://play-lh.googleusercontent.com/i1qvljmS0nE43vtDhNKeGYtNlujcFxq72WAsyD2htUHOac57Z9Oiew0FrpGKlEehOvo=w240-h480-rw"
-                            alt="Profile picture"
-                        />
-
-                        <button
+                        {/* <button
                             type="button"
                             className=""
                             onClick={toggleEditProfile}
                         >
                             <svg aria-hidden="true"
-                                className="mr-1 mt-10 -ml-1 w-5 h-5"
+                                className="mr-1 mt-8 -ml-1 w-5 h-5"
 
                                 fill="currentColor"
                                 viewBox="0 0 20 20"
@@ -33,7 +63,7 @@ const DisplayUserProfile = ({ toggleEditProfile }: { toggleEditProfile: () => vo
                                 <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"></path></svg>
 
                         </button>
-
+ */}
 
                     </li>
 
@@ -44,9 +74,7 @@ const DisplayUserProfile = ({ toggleEditProfile }: { toggleEditProfile: () => vo
                                     Name
                                 </p>
                                 <p className="text-lg text-black truncate dark:text-white">
-
-
-                                    Bhavana Karwade
+                                {userProfile?.firstName} {userProfile?.lastName}
                                 </p>
                             </div>
 
@@ -61,22 +89,7 @@ const DisplayUserProfile = ({ toggleEditProfile }: { toggleEditProfile: () => vo
                                 </p>
                                 <p className="text-lg text-black truncate dark:text-white">
 
-                                    bhavana13@yopmail.com
-                                </p>
-                            </div>
-                        </div>
-                    </li>
-
-                    <li className="py-3">
-                        <div className="flex items-center space-x-4">
-
-                            <div className="flex-1 min-w-0">
-                                <p className="text-lg font-normal text-gray-500 truncate dark:text-gray-400">
-
-                                    Passkey
-                                </p>
-                                <p className="text-lg text-black truncate dark:text-white">
-                                    abcdefghijklmnopqrstuvwxyz
+                                    {userProfile?.email}
                                 </p>
                             </div>
                         </div>
@@ -88,3 +101,7 @@ const DisplayUserProfile = ({ toggleEditProfile }: { toggleEditProfile: () => vo
 };
 
 export default DisplayUserProfile;
+function setFidoLoader(arg0: boolean) {
+    throw new Error("Function not implemented.");
+}
+

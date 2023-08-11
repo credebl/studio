@@ -180,10 +180,10 @@ const AddPasskey = () => {
         </div>
         :
 
-        <div className="flex p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800 grid-cols-2 gap-10 mt-6">
+        <div className="lg:flex max-sm p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800 grid-cols-2 gap-10 mt-6">
 
           {/* first section */}
-          <div className='w-1/3'>
+          <div className='lg:w-1/3'>
 
             {isEditProfileOpen ? (
               <EditUserProfile toggleEditProfile={toggleEditProfile} />
@@ -208,7 +208,7 @@ const AddPasskey = () => {
 
               <div>
 
-                <button onClick={addDevice} type="button" className="text-white bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 mr-2 mb-2">
+                <button onClick={addDevice} type="button" className="ml-2 mt-2 text-white bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 mr-2 mb-2">
                   <svg className='mr-2 pr-2' xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
                   </svg>
