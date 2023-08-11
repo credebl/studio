@@ -7,7 +7,7 @@ import { getFromLocalStorage } from './Auth';
 
 export const getIssuedCredentials = async (state: IssueCredential) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url = `${apiRoutes.Issuance.getIssuedCredentials}?orgId=${orgId}&state=${state}`;
+	const url = `${apiRoutes.Issuance.getIssuedCredentials}?orgId=${orgId}`;
 
 	const axiosPayload = {
 		url,
