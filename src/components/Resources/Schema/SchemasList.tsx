@@ -12,8 +12,9 @@ import { getAllSchemas } from '../../../api/Schema';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
 import { EmptyListMessage } from '../../EmptyListComponent';
+import type { SchemaDetails } from '../../Verification/interface';
 
-const SchemaList = (props: { schemaSelectionCallback: (schemaId: string,attributes:any) => void; }) => {
+const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaDetails:SchemaDetails) => void; }) => {
 	const [schemaList, setSchemaList] = useState([])
 	const [schemaListErr, setSchemaListErr] = useState<string | null>('')
 	const [loading, setLoading] = useState<boolean>(true)
@@ -87,8 +88,14 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string,attribut
 
 	}
 
-	const schemaSelectionCallback = (schemaId: string, attributes:any) => {
-		props.schemaSelectionCallback(schemaId, attributes)
+	const schemaSelectionCallback = (schemaId: string, attributes:string[], issuerId:string, created:string) => {
+		const schemaDetails = {
+			attribute:attributes,
+			issuerDid: issuerId,
+			createdDate:created
+
+		}
+		props.schemaSelectionCallback(schemaId, schemaDetails)
 	}
 
 	return (
