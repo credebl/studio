@@ -49,7 +49,7 @@ const DataTable: React.FC<DataTableProps> = ({ header, data, loading, callback }
 												</td>
 											))}
 										</tr>
-									)) : <tr className="text-center"><td className="p-2 text-center text-gray-500" colSpan={header.length}>No Data Found</td></tr>}
+									)) : <tr className="text-center"><td className="p-2 text-center text-gray-500" colSpan={header.length}>Empty data</td></tr>}
 								</tbody>
 							</table>
 						</div>

@@ -63,6 +63,7 @@ const ViewSchemas = () => {
         setSchemaDetailErr(SchemaDetails as unknown as string)
       }
     } catch (error) {
+      setSchemaDetailErr('Error while fetching schema details')
       console.error('Error while fetching schema details:', error);
       setLoading(false);
     }
