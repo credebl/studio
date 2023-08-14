@@ -15,11 +15,11 @@ const SchemaCard = (props: { schemaName: string, version: string, schemaId: stri
             Version: {props.version}
           </p>
         </div>
-        {/* <div className='float-right ml-auto '>
+        <div className='float-right ml-auto '>
           <p className='dark:text-white'>
             {dateConversion(props.created)}
           </p>
-        </div> */}
+        </div>
       </div>
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
@@ -29,13 +29,7 @@ const SchemaCard = (props: { schemaName: string, version: string, schemaId: stri
           <span className="font-semibold">Issuer DID:</span> {props.issuerDid}
         </p>
         <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-					{
-					props.ledgerShow?
-         <> <span className="font-semibold">Ledger:</span> {props.ledger}</>:
-         <> <span className="font-semibold">Ledger:</span> {props.issuerDid.split(":")[2]}</>
-
-				 
-					}
+         <span className="font-semibold">Ledger:</span> {props.issuerDid.split(":")[2]}
         </p>
       </div>
 
