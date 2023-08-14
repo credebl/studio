@@ -284,7 +284,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps)=> {
                                                         id="organizationlogo" title=""
                                                         onChange={(event): void => handleImageChange(event)} />
                                                     {/* <span>{selectedImage || 'No File Chosen'}</span> */}
-                                                    {imgError ? <div className="text-red-500">{imgError}</div> : <span className="mt-1">{logoImage.fileName || 'No File Chosen'}</span>}
+                                                    {imgError ? <div className="text-red-500">{imgError}</div> : <span className="mt-1 text-sm text-gray-500 dark:text-gray-400">{logoImage.fileName || 'No File Chosen'}</span>}
                                                 </label>
 
                                             </div>
