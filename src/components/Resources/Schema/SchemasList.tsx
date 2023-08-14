@@ -13,7 +13,7 @@ import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
 import { EmptyListMessage } from '../../EmptyListComponent';
 
-const SchemaList = (props: { schemaSelectionCallback: (schemaId: string) => void; }) => {
+const SchemaList = (props: { schemaSelectionCallback: (schemaId: string,attributes:any) => void; }) => {
 	const [schemaList, setSchemaList] = useState([])
 	const [schemaListErr, setSchemaListErr] = useState<string | null>('')
 	const [loading, setLoading] = useState<boolean>(true)
@@ -87,8 +87,8 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string) => void
 
 	}
 
-	const schemaSelectionCallback = (schemaId: string) => {
-		props.schemaSelectionCallback(schemaId)
+	const schemaSelectionCallback = (schemaId: string, attributes:any) => {
+		props.schemaSelectionCallback(schemaId, attributes)
 	}
 
 	return (
