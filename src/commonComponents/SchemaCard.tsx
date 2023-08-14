@@ -1,10 +1,10 @@
 import { Card } from 'flowbite-react';
 import { dateConversion } from '../utils/DateConversion';
 
-const SchemaCard = (props: {className:string, schemaName: string, version: string, schemaId: string, issuerDid: string, attributes: string[], created: string, onClickCallback: (schemaId: string) => void; },) => {
+const SchemaCard = (props: { schemaName: string, version: string, schemaId: string, issuerDid: string, attributes: string[], created: string, onClickCallback: (schemaId: string, attributes: string[], issuerDid:string, created:string) => void; },) => {
   return (
     <Card onClick={() => {
-      props.onClickCallback(props.schemaId)
+      props.onClickCallback(props.schemaId, props.attributes, props.issuerDid, props.created)
     }} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer' style={{ maxWidth: '100%', maxHeight: '100%', overflow: 'auto' }}>
       <div className="flex justify-between items-start">
         <div>
@@ -15,11 +15,11 @@ const SchemaCard = (props: {className:string, schemaName: string, version: strin
             Version: {props.version}
           </p>
         </div>
-        {/* <div className='float-right ml-auto '>
+        <div className='float-right ml-auto '>
           <p className='dark:text-white'>
             {dateConversion(props.created)}
           </p>
-        </div> */}
+        </div>
       </div>
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">

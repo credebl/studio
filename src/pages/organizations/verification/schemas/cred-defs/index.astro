@@ -1,0 +1,11 @@
+---
+import { useEffect } from 'react';
+import { getFromLocalStorage } from '../../../../../api/Auth';
+import LayoutSidebar from '../../../../../app/LayoutSidebar.astro';
+import CredDefSelection from '../../../../../components/Verification/CredDefSelection';
+import { storageKeys } from '../../../../../config/CommonConstant';
+---
+
+<LayoutSidebar>
+	<CredDefSelection client:load />
+</LayoutSidebar>

@@ -15,6 +15,7 @@ export const pathRoutes = {
         invitations: '/organizations/invitations',
         users: '/organizations/users',
         issuedCredentials: '/organizations/issued-credentials',
+        credentials: '/organizations/verification',
         schemas: `/organizations/schemas`,
         dashboard: '/organizations/dashboard',
         createSchema: '/organizations/schemas/create',
@@ -24,6 +25,12 @@ export const pathRoutes = {
 					credDef:'/organizations/issued-credentials/schemas/cred-defs',
 					connections:'/organizations/issued-credentials/schemas/cred-defs/connections',
 					issuance:'/organizations/issued-credentials/schemas/cred-defs/connections/issuance'
+				},
+                verification: {
+					schema: '/organizations/verification/schemas',
+					credDef:'/organizations/verification/schemas/cred-defs',
+					connections:'/organizations/verification/schemas/cred-defs/connections',
+					verify:'/organizations/verification/schemas/cred-defs/connections/verification'
 				},
     },
     ecosystems: {
