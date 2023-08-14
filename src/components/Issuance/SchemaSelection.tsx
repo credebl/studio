@@ -7,7 +7,8 @@ import SchemaList from "../Resources/Schema/SchemasList";
 
 const SchemaSelection = () => {
 
-	const schemaSelectionCallback = async (schemaId: string) => {
+	const schemaSelectionCallback = async (schemaId: string,attributes:any) => {
+		await setToLocalStorage(storageKeys.SCHEMA_ATTR, attributes)
 		await setToLocalStorage(storageKeys.SCHEMA_ID, schemaId)
 		window.location.href = `${pathRoutes.organizations.Issuance.credDef}`
 	}
