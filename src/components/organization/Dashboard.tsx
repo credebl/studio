@@ -201,22 +201,22 @@ const Dashboard = () => {
                         </div>
 
                         <div
-                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${Schema_Card})`, minHeight: '133px' }}
+                            className={`items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover ${!walletStatus ? 'pointer-events-none' : ''}`}
+                            style={{ backgroundImage: `url(${Schema_Card})`, minHeight: '133px' }}
                             onClick={() => {
-                                window.location.href = pathRoutes.organizations.schemas;
+                                if (walletStatus) {
+                                    window.location.href = pathRoutes.organizations.schemas;
+                                }
                             }}
-                        >
+                        > 
                             <div className="w-full">
                                 <h3 className="text-base font-medium text-white">
                                     Schemas
                                 </h3>
-                                <span
-                                    className="text-2xl font-semi-bold leading-none text-white sm:text-3xl dark:text-white"
-                                >{orgDashboard?.schemasCount}</span
-                                >
-
+                                <span className="text-2xl font-semi-bold leading-none text-white sm:text-3xl dark:text-white">
+                                    {orgDashboard?.schemasCount}
+                                </span>
                             </div>
-
                         </div>
                         <div
 

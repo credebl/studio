@@ -33,7 +33,7 @@ const EditUserRoleModal = (props: { openModal: boolean; user: User; setMessage: 
 
             const roles: Array<RoleI> = data?.data.response
             const filterRole = roles.filter(role => {
-                if (props?.user?.roles.includes(role.name)) {
+                if (props?.user?.roles.includes(role.name) && role.name !== 'member') {
                     role.checked = true
                     role.disabled = false
                 } else if (role.name === 'member') {

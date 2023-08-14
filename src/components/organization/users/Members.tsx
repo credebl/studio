@@ -46,7 +46,7 @@ const Members = () => {
     const getAllUsers = async () => {
         setLoading(true)
 
-        const response = await getOrganizationUsers();
+        const response = await getOrganizationUsers(currentPage.pageNumber, currentPage.pageSize, searchText);
         const { data } = response as AxiosResponse
 
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
