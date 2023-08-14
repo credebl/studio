@@ -71,8 +71,8 @@ const OrgDropDown = () => {
 				id="dropdownUsersButton"
 				data-dropdown-toggle="dropdownUsers"
 				data-dropdown-placement="bottom"
-				className="text-primary-700 text-lg h-10 bg-primary-700 cursor-pointer focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium 
-					rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+				className="text-primary-700 text-lg h-10 bg-primary-100 dark:bg-primary-700 cursor-pointer focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium 
+					rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-primary-700 dark:focus:ring-blue-800"
 			>
 
 				<>
@@ -84,16 +84,16 @@ const OrgDropDown = () => {
 								) : (
 									<CustomAvatar size="20" name={activeOrg?.name} round />
 								)}
-								<text className="ml-2 text-white dark:text-white">{activeOrg?.name}</text>
+								<text className="ml-2 text-primary-700 dark:text-white">{activeOrg?.name}</text>
 							</>
 							:
-							<text className='text-white dark:text-white'>
+							<text className='text-primary-700 dark:text-white'>
 								Select organization
 							</text>
 					}
 				</>
 
-				<BiChevronDown size={25} color='primary-700' className='dark: text-white' />
+				<BiChevronDown size={25} color='primary-700' className=' text-primary-700 dark:text-white' />
 			</div>
 			<div
 				id="dropdownUsers"
