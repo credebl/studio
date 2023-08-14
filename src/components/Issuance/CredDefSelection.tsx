@@ -22,7 +22,7 @@ const CredDefSelection = () => {
 	const [schemaLoader, setSchemaLoader] = useState<boolean>(true)
 	const [error, setError] = useState<string | null>(null)
 	const [credDefList, setCredDefList] = useState<TableData[]>([])
-	const [schemaDetailsState, setSchemaDetailsState] = useState<SchemaState>({ schemaId: '', issuerDid: '', attributes: [], createdDateTime: '' ,ledger:'',ledgerShow:true})
+	const [schemaDetailsState, setSchemaDetailsState] = useState<SchemaState>({ schemaId: '', issuerDid: '', attributes: [], createdDateTime: ''})
 
 	
 	useEffect(() => {
@@ -46,22 +46,14 @@ const CredDefSelection = () => {
 
 	const getSchemaDetails = async (schemaId: string) => {
 		setSchemaLoader(true)
-		const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
-		const schemaDetails = await getSchemaById(schemaId, Number(orgId))
-		const { data } = schemaDetails as AxiosResponse
-
-		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			if (data.data.response) {
-				const { response } = data.data
-				console.log("response?.schemaMetaData.didIndyNamespace",response?.schemaMetadata?.didIndyNamespace
-				);
-				
-				setSchemaDetailsState({ schemaId: response?.schemaId, issuerDid: response?.schema?.issuerId, attributes: response.schema.attrNames,ledger:response?.schemaMetadata?.didIndyNamespace, createdDateTime: 'string',ledgerShow:"boolean" })
-
-			}
+		const schemaDid = await getFromLocalStorage(storageKeys.SCHEMA_ATTR)
+		const schemaDidObject = JSON.parse(schemaDid)
+		if (schemaDidObject) {
+			setSchemaDetailsState({ schemaId: schemaId, issuerDid: schemaDidObject?.issuerDid, attributes: schemaDidObject?.attribute, createdDateTime: schemaDidObject?.createdDate })
 		}
 		setSchemaLoader(false)
 	}
+	
 
 	const header = [
 		{ columnName: 'Name' },
@@ -122,7 +114,7 @@ const CredDefSelection = () => {
 							color="info"
 						/>
 					</div>
-					: <SchemaCard schemaName={schemaState?.schemaName} version={schemaState?.version} schemaId={schemaDetailsState.schemaId} issuerDid={schemaDetailsState.issuerDid} attributes={schemaDetailsState.attributes} created={schemaDetailsState.createdDateTime} ledger={schemaDetailsState.ledger} ledgerShow={schemaDetailsState.ledgerShow}
+					: <SchemaCard schemaName={schemaState?.schemaName} version={schemaState?.version} schemaId={schemaDetailsState.schemaId} issuerDid={schemaDetailsState.issuerDid} attributes={schemaDetailsState.attributes} created={schemaDetailsState.createdDateTime} 
 						onClickCallback={schemaSelectionCallback} />}
 			</div>
 
