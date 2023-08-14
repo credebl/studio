@@ -56,7 +56,7 @@ const VerificationCredentialList = () => {
 							},
 							{
 								data: <Button
-									disabled={!(requestProof.state === ProofRequestState.presentationReceived || requestProof.state === ProofRequestState.done)}
+									disabled={!(requestProof.state === ProofRequestState.presentationReceived)}
 									className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
 									onClick={() => {
 										openProofRequestModel(true, requestProof?.id)
@@ -107,6 +107,7 @@ const VerificationCredentialList = () => {
 		if (proofVericationId) {
 			setOpenModal(false)
 			presentProofById(proofVericationId)
+			getproofRequestList()
 		}
 	}
 
@@ -116,7 +117,7 @@ const VerificationCredentialList = () => {
 
 		if (searchText.length >= 1) {
 			getData = setTimeout(() => {
-				getproofRequestList()
+				
 
 			}, 1000)
 		} else {
