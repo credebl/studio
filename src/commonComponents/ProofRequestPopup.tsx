@@ -1,13 +1,15 @@
-import { Modal } from 'flowbite-react';
-import React from 'react';
+import { Button, Modal } from 'flowbite-react';
+import React, { useState } from 'react';
 
 const ProofRequest = (props: { openModal: boolean; closeModal: (flag: boolean, id: string) => void; onSucess: (verifyPresentationId: string) => void; requestId: string }) => {
+  const [buttonLoader, setButtonLoader] = useState<boolean>(false)
   return (
 
     <Modal show={props.openModal} size="lg">
       <div className="relative p-4 text-center bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
         <button
           onClick={() => {
+            setButtonLoader(false)
             props.closeModal(false, '')
           }}
           className="text-gray-400 absolute top-2.5 right-2.5 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
@@ -41,20 +43,24 @@ const ProofRequest = (props: { openModal: boolean; closeModal: (flag: boolean, i
         <div className="flex justify-center items-center space-x-4">
           <button
             onClick={() => {
+              setButtonLoader(false)
               props.closeModal(false, '')
             }}
             className="py-2 px-3 text-sm font-medium text-gray-500 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-primary-300 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
           >
             No, cancel
           </button>
-          <button
+          <Button
+            isProcessing={buttonLoader}
             onClick={() => {
-              props.onSucess(props.requestId)
+              setButtonLoader(true);
+              props.onSucess(props.requestId);
             }}
-            className="py-2 px-3 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-900"
+            className="py-1 px-2 text-xs font-medium text-white bg-red-600 rounded-md hover:bg-red-700 focus:ring-2 focus:outline-none focus:ring-red-300 dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-900"
+            style={{ height: '2.5rem', minWidth: '3rem' }}
           >
-            Yes, I'm sure
-          </button>
+            Confirm
+          </Button>
         </div>
       </div>
     </Modal>

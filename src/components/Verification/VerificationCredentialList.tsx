@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from 'flowbite-react';
+import { Alert, Button } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import type { AxiosResponse } from 'axios';
@@ -19,12 +19,13 @@ import ProofRequest from '../../commonComponents/ProofRequestPopup';
 
 const VerificationCredentialList = () => {
 	const [loading, setLoading] = useState<boolean>(true)
-	const [error, setError] = useState<string | null>(null)
 	const [searchText, setSearchText] = useState("");
-	const [issuedCredList, setIssuedCredList] = useState<TableData[]>([])
+	const [verificationList, setVerificationList] = useState<TableData[]>([])
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [requestId, setRequestId] = useState<string>('')
-	const [message, setMessage] = useState<string | null>(null)
+	const [errMsg, setErrMsg] = useState<string | null>(null)
+	const [proofReqSuccess, setProofReqSuccess] = useState<string>('')
+	const [verifyLoader, setVerifyloader] = useState<boolean>(false)
 
 	//Fetch all issued credential list
 	const getproofRequestList = async () => {
@@ -42,15 +43,15 @@ const VerificationCredentialList = () => {
 				const credentialList = data?.data?.map((requestProof: RequestProof) => {
 					return {
 						data: [
-							{ data: requestProof.connectionId ? requestProof.connectionId : 'Not available' },
-							{ data: requestProof.id ? requestProof.id : 'Not available' },
-							{ data: dateConversion(requestProof.updatedAt) },
+							{ data: requestProof?.connectionId ? requestProof?.connectionId : 'Not available' },
+							{ data: requestProof?.id ? requestProof?.id : 'Not available' },
+							{ data: dateConversion(requestProof?.updatedAt) },
 							{
 								data: <span
-									className={`bg-cyan-100 ${requestProof.state === ProofRequestState.requestSent && 'text-blue-900'} ${(requestProof.state === ProofRequestState.done) && 'text-green-900'} text-xs font-medium mr-2 px-2.5 py-0.5 rounded-md dark:bg-gray-700 dark:text-white border border-cyan-100 dark:border-cyan-500`}
+									className={`bg-cyan-100 ${requestProof?.state === ProofRequestState.requestSent && 'text-blue-900'} ${(requestProof?.state === ProofRequestState.done) && 'text-green-900'} text-xs font-medium mr-2 px-2.5 py-0.5 rounded-md dark:bg-gray-700 dark:text-white border border-cyan-100 dark:border-cyan-500`}
 								>
-									{requestProof.state.replace(/_/g, ' ').replace(/\w\S*/g, (word: string) => word.charAt(0).toUpperCase() + word.substring(1).toLowerCase())}
-									{requestProof.state === ProofRequestState.done && requestProof?.isVerified !== undefined && ` - ${requestProof.isVerified ? 'Verified' : 'Not Verified'}`}
+									{requestProof?.state?.replace(/_/g, ' ').replace(/\w\S*/g, (word: string) => word?.charAt(0)?.toUpperCase() + word?.substring(1)?.toLowerCase())}
+									{requestProof?.state === ProofRequestState.done && requestProof?.isVerified !== undefined && ` - ${requestProof?.isVerified ? 'Verified' : 'Not Verified'}`}
 								</span>
 
 							},
@@ -69,12 +70,12 @@ const VerificationCredentialList = () => {
 					};
 				});
 
-				setIssuedCredList(credentialList);
+				setVerificationList(credentialList);
 			} else {
-				setError(response as string);
+				setErrMsg(response as string);
 			}
 		} catch (error) {
-			setError(error.message);
+			setErrMsg('An error occurred while fetching the proof request list');
 		}
 
 		setLoading(false);
@@ -84,15 +85,26 @@ const VerificationCredentialList = () => {
 		try {
 			const response = await verifyPresentation(id);
 			const { data } = response as AxiosResponse;
-
-			if (data?.statusCode === apiStatusCodes?.API_STATUS_SUCCESS) {
-
+			if (data?.statusCode === apiStatusCodes?.API_STATUS_CREATED) {
+				setOpenModal(false)
+				console.log("98798789", data)
+				setProofReqSuccess(data.message)
+				setVerifyloader(false)
+				setTimeout(() => {
+					setProofReqSuccess('')
+					setErrMsg('')
+					getproofRequestList()
+				}, 4000)
 			} else {
-				setError(response as string);
+				setOpenModal(false)
+				setErrMsg(response as string);
+				setVerifyloader(false)
 			}
 		} catch (error) {
+			setOpenModal(false)
+			setVerifyloader(false)
 			console.error("An error occurred:", error);
-			setError("An error occurred while processing the presentation.");
+			setErrMsg("An error occurred while processing the presentation.");
 		}
 	};
 
@@ -103,11 +115,10 @@ const VerificationCredentialList = () => {
 		setOpenModal(flag)
 	}
 
-	const requestProof = (proofVericationId: string) => {
+	const requestProof = async (proofVericationId: string) => {
 		if (proofVericationId) {
 			setOpenModal(false)
 			presentProofById(proofVericationId)
-			getproofRequestList()
 		}
 	}
 
@@ -117,7 +128,7 @@ const VerificationCredentialList = () => {
 
 		if (searchText.length >= 1) {
 			getData = setTimeout(() => {
-				
+
 
 			}, 1000)
 		} else {
@@ -165,15 +176,22 @@ const VerificationCredentialList = () => {
 							Request
 						</Button>
 					</div>
-					<AlertComponent
-						message={message ? message : error}
-						type={message ? 'success' : 'failure'}
-						onAlertClose={() => {
-							setMessage(null)
-							setError(null)
-						}}
-					/>
-					<DataTable header={header} data={issuedCredList} loading={loading}></DataTable>
+					{
+						(proofReqSuccess || errMsg) &&
+						<div className="p-2">
+							<Alert
+								color={proofReqSuccess ? "success" : "failure"}
+								onDismiss={() => setErrMsg(null)}
+							>
+								<span>
+									<p>
+										{proofReqSuccess || errMsg}
+									</p>
+								</span>
+							</Alert>
+						</div>
+					}
+					<DataTable header={header} data={verificationList} loading={loading}></DataTable>
 					<ProofRequest openModal={openModal}
 						closeModal={
 							openProofRequestModel
