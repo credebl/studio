@@ -17,7 +17,7 @@ const SchemaCard = (props: { schemaName: string, version: string, schemaId: stri
         </div>
         <div className='float-right ml-auto '>
           <p className='dark:text-white'>
-            {dateConversion(props.created)}
+            Created: {dateConversion(props.created)}
           </p>
         </div>
       </div>
