@@ -29,7 +29,7 @@ const SchemaCard = (props: { schemaName: string, version: string, schemaId: stri
           <span className="font-semibold">Issuer DID:</span> {props.issuerDid}
         </p>
         <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-          <span className="font-semibold">Ledger:</span> {props.issuerDid?.split(':')[2]}
+         <span className="font-semibold">Ledger:</span> {props.issuerDid.split(":")[2]}
         </p>
       </div>
 

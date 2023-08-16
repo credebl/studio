@@ -42,7 +42,9 @@ const DataTable: React.FC<DataTableProps> = ({ header,displaySelect, data, loadi
 								</thead>
 								<tbody className="bg-white dark:bg-gray-800">
 									{data.length ? data.map((ele, index) => (
+										
 										<tr className={`${index % 2 !== 0 ? 'bg-gray-50 dark:bg-gray-700' : ''}`} onClick={() => callback ? callback(ele?.clickId) : ''}>
+
 											{ele.data.map(subEle => (
 												<td className={` p-4 text-sm font-normal text-gray-900 whitespace-nowrap dark:text-white align-middle	`}>
 													<div>{subEle.data}</div>
