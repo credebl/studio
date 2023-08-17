@@ -1,3 +1,5 @@
+import { verifyPresentation } from "../api/verification";
+
 export const apiRoutes = {
     auth:{
         sendMail: '/users/send-mail',
@@ -51,5 +53,11 @@ export const apiRoutes = {
 			getCredDefBySchemaId :'/schemas/credential-definitions',
 			getAllConnections:'/connections',
 			issueCredential:'/issue-credentials/create-offer'
+		},
+        Verification:{
+			getAllRequestList: '/proofs',
+			verifyCredential:'/proofs/request-proof',
+            presentationVerification:'/proofs/verify-presentation'
 		}
+
 }

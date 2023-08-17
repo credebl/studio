@@ -1,5 +1,5 @@
 import type { TableData, TableHeader } from "./interface"
-import { Spinner, Tooltip } from "flowbite-react";
+import { Button, Spinner, Tooltip } from "flowbite-react";
 
 interface DataTableProps {
 	header: TableHeader[];
@@ -7,9 +7,10 @@ interface DataTableProps {
 	loading: boolean;
 	callback?: (clickId: string | null | undefined) => void;
 	displaySelect?:boolean;
+	showBtn?:boolean
 }
 
-const DataTable: React.FC<DataTableProps> = ({ header,displaySelect, data, loading, callback }) => {
+const DataTable: React.FC<DataTableProps> = ({ header,displaySelect, data, loading, callback ,showBtn}) => {
 
 	return (
 		<div className="flex flex-col ">
@@ -42,18 +43,20 @@ const DataTable: React.FC<DataTableProps> = ({ header,displaySelect, data, loadi
 								</thead>
 								<tbody className="bg-white dark:bg-gray-800">
 									{data.length ? data.map((ele, index) => (
-										<tr className={`${index % 2 !== 0 ? 'bg-gray-50 dark:bg-gray-700' : ''}`} onClick={() => callback ? callback(ele?.clickId) : ''}>
+										
+										<tr className={`${index % 2 !== 0 ? 'bg-gray-50 dark:bg-gray-700' : ''}`} >
+
 											{ele.data.map(subEle => (
 												<td className={` p-4 text-sm font-normal text-gray-900 whitespace-nowrap dark:text-white align-middle	`}>
 													<div>{subEle.data}</div>
 													{subEle.subData && subEle.subData}
 												</td>
 											))}
-													{displaySelect &&
+													{displaySelect || showBtn &&
 											<button onClick={() => callback ? callback(ele?.clickId) : ''} type="button" className="text-center mt-2 text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Select</button>
-									}
+									 } 
 										</tr>
-									)) : <tr className="text-center"><td className="p-2 text-center text-gray-500" colSpan={header.length}>No Data Found</td></tr>}
+									)) : <tr className="text-center"><td className="p-2 text-center text-gray-500" colSpan={header.length}>Empty data</td></tr>}
 								</tbody>
 							</table>
 						</div>

@@ -1,15 +1,13 @@
 'use client';
 
 import type { AxiosResponse } from "axios";
-import { Spinner } from "flowbite-react";
+import { Button, Spinner } from "flowbite-react";
 import { useEffect, useState } from "react";
-import { getFromLocalStorage, setToLocalStorage } from "../../api/Auth";
+import { getFromLocalStorage, removeFromLocalStorage, setToLocalStorage } from "../../api/Auth";
 import { getCredentialDefinitions } from "../../api/issuance";
-import { getSchemaById } from "../../api/Schema";
 import SchemaCard from "../../commonComponents/SchemaCard";
 import { apiStatusCodes, storageKeys } from "../../config/CommonConstant";
 import { pathRoutes } from "../../config/pathRoutes";
-import { dateConversion } from "../../utils/DateConversion";
 import BreadCrumbs from "../BreadCrumbs";
 import { AlertComponent } from "../AlertComponent";
 import type { SchemaState, CredDefData } from "./interface";
@@ -22,20 +20,23 @@ const CredDefSelection = () => {
 	const [schemaLoader, setSchemaLoader] = useState<boolean>(true)
 	const [error, setError] = useState<string | null>(null)
 	const [credDefList, setCredDefList] = useState<TableData[]>([])
-	const [schemaDetailsState, setSchemaDetailsState] = useState<SchemaState>({ schemaId: '', issuerDid: '', attributes: [], createdDateTime: ''})
+	const [schemaDetailsState, setSchemaDetailsState] = useState<SchemaState>({ schemaId: '', issuerDid: '', attributes: [], createdDateTime: '' })
 
-	
 	useEffect(() => {
-		getSchemaAndCredDef()
+		const fetchData = async () => {
+			await removeFromLocalStorage(storageKeys.CRED_DEF_ID);
+			getSchemaAndCredDef();
+		};
+
+		fetchData();
 	}, []);
 
 	const getSchemaAndCredDef = async () => {
 		const schemaId = await getFromLocalStorage(storageKeys.SCHEMA_ID)
-		
 		if (schemaId) {
 			getSchemaDetails(schemaId)
 			getCredDefs(schemaId)
-			const parts = schemaId.split(":");
+			const parts = schemaId?.split(":");
 			const schemaName = parts[2];
 			const version = parts[3];
 			setSchemaState({ schemaName, version })
@@ -53,12 +54,12 @@ const CredDefSelection = () => {
 		}
 		setSchemaLoader(false)
 	}
-	
 
 	const header = [
 		{ columnName: 'Name' },
-		{ columnName: 'Created on' },
-		{ columnName: 'Revocable?' }
+		{ columnName: 'Credential definition Id' },
+		{ columnName: 'Revocable?' },
+		{ columnName: 'check' }
 	]
 
 	//Fetch credential definitions against schemaId
@@ -70,13 +71,30 @@ const CredDefSelection = () => {
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const credDefs = data?.data?.data.map((ele: CredDefData) => {
 				return {
-					clickId: ele.credentialDefinitionId, data: [{ data: ele.tag ? ele.tag : 'Not available' }, { data: ele.tag ? ele.tag : 'Not available' },
-					{ data: ele.revocable === true ? <span className="text-blue-700 dark:text-white">Yes</span> : <span className="text-cyan-500 dark:text-white">No</span> }
+					data: [{ data: ele?.tag ? ele?.tag : 'Not available' }, { data: ele?.credentialDefinitionId ? ele?.credentialDefinitionId : 'Not available' },
+					{ data: ele?.revocable === true ? <span className="text-blue-700 dark:text-white">Yes</span> : <span className="text-cyan-500 dark:text-white">No</span> },
+					{
+						data: (
+							<div className="flex items-center">
+								<input
+									id="default-checkbox"
+									type="checkbox"
+									onClick={(event: React.MouseEvent<HTMLInputElement>) => {
+										const inputElement = event?.target as HTMLInputElement;
+										selectConnection(ele?.credentialDefinitionId, inputElement?.checked);
+									}}
+									value=""
+									className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 cursor-pointer"
+								/>
+							</div>
+						)
+					}
 					]
+
 				}
 			})
 
-			if (credDefs.length === 0) {
+			if (credDefs?.length === 0) {
 				setError('No Data Found')
 			}
 
@@ -92,10 +110,11 @@ const CredDefSelection = () => {
 
 	}
 
-	const selectCredDef = async(credDefId: string | null | undefined) => {
-		if (credDefId) {
+	const selectConnection = async (credDefId: string, checked: boolean) => {
+		if (credDefId && checked) {
 			await setToLocalStorage(storageKeys.CRED_DEF_ID, credDefId)
-			window.location.href = `${pathRoutes.organizations.Issuance.connections}`
+		} else {
+			removeFromLocalStorage(storageKeys.CRED_DEF_ID)
 		}
 	}
 
@@ -114,11 +133,11 @@ const CredDefSelection = () => {
 							color="info"
 						/>
 					</div>
-					: 
-					<div className="m-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap4">
-					<SchemaCard className="col-span-1 sm:col-span-2 md:col-span-1" schemaName={schemaState?.schemaName} version={schemaState?.version} schemaId={schemaDetailsState.schemaId} issuerDid={schemaDetailsState.issuerDid} attributes={schemaDetailsState.attributes} created={schemaDetailsState.createdDateTime} 
-						onClickCallback={schemaSelectionCallback} />
-						</div>}
+					: <div className="m-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap4">
+						<SchemaCard className="col-span-1 sm:col-span-2 md:col-span-1" schemaName={schemaState?.schemaName} version={schemaState?.version} schemaId={schemaDetailsState.schemaId} issuerDid={schemaDetailsState.issuerDid} attributes={schemaDetailsState.attributes} created={schemaDetailsState.createdDateTime}
+							onClickCallback={schemaSelectionCallback} />
+					</div>}
+
 			</div>
 
 			<div className="mb-4 col-span-full xl:mb-2 pt-5">
@@ -133,8 +152,18 @@ const CredDefSelection = () => {
 					setError(null)
 				}}
 			/>
-			<DataTable header={header} data={credDefList} loading={loading} callback={selectCredDef} showBtn={true}></DataTable>
+			<DataTable header={header} data={credDefList} loading={loading} callback={() => { }}></DataTable>
+			<div>
+				<Button onClick={() => {
+					window.location.href = `${pathRoutes.organizations.verification.connections}`
+				}}
+					className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mt-2 ml-auto'
+				>
+					Continue
+				</Button>
+			</div>
 		</div>
+
 	)
 }
 
