@@ -10,6 +10,7 @@ export const apiRoutes = {
     users:{
         invitations: '/users/invitations',
         fetchUsers: '/users',
+        update: '/users',
         recentActivity: '/users/activity',
     },
     organizations: {
