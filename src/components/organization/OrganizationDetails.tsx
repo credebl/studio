@@ -11,6 +11,7 @@ const OrganizationDetails = ({orgData}: {orgData: Organisation}) => {
 
     const { org_agents} = orgData
     const agentData: OrgAgent | null = org_agents.length > 0 ? org_agents[0] : null
+    // console.log('agentData::',agentData?.org_agent_type.agent)
     const [loading, setLoading] = useState<boolean>(true)
     const [connectionData, setConnectionData] = useState<Connection | null>(null)
 
@@ -99,12 +100,34 @@ const OrganizationDetails = ({orgData}: {orgData: Organisation}) => {
                                         <p
                                             className="ml-4 text-base font-semibold text-gray-900 truncate dark:text-white w-40 md:w-32 lg:w-80"
                                         >
-                                            {agentData?.agents_type.createDateTime.split("T")[0]}
+                                            {agentData?.createDateTime ? agentData.createDateTime.split("T")[0] : new Date().toISOString().split("T")[0]}
+
                                         </p>
 
                                     </div>
                                 </div>
                             </li>
+                            <li className="py-4">
+                                <div className="flex items-center space-x-4">
+
+                                    <div className="inline-flex min-w-0">
+                                        <p
+                                            className="text-base font-normal text-gray-500 truncate dark:text-gray-400 w-20 md:w-32 lg:w-40"
+
+                                        >
+                                            Wallet Type
+                                        </p>
+                                        <p className="text-base font-normal text-gray-500 truncate dark:text-gray-400">:</p>
+                                        <p
+                                            className="ml-4 text-base font-semibold text-gray-900 truncate dark:text-white w-40 md:w-32 lg:w-80"
+                                        >
+                                            {agentData?.org_agent_type.agent}
+                                        </p>
+
+                                    </div>
+                                </div>
+                            </li>
+
                         </ul>
 
                     </div>
