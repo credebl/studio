@@ -22,14 +22,16 @@ const CredDefSelection = () => {
 	const [schemaLoader, setSchemaLoader] = useState<boolean>(true)
 	const [error, setError] = useState<string | null>(null)
 	const [credDefList, setCredDefList] = useState<TableData[]>([])
-	const [schemaDetailsState, setSchemaDetailsState] = useState<SchemaState>({ schemaId: '', issuerDid: '', attributes: [], createdDateTime: '' })
+	const [schemaDetailsState, setSchemaDetailsState] = useState<SchemaState>({ schemaId: '', issuerDid: '', attributes: [], createdDateTime: ''})
 
+	
 	useEffect(() => {
 		getSchemaAndCredDef()
 	}, []);
 
 	const getSchemaAndCredDef = async () => {
 		const schemaId = await getFromLocalStorage(storageKeys.SCHEMA_ID)
+		
 		if (schemaId) {
 			getSchemaDetails(schemaId)
 			getCredDefs(schemaId)
@@ -44,19 +46,14 @@ const CredDefSelection = () => {
 
 	const getSchemaDetails = async (schemaId: string) => {
 		setSchemaLoader(true)
-		const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
-		const schemaDetails = await getSchemaById(schemaId, Number(orgId))
-		const { data } = schemaDetails as AxiosResponse
-
-		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			if (data.data.response) {
-				const { response } = data.data
-				setSchemaDetailsState({ schemaId: response?.schemaId, issuerDid: response?.schema?.issuerId, attributes: response.schema.attrNames, createdDateTime: 'string' })
-
-			}
+		const schemaDid = await getFromLocalStorage(storageKeys.SCHEMA_ATTR)
+		const schemaDidObject = JSON.parse(schemaDid)
+		if (schemaDidObject) {
+			setSchemaDetailsState({ schemaId: schemaId, issuerDid: schemaDidObject?.issuerDid, attributes: schemaDidObject?.attribute, createdDateTime: schemaDidObject?.createdDate })
 		}
 		setSchemaLoader(false)
 	}
+	
 
 	const header = [
 		{ columnName: 'Name' },
@@ -117,12 +114,11 @@ const CredDefSelection = () => {
 							color="info"
 						/>
 					</div>
-						: 
-						<div className="m-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-							<SchemaCard className=" col-span-1 sm:col-span-2 md:col-span-1" schemaName={schemaState?.schemaName} version={schemaState?.version} schemaId={schemaDetailsState.schemaId} issuerDid={schemaDetailsState.issuerDid} attributes={schemaDetailsState.attributes} created={schemaDetailsState.createdDateTime}
-							onClickCallback={schemaSelectionCallback} />
-						</div>
-						}
+					: 
+					<div className="m-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap4">
+					<SchemaCard className="col-span-1 sm:col-span-2 md:col-span-1" schemaName={schemaState?.schemaName} version={schemaState?.version} schemaId={schemaDetailsState.schemaId} issuerDid={schemaDetailsState.issuerDid} attributes={schemaDetailsState.attributes} created={schemaDetailsState.createdDateTime} 
+						onClickCallback={schemaSelectionCallback} />
+						</div>}
 			</div>
 
 			<div className="mb-4 col-span-full xl:mb-2 pt-5">
@@ -137,7 +133,7 @@ const CredDefSelection = () => {
 					setError(null)
 				}}
 			/>
-			<DataTable header={header} data={credDefList} loading={loading} callback={selectCredDef} displaySelect={true}></DataTable>
+			<DataTable header={header} data={credDefList} loading={loading} callback={selectCredDef} showBtn={true}></DataTable>
 		</div>
 	)
 }

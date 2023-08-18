@@ -14,7 +14,7 @@ import { pathRoutes } from '../../../config/pathRoutes';
 import { EmptyListMessage } from '../../EmptyListComponent';
 import type { SchemaDetails } from '../../Verification/interface';
 
-const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaDetails:SchemaDetails) => void; }) => {
+const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaDetails: SchemaDetails) => void; }) => {
 	const [schemaList, setSchemaList] = useState([])
 	const [schemaListErr, setSchemaListErr] = useState<string | null>('')
 	const [loading, setLoading] = useState<boolean>(true)
@@ -48,11 +48,17 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 					setLoading(false);
 				} else {
 					setLoading(false);
-					setSchemaListErr(schemaList as string)
+					if (schemaList !== 'Schema records not found') {
+						setSchemaListErr(schemaList as string)
+
+					}
 				}
 			} else {
 				setLoading(false);
-				setSchemaListErr(schemaList as string)
+				if (schemaList !== 'Schema records not found') {
+					setSchemaListErr(schemaList as string)
+
+				}
 			}
 			setTimeout(() => {
 				setSchemaListErr('')
@@ -88,11 +94,11 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 
 	}
 
-	const schemaSelectionCallback = (schemaId: string, attributes:string[], issuerId:string, created:string) => {
+	const schemaSelectionCallback = (schemaId: string, attributes: string[], issuerId: string, created: string) => {
 		const schemaDetails = {
-			attribute:attributes,
+			attribute: attributes,
 			issuerDid: issuerId,
-			createdDate:created
+			createdDate: created
 
 		}
 		props.schemaSelectionCallback(schemaId, schemaDetails)
@@ -122,10 +128,12 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 								window.location.href = `${pathRoutes.organizations.createSchema}?OrgId=${orgId}`
 							}}
 							className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
-						><svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
-						<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"/>
-					  </svg>
-							Create Schema
+							title='Create New Schema'  // This is the tooltip text
+						>
+							<svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
+								<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+							</svg>
+							Create
 						</Button>
 					</div>
 					{
@@ -179,8 +187,8 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 								svgComponent={<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
 									<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
 								</svg>}
-								onClick={()=>{
-									window.location.href = `${pathRoutes.organizations.createSchema}?OrgId=${orgId}`	
+								onClick={() => {
+									window.location.href = `${pathRoutes.organizations.createSchema}?OrgId=${orgId}`
 								}}
 							/>)
 					}
