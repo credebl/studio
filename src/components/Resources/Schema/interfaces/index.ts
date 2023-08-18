@@ -49,6 +49,7 @@ type DataItem = {
   schemaVersion: string; 
   attributes: string[]; 
   orgId: number; 
+	orgDid:string
 }
 
 export interface createSchema {
