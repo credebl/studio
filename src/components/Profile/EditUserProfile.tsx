@@ -215,24 +215,17 @@ const UpdateUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }
                   className="relative justify-center sm:px-2 sm:py-2 sm:flex xl:block 2xl:flex sm:space-x-4 xl:space-x-0 2xl:space-x-4"
                 >
 
-                  {
-                    (typeof (logoImage.logoFile) === "string" && userProfileInfo?.profileImg) ?
-                      <img
-                        className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
-                        src={userProfileInfo?.profileImg}
-                        alt="Jese picture"
-                      />
-                      : typeof (logoImage.logoFile) === "string" ?
-                        <Avatar
-                          size="90"
-                        /> :
-                        <img
-                          className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
-                          src={URL.createObjectURL(logoImage?.logoFile)}
-                          alt="Jese picture"
-                        />
-                  }
+                  {logoImage.imagePreviewUrl ? (
+                    <img
+                      className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
+                      src={logoImage.imagePreviewUrl}
+                      alt="Profile Picture"
+                    />
 
+                  ) : (
+                    <CustomAvatar                          
+                    size="90"
+                   name={userProfileInfo?.firstName} />                  )}
 
                   <div>
                     <h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
