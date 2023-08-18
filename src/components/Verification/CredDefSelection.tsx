@@ -27,7 +27,7 @@ const CredDefSelection = () => {
 			await removeFromLocalStorage(storageKeys.CRED_DEF_ID);
 			getSchemaAndCredDef();
 		};
-	
+
 		fetchData();
 	}, []);
 
@@ -133,11 +133,10 @@ const CredDefSelection = () => {
 							color="info"
 						/>
 					</div>
-					: <div className="lg:w-1/2 sm:w-full">
-						<SchemaCard schemaName={schemaState?.schemaName} version={schemaState?.version} schemaId={schemaDetailsState.schemaId} issuerDid={schemaDetailsState.issuerDid} attributes={schemaDetailsState.attributes} created={schemaDetailsState.createdDateTime}
+					: <div className="m-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap4">
+						<SchemaCard className="col-span-1 sm:col-span-2 md:col-span-1" schemaName={schemaState?.schemaName} version={schemaState?.version} schemaId={schemaDetailsState.schemaId} issuerDid={schemaDetailsState.issuerDid} attributes={schemaDetailsState.attributes} created={schemaDetailsState.createdDateTime}
 							onClickCallback={schemaSelectionCallback} />
-					</div>
-				}
+					</div>}
 
 			</div>
 

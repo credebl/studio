@@ -114,8 +114,11 @@ const CredDefSelection = () => {
 							color="info"
 						/>
 					</div>
-					: <SchemaCard schemaName={schemaState?.schemaName} version={schemaState?.version} schemaId={schemaDetailsState.schemaId} issuerDid={schemaDetailsState.issuerDid} attributes={schemaDetailsState.attributes} created={schemaDetailsState.createdDateTime} 
-						onClickCallback={schemaSelectionCallback} />}
+					: 
+					<div className="m-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap4">
+					<SchemaCard className="col-span-1 sm:col-span-2 md:col-span-1" schemaName={schemaState?.schemaName} version={schemaState?.version} schemaId={schemaDetailsState.schemaId} issuerDid={schemaDetailsState.issuerDid} attributes={schemaDetailsState.attributes} created={schemaDetailsState.createdDateTime} 
+						onClickCallback={schemaSelectionCallback} />
+						</div>}
 			</div>
 
 			<div className="mb-4 col-span-full xl:mb-2 pt-5">
@@ -130,7 +133,7 @@ const CredDefSelection = () => {
 					setError(null)
 				}}
 			/>
-			<DataTable header={header} data={credDefList} loading={loading} callback={selectCredDef}></DataTable>
+			<DataTable header={header} data={credDefList} loading={loading} callback={selectCredDef} showBtn={true}></DataTable>
 		</div>
 	)
 }
