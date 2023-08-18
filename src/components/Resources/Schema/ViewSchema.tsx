@@ -36,7 +36,7 @@ type SchemaData = {
 
 
 const ViewSchemas = () => {
-  const [schemaDetails, setSchemaDetails] = useState<SchemaData>(undefined);
+  const [schemaDetails, setSchemaDetails] = useState<SchemaData>(null);
   const [credDeffList, setCredDeffList] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true)
   const [createloader, setCreateLoader] = useState<boolean>(false)
@@ -48,14 +48,14 @@ const ViewSchemas = () => {
   const [orgId, setOrgId] = useState<number>(0)
   const [credDefAuto, setCredDefAuto] = useState<string>('')
 
-
   const getSchemaDetails = async (id: string, organizationId: number) => {
     try {
       setLoading(true);
       const SchemaDetails = await getSchemaById(id, organizationId);
       const { data } = SchemaDetails as AxiosResponse;
+			
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        setSchemaDetails(data?.data?.response);
+        setSchemaDetails(data?.data);
         setCredDefAuto(`${data?.data?.response?.schema?.name} ${nanoid(8)}`);
         setLoading(false);
       } else {
@@ -202,7 +202,7 @@ const ViewSchemas = () => {
                     </a>
                   </div>
                 </div>
-                <div className="flex flex-wrap">
+                <div className="">
                   <div>
                     <p className='p-1 dark:text-white break-words'>
                       Name:  {schemaDetails?.schema?.name}
