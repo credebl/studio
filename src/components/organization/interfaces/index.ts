@@ -50,6 +50,7 @@ export interface OrgAgent {
     agentsTypeId: number
     orgId: number
     orgAgentTypeId: number
+    ledgers: ledgers
     org_agent_type: org_agent_type 
     agents_type: AgentsType
 }
@@ -94,6 +95,19 @@ agent: string
 
 }
 
+export interface ledgers{
+createDateTime: string
+createdBy: number
+id: number
+isActive: boolean
+lastChangedBy: number
+lastChangedDateTime: string
+name: string
+networkString: string
+networkType: string
+poolConfig: string
+registerDIDEndpoint: string
+}
 export interface OrgDashboard {
     usersCount: number
     schemasCount: number
