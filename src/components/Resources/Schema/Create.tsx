@@ -81,7 +81,7 @@ const CreateSchema = () => {
                             onClick={() => {
                                 window.location.href = '/organizations/schemas'
                             }}
-                            className='bg-secondary-700 ring-primary-700 bg-transparent ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto'
+                            className='bg-secondary-700 ring-primary-700 bg-transparent ring-2 text-primary-700 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr- ml-auto'
                             style={{ height: '2.5rem', width: '5rem', minWidth: '2rem' }}
                         >
                             <svg className='mr-1' xmlns="http://www.w3.org/2000/svg" width="22" height="12" fill="none" viewBox="0 0 30 20">
@@ -300,12 +300,14 @@ const CreateSchema = () => {
                                             <Button
                                                 type="reset"
                                                 color='bg-primary-800'
-                                                className='dark:text-white bg-primary-700 bg-transparent ring-primary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto'
+                                                className='dark:text-white bg-primary-700 bg-transparent ring-primary-700 ring-2 text-primary-700 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto'
                                                 style={{ height: '2.6rem', width: '6rem', minWidth: '2rem' }}
                                             >
-                                                <svg xmlns="http://www.w3.org/2000/svg" className='mr-2' width="18" height="18" fill="none" viewBox="0 0 20 20">
-                                                    <path fill="#1F4EAD" d="M19.414 9.414a.586.586 0 0 0-.586.586c0 4.868-3.96 8.828-8.828 8.828-4.868 0-8.828-3.96-8.828-8.828 0-4.868 3.96-8.828 8.828-8.828 1.96 0 3.822.635 5.353 1.807l-1.017.18a.586.586 0 1 0 .204 1.153l2.219-.392a.586.586 0 0 0 .484-.577V1.124a.586.586 0 0 0-1.172 0v.928A9.923 9.923 0 0 0 10 0a9.935 9.935 0 0 0-7.071 2.929A9.935 9.935 0 0 0 0 10a9.935 9.935 0 0 0 2.929 7.071A9.935 9.935 0 0 0 10 20a9.935 9.935 0 0 0 7.071-2.929A9.935 9.935 0 0 0 20 10a.586.586 0 0 0-.586-.586Z" />
-                                                </svg>
+                                                <svg className='pr-2' xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="none" viewBox="0 0 25 25">
+  																						<path fill="#1F4EAD" fill-rule="evenodd" d="M12.5 0v2.778c5.36 0 9.722 4.36 9.722 9.722 0 5.361-4.362 9.722-9.722 9.722-5.36 0-9.722-4.36-9.722-9.722a9.7 9.7 0 0 1 2.778-6.78v3.308h2.777v-7.64H.694v2.779h2.488A12.489 12.489 0 0 0 0 12.5C0 19.392 5.607 25 12.5 25S25 19.392 25 12.5 19.393 0 12.5 0Z" clip-rule="evenodd"/>
+																								</svg>
+
+
 
                                                 Reset
                                             </Button>
