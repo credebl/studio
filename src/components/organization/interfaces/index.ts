@@ -50,6 +50,7 @@ export interface OrgAgent {
     agentsTypeId: number
     orgId: number
     orgAgentTypeId: number
+    org_agent_type: org_agent_type 
     agents_type: AgentsType
 }
 
@@ -60,6 +61,16 @@ export interface AgentsType {
     lastChangedDateTime: string
     lastChangedBy: number
     agent: string
+}
+
+export interface org_agent_type{
+id: number
+createDateTime: string
+createdBy: number
+lastChangedDateTime: string
+lastChangedBy: number
+agent: string
+
 }
 
 export interface OrgDashboard {
