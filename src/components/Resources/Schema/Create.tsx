@@ -130,6 +130,12 @@ const CreateSchema = () => {
 							validateOnChange
 							enableReinitialize
 							onSubmit={async (values): Promise<void> => {
+								values.attribute.forEach((element: any) => {
+									if (!element.schemaDataType) {
+											element.schemaDataType = 'string';
+									}
+							});
+							
 								const updatedAttribute: Array<Number> = [];
 								values.attribute.forEach((element) => {
 									updatedAttribute.push(Number(element));
