@@ -100,7 +100,7 @@ const OrganizationDetails = ({orgData}: {orgData: Organisation}) => {
                                         <p
                                             className="ml-4 text-base font-semibold text-gray-900 truncate dark:text-white w-40 md:w-32 lg:w-80"
                                         >
-                                            {agentData?.ledgers.name}
+                                            {agentData?.ledgers ? agentData?.ledgers?.name : `-`}
                                         </p>
 
                                     </div>
@@ -121,9 +121,9 @@ const OrganizationDetails = ({orgData}: {orgData: Organisation}) => {
                                         <p
                                             className="ml-4 text-base font-semibold text-gray-900 truncate dark:text-white w-40 md:w-32 lg:w-80"
                                         >
-                                            {agentData?.org_agent_type.agent
-                                                ? agentData.org_agent_type.agent.charAt(0).toUpperCase() +
-                                                agentData.org_agent_type.agent.slice(1).toLowerCase()
+                                            {agentData?.org_agent_type?.agent
+                                                ? agentData?.org_agent_type?.agent?.charAt(0).toUpperCase() +
+                                                agentData?.org_agent_type?.agent?.slice(1).toLowerCase()
                                                 : ''}
 
                                         </p>
@@ -145,7 +145,7 @@ const OrganizationDetails = ({orgData}: {orgData: Organisation}) => {
                                         <p
                                             className="ml-4 text-base font-semibold text-gray-900 truncate dark:text-white w-40 md:w-32 lg:w-80"
                                         >
-                                            {agentData?.createDateTime ? agentData.createDateTime.split("T")[0] : new Date().toISOString().split("T")[0]}
+                                            {agentData?.createDateTime ? agentData?.createDateTime?.split("T")[0] : new Date().toISOString().split("T")[0]}
 
                                         </p>
 
