@@ -2,13 +2,9 @@
 
 import * as yup from 'yup';
 
-import { Alert, Button, Card, Label, Table } from 'flowbite-react';
+import { Alert, Button, Card, Label, Table, } from 'flowbite-react';
 import { Field, FieldArray, Form, Formik } from 'formik';
-import {
-	apiStatusCodes,
-	schemaVersionRegex,
-	storageKeys,
-} from '../../../config/CommonConstant';
+import { apiStatusCodes, schemaVersionRegex, storageKeys } from '../../../config/CommonConstant';
 import { useEffect, useState } from 'react';
 
 import type { AxiosResponse } from 'axios';
@@ -19,15 +15,9 @@ import { addSchema } from '../../../api/Schema';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
 interface Values {
-	schemaName: string;
-	schemaVersion: string;
-	attribute: [
-		{
-			attributeName: string;
-			schemaDataType: string;
-			displayName: string;
-		},
-	];
+    schemaName: string;
+    schemaVersion: string;
+    attribute: [];
 }
 
 const options = [
@@ -51,16 +41,13 @@ const CreateSchema = () => {
 		fetchData();
 	}, []);
 
+
 	const submit = async (values: Values) => {
 		setCreateLoader(true);
 		const schemaFieldName: FieldName = {
 			schemaName: values.schemaName,
 			schemaVersion: values.schemaVersion,
-			attributes: values.attribute.map((attr) => ({
-				attributeName: attr.attributeName,
-				schemaDataType: attr.schemaDataType,
-				displayName: attr.displayName,
-			})),
+			attributes: values.attribute,
 			orgId: orgId,
 		};
 
@@ -222,10 +209,8 @@ const CreateSchema = () => {
 																		<div className="md:w-1/3 sm:w-full md:w-96  flex-col md:flex m-2">
 																			<Field
 																				id={`attribute[${index}]`}
-																				// `items.${index}.item1`
 																				name={`attribute.${index}.attributeName`}
 																				placeholder="Attribute eg. NAME, ID"
-																				// value={element.value}
 																				disabled={!areFirstInputsSelected}
 																				className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 																			/>
@@ -407,9 +392,7 @@ const CreateSchema = () => {
 										<Button
 											data-modal-target="popup-modal"
 											data-modal-toggle="popup-modal"
-											// className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
 											type="button"
-											// type="submit"
 											color="bg-primary-700"
 											disabled={
 												!formikHandlers.isValid || !formikHandlers.dirty
