@@ -34,7 +34,8 @@ export const apiRoutes = {
         getAll: '/schemas',
         getSchemaById:'/schemas/id',
         createCredentialDefinition: '/credential-definitions',
-        getCredDeffBySchemaId: '/schemas/credential-definitions'
+        getCredDeffBySchemaId: '/schemas/credential-definitions',
+        getAllSchemaFromPlatform: `/schemas/platform`
     },
     fido: {
         generateRegistration: 'fido/generate-registration-options',
