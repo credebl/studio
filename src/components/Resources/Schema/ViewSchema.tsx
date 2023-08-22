@@ -53,7 +53,7 @@ const ViewSchemas = () => {
       setLoading(true);
       const SchemaDetails = await getSchemaById(id, organizationId);
       const { data } = SchemaDetails as AxiosResponse;
-			
+
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setSchemaDetails(data?.data);
         setCredDefAuto(`${data?.data?.response?.schema?.name} ${nanoid(8)}`);
@@ -237,9 +237,6 @@ const ViewSchemas = () => {
                 </div>
               </div>
             )}
-
-            {/* Display the error message */}
-
           </Card>
           <Card className='h-64 sm:w-1/2 p-2 ml-1' id="credentialDefinitionCard">
             <div>
@@ -250,7 +247,7 @@ const ViewSchemas = () => {
             <div>
               <Formik
                 initialValues={{
-                  tagName: `${credDefAuto ? credDefAuto : ''}`,
+                  tagName: '',
                   revocable: false
                 }}
                 validationSchema={yup.object().shape({
@@ -290,24 +287,24 @@ const ViewSchemas = () => {
                         }
                       </div>
                     </div>
-                    
-                      <div className='flex items-center'>
-                        <div className="custom-control custom-checkbox d-flex align-items-center pt-4 p-2">
-                          <Field type="checkbox" id="Revocable" name="revocable" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                          <Label className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300" >
-                            Revocable
-                          </Label>
-                        </div>
-                        {createloader && <div className='ml-auto'>
-                          <p className='text-gray-500 text-sm italic ml-5'>
-                            <svg className='animate-spin mr-1 h-4 w-4 text-blue-600 inline-block' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.86 3.182 8.009l2.01-2.01zM12 20a8 8 0 008-8h-4a4 4 0 11-8 0H0a8 8 0 008 8v-4a4 4 0 018 0v4z"></path>
-                            </svg>
-                            Processing, please wait it will take sametime...
-                          </p>
-                        </div>}
+
+                    <div className='flex items-center'>
+                      <div className="custom-control custom-checkbox d-flex align-items-center pt-4 p-2">
+                        <Field type="checkbox" id="Revocable" name="revocable" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                        <Label className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300" >
+                          Revocable
+                        </Label>
                       </div>
+                      {createloader && <div className='ml-auto'>
+                        <p className='text-gray-500 text-sm italic ml-5'>
+                          <svg className='animate-spin mr-1 h-4 w-4 text-blue-600 inline-block' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.86 3.182 8.009l2.01-2.01zM12 20a8 8 0 008-8h-4a4 4 0 11-8 0H0a8 8 0 008 8v-4a4 4 0 018 0v4z"></path>
+                          </svg>
+                          Hold your coffee, this might take a moment...
+                        </p>
+                      </div>}
+                    </div>
                     {
                       (success || failure) &&
                       <Alert
