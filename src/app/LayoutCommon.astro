@@ -20,10 +20,10 @@ if (
 
 	if (sessionCookie) {
 		const { data: { user }, error } = await supabase.auth.getUser(sessionCookie);
+
 		if (!user || user.role !== "authenticated") {
 			return Astro.redirect(pathRoutes.auth.sinIn)
 		}
-		console.log(`SESSION:ERROR::`, error);
 	}
 }
 

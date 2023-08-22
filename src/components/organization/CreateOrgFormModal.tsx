@@ -241,7 +241,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setMessage: (message: s
                                                         id="organizationlogo" title=""
                                                         onChange={(event): void => handleImageChange(event)} />
                                                     {/* <span>{selectedImage || 'No File Chosen'}</span> */}
-                                                    {imgError ? <div className="text-red-500">{imgError}</div> : <span className="mt-1">{logoImage.fileName || 'No File Chosen'}</span>}
+                                                    {imgError ? <div className="text-red-500">{imgError}</div> : <span className="mt-1  text-sm text-gray-500 dark:text-gray-400">{logoImage.fileName || 'No File Chosen'}</span>}
                                                 </label>
 
                                             </div>
@@ -266,7 +266,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setMessage: (message: s
                                     name="name"
                                     value={formikHandlers.values.name}
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Your organization name" />
+                                    placeholder="Enter Organization Name" />
                                 {
                                     (formikHandlers?.errors?.name && formikHandlers?.touched?.name) &&
                                     <span className="text-red-500 text-xs">{formikHandlers?.errors?.name}</span>
@@ -291,7 +291,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setMessage: (message: s
                                     value={formikHandlers.values.description}
                                     as='textarea'
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Description of your organization" />
+                                    placeholder="Enter Organization Description" />
                                 {
                                     (formikHandlers?.errors?.description && formikHandlers?.touched?.description) &&
                                     <span className="text-red-500 text-xs">{formikHandlers?.errors?.description}</span>

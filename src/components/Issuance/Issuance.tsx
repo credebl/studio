@@ -29,7 +29,7 @@ interface Attributes {
 	value: string
 }
 interface IssuanceFormPayload {
-	userName: string,
+	userName?: string,
 	connectionId: string,
 	attributes: Attributes[],
 	credentialDefinitionId: string,
@@ -71,7 +71,8 @@ const IssueCred = () => {
 		const attrObj = attributes.map(attr => ({ name: attr, value: '' }))
 		const issuancePayload = selectedUsers.map(user => {
 			return {
-				userName: user.userName, connectionId: user.connectionId,
+				// userName: user.userName, 
+				connectionId: user.connectionId,
 				attributes: attrObj, credentialDefinitionId: credDefId, orgId
 			}
 		})
@@ -147,7 +148,9 @@ const IssueCred = () => {
 				</h1>
 			</div>
 			{!schemaLoader ?
-				<Card className='transform transition duration-500 hover:scale-105 hover:bg-gray-50' style={{ width: '470px', height: '140px', maxWidth: '100%', maxHeight: '100%', overflow: 'auto' }}>
+				<Card 
+				// className='transform transition duration-500 hover:scale-105 hover:bg-gray-50'
+				 style={{ width: '470px', height: '140px', maxWidth: '100%', maxHeight: '100%', overflow: 'auto' }}>
 					<div className="flex justify-between items-start">
 						<div>
 							<h5 className="text-xl font-bold leading-none text-primary dark:text-white">

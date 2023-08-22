@@ -51,45 +51,37 @@ const SignInUser = () => {
 	}, [])
 
 	const signInUser = async (values: passwordValue) => {
-		// const payload: UserSignInData = {
-		// 	email: email?.email,
-		// 	isPasskey: false,
-		// 	password: passwordEncryption(values.password)
-		// }
-		// setLoading(true)
-		// const loginRsp = await loginUser(payload)
-		// const { data } = loginRsp as AxiosResponse
-
-		// if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-		// 	await setToLocalStorage(storageKeys.TOKEN, data?.data?.access_token)
-		// 	getUserDetails(data?.data?.access_token)
-		// } else {
-		// 	setLoading(false)
-		// 	setFailur(loginRsp as string)
-		// 	setTimeout(() => {
-		// 		setFailur(null)
-		// 	}, 3000)
-		// }
-
-		const { data, error } = await supabase.auth.signInWithPassword({
-			email: email?.email as string,
-			password: values.password,
-		})
-
-		console.log(`SignIn: ERROR::`, error);
-
-		const response = await fetch('/api/auth/signin', {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(data),
-		});
-
-		if (response.redirected) {
-			window.location.assign(response.url);
+		const payload: UserSignInData = {
+			email: email?.email,
+			isPasskey: false,
+			password: passwordEncryption(values.password)
 		}
+		setLoading(true)
+		const loginRsp = await loginUser(payload)
+		const { data } = loginRsp as AxiosResponse
 
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			await setToLocalStorage(storageKeys.TOKEN, data?.data?.access_token)
+
+			const response = await fetch('/api/auth/signin', {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(data),
+			});
+
+			if (response.redirected) {
+				getUserDetails(data?.data?.access_token)
+			}
+
+		} else {
+			setLoading(false)
+			setFailur(loginRsp as string)
+			setTimeout(() => {
+				setFailur(null)
+			}, 3000)
+		}
 
 	}
 

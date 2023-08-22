@@ -223,11 +223,11 @@ export const getOrganizationRoles = async () => {
 }
 
 //Get users of the organization
-export const getOrganizationUsers = async () => {
+export const getOrganizationUsers = async (pageNumber: number, pageSize: number, search = '') => {
 
     const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
 
-    const url = `${apiRoutes.users.fetchUsers}?orgId=${orgId}`
+    const url = `${apiRoutes.users.fetchUsers}?orgId=${orgId}&pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
 
     const axiosPayload = {
         url,

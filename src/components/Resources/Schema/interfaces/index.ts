@@ -45,10 +45,17 @@ type DataItem = {
   }
 
   export interface FieldName {
-  schemaName: string; 
-  schemaVersion: string; 
-  attributes: string[]; 
-  orgId: number; 
+		schemaName: string;
+		schemaVersion: string;
+		attributes: [
+			{
+				attributeName: string;
+				schemaDataType: string;
+				displayName: string;
+			},
+		];
+		orgId: number;
+	
 }
 
 export interface createSchema {

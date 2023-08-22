@@ -278,13 +278,13 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps)=> {
 
                                             <div>
                                                 <label htmlFor="organizationlogo">
-                                                    <div className="px-4 py-2 bg-blue-700 text-white text-center rounded-lg">Choose file</div>
+                                                    <div className="px-4 py-2 bg-primary-700 text-white text-center rounded-lg">Choose file</div>
                                                     <input type="file" accept="image/*" name="file"
                                                         className="hidden"
                                                         id="organizationlogo" title=""
                                                         onChange={(event): void => handleImageChange(event)} />
                                                     {/* <span>{selectedImage || 'No File Chosen'}</span> */}
-                                                    {imgError ? <div className="text-red-500">{imgError}</div> : <span className="mt-1">{logoImage.fileName || 'No File Chosen'}</span>}
+                                                    {imgError ? <div className="text-red-500">{imgError}</div> : <span className="mt-1 text-sm text-gray-500 dark:text-gray-400">{logoImage.fileName || 'No File Chosen'}</span>}
                                                 </label>
 
                                             </div>
@@ -346,8 +346,11 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps)=> {
                                 
                                 className='float-right text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
                              
-                             >
-                               Edit
+                             ><svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 18 18">
+														 <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 1v12l-4-2-4 2V1h8ZM3 17h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z"/>
+													 </svg>
+													 
+                               Save
                             </Button>
                         </Form>
                     )}

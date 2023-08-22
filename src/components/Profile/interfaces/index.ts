@@ -4,7 +4,6 @@ export interface RegistrationOptionInterface {
 
 }
 
-
 export interface verifyRegistrationObjInterface {
   id: string;
   rawId: string;
@@ -42,4 +41,15 @@ export interface DeviceDetails {
 
 export interface UserEmail {
   userName: string
+}
+
+export interface UserProfile {
+  id: number
+  profileImg: string
+  username: string
+  email: string
+  firstName: string
+  lastName: string
+  isEmailVerified: boolean
+  keycloakUserId: string
 }
