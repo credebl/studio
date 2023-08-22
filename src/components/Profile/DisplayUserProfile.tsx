@@ -1,56 +1,38 @@
-import type { AxiosResponse } from "axios";
-import { getFromLocalStorage, getUserProfile, setToLocalStorage } from "../../api/Auth";
-import { apiStatusCodes, storageKeys } from "../../config/CommonConstant";
-import { useEffect, useState } from "react";
 import type { UserProfile } from "./interfaces";
 import CustomAvatar from '../Avatar'
 
-interface IProfileImage {
-    imagePreviewUrl: string | ArrayBuffer | null | File,
-}
-const DisplayUserProfile = ({ toggleEditProfile }: { toggleEditProfile: () => void }) => {
+interface DisplayUserProfileProps {
+    toggleEditProfile: () => void;
+    userProfileInfo: UserProfile | null;
+  }
+  
+  const DisplayUserProfile = ({ toggleEditProfile, userProfileInfo }: DisplayUserProfileProps) => {
 
-    const [failure, setFailure] = useState<string | null>(null)
-	const [loading, setLoading] = useState<boolean>(false)
-	const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
-    const [logoImage, setLogoImage] = useState<IProfileImage>()
-
-    const displayUserDetails = async () => {
-
-        const token = await getFromLocalStorage(storageKeys.TOKEN)
-		const userDetails = await getUserProfile(token);
-		const { data } = userDetails as AxiosResponse
-        console.log(`User::`, data);
-        
-        if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-            setUserProfile(data?.data)          
-        } else {
-            setFailure(userDetails as string);
-        }
-        
-		setLoading(false)
-	}
-    
-    useEffect(() => {
-        displayUserDetails();
-    }, []);
-    
     return (
-        <div className="pl-2 pt-2 lg:flex mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 md:p-8 dark:bg-gray-800">
+        <div className="max-w-lg mx-auto pl-2 pt-2 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 md:p-8 dark:bg-gray-800">
 
             <div className="flow-root">
                 <ul>
 
                     <li className="flex items-start justify-between pb-4">
-                        <CustomAvatar size='90' name={userProfile?.firstName}/>
+                        {(userProfileInfo?.profileImg) ? 
+                        <CustomAvatar 
+                        className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
+                        size="90"
+                        src={userProfileInfo?.profileImg} 
+                        /> :
+                         <CustomAvatar                          
+                         size="90"
+                        name={userProfileInfo?.firstName} />}
 
-                        {/* <button
+
+                        <button
                             type="button"
                             className=""
                             onClick={toggleEditProfile}
                         >
                             <svg aria-hidden="true"
-                                className="mr-1 mt-8 -ml-1 w-5 h-5"
+                                className="-ml-1 w-5 h-5"
 
                                 fill="currentColor"
                                 viewBox="0 0 20 20"
@@ -63,7 +45,7 @@ const DisplayUserProfile = ({ toggleEditProfile }: { toggleEditProfile: () => vo
                                 <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"></path></svg>
 
                         </button>
- */}
+
 
                     </li>
 
@@ -74,7 +56,7 @@ const DisplayUserProfile = ({ toggleEditProfile }: { toggleEditProfile: () => vo
                                     Name
                                 </p>
                                 <p className="text-lg text-black truncate dark:text-white">
-                                {userProfile?.firstName} {userProfile?.lastName}
+                                {userProfileInfo?.firstName} {userProfileInfo?.lastName}
                                 </p>
                             </div>
 
@@ -89,7 +71,7 @@ const DisplayUserProfile = ({ toggleEditProfile }: { toggleEditProfile: () => vo
                                 </p>
                                 <p className="text-lg text-black truncate dark:text-white">
 
-                                    {userProfile?.email}
+                                    {userProfileInfo?.email}
                                 </p>
                             </div>
                         </div>
@@ -101,7 +83,4 @@ const DisplayUserProfile = ({ toggleEditProfile }: { toggleEditProfile: () => vo
 };
 
 export default DisplayUserProfile;
-function setFidoLoader(arg0: boolean) {
-    throw new Error("Function not implemented.");
-}
 
