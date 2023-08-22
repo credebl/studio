@@ -45,6 +45,7 @@ export interface UserEmail {
 
 export interface UserProfile {
   id: number
+  profileImg: string
   username: string
   email: string
   firstName: string

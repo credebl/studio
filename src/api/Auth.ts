@@ -1,4 +1,4 @@
-import {axiosGet, axiosPost} from '../services/apiRequests'
+import {axiosGet, axiosPost, axiosPut} from '../services/apiRequests'
 import { number, string } from 'yup'
 
 import type { AxiosError } from 'axios'
@@ -73,7 +73,34 @@ export const getUserProfile = async(accessToken: string) => {
     }
 }    
 
-export const verifyUserMail = async(payload: EmailVerifyData) => {
+export const updateUserProfile = async(data: object ) => {
+    const url = apiRoutes.users.update
+    const payload = data
+    const token = await getFromLocalStorage(storageKeys.TOKEN)
+
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+        }
+    }
+    const axiosPayload = {
+        url,
+        payload,
+        config
+    }
+
+    try {
+        return await axiosPut(axiosPayload);
+    }
+    catch (error) {
+        const err = error as Error
+        return err?.message
+    }
+
+}  
+
+export const verifyUserMail = async(payload: EmailVerifyData ) => {
     const details ={
         url:`${apiRoutes.auth.verifyEmail}?verificationCode=${payload?.verificationCode}&email=${payload?.email}`,
         config: { headers: { "Content-type": "application/json" } }
