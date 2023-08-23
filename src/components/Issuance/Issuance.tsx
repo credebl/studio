@@ -90,7 +90,6 @@ const IssueCred = () => {
 		}));
 		const issuancePayload = selectedUsers.map((user) => {
 			return {
-				// userName: user.userName,
 				connectionId: user.connectionId,
 				attributes: attrObj,
 				credentialDefinitionId: credDefId,
@@ -107,7 +106,7 @@ const IssueCred = () => {
 		} else if (dataType === 'number') {
 			return typeof value === 'number';
 		}
-		return true; 
+		return true;
 	};
 
 	const getSchemaDetails = async (): Promise<DataTypeAttributes[] | null> => {
@@ -140,15 +139,15 @@ const IssueCred = () => {
 					'matchDataType',
 					'Value must match the specified data type',
 					function (value) {
-						const dataType = this.parent.dataType; 
+						const dataType = this.parent.dataType;
 						if (dataType === 'string') {
 							return typeof value === 'string';
 						} else if (dataType === 'number') {
 							return typeof value === 'number';
 						} else if (dataType === 'date') {
-							return !isNaN(Date.parse(value)); 
+							return !isNaN(Date.parse(value));
 						}
-						return true; 
+						return true;
 					},
 				),
 			}),
@@ -185,7 +184,6 @@ const IssueCred = () => {
 			</div>
 			{!schemaLoader ? (
 				<Card
-					// className='transform transition duration-500 hover:scale-105 hover:bg-gray-50'
 					style={{
 						width: '470px',
 						height: '140px',
