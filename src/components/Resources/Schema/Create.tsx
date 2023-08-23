@@ -23,7 +23,7 @@ interface Values {
 const options = [
 	{ value: 'string', label: 'String' },
 	{ value: 'number', label: 'Number' },
-	{ value: 'boolean', label: 'Boolean' },
+	{ value: 'date', label: 'Date' },
 ];
 
 const CreateSchema = () => {
