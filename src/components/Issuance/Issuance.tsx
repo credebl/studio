@@ -151,13 +151,13 @@ const IssueCred = () => {
 			value: String(attr.value),
 		}));
 
-		const convertedValues = {
+		const convertedAttributesValues = {
 			...values,
 			attributes: convertedAttributes,
 		};
 
 		setIssuanceLoader(true);
-		const issueCredRes = await issueCredential(convertedValues);
+		const issueCredRes = await issueCredential(convertedAttributesValues);
 		const { data } = issueCredRes as AxiosResponse;
 		setIssuanceLoader(false);
 
