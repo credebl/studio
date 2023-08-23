@@ -3,7 +3,8 @@ export interface GetAllSchemaListParameter {
     itemPerPage: number,
     page: number,
     search: string,
-    sortBy: string
+    sortBy: string,
+    allSearch: string
 }
 
 type DataItem = {
@@ -71,7 +72,6 @@ export interface createCredDeffFieldName {
   orgId: number;
   schemaLedgerId: string;
 }
-
 
 
 

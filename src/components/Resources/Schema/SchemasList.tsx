@@ -25,17 +25,11 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 		page: 1,
 		search: "",
 		sortBy: "id",
-		sortingOrder: "DESC"
-	})
+		sortingOrder: "DESC",
+		allSearch: ""
 
-	const [allSchemaListAPIParameter, setAllSchemaListAPIParameter] = useState({
-		pageSize: 9,
-		pageNumber: 1,
-		searchByText: "",
-		sortByValue: "id",
-		sorting: "DESC"
 	})
-
+	const [totalItem, setTotalItem] = useState(0)
 	const getSchemaList = async (schemaListAPIParameter: GetAllSchemaListParameter, flag: boolean) => {
 		try {
 			const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -52,11 +46,10 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 				setLoading(false);
 				setSchemaList([]);
 			}
+
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				if (data?.data?.data?.length === 0) {
-					setSchemaListErr('No Data Found');
-				}
 				if (data?.data?.data) {
+					setTotalItem(data?.data.totalItems)
 					setSchemaList(data?.data?.data);
 					setLoading(false);
 				} else {
@@ -83,11 +76,6 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 		}
 	};
 
-
-	useEffect(() => {
-		getSchemaList(schemaListAPIParameter, false)
-	}, []);
-
 	useEffect(() => {
 		getSchemaList(schemaListAPIParameter, false)
 
@@ -95,15 +83,17 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 
 	const onSearch = async (event: ChangeEvent<HTMLInputElement>): Promise<void> => {
 		event.preventDefault()
-		setSchemaListAPIParameter({
-			...schemaListAPIParameter,
-			search: event.target.value
-		})
-
 		getSchemaList({
 			...schemaListAPIParameter,
 			search: event.target.value
 		}, false)
+
+		if (allSchemaFlag) {
+			getSchemaList({
+				...schemaListAPIParameter,
+				allSearch: event.target.value
+			}, false)
+		}
 
 	}
 
@@ -127,6 +117,7 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 			getSchemaList(schemaListAPIParameter, false)
 		}
 	};
+
 	return (
 		<div className="px-4 pt-6">
 			<div className="mb-4 col-span-full xl:mb-2">
@@ -208,16 +199,16 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 							</div>
 							<div className="flex items-center justify-end mb-4" id="schemasPagination">
 
-								<Pagination
-									currentPage={1}
+								{schemaList.length> 0 &&(<Pagination
+									currentPage={schemaListAPIParameter?.page}
 									onPageChange={(page) => {
 										setSchemaListAPIParameter(prevState => ({
 											...prevState,
 											page: page
 										}));
 									}}
-									totalPages={0}
-								/>
+									totalPages={Math.ceil(totalItem / schemaListAPIParameter?.itemPerPage)}
+								/>)}
 							</div>
 						</div>) : (<EmptyListMessage
 							message={'No Schemas'}

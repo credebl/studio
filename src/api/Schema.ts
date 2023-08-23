@@ -5,10 +5,10 @@ import { apiRoutes } from "../config/apiRoutes";
 import { getFromLocalStorage } from "./Auth";
 import { storageKeys } from "../config/CommonConstant";
 
-export const getAllSchemas = async ({ search, itemPerPage, sortBy, page }: GetAllSchemaListParameter) => {
+export const getAllSchemas = async ({itemPerPage, page, allSearch }: GetAllSchemaListParameter) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
-    url: `${apiRoutes.schema.getAllSchemaFromPlatform}`,
+    url: `${apiRoutes.schema.getAllSchemaFromPlatform}?pageSize=${itemPerPage}&searchByText=${allSearch}&pageNumber=${page}`,
     config: {
       headers: {
         'Content-type': 'application/json',
@@ -27,10 +27,10 @@ export const getAllSchemas = async ({ search, itemPerPage, sortBy, page }: GetAl
   }
 }
 
-export const getAllSchemasByOrgId = async ({ search, itemPerPage, sortBy, page }: GetAllSchemaListParameter, orgId: string) => {
+export const getAllSchemasByOrgId = async ({ search, itemPerPage, page }: GetAllSchemaListParameter, orgId: string) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
-    url: `${apiRoutes.schema.getAll}?orgId=${orgId}&searchByText=${search}&page=${page}&items_per_page=${itemPerPage}&schemaSortBy=${sortBy}&items_per_page=${itemPerPage}&schemaSortBy=${sortBy}`,
+    url: `${apiRoutes.schema.getAll}?orgId=${orgId}&pageNumber=${page}&pageSize=${itemPerPage}&searchByText=${search}`,
     config: {
       headers: {
         'Content-type': 'application/json',
