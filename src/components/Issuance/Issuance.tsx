@@ -100,15 +100,6 @@ const IssueCred = () => {
 		setUserLoader(false);
 	};
 
-	const dataTypeValidation = (dataType, value) => {
-		if (dataType === 'string') {
-			return typeof value === 'string';
-		} else if (dataType === 'number') {
-			return typeof value === 'number';
-		}
-		return true;
-	};
-
 	const getSchemaDetails = async (): Promise<DataTypeAttributes[] | null> => {
 		const schemaAttributes = await getFromLocalStorage(storageKeys.SCHEMA_ATTR);
 		const parsedSchemaAttributes = JSON.parse(schemaAttributes) || [];
@@ -155,8 +146,18 @@ const IssueCred = () => {
 	});
 
 	const handleSubmit = async (values: IssuanceFormPayload) => {
+		const convertedAttributes = values.attributes.map((attr) => ({
+			...attr,
+			value: String(attr.value),
+		}));
+
+		const convertedAttributesValues = {
+			...values,
+			attributes: convertedAttributes,
+		};
+
 		setIssuanceLoader(true);
-		const issueCredRes = await issueCredential(values);
+		const issueCredRes = await issueCredential(convertedAttributesValues);
 		const { data } = issueCredRes as AxiosResponse;
 		setIssuanceLoader(false);
 
