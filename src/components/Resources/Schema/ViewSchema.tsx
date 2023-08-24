@@ -150,7 +150,7 @@ const ViewSchemas = () => {
             onClick={() => {
               window.location.href = '/organizations/schemas'
             }}
-            className='bg-secondary-700 ring-primary-700 bg-transparent ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto'
+            className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto'
             style={{ height: '2.5rem', width: '5rem', minWidth: '2rem' }}
           >
             <svg className='mr-1' xmlns="http://www.w3.org/2000/svg" width="22" height="12" fill="none" viewBox="0 0 30 20">
@@ -241,7 +241,7 @@ const ViewSchemas = () => {
           <Card className='h-64 sm:w-1/2 p-2 ml-1' id="credentialDefinitionCard">
             <div>
               <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
-                Create Credential definition
+                Create Credential Definition
               </h5>
             </div>
             <div>
@@ -341,7 +341,8 @@ const ViewSchemas = () => {
                         onClick={() => {
                           setCredDefAuto('')
                         }}
-                        className='dark:text-white bg-primary-700 bg-transparent ring-primary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto'
+                        className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto'
+
                         style={{ height: '2.6rem', width: '6rem', minWidth: '2rem' }}
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" className='mr-2' width="18" height="18" fill="none" viewBox="0 0 20 20">
