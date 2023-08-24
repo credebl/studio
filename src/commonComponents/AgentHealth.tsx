@@ -18,7 +18,9 @@ const AgentHealth = () => {
     const [agentErrMessage, setAgentErrMessage] = useState<string>('');
 
     useEffect(() => {
-        getAgentHealthDetails();
+        setTimeout(() => {
+            getAgentHealthDetails();
+        }, 4000)
     }, []);
 
     const getAgentHealthDetails = async () => {
