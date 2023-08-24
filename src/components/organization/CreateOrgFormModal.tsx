@@ -235,7 +235,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setMessage: (message: s
 
                                             <div>
                                                 <label htmlFor="organizationlogo">
-                                                    <div className="px-4 py-2 bg-primary-700 text-white text-center rounded-lg">Choose file</div>
+                                                    <div className="px-4 py-2 bg-primary-700 hover:bg-primary-800 text-white text-center rounded-lg">Choose file</div>
                                                     <input type="file" accept="image/*" name="file"
                                                         className="hidden"
                                                         id="organizationlogo" title=""
@@ -300,8 +300,9 @@ const CreateOrgFormModal = (props: { openModal: boolean; setMessage: (message: s
 
                             <Button type="submit"
                                 isProcessing={loading}
-
-                                className='float-right text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-700 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
+                                   
+                                className='float-right text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-700 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
+																
                             ><svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
                             <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"/>
                           </svg>
