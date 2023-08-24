@@ -58,6 +58,9 @@ export const apiRoutes = {
 			getAllRequestList: '/proofs',
 			verifyCredential:'/proofs/request-proof',
             presentationVerification:'/proofs/verify-presentation'
+		},
+        Agent:{
+			checkAgentHealth: '/agent-service/health',
 		}
 
 }
