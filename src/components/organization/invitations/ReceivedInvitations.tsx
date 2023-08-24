@@ -155,6 +155,7 @@ const ReceivedInvitations = () => {
                         ? <div className="flex items-center justify-center mb-4">
                             <Spinner
                                 color="info"
+																className='!fill-primary-700'
                             />
                         </div>
                         : invitationsList && invitationsList?.length > 0 ? (<div
@@ -236,7 +237,7 @@ const ReceivedInvitations = () => {
                                                         <Button
                                                             onClick={() => respondToInvitations(invitation, 'rejected')}
                                                             color='bg-white'
-                                                            className='m-5 text-base font-medium text-center text-gray-00 bg-secondary-700 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600  dark:focus:ring-primary-800 dark:bg-gray-800"'
+                                                            className='m-5 text-base font-medium text-center text-gray-00 bg-secondary-700 hover:!bg-secondary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600  dark:focus:ring-primary-800 dark:bg-gray-800"'
                                                         >
                                                             <svg className="mr-1 h-6 w-6 text-primary-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -246,7 +247,7 @@ const ReceivedInvitations = () => {
                                                         </Button>
                                                         <Button
                                                             onClick={() => respondToInvitations(invitation, 'accepted')}
-                                                            className='m-5 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+                                                            className='m-5 text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-700 dark:hover:!bg-primary-800 dark:focus:ring-primary-800"'
                                                         >
                                                             <svg className="mr-1 h-6 w-6 text-white" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <path d="M5 12l5 5l10 -10" /></svg>
                                                             Accept

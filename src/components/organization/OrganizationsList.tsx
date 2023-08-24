@@ -132,7 +132,7 @@ const OrganizationsList = () => {
             />
             <Button
               onClick={createOrganizationModel}
-              className='text-base font-text-center text-white bg-primary-700 rounded-lg hover:bg-accent-00 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+              className='text-base font-text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
             >
               <div className='pr-3'>
                 <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
@@ -160,9 +160,10 @@ const OrganizationsList = () => {
           />
 
           {loading
-            ? <div className="flex items-center justify-center mb-4">
+            ? <div className="flex items-center justify-center mb-4 ">
               <Spinner
                 color="info"
+								className='!fill-primary-800'
               />
             </div>
             : organizationsList && organizationsList?.length > 0 ? (<div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
