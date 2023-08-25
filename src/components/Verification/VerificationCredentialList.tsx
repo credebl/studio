@@ -87,19 +87,20 @@ const VerificationCredentialList = () => {
 			const { data } = response as AxiosResponse;
 			if (data?.statusCode === apiStatusCodes?.API_STATUS_CREATED) {
 				setOpenModal(false)
-				console.log("98798789", data)
 				setProofReqSuccess(data.message)
 				setVerifyloader(false)
-				setTimeout(() => {
-					setProofReqSuccess('')
-					setErrMsg('')
+				setTimeout(()=>{
 					getproofRequestList()
-				}, 4000)
+				}, 2000)
 			} else {
 				setOpenModal(false)
 				setErrMsg(response as string);
 				setVerifyloader(false)
 			}
+			setTimeout(() => {
+				setProofReqSuccess('')
+				setErrMsg('')
+			}, 4000)
 		} catch (error) {
 			setOpenModal(false)
 			setVerifyloader(false)
