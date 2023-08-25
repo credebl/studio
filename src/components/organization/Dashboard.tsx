@@ -258,6 +258,7 @@ const Dashboard = () => {
                         ? (<div className="flex items-center justify-center m-4">
                             <Spinner
                                 color="info"
+																className='!fill-primary-700'
                             />
                         </div>)
                         : walletStatus === true

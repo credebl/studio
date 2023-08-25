@@ -409,16 +409,12 @@ import AgentHealth from '../commonComponents/AgentHealth';
 				>
 					<span class="sr-only">View notifications</span>
 					<!-- Icon -->
-					<svg
-						class="w-6 h-6"
-						fill="currentColor"
-						viewBox="0 0 20 20"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
-						>
-						</path>
+					<svg 
+						class="w-6 h-6 text-gray-800 dark:text-white" 
+						fill="currentColor" 
+						xmlns="http://www.w3.org/2000/svg" 
+						viewBox="0 0 14 20">
+						<path d="M12.133 10.632v-1.8A5.406 5.406 0 0 0 7.979 3.57.946.946 0 0 0 8 3.464V1.1a1 1 0 0 0-2 0v2.364a.946.946 0 0 0 .021.106 5.406 5.406 0 0 0-4.154 5.262v1.8C1.867 13.018 0 13.614 0 14.807 0 15.4 0 16 .538 16h12.924C14 16 14 15.4 14 14.807c0-1.193-1.867-1.789-1.867-4.175ZM3.823 17a3.453 3.453 0 0 0 6.354 0H3.823Z"/>
 					</svg>
 				</button>
 				<!-- Dropdown menu -->
@@ -426,13 +422,14 @@ import AgentHealth from '../commonComponents/AgentHealth';
 					class="z-20 z-50 hidden max-w-sm my-4 overflow-hidden text-base list-none bg-white divide-y divide-gray-100 rounded shadow-lg dark:bg-gray-700 dark:divide-gray-600"
 					id="apps-dropdown"
 				>
-					<div
+
+					<!--div
 						class="block px-4 py-2 text-base font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
 					>
 						Apps
-					</div>
-					<div class="grid grid-cols-3 gap-4 p-4">
-						<!-- <a
+					</div-->
+					<!--div class="grid grid-cols-3 gap-4 p-4">
+						< <a
 							href="#"
 							class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
 						>
@@ -449,8 +446,9 @@ import AgentHealth from '../commonComponents/AgentHealth';
 							<div class="text-sm font-medium text-gray-900 dark:text-white">
 								Sales
 							</div>
-						</a> -->
-						<a
+						</a>-->
+
+						<!--a
 							href={pathRoutes.users.invitations}
 							class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
 						>
@@ -490,7 +488,7 @@ import AgentHealth from '../commonComponents/AgentHealth';
 							<div class="text-sm font-medium text-gray-900 dark:text-white">
 								Users
 							</div>
-						</a>
+						</a-->
 						<!-- <a
 							href="#"
 							class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
@@ -509,7 +507,7 @@ import AgentHealth from '../commonComponents/AgentHealth';
 								Inbox
 							</div>
 						</a> -->
-						<a
+						<!--a
 							href={pathRoutes.users.profile}
 							class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
 						>
@@ -526,7 +524,7 @@ import AgentHealth from '../commonComponents/AgentHealth';
 							<div class="text-sm font-medium text-gray-900 dark:text-white">
 								Profile
 							</div>
-						</a>
+						</a-->
 						<!-- <a
 							href="#"
 							class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
@@ -633,8 +631,8 @@ throw new Error('Function not implemented.');
 							<div class="text-sm font-medium text-gray-900 dark:text-white">
 								Logout
 							</div>
-						</a> -->
-					</div>
+						</a> >
+					</div-->
 				</div>
 
 				<ColorModeSwitcher />
@@ -664,13 +662,13 @@ throw new Error('Function not implemented.');
 					>
 						<DisplayUser client:visible />
 						<ul class="py-1" role="none">
-							<li>
+							<!--li>
 								<a
 									href={pathRoutes.users.dashboard}
 									class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
 									role="menuitem">Dashboard</a
 								>
-							</li>
+							</li-->
 							<!-- <li>
 								<a
 									href="/settings"
