@@ -45,6 +45,8 @@ const SignUpUserName = () => {
 			firstName: values.firstName,
 			lastName: values.lastName
 		})
+
+		setContinuePasswordFlag(true)
 	}
 
 	return (
