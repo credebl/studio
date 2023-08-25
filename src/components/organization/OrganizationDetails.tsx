@@ -47,7 +47,7 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
                         <ul className="divide-y divide-gray-200 dark:divide-gray-700">
 
                             <li className="py-4">
-                                <div className="flex items-center space-x-4">
+                                <div className="flex items-center space-x-8">
 
                                     <div className="inline-flex min-w-0">
                                         <p
