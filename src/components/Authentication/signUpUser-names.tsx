@@ -2,17 +2,13 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import * as yup from 'yup';
 
-import { Alert, Button, Label } from 'flowbite-react';
+import { Button, Label } from 'flowbite-react';
 import {
 	Field,
 	Form,
 	Formik
 } from 'formik';
-import { sendVerificationMail } from '../../api/Auth.js';
-import { apiStatusCodes } from '../../config/CommonConstant.js';
-
-import type { AxiosError, AxiosResponse } from 'axios';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import SignUpUser3 from './signUpUser-passkey.js';
 import React from 'react';
 
@@ -21,47 +17,21 @@ interface nameValues {
 	lastName: string;
 }
 
-interface emailValue {
-	email: string;
-}
-interface passwordValues {
-
-	password: string,
-	confirmPassword: string
-}
-
 const SignUpUser2 = () => {
 
-	const [verifyLoader, setVerifyLoader] = useState<boolean>(false)
-	const [erroMsg, setErrMsg] = useState<string | null>(null)
-	const [verificationSuccess, setVerificationSuccess] = useState<string>('')
-	const [enableName, setEnableName] = useState<boolean>(false)
-	const [continuePasswordFlag, setContinuePasswordFlag] = useState<boolean>(false)
 	const [userDetails, setUserDetails] = useState<nameValues>({
 		firstName: '',
 		lastName: ''
 	})
-	const [emailAutoFill, setEmailAutoFill] = useState<string>('')
-	const [fidoError, setFidoError] = useState("")
 	const [currentComponent, setCurrentComponent] = useState<string>('email');
 
 
-	useEffect(() => {
-
-		if (window?.location?.search.length > 7) {
-			setEmailAutoFill(window?.location?.search.split('=')[1])
-		}
-	}, [])
-
 
 	const setNameValue = (values: nameValues) => {
-		console.log('values::', values)
 		setUserDetails({
 			firstName: values.firstName,
 			lastName: values.lastName
 		})
-		setContinuePasswordFlag(true)
-		setEnableName(false)
 	}
 
 	return (
@@ -98,20 +68,6 @@ const SignUpUser2 = () => {
 						</div>
 						<div className="flex items-center justify-center p-6 sm:p-12 md:w-2/5 shadow-xl shadow-blue-700">
 							<div className="w-full" style={{ height: '700px' }}>
-								{
-									(verificationSuccess || erroMsg) &&
-									<Alert
-										color={verificationSuccess ? "success" : "failure"}
-										onDismiss={() => setErrMsg(null)}
-									>
-										<span>
-											<p>
-												{verificationSuccess || erroMsg}
-											</p>
-										</span>
-									</Alert>
-								}
-
 								<div className='mt-28 mb-28'>
 
 									<div className="flex justify-center mb-4 text-center text-primary-700 text-blue-600 font-inter text-4xl font-bold leading-10 ">
@@ -189,9 +145,10 @@ const SignUpUser2 = () => {
 														}
 													</div>
 
-													<div className="text-lg flex justify-end font-medium text-gray-500 dark:text-gray-400 text-primary-700 hover:underline dark:text-primary-500 cursor-pointer ml-auto pt-5"
-														onClick={() => setCurrentComponent('password')}>
-														{`Skip`}
+													<div className="text-lg flex justify-end font-medium text-gray-500 dark:text-gray-400 text-primary-700 dark:text-primary-500  ml-auto pt-5">
+														<span className="hover:underline cursor-pointer" onClick={() => setCurrentComponent('password')}>
+															{`Skip`}
+														</span>
 													</div>
 
 													<div className="flex justify-between mt-20">
