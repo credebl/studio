@@ -181,7 +181,7 @@ const SendInvitationModal = (props: { openModal: boolean; setMessage: (message: 
 
                                 <div className="w-1/3">
                                     <Button type="submit"
-                                        className='mt-2 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
+                                        className='mt-2 ml-4 text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
                                     ><svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
                                             <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
                                         </svg>
@@ -255,8 +255,11 @@ const SendInvitationModal = (props: { openModal: boolean; setMessage: (message: 
                             onClick={sendInvitations}
                             disabled={invitations.length === 0}
                             isProcessing={loading}
-                            className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
-                        >
+                            className='text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+                        ><svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="none" viewBox="0 0 30 30">
+												<path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12.201 17.792 28.546 1.454m-15.88 17.073 3.706 7.413c.896 1.79 1.344 2.687 1.908 2.927.49.208 1.05.17 1.506-.102.527-.314.85-1.261 1.498-3.157l7.003-20.507c.564-1.652.845-2.477.652-3.024a1.668 1.668 0 0 0-1.016-1.016c-.547-.193-1.372.089-3.024.652L4.391 8.716c-1.895.647-2.843.97-3.156 1.498a1.667 1.667 0 0 0-.102 1.506c.24.564 1.136 1.012 2.927 1.908l7.413 3.706c.295.148.443.221.57.32.114.087.216.19.303.302.099.128.172.276.32.571Z"/>
+											</svg>
+											
                             Send
                         </Button>
                     </div>

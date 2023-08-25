@@ -12,6 +12,7 @@ export const apiRoutes = {
     users:{
         invitations: '/users/invitations',
         fetchUsers: '/users',
+        update: '/users',
         recentActivity: '/users/activity',
     },
     organizations: {
@@ -34,7 +35,8 @@ export const apiRoutes = {
         getAll: '/schemas',
         getSchemaById:'/schemas/id',
         createCredentialDefinition: '/credential-definitions',
-        getCredDeffBySchemaId: '/schemas/credential-definitions'
+        getCredDeffBySchemaId: '/schemas/credential-definitions',
+        getAllSchemaFromPlatform: `/schemas/platform`
     },
     fido: {
         generateRegistration: 'fido/generate-registration-options',
@@ -57,6 +59,9 @@ export const apiRoutes = {
 			getAllRequestList: '/proofs',
 			verifyCredential:'/proofs/request-proof',
             presentationVerification:'/proofs/verify-presentation'
+		},
+        Agent:{
+			checkAgentHealth: '/agent-service/health',
 		}
 
 }

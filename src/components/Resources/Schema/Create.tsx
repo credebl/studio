@@ -23,7 +23,7 @@ interface Values {
 const options = [
 	{ value: 'string', label: 'String' },
 	{ value: 'number', label: 'Number' },
-	{ value: 'boolean', label: 'Boolean' },
+	{ value: 'date', label: 'Date' },
 ];
 
 const CreateSchema = () => {
@@ -117,6 +117,12 @@ const CreateSchema = () => {
 							validateOnChange
 							enableReinitialize
 							onSubmit={async (values): Promise<void> => {
+								values.attribute.forEach((element: any) => {
+									if (!element.schemaDataType) {
+											element.schemaDataType = 'string';
+									}
+							});
+							
 								const updatedAttribute: Array<Number> = [];
 								values.attribute.forEach((element) => {
 									updatedAttribute.push(Number(element));
