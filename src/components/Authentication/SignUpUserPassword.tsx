@@ -17,8 +17,9 @@ import { startRegistration } from '@simplewebauthn/browser';
 import type { IdeviceBody, RegistrationOptionInterface } from '../Profile/interfaces/index.js';
 import secureRandomPassword from 'secure-random-password';
 import React from 'react';
-import SignInUser3 from './SignInUser-password.js';
-import SignUpUser3 from './signUpUser-passkey.js';
+import secureRandomPassword from 'secure-random-password';
+import { startRegistration } from '@simplewebauthn/browser';
+import SignUpUserPasskey from './SignUpUserPasskey'
 
 interface nameValues {
     firstName: string;
@@ -37,7 +38,7 @@ interface passwordValues {
 }
 
 
-const SignUpUser4 = () => {
+const SignUpUserPassword = ({ firstName, lastName }: { firstName: string; lastName: string }) => {
 
     const [loading, setLoading] = useState<boolean>(false)
     const [erroMsg, setErrMsg] = useState<string | null>(null)
@@ -411,9 +412,12 @@ const SignUpUser4 = () => {
             </div> )}
 
             {currentComponent === true && (
-            <SignUpUser3 />
-        )}        </div>
+                <SignUpUserPasskey
+                firstName={firstName}
+                lastName={lastName}
+                />
+            )}        </div>
     );
 };
 
-export default SignUpUser4;
+export default SignUpUserPassword;

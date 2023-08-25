@@ -5,7 +5,9 @@ import { addPasswordDetails, checkUserExist, getFromLocalStorage, passwordEncryp
 import { apiStatusCodes, passwordRegex, storageKeys } from '../../config/CommonConstant.js';
 import type { AxiosError, AxiosResponse } from 'axios';
 import { useEffect, useState } from 'react';
-import { addDeviceDetails, generateRegistrationOption, verifyRegistration } from '../../api/Fido.js';
+
+import SignUpUserPassword from './SignUpUserPassword.jsx';
+import secureRandomPassword from 'secure-random-password';
 import { startRegistration } from '@simplewebauthn/browser';
 import type { IdeviceBody, RegistrationOptionInterface } from '../Profile/interfaces/index.js';
 import secureRandomPassword from 'secure-random-password';
@@ -26,7 +28,7 @@ interface emailValue {
 }
 
 
-const SignUpUser3 = () => {
+const SignUpUserPasskey = ({firstName, lastName}: {firstName: string; lastName: string}) => {
 
     const [loading, setLoading] = useState<boolean>(false)
     const [erroMsg, setErrMsg] = useState<string | null>(null)
@@ -44,8 +46,6 @@ const SignUpUser3 = () => {
     const [showSignUpUser, setShowSignUpUser] = useState(true);
     const [showSignUpUser4, setShowSignUpUser4] = useState(false);
     const [currentComponent, setCurrentComponent] = useState<string>('email');
-
-
 
 
     useEffect(() => {
@@ -134,7 +134,6 @@ const SignUpUser3 = () => {
             const verificationRegisterResp = await verifyRegistration(verifyRegistrationObj, OrgUserEmail)
             const { data } = verificationRegisterResp as AxiosResponse
 
-            console.log('data::', data)
             const credentialID = data?.data?.newDevice?.credentialID
             if (data?.data?.verified) {
                 let platformDeviceName = ''
@@ -151,7 +150,6 @@ const SignUpUser3 = () => {
                     deviceFriendlyName: platformDeviceName
 
                 }
-                console.log('deviceBody::', deviceBody)
                 await addDeviceDetailsMethod(deviceBody)
             }
         } catch (error) {
@@ -324,11 +322,14 @@ const SignUpUser3 = () => {
 
             {
                 currentComponent === 'password' && (
-                    <SignUpUser4 />
+                    <SignUpUserPassword 
+                    firstName={firstName}
+                    lastName={lastName}
+                    />
                 )
             }
         </div>
     );
 };
 
-export default SignUpUser3;
+export default SignUpUserPasskey;

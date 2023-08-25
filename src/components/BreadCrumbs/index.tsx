@@ -15,7 +15,6 @@ export default function BreadCrumbs() {
     const [breadcrumbList, setBreadcrumbs] = useState<BreadCrumbI[]>([]) 
 
     useEffect(() => {
-    console.log(window.location.pathname);
 
         const pathUrl = window.location.pathname
        const asPathNestedRoutes = pathUrl

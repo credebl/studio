@@ -16,9 +16,26 @@ import { apiStatusCodes, passwordRegex } from '../../config/CommonConstant.js';
 import { asset, url } from '../../lib/data.js';
 import { useEffect, useState } from 'react';
 
+import React from 'react';
 import secureRandomPassword from 'secure-random-password';
 import { startRegistration } from '@simplewebauthn/browser';
-import { supabase } from '../../supabase.js';
+import SignUpUserName from './SignUpUserName'
+
+interface emailValue {
+	email: string;
+}
+
+interface passwordValues {
+
+	password: string,
+	confirmPassword: string
+}
+
+interface nameValues {
+	firstName: string;
+	lastName: string;
+}
+
 
 const SignUpUser = () => {
 
@@ -241,9 +258,8 @@ const SignUpUser = () => {
 	}
 
 	const redirectLandingPage = () => {
-        window.location.href = '/'
-    }
-console.log("nextflag::::::", nextflag)
+		window.location.href = '/'
+	}
 	return (
 		<div className=''>
 
@@ -493,7 +509,7 @@ console.log("nextflag::::::", nextflag)
 			}
 			{
 				nextflag && (
-					<SignUpUser2/>
+					<SignUpUserName />
 				)
 			}
 
