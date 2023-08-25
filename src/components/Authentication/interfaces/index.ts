@@ -1,13 +1,13 @@
-interface passwordValues {
+export interface passwordValues {
 
 	password: string,
 	confirmPassword: string
 }
 
-interface emailValue {
+export interface emailValue {
 	email: string;
 }
-interface nameValues {
+export interface nameValues {
 	firstName: string;
 	lastName: string;
 }
