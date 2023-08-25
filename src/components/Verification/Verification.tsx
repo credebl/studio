@@ -54,7 +54,7 @@ const VerificationCred = () => {
 				const schemaAttributes = await getFromLocalStorage(storageKeys.SCHEMA_ATTR)
 				const parsedSchemaDetails = JSON.parse(schemaAttributes) || [];
 				const attributes = parsedSchemaDetails.attribute.map((ele: any) => {
-					const attributes = ele ? ele : 'Not available';
+					const attributes = ele.attributeName ? ele.attributeName : 'Not available';
 					return {
 						data: [
 							{
@@ -259,7 +259,7 @@ const VerificationCred = () => {
 					Request Proof
 				</Button>
 
-			</div>
+			</div> 
 		</>
 
 	)

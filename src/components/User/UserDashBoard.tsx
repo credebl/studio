@@ -167,7 +167,7 @@ const UserDashBoard = () => {
 					</div>
 
 				</div>
-				<div
+				{/* <div
 					className="justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
 				>
 					<div className="w-full">
@@ -178,8 +178,8 @@ const UserDashBoard = () => {
 							className="w-100 mt-8 text-center p-2 text-xl font-medium rounded-lg text-primary-700 dark:text-primary-500 dark:hover:bg-gray-700"
 						>Coming Soon..</h1>
 					</div>
-
-				</div>
+						
+				</div> */}
 				<div
 					className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800"
 				>

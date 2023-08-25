@@ -137,7 +137,7 @@ const WalletSpinup = (props: {
 
 	SOCKET.on('did-publish-process-completed', (data) => {
 		console.log(`did-publish-process-completed`, JSON.stringify(data));
-			setWalletSpinStep(4);
+		setWalletSpinStep(4);
 	});
 
 	SOCKET.on('invitation-url-creation-started', (data) => {
@@ -474,7 +474,7 @@ const WalletSteps = (props: { steps: number; agentSpinupCall: boolean }) => {
 						<span className="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -left-4 ring-4 ring-white dark:ring-gray-900 dark:bg-gray-700"></span>
 					)}
 					<h3 className="font-medium leading-tight">
-						Agent spinup process initiated
+						Getting your SSI agent up and running...
 					</h3>
 					<p className="text-sm">Step details here</p>
 				</li>
@@ -520,7 +520,7 @@ const WalletSteps = (props: { steps: number; agentSpinupCall: boolean }) => {
 						<span className="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -left-4 ring-4 ring-white dark:ring-gray-900 dark:bg-gray-700"></span>
 					)}
 					<h3 className="font-medium leading-tight">
-						Agent spinup process completed
+						SSI Agent is now ready to go!
 					</h3>
 					<p className="text-sm">Step details here</p>
 				</li>
@@ -566,7 +566,7 @@ const WalletSteps = (props: { steps: number; agentSpinupCall: boolean }) => {
 						<span className="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -left-4 ring-4 ring-white dark:ring-gray-900 dark:bg-gray-700"></span>
 					)}
 					<h3 className="font-medium leading-tight">
-						Did publish process initiated
+						Starting the DID publishing process...
 					</h3>
 					<p className="text-sm">Step details here</p>
 				</li>
@@ -612,7 +612,7 @@ const WalletSteps = (props: { steps: number; agentSpinupCall: boolean }) => {
 						<span className="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -left-4 ring-4 ring-white dark:ring-gray-900 dark:bg-gray-700"></span>
 					)}
 					<h3 className="font-medium leading-tight">
-						Did publish process completed
+						DID Publishing process is all done!
 					</h3>
 					<p className="text-sm">Step details here</p>
 				</li>
@@ -658,7 +658,7 @@ const WalletSteps = (props: { steps: number; agentSpinupCall: boolean }) => {
 						<span className="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -left-4 ring-4 ring-white dark:ring-gray-900 dark:bg-gray-700"></span>
 					)}
 					<h3 className="font-medium leading-tight">
-						Invitation url creation started
+						Creating an invitation URL...
 					</h3>
 					<p className="text-sm">Step details here</p>
 				</li>
@@ -704,7 +704,7 @@ const WalletSteps = (props: { steps: number; agentSpinupCall: boolean }) => {
 						<span className="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -left-4 ring-4 ring-white dark:ring-gray-900 dark:bg-gray-700"></span>
 					)}
 					<h3 className="font-medium leading-tight">
-						Invitation url creation success
+						Invitation URL successfully created!
 					</h3>
 					<p className="text-sm">Step details here</p>
 				</li>

@@ -2,79 +2,128 @@
 /* eslint max-lines: 'off' */
 
 import { asset } from '../lib/data.js';
-
 import ColorModeSwitcher from '../components/ColorModeSwitcher.astro';
-import OrgDropDwon from '../components/organization/OrgDropDown'
-import DisplayUser from '../components/Profile/DisplayUser'
+import OrgDropDwon from '../components/organization/OrgDropDown';
+import DisplayUser from '../components/Profile/DisplayUser';
 import { pathRoutes } from '../config/pathRoutes.js';
-import SignOutButton  from '../components/SignOutButton/index'
+import SignOutButton from '../components/SignOutButton/index';
+import AgentHealth from '../commonComponents/AgentHealth';
 
 ---
 
-<nav class="fixed z-30 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+<nav
+	class="fixed z-30 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+>
 	<div class="px-3 py-3 lg:px-5 lg:pl-3">
 		<div class="flex items-center justify-between">
 			<div class="flex items-center justify-start">
-				<button id="toggleSidebarMobile" aria-expanded="true" aria-controls="sidebar"
-					class="p-2 text-gray-600 rounded cursor-pointer lg:hidden hover:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-700 focus:ring-2 focus:ring-gray-100 dark:focus:ring-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-					<svg id="toggleSidebarMobileHamburger" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"
-						xmlns="http://www.w3.org/2000/svg">
-						<path fill-rule="evenodd"
+				<button
+					id="toggleSidebarMobile"
+					aria-expanded="true"
+					aria-controls="sidebar"
+					class="p-2 text-gray-600 rounded cursor-pointer lg:hidden hover:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-700 focus:ring-2 focus:ring-gray-100 dark:focus:ring-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+				>
+					<svg
+						id="toggleSidebarMobileHamburger"
+						class="w-6 h-6"
+						fill="currentColor"
+						viewBox="0 0 20 20"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<path
+							fill-rule="evenodd"
 							d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
 							clip-rule="evenodd"></path>
 					</svg>
-					<svg id="toggleSidebarMobileClose" class="hidden w-6 h-6" fill="currentColor" viewBox="0 0 20 20"
-						xmlns="http://www.w3.org/2000/svg">
-						<path fill-rule="evenodd"
+					<svg
+						id="toggleSidebarMobileClose"
+						class="hidden w-6 h-6"
+						fill="currentColor"
+						viewBox="0 0 20 20"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<path
+							fill-rule="evenodd"
 							d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
 							clip-rule="evenodd"></path>
 					</svg>
 				</button>
 				<a href={pathRoutes.users.dashboard} class="flex ml-2 md:mr-24">
-					<img src="/images/CREDEBL_ICON.png" class="h-8 mr-3" alt="CREDEBL Logo" />
+					<img
+						src="/images/CREDEBL_ICON.png"
+						class="h-8 mr-3"
+						alt="CREDEBL Logo"
+					/>
 					<span
-						class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">CREDEBL</span>
+						class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white"
+						>CREDEBL</span
+					>
 				</a>
-
 			</div>
 
 			<div class="flex items-center">
+				<AgentHealth client:visible />
 				<div class="hidden sm:block mr-5">
 					<OrgDropDwon client:visible />
 				</div>
 
 				<!-- Search mobile -->
-				<button id="toggleSidebarMobileSearch" type="button"
-					class="p-2 text-gray-500 rounded-lg lg:hidden hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+				<button
+					id="toggleSidebarMobileSearch"
+					type="button"
+					class="p-2 text-gray-500 rounded-lg lg:hidden hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+				>
 					<span class="sr-only">Search</span>
 					<!-- Search icon -->
-					<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-						<path fill-rule="evenodd"
+					<svg
+						class="w-6 h-6"
+						fill="currentColor"
+						viewBox="0 0 20 20"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<path
+							fill-rule="evenodd"
 							d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
 							clip-rule="evenodd"></path>
 					</svg>
 				</button>
 				<!-- Dropdown menu -->
-				<div id="dropdownNavbar"
-					class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
-					<ul class="py-2 text-sm text-gray-700 dark:text-gray-400" aria-labelledby="dropdownNavbarButton">
+				<div
+					id="dropdownNavbar"
+					class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
+				>
+					<ul
+						class="py-2 text-sm text-gray-700 dark:text-gray-400"
+						aria-labelledby="dropdownNavbarButton"
+					>
 						<li>
-							<a href="#"
-								class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</a>
+							<a
+								href="#"
+								class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+								>Dashboard</a
+							>
 						</li>
 						<li>
-							<a href="#"
-								class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</a>
+							<a
+								href="#"
+								class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+								>Settings</a
+							>
 						</li>
 						<li>
-							<a href="#"
-								class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Earnings</a>
+							<a
+								href="#"
+								class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+								>Earnings</a
+							>
 						</li>
 					</ul>
 					<div class="py-2">
-						<a href="#"
-							class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white">Sign
-							out</a>
+						<a
+							href="#"
+							class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white"
+							>Sign out</a
+						>
 					</div>
 				</div>
 
@@ -85,8 +134,8 @@ import SignOutButton  from '../components/SignOutButton/index'
 					class="p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700"
 				>
 					<span class="sr-only">View notifications</span> -->
-					<!-- Bell icon -->
-					<!-- <svg
+				<!-- Bell icon -->
+				<!-- <svg
 						class="w-6 h-6"
 						fill="currentColor"
 						viewBox="0 0 20 20"
@@ -97,153 +146,252 @@ import SignOutButton  from '../components/SignOutButton/index'
 					>
 				</button> -->
 				<!-- Dropdown menu -->
-				<div class="z-20 z-50 hidden max-w-sm my-4 overflow-hidden text-base list-none bg-white divide-y divide-gray-100 rounded shadow-lg dark:divide-gray-600 dark:bg-gray-700"
-					id="notification-dropdown">
+				<div
+					class="z-20 z-50 hidden max-w-sm my-4 overflow-hidden text-base list-none bg-white divide-y divide-gray-100 rounded shadow-lg dark:divide-gray-600 dark:bg-gray-700"
+					id="notification-dropdown"
+				>
 					<div
-						class="block px-4 py-2 text-base font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+						class="block px-4 py-2 text-base font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+					>
 						Notifications
 					</div>
 					<div>
-						<a href="#"
-							class="flex px-4 py-3 border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:border-gray-600">
+						<a
+							href="#"
+							class="flex px-4 py-3 border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:border-gray-600"
+						>
 							<div class="flex-shrink-0">
-								<img class="rounded-full w-11 h-11" src={asset('images/users/bonnie-green.png')}
-									alt="Jese image" />
+								<img
+									class="rounded-full w-11 h-11"
+									src={asset('images/users/bonnie-green.png')}
+									alt="Jese image"
+								/>
 								<div
-									class="absolute flex items-center justify-center w-5 h-5 ml-6 -mt-5 border border-white rounded-full bg-primary-700 dark:border-gray-700">
-									<svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"
-										xmlns="http://www.w3.org/2000/svg">
+									class="absolute flex items-center justify-center w-5 h-5 ml-6 -mt-5 border border-white rounded-full bg-primary-700 dark:border-gray-700"
+								>
+									<svg
+										class="w-3 h-3 text-white"
+										fill="currentColor"
+										viewBox="0 0 20 20"
+										xmlns="http://www.w3.org/2000/svg"
+									>
 										<path
-											d="M8.707 7.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l2-2a1 1 0 00-1.414-1.414L11 7.586V3a1 1 0 10-2 0v4.586l-.293-.293z">
+											d="M8.707 7.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l2-2a1 1 0 00-1.414-1.414L11 7.586V3a1 1 0 10-2 0v4.586l-.293-.293z"
+										>
 										</path>
 										<path
-											d="M3 5a2 2 0 012-2h1a1 1 0 010 2H5v7h2l1 2h4l1-2h2V5h-1a1 1 0 110-2h1a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5z">
+											d="M3 5a2 2 0 012-2h1a1 1 0 010 2H5v7h2l1 2h4l1-2h2V5h-1a1 1 0 110-2h1a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"
+										>
 										</path>
 									</svg>
 								</div>
 							</div>
 							<div class="w-full pl-3">
-								<div class="text-gray-500 font-normal text-sm mb-1.5 dark:text-gray-400">
-									New message from <span class="font-semibold text-gray-900 dark:text-white">Bonnie
-										Green</span>: "Hey, what's up? All set for the presentation?"
+								<div
+									class="text-gray-500 font-normal text-sm mb-1.5 dark:text-gray-400"
+								>
+									New message from <span
+										class="font-semibold text-gray-900 dark:text-white"
+										>Bonnie Green</span
+									>: "Hey, what's up? All set for the presentation?"
 								</div>
-								<div class="text-xs font-medium text-primary-700 dark:text-primary-400">
+								<div
+									class="text-xs font-medium text-primary-700 dark:text-primary-400"
+								>
 									a few moments ago
 								</div>
 							</div>
 						</a>
-						<a href="#"
-							class="flex px-4 py-3 border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:border-gray-600">
+						<a
+							href="#"
+							class="flex px-4 py-3 border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:border-gray-600"
+						>
 							<div class="flex-shrink-0">
-								<img class="rounded-full w-11 h-11" src={asset('images/users/jese-leos.png')}
-									alt="Jese image" />
+								<img
+									class="rounded-full w-11 h-11"
+									src={asset('images/users/jese-leos.png')}
+									alt="Jese image"
+								/>
 								<div
-									class="absolute flex items-center justify-center w-5 h-5 ml-6 -mt-5 bg-gray-900 border border-white rounded-full dark:border-gray-700">
-									<svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"
-										xmlns="http://www.w3.org/2000/svg">
+									class="absolute flex items-center justify-center w-5 h-5 ml-6 -mt-5 bg-gray-900 border border-white rounded-full dark:border-gray-700"
+								>
+									<svg
+										class="w-3 h-3 text-white"
+										fill="currentColor"
+										viewBox="0 0 20 20"
+										xmlns="http://www.w3.org/2000/svg"
+									>
 										<path
-											d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z">
+											d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"
+										>
 										</path>
 									</svg>
 								</div>
 							</div>
 							<div class="w-full pl-3">
-								<div class="text-gray-500 font-normal text-sm mb-1.5 dark:text-gray-400">
-									<span class="font-semibold text-gray-900 dark:text-white">Jese leos</span> and <span
-										class="font-medium text-gray-900 dark:text-white">5 others</span> started
-									following you.
+								<div
+									class="text-gray-500 font-normal text-sm mb-1.5 dark:text-gray-400"
+								>
+									<span class="font-semibold text-gray-900 dark:text-white"
+										>Jese leos</span
+									> and <span class="font-medium text-gray-900 dark:text-white"
+										>5 others</span
+									> started following you.
 								</div>
-								<div class="text-xs font-medium text-primary-700 dark:text-primary-400">
+								<div
+									class="text-xs font-medium text-primary-700 dark:text-primary-400"
+								>
 									10 minutes ago
 								</div>
 							</div>
 						</a>
-						<a href="#"
-							class="flex px-4 py-3 border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:border-gray-600">
+						<a
+							href="#"
+							class="flex px-4 py-3 border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:border-gray-600"
+						>
 							<div class="flex-shrink-0">
-								<img class="rounded-full w-11 h-11" src={asset('images/users/joseph-mcfall.png')}
-									alt="Joseph image" />
+								<img
+									class="rounded-full w-11 h-11"
+									src={asset('images/users/joseph-mcfall.png')}
+									alt="Joseph image"
+								/>
 								<div
-									class="absolute flex items-center justify-center w-5 h-5 ml-6 -mt-5 bg-red-600 border border-white rounded-full dark:border-gray-700">
-									<svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"
-										xmlns="http://www.w3.org/2000/svg">
-										<path fill-rule="evenodd"
+									class="absolute flex items-center justify-center w-5 h-5 ml-6 -mt-5 bg-red-600 border border-white rounded-full dark:border-gray-700"
+								>
+									<svg
+										class="w-3 h-3 text-white"
+										fill="currentColor"
+										viewBox="0 0 20 20"
+										xmlns="http://www.w3.org/2000/svg"
+									>
+										<path
+											fill-rule="evenodd"
 											d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
 											clip-rule="evenodd"></path>
 									</svg>
 								</div>
 							</div>
 							<div class="w-full pl-3">
-								<div class="text-gray-500 font-normal text-sm mb-1.5 dark:text-gray-400">
-									<span class="font-semibold text-gray-900 dark:text-white">Joseph Mcfall</span> and
-									<span class="font-medium text-gray-900 dark:text-white">141 others</span> love your
-									story. See it and view more stories.
+								<div
+									class="text-gray-500 font-normal text-sm mb-1.5 dark:text-gray-400"
+								>
+									<span class="font-semibold text-gray-900 dark:text-white"
+										>Joseph Mcfall</span
+									> and
+									<span class="font-medium text-gray-900 dark:text-white"
+										>141 others</span
+									> love your story. See it and view more stories.
 								</div>
-								<div class="text-xs font-medium text-primary-700 dark:text-primary-400">
+								<div
+									class="text-xs font-medium text-primary-700 dark:text-primary-400"
+								>
 									44 minutes ago
 								</div>
 							</div>
 						</a>
-						<a href="#"
-							class="flex px-4 py-3 border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:border-gray-600">
+						<a
+							href="#"
+							class="flex px-4 py-3 border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:border-gray-600"
+						>
 							<div class="flex-shrink-0">
-								<img class="rounded-full w-11 h-11" src={asset('images/users/leslie-livingston.png')}
-									alt="Leslie image" />
+								<img
+									class="rounded-full w-11 h-11"
+									src={asset('images/users/leslie-livingston.png')}
+									alt="Leslie image"
+								/>
 								<div
-									class="absolute flex items-center justify-center w-5 h-5 ml-6 -mt-5 bg-green-400 border border-white rounded-full dark:border-gray-700">
-									<svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"
-										xmlns="http://www.w3.org/2000/svg">
-										<path fill-rule="evenodd"
+									class="absolute flex items-center justify-center w-5 h-5 ml-6 -mt-5 bg-green-400 border border-white rounded-full dark:border-gray-700"
+								>
+									<svg
+										class="w-3 h-3 text-white"
+										fill="currentColor"
+										viewBox="0 0 20 20"
+										xmlns="http://www.w3.org/2000/svg"
+									>
+										<path
+											fill-rule="evenodd"
 											d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z"
 											clip-rule="evenodd"></path>
 									</svg>
 								</div>
 							</div>
 							<div class="w-full pl-3">
-								<div class="text-gray-500 font-normal text-sm mb-1.5 dark:text-gray-400">
-									<span class="font-semibold text-gray-900 dark:text-white">Leslie Livingston</span>
+								<div
+									class="text-gray-500 font-normal text-sm mb-1.5 dark:text-gray-400"
+								>
+									<span class="font-semibold text-gray-900 dark:text-white"
+										>Leslie Livingston</span
+									>
 									mentioned you in a comment: <span
-										class="font-medium text-primary-700 dark:text-primary-500">@bonnie.green</span>
+										class="font-medium text-primary-700 dark:text-primary-500"
+										>@bonnie.green</span
+									>
 									what do you say?
 								</div>
-								<div class="text-xs font-medium text-primary-700 dark:text-primary-400">
+								<div
+									class="text-xs font-medium text-primary-700 dark:text-primary-400"
+								>
 									1 hour ago
 								</div>
 							</div>
 						</a>
-						<a href="#" class="flex px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-600">
+						<a
+							href="#"
+							class="flex px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-600"
+						>
 							<div class="flex-shrink-0">
-								<img class="rounded-full w-11 h-11" src={asset('images/users/robert-brown.png')}
-									alt="Robert image" />
+								<img
+									class="rounded-full w-11 h-11"
+									src={asset('images/users/robert-brown.png')}
+									alt="Robert image"
+								/>
 								<div
-									class="absolute flex items-center justify-center w-5 h-5 ml-6 -mt-5 bg-purple-500 border border-white rounded-full dark:border-gray-700">
-									<svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"
-										xmlns="http://www.w3.org/2000/svg">
+									class="absolute flex items-center justify-center w-5 h-5 ml-6 -mt-5 bg-purple-500 border border-white rounded-full dark:border-gray-700"
+								>
+									<svg
+										class="w-3 h-3 text-white"
+										fill="currentColor"
+										viewBox="0 0 20 20"
+										xmlns="http://www.w3.org/2000/svg"
+									>
 										<path
-											d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z">
+											d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z"
+										>
 										</path>
 									</svg>
 								</div>
 							</div>
 							<div class="w-full pl-3">
-								<div class="text-gray-500 font-normal text-sm mb-1.5 dark:text-gray-400">
-									<span class="font-semibold text-gray-900 dark:text-white">Robert Brown</span> posted
-									a new video: Glassmorphism - learn how to implement the
+								<div
+									class="text-gray-500 font-normal text-sm mb-1.5 dark:text-gray-400"
+								>
+									<span class="font-semibold text-gray-900 dark:text-white"
+										>Robert Brown</span
+									> posted a new video: Glassmorphism - learn how to implement the
 									new design trend.
 								</div>
-								<div class="text-xs font-medium text-primary-700 dark:text-primary-400">
+								<div
+									class="text-xs font-medium text-primary-700 dark:text-primary-400"
+								>
 									3 hours ago
 								</div>
 							</div>
 						</a>
 					</div>
-					<a href="#"
-						class="block py-2 text-base font-normal text-center text-gray-900 bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:text-white dark:hover:underline">
+					<a
+						href="#"
+						class="block py-2 text-base font-normal text-center text-gray-900 bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:text-white dark:hover:underline"
+					>
 						<div class="inline-flex items-center">
-							<svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"
-								xmlns="http://www.w3.org/2000/svg">
+							<svg
+								class="w-5 h-5 mr-2"
+								fill="currentColor"
+								viewBox="0 0 20 20"
+								xmlns="http://www.w3.org/2000/svg"
+							>
 								<path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
-								<path fill-rule="evenodd"
+								<path
+									fill-rule="evenodd"
 									d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
 									clip-rule="evenodd"></path>
 							</svg>
@@ -252,25 +400,34 @@ import SignOutButton  from '../components/SignOutButton/index'
 					</a>
 				</div>
 				<!-- Apps -->
-				<button type="button" data-dropdown-toggle="apps-dropdown"
-					class="hidden p-2 text-gray-500 rounded-lg sm:flex hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700">
+				<button
+					type="button"
+					data-dropdown-toggle="apps-dropdown"
+					class="hidden p-2 text-gray-500 rounded-lg sm:flex hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700"
+				>
 					<span class="sr-only">View notifications</span>
 					<!-- Icon -->
-					<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-						<path
-							d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
-						</path>
+					<svg 
+						class="w-6 h-6 text-gray-800 dark:text-white" 
+						fill="currentColor" 
+						xmlns="http://www.w3.org/2000/svg" 
+						viewBox="0 0 14 20">
+						<path d="M12.133 10.632v-1.8A5.406 5.406 0 0 0 7.979 3.57.946.946 0 0 0 8 3.464V1.1a1 1 0 0 0-2 0v2.364a.946.946 0 0 0 .021.106 5.406 5.406 0 0 0-4.154 5.262v1.8C1.867 13.018 0 13.614 0 14.807 0 15.4 0 16 .538 16h12.924C14 16 14 15.4 14 14.807c0-1.193-1.867-1.789-1.867-4.175ZM3.823 17a3.453 3.453 0 0 0 6.354 0H3.823Z"/>
 					</svg>
 				</button>
 				<!-- Dropdown menu -->
-				<div class="z-20 z-50 hidden max-w-sm my-4 overflow-hidden text-base list-none bg-white divide-y divide-gray-100 rounded shadow-lg dark:bg-gray-700 dark:divide-gray-600"
-					id="apps-dropdown">
-					<div
-						class="block px-4 py-2 text-base font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+				<div
+					class="z-20 z-50 hidden max-w-sm my-4 overflow-hidden text-base list-none bg-white divide-y divide-gray-100 rounded shadow-lg dark:bg-gray-700 dark:divide-gray-600"
+					id="apps-dropdown"
+				>
+
+					<!--div
+						class="block px-4 py-2 text-base font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+					>
 						Apps
-					</div>
-					<div class="grid grid-cols-3 gap-4 p-4">
-						<!-- <a
+					</div-->
+					<!--div class="grid grid-cols-3 gap-4 p-4">
+						< <a
 							href="#"
 							class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
 						>
@@ -287,22 +444,32 @@ import SignOutButton  from '../components/SignOutButton/index'
 							<div class="text-sm font-medium text-gray-900 dark:text-white">
 								Sales
 							</div>
-						</a> -->
-						<a
-						href={pathRoutes.users.invitations}
-						class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
-					>
-								<svg
+						</a>-->
+
+						<!--a
+							href={pathRoutes.users.invitations}
+							class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
+						>
+							<svg
 								class="mx-auto mb-1 text-gray-500 w-7 h-7 dark:text-gray-400"
-								 xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-									<path d="M9.978 13.2329L19.37 6.56494C19.312 6.50191 19.2498 6.44278 19.184 6.38794L11.2 0.650939C10.8566 0.392942 10.4392 0.252371 10.0097 0.25003C9.58011 0.247688 9.16123 0.383702 8.815 0.637939L0.8 6.39994C0.726113 6.46135 0.65692 6.52821 0.593 6.59994L9.978 13.2329Z" fill="#6B7280"/>
-									<path d="M11.181 14.8639C10.8416 15.1166 10.4292 15.2521 10.006 15.2499C9.57095 15.2509 9.14735 15.1106 8.799 14.8499L0 8.62694V17.9999C0 18.5304 0.210714 19.0391 0.585786 19.4142C0.960859 19.7892 1.46957 19.9999 2 19.9999H18C18.5304 19.9999 19.0391 19.7892 19.4142 19.4142C19.7893 19.0391 20 18.5304 20 17.9999V8.57294L11.181 14.8639Z" fill="#6B7280"/>
-									</svg>
-						
-						<div class="text-sm font-medium text-gray-900 dark:text-white">
-							Invitations
-						</div>
-					</a>
+								xmlns="http://www.w3.org/2000/svg"
+								width="20"
+								height="20"
+								viewBox="0 0 20 20"
+								fill="none"
+							>
+								<path
+									d="M9.978 13.2329L19.37 6.56494C19.312 6.50191 19.2498 6.44278 19.184 6.38794L11.2 0.650939C10.8566 0.392942 10.4392 0.252371 10.0097 0.25003C9.58011 0.247688 9.16123 0.383702 8.815 0.637939L0.8 6.39994C0.726113 6.46135 0.65692 6.52821 0.593 6.59994L9.978 13.2329Z"
+									fill="#6B7280"></path>
+								<path
+									d="M11.181 14.8639C10.8416 15.1166 10.4292 15.2521 10.006 15.2499C9.57095 15.2509 9.14735 15.1106 8.799 14.8499L0 8.62694V17.9999C0 18.5304 0.210714 19.0391 0.585786 19.4142C0.960859 19.7892 1.46957 19.9999 2 19.9999H18C18.5304 19.9999 19.0391 19.7892 19.4142 19.4142C19.7893 19.0391 20 18.5304 20 17.9999V8.57294L11.181 14.8639Z"
+									fill="#6B7280"></path>
+							</svg>
+
+							<div class="text-sm font-medium text-gray-900 dark:text-white">
+								Invitations
+							</div>
+						</a>
 						<a
 							href="/organizations/users"
 							class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
@@ -319,7 +486,7 @@ import SignOutButton  from '../components/SignOutButton/index'
 							<div class="text-sm font-medium text-gray-900 dark:text-white">
 								Users
 							</div>
-						</a>
+						</a-->
 						<!-- <a
 							href="#"
 							class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
@@ -338,7 +505,7 @@ import SignOutButton  from '../components/SignOutButton/index'
 								Inbox
 							</div>
 						</a> -->
-						<a
+						<!--a
 							href={pathRoutes.users.profile}
 							class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
 						>
@@ -355,7 +522,7 @@ import SignOutButton  from '../components/SignOutButton/index'
 							<div class="text-sm font-medium text-gray-900 dark:text-white">
 								Profile
 							</div>
-						</a>
+						</a-->
 						<!-- <a
 							href="#"
 							class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
@@ -420,6 +587,18 @@ import SignOutButton  from '../components/SignOutButton/index'
 								class="mx-auto mb-1 text-gray-500 w-7 h-7 dark:text-gray-400"
 								fill="currentColor"
 								viewBox="0 0 20 20"
+
+function getFromLocalStorage(TOKEN: any) {
+throw new Error('Function not implemented.');
+}
+
+function axiosGet(details: { url: string; config: { headers: { 'Content-type': string; Authorization: string; }; }; }) {
+throw new Error('Function not implemented.');
+}
+
+function axiosGet(details: { url: string; config: { headers: { 'Content-type': string; Authorization: string; }; }; }) {
+throw new Error('Function not implemented.');
+}
 								xmlns="http://www.w3.org/2000/svg"
 								><path
 									fill-rule="evenodd"
@@ -450,8 +629,8 @@ import SignOutButton  from '../components/SignOutButton/index'
 							<div class="text-sm font-medium text-gray-900 dark:text-white">
 								Logout
 							</div>
-						</a> -->
-					</div>
+						</a> >
+					</div-->
 				</div>
 
 				<ColorModeSwitcher />
@@ -459,25 +638,35 @@ import SignOutButton  from '../components/SignOutButton/index'
 				<!-- Profile -->
 				<div class="flex items-center ml-3">
 					<div>
-						<button type="button"
+						<button
+							type="button"
 							class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
-							id="user-menu-button-2" aria-expanded="false" data-dropdown-toggle="dropdown-2">
+							id="user-menu-button-2"
+							aria-expanded="false"
+							data-dropdown-toggle="dropdown-2"
+						>
 							<span class="sr-only">Open user menu</span>
-							<img class="w-8 h-8 rounded-full"
-								src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" alt="user photo" />
+							<img
+								class="w-8 h-8 rounded-full"
+								src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
+								alt="user photo"
+							/>
 						</button>
 					</div>
 					<!-- Dropdown menu -->
-					<div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600"
-						id="dropdown-2">
-
+					<div
+						class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600"
+						id="dropdown-2"
+					>
 						<DisplayUser client:visible />
 						<ul class="py-1" role="none">
-							<li>
-								<a href={pathRoutes.users.dashboard}
+							<!--li>
+								<a
+									href={pathRoutes.users.dashboard}
 									class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-									role="menuitem">Dashboard</a>
-							</li>
+									role="menuitem">Dashboard</a
+								>
+							</li-->
 							<!-- <li>
 								<a
 									href="/settings"
@@ -486,9 +675,11 @@ import SignOutButton  from '../components/SignOutButton/index'
 								>
 							</li> -->
 							<li>
-								<a href={pathRoutes.users.profile}
+								<a
+									href={pathRoutes.users.profile}
 									class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-									role="menuitem">Profile</a>
+									role="menuitem">Profile</a
+								>
 							</li>
 							<!-- <li>
 								<a
@@ -498,7 +689,7 @@ import SignOutButton  from '../components/SignOutButton/index'
 								>
 							</li> -->
 							<li>
-							<SignOutButton client:load/>								
+								<SignOutButton client:load />
 							</li>
 						</ul>
 					</div>
