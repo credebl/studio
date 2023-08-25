@@ -29,7 +29,6 @@ const SignInUser = () => {
 	const [success, setSuccess] = useState<string | null>(null)
 	const [failure, setFailur] = useState<string | null>(null)
 	const [loading, setLoading] = useState<boolean>(false)
-	const [fidoLoader, setFidoLoader] = useState<boolean>(false)
 	const [currentComponent, setCurrentComponent] = useState<string>('email');
 	const [isEmailValid, setIsEmailValid] = useState(false);
 	const [isPasskeySuccess, setIsPasskeySuccess] = useState(false);
@@ -209,23 +208,13 @@ const SignInUser = () => {
 									)}
 								</Formik>
 
-
-
-								{/* </div> */}
-
 							</div>
 
 						</div>
 					</div>
 				</div> )
 
-				// </div>
 			}
-			{/* {
-				currentComponent === 'password' && (
-					<SignInUser2 email={email?.email as string} />
-				)
-			} */}
 
 		</div>
 	);

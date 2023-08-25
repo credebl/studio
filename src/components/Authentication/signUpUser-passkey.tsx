@@ -1,11 +1,6 @@
 import 'react-toastify/dist/ReactToastify.css';
 
-import { Alert, Button, Checkbox, Label, TextInput } from 'flowbite-react';
-import {
-    Field,
-    Form,
-    Formik
-} from 'formik';
+import { Alert, Button } from 'flowbite-react';
 import { addPasswordDetails, checkUserExist, getFromLocalStorage, passwordEncryption, sendVerificationMail } from '../../api/Auth.js';
 import { apiStatusCodes, passwordRegex, storageKeys } from '../../config/CommonConstant.js';
 import type { AxiosError, AxiosResponse } from 'axios';
@@ -16,33 +11,28 @@ import type { IdeviceBody, RegistrationOptionInterface } from '../Profile/interf
 import secureRandomPassword from 'secure-random-password';
 import React from 'react';
 import SignUpUser4 from './signUpUser-password.jsx';
-import SignUpUser2 from './signUpUser-names.js';
 
 interface nameValues {
-	firstName: string;
-	lastName: string;
+    firstName: string;
+    lastName: string;
 }
 interface passwordValues {
 
-	password: string,
-	confirmPassword: string
+    password: string,
+    confirmPassword: string
 }
 interface emailValue {
-	email: string;
+    email: string;
 }
 
 
-    const SignUpUser3 = () => {
+const SignUpUser3 = () => {
 
     const [loading, setLoading] = useState<boolean>(false)
-    const [verifyLoader, setVerifyLoader] = useState<boolean>(false)
     const [erroMsg, setErrMsg] = useState<string | null>(null)
     const [verificationSuccess, setVerificationSuccess] = useState<string>('')
-    const [email, setEmail] = useState<string>('')
-    const [nextflag, setNextFlag] = useState<boolean>(false)
     const [enableName, setEnableName] = useState<boolean>(false)
     const [continuePasswordFlag, setContinuePasswordFlag] = useState<boolean>(false)
-    const [enablePasswordField, setEnablePasswordField] = useState<boolean>(false)
     const [userDetails, setUserDetails] = useState<nameValues>({
         firstName: '',
         lastName: ''
@@ -51,9 +41,6 @@ interface emailValue {
     const [addfailure, setAddFailur] = useState<string | null>(null)
     const [emailAutoFill, setEmailAutoFill] = useState<string>('')
     const [fidoError, setFidoError] = useState("")
-    const [passwordVisible, setPasswordVisible] = useState(false);
-    const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
-    const [isEmailValid, setIsEmailValid] = useState(false);
     const [showSignUpUser, setShowSignUpUser] = useState(true);
     const [showSignUpUser4, setShowSignUpUser4] = useState(false);
     const [currentComponent, setCurrentComponent] = useState<string>('email');
@@ -105,62 +92,6 @@ interface emailValue {
         return userRsp;
     }
 
-    const VerifyMail = async (email: string) => {
-        try {
-            const payload = {
-                email: email
-            }
-            setVerifyLoader(true)
-            const userRsp = await sendVerificationMail(payload);
-            const { data } = userRsp as AxiosResponse;
-            if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-
-                setVerificationSuccess(data?.message)
-                setVerifyLoader(false)
-            } else {
-                setErrMsg(userRsp as string);
-                setVerifyLoader(false)
-            }
-            setTimeout(() => {
-                setVerificationSuccess('')
-                setErrMsg('')
-            }, 5000);
-            return data;
-        } catch (error) {
-            setErrMsg('An error occurred. Please try again later.');
-            setVerifyLoader(false)
-        }
-    };
-
-    //Save email
-    const ValidateEmail = async (values: emailValue) => {
-        setLoading(true)
-        const userRsp = await checkUserExist(values?.email)
-        const { data } = userRsp as AxiosResponse
-        setLoading(false)
-        if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-            if (data.data === 'New User') {
-                setEmail(values?.email)
-                await VerifyMail(values?.email)
-            }
-            else if (data.data.isEmailVerified === true && data?.data?.isKeycloak !== true) {
-                setEmail(values?.email)
-                setNextFlag(true)
-                setEnableName(true)
-            }
-        } else {
-            setErrMsg(userRsp as string)
-        }
-        setTimeout(() => {
-            setErrMsg('')
-        }, 5000);
-    }
-
-    // const createPasskey = async () => {
-
-    //     registerWithPasskey(true)
-
-    // }
 
     const registerWithPasskey = async (flag: boolean): Promise<void> => {
         try {
@@ -169,13 +100,12 @@ interface emailValue {
                 userName: userEmail,
                 deviceFlag: flag
             }
-            // Generate Registration Option
             const generateRegistrationResponse = await generateRegistrationOption(RegistrationOption)
             const { data } = generateRegistrationResponse as AxiosResponse
             if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
                 const opts = data?.data
                 const challangeId = data?.data?.challenge
-                
+
 
                 if (opts) {
                     opts.authenticatorSelection = {
@@ -219,7 +149,7 @@ interface emailValue {
                     userName: OrgUserEmail,
                     credentialId: credentialID,
                     deviceFriendlyName: platformDeviceName
-                    
+
                 }
                 console.log('deviceBody::', deviceBody)
                 await addDeviceDetailsMethod(deviceBody)
@@ -255,72 +185,57 @@ interface emailValue {
         }
     }
 
-    const setNameValue = (values: nameValues) => {
-        setUserDetails({
-            firstName: values.firstName,
-            lastName: values.lastName
-        })
-        setContinuePasswordFlag(true)
-        setEnableName(false)
-    }
-
-    const handlePasswordButtonClick = () => {
-        setShowSignUpUser4(true);
-        setShowSignUpUser(false);
-    };
-
 
     return (
         <div className='h-50'>
 
-{currentComponent==='email' &&
+            {currentComponent === 'email' &&
 
-            <div className="w-full h-full bg-white flex-shrink-0">
-                <div className="flex flex-col md:flex-row" style={{ height: '830px' }}>
-                    <div className="flex md:h-auto md:w-3/5 bg-white" style={{ justifyContent: 'center', padding: 100 }}>
-                    <div className='absolute left-10 top-10'>
-						<a  href="/" className="flex items-center">
-						<img
-							src="/images/CREDEBL_ICON.png"
-							className="mr-2 h-6 sm:h-9"
-							alt="CREDEBL Logo"
-						/>
-						<span
-							className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
-							>
-							CREDEBL</span>
-						
-					</a>
-</div>
+                <div className="w-full h-full bg-white flex-shrink-0">
+                    <div className="flex flex-col md:flex-row" style={{ height: '830px' }}>
+                        <div className="flex md:h-auto md:w-3/5 bg-white" style={{ justifyContent: 'center', padding: 100 }}>
+                            <div className='absolute left-10 top-10'>
+                                <a href="/" className="flex items-center">
+                                    <img
+                                        src="/images/CREDEBL_ICON.png"
+                                        className="mr-2 h-6 sm:h-9"
+                                        alt="CREDEBL Logo"
+                                    />
+                                    <span
+                                        className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
+                                    >
+                                        CREDEBL</span>
 
-                        <img className="flex"
-                            src="/images/signin.svg"
-                            alt="img" />
+                                </a>
+                            </div>
 
-<div className="absolute left-10 bottom-10">
-	&copy; 2019 - {new Date().getFullYear()} —
-	<a className="hover:underline" target="_blank"
-		>CREDEBL</a> | All rights reserved.
-</div>
+                            <img className="flex"
+                                src="/images/signin.svg"
+                                alt="img" />
 
-                    </div>
-                    <div className="flex items-center justify-center p-6 sm:p-12 md:w-2/5 shadow-xl shadow-blue-700">
-                        <div className="w-full" style={{ height: '700px' }}>
-                            {
-                                (verificationSuccess || erroMsg) &&
-                                <Alert
-                                    color={verificationSuccess ? "success" : "failure"}
-                                    onDismiss={() => setErrMsg(null)}
-                                >
-                                    <span>
-                                        <p>
-                                            {verificationSuccess || erroMsg}
-                                        </p>
-                                    </span>
-                                </Alert>
-                            }
+                            <div className="absolute left-10 bottom-10">
+                                &copy; 2019 - {new Date().getFullYear()} —
+                                <a className="hover:underline" target="_blank"
+                                >CREDEBL</a> | All rights reserved.
+                            </div>
 
-                            {/* <div className='justify-start'> */}
+                        </div>
+                        <div className="flex items-center justify-center p-6 sm:p-12 md:w-2/5 shadow-xl shadow-blue-700">
+                            <div className="w-full" style={{ height: '700px' }}>
+                                {
+                                    (verificationSuccess || erroMsg) &&
+                                    <Alert
+                                        color={verificationSuccess ? "success" : "failure"}
+                                        onDismiss={() => setErrMsg(null)}
+                                    >
+                                        <span>
+                                            <p>
+                                                {verificationSuccess || erroMsg}
+                                            </p>
+                                        </span>
+                                    </Alert>
+                                }
+
                                 <div className='mt-20 mb-24'>
 
                                     <div className="flex justify-center mb-4 text-center text-primary-700 text-blue-600 font-inter text-4xl font-bold leading-10 ">
@@ -353,7 +268,7 @@ interface emailValue {
                                     <button
                                         className="block w-2/5 py-2 px-4 rounded-md border text-center font-medium leading-5 border-blue-600 bg-white flex items-center justify-center"
                                         onClick={() => setCurrentComponent('password')}
-                                        >
+                                    >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 39 39" fill="none">
                                             <path d="M15.4505 31.8307H9.99045C8.44878 31.8307 7.16406 30.6513 7.16406 29.236V23.6338C7.16406 22.2185 8.44878 21.0391 9.99045 21.0391H27.2057" stroke="#1F4EAD" stroke-width="1.5" stroke-miterlimit="10" />
                                             <path d="M26.6315 21.0391H34.0613C36.2097 21.0391 38 22.2185 38 23.6338V29.236C38 30.6513 36.2097 31.8307 34.0613 31.8307H10.25" stroke="#1F4EAD" stroke-width="1.5" stroke-miterlimit="10" />
@@ -378,7 +293,7 @@ interface emailValue {
                                         }}
 
                                         className='w-2/5 font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
-                                        >
+                                    >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 37 37" fill="none">
                                             <path d="M22.9319 8.88C22.9319 13.3701 19.292 17.01 14.8019 17.01C10.3118 17.01 6.67188 13.3701 6.67188 8.88C6.67188 4.38993 10.3118 0.75 14.8019 0.75C19.292 0.75 22.9319 4.38993 22.9319 8.88Z" stroke="white" stroke-width="1.5" />
                                             <path d="M33.4534 23.3732C34.401 22.854 35.2173 22.1032 35.8288 21.1812C36.5894 20.0342 36.9976 18.6757 36.9996 17.284C37.0038 16.0481 36.6876 14.8337 36.0839 13.7677C35.4802 12.7018 34.6113 11.8233 33.568 11.2243C32.5247 10.6252 31.3452 10.3274 30.1528 10.3621C28.9604 10.3968 27.7989 10.7626 26.7897 11.4214C25.7804 12.0802 24.9604 13.0077 24.4154 14.1071C23.8704 15.2065 23.6204 16.4373 23.6915 17.671C23.7626 18.9047 24.1522 20.096 24.8196 21.1204C25.487 22.1448 26.4076 22.9646 27.4854 23.4943L33.4534 23.3732ZM33.4534 23.3732L33.2769 23.1903L32.7372 23.7112L33.0157 24.4076C33.1097 24.37 33.2028 24.3305 33.295 24.2891L33.4534 23.3732ZM36.2496 17.2814L36.2496 17.2829C36.2478 18.5292 35.8822 19.7437 35.2037 20.7667C34.5255 21.7894 33.5675 22.5715 32.4588 23.0148L31.4226 23.4291L32.1976 24.232L34.0544 26.1559L31.7029 28.5924L31.2002 29.1132L31.7029 29.6341L34.0544 32.0705L30.3396 35.9194L28.2354 33.7392V23.4943V23.0272L27.8162 22.8212C26.8618 22.3522 26.0431 21.6244 25.448 20.711C24.8528 19.7974 24.5039 18.7326 24.4403 17.6279C24.3766 16.5232 24.6007 15.4221 25.0874 14.4402C25.5741 13.4585 26.3046 12.6337 27.1996 12.0494C28.0944 11.4654 29.1218 11.1424 30.1746 11.1118C31.2273 11.0812 32.2702 11.3439 33.1945 11.8747C34.1191 12.4056 34.8926 13.186 35.4313 14.1373C35.9701 15.0887 36.2534 16.1747 36.2496 17.2814ZM28.4545 13.3975L28.9941 13.9183L28.4545 13.3975C28.0856 13.7797 27.8372 14.2635 27.7368 14.7864C27.6364 15.3092 27.6877 15.8513 27.8852 16.3453C28.0828 16.8395 28.4191 17.2662 28.8556 17.5683C29.2924 17.8708 29.8089 18.034 30.3396 18.034C31.052 18.034 31.7295 17.7405 32.2248 17.2274C32.7192 16.7151 32.9925 16.0258 32.9925 15.3124C32.9925 14.7799 32.8402 14.2574 32.5521 13.8106C32.2638 13.3636 31.8513 13.011 31.3636 12.8017C30.8756 12.5923 30.337 12.537 29.817 12.6442C29.2973 12.7513 28.8237 13.015 28.4545 13.3975Z" stroke="white" stroke-width="1.5" />
@@ -402,16 +317,16 @@ interface emailValue {
                                 </div>
 
 
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>				}
-				
-				{
-				currentComponent==='password' && (
-					<SignUpUser4/>
-				)
-			}
+                </div>}
+
+            {
+                currentComponent === 'password' && (
+                    <SignUpUser4 />
+                )
+            }
         </div>
     );
 };

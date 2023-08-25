@@ -175,7 +175,6 @@ const SignUpUser = () => {
 				userName: email,
 				deviceFlag: flag
 			}
-			// Generate Registration Option
 			const generateRegistrationResponse = await generateRegistrationOption(RegistrationOption)
 			const { data } = generateRegistrationResponse as AxiosResponse
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -256,381 +255,15 @@ const SignUpUser = () => {
 		}
 	}
 
-	// const setNameValue = (values: nameValues) => {
-	// 	setUserDetails({
-	// 		firstName: values.firstName,
-	// 		lastName: values.lastName
-	// 	})
-	// 	setContinuePasswordFlag(true)
-	// 	setEnableName(false)
-	// }
-
 	const redirectLandingPage = () => {
         window.location.href = '/'
     }
 console.log("nextflag::::::", nextflag)
 	return (
-		// <div className="min-h-screen align-middle flex pb-[12vh]">
-		// 	<div className="w-full flex flex-col items-center justify-center px-6 pt-8 mx-auto pt:mt-0 dark:bg-gray-900">
-		// 		<div className="w-full max-w-xl p-6 space-y-8 sm:p-8 bg-white rounded-lg shadow dark:bg-gray-800">
-		// 			{
-		// 				(verificationSuccess || erroMsg) &&
-		// 				<Alert
-		// 					color={verificationSuccess ? "success" : "failure"}
-		// 					onDismiss={() => setErrMsg(null)}
-		// 				>
-		// 					<span>
-		// 						<p>
-		// 							{verificationSuccess || erroMsg}
-		// 						</p>
-		// 					</span>
-		// 				</Alert>
-		// 			}
-		// 			<div className='flex'>
-		// 				<h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-		// 					Create an account
-		// 				</h2>
-		// 				{/*  */}
-		// 				{nextflag && <button
-		// 					onClick={() => {
-		// 						setNextFlag(false)
-		// 						setEnableName(false)
-		// 						setEnablePasswordField(false)
-		// 						setContinuePasswordFlag(false)
-		// 					}}
-		// 					type="button"
-		// 					className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2 text-center inline-flex items-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-auto"
-		// 					style={{ transform: 'scaleX(-1)' }}
-		// 				>
-		// 					<svg
-		// 						className="w-4 h-4"
-		// 						aria-hidden="true"
-		// 						xmlns="http://www.w3.org/2000/svg"
-		// 						fill="none"
-		// 						viewBox="0 0 14 10"
-		// 					>
-		// 						<path
-		// 							stroke="currentColor"
-		// 							stroke-linecap="round"
-		// 							stroke-linejoin="round"
-		// 							stroke-width="2"
-		// 							d="M1 5h12m0 0L9 1m4 4L9 9"
-		// 						/>
-		// 					</svg>
-		// 					<span className="sr-only">Icon description</span>
-		// 				</button>}
-		// 			</div>
-		// 			{!nextflag && (<Formik
-		// 				initialValues={{
-		// 					email: emailAutoFill ? emailAutoFill : ''
-		// 				}}
-		// 				validationSchema={yup.object().shape({
-		// 					email: yup
-		// 						.string()
-		// 						.required('Email is required')
-		// 						.email('Email is invalid')
-		// 						.matches(/(\.[a-zA-Z]{2,})$/, 'Email domain is invalid')
-		// 						.trim()
-		// 				})}
-		// 				validateOnBlur
-		// 				validateOnChange
-		// 				enableReinitialize
-		// 				onSubmit={(values: emailValue) => ValidateEmail(values)}
-
-		// 			>
-		// 				{(formikHandlers): JSX.Element => (
-		// 					<Form className="mt-8 space-y-6" onSubmit={formikHandlers.handleSubmit}>
-		// 						<div>
-		// 							<div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-		// 								<Label htmlFor="email2" value="Email" />
-		// 								<span className='text-red-500 text-xs'>*</span>
-		// 							</div>
-		// 							<Field
-		// 								id="Signupemail"
-		// 								name="email"
-		// 								className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-		// 								type="email"
-		// 							/>
-		// 							{
-		// 								(formikHandlers?.errors?.email && formikHandlers?.touched?.email) &&
-		// 								<span className="text-red-500 text-xs">{formikHandlers?.errors?.email}</span>
-		// 							}
-		// 						</div>
-		// 						<div className='pb-1'>
-		// 							<Button
-		// 								id='signupemailnextbutton'
-		// 								isProcessing={verifyLoader}
-		// 								type=""
-		// 								className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 float-right'
-		// 							>
-		// 								Next
-		// 							</Button>
-		// 						</div>
-		// 					</Form>
-		// 				)}
-		// 			</Formik>)}
-		// 			{enableName && <Formik
-		// 				initialValues={{
-		// 					firstName: '',
-		// 					lastName: '',
-		// 				}}
-		// 				validationSchema={yup.object().shape({
-		// 					firstName: yup
-		// 						.string()
-		// 						.min(2, 'First name must be at least 2 characters')
-		// 						.max(255, 'First name must be at most 255 characters')
-		// 						.trim(),
-		// 					lastName: yup
-		// 						.string()
-		// 						.min(2, 'Last name must be at least 2 characters')
-		// 						.max(255, 'Last name must be at most 255 characters')
-		// 						.trim()
-		// 				})}
-		// 				validateOnBlur
-		// 				validateOnChange
-		// 				enableReinitialize
-		// 				onSubmit={(
-		// 					values: nameValues,
-		// 				) => {
-		// 					setNameValue(values)
-		// 				}}
-		// 			>
-		// 				{(formikHandlers): JSX.Element => {
-		// 					if (JSON.stringify(userDetails) !== JSON.stringify(formikHandlers.values))
-		// 						setUserDetails({
-		// 							firstName: formikHandlers.values.firstName,
-		// 							lastName: formikHandlers.values.lastName
-		// 						})
-		// 					return (
-		// 						<Form className="mt-8 space-y-6" onSubmit={formikHandlers.handleSubmit}>
-		// 							{enableName && <div>
-		// 								<div>
-		// 									<div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-		// 										<Label htmlFor="firstName" value="First name" />
-		// 									</div>
-		// 									<Field
-		// 										id="signupfirstname"
-		// 										name="firstName"
-		// 										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-		// 									/>
-		// 									{
-		// 										(formikHandlers?.errors?.firstName && formikHandlers?.touched?.firstName) &&
-		// 										<span className="text-red-500 text-xs">{formikHandlers?.errors?.firstName}</span>
-		// 									}
-		// 								</div>
-		// 								<div>
-		// 									<div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-		// 										<Label htmlFor="lastName" value="Last name" />
-		// 									</div>
-		// 									<Field
-		// 										id="signuplastname"
-		// 										name="lastName"
-		// 										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-		// 									/>
-		// 									{
-		// 										(formikHandlers?.errors?.lastName && formikHandlers?.touched?.lastName) &&
-		// 										<span className="text-red-500 text-xs">{formikHandlers?.errors?.lastName}</span>
-		// 									}
-		// 								</div>
-		// 								<div className='flex pt-4'>
-		// 									<Button
-		// 										id='signupuserdetailsnextbutton'
-		// 										type="submit"
-		// 										isProcessing={""}
-		// 										color='bg-primary-800'
-		// 										className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
-		// 									>
-		// 										Next
-		// 									</Button>
-		// 									<div className="text-bold font-medium text-gray-500 dark:text-gray-400 text-primary-700 hover:underline dark:text-primary-500 cursor-pointer ml-auto pt-3" onClick={() => {
-		// 										setContinuePasswordFlag(true)
-		// 										setEnableName(false)
-		// 										setUserDetails({
-		// 											firstName: '',
-		// 											lastName: ''
-		// 										})
-		// 									}}>
-		// 										{`Skip`}
-		// 									</div>
-		// 								</div>
-		// 							</div>}
-		// 						</Form>
-		// 					)
-		// 				}}
-		// 			</Formik>}
-		// 			{continuePasswordFlag && <Formik
-		// 				initialValues={{
-		// 					password: '',
-		// 					confirmPassword: ''
-		// 				}}
-		// 				validationSchema={yup.object().shape({
-		// 					password: yup
-		// 						.string()
-		// 						.required('Password is required')
-		// 						.matches(passwordRegex, 'Passwords must contain at least 8 characters, including uppercase, lowercase, numbers and special character'),
-		// 					confirmPassword: yup
-		// 						.string()
-		// 						.required('Confirm Password is required')
-		// 						.oneOf([yup.ref('password')], 'Passwords must match'),
-		// 				})}
-		// 				validateOnBlur
-		// 				validateOnChange
-		// 				enableReinitialize
-		// 				onSubmit={(
-		// 					values: passwordValues,
-		// 				) => {
-		// 					submit(values, false)
-		// 				}}
-		// 			>
-		// 				{(formikHandlers): JSX.Element => (
-		// 					<Form className="mt-8 space-y-6" onSubmit={formikHandlers.handleSubmit}>
-		// 						{enablePasswordField && <div>
-		// 							<div>
-		// 								<div className="mb-2 block">
-		// 									<Label htmlFor="password" value="Password" />
-		// 									<span className='text-red-500 text-xs'>*</span>
-		// 								</div>
-		// 								<div className="relative">
-
-		// 									<Field
-		// 										id="signuppassword"
-		// 										name="password"
-		// 										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-		// 										type={passwordVisible ? 'text' : 'password'}
-		// 									/>
-		// 									<button
-		// 										type="button"
-		// 										onClick={() => setPasswordVisible((prevVisible) => !prevVisible)}
-		// 										className="bg-transparent absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-white hover:text-gray-800 dark:hover:text-white"
-		// 									>
-		// 										{passwordVisible ? (
-		// 											<svg className="h-6 w-6 text-black"
-		// 												viewBox="0 0 24 24" fill="none"
-		// 												stroke="currentColor"
-		// 												stroke-width="2"
-		// 												stroke-linecap="round"
-		// 												stroke-linejoin="round">
-		// 												<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-		// 												<circle cx="12" cy="12" r="3" />
-		// 											</svg>
-		// 										) : (
-		// 											<svg className="h-6 w-6 text-black"
-		// 												viewBox="0 0 24 24"
-		// 												fill="none"
-		// 												stroke="currentColor"
-		// 												stroke-width="2"
-		// 												stroke-linecap="round"
-		// 												stroke-linejoin="round">
-		// 												<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
-		// 												<line x1="1" y1="1" x2="23" y2="23" />
-		// 											</svg>)}
-		// 									</button>
-		// 								</div>
-		// 								{
-		// 									(formikHandlers?.errors?.password && formikHandlers?.touched?.password) &&
-		// 									<span className="text-red-500 text-xs">{formikHandlers?.errors?.password}</span>
-		// 								}
-		// 							</div>
-		// 							<div>
-		// 								<div className="mb-2 block">
-		// 									<Label htmlFor="confirmPassword" value="Confirm password" />
-		// 									<span className='text-red-500 text-xs'>*</span>
-		// 								</div>
-		// 								<div className="relative">
-
-		// 									<Field
-		// 										id="signupconfirmpassword"
-		// 										name="confirmPassword"
-		// 										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-		// 										type={confirmPasswordVisible ? 'text' : 'password'}
-		// 									/>
-		// 									<button
-		// 										type="button"
-		// 										onClick={() => setConfirmPasswordVisible((prevVisible) => !prevVisible)}
-		// 										className="bg-transparent absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-white hover:text-gray-800 dark:hover:text-white"
-		// 									>
-		// 										{confirmPasswordVisible ? (
-		// 											<svg className="h-6 w-6 text-black"
-		// 												viewBox="0 0 24 24" fill="none"
-		// 												stroke="currentColor"
-		// 												stroke-width="2"
-		// 												stroke-linecap="round"
-		// 												stroke-linejoin="round">
-		// 												<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-		// 												<circle cx="12" cy="12" r="3" />
-		// 											</svg>
-		// 										) : (
-		// 											<svg className="h-6 w-6 text-black"
-		// 												viewBox="0 0 24 24"
-		// 												fill="none"
-		// 												stroke="currentColor"
-		// 												stroke-width="2"
-		// 												stroke-linecap="round"
-		// 												stroke-linejoin="round">
-		// 												<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
-		// 												<line x1="1" y1="1" x2="23" y2="23" />
-		// 											</svg>)}
-		// 									</button>
-		// 								</div>
-		// 								{
-		// 									(formikHandlers?.errors?.confirmPassword && formikHandlers?.touched?.confirmPassword) &&
-		// 									<span className="text-red-500 text-xs">{formikHandlers?.errors?.confirmPassword}</span>
-		// 								}
-		// 							</div>
-		// 						</div>}
-		// 						{nextflag && <>
-		// 							<div className='pt-4'>
-		// 								<div className='flex'>
-		// 									<Button
-		// 										id='signupcreatepasskey'
-		// 										onClick={() => {
-		// 											createPasskey()
-		// 										}}
-		// 										color='bg-primary-800'
-		// 										className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
-		// 									>
-		// 										Create passkey
-		// 									</Button>
-		// 									{enablePasswordField &&
-		// 										<Button
-		// 											id='signupbutton'
-		// 											type="submit"
-		// 											isProcessing={loading}
-		// 											color='bg-primary-800'
-		// 											className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 ml-auto'
-		// 										>
-		// 											Sign Up
-		// 										</Button>
-		// 									}
-		// 								</div>
-		// 								<div className="text-sm font-medium text-gray-500 dark:text-gray-400 text-primary-700 hover:underline dark:text-primary-500 pt-2 cursor-pointer" onClick={() => {
-		// 									setEnablePasswordField(true)
-		// 								}}>
-		// 									{`Set password ?`}
-		// 								</div>
-		// 							</div>
-		// 						</>}
-		// 					</Form>
-		// 				)}
-		// 			</Formik>}
-
-		// 			<div className="text-sm font-medium text-gray-500 dark:text-gray-400 pt-6">
-		// 				Already have an account?
-		// 				<a
-		// 					href="/authentication/sign-in"
-		// 					className="text-primary-700 hover:underline dark:text-primary-500"
-		// 				>
-		// 					{` Sign in here.`}
-		// 				</a>
-		// 			</div>
-		// 		</div>
-		// 	</div>
-		// </div >
 		<div className=''>
 
 			{!nextflag &&
 
-				// <div className="mt-2 flex w-full items-center bg-gray-50 h-full">
 				<div className="w-full h-full bg-white flex-shrink-0">
 					<div className="flex flex-col md:flex-row" style={{ height: '830px' }}>
 						<div className="flex md:h-auto md:w-3/5 bg-white" style={{ justifyContent: 'center', padding:100 }}>
@@ -676,7 +309,6 @@ console.log("nextflag::::::", nextflag)
 									</Alert>
 								}
 
-								{/* <div className='justify-start'> */}
 									<div className='mt-28 mb-28'>
 
 										<div className="flex justify-center mb-4 text-center text-primary-700 text-blue-600 font-inter text-4xl font-bold leading-10 ">
@@ -705,11 +337,6 @@ console.log("nextflag::::::", nextflag)
 									validateOnChange
 									enableReinitialize
 									onSubmit={(values: emailValue) => ValidateEmail(values)}
-								// onSubmit={(values: emailValue, { setSubmitting }) => {
-								// 	setIsEmailValid(false);
-								// 	saveEmail(values);
-								// 	setSubmitting(true);
-								// }}
 								>
 										{(formikHandlers): JSX.Element => (
 											<Form className="mt-8 space-y-6" onSubmit={formikHandlers.handleSubmit}>
@@ -726,10 +353,6 @@ console.log("nextflag::::::", nextflag)
 														type="email"
 														className="w-full bg-gray-200 px-4 py-2 text-gray-900 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
 														placeholder="name@company.com" />
-													{/* {
-															(formikHandlers?.errors?.email && formikHandlers?.touched?.email) &&
-															<span className="text-red-500 text-xs">{formikHandlers?.errors?.email}</span>
-														} */}
 													{!isEmailValid && formikHandlers.touched.email && (
 														<span className="text-red-500 text-xs">
 															{formikHandlers.errors.email}
@@ -757,13 +380,6 @@ console.log("nextflag::::::", nextflag)
 														isProcessing={verifyLoader}														
 														type="submit"
 														className='w-2/5 font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
-														// onClick={() => setCurrentComponent('email')}
-													// onClick={() => {
-													// 	if (formikHandlers.errors.email) {
-													// 		saveEmail(formikHandlers.values);
-													// 	}
-													// }}
-
 													>
 														<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 30 20" fill="none">
 															<path d="M29.8369 10.763C29.9991 10.3984 30.0415 9.99721 29.9588 9.61015C29.876 9.22309 29.6717 8.86759 29.3719 8.58861L20.7999 0.609018C20.6022 0.418485 20.3657 0.26651 20.1043 0.161959C19.8428 0.0574089 19.5616 0.00237707 19.2771 7.53215e-05C18.9925 -0.00222642 18.7103 0.0482475 18.447 0.148553C18.1836 0.248858 17.9443 0.396985 17.7431 0.584292C17.5419 0.771598 17.3828 0.994332 17.275 1.2395C17.1673 1.48466 17.1131 1.74735 17.1155 2.01223C17.118 2.27711 17.1771 2.53888 17.2894 2.78227C17.4018 3.02566 17.565 3.24578 17.7697 3.4298L22.6857 8.0061H2.14299C1.57464 8.0061 1.02956 8.21628 0.627668 8.59039C0.225779 8.96451 0 9.47192 0 10.001C0 10.5301 0.225779 11.0375 0.627668 11.4116C1.02956 11.7857 1.57464 11.9959 2.14299 11.9959H22.6857L17.7718 16.5702C17.5672 16.7542 17.4039 16.9743 17.2916 17.2177C17.1793 17.4611 17.1202 17.7229 17.1177 17.9878C17.1152 18.2526 17.1694 18.5153 17.2772 18.7605C17.3849 19.0057 17.5441 19.2284 17.7453 19.4157C17.9465 19.603 18.1858 19.7511 18.4491 19.8514C18.7125 19.9518 18.9947 20.0022 19.2792 19.9999C19.5638 19.9976 19.845 19.9426 20.1064 19.838C20.3679 19.7335 20.6043 19.5815 20.802 19.391L29.374 11.4114C29.5725 11.2257 29.7298 11.0054 29.8369 10.763Z" fill="white" />
@@ -792,7 +408,6 @@ console.log("nextflag::::::", nextflag)
 
 
 
-								{/* </div> */}
 
 							</div>
 
@@ -800,7 +415,6 @@ console.log("nextflag::::::", nextflag)
 					</div>
 				</div>
 
-				// </div>
 			}
 			{
 				nextflag && (

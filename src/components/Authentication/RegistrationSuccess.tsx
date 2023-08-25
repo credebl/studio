@@ -46,17 +46,18 @@ const RegistrationSuccess = () => {
                                 Congratulations!
                             </div>
 
-                            <div className="mt-20 justify-center text-center">
+                            <div className="mt-20 flex justify-center text-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="99" height="99" viewBox="0 0 99 99" fill="none">
                                     <path d="M49.0889 0C42.6424 -9.6864e-08 36.2591 1.28035 30.3034 3.76796C24.3476 6.25557 18.9361 9.90171 14.3778 14.4982C9.81948 19.0947 6.20361 24.5516 3.73667 30.5572C1.26972 36.5628 0 42.9996 0 49.5C0 56.0004 1.26972 62.4372 3.73667 68.4428C6.20361 74.4484 9.81948 79.9053 14.3778 84.5018C18.9361 89.0983 24.3476 92.7444 30.3034 95.232C36.2591 97.7197 42.6424 99 49.0889 99C55.5353 99 61.9186 97.7197 67.8744 95.232C73.8301 92.7444 79.2416 89.0983 83.7999 84.5018C88.3583 79.9053 91.9741 74.4484 94.4411 68.4428C96.908 62.4372 98.1777 56.0004 98.1777 49.5C98.1777 42.9996 96.908 36.5628 94.4411 30.5572C91.9741 24.5516 88.3583 19.0947 83.7999 14.4982C79.2416 9.90171 73.8301 6.25557 67.8744 3.76796C61.9186 1.28035 55.5353 -9.6864e-08 49.0889 0Z" fill="#14BD5A" />
                                     <path fill-rule="evenodd" clip-rule="evenodd" d="M80.4367 34.3527C81.1905 35.2635 81.0662 36.6202 80.1593 37.3831L41.4011 69.9827C40.9543 70.3585 40.3754 70.5353 39.798 70.4722C39.2206 70.4091 38.6946 70.1116 38.3412 69.6483L21.7122 47.8438C20.9951 46.9034 21.1726 45.5525 22.1088 44.8264C23.045 44.1003 24.3853 44.274 25.1025 45.2143L40.3804 65.2472L77.4297 34.0849C78.3367 33.322 79.683 33.4419 80.4367 34.3527Z" fill="white" />
                                 </svg>
 
-                                <p className="text-gray-500 font-inter text-base font-medium leading-5 flex w-84 h-5.061 flex-col justify-center items-center flex-shrink-0">
-                                    Passkey created successfully
-                                    </p>
 
                             </div>
+                            <p className="text-gray-500 font-inter text-base font-medium leading-5 flex w-84 h-5.061 flex-col justify-center items-center flex-shrink-0">
+                                Passkey created successfully
+                            </p>
+
 
                             <div>
                                 <Button
