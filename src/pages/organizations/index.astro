@@ -1,8 +1,16 @@
 ---
 import LayoutSidebar from '../../app/LayoutSidebar.astro';
 import OrganizationsList from '../../components/organization/OrganizationsList'
+import { checkUserSession } from '../../utils/check-session';
+import { pathRoutes } from '../../config/pathRoutes';
+
+const response = await checkUserSession(Astro.cookies);
+const route: string = pathRoutes.auth.sinIn
+if (!response) {
+	return Astro.redirect(route);
+}
 ---
 
 <LayoutSidebar>
-	<OrganizationsList client:visible/>
+	<OrganizationsList client:visible />
 </LayoutSidebar>

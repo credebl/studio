@@ -134,7 +134,7 @@ const SignUpUser = () => {
 				setEmail(values?.email)
 				await VerifyMail(values?.email)
 			}
-			else if (data.data.isEmailVerified === true && data?.data?.isKeycloak !== true) {
+			else if (data.data.isEmailVerified === true && data?.data?.isSupabase !== true) {
 				setEmail(values?.email)
 				await setToLocalStorage(storageKeys.USER_EMAIL, values?.email)
 				setNextFlag(true)
