@@ -16,15 +16,20 @@ if (
 	pathRoutes.auth.sinIn !== Astro.url.pathname &&
 	pathRoutes.auth.verifyEmail !== Astro.url.pathname
 ) {
-	const sessionCookie = Astro.cookies.get("session").value;
+	
+	// else {
+	// 	const response = await fetch('/api/auth/signout', {
+	// 		method: "GET",
+	// 		headers: {
+	// 			"Content-Type": "application/json",
+	// 		}
+	// 	});
 
-	if (sessionCookie) {
-		const { data: { user }, error } = await supabase.auth.getUser(sessionCookie);
+	// 	if (response.redirected) {
+	// 		window.location.assign(response.url);
+	// 	}
 
-		if (!user || user.role !== "authenticated") {
-			return Astro.redirect(pathRoutes.auth.sinIn)
-		}
-	}
+	// }
 }
 
 ---

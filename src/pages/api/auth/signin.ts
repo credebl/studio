@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import { pathRoutes } from "../../../config/pathRoutes";
 import { supabase } from "../../../supabase";
 
 export const post: APIRoute = async ({ request, cookies, redirect }) => {
@@ -13,6 +14,6 @@ export const post: APIRoute = async ({ request, cookies, redirect }) => {
         path: "/",
     });
 
-    return redirect("/dashboard");
+    return redirect(pathRoutes.users.dashboard);
 
 };
