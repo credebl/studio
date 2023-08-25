@@ -1,8 +1,10 @@
 ---
-import LayoutStacked from '../../app/LayoutStacked.astro';
+import LayoutCommon from '../../app/LayoutCommon.astro';
+// import NavBarStacked from '../../app/NavBarStacked.astro';
+// import LayoutStacked from '../../app/LayoutStacked.astro';
 import SignInUser from '../../components/Authentication/SignInUser'
 ---
 
-<LayoutStacked>
+<LayoutCommon>
 	<SignInUser client:visible/>
-</LayoutStacked>
+</LayoutCommon>
