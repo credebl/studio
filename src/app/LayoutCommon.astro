@@ -11,27 +11,6 @@ const { class: clazz } = Astro.props;
 const baseUrl = process.env.PUBLIC_BASE_URL || import.meta.env.PUBLIC_BASE_URL
 const encryptKey = process.env.PUBLIC_CRYPTO_PRIVATE_KEY || import.meta.env.PUBLIC_CRYPTO_PRIVATE_KEY
 
-if (
-	pathRoutes.auth.signUp !== Astro.url.pathname &&
-	pathRoutes.auth.sinIn !== Astro.url.pathname &&
-	pathRoutes.auth.verifyEmail !== Astro.url.pathname
-) {
-	
-	// else {
-	// 	const response = await fetch('/api/auth/signout', {
-	// 		method: "GET",
-	// 		headers: {
-	// 			"Content-Type": "application/json",
-	// 		}
-	// 	});
-
-	// 	if (response.redirected) {
-	// 		window.location.assign(response.url);
-	// 	}
-
-	// }
-}
-
 ---
 
 <!DOCTYPE html>
