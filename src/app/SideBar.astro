@@ -73,6 +73,42 @@ import { pathRoutes } from "../config/pathRoutes";
 							<span class="ml-3" sidebar-toggle-item>Dashboard</span>
 						</a>
 					</li>
+					
+
+					<li>
+						<a
+							href={pathRoutes.organizations.root}
+							class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
+						>
+						<!-- <svg 
+						class="w-6 h-6 text-gray-500 dark:text-gray" 
+						aria-hidden="true" 
+						xmlns="http://www.w3.org/2000/svg" 
+						fill="currentColor" 
+						viewBox="0 0 18 20">
+						<path d="M16 0H4a2 2 0 0 0-2 2v1H1a1 1 0 0 0 0 2h1v2H1a1 1 0 0 0 0 2h1v2H1a1 1 0 0 0 0 2h1v2H1a1 1 0 0 0 0 2h1v1a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4.5a3 3 0 1 1 0 6 3 3 0 0 1 0-6ZM13.929 17H7.071a.5.5 0 0 1-.5-.5 3.935 3.935 0 1 1 7.858 0 .5.5 0 0 1-.5.5Z"/>
+					</svg> -->
+							<span class="ml-3" sidebar-toggle-item>Organizations</span>
+						</a>
+					</li>
+
+					<li>
+						<a
+							href={pathRoutes.organizations.users}
+							class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
+						>
+						<!-- <svg 
+							class="w-6 h-6 text-gray-500 dark:text-gray" 
+							aria-hidden="true" 
+							xmlns="http://www.w3.org/2000/svg" 
+							fill="currentColor" 
+							viewBox="0 0 18 20">
+							<path d="M16 0H4a2 2 0 0 0-2 2v1H1a1 1 0 0 0 0 2h1v2H1a1 1 0 0 0 0 2h1v2H1a1 1 0 0 0 0 2h1v2H1a1 1 0 0 0 0 2h1v1a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4.5a3 3 0 1 1 0 6 3 3 0 0 1 0-6ZM13.929 17H7.071a.5.5 0 0 1-.5-.5 3.935 3.935 0 1 1 7.858 0 .5.5 0 0 1-.5.5Z"/>
+						</svg> -->
+							<span class="ml-3" sidebar-toggle-item>Users</span>
+						</a>
+					</li>
+
 					<!-- <li>
 						<a
 							href={pathRoutes.users.invitations}
@@ -87,7 +123,7 @@ import { pathRoutes } from "../config/pathRoutes";
 									<span class="ml-3" sidebar-toggle-item>Received Invitations</span>
 						</a>
 					</li> -->
-					<li>
+					<!-- <li>
 						<button
 							type="button"
 							class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
@@ -119,25 +155,25 @@ import { pathRoutes } from "../config/pathRoutes";
 									d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
 									clip-rule="evenodd"></path></svg
 							>
-						</button>
-						<ul id="dropdown-layouts" class="hidden py-2 space-y-2">
-							<li>
+						</button> -->
+						<!--ul id="dropdown-layouts" class="hidden py-2 space-y-2"-->
+							<!-- <li>
 								<a
 									href={pathRoutes.organizations.root}
 									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
 									>Organizations</a
 								>
-							</li>							
-							<li>
+							</li>							 -->
+							<!-- <li>
 								<a
 									href={pathRoutes.organizations.users}
 									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
 									>Users</a
 								>
-							</li>
-						</ul>
-					</li>
-					
+							</li> -->
+						<!-- </ul> -->
+					<!-- </li> -->
+
 					<li>
 						<button
 							type="button"
@@ -146,7 +182,7 @@ import { pathRoutes } from "../config/pathRoutes";
 							data-collapse-toggle="dropdown-credentials"
 							>
 							<svg 
-								class="w-6 h-6 text-gray-800 dark:text-white" 
+								class="w-6 h-6 text-gray-500 dark:text-gray" 
 								aria-hidden="true" xmlns="http://www.w3.org/2000/svg" 
 								fill="none" 
 								viewBox="0 0 16 20">
@@ -164,7 +200,7 @@ import { pathRoutes } from "../config/pathRoutes";
 							>			
 							<svg
 								sidebar-toggle-item
-								class="w-6 h-6"
+								class="w-6 h-6 text-gray-500 dark:text-gray"
 								fill="currentColor"
 								viewBox="0 0 20 20"
 								xmlns="http://www.w3.org/2000/svg"
@@ -178,14 +214,14 @@ import { pathRoutes } from "../config/pathRoutes";
 							<li>
 								<a
 									href={pathRoutes.organizations.issuedCredentials}
-									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+									class="flex items-center p-2 text-base text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
 									>Issuance</a
 								>
 							</li>
 							<li>
 								<a
 									href={pathRoutes.organizations.credentials}
-									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+									class="flex items-center p-2 text-base text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
 									>Verification</a
 								>
 							</li>
@@ -346,7 +382,7 @@ import { pathRoutes } from "../config/pathRoutes";
 						href="https://github.com/credebl/platform/issues"
 						target="_blank"
 						class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
-					>
+					>		
 						<svg
 							class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
 							fill="currentColor"
