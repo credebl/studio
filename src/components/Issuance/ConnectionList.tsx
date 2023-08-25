@@ -7,6 +7,7 @@ import DataTable from "../../commonComponents/datatable";
 import type { TableData } from "../../commonComponents/datatable/interface";
 import { apiStatusCodes } from "../../config/CommonConstant";
 import { AlertComponent } from "../AlertComponent";
+import { dateConversion } from "../../utils/DateConversion";
 
 const ConnectionList = (props: { selectConnection: (connections: TableData[]) => void; }) => {
 
@@ -34,6 +35,7 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 			const connections = data?.data?.map((ele) => {
 				const userName = ele?.theirLabel ? ele.theirLabel : 'Not available';
 				const connectionId = ele.id ? ele.id : 'Not available'
+				const createdOn = ele?.createdAt ? ele?.createdAt : 'Not available'
 				return {
 					data: [{
 						data: <div className="flex items-center">
@@ -44,7 +46,7 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 								value="" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 cursor-pointer" />
 						</div>
 					},
-					{ data: userName }, { data: connectionId },
+					{ data: userName }, { data: connectionId }, {data:dateConversion(createdOn)},
 					]
 				}
 			})
@@ -61,7 +63,8 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 	const header = [
 		{ columnName: '', width: 'w-0.5' },
 		{ columnName: 'User' },
-		{ columnName: 'Connection ID' }
+		{ columnName: 'Connection ID' },
+		{ columnName: 'Created on' }
 	]
 
 

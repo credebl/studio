@@ -15,7 +15,7 @@ const Connections = () => {
 	const [selectedConnectionList, setSelectedConnectionList] = useState<TableData[]>([])
 	const selectedConnectionHeader = [
 		{ columnName: 'User' },
-		{ columnName: 'Connection ID' }
+		{ columnName: 'Connection ID' },
 	]
 
 	const selectConnection = (connections: TableData[]) => {
