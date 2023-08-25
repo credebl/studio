@@ -62,7 +62,9 @@ import AgentHealth from '../commonComponents/AgentHealth';
 			</div>
 
 			<div class="flex items-center">
-				<AgentHealth client:visible />
+				<div class="hidden sm:block mr-5">
+					<AgentHealth client:visible />
+				</div>
 				<div class="hidden sm:block mr-5">
 					<OrgDropDwon client:visible />
 				</div>

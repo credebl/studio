@@ -476,7 +476,6 @@ const WalletSteps = (props: { steps: number; agentSpinupCall: boolean }) => {
 					<h3 className="font-medium leading-tight">
 						Getting your SSI agent up and running...
 					</h3>
-					<p className="text-sm">Step details here</p>
 				</li>
 				<li className="mb-10 ml-6">
 					{props.steps > 1 ? (
@@ -522,7 +521,6 @@ const WalletSteps = (props: { steps: number; agentSpinupCall: boolean }) => {
 					<h3 className="font-medium leading-tight">
 						SSI Agent is now ready to go!
 					</h3>
-					<p className="text-sm">Step details here</p>
 				</li>
 				<li className="mb-10 ml-6">
 					{props.steps > 2 ? (
@@ -568,7 +566,6 @@ const WalletSteps = (props: { steps: number; agentSpinupCall: boolean }) => {
 					<h3 className="font-medium leading-tight">
 						Starting the DID publishing process...
 					</h3>
-					<p className="text-sm">Step details here</p>
 				</li>
 				<li className="mb-10 ml-6">
 					{props.steps > 3 ? (
@@ -614,7 +611,6 @@ const WalletSteps = (props: { steps: number; agentSpinupCall: boolean }) => {
 					<h3 className="font-medium leading-tight">
 						DID Publishing process is all done!
 					</h3>
-					<p className="text-sm">Step details here</p>
 				</li>
 				<li className="mb-10 ml-6">
 					{props.steps > 4 ? (
@@ -660,7 +656,6 @@ const WalletSteps = (props: { steps: number; agentSpinupCall: boolean }) => {
 					<h3 className="font-medium leading-tight">
 						Creating an invitation URL...
 					</h3>
-					<p className="text-sm">Step details here</p>
 				</li>
 				<li className="ml-6">
 					{props.steps > 5 ? (
@@ -706,7 +701,6 @@ const WalletSteps = (props: { steps: number; agentSpinupCall: boolean }) => {
 					<h3 className="font-medium leading-tight">
 						Invitation URL successfully created!
 					</h3>
-					<p className="text-sm">Step details here</p>
 				</li>
 			</ol>
 		</div>
