@@ -17,9 +17,9 @@ import { asset, url } from '../../lib/data.js';
 import { useEffect, useState } from 'react';
 
 import React from 'react';
-import SignUpUser2 from './signUpUser-names.js';
 import secureRandomPassword from 'secure-random-password';
 import { startRegistration } from '@simplewebauthn/browser';
+import SignUpUserName from './SignUpUserName'
 
 interface emailValue {
 	email: string;
@@ -250,7 +250,6 @@ const SignUpUser = () => {
 	const redirectLandingPage = () => {
 		window.location.href = '/'
 	}
-	console.log("nextflag::::::", nextflag)
 	return (
 		<div className=''>
 
@@ -410,7 +409,7 @@ const SignUpUser = () => {
 			}
 			{
 				nextflag && (
-					<SignUpUser2 />
+					<SignUpUserName />
 				)
 			}
 

@@ -12,9 +12,9 @@ import {
 import { useEffect, useState } from 'react';
 
 import React from 'react';
-import SignUpUser3 from './signUpUser-passkey.js';
 import { apiStatusCodes } from '../../config/CommonConstant.js';
 import { sendVerificationMail } from '../../api/Auth.js';
+import SignUpUserPasskey from './SignUpUserPasskey.js';
 
 interface nameValues {
 	firstName: string;
@@ -30,7 +30,7 @@ interface passwordValues {
 	confirmPassword: string
 }
 
-const SignUpUser2 = () => {
+const SignUpUserName = () => {
 
 	const [verifyLoader, setVerifyLoader] = useState<boolean>(false)
 	const [erroMsg, setErrMsg] = useState<string | null>(null)
@@ -43,8 +43,6 @@ const SignUpUser2 = () => {
 	})
 	const [emailAutoFill, setEmailAutoFill] = useState<string>('')
 	const [fidoError, setFidoError] = useState("")
-	const [currentComponent, setCurrentComponent] = useState<string>('email');
-
 
 	useEffect(() => {
 
@@ -55,19 +53,17 @@ const SignUpUser2 = () => {
 
 
 	const setNameValue = (values: nameValues) => {
-		console.log('values::', values)
 		setUserDetails({
 			firstName: values.firstName,
 			lastName: values.lastName
 		})
 		setContinuePasswordFlag(true)
-		setCurrentComponent('password')
 		setEnableName(false)
 	}
 
 	return (
 		<div className=''>
-			{currentComponent === 'email' &&
+			{!continuePasswordFlag &&
 
 				<div className="w-full h-full bg-white flex-shrink-0">
 					<div className="flex flex-col md:flex-row" style={{ height: '830px' }}>
@@ -191,7 +187,7 @@ const SignUpUser2 = () => {
 													</div>
 
 													<div className="text-lg flex justify-end font-medium text-gray-500 dark:text-gray-400 text-primary-700 hover:underline dark:text-primary-500 cursor-pointer ml-auto pt-5"
-														onClick={() => setCurrentComponent('password')}>
+														onClick={() => setContinuePasswordFlag(true)}>
 														{`Skip`}
 													</div>
 
@@ -247,8 +243,8 @@ const SignUpUser2 = () => {
 			}
 
 			{
-				currentComponent === 'password' && (
-					<SignUpUser3
+				continuePasswordFlag && (
+					<SignUpUserPasskey
 						firstName={userDetails.firstName}
 						lastName={userDetails.lastName}
 					 />
@@ -258,4 +254,4 @@ const SignUpUser2 = () => {
 	);
 };
 
-export default SignUpUser2;
+export default SignUpUserName;

@@ -46,18 +46,6 @@ const SignInUser3 = (signInUserProps: SignInUser3Props) => {
 	const [passwordVisible, setPasswordVisible] = useState(false);
 
 
-	useEffect(() => {
-		if (signUpSuccessPassword === window?.location?.search) {
-			setSuccess('Hurry!! 🎉 You have successfully registered on CREDEBL 🚀')
-		}
-		else if (signUpSuccessPasskey === window?.location?.search) {
-			setSuccess('Hurry!! 🎉 You have successfully registered on CREDEBL with passkey')
-		}
-		setTimeout(() => {
-			setSuccess('')
-		}, 5000);
-	}, [])
-
 	const getUserDetails = async (access_token: string) => {
 		const userDetails = await getUserProfile(access_token);
 		const { data } = userDetails as AxiosResponse
