@@ -2,29 +2,42 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import * as yup from 'yup';
 
-import { Button, Label } from 'flowbite-react';
+import { Alert, Button, Label } from 'flowbite-react';
 import {
 	Field,
 	Form,
 	Formik
 } from 'formik';
-import { useState } from 'react';
-import SignUpUser3 from './signUpUser-passkey.js';
+import { useEffect, useState } from 'react';
+
 import React from 'react';
+import { apiStatusCodes } from '../../config/CommonConstant.js';
+import { sendVerificationMail } from '../../api/Auth.js';
+import SignUpUserPasskey from './SignUpUserPasskey.js';
 
 interface nameValues {
 	firstName: string;
 	lastName: string;
 }
 
-const SignUpUser2 = () => {
+interface emailValue {
+	email: string;
+}
+interface passwordValues {
+
+	password: string,
+	confirmPassword: string
+}
+
+const SignUpUserName = () => {
 
 	const [userDetails, setUserDetails] = useState<nameValues>({
 		firstName: '',
 		lastName: ''
 	})
-	const [currentComponent, setCurrentComponent] = useState<string>('email');
-
+	const [emailAutoFill, setEmailAutoFill] = useState<string>('')
+	const [fidoError, setFidoError] = useState("")
+	const [continuePasswordFlag, setContinuePasswordFlag] = useState<boolean>(false)
 
 
 	const setNameValue = (values: nameValues) => {
@@ -36,7 +49,7 @@ const SignUpUser2 = () => {
 
 	return (
 		<div className=''>
-			{currentComponent === 'email' &&
+			{!continuePasswordFlag &&
 
 				<div className="w-full h-full bg-white flex-shrink-0">
 					<div className="flex flex-col md:flex-row" style={{ height: '830px' }}>
@@ -145,9 +158,10 @@ const SignUpUser2 = () => {
 														}
 													</div>
 
-													<div className="text-lg flex justify-end font-medium text-gray-500 dark:text-gray-400 text-primary-700 dark:text-primary-500  ml-auto pt-5">
-														<span className="hover:underline cursor-pointer" onClick={() => setCurrentComponent('password')}>
-															{`Skip`}
+													<div className="text-lg flex justify-end font-medium text-gray-500 dark:text-gray-400 text-primary-700  dark:text-primary-500  ml-auto pt-5">
+														<span className='hover:underline cursor-pointer' onClick={() => setContinuePasswordFlag(true)}>
+															
+														{`Skip`}
 														</span>
 													</div>
 
@@ -168,7 +182,6 @@ const SignUpUser2 = () => {
 															id='signupuserdetailsnextbutton'
 															type="submit"
 															isProcessing={""}
-															onClick={() => setCurrentComponent('password')}
 															className='w-2/5 font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
 
 														>
@@ -204,12 +217,15 @@ const SignUpUser2 = () => {
 			}
 
 			{
-				currentComponent === 'password' && (
-					<SignUpUser3 />
+				continuePasswordFlag && (
+					<SignUpUserPasskey
+						firstName={userDetails.firstName}
+						lastName={userDetails.lastName}
+					 />
 				)
 			}
 		</div>
 	);
 };
 
-export default SignUpUser2;
+export default SignUpUserName;

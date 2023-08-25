@@ -3,8 +3,18 @@ import { pathRoutes } from "../../config/pathRoutes"
 const SignOutButton = () => {
 
     const signOut = async () => {
-        await localStorage.clear()
-        window.location.href = pathRoutes.auth.sinIn
+        await localStorage.clear();
+
+        const response = await fetch('/api/auth/signout', {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+
+        if (response.redirected) {
+            window.location.assign(response.url);
+        }
     }
     return (
         <a onClick={signOut}

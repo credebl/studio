@@ -13,6 +13,9 @@ interface ImportMeta {
 declare global {
 	var baseUrl: string;
 	var encryptKey: string;
+	var supaUrl: string;
+	var supaKey: string;
+	var supaSecret: string;
 }
 
 export { };
