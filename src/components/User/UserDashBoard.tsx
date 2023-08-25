@@ -180,7 +180,8 @@ const UserDashBoard = () => {
 					</div>
 						
 				</div> */}
-				<div
+
+				{/* <div
 					className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800"
 				>
 					<div className="w-full">
@@ -193,7 +194,7 @@ const UserDashBoard = () => {
 						>Coming Soon..</h1>
 					</div>
 					<div id="traffic-channels-chart" className="w-full"></div>
-				</div>
+				</div> */}
 			</div>
 
 			<div className="">

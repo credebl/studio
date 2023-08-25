@@ -33,14 +33,14 @@ export const pathRoutes = {
 					verify:'/organizations/verification/schemas/cred-defs/connections/verification'
 				},
     },
-    ecosystems: {
-        root: '/ecosystems',
-        frameworks: '/ecosystems/frameworks',
-        members: '/ecosystems/members',
-        registries: '/ecosystems/registries',
-        users: '/organizations/users',
-        credentials: '/organizations/credentials'
-    },
+    // ecosystems: {
+    //     root: '/ecosystems',
+    //     frameworks: '/ecosystems/frameworks',
+    //     members: '/ecosystems/members',
+    //     registries: '/ecosystems/registries',
+    //     users: '/organizations/users',
+    //     credentials: '/organizations/credentials'
+    // },
     documentation: {
         root: '/docs'
     },
