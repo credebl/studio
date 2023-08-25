@@ -393,6 +393,7 @@ const WalletSpinup = (props: {
 											onChange={() => onRadioSelect(AgentType.DEDICATED)}
 											checked={agentType === AgentType.DEDICATED ? true : false}
 											name="list-radio"
+											disabled
 											className="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
 										/>
 										<label className="w-full py-3 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
@@ -476,7 +477,6 @@ const WalletSteps = (props: { steps: number; agentSpinupCall: boolean }) => {
 					<h3 className="font-medium leading-tight">
 						Getting your SSI agent up and running...
 					</h3>
-					<p className="text-sm">Step details here</p>
 				</li>
 				<li className="mb-10 ml-6">
 					{props.steps > 1 ? (
@@ -522,7 +522,6 @@ const WalletSteps = (props: { steps: number; agentSpinupCall: boolean }) => {
 					<h3 className="font-medium leading-tight">
 						SSI Agent is now ready to go!
 					</h3>
-					<p className="text-sm">Step details here</p>
 				</li>
 				<li className="mb-10 ml-6">
 					{props.steps > 2 ? (
@@ -568,7 +567,6 @@ const WalletSteps = (props: { steps: number; agentSpinupCall: boolean }) => {
 					<h3 className="font-medium leading-tight">
 						Starting the DID publishing process...
 					</h3>
-					<p className="text-sm">Step details here</p>
 				</li>
 				<li className="mb-10 ml-6">
 					{props.steps > 3 ? (
@@ -614,7 +612,6 @@ const WalletSteps = (props: { steps: number; agentSpinupCall: boolean }) => {
 					<h3 className="font-medium leading-tight">
 						DID Publishing process is all done!
 					</h3>
-					<p className="text-sm">Step details here</p>
 				</li>
 				<li className="mb-10 ml-6">
 					{props.steps > 4 ? (
@@ -660,7 +657,6 @@ const WalletSteps = (props: { steps: number; agentSpinupCall: boolean }) => {
 					<h3 className="font-medium leading-tight">
 						Creating an invitation URL...
 					</h3>
-					<p className="text-sm">Step details here</p>
 				</li>
 				<li className="ml-6">
 					{props.steps > 5 ? (
@@ -706,7 +702,6 @@ const WalletSteps = (props: { steps: number; agentSpinupCall: boolean }) => {
 					<h3 className="font-medium leading-tight">
 						Invitation URL successfully created!
 					</h3>
-					<p className="text-sm">Step details here</p>
 				</li>
 			</ol>
 		</div>
