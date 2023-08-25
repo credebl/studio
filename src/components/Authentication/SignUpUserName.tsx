@@ -8,13 +8,12 @@ import {
 	Form,
 	Formik
 } from 'formik';
-import { sendVerificationMail } from '../../api/Auth.js';
-import { apiStatusCodes } from '../../config/CommonConstant.js';
-
-import type { AxiosError, AxiosResponse } from 'axios';
 import { useEffect, useState } from 'react';
-import SignUpUser3 from './signUpUser-passkey.js';
+
 import React from 'react';
+import { apiStatusCodes } from '../../config/CommonConstant.js';
+import { sendVerificationMail } from '../../api/Auth.js';
+import SignUpUserPasskey from './SignUpUserPasskey.js';
 
 interface nameValues {
 	firstName: string;
@@ -30,43 +29,29 @@ interface passwordValues {
 	confirmPassword: string
 }
 
-const SignUpUser2 = () => {
+const SignUpUserName = () => {
 
-	const [verifyLoader, setVerifyLoader] = useState<boolean>(false)
-	const [erroMsg, setErrMsg] = useState<string | null>(null)
-	const [verificationSuccess, setVerificationSuccess] = useState<string>('')
-	const [enableName, setEnableName] = useState<boolean>(false)
-	const [continuePasswordFlag, setContinuePasswordFlag] = useState<boolean>(false)
 	const [userDetails, setUserDetails] = useState<nameValues>({
 		firstName: '',
 		lastName: ''
 	})
 	const [emailAutoFill, setEmailAutoFill] = useState<string>('')
 	const [fidoError, setFidoError] = useState("")
-	const [currentComponent, setCurrentComponent] = useState<string>('email');
-
-
-	useEffect(() => {
-
-		if (window?.location?.search.length > 7) {
-			setEmailAutoFill(window?.location?.search.split('=')[1])
-		}
-	}, [])
+	const [continuePasswordFlag, setContinuePasswordFlag] = useState<boolean>(false)
 
 
 	const setNameValue = (values: nameValues) => {
-		console.log('values::', values)
 		setUserDetails({
 			firstName: values.firstName,
 			lastName: values.lastName
 		})
+
 		setContinuePasswordFlag(true)
-		setEnableName(false)
 	}
 
 	return (
 		<div className=''>
-			{currentComponent === 'email' &&
+			{!continuePasswordFlag &&
 
 				<div className="w-full h-full bg-white flex-shrink-0">
 					<div className="flex flex-col md:flex-row" style={{ height: '830px' }}>
@@ -98,20 +83,6 @@ const SignUpUser2 = () => {
 						</div>
 						<div className="flex items-center justify-center p-6 sm:p-12 md:w-2/5 shadow-xl shadow-blue-700">
 							<div className="w-full" style={{ height: '700px' }}>
-								{
-									(verificationSuccess || erroMsg) &&
-									<Alert
-										color={verificationSuccess ? "success" : "failure"}
-										onDismiss={() => setErrMsg(null)}
-									>
-										<span>
-											<p>
-												{verificationSuccess || erroMsg}
-											</p>
-										</span>
-									</Alert>
-								}
-
 								<div className='mt-28 mb-28'>
 
 									<div className="flex justify-center mb-4 text-center text-primary-700 text-blue-600 font-inter text-4xl font-bold leading-10 ">
@@ -189,9 +160,11 @@ const SignUpUser2 = () => {
 														}
 													</div>
 
-													<div className="text-lg flex justify-end font-medium text-gray-500 dark:text-gray-400 text-primary-700 hover:underline dark:text-primary-500 cursor-pointer ml-auto pt-5"
-														onClick={() => setCurrentComponent('password')}>
+													<div className="text-lg flex justify-end font-medium text-gray-500 dark:text-gray-400 text-primary-700  dark:text-primary-500  ml-auto pt-5">
+														<span className='hover:underline cursor-pointer' onClick={() => setContinuePasswordFlag(true)}>
+															
 														{`Skip`}
+														</span>
 													</div>
 
 													<div className="flex justify-between mt-20">
@@ -211,7 +184,6 @@ const SignUpUser2 = () => {
 															id='signupuserdetailsnextbutton'
 															type="submit"
 															isProcessing={""}
-															onClick={() => setCurrentComponent('password')}
 															className='w-2/5 font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
 
 														>
@@ -247,12 +219,15 @@ const SignUpUser2 = () => {
 			}
 
 			{
-				currentComponent === 'password' && (
-					<SignUpUser3 />
+				continuePasswordFlag && (
+					<SignUpUserPasskey
+						firstName={userDetails.firstName}
+						lastName={userDetails.lastName}
+					 />
 				)
 			}
 		</div>
 	);
 };
 
-export default SignUpUser2;
+export default SignUpUserName;

@@ -1,5 +1,7 @@
-import * as yup from 'yup';
 import './global.css'
+
+import * as yup from 'yup';
+
 import { Button, Label } from 'flowbite-react';
 import {
 	Field,
@@ -9,8 +11,8 @@ import {
 import { useEffect, useState } from 'react';
 
 import { Alert } from 'flowbite-react';
-import SignInUser2 from './SignInUser-passkey';
 import RegistrationSuccess from './RegistrationSuccess'
+import SignInUser2 from './SignInUser-passkey';
 
 interface emailValue {
 	email: string | null;
