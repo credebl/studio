@@ -51,7 +51,7 @@ const CustomQRCode = ({ value, size }: { value: string, size: number }) => {
 		{/* <p className="text-center mt-3 ">Invitation URL</p> */}
 		<div className="flex items-center text-center mt-3">
 			<p className="md center"></p>  
-			<Button
+			{/* <Button
 			onClick={drawHtmlToCanvas}
 			
 			className='mt-4 float-right text-base font-medium text-center text-white  hover:!bg rounded-lg hover:bg focus:ring-4 focus:ring sm:w-auto dark:bg dark:hover:bg dark:focus:ring'
@@ -63,7 +63,7 @@ const CustomQRCode = ({ value, size }: { value: string, size: number }) => {
 				<path fill="#fff" d="M23.312 10.844a.685.685 0 0 0-.687.688v6.254a3.086 3.086 0 0 1-3.082 3.082H4.457a3.086 3.086 0 0 1-3.082-3.082V11.43a.685.685 0 0 0-.687-.688.685.685 0 0 0-.688.688v6.356a4.462 4.462 0 0 0 4.457 4.457h15.086A4.462 4.462 0 0 0 24 17.786v-6.254a.688.688 0 0 0-.688-.688Z" />
 				<path fill="#fff" d="M11.515 16.783c.133.132.31.203.484.203a.671.671 0 0 0 .484-.203l4.37-4.37a.686.686 0 0 0 0-.973.686.686 0 0 0-.973 0l-3.193 3.198V.688A.685.685 0 0 0 11.999 0a.685.685 0 0 0-.688.688v13.95L8.113 11.44a.686.686 0 0 0-.973 0 .686.686 0 0 0 0 .973l4.375 4.37Z" />
 			</svg>
-			</Button>
+			</Button> */}
 			
 			<button
 				className=
