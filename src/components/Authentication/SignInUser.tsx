@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import { Alert } from 'flowbite-react';
 import SignInUser2 from './SignInUser-passkey';
 import RegistrationSuccess from './RegistrationSuccess'
+import React from 'react';
 
 interface emailValue {
 	email: string | null;
@@ -44,7 +45,7 @@ const SignInUser = () => {
 		}
 		setTimeout(() => {
 			setSuccess('')
-		}, 5000);
+		});
 	}, [])
 
 
@@ -58,41 +59,21 @@ const SignInUser = () => {
 	}
 
 	return (
-		<div className=''>
+		<div className='h-full'>
 			{currentComponent === 'email' && isPasskeySuccess ? ( <RegistrationSuccess /> ) 
 			: currentComponent === 'password' ? (
                 <SignInUser2 email={email?.email as string} />
             ) : (
 
-				<div className="w-full h-full bg-white flex-shrink-0">
-					<div className="flex flex-col md:flex-row" style={{ height: '830px' }}>
-						<div className="flex md:h-auto md:w-3/5 bg-white" style={{ justifyContent: 'center', padding: 100 }}>
-							<div className='absolute left-10 top-10'>
-								<a href="/" className="flex items-center">
-									<img
-										src="/images/CREDEBL_ICON.png"
-										className="mr-2 h-6 sm:h-9"
-										alt="CREDEBL Logo"
-									/>
-									<span
-										className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
-									>
-										CREDEBL</span>
-
-								</a>
-							</div>
-							<img className="flex"
+				<div className="w-full bg-white flex-shrink-0">
+					<div className="flex flex-col md:flex-row">
+						<div className="flex justify-center px-50 py-50 md:w-3/5 bg-blue-500 bg-opacity-10" >
+							<img 
 								src="/images/signin.svg"
-								alt="img" />
-							<div className="absolute bottom-6 left-6">
-								&copy; 2019 - {new Date().getFullYear()} —
-								<a className="hover:underline" target="_blank"
-								>CREDEBL</a> | All rights reserved.
-							</div>
-
+								alt="img" />	
 						</div>
-						<div className="flex items-center justify-center p-6 sm:p-12 md:w-2/5 shadow-xl shadow-blue-700">
-							<div className="w-full" style={{ height: '700px' }}>
+						<div className="flex items-center justify-center p-6 sm:p-12 md:w-2/5 ">
+							<div className="w-full">
 								{
 									(success || failure || fidoUserError) &&
 									<Alert
@@ -217,6 +198,8 @@ const SignInUser = () => {
 			}
 
 		</div>
+
+
 	);
 };
 

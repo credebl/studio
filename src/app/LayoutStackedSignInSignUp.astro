@@ -1,0 +1,23 @@
+---
+import FooterSignInSignUp from './FooterSignInSignUp.astro';
+import LayoutCommon from './LayoutCommon.astro';
+import NavBarSignInSignUp from './NavBarSignInSignUp.astro';
+---
+<NavBarSignInSignUp />
+
+<LayoutCommon>
+
+	<div class="flex bg-gray-50 dark:bg-gray-900">
+		<div
+			id="main-content"
+			class="relative w-full bg-gray-50 dark:bg-gray-900"
+		>
+				<slot />
+
+		</div>
+	</div>
+
+	<FooterSignInSignUp />
+
+</LayoutCommon>
+
