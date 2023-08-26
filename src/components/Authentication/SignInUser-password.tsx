@@ -1,5 +1,7 @@
-import * as yup from 'yup';
 import './global.css'
+
+import * as yup from 'yup';
+
 import { Button, Label } from 'flowbite-react';
 import {
 	Field,
@@ -8,13 +10,13 @@ import {
 } from 'formik';
 import { UserSignInData, getUserProfile, loginUser, passwordEncryption, setToLocalStorage } from '../../api/Auth';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
+import { generateAuthenticationOption, verifyAuthentication } from '../../api/Fido';
 import { useEffect, useState } from 'react';
 
 import { Alert } from 'flowbite-react';
 import type { AxiosResponse } from 'axios';
-import { generateAuthenticationOption, verifyAuthentication } from '../../api/Fido';
-import { startAuthentication } from '@simplewebauthn/browser';
 import SignInUser2 from './SignInUser-passkey';
+import { startAuthentication } from '@simplewebauthn/browser';
 
 interface emailValue {
 	email: string;
@@ -43,18 +45,6 @@ const SignInUser3 = (signInUserProps: SignInUser3Props) => {
 	const [showSignInUser2, setShowSignInUser2] = useState(false);
 	const [passwordVisible, setPasswordVisible] = useState(false);
 
-
-	useEffect(() => {
-		if (signUpSuccessPassword === window?.location?.search) {
-			setSuccess('Hurry!! 🎉 You have successfully registered on CREDEBL 🚀')
-		}
-		else if (signUpSuccessPasskey === window?.location?.search) {
-			setSuccess('Hurry!! 🎉 You have successfully registered on CREDEBL with passkey')
-		}
-		setTimeout(() => {
-			setSuccess('')
-		}, 5000);
-	}, [])
 
 	const getUserDetails = async (access_token: string) => {
 		const userDetails = await getUserProfile(access_token);
@@ -86,7 +76,19 @@ const SignInUser3 = (signInUserProps: SignInUser3Props) => {
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			await setToLocalStorage(storageKeys.TOKEN, data?.data?.access_token)
-			getUserDetails(data?.data?.access_token)
+
+			const response = await fetch('/api/auth/signin', {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(data),
+			});
+
+			if (response.redirected) {
+				getUserDetails(data?.data?.access_token)
+			}
+
 		} else {
 			setLoading(false)
 			setFailure(loginRsp as string)

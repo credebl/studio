@@ -1,20 +1,21 @@
 import './global.css'
+
 import { Alert, Button } from 'flowbite-react';
-import { useState } from 'react';
+import { UserSignInData, getUserProfile, loginUser, setToLocalStorage } from '../../api/Auth';
+import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
+import { generateAuthenticationOption, verifyAuthentication } from '../../api/Fido';
+
+import type { AxiosResponse } from 'axios';
 import React from 'react';
 import SignInUser from './SignInUser';
 import SignInUser3 from './SignInUser-password';
-import { generateAuthenticationOption, verifyAuthentication } from '../../api/Fido';
 import { startAuthentication } from '@simplewebauthn/browser';
-import type { AxiosResponse } from 'axios';
-import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
-import { UserSignInData, getUserProfile, loginUser, setToLocalStorage } from '../../api/Auth';
+import { useState } from 'react';
 
 interface signInUserProps {
     email: string
 }
 const SignInUser2 = (signInUserProps: signInUserProps) => {
-    console.log("signInUserProps", signInUserProps)
     const [loading, setLoading] = useState<boolean>(false)
     const [showSignInUser, setShowSignInUser] = useState(true);
     const [showSignInUser3, setShowSignInUser3] = useState(false);

@@ -1,16 +1,16 @@
 import 'react-toastify/dist/ReactToastify.css';
 
 import { Alert, Button } from 'flowbite-react';
+import type { AxiosError, AxiosResponse } from 'axios';
+import type { IdeviceBody, RegistrationOptionInterface } from '../Profile/interfaces/index.js';
+import { addDeviceDetails, generateRegistrationOption, verifyRegistration } from '../../api/Fido.js';
 import { addPasswordDetails, checkUserExist, getFromLocalStorage, passwordEncryption, sendVerificationMail } from '../../api/Auth.js';
 import { apiStatusCodes, passwordRegex, storageKeys } from '../../config/CommonConstant.js';
-import type { AxiosError, AxiosResponse } from 'axios';
 import { useEffect, useState } from 'react';
-import { addDeviceDetails, generateRegistrationOption, verifyRegistration } from '../../api/Fido.js';
-import { startRegistration } from '@simplewebauthn/browser';
-import type { IdeviceBody, RegistrationOptionInterface } from '../Profile/interfaces/index.js';
+
+import SignUpUserPassword from './SignUpUserPassword.jsx';
 import secureRandomPassword from 'secure-random-password';
-import React from 'react';
-import SignUpUser4 from './signUpUser-password.jsx';
+import { startRegistration } from '@simplewebauthn/browser';
 
 interface nameValues {
     firstName: string;
@@ -26,17 +26,14 @@ interface emailValue {
 }
 
 
-const SignUpUser3 = () => {
+const SignUpUserPasskey = ({firstName, lastName}: {firstName: string; lastName: string}) => {
 
     const [loading, setLoading] = useState<boolean>(false)
     const [erroMsg, setErrMsg] = useState<string | null>(null)
     const [verificationSuccess, setVerificationSuccess] = useState<string>('')
     const [enableName, setEnableName] = useState<boolean>(false)
     const [continuePasswordFlag, setContinuePasswordFlag] = useState<boolean>(false)
-    const [userDetails, setUserDetails] = useState<nameValues>({
-        firstName: '',
-        lastName: ''
-    })
+
     const [addSuccess, setAddSuccess] = useState<string | null>(null)
     const [addfailure, setAddFailur] = useState<string | null>(null)
     const [emailAutoFill, setEmailAutoFill] = useState<string>('')
@@ -44,8 +41,6 @@ const SignUpUser3 = () => {
     const [showSignUpUser, setShowSignUpUser] = useState(true);
     const [showSignUpUser4, setShowSignUpUser4] = useState(false);
     const [currentComponent, setCurrentComponent] = useState<string>('email');
-
-
 
 
     useEffect(() => {
@@ -76,8 +71,8 @@ const SignUpUser3 = () => {
         const payload = {
             password: passwordEncryption(passwordDetails?.password),
             isPasskey: false,
-            firstName: userDetails.firstName,
-            lastName: userDetails.lastName
+            firstName: firstName,
+            lastName: lastName
         }
         setLoading(true)
 
@@ -134,7 +129,6 @@ const SignUpUser3 = () => {
             const verificationRegisterResp = await verifyRegistration(verifyRegistrationObj, OrgUserEmail)
             const { data } = verificationRegisterResp as AxiosResponse
 
-            console.log('data::', data)
             const credentialID = data?.data?.newDevice?.credentialID
             if (data?.data?.verified) {
                 let platformDeviceName = ''
@@ -151,7 +145,6 @@ const SignUpUser3 = () => {
                     deviceFriendlyName: platformDeviceName
 
                 }
-                console.log('deviceBody::', deviceBody)
                 await addDeviceDetailsMethod(deviceBody)
             }
         } catch (error) {
@@ -324,11 +317,14 @@ const SignUpUser3 = () => {
 
             {
                 currentComponent === 'password' && (
-                    <SignUpUser4 />
+                    <SignUpUserPassword 
+                    firstName={firstName}
+                    lastName={lastName}
+                    />
                 )
             }
         </div>
     );
 };
 
-export default SignUpUser3;
+export default SignUpUserPasskey;
