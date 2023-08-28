@@ -1,5 +1,3 @@
-'use client';
-
 import { Button, Card, Pagination, Spinner } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
 import type { OrgRole, Organisation } from '../interfaces'
