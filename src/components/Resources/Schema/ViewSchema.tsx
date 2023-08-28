@@ -129,11 +129,6 @@ const ViewSchemas = () => {
       setCreateLoader(false)
     }
     getCredentialDefinitionList(schemaDetails?.schemaId, orgId)
-    // setTimeout(() => {
-    //   setSuccess('')
-    //   setFailur('')
-    // }, 4000);
-  }
 
   return (
     <div className="px-4 pt-6">
