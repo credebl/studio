@@ -129,11 +129,6 @@ const ViewSchemas = () => {
       setCreateLoader(false)
     }
     getCredentialDefinitionList(schemaDetails?.schemaId, orgId)
-    setTimeout(() => {
-      setSuccess('')
-      setFailur('')
-    }, 4000);
-  }
 
   return (
     <div className="px-4 pt-6">
@@ -280,6 +275,7 @@ const ViewSchemas = () => {
                           name="tagName"
                           placeholder="Enter Credential definition"
                           className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                          disabled={createloader}
                         />
                         {
                           (formikHandlers?.errors?.tagName && formikHandlers?.touched?.tagName) &&
@@ -334,6 +330,7 @@ const ViewSchemas = () => {
                         Create
                       </Button>
                     </div>
+
                     <div className='float-right p-2'>
                       <Button
                         type="reset"
@@ -341,6 +338,7 @@ const ViewSchemas = () => {
                         onClick={() => {
                           setCredDefAuto('')
                         }}
+                        disabled={createloader}
                         className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto'
 
                         style={{ height: '2.6rem', width: '6rem', minWidth: '2rem' }}

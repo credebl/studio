@@ -8,110 +8,94 @@ import {
 	Form,
 	Formik,
 } from 'formik';
-import { useEffect, useState } from 'react';
+import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
+import { useEffect, useRef, useState } from 'react';
 
 import { Alert } from 'flowbite-react';
+import React from 'react';
 import RegistrationSuccess from './RegistrationSuccess'
-import SignInUser2 from './SignInUser-passkey';
-import { getSupabaseClient } from '../../supabase';
+import SignInUserPasskey from './SignInUserPasskey';
+import { storageKeys } from '../../config/CommonConstant';
 
 interface emailValue {
 	email: string | null;
 }
 
-interface passwordValue {
-	password: string;
-}
 const signUpSuccessPassword = '?signup=true?fidoFlag=false'
 const signUpSuccessPasskey = '?signup=true?fidoFlag=true'
 
 const SignInUser = () => {
 	const [email, setEmail] = useState<emailValue | null>(null)
 	const [fidoUserError, setFidoUserError] = useState("")
-	const [nextflag, setNextFlag] = useState<boolean>(false)
 	const [success, setSuccess] = useState<string | null>(null)
 	const [failure, setFailur] = useState<string | null>(null)
 	const [loading, setLoading] = useState<boolean>(false)
 	const [currentComponent, setCurrentComponent] = useState<string>('email');
 	const [isEmailValid, setIsEmailValid] = useState(false);
 	const [isPasskeySuccess, setIsPasskeySuccess] = useState(false);
+	const [userLoginEmail, setUserLoginEmail] = useState<string| null>(null);
+	
+	const nextButtonRef = useRef<HTMLButtonElement | null>(null);
 
 
 	useEffect(() => {
-		if (signUpSuccessPassword === window?.location?.search) {
-
-			setSuccess('Congratulations!! 🎉 You have successfully registered on CREDEBL 🚀')
-		}
-		else if (signUpSuccessPasskey === window?.location?.search) {
+		const fetchData = async () => {
+		  const storedEmail = await getFromLocalStorage(storageKeys.LOGIN_USER_EMAIL);
+		  setUserLoginEmail(storedEmail);
+	  
+		  if (signUpSuccessPassword === window?.location?.search) {
+			setSuccess('Congratulations!! 🎉 You have successfully registered on CREDEBL 🚀');
+		  } else if (signUpSuccessPasskey === window?.location?.search) {
 			setIsPasskeySuccess(true);
-		}
-		setTimeout(() => {
-			setSuccess('')
-		}, 5000);
-	}, [])
+		  }
+	  
+		  setTimeout(() => {
+			setSuccess('');
+		  }, 5000);
+		};
+	  
+		fetchData();
+	  }, []);
+	
 
-
-	const saveEmail = (values: emailValue) => {
+	const saveEmail = async (values: emailValue) => {
 		setEmail(values)
-		setNextFlag(true)
 		setCurrentComponent('password');
+
+		await setToLocalStorage(storageKeys.LOGIN_USER_EMAIL, values.email);
+		setIsPasskeySuccess(true);
 	}
+	
 	const redirectLandingPage = () => {
 		window.location.href = '/'
 	}
 
-	const forgotPassword = async (email: string) => {
-		console.log(`EMAIL::`);
-
-		const { data, error } = await getSupabaseClient().auth.resetPasswordForEmail(email
-		, {
-			redirectTo: 'http://localhost:3000/update-password',
+	useEffect(() => {
+		if (nextButtonRef.current) {
+		  nextButtonRef.current.focus();
 		}
-		);
-
-		console.log(`RESET:DATA::`, data);
-		console.log(`RESET:ERROR::`, error);
-
-		// window.location.href='/update-password'
-
-	}
+	  }, []);
+	  
 
 	return (
-		<div className=''>
+		<div className='h-full'>
+
 			{currentComponent === 'email' && isPasskeySuccess ? ( <RegistrationSuccess /> ) 
 			: currentComponent === 'password' ? (
-                <SignInUser2 email={email?.email as string} />
+                <SignInUserPasskey email={email?.email as string} />
             ) : (
 
-				<div className="w-full h-full bg-white flex-shrink-0">
-					<div className="flex flex-col md:flex-row" style={{ height: '830px' }}>
-						<div className="flex md:h-auto md:w-3/5 bg-white" style={{ justifyContent: 'center', padding: 100 }}>
-							<div className='absolute left-10 top-10'>
-								<a href="/" className="flex items-center">
-									<img
-										src="/images/CREDEBL_ICON.png"
-										className="mr-2 h-6 sm:h-9"
-										alt="CREDEBL Logo"
-									/>
-									<span
-										className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
-									>
-										CREDEBL</span>
+				<div className="bg-white flex-shrink-0">
+					<div className="flex flex-col md:flex-row">
+						<div className="flex justify-center md:px-50 md:py-50 md:w-3/5 bg-blue-500 bg-opacity-10" >
 
-								</a>
-							</div>
-							<img className="flex"
-								src="/images/signin.svg"
-								alt="img" />
-							<div className="absolute bottom-6 left-6">
-								&copy; 2019 - {new Date().getFullYear()} —
-								<a className="hover:underline" target="_blank"
-								>CREDEBL</a> | All rights reserved.
-							</div>
-
+							<img 
+							className='hidden sm:block'
+							src='/images/signin.svg'
+								alt="img" />		
 						</div>
-						<div className="flex items-center justify-center p-6 sm:p-12 md:w-2/5 shadow-xl shadow-blue-700">
-							<div className="w-full" style={{ height: '700px' }}>
+						<div className="flex items-center justify-center p-6 sm:p-12 md:w-2/5 ">
+							<div className="w-full">
 								{
 									(success || failure || fidoUserError) &&
 									<Alert
@@ -126,9 +110,7 @@ const SignInUser = () => {
 									</Alert>
 								}
 
-
-
-								<div className='mt-28 mb-28'>
+								<div className='mt-28 mb-20'>
 
 									<div className="flex justify-center mb-4 text-center text-primary-700 text-blue-600 font-inter text-4xl font-bold leading-10 ">
 										Login
@@ -139,9 +121,17 @@ const SignInUser = () => {
 
 								</div>
 
+										<div className="lg:hidden sm:block bg-blue-500 bg-opacity-10" >
+
+											<img
+												src="/images/signin.svg"
+												alt="img" />
+										</div>
+
+
 								<Formik
 									initialValues={{
-										email: ''
+										email: userLoginEmail ? userLoginEmail : '',
 									}}
 									validationSchema={yup.object().shape({
 										email: yup
@@ -159,33 +149,79 @@ const SignInUser = () => {
 
 									{(formikHandlers): JSX.Element => (
 										<Form className="mt-8 space-y-6" onSubmit={formikHandlers.handleSubmit}>
-											<div className="text-primary-700 font-inter text-base font-medium leading-5 mt-20 mb-20">
-
+											<div className="text-primary-700 font-inter text-base font-medium leading-5 mt-18 mb-20">
 
 												<div className="block mb-2 text-sm font-medium  dark:text-white">
 													<Label className="text-primary-700" htmlFor="email2" value="Your Email" />
 													<span className='text-red-500 text-xs'>*</span>
 												</div>
+														{/* <div className='relative'>
+															<Field
+																id='signinemail'
+																name='email'
+																type="email"
+																className="w-full bg-gray-100 px-10 py-2 text-gray-900 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
+																placeholder="name@company.com"
+															/>
+															<svg
+																xmlns="http://www.w3.org/2000/svg"
+																width="24"
+																height="16"
+																viewBox="0 0 30 24"
+																fill="none"
+																className="absolute left-3 right-5 top-1/2 transform -translate-y-1/2"
+															>
+																<path
+																	d="M27 0H3C1.35 0 0.015 1.35 0.015 3L0 21C0 22.65 1.35 24 3 24H27C28.65 24 30 22.65 30 21V3C30 1.35 28.65 0 27 0ZM27 6L15 13.5L3 6V3L15 10.5L27 3V6Z"
+																	fill="#1F4EAD"
+																/>
+															</svg>
+															
+															{!isEmailValid && formikHandlers.touched.email && (
+																<span className="text-red-500 text-xs">
+																	{formikHandlers.errors.email}
+																</span>
+															)}
+														</div> */}
 
-												<Field id='signinemail'
-													name='email'
-													type="email"
-													className="w-full bg-gray-200 px-4 py-2 text-gray-900 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
-													placeholder="name@company.com" />
-												{!isEmailValid && formikHandlers.touched.email && (
-													<span className="text-red-500 text-xs">
-														{formikHandlers.errors.email}
-													</span>
-
-												)}
+														<div className="w-full flex items-center bg-gray-200 px-4 border text-gray-900 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"> 
+														         {/* <AiOutlineUser className="mr-2 text-gray-500" /> Icon   */}
+																 <svg
+																xmlns="http://www.w3.org/2000/svg"
+																width="24"
+																height="16"
+																viewBox="0 0 30 24"
+																fill="none"
+																className="mr-2"
+															>
+																<path
+																	d="M27 0H3C1.35 0 0.015 1.35 0.015 3L0 21C0 22.65 1.35 24 3 24H27C28.65 24 30 22.65 30 21V3C30 1.35 28.65 0 27 0ZM27 6L15 13.5L3 6V3L15 10.5L27 3V6Z"
+																	fill="#1F4EAD"
+																/>
+															</svg>
+																         {/* <Field type="text" name="username" placeholder="Username" className="outline-none flex-grow" />   */}
+																
+																		 <Field
+																id='signinemail'
+																name='email'
+																type="email"
+																className="outline-none flex-grow bg-transparent focus:outline-none border-none focus:border-none focus:ring-0" 
+																placeholder="name@company.com"
+															/>
+														
+																</div>
+																{!isEmailValid && formikHandlers.touched.email && (
+																<span className="text-red-500 text-xs">
+																	{formikHandlers.errors.email}
+																</span>
+															)}
 
 											</div>
-											<button onClick={() => forgotPassword(formikHandlers.getFieldProps('email').toString())}>
-												Forgot Password
-											</button>
-											<div className="flex justify-between mt-20">
+											<div className="flex justify-between">
+
 												<button
-													className="block w-2/5 py-2 px-4 rounded-md border text-center font-medium leading-5 border-blue-600 bg-white flex items-center justify-center"
+													className="w-2/5 px-4 rounded-md text-center font-medium leading-5 border-blue-600 flex items-center justify-center hover:bg-secondary-700 bg-transparent ring-2 text-black rounded-lg text-sm"
+
 													onClick={redirectLandingPage}
 												>
 													<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 30 20" fill="none">
@@ -200,9 +236,10 @@ const SignInUser = () => {
 												<Button
 													id='signinnext'
 													isProcessing={loading}
+													ref={nextButtonRef}
 													type="submit"
-
 													className='w-2/5 font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
+
 													onClick={() => setCurrentComponent('email')}
 												>
 													<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 30 20" fill="none">
@@ -238,7 +275,9 @@ const SignInUser = () => {
 
 			}
 
-		</div>
+		{/* </div> */}
+</div>
+
 	);
 };
 
