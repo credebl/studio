@@ -39,7 +39,7 @@ interface IssuanceFormPayload {
 
 interface DataTypeAttributes {
 	schemaDataType: string;
-	displayName:string
+	attributeName:string
 }
 
 const IssueCred = () => {
@@ -69,7 +69,7 @@ const IssueCred = () => {
 		createSchemaPayload(schemaId, credDefId);
 		setUserLoader(true);
 		const selectedUsers = await getSelectedUsers();
-		const attributes = await getSchemaDetails(schemaId, Number(orgId));
+		const attributes = await getSchemaDetails();
 		if (attributes && attributes.length) {
 			createIssuanceForm(selectedUsers, attributes, credDefId, Number(orgId));
 		} else {
@@ -84,7 +84,7 @@ const IssueCred = () => {
 		orgId: number,
 	) => {
 		const attrObj = attributes.map((attr) => ({
-			name: attr.displayName,
+			name: attr.attributeName,
 			value: '',
 			dataType: attr.schemaDataType,
 		}));
@@ -103,7 +103,7 @@ const IssueCred = () => {
 	const getSchemaDetails = async (): Promise<DataTypeAttributes[] | null> => {
 		const schemaAttributes = await getFromLocalStorage(storageKeys.SCHEMA_ATTR);
 		const parsedSchemaAttributes = JSON.parse(schemaAttributes) || [];
-
+        console.log("parsedSchemaAttributes:::", parsedSchemaAttributes)
 		return parsedSchemaAttributes.attribute;
 	};
 
@@ -150,7 +150,6 @@ const IssueCred = () => {
 			...attr,
 			value: String(attr.value),
 		}));
-
 		const convertedAttributesValues = {
 			...values,
 			attributes: convertedAttributes,

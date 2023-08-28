@@ -66,9 +66,7 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 
 				}
 			}
-			setTimeout(() => {
-				setSchemaListErr('')
-			}, 3000)
+			
 		} catch (error) {
 			console.error('Error while fetching schema list:', error);
 			setLoading(false);
