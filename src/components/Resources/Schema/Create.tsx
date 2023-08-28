@@ -2,9 +2,13 @@
 
 import * as yup from 'yup';
 
-import { Alert, Button, Card, Label, Table, } from 'flowbite-react';
+import { Alert, Button, Card, Label, Table } from 'flowbite-react';
 import { Field, FieldArray, Form, Formik } from 'formik';
-import { apiStatusCodes, schemaVersionRegex, storageKeys } from '../../../config/CommonConstant';
+import {
+	apiStatusCodes,
+	schemaVersionRegex,
+	storageKeys,
+} from '../../../config/CommonConstant';
 import { useEffect, useState } from 'react';
 
 import type { AxiosResponse } from 'axios';
@@ -15,9 +19,9 @@ import { addSchema } from '../../../api/Schema';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
 interface Values {
-    schemaName: string;
-    schemaVersion: string;
-    attribute: [];
+	schemaName: string;
+	schemaVersion: string;
+	attribute: [];
 }
 
 const options = [
@@ -40,7 +44,6 @@ const CreateSchema = () => {
 
 		fetchData();
 	}, []);
-
 
 	const submit = async (values: Values) => {
 		setCreateLoader(true);
@@ -104,9 +107,6 @@ const CreateSchema = () => {
 										attributeName: yup
 											.mixed()
 											.required('Attribute name is required'),
-										// schemaDataType: yup
-										// 	.mixed()
-										// 	.required('Schema data type is required'),
 										displayName: yup
 											.mixed()
 											.required('Display name is required'),
@@ -119,10 +119,9 @@ const CreateSchema = () => {
 							onSubmit={async (values): Promise<void> => {
 								values.attribute.forEach((element: any) => {
 									if (!element.schemaDataType) {
-											element.schemaDataType = 'string';
+										element.schemaDataType = 'string';
 									}
-							});
-							
+								});
 								const updatedAttribute: Array<Number> = [];
 								values.attribute.forEach((element) => {
 									updatedAttribute.push(Number(element));
@@ -140,7 +139,6 @@ const CreateSchema = () => {
 											</div>
 											<div className="md:flex flex-col lg:mr-4 sm:mr-0">
 												{' '}
-												{/* Wrap the field and error message in a flex container */}
 												<Field
 													id="schemaName"
 													name="schemaName"
@@ -168,7 +166,6 @@ const CreateSchema = () => {
 											</div>
 											<div className="md:flex flex-col">
 												{' '}
-												{/* Wrap the field and error message in a flex container */}
 												<Field
 													id="schemaVersion"
 													name="schemaVersion"
@@ -212,7 +209,7 @@ const CreateSchema = () => {
 																		Attribute: {index + 1}
 																	</label>
 																	<div key={index} className="md:flex pl-1">
-																		<div className="md:w-1/3 sm:w-full md:w-96  flex-col md:flex m-2">
+																		<div className="md:w-3/12 sm:w-full md:w-96  flex-col md:flex m-2">
 																			<Field
 																				id={`attribute[${index}]`}
 																				name={`attribute.${index}.attributeName`}
@@ -242,7 +239,7 @@ const CreateSchema = () => {
 																			)}
 																		</div>
 
-																		<div className="md:w-1/3 sm:w-full md:w-96  flex-col md:flex m-2 ">
+																		<div className="md:w-3/12 sm:w-full md:w-96  flex-col md:flex m-2 ">
 																			<Field
 																				component="select"
 																				id={`attribute[${index}]`}
@@ -283,7 +280,7 @@ const CreateSchema = () => {
 																				<label className="pt-1 text-red-500 text-xs h-5"></label>
 																			)}
 																		</div>
-																		<div className="md:w-1/3 sm:w-full flex-col md:flex m-2">
+																		<div className="md:w-3/12 sm:w-full flex-col md:flex m-2">
 																			<Field
 																				id={`attribute[${index}]`}
 																				name={`attribute.${index}.displayName`}
@@ -316,12 +313,12 @@ const CreateSchema = () => {
 																		{index === 0 && attribute.length === 1 ? (
 																			''
 																		) : (
-																			<div key={index}>
+																			<div key={index} className="text-red-600">
 																				<Button
 																					data-testid="deleteBtn"
 																					type="button"
-																					color="primary"
-																					className="mt-2 "
+																					color="danger"
+																					className="mt-2"
 																					onClick={() => remove(index)}
 																					disabled={
 																						index === 0 &&
@@ -354,16 +351,19 @@ const CreateSchema = () => {
 																				onClick={() => push('')}
 																				outline
 																				disabled={
-																					!formikHandlers.isValid || !formikHandlers.dirty
+																					!formikHandlers.isValid ||
+																					!formikHandlers.dirty
 																				}
 																			>
 																				<svg
 																					xmlns="http://www.w3.org/2000/svg"
+																					width="24"
+																					height="24"
 																					fill="none"
 																					viewBox="0 0 24 24"
-																					stroke-width="1.5"
+																					strokeWidth={2.5}
 																					stroke="currentColor"
-																					className="w-4 h-4 mr-1"
+																					className="mr-2"
 																				>
 																					<path
 																						fill="#fff"
@@ -471,7 +471,6 @@ const CreateSchema = () => {
 														<h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
 															Would you like to proceed? Keep in mind that this
 															action cannot be undone.
-															{/* Do you want to continue? Please note that this action cannot be undone. */}
 														</h3>
 														<Button
 															type="submit"
