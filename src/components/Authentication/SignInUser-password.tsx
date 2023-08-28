@@ -14,7 +14,7 @@ import { Alert } from 'flowbite-react';
 import type { AxiosResponse } from 'axios';
 import { generateAuthenticationOption, verifyAuthentication } from '../../api/Fido';
 import { startAuthentication } from '@simplewebauthn/browser';
-import SignInUser2 from './SignInUser-passkey';
+import React from 'react';
 
 interface emailValue {
 	email: string;
@@ -91,42 +91,23 @@ const SignInUser3 = (signInUserProps: SignInUser3Props) => {
 
 
 	return (
-		<div className='h-50'>
+		<div className='h-full'>
 
 			{showSignInUser2 ? (
 				<SignInUser2 email={email?.email as string} />
 			) : (
 				currentComponent === 'email' && (
-					<div className="w-full h-full bg-white rounded-lg ring-4 ring-blue-600 ring-opacity-50 w-1585 h-744 flex-shrink-0">
-						<div className="flex flex-col md:flex-row" style={{ height: '830px' }}>
-							<div className="flex md:h-auto md:w-3/5 bg-white" style={{ justifyContent: 'center', padding: 100 }}>
-								<div className='absolute left-10 top-10'>
-									<a href="/" className="flex items-center">
-										<img
-											src="/images/CREDEBL_ICON.png"
-											className="mr-2 h-6 sm:h-9"
-											alt="CREDEBL Logo"
-										/>
-										<span
-											className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
-										>
-											CREDEBL</span>
-
-									</a>
-								</div>
-
-								<img className="flex"
+					<div className="bg-white flex-shrink-0">
+						<div className="flex flex-col md:flex-row">
+							<div className="flex justify-center px-50 py-50 md:w-3/5 bg-blue-500 bg-opacity-10" >
+								<img
+									className='hidden sm:block'
 									src="/images/signInPassword.svg"
 									alt="img" />
-								<div className="absolute left-10 bottom-10">
-									&copy; 2019 - {new Date().getFullYear()} —
-									<a className="hover:underline" target="_blank"
-									>CREDEBL</a> | All rights reserved.
-								</div>
 
 							</div>
-							<div className="flex items-center justify-center p-6 sm:p-12 md:w-2/5 shadow-xl shadow-blue-700">
-								<div className="w-full" style={{ height: '700px' }}>
+							<div className="flex items-center justify-center p-6 sm:p-12 md:w-2/5 ">
+								<div className="w-full">
 
 									{
 										(success || failure || fidoUserError) &&
@@ -143,16 +124,25 @@ const SignInUser3 = (signInUserProps: SignInUser3Props) => {
 									}
 
 
-									<div className='mt-28 mb-28'>
+									<div className='mt-28 mb-20'>
 
 										<div className="flex justify-center mb-4 text-center text-primary-700 text-blue-600 font-inter text-4xl font-bold leading-10 ">
 											Login
 										</div>
 										<div className="text-gray-500 font-inter text-base font-medium leading-5 flex w-84 h-5.061 flex-col justify-center items-center flex-shrink-0">
-											Please enter your password
+											Please enter your email id for login
 										</div>
 
 									</div>
+
+									<div className="lg:hidden sm:block bg-blue-500 bg-opacity-10" >
+
+										<img
+											src="/images/signin.svg"
+											alt="img" />
+									</div>
+
+
 
 									<Formik
 										initialValues={{
@@ -217,9 +207,10 @@ const SignInUser3 = (signInUserProps: SignInUser3Props) => {
 													}
 
 												</div>
-												<div className="flex justify-between mt-20">
+												<div className="flex justify-between">
+
 													<button
-														className="block w-2/5 py-2 px-4 rounded-md border text-center font-medium leading-5 border-blue-600 bg-white flex items-center justify-center"
+														className="w-2/5 py-2 px-4 rounded-md text-center font-medium leading-5 border-blue-600 flex items-center justify-center hover:bg-secondary-700 bg-transparent ring-2 text-black rounded-lg text-sm"
 														onClick={handleBackButtonClick}
 													>
 														<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 30 20" fill="none">
@@ -229,7 +220,6 @@ const SignInUser3 = (signInUserProps: SignInUser3Props) => {
 														<span className="ml-2 text-primary-700">Back</span>
 
 													</button>
-
 
 													<Button
 														id='signinsubmit'
@@ -242,7 +232,6 @@ const SignInUser3 = (signInUserProps: SignInUser3Props) => {
 														}}
 
 														className='w-2/5 font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
-
 													>
 														<svg xmlns="http://www.w3.org/2000/svg" width="22" height="21" viewBox="0 0 38 37" fill="none">
 															<path d="M25.6203 21.2026C25.9292 21.2026 26.2293 21.053 26.389 20.7875C26.6242 20.3982 26.4697 19.9092 26.0451 19.6936C24.8394 19.0839 23.5513 18.6222 22.2245 18.2876C25.6888 16.7062 28.079 13.4342 28.079 9.65217C28.079 4.329 23.3565 0 17.5494 0C11.7423 0 7.01973 4.329 7.01973 9.65217C7.01973 13.4326 9.40823 16.7015 12.8672 18.2844C9.97157 19.0132 7.31283 20.4063 5.13493 22.4027C1.82335 25.4383 0 29.4793 0 33.7826V36.1956C0 36.6396 0.393134 37 0.877497 37C1.36186 37 1.75499 36.6396 1.75499 36.1956V33.7826C1.75499 29.9088 3.39762 26.2732 6.3775 23.5401C9.35739 20.8069 13.3253 19.3043 17.5494 19.3043C20.2257 19.3043 22.8705 19.9269 25.1975 21.1029C25.3308 21.1704 25.4765 21.2026 25.6203 21.2026ZM8.77472 9.65217C8.77472 5.217 12.711 1.60867 17.5494 1.60867C22.3877 1.60867 26.3241 5.217 26.3241 9.65217C26.3241 14.0873 22.3877 17.6957 17.5494 17.6957C12.711 17.6956 8.77472 14.0873 8.77472 9.65217Z" fill="white" />
@@ -252,7 +241,6 @@ const SignInUser3 = (signInUserProps: SignInUser3Props) => {
 														<span className="ml-2">Login</span>
 
 													</Button>
-
 												</div>
 
 												<div className="text-sm font-medium text-gray-500 dark:text-gray-400 pt-6 flex items-center justify-center">
@@ -265,21 +253,14 @@ const SignInUser3 = (signInUserProps: SignInUser3Props) => {
 														{` Create an account`}
 													</a>
 												</div>
-
 											</Form>
 										)}
 									</Formik>
-
-
-
-
 								</div>
-
 							</div>
 						</div>
 					</div>))
 			}
-
 
 		</div>
 	);

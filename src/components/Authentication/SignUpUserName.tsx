@@ -9,26 +9,24 @@ import {
 	Formik
 } from 'formik';
 import { useState } from 'react';
-import SignUpUser3 from './signUpUser-passkey.js';
+
 import React from 'react';
-import { apiStatusCodes } from '../../config/CommonConstant.js';
-import { sendVerificationMail } from '../../api/Auth.js';
 import SignUpUserPasskey from './SignUpUserPasskey.js';
+import SignUpUser from './SignUpUser.js';
 
 interface nameValues {
 	firstName: string;
 	lastName: string;
 }
 
-const SignUpUser2 = () => {
+const SignUpUserName = () => {
 
 	const [userDetails, setUserDetails] = useState<nameValues>({
 		firstName: '',
 		lastName: ''
 	})
-	const [currentComponent, setCurrentComponent] = useState<string>('email');
-
-
+	const [continuePasskeyFlag, setContinuePasskeyFlag] = useState<boolean>(false)
+	const [showSignUpUser, setShowSignUpUser] = useState<boolean>(false)
 
 	const setNameValue = (values: nameValues) => {
 		setUserDetails({
@@ -36,44 +34,33 @@ const SignUpUser2 = () => {
 			lastName: values.lastName
 		})
 
-		setContinuePasswordFlag(true)
+		setContinuePasskeyFlag(true)
 	}
 
+	const handleBackButtonClick = () => {
+		setContinuePasskeyFlag(false);
+		setShowSignUpUser(true);
+	};
+
+
 	return (
-		<div className=''>
-			{!continuePasswordFlag &&
+		<div className='h-full'>
 
-				<div className="w-full h-full bg-white flex-shrink-0">
-					<div className="flex flex-col md:flex-row" style={{ height: '830px' }}>
-						<div className="flex md:h-auto md:w-3/5 bg-white" style={{ justifyContent: 'center', padding: 100 }}>
-							<div className='absolute left-10 top-10'>
-								<a href="/" className="flex items-center">
-									<img
-										src="/images/CREDEBL_ICON.png"
-										className="mr-2 h-6 sm:h-9"
-										alt="CREDEBL Logo"
-									/>
-									<span
-										className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
-									>
-										CREDEBL</span>
+			{(!continuePasskeyFlag && !showSignUpUser) && (
 
-								</a>
-							</div>
 
-							<img className="flex"
+				<div className="bg-white flex-shrink-0">
+					<div className="flex flex-col md:flex-row">
+						<div className="flex justify-center px-50 py-50 md:w-3/5 bg-blue-500 bg-opacity-10" >
+							<img
+								className='hidden sm:block'
 								src="/images/signin.svg"
 								alt="img" />
-							<div className="absolute left-10 bottom-10">
-								&copy; 2019 - {new Date().getFullYear()} —
-								<a className="hover:underline" target="_blank"
-								>CREDEBL</a> | All rights reserved.
-							</div>
 
 						</div>
-						<div className="flex items-center justify-center p-6 sm:p-12 md:w-2/5 shadow-xl shadow-blue-700">
-							<div className="w-full" style={{ height: '700px' }}>
-								<div className='mt-28 mb-28'>
+						<div className="flex items-center justify-center p-6 sm:p-12 md:w-2/5 ">
+							<div className="w-full">
+								<div className='mt-16'>
 
 									<div className="flex justify-center mb-4 text-center text-primary-700 text-blue-600 font-inter text-4xl font-bold leading-10 ">
 										Create an account
@@ -83,6 +70,14 @@ const SignUpUser2 = () => {
 									</div>
 
 								</div>
+
+								<div className="lg:hidden sm:block bg-blue-500 bg-opacity-10" >
+
+									<img
+										src="/images/signin.svg"
+										alt="img" />
+								</div>
+
 
 								<Formik
 									initialValues={{
@@ -117,7 +112,7 @@ const SignUpUser2 = () => {
 												lastName: formikHandlers.values.lastName
 											})
 										return (
-											<Form className="mt-8 space-y-6" onSubmit={formikHandlers.handleSubmit}>
+											<Form className="mt-6 space-y-6" onSubmit={formikHandlers.handleSubmit}>
 												<div>
 													<div className="text-primary-700 font-inter text-base font-medium leading-5 mt-20 mb-6">
 														<div className="block mb-2 text-sm font-medium  dark:text-white">
@@ -150,15 +145,18 @@ const SignUpUser2 = () => {
 														}
 													</div>
 
-													<div className="text-lg flex justify-end font-medium text-gray-500 dark:text-gray-400 text-primary-700 dark:text-primary-500  ml-auto pt-5">
-														<span className="hover:underline cursor-pointer" onClick={() => setCurrentComponent('password')}>
+													<div className="text-lg flex justify-end font-medium text-gray-500 dark:text-gray-400 text-primary-700  dark:text-primary-500  ml-auto pt-5">
+														<span className='hover:underline cursor-pointer' onClick={() => setContinuePasskeyFlag(true)}>
+
 															{`Skip`}
 														</span>
 													</div>
 
-													<div className="flex justify-between mt-20">
+													<div className="flex justify-between mt-8">
 
 														<button
+															onClick={handleBackButtonClick}
+
 															className="block w-2/5 py-2 px-4 rounded-md border text-center font-medium leading-5 border-blue-600 bg-white flex items-center justify-center"
 														>
 															<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 30 20" fill="none">
@@ -173,7 +171,7 @@ const SignUpUser2 = () => {
 															id='signupuserdetailsnextbutton'
 															type="submit"
 															isProcessing={""}
-															onClick={() => setCurrentComponent('password')}
+
 															className='w-2/5 font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
 
 														>
@@ -185,7 +183,7 @@ const SignUpUser2 = () => {
 
 													</div>
 												</div>
-												<div className="text-sm font-medium text-gray-500 dark:text-gray-400 pt-6 flex items-center justify-center">
+												<div className="text-sm font-medium text-gray-500 dark:text-gray-400 pt-4 flex items-center justify-center">
 													Already have an account?
 													&nbsp;<a
 														id='navigatetosignup'
@@ -205,17 +203,28 @@ const SignUpUser2 = () => {
 
 						</div>
 					</div>
-				</div>
+				</div>)
 			}
 
-			{
-				continuePasswordFlag && (
-					<SignUpUserPasskey
-						firstName={userDetails.firstName}
-						lastName={userDetails.lastName}
-					 />
-				)
-			}
+
+			{showSignUpUser ? (
+				<SignUpUser />
+			) : continuePasskeyFlag ? (
+				<SignUpUserPasskey
+					firstName={userDetails.firstName}
+					lastName={userDetails.lastName}
+				/>
+			) : null}
+
+			{continuePasskeyFlag && !showSignUpUser && (
+				<button
+					onClick={handleBackButtonClick}
+					className="hover:underline cursor-pointer text-primary-700"
+				>
+					Back
+				</button>
+			)}
+
 		</div>
 	);
 };
