@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 import { Alert } from 'flowbite-react';
 import RegistrationSuccess from './RegistrationSuccess'
 import SignInUser2 from './SignInUser-passkey';
+import { getSupabaseClient } from '../../supabase';
 
 interface emailValue {
 	email: string | null;
@@ -57,6 +58,22 @@ const SignInUser = () => {
 	}
 	const redirectLandingPage = () => {
 		window.location.href = '/'
+	}
+
+	const forgotPassword = async (email: string) => {
+		console.log(`EMAIL::`);
+
+		const { data, error } = await getSupabaseClient().auth.resetPasswordForEmail(email
+		, {
+			redirectTo: 'http://localhost:3000/update-password',
+		}
+		);
+
+		console.log(`RESET:DATA::`, data);
+		console.log(`RESET:ERROR::`, error);
+
+		// window.location.href='/update-password'
+
 	}
 
 	return (
@@ -163,6 +180,9 @@ const SignInUser = () => {
 												)}
 
 											</div>
+											<button onClick={() => forgotPassword(formikHandlers.getFieldProps('email').toString())}>
+												Forgot Password
+											</button>
 											<div className="flex justify-between mt-20">
 												<button
 													className="block w-2/5 py-2 px-4 rounded-md border text-center font-medium leading-5 border-blue-600 bg-white flex items-center justify-center"
