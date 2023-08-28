@@ -10,10 +10,10 @@ import { useEffect, useRef, useState } from 'react';
 
 import { Alert } from 'flowbite-react';
 import RegistrationSuccess from './RegistrationSuccess'
-import SignInUser2 from './SignInUser-passkey';
 import React from 'react';
 import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { storageKeys } from '../../config/CommonConstant';
+import SignInUserPasskey from './SignInUserPasskey';
 
 interface emailValue {
 	email: string | null;
@@ -80,7 +80,7 @@ const SignInUser = () => {
 
 			{currentComponent === 'email' && isPasskeySuccess ? ( <RegistrationSuccess /> ) 
 			: currentComponent === 'password' ? (
-                <SignInUser2 email={email?.email as string} />
+                <SignInUserPasskey email={email?.email as string} />
             ) : (
 
 				<div className="bg-white flex-shrink-0">
@@ -107,8 +107,6 @@ const SignInUser = () => {
 										</span>
 									</Alert>
 								}
-
-
 
 								<div className='mt-28 mb-20'>
 
@@ -155,7 +153,7 @@ const SignInUser = () => {
 													<Label className="text-primary-700" htmlFor="email2" value="Your Email" />
 													<span className='text-red-500 text-xs'>*</span>
 												</div>
-														{/* <div className='relative'> */}
+														{/* <div className='relative'>
 															<Field
 																id='signinemail'
 																name='email'
@@ -163,7 +161,7 @@ const SignInUser = () => {
 																className="w-full bg-gray-100 px-10 py-2 text-gray-900 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
 																placeholder="name@company.com"
 															/>
-															{/* <svg
+															<svg
 																xmlns="http://www.w3.org/2000/svg"
 																width="24"
 																height="16"
@@ -176,15 +174,47 @@ const SignInUser = () => {
 																	fill="#1F4EAD"
 																/>
 															</svg>
-															 */}
+															
 															{!isEmailValid && formikHandlers.touched.email && (
 																<span className="text-red-500 text-xs">
 																	{formikHandlers.errors.email}
 																</span>
 															)}
-														</div>
+														</div> */}
 
-											{/* </div> */}
+														<div className="w-full flex items-center bg-gray-200 px-4 border text-gray-900 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"> 
+														         {/* <AiOutlineUser className="mr-2 text-gray-500" /> Icon   */}
+																 <svg
+																xmlns="http://www.w3.org/2000/svg"
+																width="24"
+																height="16"
+																viewBox="0 0 30 24"
+																fill="none"
+																className="mr-2"
+															>
+																<path
+																	d="M27 0H3C1.35 0 0.015 1.35 0.015 3L0 21C0 22.65 1.35 24 3 24H27C28.65 24 30 22.65 30 21V3C30 1.35 28.65 0 27 0ZM27 6L15 13.5L3 6V3L15 10.5L27 3V6Z"
+																	fill="#1F4EAD"
+																/>
+															</svg>
+																         {/* <Field type="text" name="username" placeholder="Username" className="outline-none flex-grow" />   */}
+																
+																		 <Field
+																id='signinemail'
+																name='email'
+																type="email"
+																className="outline-none flex-grow bg-transparent focus:outline-none border-none focus:border-none focus:ring-0" 
+																placeholder="name@company.com"
+															/>
+														
+																</div>
+																{!isEmailValid && formikHandlers.touched.email && (
+																<span className="text-red-500 text-xs">
+																	{formikHandlers.errors.email}
+																</span>
+															)}
+
+											</div>
 											<div className="flex justify-between">
 
 												<button

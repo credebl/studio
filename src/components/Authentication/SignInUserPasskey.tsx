@@ -1,254 +1,213 @@
-import 'react-toastify/dist/ReactToastify.css';
+import './global.css'
 
 import { Alert, Button } from 'flowbite-react';
-import type { AxiosError, AxiosResponse } from 'axios';
-import type { IdeviceBody, RegistrationOptionInterface } from '../Profile/interfaces/index.js';
-import { addDeviceDetails, generateRegistrationOption, verifyRegistration } from '../../api/Fido.js';
-import { addPasswordDetails, getFromLocalStorage, passwordEncryption, sendVerificationMail } from '../../api/Auth.js';
-import { apiStatusCodes, storageKeys } from '../../config/CommonConstant.js';
-import { useEffect, useState } from 'react';
+import { UserSignInData, getUserProfile, loginUser, setToLocalStorage } from '../../api/Auth';
+import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
+import { generateAuthenticationOption, verifyAuthentication } from '../../api/Fido';
 
-import SignUpUserPassword from './SignUpUserPassword.jsx';
-import secureRandomPassword from 'secure-random-password';
-import { startRegistration } from '@simplewebauthn/browser';
+import type { AxiosResponse } from 'axios';
+import SignInUser from './SignInUser';
+import SignInUser3 from './SignInUserPassword';
+import { startAuthentication } from '@simplewebauthn/browser';
+import { useState } from 'react';
 import React from 'react';
+import SignInUserPassword from './SignInUserPassword';
 
-interface passwordValues {
-
-    password: string,
-    confirmPassword: string
+interface signInUserProps {
+    email: string
 }
-
-const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastName: string }) => {
-
+const SignInUserPasskey = (signInUserProps: signInUserProps) => {
     const [loading, setLoading] = useState<boolean>(false)
-    const [erroMsg, setErrMsg] = useState<string | null>(null)
-    const [verificationSuccess, setVerificationSuccess] = useState<string>('')
-    const [addSuccess, setAddSuccess] = useState<string | null>(null)
-    const [addfailure, setAddFailur] = useState<string | null>(null)
-    const [emailAutoFill, setEmailAutoFill] = useState<string>('')
-    const [fidoError, setFidoError] = useState("")
-    const [currentComponent, setCurrentComponent] = useState<string>('email');
     const [showSignInUser, setShowSignInUser] = useState(true);
+    const [showSignInUserPassword, setShowSignInUserPassword] = useState(false);
+    const [fidoLoader, setFidoLoader] = useState<boolean>(false)
+    const [fidoUserError, setFidoUserError] = useState("")
+    const [failure, setFailur] = useState<string | null>(null)
+    const [success, setSuccess] = useState<string | null>(null)
 
-
-    useEffect(() => {
-
-        if (window?.location?.search.length > 7) {
-            setEmailAutoFill(window?.location?.search.split('=')[1])
-        }
-    }, [])
-
-    const showFidoError = (error: unknown): void => {
-        const err = error as AxiosError
-        if (err.message.includes("The operation either timed out or was not allowed")) {
-            const [errorMsg] = err.message.split('.')
-            setFidoError(errorMsg)
-            setTimeout(() => {
-                setFidoError("")
-            }, 5000)
-        } else {
-            setFidoError(err.message)
-            setTimeout(() => {
-                setFidoError("")
-            }, 5000)
-        }
-    }
-
-    const submit = async (passwordDetails: passwordValues, fidoFlag: boolean) => {
-        const userEmail = await getFromLocalStorage(storageKeys.USER_EMAIL)
-        const payload = {
-            password: passwordEncryption(passwordDetails?.password),
-            isPasskey: false,
-            firstName: userDetails.firstName,
-            lastName: userDetails.lastName
-        }
-        setLoading(true)
-
-        const userRsp = await addPasswordDetails(payload, userEmail)
-        const { data } = userRsp as AxiosResponse
-        setLoading(false)
-        if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-            window.location.href = `/authentication/sign-in?signup=true?fidoFlag=${fidoFlag}`
-        } else {
-            setErrMsg(userRsp as string)
-        }
-        return userRsp;
-    }
-
-
-    const registerWithPasskey = async (flag: boolean): Promise<void> => {
-        try {
-            const userEmail = await getFromLocalStorage(storageKeys.USER_EMAIL)
-            const RegistrationOption: RegistrationOptionInterface = {
-                userName: userEmail,
-                deviceFlag: flag
-            }
-            const generateRegistrationResponse = await generateRegistrationOption(RegistrationOption)
-            const { data } = generateRegistrationResponse as AxiosResponse
-            if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-                const opts = data?.data
-                const challangeId = data?.data?.challenge
-
-
-                if (opts) {
-                    opts.authenticatorSelection = {
-                        residentKey: "preferred",
-                        requireResidentKey: false,
-                        userVerification: "preferred"
-                    }
-                }
-                setLoading(false)
-                const attResp = await startRegistration(opts)
-                const verifyRegistrationObj = {
-                    ...attResp,
-                    challangeId
-                }
-
-                await verifyRegistrationMethod(verifyRegistrationObj, userEmail);
-            } else {
-                setErrMsg(generateRegistrationResponse as string)
-            }
-        } catch (error) {
-            showFidoError(error)
-        }
-    }
-    const verifyRegistrationMethod = async (verifyRegistrationObj: any, OrgUserEmail: string) => {
-        try {
-            const verificationRegisterResp = await verifyRegistration(verifyRegistrationObj, OrgUserEmail)
-            const { data } = verificationRegisterResp as AxiosResponse
-
-            const credentialID = data?.data?.newDevice?.credentialID
-            if (data?.data?.verified) {
-                let platformDeviceName = ''
-
-                if (verifyRegistrationObj?.authenticatorAttachment === "cross-platform") {
-                    platformDeviceName = 'Passkey'
-                } else {
-                    platformDeviceName = navigator.platform
-                }
-
-                const deviceBody: IdeviceBody = {
-                    userName: OrgUserEmail,
-                    credentialId: credentialID,
-                    deviceFriendlyName: platformDeviceName
-
-                }
-                await addDeviceDetailsMethod(deviceBody)
-            }
-        } catch (error) {
-            showFidoError(error)
-        }
-    }
-    const addDeviceDetailsMethod = async (deviceBody: IdeviceBody) => {
-        try {
-            const deviceDetailsResp = await addDeviceDetails(deviceBody)
-            const { data } = deviceDetailsResp as AxiosResponse
-            if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-                const password = secureRandomPassword.randomPassword({
-                    characters: secureRandomPassword.lower + secureRandomPassword.upper + secureRandomPassword.digits,
-                    length: 12,
-                });
-                const fidoPassword = {
-                    password: `${password}@1`,
-                    confirmPassword: `${password}@1`
-                }
-
-                submit(fidoPassword, true)
-            } else {
-                setAddFailur(deviceDetailsResp as string)
-            }
-            setTimeout(() => {
-                setAddSuccess('')
-                setAddFailur('')
-            }, 5000);
-        } catch (error) {
-            showFidoError(error)
-        }
-    }
 
     const handleSvgClick = () => {
 
         setShowSignInUser(!showSignInUser);
     };
 
-    return (
-        <div className='h-full'>
+    const handlePasswordButtonClick = () => {
+        setShowSignInUserPassword(true);
+        setShowSignInUser(false);
+    };
 
-            {currentComponent === 'email' &&
+    const verifyAuthenticationMethod = async (verifyAuthenticationObj: unknown, userData: { userName: string }): Promise<string | AxiosResponse> => {
+        try {
+            return await verifyAuthentication(verifyAuthenticationObj, userData);
+        } catch (error) {
+            setFidoLoader(false)
+            throw error;
+        }
+    };
+
+    const getUserDetails = async (access_token: string) => {
+        const userDetails = await getUserProfile(access_token);
+        const { data } = userDetails as AxiosResponse
+        if (data?.data?.userOrgRoles?.length > 0) {
+            const permissionArray: number | string[] = []
+            data?.data?.userOrgRoles?.forEach((element: { orgRole: { name: string } }) => permissionArray.push(element?.orgRole?.name));
+            await setToLocalStorage(storageKeys.PERMISSIONS, permissionArray)
+            await setToLocalStorage(storageKeys.USER_PROFILE, data?.data)
+            await setToLocalStorage(storageKeys.USER_EMAIL, data?.data?.email)
+
+            window.location.href = '/dashboard'
+        } else {
+            setFailur(userDetails as string)
+        }
+        setLoading(false)
+    }
+
+    const showFidoError = (error: unknown): void => {
+        const err = error as string
+        if (err.includes("The operation either timed out or was not allowed")) {
+            const [errorMsg] = err.split('.')
+            setFidoUserError(errorMsg)
+            setTimeout(() => {
+                setFidoUserError("")
+            }, 5000)
+        } else {
+            setFidoUserError(err)
+            setTimeout(() => {
+                setFidoUserError("")
+            }, 5000)
+        }
+    }
+
+    const authenticateWithPasskey = async (email: string): Promise<void> => {
+        try {
+            setFidoLoader(true)
+
+
+            const obj = { userName: email }
+
+
+            const generateAuthenticationResponse: any = await generateAuthenticationOption(obj);
+            const challangeId: string = generateAuthenticationResponse?.data?.data?.challenge;
+
+            setFidoUserError(generateAuthenticationResponse?.data?.error);
+
+            const opts = generateAuthenticationResponse?.data?.data;
+            const attResp = await startAuthentication(opts);
+
+            const verifyAuthenticationObj = {
+                ...attResp,
+                challangeId
+            };
+            const verificationResp = await verifyAuthenticationMethod(verifyAuthenticationObj, { userName: email });
+            const { data } = verificationResp as AxiosResponse
+
+            if (data?.data?.verified) {
+                const payload: UserSignInData = {
+                    email: email,
+                    isPasskey: true
+                };
+                const loginRsp = await loginUser(payload);
+                const { data } = loginRsp as AxiosResponse;
+
+                if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+                    setFidoLoader(false)
+                    await setToLocalStorage(storageKeys.TOKEN, data?.data?.access_token);
+                    getUserDetails(data?.data?.access_token);
+                } else {
+                    setFidoLoader(false)
+                    setFailur(loginRsp as string);
+                    setTimeout(() => {
+                        setFailur(null);
+                    }, 3000);
+                }
+            } else if (data?.error) {
+                setFidoLoader(false)
+                setFidoUserError(data?.error);
+                setTimeout(() => {
+                    setFidoUserError("");
+                }, 3000);
+            }
+        } catch (error) {
+            if (error instanceof DOMException) {
+                setFidoLoader(false)
+                setFidoUserError('The operation either timed out or was not allowed.');
+            } else {
+                setFidoLoader(false)
+                showFidoError(error.message);
+            }
+        }
+        finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+
+        <div className='h-full'>
+            {showSignInUser ? (
 
                 <div className="bg-white flex-shrink-0">
                     <div className="flex flex-col md:flex-row">
                         <div className="flex justify-center px-50 py-50 md:w-3/5 bg-blue-500 bg-opacity-10" >
-                            <img
-                                className='hidden sm:block'
-                                src="/images/signin.svg"
+                        <img 
+							className='hidden sm:block'
+                                src="/images/choose-password-passkey.svg"
                                 alt="img" />
+
+
                         </div>
                         <div className="flex items-center justify-center p-6 sm:p-12 md:w-2/5 ">
                             <div className="w-full">
+
                                 {
-                                    (verificationSuccess || erroMsg) &&
+                                    (success || failure || fidoUserError) &&
                                     <Alert
-                                        color={verificationSuccess ? "success" : "failure"}
-                                        onDismiss={() => setErrMsg(null)}
+                                        color={success ? "success" : "failure"}
+                                        onDismiss={() => setSuccess(null)}
                                     >
                                         <span>
                                             <p>
-                                                {verificationSuccess || erroMsg}
+                                                {success || failure || fidoUserError}
                                             </p>
                                         </span>
                                     </Alert>
                                 }
-                                <div className='flex mt-12'>
 
-                                    <button className='flex mt-20' onClick={handleSvgClick} >
+                                <div className='flex'>
+
+                                    <button className='flex mt-32' onClick={handleSvgClick} >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="26" height="24" viewBox="0 0 37 20" fill="none">
                                             <path d="M0.201172 9.23695C0.00108337 9.60157 -0.0512199 10.0028 0.050869 10.3898C0.152962 10.7769 0.404865 11.1324 0.774712 11.4114L11.3468 19.391C11.5906 19.5815 11.8823 19.7335 12.2047 19.838C12.5272 19.9426 12.874 19.9976 13.2249 19.9999C13.5759 20.0022 13.9239 19.9518 14.2487 19.8514C14.5735 19.7511 14.8686 19.603 15.1168 19.4157C15.365 19.2284 15.5612 19.0057 15.6941 18.7605C15.827 18.5153 15.8939 18.2526 15.8908 17.9878C15.8878 17.7229 15.8149 17.4611 15.6763 17.2177C15.5378 16.9743 15.3365 16.7542 15.084 16.5702L9.02094 11.9939L34.357 11.9939C35.0579 11.9939 35.7302 11.7837 36.2259 11.4096C36.7215 11.0355 37 10.5281 37 9.999C37 9.46992 36.7215 8.96251 36.2259 8.5884C35.7302 8.21428 35.0579 8.00411 34.357 8.00411L9.02094 8.00411L15.0814 3.4298C15.3338 3.24578 15.5352 3.02565 15.6737 2.78227C15.8122 2.53888 15.8851 2.27711 15.8882 2.01223C15.8912 1.74735 15.8244 1.48466 15.6915 1.2395C15.5586 0.994335 15.3623 0.771599 15.1142 0.584293C14.866 0.396986 14.5709 0.248857 14.2461 0.148552C13.9213 0.0482464 13.5732 -0.00222778 13.2223 7.43866e-05C12.8714 0.00237656 12.5245 0.0574093 12.2021 0.161961C11.8796 0.26651 11.588 0.418484 11.3442 0.609016L0.772064 8.58861C0.527206 8.77433 0.333214 8.99464 0.201172 9.23695Z" fill="#1F4EAD" />
                                         </svg>
                                     </button>
 
-                                    <div className='mt-16 w-full'>
+                                    <div className='mt-28 mb-20 w-full'>
 
                                         <div className="flex justify-center mb-4 text-center text-primary-700 text-blue-600 font-inter text-4xl font-bold leading-10 ">
-                                            Create an account
+                                            Login
                                         </div>
                                         <div className="text-gray-500 font-inter text-base font-medium leading-5 flex w-84 h-5.061 flex-col justify-center items-center flex-shrink-0">
-                                            Choose your authentication method                                    </div>
+                                            Please select your login method
+                                        </div>
 
                                     </div>
                                 </div>
-
                                 <div className="lg:hidden sm:block bg-blue-500 bg-opacity-10" >
 
                                     <img
-                                        src="/images/signin.svg"
+                                        src="/images/choose-password-passkey.svg"
                                         alt="img" />
                                 </div>
 
-
-                                <div className='mt-16 text-[#6B7280] font-inter font-normal leading-[1.05] justify-center items-center'>
-                                    <div className='text-base'>With Passkey you don’t need to remember complex passwords</div>
-
-                                    <div className='mt-4'>
-                                        <p className='text-xl text-gray-600'>What are passkeys?</p>
-                                        <p className='text-base'>Passkeys are encrypted digital keys you create using fingerprint, face, or screen lock</p>
-
-                                    </div>
-
-                                    <div className='mt-4'>
-                                        <p className='text-xl text-gray-600'>Where are passkeys saved?</p>
-                                        <p className=' text-base'>Passkeys are saved to your password manager, so you can sign in on other devices.</p>
-
-                                    </div>
-
+                                <div className='flex mt-30 mb-20 text-gray-700 font-inter text-xl font-medium leading-[1.05] justify-center items-center'>
+                                    With Passkey you don’t need to <br /> remember complex passwords
                                 </div>
 
-                                <div className="flex justify-between mt-10">
+                                <div className="flex justify-between">
 
                                     <button
                                         className="w-2/5 px-4 rounded-md text-center font-medium leading-5 border-blue-600 flex items-center justify-center hover:bg-secondary-700 bg-transparent ring-2 text-black rounded-lg text-sm"
-                                        onClick={() => setCurrentComponent('password')}
+                                        onClick={handlePasswordButtonClick}
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 39 39" fill="none">
                                             <path d="M15.4505 31.8307H9.99045C8.44878 31.8307 7.16406 30.6513 7.16406 29.236V23.6338C7.16406 22.2185 8.44878 21.0391 9.99045 21.0391H27.2057" stroke="#1F4EAD" stroke-width="1.5" stroke-miterlimit="10" />
@@ -267,10 +226,11 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
                                     </button>
 
                                     <Button
-                                        id='signupcreatepasskey'
+                                        id='loginwithpasskey'
                                         isProcessing={''}
                                         onClick={() => {
-                                            registerWithPasskey(true)
+
+                                            authenticateWithPasskey(signInUserProps?.email)
                                         }}
 
                                         className='w-2/5 font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
@@ -285,34 +245,30 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
                                     </Button>
 
                                 </div>
-
-                                <div className="text-sm mt-6 font-medium text-gray-500 dark:text-gray-400 pt-6 mt-6 flex items-center justify-center">
-                                    Already have an account?
+                                <div className="text-sm font-medium text-gray-500 dark:text-gray-400 pt-6 mt-6 flex items-center justify-center">
+                                    Don't have an account yet?
                                     &nbsp;<a
                                         id='navigatetosignup'
-                                        href="/authentication/sign-in"
+                                        href="/authentication/sign-up"
                                         className="text-primary-700 hover:underline dark:text-primary-500"
                                     >
-                                        {` Login here`}
+                                        {` Create an account`}
                                     </a>
                                 </div>
-
-
                             </div>
+
                         </div>
                     </div>
-                </div>}
+                </div>) : (
 
-            {
-                currentComponent === 'password' && (
-                    <SignUpUserPassword
-                        firstName={firstName}
-                        lastName={lastName}
-                    />
-                )
-            }
+                showSignInUserPassword ? <SignInUserPassword isPasskey={false} email={signInUserProps.email} /> : <SignInUser />
+
+            )}
+
+
         </div>
+
     );
 };
 
-export default SignUpUserPasskey;
+export default SignInUserPasskey;
