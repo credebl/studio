@@ -6,6 +6,12 @@ export interface GetAllSchemaListParameter {
     sortBy: string,
     allSearch: string
 }
+export interface Values {
+	schemaName: string;
+	schemaVersion: string;
+	attribute: [];
+}
+
 
 type DataItem = {
     createDateTime: string;
