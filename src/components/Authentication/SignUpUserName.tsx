@@ -216,15 +216,6 @@ const SignUpUserName = () => {
 				/>
 			) : null}
 
-			{continuePasskeyFlag && !showSignUpUser && (
-				<button
-					onClick={handleBackButtonClick}
-					className="hover:underline cursor-pointer text-primary-700"
-				>
-					Back
-				</button>
-			)}
-
 		</div>
 	);
 };

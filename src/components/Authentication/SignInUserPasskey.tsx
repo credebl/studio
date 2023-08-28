@@ -118,14 +118,14 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
                     setFailur(loginRsp as string);
                     setTimeout(() => {
                         setFailur(null);
-                    }, 3000);
+                    });
                 }
             } else if (data?.error) {
                 setFidoLoader(false)
                 setFidoUserError(data?.error);
                 setTimeout(() => {
                     setFidoUserError("");
-                }, 3000);
+                });
             }
         } catch (error) {
             if (error instanceof DOMException) {

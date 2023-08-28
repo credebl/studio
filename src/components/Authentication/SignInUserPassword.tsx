@@ -8,17 +8,15 @@ import {
 	Form,
 	Formik,
 } from 'formik';
-import { UserSignInData, getUserProfile, loginUser, passwordEncryption, setToLocalStorage } from '../../api/Auth';
+import { getUserProfile, loginUser, passwordEncryption, setToLocalStorage } from '../../api/Auth';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
-import { generateAuthenticationOption, verifyAuthentication } from '../../api/Fido';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { Alert } from 'flowbite-react';
 import type { AxiosResponse } from 'axios';
-import SignInUser2 from './SignInUserPasskey';
-import { startAuthentication } from '@simplewebauthn/browser';
 import React from 'react';
 import SignInUserPasskey from './SignInUserPasskey';
+import { getSupabaseClient } from '../../supabase';
 
 interface emailValue {
 	email: string;
@@ -33,9 +31,6 @@ interface SignInUser3Props {
 	isPasskey: boolean,
 	password?: string
 }
-
-const signUpSuccessPassword = '?signup=true?fidoFlag=false'
-const signUpSuccessPasskey = '?signup=true?fidoFlag=true'
 
 const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 	const [email, setEmail] = useState(signInUserProps?.email)
@@ -96,7 +91,7 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 			setFailure(loginRsp as string)
 			setTimeout(() => {
 				setFailure(null)
-			}, 3000)
+			})
 		}
 	}
 
@@ -105,12 +100,32 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 
 	};
 
+	const forgotPassword = async () => {
+
+		setLoading(true);
+
+		var base_url = window.location.origin;
+
+		const { data, error } = await getSupabaseClient().auth.resetPasswordForEmail(email
+		, {
+			redirectTo: `${base_url}/reset-password`,
+		});
+		setLoading(false);
+
+		if(!error){
+			setSuccess('Reset password link has been sent to you on mail');
+		} else {
+			setFailure('Unable to send reset link for the password')
+		}
+
+	}
+
 
 	return (
 		<div className='h-full'>
 
 			{showSignInUser2 ? (
-				<SignInUserPasskey email={email?.email as string} />
+				<SignInUserPasskey email={email as string} />
 			) : (
 				currentComponent === 'email' && (
 					<div className="bg-white flex-shrink-0">
@@ -146,7 +161,7 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 											Login
 										</div>
 										<div className="text-gray-500 font-inter text-base font-medium leading-5 flex w-84 h-5.061 flex-col justify-center items-center flex-shrink-0">
-											Please enter your email id for login
+											Please enter password for login
 										</div>
 
 									</div>
@@ -225,7 +240,7 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 												</div>
 
 													<div className="text-sm flex justify-end font-sm text-gray-500 dark:text-gray-400 text-primary-700  dark:text-primary-500  ml-auto">
-														<span className='hover:underline cursor-pointer'>
+														<span onClick={forgotPassword} className='hover:underline cursor-pointer'>
 
 															{`Forgot Password?`}
 														</span>
