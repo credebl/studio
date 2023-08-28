@@ -13,16 +13,11 @@ import { useEffect, useState } from 'react';
 
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../../BreadCrumbs';
-import type { FieldName } from './interfaces';
+import type { FieldName, Values } from './interfaces';
 import SchemaCard from '../../../commonComponents/SchemaCard';
 import { addSchema } from '../../../api/Schema';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
-interface Values {
-	schemaName: string;
-	schemaVersion: string;
-	attribute: [];
-}
 
 const options = [
 	{ value: 'string', label: 'String' },
