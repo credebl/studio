@@ -7,18 +7,19 @@ import { generateAuthenticationOption, verifyAuthentication } from '../../api/Fi
 
 import type { AxiosResponse } from 'axios';
 import SignInUser from './SignInUser';
-import SignInUser3 from './SignInUser-password';
+import SignInUser3 from './SignInUserPassword';
 import { startAuthentication } from '@simplewebauthn/browser';
 import { useState } from 'react';
 import React from 'react';
+import SignInUserPassword from './SignInUserPassword';
 
 interface signInUserProps {
     email: string
 }
-const SignInUser2 = (signInUserProps: signInUserProps) => {
+const SignInUserPasskey = (signInUserProps: signInUserProps) => {
     const [loading, setLoading] = useState<boolean>(false)
     const [showSignInUser, setShowSignInUser] = useState(true);
-    const [showSignInUser3, setShowSignInUser3] = useState(false);
+    const [showSignInUserPassword, setShowSignInUserPassword] = useState(false);
     const [fidoLoader, setFidoLoader] = useState<boolean>(false)
     const [fidoUserError, setFidoUserError] = useState("")
     const [failure, setFailur] = useState<string | null>(null)
@@ -31,7 +32,7 @@ const SignInUser2 = (signInUserProps: signInUserProps) => {
     };
 
     const handlePasswordButtonClick = () => {
-        setShowSignInUser3(true);
+        setShowSignInUserPassword(true);
         setShowSignInUser(false);
     };
 
@@ -194,11 +195,9 @@ const SignInUser2 = (signInUserProps: signInUserProps) => {
                                 <div className="lg:hidden sm:block bg-blue-500 bg-opacity-10" >
 
                                     <img
-                                        src="/images/signin.svg"
+                                        src="/images/choose-password-passkey.svg"
                                         alt="img" />
                                 </div>
-
-
 
                                 <div className='flex mt-30 mb-20 text-gray-700 font-inter text-xl font-medium leading-[1.05] justify-center items-center'>
                                     With Passkey you don’t need to <br /> remember complex passwords
@@ -262,7 +261,7 @@ const SignInUser2 = (signInUserProps: signInUserProps) => {
                     </div>
                 </div>) : (
 
-                showSignInUser3 ? <SignInUser3 isPasskey={false} email={signInUserProps.email} /> : <SignInUser />
+                showSignInUserPassword ? <SignInUserPassword isPasskey={false} email={signInUserProps.email} /> : <SignInUser />
 
             )}
 
@@ -272,4 +271,4 @@ const SignInUser2 = (signInUserProps: signInUserProps) => {
     );
 };
 
-export default SignInUser2;
+export default SignInUserPasskey;
