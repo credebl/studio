@@ -6,8 +6,8 @@ export const getSupabaseClient = () => {
     let supabaseAnonKey = ''
 
     try {
-        supabaseUrl = process.env.PUBLIC_SUPABASE_URL as string;
-        supabaseAnonKey = process.env.PUBLIC_SUPABASE_KEY as string;
+        supabaseUrl = process.env.PUBLIC_SUPABASE_URL || import.meta.env.PUBLIC_SUPABASE_URL;
+        supabaseAnonKey = process.env.PUBLIC_SUPABASE_KEY || import.meta.env.PUBLIC_SUPABASE_KEY;
     } catch (error) {
         supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL
         supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_KEY

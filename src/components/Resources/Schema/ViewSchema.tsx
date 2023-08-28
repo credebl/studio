@@ -129,6 +129,7 @@ const ViewSchemas = () => {
       setCreateLoader(false)
     }
     getCredentialDefinitionList(schemaDetails?.schemaId, orgId)
+  }
 
   return (
     <div className="px-4 pt-6">
@@ -414,4 +415,3 @@ const ViewSchemas = () => {
 
 
 export default ViewSchemas
-
