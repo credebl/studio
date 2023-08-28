@@ -15,9 +15,10 @@ import { useEffect, useState } from 'react';
 
 import { Alert } from 'flowbite-react';
 import type { AxiosResponse } from 'axios';
-import SignInUser2 from './SignInUser-passkey';
+import SignInUser2 from './SignInUserPasskey';
 import { startAuthentication } from '@simplewebauthn/browser';
 import React from 'react';
+import SignInUserPasskey from './SignInUserPasskey';
 
 interface emailValue {
 	email: string;
@@ -36,7 +37,7 @@ interface SignInUser3Props {
 const signUpSuccessPassword = '?signup=true?fidoFlag=false'
 const signUpSuccessPasskey = '?signup=true?fidoFlag=true'
 
-const SignInUser3 = (signInUserProps: SignInUser3Props) => {
+const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 	const [email, setEmail] = useState(signInUserProps?.email)
 	const [fidoUserError, setFidoUserError] = useState("")
 	const [success, setSuccess] = useState<string | null>(null)
@@ -109,7 +110,7 @@ const SignInUser3 = (signInUserProps: SignInUser3Props) => {
 		<div className='h-full'>
 
 			{showSignInUser2 ? (
-				<SignInUser2 email={email?.email as string} />
+				<SignInUserPasskey email={email?.email as string} />
 			) : (
 				currentComponent === 'email' && (
 					<div className="bg-white flex-shrink-0">
@@ -153,7 +154,7 @@ const SignInUser3 = (signInUserProps: SignInUser3Props) => {
 									<div className="lg:hidden sm:block bg-blue-500 bg-opacity-10" >
 
 										<img
-											src="/images/signin.svg"
+											src="/images/signInPassword.svg"
 											alt="img" />
 									</div>
 
@@ -174,7 +175,7 @@ const SignInUser3 = (signInUserProps: SignInUser3Props) => {
 										onSubmit={(values: passwordValue) => signInUser(values)}					>
 										{(formikHandlers): JSX.Element => (
 											<Form className="mt-8 space-y-6" onSubmit={formikHandlers.handleSubmit}>
-												<div className="text-primary-700 font-inter text-base font-medium leading-5 mt-20 mb-20">
+												<div className="text-primary-700 font-inter text-base font-medium leading-5 mt-20">
 
 
 													<div className="block mb-2 text-sm font-medium  dark:text-white">
@@ -222,6 +223,15 @@ const SignInUser3 = (signInUserProps: SignInUser3Props) => {
 													}
 
 												</div>
+
+													<div className="text-sm flex justify-end font-sm text-gray-500 dark:text-gray-400 text-primary-700  dark:text-primary-500  ml-auto">
+														<span className='hover:underline cursor-pointer'>
+
+															{`Forgot Password?`}
+														</span>
+													</div>
+
+
 												<div className="flex justify-between">
 
 													<button
@@ -258,6 +268,7 @@ const SignInUser3 = (signInUserProps: SignInUser3Props) => {
 													</Button>
 												</div>
 
+
 												<div className="text-sm font-medium text-gray-500 dark:text-gray-400 pt-6 flex items-center justify-center">
 													Don't have an account yet?
 													&nbsp;<a
@@ -281,4 +292,4 @@ const SignInUser3 = (signInUserProps: SignInUser3Props) => {
 	);
 };
 
-export default SignInUser3;
+export default SignInUserPassword;
