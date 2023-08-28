@@ -2,32 +2,19 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import * as yup from 'yup';
 
-import { Alert, Button, Checkbox, Label, TextInput } from 'flowbite-react';
-import type { AxiosError, AxiosResponse } from 'axios';
+import { Alert, Button, Label } from 'flowbite-react';
+import type { AxiosResponse } from 'axios';
 import {
     Field,
     Form,
     Formik
 } from 'formik';
-import type { IdeviceBody, RegistrationOptionInterface } from '../Profile/interfaces/index.js';
-import { addDeviceDetails, generateRegistrationOption, verifyRegistration } from '../../api/Fido.js';
-import { addPasswordDetails, checkUserExist, getFromLocalStorage, passwordEncryption, sendVerificationMail } from '../../api/Auth.js';
+import { addPasswordDetails, getFromLocalStorage, passwordEncryption } from '../../api/Auth.js';
 import { apiStatusCodes, passwordRegex, storageKeys } from '../../config/CommonConstant.js';
 import { useEffect, useState } from 'react';
 
 import React from 'react';
-import secureRandomPassword from 'secure-random-password';
-import { startRegistration } from '@simplewebauthn/browser';
 import SignUpUserPasskey from './SignUpUserPasskey'
-
-interface nameValues {
-    firstName: string;
-    lastName: string;
-}
-
-interface emailValue {
-    email: string;
-}
 
 
 interface passwordValues {
@@ -42,14 +29,9 @@ const SignUpUserPassword = ({ firstName, lastName }: { firstName: string; lastNa
     const [loading, setLoading] = useState<boolean>(false)
     const [erroMsg, setErrMsg] = useState<string | null>(null)
     const [verificationSuccess, setVerificationSuccess] = useState<string>('')
-    const [email, setEmail] = useState<string>('')
     const [emailAutoFill, setEmailAutoFill] = useState<string>('')
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
-    const [enableName, setEnableName] = useState<boolean>(false)
-    const [continuePasswordFlag, setContinuePasswordFlag] = useState<boolean>(false)
-    const [nextflag, setNextFlag] = useState<boolean>(false)
-    const [verifyLoader, setVerifyLoader] = useState<boolean>(false)
     const [currentComponent, setCurrentComponent] = useState(false);
 
 
@@ -82,96 +64,26 @@ const SignUpUserPassword = ({ firstName, lastName }: { firstName: string; lastNa
         return userRsp;
     }
 
-    const VerifyMail = async (email: string) => {
-        try {
-            const payload = {
-                email: email
-            }
-            setVerifyLoader(true)
-            const userRsp = await sendVerificationMail(payload);
-            const { data } = userRsp as AxiosResponse;
-            if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-
-                setVerificationSuccess(data?.message)
-                setVerifyLoader(false)
-            } else {
-                setErrMsg(userRsp as string);
-                setVerifyLoader(false)
-            }
-            setTimeout(() => {
-                setVerificationSuccess('')
-                setErrMsg('')
-            }, 5000);
-            return data;
-        } catch (error) {
-            setErrMsg('An error occurred. Please try again later.');
-            setVerifyLoader(false)
-        }
-    };
-
-    const ValidateEmail = async (values: emailValue) => {
-        setLoading(true)
-        const userRsp = await checkUserExist(values?.email)
-        const { data } = userRsp as AxiosResponse
-        setLoading(false)
-        if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-            if (data.data === 'New User') {
-                setEmail(values?.email)
-                await VerifyMail(values?.email)
-            }
-            else if (data.data.isEmailVerified === true && data?.data?.isKeycloak !== true) {
-                setEmail(values?.email)
-                setNextFlag(true)
-                setEnableName(true)
-            }
-        } else {
-            setErrMsg(userRsp as string)
-        }
-        setTimeout(() => {
-            setErrMsg('')
-        }, 5000);
-    }
-
     const toggleToPasskey = () => {
         setCurrentComponent(true);
     };
 
 
     return (
-        <div className='h-50'>
+        <div className='h-full'>
 
             {currentComponent === false && (
 
-                <div className="w-full h-full bg-white flex-shrink-0">
-                    <div className="flex flex-col md:flex-row" style={{ height: '830px' }}>
-                        <div className="flex md:h-auto md:w-3/5 bg-white" style={{ justifyContent: 'center', padding: 100 }}>
-                            <div className='absolute left-10 top-10'>
-                                <a href="/" className="flex items-center">
-                                    <img
-                                        src="/images/CREDEBL_ICON.png"
-                                        className="mr-2 h-6 sm:h-9"
-                                        alt="CREDEBL Logo"
-                                    />
-                                    <div className="absolute left-10 bottom-10">
-                                        &copy; 2019 - {new Date().getFullYear()} —
-                                        <a className="hover:underline" target="_blank"
-                                        >CREDEBL</a> | All rights reserved.
-                                    </div>
-
-                                    <span
-                                        className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
-                                    >
-                                        CREDEBL</span>
-
-                                </a>
-                            </div>
-
-                            <img className="flex"
+                <div className="bg-white flex-shrink-0">
+                    <div className="flex flex-col md:flex-row">
+                        <div className="flex justify-center px-50 py-50 md:w-3/5 bg-blue-500 bg-opacity-10" >
+                            <img
+                                className='hidden sm:block'
                                 src="/images/signin.svg"
                                 alt="img" />
                         </div>
-                        <div className="flex items-center justify-center p-6 sm:p-12 md:w-2/5 shadow-xl shadow-blue-700">
-                            <div className="w-full" style={{ height: '700px' }}>
+                        <div className="flex items-center justify-center p-6 sm:p-12 md:w-2/5 ">
+                            <div className="w-full">
                                 {
                                     (verificationSuccess || erroMsg) &&
                                     <Alert
@@ -186,9 +98,9 @@ const SignUpUserPassword = ({ firstName, lastName }: { firstName: string; lastNa
                                     </Alert>
                                 }
 
-                                <div className='mt-20 mb-24'>
+                                <div className='mt-20 mb-16'>
 
-                                    <div className="flex justify-center mb-4 text-center text-primary-700 text-blue-600 font-inter text-4xl font-bold leading-10 ">
+                                    <div className="flex justify-center text-center text-primary-700 text-blue-600 font-inter text-4xl font-bold leading-10 ">
                                         Create Password
                                     </div>
                                     <div className="text-gray-500 font-inter text-base font-medium leading-5 flex w-84 h-5.061 flex-col justify-center items-center flex-shrink-0">
@@ -196,6 +108,14 @@ const SignUpUserPassword = ({ firstName, lastName }: { firstName: string; lastNa
                                     </div>
 
                                 </div>
+
+                                <div className="lg:hidden sm:block bg-blue-500 bg-opacity-10" >
+
+                                    <img
+                                        src="/images/signin.svg"
+                                        alt="img" />
+                                </div>
+
 
                                 <Formik
                                     initialValues={{
@@ -334,10 +254,10 @@ const SignUpUserPassword = ({ firstName, lastName }: { firstName: string; lastNa
                                                     }
                                                 </div>
 
-                                                <div className="flex justify-between mt-20">
+                                                <div className="flex justify-between mt-12">
 
                                                     <button
-                                                        className="block w-2/5 py-2 px-4 rounded-md border text-center font-medium leading-5 border-blue-600 bg-white flex items-center justify-center"
+                                                        className="w-2/5 py-2 px-4 rounded-md text-center font-medium leading-5 border-blue-600 flex items-center justify-center hover:bg-secondary-700 bg-transparent ring-2 text-black rounded-lg text-sm"
                                                         onClick={toggleToPasskey}
                                                     >
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 30 20" fill="none">
@@ -394,8 +314,8 @@ const SignUpUserPassword = ({ firstName, lastName }: { firstName: string; lastNa
 
             {currentComponent === true && (
                 <SignUpUserPasskey
-                firstName={firstName}
-                lastName={lastName}
+                    firstName={firstName}
+                    lastName={lastName}
                 />
             )}        </div>
     );
