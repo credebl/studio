@@ -46,12 +46,12 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
             setFidoError(errorMsg)
             setTimeout(() => {
                 setFidoError("")
-            }, 5000)
+            })
         } else {
             setFidoError(err.message)
             setTimeout(() => {
                 setFidoError("")
-            }, 5000)
+            })
         }
     }
 
@@ -161,7 +161,7 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
             setTimeout(() => {
                 setAddSuccess('')
                 setAddFailur('')
-            }, 5000);
+            });
         } catch (error) {
             showFidoError(error)
         }
@@ -176,7 +176,6 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
         <div className='h-full'>
 
             {currentComponent === 'email' &&
-
                 <div className="bg-white flex-shrink-0">
                     <div className="flex flex-col md:flex-row">
                         <div className="flex justify-center px-50 py-50 md:w-3/5 bg-blue-500 bg-opacity-10" >

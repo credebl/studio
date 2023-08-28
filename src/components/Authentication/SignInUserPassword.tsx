@@ -8,15 +8,12 @@ import {
 	Form,
 	Formik,
 } from 'formik';
-import { UserSignInData, getUserProfile, loginUser, passwordEncryption, setToLocalStorage } from '../../api/Auth';
+import { getUserProfile, loginUser, passwordEncryption, setToLocalStorage } from '../../api/Auth';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
-import { generateAuthenticationOption, verifyAuthentication } from '../../api/Fido';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { Alert } from 'flowbite-react';
 import type { AxiosResponse } from 'axios';
-import SignInUser2 from './SignInUserPasskey';
-import { startAuthentication } from '@simplewebauthn/browser';
 import React from 'react';
 import SignInUserPasskey from './SignInUserPasskey';
 
@@ -33,9 +30,6 @@ interface SignInUser3Props {
 	isPasskey: boolean,
 	password?: string
 }
-
-const signUpSuccessPassword = '?signup=true?fidoFlag=false'
-const signUpSuccessPasskey = '?signup=true?fidoFlag=true'
 
 const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 	const [email, setEmail] = useState(signInUserProps?.email)
@@ -96,7 +90,7 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 			setFailure(loginRsp as string)
 			setTimeout(() => {
 				setFailure(null)
-			}, 3000)
+			})
 		}
 	}
 
@@ -110,7 +104,7 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 		<div className='h-full'>
 
 			{showSignInUser2 ? (
-				<SignInUserPasskey email={email?.email as string} />
+				<SignInUserPasskey email={email as string} />
 			) : (
 				currentComponent === 'email' && (
 					<div className="bg-white flex-shrink-0">
@@ -146,7 +140,7 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 											Login
 										</div>
 										<div className="text-gray-500 font-inter text-base font-medium leading-5 flex w-84 h-5.061 flex-col justify-center items-center flex-shrink-0">
-											Please enter your email id for login
+											Please enter password for login
 										</div>
 
 									</div>

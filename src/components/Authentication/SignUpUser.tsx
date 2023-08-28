@@ -13,7 +13,6 @@ import type { IdeviceBody, RegistrationOptionInterface } from '../Profile/interf
 import { addDeviceDetails, generateRegistrationOption, verifyRegistration } from '../../api/Fido.js';
 import { addPasswordDetails, checkUserExist, passwordEncryption, sendVerificationMail, setToLocalStorage } from '../../api/Auth.js';
 import { apiStatusCodes, passwordRegex, storageKeys } from '../../config/CommonConstant.js';
-import { asset, url } from '../../lib/data.js';
 import { useEffect, useState } from 'react';
 
 import React from 'react';
@@ -46,7 +45,6 @@ const SignUpUser = () => {
 	const [email, setEmail] = useState<string>('')
 	const [nextflag, setNextFlag] = useState<boolean>(false)
 	const [enableName, setEnableName] = useState<boolean>(false)
-	const [continuePasswordFlag, setContinuePasswordFlag] = useState<boolean>(false)
 	const [userDetails, setUserDetails] = useState<nameValues>({
 		firstName: '',
 		lastName: ''
@@ -55,9 +53,7 @@ const SignUpUser = () => {
 	const [addfailure, setAddFailure] = useState<string | null>(null)
 	const [emailAutoFill, setEmailAutoFill] = useState<string>('')
 	const [fidoError, setFidoError] = useState("")
-	const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 	const [isEmailValid, setIsEmailValid] = useState(false);
-	const [currentComponent, setCurrentComponent] = useState<string>('email');
 
 
 	useEffect(() => {
@@ -74,12 +70,9 @@ const SignUpUser = () => {
 			setFidoError(errorMsg)
 			setTimeout(() => {
 				setFidoError("")
-			}, 5000)
+			}, )
 		} else {
 			setFidoError(err.message)
-			setTimeout(() => {
-				setFidoError("")
-			}, 5000)
 		}
 	}
 
@@ -119,10 +112,6 @@ const SignUpUser = () => {
 				setErrMsg(userRsp as string);
 				setVerifyLoader(false)
 			}
-			setTimeout(() => {
-				setVerificationSuccess('')
-				setErrMsg('')
-			}, 5000);
 			return data;
 		} catch (error) {
 			setErrMsg('An error occurred. Please try again later.');
@@ -150,9 +139,6 @@ const SignUpUser = () => {
 		} else {
 			setErrMsg(userRsp as string)
 		}
-		setTimeout(() => {
-			setErrMsg('')
-		}, 5000);
 	}
 
 	const createPasskey = async () => {
