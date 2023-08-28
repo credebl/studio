@@ -221,11 +221,14 @@ const OrganizationsList = () => {
 
           <div className="flex items-center justify-end mb-4">
 
+            {organizationsList && organizationsList?.length > 0 && (
             <Pagination
-              currentPage={currentPage.pageNumber}
-              onPageChange={onPageChange}
-              totalPages={currentPage.total}
+            currentPage={currentPage.pageNumber}
+            onPageChange={onPageChange}
+            totalPages={currentPage.total}
             />
+            )
+            }
           </div>
         </div>
       </div>
