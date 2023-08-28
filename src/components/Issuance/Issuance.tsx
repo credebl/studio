@@ -38,8 +38,8 @@ interface IssuanceFormPayload {
 }
 
 interface DataTypeAttributes {
-	attributeName: string;
 	schemaDataType: string;
+	displayName:string
 }
 
 const IssueCred = () => {
@@ -84,7 +84,7 @@ const IssueCred = () => {
 		orgId: number,
 	) => {
 		const attrObj = attributes.map((attr) => ({
-			name: attr.attributeName,
+			name: attr.displayName,
 			value: '',
 			dataType: attr.schemaDataType,
 		}));
@@ -268,7 +268,7 @@ const IssueCred = () => {
 																		className="w-1/3 pr-2 flex justify-end items-center font-light"
 																	>
 																		{attr.name.charAt(0).toUpperCase() +
-																			attr.name.slice(1).toLowerCase()}
+																			attr.name.slice(1).toLowerCase() + " :"}
 																	</label>
 																	<Field
 																		type={
