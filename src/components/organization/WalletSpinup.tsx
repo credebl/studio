@@ -259,7 +259,7 @@ const WalletSpinup = (props: {
 					<Button
 						isProcessing={loading}
 						type="submit"
-						className='float-right text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+						className='float-right text-base font-medium text-center text-white bg-primary-700 hover:bg-primary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
 					>
 						Setup Agent
 					</Button>
@@ -275,7 +275,14 @@ const WalletSpinup = (props: {
 				label: '',
 			}}
 			validationSchema={yup.object().shape({
-				label: yup.string().required('Wallet label is required').trim().test('no-spaces', 'Spaces are not allowed', value => !value || !value.includes(' ')),
+				label: yup.string()
+				.required('Wallet label is required')
+				.trim()
+				.test('no-spaces', 'Spaces are not allowed', value => !value || !value.includes(' '))
+				.matches(
+						/^[A-Za-z0-9-][^ !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]*$/,
+						'Wallet label must be alphanumeric only',
+				),
 			})}
 			validateOnBlur
 			validateOnChange
@@ -392,7 +399,7 @@ const WalletSpinup = (props: {
 											disabled
 											className="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
 										/>
-										<label className="w-full py-3 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+										<label className="w-full py-3 ml-2 text-sm font-medium text-gray-400 dark:text-gray-300">
 											Dedicated{' '}
 										</label>
 									</div>
