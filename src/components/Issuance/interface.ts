@@ -6,6 +6,7 @@ export interface SchemaState {
 }
 
 export interface CredDefData {
+	createDateTime: string;
 	credentialDefinitionId: string;
 	revocable: boolean;
 	schemaLedgerId: string;

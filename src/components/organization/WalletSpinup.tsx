@@ -63,8 +63,6 @@ const WalletSpinup = (props: {
 	};
 
 	const submitDedicatedWallet = async (values: Values) => {
-		setAgentSpinupCall(true);
-
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 
 		const payload = {
@@ -91,7 +89,6 @@ const WalletSpinup = (props: {
 	};
 
 	const submitSharedWallet = async (values: ValuesShared) => {
-		setAgentSpinupCall(true);
 		setLoading(true);
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 
@@ -103,13 +100,12 @@ const WalletSpinup = (props: {
 		};
 		const spinupRes = await spinupSharedAgent(payload);
 		const { data } = spinupRes as AxiosResponse;
-		console.log('datadata', data);
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			setLoading(false);
-			// props.setWalletSpinupStatus(true)
 
 			if (data?.data['agentSpinupStatus'] === 1) {
+
 				setAgentSpinupCall(true);
 			} else {
 				setFailure(spinupRes as string);
@@ -279,7 +275,7 @@ const WalletSpinup = (props: {
 				label: '',
 			}}
 			validationSchema={yup.object().shape({
-				label: yup.string().required('Wallet label is required').trim(),
+				label: yup.string().required('Wallet label is required').trim().test('no-spaces', 'Spaces are not allowed Wallet label', value => !value || !value.includes(' ')),
 			})}
 			validateOnBlur
 			validateOnChange
