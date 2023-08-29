@@ -42,8 +42,8 @@ const VerificationCredentialList = () => {
 				const credentialList = data?.data?.map((requestProof: RequestProof) => {
 					return {
 						data: [
-							{ data: requestProof?.connectionId ? requestProof?.connectionId : 'Not available' },
 							{ data: requestProof?.id ? requestProof?.id : 'Not available' },
+							{ data: requestProof?.connectionId ? requestProof?.connectionId : 'Not available' },
 							{ data: dateConversion(requestProof?.updatedAt) },
 							{
 								data: <span
@@ -148,8 +148,8 @@ const VerificationCredentialList = () => {
 	}
 
 	const header = [
-		{ columnName: 'Connection Id' },
 		{ columnName: 'Request Id' },
+		{ columnName: 'Connection Id' },
 		{ columnName: 'Requested On' },
 		{ columnName: 'Status' },
 		{ columnName: 'Action' }
