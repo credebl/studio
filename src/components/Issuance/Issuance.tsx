@@ -84,13 +84,13 @@ const IssueCred = () => {
 		orgId: number,
 	) => {
 		const attrObj = attributes.map((attr) => ({
-			name: attr.attributeName,
+			name: attr?.attributeName,
 			value: '',
-			dataType: attr.schemaDataType,
+			dataType: attr?.schemaDataType,
 		}));
 		const issuancePayload = selectedUsers.map((user) => {
 			return {
-				connectionId: user.connectionId,
+				connectionId: user?.connectionId,
 				attributes: attrObj,
 				credentialDefinitionId: credDefId,
 				orgId,
