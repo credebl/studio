@@ -5,6 +5,7 @@ import { ChangeEvent, useEffect, useState } from 'react';
 
 import { AlertComponent } from '../../AlertComponent';
 import type { AxiosResponse } from 'axios';
+import { EmptyListMessage } from '../../EmptyListComponent';
 import type { Invitation } from '../interfaces/invitations';
 import type { OrgRole } from '../interfaces'
 import SearchInput from '../../SearchInput';
@@ -13,7 +14,6 @@ import { TextTittlecase } from '../../../utils/TextTransform';
 import { apiStatusCodes } from '../../../config/CommonConstant';
 import { getOrganizationInvitations } from '../../../api/invitations';
 import { getOrganizations } from '../../../api/organization';
-import { EmptyListMessage } from '../../EmptyListComponent';
 
 const initialPageState = {
     pageNumber: 1,
@@ -150,7 +150,7 @@ const Invitations = () => {
 
                                         <li className="p-4">
                                             <div
-                                                className="flex flex-wrap justify-between xl:block 2xl:flex align-center 2xl:space-x-4"
+                                                className="flex flex-wrap justify-between align-center"
                                             >
                                                 <div className="flex min-w-[40%] space-x-4 xl:mb-4 2xl:mb-0">
                                                     <div>

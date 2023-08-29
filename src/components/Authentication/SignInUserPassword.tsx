@@ -2,7 +2,7 @@ import './global.css'
 
 import * as yup from 'yup';
 
-import { Button, Label } from 'flowbite-react';
+import { Button, Label, Spinner } from 'flowbite-react';
 import {
 	Field,
 	Form,
@@ -14,8 +14,8 @@ import { useState } from 'react';
 
 import { Alert } from 'flowbite-react';
 import type { AxiosResponse } from 'axios';
-import React from 'react';
 import SignInUserPasskey from './SignInUserPasskey';
+import { getSupabaseClient } from '../../supabase';
 
 interface emailValue {
 	email: string;
@@ -36,6 +36,7 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 	const [fidoUserError, setFidoUserError] = useState("")
 	const [success, setSuccess] = useState<string | null>(null)
 	const [failure, setFailure] = useState<string | null>(null)
+	const [isForgotPassLoading, setForgotPassLoading] = useState<boolean>(false)
 	const [loading, setLoading] = useState<boolean>(false)
 	const [currentComponent, setCurrentComponent] = useState<string>('email');
 	const [showSignInUser2, setShowSignInUser2] = useState(false);
@@ -88,9 +89,6 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 		} else {
 			setLoading(false)
 			setFailure(loginRsp as string)
-			setTimeout(() => {
-				setFailure(null)
-			})
 		}
 	}
 
@@ -98,6 +96,26 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 		setShowSignInUser2(!showSignInUser2);
 
 	};
+
+	const forgotPassword = async () => {
+
+		setForgotPassLoading(true);
+
+		var base_url = window.location.origin;
+
+		const { data, error } = await getSupabaseClient().auth.resetPasswordForEmail(email
+		, {
+			redirectTo: `${base_url}/reset-password`,
+		});
+		setForgotPassLoading(false);
+
+		if(!error){
+			setSuccess('Reset password link has been sent to you on mail');
+		} else {
+			setFailure('Unable to send reset link for the password')
+		}
+
+	}
 
 
 	return (
@@ -219,10 +237,21 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 												</div>
 
 													<div className="text-sm flex justify-end font-sm text-gray-500 dark:text-gray-400 text-primary-700  dark:text-primary-500  ml-auto">
-														<span className='hover:underline cursor-pointer'>
+														
+														{isForgotPassLoading
+															? <span>
+																<Spinner
+																	className='mr-2'
+																	color="info"
+
+																/>
+																Loading...
+															</span> 
+														: <span onClick={forgotPassword} className='hover:underline cursor-pointer'>
 
 															{`Forgot Password?`}
 														</span>
+														}
 													</div>
 
 

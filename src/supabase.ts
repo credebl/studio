@@ -1,8 +1,18 @@
 import { createClient } from '@supabase/supabase-js'
+import { envConfig } from './config/envConfig';
 
 export const getSupabaseClient = () => {
-    
-    const supabaseUrl = process.env.PUBLIC_SUPABASE_URL || import.meta.env.PUBLIC_SUPABASE_URL
-    const supabaseAnonKey = process.env.PUBLIC_SUPABASE_KEY || import.meta.env.PUBLIC_SUPABASE_KEY
+
+    let supabaseUrl = ''
+    let supabaseAnonKey = ''
+
+    try {
+        supabaseUrl = process.env.PUBLIC_SUPABASE_URL || envConfig.PUBLIC_SUPABASE_URL;
+        supabaseAnonKey = process.env.PUBLIC_SUPABASE_KEY || envConfig.PUBLIC_SUPABASE_KEY;
+    } catch (error) {
+        supabaseUrl = envConfig.PUBLIC_SUPABASE_URL
+        supabaseAnonKey = envConfig.PUBLIC_SUPABASE_KEY
+    }
+
     return createClient(supabaseUrl, supabaseAnonKey)
 }

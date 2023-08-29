@@ -8,14 +8,14 @@ import {
 	Form,
 	Formik,
 } from 'formik';
+import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { useEffect, useRef, useState } from 'react';
 
 import { Alert } from 'flowbite-react';
-import RegistrationSuccess from './RegistrationSuccess'
 import React from 'react';
-import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
-import { storageKeys } from '../../config/CommonConstant';
+import RegistrationSuccess from './RegistrationSuccess'
 import SignInUserPasskey from './SignInUserPasskey';
+import { storageKeys } from '../../config/CommonConstant';
 
 interface emailValue {
 	email: string | null;
@@ -23,6 +23,7 @@ interface emailValue {
 
 const signUpSuccessPassword = '?signup=true?fidoFlag=false'
 const signUpSuccessPasskey = '?signup=true?fidoFlag=true'
+const resetPasswordSuccess = '?isPasswordSet=true'
 
 const SignInUser = () => {
 	const [email, setEmail] = useState<emailValue | null>(null)
@@ -47,13 +48,11 @@ const SignInUser = () => {
 			setSuccess('Congratulations!! 🎉 You have successfully registered on CREDEBL 🚀');
 		  } else if (signUpSuccessPasskey === window?.location?.search) {
 			setIsPasskeySuccess(true);
+		  } else if (resetPasswordSuccess === window?.location?.search) {
+			setSuccess('Congratulations!! 🎉 Your new password set successfully');
 		  }
-	  
-		  setTimeout(() => {
-			setSuccess('');
-		  });
 		};
-	  
+
 		fetchData();
 	  }, []);
 	
