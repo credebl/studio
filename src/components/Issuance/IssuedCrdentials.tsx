@@ -62,8 +62,6 @@ const CredentialList = () => {
 		setLoading(false)
 	}
 
-
-	//This useEffect is called when the searchText changes 
 	useEffect(() => {
 		let getData: NodeJS.Timeout
 
@@ -101,16 +99,17 @@ const CredentialList = () => {
 			<div className="mb-4 col-span-full xl:mb-2">
 				<BreadCrumbs />
 				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-					Issued Credentials
+					Credential Issued
 				</h1>
 			</div>
 			<div>
 				<div
 					className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-					<div className="flex items-center justify-between mb-4">
-						<SearchInput
+					<div className="flex items-center justify-end mb-4">
+						{/* future requirment changes  */}
+						{/* <SearchInput
 							onInputChange={searchInputChange}
-						/>
+						/> */}
 						<Button onClick={schemeSelection}
 							className='text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
 						><svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="30" height="25" fill="none" viewBox="0 0 25 18">

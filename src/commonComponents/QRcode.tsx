@@ -49,21 +49,20 @@ const CustomQRCode = ({ value, size }: { value: string, size: number }) => {
 		</div>
 		{/* <p className="text-center mt-3">OR</p> */}
 		{/* <p className="text-center mt-3 ">Invitation URL</p> */}
-		<div className="flex items-center text-center mt-3">
+		<div className="flex items-center text-center mt-3 dark:text-white">
 			<p className="md center"></p>  
-			{/* <Button
+			<button
 			onClick={drawHtmlToCanvas}
 			
-			className='mt-4 float-right text-base font-medium text-center text-white  hover:!bg rounded-lg hover:bg focus:ring-4 focus:ring sm:w-auto dark:bg dark:hover:bg dark:focus:ring'
-
 			><svg 
 				className='pr-2' 
+				stroke-width="2" stroke="currentColor"
 				xmlns="http://www.w3.org/2000/svg" 
 				width="25" height="25" fill="none" viewBox="0 0 24 23">
 				<path fill="#fff" d="M23.312 10.844a.685.685 0 0 0-.687.688v6.254a3.086 3.086 0 0 1-3.082 3.082H4.457a3.086 3.086 0 0 1-3.082-3.082V11.43a.685.685 0 0 0-.687-.688.685.685 0 0 0-.688.688v6.356a4.462 4.462 0 0 0 4.457 4.457h15.086A4.462 4.462 0 0 0 24 17.786v-6.254a.688.688 0 0 0-.688-.688Z" />
 				<path fill="#fff" d="M11.515 16.783c.133.132.31.203.484.203a.671.671 0 0 0 .484-.203l4.37-4.37a.686.686 0 0 0 0-.973.686.686 0 0 0-.973 0l-3.193 3.198V.688A.685.685 0 0 0 11.999 0a.685.685 0 0 0-.688.688v13.95L8.113 11.44a.686.686 0 0 0-.973 0 .686.686 0 0 0 0 .973l4.375 4.37Z" />
 			</svg>
-			</Button> */}
+			</button>
 			
 			<button
 				className=
@@ -73,8 +72,6 @@ const CustomQRCode = ({ value, size }: { value: string, size: number }) => {
 					: <svg className="h-6 w-6 text-green ml-3 text-base" width="25" height="25" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <rect x="8" y="8" width="12" height="12" rx="2" />  <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" /></svg>
 				}
 				
-				{/* {value} */}
-
 			</button>
 			
 		</div>

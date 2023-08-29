@@ -168,7 +168,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setMessage: (message: s
             <Modal.Body>
                  <AlertComponent
                     message={erroMsg}
-                    type={'error'}
+                    type={'failure'}
                     onAlertClose = {() => {
                         setErrMsg(null)
                     }}
@@ -210,7 +210,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setMessage: (message: s
                                 className="mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
                             >
                                 <div
-                                    className="items-center sm:flex xl:block 2xl:flex sm:space-x-4 xl:space-x-0 2xl:space-x-4"
+                                    className="items-center sm:flex 2xl:flex sm:space-x-4 xl:space-x-4 2xl:space-x-4"
                                 >
                                     {
                                         typeof (logoImage.logoFile) === "string" ?

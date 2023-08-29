@@ -26,8 +26,7 @@ const VerificationCredentialList = () => {
 	const [errMsg, setErrMsg] = useState<string | null>(null)
 	const [proofReqSuccess, setProofReqSuccess] = useState<string>('')
 	const [verifyLoader, setVerifyloader] = useState<boolean>(false)
-
-	//Fetch all issued credential list
+	
 	const getproofRequestList = async () => {
 		await removeFromLocalStorage(storageKeys.SELECTED_USER)
 		await removeFromLocalStorage(storageKeys.SCHEMA_ID)
@@ -113,8 +112,6 @@ const VerificationCredentialList = () => {
 		}
 	};
 
-
-
 	const openProofRequestModel = (flag: boolean, requestId: string) => {
 		setRequestId(requestId)
 		setOpenModal(flag)
@@ -127,7 +124,6 @@ const VerificationCredentialList = () => {
 		}
 	}
 
-	//This useEffect is called when the searchText changes 
 	useEffect(() => {
 		let getData: NodeJS.Timeout
 
@@ -143,7 +139,6 @@ const VerificationCredentialList = () => {
 		return () => clearTimeout(getData)
 	}, [searchText])
 
-	//onCHnage of Search input text
 	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setSearchText(e.target.value);
 	}
@@ -171,10 +166,11 @@ const VerificationCredentialList = () => {
 			<div>
 				<div
 					className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-					<div className="flex items-center justify-between mb-4">
-						<SearchInput
+					<div className="flex items-center justify-end mb-4">
+						{/* search box input future implementation */}
+						{/* <SearchInput
 							onInputChange={searchInputChange}
-						/>
+						/> */}
 						<Button onClick={schemeSelection}
 							className='text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
 						><svg className='mr-2 mt-1'xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 25 25">
