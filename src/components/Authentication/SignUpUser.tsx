@@ -287,7 +287,7 @@ const SignUpUser = () => {
 									<div className='lg:mt-28 sm:mt-12 lg:mb-20 w-full'>
 
 										<div className="flex justify-center mb-4 text-center text-primary-700 text-blue-600 font-inter text-4xl font-bold leading-10 ">
-											Create and account
+											Create an account
 										</div>
 										<div className="text-gray-500 font-inter text-base font-medium leading-5 flex w-84 h-5.061 flex-col justify-center items-center flex-shrink-0">
 											Please enter your email id to create an account
