@@ -275,7 +275,7 @@ const WalletSpinup = (props: {
 				label: '',
 			}}
 			validationSchema={yup.object().shape({
-				label: yup.string().required('Wallet label is required').trim().test('no-spaces', 'Spaces are not allowed Wallet label', value => !value || !value.includes(' ')),
+				label: yup.string().required('Wallet label is required').trim().test('no-spaces', 'Spaces are not allowed', value => !value || !value.includes(' ')),
 			})}
 			validateOnBlur
 			validateOnChange
@@ -359,8 +359,8 @@ const WalletSpinup = (props: {
 				</div>
 			</div>
 
-			<div className="grid w-full grid-cols-1 md:grid-cols-2 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-2">
-				<div>
+			<div className="grid w-full grid-cols-1 md:grid-cols-2 gap-4 mt-0 mb-4 xl:grid-cols-3 2xl:grid-cols-3">
+				<div className='col-span-1'>
 					{!agentSpinupCall && !loading && (
 						<div className="mt-4 flex max-w-lg flex-col gap-4">
 							<ul className="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex dark:bg-gray-700 dark:border-gray-600 dark:text-white">
@@ -408,18 +408,19 @@ const WalletSpinup = (props: {
 							<DedicatedAgentForm />
 						)
 					) : (
-						// : agentType === AgentType.DEDICATED
 						<WalletSteps
 							steps={walletSpinStep}
 							agentSpinupCall={agentSpinupCall}
 						/>
 					)}
 				</div>
-				{agentType === AgentType.DEDICATED ? (
-					<DedicatedIllustrate />
-				) : (
-					<SharedIllustrate />
-				)}
+				<div className='col-span-2'>
+					{agentType === AgentType.DEDICATED ? (
+						<DedicatedIllustrate />
+					) : (
+						<SharedIllustrate />
+					)}
+				</div>
 			</div>
 		</div>
 	);
