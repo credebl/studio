@@ -7,7 +7,6 @@ import { generateAuthenticationOption, verifyAuthentication } from '../../api/Fi
 
 import type { AxiosResponse } from 'axios';
 import SignInUser from './SignInUser';
-import SignInUser3 from './SignInUserPassword';
 import { startAuthentication } from '@simplewebauthn/browser';
 import { useState } from 'react';
 import React from 'react';
@@ -54,8 +53,9 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
             await setToLocalStorage(storageKeys.PERMISSIONS, permissionArray)
             await setToLocalStorage(storageKeys.USER_PROFILE, data?.data)
             await setToLocalStorage(storageKeys.USER_EMAIL, data?.data?.email)
-
+            
             window.location.href = '/dashboard'
+
         } else {
             setFailur(userDetails as string)
         }
@@ -72,9 +72,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
             }, 5000)
         } else {
             setFidoUserError(err)
-            setTimeout(() => {
-                setFidoUserError("")
-            }, 5000)
+            
         }
     }
 
@@ -123,9 +121,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
             } else if (data?.error) {
                 setFidoLoader(false)
                 setFidoUserError(data?.error);
-                setTimeout(() => {
-                    setFidoUserError("");
-                });
+
             }
         } catch (error) {
             if (error instanceof DOMException) {
