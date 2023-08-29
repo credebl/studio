@@ -161,9 +161,12 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
                 {
                     loading
                         ? (
-                            <Spinner
+                            <div className='flex justify-center'>
+                              <Spinner
                                 color="info"
-                            />
+                            />   
+                            </div>
+                           
                         )
                         : connectionData && <div>
                             <CustomQRCode value={connectionData?.connectionInvitation as string} size={180} />

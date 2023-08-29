@@ -127,14 +127,13 @@ const Dashboard = () => {
             <div>
 
                 <div
-                    className="mt-4 items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
+                    className="mt-4 flex flex-wrap items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
                 >
 
                     <div
-                        className="items-center sm:flex xl:block 2xl:flex sm:space-x-4 xl:space-x-0 2xl:space-x-4"
-                    ><div>
-                        </div>
-                        <div>
+                        className="items-center flex flex-wrap"
+                    >
+                        <div className='mr-4'>
                             {(orgData?.logoUrl) ? <CustomAvatar size='60' src={orgData?.logoUrl} /> : <CustomAvatar size='60' name={orgData?.name} />}
                         </div>
                         <div>
@@ -148,7 +147,7 @@ const Dashboard = () => {
 
                         </div>
                     </div>
-                    <div className="inline-flex items-center w-auto xl:w-full 2xl:w-auto">
+                    <div className="inline-flex items-center">
                         <button type="button" className=""
 
                         >
@@ -162,19 +161,21 @@ const Dashboard = () => {
                         </button>
                     </div>
 
-                    {openModal && (
 
-                        <EditOrgdetailsModal
-                            orgData={orgData}
-                            openModal={openModal}
-                            setOpenModal={setOpenModal}
-                            onEditSucess={fetchOrganizationDetails}
-                            setMessage={(message: string) => {
-                                throw new Error('Function not implemented.');
-                            }}
+                    <EditOrgdetailsModal
+                        orgData={orgData}
+                        openModal={openModal}
+                        // setOpenModal={setOpenModal}
+                        setOpenModal={
+                            props.setOpenModal
+                        }
+                        onEditSucess={fetchOrganizationDetails}
+                        setMessage={(message: string) => {
+                            throw new Error('Function not implemented.');
+                        }}
 
-                        />
-                    )}
+                    />
+
 
 
                 </div>
@@ -258,7 +259,7 @@ const Dashboard = () => {
                         ? (<div className="flex items-center justify-center m-4">
                             <Spinner
                                 color="info"
-																className='!fill-primary-700'
+								className='!fill-primary-700'
                             />
                         </div>)
                         : walletStatus === true
