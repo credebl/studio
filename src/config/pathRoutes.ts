@@ -14,17 +14,17 @@ export const pathRoutes = {
         root: '/organizations',
         invitations: '/organizations/invitations',
         users: '/organizations/users',
-        issuedCredentials: '/organizations/issued-credentials',
+        issuedCredentials: '/organizations/credentials-issued',
         credentials: '/organizations/verification',
         schemas: `/organizations/schemas`,
         dashboard: '/organizations/dashboard',
         createSchema: '/organizations/schemas/create',
         viewSchema: '/organizations/schemas/view-schema',
 				Issuance: {
-					schema: '/organizations/issued-credentials/schemas',
-					credDef:'/organizations/issued-credentials/schemas/cred-defs',
-					connections:'/organizations/issued-credentials/schemas/cred-defs/connections',
-					issuance:'/organizations/issued-credentials/schemas/cred-defs/connections/issuance'
+					schema: '/organizations/credentials-issued/schemas',
+					credDef:'/organizations/credentials-issued/schemas/cred-defs',
+					connections:'/organizations/credentials-issued/schemas/cred-defs/connections',
+					issuance:'/organizations/credentials-issued/schemas/cred-defs/connections/issuance'
 				},
                 verification: {
 					schema: '/organizations/verification/schemas',
