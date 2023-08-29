@@ -53,7 +53,7 @@ const DataTable: React.FC<DataTableProps> = ({ header,displaySelect, data, loadi
 												</td>
 											))}
 													{displaySelect || showBtn &&
-											<button onClick={() => callback ? callback(ele?.clickId) : ''} type="button" className="text-center mt-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Select</button>
+											<button onClick={() => callback ? callback(ele?.clickId) : ''} type="button" className="text-center mt-2 text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Select</button>
 									 } 
 										</tr>
 									)) : <tr className="text-center"><td className="p-2 text-center text-gray-500" colSpan={header.length}>Empty data</td></tr>}
