@@ -56,7 +56,7 @@ const ProofRequest = (props: { openModal: boolean; closeModal: (flag: boolean, i
               setButtonLoader(true);
               props.onSucess(props.requestId);
             }}
-            className="py-1 px-2 text-xs font-medium text-white bg-red-600 rounded-md hover:bg-red-700 focus:ring-2 focus:outline-none focus:ring-red-300 dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-900"
+            className="py-1 px-2 text-xs font-medium text-white bg-red-700 hover:!bg-red-800 rounded-md hover:bg-red-700 focus:ring-2 focus:outline-none focus:ring-red-300 dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-900"
             style={{ height: '2.5rem', minWidth: '3rem' }}
           >
             Confirm
