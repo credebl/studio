@@ -78,7 +78,6 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
         return userRsp;
     }
 
-
     const registerWithPasskey = async (flag: boolean): Promise<void> => {
         try {
             const userEmail = await getFromLocalStorage(storageKeys.USER_EMAIL)
@@ -91,7 +90,6 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
             if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
                 const opts = data?.data
                 const challangeId = data?.data?.challenge
-
 
                 if (opts) {
                     opts.authenticatorSelection = {
@@ -205,7 +203,7 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
                                 }
                                 <div className='flex mt-12'>
 
-                                    <button className='flex mt-20'
+                                    <button className='lg:mt-16 sm:mt-12 w-full'
                                         onClick={handleBackButton}
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="26" height="24" viewBox="0 0 37 20" fill="none">
@@ -213,7 +211,7 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
                                         </svg>
                                     </button>
 
-                                    <div className='mt-16 w-full'>
+                                    <div className='lg:mt-28 sm:mt-12 lg:mb-20 w-full'>
 
                                         <div className="flex justify-center mb-4 text-center text-primary-700 text-blue-600 font-inter text-4xl font-bold leading-10 ">
                                             Create an account
@@ -224,7 +222,7 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
                                     </div>
                                 </div>
 
-                                <div className="lg:hidden sm:block bg-blue-500 bg-opacity-10" >
+                                <div className="lg:hidden sm:block md:hidden sm:block bg-blue-500 bg-opacity-10 mt-4" >
 
                                     <img
                                         src="/images/signin.svg"
