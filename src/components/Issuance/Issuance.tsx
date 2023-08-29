@@ -38,8 +38,8 @@ interface IssuanceFormPayload {
 }
 
 interface DataTypeAttributes {
-	attributeName: string;
 	schemaDataType: string;
+	attributeName:string
 }
 
 const IssueCred = () => {
@@ -69,7 +69,7 @@ const IssueCred = () => {
 		createSchemaPayload(schemaId, credDefId);
 		setUserLoader(true);
 		const selectedUsers = await getSelectedUsers();
-		const attributes = await getSchemaDetails(schemaId, Number(orgId));
+		const attributes = await getSchemaDetails();
 		if (attributes && attributes.length) {
 			createIssuanceForm(selectedUsers, attributes, credDefId, Number(orgId));
 		} else {
@@ -84,13 +84,13 @@ const IssueCred = () => {
 		orgId: number,
 	) => {
 		const attrObj = attributes.map((attr) => ({
-			name: attr.attributeName,
+			name: attr?.attributeName,
 			value: '',
-			dataType: attr.schemaDataType,
+			dataType: attr?.schemaDataType,
 		}));
 		const issuancePayload = selectedUsers.map((user) => {
 			return {
-				connectionId: user.connectionId,
+				connectionId: user?.connectionId,
 				attributes: attrObj,
 				credentialDefinitionId: credDefId,
 				orgId,
@@ -102,8 +102,7 @@ const IssueCred = () => {
 
 	const getSchemaDetails = async (): Promise<DataTypeAttributes[] | null> => {
 		const schemaAttributes = await getFromLocalStorage(storageKeys.SCHEMA_ATTR);
-		const parsedSchemaAttributes = JSON.parse(schemaAttributes) || [];
-
+		const parsedSchemaAttributes = JSON.parse(schemaAttributes) || []; 
 		return parsedSchemaAttributes.attribute;
 	};
 
@@ -268,7 +267,7 @@ const IssueCred = () => {
 																		className="w-1/3 pr-2 flex justify-end items-center font-light"
 																	>
 																		{attr.name.charAt(0).toUpperCase() +
-																			attr.name.slice(1).toLowerCase()}
+																			attr.name.slice(1).toLowerCase() + " :"}
 																	</label>
 																	<Field
 																		type={

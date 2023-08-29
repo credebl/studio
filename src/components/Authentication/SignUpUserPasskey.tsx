@@ -4,43 +4,34 @@ import { Alert, Button } from 'flowbite-react';
 import type { AxiosError, AxiosResponse } from 'axios';
 import type { IdeviceBody, RegistrationOptionInterface } from '../Profile/interfaces/index.js';
 import { addDeviceDetails, generateRegistrationOption, verifyRegistration } from '../../api/Fido.js';
-import { addPasswordDetails, checkUserExist, getFromLocalStorage, passwordEncryption, sendVerificationMail } from '../../api/Auth.js';
-import { apiStatusCodes, passwordRegex, storageKeys } from '../../config/CommonConstant.js';
+import { addPasswordDetails, getFromLocalStorage, passwordEncryption, sendVerificationMail } from '../../api/Auth.js';
+import { apiStatusCodes, storageKeys } from '../../config/CommonConstant.js';
 import { useEffect, useState } from 'react';
 
 import SignUpUserPassword from './SignUpUserPassword.jsx';
 import secureRandomPassword from 'secure-random-password';
 import { startRegistration } from '@simplewebauthn/browser';
+import React from 'react';
+import SignUpUserName from './SignUpUserName.js';
 
-interface nameValues {
-    firstName: string;
-    lastName: string;
-}
 interface passwordValues {
 
     password: string,
     confirmPassword: string
 }
-interface emailValue {
-    email: string;
-}
 
-
-const SignUpUserPasskey = ({firstName, lastName}: {firstName: string; lastName: string}) => {
+const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastName: string }) => {
 
     const [loading, setLoading] = useState<boolean>(false)
     const [erroMsg, setErrMsg] = useState<string | null>(null)
     const [verificationSuccess, setVerificationSuccess] = useState<string>('')
-    const [enableName, setEnableName] = useState<boolean>(false)
-    const [continuePasswordFlag, setContinuePasswordFlag] = useState<boolean>(false)
-
     const [addSuccess, setAddSuccess] = useState<string | null>(null)
     const [addfailure, setAddFailur] = useState<string | null>(null)
     const [emailAutoFill, setEmailAutoFill] = useState<string>('')
     const [fidoError, setFidoError] = useState("")
-    const [showSignUpUser, setShowSignUpUser] = useState(true);
-    const [showSignUpUser4, setShowSignUpUser4] = useState(false);
     const [currentComponent, setCurrentComponent] = useState<string>('email');
+    const [showSignUpUserName, setShowSignUpUserName] = useState(false);
+    const [showPasskeyComponent, setShowPasskeyComponent] = useState(true);
 
 
     useEffect(() => {
@@ -57,12 +48,12 @@ const SignUpUserPasskey = ({firstName, lastName}: {firstName: string; lastName: 
             setFidoError(errorMsg)
             setTimeout(() => {
                 setFidoError("")
-            }, 5000)
+            })
         } else {
             setFidoError(err.message)
             setTimeout(() => {
                 setFidoError("")
-            }, 5000)
+            })
         }
     }
 
@@ -172,49 +163,33 @@ const SignUpUserPasskey = ({firstName, lastName}: {firstName: string; lastName: 
             setTimeout(() => {
                 setAddSuccess('')
                 setAddFailur('')
-            }, 5000);
+            });
         } catch (error) {
             showFidoError(error)
         }
     }
 
+    const handleBackButton = () => {
+        setShowPasskeyComponent(false);
+
+        setShowSignUpUserName(true);
+    };
+
 
     return (
-        <div className='h-50'>
+        <div className='h-full'>
+            {currentComponent === 'email' && showPasskeyComponent &&
 
-            {currentComponent === 'email' &&
-
-                <div className="w-full h-full bg-white flex-shrink-0">
-                    <div className="flex flex-col md:flex-row" style={{ height: '830px' }}>
-                        <div className="flex md:h-auto md:w-3/5 bg-white" style={{ justifyContent: 'center', padding: 100 }}>
-                            <div className='absolute left-10 top-10'>
-                                <a href="/" className="flex items-center">
-                                    <img
-                                        src="/images/CREDEBL_ICON.png"
-                                        className="mr-2 h-6 sm:h-9"
-                                        alt="CREDEBL Logo"
-                                    />
-                                    <span
-                                        className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
-                                    >
-                                        CREDEBL</span>
-
-                                </a>
-                            </div>
-
-                            <img className="flex"
+                <div className="bg-white flex-shrink-0">
+                    <div className="flex flex-col md:flex-row">
+                        <div className="flex justify-center px-50 py-50 md:w-3/5 bg-blue-500 bg-opacity-10" >
+                            <img
+                                className='hidden sm:block'
                                 src="/images/signin.svg"
                                 alt="img" />
-
-                            <div className="absolute left-10 bottom-10">
-                                &copy; 2019 - {new Date().getFullYear()} —
-                                <a className="hover:underline" target="_blank"
-                                >CREDEBL</a> | All rights reserved.
-                            </div>
-
                         </div>
-                        <div className="flex items-center justify-center p-6 sm:p-12 md:w-2/5 shadow-xl shadow-blue-700">
-                            <div className="w-full" style={{ height: '700px' }}>
+                        <div className="flex items-center justify-center p-6 sm:p-12 md:w-2/5 ">
+                            <div className="w-full">
                                 {
                                     (verificationSuccess || erroMsg) &&
                                     <Alert
@@ -228,19 +203,36 @@ const SignUpUserPasskey = ({firstName, lastName}: {firstName: string; lastName: 
                                         </span>
                                     </Alert>
                                 }
+                                <div className='flex mt-12'>
 
-                                <div className='mt-20 mb-24'>
+                                    <button className='flex mt-20'
+                                        onClick={handleBackButton}
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="24" viewBox="0 0 37 20" fill="none">
+                                            <path d="M0.201172 9.23695C0.00108337 9.60157 -0.0512199 10.0028 0.050869 10.3898C0.152962 10.7769 0.404865 11.1324 0.774712 11.4114L11.3468 19.391C11.5906 19.5815 11.8823 19.7335 12.2047 19.838C12.5272 19.9426 12.874 19.9976 13.2249 19.9999C13.5759 20.0022 13.9239 19.9518 14.2487 19.8514C14.5735 19.7511 14.8686 19.603 15.1168 19.4157C15.365 19.2284 15.5612 19.0057 15.6941 18.7605C15.827 18.5153 15.8939 18.2526 15.8908 17.9878C15.8878 17.7229 15.8149 17.4611 15.6763 17.2177C15.5378 16.9743 15.3365 16.7542 15.084 16.5702L9.02094 11.9939L34.357 11.9939C35.0579 11.9939 35.7302 11.7837 36.2259 11.4096C36.7215 11.0355 37 10.5281 37 9.999C37 9.46992 36.7215 8.96251 36.2259 8.5884C35.7302 8.21428 35.0579 8.00411 34.357 8.00411L9.02094 8.00411L15.0814 3.4298C15.3338 3.24578 15.5352 3.02565 15.6737 2.78227C15.8122 2.53888 15.8851 2.27711 15.8882 2.01223C15.8912 1.74735 15.8244 1.48466 15.6915 1.2395C15.5586 0.994335 15.3623 0.771599 15.1142 0.584293C14.866 0.396986 14.5709 0.248857 14.2461 0.148552C13.9213 0.0482464 13.5732 -0.00222778 13.2223 7.43866e-05C12.8714 0.00237656 12.5245 0.0574093 12.2021 0.161961C11.8796 0.26651 11.588 0.418484 11.3442 0.609016L0.772064 8.58861C0.527206 8.77433 0.333214 8.99464 0.201172 9.23695Z" fill="#1F4EAD" />
+                                        </svg>
+                                    </button>
 
-                                    <div className="flex justify-center mb-4 text-center text-primary-700 text-blue-600 font-inter text-4xl font-bold leading-10 ">
-                                        Create an account
+                                    <div className='mt-16 w-full'>
+
+                                        <div className="flex justify-center mb-4 text-center text-primary-700 text-blue-600 font-inter text-4xl font-bold leading-10 ">
+                                            Create an account
+                                        </div>
+                                        <div className="text-gray-500 font-inter text-base font-medium leading-5 flex w-84 h-5.061 flex-col justify-center items-center flex-shrink-0">
+                                            Choose your authentication method                                    </div>
+
                                     </div>
-                                    <div className="text-gray-500 font-inter text-base font-medium leading-5 flex w-84 h-5.061 flex-col justify-center items-center flex-shrink-0">
-                                        Please enter your email id to login
-                                    </div>
-
                                 </div>
 
-                                <div className='mt-24 text-[#6B7280] font-inter font-normal leading-[1.05] justify-center items-center'>
+                                <div className="lg:hidden sm:block bg-blue-500 bg-opacity-10" >
+
+                                    <img
+                                        src="/images/signin.svg"
+                                        alt="img" />
+                                </div>
+
+
+                                <div className='mt-16 text-[#6B7280] font-inter font-normal leading-[1.05] justify-center items-center'>
                                     <div className='text-base'>With Passkey you don’t need to remember complex passwords</div>
 
                                     <div className='mt-4'>
@@ -257,9 +249,10 @@ const SignUpUserPasskey = ({firstName, lastName}: {firstName: string; lastName: 
 
                                 </div>
 
-                                <div className="flex justify-between mt-24">
+                                <div className="flex justify-between mt-10">
+
                                     <button
-                                        className="block w-2/5 py-2 px-4 rounded-md border text-center font-medium leading-5 border-blue-600 bg-white flex items-center justify-center"
+                                        className="w-2/5 px-4 rounded-md text-center font-medium leading-5 border-blue-600 flex items-center justify-center hover:bg-secondary-700 bg-transparent ring-2 text-black rounded-lg text-sm"
                                         onClick={() => setCurrentComponent('password')}
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 39 39" fill="none">
@@ -298,7 +291,7 @@ const SignUpUserPasskey = ({firstName, lastName}: {firstName: string; lastName: 
 
                                 </div>
 
-                                <div className="text-sm font-medium text-gray-500 dark:text-gray-400 pt-10 flex items-center justify-center">
+                                <div className="text-sm mt-6 font-medium text-gray-500 dark:text-gray-400 pt-6 mt-6 flex items-center justify-center">
                                     Already have an account?
                                     &nbsp;<a
                                         id='navigatetosignup'
@@ -314,15 +307,16 @@ const SignUpUserPasskey = ({firstName, lastName}: {firstName: string; lastName: 
                         </div>
                     </div>
                 </div>}
-
             {
                 currentComponent === 'password' && (
-                    <SignUpUserPassword 
-                    firstName={firstName}
-                    lastName={lastName}
+                    <SignUpUserPassword
+                        firstName={firstName}
+                        lastName={lastName}
                     />
                 )
             }
+            {showSignUpUserName && <SignUpUserName />}
+
         </div>
     );
 };

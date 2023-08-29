@@ -6,12 +6,13 @@ import CustomAvatar from '../Avatar'
 import { EmptyListMessage } from "../EmptyListComponent";
 import type { Organisation } from "../organization/interfaces";
 import type { UserActivity } from "./interfaces";
-import { apiStatusCodes } from "../../config/CommonConstant";
+import { apiStatusCodes, storageKeys } from "../../config/CommonConstant";
 import { getOrganizations } from "../../api/organization";
 import { getUserActivity } from "../../api/users";
 import { getUserInvitations } from "../../api/invitations";
 import moment from "moment";
 import { pathRoutes } from "../../config/pathRoutes";
+import { setToLocalStorage } from "../../api/Auth";
 
 const initialPageState = {
 	pageNumber: 1,
@@ -115,6 +116,11 @@ const UserDashBoard = () => {
 		window.location.href = pathRoutes.users.invitations
 	}
 
+	const goToOrgDashboard = async (orgId: number, roles: string[]) => {
+		await setToLocalStorage(storageKeys.ORG_ID, orgId.toString());
+		window.location.href = pathRoutes.organizations.dashboard;
+	};
+
 	return (
 		<div className="px-4 pt-6">
 			<div className="cursor-pointer" onClick={redirectToInvitations}>
@@ -136,12 +142,12 @@ const UserDashBoard = () => {
 				<div
 					className=" justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
 				>
-					<div className="w-full">
+				<div className="w-full" >
 						<h2 className="text-base font-bold text-gray-500 dark:text-gray-400">
 							Organizations
 						</h2>
 
-						{
+						{/* {
 							organizationsList
 							&& organizationsList.map(org => {
 								return <div className="pt-4 flex">
@@ -154,7 +160,31 @@ const UserDashBoard = () => {
 
 								</div>
 							})
+						} */}
+						
+
+							{organizationsList?.map((org) => {
+							const roles: string[] = org.userOrgRoles.map(role => role.orgRole.name)
+							org.roles = roles
+							return (
+								<div onClick={() => goToOrgDashboard(org?.id, org?.roles)}>
+									<a
+										href="#"
+										className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+									>
+										{org.logoUrl ? (
+											<CustomAvatar className='dark:text-white' size="25" src={org?.logoUrl} round />
+										) : (
+											<CustomAvatar className='dark:text-white' size="25" name={org?.name} round />
+										)}
+
+										<span className="ml-3 text-base font-bold text-gray-500 dark:text-white">{org?.name}</span>
+									</a>
+								</div>
+							)
+						})
 						}
+
 
 
 						<a

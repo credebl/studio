@@ -6,19 +6,19 @@ import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { generateAuthenticationOption, verifyAuthentication } from '../../api/Fido';
 
 import type { AxiosResponse } from 'axios';
-import React from 'react';
 import SignInUser from './SignInUser';
-import SignInUser3 from './SignInUser-password';
 import { startAuthentication } from '@simplewebauthn/browser';
 import { useState } from 'react';
+import React from 'react';
+import SignInUserPassword from './SignInUserPassword';
 
 interface signInUserProps {
     email: string
 }
-const SignInUser2 = (signInUserProps: signInUserProps) => {
+const SignInUserPasskey = (signInUserProps: signInUserProps) => {
     const [loading, setLoading] = useState<boolean>(false)
     const [showSignInUser, setShowSignInUser] = useState(true);
-    const [showSignInUser3, setShowSignInUser3] = useState(false);
+    const [showSignInUserPassword, setShowSignInUserPassword] = useState(false);
     const [fidoLoader, setFidoLoader] = useState<boolean>(false)
     const [fidoUserError, setFidoUserError] = useState("")
     const [failure, setFailur] = useState<string | null>(null)
@@ -26,11 +26,12 @@ const SignInUser2 = (signInUserProps: signInUserProps) => {
 
 
     const handleSvgClick = () => {
+
         setShowSignInUser(!showSignInUser);
     };
 
     const handlePasswordButtonClick = () => {
-        setShowSignInUser3(true);
+        setShowSignInUserPassword(true);
         setShowSignInUser(false);
     };
 
@@ -52,8 +53,9 @@ const SignInUser2 = (signInUserProps: signInUserProps) => {
             await setToLocalStorage(storageKeys.PERMISSIONS, permissionArray)
             await setToLocalStorage(storageKeys.USER_PROFILE, data?.data)
             await setToLocalStorage(storageKeys.USER_EMAIL, data?.data?.email)
-
+            
             window.location.href = '/dashboard'
+
         } else {
             setFailur(userDetails as string)
         }
@@ -70,9 +72,7 @@ const SignInUser2 = (signInUserProps: signInUserProps) => {
             }, 5000)
         } else {
             setFidoUserError(err)
-            setTimeout(() => {
-                setFidoUserError("")
-            }, 5000)
+            
         }
     }
 
@@ -116,14 +116,12 @@ const SignInUser2 = (signInUserProps: signInUserProps) => {
                     setFailur(loginRsp as string);
                     setTimeout(() => {
                         setFailur(null);
-                    }, 3000);
+                    });
                 }
             } else if (data?.error) {
                 setFidoLoader(false)
                 setFidoUserError(data?.error);
-                setTimeout(() => {
-                    setFidoUserError("");
-                }, 3000);
+
             }
         } catch (error) {
             if (error instanceof DOMException) {
@@ -141,40 +139,21 @@ const SignInUser2 = (signInUserProps: signInUserProps) => {
 
     return (
 
-        <div className='h-50'>
+        <div className='h-full'>
             {showSignInUser ? (
 
-                <div className="w-full h-full bg-white rounded-lg ring-4 ring-blue-600 ring-opacity-50 w-1585 h-744 flex-shrink-0">
-                    <div className="flex flex-col md:flex-row" style={{ height: '830px' }}>
-                        <div className="flex md:h-auto md:w-3/5 bg-white" style={{ justifyContent: 'center', padding: 100 }}>
-                            <div className='absolute left-10 top-10'>
-                                <a href="/" className="flex items-center">
-                                    <img
-                                        src="/images/CREDEBL_ICON.png"
-                                        className="mr-2 h-6 sm:h-9"
-                                        alt="CREDEBL Logo"
-                                    />
-
-                                    <span
-                                        className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
-                                    >
-                                        CREDEBL</span>
-
-                                </a>
-                            </div>
-
-                            <img className="flex"
+                <div className="bg-white flex-shrink-0">
+                    <div className="flex flex-col md:flex-row">
+                        <div className="flex justify-center px-50 py-50 md:w-3/5 bg-blue-500 bg-opacity-10" >
+                        <img 
+							className='hidden sm:block'
                                 src="/images/choose-password-passkey.svg"
                                 alt="img" />
-                            <div className="absolute left-10 bottom-10">
-                                &copy; 2019 - {new Date().getFullYear()} —
-                                <a className="hover:underline" target="_blank"
-                                >CREDEBL</a> | All rights reserved.
-                            </div>
+
 
                         </div>
-                        <div className="flex items-center justify-center p-6 sm:p-12 md:w-2/5 shadow-xl shadow-blue-700">
-                            <div className="w-full" style={{ height: '700px' }}>
+                        <div className="flex items-center justify-center p-6 sm:p-12 md:w-2/5 ">
+                            <div className="w-full">
 
                                 {
                                     (success || failure || fidoUserError) &&
@@ -191,13 +170,14 @@ const SignInUser2 = (signInUserProps: signInUserProps) => {
                                 }
 
                                 <div className='flex'>
+
                                     <button className='flex mt-32' onClick={handleSvgClick} >
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="20" viewBox="0 0 37 20" fill="none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="24" viewBox="0 0 37 20" fill="none">
                                             <path d="M0.201172 9.23695C0.00108337 9.60157 -0.0512199 10.0028 0.050869 10.3898C0.152962 10.7769 0.404865 11.1324 0.774712 11.4114L11.3468 19.391C11.5906 19.5815 11.8823 19.7335 12.2047 19.838C12.5272 19.9426 12.874 19.9976 13.2249 19.9999C13.5759 20.0022 13.9239 19.9518 14.2487 19.8514C14.5735 19.7511 14.8686 19.603 15.1168 19.4157C15.365 19.2284 15.5612 19.0057 15.6941 18.7605C15.827 18.5153 15.8939 18.2526 15.8908 17.9878C15.8878 17.7229 15.8149 17.4611 15.6763 17.2177C15.5378 16.9743 15.3365 16.7542 15.084 16.5702L9.02094 11.9939L34.357 11.9939C35.0579 11.9939 35.7302 11.7837 36.2259 11.4096C36.7215 11.0355 37 10.5281 37 9.999C37 9.46992 36.7215 8.96251 36.2259 8.5884C35.7302 8.21428 35.0579 8.00411 34.357 8.00411L9.02094 8.00411L15.0814 3.4298C15.3338 3.24578 15.5352 3.02565 15.6737 2.78227C15.8122 2.53888 15.8851 2.27711 15.8882 2.01223C15.8912 1.74735 15.8244 1.48466 15.6915 1.2395C15.5586 0.994335 15.3623 0.771599 15.1142 0.584293C14.866 0.396986 14.5709 0.248857 14.2461 0.148552C13.9213 0.0482464 13.5732 -0.00222778 13.2223 7.43866e-05C12.8714 0.00237656 12.5245 0.0574093 12.2021 0.161961C11.8796 0.26651 11.588 0.418484 11.3442 0.609016L0.772064 8.58861C0.527206 8.77433 0.333214 8.99464 0.201172 9.23695Z" fill="#1F4EAD" />
                                         </svg>
                                     </button>
 
-                                    <div className='mt-28 mb-28' style={{ marginLeft: '142px' }}>
+                                    <div className='mt-28 mb-20 w-full'>
 
                                         <div className="flex justify-center mb-4 text-center text-primary-700 text-blue-600 font-inter text-4xl font-bold leading-10 ">
                                             Login
@@ -205,16 +185,24 @@ const SignInUser2 = (signInUserProps: signInUserProps) => {
                                         <div className="text-gray-500 font-inter text-base font-medium leading-5 flex w-84 h-5.061 flex-col justify-center items-center flex-shrink-0">
                                             Please select your login method
                                         </div>
+
                                     </div>
                                 </div>
+                                <div className="lg:hidden sm:block bg-blue-500 bg-opacity-10" >
 
-                                <div className='flex mt-30 text-gray-700 font-inter text-xl font-medium leading-[1.05] justify-center items-center'>
+                                    <img
+                                        src="/images/choose-password-passkey.svg"
+                                        alt="img" />
+                                </div>
+
+                                <div className='flex mt-30 mb-20 text-gray-700 font-inter text-xl font-medium leading-[1.05] justify-center items-center'>
                                     With Passkey you don’t need to <br /> remember complex passwords
                                 </div>
 
-                                <div className="flex justify-between mt-32 mb-6">
+                                <div className="flex justify-between">
+
                                     <button
-                                        className="block w-2/5 py-2 px-4 rounded-md border text-center font-medium leading-5 border-blue-600 bg-white flex items-center justify-center"
+                                        className="w-2/5 px-4 rounded-md text-center font-medium leading-5 border-blue-600 flex items-center justify-center hover:bg-secondary-700 bg-transparent ring-2 text-black rounded-lg text-sm"
                                         onClick={handlePasswordButtonClick}
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 39 39" fill="none">
@@ -253,7 +241,7 @@ const SignInUser2 = (signInUserProps: signInUserProps) => {
                                     </Button>
 
                                 </div>
-                                <div className="text-sm font-medium text-gray-500 dark:text-gray-400 pt-6 flex items-center justify-center">
+                                <div className="text-sm font-medium text-gray-500 dark:text-gray-400 pt-6 mt-6 flex items-center justify-center">
                                     Don't have an account yet?
                                     &nbsp;<a
                                         id='navigatetosignup'
@@ -269,7 +257,7 @@ const SignInUser2 = (signInUserProps: signInUserProps) => {
                     </div>
                 </div>) : (
 
-                showSignInUser3 ? <SignInUser3 isPasskey={false} email={signInUserProps.email} /> : <SignInUser />
+                showSignInUserPassword ? <SignInUserPassword isPasskey={false} email={signInUserProps.email} /> : <SignInUser />
 
             )}
 
@@ -279,4 +267,4 @@ const SignInUser2 = (signInUserProps: signInUserProps) => {
     );
 };
 
-export default SignInUser2;
+export default SignInUserPasskey;
