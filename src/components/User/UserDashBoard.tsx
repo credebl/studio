@@ -185,15 +185,15 @@ const UserDashBoard = () => {
 						})
 						}
 
-
-
-						<a
+						{
+							organizationsList && organizationsList?.length > 0 && (
+								<a
 							href="/organizations"
 							className="float-right inline-flex items-center p-2 text-sm font-medium rounded-lg text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700"
 						>
 							View More..
 						</a>
-
+							)}
 					</div>
 
 				</div>
@@ -234,8 +234,14 @@ const UserDashBoard = () => {
 					<div className="flex items-center justify-between mb-4">
 						<h3 className="pl-12 text-lg font-semibold text-gray-900 dark:text-white">
 							Recent Activity
-						</h3>
-					
+							{
+								activityList && activityList?.length===0 && (
+									<div className="px-2 py-1 text-black-800  text-xs">
+										Looks like there are no activities to display at the moment.
+									</div>
+								)
+							}
+						</h3> 
 					</div>
 					{
 						activityList
