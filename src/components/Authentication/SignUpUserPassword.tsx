@@ -271,12 +271,7 @@ const SignUpUserPassword = ({ firstName, lastName }: { firstName: string; lastNa
                                                         id='signupbutton'
                                                         type="submit"
                                                         isProcessing={loading}
-                                                        onClick={(values: passwordValues
-                                                        ) => {
-                                                            if (formikHandlers.errors.password) {
-                                                                submit(values, false)
-                                                            }
-                                                        }}
+                                                        
 
 
                                                         className='w-full font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
