@@ -3,6 +3,17 @@ import React, { useState } from 'react';
 
 const ProofRequest = (props: { openModal: boolean; closeModal: (flag: boolean, id: string) => void; onSucess: (verifyPresentationId: string) => void; requestId: string }) => {
   const [buttonLoader, setButtonLoader] = useState<boolean>(false)
+	const handleConfirmClick = async () => {
+    try {
+      setButtonLoader(true);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      props.onSucess(props.requestId);
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setButtonLoader(false); 
+    }
+  };
   return (
 
     <Modal show={props.openModal} size="lg">
@@ -32,10 +43,9 @@ const ProofRequest = (props: { openModal: boolean; closeModal: (flag: boolean, i
         <div className='pt-6'>
           <p className="mb-4 text-gray-500 dark:text-gray-300">
             Are you sure you want to present proof for {' '}
-            <span className="dark:text-black font-bold">
-              Id: {props.requestId}
-            </span>
-
+            <p className="dark:text-white text-gray-600 font-bold p-2">
+             Request Id: {props.requestId}
+            </p>
           </p>
         </div>
 
@@ -45,18 +55,25 @@ const ProofRequest = (props: { openModal: boolean; closeModal: (flag: boolean, i
             onClick={() => {
               setButtonLoader(false)
               props.closeModal(false, '')
+							console.log("buttonLoader",buttonLoader);
+
             }}
-            className="py-2 px-3 text-sm font-medium text-gray-500 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-primary-300 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
+            style={{ height: '2.5rem', minWidth: '3rem' }}
+            className="py-1 px-2 medium text-center font-medium text-gray-600 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
           >
             No, cancel
           </button>
           <Button
-            isProcessing={buttonLoader}
-            onClick={() => {
-              setButtonLoader(true);
-              props.onSucess(props.requestId);
-            }}
-            className="py-1 px-2 text-xs font-medium text-white bg-red-600 rounded-md hover:bg-red-700 focus:ring-2 focus:outline-none focus:ring-red-300 dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-900"
+             isProcessing={buttonLoader}
+						 onClick={handleConfirmClick} // Use the custom handler
+						 disabled={buttonLoader}
+            // onClick={() => {
+            //   setButtonLoader(true);
+            //   props.onSucess(props.requestId);
+						// 	console.log("buttonLoader",buttonLoader);
+            // }}
+						// disabled={buttonLoader}
+            className="py-1 px-2 medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
             style={{ height: '2.5rem', minWidth: '3rem' }}
           >
             Confirm
