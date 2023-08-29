@@ -64,8 +64,8 @@ const VerificationCred = () => {
 											id="default-checkbox"
 											type="checkbox"
 											onClick={(event: React.MouseEvent<HTMLInputElement>) => {
-												const inputElement = event.target as HTMLInputElement;
-												selectConnection(attributes, inputElement.checked);
+												const inputElement = event?.target as HTMLInputElement;
+												selectConnection(attributes, inputElement?.checked);
 											}}
 											value=""
 											className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 cursor-pointer"
@@ -254,7 +254,7 @@ const VerificationCred = () => {
 					onClick={verifyCredentialSubmit}
 					isProcessing={requestLoader}
 					disabled={!selectedUsersData.length}
-					className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mt-2 ml-auto mr-8'
+					className='text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mt-2 ml-auto mr-8'
 				>
 					Request Proof
 				</Button>
