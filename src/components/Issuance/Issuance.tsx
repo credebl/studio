@@ -102,8 +102,7 @@ const IssueCred = () => {
 
 	const getSchemaDetails = async (): Promise<DataTypeAttributes[] | null> => {
 		const schemaAttributes = await getFromLocalStorage(storageKeys.SCHEMA_ATTR);
-		const parsedSchemaAttributes = JSON.parse(schemaAttributes) || [];
-
+		const parsedSchemaAttributes = JSON.parse(schemaAttributes) || []; 
 		return parsedSchemaAttributes.attribute;
 	};
 

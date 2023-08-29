@@ -9,9 +9,10 @@ import CredDeffCard from '../../../commonComponents/CredentialDefinitionCard';
 import { createCredentialDefinition, getCredDeffById, getSchemaById } from '../../../api/Schema';
 import type { AxiosResponse } from 'axios';
 import type { CredDeffFieldNameType } from './interfaces';
-import { getFromLocalStorage } from '../../../api/Auth';
+import { getFromLocalStorage, setToLocalStorage } from '../../../api/Auth';
 import { EmptyListMessage } from '../../EmptyListComponent';
 import { nanoid } from 'nanoid';
+import { pathRoutes } from '../../../config/pathRoutes';
 
 interface Values {
   tagName: string;
@@ -95,7 +96,6 @@ const ViewSchemas = () => {
     const fetchData = async () => {
       const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
       setOrgId(Number(organizationId));
-
       if (window?.location?.search) {
         const str = window?.location?.search;
         const schemaId = str.substring(str.indexOf('=') + 1);
@@ -130,6 +130,11 @@ const ViewSchemas = () => {
     }
     getCredentialDefinitionList(schemaDetails?.schemaId, orgId)
   }
+  
+  const schemaSelectionCallback = async (schemaId: string, credentialDefinitionId: string) => {
+    await setToLocalStorage(storageKeys.CRED_DEF_ID, credentialDefinitionId)
+    window.location.href = `${pathRoutes.organizations.Issuance.connections}`
+	}
 
   return (
     <div className="px-4 pt-6">
@@ -146,7 +151,7 @@ const ViewSchemas = () => {
             onClick={() => {
               window.location.href = '/organizations/schemas'
             }}
-            className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto'
+            className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto dark:text-white'
             style={{ height: '2.5rem', width: '5rem', minWidth: '2rem' }}
           >
             <svg className='mr-1' xmlns="http://www.w3.org/2000/svg" width="22" height="12" fill="none" viewBox="0 0 30 20">
@@ -385,7 +390,7 @@ const ViewSchemas = () => {
                 {credDeffList && credDeffList.length > 0 &&
                   credDeffList.map((element, key) => (
                     <div className='p-2' key={key}>
-                      <CredDeffCard credDeffName={element['tag']} credentialDefinitionId={element['credentialDefinitionId']} schemaId={element['schemaLedgerId']} revocable={element['revocable']} />
+                      <CredDeffCard credDeffName={element['tag']} credentialDefinitionId={element['credentialDefinitionId']} schemaId={element['schemaLedgerId']} revocable={element['revocable']} onClickCallback={schemaSelectionCallback} />
                     </div>
                   ))
                 }
