@@ -1,67 +1,12 @@
+import { setToLocalStorage } from "../../../api/Auth"
+import { storageKeys } from "../../../config/CommonConstant"
 import { pathRoutes } from "../../../config/pathRoutes"
 import SchemaList from "./SchemasList"
 
-import { Alert, Button, Card, Pagination, Spinner, Table, } from 'flowbite-react';
-import { ChangeEvent, useEffect, useState } from 'react';
-import type { GetAllSchemaListParameter, PaginationData } from './interfaces';
-import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
-
-import type { AxiosResponse } from 'axios';
-import BreadCrumbs from '../../BreadCrumbs';
-import SchemaCard from '../../../commonComponents/SchemaCard';
-import SearchInput from '../../SearchInput';
-import { getAllSchemas } from '../../../api/Schema';
-import { getFromLocalStorage } from '../../../api/Auth';
-import { pathRoutes } from '../../../config/pathRoutes';
-import { EmptyListMessage } from '../../EmptyListComponent';
-
-const SchemaList = () => {
-  const [schemaList, setSchemaList] = useState([])
-  const [schemaListErr, setSchemaListErr] = useState<string | null>('')
-  const [loading, setLoading] = useState<boolean>(true)
-  const [orgId, setOrgId] = useState<string>('')
-  const [schemaListAPIParameter, setSchemaListAPIParameter] = useState({
-    itemPerPage: 9,
-    page: 1,
-    search: "",
-    sortBy: "id",
-    sortingOrder: "DESC"
-  })
-
-  const getSchemaList = async (schemaListAPIParameter: GetAllSchemaListParameter) => {
-    try {
-      const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
-      setOrgId(organizationId);
-      setLoading(true);
-
-      const schemaList = await getAllSchemas(schemaListAPIParameter, organizationId);
-      const { data } = schemaList as AxiosResponse;
-      if (schemaList === 'Schema records not found') {
-        setLoading(false);
-        setSchemaList([]);
-      }
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        if (data?.data?.data?.length === 0) {
-          setSchemaListErr('No Data Found');
-        }
-        if (data?.data?.data) {
-          setSchemaList(data?.data?.data);
-          setLoading(false);
-        } else {
-          setLoading(false);
-          setSchemaListErr(schemaList as string)
-        }
-      } else {
-        setLoading(false);
-        setSchemaListErr(schemaList as string)
-      }
-     setTimeout(()=>{
-      setSchemaListErr('')
-     },5000 )
-    } catch (error) {
-      console.error('Error while fetching schema list:', error);
-      setLoading(false);
-
+const Schemas = () => {
+    const schemaSelectionCallback = async (schemaId: string, attributes:any) => {
+        await setToLocalStorage(storageKeys.SCHEMA_ATTR, attributes)
+        window.location.href = `${pathRoutes.organizations.viewSchema}?schemaId=${schemaId}`
     }
   };
 
