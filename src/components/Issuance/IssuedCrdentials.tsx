@@ -62,8 +62,6 @@ const CredentialList = () => {
 		setLoading(false)
 	}
 
-
-	//This useEffect is called when the searchText changes 
 	useEffect(() => {
 		let getData: NodeJS.Timeout
 

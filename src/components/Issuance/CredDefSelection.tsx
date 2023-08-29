@@ -71,8 +71,6 @@ const CredDefSelection = () => {
 			const credDefs = data?.data?.data.map((ele: CredDefData) => {
 				return {
 					clickId: ele.credentialDefinitionId, data: [{ data: ele.tag ? ele.tag : 'Not available' }, { data: ele?.createDateTime ? dateConversion(ele?.createDateTime): 'Not available' },
-
-					,
 					{ data: ele.revocable === true ? <span className="text-blue-700 dark:text-white">Yes</span> : <span className="text-cyan-500 dark:text-white">No</span> }
 					]
 				}
