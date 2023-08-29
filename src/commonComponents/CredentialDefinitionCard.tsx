@@ -1,8 +1,9 @@
 import { Card } from 'flowbite-react';
 
-const CredDeffCard = (props: { credDeffName: string, credentialDefinitionId: string, schemaId: string, revocable: boolean }) => {
+const CredDeffCard = (props: { credDeffName: string, credentialDefinitionId: string, schemaId: string, revocable: boolean, onClickCallback: (schemaId: string, credentialDefinitionId:string) => void;}) => {
   return (
     <Card onClick={() => {
+      props.onClickCallback(props.schemaId, props.credentialDefinitionId)
     }} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer overflow-hidden overflow-ellipsis' style={{maxHeight: '100%', maxWidth: '100%' ,overflow: 'auto'}}>
       <div className="mb-1 flex items-center justify-between">
         <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
@@ -39,5 +40,4 @@ const CredDeffCard = (props: { credDeffName: string, credentialDefinitionId: str
 
 
 export default CredDeffCard
-
 
