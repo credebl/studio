@@ -164,7 +164,7 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 													Login
 												</div>
 												<div className="text-gray-500 font-inter text-base font-medium leading-5 flex w-84 h-5.061 flex-col justify-center items-center flex-shrink-0">
-													Please enter your email id for login
+													Please enter password to login
 												</div>
 
 											<div className="flex justify-center mb-4 text-center text-primary-700 text-blue-600 font-inter text-4xl font-bold leading-10 ">
