@@ -8,9 +8,8 @@ import {
     Form,
     Formik
 } from 'formik';
-import { addPasswordDetails, getFromLocalStorage, passwordEncryption } from '../../api/Auth.js';
-import { apiStatusCodes, passwordRegex, storageKeys } from '../../config/CommonConstant.js';
-import { useEffect, useState } from 'react';
+import { passwordRegex } from '../../config/CommonConstant.js';
+import { useState } from 'react';
 
 import { getSupabaseClient } from '../../supabase';
 import { pathRoutes } from '../../config/pathRoutes.js';
@@ -26,18 +25,10 @@ const ResetPassword = () => {
     const [loading, setLoading] = useState<boolean>(false)
     const [erroMsg, setErrMsg] = useState<string | null>(null)
     const [message, setMessage] = useState<string>('')
-    const [emailAutoFill, setEmailAutoFill] = useState<string>('')
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
-    useEffect(() => {
-
-        if (window?.location?.search.length > 7) {
-            setEmailAutoFill(window?.location?.search.split('=')[1])
-        }
-    }, [])
-
-    const submit = async (passwordDetails: passwordValues, fidoFlag: boolean) => {
+    const submit = async (passwordDetails: passwordValues) => {
 
         setLoading(true)
 
@@ -121,13 +112,11 @@ const ResetPassword = () => {
                                 onSubmit={(
                                     values: passwordValues,
                                 ) => {
-                                    submit(values, false)
+                                    submit(values)
                                 }}
 
                             >
                                 {(formikHandlers): JSX.Element => (
-
-
 
                                     <Form className="mt-8 space-y-6" onSubmit={formikHandlers.handleSubmit}>
 
@@ -180,7 +169,7 @@ const ResetPassword = () => {
                                                     <span className="text-red-500 text-xs">{formikHandlers?.errors?.password}</span>
                                                 }
                                             </div>
-                                            <div>
+                                            <div className="text-primary-700 font-inter text-base font-medium leading-5 mt-8 mb-6">
                                                 <div className="block mb-2 text-sm font-medium  dark:text-white">
                                                     <Label className="text-primary-700" htmlFor="confirmPassword" value="Confirm New Password" />
                                                     <span className='text-red-500 text-xs'>*</span>
@@ -235,15 +224,7 @@ const ResetPassword = () => {
                                                 <Button
                                                     id='signupbutton'
                                                     type="submit"
-                                                    isProcessing={loading}
-                                                    onClick={(values: passwordValues
-                                                    ) => {
-                                                        if (formikHandlers.errors.password) {
-                                                            submit(values, false)
-                                                        }
-                                                    }}
-
-
+                                                    isProcessing={loading}                                               
                                                     className='w-2/5 font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
                                                 >
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 30 20" fill="none">
