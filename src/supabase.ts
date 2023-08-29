@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { envConfig } from './config/envConfig';
 
 export const getSupabaseClient = () => {
 
@@ -6,11 +7,11 @@ export const getSupabaseClient = () => {
     let supabaseAnonKey = ''
 
     try {
-        supabaseUrl = process.env.PUBLIC_SUPABASE_URL || import.meta.env.PUBLIC_SUPABASE_URL;
-        supabaseAnonKey = process.env.PUBLIC_SUPABASE_KEY || import.meta.env.PUBLIC_SUPABASE_KEY;
+        supabaseUrl = process.env.PUBLIC_SUPABASE_URL || envConfig.PUBLIC_SUPABASE_URL;
+        supabaseAnonKey = process.env.PUBLIC_SUPABASE_KEY || envConfig.PUBLIC_SUPABASE_KEY;
     } catch (error) {
-        supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL
-        supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_KEY
+        supabaseUrl = envConfig.PUBLIC_SUPABASE_URL
+        supabaseAnonKey = envConfig.PUBLIC_SUPABASE_KEY
     }
 
     return createClient(supabaseUrl, supabaseAnonKey)
