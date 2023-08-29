@@ -13,6 +13,7 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
     const agentData: OrgAgent | null = org_agents.length > 0 ? org_agents[0] : null
     const [loading, setLoading] = useState<boolean>(true)
     const [connectionData, setConnectionData] = useState<Connection | null>(null)
+    const [isCopied, setIsCopied] = useState(false);
 
     const createQrConnection = async () => {
 
@@ -26,6 +27,22 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 
         }
         setLoading(false)
+    }
+
+    function copyTextVal(e: React.MouseEvent<HTMLButtonElement>) {
+
+        e.preventDefault()
+
+        setIsCopied(true);
+
+        // Copy the text inside the text field
+        navigator.clipboard.writeText(agentData?.orgDid);
+
+        // Reset copied state after 1 second
+        setTimeout(() => {
+            setIsCopied(false);
+        }, 2000);
+
     }
 
     useEffect(() => {
@@ -77,10 +94,20 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
                                         </p>
                                         <p className="text-base font-normal text-gray-500 truncate dark:text-gray-400">:</p>
                                         <p
-                                            className="ml-4 text-base font-semibold text-gray-900 truncate dark:text-white w-40 md:w-32 lg:w-80"
+                                            className="ml-4 flex item-center text-base font-semibold text-gray-900 truncate dark:text-white w-40 md:w-32 lg:w-80"
                                         >
-                                            {agentData?.orgDid}
-                                        </p>
+                                            {agentData?.orgDid && `${agentData?.orgDid.substring(0, 25)}...`}
+                                        
+                                         <button
+                                            className=
+                                            {`${isCopied}`} onClick={copyTextVal}>
+                                            {isCopied
+                                                ? <svg className="h-6 w-6 text-white ml-3 text-base" width="25" height="25" viewBox="0 0 24 24" stroke-width="2" stroke="green" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <path d="M5 12l5 5l10 -10" /></svg>
+                                                : <svg className="h-6 w-6 text-green ml-3 text-base" width="25" height="25" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <rect x="8" y="8" width="12" height="12" rx="2" />  <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" /></svg>
+                                            }
+
+                                        </button>
+                                        </p>                                      
 
                                     </div>
                                 </div>
@@ -161,9 +188,12 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
                 {
                     loading
                         ? (
-                            <Spinner
-                                color="info"
-                            />
+                            <div className='flex justify-center'>
+                                <Spinner
+                                    color="info"
+                                />
+                            </div>
+
                         )
                         : connectionData && <div>
                             <CustomQRCode value={connectionData?.connectionInvitation as string} size={180} />

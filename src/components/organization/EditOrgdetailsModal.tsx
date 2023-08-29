@@ -197,7 +197,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps)=> {
             <Modal.Body>
                  <AlertComponent
                     message={erroMsg}
-                    type={'error'}
+                    type={'failure'}
                     onAlertClose = {() => {
                         setErrMsg(null)
                     }}
@@ -244,7 +244,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps)=> {
                                 className="mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
                             >
                                 <div
-                                    className="items-center sm:flex xl:block 2xl:flex sm:space-x-4 xl:space-x-0 2xl:space-x-4"
+                                    className="items-center sm:flex 2xl:flex sm:space-x-4 xl:space-x-4 2xl:space-x-4"
                                 >
 
 
@@ -278,7 +278,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps)=> {
 
                                             <div>
                                                 <label htmlFor="organizationlogo">
-                                                    <div className="px-4 py-2 bg-primary-700 text-white text-center rounded-lg">Choose file</div>
+																								<div className="px-4 py-2 bg-primary-700 hover:bg-primary-800 text-white text-center rounded-lg">Choose file</div>
                                                     <input type="file" accept="image/*" name="file"
                                                         className="hidden"
                                                         id="organizationlogo" title=""
@@ -344,7 +344,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps)=> {
                             <Button type="submit"
                                 isProcessing={loading}
                                 
-                                className='float-right text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
+                                className='float-right text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
                              
                              ><svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 18 18">
 														 <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 1v12l-4-2-4 2V1h8ZM3 17h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z"/>

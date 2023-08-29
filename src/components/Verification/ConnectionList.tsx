@@ -10,8 +10,6 @@ import { AlertComponent } from "../AlertComponent";
 import { dateConversion } from "../../utils/DateConversion";
 
 const ConnectionList = (props: { selectConnection: (connections: TableData[]) => void; }) => {
-
-
 	const [connectionList, setConnectionList] = useState<TableData[]>([])
 	const [selectedConnectionList, setSelectedConnectionList] = useState<TableData[]>([])
 
@@ -19,13 +17,10 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 	const [searchText, setSearchText] = useState("");
 	const [error, setError] = useState<string | null>(null)
 
-	//This useEffect is called when the searchText changes 
 	useEffect(() => {
 		getConnections()
 	}, [])
 
-
-	//Fetch the connection list against organization id
 	const getConnections = async () => {
 		setLoading(true)
 		const response = await getConnectionsByOrg();

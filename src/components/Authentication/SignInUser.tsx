@@ -8,14 +8,14 @@ import {
 	Form,
 	Formik,
 } from 'formik';
+import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { useEffect, useRef, useState } from 'react';
 
 import { Alert } from 'flowbite-react';
-import RegistrationSuccess from './RegistrationSuccess'
 import React from 'react';
-import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
-import { storageKeys } from '../../config/CommonConstant';
+import RegistrationSuccess from './RegistrationSuccess'
 import SignInUserPasskey from './SignInUserPasskey';
+import { storageKeys } from '../../config/CommonConstant';
 
 interface emailValue {
 	email: string | null;
@@ -23,6 +23,7 @@ interface emailValue {
 
 const signUpSuccessPassword = '?signup=true?fidoFlag=false'
 const signUpSuccessPasskey = '?signup=true?fidoFlag=true'
+const resetPasswordSuccess = '?isPasswordSet=true'
 
 const SignInUser = () => {
 	const [email, setEmail] = useState<emailValue | null>(null)
@@ -47,13 +48,11 @@ const SignInUser = () => {
 			setSuccess('Congratulations!! 🎉 You have successfully registered on CREDEBL 🚀');
 		  } else if (signUpSuccessPasskey === window?.location?.search) {
 			setIsPasskeySuccess(true);
+		  } else if (resetPasswordSuccess === window?.location?.search) {
+			setSuccess('Congratulations!! 🎉 Your new password set successfully');
 		  }
-	  
-		  setTimeout(() => {
-			setSuccess('');
-		  });
 		};
-	  
+
 		fetchData();
 	  }, []);
 	
@@ -110,16 +109,25 @@ const SignInUser = () => {
 									</Alert>
 								}
 
-								<div className='mt-28 mb-20'>
+										<div className='flex'>
 
-									<div className="flex justify-center mb-4 text-center text-primary-700 text-blue-600 font-inter text-4xl font-bold leading-10 ">
-										Login
-									</div>
-									<div className="text-gray-500 font-inter text-base font-medium leading-5 flex w-84 h-5.061 flex-col justify-center items-center flex-shrink-0">
-										Please enter your email id for login
-									</div>
+											<button className='flex mt-32' onClick={redirectLandingPage} >
+												<svg xmlns="http://www.w3.org/2000/svg" width="26" height="24" viewBox="0 0 37 20" fill="none">
+													<path d="M0.201172 9.23695C0.00108337 9.60157 -0.0512199 10.0028 0.050869 10.3898C0.152962 10.7769 0.404865 11.1324 0.774712 11.4114L11.3468 19.391C11.5906 19.5815 11.8823 19.7335 12.2047 19.838C12.5272 19.9426 12.874 19.9976 13.2249 19.9999C13.5759 20.0022 13.9239 19.9518 14.2487 19.8514C14.5735 19.7511 14.8686 19.603 15.1168 19.4157C15.365 19.2284 15.5612 19.0057 15.6941 18.7605C15.827 18.5153 15.8939 18.2526 15.8908 17.9878C15.8878 17.7229 15.8149 17.4611 15.6763 17.2177C15.5378 16.9743 15.3365 16.7542 15.084 16.5702L9.02094 11.9939L34.357 11.9939C35.0579 11.9939 35.7302 11.7837 36.2259 11.4096C36.7215 11.0355 37 10.5281 37 9.999C37 9.46992 36.7215 8.96251 36.2259 8.5884C35.7302 8.21428 35.0579 8.00411 34.357 8.00411L9.02094 8.00411L15.0814 3.4298C15.3338 3.24578 15.5352 3.02565 15.6737 2.78227C15.8122 2.53888 15.8851 2.27711 15.8882 2.01223C15.8912 1.74735 15.8244 1.48466 15.6915 1.2395C15.5586 0.994335 15.3623 0.771599 15.1142 0.584293C14.866 0.396986 14.5709 0.248857 14.2461 0.148552C13.9213 0.0482464 13.5732 -0.00222778 13.2223 7.43866e-05C12.8714 0.00237656 12.5245 0.0574093 12.2021 0.161961C11.8796 0.26651 11.588 0.418484 11.3442 0.609016L0.772064 8.58861C0.527206 8.77433 0.333214 8.99464 0.201172 9.23695Z" fill="#1F4EAD" />
+												</svg>
+											</button>
 
-								</div>
+											<div className='mt-28 mb-20 w-full'>
+
+												<div className="flex justify-center mb-4 text-center text-primary-700 text-blue-600 font-inter text-4xl font-bold leading-10 ">
+													Login
+												</div>
+												<div className="text-gray-500 font-inter text-base font-medium leading-5 flex w-84 h-5.061 flex-col justify-center items-center flex-shrink-0">
+													Please enter your email id for login
+												</div>
+
+											</div>
+										</div>
 
 										<div className="lg:hidden sm:block bg-blue-500 bg-opacity-10" >
 
@@ -187,20 +195,8 @@ const SignInUser = () => {
 															)}
 
 											</div>
-											<div className="flex justify-between">
+											<div >
 
-												<button
-													className="w-2/5 px-4 rounded-md text-center font-medium leading-5 border-blue-600 flex items-center justify-center hover:bg-secondary-700 bg-transparent ring-2 text-black rounded-lg text-sm"
-
-													onClick={redirectLandingPage}
-												>
-													<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 30 20" fill="none">
-														<path d="M0.163115 9.23695C0.000879288 9.60157 -0.0415287 10.0028 0.0412483 10.3898C0.124025 10.7769 0.328272 11.1324 0.628147 11.4114L9.20011 19.391C9.3978 19.5815 9.63427 19.7335 9.89572 19.838C10.1572 19.9426 10.4384 19.9976 10.7229 19.9999C11.0075 20.0022 11.2897 19.9518 11.553 19.8514C11.8164 19.7511 12.0557 19.603 12.2569 19.4157C12.4581 19.2284 12.6172 19.0057 12.725 18.7605C12.8327 18.5153 12.8869 18.2526 12.8845 17.9878C12.882 17.7229 12.8229 17.4611 12.7106 17.2177C12.5982 16.9743 12.435 16.7542 12.2303 16.5702L7.31428 11.9939L27.857 11.9939C28.4254 11.9939 28.9704 11.7837 29.3723 11.4096C29.7742 11.0355 30 10.5281 30 9.999C30 9.46992 29.7742 8.96251 29.3723 8.5884C28.9704 8.21428 28.4254 8.00411 27.857 8.00411L7.31428 8.00411L12.2282 3.4298C12.4328 3.24578 12.5961 3.02565 12.7084 2.78227C12.8207 2.53888 12.8798 2.27711 12.8823 2.01223C12.8848 1.74735 12.8306 1.48466 12.7228 1.2395C12.6151 0.994335 12.4559 0.771599 12.2547 0.584293C12.0535 0.396986 11.8142 0.248857 11.5509 0.148552C11.2875 0.0482464 11.0053 -0.00222778 10.7208 7.43866e-05C10.4362 0.00237656 10.155 0.0574093 9.89358 0.161961C9.63212 0.26651 9.39566 0.418484 9.19797 0.609016L0.625999 8.58861C0.427465 8.77433 0.270176 8.99464 0.163115 9.23695Z" fill="#1F4EAD" />
-													</svg>
-
-													<span className="ml-2 text-primary-700">Back</span>
-
-												</button>
 
 
 												<Button
@@ -208,7 +204,7 @@ const SignInUser = () => {
 													isProcessing={loading}
 													ref={nextButtonRef}
 													type="submit"
-													className='w-2/5 font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
+													className='w-full font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
 
 												>
 													<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 30 20" fill="none">
