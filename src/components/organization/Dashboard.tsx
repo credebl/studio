@@ -166,7 +166,6 @@ const Dashboard = () => {
                     <EditOrgdetailsModal
                         orgData={orgData}
                         openModal={openModal}
-                        // setOpenModal={setOpenModal}
                         setOpenModal={
                             props.setOpenModal
                         }
