@@ -127,7 +127,7 @@ const CredDefSelection = () => {
             type="submit"
             color='bg-primary-800'
             onClick={() => {
-              window.location.href = '/organizations/verification/schemas'
+              window.location.href = `${pathRoutes.back.verification.schemas}`
             }}
             className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 m-2 ml-auto dark:text-white'
             style={{ height: '2.5rem', width: '5rem', minWidth: '2rem' }}
