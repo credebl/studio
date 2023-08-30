@@ -32,16 +32,15 @@ const VerificationCredentialList = () => {
 	const getProofPresentationData= async (id:string)=>{
 			try {
 				const response = await getProofAttributes(id);
-				console.log("response",response);
 				
 				const {data}  = response as AxiosResponse
 				if (data?.statusCode === apiStatusCodes?.API_STATUS_SUCCESS) {
 					setUserData(data?.data)
+					
 				} else {
 					setErrMsg(response as string)
 				}
 			} catch (error) {
-				console.error("An error occurred:", error);
 				throw error
 			}
 		}
