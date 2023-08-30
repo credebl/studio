@@ -30,7 +30,7 @@ const CreateSchema = () => {
 	const [orgId, setOrgId] = useState<number>(0);
 	const [orgDid, setOrgDid] = useState<string>('');
 	const [createloader, setCreateLoader] = useState<boolean>(false);
-
+	const [displayName, setDisplayName] = useState<string>('')
 	useEffect(() => {
 		const fetchData = async () => {
 			const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -95,7 +95,7 @@ const CreateSchema = () => {
 								schemaName: yup.string().trim().required('Schema is required'),
 								schemaVersion: yup
 									.string()
-									.matches(schemaVersionRegex, 'Enter valid schema version')
+									.matches(schemaVersionRegex, 'Enter valid schema version (eg. 0.1 or 0.0.1)')
 									.required('Schema version is required'),
 								attribute: yup.array().of(
 									yup.object().shape({
@@ -194,7 +194,7 @@ const CreateSchema = () => {
 														<div className="d-flex justify-content-center align-items-center mb-1">
 															Attributes <span className="text-red-600">*</span>
 														</div>
-														<div className="flex flex-col flex-wrap">
+														<div className="flex flex-col">
 															{attribute.map((element: any, index: number) => (
 																<div
 																	key={`attributeList-${index}`}
@@ -210,6 +210,9 @@ const CreateSchema = () => {
 																				name={`attribute.${index}.attributeName`}
 																				placeholder="Attribute eg. NAME, ID"
 																				disabled={!areFirstInputsSelected}
+																				onBlur={(e) => {
+																					setDisplayName(e.target.value)
+																				}}
 																				className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 																			/>
 																			{formikHandlers.touched.attribute &&

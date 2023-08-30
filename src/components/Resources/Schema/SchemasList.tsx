@@ -131,13 +131,12 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 					className=""
 				>
 					<div className="flex flex-col items-center justify-between mb-4 pr-4 sm:flex-row">
-						<div id='schemasSearchInput' className='mb-2 pl-2'>
+						<div id='schemasSearchInput' className='mb-2 pl-2 flex space-x-2 items-end'>
 							<SearchInput
 								onInputChange={onSearch}
 							/>
-						</div>
-						<div className='flex space-x-2'>
-							<select onChange={handleFilter} id="schamfilter" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+							<select onChange={handleFilter} id="schamfilter" 
+							className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11">
 								<option selected>Organization's schema</option>
 								{options.map((opt) => (
 									<option
@@ -149,14 +148,15 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 									</option>
 								))}
 							</select>
-
+						</div>
+						<div className='flex space-x-2'>
 							<Button
 								id='createSchemaButton'
 								onClick={() => {
 									window.location.href = `${pathRoutes.organizations.createSchema}?OrgId=${orgId}`
 								}}
 								className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
-								title='Create New Schema'  // This is the tooltip text
+								title='Create New Schema'
 							>
 								<svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
 									<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
