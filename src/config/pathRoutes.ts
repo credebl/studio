@@ -53,6 +53,9 @@ export const pathRoutes = {
     },
 
 		back:{
+			schema:{
+				schemas:'/organizations/schemas'
+			},
 			verification:{
 				credDef:'/organizations/credentials-issued/schemas/cred-defs',
 				schemas:'/organizations/verification/schemas',
