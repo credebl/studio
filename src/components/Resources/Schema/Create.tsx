@@ -467,14 +467,6 @@ const CreateSchema = () => {
 															Would you like to proceed? Keep in mind that this
 															action cannot be undone.
 														</h3>
-														<Button
-															type="submit"
-															isProcessing={createloader}
-															disabled={createloader}
-															className="text-base bg-primary-700 hover:!bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 font-medium rounded-lg text-sm inline-flex items-center text-center mr-2"
-														>
-															Yes, I'm sure
-														</Button>
 														<button
 															data-modal-hide="popup-modal"
 															type="button"
@@ -482,6 +474,14 @@ const CreateSchema = () => {
 														>
 															No, cancel
 														</button>
+														<Button
+															type="submit"
+															isProcessing={createloader}
+															disabled={createloader}
+															className="text-base bg-primary-700 hover:!bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 font-medium rounded-lg text-sm inline-flex items-center text-center ml-2"
+														>
+															Yes, I'm sure
+														</Button>
 													</div>
 												</div>
 											</div>
