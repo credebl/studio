@@ -1,24 +1,36 @@
 import { Button, Modal } from 'flowbite-react';
 import React, { useState } from 'react';
+import { apiStatusCodes } from '../config/CommonConstant';
+import type { RequestProof } from '../components/Verification/interface';
+import { getVerificationList, verifyPresentation } from '../api/verification';
+import type { AxiosResponse } from 'axios';
 
 const ProofRequest = (props: {
 	openModal: boolean;
 	closeModal: (flag: boolean, id: string) => void;
 	onSucess: (verifyPresentationId: string) => void;
 	requestId: string;
+	userData:object[];
 }) => {
+	
 	const [buttonLoader, setButtonLoader] = useState<boolean>(false);
-	const handleConfirmClick = async () => {
-		try {
-			setButtonLoader(true);
-			await new Promise((resolve) => setTimeout(resolve, 2000));
-			props.onSucess(props.requestId);
-		} catch (error) {
-			console.error('Error:', error);
-		} finally {
-			setButtonLoader(false);
-		}
-	};
+
+	const handleConfirmClick = async (id: string) => {
+    try {
+      setButtonLoader(true);
+      const response = await verifyPresentation(id);
+      const { data } = response as AxiosResponse;
+      if (data?.statusCode === apiStatusCodes?.API_STATUS_CREATED) {
+				setButtonLoader(false);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setButtonLoader(false);
+      props.closeModal(false, ''); 
+    }
+  };
+
 	return (
 		<Modal show={props.openModal} size="lg">
 			<div className="relative p-4 text-center bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
@@ -48,7 +60,21 @@ const ProofRequest = (props: {
 					<p className="mb-4 text-gray-500 dark:text-gray-300">
 						Are you sure you want to present proof for{' '}
 						<p className="dark:text-white text-gray-600 font-bold p-2">
-							Request Id: {props.requestId}
+							{props.userData===null ? <p>Loading...</p>:
+					    <div>
+							{props.userData.map((item, index) => {
+								const firstProperty = Object.keys(item)[0]; // Get the first property
+								const value = item[firstProperty];
+				
+								return (
+									<div key={index}>
+										<p>{firstProperty}: {value}</p>
+										<p>Cred Def ID: {item.credDefId}</p>
+										<p>Schema ID: {item.schemaId}</p>
+									</div>
+								);
+							})}
+						</div>}
 						</p>
 					</p>
 				</div>
@@ -58,7 +84,6 @@ const ProofRequest = (props: {
 						onClick={() => {
 							setButtonLoader(false);
 							props.closeModal(false, '');
-							console.log('buttonLoader', buttonLoader);
 						}}
 						style={{ height: '2.5rem', minWidth: '3rem' }}
 						className="py-1 px-2 medium text-center font-medium text-gray-600 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
@@ -67,7 +92,7 @@ const ProofRequest = (props: {
 					</button>
 					<Button
 						isProcessing={buttonLoader}
-						onClick={handleConfirmClick}
+						onClick={() => handleConfirmClick(props.requestId)}
 						disabled={buttonLoader}
 						className="py-1 px-2 medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 						style={{ height: '2.5rem', minWidth: '3rem' }}
