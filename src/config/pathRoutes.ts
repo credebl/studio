@@ -53,5 +53,21 @@ export const pathRoutes = {
         getSchemaById: '/schemas/id',
         createCredentialDefinition: '/credential-definitions',
         getCredDeffBySchemaId: '/schemas/credential-definitions'
-    }
+    },
+
+		back:{
+			schema:{
+				schemas:'/organizations/schemas'
+			},
+			verification:{
+				credDef:'/organizations/credentials-issued/schemas/cred-defs',
+				schemas:'/organizations/verification/schemas',
+				verification:'/organizations/verification/schemas/cred-defs/connections',
+			},
+			issuance:{
+				credDef:'/organizations/credentials-issued/schemas/cred-defs',
+				schemas:'/organizations/credentials-issued/schemas',
+				connections: '/organizations/credentials-issued/schemas/cred-defs/connections'
+			}
+		}
 }
