@@ -153,7 +153,7 @@ const CredentialList = () => {
                 />
               </div>
             </div>) : (<EmptyListMessage
-              message={'Currently, there are no credential definitions issued.'}
+              message={'Currently, there are no credentials issued.'}
               description={'Get started by creating a new credential definition'}
               buttonContent={''}
               svgComponent={<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
