@@ -140,18 +140,22 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
             showFidoError(error)
         }
     }
+
+
+    // ------after final discussion on fido------
     const addDeviceDetailsMethod = async (deviceBody: IdeviceBody) => {
         try {
             const deviceDetailsResp = await addDeviceDetails(deviceBody)
             const { data } = deviceDetailsResp as AxiosResponse
             if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-                const password = secureRandomPassword.randomPassword({
-                    characters: secureRandomPassword.lower + secureRandomPassword.upper + secureRandomPassword.digits,
-                    length: 12,
-                });
+                // const password = secureRandomPassword.randomPassword({
+                //     characters: secureRandomPassword.lower + secureRandomPassword.upper + secureRandomPassword.digits,
+                //     length: 12,
+                // });
                 const fidoPassword = {
-                    password: `${password}@1`,
-                    confirmPassword: `${password}@1`
+                    password: 'Password@1',
+                    // confirmPassword: `${password}@1`
+                    confirmPassword: 'Password@1'
                 }
 
                 submit(fidoPassword, true)
@@ -175,18 +179,65 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
 
 
     return (
-        <div className='h-full'>
+        <div>
             {currentComponent === 'email' && showPasskeyComponent &&
 
-                <div className="bg-white flex-shrink-0">
-                    <div className="flex flex-col md:flex-row">
-                        <div className="flex justify-center px-50 py-50 md:w-3/5 bg-blue-500 bg-opacity-10" >
-                            <img
-                                className='hidden sm:block'
-                                src="/images/signin.svg"
-                                alt="img" />
+                <div className="flex flex-col min-h-screen">
+
+                    <nav
+                        className="bg-white border-b border-gray-200 sm:py-2 dark:bg-gray-800 dark:border-gray-700"
+                    >
+
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-start">
+                                <a className="flex mr-4" href="/">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="ml-4"
+                                        width="35"
+                                        height="35"
+                                        fill="none"
+                                        viewBox="0 0 45 45"
+                                    >
+                                        <path
+                                            fill="#25AFE1"
+                                            d="M45 22.5C45 34.926 34.926 45 22.5 45S0 34.926 0 22.5 10.074 0 22.5 0 45 10.074 45 22.5Zm-41.785 0c0 10.65 8.634 19.285 19.285 19.285 10.65 0 19.285-8.634 19.285-19.285 0-10.65-8.634-19.285-19.285-19.285-10.65 0-19.285 8.634-19.285 19.285Z"
+                                        ></path>
+                                        <path
+                                            fill="#1F4EAD"
+                                            d="M38.392 36.132a1.605 1.605 0 0 0-2.272 0 19.072 19.072 0 0 1-13.593 5.646c-10.6 0-19.224-8.648-19.224-19.278 0-10.63 8.624-19.278 19.224-19.278 5.07 0 9.854 1.962 13.47 5.524a1.604 1.604 0 0 0 2.712-1.17c0-.421-.165-.827-.46-1.128A22.276 22.276 0 0 0 22.527 0C10.155 0 .09 10.094.09 22.5.09 34.907 10.155 45 22.527 45c5.993 0 11.627-2.34 15.865-6.59a1.61 1.61 0 0 0 0-2.278Z"
+                                        ></path>
+                                        <path
+                                            fill="#1F4EAD"
+                                            d="M32.442 11.283a2.047 2.047 0 0 0-2.9-.188c-1.703 1.514-4.68 6.1-6.552 11.059a33.11 33.11 0 0 0-1.112 3.498c-1.415-2.218-2.598-3.55-4.024-5.156-.98-1.104-2.086-2.35-3.51-4.19a2.055 2.055 0 0 0-1.363-.787 2.037 2.037 0 0 0-1.516.415 2.079 2.079 0 0 0-.368 2.901c1.483 1.919 2.654 3.237 3.692 4.407 2.157 2.43 3.701 4.17 6.667 10.139a2.056 2.056 0 0 0 2.245 1.267 2.056 2.056 0 0 0 1.336-.84 2.085 2.085 0 0 0 .356-1.544c-.408-2.467.303-5.627 1.44-8.64 1.648-4.362 4.088-8.236 5.422-9.423a2.077 2.077 0 0 0 .187-2.919Z"
+                                        ></path>
+                                        <path
+                                            fill="#1F4EAD"
+                                            d="M18.979 8.44c-.59.146-.43.876.055.633.009 0 2.811-.948 4.648 1.991.226.361.527-.106.405-.363-.387-.81-2.055-3.015-5.108-2.261Zm-1.332 6.08c-.348-2.248.588-3.739 1.751-4.04 2.77-.72 4.14 2.719 4.14 4.528 0 1.765-1.25 2.542-2.142 2.464-1.498-.133-2.203-1.71-2.42-2.94-.054-.299-.466-2.604 1.383-2.617 1.26-.01 1.968 2.186 1.885 3.032-.054.553-.311 1.13-.894 1.079-.777-.07-1.063-1.194-1.102-1.639-.009-.07-.168-.942.256-.868.292.05.363.598.373.634.04.13.068.296.085.448.018.13-.011.278.04.421a.383.383 0 0 0 .322.273c.103.009.3-.097.306-.259.013-.861-.345-2.394-1.354-2.304-.568.05-.867.705-.705 1.76.157 1.027.688 2.157 1.738 2.25 1.154.102 1.62-.959 1.62-1.757 0-2.278-1.53-4.368-3.337-3.742-1.038.359-1.668 1.497-1.314 3.353.368 1.924 1.498 3.69 3.138 3.642 3.003-.088 2.794-3.309 2.794-3.309 0-2.96-2.381-6.384-5.435-5.05-1.258.55-2.243 2.403-1.871 4.665.943 5.738 5.06 5.079 5.252 5.049l.015.001c.656-.095.522-.833.041-.75-2.726.47-4.197-1.944-4.565-4.325Z"
+                                        ></path></svg>
+
+                                    <span
+                                        className="ml-2 self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
+                                    >CREDEBL</span>
+
+                                </a>
+                            </div>
                         </div>
-                        <div className="flex items-center justify-center p-6 sm:p-12 md:w-2/5 ">
+                    </nav>
+
+
+                    <div className="flex flex-1 flex-col md:flex-row">
+                        <div className="md:w-3/5 w-full bg-blue-500 bg-opacity-10 lg:p-4 md:p-4">
+                            <div className='flex justify-center'>
+                                <img
+                                    className='hidden sm:block'
+                                    src="/images/signin.svg"
+                                    alt="img" />
+                            </div>
+                        </div>
+
+                        <div className="md:w-2/5 w-full p-10 flex">
+
                             <div className="w-full">
                                 {
                                     (verificationSuccess || erroMsg) &&
@@ -201,9 +252,9 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
                                         </span>
                                     </Alert>
                                 }
-                                <div className='flex mt-12'>
+                                <div className='flex lg:mt-4 mb-8'>
 
-                                    <button className='lg:mt-16 sm:mt-12 w-full'
+                                    <button className='flex mt-2 '
                                         onClick={handleBackButton}
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="26" height="24" viewBox="0 0 37 20" fill="none">
@@ -211,18 +262,20 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
                                         </svg>
                                     </button>
 
-                                    <div className='lg:mt-28 sm:mt-12 lg:mb-20 w-full'>
+                                    <div className="w-full flex flex-col items-center justify-center ">
 
-                                        <div className="flex justify-center mb-4 text-center text-primary-700 text-blue-600 font-inter text-4xl font-bold leading-10 ">
-                                            Create an account
-                                        </div>
-                                        <div className="text-gray-500 font-inter text-base font-medium leading-5 flex w-84 h-5.061 flex-col justify-center items-center flex-shrink-0">
-                                            Choose your authentication method                                    </div>
+                                        <h2 className="text-primary-700 text-blue-600 font-inter text-3xl font-bold leading-10">
+                                            Create account
+                                        </h2>
+
+                                        <p className="text-gray-500 font-inter text-base font-medium leading-5 mt-2">
+                                            Please choose your authentication method
+                                        </p>
 
                                     </div>
                                 </div>
 
-                                <div className="lg:hidden sm:block md:hidden sm:block bg-blue-500 bg-opacity-10 mt-4" >
+                                <div className="lg:hidden sm:block md:hidden sm:block bg-blue-500 bg-opacity-10 mt-4 mb-8" >
 
                                     <img
                                         src="/images/signin.svg"
@@ -230,24 +283,24 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
                                 </div>
 
 
-                                <div className='mt-16 text-[#6B7280] font-inter font-normal leading-[1.05] justify-center items-center'>
+                                <div className='text-[#6B7280] font-inter font-normal leading-[1.05] justify-center items-center'>
                                     <div className='text-base'>With Passkey you don’t need to remember complex passwords</div>
 
                                     <div className='mt-4'>
-                                        <p className='text-xl text-gray-600'>What are passkeys?</p>
+                                        <p className='text-lg text-gray-600'>What are passkeys?</p>
                                         <p className='text-base'>Passkeys are encrypted digital keys you create using fingerprint, face, or screen lock</p>
 
                                     </div>
 
                                     <div className='mt-4'>
-                                        <p className='text-xl text-gray-600'>Where are passkeys saved?</p>
+                                        <p className='text-lg text-gray-600'>Where are passkeys saved?</p>
                                         <p className=' text-base'>Passkeys are saved to your password manager, so you can sign in on other devices.</p>
 
                                     </div>
 
                                 </div>
 
-                                <div className="flex justify-between mt-10">
+                                <div className="flex justify-between mt-8">
 
                                     <button
                                         className="w-2/5 px-4 rounded-md text-center font-medium leading-5 border-blue-600 flex items-center justify-center hover:bg-secondary-700 bg-transparent ring-2 text-black rounded-lg text-sm"
@@ -289,7 +342,7 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
 
                                 </div>
 
-                                <div className="text-sm mt-6 font-medium text-gray-500 dark:text-gray-400 pt-6 mt-6 flex items-center justify-center">
+                                <div className="text-sm mt-6 font-medium text-gray-500 dark:text-gray-400 flex items-center justify-center">
                                     Already have an account?
                                     &nbsp;<a
                                         id='navigatetosignup'
@@ -304,6 +357,19 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
                             </div>
                         </div>
                     </div>
+                    <footer className="bg-white border-b border-gray-200 sm:py-2 dark:bg-gray-800 dark:border-gray-700 ">
+
+                        <div className="dark:bg-gray-700 md:flex md:items-center md:justify-between p-3">
+                            <p className="text-sm text-center text-gray-500">
+                                &copy; 2019 - {new Date().getFullYear()} -
+                                <a className="hover:underline" target="_blank"
+                                >CREDEBL
+                                </a> | All rights reserved.
+                            </p>
+
+                        </div>
+                    </footer>
+
                 </div>}
             {
                 currentComponent === 'password' && (
@@ -314,7 +380,6 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
                 )
             }
             {showSignUpUserName && <SignUpUserName />}
-
         </div>
     );
 };
