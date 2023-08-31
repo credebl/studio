@@ -49,7 +49,7 @@ const CustomQRCode = ({ value, size }: { value: string, size: number }) => {
 		</div>
 		{/* <p className="text-center mt-3">OR</p> */}
 		{/* <p className="text-center mt-3 ">Invitation URL</p> */}
-		<div className="flex items-center text-center mt-3">
+		<div className="flex items-center text-center mt-3 dark:text-white">
 			<p className="md center"></p>  
 			<button
 			onClick={drawHtmlToCanvas}

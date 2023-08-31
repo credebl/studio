@@ -69,10 +69,10 @@ const CreateSchema = () => {
 	};
 
 	return (
-		<>
-			<div className="mb-4 col-span-full xl:mb-2">
+		<div className="px-4 pt-6">
+			<div className="pl-6 mb-4 col-span-full xl:mb-2"> 
 				<BreadCrumbs />
-				<h1 className="ml-6 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
+				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 					Create Schema
 				</h1>
 			</div>
@@ -467,14 +467,6 @@ const CreateSchema = () => {
 															Would you like to proceed? Keep in mind that this
 															action cannot be undone.
 														</h3>
-														<Button
-															type="submit"
-															isProcessing={createloader}
-															disabled={createloader}
-															className="text-base bg-primary-700 hover:!bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 font-medium rounded-lg text-sm inline-flex items-center text-center mr-2"
-														>
-															Yes, I'm sure
-														</Button>
 														<button
 															data-modal-hide="popup-modal"
 															type="button"
@@ -482,6 +474,14 @@ const CreateSchema = () => {
 														>
 															No, cancel
 														</button>
+														<Button
+															type="submit"
+															isProcessing={createloader}
+															disabled={createloader}
+															className="text-base bg-primary-700 hover:!bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 font-medium rounded-lg text-sm inline-flex items-center text-center ml-2"
+														>
+															Yes, I'm sure
+														</Button>
 													</div>
 												</div>
 											</div>
@@ -513,7 +513,7 @@ const CreateSchema = () => {
 					</div>
 				</Card>
 			</div>
-		</>
+		</div>
 	);
 };
 
