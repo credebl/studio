@@ -95,7 +95,7 @@ const CreateSchema = () => {
 								schemaName: yup.string().trim().required('Schema is required'),
 								schemaVersion: yup
 									.string()
-									.matches(schemaVersionRegex, 'Enter valid schema version')
+									.matches(schemaVersionRegex, 'Enter valid schema version (eg. 0.1 or 0.0.1)')
 									.required('Schema version is required'),
 								attribute: yup.array().of(
 									yup.object().shape({
@@ -194,7 +194,7 @@ const CreateSchema = () => {
 														<div className="d-flex justify-content-center align-items-center mb-1">
 															Attributes <span className="text-red-600">*</span>
 														</div>
-														<div className="flex flex-col flex-wrap">
+														<div className="flex flex-col">
 															{attribute.map((element: any, index: number) => (
 																<div
 																	key={`attributeList-${index}`}
@@ -467,14 +467,6 @@ const CreateSchema = () => {
 															Would you like to proceed? Keep in mind that this
 															action cannot be undone.
 														</h3>
-														<Button
-															type="submit"
-															isProcessing={createloader}
-															disabled={createloader}
-															className="text-base bg-primary-700 hover:!bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 font-medium rounded-lg text-sm inline-flex items-center text-center mr-2"
-														>
-															Yes, I'm sure
-														</Button>
 														<button
 															data-modal-hide="popup-modal"
 															type="button"
@@ -482,6 +474,14 @@ const CreateSchema = () => {
 														>
 															No, cancel
 														</button>
+														<Button
+															type="submit"
+															isProcessing={createloader}
+															disabled={createloader}
+															className="text-base bg-primary-700 hover:!bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 font-medium rounded-lg text-sm inline-flex items-center text-center ml-2"
+														>
+															Yes, I'm sure
+														</Button>
 													</div>
 												</div>
 											</div>
