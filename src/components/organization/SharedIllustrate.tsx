@@ -14,19 +14,30 @@ const SharedIllustrate = () => {
                 <ul className="list-disc">
                     <li>
                         <p className='mb-1 text-base font-normal text-gray-900 dark:text-white'>
-                            Our Shared Agent is here to simplify your operations! Managed by CREDEBL on your organization's behalf, this multi-tenant solution allows multiple organizations to share the same agent. You'll benefit from shared resources and reduced operational burdens.
+                            Multi-tenant solution enables multiple organizations to utilize a single agent.
                         </p>
                     </li>
                      <li>
                         <p className='mb-1 text-base font-normal text-gray-900 dark:text-white'>
-                            Leave the agent maintenance, updates, and technical aspects to CREDEBL, so your team can focus on core tasks without worrying about the backend. Enjoy improved productivity and efficiency while we handle the nitty-gritty.
+                            Enjoy shared resources and less operational stress.
                         </p>
                     </li>
                       <li>
                         <p className='mb-1 text-base font-normal text-gray-900 dark:text-white'>
-                            Experience a seamless and hassle-free future with the Shared Agent. Let CREDEBL take care of everything, while you concentrate on achieving your goals.
+                            CREDEBL handles maintenance, updates, and technical matters.
                         </p>
                     </li>
+                     <li>
+                        <p className='mb-1 text-base font-normal text-gray-900 dark:text-white'>
+                            Your team focuses on core tasks while we manage the backend.
+                        </p>
+                    </li>
+                    <li>
+                        <p className='mb-1 text-base font-normal text-gray-900 dark:text-white'>
+                            Experience seamless efficiency with the Shared Agent from CREDEBL.
+                        </p>
+                    </li>
+                    
                 </ul>
 
             </div>
