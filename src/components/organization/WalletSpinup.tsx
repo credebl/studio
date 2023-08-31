@@ -510,7 +510,7 @@ const WalletSteps = (props: { steps: number; agentSpinupCall: boolean }) => {
 						<span className="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -left-4 ring-4 ring-white dark:ring-gray-900 dark:bg-gray-700"></span>
 					)}
 					<h3 className="font-medium leading-tight">
-						We're currently creating your wallet. Hang tight!
+					Wallet creation is in progress
 					</h3>
 				</li>
 				<li className="mb-10 ml-6">
