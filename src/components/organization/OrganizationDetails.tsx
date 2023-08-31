@@ -94,9 +94,9 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
                                         </p>
                                         <p className="text-base font-normal text-gray-500 truncate dark:text-gray-400">:</p>
                                         <p
-                                            className="ml-4 flex item-center text-base font-semibold text-gray-900 dark:text-white w-40 md:w-32 lg:w-80"
+                                            className="ml-4 flex item-center text-base font-semibold text-gray-900 truncate dark:text-white w-40 md:w-32 lg:w-80"
                                         >
-                                            {agentData?.orgDid && `${agentData?.orgDid.substring(0, 40)}`}
+                                            {agentData?.orgDid && `${agentData?.orgDid.substring(0, 25)}...`}
                                         
                                          <button
                                             className=

@@ -339,13 +339,13 @@ const WalletSpinup = (props: {
 						type="submit"
 						className='float-right text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
 					>
-						Setup Agent
+						Create
 					</Button>
 				</Form>
 			)}
 		</Formik>
 	);
-
+	
 	return (
 		<div className="mt-4 flex-col p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 			<div className="items-center sm:flex xl:block 2xl:flex sm:space-x-4 xl:space-x-0 2xl:space-x-4">
@@ -361,7 +361,7 @@ const WalletSpinup = (props: {
 						</Alert>
 					)}
 					<h3 className="mb-1 mt-1 text-xl font-bold text-gray-900 dark:text-white">
-						Wallet &amp; Agent Spinup
+						 Create Wallet
 					</h3>
 				</div>
 			</div>
