@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Pagination } from 'flowbite-react';
+import { Button, Pagination, Spinner } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import type { AxiosResponse } from 'axios';
@@ -13,6 +13,8 @@ import { AlertComponent } from '../AlertComponent';
 import { pathRoutes } from '../../config/pathRoutes';
 import DataTable from '../../commonComponents/datatable';
 import type { TableData } from '../../commonComponents/datatable/interface';
+import React from 'react';
+import { EmptyListMessage } from '../EmptyListComponent';
 
 interface IssuedCredential {
 	metadata: { [x: string]: { schemaId: string; }; };
@@ -102,6 +104,7 @@ const CredentialList = () => {
 					Credential Issued
 				</h1>
 			</div>
+
 			<div>
 				<div
 					className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
@@ -130,6 +133,41 @@ const CredentialList = () => {
 					<DataTable header={header} data={issuedCredList} loading={loading}></DataTable>
 				</div>
 			</div>
+
+
+			{/* {loading ? (<div className="flex items-center justify-center mb-4">
+          <Spinner
+            color="info"
+          />
+        </div>)
+          : issuedCredList && issuedCredList.length > 0 ? (
+            <div className='Flex-wrap' style={{ display: 'flex', flexDirection: 'column' }}>
+              <div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
+                {issuedCredList && issuedCredList.length > 0 &&
+                  	<DataTable header={header} data={issuedCredList} loading={loading}></DataTable>
+                }
+              </div>
+              <div className="flex items-center justify-end mb-4">
+                <Pagination
+                  currentPage={1}
+                  onPageChange={() => {
+                  }}
+                  totalPages={0}
+                />
+              </div>
+            </div>) : (<EmptyListMessage
+              message={'No credential definition issued'}
+              description={'Get started by creating a new credential definition'}
+              buttonContent={''}
+              svgComponent={<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
+                <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+              </svg>}
+              onClick={() => { }}
+            />)
+        } */}
+
+
+			
 		</div>
 	)
 }

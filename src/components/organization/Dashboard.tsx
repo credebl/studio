@@ -1,22 +1,21 @@
 import { Alert, Spinner } from 'flowbite-react';
+import type { OrgDashboard, Organisation } from './interfaces'
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
+import { getOrgDashboard, getOrganizationById } from '../../api/organization';
 import { useEffect, useState } from 'react';
 
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
 import Credential_Card from '../../assets/Credential_Card.svg';
 import CustomAvatar from '../Avatar';
+import EditOrgdetailsModal from './EditOrgdetailsModal';
 import Invitation_Card from '../../assets/Invitation_Card.svg';
-import type { Organisation, OrgDashboard } from './interfaces'
 import OrganizationDetails from './OrganizationDetails';
 import Schema_Card from '../../assets/Schema_Card.svg';
 import User_Card from '../../assets/User_Card.svg';
 import WalletSpinup from './WalletSpinup';
 import { getFromLocalStorage } from '../../api/Auth';
 import { pathRoutes } from '../../config/pathRoutes';
-import { getOrganizationById, getOrgDashboard } from '../../api/organization';
-import EditOrgdetailsModal from './EditOrgdetailsModal';
-
 
 const Dashboard = () => {
     const [orgData, setOrgData] = useState<Organisation | null>(null);
@@ -263,7 +262,7 @@ const Dashboard = () => {
                         </div>)
                         : walletStatus === true
                             ? (<OrganizationDetails orgData={orgData} />)
-                            : (<WalletSpinup setWalletSpinupStatus={(flag: boolean) => setWalletSpinupStatus(flag)} />)
+                            : (<WalletSpinup orgName={orgData?.name} setWalletSpinupStatus={(flag: boolean) => setWalletSpinupStatus(flag)} />)
 
                 }
 
