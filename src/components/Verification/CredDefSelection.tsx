@@ -4,7 +4,6 @@ import type { AxiosResponse } from "axios";
 import { Button, Spinner } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { getFromLocalStorage, removeFromLocalStorage, setToLocalStorage } from "../../api/Auth";
-import { getCredentialDefinitions } from "../../api/issuance";
 import SchemaCard from "../../commonComponents/SchemaCard";
 import { apiStatusCodes, storageKeys } from "../../config/CommonConstant";
 import { pathRoutes } from "../../config/pathRoutes";
@@ -13,6 +12,7 @@ import { AlertComponent } from "../AlertComponent";
 import type { SchemaState, CredDefData } from "./interface";
 import type { TableData } from "../../commonComponents/datatable/interface";
 import DataTable from "../../commonComponents/datatable";
+import { getCredentialDefinitionsForVerification } from "../../api/verification";
 
 const CredDefSelection = () => {
 	const [schemaState, setSchemaState] = useState({ schemaName: '', version: '' })
@@ -65,7 +65,7 @@ const CredDefSelection = () => {
 	//Fetch credential definitions against schemaId
 	const getCredDefs = async (schemaId: string) => {
 		setLoading(true)
-		const response = await getCredentialDefinitions(schemaId);
+		const response = await getCredentialDefinitionsForVerification(schemaId);
 		const { data } = response as AxiosResponse
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
