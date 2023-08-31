@@ -14,24 +14,27 @@ export const pathRoutes = {
         root: '/organizations',
         invitations: '/organizations/invitations',
         users: '/organizations/users',
-        issuedCredentials: '/organizations/credentials-issued',
-        credentials: '/organizations/verification',
         schemas: `/organizations/schemas`,
         dashboard: '/organizations/dashboard',
         createSchema: '/organizations/schemas/create',
         viewSchema: '/organizations/schemas/view-schema',
-				Issuance: {
-					schema: '/organizations/credentials-issued/schemas',
-					credDef:'/organizations/credentials-issued/schemas/cred-defs',
-					connections:'/organizations/credentials-issued/schemas/cred-defs/connections',
-					issuance:'/organizations/credentials-issued/schemas/cred-defs/connections/issuance'
-				},
-                verification: {
-					schema: '/organizations/verification/schemas',
-					credDef:'/organizations/verification/schemas/cred-defs',
-					connections:'/organizations/verification/schemas/cred-defs/connections',
-					verify:'/organizations/verification/schemas/cred-defs/connections/verification'
-				},
+    },
+    credentials: {
+        root: '/credentials',
+        issuedCredentials: '/credentials/credentials-issued',
+        credentials: '/credentials/verification',
+        Issuance: {
+            schema: '/credentials/credentials-issued/schemas',
+            credDef:'/credentials/credentials-issued/schemas/cred-defs',
+            connections:'/credentials/credentials-issued/schemas/cred-defs/connections',
+            issuance:'/credentials/credentials-issued/schemas/cred-defs/connections/issuance'
+        },
+        verification: {
+            schema: '/credentials/verification/schemas',
+            credDef:'/credentials/verification/schemas/cred-defs',
+            connections:'/credentials/verification/schemas/cred-defs/connections',
+            verify:'/credentials/verification/schemas/cred-defs/connections/verification'
+        },
     },
     // ecosystems: {
     //     root: '/ecosystems',
