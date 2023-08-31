@@ -55,7 +55,7 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
         >
             <div className='w-full sm:w-1/2 mb-4 sm:mb-0 sm:pr-4'>
                 <h3 className="mb-1 mt-1 text-xl font-bold text-gray-900 dark:text-white">
-                    Wallet Details
+                    Web Wallet Details
                 </h3>
                 <div
                     className="items-center sm:flex xl:block 2xl:flex sm:space-x-4 xl:space-x-0 2xl:space-x-4"
