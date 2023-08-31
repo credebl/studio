@@ -130,9 +130,12 @@ const CredentialList = () => {
 							setError(null)
 						}}
 					/>
-					{/* <DataTable header={header} data={issuedCredList} loading={loading}></DataTable> */}
+					<DataTable header={header} data={issuedCredList} loading={loading}></DataTable>
+				</div>
+			</div>
 
-					{loading ? (<div className="flex items-center justify-center mb-4">
+
+			{/* {loading ? (<div className="flex items-center justify-center mb-4">
           <Spinner
             color="info"
           />
@@ -153,7 +156,7 @@ const CredentialList = () => {
                 />
               </div>
             </div>) : (<EmptyListMessage
-              message={'Currently, there are no credentials issued.'}
+              message={'No credential definition issued'}
               description={'Get started by creating a new credential definition'}
               buttonContent={''}
               svgComponent={<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
@@ -161,9 +164,10 @@ const CredentialList = () => {
               </svg>}
               onClick={() => { }}
             />)
-        }
-				</div>
-			</div>
+        } */}
+
+
+			
 		</div>
 	)
 }
