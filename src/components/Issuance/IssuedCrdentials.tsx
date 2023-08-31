@@ -109,10 +109,6 @@ const CredentialList = () => {
 				<div
 					className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 					<div className="flex items-center justify-end mb-4">
-						{/* future requirment changes  */}
-						{/* <SearchInput
-							onInputChange={searchInputChange}
-						/> */}
 						<Button onClick={schemeSelection}
 							className='text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
 						><svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="30" height="25" fill="none" viewBox="0 0 25 18">
@@ -130,7 +126,6 @@ const CredentialList = () => {
 							setError(null)
 						}}
 					/>
-					{/* <DataTable header={header} data={issuedCredList} loading={loading}></DataTable> */}
 					{loading ? (<div className="flex items-center justify-center mb-4">
           <Spinner
             color="info"
@@ -155,13 +150,7 @@ const CredentialList = () => {
 				<div>
 				<span className="block text-center p-4 m-8">There isn't any data available.</span>
 			</div>
-			)
-            //   buttonContent={''}
-            //   svgComponent={<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
-            //     <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
-            //   </svg>}
-            //   onClick={() => { }}
-            
+			) 
         }
 				</div>
 			</div>
