@@ -72,8 +72,11 @@ export const verifyPresentation = async (id:string) => {
 	}
 };
 
-export const getCredentialDefinitionsForVerification = async (schemaId: string) => {
-    const url = `${apiRoutes.Issuance.getCredDefBySchemaId}?schemaId=${schemaId}`;
+
+export const getProofAttributes=async (id:string)=>{
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+	const url = `${apiRoutes.Verification.proofRequestAttributesVerification}?id=${id}&orgId=${orgId}`;
+
 	const axiosPayload = {
 		url,
 		config: await getHeaderConfigs(),
@@ -85,4 +88,4 @@ export const getCredentialDefinitionsForVerification = async (schemaId: string) 
 		const err = error as Error;
 		return err?.message;
 	}
-};
+}

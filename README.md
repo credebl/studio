@@ -34,3 +34,5 @@ pnpm run preview
 ```
 
 ---
+#### Licence
+Apache License, Version 2.0
