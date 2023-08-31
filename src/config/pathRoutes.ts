@@ -60,14 +60,14 @@ export const pathRoutes = {
 				schemas:'/organizations/schemas'
 			},
 			verification:{
-				credDef:'/organizations/credentials-issued/schemas/cred-defs',
-				schemas:'/organizations/verification/schemas',
-				verification:'/organizations/verification/schemas/cred-defs/connections',
+				credDef:'/credentials/credentials-issued/schemas/cred-defs',
+				schemas:'/credentials/verification/schemas',
+				verification:'/credentials/verification/schemas/cred-defs/connections',
 			},
 			issuance:{
-				credDef:'/organizations/credentials-issued/schemas/cred-defs',
-				schemas:'/organizations/credentials-issued/schemas',
-				connections: '/organizations/credentials-issued/schemas/cred-defs/connections'
+				credDef:'/credentials/credentials-issued/schemas/cred-defs',
+				schemas:'/credentials/credentials-issued/schemas',
+				connections: '/credentials/credentials-issued/schemas/cred-defs/connections'
 			}
 		}
 }
