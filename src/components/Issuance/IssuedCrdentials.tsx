@@ -138,14 +138,6 @@ const CredentialList = () => {
                   	<DataTable header={header} data={issuedCredList} loading={loading}></DataTable>
                 }
               </div>
-              <div className="flex items-center justify-end mb-4">
-                <Pagination
-                  currentPage={1}
-                  onPageChange={() => {
-                  }}
-                  totalPages={0}
-                />
-              </div>
             </div>) : (
 				<div>
 				<span className="block text-center p-4 m-8">There isn't any data available.</span>
