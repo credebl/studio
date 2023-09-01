@@ -226,48 +226,37 @@ const VerificationCredentialList = () => {
 									</p>
 								</span>
 							</Alert>
-							</div>
-							}
-							{loading ? (<div className="flex items-center justify-center mb-4">
-          						<Spinner
-            						color="info"
-          						/>
-        					</div>)
-          					: verificationList && verificationList.length > 0 ? (
-            					<div className='Flex-wrap' style={{ display: 'flex', flexDirection: 'column' }}>
-              						<div className="">
-                					{verificationList && verificationList.length > 0 && 
-										<DataTable header={header} data={verificationList} loading={loading}></DataTable> 
-										|| 
-										(
-											<ProofRequest openModal={openModal}
-												closeModal={
-													openProofRequestModel
-												}
-												onSucess={
-													requestProof
-												}
-												requestId={requestId}
-												userData={userData}
-												view={view}
-											/>
-											
-										)
+						</div>
+					}
+					{loading ? (<div className="flex items-center justify-center mb-4">
+						<Spinner
+							color="info"
+						/>
+					</div>)
+						: verificationList && verificationList.length > 0 ? (
+							<div className='Flex-wrap' style={{ display: 'flex', flexDirection: 'column' }}>
+								<div className="">
+									{verificationList && verificationList.length > 0 &&
+										<DataTable header={header} data={verificationList} loading={loading}></DataTable>
 									}
-              						</div>
-              						<div className="flex items-center justify-end mb-4">
-                					<Pagination
-                  					currentPage={1}
-                  					onPageChange={() => {
-                  					}}
-                  					totalPages={0}
-                					/>
-              					</div>
-            				</div>) : (
+								</div>
+							</div>) : (
 							<div>
 								<span className="block text-center p-4 m-8">There isn't any data available.</span>
 							</div>
-								)}
+						)}
+
+					<ProofRequest openModal={openModal}
+						closeModal={
+							openProofRequestModel
+						}
+						onSucess={
+							requestProof
+						}
+						requestId={requestId}
+						userData={userData}
+						view={view}
+					/>
 				</div>
 			</div>
 		</div>

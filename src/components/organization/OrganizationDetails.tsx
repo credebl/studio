@@ -142,7 +142,7 @@ const OrganizationDetails = ({orgData}: {orgData: Organisation}) => {
                                             className="text-base font-normal text-gray-500 truncate dark:text-gray-400 w-20 md:w-32 lg:w-40"
 
                                         >
-                                            Wallet Type
+                                            Agent Type
                                         </p>
                                         <p className="text-base font-normal text-gray-500 truncate dark:text-gray-400">:</p>
                                         <p
