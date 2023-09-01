@@ -95,7 +95,7 @@ const CreateSchema = () => {
 								schemaName: yup.string().trim().required('Schema is required'),
 								schemaVersion: yup
 									.string()
-									.matches(schemaVersionRegex, 'Enter valid schema version')
+									.matches(schemaVersionRegex, 'Enter valid schema version (eg. 0.1 or 0.0.1)')
 									.required('Schema version is required'),
 								attribute: yup.array().of(
 									yup.object().shape({
@@ -194,7 +194,7 @@ const CreateSchema = () => {
 														<div className="d-flex justify-content-center align-items-center mb-1">
 															Attributes <span className="text-red-600">*</span>
 														</div>
-														<div className="flex flex-col flex-wrap">
+														<div className="flex flex-col">
 															{attribute.map((element: any, index: number) => (
 																<div
 																	key={`attributeList-${index}`}
