@@ -239,16 +239,7 @@ const VerificationCredentialList = () => {
 								<div className="">
 									{verificationList && verificationList.length > 0 &&
 										<DataTable header={header} data={verificationList} loading={loading}></DataTable>
-
 									}
-								</div>
-								<div className="flex items-center justify-end mb-4">
-									<Pagination
-										currentPage={1}
-										onPageChange={() => {
-										}}
-										totalPages={0}
-									/>
 								</div>
 							</div>) : (
 							<div>
@@ -267,8 +258,6 @@ const VerificationCredentialList = () => {
 						userData={userData}
 						view={view}
 					/>
-
-
 				</div>
 			</div>
 		</div>
