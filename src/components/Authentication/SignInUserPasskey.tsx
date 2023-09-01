@@ -101,7 +101,6 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
             if (data?.data.verified) {
                 const payload: UserSignInData = {
                     email: email,
-                    password: passwordEncryption('Password@1'),
                     isPasskey: true
                 };
 
