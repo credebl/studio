@@ -11,6 +11,7 @@ import { startAuthentication } from '@simplewebauthn/browser';
 import { useState } from 'react';
 import React from 'react';
 import SignInUserPassword from './SignInUserPassword';
+import { pathRoutes } from '../../config/pathRoutes';
 
 interface signInUserProps {
     email: string
@@ -26,7 +27,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 
 
     const handleSvgClick = () => {
-
+        window.history.pushState(null, '', pathRoutes.auth.sinIn);
         setShowSignInUser(!showSignInUser);
     };
 
