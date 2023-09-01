@@ -11,7 +11,7 @@ export interface UserSignUpData {
     email: string,
 }
 export interface AddPasswordDetails {
-    password:string
+    password?:string
     isPasskey:boolean
     firstName: string|null
     lastName: string|null
