@@ -105,7 +105,7 @@ const Dashboard = () => {
     }
 
     const setWalletSpinupStatus = (status: boolean) => {
-        setSuccess('Agent spined up successfully')
+        setSuccess('Wallet created successfully')
         fetchOrganizationDetails()
     }
 
