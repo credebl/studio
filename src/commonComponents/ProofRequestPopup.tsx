@@ -1,9 +1,10 @@
 import { Button, Modal, Spinner } from 'flowbite-react';
 import React, { useState } from 'react';
-import { apiStatusCodes } from '../config/CommonConstant';
-import type { RequestProof } from '../components/Verification/interface';
 import { getVerificationList, verifyPresentation } from '../api/verification';
+
 import type { AxiosResponse } from 'axios';
+import type { RequestProof } from '../components/Verification/interface';
+import { apiStatusCodes } from '../config/CommonConstant';
 import type { object } from 'yup';
 import { pathRoutes } from '../config/pathRoutes';
 
@@ -269,7 +270,7 @@ const ProofRequest = (props: {
 									</div>
 								</div>
 								{Object.values(item)[1] ? (
-									<div className="flex flex-start border mb-2 w-full ">
+									<div className="flex flex-start mb-2 w-full ">
 										<div className=" w-3/12 m-1 p-1 flex justify-start items-center">
 											{Object.values(item)[1] ? 'CredDef Id' : ''}
 										</div>{' '}
