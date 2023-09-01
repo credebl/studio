@@ -44,7 +44,7 @@ export const pathRoutes = {
     //     credentials: '/organizations/credentials'
     // },
     documentation: {
-        root: '/docs'
+        root: 'https://docs.credebl.id'
     },
     schema: {
         create: '/schemas',
