@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 
 import type { AxiosResponse } from 'axios';
 import { apiStatusCodes } from '../../config/CommonConstant';
+import React from 'react';
 
 const VerifyEmail = () => {
     const [loading, setLoading] = useState<boolean>(true)
@@ -52,7 +53,7 @@ const VerifyEmail = () => {
                     :
                     <div className="flex flex-col min-h-screen">
                         <nav
-                            className="bg-white border-b border-gray-200 sm:py-2 dark:bg-gray-800 dark:border-gray-700"
+                            className="bg-white border-b border-gray-200 sm:py-2"
                         >
 
                             <div className="flex items-center justify-between">

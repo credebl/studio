@@ -106,19 +106,25 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
                 const loginRsp = await loginUser(payload);
                 const { data } = loginRsp as AxiosResponse;
                 if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-                    setFidoLoader(false)
                     await setToLocalStorage(storageKeys.TOKEN, data?.data?.access_token);
-                    getUserDetails(data?.data.access_token);
-                } else {
-                    setFidoLoader(false)
-                    setFailure(loginRsp as string);
-
+                const response = await fetch('/api/auth/signin', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(data),
+                });
+    
+                if (response.redirected) {
+                    getUserDetails(data?.data?.access_token)
                 }
+    
             } else if (data?.error) {
                 setFidoLoader(false)
                 setFidoUserError(data?.error);
 
             }
+        }
         } catch (error) {
             if (error instanceof DOMException) {
                 setFidoLoader(false)
@@ -140,7 +146,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
         <div className="flex flex-col min-h-screen">
 
             <nav
-                className="bg-white border-b border-gray-200 sm:py-2 dark:bg-gray-800 dark:border-gray-700"
+                className="bg-white border-b border-gray-200 sm:py-2"
             >
 
                 <div className="flex items-center justify-between">
