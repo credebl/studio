@@ -238,6 +238,21 @@ const VerificationCredentialList = () => {
               						<div className="">
                 					{verificationList && verificationList.length > 0 && 
 										<DataTable header={header} data={verificationList} loading={loading}></DataTable> 
+										|| 
+										(
+											<ProofRequest openModal={openModal}
+												closeModal={
+													openProofRequestModel
+												}
+												onSucess={
+													requestProof
+												}
+												requestId={requestId}
+												userData={userData}
+												view={view}
+											/>
+											
+										)
 									}
               						</div>
               						<div className="flex items-center justify-end mb-4">
