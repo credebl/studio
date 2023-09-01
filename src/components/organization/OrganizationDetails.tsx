@@ -55,7 +55,7 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
         >
             <div className='w-full sm:w-1/2 mb-4 sm:mb-0 sm:pr-4'>
                 <h3 className="mb-1 mt-1 text-xl font-bold text-gray-900 dark:text-white">
-                    Wallet Details
+                    Web Wallet Details
                 </h3>
                 <div
                     className="items-center sm:flex xl:block 2xl:flex sm:space-x-4 xl:space-x-0 2xl:space-x-4"
@@ -94,9 +94,9 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
                                         </p>
                                         <p className="text-base font-normal text-gray-500 truncate dark:text-gray-400">:</p>
                                         <p
-                                            className="ml-4 flex item-center text-base font-semibold text-gray-900 truncate dark:text-white w-40 md:w-32 lg:w-80"
+                                            className="ml-4 flex item-center text-base font-semibold text-gray-900 dark:text-white w-40 md:w-32 lg:w-80"
                                         >
-                                            {agentData?.orgDid && `${agentData?.orgDid.substring(0, 25)}...`}
+                                            {agentData?.orgDid && `${agentData?.orgDid.substring(0, 40)}`}
                                         
                                          <button
                                             className=
@@ -107,8 +107,8 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
                                             }
 
                                         </button>
-                                        </p>                                      
-
+                                        </p>   
+                                                                           
                                     </div>
                                 </div>
                             </li>

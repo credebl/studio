@@ -9,6 +9,7 @@ import BreadCrumbs from "../BreadCrumbs";
 import DataTable from "../../commonComponents/datatable";
 import type { TableData } from "../../commonComponents/datatable/interface";
 import { verifyCredential } from "../../api/verification";
+import { pathRoutes } from "../../config/pathRoutes";
 
 interface SchemaDetails {
 	schemaName: string,
@@ -198,7 +199,23 @@ const VerificationCred = () => {
 	return (
 		<><div className="px-4 pt-6">
 			<div className="pl-6 mb-4 col-span-full xl:mb-2">
-				<BreadCrumbs />
+			<div className="flex justify-between">
+					<BreadCrumbs />
+					<Button
+            type="submit"
+            color='bg-primary-800'
+            onClick={() => {
+              window.location.href = `${pathRoutes.back.verification.verification}`
+            }}
+            className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 m-2 ml-auto dark:text-white'
+            style={{ height: '2.5rem', width: '5rem', minWidth: '2rem' }}
+          >
+            <svg className='mr-1' xmlns="http://www.w3.org/2000/svg" width="22" height="12" fill="none" viewBox="0 0 30 20">
+              <path fill="#1F4EAD" d="M.163 9.237a1.867 1.867 0 0 0-.122 1.153c.083.387.287.742.587 1.021l8.572 7.98c.198.19.434.343.696.447a2.279 2.279 0 0 0 1.657.013c.263-.1.503-.248.704-.435.201-.188.36-.41.468-.655a1.877 1.877 0 0 0-.014-1.543 1.999 1.999 0 0 0-.48-.648l-4.917-4.576h20.543c.568 0 1.113-.21 1.515-.584.402-.374.628-.882.628-1.411 0-.53-.226-1.036-.628-1.41a2.226 2.226 0 0 0-1.515-.585H7.314l4.914-4.574c.205-.184.368-.404.48-.648a1.878 1.878 0 0 0 .015-1.542 1.99 1.99 0 0 0-.468-.656A2.161 2.161 0 0 0 11.55.15a2.283 2.283 0 0 0-1.657.013 2.154 2.154 0 0 0-.696.447L.626 8.589a1.991 1.991 0 0 0-.463.648Z" />
+            </svg>
+            Back
+          </Button>
+				</div>
 				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 					Verification
 				</h1>
@@ -254,8 +271,11 @@ const VerificationCred = () => {
 					onClick={verifyCredentialSubmit}
 					isProcessing={requestLoader}
 					disabled={!selectedUsersData.length}
-					className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mt-2 ml-auto mr-8'
+					className='text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mt-2 ml-auto mr-8'
 				>
+					<svg className='mr-2 mt-1'xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 25 25">
+						<path fill="#fff" d="M21.094 0H3.906A3.906 3.906 0 0 0 0 3.906v12.5a3.906 3.906 0 0 0 3.906 3.907h.781v3.906a.781.781 0 0 0 1.335.553l4.458-4.46h10.614A3.906 3.906 0 0 0 25 16.407v-12.5A3.907 3.907 0 0 0 21.094 0Zm2.343 16.406a2.343 2.343 0 0 1-2.343 2.344H10.156a.782.782 0 0 0-.553.228L6.25 22.333V19.53a.781.781 0 0 0-.781-.781H3.906a2.344 2.344 0 0 1-2.344-2.344v-12.5a2.344 2.344 0 0 1 2.344-2.344h17.188a2.343 2.343 0 0 1 2.343 2.344v12.5Zm-3.184-5.951a.81.81 0 0 1-.17.254l-3.125 3.125a.781.781 0 0 1-1.105-1.106l1.792-1.79h-7.489a2.343 2.343 0 0 0-2.344 2.343.781.781 0 1 1-1.562 0 3.906 3.906 0 0 1 3.906-3.906h7.49l-1.793-1.79a.78.78 0 0 1 .254-1.277.781.781 0 0 1 .852.17l3.125 3.125a.79.79 0 0 1 .169.852Z"/>
+					</svg>
 					Request Proof
 				</Button>
 
