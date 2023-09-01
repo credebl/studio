@@ -71,3 +71,36 @@ export const verifyPresentation = async (id:string) => {
 		return err?.message;
 	}
 };
+
+
+export const getProofAttributes=async (id:string)=>{
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+	const url = `${apiRoutes.Verification.proofRequestAttributesVerification}?id=${id}&orgId=${orgId}`;
+
+	const axiosPayload = {
+		url,
+		config: await getHeaderConfigs(),
+	};
+
+	try {
+		return await axiosGet(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+}
+
+export const getCredentialDefinitionsForVerification = async (schemaId: string) => {
+    const url = `${apiRoutes.Issuance.getCredDefBySchemaId}?schemaId=${schemaId}`;
+	const axiosPayload = {
+		url,
+		config: await getHeaderConfigs(),
+	};
+
+	try {
+		return await axiosGet(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};

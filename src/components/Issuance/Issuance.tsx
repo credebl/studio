@@ -42,6 +42,12 @@ interface DataTypeAttributes {
 	attributeName:string
 }
 
+interface Attribute {
+    attributeName: string;
+    schemaDataType: string;
+    displayName: string;
+}
+
 const IssueCred = () => {
 	const [schemaLoader, setSchemaLoader] = useState<boolean>(true);
 	const [userLoader, setUserLoader] = useState<boolean>(true);
@@ -56,9 +62,11 @@ const IssueCred = () => {
 	>([]);
 	const [issuanceLoader, setIssuanceLoader] = useState<boolean>(false);
 	const [failure, setFailure] = useState<string | null>(null);
+	const [schemaAttributesDetails, setSchemaAttributesDetails] = useState<Attribute[]>([]);
 
 	useEffect(() => {
 		getSchemaAndUsers();
+		getSchemaDetails();
 	}, []);
 
 	const getSchemaAndUsers = async () => {
@@ -102,7 +110,8 @@ const IssueCred = () => {
 
 	const getSchemaDetails = async (): Promise<DataTypeAttributes[] | null> => {
 		const schemaAttributes = await getFromLocalStorage(storageKeys.SCHEMA_ATTR);
-		const parsedSchemaAttributes = JSON.parse(schemaAttributes) || []; 
+		const parsedSchemaAttributes = JSON.parse(schemaAttributes) || [];
+		setSchemaAttributesDetails(parsedSchemaAttributes?.attribute) 
 		return parsedSchemaAttributes.attribute;
 	};
 
@@ -275,21 +284,21 @@ const IssueCred = () => {
 												<h3 className="">Attributes</h3>
 												<div className="container mx-auto pr-10">
 													<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2">
-														{values.attributes.map((attr, index) => (
+														{schemaAttributesDetails.map((attr, index) => (
 															<div>
 																<div key={index} className="flex">
 																	<label
 																		htmlFor={`attributes.${index}.value`}
 																		className="w-1/3 pr-2 flex justify-end items-center font-light"
 																	>
-																		{attr.name.charAt(0).toUpperCase() +
-																			attr.name.slice(1).toLowerCase() + " :"}
+																		{attr.displayName.charAt(0).toUpperCase() +
+																			attr.displayName.slice(1).toLowerCase() + " :"}
 																	</label>
 																	<Field
 																		type={
-																			attr.dataType === 'date'
+																			attr.schemaDataType === 'date'
 																				? 'date'
-																				: attr.dataType
+																				: attr.schemaDataType
 																		}
 																		id={`attributes.${index}.value`}
 																		name={`attributes.${index}.value`}

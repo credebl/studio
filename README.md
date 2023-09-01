@@ -1,5 +1,5 @@
 
-### 🚀 Quick start
+## 🚀 Quick start
 
 1. Clone this repository or download the ZIP file
 2. Make sure that you have **Node.js** and NPM, PNPM or Yarn installed
@@ -33,6 +33,18 @@ Then, you can preview the generated build with a local web server:
 pnpm run preview
 ```
 
----
-#### Licence
-Apache License, Version 2.0
+
+## Credit
+
+The CREDEBL platform is built by Blockster Labs (Product Division of AyanWorks) team. 
+For the core SSI capabilities, it leverages the great work from multiple open-source projects such as Hyperledger Aries, Bifold, Asker, Indy, etc.
+
+[BC Digital Trust]: https://digital.gov.bc.ca/digital-trust/
+
+## Contributing
+
+Pull requests are welcome! Please read our [contributions guide](https://github.com/credebl/platform/blob/main/CONTRIBUTING.md) and submit your PRs. We enforce [developer certificate of origin](https://developercertificate.org/) (DCO) commit signing — [guidance](https://github.com/apps/dco) on this is available. We also welcome issues submitted about problems you encounter in using CREDEBL.
+
+## License
+
+[Apache License Version 2.0](https://github.com/credebl/platform/blob/main/LICENSE)

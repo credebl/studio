@@ -131,7 +131,7 @@ const ViewSchemas = () => {
     getCredentialDefinitionList(schemaDetails?.schemaId, orgId)
   }
   
-  const schemaSelectionCallback = async (schemaId: string, credentialDefinitionId: string) => {
+  const credDefSelectionCallback = async (schemaId: string, credentialDefinitionId: string) => {
     await setToLocalStorage(storageKeys.CRED_DEF_ID, credentialDefinitionId)
     window.location.href = `${pathRoutes.organizations.Issuance.connections}`
 	}
@@ -263,8 +263,9 @@ const ViewSchemas = () => {
                 validateOnBlur
                 validateOnChange
                 enableReinitialize
-                onSubmit={async (values): Promise<void> => {
-                  submit(values)
+                onSubmit={async (values, formikHandlers): Promise<void> => {
+                  await submit(values)
+                  formikHandlers.resetForm();
 
                 }}
               >
@@ -345,7 +346,7 @@ const ViewSchemas = () => {
                           setCredDefAuto('')
                         }}
                         disabled={createloader}
-                        className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto'
+                        className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto dark:text-white'
 
                         style={{ height: '2.6rem', width: '6rem', minWidth: '2rem' }}
                       >
@@ -390,7 +391,7 @@ const ViewSchemas = () => {
                 {credDeffList && credDeffList.length > 0 &&
                   credDeffList.map((element, key) => (
                     <div className='p-2' key={key}>
-                      <CredDeffCard credDeffName={element['tag']} credentialDefinitionId={element['credentialDefinitionId']} schemaId={element['schemaLedgerId']} revocable={element['revocable']} onClickCallback={schemaSelectionCallback} />
+                      <CredDeffCard credDeffName={element['tag']} credentialDefinitionId={element['credentialDefinitionId']} schemaId={element['schemaLedgerId']} revocable={element['revocable']} onClickCallback={credDefSelectionCallback} />
                     </div>
                   ))
                 }
