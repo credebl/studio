@@ -1,5 +1,4 @@
 ---
-// import { ViewTransitions } from 'astro:transitions';
 import { pathRoutes } from '../config/pathRoutes';
 
 ---
@@ -26,14 +25,19 @@ import { pathRoutes } from '../config/pathRoutes';
 						>
 					</a>
 					<div class="flex items-center lg:order-2">
-						<a href="https://github.com/credebl">
-						<svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-							 <path fill-rule="evenodd" d="M10 .333A9.911 9.911 0 0 0 6.866 19.65c.5.092.678-.215.678-.477 0-.237-.01-1.017-.014-1.845-2.757.6-3.338-1.169-3.338-1.169a2.627 2.627 0 0 0-1.1-1.451c-.9-.615.07-.6.07-.6a2.084 2.084 0 0 1 1.518 1.021 2.11 2.11 0 0 0 2.884.823c.044-.503.268-.973.63-1.325-2.2-.25-4.516-1.1-4.516-4.9A3.832 3.832 0 0 1 4.7 7.068a3.56 3.56 0 0 1 .095-2.623s.832-.266 2.726 1.016a9.409 9.409 0 0 1 4.962 0c1.89-1.282 2.717-1.016 2.717-1.016.366.83.402 1.768.1 2.623a3.827 3.827 0 0 1 1.02 2.659c0 3.807-2.319 4.644-4.525 4.889a2.366 2.366 0 0 1 .673 1.834c0 1.326-.012 2.394-.012 2.72 0 .263.18.572.681.475A9.911 9.911 0 0 0 10 .333Z" clip-rule="evenodd"/>
-						</svg>
-					</a>
+						<a href="https://github.com/credebl" class="mr-3" target="_blank">
+							<svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+								<path fill-rule="evenodd" d="M10 .333A9.911 9.911 0 0 0 6.866 19.65c.5.092.678-.215.678-.477 0-.237-.01-1.017-.014-1.845-2.757.6-3.338-1.169-3.338-1.169a2.627 2.627 0 0 0-1.1-1.451c-.9-.615.07-.6.07-.6a2.084 2.084 0 0 1 1.518 1.021 2.11 2.11 0 0 0 2.884.823c.044-.503.268-.973.63-1.325-2.2-.25-4.516-1.1-4.516-4.9A3.832 3.832 0 0 1 4.7 7.068a3.56 3.56 0 0 1 .095-2.623s.832-.266 2.726 1.016a9.409 9.409 0 0 1 4.962 0c1.89-1.282 2.717-1.016 2.717-1.016.366.83.402 1.768.1 2.623a3.827 3.827 0 0 1 1.02 2.659c0 3.807-2.319 4.644-4.525 4.889a2.366 2.366 0 0 1 .673 1.834c0 1.326-.012 2.394-.012 2.72 0 .263.18.572.681.475A9.911 9.911 0 0 0 10 .333Z" clip-rule="evenodd"/>
+							</svg>
+						</a>
+						<a href="https://discord.gg/w4hnQT7NJG" class="mr-3" target="_blank">
+							<svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 21 16">
+								<path d="M16.942 1.556a16.3 16.3 0 0 0-4.126-1.3 12.04 12.04 0 0 0-.529 1.1 15.175 15.175 0 0 0-4.573 0 11.585 11.585 0 0 0-.535-1.1 16.274 16.274 0 0 0-4.129 1.3A17.392 17.392 0 0 0 .182 13.218a15.785 15.785 0 0 0 4.963 2.521c.41-.564.773-1.16 1.084-1.785a10.63 10.63 0 0 1-1.706-.83c.143-.106.283-.217.418-.33a11.664 11.664 0 0 0 10.118 0c.137.113.277.224.418.33-.544.328-1.116.606-1.71.832a12.52 12.52 0 0 0 1.084 1.785 16.46 16.46 0 0 0 5.064-2.595 17.286 17.286 0 0 0-2.973-11.59ZM6.678 10.813a1.941 1.941 0 0 1-1.8-2.045 1.93 1.93 0 0 1 1.8-2.047 1.919 1.919 0 0 1 1.8 2.047 1.93 1.93 0 0 1-1.8 2.045Zm6.644 0a1.94 1.94 0 0 1-1.8-2.045 1.93 1.93 0 0 1 1.8-2.047 1.918 1.918 0 0 1 1.8 2.047 1.93 1.93 0 0 1-1.8 2.045Z"/>
+							</svg>
+						</a>
 						<a
 							href={pathRoutes.auth.sinIn}
-							class="ml-6 hover:bg-secondary-700 bg-transparent ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2"							
+							class="ml-3 hover:bg-secondary-700 bg-transparent ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2"							
 							>Sign in</a
 						>
 						<a
@@ -71,7 +75,7 @@ import { pathRoutes } from '../config/pathRoutes';
 							>
 						</button>
 					</div>
-					<div
+					<!-- <div
 						class="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1"
 						id="mobile-menu-2"
 					>
@@ -87,14 +91,14 @@ import { pathRoutes } from '../config/pathRoutes';
 							</li>
 							<li>
 								<a
-									href="https://discord.com/invite/ShRj58ER"
+									href="https://discord.gg/w4hnQT7NJG"
 									target="_blank"
 									class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
 									>Community</a
 								>
 							</li>
 						</ul>
-					</div>
+					</div> -->
 				</div>
 			</nav>
 		</header>
@@ -104,7 +108,7 @@ import { pathRoutes } from '../config/pathRoutes';
 					class="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16 lg:px-12"
 				>
 					<a
-						href="/docs/releases/2.0"
+						href="https://github.com/credebl/platform/releases"
 						class="inline-flex justify-between items-center py-1 px-1 pr-4 mb-7 text-sm text-gray-700 bg-gray-100 rounded-full dark:bg-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
 						role="alert"
 					>
@@ -127,21 +131,20 @@ import { pathRoutes } from '../config/pathRoutes';
 						>
 					</a>
 					<h1
-						class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white"
+						class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-5xl dark:text-white"
 					>
-						Build Self-Sovereign Identity Solutions faster - for global scale
+						Build Self-Sovereign Identity (SSI) solutions faster - for global scale.
 					</h1>
 					<p
 						class="mt-10 mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400"
 					>
-						Here at CREDEBL we focus on markets where technology, innovation,
-						and capital can unlock long-term value and drive economic growth.
+						CREDEBL aims to significantly reduce the tedious work required to build SSI solutions from scratch.
 					</p>
 					<div
 						class="flex flex-col mt-10 mb-8 lg:mb-16 space-y-4 sm:flex-row sm:justify-center sm:space-y-0 sm:space-x-4"
 					>
 						<a
-						href={pathRoutes.auth.sinIn}
+						href="https://docs.credebl.id"
 						class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900"
 						>
 							Get Started
@@ -168,11 +171,10 @@ import { pathRoutes } from '../config/pathRoutes';
 						<h2
 							class="mb-4 text-4xl tracking-tight leading-tight text-center font-extrabold text-gray-900 dark:text-white"
 						>
-							Designed based on the Principles of SSI
+							Build trusted digital ecosystems using the SSI core.
 						</h2>
-						<p class="text-gray-500 sm:text-xl dark:text-gray-400">
-							Here at Flowbite we focus on markets where technology, innovation,
-							and capital can unlock long-term value and drive economic growth.
+						<p class="text-gray-500 sm:text-xl dark:text-gray-400 text-center">
+							CREDEBL helps you build trusted digital ecosystems, by leveraging global standards of <a href="https://www.w3.org/TR/did-core/" target="_blank">W3C Decentralized Identifiers (DID)</a> & <a href="https://www.w3.org/TR/vc-data-model/" target="_blank">Verifiable Credentials (VC)</a> standards.
 						</p>
 					</div>
 					<div
@@ -197,9 +199,7 @@ import { pathRoutes } from '../config/pathRoutes';
 								Open Standards & Open Source
 							</h3>
 							<p class="text-gray-500 dark:text-gray-400">
-								Plan it, create it, launch it. Collaborate seamlessly with all
-								the organization and hit your marketing goals every month with
-								our marketing plan.
+								Built upon open standards of W3C Decentralized Identifiers, Verifiable Credentials, DIF Protocols & Hyperledger Aries.
 							</p>
 						</div>
 						<div>
@@ -220,8 +220,7 @@ import { pathRoutes } from '../config/pathRoutes';
 								Legder-agnostic & Ledger-less
 							</h3>
 							<p class="text-gray-500 dark:text-gray-400">
-								Protect your organization, devices and stay compliant with our
-								structured workflows and custom permissions made for you.
+								Supports multiple ledgers such as Indy, Cheqd, Polygon. Also issue ledger-less VCs using did methods like did:web, did:peer, did:key
 							</p>
 						</div>
 						<div>
@@ -242,11 +241,10 @@ import { pathRoutes } from '../config/pathRoutes';
 								>
 							</div>
 							<h3 class="mb-2 text-xl font-bold dark:text-white">
-								No vendor lock-in
+								Multiple credential exchange formats
 							</h3>
 							<p class="text-gray-500 dark:text-gray-400">
-								Auto-assign tasks, send Slack messages, and much more. Now power
-								up with hundreds of new templates to help you get started.
+								Supports multiple verifiable credential exchange formats such as AnonCreds, JSON-LD, JWT, etc.
 							</p>
 						</div>
 						<div>
@@ -270,8 +268,7 @@ import { pathRoutes } from '../config/pathRoutes';
 								Digital Public Good (DPG)
 							</h3>
 							<p class="text-gray-500 dark:text-gray-400">
-								Audit-proof software built for critical financial operations
-								like month-end close and quarterly budgeting.
+								CREDEBL is an open-souce Digital Public Good (DPG), designed to host Digital Public Infrastructure (DPI) for trusted digital ecosystems.
 							</p>
 						</div>
 						<div>
@@ -289,11 +286,10 @@ import { pathRoutes } from '../config/pathRoutes';
 								>
 							</div>
 							<h3 class="mb-2 text-xl font-bold dark:text-white">
-								Digital Public Infrastructure (DPI)
+								Self-host on your cloud infra
 							</h3>
 							<p class="text-gray-500 dark:text-gray-400">
-								Craft beautiful, delightful experiences for both marketing and
-								product with real cross-company collaboration.
+								You can self-host the entire CREDEBL platform and it's components on your organization's cloud infrastructure of choice.
 							</p>
 						</div>
 						<div>
@@ -312,12 +308,10 @@ import { pathRoutes } from '../config/pathRoutes';
 								>
 							</div>
 							<h3 class="mb-2 text-xl font-bold dark:text-white">
-								Enterprise Grade, Global Scale
+								Enterprise Grade, Large Scale
 							</h3>
 							<p class="text-gray-500 dark:text-gray-400">
-								Keep your company lights on with customizable, iterative, and
-								structured workflows built for all efficient teams and
-								individual.
+								Build for large scale using highly scalable micro-services architecture, and asynchronous message-driven communication.
 							</p>
 						</div>
 					</div>
@@ -330,12 +324,11 @@ import { pathRoutes } from '../config/pathRoutes';
 						<div class="flex max-w-2xl flex-col items-center justify-center gap-4">
 							<h2
 								class="text-center text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white lg:text-4xl">
-								Community contributors
+								In-CREDEBL Team
 							</h2>
 							<p class="text-lg text-gray-500 dark:text-gray-400 text-center">
-								Join a community of open-source contributors by tuning in with
-								the CREDEBL community and become one of the highlighted
-								members
+								Join our team & a community of open-source contributors by tuning in with
+								the CREDEBL Discord channel and become one of the highlighted members.
 							</p>
 						</div>
 						<div class="flex max-w-5xl flex-col gap-3 px-4 lg:px-8">
@@ -351,6 +344,35 @@ import { pathRoutes } from '../config/pathRoutes';
 									<div class="relative z-20">ajile-in</div>
 									<div class="absolute z-10 h-2 w-2 rotate-45 bg-gray-900 dark:bg-gray-700"
 										data-testid="flowbite-tooltip-arrow" style="bottom: -4px; left: 61.5px;">
+										&nbsp;
+									</div>
+								</div>
+								<div class="w-fit" data-testid="flowbite-tooltip-target">
+									<a class="cursor-pointer" href="https://github.com/kkkulkarni">
+										<img src="https://avatars.githubusercontent.com/u/24851339?v=4" alt="kkkulkarni avatar"
+											class="h-10 w-10 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300 sm:h-12 sm:w-12 lg:h-16 lg:w-16" /></a>
+								</div>
+								<div data-testid="flowbite-tooltip" tabindex="-1"
+									class="absolute inline-block z-10 rounded-lg py-2 px-3 text-sm font-medium shadow-sm transition-opacity duration-300 invisible opacity-0 bg-gray-900 text-white dark:bg-gray-700"
+									id=":r0:" role="tooltip" style="position: absolute;">
+									<div class="relative z-20">kkkulkarni</div>
+									<div class="absolute z-10 h-2 w-2 rotate-45 bg-gray-900 dark:bg-gray-700"
+										data-testid="flowbite-tooltip-arrow" style="bottom: -4px; left: 61.5px;">
+										&nbsp;
+									</div>
+								</div>
+
+								<div class="w-fit" data-testid="flowbite-tooltip-target">
+									<a class="cursor-pointer" href="https://github.com/amitayanworks"><img
+											src="https://avatars.githubusercontent.com/u/142207827?v=4" alt="amitayanworks avatar"
+											class="h-10 w-10 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300 sm:h-12 sm:w-12 lg:h-16 lg:w-16" /></a>
+								</div>
+								<div data-testid="flowbite-tooltip" tabindex="-1"
+									class="absolute inline-block z-10 rounded-lg py-2 px-3 text-sm font-medium shadow-sm transition-opacity duration-300 invisible opacity-0 bg-gray-900 text-white dark:bg-gray-700"
+									id=":r8:" role="tooltip" style="position: absolute;">
+									<div class="relative z-20">amitayanworks</div>
+									<div class="absolute z-10 h-2 w-2 rotate-45 bg-gray-900 dark:bg-gray-700"
+										data-testid="flowbite-tooltip-arrow" style="bottom: -4px; left: 44px;">
 										&nbsp;
 									</div>
 								</div>
@@ -384,34 +406,6 @@ import { pathRoutes } from '../config/pathRoutes';
 									</div>
 								</div>
 								<div class="w-fit" data-testid="flowbite-tooltip-target">
-									<a class="cursor-pointer" href="https://github.com/prano041199"><img
-											src="https://avatars.githubusercontent.com/u/91529631?v=4" alt="prano041199 avatar"
-											class="h-10 w-10 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300 sm:h-12 sm:w-12 lg:h-16 lg:w-16" /></a>
-								</div>
-								<div data-testid="flowbite-tooltip" tabindex="-1"
-									class="absolute inline-block z-10 rounded-lg py-2 px-3 text-sm font-medium shadow-sm transition-opacity duration-300 invisible opacity-0 bg-gray-900 text-white dark:bg-gray-700"
-									id=":r6:" role="tooltip" style="position: absolute;">
-									<div class="relative z-20">prano041199</div>
-									<div class="absolute z-10 h-2 w-2 rotate-45 bg-gray-900 dark:bg-gray-700"
-										data-testid="flowbite-tooltip-arrow" style="bottom: -4px; left: 43.5px;">
-										&nbsp;
-									</div>
-								</div>
-								<div class="w-fit" data-testid="flowbite-tooltip-target">
-									<a class="cursor-pointer" href="https://github.com/tarun-vadde"><img
-											src="https://avatars.githubusercontent.com/u/134402435?v=4" alt="tarun-vadde avatar"
-											class="h-10 w-10 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300 sm:h-12 sm:w-12 lg:h-16 lg:w-16" /></a>
-								</div>
-								<div data-testid="flowbite-tooltip" tabindex="-1"
-									class="absolute inline-block z-10 rounded-lg py-2 px-3 text-sm font-medium shadow-sm transition-opacity duration-300 invisible opacity-0 bg-gray-900 text-white dark:bg-gray-700"
-									id=":r8:" role="tooltip" style="position: absolute;">
-									<div class="relative z-20">tarun-vadde</div>
-									<div class="absolute z-10 h-2 w-2 rotate-45 bg-gray-900 dark:bg-gray-700"
-										data-testid="flowbite-tooltip-arrow" style="bottom: -4px; left: 44px;">
-										&nbsp;
-									</div>
-								</div>
-								<div class="w-fit" data-testid="flowbite-tooltip-target">
 									<a class="cursor-pointer" href="https://github.com/tipusinghaw"><img
 											src="https://avatars.githubusercontent.com/u/126460794?v=4" alt="tipusinghaw avatar"
 											class="h-10 w-10 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300 sm:h-12 sm:w-12 lg:h-16 lg:w-16" /></a>
@@ -425,6 +419,9 @@ import { pathRoutes } from '../config/pathRoutes';
 										&nbsp;
 									</div>
 								</div>
+
+								
+								
 								<div class="w-fit" data-testid="flowbite-tooltip-target">
 									<a class="cursor-pointer" href="https://github.com/vivekayanworks"><img
 											src="https://avatars.githubusercontent.com/u/88733247?v=4" alt="vivekayanworks avatar"
@@ -454,6 +451,37 @@ import { pathRoutes } from '../config/pathRoutes';
 										&nbsp;
 									</div>
 								</div>
+
+								<div class="w-fit" data-testid="flowbite-tooltip-target">
+									<a class="cursor-pointer" href="https://github.com/amitpadmani-awts"><img
+											src="https://avatars.githubusercontent.com/u/27995665?v=4" alt="amitpadmani-awts avatar"
+											class="h-10 w-10 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300 sm:h-12 sm:w-12 lg:h-16 lg:w-16" /></a>
+								</div>
+								<div data-testid="flowbite-tooltip" tabindex="-1"
+									class="absolute inline-block z-10 rounded-lg py-2 px-3 text-sm font-medium shadow-sm transition-opacity duration-300 invisible opacity-0 bg-gray-900 text-white dark:bg-gray-700"
+									id=":rg:" role="tooltip" style="position: absolute;">
+									<div class="relative z-20">amitpadmani-awts</div>
+									<div class="absolute z-10 h-2 w-2 rotate-45 bg-gray-900 dark:bg-gray-700"
+										data-testid="flowbite-tooltip-arrow" style="bottom: -4px; left: 40px;">
+										&nbsp;
+									</div>
+								</div>
+
+								<div class="w-fit" data-testid="flowbite-tooltip-target">
+									<a class="cursor-pointer" href="https://github.com/sairanjit"><img
+											src="https://avatars.githubusercontent.com/u/34263716?v=4" alt="sairanjit avatar"
+											class="h-10 w-10 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300 sm:h-12 sm:w-12 lg:h-16 lg:w-16" /></a>
+								</div>
+								<div data-testid="flowbite-tooltip" tabindex="-1"
+									class="absolute inline-block z-10 rounded-lg py-2 px-3 text-sm font-medium shadow-sm transition-opacity duration-300 invisible opacity-0 bg-gray-900 text-white dark:bg-gray-700"
+									id=":rg:" role="tooltip" style="position: absolute;">
+									<div class="relative z-20">sairanjit</div>
+									<div class="absolute z-10 h-2 w-2 rotate-45 bg-gray-900 dark:bg-gray-700"
+										data-testid="flowbite-tooltip-arrow" style="bottom: -4px; left: 40px;">
+										&nbsp;
+									</div>
+								</div>
+
 								<div class="w-fit" data-testid="flowbite-tooltip-target">
 									<a class="cursor-pointer" href="https://github.com/makrandshinde"><img
 											src="https://avatars.githubusercontent.com/u/131651805?v=4" alt="makrandshinde avatar"
@@ -468,6 +496,174 @@ import { pathRoutes } from '../config/pathRoutes';
 										&nbsp;
 									</div>
 								</div>
+
+
+								<div class="w-fit" data-testid="flowbite-tooltip-target">
+									<a class="cursor-pointer" href="https://github.com/poonam-ghewande"><img
+											src="https://avatars.githubusercontent.com/u/133869533?v=4" alt="poonam-ghewande avatar"
+											class="h-10 w-10 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300 sm:h-12 sm:w-12 lg:h-16 lg:w-16" /></a>
+								</div>
+								<div data-testid="flowbite-tooltip" tabindex="-1"
+									class="absolute inline-block z-10 rounded-lg py-2 px-3 text-sm font-medium shadow-sm transition-opacity duration-300 invisible opacity-0 bg-gray-900 text-white dark:bg-gray-700"
+									id=":rg:" role="tooltip" style="position: absolute;">
+									<div class="relative z-20">poonam-ghewande</div>
+									<div class="absolute z-10 h-2 w-2 rotate-45 bg-gray-900 dark:bg-gray-700"
+										data-testid="flowbite-tooltip-arrow" style="bottom: -4px; left: 40px;">
+										&nbsp;
+									</div>
+								</div>
+								
+								<div class="w-fit" data-testid="flowbite-tooltip-target">
+									<a class="cursor-pointer" href="https://github.com/yogeshayanworks"><img
+											src="https://avatars.githubusercontent.com/u/107561764?v=4" alt="yogeshayanworks avatar"
+											class="h-10 w-10 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300 sm:h-12 sm:w-12 lg:h-16 lg:w-16" /></a>
+								</div>
+								<div data-testid="flowbite-tooltip" tabindex="-1"
+									class="absolute inline-block z-10 rounded-lg py-2 px-3 text-sm font-medium shadow-sm transition-opacity duration-300 invisible opacity-0 bg-gray-900 text-white dark:bg-gray-700"
+									id=":r6:" role="tooltip" style="position: absolute;">
+									<div class="relative z-20">yogeshayanworks</div>
+									<div class="absolute z-10 h-2 w-2 rotate-45 bg-gray-900 dark:bg-gray-700"
+										data-testid="flowbite-tooltip-arrow" style="bottom: -4px; left: 43.5px;">
+										&nbsp;
+									</div>
+								</div>
+
+								<div class="w-fit" data-testid="flowbite-tooltip-target">
+									<a class="cursor-pointer" href="https://github.com/16-karan"><img
+											src="https://avatars.githubusercontent.com/u/141734327?v=4" alt="16-karan avatar"
+											class="h-10 w-10 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300 sm:h-12 sm:w-12 lg:h-16 lg:w-16" /></a>
+								</div>
+								<div data-testid="flowbite-tooltip" tabindex="-1"
+									class="absolute inline-block z-10 rounded-lg py-2 px-3 text-sm font-medium shadow-sm transition-opacity duration-300 invisible opacity-0 bg-gray-900 text-white dark:bg-gray-700"
+									id=":r6:" role="tooltip" style="position: absolute;">
+									<div class="relative z-20">16-karan</div>
+									<div class="absolute z-10 h-2 w-2 rotate-45 bg-gray-900 dark:bg-gray-700"
+										data-testid="flowbite-tooltip-arrow" style="bottom: -4px; left: 43.5px;">
+										&nbsp;
+									</div>
+								</div>
+
+								<div class="w-fit" data-testid="flowbite-tooltip-target">
+									<a class="cursor-pointer" href="https://github.com/Girish9960"><img
+											src="https://avatars.githubusercontent.com/u/126439771?v=4" alt="Girish9960 avatar"
+											class="h-10 w-10 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300 sm:h-12 sm:w-12 lg:h-16 lg:w-16" /></a>
+								</div>
+								<div data-testid="flowbite-tooltip" tabindex="-1"
+									class="absolute inline-block z-10 rounded-lg py-2 px-3 text-sm font-medium shadow-sm transition-opacity duration-300 invisible opacity-0 bg-gray-900 text-white dark:bg-gray-700"
+									id=":r6:" role="tooltip" style="position: absolute;">
+									<div class="relative z-20">Girish9960</div>
+									<div class="absolute z-10 h-2 w-2 rotate-45 bg-gray-900 dark:bg-gray-700"
+										data-testid="flowbite-tooltip-arrow" style="bottom: -4px; left: 43.5px;">
+										&nbsp;
+									</div>
+								</div>
+
+								<div class="w-fit" data-testid="flowbite-tooltip-target">
+									<a class="cursor-pointer" href="https://github.com/bhavanakarwade"><img
+											src="https://avatars.githubusercontent.com/u/137506897?v=4" alt="bhavanakarwade avatar"
+											class="h-10 w-10 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300 sm:h-12 sm:w-12 lg:h-16 lg:w-16" /></a>
+								</div>
+								<div data-testid="flowbite-tooltip" tabindex="-1"
+									class="absolute inline-block z-10 rounded-lg py-2 px-3 text-sm font-medium shadow-sm transition-opacity duration-300 invisible opacity-0 bg-gray-900 text-white dark:bg-gray-700"
+									id=":r6:" role="tooltip" style="position: absolute;">
+									<div class="relative z-20">bhavanakarwade</div>
+									<div class="absolute z-10 h-2 w-2 rotate-45 bg-gray-900 dark:bg-gray-700"
+										data-testid="flowbite-tooltip-arrow" style="bottom: -4px; left: 43.5px;">
+										&nbsp;
+									</div>
+								</div>
+
+								<div class="w-fit" data-testid="flowbite-tooltip-target">
+									<a class="cursor-pointer" href="https://github.com/sunilbade"><img
+											src="https://avatars.githubusercontent.com/u/126459604?v=4" alt="sunilbade avatar"
+											class="h-10 w-10 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300 sm:h-12 sm:w-12 lg:h-16 lg:w-16" /></a>
+								</div>
+								<div data-testid="flowbite-tooltip" tabindex="-1"
+									class="absolute inline-block z-10 rounded-lg py-2 px-3 text-sm font-medium shadow-sm transition-opacity duration-300 invisible opacity-0 bg-gray-900 text-white dark:bg-gray-700"
+									id=":r6:" role="tooltip" style="position: absolute;">
+									<div class="relative z-20">sunilbade</div>
+									<div class="absolute z-10 h-2 w-2 rotate-45 bg-gray-900 dark:bg-gray-700"
+										data-testid="flowbite-tooltip-arrow" style="bottom: -4px; left: 43.5px;">
+										&nbsp;
+									</div>
+								</div>
+
+								<div class="w-fit" data-testid="flowbite-tooltip-target">
+									<a class="cursor-pointer" href="https://github.com/sayali-chavan96"><img
+											src="https://avatars.githubusercontent.com/u/133863994?v=4" alt="sayali-chavan96 avatar"
+											class="h-10 w-10 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300 sm:h-12 sm:w-12 lg:h-16 lg:w-16" /></a>
+								</div>
+								<div data-testid="flowbite-tooltip" tabindex="-1"
+									class="absolute inline-block z-10 rounded-lg py-2 px-3 text-sm font-medium shadow-sm transition-opacity duration-300 invisible opacity-0 bg-gray-900 text-white dark:bg-gray-700"
+									id=":r6:" role="tooltip" style="position: absolute;">
+									<div class="relative z-20">sayali-chavan96</div>
+									<div class="absolute z-10 h-2 w-2 rotate-45 bg-gray-900 dark:bg-gray-700"
+										data-testid="flowbite-tooltip-arrow" style="bottom: -4px; left: 43.5px;">
+										&nbsp;
+									</div>
+								</div>
+
+								<div class="w-fit" data-testid="flowbite-tooltip-target">
+									<a class="cursor-pointer" href="https://github.com/MoulikaKulkarni"><img
+											src="https://avatars.githubusercontent.com/u/143073666?v=4" alt="MoulikaKulkarni avatar"
+											class="h-10 w-10 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300 sm:h-12 sm:w-12 lg:h-16 lg:w-16" /></a>
+								</div>
+								<div data-testid="flowbite-tooltip" tabindex="-1"
+									class="absolute inline-block z-10 rounded-lg py-2 px-3 text-sm font-medium shadow-sm transition-opacity duration-300 invisible opacity-0 bg-gray-900 text-white dark:bg-gray-700"
+									id=":r6:" role="tooltip" style="position: absolute;">
+									<div class="relative z-20">MoulikaKulkarni</div>
+									<div class="absolute z-10 h-2 w-2 rotate-45 bg-gray-900 dark:bg-gray-700"
+										data-testid="flowbite-tooltip-arrow" style="bottom: -4px; left: 43.5px;">
+										&nbsp;
+									</div>
+								</div>
+
+
+								<div class="w-fit" data-testid="flowbite-tooltip-target">
+									<a class="cursor-pointer" href="https://github.com/ashwini-aher"><img
+											src="https://avatars.githubusercontent.com/u/126259838?v=4" alt="ashwini-aher avatar"
+											class="h-10 w-10 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300 sm:h-12 sm:w-12 lg:h-16 lg:w-16" /></a>
+								</div>
+								<div data-testid="flowbite-tooltip" tabindex="-1"
+									class="absolute inline-block z-10 rounded-lg py-2 px-3 text-sm font-medium shadow-sm transition-opacity duration-300 invisible opacity-0 bg-gray-900 text-white dark:bg-gray-700"
+									id=":r6:" role="tooltip" style="position: absolute;">
+									<div class="relative z-20">ashwini-aher</div>
+									<div class="absolute z-10 h-2 w-2 rotate-45 bg-gray-900 dark:bg-gray-700"
+										data-testid="flowbite-tooltip-arrow" style="bottom: -4px; left: 43.5px;">
+										&nbsp;
+									</div>
+								</div>
+
+								<div class="w-fit" data-testid="flowbite-tooltip-target">
+									<a class="cursor-pointer" href="https://github.com/pranalidhanavade"><img
+											src="https://avatars.githubusercontent.com/u/137780597?v=4" alt="pranalidhanavade avatar"
+											class="h-10 w-10 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300 sm:h-12 sm:w-12 lg:h-16 lg:w-16" /></a>
+								</div>
+								<div data-testid="flowbite-tooltip" tabindex="-1"
+									class="absolute inline-block z-10 rounded-lg py-2 px-3 text-sm font-medium shadow-sm transition-opacity duration-300 invisible opacity-0 bg-gray-900 text-white dark:bg-gray-700"
+									id=":r6:" role="tooltip" style="position: absolute;">
+									<div class="relative z-20">pranalidhanavade</div>
+									<div class="absolute z-10 h-2 w-2 rotate-45 bg-gray-900 dark:bg-gray-700"
+										data-testid="flowbite-tooltip-arrow" style="bottom: -4px; left: 43.5px;">
+										&nbsp;
+									</div>
+								</div>
+
+								<div class="w-fit" data-testid="flowbite-tooltip-target">
+									<a class="cursor-pointer" href="https://github.com/RinkalBhojani"><img
+											src="https://avatars.githubusercontent.com/u/51080327?v=4" alt="RinkalBhojani avatar"
+											class="h-10 w-10 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300 sm:h-12 sm:w-12 lg:h-16 lg:w-16" /></a>
+								</div>
+								<div data-testid="flowbite-tooltip" tabindex="-1"
+									class="absolute inline-block z-10 rounded-lg py-2 px-3 text-sm font-medium shadow-sm transition-opacity duration-300 invisible opacity-0 bg-gray-900 text-white dark:bg-gray-700"
+									id=":r6:" role="tooltip" style="position: absolute;">
+									<div class="relative z-20">RinkalBhojani</div>
+									<div class="absolute z-10 h-2 w-2 rotate-45 bg-gray-900 dark:bg-gray-700"
+										data-testid="flowbite-tooltip-arrow" style="bottom: -4px; left: 43.5px;">
+										&nbsp;
+									</div>
+								</div>
+
 			
 							</div>
 						</div>
@@ -487,14 +683,14 @@ import { pathRoutes } from '../config/pathRoutes';
 								</div>
 								<div class="flex w-full flex-col">
 									<h2 class="text-left text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-										Join the community
+										Join Discord Community
 									</h2>
 									<p class="text-gray-500 dark:text-gray-400">
-										Become a member of a community of developers by supporting CREDEBL
+										Become a member of a community of SSI developers by supporting CREDEBL
 									</p>
 								</div><a
 									class="flex items-center gap-2 whitespace-nowrap text-base font-medium text-blue-700 dark:text-blue-600 hover:underline"
-									href="https://discord.com/invite/ShRj58ER">Join our community <svg class="w-2.5 h-2.5" aria-hidden="true"
+									href="https://discord.gg/w4hnQT7NJG">Join discord <svg class="w-2.5 h-2.5" aria-hidden="true"
 										xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
 										<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
 											d="m1 9 4-4-4-4"></path>
@@ -519,16 +715,16 @@ import { pathRoutes } from '../config/pathRoutes';
 						CREDEBL
 					</a>
 					<p class="my-6 mb-8 text-gray-500 dark:text-gray-400">
-						Open-source Self-Soveriegn Identity Platform to build robust
-						privacy-enhancing IDTech solutions.
+						Open-source self-soveriegn identity (SSI) platform to build robust,
+						privacy-enhancing identity & digital credential solutions.
 					</p>
 					<span
 						class="mt-8 text-sm text-gray-500 sm:text-center dark:text-gray-400"
 					>
-						Made with love in India - by <a
+					&copy; 2019-{new Date().getFullYear()} <a
 							href="https://blockster.global"
-							target="_blank">Blockster Labs Private Limited</a
-						> | &copy; 2019-{new Date().getFullYear()} - All Rights Reserved.</span
+							target="_blank">Blockster Labs Private Limited.</a
+						> All Rights Reserved.</span
 					>
 				</div>
 			</footer>

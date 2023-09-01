@@ -186,7 +186,7 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
                 <div className="flex flex-col min-h-screen">
 
                     <nav
-                        className="bg-white border-b border-gray-200 sm:py-2 dark:bg-gray-800 dark:border-gray-700"
+                        className="bg-white border-b border-gray-200 sm:py-2"
                     >
 
                         <div className="flex items-center justify-between">
