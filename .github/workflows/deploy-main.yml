@@ -1,8 +1,9 @@
-name: Deploy
+name: Deploy develop branch to Deno
 on:
   push:
-    branches: dev
-  
+    branches: develop
+  pull_request:
+    branches: develop
 
 jobs:
   deploy:
@@ -27,6 +28,6 @@ jobs:
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
         with:
-          project: "credebl-studio"			 # Project name in Deno Deploy
+          project: "credebl-dev-ui"			 # Project name in Deno Deploy
           entrypoint: "server/entry.mjs" # 📝 Update the entrypoint
           root: "dist"
