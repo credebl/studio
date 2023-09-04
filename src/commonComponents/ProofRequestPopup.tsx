@@ -15,6 +15,7 @@ const ProofRequest = (props: {
 	userData: object[];
 	view: boolean;
 }) => {
+	
 	const [buttonLoader, setButtonLoader] = useState<boolean>(false);
 	const [navigation, setNavigation] = useState(false);
 	const [succesMsg, setSuccesMsg] = useState('');
@@ -123,7 +124,7 @@ const ProofRequest = (props: {
 
 											{aggregatedData?.map((item, index) => (
 												<div
-													key={index}
+													key={item.entity +1}
 													className="flex justify-start w-full"
 												>
 													<div
@@ -143,10 +144,10 @@ const ProofRequest = (props: {
 											))}
 											</div>
 										</Card>
-
+												
 										{props?.userData?.slice(0, 1).map((item, index) => (
 											<div className="flex justify-start ml-2 w-full mt-6">
-												<div key={index} className="w-full">
+												<div key={Object.values(item)[2]} className="w-full">
 													<div className="flex flex-start mb-2 w-full ">
 														<div className=" w-3/12 font-semibold text-primary-700 dark:bg-gray-800 m-1 p-1 flex justify-start items-center">
 															Schema Id
@@ -279,7 +280,7 @@ const ProofRequest = (props: {
 
 											{aggregatedData?.map((item, index) => (
 												<div
-													key={index}
+													key={item.entity+1}
 													className="flex justify-start w-full"
 												>
 													<div
@@ -302,7 +303,7 @@ const ProofRequest = (props: {
 
 										{props?.userData?.slice(0, 1).map((item, index) => (
 											<div className="flex justify-start ml-2 w-full mt-6">
-												<div key={index} className="w-full">
+												<div key={Object.values(item)[2]} className="w-full">
 													<div className="flex flex-start mb-2 w-full ">
 														<div className=" w-3/12 font-semibold text-primary-700 dark:bg-gray-800 m-1 p-1 flex justify-start items-center">
 															Schema Id
