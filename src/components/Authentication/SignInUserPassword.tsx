@@ -14,10 +14,9 @@ import { getUserProfile, loginUser, passwordEncryption, setToLocalStorage } from
 import { Alert } from 'flowbite-react';
 import type { AxiosResponse } from 'axios';
 import CustomSpinner from '../CustomSpinner';
-import React from 'react';
 import SignInUserPasskey from './SignInUserPasskey';
 import { getSupabaseClient } from '../../supabase';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 interface emailValue {
 	email: string;
