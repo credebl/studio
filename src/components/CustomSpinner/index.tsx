@@ -12,11 +12,11 @@ const CustomSpinner = ({color, message, size}: SpinnerProps) => {
         <span className='text-base font-normal text-gray-600 dark:text-gray-400'>
             <Spinner
                 className='mr-2'
-                color= {color || 'info'}
-                size={size || 'md' }
+                color= {color ?? 'info'}
+                size={size ?? 'md' }
 
             />
-            {message || ' Loading...'}
+            {message ?? ' Loading...'}
            
         </span>
     )
