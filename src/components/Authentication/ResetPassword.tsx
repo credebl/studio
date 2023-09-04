@@ -57,7 +57,6 @@ const ResetPassword = () => {
                 </div>
 
                 <div className="md:w-2/5 w-full p-10 flex">
-
                     <div className="w-full">
                         {
                             (message || erroMsg) &&
@@ -74,23 +73,19 @@ const ResetPassword = () => {
                         }
 
                         <div className='flex lg:mt-8'>
-
                             <div className="flex justify-center text-center text-primary-700 text-blue-600 font-inter text-4xl font-bold leading-10 ">
                                 Reset Password
                             </div>
                             <div className="text-gray-500 font-inter text-base font-medium leading-5 flex w-84 h-5.061 flex-col justify-center items-center flex-shrink-0">
                                 Please set new password
                             </div>
-
                         </div>
 
                         <div className="lg:hidden sm:block md:hidden sm:block bg-blue-500 bg-opacity-10 mt-4" >
-
                             <img
                                 src="/images/signin.svg"
                                 alt="img" />
                         </div>
-
 
                         <Formik
                             initialValues={{
@@ -112,18 +107,14 @@ const ResetPassword = () => {
                             validateOnBlur
                             validateOnChange
                             enableReinitialize
-
                             onSubmit={(
                                 values: passwordValues,
                             ) => {
                                 submit(values)
                             }}
-
                         >
                             {(formikHandlers): JSX.Element => (
-
                                 <Form className="mt-12 space-y-6" onSubmit={formikHandlers.handleSubmit}>
-
                                     <div>
                                         <div className="text-primary-700 font-inter text-base font-medium leading-5">
 
@@ -253,7 +244,6 @@ const ResetPassword = () => {
                                     </div>
 
                                 </Form>
-
                             )}
                         </Formik>
 
