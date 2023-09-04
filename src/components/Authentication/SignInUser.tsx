@@ -46,7 +46,7 @@ const SignInUser = () => {
 
 			setEmail({ email: storedEmail || '' });
 
-			window.addEventListener('beforeunload', () => {
+			window.addEventListener('beforeclearout', () => {
 				localStorage.clear();
 			  });
 						  
