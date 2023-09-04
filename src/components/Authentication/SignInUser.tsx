@@ -43,9 +43,7 @@ const SignInUser = () => {
 		const fetchData = async () => {
 			const storedEmail = await getFromLocalStorage(storageKeys.LOGIN_USER_EMAIL);
 			setUserLoginEmail(storedEmail);
-
 			setEmail({ email: storedEmail || '' });
-
 			window.addEventListener('beforeclearout', () => {
 				localStorage.clear();
 			  });
@@ -66,9 +64,7 @@ const SignInUser = () => {
 	const saveEmail = async (values: emailValue) => {
 		setEmail(values)
 		setCurrentComponent('password');
-
 		await setToLocalStorage(storageKeys.LOGIN_USER_EMAIL, values.email);
-
 		setIsPasskeySuccess(true);
 	}
 
@@ -95,7 +91,6 @@ const SignInUser = () => {
 			<nav
 				className="bg-white border-b border-gray-200 sm:py-2"
 			>
-
 				<div className="flex items-center justify-between">
 					<div className="flex items-center justify-start">
 						<a className="flex mr-4" href="/">
@@ -132,7 +127,6 @@ const SignInUser = () => {
 					</div>
 				</div>
 			</nav>
-
 
 					<div className="flex flex-1 flex-col md:flex-row">
 						<div className="md:w-3/5 w-full bg-blue-500 bg-opacity-10 lg:p-4 md:p-4">
@@ -280,17 +274,13 @@ const SignInUser = () => {
 													{` Create an account`}
 												</a>
 											</div>
-
 										</Form>
 									)}
 								</Formik>
-
 							</div>
-
 						</div>
 					</div>
 
-			
 			<footer className="bg-white border-b border-gray-200 sm:py-2 dark:bg-gray-800 dark:border-gray-700 ">
 
 				<div className="dark:bg-gray-700 md:flex md:items-center md:justify-between p-3">
@@ -305,7 +295,6 @@ const SignInUser = () => {
 			</footer>
 			</div>
 							)}
-
 		</div>
 	);
 };
