@@ -39,8 +39,6 @@ pnpm run preview
 The CREDEBL platform is built by Blockster Labs (Product Division of AyanWorks) team. 
 For the core SSI capabilities, it leverages the great work from multiple open-source projects such as Hyperledger Aries, Bifold, Asker, Indy, etc.
 
-[BC Digital Trust]: https://digital.gov.bc.ca/digital-trust/
-
 ## Contributing
 
 Pull requests are welcome! Please read our [contributions guide](https://github.com/credebl/platform/blob/main/CONTRIBUTING.md) and submit your PRs. We enforce [developer certificate of origin](https://developercertificate.org/) (DCO) commit signing — [guidance](https://github.com/apps/dco) on this is available. We also welcome issues submitted about problems you encounter in using CREDEBL.
