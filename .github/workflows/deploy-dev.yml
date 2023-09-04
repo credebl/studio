@@ -1,15 +1,14 @@
-name: Deploy main to Deno Deploy
+name: Deploy develop branch to Deno
 on:
   push:
-    branches: main
+    branches: develop
   pull_request:
-    branches: main
+    branches: develop
 
 jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-
     permissions:
       id-token: write # Needed for auth with Deno Deploy
       contents: read # Needed to clone the repository
@@ -18,22 +17,17 @@ jobs:
       - name: Clone repository
         uses: actions/checkout@v3
 
-      - name: Install Deno
-        uses: denoland/setup-deno@v1
-        with:
-          deno-version: v1.x
-
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
           node-version: lts/*
 
       - name: Build step
-        run: "npm install && npm run build" # 📝 Update the build command(s) if necessary
+        run: npm install && npm run build # 📝 Update the build command(s)
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
         with:
-          project: "credebl-studio"
-          entrypoint: "server/entry.mjs" # 📝 Update the entrypoint if necessary
-          root: "dist" # 📝 Update the root if necessary
+          project: "credebl-dev-ui"			 # Project name in Deno Deploy
+          entrypoint: "server/entry.mjs" # 📝 Update the entrypoint
+          root: "dist"
