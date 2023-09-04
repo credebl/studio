@@ -85,7 +85,7 @@ const VerifyEmail = () => {
                                             ></path></svg>
 
                                         <span
-                                            className="ml-2 self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
+                                            className="ml-2 self-center text-2xl font-semibold whitespace-nowrap text-black"
                                         >CREDEBL</span>
 
                                     </a>
@@ -145,16 +145,16 @@ const VerifyEmail = () => {
                         </div>
                         <footer className="bg-white border-b border-gray-200 sm:py-2 dark:bg-gray-800 dark:border-gray-700 ">
 
-<div className="dark:bg-gray-700 md:flex md:items-center md:justify-between p-3">
-    <p className="text-sm text-center text-gray-500">
-        &copy; 2019 - {new Date().getFullYear()} -
-        <a className="hover:underline" target="_blank"
-        >CREDEBL
-        </a> | All rights reserved.
-    </p>
+                            <div className="dark:bg-gray-700 md:flex md:items-center md:justify-between p-3">
+                                <p className="text-sm text-center text-gray-500">
+                                    &copy; 2019 - {new Date().getFullYear()} -
+                                    <a className="hover:underline" target="_blank"
+                                    >CREDEBL
+                                    </a> | All rights reserved.
+                                </p>
 
-</div>
-</footer>
+                            </div>
+                        </footer>
                     </div>}
         </div>
     )
