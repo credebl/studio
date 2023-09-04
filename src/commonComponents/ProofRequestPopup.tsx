@@ -1,5 +1,10 @@
-import { Button, Card, Modal, Spinner } from 'flowbite-react';
+import { Button, Card, Modal } from 'flowbite-react';
 import React, { useState } from 'react';
+import { getVerificationList, verifyPresentation } from '../api/verification';
+
+import type { AxiosResponse } from 'axios';
+import CustomSpinner from '../components/CustomSpinner';
+import type { RequestProof } from '../components/Verification/interface';
 import { apiStatusCodes } from '../config/CommonConstant';
 import type { RequestProof } from '../components/Verification/interface';
 import { getVerificationList, verifyPresentation } from '../api/verification';
@@ -103,7 +108,8 @@ const ProofRequest = (props: {
 							</p>
 							{!props.userData ? (
 								<div className="flex items-center justify-center m-4">
-									<Spinner color="info" />
+									<CustomSpinner/>
+
 								</div>
 							) : (
 								<div className=" text-gray-500 dark:text-gray-300 w-full">
@@ -259,7 +265,7 @@ const ProofRequest = (props: {
 							</p>
 							{!props.userData ? (
 								<div className="flex items-center justify-center m-4">
-									<Spinner color="info" />
+									<CustomSpinner/>
 								</div>
 							) : (
 								<div className=" text-gray-500 dark:text-gray-300 w-full">

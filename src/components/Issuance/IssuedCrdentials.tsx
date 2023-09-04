@@ -1,20 +1,22 @@
 'use client';
 
-import { Button, Pagination, Spinner } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
+
+import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
+import { Button } from 'flowbite-react';
+import CustomSpinner from '../CustomSpinner';
+import DataTable from '../../commonComponents/datatable';
+import { EmptyListMessage } from '../EmptyListComponent';
+import { IssueCredential } from '../../common/enums';
+import React from 'react';
 import SearchInput from '../SearchInput';
+import type { TableData } from '../../commonComponents/datatable/interface';
 import { dateConversion } from '../../utils/DateConversion';
 import { getIssuedCredentials } from '../../api/issuance';
-import { IssueCredential } from '../../common/enums';
-import { AlertComponent } from '../AlertComponent';
 import { pathRoutes } from '../../config/pathRoutes';
-import DataTable from '../../commonComponents/datatable';
-import type { TableData } from '../../commonComponents/datatable/interface';
-import React from 'react';
-import { EmptyListMessage } from '../EmptyListComponent';
 
 interface IssuedCredential {
 	metadata: { [x: string]: { schemaId: string; }; };
@@ -127,9 +129,8 @@ const CredentialList = () => {
 						}}
 					/>
 					{loading ? (<div className="flex items-center justify-center mb-4">
-          <Spinner
-            color="info"
-          />
+        
+		  <CustomSpinner/>
         </div>)
           : issuedCredList && issuedCredList.length > 0 ? (
             <div className='Flex-wrap' style={{ display: 'flex', flexDirection: 'column' }}>

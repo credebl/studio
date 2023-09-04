@@ -9,7 +9,7 @@ interface SpinnerProps {
 const CustomSpinner = ({color, message, size}: SpinnerProps) => {
 
     return (
-        <span>
+        <span className='text-base font-normal text-gray-600 dark:text-gray-400'>
             <Spinner
                 className='mr-2'
                 color= {color ? color : 'info'}

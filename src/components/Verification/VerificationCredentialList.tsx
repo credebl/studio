@@ -1,6 +1,6 @@
 'use client';
 
-import { Alert, Button, Pagination, Spinner } from 'flowbite-react';
+import { Alert, Button, Pagination } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import type { AxiosResponse } from 'axios';
@@ -13,11 +13,7 @@ import { pathRoutes } from '../../config/pathRoutes';
 import DataTable from '../../commonComponents/datatable';
 import type { TableData } from '../../commonComponents/datatable/interface';
 import { removeFromLocalStorage } from '../../api/Auth';
-import { getProofAttributes, getVerificationList, verifyPresentation } from '../../api/verification';
-import type { RequestProof } from './interface';
-import ProofRequest from '../../commonComponents/ProofRequestPopup';
-import { EmptyListMessage } from '../EmptyListComponent';
-import React from 'react';
+import CustomSpinner from '../CustomSpinner';
 
 const VerificationCredentialList = () => {
 	const [loading, setLoading] = useState<boolean>(true)
@@ -229,9 +225,8 @@ const VerificationCredentialList = () => {
 						</div>
 					}
 					{loading ? (<div className="flex items-center justify-center mb-4">
-						<Spinner
-							color="info"
-						/>
+						
+						<CustomSpinner/>
 					</div>)
 						: verificationList && verificationList.length > 0 ? (
 							<div className='Flex-wrap' style={{ display: 'flex', flexDirection: 'column' }}>

@@ -1,7 +1,7 @@
 'use client';
 
 import { ChangeEvent, useEffect, useState } from 'react';
-import { Pagination, Spinner } from 'flowbite-react';
+import { Pagination } from 'flowbite-react';
 import { getOrganizationUsers, getOrganizations } from '../../../api/organization';
 
 import { AlertComponent } from '../../AlertComponent';
@@ -10,6 +10,7 @@ import EditUserRoleModal from './EditUserRolesModal';
 import SearchInput from '../../SearchInput';
 import type { User } from '../interfaces/users';
 import { apiStatusCodes } from '../../../config/CommonConstant';
+import CustomSpinner from '../../CustomSpinner';
 
 const initialPageState = {
     pageNumber: 1,
@@ -134,9 +135,8 @@ const Members = () => {
                     />
                     {loading
                         ? <div className="flex items-center justify-center mb-4">
-                            <Spinner
-                                color="info"
-                            />
+                          
+                            <CustomSpinner/>
                         </div>
                         : usersList && usersList?.length > 0 && <div
                             className="p-2 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-3 dark:bg-gray-800"
