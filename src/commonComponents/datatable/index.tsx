@@ -1,4 +1,3 @@
-import { Button, Tooltip } from "flowbite-react";
 import type { TableData, TableHeader } from "./interface"
 
 import CustomSpinner from "../../components/CustomSpinner";
