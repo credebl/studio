@@ -1,7 +1,7 @@
 'use client';
 
 import type { AxiosResponse } from "axios";
-import { Button, Spinner } from "flowbite-react";
+import { Button } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { getFromLocalStorage, removeFromLocalStorage, setToLocalStorage } from "../../api/Auth";
 import SchemaCard from "../../commonComponents/SchemaCard";
@@ -13,6 +13,7 @@ import type { SchemaState, CredDefData } from "./interface";
 import type { TableData } from "../../commonComponents/datatable/interface";
 import DataTable from "../../commonComponents/datatable";
 import { getCredentialDefinitionsForVerification } from "../../api/verification";
+import CustomSpinner from "../CustomSpinner";
 
 const CredDefSelection = () => {
 	const [schemaState, setSchemaState] = useState({ schemaName: '', version: '' })
@@ -145,9 +146,8 @@ const CredDefSelection = () => {
 			<div className="mb-4 col-span-full xl:mb-2 pb-3">
 				{schemaLoader ?
 					<div className="flex items-center justify-center mb-4">
-						<Spinner
-							color="info"
-						/>
+						
+						<CustomSpinner/>
 					</div>
 					: <div className="m-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap4">
 						<SchemaCard className="col-span-1 sm:col-span-2 md:col-span-1" schemaName={schemaState?.schemaName} version={schemaState?.version} schemaId={schemaDetailsState.schemaId} issuerDid={schemaDetailsState.issuerDid} attributes={schemaDetailsState.attributes} created={schemaDetailsState.createdDateTime}

@@ -1,4 +1,4 @@
-import { Alert, Button, Card, Label, Pagination, Spinner } from 'flowbite-react';
+import { Alert, Button, Card, Label, Pagination } from 'flowbite-react';
 import { Field, FieldArray, Form, Formik } from 'formik';
 import { useEffect, useState } from 'react';
 import BreadCrumbs from '../../BreadCrumbs';
@@ -13,6 +13,7 @@ import { getFromLocalStorage, setToLocalStorage } from '../../../api/Auth';
 import { EmptyListMessage } from '../../EmptyListComponent';
 import { nanoid } from 'nanoid';
 import { pathRoutes } from '../../../config/pathRoutes';
+import CustomSpinner from '../../CustomSpinner';
 
 interface Values {
   tagName: string;
@@ -171,7 +172,7 @@ const ViewSchemas = () => {
           <Card className='h-64 sm:w-1/2 p-2 mr-1 mb-1' id="viewSchemaDetailsCard">
             {loading ? (
               <div className="flex items-center justify-center mb-4">
-                <Spinner color="info" />
+                <CustomSpinner/>
               </div>
             ) : (
               <div className='pt-4'>
@@ -381,9 +382,8 @@ const ViewSchemas = () => {
         </h5>
 
         {loading ? (<div className="flex items-center justify-center mb-4">
-          <Spinner
-            color="info"
-          />
+         
+          <CustomSpinner/>
         </div>)
           : credDeffList && credDeffList.length > 0 ? (
             <div className='Flex-wrap' style={{ display: 'flex', flexDirection: 'column' }}>

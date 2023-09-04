@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import type { AxiosResponse } from 'axios';
-
-import { getAgentHealth } from '../api/Agent';
 import { apiStatusCodes, storageKeys } from '../config/CommonConstant';
+import { useEffect, useState } from 'react';
+
+import type { AxiosResponse } from 'axios';
+import CustomSpinner from '../components/CustomSpinner';
+import { getAgentHealth } from '../api/Agent';
 import { getFromLocalStorage } from '../api/Auth';
-import { Spinner } from 'flowbite-react';
 
 interface Agent {
     label: string;
@@ -53,7 +53,7 @@ const AgentHealth = () => {
                 <>
                     {loader ? (
                         <div>
-                            <Spinner color="info" />
+                            <CustomSpinner/>
                         </div>
                     ) : (
                         agentHealthDetails?.isInitialized ? (

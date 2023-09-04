@@ -1,13 +1,14 @@
-import { Alert, Spinner } from 'flowbite-react';
 import type { OrgDashboard, Organisation } from './interfaces'
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { getOrgDashboard, getOrganizationById } from '../../api/organization';
 import { useEffect, useState } from 'react';
 
+import { Alert } from 'flowbite-react';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
 import Credential_Card from '../../assets/Credential_Card.svg';
 import CustomAvatar from '../Avatar';
+import CustomSpinner from '../CustomSpinner';
 import EditOrgdetailsModal from './EditOrgdetailsModal';
 import Invitation_Card from '../../assets/Invitation_Card.svg';
 import OrganizationDetails from './OrganizationDetails';
@@ -254,11 +255,8 @@ const Dashboard = () => {
                 }
                 {
                     loading
-                        ? (<div className="flex items-center justify-center m-4">
-                            <Spinner
-                                color="info"
-								className='!fill-primary-700'
-                            />
+                        ? (<div className="flex items-center justify-center m-4">                           
+                            <CustomSpinner/>
                         </div>)
                         : walletStatus === true
                             ? (<OrganizationDetails orgData={orgData} />)
