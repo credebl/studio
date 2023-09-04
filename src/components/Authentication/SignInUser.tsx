@@ -85,7 +85,7 @@ const SignInUser = () => {
 
 	return (
 		<div>
-						{currentComponent === 'email' && isPasskeySuccess ? (<RegistrationSuccess />)
+					{currentComponent === 'email' && isPasskeySuccess ? (<RegistrationSuccess />)
 				: currentComponent === 'password' ? (
 					<SignInUserPasskey email={email?.email as string} />
 				) : (
