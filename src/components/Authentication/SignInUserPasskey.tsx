@@ -179,7 +179,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
                                 ></path></svg>
 
                             <span
-                                className="ml-2 self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
+                                className="ml-2 self-center text-2xl font-semibold whitespace-nowrap text-black"
                             >CREDEBL</span>
 
                         </a>

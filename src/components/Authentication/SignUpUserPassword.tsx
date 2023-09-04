@@ -115,7 +115,7 @@ const SignUpUserPassword = ({ firstName, lastName }: { firstName: string; lastNa
                                         ></path></svg>
 
                                     <span
-                                        className="ml-2 self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
+                                        className="ml-2 self-center text-2xl font-semibold whitespace-nowrap text-black"
                                     >CREDEBL</span>
 
                                 </a>
@@ -300,7 +300,7 @@ const SignUpUserPassword = ({ firstName, lastName }: { firstName: string; lastNa
                                                         <span className="text-red-500 text-xs absolute mt-1">{formikHandlers?.errors?.password}</span>
                                                     }
                                                 </div>
-                                                <div className="text-primary-700 font-inter text-base font-medium leading-5 mt-4">
+                                                <div className="text-primary-700 font-inter text-base font-medium leading-5 mt-8">
 
                                                     <div className="block mb-2 text-sm font-medium  dark:text-white">
                                                         <Label className="text-primary-700" htmlFor="confirmPassword" value="Confirm Password" />

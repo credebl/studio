@@ -42,6 +42,12 @@ const SignInUser = () => {
 			const storedEmail = await getFromLocalStorage(storageKeys.LOGIN_USER_EMAIL);
 			setUserLoginEmail(storedEmail);
 
+			setEmail({ email: storedEmail || '' });
+
+			if (performance.navigation.type === 1) {
+			  await setToLocalStorage(storageKeys.LOGIN_USER_EMAIL, '');
+			}
+	  
 			if (signUpSuccessPassword === window?.location?.search) {
 				setSuccess('Congratulations!! 🎉 You have successfully registered on CREDEBL 🚀');
 			} else if (signUpSuccessPasskey === window?.location?.search) {
@@ -117,7 +123,7 @@ const SignInUser = () => {
 								></path></svg>
 
 							<span
-								className="ml-2 self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
+								className="ml-2 self-center text-2xl font-semibold whitespace-nowrap text-black"
 							>CREDEBL</span>
 
 						</a>
