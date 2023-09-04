@@ -46,10 +46,10 @@ const SignInUser = () => {
 
 			setEmail({ email: storedEmail || '' });
 
-			if (performance.navigation.type === 1) {
-			  await setToLocalStorage(storageKeys.LOGIN_USER_EMAIL, '');
-			}
-	  
+			window.addEventListener('beforeunload', () => {
+				localStorage.clear();
+			  });
+						  
 			if (signUpSuccessPassword === window?.location?.search) {
 				setSuccess('Congratulations!! 🎉 You have successfully registered on CREDEBL 🚀');
 			} else if (signUpSuccessPasskey === window?.location?.search) {
