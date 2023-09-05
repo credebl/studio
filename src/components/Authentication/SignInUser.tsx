@@ -43,9 +43,12 @@ const SignInUser = () => {
 			setUserLoginEmail(storedEmail);
 			setEmail({ email: storedEmail || '' });
 
-			window.addEventListener('beforeunload', () => {
-				localStorage.clear();
-			})
+			const entries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];;
+			const isRefreshPage = entries.length > 0 && entries[0].type === 'reload';
+	  
+			if (isRefreshPage) {
+				await setToLocalStorage(storageKeys.LOGIN_USER_EMAIL, '');
+			}
 						  
 			if (signUpSuccessPassword === window?.location?.search) {
 				setSuccess('Congratulations!! 🎉 You have successfully registered on CREDEBL 🚀');
