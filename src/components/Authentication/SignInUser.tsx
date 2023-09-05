@@ -38,7 +38,6 @@ const SignInUser = () => {
 
 	const nextButtonRef = useRef<HTMLButtonElement | null>(null);
 
-
 	useEffect(() => {
 		const fetchData = async () => {
 			const storedEmail = await getFromLocalStorage(storageKeys.LOGIN_USER_EMAIL);
@@ -92,10 +91,10 @@ const SignInUser = () => {
 
 
 		<div id="parent" className="flex flex-col min-h-screen">
-			<nav id='2345'
+			<nav id='signinusernav'
 				className="bg-white border-b border-gray-200 sm:py-2"
 			>
-				<div className="flex items-center justify-between">
+				<div id="navbar" className="flex items-center justify-between">
 					<div className="flex items-center justify-start">
 						<a className="flex mr-4" href="/">
 							<svg
@@ -132,8 +131,8 @@ const SignInUser = () => {
 				</div>
 			</nav>
 
-					<div className="flex flex-1 flex-col md:flex-row">
-						<div className="md:w-3/5 w-full bg-blue-500 bg-opacity-10 lg:p-4 md:p-4">
+					<div id='main-content' className="flex flex-1 flex-col md:flex-row">
+						<div id='image-div' className="md:w-3/5 w-full bg-blue-500 bg-opacity-10 lg:p-4 md:p-4">
 							<div className='flex justify-center'>
 
 								<img
@@ -143,7 +142,7 @@ const SignInUser = () => {
 							</div>
 						</div>
 
-						<div className="md:w-2/5 w-full p-10 flex">
+						<div id='form-div' className="md:w-2/5 w-full p-10 flex">
 
 							<div className="w-full">
 								{
@@ -268,7 +267,7 @@ const SignInUser = () => {
 												</Button>
 
 											</div>
-											<div className="text-sm font-medium text-gray-500 dark:text-gray-400 pt-6 flex flex-col md:flex-row md:justify-center items-center justify-center">
+											<div id='signinusercontent' className="text-sm font-medium text-gray-500 dark:text-gray-400 pt-6 flex flex-col md:flex-row md:justify-center items-center justify-center">
 												Don't have an account yet?
 												&nbsp;<a
 													id='navigatetosignup'
@@ -285,10 +284,10 @@ const SignInUser = () => {
 						</div>
 					</div>
 
-			<footer id='1898' className="bg-white border-b border-gray-200 sm:py-2 dark:bg-gray-800 dark:border-gray-700 ">
+			<footer id='signinuserfooter' className="bg-white border-b border-gray-200 sm:py-2 dark:bg-gray-800 dark:border-gray-700 ">
 
-				<div className="dark:bg-gray-700 md:flex md:items-center md:justify-between p-3">
-					<p className="text-sm text-center text-gray-500">
+				<div id='footer_div' className="dark:bg-gray-700 md:flex md:items-center md:justify-between p-3">
+					<p id='footer-content' className="text-sm text-center text-gray-500">
 						&copy; 2019 - {new Date().getFullYear()} -
 						<a className="hover:underline" target="_blank"
 						>CREDEBL
