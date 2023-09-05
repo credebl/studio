@@ -8,8 +8,8 @@ const SchemaCredDefDetails = ({ schemaCredDefList }: SchemaCredDefProps) => {
     return (
         <>
             {schemaCredDefList.map((item, index) => (
-                <div className="flex justify-start ml-2 w-full mt-6">
-                    <div key={Object.values(item)[2]} className="w-full">
+                <div key={Object.values(item)[2]} className="flex justify-start ml-2 w-full mt-6">
+                    <div className="w-full">
                         <div className="flex flex-start mb-2 w-full ">
                             <div className=" w-3/12 font-semibold text-primary-700 dark:bg-gray-800 m-1 p-1 flex justify-start items-center">
                                 Schema Id
