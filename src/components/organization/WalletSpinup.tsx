@@ -55,15 +55,12 @@ const WalletSpinup = (props: {
 
 	const [seeds, setSeeds] = useState<string>('');
 
-	const [walletLabel, setWalletLabel] = useState<string>('');
-
     const [isCopied, setIsCopied] = useState(false);
 
 
 	const generateWalletname = () => {
 
 	}
-
 	useEffect(() => {
 		setSeeds(nanoid(32));
 		generateWalletname()
@@ -83,7 +80,6 @@ const WalletSpinup = (props: {
 		}, 1500);
 
 	}
-
 
 	const onRadioSelect = (type: string) => {
 		setAgentType(type);
@@ -177,6 +173,7 @@ const WalletSpinup = (props: {
 			setWalletSpinStep(6);
 			props.setWalletSpinupStatus(true);
 		}, 3000);
+        window.location.href= "/organizations/dashboard"
 		console.log(`invitation-url-creation-success`, JSON.stringify(data));
 	});
 
@@ -300,7 +297,7 @@ const WalletSpinup = (props: {
 		<Formik
 			initialValues={{
 				seed: '',
-				label: '',
+				label: props.orgName,
 			}}
 			validationSchema={yup.object().shape({
 				label: yup.string()
