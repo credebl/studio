@@ -40,19 +40,12 @@ const ProofRequest = (props: {
 	};
 
 	const aggregatedData: { entity: string; properties: any[] }[] = [];
-	let credDefId = null;
-	let schemaId = null;
 
 	props?.userData?.forEach((item: object) => {
 		const entity = Object.keys(item)[0];
 		const propertyValue = item[entity];
 
-		if (entity === 'credDefId') {
-			credDefId = propertyValue;
-		} else if (entity === 'schemaId') {
-			schemaId = propertyValue;
-		} else {
-			const existingEntry = aggregatedData.find(
+		const existingEntry = aggregatedData.find(
 				(entry) => entry.entity === entity,
 			);
 			if (existingEntry) {
@@ -61,9 +54,9 @@ const ProofRequest = (props: {
 				aggregatedData.push({
 					entity,
 					properties: [propertyValue],
-				});
-			}
+			});
 		}
+		
 	});
 
 	return (
@@ -134,11 +127,9 @@ const ProofRequest = (props: {
 								onClick={() => {
 									setButtonLoader(false);
 									props.closeModal(false, '');
-									{
-										navigation === true
-											? (window.location.href = `${pathRoutes.organizations.credentials}`)
-											: '';
-									}
+									if (navigation === true) {
+										window.location.href = `${pathRoutes.organizations.credentials}`
+									}									
 								}}
 								style={{ height: '2.5rem', minWidth: '100px' }}
 								className="py-1 px-2 medium text-center font-medium text-gray-600 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600 "
