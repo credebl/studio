@@ -42,6 +42,10 @@ const SignInUser = () => {
 			const storedEmail = await getFromLocalStorage(storageKeys.LOGIN_USER_EMAIL);
 			setUserLoginEmail(storedEmail);
 			setEmail({ email: storedEmail || '' });
+
+			window.addEventListener('beforeunload', () => {
+				localStorage.clear();
+			})
 						  
 			if (signUpSuccessPassword === window?.location?.search) {
 				setSuccess('Congratulations!! 🎉 You have successfully registered on CREDEBL 🚀');
