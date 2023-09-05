@@ -131,10 +131,10 @@ const ResetPassword = () => {
                                 initialValues={{
                                     firstName: '',
                                     lastName: '',
-                                    password: '',
+                                    password: '', 
                                     confirmPassword: ''
                                 }}
-                                validationSchema={yup.object().shape({
+                                validationSchema = {yup.object().shape({
                                     password: yup
                                         .string()
                                         .required('Password is required')
