@@ -1,6 +1,6 @@
 'use client';
 
-import { Alert, Button, Card, Pagination, Spinner, Table, } from 'flowbite-react';
+import { Alert, Button, Card, Pagination, Table, } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
 import type { GetAllSchemaListParameter, PaginationData } from './interfaces';
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
@@ -13,6 +13,7 @@ import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
 import { EmptyListMessage } from '../../EmptyListComponent';
 import type { SchemaDetails } from '../../Verification/interface';
+import CustomSpinner from '../../CustomSpinner';
 
 const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaDetails: SchemaDetails) => void; }) => {
 	const [schemaList, setSchemaList] = useState([])
@@ -181,9 +182,8 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 				}
 				{loading
 					? (<div className="flex items-center justify-center mb-4">
-						<Spinner
-							color="info"
-						/>
+						
+						<CustomSpinner/>
 					</div>)
 					:
 					schemaList && schemaList.length > 0 ? (

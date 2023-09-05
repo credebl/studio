@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Card, Pagination, Spinner } from 'flowbite-react';
+import { Button, Card, Pagination } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 
@@ -15,6 +15,7 @@ import { getOrganizations } from '../../api/organization';
 import { pathRoutes } from '../../config/pathRoutes';
 import { setToLocalStorage } from '../../api/Auth';
 import { EmptyListMessage } from '../EmptyListComponent';
+import CustomSpinner from '../CustomSpinner';
 
 const initialPageState = {
   pageNumber: 1,
@@ -162,11 +163,8 @@ const OrganizationsList = () => {
           />
 
           {loading
-            ? <div className="flex items-center justify-center mb-4 ">
-              <Spinner
-                color="info"
-								className='!fill-primary-800'
-              />
+            ? <div className="flex items-center justify-center mb-4 ">             
+              <CustomSpinner/>
             </div>
             : organizationsList && organizationsList?.length > 0 ? (<div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
               {
