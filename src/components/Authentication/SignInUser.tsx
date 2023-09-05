@@ -157,7 +157,7 @@ const SignInUser = () => {
 									</Alert>
 								}
 
-								<div className='flex lg:mt-16'>
+								<div id='backbutton' className='flex lg:mt-16'>
 
 									<button className='flex mt-2' onClick={redirectLandingPage} >
 										<svg xmlns="http://www.w3.org/2000/svg" width="26" height="24" viewBox="0 0 37 20" fill="none">
@@ -165,7 +165,7 @@ const SignInUser = () => {
 										</svg>
 									</button>
 
-									<div className="w-full flex flex-col items-center justify-center ">
+									<div id="heading_content" className="w-full flex flex-col items-center justify-center ">
 
 										<h2 className="text-primary-700 text-blue-600 font-inter text-3xl font-bold leading-10">
 											Login
@@ -179,7 +179,7 @@ const SignInUser = () => {
 
 								</div>
 
-								<div className="lg:hidden sm:block md:hidden sm:block bg-blue-500 bg-opacity-10 mt-4" >
+								<div id="mobileview" className="lg:hidden sm:block md:hidden sm:block bg-blue-500 bg-opacity-10 mt-4" >
 
 										<img 
 											src="/images/signin.svg"
@@ -207,15 +207,15 @@ const SignInUser = () => {
 								>
 
 									{(formikHandlers): JSX.Element => (
-										<Form className="mt-16 space-y-6" onSubmit={formikHandlers.handleSubmit}>
+										<Form id='signinuserform' className="mt-16 space-y-6" onSubmit={formikHandlers.handleSubmit}>
 											<div className="text-primary-700 font-inter text-base font-medium leading-5 mb-20">
 
-												<div className="block mb-2 text-sm font-medium  dark:text-white">
+												<div id='emailheading' className="block mb-2 text-sm font-medium  dark:text-white">
 													<Label className="text-primary-700" htmlFor="email2" value="Your Email" />
 													<span className='text-red-500 text-xs'>*</span>
 												</div>
 
-												<div className="w-full flex items-center bg-gray-200 px-4 text-gray-700 text-sm border rounded-md focus:border-blue-400 focus:ring-1 focus:ring-blue-600">
+												<div id='email-field' className="w-full flex items-center bg-gray-200 px-4 text-gray-700 text-sm border rounded-md focus:border-blue-400 focus:ring-1 focus:ring-blue-600">
 
 													<svg
 														xmlns="http://www.w3.org/2000/svg"
