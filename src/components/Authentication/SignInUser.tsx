@@ -90,12 +90,12 @@ const SignInUser = () => {
 				) : (
 
 
-					<div id="parent" className="flex flex-col min-h-screen">
+					<div className="flex flex-col min-h-screen">
 
 						<NavBar />
-						<div id='main-content' className="flex flex-1 flex-col md:flex-row">
-							<div id='image-div' className="md:w-3/5 w-full bg-blue-500 bg-opacity-10 lg:p-4 md:p-4">
-								<div id='image-block' className='flex justify-center'>
+						<div  className="flex flex-1 flex-col md:flex-row">
+							<div className="md:w-3/5 w-full bg-blue-500 bg-opacity-10 lg:p-4 md:p-4">
+								<div className='flex justify-center'>
 
 									<img
 										className='hidden sm:block'
@@ -104,7 +104,7 @@ const SignInUser = () => {
 								</div>
 							</div>
 
-							<div id='form-div' className="md:w-2/5 w-full p-10 flex">
+							<div className="md:w-2/5 w-full p-10 flex">
 
 								<div className="w-full">
 									{
@@ -121,7 +121,7 @@ const SignInUser = () => {
 										</Alert>
 									}
 
-									<div id='backbutton' className='flex lg:mt-16'>
+									<div className='flex lg:mt-16'>
 
 										<button className='flex mt-2' onClick={redirectLandingPage} >
 											<svg xmlns="http://www.w3.org/2000/svg" width="26" height="24" viewBox="0 0 37 20" fill="none">
@@ -129,7 +129,7 @@ const SignInUser = () => {
 											</svg>
 										</button>
 
-										<div id="heading_content" className="w-full flex flex-col items-center justify-center ">
+										<div className="w-full flex flex-col items-center justify-center ">
 
 											<h2 className="text-primary-700 text-blue-600 font-inter text-3xl font-bold leading-10">
 												Login
@@ -143,7 +143,7 @@ const SignInUser = () => {
 
 									</div>
 
-									<div id="mobileview" className="lg:hidden sm:block md:hidden sm:block bg-blue-500 bg-opacity-10 mt-4" >
+									<div className="lg:hidden sm:block md:hidden sm:block bg-blue-500 bg-opacity-10 mt-4" >
 
 										<img
 											src="/images/signin.svg"
@@ -171,15 +171,15 @@ const SignInUser = () => {
 									>
 
 										{(formikHandlers): JSX.Element => (
-											<Form id='signinuserform' className="mt-16 space-y-6" onSubmit={formikHandlers.handleSubmit}>
+											<Form className="mt-16 space-y-6" onSubmit={formikHandlers.handleSubmit}>
 												<div className="text-primary-700 font-inter text-base font-medium leading-5 mb-20">
 
-													<div id='emailheading' className="block mb-2 text-sm font-medium  dark:text-white">
-														<Label id='signinlabel' className="text-primary-700" htmlFor="email2" value="Your Email" />
-														<span id='mandatory_symbol' className='text-red-500 text-xs'>*</span>
+													<div className="block mb-2 text-sm font-medium  dark:text-white">
+														<Label className="text-primary-700" htmlFor="email2" value="Your Email" />
+														<span className='text-red-500 text-xs'>*</span>
 													</div>
 
-													<div id='email-field' className="w-full flex items-center bg-gray-200 px-4 text-gray-700 text-sm border rounded-md focus:border-blue-400 focus:ring-1 focus:ring-blue-600">
+													<div className="w-full flex items-center bg-gray-200 px-4 text-gray-700 text-sm border rounded-md focus:border-blue-400 focus:ring-1 focus:ring-blue-600">
 
 														<svg
 															xmlns="http://www.w3.org/2000/svg"
@@ -229,7 +229,7 @@ const SignInUser = () => {
 													</Button>
 
 												</div>
-												<div id='signinusercontent' className="text-sm font-medium text-gray-500 dark:text-gray-400 pt-6 flex flex-col md:flex-row md:justify-center items-center justify-center">
+												<div className="text-sm font-medium text-gray-500 dark:text-gray-400 pt-6 flex flex-col md:flex-row md:justify-center items-center justify-center">
 													Don't have an account yet?
 													&nbsp;<a
 														id='navigatetosignup'

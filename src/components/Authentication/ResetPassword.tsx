@@ -174,9 +174,9 @@ const ResetPassword = () => {
                                                     <span className="text-red-500 text-xs absolute mt-1">{formikHandlers?.errors?.password}</span>
                                                 }
                                             </div>
-                                            <div id='confirm-password' className="text-primary-700 font-inter text-base font-medium leading-5 mt-8 mb-6">
+                                            <div className="text-primary-700 font-inter text-base font-medium leading-5 mt-8 mb-6">
                                                 <div className="block mb-2 text-sm font-medium  dark:text-white">
-                                                    <Label id='confirm_password_label' className="text-primary-700" htmlFor="confirmPassword" value="Confirm New Password" />
+                                                    <Label className="text-primary-700" htmlFor="confirmPassword" value="Confirm New Password" />
                                                     <span className='text-red-500 text-xs'>*</span>
 
                                                 </div>
@@ -190,7 +190,7 @@ const ResetPassword = () => {
                                                     />
 
                                                     <button
-                                                        id='svgbutton'
+                                                        
                                                         type="button"
                                                         onClick={() => setConfirmPasswordVisible((prevVisible) => !prevVisible)}
                                                         className="bg-transparent absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-white hover:text-gray-800 dark:hover:text-white"
@@ -221,11 +221,11 @@ const ResetPassword = () => {
                                                 </div>
                                                 {
                                                     (formikHandlers?.errors?.confirmPassword && formikHandlers?.touched?.confirmPassword) &&
-                                                    <span id='errors' className="text-red-500 text-xs">{formikHandlers?.errors?.confirmPassword}</span>
+                                                    <span className="text-red-500 text-xs">{formikHandlers?.errors?.confirmPassword}</span>
                                                 }
                                             </div>
 
-                                            <div id='button_div' className="flex justify-end mt-12">
+                                            <div className="flex justify-end mt-12">
 
                                                 <Button
                                                     id='signupbutton'
