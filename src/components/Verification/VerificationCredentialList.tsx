@@ -10,7 +10,7 @@ import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
 import DataTable from '../../commonComponents/datatable';
 import { EmptyListMessage } from '../EmptyListComponent';
-import ProofRequest from '../../commonComponents/ProofRequestPopup';
+import ProofRequest from './ProofRequestPopup';
 import { ProofRequestState } from '../../common/enums';
 import React from 'react';
 import type { RequestProof } from './interface';
