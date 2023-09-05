@@ -168,7 +168,7 @@ const ResetPassword = () => {
                                                 </div>
                                                 <div className="relative">
                                                     <Field
-                                                        id="signuppassword"
+                                                        id="resetpassword"
                                                         name="password"
                                                         placeholder="Please enter password"
                                                         className="truncate w-full bg-gray-200 px-4 py-2 text-gray-700 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
@@ -208,15 +208,15 @@ const ResetPassword = () => {
                                                     <span className="text-red-500 text-xs absolute mt-1">{formikHandlers?.errors?.password}</span>
                                                 }
                                             </div>
-                                            <div className="text-primary-700 font-inter text-base font-medium leading-5 mt-8 mb-6">
+                                            <div id='confirm-password' className="text-primary-700 font-inter text-base font-medium leading-5 mt-8 mb-6">
                                                 <div className="block mb-2 text-sm font-medium  dark:text-white">
-                                                    <Label className="text-primary-700" htmlFor="confirmPassword" value="Confirm New Password" />
+                                                    <Label id='confirm_password_label' className="text-primary-700" htmlFor="confirmPassword" value="Confirm New Password" />
                                                     <span className='text-red-500 text-xs'>*</span>
 
                                                 </div>
                                                 <div className="relative">
                                                     <Field
-                                                        id="signupconfirmpassword"
+                                                        id="resetconfirmpassword"
                                                         name="confirmPassword"
                                                         placeholder="Please re-enter password"
                                                         className="truncate w-full bg-gray-200 px-4 py-2 text-gray-900 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
@@ -224,6 +224,7 @@ const ResetPassword = () => {
                                                     />
 
                                                     <button
+                                                    id='svgbutton'
                                                         type="button"
                                                         onClick={() => setConfirmPasswordVisible((prevVisible) => !prevVisible)}
                                                         className="bg-transparent absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-white hover:text-gray-800 dark:hover:text-white"
@@ -254,11 +255,11 @@ const ResetPassword = () => {
                                                 </div>
                                                 {
                                                     (formikHandlers?.errors?.confirmPassword && formikHandlers?.touched?.confirmPassword) &&
-                                                    <span className="text-red-500 text-xs">{formikHandlers?.errors?.confirmPassword}</span>
+                                                    <span id='errors' className="text-red-500 text-xs">{formikHandlers?.errors?.confirmPassword}</span>
                                                 }
                                             </div>
 
-                                            <div className="flex justify-end mt-12">
+                                            <div id='button_div' className="flex justify-end mt-12">
 
                                                 <Button
                                                     id='signupbutton'
@@ -285,7 +286,7 @@ const ResetPassword = () => {
                     </div>
                 </div>
             </div>
-            <footer className='bg-white border-b border-gray-200 sm:py-2 dark:bg-gray-800 dark:border-gray-700'>
+            <footer id='footerresetpassword' className='bg-white border-b border-gray-200 sm:py-2 dark:bg-gray-800 dark:border-gray-700'>
                 <div className='md:flex md:items-center md:justify-between p-3'>
                     <p className='text-sm text-center text-gray-500'>
                         &copy; 2019 - {new Date().getFullYear()} -

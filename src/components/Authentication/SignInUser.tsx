@@ -93,9 +93,9 @@ const SignInUser = () => {
 				className="bg-white border-b border-gray-200 sm:py-2"
 			>
 				<div id="navbar" className="flex items-center justify-between">
-					<div className="flex items-center justify-start">
-						<a className="flex mr-4" href="/">
-							<svg
+					<div id='logo' className="flex items-center justify-start">
+						<a id='signinuserlink' className="flex mr-4" href="/">
+							<svg id='backbuttonsvg'
 								xmlns="http://www.w3.org/2000/svg"
 								className="ml-4"
 								width="35"
@@ -131,7 +131,7 @@ const SignInUser = () => {
 
 					<div id='main-content' className="flex flex-1 flex-col md:flex-row">
 						<div id='image-div' className="md:w-3/5 w-full bg-blue-500 bg-opacity-10 lg:p-4 md:p-4">
-							<div className='flex justify-center'>
+							<div id='image-block' className='flex justify-center'>
 
 								<img
 									className='hidden sm:block'
@@ -211,8 +211,8 @@ const SignInUser = () => {
 											<div className="text-primary-700 font-inter text-base font-medium leading-5 mb-20">
 
 												<div id='emailheading' className="block mb-2 text-sm font-medium  dark:text-white">
-													<Label className="text-primary-700" htmlFor="email2" value="Your Email" />
-													<span className='text-red-500 text-xs'>*</span>
+													<Label id='signinlabel' className="text-primary-700" htmlFor="email2" value="Your Email" />
+													<span id='mandatory_symbol' className='text-red-500 text-xs'>*</span>
 												</div>
 
 												<div id='email-field' className="w-full flex items-center bg-gray-200 px-4 text-gray-700 text-sm border rounded-md focus:border-blue-400 focus:ring-1 focus:ring-blue-600">
