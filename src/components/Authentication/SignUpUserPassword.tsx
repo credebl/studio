@@ -115,7 +115,7 @@ const SignUpUserPassword = ({ firstName, lastName }: { firstName: string; lastNa
                                         ></path></svg>
 
                                     <span
-                                        className="ml-2 self-center text-2xl font-semibold whitespace-nowrap text-black"
+                                        className ="ml-2 self-center text-2xl font-semibold whitespace-nowrap text-black"
                                     >CREDEBL</span>
 
                                 </a>
@@ -124,9 +124,9 @@ const SignUpUserPassword = ({ firstName, lastName }: { firstName: string; lastNa
                     </nav>
 
 
-                    <div className="flex flex-1 flex-col md:flex-row">
-                        <div className="md:w-3/5 w-full bg-blue-500 bg-opacity-10 lg:p-4 md:p-4">
-                            <div className='flex justify-center'>
+                    <div className ="flex flex-1 flex-col md:flex-row">
+                        <div className ="md:w-3/5 w-full bg-blue-500 bg-opacity-10 lg:p-4 md:p-4">
+                            <div className ='flex justify-center'>
                                 <img
                                     className='hidden sm:block'
                                     src="/images/signin.svg"
@@ -134,9 +134,9 @@ const SignUpUserPassword = ({ firstName, lastName }: { firstName: string; lastNa
                             </div>
                         </div>
 
-                        <div className="md:w-2/5 w-full p-10 flex">
+                        <div className ="md:w-2/5 w-full p-10 flex">
 
-                            <div className="w-full">
+                            <div className ="w-full">
                                 {
                                     (verificationSuccess || erroMsg) &&
                                     <Alert
@@ -151,7 +151,7 @@ const SignUpUserPassword = ({ firstName, lastName }: { firstName: string; lastNa
                                     </Alert>
                                 }
 
-                                <div className='flex lg:mt-8'>
+                                <div className ='flex lg:mt-8'>
 
                                     <button className='flex mt-2' onClick={handleBackButtonClick} >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="26" height="24" viewBox="0 0 37 20" fill="none">
@@ -159,7 +159,7 @@ const SignUpUserPassword = ({ firstName, lastName }: { firstName: string; lastNa
                                         </svg>
                                     </button>
 
-                                    <div className="w-full flex flex-col items-center justify-center ">
+                                    <div className ="w-full flex flex-col items-center justify-center ">
 
                                         <h2 className="text-primary-700 text-blue-600 font-inter text-3xl font-bold leading-10">
                                             Create password
@@ -187,7 +187,7 @@ const SignUpUserPassword = ({ firstName, lastName }: { firstName: string; lastNa
                                     >CREDEBL</a> | All rights reserved.
                                 </div>
 
-                                <div className="lg:hidden sm:block md:hidden sm:block bg-blue-500 bg-opacity-10 mt-4" >
+                                <div className ="lg:hidden sm:block md:hidden sm:block bg-blue-500 bg-opacity-10 mt-4" >
 
                                     <img
                                         src="/images/signin.svg"
@@ -196,7 +196,7 @@ const SignUpUserPassword = ({ firstName, lastName }: { firstName: string; lastNa
 
 
                                 <Formik
-                                    initialValues={{
+                                    initialValues ={{
                                         firstName: '',
                                         lastName: '',
                                         password: '',
@@ -216,7 +216,7 @@ const SignUpUserPassword = ({ firstName, lastName }: { firstName: string; lastNa
                                     validateOnChange
                                     enableReinitialize
 
-                                    onSubmit={(
+                                    onSubmit ={(
                                         values: passwordValues,
                                     ) => {
                                         submit(values, false)
@@ -578,12 +578,12 @@ const SignUpUserPassword = ({ firstName, lastName }: { firstName: string; lastNa
                         </div>
 
                     </div>
-                    <footer className="bg-white border-b border-gray-200 sm:py-2 dark:bg-gray-800 dark:border-gray-700 ">
+                    <footer className ="bg-white border-b border-gray-200 sm:py-2 dark:bg-gray-800 dark:border-gray-700 ">
 
-                        <div className="dark:bg-gray-700 md:flex md:items-center md:justify-between p-3">
-                            <p className="text-sm text-center text-gray-500">
+                        <div className ="dark:bg-gray-700 md:flex md:items-center md:justify-between p-3">
+                            <p className ="text-sm text-center text-gray-500">
                                 &copy; 2019 - {new Date().getFullYear()} -
-                                <a className="hover:underline" target="_blank"
+                                <a className ="hover:underline" target="_blank"
                                 >CREDEBL
                                 </a> | All rights reserved.
                             </p>
