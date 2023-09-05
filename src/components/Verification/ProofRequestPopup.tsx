@@ -1,12 +1,10 @@
-import { Button, Card, Modal } from 'flowbite-react';
+import { Button, Modal } from 'flowbite-react';
 import React, { useState } from 'react';
-import { getVerificationList, verifyPresentation } from '../../api/verification';
+import { verifyPresentation } from '../../api/verification';
 
 import type { AxiosResponse } from 'axios';
 import CustomSpinner from '../CustomSpinner';
-import type { RequestProof } from './interface';
 import { apiStatusCodes } from '../../config/CommonConstant';
-import type { object } from 'yup';
 import { pathRoutes } from '../../config/pathRoutes';
 import AttributesListData from './AttributesListData';
 import SchemaCredDefDetails from './SchemaCredDefDetails';
@@ -68,47 +66,6 @@ const ProofRequest = (props: {
 		}
 	});
 
-
-	// const SchemaCredDefDetails = () => {
-	// 	return (
-	// 		<>
-	// 			{props?.userData?.slice(0, 1).map((item, index) => (
-	// 				<div className="flex justify-start ml-2 w-full mt-6">
-	// 					<div key={Object.values(item)[2]} className="w-full">
-	// 						<div className="flex flex-start mb-2 w-full ">
-	// 							<div className=" w-3/12 font-semibold text-primary-700 dark:bg-gray-800 m-1 p-1 flex justify-start items-center">
-	// 								Schema Id
-	// 							</div>
-	// 							<div className=" flex items-center p-1 m-1 ">:</div>{' '}
-	// 							<div className="w-9/12 m-1 flex justify-start truncate text-gray-600  items-center">
-	// 								{Object.values(item)[2]}
-	// 							</div>
-	// 						</div>
-	// 						{Object.values(item)[1] ? (
-	// 							<div className="flex flex-start mb-2 w-full ">
-	// 								<div className="w-3/12 font-semibold text-primary-700 dark:bg-gray-800 m-1 p-1 flex justify-start items-center">
-	// 									{Object.values(item)[1] ? 'CredDef Id' : ''}
-	// 								</div>{' '}
-	// 								<div className="flex items-center p-1 m-1">
-	// 									{' '}
-	// 									:
-	// 								</div>{' '}
-	// 								<div className="w-9/12 m-1 flex justify-start truncate text-gray-600  items-center">
-	// 									{Object.values(item)[1]
-	// 										? Object.values(item)[1].slice(0, 36)
-	// 										: ''}
-	// 								</div>
-	// 							</div>
-	// 						) : (
-	// 							''
-	// 						)}
-	// 					</div>
-	// 				</div>
-	// 			))}
-	// 		</>
-	// 	)
-	// }
-
 	return (
 		<div>
 			{!props.view ? (
@@ -118,11 +75,10 @@ const ProofRequest = (props: {
 							onClick={() => {
 								setButtonLoader(false);
 								props.closeModal(false, '');
-								{
-									navigation === true
-										? (window.location.href = `${pathRoutes.organizations.credentials}`)
-										: '';
+								if (navigation === true) {
+									window.location.href = `${pathRoutes.organizations.credentials}`
 								}
+								
 							}}
 							className="text-gray-400 absolute top-2.5 right-2.5 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
 						>
