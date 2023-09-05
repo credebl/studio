@@ -82,7 +82,7 @@ const SignUpUserPassword = ({ firstName, lastName }: { firstName: string; lastNa
 
                 <div className="flex flex-col min-h-screen">
 
-                    <nav
+                    {/* <nav
                         className="bg-white border-b border-gray-200 sm:py-2"
                     >
 
@@ -121,7 +121,7 @@ const SignUpUserPassword = ({ firstName, lastName }: { firstName: string; lastNa
                                 </a>
                             </div>
                         </div>
-                    </nav>
+                    </nav> */}
 
 
                     <div className ="flex flex-1 flex-col md:flex-row">
