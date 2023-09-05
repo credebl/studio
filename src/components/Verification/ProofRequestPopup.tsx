@@ -1,16 +1,15 @@
 import { Button, Card, Modal } from 'flowbite-react';
 import React, { useState } from 'react';
-import { getVerificationList, verifyPresentation } from '../api/verification';
+import { getVerificationList, verifyPresentation } from '../../api/verification';
 
 import type { AxiosResponse } from 'axios';
-import CustomSpinner from '../components/CustomSpinner';
-import type { RequestProof } from '../components/Verification/interface';
-import { apiStatusCodes } from '../config/CommonConstant';
-import type { RequestProof } from '../components/Verification/interface';
-import { getVerificationList, verifyPresentation } from '../api/verification';
-import type { AxiosResponse } from 'axios';
+import CustomSpinner from '../CustomSpinner';
+import type { RequestProof } from './interface';
+import { apiStatusCodes } from '../../config/CommonConstant';
 import type { object } from 'yup';
-import { pathRoutes } from '../config/pathRoutes';
+import { pathRoutes } from '../../config/pathRoutes';
+import AttributesListData from './AttributesListData';
+import SchemaCredDefDetails from './SchemaCredDefDetails';
 
 const ProofRequest = (props: {
 	openModal: boolean;
@@ -69,92 +68,46 @@ const ProofRequest = (props: {
 		}
 	});
 
-	const AttributesListData = (): JSX.Element => {
-		return (
-			<>
-				<Card >
-					<div className="flex h-full flex-col justify-center gap-0 sm:p-0">
-						<div className="flex border-b">
-							<div className="w-5/12 font-semibold flex justify-start truncate md:pl-1 sm:mr-8 md:mr-0 text-primary-700 dark:bg-gray-800 text-xl">
-								Attributes
-							</div>
-							<div className="w-1/12 font-semibold flex justify-start truncate md:pl-1 sm:mr-8 md:mr-0 text-primary-700 dark:bg-gray-800 text-xl">
-							</div>
-							<div className="w-6/12 font-semibold flex justify-start truncate sm:pl-4 text-primary-700 dark:bg-gray-800 text-xl">
-								{' '}
-								Values
-							</div>
-						</div>
 
-						{
-							aggregatedData?.map((item, index) => (
-								<div
-									key={item.entity + 1}
-									className="flex justify-start w-full"
-								>
-									<div
-										className={`flex w-full text-lg`}
-									>
-										<div className="w-5/12 m-1 p-1 flex justify-start items-center text-gray-700 text-lg">
-											{item.entity}
-										</div>
-										<div className="w-1/12 m-1 p-1 flex  items-center text-gray-700 text-lg">
-											:
-										</div>
-										<div className="w-6/12 m-1 truncate p-1 flex flex-start items-center text-gray-700 text-lg">
-											{item.properties.join(', ')}
-										</div>
-									</div>
-								</div>
-							))
-						}
-
-					</div>
-				</Card>
-
-			</>
-		)
-	}
-
-	const SchemaCredDefDetails = () => {
-		return (
-			<>
-				{props?.userData?.slice(0, 1).map((item, index) => (
-					<div className="flex justify-start ml-2 w-full mt-6">
-						<div key={Object.values(item)[2]} className="w-full">
-							<div className="flex flex-start mb-2 w-full ">
-								<div className=" w-3/12 font-semibold text-primary-700 dark:bg-gray-800 m-1 p-1 flex justify-start items-center">
-									Schema Id
-								</div>
-								<div className=" flex items-center p-1 m-1 ">:</div>{' '}
-								<div className="w-9/12 m-1 flex justify-start truncate text-gray-600  items-center">
-									{Object.values(item)[2]}
-								</div>
-							</div>
-							{Object.values(item)[1] ? (
-								<div className="flex flex-start mb-2 w-full ">
-									<div className="w-3/12 font-semibold text-primary-700 dark:bg-gray-800 m-1 p-1 flex justify-start items-center">
-										{Object.values(item)[1] ? 'CredDef Id' : ''}
-									</div>{' '}
-									<div className="flex items-center p-1 m-1">
-										{' '}
-										:
-									</div>{' '}
-									<div className="w-9/12 m-1 flex justify-start truncate text-gray-600  items-center">
-										{Object.values(item)[1]
-											? Object.values(item)[1].slice(0, 36)
-											: ''}
-									</div>
-								</div>
-							) : (
-								''
-							)}
-						</div>
-					</div>
-				))}
-			</>
-		)
-	}
+	// const SchemaCredDefDetails = () => {
+	// 	return (
+	// 		<>
+	// 			{props?.userData?.slice(0, 1).map((item, index) => (
+	// 				<div className="flex justify-start ml-2 w-full mt-6">
+	// 					<div key={Object.values(item)[2]} className="w-full">
+	// 						<div className="flex flex-start mb-2 w-full ">
+	// 							<div className=" w-3/12 font-semibold text-primary-700 dark:bg-gray-800 m-1 p-1 flex justify-start items-center">
+	// 								Schema Id
+	// 							</div>
+	// 							<div className=" flex items-center p-1 m-1 ">:</div>{' '}
+	// 							<div className="w-9/12 m-1 flex justify-start truncate text-gray-600  items-center">
+	// 								{Object.values(item)[2]}
+	// 							</div>
+	// 						</div>
+	// 						{Object.values(item)[1] ? (
+	// 							<div className="flex flex-start mb-2 w-full ">
+	// 								<div className="w-3/12 font-semibold text-primary-700 dark:bg-gray-800 m-1 p-1 flex justify-start items-center">
+	// 									{Object.values(item)[1] ? 'CredDef Id' : ''}
+	// 								</div>{' '}
+	// 								<div className="flex items-center p-1 m-1">
+	// 									{' '}
+	// 									:
+	// 								</div>{' '}
+	// 								<div className="w-9/12 m-1 flex justify-start truncate text-gray-600  items-center">
+	// 									{Object.values(item)[1]
+	// 										? Object.values(item)[1].slice(0, 36)
+	// 										: ''}
+	// 								</div>
+	// 							</div>
+	// 						) : (
+	// 							''
+	// 						)}
+	// 					</div>
+	// 				</div>
+	// 			))}
+	// 		</>
+	// 	)
+	// }
 
 	return (
 		<div>
@@ -201,8 +154,12 @@ const ProofRequest = (props: {
 							) : (
 								<div className=" text-gray-500 dark:text-gray-300 w-full">
 									<div className="mt-1">
-										<AttributesListData />									
-										<SchemaCredDefDetails/>								
+										<AttributesListData 
+										attributeDataList = {aggregatedData}
+										/>									
+										<SchemaCredDefDetails
+										  schemaCredDefList={props?.userData?.slice(0, 1)}
+										/>								
 									</div>
 								</div>
 							)}
@@ -284,9 +241,13 @@ const ProofRequest = (props: {
 							) : (
 								<div className=" text-gray-500 dark:text-gray-300 w-full">
 									<div className="mt-1">
-										<AttributesListData />										
+										<AttributesListData 
+										attributeDataList = {aggregatedData}
+										/>											
 
-										<SchemaCredDefDetails/>								
+										<SchemaCredDefDetails
+										  schemaCredDefList={props?.userData?.slice(0, 1)}
+										/>									
 									</div>
 								</div>
 							)}
