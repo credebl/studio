@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 import type { AxiosResponse } from 'axios';
 import CustomQRCode from '../../commonComponents/QRcode';
-import { Spinner } from 'flowbite-react';
+import CustomSpinner from '../CustomSpinner';
 import { apiStatusCodes } from '../../config/CommonConstant';
 import { createConnection } from '../../api/organization';
 
@@ -188,10 +188,8 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
                 {
                     loading
                         ? (
-                            <div className='flex justify-center'>
-                                <Spinner
-                                    color="info"
-                                />
+                            <div className='flex justify-center'>                              
+                                <CustomSpinner/>
                             </div>
 
                         )

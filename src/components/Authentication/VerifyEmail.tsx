@@ -1,12 +1,13 @@
-import { Button, Spinner } from 'flowbite-react';
 import { EmailVerifyData, verifyUserMail } from '../../api/Auth';
 import { useEffect, useState } from 'react';
 
 import type { AxiosResponse } from 'axios';
-import { apiStatusCodes } from '../../config/CommonConstant';
+import { Button } from 'flowbite-react';
+import CustomSpinner from '../CustomSpinner';
 import React from 'react';
 import NavBar from './NavBar';
 import FooterBar from './FooterBar';
+import { apiStatusCodes } from '../../config/CommonConstant';
 
 const VerifyEmail = () => {
     const [loading, setLoading] = useState<boolean>(true)
@@ -48,10 +49,8 @@ const VerifyEmail = () => {
     return (
         <div>
             {
-                loading ?
-                    <Spinner
-                        color="info"
-                    />
+                loading ?                   
+                    <CustomSpinner/>
                     :
                     <div className="flex flex-col min-h-screen">
 

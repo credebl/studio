@@ -1,5 +1,6 @@
 import type { TableData, TableHeader } from "./interface"
-import { Button, Spinner, Tooltip } from "flowbite-react";
+
+import CustomSpinner from "../../components/CustomSpinner";
 
 interface DataTableProps {
 	header: TableHeader[];
@@ -16,9 +17,8 @@ const DataTable: React.FC<DataTableProps> = ({ header,displaySelect, data, loadi
 		<div className="flex flex-col ">
 			{loading
 				? <div className="flex items-center justify-center mb-4">
-					<Spinner
-						color="info"
-					/>
+					
+					<CustomSpinner/>
 				</div>
 				: <div className="overflow-x-auto rounded-lg">
 					<div className="inline-block min-w-full align-middle">

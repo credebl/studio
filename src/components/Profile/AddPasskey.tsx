@@ -6,11 +6,12 @@
   import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
   import { getFromLocalStorage, getUserProfile } from '../../api/Auth';
   import BreadCrumbs from '../BreadCrumbs';
-  import { Alert, Spinner } from 'flowbite-react';
+  import { Alert } from 'flowbite-react';
   import type { IDeviceData, IdeviceBody, RegistrationOptionInterface, UserProfile, verifyRegistrationObjInterface } from './interfaces';
   import DisplayUserProfile from './DisplayUserProfile';
   import EditUserProfile from './EditUserProfile';
 import UpdateUserProfile from './EditUserProfile';
+import CustomSpinner from '../CustomSpinner';
 
   const AddPasskey = () => {
     const [fidoError, setFidoError] = useState("")
@@ -198,9 +199,8 @@ import UpdateUserProfile from './EditUserProfile';
 
         {fidoLoader
           ? <div className="flex items-center justify-center mb-4">
-            <Spinner
-              color="info"
-            />
+           
+            <CustomSpinner/>
           </div>
           :
 

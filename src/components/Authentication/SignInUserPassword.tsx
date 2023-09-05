@@ -2,23 +2,23 @@ import './global.css'
 
 import * as yup from 'yup';
 
-import { Button, Label, Spinner } from 'flowbite-react';
+import { Button, Label } from 'flowbite-react';
 import {
 	Field,
 	Form,
 	Formik,
 } from 'formik';
-import { getUserProfile, loginUser, passwordEncryption, setToLocalStorage } from '../../api/Auth';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
-import { useState } from 'react';
+import { getUserProfile, loginUser, passwordEncryption, setToLocalStorage } from '../../api/Auth';
 
 import { Alert } from 'flowbite-react';
 import type { AxiosResponse } from 'axios';
+import CustomSpinner from '../CustomSpinner';
 import SignInUserPasskey from './SignInUserPasskey';
 import { getSupabaseClient } from '../../supabase';
-import React from 'react';
 import NavBar from './NavBar';
 import FooterBar from './FooterBar';
+import React, { useState } from 'react';
 
 interface emailValue {
 	email: string;
@@ -261,14 +261,7 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 												<div className="text-sm flex justify-end font-sm text-gray-500 dark:text-gray-400 text-primary-700  dark:text-primary-500  ml-auto">
 
 													{isForgotPassLoading
-														? <span>
-															<Spinner
-																className='mr-2'
-																color="info"
-
-															/>
-															Loading...
-														</span>
+														? <CustomSpinner/>
 														: <span onClick={forgotPassword} className='hover:underline cursor-pointer'>
 
 															{`Forgot Password?`}

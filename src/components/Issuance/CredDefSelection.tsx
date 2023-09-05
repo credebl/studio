@@ -1,20 +1,22 @@
 'use client';
 
-import type { AxiosResponse } from "axios";
-import { Button, Spinner } from "flowbite-react";
-import { useEffect, useState } from "react";
+import type { CredDefData, SchemaState } from "./interface";
+import { apiStatusCodes, storageKeys } from "../../config/CommonConstant";
 import { getFromLocalStorage, setToLocalStorage } from "../../api/Auth";
+import { useEffect, useState } from "react";
+
+import { AlertComponent } from "../AlertComponent";
+import type { AxiosResponse } from "axios";
+import BreadCrumbs from "../BreadCrumbs";
+import { Button } from "flowbite-react";
+import CustomSpinner from "../CustomSpinner";
+import DataTable from "../../commonComponents/datatable";
+import SchemaCard from "../../commonComponents/SchemaCard";
+import type { TableData } from "../../commonComponents/datatable/interface";
+import { dateConversion } from "../../utils/DateConversion";
 import { getCredentialDefinitions } from "../../api/issuance";
 import { getSchemaById } from "../../api/Schema";
-import SchemaCard from "../../commonComponents/SchemaCard";
-import { apiStatusCodes, storageKeys } from "../../config/CommonConstant";
 import { pathRoutes } from "../../config/pathRoutes";
-import { dateConversion } from "../../utils/DateConversion";
-import BreadCrumbs from "../BreadCrumbs";
-import { AlertComponent } from "../AlertComponent";
-import type { SchemaState, CredDefData } from "./interface";
-import type { TableData } from "../../commonComponents/datatable/interface";
-import DataTable from "../../commonComponents/datatable";
 
 const CredDefSelection = () => {
 	const [schemaState, setSchemaState] = useState({ schemaName: '', version: '' })
@@ -126,10 +128,8 @@ const CredDefSelection = () => {
 			</div>
 			<div className="mb-4 col-span-full xl:mb-2 pb-3">
 				{schemaLoader ?
-					<div className="flex items-center justify-center mb-4">
-						<Spinner
-							color="info"
-						/>
+					<div className="flex items-center justify-center mb-4">					
+						<CustomSpinner/>
 					</div>
 					: 
 					<div className="m-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap4">

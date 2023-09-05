@@ -1,14 +1,17 @@
 'use client';
 
-import type { AxiosResponse } from 'axios';
-import { Alert, Button, Card, Spinner } from 'flowbite-react';
-import { useEffect, useState } from 'react';
-import { getFromLocalStorage, removeFromLocalStorage } from '../../api/Auth';
-import { getCredDeffById, getSchemaById } from '../../api/Schema';
-import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
-import BreadCrumbs from '../BreadCrumbs';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+
+import { Alert, Button, Card } from 'flowbite-react';
+import { ErrorMessage, Field, Form, Formik } from 'formik';
+import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
+import { getCredDeffById, getSchemaById } from '../../api/Schema';
+import { getFromLocalStorage, removeFromLocalStorage } from '../../api/Auth';
+import { useEffect, useState } from 'react';
+
+import type { AxiosResponse } from 'axios';
+import BreadCrumbs from '../BreadCrumbs';
+import CustomSpinner from '../CustomSpinner';
 import { issueCredential } from '../../api/issuance';
 import { pathRoutes } from '../../config/pathRoutes';
 
@@ -245,7 +248,7 @@ const IssueCred = () => {
 			)}
 			{userLoader ? (
 				<div className="flex items-center justify-center mb-4">
-					<Spinner color="info" />
+					<CustomSpinner/>
 				</div>
 			) : (
 				<>
