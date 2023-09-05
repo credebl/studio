@@ -134,11 +134,15 @@ export const checkUserExist = async(payload: string) => {
    
 }
 
-export const addPasswordDetails = async(payload: AddPasswordDetails, email:string) => {
+export const addPasskeyUserDetails = async(payload: any, email:string) => {
+    const token = await getFromLocalStorage(storageKeys.TOKEN)
     const details ={
-        url: `${apiRoutes.auth.addDetails}${email}`,
+        url: `${apiRoutes.auth.passkeyUserDetails}${email}`,
         payload,
-        config: { headers: { "Content-type": "application/json" } }
+        config: { headers: {
+            'Content-type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          }, }
     }
     try{
         const response = await axiosPost(details)
