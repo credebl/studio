@@ -34,7 +34,7 @@ const SignUpUserPassword = ({ firstName, lastName }: { firstName: string; lastNa
     const [emailAutoFill, setEmailAutoFill] = useState<string>('')
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
-    const [showSignInUser2, setShowSignInUser2] = useState(false);
+    const [showSignUpUser, setShowSignUpUser] = useState(false);
 
 
 
@@ -59,7 +59,7 @@ const SignUpUserPassword = ({ firstName, lastName }: { firstName: string; lastNa
         const { data } = userRsp as AxiosResponse
         setLoading(false)
         if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-            window.location.href = `/authentication/sign-in?signup=true?fidoFlag=${fidoFlag}`
+            window.location.href = `/authentication/sign-in?signup=true&email=${userEmail}&fidoFlag=${fidoFlag}&method=password`
         } else {
             setErrMsg(userRsp as string)
         }
@@ -67,13 +67,13 @@ const SignUpUserPassword = ({ firstName, lastName }: { firstName: string; lastNa
     }
 
     const handleBackButtonClick = () => {
-        setShowSignInUser2(!showSignInUser2);
+        setShowSignUpUser(!showSignUpUser);
 
     };
 
     return (
         <div>
-            {showSignInUser2 ? (
+            {showSignUpUser ? (
                 <SignUpUserPasskey firstName={firstName} lastName={lastName} />
             ) : (
                 <div className="flex flex-col min-h-screen">
