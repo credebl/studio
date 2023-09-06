@@ -22,7 +22,6 @@ const ResetPassword = () => {
 	const [message, setMessage] = useState<string>('');
 	const [passwordVisible, setPasswordVisible] = useState(false);
 	const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
-	const [showSuggestion, setShowSuggestion] = useState(false);
 
 	const submit = async (passwordDetails: passwordValues) => {
 		setLoading(true);
@@ -41,17 +40,19 @@ const ResetPassword = () => {
 
 	return (
 		<>
-		<div className="h-full">
-			<div className="bg-white flex-shrink-0">
-				<div className="flex flex-col md:flex-row">
-					<div className="flex justify-center px-50 py-50 md:w-3/5 bg-blue-500 bg-opacity-10">
-						<img
-							className="hidden sm:block"
-							src="/images/signin.svg"
-							alt="img"
-						/>
+			<div className="flex flex-col min-h-screen">
+				<NavBar />
+				<div className="flex flex-1 flex-col md:flex-row">
+					<div className="md:w-3/5 w-full bg-blue-500 bg-opacity-10 lg:p-4 md:p-4">
+						<div className="flex justify-center">
+							<img
+								className="hidden sm:block"
+								src="/images/signin.svg"
+								alt="img"
+							/>
+						</div>
 					</div>
-					<div className="flex items-center justify-center p-6 sm:p-12 md:w-2/5 ">
+					<div className="flex md:w-2/5 w-full p-10">
 						<div className="w-full">
 							{(message || erroMsg) && (
 								<Alert
@@ -64,8 +65,8 @@ const ResetPassword = () => {
 								</Alert>
 							)}
 
-							<div className="mt-20 mb-16">
-								<div className="flex justify-center text-center text-primary-700 text-blue-600 font-inter text-4xl font-bold leading-10 ">
+							<div className="flex lg:mt-8 w-full flex-col">
+								<div className="flex justify-center text-center text-primary-700 text-blue-600 font-inter text-3xl font-bold leading-10 ">
 									Reset Password
 								</div>
 								<div className="text-gray-500 font-inter text-base font-medium leading-5 flex w-84 h-5.061 flex-col justify-center items-center flex-shrink-0">
@@ -73,7 +74,7 @@ const ResetPassword = () => {
 								</div>
 							</div>
 
-							<div className="lg:hidden sm:block bg-blue-500 bg-opacity-10">
+							<div className="lg:hidden sm:block md:hidden sm:block bg-blue-500 bg-opacity-10 mt-4">
 								<img src="/images/signin.svg" alt="img" />
 							</div>
 
@@ -88,11 +89,7 @@ const ResetPassword = () => {
 									password: yup
 										.string()
 										.required('Password is required')
-										.matches(
-											passwordRegex,
-											' ',
-											//  'Passwords must contain at least 8 characters, including uppercase, lowercase, numbers and special character'
-										),
+										.matches(passwordRegex, ' '),
 									confirmPassword: yup
 										.string()
 										.required('Confirm Password is required')
@@ -107,11 +104,11 @@ const ResetPassword = () => {
 							>
 								{(formikHandlers): JSX.Element => (
 									<Form
-										className="mt-8 space-y-6"
+										className="mt-12 space-y-6"
 										onSubmit={formikHandlers.handleSubmit}
 									>
 										<div>
-											<div className="text-primary-700 font-inter text-base font-medium leading-5 mt-20 mb-6">
+											<div className="text-primary-700 font-inter text-base font-medium leading-5">
 												<div className="block mb-2 text-sm font-medium  dark:text-white">
 													<Label
 														className="text-primary-700"
@@ -122,18 +119,11 @@ const ResetPassword = () => {
 												</div>
 												<div className="relative">
 													<Field
-														id="signuppassword"
+														id="resetpassword"
 														name="password"
 														placeholder="Please enter password"
-														className="w-full bg-gray-200 px-4 py-2 text-gray-900 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
+														className="truncate w-full bg-gray-200 px-4 py-2 text-gray-700 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
 														type={passwordVisible ? 'text' : 'password'}
-														onFocus={(): void => {
-															setShowSuggestion(true);
-														}}
-														onBlurCapture={(e: any): void => {
-															setShowSuggestion(false);
-															formikHandlers.handleBlur(e);
-														}}
 													/>
 													<button
 														type="button"
@@ -174,7 +164,7 @@ const ResetPassword = () => {
 
 												{formikHandlers?.errors?.password &&
 													formikHandlers?.touched?.password && (
-														<span className="text-red-500 absolute mt-1 text-xs">
+														<span className="text-red-500 text-xs absolute mt-1">
 															{formikHandlers?.errors?.password}
 														</span>
 													)}
@@ -190,10 +180,10 @@ const ResetPassword = () => {
 												</div>
 												<div className="relative">
 													<Field
-														id="signupconfirmpassword"
+														id="resetconfirmpassword"
 														name="confirmPassword"
 														placeholder="Please re-enter password"
-														className="w-full bg-gray-200 px-4 py-2 text-gray-900 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
+														className="truncate w-full bg-gray-200 px-4 py-2 text-gray-900 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
 														type={confirmPasswordVisible ? 'text' : 'password'}
 														onBlur={(e: any): void => {
 															formikHandlers.handleBlur(e);
@@ -246,31 +236,31 @@ const ResetPassword = () => {
 													)}
 											</div>
 
-											{formikHandlers.values.password.length >= 1 && (
-													<div className="mt-4 ml-2">
-														{formikHandlers?.errors?.password &&
-															formikHandlers?.touched &&
-															showSuggestion && (
-																<div className="text-xs py-4 ">
-																	{formikHandlers.values.password && (
-																		<PasswordSuggestionBox
-																			show={true}
-																			value={formikHandlers.values.password}
-																		/>
-																	)}
-																</div>
-															)}
+											<div className="mt-4 ml-2">
+												{formikHandlers?.errors?.password && (
+													<div className="text-xs py-4 ">
+														{formikHandlers.values.password && (
+															<PasswordSuggestionBox
+																show={true}
+																value={formikHandlers?.values?.password}
+															/>
+														)}
 													</div>
 												)}
+											</div>
 
 											<div
-											 className="flex justify-end mt-12"
-											 >
+												className={
+													formikHandlers?.errors?.password
+														? 'flex mt-6'
+														: 'flex mt-12'
+												}
+											>
 												<Button
 													id="signupbutton"
 													type="submit"
 													isProcessing={loading}
-													className="w-2/5 font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+													className="w-full font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 												>
 													<svg
 														xmlns="http://www.w3.org/2000/svg"
@@ -295,7 +285,7 @@ const ResetPassword = () => {
 					</div>
 				</div>
 			</div>
-		</div>
+			<FooterBar />
 		</>
 	);
 };

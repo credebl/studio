@@ -14,15 +14,15 @@ const PasswordSuggestionBox = ({
 	const [smallAlpha, validateSmallAlpha] = useState(false);
 	const [capsAlpha, validateCapsAlpha] = useState(false);
 	const [minChar, validateMinChar] = useState(false);
-	const [unwantedChar, validateUnwantedChar] = useState(false);
+	const [restrictedChar, validateRestrictedChar] = useState(false);
 
 	const onChangeSuggest = (value: string | null): void => {
 		if (value) {
-			const unknown = value.match(allowedPasswordChars);
-			if (unknown === null) {
-				validateUnwantedChar(true);
+			const passwordValue = value.match(allowedPasswordChars);
+			if (passwordValue === null) {
+				validateRestrictedChar(true);
 			} else {
-				validateUnwantedChar(false);
+				validateRestrictedChar(false);
 			}
 			const lowerCaseLetters = /[a-z]/g;
 			if (value.match(lowerCaseLetters)) {
@@ -63,29 +63,29 @@ const PasswordSuggestionBox = ({
 		onChangeSuggest(value);
 	}, [value]);
 
-	const updatedValue = value.match(allowedPasswordChars);
+	const matchedValue = value.match(allowedPasswordChars);
 
 	return (
-		<div className=''>
+		<div className="">
 			{show === true ? (
 				<>
-					{unwantedChar ? (
+					{restrictedChar ? (
 						<>
 							<label></label>
 							<div className="">
 								<div className="text-base text-primary-700">
-									Password must contains:
+									Password must contains :
 									<>
 										<div
 											className={
 												minChar
-													? `text-green-400 flex p-0.5 items-center`
-													: `text-red-400 flex p-0.5 items-center`
+													? `text-green-500 flex p-0.5 items-center`
+													: `text-red-500 flex p-0.5 items-center`
 											}
 										>
 											{minChar ? (
 												<svg
-													className={`w-4 h-4 text-green-400 dark:text-white mr-2`}
+													className={`w-4 h-4 text-green-500 dark:text-white mr-2`}
 													aria-hidden="true"
 													xmlns="http://www.w3.org/2000/svg"
 													fill="none"
@@ -101,7 +101,7 @@ const PasswordSuggestionBox = ({
 												</svg>
 											) : (
 												<svg
-													className="w-4 h-4 text-red-400 dark:text-white mr-2"
+													className="w-4 h-4 text-red-500 dark:text-white mr-2"
 													aria-hidden="true"
 													xmlns="http://www.w3.org/2000/svg"
 													fill="none"
@@ -116,18 +116,18 @@ const PasswordSuggestionBox = ({
 													/>
 												</svg>
 											)}
-											Password must be a minimum of 8 characters.
+											Minimum of 8 characters.
 										</div>
 										<div
 											className={
 												capsAlpha
-													? `text-green-400 flex p-0.5 items-center`
-													: `text-red-400 flex p-0.5 items-center`
+													? `text-green-500 flex p-0.5 items-center`
+													: `text-red-500 flex p-0.5 items-center`
 											}
 										>
 											{capsAlpha ? (
 												<svg
-													className={`w-4 h-4 text-green-400 dark:text-white mr-2`}
+													className={`w-4 h-4 text-green-500 dark:text-white mr-2`}
 													aria-hidden="true"
 													xmlns="http://www.w3.org/2000/svg"
 													fill="none"
@@ -143,7 +143,7 @@ const PasswordSuggestionBox = ({
 												</svg>
 											) : (
 												<svg
-													className="w-4 h-4 text-red-400 dark:text-white mr-2"
+													className="w-4 h-4 text-red-500 dark:text-white mr-2"
 													aria-hidden="true"
 													xmlns="http://www.w3.org/2000/svg"
 													fill="none"
@@ -158,18 +158,18 @@ const PasswordSuggestionBox = ({
 													/>
 												</svg>
 											)}
-										Password must contain at least 1 uppercase letter.
+											At least 1 uppercase letter.
 										</div>
 										<div
 											className={
 												smallAlpha
-													? `text-green-400 flex p-0.5 items-center`
-													: `text-red-400 flex p-0.5 items-center`
+													? `text-green-500 flex p-0.5 items-center`
+													: `text-red-500 flex p-0.5 items-center`
 											}
 										>
 											{smallAlpha ? (
 												<svg
-													className="w-4 h-4 text-green-400 dark:text-white mr-2"
+													className="w-4 h-4 text-green-500 dark:text-white mr-2"
 													aria-hidden="true"
 													xmlns="http://www.w3.org/2000/svg"
 													fill="none"
@@ -185,7 +185,7 @@ const PasswordSuggestionBox = ({
 												</svg>
 											) : (
 												<svg
-													className="w-4 h-4 text-red-400 dark:text-white mr-2"
+													className="w-4 h-4 text-red-500 dark:text-white mr-2"
 													aria-hidden="true"
 													xmlns="http://www.w3.org/2000/svg"
 													fill="none"
@@ -200,18 +200,18 @@ const PasswordSuggestionBox = ({
 													/>
 												</svg>
 											)}
-											Password must contain at least 1 lowercase letter.
+											At least 1 lowercase letter.
 										</div>
 										<div
 											className={
 												number
-													? `text-green-400 flex p-0.5 items-center`
-													: `text-red-400 flex p-0.5 items-center`
+													? `text-green-500 flex p-0.5 items-center`
+													: `text-red-500 flex p-0.5 items-center`
 											}
 										>
 											{number ? (
 												<svg
-													className={`w-4 h-4 text-green-400 dark:text-white mr-2`}
+													className={`w-4 h-4 text-green-500 dark:text-white mr-2`}
 													aria-hidden="true"
 													xmlns="http://www.w3.org/2000/svg"
 													fill="none"
@@ -227,7 +227,7 @@ const PasswordSuggestionBox = ({
 												</svg>
 											) : (
 												<svg
-													className="w-4 h-4 text-red-400 dark:text-white mr-2"
+													className="w-4 h-4 text-red-500 dark:text-white mr-2"
 													aria-hidden="true"
 													xmlns="http://www.w3.org/2000/svg"
 													fill="none"
@@ -242,18 +242,18 @@ const PasswordSuggestionBox = ({
 													/>
 												</svg>
 											)}
-											Password must contain at least 1 numeric character.
+											At least 1 numeric character.
 										</div>
 										<div
 											className={
 												splChar
-													? `text-green-400 flex p-0.5 items-center`
-													: `text-red-400 flex p-0.5 items-center`
+													? `text-green-500 flex p-0.5 items-center`
+													: `text-red-500 flex p-0.5 items-center`
 											}
 										>
 											{splChar ? (
 												<svg
-													className="w-4 h-4 text-green-400 dark:text-white mr-2"
+													className="w-4 h-4 text-green-500 dark:text-white mr-2"
 													aria-hidden="true"
 													xmlns="http://www.w3.org/2000/svg"
 													fill="none"
@@ -269,7 +269,7 @@ const PasswordSuggestionBox = ({
 												</svg>
 											) : (
 												<svg
-													className="w-4 h-4 text-red-400 dark:text-white mr-2"
+													className="w-4 h-4 text-red-500 dark:text-white mr-2"
 													aria-hidden="true"
 													xmlns="http://www.w3.org/2000/svg"
 													fill="none"
@@ -284,7 +284,7 @@ const PasswordSuggestionBox = ({
 													/>
 												</svg>
 											)}
-											Password must contain at least 1 special character.
+											At least 1 special character.
 										</div>
 									</>
 								</div>
@@ -292,15 +292,15 @@ const PasswordSuggestionBox = ({
 						</>
 					) : (
 						<>
-							{updatedValue && (
-								<div className="text-red-700 flex ">
-									{updatedValue.length > 1
+							{matchedValue && (
+								<div className="text-red-700 flex">
+									{matchedValue.length > 1
 										? 'Following characters are not allowed: '
 										: 'Following character is not allowed: '}
 									<br />
 									<strong>
-										{updatedValue
-											.filter((c, index) => updatedValue.indexOf(c) === index)
+										{matchedValue
+											.filter((c, index) => matchedValue.indexOf(c) === index)
 											.join(' ')}
 									</strong>
 								</div>
@@ -309,7 +309,7 @@ const PasswordSuggestionBox = ({
 					)}
 				</>
 			) : (
-				<label>{""}</label>
+				<label>{''}</label>
 			)}
 		</div>
 	);
