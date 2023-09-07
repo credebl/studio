@@ -144,25 +144,20 @@ const ResetPassword = () => {
 														className="bg-transparent absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-white hover:text-gray-800 dark:hover:text-white"
 													>
 														{passwordVisible ? (
-																<PassInvisible/>
+															<PassInvisible />
 														) : (
-																<PassVisible/>
+															<PassVisible />
 														)}
 													</button>
 												</div>
-												{ showSuggestion&& formikHandlers?.errors?.password &&
-														formikHandlers.values.password && (
-															<div className="mt-4 ml-6">
-																<div className="text-xs py-4 absolute bg-white rounded-sm z-10 px-6 py-4 shadow-lg shadow-gray-500/50 flex justify-end">
-																	{formikHandlers.values.password && (
-																		<PasswordSuggestionBox
-																			show={true}
-																			value={formikHandlers?.values?.password}
-																		/>
-																	)}
-																</div>
-															</div>
-														)}
+												{showSuggestion &&
+													formikHandlers?.errors?.password &&
+													formikHandlers.values.password && (
+														<PasswordSuggestionBox
+															show={true}
+															value={formikHandlers?.values?.password}
+														/>
+													)}
 
 												{formikHandlers?.errors?.password &&
 													formikHandlers?.touched?.password && (
@@ -203,9 +198,9 @@ const ResetPassword = () => {
 														className="bg-transparent absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-white hover:text-gray-800 dark:hover:text-white"
 													>
 														{confirmPasswordVisible ? (
-															<PassInvisible/>
+															<PassInvisible />
 														) : (
-															<PassVisible/>
+															<PassVisible />
 														)}
 													</button>
 												</div>
@@ -217,16 +212,14 @@ const ResetPassword = () => {
 													)}
 											</div>
 
-											<div
-												className='flex mt-12'
-											>
+											<div className="flex mt-12">
 												<Button
 													id="signupbutton"
 													type="submit"
 													isProcessing={loading}
 													className="w-full font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 												>
-													<SignUpArrow/>
+													<SignUpArrow />
 													<span className="ml-2">Submit</span>
 												</Button>
 											</div>
