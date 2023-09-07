@@ -293,7 +293,7 @@ const PasswordSuggestionBox = ({
 					) : (
 						<>
 							{matchedValue && (
-								<div className="text-red-700 flex">
+								<div className="text-red-700">
 									{matchedValue.length > 1
 										? 'Following characters are not allowed: '
 										: 'Following character is not allowed: '}

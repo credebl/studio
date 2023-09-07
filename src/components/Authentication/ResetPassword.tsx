@@ -25,6 +25,7 @@ const ResetPassword = () => {
 	const [message] = useState<string>('');
 	const [passwordVisible, setPasswordVisible] = useState(false);
 	const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+	const [showSuggestion, setShowSuggestion] = useState(false);
 
 	const submit = async (passwordDetails: passwordValues) => {
 		setLoading(true);
@@ -127,6 +128,13 @@ const ResetPassword = () => {
 														placeholder="Please enter password"
 														className="truncate w-full bg-gray-200 px-4 py-2 text-gray-700 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
 														type={passwordVisible ? 'text' : 'password'}
+														onFocus={(): void => {
+															setShowSuggestion(true);
+														}}
+														onBlurCapture={(e: any): void => {
+															setShowSuggestion(false);
+															formikHandlers.handleBlur(e);
+														}}
 													/>
 													<button
 														type="button"
@@ -142,6 +150,19 @@ const ResetPassword = () => {
 														)}
 													</button>
 												</div>
+												{ showSuggestion&& formikHandlers?.errors?.password &&
+														formikHandlers.values.password && (
+															<div className="mt-4 ml-6">
+																<div className="text-xs py-4 absolute bg-white rounded-sm z-10 px-6 py-4 shadow-lg shadow-gray-500/50 flex justify-end">
+																	{formikHandlers.values.password && (
+																		<PasswordSuggestionBox
+																			show={true}
+																			value={formikHandlers?.values?.password}
+																		/>
+																	)}
+																</div>
+															</div>
+														)}
 
 												{formikHandlers?.errors?.password &&
 													formikHandlers?.touched?.password && (
@@ -150,6 +171,7 @@ const ResetPassword = () => {
 														</span>
 													)}
 											</div>
+
 											<div className="text-primary-700 font-inter text-base font-medium leading-5 mt-8 mb-6">
 												<div className="block mb-2 text-sm font-medium  dark:text-white">
 													<Label
@@ -195,25 +217,8 @@ const ResetPassword = () => {
 													)}
 											</div>
 
-											<div className="mt-4 ml-2">
-												{formikHandlers?.errors?.password && (
-													<div className="text-xs py-4 ">
-														{formikHandlers.values.password && (
-															<PasswordSuggestionBox
-																show={true}
-																value={formikHandlers?.values?.password}
-															/>
-														)}
-													</div>
-												)}
-											</div>
-
 											<div
-												className={
-													formikHandlers?.errors?.password
-														? 'flex mt-6'
-														: 'flex mt-12'
-												}
+												className='flex mt-12'
 											>
 												<Button
 													id="signupbutton"
