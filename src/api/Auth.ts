@@ -6,12 +6,13 @@ import CryptoJS from "crypto-js"
 import { apiRoutes } from '../config/apiRoutes'
 import { envConfig } from '../config/envConfig'
 import { storageKeys } from '../config/CommonConstant'
+import type { AddPassword } from '../components/Profile/interfaces'
 
 export interface UserSignUpData {
     email: string,
 }
 export interface AddPasswordDetails {
-    password:string
+    password?:string
     isPasskey:boolean
     firstName: string|null
     lastName: string|null
@@ -151,6 +152,29 @@ export const addPasswordDetails = async(payload: AddPasswordDetails, email:strin
 
    
 }
+
+export const addPasskeyUserDetails = async(payload: AddPassword, email:string) => {
+    const token = await getFromLocalStorage(storageKeys.TOKEN)
+    const details ={
+        url: `${apiRoutes.auth.passkeyUserDetails}${email}`,
+        payload,
+        config: { headers: {
+            'Content-type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          }, }
+    }
+    try{
+        const response = await axiosPost(details)
+        return response
+    }
+    catch(error){
+        const err = error as Error
+        return err?.message
+    }
+
+   
+}
+
 
 export const passwordEncryption = (password: string): string => {
     const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`    

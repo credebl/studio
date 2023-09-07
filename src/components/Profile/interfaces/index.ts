@@ -4,6 +4,9 @@ export interface RegistrationOptionInterface {
 
 }
 
+export interface AddPassword {
+  password: string,
+}
 export interface verifyRegistrationObjInterface {
   id: string;
   rawId: string;

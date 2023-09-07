@@ -8,13 +8,15 @@ import {
     Form,
     Formik
 } from 'formik';
-import { passwordRegex } from '../../config/CommonConstant.js';
-import { useState } from 'react';
+import { apiStatusCodes, passwordRegex, storageKeys } from '../../config/CommonConstant.js';
+import { useEffect, useState } from 'react';
 
 import { getSupabaseClient } from '../../supabase';
 import { pathRoutes } from '../../config/pathRoutes.js';
 import FooterBar from './FooterBar.js';
 import NavBar from './NavBar.js';
+import { addPasskeyUserDetails, passwordEncryption, setToLocalStorage } from '../../api/Auth.js';
+import type { AxiosResponse } from 'axios';
 
 interface passwordValues {
     password: string,
@@ -29,20 +31,74 @@ const ResetPassword = () => {
     const [message, setMessage] = useState<string>('')
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+    const [userToken, setUserToken] = useState<string>('');
+
+    useEffect(() => {
+        const setAccessToken = async () => {
+            const hashPart = window.location.href.split("#")[1];
+            const paramsArray = hashPart.split("&");
+            let accessToken;
+            for (const param of paramsArray) {
+                const [key, value] = param.split("=");
+                if (key === "access_token") {
+                    accessToken = value;
+                    break;
+                }
+            }
+            if (accessToken) {
+                setUserToken(accessToken);
+            } else {
+                setErrMsg('An error occurred while updating password in supabase.');
+            }
+
+        };
+        setAccessToken();
+    }, []);
 
     const submit = async (passwordDetails: passwordValues) => {
-
-        setLoading(true)
-
-        const { data, error } = await getSupabaseClient().auth.updateUser({ password: passwordDetails?.password });
-
-        setLoading(false)
-        if (!error) {
+        try {
+          await setToLocalStorage(storageKeys.TOKEN, userToken);
+          setLoading(true);
+      
+          const { data, error } = await getSupabaseClient().auth.updateUser({ password: passwordDetails?.password });
+          
+          if (data?.user?.email) {
+            await updatePasswordDetails(passwordEncryption(passwordDetails?.password), data.user.email);
+          }
+          
+          if (!error) {
+            setLoading(false);
             window.location.href = `${pathRoutes.auth.sinIn}?isPasswordSet=true`
-        } else {
-            setErrMsg(error.message)
+          } else {
+            setLoading(false);
+            setErrMsg(error.message);
+          }
+        } catch (error) {
+          console.error('An error occurred:', error);
+          setErrMsg('An error occurred while updating password in supabase.');
         }
-    }
+      };
+      
+
+    const updatePasswordDetails = async (password: string, email: string) => {
+        try {
+            const payload = {
+                password: password
+            }
+          const passkeyUserDetailsResp = await addPasskeyUserDetails(payload, email);
+          const { data } = passkeyUserDetailsResp as AxiosResponse;
+      
+          if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+            setLoading(false);
+          } else {
+            setErrMsg(passkeyUserDetailsResp as string);
+          }
+        } catch (error) {
+          console.error('An error occurred:', error);
+          setErrMsg('An error occurred while updating password details.');
+        }
+      };
+      
 
     return (
         <div>
@@ -190,7 +246,7 @@ const ResetPassword = () => {
                                                     />
 
                                                     <button
-                                                        
+
                                                         type="button"
                                                         onClick={() => setConfirmPasswordVisible((prevVisible) => !prevVisible)}
                                                         className="bg-transparent absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-white hover:text-gray-800 dark:hover:text-white"
