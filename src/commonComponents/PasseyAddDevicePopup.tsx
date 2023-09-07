@@ -1,19 +1,18 @@
 import * as yup from 'yup';
-import { Button, Label, Modal } from 'flowbite-react';
+import { Button, Label, Modal, Alert } from 'flowbite-react';
 import {
 	Field,
 	Form,
 	Formik,
 } from 'formik';
 import { useState } from 'react';
-import { Alert } from 'flowbite-react';
 import type { AxiosResponse } from 'axios';
 import { addPasskeyUserDetails, getFromLocalStorage, passwordEncryption } from '../api/Auth';
 import { apiStatusCodes, storageKeys } from '../config/CommonConstant';
 import { getSupabaseClient } from '../supabase';
 import passkeyAddDevice from '../assets/passkeyAddDevice.svg';
 
-interface passwordValue {
+interface PasswordValue {
 	Password: string;
 }
 
@@ -26,7 +25,7 @@ const PasskeyAddDevice = (props: {
 	const [success, setSuccess] = useState<string | null>(null)
 	const [passwordVisible, setPasswordVisible] = useState(false);
 
-	const savePassword = async (values: passwordValue) => {
+	const savePassword = async (values: PasswordValue) => {
 		try {
 			const storedEmail = await getFromLocalStorage(storageKeys.LOGIN_USER_EMAIL);
 			const { data, error } = await getSupabaseClient().auth.signInWithPassword({
@@ -37,7 +36,6 @@ const PasskeyAddDevice = (props: {
 				setFidoUserError(error?.message)
 
 			} else {
-				if (data) {
 					const payload = {
 						password: passwordEncryption(values.Password)
 					}
@@ -49,7 +47,7 @@ const PasskeyAddDevice = (props: {
 					} else {
 						setFidoUserError(passkeyUserDetailsResp as string)
 					}
-				}
+				
 			}
 		} catch (error) {
 			console.error('An unexpected error occurred:', error.message);
@@ -102,7 +100,7 @@ const PasskeyAddDevice = (props: {
 						validateOnBlur
 						validateOnChange
 						enableReinitialize
-						onSubmit={(values: passwordValue) => savePassword(values)}
+						onSubmit={(values: PasswordValue) => savePassword(values)}
 					>
 						{(formikHandlers): JSX.Element => (
 							<Form className="mt-8 space-y-6" onSubmit={formikHandlers.handleSubmit}>
@@ -120,6 +118,7 @@ const PasskeyAddDevice = (props: {
 										/>
 										<button
 											type="button"
+											id="checkuserpassword"
 											onClick={() => setPasswordVisible((prevVisible) => !prevVisible)}
 											className="bg-transparent ml-4 absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-white hover:text-gray-800 dark:hover:text-white"
 										>

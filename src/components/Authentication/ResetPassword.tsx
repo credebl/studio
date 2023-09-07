@@ -16,7 +16,7 @@ import { pathRoutes } from '../../config/pathRoutes.js';
 import PasswordSuggestionBox from './PasswordSuggestionBox.js';
 import FooterBar from './FooterBar.js';
 import NavBar from './NavBar.js';
-import { addPasskeyUserDetails, getFromLocalStorage, passwordEncryption, setToLocalStorage } from '../../api/Auth.js';
+import { addPasskeyUserDetails, passwordEncryption, setToLocalStorage } from '../../api/Auth.js';
 import type { AxiosResponse } from 'axios';
 
 interface passwordValues {
@@ -54,7 +54,7 @@ const ResetPassword = () => {
             if (accessToken) {
                 setUserToken(accessToken);
             } else {
-
+                setErrMsg('An error occurred while updating password in supabase.');
             }
 
         };
