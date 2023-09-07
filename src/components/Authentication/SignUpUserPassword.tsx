@@ -37,17 +37,10 @@ const SignUpUserPassword = ({
 }) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [erroMsg, setErrMsg] = useState<string | null>(null);
-	const [verificationSuccess, setVerificationSuccess] = useState<string>('');
-	const [emailAutoFill, setEmailAutoFill] = useState<string>('');
+	const [verificationSuccess] = useState<string>('');
 	const [passwordVisible, setPasswordVisible] = useState(false);
 	const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 	const [showSignInUser2, setShowSignInUser2] = useState(false);
-
-	useEffect(() => {
-		if (window?.location?.search.length > 7) {
-			setEmailAutoFill(window?.location?.search.split('=')[1]);
-		}
-	}, []);
 
 	const submit = async (passwordDetails: passwordValues, fidoFlag: boolean) => {
 		const payload = {
@@ -80,9 +73,7 @@ const SignUpUserPassword = ({
 				<SignUpUserPasskey firstName={firstName} lastName={lastName} />
 			) : (
 				<div className="flex flex-col min-h-screen">
-					<>
 						<NavBar />
-					</>
 					<div className="flex flex-1 flex-col md:flex-row">
 						<div className="md:w-3/5 w-full bg-blue-500 bg-opacity-10 lg:p-4 md:p-4">
 							<div className="flex justify-center">
@@ -355,9 +346,7 @@ const SignUpUserPassword = ({
 							</div>
 						</div>
 					</div>
-					<>
 						<FooterBar />
-					</>
 				</div>
 			)}
 		</div>
