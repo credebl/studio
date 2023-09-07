@@ -21,8 +21,6 @@ interface emailValue {
 	email: string | null;
 }
 
-const signUpSuccessPassword = '?signup=true?fidoFlag=false'
-const signUpSuccessPasskey = '?signup=true?fidoFlag=true'
 const resetPasswordSuccess = '?isPasswordSet=true'
 
 const SignInUser = () => {
@@ -35,28 +33,39 @@ const SignInUser = () => {
 	const [isEmailValid, setIsEmailValid] = useState(false);
 	const [isPasskeySuccess, setIsPasskeySuccess] = useState(false);
 	const [userLoginEmail, setUserLoginEmail] = useState<string | null>(null);
-
 	const nextButtonRef = useRef<HTMLButtonElement | null>(null);
 
 	useEffect(() => {
+
 		const fetchData = async () => {
-			const storedEmail = await getFromLocalStorage(storageKeys.LOGIN_USER_EMAIL);
-			setUserLoginEmail(storedEmail);
-			setEmail({ email: storedEmail || '' });
+			try {
+				const storedEmail = await getFromLocalStorage(storageKeys.LOGIN_USER_EMAIL);
 
-			const entries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];;
-			const isRefreshPage = entries.length > 0 && entries[0].type === 'reload';
+				const searchParam = new URLSearchParams(window?.location?.search)
+				const userEmail = searchParam.get('email');
+				const signUpStatus = searchParam.get('signup');
+				const fidoFlag = searchParam.get('fidoFlag');
+				const loginMethod = searchParam.get('method');
 
-			if (isRefreshPage) {
-				await setToLocalStorage(storageKeys.LOGIN_USER_EMAIL, '');
-			}
+				setUserLoginEmail(storedEmail || userEmail);
+				setEmail({ email: storedEmail || '' });
 
-			if (signUpSuccessPassword === window?.location?.search) {
-				setSuccess('Congratulations!! 🎉 You have successfully registered on CREDEBL 🚀');
-			} else if (signUpSuccessPasskey === window?.location?.search) {
-				setIsPasskeySuccess(true);
-			} else if (resetPasswordSuccess === window?.location?.search) {
-				setSuccess('Congratulations!! 🎉 Your new password set successfully');
+				const entries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];;
+				const isRefreshPage = entries.length > 0 && entries[0].type === 'reload';
+
+				if (isRefreshPage) {
+					await setToLocalStorage(storageKeys.LOGIN_USER_EMAIL, '');
+				}
+
+				if (signUpStatus === 'true' && fidoFlag === 'false' && loginMethod === 'password') {
+					setSuccess('Congratulations!! 🎉 You have successfully registered on CREDEBL 🚀');
+				} else if (signUpStatus === 'true' && fidoFlag === 'true' && loginMethod === 'passkey') {
+					setIsPasskeySuccess(true);
+				} else if (resetPasswordSuccess === window?.location?.search) {
+					setSuccess('Congratulations!! 🎉 Your new password set successfully');
+				}
+			} catch (err) {
+				console.log("ERROR-LOGIN::", err)
 			}
 		};
 
@@ -81,22 +90,17 @@ const SignInUser = () => {
 		}
 	}, []);
 
-
 	return (
 		<div>
 			{currentComponent === 'email' && isPasskeySuccess ? (<RegistrationSuccess />)
 				: currentComponent === 'password' ? (
 					<SignInUserPasskey email={email?.email as string} />
 				) : (
-
-
 					<div className="flex flex-col min-h-screen">
-
 						<NavBar />
-						<div  className="flex flex-1 flex-col md:flex-row">
+						<div className="flex flex-1 flex-col md:flex-row">
 							<div className="md:w-3/5 w-full bg-blue-500 bg-opacity-10 lg:p-4 md:p-4">
 								<div className='flex justify-center'>
-
 									<img
 										className='hidden sm:block'
 										src='/images/signin.svg'
@@ -105,7 +109,6 @@ const SignInUser = () => {
 							</div>
 
 							<div className="md:w-2/5 w-full p-10 flex">
-
 								<div className="w-full">
 									{
 										(success || failure || fidoUserError) &&
@@ -149,7 +152,6 @@ const SignInUser = () => {
 											src="/images/signin.svg"
 											alt="img" />
 									</div>
-
 
 									<Formik
 										initialValues={{
