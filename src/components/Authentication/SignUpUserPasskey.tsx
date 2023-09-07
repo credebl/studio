@@ -9,7 +9,6 @@ import { apiStatusCodes, storageKeys } from '../../config/CommonConstant.js';
 import { useEffect, useState } from 'react';
 
 import SignUpUserPassword from './SignUpUserPassword.jsx';
-import secureRandomPassword from 'secure-random-password';
 import { startRegistration } from '@simplewebauthn/browser';
 import React from 'react';
 import SignUpUserName from './SignUpUserName.js';
@@ -76,7 +75,7 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
         const { data } = userRsp as AxiosResponse
         setLoading(false)
         if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-            window.location.href = `/authentication/sign-in?signup=true?fidoFlag=${fidoFlag}`
+            window.location.href = `/authentication/sign-in?signup=true&fidoFlag=${fidoFlag}&method=passkey`
         } else {
             setErrMsg(userRsp as string)
         }
