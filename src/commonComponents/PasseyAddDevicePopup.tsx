@@ -28,7 +28,7 @@ const PasskeyAddDevice = (props: {
 	const savePassword = async (values: PasswordValue) => {
 		try {
 			const storedEmail = await getFromLocalStorage(storageKeys.LOGIN_USER_EMAIL);
-			const { data, error } = await getSupabaseClient().auth.signInWithPassword({
+			const { error } = await getSupabaseClient().auth.signInWithPassword({
 				email: storedEmail,
 				password: values.Password,
 			});
@@ -124,6 +124,7 @@ const PasskeyAddDevice = (props: {
 										>
 											{passwordVisible ? (
 												<svg className="h-6 w-6 text-black"
+												    id="visible"
 													viewBox="0 0 24 24"
 													fill="none"
 													stroke="currentColor"
@@ -136,6 +137,7 @@ const PasskeyAddDevice = (props: {
 												<svg className="h-6 w-6 text-black"
 													viewBox="0 0 24 24"
 													fill="none"
+													id="invisible"
 													stroke="currentColor"
 													stroke-width="2"
 													stroke-linecap="round"
