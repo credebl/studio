@@ -10,7 +10,6 @@ import { apiStatusCodes, storageKeys } from "../../config/CommonConstant";
 import { getOrganizations } from "../../api/organization";
 import { getUserActivity } from "../../api/users";
 import { getUserInvitations } from "../../api/invitations";
-import moment from "moment";
 import { pathRoutes } from "../../config/pathRoutes";
 import { setToLocalStorage } from "../../api/Auth";
 import { dateConversion } from "../../utils/DateConversion";
