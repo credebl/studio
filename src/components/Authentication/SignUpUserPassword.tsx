@@ -204,19 +204,15 @@ const SignUpUserPassword = ({
 															)}
 														</button>
 													</div>
-													{ showSuggestion&& formikHandlers?.errors?.password &&
-														formikHandlers.values.password && (
-															<div className="mt-4 ml-6">
-																<div className="text-xs py-4 absolute bg-white rounded-sm z-10 px-6 py-4 shadow-lg shadow-gray-500/50 flex justify-end">
-																	{formikHandlers.values.password && (
-																		<PasswordSuggestionBox
-																			show={true}
-																			value={formikHandlers?.values?.password}
-																		/>
-																	)}
-																</div>
-															</div>
-														)}
+													
+													{showSuggestion &&
+													formikHandlers?.errors?.password &&
+													formikHandlers.values.password && (
+														<PasswordSuggestionBox
+															show={true}
+															value={formikHandlers?.values?.password}
+														/>
+													)}
 													{formikHandlers?.errors?.password &&
 														formikHandlers?.touched?.password && (
 															<span className="text-red-500 text-xs absolute mt-1">
