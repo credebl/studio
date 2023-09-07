@@ -2,10 +2,13 @@ import { verifyPresentation } from "../api/verification";
 
 export const apiRoutes = {
     auth:{
-        sendMail:'/auth/verification-mail',
-        sinIn: '/auth/signin',
-        verifyEmail:'/auth/verify',
-        addDetails:'/auth/signup'
+        sendMail: '/users/send-mail',
+        sinIn: '/users/login',
+        verifyEmail:'/users/verify',
+        userProfile: 'users/profile',
+        checkUser:'/users/check-user/',
+        addDetails:'/users/add/',
+        passkeyUserDetails:'/users/password/'
     },
     users:{
         userProfile: '/users/profile',
