@@ -15,7 +15,6 @@ import { getOrganizations } from '../../../api/organization';
 import { pathRoutes } from '../../../config/pathRoutes';
 import { EmptyListMessage } from '../../EmptyListComponent';
 import CustomSpinner from '../../CustomSpinner';
-import { dateConversion } from '../../../utils/DateConversion';
 
 const initialPageState = {
     pageNumber: 1,
