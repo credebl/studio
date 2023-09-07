@@ -136,6 +136,7 @@ export const checkUserExist = async(payload: string) => {
 }
 
 export const addPasswordDetails = async(payload: AddPasswordDetails, email:string) => {
+    // Api call to add password details
     const details ={
         url: `${apiRoutes.auth.addDetails}${email}`,
         payload,
