@@ -40,7 +40,8 @@ const SignUpUserPassword = ({
 	const [verificationSuccess] = useState<string>('');
 	const [passwordVisible, setPasswordVisible] = useState(false);
 	const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
-	const [showSignInUser2, setShowSignInUser2] = useState(false);
+	const [showSignUpUser, setShowSignUpUser] = useState(false);
+	const [showSuggestion, setShowSuggestion] = useState(false);
 
 	const submit = async (passwordDetails: passwordValues, fidoFlag: boolean) => {
 		const payload = {
@@ -64,15 +65,15 @@ const SignUpUserPassword = ({
 	};
 
 	const handleBackButtonClick = () => {
-		setShowSignInUser2(!showSignInUser2);
+		setShowSignUpUser(!showSignUpUser);
 	};
 
-	const initialValues={
+	const initialValues = {
 		firstName: '',
 		lastName: '',
 		password: '',
 		confirmPassword: '',
-	}
+	};
 
 	const schemaValidation=yup.object().shape({
 		password: yup
@@ -87,11 +88,11 @@ const SignUpUserPassword = ({
 
 	return (
 		<div>
-			{showSignInUser2 ? (
+			{showSignUpUser ? (
 				<SignUpUserPasskey firstName={firstName} lastName={lastName} />
 			) : (
 				<div className="flex flex-col min-h-screen">
-						<NavBar />
+					<NavBar />
 					<div className="flex flex-1 flex-col md:flex-row">
 						<div className="md:w-3/5 w-full bg-blue-500 bg-opacity-10 lg:p-4 md:p-4">
 							<div className="flex justify-center">
@@ -179,6 +180,13 @@ const SignUpUserPassword = ({
 															placeholder="Please enter password"
 															className="truncate w-full bg-gray-200 px-4 py-2 text-gray-700 text-sm rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
 															type={passwordVisible ? 'text' : 'password'}
+															onFocus={(): void => {
+																setShowSuggestion(true);
+															}}
+															onBlurCapture={(e: any): void => {
+																setShowSuggestion(false);
+																formikHandlers.handleBlur(e);
+															}}
 														/>
 														<button
 															type="button"
@@ -190,14 +198,25 @@ const SignUpUserPassword = ({
 															className="bg-transparent absolute right-2 top-1/2 transform -translate-y-1/2 dark:text-white hover:text-gray-800 dark:hover:text-white"
 														>
 															{passwordVisible ? (
-																<PassInvisible/>
+																<PassInvisible />
 															) : (
-																<PassVisible/>
-
+																<PassVisible />
 															)}
 														</button>
 													</div>
-
+													{ showSuggestion&& formikHandlers?.errors?.password &&
+														formikHandlers.values.password && (
+															<div className="mt-4 ml-6">
+																<div className="text-xs py-4 absolute bg-white rounded-sm z-10 px-6 py-4 shadow-lg shadow-gray-500/50 flex justify-end">
+																	{formikHandlers.values.password && (
+																		<PasswordSuggestionBox
+																			show={true}
+																			value={formikHandlers?.values?.password}
+																		/>
+																	)}
+																</div>
+															</div>
+														)}
 													{formikHandlers?.errors?.password &&
 														formikHandlers?.touched?.password && (
 															<span className="text-red-500 text-xs absolute mt-1">
@@ -223,6 +242,10 @@ const SignUpUserPassword = ({
 															type={
 																confirmPasswordVisible ? 'text' : 'password'
 															}
+															onBlurCapture={(e: any): void => {
+																setShowSuggestion(false);
+																formikHandlers.handleBlur(e);
+															}}
 														/>
 
 														<button
@@ -235,9 +258,9 @@ const SignUpUserPassword = ({
 															className="bg-transparent absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-white hover:text-gray-800 dark:hover:text-white"
 														>
 															{confirmPasswordVisible ? (
-															  <PassInvisible/>
+																<PassInvisible />
 															) : (
-																<PassVisible/>
+																<PassVisible />
 															)}
 														</button>
 													</div>
@@ -248,26 +271,8 @@ const SignUpUserPassword = ({
 															</span>
 														)}
 												</div>
-
-												<div className="mt-4 ml-2">
-													{formikHandlers?.errors?.password && (
-														<div className="text-xs py-4 ">
-															{formikHandlers.values.password && (
-																<PasswordSuggestionBox
-																	show={true}
-																	value={formikHandlers?.values?.password}
-																/>
-															)}
-														</div>
-													)}
-												</div>
-
 												<div
-													className={
-														formikHandlers?.errors?.password
-															? 'flex mt-6'
-															: 'flex mt-16'
-													}
+													className='flex mt-16'
 												>
 													<Button
 														id="signupbutton"
@@ -275,7 +280,7 @@ const SignUpUserPassword = ({
 														isProcessing={loading}
 														className="w-full font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 													>
-														<SignUpArrow/>
+														<SignUpArrow />
 														<span className="ml-2">Sign Up</span>
 													</Button>
 												</div>
@@ -296,7 +301,7 @@ const SignUpUserPassword = ({
 							</div>
 						</div>
 					</div>
-						<FooterBar />
+  				<FooterBar />
 				</div>
 			)}
 		</div>
