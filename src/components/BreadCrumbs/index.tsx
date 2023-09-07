@@ -36,7 +36,8 @@ export default function BreadCrumbs() {
             className="bg-gray-50 py-3 dark:bg-gray-900"
         >
 
-            <Breadcrumb.Item
+           <div className='flex flex-wrap'>
+					 <Breadcrumb.Item
                 href="/dashboard"
                 icon={HiHome}
             >
@@ -55,6 +56,7 @@ export default function BreadCrumbs() {
                     </Breadcrumb.Item>
                 );
             })}
+					 </div>
         </Breadcrumb>
     )
 }
