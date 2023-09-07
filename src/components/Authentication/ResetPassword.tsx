@@ -19,14 +19,14 @@ interface passwordValues {
 const ResetPassword = () => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [erroMsg, setErrMsg] = useState<string | null>(null);
-	const [message, setMessage] = useState<string>('');
+	const [message] = useState<string>('');
 	const [passwordVisible, setPasswordVisible] = useState(false);
 	const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
 	const submit = async (passwordDetails: passwordValues) => {
 		setLoading(true);
 
-		const { data, error } = await getSupabaseClient().auth.updateUser({
+		const { error } = await getSupabaseClient().auth.updateUser({
 			password: passwordDetails?.password,
 		});
 
