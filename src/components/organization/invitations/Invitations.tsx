@@ -15,6 +15,7 @@ import { apiStatusCodes } from '../../../config/CommonConstant';
 import { getOrganizationInvitations } from '../../../api/invitations';
 import { getOrganizations } from '../../../api/organization';
 import CustomSpinner from '../../CustomSpinner';
+import { dateConversion } from '../../../utils/DateConversion';
 
 const initialPageState = {
     pageNumber: 1,
@@ -221,7 +222,7 @@ const Invitations = () => {
                                                 <p
                                                     className="mr-2 flex items-center text-sm font-medium text-gray-500 dark:text-gray-400"
                                                 >
-                                                    Invited On: {invitation.createDateTime.split('T')[0]}
+                                                    Invited On: {dateConversion(invitation.createDateTime)}
                                                 </p>
 
                                             </div>
