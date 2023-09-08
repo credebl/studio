@@ -1,3 +1,4 @@
+
 import { Alert, Button, Card, Label, Pagination } from 'flowbite-react';
 import { Field, FieldArray, Form, Formik } from 'formik';
 import { useEffect, useState } from 'react';
@@ -20,17 +21,25 @@ interface Values {
   revocable: boolean;
 }
 
-interface SchemaData {
-  schemaName: string;
-  version: string;
-  issuerDid: string;
+type SchemaData = {
+  schema: {
+    attrNames: string[];
+    name: string;
+    version: string;
+    issuerId: string;
+  };
   schemaId: string;
-  attributes: string[];
-  createdDateTime: string;
+  resolutionMetadata: Record<string, unknown>;
+  schemaMetadata: {
+    didIndyNamespace: string;
+    indyLedgerSeqNo: number;
+  };
 };
 
+
+
 const ViewSchemas = () => {
-  const [schemaDetails, setSchemaDetails] = useState<SchemaData | null >(null);
+  const [schemaDetails, setSchemaDetails] = useState<SchemaData>(null);
   const [credDeffList, setCredDeffList] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true)
   const [createloader, setCreateLoader] = useState<boolean>(false)
@@ -42,34 +51,23 @@ const ViewSchemas = () => {
   const [orgId, setOrgId] = useState<number>(0)
   const [credDefAuto, setCredDefAuto] = useState<string>('')
 
-  const getSchemaDetails = async () => {
-
+  const getSchemaDetails = async (id: string, organizationId: number) => {
     try {
-      const schemaDetails = await getFromLocalStorage(storageKeys.SCHEMA_ATTR)
-      const schemaId = await getFromLocalStorage(storageKeys.SCHEMA_ID)
-      const parts = schemaId.split(":");
-      const schemaName = parts[2];
-      const version = parts[3];
-      const schemaDidObject = JSON.parse(schemaDetails)
-      schemaDidObject.schema = schemaId;
+      setLoading(true);
+      const SchemaDetails = await getSchemaById(id, organizationId);
+      const { data } = SchemaDetails as AxiosResponse;
 
-      await setToLocalStorage(storageKeys.SCHEMA_ID, schemaId)
-      if (schemaDidObject) {
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        setSchemaDetails(data?.data);
+        setCredDefAuto(`${data?.data?.response?.schema?.name} ${nanoid(8)}`);
         setLoading(false);
-        setSchemaDetails({
-          attributes: schemaDidObject.attribute,
-          schemaId: schemaId,
-          schemaName: schemaName,
-          version: version,
-          issuerDid: schemaDidObject.issuerDid,
-          createdDateTime: schemaDidObject.createdDateTime
-
-        })
+      } else {
+        setLoading(false);
+        setSchemaDetailErr(SchemaDetails as unknown as string)
       }
-      setLoading(false);
-
     } catch (error) {
       setSchemaDetailErr('Error while fetching schema details')
+      console.error('Error while fetching schema details:', error);
       setLoading(false);
     }
   };
@@ -103,11 +101,11 @@ const ViewSchemas = () => {
       if (window?.location?.search) {
         const str = window?.location?.search;
         const schemaId = str.substring(str.indexOf('=') + 1);
-        await getSchemaDetails();
+        await getSchemaDetails(schemaId, Number(organizationId));
         await getCredentialDefinitionList(schemaId, Number(organizationId));
       }
     };
-    getSchemaDetails();
+
     fetchData();
   }, []);
 
@@ -134,11 +132,12 @@ const ViewSchemas = () => {
     }
     getCredentialDefinitionList(schemaDetails?.schemaId, orgId)
   }
-
+ 
   const credDefSelectionCallback = async (schemaId: string, credentialDefinitionId: string) => {
     await setToLocalStorage(storageKeys.CRED_DEF_ID, credentialDefinitionId)
     window.location.href = `${pathRoutes.organizations.Issuance.connections}`
-  }
+}
+
   return (
     <div className="px-4 pt-6">
       <div className="mb-4 col-span-full xl:mb-2">
@@ -161,7 +160,7 @@ const ViewSchemas = () => {
               <path fill="#1F4EAD" d="M.163 9.237a1.867 1.867 0 0 0-.122 1.153c.083.387.287.742.587 1.021l8.572 7.98c.198.19.434.343.696.447a2.279 2.279 0 0 0 1.657.013c.263-.1.503-.248.704-.435.201-.188.36-.41.468-.655a1.877 1.877 0 0 0-.014-1.543 1.999 1.999 0 0 0-.48-.648l-4.917-4.576h20.543c.568 0 1.113-.21 1.515-.584.402-.374.628-.882.628-1.411 0-.53-.226-1.036-.628-1.41a2.226 2.226 0 0 0-1.515-.585H7.314l4.914-4.574c.205-.184.368-.404.48-.648a1.878 1.878 0 0 0 .015-1.542 1.99 1.99 0 0 0-.468-.656A2.161 2.161 0 0 0 11.55.15a2.283 2.283 0 0 0-1.657.013 2.154 2.154 0 0 0-.696.447L.626 8.589a1.991 1.991 0 0 0-.463.648Z" />
             </svg>
 
-						<span className="min-[320px]:hidden sm:block"> Back</span> 
+<span className="min-[320px]:hidden sm:block"> Back</span>
           </Button>
         </div>
 
@@ -174,7 +173,7 @@ const ViewSchemas = () => {
           <Card className='h-64 sm:w-1/2 p-2 mr-1 mb-1' id="viewSchemaDetailsCard">
             {loading ? (
               <div className="flex items-center justify-center mb-4">
-                <CustomSpinner />
+                <CustomSpinner/>
               </div>
             ) : (
               <div className='pt-4'>
@@ -209,19 +208,19 @@ const ViewSchemas = () => {
                 <div className="">
                   <div>
                     <p className='p-1 dark:text-white break-words'>
-                      Name:  {schemaDetails?.schemaName}
+                      Name:  {schemaDetails?.schema?.name}
                     </p>
                   </div>
                   <div>
                     <p className='p-1 dark:text-white break-words'>
-                      Version: {schemaDetails?.version}
+                      Version: {schemaDetails?.schema?.version}
                     </p>
                   </div>
                   <p className='p-1 dark:text-white break-all'>
                     Schema ID: {schemaDetails?.schemaId}
                   </p>
                   <p className='p-1 dark:text-white break-words'>
-                    Issuer DID: {schemaDetails?.issuerDid}
+                    Issuer DID: {schemaDetails?.schema?.issuerId}
                   </p>
                 </div>
                 <div className="flow-root overflow-y-auto">
@@ -230,9 +229,9 @@ const ViewSchemas = () => {
                       <div className="flex items-center space-x-4">
                         <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white flex-wrap p-1">
                           Attributes:
-                          {schemaDetails?.attributes && schemaDetails?.attributes?.length > 0 &&
-                            schemaDetails?.attributes.map((element: string) => (
-                              <span className='m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300'>{element?.attributeName}</span>
+                          {schemaDetails?.schema?.attrNames && schemaDetails?.schema?.attrNames?.length > 0 &&
+                            schemaDetails?.schema?.attrNames.map((element: string) => (
+                              <span className='m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300'> {element}</span>
                             ))}
                         </div>
                       </div>
@@ -383,9 +382,9 @@ const ViewSchemas = () => {
           Credential Definitions
         </h5>
 
-        {credDeffloader ? (<div className="flex items-center justify-center mb-4">
-
-          <CustomSpinner />
+        {loading ? (<div className="flex items-center justify-center mb-4">
+         
+          <CustomSpinner/>
         </div>)
           : credDeffList && credDeffList.length > 0 ? (
             <div className='Flex-wrap' style={{ display: 'flex', flexDirection: 'column' }}>
@@ -423,3 +422,4 @@ const ViewSchemas = () => {
 
 
 export default ViewSchemas
+
