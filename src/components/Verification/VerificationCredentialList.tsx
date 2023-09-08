@@ -127,7 +127,7 @@ const VerificationCredentialList = () => {
 												true,
 												requestProof?.id,
 												requestProof?.state,
-											),
+											);
 												getProofPresentationData(requestProof?.id);
 										}}
 									>
