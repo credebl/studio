@@ -32,7 +32,7 @@ export enum ProofRequestStateUserText {
 }
 
 export enum IssueCredentialUserText {
-	offerSent = 'Credential Offered',
+	offerSent = 'Offered',
 	done = 'Accepted',
 	abandoned = 'Declined'
 }
