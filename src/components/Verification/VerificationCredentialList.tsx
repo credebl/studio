@@ -70,7 +70,7 @@ const VerificationCredentialList = () => {
 						data: [
 							{ data: requestProof?.id ? requestProof?.id : 'Not available' },
 							{ data: requestProof?.connectionId ? requestProof?.connectionId : 'Not available' },
-							{ data: <DateTooltip date={requestProof?.updatedAt}> {dateConversion(requestProof?.updatedAt)} </DateTooltip> },
+							{ data: <DateTooltip date={requestProof.updatedAt}> {dateConversion(requestProof.updatedAt)} </DateTooltip> },
 							{
 								data: <span
 									className={`bg-cyan-100 ${requestProof?.state === ProofRequestState.requestSent && 'text-blue-900'} ${(requestProof?.state === ProofRequestState.done) && 'text-green-900'} text-xs font-medium mr-2 px-2.5 py-0.5 rounded-md dark:bg-gray-700 dark:text-white border border-cyan-100 dark:border-cyan-500`}
