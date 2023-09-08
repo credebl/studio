@@ -29,10 +29,8 @@ interface SchemaData {
   createdDateTime: string;
 };
 
-
-
 const ViewSchemas = () => {
-  const [schemaDetails, setSchemaDetails] = useState<SchemaData>();
+  const [schemaDetails, setSchemaDetails] = useState<SchemaData | null >(null);
   const [credDeffList, setCredDeffList] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true)
   const [createloader, setCreateLoader] = useState<boolean>(false)
@@ -47,20 +45,15 @@ const ViewSchemas = () => {
   const getSchemaDetails = async () => {
 
     try {
-
       const schemaDetails = await getFromLocalStorage(storageKeys.SCHEMA_ATTR)
       const schemaId = await getFromLocalStorage(storageKeys.SCHEMA_ID)
       const parts = schemaId.split(":");
       const schemaName = parts[2];
       const version = parts[3];
-      console.log("schemaId::::", schemaId)
       const schemaDidObject = JSON.parse(schemaDetails)
       schemaDidObject.schema = schemaId;
 
-
       await setToLocalStorage(storageKeys.SCHEMA_ID, schemaId)
-      // setSchemaDetails(schemaDidObject)
-      console.log("schemaDidObject::::", schemaDidObject)
       if (schemaDidObject) {
         setLoading(false);
         setSchemaDetails({
@@ -75,15 +68,11 @@ const ViewSchemas = () => {
       }
       setLoading(false);
 
-
     } catch (error) {
       setSchemaDetailErr('Error while fetching schema details')
-      console.error('Error while fetching schema details:', error);
       setLoading(false);
     }
   };
-
-
 
   const getCredentialDefinitionList = async (id: string, orgId: number) => {
     try {
@@ -150,7 +139,6 @@ const ViewSchemas = () => {
     await setToLocalStorage(storageKeys.CRED_DEF_ID, credentialDefinitionId)
     window.location.href = `${pathRoutes.organizations.Issuance.connections}`
   }
-  console.log("setSchemaDetails7888979809798", schemaDetails)
   return (
     <div className="px-4 pt-6">
       <div className="mb-4 col-span-full xl:mb-2">
