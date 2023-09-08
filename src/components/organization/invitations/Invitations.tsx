@@ -16,6 +16,7 @@ import { getOrganizationInvitations } from '../../../api/invitations';
 import { getOrganizations } from '../../../api/organization';
 import CustomSpinner from '../../CustomSpinner';
 import { dateConversion } from '../../../utils/DateConversion';
+import DateTooltip from '../../Tooltip';
 
 const initialPageState = {
     pageNumber: 1,
@@ -220,7 +221,7 @@ const Invitations = () => {
                                                 <p
                                                     className="mr-2 flex items-center text-sm font-medium text-gray-500 dark:text-gray-400"
                                                 >
-                                                    Invited On: {dateConversion(invitation.createDateTime)}
+                                                    Invited On: <DateTooltip date={invitation.createDateTime}> {dateConversion(invitation.createDateTime)} </DateTooltip>
                                                 </p>
 
                                             </div>

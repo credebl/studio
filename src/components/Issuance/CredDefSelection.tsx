@@ -17,6 +17,7 @@ import { dateConversion } from "../../utils/DateConversion";
 import { getCredentialDefinitions } from "../../api/issuance";
 import { getSchemaById } from "../../api/Schema";
 import { pathRoutes } from "../../config/pathRoutes";
+import DateTooltip from "../Tooltip";
 
 const CredDefSelection = () => {
 	const [schemaState, setSchemaState] = useState({ schemaName: '', version: '' })
@@ -72,7 +73,8 @@ const CredDefSelection = () => {
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const credDefs = data?.data?.data.map((ele: CredDefData) => {
 				return {
-					clickId: ele.credentialDefinitionId, data: [{ data: ele.tag ? ele.tag : 'Not available' }, { data: ele?.createDateTime ? dateConversion(ele?.createDateTime): 'Not available' },
+					clickId: ele.credentialDefinitionId, data: [{ data: ele.tag ? ele.tag : 'Not available' }, 
+					{ data: ele?.createDateTime ? <DateTooltip date={ele?.createDateTime}> {dateConversion(ele?.createDateTime)} </DateTooltip>: 'Not available' },
 					{ data: ele.revocable === true ? <span className="text-blue-700 dark:text-white">Yes</span> : <span className="text-cyan-500 dark:text-white">No</span> }
 					]
 				}

@@ -8,6 +8,7 @@ import type { TableData } from "../../commonComponents/datatable/interface";
 import { apiStatusCodes } from "../../config/CommonConstant";
 import { AlertComponent } from "../AlertComponent";
 import { dateConversion } from "../../utils/DateConversion";
+import DateTooltip from "../Tooltip";
 
 const ConnectionList = (props: { selectConnection: (connections: TableData[]) => void; }) => {
 
@@ -46,7 +47,7 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 								value="" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-lg focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 cursor-pointer" />
 						</div>
 					},
-					{ data: userName }, { data: connectionId }, {data:dateConversion(createdOn)},
+					{ data: userName }, { data: connectionId }, {data:<DateTooltip date={createdOn}>  {dateConversion(createdOn)}  </DateTooltip>},
 					]
 				}
 			})
