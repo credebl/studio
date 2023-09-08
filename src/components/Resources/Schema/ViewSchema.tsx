@@ -42,6 +42,7 @@ const ViewSchemas = () => {
   const [orgId, setOrgId] = useState<number>(0)
   const [credDefAuto, setCredDefAuto] = useState<string>('')
 
+  //this function is used for get schema details from localstorage
   const getSchemaDetails = async () => {
 
     try {
