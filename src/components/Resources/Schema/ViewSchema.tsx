@@ -55,6 +55,7 @@ const ViewSchemas = () => {
 
       await setToLocalStorage(storageKeys.SCHEMA_ID, schemaId)
       if (schemaDidObject) {
+        console.log(schemaDetails);
         setLoading(false);
         setSchemaDetails({
           attributes: schemaDidObject.attribute,
