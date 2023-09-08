@@ -24,3 +24,15 @@ export enum ProofRequestState {
 	abandoned = 'abandoned',
 }
 
+export enum ProofRequestStateUserText {
+	requestSent = 'Requested',
+	requestReceived = 'Received',
+	done = 'Verified',
+	abandoned = 'Declined',
+}
+
+export enum IssueCredentialUserText {
+	offerSent = 'Credential Offered',
+	done = 'Accepted',
+	abandoned = 'Declined'
+}
