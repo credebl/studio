@@ -65,7 +65,6 @@ const VerificationCredentialList = () => {
 		try {
 			const response = await getVerificationList();
 			const { data } = response as AxiosResponse;
-			console.log('datadata', data);
 
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 				const credentialList = data?.data?.map((requestProof: RequestProof) => {
@@ -112,8 +111,8 @@ const VerificationCredentialList = () => {
 								data: (
 									<Button
 										disabled={
-											!(
-												requestProof.state ===
+											(
+												requestProof.state !==
 												ProofRequestState.presentationReceived
 											) && requestProof?.state !== 'done'
 										}
@@ -123,7 +122,7 @@ const VerificationCredentialList = () => {
 											openProofRequestModel(
 												true,
 												requestProof?.id,
-												requestProof?.state,
+												requestProof.state,
 											);
 												getProofPresentationData(requestProof?.id);
 										}}
