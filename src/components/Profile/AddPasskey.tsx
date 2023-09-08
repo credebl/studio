@@ -12,6 +12,7 @@
   import EditUserProfile from './EditUserProfile';
 import UpdateUserProfile from './EditUserProfile';
 import CustomSpinner from '../CustomSpinner';
+import { dateConversion } from '../../utils/DateConversion';
 
   const AddPasskey = () => {
     const [fidoError, setFidoError] = useState("")
@@ -166,7 +167,7 @@ import CustomSpinner from '../CustomSpinner';
         if (userDeviceDetailsResp) {
           const deviceDetails = Object.keys(userDeviceDetailsResp?.data?.data)?.length > 0 ?
             userDeviceDetailsResp?.data?.data.map((data) => {
-              data.lastChangedDateTime = data.lastChangedDateTime ? data.lastChangedDateTime : "-"
+              data.lastChangedDateTime = dateConversion(data.lastChangedDateTime) ? dateConversion(data.lastChangedDateTime) : "-"
               return data
             })
             : []
@@ -235,7 +236,7 @@ import CustomSpinner from '../CustomSpinner';
                 <div className='divide-y'>
                   {deviceList && deviceList.length > 0 &&
                     deviceList.map((element, key) => (
-                      <DeviceDetails deviceFriendlyName={element['deviceFriendlyName']} createDateTime={element['createDateTime']} credentialID={element['credentialId']} refreshList={userDeviceDetails} />
+                      <DeviceDetails deviceFriendlyName={element['deviceFriendlyName']} createDateTime={dateConversion(element['createDateTime'])} credentialID={element['credentialId']} refreshList={userDeviceDetails} />
                     ))}
                 </div>
 
