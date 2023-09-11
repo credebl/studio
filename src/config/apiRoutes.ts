@@ -7,7 +7,8 @@ export const apiRoutes = {
         verifyEmail:'/users/verify',
         userProfile: 'users/profile',
         checkUser:'/users/check-user/',
-        addDetails:'/users/add/'
+        addDetails:'/users/add/',
+        passkeyUserDetails:'/users/password/'
     },
     users:{
         invitations: '/users/invitations',
