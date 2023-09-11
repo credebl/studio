@@ -20,10 +20,10 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 	const [error, setError] = useState<string | null>(null)
 
 	useEffect(() => {
-		getConnections_verification()
+		getConnectionsVerification()
 	}, [])
 
-	const getConnections_verification = async () => {
+	const getConnectionsVerification = async () => {
 		setLoading(true)
 		const response = await getConnectionsByOrg();
 		const { data } = response as AxiosResponse
