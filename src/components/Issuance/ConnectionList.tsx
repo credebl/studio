@@ -1,5 +1,6 @@
 'use client';
 
+import React from "react";
 import type { AxiosResponse } from "axios";
 import {  useEffect, useState } from "react";
 import { getConnectionsByOrg } from "../../api/connection";
@@ -108,7 +109,7 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 
 	return (
 		<div id="issuance_connection_list">
-			<div className="flex items-center justify-between mb-4">
+			<div className="flex items-center justify-between mb-4" id="issued-credentials-list">
 				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 					Connection List
 				</h1>

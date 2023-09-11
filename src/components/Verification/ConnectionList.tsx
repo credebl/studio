@@ -1,11 +1,12 @@
 'use client';
 
+import React from "react";
+import { apiStatusCodes } from "../../config/CommonConstant";
 import type { AxiosResponse } from "axios";
 import {  useEffect, useState } from "react";
 import { getConnectionsByOrg } from "../../api/connection";
 import DataTable from "../../commonComponents/datatable";
 import type { TableData } from "../../commonComponents/datatable/interface";
-import { apiStatusCodes } from "../../config/CommonConstant";
 import { AlertComponent } from "../AlertComponent";
 import { dateConversion } from "../../utils/DateConversion";
 import DateTooltip from "../Tooltip";
@@ -88,7 +89,7 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 	return (
 		<div id="verification_connection_list
 		">
-			<div className="flex items-center justify-between mb-4">
+			<div className="flex items-center justify-between mb-4" id="verification-list">
 				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 					Connection List
 				</h1>
