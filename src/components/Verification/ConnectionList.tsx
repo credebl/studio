@@ -20,10 +20,10 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 	const [error, setError] = useState<string | null>(null)
 
 	useEffect(() => {
-		getConnections()
+		getConnections_verification()
 	}, [])
 
-	const getConnections = async () => {
+	const getConnections_verification = async () => {
 		setLoading(true)
 		const response = await getConnectionsByOrg();
 		const { data } = response as AxiosResponse
@@ -59,7 +59,7 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 		setLoading(false)
 	}
 	
-	const header = [
+	const verification_header = [
 		{ columnName: '', width: 'w-0.5' },
 		{ columnName: 'User' },
 		{ columnName: 'Connection ID' },
@@ -105,7 +105,7 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 			/>
 			<div id="verification_datatable"
 				className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-				<DataTable header={header} data={connectionList} loading={loading} ></DataTable>
+				<DataTable header={verification_header} data={connectionList} loading={loading} ></DataTable>
 			</div>
 		</div>
 	)
