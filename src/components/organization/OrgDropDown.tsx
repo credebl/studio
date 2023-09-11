@@ -23,8 +23,6 @@ const OrgDropDown = () => {
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			setOrgList(data?.data?.organizations);
 			setActiveOrg(data?.data?.organizations)
-		} else {
-			console.log("data?.data?.organizations")
 		}
 	};
 
