@@ -8,6 +8,8 @@ import { apiStatusCodes } from "../config/CommonConstant";
 import BreadCrumbs from "../components/BreadCrumbs";
 import editIcon from '/images/edit.svg';
 import React from "react";
+import { dateConversion } from "../utils/DateConversion";
+import DateTooltip from "../components/Tooltip";
 
 const DeviceDetails = (props: { deviceFriendlyName: string, createDateTime: string, credentialID: string, refreshList: () => void, disableRevoke: boolean }) => {
     const [openModal, setOpenModal] = useState<boolean>(false);
@@ -96,8 +98,9 @@ const DeviceDetails = (props: { deviceFriendlyName: string, createDateTime: stri
                                 </button>
                             </div>
                             <p className="text-sm font-normal text-gray-500 truncate dark:text-gray-400">
-                                {new Date(props.createDateTime).toLocaleDateString('en-GB')}
-                            </p>
+                            <DateTooltip date={props.createDateTime}>
+                                    {dateConversion(new Date(props.createDateTime).toLocaleDateString('en-GB'))}
+                            </DateTooltip>                            </p>
                             <p className="text-sm font-normal text-gray-500 truncate dark:text-gray-400">
                                 {props.credentialID}
                             </p>

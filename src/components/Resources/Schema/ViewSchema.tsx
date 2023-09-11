@@ -1,11 +1,10 @@
 
 import { Alert, Button, Card, Label, Pagination } from 'flowbite-react';
-import { Field, FieldArray, Form, Formik } from 'formik';
+import { Field, Form, Formik } from 'formik';
 import { useEffect, useState } from 'react';
 import BreadCrumbs from '../../BreadCrumbs';
 import * as yup from 'yup';
-import { apiStatusCodes, schemaVersionRegex, storageKeys } from '../../../config/CommonConstant';
-import SchemaCard from '../../../commonComponents/SchemaCard';
+import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
 import CredDeffCard from '../../../commonComponents/CredentialDefinitionCard';
 import { createCredentialDefinition, getCredDeffById, getSchemaById } from '../../../api/Schema';
 import type { AxiosResponse } from 'axios';
@@ -15,6 +14,7 @@ import { EmptyListMessage } from '../../EmptyListComponent';
 import { nanoid } from 'nanoid';
 import { pathRoutes } from '../../../config/pathRoutes';
 import CustomSpinner from '../../CustomSpinner';
+import React from 'react';
 
 interface Values {
   tagName: string;
@@ -132,11 +132,11 @@ const ViewSchemas = () => {
     }
     getCredentialDefinitionList(schemaDetails?.schemaId, orgId)
   }
- 
+
   const credDefSelectionCallback = async (schemaId: string, credentialDefinitionId: string) => {
     await setToLocalStorage(storageKeys.CRED_DEF_ID, credentialDefinitionId)
     window.location.href = `${pathRoutes.organizations.Issuance.connections}`
-}
+  }
 
   return (
     <div className="px-4 pt-6">
@@ -160,7 +160,7 @@ const ViewSchemas = () => {
               <path fill="#1F4EAD" d="M.163 9.237a1.867 1.867 0 0 0-.122 1.153c.083.387.287.742.587 1.021l8.572 7.98c.198.19.434.343.696.447a2.279 2.279 0 0 0 1.657.013c.263-.1.503-.248.704-.435.201-.188.36-.41.468-.655a1.877 1.877 0 0 0-.014-1.543 1.999 1.999 0 0 0-.48-.648l-4.917-4.576h20.543c.568 0 1.113-.21 1.515-.584.402-.374.628-.882.628-1.411 0-.53-.226-1.036-.628-1.41a2.226 2.226 0 0 0-1.515-.585H7.314l4.914-4.574c.205-.184.368-.404.48-.648a1.878 1.878 0 0 0 .015-1.542 1.99 1.99 0 0 0-.468-.656A2.161 2.161 0 0 0 11.55.15a2.283 2.283 0 0 0-1.657.013 2.154 2.154 0 0 0-.696.447L.626 8.589a1.991 1.991 0 0 0-.463.648Z" />
             </svg>
 
-<span className="min-[320px]:hidden sm:block"> Back</span>
+            <span className="min-[320px]:hidden sm:block"> Back</span>
           </Button>
         </div>
 
@@ -173,7 +173,7 @@ const ViewSchemas = () => {
           <Card className='h-64 sm:w-1/2 p-2 mr-1 mb-1' id="viewSchemaDetailsCard">
             {loading ? (
               <div className="flex items-center justify-center mb-4">
-                <CustomSpinner/>
+                <CustomSpinner />
               </div>
             ) : (
               <div className='pt-4'>
@@ -383,8 +383,8 @@ const ViewSchemas = () => {
         </h5>
 
         {loading ? (<div className="flex items-center justify-center mb-4">
-         
-          <CustomSpinner/>
+
+          <CustomSpinner />
         </div>)
           : credDeffList && credDeffList.length > 0 ? (
             <div className='Flex-wrap' style={{ display: 'flex', flexDirection: 'column' }}>
@@ -422,4 +422,3 @@ const ViewSchemas = () => {
 
 
 export default ViewSchemas
-
