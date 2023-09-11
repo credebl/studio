@@ -35,7 +35,7 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 				const createdOn = ele?.createdAt ? ele?.createdAt : 'Not available'
 				return {
 					data: [{
-						data: <div className="flex items-center">
+						data: <div className="flex items-center" id="verification_checkbox">
 							<input id="default-checkbox" type="radio" name='connection' onClick={(event: React.MouseEvent<HTMLInputElement>) => {
 								const inputElement = event.target as HTMLInputElement;
 								selectConnection(userName, connectionId, inputElement.checked)
@@ -44,7 +44,9 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 								className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-lg focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 cursor-pointer" />
 						</div>
 					},
-					{ data: userName }, { data: connectionId }, {data:<DateTooltip date={createdOn} id="connectionlist" >  {dateConversion(createdOn)}  </DateTooltip>},
+					{ data: userName }, 
+					{ data: connectionId }, 
+					{data:<DateTooltip date={createdOn} id="connectionlist" >  {dateConversion(createdOn)}  </DateTooltip>},
 					]
 				}
 			})
@@ -56,7 +58,7 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 
 		setLoading(false)
 	}
-
+	
 	const header = [
 		{ columnName: '', width: 'w-0.5' },
 		{ columnName: 'User' },

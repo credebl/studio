@@ -40,7 +40,7 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 				const createdOn = ele?.createdAt ? ele?.createdAt : 'Not available'
 				return {
 					data: [{
-						data: <div className="flex items-center">
+						data: <div className="flex items-center" id="issuance_checkbox">
 							<input id="default-checkbox" type="radio" name='connection' onClick={(event: React.MouseEvent<HTMLInputElement>) => {
 								const inputElement = event.target as HTMLInputElement;
 								selectConnection(userName, connectionId, inputElement.checked)
