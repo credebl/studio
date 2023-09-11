@@ -5,6 +5,7 @@ import type { ChildrenType } from 'react-tooltip';
 
 interface DateProps {
   date?: Date
+  id?: string
   children?: any
 }
 
