@@ -7,6 +7,7 @@ import CustomSpinner from '../CustomSpinner';
 import { apiStatusCodes } from '../../config/CommonConstant';
 import { createConnection } from '../../api/organization';
 import { dateConversion } from '../../utils/DateConversion';
+import DateTooltip from '../Tooltip';
 
 const OrganizationDetails = ({orgData}: {orgData: Organisation}) => {
 
@@ -173,8 +174,11 @@ const OrganizationDetails = ({orgData}: {orgData: Organisation}) => {
                                         <p
                                             className="ml-4 text-base font-semibold text-gray-900 truncate dark:text-white w-40 md:w-32 lg:w-80"
                                         >
-                                            {agentData?.createDateTime ? dateConversion(agentData?.createDateTime) : dateConversion(new Date().toISOString())}
-
+                                            {
+                                            agentData?.createDateTime ? 
+                                                <DateTooltip date={agentData?.createDateTime}> { dateConversion(agentData?.createDateTime) } </DateTooltip> : 
+                                                    <DateTooltip date={agentData?.createDateTime}> { dateConversion(new Date().toISOString()) } </DateTooltip>
+                                            }
                                         </p>
                                         
                                     </div>

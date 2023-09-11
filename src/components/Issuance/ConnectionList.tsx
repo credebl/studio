@@ -8,6 +8,8 @@ import type { TableData } from "../../commonComponents/datatable/interface";
 import { apiStatusCodes } from "../../config/CommonConstant";
 import { AlertComponent } from "../AlertComponent";
 import { dateConversion } from "../../utils/DateConversion";
+import DateTooltip from "../Tooltip";
+import React from "react";
 
 const ConnectionList = (props: { selectConnection: (connections: TableData[]) => void; }) => {
 
@@ -38,7 +40,7 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 				const createdOn = ele?.createdAt ? ele?.createdAt : 'Not available'
 				return {
 					data: [{
-						data: <div className="flex items-center">
+						data: <div className="flex items-center" id="issuance_checkbox">
 							<input id="default-checkbox" type="radio" name='connection' onClick={(event: React.MouseEvent<HTMLInputElement>) => {
 								const inputElement = event.target as HTMLInputElement;
 								selectConnection(userName, connectionId, inputElement.checked)
@@ -46,7 +48,9 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 								value="" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-lg focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 cursor-pointer" />
 						</div>
 					},
-					{ data: userName }, { data: connectionId }, {data:dateConversion(createdOn)},
+					{ data: userName }, 
+					{ data: connectionId }, 
+					{data:<DateTooltip date={createdOn} id="issuance_connection_list">  {dateConversion(createdOn)}  </DateTooltip>},
 					]
 				}
 			})
@@ -104,8 +108,8 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 	}, [selectedConnectionList])
 
 	return (
-		<div>
-			<div className="flex items-center justify-between mb-4">
+		<div id="issuance_connection_list">
+			<div className="flex items-center justify-between mb-4" id="issued-credentials-list">
 				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 					Connection List
 				</h1>
@@ -117,7 +121,7 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 					setError(null)
 				}}
 			/>
-			<div
+			<div id="issuance_datatable"
 				className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 				<DataTable header={header} data={connectionList} loading={loading} ></DataTable>
 			</div>

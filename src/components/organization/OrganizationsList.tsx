@@ -15,6 +15,7 @@ import { pathRoutes } from '../../config/pathRoutes';
 import { setToLocalStorage } from '../../api/Auth';
 import { EmptyListMessage } from '../EmptyListComponent';
 import CustomSpinner from '../CustomSpinner';
+import React from 'react';
 
 const initialPageState = {
   pageNumber: 1,
@@ -166,8 +167,8 @@ const OrganizationsList = () => {
             </div>
             : organizationsList && organizationsList?.length > 0 ? (<div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
               {
-                organizationsList && organizationsList.map((org) => (
-                  <Card onClick={() => redirectOrgDashboard(org.id)} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer'>
+                organizationsList.map((org) => (
+                  <Card onClick={() => redirectOrgDashboard(org.id)} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer overflow-hidden overflow-ellipsis' style={{ maxHeight: '100%', maxWidth: '100%', overflow: 'auto' }}>
 
                     <div className='flex items-center'>
                       {(org.logoUrl) ? <CustomAvatar size='100' src={org.logoUrl} /> : <CustomAvatar size='100' name={org.name} />}

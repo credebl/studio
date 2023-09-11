@@ -17,6 +17,7 @@ import type { TableData } from '../../commonComponents/datatable/interface';
 import { dateConversion } from '../../utils/DateConversion';
 import { getIssuedCredentials } from '../../api/issuance';
 import { pathRoutes } from '../../config/pathRoutes';
+import DateTooltip from '../Tooltip';
 
 interface IssuedCredential {
 	metadata: { [x: string]: { schemaId: string } };
@@ -56,7 +57,7 @@ const CredentialList = () => {
 									: 'Not available',
 							},
 							{ data: schemaName },
-							{ data: dateConversion(issuedCredential.updatedAt) },
+							{ data: <DateTooltip date={issuedCredential.updatedAt}> {dateConversion(issuedCredential.updatedAt)} </DateTooltip> },
 							{
 								data: (
 									<span

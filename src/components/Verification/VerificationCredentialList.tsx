@@ -30,6 +30,7 @@ import DataTable from '../../commonComponents/datatable';
 import type { TableData } from '../../commonComponents/datatable/interface';
 import { removeFromLocalStorage } from '../../api/Auth';
 import CustomSpinner from '../CustomSpinner';
+import DateTooltip from '../Tooltip';
 
 const VerificationCredentialList = () => {
 	const [loading, setLoading] = useState<boolean>(true);
@@ -79,7 +80,7 @@ const VerificationCredentialList = () => {
 									? requestProof?.connectionId
 									: 'Not available',
 							},
-							{ data: dateConversion(requestProof?.updatedAt) },
+							{ data: <DateTooltip date={requestProof.updatedAt}> {dateConversion(requestProof.updatedAt)} </DateTooltip> },
 							{
 								data: (
 									<span
