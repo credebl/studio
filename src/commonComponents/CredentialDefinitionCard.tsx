@@ -24,7 +24,7 @@ const CredDeffCard = (props: { credDeffName: string, credentialDefinitionId: str
             </svg>
             </div>
 
-            Initiate Issuance
+            Issue
           </Button>
         </div>
       </div>
