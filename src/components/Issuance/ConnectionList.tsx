@@ -1,12 +1,12 @@
 'use client';
 
 import React from "react";
-import type { AxiosResponse } from "axios";
 import {  useEffect, useState } from "react";
+import type { AxiosResponse } from "axios";
+import { apiStatusCodes } from "../../config/CommonConstant";
 import { getConnectionsByOrg } from "../../api/connection";
 import DataTable from "../../commonComponents/datatable";
 import type { TableData } from "../../commonComponents/datatable/interface";
-import { apiStatusCodes } from "../../config/CommonConstant";
 import { AlertComponent } from "../AlertComponent";
 import { dateConversion } from "../../utils/DateConversion";
 import DateTooltip from "../Tooltip";
