@@ -1,16 +1,18 @@
 'use client';
 
 import { ChangeEvent, useEffect, useState } from 'react';
-import { Pagination } from 'flowbite-react';
-import { getOrganizationUsers, getOrganizations } from '../../../api/organization';
+import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
 
 import { AlertComponent } from '../../AlertComponent';
 import type { AxiosResponse } from 'axios';
+import CustomSpinner from '../../CustomSpinner';
 import EditUserRoleModal from './EditUserRolesModal';
+import { Pagination } from 'flowbite-react';
+import {Roles} from '../../../utils/enums/roles'
 import SearchInput from '../../SearchInput';
 import type { User } from '../interfaces/users';
-import { apiStatusCodes } from '../../../config/CommonConstant';
-import CustomSpinner from '../../CustomSpinner';
+import { getFromLocalStorage } from '../../../api/Auth';
+import { getOrganizationUsers } from '../../../api/organization';
 
 const initialPageState = {
     pageNumber: 1,
@@ -24,6 +26,7 @@ const Members = () => {
     const [loading, setLoading] = useState<boolean>(false)
     const [message, setMessage] = useState<string | null>(null)
     const [error, setError] = useState<string | null>(null)
+    const [userRoles, setUserRoles] = useState<string[]>([])
     const [currentPage, setCurrentPage] = useState(initialPageState);
     const timestamp = Date.now();
 
@@ -38,10 +41,6 @@ const Members = () => {
     const [usersList, setUsersList] = useState<Array<User> | null>(null)
     const [selectedUser, setSelectedUser] = useState<User | null>(null)
     const props = { openModal, setOpenModal };
-
-    const createOrganizationModel = () => {
-        props.setOpenModal(true)
-    }
 
     //Fetch the user organization list
     const getAllUsers = async () => {
@@ -94,6 +93,16 @@ const Members = () => {
 
         return () => clearTimeout(getData)
     }, [searchText, openModal, currentPage.pageNumber])
+
+    const getUserRoles = async () => {
+        const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES)
+        const roles = orgRoles.split(',')
+        setUserRoles(roles)        
+    }
+
+    useEffect(() => {
+        getUserRoles()
+    },[])
 
     //onCHnage of Search input text
     const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -193,7 +202,7 @@ const Members = () => {
                                                     </span>
 
                                                     {
-                                                        !user.roles.includes('owner')
+                                                        !user.roles.includes(Roles.OWNER) && (userRoles.includes(Roles.OWNER) || userRoles.includes(Roles.ADMIN))
                                                             ? <p
                                                                 onClick={() => editUserRole(user)}
                                                                 className="cursor-pointer mr-2 flex items-center text-sm font-medium text-gray-500 dark:text-gray-400"
