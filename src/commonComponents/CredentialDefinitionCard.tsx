@@ -18,7 +18,7 @@ const CredDeffCard = (props: { credDeffName: string, userRoles?:string[], creden
       <div className="mb-1 lg:flex lg:items-center justify-between">
         <div className="lg:w-1/2 md:w-2/3"> {/* This will take up 2/3 of the available width on larger screens */}
           <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
-            {props.credDeffName}userRoles
+            {props.credDeffName}
           </h5>
         </div>
         {
