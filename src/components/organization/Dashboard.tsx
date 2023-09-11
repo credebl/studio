@@ -11,6 +11,9 @@ import CustomAvatar from '../Avatar';
 import CustomSpinner from '../CustomSpinner';
 import EditOrgdetailsModal from './EditOrgdetailsModal';
 import OrganizationDetails from './OrganizationDetails';
+import { Roles } from '../../utils/enums/roles';
+import Schema_Card from '../../assets/Schema_Card.svg';
+import User_Card from '../../assets/User_Card.svg';
 import WalletSpinup from './WalletSpinup';
 import { getFromLocalStorage } from '../../api/Auth';
 import { getOrganizationById } from '../../api/organization';
@@ -27,6 +30,7 @@ const Dashboard = () => {
     const [failure, setFailure] = useState<string | null>(null)
 
     const [loading, setLoading] = useState<boolean | null>(true)
+    const [userRoles, setUserRoles] = useState<string[]>([])
 
     const [openModal, setOpenModal] = useState<boolean>(false);
     const props = { openModal, setOpenModal };
@@ -40,6 +44,16 @@ const Dashboard = () => {
     const updateOrganizationData = (updatedData: Organisation) => {
         setOrgData(updatedData);
     };
+
+    const getUserRoles = async () => {
+        const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES)
+        const roles = orgRoles.split(',')
+        setUserRoles(roles)        
+    }
+
+    useEffect(() => {
+        getUserRoles()
+    },[])
 
 
 
@@ -149,9 +163,10 @@ const Dashboard = () => {
 
                         </div>
                     </div>
-                    <div className="inline-flex items-center">
-                        <button type="button" className=""
-
+                    {
+                        (userRoles.includes(Roles.OWNER) || userRoles.includes(Roles.ADMIN)) 
+                        &&  <div className="inline-flex items-center">
+                        <button type="button" 
                         >
                             <svg aria-hidden="true" className="mr-1 -ml-1 w-5 h-5"
                                 fill="currentColor" viewBox="0 0 20 20"
@@ -162,7 +177,7 @@ const Dashboard = () => {
 
                         </button>
                     </div>
-
+                    }                 
 
                     <EditOrgdetailsModal
                         orgData={orgData}
@@ -262,7 +277,9 @@ const Dashboard = () => {
                         </div>)
                         : walletStatus === true
                             ? (<OrganizationDetails orgData={orgData} />)
-                            : (<WalletSpinup orgName={orgData?.name} setWalletSpinupStatus={(flag: boolean) => setWalletSpinupStatus(flag)} />)
+                            : ((userRoles.includes(Roles.OWNER) || userRoles.includes(Roles.ADMIN))
+                        && <WalletSpinup orgName={orgData?.name} setWalletSpinupStatus={(flag: boolean) => setWalletSpinupStatus(flag)} />)
+                            
 
                 }
 
