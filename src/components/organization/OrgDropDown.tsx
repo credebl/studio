@@ -23,15 +23,22 @@ const OrgDropDown = () => {
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			setOrgList(data?.data?.organizations);
 			setActiveOrg(data?.data?.organizations)
-		} else {
-			console.log("data?.data?.organizations")
 		}
 	};
 
-	const goToOrgDashboard = async (orgId: number, roles: string[]) => {
-		await setToLocalStorage(storageKeys.ORG_ID, orgId.toString());
+	const goToOrgDashboard = async (org: Organisation) => {
+
+		await setOrgRoleDetails(org)
 		window.location.href = pathRoutes.organizations.dashboard;
 	};
+
+	const setOrgRoleDetails = async (org: Organisation) => {
+
+		await setToLocalStorage(storageKeys.ORG_ID, org.id.toString());
+		const roles: string[] = org?.userOrgRoles.map(role => role.orgRole.name)
+		
+		await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
+	}
 
 	const setActiveOrg = async (organizations: Organisation[]) => {
 
@@ -48,15 +55,8 @@ const OrgDropDown = () => {
 		}
 
 		if (activeOrg) {
-
-			await setToLocalStorage(storageKeys.ORG_ID, activeOrg.id.toString());
-			const roles: string[] = activeOrg?.userOrgRoles.map(role => role.orgRole.name)
-			activeOrg.roles = roles
-
-			await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
+			await setOrgRoleDetails(activeOrg)
 		}
-
-
 	}
 
 	const redirectToCreateOrgModal = () => {
@@ -107,7 +107,7 @@ const OrgDropDown = () => {
 							const roles: string[] = org.userOrgRoles.map(role => role.orgRole.name)
 							org.roles = roles
 							return (
-								<li key={org?.id} onClick={() => goToOrgDashboard(org?.id, org?.roles)}>
+								<li key={org?.id} onClick={() => goToOrgDashboard(org)}>
 									<a
 										href="#"
 										className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
