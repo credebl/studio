@@ -9,7 +9,6 @@ import { apiStatusCodes } from "../../config/CommonConstant";
 import { AlertComponent } from "../AlertComponent";
 import { dateConversion } from "../../utils/DateConversion";
 import DateTooltip from "../Tooltip";
-import React from "react";
 
 const ConnectionList = (props: { selectConnection: (connections: TableData[]) => void; }) => {
 
