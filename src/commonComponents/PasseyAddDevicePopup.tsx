@@ -11,6 +11,7 @@ import { addPasskeyUserDetails, getFromLocalStorage, passwordEncryption } from '
 import { apiStatusCodes, storageKeys } from '../config/CommonConstant';
 import { getSupabaseClient } from '../supabase';
 import passkeyAddDevice from '../assets/passkeyAddDevice.svg';
+import React from 'react';
 
 interface PasswordValue {
 	Password: string;
@@ -60,7 +61,7 @@ const PasskeyAddDevice = (props: {
 			props.setOpenModel(false)
 		}
 		}>
-			<Modal.Header>Add Passkey</Modal.Header>
+			<Modal.Header>Create Passkey</Modal.Header>
 			<Modal.Body>
 				<div className="">
 					{
@@ -155,7 +156,7 @@ const PasskeyAddDevice = (props: {
 									id='signinnext'
 									// isProcessing={loading}
 									type="submit"
-									className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 float-right'
+									className='text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 float-right'
 								>
 									Next
 								</Button>
@@ -181,7 +182,7 @@ const PasskeyAddDevice = (props: {
 									id="loginwithpasskey"
 									isProcessing={''}
 									onClick={() => props.registerWithPasskey(true)}
-									className="text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+									className="text-base hover:!bg-primary-800 font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 								>
 									Create Passkey
 								</Button>
