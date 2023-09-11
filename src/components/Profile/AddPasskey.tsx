@@ -12,16 +12,19 @@ import DisplayUserProfile from './DisplayUserProfile';
 import UpdateUserProfile from './EditUserProfile';
 import CustomSpinner from '../CustomSpinner';
 import PasskeyAddDevice from '../../commonComponents/PasseyAddDevicePopup';
+import { apiRoutes } from '../../config/apiRoutes';
+import React from 'react';
 
 const AddPasskey = () => {
   const [fidoError, setFidoError] = useState("")
-  const [fidoLoader, setFidoLoader] = useState(false)
+  const [fidoLoader, setFidoLoader] = useState(true)
   const [OrgUserEmail, setOrgUserEmail] = useState<string>('')
   const [deviceList, setDeviceList] = useState<IDeviceData[]>([])
   const [addSuccess, setAddSuccess] = useState<string | null>(null)
   const [addfailure, setAddFailur] = useState<string | null>(null)
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [prePopulatedUserProfile, setPrePopulatedUserProfile] = useState<UserProfile | null>(null);
+  const [disableFlag, setDisableFlag] = useState<boolean>(false)
 
 
   const [openModel, setOpenModel] = useState<boolean>(false)
@@ -138,6 +141,7 @@ const AddPasskey = () => {
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setAddSuccess("Device added successfully")
         userDeviceDetails()
+        window.location.href = `${apiRoutes.auth.profile}`
       } else {
         setAddFailur(deviceDetailsResp as string)
       }
@@ -149,22 +153,25 @@ const AddPasskey = () => {
   //userDeviceDetails on page reload
   const userDeviceDetails = async (): Promise<void> => {
     try {
-      const config = { headers: {} }
       setFidoLoader(true)
 
       const userDeviceDetailsResp = await getUserDeviceDetails(OrgUserEmail)
+      const { data } = userDeviceDetailsResp as AxiosResponse
       setFidoLoader(false)
-
       if (userDeviceDetailsResp) {
-        const deviceDetails = Object.keys(userDeviceDetailsResp?.data?.data)?.length > 0 ?
+        const deviceDetails = Object.keys(data)?.length > 0 ?
           userDeviceDetailsResp?.data?.data.map((data) => {
             data.lastChangedDateTime = data.lastChangedDateTime ? data.lastChangedDateTime : "-"
             return data
           })
           : []
+          if (data?.data?.length === 1){
+            setDisableFlag(true)
+          }
         setDeviceList(deviceDetails)
       }
     } catch (error) {
+      setAddFailur("Error while fetching the device details")
       setFidoLoader(false)
     }
   }
@@ -227,7 +234,7 @@ const AddPasskey = () => {
               <div className='divide-y'>
                 {deviceList && deviceList.length > 0 &&
                   deviceList.map((element, key) => (
-                    <DeviceDetails deviceFriendlyName={element['deviceFriendlyName']} createDateTime={element['createDateTime']} credentialID={element['credentialId']} refreshList={userDeviceDetails} />
+                    <DeviceDetails deviceFriendlyName={element['deviceFriendlyName']} createDateTime={element['createDateTime']} credentialID={element['credentialId']} refreshList={userDeviceDetails} disableRevoke={disableFlag} />
                   ))}
               </div>
 

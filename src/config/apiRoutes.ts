@@ -8,7 +8,8 @@ export const apiRoutes = {
         userProfile: 'users/profile',
         checkUser:'/users/check-user/',
         addDetails:'/users/add/',
-        passkeyUserDetails:'/users/password/'
+        passkeyUserDetails:'/users/password/',
+        profile:'/profile'
     },
     users:{
         userProfile: '/users/profile',
@@ -61,7 +62,7 @@ export const apiRoutes = {
 			getAllRequestList: '/proofs',
 			verifyCredential:'/proofs/request-proof',
             presentationVerification:'/proofs/verify-presentation',
-			proofRequestAttributesVerification:'/proofs/form-data'
+		    proofRequestAttributesVerification:'/proofs/form-data'
 		},
         Agent:{
 			checkAgentHealth: '/agents/health',       
