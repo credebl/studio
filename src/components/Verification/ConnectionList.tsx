@@ -9,6 +9,7 @@ import { apiStatusCodes } from "../../config/CommonConstant";
 import { AlertComponent } from "../AlertComponent";
 import { dateConversion } from "../../utils/DateConversion";
 import DateTooltip from "../Tooltip";
+import React from "react";
 
 const ConnectionList = (props: { selectConnection: (connections: TableData[]) => void; }) => {
 	const [connectionList, setConnectionList] = useState<TableData[]>([])
@@ -86,13 +87,14 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 	}, [selectedConnectionList])
 
 	return (
-		<div>
+		<div id="verification_connection_list
+		">
 			<div className="flex items-center justify-between mb-4">
 				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 					Connection List
 				</h1>
 			</div>
-			<AlertComponent
+			<AlertComponent 
 				message={error}
 				type={'failure'}
 				onAlertClose={() => {
