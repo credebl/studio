@@ -32,6 +32,14 @@ const RoleViewButton = ({ buttonTitle, svgComponent, onClickEvent, feature }: Ro
 
         if(feature === Features.CRETAE_ORG){
             return true
+        } else if (feature === Features.ISSUENCE) {
+            if (userRoles.includes(Roles.OWNER) 
+            || userRoles.includes(Roles.ADMIN)
+            || userRoles.includes(Roles.ISSUER)
+            ) {
+                return true
+            }
+            return false
         } else if (userRoles.includes(Roles.OWNER) || userRoles.includes(Roles.ADMIN)) {
             return true
         } else {
