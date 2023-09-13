@@ -9,7 +9,9 @@ import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
 import CreateOrgFormModal from "./CreateOrgFormModal";
 import CustomAvatar from '../Avatar'
+import { Features } from '../../utils/enums/features';
 import type { Organisation } from './interfaces'
+import RoleViewButton from '../RoleViewButton';
 import SearchInput from '../SearchInput';
 import { getOrganizations } from '../../api/organization';
 import { pathRoutes } from '../../config/pathRoutes';
@@ -110,9 +112,14 @@ const OrganizationsList = () => {
     setSearchText(e.target.value);
   }
 
-  const redirectOrgDashboard = (orgId: number) => {
-    setToLocalStorage(storageKeys.ORG_ID, orgId.toString())
-    window.location.href = pathRoutes.organizations.dashboard
+  const redirectOrgDashboard = async (activeOrg: Organisation) => {
+
+    	await setToLocalStorage(storageKeys.ORG_ID, activeOrg.id.toString());
+			const roles: string[] = activeOrg?.userOrgRoles.map(role => role.orgRole.name)
+			activeOrg.roles = roles
+
+			await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
+      window.location.href = pathRoutes.organizations.dashboard
   }
 
 
@@ -133,18 +140,18 @@ const OrganizationsList = () => {
             <SearchInput
               onInputChange={searchInputChange}
             />
-            <Button
-              onClick={createOrganizationModel}
-              className='text-base font-text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
-            >
-              <div className='pr-3'>
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
-                  <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
-                </svg>
-              </div>
-
-              Create
-            </Button>
+            <RoleViewButton
+              buttonTitle='Create'
+              feature={Features.CRETAE_ORG}
+              svgComponent={
+                <div className='pr-3'>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
+                    <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+                  </svg>
+                </div>
+              }
+              onClickEvent={createOrganizationModel}
+            />    
           </div>
 
           <CreateOrgFormModal
@@ -170,8 +177,7 @@ const OrganizationsList = () => {
             : organizationsList && organizationsList?.length > 0 ? (<div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
               {
                 organizationsList.map((org) => (
-                  <Card onClick={() => redirectOrgDashboard(org.id)} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer overflow-hidden overflow-ellipsis' style={{ maxHeight: '100%', maxWidth: '100%', overflow: 'auto' }}>
-
+                  <Card onClick={() => redirectOrgDashboard(org)} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer overflow-hidden overflow-ellipsis' style={{ maxHeight: '100%', maxWidth: '100%', overflow: 'auto' }}>
                     <div className='flex items-center'>
                       {(org.logoUrl) ? <CustomAvatar size='80' src={org.logoUrl} /> : <CustomAvatar size='80' name={org.name} />}
 
@@ -215,6 +221,7 @@ const OrganizationsList = () => {
                 description={'Get started by creating a new Organization'}
                 buttonContent={'Create Organization'}
                 onClick={createOrganizationModel}
+                feature={Features.CRETAE_ORG}
                 svgComponent={<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
                   <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
                 </svg>} />)
