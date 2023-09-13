@@ -17,6 +17,7 @@ import { getOrganizations } from '../../../api/organization';
 import CustomSpinner from '../../CustomSpinner';
 import { dateConversion } from '../../../utils/DateConversion';
 import DateTooltip from '../../Tooltip';
+import React from 'react';
 
 const initialPageState = {
     pageNumber: 1,

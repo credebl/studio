@@ -10,12 +10,12 @@ import Credential_Card from '../../assets/Credential_Card.svg';
 import CustomAvatar from '../Avatar';
 import CustomSpinner from '../CustomSpinner';
 import EditOrgdetailsModal from './EditOrgdetailsModal';
-import Invitation_Card from '../../assets/Invitation_Card.svg';
 import OrganizationDetails from './OrganizationDetails';
 import WalletSpinup from './WalletSpinup';
 import { getFromLocalStorage } from '../../api/Auth';
 import { getOrganizationById } from '../../api/organization';
 import { pathRoutes } from '../../config/pathRoutes';
+import React from 'react';
 
 const Dashboard = () => {
     const [orgData, setOrgData] = useState<Organisation | null>(null);

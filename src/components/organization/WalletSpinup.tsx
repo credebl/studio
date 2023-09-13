@@ -20,6 +20,7 @@ import InputCopy from '../InputCopy';
 import SOCKET from '../../config/SocketConfig';
 import SharedIllustrate from './SharedIllustrate';
 import { nanoid } from 'nanoid';
+import React from 'react';
 
 interface Values {
 	seed: string;
@@ -86,17 +87,16 @@ const WalletSpinup = (props: {
 	};
 
 	const submitDedicatedWallet = async (values: Values) => {
-		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 
 		const payload = {
 			walletName: values.name,
 			seed: seeds,
-			orgId: Number(orgId),
 			walletPassword: passwordEncryption(values.password),
 			clientSocketId: SOCKET.id,
 		};
 		setLoading(true);
-		const spinupRes = await spinupDedicatedAgent(payload);
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		const spinupRes = await spinupDedicatedAgent(payload, parseInt(orgId));
 		const { data } = spinupRes as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
@@ -113,16 +113,15 @@ const WalletSpinup = (props: {
 
 	const submitSharedWallet = async (values: ValuesShared) => {
 		setLoading(true);
-		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 
 		const payload = {
 			label: values.label,
 			seed: seeds,
-			orgId: Number(orgId),
 			clientSocketId: SOCKET.id,
 		};
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 
-		const spinupRes = await spinupSharedAgent(payload);
+		const spinupRes = await spinupSharedAgent(payload, parseInt(orgId));
 		const { data } = spinupRes as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
