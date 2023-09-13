@@ -8,14 +8,10 @@ import { getOrganizationUsers, getOrganizations } from '../../../api/organizatio
 import { AlertComponent } from '../../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../../BreadCrumbs';
-import CreateOrgFormModal from "../CreateOrgFormModal";
-import CustomAvatar from '../../Avatar'
-import EditUserRoleModal from './EditUserRolesModal';
-import SearchInput from '../../SearchInput';
-import { TextTittlecase } from '../../../utils/TextTransform';
-import type { User } from '../interfaces/users';
-import { apiStatusCodes } from '../../../config/CommonConstant';
-import { getOrganizationInvitations } from '../../../api/invitations';
+import Invitations from '../invitations/Invitations';
+import { MdDashboard } from 'react-icons/md';
+import Members from './Members';
+import React from 'react';
 
 const initialPageState = {
     pageNumber: 1,
