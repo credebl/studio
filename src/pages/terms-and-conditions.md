@@ -1,4 +1,6 @@
-
+---
+layout: ../app/LayoutStacked.astro
+---
 # TERMS AND CONDITIONS 
 
 ## 1. Validity of the General Terms and Conditions

@@ -1,15 +1,15 @@
 body {
     background-color: #ffffff;
-    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", Inter var, ui-sans-serif, system-ui, -apple-system, system-ui, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+    font-family: ui-sans-serif, system-ui, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", ui-sans-serif, system-ui, system-ui, Helvetica ,Arial, sans-serif,Color, Symbol;
     ;
-    margin-left: 10rem;
-    margin-right: 10rem;
+    /* margin-left: 10rem;
+    margin-right: 10rem; */
     text-align: justify;
-    margin-top: 2rem;
+    /* margin-top: 2rem; */
     line-height: 2rem;
 }
 
-h1 {
+ h1{
     font-size: 25px;
     color: black;
     font-weight: 800;
@@ -17,14 +17,17 @@ h1 {
 
 }
 
-h2 {
+ h2 {
     margin-top: 2rem;
     font-size: 20px;
     color: black;
     font-weight: 800;
     margin-bottom: 1rem;
-}
+} 
+ p{
+    margin-bottom: 1rem;
+ }
 
-button {
-    background-color: red !important;
-}
+ .markdown-container ul{
+    list-style: disc;
+ }

@@ -1,6 +1,10 @@
+---
+layout: ../app/LayoutStacked.astro
+--- 
+
 # PRIVACY POLICY
 
-Effective Date: 12/09/2023
+Effective Date: 1/09/2023
 
 ## 1. Responsible Entity's Name and Contact Information
 Responsible for the processing of data on ADEYA Mobile Wallet App: Blockster Labs Pvt Ltd Company; A Company established under provisions of Companies Act 1956 of Government of India, and as amended further from time to time and having its registered office at 409, Navale ICON, Off. Mumbai-Bangalore Highway, Narhe, Pune, Maharashtra, 411021 India
@@ -88,6 +92,7 @@ The User has the right to lodge a complaint with a supervisory authority if they
 
 ## 8. Version and changes to this data protection information
 The most recent update to this data protection information was made in September 2023. This data protection information might need to be updated as a result of technical developments, adjustments to the app's functioning, and/or changing regulatory and governmental regulations. The app always has the most recent version of the data protection information.
+
 
 
 <link rel="stylesheet" type="text/css" href="src/styles/markdown.css">
