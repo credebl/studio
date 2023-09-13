@@ -1,19 +1,20 @@
 'use client';
 
-import { Button, Pagination } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
+import { apiStatusCodes } from '../../../config/CommonConstant';
 
 import { AlertComponent } from '../../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import { EmptyListMessage } from '../../EmptyListComponent';
+import { Features } from '../../../utils/enums/features';
 import type { Invitation } from '../interfaces/invitations';
 import type { OrgRole } from '../interfaces'
+import { Pagination } from 'flowbite-react';
+import RoleViewButton from '../../RoleViewButton';
 import SearchInput from '../../SearchInput';
 import SendInvitationModal from './SendInvitationModal';
 import { TextTittlecase } from '../../../utils/TextTransform';
-import { apiStatusCodes } from '../../../config/CommonConstant';
 import { getOrganizationInvitations } from '../../../api/invitations';
-import { getOrganizations } from '../../../api/organization';
 import CustomSpinner from '../../CustomSpinner';
 import { dateConversion } from '../../../utils/DateConversion';
 import DateTooltip from '../../Tooltip';
@@ -32,6 +33,7 @@ const Invitations = () => {
     const [message, setMessage] = useState<string | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [currentPage, setCurrentPage] = useState(initialPageState);
+    const [userRoles, setUserRoles] = useState<string[]>([])
     const timestamp = Date.now();
 
     const onPageChange = (page: number) => {
@@ -90,6 +92,7 @@ const Invitations = () => {
         return () => clearTimeout(getData)
     }, [searchText, openModal, currentPage.pageNumber])
 
+    
     //onCHnage of Search input text
     const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         setSearchText(e.target.value);
@@ -109,16 +112,15 @@ const Invitations = () => {
                     <SearchInput
                         onInputChange={searchInputChange}
                     />
-                    <Button
-                        onClick={createInvitationsModel}
-                        className='text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
-                    >
+                    <RoleViewButton
+                        buttonTitle='Invite'
+                        feature={Features.SEND_INVITATION}
+                        svgComponent={
                         <svg className='pr-2' xmlns="http://www.w3.org/2000/svg" width="36" height="18" fill="none" viewBox="0 0 42 24">
                             <path fill="#fff" d="M37.846 0H9.231a3.703 3.703 0 0 0-3.693 3.692v1.385c0 .508.416.923.924.923a.926.926 0 0 0 .923-.923V3.692c0-.184.046-.369.092-.554L17.815 12 7.477 20.861a2.317 2.317 0 0 1-.092-.553v-1.385A.926.926 0 0 0 6.462 18a.926.926 0 0 0-.924.923v1.385A3.703 3.703 0 0 0 9.231 24h28.615a3.703 3.703 0 0 0 3.693-3.692V3.692A3.703 3.703 0 0 0 37.846 0ZM8.862 1.892c.092-.046.23-.046.369-.046h28.615c.139 0 .277 0 .37.046L24.137 13.938a.97.97 0 0 1-1.2 0L8.863 1.893Zm28.984 20.262H9.231c-.139 0-.277 0-.37-.046L19.247 13.2l2.492 2.17a2.67 2.67 0 0 0 1.8.691 2.67 2.67 0 0 0 1.8-.692l2.493-2.169 10.384 8.908c-.092.046-.23.046-.369.046Zm1.846-1.846c0 .184-.046.369-.092.553L29.262 12 39.6 3.138c.046.185.092.37.092.554v16.616ZM2.77 9.692c0-.507.416-.923.923-.923h5.539c.507 0 .923.416.923.923a.926.926 0 0 1-.923.923h-5.54a.926.926 0 0 1-.923-.923Zm6.462 5.539H.923A.926.926 0 0 1 0 14.308c0-.508.415-.923.923-.923h8.308c.507 0 .923.415.923.923a.926.926 0 0 1-.923.923Z" />
-                        </svg>
-
-                        Invite
-                    </Button>
+                        </svg>}
+                        onClickEvent={createInvitationsModel}
+                    />                   
                 </div>
 
                 <SendInvitationModal
@@ -236,6 +238,7 @@ const Invitations = () => {
                         message={'No Invitations'}
                         description={'Get started by inviting a users'}
                         buttonContent={'Invite'}
+                        feature={Features.SEND_INVITATION}
                         onClick={createInvitationsModel}
                         svgComponent={<svg className='pr-2' xmlns="http://www.w3.org/2000/svg" width="36" height="18" fill="none" viewBox="0 0 42 24">
                             <path fill="#fff" d="M37.846 0H9.231a3.703 3.703 0 0 0-3.693 3.692v1.385c0 .508.416.923.924.923a.926.926 0 0 0 .923-.923V3.692c0-.184.046-.369.092-.554L17.815 12 7.477 20.861a2.317 2.317 0 0 1-.092-.553v-1.385A.926.926 0 0 0 6.462 18a.926.926 0 0 0-.924.923v1.385A3.703 3.703 0 0 0 9.231 24h28.615a3.703 3.703 0 0 0 3.693-3.692V3.692A3.703 3.703 0 0 0 37.846 0ZM8.862 1.892c.092-.046.23-.046.369-.046h28.615c.139 0 .277 0 .37.046L24.137 13.938a.97.97 0 0 1-1.2 0L8.863 1.893Zm28.984 20.262H9.231c-.139 0-.277 0-.37-.046L19.247 13.2l2.492 2.17a2.67 2.67 0 0 0 1.8.691 2.67 2.67 0 0 0 1.8-.692l2.493-2.169 10.384 8.908c-.092.046-.23.046-.369.046Zm1.846-1.846c0 .184-.046.369-.092.553L29.262 12 39.6 3.138c.046.185.092.37.092.554v16.616ZM2.77 9.692c0-.507.416-.923.923-.923h5.539c.507 0 .923.416.923.923a.926.926 0 0 1-.923.923h-5.54a.926.926 0 0 1-.923-.923Zm6.462 5.539H.923A.926.926 0 0 1 0 14.308c0-.508.415-.923.923-.923h8.308c.507 0 .923.415.923.923a.926.926 0 0 1-.923.923Z" />

@@ -4,7 +4,7 @@ import { Alert, Button } from 'flowbite-react';
 import type { AxiosError, AxiosResponse } from 'axios';
 import type { IdeviceBody, RegistrationOptionInterface } from '../Profile/interfaces/index.js';
 import { addDeviceDetails, generateRegistrationOption, verifyRegistration } from '../../api/Fido.js';
-import { addPasswordDetails, getFromLocalStorage, passwordEncryption} from '../../api/Auth.js';
+import { AddPasswordDetails, addPasswordDetails, getFromLocalStorage, passwordEncryption } from '../../api/Auth.js';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant.js';
 import { useEffect, useState } from 'react';
 
@@ -12,6 +12,7 @@ import SignUpUserPassword from './SignUpUserPassword.jsx';
 import { startRegistration } from '@simplewebauthn/browser';
 import React from 'react';
 import SignUpUserName from './SignUpUserName.js';
+import { v4 as uuidv4 } from 'uuid';
 import NavBar from './NavBar.js';
 import FooterBar from './FooterBar.js';
 
@@ -58,14 +59,18 @@ const SignUpUserPasskey = ({ email,firstName, lastName }: { email:string,firstNa
         }
     }
 
-    const submit = async (passwordDetails: passwordValues, fidoFlag: boolean) => {
+    const submit = async (fidoFlag: boolean, passwordDetails?: passwordValues,) => {
         const userEmail = await getFromLocalStorage(storageKeys.USER_EMAIL)
-        const payload = {
-            email: userEmail,
-            password: passwordEncryption(passwordDetails?.password),
-            isPasskey: false,
+        const password: string = uuidv4();
+        let payload: AddPasswordDetails = {
+            isPasskey: fidoFlag,
             firstName: firstName,
-            lastName: lastName
+            lastName: lastName,
+            password: passwordEncryption(password)
+        };
+        if (!fidoFlag) {
+
+            payload.password = passwordDetails?.password;
         }
         setLoading(true)
 
@@ -150,17 +155,7 @@ const SignUpUserPasskey = ({ email,firstName, lastName }: { email:string,firstNa
             const deviceDetailsResp = await addDeviceDetails(deviceBody)
             const { data } = deviceDetailsResp as AxiosResponse
             if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-                // const password = secureRandomPassword.randomPassword({
-                //     characters: secureRandomPassword.lower + secureRandomPassword.upper + secureRandomPassword.digits,
-                //     length: 12,
-                // });
-                const fidoPassword = {
-                    password: 'Password@1',
-                    // confirmPassword: `${password}@1`
-                    confirmPassword: 'Password@1'
-                }
-
-                submit(fidoPassword, true)
+                submit(true)
             } else {
                 setAddFailur(deviceDetailsResp as string)
             }
@@ -185,10 +180,7 @@ const SignUpUserPasskey = ({ email,firstName, lastName }: { email:string,firstNa
             {currentComponent === 'email' && showPasskeyComponent &&
 
                 <div className="flex flex-col min-h-screen">
-
                     <NavBar />
-
-
                     <div className="flex flex-1 flex-col md:flex-row">
                         <div className="md:w-3/5 w-full bg-blue-500 bg-opacity-10 lg:p-4 md:p-4">
                             <div className='flex justify-center'>
@@ -320,7 +312,7 @@ const SignUpUserPasskey = ({ email,firstName, lastName }: { email:string,firstNa
                             </div>
                         </div>
                     </div>
-                    <FooterBar />
+                   <FooterBar/>
 
                 </div>}
             {

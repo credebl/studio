@@ -152,7 +152,7 @@ const UpdateUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }
     setLoading(true)
 
     const userData = {
-      id: userProfileInfo?.id,
+      // id: userProfileInfo?.id,
       firstName: values.firstName,
       lastName: values.lastName,
       email: values.email,

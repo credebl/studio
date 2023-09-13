@@ -5,7 +5,9 @@ export const apiRoutes = {
         sendMail:'/auth/verification-mail',
         sinIn: '/auth/signin',
         verifyEmail:'/auth/verify',
-        addDetails:'/auth/signup'
+        addDetails:'/auth/signup',
+        passkeyUserDetails:'/users/password/',
+        profile:'/profile',
     },
     users:{
         userProfile: '/users/profile',
@@ -58,7 +60,7 @@ export const apiRoutes = {
 			getAllRequestList: '/proofs',
 			verifyCredential:'/proofs/request-proof',
             presentationVerification:'/proofs/verify-presentation',
-			proofRequestAttributesVerification:'/proofs/form-data'
+		    proofRequestAttributesVerification:'/proofs/form-data'
 		},
         Agent:{
 			checkAgentHealth: '/agents/health',       

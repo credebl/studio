@@ -7,10 +7,11 @@ import type { AxiosResponse } from "axios";
 import { apiStatusCodes } from "../config/CommonConstant";
 import BreadCrumbs from "../components/BreadCrumbs";
 import editIcon from '/images/edit.svg';
+import React from "react";
 import { dateConversion } from "../utils/DateConversion";
 import DateTooltip from "../components/Tooltip";
 
-const DeviceDetails = (props: { deviceFriendlyName: string, createDateTime: string, credentialID: string, refreshList: () => void }) => {
+const DeviceDetails = (props: { deviceFriendlyName: string, createDateTime: string, credentialID: string, refreshList: () => void, disableRevoke: boolean }) => {
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [openEditModel, setOpenEditModel] = useState<boolean>(false)
     const [editSuccess, setEditSuccess] = useState<string | null>(null)
@@ -50,18 +51,17 @@ const DeviceDetails = (props: { deviceFriendlyName: string, createDateTime: stri
         const { data } = editDeviceDetailsResponse as AxiosResponse
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
             await setEditSuccess(data?.message)
-            
-       
+
+
         } else {
             setEditFailur(editDeviceDetailsResponse as string)
         }
         setTimeout(() => {
-            setEditSuccess('')
-            setEditFailur('')
             props.refreshList()
-        }, 3000); 
+        }, 4000);
+ 
     }
-   
+
     return (
         <>
             <ul className="divide-gray-200 dark:divide-gray-700">
@@ -106,7 +106,9 @@ const DeviceDetails = (props: { deviceFriendlyName: string, createDateTime: stri
                             </p>
                         </div>
                         <div className="inline-flex items-center">
-                            <button className="px-3 py-2 mb-3 mr-3 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-primary-300 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                            <button
+                                className={`px-3 py-2 mb-3 mr-3 text-sm font-medium text-center text-gray-900 bg-white border ${props.disableRevoke ? 'border-gray-400 text-gray-400 cursor-not-allowed' : 'border-gray-300 text-gray-900 hover:bg-gray-100 focus:ring-4 focus:ring-primary-300'} rounded-lg ${props.disableRevoke ? 'dark:bg-gray-800 dark:text-gray-400 dark:border-gray-400' : 'dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700'}`}
+                                disabled={props.disableRevoke}
                                 onClick={() => handleDeleteModel(true)}
                             >
                                 Revoke
