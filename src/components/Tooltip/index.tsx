@@ -2,7 +2,6 @@ import { Tooltip } from 'flowbite-react';
 import moment from 'moment';
 import { dateConversion } from '../../utils/DateConversion';
 import type { ChildrenType } from 'react-tooltip';
-import { useEffect } from 'react';
 
 interface DateProps {
   date: string
