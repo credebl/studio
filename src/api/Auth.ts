@@ -11,6 +11,7 @@ export interface UserSignUpData {
     email: string,
 }
 export interface AddPasswordDetails {
+    email:string
     password:string
     isPasskey:boolean
     firstName: string|null
@@ -60,7 +61,7 @@ export const loginUser = async(payload: UserSignInData) => {
 
 export const getUserProfile = async(accessToken: string) => {
     const details = {
-        url: apiRoutes.auth.userProfile,
+        url: apiRoutes.users.userProfile,
         config : { headers: { Authorization: `Bearer ${accessToken}` } }
     }
     try{
@@ -112,14 +113,12 @@ export const verifyUserMail = async(payload: EmailVerifyData ) => {
     catch(error){
         const err = error as Error
         return err?.message
-    }
-
-   
+    } 
 }
 
 export const checkUserExist = async(payload: string) => {
     const details ={
-        url:`${apiRoutes.auth.checkUser}${payload}`,
+        url:`${apiRoutes.users.checkUser}${payload}`,
         config: { headers: { "Content-type": "application/json" } }
     }
     try{
@@ -129,14 +128,12 @@ export const checkUserExist = async(payload: string) => {
     catch(error){
         const err = error as Error
         return err?.message
-    }
-
-   
+    } 
 }
 
-export const addPasswordDetails = async(payload: AddPasswordDetails, email:string) => {
+export const addPasswordDetails = async(payload: AddPasswordDetails) => {
     const details ={
-        url: `${apiRoutes.auth.addDetails}${email}`,
+        url: `${apiRoutes.auth.addDetails}`,
         payload,
         config: { headers: { "Content-type": "application/json" } }
     }
@@ -147,9 +144,7 @@ export const addPasswordDetails = async(payload: AddPasswordDetails, email:strin
     catch(error){
         const err = error as Error
         return err?.message
-    }
-
-   
+    }  
 }
 
 export const passwordEncryption = (password: string): string => {

@@ -13,6 +13,7 @@ import PasswordSuggestionBox from './PasswordSuggestionBox.js';
 import FooterBar from './FooterBar.js';
 import NavBar from './NavBar.js';
 import { PassInvisible, PassVisible, SignUpArrow } from './Svg.js';
+import React from 'react';
 
 interface passwordValues {
 	password: string;

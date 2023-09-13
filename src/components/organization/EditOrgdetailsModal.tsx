@@ -2,14 +2,15 @@ import * as yup from "yup"
 
 import { Avatar, Button, Label, Modal } from 'flowbite-react';
 import { Field, Form, Formik, FormikHelpers } from 'formik';
-import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, apiStatusCodes, imageSizeAccepted } from '../../config/CommonConstant'
+import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, apiStatusCodes, imageSizeAccepted, storageKeys } from '../../config/CommonConstant'
 import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
 import { useEffect, useState } from "react";
 import { AlertComponent } from "../AlertComponent";
 import type { AxiosResponse } from 'axios';
-// import { asset } from '../../lib/data.js';
 import { updateOrganization } from "../../api/organization";
 import type { Organisation } from "./interfaces";
+import React from "react";
+import { getFromLocalStorage } from "../../api/Auth";
 
 interface Values {
     name: string;
@@ -159,14 +160,14 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps)=> {
             setLoading(true)
 
             const orgData = {
-                orgId: props?.orgData?.id,
                 name: values.name,
                 description: values.description,
                 logo: logoImage?.imagePreviewUrl as string || props?.orgData?.logoUrl,
                 website: ""
             }
+            const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
 
-            const resUpdateOrg = await updateOrganization(orgData)
+            const resUpdateOrg = await updateOrganization(orgData, orgId as string)
 
             const { data } = resUpdateOrg as AxiosResponse
             setLoading(false)
@@ -219,8 +220,8 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps)=> {
                                 .trim(),
                             description: yup
                                 .string()
-                                .min(2, 'Organization name must be at least 2 characters')
-                                .max(255, 'Organization name must be at most 255 characters')
+                                .min(2, 'Description must be at least 2 characters')
+                                .max(255, 'Description must be at most 255 characters')
                                 .required('Description is required')
                         })}
                     validateOnBlur

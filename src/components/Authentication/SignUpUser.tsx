@@ -48,7 +48,7 @@ const SignUpUser = () => {
 			setVerifyLoader(true)
 			const userRsp = await sendVerificationMail(payload);
 			const { data } = userRsp as AxiosResponse;
-			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 
 				setVerificationSuccess(data?.message)
 				setVerifyLoader(false)
