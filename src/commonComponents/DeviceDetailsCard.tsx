@@ -56,7 +56,7 @@ const DeviceDetails = (props: { deviceFriendlyName: string, createDateTime: stri
         }
         setTimeout(() => {
             props.refreshList()
-        }, 4000);
+        }, 6000);
  
     }
 
