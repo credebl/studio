@@ -2,10 +2,8 @@ body {
     background-color: #ffffff;
     font-family: ui-sans-serif, system-ui, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", ui-sans-serif, system-ui, system-ui, Helvetica ,Arial, sans-serif,Color, Symbol;
     ;
-    /* margin-left: 10rem;
-    margin-right: 10rem; */
+   
     text-align: justify;
-    /* margin-top: 2rem; */
     line-height: 2rem;
 }
 
