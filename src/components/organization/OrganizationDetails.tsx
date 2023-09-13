@@ -6,6 +6,8 @@ import CustomQRCode from '../../commonComponents/QRcode';
 import CustomSpinner from '../CustomSpinner';
 import { apiStatusCodes } from '../../config/CommonConstant';
 import { createConnection } from '../../api/organization';
+import { dateConversion } from '../../utils/DateConversion';
+import DateTooltip from '../Tooltip';
 
 const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 
@@ -172,10 +174,13 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
                                         <p
                                             className="ml-4 text-base font-semibold text-gray-900 truncate dark:text-white w-40 md:w-32 lg:w-80"
                                         >
-                                            {agentData?.createDateTime ? agentData?.createDateTime?.split("T")[0] : new Date().toISOString().split("T")[0]}
-
+                                            {
+                                            agentData?.createDateTime ? 
+                                                <DateTooltip date={agentData?.createDateTime}> { dateConversion(agentData?.createDateTime) } </DateTooltip> : 
+                                                    <DateTooltip date={agentData?.createDateTime}> { dateConversion(new Date().toISOString()) } </DateTooltip>
+                                            }
                                         </p>
-
+                                        
                                     </div>
                                 </div>
                             </li>

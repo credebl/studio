@@ -1,7 +1,7 @@
 'use client';
 
 import { ChangeEvent, useEffect, useState } from 'react';
-import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
+import { IssueCredential, IssueCredentialUserText } from '../../common/enums';
 
 import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
@@ -9,56 +9,96 @@ import BreadCrumbs from '../BreadCrumbs';
 import { Button } from 'flowbite-react';
 import CustomSpinner from '../CustomSpinner';
 import DataTable from '../../commonComponents/datatable';
+import DateTooltip from '../Tooltip';
 import { EmptyListMessage } from '../EmptyListComponent';
 import { Features } from '../../utils/enums/features';
-import { IssueCredential } from '../../common/enums';
 import React from 'react';
 import RoleViewButton from '../RoleViewButton';
 import SearchInput from '../SearchInput';
 import type { TableData } from '../../commonComponents/datatable/interface';
+import { apiStatusCodes } from '../../config/CommonConstant';
 import { dateConversion } from '../../utils/DateConversion';
 import { getIssuedCredentials } from '../../api/issuance';
 import { pathRoutes } from '../../config/pathRoutes';
 
 interface IssuedCredential {
-	metadata: { [x: string]: { schemaId: string; }; };
+	metadata: { [x: string]: { schemaId: string } };
 	connectionId: string;
 	updatedAt: string;
 	state: string;
 	isRevocable: boolean;
 }
 const CredentialList = () => {
-	const [loading, setLoading] = useState<boolean>(true)
-	const [error, setError] = useState<string | null>(null)
-	const [searchText, setSearchText] = useState("");
-	const [issuedCredList, setIssuedCredList] = useState<TableData[]>([])
+	const [loading, setLoading] = useState<boolean>(true);
+	const [error, setError] = useState<string | null>(null);
+	const [searchText, setSearchText] = useState('');
+	const [issuedCredList, setIssuedCredList] = useState<TableData[]>([]);
 
-	//Fetch all issued credential list
 	const getIssuedCredDefs = async () => {
-		setLoading(true)
-		const response = await getIssuedCredentials(IssueCredential.credentialIssued);
-		const { data } = response as AxiosResponse
+		setLoading(true);
+		const response = await getIssuedCredentials(
+			IssueCredential.credentialIssued,
+		);
+		const { data } = response as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			const credentialList = data?.data?.map((issuedCredential: IssuedCredential) => {
-				const schemaName = issuedCredential.metadata["_anoncreds/credential"].schemaId ? issuedCredential.metadata["_anoncreds/credential"].schemaId.split(':').slice(2).join(':') : 'Not available'
-				return {
-					data: [{ data: issuedCredential.connectionId ? issuedCredential.connectionId : 'Not available' }, { data: schemaName }, { data: dateConversion(issuedCredential.updatedAt) },
-					{
-						data: <span
-							className={`bg-cyan-100 ${issuedCredential.state === IssueCredential.offerSent && 'text-blue-900'} ${(issuedCredential.state === IssueCredential.done || issuedCredential.state === IssueCredential.credentialIssued) && 'text-green-900'} text-xs font-medium mr-2 px-2.5 py-0.5 rounded-md dark:bg-gray-700 dark:text-white border border-cyan-100 dark:border-cyan-500`}>
-							{issuedCredential.state.replace(/_/g, ' ').replace(/\w\S*/g, (word: string) => word.charAt(0).toUpperCase() + word.substring(1).toLowerCase())}
-						</span>
-					}, {
-						data: issuedCredential?.isRevocable ? <Button disabled
-							className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
-						>
-							Revoke
-						</Button>
-							: <span className='text-gray-400'>Non revocable</span>
-					}]
-				};
-			})
+			const credentialList = data?.data?.map(
+				(issuedCredential: IssuedCredential) => {
+					const schemaName = issuedCredential.metadata['_anoncreds/credential']
+						.schemaId
+						? issuedCredential.metadata['_anoncreds/credential'].schemaId
+								.split(':')
+								.slice(2)
+								.join(':')
+						: 'Not available';
+					return {
+						data: [
+							{
+								data: issuedCredential.connectionId
+									? issuedCredential.connectionId
+									: 'Not available',
+							},
+							{ data: schemaName },
+							{ data: <DateTooltip date={issuedCredential.updatedAt}> {dateConversion(issuedCredential.updatedAt)} </DateTooltip> },
+							{
+								data: (
+									<span
+										className={` ${
+											issuedCredential.state === IssueCredential.offerSent &&
+											'bg-orange-100 text-orange-800 border border-orange-100 dark:bg-gray-700 dark:border-orange-300 dark:text-orange-300'
+										} ${
+											issuedCredential?.state === IssueCredential.done &&
+											'bg-green-100 text-green-800 dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500'
+										} ${
+											issuedCredential?.state === IssueCredential.abandoned &&
+											'bg-red-100 text-red-800 border border-red-100 dark:border-red-400 dark:bg-gray-700 dark:text-red-400'
+										} text-xs font-medium mr-0.5 px-0.5 py-0.5 rounded-md border flex justify-center min-[320]:w-full xl:w-9/12 2xl:w-6/12`}
+									>
+										{issuedCredential.state === IssueCredential.offerSent
+											? IssueCredentialUserText.offerSent
+											: issuedCredential.state === IssueCredential.done
+											? IssueCredentialUserText.done
+											: issuedCredential.state === IssueCredential.abandoned
+											? IssueCredentialUserText.abandoned :''}
+									</span>
+								),
+							},
+							{
+								data: issuedCredential?.isRevocable ? (
+									<Button
+										disabled
+										className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+									>
+										Revoke
+									</Button>
+								) : (
+									<span className="text-gray-400">Non revocable</span>
+								),
+							},
+						],
+					};
+				},
+			);
 
 			setIssuedCredList(credentialList)
 		} else {
@@ -83,13 +123,12 @@ const CredentialList = () => {
 		return () => clearTimeout(getData)
 	}, [searchText])
 
-	//onCHnage of Search input text
 	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setSearchText(e.target.value);
 	}
 
 	const schemeSelection = () => {
-		window.location.href = pathRoutes.organizations.Issuance.schema
+		window.location.href = pathRoutes.organizations.Issuance.schema;
 	}
 
 	const header = [
@@ -134,23 +173,28 @@ const CredentialList = () => {
 							setError(null)
 						}}
 					/>
-					{loading ? (<div className="flex items-center justify-center mb-4">
-        
-		  <CustomSpinner/>
-        </div>)
-          : issuedCredList && issuedCredList.length > 0 ? (
-            <div className='Flex-wrap' style={{ display: 'flex', flexDirection: 'column' }}>
-              <div className="">
-                {issuedCredList && issuedCredList.length > 0 &&
-                  	<DataTable header={header} data={issuedCredList} loading={loading}></DataTable>
-                }
-              </div>
-            </div>) : (
-				<div>
-				<span className="block text-center p-4 m-8">There isn't any data available.</span>
-			</div>
-			) 
-        }
+					{loading ? (
+						<div className="flex items-center justify-center mb-4">
+							<CustomSpinner />
+						</div>
+					) : issuedCredList && issuedCredList.length > 0 ? (
+						<div
+							className="Flex-wrap"
+							style={{ display: 'flex', flexDirection: 'column' }}
+						>
+							<div className="">
+								{issuedCredList && issuedCredList.length > 0 &&
+									<DataTable header={header} data={issuedCredList} loading={loading}></DataTable>
+								}
+							</div>
+						</div>
+					) : (
+						<div>
+							<span className="block text-center p-4 m-8">
+								There isn't any data available.
+							</span>
+						</div>
+					)}
 				</div>
 			</div>
 		</div>

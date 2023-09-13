@@ -215,7 +215,7 @@ const ReceivedInvitations = () => {
                                                             {/* <p
                                                                 className="mr-2 flex items-center text-sm font-medium text-gray-500 dark:text-gray-400"
                                                             >
-                                                                Received On: {invitation.createDateTime.split('T')[0]}
+                                                                Received On: {dateConversion(invitation.createDateTime)}
                                                             </p> */}
                                                         </div>
 
