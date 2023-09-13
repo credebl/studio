@@ -96,9 +96,7 @@ const DeviceDetails = (props: { deviceFriendlyName: string, createDateTime: stri
                                 </button>
                             </div>
                             <p className="text-sm font-normal text-gray-500 truncate dark:text-gray-400">
-                            <DateTooltip date={props.createDateTime}>
-                                    {dateConversion(new Date(props.createDateTime).toLocaleDateString('en-GB'))}
-                            </DateTooltip>                            </p>
+                            <DateTooltip date={props?.createDateTime}> {dateConversion(props?.createDateTime)} </DateTooltip>                           </p>
                             <p className="text-sm font-normal text-gray-500 truncate dark:text-gray-400">
                                 {props.credentialID}
                             </p>
