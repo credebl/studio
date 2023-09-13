@@ -4,52 +4,58 @@ layout: ../app/LayoutStacked.astro
 
 # PRIVACY POLICY
 
-Effective Date: 1/09/2023
+Effective Date: 01/09/2023
 
 ## 1. Responsible Entity's Name and Contact Information
-Responsible for the processing of data on ADEYA Mobile Wallet App: Blockster Labs Pvt Ltd Company; A Company established under provisions of Companies Act 1956 of Government of India, and as amended further from time to time and having its registered office at 409, Navale ICON, Off. Mumbai-Bangalore Highway, Narhe, Pune, Maharashtra, 411021 India
+
+Responsible for the processing of data on CREDEBL (Verifiable Credential & Decentralised Identity management platform) and ADEYA (Mobile Wallet App): Blockster Labs Pvt Ltd Company; A Company established under provisions of Companies Act 1956 of Government of India, and as amended further from time to time and having its registered office at 409, Navale ICON, Off. Mumbai-Bangalore Highway, Narhe, Pune, Maharashtra, 411021 India
 Email: privacy@blockster.global
 
 Note: A data control officer has not been mandated by the Responsible Entity. If you have queries or wish to assert any of your legal rights regarding data protection, kindly get in touch with the Responsible Entity immediately.
 
 ## 2. Information on the Processing of Personal Data
-ADEYA Mobile Wallet App is designed to prioritize user privacy. As a basic principle, no data is processed by Blockster Labs Pvt Ltd Company when the app is used. All data is securely stored only on the user's end device, and Blockster Labs Pvt Ltd Company does not have access to this data.
 
-However, the app is associated with a digital mailbox service ("Mediation Agent") operated by Blockster Labs Pvt Ltd Company. The installation ID of the user is saved and processed for the purpose of the mailbox service. This allows incoming messages to be properly assigned to the respective user. The incoming messages are encrypted and sent to the mailbox service, which then forwards them to the user's app. The recipient of the message receives a dedicated code from the mailbox service, which is linked to the installation ID.
+CREDEBL Platform and ADEYA Mobile Wallet App are designed to prioritize user privacy. As a basic principle, no data is processed by Blockster Labs Pvt Ltd Company when the platform and app are used. All data is securely stored only on the user's end device, and Blockster Labs Pvt Ltd Company does not have access to this data.
 
-The Responsible Entity cannot identify individual users or access the content of the messages since they are encrypted and decrypted only on the user's end device.  Once the messages have been properly sent to the app, the mailbox service deletes them. The messages are held on the mailbox service until they can be delivered if the user's app isn't accessible.  
+However, the platform and app are associated with a digital mailbox service ("Mediation Agent") operated by Blockster Labs Pvt Ltd Company. The installation ID of the user is saved and processed for the purpose of the mailbox service. This allows incoming messages to be properly assigned to the respective user. The incoming messages are encrypted and sent to the mailbox service, which then forwards them to the user's platform and app. The recipient of the message receives a dedicated code from the mailbox service, which is linked to the installation ID.
 
-To enhance the user experience and improve app functionality, automated crash reports may be generated in the event of errors or application crashes. These reports may include information such as the cause of the crash, error reports, and additional data like the date and time of the crash, device model number, installed operating system version, language settings, and the user's country.
+The Responsible Entity cannot identify individual users or access the content of the messages since they are encrypted and decrypted only on the user's end device.  Once the messages have been properly sent to the platform and app, the mailbox service deletes them. The messages are held on the mailbox service until they can be delivered if the user's platform and app aren't accessible.  
+
+To enhance the user experience and improve platform & app functionality, automated crash reports may be generated in the event of errors or application crashes. These reports may include information such as the cause of the crash, error reports, and additional data like the date and time of the crash, device model number, installed operating system version, language settings, and the user's country.
 
 
 ## 3. Legal Basis of the Processing
-The processing of the installation ID is based on contractual purposes (Article 6(1)(b) of the General Data Protection Regulation - GDPR). The installation ID is automatically provided by Blockster Labs Pvt Ltd Company for the functioning of the mailbox service. Without processing the installation ID, Blockster Labs Pvt Ltd Company cannot assign or deliver incoming messages to individual users. The processing is necessary to fulfill the purpose of the contract, which involves the exchange of identity information.
 
-Error analysis and other analyses are carried out in the legitimate interests of Blockster Labs Pvt Ltd Company (Article 6(1)(f) GDPR). These analyses aim to ensure app functionality and improvement. No automated decision-making is involved in these processes.
+The processing of the installation ID is based on contractual purposes (Article 6(1)(b) of the General Data Protection Regulation - GDPR). The installation ID is automatically provided by Blockster Labs Pvt Ltd Company for the functioning of the mailbox service. Without processing the installation ID, Blockster Labs Pvt Ltd Company cannot assign or deliver incoming messages to individual users. The processing is necessary to fulfil the purpose of the contract, which involves the exchange of identity information.
+
+Error analysis and other analyses are carried out in the legitimate interests of Blockster Labs Pvt Ltd Company (Article 6(1)(f) GDPR). These analyses aim to ensure platform and app functionality and improvement. No automated decision-making is involved in these processes.
 
 ## 4. Recipients and Categories of Recipients
+
 In general, data transfer to third parties (other than Blockster Labs Pvt Ltd Company) does not occur and is not planned. However, data transfer may occur in specific cases when legally obligated or with user consent. Such cases may include:
 - Public authorities and institutions (e.g., tax authorities, prosecution authorities, family courts, land registry offices) if legally or officially required for any purposes that is the interest of justice and so called upon by the appropriate legal authorities using the due course of procedure laid down by current provisions of law.
 - Auditors
 - Service providers engaged in order-processing relationships
 
 ## 5. Data Transfer to Third Countries
+
 Data transfers to third countries do not occur.
 
 ## 6. Storage Duration
-Blockster Labs Pvt Ltd Company processes and stores personal data as long as it is required to fulfill contractual obligations and protect our rights. The Installation ID associated with your personal data is also deleted when you uninstall the app from your device.
+
+Blockster Labs Pvt Ltd Company processes and stores personal data as long as it is required to fulfil contractual obligations and protect our rights. The Installation ID associated with your personal data is also deleted when you close or uninstall the platform and app, respectively, from your device.
 
 ## 7. Information about data subjects' rights
 
 As an affected person, the User has the following rights regarding how their personal data is processed:
 
-Right of access (Article 15 GDPR)
-Right to rectification (Article 16 GDPR)
-Right to erasure (“right to be forgotten”) (Article 17 GDPR)
-Right to restriction of processing (Article 18 GDPR)
-Right to data portability (Article 20 GDPR)
-Right to object (Article 21 GDPR)
-Right to withdraw consent (Article 7 Para. 3 GDPR)
+Right of access (Article 15 GDPR)<br>
+Right to rectification (Article 16 GDPR)<br>
+Right to erasure (“right to be forgotten”) (Article 17 GDPR)<br>
+Right to restriction of processing (Article 18 GDPR)<br>
+Right to data portability (Article 20 GDPR)<br>
+Right to object (Article 21 GDPR)<br>
+Right to withdraw consent (Article 7 Para. 3 GDPR)<br>
 Right to lodge a complaint with a supervisory authority (Article 77 GDPR)
 ‍
 The User may reach out to us using the details listed in No. 1 to exercise these rights.
@@ -88,11 +94,10 @@ If the User's personal data is processed for direct marketing purposes, they hav
 If the processing of personal data is based on the User's consent, they have the right to withdraw their consent at any time. The withdrawal of consent does not affect the lawfulness of the processing based on consent before its withdrawal. Before providing consent, the User must be made aware of their right to do so.
 
 7.8 Right to complain to a supervisory authority
-The User has the right to lodge a complaint with a supervisory authority if they believe that the processing of their personal data infringes the provisions of the GDPR. The relevant supervisory authority for the Responsible Entity is the data protection supervisory officer of Government of India.
+The User has the right to lodge a complaint with a supervisory authority if they believe that the processing of their personal data infringes the provisions of the GDPR. The relevant supervisory authority for the Responsible Entity is the data protection supervisory officer of the Government of India.
 
 ## 8. Version and changes to this data protection information
-The most recent update to this data protection information was made in September 2023. This data protection information might need to be updated as a result of technical developments, adjustments to the app's functioning, and/or changing regulatory and governmental regulations. The app always has the most recent version of the data protection information.
-
+The most recent update to this data protection information was made in September 2023. This data protection information might need to be updated as a result of technical developments, adjustments to the platform’s and app's functioning, and/or changing regulatory and governmental regulations. The platform and app always have the most recent version of the data protection information.
 
 
 <link rel="stylesheet" type="text/css" href="src/styles/markdown.css">
