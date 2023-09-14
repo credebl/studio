@@ -1,7 +1,4 @@
 import {axiosGet, axiosPost, axiosPut} from '../services/apiRequests'
-import { number, string } from 'yup'
-
-import type { AxiosError } from 'axios'
 import CryptoJS from "crypto-js"
 import { apiRoutes } from '../config/apiRoutes'
 import { envConfig } from '../config/envConfig'
@@ -13,7 +10,7 @@ export interface UserSignUpData {
 }
 export interface AddPasswordDetails {
     email:string
-    password:string | undefined
+    password:string 
     isPasskey:boolean
     firstName: string|null
     lastName: string|null
@@ -99,7 +96,6 @@ export const updateUserProfile = async(data: object ) => {
         const err = error as Error
         return err?.message
     }
-
 }  
 
 export const verifyUserMail = async(payload: EmailVerifyData ) => {
