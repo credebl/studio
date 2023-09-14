@@ -34,28 +34,6 @@ interface SignInUser3Props {
 	password?: string
 }
 
-const getUserDetails = async (access_token: string) => {
-	const [failure, setFailure] = useState<string | null>(null)
-	const [loading, setLoading] = useState<boolean>(false)
-		
-	const userDetails = await getUserProfile(access_token);
-	const { data } = userDetails as AxiosResponse
-	if (data?.data?.userOrgRoles?.length > 0) {
-		
-		const permissionArray: number | string[] = []
-		data?.data?.userOrgRoles?.forEach((element: { orgRole: { name: string } }) => permissionArray.push(element?.orgRole?.name));
-		await setToLocalStorage(storageKeys.PERMISSIONS, permissionArray)
-		await setToLocalStorage(storageKeys.USER_PROFILE, data?.data)
-		await setToLocalStorage(storageKeys.USER_EMAIL, data?.data?.email)
-		window.location.href = '/dashboard'
-	} else {
-		setFailure(userDetails as string)
-	}
-
-	setLoading(false)
-}
-
-
 const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 	const [email, setEmail] = useState(signInUserProps?.email)
 	const [fidoUserError, setFidoUserError] = useState("")
@@ -68,7 +46,24 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 	const [passwordVisible, setPasswordVisible] = useState(false);
 
 
-
+	const getUserDetails = async (access_token: string) => {
+		
+		const userDetails = await getUserProfile(access_token);
+		const { data } = userDetails as AxiosResponse
+		if (data?.data?.userOrgRoles?.length > 0) {
+			
+			const permissionArray: number | string[] = []
+			data?.data?.userOrgRoles?.forEach((element: { orgRole: { name: string } }) => permissionArray.push(element?.orgRole?.name));
+			await setToLocalStorage(storageKeys.PERMISSIONS, permissionArray)
+			await setToLocalStorage(storageKeys.USER_PROFILE, data?.data)
+			await setToLocalStorage(storageKeys.USER_EMAIL, data?.data?.email)
+			window.location.href = '/dashboard'
+		} else {
+			setFailure(userDetails as string)
+		}
+	
+		setLoading(false)
+	}
 	const signInUser = async (values: passwordValue) => {
 		const payload: SignInUser3Props = {
 			email: email,
