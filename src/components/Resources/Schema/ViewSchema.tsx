@@ -57,10 +57,10 @@ const ViewSchemas = () => {
   const [userRoles, setUserRoles] = useState<string[]>([])
 
 
-  const getSchemaDetails = async (id: string, organizationId: number) => {
+  const getSchemaDetails = async (SchemaId: string, organizationId: number) => {
     try {
       setLoading(true);
-      const SchemaDetails = await getSchemaById(id, organizationId);
+      const SchemaDetails = await getSchemaById(SchemaId, organizationId);
       const { data } = SchemaDetails as AxiosResponse;
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {

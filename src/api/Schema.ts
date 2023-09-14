@@ -30,7 +30,7 @@ export const getAllSchemas = async ({itemPerPage, page, allSearch }: GetAllSchem
 export const getAllSchemasByOrgId = async ({ search, itemPerPage, page }: GetAllSchemaListParameter, orgId: string) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
-    url: `${apiRoutes.schema.getAll}?orgId=${orgId}&pageNumber=${page}&pageSize=${itemPerPage}&searchByText=${search}`,
+    url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.getAll}&pageNumber=${page}&pageSize=${itemPerPage}&searchByText=${search}`,
     config: {
       headers: {
         'Content-type': 'application/json',
@@ -72,10 +72,10 @@ export const addSchema = async (payload: createSchema) => {
   }
 }
 
-export const getSchemaById = async (id: string, orgId: number) => {
+export const getSchemaById = async (schemaId: string, orgId: number) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
-    url: `${apiRoutes.schema.getSchemaById}?schemaId=${id}&orgId=${orgId}`,
+    url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.getSchemaById}/${schemaId}`,
     config: {
       headers: {
         'Content-type': 'application/json',

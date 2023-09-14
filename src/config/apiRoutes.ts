@@ -21,14 +21,16 @@ export const apiRoutes = {
     },
     organizations: {
         root: '/orgs',
-        create: '/orgs',
-        update: '/orgs',
-        getAll: '/orgs',
-        getById: '/orgs',
-        getOrgDashboard: '/orgs/dashboard',
-        invitations: '/invitations',
-        orgRoles: '/orgs/roles',
-        editUserROle: '/user-roles'
+        create: '/organization',
+        update: '/organization',
+        getAll: '/organization',
+        getById: '/organization',
+        getOrgDashboard: '/organization/dashboard',
+        agentDedicatedSpinup: '/agent-service/spinup',
+        agentSharedSpinup: '/agent-service/tenant',
+        invitations: '/organization/invitations',
+        orgRoles: '/organization/roles',
+        editUserROle: '/organization/user-roles'
     },
     connection: {
         create: '/connections',
@@ -36,7 +38,7 @@ export const apiRoutes = {
     schema: {
         create: '/schemas',
         getAll: '/schemas',
-        getSchemaById:'/schemas/id',
+        getSchemaById:'/schemas',
         createCredentialDefinition: '/credential-definitions',
         getCredDeffBySchemaId: '/schemas/credential-definitions',
         getAllSchemaFromPlatform: `/schemas/platform`
