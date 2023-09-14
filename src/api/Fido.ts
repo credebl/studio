@@ -27,7 +27,7 @@ export const generateRegistrationOption = async (payload: RegistrationOptionInte
   }
 }
 
-export const verifyRegistration = async (payload, userEmail:string) => {
+export const verifyRegistration = async (payload:any, userEmail:string) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
     url: `${apiRoutes.fido.verifyRegistration}${userEmail}`,

@@ -107,7 +107,7 @@ const AddPasskey = () => {
     }
   }
 
-  const verifyRegistrationMethod = async (verifyRegistrationObj, OrgUserEmail: string) => {
+  const verifyRegistrationMethod = async (verifyRegistrationObj:any, OrgUserEmail: string) => {
     try {
       const verificationRegisterResp = await verifyRegistration(verifyRegistrationObj, OrgUserEmail)
       const { data } = verificationRegisterResp as AxiosResponse

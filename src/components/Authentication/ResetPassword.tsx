@@ -13,7 +13,6 @@ import FooterBar from './FooterBar.js';
 import NavBar from './NavBar.js';
 import { addPasskeyUserDetails, passwordEncryption, setToLocalStorage } from '../../api/Auth.js';
 import type { AxiosResponse } from 'axios';
-import React from 'react';
 import { PassInvisible, PassVisible, SignUpArrow } from './Svg.js';
 import React from 'react';
 
