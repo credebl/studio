@@ -6,7 +6,6 @@ import type { AxiosResponse } from 'axios';
 import { TextTittlecase } from '../../../utils/TextTransform';
 import type { User } from "../interfaces/users";
 import { apiStatusCodes } from "../../../config/CommonConstant";
-import React from 'react';
 
 interface RoleI {
     id: number

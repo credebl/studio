@@ -17,7 +17,6 @@ import User_Card from '../../assets/User_Card.svg';
 import WalletSpinup from './WalletSpinup';
 import { getFromLocalStorage } from '../../api/Auth';
 import { pathRoutes } from '../../config/pathRoutes';
-import React from 'react';
 
 const Dashboard = () => {
     const [orgData, setOrgData] = useState<Organisation | null>(null);

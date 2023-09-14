@@ -7,7 +7,6 @@ import BreadCrumbs from '../../BreadCrumbs';
 import Invitations from '../invitations/Invitations';
 import { MdDashboard } from 'react-icons/md';
 import Members from './Members';
-import React from 'react';
 
 const initialPageState = {
     pageNumber: 1,
