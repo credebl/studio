@@ -63,6 +63,7 @@ const SignUpUserPasskey = ({ email,firstName, lastName }: { email:string,firstNa
         const userEmail = await getFromLocalStorage(storageKeys.USER_EMAIL)
         const password: string = uuidv4();
         let payload: AddPasswordDetails = {
+            email: userEmail,
             isPasskey: fidoFlag,
             firstName: firstName,
             lastName: lastName,
