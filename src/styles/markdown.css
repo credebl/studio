@@ -1,7 +1,6 @@
 body {
    @apply dark:text-white;
    @apply bg-white;
-    /* background-color: #ffffff; */
     @apply font-sans;
     @apply text-justify;
     @apply leading-8;
