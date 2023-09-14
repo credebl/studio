@@ -18,6 +18,7 @@ export const apiRoutes = {
         recentActivity: '/users/activity',
     },
     organizations: {
+        root: '/orgs',
         create: '/organization',
         update: '/organization',
         getAll: '/organization',
@@ -35,7 +36,7 @@ export const apiRoutes = {
     schema: {
         create: '/schemas',
         getAll: '/schemas',
-        getSchemaById:'/schemas/id',
+        getSchemaById:'/schemas',
         createCredentialDefinition: '/credential-definitions',
         getCredDeffBySchemaId: '/schemas/credential-definitions',
         getAllSchemaFromPlatform: `/schemas/platform`
