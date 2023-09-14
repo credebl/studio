@@ -18,6 +18,7 @@ import SchemaCard from '../../../commonComponents/SchemaCard';
 import { addSchema } from '../../../api/Schema';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
+import React from 'react';
 
 const options = [
 	{ value: 'string', label: 'String' },
@@ -49,7 +50,7 @@ const CreateSchema = () => {
 			orgId: orgId,
 		};
 
-		const createSchema = await addSchema(schemaFieldName);
+		const createSchema = await addSchema(schemaFieldName, orgId);
 		const { data } = createSchema as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			if (data?.data) {
@@ -492,9 +493,9 @@ const CreateSchema = () => {
 									<Button
                         type="reset"
                         color='bg-primary-800'
-                        onClick={() => {
-                          setCredDefAuto('')
-                        }}
+                        // onClick={() => {
+                        //   setCredDefAuto('')
+                        // }}
                         disabled={createloader}
                         className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto'
 

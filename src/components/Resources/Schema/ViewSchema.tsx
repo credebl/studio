@@ -136,7 +136,7 @@ const ViewSchemas = () => {
 
     }
 
-    const createCredDeff = await createCredentialDefinition(CredDeffFieldName);
+    const createCredDeff = await createCredentialDefinition(CredDeffFieldName, orgId);
     const { data } = createCredDeff as AxiosResponse
     if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
       setCreateLoader(false)

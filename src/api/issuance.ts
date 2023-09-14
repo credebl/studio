@@ -24,7 +24,9 @@ export const getIssuedCredentials = async (state: IssueCredential) => {
 
 export const getCredentialDefinitions = async (schemaId: string) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-    const url = `${apiRoutes.Issuance.getCredDefBySchemaId}?schemaId=${schemaId}&orgId=${orgId}`;
+    // const url = `${apiRoutes.Issuance.getCredDefBySchemaId}?schemaId=${schemaId}&orgId=${orgId}`;
+	const url= `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.getCredDefBySchemaId}/${schemaId}/cred-defs`;
+
 	const axiosPayload = {
 		url,
 		config: await getHeaderConfigs(),

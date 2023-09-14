@@ -1,5 +1,3 @@
-import { verifyPresentation } from "../api/verification";
-
 export const apiRoutes = {
     auth:{
         sendMail: '/users/send-mail',
@@ -37,9 +35,10 @@ export const apiRoutes = {
         create: '/schemas',
         getAll: '/schemas',
         getSchemaById:'/schemas',
-        createCredentialDefinition: '/credential-definitions',
-        getCredDeffBySchemaId: '/schemas/credential-definitions',
-        getAllSchemaFromPlatform: `/schemas/platform`
+        // createCredentialDefinition: '/credential-definitions',
+        createCredentialDefinition: '/cred-defs',
+        getCredDefBySchemaId: '/schemas',
+        // getAllSchemaFromPlatform: `/schemas/platform`,
     },
     fido: {
         generateRegistration: 'fido/generate-registration-options',
@@ -54,7 +53,7 @@ export const apiRoutes = {
     },
 		Issuance:{
 			getIssuedCredentials:'/issue-credentials',
-			getCredDefBySchemaId :'/schemas/credential-definitions',
+			// getCredDefBySchemaId :'/schemas/cred-defs',
 			getAllConnections:'/connections',
 			issueCredential:'/issue-credentials/create-offer'
 		},
@@ -66,6 +65,9 @@ export const apiRoutes = {
 		},
         Agent:{
 			checkAgentHealth: '/agent-service/health',
-		}
+		},
+        Platform: {
+            getAllSchemaFromPlatform: '/platform/schemas',
+        }
 
 }
