@@ -65,18 +65,50 @@ import React from 'react';
                 setCreateLoader(false);
                 window.location.href = pathRoutes.organizations.schemas;
 
-            } else {
-                setFailure(createSchema as string);
-                setCreateLoader(false);
-            }
-        } else {
-            setCreateLoader(false);
-            setFailure(createSchema as string);
-            setTimeout(() => {
-                setFailure(null);
-            }, 4000);
-        }
-    };
+												return (
+													<>
+														<div className="dark:text-white d-flex justify-content-center align-items-center mb-1">
+															Attributes <span className="dark:text-white text-red-600">*</span>
+														</div>
+														<div className="flex flex-col">
+															{attribute.map((element: any, index: number) => (
+																<div
+																	key={`attributeList-${index}`}
+																	className="mt-5"
+																>
+																	<label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white pl-1">
+																		Attribute: {index + 1}
+																	</label>
+																	<div key={index} className="md:flex pl-1">
+																		<div className="md:w-3/12 sm:w-full md:w-96  flex-col md:flex m-2">
+																			<Field
+																				id={`attribute[${index}]`}
+																				name={`attribute.${index}.attributeName`}
+																				placeholder="Attribute eg. NAME, ID"
+																				disabled={!areFirstInputsSelected}
+																				className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+																			/>
+																			{formikHandlers.touched.attribute &&
+																			attribute[index] &&
+																			formikHandlers?.errors?.attribute &&
+																			formikHandlers?.errors?.attribute[
+																				index
+																			] &&
+																			formikHandlers?.touched?.attribute[index]
+																				?.attributeName &&
+																			formikHandlers?.errors?.attribute[index]
+																				?.attributeName ? (
+																				<label className="pt-1 text-red-500 text-xs h-5">
+																					{
+																						formikHandlers?.errors?.attribute[
+																							index
+																						]?.attributeName
+																					}
+																				</label>
+																			) : (
+																				<label className="pt-1 text-red-500 text-xs h-5"></label>
+																			)}
+																		</div>
 
     return (
         <div className="px-4 pt-6">
@@ -571,11 +603,11 @@ import React from 'react';
                         //   setCredDefAuto('')
                         // }}
                         disabled={createloader}
-                        className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto'
+                        className='dark:text-white bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto'
 
                         style={{ height: '2.6rem', width: '6rem', minWidth: '2rem' }}
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" className='mr-2' width="18" height="18" fill="none" viewBox="0 0 20 20">
+                        <svg xmlns="http://www.w3.org/2000/svg" className= 'mr-2' width="18" height="18" fill="none" viewBox="0 0 20 20">
                           <path fill="#1F4EAD" d="M19.414 9.414a.586.586 0 0 0-.586.586c0 4.868-3.96 8.828-8.828 8.828-4.868 0-8.828-3.96-8.828-8.828 0-4.868 3.96-8.828 8.828-8.828 1.96 0 3.822.635 5.353 1.807l-1.017.18a.586.586 0 1 0 .204 1.153l2.219-.392a.586.586 0 0 0 .484-.577V1.124a.586.586 0 0 0-1.172 0v.928A9.923 9.923 0 0 0 10 0a9.935 9.935 0 0 0-7.071 2.929A9.935 9.935 0 0 0 0 10a9.935 9.935 0 0 0 2.929 7.071A9.935 9.935 0 0 0 10 20a9.935 9.935 0 0 0 7.071-2.929A9.935 9.935 0 0 0 20 10a.586.586 0 0 0-.586-.586Z" />
                         </svg>
 
