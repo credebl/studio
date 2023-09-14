@@ -1,20 +1,23 @@
+import * as yup from 'yup';
 
 import { Alert, Button, Card, Label, Pagination } from 'flowbite-react';
-import { Field, FieldArray, Form, Formik } from 'formik';
-import { useEffect, useState } from 'react';
-import BreadCrumbs from '../../BreadCrumbs';
-import * as yup from 'yup';
-import { apiStatusCodes, schemaVersionRegex, storageKeys } from '../../../config/CommonConstant';
-import SchemaCard from '../../../commonComponents/SchemaCard';
-import CredDeffCard from '../../../commonComponents/CredentialDefinitionCard';
+import { Field, Form, Formik } from 'formik';
+import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
 import { createCredentialDefinition, getCredDeffById, getSchemaById } from '../../../api/Schema';
-import type { AxiosResponse } from 'axios';
-import type { CredDeffFieldNameType } from './interfaces';
 import { getFromLocalStorage, setToLocalStorage } from '../../../api/Auth';
+import { useEffect, useState } from 'react';
+
+import type { AxiosResponse } from 'axios';
+import BreadCrumbs from '../../BreadCrumbs';
+import CredDeffCard from '../../../commonComponents/CredentialDefinitionCard';
+import type { CredDeffFieldNameType } from './interfaces';
+import CustomSpinner from '../../CustomSpinner';
 import { EmptyListMessage } from '../../EmptyListComponent';
+import React from 'react';
+import { Roles } from '../../../utils/enums/roles';
+import SchemaCard from '../../../commonComponents/SchemaCard';
 import { nanoid } from 'nanoid';
 import { pathRoutes } from '../../../config/pathRoutes';
-import CustomSpinner from '../../CustomSpinner';
 
 interface Values {
   tagName: string;
@@ -50,6 +53,9 @@ const ViewSchemas = () => {
   const [failure, setFailur] = useState<string | null>(null)
   const [orgId, setOrgId] = useState<number>(0)
   const [credDefAuto, setCredDefAuto] = useState<string>('')
+
+  const [userRoles, setUserRoles] = useState<string[]>([])
+
 
   const getSchemaDetails = async (id: string, organizationId: number) => {
     try {
@@ -108,6 +114,16 @@ const ViewSchemas = () => {
 
     fetchData();
   }, []);
+
+  const getUserRoles = async () => {
+        const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES)
+        const roles = orgRoles.split(',')
+        setUserRoles(roles)        
+    }
+
+  useEffect(() => {
+        getUserRoles()
+  },[])
 
 
   const submit = async (values: Values) => {
@@ -241,7 +257,11 @@ const ViewSchemas = () => {
               </div>
             )}
           </Card>
-          <Card className='h-64 sm:w-1/2 p-2 ml-1' id="credentialDefinitionCard">
+          {
+            (userRoles.includes(Roles.OWNER) 
+            || userRoles.includes(Roles.ADMIN))
+           
+            &&     <Card className='h-64 sm:w-1/2 p-2 ml-1' id="credentialDefinitionCard">
             <div>
               <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
                 Create Credential Definition
@@ -364,6 +384,8 @@ const ViewSchemas = () => {
               </Formik>
             </div>
           </Card >
+
+          }
         </div>
       </div>
       <>
@@ -392,7 +414,14 @@ const ViewSchemas = () => {
                 {credDeffList && credDeffList.length > 0 &&
                   credDeffList.map((element, key) => (
                     <div className='p-2' key={key}>
-                      <CredDeffCard credDeffName={element['tag']} credentialDefinitionId={element['credentialDefinitionId']} schemaId={element['schemaLedgerId']} revocable={element['revocable']} onClickCallback={credDefSelectionCallback} />
+                      <CredDeffCard 
+                      credDeffName={element['tag']}
+                      credentialDefinitionId={element['credentialDefinitionId']}
+                      schemaId={element['schemaLedgerId']}
+                      revocable={element['revocable']}
+                      onClickCallback={credDefSelectionCallback} 
+                      userRoles= {userRoles}
+                      />
                     </div>
                   ))
                 }
