@@ -96,6 +96,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
                 challangeId
             };
             setFidoLoader(false)
+
             const verificationResp = await verifyAuthenticationMethod(verifyAuthenticationObj, { userName: email });
             const { data } = verificationResp as AxiosResponse
             if (data?.data.verified) {
