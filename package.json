@@ -65,6 +65,7 @@
 		"socket.io-client": "^4.6.2",
 		"tailwind-scrollbar": "^3.0.4",
 		"tailwindcss": "^3.3.3",
+		"uuid": "^9.0.1",
 		"yup": "^1.2.0"
 	},
 	"devDependencies": {
@@ -74,6 +75,7 @@
 		"@types/downloadjs": "^1.4.3",
 		"@types/eslint": "^8.21.1",
 		"@types/secure-random-password": "^0.2.1",
+		"@types/uuid": "^9.0.3",
 		"@typescript-eslint/eslint-plugin": "^5.54.1",
 		"@typescript-eslint/parser": "^5.54.1",
 		"astro-eslint-parser": "^0.11.0",
