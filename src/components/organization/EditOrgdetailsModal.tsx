@@ -9,7 +9,6 @@ import { AlertComponent } from "../AlertComponent";
 import type { AxiosResponse } from 'axios';
 import { updateOrganization } from "../../api/organization";
 import type { Organisation } from "./interfaces";
-import React from "react";
 import { getFromLocalStorage } from "../../api/Auth";
 
 interface Values {

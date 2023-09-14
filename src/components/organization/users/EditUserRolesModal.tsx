@@ -7,7 +7,6 @@ import { useEffect, useRef, useState } from "react";
 import { AlertComponent } from "../../AlertComponent";
 import type { AxiosResponse } from 'axios';
 import { apiStatusCodes } from "../../../config/CommonConstant";
-import React from 'react';
 
 interface RoleI {
     id: number

@@ -18,7 +18,6 @@ import WalletSpinup from './WalletSpinup';
 import { getFromLocalStorage } from '../../api/Auth';
 import { getOrganizationById } from '../../api/organization';
 import { pathRoutes } from '../../config/pathRoutes';
-import React from 'react';
 
 const Dashboard = () => {
     const [orgData, setOrgData] = useState<Organisation | null>(null);

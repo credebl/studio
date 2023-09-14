@@ -100,14 +100,13 @@ const AddPasskey = () => {
         ...attResp,
         challangeId
       }
-      console.log("verifyRegistrationObj::::", verifyRegistrationObj)
       await verifyRegistrationMethod(verifyRegistrationObj, OrgUserEmail);
     } catch (error) {
       showFidoError(error)
     }
   }
 
-  const verifyRegistrationMethod = async (verifyRegistrationObj:any, OrgUserEmail: string) => {
+  const verifyRegistrationMethod = async (verifyRegistrationObj, OrgUserEmail: string) => {
     try {
       const verificationRegisterResp = await verifyRegistration(verifyRegistrationObj, OrgUserEmail)
       const { data } = verificationRegisterResp as AxiosResponse

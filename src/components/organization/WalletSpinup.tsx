@@ -20,7 +20,6 @@ import InputCopy from '../InputCopy';
 import SOCKET from '../../config/SocketConfig';
 import SharedIllustrate from './SharedIllustrate';
 import { nanoid } from 'nanoid';
-import React from 'react';
 
 interface Values {
 	seed: string;
