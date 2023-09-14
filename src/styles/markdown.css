@@ -1,0 +1,33 @@
+body {
+   @apply dark:text-white;
+   @apply bg-white;
+    @apply font-sans;
+    @apply text-justify;
+    @apply leading-8;
+    
+
+}
+
+ h1{
+   @apply text-2xl;
+   @apply text-black;
+   @apply font-extrabold; 
+   @apply mb-4;
+   @apply dark:text-white;
+}
+
+ h2 {
+   @apply dark:text-white;
+   @apply mt-8 ;
+   @apply text-lg ;
+   @apply text-black ;
+   @apply font-extrabold ;
+   @apply mb-4 ;
+} 
+ p{
+    @apply mb-4;
+ }
+
+ .markdown-container ul{
+    @apply list-disc;
+ }
