@@ -1,17 +1,33 @@
 import { Button, Card } from 'flowbite-react';
 
-const CredDeffCard = (props: { credDeffName: string, credentialDefinitionId: string, schemaId: string, revocable: boolean, onClickCallback: (schemaId: string, credentialDefinitionId: string) => void; }) => {
-  return (
-    <Card onClick={() => {
+import { Roles } from '../utils/enums/roles';
+
+const CredDeffCard = (props: { credDeffName: string, userRoles?:string[], credentialDefinitionId: string, schemaId: string, revocable: boolean, onClickCallback: (schemaId: string, credentialDefinitionId: string) => void; }) => {
+  
+  const redirectToIssuance = () => {
+    if (props?.userRoles?.includes(Roles.OWNER)
+      || props?.userRoles?.includes(Roles.ADMIN) 
+      || props?.userRoles?.includes(Roles.ISSUER)) {
       props.onClickCallback(props.schemaId, props.credentialDefinitionId)
-    }} className=' cursor-pointer overflow-hidden overflow-ellipsis' style={{ maxHeight: '100%', maxWidth: '100%', overflow: 'auto' }}>
+
+    }
+  }
+  
+  return (
+    <Card onClick={redirectToIssuance} className=' cursor-pointer overflow-hidden overflow-ellipsis' style={{ maxHeight: '100%', maxWidth: '100%', overflow: 'auto' }}>
       <div className="mb-1 lg:flex lg:items-center justify-between">
         <div className="lg:w-1/2 md:w-2/3"> {/* This will take up 2/3 of the available width on larger screens */}
           <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
             {props.credDeffName}
           </h5>
         </div>
-        <div className="p-2 lg:w-1/2 md:w-2/3 mt-2 lg:mt-0">
+        {
+          props.userRoles 
+          && (props.userRoles.includes(Roles.OWNER) 
+            || props.userRoles.includes(Roles.ADMIN)
+            || props.userRoles.includes(Roles.ISSUER)            
+            ) 
+          && <div className="p-2 lg:w-1/2 md:w-2/3 mt-2 lg:mt-0">
           <Button
             type="submit"
             color='bg-primary-800'
@@ -27,6 +43,8 @@ const CredDeffCard = (props: { credDeffName: string, credentialDefinitionId: str
             Issue
           </Button>
         </div>
+        }
+        
       </div>
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
