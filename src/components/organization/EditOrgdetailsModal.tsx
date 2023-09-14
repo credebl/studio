@@ -176,7 +176,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps)=> {
                     props?.onEditSucess()
                 }
                 props.setOpenModal(false)
-
+                window.location.reload();
             } else {
                 setErrMsg(resUpdateOrg as string)
             }
