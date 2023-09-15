@@ -7,11 +7,14 @@ export const pathRoutes = {
     users: {
         dashboard: '/dashboard',
         profile: '/profile',
-        invitations: '/invitations',
+        invitations: '/invitations', 
         fetchUsers: '/users',
     },
     subscription:{
     subscription: '/subscription'
+    },
+    yourSubscription: {
+        yourSubscription: '/yourSubscription'
     },
     organizations: {
         root: '/organizations',
