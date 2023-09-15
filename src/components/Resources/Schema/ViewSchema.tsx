@@ -186,19 +186,20 @@ const ViewSchemas = () => {
         className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
       >
         <div className='flex flex-col sm:flex-row'>
-          <Card className='h-64 sm:w-1/2 p-2 mr-1 mb-1' id="viewSchemaDetailsCard">
+          <Card className='sm:w-1/2 p-2 mr-1 mb-1' id="viewSchemaDetailsCard">
             {loading ? (
               <div className="flex items-center justify-center mb-4">
                 <CustomSpinner/>
               </div>
             ) : (
-              <div className='pt-4'>
-                <div className='flex space-between'>
+              <div className='cursor-pointer overflow-hidden overflow-ellipsis' style={{ overflow: 'auto'}}>
+                <div className='mb-1 lg:flex lg:items-center justify-between'>
+                  <div className="lg:w-1/2 md:w-2/3 ">
                   <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white p-1 pb-2">
                     Schema Details
                   </h5>
-                  <div className='ml-auto'>
-                    <a
+                  </div>
+                  <div className='p-2 lg:w-2/3 md:w-2/3 lg:mt-0 '>                    <a
                       className="text-sm font-medium hover:underline"
                       href={`http://test.bcovrin.vonx.io/browse/domain?query=${schemaDetails?.schemaId}`}
                       target="_blank"
@@ -261,7 +262,9 @@ const ViewSchemas = () => {
             (userRoles.includes(Roles.OWNER) 
             || userRoles.includes(Roles.ADMIN))
            
-            &&     <Card className='h-64 sm:w-1/2 p-2 ml-1' id="credentialDefinitionCard">
+            &&     <Card className='sm:w-1/2 p-2 ml-1 cursor-pointer overflow-hidden overflow-ellipsis' 
+                        style={{ overflow: 'auto' }} 
+                        id="credentialDefinitionCard">
             <div>
               <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
                 Create Credential Definition
