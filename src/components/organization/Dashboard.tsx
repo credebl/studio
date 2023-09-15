@@ -157,6 +157,13 @@ const Dashboard = () => {
                                 {orgData?.description}
                             </p>
 
+                            <p className='mb-1 text-base font-normal text-gray-900 dark:text-white'>
+                                Public view : 
+                                <span className='font-semibold'>
+                                {orgData?.publicProfile ? " Public" : "Private"}
+                                </span>
+                            </p>
+
                         </div>
                     </div>
                     {
