@@ -68,12 +68,14 @@ const SignUpUser = () => {
 		const userRsp = await checkUserExist(values?.email)
 		const { data } = userRsp as AxiosResponse
 		setLoading(false)
+		console.log("data:56576", data)
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			if (data.data === 'New User') {
+			if (data?.data?.isExist === false) {
+				console.log('email data::', data.data)
 				setEmail(values?.email)
 				await VerifyMail(values?.email)
 			}
-			else if (data.data.isEmailVerified === true && data?.data?.isKeycloak !== true) {
+			else if (data.data.isEmailVerified === true && data?.data?.isSupabase!== true) {
 				setEmail(values?.email)
 				await setToLocalStorage(storageKeys.USER_EMAIL, values?.email)
 				setNextFlag(true)
