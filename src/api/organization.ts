@@ -226,6 +226,9 @@ export const getOrganizationRoles = async () => {
 export const getOrganizationUsers = async (pageNumber: number, pageSize: number, search = '') => {
 
     const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
+    if (!orgId) {
+        return "Organization is required";
+    }
 
     const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.users.fetchUsers}?&pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
 
