@@ -55,4 +55,5 @@ export interface UserProfile {
   lastName: string
   isEmailVerified: boolean
   keycloakUserId: string
+  publicProfile:boolean
 }

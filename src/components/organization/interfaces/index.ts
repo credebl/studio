@@ -19,6 +19,7 @@ export interface Organisation {
     roles: string[]
     userOrgRoles: UserOrgRole[]
     org_agents: OrgAgent[]
+    radio1:string | boolean
 }
 
 export interface OrgRole {

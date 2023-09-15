@@ -10,10 +10,12 @@ import type { AxiosResponse } from 'axios';
 // import { asset } from '../../lib/data.js';
 import { updateOrganization } from "../../api/organization";
 import type { Organisation } from "./interfaces";
+import React from "react";
 
 interface Values {
     name: string;
     description: string;
+    radio1: string | boolean;
 }
 
 interface ILogoImage {
@@ -26,15 +28,17 @@ interface EditOrgdetailsModalProps {
     openModal: boolean;
     setMessage: (message: string) => void;
     setOpenModal: (flag: boolean) => void;
-    onEditSucess?:() =>void;
-    orgData: Organisation | null; 
-  }
+    onEditSucess?: () => void;
+    orgData: Organisation | null;
+    
+}
 
-const EditOrgdetailsModal = (props: EditOrgdetailsModalProps)=> {
+const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
     const [logoImage, setLogoImage] = useState<ILogoImage>({
         logoFile: "",
         imagePreviewUrl: props?.orgData?.logoUrl || "",
-        fileName: ''
+        fileName: '',
+        
     })
 
 
@@ -42,27 +46,28 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps)=> {
 
     const [isImageEmpty, setIsImageEmpty] = useState(true)
 
+
     const [initialOrgData, setOrgData] = useState({
         name: props?.orgData?.name || "",
         description: props?.orgData?.description || "",
     })
 
     useEffect(() => {
-        
+
         if (props.orgData) {
-          setOrgData({
-            name: props.orgData.name || '',
-            description: props.orgData.description || '',
-          });
-          
-          setLogoImage({
-            logoFile: "",
-            imagePreviewUrl: props.orgData.logoUrl || "",
-            fileName: ''
-          });
+            setOrgData({
+                name: props.orgData.name || '',
+                description: props.orgData.description || '',
+            });
+
+            setLogoImage({
+                logoFile: "",
+                imagePreviewUrl: props.orgData.logoUrl || "",
+                fileName: ''
+            });
         }
-      }, [props.orgData]);
-    
+    }, [props.orgData]);
+
 
     const [erroMsg, setErrMsg] = useState<string | null>(null)
 
@@ -155,33 +160,34 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps)=> {
         }
     }
 
-        const submitUpdateOrganization = async (values: Values) => {
-            setLoading(true)
+    const submitUpdateOrganization = async (values: Values) => {
+        setLoading(true)
 
-            const orgData = {
-                orgId: props?.orgData?.id,
-                name: values.name,
-                description: values.description,
-                logo: logoImage?.imagePreviewUrl as string || props?.orgData?.logoUrl,
-                website: ""
-            }
-
-            const resUpdateOrg = await updateOrganization(orgData)
-
-            const { data } = resUpdateOrg as AxiosResponse
-            setLoading(false)
-
-            if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-                if(props?.onEditSucess){
-                    props?.onEditSucess()
-                }
-                props.setOpenModal(false)
-                window.location.reload();
-            } else {
-                setErrMsg(resUpdateOrg as string)
-            }
+        const orgData = {
+            orgId: props?.orgData?.id,
+            name: values.name,
+            description: values.description,
+            logo: logoImage?.imagePreviewUrl as string || props?.orgData?.logoUrl,
+            website: "",
+            
         }
-        
+
+        const resUpdateOrg = await updateOrganization(orgData)
+
+        const { data } = resUpdateOrg as AxiosResponse
+        setLoading(false)
+
+        if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+            if (props?.onEditSucess) {
+                props?.onEditSucess()
+            }
+            props.setOpenModal(false)
+             window.location.reload();
+        } else {
+            setErrMsg(resUpdateOrg as string)
+        }
+    }
+
     return (
         <Modal show={props.openModal} onClose={() => {
             setLogoImage({
@@ -195,18 +201,19 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps)=> {
         }>
             <Modal.Header>Edit Organization</Modal.Header>
             <Modal.Body>
-                 <AlertComponent
+                <AlertComponent
                     message={erroMsg}
                     type={'failure'}
-                    onAlertClose = {() => {
+                    onAlertClose={() => {
                         setErrMsg(null)
                     }}
-                    />
+                />
                 <Formik
                     initialValues={
                         {
-                            name:props?.orgData?.name || "",
-                        description:props?.orgData?.description || "",
+                            name: props?.orgData?.name || "",
+                            description: props?.orgData?.description || "",
+                            radio1:props?.orgData?.publicProfile || "",
                         }
                     }
                     validationSchema={
@@ -220,7 +227,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps)=> {
                             description: yup
                                 .string()
                                 .min(2, 'Organization name must be at least 2 characters')
-                                .max(255, 'Organization name must be at most 255 characters')
+                                .max(600, 'Organization name must be at most 255 characters')
                                 .required('Description is required')
                         })}
                     validateOnBlur
@@ -249,21 +256,21 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps)=> {
 
 
                                     {
-                                       (typeof (logoImage.logoFile) === "string" && props?.orgData?.logoUrl) ?
-                                        <img
-                                        className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
-                                        src={props?.orgData?.logoUrl}
-                                        alt="Jese picture"
-                                    />
-                                    : typeof (logoImage.logoFile) === "string" ?
-                                            <Avatar
-                                                size="lg"
-                                            /> :
+                                        (typeof (logoImage.logoFile) === "string" && props?.orgData?.logoUrl) ?
                                             <img
                                                 className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
-                                                src={URL.createObjectURL(logoImage?.logoFile)}
+                                                src={props?.orgData?.logoUrl}
                                                 alt="Jese picture"
                                             />
+                                            : typeof (logoImage.logoFile) === "string" ?
+                                                <Avatar
+                                                    size="lg"
+                                                /> :
+                                                <img
+                                                    className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
+                                                    src={URL.createObjectURL(logoImage?.logoFile)}
+                                                    alt="Jese picture"
+                                                />
                                     }
 
 
@@ -278,7 +285,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps)=> {
 
                                             <div>
                                                 <label htmlFor="organizationlogo">
-																								<div className="px-4 py-2 bg-primary-700 hover:bg-primary-800 text-white text-center rounded-lg">Choose file</div>
+                                                    <div className="px-4 py-2 bg-primary-700 hover:bg-primary-800 text-white text-center rounded-lg">Choose file</div>
                                                     <input type="file" accept="image/*" name="file"
                                                         className="hidden"
                                                         id="organizationlogo" title=""
@@ -316,6 +323,25 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps)=> {
                                 }
 
                             </div>
+
+                            <div>
+                                <div
+                                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                >
+                                    <Label
+                                        htmlFor="website"
+                                        value="Website URL"
+                                    />
+                                    <span className='text-red-500 text-xs'>*</span>
+
+                                </div>
+                                <Field
+                                    id="website"
+                                    name="website"
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                    placeholder="Add org URL" />
+
+                            </div>
                             <div>
                                 <div
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -340,17 +366,60 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps)=> {
                                     <span className="text-red-500 text-xs">{formikHandlers?.errors?.description}</span>
                                 }
                             </div>
+                            <div className="mx-2 grid ">
+                                
+                                <div>
+                                    <div
+                                        className="block mb-2 mt-2 text-sm font-medium text-gray-900 dark:text-white"
+                                    >
+                                        <Label
+                                            htmlFor="name"
+                                            value=""
+                                        />
+                                    </div>
+                                    <Field
+                                        className=""
+                                        type="radio"
+                                        id="private"
+                                        name="radio1"
+                                        value="true"
+                                    // onChange={() => handleRadioChange()}
+                                    />
+                                    <span className="ml-2">Private
+                                    <span className="block pl-6">Only the connected organization can see you organization details</span>
+                                    </span>
+                                </div>
+                                <div>
+                                    <div
+                                        className="block mb-2 mt-2 text-sm font-medium text-gray-900 dark:text-white"
+                                    >
+                                        <Label
+                                            htmlFor="name"
+                                            value=""
+                                        />
+                                    </div>
+                                    <Field
+                                        className=""
+                                        type="radio"
+                                        id="public"
+                                        name="radio1"
+                                        value="false"
+                                    />
+                                    <span className="ml-2">Public
+                                    <span className="block pl-6">Your profile and organization details can be seen by everyone</span></span>
+                                </div>
+                            </div>
 
                             <Button type="submit"
                                 isProcessing={loading}
-                                
+
                                 className='float-right text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
-                             
-                             ><svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 18 18">
-														 <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 1v12l-4-2-4 2V1h8ZM3 17h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z"/>
-													 </svg>
-													 
-                               Save
+
+                            ><svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 18 18">
+                                    <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 1v12l-4-2-4 2V1h8ZM3 17h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z" />
+                                </svg>
+
+                                Save
                             </Button>
                         </Form>
                     )}
