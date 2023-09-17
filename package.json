@@ -22,7 +22,10 @@
 		"start": "astro dev",
 		"build": "astro build",
 		"preview": "deno run --allow-net --allow-read --allow-env ./dist/server/entry.mjs",
-		"astro": "astro"
+		"astro": "astro",
+		"lint": "eslint --ext .js,.jsx,.ts,.tsx,.astro,.mjs,.cjs  .",
+		"lint:fix": "eslint --ext .js,.jsx,.ts,.tsx,.astro,.mjs,.cjs . --fix",
+		"prepare": "husky install"
 	},
 	"dependencies": {
 		"@astrojs/deno": "^4.2.0",
@@ -62,19 +65,28 @@
 		"@types/react": "^18.2.14",
 		"@types/react-dom": "^18.2.6",
 		"@types/uuid": "^9.0.4",
-		"@typescript-eslint/eslint-plugin": "^5.54.1",
-		"@typescript-eslint/parser": "^5.54.1",
+		"@typescript-eslint/eslint-plugin": "^5.54.0",
+		"@typescript-eslint/parser": "^5.54.0",
 		"astro-eslint-parser": "^0.11.0",
 		"babel-eslint": "^10.1.0",
 		"eslint": "^8.35.0",
 		"eslint-config-airbnb-base": "^15.0.0",
 		"eslint-config-airbnb-typescript": "^17.0.0",
-		"eslint-config-prettier": "^8.7.0",
+		"eslint-config-prettier": "^8.6.0",
 		"eslint-import-resolver-typescript": "^3.5.3",
 		"eslint-plugin-astro": "^0.23.0",
 		"eslint-plugin-import": "^2.27.5",
+		"eslint-plugin-jsx-a11y": "^6.7.1",
 		"eslint-plugin-prettier": "^4.2.1",
-		"eslint-plugin-react": "^7.33.2",
-		"eslint-plugin-tsdoc": "^0.2.17"
+		"eslint-plugin-react": "^7.32.2",
+		"eslint-plugin-react-hooks": "^4.6.0",
+		"eslint-plugin-simple-import-sort": "^10.0.0",
+		"eslint-plugin-tailwindcss": "^3.10.1",
+		"eslint-plugin-tsdoc": "^0.2.17",
+		"eslint-plugin-unused-imports": "^2.0.0",
+		"husky": "^8.0.0",
+		"lint-staged": "^14.0.1",
+		"prettier": "^2.8.4",
+		"prettier-plugin-astro": "^0.8.0"
 	}
 }
