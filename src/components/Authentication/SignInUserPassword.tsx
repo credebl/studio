@@ -8,17 +8,17 @@ import {
 	Form,
 	Formik,
 } from 'formik';
+import React, { useState } from 'react';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { getUserProfile, loginUser, passwordEncryption, setToLocalStorage } from '../../api/Auth';
 
 import { Alert } from 'flowbite-react';
 import type { AxiosResponse } from 'axios';
 import CustomSpinner from '../CustomSpinner';
+import FooterBar from './FooterBar';
+import NavBar from './NavBar';
 import SignInUserPasskey from './SignInUserPasskey';
 import { getSupabaseClient } from '../../supabase';
-import React from 'react';
-import NavBar from './NavBar';
-import FooterBar from './FooterBar';
 
 interface emailValue {
 	email: string;
