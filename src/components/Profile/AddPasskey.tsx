@@ -140,7 +140,8 @@ const AddPasskey = () => {
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setAddSuccess("Device added successfully")
         setTimeout(() => {
-          userDeviceDetails()
+          // userDeviceDetails() // required
+          setAddSuccess('')
           window.location.href = `${apiRoutes.auth.profile}`
       }, 4000)
       } else {
