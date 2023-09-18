@@ -18,9 +18,8 @@ const OrganisationPublicProfile = () => {
 	};
 
 	const [organizationsList, setOrganizationList] = useState([]);
-	
+
 	const [loading, setLoading] = useState<boolean>(true);
-	const [message, setMessage] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [searchText, setSearchText] = useState('');
 	const [currentPage, setCurrentPage] = useState(initialPageState);
@@ -77,7 +76,6 @@ const OrganisationPublicProfile = () => {
 		setSearchText(e.target.value);
 	};
 
-	
 	return (
 		<div>
 			<div className="flex items-center justify-between mb-4 p-2 pl-0">
@@ -92,28 +90,36 @@ const OrganisationPublicProfile = () => {
 				) : organizationsList && organizationsList?.length > 0 ? (
 					<div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2">
 						{organizationsList?.map(
-							(org: { logoUrl: string; name: string; description: string ,id:number,orgSlug:string}) => (
-
-								<Card onClick={()=>{ window.location.href=`/publicOrg/${org.orgSlug}`
-								}} className="transform transition duration-500 hover:scale-[1.02] hover:bg-gray-50 cursor-pointer">
+							(org: {
+								logoUrl: string;
+								name: string;
+								description: string;
+								id: number;
+								orgSlug: string;
+							}) => (
+								<Card
+									onClick={() => {
+										window.location.href = `/org/${org?.orgSlug}`;
+									}}
+									className="transform transition duration-500 hover:scale-[1.02] hover:bg-gray-50 cursor-pointer"
+								>
 									<div className="flex items-center">
 										{org.logoUrl ? (
-											<CustomAvatar size="80" src={org.logoUrl} />
+											<CustomAvatar size="80" src={org?.logoUrl} />
 										) : (
-											<CustomAvatar size="80" name={org.name} />
+											<CustomAvatar size="80" name={org?.name} />
 										)}
 
 										<div className="ml-4">
 											<h5 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-												<p>{org.name}</p>
-												
+												<p>{org?.name}</p>
 											</h5>
 											<div className="flow-root h-auto">
 												<ul className="divide-y divide-gray-200 dark:divide-gray-700">
 													<li className="py-3 sm:py-4 overflow-auto">
 														<div className="flex items-center space-x-4">
 															<div className="inline-flex items-center text-base text-lg text-gray-900 dark:text-white">
-																{org.description}
+																{org?.description}
 															</div>
 														</div>
 													</li>
@@ -127,35 +133,21 @@ const OrganisationPublicProfile = () => {
 					</div>
 				) : (
 					organizationsList && (
-						<EmptyListMessage
-							message={'No Organization'}
-							description={'Get started by creating a new Organization'}
-							buttonContent={'Create Organization'}
-							// onClick={createOrganizationModel}
-							svgComponent={
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="15"
-									height="15"
-									fill="none"
-									viewBox="0 0 24 24"
-								>
-									<path
-										fill="#fff"
-										d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"
-									/>
-								</svg>
-							}
-						/>
+						<div className="flex justify-center items-center">
+							<EmptyListMessage
+								message={'No Matching Organization'}
+								description={''}
+							/>
+						</div>
 					)
 				)}
 
 				<div className="flex items-center justify-end mb-4">
 					{organizationsList && organizationsList?.length > 0 && (
 						<Pagination
-							currentPage={currentPage.pageNumber}
+							currentPage={currentPage?.pageNumber}
 							onPageChange={onPageChange}
-							totalPages={currentPage.total}
+							totalPages={currentPage?.total}
 						/>
 					)}
 				</div>

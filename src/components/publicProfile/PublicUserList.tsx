@@ -8,6 +8,7 @@ import SearchInput from '../SearchInput';
 import { Card, Pagination } from 'flowbite-react';
 import CustomAvatar from '../Avatar';
 import CustomSpinner from '../CustomSpinner';
+import { EmptyListMessage } from '../EmptyListComponent';
 
 const PublicUserList = () => {
 	const initialPageState = {
@@ -56,7 +57,7 @@ const PublicUserList = () => {
 	};
 
 	useEffect(() => {
-		let getData: NodeJS.Timeout;
+		let getData: NodeJS.Timeout | undefined;
 
 		if (searchText.length >= 1) {
 			getData = setTimeout(() => {
@@ -87,13 +88,27 @@ const PublicUserList = () => {
 				) : usersData && usersData?.length > 0 ? (
 					<div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2">
 						{usersData.map(
-							(user: { logoUrl: string; firstName: string; email: string , id:number, username:string}) => (
-								<Card onClick={()=>{ window.location.href=`/publicUser/${user.username}`}} className="transform transition duration-500 hover:scale-[1.02] hover:bg-gray-50 cursor-pointer">
+							(user: {
+								logoUrl: string;
+								firstName: string;
+								email: string;
+								id: number;
+								username: string;
+							}) => (
+								<Card
+									onClick={() => {
+										window.location.href = `/user/${user.username}`;
+									}}
+									className="transform transition duration-500 hover:scale-[1.02] hover:bg-gray-50 cursor-pointer"
+								>
 									<div className="flex items-center">
 										{user.logoUrl ? (
 											<CustomAvatar size="80" src={user.logoUrl} />
 										) : (
-											<CustomAvatar size="80" name={user.firstName} />
+											<CustomAvatar
+												size="80"
+												name={user.firstName || user.email}
+											/>
 										)}
 
 										<div className="ml-4">
@@ -118,7 +133,14 @@ const PublicUserList = () => {
 						)}
 					</div>
 				) : (
-					''
+					usersData && (
+						<div className="flex justify-center items-center">
+							<EmptyListMessage
+								message={'No Matching User Avilable'}
+								description={''}
+							/>
+						</div>
+					)
 				)}
 
 				<div className="flex items-center justify-end mb-4">

@@ -16,6 +16,8 @@ interface UserObject {
 <div class="min-[320]:inline-block  w-full md:flex rounded gap-2 bg-white">
 	<div class="w-2/3 mb-4 sm:mb-0 sm:pr-4 p-2">
 		<h1 class="font-semibold text-2xl p-3">Wallet Details</h1>
+
+	{	orgData?.org_agents.length > 0 ?
 	<div class=" flex justify-start align-middle items-center p-3">
 		<ul class="space-y-6">
 			{orgData?.org_agents ? 
@@ -59,33 +61,30 @@ interface UserObject {
 
 		}
 	</ul>
+	</div>:
+	<p class="pl-4">
+		
+			Wallet details are not avilable. Need to create wallet.
+			</p>
+	}
 	</div>
-	</div>
-
+{orgData?.org_agents.length > 0 &&
 	<div class="w-1/3 flex flex-col justify-center text-wrap p-2">
 		<div class="h-auto flex-col items-center p-4">
+		{	orgData?.org_agents &&
+			
 			<div
 					class="bg-white p-4 border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 overflow-hidden">
 					<CustomQRCode
 					client:load
 							size={180}
-							value={orgData?.org_agents[0]?.agent_invitations[0] || "dummy"}
+							value={orgData?.org_agents[0]?.agent_invitations[0]?.connectionInvitation}
 					/>
 			</div>
-		
+		}
 	</div>
-	</div>
+	</div>}
 </div>
 
 
-<!-- <script>
-	const btn = document.getElementById("myButton");
 
-const handleClick=(orgData: { org_agents: { orgDid: string; }[]; })=>{
-	navigator.clipboard.writeText(orgData?.org_agents[0].orgDid);
-	
-}
-if(btn) {
-	btn.addEventListener("click", handleClick);
-}
-</script> -->
