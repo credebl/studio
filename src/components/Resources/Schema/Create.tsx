@@ -192,8 +192,8 @@ const CreateSchema = () => {
 
 												return (
 													<>
-														<div className="d-flex justify-content-center align-items-center mb-1">
-															Attributes <span className="text-red-600">*</span>
+														<div className="d-flex justify-content-center dark:text-white align-items-center mb-1">
+															Attributes <span className="dark:text-red text-red-600">*</span>
 														</div>
 														<div className="flex flex-col">
 															{attribute.map((element: any, index: number) => (

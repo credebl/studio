@@ -67,6 +67,10 @@ export const apiRoutes = {
 		},
         Platform: {
             getAllSchemaFromPlatform: '/platform/schemas',
-        }
+        },
+		public:{
+			organizations: '/organization/public-profiles',
+			users:'/users/public-profiles',
+		}
 
 }
