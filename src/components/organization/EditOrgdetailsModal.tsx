@@ -5,12 +5,13 @@ import { Field, Form, Formik, FormikHelpers } from 'formik';
 import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, apiStatusCodes, imageSizeAccepted } from '../../config/CommonConstant'
 import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
 import { useEffect, useState } from "react";
+
 import { AlertComponent } from "../AlertComponent";
 import type { AxiosResponse } from 'axios';
-// import { asset } from '../../lib/data.js';
-import { updateOrganization } from "../../api/organization";
 import type { Organisation } from "./interfaces";
 import React from "react";
+// import { asset } from '../../lib/data.js';
+import { updateOrganization } from "../../api/organization";
 
 interface Values {
     name: string;
@@ -326,24 +327,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 
                             </div>
 
-                            <div>
-                                <div
-                                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                >
-                                    <Label
-                                        htmlFor="website"
-                                        value="Website URL"
-                                    />
-                                    <span className='text-red-500 text-xs'>*</span>
-
-                                </div>
-                                <Field
-                                    id="website"
-                                    name="website"
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Add org URL" />
-
-                            </div>
+                         
                             <div>
                                 <div
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -367,6 +351,23 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                                     (formikHandlers?.errors?.description && formikHandlers?.touched?.description) &&
                                     <span className="text-red-500 text-xs">{formikHandlers?.errors?.description}</span>
                                 }
+                            </div>
+                               <div>
+                                <div
+                                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                >
+                                    <Label
+                                        htmlFor="website"
+                                        value="Website URL"
+                                    />
+
+                                </div>
+                                <Field
+                                    id="website"
+                                    name="website"
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                    placeholder="Add org URL" />
+
                             </div>
                             <div className="mx-2 grid ">
                                 
