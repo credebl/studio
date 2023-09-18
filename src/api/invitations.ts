@@ -8,6 +8,10 @@ export const getOrganizationInvitations = async (pageNumber: number, pageSize: n
 
     const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
 
+    if (!orgId) {
+        return "Organization is required";
+    }
+
        const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.invitations}?&pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
 
     const token = await getFromLocalStorage(storageKeys.TOKEN)
