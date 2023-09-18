@@ -53,7 +53,6 @@ export const apiRoutes = {
     },
 		Issuance:{
 			getIssuedCredentials:'/issue-credentials',
-			// getCredDefBySchemaId :'/schemas/cred-defs',
 			getAllConnections:'/connections',
 			issueCredential:'/issue-credentials/create-offer'
 		},

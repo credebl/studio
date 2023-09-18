@@ -50,7 +50,7 @@ const ViewSchemas = () => {
   const [success, setSuccess] = useState<string | null>(null)
   const [credDefListErr, setCredDefListErr] = useState<string | null>(null)
   const [schemaDetailErr, setSchemaDetailErr] = useState<string | null>(null)
-  const [failure, setFailur] = useState<string | null>(null)
+  const [failure, setFailure] = useState<string | null>(null)
   const [orgId, setOrgId] = useState<number>(0)
   const [credDefAuto, setCredDefAuto] = useState<string>('')
 
@@ -143,7 +143,7 @@ const ViewSchemas = () => {
       setSuccess(data?.message)
     }
     else {
-      setFailur(createCredDeff as string)
+      setFailure(createCredDeff as string)
       setCreateLoader(false)
     }
     getCredentialDefinitionList(schemaDetails?.schemaId, orgId)
@@ -334,7 +334,10 @@ const ViewSchemas = () => {
                       (success || failure) &&
                       <Alert
                         color={success ? "success" : "failure"}
-                        onDismiss={() => setSuccess(null)}
+                        onDismiss={() => {
+                          setSuccess(null)
+                          setFailure(null)
+                        }}
                       >
                         <span>
                           <p>
