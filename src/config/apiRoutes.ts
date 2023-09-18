@@ -37,10 +37,8 @@ export const apiRoutes = {
         create: '/schemas',
         getAll: '/schemas',
         getSchemaById:'/schemas',
-        // createCredentialDefinition: '/credential-definitions',
         createCredentialDefinition: '/cred-defs',
         getCredDefBySchemaId: '/schemas',
-        // getAllSchemaFromPlatform: `/schemas/platform`,
     },
     fido: {
         generateRegistration: 'fido/generate-registration-options',
