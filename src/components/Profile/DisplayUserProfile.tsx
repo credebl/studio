@@ -86,7 +86,6 @@ interface DisplayUserProfileProps {
             <div className='h-full'>
                 <div className='page-container relative h-full flex flex-auto flex-col px-4 sm:px-6 md:px-8 py-4 sm:py-6 md:px-8'>
                     <div className='container mx-auto bg-white border border-gray-200 rounded-lg'>
-                        {/* <div className='border-gray-200'> */}
                             <div className="px-6 py-6">
                                 <form action="#">
                                     <div className="form-container">
@@ -166,7 +165,6 @@ interface DisplayUserProfileProps {
                                     </div>
                                 </form>
                             </div>
-                        {/* </div> */}
                     </div>
                 </div>
             </div>
