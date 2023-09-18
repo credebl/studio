@@ -30,7 +30,7 @@ export const getAllSchemas = async ({itemPerPage, page, allSearch }: GetAllSchem
 export const getAllSchemasByOrgId = async ({ search, itemPerPage, page }: GetAllSchemaListParameter, orgId: string) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
-    url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.getAll}&pageNumber=${page}&pageSize=${itemPerPage}&searchByText=${search}`,
+    url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.getAll}?pageNumber=${page}&pageSize=${itemPerPage}&searchByText=${search}`,
     config: {
       headers: {
         'Content-type': 'application/json',
