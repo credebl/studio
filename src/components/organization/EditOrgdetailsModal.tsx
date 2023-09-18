@@ -31,7 +31,7 @@ interface EditOrgdetailsModalProps {
     setOpenModal: (flag: boolean) => void;
     onEditSucess?: () => void;
     orgData: Organisation | null;
-    
+
 }
 
 const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
@@ -39,14 +39,14 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
         logoFile: "",
         imagePreviewUrl: props?.orgData?.logoUrl || "",
         fileName: '',
-        
+
     })
 
 
     const [loading, setLoading] = useState<boolean>(false)
 
     const [isImageEmpty, setIsImageEmpty] = useState(true)
-
+    const [isPublic, setIsPublic] = useState(true)
 
     const [initialOrgData, setOrgData] = useState({
         name: props?.orgData?.name || "",
@@ -60,7 +60,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
             setOrgData({
                 name: props.orgData.name || '',
                 description: props.orgData.description || '',
-                radio1: props?.orgData?.publicProfile.toString() 
+                radio1: props?.orgData?.publicProfile.toString()
             });
 
             setLogoImage({
@@ -77,20 +77,19 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
     const [imgError, setImgError] = useState('')
 
     useEffect(() => {
-        if(props.openModal === false)
-        {
+        if (props.openModal === false) {
             setOrgData({
                 name: '',
                 description: '',
-                radio1:''     
+                radio1: ''
             })
-            
+
             setLogoImage({
                 ...logoImage,
                 logoFile: "",
                 imagePreviewUrl: ""
             })
-        }     
+        }
     }, [props.openModal])
 
 
@@ -169,6 +168,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
     }
 
     const submitUpdateOrganization = async (values: Values) => {
+
         setLoading(true)
 
         const orgData = {
@@ -177,7 +177,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
             description: values.description,
             logo: logoImage?.imagePreviewUrl as string || props?.orgData?.logoUrl,
             website: "",
-            
+            isPublic: isPublic
         }
 
         const resUpdateOrg = await updateOrganization(orgData)
@@ -190,7 +190,6 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                 props?.onEditSucess()
             }
             props.setOpenModal(false)
-            // window.location.reload();
         } else {
             setErrMsg(resUpdateOrg as string)
         }
@@ -327,7 +326,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 
                             </div>
 
-                         
+
                             <div>
                                 <div
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -352,7 +351,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                                     <span className="text-red-500 text-xs">{formikHandlers?.errors?.description}</span>
                                 }
                             </div>
-                               <div>
+                            <div>
                                 <div
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >
@@ -370,7 +369,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 
                             </div>
                             <div className="mx-2 grid ">
-                                
+
                                 <div>
                                     <div
                                         className="block mb-2 mt-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -380,15 +379,16 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                                             value=""
                                         />
                                     </div>
-                                    <Field
+                                    <input
                                         className=""
                                         type="radio"
+                                        checked={isPublic === false}
+                                        onChange={() => setIsPublic(false)}
                                         id="private"
-                                        name="radio1"
-                                        value="true"
-                                    />
-                                    <span className="ml-2">Private
-                                    <span className="block pl-6">Only the connected organization can see you organization details</span>
+                                        name="private"
+                                    />                                   
+                                    <span className="ml-2 text-gray-900">Private
+                                        <span className="block pl-6 text-gray-500 text-sm">Only the connected organization can see you organization details</span>
                                     </span>
                                 </div>
                                 <div>
@@ -400,22 +400,23 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                                             value=""
                                         />
                                     </div>
-                                    <Field
+                                    <input
                                         className=""
                                         type="radio"
+                                        onChange={() => setIsPublic(true)}
+                                        checked={isPublic === true}
                                         id="public"
-                                        name="radio1"
-                                        value="false"
+                                        name="public"
                                     />
-                                    <span className="ml-2">Public
-                                    <span className="block pl-6">Your profile and organization details can be seen by everyone</span></span>
+                                   
+                                    <span className="ml-2 text-gray-900">Public
+                                        <span className="block pl-6 text-gray-500 text-sm">Your profile and organization details can be seen by everyone</span></span>
                                 </div>
                             </div>
 
                             <Button type="submit"
                                 isProcessing={loading}
-
-                                className='float-right text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
+                                className='mb-2 float-right text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
 
                             ><svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 18 18">
                                     <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 1v12l-4-2-4 2V1h8ZM3 17h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z" />
