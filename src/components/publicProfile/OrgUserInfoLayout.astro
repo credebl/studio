@@ -1,0 +1,84 @@
+---
+interface UserDetails {
+	lastName: string;
+	firstName: string;
+	email: string;
+	publicProfile: boolean;
+	id: number;
+	username: string;
+}
+const { orgUsersData } = Astro.props;
+---
+
+<div class="grid lg:grid-cols-2 sm:grid-cols-1 gap-2 rounded">
+	<div
+		class="px-6 py-4 col-span-1 bg-gradient-to-r from-white via-white to-gray-50 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-gray-300 dark:focus:ring-gray-800 shadow-lg shadow-gray-500/50 dark:shadow-lg dark:shadow-gray-800/80 rounded-lg"
+	>
+		{
+			orgUsersData &&
+				orgUsersData?.map((orgUser: UserDetails) => {
+					return (
+						<>
+							<div class=" flex">
+								<svg
+									class="w-6 h-6 text-gray-800 dark:text-white"
+									aria-hidden="true"
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 20 20"
+								>
+									<path
+										stroke="currentColor"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M10 19a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0a8.949 8.949 0 0 0 4.951-1.488A3.987 3.987 0 0 0 11 14H9a3.987 3.987 0 0 0-3.951 3.512A8.948 8.948 0 0 0 10 19Zm3-11a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+									/>
+								</svg>
+								<div class="font-bold text-xl pl-2 mb-2">
+									{orgUser.firstName} {orgUser.lastName}
+								</div>
+							</div>
+
+							<div class="flex">
+								<svg
+									class="w-6 h-6 text-gray-800 dark:text-white m-0.5"
+									aria-hidden="true"
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 20 16"
+								>
+									<path
+										stroke="currentColor"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="m19 2-8.4 7.05a1 1 0 0 1-1.2 0L1 2m18 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1m18 0v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2"
+									/>
+								</svg>
+								<p class="text-gray-700 text-xl mb-1.5 pl-1">{orgUser.email}</p>
+							</div>
+							<span
+								class={
+									orgUser?.publicProfile
+										? 'text-gray-700 text-sm px-2 py-1 rounded-lg my-1.5 pl-1 bg-secondary-800'
+										: 'text-gray-700 text-sm px-2 py-1 rounded-lg my-1.5 pl-1 bg-red-400'
+								}
+							>
+								{orgUser?.publicProfile ? 'Public Account' : 'Private Account'}
+							</span>
+
+							{orgUser?.publicProfile && (
+								<a
+									href={`/publicUser/${orgUser?.username}`}
+									class="float-right inline-flex items-center p-2 text-sm font-medium rounded-lg text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700"
+								>
+									View More..
+								</a>
+							)}
+						</>
+					);
+				})
+		}
+	</div>
+</div>

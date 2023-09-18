@@ -63,6 +63,10 @@ export const apiRoutes = {
 		},
         Agent:{
 			checkAgentHealth: '/agent-service/health',
+		},
+		public:{
+			organizations: '/organization/public-profiles',
+			users:'/users/public-profiles',
 		}
 
 }
