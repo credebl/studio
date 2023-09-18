@@ -198,12 +198,12 @@ const AddPasskey = () => {
     <div className="mb-4 col-span-full xl:mb-2 p-4">
       <BreadCrumbs />
 
-      {fidoLoader
+      {/* {fidoLoader
         ? <div className="flex items-center justify-center mb-4">
 
           <CustomSpinner />
         </div>
-        :
+        : */}
         <div>
           <div className=' h-full flex flex-auto flex-col justify-between'>
             <div className="mb-4 border-b border-gray-200 dark:border-gray-700">
@@ -233,7 +233,7 @@ const AddPasskey = () => {
 			</div> 
         </div>
 
-      }
+      {/* } */}
     </div>
   );
 };
