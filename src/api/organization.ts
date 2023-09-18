@@ -274,10 +274,8 @@ export const editOrganizationUserRole = async (userId: number, roles: number[]) 
 
 
 export const createConnection = async (orgName: string) => {
-
-    const url = apiRoutes.connection.create
-
     const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
+    const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.connection.create}`
     
     const data = {
         label: orgName,

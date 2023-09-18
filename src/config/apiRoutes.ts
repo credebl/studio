@@ -18,6 +18,7 @@ export const apiRoutes = {
         recentActivity: '/users/activity',
     },
     organizations: {
+        root: '/orgs',
         create: '/organization',
         update: '/organization',
         getAll: '/organization',
@@ -51,18 +52,17 @@ export const apiRoutes = {
         fidoVerifyAuthentication: 'Fido/verify-authentication/'
 
     },
-		Issuance:{
-			getIssuedCredentials:'/issue-credentials',
-			getCredDefBySchemaId :'/schemas/credential-definitions',
-			getAllConnections:'/connections',
-			issueCredential:'/issue-credentials/create-offer'
-		},
-        Verification:{
-			getAllRequestList: '/proofs',
-			verifyCredential:'/proofs/request-proof',
-            presentationVerification:'/proofs/verify-presentation',
-		    proofRequestAttributesVerification:'/proofs/form-data'
-		},
+    Issuance: {
+        getIssuedCredentials: '/credentials',
+        getAllConnections: '/connections',
+        issueCredential: '/credentials/offer',
+    },
+    Verification: {
+        getAllRequestList: '/credentials/proofs',
+        verifyCredential: '/proofs',
+        presentationVerification: '/proofs',
+        proofRequestAttributesVerification: '/proofs'
+    },
         Agent:{
 			checkAgentHealth: '/agent-service/health',
 		},
