@@ -50,6 +50,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
     const [initialOrgData, setOrgData] = useState({
         name: props?.orgData?.name || "",
         description: props?.orgData?.description || "",
+        radio1: props?.orgData?.publicProfile?.toString() || ""
     })
 
     useEffect(() => {
@@ -58,6 +59,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
             setOrgData({
                 name: props.orgData.name || '',
                 description: props.orgData.description || '',
+                radio1: props?.orgData?.publicProfile.toString() 
             });
 
             setLogoImage({
@@ -66,7 +68,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                 fileName: ''
             });
         }
-    }, [props.orgData]);
+    }, [props]);
 
 
     const [erroMsg, setErrMsg] = useState<string | null>(null)
@@ -74,15 +76,20 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
     const [imgError, setImgError] = useState('')
 
     useEffect(() => {
-        setOrgData({
-            name: '',
-            description: '',
-        })
-        setLogoImage({
-            ...logoImage,
-            logoFile: "",
-            imagePreviewUrl: ""
-        })
+        if(props.openModal === false)
+        {
+            setOrgData({
+                name: '',
+                description: '',
+                radio1:''     
+            })
+            
+            setLogoImage({
+                ...logoImage,
+                logoFile: "",
+                imagePreviewUrl: ""
+            })
+        }     
     }, [props.openModal])
 
 
@@ -182,7 +189,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                 props?.onEditSucess()
             }
             props.setOpenModal(false)
-             window.location.reload();
+            // window.location.reload();
         } else {
             setErrMsg(resUpdateOrg as string)
         }
@@ -210,11 +217,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                 />
                 <Formik
                     initialValues={
-                        {
-                            name: props?.orgData?.name || "",
-                            description: props?.orgData?.description || "",
-                            radio1:props?.orgData?.publicProfile || "",
-                        }
+                        initialOrgData
                     }
                     validationSchema={
                         yup.object().shape({
@@ -239,7 +242,6 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                     ) => {
 
                         submitUpdateOrganization(values)
-
                     }}
                 >
                     {(formikHandlers): JSX.Element => (
@@ -383,7 +385,6 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                                         id="private"
                                         name="radio1"
                                         value="true"
-                                    // onChange={() => handleRadioChange()}
                                     />
                                     <span className="ml-2">Private
                                     <span className="block pl-6">Only the connected organization can see you organization details</span>

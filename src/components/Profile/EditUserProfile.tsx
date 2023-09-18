@@ -336,7 +336,6 @@ const UpdateUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }
                                         id="private"
                                         name="radio1"
                                         value="true"
-                                    // onChange={() => handleRadioChange()}
                                     />
                                     <span className="ml-2 text-gray-900">Private
                                     <span className="block pl-6 text-gray-500 text-sm">Only the connected organization can see you organization details</span>
