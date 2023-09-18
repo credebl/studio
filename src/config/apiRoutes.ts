@@ -51,17 +51,17 @@ export const apiRoutes = {
         fidoVerifyAuthentication: 'Fido/verify-authentication/'
 
     },
-		Issuance:{
-			getIssuedCredentials:'/issue-credentials',
-			getAllConnections:'/connections',
-			issueCredential:'/issue-credentials/create-offer'
-		},
-        Verification:{
-			getAllRequestList: '/proofs',
-			verifyCredential:'/proofs/request-proof',
-            presentationVerification:'/proofs/verify-presentation',
-		    proofRequestAttributesVerification:'/proofs/form-data'
-		},
+    Issuance: {
+        getIssuedCredentials: '/credentials',
+        getAllConnections: '/connections',
+        issueCredential: '/credentials/offer',
+    },
+    Verification: {
+        getAllRequestList: '/credentials/proofs',
+        verifyCredential: '/proofs',
+        presentationVerification: '/proofs',
+        proofRequestAttributesVerification: '/proofs'
+    },
         Agent:{
 			checkAgentHealth: '/agents/health',       
             agentDedicatedSpinup: '/agents/spinup',

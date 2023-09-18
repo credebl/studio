@@ -6,8 +6,7 @@ import { getFromLocalStorage } from './Auth';
 
 export const getIssuedCredentials = async (schemaId: string) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url= `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.getCredDefBySchemaId}/${schemaId}/cred-defs`;
-
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.getIssuedCredentials}`;
 	const axiosPayload = {
 		url,
 		config: await getHeaderConfigs(),
@@ -40,8 +39,8 @@ export const getCredentialDefinitions = async (schemaId: string) => {
 
 
 export const issueCredential = async (data: object) => {
-	const url = apiRoutes.Issuance.issueCredential;
-	const payload = data;
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.issueCredential}`;	const payload = data;
 	const axiosPayload = {
 		url,
 		payload,
