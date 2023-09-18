@@ -304,7 +304,7 @@ export const createConnection = async (orgName: string) => {
 
 // public profile
 
-export const getPublicUsers = async (pageNumber: number, pageSize: number, search = '') => {
+export const getPublicUsers = async (pageNumber: number, pageSize: number, search :string) => {
 
 	const url = `${apiRoutes.public.users}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
 
@@ -321,7 +321,7 @@ export const getPublicUsers = async (pageNumber: number, pageSize: number, searc
 	}
 }
 
-export const getPublicOrganizations = async (pageNumber: number, pageSize: number, search = '') => {
+export const getPublicOrganizations = async (pageNumber: number, pageSize: number, search :string) => {
 
 	const url = `${apiRoutes.public.organizations}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
 

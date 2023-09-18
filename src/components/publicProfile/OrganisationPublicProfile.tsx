@@ -34,14 +34,14 @@ const OrganisationPublicProfile = () => {
 	const getAllOrganizations = async () => {
 		setLoading(true);
 		const response = await getPublicOrganizations(
-			currentPage.pageNumber,
-			currentPage.pageSize,
+			currentPage?.pageNumber,
+			currentPage?.pageSize,
 			searchText,
 		);
 
 		const { data } = response as AxiosResponse;
 
-		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+		if (data?.statusCode === apiStatusCodes?.API_STATUS_SUCCESS) {
 			const totalPages = data?.data?.totalPages;
 
 			const orgList = data?.data?.organizations.map((userOrg: any) => {
@@ -62,7 +62,7 @@ const OrganisationPublicProfile = () => {
 	useEffect(() => {
 		let getData: NodeJS.Timeout;
 
-		if (searchText.length >= 1) {
+		if (searchText?.length >= 1) {
 			getData = setTimeout(() => {
 				getAllOrganizations();
 			}, 1000);
