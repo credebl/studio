@@ -240,7 +240,6 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                         values: Values,
                         { resetForm }: FormikHelpers<Values>
                     ) => {
-
                         submitUpdateOrganization(values)
                     }}
                 >
