@@ -10,6 +10,7 @@ import DataTable from "../../commonComponents/datatable";
 import type { TableData } from "../../commonComponents/datatable/interface";
 import { verifyCredential } from "../../api/verification";
 import { pathRoutes } from "../../config/pathRoutes";
+import CustomSpinner from "../CustomSpinner";
 
 interface SchemaDetails {
 	schemaName: string,
@@ -41,7 +42,7 @@ const VerificationCred = () => {
 	const [schemaDetails, setSchemaDetails] = useState<SchemaDetails>({
 		schemaName: '', version: '', schemaId: '', credDefId: ''
 	})
-	const [loading, setLoading] = useState<boolean>(false)
+	const [loading, setLoading] = useState<boolean>(true)
 	const [schemaAttributes, setSchemaAttributes] = useState<string[]>([]);
 	const [selectedUsersData, setSelectedUsersData] = useState<Array<{ name: string, selected: boolean }>>([]);
 	const [requestLoader, setRequestLoader] = useState<boolean>(false)
@@ -220,6 +221,11 @@ const VerificationCred = () => {
 					Verification
 				</h1>
 			</div>
+			{loading ? 
+				<div className="flex items-center justify-center mb-4">
+					<CustomSpinner/>
+					</div>
+					:
 			<Card className='transform transition duration-500 hover:scale-105 hover:bg-gray-50' style={{ width: '470px', height: '140px', maxWidth: '100%', maxHeight: '100%', overflow: 'auto' }}>
 				<div className="flex justify-between items-start">
 					<div>
@@ -242,6 +248,7 @@ const VerificationCred = () => {
 					</p>
 				</div>
 			</Card>
+			}
 			{
 				(proofReqSuccess || errMsg) &&
 				<div className="p-2">

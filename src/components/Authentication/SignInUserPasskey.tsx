@@ -95,13 +95,12 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
                 ...attResp,
                 challangeId
             };
+            setFidoLoader(false)
             const verificationResp = await verifyAuthenticationMethod(verifyAuthenticationObj, { userName: email });
             const { data } = verificationResp as AxiosResponse
-
             if (data?.data.verified) {
                 const payload: UserSignInData = {
                     email: email,
-                    password: passwordEncryption('Password@1'),
                     isPasskey: true
                 };
 
@@ -235,7 +234,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 
                                     <Button
                                         id='loginwithpasskey'
-                                        isProcessing={''}
+                                        isProcessing={fidoLoader}
                                         onClick={() => {
 
                                             authenticateWithPasskey(signInUserProps?.email)
