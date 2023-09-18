@@ -1,0 +1,54 @@
+---
+import { pathRoutes } from '../../config/pathRoutes';
+import ProfileDesign from '../../components/publicProfile/ProfileDesign.astro';
+import WalletDetailQRLayout from '../../components/publicProfile/WalletDetailQRLayout.astro';
+import OrgUserInfoLayout from '../../components/publicProfile/OrgUserInfoLayout.astro';
+
+const { org } = Astro.params;
+const baseUrl = process.env.PUBLIC_BASE_URL || import.meta.env.PUBLIC_BASE_URL
+const response = await fetch(
+	`${baseUrl}/organization/public-profiles/${org}`,
+);
+const data = await response?.json();
+
+const orgData = data?.data;
+const orgUsersData = orgData?.userOrgRoles?.map(
+	(users: { user: { firstName: string } }) => {
+		return users?.user;
+	},
+);
+---
+
+<div class="">
+	<div class="w-full mx-0">
+		<div class="flex px-3 py-2 justify-start">
+			<div class="flex items-center justify-start">
+				<a href={pathRoutes?.users?.dashboard} class="flex ml-2 md:mr-24">
+					<img
+						src="/images/CREDEBL_ICON.png"
+						class="h-8 mr-3"
+						alt="CREDEBL Logo"
+					/>
+					<span
+						class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white"
+						>CREDEBL</span
+					>
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="grid grid-cols-3 gap-2 p-2 bg-gray-100">
+		<div class="h-screen col-span-1 border">
+			<ProfileDesign orgData={orgData} />
+		</div>
+
+		<div class="col-span-2 grid grid-rows-2 gap-4 bg-gray-100">
+			<WalletDetailQRLayout orgData={orgData} />
+			<div class="p-2 rounded bg-white">
+				<h1 class="font-bold text-2xl p-2">Users</h1>
+				<OrgUserInfoLayout orgUsersData={orgUsersData} />
+			</div>
+		</div>
+	</div>
+</div>
