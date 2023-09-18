@@ -139,8 +139,10 @@ const AddPasskey = () => {
       const { data } = deviceDetailsResp as AxiosResponse
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setAddSuccess("Device added successfully")
-        userDeviceDetails()
-        window.location.href = `${apiRoutes.auth.profile}`
+        setTimeout(() => {
+          userDeviceDetails()
+          window.location.href = `${apiRoutes.auth.profile}`
+      }, 4000)
       } else {
         setAddFailur(deviceDetailsResp as string)
       }
