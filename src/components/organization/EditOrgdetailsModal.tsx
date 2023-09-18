@@ -229,8 +229,8 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                                 .trim(),
                             description: yup
                                 .string()
-                                .min(2, 'Organization name must be at least 2 characters')
-                                .max(600, 'Organization name must be at most 255 characters')
+                                .min(2, 'Organization description must be at least 2 characters')
+                                .max(600, 'Organization description must be at most 255 characters')
                                 .required('Description is required')
                         })}
                     validateOnBlur
@@ -240,7 +240,6 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                         values: Values,
                         { resetForm }: FormikHelpers<Values>
                     ) => {
-
                         submitUpdateOrganization(values)
                     }}
                 >

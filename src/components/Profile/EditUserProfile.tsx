@@ -1,21 +1,22 @@
-import { SetStateAction, useEffect, useState } from "react";
-import type { UserProfile } from "./interfaces";
-import { getFromLocalStorage, getUserProfile, updateUserProfile } from "../../api/Auth";
-import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, apiStatusCodes, imageSizeAccepted, storageKeys } from "../../config/CommonConstant";
-import type { AxiosResponse } from "axios";
-import CustomAvatar from '../Avatar'
-import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
+import * as yup from "yup"
+
 import { Avatar, Button, Label } from "flowbite-react";
 import { Field, Form, Formik, FormikHelpers } from "formik";
+import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, apiStatusCodes, imageSizeAccepted, storageKeys } from "../../config/CommonConstant";
+import { SetStateAction, useEffect, useState } from "react";
+import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
+import { getFromLocalStorage, getUserProfile, updateUserProfile } from "../../api/Auth";
+
+import type { AxiosResponse } from "axios";
+import CustomAvatar from '../Avatar'
+import type { UserProfile } from "./interfaces";
 import { asset } from "../../lib/data";
-import * as yup from "yup"
 
 interface Values {
   profileImg: string;
   firstName: string;
   lastName: string;
   email: string;
-  radio1: string | boolean;
 }
 
 interface ILogoImage {
@@ -33,13 +34,14 @@ const UpdateUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }
 
   const [loading, setLoading] = useState<boolean>(false)
   const [isImageEmpty, setIsImageEmpty] = useState(true)
+
+  const [isPublic, setIsPublic] = useState(true)
+
   const [initialProfileData, setInitialProfileData] = useState({
     profileImg: userProfileInfo?.profileImg || "",
     firstName: userProfileInfo?.firstName || "",
     lastName: userProfileInfo?.lastName || "",
-    email: userProfileInfo?.email || "",
-    radio1: userProfileInfo?.publicProfile?.toString()
-    
+    email: userProfileInfo?.email || ""    
   })
   const [logoImage, setLogoImage] = useState<ILogoImage>({
     logoFile: '',
@@ -56,8 +58,7 @@ const UpdateUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }
         profileImg: userProfileInfo?.profileImg || "",
         firstName: userProfileInfo.firstName || '',
         lastName: userProfileInfo.lastName || '',
-        email: userProfileInfo?.email,  
-        radio1: userProfileInfo?.publicProfile.toString()  
+        email: userProfileInfo?.email 
       });
 
       setLogoImage({
@@ -153,22 +154,22 @@ const UpdateUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }
     setLoading(true)
 
     const userData = {
-      id: userProfileInfo?.id,
+      id: userProfileInfo?.id as number,
       firstName: values.firstName,
       lastName: values.lastName,
       email: values.email,
       profileImg: logoImage?.imagePreviewUrl as string || values?.profileImg,
-      publicProfile:values?.radio1
+      isPublic
     }
 
     const resUpdateUserDetails = await updateUserProfile(userData)
+    setLoading(false)
 
     const { data } = resUpdateUserDetails as AxiosResponse
 
-    updateProfile(userData);
-
-    setLoading(false)
-
+    if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        updateProfile(userData);
+    }
   }
 
   const validationSchema = yup.object().shape({
@@ -200,7 +201,6 @@ const UpdateUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }
             if (!values.firstName || !values.lastName) {
               return;
             }
-            values['radio1'] = values?.radio1 === 'true' ? true : false
             updateUserDetails(values);
             toggleEditProfile();
 
@@ -330,13 +330,14 @@ const UpdateUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }
                                             value="Profile View"
                                         />
                                     </div>
-                                    <Field
+                                      <input
                                         className=""
                                         type="radio"
+                                        checked={isPublic === false}
+                                        onChange={() => setIsPublic(false)}
                                         id="private"
-                                        name="radio1"
-                                        value="true"
-                                    />
+                                        name="private"
+                                    />       
                                     <span className="ml-2 text-gray-900">Private
                                     <span className="block pl-6 text-gray-500 text-sm">Only the connected organization can see you organization details</span>
                                     </span>
@@ -350,12 +351,13 @@ const UpdateUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }
                                             value=""
                                         />
                                     </div>
-                                    <Field
+                                    <input
                                         className=""
                                         type="radio"
+                                        onChange={() => setIsPublic(true)}
+                                        checked={isPublic === true}
                                         id="public"
-                                        name="radio1"
-                                        value="false"
+                                        name="public"
                                     />
                                     <span className="ml-2 text-gray-900 ">Public
                                     <span className="block pl-6 text-gray-500 text-sm">Your profile and organization details can be seen by everyone</span></span>
