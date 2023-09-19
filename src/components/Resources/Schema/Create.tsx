@@ -331,7 +331,7 @@ import { pathRoutes } from '../../../config/pathRoutes';
 
 
 
-                                                                        <div className='sm:w-full items-center flex flex-wrap min-[320]:justify-center min-[320]:space-x-2 lg:space-x-6 m-2 py-2'>
+                                                                        <div className='sm:w-full items-center flex flex-wrap min-[320]:justify-between min-[320]:space-x-2 xl:space-x-6 m-2 py-2'>
                                                                         {index === 0 && attribute.length === 1 ? (
                                                                              <div key={element.id} className="sm:w-0.5/3 text-red-600 hidden">
 																				<Button
@@ -392,7 +392,7 @@ import { pathRoutes } from '../../../config/pathRoutes';
                                                                         )}
 
                                                                         {index === attribute.length - 1 && (
-                                                                            <div key={element.id} className="sm:w-2.5/3 text-red-600 ml-3 lg:ml-0">
+                                                                            <div key={element.id} className="sm:w-2.5/3 text-red-600 sm:ml-0 md:ml-0 lg:ml-0">
 
                                                                             <Button
                                                                                 id="addSchemaButton"
