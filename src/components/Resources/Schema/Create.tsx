@@ -215,7 +215,7 @@ import { pathRoutes } from '../../../config/pathRoutes';
                                                                         Attribute: {index + 1}
                                                                     </label>
                                                                     <Card className='cursor-pointer overflow-hidden overflow-ellipsis' style={{overflow: 'auto'}}>  
-                                                                    <div key={index} className="grid min-[320]:grid-cols-1 sm:grid-cols-4 md:grid-cols-4 gap-2">
+                                                                    <div key={element.id} className="grid min-[320]:grid-cols-1 sm:grid-cols-4 md:grid-cols-4 gap-2">
                                                                         <div className="sm:w-full m-2 p-2">
                                                                             <Field
                                                                                 id={`attribute[${index}]`}
@@ -333,7 +333,7 @@ import { pathRoutes } from '../../../config/pathRoutes';
 
                                                                         <div className='sm:w-full items-center flex flex-wrap min-[320]:justify-center min-[320]:space-x-2 lg:space-x-6 m-2 py-2'>
                                                                         {index === 0 && attribute.length === 1 ? (
-                                                                             <div key={index} className="sm:w-0.5/3 text-red-600 hidden">
+                                                                             <div key={element.id} className="sm:w-0.5/3 text-red-600 hidden">
 																				<Button
 																					data-testid="deleteBtn"
 																					type="button"
@@ -362,7 +362,7 @@ import { pathRoutes } from '../../../config/pathRoutes';
 																				</div>
                                                                         ) : (
 																			
-                                                                            <div key={index} className="sm:w-0.5/3 text-red-600">
+                                                                            <div key={element.id} className="sm:w-0.5/3 text-red-600">
                                                                                 <Button
                                                                                     data-testid="deleteBtn"
                                                                                     type="button"
@@ -392,7 +392,7 @@ import { pathRoutes } from '../../../config/pathRoutes';
                                                                         )}
 
                                                                         {index === attribute.length - 1 && (
-                                                                            <div key={index} className="sm:w-2.5/3 text-red-600 ml-3 lg:ml-0">
+                                                                            <div key={element.id} className="sm:w-2.5/3 text-red-600 ml-3 lg:ml-0">
 
                                                                             <Button
                                                                                 id="addSchemaButton"
