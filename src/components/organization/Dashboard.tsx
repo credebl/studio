@@ -10,7 +10,6 @@ import Credential_Card from '../../assets/Credential_Card.svg';
 import CustomAvatar from '../Avatar';
 import CustomSpinner from '../CustomSpinner';
 import EditOrgdetailsModal from './EditOrgdetailsModal';
-import Invitation_Card from '../../assets/Invitation_Card.svg';
 import OrganizationDetails from './OrganizationDetails';
 import { Roles } from '../../utils/enums/roles';
 import Schema_Card from '../../assets/Schema_Card.svg';

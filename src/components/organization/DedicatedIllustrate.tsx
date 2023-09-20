@@ -1,3 +1,4 @@
+import React from 'react';
 import DedicatedIcon from '../../assets/dedicated.svg';
 
 const DedicatedIllustrate = () => {

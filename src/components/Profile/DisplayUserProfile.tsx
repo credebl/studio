@@ -1,5 +1,5 @@
-import CustomAvatar from '../Avatar'
 import type { UserProfile } from "./interfaces";
+import CustomAvatar from '../Avatar'
 
 interface DisplayUserProfileProps {
     toggleEditProfile: () => void;
@@ -72,20 +72,6 @@ interface DisplayUserProfileProps {
                                 <p className="text-lg text-black truncate dark:text-white">
 
                                     {userProfileInfo?.email}
-                                </p>
-                            </div>
-                        </div>
-                    </li>
-                     <li className="py-3">
-                        <div className="flex items-center space-x-4">
-
-                            <div className="flex-1 min-w-0">
-                                <p className="text-lg font-normal text-gray-500 truncate dark:text-gray-400">
-                                    Public view
-                                </p>
-                                <p className="text-lg text-black truncate dark:text-white">
-
-                                    {userProfileInfo?.publicProfile ? " Public" : "Private"}
                                 </p>
                             </div>
                         </div>
