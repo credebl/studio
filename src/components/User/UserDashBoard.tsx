@@ -10,9 +10,10 @@ import { apiStatusCodes, storageKeys } from "../../config/CommonConstant";
 import { getOrganizations } from "../../api/organization";
 import { getUserActivity } from "../../api/users";
 import { getUserInvitations } from "../../api/invitations";
-import moment from "moment";
 import { pathRoutes } from "../../config/pathRoutes";
 import { setToLocalStorage } from "../../api/Auth";
+import { dateConversion } from "../../utils/DateConversion";
+import DateTooltip from "../Tooltip";
 
 const initialPageState = {
 	pageNumber: 1,
@@ -256,7 +257,10 @@ const UserDashBoard = () => {
 											</div>
 											<time
 												className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500"
-											>{moment(activity.createDateTime).format('Do MMMM YYYY')}
+											>
+												<DateTooltip date={activity.createDateTime}>
+												{dateConversion(activity.createDateTime)}
+												</DateTooltip>
 											</time>
 											<h3 className="text-lg font-semibold text-gray-900 dark:text-white">
 												{activity.action}

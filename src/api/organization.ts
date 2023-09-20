@@ -1,4 +1,4 @@
-import { axiosGet, axiosPost, axiosPut } from "../services/apiRequests"
+import { axiosGet, axiosPost, axiosPublicUserGet, axiosPut } from "../services/apiRequests"
 
 import { apiRoutes } from "../config/apiRoutes";
 import { getFromLocalStorage } from "./Auth";
@@ -302,4 +302,44 @@ export const createConnection = async (orgName: string) => {
     }
 }
 
+// public profile
 
+export const getPublicUsers = async (pageNumber: number, pageSize: number, search :string) => {
+
+	const url = `${apiRoutes.public.users}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
+
+	const axiosPayload = {
+			url,
+	}
+
+	try {
+			return await axiosPublicUserGet(axiosPayload);
+	}
+	catch (error) {
+			const err = error as Error
+			return err?.message
+	}
+}
+
+export const getPublicOrganizations = async (pageNumber: number, pageSize: number, search :string) => {
+
+	const url = `${apiRoutes.public.organizations}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
+
+	const config = {
+			headers: {
+					'Content-Type': 'application/json',
+			}
+	}
+	const axiosPayload = {
+			url,
+			config
+	}
+
+	try {
+			return await axiosGet(axiosPayload);
+	}
+	catch (error) {
+			const err = error as Error
+			return err?.message
+	}
+}

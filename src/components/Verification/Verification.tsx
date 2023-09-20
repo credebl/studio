@@ -10,6 +10,7 @@ import DataTable from "../../commonComponents/datatable";
 import type { TableData } from "../../commonComponents/datatable/interface";
 import { verifyCredential } from "../../api/verification";
 import { pathRoutes } from "../../config/pathRoutes";
+import CustomSpinner from "../CustomSpinner";
 
 interface SchemaDetails {
 	schemaName: string,
@@ -41,7 +42,7 @@ const VerificationCred = () => {
 	const [schemaDetails, setSchemaDetails] = useState<SchemaDetails>({
 		schemaName: '', version: '', schemaId: '', credDefId: ''
 	})
-	const [loading, setLoading] = useState<boolean>(false)
+	const [loading, setLoading] = useState<boolean>(true)
 	const [schemaAttributes, setSchemaAttributes] = useState<string[]>([]);
 	const [selectedUsersData, setSelectedUsersData] = useState<Array<{ name: string, selected: boolean }>>([]);
 	const [requestLoader, setRequestLoader] = useState<boolean>(false)
@@ -198,8 +199,8 @@ const VerificationCred = () => {
 
 	return (
 		<><div className="px-4 pt-6">
-			<div className="pl-6 mb-4 col-span-full xl:mb-2">
-			<div className="flex justify-between">
+			<div className="mb-4 col-span-full xl:mb-2">
+			<div className="flex justify-between items-center">
 					<BreadCrumbs />
 					<Button
             type="submit"
@@ -207,19 +208,24 @@ const VerificationCred = () => {
             onClick={() => {
               window.location.href = `${pathRoutes.back.verification.verification}`
             }}
-            className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 m-2 ml-auto dark:text-white'
+            className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 m-2 ml-2 dark:text-white'
             style={{ height: '2.5rem', width: '5rem', minWidth: '2rem' }}
           >
             <svg className='mr-1' xmlns="http://www.w3.org/2000/svg" width="22" height="12" fill="none" viewBox="0 0 30 20">
               <path fill="#1F4EAD" d="M.163 9.237a1.867 1.867 0 0 0-.122 1.153c.083.387.287.742.587 1.021l8.572 7.98c.198.19.434.343.696.447a2.279 2.279 0 0 0 1.657.013c.263-.1.503-.248.704-.435.201-.188.36-.41.468-.655a1.877 1.877 0 0 0-.014-1.543 1.999 1.999 0 0 0-.48-.648l-4.917-4.576h20.543c.568 0 1.113-.21 1.515-.584.402-.374.628-.882.628-1.411 0-.53-.226-1.036-.628-1.41a2.226 2.226 0 0 0-1.515-.585H7.314l4.914-4.574c.205-.184.368-.404.48-.648a1.878 1.878 0 0 0 .015-1.542 1.99 1.99 0 0 0-.468-.656A2.161 2.161 0 0 0 11.55.15a2.283 2.283 0 0 0-1.657.013 2.154 2.154 0 0 0-.696.447L.626 8.589a1.991 1.991 0 0 0-.463.648Z" />
             </svg>
-            Back
+						<span className="min-[320px]:hidden sm:block"> Back</span> 
           </Button>
 				</div>
 				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 					Verification
 				</h1>
 			</div>
+			{loading ? 
+				<div className="flex items-center justify-center mb-4">
+					<CustomSpinner/>
+					</div>
+					:
 			<Card className='transform transition duration-500 hover:scale-105 hover:bg-gray-50' style={{ width: '470px', height: '140px', maxWidth: '100%', maxHeight: '100%', overflow: 'auto' }}>
 				<div className="flex justify-between items-start">
 					<div>
@@ -242,6 +248,7 @@ const VerificationCred = () => {
 					</p>
 				</div>
 			</Card>
+			}
 			{
 				(proofReqSuccess || errMsg) &&
 				<div className="p-2">

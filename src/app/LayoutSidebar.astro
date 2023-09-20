@@ -1,4 +1,5 @@
 ---
+import CopyrightNotice from '../components/CopyrightNotice.astro';
 import FooterSidebar from './FooterSidebar.astro';
 import LayoutCommon from './LayoutCommon.astro';
 import NavBarSidebar from './NavBarSidebar.astro';
@@ -13,11 +14,12 @@ import SideBar from './SideBar.astro';
 	<div class="flex pt-16 overflow-hidden bg-gray-50 dark:bg-gray-900">
 		<div
 			id="main-content"
-			class="relative w-full h-full overflow-y-auto bg-gray-50 lg:ml-64 dark:bg-gray-900 min-h-screen"
+			class="relative w-full h-full overflow-y-auto bg-gray-50 lg:ml-64 dark:bg-gray-900 min-h-screen flex justify-between flex-col"
+			style="min-height: calc(100vh - 64px);"
 		>
 			<slot />
 
-			<FooterSidebar />
+			<CopyrightNotice />
 		</div>
 	</div>
 </LayoutCommon>

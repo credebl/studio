@@ -1,11 +1,10 @@
 'use client';
 
 import { ChangeEvent, useEffect, useState } from 'react';
-import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
+import { apiStatusCodes } from '../../../config/CommonConstant';
 
 import { AlertComponent } from '../../AlertComponent';
 import type { AxiosResponse } from 'axios';
-import CustomSpinner from '../../CustomSpinner';
 import { EmptyListMessage } from '../../EmptyListComponent';
 import { Features } from '../../../utils/enums/features';
 import type { Invitation } from '../interfaces/invitations';
@@ -15,8 +14,11 @@ import RoleViewButton from '../../RoleViewButton';
 import SearchInput from '../../SearchInput';
 import SendInvitationModal from './SendInvitationModal';
 import { TextTittlecase } from '../../../utils/TextTransform';
-import { getFromLocalStorage } from '../../../api/Auth';
 import { getOrganizationInvitations } from '../../../api/invitations';
+import CustomSpinner from '../../CustomSpinner';
+import { dateConversion } from '../../../utils/DateConversion';
+import DateTooltip from '../../Tooltip';
+import React from 'react';
 
 const initialPageState = {
     pageNumber: 1,
@@ -222,9 +224,9 @@ const Invitations = () => {
                                                 <p
                                                     className="mr-2 flex items-center text-sm font-medium text-gray-500 dark:text-gray-400"
                                                 >
-                                                    Invited On: {invitation.createDateTime.split('T')[0]}
-                                                </p>
-
+                                                    Invited On: <DateTooltip date={invitation.createDateTime}> {dateConversion(invitation.createDateTime)} </DateTooltip>                                                
+                                                    </p>
+                                                    
                                             </div>
                                         </li>
                                     ))

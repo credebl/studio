@@ -107,7 +107,7 @@ const SignUpUserName = () => {
 										</h2>
 
 										<p className="text-gray-500 font-inter text-base font-medium leading-5 mt-2">
-											Please enter your detaild
+											Please enter your details
 										</p>
 
 									</div>

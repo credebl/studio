@@ -4,16 +4,19 @@ import { Alert, Button, Card, Pagination, Table, } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
 import type { GetAllSchemaListParameter, PaginationData } from './interfaces';
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
+import { getAllSchemas, getAllSchemasByOrgId } from '../../../api/Schema';
+
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../../BreadCrumbs';
+import CustomSpinner from '../../CustomSpinner';
+import { EmptyListMessage } from '../../EmptyListComponent';
+import { Features } from '../../../utils/enums/features';
+import RoleViewButton from '../../RoleViewButton';
 import SchemaCard from '../../../commonComponents/SchemaCard';
+import type { SchemaDetails } from '../../Verification/interface';
 import SearchInput from '../../SearchInput';
-import { getAllSchemasByOrgId, getAllSchemas } from '../../../api/Schema';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
-import { EmptyListMessage } from '../../EmptyListComponent';
-import type { SchemaDetails } from '../../Verification/interface';
-import CustomSpinner from '../../CustomSpinner';
 
 const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaDetails: SchemaDetails) => void; }) => {
 	const [schemaList, setSchemaList] = useState([])
@@ -136,8 +139,8 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 							<SearchInput
 								onInputChange={onSearch}
 							/>
-							<select onChange={handleFilter} id="schamfilter" 
-							className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11">
+							<select onChange={handleFilter} id="schamfilter"
+								className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11">
 								<option selected>Organization's schema</option>
 								{options.map((opt) => (
 									<option
@@ -150,20 +153,21 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 								))}
 							</select>
 						</div>
-						<div className='flex space-x-2'>
-							<Button
-								id='createSchemaButton'
-								onClick={() => {
+						<div className='flex space-x-2'>							
+							<RoleViewButton
+								buttonTitle='Create'
+								feature={Features.CRETAE_SCHEMA}
+								svgComponent={
+									<div className='pr-3'>
+										<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
+											<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+										</svg>
+									</div>
+								}
+								onClickEvent={() => {
 									window.location.href = `${pathRoutes.organizations.createSchema}?OrgId=${orgId}`
 								}}
-								className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
-								title='Create New Schema'
-							>
-								<svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
-									<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
-								</svg>
-								Create
-							</Button>
+							/>
 						</div>
 					</div>
 				</div>
@@ -182,8 +186,8 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 				}
 				{loading
 					? (<div className="flex items-center justify-center mb-4">
-						
-						<CustomSpinner/>
+
+						<CustomSpinner />
 					</div>)
 					:
 					schemaList && schemaList.length > 0 ? (
@@ -199,7 +203,7 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 							</div>
 							<div className="flex items-center justify-end mb-4" id="schemasPagination">
 
-								{schemaList.length> 0 &&(<Pagination
+								{schemaList.length > 0 && (<Pagination
 									currentPage={schemaListAPIParameter?.page}
 									onPageChange={(page) => {
 										setSchemaListAPIParameter(prevState => ({
@@ -213,8 +217,8 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 						</div>) : (<EmptyListMessage
 							message={'No Schemas'}
 							description={'Get started by creating a new Schema'}
-							buttonContent={'Create Schema'}
-							svgComponent={<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
+							buttonContent={'Create'}
+							svgComponent={<svg className='pr-2' xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
 								<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
 							</svg>}
 							onClick={() => {
