@@ -63,6 +63,9 @@ export const apiRoutes = {
             agentDedicatedSpinup: '/agents/spinup',
             agentSharedSpinup: '/agents/wallet'
 		},	
+		Platform: {
+			getAllSchemaFromPlatform: '/platform/schemas',
+	},
 		public:{
 			organizations: '/organization/public-profiles',
 			users:'/users/public-profiles',
