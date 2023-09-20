@@ -7,7 +7,7 @@ import BreadCrumbs from '../../components/BreadCrumbs'
 import { MdDashboard } from 'react-icons/md';
 
 import React from 'react';
-import Subscription from './subscription';
+import FreeSubscription from './freesubscription';
 
 const initialPageState = {
     pageNumber: 1,
@@ -16,7 +16,7 @@ const initialPageState = {
 };
 
 
-const Billing = () =>
+const Freeplan = () =>
 {
     return (
         <div className="pt-6">
@@ -39,7 +39,7 @@ const Billing = () =>
                     
                 </div>
                 <div className="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
-                <Subscription />
+                <FreeSubscription />
                 </div>
             </div>
 
@@ -47,4 +47,4 @@ const Billing = () =>
         </div>
     )
 }
-export default Billing;
+export default Freeplan;
