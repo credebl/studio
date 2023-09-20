@@ -1,22 +1,20 @@
-import * as yup from "yup"
-
-import { Avatar, Button, Label } from "flowbite-react";
-import { Field, Form, Formik, FormikHelpers } from "formik";
-import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, apiStatusCodes, imageSizeAccepted, storageKeys } from "../../config/CommonConstant";
-import { SetStateAction, useEffect, useState } from "react";
-import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
+import { useEffect, useState } from "react";
+import type { UserProfile } from "./interfaces";
 import { getFromLocalStorage, getUserProfile, updateUserProfile } from "../../api/Auth";
-
+import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, apiStatusCodes, imageSizeAccepted, storageKeys } from "../../config/CommonConstant";
 import type { AxiosResponse } from "axios";
 import CustomAvatar from '../Avatar'
-import type { UserProfile } from "./interfaces";
+import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
+import { Avatar, Button, Label } from "flowbite-react";
+import { Field, Form, Formik, FormikHelpers } from "formik";
 import { asset } from "../../lib/data";
+import * as yup from "yup"
 
 interface Values {
   profileImg: string;
   firstName: string;
   lastName: string;
-  email: string;
+  email:string;
 }
 
 interface ILogoImage {
@@ -34,22 +32,18 @@ const UpdateUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }
 
   const [loading, setLoading] = useState<boolean>(false)
   const [isImageEmpty, setIsImageEmpty] = useState(true)
-
-  const [isPublic, setIsPublic] = useState(true)
-
   const [initialProfileData, setInitialProfileData] = useState({
     profileImg: userProfileInfo?.profileImg || "",
     firstName: userProfileInfo?.firstName || "",
     lastName: userProfileInfo?.lastName || "",
-    email: userProfileInfo?.email || ""    
+    email: userProfileInfo?.email || "",
+
   })
   const [logoImage, setLogoImage] = useState<ILogoImage>({
     logoFile: '',
     imagePreviewUrl: userProfileInfo?.profileImg || "",
     fileName: ''
   })
-  
-
 
   useEffect(() => {
 
@@ -58,7 +52,8 @@ const UpdateUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }
         profileImg: userProfileInfo?.profileImg || "",
         firstName: userProfileInfo.firstName || '',
         lastName: userProfileInfo.lastName || '',
-        email: userProfileInfo?.email 
+        email: userProfileInfo?.email,
+
       });
 
       setLogoImage({
@@ -126,7 +121,7 @@ const UpdateUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }
       ...logoImage,
       imagePreviewUrl: '',
     });
-
+  
     const reader = new FileReader()
     const file = event?.target?.files
 
@@ -151,37 +146,39 @@ const UpdateUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }
 
   const updateUserDetails = async (values: Values) => {
 
+    console.log(`Image::`, logoImage?.imagePreviewUrl);
+
+
     setLoading(true)
 
     const userData = {
-      id: userProfileInfo?.id as number,
       firstName: values.firstName,
       lastName: values.lastName,
       email: values.email,
-      profileImg: logoImage?.imagePreviewUrl as string || values?.profileImg,
-      isPublic
+      profileImg: logoImage?.imagePreviewUrl as string || values?.profileImg
+
     }
 
     const resUpdateUserDetails = await updateUserProfile(userData)
-    setLoading(false)
 
     const { data } = resUpdateUserDetails as AxiosResponse
 
-    if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        updateProfile(userData);
-    }
+    updateProfile(userData);
+
+    setLoading(false)
+
   }
 
   const validationSchema = yup.object().shape({
     firstName: yup.string()
-      .required("First Name is required")
-      .min(2, 'First name must be at least 2 characters')
-      .max(255, 'First name must be at most 255 characters'),
+                  .required("First Name is required")
+                  .min(2, 'First name must be at least 2 characters')
+                  .max(255, 'First name must be at most 255 characters'),
 
     lastName: yup.string()
-      .required("Last Name is required")
-      .min(2, 'Last name must be at least 2 characters')
-      .max(255, 'Last name must be at most 255 characters')
+                 .required("Last Name is required")
+                 .min(2, 'Last name must be at least 2 characters')
+                 .max(255, 'Last name must be at most 255 characters')
 
   });
 
@@ -194,18 +191,17 @@ const UpdateUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }
         <Formik
           initialValues={initialProfileData}
           onSubmit={async (
-            
-            values: Values,
+            values: Values, 
             { resetForm }: FormikHelpers<Values>
-          ) => {
+            ) => {
             if (!values.firstName || !values.lastName) {
               return;
             }
+        
             updateUserDetails(values);
             toggleEditProfile();
-
           }}
-
+        
           validationSchema={validationSchema}>
           {(formikHandlers): JSX.Element => (
             <Form onSubmit={
@@ -226,9 +222,9 @@ const UpdateUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }
                     />
 
                   ) : (
-                    <CustomAvatar
-                      size="90"
-                      name={userProfileInfo?.firstName} />)}
+                    <CustomAvatar                          
+                    size="90"
+                   name={userProfileInfo?.firstName} />                  )}
 
                   <div>
                     <h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
@@ -254,25 +250,25 @@ const UpdateUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }
                     </div>
                   </div>
                   <button
-                    type="button"
-                    className="absolute top-0 right-0  w-6 h-6 m-2 "
-                    onClick={toggleEditProfile}
-                  >
-                    <svg className="-top-1 -right-6 mr-1 w-6 h-6 mb-20"
-                      width="24" height="24"
-                      viewBox="0 0 24 24"
-                      stroke-width="2"
-                      stroke="currentColor"
-                      fill="none"
-                      stroke-linecap="round"
-                      stroke-linejoin="round">
-                      <path stroke="none" d="M0 0h24v24H0z" />
-                      <line x1="5" y1="12" x2="19" y2="12" />
-                      <line x1="5" y1="12" x2="11" y2="18" />
-                      <line x1="5" y1="12" x2="11" y2="6" />
-                    </svg>
+                  type="button"
+                  className="absolute top-0 right-0  w-6 h-6 m-2 "
+                  onClick={toggleEditProfile}
+                >
+                  <svg className="-top-1 -right-6 mr-1 w-6 h-6 mb-20"
+                    width="24" height="24"
+                    viewBox="0 0 24 24"
+                    stroke-width="2"
+                    stroke="currentColor"
+                    fill="none"
+                    stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <line x1="5" y1="12" x2="11" y2="18" />
+                    <line x1="5" y1="12" x2="11" y2="6" />
+                  </svg>
 
-                  </button>
+                </button>
 
 
                 </div>
@@ -320,50 +316,6 @@ const UpdateUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }
                 }
               </div>
 
-              <div className="mx-2 grid ">
-              <div>
-                                    <div
-                                        className="block mb-2 mt-2 text-sm font-medium text-gray-900 dark:text-white"
-                                    >
-                                        <Label
-                                            htmlFor="name"
-                                            value="Profile View"
-                                        />
-                                    </div>
-                                      <input
-                                        className=""
-                                        type="radio"
-                                        checked={isPublic === false}
-                                        onChange={() => setIsPublic(false)}
-                                        id="private"
-                                        name="private"
-                                    />       
-                                    <span className="ml-2 text-gray-900">Private
-                                    <span className="block pl-6 text-gray-500 text-sm">Only the connected organization can see you organization details</span>
-                                    </span>
-                                </div>
-                                <div>
-                                    <div
-                                        className="block mb-2 mt-2 text-sm font-medium text-gray-900 dark:text-white"
-                                    >
-                                        <Label
-                                            htmlFor="name"
-                                            value=""
-                                        />
-                                    </div>
-                                    <input
-                                        className=""
-                                        type="radio"
-                                        onChange={() => setIsPublic(true)}
-                                        checked={isPublic === true}
-                                        id="public"
-                                        name="public"
-                                    />
-                                    <span className="ml-2 text-gray-900 ">Public
-                                    <span className="block pl-6 text-gray-500 text-sm">Your profile and organization details can be seen by everyone</span></span>
-                                </div>
-              </div>
-
               <div className="flex flex-col items-center sm:flex-row sm:justify-end">
                 <Button type="submit"
                   isProcessing={loading}
@@ -371,8 +323,8 @@ const UpdateUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }
                   className='mt-4 mb-4 float-right text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
 
                 ><svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 18 18">
-                    <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 1v12l-4-2-4 2V1h8ZM3 17h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z" />
-                  </svg>
+								<path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 1v12l-4-2-4 2V1h8ZM3 17h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z"/>
+							</svg>
                   Save
                 </Button>
               </div>

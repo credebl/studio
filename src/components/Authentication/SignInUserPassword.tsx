@@ -8,17 +8,17 @@ import {
 	Form,
 	Formik,
 } from 'formik';
-import React, { useState } from 'react';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { getUserProfile, loginUser, passwordEncryption, setToLocalStorage } from '../../api/Auth';
 
 import { Alert } from 'flowbite-react';
 import type { AxiosResponse } from 'axios';
 import CustomSpinner from '../CustomSpinner';
-import FooterBar from './FooterBar';
-import NavBar from './NavBar';
 import SignInUserPasskey from './SignInUserPasskey';
 import { getSupabaseClient } from '../../supabase';
+import NavBar from './NavBar';
+import FooterBar from './FooterBar';
+import React, { useState } from 'react';
 
 interface emailValue {
 	email: string;
@@ -47,23 +47,22 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 
 
 	const getUserDetails = async (access_token: string) => {
+		
 		const userDetails = await getUserProfile(access_token);
 		const { data } = userDetails as AxiosResponse
 		if (data?.data?.userOrgRoles?.length > 0) {
+			
 			const permissionArray: number | string[] = []
 			data?.data?.userOrgRoles?.forEach((element: { orgRole: { name: string } }) => permissionArray.push(element?.orgRole?.name));
-			await setToLocalStorage(storageKeys.PERMISSIONS, permissionArray)
 			await setToLocalStorage(storageKeys.USER_PROFILE, data?.data)
 			await setToLocalStorage(storageKeys.USER_EMAIL, data?.data?.email)
-
 			window.location.href = '/dashboard'
 		} else {
 			setFailure(userDetails as string)
 		}
+	
 		setLoading(false)
 	}
-
-
 	const signInUser = async (values: passwordValue) => {
 		const payload: SignInUser3Props = {
 			email: email,
@@ -73,10 +72,8 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 		setLoading(true)
 		const loginRsp = await loginUser(payload)
 		const { data } = loginRsp as AxiosResponse
-
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			await setToLocalStorage(storageKeys.TOKEN, data?.data?.access_token)
-
 			const response = await fetch('/api/auth/signin', {
 				method: "POST",
 				headers: {
@@ -88,7 +85,6 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 			if (response.redirected) {
 				getUserDetails(data?.data?.access_token)
 			}
-
 		} else {
 			setLoading(false)
 			setFailure(loginRsp as string)

@@ -8,7 +8,11 @@ export const getOrganizationInvitations = async (pageNumber: number, pageSize: n
 
     const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
 
-    const url = `${apiRoutes.organizations.invitations}/${orgId}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
+    if (!orgId) {
+        return "Organization is required";
+    }
+
+       const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.invitations}?&pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
 
     const token = await getFromLocalStorage(storageKeys.TOKEN)
 
@@ -36,7 +40,7 @@ export const createInvitations = async (invitationList: Array<object>) => {
 
     const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
 
-    const url = apiRoutes.organizations.invitations
+    const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.invitations}`
     const payload = {
         invitations: invitationList,
         orgId: Number(orgId)
@@ -94,10 +98,9 @@ export const getUserInvitations = async (pageNumber: number, pageSize: number, s
 // Accept/ Reject Invitations
 export const acceptRejectInvitations = async (invitationId: number,orgId: number, status: string) => {
 
-    const url = apiRoutes.users.invitations
+    const url = `${apiRoutes.users.invitations}/${invitationId}`
     
     const payload = {
-        invitationId,
         orgId: Number(orgId),
         status
     }

@@ -18,7 +18,6 @@ export const axiosGet = async ({ url, config }: APIParameters): Promise<AxiosRes
         return HandleResponse(err.response ? err.response : err)
     }
 }
-
 export const axiosPublicUserGet = async ({ url }: APIParameters): Promise<AxiosResponse> => {
 	try {
 			const response = await axiosUser.get(url);
@@ -42,6 +41,7 @@ export const axiosPublicOrganisationGet = async ({ url }: APIParameters): Promis
 			return HandleResponse(err.response ? err.response : err)
 	}
 }
+
 
 export const axiosPost = async ({ url, payload, config }: APIParameters): Promise<AxiosResponse> => {
     try {

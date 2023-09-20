@@ -100,7 +100,6 @@ const AddPasskey = () => {
         ...attResp,
         challangeId
       }
-      console.log("verifyRegistrationObj::::", verifyRegistrationObj)
       await verifyRegistrationMethod(verifyRegistrationObj, OrgUserEmail);
     } catch (error) {
       showFidoError(error)
@@ -140,11 +139,8 @@ const AddPasskey = () => {
       const { data } = deviceDetailsResp as AxiosResponse
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setAddSuccess("Device added successfully")
-        setTimeout(() => {
-          // userDeviceDetails() // required
-          setAddSuccess('')
-          window.location.href = `${apiRoutes.auth.profile}`
-      }, 4000)
+        userDeviceDetails()
+        window.location.href = `${apiRoutes.auth.profile}`
       } else {
         setAddFailur(deviceDetailsResp as string)
       }
