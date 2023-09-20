@@ -186,7 +186,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setMessage: (message: s
                             description: yup
                                 .string()
                                 .min(2, 'Description must be at least 2 characters')
-                                .max(255, 'Description must be at most 255 characters')
+                                .max(600, 'Description must be at most 600 characters')
                                 .required('Description is required')
                         })}
                     validateOnBlur

@@ -15,7 +15,6 @@ interface Values {
 		website: any;
     name: string;
     description: string;
-    radio1: string | boolean;
 }
 
 interface ILogoImage {
@@ -47,7 +46,6 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
     const [initialOrgData, setOrgData] = useState({
         name: props?.orgData?.name || "",
         description: props?.orgData?.description || "",
-        radio1: props?.orgData?.publicProfile?.toString() || "",
 				website: props?.orgData?.website || "",
     })
 
@@ -57,7 +55,6 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
             setOrgData({
                 name: props.orgData.name || '',
                 description: props.orgData.description || '',
-                radio1: props?.orgData?.publicProfile.toString(),
 								website: props?.orgData?.website || "",
             });
 
@@ -79,7 +76,6 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
             setOrgData({
                 name: '',
                 description: '',
-                radio1: '',
 								website:''
             })
 
@@ -178,7 +174,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
             isPublic: isPublic
         }
 
-        const resUpdateOrg = await updateOrganization(orgData, orgData.orgId)
+        const resUpdateOrg = await updateOrganization(orgData, orgData.orgId?.toString() as string)
 
         const { data } = resUpdateOrg as AxiosResponse
         setLoading(false)
