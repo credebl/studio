@@ -37,7 +37,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
     const [logoImage, setLogoImage] = useState<ILogoImage>({
         logoFile: "",
         imagePreviewUrl: props?.orgData?.logoUrl || "",
-        fileName: '',
+        fileName: '' ,
 
     })
     const [loading, setLoading] = useState<boolean>(false)
