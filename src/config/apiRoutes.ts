@@ -63,10 +63,15 @@ export const apiRoutes = {
 		    proofRequestAttributesVerification:'/proofs/form-data'
 		},
         Agent:{
-			checkAgentHealth: '/agent-service/health',
-		},
-        Platform: {
-            getAllSchemaFromPlatform: '/platform/schemas',
-        }
-
+			checkAgentHealth: '/agents/health',       
+            agentDedicatedSpinup: '/agents/spinup',
+            agentSharedSpinup: '/agents/wallet'
+		},	
+		Platform: {
+			getAllSchemaFromPlatform: '/platform/schemas',
+	},
+		public:{
+			organizations: '/organization/public-profiles',
+			users:'/users/public-profiles',
+		}
 }

@@ -243,8 +243,8 @@ import React from 'react';
 
                                                 return (
                                                     <>
-                                                        <div className="d-flex justify-content-center align-items-center mb-1">
-                                                            Attributes <span className="text-red-600">*</span>
+                                                        <div className="dark:text-white d-flex justify-content-center align-items-center mb-1">
+                                                            Attributes <span className="dark:text-white text-red-600">*</span>
 
                                                         </div>
                                                         <div className="flex flex-col">
@@ -582,6 +582,7 @@ import React from 'react';
                                                             No, cancel
                                                         </button>
                                                         <Button
+																														data-modal-hide="popup-modal"
                                                             type="submit"
                                                             isProcessing={createloader}
                                                             disabled={createloader}
