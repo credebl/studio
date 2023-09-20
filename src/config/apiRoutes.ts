@@ -65,11 +65,12 @@ export const apiRoutes = {
 		    proofRequestAttributesVerification:'/proofs/form-data'
 		},
         Agent:{
-			checkAgentHealth: '/agent-service/health',
-		},
+			checkAgentHealth: '/agents/health',       
+            agentDedicatedSpinup: '/agents/spinup',
+            agentSharedSpinup: '/agents/wallet'
+		},	
 		public:{
 			organizations: '/organization/public-profiles',
 			users:'/users/public-profiles',
 		}
-
 }
