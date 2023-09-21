@@ -1,0 +1,141 @@
+---
+import CustomAvatar from '../../components/Avatar';
+import { pathRoutes } from '../../config/pathRoutes';
+
+const { user } = Astro.params;
+const baseUrl = process.env.PUBLIC_BASE_URL || import.meta.env.PUBLIC_BASE_URL
+const response = await fetch(`${baseUrl}/users/public-profiles/${user}`);
+const data = await response.json();
+const userData = data?.data;
+---
+
+<div class="p-0 m-0">
+	<div class="w-full mx-0">
+		<div>
+			<div class="w-full mx-0">
+				<div class="flex px-3 py-2 justify-start">
+					<div class="flex items-center justify-start">
+						<a href={pathRoutes.users.dashboard} class="flex ml-2 md:mr-24">
+							<img
+								src="/images/CREDEBL_ICON.png"
+								class="h-8 mr-3"
+								alt="CREDEBL Logo"
+							/>
+							<span
+								class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white"
+								>CREDEBL</span
+							>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="grid sm:grid-cols-1 lg:grid-cols-3 mt-3 m-0 p-0 bg-gray-200">
+				<div class="sm:h-auto lg:h-screen grid-cols-1 m-2">
+					<div
+						class="w-full h-full bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+					>
+						<div class="flex flex-col items-center pb-10">
+							{
+								userData?.logoUrl ? (
+									<CustomAvatar
+										className=" w-56 h-56 my-4 rounded-full shadow-lg"
+										size="80"
+										src={userData?.logoUrl}
+										client:load
+									/>
+								) : (
+									<CustomAvatar
+										className=" w-56 h-56 my-4 rounded-full shadow-lg"
+										size="120"
+										name={userData?.firstName}
+										client:load
+									/>
+								)
+							}
+							<h3 class="mb-1 text-3xl font-medium text-gray-900 dark:text-white p-2 flex items-center">
+								{userData?.firstName}{' '}{userData?.lastName}
+							</h3>
+							<div class="flex text-center align-middle">
+								<svg
+									class="w-6 h-6 text-gray-800 dark:text-white m-0.5"
+									aria-hidden="true"
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 20 16"
+								>
+									<path
+										stroke="currentColor"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="m19 2-8.4 7.05a1 1 0 0 1-1.2 0L1 2m18 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1m18 0v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2"
+									></path>
+								</svg>
+								<span class="text-2xl text-gray-500 dark:text-gray-400 pl-2"
+									>{userData?.email}</span
+								>
+							</div>
+						</div>
+					</div>
+				</div>
+
+		
+				<div class="grid min-h-screen col-span-2 my-2 bg-white">
+		
+					<div class="grid h-screen sm:grid-cols-1 lg:grid-cols-2 gap-4 max-h-3">
+						{
+							userData?.userOrgRoles?.map(
+								(userOrg: {
+									organisation: {
+										name: string;
+										description: string;
+										logoUrl: string;
+										id: number;
+										orgSlug:string
+									};
+									name: string;
+								}) => {
+									return (
+										userOrg?.organisation?.name && (
+											
+											<div class=" justify-between mx-4 mt-2 mb-0 bg-white border border-t-0 border-gray-100 rounded-lg shadow-md shadow-gray-400 sm:flex dark:border-gray-700 sm:p-2 dark:bg-gray-800">
+												<div class="w-full ">
+													<div class="flex align-middle items-center p-0">
+														<div class="relative w-8 h-8 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
+															<img
+																class=" w-56 h-56 my-4 rounded-full shadow-lg"
+																src={userOrg?.organisation?.logoUrl}
+																alt={userOrg?.name}
+															/>
+														</div>
+														<h2 class="text-2xl p-2 font-bold text-gray-500 dark:text-gray-400 ">
+															{userOrg?.organisation?.name &&
+																userOrg?.organisation?.name }
+														</h2>
+													</div>
+													<div>
+														<p class="text-base text-gray-500 dark:text-gray-400 pl-6  ml-4 line-clamp-3">
+															{userOrg?.organisation?.description &&
+																userOrg?.organisation?.description}
+														</p>
+													</div>
+	
+												{userData?.publicProfile &&	<a
+														href={`/publicorg/${userOrg?.organisation?.orgSlug}`}
+														class="float-right inline-flex items-center p-2 text-sm font-medium rounded-lg text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700"
+													>
+														View More..
+													</a>}
+												</div>
+											</div>
+										)
+									);
+								},
+							)
+						}
+					</div>
+				</div>
+		</div>
+	</div>
+</div>

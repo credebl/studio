@@ -1,20 +1,23 @@
+import * as yup from 'yup';
 
 import { Alert, Button, Card, Label, Pagination } from 'flowbite-react';
 import { Field, Form, Formik } from 'formik';
-import { useEffect, useState } from 'react';
-import BreadCrumbs from '../../BreadCrumbs';
-import * as yup from 'yup';
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
-import CredDeffCard from '../../../commonComponents/CredentialDefinitionCard';
 import { createCredentialDefinition, getCredDeffById, getSchemaById } from '../../../api/Schema';
-import type { AxiosResponse } from 'axios';
-import type { CredDeffFieldNameType } from './interfaces';
 import { getFromLocalStorage, setToLocalStorage } from '../../../api/Auth';
+import { useEffect, useState } from 'react';
+
+import type { AxiosResponse } from 'axios';
+import BreadCrumbs from '../../BreadCrumbs';
+import CredDeffCard from '../../../commonComponents/CredentialDefinitionCard';
+import type { CredDeffFieldNameType } from './interfaces';
+import CustomSpinner from '../../CustomSpinner';
 import { EmptyListMessage } from '../../EmptyListComponent';
+import React from 'react';
+import { Roles } from '../../../utils/enums/roles';
+import SchemaCard from '../../../commonComponents/SchemaCard';
 import { nanoid } from 'nanoid';
 import { pathRoutes } from '../../../config/pathRoutes';
-import CustomSpinner from '../../CustomSpinner';
-import React from 'react';
 
 interface Values {
   tagName: string;
@@ -50,6 +53,9 @@ const ViewSchemas = () => {
   const [failure, setFailur] = useState<string | null>(null)
   const [orgId, setOrgId] = useState<number>(0)
   const [credDefAuto, setCredDefAuto] = useState<string>('')
+
+  const [userRoles, setUserRoles] = useState<string[]>([])
+
 
   const getSchemaDetails = async (id: string, organizationId: number) => {
     try {
@@ -108,6 +114,16 @@ const ViewSchemas = () => {
 
     fetchData();
   }, []);
+
+  const getUserRoles = async () => {
+        const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES)
+        const roles = orgRoles.split(',')
+        setUserRoles(roles)        
+    }
+
+  useEffect(() => {
+        getUserRoles()
+  },[])
 
 
   const submit = async (values: Values) => {
@@ -173,19 +189,20 @@ const ViewSchemas = () => {
         className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
       >
         <div className='flex flex-col sm:flex-row'>
-          <Card className='h-64 sm:w-1/2 p-2 mr-1 mb-1' id="viewSchemaDetailsCard">
+          <Card className='sm:w-1/2 p-2 mr-1 mb-1' id="viewSchemaDetailsCard">
             {loading ? (
               <div className="flex items-center justify-center mb-4">
                 <CustomSpinner />
               </div>
             ) : (
-              <div className='pt-4'>
-                <div className='flex space-between'>
+              <div className='cursor-pointer overflow-hidden overflow-ellipsis' style={{ overflow: 'auto'}}>
+                <div className='mb-1 lg:flex lg:items-center justify-between'>
+                  <div className="lg:w-1/2 md:w-2/3 ">
                   <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white p-1 pb-2">
                     Schema Details
                   </h5>
-                  <div className='ml-auto'>
-                    <a
+                  </div>
+                  <div className='p-2 lg:w-2/3 md:w-2/3 lg:mt-0 '>                    <a
                       className="text-sm font-medium hover:underline"
                       href={`http://test.bcovrin.vonx.io/browse/domain?query=${schemaDetails?.schemaId}`}
                       target="_blank"
@@ -247,7 +264,13 @@ const ViewSchemas = () => {
               </div>
             )}
           </Card>
-          <Card className='h-64 sm:w-1/2 p-2 ml-1' id="credentialDefinitionCard">
+          {
+            (userRoles.includes(Roles.OWNER) 
+            || userRoles.includes(Roles.ADMIN))
+           
+            &&     <Card className='sm:w-1/2 p-2 ml-1 cursor-pointer overflow-hidden overflow-ellipsis' 
+                        style={{ overflow: 'auto' }} 
+                        id="credentialDefinitionCard">
             <div>
               <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
                 Create Credential Definition
@@ -370,6 +393,8 @@ const ViewSchemas = () => {
               </Formik>
             </div>
           </Card >
+
+          }
         </div>
       </div>
       <>
@@ -398,7 +423,14 @@ const ViewSchemas = () => {
                 {credDeffList && credDeffList.length > 0 &&
                   credDeffList.map((element, key) => (
                     <div className='p-2' key={key}>
-                      <CredDeffCard credDeffName={element['tag']} credentialDefinitionId={element['credentialDefinitionId']} schemaId={element['schemaLedgerId']} revocable={element['revocable']} onClickCallback={credDefSelectionCallback} />
+                      <CredDeffCard 
+                      credDeffName={element['tag']}
+                      credentialDefinitionId={element['credentialDefinitionId']}
+                      schemaId={element['schemaLedgerId']}
+                      revocable={element['revocable']}
+                      onClickCallback={credDefSelectionCallback} 
+                      userRoles= {userRoles}
+                      />
                     </div>
                   ))
                 }

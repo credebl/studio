@@ -100,7 +100,6 @@ const AddPasskey = () => {
         ...attResp,
         challangeId
       }
-      console.log("verifyRegistrationObj::::", verifyRegistrationObj)
       await verifyRegistrationMethod(verifyRegistrationObj, OrgUserEmail);
     } catch (error) {
       showFidoError(error)

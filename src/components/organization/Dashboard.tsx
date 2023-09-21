@@ -10,7 +10,6 @@ import Credential_Card from '../../assets/Credential_Card.svg';
 import CustomAvatar from '../Avatar';
 import CustomSpinner from '../CustomSpinner';
 import EditOrgdetailsModal from './EditOrgdetailsModal';
-import Invitation_Card from '../../assets/Invitation_Card.svg';
 import OrganizationDetails from './OrganizationDetails';
 import { Roles } from '../../utils/enums/roles';
 import Schema_Card from '../../assets/Schema_Card.svg';
@@ -155,6 +154,13 @@ const Dashboard = () => {
 
                             <p className='mb-1 text-base font-normal text-gray-900 dark:text-white'>
                                 {orgData?.description}
+                            </p>
+
+                            <p className='mb-1 text-base font-normal text-gray-900 dark:text-white'>
+                                Public view : 
+                                <span className='font-semibold'>
+                                {orgData?.publicProfile ? " Public" : "Private"}
+                                </span>
                             </p>
 
                         </div>

@@ -2,7 +2,7 @@ export const pathRoutes = {
     auth: {
         signUp: '/authentication/sign-up',
         sinIn: '/authentication/sign-in',
-        verifyEmail: '/users/verify',
+        verifyEmail: '/auth/verify',
     },
     users: {
         dashboard: '/dashboard',
@@ -59,7 +59,7 @@ export const pathRoutes = {
 				schemas:'/organizations/schemas'
 			},
 			verification:{
-				credDef:'/organizations/credentials-issued/schemas/cred-defs',
+				credDef:'/organizations/verification/schemas/cred-defs',
 				schemas:'/organizations/verification/schemas',
 				verification:'/organizations/verification/schemas/cred-defs/connections',
 			},
