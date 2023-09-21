@@ -144,7 +144,7 @@ const UserDashBoard = () => {
 					className=" justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
 				>
 				<div className="w-full" >
-						<h2 className="text-base font-bold text-gray-500 dark:text-gray-400">
+						<h2 className="text-base font-bold text-gray-500 dark:text-white mb-2">
 							Organizations
 						</h2>
 
@@ -171,7 +171,7 @@ const UserDashBoard = () => {
 								<div onClick={() => goToOrgDashboard(org?.id, org?.roles)}>
 									<a
 										href="#"
-										className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+										className="flex items-center py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
 									>
 										{org.logoUrl ? (
 											<CustomAvatar className='dark:text-white' size="25" src={org?.logoUrl} round />
@@ -232,8 +232,8 @@ const UserDashBoard = () => {
 				<div
 					className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800 xl:mb-0"
 				>
-					<div className="flex items-center justify-between mb-4">
-						<h3 className="pl-12 text-lg font-semibold text-gray-900 dark:text-white">
+					<div className="flex items-start justify-start mb-4">
+						<h3 className="text-lg font-semibold text-gray-900 dark:text-white ">
 							Recent Activity
 							{
 								activityList && activityList?.length===0 && (

@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import { Alert, Button, Card } from 'flowbite-react';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
-import { getCredDeffById, getSchemaById } from '../../api/Schema';
+// import { getCredDeffById, getSchemaById } from '../../api/Schema';
 import { getFromLocalStorage, removeFromLocalStorage } from '../../api/Auth';
 import { useEffect, useState } from 'react';
 

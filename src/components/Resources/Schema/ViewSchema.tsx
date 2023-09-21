@@ -50,17 +50,17 @@ const ViewSchemas = () => {
   const [success, setSuccess] = useState<string | null>(null)
   const [credDefListErr, setCredDefListErr] = useState<string | null>(null)
   const [schemaDetailErr, setSchemaDetailErr] = useState<string | null>(null)
-  const [failure, setFailur] = useState<string | null>(null)
+  const [failure, setFailure] = useState<string | null>(null)
   const [orgId, setOrgId] = useState<number>(0)
   const [credDefAuto, setCredDefAuto] = useState<string>('')
 
   const [userRoles, setUserRoles] = useState<string[]>([])
 
 
-  const getSchemaDetails = async (id: string, organizationId: number) => {
+  const getSchemaDetails = async (SchemaId: string, organizationId: number) => {
     try {
       setLoading(true);
-      const SchemaDetails = await getSchemaById(id, organizationId);
+      const SchemaDetails = await getSchemaById(SchemaId, organizationId);
       const { data } = SchemaDetails as AxiosResponse;
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -136,14 +136,14 @@ const ViewSchemas = () => {
 
     }
 
-    const createCredDeff = await createCredentialDefinition(CredDeffFieldName);
+    const createCredDeff = await createCredentialDefinition(CredDeffFieldName, orgId);
     const { data } = createCredDeff as AxiosResponse
     if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
       setCreateLoader(false)
       setSuccess(data?.message)
     }
     else {
-      setFailur(createCredDeff as string)
+      setFailure(createCredDeff as string)
       setCreateLoader(false)
     }
     getCredentialDefinitionList(schemaDetails?.schemaId, orgId)
@@ -343,7 +343,10 @@ const ViewSchemas = () => {
                       (success || failure) &&
                       <Alert
                         color={success ? "success" : "failure"}
-                        onDismiss={() => setSuccess(null)}
+                        onDismiss={() => {
+                          setSuccess(null)
+                          setFailure(null)
+                        }}
                       >
                         <span>
                           <p>
