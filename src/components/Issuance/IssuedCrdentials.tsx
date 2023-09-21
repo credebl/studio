@@ -36,12 +36,12 @@ const CredentialList = () => {
 
 	const getIssuedCredDefs = async () => {
 		setLoading(true);
-		const response = await getIssuedCredentials(
-			IssueCredential.credentialIssued,
-		);
+		const response = await getIssuedCredentials();
+		
 		const { data } = response as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			
 			const credentialList = data?.data?.map(
 				(issuedCredential: IssuedCredential) => {
 					const schemaName = issuedCredential.metadata['_anoncreds/credential']
@@ -51,6 +51,7 @@ const CredentialList = () => {
 								.slice(2)
 								.join(':')
 						: 'Not available';
+
 					return {
 						data: [
 							{

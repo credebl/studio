@@ -113,9 +113,9 @@ const UserDashBoard = () => {
 		getUserRecentActivity()
 	}, [])
 
-	const redirectToInvitations = () => {
-		window.location.href = pathRoutes.users.invitations
-	}
+	// const redirectToInvitations = () => {
+	// 	window.location.href = pathRoutes.users.invitations
+	// }
 
 	const goToOrgDashboard = async (orgId: number, roles: string[]) => {
 		await setToLocalStorage(storageKeys.ORG_ID, orgId.toString());
@@ -124,11 +124,14 @@ const UserDashBoard = () => {
 
 	return (
 		<div className="px-4 pt-6">
-			<div className="cursor-pointer" onClick={redirectToInvitations}>
+			{/* <div className="cursor-pointer" onClick={redirectToInvitations}> */}
+			<div className="cursor-pointer">
+
 				<AlertComponent
 					message={message ? message : error}
 					type={message ? 'warning' : 'failure'}
 					viewButton={viewButton}
+					goToInvite={true}
 					onAlertClose={() => {
 						setMessage(null)
 						setError(null)

@@ -21,9 +21,10 @@ const OrganizationDetails = ({orgData}: {orgData: Organisation}) => {
 
         setLoading(true)
         const response = await createConnection(orgData?.name as string);
+				
         const { data } = response as AxiosResponse
 
-        if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 
             setConnectionData(data?.data)
 

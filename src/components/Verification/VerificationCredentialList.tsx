@@ -73,6 +73,7 @@ const VerificationCredentialList = () => {
 			const { data } = response as AxiosResponse;
 
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+				
 				const credentialList = data?.data?.map((requestProof: RequestProof) => {
 					return {
 						data: [
