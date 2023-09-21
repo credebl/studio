@@ -88,7 +88,7 @@ export const getProofAttributes=async (proofId:string)=>{
 }
 
 export const getCredentialDefinitionsForVerification = async (schemaId: string) => {
-    const url = `${apiRoutes.Issuance.getCredDefBySchemaId}?schemaId=${schemaId}`;
+    const url = `${apiRoutes.schema.getCredDefBySchemaId}?schemaId=${schemaId}`;
 	const axiosPayload = {
 		url,
 		config: await getHeaderConfigs(),
