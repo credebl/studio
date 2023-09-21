@@ -190,7 +190,7 @@ const CredentialList = () => {
 						</div>
 					) : (
 						<div>
-							<span className="block text-center p-4 m-8">
+							<span className="dark:text-white block text-center p-4 m-8">
 								There isn't any data available.
 							</span>
 						</div>
