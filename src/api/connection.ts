@@ -6,7 +6,7 @@ import { getFromLocalStorage } from './Auth';
 
 export const getConnectionsByOrg = async () => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url = `${apiRoutes.Issuance.getAllConnections}?orgId=${orgId}`;
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.getAllConnections}`;	
 	const axiosPayload = {
 		url,
 		config: await getHeaderConfigs(),

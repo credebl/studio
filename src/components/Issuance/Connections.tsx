@@ -42,7 +42,10 @@ const Connections = () => {
             onClick={() => {
               window.location.href = `${pathRoutes.back.issuance.credDef}`
             }}
-            className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 m-2 ml-auto dark:text-white'
+            className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 
+						ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 
+						lg:py-2.5 mr-2 ml-auto dark:text-white dark:hover:text-black 
+						dark:hover:bg-primary-50'
             style={{ height: '2.5rem', width: '5rem', minWidth: '2rem' }}
           >
             <svg className='mr-1' xmlns="http://www.w3.org/2000/svg" width="22" height="12" fill="none" viewBox="0 0 30 20">

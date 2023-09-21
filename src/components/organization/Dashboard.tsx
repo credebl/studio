@@ -140,13 +140,15 @@ const Dashboard = () => {
                 <div
                     className="mt-4 flex flex-wrap items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
                 >
-
+  
                     <div
                         className="items-center flex flex-wrap"
                     >
-                        <div className='mr-4'>
-                            {(orgData?.logoUrl) ? <CustomAvatar size='60' src={orgData?.logoUrl} /> : <CustomAvatar size='60' name={orgData?.name} />}
+                      
+												 <div className='mr-4'>
+                            {(orgData?.logoUrl) ? <CustomAvatar size='80' src={orgData?.logoUrl} /> : <CustomAvatar size='90' name={orgData?.name} />}
                         </div>
+												{orgData ?
                         <div>
                             <h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
                                 {orgData?.name}
@@ -157,14 +159,18 @@ const Dashboard = () => {
                             </p>
 
                             <p className='mb-1 text-base font-normal text-gray-900 dark:text-white'>
-                                Public view : 
+                                Profile view : 
                                 <span className='font-semibold'>
                                 {orgData?.publicProfile ? " Public" : "Private"}
                                 </span>
                             </p>
 
                         </div>
+												: 
+												<CustomSpinner/>
+												}
                     </div>
+
                     {
                         (userRoles.includes(Roles.OWNER) || userRoles.includes(Roles.ADMIN)) 
                         &&  <div className="inline-flex items-center">

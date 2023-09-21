@@ -15,7 +15,6 @@ import SchemaCard from "../../commonComponents/SchemaCard";
 import type { TableData } from "../../commonComponents/datatable/interface";
 import { dateConversion } from "../../utils/DateConversion";
 import { getCredentialDefinitions } from "../../api/issuance";
-import { getSchemaById } from "../../api/Schema";
 import { pathRoutes } from "../../config/pathRoutes";
 import DateTooltip from "../Tooltip";
 
@@ -68,6 +67,7 @@ const CredDefSelection = () => {
 	const getCredDefs = async (schemaId: string) => {
 		setLoading(true)
 		const response = await getCredentialDefinitions(schemaId);
+		
 		const { data } = response as AxiosResponse
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {

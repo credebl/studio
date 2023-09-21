@@ -42,7 +42,7 @@ const DeleteModal = (props: { openModal: boolean; closeModal: (flag: boolean) =>
         </svg>
         <p className="mb-4 text-gray-500 dark:text-gray-300">
           Are you sure you want to revoke{' '}
-          <span className="dark:text-black font-bold">{props.deviceName}</span> device?
+          <span className="dark:text-white font-bold">{props.deviceName}</span> device?
         </p>
         <div className="flex justify-center items-center space-x-4">
           <button
