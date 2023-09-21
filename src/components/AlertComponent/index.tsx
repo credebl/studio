@@ -1,6 +1,7 @@
 import { Alert } from 'flowbite-react';
+import { pathRoutes } from '../../config/pathRoutes';
 
-export const AlertComponent = ({ message, type, viewButton, onAlertClose }: { message: string | null, type: string, viewButton?: boolean, onAlertClose: () => void }) => {
+export const AlertComponent = ({ message, type, viewButton, onAlertClose, path='' }: { message: string | null, type: string, viewButton?: boolean, path?:string, onAlertClose: () => void }) => {
 
 
     return message !== null ? <Alert
@@ -16,7 +17,7 @@ export const AlertComponent = ({ message, type, viewButton, onAlertClose }: { me
             {
                 viewButton
                 && <p className='md:w-32 lg:w-48 text-base text-primary-700 text-right'>
-                    View more...
+                  <a href={path}>View more... </a>
                 </p>
             }
            

@@ -27,7 +27,6 @@ import React from 'react';
     	const [orgId, setOrgId] = useState<number>(0);
     	const [orgDid, setOrgDid] = useState<string>('');
     	const [createloader, setCreateLoader] = useState<boolean>(false);
-
     	useEffect(() => {
         	const fetchData = async () => {
             	const organizationId = await getFromLocalStorage(
@@ -540,7 +539,6 @@ import React from 'react';
                                                             No, cancel
                                                         </button>
                                                         <Button
-																														data-modal-hide="popup-modal"
                                                             type="submit"
                                                             isProcessing={createloader}
                                                             disabled={createloader}

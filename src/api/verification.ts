@@ -6,8 +6,8 @@ import { axiosGet, axiosPost } from '../services/apiRequests';
 import { getFromLocalStorage } from './Auth';
 
 export const verifyCredential = async (payload: any) => {
-	const url = apiRoutes.Verification.verifyCredential;
-	const axiosPayload = {
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Verification.verifyCredential}`;	const axiosPayload = {
 		url,
 		payload,
 		config: await getHeaderConfigs(),
@@ -24,7 +24,6 @@ export const verifyCredential = async (payload: any) => {
 export const getVerificationCredential = async (state: IssueCredential) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 	const url = `${apiRoutes.Issuance.getIssuedCredentials}?orgId=${orgId}&state=${state}`;
-
 	const axiosPayload = {
 		url,
 		config: await getHeaderConfigs(),
@@ -40,8 +39,8 @@ export const getVerificationCredential = async (state: IssueCredential) => {
 
 export const getVerificationList = async () => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url = `${apiRoutes.Verification.getAllRequestList}?orgId=${orgId}`;
-
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Verification.verifyCredential}`
+	
 	const axiosPayload = {
 		url,
 		config: await getHeaderConfigs(),
@@ -55,10 +54,9 @@ export const getVerificationList = async () => {
 	}
 };
 
-export const verifyPresentation = async (id:string) => {
+export const verifyPresentation = async (proofId:string) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url = `${apiRoutes.Verification.presentationVerification}?orgId=${orgId}&id=${id}`;
-
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Verification.presentationVerification}/${proofId}/verify`;
 	const axiosPayload = {
 		url,
 		config: await getHeaderConfigs(),
@@ -73,10 +71,9 @@ export const verifyPresentation = async (id:string) => {
 };
 
 
-export const getProofAttributes=async (id:string)=>{
+export const getProofAttributes=async (proofId:string)=>{
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url = `${apiRoutes.Verification.proofRequestAttributesVerification}?id=${id}&orgId=${orgId}`;
-
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Verification.proofRequestAttributesVerification}/${proofId}/form`;
 	const axiosPayload = {
 		url,
 		config: await getHeaderConfigs(),
@@ -91,7 +88,9 @@ export const getProofAttributes=async (id:string)=>{
 }
 
 export const getCredentialDefinitionsForVerification = async (schemaId: string) => {
-    const url = `${apiRoutes.schema.getCredDefBySchemaId}?schemaId=${schemaId}`;
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+	const url= `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.getCredDefBySchemaId}/${schemaId}/cred-defs`;
+
 	const axiosPayload = {
 		url,
 		config: await getHeaderConfigs(),
