@@ -144,7 +144,7 @@ const UserDashBoard = () => {
 					className=" justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
 				>
 				<div className="w-full" >
-						<h2 className="text-base font-bold text-gray-500 dark:text-gray-400 mb-2">
+						<h2 className="text-base font-bold text-gray-500 dark:text-white mb-2">
 							Organizations
 						</h2>
 
