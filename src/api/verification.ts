@@ -24,7 +24,6 @@ export const verifyCredential = async (payload: any) => {
 export const getVerificationCredential = async (state: IssueCredential) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 	const url = `${apiRoutes.Issuance.getIssuedCredentials}?orgId=${orgId}&state=${state}`;
-
 	const axiosPayload = {
 		url,
 		config: await getHeaderConfigs(),
@@ -40,7 +39,8 @@ export const getVerificationCredential = async (state: IssueCredential) => {
 
 export const getVerificationList = async () => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Verification.getAllRequestList}`
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Verification.verifyCredential}`
+	
 	const axiosPayload = {
 		url,
 		config: await getHeaderConfigs(),
@@ -88,7 +88,9 @@ export const getProofAttributes=async (proofId:string)=>{
 }
 
 export const getCredentialDefinitionsForVerification = async (schemaId: string) => {
-    const url = `${apiRoutes.schema.getCredDefBySchemaId}?schemaId=${schemaId}`;
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+	const url= `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.getCredDefBySchemaId}/${schemaId}/cred-defs`;
+
 	const axiosPayload = {
 		url,
 		config: await getHeaderConfigs(),
