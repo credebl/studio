@@ -3,10 +3,10 @@ import LayoutSidebar from '../app/LayoutSidebar.astro';
 // import Billing from '../pages/billing/billing';
 import { pathRoutes } from '../config/pathRoutes';
 import { checkUserSession } from '../utils/check-session';
-import FreeSubscription from './../pages/free-subscription/freesubscription'
+import ProSubscription from './../pages/prosubscription/prosubscription'
 
 ---
 
 <LayoutSidebar>
-	<FreeSubscription client:visible/>
+	<ProSubscription client:visible/>
 </LayoutSidebar>

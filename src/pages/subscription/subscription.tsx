@@ -1,18 +1,24 @@
 import React from 'react'
+import BreadCrumbs from '../../components/BreadCrumbs';
 
 const Subscription = () => {
   return (
     <section className="bg-white dark:bg-gray-900">
+        
+        <BreadCrumbs />
+        <h1 className="mx-4 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
+          Subscription
+        </h1>
     <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
-       
+    
         <div className="space-y-8 lg:grid lg:grid-cols-2 sm:gap-6 xl:gap-10 lg:space-y-0">
             
             <div className="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border-t-8 border-white  shadow-[0_0_7px_0px] shadow-black-100 dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white">
                 <h3 className="mb-4 text-2xl font-semibold">Free</h3>
-                <p className="font-light text-gray-500 sm:text-lg dark:text-gray-400">Best option for personal use & for your next project.</p>
+                <p className="font-light text-gray-500 sm:text-lg dark:text-white">Best option for personal use & for your next project.</p>
                 <div className="flex justify-center items-baseline my-8">
                 <span className="mr-2 text-5xl font-extrabold">$0</span>
-                  <span className="text-gray-500">/month</span>
+                  <span className="text-gray-500 dark:text-white">/month</span>
                 </div>
                 
                 <ul role="list" className="mb-8 space-y-4 text-left">
@@ -92,10 +98,10 @@ const Subscription = () => {
            
             <div className="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border-t-8 border-primary-700 shadow dark:border-gray-600  shadow-[0_0_7px_0px] shadow-black-100 xl:p-8 dark:bg-gray-800 dark:text-white">
                 <h3 className="mb-4 text-2xl font-semibold">Pro</h3>
-                <p className="font-light text-gray-500 sm:text-lg dark:text-gray-400">Relevant for multiple users, extended and premium support.</p>
+                <p className="font-light text-gray-500 sm:text-lg dark:text-white">Relevant for multiple users, extended and premium support.</p>
                 <div className="flex justify-center items-baseline my-8">
                 <span className="mr-2 text-5xl font-extrabold">$99</span>
-                  <span className="text-gray-500">/month</span>
+                  <span className="text-gray-500 dark:text-white">/month</span>
                 </div>
                
                 <ul role="list" className="mb-8 space-y-4 text-left">
