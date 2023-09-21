@@ -171,7 +171,7 @@ const UserDashBoard = () => {
 								<div onClick={() => goToOrgDashboard(org?.id, org?.roles)}>
 									<a
 										href="#"
-										className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+										className="flex items-center py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
 									>
 										{org.logoUrl ? (
 											<CustomAvatar className='dark:text-white' size="25" src={org?.logoUrl} round />
@@ -190,7 +190,7 @@ const UserDashBoard = () => {
 							organizationsList && organizationsList?.length > 0 && (
 								<a
 							href="/organizations"
-							className="float-right inline-flex items-center p-2 text-sm font-medium rounded-lg text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700"
+							className="float-right inline-flex items-center p-2 text-sm font-regular rounded-lg text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700"
 						>
 							View More..
 						</a>
@@ -232,8 +232,8 @@ const UserDashBoard = () => {
 				<div
 					className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800 xl:mb-0"
 				>
-					<div className="flex items-center justify-between mb-4">
-						<h3 className="pl-12 text-lg font-semibold text-gray-900 dark:text-white">
+					<div className="flex items-start justify-start mb-4">
+						<h3 className="text-lg font-semibold text-gray-900 dark:text-white ">
 							Recent Activity
 							{
 								activityList && activityList?.length===0 && (
