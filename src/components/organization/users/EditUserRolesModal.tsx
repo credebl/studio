@@ -23,6 +23,9 @@ const EditUserRoleModal = (props: { openModal: boolean; user: User; setMessage: 
 
     const [erroMsg, setErrMsg] = useState<string | null>(null)
 
+    const [shouldRender, setShouldRender] = useState(true);
+
+
     const getRoles = async () => {
 
         const resRoles = await getOrganizationRoles()
@@ -128,7 +131,7 @@ const EditUserRoleModal = (props: { openModal: boolean; user: User; setMessage: 
             })
             setRoles(updatesRoles)
         }
-
+    setShouldRender(shouldRender);
     }
 
     return (
@@ -168,8 +171,8 @@ const EditUserRoleModal = (props: { openModal: boolean; user: User; setMessage: 
                                     Roles
                                     <span className="text-red-500 text-xs">*</span>
                                 </div>
-                                {
 
+                                    { shouldRender && (
                                     roles && <div className="grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-2">
 
                                         {
@@ -189,7 +192,7 @@ const EditUserRoleModal = (props: { openModal: boolean; user: User; setMessage: 
                                             ))
                                         }
                                     </div>
-                                }
+                                )}
 
 
                             </div>
