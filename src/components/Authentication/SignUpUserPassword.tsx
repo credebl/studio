@@ -24,14 +24,17 @@ import PasswordSuggestionBox from './PasswordSuggestionBox.js';
 import { PassInvisible, PassVisible, SignUpArrow } from './Svg.js';
 
 interface passwordValues {
+	email: string;
 	password: string;
 	confirmPassword: string;
 }
 
 const SignUpUserPassword = ({
+	email,
 	firstName,
 	lastName,
 }: {
+	email: string,
 	firstName: string;
 	lastName: string;
 }) => {
@@ -44,16 +47,18 @@ const SignUpUserPassword = ({
 	const [showSuggestion, setShowSuggestion] = useState(false);
 
 	const submit = async (passwordDetails: passwordValues, fidoFlag: boolean) => {
+		const userEmail = await getFromLocalStorage(storageKeys.USER_EMAIL);
 		const payload = {
+			email: userEmail,
 			password: passwordEncryption(passwordDetails?.password),
 			isPasskey: false,
 			firstName,
 			lastName,
 		};
+
 		setLoading(true);
 
-		const userEmail = await getFromLocalStorage(storageKeys.USER_EMAIL);
-		const userRsp = await addPasswordDetails(payload, userEmail);
+		const userRsp = await addPasswordDetails(payload);
 		const { data } = userRsp as AxiosResponse;
 		setLoading(false);
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
@@ -69,6 +74,7 @@ const SignUpUserPassword = ({
 	};
 
 	const initialValues = {
+		email: email,
 		firstName: '',
 		lastName: '',
 		password: '',
@@ -89,7 +95,7 @@ const SignUpUserPassword = ({
 	return (
 		<div>
 			{showSignUpUser ? (
-				<SignUpUserPasskey firstName={firstName} lastName={lastName} />
+				<SignUpUserPasskey email={email} firstName={firstName} lastName={lastName} />
 			) : (
 				<div className="flex flex-col min-h-screen">
 					<NavBar />

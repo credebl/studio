@@ -1,4 +1,4 @@
-import { axiosGet, axiosPost, axiosPublicUserGet, axiosPut } from "../services/apiRequests"
+import { axiosGet, axiosPost, axiosPut } from "../services/apiRequests"
 
 import { apiRoutes } from "../config/apiRoutes";
 import { getFromLocalStorage } from "./Auth";
@@ -32,9 +32,9 @@ export const createOrganization = async (data: object) => {
     }
 }
 
-export const updateOrganization = async (data: object) => {
+export const updateOrganization = async (data: object, orgId:string) => {
 
-    const url = apiRoutes.organizations.update
+    const url = `${apiRoutes.organizations.update}/${orgId}`
     const payload = data
     const token = await getFromLocalStorage(storageKeys.TOKEN)
 
@@ -114,7 +114,7 @@ export const getOrganizationById = async (orgId: string) => {
 
 export const getOrgDashboard = async (orgId: string) => {
 
-    const url = `${apiRoutes.organizations.getOrgDashboard}?orgId=${Number(orgId)}`
+    const url = `${apiRoutes.organizations.getOrgDashboard}/${orgId}`
 
     const token = await getFromLocalStorage(storageKeys.TOKEN)
 
@@ -138,9 +138,9 @@ export const getOrgDashboard = async (orgId: string) => {
     }
 }
 
-export const spinupDedicatedAgent = async (data: object) => {
+export const spinupDedicatedAgent = async (data: object, orgId:number) => {
 
-    const url = apiRoutes.organizations.agentDedicatedSpinup
+    const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.agentDedicatedSpinup}`
     const payload = data
 
     const token = await getFromLocalStorage(storageKeys.TOKEN)
@@ -166,9 +166,9 @@ export const spinupDedicatedAgent = async (data: object) => {
     }
 }
 
-export const spinupSharedAgent = async (data: object) => {
+export const spinupSharedAgent = async (data: object, orgId:number) => {
 
-    const url = apiRoutes.organizations.agentSharedSpinup
+    const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.agentSharedSpinup}`
     const payload = data
 
     const token = await getFromLocalStorage(storageKeys.TOKEN)
@@ -226,8 +226,11 @@ export const getOrganizationRoles = async () => {
 export const getOrganizationUsers = async (pageNumber: number, pageSize: number, search = '') => {
 
     const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
+    if (!orgId) {
+        return "Organization is required";
+    }
 
-    const url = `${apiRoutes.users.fetchUsers}?orgId=${orgId}&pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
+    const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.users.fetchUsers}?&pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
 
     const axiosPayload = {
         url,
@@ -248,7 +251,7 @@ export const editOrganizationUserRole = async (userId: number, roles: number[]) 
 
     const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
 
-    const url = apiRoutes.organizations.editUserROle
+    const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.editUserROle}/${userId}`
     const payload = {
         orgId,
         userId,
@@ -341,3 +344,4 @@ export const getPublicOrganizations = async (pageNumber: number, pageSize: numbe
 			return err?.message
 	}
 }
+

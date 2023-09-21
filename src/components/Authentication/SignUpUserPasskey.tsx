@@ -22,7 +22,7 @@ interface passwordValues {
     confirmPassword: string
 }
 
-const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastName: string }) => {
+const SignUpUserPasskey = ({ email,firstName, lastName }: { email:string,firstName: string; lastName: string }) => {
 
     const [loading, setLoading] = useState<boolean>(false)
     const [erroMsg, setErrMsg] = useState<string | null>(null)
@@ -63,17 +63,19 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
         const userEmail = await getFromLocalStorage(storageKeys.USER_EMAIL)
         const password: string = uuidv4();
         let payload: AddPasswordDetails = {
+            email: userEmail,
             isPasskey: fidoFlag,
             firstName: firstName,
             lastName: lastName,
             password: passwordEncryption(password)
         };
         if (!fidoFlag) {
+
             payload.password = passwordDetails?.password;
         }
         setLoading(true)
 
-        const userRsp = await addPasswordDetails(payload, userEmail)
+        const userRsp = await addPasswordDetails(payload)
         const { data } = userRsp as AxiosResponse
         setLoading(false)
         if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
@@ -317,6 +319,7 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
             {
                 currentComponent === 'password' && (
                     <SignUpUserPassword
+                    email={email}
                         firstName={firstName}
                         lastName={lastName}
                     />
