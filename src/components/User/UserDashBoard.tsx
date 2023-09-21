@@ -14,7 +14,6 @@ import { pathRoutes } from "../../config/pathRoutes";
 import { setToLocalStorage } from "../../api/Auth";
 import { dateConversion } from "../../utils/DateConversion";
 import DateTooltip from "../Tooltip";
-import React from "react";
 
 const initialPageState = {
 	pageNumber: 1,
