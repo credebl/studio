@@ -190,7 +190,7 @@ const UserDashBoard = () => {
 							organizationsList && organizationsList?.length > 0 && (
 								<a
 							href="/organizations"
-							className="float-right inline-flex items-center p-2 text-sm font-regular rounded-lg text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700"
+							className="float-right inline-flex items-center p-2 text-sm font-medium rounded-lg text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700"
 						>
 							View More..
 						</a>
