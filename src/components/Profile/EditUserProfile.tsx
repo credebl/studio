@@ -1,15 +1,13 @@
 import { useEffect, useState } from "react";
 import type { UserProfile } from "./interfaces";
-import { getFromLocalStorage, getUserProfile, updateUserProfile } from "../../api/Auth";
-import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, apiStatusCodes, imageSizeAccepted, storageKeys } from "../../config/CommonConstant";
+import { updateUserProfile } from "../../api/Auth";
+import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, imageSizeAccepted} from "../../config/CommonConstant";
 import type { AxiosResponse } from "axios";
 import CustomAvatar from '../Avatar'
 import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
-import { Alert, Avatar, Button, Label } from "flowbite-react";
-import { Field, Form, Formik, FormikHelpers } from "formik";
-import { asset } from "../../lib/data";
+import { Alert,Button} from "flowbite-react";
+import { Form, Formik, FormikHelpers } from "formik";
 import * as yup from "yup"
-import React from "react";
 
 interface Values {
   profileImg: string;
@@ -155,7 +153,6 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
       lastName: values.lastName,
       email: values.email,
       profileImg: logoImage?.imagePreviewUrl as string || values?.profileImg
-
     }
     const resUpdateUserDetails = await updateUserProfile(userData)
 
