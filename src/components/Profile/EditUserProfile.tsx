@@ -186,8 +186,8 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
   return (
     <div>
       <div className='h-full'>
-        <div className='page-container relative h-full flex flex-auto flex-col px-4 sm:px-6 md:px-8 py-4 sm:py-6 md:px-8'>
-          <div className='container mx-auto bg-white border border-gray-200 rounded-lg'>
+        <div className='page-container relative h-full flex flex-auto flex-col py-4 sm:py-6'>
+          <div className='container mx-auto bg-white border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700'>
             <div className="px-6 py-6">
 
               {
@@ -214,10 +214,6 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
                   values: Values,
                   { resetForm }: FormikHelpers<Values>
                 ) => {
-                  if (!values.firstName || !values.lastName) {
-                    return;
-                  }
-
                   updateUserDetails(values);
                   toggleEditProfile();
                 }}
@@ -232,8 +228,8 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
                       <div className="flex items-center justify-between">
 
                         <div>
-                          <h1 className="text-gray-500 text-xl font-medium font-montserrat">General</h1>
-                          <p className="mt-2 text-gray-700 font-montserrat text-sm font-normal font-light leading-normal">Basic info, like your first name, last name and profile image that will be displayed</p>
+                          <h1 className="text-gray-500 text-xl font-medium font-montserrat dark:text-white">General</h1>
+                          <p className="mt-2 text-gray-700 font-montserrat text-sm font-normal font-light leading-normal dark:text-white">Basic info, like your first name, last name and profile image that will be displayed</p>
                         </div>
 
                         <Button
@@ -254,7 +250,7 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
                       </div>
                     </div>
                     <div className="grid md:grid-cols-3 gap-4 py-8 border-b border-gray-200 dark:border-gray-600 items-center">
-                      <div className="text-base text-gray-700 font-montserrat">
+                      <div className="text-base text-gray-700 font-montserrat dark:text-white">
                         First Name
                         <span className='text-red-500 text-xs'>*</span>
 
@@ -265,11 +261,11 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
                           <input
                             type="text"
                             name="firstName"
+                            placeholder="Enter your first name"
                             value={formikHandlers.values.firstName}
                             onChange={formikHandlers.handleChange}
                             onBlur={formikHandlers.handleBlur}
-
-                            className="bg-gray-50 py-3 px-4 border border-gray-300 w-full rounded-md focus:ring-primary-500 focus:border-primary-500" />
+                            className="bg-gray-50 py-3 px-4 border border-gray-300 w-full rounded-md focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" />
                           {(formikHandlers?.errors?.firstName && formikHandlers?.touched?.firstName) && (
                             <span className="text-red-500 text-xs mt-1">
                               {formikHandlers?.errors?.firstName}
@@ -280,7 +276,7 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
                     </div>
 
                     <div className="grid md:grid-cols-3 gap-4 py-8 border-b border-gray-200 dark:border-gray-600 items-center">
-                      <div className="text-base text-gray-700 font-montserrat">
+                      <div className="text-base text-gray-700 font-montserrat dark:text-white">
                         Last Name
                         <span className='text-red-500 text-xs'>*</span>
                       </div>
@@ -289,11 +285,11 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
                         <div className="flex flex-col">
                           <input
                             name="lastName"
+                            placeholder="Enter your last name"
                             value={formikHandlers.values.lastName}
                             onChange={formikHandlers.handleChange}
                             onBlur={formikHandlers.handleBlur}
-
-                            className="bg-gray-50 py-3 px-4 border border-gray-300 w-full rounded-md focus:ring-primary-500 focus:border-primary-500" />
+                            className="bg-gray-50 py-3 px-4 border border-gray-300 w-full rounded-md focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" />
                           {(formikHandlers?.errors?.lastName && formikHandlers?.touched?.lastName) && (
                             <span className="text-red-500 text-xs mt-1">
                               {formikHandlers?.errors?.lastName}
@@ -304,7 +300,7 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
                     </div>
 
                     <div className="grid md:grid-cols-3 gap-4 py-8 border-gray-200 dark:border-gray-600 items-center">
-                      <div className="text-base text-gray-600 font-montserrat font-normal">Profile Image</div>
+                      <div className="text-base text-gray-600 font-montserrat font-normal dark:text-white">Profile Image</div>
                       <div className="focus:ring-indigo-600 col-span-2 w-full focus-within:ring-indigo-600 focus-within:border-indigo-600 focus:border-indigo-600">
                         <div className="flex items-center gap-4 space-x-4">
                           {logoImage.imagePreviewUrl ? (
@@ -333,11 +329,11 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
                         </div>
                       </div>
                     </div>
+                    <div className="mb-16">
                     <div className='float-right p-2'>
                       <Button
                         type="submit"
                         isProcessing={loading}
-                        onClick={toggleEditProfile}
                         fill="none"
                         className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
                       >
@@ -347,7 +343,7 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
                         Update
                       </Button>
                     </div>
-                    <div className='float-right p-2'>
+                    <div className='float-right p-3'>
                       <Button
                         type="reset"
                         color='bg-primary-800'
@@ -362,6 +358,7 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
 
                         Reset
                       </Button>
+                    </div>
                     </div>
                   </Form>
                 )}
