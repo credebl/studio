@@ -1,5 +1,6 @@
 import CustomAvatar from '../Avatar'
 import { Button } from "flowbite-react";
+import React from "react";
 
 interface DisplayUserProfileProps {
     toggleEditProfile: () => void;
@@ -45,7 +46,7 @@ const DisplayUserProfile = ({ toggleEditProfile, userProfileInfo }: DisplayUserP
                                     <div className="grid md:grid-cols-3 gap-4 py-8 border-b border-gray-200 dark:border-gray-600 items-center">
                                         <div className="text-base text-gray-600 font-montserrat font-normal dark:text-white">First Name</div>
                                         <div className="col-span-2">
-                                            <p className={`bg-gray-50 py-3 px-4 border border-gray-300 w-full rounded-md text-black dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 ${!userProfileInfo?.firstName && !userProfileInfo?.lastName ? 'py-6' : ''}`}>
+                                            <p className={`bg-gray-50 py-3 px-4 border border-gray-300 w-full rounded-md text-black dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 max-w-100/6rem ${!userProfileInfo?.firstName && !userProfileInfo?.lastName ? 'py-6' : ''}`}>
                                                 {userProfileInfo?.firstName}
                                             </p>
                                         </div>
@@ -55,7 +56,7 @@ const DisplayUserProfile = ({ toggleEditProfile, userProfileInfo }: DisplayUserP
                                     <div className="grid md:grid-cols-3 gap-4 py-8 border-b border-gray-200 dark:border-gray-600 items-center">
                                         <div className="text-base text-gray-600 font-montserrat font-normal dark:text-white">Last Name</div>
                                         <div className="col-span-2">
-                                            <p className={`bg-gray-50 py-3 px-4 border border-gray-300 w-full rounded-md text-black dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 ${!userProfileInfo?.firstName && !userProfileInfo?.lastName ? 'py-6' : ''}`}>
+                                            <p className={`bg-gray-50 py-3 px-4 border border-gray-300 w-full rounded-md text-black dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 max-w-100/6rem ${!userProfileInfo?.firstName && !userProfileInfo?.lastName ? 'py-6' : ''}`}>
                                                 {userProfileInfo?.lastName}
                                             </p>
                                         </div>

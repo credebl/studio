@@ -101,6 +101,9 @@ module.exports = {
 			minWidth: {
 				kanban: '28rem',
 			},
+			maxWidth: {
+				'100/6rem': 'calc(100% - 6rem)'
+			}
 		},
 	},
 
