@@ -4,63 +4,51 @@ import * as yup from 'yup';
 
 import { Alert, Button, Card, Label, Table } from 'flowbite-react';
 import { Field, FieldArray, Form, Formik } from 'formik';
-import {apiStatusCodes,schemaVersionRegex,storageKeys} from '../../../config/CommonConstant';
+import { apiStatusCodes, schemaVersionRegex, storageKeys } from '../../../config/CommonConstant';
 import { useEffect, useState } from 'react';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../../BreadCrumbs';
 import type { FieldName, Values } from './interfaces';
-import SchemaCard from '../../../commonComponents/SchemaCard';
 import { addSchema } from '../../../api/Schema';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
-import React from 'react';
 
-	const options = [
-    	{ value: 'string', label: 'String' },
-    	{ value: 'number', label: 'Number' },
-    	{ value: 'date', label: 'Date' },
-	];
+const options = [
+    { value: 'string', label: 'String' },
+    { value: 'number', label: 'Number' },
+    { value: 'date', label: 'Date' },
+];
 
 
-	const CreateSchema = () => {
-    	const [failure, setFailure] = useState<string | null>(null);
-    	const [orgId, setOrgId] = useState<number>(0);
-    	const [orgDid, setOrgDid] = useState<string>('');
-    	const [createloader, setCreateLoader] = useState<boolean>(false);
-    	useEffect(() => {
-        	const fetchData = async () => {
-            	const organizationId = await getFromLocalStorage(
-			storageKeys.ORG_ID);
-            	setOrgId(Number(organizationId));
+const CreateSchema = () => {
+    const [failure, setFailure] = useState<string | null>(null);
+    const [orgId, setOrgId] = useState<number>(0);
+    const [orgDid, setOrgDid] = useState<string>('');
+    const [createloader, setCreateLoader] = useState<boolean>(false);
+    useEffect(() => {
+        const fetchData = async () => {
+            const organizationId = await getFromLocalStorage(
+                storageKeys.ORG_ID);
+            setOrgId(Number(organizationId));
         };
 
-        	fetchData();
-    	}, []);
+        fetchData();
+    }, []);
 
-		const createSchema = await addSchema(schemaFieldName, orgId);
-		const { data } = createSchema as AxiosResponse;
-		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-			if (data?.data) {
-				setCreateLoader(false);
-				window.location.href = pathRoutes.organizations.schemas;
-			} else {
-				setFailure(createSchema as string);
-				setCreateLoader(false);
-			}
-		} else {
-			setCreateLoader(false);
-			setFailure(createSchema as string);
-			setTimeout(() => {
-				setFailure(null);
-			}, 4000);
-		}
-	};
+    const submit = async (values: Values) => {
+        setCreateLoader(true);
+        const schemaFieldName: FieldName = {
+            schemaName: values.schemaName,
+            schemaVersion: values.schemaVersion,
+            attributes: values.attribute,
+            orgId: orgId,
+        };
 
-        	const createSchema = await addSchema(schemaFieldName);
-        	const { data } = createSchema as AxiosResponse;
-        	if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+        const createSchema = await addSchema(schemaFieldName, orgId);
+        const { data } = createSchema as AxiosResponse;
+        if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 
-            	if (data?.data) {
+            if (data?.data) {
                 setCreateLoader(false);
                 window.location.href = pathRoutes.organizations.schemas;
 
@@ -187,8 +175,8 @@ import React from 'react';
                                                     className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                                 />
                                                 {formikHandlers.errors &&
-                                                formikHandlers.touched.schemaName &&
-                                                formikHandlers.errors.schemaName ? (
+                                                    formikHandlers.touched.schemaName &&
+                                                    formikHandlers.errors.schemaName ? (
 
                                                     <label className="pt-1 text-red-500 text-xs h-5">
                                                         {formikHandlers.errors.schemaName}
@@ -217,8 +205,8 @@ import React from 'react';
                                                     className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                                 />
                                                 {formikHandlers.errors &&
-                                                formikHandlers.touched.schemaVersion &&
-                                                formikHandlers.errors.schemaVersion ? (
+                                                    formikHandlers.touched.schemaVersion &&
+                                                    formikHandlers.errors.schemaVersion ? (
 
                                                     <label className="pt-1 text-red-500 text-xs h-5">
                                                         {formikHandlers.errors.schemaVersion}
@@ -247,7 +235,7 @@ import React from 'react';
 
                                                         </div>
                                                         <div className="flex flex-col">
-                                                            {attribute.map((element: any, index: number, schemaDataType:string) => (
+                                                            {attribute.map((element: any, index: number, schemaDataType: string) => (
 
                                                                 <div
                                                                     key={`attributeList-${index}`}
@@ -256,223 +244,223 @@ import React from 'react';
                                                                     <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white pl-1">
                                                                         Attribute: {index + 1}
                                                                     </label>
-                                                                    <Card className='cursor-pointer overflow-hidden overflow-ellipsis' style={{overflow: 'auto'}}>  
-                                                                    <div key={element.id} className="grid min-[320]:grid-cols-1 sm:grid-cols-4 md:grid-cols-4 gap-2">
-                                                                        <div className="sm:w-full m-2 p-2">
-                                                                            <Field
-                                                                                id={`attribute[${index}]`}
-                                                                                name={`attribute.${index}.attributeName`}
+                                                                    <Card className='cursor-pointer overflow-hidden overflow-ellipsis' style={{ overflow: 'auto' }}>
+                                                                        <div key={element.id} className="grid min-[320]:grid-cols-1 sm:grid-cols-4 md:grid-cols-4 gap-2">
+                                                                            <div className="sm:w-full m-2 p-2">
+                                                                                <Field
+                                                                                    id={`attribute[${index}]`}
+                                                                                    name={`attribute.${index}.attributeName`}
 
-                                                                                placeholder="Attribute eg. NAME, ID"
-                                                                                disabled={!areFirstInputsSelected}
+                                                                                    placeholder="Attribute eg. NAME, ID"
+                                                                                    disabled={!areFirstInputsSelected}
 
-                                                                                className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                                                            />
-                                                                            {formikHandlers.touched.attribute &&
-                                                                            attribute[index] &&
-                                                                            formikHandlers?.errors?.attribute &&
-                                                                            formikHandlers?.errors?.attribute[
-                                                                                index
-                                                                            ] &&
-                                                                            formikHandlers?.touched?.attribute[index]
-                                                                                ?.attributeName &&
-                                                                            formikHandlers?.errors?.attribute[index]
+                                                                                    className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                                                                />
+                                                                                {formikHandlers.touched.attribute &&
+                                                                                    attribute[index] &&
+                                                                                    formikHandlers?.errors?.attribute &&
+                                                                                    formikHandlers?.errors?.attribute[
+                                                                                    index
+                                                                                    ] &&
+                                                                                    formikHandlers?.touched?.attribute[index]
+                                                                                        ?.attributeName &&
+                                                                                    formikHandlers?.errors?.attribute[index]
 
-                                                                                ?.attributeName ? (
-                                                                                <label className="pt-1 text-red-500 text-xs h-5">
-                                                                                    {
-                                                                                        formikHandlers?.errors?.attribute[
+                                                                                        ?.attributeName ? (
+                                                                                    <label className="pt-1 text-red-500 text-xs h-5">
+                                                                                        {
+                                                                                            formikHandlers?.errors?.attribute[
 
-                                                                                            index
-                                                                                        ]?.attributeName
-                                                                                    }
-                                                                                </label>
-                                                                            ) : (
-                                                                                <label className="pt-1 text-red-500 text-xs h-5"></label>
-                                                                            )}
-                                                                        </div>
-
-                                                                        <div className="sm:w-full m-2 p-2">
-                                                                            <Field
-                                                                                component="select"
-                                                                                id={`attribute[${index}]`}
-                                                                                name={`attribute.${index}.schemaDataType`}
-                                                                                placeholder="Select"
-                                                                                disabled={!areFirstInputsSelected}
-
-                                                                                className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 "
-                                                                            >
-                                                                                {options.map((opt) => {
-                                                                                    return (
-                                                                                        <option
-                                                                                            className=""
-                                                                                            value={opt.value}
-                                                                                        >
-                                                                                            {opt.label}
-                                                                                        </option>
-                                                                                    );
-                                                                                })}
-                                                                            </Field>
-                                                                            {formikHandlers?.touched?.attribute &&
-                                                                            attribute[index] &&
-                                                                            formikHandlers?.errors?.attribute &&
-                                                                            formikHandlers?.errors?.attribute[
-                                                                                index
-                                                                            ] &&
-                                                                            formikHandlers?.touched?.attribute[index]
-                                                                                ?.schemaDataType &&
-                                                                            formikHandlers?.errors?.attribute[index]
-
-                                                                                ?.schemaDataType ? (
-                                                                                <label className="pt-1 text-red-500 text-xs h-5">
-                                                                                    {
-                                                                                        formikHandlers?.errors?.attribute[
-
-                                                                                            index
-                                                                                        ]?.schemaDataType
-                                                                                    }
-                                                                                </label>
-                                                                            ) : (
-                                                                                <label className="pt-1 text-red-500 text-xs h-5"></label>
-                                                                            )}
-                                                                        </div>
-                                                                        <div className="sm:w-full m-2 p-2">
-                                                                            <Field
-                                                                                id={`attribute[${index}]`}
-                                                                                name={`attribute.${index}.displayName`}
-
-                                                                                placeholder="Display Name"
-                                                                                disabled={!areFirstInputsSelected}
-
-                                                                                className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 "
-                                                                            />
-
-                                                                            {formikHandlers?.touched?.attribute &&
-                                                                            attribute[index] &&
-                                                                            formikHandlers?.errors?.attribute &&
-                                                                            formikHandlers?.errors?.attribute[
-                                                                                index
-                                                                            ] &&
-                                                                            formikHandlers?.touched?.attribute[index]
-                                                                                ?.displayName &&
-                                                                            formikHandlers?.errors?.attribute[index]
-
-                                                                                ?.displayName ? (
-                                                                                <label className="pt-1 text-red-500 text-xs h-5">
-                                                                                    {
-                                                                                        formikHandlers?.errors?.attribute[
-
-                                                                                            index
-                                                                                        ]?.displayName
-                                                                                    }
-                                                                                </label>
-                                                                            ) : (
-                                                                                <label className="pt-1 text-red-500 text-xs h-5"></label>
-                                                                            )}
-                                                                        </div>
-
-
-
-                                                                        <div className='sm:w-full items-center flex flex-wrap min-[320]:justify-between min-[320]:space-x-2 xl:space-x-6 m-2 py-2'>
-                                                                        {index === 0 && attribute.length === 1 ? (
-                                                                             <div key={element.id} className="sm:w-0.5/3 text-red-600 hidden">
-																				<Button
-																					data-testid="deleteBtn"
-																					type="button"
-																					color="danger"
-																					onClick={() => remove(index)}
-																					disabled={
-																					index === 0 &&
-																					attribute.length === 1
-																					}
-																				>
-																				<svg
-																					xmlns="http://www.w3.org/2000/svg"
-																					fill="none"
-																					viewBox="0 0 24 24"
-																					strokeWidth={1.5}
-																					stroke="currentColor"
-																					className="w-6 h-6"
-																				>
-																				<path
-																					strokeLinecap="round"
-																					strokeLinejoin="round"
-																					d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-																				/>
-																				</svg>
-																				</Button>
-																				</div>
-                                                                        ) : (
-																			
-                                                                            <div key={element.id} className="sm:w-0.5/3 text-red-600">
-                                                                                <Button
-                                                                                    data-testid="deleteBtn"
-                                                                                    type="button"
-                                                                                    color="danger"
-                                                                                    onClick={() => remove(index)}
-                                                                                    disabled={
-                                                                                        index === 0 &&
-                                                                                        attribute.length === 1
-                                                                                    }
-                                                                                >
-                                                                                    <svg
-                                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                                        fill="none"
-                                                                                        viewBox="0 0 24 24"
-                                                                                        strokeWidth={1.5}
-                                                                                        stroke="currentColor"
-                                                                                        className="w-6 h-6"
-                                                                                    >
-                                                                                        <path
-                                                                                            strokeLinecap="round"
-                                                                                            strokeLinejoin="round"
-                                                                                            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                                                                                        />
-                                                                                    </svg>
-                                                                                </Button>
+                                                                                                index
+                                                                                            ]?.attributeName
+                                                                                        }
+                                                                                    </label>
+                                                                                ) : (
+                                                                                    <label className="pt-1 text-red-500 text-xs h-5"></label>
+                                                                                )}
                                                                             </div>
-                                                                        )}
 
-                                                                        {index === attribute.length - 1 && (
-                                                                            <div key={element.id} className="sm:w-2.5/3 text-red-600 sm:ml-0 md:ml-0 lg:ml-0">
+                                                                            <div className="sm:w-full m-2 p-2">
+                                                                                <Field
+                                                                                    component="select"
+                                                                                    id={`attribute[${index}]`}
+                                                                                    name={`attribute.${index}.schemaDataType`}
+                                                                                    placeholder="Select"
+                                                                                    disabled={!areFirstInputsSelected}
 
-                                                                            <Button
-                                                                                id="addSchemaButton"
-                                                                                className="text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-                                                                                type="button"
-                                                                                color="bg-primary-700"
-                                                                                onClick={() => push('')}
-                                                                                outline
-                                                                                disabled={
-                                                                                    !formikHandlers.isValid ||
-                                                                                    !formikHandlers.dirty
-                                                                                }
-                                                                            >
-                                                                                <svg
-                                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                                    width="22"
-                                                                                    height="22"
-                                                                                    fill="none"
-                                                                                    viewBox="0 0 24 24"
-                                                                                    strokeWidth={2.5}
-                                                                                    stroke="currentColor"
-                                                                                    className="mr-2"
+                                                                                    className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 "
                                                                                 >
-                                                                                    <path
-                                                                                        fill="#fff"
-                                                                                        stroke-linecap="round"
-                                                                                        stroke-linejoin="round"
-                                                                                        d="M12 4.5v15m7.5-7.5h-15"
-                                                                                    />
-                                                                                </svg>
-																				<span className="hidden xl:inline-block">
-                                                                                Add
-																				</span>
-                                                                            </Button>
-																			</div>
-                                                                        )}
+                                                                                    {options.map((opt) => {
+                                                                                        return (
+                                                                                            <option
+                                                                                                className=""
+                                                                                                value={opt.value}
+                                                                                            >
+                                                                                                {opt.label}
+                                                                                            </option>
+                                                                                        );
+                                                                                    })}
+                                                                                </Field>
+                                                                                {formikHandlers?.touched?.attribute &&
+                                                                                    attribute[index] &&
+                                                                                    formikHandlers?.errors?.attribute &&
+                                                                                    formikHandlers?.errors?.attribute[
+                                                                                    index
+                                                                                    ] &&
+                                                                                    formikHandlers?.touched?.attribute[index]
+                                                                                        ?.schemaDataType &&
+                                                                                    formikHandlers?.errors?.attribute[index]
+
+                                                                                        ?.schemaDataType ? (
+                                                                                    <label className="pt-1 text-red-500 text-xs h-5">
+                                                                                        {
+                                                                                            formikHandlers?.errors?.attribute[
+
+                                                                                                index
+                                                                                            ]?.schemaDataType
+                                                                                        }
+                                                                                    </label>
+                                                                                ) : (
+                                                                                    <label className="pt-1 text-red-500 text-xs h-5"></label>
+                                                                                )}
+                                                                            </div>
+                                                                            <div className="sm:w-full m-2 p-2">
+                                                                                <Field
+                                                                                    id={`attribute[${index}]`}
+                                                                                    name={`attribute.${index}.displayName`}
+
+                                                                                    placeholder="Display Name"
+                                                                                    disabled={!areFirstInputsSelected}
+
+                                                                                    className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 "
+                                                                                />
+
+                                                                                {formikHandlers?.touched?.attribute &&
+                                                                                    attribute[index] &&
+                                                                                    formikHandlers?.errors?.attribute &&
+                                                                                    formikHandlers?.errors?.attribute[
+                                                                                    index
+                                                                                    ] &&
+                                                                                    formikHandlers?.touched?.attribute[index]
+                                                                                        ?.displayName &&
+                                                                                    formikHandlers?.errors?.attribute[index]
+
+                                                                                        ?.displayName ? (
+                                                                                    <label className="pt-1 text-red-500 text-xs h-5">
+                                                                                        {
+                                                                                            formikHandlers?.errors?.attribute[
+
+                                                                                                index
+                                                                                            ]?.displayName
+                                                                                        }
+                                                                                    </label>
+                                                                                ) : (
+                                                                                    <label className="pt-1 text-red-500 text-xs h-5"></label>
+                                                                                )}
+                                                                            </div>
+
+
+
+                                                                            <div className='sm:w-full items-center flex flex-wrap min-[320]:justify-between min-[320]:space-x-2 xl:space-x-6 m-2 py-2'>
+                                                                                {index === 0 && attribute.length === 1 ? (
+                                                                                    <div key={element.id} className="sm:w-0.5/3 text-red-600 hidden">
+                                                                                        <Button
+                                                                                            data-testid="deleteBtn"
+                                                                                            type="button"
+                                                                                            color="danger"
+                                                                                            onClick={() => remove(index)}
+                                                                                            disabled={
+                                                                                                index === 0 &&
+                                                                                                attribute.length === 1
+                                                                                            }
+                                                                                        >
+                                                                                            <svg
+                                                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                                                fill="none"
+                                                                                                viewBox="0 0 24 24"
+                                                                                                strokeWidth={1.5}
+                                                                                                stroke="currentColor"
+                                                                                                className="w-6 h-6"
+                                                                                            >
+                                                                                                <path
+                                                                                                    strokeLinecap="round"
+                                                                                                    strokeLinejoin="round"
+                                                                                                    d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                                                                                                />
+                                                                                            </svg>
+                                                                                        </Button>
+                                                                                    </div>
+                                                                                ) : (
+
+                                                                                    <div key={element.id} className="sm:w-0.5/3 text-red-600">
+                                                                                        <Button
+                                                                                            data-testid="deleteBtn"
+                                                                                            type="button"
+                                                                                            color="danger"
+                                                                                            onClick={() => remove(index)}
+                                                                                            disabled={
+                                                                                                index === 0 &&
+                                                                                                attribute.length === 1
+                                                                                            }
+                                                                                        >
+                                                                                            <svg
+                                                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                                                fill="none"
+                                                                                                viewBox="0 0 24 24"
+                                                                                                strokeWidth={1.5}
+                                                                                                stroke="currentColor"
+                                                                                                className="w-6 h-6"
+                                                                                            >
+                                                                                                <path
+                                                                                                    strokeLinecap="round"
+                                                                                                    strokeLinejoin="round"
+                                                                                                    d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                                                                                                />
+                                                                                            </svg>
+                                                                                        </Button>
+                                                                                    </div>
+                                                                                )}
+
+                                                                                {index === attribute.length - 1 && (
+                                                                                    <div key={element.id} className="sm:w-2.5/3 text-red-600 sm:ml-0 md:ml-0 lg:ml-0">
+
+                                                                                        <Button
+                                                                                            id="addSchemaButton"
+                                                                                            className="text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                                                                                            type="button"
+                                                                                            color="bg-primary-700"
+                                                                                            onClick={() => push('')}
+                                                                                            outline
+                                                                                            disabled={
+                                                                                                !formikHandlers.isValid ||
+                                                                                                !formikHandlers.dirty
+                                                                                            }
+                                                                                        >
+                                                                                            <svg
+                                                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                                                width="22"
+                                                                                                height="22"
+                                                                                                fill="none"
+                                                                                                viewBox="0 0 24 24"
+                                                                                                strokeWidth={2.5}
+                                                                                                stroke="currentColor"
+                                                                                                className="mr-2"
+                                                                                            >
+                                                                                                <path
+                                                                                                    fill="#fff"
+                                                                                                    stroke-linecap="round"
+                                                                                                    stroke-linejoin="round"
+                                                                                                    d="M12 4.5v15m7.5-7.5h-15"
+                                                                                                />
+                                                                                            </svg>
+                                                                                            <span className="hidden xl:inline-block">
+                                                                                                Add
+                                                                                            </span>
+                                                                                        </Button>
+                                                                                    </div>
+                                                                                )}
+                                                                            </div>
                                                                         </div>
-                                                                    </div>
                                                                     </Card>
                                                                 </div>
                                                             ))}
@@ -503,9 +491,9 @@ import React from 'react';
                                             }
                                             className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto mt-2'
 
-											style={{ height: '2.6rem', width: '6rem', minWidth: '2rem' }}
-											
-											>
+                                            style={{ height: '2.6rem', width: '6rem', minWidth: '2rem' }}
+
+                                        >
                                             <svg
                                                 className="pr-2"
                                                 xmlns="http://www.w3.org/2000/svg"
@@ -595,23 +583,20 @@ import React from 'react';
                                     </div>
 
                                     <div className="float-right p-2 mt-2">
-                                    <Button
-                        type="reset"
-                        color='bg-primary-800'
-                        // onClick={() => {
-                        //   setCredDefAuto('')
-                        // }}
-                        disabled={createloader}
-                        className='dark:text-white bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto'
+                                        <Button
+                                            type="reset"
+                                            color='bg-primary-800'
+                                            disabled={createloader}
+                                            className='dark:text-white bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto'
 
-                        style={{ height: '2.6rem', width: '6rem', minWidth: '2rem' }}
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className= 'mr-2' width="18" height="18" fill="none" viewBox="0 0 20 20">
-                          <path fill="#1F4EAD" d="M19.414 9.414a.586.586 0 0 0-.586.586c0 4.868-3.96 8.828-8.828 8.828-4.868 0-8.828-3.96-8.828-8.828 0-4.868 3.96-8.828 8.828-8.828 1.96 0 3.822.635 5.353 1.807l-1.017.18a.586.586 0 1 0 .204 1.153l2.219-.392a.586.586 0 0 0 .484-.577V1.124a.586.586 0 0 0-1.172 0v.928A9.923 9.923 0 0 0 10 0a9.935 9.935 0 0 0-7.071 2.929A9.935 9.935 0 0 0 0 10a9.935 9.935 0 0 0 2.929 7.071A9.935 9.935 0 0 0 10 20a9.935 9.935 0 0 0 7.071-2.929A9.935 9.935 0 0 0 20 10a.586.586 0 0 0-.586-.586Z" />
-                        </svg>
+                                            style={{ height: '2.6rem', width: '6rem', minWidth: '2rem' }}
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" className='mr-2' width="18" height="18" fill="none" viewBox="0 0 20 20">
+                                                <path fill="#1F4EAD" d="M19.414 9.414a.586.586 0 0 0-.586.586c0 4.868-3.96 8.828-8.828 8.828-4.868 0-8.828-3.96-8.828-8.828 0-4.868 3.96-8.828 8.828-8.828 1.96 0 3.822.635 5.353 1.807l-1.017.18a.586.586 0 1 0 .204 1.153l2.219-.392a.586.586 0 0 0 .484-.577V1.124a.586.586 0 0 0-1.172 0v.928A9.923 9.923 0 0 0 10 0a9.935 9.935 0 0 0-7.071 2.929A9.935 9.935 0 0 0 0 10a9.935 9.935 0 0 0 2.929 7.071A9.935 9.935 0 0 0 10 20a9.935 9.935 0 0 0 7.071-2.929A9.935 9.935 0 0 0 20 10a.586.586 0 0 0-.586-.586Z" />
+                                            </svg>
 
-                        Reset
-                      </Button>
+                                            Reset
+                                        </Button>
                                     </div>
                                 </Form>
                             )}
