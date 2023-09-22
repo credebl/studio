@@ -8,6 +8,7 @@ import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
 import { Alert,Button} from "flowbite-react";
 import { Form, Formik, FormikHelpers } from "formik";
 import * as yup from "yup"
+import React from "react";
 
 interface Values {
   profileImg: string;
@@ -259,7 +260,7 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
                             value={formikHandlers.values.firstName}
                             onChange={formikHandlers.handleChange}
                             onBlur={formikHandlers.handleBlur}
-                            className="bg-gray-50 py-3 px-4 border border-gray-300 w-full rounded-md focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" />
+                            className="bg-gray-50 py-3 px-4 border border-gray-300 w-full rounded-md focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 max-w-100/6rem" />
                           {(formikHandlers?.errors?.firstName && formikHandlers?.touched?.firstName) && (
                             <span className="text-red-500 text-xs mt-1">
                               {formikHandlers?.errors?.firstName}
@@ -283,7 +284,7 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
                             value={formikHandlers.values.lastName}
                             onChange={formikHandlers.handleChange}
                             onBlur={formikHandlers.handleBlur}
-                            className="bg-gray-50 py-3 px-4 border border-gray-300 w-full rounded-md focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" />
+                            className="bg-gray-50 py-3 px-4 border border-gray-300 w-full rounded-md focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 max-w-100/6rem" />
                           {(formikHandlers?.errors?.lastName && formikHandlers?.touched?.lastName) && (
                             <span className="text-red-500 text-xs mt-1">
                               {formikHandlers?.errors?.lastName}
