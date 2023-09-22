@@ -67,6 +67,7 @@ const CredDefSelection = () => {
 	const getCredDefs = async (schemaId: string) => {
 		setLoading(true)
 		const response = await getCredentialDefinitions(schemaId);
+		
 		const { data } = response as AxiosResponse
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
