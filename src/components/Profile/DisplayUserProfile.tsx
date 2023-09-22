@@ -11,27 +11,21 @@ interface DisplayUserProfileProps {
 }
 
 const DisplayUserProfile = ({toggleEditProfile, userProfileInfo }: DisplayUserProfileProps) => {
-    const [isEditing, setIsEditing] = useState(false);
-
-    // const handleEditClick = () => {
-    //     setIsEditing(true);
-    // };
 
     return (
         <div>
             <div className='h-full'>
-                <div className='page-container relative h-full flex flex-auto flex-col px-4 sm:px-6 md:px-8 py-4 sm:py-6 md:px-8'>
-                    <div className='container mx-auto bg-white border border-gray-200 rounded-lg'>
+                <div className='page-container relative h-full flex flex-auto flex-col px-4 py-4 sm:py-6'>
+                    <div className='container mx-auto bg-white border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700'>
                         <div className="px-6 py-6">
 
-                            {/* {isEditing ? (<EditUserProfile />) : ( */}
                             <form action="#">
                                 <div className="form-container">
                                 <div className="flex items-center justify-between">
 
                                     <div>
-                                        <h1 className="text-gray-500 text-xl font-medium font-montserrat">General</h1>
-                                        <p className="mt-2 text-gray-700 font-montserrat text-sm font-normal font-light leading-normal">Basic info, like your first name, last name and profile image that will be displayed</p>
+                                        <h1 className="text-gray-500 text-xl font-medium font-montserrat dark:text-white">General</h1>
+                                        <p className="mt-2 text-gray-700 font-montserrat text-sm font-normal font-light leading-normal dark:text-white">Basic info, like your first name, last name and profile image that will be displayed</p>
                                     </div>
 
                                     <Button
@@ -53,9 +47,9 @@ const DisplayUserProfile = ({toggleEditProfile, userProfileInfo }: DisplayUserPr
                                     </div>
 
                                     <div className="grid md:grid-cols-3 gap-4 py-8 border-b border-gray-200 dark:border-gray-600 items-center">
-                                        <div className="text-base text-gray-600 font-montserrat font-normal">First Name</div>
+                                        <div className="text-base text-gray-600 font-montserrat font-normal dark:text-white">First Name</div>
                                         <div className="col-span-2">
-                                            <p className="bg-gray-50 py-3 px-4 border border-gray-300 w-full rounded-md text-black">
+                                            <p className="bg-gray-50 py-3 px-4 border border-gray-300 w-full rounded-md text-black dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                                                 {userProfileInfo?.firstName}
                                             </p>
                                         </div>
@@ -63,16 +57,16 @@ const DisplayUserProfile = ({toggleEditProfile, userProfileInfo }: DisplayUserPr
 
 
                                     <div className="grid md:grid-cols-3 gap-4 py-8 border-b border-gray-200 dark:border-gray-600 items-center">
-                                        <div className="text-base text-gray-600 font-montserrat font-normal">First Name</div>
+                                        <div className="text-base text-gray-600 font-montserrat font-normal dark:text-white">Last Name</div>
                                         <div className="col-span-2">
-                                            <p className="bg-gray-50 py-3 px-4 border border-gray-300 w-full rounded-md text-black">
+                                            <p className="bg-gray-50 py-3 px-4 border border-gray-300 w-full rounded-md text-black dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                                                 {userProfileInfo?.lastName}
                                             </p>
                                         </div>
                                     </div>
 
                                     <div className="grid md:grid-cols-3 gap-4 py-8 border-gray-200 dark:border-gray-600 items-center">
-                                        <div className="text-base text-gray-600 font-montserrat font-normal">Profile Image</div>
+                                        <div className="text-base text-gray-600 font-montserrat font-normal dark:text-white">Profile Image</div>
                                         <div className="focus:ring-indigo-600 col-span-2 w-full focus-within:ring-indigo-600 focus-within:border-indigo-600 focus:border-indigo-600">
                                             <div className="flex items-center gap-4 space-x-4">
 
@@ -87,7 +81,7 @@ const DisplayUserProfile = ({toggleEditProfile, userProfileInfo }: DisplayUserPr
                                                         size="90"
                                                         name={userProfileInfo?.firstName} />}
                                                                           <div className="flex flex-col mt-2">
-                                                        <label htmlFor="profile-image" className="px-4 py-1 bg-primary-700 hover:bg-primary-800 text-white text-center font-montserrat rounded-md">
+                                                        <label htmlFor="profile-image" className="px-4 py-1 bg-primary-700 hover:bg-primary-800 text-white text-center font-montserrat rounded-md dark:text-white">
                                                             Choose file
                                                             <input type="file" accept="image/*" name="file"
                                                                 className="hidden"
@@ -95,11 +89,12 @@ const DisplayUserProfile = ({toggleEditProfile, userProfileInfo }: DisplayUserPr
                                                             />
 
                                                         </label>
-                                                        <span className="mt-1 ml-2 text-sm text-gray-500 dark:text-gray-400">'No File Chosen'</span>
+                                                        <span className="mt-1 ml-2 text-sm text-gray-500 dark:text-white">'No File Chosen'</span>
                                                     </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <div className="mb-16">
                                     <div className='float-right p-2'>
                                         <Button
                                             type="submit"
@@ -113,7 +108,7 @@ const DisplayUserProfile = ({toggleEditProfile, userProfileInfo }: DisplayUserPr
                                             Update
                                         </Button>
                                     </div>
-                                    <div className='float-right p-2'>
+                                    <div className='float-right p-3'>
                                         <Button
                                             type="reset"
                                             color='bg-primary-800'
@@ -129,9 +124,9 @@ const DisplayUserProfile = ({toggleEditProfile, userProfileInfo }: DisplayUserPr
                                             Reset
                                         </Button>
                                     </div>
+                                    </div>
                                 </div>
                             </form>
-                            {/* )} */}
                         </div>
                     </div>
                 </div>

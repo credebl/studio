@@ -157,8 +157,8 @@ const AddPasskey = () => {
 
   return (
     <div className='h-full'>
-      <div className='page-container relative h-full flex flex-auto flex-col px-4 sm:px-6 md:px-8 py-4 sm:py-6 md:px-8'>
-        <div className='container mx-auto bg-white border border-gray-200 rounded-lg'>
+      <div className='page-container relative h-full flex flex-auto flex-col py-4 sm:py-6'>
+        <div className='container mx-auto bg-white border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700'>
           <div className="px-6 py-6">
                   {fidoLoader
         ? <div className="flex items-center justify-center mb-4">
@@ -170,8 +170,8 @@ const AddPasskey = () => {
             <form action="#">
               <div className="form-container">
                 <div>
-                  <h1 className="text-gray-500 text-xl font-medium font-montserrat">Add Passkey</h1>
-                  <p className="mt-2 text-gray-700 font-montserrat text-sm font-normal font-light leading-normal">With Passkey, no complex passwords to remember.</p>
+                  <h1 className="text-gray-500 text-xl font-medium font-montserrat dark:text-white">Add Passkey</h1>
+                  <p className="mt-2 text-gray-700 font-montserrat text-sm font-normal font-light leading-normal dark:text-white">With Passkey, no complex passwords to remember.</p>
                 </div>
 
                     {deviceList && deviceList.length > 0 &&
@@ -187,7 +187,7 @@ const AddPasskey = () => {
                         color='bg-primary-800'
                         className='mt-10 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="mr-2" width="18" height="18" fill="none" viewBox="0 0 18 18">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="mr-4" width="18" height="18" fill="none" viewBox="0 0 18 18">
                           <path stroke="#fff" d="M11.03 4.32a3.82 3.82 0 1 1-7.64 0 3.82 3.82 0 0 1 7.64 0Zm6.473 4.047a2.94 2.94 0 0 1-.486 1.62c-.315.476-.76.838-1.273 1.044l-.691.276.517.535.812.842-1.053 1.091-.335.348.335.347 1.053 1.091-1.619 1.678-.888-.92v-5.241l-.28-.138a2.774 2.774 0 0 1-1.098-.98 2.958 2.958 0 0 1-.168-2.917c.226-.455.566-.838.98-1.109a2.65 2.65 0 0 1 2.775-.081 2.79 2.79 0 0 1 1.038 1.05c.25.443.383.948.38 1.463Zm-1.55-1.761-.42.27.42-.27a1.434 1.434 0 0 0-.638-.542 1.396 1.396 0 0 0-1.566.32 1.491 1.491 0 0 0-.305 1.578c.105.265.286.494.52.656a1.403 1.403 0 0 0 1.813-.183 1.484 1.484 0 0 0 .175-1.83Zm-7.48 3.934c.664 0 1.32.122 1.934.359a5.18 5.18 0 0 0 1.332 1.626v4.213H.5v-1.3c0-1.291.537-2.535 1.5-3.456a5.284 5.284 0 0 1 3.649-1.443h2.824Z" />
                         </svg>
                         Add Passkey
