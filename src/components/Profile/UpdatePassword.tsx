@@ -1,5 +1,4 @@
 import { Button } from 'flowbite-react'
-import React from 'react'
 
 const UpdatePassword = () => {
   return (
