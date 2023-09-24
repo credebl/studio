@@ -229,7 +229,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                             description: yup
                                 .string()
                                 .min(2, 'Organization description must be at least 2 characters')
-                                .max(600, 'Organization description must be at most 255 characters')
+                                .max(255, 'Organization description must be at most 255 characters')
                                 .required('Description is required')
                         })}
                     validateOnBlur
