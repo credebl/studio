@@ -10,8 +10,8 @@ export const pathRoutes = {
         invitations: '/invitations',
         fetchUsers: '/users',
     },
-    subscription:{
-    subscription: '/subscription'
+    mysubscription:{
+        mysubscription: '/mysubscription'
     },
     organizations: {
         root: '/organizations',

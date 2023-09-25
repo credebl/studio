@@ -3,10 +3,10 @@ import LayoutSidebar from '../app/LayoutSidebar.astro';
 // import Billing from '../pages/billing/billing';
 import { pathRoutes } from '../config/pathRoutes';
 import { checkUserSession } from '../utils/check-session';
-import OrgFreeSubscription from './../pages/org-free-subscription/orgfreesubscription'
+import OrgMySubscription from './../pages/org-my-subscription/orgmysubscription'
 
 ---
 
 <LayoutSidebar>
-	<OrgFreeSubscription client:visible/>
+	<OrgMySubscription client:visible/>
 </LayoutSidebar>
