@@ -197,7 +197,7 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 									schemaList.map((element, key) => (
 										<div className='p-2' key={key}>
 											<SchemaCard schemaName={element['name']} version={element['version']} schemaId={element['schemaLedgerId']} issuerDid={element['issuerId']} attributes={element['attributes']} created={element['createDateTime']}
-												onClickCallback={schemaSelectionCallback} className='' />
+												onClickCallback={schemaSelectionCallback} />
 										</div>
 									))}
 							</div>
