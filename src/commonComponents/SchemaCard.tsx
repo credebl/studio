@@ -6,7 +6,7 @@ const SchemaCard = (props: {className:string, schemaName: string, version: strin
   return (
     <Card onClick={() => {
       props.onClickCallback(props.schemaId, props.attributes, props.issuerDid, props.created)
-    }} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer' style={{ width: '100%', height: '300px', overflow: 'auto' }}>
+    }} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer' style={{ width: '100%', height: '260px', overflow: 'auto' }}>
       <div className="flex justify-between items-start">
         <div>
           <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
@@ -39,31 +39,32 @@ const SchemaCard = (props: {className:string, schemaName: string, version: strin
         <ul className="divide-y divide-gray-200 dark:divide-gray-700">
           <li className="py-3 sm:py-2">
             <div className="flex items-center space-x-4">
-              <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white overflow-hidden overflow-ellipsis">
+              <div className="block text-base font-semibold text-gray-900 dark:text-white overflow-hidden overflow-ellipsis">
                 Attributes:
+                <div className="flex flex-wrap items-start">
+
                 {props.attributes && props.attributes.length > 0 && (
                   <>
                     {props?.attributes?.slice(0, 3).map((element, index) => (
+                      <div key={index}>
                       <span
-                        key={index}
+                        style={{ display: 'block' }}
                         className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
                       >
                         {element?.attributeName}
                       </span>
+                      </div>
                     ))}
                     {props?.attributes?.length > 3 && <span>...</span>}
                   </>
                 )}
+                </div>
               </div>
             </div>
-
           </li>
-
         </ul>
       </div>
     </Card>
   )
 }
-
-
 export default SchemaCard
