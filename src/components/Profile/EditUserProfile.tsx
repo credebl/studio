@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import type { UserProfile } from "./interfaces";
-import { getFromLocalStorage, getUserProfile, updateUserProfile } from "../../api/Auth";
-import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, apiStatusCodes, imageSizeAccepted, storageKeys } from "../../config/CommonConstant";
+import { setToLocalStorage, updateUserProfile } from "../../api/Auth";
+import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, imageSizeAccepted, storageKeys } from "../../config/CommonConstant";
 import type { AxiosResponse } from "axios";
 import CustomAvatar from '../Avatar'
 import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
-import { Avatar, Button, Label } from "flowbite-react";
+import { Button, Label } from "flowbite-react";
 import { Field, Form, Formik, FormikHelpers } from "formik";
-import { asset } from "../../lib/data";
 import * as yup from "yup"
 
 interface Values {
@@ -145,10 +144,6 @@ const UpdateUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }
 
 
   const updateUserDetails = async (values: Values) => {
-
-    console.log(`Image::`, logoImage?.imagePreviewUrl);
-
-
     setLoading(true)
 
     const userData = {
@@ -162,9 +157,10 @@ const UpdateUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }
     const resUpdateUserDetails = await updateUserProfile(userData)
 
     const { data } = resUpdateUserDetails as AxiosResponse
+		 setToLocalStorage(storageKeys.USER_PROFILE, userData)
 
     updateProfile(userData);
-
+		window.location.reload()
     setLoading(false)
 
   }
@@ -251,22 +247,24 @@ const UpdateUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }
                   </div>
                   <button
                   type="button"
-                  className="absolute top-0 right-0  w-6 h-6 m-2 "
+                  className="absolute top-0 right-0 w-7 h-7 m-2 "
                   onClick={toggleEditProfile}
-                >
-                  <svg className="-top-1 -right-6 mr-1 w-6 h-6 mb-20"
-                    width="24" height="24"
-                    viewBox="0 0 24 24"
-                    stroke-width="2"
-                    stroke="currentColor"
-                    fill="none"
-                    stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" />
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                    <line x1="5" y1="12" x2="11" y2="18" />
-                    <line x1="5" y1="12" x2="11" y2="6" />
-                  </svg>
+                >	
+								<svg
+								aria-hidden="true"
+								className="w-15 h-15"
+								fill="currentColor"
+								stroke-width="5"
+
+								viewBox="0 0 24 24"
+								xmlns="http://www.w3.org/2000/svg"
+							>
+								<path
+									fillRule="evenodd"
+									d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+									clipRule="evenodd"
+								></path>
+							</svg>
 
                 </button>
 
