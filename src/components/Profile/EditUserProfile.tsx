@@ -196,7 +196,7 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile}: E
             <div className="px-6 py-6">
 
               {
-                (success === "Profile Edited Successfully" || failure) &&
+                (success === "Profile Updated Successfully" || failure) &&
                 <Alert
                   color={success ? "success" : "failure"}
                   onDismiss={() => {
