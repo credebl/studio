@@ -192,17 +192,8 @@ const EditUserRoleModal = (props: { openModal: boolean;  setMessage: (message: s
                                 .email('Email is invalid')
                                 .trim(),
 
-                        })}
-                    validateOnBlur
-                    validateOnChange
-                    enableReinitialize
-                    onSubmit={async (
-                        values: Values,
-                        { resetForm }: FormikHelpers<Values>
-                    ) => {
-                        await includeInvitation(values)
-                        resetForm({ values: initialInvitationData })
-                    }}
+                <div
+                    className="mb-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 dark:text-white sm:p-6 dark:bg-gray-800"
                 >
 
                     <div className="space-y-6">
@@ -281,8 +272,9 @@ const EditUserRoleModal = (props: { openModal: boolean;  setMessage: (message: s
                                                             disabled={role.disabled}
                                                             checked={role.checked}
                                                             onChange={(event: any) => onRoleChanged(event, role.id)}
+                                                            className={`mr-2 ${role.disabled ? 'text-gray-500' : ''}`}
                                                         />
-                                                        <span className={`ml-3 ${role.disabled ? 'text-gray-500' : ''}`}>{TextTittlecase(role.name)}</span>
+                                                        <span className={`ml-3 ${role.disabled ? 'text-gray-500 ' : ''}`}>{TextTittlecase(role.name)}</span>
                                                     </label>
                                                 </div>
                                                 <span className="cursor-pointer" onClick={() => removeInvitation(invitation.email)}>

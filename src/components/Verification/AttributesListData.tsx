@@ -30,13 +30,13 @@ interface AttributesListProps {
 									<div
 										className={`flex w-full text-lg`}
 									>
-										<div className="w-5/12 m-1 p-1 flex justify-start items-center text-gray-700 text-lg">
+										<div className="w-5/12 m-1 p-1 flex justify-start items-center text-gray-700 dark:text-white text-lg">
 											{item?.entity}
 										</div>
-										<div className="w-1/12 m-1 p-1 flex  items-center text-gray-700 text-lg">
+										<div className="w-1/12 m-1 p-1 flex  items-center text-gray-700 dark:text-white text-lg">
 											:
 										</div>
-										<div className="w-6/12 m-1 truncate p-1 flex flex-start items-center text-gray-700 text-lg">
+										<div className="w-6/12 m-1 truncate p-1 flex flex-start items-center text-gray-700 dark:text-white text-lg">
 											{item?.properties.join(', ')}
 										</div>
 									</div>
