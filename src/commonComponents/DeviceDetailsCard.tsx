@@ -81,18 +81,20 @@ const DeviceDetails = (props: { deviceFriendlyName: string, createDateTime: stri
                         </div>
                         <div className="flex-1 min-w-0">
                             <div className="flex">
-                                <p className="text-base font-semibold text-gray-900 truncate dark:text-white pr-1">
+                                <p className="text-base font-semibold text-gray-900 truncate dark:text-white pr-3">
                                     {props?.deviceFriendlyName}
                                 </p>
                                 <button
-                                    className="p-1 border border-gray-400 rounded hover:bg-gray-100"
+                                    className="p-1 border border-gray-400 rounded hover:bg-gray-100 dark:hover:bg-black dark:text-white dark:hover:text-white"
                                     onClick={() => setOpenEditModel(true)}
                                 >
-                                    <img
-                                        src={editIcon}
-                                        alt="CREDEBL Logo"
-                                        style={{ width: '14px', height: '14px' }}
-                                    />
+                                    <svg className="h-4 w-4 dark:text-white dark:hover:text-white" viewBox="0 0 20 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" />
+                                                <path d="M9 7 h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3" />
+                                                <path d="M9 15h3l8.5 -8.5a1.5 1.5 0 0 0 -3 -3l-8.5 8.5v3" />
+                                                <line x1="16" y1="5" x2="19" y2="8" />
+                                            </svg>
+                                    
                                 </button>
                             </div>
                             <p className="text-sm font-normal text-gray-500 truncate dark:text-gray-400">

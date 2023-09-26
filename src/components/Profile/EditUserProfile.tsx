@@ -317,7 +317,7 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile}: E
                                 className="hidden"
                                 id="organizationlogo" title=""
                                 onChange={(event): void => handleImageChange(event)} />
-                              {imgError ? <div className="text-red-500">{imgError}</div> : <span className="mt-1 ml-2 text-sm text-gray-500 dark:text-gray-400">{logoImage.fileName || 'No File Chosen'}</span>}
+                              {imgError ? <div className="text-red-500">{imgError}</div> : <span className="mt-1 ml-2 text-sm text-gray-500 dark:text-white">{logoImage.fileName || 'No File Chosen'}</span>}
                             </label>
 
                           </div>
