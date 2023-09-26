@@ -66,7 +66,8 @@ const CredDefSelection = () => {
 	//Fetch credential definitions against schemaId
 	const getCredDefs = async (schemaId: string) => {
 		setLoading(true)
-		const response = await getCredentialDefinitionsForVerification(schemaId);
+		const response = await getCredentialDefinitionsForVerification(schemaId,31);
+		
 		const { data } = response as AxiosResponse
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {

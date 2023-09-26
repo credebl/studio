@@ -151,7 +151,7 @@ const VerificationCred = () => {
 	
 			const attributes = await selectedUsersData.map(user => ({
 				attributeName: user.name,
-				credDefId: credDefId,
+    ...(credDefId ? { credDefId } : {}),
 				schemaId: schemaId
 			}));
 			const verifyCredentialPayload: VerifyCredentialPayload = {

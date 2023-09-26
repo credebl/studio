@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import { Alert, Button, Card } from 'flowbite-react';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
-import { getCredDeffById, getSchemaById } from '../../api/Schema';
+// import { getCredDeffById, getSchemaById } from '../../api/Schema';
 import { getFromLocalStorage, removeFromLocalStorage } from '../../api/Auth';
 import { useEffect, useState } from 'react';
 
@@ -197,7 +197,10 @@ const IssueCred = () => {
             onClick={() => {
               window.location.href =`${pathRoutes.back.issuance.connections}`
             }}
-            className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 m-2 ml-2 dark:text-white'
+            className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 
+						ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 
+						lg:py-2.5 mr-2 ml-auto dark:text-white dark:hover:text-black 
+						dark:hover:bg-primary-50'
             style={{ height: '2.5rem', width: '5rem', minWidth: '2rem' }}
           >
             <svg className='mr-1' xmlns="http://www.w3.org/2000/svg" width="22" height="12" fill="none" viewBox="0 0 30 20">
@@ -283,9 +286,9 @@ const IssueCred = () => {
 														Connection Id 
 													</h5>
 													<span className='text-xl font-bold leading-none dark:text-white pl-1'>:</span>
-													<p className="pl-1">{user.connectionId}</p>
+													<p className="dark:text-white pl-1">{user.connectionId}</p>
 												</div>
-												<h3 className="">Attributes</h3>
+												<h3 className="dark:text-white">Attributes</h3>
 												<div className="container mx-auto pr-2">
 													<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2">
 														{schemaAttributesDetails.map((attr, index) => (
@@ -293,7 +296,7 @@ const IssueCred = () => {
 																<div key={index} className="flex">
 																	<label
 																		htmlFor={`attributes.${index}.value`}
-																		className="w-1/3 pr-2 flex justify-end items-center font-light"
+																		className="dark:text-white w-1/3 pr-2 flex justify-end items-center font-light"
 																	>
 																		{attr.displayName.charAt(0).toUpperCase() +
 																			attr.displayName.slice(1).toLowerCase() + ":"}

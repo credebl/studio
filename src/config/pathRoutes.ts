@@ -2,7 +2,7 @@ export const pathRoutes = {
     auth: {
         signUp: '/authentication/sign-up',
         sinIn: '/authentication/sign-in',
-        verifyEmail: '/users/verify',
+        verifyEmail: '/auth/verify',
     },
     users: {
         dashboard: '/dashboard',

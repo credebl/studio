@@ -70,6 +70,7 @@ const VerificationCredentialList = () => {
 			const { data } = response as AxiosResponse;
 
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+				
 				const credentialList = data?.data?.map((requestProof: RequestProof) => {
 					return {
 						data: [
@@ -321,7 +322,7 @@ const VerificationCredentialList = () => {
 						</div>
 					) : (
 						<div>
-							<span className="block text-center p-4 m-8">
+							<span className="dark:text-white block text-center p-4 m-8">
 								There isn't any data available.
 							</span>
 						</div>

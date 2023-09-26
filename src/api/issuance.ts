@@ -1,13 +1,12 @@
-import type { IssueCredential } from '../common/enums';
 import { apiRoutes } from '../config/apiRoutes';
 import { storageKeys } from '../config/CommonConstant';
 import { getHeaderConfigs } from '../config/GetHeaderConfigs';
 import { axiosGet, axiosPost } from '../services/apiRequests';
 import { getFromLocalStorage } from './Auth';
 
-export const getIssuedCredentials = async (state: IssueCredential) => {
+export const getIssuedCredentials = async () => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url = `${apiRoutes.Issuance.getIssuedCredentials}?orgId=${orgId}`;
+	const url= `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.getIssuedCredentials}`;
 
 	const axiosPayload = {
 		url,
@@ -23,8 +22,10 @@ export const getIssuedCredentials = async (state: IssueCredential) => {
 };
 
 export const getCredentialDefinitions = async (schemaId: string) => {
+	
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-    const url = `${apiRoutes.Issuance.getCredDefBySchemaId}?schemaId=${schemaId}&orgId=${orgId}`;
+	const url= `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.getCredDefBySchemaId}/${schemaId}/cred-defs`;
+
 	const axiosPayload = {
 		url,
 		config: await getHeaderConfigs(),
@@ -40,8 +41,10 @@ export const getCredentialDefinitions = async (schemaId: string) => {
 
 
 export const issueCredential = async (data: object) => {
-	const url = apiRoutes.Issuance.issueCredential;
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.issueCredential}`;	
 	const payload = data;
+	
 	const axiosPayload = {
 		url,
 		payload,
