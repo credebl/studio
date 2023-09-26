@@ -65,6 +65,9 @@ export const apiRoutes = {
 		},
         Agent:{
 			checkAgentHealth: '/agent-service/health',
+		},
+        notification:{
+			getAllNotification: '/notification',
 		}
 
 }

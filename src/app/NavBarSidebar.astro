@@ -9,7 +9,7 @@ import DisplayProfileImg from '../components/Profile/DisplayProfileImg';
 import { pathRoutes } from '../config/pathRoutes.js';
 import SignOutButton from '../components/SignOutButton/index';
 import AgentHealth from '../commonComponents/AgentHealth';
-
+import WebNotification from '../components/PushNotifications/Notification'
 ---
 
 <nav
@@ -69,7 +69,12 @@ import AgentHealth from '../commonComponents/AgentHealth';
 				<div class="hidden sm:block mr-5">
 					<OrgDropDwon client:visible />
 				</div>
-
+				<div>
+					<WebNotification client:visible />
+				</div>
+                <!-- <div >
+					<Notification />
+				</div> -->
 				<!-- Search mobile -->
 
 				<!-- <button
