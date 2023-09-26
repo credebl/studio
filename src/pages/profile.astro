@@ -1,6 +1,6 @@
 ---
 import LayoutSidebar from '../app/LayoutSidebar.astro';
-import AddPasskey from '../components/Profile/AddPasskey';
+import UserProfile from '../components/Profile/UserProfile';
 import { pathRoutes } from '../config/pathRoutes';
 import { checkUserSession } from '../utils/check-session';
 
@@ -12,5 +12,5 @@ if (!response) {
 ---
 
 <LayoutSidebar>
-	<AddPasskey client:visible/>
+	<UserProfile client:visible/>
 </LayoutSidebar>

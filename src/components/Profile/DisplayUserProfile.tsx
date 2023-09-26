@@ -1,82 +1,92 @@
 import type { UserProfile } from "./interfaces";
 import CustomAvatar from '../Avatar'
+import { Button } from "flowbite-react";
 
 interface DisplayUserProfileProps {
     toggleEditProfile: () => void;
     userProfileInfo: UserProfile | null;
-  }
-  
-  const DisplayUserProfile = ({ toggleEditProfile, userProfileInfo }: DisplayUserProfileProps) => {
+}
+const DisplayUserProfile = ({ toggleEditProfile, userProfileInfo }: DisplayUserProfileProps) => {
+   return (
+        <div>
+            <div className='h-full'>
+                <div className='page-container relative h-full flex flex-auto flex-col px-4 py-4 sm:py-6'>
+                    <div className='container mx-auto bg-white border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700'>
+                        <div className="px-6 py-6">
 
-    return (
-        <div className="max-w-lg mx-auto pl-2 pt-2 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 md:p-8 dark:bg-gray-800">
+                            <form action="#">
+                                <div className="form-container">
+                                    <div className="flex items-center justify-between">
 
-            <div className="flow-root">
-                <ul>
+                                        <div>
+                                            <h1 className="text-gray-500 text-xl font-medium font-montserrat dark:text-white">General</h1>
+                                            <p className="mt-2 text-gray-700 font-montserrat text-sm font-normal font-light leading-normal dark:text-white">Basic info, like your first name, last name and profile image that will be displayed</p>
+                                        </div>
 
-                    <li className="flex items-start justify-between pb-4">
-                        {(userProfileInfo?.profileImg) ? 
-                        <CustomAvatar 
-                        className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
-                        size="90"
-                        src={userProfileInfo?.profileImg} 
-                        /> :
-                         <CustomAvatar                          
-                         size="90"
-                        name={userProfileInfo?.firstName} />}
+                                        <Button
+                                            type="button"
+                                            title="Add new credential-definition on ledger"
+                                            color='bg-primary-800'
+                                            onClick={toggleEditProfile}
+                                            className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+                                        >
+                                            <svg className="h-5 w-6 mr-1 text-white" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" />
+                                                <path d="M9 7 h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3" />
+                                                <path d="M9 15h3l8.5 -8.5a1.5 1.5 0 0 0 -3 -3l-8.5 8.5v3" />
+                                                <line x1="16" y1="5" x2="19" y2="8" />
+                                            </svg>
+                                            Edit
+                                        </Button>
 
+                                    </div>
 
-                        <button
-                            type="button"
-                            className=""
-                            onClick={toggleEditProfile}
-                        >
-                            <svg aria-hidden="true"
-                                className="-ml-1 w-5 h-5"
+                                    <div className="grid md:grid-cols-3 gap-4 py-8 border-b border-gray-200 dark:border-gray-600 items-center">
+                                        <div className="text-base text-gray-600 font-montserrat font-normal dark:text-white">First Name</div>
+                                        <div className="col-span-2 font-medium text-gray-900 dark:text-white">
+                                            {userProfileInfo?.firstName ? (
+                                                userProfileInfo.firstName
+                                            ) : (
+                                                "N/A"
+                                            )}
 
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg"
-                                color='#3558A8'
-                            >
-                                <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z">
+                                        </div>
+                                    </div>
+                                    <div className="grid md:grid-cols-3 gap-4 py-8 border-b border-gray-200 dark:border-gray-600 items-center">
+                                        <div className="text-base text-gray-600 font-montserrat font-normal dark:text-white">Last Name</div>
+                                        <div className="col-span-2 font-medium text-gray-900 dark:text-white">
+                                            {userProfileInfo?.lastName ? (
+                                                userProfileInfo.lastName
+                                            ) : (
+                                                "N/A"
+                                            )}
 
-                                </path>
-                                <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"></path></svg>
+                                        </div>
+                                    </div>
+                                    <div className="grid md:grid-cols-3 gap-4 py-8 border-gray-200 dark:border-gray-600 items-center">
+                                        <div className="text-base text-gray-600 font-montserrat font-normal dark:text-white">Profile Image</div>
+                                        <div className="focus:ring-indigo-600 col-span-2 w-full focus-within:ring-indigo-600 focus-within:border-indigo-600 focus:border-indigo-600">
+                                            <div className="flex items-center gap-4 space-x-4">
 
-                        </button>
-
-
-                    </li>
-
-                    <li className="py-3">
-                        <div className="flex items-center space-x-4">
-                            <div className="flex-1 min-w-0">
-                                <p className="text-lg font-normal text-gray-500 truncate dark:text-gray-400">
-                                    Name
-                                </p>
-                                <p className="text-lg text-black truncate dark:text-white">
-                                {userProfileInfo?.firstName} {userProfileInfo?.lastName}
-                                </p>
-                            </div>
-
+                                                {(userProfileInfo?.profileImg) ?
+                                                    <CustomAvatar
+                                                        className="mb-4 rounded-full w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
+                                                        size="90"
+                                                        src={userProfileInfo?.profileImg}
+                                                    /> :
+                                                    <CustomAvatar
+                                                        className="mb-4 border border-b rounded-full w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
+                                                        size="90"
+                                                        src={userProfileInfo?.firstName || '../../public/images/profile.png'}
+                                                        name={userProfileInfo?.firstName} />}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
-                    </li>
-                    <li className="py-3">
-                        <div className="flex items-center space-x-4">
-
-                            <div className="flex-1 min-w-0">
-                                <p className="text-lg font-normal text-gray-500 truncate dark:text-gray-400">
-                                    Email
-                                </p>
-                                <p className="text-lg text-black truncate dark:text-white">
-
-                                    {userProfileInfo?.email}
-                                </p>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
+                    </div>
+                </div>
             </div>
         </div>
     );
