@@ -224,7 +224,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                             description: yup
                                 .string()
                                 .min(2, 'Organization description must be at least 2 characters')
-                                .max(600, 'Organization description must be at most 600 characters')
+                                .max(255, 'Organization description must be at most 255 characters')
                                 .required('Description is required')
                         })}
                     validateOnBlur
@@ -380,7 +380,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                                         id="private"
                                         name="private"
                                     />                                   
-                                    <span className="ml-2 text-gray-900">Private
+                                    <span className="ml-2 text-gray-900 dark:text-white">Private
                                         <span className="block pl-6 text-gray-500 text-sm">Only the connected organization can see you organization details</span>
                                     </span>
                                 </div>
@@ -402,7 +402,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                                         name="public"
                                     />
                                    
-                                    <span className="ml-2 text-gray-900">Public
+                                    <span className="ml-2 text-gray-900 dark:text-white">Public
                                         <span className="block pl-6 text-gray-500 text-sm">Your profile and organization details can be seen by everyone</span></span>
                                 </div>
                             </div>

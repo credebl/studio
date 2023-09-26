@@ -156,7 +156,6 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile}: E
 
 
   const updateUserDetails = async (values: Values) => {
-
     setLoading(true)
 
     const userData = {
@@ -168,6 +167,7 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile}: E
     const resUpdateUserDetails = await updateUserProfile(userData)
 
     const { data } = resUpdateUserDetails as AxiosResponse
+		 setToLocalStorage(storageKeys.USER_PROFILE, userData)
 
     updateProfile(userData);
     await setToLocalStorage(storageKeys.USER_PROFILE, userData);
