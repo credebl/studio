@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { UserProfile } from "./interfaces";
-import { updateUserProfile } from "../../api/Auth";
-import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, imageSizeAccepted} from "../../config/CommonConstant";
+import { setToLocalStorage, updateUserProfile } from "../../api/Auth";
+import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, imageSizeAccepted, storageKeys} from "../../config/CommonConstant";
 import type { AxiosResponse } from "axios";
 import CustomAvatar from '../Avatar'
 import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
@@ -28,7 +28,7 @@ interface EditUserProfileProps {
   updateProfile: (updatedProfile: UserProfile) => void;
 }
 
-const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: EditUserProfileProps) => {
+const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile}: EditUserProfileProps) => {
 
   const [loading, setLoading] = useState<boolean>(false)
   const [isImageEmpty, setIsImageEmpty] = useState(true)
@@ -47,6 +47,15 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
     imagePreviewUrl: userProfileInfo?.profileImg || "",
     fileName: ''
   })
+
+  const firstNameInputRef = useRef(null);
+
+  useEffect(() => {
+    if (firstNameInputRef.current) {
+      firstNameInputRef.current.focus();
+    }
+  }, []); 
+
 
   useEffect(() => {
 
@@ -147,6 +156,7 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
 
 
   const updateUserDetails = async (values: Values) => {
+
     setLoading(true)
 
     const userData = {
@@ -160,9 +170,9 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
     const { data } = resUpdateUserDetails as AxiosResponse
 
     updateProfile(userData);
-
+    await setToLocalStorage(storageKeys.USER_PROFILE, userData);
+    window.location.reload();
     setLoading(false)
-
   }
 
   const validationSchema = yup.object().shape({
@@ -209,7 +219,7 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
                   values: Values,
                   { resetForm }: FormikHelpers<Values>
                 ) => {
-                  updateUserDetails(values);
+                 await updateUserDetails(values);
                   toggleEditProfile();
                 }}
 
@@ -226,21 +236,6 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
                           <h1 className="text-gray-500 text-xl font-medium font-montserrat dark:text-white">General</h1>
                           <p className="mt-2 text-gray-700 font-montserrat text-sm font-normal font-light leading-normal dark:text-white">Basic info, like your first name, last name and profile image that will be displayed</p>
                         </div>
-
-                        <Button
-                          type="submit"
-                          title="Add new credential-definition on ledger"
-                          color='bg-primary-800'
-                          className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
-                        >
-                          <svg className="h-5 w-6 mr-1 text-white" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" />
-                            <path d="M9 7 h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3" />
-                            <path d="M9 15h3l8.5 -8.5a1.5 1.5 0 0 0 -3 -3l-8.5 8.5v3" />
-                            <line x1="16" y1="5" x2="19" y2="8" />
-                          </svg>
-                          Edit
-                        </Button>
 
                       </div>
                     </div>
@@ -260,7 +255,8 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
                             value={formikHandlers.values.firstName}
                             onChange={formikHandlers.handleChange}
                             onBlur={formikHandlers.handleBlur}
-                            className="bg-gray-50 py-3 px-4 border border-gray-300 w-full rounded-md focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 max-w-100/6rem" />
+                            ref={firstNameInputRef}
+                            className="bg-gray-50 py-3 px-4 font-medium text-gray-900 border border-gray-300 w-full rounded-md focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 max-w-100/6rem" />
                           {(formikHandlers?.errors?.firstName && formikHandlers?.touched?.firstName) && (
                             <span className="text-red-500 text-xs mt-1">
                               {formikHandlers?.errors?.firstName}
@@ -284,7 +280,7 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
                             value={formikHandlers.values.lastName}
                             onChange={formikHandlers.handleChange}
                             onBlur={formikHandlers.handleBlur}
-                            className="bg-gray-50 py-3 px-4 border border-gray-300 w-full rounded-md focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 max-w-100/6rem" />
+                            className="bg-gray-50 py-3 px-4 font-medium text-gray-900 border border-gray-300 w-full rounded-md focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 max-w-100/6rem" />
                           {(formikHandlers?.errors?.lastName && formikHandlers?.touched?.lastName) && (
                             <span className="text-red-500 text-xs mt-1">
                               {formikHandlers?.errors?.lastName}
@@ -330,12 +326,12 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
                         type="submit"
                         isProcessing={loading}
                         fill="none"
-                        className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+                        className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 px-3'
                       >
-                        <svg className="h-6 w-6 mr-2 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 11l3-3m0 0l3 3m-3-3v8m0-13a9 9 0 110 18 9 9 0 010-18z" />
-                        </svg>
-                        Update
+                        <svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="24" height="22" fill="none" viewBox="0 0 18 18">
+                            <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 1v12l-4-2-4 2V1h8ZM3 17h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z" />
+                          </svg>                     
+                          Save
                       </Button>
                     </div>
                     <div className='float-right p-3'>
@@ -343,15 +339,24 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
                         type="reset"
                         color='bg-primary-800'
                         className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-3 mr-2 ml-auto dark:text-white'
-
+                        onClick= {() => toggleEditProfile()}
                         style={{ height: '2.5rem', width: '7rem', minWidth: '4rem' }}
                       >
-                        <svg className="h-6 w-6 mr-2 text-primary-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <polyline points="23 4 23 10 17 10" />
-                          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
-                        </svg>
-
-                        Reset
+                         <svg className="h-6 w-6 text-primary-700 mr-1"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            stroke-width="2"
+                            stroke="currentColor"
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" />
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                          </svg>
+ 
+                        Cancel
                       </Button>
                     </div>
                     </div>
