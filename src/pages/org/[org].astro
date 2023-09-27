@@ -7,12 +7,17 @@ import OrgUserInfoLayout from '../../components/publicProfile/OrgUserInfoLayout.
 const { org } = Astro.params;
 const baseUrl = process.env.PUBLIC_BASE_URL || import.meta.env.PUBLIC_BASE_URL
 const response = await fetch(
-	`${baseUrl}/organization/public-profiles/${org}`,
+	`${baseUrl}/orgs/public-profiles/${org}`,
 );
 const data = await response?.json();
-
 const orgData = data?.data;
-const orgUsersData = orgData?.userOrgRoles?.map(
+const orgUsersFilterByRole = orgData?.userOrgRoles?.filter(
+	(users: { orgRole: {name:string}; }) => {
+	return users?.orgRole.name === "owner"
+	},
+);
+
+const orgUsersData = orgUsersFilterByRole?.map(
 	(users: { user: { firstName: string } }) => {
 		return users?.user;
 	},
