@@ -72,11 +72,6 @@ export const apiRoutes = {
 			getAllSchemaFromPlatform: '/platform/schemas',
 	},
 		public:{
-			organizations: '/organization/public-profiles',
-			users:'/users/public-profiles',
-		},
-		ecosystem:{
-			root:'/ecosystem',
-			invitations:'/invitations'
+			organizations: '/orgs/public-profile',
 		}
 }
