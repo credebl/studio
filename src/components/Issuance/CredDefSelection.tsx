@@ -61,7 +61,7 @@ const CredDefSelection = () => {
 		{ columnName: 'Name' },
 		{ columnName: 'Created on' },
 		{ columnName: 'Revocable?' },
-		{ columnName: '' }
+		{ columnName: ' ' }
 	]
 
 	//Fetch credential definitions against schemaId
