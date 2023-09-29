@@ -79,19 +79,20 @@ const WebNotification = () => {
         </svg>
       </button>
       <div style={{ position: 'absolute', top: 50, right: 0 }}>
-        {newNotification.length > 0 && (
-          <Toast>
+        {newNotification.length > 0 && newNotification.map((notification, index) => (
+          <Toast key={index}>
             <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
-              {/* <HiCheck className="h-5 w-5" /> */}
             </div>
             <div className="ml-3 text-sm font-normal">
-              You have recived a new notification
+              You have recived a new {notification?.type} notification
             </div>
             <Toast.Toggle onClick={() => {
-              setNewNotification([])
+              const updatedNotifications = [...newNotification];
+              updatedNotifications.splice(index, 1);
+              setNewNotification(updatedNotifications);
             }} />
           </Toast>
-        )}
+        ))}
       </div>
       <div
         className="z-20 z-50 hidden max-w-sm my-4 overflow-hidden text-base list-none bg-white divide-y divide-gray-100 rounded shadow-lg dark:divide-gray-600 dark:bg-gray-700"
