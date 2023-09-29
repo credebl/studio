@@ -1,6 +1,6 @@
 'use client';
 
-import { Alert, Button, Card, Pagination, Table, } from 'flowbite-react';
+import { Alert, Pagination} from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
 import type { GetAllSchemaListParameter, PaginationData } from './interfaces';
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';

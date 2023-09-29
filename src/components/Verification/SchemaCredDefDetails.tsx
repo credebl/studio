@@ -14,8 +14,9 @@ const SchemaCredDefDetails = ({ schemaCredDefList }: SchemaCredDefProps) => {
                             <div className=" w-3/12 font-semibold text-primary-700 dark:bg-gray-800 m-1 p-1 flex justify-start items-center">
                                 Schema Id
                             </div>
-                            <div className=" flex flex-wrap items-center p-1 m-1 ">:</div>{' '}
-                            <div className="w-9/12 m-1 flex justify-start text-gray-600 items-center">
+                            <div className=" flex items-center p-1 m-1 ">:</div>{' '}
+                            <div className="w-9/12 m-1 flex justify-start truncate text-gray-600 dark:text-white items-center cursor-pointer overflow:hidden overflow:ellipsis"
+                                 style={{overflow: 'auto'}}>
                                 {Object.values(item)[2]}
                             </div>
                         </div>
@@ -28,7 +29,7 @@ const SchemaCredDefDetails = ({ schemaCredDefList }: SchemaCredDefProps) => {
                                     {' '}
                                     :
                                 </div>{' '}
-                                <div className="w-9/12 m-1 flex justify-start text-gray-600 items-center">
+                                <div className="w-9/12 m-1 flex justify-start truncate text-gray-600 dark:text-white items-center overflow:hidden overflow:ellipsis">
                                     {Object.values(item)[1]
                                         ? Object.values(item)[1]
                                         : ''}

@@ -1,52 +1,35 @@
-import { useEffect, useState } from 'react';
+import { Alert, Button } from 'flowbite-react'
+import React, { useEffect, useState } from 'react'
+import { IDeviceData, IdeviceBody, RegistrationOptionInterface } from './interfaces'
+import DeviceDetails from '../../commonComponents/DeviceDetailsCard'
+import PasskeyAddDevice from '../../commonComponents/PasseyAddDevicePopup'
+import { AxiosError, AxiosResponse } from 'axios'
+import { addDeviceDetails, generateRegistrationOption, getUserDeviceDetails, verifyRegistration } from '../../api/Fido'
+import { apiStatusCodes, storageKeys } from '../../config/CommonConstant'
+import { apiRoutes } from '../../config/apiRoutes'
 import { startRegistration } from '@simplewebauthn/browser'
-import type { AxiosError, AxiosResponse } from 'axios';
-import { addDeviceDetails, generateRegistrationOption, getUserDeviceDetails, verifyRegistration } from '../../api/Fido';
-import DeviceDetails from '../../commonComponents/DeviceDetailsCard';
-import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
-import { getFromLocalStorage, getUserProfile } from '../../api/Auth';
-import BreadCrumbs from '../BreadCrumbs';
-import { Alert } from 'flowbite-react';
-import type { IDeviceData, IdeviceBody, RegistrationOptionInterface, UserProfile, verifyRegistrationObjInterface } from './interfaces';
-import DisplayUserProfile from './DisplayUserProfile';
-import UpdateUserProfile from './EditUserProfile';
-import CustomSpinner from '../CustomSpinner';
-import PasskeyAddDevice from '../../commonComponents/PasseyAddDevicePopup';
-import { apiRoutes } from '../../config/apiRoutes';
-import React from 'react';
+import { getFromLocalStorage } from '../../api/Auth'
+import CustomSpinner from '../CustomSpinner'
 
 const AddPasskey = () => {
+
   const [fidoError, setFidoError] = useState("")
   const [fidoLoader, setFidoLoader] = useState(true)
   const [OrgUserEmail, setOrgUserEmail] = useState<string>('')
   const [deviceList, setDeviceList] = useState<IDeviceData[]>([])
   const [addSuccess, setAddSuccess] = useState<string | null>(null)
   const [addfailure, setAddFailur] = useState<string | null>(null)
-  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
-  const [prePopulatedUserProfile, setPrePopulatedUserProfile] = useState<UserProfile | null>(null);
   const [disableFlag, setDisableFlag] = useState<boolean>(false)
 
 
   const [openModel, setOpenModel] = useState<boolean>(false)
 
   const props = { openModel, setOpenModel };
-  const fetchUserProfile = async () => {
-    try {
-      const token = await getFromLocalStorage(storageKeys.TOKEN);
-      const userDetailsResponse = await getUserProfile(token);
-      const { data } = userDetailsResponse as AxiosResponse;
-
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        setPrePopulatedUserProfile(data?.data);
-      }
-    } catch (error) {
-    }
-  };
-
-  const toggleEditProfile = async () => {
-    await fetchUserProfile()
-    setIsEditProfileOpen(!isEditProfileOpen);
-  };
+  const setProfile = async () => {
+    const UserEmail = await getFromLocalStorage(storageKeys.USER_EMAIL)
+    setOrgUserEmail(UserEmail)
+    return UserEmail
+  }
 
   const showFidoError = (error: unknown): void => {
     const err = error as AxiosError
@@ -65,16 +48,6 @@ const AddPasskey = () => {
       setFidoLoader(false)
     }
   }
-  const setProfile = async () => {
-    const UserEmail = await getFromLocalStorage(storageKeys.USER_EMAIL)
-    setOrgUserEmail(UserEmail)
-    return UserEmail
-  }
-
-  useEffect(() => {
-    fetchUserProfile();
-  }, []);
-
   const registerWithPasskey = async (flag: boolean): Promise<void> => {
     try {
       const RegistrationOption: RegistrationOptionInterface = {
@@ -164,9 +137,9 @@ const AddPasskey = () => {
             return data
           })
           : []
-          if (data?.data?.length === 1){
-            setDisableFlag(true)
-          }
+        if (data?.data?.length === 1) {
+          setDisableFlag(true)
+        }
         setDeviceList(deviceDetails)
       }
     } catch (error) {
@@ -174,7 +147,6 @@ const AddPasskey = () => {
       setFidoLoader(false)
     }
   }
-
   useEffect(() => {
     if (OrgUserEmail) {
       userDeviceDetails();
@@ -183,102 +155,80 @@ const AddPasskey = () => {
     }
   }, [OrgUserEmail]);
 
-  const updatePrePopulatedUserProfile = (updatedProfile: UserProfile) => {
-    setPrePopulatedUserProfile(updatedProfile);
-  };
-
   return (
-
-    <div className="mb-4 col-span-full xl:mb-2 p-4">
-      <BreadCrumbs />
-      <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-        User's Profile
-      </h1>
-
-      {fidoLoader
+    <div className='h-full'>
+      <div className='page-container relative h-full flex flex-auto flex-col py-4 sm:py-6'>
+        <div className='container mx-auto bg-white border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700'>
+          <div className="px-6 py-6">
+                  {fidoLoader
         ? <div className="flex items-center justify-center mb-4">
 
           <CustomSpinner />
         </div>
         :
 
-        <div className="lg:flex max-sm p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800 grid-cols-2 gap-10 mt-6">
+            <form action="#">
+              <div className="form-container">
+                <div>
+                  <h1 className="text-gray-500 text-xl font-medium font-montserrat dark:text-white">Add Passkey</h1>
+                  <p className="mt-2 text-gray-700 font-montserrat text-sm font-normal font-light leading-normal dark:text-white">With Passkey, no complex passwords to remember.</p>
+                </div>
 
-          {/* first section */}
-          <div className='lg:w-1/3'>
+                    {deviceList && deviceList.length > 0 &&
+                      deviceList.map((element, key) => (
+                        <DeviceDetails deviceFriendlyName={element['deviceFriendlyName']} createDateTime={element['createDateTime']} credentialID={element['credentialId']} refreshList={userDeviceDetails} disableRevoke={disableFlag} />
+                      ))}
 
-            {!isEditProfileOpen && prePopulatedUserProfile && (
-              <DisplayUserProfile
-                toggleEditProfile={toggleEditProfile}
-                userProfileInfo={prePopulatedUserProfile}
-              />
-            )}
+                    <div>
 
-            {isEditProfileOpen && prePopulatedUserProfile && (
-              <UpdateUserProfile
-                toggleEditProfile={toggleEditProfile}
-                userProfileInfo={prePopulatedUserProfile}
-                updateProfile={updatePrePopulatedUserProfile}
-              />
-            )}
+                      <Button
+                        onClick={addDevice}
+                        type="button"
+                        color='bg-primary-800'
+                        className='mt-10 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="mr-4" width="18" height="18" fill="none" viewBox="0 0 18 18">
+                          <path stroke="#fff" d="M11.03 4.32a3.82 3.82 0 1 1-7.64 0 3.82 3.82 0 0 1 7.64 0Zm6.473 4.047a2.94 2.94 0 0 1-.486 1.62c-.315.476-.76.838-1.273 1.044l-.691.276.517.535.812.842-1.053 1.091-.335.348.335.347 1.053 1.091-1.619 1.678-.888-.92v-5.241l-.28-.138a2.774 2.774 0 0 1-1.098-.98 2.958 2.958 0 0 1-.168-2.917c.226-.455.566-.838.98-1.109a2.65 2.65 0 0 1 2.775-.081 2.79 2.79 0 0 1 1.038 1.05c.25.443.383.948.38 1.463Zm-1.55-1.761-.42.27.42-.27a1.434 1.434 0 0 0-.638-.542 1.396 1.396 0 0 0-1.566.32 1.491 1.491 0 0 0-.305 1.578c.105.265.286.494.52.656a1.403 1.403 0 0 0 1.813-.183 1.484 1.484 0 0 0 .175-1.83Zm-7.48 3.934c.664 0 1.32.122 1.934.359a5.18 5.18 0 0 0 1.332 1.626v4.213H.5v-1.3c0-1.291.537-2.535 1.5-3.456a5.284 5.284 0 0 1 3.649-1.443h2.824Z" />
+                        </svg>
+                        Add Passkey
+                      </Button>
+                      {
+                        (addSuccess || addfailure || fidoError) &&
+                        <div className='p-2'>
+                          <Alert
+                            color={addSuccess ? "success" : "failure"}
+                            onDismiss={() => {
+                              setAddSuccess(null)
+                              setFidoError('')
+                              setAddFailur('')
+                            }}
+                          >
+                            <span>
+                              <p>
+                                {addSuccess || addfailure || fidoError}
+                              </p>
+                            </span>
+                          </Alert>
+                        </div>
+                      }
 
-          </div>
+                </div>
 
-          {/* second section */}
-          <div className="flow-root w-2/3">
-            <div
-              className="mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
-            >
-
-              <div className='divide-y'>
-                {deviceList && deviceList.length > 0 &&
-                  deviceList.map((element, key) => (
-                    <DeviceDetails deviceFriendlyName={element['deviceFriendlyName']} createDateTime={element['createDateTime']} credentialID={element['credentialId']} refreshList={userDeviceDetails} disableRevoke={disableFlag} />
-                  ))}
-              </div>
-
-              <div>
-
-                <button onClick={addDevice} type="button" className="ml-2 mt-2 text-white bg-primary-700 hover:!bg-primary-800 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 mr-2 mb-2">
-                  <svg className='mr-2 pr-2' xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
-                  </svg>
-                  Create Passkey
-                </button>
-                {
-                  (addSuccess || addfailure || fidoError) &&
-                  <div className='p-2'>
-                    <Alert
-                      color={addSuccess ? "success" : "failure"}
-                      onDismiss={() => {
-                        setAddSuccess(null)
-                        setFidoError('')
-                        setAddFailur('')
-                      }}
-                    >
-                      <span>
-                        <p>
-                          {addSuccess || addfailure || fidoError}
-                        </p>
-                      </span>
-                    </Alert>
-                  </div>
+                <PasskeyAddDevice openModal={openModel} setOpenModel={props.setOpenModel} closeModal={function (flag: boolean): void {
+                  throw new Error('Function not implemented.');
                 }
+                }
+                  registerWithPasskey={registerWithPasskey}
+                />
               </div>
-            </div>
 
+            </form> }
           </div>
-
-          <PasskeyAddDevice openModal={openModel} setOpenModel={props.setOpenModel} closeModal={function (flag: boolean): void {
-            throw new Error('Function not implemented.');
-          }
-          }
-            registerWithPasskey={registerWithPasskey}
-          />
         </div>
-      }
+      </div>
     </div>
-  );
-};
 
-export default AddPasskey;
+  )
+}
+
+export default AddPasskey
