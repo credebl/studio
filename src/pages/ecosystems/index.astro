@@ -3,6 +3,7 @@ import LayoutSidebar from '../../app/LayoutSidebar.astro';
 import Dashboard from '../../components/Ecosystems/Dashboard';
 import { checkUserSession } from '../../utils/check-session';
 import { pathRoutes } from '../../config/pathRoutes';
+import EcosystemDashbaord from '../../components/Ecosystems/EcosystemDashboard';
 const response = await checkUserSession(Astro.cookies);
 const route: string = pathRoutes.auth.sinIn
 if (!response) {
@@ -12,5 +13,5 @@ if (!response) {
 
 <LayoutSidebar>
 	<Dashboard client:visible/>
-	
+	<EcosystemDashbaord client:visible />
 </LayoutSidebar>
