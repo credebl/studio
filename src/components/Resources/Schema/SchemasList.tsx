@@ -127,7 +127,7 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 	const fetchOrganizationDetails = async () => {
 		setLoading(true)
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
-		const response = await getOrganizationById(orgId as string);
+		const response = await getOrganizationById(orgId);
 		const { data } = response as AxiosResponse
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 				if (data?.data?.org_agents && data?.data?.org_agents?.length > 0) {
