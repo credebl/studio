@@ -7,29 +7,29 @@ import { storageKeys } from "../config/CommonConstant";
 
 export const createEcosystems = async (data: object) => {
 
-    // const url = apiRoutes.organizations.create
-    // const payload = data
-    // const token = await getFromLocalStorage(storageKeys.TOKEN)
+    const url = apiRoutes.organizations.create
+    const payload = data
+    const token = await getFromLocalStorage(storageKeys.TOKEN)
 
-    // const config = {
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //         Authorization: `Bearer ${token}`
-    //     }
-    // }
-    // const axiosPayload = {
-    //     url,
-    //     payload,
-    //     config
-    // }
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+        }
+    }
+    const axiosPayload = {
+        url,
+        payload,
+        config
+    }
 
-    // try {
-    //     return await axiosPost(axiosPayload);
-    // }
-    // catch (error) {
-    //     const err = error as Error
-    //     return err?.message
-    // }
+    try {
+        return await axiosPost(axiosPayload);
+    }
+    catch (error) {
+        const err = error as Error
+        return err?.message
+    }
 }
 
 

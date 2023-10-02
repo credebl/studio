@@ -2,17 +2,18 @@ import * as yup from "yup"
 
 import { Avatar, Button, Label, Modal } from 'flowbite-react';
 import { Field, Form, Formik, FormikHelpers } from 'formik';
-import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, apiStatusCodes, imageSizeAccepted } from '../../config/CommonConstant'
+import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, apiStatusCodes, imageSizeAccepted, storageKeys } from '../../config/CommonConstant'
 import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { AlertComponent } from "../AlertComponent";
 import type { AxiosResponse } from 'axios';
-import { asset } from '../../lib/data.js';
-import { createEcosystems } from "../../api/ecosystems";
+import { updateOrganization } from "../../api/organization";
+import type { Ecosystem } from "./interfaces";
 import React from "react";
 
 interface Values {
+		website: any;
     name: string;
     description: string;
 }
@@ -23,35 +24,68 @@ interface ILogoImage {
     fileName: string
 }
 
-const CreateEcosystems = (props: { openModal: boolean; setMessage: (message: string)=> void ; setOpenModal: (flag: boolean) => void }) => {
+interface EditEcosystemsModalProps {
+    openModal: boolean;
+    setMessage: (message: string) => void;
+    setOpenModal: (flag: boolean) => void;
+    onEditSucess?: () => void;
+    EcoData: Ecosystem | null;
 
+}
+
+const EditEcosystemsModal = (props: EditEcosystemsModalProps) => {
     const [logoImage, setLogoImage] = useState<ILogoImage>({
         logoFile: "",
-        imagePreviewUrl: "",
-        fileName: ''
-    })
+        imagePreviewUrl: props?.EcoData?.logoUrl || "",
+        fileName: '' ,
 
+    })
     const [loading, setLoading] = useState<boolean>(false)
-
     const [isImageEmpty, setIsImageEmpty] = useState(true)
-    const [initialEcoData, setEcoData] = useState({
-        name: '',
-        description: '',
+    const [isPublic, setIsPublic] = useState(true)
+
+    const [initialOrgData, setOrgData] = useState({
+        name: props?.EcoData?.name || "",
+        description: props?.EcoData?.description || "",
+				website: props?.EcoData?.website || "",
     })
+
+    useEffect(() => {
+
+        if (props.EcoData) {
+            setOrgData({
+                name: props.EcoData.name || '',
+                description: props.EcoData.description || '',
+								website: props?.EcoData?.website || "",
+            });
+
+            setLogoImage({
+                logoFile: "",
+                imagePreviewUrl: props.EcoData.logoUrl || "",
+                fileName: ''
+            });
+        }
+    }, [props]);
+
+
     const [erroMsg, setErrMsg] = useState<string | null>(null)
 
     const [imgError, setImgError] = useState('')
 
     useEffect(() => {
-        setEcoData({
-            name: '',
-            description: '',
-        })
-        setLogoImage({
-            ...logoImage,
-            logoFile: "",
-            imagePreviewUrl: ""
-        }) 
+        if (props.openModal === false) {
+            setOrgData({
+                name: '',
+                description: '',
+								website:''
+            })
+
+            setLogoImage({
+                ...logoImage,
+                logoFile: "",
+                imagePreviewUrl: ""
+            })
+        }
     }, [props.openModal])
 
 
@@ -96,7 +130,6 @@ const CreateEcosystems = (props: { openModal: boolean; setMessage: (message: str
     }
 
     const isEmpty = (object: any): boolean => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars, guard-for-in
         for (const property in object) {
             setIsImageEmpty(false)
             return false
@@ -129,29 +162,34 @@ const CreateEcosystems = (props: { openModal: boolean; setMessage: (message: str
         }
     }
 
-    const sumitCreateOrganization = async (values: Values) => {
+    const submitUpdateOrganization = async (values: Values) => {
+
         setLoading(true)
 
-        const ecoData = {
+        const EcoData = {
+            orgId: props?.EcoData?.id,
             name: values.name,
             description: values.description,
-            logo: logoImage?.imagePreviewUrl as string || "",
-            website: ""
+            logo: logoImage?.imagePreviewUrl as string || props?.EcoData?.logoUrl,
+            website: values.website,
+            isPublic: isPublic
         }
 
-        const resCreateOrg = await createEcosystems(ecoData)
+        const resUpdateOrg = await updateOrganization(EcoData, EcoData.orgId?.toString() as string)
 
-        const { data } = resCreateOrg as AxiosResponse
+        const { data } = resUpdateOrg as AxiosResponse
         setLoading(false)
 
-        if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-            props.setMessage(data?.message)
+        if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+            if (props?.onEditSucess) {
+                props?.onEditSucess()
+            }
             props.setOpenModal(false)
-
         } else {
-            setErrMsg(resCreateOrg as string)
+            setErrMsg(resUpdateOrg as string)
         }
     }
+
     return (
         <Modal show={props.openModal} onClose={() => {
             setLogoImage({
@@ -159,21 +197,23 @@ const CreateEcosystems = (props: { openModal: boolean; setMessage: (message: str
                 imagePreviewUrl: "",
                 fileName: ''
             })
-            setEcoData(initialEcoData)
+            setOrgData(initialOrgData)
             props.setOpenModal(false)
         }
         }>
-            <Modal.Header>Create Ecosystem</Modal.Header>
+            <Modal.Header>Edit Ecosystem</Modal.Header>
             <Modal.Body>
-                 <AlertComponent
+                <AlertComponent
                     message={erroMsg}
                     type={'failure'}
-                    onAlertClose = {() => {
+                    onAlertClose={() => {
                         setErrMsg(null)
                     }}
-                    />
+                />
                 <Formik
-                    initialValues={initialEcoData}
+                    initialValues={
+                        initialOrgData
+                    }
                     validationSchema={
                         yup.object().shape({
                             name: yup
@@ -184,8 +224,8 @@ const CreateEcosystems = (props: { openModal: boolean; setMessage: (message: str
                                 .trim(),
                             description: yup
                                 .string()
-                                .min(2, 'Description must be at least 2 characters')
-                                .max(255, 'Description must be at most 255 characters')
+                                .min(2, 'Ecosystem description must be at least 2 characters')
+                                .max(255, 'Ecosystem description must be at most 255 characters')
                                 .required('Description is required')
                         })}
                     validateOnBlur
@@ -195,8 +235,7 @@ const CreateEcosystems = (props: { openModal: boolean; setMessage: (message: str
                         values: Values,
                         { resetForm }: FormikHelpers<Values>
                     ) => {
-
-                        sumitCreateOrganization(values)
+                        submitUpdateOrganization(values)
                     }}
                 >
                     {(formikHandlers): JSX.Element => (
@@ -210,21 +249,30 @@ const CreateEcosystems = (props: { openModal: boolean; setMessage: (message: str
                                 <div
                                     className="items-center sm:flex 2xl:flex sm:space-x-4 xl:space-x-4 2xl:space-x-4"
                                 >
+
+
                                     {
-                                        typeof (logoImage.logoFile) === "string" ?
-                                            <Avatar
-                                                size="lg"
-                                            /> :
+                                        (typeof (logoImage.logoFile) === "string" && props?.EcoData?.logoUrl) ?
                                             <img
                                                 className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
-                                                src={typeof (logoImage.logoFile) === "string" ? asset('images/users/bonnie-green-2x.png') : URL.createObjectURL(logoImage.logoFile)}
+                                                src={props?.EcoData?.logoUrl}
                                                 alt="Jese picture"
                                             />
+                                            : typeof (logoImage.logoFile) === "string" ?
+                                                <Avatar
+                                                    size="lg"
+                                                /> :
+                                                <img
+                                                    className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
+                                                    src={URL.createObjectURL(logoImage?.logoFile)}
+                                                    alt="Jese picture"
+                                                />
                                     }
+
 
                                     <div>
                                         <h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
-                                            Ecosystem Logo
+                                        Ecosystem Logo
                                         </h3>
                                         <div className="mb-4 text-sm text-gray-500 dark:text-gray-400">
                                             JPG, JPEG and PNG . Max size of 1MB
@@ -239,7 +287,7 @@ const CreateEcosystems = (props: { openModal: boolean; setMessage: (message: str
                                                         id="organizationlogo" title=""
                                                         onChange={(event): void => handleImageChange(event)} />
                                                     {/* <span>{selectedImage || 'No File Chosen'}</span> */}
-                                                    {imgError ? <div className="text-red-500">{imgError}</div> : <span className="mt-1  text-sm text-gray-500 dark:text-gray-400">{logoImage.fileName || 'No File Chosen'}</span>}
+                                                    {imgError ? <div className="text-red-500">{imgError}</div> : <span className="mt-1 text-sm text-gray-500 dark:text-gray-400">{logoImage.fileName || 'No File Chosen'}</span>}
                                                 </label>
 
                                             </div>
@@ -264,13 +312,15 @@ const CreateEcosystems = (props: { openModal: boolean; setMessage: (message: str
                                     name="name"
                                     value={formikHandlers.values.name}
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Enter Ecosystem Name" />
+                                    placeholder="Your organization name" />
                                 {
                                     (formikHandlers?.errors?.name && formikHandlers?.touched?.name) &&
                                     <span className="text-red-500 text-xs">{formikHandlers?.errors?.name}</span>
                                 }
 
                             </div>
+
+
                             <div>
                                 <div
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -289,23 +339,84 @@ const CreateEcosystems = (props: { openModal: boolean; setMessage: (message: str
                                     value={formikHandlers.values.description}
                                     as='textarea'
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Enter Ecosystem Description" />
+                                    placeholder="Description of your organization" />
                                 {
                                     (formikHandlers?.errors?.description && formikHandlers?.touched?.description) &&
                                     <span className="text-red-500 text-xs">{formikHandlers?.errors?.description}</span>
                                 }
                             </div>
+                            <div>
+                                {/* <div
+                                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                >
+                                    <Label
+                                        htmlFor="website"
+                                        value="Website URL"
+                                    />
+
+                                </div> */}
+                                {/* <Field
+                                    id="website"
+                                    name="website"
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                    placeholder="Add org URL" /> */}
+
+                            </div>
+                            {/* <div className="mx-2 grid ">
+
+                                <div>
+                                    <div
+                                        className="block mb-2 mt-2 text-sm font-medium text-gray-900 dark:text-white"
+                                    >
+                                        <Label
+                                            htmlFor="name"
+                                            value=""
+                                        />
+                                    </div>
+                                    <input
+                                        className=""
+                                        type="radio"
+                                        checked={isPublic === false}
+                                        onChange={() => setIsPublic(false)}
+                                        id="private"
+                                        name="private"
+                                    />                                   
+                                    <span className="ml-2 text-gray-900 dark:text-white">Private
+                                        <span className="block pl-6 text-gray-500 text-sm">Only the connected organization can see you organization details</span>
+                                    </span>
+                                </div>
+                                <div>
+                                    <div
+                                        className="block mb-2 mt-2 text-sm font-medium text-gray-900 dark:text-white"
+                                    >
+                                        <Label
+                                            htmlFor="name"
+                                            value=""
+                                        />
+                                    </div>
+                                    <input
+                                        className=""
+                                        type="radio"
+                                        onChange={() => setIsPublic(true)}
+                                        checked={isPublic === true}
+                                        id="public"
+                                        name="public"
+                                    />
+                                   
+                                    <span className="ml-2 text-gray-900 dark:text-white">Public
+                                        <span className="block pl-6 text-gray-500 text-sm">Your profile and organization details can be seen by everyone</span></span>
+                                </div>
+                            </div> */}
 
                             <Button type="submit"
                                 isProcessing={loading}
-                                   
-                                className='float-right text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-700 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
-																
-                            ><svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
-                            <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"/>
-                          </svg>
-                          
-                                Create
+                                className='mb-2 float-right text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
+
+                            ><svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 18 18">
+                                    <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 1v12l-4-2-4 2V1h8ZM3 17h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z" />
+                                </svg>
+
+                                Save
                             </Button>
                         </Form>
                     )}
@@ -317,4 +428,4 @@ const CreateEcosystems = (props: { openModal: boolean; setMessage: (message: str
     )
 }
 
-export default CreateEcosystems;
+export default EditEcosystemsModal;
