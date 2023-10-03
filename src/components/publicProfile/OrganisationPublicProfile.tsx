@@ -5,7 +5,7 @@ import { getPublicOrganizations } from '../../api/organization';
 import type { AxiosResponse } from 'axios';
 import { apiStatusCodes } from '../../config/CommonConstant';
 import SearchInput from '../SearchInput';
-import { Button, Card, Pagination } from 'flowbite-react';
+import { Card, Pagination } from 'flowbite-react';
 import CustomSpinner from '../CustomSpinner';
 import CustomAvatar from '../Avatar';
 import { EmptyListMessage } from '../EmptyListComponent';
@@ -132,14 +132,16 @@ const OrganisationPublicProfile = () => {
 						)}
 					</div>
 				) : (
-					organizationsList && (
+					<div className="flex justify-center items-center">
+					{organizationsList && (
 						<div className="flex justify-center items-center">
 							<EmptyListMessage
 								message={'No Matching Organization'}
 								description={''}
 							/>
 						</div>
-					)
+					)}
+					</div>
 				)}
 
 				<div className="flex items-center justify-end mb-4">
