@@ -26,6 +26,7 @@ export const apiRoutes = {
         orgRoles: '/orgs/roles',
         editUserROle: '/user-roles'
     },
+    
     connection: {
         create: '/connections',
     },
@@ -69,5 +70,8 @@ export const apiRoutes = {
 		public:{
 			organizations: '/organization/public-profiles',
 			users:'/users/public-profiles',
-		}
+		},
+    ecosystem:{
+        create:'/ecosystem'
+    }
 }

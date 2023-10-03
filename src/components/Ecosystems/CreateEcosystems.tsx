@@ -2,7 +2,7 @@ import * as yup from "yup"
 
 import { Avatar, Button, Label, Modal } from 'flowbite-react';
 import { Field, Form, Formik, FormikHelpers } from 'formik';
-import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, apiStatusCodes, imageSizeAccepted } from '../../config/CommonConstant'
+import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, apiStatusCodes, imageSizeAccepted, storageKeys } from '../../config/CommonConstant'
 import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
 import { useEffect, useRef, useState } from "react";
 
@@ -11,10 +11,12 @@ import type { AxiosResponse } from 'axios';
 import { asset } from '../../lib/data.js';
 import { createEcosystems } from "../../api/ecosystems";
 import React from "react";
+import { getFromLocalStorage } from "../../api/Auth";
 
 interface Values {
     name: string;
     description: string;
+    
 }
 
 interface ILogoImage {
@@ -129,16 +131,19 @@ const CreateEcosystems = (props: { openModal: boolean; setMessage: (message: str
         }
     }
 
-    const sumitCreateOrganization = async (values: Values) => {
+    const submitCreateEcosystem = async (values: Values) => {
+try{
         setLoading(true)
-
+        const user_data = JSON.parse(await getFromLocalStorage(storageKeys.USER_PROFILE))
+        const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
         const ecoData = {
             name: values.name,
             description: values.description,
-            logo: logoImage?.imagePreviewUrl as string || "",
-            website: ""
+            tag:"",
+            orgId: Number(organizationId),
+            userId:Number(user_data?.id)
         }
-
+        
         const resCreateOrg = await createEcosystems(ecoData)
 
         const { data } = resCreateOrg as AxiosResponse
@@ -152,6 +157,12 @@ const CreateEcosystems = (props: { openModal: boolean; setMessage: (message: str
             setErrMsg(resCreateOrg as string)
         }
     }
+    catch (error) 
+    {   
+        console.error("An error occurred:", error);
+        setLoading(false); 
+    }
+}
     return (
         <Modal show={props.openModal} onClose={() => {
             setLogoImage({
@@ -196,7 +207,7 @@ const CreateEcosystems = (props: { openModal: boolean; setMessage: (message: str
                         { resetForm }: FormikHelpers<Values>
                     ) => {
 
-                        sumitCreateOrganization(values)
+                        submitCreateEcosystem(values)
                     }}
                 >
                     {(formikHandlers): JSX.Element => (
