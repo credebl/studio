@@ -10,6 +10,7 @@ import { AlertComponent } from "../AlertComponent";
 import type { AxiosResponse } from 'axios';
 import { asset } from '../../lib/data.js';
 import { createOrganization } from "../../api/organization";
+import React from "react";
 
 interface Values {
     name: string;
@@ -138,7 +139,6 @@ const CreateOrgFormModal = (props: { openModal: boolean; setMessage: (message: s
             logo: logoImage?.imagePreviewUrl as string || "",
             website: ""
         }
-
         const resCreateOrg = await createOrganization(orgData)
 
         const { data } = resCreateOrg as AxiosResponse

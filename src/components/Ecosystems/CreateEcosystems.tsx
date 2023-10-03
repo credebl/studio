@@ -16,7 +16,6 @@ import { getFromLocalStorage } from "../../api/Auth";
 interface Values {
     name: string;
     description: string;
-    
 }
 
 interface ILogoImage {
@@ -139,11 +138,11 @@ try{
         const ecoData = {
             name: values.name,
             description: values.description,
+            logo: logoImage?.imagePreviewUrl as string || "",
             tag:"",
             orgId: Number(organizationId),
             userId:Number(user_data?.id)
         }
-        
         const resCreateOrg = await createEcosystems(ecoData)
 
         const { data } = resCreateOrg as AxiosResponse
@@ -243,11 +242,11 @@ try{
                                         <div className="flex items-center space-x-4">
 
                                             <div>
-                                                <label htmlFor="organizationlogo">
+                                                <label htmlFor="ecosystemlogo">
                                                     <div className="px-4 py-2 bg-primary-700 hover:bg-primary-800 text-white text-center rounded-lg">Choose file</div>
                                                     <input type="file" accept="image/*" name="file"
                                                         className="hidden"
-                                                        id="organizationlogo" title=""
+                                                        id="ecosystemlogo" title=""
                                                         onChange={(event): void => handleImageChange(event)} />
                                                     {/* <span>{selectedImage || 'No File Chosen'}</span> */}
                                                     {imgError ? <div className="text-red-500">{imgError}</div> : <span className="mt-1  text-sm text-gray-500 dark:text-gray-400">{logoImage.fileName || 'No File Chosen'}</span>}
@@ -327,5 +326,4 @@ try{
         </Modal>
     )
 }
-
 export default CreateEcosystems;
