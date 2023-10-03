@@ -28,6 +28,7 @@ export const apiRoutes = {
         orgRoles: '/organization/roles',
         editUserROle: '/organization/user-roles'
     },
+    
     connection: {
         create: '/connections',
     },
@@ -61,18 +62,19 @@ export const apiRoutes = {
         presentationVerification: '/proofs',
         proofRequestAttributesVerification: '/proofs'
     },
-    Agent: {
-        checkAgentHealth: '/agents/health',
-        agentDedicatedSpinup: '/agents/spinup',
-        agentSharedSpinup: '/agents/wallet'
-    },
-    Platform: {
-        getAllSchemaFromPlatform: '/platform/schemas',
-    },
-    Public: {
-        organizations: '/orgs/public-profile',
-    },
-    Ecosystem: {
-        getEcosystem: '/ecosystem'
+        Agent:{
+			checkAgentHealth: '/agents/health',       
+            agentDedicatedSpinup: '/agents/spinup',
+            agentSharedSpinup: '/agents/wallet'
+		},	
+		Platform: {
+			getAllSchemaFromPlatform: '/platform/schemas',
+	},
+		public:{
+			organizations: '/organization/public-profiles',
+			users:'/users/public-profiles',
+		},
+    ecosystem:{
+        create:'/ecosystem'
     }
 }
