@@ -139,7 +139,7 @@ try{
             name: values.name,
             description: values.description,
             logo: logoImage?.imagePreviewUrl as string || "",
-            tag:"",
+            tags:"",
             orgId: Number(organizationId),
             userId:Number(user_data?.id)
         }
