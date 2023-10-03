@@ -91,7 +91,7 @@ const ProofRequest = (props: {
 							<span className="sr-only">Close modal</span>
 						</button>
 						<div className="sm:p-2 lg:p-6 m-4">
-							<p className="text-xl text-gray-700 pb-2 dark:bg-gray-800 font-semibold flex flex-start">
+							<p className="text-xl text-gray-700 pb-2 dark:bg-gray-800 dark:text-white font-semibold flex flex-start">
 								{' '}
 								Verification Details
 							</p>
