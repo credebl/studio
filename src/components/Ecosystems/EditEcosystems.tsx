@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 
 import { AlertComponent } from "../AlertComponent";
 import type { AxiosResponse } from 'axios';
-import { updateOrganization } from "../../api/organization";
+import { updateEcosystem } from "../../api/ecosystems";
 import type { Ecosystem } from "./interfaces";
 import React from "react";
 
@@ -44,7 +44,7 @@ const EditEcosystemsModal = (props: EditEcosystemsModalProps) => {
     const [isImageEmpty, setIsImageEmpty] = useState(true)
     const [isPublic, setIsPublic] = useState(true)
 
-    const [initialOrgData, setOrgData] = useState({
+    const [initialEcoData, setEcoData] = useState({
         name: props?.EcoData?.name || "",
         description: props?.EcoData?.description || "",
 				website: props?.EcoData?.website || "",
@@ -53,7 +53,7 @@ const EditEcosystemsModal = (props: EditEcosystemsModalProps) => {
     useEffect(() => {
 
         if (props.EcoData) {
-            setOrgData({
+            setEcoData({
                 name: props.EcoData.name || '',
                 description: props.EcoData.description || '',
 								website: props?.EcoData?.website || "",
@@ -74,7 +74,7 @@ const EditEcosystemsModal = (props: EditEcosystemsModalProps) => {
 
     useEffect(() => {
         if (props.openModal === false) {
-            setOrgData({
+            setEcoData({
                 name: '',
                 description: '',
 								website:''
@@ -162,7 +162,7 @@ const EditEcosystemsModal = (props: EditEcosystemsModalProps) => {
         }
     }
 
-    const submitUpdateOrganization = async (values: Values) => {
+    const submitUpdateEcosystem = async (values: Values) => {
 
         setLoading(true)
 
@@ -175,7 +175,7 @@ const EditEcosystemsModal = (props: EditEcosystemsModalProps) => {
             isPublic: isPublic
         }
 
-        const resUpdateOrg = await updateOrganization(EcoData, EcoData.orgId?.toString() as string)
+        const resUpdateOrg = await updateEcosystem(EcoData, EcoData.orgId?.toString() as string)
 
         const { data } = resUpdateOrg as AxiosResponse
         setLoading(false)
@@ -197,7 +197,7 @@ const EditEcosystemsModal = (props: EditEcosystemsModalProps) => {
                 imagePreviewUrl: "",
                 fileName: ''
             })
-            setOrgData(initialOrgData)
+            setEcoData(initialEcoData)
             props.setOpenModal(false)
         }
         }>
@@ -212,7 +212,7 @@ const EditEcosystemsModal = (props: EditEcosystemsModalProps) => {
                 />
                 <Formik
                     initialValues={
-                        initialOrgData
+                        initialEcoData
                     }
                     validationSchema={
                         yup.object().shape({
@@ -235,7 +235,7 @@ const EditEcosystemsModal = (props: EditEcosystemsModalProps) => {
                         values: Values,
                         { resetForm }: FormikHelpers<Values>
                     ) => {
-                        submitUpdateOrganization(values)
+                        submitUpdateEcosystem(values)
                     }}
                 >
                     {(formikHandlers): JSX.Element => (
@@ -280,11 +280,11 @@ const EditEcosystemsModal = (props: EditEcosystemsModalProps) => {
                                         <div className="flex items-center space-x-4">
 
                                             <div>
-                                                <label htmlFor="organizationlogo">
+                                                <label htmlFor="editecosystemlogo">
                                                     <div className="px-4 py-2 bg-primary-700 hover:bg-primary-800 text-white text-center rounded-lg">Choose file</div>
                                                     <input type="file" accept="image/*" name="file"
                                                         className="hidden"
-                                                        id="organizationlogo" title=""
+                                                        id="editecosystemlogo" title=""
                                                         onChange={(event): void => handleImageChange(event)} />
                                                     {/* <span>{selectedImage || 'No File Chosen'}</span> */}
                                                     {imgError ? <div className="text-red-500">{imgError}</div> : <span className="mt-1 text-sm text-gray-500 dark:text-gray-400">{logoImage.fileName || 'No File Chosen'}</span>}
@@ -346,67 +346,9 @@ const EditEcosystemsModal = (props: EditEcosystemsModalProps) => {
                                 }
                             </div>
                             <div>
-                                {/* <div
-                                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                >
-                                    <Label
-                                        htmlFor="website"
-                                        value="Website URL"
-                                    />
-
-                                </div> */}
-                                {/* <Field
-                                    id="website"
-                                    name="website"
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Add org URL" /> */}
+                                
 
                             </div>
-                            {/* <div className="mx-2 grid ">
-
-                                <div>
-                                    <div
-                                        className="block mb-2 mt-2 text-sm font-medium text-gray-900 dark:text-white"
-                                    >
-                                        <Label
-                                            htmlFor="name"
-                                            value=""
-                                        />
-                                    </div>
-                                    <input
-                                        className=""
-                                        type="radio"
-                                        checked={isPublic === false}
-                                        onChange={() => setIsPublic(false)}
-                                        id="private"
-                                        name="private"
-                                    />                                   
-                                    <span className="ml-2 text-gray-900 dark:text-white">Private
-                                        <span className="block pl-6 text-gray-500 text-sm">Only the connected organization can see you organization details</span>
-                                    </span>
-                                </div>
-                                <div>
-                                    <div
-                                        className="block mb-2 mt-2 text-sm font-medium text-gray-900 dark:text-white"
-                                    >
-                                        <Label
-                                            htmlFor="name"
-                                            value=""
-                                        />
-                                    </div>
-                                    <input
-                                        className=""
-                                        type="radio"
-                                        onChange={() => setIsPublic(true)}
-                                        checked={isPublic === true}
-                                        id="public"
-                                        name="public"
-                                    />
-                                   
-                                    <span className="ml-2 text-gray-900 dark:text-white">Public
-                                        <span className="block pl-6 text-gray-500 text-sm">Your profile and organization details can be seen by everyone</span></span>
-                                </div>
-                            </div> */}
 
                             <Button type="submit"
                                 isProcessing={loading}
@@ -415,12 +357,10 @@ const EditEcosystemsModal = (props: EditEcosystemsModalProps) => {
                             ><svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 18 18">
                                     <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 1v12l-4-2-4 2V1h8ZM3 17h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z" />
                                 </svg>
-
                                 Save
                             </Button>
                         </Form>
                     )}
-
                 </Formik>
             </Modal.Body>
 
