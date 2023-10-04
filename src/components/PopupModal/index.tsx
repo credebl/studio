@@ -65,18 +65,18 @@ const PopupModal = (props: { openModal: boolean; isorgModal : boolean ;setMessag
 
     const ProcessImg = (e: any): string | undefined => {
 
-        const file = e?.target.files[0]
-        if (!file) { return }
+        const imgfile = e?.target.files[0]
+        if (!imgfile) { return }
 
         const reader = new FileReader()
-        reader.readAsDataURL(file)
+        reader.readAsDataURL(imgfile)
 
         reader.onload = (event): void => {
             const imgElement = document.createElement("img")
             if (imgElement) {
                 imgElement.src = typeof event?.target?.result === 'string' ? event.target.result : ""
                 imgElement.onload = (e): void => {
-                    let fileUpdated: File | string = file
+                    let fileUpdated: File | string = imgfile
                     let srcEncoded = ''
                     const canvas = document.createElement("canvas")
 
@@ -89,13 +89,13 @@ const PopupModal = (props: { openModal: boolean; isorgModal : boolean ;setMessag
                         ctx.imageSmoothingEnabled = true
                         ctx.imageSmoothingQuality = "high"
                         ctx.drawImage(ev, 0, 0, canvas.width, canvas.height)
-                        srcEncoded = ctx.canvas.toDataURL(ev, file.type)
-                        const blob = dataURItoBlob(srcEncoded, file.type)
-                        fileUpdated = new File([blob], file.name, { type: file.type, lastModified: new Date().getTime() })
+                        srcEncoded = ctx.canvas.toDataURL(ev, imgfile.type)
+                        const blob = dataURItoBlob(srcEncoded, imgfile.type)
+                        fileUpdated = new File([blob], imgfile.name, { type: imgfile.type, lastModified: new Date().getTime() })
                         setLogoImage({
                             logoFile: fileUpdated,
                             imagePreviewUrl: srcEncoded,
-                            fileName: file.name
+                            fileName: imgfile.name
                         })
                     }
                 }
@@ -269,7 +269,7 @@ const PopupModal = (props: { openModal: boolean; isorgModal : boolean ;setMessag
         
                                             <div>
                                                 <h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
-                                                {props.isorgModal? "Organization Logo":"Ecosystem Logo"} Ecosystem Logo
+                                                {props.isorgModal? "Organization Logo":"Ecosystem Logo"}
                                                 </h3>
                                                 <div className="mb-4 text-sm text-gray-500 dark:text-gray-400">
                                                     JPG, JPEG and PNG . Max size of 1MB
