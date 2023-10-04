@@ -42,23 +42,23 @@ const EditEcosystemsModal = (props: EditEcosystemsModalProps) => {
 
 
     const [initialEditEcoData, setEditEcoData] = useState({
-        name: props?.EditEcoData?.name || "",
-        description: props?.EditEcoData?.description || "",
-        website: props?.EditEcoData?.website || "",
+        name: props?.EditEcoData?.name ?? "",
+        description: props?.EditEcoData?.description ?? "",
+        website: props?.EditEcoData?.website ?? "",
     })
     const newInitialEcoData = initialEditEcoData
     useEffect(() => {
 
         if (props.EditEcoData) {
             setEditEcoData({
-                name: props.EditEcoData.name || '',
-                description: props.EditEcoData.description || '',
-                website: props?.EditEcoData?.website || "",
+                name: props.EditEcoData.name ?? '',
+                description: props.EditEcoData.description ?? '',
+                website: props?.EditEcoData?.website ?? "",
             });
 
             setEditLogoImage({
                 logoFile: "",
-                imagePreviewUrl: props.EditEcoData.logoUrl || "",
+                imagePreviewUrl: props.EditEcoData.logoUrl ?? "",
                 fileName: ''
             });
         }
