@@ -1,16 +1,13 @@
 import * as yup from "yup"
-
 import { Avatar, Button, Label, Modal } from 'flowbite-react';
 import { Field, Form, Formik, FormikHelpers } from 'formik';
-import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, apiStatusCodes, imageSizeAccepted, storageKeys } from '../../config/CommonConstant'
+import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, apiStatusCodes, imageSizeAccepted } from '../../config/CommonConstant'
 import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
 import { useEffect, useState } from "react";
-
 import { AlertComponent } from "../AlertComponent";
 import type { AxiosResponse } from 'axios';
 import { updateEcosystem } from "../../api/ecosystems";
 import type { Ecosystem } from "./interfaces";
-import React from "react";
 
 interface Values {
 		website: any;
@@ -42,14 +39,14 @@ const EditEcosystemsModal = (props: EditEcosystemsModalProps) => {
     })
     const [loading, setLoading] = useState<boolean>(false)
     const [isImageEmpty, setIsImageEmpty] = useState(true)
-    const [isPublic, setIsPublic] = useState(true)
+   
 
     const [initialEcoData, setEcoData] = useState({
         name: props?.EcoData?.name || "",
         description: props?.EcoData?.description || "",
 				website: props?.EcoData?.website || "",
     })
-
+const newInitialEcoData = initialEcoData
     useEffect(() => {
 
         if (props.EcoData) {
@@ -172,7 +169,7 @@ const EditEcosystemsModal = (props: EditEcosystemsModalProps) => {
             description: values.description,
             logo: logoImage?.imagePreviewUrl as string || props?.EcoData?.logoUrl,
             website: values.website,
-            isPublic: isPublic
+           
         }
 
         const resUpdateOrg = await updateEcosystem(EcoData, EcoData.orgId?.toString() as string)
@@ -197,7 +194,7 @@ const EditEcosystemsModal = (props: EditEcosystemsModalProps) => {
                 imagePreviewUrl: "",
                 fileName: ''
             })
-            setEcoData(initialEcoData)
+            setEcoData(newInitialEcoData)
             props.setOpenModal(false)
         }
         }>
@@ -212,7 +209,7 @@ const EditEcosystemsModal = (props: EditEcosystemsModalProps) => {
                 />
                 <Formik
                     initialValues={
-                        initialEcoData
+                        newInitialEcoData
                     }
                     validationSchema={
                         yup.object().shape({

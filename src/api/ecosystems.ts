@@ -1,8 +1,6 @@
-import { axiosGet, axiosPost, axiosPut } from "../services/apiRequests"
-
+import {  axiosPost, axiosPut } from "../services/apiRequests"
 import { apiRoutes } from "../config/apiRoutes";
 import { getFromLocalStorage } from "./Auth";
-import { getHeaderConfigs } from "../config/GetHeaderConfigs";
 import { storageKeys } from "../config/CommonConstant";
 
 export const createEcosystems = async (data: object) => {

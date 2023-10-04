@@ -1,11 +1,8 @@
 'use client';
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import BreadCrumbs from '../BreadCrumbs';
 import CreateEcosystems from './CreateEcosystems';
-import { Features } from '../../utils/enums/features';
-import RoleViewButton from '../RoleViewButton';
 import { EmptyListMessage } from '../EmptyListComponent';
-import { pathRoutes } from '../../config/pathRoutes';
 import EditEcosystems from './EditEcosystems';
 
 
@@ -27,13 +24,13 @@ const Dashboard = () => {
   }
 
   const EditEcosystemsModel = () => {
-    props.setEditEcosystemModal(true); // Open the EditEcosystems modal
+    props.setEditEcosystemModal(true); 
   };
 
   return (
     <div>
       <div className="pl-6 mb-4 col-span-full xl:mb-2">
-        <button type="button" onClick={EditEcosystemsModel}> {/* Use EditEcosystemsModel */}
+        <button type="button" onClick={EditEcosystemsModel}> 
           <svg aria-hidden="true" className="mr-1 -ml-1 w-5 h-5"
             fill="currentColor" viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg" color='#3558A8'>
@@ -53,18 +50,15 @@ const Dashboard = () => {
 
           <EditEcosystems
             openModal={props.editEcosystemModal}
-            // setMessage={(data) => setMessage(data)}
             setOpenModal={props.setEditEcosystemModal} setMessage={function (message: string): void {
               throw new Error('Function not implemented.');
             }} EcoData={null} />
 
           <CreateEcosystems
             openModal={props.openModal}
-            // setMessage={(data) => setMessage(data)}
             setOpenModal={props.setOpenModal} setMessage={function (message: string): void {
               throw new Error('Function not implemented.');
             }} 
-            // EcoData={null}
              />
 
           <EmptyListMessage
