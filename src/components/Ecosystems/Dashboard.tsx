@@ -1,9 +1,7 @@
 'use client';
 import  { useState } from 'react';
 import BreadCrumbs from '../BreadCrumbs';
-import CreateEcosystems from './CreateEcosystems';
 import { EmptyListMessage } from '../EmptyListComponent';
-import EditEcosystems from './EditEcosystems';
 import PopupModal from '../PopupModal';
 import React from 'react';
 
@@ -49,8 +47,10 @@ const Dashboard = () => {
             }} 
             isorgModal={false}
              />
+             <button type="button" onClick={createEcosystemModel}>Create Eco</button>
 
           <EmptyListMessage
+        
             message={'No Ecosystem found'}
             description={'Get started by creating an ecosystem'}
             buttonContent={'Create Ecosystem'}

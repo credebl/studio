@@ -1,9 +1,9 @@
 'use client';
 
 import { Button } from 'flowbite-react';
-import CreateOrgFormModal from "./organization/CreateOrgFormModal.js";
-import { useEffect, useState } from 'react';
+import {  useState } from 'react';
 import PopupModal from '../components/PopupModal/index.js'
+import React from 'react';
 
 export default function Dashboard() {
 
