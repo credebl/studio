@@ -40,7 +40,7 @@ const CreateEcosystems = (props: { openModal: boolean; setMessage: (message: str
     const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
     const [imageError, setImageError] = useState('')
-const newEcoData = initialEcoData
+    const newEcoData = initialEcoData
     useEffect(() => {
         setEcoData({
             name: '',
@@ -141,9 +141,9 @@ const newEcoData = initialEcoData
                 orgId: Number(organizationId),
                 userId: Number(user_data?.id)
             }
-            const resCreateOrg = await createEcosystems(ecoData)
+            const resCreateEco = await createEcosystems(ecoData)
 
-            const { data } = resCreateOrg as AxiosResponse
+            const { data } = resCreateEco as AxiosResponse
             setLoading(false)
 
             if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
@@ -151,7 +151,7 @@ const newEcoData = initialEcoData
                 props.setOpenModal(false)
 
             } else {
-                setErrorMsg(resCreateOrg as string)
+                setErrorMsg(resCreateEco as string)
             }
         }
         catch (error) {
