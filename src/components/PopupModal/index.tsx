@@ -68,10 +68,10 @@ const PopupModal = (props: { openModal: boolean; isorgModal : boolean ;setMessag
         const imgfile = e?.target.files[0]
         if (!imgfile) { return }
 
-        const reader = new FileReader()
-        reader.readAsDataURL(imgfile)
+        const imgreader = new FileReader()
+        imgreader.readAsDataURL(imgfile)
 
-        reader.onload = (event): void => {
+        imgreader.onload = (event): void => {
             const imgElement = document.createElement("img")
             if (imgElement) {
                 imgElement.src = typeof event?.target?.result === 'string' ? event.target.result : ""
@@ -107,17 +107,15 @@ const PopupModal = (props: { openModal: boolean; isorgModal : boolean ;setMessag
        
         return true
     }
-
-
     const handleImageChange = (event: any): void => {
         setImgError('')
         const reader = new FileReader()
         const file = event?.target?.files
 
-        const fieSize = Number((file[0]?.size / 1024 / 1024)?.toFixed(2))
+        const imgfieSize = Number((file[0]?.size / 1024 / 1024)?.toFixed(2))
         const extension = file[0]?.name?.substring(file[0]?.name?.lastIndexOf(".") + 1)?.toLowerCase()
         if (extension === "png" || extension === "jpeg" || extension === "jpg") {
-            if (fieSize <= imageSizeAccepted) {
+            if (imgfieSize <= imageSizeAccepted) {
                 reader.onloadend = (): void => {
                     ProcessImg(event)
                     isEmpty(reader.result)
