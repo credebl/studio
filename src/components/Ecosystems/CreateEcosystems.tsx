@@ -5,28 +5,26 @@ import { Field, Form, Formik, FormikHelpers } from 'formik';
 import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, apiStatusCodes, imageSizeAccepted, storageKeys } from '../../config/CommonConstant'
 import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
 import { useEffect, useRef, useState } from "react";
-
 import { AlertComponent } from "../AlertComponent";
 import type { AxiosResponse } from 'axios';
 import { asset } from '../../lib/data.js';
 import { createEcosystems } from "../../api/ecosystems";
-import React from "react";
 import { getFromLocalStorage } from "../../api/Auth";
 
-interface Values {
+interface EcoValues {
     name: string;
     description: string;
 }
 
-interface ILogoImage {
+interface LogoImage {
     logoFile: string | File
     imagePreviewUrl: string | ArrayBuffer | null | File,
     fileName: string
 }
 
-const CreateEcosystems = (props: { openModal: boolean; setMessage: (message: string)=> void ; setOpenModal: (flag: boolean) => void }) => {
+const CreateEcosystems = (props: { openModal: boolean; setMessage: (message: string) => void; setOpenModal: (flag: boolean) => void }) => {
 
-    const [logoImage, setLogoImage] = useState<ILogoImage>({
+    const [ecologoImage, setEcoLogoImage] = useState<LogoImage>({
         logoFile: "",
         imagePreviewUrl: "",
         fileName: ''
@@ -34,25 +32,25 @@ const CreateEcosystems = (props: { openModal: boolean; setMessage: (message: str
 
     const [loading, setLoading] = useState<boolean>(false)
 
-    const [isImageEmpty, setIsImageEmpty] = useState(true)
+    const [islogoImageEmpty, setIsLogoImageEmpty] = useState(true)
     const [initialEcoData, setEcoData] = useState({
         name: '',
         description: '',
     })
-    const [erroMsg, setErrMsg] = useState<string | null>(null)
+    const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
-    const [imgError, setImgError] = useState('')
+    const [imageError, setImageError] = useState('')
 
     useEffect(() => {
         setEcoData({
             name: '',
             description: '',
         })
-        setLogoImage({
-            ...logoImage,
+        setEcoLogoImage({
+            ...ecologoImage,
             logoFile: "",
             imagePreviewUrl: ""
-        }) 
+        })
     }, [props.openModal])
 
 
@@ -85,7 +83,7 @@ const CreateEcosystems = (props: { openModal: boolean; setMessage: (message: str
                         srcEncoded = ctx.canvas.toDataURL(ev, file.type)
                         const blob = dataURItoBlob(srcEncoded, file.type)
                         fileUpdated = new File([blob], file.name, { type: file.type, lastModified: new Date().getTime() })
-                        setLogoImage({
+                        setEcoLogoImage({
                             logoFile: fileUpdated,
                             imagePreviewUrl: srcEncoded,
                             fileName: file.name
@@ -99,16 +97,16 @@ const CreateEcosystems = (props: { openModal: boolean; setMessage: (message: str
     const isEmpty = (object: any): boolean => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars, guard-for-in
         for (const property in object) {
-            setIsImageEmpty(false)
+            setIsLogoImageEmpty(false)
             return false
         }
-        setIsImageEmpty(true)
+        setIsLogoImageEmpty(true)
         return true
     }
 
 
     const handleImageChange = (event: any): void => {
-        setImgError('')
+        setImageError('')
         const reader = new FileReader()
         const file = event?.target?.files
 
@@ -123,48 +121,47 @@ const CreateEcosystems = (props: { openModal: boolean; setMessage: (message: str
                 reader.readAsDataURL(file[0])
                 event.preventDefault()
             } else {
-                setImgError("Please check image size")
+                setImageError("Please check image size")
             }
         } else {
-            setImgError("Invalid image type")
+            setImageError("Invalid image type")
         }
     }
 
-    const submitCreateEcosystem = async (values: Values) => {
-try{
-        setLoading(true)
-        const user_data = JSON.parse(await getFromLocalStorage(storageKeys.USER_PROFILE))
-        const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
-        const ecoData = {
-            name: values.name,
-            description: values.description,
-            logo: logoImage?.imagePreviewUrl as string || "",
-            tags:"",
-            orgId: Number(organizationId),
-            userId:Number(user_data?.id)
+    const submitCreateEcosystem = async (values: EcoValues) => {
+        try {
+            setLoading(true)
+            const user_data = JSON.parse(await getFromLocalStorage(storageKeys.USER_PROFILE))
+            const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
+            const ecoData = {
+                name: values.name,
+                description: values.description,
+                logo: ecologoImage?.imagePreviewUrl as string || "",
+                tags: "",
+                orgId: Number(organizationId),
+                userId: Number(user_data?.id)
+            }
+            const resCreateOrg = await createEcosystems(ecoData)
+
+            const { data } = resCreateOrg as AxiosResponse
+            setLoading(false)
+
+            if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+                props.setMessage(data?.message)
+                props.setOpenModal(false)
+
+            } else {
+                setErrorMsg(resCreateOrg as string)
+            }
         }
-        const resCreateOrg = await createEcosystems(ecoData)
-
-        const { data } = resCreateOrg as AxiosResponse
-        setLoading(false)
-
-        if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-            props.setMessage(data?.message)
-            props.setOpenModal(false)
-
-        } else {
-            setErrMsg(resCreateOrg as string)
+        catch (error) {
+            console.error("An error occurred:", error);
+            setLoading(false);
         }
     }
-    catch (error) 
-    {   
-        console.error("An error occurred:", error);
-        setLoading(false); 
-    }
-}
     return (
         <Modal show={props.openModal} onClose={() => {
-            setLogoImage({
+            setEcoLogoImage({
                 logoFile: "",
                 imagePreviewUrl: "",
                 fileName: ''
@@ -175,13 +172,13 @@ try{
         }>
             <Modal.Header>Create Ecosystem</Modal.Header>
             <Modal.Body>
-                 <AlertComponent
-                    message={erroMsg}
+                <AlertComponent
+                    message={errorMsg}
                     type={'failure'}
-                    onAlertClose = {() => {
-                        setErrMsg(null)
+                    onAlertClose={() => {
+                        setErrorMsg(null)
                     }}
-                    />
+                />
                 <Formik
                     initialValues={initialEcoData}
                     validationSchema={
@@ -202,8 +199,8 @@ try{
                     validateOnChange
                     enableReinitialize
                     onSubmit={async (
-                        values: Values,
-                        { resetForm }: FormikHelpers<Values>
+                        values: EcoValues,
+                        { resetForm }: FormikHelpers<EcoValues>
                     ) => {
 
                         submitCreateEcosystem(values)
@@ -221,13 +218,13 @@ try{
                                     className="items-center sm:flex 2xl:flex sm:space-x-4 xl:space-x-4 2xl:space-x-4"
                                 >
                                     {
-                                        typeof (logoImage.logoFile) === "string" ?
+                                        typeof (ecologoImage.logoFile) === "string" ?
                                             <Avatar
                                                 size="lg"
                                             /> :
                                             <img
                                                 className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
-                                                src={typeof (logoImage.logoFile) === "string" ? asset('images/users/bonnie-green-2x.png') : URL.createObjectURL(logoImage.logoFile)}
+                                                src={typeof (ecologoImage.logoFile) === "string" ? asset('images/users/bonnie-green-2x.png') : URL.createObjectURL(ecologoImage.logoFile)}
                                                 alt="Jese picture"
                                             />
                                     }
@@ -249,7 +246,7 @@ try{
                                                         id="ecosystemlogo" title=""
                                                         onChange={(event): void => handleImageChange(event)} />
                                                     {/* <span>{selectedImage || 'No File Chosen'}</span> */}
-                                                    {imgError ? <div className="text-red-500">{imgError}</div> : <span className="mt-1  text-sm text-gray-500 dark:text-gray-400">{logoImage.fileName || 'No File Chosen'}</span>}
+                                                    {imageError ? <div className="text-red-500">{imageError}</div> : <span className="mt-1  text-sm text-gray-500 dark:text-gray-400">{ecologoImage.fileName || 'No File Chosen'}</span>}
                                                 </label>
 
                                             </div>
@@ -308,13 +305,13 @@ try{
 
                             <Button type="submit"
                                 isProcessing={loading}
-                                   
+
                                 className='float-right text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-700 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
-																
+
                             ><svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
-                            <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"/>
-                          </svg>
-                          
+                                    <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+                                </svg>
+
                                 Create
                             </Button>
                         </Form>
