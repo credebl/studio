@@ -41,8 +41,6 @@ const PopupModal = (props: { openModal: boolean; isorgModal : boolean ;setMessag
     })
 
     const [loading, setLoading] = useState<boolean>(false)
-
-    const [isImageEmpty, setIsImageEmpty] = useState(true)
     const [initialOrgData, setOrgData] = useState({
         name: '',
         description: '',
@@ -51,6 +49,7 @@ const PopupModal = (props: { openModal: boolean; isorgModal : boolean ;setMessag
 
     const [imgError, setImgError] = useState('')
 
+    const newinitialOrgData = initialOrgData
     useEffect(() => {
         setOrgData({
             name: '',
@@ -106,12 +105,6 @@ const PopupModal = (props: { openModal: boolean; isorgModal : boolean ;setMessag
 
     const isEmpty = (object: any): boolean => {
        
-        for (const property1 in object) {
-            console.log("",property1)
-            setIsImageEmpty(false)
-            return false
-        }
-        setIsImageEmpty(true)
         return true
     }
 
@@ -210,7 +203,7 @@ const PopupModal = (props: { openModal: boolean; isorgModal : boolean ;setMessag
                         imagePreviewUrl: "",
                         fileName: ''
                     })
-                    setOrgData(initialOrgData)
+                    setOrgData(newinitialOrgData)
                     props.setOpenModal(false)
                 }
                 }>
