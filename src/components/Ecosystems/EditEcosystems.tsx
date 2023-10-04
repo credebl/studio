@@ -33,7 +33,7 @@ interface EditEcosystemsModalProps {
 const EditEcosystemsModal = (props: EditEcosystemsModalProps) => {
     const [editLogoImage, setEditLogoImage] = useState<EditLogoImage>({
         logoFile: "",
-        imagePreviewUrl: props?.EditEcoData?.logoUrl || "",
+        imagePreviewUrl: props?.EditEcoData?.logoUrl ?? "",
         fileName: '',
 
     })
