@@ -47,7 +47,7 @@ const Dashboard = () => {
             }} 
             isorgModal={false}
              />
-             <button type="button" onClick={createEcosystemModel}>Create Eco</button>
+             
 
           <EmptyListMessage
         
