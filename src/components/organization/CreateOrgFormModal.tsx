@@ -6,12 +6,12 @@ import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, imageSizeAccepted } from '../../config/C
 import { MouseEvent, useState } from "react";
 import { asset, url } from '../../lib/data.js';
 import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
-import { useEffect, useRef, useState } from "react";
-
+import { useEffect, useState } from "react";
+import { AlertComponent } from "../AlertComponent";
 import type { AxiosResponse } from 'axios';
 import { asset } from '../../lib/data.js';
 import { createOrganization } from "../../api/organization";
-import React from "react";
+
 
 interface Values {
     name: string;
@@ -93,7 +93,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
     }
 
     const isEmpty = (object: any): boolean => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars, guard-for-in
+       
         for (const property in object) {
             setIsImageEmpty(false)
             return false
@@ -242,7 +242,7 @@ const CreateOrgFormModal = (props: { openModal: boolean; setOpenModal: (flag: bo
                                                         className="hidden"
                                                         id="organizationlogo" title=""
                                                         onChange={(event): void => handleImageChange(event)} />
-                                                    {/* <span>{selectedImage || 'No File Chosen'}</span> */}
+                                            
                                                     {imgError ? <div className="text-red-500">{imgError}</div> : <span className="mt-1  text-sm text-gray-500 dark:text-gray-400">{logoImage.fileName || 'No File Chosen'}</span>}
                                                 </label>
 

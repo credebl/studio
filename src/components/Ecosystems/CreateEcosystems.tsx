@@ -40,7 +40,7 @@ const CreateEcosystems = (props: { openModal: boolean; setMessage: (message: str
     const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
     const [imageError, setImageError] = useState('')
-
+const newEcoData = initialEcoData
     useEffect(() => {
         setEcoData({
             name: '',
@@ -166,7 +166,7 @@ const CreateEcosystems = (props: { openModal: boolean; setMessage: (message: str
                 imagePreviewUrl: "",
                 fileName: ''
             })
-            setEcoData(initialEcoData)
+            setEcoData(newEcoData)
             props.setOpenModal(false)
         }
         }>
@@ -180,7 +180,7 @@ const CreateEcosystems = (props: { openModal: boolean; setMessage: (message: str
                     }}
                 />
                 <Formik
-                    initialValues={initialEcoData}
+                    initialValues={newEcoData}
                     validationSchema={
                         yup.object().shape({
                             name: yup
