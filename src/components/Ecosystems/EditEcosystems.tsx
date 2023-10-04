@@ -38,7 +38,7 @@ const EditEcosystemsModal = (props: EditEcosystemsModalProps) => {
 
     })
     const [loading, setLoading] = useState<boolean>(false)
-    const [isEditImageEmpty, setIsEditImageEmpty] = useState(true)
+    // const [isEditImageEmpty, setIsEditImageEmpty] = useState(true)
 
 
     const [initialEditEcoData, setEditEcoData] = useState({
@@ -127,11 +127,11 @@ const EditEcosystemsModal = (props: EditEcosystemsModalProps) => {
     }
 
     const isEmpty = (object: any): boolean => {
-        for (const property in object) {
-            setIsEditImageEmpty(false)
+        for (const item in object) {
+            // setIsEditImageEmpty(false)
             return false
         }
-        setIsEditImageEmpty(true)
+        // setIsEditImageEmpty(true)
         return true
     }
 
@@ -249,7 +249,7 @@ const EditEcosystemsModal = (props: EditEcosystemsModalProps) => {
 
 
                                     {
-                                        (typeof (editLogoImage.logoFile) === "string" && props?.EditEcoData?.logoUrl) ?
+                                         props?.EditEcoData?.logoUrl ?
                                             <img
                                                 className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
                                                 src={props?.EditEcoData?.logoUrl}
