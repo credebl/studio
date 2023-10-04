@@ -130,7 +130,7 @@ const PopupModal = (props: { openModal: boolean; isorgModal : boolean ;setMessag
         }
     }
 
-    const sumitCreateOrganization = async (values: Values) => {
+    const submitCreateOrganization = async (values: Values) => {
         setLoading(true)
 
         const orgData = {
@@ -187,12 +187,40 @@ const PopupModal = (props: { openModal: boolean; isorgModal : boolean ;setMessag
 
     const submit= (values :EcoValues | Values)=>{
         if(props.isorgModal){
-        sumitCreateOrganization(values)
+            submitCreateOrganization(values)
         }else{
             submitCreateEcosystem(values)
         }
 
     }
+
+    const orgErrorMsg = {
+        name: yup
+          .string()
+          .min(2, 'Organization name must be at least 2 characters')
+          .max(50, 'Organization name must be at most 50 characters')
+          .required('Organization name is required')
+          .trim(),
+        description: yup
+          .string()
+          .min(2, 'Description must be at least 2 characters')
+          .max(255, 'Description must be at most 255 characters')
+          .required('Description is required'),
+      };
+      
+      const ecoErrorMsg = {
+        name: yup
+          .string()
+          .min(2, 'Ecosystem name must be at least 2 characters')
+          .max(50, 'Ecosystem name must be at most 50 characters')
+          .required('Ecosystem name is required')
+          .trim(),
+        description: yup
+          .string()
+          .min(2, 'Description must be at least 2 characters')
+          .max(255, 'Description must be at most 255 characters')
+          .required('Description is required'),
+      };
     const renderEcosystemModal = () =>{
         return(
         <Modal show={props.openModal} onClose={() => {
@@ -216,20 +244,13 @@ const PopupModal = (props: { openModal: boolean; isorgModal : boolean ;setMessag
                             />
                         <Formik
                             initialValues={initialOrgData}
-                            validationSchema={
-                                yup.object().shape({
-                                    name: yup
-                                        .string()
-                                        .min(2, 'Organization name must be at least 2 characters')
-                                        .max(50, 'Organization name must be at most 50 characters')
-                                        .required('Organization name is required')
-                                        .trim(),
-                                    description: yup
-                                        .string()
-                                        .min(2, 'Description must be at least 2 characters')
-                                        .max(255, 'Description must be at most 255 characters')
-                                        .required('Description is required')
-                                })}
+                            
+                            validationSchema={yup.object().shape({
+                                name: props.isorgModal ? orgErrorMsg.name : ecoErrorMsg.name,
+                                description: props.isorgModal ? orgErrorMsg.description : ecoErrorMsg.description,
+                              })}
+                                
+                                
                             validateOnBlur
                             validateOnChange
                             enableReinitialize
