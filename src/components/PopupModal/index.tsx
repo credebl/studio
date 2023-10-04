@@ -106,7 +106,7 @@ const PopupModal = (props: { openModal: boolean; isorgModal : boolean ;setMessag
 
     const isEmpty = (object: any): boolean => {
        
-        for (const property in object) {
+        for (const property1 in object) {
             setIsImageEmpty(false)
             return false
         }
