@@ -9,13 +9,13 @@ import type { AxiosResponse } from 'axios';
 import { updateEcosystem } from "../../api/ecosystems";
 import type { Ecosystem } from "./interfaces";
 
-interface Values {
-		website: any;
+interface EditEcoValues {
+    website: any;
     name: string;
     description: string;
 }
 
-interface ILogoImage {
+interface EditLogoImage {
     logoFile: string | File
     imagePreviewUrl: string | ArrayBuffer | null | File,
     fileName: string
@@ -26,59 +26,59 @@ interface EditEcosystemsModalProps {
     setMessage: (message: string) => void;
     setOpenModal: (flag: boolean) => void;
     onEditSucess?: () => void;
-    EcoData: Ecosystem | null;
+    EditEcoData: Ecosystem | null;
 
 }
 
 const EditEcosystemsModal = (props: EditEcosystemsModalProps) => {
-    const [logoImage, setLogoImage] = useState<ILogoImage>({
+    const [editLogoImage, setEditLogoImage] = useState<EditLogoImage>({
         logoFile: "",
-        imagePreviewUrl: props?.EcoData?.logoUrl || "",
-        fileName: '' ,
+        imagePreviewUrl: props?.EditEcoData?.logoUrl || "",
+        fileName: '',
 
     })
     const [loading, setLoading] = useState<boolean>(false)
-    const [isImageEmpty, setIsImageEmpty] = useState(true)
-   
+    const [isEditImageEmpty, setIsEditImageEmpty] = useState(true)
 
-    const [initialEcoData, setEcoData] = useState({
-        name: props?.EcoData?.name || "",
-        description: props?.EcoData?.description || "",
-				website: props?.EcoData?.website || "",
+
+    const [initialEditEcoData, setEditEcoData] = useState({
+        name: props?.EditEcoData?.name || "",
+        description: props?.EditEcoData?.description || "",
+        website: props?.EditEcoData?.website || "",
     })
-const newInitialEcoData = initialEcoData
+    const newInitialEcoData = initialEditEcoData
     useEffect(() => {
 
-        if (props.EcoData) {
-            setEcoData({
-                name: props.EcoData.name || '',
-                description: props.EcoData.description || '',
-								website: props?.EcoData?.website || "",
+        if (props.EditEcoData) {
+            setEditEcoData({
+                name: props.EditEcoData.name || '',
+                description: props.EditEcoData.description || '',
+                website: props?.EditEcoData?.website || "",
             });
 
-            setLogoImage({
+            setEditLogoImage({
                 logoFile: "",
-                imagePreviewUrl: props.EcoData.logoUrl || "",
+                imagePreviewUrl: props.EditEcoData.logoUrl || "",
                 fileName: ''
             });
         }
     }, [props]);
 
 
-    const [erroMsg, setErrMsg] = useState<string | null>(null)
+    const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
     const [imgError, setImgError] = useState('')
 
     useEffect(() => {
         if (props.openModal === false) {
-            setEcoData({
+            setEditEcoData({
                 name: '',
                 description: '',
-								website:''
+                website: ''
             })
 
-            setLogoImage({
-                ...logoImage,
+            setEditLogoImage({
+                ...editLogoImage,
                 logoFile: "",
                 imagePreviewUrl: ""
             })
@@ -115,7 +115,7 @@ const newInitialEcoData = initialEcoData
                         srcEncoded = ctx.canvas.toDataURL(ev, file.type)
                         const blob = dataURItoBlob(srcEncoded, file.type)
                         fileUpdated = new File([blob], file.name, { type: file.type, lastModified: new Date().getTime() })
-                        setLogoImage({
+                        setEditLogoImage({
                             logoFile: fileUpdated,
                             imagePreviewUrl: srcEncoded,
                             fileName: file.name
@@ -128,10 +128,10 @@ const newInitialEcoData = initialEcoData
 
     const isEmpty = (object: any): boolean => {
         for (const property in object) {
-            setIsImageEmpty(false)
+            setIsEditImageEmpty(false)
             return false
         }
-        setIsImageEmpty(true)
+        setIsEditImageEmpty(true)
         return true
     }
 
@@ -159,22 +159,22 @@ const newInitialEcoData = initialEcoData
         }
     }
 
-    const submitUpdateEcosystem = async (values: Values) => {
+    const submitUpdateEcosystem = async (values: EditEcoValues) => {
 
         setLoading(true)
 
         const EcoData = {
-            orgId: props?.EcoData?.id,
+            orgId: props?.EditEcoData?.id,
             name: values.name,
             description: values.description,
-            logo: logoImage?.imagePreviewUrl as string || props?.EcoData?.logoUrl,
+            logo: editLogoImage?.imagePreviewUrl as string || props?.EditEcoData?.logoUrl,
             website: values.website,
-           
+
         }
 
-        const resUpdateOrg = await updateEcosystem(EcoData, EcoData.orgId?.toString() as string)
+        const resUpdateEco = await updateEcosystem(EcoData, EcoData.orgId?.toString() as string)
 
-        const { data } = resUpdateOrg as AxiosResponse
+        const { data } = resUpdateEco as AxiosResponse
         setLoading(false)
 
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -183,28 +183,28 @@ const newInitialEcoData = initialEcoData
             }
             props.setOpenModal(false)
         } else {
-            setErrMsg(resUpdateOrg as string)
+            setErrorMsg(resUpdateEco as string)
         }
     }
 
     return (
         <Modal show={props.openModal} onClose={() => {
-            setLogoImage({
+            setEditLogoImage({
                 logoFile: "",
                 imagePreviewUrl: "",
                 fileName: ''
             })
-            setEcoData(newInitialEcoData)
+            setEditEcoData(newInitialEcoData)
             props.setOpenModal(false)
         }
         }>
             <Modal.Header>Edit Ecosystem</Modal.Header>
             <Modal.Body>
                 <AlertComponent
-                    message={erroMsg}
+                    message={errorMsg}
                     type={'failure'}
                     onAlertClose={() => {
-                        setErrMsg(null)
+                        setErrorMsg(null)
                     }}
                 />
                 <Formik
@@ -229,8 +229,8 @@ const newInitialEcoData = initialEcoData
                     validateOnChange
                     enableReinitialize
                     onSubmit={async (
-                        values: Values,
-                        { resetForm }: FormikHelpers<Values>
+                        values: EditEcoValues,
+                        { resetForm }: FormikHelpers<EditEcoValues>
                     ) => {
                         submitUpdateEcosystem(values)
                     }}
@@ -249,19 +249,19 @@ const newInitialEcoData = initialEcoData
 
 
                                     {
-                                        (typeof (logoImage.logoFile) === "string" && props?.EcoData?.logoUrl) ?
+                                        (typeof (editLogoImage.logoFile) === "string" && props?.EditEcoData?.logoUrl) ?
                                             <img
                                                 className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
-                                                src={props?.EcoData?.logoUrl}
+                                                src={props?.EditEcoData?.logoUrl}
                                                 alt="Jese picture"
                                             />
-                                            : typeof (logoImage.logoFile) === "string" ?
+                                            : typeof (editLogoImage.logoFile) === "string" ?
                                                 <Avatar
                                                     size="lg"
                                                 /> :
                                                 <img
                                                     className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
-                                                    src={URL.createObjectURL(logoImage?.logoFile)}
+                                                    src={URL.createObjectURL(editLogoImage?.logoFile)}
                                                     alt="Jese picture"
                                                 />
                                     }
@@ -269,7 +269,7 @@ const newInitialEcoData = initialEcoData
 
                                     <div>
                                         <h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
-                                        Ecosystem Logo
+                                            Ecosystem Logo
                                         </h3>
                                         <div className="mb-4 text-sm text-gray-500 dark:text-gray-400">
                                             JPG, JPEG and PNG . Max size of 1MB
@@ -284,7 +284,7 @@ const newInitialEcoData = initialEcoData
                                                         id="editecosystemlogo" title=""
                                                         onChange={(event): void => handleImageChange(event)} />
                                                     {/* <span>{selectedImage || 'No File Chosen'}</span> */}
-                                                    {imgError ? <div className="text-red-500">{imgError}</div> : <span className="mt-1 text-sm text-gray-500 dark:text-gray-400">{logoImage.fileName || 'No File Chosen'}</span>}
+                                                    {imgError ? <div className="text-red-500">{imgError}</div> : <span className="mt-1 text-sm text-gray-500 dark:text-gray-400">{editLogoImage.fileName || 'No File Chosen'}</span>}
                                                 </label>
 
                                             </div>
@@ -343,7 +343,7 @@ const newInitialEcoData = initialEcoData
                                 }
                             </div>
                             <div>
-                                
+
 
                             </div>
 
