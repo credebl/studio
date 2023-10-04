@@ -3,6 +3,7 @@
 import { Button } from 'flowbite-react';
 import CreateOrgFormModal from "./organization/CreateOrgFormModal.js";
 import { useEffect, useState } from 'react';
+import PopupModal from '../components/PopupModal/index.js'
 
 export default function Dashboard() {
 
@@ -31,9 +32,11 @@ export default function Dashboard() {
 
                     {
                         props.openModal &&
-                        <CreateOrgFormModal 
+                        <PopupModal 
                     openModal={props.openModal}
-                    setOpenModal= {props.setOpenModal} />
+                    setOpenModal= {props.setOpenModal}
+                    isorgModal={true}
+                 />
                     }
                 </div>
             </div>

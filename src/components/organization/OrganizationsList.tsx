@@ -19,6 +19,7 @@ import { setToLocalStorage } from '../../api/Auth';
 import { EmptyListMessage } from '../EmptyListComponent';
 import CustomSpinner from '../CustomSpinner';
 import React from 'react';
+import PopupModal from '../PopupModal';
 
 const initialPageState = {
   pageNumber: 1,
@@ -154,12 +155,13 @@ const OrganizationsList = () => {
             />    
           </div>
 
-          <CreateOrgFormModal
+          <PopupModal
             openModal={props.openModal}
             setMessage={(data) => setMessage(data)}
             setOpenModal={
               props.setOpenModal
-            } />
+            }
+            isorgModal={true} />
 
           <AlertComponent
             message={message ? message : error}
