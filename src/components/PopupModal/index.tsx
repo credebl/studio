@@ -1,4 +1,4 @@
-import React from "react";
+
 
 import * as yup from "yup"
 
@@ -192,6 +192,16 @@ const PopupModal = (props: { openModal: boolean; isorgModal : boolean ;setMessag
             setLoading(false);
         }
     }
+
+
+    const submit= (values :EcoValues | Values)=>{
+        if(props.isorgModal){
+        sumitCreateOrganization(values)
+        }else{
+            submitCreateEcosystem(values)
+        }
+
+    }
     const renderEcosystemModal = () =>{
         return(
         <Modal show={props.openModal} onClose={() => {
@@ -237,7 +247,7 @@ const PopupModal = (props: { openModal: boolean; isorgModal : boolean ;setMessag
                                 { resetForm }: FormikHelpers<Values>
                             ) => {
         
-                                {props.isorgModal? sumitCreateOrganization(values):submitCreateEcosystem(values)}    
+                                submit(values)    
         
                             }}
                         >
