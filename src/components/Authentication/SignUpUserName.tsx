@@ -52,12 +52,6 @@ const SignUpUserName = () => {
 		setGoingBack(false);
 	};
 
-	const handleSkipClick = () => {
-		setSkipped(true);
-	};
-
-
-
 	return (
 		<div>
 			{skipped ? (
@@ -130,11 +124,13 @@ const SignUpUserName = () => {
 									validationSchema={yup.object().shape({
 										firstName: yup
 											.string()
+											.required('First name is required')
 											.min(2, 'First name must be at least 2 characters')
 											.max(50, 'First name must be at most 255 characters')
 											.trim(),
 										lastName: yup
 											.string()
+											.required('Last name is required')
 											.min(2, 'Last name must be at least 2 characters')
 											.max(50, 'Last name must be at most 255 characters')
 											.trim()
@@ -161,6 +157,7 @@ const SignUpUserName = () => {
 
 														<div className="block mb-2 text-sm font-medium  dark:text-white">
 															<Label className="text-primary-700" htmlFor="firstName" value="First name" />
+															<span className='text-red-500 text-xs'>*</span>
 														</div>
 														<Field
 															id="signupfirstname"
@@ -177,6 +174,7 @@ const SignUpUserName = () => {
 
 														<div className="block mb-2 text-sm font-medium  dark:text-white">
 															<Label className="text-primary-700" htmlFor="lastName" value="Last name" />
+															<span className='text-red-500 text-xs'>*</span>
 														</div>
 														<Field
 															id="signuplastname"
@@ -189,15 +187,6 @@ const SignUpUserName = () => {
 															<span className="text-red-500 text-xs">{formikHandlers?.errors?.lastName}</span>
 														}
 													</div>
-
-													<div className="text-lg flex justify-end font-medium text-gray-500 dark:text-gray-400 text-primary-700  dark:text-primary-500  ml-auto pt-4">
-														<span className='hover:underline cursor-pointer'
-															onClick={handleSkipClick}>
-
-															{`Skip`}
-														</span>
-													</div>
-
 													<div className="flex mt-8">
 
 														<Button
