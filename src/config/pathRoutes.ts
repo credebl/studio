@@ -34,11 +34,18 @@ export const pathRoutes = {
         },
     },
     ecosystem: {
-			  root:'/ecosystem',
-        profile: "/ecosystem/profile",
-        endorsements: "/ecosystem/endorsements",
-				invitation:"/ecosystem/invitation"
+        root: '/ecosystem',
+        profile: '/ecosystem/profile',
+        endorsements: "/ecosystem/endorsement"
     },
+    // ecosystems: {
+    //     root: '/ecosystems',
+    //     frameworks: '/ecosystems/frameworks',
+    //     members: '/ecosystems/members',
+    //     registries: '/ecosystems/registries',
+    //     users: '/organizations/users',
+    //     credentials: '/organizations/credentials'
+    // },
     documentation: {
         root: 'https://docs.credebl.id'
     },
@@ -49,6 +56,7 @@ export const pathRoutes = {
         createCredentialDefinition: '/credential-definitions',
         getCredDeffBySchemaId: '/schemas/credential-definitions'
     },
+
     back: {
         schema: {
             schemas: '/organizations/schemas'

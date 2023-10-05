@@ -1,12 +1,12 @@
 import { EcosystemRoles } from "../common/enums"
 
 const isEnabledEcosystem = true
-const ecosystemRole = EcosystemRoles.ecosystemLead
+const ecosystemRole = EcosystemRoles.member
 
 const checkEcosystem = () => ({
     isEnabledEcosystem,
-    isEcosystemMember: ecosystemRole === EcosystemRoles.ecosystemMember && isEnabledEcosystem,
-    isEcosystemLead: ecosystemRole === EcosystemRoles.ecosystemLead && isEnabledEcosystem
+    isEcosystemMember: ecosystemRole === EcosystemRoles.member && isEnabledEcosystem,
+    isEcosystemLead: ecosystemRole === EcosystemRoles.lead && isEnabledEcosystem
 })
 
 export default checkEcosystem
