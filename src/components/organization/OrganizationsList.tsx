@@ -1,13 +1,12 @@
 'use client';
 
-import { Button, Card, Pagination } from 'flowbite-react';
+import {Button,Card ,Pagination } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 
 import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
-import CreateOrgFormModal from "./CreateOrgFormModal";
 import CustomAvatar from '../Avatar'
 import { Features } from '../../utils/enums/features';
 import type { Organisation } from './interfaces'
@@ -19,6 +18,7 @@ import { setToLocalStorage } from '../../api/Auth';
 import { EmptyListMessage } from '../EmptyListComponent';
 import CustomSpinner from '../CustomSpinner';
 import React from 'react';
+import PopupModal from '../PopupModal';
 
 const initialPageState = {
   pageNumber: 1,
@@ -154,12 +154,13 @@ const OrganizationsList = () => {
             />    
           </div>
 
-          <CreateOrgFormModal
+          <PopupModal
             openModal={props.openModal}
             setMessage={(data) => setMessage(data)}
             setOpenModal={
               props.setOpenModal
-            } />
+            }
+            isorgModal={true} />
 
           <AlertComponent
             message={message ? message : error}

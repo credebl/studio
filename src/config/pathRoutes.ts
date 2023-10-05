@@ -35,14 +35,10 @@ export const pathRoutes = {
         },
     },
    
-    // ecosystems: {
-    //     root: '/ecosystems',
-    //     frameworks: '/ecosystems/frameworks',
-    //     members: '/ecosystems/members',
-    //     registries: '/ecosystems/registries',
-    //     users: '/organizations/users',
-    //     credentials: '/organizations/credentials'
-    // },
+    ecosystems: {
+        root: '/ecosystems',
+        dashboard:'/ecosystems/dashboard'
+    },
     documentation: {
         root: 'https://docs.credebl.id'
     },

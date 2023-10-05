@@ -235,6 +235,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                         { resetForm }: FormikHelpers<Values>
                     ) => {
                         submitUpdateOrganization(values)
+                        window.location.reload();
                     }}
                 >
                     {(formikHandlers): JSX.Element => (
