@@ -3,10 +3,13 @@ import { apiRoutes } from "../config/apiRoutes";
 import { getFromLocalStorage } from "./Auth";
 import { storageKeys } from "../config/CommonConstant";
 
-export const createEcosystems = async (data: object) => {
+interface datapayload{
+data:object
+}
+export const createEcosystems = async (Datapayload:datapayload) => {
 
     const url = apiRoutes.ecosystem.create
-    const payload = data
+    const payload = Datapayload
     const token = await getFromLocalStorage(storageKeys.TOKEN)
 
     const config = {
