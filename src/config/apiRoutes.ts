@@ -1,17 +1,15 @@
 export const apiRoutes = {
-    auth:{
-        sendMail: '/users/send-mail',
-        sinIn: '/users/login',
-        verifyEmail:'/users/verify',
-        userProfile: 'users/profile',
-        checkUser:'/users/check-user/',
-        addDetails:'/users/add/',
-        passkeyUserDetails:'/users/password/',
-        profile:'/profile'
+    auth: {
+        sendMail: '/auth/verification-mail',
+        sinIn: '/auth/signin',
+        verifyEmail: '/auth/verify',
+        addDetails: '/auth/signup',
+        passkeyUserDetails: '/users/password/',
+        profile: '/profile',
     },
-    users:{
+    users: {
         userProfile: '/users/profile',
-        checkUser:'/users/',
+        checkUser: '/users/',
         invitations: '/users/org-invitations',
         fetchUsers: '/users',
         update: '/users',
@@ -36,8 +34,8 @@ export const apiRoutes = {
     schema: {
         create: '/schemas',
         getAll: '/schemas',
-        getSchemaById:'/schemas/id',
-        createCredentialDefinition: '/credential-definitions',
+        getSchemaById: '/schemas',
+        createCredentialDefinition: '/cred-defs',
         getCredDefBySchemaId: '/schemas',
         getAllSchemaFromPlatform: `/schemas/platform`
     },
@@ -63,15 +61,18 @@ export const apiRoutes = {
         presentationVerification: '/proofs',
         proofRequestAttributesVerification: '/proofs'
     },
-        Agent:{
-			checkAgentHealth: '/agents/health',       
-            agentDedicatedSpinup: '/agents/spinup',
-            agentSharedSpinup: '/agents/wallet'
-		},	
-		Platform: {
-			getAllSchemaFromPlatform: '/platform/schemas',
-	},
-		public:{
-			organizations: '/orgs/public-profile',
-		}
+    Agent: {
+        checkAgentHealth: '/agents/health',
+        agentDedicatedSpinup: '/agents/spinup',
+        agentSharedSpinup: '/agents/wallet'
+    },
+    Platform: {
+        getAllSchemaFromPlatform: '/platform/schemas',
+    },
+    Public: {
+        organizations: '/orgs/public-profile',
+    },
+    Ecosystem: {
+        getEcosystem: '/ecosystem'
+    }
 }

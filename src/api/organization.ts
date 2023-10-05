@@ -307,7 +307,7 @@ export const createConnection = async (orgName: string) => {
 
 export const getPublicOrganizations = async (pageNumber: number, pageSize: number, search :string) => {
 
-	const url = `${apiRoutes.public.organizations}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
+	const url = `${apiRoutes.Public.organizations}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
 
 	const config = {
 			headers: {
