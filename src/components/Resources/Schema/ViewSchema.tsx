@@ -18,6 +18,7 @@ import { Roles } from '../../../utils/enums/roles';
 import SchemaCard from '../../../commonComponents/SchemaCard';
 import { nanoid } from 'nanoid';
 import { pathRoutes } from '../../../config/pathRoutes';
+import checkEcosystem from '../../../config/ecosystem';
 
 interface Values {
   tagName: string;
@@ -39,10 +40,17 @@ type SchemaData = {
   };
 };
 
+interface ICredDefCard {
+  tag: string,
+  credentialDefinitionId: string
+  schemaLedgerId: string
+  revocable: boolean
+}
+
 
 
 const ViewSchemas = () => {
-  const [schemaDetails, setSchemaDetails] = useState<SchemaData>(null);
+  const [schemaDetails, setSchemaDetails] = useState<SchemaData | null>(null);
   const [credDeffList, setCredDeffList] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true)
   const [createloader, setCreateLoader] = useState<boolean>(false)
@@ -127,32 +135,42 @@ const ViewSchemas = () => {
 
 
   const submit = async (values: Values) => {
-    setCreateLoader(true)
-    const CredDeffFieldName: CredDeffFieldNameType = {
-      tag: values?.tagName,
-      revocable: values?.revocable,
-      orgId: orgId,
-      schemaLedgerId: schemaDetails?.schemaId
+    const { isEnabledEcosystem, isEcosystemMember } = checkEcosystem()
 
-    }
+    if (isEnabledEcosystem && isEcosystemMember) {
+      console.log("Submitted for endorsement by ecosystem member")
+    } else {
+      setCreateLoader(true)
+      const schemaId = schemaDetails?.schemaId || ""
+      const CredDeffFieldName: CredDeffFieldNameType = {
+        tag: values?.tagName,
+        revocable: values?.revocable,
+        orgId: orgId,
+        schemaLedgerId: schemaId
+      }
 
-    const createCredDeff = await createCredentialDefinition(CredDeffFieldName, orgId);
-    const { data } = createCredDeff as AxiosResponse
-    if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-      setCreateLoader(false)
-      setSuccess(data?.message)
+      const createCredDeff = await createCredentialDefinition(CredDeffFieldName, orgId);
+      const { data } = createCredDeff as AxiosResponse
+      if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+        setCreateLoader(false)
+        setSuccess(data?.message)
+      }
+      else {
+        setFailure(createCredDeff as string)
+        setCreateLoader(false)
+      }
+      getCredentialDefinitionList(schemaId, orgId)
     }
-    else {
-      setFailure(createCredDeff as string)
-      setCreateLoader(false)
-    }
-    getCredentialDefinitionList(schemaDetails?.schemaId, orgId)
   }
 
   const credDefSelectionCallback = async (schemaId: string, credentialDefinitionId: string) => {
     await setToLocalStorage(storageKeys.CRED_DEF_ID, credentialDefinitionId)
     window.location.href = `${pathRoutes.organizations.Issuance.connections}`
   }
+
+  const { isEcosystemMember } = checkEcosystem()
+  const formTitle = isEcosystemMember ? "Create Endorsement Request" : "Create Credential Definition"
+  const submitButtonTitle = isEcosystemMember ? "Request Endorsement" : "Create"
 
   return (
     <div className="px-4 pt-6">
@@ -273,7 +291,7 @@ const ViewSchemas = () => {
               id="credentialDefinitionCard">
               <div>
                 <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
-                  Create Credential Definition
+                  {formTitle}
                 </h5>
               </div>
               <div>
@@ -368,7 +386,7 @@ const ViewSchemas = () => {
                           <svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
                           </svg>
-                          Create
+                          {submitButtonTitle}
                         </Button>
                       </div>
 
@@ -424,8 +442,8 @@ const ViewSchemas = () => {
             <div className='Flex-wrap' style={{ display: 'flex', flexDirection: 'column' }}>
               <div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
                 {credDeffList && credDeffList.length > 0 &&
-                  credDeffList.map((element, key) => (
-                    <div className='p-2' key={key}>
+                  credDeffList.map((element: ICredDefCard, index: number) => (
+                    <div className='p-2' key={`view-schema-cred-def-card-${index}`}>
                       <CredDeffCard
                         credDeffName={element['tag']}
                         credentialDefinitionId={element['credentialDefinitionId']}

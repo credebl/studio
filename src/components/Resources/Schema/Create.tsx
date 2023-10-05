@@ -12,6 +12,7 @@ import type { FieldName, Values } from './interfaces';
 import { addSchema } from '../../../api/Schema';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
+import checkEcosystem from '../../../config/ecosystem';
 
 const options = [
     { value: 'string', label: 'String' },
@@ -65,12 +66,16 @@ const CreateSchema = () => {
         }
     };
 
+    const { isEnabledEcosystem, isEcosystemMember } = checkEcosystem()
+    const formTitle = isEcosystemMember ? "Create Endorsement Request" : "Create Schema"
+    const submitButtonTitle = isEcosystemMember ? "Request Endorsement" : "Create"
+
     return (
         <div className="px-4 pt-6">
             <div className="pl-6 mb-4 col-span-full xl:mb-2">
                 <BreadCrumbs />
                 <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-                    Create Schema
+                    {formTitle}
                 </h1>
             </div>
             <div>
@@ -110,18 +115,21 @@ const CreateSchema = () => {
                             validateOnChange
                             enableReinitialize
                             onSubmit={async (values): Promise<void> => {
-                                values.attribute.forEach((element: any) => {
+                                if (isEnabledEcosystem && isEcosystemMember) {
+                                    console.log("Submitted for endorsement by ecosystem member")
+                                } else {
+                                    values.attribute.forEach((element: any) => {
+                                        if (!element.schemaDataType) {
+                                            element.schemaDataType = 'string';
+                                        }
+                                    });
+                                    const updatedAttribute: Array<Number> = [];
+                                    values.attribute.forEach((element) => {
+                                        updatedAttribute.push(Number(element));
 
-                                    if (!element.schemaDataType) {
-                                        element.schemaDataType = 'string';
-                                    }
-                                });
-                                const updatedAttribute: Array<Number> = [];
-                                values.attribute.forEach((element) => {
-                                    updatedAttribute.push(Number(element));
-
-                                });
-                                submit(values);
+                                    });
+                                    submit(values);
+                                }
                             }}
                         >
                             {(formikHandlers): JSX.Element => (
@@ -412,7 +420,6 @@ const CreateSchema = () => {
                                                                                                 viewBox="0 0 24 24"
                                                                                                 strokeWidth={2.5}
                                                                                                 stroke="currentColor"
-                                                                                                className="mr-2"
                                                                                             >
                                                                                                 <path
                                                                                                     fill="#fff"
@@ -421,7 +428,7 @@ const CreateSchema = () => {
                                                                                                     d="M12 4.5v15m7.5-7.5h-15"
                                                                                                 />
                                                                                             </svg>
-                                                                                            <span className="hidden xl:inline-block">
+                                                                                            <span className="hidden xl:inline-block ml-2">
                                                                                                 Add
                                                                                             </span>
                                                                                         </Button>
@@ -457,10 +464,7 @@ const CreateSchema = () => {
                                             disabled={
                                                 !formikHandlers.isValid || !formikHandlers.dirty
                                             }
-                                            className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto mt-2'
-
-                                            style={{ height: '2.6rem', width: '6rem', minWidth: '2rem' }}
-
+                                            className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto mt-2 min-w-[6rem] h-[2.6rem]'
                                         >
                                             <svg
                                                 className="pr-2"
@@ -475,14 +479,14 @@ const CreateSchema = () => {
                                                     d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"
                                                 />
                                             </svg>
-                                            Create
+                                            {submitButtonTitle}
                                         </Button>
                                     </div>
 
                                     <div>
                                         <div
                                             id="popup-modal"
-                                            tabindex="-1"
+                                            tabIndex={-1}
                                             className="fixed top-0 left-0 right-0 z-50 hidden p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
                                         >
                                             <div className="relative w-full max-w-md max-h-full">

@@ -36,3 +36,15 @@ export enum IssueCredentialUserText {
 	done = 'Accepted',
 	abandoned = 'Declined'
 }
+
+export enum EndorsementStatus {
+	all = "all",
+	approved = "approved",
+	rejected = "rejected",
+	requested = "requested"
+}
+
+export enum EcosystemRoles {
+	member = "member",
+	lead = "lead"
+}
