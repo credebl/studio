@@ -1,7 +1,7 @@
 import { EcosystemRoles } from "../common/enums"
 
 const isEnabledEcosystem = true
-const ecosystemRole = EcosystemRoles.ecosystemMember
+const ecosystemRole = EcosystemRoles.ecosystemLead
 
 const checkEcosystem = () => ({
     isEnabledEcosystem,
