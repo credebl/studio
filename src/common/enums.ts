@@ -37,7 +37,12 @@ export enum IssueCredentialUserText {
 	abandoned = 'Declined'
 }
 
+export enum RequestedType {
+	schema = 'schema',
+	credDef = 'credDef'
+}
+
 export enum EcosystemRoles {
-	ecosystemMember = "Ecosystem Member",
-	ecosystemLead = "Ecosystem Lead"
+	member = 'member',
+    lead = 'lead'
 }
