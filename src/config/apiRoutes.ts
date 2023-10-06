@@ -1,15 +1,15 @@
 export const apiRoutes = {
-    auth:{
-        sendMail:'/auth/verification-mail',
+    auth: {
+        sendMail: '/auth/verification-mail',
         sinIn: '/auth/signin',
-        verifyEmail:'/auth/verify',
-        addDetails:'/auth/signup',
-        passkeyUserDetails:'/users/password/',
-        profile:'/profile',
+        verifyEmail: '/auth/verify',
+        addDetails: '/auth/signup',
+        passkeyUserDetails: '/users/password/',
+        profile: '/profile',
     },
-    users:{
+    users: {
         userProfile: '/users/profile',
-        checkUser:'/users/',
+        checkUser: '/users/',
         invitations: '/users/org-invitations',
         fetchUsers: '/users',
         update: '/users',
@@ -26,13 +26,14 @@ export const apiRoutes = {
         orgRoles: '/orgs/roles',
         editUserROle: '/user-roles'
     },
+    
     connection: {
         create: '/connections',
     },
     schema: {
         create: '/schemas',
         getAll: '/schemas',
-        getSchemaById:'/schemas',
+        getSchemaById: '/schemas',
         createCredentialDefinition: '/cred-defs',
         getCredDefBySchemaId: '/schemas',
     },
@@ -58,16 +59,18 @@ export const apiRoutes = {
         presentationVerification: '/proofs',
         proofRequestAttributesVerification: '/proofs'
     },
-        Agent:{
-			checkAgentHealth: '/agents/health',       
-            agentDedicatedSpinup: '/agents/spinup',
-            agentSharedSpinup: '/agents/wallet'
-		},	
-		Platform: {
-			getAllSchemaFromPlatform: '/platform/schemas',
-	},
-		public:{
-			organizations: '/organization/public-profiles',
-			users:'/users/public-profiles',
-		}
+    Agent: {
+        checkAgentHealth: '/agents/health',
+        agentDedicatedSpinup: '/agents/spinup',
+        agentSharedSpinup: '/agents/wallet'
+    },
+    Platform: {
+        getAllSchemaFromPlatform: '/platform/schemas',
+    },
+    Public: {
+        organizations: '/orgs/public-profile',
+    },
+    Ecosystem: {
+        root: '/ecosystem'
+    }
 }

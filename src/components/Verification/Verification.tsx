@@ -28,7 +28,7 @@ interface VerifyCredentialPayload {
 	connectionId: string;
 	attributes: Array<{
 		attributeName: string;
-		credDefId: string;
+		credDefId?: string  ;
 	}>;
 	comment: string;
 	orgId: number;
@@ -166,16 +166,12 @@ const VerificationCred = () => {
 				if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 					setProofReqSuccess(data?.message);
 					setRequestLoader(false);
-					await clearLocalStorage()
+					clearLocalStorage()
 					setTimeout(()=>{
 						window.location.href = '/organizations/verification'
-		
-					}, 5000)
-					
-					
+					}, 2000)
 				} else {
 					setErrMsg(response as string);
-					
 				}
 			}
 			setTimeout(()=>{

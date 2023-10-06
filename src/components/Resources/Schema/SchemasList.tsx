@@ -17,6 +17,7 @@ import type { SchemaDetails } from '../../Verification/interface';
 import SearchInput from '../../SearchInput';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
+import { getOrganizationById } from '../../../api/organization';
 
 const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaDetails: SchemaDetails) => void; }) => {
 	const [schemaList, setSchemaList] = useState([])
@@ -33,6 +34,7 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 		allSearch: ""
 
 	})
+  const [walletStatus, setWalletStatus]=useState(false)
 	const [totalItem, setTotalItem] = useState(0)
 	const getSchemaList = async (schemaListAPIParameter: GetAllSchemaListParameter, flag: boolean) => {
 		try {
@@ -122,6 +124,23 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 		}
 	};
 
+	const fetchOrganizationDetails = async () => {
+		setLoading(true)
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
+		const response = await getOrganizationById(orgId);
+		const { data } = response as AxiosResponse
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+				if (data?.data?.org_agents && data?.data?.org_agents?.length > 0) {
+						setWalletStatus(true)
+				}
+		}
+		setLoading(false)
+}
+
+useEffect(()=>{
+	fetchOrganizationDetails()
+},[])
+
 	return (
 		<div className="px-4 pt-6">
 			<div className="mb-4 col-span-full xl:mb-2">
@@ -154,7 +173,7 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 							</select>
 						</div>
 						<div className='flex space-x-2'>							
-							<RoleViewButton
+							{walletStatus ? <RoleViewButton
 								buttonTitle='Create'
 								feature={Features.CRETAE_SCHEMA}
 								svgComponent={
@@ -168,6 +187,21 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 									window.location.href = `${pathRoutes.organizations.createSchema}?OrgId=${orgId}`
 								}}
 							/>
+							:
+							<RoleViewButton
+							buttonTitle='Create'
+							feature={Features.CRETAE_SCHEMA}
+							svgComponent={
+								<div className='pr-3'>
+									<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
+										<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+									</svg>
+								</div>
+							}
+							onClickEvent={() => {
+								window.location.href = `${pathRoutes.organizations.dashboard}?OrgId=${orgId}`
+							}}
+						/>}
 						</div>
 					</div>
 				</div>
@@ -214,7 +248,10 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 									totalPages={Math.ceil(totalItem / schemaListAPIParameter?.itemPerPage)}
 								/>)}
 							</div>
-						</div>) : (<EmptyListMessage
+						</div>) : (
+						<div>
+						{walletStatus ?
+						 <EmptyListMessage
 							message={'No Schemas'}
 							description={'Get started by creating a new Schema'}
 							buttonContent={'Create Schema'}
@@ -224,7 +261,22 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 							onClick={() => {
 								window.location.href = `${pathRoutes.organizations.createSchema}?OrgId=${orgId}`
 							}}
-						/>)
+						/> 
+						:
+						<EmptyListMessage
+						message={'No Wallet'}
+						description={'Get started by creating a Wallet'}
+						buttonContent={'Create Wallet'}
+						svgComponent={<svg className='pr-2 mr-1' xmlns="http://www.w3.org/2000/svg" width="24" height="15" fill="none" viewBox="0 0 24 24">
+							<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+						</svg>}
+						onClick={() => {
+							window.location.href = `${pathRoutes.organizations.dashboard}?OrgId=${orgId}`
+						}}
+					/>}
+						
+						</div>
+						)
 				}
 			</div>
 		</div>

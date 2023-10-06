@@ -1,8 +1,8 @@
 'use client';
 
 import { Button } from 'flowbite-react';
-import CreateOrgFormModal from "./organization/CreateOrgFormModal.js";
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import CreateEcosystemOrgModal from './CreateEcosystemOrgModal';
 
 export default function Dashboard() {
 
@@ -13,7 +13,7 @@ export default function Dashboard() {
         props.setOpenModal(true)
     }
 
-    
+
     return (
         <div className="px-4 pt-6">
             <div>
@@ -31,9 +31,11 @@ export default function Dashboard() {
 
                     {
                         props.openModal &&
-                        <CreateOrgFormModal 
-                    openModal={props.openModal}
-                    setOpenModal= {props.setOpenModal} />
+                        <CreateEcosystemOrgModal
+                            openModal={props.openModal}
+                            setOpenModal={props.setOpenModal}
+                            isorgModal={true}
+                        />
                     }
                 </div>
             </div>
