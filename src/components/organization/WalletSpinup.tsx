@@ -305,7 +305,9 @@ const WalletSpinup = (props: {
 				.matches(
 						/^[A-Za-z0-9-][^ !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]*$/,
 						'Wallet label must be alphanumeric only',
-				),
+				)
+				.min(2, 'Wallet label must be at least 2 characters')
+				.max(25, 'Wallet label must be at most 25 characters'),
 			})}
 			validateOnBlur
 			validateOnChange

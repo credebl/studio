@@ -36,3 +36,8 @@ export enum IssueCredentialUserText {
 	done = 'Accepted',
 	abandoned = 'Declined'
 }
+
+export enum EcosystemRoles {
+	ecosystemMember = "Ecosystem Member",
+	ecosystemLead = "Ecosystem Lead"
+}
