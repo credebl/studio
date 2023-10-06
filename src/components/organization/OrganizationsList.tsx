@@ -1,6 +1,6 @@
 'use client';
 
-import {Button,Card ,Pagination } from 'flowbite-react';
+import { Card, Pagination } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 
@@ -18,8 +18,7 @@ import { pathRoutes } from '../../config/pathRoutes';
 import { setToLocalStorage } from '../../api/Auth';
 import { EmptyListMessage } from '../EmptyListComponent';
 import CustomSpinner from '../CustomSpinner';
-import React from 'react';
-import PopupModal from '../PopupModal';
+import CreateEcosystemOrgModal from '../CreateEcosystemOrgModal';
 
 const initialPageState = {
   pageNumber: 1,
@@ -72,7 +71,7 @@ const OrganizationsList = () => {
         total: totalPages
       })
     }
-    else{
+    else {
       setError(response as string)
 
     }
@@ -115,12 +114,12 @@ const OrganizationsList = () => {
 
   const redirectOrgDashboard = async (activeOrg: Organisation) => {
 
-    	await setToLocalStorage(storageKeys.ORG_ID, activeOrg.id.toString());
-			const roles: string[] = activeOrg?.userOrgRoles.map(role => role.orgRole.name)
-			activeOrg.roles = roles
+    await setToLocalStorage(storageKeys.ORG_ID, activeOrg.id.toString());
+    const roles: string[] = activeOrg?.userOrgRoles.map(role => role.orgRole.name)
+    activeOrg.roles = roles
 
-			await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
-      window.location.href = pathRoutes.organizations.dashboard
+    await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
+    window.location.href = pathRoutes.organizations.dashboard
   }
 
 
@@ -152,10 +151,10 @@ const OrganizationsList = () => {
                 </div>
               }
               onClickEvent={createOrganizationModel}
-            />    
+            />
           </div>
 
-          <PopupModal
+          <CreateEcosystemOrgModal
             openModal={props.openModal}
             setOpenModal={
               props.setOpenModal
@@ -172,8 +171,8 @@ const OrganizationsList = () => {
           />
 
           {loading
-            ? <div className="flex items-center justify-center mb-4 ">             
-              <CustomSpinner/>
+            ? <div className="flex items-center justify-center mb-4 ">
+              <CustomSpinner />
             </div>
             : organizationsList && organizationsList?.length > 0 ? (<div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
               {
@@ -232,11 +231,11 @@ const OrganizationsList = () => {
           <div className="flex items-center justify-end mb-4">
 
             {organizationsList && organizationsList?.length > 0 && (
-            <Pagination
-            currentPage={currentPage.pageNumber}
-            onPageChange={onPageChange}
-            totalPages={currentPage.total}
-            />
+              <Pagination
+                currentPage={currentPage.pageNumber}
+                onPageChange={onPageChange}
+                totalPages={currentPage.total}
+              />
             )
             }
           </div>

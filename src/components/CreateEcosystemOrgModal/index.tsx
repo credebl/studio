@@ -33,11 +33,11 @@ interface EcoValues {
 interface IProps {
     openModal: boolean;
     isorgModal: boolean;
-    setMessage: (message: string) => void;
+    setMessage?: (message: string) => void;
     setOpenModal: (flag: boolean) => void
 }
 
-const PopupModal = (props: IProps) => {
+const CreateEcosystemOrgModal = (props: IProps) => {
 
     const [logoImage, setLogoImage] = useState<ILogoImage>({
         logoFile: "",
@@ -150,7 +150,7 @@ const PopupModal = (props: IProps) => {
         setLoading(false)
 
         if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-            props.setMessage(data?.message)
+            props.setMessage && props.setMessage(data?.message)
             props.setOpenModal(false)
 
         } else {
@@ -176,7 +176,7 @@ const PopupModal = (props: IProps) => {
             setLoading(false)
 
             if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-                props.setMessage(data?.message)
+                props.setMessage && props.setMessage(data?.message)
                 props.setOpenModal(false)
             } else {
                 setErrMsg(resCreateEco as string)
@@ -394,4 +394,4 @@ const PopupModal = (props: IProps) => {
 
 }
 
-export default PopupModal;
+export default CreateEcosystemOrgModal;
