@@ -28,10 +28,11 @@ const Dashboard = () => {
         const { data } = response as AxiosResponse
 
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+            const { logoUrl, name, description } = data?.data[0]
             setEcosystemDetails({
-                logoUrl: "",
-                name: "Ecosystem 1234",
-                description: "Test"
+                logoUrl,
+                name,
+                description
             })
         } else {
             setFailure(response as string)
@@ -61,11 +62,11 @@ const Dashboard = () => {
                         {ecosystemDetails ?
                             <div>
                                 <h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
-                                    {ecosystemDetails?.name}
+                                    {ecosystemDetails?.name || "Dummy Name"}
                                 </h3>
 
                                 <p className='mb-1 text-base font-normal text-gray-900 dark:text-white'>
-                                    {ecosystemDetails?.description}
+                                    {ecosystemDetails?.description || "Dummy Desc"}
                                 </p>
                             </div>
                             : !ecosystemDetails && loading ?
