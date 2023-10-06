@@ -1,12 +1,7 @@
-import { Button, Card, Modal } from 'flowbite-react';
+import { Button,Modal } from 'flowbite-react';
 import React from 'react';
-import { pathRoutes } from '../../config/pathRoutes';
 import { EcosystemRoles, RequestedType } from '../../common/enums';
 import SchemaCard from '../../commonComponents/SchemaCard';
-import DateTooltip from '../Tooltip';
-import { dateConversion } from '../../utils/DateConversion';
-import { date } from 'yup';
-import checkEcosystem from './EcosystemRoles';
 
 const EndorsementPopup = (props: {
   openModal: boolean;
@@ -20,19 +15,10 @@ const EndorsementPopup = (props: {
   revocable: boolean;
   endorsementType: RequestedType;
   organizationName: string;
-  tag: string;
   ecosystemRole: EcosystemRoles;
-  ledger: string;
   attrNames: [];
   created: string;
 }) => {
-  const schemaCallback = (schemaId: string) => {
-    window.location.href = `${pathRoutes.ecosystems.schema}`;
-  };
-  const credDefCallback = (schemaId: string, credentialDefinitionId: string) => {
-    window.location.href = `${pathRoutes.ecosystems.credDef}`;
-  };
-
 
   return (
     <Modal show={props.openModal} onClose={props.closeModal}  size="lg">
@@ -49,7 +35,6 @@ const EndorsementPopup = (props: {
 
       </Modal.Header>
 
-      {/* {props.endorsementType=== RequestedType.schema} */}
       <SchemaCard className='flex justify-center'
                   schemaName= {props.name}
                   version= {props.version}
@@ -65,7 +50,6 @@ const EndorsementPopup = (props: {
                   Org. Name: {props.organizationName}
                 </p>
                 }
-
 
           {props.endorsementType=== RequestedType.credDef ? (
 
@@ -115,7 +99,7 @@ const EndorsementPopup = (props: {
                       fill="none" 
                       viewBox="0 0 24 24" 
                       stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                   </svg>
                   <span className='text- blue-700 ml-2 '>                
                       Accept
@@ -132,7 +116,7 @@ const EndorsementPopup = (props: {
                       fill="none" 
                       viewBox="0 0 24 24" 
                       stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                   </svg>
                   <span className='text- blue-700 ml-2 '>                
                       Signed
