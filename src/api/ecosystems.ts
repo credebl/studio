@@ -1,15 +1,20 @@
-import {  axiosPost, axiosPut } from "../services/apiRequests"
+import { axiosPost, axiosPut } from "../services/apiRequests"
 import { apiRoutes } from "../config/apiRoutes";
 import { getFromLocalStorage } from "./Auth";
 import { storageKeys } from "../config/CommonConstant";
 
-interface datapayload{
-data:object
+interface DataPayload {
+    name: string
+    description: string
+    logo: string
+    tags: string
+    orgId: number
+    userId: number
 }
-export const createEcosystems = async (Datapayload:datapayload) => {
 
-    const url = apiRoutes.ecosystem.create
-    const payload = Datapayload
+export const createEcosystems = async (dataPayload: DataPayload) => {
+    const url = apiRoutes.Ecosystem.root
+    const payload = dataPayload
     const token = await getFromLocalStorage(storageKeys.TOKEN)
 
     const config = {
@@ -33,7 +38,7 @@ export const createEcosystems = async (Datapayload:datapayload) => {
     }
 }
 
-export const updateEcosystem = async (data: object, orgId:string) => {
+export const updateEcosystem = async (data: object, orgId: string) => {
 
     const url = `${apiRoutes.organizations.update}/${orgId}`
     const payload = data

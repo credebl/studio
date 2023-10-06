@@ -56,7 +56,7 @@ const VerificationCred = () => {
 				const schemaAttributes = await getFromLocalStorage(storageKeys.SCHEMA_ATTR)
 				const parsedSchemaDetails = JSON.parse(schemaAttributes) || [];
 				const attributes = parsedSchemaDetails.attribute.map((ele: any) => {
-					const attributes = ele.displayName ? ele.displayName : 'Not available';
+					const attributes = ele.attributeName ? ele.attributeName : 'Not available';
 					return {
 						data: [
 							{

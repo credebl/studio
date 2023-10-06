@@ -71,6 +71,6 @@ export const apiRoutes = {
         organizations: '/orgs/public-profile',
     },
     Ecosystem: {
-        getEcosystem: '/ecosystem'
+        root: '/ecosystem'
     }
 }
