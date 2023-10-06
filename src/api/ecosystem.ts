@@ -6,7 +6,7 @@ import { storageKeys } from "../config/CommonConstant";
 
 export const getEcosystem = async () => {
 
-    const url = `${apiRoutes.Ecosystem.getEcosystem}`
+    const url = `${apiRoutes.Ecosystem.root}`
 
     const token = await getFromLocalStorage(storageKeys.TOKEN)
 
