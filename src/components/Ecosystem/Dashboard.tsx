@@ -97,14 +97,20 @@ const Dashboard = () => {
 										{ecosystemDetails?.name || 'Dummy Name'}
 									</h3>
 
-									<p className="mb-1 text-base font-normal text-gray-900 dark:text-white">
-										{ecosystemDetails?.description || 'Dummy Desc'}
-									</p>
-								</div>
-							) : (
-								<CustomSpinner />
-							)}
-						</div>
+        if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+            if (data?.data.length > 0) {
+                const ecosystemData = data?.data[0]
+                setEcosystemDetails({
+                    logoUrl: ecosystemData.logoUrl,
+                    name: ecosystemData.name,
+                    description: ecosystemData.description
+                })
+            }
+        } else {
+            setFailure(response as string)
+        }
+        setLoading(false)
+    }
 
 						{isEcosystemLead && (
 							<div className="inline-flex items-center">
