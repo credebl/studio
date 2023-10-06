@@ -38,6 +38,6 @@ export enum IssueCredentialUserText {
 }
 
 export enum EcosystemRoles {
-	member = "member",
-	lead = "lead"
+	ecosystemMember = "Ecosystem Member",
+	ecosystemLead = "Ecosystem Lead"
 }

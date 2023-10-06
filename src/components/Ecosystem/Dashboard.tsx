@@ -2,7 +2,7 @@ import type { IEcosystem } from './interfaces'
 import { apiStatusCodes } from '../../config/CommonConstant';
 import { useEffect, useState } from 'react';
 
-import { Alert, Button } from 'flowbite-react';
+import { Button } from 'flowbite-react';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
 import CustomAvatar from '../Avatar';
@@ -11,8 +11,9 @@ import endorseIcon from '../../assets/endorser-card.svg';
 import userCard from '../../assets/User_Card.svg';
 import MemberList from './MemberList';
 import { getEcosystem } from '../../api/ecosystem';
-import PopupModal from '../PopupModal';
 import { EmptyListMessage } from '../EmptyListComponent';
+import CreateEcosystemOrgModal from '../CreateEcosystemOrgModal';
+import { AlertComponent } from '../AlertComponent';
 
 const Dashboard = () => {
     const [ecosystemDetails, setEcosystemDetails] = useState<IEcosystem | null>()
@@ -61,19 +62,14 @@ const Dashboard = () => {
             </div>
             {
                 (success || failure) &&
-                <Alert
-                    color={success ? "success" : "failure"}
-                    onDismiss={() => {
+                <AlertComponent
+                    message={success ?? failure}
+                    type={success ? "success" : "failure"}
+                    onAlertClose={() => {
                         setSuccess(null)
                         setFailure(null)
                     }}
-                >
-                    <span>
-                        <p>
-                            {success ?? failure}
-                        </p>
-                    </span>
-                </Alert>
+                />
             }
             {
                 ecosystemDetails ?
@@ -168,7 +164,7 @@ const Dashboard = () => {
                                     className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
                                 >
                                     <div className="flex items-center justify-center mb-4">
-                                        <PopupModal
+                                        <CreateEcosystemOrgModal
                                             openModal={openModal}
                                             setOpenModal={props.setOpenModal} setMessage={(value) => {
                                                 setSuccess(value)
