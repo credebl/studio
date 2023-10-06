@@ -12,7 +12,7 @@ import type { AxiosResponse } from 'axios';
 import { asset } from '../../lib/data.js';
 import { createOrganization } from "../../api/organization";
 import { getFromLocalStorage } from "../../api/Auth";
-import { createEcosystems } from "../../api/ecosystems";
+import { createEcosystems } from "../../api/ecosystem";
 
 
 interface Values {
