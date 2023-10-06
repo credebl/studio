@@ -16,41 +16,41 @@ module.exports = {
 		extend: {
 			colors: {
 				accentColor: '#20ACDF',
-				
-				primary: {  
-					DEFAULT: '#1F4EAD',  
-					50: '#DCE6F9',  
-					100: '#CBD9F6', 
-					200: '#A9C0F0', 
-					300: '#86A7E9',  
-					400: '#638EE3',  
-					500: '#4174DD',  
-					600: '#255ED0',  
-					700: '#1F4EAD',  
-					800: '#16397D',  
-					900: '#0E234E',  
+
+				primary: {
+					DEFAULT: '#1F4EAD',
+					50: '#DCE6F9',
+					100: '#CBD9F6',
+					200: '#A9C0F0',
+					300: '#86A7E9',
+					400: '#638EE3',
+					500: '#4174DD',
+					600: '#255ED0',
+					700: '#1F4EAD',
+					800: '#16397D',
+					900: '#0E234E',
 					950: '#0A1836'
 				},
 
-				secondary: {  
-					DEFAULT: '#D6F5F5',  
-					50: '#FFFFFF',  
-					100: '#FFFFFF', 
-					200: '#FFFFFF', 
-					300: '#FFFFFF',  
-					400: '#FFFFFF',  
-					500: '#FFFFFF',  
-					600: '#F7FDFD',  
-					700: '#D6F5F5',  
-					800: '#A9EAEA',  
-					900: '#7CDFDF',  
+				secondary: {
+					DEFAULT: '#D6F5F5',
+					50: '#FFFFFF',
+					100: '#FFFFFF',
+					200: '#FFFFFF',
+					300: '#FFFFFF',
+					400: '#FFFFFF',
+					500: '#FFFFFF',
+					600: '#F7FDFD',
+					700: '#D6F5F5',
+					800: '#A9EAEA',
+					900: '#7CDFDF',
 					950: '#65DADA'
 				},
 			},
 			fontFamily: {
 				sans: [
 					...defaultTheme.fontFamily.sans,
-					'Inter var', 
+					'Inter var',
 					'ui-sans-serif',
 					'system-ui',
 					'-apple-system',
@@ -103,6 +103,9 @@ module.exports = {
 			},
 			maxWidth: {
 				'100/6rem': 'calc(100% - 6rem)'
+			},
+			minHeight: {
+				'100/18rem': 'calc(100vh - 18rem)'
 			}
 		},
 	},

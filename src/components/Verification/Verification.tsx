@@ -56,7 +56,7 @@ const VerificationCred = () => {
 				const schemaAttributes = await getFromLocalStorage(storageKeys.SCHEMA_ATTR)
 				const parsedSchemaDetails = JSON.parse(schemaAttributes) || [];
 				const attributes = parsedSchemaDetails.attribute.map((ele: any) => {
-					const attributes = ele.displayName ? ele.displayName : 'Not available';
+					const attributes = ele.attributeName ? ele.attributeName : 'Not available';
 					return {
 						data: [
 							{
@@ -166,16 +166,12 @@ const VerificationCred = () => {
 				if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 					setProofReqSuccess(data?.message);
 					setRequestLoader(false);
-					await clearLocalStorage()
+					clearLocalStorage()
 					setTimeout(()=>{
 						window.location.href = '/organizations/verification'
-		
-					}, 5000)
-					
-					
+					}, 2000)
 				} else {
 					setErrMsg(response as string);
-					
 				}
 			}
 			setTimeout(()=>{
