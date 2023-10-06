@@ -12,6 +12,9 @@ import { pathRoutes } from '../../config/pathRoutes';
 const OrgDropDown = () => {
 	const [orgList, setOrgList] = useState<Organisation[]>([]);
 	const [activeOrg, setactiveOrg] = useState<Organisation | null>(null)
+	console.log("activeOrg",orgList);
+	
+console.log("activeOrg",activeOrg?.id);
 
 	useEffect(() => {
 		getAllorgs()
@@ -45,8 +48,12 @@ const OrgDropDown = () => {
 		let activeOrg: Organisation | null = null
 
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
+		console.log("activeOrgfindID",orgId);
+		
 		if (orgId) {
 			activeOrg = organizations?.find(org => org.id === Number(orgId)) as Organisation
+			console.log("activeOrgfind",activeOrg);
+			
 			setactiveOrg(activeOrg || null)
 		} else {
 			activeOrg = organizations && organizations[0]

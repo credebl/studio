@@ -2,18 +2,18 @@
 
 import { ChangeEvent, useEffect, useState } from 'react';
 import { apiStatusCodes } from '../../config/CommonConstant';
-
+import axios from 'axios';
 import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import { EmptyListMessage } from '../EmptyListComponent';
 import { Features } from '../../utils/enums/features';
-import type { Invitation } from '../../components/organization/interfaces/invitations';
+import type { Invitation } from '../organization/interfaces/invitations';
 import type { OrgRole } from '../organization/interfaces';
 import { Card, Pagination } from 'flowbite-react';
-import RoleViewButton from '../../components/RoleViewButton';
-import SendInvitationModal from '../../components/organization/invitations/SendInvitationModal';
+import RoleViewButton from '../RoleViewButton';
+import SendInvitationModal from '../organization/invitations/SendInvitationModal';
 import { TextTittlecase } from '../../utils/TextTransform';
-import { getOrganizationInvitations } from '../../api/invitations';
+import { getEcosystemList, getOrganizationInvitations } from '../../api/invitations';
 import CustomSpinner from '../CustomSpinner';
 import { dateConversion } from '../../utils/DateConversion';
 import DateTooltip from '../Tooltip';
@@ -36,7 +36,7 @@ const header = [
 ];
 
 
-const Invitations = () => {
+const Ecosysteminvitation = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false)
     const [message, setMessage] = useState<string | null>(null)
@@ -55,33 +55,35 @@ const Invitations = () => {
 
     const [invitationsList, setInvitationsList] = useState<Array<Invitation> | null>(null)
     const props = { openModal, setOpenModal };
+console.log("invitationsList",invitationsList);
 
     //Fetch the user organization list
-    // const getAllInvitations = async () => {
-    //     setLoading(true)
+    const getAllEcosystem = async () => {
+        setLoading(true)
 
-    //     const response = await getOrganizationInvitations(currentPage.pageNumber, currentPage.pageSize, searchText);
-    //     const { data } = response as AxiosResponse
+        const response = await getEcosystemList();
+        const { data } = response as AxiosResponse
+console.log("data",data);
 
-    //     setLoading(false)
+        setLoading(false)
 
-    //     if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 
-    //         const totalPages = data?.data?.totalPages;
+            // const totalPages = data?.data?.totalPages;
 
-    //         const invitationList = data?.data?.invitations
+            const invitationList = data?.data
 
-    //         setInvitationsList(invitationList)
-    //         setCurrentPage({
-    //             ...currentPage,
-    //             total: totalPages
-    //         })
-    //     }
-    //     else {
-    //         setError(response as string)
+            setInvitationsList(invitationList)
+            // setCurrentPage({
+            //     ...currentPage,
+            //     total: totalPages
+            // })
+        }
+        else {
+            setError(response as string)
 
-    //     }
-    // }
+        }
+    }
 
 		const credentialList =  [	{ data:[
 			{ data: "Master Card" },
@@ -125,12 +127,26 @@ const Invitations = () => {
         props.setOpenModal(true)
     }
 let name="Karan tompe"
-
+useEffect(()=>{
+	getAllEcosystem()
+	
+	},[])
     return (
         <div>
             <div
                 className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
             >
+							<AlertComponent
+                    message='You have some pending received invitations' 
+                    type="message"
+										viewButton={true}
+										path={"/ecosystem/invitation"}
+										// ecosystem/inivations
+                    onAlertClose={() => {
+                        setMessage(null)
+                        setError(null)
+                    }}
+                />
 							<Card className='my-2'>
                 <div className="flex items-center justify-between">
 								<div className="flex items-center">
@@ -167,7 +183,7 @@ let name="Karan tompe"
                             <path fill="#fff" d="M37.846 0H9.231a3.703 3.703 0 0 0-3.693 3.692v1.385c0 .508.416.923.924.923a.926.926 0 0 0 .923-.923V3.692c0-.184.046-.369.092-.554L17.815 12 7.477 20.861a2.317 2.317 0 0 1-.092-.553v-1.385A.926.926 0 0 0 6.462 18a.926.926 0 0 0-.924.923v1.385A3.703 3.703 0 0 0 9.231 24h28.615a3.703 3.703 0 0 0 3.693-3.692V3.692A3.703 3.703 0 0 0 37.846 0ZM8.862 1.892c.092-.046.23-.046.369-.046h28.615c.139 0 .277 0 .37.046L24.137 13.938a.97.97 0 0 1-1.2 0L8.863 1.893Zm28.984 20.262H9.231c-.139 0-.277 0-.37-.046L19.247 13.2l2.492 2.17a2.67 2.67 0 0 0 1.8.691 2.67 2.67 0 0 0 1.8-.692l2.493-2.169 10.384 8.908c-.092.046-.23.046-.369.046Zm1.846-1.846c0 .184-.046.369-.092.553L29.262 12 39.6 3.138c.046.185.092.37.092.554v16.616ZM2.77 9.692c0-.507.416-.923.923-.923h5.539c.507 0 .923.416.923.923a.926.926 0 0 1-.923.923h-5.54a.926.926 0 0 1-.923-.923Zm6.462 5.539H.923A.926.926 0 0 1 0 14.308c0-.508.415-.923.923-.923h8.308c.507 0 .923.415.923.923a.926.926 0 0 1-.923.923Z" />
                         </svg>}
                         onClickEvent={createInvitationsModel}
-                    /> 
+                    />
 										 <button type="button" className='ml-4'
                         >
                             <svg aria-hidden="true" className="mr-1 -ml-1 w-5 h-5"
@@ -182,20 +198,14 @@ let name="Karan tompe"
                 </div>
 								</Card>
                 <SendInvitationModal
+								    flag={true}
                     openModal={props.openModal}
                     setMessage={(data) => setMessage(data)}
                     setOpenModal={
                         props.setOpenModal
                     } />
 
-                <AlertComponent
-                    message={message ? message : error}
-                    type={message ? 'success' : 'failure'}
-                    onAlertClose={() => {
-                        setMessage(null)
-                        setError(null)
-                    }}
-                />
+                
 
                 {/* {
 								loading
@@ -210,8 +220,10 @@ let name="Karan tompe"
 										> */}
 
 											<Card>
+												<div className='flex justify-between'>
 <h1 className='text-xl font-semibold py-1'>EcoSystem Members</h1>
-
+<a href={"/ecosystem/sent-invitations"}><h1 className='text-xl font-semibold py-1'>Sent Invitations</h1></a>
+</div>
 											<div className="">
 												{/* {invitationsList && invitationsList.length > 0 && */}
 													<DataTable header={header} data={credentialList} loading={loading}></DataTable>
@@ -246,7 +258,7 @@ let name="Karan tompe"
     )
 }
 
-export default Invitations;
+export default Ecosysteminvitation;
 
 
 

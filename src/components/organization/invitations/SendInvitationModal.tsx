@@ -7,8 +7,9 @@ import { useEffect, useRef, useState } from "react";
 import { AlertComponent } from "../../AlertComponent";
 import type { AxiosResponse } from 'axios';
 import { apiStatusCodes } from "../../../config/CommonConstant";
-import { createInvitations } from "../../../api/invitations";
+import { createEcoSystemInvitations, createInvitations } from "../../../api/invitations";
 import { getOrganizationRoles } from "../../../api/organization";
+import axios from "axios";
 
 interface Values {
     email: string;
@@ -27,7 +28,7 @@ interface RoleI {
 }
 
 
-const SendInvitationModal = (props: { openModal: boolean; setMessage: (message: string) => void; setOpenModal: (flag: boolean) => void }) => {
+const SendInvitationModal = (props: {flag:boolean; openModal: boolean; setMessage: (message: string) => void; setOpenModal: (flag: boolean) => void }) => {
 
     const [loading, setLoading] = useState<boolean>(false)
 
@@ -113,6 +114,32 @@ const SendInvitationModal = (props: { openModal: boolean; setMessage: (message: 
 
     }
 
+		
+		const sendEcoSystemInvitations = async () => {
+
+			setLoading(true)
+
+			const invitationPayload = invitations.map(invitation => {
+					return {
+							email: invitation.email,
+					}
+			})
+			console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhhh",invitationPayload);
+
+			const resCreateOrg = await createEcoSystemInvitations(invitationPayload)
+
+			const { data } = resCreateOrg as AxiosResponse
+
+			if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+					props.setMessage(data?.message)
+					props.setOpenModal(false)
+
+			} else {
+					setErrMsg(resCreateOrg as string)
+			}
+			setLoading(false)
+
+	}
     return (
         <Modal
             size="3xl"
@@ -252,7 +279,7 @@ const SendInvitationModal = (props: { openModal: boolean; setMessage: (message: 
 
                     <div className="mt-4 flex justify-end">
                         <Button
-                            onClick={sendInvitations}
+                            onClick={props.flag? sendEcoSystemInvitations : sendInvitations}
                             disabled={invitations.length === 0}
                             isProcessing={loading}
                             className='text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
