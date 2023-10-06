@@ -68,6 +68,61 @@ export const createInvitations = async (invitationList: Array<object>) => {
     }
 }
 
+export const getEcosystemList = async () => {
+
+	const url = `${apiRoutes.ecosystem.root}`
+
+	const token = await getFromLocalStorage(storageKeys.TOKEN)
+
+	const config = {
+			headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`
+			}
+	}
+	const axiosPayload = {
+			url,
+			config
+	}
+
+	try {
+			return await axiosGet(axiosPayload);
+	}
+	catch (error) {
+			const err = error as Error
+			return err?.message
+	}
+}
+export const createEcoSystemInvitations = async (invitationList: Array<object>) => {
+
+	// const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.invitations}`
+		const url = `${apiRoutes.ecosystem.root}/2139b71b-ea35-4835-a912-09eea0e95344${apiRoutes.organizations.invitations}`
+
+	const payload = {
+			invitations: invitationList,
+	}
+	const token = await getFromLocalStorage(storageKeys.TOKEN)
+
+	const config = {
+			headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`
+			}
+	}
+	const axiosPayload = {
+			url,
+			payload,
+			config
+	}
+
+	try {
+			return await axiosPost(axiosPayload);
+	}
+	catch (error) {
+			const err = error as Error
+			return err?.message
+	}
+}
 // Received Invitations by User
 export const getUserInvitations = async (pageNumber: number, pageSize: number, search = '') => {
 
@@ -93,6 +148,32 @@ export const getUserInvitations = async (pageNumber: number, pageSize: number, s
         const err = error as Error
         return err?.message
     }
+}
+
+export const getEcosystemInvitations = async (pageNumber: number, pageSize: number, search:string) => {
+
+	const url = `${apiRoutes.ecosystem.root}/2139b71b-ea35-4835-a912-09eea0e95344${apiRoutes.ecosystem.invitations}`
+
+	const token = await getFromLocalStorage(storageKeys.TOKEN)
+
+	const config = {
+			headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`
+			}
+	}
+	const axiosPayload = {
+			url,
+			config
+	}
+
+	try {
+			return await axiosGet(axiosPayload);
+	}
+	catch (error) {
+			const err = error as Error
+			return err?.message
+	}
 }
 
 // Accept/ Reject Invitations
