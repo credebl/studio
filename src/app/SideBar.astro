@@ -1,7 +1,6 @@
 ---
-import { pathRoutes } from "../config/pathRoutes";
+import { pathRoutes } from '../config/pathRoutes';
 /* eslint max-lines: 'off' */
-
 ---
 
 <!-- TODO: Dynamic dropdowns -->
@@ -25,8 +24,8 @@ import { pathRoutes } from "../config/pathRoutes";
 				class="flex-1 px-3 space-y-1 bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700"
 			>
 				<ul class="pb-2 space-y-2">
-					<li>
-						<form action="#" method="GET" class="lg:hidden">
+					<li class="hidden">
+						<form action="#" method="GET">
 							<label for="mobile-search" class="sr-only">Search</label>
 							<div class="relative">
 								<div
@@ -47,77 +46,225 @@ import { pathRoutes } from "../config/pathRoutes";
 									type="text"
 									name="email"
 									id="mobile-search"
-									class="bg-gray-50 border border-gray-300 text-gray-900 text-sm roundedstroke-widthhing-primary-500 focus:border-primary-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-200 dark:focus:ring-primary-500 dark:focus:border-primary-500
-									placestroke-linecaph"
+									class="bg-gray-50 border border-gray-300 text-gray-900 text-sm roundedstroke-widthhing-primary-500 focus:border-primary-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-200 dark:focus:ring-primary-500 dark:focus:border-primary-500 placestroke-linecaph"
 								/>
 							</div>
 						</form>
 					</li>
-				 <li>
-						
-
-					</li>
 					<li>
 						<a
 							href={pathRoutes.users.dashboard}
-						class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
+							class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
 						>
-						<svg 
-						xmlns="http://www.w3.org/2000/svg" 
-						class="flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
-						width="17" height="17" 
-						fill="none" 
-						viewBox="0 0 25 25">  
-						<path fill="currentColor" 
-						d="M16.28 25c1.566 0 2.91-.082 4.033-.332 1.138-.253 2.124-.693 2.893-1.462.769-.77 1.21-1.755 1.462-2.893.25-1.123.332-2.467.332-4.033V12.5a2.5 2.5 0 0 0-2.5-2.5h-10a2.5 2.5 0 0 0-2.5 2.5v10a2.5 2.5 0 0 0 2.5 2.5h3.78ZM0 16.28c0 1.566.082 2.91.332 4.033.253 1.138.693 2.124 1.462 2.893.77.769 1.755 1.21 2.892 1.462.11.024.219.047.329.068 1.355.262 2.485-.885 2.485-2.266V12.5A2.5 2.5 0 0 0 5 10H2.5A2.5 2.5 0 0 0 0 12.5v3.78ZM8.72 0C7.153 0 5.81.082 4.686.332c-1.137.253-2.123.693-2.892 1.462-.77.77-1.21 1.755-1.462 2.892l-.06.281C.006 6.341 1.174 7.5 2.573 7.5H22.47c1.38 0 2.528-1.13 2.266-2.485a11.98 11.98 0 0 0-.068-.329c-.253-1.137-.694-2.123-1.463-2.892-.769-.769-1.755-1.21-2.892-1.462C19.19.082 17.846 0 16.279 0H8.72Z"
-						/></svg>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+								width="17"
+								height="17"
+								fill="none"
+								viewBox="0 0 25 25"
+							>
+								<path
+									fill="currentColor"
+									d="M16.28 25c1.566 0 2.91-.082 4.033-.332 1.138-.253 2.124-.693 2.893-1.462.769-.77 1.21-1.755 1.462-2.893.25-1.123.332-2.467.332-4.033V12.5a2.5 2.5 0 0 0-2.5-2.5h-10a2.5 2.5 0 0 0-2.5 2.5v10a2.5 2.5 0 0 0 2.5 2.5h3.78ZM0 16.28c0 1.566.082 2.91.332 4.033.253 1.138.693 2.124 1.462 2.893.77.769 1.755 1.21 2.892 1.462.11.024.219.047.329.068 1.355.262 2.485-.885 2.485-2.266V12.5A2.5 2.5 0 0 0 5 10H2.5A2.5 2.5 0 0 0 0 12.5v3.78ZM8.72 0C7.153 0 5.81.082 4.686.332c-1.137.253-2.123.693-2.892 1.462-.77.77-1.21 1.755-1.462 2.892l-.06.281C.006 6.341 1.174 7.5 2.573 7.5H22.47c1.38 0 2.528-1.13 2.266-2.485a11.98 11.98 0 0 0-.068-.329c-.253-1.137-.694-2.123-1.463-2.892-.769-.769-1.755-1.21-2.892-1.462C19.19.082 17.846 0 16.279 0H8.72Z"
+								></path></svg
+							>
 							<span class="ml-3" sidebar-toggle-item>Dashboard</span>
 						</a>
 					</li>
 
+					<li>
+						<button
+							type="button"
+							class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+							aria-controls="dropdown-ecosystems"
+							data-collapse-toggle="dropdown-ecosystems"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+								width="18"
+								height="17"
+								fill="none"
+								viewBox="0 0 25 25"
+							>
+								<path
+									fill="currentColor"
+									d="M23 9.487h-5.27V8.184a.997.997 0 0 0-.999-.999h-1.895v-.818c.872-.685 1.376-1.665 1.376-2.708C16.212 1.64 14.326 0 12.005 0 9.683 0 7.798 1.64 7.798 3.659c0 1.043.504 2.023 1.376 2.708v.818H7.278a.998.998 0 0 0-.999 1v1.302H1a.998.998 0 0 0-.999 1V23A.996.996 0 0 0 1 24h22c.554 0 1-.446 1-1V10.487a1 1 0 0 0-1-.999ZM10.669 4.971c-.549-.318-.877-.808-.877-1.312 0-.901 1.009-1.66 2.209-1.66 1.195 0 2.209.759 2.209 1.66 0 .504-.328.999-.877 1.312a1 1 0 0 0-.5.867V7.18h-1.665V5.838c0-.357-.19-.685-.5-.867ZM8.273 9.184h7.46v2.566h-7.46V9.184Zm13.729 12.818H1.998h14.733L19.5 22l2.497.002h.005Z"
+								></path></svg
+							>
+							<span
+								class="flex-1 ml-3 text-left whitespace-nowrap"
+								sidebar-toggle-item>Ecosystem</span
+							>
+							<svg
+								sidebar-toggle-item
+								class="w-6 h-6 flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white sidebar-expand-menu-icon"
+								fill="currentColor"
+								viewBox="0 0 20 20"
+								xmlns="http://www.w3.org/2000/svg"
+							>
+								<path
+									fill-rule="evenodd"
+									d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+									clip-rule="evenodd"
+								>
+								</path>
+							</svg>
+						</button>
+						<ul id="dropdown-ecosystems" class="py-2 space-y-2">
+							<li>
+								<a
+									href={pathRoutes.ecosystem.profile}
+									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="20"
+										height="20"
+										fill="none"
+										viewBox="0 0 25 22"
+									>
+										<path
+											stroke="#6B7280"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="1.25"
+											d="M4 4h3.125M4 6.885h3.125M1 1h15.702M4.695 10h.962m1.453 0h.96m1.422 0h.962m1.452 0h.962M17 1v4.952m0 3.715V13H1V1"
+										></path>
+										<path
+											fill="#6B7280"
+											d="M14 5.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm-3.816 0a1.316 1.316 0 1 0 2.632 0 1.316 1.316 0 0 0-2.633 0Z"
+										></path>
+										<path
+											stroke="#6B7280"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="1.25"
+											d="M7.164 13.647v1.47h7.53m-6.024.589v2.353h6.526m-4.518.294V21h11.044l3.263-1.177m0 0v-9.705m0 9.705h3.012m-3.012-9.705L23.48 8.353 16.2 6l-1.004.588-.25 1.47.501 1.177 3.263.883.502 1.764 1.004 1.765h1.506m3.263-3.53h3.012"
+										></path></svg
+									>
+									<span class="ml-2">Profile</span>
+								</a>
+							</li>
+							<li>
+								<a
+									href={pathRoutes.ecosystem.endorsements}
+									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="20"
+										height="20"
+										fill="none"
+										viewBox="0 0 25 25"
+									>
+										<path
+											fill="#6B7280"
+											d="M19.322 8.824h-4.427V7.612c0-.515-.375-.93-.84-.93h-1.592v-.76a3.335 3.335 0 0 0 1.156-2.52C13.62 1.527 12.035 0 10.085 0 8.135 0 6.55 1.526 6.55 3.403c0 .97.424 1.881 1.157 2.519v.76H6.114c-.465 0-.84.415-.84.93v1.212H.84c-.465 0-.839.414-.839.93v11.638c0 .515.374.93.84.93h12.78l-.993-1.86 7.534-7.962V9.753c0-.51-.374-.93-.84-.93Zm-10.36-4.2c-.461-.296-.737-.752-.737-1.221 0-.838.848-1.544 1.856-1.544 1.004 0 1.855.706 1.855 1.544 0 .47-.275.93-.736 1.22a.952.952 0 0 0-.42.807v1.248H9.381V5.43a.958.958 0 0 0-.42-.806ZM6.948 8.54h6.267v2.141H6.949v-2.14Zm5.678 11.922H1.68v-9.78h16.804l.065 1.37 1.21.447h.403l-7.534 7.963Z"
+										></path>
+										<path
+											fill="#6B7280"
+											d="M24.997 17.854c0 3.945-2.889 7.143-6.452 7.143s-6.451-3.198-6.451-7.143 2.888-7.143 6.451-7.143c3.563 0 6.452 3.198 6.452 7.143Zm-11.292 0c0 2.96 2.167 5.358 4.84 5.358s4.84-2.399 4.84-5.358c0-2.96-2.167-5.359-4.84-5.359s-4.84 2.4-4.84 5.359Z"
+										></path>
+										<path
+											stroke="#6B7280"
+											stroke-linecap="round"
+											stroke-width="1.5"
+											d="m15.328 17.984 2.24 2.55 4.48-4.464"></path></svg
+									>
+									<span class="ml-2">Endorsements</span>
+								</a>
+							</li>
+						</ul>
+					</li>
 
 					<li>
 						<a
 							href={pathRoutes.organizations.root}
 							class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
 						>
-							<svg xmlns="http://www.w3.org/2000/svg" 
-							class="flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
-							width="17" 
-							height="17" 
-							fill="none" 
-							viewBox="0 0 25 25">  
-							<path fill="currentColor" 
-							d="M19.898 14.073h3.54c.854 0 1.562.707 1.562 1.561v7.805c0 .854-.708 1.561-1.563 1.561h-7.812a1.572 1.572 0 0 1-1.563-1.561v-7.805c0-.854.708-1.56 1.563-1.56h2.759v-.928H6.59v.927h2.784c.855 0 1.563.707 1.563 1.561v7.805c0 .854-.708 1.561-1.563 1.561H1.562A1.572 1.572 0 0 1 0 23.439v-7.805c0-.854.708-1.56 1.563-1.56h3.515V12.61c0-.537.684-.805 1.294-.805h5.371v-.878h-3.37a1.572 1.572 0 0 1-1.562-1.561V1.56A1.572 1.572 0 0 1 8.373 0h7.813c.855 0 1.562.707 1.562 1.561v7.805a1.57 1.57 0 0 1-1.562 1.56h-2.881v.903c2.026 0 3.272-.024 5.297-.024.61 0 1.294.244 1.294.805v1.463h.002Z"
-							/></svg>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+								width="17"
+								height="17"
+								fill="none"
+								viewBox="0 0 25 25"
+							>
+								<path
+									fill="currentColor"
+									d="M19.898 14.073h3.54c.854 0 1.562.707 1.562 1.561v7.805c0 .854-.708 1.561-1.563 1.561h-7.812a1.572 1.572 0 0 1-1.563-1.561v-7.805c0-.854.708-1.56 1.563-1.56h2.759v-.928H6.59v.927h2.784c.855 0 1.563.707 1.563 1.561v7.805c0 .854-.708 1.561-1.563 1.561H1.562A1.572 1.572 0 0 1 0 23.439v-7.805c0-.854.708-1.56 1.563-1.56h3.515V12.61c0-.537.684-.805 1.294-.805h5.371v-.878h-3.37a1.572 1.572 0 0 1-1.562-1.561V1.56A1.572 1.572 0 0 1 8.373 0h7.813c.855 0 1.562.707 1.562 1.561v7.805a1.57 1.57 0 0 1-1.562 1.56h-2.881v.903c2.026 0 3.272-.024 5.297-.024.61 0 1.294.244 1.294.805v1.463h.002Z"
+								></path></svg
+							>
 							<span class="ml-3" sidebar-toggle-item>Organizations</span>
 						</a>
 					</li>
+					<!-- 
+						<ul id="dropdown-ecosystem" class="hidden py-2 space-y-2">
+							<li>
+								<a
+									href='featurecoming'
+									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+									>Ecosystems</a
+								>
+							</li>
+							<li>
+								<a
+									href='featurecoming'
+									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+									>Trust Frameworks</a
+								>
+							</li>
+							<li>
+								<a
+									href='featurecoming'
+									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+									>Members</a
+								>
+							</li>
+							<li>
+								<a
+									href='featurecoming'
+									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+									>Trust Registries</a
+								>
+							</li>
+						</ul>
+					</li -->
 
 					<li>
 						<a
 							href={pathRoutes.organizations.users}
 							class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
 						>
-						<svg xmlns="http://www.w3.org/2000/svg" 
-						class="flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
-						width="18" 
-						height="17" 
-						fill="none" 
-						viewBox="0 0 28 28">  
-						<path fill="currentColor" 
-						fill-rule="evenodd" 
-						d="M4.4 6.8a6.8 6.8 0 1 1 14.399 0 6.8 6.8 0 0 1-14.4 0Z" 
-						clip-rule="evenodd"/>  
-						<path fill="currentColor" 
-						d="M18.78 11.303a.316.316 0 0 0 .084.402 5.6 5.6 0 1 0 0-9.008.316.316 0 0 0-.083.403 8.76 8.76 0 0 1 1.012 4.102 8.76 8.76 0 0 1-1.012 4.1Z"/>  
-						<path fill="currentColor" 
-						fill-rule="evenodd" 
-						d="M4.216 17.119C6.187 16.263 8.775 16 11.99 16c3.218 0 5.807.264 7.78 1.121 2.148.934 3.454 2.526 4.138 4.773A1.631 1.631 0 0 1 22.348 24H1.635a1.633 1.633 0 0 1-1.563-2.11c.686-2.247 1.994-3.838 4.144-4.771Z" 
-						clip-rule="evenodd"/>  
-						<path fill="currentColor"
-						 d="M20.5 15.458c-.662.041-.7.93-.092 1.196 1.668.725 2.924 1.793 3.825 3.155.738 1.118 1.886 1.99 3.226 1.99h2.85c1.13 0 1.957-1.124 1.558-2.222a7.076 7.076 0 0 0-.07-.188c-.549-1.384-1.488-2.402-2.878-3.051-1.306-.61-2.94-.861-4.865-.937l-.032-.001h-.031c-1.134 0-2.319-.015-3.49.058Z"
-						 /></svg>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+								width="18"
+								height="17"
+								fill="none"
+								viewBox="0 0 28 28"
+							>
+								<path
+									fill="currentColor"
+									fill-rule="evenodd"
+									d="M4.4 6.8a6.8 6.8 0 1 1 14.399 0 6.8 6.8 0 0 1-14.4 0Z"
+									clip-rule="evenodd"></path>
+								<path
+									fill="currentColor"
+									d="M18.78 11.303a.316.316 0 0 0 .084.402 5.6 5.6 0 1 0 0-9.008.316.316 0 0 0-.083.403 8.76 8.76 0 0 1 1.012 4.102 8.76 8.76 0 0 1-1.012 4.1Z"
+								></path>
+								<path
+									fill="currentColor"
+									fill-rule="evenodd"
+									d="M4.216 17.119C6.187 16.263 8.775 16 11.99 16c3.218 0 5.807.264 7.78 1.121 2.148.934 3.454 2.526 4.138 4.773A1.631 1.631 0 0 1 22.348 24H1.635a1.633 1.633 0 0 1-1.563-2.11c.686-2.247 1.994-3.838 4.144-4.771Z"
+									clip-rule="evenodd"></path>
+								<path
+									fill="currentColor"
+									d="M20.5 15.458c-.662.041-.7.93-.092 1.196 1.668.725 2.924 1.793 3.825 3.155.738 1.118 1.886 1.99 3.226 1.99h2.85c1.13 0 1.957-1.124 1.558-2.222a7.076 7.076 0 0 0-.07-.188c-.549-1.384-1.488-2.402-2.878-3.051-1.306-.61-2.94-.861-4.865-.937l-.032-.001h-.031c-1.134 0-2.319-.015-3.49.058Z"
+								></path></svg
+							>
 							<span class="ml-3" sidebar-toggle-item>Users</span>
 						</a>
 					</li>
@@ -169,22 +316,22 @@ import { pathRoutes } from "../config/pathRoutes";
 									clip-rule="evenodd"></path></svg
 							>
 						</button> -->
-						<!--ul id="dropdown-layouts" class="hidden py-2 space-y-2"-->
-							<!-- <li>
+					<!--ul id="dropdown-layouts" class="hidden py-2 space-y-2"-->
+					<!-- <li>
 								<a
 									href={pathRoutes.organizations.root}
 									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
 									>Organizations</a
 								>
 							</li>							 -->
-							<!-- <li>
+					<!-- <li>
 								<a
 									href={pathRoutes.organizations.users}
 									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
 									>Users</a
 								>
 							</li> -->
-						<!-- </ul> -->
+					<!-- </ul> -->
 					<!-- </li> -->
 
 					<li>
@@ -193,24 +340,27 @@ import { pathRoutes } from "../config/pathRoutes";
 							class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
 							aria-controls="dropdown-credentials"
 							data-collapse-toggle="dropdown-credentials"
-							>
-							<svg 
-								xmlns="http://www.w3.org/2000/svg" 
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
 								class="flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
-								width="18" 
-								height="17" 
-								fill="none" 
-								viewBox="0 0 25 25">  
-								<path fill="currentColor" 
-								d="M23 9.487h-5.27V8.184a.997.997 0 0 0-.999-.999h-1.895v-.818c.872-.685 1.376-1.665 1.376-2.708C16.212 1.64 14.326 0 12.005 0 9.683 0 7.798 1.64 7.798 3.659c0 1.043.504 2.023 1.376 2.708v.818H7.278a.998.998 0 0 0-.999 1v1.302H1a.998.998 0 0 0-.999 1V23A.996.996 0 0 0 1 24h22c.554 0 1-.446 1-1V10.487a1 1 0 0 0-1-.999ZM10.669 4.971c-.549-.318-.877-.808-.877-1.312 0-.901 1.009-1.66 2.209-1.66 1.195 0 2.209.759 2.209 1.66 0 .504-.328.999-.877 1.312a1 1 0 0 0-.5.867V7.18h-1.665V5.838c0-.357-.19-.685-.5-.867ZM8.273 9.184h7.46v2.566h-7.46V9.184Zm13.729 12.818H1.998h14.733L19.5 22l2.497.002h.005Z"
-								/></svg>
+								width="18"
+								height="17"
+								fill="none"
+								viewBox="0 0 25 25"
+							>
+								<path
+									fill="currentColor"
+									d="M23 9.487h-5.27V8.184a.997.997 0 0 0-.999-.999h-1.895v-.818c.872-.685 1.376-1.665 1.376-2.708C16.212 1.64 14.326 0 12.005 0 9.683 0 7.798 1.64 7.798 3.659c0 1.043.504 2.023 1.376 2.708v.818H7.278a.998.998 0 0 0-.999 1v1.302H1a.998.998 0 0 0-.999 1V23A.996.996 0 0 0 1 24h22c.554 0 1-.446 1-1V10.487a1 1 0 0 0-1-.999ZM10.669 4.971c-.549-.318-.877-.808-.877-1.312 0-.901 1.009-1.66 2.209-1.66 1.195 0 2.209.759 2.209 1.66 0 .504-.328.999-.877 1.312a1 1 0 0 0-.5.867V7.18h-1.665V5.838c0-.357-.19-.685-.5-.867ZM8.273 9.184h7.46v2.566h-7.46V9.184Zm13.729 12.818H1.998h14.733L19.5 22l2.497.002h.005Z"
+								></path></svg
+							>
 							<span
 								class="flex-1 ml-3 text-left whitespace-nowrap"
 								sidebar-toggle-item>Credentials</span
-							>			
+							>
 							<svg
 								sidebar-toggle-item
-								class="w-6 h-6 flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+								class="w-6 h-6 flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white sidebar-expand-menu-icon"
 								fill="currentColor"
 								viewBox="0 0 20 20"
 								xmlns="http://www.w3.org/2000/svg"
@@ -223,62 +373,73 @@ import { pathRoutes } from "../config/pathRoutes";
 
 						<ul id="dropdown-credentials" class="py-2 space-y-2">
 							<li>
-
 								<a
 									href={pathRoutes.organizations.issuedCredentials}
 									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="20"
+										height="20"
+										fill="none"
+										viewBox="0 0 25 22"
 									>
-									<svg 
-										xmlns="http://www.w3.org/2000/svg" 
-										width="20" 
-										height="20" 
-										fill="none" 
-										viewBox="0 0 25 22">  
-										<path stroke="#6B7280" 
-										stroke-linecap="round" 
-										stroke-linejoin="round" 
-										stroke-width="1.25" 
-										d="M4 4h3.125M4 6.885h3.125M1 1h15.702M4.695 10h.962m1.453 0h.96m1.422 0h.962m1.452 0h.962M17 1v4.952m0 3.715V13H1V1"/>  
-										<path fill="#6B7280" 
-										d="M14 5.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm-3.816 0a1.316 1.316 0 1 0 2.632 0 1.316 1.316 0 0 0-2.633 0Z"/>  
-										<path stroke="#6B7280" 
-										stroke-linecap="round" 
-										stroke-linejoin="round" 
-										stroke-width="1.25" 
-										d="M7.164 13.647v1.47h7.53m-6.024.589v2.353h6.526m-4.518.294V21h11.044l3.263-1.177m0 0v-9.705m0 9.705h3.012m-3.012-9.705L23.48 8.353 16.2 6l-1.004.588-.25 1.47.501 1.177 3.263.883.502 1.764 1.004 1.765h1.506m3.263-3.53h3.012"
-										/></svg>
-									 <span class="ml-2" >Issuance</span>
-									 </a>
+										<path
+											stroke="#6B7280"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="1.25"
+											d="M4 4h3.125M4 6.885h3.125M1 1h15.702M4.695 10h.962m1.453 0h.96m1.422 0h.962m1.452 0h.962M17 1v4.952m0 3.715V13H1V1"
+										></path>
+										<path
+											fill="#6B7280"
+											d="M14 5.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm-3.816 0a1.316 1.316 0 1 0 2.632 0 1.316 1.316 0 0 0-2.633 0Z"
+										></path>
+										<path
+											stroke="#6B7280"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="1.25"
+											d="M7.164 13.647v1.47h7.53m-6.024.589v2.353h6.526m-4.518.294V21h11.044l3.263-1.177m0 0v-9.705m0 9.705h3.012m-3.012-9.705L23.48 8.353 16.2 6l-1.004.588-.25 1.47.501 1.177 3.263.883.502 1.764 1.004 1.765h1.506m3.263-3.53h3.012"
+										></path></svg
+									>
+									<span class="ml-2">Issuance</span>
+								</a>
 							</li>
 							<li>
 								<a
 									href={pathRoutes.organizations.credentials}
 									class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="20"
+										height="20"
+										fill="none"
+										viewBox="0 0 25 25"
 									>
-									<svg 
-										xmlns="http://www.w3.org/2000/svg" 
-										width="20" 
-										height="20" 
-										fill="none" 
-										viewBox="0 0 25 25">  
-										<path fill="#6B7280" 
-										d="M19.322 8.824h-4.427V7.612c0-.515-.375-.93-.84-.93h-1.592v-.76a3.335 3.335 0 0 0 1.156-2.52C13.62 1.527 12.035 0 10.085 0 8.135 0 6.55 1.526 6.55 3.403c0 .97.424 1.881 1.157 2.519v.76H6.114c-.465 0-.84.415-.84.93v1.212H.84c-.465 0-.839.414-.839.93v11.638c0 .515.374.93.84.93h12.78l-.993-1.86 7.534-7.962V9.753c0-.51-.374-.93-.84-.93Zm-10.36-4.2c-.461-.296-.737-.752-.737-1.221 0-.838.848-1.544 1.856-1.544 1.004 0 1.855.706 1.855 1.544 0 .47-.275.93-.736 1.22a.952.952 0 0 0-.42.807v1.248H9.381V5.43a.958.958 0 0 0-.42-.806ZM6.948 8.54h6.267v2.141H6.949v-2.14Zm5.678 11.922H1.68v-9.78h16.804l.065 1.37 1.21.447h.403l-7.534 7.963Z"/>  
-										<path fill="#6B7280" 
-										d="M24.997 17.854c0 3.945-2.889 7.143-6.452 7.143s-6.451-3.198-6.451-7.143 2.888-7.143 6.451-7.143c3.563 0 6.452 3.198 6.452 7.143Zm-11.292 0c0 2.96 2.167 5.358 4.84 5.358s4.84-2.399 4.84-5.358c0-2.96-2.167-5.359-4.84-5.359s-4.84 2.4-4.84 5.359Z"/>  
-										<path stroke="#6B7280" 
-										stroke-linecap="round" 
-										stroke-width="1.5" 
-										d="m15.328 17.984 2.24 2.55 4.48-4.464"
-										/></svg>
-										<span class="ml-2" >Verification</span>
-										</a>
-									</li>
+										<path
+											fill="#6B7280"
+											d="M19.322 8.824h-4.427V7.612c0-.515-.375-.93-.84-.93h-1.592v-.76a3.335 3.335 0 0 0 1.156-2.52C13.62 1.527 12.035 0 10.085 0 8.135 0 6.55 1.526 6.55 3.403c0 .97.424 1.881 1.157 2.519v.76H6.114c-.465 0-.84.415-.84.93v1.212H.84c-.465 0-.839.414-.839.93v11.638c0 .515.374.93.84.93h12.78l-.993-1.86 7.534-7.962V9.753c0-.51-.374-.93-.84-.93Zm-10.36-4.2c-.461-.296-.737-.752-.737-1.221 0-.838.848-1.544 1.856-1.544 1.004 0 1.855.706 1.855 1.544 0 .47-.275.93-.736 1.22a.952.952 0 0 0-.42.807v1.248H9.381V5.43a.958.958 0 0 0-.42-.806ZM6.948 8.54h6.267v2.141H6.949v-2.14Zm5.678 11.922H1.68v-9.78h16.804l.065 1.37 1.21.447h.403l-7.534 7.963Z"
+										></path>
+										<path
+											fill="#6B7280"
+											d="M24.997 17.854c0 3.945-2.889 7.143-6.452 7.143s-6.451-3.198-6.451-7.143 2.888-7.143 6.451-7.143c3.563 0 6.452 3.198 6.452 7.143Zm-11.292 0c0 2.96 2.167 5.358 4.84 5.358s4.84-2.399 4.84-5.358c0-2.96-2.167-5.359-4.84-5.359s-4.84 2.4-4.84 5.359Z"
+										></path>
+										<path
+											stroke="#6B7280"
+											stroke-linecap="round"
+											stroke-width="1.5"
+											d="m15.328 17.984 2.24 2.55 4.48-4.464"></path></svg
+									>
+									<span class="ml-2">Verification</span>
+								</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
 
-								</ul>
-							</button>
-						</li>
-
-					<!-- li>
+				<!-- li>
 						<button
 							type="button"
 							class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
@@ -348,11 +509,9 @@ import { pathRoutes } from "../config/pathRoutes";
 						</ul>
 					</li -->
 
-
-
-					<li>
-						<!-- {{ if eq $page_slug "settings" }} -->
-						<!-- <a
+				<!-- <li>
+					{{ if eq $page_slug "settings" }}
+					<a
 							href="/settings"
 							class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
 						>
@@ -370,48 +529,47 @@ import { pathRoutes } from "../config/pathRoutes";
 								></path>
 							</svg>
 							<span class="ml-3" sidebar-toggle-item>Settings</span>
-						</a> -->
-					</li>
+						</a>
+				</li> -->
+			</div>
 
-				</ul>
-				
-				<div class="pt-2 space-y-2">
-					<a
-						href={'https://github.com/credebl'}
-						target="_blank"
-						class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
+			<div class="pt-2 space-y-2">
+				<a
+					href={'https://github.com/credebl'}
+					target="_blank"
+					class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
+				>
+					<svg
+						aria-hidden="true"
+						class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+						fill="currentColor"
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 496 512"
+						><!--! Font Awesome Pro 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
+						<path
+							d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"
+						></path></svg
 					>
-						<svg
-							aria-hidden="true"
-							class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
-							fill="currentColor"
-							xmlns="http://www.w3.org/2000/svg"
-							viewBox="0 0 496 512"
-							><!--! Font Awesome Pro 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
-							<path
-								d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"
-							></path></svg
-						>
-						<span class="ml-3" sidebar-toggle-item>GitHub Repository</span>
-					</a>
-					<a
-						href={pathRoutes.documentation.root}
-						target="_blank"
-						class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
+					<span class="ml-3" sidebar-toggle-item>GitHub Repository</span>
+				</a>
+				<a
+					href={pathRoutes.documentation.root}
+					target="_blank"
+					class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
+				>
+					<svg
+						class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+						fill="currentColor"
+						viewBox="0 0 20 20"
+						xmlns="http://www.w3.org/2000/svg"
+						><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path><path
+							fill-rule="evenodd"
+							d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"
+							clip-rule="evenodd"></path></svg
 					>
-						<svg
-							class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
-							fill="currentColor"
-							viewBox="0 0 20 20"
-							xmlns="http://www.w3.org/2000/svg"
-							><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path><path
-								fill-rule="evenodd"
-								d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"
-								clip-rule="evenodd"></path></svg
-						>
-						<span class="ml-3" sidebar-toggle-item>Documentation</span>
-					</a> 
-					<!-- <a
+					<span class="ml-3" sidebar-toggle-item>Documentation</span>
+				</a>
+				<!-- <a
 						href="/alerts"
 						target="_blank"
 						class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
@@ -427,26 +585,26 @@ import { pathRoutes } from "../config/pathRoutes";
 						>
 						<span class="ml-3" sidebar-toggle-item>FAQ's</span>
 					</a>  -->
-					 <a
-						href="https://discord.com/invite/w4hnQT7NJG"
-						target="_blank"
-						class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
-					>		
-						<svg
-							class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
-							fill="currentColor"
-							viewBox="0 0 20 20"
-							xmlns="http://www.w3.org/2000/svg"
-							><path
-								fill-rule="evenodd"
-								d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-2 0c0 .993-.241 1.929-.668 2.754l-1.524-1.525a3.997 3.997 0 00.078-2.183l1.562-1.562C15.802 8.249 16 9.1 16 10zm-5.165 3.913l1.58 1.58A5.98 5.98 0 0110 16a5.976 5.976 0 01-2.516-.552l1.562-1.562a4.006 4.006 0 001.789.027zm-4.677-2.796a4.002 4.002 0 01-.041-2.08l-.08.08-1.53-1.533A5.98 5.98 0 004 10c0 .954.223 1.856.619 2.657l1.54-1.54zm1.088-6.45A5.974 5.974 0 0110 4c.954 0 1.856.223 2.657.619l-1.54 1.54a4.002 4.002 0 00-2.346.033L7.246 4.668zM12 10a2 2 0 11-4 0 2 2 0 014 0z"
-								clip-rule="evenodd"></path></svg
-						>
-						<span class="ml-3" sidebar-toggle-item>Support</span>
-					</a> 
-				</div>
+				<a
+					href="https://discord.com/invite/w4hnQT7NJG"
+					target="_blank"
+					class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
+				>
+					<svg
+						class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+						fill="currentColor"
+						viewBox="0 0 20 20"
+						xmlns="http://www.w3.org/2000/svg"
+						><path
+							fill-rule="evenodd"
+							d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-2 0c0 .993-.241 1.929-.668 2.754l-1.524-1.525a3.997 3.997 0 00.078-2.183l1.562-1.562C15.802 8.249 16 9.1 16 10zm-5.165 3.913l1.58 1.58A5.98 5.98 0 0110 16a5.976 5.976 0 01-2.516-.552l1.562-1.562a4.006 4.006 0 001.789.027zm-4.677-2.796a4.002 4.002 0 01-.041-2.08l-.08.08-1.53-1.533A5.98 5.98 0 004 10c0 .954.223 1.856.619 2.657l1.54-1.54zm1.088-6.45A5.974 5.974 0 0110 4c.954 0 1.856.223 2.657.619l-1.54 1.54a4.002 4.002 0 00-2.346.033L7.246 4.668zM12 10a2 2 0 11-4 0 2 2 0 014 0z"
+							clip-rule="evenodd"></path></svg
+					>
+					<span class="ml-3" sidebar-toggle-item>Support</span>
+				</a>
 			</div>
 		</div>
+
 		<div
 			class="absolute bottom-0 left-0 justify-center hidden w-full p-4 space-x-4 bg-white lg:flex dark:bg-gray-800"
 			sidebar-bottom-menu
@@ -662,70 +820,70 @@ import { pathRoutes } from "../config/pathRoutes";
 				</ul>
 			</div>
 		</div>
+
+		<div
+			class="fixed inset-0 z-10 hidden bg-gray-900/50 dark:bg-gray-900/90"
+			id="sidebarBackdrop"
+		>
+		</div>
+
+		<script>
+			const sidebar = document.getElementById('sidebar');
+
+			if (sidebar) {
+				const toggleSidebarMobile = (
+					sidebar: HTMLElement,
+					sidebarBackdrop: HTMLElement,
+					toggleSidebarMobileHamburger: HTMLElement,
+					toggleSidebarMobileClose: HTMLElement,
+				) => {
+					sidebar.classList.toggle('hidden');
+					sidebarBackdrop.classList.toggle('hidden');
+					toggleSidebarMobileHamburger.classList.toggle('hidden');
+					toggleSidebarMobileClose.classList.toggle('hidden');
+				};
+
+				const toggleSidebarMobileEl = document.getElementById(
+					'toggleSidebarMobile',
+				);
+				const sidebarBackdrop = document.getElementById('sidebarBackdrop')!;
+				const toggleSidebarMobileHamburger = document.getElementById(
+					'toggleSidebarMobileHamburger',
+				)!;
+				const toggleSidebarMobileClose = document.getElementById(
+					'toggleSidebarMobileClose',
+				)!;
+				const toggleSidebarMobileSearch = document.getElementById(
+					'toggleSidebarMobileSearch',
+				)!;
+
+				toggleSidebarMobileSearch?.addEventListener('click', () => {
+					toggleSidebarMobile(
+						sidebar,
+						sidebarBackdrop,
+						toggleSidebarMobileHamburger,
+						toggleSidebarMobileClose,
+					);
+				});
+
+				toggleSidebarMobileEl?.addEventListener('click', () => {
+					toggleSidebarMobile(
+						sidebar,
+						sidebarBackdrop,
+						toggleSidebarMobileHamburger,
+						toggleSidebarMobileClose,
+					);
+				});
+
+				sidebarBackdrop?.addEventListener('click', () => {
+					toggleSidebarMobile(
+						sidebar,
+						sidebarBackdrop,
+						toggleSidebarMobileHamburger,
+						toggleSidebarMobileClose,
+					);
+				});
+			}
+		</script>
 	</div>
 </aside>
-
-<div
-	class="fixed inset-0 z-10 hidden bg-gray-900/50 dark:bg-gray-900/90"
-	id="sidebarBackdrop"
->
-</div>
-
-<script>
-	const sidebar = document.getElementById('sidebar');
-
-	if (sidebar) {
-		const toggleSidebarMobile = (
-			sidebar: HTMLElement,
-			sidebarBackdrop: HTMLElement,
-			toggleSidebarMobileHamburger: HTMLElement,
-			toggleSidebarMobileClose: HTMLElement,
-		) => {
-			sidebar.classList.toggle('hidden');
-			sidebarBackdrop.classList.toggle('hidden');
-			toggleSidebarMobileHamburger.classList.toggle('hidden');
-			toggleSidebarMobileClose.classList.toggle('hidden');
-		};
-
-		const toggleSidebarMobileEl = document.getElementById(
-			'toggleSidebarMobile',
-		);
-		const sidebarBackdrop = document.getElementById('sidebarBackdrop')!;
-		const toggleSidebarMobileHamburger = document.getElementById(
-			'toggleSidebarMobileHamburger',
-		)!;
-		const toggleSidebarMobileClose = document.getElementById(
-			'toggleSidebarMobileClose',
-		)!;
-		const toggleSidebarMobileSearch = document.getElementById(
-			'toggleSidebarMobileSearch',
-		)!;
-
-		toggleSidebarMobileSearch?.addEventListener('click', () => {
-			toggleSidebarMobile(
-				sidebar,
-				sidebarBackdrop,
-				toggleSidebarMobileHamburger,
-				toggleSidebarMobileClose,
-			);
-		});
-
-		toggleSidebarMobileEl?.addEventListener('click', () => {
-			toggleSidebarMobile(
-				sidebar,
-				sidebarBackdrop,
-				toggleSidebarMobileHamburger,
-				toggleSidebarMobileClose,
-			);
-		});
-
-		sidebarBackdrop?.addEventListener('click', () => {
-			toggleSidebarMobile(
-				sidebar,
-				sidebarBackdrop,
-				toggleSidebarMobileHamburger,
-				toggleSidebarMobileClose,
-			);
-		});
-	}
-</script>

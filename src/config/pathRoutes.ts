@@ -20,7 +20,6 @@ export const pathRoutes = {
         credentials: '/organizations/verification',
         createSchema: '/organizations/schemas/create',
         viewSchema: '/organizations/schemas/view-schema',
-
         Issuance: {
             schema: '/organizations/credentials-issued/schemas',
             credDef: '/organizations/credentials-issued/schemas/cred-defs',
@@ -39,14 +38,6 @@ export const pathRoutes = {
         profile: '/ecosystem/profile',
         endorsements: "/ecosystem/endorsement"
     },
-    // ecosystems: {
-    //     root: '/ecosystems',
-    //     frameworks: '/ecosystems/frameworks',
-    //     members: '/ecosystems/members',
-    //     registries: '/ecosystems/registries',
-    //     users: '/organizations/users',
-    //     credentials: '/organizations/credentials'
-    // },
     documentation: {
         root: 'https://docs.credebl.id'
     },
@@ -57,7 +48,6 @@ export const pathRoutes = {
         createCredentialDefinition: '/credential-definitions',
         getCredDeffBySchemaId: '/schemas/credential-definitions'
     },
-
     back: {
         schema: {
             schemas: '/organizations/schemas'
