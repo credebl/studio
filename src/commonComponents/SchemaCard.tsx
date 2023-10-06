@@ -2,12 +2,15 @@ import { Card } from 'flowbite-react';
 import { dateConversion } from '../utils/DateConversion';
 import DateTooltip from '../components/Tooltip';
 
-const SchemaCard = (props: {className?:string, schemaName: string, version: string, schemaId: string, issuerDid: string, attributes: [], created: string, onClickCallback: (schemaId: string, attributes: string[], issuerDid:string, created:string) => void; }) => {
+const SchemaCard = (props: {className?:string, schemaName: string, version: string, schemaId: string, issuerDid: string, attributes: [], created: string, onClickCallback: (schemaId: string, attributes: string[], issuerDid:string, created:string) => void; isLarge:boolean}) => {
   return (
     <Card onClick={() => {
       props.onClickCallback(props.schemaId, props.attributes, props.issuerDid, props.created)
-    }} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer' style={{ width: '100%', height: '260px', overflow: 'auto' }}>
-      <div className="flex justify-between items-start">
+    }} 
+    className= {props.isLarge? "" : "transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer"}
+    
+    style={props.isLarge? { height: '260px', overflow: 'auto', margin: 10}: { width: '100%', height: '260px', overflow: 'auto'}}
+  >      <div className="flex justify-between items-start">
         <div>
           <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
             {props.schemaName}
@@ -20,7 +23,8 @@ const SchemaCard = (props: {className?:string, schemaName: string, version: stri
           <p className='dark:text-white'>
           <DateTooltip date={props.created}>
               Created: {dateConversion(props.created)}
-            </DateTooltip>          </p>
+            </DateTooltip>          
+          </p>
         </div>
       </div>
       <div className="min-w-0 flex-1">

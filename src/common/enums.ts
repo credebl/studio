@@ -36,3 +36,13 @@ export enum IssueCredentialUserText {
 	done = 'Accepted',
 	abandoned = 'Declined'
 }
+
+export enum RequestedType {
+	schema = 'schema',
+	credDef = 'credDef'
+}
+
+export enum EcosystemRoles {
+	member = 'member',
+    lead = 'lead'
+}
