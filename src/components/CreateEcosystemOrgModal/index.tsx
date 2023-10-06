@@ -46,17 +46,17 @@ const CreateEcosystemOrgModal = (props: IProps) => {
     })
 
     const [loading, setLoading] = useState<boolean>(false)
-    const [initialOrgData, setOrgData] = useState({
+    const [formData, setFormData] = useState({
         name: '',
         description: '',
     })
-    const [erroMsg, setErrMsg] = useState<string | null>(null)
+    const [errMsg, setErrMsg] = useState<string | null>(null)
 
     const [imgError, setImgError] = useState('')
 
-    const newinitialOrgData = initialOrgData
+    const initialFormData = formData
     useEffect(() => {
-        setOrgData({
+        setFormData({
             name: '',
             description: '',
         })
@@ -150,7 +150,9 @@ const CreateEcosystemOrgModal = (props: IProps) => {
         setLoading(false)
 
         if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-            props.setMessage && props.setMessage(data?.message)
+            if (props.setMessage) {
+                props.setMessage(data?.message)
+            }
             props.setOpenModal(false)
 
         } else {
@@ -176,7 +178,9 @@ const CreateEcosystemOrgModal = (props: IProps) => {
             setLoading(false)
 
             if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-                props.setMessage && props.setMessage(data?.message)
+                if (props.setMessage) {
+                    props.setMessage(data?.message)
+                }
                 props.setOpenModal(false)
             } else {
                 setErrMsg(resCreateEco as string)
@@ -234,21 +238,21 @@ const CreateEcosystemOrgModal = (props: IProps) => {
                     imagePreviewUrl: "",
                     fileName: ''
                 })
-                setOrgData(newinitialOrgData)
+                setFormData(initialFormData)
                 props.setOpenModal(false)
             }
             }>
                 <Modal.Header>Create {popupName}</Modal.Header>
                 <Modal.Body>
                     <AlertComponent
-                        message={erroMsg}
+                        message={errMsg}
                         type={'failure'}
                         onAlertClose={() => {
                             setErrMsg(null)
                         }}
                     />
                     <Formik
-                        initialValues={initialOrgData}
+                        initialValues={formData}
 
                         validationSchema={yup.object().shape({
                             name: props.isorgModal ? orgErrorMsg.name : ecoErrorMsg.name,
