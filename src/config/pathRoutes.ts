@@ -34,8 +34,9 @@ export const pathRoutes = {
         },
     },
     ecosystem: {
-        profile: "/ecosystem/profile",
-        endorsements: "/ecosystem/endorsements"
+        root: '/ecosystem',
+        profile: '/ecosystem/profile',
+        endorsements: "/ecosystem/endorsement"
     },
     documentation: {
         root: 'https://docs.credebl.id'

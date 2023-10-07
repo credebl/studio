@@ -42,7 +42,14 @@ export enum RequestedType {
 	credDef = 'credDef'
 }
 
+export enum EndorsementStatus {
+	all = "all",
+	approved = "approved",
+	rejected = "rejected",
+	requested = "requested"
+}
+
 export enum EcosystemRoles {
-	member = 'member',
-    lead = 'lead'
+	ecosystemMember = "Ecosystem Member",
+	ecosystemLead = "Ecosystem Lead"
 }
