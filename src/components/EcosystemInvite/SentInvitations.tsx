@@ -1,6 +1,6 @@
 import { Button, Pagination } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
-import {getEcosystemInvitations} from '../../api/invitations';
+import { getEcosystemInvitations } from '../../api/invitations';
 import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
@@ -9,7 +9,6 @@ import type { OrgRole } from '../organization/interfaces';
 import { apiStatusCodes } from '../../config/CommonConstant';
 import { EmptyListMessage } from '../EmptyListComponent';
 import CustomSpinner from '../CustomSpinner';
-
 
 const initialPageState = {
 	pageNumber: 1,
@@ -23,7 +22,7 @@ const SentInvitations = () => {
 	const [message, setMessage] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
-  const [searchText, setSearchText]=useState<string>('')
+	const [searchText, setSearchText] = useState<string>('');
 
 	const timestamp = Date.now();
 	const onPageChange = (page: number) => {
@@ -33,7 +32,8 @@ const SentInvitations = () => {
 		});
 	};
 
-	const [invitationsList, setInvitationsList] = useState<Array<Invitation> | null>(null);
+	const [invitationsList, setInvitationsList] =
+		useState<Array<Invitation> | null>(null);
 	const props = { openModal, setOpenModal };
 
 	const getAllSentInvitations = async () => {
@@ -41,7 +41,7 @@ const SentInvitations = () => {
 		const response = await getEcosystemInvitations(
 			currentPage.pageNumber,
 			currentPage.pageSize,
-			searchText
+			searchText,
 		);
 		const { data } = response as AxiosResponse;
 
@@ -83,13 +83,12 @@ const SentInvitations = () => {
 		<div className="px-4 pt-6">
 			<div className="mb-4 col-span-full xl:mb-2">
 				<BreadCrumbs />
-				
 			</div>
 			<div>
 				<div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 					<h1 className="text-xl mb-4 font-semibold text-gray-900 sm:text-2xl dark:text-white">
-					Sent Ecosystem Invitations
-				</h1>
+						Sent Ecosystem Invitations
+					</h1>
 
 					<AlertComponent
 						message={message ? message : error}
@@ -163,12 +162,13 @@ const SentInvitations = () => {
 																	<li className="pt-3 sm:pt-3 overflow-auto">
 																		<div className="items-center space-x-4">
 																			<div className="inline-flex items-center text-base font-normal text-gray-900 dark:text-white">
-																				Roles: <span
-																									key={invitation.id}
-																									className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
-																								>
-																									Ecosystem Member
-																								</span>
+																				Roles:{' '}
+																				<span
+																					key={invitation.id}
+																					className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
+																				>
+																					Ecosystem Member
+																				</span>
 																				{invitation.orgRoles &&
 																					invitation.orgRoles.length > 0 &&
 																					invitation.orgRoles.map(
@@ -193,7 +193,7 @@ const SentInvitations = () => {
 
 													<div className="flex">
 														<Button
-														// delete invitation functionality requirement
+															// delete invitation functionality requirement
 															// onClick={() =>
 															// 	respondToInvitations(invitation, 'rejected')
 															// }
@@ -215,7 +215,9 @@ const SentInvitations = () => {
 																	d="m13 7-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
 																/>
 															</svg>
-															<span className="text-lg ml-2">Delete Invitation</span>
+															<span className="text-lg ml-2">
+																Delete Invitation
+															</span>
 														</Button>
 													</div>
 												</div>
@@ -223,7 +225,7 @@ const SentInvitations = () => {
 												<div className="dark:text-white">
 													Status:
 													<span className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-1 rounded dark:bg-blue-900 dark:text-blue-300">
-														{ invitation.status}
+														{invitation.status}
 													</span>
 												</div>
 											</div>

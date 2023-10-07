@@ -95,7 +95,6 @@ export const getEcosystemList = async () => {
 }
 export const createEcoSystemInvitations = async (invitationList: Array<object>,ecosystemId: string) => {
   	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	// const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.invitations}`
 		const url = `${apiRoutes.Ecosystem.root}/${ecosystemId}/${orgId}${apiRoutes.Ecosystem.invitations}`
 
 	const payload = {
