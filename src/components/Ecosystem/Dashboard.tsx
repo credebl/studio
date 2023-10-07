@@ -9,11 +9,14 @@ import CustomSpinner from '../CustomSpinner';
 import endorseIcon from '../../assets/endorser-card.svg';
 import userCard from '../../assets/User_Card.svg';
 import MemberList from './MemberList';
-import { getEcosystem } from '../../api/ecosystems';
+import { getEcosystem } from '../../api/ecosystem';
 import { EmptyListMessage } from '../EmptyListComponent';
 import CreateEcosystemOrgModal from '../CreateEcosystemOrgModal';
 import { AlertComponent } from '../AlertComponent';
 import checkEcosystem from '../../config/ecosystem';
+import RoleViewButton from '../RoleViewButton';
+import SendInvitationModal from '../organization/invitations/SendInvitationModal';
+import { setToLocalStorage } from '../../api/Auth';
 
 const Dashboard = () => {
 	const [ecosystemDetails, setEcosystemDetails] = useState<IEcosystem | null>();
@@ -43,6 +46,8 @@ const Dashboard = () => {
 
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
             const ecosystemData = data?.data[0]
+						await setToLocalStorage(storageKeys.ECOSYSTEM_ID,ecosystemData?.id)
+						setEcosystemId(ecosystemData?.id)
             setEcosystemDetails({
                 logoUrl: ecosystemData.logoUrl,
                 name: ecosystemData.name,
@@ -186,7 +191,7 @@ const Dashboard = () => {
 				</div>
 			) : (
 				<div>
-					{!ecosystemDetails && loading ? (
+					{!ecosystemDetails && !loading ? (
 						<div className="min-h-100/18rem flex justify-center items-center">
 							<CustomSpinner />
 						</div>
