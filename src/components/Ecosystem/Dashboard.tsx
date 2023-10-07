@@ -14,9 +14,6 @@ import { EmptyListMessage } from '../EmptyListComponent';
 import CreateEcosystemOrgModal from '../CreateEcosystemOrgModal';
 import { AlertComponent } from '../AlertComponent';
 import checkEcosystem from '../../config/ecosystem';
-import RoleViewButton from '../RoleViewButton';
-import SendInvitationModal from '../organization/invitations/SendInvitationModal';
-import { setToLocalStorage } from '../../api/Auth';
 
 const Dashboard = () => {
 	const [ecosystemDetails, setEcosystemDetails] = useState<IEcosystem | null>();
@@ -44,20 +41,18 @@ const Dashboard = () => {
 		const response = await getEcosystem();
 		const { data } = response as AxiosResponse;
 
-		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			const ecosystemData = data?.data[0];
-			setEcosystemId(ecosystemData.id)
-			await setToLocalStorage(storageKeys.ECOSYSTEM_ID,ecosystemData.id);
-			setEcosystemDetails({
-				logoUrl: ecosystemData.logoUrl,
-				name: ecosystemData.name,
-				description: ecosystemData.description,
-			});
-		} else {
-			setFailure(response as string);
-		}
-		setLoading(false);
-	};
+        if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+            const ecosystemData = data?.data[0]
+            setEcosystemDetails({
+                logoUrl: ecosystemData.logoUrl,
+                name: ecosystemData.name,
+                description: ecosystemData.description
+            })
+        } else {
+            setFailure(response as string)
+        }
+        setLoading(false)
+    }
 
 	useEffect(() => {
 		fetchEcosystemDetails();
