@@ -28,7 +28,7 @@ export const apiRoutes = {
         orgRoles: '/organization/roles',
         editUserROle: '/organization/user-roles'
     },
-    
+
     connection: {
         create: '/connections',
     },
@@ -75,7 +75,13 @@ export const apiRoutes = {
     },
     Ecosystem: {
         root: '/ecosystem',
-				invitations:'/invitations',
-				usersInvitation:'/users/invitations'
+        endorsements: {
+            list: '/transactions',
+            createSchemaRequest: '/transaction/schema',
+            createCredDefRequest: '/transaction/cred-def',
+            signRequest: '/transaction/sign/',
+            submitRequest: '/transaction/submit/',
+            transactionApproval: '/transaction-approval/'
+        }
     }
 }
