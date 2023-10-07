@@ -33,8 +33,7 @@ const SentInvitations = () => {
 		});
 	};
 
-	const [invitationsList, setInvitationsList] =
-		useState<Array<Invitation> | null>(null);
+	const [invitationsList, setInvitationsList] = useState<Array<Invitation> | null>(null);
 	const props = { openModal, setOpenModal };
 
 	const getAllSentInvitations = async () => {
@@ -79,8 +78,6 @@ const SentInvitations = () => {
 	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setSearchText(e.target.value);
 	};
-	const [selectedId, setSelectedId] = useState('1'); // Initialize the selected ID state
-
 
 	return (
 		<div className="px-4 pt-6">

@@ -45,7 +45,8 @@ const Dashboard = () => {
 		const { data } = response as AxiosResponse;
 
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-            const ecosystemData = data?.data[0]
+					if (data?.data.length > 0) {
+						const ecosystemData = data?.data[0]
 						await setToLocalStorage(storageKeys.ECOSYSTEM_ID,ecosystemData?.id)
 						setEcosystemId(ecosystemData?.id)
             setEcosystemDetails({
@@ -53,6 +54,7 @@ const Dashboard = () => {
                 name: ecosystemData.name,
                 description: ecosystemData.description
             })
+				}  
         } else {
             setFailure(response as string)
         }

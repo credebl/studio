@@ -1,4 +1,4 @@
-const MemberList = ({ecosystemId}:any) => {	
+const MemberList = () => {	
     return (
 			<div className="flex justify-between p-2">
 
