@@ -1,21 +1,15 @@
 import { Button, Pagination } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
-import {
-	acceptRejectInvitations,
-	getEcosystemInvitations,
-	getUserInvitations,
-} from '../../api/invitations';
-
+import {getEcosystemInvitations} from '../../api/invitations';
 import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
 import type { Invitation } from '../organization/interfaces/invitations';
 import type { OrgRole } from '../organization/interfaces';
-import SendInvitationModal from '../organization/invitations/SendInvitationModal';
 import { apiStatusCodes } from '../../config/CommonConstant';
-import { pathRoutes } from '../../config/pathRoutes';
 import { EmptyListMessage } from '../EmptyListComponent';
 import CustomSpinner from '../CustomSpinner';
+
 
 const initialPageState = {
 	pageNumber: 1,
@@ -28,34 +22,29 @@ const SentInvitations = () => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [message, setMessage] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
-
 	const [currentPage, setCurrentPage] = useState(initialPageState);
+  const [searchText, setSearchText]=useState<string>('')
+
 	const timestamp = Date.now();
-	// "bcdbaed0-48e7-4394-8249-6584de1fb031"
 	const onPageChange = (page: number) => {
 		setCurrentPage({
 			...currentPage,
 			pageNumber: page,
 		});
 	};
-	const [searchText, setSearchText] = useState('');
 
 	const [invitationsList, setInvitationsList] =
 		useState<Array<Invitation> | null>(null);
-	console.log('invitationsList1111111111', invitationsList);
-
 	const props = { openModal, setOpenModal };
 
-	//Fetch the user organization list
 	const getAllSentInvitations = async () => {
 		setLoading(true);
 		const response = await getEcosystemInvitations(
 			currentPage.pageNumber,
 			currentPage.pageSize,
-			searchText,
+			searchText
 		);
 		const { data } = response as AxiosResponse;
-console.log("11111111111",data);
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const totalPages = data?.data?.totalPages;
@@ -74,7 +63,6 @@ console.log("11111111111",data);
 		setLoading(false);
 	};
 
-	//This useEffect is called when the searchText changes
 	useEffect(() => {
 		let getData: NodeJS.Timeout;
 
@@ -85,39 +73,14 @@ console.log("11111111111",data);
 		} else {
 			getAllSentInvitations();
 		}
-
 		return () => clearTimeout(getData);
 	}, [searchText, openModal, currentPage.pageNumber]);
 
-	//onChange of Search input text
 	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setSearchText(e.target.value);
 	};
-
-	// const respondToInvitations = async (invite: Invitation, status: string) => {
-	// 	setLoading(true);
-	// 	const response = await acceptRejectInvitations(
-	// 		invite.id,
-	// 		invite.orgId,
-	// 		status,
-	// 	);
-	// 	const { data } = response as AxiosResponse;
-	// 	if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-	// 		setMessage(data?.message);
-	// 		setLoading(false);
-	// 		window.location.href = pathRoutes.organizations.root;
-	// 	} else {
-	// 		setError(response as string);
-	// 		setLoading(false);
-	// 	}
-	// };
 	const [selectedId, setSelectedId] = useState('1'); // Initialize the selected ID state
 
-	const handleDropdownChange = (e: { target: { value: any } }) => {
-		const value = e.target.value;
-		setSelectedId(value);
-		// sendToApi(value); // Call the function to send data to the API
-	};
 
 	return (
 		<div className="px-4 pt-6">
@@ -127,11 +90,6 @@ console.log("11111111111",data);
 			</div>
 			<div>
 				<div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-					{/* <SendInvitationModal
-						openModal={props.openModal}
-						setMessage={(data) => setMessage(data)}
-						setOpenModal={props.setOpenModal}
-					/> */}
 					<h1 className="text-xl mb-4 font-semibold text-gray-900 sm:text-2xl dark:text-white">
 					Sent Ecosystem Invitations
 				</h1>
@@ -213,25 +171,17 @@ console.log("11111111111",data);
 																									className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
 																								>
 																									Ecosystem Member
-																									{/* {role.name
-																										.charAt(0)
-																										.toUpperCase() +
-																										role.name.slice(1)} */}
 																								</span>
 																				{invitation.orgRoles &&
 																					invitation.orgRoles.length > 0 &&
 																					invitation.orgRoles.map(
-																						(role: OrgRole, index: number) => {
+																						(_role: OrgRole, index: number) => {
 																							return (
 																								<span
 																									key={index}
 																									className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
 																								>
 																									Ecosystem Member
-																									{/* {role.name
-																										.charAt(0)
-																										.toUpperCase() +
-																										role.name.slice(1)} */}
 																								</span>
 																							);
 																						},
@@ -241,16 +191,12 @@ console.log("11111111111",data);
 																	</li>
 																</ul>
 															</div>
-															{/* <p
-                                                                className="mr-2 flex items-center text-sm font-medium text-gray-500 dark:text-gray-400"
-                                                            >
-                                                                Received On: {dateConversion(invitation.createDateTime)}
-                                                            </p> */}
 														</div>
 													</div>
 
 													<div className="flex">
 														<Button
+														// delete invitation functionality requirement
 															// onClick={() =>
 															// 	respondToInvitations(invitation, 'rejected')
 															// }
@@ -272,10 +218,7 @@ console.log("11111111111",data);
 																	d="m13 7-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
 																/>
 															</svg>
-															{/* className="text-blue-800 text-lg ml-2 hover:text-white" */}
-															{/* <span className='text-blue-800'> */}{' '}
 															<span className="text-lg ml-2">Delete Invitation</span>
-															{/* </span> */}
 														</Button>
 													</div>
 												</div>
@@ -283,7 +226,7 @@ console.log("11111111111",data);
 												<div className="dark:text-white">
 													Status:
 													<span className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-1 rounded dark:bg-blue-900 dark:text-blue-300">
-														Pending
+														{ invitation.status}
 													</span>
 												</div>
 											</div>

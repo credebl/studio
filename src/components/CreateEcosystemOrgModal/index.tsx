@@ -12,7 +12,7 @@ import type { AxiosResponse } from 'axios';
 import { asset } from '../../lib/data.js';
 import { createOrganization } from "../../api/organization";
 import { getFromLocalStorage } from "../../api/Auth";
-import { createEcosystems } from "../../api/ecosystems";
+import { createEcosystems } from "../../api/ecosystem";
 
 
 interface Values {
@@ -163,13 +163,11 @@ const CreateEcosystemOrgModal = (props: IProps) => {
         try {
             setLoading(true)
             const user_data = JSON.parse(await getFromLocalStorage(storageKeys.USER_PROFILE))
-            const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
             const ecoData = {
                 name: values.name,
                 description: values.description,
                 logo: logoImage?.imagePreviewUrl as string || "",
                 tags: "",
-                orgId: Number(organizationId),
                 userId: Number(user_data?.id)
             }
             const resCreateEco = await createEcosystems(ecoData)

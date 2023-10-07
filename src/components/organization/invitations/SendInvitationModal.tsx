@@ -1,15 +1,14 @@
 import * as yup from "yup"
 
-import { Avatar, Button, Label, Modal } from 'flowbite-react';
+import { Button, Label, Modal } from 'flowbite-react';
 import { Field, Form, Formik, FormikHelpers } from 'formik';
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { AlertComponent } from "../../AlertComponent";
 import type { AxiosResponse } from 'axios';
 import { apiStatusCodes } from "../../../config/CommonConstant";
 import { createEcoSystemInvitations, createInvitations } from "../../../api/invitations";
 import { getOrganizationRoles } from "../../../api/organization";
-import axios from "axios";
 
 interface Values {
     email: string;
@@ -28,7 +27,7 @@ interface RoleI {
 }
 
 
-const SendInvitationModal = (props: {flag:boolean; openModal: boolean; setMessage: (message: string) => void; setOpenModal: (flag: boolean) => void }) => {
+const SendInvitationModal = (props: {ecosystemId?:string,flag:boolean; openModal: boolean; setMessage: (message: string) => void; setOpenModal: (flag: boolean) => void }) => {
 
     const [loading, setLoading] = useState<boolean>(false)
 
@@ -36,7 +35,7 @@ const SendInvitationModal = (props: {flag:boolean; openModal: boolean; setMessag
 
     const [memberRole, setMemberRole] = useState<RoleI | null>(null)
 
-    const [initialInvitationData, setInvitationData] = useState({
+    const [initialInvitationData, setInitialInvitationData] = useState({
         email: '',
     })
     const [erroMsg, setErrMsg] = useState<string | null>(null)
@@ -59,7 +58,7 @@ const SendInvitationModal = (props: {flag:boolean; openModal: boolean; setMessag
     }
 
     useEffect(() => {
-        setInvitationData({
+        setInitialInvitationData({
             email: '',
         })
 
@@ -124,9 +123,9 @@ const SendInvitationModal = (props: {flag:boolean; openModal: boolean; setMessag
 							email: invitation.email,
 					}
 			})
-			console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhhh",invitationPayload);
 
-			const resCreateOrg = await createEcoSystemInvitations(invitationPayload)
+			const resCreateOrg = await createEcoSystemInvitations(invitationPayload,props?.ecosystemId)
+
 
 			const { data } = resCreateOrg as AxiosResponse
 
@@ -145,7 +144,7 @@ const SendInvitationModal = (props: {flag:boolean; openModal: boolean; setMessag
             size="3xl"
             show={props.openModal} onClose={() => {
                 setInvitations([])
-                setInvitationData(initialInvitationData)
+                setInitialInvitationData(initialInvitationData)
                 props.setOpenModal(false)
             }
             }>
