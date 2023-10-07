@@ -1,4 +1,4 @@
-import { axiosPost, axiosPut } from "../services/apiRequests"
+import { axiosGet, axiosPost, axiosPut } from "../services/apiRequests"
 import { apiRoutes } from "../config/apiRoutes";
 import { getFromLocalStorage } from "./Auth";
 import { storageKeys } from "../config/CommonConstant";
@@ -8,15 +8,17 @@ interface DataPayload {
     description: string
     logo: string
     tags: string
-    orgId: number
     userId: number
 }
+	
 
 export const createEcosystems = async (dataPayload: DataPayload) => {
-    const url = apiRoutes.Ecosystem.root
+	  const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		
+    const url = `${apiRoutes.Ecosystem.root}/${orgId}`
     const payload = dataPayload
+		
     const token = await getFromLocalStorage(storageKeys.TOKEN)
-
     const config = {
         headers: {
             'Content-Type': 'application/json',
@@ -38,12 +40,11 @@ export const createEcosystems = async (dataPayload: DataPayload) => {
     }
 }
 
-export const updateEcosystem = async (data: object, orgId: string) => {
-
-    const url = `${apiRoutes.organizations.update}/${orgId}`
+export const updateEcosystem = async (data: object) => {
+	  const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+    const url = `${apiRoutes.Ecosystem.root}/${orgId}`
     const payload = data
     const token = await getFromLocalStorage(storageKeys.TOKEN)
-
     const config = {
         headers: {
             'Content-Type': 'application/json',
@@ -65,6 +66,29 @@ export const updateEcosystem = async (data: object, orgId: string) => {
     }
 }
 
+export const getEcosystem = async () => {
+  	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		const url = `${apiRoutes.Ecosystem.root}/${orgId}`
+    const token = await getFromLocalStorage(storageKeys.TOKEN)
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+        }
+    }
+    const axiosPayload = {
+        url,
+        config
+    }
+
+    try {
+        return await axiosGet(axiosPayload);
+    }
+    catch (error) {
+        const err = error as Error
+        return err?.message
+    }
+}
 
 
 

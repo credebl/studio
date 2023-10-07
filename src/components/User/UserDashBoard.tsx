@@ -59,6 +59,33 @@ const UserDashBoard = () => {
 		setLoading(false)
 	}
 
+	const getAllEcosystemInvitations = async () => {
+
+		setLoading(true)
+		const response = await getEcosytemReceivedInvitations(currentPage.pageNumber, currentPage.pageSize, '');
+		const { data } = response as AxiosResponse
+
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+
+			const totalPages = data?.data?.totalPages;
+
+			const invitationList = data?.data?.invitations
+
+			if (invitationList.length > 0) {
+				setMessage('You have some pending received invitations')
+				setViewButton(true)
+			}
+
+			setCurrentPage({
+				...currentPage,
+				total: totalPages
+			})
+		} else {
+			setError(response as string)
+		}
+
+		setLoading(false)
+	}
 	//Fetch the user organization list
 	const getAllOrganizations = async () => {
 
@@ -111,6 +138,7 @@ const UserDashBoard = () => {
 		getAllInvitations()
 		getAllOrganizations()
 		getUserRecentActivity()
+		getAllEcosystemInvitations()
 	}, [])
 
 	const goToOrgDashboard = async (orgId: number, roles: string[]) => {
