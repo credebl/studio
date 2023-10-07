@@ -19,6 +19,7 @@ import SchemaCard from '../../../commonComponents/SchemaCard';
 import { nanoid } from 'nanoid';
 import { pathRoutes } from '../../../config/pathRoutes';
 import checkEcosystem from '../../../config/ecosystem';
+import { createCredDefRequest } from '../../../api/ecosystem';
 
 interface Values {
   tagName: string;
@@ -139,6 +140,26 @@ const ViewSchemas = () => {
 
     if (isEnabledEcosystem && isEcosystemMember) {
       console.log("Submitted for endorsement by ecosystem member")
+      setCreateLoader(true)
+      const schemaId = schemaDetails?.schemaId || ""
+      const CredDeffFieldName: CredDeffFieldNameType = {
+        tag: values?.tagName,
+        revocable: values?.revocable,
+        orgId: orgId,
+        schemaLedgerId: schemaId
+      }
+
+      const createCredDeff = await createCredDefRequest(CredDeffFieldName, orgId);
+      const { data } = createCredDeff as AxiosResponse
+      if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+        setCreateLoader(false)
+        setSuccess(data?.message)
+      }
+      else {
+        setFailure(createCredDeff as string)
+        setCreateLoader(false)
+      }
+      getCredentialDefinitionList(schemaId, orgId)
     } else {
       setCreateLoader(true)
       const schemaId = schemaDetails?.schemaId || ""
@@ -435,12 +456,11 @@ const ViewSchemas = () => {
         </h5>
 
         {loading ? (<div className="flex items-center justify-center mb-4">
-
           <CustomSpinner />
         </div>)
           : credDeffList && credDeffList.length > 0 ? (
             <div className='Flex-wrap' style={{ display: 'flex', flexDirection: 'column' }}>
-              <div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
+              <div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3">
                 {credDeffList && credDeffList.length > 0 &&
                   credDeffList.map((element: ICredDefCard, index: number) => (
                     <div className='p-2' key={`view-schema-cred-def-card-${index}`}>

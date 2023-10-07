@@ -106,6 +106,9 @@ module.exports = {
 			},
 			minHeight: {
 				'100/18rem': 'calc(100vh - 18rem)'
+			},
+			scale: {
+				'103': '1.03',
 			}
 		},
 	},

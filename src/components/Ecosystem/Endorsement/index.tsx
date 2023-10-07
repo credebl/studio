@@ -27,7 +27,7 @@ const EndorsementList = () => {
     const [loading, setLoading] = useState<boolean>(true)
     const [allSchemaFlag, setAllSchemaFlag] = useState<boolean>(false)
     const [orgId, setOrgId] = useState<string>('')
-    const [schemaListAPIParameter, setSchemaListAPIParameter] = useState({
+    const [endorsementListAPIParameter, setEndorsementListAPIParameter] = useState({
         itemPerPage: 9,
         page: 1,
         search: "",
@@ -37,16 +37,16 @@ const EndorsementList = () => {
     })
     const [walletStatus, setWalletStatus] = useState(false)
     const [totalItem, setTotalItem] = useState(0)
-    const getSchemaList = async (schemaListAPIParameter: GetAllSchemaListParameter, flag: boolean) => {
+    const getEndorsementList = async (endorsementListAPIParameter: GetAllSchemaListParameter, flag: boolean) => {
         try {
             const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
             setOrgId(organizationId);
             setLoading(true);
             let schemaList
             if (allSchemaFlag) {
-                schemaList = await getAllSchemas(schemaListAPIParameter);
+                schemaList = await getAllSchemas(endorsementListAPIParameter);
             } else {
-                schemaList = await getAllSchemasByOrgId(schemaListAPIParameter, organizationId);
+                schemaList = await getAllSchemasByOrgId(endorsementListAPIParameter, organizationId);
             }
             const { data } = schemaList as AxiosResponse;
             if (schemaList === 'Schema records not found') {
@@ -84,20 +84,20 @@ const EndorsementList = () => {
     };
 
     useEffect(() => {
-        getSchemaList(schemaListAPIParameter, false)
+        getEndorsementList(endorsementListAPIParameter, false)
 
-    }, [schemaListAPIParameter, allSchemaFlag])
+    }, [endorsementListAPIParameter, allSchemaFlag])
 
     const onSearch = async (event: ChangeEvent<HTMLInputElement>): Promise<void> => {
         event.preventDefault()
-        getSchemaList({
-            ...schemaListAPIParameter,
+        getEndorsementList({
+            ...endorsementListAPIParameter,
             search: event.target.value
         }, false)
 
         if (allSchemaFlag) {
-            getSchemaList({
-                ...schemaListAPIParameter,
+            getEndorsementList({
+                ...endorsementListAPIParameter,
                 allSearch: event.target.value
             }, false)
         }
@@ -123,7 +123,7 @@ const EndorsementList = () => {
         }
         else {
             setAllSchemaFlag(false)
-            getSchemaList(schemaListAPIParameter, false)
+            getEndorsementList(endorsementListAPIParameter, false)
         }
     };
 
@@ -210,47 +210,48 @@ const EndorsementList = () => {
                                     ))}
                             </div>
                             <div className="flex items-center justify-end mb-4" id="schemasPagination">
-
                                 {schemaList.length > 0 && (<Pagination
-                                    currentPage={schemaListAPIParameter?.page}
+                                    currentPage={endorsementListAPIParameter?.page}
                                     onPageChange={(page) => {
-                                        setSchemaListAPIParameter(prevState => ({
+                                        setEndorsementListAPIParameter(prevState => ({
                                             ...prevState,
                                             page: page
                                         }));
                                     }}
-                                    totalPages={Math.ceil(totalItem / schemaListAPIParameter?.itemPerPage)}
+                                    totalPages={Math.ceil(totalItem / endorsementListAPIParameter?.itemPerPage)}
                                 />)}
                             </div>
-                        </div>) : (
-                        <div>
-                            {walletStatus ?
-                                <EmptyListMessage
-                                    message={'No Schemas'}
-                                    description={'Get started by creating a new Schema'}
-                                    buttonContent={'Create Schema'}
-                                    svgComponent={<svg className='pr-2 mr-1' xmlns="http://www.w3.org/2000/svg" width="24" height="15" fill="none" viewBox="0 0 24 24">
-                                        <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
-                                    </svg>}
-                                    onClick={() => {
-                                        window.location.href = `${pathRoutes.organizations.createSchema}?OrgId=${orgId}`
-                                    }}
-                                />
-                                :
-                                <EmptyListMessage
-                                    message={'No Wallet'}
-                                    description={'Get started by creating a Wallet'}
-                                    buttonContent={'Create Wallet'}
-                                    svgComponent={<svg className='pr-2 mr-1' xmlns="http://www.w3.org/2000/svg" width="24" height="15" fill="none" viewBox="0 0 24 24">
-                                        <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
-                                    </svg>}
-                                    onClick={() => {
-                                        window.location.href = `${pathRoutes.organizations.dashboard}?OrgId=${orgId}`
-                                    }}
-                                />}
-
                         </div>
-                    )
+                    ) :
+                        (
+                            <div>
+                                {walletStatus ?
+                                    <EmptyListMessage
+                                        message={'No Schemas'}
+                                        description={'Get started by creating a new Schema'}
+                                        buttonContent={'Create Schema'}
+                                        svgComponent={<svg className='pr-2 mr-1' xmlns="http://www.w3.org/2000/svg" width="24" height="15" fill="none" viewBox="0 0 24 24">
+                                            <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+                                        </svg>}
+                                        onClick={() => {
+                                            window.location.href = `${pathRoutes.organizations.createSchema}?OrgId=${orgId}`
+                                        }}
+                                    />
+                                    :
+                                    <EmptyListMessage
+                                        message={'No Wallet'}
+                                        description={'Get started by creating a Wallet'}
+                                        buttonContent={'Create Wallet'}
+                                        svgComponent={<svg className='pr-2 mr-1' xmlns="http://www.w3.org/2000/svg" width="24" height="15" fill="none" viewBox="0 0 24 24">
+                                            <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+                                        </svg>}
+                                        onClick={() => {
+                                            window.location.href = `${pathRoutes.organizations.dashboard}?OrgId=${orgId}`
+                                        }}
+                                    />}
+
+                            </div>
+                        )
                 }
             </div>
         </div>
