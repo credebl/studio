@@ -34,7 +34,9 @@ const SendInvitationModal = (props: {ecosystemId?:string,flag?:boolean; openModa
     const [invitations, setInvitations] = useState<Invitations[]>([])
 
     const [memberRole, setMemberRole] = useState<RoleI | null>(null)
-
+		const [initialData ,setInitialData]=useState({
+			email: '',
+	})
     const [initialInvitationData, setInitialInvitationData] = useState({
         email: '',
     })
@@ -61,6 +63,9 @@ const SendInvitationModal = (props: {ecosystemId?:string,flag?:boolean; openModa
         setInitialInvitationData({
             email: '',
         })
+				setInitialData({
+					email: '',
+			})
 
         setInvitations([])
         getRoles()
@@ -144,7 +149,7 @@ const SendInvitationModal = (props: {ecosystemId?:string,flag?:boolean; openModa
             size="2xl"
             show={props.openModal} onClose={() => {
                 setInvitations([])
-                setInitialInvitationData(initialInvitationData)
+                setInitialInvitationData(initialData)
                 props.setOpenModal(false)
             }
             }>
