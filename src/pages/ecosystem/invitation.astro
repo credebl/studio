@@ -2,7 +2,7 @@
 import LayoutSidebar from '../../app/LayoutSidebar.astro';
 import { checkUserSession } from '../../utils/check-session';
 import { pathRoutes } from '../../config/pathRoutes';
-import EcoSystemReceivedInvitations from '../../components/EcosystemInvite/EcoSystemReceivedInvitations'
+// import EcoSystemReceivedInvitations from '../../components/EcosystemInvite/EcoSystemReceivedInvitations'
 
 const response = await checkUserSession(Astro.cookies);
 const route = pathRoutes.auth.sinIn
@@ -12,7 +12,7 @@ if (!response) {
 ---
 
 <LayoutSidebar>
-	<EcoSystemReceivedInvitations client:visible/>
+	<!-- <EcoSystemReceivedInvitations client:visible/> -->
 </LayoutSidebar>
 
 
