@@ -45,6 +45,7 @@ const OrgDropDown = () => {
 		let activeOrg: Organisation | null = null
 
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
+		
 		if (orgId) {
 			activeOrg = organizations?.find(org => org.id === Number(orgId)) as Organisation
 			setactiveOrg(activeOrg || null)

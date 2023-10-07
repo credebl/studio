@@ -135,9 +135,9 @@ const ReceivedInvitations = () => {
                         } />
 
                     <AlertComponent
-                        message={message ? message : error}
-                        type={message ? 'success' : 'failure'}
-                        onAlertClose={() => {
+                         message={message ? message : error}
+												 type={message ? 'success' : 'failure'}
+                         onAlertClose={() => {
                             setMessage(null)
                             setError(null)
                         }}
