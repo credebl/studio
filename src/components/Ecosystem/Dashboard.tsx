@@ -1,5 +1,5 @@
 import type { IEcosystem } from './interfaces'
-import { apiStatusCodes } from '../../config/CommonConstant';
+import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { useEffect, useState } from 'react';
 
 import { Button } from 'flowbite-react';
@@ -35,25 +35,28 @@ const Dashboard = () => {
 
         setLoading(true)
 
-        const response = await getEcosystem();
+        if (storageKeys.ORG_ID) {
+            const response = await getEcosystem(storageKeys.ORG_ID);
 
-        const { data } = response as AxiosResponse
+            const { data } = response as AxiosResponse
 
-        if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-            if (data?.data.length > 0) {
-                const ecosystemData = data?.data[0]
-                setEcosystemDetails({
-                    logoUrl: ecosystemData.logoUrl,
-                    name: ecosystemData.name,
-                    description: ecosystemData.description
-                })
+            if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+                if (data?.data.length > 0) {
+                    const ecosystemData = data?.data[0]
+                    setEcosystemDetails({
+                        logoUrl: ecosystemData.logoUrl,
+                        name: ecosystemData.name,
+                        description: ecosystemData.description
+                    })
+                }
+            } else {
+                setFailure(response as string)
             }
-        } else {
-            setFailure(response as string)
         }
+
         setLoading(false)
     }
-    
+
     useEffect(() => {
         fetchEcosystemDetails()
     }, [])

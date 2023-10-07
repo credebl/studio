@@ -23,6 +23,7 @@ const options = [
 ];
 
 interface IAttributes {
+    id?: string
     attributeName: string
     schemaDataType: string
     displayName: string
@@ -62,7 +63,7 @@ const CreateSchema = () => {
         fetchData();
     }, []);
 
-    const submit = async (values: Values) => {
+    const submit = async (values: IFormData) => {
         setCreateLoader(true);
         const schemaFieldName: FieldName = {
             schemaName: values.schemaName,
@@ -92,14 +93,15 @@ const CreateSchema = () => {
         }
     };
 
-    const submitSchemaCreationRequest = async (values: Values) => {
+    const submitSchemaCreationRequest = async (values: IFormData) => {
         setCreateLoader(true);
-        const schemaFieldName: FieldName = {
-            schemaName: values.schemaName,
-            schemaVersion: values.schemaVersion,
+        const schemaFieldName = {
+            endorse: true,
             attributes: values.attribute,
-            orgId: orgId,
-        };
+            version: values.schemaVersion,
+            name: values.schemaName,
+        }
+
 
         const createSchema = await createSchemaRequest(schemaFieldName, orgId);
         const { data } = createSchema as AxiosResponse;
@@ -259,8 +261,7 @@ const CreateSchema = () => {
 
                                                         </div>
                                                         <div className="flex flex-col">
-                                                            {attribute.map((element: any, index: number, schemaDataType: string) => (
-
+                                                            {attribute.map((element: IAttributes, index: number) => (
                                                                 <div
                                                                     key={`attributeList-${index}`}
                                                                     className="mt-5"

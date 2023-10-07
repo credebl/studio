@@ -53,8 +53,7 @@ export const updateEcosystem = async (data: object) => {
     }
 }
 
-export const getEcosystem = async () => {
-    const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+export const getEcosystem = async (orgId: string) => {
     const url = `${apiRoutes.Ecosystem.root}/${orgId}`
 
     const axiosPayload = {

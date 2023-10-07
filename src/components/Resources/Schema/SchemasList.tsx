@@ -19,6 +19,7 @@ import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
 import { getOrganizationById } from '../../../api/organization';
 import checkEcosystem from '../../../config/ecosystem';
+import { EndorsementStatus } from '../../../common/enums';
 
 const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaDetails: SchemaDetails) => void; }) => {
 	const [schemaList, setSchemaList] = useState([])
@@ -144,7 +145,9 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 
 	const { isEcosystemMember } = checkEcosystem()
 	const createSchemaTitle = isEcosystemMember ? "Request Endorsement" : "Create"
-	isEcosystemMember ? "Request Endorsement" : "Create"
+	const emptyListTitle = "No Schemas"
+	const emptyListDesc = "Get started by creating a new Schema"
+	const emptyListBtn = isEcosystemMember ? "Request Endorsement" : "Create Schema"
 	return (
 		<div className="px-4 pt-6">
 			<div className="mb-4 col-span-full xl:mb-2">
@@ -235,7 +238,7 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 									schemaList.map((element, key) => (
 										<div className='p-2' key={key}>
 											<SchemaCard schemaName={element['name']} version={element['version']} schemaId={element['schemaLedgerId']} issuerDid={element['issuerId']} attributes={element['attributes']} created={element['createDateTime']}
-												onClickCallback={schemaSelectionCallback} status={key === 1 ? "rejected" : key === 2 ? "requested" : "approved"} />
+												onClickCallback={schemaSelectionCallback} status={key === 1 ? EndorsementStatus.approved : key === 2 ? EndorsementStatus.requested : EndorsementStatus.rejected} />
 										</div>
 									))}
 							</div>
@@ -256,9 +259,9 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 						<div>
 							{walletStatus ?
 								<EmptyListMessage
-									message={'No Schemas'}
-									description={'Get started by creating a new Schema'}
-									buttonContent={'Create Schema'}
+									message={emptyListTitle}
+									description={emptyListDesc}
+									buttonContent={emptyListBtn}
 									svgComponent={<svg className='pr-2 mr-1' xmlns="http://www.w3.org/2000/svg" width="24" height="15" fill="none" viewBox="0 0 24 24">
 										<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
 									</svg>}
@@ -278,7 +281,6 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 										window.location.href = `${pathRoutes.organizations.dashboard}?OrgId=${orgId}`
 									}}
 								/>}
-
 						</div>
 					)
 				}

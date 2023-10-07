@@ -2,7 +2,6 @@
 
 import { Alert, Pagination } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
-// import type { GetAllSchemaListParameter, PaginationData } from '../../../interfaces';
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
 import { getAllSchemas, getAllSchemasByOrgId } from '../../../api/Schema';
 
@@ -10,16 +9,22 @@ import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../../BreadCrumbs';
 import CustomSpinner from '../../CustomSpinner';
 import { EmptyListMessage } from '../../EmptyListComponent';
-import { Features } from '../../../utils/enums/features';
-import RoleViewButton from '../../RoleViewButton';
-import SchemaCard from '../../../commonComponents/SchemaCard';
-import type { SchemaDetails } from '../../Verification/interface';
 import SearchInput from '../../SearchInput';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
 import { getOrganizationById } from '../../../api/organization';
 import checkEcosystem from '../../../config/ecosystem';
-import type { GetAllSchemaListParameter } from '../../Resources/Schema/interfaces';
+import type { GetAllSchemaListParameter, IAttributes } from '../../Resources/Schema/interfaces';
+import EndorsementPopup from './EndorsementPopup';
+import { EcosystemRoles, EndorsementStatus, EndorsementType } from '../../../common/enums';
+import EndorsementCard from './EndorsementCard';
+
+interface ISelectedRequest {
+    attribute: IAttributes[];
+    issuerDid: string;
+    createdDate: string;
+    schemaId: string;
+}
 
 const EndorsementList = () => {
     const [schemaList, setSchemaList] = useState([])
@@ -37,6 +42,8 @@ const EndorsementList = () => {
     })
     const [walletStatus, setWalletStatus] = useState(false)
     const [totalItem, setTotalItem] = useState(0)
+    const [showPopup, setShowPopup] = useState(false)
+    const [selectedRequest, setSelectedRequest] = useState<ISelectedRequest>()
     const getEndorsementList = async (endorsementListAPIParameter: GetAllSchemaListParameter, flag: boolean) => {
         try {
             const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -104,7 +111,7 @@ const EndorsementList = () => {
 
     }
 
-    const requestSelectionCallback = (schemaId: string, attributes: string[], issuerId: string, created: string) => {
+    const requestSelectionCallback = (schemaId: string, attributes: IAttributes[], issuerId: string, created: string) => {
         const schemaDetails = {
             attribute: attributes,
             issuerDid: issuerId,
@@ -112,7 +119,9 @@ const EndorsementList = () => {
             schemaId
         }
         console.log("Selected request data::", schemaDetails)
+        setSelectedRequest(schemaDetails)
         // props.schemaSelectionCallback(schemaId, schemaDetails)
+        setShowPopup(true)
     }
     const options = ["All", "Approved", "Requested", "Rejected"]
 
@@ -140,6 +149,10 @@ const EndorsementList = () => {
         setLoading(false)
     }
 
+    const hidePopup = () => {
+        setShowPopup(false)
+    }
+
     useEffect(() => {
         fetchOrganizationDetails()
     }, [])
@@ -147,6 +160,7 @@ const EndorsementList = () => {
     const { isEcosystemMember } = checkEcosystem()
     // const createSchemaTitle = isEcosystemMember ? "Request Endorsement" : "Create"
     // isEcosystemMember ? "Request Endorsement" : "Create"
+
     return (
         <div className="px-4 pt-6">
             <div className="mb-4 col-span-full xl:mb-2">
@@ -193,19 +207,19 @@ const EndorsementList = () => {
                         </span>
                     </Alert>
                 }
-                {loading
-                    ? (<div className="flex items-center justify-center mb-4">
-                        <CustomSpinner />
-                    </div>)
-                    :
-                    schemaList && schemaList.length > 0 ? (
+                {loading && (<div className="flex items-center justify-center mb-4">
+                    <CustomSpinner />
+                </div>)
+                }
+                {
+                    !loading && schemaList && schemaList.length > 0 ? (
                         <div className='Flex-wrap' style={{ display: 'flex', flexDirection: 'column' }}>
                             <div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
                                 {schemaList && schemaList.length > 0 &&
                                     schemaList.map((element, index) => (
                                         <div className='p-2' key={`endorsement-cards${index}`}>
-                                            <SchemaCard fromEndorsementList={true} schemaName={element['name']} version={element['version']} schemaId={element['schemaLedgerId']} issuerDid={element['issuerId']} attributes={element['attributes']} created={element['createDateTime']}
-                                                onClickCallback={requestSelectionCallback} status={index === 1 ? "approved" : index === 2 ? "requested" : "rejected"} />
+                                            <EndorsementCard fromEndorsementList={true} schemaName={element['name']} version={element['version']} schemaId={element['schemaLedgerId']} issuerDid={element['issuerId']} attributes={element['attributes']} created={element['createDateTime']}
+                                                onClickCallback={requestSelectionCallback} status={index === 1 ? EndorsementStatus.approved : index === 2 ? EndorsementStatus.requested : EndorsementStatus.rejected} />
                                         </div>
                                     ))}
                             </div>
@@ -227,9 +241,9 @@ const EndorsementList = () => {
                             <div>
                                 {walletStatus ?
                                     <EmptyListMessage
-                                        message={'No Schemas'}
-                                        description={'Get started by creating a new Schema'}
-                                        buttonContent={'Create Schema'}
+                                        message={'No Endorsement Requests'}
+                                        description={'Get started by requesting Endorsement'}
+                                        buttonContent={'Request Endorsements'}
                                         svgComponent={<svg className='pr-2 mr-1' xmlns="http://www.w3.org/2000/svg" width="24" height="15" fill="none" viewBox="0 0 24 24">
                                             <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
                                         </svg>}
@@ -254,9 +268,8 @@ const EndorsementList = () => {
                         )
                 }
             </div>
+            <EndorsementPopup openModal={showPopup} closeModal={hidePopup} isAccepted={(flag: boolean) => console.log('Is accepted::', flag)} name={"Schema"} id={selectedRequest?.schemaId ?? "test"} version={''} authorDID={''} revocable={false} endorsementType={EndorsementType.schema} organizationName={''} created={''} ecosystemRole={EcosystemRoles.ecosystemMember} attrNames={[]} />
         </div>
-
-
     )
 }
 
