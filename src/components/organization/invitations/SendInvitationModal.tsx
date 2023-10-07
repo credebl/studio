@@ -27,7 +27,7 @@ interface RoleI {
 }
 
 
-const SendInvitationModal = (props: {ecosystemId?:string,flag:boolean; openModal: boolean; setMessage: (message: string) => void; setOpenModal: (flag: boolean) => void }) => {
+const SendInvitationModal = (props: {ecosystemId?:string,flag?:boolean; openModal: boolean; setMessage: (message: string) => void; setOpenModal: (flag: boolean) => void }) => {
 
     const [loading, setLoading] = useState<boolean>(false)
 
