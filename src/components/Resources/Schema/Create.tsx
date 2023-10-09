@@ -12,6 +12,9 @@ import type { FieldName, Values } from './interfaces';
 import { addSchema } from '../../../api/Schema';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
+import checkEcosystem from '../../../config/ecosystem';
+import { createSchemaRequest } from '../../../api/ecosystem';
+import ConfirmModal from '../../../commonComponents/ConfirmPopup';
 
 const options = [
     { value: 'string', label: 'String' },
@@ -19,12 +22,37 @@ const options = [
     { value: 'date', label: 'Date' },
 ];
 
+interface IAttributes {
+    id?: string
+    attributeName: string
+    schemaDataType: string
+    displayName: string
+}
+interface IFormData {
+    schemaName: string
+    schemaVersion: string
+    attribute: IAttributes[]
+}
+
 
 const CreateSchema = () => {
     const [failure, setFailure] = useState<string | null>(null);
     const [orgId, setOrgId] = useState<number>(0);
     const [orgDid, setOrgDid] = useState<string>('');
     const [createloader, setCreateLoader] = useState<boolean>(false);
+    const [showPopup, setShowPopup] = useState(false)
+    const initFormData: IFormData = {
+        schemaName: '',
+        schemaVersion: '',
+        attribute: [
+            {
+                attributeName: '',
+                schemaDataType: 'string',
+                displayName: '',
+            }
+        ]
+    }
+    const [formData, setFormData] = useState(initFormData)
     useEffect(() => {
         const fetchData = async () => {
             const organizationId = await getFromLocalStorage(
@@ -35,7 +63,7 @@ const CreateSchema = () => {
         fetchData();
     }, []);
 
-    const submit = async (values: Values) => {
+    const submit = async (values: IFormData) => {
         setCreateLoader(true);
         const schemaFieldName: FieldName = {
             schemaName: values.schemaName,
@@ -65,32 +93,74 @@ const CreateSchema = () => {
         }
     };
 
+    const submitSchemaCreationRequest = async (values: IFormData) => {
+        setCreateLoader(true);
+        const schemaFieldName = {
+            endorse: true,
+            attributes: values.attribute,
+            version: values.schemaVersion,
+            name: values.schemaName,
+        }
+
+
+        const createSchema = await createSchemaRequest(schemaFieldName, orgId);
+        const { data } = createSchema as AxiosResponse;
+        if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+            if (data?.data) {
+                setCreateLoader(false);
+                window.location.href = pathRoutes.organizations.schemas;
+            } else {
+                setFailure(createSchema as string);
+                setCreateLoader(false);
+            }
+        } else {
+            setCreateLoader(false);
+            setFailure(createSchema as string);
+            setTimeout(() => {
+                setFailure(null);
+            }, 4000);
+        }
+        setShowPopup(false)
+    };
+
+
+    const { isEnabledEcosystem, isEcosystemMember } = checkEcosystem()
+    const formTitle = isEcosystemMember ? "Create Endorsement Request" : "Create Schema"
+    const submitButtonTitle = isEcosystemMember ? "Request Endorsement" : "Create"
+
+    const confirmCreateSchema = () => {
+        if (isEnabledEcosystem && isEcosystemMember) {
+            console.log("Submitted for endorsement by ecosystem member")
+            submitSchemaCreationRequest(formData)
+        } else {
+            formData.attribute.forEach((element: any) => {
+                if (!element.schemaDataType) {
+                    element.schemaDataType = 'string';
+                }
+            });
+            const updatedAttribute: Array<Number> = [];
+            formData.attribute.forEach((element) => {
+                updatedAttribute.push(Number(element));
+            });
+            submit(formData);
+        }
+    }
+
     return (
         <div className="px-4 pt-6">
             <div className="pl-6 mb-4 col-span-full xl:mb-2">
                 <BreadCrumbs />
                 <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-                    Create Schema
+                    {formTitle}
                 </h1>
             </div>
             <div>
                 <Card className="p-6 m-6" id="createSchemaCard">
                     <div>
                         <Formik
-                            initialValues={{
-                                schemaName: '',
-                                schemaVersion: '',
-                                attribute: [
-                                    {
-                                        attributeName: '',
-                                        schemaDataType: 'string',
-                                        displayName: '',
-                                    },
-                                ],
-                            }}
+                            initialValues={formData}
                             validationSchema={yup.object().shape({
                                 schemaName: yup.string().trim().required('Schema is required'),
-
                                 schemaVersion: yup
                                     .string()
                                     .matches(schemaVersionRegex, 'Enter valid schema version (eg. 0.1 or 0.0.1)')
@@ -110,18 +180,8 @@ const CreateSchema = () => {
                             validateOnChange
                             enableReinitialize
                             onSubmit={async (values): Promise<void> => {
-                                values.attribute.forEach((element: any) => {
-
-                                    if (!element.schemaDataType) {
-                                        element.schemaDataType = 'string';
-                                    }
-                                });
-                                const updatedAttribute: Array<Number> = [];
-                                values.attribute.forEach((element) => {
-                                    updatedAttribute.push(Number(element));
-
-                                });
-                                submit(values);
+                                setFormData(values)
+                                setShowPopup(true)
                             }}
                         >
                             {(formikHandlers): JSX.Element => (
@@ -145,10 +205,8 @@ const CreateSchema = () => {
                                                 {formikHandlers.errors &&
                                                     formikHandlers.touched.schemaName &&
                                                     formikHandlers.errors.schemaName ? (
-
                                                     <label className="pt-1 text-red-500 text-xs h-5">
                                                         {formikHandlers.errors.schemaName}
-
                                                     </label>
                                                 ) : (
                                                     <label className="pt-1 text-red-500 text-xs h-5"></label>
@@ -203,8 +261,7 @@ const CreateSchema = () => {
 
                                                         </div>
                                                         <div className="flex flex-col">
-                                                            {attribute.map((element: any, index: number, schemaDataType: string) => (
-
+                                                            {attribute.map((element: IAttributes, index: number) => (
                                                                 <div
                                                                     key={`attributeList-${index}`}
                                                                     className="mt-5"
@@ -261,6 +318,7 @@ const CreateSchema = () => {
                                                                                     {options.map((opt) => {
                                                                                         return (
                                                                                             <option
+                                                                                                key={opt.value}
                                                                                                 className=""
                                                                                                 value={opt.value}
                                                                                             >
@@ -412,7 +470,6 @@ const CreateSchema = () => {
                                                                                                 viewBox="0 0 24 24"
                                                                                                 strokeWidth={2.5}
                                                                                                 stroke="currentColor"
-                                                                                                className="mr-2"
                                                                                             >
                                                                                                 <path
                                                                                                     fill="#fff"
@@ -421,7 +478,7 @@ const CreateSchema = () => {
                                                                                                     d="M12 4.5v15m7.5-7.5h-15"
                                                                                                 />
                                                                                             </svg>
-                                                                                            <span className="hidden xl:inline-block">
+                                                                                            <span className="hidden xl:inline-block ml-2">
                                                                                                 Add
                                                                                             </span>
                                                                                         </Button>
@@ -440,7 +497,7 @@ const CreateSchema = () => {
                                     </div>
 
                                     {failure && (
-                                        <div className="pt-1">
+                                        <div className="pt-4">
                                             <Alert color="failure" onDismiss={() => setFailure(null)}>
                                                 <span>
                                                     <p>{failure}</p>
@@ -450,17 +507,12 @@ const CreateSchema = () => {
                                     )}
                                     <div className="float-right p-2">
                                         <Button
-                                            data-modal-target="popup-modal"
-                                            data-modal-toggle="popup-modal"
-                                            type="button"
+                                            type="submit"
                                             color="bg-primary-700"
                                             disabled={
-                                                !formikHandlers.isValid || !formikHandlers.dirty
+                                                !formikHandlers.isValid
                                             }
-                                            className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto mt-2'
-
-                                            style={{ height: '2.6rem', width: '6rem', minWidth: '2rem' }}
-
+                                            className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto mt-2 min-w-[6rem] h-[2.6rem]'
                                         >
                                             <svg
                                                 className="pr-2"
@@ -475,80 +527,11 @@ const CreateSchema = () => {
                                                     d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"
                                                 />
                                             </svg>
-                                            Create
+                                            {submitButtonTitle}
                                         </Button>
                                     </div>
 
-                                    <div>
-                                        <div
-                                            id="popup-modal"
-                                            tabindex="-1"
-                                            className="fixed top-0 left-0 right-0 z-50 hidden p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
-                                        >
-                                            <div className="relative w-full max-w-md max-h-full">
-                                                <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                                                    <button
-                                                        type="button"
-                                                        className="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                                                        data-modal-hide="popup-modal"
-                                                    >
-                                                        <svg
-                                                            className="w-3 h-3"
-                                                            aria-hidden="true"
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            fill="none"
-                                                            viewBox="0 0 14 14"
-                                                        >
-                                                            <path
-                                                                stroke="currentColor"
-                                                                stroke-linecap="round"
-                                                                stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-                                                            />
-                                                        </svg>
-                                                        <span className="sr-only">Close modal</span>
-                                                    </button>
-                                                    <div className="p-6 text-center">
-                                                        <svg
-                                                            className="mx-auto mb-4 text-yellow-300 w-12 h-12 dark:text-gray-200"
-                                                            aria-hidden="true"
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            fill="none"
-                                                            viewBox="0 0 20 20"
-                                                        >
-                                                            <path
-                                                                stroke="currentColor"
-                                                                stroke-linecap="round"
-                                                                stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                            />
-                                                        </svg>
-                                                        <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-                                                            Would you like to proceed? Keep in mind that this
-                                                            action cannot be undone.
-                                                        </h3>
-                                                        <button
-                                                            data-modal-hide="popup-modal"
-                                                            type="button"
-                                                            className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
-                                                        >
-                                                            No, cancel
-                                                        </button>
-                                                        <Button
-                                                            type="submit"
-                                                            isProcessing={createloader}
-                                                            disabled={createloader}
-                                                            className="text-base bg-primary-700 hover:!bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 font-medium rounded-lg text-sm inline-flex items-center text-center ml-2"
-                                                        >
-                                                            Yes, I'm sure
-                                                        </Button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <ConfirmModal openModal={showPopup} closeModal={() => setShowPopup(false)} onSuccess={confirmCreateSchema} message={"Would you like to proceed? Keep in mind that this action cannot be undone."} isProcessing={createloader} />
 
                                     <div className="float-right p-2 mt-2">
                                         <Button

@@ -27,5 +27,6 @@ export const storageKeys = {
     SCHEMA_ATTR:'schema_attr',
 	CRED_DEF_ID:'cred_def_id',
     SCHEMA_DID: 'schema_did',
-    LOGIN_USER_EMAIL: 'login_user_email'
+    LOGIN_USER_EMAIL: 'login_user_email',
+		ECOSYSTEM_ID: "ecosystem_id"
 }

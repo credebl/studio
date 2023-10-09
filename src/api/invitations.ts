@@ -68,6 +68,60 @@ export const createInvitations = async (invitationList: Array<object>) => {
     }
 }
 
+export const getEcosystemList = async () => {
+
+	const url = `${apiRoutes.Ecosystem.root}`
+
+	const token = await getFromLocalStorage(storageKeys.TOKEN)
+
+	const config = {
+			headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`
+			}
+	}
+	const axiosPayload = {
+			url,
+			config
+	}
+
+	try {
+			return await axiosGet(axiosPayload);
+	}
+	catch (error) {
+			const err = error as Error
+			return err?.message
+	}
+}
+export const createEcoSystemInvitations = async (invitationList: Array<object>,ecosystemId: string) => {
+  	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		const url = `${apiRoutes.Ecosystem.root}/${ecosystemId}/${orgId}${apiRoutes.Ecosystem.invitations}`
+
+	const payload = {
+			invitations: invitationList,
+	}
+	const token = await getFromLocalStorage(storageKeys.TOKEN)
+
+	const config = {
+			headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`
+			}
+	}
+	const axiosPayload = {
+			url,
+			payload,
+			config
+	}
+
+	try {
+			return await axiosPost(axiosPayload);
+	}
+	catch (error) {
+			const err = error as Error
+			return err?.message
+	}
+}
 // Received Invitations by User
 export const getUserInvitations = async (pageNumber: number, pageSize: number, search = '') => {
 
@@ -93,6 +147,60 @@ export const getUserInvitations = async (pageNumber: number, pageSize: number, s
         const err = error as Error
         return err?.message
     }
+}
+
+// getEcosytemReceivedInvitations
+export const getEcosytemReceivedInvitations = async (pageNumber: number, pageSize: number, search = '') => {
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+
+	const url = `${apiRoutes.Ecosystem.root}/${orgId}/?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
+
+	const token = await getFromLocalStorage(storageKeys.TOKEN)
+
+	const config = {
+			headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`
+			}
+	}
+	const axiosPayload = {
+			url,
+			config
+	}
+
+	try {
+			return await axiosGet(axiosPayload);
+	}
+	catch (error) {
+			const err = error as Error
+			return err?.message
+	}
+}
+export const getEcosystemInvitations = async (pageNumber: number, pageSize: number, search:string) => {
+	const ecosystemId = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID);
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+	const url = `${apiRoutes.Ecosystem.root}/${ecosystemId}/${orgId}${apiRoutes.Ecosystem.invitations}`
+
+	const token = await getFromLocalStorage(storageKeys.TOKEN)
+
+	const config = {
+			headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`
+			}
+	}
+	const axiosPayload = {
+			url,
+			config
+	}
+
+	try {
+			return await axiosGet(axiosPayload);
+	}
+	catch (error) {
+			const err = error as Error
+			return err?.message
+	}
 }
 
 // Accept/ Reject Invitations
