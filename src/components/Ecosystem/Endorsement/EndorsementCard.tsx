@@ -3,113 +3,84 @@ import { dateConversion } from '../../../utils/DateConversion';
 import DateTooltip from '../../../components/Tooltip';
 import { EndorsementStatus, EndorsementType } from '../../../common/enums';
 import StatusTabletTag from '../../../commonComponents/StatusTabletTag';
-import checkEcosystem from '../../../config/ecosystem';
-import type { IAttributes } from '../../Resources/Schema/interfaces';
+import { checkEcosystem } from '../../../config/ecosystem';
 
-type IStatus = "Approved" | "Rejected" | "Requested" | "Submitted"
 interface IProps {
     className?: string,
-    schemaName: string,
-    version: string,
-    schemaId: string,
-    issuerDid: string,
-    attributes: IAttributes[],
-    created: string,
-    status?: IStatus,
+    data: any,
     fromEndorsementList?: boolean,
     cardTransitionDisabled?: boolean
     endorsementType?: EndorsementType
     allAttributes?: boolean
-    organizationName?: string
-    onClickCallback: (schemaId: string, attributes: IAttributes[], issuerDid: string, created: string) => void;
+    onClickCallback?: (data: any) => void;
 }
 
 interface IAttrubute {
     attributeName: string
 }
 
-const EndorsementCard = (props: IProps) => {
-    const enableAction = (!Boolean(props.fromEndorsementList) && props.status === EndorsementStatus.approved) || Boolean(props.fromEndorsementList)
-    const attributesData = props.allAttributes ? props?.attributes : props?.attributes?.slice(0, 3)
+const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTransitionDisabled, allAttributes }: IProps) => {
+    const enableAction = (!fromEndorsementList && data?.status === EndorsementStatus.approved) || Boolean(fromEndorsementList)
 
     const { isEcosystemLead } = checkEcosystem()
 
+
+    const requestPayload = data?.requestPayload && JSON.parse(data?.requestPayload)
+
+    const requestData = requestPayload?.operation?.data
+    const attributesData = allAttributes ? requestData?.attr_names : requestData?.attr_names?.slice(0, 3)
+
     return (
         <Card onClick={() => {
-            if (enableAction) {
-                props.onClickCallback(props.schemaId, props.attributes, props.issuerDid, props.created)
+            if (enableAction && onClickCallback) {
+                onClickCallback(data)
             }
         }}
-            className={`${props.cardTransitionDisabled ? "" : "transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer"}  ${enableAction ? "cursor-pointer" : props.cardTransitionDisabled ? "cursor-default" : "cursor-not-allowed"} ${props.cardTransitionDisabled && "shadow-none"}`}
-
-            style={props.cardTransitionDisabled ? { height: '260px', overflow: 'auto', margin: 10 } : { width: '100%', height: '260px', overflow: 'auto' }}
+            className={`${cardTransitionDisabled ? "" : "transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer"}  ${enableAction ? "cursor-pointer" : cardTransitionDisabled ? "cursor-default" : "cursor-not-allowed"} ${cardTransitionDisabled && "shadow-none"} m-3`}
         >      <div className="flex justify-between items-start">
                 <div>
                     <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
-                        {props.schemaName}
+                        {requestData?.name}
                     </h5>
                     <p className='dark:text-white'>
-                        Version: {props.version}
+                        Version: {requestData?.version}
                     </p>
                 </div>
-                <div className='float-right ml-auto '>
+                <div className='float-right ml-auto'>
                     <p className='dark:text-white'>
-                        <DateTooltip date={props.created}>
-                            Created: {dateConversion(props.created)}
+                        <DateTooltip date={data?.createDateTime}>
+                            Requested: {dateConversion(data?.createDateTime)}
                         </DateTooltip >
                     </p >
                 </div >
             </div >
             {
-                props.status &&
+                data?.status &&
                 <div className='flex items-center'>
-                    <div>
+                    <div className='dark:text-white'>
                         Status:
                     </div>
                     <div className='ml-4'>
-                        <StatusTabletTag status={props.status} />
+                        <StatusTabletTag status={data?.status} />
                     </div>
                 </div>
             }
             < div className="min-w-0 flex-1" >
                 <p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
-                    <span className="font-semibold">Schema ID:</span> {props.schemaId}
+                    <span className="font-semibold">Schema ID:</span> {data?.schemaId}
                 </p>
                 <p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
-                    <span className="font-semibold">Issuer DID:</span> {props.issuerDid}
+                    <span className="font-semibold">Author DID:</span> {data?.authorDid}
                 </p>
-                <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                    <span className="font-semibold">Ledger:</span> {props.issuerDid.split(":")[2]}
+                <p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
+                    <span className="font-semibold">Ledger:</span> NA
                 </p>
+                {isEcosystemLead &&
+                    <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
+                        <span className="font-semibold">Organization:</span> NA
+                    </p>
+                }
             </div>
-
-            {isEcosystemLead &&
-                <p>
-                    Org. Name: {props.organizationName}
-                </p>
-            }
-
-            {/* {props.endorsementType === EndorsementType.credDef ? (
-
-                <div>
-                    ID: {props.id}
-                    <div>
-
-                        Revocable:
-                        <div
-                            key={''}
-                            className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
-                        >
-                            {props.revocable ? 'Yes' : 'No'}
-                        </div>
-                    </div>
-                </div>
-
-            ) : (
-                <div>
-
-                </div>
-            )} */}
 
             <div className="flow-root">
                 <ul className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -122,13 +93,13 @@ const EndorsementCard = (props: IProps) => {
 
                                 {attributesData && attributesData.length > 0 && (
                                     <>
-                                        {attributesData.map((element: IAttrubute, index: number) => (
-                                            <div key={`schema-card-attributes${index}`}>
+                                        {attributesData.map((element: string, index: number) => (
+                                            <div key={`schema-card-attributes${element}`}>
                                                 <span
                                                     style={{ display: 'block' }}
                                                     className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
                                                 >
-                                                    {element?.attributeName}
+                                                    {element}
                                                 </span>
                                             </div>
                                         ))}

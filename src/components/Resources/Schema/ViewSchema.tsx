@@ -13,12 +13,10 @@ import CredDeffCard from '../../../commonComponents/CredentialDefinitionCard';
 import type { CredDeffFieldNameType } from './interfaces';
 import CustomSpinner from '../../CustomSpinner';
 import { EmptyListMessage } from '../../EmptyListComponent';
-import React from 'react';
 import { Roles } from '../../../utils/enums/roles';
-import SchemaCard from '../../../commonComponents/SchemaCard';
 import { nanoid } from 'nanoid';
 import { pathRoutes } from '../../../config/pathRoutes';
-import checkEcosystem from '../../../config/ecosystem';
+import { checkEcosystem, getEcosystemId } from '../../../config/ecosystem';
 import { createCredDefRequest } from '../../../api/ecosystem';
 
 interface Values {
@@ -149,7 +147,9 @@ const ViewSchemas = () => {
         schemaLedgerId: schemaId
       }
 
-      const createCredDeff = await createCredDefRequest(CredDeffFieldName, orgId);
+      const ecoId = await getEcosystemId()
+
+      const createCredDeff = await createCredDefRequest(CredDeffFieldName, ecoId, orgId);
       const { data } = createCredDeff as AxiosResponse
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
         setCreateLoader(false)
