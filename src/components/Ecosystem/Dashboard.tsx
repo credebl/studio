@@ -16,7 +16,7 @@ import { AlertComponent } from '../AlertComponent';
 import checkEcosystem from '../../config/ecosystem';
 import RoleViewButton from '../RoleViewButton';
 import SendInvitationModal from '../organization/invitations/SendInvitationModal';
-import { setToLocalStorage } from '../../api/Auth';
+import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 
 const Dashboard = () => {
     const [ecosystemDetails, setEcosystemDetails] = useState<IEcosystem | null>();
@@ -41,9 +41,9 @@ const Dashboard = () => {
     const fetchEcosystemDetails = async () => {
 
         setLoading(true);
-        if (storageKeys.ORG_ID) {
-
-            const response = await getEcosystem(storageKeys.ORG_ID);
+        const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
+        if (orgId) {
+            const response = await getEcosystem(orgId);
             const { data } = response as AxiosResponse;
 
             if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
