@@ -187,10 +187,11 @@ const ReceivedInvitations = () => {
 								<ul id={selectedId?.toString()} className="divide-y divide-gray-200 dark:divide-gray-700">
 									{invitationsList.map((invitation) => (
 										<li key={invitation.id} className="p-4">
-											<div className="flex flex-wrap justify-between xl:block 2xl:flex align-center 2xl:space-x-4">
+											<div id={invitation.email} className="flex flex-wrap justify-between xl:block 2xl:flex align-center 2xl:space-x-4">
 												<div id={invitation.email} className=" xl:mb-4 2xl:mb-0">
 													<div id={invitation.email} className="flex space-x-4">
 														<svg
+														  id={invitation.email}
 															width="60"
 															height="60"
 															viewBox="0 0 398 398"
@@ -231,17 +232,18 @@ const ReceivedInvitations = () => {
 														</svg>
 
 														<div id={invitation.email} className="flex-1 min-w-0">
-															<p className="text-base font-semibold text-gray-900 leading-none truncate mb-0.5 dark:text-white">
+															<p id={invitation.email} className="text-base font-semibold text-gray-900 leading-none truncate mb-0.5 dark:text-white">
 																{invitation.email}
 															</p>
 
 															<div id={invitation.email} className="flow-root h-auto">
 																<ul id={invitation.email} className="divide-y divide-gray-200 dark:divide-gray-700">
 																	<li id={invitation.email} className="pt-3 sm:pt-3 overflow-auto">
-																		<div className="items-center space-x-4">
-																			<div className="inline-flex items-center text-base font-normal text-gray-900 dark:text-white">
+																		<div id={invitation.email} className="items-center space-x-4">
+																			<div id={invitation.email} className="inline-flex items-center text-base font-normal text-gray-900 dark:text-white">
 																				Roles:
 																				<span
+																				  id={invitation.email}
 																					key={invitation.id}
 																					className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
 																				>
@@ -268,6 +270,7 @@ const ReceivedInvitations = () => {
 															className='mx-5 mt-5 text-base font-medium text-center text-gray-00 bg-secondary-700 hover:!bg-secondary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600  dark:focus:ring-primary-800 dark:bg-gray-800"'
 														>
 															<svg
+																id={invitation.email}
 																className="mr-1 h-6 w-6 text-primary-700"
 																fill="none"
 																viewBox="0 0 24 24"
@@ -293,6 +296,7 @@ const ReceivedInvitations = () => {
 															className='mx-5 mt-5 text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-700 dark:hover:!bg-primary-800 dark:focus:ring-primary-800"'
 														>
 															<svg
+																id={invitation.email}
 																className="mr-1 h-6 w-6 text-white"
 																width="20"
 																height="20"
