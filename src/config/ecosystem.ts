@@ -6,7 +6,7 @@ const userProfile = await getFromLocalStorage(storageKeys.USER_PROFILE)
 const userDetails = userProfile && await JSON.parse(userProfile)
 
 const isEnabledEcosystem = userDetails.enableEcosystem
-const ecosystemRole = EcosystemRoles.ecosystemMember
+const ecosystemRole = EcosystemRoles.ecosystemLead
 
 const checkEcosystem = () => ({
     isEnabledEcosystem,
