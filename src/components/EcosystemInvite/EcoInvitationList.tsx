@@ -1,6 +1,5 @@
 interface InvitationProps {
 	invitationId: string;
-	invitationEmail: string;
 	ecosytem: [];
 }
 
@@ -10,7 +9,6 @@ const EcoInvitationList = (props: InvitationProps) => {
 	const { name } = ecosytem;
 
 	return (
-		<>
 			<div className="flex space-x-4">
 				<svg
 					width="60"
@@ -72,7 +70,6 @@ const EcoInvitationList = (props: InvitationProps) => {
 					</div>
 				</div>
 			</div>
-		</>
 	);
 };
 
