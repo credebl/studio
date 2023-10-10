@@ -28,7 +28,7 @@ const ReceivedInvitations = () => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [message, setMessage] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
-	const [organizationsList, setOrganizationList] =useState<Array<Organisation> | null>(null);
+	const [organizationsList, setOrganizationsList] =useState<Array<Organisation> | null>(null);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const [selectedId, setSelectedId] = useState<number>();
 	const [searchText, setSearchText] = useState('');
@@ -63,7 +63,7 @@ const ReceivedInvitations = () => {
 				return userOrg;
 			});
 
-			setOrganizationList(orgList);
+			setOrganizationsList(orgList);
 			setCurrentPage({
 				...currentPage,
 				total: totalPages,
@@ -189,7 +189,7 @@ const ReceivedInvitations = () => {
 										<li key={invitation.id} className="p-4">
 											<div className="flex flex-wrap justify-between xl:block 2xl:flex align-center 2xl:space-x-4">
 												<div id={invitation.email} className=" xl:mb-4 2xl:mb-0">
-													<div className="flex space-x-4">
+													<div id={invitation.email} className="flex space-x-4">
 														<svg
 															width="60"
 															height="60"
@@ -230,7 +230,7 @@ const ReceivedInvitations = () => {
 															</defs>
 														</svg>
 
-														<div className="flex-1 min-w-0">
+														<div id={invitation.email} className="flex-1 min-w-0">
 															<p className="text-base font-semibold text-gray-900 leading-none truncate mb-0.5 dark:text-white">
 																{invitation.email}
 															</p>
@@ -240,7 +240,7 @@ const ReceivedInvitations = () => {
 																	<li className="pt-3 sm:pt-3 overflow-auto">
 																		<div className="items-center space-x-4">
 																			<div className="inline-flex items-center text-base font-normal text-gray-900 dark:text-white">
-																				Roles:{' '}
+																				Roles:
 																				<span
 																					key={invitation.id}
 																					className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
@@ -255,7 +255,7 @@ const ReceivedInvitations = () => {
 														</div>
 													</div>
 
-													<div className="flex">
+													<div  id={invitation.email} className="flex">
 														<Button
 															onClick={() =>
 																respondToEcosystemInvitations(
