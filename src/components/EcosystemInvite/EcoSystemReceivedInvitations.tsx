@@ -152,6 +152,76 @@ const ReceivedInvitations = () => {
 		getOrgId();
 	}, []);
 
+	const invSvg=	<svg
+	width="60"
+	height="60"
+	viewBox="0 0 398 398"
+	fill="none"
+	xmlns="http://www.w3.org/2000/svg"
+>
+	<g clip-path="url(#clip0_3892_5729)">
+		<path
+			d="M350.828 117.051V166.651L382.328 143.251L350.828 117.051Z"
+			fill="#6B7280"
+		/>
+		<path
+			d="M217.922 6.9502C206.822 -2.2498 190.722 -2.3498 179.622 6.8502L166.922 17.6502H230.822L217.922 6.9502Z"
+			fill="#6B7280"
+		/>
+		<path
+			d="M228.629 282.451C220.029 288.851 209.629 292.351 198.929 292.251C188.229 292.251 177.729 288.851 169.129 282.451L9.82869 163.551V367.451C9.72869 383.951 23.0287 397.451 39.5287 397.551H358.029C374.529 397.451 387.829 383.951 387.729 367.451V163.551L228.629 282.451Z"
+			fill="#6B7280"
+		/>
+		<path
+			d="M15.3281 143.249L45.8281 165.949V117.949L15.3281 143.249Z"
+			fill="#6B7280"
+		/>
+		<path
+			d="M65.8281 37.6484V180.848L180.828 266.448C191.528 274.248 206.228 274.248 216.928 266.448L330.828 181.548V37.6484H65.8281ZM136.828 117.648H190.828C196.328 117.648 200.828 122.148 200.828 127.648C200.828 133.148 196.328 137.648 190.828 137.648H136.828C131.328 137.648 126.828 133.148 126.828 127.648C126.828 122.148 131.328 117.648 136.828 117.648ZM260.828 187.648H136.828C131.328 187.648 126.828 183.148 126.828 177.648C126.828 172.148 131.328 167.648 136.828 167.648H260.828C266.328 167.648 270.828 172.148 270.828 177.648C270.828 183.148 266.328 187.648 260.828 187.648Z"
+			fill="#6B7280"
+		/>
+	</g>
+	<defs>
+		<clipPath id="clip0_3892_5729">
+			<rect
+				width="397.55"
+				height="397.55"
+				fill="white"
+			/>
+		</clipPath>
+	</defs>
+</svg>
+
+
+const rejectEnv=<svg
+className="mr-1 h-6 w-6 text-primary-700"
+fill="none"
+viewBox="0 0 24 24"
+stroke="currentColor"
+>
+<path
+	stroke-linecap="round"
+	stroke-linejoin="round"
+	stroke-width="2"
+	d="M6 18L18 6M6 6l12 12"
+/>
+</svg>
+
+const acceptEnv=<svg
+className="mr-1 h-6 w-6 text-white"
+width="20"
+height="20"
+viewBox="0 0 24 24"
+stroke-width="2"
+stroke="currentColor"
+fill="none"
+stroke-linecap="round"
+stroke-linejoin="round"
+>
+<path stroke="none" d="M0 0h24v24H0z" />
+<path d="M5 12l5 5l10 -10" />
+</svg>
+
 	return (
 		<div className="px-4 pt-6">
 			<div className="pl-6 mb-4 col-span-full xl:mb-2">
@@ -190,46 +260,7 @@ const ReceivedInvitations = () => {
 											<div id={invitation.email} className="flex flex-wrap justify-between xl:block 2xl:flex align-center 2xl:space-x-4">
 												<div id={invitation.email} className=" xl:mb-4 2xl:mb-0">
 													<div id={invitation.email} className="flex space-x-4">
-														<svg
-														  id={invitation.email}
-															width="60"
-															height="60"
-															viewBox="0 0 398 398"
-															fill="none"
-															xmlns="http://www.w3.org/2000/svg"
-														>
-															<g clip-path="url(#clip0_3892_5729)">
-																<path
-																	d="M350.828 117.051V166.651L382.328 143.251L350.828 117.051Z"
-																	fill="#6B7280"
-																/>
-																<path
-																	d="M217.922 6.9502C206.822 -2.2498 190.722 -2.3498 179.622 6.8502L166.922 17.6502H230.822L217.922 6.9502Z"
-																	fill="#6B7280"
-																/>
-																<path
-																	d="M228.629 282.451C220.029 288.851 209.629 292.351 198.929 292.251C188.229 292.251 177.729 288.851 169.129 282.451L9.82869 163.551V367.451C9.72869 383.951 23.0287 397.451 39.5287 397.551H358.029C374.529 397.451 387.829 383.951 387.729 367.451V163.551L228.629 282.451Z"
-																	fill="#6B7280"
-																/>
-																<path
-																	d="M15.3281 143.249L45.8281 165.949V117.949L15.3281 143.249Z"
-																	fill="#6B7280"
-																/>
-																<path
-																	d="M65.8281 37.6484V180.848L180.828 266.448C191.528 274.248 206.228 274.248 216.928 266.448L330.828 181.548V37.6484H65.8281ZM136.828 117.648H190.828C196.328 117.648 200.828 122.148 200.828 127.648C200.828 133.148 196.328 137.648 190.828 137.648H136.828C131.328 137.648 126.828 133.148 126.828 127.648C126.828 122.148 131.328 117.648 136.828 117.648ZM260.828 187.648H136.828C131.328 187.648 126.828 183.148 126.828 177.648C126.828 172.148 131.328 167.648 136.828 167.648H260.828C266.328 167.648 270.828 172.148 270.828 177.648C270.828 183.148 266.328 187.648 260.828 187.648Z"
-																	fill="#6B7280"
-																/>
-															</g>
-															<defs>
-																<clipPath id="clip0_3892_5729">
-																	<rect
-																		width="397.55"
-																		height="397.55"
-																		fill="white"
-																	/>
-																</clipPath>
-															</defs>
-														</svg>
+												   	{invSvg}
 
 														<div id={invitation.email} className="flex-1 min-w-0">
 															<p id={invitation.email} className="text-base font-semibold text-gray-900 leading-none truncate mb-0.5 dark:text-white">
@@ -269,20 +300,7 @@ const ReceivedInvitations = () => {
 															color="bg-white"
 															className='mx-5 mt-5 text-base font-medium text-center text-gray-00 bg-secondary-700 hover:!bg-secondary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600  dark:focus:ring-primary-800 dark:bg-gray-800"'
 														>
-															<svg
-																id={invitation.email}
-																className="mr-1 h-6 w-6 text-primary-700"
-																fill="none"
-																viewBox="0 0 24 24"
-																stroke="currentColor"
-															>
-																<path
-																	stroke-linecap="round"
-																	stroke-linejoin="round"
-																	stroke-width="2"
-																	d="M6 18L18 6M6 6l12 12"
-																/>
-															</svg>
+															{rejectEnv}
 															Reject
 														</Button>
 														<Button
@@ -295,21 +313,7 @@ const ReceivedInvitations = () => {
 															id={invitation.id}
 															className='mx-5 mt-5 text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-700 dark:hover:!bg-primary-800 dark:focus:ring-primary-800"'
 														>
-															<svg
-																id={invitation.email}
-																className="mr-1 h-6 w-6 text-white"
-																width="20"
-																height="20"
-																viewBox="0 0 24 24"
-																stroke-width="2"
-																stroke="currentColor"
-																fill="none"
-																stroke-linecap="round"
-																stroke-linejoin="round"
-															>
-																<path stroke="none" d="M0 0h24v24H0z" />
-																<path d="M5 12l5 5l10 -10" />
-															</svg>
+															{acceptEnv}
 															Accept
 														</Button>
 													</div>
