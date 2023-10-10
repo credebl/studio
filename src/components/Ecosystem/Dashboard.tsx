@@ -13,7 +13,7 @@ import { getEcosystem } from '../../api/ecosystem';
 import { EmptyListMessage } from '../EmptyListComponent';
 import CreateEcosystemOrgModal from '../CreateEcosystemOrgModal';
 import { AlertComponent } from '../AlertComponent';
-import checkEcosystem from '../../config/ecosystem';
+import { checkEcosystem } from '../../config/ecosystem';
 import RoleViewButton from '../RoleViewButton';
 import SendInvitationModal from '../organization/invitations/SendInvitationModal';
 import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
@@ -194,7 +194,7 @@ const Dashboard = () => {
                 </div>
             ) : (
                 <div>
-                    {!ecosystemDetails && !loading ? (
+                    {!ecosystemDetails && loading ? (
                         <div className="min-h-100/18rem flex justify-center items-center">
                             <CustomSpinner />
                         </div>

@@ -18,7 +18,7 @@ import SearchInput from '../../SearchInput';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
 import { getOrganizationById } from '../../../api/organization';
-import checkEcosystem from '../../../config/ecosystem';
+import { checkEcosystem } from '../../../config/ecosystem';
 import { EndorsementStatus } from '../../../common/enums';
 
 const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaDetails: SchemaDetails) => void; }) => {
