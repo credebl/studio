@@ -182,9 +182,9 @@ const ReceivedInvitations = () => {
 							<CustomSpinner />
 						</div>
 					) : invitationsList && invitationsList?.length > 0 ? (
-						<div className="p-2 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-3 dark:bg-gray-800">
-							<div className="flow-root">
-								<ul className="divide-y divide-gray-200 dark:divide-gray-700">
+						<div id={selectedId?.toString()} className="p-2 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-3 dark:bg-gray-800">
+							<div id={selectedId?.toString()} className="flow-root">
+								<ul id={selectedId?.toString()} className="divide-y divide-gray-200 dark:divide-gray-700">
 									{invitationsList.map((invitation) => (
 										<li key={invitation.id} className="p-4">
 											<div className="flex flex-wrap justify-between xl:block 2xl:flex align-center 2xl:space-x-4">
