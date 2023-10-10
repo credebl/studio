@@ -178,7 +178,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
             } else {
                 const response = await updateEcosystem(entityData);
                 const { data } = response as AxiosResponse;
-                console.log('data::', data);
+               
                 if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
                     if (props?.onEditSuccess) {
                         props?.onEditSuccess();
@@ -193,8 +193,6 @@ const EditPopupModal = (props: EditEntityModalProps) => {
             setLoading(false);
         }
     };
-    console.log(6566, initialEntityData)
-
     return (
         <Modal show={props.openModal} onClose={() => {
             setLogoImage({
