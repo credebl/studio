@@ -1,4 +1,4 @@
-import { axiosGet, axiosPost } from "../services/apiRequests"
+import { axiosDelete, axiosGet, axiosPost } from "../services/apiRequests"
 
 import { apiRoutes } from "../config/apiRoutes";
 import { getFromLocalStorage } from "./Auth";
@@ -149,6 +149,34 @@ export const getUserInvitations = async (pageNumber: number, pageSize: number, s
     }
 }
 
+
+export const getUserEcosystemInvitations = async (pageNumber: number, pageSize: number, search: string) => {
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
+
+	const url = `${apiRoutes.Ecosystem.root}/${orgId}${apiRoutes.Ecosystem.usersInvitation}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
+
+	const token = await getFromLocalStorage(storageKeys.TOKEN)
+
+	const config = {
+			headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`
+			}
+	}
+	const axiosPayload = {
+			url,
+			config
+	}
+
+	try {
+			return await axiosGet(axiosPayload);
+	}
+	catch (error) {
+			const err = error as Error
+			return err?.message
+	}
+}
+
 // getEcosytemReceivedInvitations
 export const getEcosytemReceivedInvitations = async (pageNumber: number, pageSize: number, search = '') => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -178,6 +206,7 @@ export const getEcosytemReceivedInvitations = async (pageNumber: number, pageSiz
 }
 export const getEcosystemInvitations = async (pageNumber: number, pageSize: number, search:string) => {
 	const ecosystemId = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID);
+	
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 	const url = `${apiRoutes.Ecosystem.root}/${ecosystemId}/${orgId}${apiRoutes.Ecosystem.invitations}`
 
@@ -204,9 +233,9 @@ export const getEcosystemInvitations = async (pageNumber: number, pageSize: numb
 }
 
 // Accept/ Reject Invitations
-export const acceptRejectInvitations = async (invitationId: number,orgId: number, status: string) => {
+export const acceptRejectEcosystemInvitations = async (invitationId: number,orgId: number, status: string) => {
 
-    const url = `${apiRoutes.users.invitations}/${invitationId}`
+    const url = `${apiRoutes.Ecosystem.root}/${orgId}${apiRoutes.Ecosystem.invitations}/${invitationId}`
     
     const payload = {
         orgId: Number(orgId),
@@ -235,4 +264,61 @@ export const acceptRejectInvitations = async (invitationId: number,orgId: number
     }
 }
 
+export const acceptRejectInvitations = async (invitationId: number,orgId: number, status: string) => {
 
+	const url = `${apiRoutes.users.invitations}/${invitationId}`
+	
+	const payload = {
+			orgId: Number(orgId),
+			status
+	}
+	const token = await getFromLocalStorage(storageKeys.TOKEN)
+
+	const config = {
+			headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`
+			}
+	}
+	const axiosPayload = {
+			url,
+			payload,
+			config
+	}
+
+	try {
+			return await axiosPost(axiosPayload);
+	}
+	catch (error) {
+			const err = error as Error
+			return err?.message
+	}
+}
+
+export const deleteEcosystemInvitations = async (invitationId: number) => {
+	
+	const ecosystemId = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID);
+  const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
+	const url = `${apiRoutes.Ecosystem.root}/${ecosystemId}/${orgId}${apiRoutes.Ecosystem.invitations}/${invitationId}`
+	
+	const token = await getFromLocalStorage(storageKeys.TOKEN)
+
+	const config = {
+			headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`
+			}
+	}
+	const axiosPayload = {
+			url,
+			config
+	}
+
+	try {
+			return await axiosDelete(axiosPayload);
+	}
+	catch (error) {
+			const err = error as Error
+			return err?.message
+	}
+}
