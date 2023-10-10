@@ -7,6 +7,7 @@ export interface UserOrgRole {
 }
 
 export interface Organisation {
+    logoFile: string
     id: number
     createDateTime: string
     createdBy: number
@@ -20,6 +21,7 @@ export interface Organisation {
     userOrgRoles: UserOrgRole[]
     org_agents: OrgAgent[]
     publicProfile: boolean
+    
 }
 
 export interface OrgRole {

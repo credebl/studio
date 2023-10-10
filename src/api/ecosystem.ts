@@ -7,7 +7,7 @@ interface DataPayload {
     name: string
     description: string
     logo: string
-    tags: string
+    tags?: string
     userId: number
 }
 
@@ -40,10 +40,12 @@ export const createEcosystems = async (dataPayload: DataPayload) => {
     }
 }
 
-export const updateEcosystem = async (data: object) => {
+export const updateEcosystem = async (dataPayload: DataPayload) => {
     const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-    const url = `${apiRoutes.Ecosystem.root}/${orgId}`
-    const payload = data
+    const ecosystemId = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID);
+
+    const url = `${apiRoutes.Ecosystem.root}/${ecosystemId}/${orgId}`
+    const payload = dataPayload
     const token = await getFromLocalStorage(storageKeys.TOKEN)
     const config = {
         headers: {
@@ -65,6 +67,7 @@ export const updateEcosystem = async (data: object) => {
         return err?.message
     }
 }
+
 
 export const getEcosystem = async () => {
     const orgId = await getFromLocalStorage(storageKeys.ORG_ID);

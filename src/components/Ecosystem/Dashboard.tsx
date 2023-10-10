@@ -17,6 +17,8 @@ import checkEcosystem from '../../config/ecosystem';
 import RoleViewButton from '../RoleViewButton';
 import SendInvitationModal from '../organization/invitations/SendInvitationModal';
 import { setToLocalStorage } from '../../api/Auth';
+import { Dropdown } from 'flowbite-react';
+import EditPopupModal from '../EditEcosystemOrgModal';
 
 const Dashboard = () => {
 	const [ecosystemDetails, setEcosystemDetails] = useState<IEcosystem | null>();
@@ -25,39 +27,48 @@ const Dashboard = () => {
 	const [failure, setFailure] = useState<string | null>(null);
 	const [message, setMessage] = useState<string | null>(null);
 	const [loading, setLoading] = useState<boolean | null>(true);
-  const[ecosystemId,setEcosystemId]=useState('')
+	const [ecosystemId, setEcosystemId] = useState('')
 	const [openModal, setOpenModal] = useState<boolean>(false);
-	const props = { openModal, setOpenModal };
+	const [editOpenModal, setEditOpenModal] = useState<boolean>(false);
+	const [dropdownOpen, setDropdownOpen] = useState(false);
 
 	const createEcosystemModel = () => {
-		props.setOpenModal(true);
+		setOpenModal(true);
 	};
 
 	const createInvitationsModel = () => {
-		props.setOpenModal(true);
+		setOpenModal(true);
 	};
 
-	
+	const EditEcosystemOrgModal = () => {
+		setEditOpenModal(true);
+	};
+
+	const handleEditModalClose = () => {
+		setEditOpenModal(false);
+		setDropdownOpen(false); // Close the dropdown when the edit modal is closed
+	  };
+
 	const fetchEcosystemDetails = async () => {
-		
+
 		setLoading(true);
 		const response = await getEcosystem();
 		const { data } = response as AxiosResponse;
 
-        if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-						const ecosystemData = data?.data[0]
-						await setToLocalStorage(storageKeys.ECOSYSTEM_ID,ecosystemData?.id)
-						setEcosystemId(ecosystemData?.id)
-            setEcosystemDetails({
-                logoUrl: ecosystemData.logoUrl,
-                name: ecosystemData.name,
-                description: ecosystemData.description
-            })
-        } else {
-            setFailure(response as string)
-        }
-        setLoading(false)
-    }
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			const ecosystemData = data?.data[0]
+			await setToLocalStorage(storageKeys.ECOSYSTEM_ID, ecosystemData?.id)
+			setEcosystemId(ecosystemData?.id)
+			setEcosystemDetails({
+				logoUrl: ecosystemData.logoUrl,
+				name: ecosystemData.name,
+				description: ecosystemData.description
+			})
+		} else {
+			setFailure(response as string)
+		}
+		setLoading(false)
+	}
 
 	useEffect(() => {
 		fetchEcosystemDetails();
@@ -117,9 +128,9 @@ const Dashboard = () => {
 								<SendInvitationModal
 									ecosystemId={ecosystemId}
 									flag={true}
-									openModal={props.openModal}
+									openModal={openModal}
 									setMessage={(data) => setMessage(data)}
-									setOpenModal={props.setOpenModal}
+									setOpenModal={setOpenModal}
 								/>
 								<RoleViewButton
 									buttonTitle="Invite"
@@ -141,17 +152,39 @@ const Dashboard = () => {
 									}
 									onClickEvent={createInvitationsModel}
 								/>
-								<div className="ml-4">
-									<svg
-										className="w-6 h-6 text-gray-800 cursor-pointer dark:text-white"
+								<Dropdown
+									label={"test"}
+									open={dropdownOpen} // Pass the open state here
+									onToggle={() => setDropdownOpen(!dropdownOpen)} 
+									renderTrigger={() => <svg
+										className="ml-4 w-4 h-4 text-gray-800 cursor-pointer dark:text-white"
 										aria-hidden="true"
 										xmlns="http://www.w3.org/2000/svg"
 										fill="currentColor"
 										viewBox="0 0 4 15"
+
 									>
 										<path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
-									</svg>
-								</div>
+									</svg>}
+								>
+									<Dropdown.Item onClick={EditEcosystemOrgModal}>
+										<div>
+											Edit Ecosystem
+										</div>
+									</Dropdown.Item>
+									<Dropdown.Item>
+										<div>
+											Enable/Disable Ecosystem
+										</div>
+									</Dropdown.Item>
+									<Dropdown.Item>
+										<div>
+											Manual Registration
+										</div>
+									</Dropdown.Item>
+
+
+								</Dropdown>
 							</div>
 						)}
 					</div>
@@ -192,6 +225,18 @@ const Dashboard = () => {
 							<div className="mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 								<MemberList />
 							</div>
+							<EditPopupModal
+								openModal={editOpenModal}
+								setOpenModal={setEditOpenModal}
+								setMessage={(value) => {
+									setSuccess(value);
+									// setDropdownOpen(false);
+
+								}}
+								isOrganization={false}
+								onEditSuccess={handleEditModalClose}
+								entityData={ecosystemDetails}
+							/>
 						</>
 					)}
 				</div>
@@ -206,13 +251,14 @@ const Dashboard = () => {
 							<div className="flex items-center justify-center mb-4">
 								<CreateEcosystemOrgModal
 									openModal={openModal}
-									setOpenModal={props.setOpenModal}
+									setOpenModal={setOpenModal}
 									setMessage={(value) => {
 										setSuccess(value);
 										fetchEcosystemDetails();
 									}}
 									isorgModal={false}
 								/>
+
 								<EmptyListMessage
 									message={'No Ecosystem found'}
 									description={'Get started by creating an ecosystem'}
@@ -239,6 +285,7 @@ const Dashboard = () => {
 					)}
 				</div>
 			)}
+
 		</div>
 	);
 };
