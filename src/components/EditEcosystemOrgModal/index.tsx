@@ -63,6 +63,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
     const [errMsg, setErrMsg] = useState<string | null>(null);
     const [imgError, setImgError] = useState('');
 
+
     useEffect(() => {
         if (!props.openModal) {
             setInitialEntityData({
@@ -145,13 +146,11 @@ const EditPopupModal = (props: EditEntityModalProps) => {
         }
     };
 
-    // Function to check if an object is empty
     const isEmpty = (object: any): boolean => {
 
         return true;
     };
 
-    // Function to submit update operation
     const submitUpdateEntity = async (values: EditEntityValues) => {
         setLoading(true);
 
@@ -178,7 +177,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
             } else {
                 const response = await updateEcosystem(entityData);
                 const { data } = response as AxiosResponse;
-               
+
                 if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
                     if (props?.onEditSuccess) {
                         props?.onEditSuccess();
@@ -200,7 +199,10 @@ const EditPopupModal = (props: EditEntityModalProps) => {
                 imagePreviewUrl: "",
                 fileName: ''
             });
-            setInitialEntityData(initialEntityData);
+            setInitialEntityData({
+                name: "",
+                description: "",
+            });
             props.setOpenModal(false);
         }}>
             <Modal.Header>Edit {props.isOrganization ? "Organization" : "Ecosystem"}</Modal.Header>
