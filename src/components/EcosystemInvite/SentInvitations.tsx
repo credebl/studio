@@ -19,7 +19,6 @@ const initialPageState = {
 };
 
 const SentInvitations = () => {
-	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [message, setMessage] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
@@ -83,7 +82,7 @@ const SentInvitations = () => {
 			getAllSentInvitations();
 		}
 		return () => clearTimeout(getData);
-	}, [searchText, openModal, currentPage.pageNumber]);
+	}, [searchText, currentPage.pageNumber]);
 
 	return (
 		<div className="px-4 pt-6">
@@ -166,9 +165,7 @@ const SentInvitations = () => {
 																			<div className="inline-flex items-center text-base font-normal text-gray-900 dark:text-white">
 																				Roles:{' '}
 																				<span
-																					key={invitation.id}
-																					// "m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300
-																				>
+																					key={invitation.id}																				>
 																					Ecosystem Member
 																				</span>
 																			</div>
