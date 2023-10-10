@@ -69,6 +69,7 @@ const CreateSchema = () => {
         }
         
         checkEcosystemData();
+        
     }, []);
 
     const submit = async (values: IFormData) => {
