@@ -133,29 +133,3 @@ export const createCredDefRequest = async (data: object, ecosystemId: string, or
         return err?.message
     }
 }
-
-export const editOrganizationUserRole = async (userId: number, roles: number[]) => {
-
-    const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
-
-    const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.editUserROle}/${userId}`
-    const payload = {
-        orgId,
-        userId,
-        orgRoleId: roles
-    }
-
-    const axiosPayload = {
-        url,
-        payload,
-        config: await getHeaderConfigs()
-    }
-
-    try {
-        return axiosPut(axiosPayload);
-    }
-    catch (error) {
-        const err = error as Error
-        return err?.message
-    }
-}

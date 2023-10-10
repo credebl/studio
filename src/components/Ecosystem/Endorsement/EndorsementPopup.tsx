@@ -1,5 +1,5 @@
 import { Button, Modal } from 'flowbite-react';
-import { EcosystemRoles, EndorsementStatus, EndorsementType } from '../../../common/enums';
+import { EndorsementStatus } from '../../../common/enums';
 import { checkEcosystem } from '../../../config/ecosystem';
 import EndorsementCard from './EndorsementCard';
 
@@ -7,16 +7,6 @@ const EndorsementPopup = (props: {
   openModal: boolean;
   closeModal: () => void;
   isAccepted: (flag: boolean) => void;
-  name: string;
-  id: string;
-  version: string;
-  authorDID: string;
-  revocable: boolean;
-  endorsementType: EndorsementType;
-  organizationName: string;
-  ecosystemRole: EcosystemRoles;
-  attrNames: [];
-  created: string;
   endorsementData: any
 }) => {
 

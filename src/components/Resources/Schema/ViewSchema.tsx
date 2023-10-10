@@ -140,16 +140,15 @@ const ViewSchemas = () => {
       console.log("Submitted for endorsement by ecosystem member")
       setCreateLoader(true)
       const schemaId = schemaDetails?.schemaId || ""
-      const CredDeffFieldName: CredDeffFieldNameType = {
+      const requestPayload = {
+        endorse: true,
         tag: values?.tagName,
-        revocable: values?.revocable,
-        orgId: orgId,
         schemaLedgerId: schemaId
       }
 
       const ecoId = await getEcosystemId()
 
-      const createCredDeff = await createCredDefRequest(CredDeffFieldName, ecoId, orgId);
+      const createCredDeff = await createCredDefRequest(requestPayload, ecoId, orgId);
       const { data } = createCredDeff as AxiosResponse
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
         setCreateLoader(false)
