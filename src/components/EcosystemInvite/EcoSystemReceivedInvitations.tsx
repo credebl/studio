@@ -24,6 +24,22 @@ const initialPageState = {
 	total: 0,
 };
 
+
+export interface EcosystemInvitation {
+	ecosystem: any
+	id: string
+	createDateTime: string
+	createdBy: number
+	lastChangedDateTime: string
+	lastChangedBy: number
+	deletedAt: any
+	userId: string
+	orgId: string
+	status: string
+	email: string
+}
+
+
 const ReceivedInvitations = () => {
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
@@ -33,7 +49,7 @@ const ReceivedInvitations = () => {
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const [selectedId, setSelectedId] = useState<number>();
 	const [searchText, setSearchText] = useState('');
-	const [invitationsData, setInvitationsData] = useState<Array<Invitation> | null>(null);
+	const [invitationsData, setInvitationsData] = useState<Array<EcosystemInvitation> | null>(null);
 
 	const onPageChange = (page: number) => {
 		setCurrentPage({
@@ -262,7 +278,10 @@ stroke-linejoin="round"
 										<li key={invitation.id} className="p-4">
 											<div id={invitation.email} className="flex flex-wrap justify-between xl:block 2xl:flex align-center 2xl:space-x-4">
 												<div id={invitation.email} className=" xl:mb-4 2xl:mb-0">
-													<EcoInvitationList invitation={invitation} />
+													<EcoInvitationList 
+													invitationId={invitation.id} 
+													invitationEmail={invitation.email} 
+													/>
 
 													<div  id={invitation.email} className="flex">
 														<Button

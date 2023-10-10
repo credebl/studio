@@ -1,7 +1,14 @@
 
 import React from 'react';
 
-const EcoInvitationList = (invitation:{id:number, email:string} ) => {
+interface InvitationProps{
+	invitationId:string;
+	invitationEmail:string
+}
+
+const EcoInvitationList = (props: InvitationProps ) => {
+
+	const {invitationId, invitationEmail} = props
 	return (
 		<>
 			<div className="flex space-x-4">
@@ -43,7 +50,7 @@ const EcoInvitationList = (invitation:{id:number, email:string} ) => {
 
 				<div className="flex-1 min-w-0">
 					<p className="text-base font-semibold text-gray-900 leading-none truncate mb-0.5 dark:text-white">
-						{invitation.email}
+						{invitationEmail}
 					</p>
 
 					<div className="flow-root h-auto">
@@ -53,8 +60,7 @@ const EcoInvitationList = (invitation:{id:number, email:string} ) => {
 									<div className="inline-flex items-center text-base font-normal text-gray-900 dark:text-white">
 										Roles:
 										<span
-											id={invitation.email}
-											key={invitation.id}
+											key={invitationId}
 											className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
 										>
 											Ecosystem Member
