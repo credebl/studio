@@ -33,10 +33,10 @@ export const pathRoutes = {
             verify: '/organizations/verification/schemas/cred-defs/connections/verification'
         },
     },
-   
-    ecosystems: {
-        root: '/ecosystems',
-        dashboard:'/ecosystems/dashboard'
+    ecosystem: {
+        profile: "/ecosystem/profile",
+        endorsements: "/ecosystem/endorsements",
+				invitation:"/ecosystem/invitation"
     },
     documentation: {
         root: 'https://docs.credebl.id'

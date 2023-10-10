@@ -1,11 +1,13 @@
 import { Button, Pagination } from 'flowbite-react';
-import { ChangeEvent, useEffect, useState } from 'react';
-import { getEcosystemInvitations } from '../../api/invitations';
+import { useEffect, useState } from 'react';
+import {
+	getEcosystemInvitations,
+	deleteEcosystemInvitations,
+} from '../../api/invitations';
 import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
 import type { Invitation } from '../organization/interfaces/invitations';
-import type { OrgRole } from '../organization/interfaces';
 import { apiStatusCodes } from '../../config/CommonConstant';
 import { EmptyListMessage } from '../EmptyListComponent';
 import CustomSpinner from '../CustomSpinner';
@@ -23,18 +25,15 @@ const SentInvitations = () => {
 	const [error, setError] = useState<string | null>(null);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const [searchText, setSearchText] = useState<string>('');
+	const [invitationsList, setInvitationsList] =
+		useState<Array<Invitation> | null>(null);
 
-	const timestamp = Date.now();
 	const onPageChange = (page: number) => {
 		setCurrentPage({
 			...currentPage,
 			pageNumber: page,
 		});
 	};
-
-	const [invitationsList, setInvitationsList] =
-		useState<Array<Invitation> | null>(null);
-	const props = { openModal, setOpenModal };
 
 	const getAllSentInvitations = async () => {
 		setLoading(true);
@@ -47,7 +46,6 @@ const SentInvitations = () => {
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const totalPages = data?.data?.totalPages;
-
 			const invitationList = data?.data?.invitations;
 
 			setInvitationsList(invitationList);
@@ -58,7 +56,19 @@ const SentInvitations = () => {
 		} else {
 			setError(response as string);
 		}
+		setLoading(false);
+	};
 
+	const deletInvitations = async (invitationId: number) => {
+		const response = await deleteEcosystemInvitations(invitationId);
+		const { data } = response as AxiosResponse;
+
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			setLoading(true);
+			await getAllSentInvitations();
+		} else {
+			setError(response as string);
+		}
 		setLoading(false);
 	};
 
@@ -74,10 +84,6 @@ const SentInvitations = () => {
 		}
 		return () => clearTimeout(getData);
 	}, [searchText, openModal, currentPage.pageNumber]);
-
-	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-		setSearchText(e.target.value);
-	};
 
 	return (
 		<div className="px-4 pt-6">
@@ -99,11 +105,7 @@ const SentInvitations = () => {
 						}}
 					/>
 
-					{loading ? (
-						<div className="flex items-center justify-center mb-4">
-							<CustomSpinner />
-						</div>
-					) : invitationsList && invitationsList?.length > 0 ? (
+					{invitationsList && invitationsList?.length > 0 ? (
 						<div className="p-2 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-3 dark:bg-gray-800">
 							<div className="flow-root">
 								<ul className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -165,24 +167,10 @@ const SentInvitations = () => {
 																				Roles:{' '}
 																				<span
 																					key={invitation.id}
-																					className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
+																					// "m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300
 																				>
 																					Ecosystem Member
 																				</span>
-																				{invitation.orgRoles &&
-																					invitation.orgRoles.length > 0 &&
-																					invitation.orgRoles.map(
-																						(_role: OrgRole, index: number) => {
-																							return (
-																								<span
-																									key={index}
-																									className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
-																								>
-																									Ecosystem Member
-																								</span>
-																							);
-																						},
-																					)}
 																			</div>
 																		</div>
 																	</li>
@@ -193,10 +181,7 @@ const SentInvitations = () => {
 
 													<div className="flex">
 														<Button
-															// delete invitation functionality requirement
-															// onClick={() =>
-															// 	respondToInvitations(invitation, 'rejected')
-															// }
+															onClick={() => deletInvitations(invitation.id)}
 															color="bg-white"
 															className="mx-5 font-normal items-center mt-5 text-xl text-primary-700 border border-blue-700 text-center hover:!bg-primary-800 hover:text-white rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:hover:bg-primary-700 dark:text-white dark:bg-primary-700 dark:focus:ring-blue-800"
 														>
@@ -224,7 +209,10 @@ const SentInvitations = () => {
 
 												<div className="dark:text-white">
 													Status:
-													<span className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-1 rounded dark:bg-blue-900 dark:text-blue-300">
+													<span
+														key={invitation.id}
+														className="m-1 text-sm font-medium mr-2 px-2.5 py-0.5 rounded bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
+													>
 														{invitation.status}
 													</span>
 												</div>
@@ -235,12 +223,18 @@ const SentInvitations = () => {
 							</div>
 						</div>
 					) : (
-						invitationsList && (
-							<EmptyListMessage
-								message={'No Invitations'}
-								description={`You don't have any invitation`}
-							/>
-						)
+						<div>
+							{!(invitationsList && invitationsList?.length > 0) && !loading ? (
+								<EmptyListMessage
+									message={'No Sent Invitations'}
+									description={`You don't have any sent invitation`}
+								/>
+							) : (
+								<div className="flex items-center justify-center mb-4">
+									<CustomSpinner />
+								</div>
+							)}
+						</div>
 					)}
 
 					<div className="flex items-center justify-end mb-4">
