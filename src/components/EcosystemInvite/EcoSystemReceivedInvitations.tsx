@@ -32,7 +32,7 @@ const ReceivedInvitations = () => {
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const [selectedId, setSelectedId] = useState<number>();
 	const [searchText, setSearchText] = useState('');
-	const [invitations, setInvitations] = useState<Array<Invitation> | null>(null);
+	const [invitationsData, setInvitationsData] = useState<Array<Invitation> | null>(null);
 
 	const onPageChange = (page: number) => {
 		setCurrentPage({
@@ -89,7 +89,7 @@ const ReceivedInvitations = () => {
 			const invitationList = data?.data?.invitations.filter((invitation: { status: string; })=>{
 				return invitation.status === 'pending'
 			})
-			setInvitations(invitationList);
+			setInvitationsData(invitationList);
 			setCurrentPage({
 				...currentPage,
 				total: totalPages,
@@ -251,11 +251,11 @@ stroke-linejoin="round"
 						<div className="flex items-center justify-center mb-4">
 							<CustomSpinner />
 						</div>
-					) : invitations && invitations?.length > 0 ? (
+					) : invitationsData && invitationsData?.length > 0 ? (
 						<div id={selectedId?.toString()} className="p-2 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-3 dark:bg-gray-800">
 							<div id={selectedId?.toString()} className="flow-root">
 								<ul id={selectedId?.toString()} className="divide-y divide-gray-200 dark:divide-gray-700">
-									{invitations.map((invitation) => (
+									{invitationsData.map((invitation) => (
 										<li key={invitation.id} className="p-4">
 											<div id={invitation.email} className="flex flex-wrap justify-between xl:block 2xl:flex align-center 2xl:space-x-4">
 												<div id={invitation.email} className=" xl:mb-4 2xl:mb-0">
@@ -342,7 +342,7 @@ stroke-linejoin="round"
 							</div>
 						</div>
 					) : (
-						invitations && (
+						invitationsData && (
 							<EmptyListMessage
 								message={'No Invitations'}
 								description={`You don't have any invitation`}
