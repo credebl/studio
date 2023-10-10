@@ -3,10 +3,10 @@ import { dateConversion } from '../../../utils/DateConversion';
 import DateTooltip from '../../../components/Tooltip';
 import { EndorsementStatus } from '../../../common/enums';
 import StatusTabletTag from '../../../commonComponents/StatusTabletTag';
-import { checkEcosystem } from '../../../config/ecosystem';
+import { ICheckEcosystem, checkEcosystem } from '../../../config/ecosystem';
+import { useEffect, useState } from 'react';
 
 interface IProps {
-    className?: string,
     data: any,
     fromEndorsementList?: boolean,
     cardTransitionDisabled?: boolean
@@ -15,9 +15,17 @@ interface IProps {
 }
 
 const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTransitionDisabled, allAttributes }: IProps) => {
-    const enableAction = (!fromEndorsementList && data?.status === EndorsementStatus.approved) || Boolean(fromEndorsementList)
+    const [isEcosystemLead, setIsEcosystemLead] = useState(false);
 
-    const { isEcosystemLead } = checkEcosystem()
+    useEffect(() => {
+        const checkEcosystemData = async () => {
+            const data: ICheckEcosystem = await checkEcosystem();
+            setIsEcosystemLead(data.isEnabledEcosystem)
+        }
+        checkEcosystemData();
+    }, [])
+
+    const enableAction = (!fromEndorsementList && data?.status === EndorsementStatus.approved) || Boolean(fromEndorsementList)
 
 
     const requestPayload = data?.requestPayload && JSON.parse(data?.requestPayload)
@@ -31,7 +39,7 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
                 onClickCallback(data)
             }
         }}
-            className={`${cardTransitionDisabled ? "" : "transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer"}  ${enableAction ? "cursor-pointer" : cardTransitionDisabled ? "cursor-default" : "cursor-not-allowed"} ${cardTransitionDisabled && "shadow-none"} m-3`}
+            className={`${cardTransitionDisabled ? "" : "transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer"}  ${enableAction ? "cursor-pointer": cardTransitionDisabled ? "cursor-default" : "cursor-not-allowed"} ${cardTransitionDisabled && "shadow-none"} m-3`}
         >      <div className="flex justify-between items-start">
                 <div>
                     <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">

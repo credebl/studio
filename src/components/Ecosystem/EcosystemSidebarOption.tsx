@@ -1,10 +1,19 @@
-import { checkEcosystem } from '../../config/ecosystem'
+import { useEffect, useState } from 'react'
+import { ICheckEcosystem, checkEcosystem } from '../../config/ecosystem'
 import { pathRoutes } from '../../config/pathRoutes'
 
 const EcosystemSidebarOption = () => {
-    const { isEnabledEcosystem } = checkEcosystem()
+    const [isEcosystemEnabled, setIsEcosystemEnabled] = useState(false);
 
-    if (isEnabledEcosystem) {
+    useEffect(() => {
+        const checkEcosystemData = async () => {
+            const data: ICheckEcosystem = await checkEcosystem();
+            setIsEcosystemEnabled(data.isEnabledEcosystem)
+        }
+        checkEcosystemData();
+    }, [])
+
+    if (isEcosystemEnabled) {
         return (
             <li>
                 <button
@@ -28,12 +37,10 @@ const EcosystemSidebarOption = () => {
                     </svg>
                     <span
                         className="flex-1 ml-3 text-left whitespace-nowrap"
-                        sidebar-toggle-item
                     >
                         Ecosystem
                     </span>
                     <svg
-                        sidebar-toggle-item
                         className="w-6 h-6 flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white sidebar-expand-menu-icon"
                         fill="currentColor"
                         viewBox="0 0 20 20"
