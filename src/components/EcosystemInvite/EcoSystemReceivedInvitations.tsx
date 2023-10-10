@@ -235,9 +235,9 @@ const ReceivedInvitations = () => {
 																{invitation.email}
 															</p>
 
-															<div className="flow-root h-auto">
-																<ul className="divide-y divide-gray-200 dark:divide-gray-700">
-																	<li className="pt-3 sm:pt-3 overflow-auto">
+															<div id={invitation.email} className="flow-root h-auto">
+																<ul id={invitation.email} className="divide-y divide-gray-200 dark:divide-gray-700">
+																	<li id={invitation.email} className="pt-3 sm:pt-3 overflow-auto">
 																		<div className="items-center space-x-4">
 																			<div className="inline-flex items-center text-base font-normal text-gray-900 dark:text-white">
 																				Roles:
@@ -263,6 +263,7 @@ const ReceivedInvitations = () => {
 																	'rejected',
 																)
 															}
+															id={invitation.id}
 															color="bg-white"
 															className='mx-5 mt-5 text-base font-medium text-center text-gray-00 bg-secondary-700 hover:!bg-secondary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600  dark:focus:ring-primary-800 dark:bg-gray-800"'
 														>
@@ -288,6 +289,7 @@ const ReceivedInvitations = () => {
 																	'accepted',
 																)
 															}
+															id={invitation.id}
 															className='mx-5 mt-5 text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-700 dark:hover:!bg-primary-800 dark:focus:ring-primary-800"'
 														>
 															<svg
@@ -309,7 +311,7 @@ const ReceivedInvitations = () => {
 													</div>
 												</div>
 
-												<div id={invitation.email}>
+												<div>
 													<select
 														className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 														id="dropdown"
