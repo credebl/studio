@@ -139,13 +139,8 @@ const CreateSchema = () => {
         const createSchema = await createSchemaRequest(schemaFieldName, id, orgId);
         const { data } = createSchema as AxiosResponse;
         if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-            if (data?.data) {
-                setCreateLoader(false);
-                window.location.href = pathRoutes.organizations.schemas;
-            } else {
-                setFailure(createSchema as string);
-                setCreateLoader(false);
-            }
+            setCreateLoader(false);
+            window.location.href = pathRoutes.ecosystem.endorsements;
         } else {
             setCreateLoader(false);
             setFailure(createSchema as string);
