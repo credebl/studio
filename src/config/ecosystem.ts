@@ -4,29 +4,45 @@ import { getEcosystem } from "../api/ecosystem"
 import { EcosystemRoles } from "../common/enums"
 import { apiStatusCodes, storageKeys } from "./CommonConstant"
 
-interface IProps {
-    role?: EcosystemRoles
+export interface ICheckEcosystem {
+    isEnabledEcosystem: boolean;
+    isEcosystemMember: boolean;
+    isEcosystemLead: boolean;
 }
 
-const ecosystemId = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID)
-const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
+const ecosystemId = async () => {
+    const id = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID)
+    return id
+}
+
+const getOrgId = async () => {
+    const id = await getFromLocalStorage(storageKeys.ORG_ID)
+    return id
+}
+
+const getUserProfile = async () => {
+    const userProfile = await getFromLocalStorage(storageKeys.USER_PROFILE)
+    const userDetails = userProfile && await JSON.parse(userProfile)
+    return userDetails
+}
 
 const role = localStorage.getItem("eco_role")
 
-const userProfile = await getFromLocalStorage(storageKeys.USER_PROFILE)
-const userDetails = userProfile && await JSON.parse(userProfile)
-
-const isEnabledEcosystem = userDetails.enableEcosystem
-const ecosystemRole = role ?? EcosystemRoles.ecosystemLead
-
-const checkEcosystem = () => ({
-    isEnabledEcosystem,
-    isEcosystemMember: ecosystemRole === EcosystemRoles.ecosystemMember && isEnabledEcosystem,
-    isEcosystemLead: ecosystemRole === EcosystemRoles.ecosystemLead && isEnabledEcosystem
-})
+const checkEcosystem = async (): Promise<ICheckEcosystem> => {
+    const userData = await getUserProfile()
+    const isEnabledEcosystem = userData?.enableEcosystem
+    const ecosystemRole = role ?? EcosystemRoles.ecosystemLead
+    return {
+        isEnabledEcosystem,
+        isEcosystemMember: ecosystemRole === EcosystemRoles.ecosystemMember && isEnabledEcosystem,
+        isEcosystemLead: ecosystemRole === EcosystemRoles.ecosystemLead && isEnabledEcosystem
+    }
+}
 
 const getEcosystemId = async (): Promise<string> => {
-    if (!ecosystemId) {
+    const ecoId = await ecosystemId()
+    const orgId = await getOrgId()
+    if (!ecoId) {
         try {
             const { data } = await getEcosystem(orgId) as AxiosResponse
 
@@ -39,7 +55,7 @@ const getEcosystemId = async (): Promise<string> => {
             console.log("ERROR-Get Ecosystem", err)
         }
     }
-    return ecosystemId
+    return ecoId
 }
 
 export { checkEcosystem, getEcosystemId }

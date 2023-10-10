@@ -13,7 +13,7 @@ import { getEcosystem } from '../../api/ecosystem';
 import { EmptyListMessage } from '../EmptyListComponent';
 import CreateEcosystemOrgModal from '../CreateEcosystemOrgModal';
 import { AlertComponent } from '../AlertComponent';
-import { checkEcosystem } from '../../config/ecosystem';
+import { ICheckEcosystem, checkEcosystem } from '../../config/ecosystem';
 import RoleViewButton from '../RoleViewButton';
 import SendInvitationModal from '../organization/invitations/SendInvitationModal';
 import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
@@ -37,6 +37,7 @@ const Dashboard = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [viewButton, setViewButton] = useState<boolean>(false);
     const [currentPage, setCurrentPage] = useState(initialPageState);
+    const [isEcosystemLead, setIsEcosystemLead] = useState(false);
 
     const props = { openModal, setOpenModal };
 
@@ -110,9 +111,14 @@ const Dashboard = () => {
     useEffect(() => {
         fetchEcosystemDetails();
         getAllEcosystemInvitations();
-    }, []);
+        
+        const checkEcosystemData = async () => {
+            const data: ICheckEcosystem = await checkEcosystem();
+            setIsEcosystemLead(data.isEcosystemLead)
+        }
+        checkEcosystemData();
 
-    const { isEcosystemLead } = checkEcosystem();
+    }, []);
 
     return (
         <div className="px-4 pt-6">
@@ -237,7 +243,7 @@ const Dashboard = () => {
                             <div className="mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
                                 <div className="grid w-full grid-cols-1 gap-4 mt-0 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2">
                                     <div
-                                        className="items-center justify-between p-4 bg-white border-0 border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover min-h-[152px]"
+                                        className="items-center justify-between p-4 bg-white border-0 border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-103 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover min-h-[152px]"
                                         style={{ backgroundImage: `url(${userCard})` }}
                                     >
                                         <div className="w-full">
@@ -251,7 +257,7 @@ const Dashboard = () => {
                                     </div>
 
                                     <div
-                                        className="items-center justify-between p-4 bg-white border-0 border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover min-h-[152px]"
+                                        className="items-center justify-between p-4 bg-white border-0 border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-103 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover min-h-[152px]"
                                         style={{ backgroundImage: `url(${endorseIcon})` }}
                                     >
                                         <div className="w-full">

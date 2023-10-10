@@ -18,8 +18,7 @@ import SearchInput from '../../SearchInput';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
 import { getOrganizationById } from '../../../api/organization';
-import { checkEcosystem } from '../../../config/ecosystem';
-import { EndorsementStatus } from '../../../common/enums';
+import { ICheckEcosystem, checkEcosystem } from '../../../config/ecosystem';
 
 const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaDetails: SchemaDetails) => void; }) => {
 	const [schemaList, setSchemaList] = useState([])
@@ -37,6 +36,8 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 	})
 	const [walletStatus, setWalletStatus] = useState(false)
 	const [totalItem, setTotalItem] = useState(0)
+	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
+
 	const getSchemaList = async (schemaListAPIParameter: GetAllSchemaListParameter, flag: boolean) => {
 		try {
 			const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -141,13 +142,18 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 
 	useEffect(() => {
 		fetchOrganizationDetails()
+		const checkEcosystemData = async () => {
+            const data: ICheckEcosystem = await checkEcosystem();
+            setIsEcosystemData(data)
+        }
+        
+        checkEcosystemData();
 	}, [])
 
-	const { isEcosystemMember } = checkEcosystem()
-	const createSchemaTitle = isEcosystemMember ? "Request Endorsement" : "Create"
+	const createSchemaTitle = isEcosystemData?.isEcosystemMember ? "Request Endorsement" : "Create"
 	const emptyListTitle = "No Schemas"
 	const emptyListDesc = "Get started by creating a new Schema"
-	const emptyListBtn = isEcosystemMember ? "Request Endorsement" : "Create Schema"
+	const emptyListBtn = isEcosystemData?.isEcosystemMember ? "Request Endorsement" : "Create Schema"
 	return (
 		<div className="px-4 pt-6">
 			<div className="mb-4 col-span-full xl:mb-2">

@@ -1,7 +1,8 @@
 import { Button, Modal } from 'flowbite-react';
 import { EndorsementStatus } from '../../../common/enums';
-import { checkEcosystem } from '../../../config/ecosystem';
+import { ICheckEcosystem, checkEcosystem } from '../../../config/ecosystem';
 import EndorsementCard from './EndorsementCard';
+import { useEffect, useState } from 'react';
 
 const EndorsementPopup = (props: {
   openModal: boolean;
@@ -10,12 +11,20 @@ const EndorsementPopup = (props: {
   endorsementData: any
 }) => {
 
-  const { isEcosystemLead, isEcosystemMember } = checkEcosystem()
+  const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
+
+  useEffect(() => {
+    const checkEcosystemData = async () => {
+      const data: ICheckEcosystem = await checkEcosystem();
+      setIsEcosystemData(data)
+    }
+    checkEcosystemData();
+  }, [])
 
   return (
     <Modal show={props.openModal} onClose={props.closeModal} size="xl">
       <Modal.Header>
-        {isEcosystemLead ? (
+        {isEcosystemData?.isEcosystemLead ? (
           <div>
             Requested {props.endorsementData?.type}
           </div>
@@ -31,7 +40,7 @@ const EndorsementPopup = (props: {
 
       <div className='justify-between'>
         <div className='flex justify-end'>
-          {isEcosystemLead && props.endorsementData?.status === EndorsementStatus.requested ? (
+          {isEcosystemData?.isEcosystemLead && props.endorsementData?.status === EndorsementStatus.requested ? (
             <div className='flex gap-3 pt-1 pb-3'>
               <Button onClick={() => props.isAccepted(false)}
                 class="hover:bg-secondary-700 bg-transparent ring-2 dark:text-white text-black font-medium rounded-lg text-sm dark:hover:text-primary-700 "
@@ -65,7 +74,7 @@ const EndorsementPopup = (props: {
             (
               <>
                 {
-                  !isEcosystemLead && isEcosystemMember && props.endorsementData?.status === EndorsementStatus.requested ?
+                  !isEcosystemData?.isEcosystemLead && isEcosystemData?.isEcosystemMember && props.endorsementData?.status === EndorsementStatus.requested ?
                     (
                       <div className='flex gap-3 pt-1 pb-3'>
                         <Button onClick={() => props.isAccepted(false)}
