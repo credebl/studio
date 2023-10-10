@@ -149,7 +149,7 @@ const ViewSchemas = () => {
       const requestPayload = {
         endorse: true,
         tag: values?.tagName,
-        schemaLedgerId: schemaId
+        schemaId
       }
 
       const ecoId = await getEcosystemId()
