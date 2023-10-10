@@ -15,7 +15,6 @@ import { getOrganizationById } from '../../../api/organization';
 import { getEcosystemId } from '../../../config/ecosystem';
 import type { IAttributes } from '../../Resources/Schema/interfaces';
 import EndorsementPopup from './EndorsementPopup';
-import { EcosystemRoles, EndorsementType } from '../../../common/enums';
 import EndorsementCard from './EndorsementCard';
 import { GetEndorsementListParameter, getEndorsementList } from '../../../api/ecosystem';
 
@@ -286,7 +285,7 @@ const EndorsementList = () => {
                     )
                 }
             </div>
-            <EndorsementPopup openModal={showPopup} closeModal={hidePopup} isAccepted={(flag: boolean) => console.log('Is accepted::', flag)} endorsementData={selectedRequest} name={"Schema"} id={selectedRequest?.schemaId ?? "test"} version={''} authorDID={''} revocable={false} endorsementType={EndorsementType.schema} organizationName={''} created={''} ecosystemRole={EcosystemRoles.ecosystemMember} attrNames={[]} />
+            <EndorsementPopup openModal={showPopup} closeModal={hidePopup} isAccepted={(flag: boolean) => console.log('Is accepted::', flag)} endorsementData={selectedRequest}/>
         </div>
     )
 }

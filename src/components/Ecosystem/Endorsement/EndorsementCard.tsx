@@ -1,7 +1,7 @@
 import { Card } from 'flowbite-react';
 import { dateConversion } from '../../../utils/DateConversion';
 import DateTooltip from '../../../components/Tooltip';
-import { EndorsementStatus, EndorsementType } from '../../../common/enums';
+import { EndorsementStatus } from '../../../common/enums';
 import StatusTabletTag from '../../../commonComponents/StatusTabletTag';
 import { checkEcosystem } from '../../../config/ecosystem';
 
@@ -10,13 +10,8 @@ interface IProps {
     data: any,
     fromEndorsementList?: boolean,
     cardTransitionDisabled?: boolean
-    endorsementType?: EndorsementType
     allAttributes?: boolean
     onClickCallback?: (data: any) => void;
-}
-
-interface IAttrubute {
-    attributeName: string
 }
 
 const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTransitionDisabled, allAttributes }: IProps) => {

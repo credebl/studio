@@ -273,7 +273,7 @@ const Dashboard = () => {
                 </div>
             ) : (
                 <div>
-                    {!ecosystemDetails && !loading ? (
+                    {!ecosystemDetails && loading ? (
                         <div className="min-h-100/18rem flex justify-center items-center">
                             <CustomSpinner />
                         </div>

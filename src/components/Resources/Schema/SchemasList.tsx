@@ -113,18 +113,18 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 		}
 		props.schemaSelectionCallback(schemaId, schemaDetails)
 	}
-	const options = ["All", "Approved", "Requested", "Rejected"]
+	// const options = ["All", "Approved", "Requested", "Rejected"]
 
-	const handleFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		console.log("Handle filter", e.target.value)
-		if (e.target.value === 'All schemas') {
-			setAllSchemaFlag(true)
-		}
-		else {
-			setAllSchemaFlag(false)
-			getSchemaList(schemaListAPIParameter, false)
-		}
-	};
+	// const handleFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
+	// 	console.log("Handle filter", e.target.value)
+	// 	if (e.target.value === 'All schemas') {
+	// 		setAllSchemaFlag(true)
+	// 	}
+	// 	else {
+	// 		setAllSchemaFlag(false)
+	// 		getSchemaList(schemaListAPIParameter, false)
+	// 	}
+	// };
 
 	const fetchOrganizationDetails = async () => {
 		setLoading(true)
@@ -165,9 +165,9 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 							<SearchInput
 								onInputChange={onSearch}
 							/>
-							<select onChange={handleFilter} id="schamfilter"
+							{/* <select onChange={handleFilter} id="schamfilter"
 								className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11">
-								{/* <option selected>Organization's schema</option> */}
+								<option selected>Organization's schema</option>
 								{options.map((opt) => (
 									<option
 										key={opt}
@@ -177,7 +177,7 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 										{opt}
 									</option>
 								))}
-							</select>
+							</select> */}
 						</div>
 						<div className='flex space-x-2'>
 							{walletStatus ? <RoleViewButton
@@ -225,12 +225,7 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 						</span>
 					</Alert>
 				}
-				{loading
-					? (<div className="flex items-center justify-center mb-4">
-
-						<CustomSpinner />
-					</div>)
-					:
+				{
 					schemaList && schemaList.length > 0 ? (
 						<div className='Flex-wrap' style={{ display: 'flex', flexDirection: 'column' }}>
 							<div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
@@ -238,7 +233,7 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 									schemaList.map((element, key) => (
 										<div className='p-2' key={key}>
 											<SchemaCard schemaName={element['name']} version={element['version']} schemaId={element['schemaLedgerId']} issuerDid={element['issuerId']} attributes={element['attributes']} created={element['createDateTime']}
-												onClickCallback={schemaSelectionCallback} status={key === 1 ? EndorsementStatus.approved : key === 2 ? EndorsementStatus.requested : EndorsementStatus.rejected} />
+												onClickCallback={schemaSelectionCallback} />
 										</div>
 									))}
 							</div>
@@ -255,34 +250,47 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 									totalPages={Math.ceil(totalItem / schemaListAPIParameter?.itemPerPage)}
 								/>)}
 							</div>
-						</div>) : (
-						<div>
-							{walletStatus ?
-								<EmptyListMessage
-									message={emptyListTitle}
-									description={emptyListDesc}
-									buttonContent={emptyListBtn}
-									svgComponent={<svg className='pr-2 mr-1' xmlns="http://www.w3.org/2000/svg" width="24" height="15" fill="none" viewBox="0 0 24 24">
-										<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
-									</svg>}
-									onClick={() => {
-										window.location.href = `${pathRoutes.organizations.createSchema}?OrgId=${orgId}`
-									}}
-								/>
-								:
-								<EmptyListMessage
-									message={'No Wallet'}
-									description={'Get started by creating a Wallet'}
-									buttonContent={'Create Wallet'}
-									svgComponent={<svg className='pr-2 mr-1' xmlns="http://www.w3.org/2000/svg" width="24" height="15" fill="none" viewBox="0 0 24 24">
-										<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
-									</svg>}
-									onClick={() => {
-										window.location.href = `${pathRoutes.organizations.dashboard}?OrgId=${orgId}`
-									}}
-								/>}
-						</div>
-					)
+						</div>)
+						:
+						(
+							<div>
+								{
+									!(schemaList && schemaList.length > 0) && loading ?
+										(<div className="flex items-center justify-center mb-4">
+											<CustomSpinner />
+										</div>)
+										:
+										(
+											<div>
+												{walletStatus ?
+													<EmptyListMessage
+														message={emptyListTitle}
+														description={emptyListDesc}
+														buttonContent={emptyListBtn}
+														svgComponent={<svg className='pr-2 mr-1' xmlns="http://www.w3.org/2000/svg" width="24" height="15" fill="none" viewBox="0 0 24 24">
+															<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+														</svg>}
+														onClick={() => {
+															window.location.href = `${pathRoutes.organizations.createSchema}?OrgId=${orgId}`
+														}}
+													/>
+													:
+													<EmptyListMessage
+														message={'No Wallet'}
+														description={'Get started by creating a Wallet'}
+														buttonContent={'Create Wallet'}
+														svgComponent={<svg className='pr-2 mr-1' xmlns="http://www.w3.org/2000/svg" width="24" height="15" fill="none" viewBox="0 0 24 24">
+															<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+														</svg>}
+														onClick={() => {
+															window.location.href = `${pathRoutes.organizations.dashboard}?OrgId=${orgId}`
+														}}
+													/>}
+											</div>
+										)
+								}
+							</div>
+						)
 				}
 			</div>
 		</div>
