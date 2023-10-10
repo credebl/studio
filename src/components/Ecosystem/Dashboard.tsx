@@ -9,7 +9,7 @@ import CustomSpinner from '../CustomSpinner';
 import endorseIcon from '../../assets/endorser-card.svg';
 import userCard from '../../assets/User_Card.svg';
 import MemberList from './MemberList';
-import { getEcosystem } from '../../api/ecosystem';
+import { getEcosystem, getEcosystemDashboard } from '../../api/ecosystem';
 import { EmptyListMessage } from '../EmptyListComponent';
 import CreateEcosystemOrgModal from '../CreateEcosystemOrgModal';
 import { AlertComponent } from '../AlertComponent';
@@ -19,6 +19,9 @@ import SendInvitationModal from '../organization/invitations/SendInvitationModal
 import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { Button } from 'flowbite-react';
 import OrgRegistrationPopup from './OrgRegistrationPopup';
+import React from 'react';
+import type { EcosystemDashboard } from '../organization/interfaces';
+import { string } from 'yup';
 
 const Dashboard = () => {
 	const [ecosystemDetails, setEcosystemDetails] = useState<IEcosystem | null>();
@@ -30,6 +33,7 @@ const Dashboard = () => {
 	const [ecosystemId, setEcosystemId] = useState('');
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [showPopup, setShowPopup] = useState<boolean>(false);
+    const [ecosystemDashboard, setEcosystemDashboard] = useState<EcosystemDashboard | null>(null)
 	const props = { openModal, setOpenModal };
 
 	const createEcosystemModel = () => {
@@ -67,15 +71,38 @@ const Dashboard = () => {
 		setLoading(false);
 	};
 
+	const fetchEcosystemDashboard = async () => {
+
+        setLoading(true)
+
+        const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		const ecosystemId = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID);
+
+		const response = await getEcosystemDashboard(ecosystemId as string, orgId as string);
+
+		const { data } = response as AxiosResponse
+
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			setEcosystemDashboard(data?.data)
+		}
+		else {
+            setFailure(response as string)
+		}
+		setLoading(false)
+        
+    }
+
+	useEffect(() => {
+		fetchEcosystemDetails();
+		fetchEcosystemDashboard();
+	}, []);
+    
+
 	const [isDropdownVisible, setDropdownVisible] = useState(false);
 
 	const toggleDropdown = () => {
 		setDropdownVisible(!isDropdownVisible);
 	};
-
-	useEffect(() => {
-		fetchEcosystemDetails();
-	}, []);
 
 	const { isEcosystemLead } = checkEcosystem();
 
@@ -195,7 +222,7 @@ const Dashboard = () => {
 												Member
 											</h3>
 											<span className="text-2xl font-semi-bold leading-none text-white sm:text-3xl dark:text-white">
-												23
+												{ecosystemDashboard?.membersCount}
 											</span>
 										</div>
 									</div>
@@ -209,7 +236,7 @@ const Dashboard = () => {
 												Endorsements
 											</h3>
 											<span className="text-2xl font-semi-bold leading-none text-white sm:text-3xl dark:text-white">
-												598
+												{ ecosystemDashboard?.endorsementsCount }
 											</span>
 										</div>
 									</div>

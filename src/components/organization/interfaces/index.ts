@@ -106,3 +106,8 @@ export interface Connection {
     lastChangedDateTime: string
     lastChangedBy: number
   }
+
+  export interface EcosystemDashboard {
+    membersCount: number
+    endorsementsCount: number
+  }
