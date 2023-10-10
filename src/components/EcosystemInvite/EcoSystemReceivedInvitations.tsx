@@ -1,5 +1,5 @@
 import { Button, Pagination } from 'flowbite-react';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
 	acceptRejectEcosystemInvitations,
 	getUserEcosystemInvitations,
@@ -8,7 +8,7 @@ import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
 import type { Invitation } from '../organization/interfaces/invitations';
-import type { OrgRole, Organisation } from '../organization/interfaces';
+import type { Organisation } from '../organization/interfaces';
 import SendInvitationModal from '../organization/invitations/SendInvitationModal';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { pathRoutes } from '../../config/pathRoutes';
@@ -31,6 +31,8 @@ const ReceivedInvitations = () => {
 	const [organizationsList, setOrganizationList] =useState<Array<Organisation> | null>(null);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const [selectedId, setSelectedId] = useState<number>();
+	const [searchText, setSearchText] = useState('');
+	const [invitationsList, setInvitationsList] = useState<Array<Invitation> | null>(null);
 
 	const onPageChange = (page: number) => {
 		setCurrentPage({
@@ -38,8 +40,6 @@ const ReceivedInvitations = () => {
 			pageNumber: page,
 		});
 	};
-	const [searchText, setSearchText] = useState('');
-	const [invitationsList, setInvitationsList] = useState<Array<Invitation> | null>(null);
 
 	const props = { openModal, setOpenModal };
 
@@ -114,11 +114,7 @@ const ReceivedInvitations = () => {
 
 		return () => clearTimeout(getData);
 	}, [searchText, openModal, currentPage.pageNumber]);
-
-	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-		setSearchText(e.target.value);
-	};
-
+	
 	const respondToEcosystemInvitations = async (
 		invite: Invitation,
 		status: string,
@@ -133,7 +129,7 @@ const ReceivedInvitations = () => {
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			setMessage(data?.message);
 			setLoading(false);
-			window.location.href = pathRoutes.organizations.root;
+			window.location.href = pathRoutes.ecosystem.profile
 		} else {
 			setError(response as string);
 			setLoading(false);
@@ -190,9 +186,9 @@ const ReceivedInvitations = () => {
 							<div className="flow-root">
 								<ul className="divide-y divide-gray-200 dark:divide-gray-700">
 									{invitationsList.map((invitation) => (
-										<li className="p-4">
+										<li key={invitation.id} className="p-4">
 											<div className="flex flex-wrap justify-between xl:block 2xl:flex align-center 2xl:space-x-4">
-												<div className=" xl:mb-4 2xl:mb-0">
+												<div id={invitation.email} className=" xl:mb-4 2xl:mb-0">
 													<div className="flex space-x-4">
 														<svg
 															width="60"
@@ -250,28 +246,7 @@ const ReceivedInvitations = () => {
 																					className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
 																				>
 																					Ecosystem Member
-																					{/* {role.name
-																										.charAt(0)
-																										.toUpperCase() +
-																										role.name.slice(1)} */}
 																				</span>
-																				{invitation.orgRoles &&
-																					invitation.orgRoles.length > 0 &&
-																					invitation.orgRoles.map(
-																						(role: OrgRole, index: number) => {
-																							return (
-																								<span
-																									key={index}
-																									className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
-																								>
-																									{/* {role.name
-																										.charAt(0)
-																										.toUpperCase() +
-																										role.name.slice(1)} */}
-																								</span>
-																							);
-																						},
-																					)}
 																			</div>
 																		</div>
 																	</li>
@@ -326,8 +301,7 @@ const ReceivedInvitations = () => {
 																stroke-linecap="round"
 																stroke-linejoin="round"
 															>
-																{' '}
-																<path stroke="none" d="M0 0h24v24H0z" />{' '}
+																<path stroke="none" d="M0 0h24v24H0z" />
 																<path d="M5 12l5 5l10 -10" />
 															</svg>
 															Accept
@@ -335,7 +309,7 @@ const ReceivedInvitations = () => {
 													</div>
 												</div>
 
-												<div>
+												<div id={invitation.email}>
 													<select
 														className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 														id="dropdown"
@@ -349,8 +323,6 @@ const ReceivedInvitations = () => {
 																	<option value={orgs.id}>{orgs.name}</option>
 																);
 															})}
-														{/* <option value="2">Ayanworks.com</option>
-														<option value="3">Blockst.com</option> */}
 													</select>
 												</div>
 											</div>
