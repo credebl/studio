@@ -19,19 +19,29 @@ import SendInvitationModal from '../organization/invitations/SendInvitationModal
 import { setToLocalStorage } from '../../api/Auth';
 import { Dropdown } from 'flowbite-react';
 import EditPopupModal from '../EditEcosystemOrgModal';
+import { getEcosytemReceivedInvitations } from '../../api/invitations';
+import { pathRoutes } from '../../config/pathRoutes';
+
+const initialPageState = {
+	pageNumber: 1,
+	pageSize: 10,
+	total: 0,
+};
 
 const Dashboard = () => {
 	const [ecosystemDetails, setEcosystemDetails] = useState<IEcosystem | null>();
-
 	const [success, setSuccess] = useState<string | null>(null);
 	const [failure, setFailure] = useState<string | null>(null);
 	const [message, setMessage] = useState<string | null>(null);
 	const [loading, setLoading] = useState<boolean | null>(true);
 	const [ecosystemId, setEcosystemId] = useState('')
-	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [editOpenModal, setEditOpenModal] = useState<boolean>(false);
 	const [dropdownOpen, setDropdownOpen] = useState(false);
-
+	const [error, setError] = useState<string | null>(null);
+	const [openModal, setOpenModal] = useState<boolean>(false);
+	const [viewButton, setViewButton] = useState<boolean>(false);
+	const [currentPage, setCurrentPage] = useState(initialPageState);
+	
 	const createEcosystemModel = () => {
 		setOpenModal(true);
 	};
@@ -49,8 +59,41 @@ const Dashboard = () => {
 		setDropdownOpen(false); // Close the dropdown when the edit modal is closed
 	  };
 
-	const fetchEcosystemDetails = async () => {
+	const getAllEcosystemInvitations = async () => {
+		setLoading(true);
+		const response = await getEcosytemReceivedInvitations(
+			currentPage.pageNumber,
+			currentPage.pageSize,
+			''
+		);
+		const { data } = response as AxiosResponse;
 
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			const totalPages = data?.data?.totalPages;
+
+			const invitationList = data?.data;
+			const ecoSystemName = invitationList.map((invitations: { name: string; })=>{
+				return invitations.name
+			})
+			const invitationPendingList = data?.data?.invitations.filter((invitation: { status: string; })=>{
+				return invitation.status === 'pending'
+			})
+
+			if (invitationPendingList.length > 0) {
+				setMessage(`You have received invitation to join ${ecoSystemName} ecosystem `)
+				setViewButton(true);
+			}
+			setCurrentPage({
+				...currentPage,
+				total: totalPages,
+			});
+		} else {
+			setError(response as string);
+		}
+		setLoading(false);
+	};
+
+	const fetchEcosystemDetails = async () => {
 		setLoading(true);
 		const response = await getEcosystem();
 		const { data } = response as AxiosResponse;
@@ -72,6 +115,7 @@ const Dashboard = () => {
 
 	useEffect(() => {
 		fetchEcosystemDetails();
+		getAllEcosystemInvitations();
 	}, []);
 
 	const { isEcosystemLead } = checkEcosystem();
@@ -81,6 +125,34 @@ const Dashboard = () => {
 			<div className="mb-4 col-span-full xl:mb-2">
 				<BreadCrumbs />
 			</div>
+
+			{
+				error ?  <> {(success || failure) && (
+					<AlertComponent
+						message={success ?? failure}
+						type={success ? 'success' : 'failure'}
+						onAlertClose={() => {
+							setSuccess(null);
+							setFailure(null);
+						}}
+					/>
+				)}   
+				</>  
+				:
+				<>
+				<div className="cursor-pointer">
+				{<AlertComponent
+					message={message ? message : error}
+					type={message ? 'warning' : 'failure'}
+					viewButton={viewButton}
+					path={pathRoutes.ecosystem.invitation}
+					onAlertClose={() => {
+						setMessage(null);
+						setError(null);
+					}}
+				/>}
+			</div>
+
 			{(success || failure) && (
 				<AlertComponent
 					message={success ?? failure}
@@ -91,6 +163,11 @@ const Dashboard = () => {
 					}}
 				/>
 			)}
+
+
+					</>
+			}
+			
 			{ecosystemDetails ? (
 				<div>
 					<div className="mt-4 flex flex-wrap items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
@@ -148,7 +225,7 @@ const Dashboard = () => {
 								/>
 								<Dropdown
 									label={"test"}
-									open={dropdownOpen} // Pass the open state here
+									open={dropdownOpen} 
 									onToggle={() => setDropdownOpen(!dropdownOpen)} 
 									renderTrigger={() => <svg
 										className="ml-4 w-4 h-4 text-gray-800 cursor-pointer dark:text-white"
@@ -224,8 +301,6 @@ const Dashboard = () => {
 								setOpenModal={setEditOpenModal}
 								setMessage={(value) => {
 									setSuccess(value);
-									// setDropdownOpen(false);
-
 								}}
 								isOrganization={false}
 								onEditSuccess={handleEditModalClose}
