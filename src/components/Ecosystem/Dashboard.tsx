@@ -17,16 +17,27 @@ import { checkEcosystem } from '../../config/ecosystem';
 import RoleViewButton from '../RoleViewButton';
 import SendInvitationModal from '../organization/invitations/SendInvitationModal';
 import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
+import { getEcosytemReceivedInvitations } from '../../api/invitations';
+import { pathRoutes } from '../../config/pathRoutes';
+
+const initialPageState = {
+    pageNumber: 1,
+    pageSize: 10,
+    total: 0,
+};
 
 const Dashboard = () => {
     const [ecosystemDetails, setEcosystemDetails] = useState<IEcosystem | null>();
-
     const [success, setSuccess] = useState<string | null>(null);
     const [failure, setFailure] = useState<string | null>(null);
     const [message, setMessage] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean | null>(true);
-    const [ecosystemId, setEcosystemId] = useState('')
+    const [error, setError] = useState<string | null>(null);
+    const [ecosystemId, setEcosystemId] = useState('');
     const [openModal, setOpenModal] = useState<boolean>(false);
+    const [viewButton, setViewButton] = useState<boolean>(false);
+    const [currentPage, setCurrentPage] = useState(initialPageState);
+
     const props = { openModal, setOpenModal };
 
     const createEcosystemModel = () => {
@@ -37,9 +48,41 @@ const Dashboard = () => {
         props.setOpenModal(true);
     };
 
+    const getAllEcosystemInvitations = async () => {
+        setLoading(true);
+        const response = await getEcosytemReceivedInvitations(
+            currentPage.pageNumber,
+            currentPage.pageSize,
+            '',
+        );
+        const { data } = response as AxiosResponse;
+
+        if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+            const totalPages = data?.data?.totalPages;
+
+            const invitationList = data?.data;
+            const ecoSystemName = invitationList.map((invitations: { name: string; }) => {
+                return invitations.name
+            })
+            const invitationPendingList = data?.data?.invitations.filter((invitation: { status: string; }) => {
+                return invitation.status === 'pending'
+            })
+
+            if (invitationPendingList.length > 0) {
+                setMessage(`You have received invitation to join ${ecoSystemName} ecosystem `)
+                setViewButton(true);
+            }
+            setCurrentPage({
+                ...currentPage,
+                total: totalPages,
+            });
+        } else {
+            setError(response as string);
+        }
+        setLoading(false);
+    };
 
     const fetchEcosystemDetails = async () => {
-
         setLoading(true);
         const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
         if (orgId) {
@@ -48,13 +91,15 @@ const Dashboard = () => {
 
             if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
                 const ecosystemData = data?.data[0]
-                await setToLocalStorage(storageKeys.ECOSYSTEM_ID, ecosystemData?.id)
-                setEcosystemId(ecosystemData?.id)
-                setEcosystemDetails({
-                    logoUrl: ecosystemData.logoUrl,
-                    name: ecosystemData.name,
-                    description: ecosystemData.description
-                })
+                if (ecosystemData?.id) {
+                    await setToLocalStorage(storageKeys.ECOSYSTEM_ID, ecosystemData?.id)
+                    setEcosystemId(ecosystemData?.id)
+                    setEcosystemDetails({
+                        logoUrl: ecosystemData.logoUrl,
+                        name: ecosystemData.name,
+                        description: ecosystemData.description
+                    })
+                }
             } else {
                 setFailure(response as string)
             }
@@ -64,6 +109,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         fetchEcosystemDetails();
+        getAllEcosystemInvitations();
     }, []);
 
     const { isEcosystemLead } = checkEcosystem();
@@ -73,16 +119,49 @@ const Dashboard = () => {
             <div className="mb-4 col-span-full xl:mb-2">
                 <BreadCrumbs />
             </div>
-            {(success || failure) && (
-                <AlertComponent
-                    message={success ?? failure}
-                    type={success ? 'success' : 'failure'}
-                    onAlertClose={() => {
-                        setSuccess(null);
-                        setFailure(null);
-                    }}
-                />
-            )}
+
+            {
+                error ? <> {(success || failure) && (
+                    <AlertComponent
+                        message={success ?? failure}
+                        type={success ? 'success' : 'failure'}
+                        onAlertClose={() => {
+                            setSuccess(null);
+                            setFailure(null);
+                        }}
+                    />
+                )}
+                </>
+                    :
+                    <>
+                        <div className="cursor-pointer">
+                            {<AlertComponent
+                                message={message ? message : error}
+                                type={message ? 'warning' : 'failure'}
+                                viewButton={viewButton}
+                                path={pathRoutes.ecosystem.invitation}
+                                onAlertClose={() => {
+                                    setMessage(null);
+                                    setError(null);
+                                }}
+                            />}
+                        </div>
+
+                        {(success || failure) && (
+                            <AlertComponent
+                                message={success ?? failure}
+                                type={success ? 'success' : 'failure'}
+                                onAlertClose={() => {
+                                    setSuccess(null);
+                                    setFailure(null);
+                                }}
+                            />
+                        )}
+
+
+                    </>
+            }
+
             {ecosystemDetails ? (
                 <div>
                     <div className="mt-4 flex flex-wrap items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
@@ -194,7 +273,7 @@ const Dashboard = () => {
                 </div>
             ) : (
                 <div>
-                    {!ecosystemDetails && loading ? (
+                    {!ecosystemDetails && !loading ? (
                         <div className="min-h-100/18rem flex justify-center items-center">
                             <CustomSpinner />
                         </div>
