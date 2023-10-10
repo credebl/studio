@@ -26,7 +26,7 @@ const initialPageState = {
 
 
 export interface EcosystemInvitation {
-	ecosystem: any
+	ecosystem: []
 	id: string
 	createDateTime: string
 	createdBy: number
@@ -146,7 +146,7 @@ const ReceivedInvitations = () => {
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			setMessage(data?.message);
 			setLoading(false);
-			window.location.href = pathRoutes.ecosystem.profile
+			window.location.href = pathRoutes.ecosystem.root
 		} else {
 			setError(response as string);
 			setLoading(false);
@@ -239,6 +239,7 @@ stroke-linejoin="round"
 													<EcoInvitationList 
 													invitationId={invitation.id} 
 													invitationEmail={invitation.email} 
+													ecosytem={invitation.ecosystem}
 													/>
 
 													<div  id={invitation.email} className="flex">

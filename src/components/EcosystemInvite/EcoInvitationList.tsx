@@ -4,11 +4,13 @@ import React from 'react';
 interface InvitationProps{
 	invitationId:string;
 	invitationEmail:string
+	ecosytem:[]
 }
 
 const EcoInvitationList = (props: InvitationProps ) => {
 
-	const {invitationId, invitationEmail} = props
+	const {invitationId, invitationEmail,ecosytem} = props
+	
 	return (
 		<>
 			<div className="flex space-x-4">
