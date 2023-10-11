@@ -21,10 +21,6 @@ const OrgRegistrationPopup = (props: {
 	const [message, setMessage] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
 
-	// const resetForm = (formikHandlers: FormikProps<any>) => {
-	//   formikHandlers.resetForm();
-	// };
-
 	const acceptEcosytemInvitation = async (
 		invite: Invitation,
 		status: string,
@@ -40,7 +36,6 @@ const OrgRegistrationPopup = (props: {
 			setMessage(data?.message);
 			setLoading(false);
 			window.location.href = pathRoutes.ecosystem.profile;
-			// resetForm();
 		} else {
 			setError(response as string);
 			setLoading(false);
