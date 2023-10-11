@@ -10,10 +10,6 @@ export interface ICheckEcosystem {
     isEcosystemLead: boolean;
 }
 
-// const isEnabledEcosystem = userDetails.enableEcosystem
-// const ecosystemRole = EcosystemRoles.ecosystemLead
-
-
 const ecosystemId = async () => {
     const id = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID)
     return id
