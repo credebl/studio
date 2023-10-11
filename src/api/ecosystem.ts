@@ -143,7 +143,7 @@ export const SignEndorsementRequest = async ( ecosystemId: string, orgId: string
     }
 
     try {
-        return await axiosPost(axiosPayload);
+        return await axiosPut(axiosPayload);
     }
     catch (error) {
         const err = error as Error
