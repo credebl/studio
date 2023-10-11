@@ -56,7 +56,7 @@ const Dashboard = () => {
 
 	const handleEditModalClose = () => {
 		setEditOpenModal(false);
-		setDropdownOpen(false); // Close the dropdown when the edit modal is closed
+		setDropdownOpen(false); 
 	  };
 
 	const getAllEcosystemInvitations = async () => {

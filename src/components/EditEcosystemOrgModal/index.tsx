@@ -17,7 +17,7 @@ interface EditEntityModalProps {
     setOpenModal: (flag: boolean) => void;
     onEditSuccess?: () => void;
     entityData: Organisation | Ecosystem | null;
-    isOrganization: boolean; // Indicates whether it's an organization or ecosystem
+    isOrganization: boolean; 
 }
 
 interface EditEntityValues {
@@ -81,7 +81,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
             setLoading(false);
         }
     }, [props.openModal]);
-    // Function to process image
+ 
     const processImage = (e: any): string | undefined => {
         const file = e?.target?.files[0];
         if (!file) return;
@@ -121,7 +121,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
         };
     };
 
-    // Function to handle image change
+    
     const handleImageChange = (event: any): void => {
         setImgError('');
         const reader = new FileReader();
