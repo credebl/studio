@@ -1,5 +1,5 @@
 import { Button, Modal } from 'flowbite-react';
-import { EcosystemRoles, EndorsementType } from '../../../common/enums';
+import { EndorsementType } from '../../../common/enums';
 import checkEcosystem from '../../../config/ecosystem';
 import EndorsementCard from './EndorsementCard';
 import type { IAttributes } from '../../Resources/Schema/interfaces';
