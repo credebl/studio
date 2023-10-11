@@ -26,10 +26,12 @@ const getUserProfile = async () => {
     return userDetails
 }
 
-const role = localStorage.getItem("eco_role")
-
 const checkEcosystem = async (): Promise<ICheckEcosystem> => {
     const userData = await getUserProfile()
+
+    // Added this key to change ecosystem role from localstorage until we'll get ecosystem role from backend
+    const role = await localStorage.getItem("eco_role")
+    
     const isEnabledEcosystem = userData?.enableEcosystem
     const ecosystemRole = role ?? EcosystemRoles.ecosystemLead
     return {
