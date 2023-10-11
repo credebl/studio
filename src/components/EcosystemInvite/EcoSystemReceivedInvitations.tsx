@@ -1,4 +1,4 @@
-import { Button, Pagination } from 'flowbite-react';
+import { Button, Card, Pagination } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import {
 	acceptRejectEcosystemInvitations,
@@ -26,7 +26,7 @@ const initialPageState = {
 
 
 export interface EcosystemInvitation {
-	ecosystem: any
+	ecosystem: []
 	id: string
 	createDateTime: string
 	createdBy: number
@@ -146,7 +146,7 @@ const ReceivedInvitations = () => {
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			setMessage(data?.message);
 			setLoading(false);
-			window.location.href = pathRoutes.ecosystem.profile
+			window.location.href = pathRoutes.ecosystem.root
 		} else {
 			setError(response as string);
 			setLoading(false);
@@ -229,16 +229,17 @@ stroke-linejoin="round"
 							<CustomSpinner />
 						</div>
 					) : invitationsData && invitationsData?.length > 0 ? (
-						<div id={selectedId?.toString()} className="p-2 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-3 dark:bg-gray-800">
+						<div id={selectedId?.toString()} className="p-2 mb-4 bg-white 2xl:col-span-2 dark:border-gray-700 sm:p-3 dark:bg-gray-800">
 							<div id={selectedId?.toString()} className="flow-root">
-								<ul id={selectedId?.toString()} className="divide-y divide-gray-200 dark:divide-gray-700">
+								<ul id={selectedId?.toString()}>
 									{invitationsData.map((invitation) => (
-										<li key={invitation.id} className="p-4">
-											<div id={invitation.email} className="flex flex-wrap justify-between xl:block 2xl:flex align-center 2xl:space-x-4">
+										<Card key={invitation.id} className="p-4 mb-4">
+											<div id={invitation.email} className="flex flex-wrap justify-between 2xl:flex align-center">
 												<div id={invitation.email} className=" xl:mb-4 2xl:mb-0">
 													<EcoInvitationList 
 													invitationId={invitation.id} 
 													invitationEmail={invitation.email} 
+													ecosytem={invitation.ecosystem}
 													/>
 
 													<div  id={invitation.email} className="flex">
@@ -289,7 +290,7 @@ stroke-linejoin="round"
 													</select>
 												</div>
 											</div>
-										</li>
+										</Card>
 									))}
 								</ul>
 							</div>

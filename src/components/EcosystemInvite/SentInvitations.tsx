@@ -65,6 +65,7 @@ const SentInvitations = () => {
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			setLoading(true);
 			await getAllSentInvitations();
+			setMessage('Invitation deleted successfully')
 		} else {
 			setError(response as string);
 		}
