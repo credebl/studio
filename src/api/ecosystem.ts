@@ -10,7 +10,7 @@ interface CreateEcosystemPayload {
     name: string
     description: string
     logo: string
-    tags: string
+    tags?: string
     userId: number
 }
 
@@ -44,10 +44,13 @@ export const createEcosystems = async (dataPayload: CreateEcosystemPayload) => {
     }
 }
 
-export const updateEcosystem = async (data: object) => {
+export const updateEcosystem = async (dataPayload: CreateEcosystemPayload) => {
     const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-    const url = `${apiRoutes.Ecosystem.root}/${orgId}`
-    const payload = data
+    const ecosystemId = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID);
+
+    const url = `${apiRoutes.Ecosystem.root}/${ecosystemId}/${orgId}`
+    const payload = dataPayload
+
     const axiosPayload = {
         url,
         payload,
@@ -62,6 +65,7 @@ export const updateEcosystem = async (data: object) => {
         return err?.message
     }
 }
+
 
 export const getEcosystem = async (orgId: string) => {
     const url = `${apiRoutes.Ecosystem.root}/${orgId}`
@@ -133,4 +137,31 @@ export const createCredDefRequest = async (data: object, ecosystemId: string, or
         const err = error as Error
         return err?.message
     }
+}
+
+export const getEcosystemDashboard = async (ecosystemId: string, orgId: string) => {
+    
+    const url = `${apiRoutes.Ecosystem.root}/${ecosystemId}/${orgId}/dashboard`
+
+    const token = await getFromLocalStorage(storageKeys.TOKEN)
+
+    const config = { 
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+        }
+    }
+    const axiosPayload = {
+        url,
+        config
+    }
+
+    try {
+        return await axiosGet(axiosPayload);
+    }
+    catch (error) {
+        const err = error as Error
+        return err?.message
+    }
+
 }

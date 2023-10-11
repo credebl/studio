@@ -9,17 +9,20 @@ import CustomSpinner from '../CustomSpinner';
 import endorseIcon from '../../assets/endorser-card.svg';
 import userCard from '../../assets/User_Card.svg';
 import MemberList from './MemberList';
-import { getEcosystem } from '../../api/ecosystem';
+import { getEcosystem, getEcosystemDashboard } from '../../api/ecosystem';
 import { EmptyListMessage } from '../EmptyListComponent';
 import CreateEcosystemOrgModal from '../CreateEcosystemOrgModal';
 import { AlertComponent } from '../AlertComponent';
 import { ICheckEcosystem, checkEcosystem } from '../../config/ecosystem';
 import RoleViewButton from '../RoleViewButton';
 import SendInvitationModal from '../organization/invitations/SendInvitationModal';
+import { Dropdown } from 'flowbite-react';
+import EditPopupModal from '../EditEcosystemOrgModal';
 import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
-import { getEcosytemReceivedInvitations } from '../../api/invitations';
+import { getUserEcosystemInvitations } from '../../api/invitations';
 import { pathRoutes } from '../../config/pathRoutes';
 import React from 'react';
+import type { EcosystemDashboard } from '../organization/interfaces';
 
 const initialPageState = {
     pageNumber: 1,
@@ -28,50 +31,60 @@ const initialPageState = {
 };
 
 const Dashboard = () => {
-    const [ecosystemDetails, setEcosystemDetails] = useState<IEcosystem | null>();
-    const [success, setSuccess] = useState<string | null>(null);
-    const [failure, setFailure] = useState<string | null>(null);
-    const [message, setMessage] = useState<string | null>(null);
-    const [loading, setLoading] = useState<boolean | null>(true);
-    const [error, setError] = useState<string | null>(null);
-    const [ecosystemId, setEcosystemId] = useState('');
-    const [openModal, setOpenModal] = useState<boolean>(false);
-    const [viewButton, setViewButton] = useState<boolean>(false);
-    const [currentPage, setCurrentPage] = useState(initialPageState);
-    const [isEcosystemLead, setIsEcosystemLead] = useState(false);
+	const [ecosystemDetails, setEcosystemDetails] = useState<IEcosystem | null>();
+	const [success, setSuccess] = useState<string | null>(null);
+	const [failure, setFailure] = useState<string | null>(null);
+	const [message, setMessage] = useState<string | null>(null);
+	const [loading, setLoading] = useState<boolean | null>(true);
+	const [ecosystemId, setEcosystemId] = useState('')
+	const [editOpenModal, setEditOpenModal] = useState<boolean>(false);
+	const [dropdownOpen, setDropdownOpen] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+	const [openModal, setOpenModal] = useState<boolean>(false);
+	const [viewButton, setViewButton] = useState<boolean>(false);
+	const [currentPage, setCurrentPage] = useState(initialPageState);
+	const [isEcosystemLead, setIsEcosystemLead] = useState(false);
+    const [ecosystemDashboard, setEcosystemDashboard] = useState<EcosystemDashboard | null>(null)
+	const [ecosystemDetailsNotFound, setEcosystemDetailsNotFound] = useState(false);
 
-    const props = { openModal, setOpenModal };
+	
+	const createEcosystemModel = () => {
+		setOpenModal(true);
+	};
 
-    const createEcosystemModel = () => {
-        props.setOpenModal(true);
-    };
+	const createInvitationsModel = () => {
+		setOpenModal(true);
+	};
 
-    const createInvitationsModel = () => {
-        props.setOpenModal(true);
-    };
+	const EditEcosystemOrgModal = () => {
+		setEditOpenModal(true);
+	};
+
+	const handleEditModalClose = () => {
+		setEditOpenModal(false);
+		setDropdownOpen(false); 
+        fetchEcosystemDetails()
+	  };
 
     const getAllEcosystemInvitations = async () => {
-        setLoading(true);
-        const response = await getEcosytemReceivedInvitations(
-            currentPage.pageNumber,
-            currentPage.pageSize,
-            '',
+			
+			setLoading(true);
+			const response = await getUserEcosystemInvitations(
+				currentPage.pageNumber,
+				currentPage.pageSize,
+				'',
         );
         const { data } = response as AxiosResponse;
-
+				
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-            const totalPages = data?.data?.totalPages;
-
-            const invitationList = data?.data;
-            const ecoSystemName = invitationList.map((invitations: { name: string; }) => {
-                return invitations.name
-            })
-            const invitationPendingList = data?.data?.invitations.filter((invitation: { status: string; }) => {
+					const totalPages = data?.data?.totalPages;
+					
+					const invitationPendingList = data?.data?.invitations.filter((invitation: { status: string; }) => {
                 return invitation.status === 'pending'
             })
 
             if (invitationPendingList.length > 0) {
-                setMessage(`You have received invitation to join ${ecoSystemName} ecosystem `)
+                setMessage(`You have received invitation to join ecosystem `)
                 setViewButton(true);
             }
             setCurrentPage({
@@ -85,33 +98,67 @@ const Dashboard = () => {
     };
 
     const fetchEcosystemDetails = async () => {
-        setLoading(true);
-        const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
-        if (orgId) {
-            const response = await getEcosystem(orgId);
-            const { data } = response as AxiosResponse;
+		setLoading(true);
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		if (orgId) {
+			const response = await getEcosystem(orgId);
+			const { data } = response as AxiosResponse;
 
-            if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-                const ecosystemData = data?.data[0]
-                if (ecosystemData?.id) {
-                    await setToLocalStorage(storageKeys.ECOSYSTEM_ID, ecosystemData?.id)
-                    setEcosystemId(ecosystemData?.id)
-                    setEcosystemDetails({
-                        logoUrl: ecosystemData.logoUrl,
-                        name: ecosystemData.name,
-                        description: ecosystemData.description
-                    })
-                }
-            } else {
-                setFailure(response as string)
-            }
-        }
-        setLoading(false)
+			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+				const ecosystemData = data?.data[0];
+				await setToLocalStorage(storageKeys.ECOSYSTEM_ID, ecosystemData?.id);
+				setEcosystemId(ecosystemData?.id);
+				setEcosystemDetails({
+					logoUrl: ecosystemData.logoUrl,
+					name: ecosystemData.name,
+					description: ecosystemData.description,
+				});
+			} else {
+				setEcosystemDetailsNotFound(true);
+				
+			}
+		}
+		setLoading(false);
+	};
+
+	const fetchEcosystemDashboard = async () => {
+
+        setLoading(true)
+
+        const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		const ecosystemId = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID);
+
+		const response = await getEcosystemDashboard(ecosystemId as string, orgId as string);
+
+		const { data } = response as AxiosResponse
+
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			setEcosystemDashboard(data?.data)
+		}
+		else {
+            setFailure(response as string)
+			setFailure(response as string);
+			setLoading(false);
+		}
+		setLoading(false)
+        
     }
 
+	const checkOrgId = async () => {
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		if (orgId) {
+			await getAllEcosystemInvitations();
+		}
+	};
+
+	const getDashboardData = async () => {
+		await checkOrgId();
+		await fetchEcosystemDetails();
+		await fetchEcosystemDashboard();
+	};
+
     useEffect(() => {
-        fetchEcosystemDetails();
-        getAllEcosystemInvitations();
+		getDashboardData();
         
         const checkEcosystemData = async () => {
             const data: ICheckEcosystem = await checkEcosystem();
@@ -121,7 +168,9 @@ const Dashboard = () => {
 
     }, []);
 
-    return (
+
+
+	return (
         <div className="px-4 pt-6">
             <div className="mb-4 col-span-full xl:mb-2">
                 <BreadCrumbs />
@@ -144,8 +193,8 @@ const Dashboard = () => {
                         <div className="cursor-pointer">
                             {<AlertComponent
                                 message={message ? message : error}
-                                type={message ? 'warning' : 'failure'}
-                                viewButton={viewButton}
+                                type={message ? message==='Ecosystem invitations sent successfully'? 'success' : 'warning' : 'failure'}
+                                viewButton={message==='Ecosystem invitations sent successfully'? false : true}
                                 path={pathRoutes.ecosystem.invitation}
                                 onAlertClose={() => {
                                     setMessage(null);
@@ -164,8 +213,6 @@ const Dashboard = () => {
                                 }}
                             />
                         )}
-
-
                     </>
             }
 
@@ -200,9 +247,9 @@ const Dashboard = () => {
                                 <SendInvitationModal
                                     ecosystemId={ecosystemId}
                                     flag={true}
-                                    openModal={props.openModal}
+                                    openModal={openModal}
                                     setMessage={(data) => setMessage(data)}
-                                    setOpenModal={props.setOpenModal}
+                                    setOpenModal={setOpenModal}
                                 />
                                 <RoleViewButton
                                     buttonTitle="Invite"
@@ -224,17 +271,39 @@ const Dashboard = () => {
                                     }
                                     onClickEvent={createInvitationsModel}
                                 />
-                                <div className="ml-4">
-                                    <svg
-                                        className="w-6 h-6 text-gray-800 cursor-pointer dark:text-white"
-                                        aria-hidden="true"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="currentColor"
-                                        viewBox="0 0 4 15"
-                                    >
-                                        <path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
-                                    </svg>
-                                </div>
+                                <Dropdown
+									label={"test"}
+									open={dropdownOpen} 
+									onToggle={() => setDropdownOpen(!dropdownOpen)} 
+									renderTrigger={() => <svg
+										className="ml-4 w-4 h-4 text-gray-800 cursor-pointer dark:text-white"
+										aria-hidden="true"
+										xmlns="http://www.w3.org/2000/svg"
+										fill="currentColor"
+										viewBox="0 0 4 15"
+
+									>
+										<path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
+									</svg>}
+								>
+									<Dropdown.Item onClick={EditEcosystemOrgModal}>
+										<div>
+											Edit Ecosystem
+										</div>
+									</Dropdown.Item>
+									<Dropdown.Item>
+										<div>
+											Enable/Disable Ecosystem
+										</div>
+									</Dropdown.Item>
+									<Dropdown.Item>
+										<div>
+											Manual Registration
+										</div>
+									</Dropdown.Item>
+
+
+								</Dropdown>
                             </div>
                         )}
                     </div>
@@ -252,7 +321,7 @@ const Dashboard = () => {
                                                 Member
                                             </h3>
                                             <span className="text-2xl font-semi-bold leading-none text-white sm:text-3xl dark:text-white">
-                                                23
+                                                {ecosystemDashboard?.membersCount}
                                             </span>
                                         </div>
                                     </div>
@@ -266,7 +335,7 @@ const Dashboard = () => {
                                                 Endorsements
                                             </h3>
                                             <span className="text-2xl font-semi-bold leading-none text-white sm:text-3xl dark:text-white">
-                                                598
+											{ecosystemDashboard?.endorsementsCount}
                                             </span>
                                         </div>
                                     </div>
@@ -275,6 +344,16 @@ const Dashboard = () => {
                             <div className="mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
                                 <MemberList />
                             </div>
+                            <EditPopupModal
+								openModal={editOpenModal}
+								setOpenModal={setEditOpenModal}
+								setMessage={(value) => {
+									setSuccess(value);
+								}}
+								isOrganization={false}
+								onEditSuccess={handleEditModalClose}
+								entityData={ecosystemDetails}
+							/>
                         </>
                     )}
                 </div>
@@ -289,7 +368,7 @@ const Dashboard = () => {
                             <div className="flex items-center justify-center mb-4">
                                 <CreateEcosystemOrgModal
                                     openModal={openModal}
-                                    setOpenModal={props.setOpenModal}
+                                    setOpenModal={setOpenModal}
                                     setMessage={(value) => {
                                         setSuccess(value);
                                         fetchEcosystemDetails();
@@ -322,6 +401,17 @@ const Dashboard = () => {
                     )}
                 </div>
             )}
+
+{ecosystemDetailsNotFound && (
+        <AlertComponent
+          message="Ecosystem details not found."
+          type="failure"
+          onAlertClose={() => {
+            setEcosystemDetailsNotFound(false); 
+            setFailure(null);
+          }}
+        />
+      )}
         </div>
     );
 };
