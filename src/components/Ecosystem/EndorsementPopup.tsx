@@ -12,10 +12,7 @@ const EndorsementPopup = (props: {
   id: string;
   version: string;
   authorDID: string;
-  revocable: boolean;
   endorsementType: EndorsementType;
-  organizationName: string;
-  ecosystemRole: EcosystemRoles;
   attrNames: [];
   created: string;
 }) => {

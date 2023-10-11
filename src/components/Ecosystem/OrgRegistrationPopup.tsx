@@ -1,5 +1,4 @@
 import { Button, Label, Modal } from 'flowbite-react';
-import checkEcosystem from '../../config/ecosystem';
 import { Field, Form, Formik, FormikProps } from 'formik';
 import * as yup from 'yup';
 import { useState } from 'react';
@@ -13,7 +12,7 @@ const OrgRegistrationPopup = (props: {
 	openModal: boolean;
 	closeModal: (flag: boolean) => void;
 }) => {
-	const [selectedId, setSelectedId] = useState<number>();
+	const [selectedId] = useState<number>();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [message, setMessage] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
@@ -28,6 +27,7 @@ const OrgRegistrationPopup = (props: {
 			status,
 		);
 		const { data } = response as AxiosResponse;
+		
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			setMessage(data?.message);
