@@ -1,6 +1,6 @@
 import type { IEcosystem } from './interfaces'
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
-import { ReactSVGElement, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Features } from '../../utils/enums/features';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
@@ -40,7 +40,6 @@ const Dashboard = () => {
 	const [viewButton, setViewButton] = useState<boolean>(false);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const [isEcosystemLead, setIsEcosystemLead] = useState(false);
-	const [showPopup, setShowPopup] = useState<boolean>(false);
 	const [ecosystemDashboard, setEcosystemDashboard] =
 		useState<EcosystemDashboard | null>(null);
 	const [ecosystemDetailsNotFound, setEcosystemDetailsNotFound] =
@@ -54,10 +53,6 @@ const Dashboard = () => {
 
 	const createInvitationsModel = () => {
 		props.setOpenModal(true);
-	};
-
-	const redirectToOrgRegistrationPopup = () => {
-		setShowPopup(true);
 	};
 
 	const getAllEcosystemInvitations = async () => {
@@ -130,8 +125,8 @@ const Dashboard = () => {
 		const ecosystemId = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID);
 
 		const response = await getEcosystemDashboard(
-			ecosystemId as string,
-			orgId as string,
+			ecosystemId ,
+			orgId
 		);
 
 		const { data } = response as AxiosResponse;
@@ -168,39 +163,35 @@ const Dashboard = () => {
 			</div>
 
 			{error ? (
-				<>
-					{' '}
-					{(success || failure) && (
+				(success || failure) && (
+					<>
 						<AlertComponent
-							message={success ?? failure}
+							message={success || failure}
 							type={success ? 'success' : 'failure'}
 							onAlertClose={() => {
 								setSuccess(null);
 								setFailure(null);
 							}}
 						/>
-					)}
-				</>
+					</>
+				)
 			) : (
 				<>
 					<div className="cursor-pointer">
-						{
-							<AlertComponent
-								message={message ? message : error}
-								type={message ? 'warning' : 'failure'}
-								viewButton={viewButton}
-								path={pathRoutes.ecosystem.invitation}
-								onAlertClose={() => {
-									setMessage(null);
-									setError(null);
-								}}
-							/>
-						}
+						<AlertComponent
+							message={message || error}
+							type={message ? 'warning' : 'failure'}
+							viewButton={viewButton}
+							path={pathRoutes.ecosystem.invitation}
+							onAlertClose={() => {
+								setMessage(null);
+								setError(null);
+							}}
+						/>
 					</div>
-
 					{(success || failure) && (
 						<AlertComponent
-							message={success ?? failure}
+							message={success || failure}
 							type={success ? 'success' : 'failure'}
 							onAlertClose={() => {
 								setSuccess(null);
@@ -324,7 +315,7 @@ const Dashboard = () => {
 				<div>
 					{!ecosystemDetails && loading ? (
 						<div className="min-h-100/18rem flex justify-center items-center">
-							<CustomSpinner/>
+							<CustomSpinner />
 						</div>
 					) : (
 						<div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
@@ -357,7 +348,7 @@ const Dashboard = () => {
 											/>
 										</svg>
 									}
-									onClick={() => createEcosystemModel()}	
+									onClick={() => createEcosystemModel()}
 								/>
 							</div>
 						</div>
