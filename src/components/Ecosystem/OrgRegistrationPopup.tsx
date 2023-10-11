@@ -3,23 +3,20 @@ import checkEcosystem from '../../config/ecosystem';
 import { Field, Form, Formik, FormikProps } from 'formik';
 import * as yup from 'yup';
 import { useState } from 'react';
-import type { Organisation } from '../organization/interfaces';
 import type { Invitation } from '../organization/interfaces/invitations';
 import { acceptRejectInvitations } from '../../api/invitations';
 import type { AxiosResponse } from 'axios';
 import { apiStatusCodes } from '../../config/CommonConstant';
 import { pathRoutes } from '../../config/pathRoutes';
-import React from 'react';
 
 const OrgRegistrationPopup = (props: {
 	openModal: boolean;
 	closeModal: (flag: boolean) => void;
 }) => {
-	const { isEcosystemLead } = checkEcosystem();
-	const [selectedId, setSelectedId] = useState<number>();
-	const [loading, setLoading] = useState<boolean>(false);
-	const [message, setMessage] = useState<string | null>(null);
-	const [error, setError] = useState<string | null>(null);
+	const [selectedId] = useState<number>();
+	const [setLoading] = useState<boolean>(false);
+	const [setMessage] = useState<string | null>(null);
+	const [setError] = useState<string | null>(null);
 
 	const acceptEcosytemInvitation = async (
 		invite: Invitation,
@@ -173,9 +170,9 @@ const OrgRegistrationPopup = (props: {
 											stroke="currentColor"
 										>
 											<path
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												stroke-width="1"
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												strokeWidth="1"
 												d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
 											/>
 										</svg>
@@ -195,9 +192,9 @@ const OrgRegistrationPopup = (props: {
 											stroke="currentColor"
 										>
 											<path
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												stroke-width="1"
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												strokeWidth="1"
 												d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
 											/>
 										</svg>
