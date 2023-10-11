@@ -17,6 +17,7 @@ import CustomSpinner from '../CustomSpinner';
 import { getFromLocalStorage } from '../../api/Auth';
 import { getOrganizations } from '../../api/organization';
 import EcoInvitationList from './EcoInvitationList';
+import { getOrgDetails } from '../../config/ecosystem';
 
 const initialPageState = {
 	pageNumber: 1,
@@ -45,7 +46,7 @@ const ReceivedInvitations = () => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [message, setMessage] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
-	const [organizationsList, setOrganizationsList] =useState<Array<Organisation> | null>(null);
+	const [organizationsList, setOrganizationsList] = useState<Array<Organisation> | null>(null);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const [selectedId, setSelectedId] = useState<number>();
 	const [searchText, setSearchText] = useState('');
@@ -131,16 +132,19 @@ const ReceivedInvitations = () => {
 
 		return () => clearTimeout(getData);
 	}, [searchText, openModal, currentPage.pageNumber]);
-	
+
 	const respondToEcosystemInvitations = async (
 		invite: Invitation,
 		status: string,
 	) => {
 		setLoading(true);
+		const orgDetails = await getOrgDetails()
 		const response = await acceptRejectEcosystemInvitations(
 			invite.id,
 			Number(selectedId),
 			status,
+			orgDetails.orgName,
+			orgDetails.orgDid
 		);
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
@@ -168,36 +172,36 @@ const ReceivedInvitations = () => {
 	useEffect(() => {
 		getOrgId();
 	}, []);
-	
-const rejectEnv=
-<svg
-className="mr-1 h-6 w-6 text-primary-700"
-fill="none"
-viewBox="0 0 24 24"
-stroke="currentColor"
->
-<path
-	stroke-linecap="round"
-	stroke-linejoin="round"
-	stroke-width="2"
-	d="M6 18L18 6M6 6l12 12"
-/>
-</svg>
 
-const acceptEnv=<svg
-className="mr-1 h-6 w-6 text-white"
-width="20"
-height="20"
-viewBox="0 0 24 24"
-stroke-width="2"
-stroke="currentColor"
-fill="none"
-stroke-linecap="round"
-stroke-linejoin="round"
->
-<path stroke="none" d="M0 0h24v24H0z" />
-<path d="M5 12l5 5l10 -10" />
-</svg>
+	const rejectEnv =
+		<svg
+			className="mr-1 h-6 w-6 text-primary-700"
+			fill="none"
+			viewBox="0 0 24 24"
+			stroke="currentColor"
+		>
+			<path
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				stroke-width="2"
+				d="M6 18L18 6M6 6l12 12"
+			/>
+		</svg>
+
+	const acceptEnv = <svg
+		className="mr-1 h-6 w-6 text-white"
+		width="20"
+		height="20"
+		viewBox="0 0 24 24"
+		stroke-width="2"
+		stroke="currentColor"
+		fill="none"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+	>
+		<path stroke="none" d="M0 0h24v24H0z" />
+		<path d="M5 12l5 5l10 -10" />
+	</svg>
 
 	return (
 		<div className="px-4 pt-6">
@@ -236,13 +240,13 @@ stroke-linejoin="round"
 										<Card key={invitation.id} className="p-4 mb-4">
 											<div id={invitation.email} className="flex flex-wrap justify-between 2xl:flex align-center">
 												<div id={invitation.email} className=" xl:mb-4 2xl:mb-0">
-													<EcoInvitationList 
-													invitationId={invitation.id} 
-													invitationEmail={invitation.email} 
-													ecosytem={invitation.ecosystem}
+													<EcoInvitationList
+														invitationId={invitation.id}
+														invitationEmail={invitation.email}
+														ecosytem={invitation.ecosystem}
 													/>
 
-													<div  id={invitation.email} className="flex">
+													<div id={invitation.email} className="flex">
 														<Button
 															onClick={() =>
 																respondToEcosystemInvitations(

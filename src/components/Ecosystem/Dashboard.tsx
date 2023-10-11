@@ -19,6 +19,7 @@ import SendInvitationModal from '../organization/invitations/SendInvitationModal
 import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { getEcosytemReceivedInvitations } from '../../api/invitations';
 import { pathRoutes } from '../../config/pathRoutes';
+import React from 'react';
 
 const initialPageState = {
     pageNumber: 1,

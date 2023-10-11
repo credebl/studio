@@ -1,4 +1,4 @@
-import { axiosDelete, axiosGet, axiosPost } from "../services/apiRequests"
+import { axiosDelete, axiosGet, axiosPost, axiosPut } from "../services/apiRequests"
 
 import { apiRoutes } from "../config/apiRoutes";
 import { getFromLocalStorage } from "./Auth";
@@ -233,13 +233,14 @@ export const getEcosystemInvitations = async (pageNumber: number, pageSize: numb
 }
 
 // Accept/ Reject Invitations
-export const acceptRejectEcosystemInvitations = async (invitationId: number,orgId: number, status: string) => {
+export const acceptRejectEcosystemInvitations = async (invitationId: number,orgId: number, status: string, orgName: string, orgDid: string) => {
 
     const url = `${apiRoutes.Ecosystem.root}/${orgId}${apiRoutes.Ecosystem.invitations}/${invitationId}`
     
     const payload = {
-        orgId: Number(orgId),
-        status
+        status,
+		orgName,
+		orgDid
     }
     const token = await getFromLocalStorage(storageKeys.TOKEN)
 
@@ -256,7 +257,7 @@ export const acceptRejectEcosystemInvitations = async (invitationId: number,orgI
     }
 
     try {
-        return await axiosPost(axiosPayload);
+        return await axiosPut(axiosPayload);
     }
     catch (error) {
         const err = error as Error

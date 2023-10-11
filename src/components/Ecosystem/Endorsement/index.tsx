@@ -12,7 +12,7 @@ import SearchInput from '../../SearchInput';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
 import { getOrganizationById } from '../../../api/organization';
-import { getEcosystemId } from '../../../config/ecosystem';
+import { ICheckEcosystem, checkEcosystem, getEcosystemId } from '../../../config/ecosystem';
 import type { IAttributes } from '../../Resources/Schema/interfaces';
 import EndorsementPopup from './EndorsementPopup';
 import EndorsementCard from './EndorsementCard';
@@ -57,6 +57,7 @@ const EndorsementList = () => {
     const [walletStatus, setWalletStatus] = useState(false)
     const [showPopup, setShowPopup] = useState(false)
     const [selectedRequest, setSelectedRequest] = useState<ISelectedRequest>()
+    const [isEcosystemLead, setIsEcosystemLead] = useState(false);
 
 
     const options = [
@@ -119,11 +120,11 @@ const EndorsementList = () => {
     }
 
     const onPageChange = (page: number) => {
-		setEndorsementListAPIParameter({
-			...endorsementListAPIParameter,
-			page,
-		});
-	};
+        setEndorsementListAPIParameter({
+            ...endorsementListAPIParameter,
+            page,
+        });
+    };
 
     useEffect(() => {
         getEndorsementListData(endorsementListAPIParameter)
@@ -170,6 +171,11 @@ const EndorsementList = () => {
 
     useEffect(() => {
         fetchOrganizationDetails()
+        const checkEcosystemData = async () => {
+            const data: ICheckEcosystem = await checkEcosystem();
+            setIsEcosystemLead(data.isEcosystemLead)
+        }
+        checkEcosystemData();
     }, [])
 
     return (
@@ -255,7 +261,7 @@ const EndorsementList = () => {
                                     </div>)
                                     :
                                     <div>
-                                        {walletStatus ?
+                                        {walletStatus && !isEcosystemLead ?
                                             <EmptyListMessage
                                                 message={'No Endorsement Requests'}
                                                 description={'Get started by requesting Endorsement'}
@@ -285,7 +291,7 @@ const EndorsementList = () => {
                     )
                 }
             </div>
-            <EndorsementPopup openModal={showPopup} closeModal={hidePopup} isAccepted={(flag: boolean) => console.log('Is accepted::', flag)} endorsementData={selectedRequest}/>
+            <EndorsementPopup openModal={showPopup} closeModal={hidePopup} isAccepted={(flag: boolean) => console.log('Is accepted::', flag)} endorsementData={selectedRequest} />
         </div>
     )
 }

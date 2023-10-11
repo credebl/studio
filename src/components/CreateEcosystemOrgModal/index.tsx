@@ -13,6 +13,8 @@ import { asset } from '../../lib/data.js';
 import { createOrganization } from "../../api/organization";
 import { getFromLocalStorage } from "../../api/Auth";
 import { createEcosystems } from "../../api/ecosystem";
+import React from "react";
+import { getOrgDetails } from "../../config/ecosystem";
 
 
 interface Values {
@@ -162,14 +164,18 @@ const CreateEcosystemOrgModal = (props: IProps) => {
     const submitCreateEcosystem = async (values: EcoValues) => {
         try {
             setLoading(true)
+            const orgDetails = await getOrgDetails()
             const user_data = JSON.parse(await getFromLocalStorage(storageKeys.USER_PROFILE))
             const ecoData = {
                 name: values.name,
                 description: values.description,
                 logo: logoImage?.imagePreviewUrl as string || "",
                 tags: "",
-                userId: Number(user_data?.id)
+                userId: Number(user_data?.id),
+                orgName: orgDetails?.orgName,
+                orgDid: orgDetails?.orgDid
             }
+
             const resCreateEco = await createEcosystems(ecoData)
 
             const { data } = resCreateEco as AxiosResponse
