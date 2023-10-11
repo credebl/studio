@@ -61,7 +61,7 @@ const EndorsementList = () => {
 
     const options = [
         {
-            name: "All",
+            name: "Status",
             value: ""
         },
         {
@@ -79,7 +79,7 @@ const EndorsementList = () => {
     ]
 
     const typeOptions = [{
-        name: "All",
+        name: "Endorsement Type",
         value: ""
     },
     {
@@ -183,12 +183,12 @@ const EndorsementList = () => {
             <div>
                 <div>
                     <div className="flex flex-col items-center justify-between mb-4 pr-4 sm:flex-row">
-                        <div id='schemasSearchInput' className='mb-2 pl-2 flex space-x-2 items-end'>
+                        <div id='schemasSearchInput' className='mb-2 pl-2 flex flex-wrap sm:flex-nowrap space-x-2 items-end'>
                             <SearchInput
                                 onInputChange={onSearch}
                             />
                             <select onChange={(e) => handleFilter(e, "statusFilter")} id="statusfilter"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11">
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11 sm:!ml-2 !ml-0 mt-2 sm:mt-0">
                                 {options.map((opt) => (
                                     <option
                                         key={opt.value}
@@ -200,7 +200,7 @@ const EndorsementList = () => {
                                 ))}
                             </select>
                             <select onChange={(e) => handleFilter(e, "typeFilter")} id="typefilter"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11">
+                                className="bg-gray-50 border border-gray-300 text-gray-900 min-w-[11rem] text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11 sm:!ml-2 !ml-0 mt-2 sm:mt-0">
                                 {typeOptions.map((opt) => (
                                     <option
                                         key={opt.value}
