@@ -59,6 +59,7 @@ const Dashboard = () => {
 	const handleEditModalClose = () => {
 		setEditOpenModal(false);
 		setDropdownOpen(false); 
+        fetchEcosystemDetails()
 	  };
 
 	const getAllEcosystemInvitations = async () => {
