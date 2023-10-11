@@ -1,8 +1,12 @@
 import { Button, Modal } from 'flowbite-react';
 import { EndorsementStatus } from '../../../common/enums';
-import { ICheckEcosystem, checkEcosystem } from '../../../config/ecosystem';
+import { ICheckEcosystem, checkEcosystem, getEcosystemId } from '../../../config/ecosystem';
 import EndorsementCard from './EndorsementCard';
 import { useEffect, useState } from 'react';
+import { getFromLocalStorage } from '../../../api/Auth';
+import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
+import { SignEndorsementRequest } from '../../../api/ecosystem';
+import type { AxiosResponse } from 'axios';
 
 const EndorsementPopup = (props: {
   openModal: boolean;
@@ -10,7 +14,8 @@ const EndorsementPopup = (props: {
   isAccepted: (flag: boolean) => void;
   endorsementData: any
 }) => {
-
+  const [orgid, setOrgId] = useState<string>('')
+  const [loading, setIsLoading] = useState<boolean>(true)
   const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 
   useEffect(() => {
@@ -20,6 +25,24 @@ const EndorsementPopup = (props: {
     }
     checkEcosystemData();
   }, [])
+
+  const SignEndorsement = async (endorsementId: string) => {
+    try {
+      const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
+      setOrgId(organizationId)
+      const ecoId = await getEcosystemId();
+      const SignEndorsementrequest = await SignEndorsementRequest(ecoId, organizationId, endorsementId);
+
+      const { data } = SignEndorsementrequest as AxiosResponse;
+
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        props.isAccepted(true)
+      }
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error while fetching schema list:', error);
+    }
+  }
 
   return (
     <Modal show={props.openModal} onClose={props.closeModal} size="xl">
@@ -55,7 +78,11 @@ const EndorsementPopup = (props: {
                 </span>
               </Button>
 
-              <Button onClick={() => props.isAccepted(true)}
+              <Button
+                onClick={() => {
+                  SignEndorsement(props.endorsementData.id);
+                  props.isAccepted(true)
+                }}
                 class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800 mr-3"
               >
                 <svg className="h-8 w-8 text-white"
@@ -65,7 +92,7 @@ const EndorsementPopup = (props: {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <span className='ml-2 '>
-                  Accept
+                  Sign
                 </span>
               </Button>
 
@@ -74,7 +101,7 @@ const EndorsementPopup = (props: {
             (
               <>
                 {
-                  !isEcosystemData?.isEcosystemLead && isEcosystemData?.isEcosystemMember && props.endorsementData?.status === EndorsementStatus.requested ?
+                  !isEcosystemData?.isEcosystemLead && isEcosystemData?.isEcosystemMember && props.endorsementData?.status === EndorsementStatus.signed ?
                     (
                       <div className='flex gap-3 pt-1 pb-3'>
                         <Button onClick={() => props.isAccepted(false)}
@@ -99,7 +126,7 @@ const EndorsementPopup = (props: {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                           <span className='ml-2 '>
-                            Signed
+                            Submit
                           </span>
                         </Button>
                       </div>
