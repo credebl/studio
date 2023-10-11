@@ -74,13 +74,13 @@ const UserDashBoard = () => {
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const totalPages = data?.data?.totalPages;
-			const invitationPendingList = data?.data?.invitations.filter(
+			const invitationPendingList = data?.data?.invitations && data?.data?.invitations?.filter(
 				(invitation: { status: string }) => {
 					return invitation.status === 'pending';
 				},
 			);
 
-			if (invitationPendingList.length > 0) {
+			if (invitationPendingList && invitationPendingList.length > 0) {
 				setEcoMessage(`You have received invitation to join ecosystem `);
 				setViewButton(true);
 			}
@@ -284,25 +284,23 @@ const UserDashBoard = () => {
 					</div>
 					{activityList ? (
 						<ol className="relative border-l pl-8 border-gray-200 dark:border-gray-700">
-							{activityList &&
-								activityList.map((activity) => {
-									return (
-										<li className="mb-10 ml-4">
-											<div className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -left-1.5 border border-white dark:border-gray-800 dark:bg-gray-700"></div>
-											<time className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
-												<DateTooltip date={activity.createDateTime}>
-													{dateConversion(activity.createDateTime)}
-												</DateTooltip>
-											</time>
-											<h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-												{activity.action}
-											</h3>
-											<p className="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
-												{activity.details}
-											</p>
-										</li>
-									);
-								})}
+							{activityList.map((activity) => (
+								<li className="mb-10 ml-4" key={activity.id}>
+									<div className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -left-1.5 border border-white dark:border-gray-800 dark:bg-gray-700"></div>
+									<time className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
+										<DateTooltip date={activity.createDateTime}>
+											{dateConversion(activity.createDateTime)}
+										</DateTooltip>
+									</time>
+									<h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+										{activity.action}
+									</h3>
+									<p className="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
+										{activity.details}
+									</p>
+								</li>
+							)
+							)}
 						</ol>
 					) : (
 						activityList && (
