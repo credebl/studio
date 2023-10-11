@@ -39,7 +39,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
     });
 
     const [loading, setLoading] = useState<boolean>(false);
-    const [isImageEmpty, setIsImageEmpty] = useState(false);
+    const [isImageEmpty, setIsImageEmpty] = useState(true);
     const [initialEntityData, setInitialEntityData] = useState<EditEntityValues>({
         name: "",
         description: "",
@@ -72,7 +72,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
             });
 
             setLogoImage({
-                logoFile: "",
+                                logoFile: "",
                 imagePreviewUrl: "",
                 fileName: "",
             });
@@ -126,7 +126,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
         setImgError('');
         const reader = new FileReader();
         const file = event?.target?.files;
-
+       
         const fileSize = Number((file[0]?.size / 1024 / 1024)?.toFixed(2));
         const extension = file[0]?.name?.substring(file[0]?.name?.lastIndexOf(".") + 1)?.toLowerCase();
 
