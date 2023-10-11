@@ -16,9 +16,12 @@ import { AlertComponent } from '../AlertComponent';
 import { ICheckEcosystem, checkEcosystem } from '../../config/ecosystem';
 import RoleViewButton from '../RoleViewButton';
 import SendInvitationModal from '../organization/invitations/SendInvitationModal';
+import { Dropdown } from 'flowbite-react';
+import EditPopupModal from '../EditEcosystemOrgModal';
 import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { getEcosytemReceivedInvitations } from '../../api/invitations';
 import { pathRoutes } from '../../config/pathRoutes';
+
 
 const initialPageState = {
     pageNumber: 1,
@@ -27,36 +30,46 @@ const initialPageState = {
 };
 
 const Dashboard = () => {
-    const [ecosystemDetails, setEcosystemDetails] = useState<IEcosystem | null>();
-    const [success, setSuccess] = useState<string | null>(null);
-    const [failure, setFailure] = useState<string | null>(null);
-    const [message, setMessage] = useState<string | null>(null);
-    const [loading, setLoading] = useState<boolean | null>(true);
-    const [error, setError] = useState<string | null>(null);
-    const [ecosystemId, setEcosystemId] = useState('');
-    const [openModal, setOpenModal] = useState<boolean>(false);
-    const [viewButton, setViewButton] = useState<boolean>(false);
-    const [currentPage, setCurrentPage] = useState(initialPageState);
-    const [isEcosystemLead, setIsEcosystemLead] = useState(false);
+	const [ecosystemDetails, setEcosystemDetails] = useState<IEcosystem | null>();
+	const [success, setSuccess] = useState<string | null>(null);
+	const [failure, setFailure] = useState<string | null>(null);
+	const [message, setMessage] = useState<string | null>(null);
+	const [loading, setLoading] = useState<boolean | null>(true);
+	const [ecosystemId, setEcosystemId] = useState('')
+	const [editOpenModal, setEditOpenModal] = useState<boolean>(false);
+	const [dropdownOpen, setDropdownOpen] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+	const [openModal, setOpenModal] = useState<boolean>(false);
+	const [viewButton, setViewButton] = useState<boolean>(false);
+	const [currentPage, setCurrentPage] = useState(initialPageState);
+	const [isEcosystemLead, setIsEcosystemLead] = useState(false);
+	
+	const createEcosystemModel = () => {
+		setOpenModal(true);
+	};
 
-    const props = { openModal, setOpenModal };
+	const createInvitationsModel = () => {
+		setOpenModal(true);
+	};
 
-    const createEcosystemModel = () => {
-        props.setOpenModal(true);
-    };
+	const EditEcosystemOrgModal = () => {
+		setEditOpenModal(true);
+	};
 
-    const createInvitationsModel = () => {
-        props.setOpenModal(true);
-    };
+	const handleEditModalClose = () => {
+		setEditOpenModal(false);
+		setDropdownOpen(false); 
+        fetchEcosystemDetails()
+	  };
 
-    const getAllEcosystemInvitations = async () => {
-        setLoading(true);
-        const response = await getEcosytemReceivedInvitations(
-            currentPage.pageNumber,
-            currentPage.pageSize,
-            '',
-        );
-        const { data } = response as AxiosResponse;
+	const getAllEcosystemInvitations = async () => {
+		setLoading(true);
+		const response = await getEcosytemReceivedInvitations(
+			currentPage.pageNumber,
+			currentPage.pageSize,
+			''
+		);
+		const { data } = response as AxiosResponse;
 
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
             const totalPages = data?.data?.totalPages;
@@ -142,7 +155,7 @@ const Dashboard = () => {
                     <>
                         <div className="cursor-pointer">
                             {<AlertComponent
-                                message={message ? message : error}
+                                message={message || error}
                                 type={message ? 'warning' : 'failure'}
                                 viewButton={viewButton}
                                 path={pathRoutes.ecosystem.invitation}
@@ -199,9 +212,9 @@ const Dashboard = () => {
                                 <SendInvitationModal
                                     ecosystemId={ecosystemId}
                                     flag={true}
-                                    openModal={props.openModal}
+                                    openModal={openModal}
                                     setMessage={(data) => setMessage(data)}
-                                    setOpenModal={props.setOpenModal}
+                                    setOpenModal={setOpenModal}
                                 />
                                 <RoleViewButton
                                     buttonTitle="Invite"
@@ -223,17 +236,39 @@ const Dashboard = () => {
                                     }
                                     onClickEvent={createInvitationsModel}
                                 />
-                                <div className="ml-4">
-                                    <svg
-                                        className="w-6 h-6 text-gray-800 cursor-pointer dark:text-white"
-                                        aria-hidden="true"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="currentColor"
-                                        viewBox="0 0 4 15"
-                                    >
-                                        <path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
-                                    </svg>
-                                </div>
+                                <Dropdown
+									label={"test"}
+									open={dropdownOpen} 
+									onToggle={() => setDropdownOpen(!dropdownOpen)} 
+									renderTrigger={() => <svg
+										className="ml-4 w-4 h-4 text-gray-800 cursor-pointer dark:text-white"
+										aria-hidden="true"
+										xmlns="http://www.w3.org/2000/svg"
+										fill="currentColor"
+										viewBox="0 0 4 15"
+
+									>
+										<path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
+									</svg>}
+								>
+									<Dropdown.Item onClick={EditEcosystemOrgModal}>
+										<div>
+											Edit Ecosystem
+										</div>
+									</Dropdown.Item>
+									<Dropdown.Item>
+										<div>
+											Enable/Disable Ecosystem
+										</div>
+									</Dropdown.Item>
+									<Dropdown.Item>
+										<div>
+											Manual Registration
+										</div>
+									</Dropdown.Item>
+
+
+								</Dropdown>
                             </div>
                         )}
                     </div>
@@ -274,6 +309,16 @@ const Dashboard = () => {
                             <div className="mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
                                 <MemberList />
                             </div>
+                            <EditPopupModal
+								openModal={editOpenModal}
+								setOpenModal={setEditOpenModal}
+								setMessage={(value) => {
+									setSuccess(value);
+								}}
+								isOrganization={false}
+								onEditSuccess={handleEditModalClose}
+								entityData={ecosystemDetails}
+							/>
                         </>
                     )}
                 </div>
@@ -288,7 +333,7 @@ const Dashboard = () => {
                             <div className="flex items-center justify-center mb-4">
                                 <CreateEcosystemOrgModal
                                     openModal={openModal}
-                                    setOpenModal={props.setOpenModal}
+                                    setOpenModal={setOpenModal}
                                     setMessage={(value) => {
                                         setSuccess(value);
                                         fetchEcosystemDetails();
