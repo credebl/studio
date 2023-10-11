@@ -153,7 +153,7 @@ const SendInvitationModal = (props: {
 			<Modal.Body>
 				<AlertComponent
 					message={erroMsg}
-					type={'error'}
+					type={'failure'}
 					onAlertClose={() => {
 						setErrMsg(null);
 					}}
@@ -236,7 +236,7 @@ const SendInvitationModal = (props: {
 						<div className="p-2 my-2 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-2 dark:bg-gray-800">
 							<ul className="divide-y divide-gray-200 dark:divide-gray-700">
 								{invitations.map((invitation) => (
-									<li className="p-2">
+									<li key={invitation.email} className="p-2">
 										<div className="flex justify-between xl:block 2xl:flex align-center 2xl:space-x-4">
 											<div className="flex flex-wrap space-x-4 xl:mb-4 2xl:mb-0">
 												<div>
