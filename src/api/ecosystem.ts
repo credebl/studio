@@ -138,3 +138,30 @@ export const createCredDefRequest = async (data: object, ecosystemId: string, or
         return err?.message
     }
 }
+
+export const getEcosystemDashboard = async (ecosystemId: string, orgId: string) => {
+    
+    const url = `${apiRoutes.Ecosystem.root}/${ecosystemId}/${orgId}/dashboard`
+
+    const token = await getFromLocalStorage(storageKeys.TOKEN)
+
+    const config = { 
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+        }
+    }
+    const axiosPayload = {
+        url,
+        config
+    }
+
+    try {
+        return await axiosGet(axiosPayload);
+    }
+    catch (error) {
+        const err = error as Error
+        return err?.message
+    }
+
+}
