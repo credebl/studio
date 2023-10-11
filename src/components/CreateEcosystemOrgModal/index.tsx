@@ -13,7 +13,6 @@ import { asset } from '../../lib/data.js';
 import { createOrganization } from "../../api/organization";
 import { getFromLocalStorage } from "../../api/Auth";
 import { createEcosystems } from "../../api/ecosystem";
-import React from "react";
 import { getOrgDetails } from "../../config/ecosystem";
 
 interface Values {

@@ -1,7 +1,7 @@
 import { Card } from 'flowbite-react';
 import { dateConversion } from '../../../utils/DateConversion';
 import DateTooltip from '../../../components/Tooltip';
-import { EndorsementStatus } from '../../../common/enums';
+import { EndorsementStatus, EndorsementType } from '../../../common/enums';
 import StatusTabletTag from '../../../commonComponents/StatusTabletTag';
 import { ICheckEcosystem, checkEcosystem } from '../../../config/ecosystem';
 import { useEffect, useState } from 'react';
@@ -20,17 +20,18 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
     useEffect(() => {
         const checkEcosystemData = async () => {
             const data: ICheckEcosystem = await checkEcosystem();
-            setIsEcosystemLead(data.isEnabledEcosystem)
+            setIsEcosystemLead(data.isEcosystemLead)
         }
         checkEcosystemData();
     }, [])
 
-    const enableAction = (!fromEndorsementList && data?.status === EndorsementStatus.signed) || Boolean(fromEndorsementList)
+    const isSchema = data?.type === EndorsementType.schema
 
+    const enableAction = (!fromEndorsementList && data?.status === EndorsementStatus.approved) || Boolean(fromEndorsementList)
 
     const requestPayload = data?.requestPayload && JSON.parse(data?.requestPayload)
 
-    const requestData = requestPayload?.operation?.data
+    const requestData = isSchema ? requestPayload?.operation?.data : requestPayload?.operation
     const attributesData = allAttributes ? requestData?.attr_names : requestData?.attr_names?.slice(0, 3)
 
     return (
@@ -39,15 +40,18 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
                 onClickCallback(data)
             }
         }}
-            className={`${cardTransitionDisabled ? "" : "transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer"}  ${enableAction ? "cursor-pointer": cardTransitionDisabled ? "cursor-default" : "cursor-not-allowed"} ${cardTransitionDisabled && "shadow-none"} m-3`}
+            className={`${cardTransitionDisabled ? "" : "transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer"}  ${enableAction ? "cursor-pointer" : cardTransitionDisabled ? "cursor-default" : "cursor-not-allowed"} ${cardTransitionDisabled && "shadow-none"} m-3 h-full`}
         >      <div className="flex justify-between items-start">
                 <div>
                     <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
-                        {requestData?.name}
+                        {isSchema ? requestData?.name : requestData?.tag}
                     </h5>
-                    <p className='dark:text-white'>
-                        Version: {requestData?.version}
-                    </p>
+                    {
+                        isSchema &&
+                        <p className='dark:text-white'>
+                            Version: {requestData?.version}
+                        </p>
+                    }
                 </div>
                 <div className='float-right ml-auto'>
                     <p className='dark:text-white'>
@@ -57,21 +61,33 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
                     </p >
                 </div >
             </div >
-            {
-                data?.status &&
-                <div className='flex items-center'>
-                    <div className='dark:text-white'>
-                        Status:
+            <div className='flex flex-wrap justify-between items-center'>
+                {
+                    data?.status &&
+                    <div className='flex items-center mt-3 mr-2'>
+                        <div className='dark:text-white'>
+                            Status:
+                        </div>
+                        <div className='ml-4'>
+                            <StatusTabletTag status={data?.status} />
+                        </div>
                     </div>
-                    <div className='ml-4'>
-                        <StatusTabletTag status={data?.status} />
-                    </div>
+                }
+                <div className={`${isSchema ? "text-primary-700 bg-primary-100" : "bg-green-100 text-green-800"} w-fit py-1.5 px-3 rounded-md text-sm h-fit mt-3`}>
+                    {isSchema ? "Schema" : "Credential Definition"}
                 </div>
-            }
+            </div>
             < div className="min-w-0 flex-1" >
-                <p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
-                    <span className="font-semibold">Schema ID:</span> {data?.schemaId}
-                </p>
+                {!isSchema &&
+                    <>
+                        <p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
+                            <span className="font-semibold">Schema Name:</span> NA
+                        </p>
+                        <p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
+                            <span className="font-semibold">Schema Version:</span> NA
+                        </p>
+                    </>
+                }
                 <p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
                     <span className="font-semibold">Author DID:</span> {data?.authorDid}
                 </p>
@@ -85,35 +101,38 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
                 }
             </div>
 
-            <div className="flow-root">
-                <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-                    <li className="py-3 sm:py-2">
-                        <div className="flex items-center space-x-4">
-                            <div className="block text-base font-semibold text-gray-900 dark:text-white">
-                                Attributes:
-                            </div>
-                            <div className="flex flex-wrap items-start overflow-hidden overflow-ellipsis">
+            {
+                isSchema &&
+                <div className="flow-root">
+                    <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+                        <li className="py-3 sm:py-2">
+                            <div className="flex items-center space-x-4">
+                                <div className="block text-base font-semibold text-gray-900 dark:text-white">
+                                    Attributes:
+                                </div>
+                                <div className="flex flex-wrap items-start overflow-hidden overflow-ellipsis">
 
-                                {attributesData && attributesData.length > 0 && (
-                                    <>
-                                        {attributesData.map((element: string, index: number) => (
-                                            <div key={`schema-card-attributes${element}`}>
-                                                <span
-                                                    style={{ display: 'block' }}
-                                                    className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
-                                                >
-                                                    {element}
-                                                </span>
-                                            </div>
-                                        ))}
-                                        {attributesData.length === 3 && <span>...</span>}
-                                    </>
-                                )}
+                                    {attributesData && attributesData.length > 0 && (
+                                        <>
+                                            {attributesData.map((element: string, index: number) => (
+                                                <div key={`schema-card-attributes${element}`}>
+                                                    <span
+                                                        style={{ display: 'block' }}
+                                                        className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
+                                                    >
+                                                        {element}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                            {attributesData.length === 3 && <span>...</span>}
+                                        </>
+                                    )}
+                                </div>
                             </div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
+                        </li>
+                    </ul>
+                </div>
+            }
         </Card >
     )
 }

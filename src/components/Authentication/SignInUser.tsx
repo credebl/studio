@@ -72,6 +72,7 @@ const SignInUser = () => {
 
 	const saveEmail = async (values: emailValue) => {
 		setEmail(values)
+		await localStorage.clear();
 		setCurrentComponent('password');
 		await setToLocalStorage(storageKeys.LOGIN_USER_EMAIL, values.email);
 		setIsPasskeySuccess(true);

@@ -46,9 +46,11 @@ const checkEcosystem = async (): Promise<ICheckEcosystem> => {
     await getEcosystemId()
     const userData = await getUserProfile()
     const role = await getEcosystemRole()
+
     
     const isEnabledEcosystem = userData?.enableEcosystem
-    const ecosystemRole = role ?? EcosystemRoles.ecosystemLead
+    const ecosystemRole = role || EcosystemRoles.ecosystemLead
+    
     return {
         isEnabledEcosystem,
         isEcosystemMember: ecosystemRole === EcosystemRoles.ecosystemMember && isEnabledEcosystem,
@@ -67,9 +69,11 @@ const getEcosystemId = async (): Promise<string> => {
             if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS && data?.data && data?.data.length > 0) {
                 const response = data?.data[0]
                 const id = response?.id
-                const role = response?.ecosystemOrgs[0].ecosystemRole.name
+                const role = response?.ecosystemOrgs && response?.ecosystemOrgs.length > 0 && response?.ecosystemOrgs[0]?.ecosystemRole?.name
                 await setToLocalStorage(storageKeys.ECOSYSTEM_ID, id);
-                await setToLocalStorage(storageKeys.ECOSYSTEM_ROLE, role);
+                if(role){
+                    await setToLocalStorage(storageKeys.ECOSYSTEM_ROLE, role);
+                }
                 return id
             }
         } catch (err) {
