@@ -22,6 +22,7 @@ import EditPopupModal from '../EditEcosystemOrgModal';
 import { getEcosytemReceivedInvitations } from '../../api/invitations';
 import { pathRoutes } from '../../config/pathRoutes';
 
+
 const initialPageState = {
 	pageNumber: 1,
 	pageSize: 10,
