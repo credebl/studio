@@ -141,7 +141,7 @@ export const getEcosystemDashboard = async (ecosystemId: string, orgId: string) 
 
     const token = await getFromLocalStorage(storageKeys.TOKEN)
 
-    const config = {
+    const config = { 
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`
