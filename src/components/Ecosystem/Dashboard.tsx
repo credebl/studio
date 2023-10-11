@@ -48,6 +48,15 @@ const Dashboard = () => {
 		setOpenModal(true);
 	};
 
+	const EditEcosystemOrgModal = () => {
+		setEditOpenModal(true);
+	};
+
+	const handleEditModalClose = () => {
+		setEditOpenModal(false);
+		setDropdownOpen(false); 
+	  };
+
 	const getAllEcosystemInvitations = async () => {
 		setLoading(true);
 		const response = await getEcosytemReceivedInvitations(
