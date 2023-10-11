@@ -32,9 +32,49 @@ const Dashboard = () => {
     const [isEcosystemLead, setIsEcosystemLead] = useState(false);
 
 
-    const createEcosystemModel = () => {
-        props.setOpenModal(true)
-    }
+	const EditEcosystemOrgModal = () => {
+		setEditOpenModal(true);
+	};
+
+	const handleEditModalClose = () => {
+		setEditOpenModal(false);
+		setDropdownOpen(false); 
+        fetchEcosystemDetails()
+	  };
+
+	const getAllEcosystemInvitations = async () => {
+		setLoading(true);
+		const response = await getEcosytemReceivedInvitations(
+			currentPage.pageNumber,
+			currentPage.pageSize,
+			''
+		);
+		const { data } = response as AxiosResponse;
+
+        if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+            const totalPages = data?.data?.totalPages;
+
+            const invitationList = data?.data;
+            const ecoSystemName = invitationList.map((invitations: { name: string; }) => {
+                return invitations.name
+            })
+            const invitationPendingList = data?.data?.invitations.filter((invitation: { status: string; }) => {
+                return invitation.status === 'pending'
+            })
+
+            if (invitationPendingList.length > 0) {
+                setMessage(`You have received invitation to join ${ecoSystemName} ecosystem `)
+                setViewButton(true);
+            }
+            setCurrentPage({
+                ...currentPage,
+                total: totalPages,
+            });
+        } else {
+            setError(response as string);
+        }
+        setLoading(false);
+    };
 
     const fetchEcosystemDetails = async () => {
 

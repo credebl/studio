@@ -237,9 +237,6 @@ const EditPopupModal = (props: EditEntityModalProps) => {
                         { resetForm }: FormikHelpers<EditEntityValues>
                     ) => {
                         await submitUpdateEntity(values);
-
-                        window.location.reload();
-
                     }}
                 >
                     {(formikHandlers): JSX.Element => (
