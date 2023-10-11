@@ -22,6 +22,7 @@ import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { getEcosytemReceivedInvitations } from '../../api/invitations';
 import { pathRoutes } from '../../config/pathRoutes';
 import type { EcosystemDashboard } from '../organization/interfaces';
+import OrgRegistrationPopup from './OrgRegistrationPopup';
 
 
 const initialPageState = {
@@ -46,6 +47,7 @@ const Dashboard = () => {
 	const [isEcosystemLead, setIsEcosystemLead] = useState(false);
     const [ecosystemDashboard, setEcosystemDashboard] = useState<EcosystemDashboard | null>(null)
 	const [ecosystemDetailsNotFound, setEcosystemDetailsNotFound] = useState(false);
+    const [showPopup, setShowPopup] = useState<boolean>(false);
 
 	
 	const createEcosystemModel = () => {
@@ -58,6 +60,10 @@ const Dashboard = () => {
 
 	const EditEcosystemOrgModal = () => {
 		setEditOpenModal(true);
+	};
+
+    const redirectToOrgRegistrationPopup = () => {
+		setShowPopup(true);
 	};
 
 	const handleEditModalClose = () => {
@@ -288,19 +294,12 @@ const Dashboard = () => {
 										<div>
 											Edit Ecosystem
 										</div>
-									</Dropdown.Item>
-									<Dropdown.Item>
-										<div>
-											Enable/Disable Ecosystem
-										</div>
-									</Dropdown.Item>
-									<Dropdown.Item>
+									</Dropdown.Item>									
+									<Dropdown.Item onClick={redirectToOrgRegistrationPopup}>
 										<div>
 											Manual Registration
 										</div>
 									</Dropdown.Item>
-
-
 								</Dropdown>
                             </div>
                         )}
@@ -352,6 +351,10 @@ const Dashboard = () => {
 								onEditSuccess={handleEditModalClose}
 								entityData={ecosystemDetails}
 							/>
+                            <OrgRegistrationPopup
+                                openModal={showPopup}
+                                closeModal={() => setShowPopup(false)}>
+                            </OrgRegistrationPopup>
                         </>
                     )}
                 </div>
