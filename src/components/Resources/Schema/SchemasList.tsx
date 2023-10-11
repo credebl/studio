@@ -1,6 +1,6 @@
 'use client';
 
-import { Alert, Pagination} from 'flowbite-react';
+import { Alert, Pagination } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
 import type { GetAllSchemaListParameter, PaginationData } from './interfaces';
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
@@ -18,6 +18,7 @@ import SearchInput from '../../SearchInput';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
 import { getOrganizationById } from '../../../api/organization';
+import { ICheckEcosystem, checkEcosystem } from '../../../config/ecosystem';
 
 const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaDetails: SchemaDetails) => void; }) => {
 	const [schemaList, setSchemaList] = useState([])
@@ -32,10 +33,11 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 		sortBy: "id",
 		sortingOrder: "DESC",
 		allSearch: ""
-
 	})
-  const [walletStatus, setWalletStatus]=useState(false)
+	const [walletStatus, setWalletStatus] = useState(false)
 	const [totalItem, setTotalItem] = useState(0)
+	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
+
 	const getSchemaList = async (schemaListAPIParameter: GetAllSchemaListParameter, flag: boolean) => {
 		try {
 			const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -112,17 +114,18 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 		}
 		props.schemaSelectionCallback(schemaId, schemaDetails)
 	}
-	const options = ["All schemas"]
+	// const options = ["All", "Approved", "Requested", "Rejected"]
 
-	const handleFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		if (e.target.value === 'All schemas') {
-			setAllSchemaFlag(true)
-		}
-		else {
-			setAllSchemaFlag(false)
-			getSchemaList(schemaListAPIParameter, false)
-		}
-	};
+	// const handleFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
+	// 	console.log("Handle filter", e.target.value)
+	// 	if (e.target.value === 'All schemas') {
+	// 		setAllSchemaFlag(true)
+	// 	}
+	// 	else {
+	// 		setAllSchemaFlag(false)
+	// 		getSchemaList(schemaListAPIParameter, false)
+	// 	}
+	// };
 
 	const fetchOrganizationDetails = async () => {
 		setLoading(true)
@@ -130,17 +133,27 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 		const response = await getOrganizationById(orgId);
 		const { data } = response as AxiosResponse
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				if (data?.data?.org_agents && data?.data?.org_agents?.length > 0) {
-						setWalletStatus(true)
-				}
+			if (data?.data?.org_agents && data?.data?.org_agents?.length > 0) {
+				setWalletStatus(true)
+			}
 		}
 		setLoading(false)
-}
+	}
 
-useEffect(()=>{
-	fetchOrganizationDetails()
-},[])
+	useEffect(() => {
+		fetchOrganizationDetails()
+		const checkEcosystemData = async () => {
+            const data: ICheckEcosystem = await checkEcosystem();
+            setIsEcosystemData(data)
+        }
+        
+        checkEcosystemData();
+	}, [])
 
+	const createSchemaTitle = isEcosystemData?.isEcosystemMember ? "Request Endorsement" : "Create"
+	const emptyListTitle = "No Schemas"
+	const emptyListDesc = "Get started by creating a new Schema"
+	const emptyListBtn = isEcosystemData?.isEcosystemMember ? "Request Endorsement" : "Create Schema"
 	return (
 		<div className="px-4 pt-6">
 			<div className="mb-4 col-span-full xl:mb-2">
@@ -158,7 +171,7 @@ useEffect(()=>{
 							<SearchInput
 								onInputChange={onSearch}
 							/>
-							<select onChange={handleFilter} id="schamfilter"
+							{/* <select onChange={handleFilter} id="schamfilter"
 								className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11">
 								<option selected>Organization's schema</option>
 								{options.map((opt) => (
@@ -170,11 +183,11 @@ useEffect(()=>{
 										{opt}
 									</option>
 								))}
-							</select>
+							</select> */}
 						</div>
-						<div className='flex space-x-2'>							
+						<div className='flex space-x-2'>
 							{walletStatus ? <RoleViewButton
-								buttonTitle='Create'
+								buttonTitle={createSchemaTitle}
 								feature={Features.CRETAE_SCHEMA}
 								svgComponent={
 									<div className='pr-3'>
@@ -187,21 +200,21 @@ useEffect(()=>{
 									window.location.href = `${pathRoutes.organizations.createSchema}?OrgId=${orgId}`
 								}}
 							/>
-							:
-							<RoleViewButton
-							buttonTitle='Create'
-							feature={Features.CRETAE_SCHEMA}
-							svgComponent={
-								<div className='pr-3'>
-									<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
-										<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
-									</svg>
-								</div>
-							}
-							onClickEvent={() => {
-								window.location.href = `${pathRoutes.organizations.dashboard}?OrgId=${orgId}`
-							}}
-						/>}
+								:
+								<RoleViewButton
+									buttonTitle={createSchemaTitle}
+									feature={Features.CRETAE_SCHEMA}
+									svgComponent={
+										<div className='pr-3'>
+											<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
+												<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+											</svg>
+										</div>
+									}
+									onClickEvent={() => {
+										window.location.href = `${pathRoutes.organizations.dashboard}?OrgId=${orgId}`
+									}}
+								/>}
 						</div>
 					</div>
 				</div>
@@ -218,12 +231,7 @@ useEffect(()=>{
 						</span>
 					</Alert>
 				}
-				{loading
-					? (<div className="flex items-center justify-center mb-4">
-
-						<CustomSpinner />
-					</div>)
-					:
+				{
 					schemaList && schemaList.length > 0 ? (
 						<div className='Flex-wrap' style={{ display: 'flex', flexDirection: 'column' }}>
 							<div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
@@ -248,34 +256,46 @@ useEffect(()=>{
 									totalPages={Math.ceil(totalItem / schemaListAPIParameter?.itemPerPage)}
 								/>)}
 							</div>
-						</div>) : (
-						<div>
-						{walletStatus ?
-						 <EmptyListMessage
-							message={'No Schemas'}
-							description={'Get started by creating a new Schema'}
-							buttonContent={'Create Schema'}
-							svgComponent={<svg className='pr-2 mr-1' xmlns="http://www.w3.org/2000/svg" width="24" height="15" fill="none" viewBox="0 0 24 24">
-								<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
-							</svg>}
-							onClick={() => {
-								window.location.href = `${pathRoutes.organizations.createSchema}?OrgId=${orgId}`
-							}}
-						/> 
+						</div>)
 						:
-						<EmptyListMessage
-						message={'No Wallet'}
-						description={'Get started by creating a Wallet'}
-						buttonContent={'Create Wallet'}
-						svgComponent={<svg className='pr-2 mr-1' xmlns="http://www.w3.org/2000/svg" width="24" height="15" fill="none" viewBox="0 0 24 24">
-							<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
-						</svg>}
-						onClick={() => {
-							window.location.href = `${pathRoutes.organizations.dashboard}?OrgId=${orgId}`
-						}}
-					/>}
-						
-						</div>
+						(
+							<div>
+								{
+									!(schemaList && schemaList.length > 0) && loading ?
+										(<div className="flex items-center justify-center mb-4">
+											<CustomSpinner />
+										</div>)
+										:
+										(
+											<div>
+												{walletStatus ?
+													<EmptyListMessage
+														message={emptyListTitle}
+														description={emptyListDesc}
+														buttonContent={emptyListBtn}
+														svgComponent={<svg className='pr-2 mr-1' xmlns="http://www.w3.org/2000/svg" width="24" height="15" fill="none" viewBox="0 0 24 24">
+															<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+														</svg>}
+														onClick={() => {
+															window.location.href = `${pathRoutes.organizations.createSchema}?OrgId=${orgId}`
+														}}
+													/>
+													:
+													<EmptyListMessage
+														message={'No Wallet'}
+														description={'Get started by creating a Wallet'}
+														buttonContent={'Create Wallet'}
+														svgComponent={<svg className='pr-2 mr-1' xmlns="http://www.w3.org/2000/svg" width="24" height="15" fill="none" viewBox="0 0 24 24">
+															<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+														</svg>}
+														onClick={() => {
+															window.location.href = `${pathRoutes.organizations.dashboard}?OrgId=${orgId}`
+														}}
+													/>}
+											</div>
+										)
+								}
+							</div>
 						)
 				}
 			</div>
