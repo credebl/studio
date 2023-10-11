@@ -153,7 +153,7 @@ export const editOrganizationUserRole = async (userId: number, roles: number[]) 
     }
 
     try {
-        return axiosPut(axiosPayload);
+        return await axiosPut(axiosPayload);
     }
     catch (error) {
         const err = error as Error
