@@ -21,20 +21,30 @@ import { Button } from 'flowbite-react';
 import OrgRegistrationPopup from './OrgRegistrationPopup';
 import React from 'react';
 import type { EcosystemDashboard } from '../organization/interfaces';
-import { string } from 'yup';
+
+const initialPageState = {
+	pageNumber: 1,
+	pageSize: 10,
+	total: 0,
+};
 
 const Dashboard = () => {
 	const [ecosystemDetails, setEcosystemDetails] = useState<IEcosystem | null>();
-
 	const [success, setSuccess] = useState<string | null>(null);
 	const [failure, setFailure] = useState<string | null>(null);
 	const [message, setMessage] = useState<string | null>(null);
 	const [loading, setLoading] = useState<boolean | null>(true);
+	const [error, setError] = useState<string | null>(null);
 	const [ecosystemId, setEcosystemId] = useState('');
 	const [openModal, setOpenModal] = useState<boolean>(false);
+	const [viewButton, setViewButton] = useState<boolean>(false);
+	const [currentPage, setCurrentPage] = useState(initialPageState);
+	const [isEcosystemLead, setIsEcosystemLead] = useState(false);
 	const [showPopup, setShowPopup] = useState<boolean>(false);
-    const [ecosystemDashboard, setEcosystemDashboard] = useState<EcosystemDashboard | null>(null)
-	const [ecosystemDetailsNotFound, setEcosystemDetailsNotFound] = useState(false);
+	const [ecosystemDashboard, setEcosystemDashboard] =
+		useState<EcosystemDashboard | null>(null);
+	const [ecosystemDetailsNotFound, setEcosystemDetailsNotFound] =
+		useState(false);
 
 	const props = { openModal, setOpenModal };
 
@@ -48,6 +58,46 @@ const Dashboard = () => {
 
 	const redirectToOrgRegistrationPopup = () => {
 		setShowPopup(true);
+	};
+
+	const getAllEcosystemInvitations = async () => {
+		setLoading(true);
+		const response = await getEcosytemReceivedInvitations(
+			currentPage.pageNumber,
+			currentPage.pageSize,
+			'',
+		);
+		const { data } = response as AxiosResponse;
+
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			const totalPages = data?.data?.totalPages;
+
+			const invitationList = data?.data;
+			const ecoSystemName = invitationList.map(
+				(invitations: { name: string }) => {
+					return invitations.name;
+				},
+			);
+			const invitationPendingList = data?.data?.invitations.filter(
+				(invitation: { status: string }) => {
+					return invitation.status === 'pending';
+				},
+			);
+
+			if (invitationPendingList.length > 0) {
+				setMessage(
+					`You have received invitation to join ${ecoSystemName} ecosystem `,
+				);
+				setViewButton(true);
+			}
+			setCurrentPage({
+				...currentPage,
+				total: totalPages,
+			});
+		} else {
+			setError(response as string);
+		}
+		setLoading(false);
 	};
 
 	const fetchEcosystemDetails = async () => {
@@ -68,67 +118,99 @@ const Dashboard = () => {
 				});
 			} else {
 				setEcosystemDetailsNotFound(true);
-				
 			}
 		}
 		setLoading(false);
 	};
 
 	const fetchEcosystemDashboard = async () => {
+		setLoading(true);
 
-        setLoading(true)
-
-        const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		const ecosystemId = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID);
 
-		const response = await getEcosystemDashboard(ecosystemId as string, orgId as string);
+		const response = await getEcosystemDashboard(
+			ecosystemId as string,
+			orgId as string,
+		);
 
-		const { data } = response as AxiosResponse
+		const { data } = response as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			setEcosystemDashboard(data?.data)
-		}
-		else {
-            setFailure(response as string)
+			setEcosystemDashboard(data?.data);
+		} else {
+			setFailure(response as string);
 			setFailure(response as string);
 		}
 		setLoading(false);
-        
-    }
+	};
 
 	const getDashboardData = async () => {
 		await fetchEcosystemDetails();
 		await fetchEcosystemDashboard();
-	}
-
-	useEffect(() => {
-		getDashboardData()
-	}, []);
-    
-
-	const [isDropdownVisible, setDropdownVisible] = useState(false);
-
-	const toggleDropdown = () => {
-		setDropdownVisible(!isDropdownVisible);
+		getAllEcosystemInvitations();
 	};
 
-	const { isEcosystemLead } = checkEcosystem();
+	useEffect(() => {
+		getDashboardData();
+		const checkEcosystemData = async () => {
+			const data: ICheckEcosystem = await checkEcosystem();
+			setIsEcosystemLead(data.isEcosystemLead);
+		};
+		checkEcosystemData();
+	}, []);
+    
 
 	return (
 		<div className="px-4 pt-6">
 			<div className="mb-4 col-span-full xl:mb-2">
 				<BreadCrumbs />
 			</div>
-			{(success || failure) && (
-				<AlertComponent
-					message={success ?? failure}
-					type={success ? 'success' : 'failure'}
-					onAlertClose={() => {
-						setSuccess(null);
-						setFailure(null);
-					}}
-				/>
+
+			{error ? (
+				<>
+					{' '}
+					{(success || failure) && (
+						<AlertComponent
+							message={success ?? failure}
+							type={success ? 'success' : 'failure'}
+							onAlertClose={() => {
+								setSuccess(null);
+								setFailure(null);
+							}}
+						/>
+					)}
+				</>
+			) : (
+				<>
+					<div className="cursor-pointer">
+						{
+							<AlertComponent
+								message={message ? message : error}
+								type={message ? 'warning' : 'failure'}
+								viewButton={viewButton}
+								path={pathRoutes.ecosystem.invitation}
+								onAlertClose={() => {
+									setMessage(null);
+									setError(null);
+								}}
+							/>
+						}
+					</div>
+
+					{(success || failure) && (
+						<AlertComponent
+							message={success ?? failure}
+							type={success ? 'success' : 'failure'}
+							onAlertClose={() => {
+								setSuccess(null);
+								setFailure(null);
+							}}
+						/>
+					)}
+				</>
 			)}
+
 			{ecosystemDetails ? (
 				<div>
 					<div className="mt-4 flex flex-wrap items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
@@ -194,7 +276,7 @@ const Dashboard = () => {
 									>
 										<path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
 									</svg>
-								</div>	
+								</div>
 							</div>
 						)}
 					</div>
@@ -204,7 +286,7 @@ const Dashboard = () => {
 							<div className="mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 								<div className="grid w-full grid-cols-1 gap-4 mt-0 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2">
 									<div
-										className="items-center justify-between p-4 bg-white border-0 border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover min-h-[152px]"
+										className="items-center justify-between p-4 bg-white border-0 border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-103 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover min-h-[152px]"
 										style={{ backgroundImage: `url(${userCard})` }}
 									>
 										<div className="w-full">
@@ -218,7 +300,7 @@ const Dashboard = () => {
 									</div>
 
 									<div
-										className="items-center justify-between p-4 bg-white border-0 border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover min-h-[152px]"
+										className="items-center justify-between p-4 bg-white border-0 border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-103 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover min-h-[152px]"
 										style={{ backgroundImage: `url(${endorseIcon})` }}
 									>
 										<div className="w-full">
@@ -226,7 +308,7 @@ const Dashboard = () => {
 												Endorsements
 											</h3>
 											<span className="text-2xl font-semi-bold leading-none text-white sm:text-3xl dark:text-white">
-												{ ecosystemDashboard?.endorsementsCount }
+												{ecosystemDashboard?.endorsementsCount}
 											</span>
 										</div>
 									</div>
@@ -240,8 +322,9 @@ const Dashboard = () => {
 				</div>
 			) : (
 				<div>
-					{!ecosystemDetails && !loading ? (
-						<div>
+					{!ecosystemDetails && loading ? (
+						<div className="min-h-100/18rem flex justify-center items-center">
+							<CustomSpinner/>
 						</div>
 					) : (
 						<div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
@@ -274,29 +357,24 @@ const Dashboard = () => {
 											/>
 										</svg>
 									}
-									onClick={() => createEcosystemModel()}
+									onClick={() => createEcosystemModel()}	
 								/>
 							</div>
 						</div>
-						
 					)}
 				</div>
 			)}
-
-		{ecosystemDetailsNotFound && (
-        	<AlertComponent
-          	message="Ecosystem details not found."
-          	type="failure"
-          	onAlertClose={() => {
-            	setEcosystemDetailsNotFound(false); 
-            	setFailure(null);
-          }}
-        />
-      )}
-
-
+			{ecosystemDetailsNotFound && (
+				<AlertComponent
+					message="Ecosystem details not found."
+					type="failure"
+					onAlertClose={() => {
+						setEcosystemDetailsNotFound(false);
+						setFailure(null);
+					}}
+				/>
+			)}
 		</div>
-		
 	);
 };
 
