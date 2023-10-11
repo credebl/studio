@@ -144,10 +144,17 @@ const Dashboard = () => {
         
     }
 
+	const checkOrgId = async () => {
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		if (orgId) {
+			await getAllEcosystemInvitations();
+		}
+	};
+
 	const getDashboardData = async () => {
+		await checkOrgId();
 		await fetchEcosystemDetails();
 		await fetchEcosystemDashboard();
-		getAllEcosystemInvitations();
 	};
 
     useEffect(() => {
