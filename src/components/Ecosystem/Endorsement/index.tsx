@@ -12,11 +12,12 @@ import SearchInput from '../../SearchInput';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
 import { getOrganizationById } from '../../../api/organization';
-import { getEcosystemId } from '../../../config/ecosystem';
+import { ICheckEcosystem, checkEcosystem, getEcosystemId } from '../../../config/ecosystem';
 import type { IAttributes } from '../../Resources/Schema/interfaces';
 import EndorsementPopup from './EndorsementPopup';
 import EndorsementCard from './EndorsementCard';
 import { GetEndorsementListParameter, getEndorsementList } from '../../../api/ecosystem';
+import { EndorsementStatus, EndorsementType } from '../../../common/enums';
 
 interface ISelectedRequest {
     attribute: IAttributes[];
@@ -61,34 +62,38 @@ const EndorsementList = () => {
 
     const options = [
         {
-            name: "All",
+            name: "Select Status",
             value: ""
         },
         {
-            name: "Approved",
-            value: "approved"
+            name: "Signed",
+            value: EndorsementStatus.approved
         },
         {
             name: "Requested",
-            value: "requested"
+            value: EndorsementStatus.requested
         },
         {
             name: "Rejected",
-            value: "rejected"
+            value: EndorsementStatus.rejected
         },
+        {
+            name: "Submitted",
+            value: EndorsementStatus.submitted
+        }
     ]
 
     const typeOptions = [{
-        name: "All",
+        name: "Select Type",
         value: ""
     },
     {
         name: "Schema",
-        value: "schema"
+        value: EndorsementType.schema
     },
     {
         name: "Credential-definition",
-        value: "credential-definition"
+        value: EndorsementType.credDef
     }
 
     ]

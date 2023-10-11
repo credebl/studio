@@ -19,7 +19,7 @@ const initialPageState = {
 };
 
 const SentInvitations = () => {
-	const [loading, setLoading] = useState<boolean>(false);
+	const [loading, setLoading] = useState<boolean>(true);
 	const [message, setMessage] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
@@ -232,15 +232,15 @@ const SentInvitations = () => {
 						</div>
 					) : (
 						<div>
-							{!(invitationsList && invitationsList?.length > 0) && !loading ? (
+							{!(invitationsList && invitationsList?.length > 0) && loading ? (
+								<div className="flex items-center justify-center mb-4">
+									<CustomSpinner />
+								</div>
+							) : (
 								<EmptyListMessage
 									message={'No Sent Invitations'}
 									description={`You don't have any sent invitation`}
 								/>
-							) : (
-								<div className="flex items-center justify-center mb-4">
-									<CustomSpinner />
-								</div>
 							)}
 						</div>
 					)}
