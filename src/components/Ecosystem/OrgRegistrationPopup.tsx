@@ -13,9 +13,9 @@ const OrgRegistrationPopup = (props: {
 	closeModal: (flag: boolean) => void;
 }) => {
 	const [selectedId] = useState<number>();
-	const [loading, setLoading] = useState<boolean>(false);
-	const [message, setMessage] = useState<string | null>(null);
-	const [error, setError] = useState<string | null>(null);
+	const [setLoading] = useState<boolean>(false);
+	const [setMessage] = useState<string | null>(null);
+	const [setError] = useState<string | null>(null);
 
 	const acceptEcosytemInvitation = async (
 		invite: Invitation,
@@ -27,7 +27,7 @@ const OrgRegistrationPopup = (props: {
 			status,
 		);
 		const { data } = response as AxiosResponse;
-		
+
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			setMessage(data?.message);
