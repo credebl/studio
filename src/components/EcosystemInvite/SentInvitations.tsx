@@ -110,7 +110,7 @@ const SentInvitations = () => {
 							<div className="flow-root">
 								<ul className="divide-y divide-gray-200 dark:divide-gray-700">
 									{invitationsList.map((invitation) => (
-										<li className="p-4 min-[320px]:h-52 sm:h-48 md:h-[150px] items-center">
+										<li key={invitation.id} className="p-4 min-[320px]:h-52 sm:h-48 md:h-[150px] items-center">
 											<div className="flex flex-wrap justify-between align-middle 2xl:flex items-center 2xl:space-x-4">
 												<div className=" xl:mb-4 2xl:mb-0">
 													<div className="flex space-x-4">
@@ -153,7 +153,6 @@ const SentInvitations = () => {
 																</clipPath>
 															</defs>
 														</svg>
-
 														<div className="flex-1 min-w-0">
 															<p className="text-base font-semibold text-gray-900 leading-none truncate mb-0.5 dark:text-white">
 																{invitation.email}
