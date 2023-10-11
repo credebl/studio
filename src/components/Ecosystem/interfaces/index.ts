@@ -15,4 +15,5 @@ export interface Ecosystem {
     logoUrl: string
     website: string
     roles: string[] 
+    logoFile:string
 }
