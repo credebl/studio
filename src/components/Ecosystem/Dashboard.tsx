@@ -156,6 +156,7 @@ const Dashboard = () => {
 	}, []);
 
 
+
 	const renderAlert = () => {
 		return (
 		  <AlertComponent
@@ -195,76 +196,6 @@ const Dashboard = () => {
 			  ) : null}
 			  {(success || failure) && renderAlert()}
 			</div>
-		  )}
-	  
-		  {ecosystemDetails ? (
-			<div>
-			  <div className="mt-4 flex flex-wrap items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-				<div className="items-center flex flex-wrap">
-				  <div className="mr-4">
-					{ecosystemDetails?.logoUrl ? (
-					  <CustomAvatar size="80" src={ecosystemDetails?.logoUrl} />
-					) : (
-					  <CustomAvatar size="90" name={ecosystemDetails?.name} />
-					)}
-				  </div>
-				  {ecosystemDetails ? (
-					<div>
-					  <h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
-						{ecosystemDetails?.name || 'Dummy Name'}
-					  </h3>
-					  <p className="mb-1 text-base font-normal text-gray-900 dark:text-white">
-						{ecosystemDetails?.description || 'Dummy Desc'}
-					  </p>
-					</div>
-				  ) : (
-					<CustomSpinner />
-				  )}
-				</div>
-			  </div>
-			</div>
-		  ) : (
-			<div>
-			  {!ecosystemDetails && loading ? (
-				<div className="min-h-100/18rem flex justify-center items-center">
-				  <CustomSpinner />
-				</div>
-			  ) : (
-				<div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-				  <EmptyListMessage
-					message={'No Ecosystem found'}
-					description={'Get started by creating an ecosystem'}
-					buttonContent={'Create Ecosystem'}
-					svgComponent={
-					  <svg
-						className="pr-2 mr-1"
-						xmlns="http://www.w3.org/2000/svg"
-						width="24"
-						height="15"
-						fill="none"
-						viewBox="0 0 24 24"
-					  >
-						<path
-						  fill="#fff"
-						  d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"
-						/>
-					  </svg>
-					}
-					onClick={() => createEcosystemModel()}
-				  />
-				</div>
-			  )}
-			</div>
-		  )}
-		  {ecosystemDetailsNotFound && (
-			<AlertComponent
-			  message="Ecosystem details not found."
-			  type="failure"
-			  onAlertClose={() => {
-				setEcosystemDetailsNotFound(false);
-				setFailure(null);
-			  }}
-			/>
 		  )}
 			{ecosystemDetails ? (
 				<div>
