@@ -106,13 +106,15 @@ const Dashboard = () => {
 
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 				const ecosystemData = data?.data[0];
-				await setToLocalStorage(storageKeys.ECOSYSTEM_ID, ecosystemData?.id);
-				setEcosystemId(ecosystemData?.id);
-				setEcosystemDetails({
-					logoUrl: ecosystemData.logoUrl,
-					name: ecosystemData.name,
-					description: ecosystemData.description,
-				});
+                if (ecosystemData) {
+                    await setToLocalStorage(storageKeys.ECOSYSTEM_ID, ecosystemData?.id);
+                    setEcosystemId(ecosystemData?.id);
+                    setEcosystemDetails({
+                        logoUrl: ecosystemData.logoUrl,
+                        name: ecosystemData.name,
+                        description: ecosystemData.description,
+                    });
+                }
 			} else {
 				setEcosystemDetailsNotFound(true);
 				
