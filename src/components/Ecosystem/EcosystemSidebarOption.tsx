@@ -1,10 +1,19 @@
-import checkEcosystem from '../../config/ecosystem'
+import { useEffect, useState } from 'react'
+import { ICheckEcosystem, checkEcosystem } from '../../config/ecosystem'
 import { pathRoutes } from '../../config/pathRoutes'
 
 const EcosystemSidebarOption = () => {
-    const { isEnabledEcosystem } = checkEcosystem()
+    const [isEcosystemEnabled, setIsEcosystemEnabled] = useState(false);
 
-    if (isEnabledEcosystem) {
+    useEffect(() => {
+        const checkEcosystemData = async () => {
+            const data: ICheckEcosystem = await checkEcosystem();
+            setIsEcosystemEnabled(data.isEnabledEcosystem)
+        }
+        checkEcosystemData();
+    }, [])
+
+    if (isEcosystemEnabled) {
         return (
             <li>
                 <button
@@ -28,28 +37,26 @@ const EcosystemSidebarOption = () => {
                     </svg>
                     <span
                         className="flex-1 ml-3 text-left whitespace-nowrap"
-                        sidebar-toggle-item
                     >
                         Ecosystem
                     </span>
                     <svg
-                        sidebar-toggle-item
                         className="w-6 h-6 flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white sidebar-expand-menu-icon"
                         fill="currentColor"
                         viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg"
                     >
                         <path
-                            fill-rule="evenodd"
+                            fillRule="evenodd"
                             d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                            clip-rule="evenodd"
+                            clipRule="evenodd"
                         />
                     </svg>
                 </button>
                 <ul id="dropdown-ecosystems" className="py-2 space-y-2">
                     <li>
                         <a
-                            href={pathRoutes.ecosystem.profile}
+                            href={pathRoutes.ecosystem.root}
                             className="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
                         >
                             <svg
@@ -61,9 +68,8 @@ const EcosystemSidebarOption = () => {
                             >
                                 <path
                                     stroke="#6B7280"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="1.25"
+                                    strokeLinejoin="round"
+                                    strokeWidth={1.25}
                                     d="M4 4h3.125M4 6.885h3.125M1 1h15.702M4.695 10h.962m1.453 0h.96m1.422 0h.962m1.452 0h.962M17 1v4.952m0 3.715V13H1V1"
                                 />
                                 <path
@@ -72,9 +78,8 @@ const EcosystemSidebarOption = () => {
                                 />
                                 <path
                                     stroke="#6B7280"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="1.25"
+                                    strokeLinejoin="round"
+                                    strokeWidth={1.25}
                                     d="M7.164 13.647v1.47h7.53m-6.024.589v2.353h6.526m-4.518.294V21h11.044l3.263-1.177m0 0v-9.705m0 9.705h3.012m-3.012-9.705L23.48 8.353 16.2 6l-1.004.588-.25 1.47.501 1.177 3.263.883.502 1.764 1.004 1.765h1.506m3.263-3.53h3.012"
                                 />
                             </svg>
@@ -103,8 +108,8 @@ const EcosystemSidebarOption = () => {
                                 />
                                 <path
                                     stroke="#6B7280"
-                                    stroke-linecap="round"
-                                    stroke-width="1.5"
+                                    strokeLinejoin="round"
+                                    strokeWidth={1.5}
                                     d="m15.328 17.984 2.24 2.55 4.48-4.464"
                                 />
                             </svg>

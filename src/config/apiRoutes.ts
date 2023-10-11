@@ -73,7 +73,7 @@ export const apiRoutes = {
     Ecosystem: {
         root: '/ecosystem',
         endorsements: {
-            list: '/transactions',
+            list: '/endorsement-transactions',
             createSchemaRequest: '/transaction/schema',
             createCredDefRequest: '/transaction/cred-def',
             signRequest: '/transaction/sign/',

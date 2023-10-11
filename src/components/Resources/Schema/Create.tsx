@@ -2,17 +2,17 @@
 
 import * as yup from 'yup';
 
-import { Alert, Button, Card, Label, Table } from 'flowbite-react';
+import { Alert, Button, Card, Label } from 'flowbite-react';
 import { Field, FieldArray, Form, Formik } from 'formik';
 import { apiStatusCodes, schemaVersionRegex, storageKeys } from '../../../config/CommonConstant';
 import { useEffect, useState } from 'react';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../../BreadCrumbs';
-import type { FieldName, Values } from './interfaces';
+import type { FieldName } from './interfaces';
 import { addSchema } from '../../../api/Schema';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
-import checkEcosystem from '../../../config/ecosystem';
+import { ICheckEcosystem, checkEcosystem, getEcosystemId } from '../../../config/ecosystem';
 import { createSchemaRequest } from '../../../api/ecosystem';
 import ConfirmModal from '../../../commonComponents/ConfirmPopup';
 
@@ -38,9 +38,10 @@ interface IFormData {
 const CreateSchema = () => {
     const [failure, setFailure] = useState<string | null>(null);
     const [orgId, setOrgId] = useState<number>(0);
-    const [orgDid, setOrgDid] = useState<string>('');
     const [createloader, setCreateLoader] = useState<boolean>(false);
     const [showPopup, setShowPopup] = useState(false)
+    const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
+
     const initFormData: IFormData = {
         schemaName: '',
         schemaVersion: '',
@@ -61,6 +62,14 @@ const CreateSchema = () => {
         };
 
         fetchData();
+
+        const checkEcosystemData = async () => {
+            const data: ICheckEcosystem = await checkEcosystem();
+            setIsEcosystemData(data)
+        }
+        
+        checkEcosystemData();
+        
     }, []);
 
     const submit = async (values: IFormData) => {
@@ -102,17 +111,13 @@ const CreateSchema = () => {
             name: values.schemaName,
         }
 
+        const id = await getEcosystemId()
 
-        const createSchema = await createSchemaRequest(schemaFieldName, orgId);
+        const createSchema = await createSchemaRequest(schemaFieldName, id, orgId);
         const { data } = createSchema as AxiosResponse;
         if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-            if (data?.data) {
-                setCreateLoader(false);
-                window.location.href = pathRoutes.organizations.schemas;
-            } else {
-                setFailure(createSchema as string);
-                setCreateLoader(false);
-            }
+            setCreateLoader(false);
+            window.location.href = pathRoutes.ecosystem.endorsements;
         } else {
             setCreateLoader(false);
             setFailure(createSchema as string);
@@ -124,12 +129,11 @@ const CreateSchema = () => {
     };
 
 
-    const { isEnabledEcosystem, isEcosystemMember } = checkEcosystem()
-    const formTitle = isEcosystemMember ? "Create Endorsement Request" : "Create Schema"
-    const submitButtonTitle = isEcosystemMember ? "Request Endorsement" : "Create"
+    const formTitle = isEcosystemData?.isEcosystemMember ? "Create Endorsement Request" : "Create Schema"
+    const submitButtonTitle = isEcosystemData?.isEcosystemMember ? "Request Endorsement" : "Create"
 
     const confirmCreateSchema = () => {
-        if (isEnabledEcosystem && isEcosystemMember) {
+        if (isEcosystemData?.isEnabledEcosystem && isEcosystemData?.isEcosystemMember) {
             console.log("Submitted for endorsement by ecosystem member")
             submitSchemaCreationRequest(formData)
         } else {

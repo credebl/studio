@@ -6,7 +6,7 @@ import { getFromLocalStorage } from "./Auth";
 import { storageKeys } from "../config/CommonConstant";
 import { getHeaderConfigs } from "../config/GetHeaderConfigs";
 
-interface DataPayload {
+interface CreateEcosystemPayload {
     name: string
     description: string
     logo: string
@@ -14,8 +14,17 @@ interface DataPayload {
     userId: number
 }
 
+export interface GetEndorsementListParameter {
+    itemPerPage: number,
+    page: number,
+    search: string,
+    sortBy: string,
+    type: string,
+    status: string
+}
 
-export const createEcosystems = async (dataPayload: DataPayload) => {
+
+export const createEcosystems = async (dataPayload: CreateEcosystemPayload) => {
     const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 
     const url = `${apiRoutes.Ecosystem.root}/${orgId}`
@@ -71,9 +80,9 @@ export const getEcosystem = async (orgId: string) => {
     }
 }
 
-export const getEndorsementList = async () => {
+export const getEndorsementList = async ({ search, itemPerPage, page, type, status }: GetEndorsementListParameter, ecosystemId: string, orgId: string) => {
 
-    const url = `${apiRoutes.Ecosystem.endorsements.list}`
+    const url = `${apiRoutes.Ecosystem.root}/${orgId}/${ecosystemId}${apiRoutes.Ecosystem.endorsements.list}?${page ? `pageNumber=${page}` : ""}${search ? `&search=${search}` : ""}${itemPerPage ? `&pageSize=${itemPerPage}` : ""}${type ? `&type=${type}` : ""}${status ? `&status=${status}` : ""}`
 
     const axiosPayload = {
         url,
@@ -89,9 +98,8 @@ export const getEndorsementList = async () => {
     }
 }
 
-export const createSchemaRequest = async (data: object, orgId: number) => {
-
-    const url = `${apiRoutes.Ecosystem.root}/${orgId}${apiRoutes.Ecosystem.endorsements.createSchemaRequest}`
+export const createSchemaRequest = async (data: object, endorsementId: string, orgId: number) => {
+    const url = `${apiRoutes.Ecosystem.root}/${endorsementId}/${orgId}${apiRoutes.Ecosystem.endorsements.createSchemaRequest}`
     const payload = data
     const axiosPayload = {
         url,
@@ -108,9 +116,9 @@ export const createSchemaRequest = async (data: object, orgId: number) => {
     }
 }
 
-export const createCredDefRequest = async (data: object, orgId: number) => {
+export const createCredDefRequest = async (data: object, ecosystemId: string, orgId: number) => {
 
-    const url = `${apiRoutes.Ecosystem.root}/${orgId}${apiRoutes.Ecosystem.endorsements.createCredDefRequest}`
+    const url = `${apiRoutes.Ecosystem.root}/${ecosystemId}/${orgId}${apiRoutes.Ecosystem.endorsements.createCredDefRequest}`
     const payload = data
     const axiosPayload = {
         url,
