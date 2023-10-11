@@ -34,6 +34,8 @@ const Dashboard = () => {
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [showPopup, setShowPopup] = useState<boolean>(false);
     const [ecosystemDashboard, setEcosystemDashboard] = useState<EcosystemDashboard | null>(null)
+	const [ecosystemDetailsNotFound, setEcosystemDetailsNotFound] = useState(false);
+
 	const props = { openModal, setOpenModal };
 
 	const createEcosystemModel = () => {
@@ -65,7 +67,8 @@ const Dashboard = () => {
 					description: ecosystemData.description,
 				});
 			} else {
-				setFailure(response as string);
+				setEcosystemDetailsNotFound(true);
+				
 			}
 		}
 		setLoading(false);
@@ -87,14 +90,20 @@ const Dashboard = () => {
 		}
 		else {
             setFailure(response as string)
+			setFailure(response as string);
+			setLoading(false);
 		}
 		setLoading(false)
         
     }
 
+	const getDashboardData = async () => {
+		await fetchEcosystemDetails();
+		await fetchEcosystemDashboard();
+	}
+
 	useEffect(() => {
-		fetchEcosystemDetails();
-		fetchEcosystemDashboard();
+		getDashboardData()
 	}, []);
     
 
@@ -183,28 +192,10 @@ const Dashboard = () => {
 										xmlns="http://www.w3.org/2000/svg"
 										fill="currentColor"
 										viewBox="0 0 4 15"
-										onClick={toggleDropdown}
 									>
 										<path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
 									</svg>
-									<ul
-										className={`absolute top-8 right-0 bg-white border border-gray-300 dark:bg-gray-800 dark:border-gray-600 rounded-lg p-2 shadow-md ${
-											isDropdownVisible ? 'block' : 'hidden'
-										}`}
-									>
-										<li>Edit Ecosystem</li>
-										<li>Enable/Disable Ecosystem</li>
-										<li>
-											<Button onClick={redirectToOrgRegistrationPopup}>
-												Manual Registration
-											</Button>
-										</li>
-									</ul>
-								</div>
-								<OrgRegistrationPopup
-									openModal={showPopup}
-									closeModal={() => setShowPopup(false)}
-								/>
+								</div>	
 							</div>
 						)}
 					</div>
@@ -289,10 +280,25 @@ const Dashboard = () => {
 								/>
 							</div>
 						</div>
+						
 					)}
 				</div>
 			)}
+
+	{ecosystemDetailsNotFound && (
+        <AlertComponent
+          message="Ecosystem details not found."
+          type="failure"
+          onAlertClose={() => {
+            setEcosystemDetailsNotFound(false); 
+            setFailure(null);
+          }}
+        />
+      )}
+
+
 		</div>
+		
 	);
 };
 
