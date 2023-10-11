@@ -266,7 +266,7 @@ const SendInvitationModal = (props: {
 															<li className="pt-3 sm:pt-3 overflow-auto">
 																<div className="items-center space-x-4">
 																	<div className="inline-flex items-center text-base font-normal text-gray-900 dark:text-white">
-																		Roles: Member
+																		Role: Member
 																	</div>
 																</div>
 															</li>

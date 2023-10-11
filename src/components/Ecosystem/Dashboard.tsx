@@ -17,6 +17,14 @@ import { ICheckEcosystem, checkEcosystem } from '../../config/ecosystem';
 import RoleViewButton from '../RoleViewButton';
 import SendInvitationModal from '../organization/invitations/SendInvitationModal';
 import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
+import { getUserEcosystemInvitations } from '../../api/invitations';
+import { pathRoutes } from '../../config/pathRoutes';
+
+const initialPageState = {
+    pageNumber: 1,
+    pageSize: 10,
+    total: 0,
+};
 
 const Dashboard = () => {
     const [ecosystemDetails, setEcosystemDetails] = useState<IEcosystem | null>();
@@ -42,28 +50,25 @@ const Dashboard = () => {
         fetchEcosystemDetails()
 	  };
 
-	const getAllEcosystemInvitations = async () => {
-		setLoading(true);
-		const response = await getEcosytemReceivedInvitations(
-			currentPage.pageNumber,
-			currentPage.pageSize,
-			''
-		);
-		const { data } = response as AxiosResponse;
-
+    const getAllEcosystemInvitations = async () => {
+			
+			setLoading(true);
+			const response = await getUserEcosystemInvitations(
+				currentPage.pageNumber,
+				currentPage.pageSize,
+				'',
+        );
+        const { data } = response as AxiosResponse;
+				
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-            const totalPages = data?.data?.totalPages;
-
-            const invitationList = data?.data;
-            const ecoSystemName = invitationList.map((invitations: { name: string; }) => {
-                return invitations.name
-            })
-            const invitationPendingList = data?.data?.invitations.filter((invitation: { status: string; }) => {
+					const totalPages = data?.data?.totalPages;
+					
+					const invitationPendingList = data?.data?.invitations.filter((invitation: { status: string; }) => {
                 return invitation.status === 'pending'
             })
 
             if (invitationPendingList.length > 0) {
-                setMessage(`You have received invitation to join ${ecoSystemName} ecosystem `)
+                setMessage(`You have received invitation to join ecosystem `)
                 setViewButton(true);
             }
             setCurrentPage({
@@ -136,8 +141,8 @@ const Dashboard = () => {
                         <div className="cursor-pointer">
                             {<AlertComponent
                                 message={message ? message : error}
-                                type={message ? 'warning' : 'failure'}
-                                viewButton={viewButton}
+                                type={message ? message==='Ecosystem invitations sent successfully'? 'success' : 'warning' : 'failure'}
+                                viewButton={message==='Ecosystem invitations sent successfully'? false : true}
                                 path={pathRoutes.ecosystem.invitation}
                                 onAlertClose={() => {
                                     setMessage(null);
@@ -156,12 +161,8 @@ const Dashboard = () => {
                                 }}
                             />
                         )}
-
-
-								</Dropdown>
-							</div>
-						)}
-					</div>
+                    </>
+            }
 
 					{isEcosystemLead && (
 						<>
