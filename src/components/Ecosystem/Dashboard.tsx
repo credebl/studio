@@ -13,7 +13,7 @@ import { getEcosystem, getEcosystemDashboard } from '../../api/ecosystem';
 import { EmptyListMessage } from '../EmptyListComponent';
 import CreateEcosystemOrgModal from '../CreateEcosystemOrgModal';
 import { AlertComponent } from '../AlertComponent';
-import { ICheckEcosystem, checkEcosystem } from '../../config/ecosystem';
+import { ICheckEcosystem, checkEcosystem, getEcosystemId } from '../../config/ecosystem';
 import RoleViewButton from '../RoleViewButton';
 import SendInvitationModal from '../organization/invitations/SendInvitationModal';
 import { Dropdown } from 'flowbite-react';
@@ -121,27 +121,29 @@ const Dashboard = () => {
 		setLoading(false);
 	};
 
-	const fetchEcosystemDashboard = async () => {
+    const fetchEcosystemDashboard = async () => {
 
         setLoading(true)
 
         const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-		const ecosystemId = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID);
+        const ecosystemId = await getEcosystemId();
 
-		const response = await getEcosystemDashboard(ecosystemId as string, orgId as string);
+        if (ecosystemId && orgId) {
+            const response = await getEcosystemDashboard(ecosystemId, orgId);
 
-		const { data } = response as AxiosResponse
+            const { data } = response as AxiosResponse
 
-		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			setEcosystemDashboard(data?.data)
-		}
-		else {
-            setFailure(response as string)
-			setFailure(response as string);
-			setLoading(false);
-		}
-		setLoading(false)
-        
+            if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+                setEcosystemDashboard(data?.data)
+            }
+            else {
+                setFailure(response as string)
+                setFailure(response as string);
+                setLoading(false);
+            }
+        }
+        setLoading(false)
+
     }
 
 	const checkOrgId = async () => {
