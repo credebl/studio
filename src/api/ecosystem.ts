@@ -22,7 +22,6 @@ export interface GetEndorsementListParameter {
     status: string
 }
 
-
 export const createEcosystems = async (dataPayload: CreateEcosystemPayload) => {
     const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 
@@ -122,6 +121,24 @@ export const createCredDefRequest = async (data: object, ecosystemId: string, or
     const axiosPayload = {
         url,
         payload,
+        config: await getHeaderConfigs()
+    }
+
+    try {
+        return await axiosPost(axiosPayload);
+    }
+    catch (error) {
+        const err = error as Error
+        return err?.message
+    }
+}
+
+export const SignEndorsementRequest = async ( ecosystemId: string, orgId: string, endorsementId: string) => {
+
+    const url = `${apiRoutes.Ecosystem.root}/${ecosystemId}/${orgId}${apiRoutes.Ecosystem.endorsements.signRequest}${endorsementId}`
+
+    const axiosPayload = {
+        url,
         config: await getHeaderConfigs()
     }
 
