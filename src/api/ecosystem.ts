@@ -133,24 +133,6 @@ export const createCredDefRequest = async (data: object, ecosystemId: string, or
     }
 }
 
-export const SignEndorsementRequest = async ( ecosystemId: string, orgId: string, endorsementId: string) => {
-
-    const url = `${apiRoutes.Ecosystem.root}/${ecosystemId}/${orgId}${apiRoutes.Ecosystem.endorsements.signRequest}${endorsementId}`
-
-    const axiosPayload = {
-        url,
-        config: await getHeaderConfigs()
-    }
-
-    try {
-        return await axiosPut(axiosPayload);
-    }
-    catch (error) {
-        const err = error as Error
-        return err?.message
-    }
-}
-
 export const getEcosystemDashboard = async (ecosystemId: string, orgId: string) => {
     
     const url = `${apiRoutes.Ecosystem.root}/${ecosystemId}/${orgId}/dashboard`
