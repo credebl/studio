@@ -32,12 +32,12 @@ const MemberList = () => {
 			const totalPages = data?.data?.totalPages;
 			const sortedMemberList = data?.data?.members?.sort(
 				(
-					a: { ecosystemRole: { name: number } },
-					b: { ecosystemRole: { name: number } },
+					firstMember: { ecosystemRole: { name: number } },
+					secondMember: { ecosystemRole: { name: number } },
 				) =>
-					a?.ecosystemRole?.name > b?.ecosystemRole?.name
+				firstMember?.ecosystemRole?.name > secondMember?.ecosystemRole?.name
 						? 1
-						: b?.ecosystemRole?.name > a?.ecosystemRole?.name
+						: secondMember?.ecosystemRole?.name > firstMember?.ecosystemRole?.name
 						? -1
 						: 0,
 			);
