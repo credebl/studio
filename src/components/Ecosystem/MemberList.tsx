@@ -48,17 +48,12 @@ const MemberList = () => {
 					return {
 						data: [
 							{
-								data: member.orgName ? member.orgName : 'Not avilable',
+								data: member.orgName || 'Not avilable',
 							},
 							{
-								data: member?.createDateTime ? (
-									<DateTooltip date={member?.createDateTime}>
-										{' '}
+								data: <DateTooltip date={member?.createDateTime}>
 										{dateConversion(member?.createDateTime)}{' '}
-									</DateTooltip>
-								) : (
-									'Not available'
-								),
+									</DateTooltip> ||	'Not available'
 							},
 							{
 								data: member.ecosystemRole.name ? (

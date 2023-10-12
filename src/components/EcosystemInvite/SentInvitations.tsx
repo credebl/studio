@@ -192,7 +192,7 @@ const SentInvitations = () => {
 																	: 'bg-red-100 text-red-800 rounded dark:bg-gray-900 dark:text-red-300  border-red-100 dark:border-red-500 border'
 															} m-1 text-sm font-medium px-2.5 py-0.5 rounded`}
 														>
-															{invitation.status.charAt(0).toUpperCase() + invitation.status.slice(1)}
+															{invitation?.status?.charAt(0).toUpperCase() + invitation?.status?.slice(1)}
 														</span>
 													</div>
 													{invitation.status === 'pending' && (
