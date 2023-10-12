@@ -25,9 +25,8 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
         checkEcosystemData();
     }, [])
 
+    const enableAction = (!fromEndorsementList && data?.status === EndorsementStatus.signed) || Boolean(fromEndorsementList)
     const isSchema = data?.type === EndorsementType.schema
-
-    const enableAction = (!fromEndorsementList && data?.status === EndorsementStatus.approved) || Boolean(fromEndorsementList)
 
     const requestPayload = data?.requestPayload && JSON.parse(data?.requestPayload)
 

@@ -23,7 +23,6 @@ export interface GetEndorsementListParameter {
     status: string
 }
 
-
 export const createEcosystems = async (dataPayload: CreateEcosystemPayload) => {
     const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 
@@ -65,7 +64,6 @@ export const updateEcosystem = async (dataPayload: CreateEcosystemPayload) => {
         return err?.message
     }
 }
-
 
 export const getEcosystem = async (orgId: string) => {
     const url = `${apiRoutes.Ecosystem.root}/${orgId}`
@@ -139,6 +137,23 @@ export const createCredDefRequest = async (data: object, ecosystemId: string, or
     }
 }
 
+export const SignEndorsementRequest = async ( ecosystemId: string, orgId: string, endorsementId: string) => {
+
+    const url = `${apiRoutes.Ecosystem.root}/${ecosystemId}/${orgId}${apiRoutes.Ecosystem.endorsements.signRequest}${endorsementId}`
+
+    const axiosPayload = {
+        url,
+        config: await getHeaderConfigs()
+    }
+    try {
+        return await axiosPost(axiosPayload);
+    }
+    catch (error) {
+        const err = error as Error
+        return err?.message
+    }
+}
+
 export const getEcosystemDashboard = async (ecosystemId: string, orgId: string) => {
     
     const url = `${apiRoutes.Ecosystem.root}/${ecosystemId}/${orgId}/dashboard`
@@ -164,4 +179,23 @@ export const getEcosystemDashboard = async (ecosystemId: string, orgId: string) 
         return err?.message
     }
 
+}
+
+export const getEcosystemMemberList = async (pageNumber: number, pageSize: number, search: string) => {
+  const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
+	const ecosystemId= await getFromLocalStorage(storageKeys.ECOSYSTEM_ID)
+	const url = `${apiRoutes.Ecosystem.root}/${ecosystemId}/${orgId}${apiRoutes.Ecosystem.members}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
+
+	const axiosPayload = {
+			url,
+			config: await getHeaderConfigs()
+	}
+
+	try {
+			return await axiosGet(axiosPayload);
+	}
+	catch (error) {
+			const err = error as Error
+			return err?.message
+	}
 }
