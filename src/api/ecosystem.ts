@@ -165,3 +165,22 @@ export const getEcosystemDashboard = async (ecosystemId: string, orgId: string) 
     }
 
 }
+
+export const getEcosystemMemberList = async (pageNumber: number, pageSize: number, search: string) => {
+  const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
+	const ecosystemId= await getFromLocalStorage(storageKeys.ECOSYSTEM_ID)
+	const url = `${apiRoutes.Ecosystem.root}/${ecosystemId}/${orgId}${apiRoutes.Ecosystem.members}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
+
+	const axiosPayload = {
+			url,
+			config: await getHeaderConfigs()
+	}
+
+	try {
+			return await axiosGet(axiosPayload);
+	}
+	catch (error) {
+			const err = error as Error
+			return err?.message
+	}
+}
