@@ -12,11 +12,12 @@ import SearchInput from '../../SearchInput';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
 import { getOrganizationById } from '../../../api/organization';
-import { getEcosystemId } from '../../../config/ecosystem';
+import { ICheckEcosystem, checkEcosystem, getEcosystemId } from '../../../config/ecosystem';
 import type { IAttributes } from '../../Resources/Schema/interfaces';
 import EndorsementPopup from './EndorsementPopup';
 import EndorsementCard from './EndorsementCard';
 import { GetEndorsementListParameter, getEndorsementList } from '../../../api/ecosystem';
+import { EndorsementStatus, EndorsementType } from '../../../common/enums';
 
 interface ISelectedRequest {
     attribute: IAttributes[];
@@ -57,38 +58,42 @@ const EndorsementList = () => {
     const [walletStatus, setWalletStatus] = useState(false)
     const [showPopup, setShowPopup] = useState(false)
     const [selectedRequest, setSelectedRequest] = useState<ISelectedRequest>()
-
+    const [isEcosystemLead, setIsEcosystemLead] = useState(false);
 
     const options = [
         {
-            name: "All",
+            name: "Select Status",
             value: ""
         },
         {
-            name: "Approved",
-            value: "approved"
+            name: "Signed",
+            value: EndorsementStatus.approved
         },
         {
             name: "Requested",
-            value: "requested"
+            value: EndorsementStatus.requested
         },
         {
             name: "Rejected",
-            value: "rejected"
+            value: EndorsementStatus.rejected
         },
+        {
+            name: "Submitted",
+            value: EndorsementStatus.submitted
+        }
     ]
 
     const typeOptions = [{
-        name: "All",
+        name: "Select Type",
         value: ""
     },
     {
         name: "Schema",
-        value: "schema"
+        value: EndorsementType.schema
     },
     {
         name: "Credential-definition",
-        value: "credential-definition"
+        value: EndorsementType.credDef
     }
 
     ]
@@ -170,6 +175,12 @@ const EndorsementList = () => {
 
     useEffect(() => {
         fetchOrganizationDetails()
+
+        const checkEcosystemData = async () => {
+            const data: ICheckEcosystem = await checkEcosystem();
+            setIsEcosystemLead(data.isEcosystemLead)
+        }
+        checkEcosystemData();
     }, [])
 
     return (
@@ -258,8 +269,8 @@ const EndorsementList = () => {
                                         {walletStatus ?
                                             <EmptyListMessage
                                                 message={'No Endorsement Requests'}
-                                                description={'Get started by requesting Endorsement'}
-                                                buttonContent={'Request Endorsements'}
+                                                description={''}
+                                                buttonContent={isEcosystemLead ? '' : 'Request Endorsements'}
                                                 svgComponent={<svg className='pr-2 mr-1' xmlns="http://www.w3.org/2000/svg" width="24" height="15" fill="none" viewBox="0 0 24 24">
                                                     <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
                                                 </svg>}
@@ -285,7 +296,7 @@ const EndorsementList = () => {
                     )
                 }
             </div>
-            <EndorsementPopup openModal={showPopup} closeModal={hidePopup} isAccepted={(flag: boolean) => console.log('Is accepted::', flag)} endorsementData={selectedRequest}/>
+            <EndorsementPopup openModal={showPopup} closeModal={hidePopup} isAccepted={(flag: boolean) => console.log('Is accepted::', flag)} endorsementData={selectedRequest} />
         </div>
     )
 }

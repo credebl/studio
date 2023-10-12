@@ -39,7 +39,7 @@ export enum IssueCredentialUserText {
 
 export enum EndorsementType {
 	schema = 'schema',
-	credDef = 'credDef'
+	credDef = 'credential-definition'
 }
 
 export enum EndorsementStatus {
