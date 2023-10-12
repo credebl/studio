@@ -19,7 +19,7 @@ const initialPageState = {
 };
 
 const SentInvitations = () => {
-	const [loading, setLoading] = useState<boolean>(false);
+	const [loading, setLoading] = useState<boolean>(true);
 	const [message, setMessage] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
@@ -65,6 +65,7 @@ const SentInvitations = () => {
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			setLoading(true);
 			await getAllSentInvitations();
+			setMessage('Invitation deleted successfully');
 		} else {
 			setError(response as string);
 		}
@@ -109,8 +110,8 @@ const SentInvitations = () => {
 							<div className="flow-root">
 								<ul className="divide-y divide-gray-200 dark:divide-gray-700">
 									{invitationsList.map((invitation) => (
-										<li className="p-4">
-											<div className="flex flex-wrap justify-between xl:block 2xl:flex align-center 2xl:space-x-4">
+										<li key={invitation.id} className="p-4 min-[320px]:h-52 sm:h-48 md:h-[150px] items-center">
+											<div className="flex flex-wrap justify-between align-middle 2xl:flex items-center 2xl:space-x-4">
 												<div className=" xl:mb-4 2xl:mb-0">
 													<div className="flex space-x-4">
 														<svg
@@ -152,7 +153,6 @@ const SentInvitations = () => {
 																</clipPath>
 															</defs>
 														</svg>
-
 														<div className="flex-1 min-w-0">
 															<p className="text-base font-semibold text-gray-900 leading-none truncate mb-0.5 dark:text-white">
 																{invitation.email}
@@ -163,9 +163,11 @@ const SentInvitations = () => {
 																	<li className="pt-3 sm:pt-3 overflow-auto">
 																		<div className="items-center space-x-4">
 																			<div className="inline-flex items-center text-base font-normal text-gray-900 dark:text-white">
-																				Roles:{' '}
+																				Role:{' '}
 																				<span
-																					key={invitation.id}																				>
+																					key={invitation.id}
+																					className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
+																				>
 																					Ecosystem Member
 																				</span>
 																			</div>
@@ -175,43 +177,52 @@ const SentInvitations = () => {
 															</div>
 														</div>
 													</div>
-
-													<div className="flex">
-														<Button
-															onClick={() => deletInvitations(invitation.id)}
-															color="bg-white"
-															className="mx-5 font-normal items-center mt-5 text-xl text-primary-700 border border-blue-700 text-center hover:!bg-primary-800 hover:text-white rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:hover:bg-primary-700 dark:text-white dark:bg-primary-700 dark:focus:ring-blue-800"
-														>
-															<svg
-																className="w-6 h-6"
-																aria-hidden="true"
-																xmlns="http://www.w3.org/2000/svg"
-																fill="none"
-																viewBox="0 0 20 20"
-															>
-																<path
-																	stroke="currentColor"
-																	stroke-linecap="round"
-																	stroke-linejoin="round"
-																	stroke-width="1.5"
-																	d="m13 7-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-																/>
-															</svg>
-															<span className="text-lg ml-2">
-																Delete Invitation
-															</span>
-														</Button>
-													</div>
 												</div>
 
-												<div className="dark:text-white">
-													Status:
-													<span
-														key={invitation.id}
-														className="m-1 text-sm font-medium mr-2 px-2.5 py-0.5 rounded bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
-													>
-														{invitation.status}
-													</span>
+												<div>
+													<div className="dark:text-white flex items-center justify-end">
+														Status:
+														<span
+															key={invitation.id}
+															className={`${
+																invitation.status === 'pending'
+																	? 'bg-orange-100 text-orange-800 dark:bg-gray-700 dark:text-orange-300'
+																	: invitation.status === 'accepted'
+																	? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
+																	: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+															} m-1 text-sm font-medium px-2.5 py-0.5 rounded`}
+														>
+															{invitation.status}
+														</span>
+													</div>
+													{invitation.status === 'pending' && (
+														<div className="flex">
+															<Button
+																onClick={() => deletInvitations(invitation.id)}
+																color="bg-white"
+																className="ml-5 font-normal items-center mt-5 text-xl text-primary-700 border border-blue-700 text-center hover:!bg-primary-800 hover:text-white rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:hover:bg-primary-700 dark:text-white dark:bg-primary-700 dark:focus:ring-blue-800"
+															>
+																<svg
+																	className="w-6 h-6"
+																	aria-hidden="true"
+																	xmlns="http://www.w3.org/2000/svg"
+																	fill="none"
+																	viewBox="0 0 20 20"
+																>
+																	<path
+																		stroke="currentColor"
+																		stroke-linecap="round"
+																		stroke-linejoin="round"
+																		stroke-width="1.5"
+																		d="m13 7-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+																	/>
+																</svg>
+																<span className="text-lg ml-2">
+																	Delete Invitation
+																</span>
+															</Button>
+														</div>
+													)}
 												</div>
 											</div>
 										</li>
@@ -221,15 +232,15 @@ const SentInvitations = () => {
 						</div>
 					) : (
 						<div>
-							{!(invitationsList && invitationsList?.length > 0) && !loading ? (
+							{!(invitationsList && invitationsList?.length > 0) && loading ? (
+								<div className="flex items-center justify-center mb-4">
+									<CustomSpinner />
+								</div>
+							) : (
 								<EmptyListMessage
 									message={'No Sent Invitations'}
 									description={`You don't have any sent invitation`}
 								/>
-							) : (
-								<div className="flex items-center justify-center mb-4">
-									<CustomSpinner />
-								</div>
 							)}
 						</div>
 					)}

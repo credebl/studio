@@ -13,11 +13,11 @@ import CredDeffCard from '../../../commonComponents/CredentialDefinitionCard';
 import type { CredDeffFieldNameType } from './interfaces';
 import CustomSpinner from '../../CustomSpinner';
 import { EmptyListMessage } from '../../EmptyListComponent';
-import React from 'react';
 import { Roles } from '../../../utils/enums/roles';
-import SchemaCard from '../../../commonComponents/SchemaCard';
 import { nanoid } from 'nanoid';
 import { pathRoutes } from '../../../config/pathRoutes';
+import { ICheckEcosystem, checkEcosystem, getEcosystemId } from '../../../config/ecosystem';
+import { createCredDefRequest } from '../../../api/ecosystem';
 
 interface Values {
   tagName: string;
@@ -39,10 +39,17 @@ type SchemaData = {
   };
 };
 
+interface ICredDefCard {
+  tag: string,
+  credentialDefinitionId: string
+  schemaLedgerId: string
+  revocable: boolean
+}
+
 
 
 const ViewSchemas = () => {
-  const [schemaDetails, setSchemaDetails] = useState<SchemaData>(null);
+  const [schemaDetails, setSchemaDetails] = useState<SchemaData | null>(null);
   const [credDeffList, setCredDeffList] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true)
   const [createloader, setCreateLoader] = useState<boolean>(false)
@@ -53,6 +60,8 @@ const ViewSchemas = () => {
   const [failure, setFailure] = useState<string | null>(null)
   const [orgId, setOrgId] = useState<number>(0)
   const [credDefAuto, setCredDefAuto] = useState<string>('')
+  const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
+
 
   const [userRoles, setUserRoles] = useState<string[]>([])
 
@@ -123,36 +132,70 @@ const ViewSchemas = () => {
 
   useEffect(() => {
     getUserRoles()
+    const checkEcosystemData = async () => {
+      const data: ICheckEcosystem = await checkEcosystem();
+      setIsEcosystemData(data)
+    }
+
+    checkEcosystemData();
   }, [])
 
 
   const submit = async (values: Values) => {
-    setCreateLoader(true)
-    const CredDeffFieldName: CredDeffFieldNameType = {
-      tag: values?.tagName,
-      revocable: values?.revocable,
-      orgId: orgId,
-      schemaLedgerId: schemaDetails?.schemaId
+    if (isEcosystemData?.isEnabledEcosystem && isEcosystemData?.isEcosystemMember) {
+      console.log("Submitted for endorsement by ecosystem member")
+      setCreateLoader(true)
+      const schemaId = schemaDetails?.schemaId || ""
+      const requestPayload = {
+        endorse: true,
+        tag: values?.tagName,
+        schemaId
+      }
 
-    }
+      const ecoId = await getEcosystemId()
 
-    const createCredDeff = await createCredentialDefinition(CredDeffFieldName, orgId);
-    const { data } = createCredDeff as AxiosResponse
-    if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-      setCreateLoader(false)
-      setSuccess(data?.message)
+      const createCredDeff = await createCredDefRequest(requestPayload, ecoId, orgId);
+      const { data } = createCredDeff as AxiosResponse
+      if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+        setCreateLoader(false)
+        setSuccess(data?.message)
+      }
+      else {
+        setFailure(createCredDeff as string)
+        setCreateLoader(false)
+      }
+      getCredentialDefinitionList(schemaId, orgId)
+    } else {
+      setCreateLoader(true)
+      const schemaId = schemaDetails?.schemaId || ""
+      const CredDeffFieldName: CredDeffFieldNameType = {
+        tag: values?.tagName,
+        revocable: values?.revocable,
+        orgId: orgId,
+        schemaLedgerId: schemaId
+      }
+
+      const createCredDeff = await createCredentialDefinition(CredDeffFieldName, orgId);
+      const { data } = createCredDeff as AxiosResponse
+      if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+        setCreateLoader(false)
+        setSuccess(data?.message)
+      }
+      else {
+        setFailure(createCredDeff as string)
+        setCreateLoader(false)
+      }
+      getCredentialDefinitionList(schemaId, orgId)
     }
-    else {
-      setFailure(createCredDeff as string)
-      setCreateLoader(false)
-    }
-    getCredentialDefinitionList(schemaDetails?.schemaId, orgId)
   }
 
   const credDefSelectionCallback = async (schemaId: string, credentialDefinitionId: string) => {
     await setToLocalStorage(storageKeys.CRED_DEF_ID, credentialDefinitionId)
     window.location.href = `${pathRoutes.organizations.Issuance.connections}`
   }
+
+  const formTitle = isEcosystemData?.isEcosystemMember ? "Create Endorsement Request" : "Create Credential Definition"
+  const submitButtonTitle = isEcosystemData?.isEcosystemMember ? "Request Endorsement" : "Create"
 
   return (
     <div className="px-4 pt-6">
@@ -254,7 +297,7 @@ const ViewSchemas = () => {
                           Attributes:
                           {schemaDetails?.schema?.attrNames && schemaDetails?.schema?.attrNames?.length > 0 &&
                             schemaDetails?.schema?.attrNames.map((element: string) => (
-                              <span className='m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300'> {element}</span>
+                              <span key={`schema-details-${element}`} className='m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300'> {element}</span>
                             ))}
                         </div>
                       </div>
@@ -273,7 +316,7 @@ const ViewSchemas = () => {
               id="credentialDefinitionCard">
               <div>
                 <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
-                  Create Credential Definition
+                  {formTitle}
                 </h5>
               </div>
               <div>
@@ -368,7 +411,7 @@ const ViewSchemas = () => {
                           <svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
                           </svg>
-                          Create
+                          {submitButtonTitle}
                         </Button>
                       </div>
 
@@ -400,63 +443,60 @@ const ViewSchemas = () => {
           }
         </div>
       </div>
-      <>
-        <div className='p-4'>
-          {schemaDetailErr && (
-            <Alert color="failure" onDismiss={() => setSchemaDetailErr(null)}>
-              <span>
-                <p>
-                  {schemaDetailErr}
-                </p>
-              </span>
-            </Alert>
-          )}
-        </div>
-        <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white p-4">
-          Credential Definitions
-        </h5>
+      <div className='p-4'>
+        {schemaDetailErr && (
+          <Alert color="failure" onDismiss={() => setSchemaDetailErr(null)}>
+            <span>
+              <p>
+                {schemaDetailErr}
+              </p>
+            </span>
+          </Alert>
+        )}
+      </div>
+      <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white p-4">
+        Credential Definitions
+      </h5>
 
-        {loading ? (<div className="flex items-center justify-center mb-4">
-
-          <CustomSpinner />
-        </div>)
-          : credDeffList && credDeffList.length > 0 ? (
-            <div className='Flex-wrap' style={{ display: 'flex', flexDirection: 'column' }}>
-              <div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
-                {credDeffList && credDeffList.length > 0 &&
-                  credDeffList.map((element, key) => (
-                    <div className='p-2' key={key}>
-                      <CredDeffCard
-                        credDeffName={element['tag']}
-                        credentialDefinitionId={element['credentialDefinitionId']}
-                        schemaId={element['schemaLedgerId']}
-                        revocable={element['revocable']}
-                        onClickCallback={credDefSelectionCallback}
-                        userRoles={userRoles}
-                      />
-                    </div>
-                  ))
-                }
-              </div>
-              <div className="flex items-center justify-end mb-4">
-                <Pagination
-                  currentPage={1}
-                  onPageChange={() => {
-                  }}
-                  totalPages={0}
-                />
-              </div>
-            </div>) : (<EmptyListMessage
-              message={'No credential definition'}
-              description={'Get started by creating a new credential definition'}
-              buttonContent={''}
-              svgComponent={<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
-                <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
-              </svg>}
-              onClick={() => { }}
-            />)
-        }
-      </>
+      {loading ? (<div className="flex items-center justify-center mb-4">
+        <CustomSpinner />
+      </div>)
+        : credDeffList && credDeffList.length > 0 ? (
+          <div className='Flex-wrap' style={{ display: 'flex', flexDirection: 'column' }}>
+            <div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3">
+              {credDeffList && credDeffList.length > 0 &&
+                credDeffList.map((element: ICredDefCard, index: number) => (
+                  <div className='p-2' key={`view-schema-cred-def-card-${element['credentialDefinitionId']}`}>
+                    <CredDeffCard
+                      credDeffName={element['tag']}
+                      credentialDefinitionId={element['credentialDefinitionId']}
+                      schemaId={element['schemaLedgerId']}
+                      revocable={element['revocable']}
+                      onClickCallback={credDefSelectionCallback}
+                      userRoles={userRoles}
+                    />
+                  </div>
+                ))
+              }
+            </div>
+            <div className="flex items-center justify-end mb-4">
+              <Pagination
+                currentPage={1}
+                onPageChange={() => {
+                }}
+                totalPages={0}
+              />
+            </div>
+          </div>) : (<EmptyListMessage
+            message={'No credential definition'}
+            description={'Get started by creating a new credential definition'}
+            buttonContent={''}
+            svgComponent={<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
+              <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+            </svg>}
+            onClick={() => { }}
+          />)
+      }
     </div>
   )
 }

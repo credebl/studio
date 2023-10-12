@@ -10,11 +10,11 @@ import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { getOrganizations } from '../../api/organization';
 import { getUserActivity } from '../../api/users';
 import {
-	getEcosytemReceivedInvitations,
+	getUserEcosystemInvitations,
 	getUserInvitations,
 } from '../../api/invitations';
 import { pathRoutes } from '../../config/pathRoutes';
-import { setToLocalStorage } from '../../api/Auth';
+import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { dateConversion } from '../../utils/DateConversion';
 import DateTooltip from '../Tooltip';
 
@@ -49,16 +49,8 @@ const UserDashBoard = () => {
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const totalPages = data?.data?.totalPages;
 			const invitationList = data?.data?.invitations;
-			const orgName = invitationList.map(
-				(invitations: { organisation: { name: string } }) => {
-					return invitations.organisation.name;
-				},
-			);
-
 			if (invitationList.length > 0) {
-				setMessage(
-					`You have received invitations to join ${orgName} organisation`,
-				);
+				setMessage(`You have received invitations to join organisation`);
 				setViewButton(true);
 			}
 			setCurrentPage({
@@ -73,7 +65,7 @@ const UserDashBoard = () => {
 
 	const getAllEcosystemInvitations = async () => {
 		setLoading(true);
-		const response = await getEcosytemReceivedInvitations(
+		const response = await getUserEcosystemInvitations(
 			currentPage.pageNumber,
 			currentPage.pageSize,
 			'',
@@ -82,21 +74,14 @@ const UserDashBoard = () => {
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const totalPages = data?.data?.totalPages;
-			const invitationList = data?.data;
-			const ecoSystemName = invitationList.map(
-				(invitations: { name: string }) => {
-					return invitations.name;
-				},
-			);
-			const invitationPendingList = data?.data?.invitations.filter(
+			const invitationPendingList = data?.data?.invitations && data?.data?.invitations?.filter(
 				(invitation: { status: string }) => {
 					return invitation.status === 'pending';
 				},
 			);
-			if (invitationPendingList.length > 0) {
-				setEcoMessage(
-					`You have received invitation to join ${ecoSystemName} ecosystem `,
-				);
+
+			if (invitationPendingList && invitationPendingList.length > 0) {
+				setEcoMessage(`You have received invitation to join ecosystem `);
 				setViewButton(true);
 			}
 			setCurrentPage({
@@ -154,12 +139,17 @@ const UserDashBoard = () => {
 
 		setLoading(false);
 	};
-
+	const checkOrgId = async () => {
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		if (orgId) {
+			await getAllEcosystemInvitations();
+		}
+	};
 	useEffect(() => {
 		getAllInvitations();
 		getAllOrganizations();
 		getUserRecentActivity();
-		getAllEcosystemInvitations();
+		checkOrgId();
 	}, []);
 
 	const goToOrgDashboard = async (orgId: number, roles: string[]) => {
@@ -193,7 +183,6 @@ const UserDashBoard = () => {
 						setError(null);
 					}}
 				/>
-				{/* } */}
 			</div>
 
 			<div className="grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
@@ -202,7 +191,7 @@ const UserDashBoard = () => {
 						<h2 className="text-base font-bold text-gray-500 dark:text-white mb-2">
 							Organizations
 						</h2>
-						
+
 						{organizationsList?.map((org) => {
 							const roles: string[] = org.userOrgRoles.map(
 								(role) => role.orgRole.name,
@@ -295,25 +284,23 @@ const UserDashBoard = () => {
 					</div>
 					{activityList ? (
 						<ol className="relative border-l pl-8 border-gray-200 dark:border-gray-700">
-							{activityList &&
-								activityList.map((activity) => {
-									return (
-										<li className="mb-10 ml-4">
-											<div className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -left-1.5 border border-white dark:border-gray-800 dark:bg-gray-700"></div>
-											<time className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
-												<DateTooltip date={activity.createDateTime}>
-													{dateConversion(activity.createDateTime)}
-												</DateTooltip>
-											</time>
-											<h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-												{activity.action}
-											</h3>
-											<p className="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
-												{activity.details}
-											</p>
-										</li>
-									);
-								})}
+							{activityList.map((activity) => (
+								<li className="mb-10 ml-4" key={activity.id}>
+									<div className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -left-1.5 border border-white dark:border-gray-800 dark:bg-gray-700"></div>
+									<time className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
+										<DateTooltip date={activity.createDateTime}>
+											{dateConversion(activity.createDateTime)}
+										</DateTooltip>
+									</time>
+									<h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+										{activity.action}
+									</h3>
+									<p className="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
+										{activity.details}
+									</p>
+								</li>
+							)
+							)}
 						</ol>
 					) : (
 						activityList && (

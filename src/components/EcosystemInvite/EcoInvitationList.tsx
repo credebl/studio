@@ -1,16 +1,14 @@
-
-import React from 'react';
-
-interface InvitationProps{
-	invitationId:string;
-	invitationEmail:string
+interface InvitationProps {
+	invitationId: string;
+	ecosytem: [];
 }
 
-const EcoInvitationList = (props: InvitationProps ) => {
+const EcoInvitationList = (props: InvitationProps) => {
+	const { invitationId, ecosytem } = props;
 
-	const {invitationId, invitationEmail} = props
+	const { name } = ecosytem;
+
 	return (
-		<>
 			<div className="flex space-x-4">
 				<svg
 					width="60"
@@ -50,7 +48,7 @@ const EcoInvitationList = (props: InvitationProps ) => {
 
 				<div className="flex-1 min-w-0">
 					<p className="text-base font-semibold text-gray-900 leading-none truncate mb-0.5 dark:text-white">
-						{invitationEmail}
+						{name}
 					</p>
 
 					<div className="flow-root h-auto">
@@ -58,7 +56,7 @@ const EcoInvitationList = (props: InvitationProps ) => {
 							<li className="pt-3 sm:pt-3 overflow-auto">
 								<div className="items-center space-x-4">
 									<div className="inline-flex items-center text-base font-normal text-gray-900 dark:text-white">
-										Roles:
+										Role:{' '}
 										<span
 											key={invitationId}
 											className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
@@ -72,7 +70,6 @@ const EcoInvitationList = (props: InvitationProps ) => {
 					</div>
 				</div>
 			</div>
-		</>
 	);
 };
 

@@ -37,6 +37,18 @@ export enum IssueCredentialUserText {
 	abandoned = 'Declined'
 }
 
+export enum EndorsementType {
+	schema = 'schema',
+	credDef = 'credential-definition'
+}
+
+export enum EndorsementStatus {
+    signed = "signed",
+    rejected = "declined",
+    requested = "requested",
+    submitted = "submited"
+}
+
 export enum EcosystemRoles {
 	ecosystemMember = "Ecosystem Member",
 	ecosystemLead = "Ecosystem Lead"
