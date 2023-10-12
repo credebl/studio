@@ -237,7 +237,7 @@ const SendInvitationModal = (props: {
 								{invitations.map((invitation) => (
 									<li key={invitation.email} className="p-2">
 										<div className="flex justify-between xl:block 2xl:flex align-center 2xl:space-x-4">
-											<div className="flex flex-wrap space-x-4 xl:mb-4 2xl:mb-0">
+											<div className="flex flex-wrap space-x-4 xl:mb-4 2xl:mb-0 dark:text-white">
 												<div>
 													<svg
 														xmlns="http://www.w3.org/2000/svg"
@@ -278,7 +278,7 @@ const SendInvitationModal = (props: {
 												onClick={() => removeInvitation(invitation.email)}
 											>
 												<svg
-													className="text-red-400 dark:text-gray-500 w-6 h-8  mb-3.5 mx-auto"
+													className="text-red-400 dark:text-red-500 w-6 h-8 mb-3.5 mx-auto"
 													aria-hidden="true"
 													fill="currentColor"
 													viewBox="0 0 20 20"

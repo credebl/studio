@@ -186,13 +186,13 @@ const SentInvitations = () => {
 															key={invitation.id}
 															className={`${
 																invitation.status === 'pending'
-																	? 'bg-orange-100 text-orange-800 dark:bg-gray-700 dark:text-orange-300'
+																	? 'bg-orange-100 text-orange-800 border border-orange-100 dark:bg-gray-700 dark:border-orange-300 dark:text-orange-300'
 																	: invitation.status === 'accepted'
-																	? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
-																	: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+																	? 'bg-green-100 text-green-700 dark:bg-gray-700 dark:text-green-400 rounded border border-green-100 dark:border-green-500'
+																	: 'bg-red-100 text-red-800 rounded dark:bg-gray-900 dark:text-red-300  border-red-100 dark:border-red-500 border'
 															} m-1 text-sm font-medium px-2.5 py-0.5 rounded`}
 														>
-															{invitation.status}
+															{invitation.status.charAt(0).toUpperCase() + invitation.status.slice(1)}
 														</span>
 													</div>
 													{invitation.status === 'pending' && (
