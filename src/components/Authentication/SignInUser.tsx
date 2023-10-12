@@ -1,12 +1,14 @@
-import '../../common/global.css'
+import './global.css';
 
 import * as yup from 'yup';
-import { Button, Label} from 'flowbite-react';
+
+import { Button, Label, Navbar } from 'flowbite-react';
 import { Field, Form, Formik } from 'formik';
 import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { useEffect, useRef, useState } from 'react';
 import NavBar from './NavBar';
 import { Alert } from 'flowbite-react';
+import React from 'react';
 import RegistrationSuccess from './RegistrationSuccess';
 import SignInUserPasskey from './SignInUserPasskey';
 import { storageKeys } from '../../config/CommonConstant';
@@ -29,15 +31,13 @@ const SignInUser = () => {
 	const [userLoginEmail, setUserLoginEmail] = useState<string | null>(null);
 	const nextButtonRef = useRef<HTMLButtonElement | null>(null);
 
-	
-
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
 				const storedEmail = await getFromLocalStorage(
 					storageKeys.LOGIN_USER_EMAIL,
 				);
-				const newEmail = await getFromLocalStorage(storageKeys.USER_EMAIL)
+
 				const searchParam = new URLSearchParams(window?.location?.search);
 				const userEmail = searchParam.get('email');
 				const signUpStatus = searchParam.get('signup');
@@ -57,15 +57,12 @@ const SignInUser = () => {
 				if (isRefreshPage) {
 					await setToLocalStorage(storageKeys.LOGIN_USER_EMAIL, '');
 				}
+
 				if (
 					signUpStatus === 'true' &&
 					fidoFlag === 'false' &&
 					loginMethod === 'password'
 				) {
-					setSuccess(
-						'Congratulations!! 🎉 You have successfully registered on CREDEBL 🚀',
-					);
-				} else if (showMsg === 'true') {
 					setSuccess(
 						'Congratulations!! 🎉 You have successfully registered on CREDEBL 🚀',
 					);
@@ -79,6 +76,7 @@ const SignInUser = () => {
 					setSuccess('Congratulations!! 🎉 Your new password set successfully');
 				}
 			} catch (err) {
+				console.log('ERROR-LOGIN::', err);
 			}
 		};
 
@@ -87,7 +85,6 @@ const SignInUser = () => {
 
 	const saveEmail = async (values: emailValue) => {
 		setEmail(values);
-		await localStorage.clear();
 		setCurrentComponent('password');
 		await setToLocalStorage(storageKeys.LOGIN_USER_EMAIL, values.email);
 		setIsPasskeySuccess(true);
@@ -106,7 +103,7 @@ const SignInUser = () => {
 	return (
 		<div>
 			{currentComponent === 'email' && isPasskeySuccess ? (
-				<RegistrationSuccess email= {email} />
+				<RegistrationSuccess />
 			) : (
 				<div>
 					{!(currentComponent === 'email' && isPasskeySuccess) &&
@@ -199,16 +196,16 @@ const SignInUser = () => {
 													onSubmit={formikHandlers.handleSubmit}
 												>
 													<div className="text-primary-700 font-inter text-base font-medium leading-5 mb-20">
-														<div className="block mb-2 text-sm font-medium dark:text-white">
+														<div className="block mb-2 text-sm font-medium  dark:text-white">
 															<Label
-																className="text-primary-700 dark:!text-primary-700"
+																className="text-primary-700"
 																htmlFor="email2"
 																value="Your Email"
 															/>
 															<span className="text-red-500 text-xs">*</span>
 														</div>
 
-														<div className="w-full flex items-center bg-gray-200 px-4 py-3 text-gray-700 text-sm border rounded-md focus:border-blue-400 focus:ring-1 focus:ring-blue-600">
+														<div className="w-full flex items-center bg-gray-200 px-4 text-gray-700 text-sm border rounded-md focus:border-blue-400 focus:ring-1 focus:ring-blue-600">
 															<svg
 																xmlns="http://www.w3.org/2000/svg"
 																width="24"
@@ -226,6 +223,7 @@ const SignInUser = () => {
 															<Field
 																id="signinemail"
 																name="email"
+																type="email"
 																className="truncate outline-none flex-grow bg-transparent focus:outline-none border-none focus:border-none focus:ring-0"
 																placeholder="name@company.com"
 															/>

@@ -53,7 +53,6 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
 		}
 	};
 
-
     const submit = async (fidoFlag: boolean, passwordDetails?: passwordValues) => {
         const userEmail = await getFromLocalStorage(storageKeys.USER_EMAIL)
         const password: string = uuidv4();
@@ -65,7 +64,7 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
             password: passwordEncryption(password)
         };
         if (!fidoFlag) {
-            payload.password = passwordDetails?.password || '';
+            payload.password = passwordDetails?.password;
         }
 
         setLoading(true)
@@ -120,7 +119,7 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
     }
 
     let credentialID = '';
-    const verifyRegistrationMethod = async (verifyRegistrationObj: VerifyRegistrationObjInterface, OrgUserEmail: string) => {
+    const verifyRegistrationMethod = async (verifyRegistrationObj: any, OrgUserEmail: string) => {
         try {
             const verificationRegisterResp = await verifyRegistration(verifyRegistrationObj, OrgUserEmail)
             const { data } = verificationRegisterResp as AxiosResponse
