@@ -30,20 +30,30 @@ const MemberList = () => {
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const totalPages = data?.data?.totalPages;
-			const sortedMemberList = data?.data?.members?.sort(
-				(
-					firstMember: { ecosystemRole: { name: number } },
-					secondMember: { ecosystemRole: { name: number } },
-				) =>
-					firstMember?.ecosystemRole?.name > secondMember?.ecosystemRole?.name ? 1 : secondMember?.ecosystemRole?.name > firstMember?.ecosystemRole?.name ? -1 : 0,
-			);
+
+			const compareMembers=(
+				firstMember: { ecosystemRole: { name: string; }; },
+				secondMember: { ecosystemRole: { name: string; }; }
+			)=> {
+				const firstName = firstMember?.ecosystemRole?.name;
+				const secondName = secondMember?.ecosystemRole?.name;
+			
+				if (firstName > secondName) {
+					return 1;
+				} else if (secondName > firstName) {
+					return -1;
+				} else {
+					return 0;
+				}
+			}
+			const sortedMemberList = data?.data?.members?.sort(compareMembers)
 			const membersData = sortedMemberList?.map(
 				(member: {
-					ecosystemRole: { name: any };
-					orgName: any;
-					role: any;
+					ecosystemRole: { name: string };
+					orgName: string;
+					role: string;
 					createDateTime: any;
-					status: any;
+					status: string;
 				}) => {
 					return {
 						data: [
@@ -53,7 +63,8 @@ const MemberList = () => {
 							{
 								data: <DateTooltip date={member?.createDateTime}>
 										{dateConversion(member?.createDateTime)}{' '}
-									</DateTooltip> ||	'Not available'
+							
+					</DateTooltip> ||	'Not available'
 							},
 							{
 								data: member.ecosystemRole.name ? (
@@ -114,6 +125,8 @@ const MemberList = () => {
 		}
 		setLoading(false);
 	};
+
+
 
 	const onPageChange = (page: number) => {
 		setCurrentPage({
