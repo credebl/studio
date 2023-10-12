@@ -98,6 +98,9 @@ module.exports = {
 				width: 'width',
 			},
 			textDecoration: ['active'],
+			width: {
+				'100/22rem': 'calc(100% - 22rem)'
+			},
 			minWidth: {
 				kanban: '28rem',
 			},
