@@ -43,7 +43,7 @@ export interface EcosystemInvitation {
 
 const ReceivedInvitations = () => {
 	const [openModal, setOpenModal] = useState<boolean>(false);
-	const [loading, setLoading] = useState<boolean>(false);
+	const [loading, setLoading] = useState<boolean>(true);
 	const [message, setMessage] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [organizationsList, setOrganizationsList] = useState<Array<Organisation> | null>(null);
@@ -233,7 +233,7 @@ const ReceivedInvitations = () => {
 			<div>
 				<div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 					<AlertComponent
-						message={message ? message : error}
+						message={message || error}
 						type={message ? 'success' : 'failure'}
 						onAlertClose={() => {
 							setMessage(null);
@@ -300,7 +300,7 @@ const ReceivedInvitations = () => {
 															organizationsList.length > 0 &&
 															organizationsList.map((orgs) => {
 																return (
-																	<option value={orgs.id}>{orgs.name}</option>
+																	<option key={orgs.id} value={orgs.id}>{orgs.name}</option>
 																);
 															})}
 													</select>

@@ -211,7 +211,7 @@ const Dashboard = () => {
                         className="grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-3 2xl:grid-cols-3"
                     >
                         <div
-                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${User_Card})`, minHeight: '133px' }}
+                            className="items-center justify-between p-4 bg-white border-0 border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-103 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${User_Card})`, minHeight: '133px' }}
                         >
                             <div className="w-full" onClick={redirectOrgUsers}>
                                 <h3 className="text-base font-medium text-white">
@@ -226,7 +226,7 @@ const Dashboard = () => {
                         </div>
 
                         <div
-                            className={`items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover ${!walletStatus ? 'pointer-events-none' : ''}`}
+                            className={`items-center justify-between p-4 bg-white border-0 border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-103 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover ${!walletStatus ? 'pointer-events-none' : ''}`}
                             style={{ backgroundImage: `url(${Schema_Card})`, minHeight: '133px' }}
                             onClick={() => {
                                 if (walletStatus) {
@@ -245,7 +245,7 @@ const Dashboard = () => {
                         </div>
                         <div
 
-                            className="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${Credential_Card})`, minHeight: '133px' }}
+                            className="items-center justify-between p-4 bg-white border-0 border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-103 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${Credential_Card})`, minHeight: '133px' }}
                         >
 
                             <div className="w-full" >
