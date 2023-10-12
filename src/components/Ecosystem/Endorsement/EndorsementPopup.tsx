@@ -21,7 +21,7 @@ const EndorsementPopup = (props: {
 	endorsementData: any;
 	onAlertClose: boolean;
 }) => {
-	const [loading, setIsLoading] = useState<boolean>(false);
+	const [loading, setLoading] = useState<boolean>(false);
 	const [errMsg, setErrMsg] = useState<string | null>(null);
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 
@@ -39,7 +39,7 @@ const EndorsementPopup = (props: {
 
 	const SignEndorsement = async (endorsementId: string) => {
 		try {
-			setIsLoading(true);
+			setLoading(true);
 			const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
 			const ecoId = await getEcosystemId();
 			const SignEndorsementrequest = await SignEndorsementRequest(
@@ -55,9 +55,9 @@ const EndorsementPopup = (props: {
 			} else {
 				setErrMsg(response as unknown as string);
 			}
-			setIsLoading(false);
+			setLoading(false);
 		} catch (error) {
-			setIsLoading(false);
+			setLoading(false);
 			setErrMsg('error from catch');
 			console.error('Error while fetching schema list:', error);
 		}
