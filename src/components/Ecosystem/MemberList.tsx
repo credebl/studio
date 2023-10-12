@@ -30,8 +30,20 @@ const MemberList = () => {
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const totalPages = data?.data?.totalPages;
-			const membersData = data?.data?.members.map(
+			const sortedMemberList = data?.data?.members?.sort(
+				(
+					a: { ecosystemRole: { name: number } },
+					b: { ecosystemRole: { name: number } },
+				) =>
+					a?.ecosystemRole?.name > b?.ecosystemRole?.name
+						? 1
+						: b?.ecosystemRole?.name > a?.ecosystemRole?.name
+						? -1
+						: 0,
+			);
+			const membersData = sortedMemberList?.map(
 				(member: {
+					ecosystemRole: { name: any };
 					orgName: any;
 					role: any;
 					createDateTime: any;
@@ -53,10 +65,34 @@ const MemberList = () => {
 								),
 							},
 							{
-								data: member.role ? member.role : 'Not avilable',
+								data: member.ecosystemRole.name ? (
+									<span
+										className={`${
+											member.ecosystemRole.name === 'Ecosystem Lead'
+												? 'bg-primary-100 text-primary-800 rounded dark:bg-primary-900 dark:text-primary-300  border-primary-100 dark:border-primary-500'
+												: 'bg-green-100 text-green-700 dark:bg-gray-700 dark:text-green-400 rounded border border-green-100 dark:border-green-500'
+										}'text-sm font-medium mr-2 px-2.5 py-1 rounded-md'`}
+									>
+										{member.ecosystemRole.name}
+									</span>
+								) : (
+									'Not avilable'
+								),
 							},
 							{
-								data: member.status ? member.status : 'Not avilable',
+								data: member.status ? (
+									<span
+										className={`${
+											member.status === 'SUSPENDED'
+												? 'bg-red-100 text-red-800 rounded dark:bg-red-900 dark:text-red-300  border-red-100 dark:border-red-500'
+												: 'bg-green-100 text-green-700 dark:bg-gray-700 dark:text-green-400 rounded border border-green-100 dark:border-green-500'
+										}'text-sm font-medium mr-2 px-2.5 py-1 rounded-md'`}
+									>
+										{member.status}
+									</span>
+								) : (
+									'Not avilable'
+								),
 							},
 							{
 								data: (
@@ -75,7 +111,9 @@ const MemberList = () => {
 					};
 				},
 			);
+
 			setMemberList(membersData);
+
 			setCurrentPage({
 				...currentPage,
 				total: totalPages,
