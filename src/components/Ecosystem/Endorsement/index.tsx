@@ -89,7 +89,7 @@ const EndorsementList = () => {
 		},
 		{
 			name: 'Submitted',
-			value: EndorsementStatus.submitted,
+			value: EndorsementStatus.submited,
 		},
 	];
 
