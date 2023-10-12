@@ -51,6 +51,7 @@ const EndorsementList = () => {
 	const [schemaList, setSchemaList] = useState<IEndorsementList[]>([]);
 	const [schemaListErr, setSchemaListErr] = useState<string | null>('');
 	const [loading, setLoading] = useState<boolean>(true);
+	const [alertClose, setAlertClose] = useState<boolean>(true);
 	const [orgId, setOrgId] = useState<string>('');
 	const [endorsementListAPIParameter, setEndorsementListAPIParameter] =
 		useState({
@@ -251,7 +252,7 @@ const EndorsementList = () => {
 					<AlertComponent
 						message={successMessage}
 						type={'success'}
-						onAlertClose={() => console.log('Close alert')}
+						onAlertClose={() => setAlertClose(!alertClose)}
 					/>
 				)}
 				{schemaListErr && (
@@ -361,6 +362,7 @@ const EndorsementList = () => {
 						setShowPopup(false);
 					}
 				}}
+				onAlertClose={alertClose}
 				endorsementData={selectedRequest}
 				setMessage={setSuccessMessage}
 			/>

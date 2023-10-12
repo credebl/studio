@@ -46,7 +46,6 @@ const EditPopupModal = (props: EditEntityModalProps) => {
     });
 
     useEffect(() => {
-        console.log(6565, props.entityData)
         if (props.openModal && props.entityData) {
             setInitialEntityData({
                 name: props.entityData.name ?? "",
