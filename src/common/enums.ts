@@ -43,10 +43,10 @@ export enum EndorsementType {
 }
 
 export enum EndorsementStatus {
-	signed = "signed",
-	rejected = "declined",
-	requested = "requested",
-	submitted = "submited"
+    signed = "signed",
+    rejected = "declined",
+    requested = "requested",
+    submitted = "submited"
 }
 
 export enum EcosystemRoles {
