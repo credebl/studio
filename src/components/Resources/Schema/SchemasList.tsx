@@ -114,18 +114,19 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 		}
 		props.schemaSelectionCallback(schemaId, schemaDetails)
 	}
-	// const options = ["All", "Approved", "Requested", "Rejected"]
 
-	// const handleFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
-	// 	console.log("Handle filter", e.target.value)
-	// 	if (e.target.value === 'All schemas') {
-	// 		setAllSchemaFlag(true)
-	// 	}
-	// 	else {
-	// 		setAllSchemaFlag(false)
-	// 		getSchemaList(schemaListAPIParameter, false)
-	// 	}
-	// };
+	const options = ["All schemas"]
+
+	const handleFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		console.log("Handle filter", e.target.value)
+		if (e.target.value === 'All schemas') {
+			setAllSchemaFlag(true)
+		}
+		else {
+			setAllSchemaFlag(false)
+			getSchemaList(schemaListAPIParameter, false)
+		}
+	};
 
 	const fetchOrganizationDetails = async () => {
 		setLoading(true)
@@ -171,19 +172,22 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 							<SearchInput
 								onInputChange={onSearch}
 							/>
-							{/* <select onChange={handleFilter} id="schamfilter"
-								className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11">
-								<option selected>Organization's schema</option>
-								{options.map((opt) => (
-									<option
-										key={opt}
-										className=""
-										value={opt}
-									>
-										{opt}
-									</option>
-								))}
-							</select> */}
+							{
+								!isEcosystemData?.isEnabledEcosystem &&
+								<select onChange={handleFilter} id="schamfilter"
+									className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11">
+									<option selected>Organization's schema</option>
+									{options.map((opt) => (
+										<option
+											key={opt}
+											className=""
+											value={opt}
+										>
+											{opt}
+										</option>
+									))}
+								</select>
+							}
 						</div>
 						<div className='flex space-x-2'>
 							{walletStatus ? <RoleViewButton

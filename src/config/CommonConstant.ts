@@ -28,5 +28,7 @@ export const storageKeys = {
 	CRED_DEF_ID:'cred_def_id',
     SCHEMA_DID: 'schema_did',
     LOGIN_USER_EMAIL: 'login_user_email',
-		ECOSYSTEM_ID: "ecosystem_id"
+	ECOSYSTEM_ID: "ecosystem_id",
+    ORG_DETAILS: "org_details",
+    ECOSYSTEM_ROLE: "ecosystem_role"
 }
