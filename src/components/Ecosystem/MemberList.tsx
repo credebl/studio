@@ -35,9 +35,10 @@ const MemberList = () => {
 					firstMember: { ecosystemRole: { name: number } },
 					secondMember: { ecosystemRole: { name: number } },
 				) =>
-				firstMember?.ecosystemRole?.name > secondMember?.ecosystemRole?.name
+					firstMember?.ecosystemRole?.name > secondMember?.ecosystemRole?.name
 						? 1
-						: secondMember?.ecosystemRole?.name > firstMember?.ecosystemRole?.name
+						: secondMember?.ecosystemRole?.name >
+						  firstMember?.ecosystemRole?.name
 						? -1
 						: 0,
 			);
@@ -69,8 +70,8 @@ const MemberList = () => {
 									<span
 										className={`${
 											member.ecosystemRole.name === 'Ecosystem Lead'
-												? 'bg-primary-100 text-primary-800 rounded dark:bg-primary-900 dark:text-primary-300  border-primary-100 dark:border-primary-500'
-												: 'bg-green-100 text-green-700 dark:bg-gray-700 dark:text-green-400 rounded border border-green-100 dark:border-green-500'
+												? 'bg-primary-100 text-primary-800 rounded dark:bg-gray-900 dark:text-primary-400 border border-primary-100 dark:border-primary-500'
+												: 'bg-green-100 text-green-800 rounded dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500'
 										}'text-sm font-medium mr-2 px-2.5 py-1 rounded-md'`}
 									>
 										{member.ecosystemRole.name}
@@ -84,9 +85,9 @@ const MemberList = () => {
 									<span
 										className={`${
 											member.status === 'SUSPENDED'
-												? 'bg-red-100 text-red-800 rounded dark:bg-red-900 dark:text-red-300  border-red-100 dark:border-red-500'
+												? 'bg-red-100 text-red-800 rounded dark:bg-gray-900 dark:text-red-300  border-red-100 dark:border-red-500 border'
 												: 'bg-green-100 text-green-700 dark:bg-gray-700 dark:text-green-400 rounded border border-green-100 dark:border-green-500'
-										}'text-sm font-medium mr-2 px-2.5 py-1 rounded-md'`}
+										}'text-sm font-medium mr-2 px-2.5 py-1 rounded'`}
 									>
 										{member.status}
 									</span>
