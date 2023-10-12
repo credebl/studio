@@ -19,6 +19,7 @@ const EndorsementPopup = (props: {
 	isAccepted: (flag: boolean) => void;
 	setMessage: (message: string) => void;
 	endorsementData: any;
+	onAlertClose: boolean;
 }) => {
 	const [loading, setIsLoading] = useState<boolean>(false);
 	const [errMsg, setErrMsg] = useState<string | null>(null);
@@ -32,6 +33,10 @@ const EndorsementPopup = (props: {
 		checkEcosystemData();
 	}, []);
 
+	useEffect(() => {
+		props.setMessage("");
+	}, [props.onAlertClose]);
+
 	const SignEndorsement = async (endorsementId: string) => {
 		try {
 			setIsLoading(true);
@@ -44,7 +49,6 @@ const EndorsementPopup = (props: {
 			);
 
 			const response = SignEndorsementrequest as AxiosResponse;
-			console.log('wert', response);
 			if (response?.data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 				props.isAccepted(true);
 				props.setMessage(response?.data.message);
