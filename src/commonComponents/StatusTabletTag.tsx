@@ -7,7 +7,7 @@ interface IStatusTabletTag {
 const StatusTabletTag = ({ status }: IStatusTabletTag) => {
     const color = () => {
         switch (true) {
-            case status === EndorsementStatus.approved:
+            case status === EndorsementStatus.signed || status === EndorsementStatus.submitted:
                 return {
                     style: `bg-[#70ffa01a] text-[#28C76F]`,
                     title: "Accepted"
@@ -21,6 +21,11 @@ const StatusTabletTag = ({ status }: IStatusTabletTag) => {
                 return {
                     style: `bg-[#EEE] text-[#7D7D7D]`,
                     title: "Requested"
+                }
+            case status === EndorsementStatus.submitted:
+                return {
+                    style: `bg-[#70ffa01a] text-[#28C76F] `,
+                    title: "Submitted"
                 }
             default:
                 return {
