@@ -136,7 +136,7 @@ const MemberList = () => {
 	}, []);
 
 	const header = [
-		{ columnName: 'Org Name' },
+		{ columnName: 'Organization' },
 		{ columnName: 'Member Since' },
 		{ columnName: 'Role' },
 		{ columnName: 'Status' },
@@ -148,9 +148,8 @@ const MemberList = () => {
 			id="ecosystem-datable"
 			className="p-4 mt-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
 		>
-			<div className="flex justify-between p-2">
+			<div className="flex justify-between p-2 mb-4">
 				<h2 className="text-xl dark:text-white font-medium font-body">
-					{' '}
 					Ecosystem Members
 				</h2>
 				<a

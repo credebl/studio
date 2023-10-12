@@ -7,9 +7,9 @@ interface IStatusTabletTag {
 const StatusTabletTag = ({ status }: IStatusTabletTag) => {
     const color = () => {
         switch (true) {
-            case status === EndorsementStatus.signed || status === EndorsementStatus.submitted:
+            case status === EndorsementStatus.signed:
                 return {
-                    style: `bg-[#70ffa01a] text-[#28C76F]`,
+                    style: `bg-[#fca20033] text-[#FCA200]`,
                     title: "Accepted"
                 }
             case status === EndorsementStatus.rejected:
@@ -22,9 +22,9 @@ const StatusTabletTag = ({ status }: IStatusTabletTag) => {
                     style: `bg-[#EEE] text-[#7D7D7D]`,
                     title: "Requested"
                 }
-            case status === EndorsementStatus.submitted:
+            case status === EndorsementStatus.submited:
                 return {
-                    style: `bg-[#70ffa01a] text-[#28C76F] `,
+                    style: `bg-[#70ffa01a] text-[#28C76F]`,
                     title: "Submitted"
                 }
             default:
