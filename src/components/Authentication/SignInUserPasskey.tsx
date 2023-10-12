@@ -9,7 +9,6 @@ import type { AxiosResponse } from 'axios';
 import SignInUser from './SignInUser';
 import { startAuthentication } from '@simplewebauthn/browser';
 import { useState } from 'react';
-import React from 'react';
 import SignInUserPassword from './SignInUserPassword';
 import { pathRoutes } from '../../config/pathRoutes';
 import NavBar from "./NavBar";
@@ -80,13 +79,10 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
         try {
             setFidoLoader(true)
 
-
             const obj = { userName: email }
-
 
             const generateAuthenticationResponse: any = await generateAuthenticationOption(obj);
             const challangeId: string = generateAuthenticationResponse?.data?.data?.challenge;
-
             setFidoUserError(generateAuthenticationResponse?.data?.error);
 
             const opts = generateAuthenticationResponse?.data?.data;
@@ -95,14 +91,15 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
                 ...attResp,
                 challangeId
             };
-            const verificationResp = await verifyAuthenticationMethod(verifyAuthenticationObj, { userName: email });
+
+            const verificationResp = await verifyAuthenticationMethod(verifyAuthenticationObj, obj);
+
             const { data } = verificationResp as AxiosResponse
             if (data?.data.verified) {
                 const payload: UserSignInData = {
                     email: email,
                     isPasskey: true
                 };
-
                 const loginRsp = await loginUser(payload);
                 const { data } = loginRsp as AxiosResponse;
                 if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {

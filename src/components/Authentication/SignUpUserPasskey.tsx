@@ -10,7 +10,6 @@ import { useEffect, useState } from 'react';
 
 import SignUpUserPassword from './SignUpUserPassword.jsx';
 import { startRegistration } from '@simplewebauthn/browser';
-import React from 'react';
 import SignUpUserName from './SignUpUserName.js';
 import { v4 as uuidv4 } from 'uuid';
 import NavBar from './NavBar.js';
@@ -22,13 +21,13 @@ interface passwordValues {
     confirmPassword: string
 }
 
-const SignUpUserPasskey = ({ email,firstName, lastName }: { email:string,firstName: string; lastName: string }) => {
+const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firstName: string; lastName: string }) => {
 
     const [loading, setLoading] = useState<boolean>(false)
     const [erroMsg, setErrMsg] = useState<string | null>(null)
     const [verificationSuccess, setVerificationSuccess] = useState<string>('')
     const [addSuccess, setAddSuccess] = useState<string | null>(null)
-    const [addfailure, setAddFailur] = useState<string | null>(null)
+    const [addfailure, setAddFailure] = useState<string | null>(null)
     const [emailAutoFill, setEmailAutoFill] = useState<string>('')
     const [fidoError, setFidoError] = useState("")
     const [currentComponent, setCurrentComponent] = useState<string>('email');
@@ -59,7 +58,7 @@ const SignUpUserPasskey = ({ email,firstName, lastName }: { email:string,firstNa
         }
     }
 
-    const submit = async (fidoFlag: boolean, passwordDetails?: passwordValues,) => {
+    const submit = async (fidoFlag: boolean, passwordDetails?: passwordValues) => {
         const userEmail = await getFromLocalStorage(storageKeys.USER_EMAIL)
         const password: string = uuidv4();
         let payload: AddPasswordDetails = {
@@ -70,12 +69,13 @@ const SignUpUserPasskey = ({ email,firstName, lastName }: { email:string,firstNa
             password: passwordEncryption(password)
         };
         if (!fidoFlag) {
-
             payload.password = passwordDetails?.password;
         }
+
         setLoading(true)
 
         const userRsp = await addPasswordDetails(payload)
+
         const { data } = userRsp as AxiosResponse
         setLoading(false)
         if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
@@ -95,7 +95,7 @@ const SignUpUserPasskey = ({ email,firstName, lastName }: { email:string,firstNa
             }
             const generateRegistrationResponse = await generateRegistrationOption(RegistrationOption)
             const { data } = generateRegistrationResponse as AxiosResponse
-            if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+            if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
                 const opts = data?.data
                 const challangeId = data?.data?.challenge
 
@@ -121,12 +121,13 @@ const SignUpUserPasskey = ({ email,firstName, lastName }: { email:string,firstNa
             showFidoError(error)
         }
     }
+
+    let credentialID = '';
     const verifyRegistrationMethod = async (verifyRegistrationObj: any, OrgUserEmail: string) => {
         try {
             const verificationRegisterResp = await verifyRegistration(verifyRegistrationObj, OrgUserEmail)
             const { data } = verificationRegisterResp as AxiosResponse
-
-            const credentialID = data?.data?.newDevice?.credentialID
+            credentialID = encodeURIComponent(data?.data?.newDevice?.credentialID)
             if (data?.data?.verified) {
                 let platformDeviceName = ''
 
@@ -158,11 +159,11 @@ const SignUpUserPasskey = ({ email,firstName, lastName }: { email:string,firstNa
             if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
                 submit(true)
             } else {
-                setAddFailur(deviceDetailsResp as string)
+                setAddFailure(deviceDetailsResp as string)
             }
             setTimeout(() => {
                 setAddSuccess('')
-                setAddFailur('')
+                setAddFailure('')
             });
         } catch (error) {
             showFidoError(error)
@@ -313,13 +314,13 @@ const SignUpUserPasskey = ({ email,firstName, lastName }: { email:string,firstNa
                             </div>
                         </div>
                     </div>
-                   <FooterBar/>
+                    <FooterBar />
 
                 </div>}
             {
                 currentComponent === 'password' && (
                     <SignUpUserPassword
-                    email={email}
+                        email={email}
                         firstName={firstName}
                         lastName={lastName}
                     />

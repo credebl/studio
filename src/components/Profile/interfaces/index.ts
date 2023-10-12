@@ -43,7 +43,7 @@ export interface DeviceDetails {
 }
 
 export interface UserEmail {
-  userName: string
+  email: string
 }
 
 export interface UserProfile {

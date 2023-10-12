@@ -1,13 +1,10 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { deleteDeviceById, editDeviceDetails } from "../api/Fido"
 import DeleteModal from "./DeletePopup"
 import EditModal from "./EditPopup";
 import { Alert } from "flowbite-react";
 import type { AxiosResponse } from "axios";
 import { apiStatusCodes } from "../config/CommonConstant";
-import BreadCrumbs from "../components/BreadCrumbs";
-import editIcon from '/images/edit.svg';
-import React from "react";
 import { dateConversion } from "../utils/DateConversion";
 import DateTooltip from "../components/Tooltip";
 

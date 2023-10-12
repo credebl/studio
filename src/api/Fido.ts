@@ -5,9 +5,10 @@ import { axiosDelete, axiosGet, axiosPost, axiosPut } from "../services/apiReque
 import { getFromLocalStorage } from "./Auth"
 
 export const generateRegistrationOption = async (payload: RegistrationOptionInterface) => {
+  const email = payload.userName;
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
-    url: `${apiRoutes.fido.generateRegistration}`,
+    url: `${apiRoutes.auth.generateRegistration}/${email}`,
     payload,
     config: {
       headers: {
@@ -27,10 +28,10 @@ export const generateRegistrationOption = async (payload: RegistrationOptionInte
   }
 }
 
-export const verifyRegistration = async (payload:verifyRegistrationObjInterface, userEmail:string) => {
+export const verifyRegistration = async (payload:verifyRegistrationObjInterface, email:string) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
-    url: `${apiRoutes.fido.verifyRegistration}${userEmail}`,
+    url: `${apiRoutes.auth.verifyRegistration}${email}`,
     payload,
     config: {
       headers: {
@@ -51,9 +52,10 @@ export const verifyRegistration = async (payload:verifyRegistrationObjInterface,
 }
 
 export const addDeviceDetails = async (payload: IdeviceBody) => {
+  const credentialId = payload.credentialId;
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
-    url: `${apiRoutes.fido.userUpdate}`,
+    url: `${apiRoutes.auth.userUpdate}/${credentialId}`,
     payload,
     config: {
       headers: {
@@ -73,10 +75,10 @@ export const addDeviceDetails = async (payload: IdeviceBody) => {
   }
 }
 
-export const getUserDeviceDetails = async(userEmail:string) => {
+export const getUserDeviceDetails = async(email:string) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
-    url: `${apiRoutes.fido.getDeviceList}${userEmail}`,
+    url: `${apiRoutes.auth.getDeviceList}${email}`,
     config: {
       headers: {
         'Content-type': 'application/json',
@@ -95,10 +97,10 @@ export const getUserDeviceDetails = async(userEmail:string) => {
     } 
 }
 
-export const deleteDeviceById = async(enCodedUrl:string) => {
+export const deleteDeviceById = async(credentialId:string) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
-    url: `${apiRoutes.fido.fidoDevice}?credentialId=${enCodedUrl}`,
+    url: `${apiRoutes.auth.fidoDevice}/${credentialId}`,
     config: {
       headers: {
         'Content-type': 'application/json',
@@ -120,7 +122,7 @@ export const deleteDeviceById = async(enCodedUrl:string) => {
 export const generateAuthenticationOption = async (payload:UserEmail) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
-    url: `${apiRoutes.fido.fidoAuthentication}`,
+    url: `${apiRoutes.auth.fidoAuthentication}`,
     payload,
     config: {
       headers: {
@@ -140,11 +142,10 @@ export const generateAuthenticationOption = async (payload:UserEmail) => {
   }
 }
 
-export const verifyAuthentication = async (payload: any, userEmail:UserEmail) => {
-  console.log("userEmail", userEmail)
+export const verifyAuthentication = async (payload: any, email: { userName: string }) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
-    url: `${apiRoutes.fido.fidoVerifyAuthentication}${userEmail?.userName}`,
+    url: `${apiRoutes.auth.fidoVerifyAuthentication}${email.userName}`,
     payload,
     config: {
       headers: {
@@ -167,7 +168,7 @@ export const verifyAuthentication = async (payload: any, userEmail:UserEmail) =>
 export const editDeviceDetails = async (payload:DeviceDetails) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
-    url: `${apiRoutes.fido.updateDeviceName}?credentialId=${payload.enCodedUrl}&deviceName=${payload.updatedDeviceName}`,
+    url: `${apiRoutes.auth.updateDeviceName}/${payload.enCodedUrl}?deviceName=${payload.updatedDeviceName}`,
     payload,
     config: {
       headers: {

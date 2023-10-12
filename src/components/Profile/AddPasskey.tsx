@@ -1,15 +1,15 @@
 import { Alert, Button } from 'flowbite-react'
-import React, { useEffect, useState } from 'react'
-import { IDeviceData, IdeviceBody, RegistrationOptionInterface } from './interfaces'
+import { useEffect, useState } from 'react'
 import DeviceDetails from '../../commonComponents/DeviceDetailsCard'
 import PasskeyAddDevice from '../../commonComponents/PasseyAddDevicePopup'
-import { AxiosError, AxiosResponse } from 'axios'
 import { addDeviceDetails, generateRegistrationOption, getUserDeviceDetails, verifyRegistration } from '../../api/Fido'
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant'
 import { apiRoutes } from '../../config/apiRoutes'
 import { startRegistration } from '@simplewebauthn/browser'
 import { getFromLocalStorage } from '../../api/Auth'
 import CustomSpinner from '../CustomSpinner'
+import type { IDeviceData, IdeviceBody, RegistrationOptionInterface, verifyRegistrationObjInterface } from './interfaces'
+import type { AxiosError, AxiosResponse } from 'axios'
 
 const AddPasskey = () => {
 
@@ -18,7 +18,7 @@ const AddPasskey = () => {
   const [OrgUserEmail, setOrgUserEmail] = useState<string>('')
   const [deviceList, setDeviceList] = useState<IDeviceData[]>([])
   const [addSuccess, setAddSuccess] = useState<string | null>(null)
-  const [addfailure, setAddFailur] = useState<string | null>(null)
+  const [addfailure, setAddFailure] = useState<string | null>(null)
   const [disableFlag, setDisableFlag] = useState<boolean>(false)
 
 
@@ -115,7 +115,7 @@ const AddPasskey = () => {
         userDeviceDetails()
         window.location.href = `${apiRoutes.auth.profile}`
       } else {
-        setAddFailur(deviceDetailsResp as string)
+        setAddFailure(deviceDetailsResp as string)
       }
     } catch (error) {
       showFidoError(error)
@@ -143,7 +143,7 @@ const AddPasskey = () => {
         setDeviceList(deviceDetails)
       }
     } catch (error) {
-      setAddFailur("Error while fetching the device details")
+      setAddFailure("Error while fetching the device details")
       setFidoLoader(false)
     }
   }
@@ -200,7 +200,7 @@ const AddPasskey = () => {
                             onDismiss={() => {
                               setAddSuccess(null)
                               setFidoError('')
-                              setAddFailur('')
+                              setAddFailure('')
                             }}
                           >
                             <span>
