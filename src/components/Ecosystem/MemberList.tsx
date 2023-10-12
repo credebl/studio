@@ -35,12 +35,7 @@ const MemberList = () => {
 					firstMember: { ecosystemRole: { name: number } },
 					secondMember: { ecosystemRole: { name: number } },
 				) =>
-					firstMember?.ecosystemRole?.name > secondMember?.ecosystemRole?.name
-						? 1
-						: secondMember?.ecosystemRole?.name >
-						  firstMember?.ecosystemRole?.name
-						? -1
-						: 0,
+					firstMember?.ecosystemRole?.name > secondMember?.ecosystemRole?.name ? 1 : -1,
 			);
 			const membersData = sortedMemberList?.map(
 				(member: {
