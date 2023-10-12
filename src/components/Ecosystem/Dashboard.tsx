@@ -181,7 +181,6 @@ const Dashboard = () => {
 
         const checkEcosystemData = async () => {
             const data: ICheckEcosystem = await checkEcosystem();
-            console.log(65653, data)
             setIsEcosystemLead(data.isEcosystemLead)
         }
         checkEcosystemData();
