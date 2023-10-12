@@ -2,6 +2,8 @@ export interface IEcosystem {
     name: string
     description: string
     logoUrl: string
+    joinedDate?: string
+    role?: string
 }
 
 export interface Ecosystem {
