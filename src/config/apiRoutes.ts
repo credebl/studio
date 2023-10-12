@@ -82,6 +82,10 @@ export const apiRoutes = {
             signRequest: '/transaction/sign/',
             submitRequest: '/transaction/submit/',
             transactionApproval: '/transaction-approval/'
-        }
+        },
+        invitations: '/invitations',
+        usersInvitation: '/users/invitations',
+				members:'/members'
+
     }
 }
