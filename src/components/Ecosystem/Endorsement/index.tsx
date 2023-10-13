@@ -25,6 +25,7 @@ import {
 } from '../../../api/ecosystem';
 import { EndorsementStatus, EndorsementType } from '../../../common/enums';
 import { AlertComponent } from '../../AlertComponent';
+import { Features } from '../../../utils/enums/features';
 
 interface ISelectedRequest {
 	attribute: IAttributes[];
@@ -76,7 +77,7 @@ const EndorsementList = () => {
 			value: '',
 		},
 		{
-			name: 'Signed',
+			name: 'Accepted',
 			value: EndorsementStatus.signed,
 		},
 		{
@@ -115,24 +116,26 @@ const EndorsementList = () => {
 			const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
 			setOrgId(organizationId);
 			const id = await getEcosystemId();
-			const endorsementList = await getEndorsementList(
-				endorsementListAPIParameter,
-				organizationId,
-				id,
-			);
+			if (id && organizationId) {
+				const endorsementList = await getEndorsementList(
+					endorsementListAPIParameter,
+					organizationId,
+					id,
+				);
 
-			const { data } = endorsementList as AxiosResponse;
+				const { data } = endorsementList as AxiosResponse;
 
-			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				if (data?.data?.transactions) {
-					setSchemaList(data?.data?.transactions);
-					setTotalPages(data?.data?.totalPages);
-					setLoading(false);
+				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+					if (data?.data?.transactions) {
+						setSchemaList(data?.data?.transactions);
+						setTotalPages(data?.data?.totalPages);
+						setLoading(false);
+					} else {
+						setLoading(false);
+					}
 				} else {
 					setLoading(false);
 				}
-			} else {
-				setLoading(false);
 			}
 		} catch (error) {
 			console.error('Error while fetching schema list:', error);
@@ -278,16 +281,19 @@ const EndorsementList = () => {
 								</div>
 							))}
 						</div>
-						<div
-							className="flex items-center justify-end mb-4"
-							id="schemasPagination"
-						>
-							<Pagination
-								currentPage={endorsementListAPIParameter.page}
-								onPageChange={onPageChange}
-								totalPages={totalPages}
-							/>
-						</div>
+						{
+							totalPages > 1 &&
+							<div
+								className="flex items-center justify-end mb-4"
+								id="schemasPagination"
+							>
+								<Pagination
+									currentPage={endorsementListAPIParameter.page}
+									onPageChange={onPageChange}
+									totalPages={totalPages}
+								/>
+							</div>
+						}
 					</div>
 				) : (
 					<div>
@@ -297,13 +303,11 @@ const EndorsementList = () => {
 							</div>
 						) : (
 							<div>
-								{walletStatus ? (
+								{orgId ? (
 									<EmptyListMessage
 										message={'No Endorsement Requests'}
-										description={''}
-										buttonContent={
-											isEcosystemLead ? '' : 'Request Endorsements'
-										}
+										description={"You don't have any endorsement requests"}
+										buttonContent={''}
 										svgComponent={
 											<svg
 												className="pr-2 mr-1"
@@ -325,9 +329,10 @@ const EndorsementList = () => {
 									/>
 								) : (
 									<EmptyListMessage
-										message={'No Wallet'}
-										description={'Get started by creating a Wallet'}
-										buttonContent={'Create Wallet'}
+										message={'No Organization'}
+										description={'Get started by creating a Organization'}
+										buttonContent={''}
+										feature={Features.CRETAE_ORG}
 										svgComponent={
 											<svg
 												className="pr-2 mr-1"

@@ -16,10 +16,11 @@ import React from 'react';
 import RoleViewButton from '../RoleViewButton';
 import SearchInput from '../SearchInput';
 import type { TableData } from '../../commonComponents/datatable/interface';
-import { apiStatusCodes } from '../../config/CommonConstant';
+import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { dateConversion } from '../../utils/DateConversion';
 import { getIssuedCredentials } from '../../api/issuance';
 import { pathRoutes } from '../../config/pathRoutes';
+import { getFromLocalStorage } from '../../api/Auth';
 
 interface IssuedCredential {
 	metadata: { [x: string]: { schemaId: string } };
@@ -35,77 +36,76 @@ const CredentialList = () => {
 	const [issuedCredList, setIssuedCredList] = useState<TableData[]>([]);
 
 	const getIssuedCredDefs = async () => {
-		setLoading(true);
-		const response = await getIssuedCredentials();
-		
-		const { data } = response as AxiosResponse;
+		setLoading(true)
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		if (orgId) {
+			const response = await getIssuedCredentials();
 
-		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			
-			const credentialList = data?.data?.map(
-				(issuedCredential: IssuedCredential) => {
-					const schemaName = issuedCredential.metadata['_anoncreds/credential']
-						.schemaId
-						? issuedCredential.metadata['_anoncreds/credential'].schemaId
+			const { data } = response as AxiosResponse;
+
+			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+
+				const credentialList = data?.data?.map(
+					(issuedCredential: IssuedCredential) => {
+						const schemaName = issuedCredential.metadata['_anoncreds/credential']
+							.schemaId
+							? issuedCredential.metadata['_anoncreds/credential'].schemaId
 								.split(':')
 								.slice(2)
 								.join(':')
-						: 'Not available';
+							: 'Not available';
 
-					return {
-						data: [
-							{
-								data: issuedCredential.connectionId
-									? issuedCredential.connectionId
-									: 'Not available',
-							},
-							{ data: schemaName },
-							{ data: <DateTooltip date={issuedCredential.updatedAt}> {dateConversion(issuedCredential.updatedAt)} </DateTooltip> },
-							{
-								data: (
-									<span
-										className={` ${
-											issuedCredential.state === IssueCredential.offerSent &&
-											'bg-orange-100 text-orange-800 border border-orange-100 dark:bg-gray-700 dark:border-orange-300 dark:text-orange-300'
-										} ${
-											issuedCredential?.state === IssueCredential.done &&
-											'bg-green-100 text-green-800 dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500'
-										} ${
-											issuedCredential?.state === IssueCredential.abandoned &&
-											'bg-red-100 text-red-800 border border-red-100 dark:border-red-400 dark:bg-gray-700 dark:text-red-400'
-										} text-xs font-medium mr-0.5 px-0.5 py-0.5 rounded-md border flex justify-center min-[320]:w-full xl:w-9/12 2xl:w-6/12`}
-									>
-										{issuedCredential.state === IssueCredential.offerSent
-											? IssueCredentialUserText.offerSent
-											: issuedCredential.state === IssueCredential.done
-											? IssueCredentialUserText.done
-											: issuedCredential.state === IssueCredential.abandoned
-											? IssueCredentialUserText.abandoned :''}
-									</span>
-								),
-							},
-							{
-								data: issuedCredential?.isRevocable ? (
-									<Button
-										disabled
-										className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
-									>
-										Revoke
-									</Button>
-								) : (
-									<span className="text-gray-400">Non revocable</span>
-								),
-							},
-						],
-					};
-				},
-			);
+						return {
+							data: [
+								{
+									data: issuedCredential.connectionId
+										? issuedCredential.connectionId
+										: 'Not available',
+								},
+								{ data: schemaName },
+								{ data: <DateTooltip date={issuedCredential.updatedAt}> {dateConversion(issuedCredential.updatedAt)} </DateTooltip> },
+								{
+									data: (
+										<span
+											className={` ${issuedCredential.state === IssueCredential.offerSent &&
+												'bg-orange-100 text-orange-800 border border-orange-100 dark:bg-gray-700 dark:border-orange-300 dark:text-orange-300'
+												} ${issuedCredential?.state === IssueCredential.done &&
+												'bg-green-100 text-green-800 dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500'
+												} ${issuedCredential?.state === IssueCredential.abandoned &&
+												'bg-red-100 text-red-800 border border-red-100 dark:border-red-400 dark:bg-gray-700 dark:text-red-400'
+												} text-xs font-medium mr-0.5 px-0.5 py-0.5 rounded-md border flex justify-center min-[320]:w-full xl:w-9/12 2xl:w-6/12`}
+										>
+											{issuedCredential.state === IssueCredential.offerSent
+												? IssueCredentialUserText.offerSent
+												: issuedCredential.state === IssueCredential.done
+													? IssueCredentialUserText.done
+													: issuedCredential.state === IssueCredential.abandoned
+														? IssueCredentialUserText.abandoned : ''}
+										</span>
+									),
+								},
+								{
+									data: issuedCredential?.isRevocable ? (
+										<Button
+											disabled
+											className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+										>
+											Revoke
+										</Button>
+									) : (
+										<span className="text-gray-400">Non revocable</span>
+									),
+								},
+							],
+						};
+					},
+				);
 
-			setIssuedCredList(credentialList)
-		} else {
-			setError(response as string)
+				setIssuedCredList(credentialList)
+			} else {
+				setError(response as string)
+			}
 		}
-
 		setLoading(false)
 	}
 
@@ -152,7 +152,7 @@ const CredentialList = () => {
 			<div>
 				<div
 					className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-					<div className="flex items-center justify-end mb-4">						
+					<div className="flex items-center justify-end mb-4">
 
 						<RoleViewButton
 							buttonTitle='Issue'
@@ -166,7 +166,7 @@ const CredentialList = () => {
 							onClickEvent={schemeSelection}
 						/>
 
-					</div>			
+					</div>
 					<AlertComponent
 						message={error}
 						type={'failure'}

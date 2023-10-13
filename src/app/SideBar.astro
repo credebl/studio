@@ -22,7 +22,7 @@ import { pathRoutes } from '../config/pathRoutes';
 			]}
 		>
 			<div
-				class="flex-1 px-3 space-y-1 bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700"
+				class="px-3 space-y-1 bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700"
 			>
 				<ul class="pb-2 space-y-2">
 					<li class="hidden">
@@ -73,7 +73,6 @@ import { pathRoutes } from '../config/pathRoutes';
 							<span class="ml-3" sidebar-toggle-item>Dashboard</span>
 						</a>
 					</li>
-					<EcosystemSidebarOption client:load />
 					<li>
 						<a
 							href={pathRoutes.organizations.root}
@@ -240,20 +239,21 @@ import { pathRoutes } from '../config/pathRoutes';
 										height="20"
 										fill="none"
 										viewBox="0 0 25 22"
+										class="flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
 									>
 										<path
-											stroke="#6B7280"
+											stroke="currentColor"
 											stroke-linecap="round"
 											stroke-linejoin="round"
 											stroke-width="1.25"
 											d="M4 4h3.125M4 6.885h3.125M1 1h15.702M4.695 10h.962m1.453 0h.96m1.422 0h.962m1.452 0h.962M17 1v4.952m0 3.715V13H1V1"
 										></path>
 										<path
-											fill="#6B7280"
+											fill="currentColor"
 											d="M14 5.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm-3.816 0a1.316 1.316 0 1 0 2.632 0 1.316 1.316 0 0 0-2.633 0Z"
 										></path>
 										<path
-											stroke="#6B7280"
+											stroke="currentColor"
 											stroke-linecap="round"
 											stroke-linejoin="round"
 											stroke-width="1.25"
@@ -274,17 +274,18 @@ import { pathRoutes } from '../config/pathRoutes';
 										height="20"
 										fill="none"
 										viewBox="0 0 25 25"
+										class="flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
 									>
 										<path
-											fill="#6B7280"
+											fill="currentColor"
 											d="M19.322 8.824h-4.427V7.612c0-.515-.375-.93-.84-.93h-1.592v-.76a3.335 3.335 0 0 0 1.156-2.52C13.62 1.527 12.035 0 10.085 0 8.135 0 6.55 1.526 6.55 3.403c0 .97.424 1.881 1.157 2.519v.76H6.114c-.465 0-.84.415-.84.93v1.212H.84c-.465 0-.839.414-.839.93v11.638c0 .515.374.93.84.93h12.78l-.993-1.86 7.534-7.962V9.753c0-.51-.374-.93-.84-.93Zm-10.36-4.2c-.461-.296-.737-.752-.737-1.221 0-.838.848-1.544 1.856-1.544 1.004 0 1.855.706 1.855 1.544 0 .47-.275.93-.736 1.22a.952.952 0 0 0-.42.807v1.248H9.381V5.43a.958.958 0 0 0-.42-.806ZM6.948 8.54h6.267v2.141H6.949v-2.14Zm5.678 11.922H1.68v-9.78h16.804l.065 1.37 1.21.447h.403l-7.534 7.963Z"
 										></path>
 										<path
-											fill="#6B7280"
+											fill="currentColor"
 											d="M24.997 17.854c0 3.945-2.889 7.143-6.452 7.143s-6.451-3.198-6.451-7.143 2.888-7.143 6.451-7.143c3.563 0 6.452 3.198 6.452 7.143Zm-11.292 0c0 2.96 2.167 5.358 4.84 5.358s4.84-2.399 4.84-5.358c0-2.96-2.167-5.359-4.84-5.359s-4.84 2.4-4.84 5.359Z"
 										></path>
 										<path
-											stroke="#6B7280"
+											stroke="currentColor"
 											stroke-linecap="round"
 											stroke-width="1.5"
 											d="m15.328 17.984 2.24 2.55 4.48-4.464"></path></svg
@@ -294,6 +295,7 @@ import { pathRoutes } from '../config/pathRoutes';
 							</li>
 						</ul>
 					</li>
+					<EcosystemSidebarOption client:load />
 				</ul>
 
 								</ul>
