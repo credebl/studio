@@ -176,14 +176,15 @@ const MemberList = () => {
 				loading={loading}
 			></DataTable>
 
-			{memberList.length>10 &&
-			<div className="flex items-center justify-end mb-4">
-				<Pagination
-					currentPage={currentPage.pageNumber}
-					onPageChange={onPageChange}
-					totalPages={currentPage.total}
-				/>
-			</div>}
+			{currentPage.pageNumber > 1 && (
+				<div className="flex items-center justify-end mb-4">
+					<Pagination
+						currentPage={currentPage.pageNumber}
+						onPageChange={onPageChange}
+						totalPages={currentPage.total}
+					/>
+				</div>
+			)}
 		</div>
 	);
 };
