@@ -201,7 +201,6 @@ const Dashboard = () => {
 	}, []);
 
 	useEffect(() => {
-		console.log(9898, editOpenModal);
 		setDropdownOpen(!editOpenModal);
 	}, [editOpenModal]);
 
