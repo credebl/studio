@@ -312,10 +312,6 @@ const Dashboard = () => {
                                                 </span>
                                             </div>
                                             <div className="flex">
-                                                <span className="text-[#3D3D3D] dark:text-white min-w-[10rem]">
-                                                    Joined since
-                                                </span>{' '}
-                                                <span className="dark:text-white">:</span>
                                                 <span className='text-[#3D3D3D] dark:text-white min-w-[10rem]'>Joined since</span> <span className='dark:text-white'>:</span><span className='text-[#5E5972] dark:text-white ml-2'><DateTooltip date={ecosystemDetails.joinedDate}>
                                                     {dateConversion(ecosystemDetails.joinedDate || "")}
                                                 </DateTooltip ></span>
