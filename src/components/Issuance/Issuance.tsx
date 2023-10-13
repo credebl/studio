@@ -147,7 +147,7 @@ const IssueCred = () => {
 						} else if (dataType === 'number') {
 							return typeof value === 'number';
 						} else if (dataType === 'date') {
-							return !isNaN(Date.parse(value));
+							return !isNaN(Date.parse(value as string));
 						}
 						return true;
 					},
