@@ -64,7 +64,7 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
             password: passwordEncryption(password)
         };
         if (!fidoFlag) {
-            payload.password = passwordDetails?.password;
+            payload.password = passwordDetails?.password || '';
         }
 
         setLoading(true)

@@ -62,7 +62,8 @@ const SignUpUserPassword = ({
 		const { data } = userRsp as AxiosResponse;
 		setLoading(false);
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-			window.location.href = `/authentication/sign-in?signup=true?fidoFlag=${fidoFlag}&method=password`;
+			window.location.href = `/authentication/sign-in?signup=true&email=${userEmail}&fidoFlag=${fidoFlag}&method=password`
+
 		} else {
 			setErrMsg(userRsp as string);
 		}
