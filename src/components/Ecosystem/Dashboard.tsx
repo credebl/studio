@@ -39,7 +39,7 @@ const initialPageState = {
 };
 
 export const RoleTablet = ({ role }: IRoleTablet) => (
-    <div className='text-[#467FFF] bg-[#C8DCFF] w-fit py-1.5 px-3 rounded-full ml-3'>{role}</div>
+    <div className='bg-primary-100 text-primary-800 dark:bg-gray-900 dark:text-primary-400 border border-primary-100 dark:border-primary-500 mr-2 px-2.5 py-1 rounded-md m-1'>{role}</div>
 )
 
 const Dashboard = () => {
@@ -493,11 +493,12 @@ const Dashboard = () => {
                                                 Edit Ecosystem
                                             </div>
                                         </Dropdown.Item>
-                                        <Dropdown.Item>
+																				{/* required for future implementation */}
+                                        {/* <Dropdown.Item>
                                             <div>
                                                 Enable/Disable Ecosystem
                                             </div>
-                                        </Dropdown.Item>
+                                        </Dropdown.Item> */}
                                         <Dropdown.Item>
                                             <div>
                                                 Manual Registration
