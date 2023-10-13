@@ -119,7 +119,7 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
     }
 
     let credentialID = '';
-    const verifyRegistrationMethod = async (verifyRegistrationObj: any, OrgUserEmail: string) => {
+    const verifyRegistrationMethod = async (verifyRegistrationObj: VerifyRegistrationObjInterface, OrgUserEmail: string) => {
         try {
             const verificationRegisterResp = await verifyRegistration(verifyRegistrationObj, OrgUserEmail)
             const { data } = verificationRegisterResp as AxiosResponse

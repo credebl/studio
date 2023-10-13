@@ -1,12 +1,7 @@
 import '../../common/global.css'
 
 import { Alert, Button } from 'flowbite-react';
-import {
-	UserSignInData,
-	getUserProfile,
-	loginUser,
-	setToLocalStorage,
-} from '../../api/Auth';
+import { UserSignInData, getUserProfile, loginUser, setToLocalStorage } from '../../api/Auth';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import {
 	generateAuthenticationOption,

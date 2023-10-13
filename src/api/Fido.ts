@@ -28,7 +28,7 @@ export const generateRegistrationOption = async (payload: RegistrationOptionInte
   }
 }
 
-export const verifyRegistration = async (payload:verifyRegistrationObjInterface, email:string) => {
+export const verifyRegistration = async (payload:VerifyRegistrationObjInterface, email:string) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
     url: `${apiRoutes.auth.verifyRegistration}${email}`,

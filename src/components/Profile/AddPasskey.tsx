@@ -8,7 +8,7 @@ import { apiRoutes } from '../../config/apiRoutes'
 import { startRegistration } from '@simplewebauthn/browser'
 import { getFromLocalStorage } from '../../api/Auth'
 import CustomSpinner from '../CustomSpinner'
-import type { IDeviceData, IdeviceBody, RegistrationOptionInterface, verifyRegistrationObjInterface } from './interfaces'
+import type { IDeviceData, IdeviceBody, RegistrationOptionInterface, VerifyRegistrationObjInterface} from './interfaces'
 import type { AxiosError, AxiosResponse } from 'axios'
 
 const AddPasskey = () => {
@@ -100,8 +100,11 @@ const AddPasskey = () => {
 			const { data } = verificationRegisterResp as AxiosResponse;
 			const credentialID = data?.data?.newDevice?.credentialID;
 
-			if (data?.data?.verified) {
-				let platformDeviceName = '';
+  const verifyRegistrationMethod = async (verifyRegistrationObj: VerifyRegistrationObjInterface, OrgUserEmail: string) => {
+    try {
+      const verificationRegisterResp = await verifyRegistration(verifyRegistrationObj, OrgUserEmail)
+      const { data } = verificationRegisterResp as AxiosResponse
+      const credentialID = data?.data?.newDevice?.credentialID
 
 				if (
 					verifyRegistrationObj?.authenticatorAttachment === 'cross-platform'
