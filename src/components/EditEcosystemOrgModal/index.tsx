@@ -119,8 +119,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
             }
         };
     };
-
-    
+ 
     const handleImageChange = (event: any): void => {
         setImgError('');
         const reader = new FileReader();
@@ -251,6 +250,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
                                     ) : (
                                         <Avatar size="lg" />
                                     )}
+                                    
                                     <div>
                                         <h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
                                             {props.isOrganization ? "Organization Logo" : "Ecosystem Logo"}
@@ -275,7 +275,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
                                                         <div className="text-red-500">{imgError}</div>
                                                     ) : (
                                                         <span className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                                                            {logoImage.fileName || 'No File Chosen'}
+                                                            {logoImage.fileName}
                                                         </span>
                                                     )}
                                                 </label>
