@@ -423,8 +423,8 @@ const Dashboard = () => {
                                 <EmptyListMessage
                                     feature={!orgId ? Features.CRETAE_ORG : ""}
                                     message={'No Ecosystem found'}
-                                    description={`Get started by creating an ${!orgId ? "Organization" : "Ecosystem"}`}
-                                    buttonContent={`Create ${!orgId ? 'Organization' : 'Ecosystem'}`}
+                                    description={`Get started by creating ${!orgId ? "a new Organization to set up your Ecosystem" : "an Ecosystem"}`}
+                                    buttonContent={`${!orgId ? '' : 'Create Ecosystem'}`}
                                     svgComponent={
                                         <svg
                                             className="pr-2 mr-1"
