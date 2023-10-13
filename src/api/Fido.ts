@@ -1,4 +1,4 @@
-import type { DeviceDetails, IdeviceBody, RegistrationOptionInterface, UserEmail, verifyRegistrationObjInterface } from "../components/Profile/interfaces"
+import type { DeviceDetails, IdeviceBody, RegistrationOptionInterface, UserEmail, VerifyRegistrationObjInterface } from "../components/Profile/interfaces"
 import { storageKeys } from "../config/CommonConstant"
 import { apiRoutes } from "../config/apiRoutes"
 import { axiosDelete, axiosGet, axiosPost, axiosPut } from "../services/apiRequests"
@@ -28,7 +28,7 @@ export const generateRegistrationOption = async (payload: RegistrationOptionInte
   }
 }
 
-export const verifyRegistration = async (payload:verifyRegistrationObjInterface, email:string) => {
+export const verifyRegistration = async (payload:VerifyRegistrationObjInterface, email:string) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
     url: `${apiRoutes.auth.verifyRegistration}${email}`,

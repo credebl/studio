@@ -2,19 +2,18 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { Alert, Button } from 'flowbite-react';
 import type { AxiosError, AxiosResponse } from 'axios';
-import type { IdeviceBody, RegistrationOptionInterface } from '../Profile/interfaces/index.js';
+import type { IdeviceBody, RegistrationOptionInterface, VerifyRegistrationObjInterface} from '../Profile/interfaces/index.js';
 import { addDeviceDetails, generateRegistrationOption, verifyRegistration } from '../../api/Fido.js';
 import { AddPasswordDetails, addPasswordDetails, getFromLocalStorage, passwordEncryption } from '../../api/Auth.js';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant.js';
 import { useEffect, useState } from 'react';
-
 import SignUpUserPassword from './SignUpUserPassword.jsx';
 import { startRegistration } from '@simplewebauthn/browser';
 import SignUpUserName from './SignUpUserName.js';
 import { v4 as uuidv4 } from 'uuid';
 import NavBar from './NavBar.js';
 import FooterBar from './FooterBar.js';
-
+  
 interface passwordValues {
 
     password: string,
@@ -109,7 +108,7 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
                 }
                 setLoading(false)
                 const attResp = await startRegistration(opts)
-                const verifyRegistrationObj = {
+                const verifyRegistrationObj: VerifyRegistrationObjInterface = {
                     ...attResp,
                     challangeId
                 }
@@ -124,7 +123,7 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
     }
 
     let credentialID = '';
-    const verifyRegistrationMethod = async (verifyRegistrationObj: any, OrgUserEmail: string) => {
+    const verifyRegistrationMethod = async (verifyRegistrationObj: VerifyRegistrationObjInterface, OrgUserEmail: string) => {
         try {
             const verificationRegisterResp = await verifyRegistration(verifyRegistrationObj, OrgUserEmail)
             const { data } = verificationRegisterResp as AxiosResponse

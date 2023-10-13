@@ -1,7 +1,7 @@
 import './global.css'
 
 import { Alert, Button } from 'flowbite-react';
-import { UserSignInData, getUserProfile, loginUser, passwordEncryption, setToLocalStorage } from '../../api/Auth';
+import { UserSignInData, getUserProfile, loginUser, setToLocalStorage } from '../../api/Auth';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { generateAuthenticationOption, verifyAuthentication } from '../../api/Fido';
 
@@ -13,6 +13,7 @@ import SignInUserPassword from './SignInUserPassword';
 import { pathRoutes } from '../../config/pathRoutes';
 import NavBar from "./NavBar";
 import FooterBar from './FooterBar';
+
 interface signInUserProps {
     email: string
 }

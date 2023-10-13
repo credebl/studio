@@ -7,23 +7,15 @@ export interface RegistrationOptionInterface {
 export interface AddPassword {
   password: string,
 }
-export interface verifyRegistrationObjInterface {
+export interface VerifyRegistrationObjInterface{
   id: string;
   rawId: string;
-  response: {
-    attestationObject: string;
-    clientDataJSON: string;
-    transports: string[];
-  };
-  type: string;
-  clientExtensionResults: {
-    credProps: {
-      rk: boolean;
-    };
-  };
-  authenticatorAttachment: string;
+  response: object;
+  authenticatorAttachment?: AuthenticatorAttachment;
+  clientExtensionResults: AuthenticationExtensionsClientOutputs;
+  type: PublicKeyCredentialType;
   challangeId: string;
-}
+};
 
 export interface IDeviceData {
   createDateTime: string
