@@ -119,8 +119,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
             }
         };
     };
-
-    
+ 
     const handleImageChange = (event: any): void => {
         setImgError('');
         const reader = new FileReader();
@@ -242,15 +241,16 @@ const EditPopupModal = (props: EditEntityModalProps) => {
                         <Form className="space-y-6" onSubmit={formikHandlers.handleSubmit}>
                             <div className="mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
                                 <div className="items-center sm:flex 2xl:flex sm:space-x-4 xl:space-x-4 2xl:space-x-4">
-                                    {isImageEmpty ? (
-                                        <Avatar size="lg" />
-                                    ) : (
+                                {logoImage.imagePreviewUrl ? (
                                         <img
                                             className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
-                                            src={logoImage.imagePreviewUrl || (typeof logoImage.logoFile === "string" ? logoImage.logoFile : '')}
+                                            src={logoImage.imagePreviewUrl}
                                             alt={`${props.isOrganization ? "Organization" : "Ecosystem"} Logo`}
                                         />
+                                    ) : (
+                                        <Avatar size="lg" />
                                     )}
+                                    
                                     <div>
                                         <h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
                                             {props.isOrganization ? "Organization Logo" : "Ecosystem Logo"}
@@ -275,7 +275,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
                                                         <div className="text-red-500">{imgError}</div>
                                                     ) : (
                                                         <span className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                                                            {logoImage.fileName || 'No File Chosen'}
+                                                            {logoImage.fileName}
                                                         </span>
                                                     )}
                                                 </label>
