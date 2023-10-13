@@ -16,7 +16,7 @@ const SchemaCard = (props: {className?:string, schemaName: string, version: stri
   return (
     <Card onClick={() => {
       props.onClickCallback(props.schemaId, props.attributes, props.issuerDid, props.created)
-    }} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer' style={{ width: '100%', height: '260px', overflow: 'auto' }}>
+    }} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer h-full w-full overflow-auto'>
       <div className="flex justify-between items-start">
         <div>
           <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">

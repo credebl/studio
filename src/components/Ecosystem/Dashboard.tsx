@@ -23,6 +23,7 @@ import { getUserEcosystemInvitations } from '../../api/invitations';
 import { pathRoutes } from '../../config/pathRoutes';
 import type { EcosystemDashboard } from '../organization/interfaces';
 import { dateConversion } from '../../utils/DateConversion';
+import DateTooltip from '../Tooltip';
 
 interface IRoleTablet {
     role: string
@@ -124,8 +125,8 @@ const Dashboard = () => {
                         logoUrl: ecosystemData?.logoUrl,
                         name: ecosystemData?.name,
                         description: ecosystemData?.description,
-                        joinedDate: ecosystemOrg && ecosystemOrg?.createDateTime,
-                        role: ecosystemOrg && ecosystemOrg?.ecosystemRole?.name
+                        joinedDate: ecosystemOrg && ecosystemOrg?.createDateTime ? ecosystemOrg?.createDateTime : "",
+                        role: ecosystemOrg && ecosystemOrg?.ecosystemRole?.name ? ecosystemOrg?.ecosystemRole?.name : ""
                     });
                 } else {
                     await removeFromLocalStorage(storageKeys.ECOSYSTEM_ID)
@@ -263,7 +264,9 @@ const Dashboard = () => {
                                                     <span className='text-[#3D3D3D] dark:text-white min-w-[10rem]'>Ecosystem Lead</span> <span className='dark:text-white'>:</span><span className='text-[#5E5972] dark:text-white ml-2'>NA</span>
                                                 </div>
                                                 <div className='flex'>
-                                                    <span className='text-[#3D3D3D] dark:text-white min-w-[10rem]'>Joined since</span> <span className='dark:text-white'>:</span><span className='text-[#5E5972] dark:text-white ml-2'>{ecosystemDetails.joinedDate ? dateConversion(ecosystemDetails.joinedDate) : "NA"}</span>
+                                                    <span className='text-[#3D3D3D] dark:text-white min-w-[10rem]'>Joined since</span> <span className='dark:text-white'>:</span><span className='text-[#5E5972] dark:text-white ml-2'><DateTooltip date={ecosystemDetails.joinedDate}>
+                                                        {dateConversion(ecosystemDetails.joinedDate || "")}
+                                                    </DateTooltip ></span>
                                                 </div>
                                             </div>
                                             :
@@ -380,9 +383,9 @@ const Dashboard = () => {
                                     </div>
                                 </div>
                             </div>
-														<div>
+                            <div>
                                 <MemberList />
-														</div>
+                            </div>
                             <EditPopupModal
                                 openModal={editOpenModal}
                                 setOpenModal={setEditOpenModal}
