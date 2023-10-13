@@ -87,7 +87,7 @@ export const getEndorsementList = async (
 		apiRoutes.Ecosystem.endorsements.list
 	}?${page ? `pageNumber=${page}` : ''}${search ? `&search=${search}` : ''}${
 		itemPerPage ? `&pageSize=${itemPerPage}` : ''
-	}${type ? `&type=${type}` : ''}${status ? `&status=${status}` : ''}`;
+	}${type ? `&type=${type}` : ''}${status ? `&search=${status}` : ''}`;
 
 	const axiosPayload = {
 		url,

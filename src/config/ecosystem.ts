@@ -89,17 +89,20 @@ const getOrgDetails = async (): Promise<IOrgDetails> => {
     const org = await getOrgData()
     const orgData: IOrgDetails = org && JSON.parse(org)
     const isOrgData = Object.keys(orgData).length > 0
-    if (!isOrgData) {
+    const isOrgDid = orgData?.orgDid
+    if (!isOrgData || !isOrgDid) {
         try {
-            const { data } = await getOrganizationById(orgId) as AxiosResponse
-
-            if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-                const orgData: IOrgDetails = {
-                    orgName: data?.data?.name,
-                    orgDid: data?.data && data?.data?.org_agents?.length > 0 ? data?.data?.org_agents[0]?.orgDid : ""
+            if(orgId){
+                const { data } = await getOrganizationById(orgId) as AxiosResponse
+    
+                if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+                    const orgData: IOrgDetails = {
+                        orgName: data?.data?.name,
+                        orgDid: data?.data && data?.data?.org_agents?.length > 0 ? data?.data?.org_agents[0]?.orgDid : ""
+                    }
+                    await setToLocalStorage(storageKeys.ORG_DETAILS, JSON.stringify(orgData));
+                    return orgData
                 }
-                await setToLocalStorage(storageKeys.ORG_DETAILS, JSON.stringify(orgData));
-                return orgData
             }
         } catch (err) {
             console.log("ERROR-Get ORG Details", err)
