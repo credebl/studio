@@ -1,14 +1,12 @@
 import './global.css';
 
 import * as yup from 'yup';
-
 import { Button, Label, Navbar } from 'flowbite-react';
 import { Field, Form, Formik } from 'formik';
 import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { useEffect, useRef, useState } from 'react';
 import NavBar from './NavBar';
 import { Alert } from 'flowbite-react';
-import React from 'react';
 import RegistrationSuccess from './RegistrationSuccess';
 import SignInUserPasskey from './SignInUserPasskey';
 import { storageKeys } from '../../config/CommonConstant';
@@ -31,22 +29,25 @@ const SignInUser = () => {
 	const [userLoginEmail, setUserLoginEmail] = useState<string | null>(null);
 	const nextButtonRef = useRef<HTMLButtonElement | null>(null);
 
+	
+
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
 				const storedEmail = await getFromLocalStorage(
 					storageKeys.LOGIN_USER_EMAIL,
 				);
-
 				const searchParam = new URLSearchParams(window?.location?.search);
 				const userEmail = searchParam.get('email');
 				const signUpStatus = searchParam.get('signup');
 				const fidoFlag = searchParam.get('fidoFlag');
 				const loginMethod = searchParam.get('method');
+				const showMsg = searchParam.get('showmsg');
 
 				setUserLoginEmail(storedEmail || userEmail);
 				setEmail({ email: storedEmail || '' });
 
+console.log('email::', email);
 				const entries = performance.getEntriesByType(
 					'navigation',
 				) as PerformanceNavigationTiming[];
@@ -56,12 +57,15 @@ const SignInUser = () => {
 				if (isRefreshPage) {
 					await setToLocalStorage(storageKeys.LOGIN_USER_EMAIL, '');
 				}
-
 				if (
 					signUpStatus === 'true' &&
 					fidoFlag === 'false' &&
 					loginMethod === 'password'
 				) {
+					setSuccess(
+						'Congratulations!! 🎉 You have successfully registered on CREDEBL 🚀',
+					);
+				} else if (showMsg === 'true') {
 					setSuccess(
 						'Congratulations!! 🎉 You have successfully registered on CREDEBL 🚀',
 					);
@@ -83,7 +87,7 @@ const SignInUser = () => {
 	}, []);
 
 	const saveEmail = async (values: emailValue) => {
-		setEmail(values)
+		setEmail(values);
 		await localStorage.clear();
 		setCurrentComponent('password');
 		await setToLocalStorage(storageKeys.LOGIN_USER_EMAIL, values.email);
@@ -103,7 +107,7 @@ const SignInUser = () => {
 	return (
 		<div>
 			{currentComponent === 'email' && isPasskeySuccess ? (
-				<RegistrationSuccess />
+				<RegistrationSuccess email= {email} />
 			) : (
 				<div>
 					{!(currentComponent === 'email' && isPasskeySuccess) &&

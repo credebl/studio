@@ -69,7 +69,7 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
             password: passwordEncryption(password)
         };
         if (!fidoFlag) {
-            payload.password = passwordDetails?.password;
+            payload.password = passwordDetails?.password || '';
         }
 
         setLoading(true)
@@ -80,6 +80,7 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
         setLoading(false)
         if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
             window.location.href = `/authentication/sign-in?signup=true&fidoFlag=${fidoFlag}&method=passkey`
+
         } else {
             setErrMsg(userRsp as string)
         }
