@@ -37,6 +37,7 @@ const SignInUser = () => {
 				const storedEmail = await getFromLocalStorage(
 					storageKeys.LOGIN_USER_EMAIL,
 				);
+				const newEmail = await getFromLocalStorage(storageKeys.USER_EMAIL)
 				const searchParam = new URLSearchParams(window?.location?.search);
 				const userEmail = searchParam.get('email');
 				const signUpStatus = searchParam.get('signup');
@@ -45,9 +46,8 @@ const SignInUser = () => {
 				const showMsg = searchParam.get('showmsg');
 
 				setUserLoginEmail(storedEmail || userEmail);
-				setEmail({ email: storedEmail || '' });
+				setEmail({ email: storedEmail || newEmail });
 
-console.log('email::', email);
 				const entries = performance.getEntriesByType(
 					'navigation',
 				) as PerformanceNavigationTiming[];
