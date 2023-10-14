@@ -1,5 +1,5 @@
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
-import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
+import { getFromLocalStorage, removeFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { useEffect, useState } from 'react';
 
 import type { AxiosResponse } from 'axios';
@@ -27,6 +27,8 @@ const OrgDropDown = () => {
 	};
 
 	const goToOrgDashboard = async (org: Organisation) => {
+		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ID)
+		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ROLE)
 
 		await setOrgRoleDetails(org)
 		window.location.href = pathRoutes.organizations.dashboard;
@@ -36,7 +38,7 @@ const OrgDropDown = () => {
 
 		await setToLocalStorage(storageKeys.ORG_ID, org.id.toString());
 		const roles: string[] = org?.userOrgRoles.map(role => role.orgRole.name)
-		
+
 		await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
 	}
 
@@ -45,7 +47,7 @@ const OrgDropDown = () => {
 		let activeOrg: Organisation | null = null
 
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
-		
+
 		if (orgId) {
 			activeOrg = organizations?.find(org => org.id === Number(orgId)) as Organisation
 			setactiveOrg(activeOrg || null)

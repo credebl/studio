@@ -19,7 +19,7 @@ const StatusTabletTag = ({ status }: IStatusTabletTag) => {
                 }
             case status === EndorsementStatus.requested:
                 return {
-                    style: `bg-[#EEE] text-[#7D7D7D]`,
+                    style: `bg-[#1f4ead33] text-[#1F4EAD]`,
                     title: "Requested"
                 }
             case status === EndorsementStatus.submited:

@@ -137,6 +137,7 @@ const EndorsementPopup = (props: {
 			<EndorsementCard
 				cardTransitionDisabled={true}
 				data={props.endorsementData}
+				allAttributes={true}
 			/>
 
 			<div className="justify-between">
@@ -146,7 +147,6 @@ const EndorsementPopup = (props: {
 						<div className="flex gap-3 pt-1 pb-3">
 							<button
 								onClick={() => RejectEndorsement(props.endorsementData.id)}
-								title="Reject"
 								disabled={loadingReject}
 								className="hover:bg-secondary-700 bg-white !ring-2 dark:text-white text-primary-700 font-medium rounded-lg text-sm dark:hover:text-primary-700 "
 							>
@@ -181,7 +181,6 @@ const EndorsementPopup = (props: {
 							</button>
 
 							<Button
-								title="Accept"
 								isProcessing={loading}
 								color="bg-primary-800"
 								disabled={loading}
@@ -215,7 +214,6 @@ const EndorsementPopup = (props: {
 								props.endorsementData?.status === EndorsementStatus.signed ? (
 								<div className="flex gap-3 pt-1 pb-3">
 									<Button
-										title="Accept"
 										isProcessing={loading}
 										color="bg-primary-800"
 										disabled={loading}
