@@ -281,7 +281,7 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
 
                                     <Button
                                         id='signupcreatepasskey'
-                                        isProcessing={''}
+                                        isProcessing={loading}
                                         onClick={() => {
                                             registerWithPasskey(true)
                                         }}
