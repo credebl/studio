@@ -44,10 +44,8 @@ const initialPageState = {
 };
 
 export const RoleTablet = ({ role }: IRoleTablet) => (
-    <div className="text-[#467FFF] bg-[#C8DCFF] w-fit py-1.5 px-3 rounded-full ml-3">
-        {role}
-    </div>
-);
+    <div className='bg-primary-100 text-primary-800 dark:bg-gray-900 dark:text-primary-400 border border-primary-100 dark:border-primary-500 mr-2 px-2.5 py-1 rounded-md m-1'>{role}</div>
+)
 
 const Dashboard = () => {
     const [ecosystemDetails, setEcosystemDetails] = useState<IEcosystem | null>();
@@ -248,33 +246,39 @@ const Dashboard = () => {
                                     setMessage(null);
                                     setError(null);
                                 }}
-                            />
-                        }
-                    </div>
+                            />}
+                        </div>
 
-                    {(success || failure) && (
-                        <AlertComponent
-                            message={success ?? failure}
-                            type={success ? 'success' : 'failure'}
-                            onAlertClose={() => {
-                                setSuccess(null);
-                                setFailure(null);
-                            }}
-                        />
-                    )}
-                </>
+                        {(success || failure) && (
+                            <AlertComponent
+                                message={success ?? failure}
+                                type={success ? 'success' : 'failure'}
+                                onAlertClose={() => {
+                                    setSuccess(null);
+                                    setFailure(null);
+                                }}
+                            />
+                        )}
+                    </>
             )}
+
+						{
+                ecosystemDetailsNotFound && (
+                    <AlertComponent
+                        message="Ecosystem details not found."
+                        type="failure"
+                        onAlertClose={() => {
+                            setEcosystemDetailsNotFound(false);
+                            setFailure(null);
+                        }}
+                    />
+                )
+            }
 
             {ecosystemDetails ? (
                 <div>
-                    <div
-                        className={`mt-4 flex-wrap items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800 ${isEcosystemLead ? 'w-full block' : 'flex'
-                            }`}
-                    >
-                        <div
-                            className={`flex flex-wrap ${!isEcosystemLead ? 'w-full items-start' : 'items-center'
-                                }`}
-                        >
+                    <div className={`mt-4 flex-wrap items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800 ${isEcosystemLead ? "w-full block" : "flex"}`}>
+                        <div className={`flex flex-wrap ${!isEcosystemLead ? "w-full items-start" : "items-center"}`}>
                             <div className="mr-4">
                                 {ecosystemDetails?.logoUrl ? (
                                     <CustomAvatar size="80" src={ecosystemDetails?.logoUrl} />
@@ -484,12 +488,10 @@ const Dashboard = () => {
                                     isorgModal={isOrgModal}
                                 />
                                 <EmptyListMessage
-                                    feature={!orgId ? Features.CRETAE_ORG : ''}
+                                    feature={!orgId ? Features.CRETAE_ORG : ""}
                                     message={'No Ecosystem found'}
-                                    description={`Get started by creating an ${!orgId ? 'Organization' : 'Ecosystem'
-                                        }`}
-                                    buttonContent={`Create ${!orgId ? 'Organization' : 'Ecosystem'
-                                        }`}
+                                    description={`Get started by creating ${!orgId ? "a new Organization to set up your Ecosystem" : "an Ecosystem"}`}
+                                    buttonContent={`${!orgId ? '' : 'Create Ecosystem'}`}
                                     svgComponent={
                                         <svg
                                             className="pr-2 mr-1"
@@ -514,19 +516,9 @@ const Dashboard = () => {
                         </div>
                     )}
                 </div>
-            )}
-
-            {ecosystemDetailsNotFound && (
-                <AlertComponent
-                    message="Ecosystem details not found."
-                    type="failure"
-                    onAlertClose={() => {
-                        setEcosystemDetailsNotFound(false);
-                        setFailure(null);
-                    }}
-                />
-            )}
-        </div>
+            )
+            }
+        </div >
     );
 };
 

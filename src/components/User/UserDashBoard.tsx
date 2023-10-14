@@ -171,11 +171,10 @@ const UserDashBoard = () => {
 					}}
 				/>
 			</div>
-
 			<div className="cursor-pointer">
 				<AlertComponent
-					message={ecoMessage ? ecoMessage : error}
-					type={ecoMessage ? 'warning' : 'failure'}
+					message={ecoMessage}
+					type={'warning'}
 					viewButton={viewButton}
 					path={pathRoutes.ecosystem.invitation}
 					onAlertClose={() => {
@@ -184,7 +183,6 @@ const UserDashBoard = () => {
 					}}
 				/>
 			</div>
-
 			<div className="grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
 				<div className=" justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 					<div className="w-full">
