@@ -30,22 +30,23 @@ const MemberList = () => {
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const totalPages = data?.data?.totalPages;
-
-			const compareMembers=(
-				firstMember: { ecosystemRole: { name: string; }; },
+			
+			const compareMembers = (
+					firstMember: { ecosystemRole: { name: string; }; },
 				secondMember: { ecosystemRole: { name: string; }; }
-			)=> {
+			) => {
 				const firstName = firstMember?.ecosystemRole?.name;
 				const secondName = secondMember?.ecosystemRole?.name;
 			
-				if (firstName > secondName) {
-					return 1;
-				} else if (secondName > firstName) {
-					return -1;
-				} else {
-					return 0;
+				switch (true) {
+					case firstName > secondName:
+						return 1;
+					case secondName > firstName:
+						return -1;
+					default:
+						return 0;
 				}
-			}
+			};
 			const sortedMemberList = data?.data?.members?.sort(compareMembers)
 			const membersData = sortedMemberList?.map(
 				(member: {
