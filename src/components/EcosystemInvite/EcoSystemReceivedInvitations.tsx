@@ -7,16 +7,14 @@ import {
 import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
-import type { Invitation } from '../organization/interfaces/invitations';
 import type { Organisation } from '../organization/interfaces';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { pathRoutes } from '../../config/pathRoutes';
 import { EmptyListMessage } from '../EmptyListComponent';
 import CustomSpinner from '../CustomSpinner';
 import { getFromLocalStorage } from '../../api/Auth';
-import { getOrganizations } from '../../api/organization';
+import { getOrganizationById, getOrganizations } from '../../api/organization';
 import EcoInvitationList from './EcoInvitationList';
-import { getOrgDetails } from '../../config/ecosystem';
 
 const initialPageState = {
 	pageNumber: 1,
@@ -24,6 +22,10 @@ const initialPageState = {
 	total: 0,
 };
 
+interface IOrgData {
+	orgDid: string
+	orgName: string
+}
 
 export interface EcosystemInvitation {
 	ecosystem: []
@@ -37,6 +39,8 @@ export interface EcosystemInvitation {
 	orgId: string
 	status: string
 	email: string
+	selected?: boolean
+	orgData?: IOrgData
 }
 
 
@@ -50,6 +54,7 @@ const ReceivedInvitations = () => {
 	const [selectedId, setSelectedId] = useState<number>();
 	const [searchText, setSearchText] = useState('');
 	const [invitationsData, setInvitationsData] = useState<Array<EcosystemInvitation> | null>(null);
+	const [getOrgError, setGetOrgError] = useState<string | null>(null);
 
 	const onPageChange = (page: number) => {
 		setCurrentPage({
@@ -57,8 +62,6 @@ const ReceivedInvitations = () => {
 			pageNumber: page,
 		});
 	};
-
-	const props = { openModal, setOpenModal };
 
 	const getAllOrganizationsForEcosystem = async () => {
 		setLoading(true);
@@ -103,7 +106,7 @@ const ReceivedInvitations = () => {
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const totalPages = data?.data?.totalPages;
 
-			const invitationList = data?.data?.invitations.filter((invitation: { status: string; }) => {
+			const invitationList = data?.data?.invitations?.filter((invitation: { status: string; }) => {
 				return invitation.status === 'pending'
 			})
 			setInvitationsData(invitationList);
@@ -133,31 +136,77 @@ const ReceivedInvitations = () => {
 	}, [searchText, openModal, currentPage.pageNumber]);
 
 	const respondToEcosystemInvitations = async (
-		invite: Invitation,
+		invite: EcosystemInvitation,
 		status: string,
 	) => {
-		setLoading(true);
-		const orgDetails = await getOrgDetails()
-		const response = await acceptRejectEcosystemInvitations(
-			invite.id,
-			Number(selectedId),
-			status,
-			orgDetails.orgName,
-			orgDetails.orgDid
-		);
-		const { data } = response as AxiosResponse;
-		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-			setMessage(data?.message);
-			setLoading(false);
-			getAllInvitations()
-		} else {
-			setError(response as string);
-			setLoading(false);
+		try {
+			const orgDid = invite?.orgData?.orgDid || ""
+			const orgName = invite?.orgData?.orgName || ""
+			if (orgDid) {
+				const response = await acceptRejectEcosystemInvitations(
+					invite.id,
+					Number(selectedId),
+					status,
+					orgName,
+					orgDid
+				);
+				setLoading(false)
+				const { data } = response as AxiosResponse;
+				if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+					setMessage(data?.message);
+					getAllInvitations()
+				} else {
+					setError(response as string);
+				}
+			}
+			setLoading(false)
+		} catch (err) {
+			console.log("ERROR - Accept/Reject Ecosystem::", err)
 		}
 	};
 
-	const handleDropdownChange = (e: { target: { value: any } }) => {
+	const getSelectedOrgDetails = async (orgId: string): Promise<IOrgData | null> => {
+		try {
+			const response = await getOrganizationById(orgId);
+			const { data } = response as AxiosResponse;
+			const orgData = data?.data
+			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+				if (orgData.org_agents[0]?.orgDid) {
+					setGetOrgError(null)
+					return {
+						orgDid: orgData.org_agents[0]?.orgDid || "",
+						orgName: orgData.name
+					}
+				} else {
+					setGetOrgError("Please create your wallet for this organization to accept the invitation.")
+					return null
+				}
+			}
+			return null
+		} catch (err) {
+			console.log("ERROR::", err)
+			return null
+		}
+	}
+
+	const handleDropdownChange = async (e: { target: { value: any } }, id: string) => {
 		const value = e.target.value;
+		const orgData: IOrgData | null | undefined = await getSelectedOrgDetails(value)
+		const updateInvitationData = invitationsData && invitationsData.length > 0 ? invitationsData.map((item) => {
+			if (id === item.id) {
+				return {
+					...item,
+					orgId: value,
+					selected: true,
+					orgData: orgData || undefined
+				}
+			}
+			return {
+				...item,
+				selected: false
+			}
+		}) : null
+		setInvitationsData(updateInvitationData)
 		setSelectedId(value);
 	};
 
@@ -241,7 +290,7 @@ const ReceivedInvitations = () => {
 					/>
 
 					{loading ? (
-						<div className="flex items-center justify-center mb-4">
+						<div className="flex items-center justify-center px-12">
 							<CustomSpinner />
 						</div>
 					) : invitationsData && invitationsData?.length > 0 ? (
@@ -249,7 +298,7 @@ const ReceivedInvitations = () => {
 							<div id={selectedId?.toString()} className="flow-root">
 								<ul id={selectedId?.toString()}>
 									{invitationsData.map((invitation) => (
-										<Card key={invitation.id} className="p-4 mb-4">
+										<Card key={invitation.id} className="p-2 mb-4">
 											<div id={invitation.email} className="flex flex-wrap justify-between 2xl:flex align-center">
 												<div id={invitation.email} className=" xl:mb-4 2xl:mb-0">
 													<EcoInvitationList
@@ -279,6 +328,7 @@ const ReceivedInvitations = () => {
 																	'accepted',
 																)
 															}
+															disabled={!invitation?.orgData}
 															id={invitation.id}
 															className='mx-5 mt-5 text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-700 dark:hover:!bg-primary-800 dark:focus:ring-primary-800"'
 														>
@@ -287,24 +337,34 @@ const ReceivedInvitations = () => {
 														</Button>
 													</div>
 												</div>
-
-												<div>
+												<div className='flex items-center h-fit'>
 													<select
-														className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+														className="ml-3 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 														id="dropdown"
-														onChange={handleDropdownChange}
-														value={selectedId}
+														onChange={(e) => handleDropdownChange(e, invitation.id)}
+														value={invitation.orgId || ""}
 													>
+														<option value="">Select Organization</option>
 														{organizationsList &&
 															organizationsList.length > 0 &&
 															organizationsList.map((orgs) => {
 																return (
-																	<option key={orgs.id} value={orgs.id}>{orgs.name}</option>
+																	<option key={orgs.id} value={orgs.id.toString()}>{orgs.name}</option>
 																);
 															})}
 													</select>
 												</div>
 											</div>
+											{
+												invitation.selected &&
+												<AlertComponent
+													message={getOrgError}
+													type={'failure'}
+													onAlertClose={() => {
+														setGetOrgError(null);
+													}}
+												/>
+											}
 										</Card>
 									))}
 								</ul>
@@ -319,7 +379,7 @@ const ReceivedInvitations = () => {
 						)
 					)}
 
-				{currentPage.pageNumber > 1 &&	<div className="flex items-center justify-end mb-4">
+					{currentPage.pageNumber > 1 && <div className="flex items-center justify-end mb-4">
 						<Pagination
 							currentPage={currentPage.pageNumber}
 							onPageChange={onPageChange}

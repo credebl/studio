@@ -103,7 +103,7 @@ const OrgDropDown = () => {
 			>
 				{orgList?.length > 0 ? (
 					<ul
-						className="max-h-48 py-2 overflow-y-auto text-gray-700 dark:text-gray-200 text-sm"
+						className="max-h-48 py-2 overflow-y-auto text-gray-700 dark:text-gray-200 text-sm scrollbar scrollbar-w-3 scrollbar-thumb-rounded-[0.25rem] scrollbar-track-slate-200 scrollbar-thumb-gray-400 dark:scrollbar-track-gray-900 dark:scrollbar-thumb-gray-700"
 						aria-labelledby="dropdownUsersButton"
 					>
 						{orgList?.map((org) => {
