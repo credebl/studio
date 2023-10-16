@@ -136,9 +136,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
         setIsImageEmpty(true)
         return true
     }
-
-
-    const handleImageChange = (event: any): void => {
+      const handleImageChange = (event: any): void => {
         setImgError('')
         const reader = new FileReader()
         const file = event?.target?.files
@@ -268,8 +266,6 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                                                     alt="Jese picture"
                                                 />
                                     }
-
-
                                     <div>
                                         <h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
                                             Organization Logo
@@ -319,7 +315,6 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                                 }
 
                             </div>
-
 
                             <div>
                                 <div
@@ -380,10 +375,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                                         onChange={() => setIsPublic(false)}
                                         id="private"
                                         name="private"
-                                    />                                   
-                                    <span className="ml-2 text-gray-900 dark:text-white">Private
-                                        <span className="block pl-6 text-gray-500 text-sm">Only the connected organization can see you organization details</span>
-                                    </span>
+                                    /><span className="ml-2 text-gray-900 dark:text-white">Private<span className="block pl-6 text-gray-500 text-sm">Only the connected organization can see your organization details</span></span>
                                 </div>
                                 <div>
                                     <div
@@ -402,12 +394,10 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                                         id="public"
                                         name="public"
                                     />
-                                   
                                     <span className="ml-2 text-gray-900 dark:text-white">Public
                                         <span className="block pl-6 text-gray-500 text-sm">Your profile and organization details can be seen by everyone</span></span>
                                 </div>
                             </div>
-
                             <Button type="submit"
                                 isProcessing={loading}
                                 className='mb-2 float-right text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'

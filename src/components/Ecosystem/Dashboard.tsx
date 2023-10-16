@@ -391,12 +391,12 @@ const Dashboard = () => {
                                             >
                                                 <div>Edit Ecosystem</div>
                                             </Dropdown.Item>
-                                            <Dropdown.Item>
+                                            {/* <Dropdown.Item>
                                                 <div>Enable/Disable Ecosystem</div>
-                                            </Dropdown.Item>
-                                            <Dropdown.Item>
+                                            </Dropdown.Item> */}
+                                            {/* <Dropdown.Item>
                                                 <div>Manual Registration</div>
-                                            </Dropdown.Item>
+                                            </Dropdown.Item> */}
                                         </Dropdown>
                                     ) : (
                                         <svg

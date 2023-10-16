@@ -184,7 +184,7 @@ const SendInvitationModal = (props: {
 							onSubmit={formikHandlers.handleSubmit}
 						>
 							<div className="flex items-center justify-between">
-								<div className="w-2/3">
+								<div className="w-full">
 									<div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
 										<Label htmlFor="email2" value="Email" />
 										<span className="text-red-500 text-xs">*</span>
@@ -204,7 +204,7 @@ const SendInvitationModal = (props: {
 									)}
 								</div>
 
-								<div className="w-1/3">
+								<div className="">
 									<Button
 										type="submit"
 										className="mt-2 ml-4 text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
