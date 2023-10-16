@@ -208,7 +208,7 @@ export const getEcosystemInvitations = async (pageNumber: number, pageSize: numb
 	const ecosystemId = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID);
 
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url = `${apiRoutes.Ecosystem.root}/${ecosystemId}/${orgId}${apiRoutes.Ecosystem.invitations}`
+	const url = `${apiRoutes.Ecosystem.root}/${ecosystemId}/${orgId}${apiRoutes.Ecosystem.invitations}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
 
 	const token = await getFromLocalStorage(storageKeys.TOKEN)
 
