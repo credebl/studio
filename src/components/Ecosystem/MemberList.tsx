@@ -176,7 +176,7 @@ const MemberList = () => {
 				loading={loading}
 			></DataTable>
 
-			{currentPage.pageNumber > 1 && (
+			{currentPage.total > 1 && (
 				<div className="flex items-center justify-end mb-4">
 					<Pagination
 						currentPage={currentPage.pageNumber}
