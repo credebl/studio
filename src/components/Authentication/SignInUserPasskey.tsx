@@ -231,7 +231,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 
                                     <Button
                                         id='loginwithpasskey'
-                                        isProcessing={fidoLoader}
+                                        isProcessing={loading}
                                         onClick={() => {
 
                                             authenticateWithPasskey(signInUserProps?.email)

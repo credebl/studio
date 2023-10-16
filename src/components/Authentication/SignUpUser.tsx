@@ -183,11 +183,11 @@ const SignUpUser = () => {
 											<div className="text-primary-700 font-inter text-base font-medium leading-5 mb-20">
 
 												<div className="block mb-2 text-sm font-medium  dark:text-white">
-													<Label className="text-primary-700" htmlFor="email2" value="Your Email" />
+													<Label className="text-primary-700 dark:!text-primary-700" htmlFor="email2" value="Your Email" />
 													<span className='text-red-500 text-xs'>*</span>
 												</div>
 
-												<div className="w-full flex items-center bg-gray-200 px-4 text-gray-700 text-sm border rounded-md focus:border-blue-400 focus:ring-1 focus:ring-blue-600">
+												<div className="w-full flex items-center bg-gray-200 px-4 py-3 text-gray-700 text-sm border rounded-md focus:border-blue-400 focus:ring-1 focus:ring-blue-600">
 
 													<svg
 														xmlns="http://www.w3.org/2000/svg"
@@ -205,7 +205,7 @@ const SignUpUser = () => {
 
 													<Field id='Signupemail'
 														name='email'
-														type="email"
+														// type="email"
 														className="truncate outline-none flex-grow bg-transparent focus:outline-none border-none focus:border-none focus:ring-0"
 														placeholder="name@company.com" />
 

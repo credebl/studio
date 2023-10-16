@@ -12,7 +12,7 @@ const DeviceDetails = (props: { deviceFriendlyName: string, createDateTime: stri
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [openEditModel, setOpenEditModel] = useState<boolean>(false)
     const [editSuccess, setEditSuccess] = useState<string | null>(null)
-    const [editfailure, setEditFailur] = useState<string | null>(null)
+    const [editfailure, setEditFailure] = useState<string | null>(null)
     const handleDeleteModel = (flag: boolean) => {
         setOpenModal(flag)
     }
@@ -51,11 +51,11 @@ const DeviceDetails = (props: { deviceFriendlyName: string, createDateTime: stri
 
 
         } else {
-            setEditFailur(editDeviceDetailsResponse as string)
+            setEditFailure(editDeviceDetailsResponse as string)
         }
         setTimeout(() => {
             props.refreshList()
-        }, 6000);
+        }, 2000);
  
     }
 
