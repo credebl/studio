@@ -145,7 +145,9 @@ const SendInvitationModal = (props: {
 			show={props.openModal}
 			onClose={() => {
 				setInvitations([]);
-				setInitialInvitationData(initialData);
+				setInitialInvitationData({
+					email:" ",
+				});
 				props.setOpenModal(false);
 			}}
 		>
