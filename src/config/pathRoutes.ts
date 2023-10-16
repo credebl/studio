@@ -35,7 +35,10 @@ export const pathRoutes = {
     },
     ecosystem: {
         root: '/ecosystem',
-        endorsements: "/ecosystem/endorsement"
+        profile: "/ecosystem/profile",
+        endorsements: "/ecosystem/endorsement",
+        invitation:"/ecosystem/invitation",
+				sentinvitation:'/ecosystem/sent-invitations'
     },
     // ecosystems: {
     //     root: '/ecosystems',
