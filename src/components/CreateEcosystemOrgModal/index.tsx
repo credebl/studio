@@ -235,11 +235,14 @@ const CreateEcosystemOrgModal = (props: IProps) => {
         return (
             <Modal show={props.openModal} onClose={() => {
                 setLogoImage({
-                    logoFile: "",
-                    imagePreviewUrl: "",
-                    fileName: ''
+                    logoFile: " ",
+                    imagePreviewUrl: " ",
+                    fileName: ' '
                 })
-                setFormData(initialFormData)
+                setFormData({
+                    name:" ",
+                    description:" "
+                })
                 props.setOpenModal(false)
             }
             }>
@@ -267,8 +270,8 @@ const CreateEcosystemOrgModal = (props: IProps) => {
                             values: Values,
                             { resetForm }: FormikHelpers<Values>
                         ) => {
-
                             submit(values)
+                            resetForm();
 
                         }}
                     >
