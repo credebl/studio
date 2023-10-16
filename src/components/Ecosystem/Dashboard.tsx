@@ -487,11 +487,38 @@ const Dashboard = () => {
                                         }
                                         onClickEvent={createInvitationsModel}
                                     />
-                                    <Dropdown
-                                        label={"test"}
-                                        open={dropdownOpen}
-                                        onToggle={() => setDropdownOpen(!dropdownOpen)}
-                                        renderTrigger={() => <svg
+                                    {dropdownOpen ? (
+                                        <Dropdown
+                                            label={'test'}
+                                            renderTrigger={() => (
+                                                <svg
+                                                    className="ml-4 w-4 h-4 text-gray-800 cursor-pointer dark:text-white"
+                                                    aria-hidden="true"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="currentColor"
+                                                    viewBox="0 0 4 15"
+                                                >
+                                                    <path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
+                                                </svg>
+                                            )}
+                                            dismissOnClick={true}
+                                        >
+                                            <Dropdown.Item
+                                                onClick={() => {
+                                                    EditEcosystemOrgModal();
+                                                }}
+                                            >
+                                                <div>Edit Ecosystem</div>
+                                            </Dropdown.Item>
+                                            {/* <Dropdown.Item>
+                                                <div>Enable/Disable Ecosystem</div>
+                                            </Dropdown.Item> */}
+                                            {/* <Dropdown.Item>
+                                                <div>Manual Registration</div>
+                                            </Dropdown.Item> */}
+                                        </Dropdown>
+                                    ) : (
+                                        <svg
                                             className="ml-4 w-4 h-4 text-gray-800 cursor-pointer dark:text-white"
                                             aria-hidden="true"
                                             xmlns="http://www.w3.org/2000/svg"
