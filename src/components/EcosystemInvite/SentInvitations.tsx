@@ -110,7 +110,10 @@ const SentInvitations = () => {
 							<div className="flow-root">
 								<ul className="divide-y divide-gray-200 dark:divide-gray-700">
 									{invitationsList.map((invitation) => (
-										<li key={invitation.id} className="p-4 min-[320px]:h-52 sm:h-48 md:h-[150px] items-center">
+										<li
+											key={invitation.id}
+											className="p-4 min-[320px]:h-52 sm:h-48 md:h-[150px] items-center"
+										>
 											<div className="flex flex-wrap justify-between align-middle 2xl:flex items-center 2xl:space-x-4">
 												<div className=" xl:mb-4 2xl:mb-0">
 													<div className="flex space-x-4">
@@ -190,9 +193,10 @@ const SentInvitations = () => {
 																	: invitation.status === 'accepted'
 																	? 'bg-green-100 text-green-700 dark:bg-gray-700 dark:text-green-400 rounded border border-green-100 dark:border-green-500'
 																	: 'bg-red-100 text-red-800 rounded dark:bg-gray-900 dark:text-red-300  border-red-100 dark:border-red-500 border'
-															} m-1 text-sm font-medium px-2.5 py-0.5 rounded`}
+															} m-1 text-sm font-medium px-2.5 py-0.5 rounded-md`}
 														>
-															{invitation?.status?.charAt(0).toUpperCase() + invitation?.status?.slice(1)}
+															{invitation?.status?.charAt(0).toUpperCase() +
+																invitation?.status?.slice(1)}
 														</span>
 													</div>
 													{invitation.status === 'pending' && (
@@ -245,13 +249,15 @@ const SentInvitations = () => {
 						</div>
 					)}
 
-					<div className="flex items-center justify-end mb-4">
-						<Pagination
-							currentPage={currentPage.pageNumber}
-							onPageChange={onPageChange}
-							totalPages={currentPage.total}
-						/>
-					</div>
+					{currentPage.total > 1 && (
+						<div className="flex items-center justify-end mb-4">
+							<Pagination
+								currentPage={currentPage.pageNumber}
+								onPageChange={onPageChange}
+								totalPages={currentPage.total}
+							/>
+						</div>
+					)}
 				</div>
 			</div>
 		</div>

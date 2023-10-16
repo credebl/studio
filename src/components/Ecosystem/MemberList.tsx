@@ -30,22 +30,23 @@ const MemberList = () => {
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const totalPages = data?.data?.totalPages;
-
-			const compareMembers=(
-				firstMember: { ecosystemRole: { name: string; }; },
+			
+			const compareMembers = (
+					firstMember: { ecosystemRole: { name: string; }; },
 				secondMember: { ecosystemRole: { name: string; }; }
-			)=> {
+			) => {
 				const firstName = firstMember?.ecosystemRole?.name;
 				const secondName = secondMember?.ecosystemRole?.name;
 			
-				if (firstName > secondName) {
-					return 1;
-				} else if (secondName > firstName) {
-					return -1;
-				} else {
-					return 0;
+				switch (true) {
+					case firstName > secondName:
+						return 1;
+					case secondName > firstName:
+						return -1;
+					default:
+						return 0;
 				}
-			}
+			};
 			const sortedMemberList = data?.data?.members?.sort(compareMembers)
 			const membersData = sortedMemberList?.map(
 				(member: {
@@ -58,7 +59,7 @@ const MemberList = () => {
 					return {
 						data: [
 							{
-								data: member.orgName || 'Not avilable',
+								data: member.orgName || 'Not available',
 							},
 							{
 								data: <DateTooltip date={member?.createDateTime}>
@@ -71,9 +72,9 @@ const MemberList = () => {
 									<span
 										className={`${
 											member.ecosystemRole.name === 'Ecosystem Lead'
-												? 'bg-primary-100 text-primary-800 rounded dark:bg-gray-900 dark:text-primary-400 border border-primary-100 dark:border-primary-500'
-												: 'bg-green-100 text-green-800 rounded dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500'
-										}'text-sm font-medium mr-2 px-2.5 py-1 rounded-md'`}
+												? 'bg-primary-100 text-primary-800 dark:bg-gray-900 dark:text-primary-400 border border-primary-100 dark:border-primary-500'
+												: 'bg-green-100 text-green-800 dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500'
+										} text-sm font-medium mr-2 px-2.5 py-1 rounded-md`}
 									>
 										{member.ecosystemRole.name}
 									</span>
@@ -88,7 +89,7 @@ const MemberList = () => {
 											member.status === 'SUSPENDED'
 												? 'bg-red-100 text-red-800 rounded dark:bg-gray-900 dark:text-red-300  border-red-100 dark:border-red-500 border'
 												: 'bg-green-100 text-green-700 dark:bg-gray-700 dark:text-green-400 rounded border border-green-100 dark:border-green-500'
-										}'text-sm font-medium mr-2 px-2.5 py-1 rounded'`}
+										} text-sm font-medium mr-2 px-2.5 py-1 rounded-md`}
 									>
 										{member.status}
 									</span>
@@ -175,13 +176,16 @@ const MemberList = () => {
 				data={memberList}
 				loading={loading}
 			></DataTable>
-			<div className="flex items-center justify-end mb-4">
-				<Pagination
-					currentPage={currentPage.pageNumber}
-					onPageChange={onPageChange}
-					totalPages={currentPage.total}
-				/>
-			</div>
+
+			{currentPage.total > 1 && (
+				<div className="flex items-center justify-end mb-4">
+					<Pagination
+						currentPage={currentPage.pageNumber}
+						onPageChange={onPageChange}
+						totalPages={currentPage.total}
+					/>
+				</div>
+			)}
 		</div>
 	);
 };
