@@ -484,7 +484,7 @@ const CreateSchema = () => {
                                                                                 )}
 
                                                                                 {index === attribute.length - 1 && (
-                                                                                    <div key={element.id} className="sm:w-2.5/3 text-red-600 sm:ml-0 md:ml-0 lg:ml-0">
+                                                                                    <div key={element.id} className="justify-end sm:w-2.5/3 text-red-600 sm:ml-0 md:ml-0 lg:ml-0">
 
                                                                                         <Button
                                                                                             id="addSchemaButton"

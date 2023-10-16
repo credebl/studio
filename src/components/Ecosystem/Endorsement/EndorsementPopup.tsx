@@ -1,5 +1,5 @@
 import { Button, Modal, Spinner } from 'flowbite-react';
-import { EndorsementStatus } from '../../../common/enums';
+import { EndorsementStatus, EndorsementType } from '../../../common/enums';
 import {
 	ICheckEcosystem,
 	checkEcosystem,
@@ -114,15 +114,17 @@ const EndorsementPopup = (props: {
 	};
 
 	return (
-		<Modal show={props.openModal} onClose={() => {
+		<Modal
+		className='h-full'
+		 show={props.openModal} onClose={() => {
 			props.closeModal()
 			setErrMsg(null)
 		}} size="xl">
 			<Modal.Header>
 				{isEcosystemData?.isEcosystemLead ? (
-					<div>Requested {props.endorsementData?.type}</div>
+					<div>Requested {props.endorsementData?.type === EndorsementType.credDef ? "Credential Definition" : "Schema" }</div>
 				) : (
-					<div>View {props.endorsementData?.type}</div>
+					<div>View {props.endorsementData?.type === EndorsementType.credDef ? "Credential Definition" : "Schema"}</div>
 				)}
 			</Modal.Header>
 			<div className="mt-3 mx-3 -mb-3">
