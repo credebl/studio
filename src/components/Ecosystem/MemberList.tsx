@@ -58,7 +58,7 @@ const MemberList = () => {
 					return {
 						data: [
 							{
-								data: member.orgName || 'Not avilable',
+								data: member.orgName || 'Not available',
 							},
 							{
 								data: <DateTooltip date={member?.createDateTime}>
