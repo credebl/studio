@@ -271,9 +271,7 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 										</div>)
 										:
 										(
-											<div>
-												{walletStatus ?
-													<EmptyListMessage
+												<EmptyListMessage
 														message={emptyListTitle}
 														description={emptyListDesc}
 														buttonContent={emptyListBtn}
@@ -284,19 +282,6 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 															window.location.href = `${pathRoutes.organizations.createSchema}?OrgId=${orgId}`
 														}}
 													/>
-													:
-													<EmptyListMessage
-														message={'No Wallet'}
-														description={'Get started by creating a Wallet'}
-														buttonContent={'Create Wallet'}
-														svgComponent={<svg className='pr-2 mr-1' xmlns="http://www.w3.org/2000/svg" width="24" height="15" fill="none" viewBox="0 0 24 24">
-															<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
-														</svg>}
-														onClick={() => {
-															window.location.href = `${pathRoutes.organizations.dashboard}?OrgId=${orgId}`
-														}}
-													/>}
-											</div>
 										)
 								}
 							</div>
