@@ -11,7 +11,7 @@ export const EmptyListMessage = ({ message, description, buttonContent, svgCompo
         onClick?: () => void,
     }) => {
     return (
-        <div className='flex mt-20 justify-start items-center flex-col'>
+        <div className='flex mt-20 mb-16 justify-start items-center flex-col'>
             <p className='text-2xl font-bold mb-4 text-gray-900 dark:text-white'>{message}</p>
             <p className='text-lg mb-4 text-gray-900 dark:text-white'>{description}</p>
             {

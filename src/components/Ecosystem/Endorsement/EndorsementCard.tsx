@@ -16,6 +16,7 @@ interface IProps {
 
 const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTransitionDisabled, allAttributes }: IProps) => {
     const [isEcosystemLead, setIsEcosystemLead] = useState(false);
+    const isSchema = data?.type === EndorsementType.schema
 
     useEffect(() => {
         const checkEcosystemData = async () => {
@@ -25,13 +26,35 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
         checkEcosystemData();
     }, [])
 
+    const getAttributes = () => {
+        switch (true) {
+            case isSchema:
+                if (requestData?.attr_names && requestData?.attr_names.length > 0) {
+                    if (allAttributes) {
+                        return requestData?.attr_names
+                    }
+                    return requestData?.attr_names?.slice(0, 3)
+                }
+                return []
+            case !isSchema && allAttributes:
+                if (data?.requestBody?.schemaDetails?.version && data?.requestBody?.schemaDetails?.version.length > 0) {
+                    if (allAttributes) {
+                        return data?.requestBody?.schemaDetails?.version
+                    }
+                    return data?.requestBody?.schemaDetails?.version?.slice(0, 3)
+                }
+                return []
+            default:
+                return []
+        }
+    }
+
     const enableAction = (!fromEndorsementList && data?.status === EndorsementStatus.signed) || Boolean(fromEndorsementList)
-    const isSchema = data?.type === EndorsementType.schema
 
     const requestPayload = data?.requestPayload && JSON.parse(data?.requestPayload)
 
     const requestData = isSchema ? requestPayload?.operation?.data : requestPayload?.operation
-    const attributesData = allAttributes ? requestData?.attr_names : requestData?.attr_names?.slice(0, 3)
+    const attributesData = getAttributes()
 
     return (
         <Card onClick={() => {
@@ -80,10 +103,10 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
                 {!isSchema &&
                     <>
                         <p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
-                            <span className="font-semibold">Schema Name:</span> NA
+                            <span className="font-semibold">Schema Name:</span> {data?.requestBody?.schemaDetails?.name || "NA"}
                         </p>
                         <p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
-                            <span className="font-semibold">Schema Version:</span> NA
+                            <span className="font-semibold">Schema Version:</span> {data?.requestBody?.schemaDetails?.version || "NA"}
                         </p>
                     </>
                 }
@@ -91,11 +114,11 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
                     <span className="font-semibold">Author DID:</span> {data?.authorDid}
                 </p>
                 <p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
-                    <span className="font-semibold">Ledger:</span> NA
+                    <span className="font-semibold">Ledger:</span> {data?.authorDid.split(":")[2]}
                 </p>
                 {isEcosystemLead &&
                     <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                        <span className="font-semibold">Organization:</span> NA
+                        <span className="font-semibold">Organization:</span> {data?.ecosystemOrgs?.orgName}
                     </p>
                 }
             </div>
@@ -123,7 +146,7 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
                                                     </span>
                                                 </div>
                                             ))}
-                                            {attributesData.length === 3 && <span>...</span>}
+                                            {!allAttributes && attributesData.length === 3 && <span>...</span>}
                                         </>
                                     )}
                                 </div>
