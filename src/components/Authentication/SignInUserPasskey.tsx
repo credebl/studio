@@ -88,20 +88,18 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 		try {
 			setFidoLoader(true);
 
-			const obj = { userName: email };
+    const showFidoError = (error: unknown): void => {
+		const err = error as AxiosError;
+		if (
+			err.message.includes('The operation either timed out or was not allowed')
+		) {
+			const [errorMsg] = err.message.split('.');
+			setFidoUserError(errorMsg);
+		} else {
+			setFidoUserError(err.message);
+		}
+	};
 
-			const generateAuthenticationResponse: any =
-				await generateAuthenticationOption(obj);
-			const challangeId: string =
-				generateAuthenticationResponse?.data?.data?.challenge;
-			setFidoUserError(generateAuthenticationResponse?.data?.error);
-
-			const opts = generateAuthenticationResponse?.data?.data;
-			const attResp = await startAuthentication(opts);
-			const verifyAuthenticationObj = {
-				...attResp,
-				challangeId,
-			};
 
 			const verificationResp = await verifyAuthenticationMethod(
 				verifyAuthenticationObj,
@@ -234,8 +232,6 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
                                     src="/images/choose-password-passkey.svg"
                                     alt="img" />
                             </div>
-
-
                         </div>
                         <div className="md:w-2/5 w-full p-10 flex">
 
@@ -248,6 +244,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
                                         onDismiss={() => {
                                             setSuccess(null)
                                             setFailure(null)
+                                            setFidoUserError('')
                                         }}
                                     >
                                         <span>

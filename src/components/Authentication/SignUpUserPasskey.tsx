@@ -53,6 +53,7 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
 		}
 	};
 
+
     const submit = async (fidoFlag: boolean, passwordDetails?: passwordValues) => {
         const userEmail = await getFromLocalStorage(storageKeys.USER_EMAIL)
         const password: string = uuidv4();
