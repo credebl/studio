@@ -79,7 +79,6 @@ const SignInUser = () => {
 					setSuccess('Congratulations!! 🎉 Your new password set successfully');
 				}
 			} catch (err) {
-				console.log('ERROR-LOGIN::', err);
 			}
 		};
 
@@ -227,7 +226,6 @@ const SignInUser = () => {
 															<Field
 																id="signinemail"
 																name="email"
-																// type="email"
 																className="truncate outline-none flex-grow bg-transparent focus:outline-none border-none focus:border-none focus:ring-0"
 																placeholder="name@company.com"
 															/>

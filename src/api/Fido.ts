@@ -142,7 +142,7 @@ export const generateAuthenticationOption = async (payload:UserEmail) => {
   }
 }
 
-export const verifyAuthentication = async (payload: any, email: { userName: string }) => {
+export const verifyAuthentication = async (payload: VerifyRegistrationObjInterface, email: { userName: string }) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
     url: `${apiRoutes.auth.fidoVerifyAuthentication}${email.userName}`,

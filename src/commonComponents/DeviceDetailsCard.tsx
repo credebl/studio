@@ -85,7 +85,10 @@ const DeviceDetails = (props: { deviceFriendlyName: string, createDateTime: stri
                                 </p>
                                 <button
                                     className="p-1 border border-gray-400 rounded hover:bg-gray-100 dark:hover:bg-black dark:text-white dark:hover:text-white"
-                                    onClick={() => setOpenEditModel(true)}
+                                    onClick={(e) => {
+                                        e.preventDefault(); 
+                                        setOpenEditModel(true)
+                                    }}
                                 >
                                     <svg className="h-4 w-4 dark:text-white dark:hover:text-white" viewBox="0 0 20 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                 <path stroke="none" d="M0 0h24v24H0z" />
@@ -106,7 +109,10 @@ const DeviceDetails = (props: { deviceFriendlyName: string, createDateTime: stri
                             <button
                                 className={`px-3 py-2 mb-3 mr-3 text-sm font-medium text-center text-gray-900 bg-white border ${props.disableRevoke ? 'border-gray-400 text-gray-400 cursor-not-allowed' : 'border-gray-300 text-gray-900 hover:bg-gray-100 focus:ring-4 focus:ring-primary-300'} rounded-lg ${props.disableRevoke ? 'dark:bg-gray-800 dark:text-gray-400 dark:border-gray-400' : 'dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700'}`}
                                 disabled={props.disableRevoke}
-                                onClick={() => handleDeleteModel(true)}
+                                onClick={(e) => {
+                                    e.preventDefault(); 
+                                    handleDeleteModel(true)
+                                }}
                             >
                                 Revoke
                             </button>

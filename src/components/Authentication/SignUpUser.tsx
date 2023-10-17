@@ -12,7 +12,6 @@ import {
 import { checkUserExist, sendVerificationMail, setToLocalStorage } from '../../api/Auth.js';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant.js';
 import { useEffect, useState } from 'react';
-import React from 'react';
 import SignUpUserName from './SignUpUserName'
 import FooterBar from './FooterBar.js';
 import NavBar from './NavBar.js';
@@ -205,7 +204,6 @@ const SignUpUser = () => {
 
 													<Field id='Signupemail'
 														name='email'
-														// type="email"
 														className="truncate outline-none flex-grow bg-transparent focus:outline-none border-none focus:border-none focus:ring-0"
 														placeholder="name@company.com" />
 
