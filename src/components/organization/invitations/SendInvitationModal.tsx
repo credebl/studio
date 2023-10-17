@@ -238,7 +238,7 @@ const SendInvitationModal = (props: {
 							<ul className="divide-y divide-gray-200 dark:divide-gray-700">
 								{invitations.map((invitation) => (
 									<li key={invitation.email} className="p-2">
-										<div className="flex justify-between xl:block 2xl:flex align-center 2xl:space-x-4">
+										<div className="flex justify-between 2xl:flex align-center 2xl:space-x-4">
 											<div className="flex flex-wrap space-x-4 xl:mb-4 2xl:mb-0 dark:text-white">
 												<div>
 													<svg
