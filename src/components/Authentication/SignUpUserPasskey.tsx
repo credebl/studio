@@ -42,20 +42,17 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
     }, [])
 
     const showFidoError = (error: unknown): void => {
-        const err = error as AxiosError
-        if (err.message.includes("The operation either timed out or was not allowed")) {
-            const [errorMsg] = err.message.split('.')
-            setFidoError(errorMsg)
-            setTimeout(() => {
-                setFidoError("")
-            })
-        } else {
-            setFidoError(err.message)
-            setTimeout(() => {
-                setFidoError("")
-            })
-        }
-    }
+		const err = error as AxiosError;
+		if (
+			err.message.includes('The operation either timed out or was not allowed')
+		) {
+			const [errorMsg] = err.message.split('.');
+			setFidoError(errorMsg);
+		} else {
+			setFidoError(err.message);
+		}
+	};
+
 
     const submit = async (fidoFlag: boolean, passwordDetails?: passwordValues) => {
         const userEmail = await getFromLocalStorage(storageKeys.USER_EMAIL)
@@ -141,7 +138,6 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
                     userName: OrgUserEmail,
                     credentialId: credentialID,
                     deviceFriendlyName: platformDeviceName
-
                 }
                 await addDeviceDetailsMethod(deviceBody)
             }
@@ -197,14 +193,18 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
 
                             <div className="w-full">
                                 {
-                                    (verificationSuccess || erroMsg) &&
+                                    (verificationSuccess || erroMsg || fidoError) &&
                                     <Alert
                                         color={verificationSuccess ? "success" : "failure"}
-                                        onDismiss={() => setErrMsg(null)}
+                                        onDismiss={() => {
+                                            setAddSuccess(null)
+                                            setFidoError('')
+                                            setErrMsg('')
+                                        }}
                                     >
                                         <span>
                                             <p>
-                                                {verificationSuccess || erroMsg}
+                                                {verificationSuccess || erroMsg || fidoError}
                                             </p>
                                         </span>
                                     </Alert>

@@ -5,7 +5,7 @@ import { UserSignInData, getUserProfile, loginUser, setToLocalStorage } from '..
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { generateAuthenticationOption, verifyAuthentication } from '../../api/Fido';
 
-import type { AxiosResponse } from 'axios';
+import type { AxiosError, AxiosResponse } from 'axios';
 import SignInUser from './SignInUser';
 import { startAuthentication } from '@simplewebauthn/browser';
 import { useState } from 'react';
@@ -65,16 +65,17 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
     }
 
     const showFidoError = (error: unknown): void => {
-        const err = error as string
-        if (err.includes("The operation either timed out or was not allowed")) {
-            const [errorMsg] = err.split('.')
-            setFidoUserError(errorMsg)
+		const err = error as AxiosError;
+		if (
+			err.message.includes('The operation either timed out or was not allowed')
+		) {
+			const [errorMsg] = err.message.split('.');
+			setFidoUserError(errorMsg);
+		} else {
+			setFidoUserError(err.message);
+		}
+	};
 
-        } else {
-            setFidoUserError(err)
-
-        }
-    }
 
     const authenticateWithPasskey = async (email: string): Promise<void> => {
         try {
@@ -152,8 +153,6 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
                                     src="/images/choose-password-passkey.svg"
                                     alt="img" />
                             </div>
-
-
                         </div>
                         <div className="md:w-2/5 w-full p-10 flex">
 
@@ -166,6 +165,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
                                         onDismiss={() => {
                                             setSuccess(null)
                                             setFailure(null)
+                                            setFidoUserError('')
                                         }}
                                     >
                                         <span>
