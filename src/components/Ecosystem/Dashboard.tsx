@@ -6,8 +6,8 @@ import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
 import CustomAvatar from '../Avatar';
 import CustomSpinner from '../CustomSpinner';
-import endorseIcon from '../../assets/endorser-card.svg';
-import userCard from '../../assets/User_Card.svg';
+import endorseIcon from '../../assets/endorser-icon.svg';
+import memberIcon from '../../assets/member-icon.svg'
 import MemberList from './MemberList';
 import { getEcosystem, getEcosystemDashboard } from '../../api/ecosystem';
 import { EmptyListMessage } from '../EmptyListComponent';
@@ -32,6 +32,7 @@ import { pathRoutes } from '../../config/pathRoutes';
 import type { EcosystemDashboard } from '../organization/interfaces';
 import { dateConversion } from '../../utils/DateConversion';
 import DateTooltip from '../Tooltip';
+import DashboardCard from '../../commonComponents/DashboardCard'
 
 interface IRoleTablet {
     role: string;
@@ -247,22 +248,22 @@ const Dashboard = () => {
                                     setError(null);
                                 }}
                             />}
-                        </div>
+                    </div>
 
-                        {(success || failure) && (
-                            <AlertComponent
-                                message={success ?? failure}
-                                type={success ? 'success' : 'failure'}
-                                onAlertClose={() => {
-                                    setSuccess(null);
-                                    setFailure(null);
-                                }}
-                            />
-                        )}
-                    </>
+                    {(success || failure) && (
+                        <AlertComponent
+                            message={success ?? failure}
+                            type={success ? 'success' : 'failure'}
+                            onAlertClose={() => {
+                                setSuccess(null);
+                                setFailure(null);
+                            }}
+                        />
+                    )}
+                </>
             )}
 
-						{
+            {
                 ecosystemDetailsNotFound && (
                     <AlertComponent
                         message="Ecosystem details not found."
@@ -418,33 +419,8 @@ const Dashboard = () => {
                         <>
                             <div className="mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
                                 <div className="grid w-full grid-cols-1 gap-4 mt-0 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2">
-                                    <div
-                                        className="items-center justify-between p-4 bg-white border-0 border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-103 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover min-h-[152px]"
-                                        style={{ backgroundImage: `url(${userCard})` }}
-                                    >
-                                        <div className="w-full">
-                                            <h3 className="text-base font-medium text-white">
-                                                Member
-                                            </h3>
-                                            <span className="text-2xl font-semi-bold leading-none text-white sm:text-3xl dark:text-white">
-                                                {ecosystemDashboard?.membersCount}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <div
-                                        className="items-center justify-between p-4 bg-white border-0 border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-103 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover min-h-[152px]"
-                                        style={{ backgroundImage: `url(${endorseIcon})` }}
-                                    >
-                                        <div className="w-full">
-                                            <h3 className="text-base font-medium text-white">
-                                                Endorsements
-                                            </h3>
-                                            <span className="text-2xl font-semi-bold leading-none text-white sm:text-3xl dark:text-white">
-                                                {ecosystemDashboard?.endorsementsCount}
-                                            </span>
-                                        </div>
-                                    </div>
+                                    <DashboardCard icon={memberIcon} backgroundColor="linear-gradient(279deg, #FFF -18.24%, #2F80ED -0.8%, #1F4EAD 61.45%)" label="Member" value={ecosystemDashboard?.membersCount ?? 0} />
+                                    <DashboardCard icon={endorseIcon} backgroundColor="linear-gradient(279deg, #FFF -15.85%, #40F683 22.4%, #22C55E 59.86%)" label="Endorsements" value={ecosystemDashboard?.endorsementsCount ?? 0} />
                                 </div>
                             </div>
                             <div>
