@@ -87,7 +87,6 @@ const DeviceDetails = (props: { deviceFriendlyName: string, createDateTime: stri
                                     className="p-1 border border-gray-400 rounded hover:bg-gray-100 dark:hover:bg-black dark:text-white dark:hover:text-white"
                                     onClick={(e) => {
                                         e.preventDefault(); 
-                                        props.refreshList()
                                         setOpenEditModel(true)
                                     }}
                                 >
