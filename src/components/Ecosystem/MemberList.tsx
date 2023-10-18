@@ -7,8 +7,7 @@ import type { TableData } from '../../commonComponents/datatable/interface';
 import DateTooltip from '../Tooltip';
 import { dateConversion } from '../../utils/DateConversion';
 import { AlertComponent } from '../AlertComponent';
-import { Button, Pagination } from 'flowbite-react';
-import { pathRoutes } from '../../config/pathRoutes';
+import { Pagination } from 'flowbite-react';
 
 const initialPageState = {
 	pageNumber: 1,
@@ -48,9 +47,10 @@ const MemberList = () => {
 						return 0;
 				}
 			};
-			const sortedMemberList = data?.data?.members?.sort(compareMembers);
+			const sortedMemberList = data?.data?.members?.sort(compareMembers);			
 			const membersData = sortedMemberList?.map(
 				(member: {
+					ecosystem: {createDateTime: string};
 					ecosystemRole: { name: string };
 					orgName: string;
 					role: string;
@@ -79,7 +79,7 @@ const MemberList = () => {
 												: 'bg-green-100 text-green-800 dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500'
 										} text-sm font-medium mr-2 px-2.5 py-1 rounded-md`}
 									>
-										{member.ecosystemRole.name}
+										  {member?.createDateTime === member?.ecosystem?.createDateTime ? member?.ecosystemRole?.name + (' (You)')  : member?.ecosystemRole?.name}
 									</span>
 								) : (
 									'Not available'
@@ -158,35 +158,6 @@ const MemberList = () => {
 				<h2 className="text-xl dark:text-white font-medium font-body">
 					Ecosystem Members
 				</h2>
-
-				<Button
-					type="submit"
-					color="bg-primary-800"
-					onClick={() => {
-						window.location.href = `${pathRoutes.ecosystem.sentinvitation}`;
-					}}
-					className="bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 
-						ring-2 text-black font-medium rounded-lg text-sm
-						 ml-auto dark:text-white dark:hover:text-black 
-						dark:hover:bg-primary-50"
-				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="27"
-						height="16"
-						viewBox="0 0 27 16"
-						fill="none"
-					>
-						<path
-							d="M8.8125 3.29502H4.125M8.8125 7.99999H1M8.8125 12.705H4.125M15.0352 1.12145L26 7.99999L15.0352 14.8785C14.4544 15.243 13.7206 14.7341 13.855 14.0598L15.0625 7.99999L13.855 1.94019C13.7206 1.266 14.4544 0.757051 15.0352 1.12145Z"
-							stroke="#1F4EAD"
-							stroke-width="1.5"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						/>
-					</svg>
-					<span className="hidden sm:block ml-2">Sent Invitations</span>
-				</Button>
 			</div>
 			<AlertComponent
 				message={error}
