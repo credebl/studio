@@ -275,7 +275,7 @@ const UserDashBoard = () => {
 							Recent Activity
 						</h3>
 						{activityList && activityList?.length === 0 && (
-							<div className="px-2 py-1 text-black-800  text-xs">
+							<div className="px-2 py-1 text-black-800 dark:text-white text-xs ">
 								Looks like there are no activities to display at the moment.
 							</div>
 						)}
