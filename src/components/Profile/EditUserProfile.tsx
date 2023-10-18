@@ -179,12 +179,12 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile}: E
     firstName: yup.string()
       .required("First Name is required")
       .min(2, 'First name must be at least 2 characters')
-      .max(255, 'First name must be at most 255 characters'),
+      .max(50, 'First name must be at most 255 characters'),
 
     lastName: yup.string()
       .required("Last Name is required")
       .min(2, 'Last name must be at least 2 characters')
-      .max(255, 'Last name must be at most 255 characters')
+      .max(50, 'Last name must be at most 255 characters')
 
   });
 

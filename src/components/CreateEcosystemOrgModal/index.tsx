@@ -233,13 +233,20 @@ const CreateEcosystemOrgModal = (props: IProps) => {
     const renderEcosystemModal = () => {
         const popupName = props.isorgModal ? "Organization" : "Ecosystem"
         return (
-            <Modal show={props.openModal} onClose={() => {
+            
+            <Modal show={props.openModal} onClose={() => { 
+
                 setLogoImage({
-                    logoFile: "",
-                    imagePreviewUrl: "",
+                    logoFile: " ",
+                    imagePreviewUrl: " ",
                     fileName: ''
                 })
-                setFormData(initialFormData)
+
+                setFormData({
+                    name: " ",
+                    description: " ",
+                  });                
+                  
                 props.setOpenModal(false)
             }
             }>
@@ -269,6 +276,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
                         ) => {
 
                             submit(values)
+                            resetForm();
 
                         }}
                     >
