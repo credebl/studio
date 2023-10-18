@@ -202,7 +202,7 @@ const ViewSchemas = () => {
       <div className="mb-4 col-span-full xl:mb-2">
         <BreadCrumbs />
 
-        <div className='flex items-center content-between'>
+        <div className='flex items-center justify-between'>
           <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
             Schemas
           </h1>
