@@ -12,14 +12,16 @@ interface IProps {
   created: string,
   onClickCallback: (schemaId: string, attributes: string[], issuerDid: string, created: string) => void;
 }
-const SchemaCard = (props: { className?: string, schemaName: string, version: string, schemaId: string, issuerDid: string, attributes: [], created: string, onClickCallback: (schemaId: string, attributes: string[], issuerDid: string, created: string) => void; }) => {
+const SchemaCard = (props: IProps) => {
   return (
     <Card onClick={() => {
       props.onClickCallback(props.schemaId, props.attributes, props.issuerDid, props.created)
-    }} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer h-full w-full overflow-hidden'>
+    }}
+    id="schema-cards" 
+    className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer h-full w-full overflow-hidden'>
       <div className="flex justify-between items-baseline">
-        <div className='overflow-hidden min-w-[8rem] max-w-100/10rem'>
-          <h5 className="text-xl font-bold truncate text-gray-900 dark:text-white">
+        <div className='min-w-[8rem] max-w-100/10rem'>
+          <h5 className="text-xl font-bold leading-[1.1] text-gray-900 dark:text-white break-words truncate line-clamp-2 max-h-[43px] whitespace-normal" style={{ display: "-webkit-box" }}>
             {props.schemaName}
           </h5>
           <p className='dark:text-white'>
@@ -47,7 +49,7 @@ const SchemaCard = (props: { className?: string, schemaName: string, version: st
 
       <div className="flow-root">
         <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-          <li className="py-3 sm:py-2">
+          <li className="">
             <div className="flex items-center space-x-4">
               <div className="block text-base font-semibold text-gray-900 dark:text-white overflow-hidden overflow-ellipsis">
                 Attributes:

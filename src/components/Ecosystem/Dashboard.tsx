@@ -49,25 +49,26 @@ export const RoleTablet = ({ role }: IRoleTablet) => (
 );
 
 const Dashboard = () => {
-	const [ecosystemDetails, setEcosystemDetails] = useState<IEcosystem | null>();
-	const [success, setSuccess] = useState<string | null>(null);
-	const [failure, setFailure] = useState<string | null>(null);
-	const [message, setMessage] = useState<string | null>(null);
-	const [loading, setLoading] = useState<boolean | null>(true);
-	const [ecosystemId, setEcosystemId] = useState('');
-	const [editOpenModal, setEditOpenModal] = useState<boolean>(false);
-	const [dropdownOpen, setDropdownOpen] = useState(true);
-	const [error, setError] = useState<string | null>(null);
-	const [openModal, setOpenModal] = useState<boolean>(false);
-	const [viewButton, setViewButton] = useState<boolean>(false);
-	const [currentPage, setCurrentPage] = useState(initialPageState);
-	const [isEcosystemLead, setIsEcosystemLead] = useState(false);
-	const [ecosystemDashboard, setEcosystemDashboard] =
-		useState<EcosystemDashboard | null>(null);
-	const [ecosystemDetailsNotFound, setEcosystemDetailsNotFound] =
-		useState(false);
-	const [orgId, setOrgId] = useState('');
-	const [isOrgModal, setIsOrgModal] = useState(false);
+    const [ecosystemDetails, setEcosystemDetails] = useState<IEcosystem | null>();
+    const [success, setSuccess] = useState<string | null>(null);
+    const [failure, setFailure] = useState<string | null>(null);
+    const [message, setMessage] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean | null>(true);
+    const [leadOrg, setLeadOrg] = useState("")
+    const [ecosystemId, setEcosystemId] = useState('');
+    const [editOpenModal, setEditOpenModal] = useState<boolean>(false);
+    const [dropdownOpen, setDropdownOpen] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [openModal, setOpenModal] = useState<boolean>(false);
+    const [viewButton, setViewButton] = useState<boolean>(false);
+    const [currentPage, setCurrentPage] = useState(initialPageState);
+    const [isEcosystemLead, setIsEcosystemLead] = useState(false);
+    const [ecosystemDashboard, setEcosystemDashboard] =
+        useState<EcosystemDashboard | null>(null);
+    const [ecosystemDetailsNotFound, setEcosystemDetailsNotFound] =
+        useState(false);
+    const [orgId, setOrgId] = useState('');
+    const [isOrgModal, setIsOrgModal] = useState(false);
 
 	const createEcosystemModel = () => {
 		setOpenModal(true);
@@ -166,7 +167,8 @@ const Dashboard = () => {
 		if (ecosystemId && orgId) {
 			const response = await getEcosystemDashboard(ecosystemId, orgId);
 
-			const { data } = response as AxiosResponse;
+        if (ecosystemId && orgId) {
+            const response = await getEcosystemDashboard(ecosystemId, orgId);
 
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 				setEcosystemDashboard(data?.data);
@@ -179,12 +181,17 @@ const Dashboard = () => {
 		setLoading(false);
 	};
 
-	const checkOrgId = async () => {
-		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-		if (orgId) {
-			await getAllEcosystemInvitations();
-		}
-	};
+            if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+                setEcosystemDashboard(data?.data);
+                setLeadOrg(data?.data?.ecosystemLead?.orgName || "")
+            } else {
+                setFailure(response as string);
+                setFailure(response as string);
+                setLoading(false);
+            }
+        }
+        setLoading(false);
+    };
 
 	const getDashboardData = async () => {
 		await checkOrgId();
@@ -295,16 +302,45 @@ const Dashboard = () => {
 				</>
 			)}
 
-			{ecosystemDetailsNotFound && (
-				<AlertComponent
-					message="Ecosystem details not found."
-					type="failure"
-					onAlertClose={() => {
-						setEcosystemDetailsNotFound(false);
-						setFailure(null);
-					}}
-				/>
-			)}
+                                    <p className="mb-1 text-base font-normal text-gray-900 dark:text-white">
+                                        {ecosystemDetails?.description}
+                                    </p>
+                                    {!isEcosystemLead ? (
+                                        <div className="text-md font-semibold mt-6">
+                                            <div className="flex">
+                                                <span className="text-[#3D3D3D] dark:text-white min-w-[10rem]">
+                                                    Ecosystem Owner
+                                                </span>
+                                                <span className="dark:text-white">:</span>{' '}
+                                                <span className="text-[#5E5972] dark:text-white ml-2">
+                                                    {leadOrg}
+                                                </span>
+                                            </div>
+                                            <div className="flex">
+                                                <span className="text-[#3D3D3D] dark:text-white min-w-[10rem]">
+                                                    Ecosystem Lead
+                                                </span>
+                                                <span className="dark:text-white">:</span>
+                                                <span className="text-[#5E5972] dark:text-white ml-2">
+                                                    {leadOrg}
+                                                </span>
+                                            </div>
+                                            <div className="flex">
+                                                <span className='text-[#3D3D3D] dark:text-white min-w-[10rem]'>Joined since</span> <span className='dark:text-white'>:</span><span className='text-[#5E5972] dark:text-white ml-2'><DateTooltip date={ecosystemDetails.joinedDate}>
+                                                    {dateConversion(ecosystemDetails.joinedDate || "")}
+                                                </DateTooltip ></span>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center">
+                                            <span className="dark:text-white">Role: </span>{' '}
+                                            <RoleTablet role={ecosystemDetails?.role || ''} />
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (
+                                <CustomSpinner />
+                            )}
 
 			{ecosystemDetails ? (
 				<div>
