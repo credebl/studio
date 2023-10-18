@@ -93,14 +93,14 @@ const ResetPassword = () => {
             const payload = {
                 password: password
             }
-          const passkeyUserDetailsResp = await addPasskeyUserDetails(payload, email);
-          const { data } = passkeyUserDetailsResp as AxiosResponse;
-      
-          if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-            setLoading(false);
-          } else {
-            setErrMsg(passkeyUserDetailsResp as string);
-          }
+            const passkeyUserDetailsResp = await addPasskeyUserDetails(payload, email);
+            const { data } = passkeyUserDetailsResp as AxiosResponse;
+
+            if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+                setLoading(false);
+            } else {
+                setErrMsg(passkeyUserDetailsResp as string);
+            }
         } catch (error) {
           console.error('An error occurred:', error);
           setErrMsg('An error occurred while updating password details.');

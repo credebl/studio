@@ -62,7 +62,8 @@ const SignUpUserPassword = ({
 		const { data } = userRsp as AxiosResponse;
 		setLoading(false);
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-			window.location.href = `/authentication/sign-in?signup=true?fidoFlag=${fidoFlag}`;
+			window.location.href = `/authentication/sign-in?signup=true&email=${userEmail}&fidoFlag=${fidoFlag}&method=password`
+
 		} else {
 			setErrMsg(userRsp as string);
 		}
@@ -173,7 +174,7 @@ const SignUpUserPassword = ({
 												<div className="text-primary-700 font-inter text-base font-medium leading-5">
 													<div className="block mb-2 text-sm font-medium  dark:text-white">
 														<Label
-															className="text-primary-700"
+															className="text-primary-700 dark:!text-primary-700"
 															htmlFor="password"
 															value="Password"
 														/>
@@ -229,7 +230,7 @@ const SignUpUserPassword = ({
 												<div className="text-primary-700 font-inter text-base font-medium leading-5 mt-8">
 													<div className="block mb-2 text-sm font-medium  dark:text-white">
 														<Label
-															className="text-primary-700"
+															className="text-primary-700 dark:!text-primary-700"
 															htmlFor="confirmPassword"
 															value="Confirm Password"
 														/>

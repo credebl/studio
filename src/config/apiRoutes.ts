@@ -6,6 +6,14 @@ export const apiRoutes = {
 		addDetails: '/auth/signup',
 		passkeyUserDetails: '/users/password/',
 		profile: '/profile',
+		generateRegistration: 'auth/passkey/generate-registration',
+		verifyRegistration: 'auth/passkey/verify-registration/',
+		getDeviceList: 'auth/passkey/',
+		updateDeviceName: 'auth/passkey',
+		userUpdate: 'auth/passkey/user-details',
+		fidoDevice: 'auth/passkey',
+		fidoAuthentication: 'auth/passkey/authentication-options',
+		fidoVerifyAuthentication: 'auth/passkey/verify-authentication/',
 	},
 	users: {
 		userProfile: '/users/profile',
@@ -26,7 +34,6 @@ export const apiRoutes = {
 		orgRoles: '/orgs/roles',
 		editUserROle: '/user-roles',
 	},
-
 	connection: {
 		create: '/connections',
 	},
@@ -36,16 +43,6 @@ export const apiRoutes = {
 		getSchemaById: '/schemas',
 		createCredentialDefinition: '/cred-defs',
 		getCredDefBySchemaId: '/schemas',
-	},
-	fido: {
-		generateRegistration: 'fido/generate-registration-options',
-		verifyRegistration: 'fido/verify-registration/',
-		getDeviceList: 'fido/user-details/',
-		updateDeviceName: 'fido/device-name',
-		userUpdate: 'fido/user-update',
-		fidoDevice: 'fido/device',
-		fidoAuthentication: 'Fido/generate-authentication-options',
-		fidoVerifyAuthentication: 'Fido/verify-authentication/',
 	},
 	Issuance: {
 		getIssuedCredentials: '/credentials',
@@ -77,7 +74,7 @@ export const apiRoutes = {
 			createCredDefRequest: '/transaction/cred-def',
 			signRequest: '/transaction/sign/',
 			submitRequest: '/transaction/sumbit/',
-            rejectRequest: '/transactions/',
+			rejectRequest: '/transactions/',
 			transactionApproval: '/transaction-approval/',
 		},
 		invitations: '/invitations',
