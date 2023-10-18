@@ -293,7 +293,7 @@ const CreateSchema = () => {
                                                 return (
                                                     <>
                                                         <div className="dark:text-white d-flex justify-content-center align-items-center mb-1">
-                                                            Attributes <span className="dark:text-white text-red-600">*</span>
+                                                            Attributes <span className="text-red-600">*</span>
 
                                                         </div>
                                                         <div className="flex flex-col">
@@ -574,7 +574,7 @@ const CreateSchema = () => {
                                             type="reset"
                                             color='bg-primary-800'
                                             disabled={createloader}
-                                            className='dark:text-white bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto dark:hover:text-primary-700'
+                                            className='dark:text-white bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto dark:hover:text-black'
 
                                             style={{ height: '2.6rem', width: '6rem', minWidth: '2rem' }}
                                         >
