@@ -62,10 +62,10 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
                 onClickCallback(data)
             }
         }}
-            className={`${cardTransitionDisabled ? "" : "transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer"}  ${enableAction ? "cursor-pointer" : cardTransitionDisabled ? "cursor-default" : "cursor-not-allowed"} ${cardTransitionDisabled && "shadow-none"} m-3 h-full`}
+            className={`${cardTransitionDisabled ? "" : "transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer"}  ${enableAction ? "cursor-pointer" : cardTransitionDisabled ? "cursor-default" : "cursor-not-allowed"} ${cardTransitionDisabled && "shadow-none"} m-3 h-full m-0 sm:m-3`}
         >      <div className="flex justify-between items-start">
-                <div>
-                    <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
+                <div className='min-w-[6rem] max-w-100/13rem'>
+                    <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white break-words">
                         {isSchema ? requestData?.name : requestData?.tag}
                     </h5>
                     {
@@ -112,6 +112,9 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
                 }
                 <p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
                     <span className="font-semibold">Author DID:</span> {data?.authorDid}
+                </p>
+                <p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
+                    <span className="font-semibold">Endorser DID:</span> {data?.endorserDid}
                 </p>
                 <p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
                     <span className="font-semibold">Ledger:</span> {data?.authorDid.split(":")[2]}
