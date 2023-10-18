@@ -223,7 +223,7 @@ const EndorsementList = () => {
 					<div className="flex flex-col items-center justify-between mb-4 pr-4 sm:flex-row">
 						<div
 							id="schemasSearchInput"
-							className="mb-2 pl-2 flex space-x-2 items-end"
+							className="mb-2 pl-0 sm:pl-2 flex space-x-2 items-end"
 						>
 							<SearchInput onInputChange={onSearch} />
 							<select
@@ -272,7 +272,7 @@ const EndorsementList = () => {
 					>
 						<div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
 							{schemaList.map((item: IEndorsementList) => (
-								<div className="p-2" key={`endorsement-cards${item.id}`}>
+								<div className="px-0 sm:px-2" key={`endorsement-cards${item.id}`}>
 									<EndorsementCard
 										fromEndorsementList={true}
 										data={item}

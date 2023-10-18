@@ -23,10 +23,10 @@ const CredDeffCard = (props: IProps) => {
   }
 
   return (
-    <Card onClick={redirectToIssuance} className=' cursor-pointer overflow-hidden overflow-ellipsis' style={{ maxHeight: '100%', maxWidth: '100%', overflow: 'auto' }}>
+    <Card onClick={redirectToIssuance} className='cursor-pointer overflow-hidden overflow-ellipsis h-full' style={{ maxHeight: '100%', maxWidth: '100%', overflow: 'auto' }}>
       <div className="mb-1 lg:flex lg:items-center justify-between">
         <div className="lg:w-1/2 md:w-2/3"> {/* This will take up 2/3 of the available width on larger screens */}
-          <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
+          <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white break-words">
             {props.credDeffName}
           </h5>
         </div>
