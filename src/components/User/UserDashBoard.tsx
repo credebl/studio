@@ -270,13 +270,13 @@ const UserDashBoard = () => {
 
 			<div className="">
 				<div className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800 xl:mb-0">
-					<div className="flex items-start justify-start mb-4">
+					<div className="items-start justify-start mb-4">
 						<h3 className="text-xl font-semibold text-gray-900 dark:text-white ">
 							Recent Activity
 						</h3>
 						{activityList && activityList?.length === 0 && (
-							<div className="px-2 py-1 text-black-800 dark:text-white text-xs ">
-								Looks like there are no activities to display at the moment.
+							<div className="py-1 text-black-800 dark:text-white text-xs flex items-center" >
+								Looks like there is no activity to display at the moment.
 							</div>
 						)}
 					</div>
