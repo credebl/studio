@@ -155,7 +155,7 @@ export const addPasskeyUserDetails = async(payload: AddPassword, email:string) =
           }, }
     }
     try{
-        const response = await axiosPost(details)
+        const response = await axiosPut(details)
         return response
     }
     catch(error){
