@@ -6,17 +6,18 @@ import { useEffect, useState } from 'react';
 import { Alert } from 'flowbite-react';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
-import Credential_Card from '../../assets/Credential_Card.svg';
+import credIcon from '../../assets/cred-icon.svg';
 import CustomAvatar from '../Avatar';
 import CustomSpinner from '../CustomSpinner';
 import EditOrgdetailsModal from './EditOrgdetailsModal';
 import OrganizationDetails from './OrganizationDetails';
 import { Roles } from '../../utils/enums/roles';
-import Schema_Card from '../../assets/Schema_Card.svg';
-import User_Card from '../../assets/User_Card.svg';
+import schemaCard from '../../assets/schema-icon.svg';
+import userCard from '../../assets/users-icon.svg';
 import WalletSpinup from './WalletSpinup';
 import { getFromLocalStorage } from '../../api/Auth';
 import { pathRoutes } from '../../config/pathRoutes';
+import DashboardCard from '../../commonComponents/DashboardCard';
 
 const Dashboard = () => {
     const [orgData, setOrgData] = useState<Organisation | null>(null);
@@ -46,12 +47,12 @@ const Dashboard = () => {
     const getUserRoles = async () => {
         const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES)
         const roles = orgRoles.split(',')
-        setUserRoles(roles)        
+        setUserRoles(roles)
     }
 
     useEffect(() => {
         getUserRoles()
-    },[])
+    }, [])
 
 
 
@@ -140,52 +141,52 @@ const Dashboard = () => {
                 <div
                     className="mt-4 flex flex-wrap items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
                 >
-  
+
                     <div
                         className="items-center flex flex-wrap"
                     >
-                      
-												 <div className='mr-4'>
+
+                        <div className='mr-4'>
                             {(orgData?.logoUrl) ? <CustomAvatar size='80' src={orgData?.logoUrl} /> : <CustomAvatar size='90' name={orgData?.name} />}
                         </div>
-												{orgData ?
-                        <div>
-                            <h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
-                                {orgData?.name}
-                            </h3>
+                        {orgData ?
+                            <div>
+                                <h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
+                                    {orgData?.name}
+                                </h3>
 
-                            <p className='mb-1 text-base font-normal text-gray-900 dark:text-white'>
-                                {orgData?.description}
-                            </p>
+                                <p className='mb-1 text-base font-normal text-gray-900 dark:text-white'>
+                                    {orgData?.description}
+                                </p>
 
-                            <p className='mb-1 text-base font-normal text-gray-900 dark:text-white'>
-                                Profile view : 
-                                <span className='font-semibold'>
-                                {orgData?.publicProfile ? " Public" : "Private"}
-                                </span>
-                            </p>
+                                <p className='mb-1 text-base font-normal text-gray-900 dark:text-white'>
+                                    Profile view :
+                                    <span className='font-semibold'>
+                                        {orgData?.publicProfile ? " Public" : "Private"}
+                                    </span>
+                                </p>
 
-                        </div>
-												: 
-												<CustomSpinner/>
-												}
+                            </div>
+                            :
+                            <CustomSpinner />
+                        }
                     </div>
 
                     {
-                        (userRoles.includes(Roles.OWNER) || userRoles.includes(Roles.ADMIN)) 
-                        &&  <div className="inline-flex items-center">
-                        <button type="button" 
-                        >
-                            <svg aria-hidden="true" className="mr-1 -ml-1 w-5 h-5"
-                                fill="currentColor" viewBox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg" color='#3558A8'
-                                onClick={EditOrgDetails}><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"
-                                >
-                                </path><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"></path></svg>
+                        (userRoles.includes(Roles.OWNER) || userRoles.includes(Roles.ADMIN))
+                        && <div className="inline-flex items-center">
+                            <button type="button"
+                            >
+                                <svg aria-hidden="true" className="mr-1 -ml-1 w-5 h-5"
+                                    fill="currentColor" viewBox="0 0 20 20"
+                                    xmlns="http://www.w3.org/2000/svg" color='#3558A8'
+                                    onClick={EditOrgDetails}><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"
+                                    >
+                                    </path><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"></path></svg>
 
-                        </button>
-                    </div>
-                    }                 
+                            </button>
+                        </div>
+                    }
 
                     <EditOrgdetailsModal
                         orgData={orgData}
@@ -210,58 +211,14 @@ const Dashboard = () => {
                     <div
                         className="grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-3 2xl:grid-cols-3"
                     >
-                        <div
-                            className="items-center justify-between p-4 bg-white border-0 border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-103 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${User_Card})`, minHeight: '133px' }}
-                        >
-                            <div className="w-full" onClick={redirectOrgUsers}>
-                                <h3 className="text-base font-medium text-white">
-                                    Users
-                                </h3>
-                                <span
-                                    className="text-2xl font-semi-bold leading-none text-white sm:text-3xl dark:text-white"
-                                >{orgDashboard?.usersCount}</span
-                                >
+                        <DashboardCard icon={userCard} backgroundColor="linear-gradient(279deg, #FFF -18.24%, #2F80ED -0.8%, #1F4EAD 61.45%)" label="Users" value={orgDashboard?.usersCount ?? 0} onClickHandler={redirectOrgUsers} />
 
-                            </div>
-                        </div>
-
-                        <div
-                            className={`items-center justify-between p-4 bg-white border-0 border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-103 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover ${!walletStatus ? 'pointer-events-none' : ''}`}
-                            style={{ backgroundImage: `url(${Schema_Card})`, minHeight: '133px' }}
-                            onClick={() => {
-                                if (walletStatus) {
-                                    window.location.href = pathRoutes.organizations.schemas;
-                                }
-                            }}
-                        > 
-                            <div className="w-full">
-                                <h3 className="text-base font-medium text-white">
-                                    Schemas
-                                </h3>
-                                <span className="text-2xl font-semi-bold leading-none text-white sm:text-3xl dark:text-white">
-                                    {orgDashboard?.schemasCount}
-                                </span>
-                            </div>
-                        </div>
-                        <div
-
-                            className="items-center justify-between p-4 bg-white border-0 border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-103 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${Credential_Card})`, minHeight: '133px' }}
-                        >
-
-                            <div className="w-full" >
-
-                                <h3 className="text-base font-medium text-white">
-
-                                    Credentials
-                                </h3>
-                                <span
-
-                                    className="text-2xl font-semi-semi-bold leading-none text-white sm:text-3xl dark:text-white"
-                                >{orgDashboard?.credentialsCount}</span
-                                >
-
-                            </div>
-                        </div>
+                        <DashboardCard icon={schemaCard} classes={!walletStatus ? 'pointer-events-none' : ''} backgroundColor="linear-gradient(279deg, #FFF -28.6%, #5AC2E8 21.61%, #0054FF 68.63%)" label="Schemas" value={orgDashboard?.schemasCount ?? 0} onClickHandler={() => {
+                            if (walletStatus) {
+                                window.location.href = pathRoutes.organizations.schemas;
+                            }
+                        }} />
+                        <DashboardCard icon={credIcon} backgroundColor="linear-gradient(279deg, #FFF -34.06%, #FFC968 43.71%, #FEB431 111.13%)" label="Credentials" value={orgDashboard?.credentialsCount ?? 0} />
                     </div>
                 </div>
 
@@ -280,14 +237,14 @@ const Dashboard = () => {
                 }
                 {
                     loading
-                        ? (<div className="flex items-center justify-center m-4">                           
-                            <CustomSpinner/>
+                        ? (<div className="flex items-center justify-center m-4">
+                            <CustomSpinner />
                         </div>)
                         : walletStatus === true
                             ? (<OrganizationDetails orgData={orgData} />)
                             : ((userRoles.includes(Roles.OWNER) || userRoles.includes(Roles.ADMIN))
-                        && <WalletSpinup orgName={orgData?.name} setWalletSpinupStatus={(flag: boolean) => setWalletSpinupStatus(flag)} />)
-                            
+                                && <WalletSpinup orgName={orgData?.name} setWalletSpinupStatus={(flag: boolean) => setWalletSpinupStatus(flag)} />)
+
 
                 }
 
