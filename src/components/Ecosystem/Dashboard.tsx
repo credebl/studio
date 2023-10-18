@@ -54,6 +54,7 @@ const Dashboard = () => {
     const [failure, setFailure] = useState<string | null>(null);
     const [message, setMessage] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean | null>(true);
+    const [leadOrg, setLeadOrg] = useState("")
     const [ecosystemId, setEcosystemId] = useState('');
     const [editOpenModal, setEditOpenModal] = useState<boolean>(false);
     const [dropdownOpen, setDropdownOpen] = useState(true);
@@ -161,13 +162,14 @@ const Dashboard = () => {
         const ecosystemId = await getEcosystemId();
         const data: ICheckEcosystem = await checkEcosystem();
 
-        if (ecosystemId && orgId && data.isEcosystemLead) {
+        if (ecosystemId && orgId) {
             const response = await getEcosystemDashboard(ecosystemId, orgId);
 
             const { data } = response as AxiosResponse;
 
             if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
                 setEcosystemDashboard(data?.data);
+                setLeadOrg(data?.data?.ecosystemLead?.orgName || "")
             } else {
                 setFailure(response as string);
                 setFailure(response as string);
@@ -304,16 +306,16 @@ const Dashboard = () => {
                                                 </span>
                                                 <span className="dark:text-white">:</span>{' '}
                                                 <span className="text-[#5E5972] dark:text-white ml-2">
-                                                    NA
+                                                    {leadOrg}
                                                 </span>
                                             </div>
                                             <div className="flex">
                                                 <span className="text-[#3D3D3D] dark:text-white min-w-[10rem]">
                                                     Ecosystem Lead
-                                                </span>{' '}
+                                                </span>
                                                 <span className="dark:text-white">:</span>
                                                 <span className="text-[#5E5972] dark:text-white ml-2">
-                                                    NA
+                                                    {leadOrg}
                                                 </span>
                                             </div>
                                             <div className="flex">

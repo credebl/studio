@@ -27,25 +27,29 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
     }, [])
 
     const getAttributes = () => {
-        switch (true) {
-            case isSchema:
-                if (requestData?.attr_names && requestData?.attr_names.length > 0) {
-                    if (allAttributes) {
-                        return requestData?.attr_names
+        try {
+            switch (true) {
+                case isSchema:
+                    if (requestData?.attr_names && requestData?.attr_names.length > 0) {
+                        if (allAttributes) {
+                            return requestData?.attr_names
+                        }
+                        return requestData?.attr_names?.slice(0, 3)
                     }
-                    return requestData?.attr_names?.slice(0, 3)
-                }
-                return []
-            case !isSchema && allAttributes:
-                if (data?.requestBody?.schemaDetails?.version && data?.requestBody?.schemaDetails?.version.length > 0) {
-                    if (allAttributes) {
-                        return data?.requestBody?.schemaDetails?.version
+                    return []
+                case !isSchema:
+                    if (data?.requestBody && data?.requestBody?.schemaDetails && data?.requestBody?.schemaDetails?.attributes && data?.requestBody?.schemaDetails?.attributes.length > 0) {
+                        if (allAttributes) {
+                            return data?.requestBody?.schemaDetails?.attributes
+                        }
+                        return data?.requestBody?.schemaDetails?.attributes?.slice(0, 3)
                     }
-                    return data?.requestBody?.schemaDetails?.version?.slice(0, 3)
-                }
-                return []
-            default:
-                return []
+                    return []
+                default:
+                    return []
+            }
+        } catch (err) {
+            console.log("Attribute Error::", err)
         }
     }
 
@@ -62,10 +66,11 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
                 onClickCallback(data)
             }
         }}
+        id="schema-cards"
             className={`${cardTransitionDisabled ? "" : "transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer"}  ${enableAction ? "cursor-pointer" : cardTransitionDisabled ? "cursor-default" : "cursor-not-allowed"} ${cardTransitionDisabled && "shadow-none"} m-3 h-full m-0 sm:m-3`}
         >      <div className="flex justify-between items-start">
                 <div className='min-w-[6rem] max-w-100/13rem'>
-                    <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white break-words">
+                    <h5 className="text-xl font-bold leading-[1.1] text-gray-900 dark:text-white break-words truncate line-clamp-2 max-h-[43px] whitespace-normal" style={{ display: "-webkit-box" }}>
                         {isSchema ? requestData?.name : requestData?.tag}
                     </h5>
                     {
@@ -99,14 +104,14 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
                     {isSchema ? "Schema" : "Credential Definition"}
                 </div>
             </div>
-            < div className="min-w-0 flex-1" >
+            < div className="min-w-0 flex-none" >
                 {!isSchema &&
                     <>
                         <p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
-                            <span className="font-semibold">Schema Name:</span> {data?.requestBody?.schemaDetails?.name || "NA"}
+                            <span className="font-semibold">Schema Name:</span> {data?.requestBody?.schemaDetails?.name || "-"}
                         </p>
                         <p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
-                            <span className="font-semibold">Schema Version:</span> {data?.requestBody?.schemaDetails?.version || "NA"}
+                            <span className="font-semibold">Schema Version:</span> {data?.requestBody?.schemaDetails?.version || "-"}
                         </p>
                     </>
                 }
@@ -117,7 +122,7 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
                     <span className="font-semibold">Endorser DID:</span> {data?.endorserDid}
                 </p>
                 <p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
-                    <span className="font-semibold">Ledger:</span> {data?.authorDid.split(":")[2]}
+                    <span className="font-semibold">Ledger:</span> {data?.authorDid ? data?.authorDid?.split(":")[2] : "-"}
                 </p>
                 {isEcosystemLead &&
                     <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
@@ -125,33 +130,31 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
                     </p>
                 }
             </div>
-
-            {
-                isSchema &&
-                <div className="flow-root">
+            {attributesData && attributesData.length > 0 &&
+                <div className="flow-root mt-auto">
                     <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-                        <li className="py-3 sm:py-2">
+                        <li className="">
                             <div className="flex items-center space-x-4">
                                 <div className="block text-base font-semibold text-gray-900 dark:text-white">
                                     Attributes:
                                 </div>
                                 <div className="flex flex-wrap items-start overflow-hidden overflow-ellipsis">
 
-                                    {attributesData && attributesData.length > 0 && (
-                                        <>
-                                            {attributesData.map((element: string, index: number) => (
-                                                <div key={`schema-card-attributes${element}`}>
-                                                    <span
-                                                        style={{ display: 'block' }}
-                                                        className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
-                                                    >
-                                                        {element}
-                                                    </span>
-                                                </div>
-                                            ))}
-                                            {!allAttributes && attributesData.length === 3 && <span>...</span>}
-                                        </>
-                                    )}
+                                    {attributesData.map((element: string | { attributeName: string }) => {
+                                        const attribute = typeof element === "string" ? element : element?.attributeName
+                                        return (
+                                            <div key={`schema-card-attributes${attribute}`}>
+                                                <span
+                                                    style={{ display: 'block' }}
+                                                    className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
+                                                >
+                                                    {attribute}
+                                                </span>
+                                            </div>
+                                        )
+                                    })}
+                                    {!allAttributes && attributesData.length > 3 && <span>...</span>}
+
                                 </div>
                             </div>
                         </li>
