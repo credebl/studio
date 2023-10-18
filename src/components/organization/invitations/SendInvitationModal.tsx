@@ -29,7 +29,7 @@ interface RoleI {
 }
 
 const SendInvitationModal = (props: {
-	getAllSentInvitations: ()=> void;
+	getAllSentInvitations?: ()=> void;
 	ecosystemId? : string | undefined;
 	flag?: boolean;
 	openModal: boolean;
