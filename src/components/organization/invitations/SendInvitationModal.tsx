@@ -29,7 +29,8 @@ interface RoleI {
 }
 
 const SendInvitationModal = (props: {
-	ecosystemId?: string;
+	getAllSentInvitations: ()=> void;
+	ecosystemId? : string | undefined;
 	flag?: boolean;
 	openModal: boolean;
 	setMessage: (message: string) => void;
@@ -116,8 +117,8 @@ const SendInvitationModal = (props: {
 	};
 
 	const sendEcoSystemInvitations = async () => {
-		setLoading(true);
 
+		setLoading(true);
 		const invitationPayload = invitations.map((invitation) => {
 			return {
 				email: invitation.email,
@@ -132,8 +133,11 @@ const SendInvitationModal = (props: {
 		const { data } = resCreateOrg as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-			props.setMessage(data?.message);
-			props.setOpenModal(false);
+
+			props?.setMessage(data?.message);
+			props?.setOpenModal(false);
+			props?.getAllSentInvitations()
+
 		} else {
 			setErrMsg(resCreateOrg as string);
 		}
