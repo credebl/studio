@@ -23,7 +23,7 @@ const MemberList = () => {
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 
 	const getEcosystemMembers = async () => {
-		const userOrgId= await getFromLocalStorage(storageKeys.ORG_ID)
+		const userOrgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		setLoading(true);
 		const response = await getEcosystemMemberList(
 			currentPage.pageNumber,
@@ -31,7 +31,7 @@ const MemberList = () => {
 			'',
 		);
 		const { data } = response as AxiosResponse;
-		
+
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const totalPages = data?.data?.totalPages;
 
@@ -51,13 +51,14 @@ const MemberList = () => {
 						return 0;
 				}
 			};
-			const sortedMemberList = data?.data?.members?.sort(compareMembers);				
+			const sortedMemberList = data?.data?.members?.sort(compareMembers);
 			const membersData = sortedMemberList?.map(
 				(member: {
 					orgId: string;
-					ecosystem: {createDateTime: string};
+					ecosystem: { createDateTime: string };
 					ecosystemRole: { name: string };
 					orgName: string;
+					orgDid: string;
 					role: string;
 					createDateTime: any;
 					status: string;
@@ -76,15 +77,29 @@ const MemberList = () => {
 									) || 'Not available',
 							},
 							{
+								data: member.orgDid ? (
+									<span className="text-sm mr-2 px-2.5 py-1 rounded-md">
+										{member?.orgDid}
+									</span>
+								) : (
+									<span className="text-sm mr-2 px-2.5 py-1 rounded-md">
+										Not available
+									</span>
+								),
+							},
+							{
 								data: member.ecosystemRole.name ? (
-									<span
-										className={`${
-											member.ecosystemRole.name === 'Ecosystem Lead'
-												? 'bg-primary-100 text-primary-800 dark:bg-gray-900 dark:text-primary-400 border border-primary-100 dark:border-primary-500'
-												: 'bg-green-100 text-green-800 dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500'
-										} text-sm font-medium mr-2 px-2.5 py-1 rounded-md`}
-									>
-										  {member?.orgId === userOrgId ? member?.ecosystemRole?.name + (' (You)')  : member?.ecosystemRole?.name}
+									<span className="text-sm px-2.5 py-1 rounded-md">
+										<span
+											className={`${
+												member.ecosystemRole.name === 'Ecosystem Lead'
+													? 'bg-primary-100 text-primary-800 dark:bg-gray-900 dark:text-primary-400 border border-primary-100 dark:border-primary-500'
+													: 'bg-green-100 text-green-800 dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500'
+											} text-sm font-medium mr-1 px-2.5 py-1 rounded-md`}
+										>
+											{member?.ecosystemRole?.name}
+										</span>
+										{member?.orgId === userOrgId ? '(You)' : ''}
 									</span>
 								) : (
 									'Not available'
@@ -99,23 +114,11 @@ const MemberList = () => {
 												: 'bg-green-100 text-green-700 dark:bg-gray-700 dark:text-green-400 rounded border border-green-100 dark:border-green-500'
 										} text-sm font-medium mr-2 px-2.5 py-1 rounded-md`}
 									>
-										{member.status}
+										{member.status.charAt(0) +
+											member.status.slice(1).toLowerCase()}
 									</span>
 								) : (
 									'Not available'
-								),
-							},
-							{
-								data: (
-									<svg
-										className="ml-4 w-4 h-4 text-gray-800 cursor-pointer dark:text-white"
-										aria-hidden="true"
-										xmlns="http://www.w3.org/2000/svg"
-										fill="currentColor"
-										viewBox="0 0 4 15"
-									>
-										<path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
-									</svg>
 								),
 							},
 						],
@@ -149,9 +152,9 @@ const MemberList = () => {
 	const header = [
 		{ columnName: 'Organization' },
 		{ columnName: 'Member Since' },
-		{ columnName: 'Role' },
+		{ columnName: 'Organization Did', width: 'w-1.5 pl-6' },
+		{ columnName: 'Role', width: 'pl-7' },
 		{ columnName: 'Status' },
-		{ columnName: 'Action' },
 	];
 
 	return (
