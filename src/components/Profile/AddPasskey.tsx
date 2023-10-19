@@ -162,6 +162,8 @@ const AddPasskey = () => {
 						: [];
 				if (data?.data?.length === 1) {
 					setDisableFlag(true);
+				} else {
+					setDisableFlag(false);
 				}
 				setDeviceList(deviceDetails);
 			}

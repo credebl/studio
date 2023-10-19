@@ -23,10 +23,10 @@ const CredDeffCard = (props: IProps) => {
   }
 
   return (
-    <Card onClick={redirectToIssuance} className=' cursor-pointer overflow-hidden overflow-ellipsis' style={{ maxHeight: '100%', maxWidth: '100%', overflow: 'auto' }}>
-      <div className="mb-1 lg:flex lg:items-center justify-between">
-        <div className="lg:w-1/2 md:w-2/3"> {/* This will take up 2/3 of the available width on larger screens */}
-          <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
+    <Card onClick={redirectToIssuance} className='cursor-pointer overflow-hidden overflow-ellipsis h-full' style={{ maxHeight: '100%', maxWidth: '100%', overflow: 'auto' }}>
+      <div className="mb-1 flex items-center justify-between flex-wrap">
+        <div className="min-w-[6rem] max-w-100/8rem"> {/* This will take up 2/3 of the available width on larger screens */}
+          <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white break-words truncate line-clamp-2 max-h-[40px] whitespace-normal" style={{ display: "-webkit-box" }}>
             {props.credDeffName}
           </h5>
         </div>
@@ -36,14 +36,13 @@ const CredDeffCard = (props: IProps) => {
             || props.userRoles.includes(Roles.ADMIN)
             || props.userRoles.includes(Roles.ISSUER)
           )
-          && <div className="p-2 lg:w-1/2 md:w-2/3 mt-2 lg:mt-0">
+          && <div className="p-2">
             <Button
               type="submit"
               color='bg-primary-800'
               title='Initiate Credential Issuance'
               className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 
-						ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 
-						lg:py-2.5 mr-2 ml-auto dark:text-white dark:hover:text-black 
+						ring-2 text-black font-medium rounded-lg text-sm mr-2 ml-auto dark:text-white dark:hover:text-black 
 						dark:hover:bg-primary-50'
               style={{ height: '1.5rem', width: '100%', minWidth: '2rem' }}
             >
@@ -58,14 +57,14 @@ const CredDeffCard = (props: IProps) => {
         }
 
       </div>
-      <div className="min-w-0 flex-1">
+      <div className="min-w-0 flex-1 flex flex-col">
         <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
           ID : {props.credentialDefinitionId}
         </p>
         <p className="truncate text-sm font-medium text-gray-900 dark:text-white pt-2 pb-1">
           Schema ID:{props.schemaId}
         </p>
-        <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white overflow-hidden overflow-ellipsis">
+        <div className="mt-auto inline-flex items-center text-base font-semibold text-gray-900 dark:text-white overflow-hidden overflow-ellipsis">
           Revocable:
           <>
             <span
