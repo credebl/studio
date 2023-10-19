@@ -55,7 +55,7 @@ const WalletSpinup = (props: {
 
 	const [seeds, setSeeds] = useState<string>('');
 
-    const [isCopied, setIsCopied] = useState(false);
+	const [isCopied, setIsCopied] = useState(false);
 
 
 	const generateWalletname = () => {
@@ -171,7 +171,7 @@ const WalletSpinup = (props: {
 			setWalletSpinStep(6);
 			props.setWalletSpinupStatus(true);
 		}, 3000);
-        window.location.href= "/organizations/dashboard"
+		window.location.href = "/organizations/dashboard"
 		console.log(`invitation-url-creation-success`, JSON.stringify(data));
 	});
 
@@ -291,23 +291,26 @@ const WalletSpinup = (props: {
 		</Formik>
 	);
 
+	const orgName = props?.orgName ? props?.orgName?.split(" ").reduce((s, c) => (s.charAt(0).toUpperCase() + s.slice(1)) + (c.charAt(0).toUpperCase() + c.slice(1))
+	) : ""
+
 	const SharedAgentForm = () => (
 		<Formik
 			initialValues={{
 				seed: '',
-				label: props.orgName,
+				label: orgName,
 			}}
 			validationSchema={yup.object().shape({
 				label: yup.string()
-				.required('Wallet label is required')
-				.trim()
-				.test('no-spaces', 'Spaces are not allowed', value => !value || !value.includes(' '))
-				.matches(
+					.required('Wallet label is required')
+					.trim()
+					.test('no-spaces', 'Spaces are not allowed', value => !value || !value.includes(' '))
+					.matches(
 						/^[A-Za-z0-9-][^ !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]*$/,
 						'Wallet label must be alphanumeric only',
-				)
-				.min(2, 'Wallet label must be at least 2 characters')
-				.max(25, 'Wallet label must be at most 25 characters'),
+					)
+					.min(2, 'Wallet label must be at least 2 characters')
+					.max(25, 'Wallet label must be at most 25 characters'),
 			})}
 			validateOnBlur
 			validateOnChange
@@ -325,22 +328,22 @@ const WalletSpinup = (props: {
 						</div>
 						<div className="flex align-center block mb-1 text-sm text-gray-900 dark:text-white">
 							{seeds}
-								<span
-							className="text-base font-semibold text-gray-900 truncate dark:text-white"
-						>
-							<button
-								className=
-								{`${isCopied}`} onClick={copyTextVal}
+							<span
+								className="text-base font-semibold text-gray-900 truncate dark:text-white"
+							>
+								<button
+									className=
+									{`${isCopied}`} onClick={copyTextVal}
 								>
-								{isCopied
-									? <svg className="h-6 w-6 text-white ml-2 text-base" width="25" height="25" viewBox="0 0 24 24" stroke-width="2" stroke="green" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <path d="M5 12l5 5l10 -10" /></svg>
-									: <svg className="h-6 w-6 text-green ml-2 text-base" width="25" height="25" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <rect x="8" y="8" width="12" height="12" rx="2" />  <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" /></svg>
-								}
+									{isCopied
+										? <svg className="h-6 w-6 text-white ml-2 text-base" width="25" height="25" viewBox="0 0 24 24" stroke-width="2" stroke="green" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <path d="M5 12l5 5l10 -10" /></svg>
+										: <svg className="h-6 w-6 text-green ml-2 text-base" width="25" height="25" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <rect x="8" y="8" width="12" height="12" rx="2" />  <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" /></svg>
+									}
 
-							</button>
-						</span>
+								</button>
+							</span>
 						</div>
-					
+
 					</div>
 					<div>
 						<div className="mb-1 block">
@@ -368,15 +371,15 @@ const WalletSpinup = (props: {
 						className='float-right text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
 					>
 						<svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
-									<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
-								</svg>
+							<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+						</svg>
 						Create
 					</Button>
 				</Form>
 			)}
 		</Formik>
 	);
-	
+
 	return (
 		<div className="mt-4 flex-col p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 			<div className="items-center sm:flex xl:block 2xl:flex sm:space-x-4 xl:space-x-0 2xl:space-x-4">
@@ -392,7 +395,7 @@ const WalletSpinup = (props: {
 						</Alert>
 					)}
 					<h3 className="mb-1 mt-1 text-xl font-bold text-gray-900 dark:text-white">
-						 Create Wallet
+						Create Wallet
 					</h3>
 				</div>
 			</div>
@@ -404,34 +407,34 @@ const WalletSpinup = (props: {
 							<ul className="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex dark:bg-gray-700 dark:border-gray-600 dark:text-white">
 								<li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
 									<div className="flex items-center pl-3">
-										<input
-											id="horizontal-list-radio-license"
-											type="radio"
-											checked={agentType === AgentType.SHARED ? true : false}
-											value=""
-											onChange={() => onRadioSelect(AgentType.SHARED)}
-											name="list-radio"
-											className="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-										/>
-										<label className="w-full py-3 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+										<label className="w-full py-3 text-sm font-medium text-gray-900 dark:text-gray-300 flex items-center">
+											<input
+												id="horizontal-list-radio-license"
+												type="radio"
+												checked={agentType === AgentType.SHARED}
+												value=""
+												onChange={() => onRadioSelect(AgentType.SHARED)}
+												name="list-radio"
+												className="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500 mr-2"
+											/>
 											Shared
 										</label>
 									</div>
 								</li>
 								<li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
 									<div className="flex items-center pl-3">
-										<input
-											id="horizontal-list-radio-id"
-											type="radio"
-											value=""
-											onChange={() => onRadioSelect(AgentType.DEDICATED)}
-											checked={agentType === AgentType.DEDICATED ? true : false}
-											name="list-radio"
-											disabled
-											className="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-										/>
-										<label className="w-full py-3 ml-2 text-sm font-medium text-gray-400 dark:text-gray-300">
-											Dedicated{' '}
+										<label className="w-full py-3 text-sm font-medium text-gray-400 dark:text-gray-300 cursor-not-allowed flex items-center">
+											<input
+												id="horizontal-list-radio-id"
+												type="radio"
+												value=""
+												onChange={() => onRadioSelect(AgentType.DEDICATED)}
+												checked={agentType === AgentType.DEDICATED}
+												name="list-radio"
+												disabled
+												className="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500 disabled:cursor-not-allowed mr-2"
+											/>
+											Dedicated
 										</label>
 									</div>
 								</li>
@@ -510,7 +513,7 @@ const WalletSteps = (props: { steps: number; agentSpinupCall: boolean }) => {
 						<span className="absolute flex items-center justify-center w-8 h-8 bg-gray-900 rounded-full -left-4 ring-4 ring-white dark:ring-gray-900 dark:bg-gray-700"></span>
 					)}
 					<h3 className="font-medium leading-tight">
-					Wallet creation is in progress
+						Wallet creation is in progress
 					</h3>
 				</li>
 				<li className="mb-10 ml-6">

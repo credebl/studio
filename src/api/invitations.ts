@@ -233,7 +233,7 @@ export const getEcosystemInvitations = async (pageNumber: number, pageSize: numb
 }
 
 // Accept/ Reject Invitations
-export const acceptRejectEcosystemInvitations = async (invitationId: number, orgId: number, status: string, orgName: string, orgDid: string) => {
+export const acceptRejectEcosystemInvitations = async (invitationId: string, orgId: number, status: string, orgName: string, orgDid: string) => {
 
 	const url = `${apiRoutes.Ecosystem.root}/${orgId}${apiRoutes.Ecosystem.invitations}/${invitationId}`
 

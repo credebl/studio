@@ -156,7 +156,7 @@ const SignUpUserName = () => {
 													<div className="text-primary-700 font-inter text-base font-medium leading-5">
 
 														<div className="block mb-2 text-sm font-medium  dark:text-white">
-															<Label className="text-primary-700" htmlFor="firstName" value="First name" />
+															<Label className="text-primary-700 dark:!text-primary-700" htmlFor="firstName" value="First name" />
 															<span className='text-red-500 text-xs'>*</span>
 														</div>
 														<Field
@@ -173,7 +173,7 @@ const SignUpUserName = () => {
 													<div className="text-primary-700 font-inter text-base font-medium leading-5 mt-6">
 
 														<div className="block mb-2 text-sm font-medium  dark:text-white">
-															<Label className="text-primary-700" htmlFor="lastName" value="Last name" />
+															<Label className="text-primary-700 dark:!text-primary-700" htmlFor="lastName" value="Last name" />
 															<span className='text-red-500 text-xs'>*</span>
 														</div>
 														<Field

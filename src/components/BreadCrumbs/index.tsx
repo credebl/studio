@@ -47,12 +47,15 @@ export default function BreadCrumbs() {
             </Breadcrumb.Item>
 
             {breadcrumbList.map((crumb, idx) => {
+                const crumbData = crumb.text.charAt(0).toUpperCase() + crumb.text.slice(1)
+                const routes = crumbData ? crumbData?.split("-").reduce((s, c) => (s.charAt(0).toUpperCase() + s.slice(1)) + " " + (c.charAt(0).toUpperCase() + c.slice(1))
+                ) : ""
                 return (
                     <Breadcrumb.Item
                     href={crumb.href}
                         key={idx}
                     >
-                        {crumb.text.charAt(0).toUpperCase() + crumb.text.slice(1)}
+                        {routes}
                     </Breadcrumb.Item>
                 );
             })}

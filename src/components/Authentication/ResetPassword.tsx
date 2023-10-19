@@ -86,7 +86,7 @@ const ResetPassword = () => {
             const passkeyUserDetailsResp = await addPasskeyUserDetails(payload, email);
             const { data } = passkeyUserDetailsResp as AxiosResponse;
 
-            if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+            if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
                 setLoading(false);
             } else {
                 setErrMsg(passkeyUserDetailsResp as string);

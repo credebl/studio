@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getEcosystemMemberList } from '../../api/ecosystem';
-import { apiStatusCodes } from '../../config/CommonConstant';
+import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import type { AxiosResponse } from 'axios';
 import DataTable from '../../commonComponents/datatable';
 import type { TableData } from '../../commonComponents/datatable/interface';
@@ -8,6 +8,7 @@ import DateTooltip from '../Tooltip';
 import { dateConversion } from '../../utils/DateConversion';
 import { AlertComponent } from '../AlertComponent';
 import { Pagination } from 'flowbite-react';
+import { getFromLocalStorage } from '../../api/Auth';
 
 const initialPageState = {
 	pageNumber: 1,
@@ -20,7 +21,9 @@ const MemberList = () => {
 	const [memberList, setMemberList] = useState<TableData[]>([]);
 	const [error, setError] = useState<string | null>(null);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
+
 	const getEcosystemMembers = async () => {
+		const userOrgId= await getFromLocalStorage(storageKeys.ORG_ID)
 		setLoading(true);
 		const response = await getEcosystemMemberList(
 			currentPage.pageNumber,
@@ -28,16 +31,17 @@ const MemberList = () => {
 			'',
 		);
 		const { data } = response as AxiosResponse;
+		
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const totalPages = data?.data?.totalPages;
-			
+
 			const compareMembers = (
-					firstMember: { ecosystemRole: { name: string; }; },
-				secondMember: { ecosystemRole: { name: string; }; }
+				firstMember: { ecosystemRole: { name: string } },
+				secondMember: { ecosystemRole: { name: string } },
 			) => {
 				const firstName = firstMember?.ecosystemRole?.name;
 				const secondName = secondMember?.ecosystemRole?.name;
-			
+
 				switch (true) {
 					case firstName > secondName:
 						return 1;
@@ -47,9 +51,11 @@ const MemberList = () => {
 						return 0;
 				}
 			};
-			const sortedMemberList = data?.data?.members?.sort(compareMembers)
+			const sortedMemberList = data?.data?.members?.sort(compareMembers);				
 			const membersData = sortedMemberList?.map(
 				(member: {
+					orgId: string;
+					ecosystem: {createDateTime: string};
 					ecosystemRole: { name: string };
 					orgName: string;
 					role: string;
@@ -62,10 +68,12 @@ const MemberList = () => {
 								data: member.orgName || 'Not available',
 							},
 							{
-								data: <DateTooltip date={member?.createDateTime}>
-										{dateConversion(member?.createDateTime)}{' '}
-							
-					</DateTooltip> ||	'Not available'
+								data:
+									(
+										<DateTooltip date={member?.createDateTime}>
+											{dateConversion(member?.createDateTime)}{' '}
+										</DateTooltip>
+									) || 'Not available',
 							},
 							{
 								data: member.ecosystemRole.name ? (
@@ -76,10 +84,10 @@ const MemberList = () => {
 												: 'bg-green-100 text-green-800 dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500'
 										} text-sm font-medium mr-2 px-2.5 py-1 rounded-md`}
 									>
-										{member.ecosystemRole.name}
+										  {member?.orgId === userOrgId ? member?.ecosystemRole?.name + (' (You)')  : member?.ecosystemRole?.name}
 									</span>
 								) : (
-									'Not avilable'
+									'Not available'
 								),
 							},
 							{
@@ -94,7 +102,7 @@ const MemberList = () => {
 										{member.status}
 									</span>
 								) : (
-									'Not avilable'
+									'Not available'
 								),
 							},
 							{
@@ -127,8 +135,6 @@ const MemberList = () => {
 		setLoading(false);
 	};
 
-
-
 	const onPageChange = (page: number) => {
 		setCurrentPage({
 			...currentPage,
@@ -157,12 +163,6 @@ const MemberList = () => {
 				<h2 className="text-xl dark:text-white font-medium font-body">
 					Ecosystem Members
 				</h2>
-				<a
-					href={`/ecosystem/sent-invitations`}
-					className="text-lg text-primary-700 dark:text-primary-600 hover:text-primary-800"
-				>
-					Sent Invitations
-				</a>
 			</div>
 			<AlertComponent
 				message={error}

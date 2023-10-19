@@ -6,12 +6,13 @@ import { useEffect, useState } from 'react';
 
 import { AlertComponent } from '../../AlertComponent';
 import type { AxiosResponse } from 'axios';
-import { apiStatusCodes } from '../../../config/CommonConstant';
+import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
 import {
 	createEcoSystemInvitations,
 	createInvitations,
 } from '../../../api/invitations';
 import { getOrganizationRoles } from '../../../api/organization';
+import { getFromLocalStorage } from '../../../api/Auth';
 
 interface Values {
 	email: string;
@@ -29,6 +30,7 @@ interface RoleI {
 }
 
 const SendInvitationModal = (props: {
+	getAllSentInvitations?: () => void;
 	ecosystemId?: string;
 	flag?: boolean;
 	openModal: boolean;
@@ -36,6 +38,10 @@ const SendInvitationModal = (props: {
 	setOpenModal: (flag: boolean) => void;
 }) => {
 	const [loading, setLoading] = useState<boolean>(false);
+	const [selfEmail, setSelfEmail] = useState({
+		email: "",
+		error: ""
+	});
 
 	const [invitations, setInvitations] = useState<Invitations[]>([]);
 
@@ -116,8 +122,8 @@ const SendInvitationModal = (props: {
 	};
 
 	const sendEcoSystemInvitations = async () => {
-		setLoading(true);
 
+		setLoading(true);
 		const invitationPayload = invitations.map((invitation) => {
 			return {
 				email: invitation.email,
@@ -132,20 +138,37 @@ const SendInvitationModal = (props: {
 		const { data } = resCreateOrg as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-			props.setMessage(data?.message);
-			props.setOpenModal(false);
+
+			props?.setMessage(data?.message);
+			props?.setOpenModal(false);
+			props?.getAllSentInvitations()
+
 		} else {
 			setErrMsg(resCreateOrg as string);
 		}
 		setLoading(false);
 	};
+
+	useEffect(() => {
+		const getEmail = async () => {
+			const email = await getFromLocalStorage(storageKeys.USER_EMAIL)
+			setSelfEmail({
+				...selfEmail,
+				email
+			})
+		}
+		getEmail()
+	}, [])
+
 	return (
 		<Modal
 			size="2xl"
 			show={props.openModal}
 			onClose={() => {
 				setInvitations([]);
-				setInitialInvitationData(initialData);
+				setInitialInvitationData({
+					email: " ",
+				});
 				props.setOpenModal(false);
 			}}
 		>
@@ -174,6 +197,17 @@ const SendInvitationModal = (props: {
 						values: Values,
 						{ resetForm }: FormikHelpers<Values>,
 					) => {
+						if(values.email === selfEmail.email){
+							setSelfEmail({
+								...selfEmail,
+								error: "You can't send invitation to self."
+							})
+							return
+						}
+						setSelfEmail({
+							...selfEmail,
+							error: ""
+						})
 						await includeInvitation(values);
 						resetForm({ values: initialInvitationData });
 					}}
@@ -193,15 +227,23 @@ const SendInvitationModal = (props: {
 										id="email"
 										name="email"
 										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+										onChange={(e) => {
+											formikHandlers.handleChange(e)
+										}}
 									/>
 									{formikHandlers?.errors?.email &&
-									formikHandlers?.touched?.email ? (
+										formikHandlers?.touched?.email ? (
 										<span className="text-red-500 text-xs">
 											{formikHandlers?.errors?.email}
 										</span>
-									) : (
-										<span className="invisible text-xs">Error</span>
-									)}
+									) : selfEmail.error ?
+										<span className="text-red-500 text-xs">
+											{selfEmail.error}
+										</span>
+										:
+										(
+											<span className="invisible text-xs">Error</span>
+										)}
 								</div>
 
 								<div className="">
@@ -236,7 +278,7 @@ const SendInvitationModal = (props: {
 							<ul className="divide-y divide-gray-200 dark:divide-gray-700">
 								{invitations.map((invitation) => (
 									<li key={invitation.email} className="p-2">
-										<div className="flex justify-between xl:block 2xl:flex align-center 2xl:space-x-4">
+										<div className="flex justify-between 2xl:flex align-center 2xl:space-x-4">
 											<div className="flex flex-wrap space-x-4 xl:mb-4 2xl:mb-0 dark:text-white">
 												<div>
 													<svg
