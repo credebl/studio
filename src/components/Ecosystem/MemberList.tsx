@@ -51,7 +51,7 @@ const MemberList = () => {
 						return 0;
 				}
 			};
-			const sortedMemberList = data?.data?.members?.sort(compareMembers);			
+			const sortedMemberList = data?.data?.members?.sort(compareMembers);
 			const membersData = sortedMemberList?.map(
 				(member: {
 					orgId: string;
@@ -78,34 +78,34 @@ const MemberList = () => {
 							},
 							{
 								data: member.orgDid ? (
-									<span
-									className='text-sm font-medium mr-2 px-2.5 py-1 rounded-md'
-									>
-											{member?.orgDid}
+									<span className="text-sm mr-2 px-2.5 py-1 rounded-md">
+										{member?.orgDid}
+									</span>
+								) : (
+									<span className="text-sm mr-2 px-2.5 py-1 rounded-md">
+										Not available
+									</span>
+								),
+							},
+							{
+								data: member.ecosystemRole.name ? (
+									<span className="text-sm px-2.5 py-1 rounded-md">
+										<span
+											className={`${
+												member.ecosystemRole.name === 'Ecosystem Lead'
+													? 'bg-primary-100 text-primary-800 dark:bg-gray-900 dark:text-primary-400 border border-primary-100 dark:border-primary-500'
+													: 'bg-green-100 text-green-800 dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500'
+											} text-sm font-medium mr-1 px-2.5 py-1 rounded-md`}
+										>
+											{member?.ecosystemRole?.name}
 										</span>
+										{member?.orgId === userOrgId ? '(You)' : ''}
+									</span>
 								) : (
 									'Not available'
-									),
-								},
-								{
-									data: member.ecosystemRole.name ? (
-										<span className='text-sm font-medium mr-2 px-2.5 py-1 rounded-md'>
-											<span
-												className={`${
-													member.ecosystemRole.name === 'Ecosystem Lead'
-														? 'bg-primary-100 text-primary-800 dark:bg-gray-900 dark:text-primary-400 border border-primary-100 dark:border-primary-500'
-														: 'bg-green-100 text-green-800 dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500'
-												} text-sm font-medium mr-2 px-2.5 py-1 rounded-md`}
-											>
-													{member?.ecosystemRole?.name}
-											</span>
-											{member?.orgId === userOrgId ? '(You)' : ''}
-										</span>
-									) : (
-										'Not available'
-									),
-								},
-								{
+								),
+							},
+							{
 								data: member.status ? (
 									<span
 										className={`${
@@ -152,8 +152,8 @@ const MemberList = () => {
 	const header = [
 		{ columnName: 'Organization' },
 		{ columnName: 'Member Since' },
-		{ columnName: 'Organization Did', width:'w-1.5 pl-6' },
-		{ columnName: 'Role', width:'pl-7' },
+		{ columnName: 'Organization Did', width: 'w-1.5 pl-6' },
+		{ columnName: 'Role', width: 'pl-7' },
 		{ columnName: 'Status' },
 	];
 
