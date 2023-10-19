@@ -150,7 +150,7 @@ const EndorsementPopup = (props: {
 							<button
 								onClick={() => RejectEndorsement(props.endorsementData.id)}
 								disabled={loadingReject}
-								className="hover:bg-secondary-700 bg-white !ring-2 dark:text-white text-primary-700 font-medium rounded-lg text-sm dark:hover:text-primary-700 "
+								className="hover:bg-secondary-700  !ring-2 dark:text-white text-primary-700 font-medium rounded-lg text-sm dark:hover:text-primary-700 "
 							>
 								<span className='flex items-center rounded-md text-sm px-4 py-2'>
 									{

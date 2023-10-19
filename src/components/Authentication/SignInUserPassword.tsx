@@ -1,4 +1,4 @@
-import './global.css'
+import '../../common/global.css'
 
 import * as yup from 'yup';
 

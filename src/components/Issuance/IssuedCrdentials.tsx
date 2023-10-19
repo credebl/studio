@@ -145,7 +145,7 @@ const CredentialList = () => {
 			<div className="mb-4 col-span-full xl:mb-2">
 				<BreadCrumbs />
 				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-					Credential Issued
+					Credentials
 				</h1>
 			</div>
 

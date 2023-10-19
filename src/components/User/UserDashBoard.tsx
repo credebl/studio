@@ -186,7 +186,7 @@ const UserDashBoard = () => {
 			<div className="grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
 				<div className=" justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 					<div className="w-full">
-						<h2 className="text-base font-bold text-gray-500 dark:text-white mb-2">
+						<h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
 							Organizations
 						</h2>
 
@@ -270,15 +270,15 @@ const UserDashBoard = () => {
 
 			<div className="">
 				<div className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800 xl:mb-0">
-					<div className="flex items-start justify-start mb-4">
-						<h3 className="text-lg font-semibold text-gray-900 dark:text-white ">
+					<div className="items-start justify-start mb-4">
+						<h3 className="text-xl font-semibold text-gray-900 dark:text-white ">
 							Recent Activity
-							{activityList && activityList?.length === 0 && (
-								<div className="px-2 py-1 text-black-800  text-xs">
-									Looks like there are no activities to display at the moment.
-								</div>
-							)}
 						</h3>
+						{activityList && activityList?.length === 0 && (
+							<div className="py-1 text-black-800 dark:text-white text-xs flex items-center" >
+								Looks like there is no activity to display at the moment.
+							</div>
+						)}
 					</div>
 					{activityList ? (
 						<ol className="relative border-l pl-8 border-gray-200 dark:border-gray-700">

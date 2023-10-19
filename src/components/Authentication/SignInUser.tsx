@@ -1,5 +1,4 @@
-import './global.css';
-
+import '../../common/global.css'
 import * as yup from 'yup';
 import { Button, Label} from 'flowbite-react';
 import { Field, Form, Formik } from 'formik';
