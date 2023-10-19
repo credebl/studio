@@ -57,7 +57,9 @@ const VerificationCred = () => {
 				const schemaAttributes = await getFromLocalStorage(storageKeys.SCHEMA_ATTR)
 				const parsedSchemaDetails = JSON.parse(schemaAttributes) || [];
 				const attributes = parsedSchemaDetails.attribute.map((ele: any) => {
-					const attributes = ele.attributeName ? ele.attributeName : 'Not available';
+					const attributesName = ele.attributeName ? ele.attributeName : 'Not available';
+					const displayName = ele.displayName ? ele.displayName : 'Not available';
+
 					return {
 						data: [
 							{
@@ -68,7 +70,7 @@ const VerificationCred = () => {
 											type="checkbox"
 											onClick={(event: React.MouseEvent<HTMLInputElement>) => {
 												const inputElement = event?.target as HTMLInputElement;
-												selectConnection(attributes, inputElement?.checked);
+												selectConnection(attributesName, inputElement?.checked);
 											}}
 											value=""
 											className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 cursor-pointer"
@@ -76,7 +78,7 @@ const VerificationCred = () => {
 									</div>
 								)
 							},
-							{ data: attributes },
+							{ data: displayName },
 						]
 					};
 				});

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getEcosystemMemberList } from '../../api/ecosystem';
-import { apiStatusCodes } from '../../config/CommonConstant';
+import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import type { AxiosResponse } from 'axios';
 import DataTable from '../../commonComponents/datatable';
 import type { TableData } from '../../commonComponents/datatable/interface';
@@ -8,6 +8,7 @@ import DateTooltip from '../Tooltip';
 import { dateConversion } from '../../utils/DateConversion';
 import { AlertComponent } from '../AlertComponent';
 import { Pagination } from 'flowbite-react';
+import { getFromLocalStorage } from '../../api/Auth';
 
 const initialPageState = {
 	pageNumber: 1,
@@ -20,7 +21,9 @@ const MemberList = () => {
 	const [memberList, setMemberList] = useState<TableData[]>([]);
 	const [error, setError] = useState<string | null>(null);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
+
 	const getEcosystemMembers = async () => {
+		const userOrgId= await getFromLocalStorage(storageKeys.ORG_ID)
 		setLoading(true);
 		const response = await getEcosystemMemberList(
 			currentPage.pageNumber,
@@ -28,6 +31,7 @@ const MemberList = () => {
 			'',
 		);
 		const { data } = response as AxiosResponse;
+		
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const totalPages = data?.data?.totalPages;
 
@@ -47,9 +51,10 @@ const MemberList = () => {
 						return 0;
 				}
 			};
-			const sortedMemberList = data?.data?.members?.sort(compareMembers);			
+			const sortedMemberList = data?.data?.members?.sort(compareMembers);				
 			const membersData = sortedMemberList?.map(
 				(member: {
+					orgId: string;
 					ecosystem: {createDateTime: string};
 					ecosystemRole: { name: string };
 					orgName: string;
@@ -79,7 +84,7 @@ const MemberList = () => {
 												: 'bg-green-100 text-green-800 dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500'
 										} text-sm font-medium mr-2 px-2.5 py-1 rounded-md`}
 									>
-										  {member?.createDateTime === member?.ecosystem?.createDateTime ? member?.ecosystemRole?.name + (' (You)')  : member?.ecosystemRole?.name}
+										  {member?.orgId === userOrgId ? member?.ecosystemRole?.name + (' (You)')  : member?.ecosystemRole?.name}
 									</span>
 								) : (
 									'Not available'

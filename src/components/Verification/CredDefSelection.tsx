@@ -66,12 +66,11 @@ const CredDefSelection = () => {
 
 	const getCredDefs = async (schemaId: string) => {
 		setLoading(true)
-		const response = await getCredentialDefinitionsForVerification(schemaId,31);
+		const response = await getCredentialDefinitionsForVerification(schemaId);
 		
 		const { data } = response as AxiosResponse
-
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			const credDefs = data?.data?.data.map((ele: CredDefData) => {
+			const credDefs = data?.data?.map((ele: CredDefData) => {
 				return {
 					data: [{ data: ele?.tag ? ele?.tag : 'Not available' }, { data: ele?.credentialDefinitionId ? ele?.credentialDefinitionId : 'Not available' },
 					{ data: ele?.revocable === true ? <span className="text-blue-700 dark:text-white">Yes</span> : <span className="text-cyan-500 dark:text-white">No</span> },
@@ -99,9 +98,10 @@ const CredDefSelection = () => {
 			if (credDefs?.length === 0) {
 				setError('No Data Found')
 			}
-
+            setLoading(false)
 			setCredDefList(credDefs)
 		} else {
+			setLoading(false)
 			setError(response as string)
 		}
 

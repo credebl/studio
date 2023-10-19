@@ -16,3 +16,7 @@ input[type="radio"] {
 ul[role="tablist"] li[role="presentation"] button[aria-selected="true"] {
   @apply text-primary-700 border-primary-700;
 }
+
+#schema-cards div[data-testid="flowbite-card"] div {
+  @apply justify-start;
+}

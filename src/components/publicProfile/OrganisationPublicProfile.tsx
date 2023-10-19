@@ -9,6 +9,7 @@ import { Card, Pagination } from 'flowbite-react';
 import CustomSpinner from '../CustomSpinner';
 import CustomAvatar from '../Avatar';
 import { EmptyListMessage } from '../EmptyListComponent';
+import { AlertComponent } from '../AlertComponent';
 
 const OrganisationPublicProfile = () => {
 	const initialPageState = {
@@ -78,6 +79,13 @@ const OrganisationPublicProfile = () => {
 
 	return (
 		<div>
+			<AlertComponent
+				message={error}
+				type={'failure'}
+				onAlertClose={() => {
+					setError(null);
+				}}
+			/>
 			<div className="flex items-center justify-between mb-4 p-2 pl-0">
 				<SearchInput onInputChange={searchInputChange} />
 			</div>
