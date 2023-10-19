@@ -133,25 +133,26 @@ const IssueCred = () => {
 		return JSON.parse(selectedUsers);
 	};
 
+	const createAttributeValidationSchema = (dataType: string) => {
+		let attributeSchema;
+	
+		if (dataType === 'string') {
+			attributeSchema = Yup.string().typeError('Value must be a string');
+		} else if (dataType === 'number') {
+			attributeSchema = Yup.number().typeError('Value must be a number');
+		} else if (dataType === 'date') {
+			attributeSchema = Yup.date().typeError('Value must be a valid date');
+		} else {
+			attributeSchema = Yup.mixed();
+		}
+		return Yup.object().shape({
+			value: attributeSchema,
+		});
+	};
+	
 	const validationSchema = Yup.object().shape({
 		attributes: Yup.array().of(
-			Yup.object().shape({
-				value: Yup.mixed().test(
-					'matchDataType',
-					'Value must match the specified data type',
-					function (value) {
-						const dataType = this.parent.dataType;
-						if (dataType === 'string') {
-							return typeof value === 'string';
-						} else if (dataType === 'number') {
-							return typeof value === 'number';
-						} else if (dataType === 'date') {
-							return !isNaN(Date.parse(value as string));
-						}
-						return true;
-					},
-				),
-			}),
+			Yup.lazy(({ dataType }) => createAttributeValidationSchema(dataType))
 		),
 	});
 
