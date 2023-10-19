@@ -423,8 +423,6 @@ const Dashboard = () => {
                         </div>
                     </div>
 
-                    {isEcosystemLead && (
-                        <>
                             <div className="mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
                                 <div className="grid w-full grid-cols-1 gap-4 mt-0 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2">
                                     <DashboardCard
@@ -454,8 +452,6 @@ const Dashboard = () => {
                                 onEditSuccess={handleEditModalClose}
                                 entityData={ecosystemDetails}
                             />
-                        </>
-                    )}
                 </div>
             ) : (
                 <div>
