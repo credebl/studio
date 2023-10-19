@@ -66,10 +66,11 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
                 onClickCallback(data)
             }
         }}
-        id="schema-cards"
-            className={`${cardTransitionDisabled ? "" : "transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer"}  ${enableAction ? "cursor-pointer" : cardTransitionDisabled ? "cursor-default" : "cursor-not-allowed"} ${cardTransitionDisabled && "shadow-none"} m-3 h-full m-0 sm:m-3`}
-        >      <div className="flex justify-between items-start">
-                <div className='min-w-[6rem] max-w-100/13rem'>
+id="schema-cards"
+className={`${cardTransitionDisabled ? "" : "transform transition duration-500 hover:scale-105 hover:bg-gray-50 min-[w-320px]: cursor-default"}  ${enableAction && "lg:cursor-pointer cursor-default" }${ cardTransitionDisabled ? "cursor-default" : "lg:cursor-not-allowed cursor-default"} ${cardTransitionDisabled && "shadow-none"} m-3 h-full`}
+        >
+            <div className="flex justify-between items-start">
+            <div className='min-w-[6rem] max-w-100/13rem'>
                     <h5 className="text-xl font-bold leading-[1.1] text-gray-900 dark:text-white break-words truncate line-clamp-2 max-h-[43px] whitespace-normal" style={{ display: "-webkit-box" }}>
                         {isSchema ? requestData?.name : requestData?.tag}
                     </h5>
