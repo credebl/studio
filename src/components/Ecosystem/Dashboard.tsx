@@ -487,98 +487,95 @@ const Dashboard = () => {
 						</div>
 					</div>
 
-						<>
-							<div className="mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-								<div className="grid w-full grid-cols-1 gap-4 mt-0 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2">
-									<DashboardCard
-										icon={memberIcon}
-										backgroundColor="linear-gradient(279deg, #FFF -18.24%, #2F80ED -0.8%, #1F4EAD 61.45%)"
-										label="Member"
-										value={ecosystemDashboard?.membersCount ?? 0}
-									/>
-									<DashboardCard
-										icon={endorseIcon}
-										backgroundColor="linear-gradient(279deg, #FFF -15.85%, #40F683 22.4%, #22C55E 59.86%)"
-										label="Endorsements"
-										value={ecosystemDashboard?.endorsementsCount ?? 0}
-									/>
-								</div>
-							</div>
-							<div>
-								<MemberList />
-							</div>
-							<EditPopupModal
-								openModal={editOpenModal}
-								setOpenModal={setEditOpenModal}
-								setMessage={(value) => {
-									setSuccess(value);
-								}}
-								isOrganization={false}
-								onEditSuccess={handleEditModalClose}
-								entityData={ecosystemDetails}
-							/>
-						</>
-				</div>
-			) : (
-				<div>
-					{!ecosystemDetails && loading ? (
-						<div className="min-h-100/18rem flex justify-center items-center">
-							<CustomSpinner />
-						</div>
-					) : (
-						<div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-							<div className="flex items-center justify-center mb-4">
-								<CreateEcosystemOrgModal
-									openModal={openModal}
-									setOpenModal={setOpenModal}
-									setMessage={(value) => {
-										setSuccess(value);
-										if (isOrgModal && value) {
-											setTimeout(() => {
-												window.location.reload();
-											}, 2000);
-										} else {
-											getDashboardData();
-										}
-									}}
-									isorgModal={isOrgModal}
-								/>
-								<EmptyListMessage
-									feature={!orgId ? Features.CRETAE_ORG : ''}
-									message={'No Ecosystem found'}
-									description={`Get started by creating ${
-										!orgId
-											? 'a new Organization to set up your Ecosystem'
-											: 'an Ecosystem'
-									}`}
-									buttonContent={`${!orgId ? '' : 'Create Ecosystem'}`}
-									svgComponent={
-										<svg
-											className="pr-2 mr-1"
-											xmlns="http://www.w3.org/2000/svg"
-											width="24"
-											height="15"
-											fill="none"
-											viewBox="0 0 24 24"
-										>
-											<path
-												fill="#fff"
-												d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"
-											/>
-										</svg>
-									}
-									onClick={() => {
-										setIsOrgModal(Boolean(!orgId));
-										createEcosystemModel();
-									}}
-								/>
-							</div>
-						</div>
-					)}
-				</div>
-			)}
-		</div>
-	);
+                            <div className="mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+                                <div className="grid w-full grid-cols-1 gap-4 mt-0 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2">
+                                    <DashboardCard
+                                        icon={memberIcon}
+                                        backgroundColor="linear-gradient(279deg, #FFF -18.24%, #2F80ED -0.8%, #1F4EAD 61.45%)"
+                                        label="Member"
+                                        value={ecosystemDashboard?.membersCount ?? 0}
+                                    />
+                                    <DashboardCard
+                                        icon={endorseIcon}
+                                        backgroundColor="linear-gradient(279deg, #FFF -15.85%, #40F683 22.4%, #22C55E 59.86%)"
+                                        label="Endorsements"
+                                        value={ecosystemDashboard?.endorsementsCount ?? 0}
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <MemberList />
+                            </div>
+                            <EditPopupModal
+                                openModal={editOpenModal}
+                                setOpenModal={setEditOpenModal}
+                                setMessage={(value) => {
+                                    setSuccess(value);
+                                }}
+                                isOrganization={false}
+                                onEditSuccess={handleEditModalClose}
+                                entityData={ecosystemDetails}
+                            />
+                </div>
+            ) : (
+                <div>
+                    {!ecosystemDetails && loading ? (
+                        <div className="min-h-100/18rem flex justify-center items-center">
+                            <CustomSpinner />
+                        </div>
+                    ) : (
+                        <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+                            <div className="flex items-center justify-center mb-4">
+                                <CreateEcosystemOrgModal
+                                    openModal={openModal}
+                                    setOpenModal={setOpenModal}
+                                    setMessage={(value) => {
+                                        setSuccess(value);
+                                        if (isOrgModal && value) {
+                                            setTimeout(() => {
+                                                window.location.reload();
+                                            }, 2000);
+                                        } else {
+                                            getDashboardData();
+                                        }
+                                    }}
+                                    isorgModal={isOrgModal}
+                                />
+                                <EmptyListMessage
+                                    feature={!orgId ? Features.CRETAE_ORG : ''}
+                                    message={'No Ecosystem found'}
+                                    description={`Get started by creating ${!orgId
+                                            ? 'a new Organization to set up your Ecosystem'
+                                            : 'an Ecosystem'
+                                        }`}
+                                    buttonContent={`${!orgId ? '' : 'Create Ecosystem'}`}
+                                    svgComponent={
+                                        <svg
+                                            className="pr-2 mr-1"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="24"
+                                            height="15"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                fill="#fff"
+                                                d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"
+                                            />
+                                        </svg>
+                                    }
+                                    onClick={() => {
+                                        setIsOrgModal(Boolean(!orgId));
+                                        createEcosystemModel();
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
+    );
 };
 
 export default Dashboard;
