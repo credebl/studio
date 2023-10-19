@@ -22,6 +22,23 @@ const MemberList = () => {
 	const [error, setError] = useState<string | null>(null);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 
+	const compareMembers = (
+		firstMember: { ecosystemRole: { name: string } },
+		secondMember: { ecosystemRole: { name: string } },
+	) => {
+		const firstName = firstMember?.ecosystemRole?.name;
+		const secondName = secondMember?.ecosystemRole?.name;
+
+		switch (true) {
+			case firstName > secondName:
+				return 1;
+			case secondName > firstName:
+				return -1;
+			default:
+				return 0;
+		}
+	};
+
 	const getEcosystemMembers = async () => {
 		const userOrgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		setLoading(true);
@@ -32,25 +49,14 @@ const MemberList = () => {
 		);
 		const { data } = response as AxiosResponse;
 
+		if (data?.statusCode !== apiStatusCodes.API_STATUS_SUCCESS) {
+			setError(response as string);
+			return;
+		}
+
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const totalPages = data?.data?.totalPages;
 
-			const compareMembers = (
-				firstMember: { ecosystemRole: { name: string } },
-				secondMember: { ecosystemRole: { name: string } },
-			) => {
-				const firstName = firstMember?.ecosystemRole?.name;
-				const secondName = secondMember?.ecosystemRole?.name;
-
-				switch (true) {
-					case firstName > secondName:
-						return 1;
-					case secondName > firstName:
-						return -1;
-					default:
-						return 0;
-				}
-			};
 			const sortedMemberList = data?.data?.members?.sort(compareMembers);
 			const membersData = sortedMemberList?.map(
 				(member: {
@@ -132,8 +138,6 @@ const MemberList = () => {
 				...currentPage,
 				total: totalPages,
 			});
-		} else {
-			setError(response as string);
 		}
 		setLoading(false);
 	};
