@@ -114,7 +114,7 @@ const DeviceDetails = (props: { deviceFriendlyName: string, createDateTime: stri
                                     handleDeleteModel(true)
                                 }}
                             >
-                                Revoke {props.disableRevoke}
+                                Revoke
                             </button>
                         </div>
                     </div>
