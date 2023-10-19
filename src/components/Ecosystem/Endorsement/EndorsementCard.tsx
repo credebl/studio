@@ -155,8 +155,7 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
                                             </div>
                                         )
                                     })}
-                                    {!allAttributes && attributesData.length > 3 && <span>...</span>}
-
+                                    {!allAttributes && attributesData.length === 3 && <span>...</span>}
                                 </div>
                             </div>
                         </li>
