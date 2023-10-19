@@ -1,13 +1,13 @@
 /* eslint-disable global-require */
 /** @type {import('tailwindcss').Config} */
 
-const defaultTheme = require('tailwindcss/defaultTheme')
+const defaultTheme = require('tailwindcss/defaultTheme');
 
 module.exports = {
 	content: [
 		'./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}',
 		'./node_modules/flowbite/**/*.js',
-		'node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}'
+		'node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}',
 	],
 
 	darkMode: 'class',
@@ -29,7 +29,7 @@ module.exports = {
 					700: '#1F4EAD',
 					800: '#16397D',
 					900: '#0E234E',
-					950: '#0A1836'
+					950: '#0A1836',
 				},
 
 				secondary: {
@@ -44,7 +44,7 @@ module.exports = {
 					700: '#D6F5F5',
 					800: '#A9EAEA',
 					900: '#7CDFDF',
-					950: '#65DADA'
+					950: '#65DADA',
 				},
 			},
 			fontFamily: {
@@ -99,24 +99,27 @@ module.exports = {
 			},
 			textDecoration: ['active'],
 			width: {
-				'100/22rem': 'calc(100% - 22rem)'
+				'100/22rem': 'calc(100% - 22rem)',
 			},
 			minWidth: {
 				kanban: '28rem',
 			},
 			maxWidth: {
-				'100/6rem': 'calc(100% - 6rem)'
+				'100/6rem': 'calc(100% - 6rem)',
+				'100/13rem': 'calc(100% - 13rem)',
+				'100/10rem': 'calc(100% - 10rem)',
+				'100/8rem': 'calc(100% - 8rem)'
 			},
 			minHeight: {
 				'100/18rem': 'calc(100vh - 18rem)',
-				'100/25rem': 'calc(100vh - 25rem)'
+				'100/25rem': 'calc(100vh - 25rem)',
 			},
 			maxHeight: {
-				'\[90vh\]': 'fit-content !important'
+				'[90vh]': 'fit-content !important',
 			},
 			scale: {
-				'103': '1.03',
-			}
+				103: '1.03',
+			},
 		},
 	},
 

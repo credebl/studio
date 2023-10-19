@@ -149,7 +149,12 @@ const ViewSchemas = () => {
       const requestPayload = {
         endorse: true,
         tag: values?.tagName,
-        schemaId
+        schemaId,
+        schemaDetails: {
+          name: schemaDetails?.schema?.name,
+          version: schemaDetails?.schema?.version,
+          attributes: schemaDetails?.schema?.attrNames
+        }
       }
 
       const ecoId = await getEcosystemId()
@@ -194,8 +199,18 @@ const ViewSchemas = () => {
     window.location.href = `${pathRoutes.organizations.Issuance.connections}`
   }
 
-  const formTitle = isEcosystemData?.isEcosystemMember ? "Create Endorsement Request" : "Create Credential Definition"
-  const submitButtonTitle = isEcosystemData?.isEcosystemMember ? "Request Endorsement" : "Create"
+  const formTitle = isEcosystemData?.isEcosystemMember ? "Credential Definition Endorsement" : "Create Credential Definition"
+  const submitButtonTitle = isEcosystemData?.isEcosystemMember ? {
+    title: "Request Endorsement", svg: <svg className='mr-2 mt-1' xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 25 25">
+      <path fill="#fff" d="M21.094 0H3.906A3.906 3.906 0 0 0 0 3.906v12.5a3.906 3.906 0 0 0 3.906 3.907h.781v3.906a.781.781 0 0 0 1.335.553l4.458-4.46h10.614A3.906 3.906 0 0 0 25 16.407v-12.5A3.907 3.907 0 0 0 21.094 0Zm2.343 16.406a2.343 2.343 0 0 1-2.343 2.344H10.156a.782.782 0 0 0-.553.228L6.25 22.333V19.53a.781.781 0 0 0-.781-.781H3.906a2.344 2.344 0 0 1-2.344-2.344v-12.5a2.344 2.344 0 0 1 2.344-2.344h17.188a2.343 2.343 0 0 1 2.343 2.344v12.5Zm-3.184-5.951a.81.81 0 0 1-.17.254l-3.125 3.125a.781.781 0 0 1-1.105-1.106l1.792-1.79h-7.489a2.343 2.343 0 0 0-2.344 2.343.781.781 0 1 1-1.562 0 3.906 3.906 0 0 1 3.906-3.906h7.49l-1.793-1.79a.78.78 0 0 1 .254-1.277.781.781 0 0 1 .852.17l3.125 3.125a.79.79 0 0 1 .169.852Z" />
+    </svg>
+  } : {
+    title: "Create", svg: <div className='pr-3'>
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
+        <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+      </svg>
+    </div>
+  }
 
   return (
     <div className="px-4 pt-6">
@@ -206,7 +221,7 @@ const ViewSchemas = () => {
           <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
             Schemas
           </h1>
-					<BackButton path={pathRoutes.back.schema.schemas} />
+          <BackButton path={pathRoutes.back.schema.schemas} />
         </div>
       </div>
 
@@ -214,13 +229,13 @@ const ViewSchemas = () => {
         className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
       >
         <div className='flex flex-col sm:flex-row'>
-          <Card className='sm:w-1/2 p-2 mr-1' id="viewSchemaDetailsCard">
+          <Card className='sm:w-1/2 mr-1' id="viewSchemaDetailsCard">
             {loading ? (
               <div className="flex items-center justify-center mb-4">
                 <CustomSpinner />
               </div>
             ) : (
-              <div className='cursor-pointer overflow-hidden overflow-ellipsis' style={{ overflow: 'auto' }}>
+              <div className='overflow-hidden overflow-ellipsis' style={{ overflow: 'auto' }}>
                 <div className='mb-1 lg:flex lg:items-center justify-between'>
                   <div className="lg:w-1/2 md:w-2/3 ">
                     <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white p-1 pb-2">
@@ -238,10 +253,9 @@ const ViewSchemas = () => {
                       color='bg-primary-800'
                       title='View schema details on ledger'
                       className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 
-												ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 
-												lg:py-2.5 mr-2 ml-auto dark:text-white dark:hover:text-black 
+												ring-2 text-black font-medium rounded-lg text-sm mr-2 ml-auto dark:text-white dark:hover:text-black 
 												dark:hover:bg-primary-50'
-                      style={{ height: '1.5rem', width: '13rem', minWidth: '2rem' }}
+                      style={{ height: '1.5rem', minWidth: '2rem' }}
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" className='mr-2' fill="none" viewBox="0 0 17 17">
                         <path fill="#1F4EAD" d="M15.749 6.99c-.334-.21-.813-.503-.813-.697.01-.397.113-.786.3-1.136.277-.69.561-1.395.204-1.915-.358-.519-1.122-.462-1.853-.405-.358.082-.73.082-1.089 0a2.74 2.74 0 0 1-.374-1.087c-.162-.739-.333-1.501-.942-1.704-.61-.203-1.154.3-1.699.811-.309.276-.723.65-.934.65-.212 0-.634-.374-.943-.65C7.07.362 6.51-.14 5.908.046c-.602.187-.805.933-.967 1.671-.05.383-.18.75-.382 1.08a2.295 2.295 0 0 1-1.09 0c-.722-.066-1.478-.13-1.844.405-.365.535-.081 1.225.195 1.914.19.35.295.739.31 1.136-.066.195-.521.487-.854.698C.65 7.34 0 7.76 0 8.41c0 .649.65 1.07 1.276 1.468.333.211.812.495.853.69-.014.4-.12.791-.309 1.144-.276.69-.56 1.395-.195 1.914.366.52 1.122.463 1.845.398a2.441 2.441 0 0 1 1.089.04c.2.33.33.697.382 1.08.162.738.333 1.508.934 1.711a.86.86 0 0 0 .277.106 2.439 2.439 0 0 0 1.422-.812c.308-.275.731-.657.942-.657.212 0 .626.382.935.657.544.487 1.105.998 1.698.812.593-.187.813-.974.943-1.712a2.69 2.69 0 0 1 .374-1.08 2.472 2.472 0 0 1 1.089-.04c.73.065 1.479.138 1.852-.397.374-.536.073-1.225-.203-1.915a2.585 2.585 0 0 1-.3-1.144c.056-.194.511-.478.812-.69C16.35 9.587 17 9.174 17 8.517c0-.658-.618-1.136-1.251-1.526Zm-.431 2.248c-.537.332-1.04.649-1.195 1.135a2.73 2.73 0 0 0 .325 1.68c.155.373.399.99.293 1.151-.106.163-.731.09-1.113.057a2.393 2.393 0 0 0-1.626.203 2.594 2.594 0 0 0-.682 1.55c-.082.365-.236 1.054-.406 1.111-.171.057-.667-.422-.894-.625a2.585 2.585 0 0 0-1.48-.868c-.58.11-1.105.417-1.486.868-.22.203-.756.674-.894.625-.138-.049-.325-.746-.407-1.111a2.594 2.594 0 0 0-.674-1.55 1.522 1.522 0 0 0-.95-.243 7.016 7.016 0 0 0-.708.04c-.374 0-1.008.09-1.105-.056-.098-.146.097-.78.26-1.112.285-.51.4-1.1.325-1.68-.146-.486-.65-.81-1.186-1.135-.358-.227-.902-.568-.902-.811 0-.244.544-.552.902-.811.536-.333 1.04-.658 1.186-1.136a2.754 2.754 0 0 0-.325-1.688c-.163-.348-.398-.973-.284-1.127.113-.154.73-.09 1.105-.057.549.122 1.123.05 1.625-.203.392-.427.629-.972.674-1.55.082-.364.236-1.054.407-1.11.17-.058.674.421.894.624.381.45.907.753 1.487.86a2.569 2.569 0 0 0 1.479-.86c.227-.203.756-.673.894-.625.138.049.325.747.406 1.112.048.578.288 1.123.682 1.55a2.397 2.397 0 0 0 1.626.202c.382 0 1.007-.09 1.113.057.106.146-.138.811-.292 1.144a2.755 2.755 0 0 0-.326 1.687c.155.479.659.811 1.195 1.136.357.227.902.568.902.811 0 .243-.488.527-.845.755Z" />
@@ -273,7 +287,7 @@ const ViewSchemas = () => {
                 </div>
                 <div className="flow-root overflow-y-auto">
                   <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-                    <li className="py-3 sm:py-4">
+                    <li className="pt-3 sm:pt-4">
                       <div className="flex items-center space-x-4">
                         <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white flex-wrap p-1">
                           Attributes:
@@ -293,7 +307,7 @@ const ViewSchemas = () => {
             (userRoles.includes(Roles.OWNER)
               || userRoles.includes(Roles.ADMIN))
 
-            && <Card className='sm:w-1/2 p-2 ml-1 cursor-pointer overflow-hidden overflow-ellipsis'
+            && <Card className='sm:w-1/2 p-2 ml-1 overflow-hidden overflow-ellipsis'
               style={{ overflow: 'auto' }}
               id="credentialDefinitionCard">
               <div>
@@ -348,12 +362,12 @@ const ViewSchemas = () => {
                       </div>
 
                       <div className='flex items-center'>
-                        <div className="custom-control custom-checkbox d-flex align-items-center pt-4 p-2">
-                          {/* <Field type="checkbox" id="Revocable" name="revocable" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" /> */}
-                          {/* <Label className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300" >
+                        {/* <div className="custom-control custom-checkbox d-flex align-items-center pt-4 p-2"> */}
+                        {/* <Field type="checkbox" id="Revocable" name="revocable" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" /> */}
+                        {/* <Label className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300" >
                           Revocable
                         </Label> */}
-                        </div>
+                        {/* </div> */}
                         {createloader && <div className='ml-auto'>
                           <p className='text-gray-500 text-sm italic ml-5'>
                             <svg className='animate-spin mr-1 h-4 w-4 text-blue-600 inline-block' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -366,22 +380,23 @@ const ViewSchemas = () => {
                       </div>
                       {
                         (success || failure) &&
-                        <Alert
-                          color={success ? "success" : "failure"}
-                          onDismiss={() => {
-                            setSuccess(null)
-                            setFailure(null)
-                          }}
-                        >
-                          <span>
-                            <p>
-                              {success || failure}
-                            </p>
-                          </span>
-                        </Alert>
+                        <div className='py-3'>
+                          <Alert
+                            color={success ? "success" : "failure"}
+                            onDismiss={() => {
+                              setSuccess(null)
+                              setFailure(null)
+                            }}
+                          >
+                            <span>
+                              <p>
+                                {success || failure}
+                              </p>
+                            </span>
+                          </Alert>
+                        </div>
                       }
-                      {/* <div > */}
-                      <div className='float-right p-2'>
+                      <div className='float-right py-4'>
                         <Button
                           type="submit"
                           title="Add new credential-definition on ledger"
@@ -390,14 +405,12 @@ const ViewSchemas = () => {
                           disabled={createloader}
                           className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
                         >
-                          <svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
-                          </svg>
-                          {submitButtonTitle}
+                          {submitButtonTitle.svg}
+                          {submitButtonTitle.title}
                         </Button>
                       </div>
 
-                      <div className='float-right p-2'>
+                      <div className='float-right py-4 px-2'>
                         <Button
                           type="reset"
                           color='bg-primary-800'
