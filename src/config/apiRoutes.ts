@@ -54,6 +54,7 @@ export const apiRoutes = {
 		verifyCredential: '/proofs',
 		presentationVerification: '/proofs',
 		proofRequestAttributesVerification: '/proofs',
+		verificationCredDef: '/verifiation/cred-defs'
 	},
 	Agent: {
 		checkAgentHealth: '/agents/health',
