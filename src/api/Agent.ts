@@ -6,7 +6,7 @@ import { storageKeys } from "../config/CommonConstant";
 export const getAgentHealth = async (orgId:number) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
-    url: `${apiRoutes.Agent.checkAgentHealth}?orgId=${orgId}`,
+    url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.checkAgentHealth}`,
     config: {
       headers: {
         'Content-type': 'application/json',

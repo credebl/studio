@@ -12,7 +12,6 @@ import {
 import { checkUserExist, sendVerificationMail, setToLocalStorage } from '../../api/Auth.js';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant.js';
 import { useEffect, useState } from 'react';
-import React from 'react';
 import SignUpUserName from './SignUpUserName'
 import FooterBar from './FooterBar.js';
 import NavBar from './NavBar.js';
@@ -48,7 +47,7 @@ const SignUpUser = () => {
 			setVerifyLoader(true)
 			const userRsp = await sendVerificationMail(payload);
 			const { data } = userRsp as AxiosResponse;
-			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 
 				setVerificationSuccess(data?.message)
 				setVerifyLoader(false)
@@ -68,12 +67,14 @@ const SignUpUser = () => {
 		const userRsp = await checkUserExist(values?.email)
 		const { data } = userRsp as AxiosResponse
 		setLoading(false)
+		console.log("data:56576", data)
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			if (data.data === 'New User') {
+			if (data?.data?.isExist === false) {
+				console.log('email data::', data.data)
 				setEmail(values?.email)
 				await VerifyMail(values?.email)
 			}
-			else if (data.data.isEmailVerified === true && data?.data?.isKeycloak !== true) {
+			else if (data.data.isEmailVerified === true && data?.data?.isSupabase!== true) {
 				setEmail(values?.email)
 				await setToLocalStorage(storageKeys.USER_EMAIL, values?.email)
 				setNextFlag(true)
@@ -181,11 +182,11 @@ const SignUpUser = () => {
 											<div className="text-primary-700 font-inter text-base font-medium leading-5 mb-20">
 
 												<div className="block mb-2 text-sm font-medium  dark:text-white">
-													<Label className="text-primary-700" htmlFor="email2" value="Your Email" />
+													<Label className="text-primary-700 dark:!text-primary-700" htmlFor="email2" value="Your Email" />
 													<span className='text-red-500 text-xs'>*</span>
 												</div>
 
-												<div className="w-full flex items-center bg-gray-200 px-4 text-gray-700 text-sm border rounded-md focus:border-blue-400 focus:ring-1 focus:ring-blue-600">
+												<div className="w-full flex items-center bg-gray-200 px-4 py-3 text-gray-700 text-sm border rounded-md focus:border-blue-400 focus:ring-1 focus:ring-blue-600">
 
 													<svg
 														xmlns="http://www.w3.org/2000/svg"
@@ -203,7 +204,6 @@ const SignUpUser = () => {
 
 													<Field id='Signupemail'
 														name='email'
-														type="email"
 														className="truncate outline-none flex-grow bg-transparent focus:outline-none border-none focus:border-none focus:ring-0"
 														placeholder="name@company.com" />
 

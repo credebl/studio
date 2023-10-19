@@ -13,8 +13,8 @@ import FooterBar from './FooterBar.js';
 import NavBar from './NavBar.js';
 import { addPasskeyUserDetails, passwordEncryption, setToLocalStorage } from '../../api/Auth.js';
 import type { AxiosResponse } from 'axios';
-import React from 'react';
 import { PassInvisible, PassVisible, SignUpArrow } from './Svg.js';
+import React from 'react';
 
 interface passwordValues {
     password: string;
@@ -86,7 +86,7 @@ const ResetPassword = () => {
             const passkeyUserDetailsResp = await addPasskeyUserDetails(payload, email);
             const { data } = passkeyUserDetailsResp as AxiosResponse;
 
-            if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+            if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
                 setLoading(false);
             } else {
                 setErrMsg(passkeyUserDetailsResp as string);

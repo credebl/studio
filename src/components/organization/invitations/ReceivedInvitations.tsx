@@ -94,8 +94,7 @@ const ReceivedInvitations = () => {
         setLoading(true)
         const response = await acceptRejectInvitations(invite.id, invite.orgId, status);
         const { data } = response as AxiosResponse
-
-        if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
             setMessage(data?.message)
             setLoading(false)
             window.location.href = pathRoutes.organizations.root
@@ -136,9 +135,9 @@ const ReceivedInvitations = () => {
                         } />
 
                     <AlertComponent
-                        message={message ? message : error}
-                        type={message ? 'success' : 'failure'}
-                        onAlertClose={() => {
+                         message={message ? message : error}
+												 type={message ? 'success' : 'failure'}
+                         onAlertClose={() => {
                             setMessage(null)
                             setError(null)
                         }}

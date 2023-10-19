@@ -1,13 +1,13 @@
 /* eslint-disable global-require */
 /** @type {import('tailwindcss').Config} */
 
-const defaultTheme = require('tailwindcss/defaultTheme')
+const defaultTheme = require('tailwindcss/defaultTheme');
 
 module.exports = {
 	content: [
 		'./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}',
 		'./node_modules/flowbite/**/*.js',
-		'node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}'
+		'node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}',
 	],
 
 	darkMode: 'class',
@@ -16,41 +16,41 @@ module.exports = {
 		extend: {
 			colors: {
 				accentColor: '#20ACDF',
-				
-				primary: {  
-					DEFAULT: '#1F4EAD',  
-					50: '#DCE6F9',  
-					100: '#CBD9F6', 
-					200: '#A9C0F0', 
-					300: '#86A7E9',  
-					400: '#638EE3',  
-					500: '#4174DD',  
-					600: '#255ED0',  
-					700: '#1F4EAD',  
-					800: '#16397D',  
-					900: '#0E234E',  
-					950: '#0A1836'
+
+				primary: {
+					DEFAULT: '#1F4EAD',
+					50: '#DCE6F9',
+					100: '#CBD9F6',
+					200: '#A9C0F0',
+					300: '#86A7E9',
+					400: '#638EE3',
+					500: '#4174DD',
+					600: '#255ED0',
+					700: '#1F4EAD',
+					800: '#16397D',
+					900: '#0E234E',
+					950: '#0A1836',
 				},
 
-				secondary: {  
-					DEFAULT: '#D6F5F5',  
-					50: '#FFFFFF',  
-					100: '#FFFFFF', 
-					200: '#FFFFFF', 
-					300: '#FFFFFF',  
-					400: '#FFFFFF',  
-					500: '#FFFFFF',  
-					600: '#F7FDFD',  
-					700: '#D6F5F5',  
-					800: '#A9EAEA',  
-					900: '#7CDFDF',  
-					950: '#65DADA'
+				secondary: {
+					DEFAULT: '#D6F5F5',
+					50: '#FFFFFF',
+					100: '#FFFFFF',
+					200: '#FFFFFF',
+					300: '#FFFFFF',
+					400: '#FFFFFF',
+					500: '#FFFFFF',
+					600: '#F7FDFD',
+					700: '#D6F5F5',
+					800: '#A9EAEA',
+					900: '#7CDFDF',
+					950: '#65DADA',
 				},
 			},
 			fontFamily: {
 				sans: [
 					...defaultTheme.fontFamily.sans,
-					'Inter var', 
+					'Inter var',
 					'ui-sans-serif',
 					'system-ui',
 					'-apple-system',
@@ -98,8 +98,27 @@ module.exports = {
 				width: 'width',
 			},
 			textDecoration: ['active'],
+			width: {
+				'100/22rem': 'calc(100% - 22rem)',
+			},
 			minWidth: {
 				kanban: '28rem',
+			},
+			maxWidth: {
+				'100/6rem': 'calc(100% - 6rem)',
+				'100/13rem': 'calc(100% - 13rem)',
+				'100/10rem': 'calc(100% - 10rem)',
+				'100/8rem': 'calc(100% - 8rem)'
+			},
+			minHeight: {
+				'100/18rem': 'calc(100vh - 18rem)',
+				'100/25rem': 'calc(100vh - 25rem)',
+			},
+			maxHeight: {
+				'[90vh]': 'fit-content !important',
+			},
+			scale: {
+				103: '1.03',
 			},
 		},
 	},

@@ -91,7 +91,7 @@ const ProofRequest = (props: {
 							<span className="sr-only">Close modal</span>
 						</button>
 						<div className="sm:p-2 lg:p-6 m-4">
-							<p className="text-xl text-gray-700 pb-2 dark:bg-gray-800 font-semibold flex flex-start">
+							<p className="text-xl text-gray-700 pb-2 dark:bg-gray-800 dark:text-white font-semibold flex flex-start">
 								{' '}
 								Verification Details
 							</p>
@@ -102,7 +102,7 @@ const ProofRequest = (props: {
 								</div>
 							) : (
 								<div className=" text-gray-500 dark:text-gray-300 w-full">
-									<div className="mt-1">
+									<div className="mt-1 ">
 										<AttributesListData 
 										attributeDataList = {aggregatedData}
 										/>									
@@ -118,7 +118,7 @@ const ProofRequest = (props: {
 								className="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400"
 								role="alert"
 							>
-								<span className="font-medium">Success alert! </span> {succesMsg}
+								{succesMsg}
 							</div>
 						)}
 
@@ -178,7 +178,7 @@ const ProofRequest = (props: {
 							<span className="sr-only">Close modal</span>
 						</button>
 						<div className="sm:p-2 lg:p-6 m-4">
-							<p className="text-xl font-semibold text-gray-700 dark:bg-gray-800 flex flex-start pb-2">
+							<p className="text-xl font-semibold text-gray-700 dark:bg-gray-800 dark:text-white flex flex-start pb-2">
 								Verified Details
 							</p>
 							{!props.userData ? (

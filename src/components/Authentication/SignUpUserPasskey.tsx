@@ -2,33 +2,31 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { Alert, Button } from 'flowbite-react';
 import type { AxiosError, AxiosResponse } from 'axios';
-import type { IdeviceBody, RegistrationOptionInterface } from '../Profile/interfaces/index.js';
+import type { IdeviceBody, RegistrationOptionInterface, VerifyRegistrationObjInterface} from '../Profile/interfaces/index.js';
 import { addDeviceDetails, generateRegistrationOption, verifyRegistration } from '../../api/Fido.js';
 import { AddPasswordDetails, addPasswordDetails, getFromLocalStorage, passwordEncryption } from '../../api/Auth.js';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant.js';
 import { useEffect, useState } from 'react';
-
 import SignUpUserPassword from './SignUpUserPassword.jsx';
 import { startRegistration } from '@simplewebauthn/browser';
-import React from 'react';
 import SignUpUserName from './SignUpUserName.js';
 import { v4 as uuidv4 } from 'uuid';
 import NavBar from './NavBar.js';
 import FooterBar from './FooterBar.js';
-
+  
 interface passwordValues {
 
     password: string,
     confirmPassword: string
 }
 
-const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastName: string }) => {
+const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firstName: string; lastName: string }) => {
 
     const [loading, setLoading] = useState<boolean>(false)
     const [erroMsg, setErrMsg] = useState<string | null>(null)
     const [verificationSuccess, setVerificationSuccess] = useState<string>('')
     const [addSuccess, setAddSuccess] = useState<string | null>(null)
-    const [addfailure, setAddFailur] = useState<string | null>(null)
+    const [addfailure, setAddFailure] = useState<string | null>(null)
     const [emailAutoFill, setEmailAutoFill] = useState<string>('')
     const [fidoError, setFidoError] = useState("")
     const [currentComponent, setCurrentComponent] = useState<string>('email');
@@ -44,40 +42,41 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
     }, [])
 
     const showFidoError = (error: unknown): void => {
-        const err = error as AxiosError
-        if (err.message.includes("The operation either timed out or was not allowed")) {
-            const [errorMsg] = err.message.split('.')
-            setFidoError(errorMsg)
-            setTimeout(() => {
-                setFidoError("")
-            })
-        } else {
-            setFidoError(err.message)
-            setTimeout(() => {
-                setFidoError("")
-            })
-        }
-    }
+		const err = error as AxiosError;
+		if (
+			err.message.includes('The operation either timed out or was not allowed')
+		) {
+			const [errorMsg] = err.message.split('.');
+			setFidoError(errorMsg);
+		} else {
+			setFidoError(err.message);
+		}
+	};
 
-    const submit = async (fidoFlag: boolean, passwordDetails?: passwordValues,) => {
+
+    const submit = async (fidoFlag: boolean, passwordDetails?: passwordValues) => {
         const userEmail = await getFromLocalStorage(storageKeys.USER_EMAIL)
         const password: string = uuidv4();
         let payload: AddPasswordDetails = {
+            email: userEmail,
             isPasskey: fidoFlag,
             firstName: firstName,
             lastName: lastName,
             password: passwordEncryption(password)
         };
         if (!fidoFlag) {
-            payload.password = passwordDetails?.password;
+            payload.password = passwordDetails?.password || '';
         }
+
         setLoading(true)
 
-        const userRsp = await addPasswordDetails(payload, userEmail)
+        const userRsp = await addPasswordDetails(payload)
+
         const { data } = userRsp as AxiosResponse
         setLoading(false)
         if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
             window.location.href = `/authentication/sign-in?signup=true&fidoFlag=${fidoFlag}&method=passkey`
+
         } else {
             setErrMsg(userRsp as string)
         }
@@ -93,7 +92,7 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
             }
             const generateRegistrationResponse = await generateRegistrationOption(RegistrationOption)
             const { data } = generateRegistrationResponse as AxiosResponse
-            if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+            if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
                 const opts = data?.data
                 const challangeId = data?.data?.challenge
 
@@ -106,7 +105,7 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
                 }
                 setLoading(false)
                 const attResp = await startRegistration(opts)
-                const verifyRegistrationObj = {
+                const verifyRegistrationObj: VerifyRegistrationObjInterface = {
                     ...attResp,
                     challangeId
                 }
@@ -119,12 +118,13 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
             showFidoError(error)
         }
     }
-    const verifyRegistrationMethod = async (verifyRegistrationObj: any, OrgUserEmail: string) => {
+
+    let credentialID = '';
+    const verifyRegistrationMethod = async (verifyRegistrationObj: VerifyRegistrationObjInterface, OrgUserEmail: string) => {
         try {
             const verificationRegisterResp = await verifyRegistration(verifyRegistrationObj, OrgUserEmail)
             const { data } = verificationRegisterResp as AxiosResponse
-
-            const credentialID = data?.data?.newDevice?.credentialID
+            credentialID = encodeURIComponent(data?.data?.newDevice?.credentialID)
             if (data?.data?.verified) {
                 let platformDeviceName = ''
 
@@ -138,7 +138,6 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
                     userName: OrgUserEmail,
                     credentialId: credentialID,
                     deviceFriendlyName: platformDeviceName
-
                 }
                 await addDeviceDetailsMethod(deviceBody)
             }
@@ -156,11 +155,11 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
             if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
                 submit(true)
             } else {
-                setAddFailur(deviceDetailsResp as string)
+                setAddFailure(deviceDetailsResp as string)
             }
             setTimeout(() => {
                 setAddSuccess('')
-                setAddFailur('')
+                setAddFailure('')
             });
         } catch (error) {
             showFidoError(error)
@@ -194,14 +193,18 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
 
                             <div className="w-full">
                                 {
-                                    (verificationSuccess || erroMsg) &&
+                                    (verificationSuccess || erroMsg || fidoError) &&
                                     <Alert
                                         color={verificationSuccess ? "success" : "failure"}
-                                        onDismiss={() => setErrMsg(null)}
+                                        onDismiss={() => {
+                                            setAddSuccess(null)
+                                            setFidoError('')
+                                            setErrMsg('')
+                                        }}
                                     >
                                         <span>
                                             <p>
-                                                {verificationSuccess || erroMsg}
+                                                {verificationSuccess || erroMsg || fidoError}
                                             </p>
                                         </span>
                                     </Alert>
@@ -278,7 +281,7 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
 
                                     <Button
                                         id='signupcreatepasskey'
-                                        isProcessing={''}
+                                        isProcessing={loading}
                                         onClick={() => {
                                             registerWithPasskey(true)
                                         }}
@@ -311,12 +314,13 @@ const SignUpUserPasskey = ({ firstName, lastName }: { firstName: string; lastNam
                             </div>
                         </div>
                     </div>
-                   <FooterBar/>
+                    <FooterBar />
 
                 </div>}
             {
                 currentComponent === 'password' && (
                     <SignUpUserPassword
+                        email={email}
                         firstName={firstName}
                         lastName={lastName}
                     />

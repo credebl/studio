@@ -24,14 +24,17 @@ import PasswordSuggestionBox from './PasswordSuggestionBox.js';
 import { PassInvisible, PassVisible, SignUpArrow } from './Svg.js';
 
 interface passwordValues {
+	email: string;
 	password: string;
 	confirmPassword: string;
 }
 
 const SignUpUserPassword = ({
+	email,
 	firstName,
 	lastName,
 }: {
+	email: string,
 	firstName: string;
 	lastName: string;
 }) => {
@@ -44,20 +47,23 @@ const SignUpUserPassword = ({
 	const [showSuggestion, setShowSuggestion] = useState(false);
 
 	const submit = async (passwordDetails: passwordValues, fidoFlag: boolean) => {
+		const userEmail = await getFromLocalStorage(storageKeys.USER_EMAIL);
 		const payload = {
+			email: userEmail,
 			password: passwordEncryption(passwordDetails?.password),
 			isPasskey: false,
 			firstName,
 			lastName,
 		};
+
 		setLoading(true);
 
-		const userEmail = await getFromLocalStorage(storageKeys.USER_EMAIL);
-		const userRsp = await addPasswordDetails(payload, userEmail);
+		const userRsp = await addPasswordDetails(payload);
 		const { data } = userRsp as AxiosResponse;
 		setLoading(false);
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-			window.location.href = `/authentication/sign-in?signup=true?fidoFlag=${fidoFlag}`;
+			window.location.href = `/authentication/sign-in?signup=true&email=${userEmail}&fidoFlag=${fidoFlag}&method=password`
+
 		} else {
 			setErrMsg(userRsp as string);
 		}
@@ -69,6 +75,7 @@ const SignUpUserPassword = ({
 	};
 
 	const initialValues = {
+		email: email,
 		firstName: '',
 		lastName: '',
 		password: '',
@@ -89,7 +96,7 @@ const SignUpUserPassword = ({
 	return (
 		<div>
 			{showSignUpUser ? (
-				<SignUpUserPasskey firstName={firstName} lastName={lastName} />
+				<SignUpUserPasskey email={email} firstName={firstName} lastName={lastName} />
 			) : (
 				<div className="flex flex-col min-h-screen">
 					<NavBar />
@@ -167,7 +174,7 @@ const SignUpUserPassword = ({
 												<div className="text-primary-700 font-inter text-base font-medium leading-5">
 													<div className="block mb-2 text-sm font-medium  dark:text-white">
 														<Label
-															className="text-primary-700"
+															className="text-primary-700 dark:!text-primary-700"
 															htmlFor="password"
 															value="Password"
 														/>
@@ -223,7 +230,7 @@ const SignUpUserPassword = ({
 												<div className="text-primary-700 font-inter text-base font-medium leading-5 mt-8">
 													<div className="block mb-2 text-sm font-medium  dark:text-white">
 														<Label
-															className="text-primary-700"
+															className="text-primary-700 dark:!text-primary-700"
 															htmlFor="confirmPassword"
 															value="Confirm Password"
 														/>

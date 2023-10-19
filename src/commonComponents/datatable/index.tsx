@@ -31,6 +31,7 @@ const DataTable: React.FC<DataTableProps> = ({ header,displaySelect, data, loadi
 										{header && header.length > 0 &&
 											header.map(ele => (
 												<th
+												  key={ele.columnName}
 													scope="col"
 													className={`p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white ${ele.width && ele.width}`}
 												>
@@ -44,10 +45,10 @@ const DataTable: React.FC<DataTableProps> = ({ header,displaySelect, data, loadi
 								<tbody className="bg-white dark:bg-gray-800">
 									{data.length ? data.map((ele, index) => (
 										
-										<tr className={`${index % 2 !== 0 ? 'bg-gray-50 dark:bg-gray-700' : ''}`} >
+										<tr key={index} className={`${index % 2 !== 0 ? 'bg-gray-50 dark:bg-gray-700' : ''}`} >
 
-											{ele.data.map(subEle => (
-												<td className={` p-4 text-sm font-normal text-gray-900 whitespace-nowrap dark:text-white align-middle	`}>
+											{ele.data.map((subEle,index) => (
+												<td  key={index} className={` p-4 text-sm font-normal text-gray-900 whitespace-nowrap dark:text-white align-middle	`}>
 													<div>{subEle.data}</div>
 													{subEle.subData && subEle.subData}
 												</td>

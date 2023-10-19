@@ -1,19 +1,24 @@
 'use client';
 
-import { Alert, Button, Card, Pagination, Table, } from 'flowbite-react';
+import { Alert, Pagination } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
 import type { GetAllSchemaListParameter, PaginationData } from './interfaces';
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
+import { getAllSchemas, getAllSchemasByOrgId } from '../../../api/Schema';
+
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../../BreadCrumbs';
+import CustomSpinner from '../../CustomSpinner';
+import { EmptyListMessage } from '../../EmptyListComponent';
+import { Features } from '../../../utils/enums/features';
+import RoleViewButton from '../../RoleViewButton';
 import SchemaCard from '../../../commonComponents/SchemaCard';
+import type { SchemaDetails } from '../../Verification/interface';
 import SearchInput from '../../SearchInput';
-import { getAllSchemasByOrgId, getAllSchemas } from '../../../api/Schema';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
-import { EmptyListMessage } from '../../EmptyListComponent';
-import type { SchemaDetails } from '../../Verification/interface';
-import CustomSpinner from '../../CustomSpinner';
+import { getOrganizationById } from '../../../api/organization';
+import { ICheckEcosystem, checkEcosystem } from '../../../config/ecosystem';
 
 const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaDetails: SchemaDetails) => void; }) => {
 	const [schemaList, setSchemaList] = useState([])
@@ -28,9 +33,11 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 		sortBy: "id",
 		sortingOrder: "DESC",
 		allSearch: ""
-
 	})
+	const [walletStatus, setWalletStatus] = useState(false)
 	const [totalItem, setTotalItem] = useState(0)
+	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
+
 	const getSchemaList = async (schemaListAPIParameter: GetAllSchemaListParameter, flag: boolean) => {
 		try {
 			const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -107,9 +114,11 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 		}
 		props.schemaSelectionCallback(schemaId, schemaDetails)
 	}
+
 	const options = ["All schemas"]
 
 	const handleFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		console.log("Handle filter", e.target.value)
 		if (e.target.value === 'All schemas') {
 			setAllSchemaFlag(true)
 		}
@@ -119,6 +128,43 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 		}
 	};
 
+	const fetchOrganizationDetails = async () => {
+		setLoading(true)
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
+		const response = await getOrganizationById(orgId);
+		const { data } = response as AxiosResponse
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			if (data?.data?.org_agents && data?.data?.org_agents?.length > 0) {
+				setWalletStatus(true)
+			}
+		}
+		setLoading(false)
+	}
+
+	useEffect(() => {
+		fetchOrganizationDetails()
+		const checkEcosystemData = async () => {
+			const data: ICheckEcosystem = await checkEcosystem();
+			setIsEcosystemData(data)
+		}
+
+		checkEcosystemData();
+	}, [])
+
+	const schemaEndorsement = <svg className='mr-2 mt-1' xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 25 25">
+	<path fill="#fff" d="M21.094 0H3.906A3.906 3.906 0 0 0 0 3.906v12.5a3.906 3.906 0 0 0 3.906 3.907h.781v3.906a.781.781 0 0 0 1.335.553l4.458-4.46h10.614A3.906 3.906 0 0 0 25 16.407v-12.5A3.907 3.907 0 0 0 21.094 0Zm2.343 16.406a2.343 2.343 0 0 1-2.343 2.344H10.156a.782.782 0 0 0-.553.228L6.25 22.333V19.53a.781.781 0 0 0-.781-.781H3.906a2.344 2.344 0 0 1-2.344-2.344v-12.5a2.344 2.344 0 0 1 2.344-2.344h17.188a2.343 2.343 0 0 1 2.343 2.344v12.5Zm-3.184-5.951a.81.81 0 0 1-.17.254l-3.125 3.125a.781.781 0 0 1-1.105-1.106l1.792-1.79h-7.489a2.343 2.343 0 0 0-2.344 2.343.781.781 0 1 1-1.562 0 3.906 3.906 0 0 1 3.906-3.906h7.49l-1.793-1.79a.78.78 0 0 1 .254-1.277.781.781 0 0 1 .852.17l3.125 3.125a.79.79 0 0 1 .169.852Z" />
+</svg>
+
+const create = <div className='pr-3'>
+<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
+	<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+</svg>
+</div>
+
+	const createSchemaTitle = isEcosystemData?.isEcosystemMember ? { title: "Schema Endorsement", svg: schemaEndorsement	} : { title: "Create", svg: create }
+	const emptyListTitle = "No Schemas"
+	const emptyListDesc = "Get started by creating a new Schema"
+	const emptyListBtn = isEcosystemData?.isEcosystemMember ? { title: "Schema Endorsement", svg: schemaEndorsement	} : { title: "Create Schema", svg: create }
 	return (
 		<div className="px-4 pt-6">
 			<div className="mb-4 col-span-full xl:mb-2">
@@ -132,12 +178,13 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 					className=""
 				>
 					<div className="flex flex-col items-center justify-between mb-4 pr-4 sm:flex-row">
-						<div id='schemasSearchInput' className='mb-2 pl-2 flex space-x-2 items-end'>
+						<div id='schemasSearchInput' className='mb-2 pl-0 sm:pl-2 flex space-x-2 items-end'>
 							<SearchInput
 								onInputChange={onSearch}
 							/>
-							<select onChange={handleFilter} id="schamfilter" 
-							className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11">
+
+							<select onChange={handleFilter} id="schamfilter"
+								className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11">
 								<option selected>Organization's schema</option>
 								{options.map((opt) => (
 									<option
@@ -149,21 +196,30 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 									</option>
 								))}
 							</select>
+
 						</div>
 						<div className='flex space-x-2'>
-							<Button
-								id='createSchemaButton'
-								onClick={() => {
+							{walletStatus ? <RoleViewButton
+								buttonTitle={createSchemaTitle.title}
+								feature={Features.CRETAE_SCHEMA}
+								svgComponent={
+									createSchemaTitle.svg
+								}
+								onClickEvent={() => {
 									window.location.href = `${pathRoutes.organizations.createSchema}?OrgId=${orgId}`
 								}}
-								className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
-								title='Create New Schema'
-							>
-								<svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
-									<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
-								</svg>
-								Create
-							</Button>
+							/>
+								:
+								<RoleViewButton
+									buttonTitle={createSchemaTitle.title}
+									feature={Features.CRETAE_SCHEMA}
+									svgComponent={
+										createSchemaTitle.svg
+									}
+									onClickEvent={() => {
+										window.location.href = `${pathRoutes.organizations.dashboard}?OrgId=${orgId}`
+									}}
+								/>}
 						</div>
 					</div>
 				</div>
@@ -180,18 +236,13 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 						</span>
 					</Alert>
 				}
-				{loading
-					? (<div className="flex items-center justify-center mb-4">
-						
-						<CustomSpinner/>
-					</div>)
-					:
+				{
 					schemaList && schemaList.length > 0 ? (
 						<div className='Flex-wrap' style={{ display: 'flex', flexDirection: 'column' }}>
 							<div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
 								{schemaList && schemaList.length > 0 &&
 									schemaList.map((element, key) => (
-										<div className='p-2' key={key}>
+										<div className='px-0 sm:px-2' key={`SchemaList-${key}`}>
 											<SchemaCard schemaName={element['name']} version={element['version']} schemaId={element['schemaLedgerId']} issuerDid={element['issuerId']} attributes={element['attributes']} created={element['createDateTime']}
 												onClickCallback={schemaSelectionCallback} />
 										</div>
@@ -199,7 +250,7 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 							</div>
 							<div className="flex items-center justify-end mb-4" id="schemasPagination">
 
-								{schemaList.length> 0 &&(<Pagination
+								{schemaList.length > 0 && (<Pagination
 									currentPage={schemaListAPIParameter?.page}
 									onPageChange={(page) => {
 										setSchemaListAPIParameter(prevState => ({
@@ -210,17 +261,30 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 									totalPages={Math.ceil(totalItem / schemaListAPIParameter?.itemPerPage)}
 								/>)}
 							</div>
-						</div>) : (<EmptyListMessage
-							message={'No Schemas'}
-							description={'Get started by creating a new Schema'}
-							buttonContent={'Create Schema'}
-							svgComponent={<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
-								<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
-							</svg>}
-							onClick={() => {
-								window.location.href = `${pathRoutes.organizations.createSchema}?OrgId=${orgId}`
-							}}
-						/>)
+						</div>)
+						:
+						(
+							<div>
+								{
+									!(schemaList && schemaList.length > 0) && loading ?
+										(<div className="flex items-center justify-center mb-4">
+											<CustomSpinner />
+										</div>)
+										:
+										(
+											<EmptyListMessage
+												message={emptyListTitle}
+												description={emptyListDesc}
+												buttonContent={emptyListBtn.title}
+												svgComponent={emptyListBtn.svg}
+												onClick={() => {
+													window.location.href = `${pathRoutes.organizations.createSchema}?OrgId=${orgId}`
+												}}
+											/>
+										)
+								}
+							</div>
+						)
 				}
 			</div>
 		</div>

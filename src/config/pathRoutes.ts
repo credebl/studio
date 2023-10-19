@@ -2,7 +2,7 @@ export const pathRoutes = {
     auth: {
         signUp: '/authentication/sign-up',
         sinIn: '/authentication/sign-in',
-        verifyEmail: '/users/verify',
+        verifyEmail: '/auth/verify',
     },
     users: {
         dashboard: '/dashboard',
@@ -16,33 +16,30 @@ export const pathRoutes = {
         users: '/organizations/users',
         schemas: `/organizations/schemas`,
         dashboard: '/organizations/dashboard',
-        issuedCredentials: '/organizations/credentials-issued',
+        issuedCredentials: '/organizations/credentials',
         credentials: '/organizations/verification',
         createSchema: '/organizations/schemas/create',
         viewSchema: '/organizations/schemas/view-schema',
-
         Issuance: {
-            schema: '/organizations/credentials-issued/schemas',
-            credDef:'/organizations/credentials-issued/schemas/cred-defs',
-            connections:'/organizations/credentials-issued/schemas/cred-defs/connections',
-            issuance:'/organizations/credentials-issued/schemas/cred-defs/connections/issuance'
+            schema: '/organizations/credentials/schemas',
+            credDef: '/organizations/credentials/schemas/cred-defs',
+            connections: '/organizations/credentials/schemas/cred-defs/connections',
+            issuance: '/organizations/credentials/schemas/cred-defs/connections/issuance'
         },
         verification: {
             schema: '/organizations/verification/schemas',
-            credDef:'/organizations/verification/schemas/cred-defs',
-            connections:'/organizations/verification/schemas/cred-defs/connections',
-            verify:'/organizations/verification/schemas/cred-defs/connections/verification'
+            credDef: '/organizations/verification/schemas/cred-defs',
+            connections: '/organizations/verification/schemas/cred-defs/connections',
+            verify: '/organizations/verification/schemas/cred-defs/connections/verification'
         },
     },
-   
-    // ecosystems: {
-    //     root: '/ecosystems',
-    //     frameworks: '/ecosystems/frameworks',
-    //     members: '/ecosystems/members',
-    //     registries: '/ecosystems/registries',
-    //     users: '/organizations/users',
-    //     credentials: '/organizations/credentials'
-    // },
+    ecosystem: {
+        root: '/ecosystem',
+        profile: "/ecosystem/profile",
+        endorsements: "/ecosystem/endorsement",
+        invitation:"/ecosystem/invitation",
+				sentinvitation:'/ecosystem/invitations'
+    },
     documentation: {
         root: 'https://docs.credebl.id'
     },
@@ -53,20 +50,19 @@ export const pathRoutes = {
         createCredentialDefinition: '/credential-definitions',
         getCredDeffBySchemaId: '/schemas/credential-definitions'
     },
-
-		back:{
-			schema:{
-				schemas:'/organizations/schemas'
-			},
-			verification:{
-				credDef:'/organizations/credentials-issued/schemas/cred-defs',
-				schemas:'/organizations/verification/schemas',
-				verification:'/organizations/verification/schemas/cred-defs/connections',
-			},
-			issuance:{
-				credDef:'/organizations/credentials-issued/schemas/cred-defs',
-				schemas:'/organizations/credentials-issued/schemas',
-				connections: '/organizations/credentials-issued/schemas/cred-defs/connections'
-			}
-		}
+    back: {
+        schema: {
+            schemas: '/organizations/schemas'
+        },
+        verification: {
+            credDef: '/organizations/verification/schemas/cred-defs',
+            schemas: '/organizations/verification/schemas',
+            verification: '/organizations/verification/schemas/cred-defs/connections',
+        },
+        issuance: {
+            credDef: '/organizations/credentials/schemas/cred-defs',
+            schemas: '/organizations/credentials/schemas',
+            connections: '/organizations/credentials/schemas/cred-defs/connections'
+        }
+    }
 }

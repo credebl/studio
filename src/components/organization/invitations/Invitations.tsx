@@ -157,7 +157,7 @@ const Invitations = () => {
                                                 className="flex flex-wrap justify-between align-center"
                                             >
                                                 <div className="flex min-w-[40%] space-x-4 xl:mb-4 2xl:mb-0">
-                                                    <div>
+                                                    <div className='dark:text-white'>
                                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" width="60px" height="60px">
                                                             <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
                                                         </svg>
@@ -221,12 +221,12 @@ const Invitations = () => {
                                                 </span>
 
 
-                                                <p
-                                                    className="mr-2 flex items-center text-sm font-medium text-gray-500 dark:text-gray-400"
+                                                <p 
+                                                className="mr-2 flex items-center text-sm font-medium text-gray-500 dark:text-gray-400"
                                                 >
-                                                    Invited On: <DateTooltip date={invitation.createDateTime}> {dateConversion(invitation.createDateTime)} </DateTooltip>                                                
-                                                    </p>
-                                                    
+                                                    Invited On: &nbsp;<DateTooltip date={invitation.createDateTime}>{dateConversion(invitation.createDateTime)}</DateTooltip>
+                                                </p>          
+
                                             </div>
                                         </li>
                                     ))

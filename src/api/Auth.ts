@@ -1,7 +1,4 @@
 import {axiosGet, axiosPost, axiosPut} from '../services/apiRequests'
-import { number, string } from 'yup'
-
-import type { AxiosError } from 'axios'
 import CryptoJS from "crypto-js"
 import { apiRoutes } from '../config/apiRoutes'
 import { envConfig } from '../config/envConfig'
@@ -12,7 +9,8 @@ export interface UserSignUpData {
     email: string,
 }
 export interface AddPasswordDetails {
-    password?:string
+    email:string
+    password:string 
     isPasskey:boolean
     firstName: string|null
     lastName: string|null
@@ -61,7 +59,7 @@ export const loginUser = async(payload: UserSignInData) => {
 
 export const getUserProfile = async(accessToken: string) => {
     const details = {
-        url: apiRoutes.auth.userProfile,
+        url: apiRoutes.users.userProfile,
         config : { headers: { Authorization: `Bearer ${accessToken}` } }
     }
     try{
@@ -98,7 +96,6 @@ export const updateUserProfile = async(data: object ) => {
         const err = error as Error
         return err?.message
     }
-
 }  
 
 export const verifyUserMail = async(payload: EmailVerifyData ) => {
@@ -113,14 +110,12 @@ export const verifyUserMail = async(payload: EmailVerifyData ) => {
     catch(error){
         const err = error as Error
         return err?.message
-    }
-
-   
+    } 
 }
 
 export const checkUserExist = async(payload: string) => {
     const details ={
-        url:`${apiRoutes.auth.checkUser}${payload}`,
+        url:`${apiRoutes.users.checkUser}${payload}`,
         config: { headers: { "Content-type": "application/json" } }
     }
     try{
@@ -130,15 +125,12 @@ export const checkUserExist = async(payload: string) => {
     catch(error){
         const err = error as Error
         return err?.message
-    }
-
-   
+    } 
 }
 
-export const addPasswordDetails = async(payload: AddPasswordDetails, email:string) => {
-    // Api call to add password
+export const addPasswordDetails = async(payload: AddPasswordDetails) => {
     const details ={
-        url: `${apiRoutes.auth.addDetails}${email}`,
+        url: `${apiRoutes.auth.addDetails}`,
         payload,
         config: { headers: { "Content-type": "application/json" } }
     }
@@ -149,9 +141,7 @@ export const addPasswordDetails = async(payload: AddPasswordDetails, email:strin
     catch(error){
         const err = error as Error
         return err?.message
-    }
-
-   
+    }  
 }
 
 export const addPasskeyUserDetails = async(payload: AddPassword, email:string) => {
@@ -165,17 +155,14 @@ export const addPasskeyUserDetails = async(payload: AddPassword, email:string) =
           }, }
     }
     try{
-        const response = await axiosPost(details)
+        const response = await axiosPut(details)
         return response
     }
     catch(error){
         const err = error as Error
         return err?.message
-    }
-
-   
+    }  
 }
-
 
 export const passwordEncryption = (password: string): string => {
     const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`    

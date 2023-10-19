@@ -7,6 +7,7 @@ export interface UserOrgRole {
 }
 
 export interface Organisation {
+    logoFile: string
     id: number
     createDateTime: string
     createdBy: number
@@ -19,6 +20,8 @@ export interface Organisation {
     roles: string[]
     userOrgRoles: UserOrgRole[]
     org_agents: OrgAgent[]
+    publicProfile: boolean
+    
 }
 
 export interface OrgRole {
@@ -104,4 +107,9 @@ export interface Connection {
     createdBy: number
     lastChangedDateTime: string
     lastChangedBy: number
+  }
+
+  export interface EcosystemDashboard {
+    membersCount: number
+    endorsementsCount: number
   }
