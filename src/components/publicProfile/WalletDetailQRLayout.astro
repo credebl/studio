@@ -12,6 +12,17 @@ interface UserObject {
 	walletName:string
 	createDateTime:string
 }
+
+let connectionInvitation = ''
+
+if(orgData?.org_agents?.length > 0){
+	const agents = orgData?.org_agents[0]
+	if(agents?.agent_invitations?.length > 0){
+		connectionInvitation = agents?.agent_invitations[0].connectionInvitation
+	}
+
+}
+
 ---
 
 <div class="min-[320]:inline-block w-full md:flex rounded gap-2 bg-white">
@@ -72,24 +83,24 @@ interface UserObject {
 	</div>
 	}
 	</div>
-{orgData?.org_agents.length > 0 ?
-	<div class="w-1/3 flex flex-col justify-center text-wrap p-2">
+	<!-- commented for future use -->
+	<!-- {
+		connectionInvitation 
+		&& <div class="w-1/3 flex flex-col justify-center text-wrap p-2">
 		<div class="h-auto flex-col items-center p-4">
-		{	orgData?.org_agents &&
 			<div
 					class="bg-white p-4 border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 overflow-hidden">
 					<CustomQRCode
 					client:load
 							size={180}
-							value={orgData?.org_agents[0]?.agent_invitations[0]?.connectionInvitation}
+							value={connectionInvitation.toString()}
 					/>
 			</div>
-		}
+		
+		</div>
 	</div>
-	</div>
-	:
-   ''
-	 }
+	} -->
+	
 </div>
 
 
