@@ -27,8 +27,8 @@ const OrgWalletDetails = ({orgData}) => {
 
 
     return (
-        <div className="min-[320]:inline-block w-full md:flex rounded gap-2 bg-white">
-        <div className="lg:w-2/3 mb-4 sm:mb-0 sm:pr-4 p-2">
+        <div className="flex flex-col w-full md:flex rounded gap-2 bg-white">
+        <div className="mb-4 sm:mb-0 sm:pr-4 p-2">
             <h1 className="font-semibold text-2xl p-3">Wallet Details</h1>
     
         {	orgData?.org_agents.length > 0 ?
@@ -55,23 +55,8 @@ const OrgWalletDetails = ({orgData}) => {
                             <span className=" w-40">Network</span>
                             <span className="mx-2">:</span>
                             <span className="ml-9 text-gray-600">{agentData?.ledgers?.networkType}</span>
-                        </li><li className="flex items-center text-xl">
-                            <span className=" w-40">WalletName</span>
-                            <span className="mx-2">:</span>
-                            <span className="ml-9 text-gray-600">{agentData?.walletName}</span>
-                        </li><li className="flex items-center text-xl">
-                            <span className=" w-40">CreationDate</span>
-                            <span className="mx-2">:</span>
-                            <p
-                                            className="ml-9 text-base font-semibold text-gray-900 truncate dark:text-white w-40 md:w-32 lg:w-80"
-                                        >
-                                            {
-                                            agentData?.createDateTime ? 
-                                                <DateTooltip date={agentData?.createDateTime}> { dateConversion(agentData?.createDateTime) } </DateTooltip> : 
-                                                    <DateTooltip date={agentData?.createDateTime}> { dateConversion(new Date().toISOString()) } </DateTooltip>
-                                            }
-                                        </p>
-                        </li></>
+                        </li>
+                        </>
                 ))
             :
             <ul>
@@ -92,7 +77,7 @@ const OrgWalletDetails = ({orgData}) => {
         </div>
         {
             connectionInvitation 
-            && <div className="lg:w-1/3 flex flex-col justify-center text-wrap p-2">
+            && <div className="lg:w-2/3 flex flex-col text-wrap p-2">
             <div className="h-auto flex-col items-center p-4">
                 <div
                         className="bg-white p-4 border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 overflow-hidden">

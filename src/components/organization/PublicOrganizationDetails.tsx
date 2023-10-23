@@ -76,12 +76,9 @@ const PublicOrganizationDetails = ({ orgSlug }: { orgSlug: string }) => {
                             }
 
                         </div>
-                        <div className="col-span-3 grid grid-rows-2 gap-4 bg-gray-100">
+                        <div className="col-span-3 grid gap-4 bg-gray-100">
                             <OrgWalletDetails orgData={orgData} />
-                            <div className="p-2 rounded bg-white">
-                                <h1 className="font-bold text-2xl p-2">Users</h1>
-                                <OrgUserInfo orgUsersData={orgUsersData} />
-                            </div>
+                    
                         </div>
                     </div>
             }
