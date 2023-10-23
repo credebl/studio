@@ -3,20 +3,19 @@ import { pathRoutes } from '../../config/pathRoutes';
 import ProfileDesign from '../../components/publicProfile/ProfileDesign.astro';
 import WalletDetailQRLayout from '../../components/publicProfile/WalletDetailQRLayout.astro';
 import OrgUserInfoLayout from '../../components/publicProfile/OrgUserInfoLayout.astro';
+import PublicOrganizationDetails from '../../components/organization/PublicOrganizationDetails';
 
 const { org } = Astro.params;
-const baseUrl = process.env.PUBLIC_BASE_URL || import.meta.env.PUBLIC_BASE_URL
+// const baseUrl = process.env.PUBLIC_BASE_URL || import.meta.env.PUBLIC_BASE_URL
 
-console.log(`BaseUrl::`, baseUrl);
+// const response = await fetch(`${baseUrl}/orgs/public-profiles/${org}`,
+// {
+//     method: 'GET',
+//     headers: {'Content-Type':'application/json'}
+//   }
+// );
 
-const response = await fetch(`${baseUrl}/orgs/public-profiles/${org}`,
-{
-    method: 'GET',
-    headers: {'Content-Type':'application/json'}
-  }
-);
-
-const data = await response?.json();
+// const data = await response?.json();
 // const orgData = data?.data;
 
 // const orgUsersFilterByRole = orgData?.userOrgRoles?.filter(
@@ -52,21 +51,23 @@ const data = await response?.json();
 		</div>
 	</div>
 
+
 	<div>Org Slug {org}</div>
-	<div>BaseUrl {baseUrl}</div>
-	<div>JSON Data {JSON.stringify(data)}</div>
+	{
+		org && <PublicOrganizationDetails orgSlug = {org}/>
+	}
 
-	<div class="grid grid-cols-3 gap-2 p-2 bg-gray-100">
-		<!-- <div class="h-screen col-span-1 border">
+	<!-- <div class="grid grid-cols-3 gap-2 p-2 bg-gray-100">
+		<div class="h-screen col-span-1 border">
 			<ProfileDesign orgData={orgData} />
-		</div> -->
+		</div>
 
-		<!-- <div class="col-span-2 grid grid-rows-2 gap-4 bg-gray-100">
+		<div class="col-span-2 grid grid-rows-2 gap-4 bg-gray-100">
 			<WalletDetailQRLayout orgData={orgData} />
 			<div class="p-2 rounded bg-white">
 				<h1 class="font-bold text-2xl p-2">Users</h1>
 				<OrgUserInfoLayout orgUsersData={orgUsersData} />
 			</div>
-		</div> -->
-	</div>
+		</div>
+	</div> -->
 </div>

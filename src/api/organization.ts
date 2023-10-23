@@ -328,3 +328,27 @@ export const getPublicOrganizations = async (pageNumber: number, pageSize: numbe
 	}
 }
 
+export const getPublicOrgDetails = async (orgSlug: string) => {
+
+	const url = `${apiRoutes.Public.organizationDetails}/${orgSlug}`
+
+	const config = {
+			headers: {
+					'Content-Type': 'application/json',
+			}
+	}
+	const axiosPayload = {
+			url,
+			config
+	}
+
+	try {
+			return await axiosPublicOrganisationGet(axiosPayload);
+	}
+	catch (error) {
+			const err = error as Error
+			return err?.message
+	}
+}
+
+

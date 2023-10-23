@@ -66,6 +66,7 @@ export const apiRoutes = {
 	},
 	Public: {
 		organizations: '/orgs/public-profile',
+		organizationDetails: '/orgs/public-profiles',
 	},
 	Ecosystem: {
 		root: '/ecosystem',
