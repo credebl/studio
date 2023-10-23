@@ -9,10 +9,10 @@ interface OrgInterface {
         logoUrl: string;
         description: string;
     }
-    
+
 }
 
-const ProfilesDesign = ({orgData}: OrgInterface) => {
+const ProfilesDesign = ({ orgData }: OrgInterface) => {
 
     return (
         <>
@@ -26,10 +26,10 @@ const ProfilesDesign = ({orgData}: OrgInterface) => {
                             <CustomAvatar className="my-4 rounded-full shadow-lg" size="180" name={orgData?.name} />
                         )}
 
-                        <h3 className="mb-1 text-3xl font-medium text-gray-900 dark:text-white pt-4">{orgData?.name}</h3>
+                        <h3 className="mb-1 text-center text-3xl font-medium text-gray-900 dark:text-white pt-4">{orgData?.name}</h3>
                         <div className="flex text-center align-middle ">
                             {orgData?.website &&
-					<><svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 19 19">
+                                <><svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 19 19">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.013 7.962a3.519 3.519 0 0 0-4.975 0l-3.554 3.554a3.518 3.518 0 0 0 4.975 4.975l.461-.46m-.461-4.515a3.518 3.518 0 0 0 4.975 0l3.553-3.554a3.518 3.518 0 0 0-4.974-4.975L10.3 3.7" />
                                 </svg><a href={orgData?.website} target="_blank">	<span className="text-2xl text-gray-500 dark:text-gray-400 pl-2 ">{orgData?.website}</span></a></>
                             }
