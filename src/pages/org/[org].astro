@@ -51,11 +51,12 @@ const orgData = data?.data;
 
 	<div>Org Slug {org}</div>
 	<div>BaseUrl {baseUrl}</div>
+	<div>JSON Data {JSON.stringify(orgData)}</div>
 
 	<div class="grid grid-cols-3 gap-2 p-2 bg-gray-100">
-		<div class="h-screen col-span-1 border">
+		<!-- <div class="h-screen col-span-1 border">
 			<ProfileDesign orgData={orgData} />
-		</div>
+		</div> -->
 
 		<!-- <div class="col-span-2 grid grid-rows-2 gap-4 bg-gray-100">
 			<WalletDetailQRLayout orgData={orgData} />
