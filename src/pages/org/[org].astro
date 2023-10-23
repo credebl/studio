@@ -9,12 +9,12 @@ const baseUrl = process.env.PUBLIC_BASE_URL || import.meta.env.PUBLIC_BASE_URL
 
 console.log(`BaseUrl::`, baseUrl);
 
-// const response = await fetch(
-// 	`${baseUrl}/orgs/public-profiles/${org}`,
-// );
+const response = await fetch(
+	`${baseUrl}/orgs/public-profiles/${org}`,
+);
 
-// const data = await response?.json();
-// const orgData = data?.data;
+const data = await response?.json();
+const orgData = data?.data;
 
 // const orgUsersFilterByRole = orgData?.userOrgRoles?.filter(
 // 	(users: { orgRole: {name:string}; }) => {
@@ -52,17 +52,17 @@ console.log(`BaseUrl::`, baseUrl);
 	<div>Org Slug {org}</div>
 	<div>BaseUrl {baseUrl}</div>
 
-	<!-- <div class="grid grid-cols-3 gap-2 p-2 bg-gray-100">
+	<div class="grid grid-cols-3 gap-2 p-2 bg-gray-100">
 		<div class="h-screen col-span-1 border">
 			<ProfileDesign orgData={orgData} />
 		</div>
 
-		<div class="col-span-2 grid grid-rows-2 gap-4 bg-gray-100">
+		<!-- <div class="col-span-2 grid grid-rows-2 gap-4 bg-gray-100">
 			<WalletDetailQRLayout orgData={orgData} />
 			<div class="p-2 rounded bg-white">
 				<h1 class="font-bold text-2xl p-2">Users</h1>
 				<OrgUserInfoLayout orgUsersData={orgUsersData} />
 			</div>
-		</div>
-	</div> -->
+		</div> -->
+	</div>
 </div>
