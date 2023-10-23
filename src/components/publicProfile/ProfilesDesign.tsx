@@ -25,7 +25,7 @@ const ProfilesDesign = ({ orgData }: OrgDataInterface) => {
                                 </svg><a href={orgData?.website} target="_blank">	<span className="text-2xl text-gray-500 dark:text-gray-400 pl-2 ">{orgData?.website}</span></a></>
                             }
                         </div>
-                        <p className="pt-2 p-4 flex items-center justify-center flex-wrap">{orgData?.description}</p>
+                        <p className="pt-2 p-4 flex items-center justify-center text-gray-900 dark:text-white flex-wrap">{orgData?.description}</p>
                     </div>
                 </div>
             </div>
