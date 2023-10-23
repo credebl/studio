@@ -9,7 +9,12 @@ const baseUrl = process.env.PUBLIC_BASE_URL || import.meta.env.PUBLIC_BASE_URL
 
 console.log(`BaseUrl::`, baseUrl);
 
-const response = await fetch(`${baseUrl}/orgs/public-profiles/${org}`);
+const response = await fetch(`${baseUrl}/orgs/public-profiles/${org}`,
+{
+    method: 'GET',
+    headers: {'Content-Type':'application/json'}
+  }
+);
 
 const data = await response?.json();
 // const orgData = data?.data;
