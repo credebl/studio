@@ -27,8 +27,8 @@ const OrgWalletDetails = ({orgData}) => {
 
 
     return (
-        <div className="flex flex-col w-full md:flex rounded gap-2 bg-white">
-        <div className="mb-4 sm:mb-0 sm:pr-4 p-2">
+        <div className="min-[320]:inline-block w-full md:flex rounded gap-2 bg-white">
+        <div className="lg:w-2/3 mb-4 sm:mb-0 sm:pr-4 p-2">
             <h1 className="font-semibold text-2xl p-3">Wallet Details</h1>
     
         {	orgData?.org_agents.length > 0 ?
@@ -77,7 +77,7 @@ const OrgWalletDetails = ({orgData}) => {
         </div>
         {
             connectionInvitation 
-            && <div className="lg:w-2/3 flex flex-col text-wrap p-2">
+            && <div className="lg:w-1/3 flex flex-col text-wrap p-2">
             <div className="h-auto flex-col items-center p-4">
                 <div
                         className="bg-white p-4 border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 overflow-hidden">
