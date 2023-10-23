@@ -3,8 +3,6 @@
 import React, { useEffect, useState } from "react"
 import { EmptyListMessage } from "../EmptyListComponent";
 import CustomQRCode from "../../commonComponents/QRcode";
-import DateTooltip from '../Tooltip';
-import { dateConversion } from '../../utils/DateConversion';
 import { OrgWalletDetailsObject } from "../organization/interfaces";
 
 const OrgWalletDetails = ({orgData}) => {

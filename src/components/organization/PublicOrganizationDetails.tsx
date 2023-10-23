@@ -4,7 +4,6 @@ import { getPublicOrgDetails } from '../../api/organization'
 import { apiStatusCodes } from "../../config/CommonConstant";
 import ProfilesDesign from "../publicProfile/ProfilesDesign";
 import OrgWalletDetails from "../publicProfile/OrgWalletDetails";
-import OrgUserInfo from "../publicProfile/OrgUserInfo";
 import { AlertComponent } from "../AlertComponent";
 import CustomSpinner from "../CustomSpinner";
 import { OrgInterface } from "./interfaces";
