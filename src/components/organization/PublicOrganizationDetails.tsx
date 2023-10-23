@@ -7,13 +7,10 @@ import OrgWalletDetails from "../publicProfile/OrgWalletDetails";
 import { AlertComponent } from "../AlertComponent";
 import CustomSpinner from "../CustomSpinner";
 import { OrgInterface } from "./interfaces";
-import { Roles } from "../../utils/enums/roles";
-
 
 const PublicOrganizationDetails = ({ orgSlug }: { orgSlug: string }) => {
 
     const [orgData, setOrgData] = useState<OrgInterface | null>(null);
-    const [orgUsersData, setOrgUsersData] = useState<object | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -27,19 +24,6 @@ const PublicOrganizationDetails = ({ orgSlug }: { orgSlug: string }) => {
 
             setOrgData(data?.data);
 
-            const orgUsersFilterByRole = data?.data?.userOrgRoles?.filter(
-                (users: { orgRole: { name: string }; }) => {
-                    return users?.orgRole.name === Roles.OWNER
-                },
-            );
-
-            const usersData = orgUsersFilterByRole?.map(
-                (users: { user: { firstName: string } }) => {
-                    return users?.user;
-                },
-            );
-
-            setOrgUsersData(usersData);
         } else {
             setError(response as string);
         }
