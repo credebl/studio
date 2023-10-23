@@ -134,3 +134,38 @@ export interface Connection {
     membersCount: number
     endorsementsCount: number
   }
+
+
+export interface OrgInterface {
+    name: string;
+    website: string;
+    logoUrl: string;
+    description: string;
+}
+
+export interface OrgDataInterface {
+    orgData: OrgInterface
+}
+
+export interface OrgWalletDetailsObject {
+	orgDid:string
+	ledgers:{
+		name:string
+	  networkType:string
+	}
+	networkType:string
+	walletName:string
+	createDateTime:string
+}
+
+export interface UserDetails {
+    profileImg: string;
+    lastName: string;
+    firstName: string;
+    email: string;
+    publicProfile: boolean;
+    id: number;
+    username: string;
+}
+
+

@@ -1,28 +1,13 @@
 ---
 import { pathRoutes } from '../../config/pathRoutes';
-import ProfileDesign from '../../components/publicProfile/ProfileDesign.astro';
-import WalletDetailQRLayout from '../../components/publicProfile/WalletDetailQRLayout.astro';
-import OrgUserInfoLayout from '../../components/publicProfile/OrgUserInfoLayout.astro';
+import LayoutCommon from "../../app/LayoutCommon.astro";
+
+import PublicOrganizationDetails from '../../components/organization/PublicOrganizationDetails';
 
 const { org } = Astro.params;
-const baseUrl = process.env.PUBLIC_BASE_URL || import.meta.env.PUBLIC_BASE_URL
-const response = await fetch(
-	`${baseUrl}/orgs/public-profiles/${org}`,
-);
-const data = await response?.json();
-const orgData = data?.data;
-const orgUsersFilterByRole = orgData?.userOrgRoles?.filter(
-	(users: { orgRole: {name:string}; }) => {
-	return users?.orgRole.name === "owner"
-	},
-);
-
-const orgUsersData = orgUsersFilterByRole?.map(
-	(users: { user: { firstName: string } }) => {
-		return users?.user;
-	},
-);
 ---
+
+<LayoutCommon>
 
 <div class="max-h-fit">
 	<div class="w-full mx-0">
@@ -43,17 +28,9 @@ const orgUsersData = orgUsersFilterByRole?.map(
 		</div>
 	</div>
 
-	<div class="grid grid-cols-3 gap-2 p-2 bg-gray-100">
-		<div class="h-screen col-span-1 border">
-			<ProfileDesign orgData={orgData} />
-		</div>
+	{
+		org && <PublicOrganizationDetails client:visible orgSlug = {org}/>
+	}
 
-		<div class="col-span-2 grid grid-rows-2 gap-4 bg-gray-100">
-			<WalletDetailQRLayout orgData={orgData} />
-			<div class="p-2 rounded bg-white">
-				<h1 class="font-bold text-2xl p-2">Users</h1>
-				<OrgUserInfoLayout orgUsersData={orgUsersData} />
-			</div>
-		</div>
-	</div>
 </div>
+<LayoutCommon>
