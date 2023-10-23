@@ -7,15 +7,9 @@ import OrgWalletDetails from "../publicProfile/OrgWalletDetails";
 import OrgUserInfo from "../publicProfile/OrgUserInfo";
 import { AlertComponent } from "../AlertComponent";
 import CustomSpinner from "../CustomSpinner";
+import { OrgInterface } from "./interfaces";
+import { Roles } from "../../utils/enums/roles";
 
-
-interface OrgInterface {
-    name: string;
-    website: string;
-    logoUrl: string;
-    description: string;
-
-}
 
 const PublicOrganizationDetails = ({ orgSlug }: { orgSlug: string }) => {
 
@@ -36,7 +30,7 @@ const PublicOrganizationDetails = ({ orgSlug }: { orgSlug: string }) => {
 
             const orgUsersFilterByRole = data?.data?.userOrgRoles?.filter(
                 (users: { orgRole: { name: string }; }) => {
-                    return users?.orgRole.name === "owner"
+                    return users?.orgRole.name === Roles.OWNER
                 },
             );
 

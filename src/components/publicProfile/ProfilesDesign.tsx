@@ -1,18 +1,9 @@
 import React from "react"
 import CustomAvatar from "../../components/Avatar"
+import { OrgDataInterface } from "../organization/interfaces"
 
 
-interface OrgInterface {
-    orgData: {
-        name: string;
-        website: string;
-        logoUrl: string;
-        description: string;
-    }
-
-}
-
-const ProfilesDesign = ({ orgData }: OrgInterface) => {
+const ProfilesDesign = ({ orgData }: OrgDataInterface) => {
 
     return (
         <>

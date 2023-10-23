@@ -5,18 +5,7 @@ import { EmptyListMessage } from "../EmptyListComponent";
 import CustomQRCode from "../../commonComponents/QRcode";
 import DateTooltip from '../Tooltip';
 import { dateConversion } from '../../utils/DateConversion';
-
-
-interface OrgWalletDetailsObject {
-	orgDid:string
-	ledgers:{
-		name:string
-	  networkType:string
-	}
-	networkType:string
-	walletName:string
-	createDateTime:string
-}
+import { OrgWalletDetailsObject } from "../organization/interfaces";
 
 const OrgWalletDetails = ({orgData}) => {
 

@@ -1,16 +1,7 @@
 import React from "react"
 import CustomAvatar from "../../components/Avatar"
+import { UserDetails } from "../organization/interfaces";
 
-
-interface UserDetails {
-    profileImg: string;
-    lastName: string;
-    firstName: string;
-    email: string;
-    publicProfile: boolean;
-    id: number;
-    username: string;
-}
 
 const OrgUserInfo = ({orgUsersData}) => {
 
