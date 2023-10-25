@@ -346,7 +346,7 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
                         <Button
                           type="reset"
                           color='bg-primary-800'
-                          className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-3 mr-2 ml-auto dark:text-white'
+                          className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-3 mr-2 ml-auto dark:text-secondary-700 dark:hover:text-primary-700'
                           onClick={() => toggleEditProfile()}
                           style={{ height: '2.5rem', width: '7rem', minWidth: '4rem' }}
                         >
