@@ -20,3 +20,73 @@ ul[role="tablist"] li[role="presentation"] button[aria-selected="true"] {
 #schema-cards div[data-testid="flowbite-card"] div {
   @apply justify-start;
 }
+ul.timelinestatic > li:before {
+  content: counter(step);
+  counter-increment: step;
+  display: inline-block;
+  position: absolute;
+  border-radius: 50%;
+  left: 9px;
+  font-size: 20px;
+  padding: 0.5rem 0;
+  z-index: 1;
+  vertical-align: middle;
+  text-align: center;
+  width: 45px;
+  font-weight: bold;
+  font-family: 'Montserrat';
+  height: 45px;
+  color:#1F4EAD;
+  background: #b0cdff;
+}
+
+ul.timelinestatic {
+  list-style-type: none;
+  position: relative;
+}
+
+ul.timelinestatic:before {
+  content: ' ';
+  background: #b0cdff;
+  display: inline-block;
+  position: absolute;
+  left: 29px;
+  width: 6px;
+  height: 90%;
+  z-index: 1;
+}
+
+ul.timelinestatic > li:last-child {
+  height: auto;
+}
+
+ul.timelinestatic > li {
+  margin-left: 64px;
+  padding-left: 20px;
+  height: 100px;
+}
+
+ul.timelinestatic {
+  counter-reset: step;
+}
+
+.height-110 {
+  height: 110px;
+}
+
+.steps-active-text {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 22px;
+  color:#5E5873;
+  margin-bottom: 0.5rem;
+}
+
+.welcome-text {
+  font-style: normal;
+  font-weight: bold;
+  font-size: 20px;
+  text-align: left;
+  color: #1F4EAD;
+}
