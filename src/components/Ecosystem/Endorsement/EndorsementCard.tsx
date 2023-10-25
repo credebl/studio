@@ -154,7 +154,7 @@ className={`${cardTransitionDisabled ? "" : "transform transition duration-500 h
                                             </div>
                                         )
                                     })}
-                                    {!allAttributes && attributesData.length === 3 && <span>...</span>}
+                                    {!allAttributes && attributesData.length === 3 && <span className="dark:text-white">...</span>}
                                 </div>
                             </div>
                         </li>

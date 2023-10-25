@@ -1,6 +1,7 @@
 ---
 import EcosystemSidebarOption from '../components/Ecosystem/EcosystemSidebarOption';
 import { pathRoutes } from '../config/pathRoutes';
+import { PLATFORM_DATA } from './constants';
 /* eslint max-lines: 'off' */
 ---
 
@@ -432,7 +433,7 @@ import { pathRoutes } from '../config/pathRoutes';
 
 			<div class="pt-2 space-y-2">
 				<a
-					href={'https://github.com/credebl'}
+					href={PLATFORM_DATA.git}
 					target="_blank"
 					class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
 				>
@@ -483,7 +484,7 @@ import { pathRoutes } from '../config/pathRoutes';
 						<span class="ml-3" sidebar-toggle-item>FAQ's</span>
 					</a>  -->
 				<a
-					href="https://discord.com/invite/w4hnQT7NJG"
+					href={PLATFORM_DATA.supportInvite}
 					target="_blank"
 					class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
 				>

@@ -1,4 +1,5 @@
 ---
+import { PLATFORM_DATA } from '../app/constants';
 import { pathRoutes } from '../config/pathRoutes';
 ---
 
@@ -14,14 +15,14 @@ import { pathRoutes } from '../config/pathRoutes';
 				<div class="flex">
 					<a href="/" class="flex items-center">
 						<img
-							src="/images/CREDEBL_ICON.png"
+							src={`${PLATFORM_DATA.logo}`}
 							class="mr-2 h-6 sm:h-9"
-							alt="CREDEBL Logo"
+							alt={`${PLATFORM_DATA.name} Logo`}
 						/>
 						<span
 							class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
 						>
-							CREDEBL</span
+							{PLATFORM_DATA.name}</span
 						>
 					</a>
 					<a
@@ -32,7 +33,7 @@ import { pathRoutes } from '../config/pathRoutes';
 				</div>				
 					<div class="flex items-center lg:order-2">
 						
-						<a href="https://github.com/credebl" class="mr-3" target="_blank">
+						<a href={PLATFORM_DATA.git} class="mr-3" target="_blank">
 							<svg
 								class="w-6 h-6 text-gray-800 dark:text-white"
 								aria-hidden="true"
@@ -47,7 +48,7 @@ import { pathRoutes } from '../config/pathRoutes';
 							</svg>
 						</a>
 						<a
-							href="https://discord.gg/w4hnQT7NJG"
+							href={PLATFORM_DATA.support}
 							class="mr-3"
 							target="_blank"
 						>
@@ -1018,7 +1019,7 @@ import { pathRoutes } from '../config/pathRoutes';
 									</p>
 								</div><a
 									class="flex items-center gap-2 whitespace-nowrap text-base font-medium text-blue-700 dark:text-blue-600 hover:underline"
-									href="https://discord.gg/w4hnQT7NJG"
+									href={PLATFORM_DATA.support}
 									>Join discord <svg
 										class="w-2.5 h-2.5"
 										aria-hidden="true"
@@ -1046,11 +1047,11 @@ import { pathRoutes } from '../config/pathRoutes';
 						class="flex justify-center items-center text-2xl font-semibold text-gray-900 dark:text-white"
 					>
 						<img
-							src="/images/CREDEBL_ICON.png"
+							src={PLATFORM_DATA.logo}
 							class="mr-2 h-6 sm:h-9"
-							alt="CREDEBL Logo"
+							alt={`${PLATFORM_DATA.name} Logo`}
 						/>
-						CREDEBL
+						{PLATFORM_DATA.name}
 					</a>
 					<p class="my-6 mb-4 text-gray-500 dark:text-gray-400">
 						Open-source self-soveriegn identity (SSI) platform to build robust,
@@ -1060,8 +1061,8 @@ import { pathRoutes } from '../config/pathRoutes';
 						class="mt-8 text-sm text-gray-500 sm:text-center dark:text-gray-400"
 					>
 						&copy; 2019-{new Date().getFullYear()}
-						<a href="https://blockster.global" target="_blank"
-							>Blockster Labs Private Limited.</a
+						<a href={PLATFORM_DATA.orgUrl} target="_blank"
+							>{PLATFORM_DATA.poweredBy}.</a
 						> All Rights Reserved.</span
 					>
 					<div class="mt-4 flex flex-row flex-col-2 gap-6 justify-center ">
@@ -1086,7 +1087,7 @@ import { pathRoutes } from '../config/pathRoutes';
                     <path 
 						d="M.001.24c-.02.028.23.427.558.9.334.466.767 1.082.962 1.359l.739 1.048c.39.54 2.474 3.489 3.325 4.699.25.352.662.933.906 1.285.251.351.62.872.816 1.15.195.276.704 1 1.136 1.602.432.601.78 1.129.78 1.17 0 .04-.132.216-.299.391a76.85 76.85 0 0 0-1.436 1.603c-.627.703-1.387 1.575-1.7 1.92C3.123 20.356.021 23.9.021 23.94c0 .034.44.061.976.061h.976l.279-.297c.153-.163.383-.42.509-.562.118-.148.787-.906 1.478-1.676.69-.778 1.345-1.522 1.463-1.65.112-.136.774-.88 1.464-1.657s1.485-1.677 1.764-1.994c.941-1.076 1.206-1.36 1.255-1.36.028 0 .146.15.272.325.118.176.432.622.697.994.265.372.683.967.934 1.319.25.351.662.933.913 1.284.251.352 1.15 1.63 2 2.84.851 1.21 1.604 2.251 1.674 2.32.111.107.355.114 3.618.1l3.506-.02-.641-.913c-.6-.858-1.046-1.487-1.91-2.704-.196-.277-.572-.811-.837-1.183s-1.018-1.447-1.687-2.38c-1.171-1.657-1.52-2.15-2.426-3.435-.237-.338-.6-.852-.808-1.15-1.046-1.474-1.318-1.866-1.318-1.913 0-.027.272-.358.607-.737.341-.372.962-1.068 1.38-1.548a285.78 285.78 0 0 0 1.847-2.09c.593-.669 1.178-1.325 1.29-1.46.118-.135.773-.872 1.464-1.65 1.422-1.596 1.966-2.21 2.147-2.44L23.04.2h-1.038L20.97.207l-1.827 2.076c-3.75 4.252-5.841 6.599-5.91 6.619-.036.013-.559-.67-1.151-1.515-.593-.845-1.29-1.825-1.54-2.177-.572-.818-1.2-1.697-1.96-2.779A348.15 348.15 0 0 0 7.51.91L7.02.234 3.535.214C1.618.207.03.22.001.24Zm6.295 1.9c.174.224.788 1.062 1.36 1.873 1.017 1.427 4.203 5.856 4.942 6.87a622.1 622.1 0 0 1 1.512 2.096c.62.872 1.332 1.86 1.576 2.197.244.332.613.852.83 1.15.46.649 1.261 1.758 1.714 2.387 2.057 2.846 2.705 3.766 2.705 3.813 0 .027-.718.054-1.596.054h-1.597l-1.045-1.44c-.572-.784-1.736-2.407-2.594-3.597-.85-1.19-1.721-2.394-1.924-2.67-.202-.278-.87-1.211-1.484-2.063a452.26 452.26 0 0 0-1.506-2.096c-.21-.298-.648-.906-.969-1.352-.32-.447-.795-1.102-1.053-1.454a768.81 768.81 0 0 0-1.575-2.197 506.222 506.222 0 0 0-2.405-3.334c-.237-.324-.418-.602-.411-.622.014-.02.739-.027 1.617-.027l1.59.014.313.399Z"/></svg>
 					<a
-					href="https://discord.gg/w4hnQT7NJG"
+					href={PLATFORM_DATA.support}
 					class="text-gray-700 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
 					target="_blank"
 				>

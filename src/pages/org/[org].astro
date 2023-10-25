@@ -3,6 +3,7 @@ import { pathRoutes } from '../../config/pathRoutes';
 import ProfileDesign from '../../components/publicProfile/ProfileDesign.astro';
 import WalletDetailQRLayout from '../../components/publicProfile/WalletDetailQRLayout.astro';
 import OrgUserInfoLayout from '../../components/publicProfile/OrgUserInfoLayout.astro';
+import { PLATFORM_DATA } from '../../app/constants';
 
 const { org } = Astro.params;
 const baseUrl = process.env.PUBLIC_BASE_URL || import.meta.env.PUBLIC_BASE_URL
@@ -30,13 +31,13 @@ const orgUsersData = orgUsersFilterByRole?.map(
 			<div class="flex items-center justify-start">
 				<a href={pathRoutes?.users?.dashboard} class="flex ml-2 md:mr-24">
 					<img
-						src="/images/CREDEBL_ICON.png"
+						src={PLATFORM_DATA.logo}
 						class="h-8 mr-3"
-						alt="CREDEBL Logo"
+						alt={`${PLATFORM_DATA.name} Logo`}
 					/>
 					<span
 						class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white"
-						>CREDEBL</span
+						>{PLATFORM_DATA.name}</span
 					>
 				</a>
 			</div>

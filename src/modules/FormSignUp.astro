@@ -1,17 +1,18 @@
 ---
-import { asset, url } from '../lib/data.js';
+import { PLATFORM_DATA } from '../app/constants';
+import { asset } from '../lib/data.js';
 ---
 
 <div
 	class="w-full flex flex-col items-center justify-center px-6 pt-8 mx-auto pt:mt-0 dark:bg-gray-900"
 >
-	<a
-		href="#"
-		class="flex items-center justify-center mb-8 text-2xl font-semibold lg:mb-10 dark:text-white"
+<a
+	href="#"
+	class="flex items-center justify-center mb-8 text-2xl font-semibold lg:mb-10 dark:text-white"
 	>
-		<img src={asset('images/logo.svg')} alt="FlowBite Logo" class="mr-4 h-11" />
-		<span>CREDEBL</span>
-	</a>
+	<img src={asset(PLATFORM_DATA.logo)} alt={`${PLATFORM_DATA.name} Logo`} class="mr-4 h-11" />
+	<span>{PLATFORM_DATA.name}</span>
+</a>
 	<!-- Card -->
 	<div
 		class="w-full max-w-xl p-6 space-y-8 sm:p-8 bg-white rounded-lg shadow dark:bg-gray-800"
