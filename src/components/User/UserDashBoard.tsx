@@ -152,8 +152,8 @@ const UserDashBoard = () => {
 		checkOrgId();
 	}, []);
 
-	const goToOrgDashboard = async (orgId: number, roles: string[]) => {
-		await setToLocalStorage(storageKeys.ORG_ID, orgId.toString());
+	const goToOrgDashboard = async (orgId: string, roles: string[]) => {
+		await setToLocalStorage(storageKeys.ORG_ID, orgId);
 		window.location.href = pathRoutes.organizations.dashboard;
 	};
 

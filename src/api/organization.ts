@@ -138,7 +138,7 @@ export const getOrgDashboard = async (orgId: string) => {
     }
 }
 
-export const spinupDedicatedAgent = async (data: object, orgId:number) => {
+export const spinupDedicatedAgent = async (data: object, orgId:string) => {
 
     const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.agentDedicatedSpinup}`
     const payload = data
@@ -166,7 +166,7 @@ export const spinupDedicatedAgent = async (data: object, orgId:number) => {
     }
 }
 
-export const spinupSharedAgent = async (data: object, orgId:number) => {
+export const spinupSharedAgent = async (data: object, orgId:string) => {
 
     const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.agentSharedSpinup}`
     const payload = data
@@ -247,7 +247,7 @@ export const getOrganizationUsers = async (pageNumber: number, pageSize: number,
 }
 
 // Edit user roles
-export const editOrganizationUserRole = async (userId: number, roles: number[]) => {
+export const editOrganizationUserRole = async (userId: string, roles: string[]) => {
 
     const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
 
@@ -284,7 +284,7 @@ export const createConnection = async (orgName: string) => {
         label: orgName,
         multiUseInvitation: true,
         autoAcceptConnection: true,
-        orgId: Number(orgId)
+        orgId: orgId
     }
     const payload = data
 

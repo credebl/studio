@@ -10,7 +10,7 @@ interface CreateEcosystemPayload {
 	description: string;
 	logo: string;
 	tags?: string;
-	userId: number;
+	userId: string;
 }
 
 export interface GetEndorsementListParameter {
@@ -105,7 +105,7 @@ export const getEndorsementList = async (
 export const createSchemaRequest = async (
 	data: object,
 	endorsementId: string,
-	orgId: number,
+	orgId: string,
 ) => {
 	const url = `${apiRoutes.Ecosystem.root}/${endorsementId}/${orgId}${apiRoutes.Ecosystem.endorsements.createSchemaRequest}`;
 	const payload = data;
@@ -126,7 +126,7 @@ export const createSchemaRequest = async (
 export const createCredDefRequest = async (
 	data: object,
 	ecosystemId: string,
-	orgId: number,
+	orgId: string,
 ) => {
 	const url = `${apiRoutes.Ecosystem.root}/${ecosystemId}/${orgId}${apiRoutes.Ecosystem.endorsements.createCredDefRequest}`;
 	const payload = data;

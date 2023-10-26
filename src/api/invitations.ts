@@ -43,7 +43,7 @@ export const createInvitations = async (invitationList: Array<object>) => {
 	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.invitations}`
 	const payload = {
 		invitations: invitationList,
-		orgId: Number(orgId)
+		orgId: orgId
 	}
 	const token = await getFromLocalStorage(storageKeys.TOKEN)
 
@@ -233,7 +233,7 @@ export const getEcosystemInvitations = async (pageNumber: number, pageSize: numb
 }
 
 // Accept/ Reject Invitations
-export const acceptRejectEcosystemInvitations = async (invitationId: string, orgId: number, status: string, orgName: string, orgDid: string) => {
+export const acceptRejectEcosystemInvitations = async (invitationId: string, orgId: string, status: string, orgName: string, orgDid: string) => {
 
 	const url = `${apiRoutes.Ecosystem.root}/${orgId}${apiRoutes.Ecosystem.invitations}/${invitationId}`
 
@@ -265,12 +265,12 @@ export const acceptRejectEcosystemInvitations = async (invitationId: string, org
 	}
 }
 
-export const acceptRejectInvitations = async (invitationId: number, orgId: number, status: string) => {
+export const acceptRejectInvitations = async (invitationId: string, orgId: string, status: string) => {
 
 	const url = `${apiRoutes.users.invitations}/${invitationId}`
 
 	const payload = {
-		orgId: Number(orgId),
+		orgId: orgId,
 		status
 	}
 	const token = await getFromLocalStorage(storageKeys.TOKEN)

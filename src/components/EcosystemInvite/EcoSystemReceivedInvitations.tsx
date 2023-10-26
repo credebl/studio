@@ -54,7 +54,7 @@ const ReceivedInvitations = () => {
 	const [error, setError] = useState<string | null>(null);
 	const [organizationsList, setOrganizationsList] = useState<Array<Organisation> | null>(null);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
-	const [selectedId, setSelectedId] = useState<number>();
+	const [selectedId, setSelectedId] = useState<string>('');
 	const [searchText, setSearchText] = useState('');
 	const [invitationsData, setInvitationsData] = useState<Array<EcosystemInvitation> | null>(null);
 	const [getOrgError, setGetOrgError] = useState<string | null>(null);
@@ -148,7 +148,7 @@ const ReceivedInvitations = () => {
 			if (orgDid) {
 				const response = await acceptRejectEcosystemInvitations(
 					invite.id,
-					Number(selectedId),
+					selectedId,
 					status,
 					orgName,
 					orgDid
@@ -216,7 +216,7 @@ const ReceivedInvitations = () => {
 	const getOrgId = async () => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		if (orgId) {
-			setSelectedId(Number(orgId));
+			setSelectedId(orgId);
 		}
 	};
 

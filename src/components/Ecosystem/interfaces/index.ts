@@ -7,7 +7,7 @@ export interface IEcosystem {
 }
 
 export interface Ecosystem {
-    id: number
+    id: string
     createDateTime: string
     createdBy: number
     lastChangedDateTime: string

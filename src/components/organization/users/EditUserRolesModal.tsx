@@ -9,7 +9,7 @@ import type { AxiosResponse } from 'axios';
 import { apiStatusCodes } from "../../../config/CommonConstant";
 
 interface RoleI {
-    id: number
+    id: string
     name: string,
     checked: boolean
     disabled: boolean
@@ -99,7 +99,7 @@ const EditUserRoleModal = (props: { openModal: boolean;  setMessage: (message: s
 
         const roleIds = roles?.filter(role => role.checked).map(role => role.id)
 
-        const resCreateOrg = await createInvitations(invitationPayload)
+        const response = await editOrganizationUserRole(props.user.id, roleIds as string[])
 
         const { data } = resCreateOrg as AxiosResponse
 
@@ -114,7 +114,7 @@ const EditUserRoleModal = (props: { openModal: boolean;  setMessage: (message: s
 
     }
 
-    const onRoleChanged = (event: any, id: number) => {
+    const onRoleChanged = (event: any, id: string) => {
 
      if (
             (event?.target?.name === 'issuer' && event?.target?.checked === true) || (event?.target?.name === 'verifier' && event?.target?.checked === true)

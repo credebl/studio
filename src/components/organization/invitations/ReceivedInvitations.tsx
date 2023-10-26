@@ -10,10 +10,7 @@ import CustomAvatar from '../../Avatar'
 import type { Invitation } from '../interfaces/invitations';
 import SearchInput from '../../SearchInput';
 import SendInvitationModal from './SendInvitationModal';
-import { TextTittlecase } from '../../../utils/TextTransform';
 import { apiStatusCodes } from '../../../config/CommonConstant';
-import { getOrganizationInvitations } from '../../../api/invitations';
-import { getOrganizations } from '../../../api/organization';
 import { pathRoutes } from '../../../config/pathRoutes';
 import { EmptyListMessage } from '../../EmptyListComponent';
 import CustomSpinner from '../../CustomSpinner';
@@ -30,7 +27,6 @@ const ReceivedInvitations = () => {
     const [loading, setLoading] = useState<boolean>(false)
     const [message, setMessage] = useState<string | null>(null)
     const [currentPage, setCurrentPage] = useState(initialPageState);
-    const timestamp = Date.now();
 
     const onPageChange = (page: number) => {
         setCurrentPage({
@@ -108,7 +104,6 @@ const ReceivedInvitations = () => {
             setLoading(false)
         }
     }
-
 
     return (
         <div className="px-4 pt-6">
