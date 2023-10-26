@@ -169,7 +169,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
                 description: values.description,
                 logo: logoImage?.imagePreviewUrl as string || "",
                 tags: "",
-                userId: Number(user_data?.id),
+                userId: user_data?.id,
                 orgName: orgDetails?.orgName,
                 orgDid: orgDetails?.orgDid
             }

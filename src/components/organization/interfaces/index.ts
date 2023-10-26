@@ -1,14 +1,14 @@
 export interface UserOrgRole {
-    id: number
-    userId: number
-    orgRoleId: number
-    orgId: number
+    id: string
+    userId: string
+    orgRoleId: string
+    orgId: string
     orgRole: OrgRole
 }
 
 export interface Organisation {
     logoFile: string
-    id: number
+    id: string
     createDateTime: string
     createdBy: number
     lastChangedDateTime: string
@@ -25,7 +25,7 @@ export interface Organisation {
 }
 
 export interface OrgRole {
-    id: number
+    id: string
     name: string
     description: string
     createDateTime?: string
@@ -36,7 +36,7 @@ export interface OrgRole {
 }
 
 export interface OrgAgent {
-    id: number
+    id: string
     createDateTime: string
     createdBy: number
     lastChangedDateTime: string
@@ -50,16 +50,16 @@ export interface OrgAgent {
     agentOptions: any
     walletName: string
     tenantId: any
-    agentsTypeId: number
-    orgId: number
-    orgAgentTypeId: number
+    agentsTypeId: string
+    orgId: string
+    orgAgentTypeId: string
     ledgers: ledgers
     org_agent_type: org_agent_type 
     agents_type: AgentsType
 }
 
 export interface AgentsType {
-    id: number
+    id: string
     createDateTime: string
     createdBy: number
     lastChangedDateTime: string
@@ -68,7 +68,7 @@ export interface AgentsType {
 }
 
 export interface org_agent_type{
-id: number
+id: string
 createDateTime: string
 createdBy: number
 lastChangedDateTime: string
@@ -80,7 +80,7 @@ agent: string
 export interface ledgers{
 createDateTime: string
 createdBy: number
-id: number
+id: string
 isActive: boolean
 lastChangedBy: number
 lastChangedDateTime: string
@@ -98,9 +98,9 @@ export interface OrgDashboard {
 }
 
 export interface Connection {
-    id: number
-    orgId: number
-    agentId: number
+    id: string
+    orgId: string
+    agentId: string
     connectionInvitation: string
     multiUse: boolean
     createDateTime: string
@@ -143,7 +143,7 @@ export interface UserDetails {
     firstName: string;
     email: string;
     publicProfile: boolean;
-    id: number;
+    id: string;
     username: string;
 }
 

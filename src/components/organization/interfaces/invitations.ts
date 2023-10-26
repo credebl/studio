@@ -2,14 +2,14 @@ import type { OrgRole, Organisation } from "."
 
 export interface Invitation {
 		ecosystem: any
-    id: number
+    id: string
     createDateTime: string
     createdBy: number
     lastChangedDateTime: string
     lastChangedBy: number
     deletedAt: any
-    userId: number
-    orgId: number
+    userId: string
+    orgId: string
     status: string
     orgRoles: OrgRole[]
     email: string

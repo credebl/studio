@@ -1,4 +1,3 @@
-import { Pagination } from 'flowbite-react';
 export interface GetAllSchemaListParameter {
   itemPerPage: number,
   page: number,
@@ -27,7 +26,7 @@ type DataItem = {
   schemaLedgerId: string;
   createdBy: number;
   publisherDid: string;
-  orgId: number;
+  orgId: string;
   issuerId: string;
 };
 
@@ -53,7 +52,7 @@ export type PaginationData = {
 export interface CredDeffFieldNameType {
   tag: string;
   revocable: boolean;
-  orgId: number;
+  orgId: string;
   schemaLedgerId: string;
 }
 
@@ -61,7 +60,7 @@ export interface FieldName {
   schemaName: string;
   schemaVersion: string;
   attributes: IAttributes[]
-  orgId: number;
+  orgId: string;
 
 }
 
@@ -69,13 +68,13 @@ export interface createSchema {
   schemaName: string;
   schemaVersion: string;
   attributes: IAttributes[]
-  orgId: number;
+  orgId: string;
 }
 
 export interface createCredDeffFieldName {
   tag: string;
   revocable: boolean;
-  orgId: number;
+  orgId: string;
   schemaLedgerId: string;
 }
 

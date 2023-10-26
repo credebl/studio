@@ -102,7 +102,7 @@ const OrganisationPublicProfile = () => {
 								logoUrl: string;
 								name: string;
 								description: string;
-								id: number;
+								id: string;
 								orgSlug: string;
 							}) => (
 								<Card

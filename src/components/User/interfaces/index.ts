@@ -1,7 +1,7 @@
 export interface UserActivity {
     id: number
-    userId: number
-    orgId: number
+    userId: string
+    orgId: string
     action: string
     details: string
     createDateTime: string

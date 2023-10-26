@@ -95,7 +95,7 @@ const WalletSpinup = (props: {
 		};
 		setLoading(true);
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-		const spinupRes = await spinupDedicatedAgent(payload, parseInt(orgId));
+		const spinupRes = await spinupDedicatedAgent(payload, orgId);
 		const { data } = spinupRes as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
@@ -120,7 +120,7 @@ const WalletSpinup = (props: {
 		};
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 
-		const spinupRes = await spinupSharedAgent(payload, parseInt(orgId));
+		const spinupRes = await spinupSharedAgent(payload, orgId);
 		const { data } = spinupRes as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {

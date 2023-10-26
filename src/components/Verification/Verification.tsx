@@ -32,7 +32,7 @@ interface VerifyCredentialPayload {
 		credDefId?: string  ;
 	}>;
 	comment: string;
-	orgId: number;
+	orgId: string;
 }
 
 const VerificationCred = () => {
@@ -161,7 +161,7 @@ const VerificationCred = () => {
 				connectionId: `${selectedUsers[0].connectionId}`,
 				attributes: attributes,
 				comment: "string",
-				orgId: Number(orgId)
+				orgId: orgId
 			};
 			if (attributes) {
 				const response = await verifyCredential(verifyCredentialPayload);
