@@ -48,6 +48,9 @@ export const apiRoutes = {
 		getIssuedCredentials: '/credentials',
 		getAllConnections: '/connections',
 		issueCredential: '/credentials/offer',
+		bulk:{
+			credefList:'/bulk/cred-defs'
+		}
 	},
 	Verification: {
 		getAllRequestList: '/credentials/proofs',

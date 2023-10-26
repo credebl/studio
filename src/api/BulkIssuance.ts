@@ -4,9 +4,9 @@ import { getHeaderConfigs } from '../config/GetHeaderConfigs';
 import { axiosGet } from '../services/apiRequests';
 import { getFromLocalStorage } from './Auth';
 
-export const getConnectionsByOrg = async () => {
+export const getSchemaCredDef = async () => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.getAllConnections}`;	
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.bulk.credefList}`;	
 	const axiosPayload = {
 		url,
 		config: await getHeaderConfigs(),

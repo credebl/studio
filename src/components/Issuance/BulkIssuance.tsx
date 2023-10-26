@@ -1,9 +1,55 @@
 import { Card } from 'flowbite-react';
-import React, { useState } from 'react';
-import Select from 'react-select'
+import React, { useEffect, useState } from 'react';
+import Select from 'react-select';
+import { getSchemaCredDef } from '../../api/BulkIssuance';
+import { getFromLocalStorage } from '../../api/Auth';
+import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
+import type { AxiosResponse } from 'axios';
+
+interface IValues {
+	value: string;
+	label: string;
+}
 
 const BulkIssuance = () => {
 	const [csvData, setCsvData] = useState<string[][]>([]);
+	const [loading, setLoading] = useState<boolean>(true);
+	const [error, setError] = useState<string | null>(null);
+	const [credentialOptions, setCredentialOptions] = useState([]);
+	const [credentialSelected, setCredentialSelected] = useState('');
+
+	const getSchemaCredentials = async () => {
+		setLoading(true);
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		if (orgId) {
+			const response = await getSchemaCredDef();
+			console.log('API Response:', response);
+			const { data } = response as AxiosResponse;
+
+			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+				const credentialDefs = data.data;
+
+				const options = credentialDefs.map(
+					(credDef: {
+						credentialDefinitionId: string;
+						schemaCredDefName: string;
+					}) => ({
+						value: credDef.credentialDefinitionId,
+						label: credDef.schemaCredDefName,
+					}),
+				);
+
+				setCredentialOptions(options);
+			} else {
+				setError(response as string);
+			}
+			setLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		getSchemaCredentials();
+	}, []);
 
 	const handleFileUpload = (file) => {
 		const reader = new FileReader();
@@ -21,17 +67,13 @@ const BulkIssuance = () => {
 		reader.readAsText(file);
 	};
 
-	const options = [
-		{ value: 'chocolate', label: 'Chocolate' },
-		{ value: 'strawberry', label: 'Strawberry' },
-		{ value: 'vanilla', label: 'Vanilla' }
-	  ]
-
 	const handleDrop = (e) => {
 		e.preventDefault();
-		const file = e.dataTransfer.files[0];
-		if (file) {
-			handleFileUpload(file);
+		if(isCredSelected){
+			const file = e.dataTransfer.files[0];
+			if (file) {
+				handleFileUpload(file);
+			}
 		}
 	};
 
@@ -46,28 +88,32 @@ const BulkIssuance = () => {
 		}
 	};
 
+	const isCredSelected = Boolean(credentialSelected)
+
 	return (
 		<div>
 			<Card>
-				<div className="grid grid-cols-2">
+				<div className="grid grid-cols-2 ">
 					<div>
-					<Select options={options} />
-						{/* <div>
-							<input
-								placeholder="Choose Schema-credential definition"
-								type="text"
-								list="schema-cred-def-search"
-								value={credentialDefinition}
-								onChange={(e) => setCredentialDefinition(e.target.value)}
+						<div className="search-dropdown text-primary-700 drak:text-primary-700">
+							<Select
+								placeholder="Select Schema-Cred def"
+								className="basic-single "
+								classNamePrefix="select"
+								isDisabled={false}
+								isClearable={true}
+								isRtl={false}
+								isSearchable={true}
+								name="color"
+								options={credentialOptions}
+								onChange={(value: IValues | null) => {
+									console.log(7676, value)
+									setCredentialSelected(value?.value || '');
+								}}
 							/>
-							<datalist id="schema-cred-def-search">
-								{dummyOptions.map((option) => (
-									<option key={option.id} value={option.name} />
-								))}
-							</datalist>
-						</div> */}
+						</div>
 						<div className="mt-20">
-							<button className="text-primary-700 dark:text-primary-700 py-2 px-4 rounded inline-flex items-center border border-primary-700">
+							<button className="text-primary-700 dark:text-primary-700 py-2 px-4 rounded inline-flex items-center border border-primary-700" disabled={!isCredSelected}>
 								<svg
 									className="h-6 w-6 text-primary-700"
 									fill="none"
@@ -86,12 +132,12 @@ const BulkIssuance = () => {
 						</div>
 					</div>
 
-					<div onDrop={handleDrop} onDragOver={handleDragOver}>
+					<div onDrop={handleDrop} onDragOver={handleDragOver}  >
 						<label
 							htmlFor="csv-file"
 							className="flex flex-col items-center justify-center w-36 h-36 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover-bg-gray-100 dark-border-gray-600 dark-hover-border-gray-500 dark-hover-bg-gray-600"
 						>
-							<div className="flex flex-col items-center justify-center pt-5 pb-6">
+							<div className="flex flex-col items-center justify-center pt-5 pb-6" >
 								<svg
 									className="h-12 w-12 text-gray-500"
 									viewBox="0 0 24 24"
@@ -117,6 +163,7 @@ const BulkIssuance = () => {
 									Choose file
 								</div>
 								<input
+								    disabled={!isCredSelected}
 									type="file"
 									accept=".csv"
 									name="file"
@@ -161,21 +208,26 @@ const BulkIssuance = () => {
 			<div>
 				<ul className="timelinestatic m-12">
 					<li className="">
-						<p className="steps-active-text">Select and download</p>
-						<p>
-							Select Schema - Credential definition and download .CSV file
-							template
+						<p className="steps-active-text text-primary-700 dark-text-primary-700">
+							Select and download
+						</p>
+						<p className="text-primary-700 dark-text-primary-700">
+							Select Credential definition and download .CSV template template
 						</p>
 					</li>
 					<li className="mt-5">
-						<p className="steps-active-text">Upload the filled CSV and issue</p>
-						<p>Upload the correct filled CSV and start Bulk-Issuance</p>
+						<p className="steps-active-text text-primary-700 dark-text-primary-700">
+							Fill the data
+						</p>
+						<p className="text-primary-700 dark-text-primary-700">
+							Fill issuance data in the downloaded .CSV template
+						</p>
 					</li>
 					<li className="mt-5">
-						<p className="steps-active-text">
+						<p className="steps-active-text text-primary-700 dark-text-primary-700">
 							Check the issunace details on history page
 						</p>
-						<p>
+						<p className="text-primary-700 dark-text-primary-700">
 							After the completion of issuance, see the details of issuance on
 							history page
 						</p>
