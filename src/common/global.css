@@ -90,3 +90,50 @@ ul.timelinestatic {
   text-align: left;
   color: #1F4EAD;
 }
+
+.search-dropdown .select__control .select__input:focus {
+  box-shadow: none !important;
+}
+
+.search-dropdown .select__control .select__indicators {
+  @apply flex dark:bg-gray-900;
+}
+
+.search-dropdown .select__control .select__placeholder {
+  @apply absolute flex items-start;
+}
+
+.search-dropdown .select__control .select__value-container{
+  @apply overflow-hidden flex items-center;
+  width: calc(100% - 40px);
+}
+
+.select__single-value{
+  @apply !text-primary-700;
+}
+
+.search-dropdown{
+  width: 30rem;
+  border: #1F4EAD;
+@apply dark:text-primary-500 dark:bg-primary-700
+
+}
+.search-dropdown .select__control .select__control--is-focused {
+  box-shadow: #1F4EAD !important; 
+ }
+
+ .search-dropdown .select__control .select__control--is-focused .css-t3ipsp-control:hover {
+  box-shadow: #1F4EAD !important; 
+ }
+
+ .search-dropdown .select__control {
+@apply dark:bg-gray-900;
+ }
+
+ .select__menu{
+  @apply dark:bg-gray-900;
+ }
+
+ .search-dropdown .select__control .select__value-container .select__input-container {
+  width: 1px;
+ }
