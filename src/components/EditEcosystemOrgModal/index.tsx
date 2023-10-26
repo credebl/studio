@@ -295,6 +295,18 @@ const EditPopupModal = (props: EditEntityModalProps) => {
                                     value={formikHandlers.values.name}
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                     placeholder={`Enter ${props.isOrganization ? "Organization" : "Ecosystem"} Name`}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        formikHandlers.setFieldValue('name', value);
+                                        formikHandlers.setFieldTouched('name', true);
+                                    
+                                        if (value.length > 50) {
+                                          formikHandlers.setFieldError('name', props.isOrganization ? 'Organization name must be at most 50 characters' : 'Ecosystem name must be at most 50 characters');
+                                        } else {
+                                          formikHandlers.setFieldError('name', undefined); 
+                                        }
+                                      }}
+
                                 />
                                 {formikHandlers?.errors?.name && formikHandlers?.touched?.name && (
                                     <span className="text-red-500 text-xs">{formikHandlers?.errors?.name}</span>
@@ -312,6 +324,18 @@ const EditPopupModal = (props: EditEntityModalProps) => {
                                     as='textarea'
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                     placeholder={`Enter ${props.isOrganization ? "Organization" : "Ecosystem"} Description`}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        formikHandlers.setFieldValue('description', value);
+                                        formikHandlers.setFieldTouched('description', true);
+                                    
+                                        if (value.length > 50) {
+                                          formikHandlers.setFieldError('description', 'Description must be at most 255 characters');
+                                        } else {
+                                          formikHandlers.setFieldError('description', undefined); 
+                                        }
+                                      }}
+
                                 />
                                 {formikHandlers?.errors?.description && formikHandlers?.touched?.description && (
                                     <span className="text-red-500 text-xs">{formikHandlers?.errors?.description}</span>

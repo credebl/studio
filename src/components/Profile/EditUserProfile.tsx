@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState} from "react";
 import type { UserProfile } from "./interfaces";
 import { setToLocalStorage, updateUserProfile } from "../../api/Auth";
 import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, imageSizeAccepted, storageKeys} from "../../config/CommonConstant";
@@ -8,7 +8,6 @@ import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
 import { Alert,Button} from "flowbite-react";
 import { Form, Formik, FormikHelpers } from "formik";
 import * as yup from "yup"
-import React from "react";
 
 interface Values {
   profileImg: string;
@@ -179,12 +178,12 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile}: E
     firstName: yup.string()
       .required("First Name is required")
       .min(2, 'First name must be at least 2 characters')
-      .max(255, 'First name must be at most 255 characters'),
-
+      .max(50, 'First name must be at most 50 characters'),
+  
     lastName: yup.string()
       .required("Last Name is required")
       .min(2, 'Last name must be at least 2 characters')
-      .max(255, 'Last name must be at most 255 characters')
+      .max(50, 'Last name must be at most 50 characters')
 
   });
 
@@ -253,7 +252,17 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile}: E
                             name="firstName"
                             placeholder="Enter your first name"
                             value={formikHandlers.values.firstName}
-                            onChange={formikHandlers.handleChange}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              formikHandlers.setFieldValue('firstName', value);
+                              formikHandlers.setFieldTouched('firstName', true);
+                          
+                              if (value.length > 50) {
+                                formikHandlers.setFieldError('firstName', 'First name must be at most 50 characters');
+                              } else {
+                                formikHandlers.setFieldError('firstName', undefined);
+                              }
+                            }}
                             onBlur={formikHandlers.handleBlur}
                             ref={firstNameInputRef}
                             className="bg-gray-50 py-3 px-4 font-medium text-gray-900 border border-gray-300 w-full rounded-md focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 max-w-100/6rem" />
@@ -278,7 +287,17 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile}: E
                             name="lastName"
                             placeholder="Enter your last name"
                             value={formikHandlers.values.lastName}
-                            onChange={formikHandlers.handleChange}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              formikHandlers.setFieldValue('lastName', value);
+                              formikHandlers.setFieldTouched('lastName', true);
+                          
+                              if (value.length > 50) {
+                                formikHandlers.setFieldError('lastName', 'Last name must be at most 50 characters');
+                              } else {
+                                formikHandlers.setFieldError('lastName', undefined);
+                              }
+                            }}
                             onBlur={formikHandlers.handleBlur}
                             className="bg-gray-50 py-3 px-4 font-medium text-gray-900 border border-gray-300 w-full rounded-md focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 max-w-100/6rem" />
                           {(formikHandlers?.errors?.lastName && formikHandlers?.touched?.lastName) && (
