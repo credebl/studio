@@ -29,6 +29,7 @@ const OrgDropDown = () => {
 	const goToOrgDashboard = async (org: Organisation) => {
 		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ID)
 		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ROLE)
+		await removeFromLocalStorage(storageKeys.ORG_DETAILS)
 
 		await setOrgRoleDetails(org)
 		window.location.href = pathRoutes.organizations.dashboard;
