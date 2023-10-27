@@ -110,10 +110,11 @@ ul.timelinestatic {
 
 .select__single-value{
   @apply !text-primary-700;
+  width: calc(100% - 5px);
 }
 
 .search-dropdown{
-  width: 30rem;
+  max-width: 30rem;
   border: #1F4EAD;
 @apply dark:text-primary-500 dark:bg-primary-700
 
