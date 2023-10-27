@@ -34,11 +34,11 @@ export const pathRoutes = {
         },
     },
     ecosystem: {
-        root: '/ecosystem',
-        profile: "/ecosystem/profile",
-        endorsements: "/ecosystem/endorsement",
-        invitation:"/ecosystem/invitation",
-				sentinvitation:'/ecosystem/invitations'
+        root: '/ecosystems',
+        dashboard: "/ecosystems/dashboard",
+        endorsements: "/ecosystems/endorsement",
+        invitation:"/ecosystems/invitation",
+				sentinvitation:'/ecosystems/invitations'
     },
     // ecosystems: {
     //     root: '/ecosystems',
