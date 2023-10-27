@@ -4,9 +4,9 @@ export interface Invitation {
 		ecosystem: any
     id: string
     createDateTime: string
-    createdBy: number
+    createdBy: string
     lastChangedDateTime: string
-    lastChangedBy: number
+    lastChangedBy: string
     deletedAt: any
     userId: string
     orgId: string
