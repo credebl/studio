@@ -113,6 +113,7 @@ module.exports = {
 			minHeight: {
 				'100/18rem': 'calc(100vh - 18rem)',
 				'100/25rem': 'calc(100vh - 25rem)',
+				'100/21rem' : 'calc(100vh - 21rem)',
 			},
 			maxHeight: {
 				'[90vh]': 'fit-content !important',

@@ -1,3 +1,4 @@
+import type download from 'downloadjs';
 import { apiRoutes } from '../config/apiRoutes';
 import { storageKeys } from '../config/CommonConstant';
 import { getHeaderConfigs } from '../config/GetHeaderConfigs';
@@ -19,3 +20,20 @@ export const getSchemaCredDef = async () => {
 		return err?.message;
 	}
 };
+
+export const DownloadCsvTemplate = async () => {
+	const orgId = await getFromLocalStorage(storageKeys.CRED_DEF_ID);
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.download}`;	
+	const axiosPayload = {
+		url,
+		config: await getHeaderConfigs(),
+	};
+
+	try {
+		return await axiosGet(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};
+
