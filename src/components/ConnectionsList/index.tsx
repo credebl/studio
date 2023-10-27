@@ -99,8 +99,8 @@ const ConnectionList = () => {
 			) : (
 				<div className="bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 					<EmptyListMessage
-						message={''}
-						description={"There isn't any data available"}
+						message={'No Connections'}
+						description={"You don't have any connection"}
 					/>
 				</div>
 			)}
