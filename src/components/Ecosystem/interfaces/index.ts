@@ -9,9 +9,9 @@ export interface IEcosystem {
 export interface Ecosystem {
     id: string
     createDateTime: string
-    createdBy: number
+    createdBy: string
     lastChangedDateTime: string
-    lastChangedBy: number
+    lastChangedBy: string
     name: string
     description: string
     logoUrl: string

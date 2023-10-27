@@ -10,9 +10,9 @@ export interface Organisation {
     logoFile: string
     id: string
     createDateTime: string
-    createdBy: number
+    createdBy: string
     lastChangedDateTime: string
-    lastChangedBy: number
+    lastChangedBy: string
     name: string
     description: string
     logoUrl: string
@@ -29,18 +29,18 @@ export interface OrgRole {
     name: string
     description: string
     createDateTime?: string
-    createdBy?: number
+    createdBy?: string
     lastChangedDateTime?: string
-    lastChangedBy?: number
+    lastChangedBy?: string
     deletedAt?: any
 }
 
 export interface OrgAgent {
     id: string
     createDateTime: string
-    createdBy: number
+    createdBy: string
     lastChangedDateTime: string
-    lastChangedBy: number
+    lastChangedBy: string
     orgDid: string
     verkey: string
     agentEndPoint: string
@@ -61,28 +61,28 @@ export interface OrgAgent {
 export interface AgentsType {
     id: string
     createDateTime: string
-    createdBy: number
+    createdBy: string
     lastChangedDateTime: string
-    lastChangedBy: number
+    lastChangedBy: string
     agent: string
 }
 
 export interface org_agent_type{
 id: string
 createDateTime: string
-createdBy: number
+createdBy: string
 lastChangedDateTime: string
-lastChangedBy: number
+lastChangedBy: string
 agent: string
 
 }
 
 export interface ledgers{
 createDateTime: string
-createdBy: number
+createdBy: string
 id: string
 isActive: boolean
-lastChangedBy: number
+lastChangedBy: string
 lastChangedDateTime: string
 name: string
 networkString: string
@@ -104,16 +104,15 @@ export interface Connection {
     connectionInvitation: string
     multiUse: boolean
     createDateTime: string
-    createdBy: number
+    createdBy: string
     lastChangedDateTime: string
-    lastChangedBy: number
+    lastChangedBy: string
   }
 
   export interface EcosystemDashboard {
     membersCount: number
     endorsementsCount: number
   }
-
 
 export interface OrgInterface {
     name: string;

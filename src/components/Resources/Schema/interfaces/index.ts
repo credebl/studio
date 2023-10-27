@@ -24,7 +24,7 @@ type DataItem = {
   version: string;
   attributes: string[];
   schemaLedgerId: string;
-  createdBy: number;
+  createdBy: string;
   publisherDid: string;
   orgId: string;
   issuerId: string;

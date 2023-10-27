@@ -296,7 +296,7 @@ export const acceptRejectInvitations = async (invitationId: string, orgId: strin
 	}
 }
 
-export const deleteEcosystemInvitations = async (invitationId: number) => {
+export const deleteEcosystemInvitations = async (invitationId: string) => {
 
 	const ecosystemId = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID);
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
