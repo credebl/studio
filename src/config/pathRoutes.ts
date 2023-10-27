@@ -9,6 +9,7 @@ export const pathRoutes = {
         profile: '/profile',
         invitations: '/invitations',
         fetchUsers: '/users',
+				connectionList: '/connections'
     },
     organizations: {
         root: '/organizations',
