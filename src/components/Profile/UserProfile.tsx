@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { AxiosResponse } from 'axios';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
-import { getFromLocalStorage, getUserProfile } from '../../api/Auth';
+import { getFromLocalStorage, getUserProfile, setToLocalStorage } from '../../api/Auth';
 import BreadCrumbs from '../BreadCrumbs';
 import type { UserProfile } from './interfaces';
 import DisplayUserProfile from './DisplayUserProfile';
@@ -9,9 +9,16 @@ import React from 'react';
 import AddPasskey from './AddPasskey';
 import EditUserProfile from './EditUserProfile';
 
+interface IUserProfile {
+  firstName: string
+  lastName: string
+  email: string
+  profileImg: string
+}
+
 const UserProfile = () => {
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
-  const [prePopulatedUserProfile, setPrePopulatedUserProfile] = useState<UserProfile | null>(null);
+  const [prePopulatedUserProfile, setPrePopulatedUserProfile] = useState<IUserProfile | null>(null);
 
   const fetchUserProfile = async () => {
     try {
@@ -21,6 +28,8 @@ const UserProfile = () => {
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setPrePopulatedUserProfile(data?.data);
+        await setToLocalStorage(storageKeys.USER_PROFILE, data?.data)
+        await setToLocalStorage(storageKeys.USER_EMAIL, data?.data?.email)
       }
     } catch (error) {
     }
@@ -37,7 +46,7 @@ const UserProfile = () => {
   }, []);
 
 
-  const updatePrePopulatedUserProfile = (updatedProfile: UserProfile) => {
+  const updatePrePopulatedUserProfile = (updatedProfile: IUserProfile) => {
     setPrePopulatedUserProfile(updatedProfile);
   };
 
@@ -107,7 +116,6 @@ const UserProfile = () => {
 
         </div>
       </div>
-
     </div>
   );
 };
