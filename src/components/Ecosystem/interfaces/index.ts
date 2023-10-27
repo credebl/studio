@@ -1,9 +1,15 @@
 export interface IEcosystem {
+    id: string
     name: string
     description: string
     logoUrl: string
     joinedDate?: string
     role?: string
+    ecosystemOrgs?: {
+        ecosystemRole: {
+            name: string
+        }
+    }[]
 }
 
 export interface Ecosystem {
