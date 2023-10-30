@@ -1,14 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState} from "react";
 import type { UserProfile } from "./interfaces";
-import { setToLocalStorage, updateUserProfile } from "../../api/Auth";
-import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, imageSizeAccepted, storageKeys} from "../../config/CommonConstant";
+import { getFromLocalStorage, setToLocalStorage, updateUserProfile } from "../../api/Auth";
+import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, imageSizeAccepted, storageKeys } from "../../config/CommonConstant";
 import type { AxiosResponse } from "axios";
 import CustomAvatar from '../Avatar'
 import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
-import { Alert,Button} from "flowbite-react";
+import { Alert, Button } from "flowbite-react";
 import { Form, Formik, FormikHelpers } from "formik";
 import * as yup from "yup"
-import React from "react";
 
 interface Values {
   profileImg: string;
@@ -28,7 +27,7 @@ interface EditUserProfileProps {
   updateProfile: (updatedProfile: UserProfile) => void;
 }
 
-const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile}: EditUserProfileProps) => {
+const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: EditUserProfileProps) => {
 
   const [loading, setLoading] = useState<boolean>(false)
   const [isImageEmpty, setIsImageEmpty] = useState(true)
@@ -54,7 +53,7 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile}: E
     if (firstNameInputRef.current) {
       firstNameInputRef.current.focus();
     }
-  }, []); 
+  }, []);
 
 
   useEffect(() => {
@@ -166,11 +165,19 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile}: E
     }
     const resUpdateUserDetails = await updateUserProfile(userData)
 
+    const existingUser = await getFromLocalStorage(storageKeys.USER_PROFILE)
+
     const { data } = resUpdateUserDetails as AxiosResponse
-		 setToLocalStorage(storageKeys.USER_PROFILE, userData)
+
+    const updatedUser = JSON.parse(existingUser)
+
+    const updatedUserData = {
+      ...updatedUser,
+      ...userData
+    }
 
     updateProfile(userData);
-    await setToLocalStorage(storageKeys.USER_PROFILE, userData);
+    await setToLocalStorage(storageKeys.USER_PROFILE, updatedUserData);
     window.location.reload();
     setLoading(false)
   }
@@ -179,12 +186,12 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile}: E
     firstName: yup.string()
       .required("First Name is required")
       .min(2, 'First name must be at least 2 characters')
-      .max(255, 'First name must be at most 255 characters'),
-
+      .max(50, 'First name must be at most 50 characters'),
+  
     lastName: yup.string()
       .required("Last Name is required")
       .min(2, 'Last name must be at least 2 characters')
-      .max(255, 'Last name must be at most 255 characters')
+      .max(50, 'Last name must be at most 50 characters')
 
   });
 
@@ -219,7 +226,7 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile}: E
                   values: Values,
                   { resetForm }: FormikHelpers<Values>
                 ) => {
-                 await updateUserDetails(values);
+                  await updateUserDetails(values);
                   toggleEditProfile();
                 }}
 
@@ -253,7 +260,17 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile}: E
                             name="firstName"
                             placeholder="Enter your first name"
                             value={formikHandlers.values.firstName}
-                            onChange={formikHandlers.handleChange}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              formikHandlers.setFieldValue('firstName', value);
+                              formikHandlers.setFieldTouched('firstName', true);
+                          
+                              if (value.length > 50) {
+                                formikHandlers.setFieldError('firstName', 'First name must be at most 50 characters');
+                              } else {
+                                formikHandlers.setFieldError('firstName', undefined);
+                              }
+                            }}
                             onBlur={formikHandlers.handleBlur}
                             ref={firstNameInputRef}
                             className="bg-gray-50 py-3 px-4 font-medium text-gray-900 border border-gray-300 w-full rounded-md focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 max-w-100/6rem" />
@@ -278,7 +295,17 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile}: E
                             name="lastName"
                             placeholder="Enter your last name"
                             value={formikHandlers.values.lastName}
-                            onChange={formikHandlers.handleChange}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              formikHandlers.setFieldValue('lastName', value);
+                              formikHandlers.setFieldTouched('lastName', true);
+                          
+                              if (value.length > 50) {
+                                formikHandlers.setFieldError('lastName', 'Last name must be at most 50 characters');
+                              } else {
+                                formikHandlers.setFieldError('lastName', undefined);
+                              }
+                            }}
                             onBlur={formikHandlers.handleBlur}
                             className="bg-gray-50 py-3 px-4 font-medium text-gray-900 border border-gray-300 w-full rounded-md focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 max-w-100/6rem" />
                           {(formikHandlers?.errors?.lastName && formikHandlers?.touched?.lastName) && (
@@ -321,28 +348,28 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile}: E
                       </div>
                     </div>
                     <div className="mb-16">
-                    <div className='float-right p-2'>
-                      <Button
-                        type="submit"
-                        isProcessing={loading}
-                        fill="none"
-                        className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 px-3'
-                      >
-                        <svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="24" height="22" fill="none" viewBox="0 0 18 18">
+                      <div className='float-right p-2'>
+                        <Button
+                          type="submit"
+                          isProcessing={loading}
+                          fill="none"
+                          className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 px-3'
+                        >
+                          <svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="24" height="22" fill="none" viewBox="0 0 18 18">
                             <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 1v12l-4-2-4 2V1h8ZM3 17h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z" />
-                          </svg>                     
+                          </svg>
                           Save
-                      </Button>
-                    </div>
-                    <div className='float-right p-3'>
-                      <Button
-                        type="reset"
-                        color='bg-primary-800'
-                        className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-3 mr-2 ml-auto dark:text-white'
-                        onClick= {() => toggleEditProfile()}
-                        style={{ height: '2.5rem', width: '7rem', minWidth: '4rem' }}
-                      >
-                         <svg className="h-6 w-6 text-primary-700 mr-1"
+                        </Button>
+                      </div>
+                      <div className='float-right p-3'>
+                        <Button
+                          type="reset"
+                          color='bg-primary-800'
+                          className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-3 mr-2 ml-auto dark:text-secondary-700 dark:hover:text-primary-700'
+                          onClick={() => toggleEditProfile()}
+                          style={{ height: '2.5rem', width: '7rem', minWidth: '4rem' }}
+                        >
+                          <svg className="h-6 w-6 text-primary-700 mr-1"
                             width="24"
                             height="24"
                             viewBox="0 0 24 24"
@@ -355,10 +382,10 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile}: E
                             <line x1="18" y1="6" x2="6" y2="18" />
                             <line x1="6" y1="6" x2="18" y2="18" />
                           </svg>
- 
-                        Cancel
-                      </Button>
-                    </div>
+
+                          Cancel
+                        </Button>
+                      </div>
                     </div>
                   </Form>
                 )}
