@@ -9,7 +9,7 @@ import CustomSpinner from '../CustomSpinner';
 import endorseIcon from '../../assets/endorser-icon.svg';
 import memberIcon from '../../assets/member-icon.svg';
 import MemberList from './MemberList';
-import { getEcosystem, getEcosystemDashboard } from '../../api/ecosystem';
+import { getEcosystems, getEcosystemDashboard } from '../../api/ecosystem';
 import { EmptyListMessage } from '../EmptyListComponent';
 import CreateEcosystemOrgModal from '../CreateEcosystemOrgModal';
 import { AlertComponent } from '../AlertComponent';
@@ -118,20 +118,21 @@ const Dashboard = () => {
     const fetchEcosystemDetails = async () => {
         setLoading(true);
         const id = await getFromLocalStorage(storageKeys.ORG_ID);
+        const ecosystemId = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID);
         setOrgId(id);
         if (id) {
-            const response = await getEcosystem(id);
+            const response = await getEcosystems(id);
             const { data } = response as AxiosResponse;
 
             if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-                const ecosystemData = data?.data[0];
+                const ecosystemData = data?.data.find((item: { id: string }) => item.id === ecosystemId);
                 if (ecosystemData) {
-                    await setToLocalStorage(storageKeys.ECOSYSTEM_ID, ecosystemData?.id);
                     const ecosystemOrg =
                         ecosystemData?.ecosystemOrgs &&
                         ecosystemData?.ecosystemOrgs.length > 0 &&
                         ecosystemData?.ecosystemOrgs[0];
                     setEcosystemDetails({
+                        id: ecosystemData?.id,
                         logoUrl: ecosystemData?.logoUrl,
                         name: ecosystemData?.name,
                         description: ecosystemData?.description,
@@ -422,36 +423,36 @@ const Dashboard = () => {
                             )}
                         </div>
                     </div>
-
-                            <div className="mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-                                <div className="grid w-full grid-cols-1 gap-4 mt-0 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2">
-                                    <DashboardCard
-                                        icon={memberIcon}
-                                        backgroundColor="linear-gradient(279deg, #FFF -18.24%, #2F80ED -0.8%, #1F4EAD 61.45%)"
-                                        label="Member"
-                                        value={ecosystemDashboard?.membersCount ?? 0}
-                                    />
-                                    <DashboardCard
-                                        icon={endorseIcon}
-                                        backgroundColor="linear-gradient(279deg, #FFF -15.85%, #40F683 22.4%, #22C55E 59.86%)"
-                                        label="Endorsements"
-                                        value={ecosystemDashboard?.endorsementsCount ?? 0}
-                                    />
-                                </div>
-                            </div>
-                            <div>
-                                <MemberList />
-                            </div>
-                            <EditPopupModal
-                                openModal={editOpenModal}
-                                setOpenModal={setEditOpenModal}
-                                setMessage={(value) => {
-                                    setSuccess(value);
-                                }}
-                                isOrganization={false}
-                                onEditSuccess={handleEditModalClose}
-                                entityData={ecosystemDetails}
+                    <div className="mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+                        <div className="grid w-full grid-cols-1 gap-4 mt-0 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2">
+                            <DashboardCard
+                                icon={memberIcon}
+                                backgroundColor="linear-gradient(279deg, #FFF -18.24%, #2F80ED -0.8%, #1F4EAD 61.45%)"
+                                label="Member"
+                                value={ecosystemDashboard?.membersCount ?? 0}
                             />
+                            <DashboardCard
+                                icon={endorseIcon}
+                                backgroundColor="linear-gradient(279deg, #FFF -15.85%, #40F683 22.4%, #22C55E 59.86%)"
+                                label="Endorsements"
+                                value={ecosystemDashboard?.endorsementsCount ?? 0}
+                                onClickHandler={() => window.location.href = pathRoutes.ecosystem.endorsements}
+                            />
+                        </div>
+                    </div>
+                    <div>
+                        <MemberList />
+                    </div>
+                    <EditPopupModal
+                        openModal={editOpenModal}
+                        setOpenModal={setEditOpenModal}
+                        setMessage={(value) => {
+                            setSuccess(value);
+                        }}
+                        isOrganization={false}
+                        onEditSuccess={handleEditModalClose}
+                        entityData={ecosystemDetails}
+                    />
                 </div>
             ) : (
                 <div>
@@ -481,8 +482,8 @@ const Dashboard = () => {
                                     feature={!orgId ? Features.CRETAE_ORG : ''}
                                     message={'No Ecosystem found'}
                                     description={`Get started by creating ${!orgId
-                                            ? 'a new Organization to set up your Ecosystem'
-                                            : 'an Ecosystem'
+                                        ? 'a new Organization to set up your Ecosystem'
+                                        : 'an Ecosystem'
                                         }`}
                                     buttonContent={`${!orgId ? '' : 'Create Ecosystem'}`}
                                     svgComponent={
