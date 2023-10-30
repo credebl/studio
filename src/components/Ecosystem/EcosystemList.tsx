@@ -115,15 +115,31 @@ const EcosystemList = () => {
 
   const isEcosystemList = Boolean(ecosystemList && ecosystemList?.length > 0)
   const showCreateButton = Boolean(isEcosystemList && (isEcosystemData?.isMultiEcosystem || isEcosystemData?.isEcosystemLead))
-  console.log(6534, isEcosystemData, showCreateButton, isEcosystemList, isEcosystemData?.isMultiEcosystem, isEcosystemData?.isEcosystemLead, (isEcosystemList && isEcosystemData?.isMultiEcosystem) || isEcosystemData?.isEcosystemLead)
   return (
     <div className="px-4 pt-6">
       <div className="pl-6 mb-4 col-span-full xl:mb-2">
 
         <BreadCrumbs />
+      </div>
+      <div className='mb-4 flex justify-between'>
         <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
           Ecosystems
         </h1>
+        {
+          showCreateButton &&
+          <RoleViewButton
+            buttonTitle='Create'
+            feature={Features.CRETAE_ORG}
+            svgComponent={
+              <div className='pr-3'>
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
+                  <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+                </svg>
+              </div>
+            }
+            onClickEvent={createOrganizationModel}
+          />
+        }
       </div>
       <div>
         <div
@@ -133,21 +149,6 @@ const EcosystemList = () => {
             <SearchInput
               onInputChange={searchInputChange}
             />
-            {
-              showCreateButton &&
-              <RoleViewButton
-                buttonTitle='Create'
-                feature={Features.CRETAE_ORG}
-                svgComponent={
-                  <div className='pr-3'>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
-                      <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
-                    </svg>
-                  </div>
-                }
-                onClickEvent={createOrganizationModel}
-              />
-            }
           </div>
 
           <AlertComponent
@@ -165,10 +166,10 @@ const EcosystemList = () => {
             </div>
             : isEcosystemList ? (<div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
               {
-                isEcosystemList && ecosystemList && ecosystemList.map((item) => {
+                ecosystemList?.map((item) => {
                   const role = item?.ecosystemOrgs && item?.ecosystemOrgs.length > 0 && item?.ecosystemOrgs[0]?.ecosystemRole?.name || ""
                   return (
-                    <Card key={item.id} onClick={() => redirectOrgDashboard(item.id, role)} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer overflow-hidden overflow-ellipsis' style={{ maxHeight: '100%', maxWidth: '100%', overflow: 'auto' }}>
+                    <Card key={item.id} onClick={() => redirectOrgDashboard(item.id, role)} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer overflow-hidden' style={{ maxHeight: '100%', maxWidth: '100%', overflow: 'auto' }}>
                       <div className='flex items-center'>
                         {(item.logoUrl) ? <CustomAvatar size='80' src={item.logoUrl} /> : <CustomAvatar size='80' name={item.name} />}
 
@@ -216,7 +217,7 @@ const EcosystemList = () => {
 
           <div className={`flex items-center justify-end ${isEcosystemList && "mt-auto"}`}>
             {
-              isEcosystemList && (
+              isEcosystemList && ecosystemList && ecosystemList?.length > 10 && (
                 <Pagination
                   currentPage={currentPage.pageNumber}
                   onPageChange={onPageChange}

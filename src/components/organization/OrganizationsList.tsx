@@ -126,9 +126,23 @@ const OrganizationsList = () => {
       <div className="pl-6 mb-4 col-span-full xl:mb-2">
 
         <BreadCrumbs />
+      </div>
+      <div className='mb-4 flex justify-between'>
         <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
           Organizations
         </h1>
+        <RoleViewButton
+          buttonTitle='Create'
+          feature={Features.CRETAE_ORG}
+          svgComponent={
+            <div className='pr-3'>
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
+                <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+              </svg>
+            </div>
+          }
+          onClickEvent={createOrganizationModel}
+        />
       </div>
       <div>
         <div
@@ -137,18 +151,6 @@ const OrganizationsList = () => {
           <div className="flex items-center justify-between mb-4">
             <SearchInput
               onInputChange={searchInputChange}
-            />
-            <RoleViewButton
-              buttonTitle='Create'
-              feature={Features.CRETAE_ORG}
-              svgComponent={
-                <div className='pr-3'>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
-                    <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
-                  </svg>
-                </div>
-              }
-              onClickEvent={createOrganizationModel}
             />
           </div>
 
@@ -180,9 +182,9 @@ const OrganizationsList = () => {
                       {(org.logoUrl) ? <CustomAvatar size='100' src={org.logoUrl} /> : <CustomAvatar size='100' name={org.name} />}
 
                       <div className='ml-4'>
-                      <h5 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-                            {org?.name}
-                          </h5>
+                        <h5 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+                          {org?.name}
+                        </h5>
                         <p className="text-base tracking-tight text-gray-900 dark:text-white truncate">{org?.description}</p>
                         <div className="flow-root h-auto">
                           <ul className="divide-y divide-gray-200 dark:divide-gray-700">
