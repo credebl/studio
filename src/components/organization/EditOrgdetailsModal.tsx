@@ -10,6 +10,7 @@ import { AlertComponent } from "../AlertComponent";
 import type { AxiosResponse } from 'axios';
 import type { Organisation } from "./interfaces";
 import React from "react";
+import defaultUserIcon from '../../../public/images/person_FILL1_wght400_GRAD0_opsz24.svg'
 
 interface Values {
     name: string;
@@ -247,8 +248,6 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                                 <div
                                     className="items-center sm:flex 2xl:flex sm:space-x-4 xl:space-x-4 2xl:space-x-4"
                                 >
-
-
                                     {
                                         (typeof (logoImage.logoFile) === "string" && props?.orgData?.logoUrl) ?
                                             <img
@@ -259,6 +258,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                                             : typeof (logoImage.logoFile) === "string" ?
                                                 <Avatar
                                                     size="lg"
+                                                    img={defaultUserIcon}
                                                 /> :
                                                 <img
                                                     className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"

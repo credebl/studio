@@ -14,8 +14,7 @@ import { createOrganization } from "../../api/organization";
 import { getFromLocalStorage } from "../../api/Auth";
 import { createEcosystems } from "../../api/ecosystem";
 import { getOrgDetails } from "../../config/ecosystem";
-import React from "react";
-
+import defaultUserIcon from "../../../public/images/person_FILL1_wght400_GRAD0_opsz24.svg"
 interface Values {
     name: string;
     description: string;
@@ -291,6 +290,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
                                             typeof (logoImage.logoFile) === "string" ?
                                                 <Avatar
                                                     size="lg"
+                                                    img={defaultUserIcon}
                                                 /> :
                                                 <img
                                                     className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
