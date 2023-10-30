@@ -2,7 +2,7 @@
 
 import { Alert, Pagination } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';
-import type { GetAllSchemaListParameter, PaginationData } from './interfaces';
+import type { GetAllSchemaListParameter } from './interfaces';
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
 import { getAllSchemas, getAllSchemasByOrgId } from '../../../api/Schema';
 
@@ -19,7 +19,6 @@ import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
 import { getOrganizationById } from '../../../api/organization';
 import { ICheckEcosystem, checkEcosystem } from '../../../config/ecosystem';
-import EcosystemProfileCard from '../../../commonComponents/EcosystemProfileCard';
 
 const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaDetails: SchemaDetails) => void; }) => {
 	const [schemaList, setSchemaList] = useState([])
@@ -171,12 +170,6 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 			<div className="mb-4 col-span-full xl:mb-2">
 				<BreadCrumbs />
 			</div>
-			{
-				isEcosystemData?.isEnabledEcosystem &&
-				<div className='mb-4'>
-					<EcosystemProfileCard />
-				</div>
-			}
 			<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 				Schemas
 			</h1>
