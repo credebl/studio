@@ -149,6 +149,30 @@ const BulkIssuance = () => {
 	return (
 		<div className="flex flex-col justify-between min-h-100/21rem">
 			<Card>
+				<Button
+					color="bg-primary-800"
+					className="float-right py-4 bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto dark:text-white dark:hover:text-black dark:hover:bg-primary-50"
+					style={{ height: '2.6rem', width: '8rem', minWidth: '2rem' }}
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="30"
+						color='text-white'
+						height="25"
+						fill="none"
+						viewBox="0 0 18 18"
+					>
+						<path
+							fill="#1F4EAD"
+							d="M15.483 18H2.518A2.518 2.518 0 0 1 0 15.482V2.518A2.518 2.518 0 0 1 2.518 0h12.965a2.518 2.518 0 0 1 2.518 2.518v12.964A2.518 2.518 0 0 1 15.483 18ZM2.518 1.007a1.51 1.51 0 0 0-1.51 1.51v12.965a1.51 1.51 0 0 0 1.51 1.51h12.965a1.51 1.51 0 0 0 1.51-1.51V2.518a1.51 1.51 0 0 0-1.51-1.51H2.518Z"
+						/>
+						<path
+							fill="#1F4EAD"
+							d="M3.507 5.257a.504.504 0 0 1 0-1.007h5.495a.504.504 0 1 1 0 1.007H3.507ZM6.254 9.5a.504.504 0 1 1 0-1.008h5.492a.504.504 0 0 1 0 1.007H6.254ZM9 13.757a.503.503 0 1 1 0-1.007h5.493a.504.504 0 0 1 0 1.007H9Z"
+						/>
+					</svg>
+					View History
+				</Button>
 				<div>
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 						<div className="flex flex-col justify-between">
@@ -197,7 +221,7 @@ const BulkIssuance = () => {
 						<div onDrop={handleDrop} onDragOver={handleDragOver}>
 							<label
 								htmlFor="csv-file"
-								className="flex flex-col items-center justify-center w-36 h-36 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover-bg-gray-100 dark-border-gray-600 dark-hover-border-gray-500 dark-hover-bg-gray-600"
+								className="flex flex-col items-center justify-center w-36 h-36 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 dark-border-gray-600"
 							>
 								<div
 									className={`flex flex-col items-center justify-center pt-5 pb-6 ${
@@ -247,10 +271,12 @@ const BulkIssuance = () => {
 							</div>
 							{uploadedFileName && (
 								<div className={`mt-2 ${!isCredSelected ? 'opacity-50' : ''}`}>
-									<p>{uploadedFileName}</p>
+									<p className="text-primary-700 dark:text-primary-700">
+										{uploadedFileName}
+									</p>
 									<button
 										onClick={handleDiscardFile}
-										className="text-black-500 hover:text-black-700 cursor-pointer"
+										className="dark:text-white cursor-pointer"
 									>
 										<svg
 											className="h-6 w-6"
@@ -293,12 +319,17 @@ const BulkIssuance = () => {
 
 				{csvData.length > 0 && (
 					<div className="mt-4">
-						<h2>CSV Data:</h2>
-						<table className="table-auto">
+						<h2 className="text-primary-700 dark:text-primary-700">
+							CSV Data:
+						</h2>
+						<table className="table-auto text-primary-700 dark:text-primary-700">
 							<thead>
 								<tr>
 									{csvData[0].map((header, index) => (
-										<th key={index} className="border px-4 py-2">
+										<th
+											key={index}
+											className="border px-4 py-2 text-primary-700 dark:text-primary-700"
+										>
 											{header}
 										</th>
 									))}
@@ -308,7 +339,10 @@ const BulkIssuance = () => {
 								{csvData.slice(1).map((row, rowIndex) => (
 									<tr key={rowIndex}>
 										{row.map((cell, cellIndex) => (
-											<td key={cellIndex} className="border px-4 py-2">
+											<td
+												key={cellIndex}
+												className="border px-4 py-2 text-primary-700 dark:text-primary-700"
+											>
 												{cell}
 											</td>
 										))}
