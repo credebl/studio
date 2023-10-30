@@ -6,50 +6,60 @@ import { SITE_TITLE } from './constants.js';
 
 const { class: clazz } = Astro.props;
 
-const baseUrl = process.env.PUBLIC_BASE_URL || import.meta.env.PUBLIC_BASE_URL
-const encryptKey = process.env.PUBLIC_CRYPTO_PRIVATE_KEY || import.meta.env.PUBLIC_CRYPTO_PRIVATE_KEY
-const supabaseUrl = process.env.PUBLIC_SUPABASE_URL || import.meta.env.PUBLIC_SUPABASE_URL
-const supabaseKey = process.env.PUBLIC_SUPABASE_KEY || import.meta.env.PUBLIC_SUPABASE_KEY
+const initData: any = {};
 
+const envKeys = [...Object.keys(process.env), ...Object.keys(import.meta.env)];
+
+envKeys.forEach((item) => {
+	initData[item] = process.env[item] || import.meta.env[item];
+});
 ---
 
 <!DOCTYPE html>
 <html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>{SITE_TITLE} — v{pkg.version}</title>
 
-<head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>{SITE_TITLE} — v{pkg.version}</title>
+		<meta name="generator" content={Astro.generator} />
+		<meta name="description" content={pkg.description} />
+		<meta name="" content={pkg.description} />
+		<link rel="icon" type="image/svg+xml" href={url('favicon.svg')} />
+		<link
+			rel="sitemap"
+			type="application/xml"
+			href={url('sitemap-index.xml')}
+		/>
 
-	<meta name="generator" content={Astro.generator} />
-	<meta name="description" content={pkg.description} />
-	<meta name="" content={pkg.description} />
-	<link rel="icon" type="image/svg+xml" href={url('favicon.svg')} />
-	<link rel="sitemap" type="application/xml" href={url('sitemap-index.xml')} />
+		<meta
+			name="author"
+			content="Julian Cataldo, Zoltán Szőgyényi, Robert Tanislav"
+		/>
+		<meta name="copyright" content="MIT" />
 
-	<meta name="author" content="Julian Cataldo, Zoltán Szőgyényi, Robert Tanislav" />
-	<meta name="copyright" content="MIT" />
-
-	<script is:inline>
-			if (
-				localStorage.getItem('color-theme') === 'dark' ||
-				(!('color-theme' in localStorage) &&
-					window.matchMedia('(prefers-color-scheme: dark)').matches)
-			) {
-				document.documentElement.classList.add('dark');
-			} else {
-				document.documentElement.classList.remove('dark');
-			}
+		<script is:inline>
+		if (
+			localStorage.getItem('color-theme') === 'dark' ||
+			(!('color-theme' in localStorage) &&
+				window.matchMedia('(prefers-color-scheme: dark)').matches)
+		) {
+			document.documentElement.classList.add('dark');
+		} else {
+			document.documentElement.classList.remove('dark');
+		}
 		</script>
-</head>
+	</head>
 
-<body class:list={[ // clazz, 'bg-gray-50 dark:bg-gray-800'
-	, 'scrollbar scrollbar-w-3 scrollbar-thumb-rounded-[0.25rem]'
-	, 'scrollbar-track-slate-200  scrollbar-thumb-gray-400'
-	, 'dark:scrollbar-track-gray-900 dark:scrollbar-thumb-gray-700' , ]}>
-	<slot />
-</body>
-
+	<body
+		class:list={[
+			'scrollbar scrollbar-w-3 scrollbar-thumb-rounded-[0.25rem]',
+			'scrollbar-track-slate-200  scrollbar-thumb-gray-400',
+			'dark:scrollbar-track-gray-900 dark:scrollbar-thumb-gray-700',
+		]}
+	>
+		<slot />
+	</body>
 </html>
 
 <script>
@@ -57,11 +67,10 @@ const supabaseKey = process.env.PUBLIC_SUPABASE_KEY || import.meta.env.PUBLIC_SU
 	import 'flowbite/dist/datepicker.js';
 </script>
 
-<script define:vars={{ baseUrl, encryptKey, supabaseUrl, supabaseKey }}>
-	globalThis.baseUrl = baseUrl;
-	globalThis.encryptKey = encryptKey;
-	globalThis.supabaseUrl = supabaseUrl;
-	globalThis.supabaseKey = supabaseKey;
+<script define:vars={{ initData, envKeys }}>
+	envKeys.forEach((item) => {
+		globalThis[item] = initData[item];
+	});
 </script>
 
 <style is:global>
