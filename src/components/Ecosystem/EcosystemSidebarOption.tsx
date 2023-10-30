@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 import { ICheckEcosystem, checkEcosystem } from '../../config/ecosystem';
 import { pathRoutes } from '../../config/pathRoutes';
-import React from 'react';
 
 const EcosystemSidebarOption = () => {
 	const [isEcosystemEnabled, setIsEcosystemEnabled] = useState(false);
-	const [showSubMenus, setShowSubMenus] = useState(true);
 
 	useEffect(() => {
 		const checkEcosystemData = async () => {
@@ -18,16 +16,13 @@ const EcosystemSidebarOption = () => {
 	if (isEcosystemEnabled) {
 		return (
 			<li>
-				<button
-					type="button"
-					className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
-					aria-controls="dropdown-ecosystems"
-					data-collapse-toggle="dropdown-ecosystems"
-					onClick={() => setShowSubMenus(!showSubMenus)}
+				<a
+					href={pathRoutes.ecosystem.root}
+					className="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
-                        className="flex-shrink-0 w-6 h-6 pt-1 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+						className="flex-shrink-0 w-6 h-6 pt-1 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
 						width="24"
 						height="24"
 						fill="none"
@@ -43,81 +38,10 @@ const EcosystemSidebarOption = () => {
 							d="M12 24.008c2.253 0 4.43-.63 6.327-1.811l-.321-.322A11.482 11.482 0 0 1 12 23.566C5.626 23.566.439 18.38.439 12.006c0-1.12.159-2.225.474-3.285a.22.22 0 0 0-.147-.274.218.218 0 0 0-.274.15A11.95 11.95 0 0 0 0 12.005c0 6.619 5.384 12.003 12.003 12.003H12ZM12.002.442c6.374 0 11.56 5.187 11.56 11.56 0 1.12-.158 2.225-.473 3.285a.22.22 0 0 0 .209.283.223.223 0 0 0 .212-.16c.327-1.098.492-2.246.492-3.407C24.002 5.384 18.617 0 11.999 0c-2.253 0-4.43.63-6.327 1.811l.32.322A11.482 11.482 0 0 1 12 .442h.003Zm-8.1.222L2.43 5.082 6.848 3.61 3.902.664Zm17.673 18.258-4.419 1.473 2.946 2.945 1.473-4.418Z"
 						/>
 					</svg>
-
-					<span className="flex-1 ml-3 text-left whitespace-nowrap">
-						Ecosystem
+					<span className="ml-3" sidebar-toggle-item>
+						Ecosystems
 					</span>
-					<svg
-						className="w-6 h-6 flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white sidebar-expand-menu-icon"
-						fill="currentColor"
-						viewBox="0 0 20 20"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							fillRule="evenodd"
-							d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-							clipRule="evenodd"
-						/>
-					</svg>
-				</button>
-				{showSubMenus && (
-					<ul id="dropdown-ecosystems" className="py-2 space-y-2">
-						<li>
-							<a
-								href={pathRoutes.ecosystem.root}
-								className="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
-							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="24"
-									height="24"
-									viewBox="0 0 24 24"
-									fill="none"
-									className="flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
-								>
-									<path
-										d="M12.4689 11.226C14.9817 11.226 17.0277 9.17995 17.0277 6.66719C17.0277 4.15443 14.9817 2.10547 12.4689 2.10547C9.95618 2.10547 7.91016 4.15149 7.91016 6.66425C7.91016 9.17701 9.95618 11.226 12.4689 11.226ZM12.4689 3.27966C14.3359 3.27966 15.8535 4.79729 15.8535 6.66425C15.8535 8.53121 14.3359 10.0488 12.4689 10.0488C10.602 10.0488 9.08434 8.53121 9.08434 6.66425C9.08434 4.80023 10.602 3.27966 12.4689 3.27966Z"
-										fill="currentColor"
-									/>
-									<path
-										d="M20.9984 20.5578V16.7887C20.9984 14.1614 18.8614 12.0273 16.2371 12.0273H8.69883C6.07159 12.0273 3.9375 14.1644 3.9375 16.7887V20.5578C3.9375 20.8807 4.20169 21.1449 4.52459 21.1449H20.4143C20.7372 21.1449 20.9984 20.8807 20.9984 20.5578ZM19.8243 19.9707H5.11169V16.7887C5.11169 14.8102 6.72032 13.2015 8.69883 13.2015H16.2371C18.2156 13.2015 19.8243 14.8102 19.8243 16.7887V19.9707Z"
-										fill="currentColor"
-									/>
-								</svg>
-								<span className="ml-2">Profile</span>
-							</a>
-						</li>
-						<li>
-							<a
-								href={pathRoutes.ecosystem.endorsements}
-								className="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
-							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="24"
-									height="24"
-									viewBox="0 0 24 24"
-									fill="none"
-									className="flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
-								>
-									<path
-										d="M9.44322 0.737955C7.93853 0.93483 6.58385 2.04577 6.09166 3.48014C5.54791 5.05983 5.95572 6.69577 7.18385 7.86295C9.17135 9.74733 12.4526 9.15202 13.6948 6.6817C13.9526 6.17077 14.0698 5.69264 14.0932 5.03639C14.1307 4.10827 13.962 3.43795 13.4885 2.63639C13.2917 2.30358 12.626 1.62389 12.2557 1.38483C11.4588 0.864517 10.3713 0.616079 9.44322 0.737955ZM10.6573 1.33327C11.3135 1.45983 11.8854 1.75045 12.3963 2.2192C13.1557 2.90827 13.5448 3.7942 13.5448 4.83014C13.5448 6.25514 12.7807 7.46452 11.501 8.0692C10.976 8.31764 10.5776 8.40202 9.95885 8.40202C8.98385 8.39733 8.22447 8.08327 7.51666 7.38483C6.78072 6.65358 6.42447 5.83795 6.41978 4.86764C6.4151 2.61295 8.45416 0.91608 10.6573 1.33327Z"
-										fill="currentColor"
-										stroke="currentColor"
-										stroke-width="0.5"
-									/>
-									<path
-										d="M8.32933 9.61523C6.39339 9.91055 4.7387 11.1012 3.8762 12.8215C3.63714 13.2949 3.50589 13.6652 3.36058 14.2512C3.27152 14.6309 3.26214 14.8043 3.24808 17.9168C3.22933 21.1652 3.22933 21.184 3.32308 21.2777C3.42152 21.3762 3.45433 21.3762 6.51527 21.3762H9.60902V22.0465C9.60902 22.6746 9.61839 22.7262 9.70745 22.8105C9.8012 22.8949 9.90433 22.8996 11.1981 22.9137C12.07 22.923 12.6418 22.909 12.7168 22.8809C12.8059 22.848 12.8528 22.7871 12.8715 22.6887C12.8903 22.6137 12.9043 22.548 12.909 22.548C12.9184 22.548 13.0778 22.6043 13.27 22.6699C13.7856 22.848 14.77 23.0918 15.3512 23.1855C16.0637 23.3027 17.4184 23.3027 18.07 23.1855C18.7028 23.0684 19.2934 22.8949 19.5465 22.7496C19.8887 22.548 20.2262 22.1684 20.4371 21.7418C20.7325 21.1371 20.7746 20.8465 20.7559 19.473L20.7418 18.3012L20.5637 17.9449C20.3621 17.5324 20.0621 17.2324 19.6496 17.0309C19.3871 16.8996 19.3637 16.8996 18.4121 16.8855L17.4418 16.8715L17.4278 15.6668C17.4137 14.5324 17.4043 14.448 17.3012 14.1902C17.1418 13.7871 16.8043 13.3699 16.4715 13.1496C16.2887 13.0324 16.1528 12.9012 16.1012 12.798C16.059 12.709 15.8856 12.4277 15.7168 12.1746C15.0512 11.1668 13.9778 10.3277 12.8434 9.91523C12.0325 9.62461 11.8309 9.60117 10.1481 9.58242C9.29964 9.57773 8.47933 9.5918 8.32933 9.61523ZM11.559 10.1777C12.9887 10.3746 14.3621 11.209 15.1825 12.3762L15.4262 12.7277L15.1262 12.7559C14.7559 12.7887 14.5965 12.8824 14.4793 13.1402C14.3621 13.4074 14.3668 13.5715 14.5309 14.4199C14.709 15.3199 14.7231 15.8027 14.5778 16.1074C14.3996 16.4684 13.9918 16.6793 13.2934 16.7777C13.0965 16.8059 12.9231 16.8293 12.909 16.8293C12.8996 16.8293 12.8903 16.7918 12.8903 16.7496C12.8903 16.7074 12.8575 16.6324 12.8106 16.5855C12.7403 16.5059 12.6278 16.5012 11.259 16.5012C9.9512 16.5012 9.76839 16.5105 9.69339 16.5809C9.6137 16.6512 9.60902 16.7824 9.60902 18.7371V20.8137H6.70277H3.79652V17.9871C3.8012 15.1277 3.81995 14.7434 3.97933 14.1105C4.50902 12.0809 6.29495 10.4777 8.36683 10.1777C8.77933 10.1168 11.1371 10.1168 11.559 10.1777ZM15.9465 13.4918C16.3075 13.6699 16.5559 13.923 16.7293 14.2934C16.8512 14.5559 16.8512 14.5652 16.8746 15.9246C16.8934 17.1293 16.9075 17.3027 16.9778 17.373C17.0481 17.4434 17.1934 17.4527 18.1731 17.4574L19.2887 17.4621L19.509 17.5887C19.809 17.7668 20.0528 18.0668 20.1371 18.3668C20.1981 18.573 20.2075 18.8262 20.1934 19.773C20.17 21.0809 20.1418 21.2262 19.8043 21.7277C19.5653 22.084 19.2981 22.2855 18.9043 22.4074C17.2637 22.9137 15.4543 22.8199 13.3825 22.1121L12.9137 21.9527L12.8996 19.6746L12.8903 17.3965L13.1106 17.3684C14.0903 17.2512 14.6762 16.9934 14.9668 16.5527C15.2856 16.0746 15.3184 15.5074 15.0981 14.373C14.9481 13.6277 14.9246 13.4027 14.9903 13.3418C15.009 13.323 15.1637 13.3137 15.3325 13.323C15.5575 13.3324 15.7168 13.3793 15.9465 13.4918ZM12.3278 19.7121V22.3605H11.2496H10.1715V19.7121V17.0637H11.2496H12.3278V19.7121Z"
-										fill="currentColor"
-										stroke="currentColor"
-										stroke-width="0.5"
-									/>
-								</svg>
-								<span className="ml-2">Endorsements</span>
-							</a>
-						</li>
-					</ul>
-				)}
+				</a>
 			</li>
 		);
 	}

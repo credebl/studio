@@ -18,6 +18,7 @@ import { nanoid } from 'nanoid';
 import { pathRoutes } from '../../../config/pathRoutes';
 import { ICheckEcosystem, checkEcosystem, getEcosystemId } from '../../../config/ecosystem';
 import { createCredDefRequest } from '../../../api/ecosystem';
+import EcosystemProfileCard from '../../../commonComponents/EcosystemProfileCard';
 
 interface Values {
   tagName: string;
@@ -216,6 +217,13 @@ const ViewSchemas = () => {
     <div className="px-4 pt-6">
       <div className="mb-4 col-span-full xl:mb-2">
         <BreadCrumbs />
+
+        {
+          isEcosystemData?.isEnabledEcosystem &&
+          <div className='mb-4'>
+            <EcosystemProfileCard />
+          </div>
+        }
 
         <div className='flex items-center justify-between'>
           <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
