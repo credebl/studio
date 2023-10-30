@@ -170,7 +170,7 @@ const CreateSchema = () => {
             </div>
             {
                 isEcosystemData?.isEnabledEcosystem &&
-                <div className='pb-3 mx-6'>
+                <div className='pb-3 mx-6 mb-6'>
                     <EcosystemProfileCard />
                 </div>
             }
