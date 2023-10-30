@@ -80,8 +80,6 @@ const OrganizationsList = () => {
 
   //This useEffect is called when the searchText changes 
   useEffect(() => {
-
-    // let getData: string | number | NodeJS.Timeout | undefined;
     let getData: NodeJS.Timeout
 
     if (searchText.length >= 1) {
@@ -162,7 +160,7 @@ const OrganizationsList = () => {
             isorgModal={true} />
 
           <AlertComponent
-            message={message ? message : error}
+            message={message || error}
             type={message ? 'success' : 'failure'}
             onAlertClose={() => {
               setMessage(null)
@@ -177,19 +175,18 @@ const OrganizationsList = () => {
             : organizationsList && organizationsList?.length > 0 ? (<div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
               {
                 organizationsList.map((org) => (
-                  <Card onClick={() => redirectOrgDashboard(org)} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer overflow-hidden overflow-ellipsis' style={{ maxHeight: '100%', maxWidth: '100%', overflow: 'auto' }}>
+                  <Card key={org.id} onClick={() => redirectOrgDashboard(org)} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer overflow-hidden overflow-ellipsis' style={{ maxHeight: '100%', maxWidth: '100%', overflow: 'auto' }}>
                     <div className='flex items-center'>
                       {(org.logoUrl) ? <CustomAvatar size='80' src={org.logoUrl} /> : <CustomAvatar size='80' name={org.name} />}
 
                       <div className='ml-4'>
-                        <h5 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-                          <p>
-                            {org.name}
-                          </p>
-                        </h5>
+                      <h5 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+                            {org?.name}
+                          </h5>
+                        <p className="text-base tracking-tight text-gray-900 dark:text-white truncate">{org?.description}</p>
                         <div className="flow-root h-auto">
                           <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-                            <li className="py-3 sm:py-4 overflow-auto">
+                            <li className="pt-2 sm:pt-3 overflow-auto">
                               <div className="flex items-center space-x-4">
                                 <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
                                   Roles:

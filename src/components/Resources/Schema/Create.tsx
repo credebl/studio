@@ -15,6 +15,7 @@ import { pathRoutes } from '../../../config/pathRoutes';
 import { ICheckEcosystem, checkEcosystem, getEcosystemId } from '../../../config/ecosystem';
 import { createSchemaRequest } from '../../../api/ecosystem';
 import ConfirmModal from '../../../commonComponents/ConfirmPopup';
+import EcosystemProfileCard from '../../../commonComponents/EcosystemProfileCard'
 
 const options = [
     { value: 'string', label: 'String' },
@@ -166,12 +167,18 @@ const CreateSchema = () => {
         <div className="px-4 pt-6">
             <div className="pl-6 mb-4 col-span-full xl:mb-2">
                 <BreadCrumbs />
-                <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-                    {formTitle}
-                </h1>
             </div>
+            {
+                isEcosystemData?.isEnabledEcosystem &&
+                <div className='pb-3 mx-6'>
+                    <EcosystemProfileCard />
+                </div>
+            }
+            <h1 className="md:pl-6 mb-4 col-span-full xl:mb-2 ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
+                {formTitle}
+            </h1>
             <div>
-                <Card className="p-6 m-6" id="createSchemaCard">
+                <Card className="m-0 md:m-6" id="createSchemaCard">
                     <div>
                         <Formik
                             initialValues={formData}
@@ -204,7 +211,7 @@ const CreateSchema = () => {
                                 <Form onSubmit={formikHandlers.handleSubmit}>
 
                                     <div className=" md:flex items-center space-x-4 ">
-                                        <div className="md:w-1/3 sm:w-full md:w-96  flex-col md:flex">
+                                        <div className="md:w-1/3 sm:w-full md:w-96 flex-col md:flex pr-0 md:pr-4">
                                             <div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                                 <Label htmlFor="schema" value="Schema" />
                                                 <span className="text-red-600">*</span>
@@ -286,8 +293,8 @@ const CreateSchema = () => {
                                                                         Attribute: {index + 1}
                                                                     </label>
                                                                     <Card className='cursor-pointer overflow-hidden overflow-ellipsis' style={{ overflow: 'auto' }}>
-                                                                        <div key={element.id} className="grid min-[320]:grid-cols-1 sm:grid-cols-4 md:grid-cols-4 gap-2">
-                                                                            <div className="sm:w-full m-2 p-2">
+                                                                        <div key={element.id} className="grid min-[320]:grid-cols-1 sm:grid-cols-4 md:grid-cols-4 gap-4">
+                                                                            <div className="">
                                                                                 <Field
                                                                                     id={`attribute[${index}]`}
                                                                                     name={`attribute.${index}.attributeName`}
@@ -321,7 +328,7 @@ const CreateSchema = () => {
                                                                                 )}
                                                                             </div>
 
-                                                                            <div className="sm:w-full m-2 p-2">
+                                                                            <div className="">
                                                                                 <Field
                                                                                     component="select"
                                                                                     id={`attribute[${index}]`}
@@ -366,7 +373,7 @@ const CreateSchema = () => {
                                                                                     <label className="pt-1 text-red-500 text-xs h-5"></label>
                                                                                 )}
                                                                             </div>
-                                                                            <div className="sm:w-full m-2 p-2">
+                                                                            <div className="">
                                                                                 <Field
                                                                                     id={`attribute[${index}]`}
                                                                                     name={`attribute.${index}.displayName`}
@@ -403,7 +410,7 @@ const CreateSchema = () => {
 
 
 
-                                                                            <div className='sm:w-full items-center flex flex-wrap min-[320]:justify-between min-[320]:space-x-2 xl:space-x-6 m-2 py-2'>
+                                                                            <div className='sm:w-full items-center flex flex-wrap min-[320]:justify-between min-[320]:space-x-2 xl:space-x-6'>
                                                                                 {index === 0 && attribute.length === 1 ? (
                                                                                     <div key={element.id} className="sm:w-0.5/3 text-red-600 hidden">
                                                                                         <Button
@@ -521,28 +528,25 @@ const CreateSchema = () => {
                                             </Alert>
                                         </div>
                                     )}
-                                    <div className="float-right p-2">
+                                    <div className="float-right mt-4 ml-4">
                                         <Button
                                             type="submit"
                                             color="bg-primary-700"
                                             disabled={
                                                 !formikHandlers.isValid
                                             }
-                                            className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto mt-2 min-w-[6rem] h-[2.6rem]'
+                                            className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 lg:px-5 py-2 lg:py-2.5 ml-auto min-w-[6rem] h-[2.6rem]'
                                         >
                                             {submitButtonTitle.svg}
                                             {submitButtonTitle.title}
                                         </Button>
                                     </div>
-
-                                    <ConfirmModal openModal={showPopup} closeModal={() => setShowPopup(false)} onSuccess={confirmCreateSchema} message={"Would you like to proceed? Keep in mind that this action cannot be undone."} isProcessing={createloader} />
-
-                                    <div className="float-right p-2 mt-2">
+                                    <div className="float-right mt-4">
                                         <Button
                                             type="reset"
                                             color='bg-primary-800'
                                             disabled={createloader}
-                                            className='dark:text-white bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto dark:hover:text-black'
+                                            className='dark:text-white bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 ml-auto dark:hover:text-black'
 
                                             style={{ height: '2.6rem', width: '6rem', minWidth: '2rem' }}
                                         >
@@ -553,6 +557,9 @@ const CreateSchema = () => {
                                             Reset
                                         </Button>
                                     </div>
+
+                                    <ConfirmModal openModal={showPopup} closeModal={() => setShowPopup(false)} onSuccess={confirmCreateSchema} message={"Would you like to proceed? Keep in mind that this action cannot be undone."} isProcessing={createloader} />
+
                                 </Form>
                             )}
                         </Formik>
