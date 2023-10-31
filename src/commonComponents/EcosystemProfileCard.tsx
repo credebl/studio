@@ -104,19 +104,21 @@ const EcosystemProfileCard = () => {
 
 
                     <div className="inline-flex items-end ml-auto flex-col">
-                        <select
-                            className="bg-gray-50 sm:min-w-[244px] border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            onChange={handleSelectEcosystem}
-                            disabled={Boolean(ecosystemOptions && ecosystemOptions.length <= 1)}
-                        >
-                            <option selected>Select Ecosystem</option>
-                            {
-                                ecosystemOptions && ecosystemOptions.length > 0 && ecosystemOptions.map(item => (
-                                    <option key={item.id} value={item.id}>{item.name}</option>
-                                ))
-                            }
-                        </select>
-                        <a href={pathRoutes.ecosystem.dashboard} className='mt-4 flex text-primary-700 dark:text-secondary-700 text-sm font-medium underline-offset-4 hover:underline'>
+                        {
+                            Boolean(ecosystemOptions && ecosystemOptions.length > 0) &&
+                            <select
+                                className="mb-4 bg-gray-50 sm:min-w-[244px] border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                onChange={handleSelectEcosystem}
+                            >
+                                <option selected>Select Ecosystem</option>
+                                {
+                                    ecosystemOptions && ecosystemOptions.length > 0 && ecosystemOptions.map(item => (
+                                        <option key={item.id} value={item.id}>{item.name}</option>
+                                    ))
+                                }
+                            </select>
+                        }
+                        <a href={pathRoutes.ecosystem.dashboard} className='flex text-primary-700 dark:text-secondary-700 text-sm font-medium underline-offset-4 hover:underline'>
                             Go to Dashboard
                             <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" className='h-4 w-4 text-primary-700 dark:text-secondary-700 ml-1'>
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path>
