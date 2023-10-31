@@ -24,3 +24,25 @@ export const getAgentHealth = async (orgId:number) => {
     return err?.message
   }
 }
+
+export const getLedgers = async () => {
+  const token = await getFromLocalStorage(storageKeys.TOKEN)
+  const details = {
+    url: `${apiRoutes.Platform.getLedgers}`,
+    config: {
+      headers: {
+        'Content-type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    },
+  };
+
+  try {
+    const response = await axiosGet(details)
+    return response
+  }
+  catch (error) {
+    const err = error as Error
+    return err?.message
+  }
+}
