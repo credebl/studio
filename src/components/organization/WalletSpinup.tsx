@@ -20,6 +20,7 @@ import InputCopy from '../InputCopy';
 import SOCKET from '../../config/SocketConfig';
 import SharedIllustrate from './SharedIllustrate';
 import { nanoid } from 'nanoid';
+import { getLedgers } from '../../api/Agent';
 
 interface Values {
 	seed: string;
@@ -39,6 +40,11 @@ enum AgentType {
 	DEDICATED = 'dedicated',
 }
 
+interface INetworks {
+	id: number
+	name: string
+}
+
 interface ISharedAgentForm {
 	seeds: string
 	isCopied: boolean
@@ -54,25 +60,47 @@ interface IDedicatedAgentForm {
 	submitDedicatedWallet: (values: Values) => void
 }
 
+const fetchNetworks = async () => {
+	try {
+		const { data } = await getLedgers() as AxiosResponse
+		console.log(7576, data)
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			return data?.data
+		}
+		return []
+	} catch (err) {
+		console.log(7578, err)
+	}
+}
+
 const SharedAgentForm = ({ orgName, seeds, isCopied, loading, copyTextVal, submitSharedWallet }: ISharedAgentForm) => {
 	const [haveDid, setHaveDid] = useState(false)
+	const [networks, setNetworks] = useState([])
+	const getLedgerList = async () => {
+		const res = await fetchNetworks()
+		setNetworks(res)
+	}
+	useEffect(() => {
+		getLedgerList()
+	}, [])
+
 	return (
-		<div className='mt-8 space-y-6 max-w-lg flex-col gap-4'>
-			<div className="flex items-center gap-2">
+		<div className='mt-4 max-w-lg flex-col gap-4'>
+			<div className="flex items-center gap-2 mt-4">
 				<Checkbox id="haveDid" onChange={(e) => setHaveDid(e.target.checked)} />
 				<Label
 					className="flex"
 					htmlFor="haveDid"
 				>
 					<p>
-						Do you have DID?
+						Already have DID?
 					</p>
 
 				</Label>
 			</div>
 			{
 				!haveDid &&
-				<div>
+				<div className='mt-4'>
 					<div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
 						<Label value="Seed" />
 					</div>
@@ -128,7 +156,7 @@ const SharedAgentForm = ({ orgName, seeds, isCopied, loading, copyTextVal, submi
 						{
 							haveDid &&
 							<>
-								<div>
+								<div className='mt-4'>
 									<div className="mb-1 block">
 										<Label htmlFor="seed" value="Seed" />
 										<span className="text-red-500 text-xs">*</span>
@@ -147,7 +175,7 @@ const SharedAgentForm = ({ orgName, seeds, isCopied, loading, copyTextVal, submi
 											</span>
 										)}
 								</div>
-								<div>
+								<div className=''>
 									<div className="mb-1 block">
 										<Label htmlFor="did" value="DID" />
 										<span className="text-red-500 text-xs">*</span>
@@ -189,21 +217,21 @@ const SharedAgentForm = ({ orgName, seeds, isCopied, loading, copyTextVal, submi
 						</div>
 						<div>
 							<div className="mb-1 block">
-								<Label htmlFor="network" value="Wallet Label" />
+								<Label htmlFor="network" value="Network" />
 								<span className="text-red-500 text-xs">*</span>
 							</div>
 
-							{/* <select
-								onChange={(e) => handleFilter(e, 'statusFilter')}
+							<select
+								// onChange={(e) => handleFilter(e, 'statusFilter')}
 								id="statusfilter"
 								className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
 							>
-								{networks.map((item) => (
-									<option key={item.value} className="" value={item.value}>
+								{networks && networks.length > 0 && networks.map((item: INetworks) => (
+									<option key={item.id} className="" value={item.id}>
 										{item.name}
 									</option>
 								))}
-							</select> */}
+							</select>
 
 							{formikHandlers?.errors?.network &&
 								formikHandlers?.touched?.network && (
@@ -400,14 +428,16 @@ const WalletSpinup = (props: {
 	const submitSharedWallet = async (values: ValuesShared) => {
 		setLoading(true);
 
+		console.log(45456, values)
+
 		const payload = {
 			label: values.label,
 			seed: seeds,
 			clientSocketId: SOCKET.id,
 		};
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-
-		const spinupRes = await spinupSharedAgent(payload, orgId);
+		const spinupRes = {}
+		// const spinupRes = await spinupSharedAgent(payload, parseInt(orgId));
 		const { data } = spinupRes as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
@@ -472,7 +502,6 @@ const WalletSpinup = (props: {
 
 	const orgName = props?.orgName ? props?.orgName?.split(" ").reduce((s, c) => (s.charAt(0).toUpperCase() + s.slice(1)) + (c.charAt(0).toUpperCase() + c.slice(1))
 	) : ""
-
 
 	return (
 		<div className="mt-4 flex-col p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
