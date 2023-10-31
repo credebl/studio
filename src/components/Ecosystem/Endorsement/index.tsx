@@ -26,6 +26,7 @@ import {
 import { EndorsementStatus, EndorsementType } from '../../../common/enums';
 import { AlertComponent } from '../../AlertComponent';
 import { Features } from '../../../utils/enums/features';
+import EcosystemProfileCard from '../../../commonComponents/EcosystemProfileCard';
 
 interface ISelectedRequest {
 	attribute: IAttributes[];
@@ -68,7 +69,7 @@ const EndorsementList = () => {
 	const [walletStatus, setWalletStatus] = useState(false);
 	const [showPopup, setShowPopup] = useState(false);
 	const [selectedRequest, setSelectedRequest] = useState<ISelectedRequest>();
-	const [isEcosystemLead, setIsEcosystemLead] = useState(false);
+	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
 	const options = [
@@ -205,7 +206,7 @@ const EndorsementList = () => {
 
 		const checkEcosystemData = async () => {
 			const data: ICheckEcosystem = await checkEcosystem();
-			setIsEcosystemLead(data.isEcosystemLead);
+			setIsEcosystemData(data);
 		};
 		checkEcosystemData();
 	}, []);
@@ -214,13 +215,19 @@ const EndorsementList = () => {
 		<div className="px-4 pt-6">
 			<div className="mb-4 col-span-full xl:mb-2">
 				<BreadCrumbs />
-				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-					Endorsements
-				</h1>
 			</div>
+			{
+				isEcosystemData?.isEnabledEcosystem &&
+				<div className='pb-3'>
+					<EcosystemProfileCard />
+				</div>
+			}
+			<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
+				Endorsements
+			</h1>
 			<div>
 				<div>
-					<div className="flex flex-col items-center justify-between mb-4 pr-4 sm:flex-row">
+					<div className="flex flex-col items-center justify-between mb-4 sm:flex-row">
 						<div
 							id="schemasSearchInput"
 							className="mb-2 pl-0 sm:pl-2 flex space-x-2 items-end"
