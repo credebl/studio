@@ -11,7 +11,7 @@ interface BreadCrumbI {
 }
 
 export default function BreadCrumbs() {
-	const [breadcrumbList, setBreadcrumbs] = useState<BreadCrumbI[]>([]);
+	const [breadcrumbList, setBreadcrumbList] = useState<BreadCrumbI[]>([]);
 
 	useEffect(() => {
 		const pathUrl = window.location.pathname;
