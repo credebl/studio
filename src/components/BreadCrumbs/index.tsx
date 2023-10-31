@@ -22,7 +22,7 @@ export default function BreadCrumbs() {
 			return { href, text: subpath };
 		});
 
-		setBreadcrumbs(crumblist);
+		setBreadcrumbList(crumblist);
 	}, []);
 
 	return (
@@ -49,6 +49,8 @@ export default function BreadCrumbs() {
 				</Breadcrumb.Item>
 
 				{breadcrumbList.map((crumb, idx) => {
+					console.log("crumb",);
+					
 					const crumbData =
 						crumb.text.charAt(0).toUpperCase() + crumb.text.slice(1);
 					const routes = crumbData
@@ -63,7 +65,7 @@ export default function BreadCrumbs() {
 								)
 						: '';
 					return (
-						<Breadcrumb.Item href={crumb.href} key={idx}>
+						<Breadcrumb.Item href={crumb.href} key={crumb.text}>
 							{routes}
 						</Breadcrumb.Item>
 					);
