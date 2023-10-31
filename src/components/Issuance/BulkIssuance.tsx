@@ -14,6 +14,7 @@ interface IValues {
 
 const BulkIssuance = () => {
 	const [csvData, setCsvData] = useState<string[][]>([]);
+	
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
 	const [credentialOptions, setCredentialOptions] = useState([]);
@@ -27,7 +28,6 @@ const BulkIssuance = () => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		if (orgId) {
 			const response = await getSchemaCredDef();
-			console.log('API Response:', response);
 			const { data } = response as AxiosResponse;
 
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -61,7 +61,6 @@ const BulkIssuance = () => {
 
 		if (orgId) {
 			const response = await DownloadCsvTemplate();
-			console.log('API Response:', response);
 			const { data } = response as AxiosResponse;
 
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -84,9 +83,9 @@ const BulkIssuance = () => {
 			setLoading(false);
 		}
 	};
-	useEffect(() => {
-		DownloadSchemaTemplate();
-	}, []);
+	// useEffect(() => {
+	// 	DownloadSchemaTemplate();
+	// }, []);
 
 	const handleFileUpload = (file) => {
 		if (file.type !== 'text/csv') {
@@ -97,7 +96,7 @@ const BulkIssuance = () => {
 		const reader = new FileReader();
 
 		reader.onload = (event) => {
-			const result = event.target.result;
+			const result = event?.target && event?.target?.result;
 			if (typeof result === 'string') {
 				const text = result;
 				const rows = text.split('\n');
@@ -120,7 +119,10 @@ const BulkIssuance = () => {
 		setUploadedFile(null);
 	};
 
-	const handleDrop = (e) => {
+	const handleDrop = (e: {
+		preventDefault: () => void;
+		dataTransfer: { files: any[] };
+	}) => {
 		e.preventDefault();
 		if (isCredSelected) {
 			const file = e.dataTransfer.files[0];
@@ -130,11 +132,11 @@ const BulkIssuance = () => {
 		}
 	};
 
-	const handleDragOver = (e) => {
+	const handleDragOver = (e: { preventDefault: () => void }) => {
 		e.preventDefault();
 	};
 
-	const handleInputChange = (e) => {
+	const handleInputChange = (e: { target: { files: any[] } }) => {
 		const file = e.target.files[0];
 		if (file) {
 			handleFileUpload(file);
@@ -147,18 +149,25 @@ const BulkIssuance = () => {
 	const isCredSelected = Boolean(credentialSelected);
 
 	return (
-		<div className="flex flex-col justify-between min-h-100/21rem">
-			<Card>
+		<div>
+			<div className="flex justify-between mb-4 items-center ml-1">
+				<div>
+					<p className="text-2xl font-semibold dark:text-white">
+						Bulk Issuance
+					</p>
+					<span className="text-sm text-gray-400">Bulk issuance by .csv</span>
+				</div>
 				<Button
 					color="bg-primary-800"
-					className="float-right py-4 bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto dark:text-white dark:hover:text-black dark:hover:bg-primary-50"
-					style={{ height: '2.6rem', width: '8rem', minWidth: '2rem' }}
+					className="flex float-right bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-primary-600 font-medium rounded-md text-lg px-2 lg:px-3 py-2 lg:py-2.5 mr-2 ml-auto border-blue-600 hover:text-primary-600 dark:text-blue-500 dark:border-blue-500 dark:hover:text-blue-500 dark:hover:bg-primary-50"
+					style={{ height: '2.4rem', minWidth: '2rem' }}
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
+						className="pr-2"
 						width="30"
-						color='text-white'
-						height="25"
+						color="text-white"
+						height="20"
 						fill="none"
 						viewBox="0 0 18 18"
 					>
@@ -173,114 +182,39 @@ const BulkIssuance = () => {
 					</svg>
 					View History
 				</Button>
-				<div>
-					<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-						<div className="flex flex-col justify-between">
-							<div className="search-dropdown text-primary-700 drak:text-primary-700">
-								<Select
-									placeholder="Select Schema-Cred def"
-									className="basic-single "
-									classNamePrefix="select"
-									isDisabled={false}
-									isClearable={true}
-									isRtl={false}
-									isSearchable={true}
-									name="color"
-									options={credentialOptions}
-									onChange={(value: IValues | null) => {
-										console.log(7676, value);
-										setCredentialSelected(value?.value || '');
-									}}
-								/>
-							</div>
-							<div className="mt-4">
-								<button
-									className={`text-primary-700 dark:text-primary-700 py-2 px-4 rounded inline-flex items-center border border-primary-700  ${
-										!isCredSelected ? 'opacity-50' : ''
-									}`}
-									disabled={!isCredSelected}
-								>
-									<svg
-										className="h-6 w-6 text-primary-700"
-										fill="none"
-										viewBox="0 0 24 24"
-										stroke="currentColor"
-									>
-										<path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											stroke-width="2"
-											d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-										/>
-									</svg>
-									<span>Download Template</span>
-								</button>
-							</div>
-						</div>
-
-						<div onDrop={handleDrop} onDragOver={handleDragOver}>
-							<label
-								htmlFor="csv-file"
-								className="flex flex-col items-center justify-center w-36 h-36 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 dark-border-gray-600"
-							>
-								<div
-									className={`flex flex-col items-center justify-center pt-5 pb-6 ${
-										!isCredSelected ? 'opacity-50' : ''
-									}`}
-								>
-									<svg
-										className="h-12 w-12 text-gray-500"
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="2"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-									>
-										{' '}
-										<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />{' '}
-										<polyline points="16 6 12 2 8 6" />{' '}
-										<line x1="12" y1="2" x2="12" y2="15" />
-									</svg>
-									<p className="mb-2 mt-2 text-sm text-gray-500 dark-text-gray-400">
-										<span className="font-semibold">Drag .CSV file here</span>
-									</p>
-								</div>
-							</label>
-
-							<div className="w-fit">
-								<label htmlFor="organizationlogo">
-									<div
-										className={`px-4 py-2 mt-4 ml-4 bg-primary-700 hover-bg-primary-800 text-white text-center rounded-lg ${
-											!isCredSelected ? 'opacity-50' : ''
-										}`}
-									>
-										Choose file
-									</div>
-									<input
-										disabled={!isCredSelected}
-										type="file"
-										accept=".csv"
-										name="file"
-										className="hidden"
-										id="organizationlogo"
-										onChange={handleInputChange}
-										title=""
+			</div>
+			<div className="flex flex-col justify-between min-h-100/21rem">
+				<Card>
+					<div>
+						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+							<div className="flex flex-col justify-between">
+								<div className="search-dropdown text-primary-700 drak:text-primary-700">
+									<Select
+										placeholder="Select Schema-Cred def"
+										className="basic-single "
+										classNamePrefix="select"
+										isDisabled={false}
+										isClearable={true}
+										isRtl={false}
+										isSearchable={true}
+										name="color"
+										options={credentialOptions}
+										onChange={(value: IValues | null) => {
+											setCredentialSelected(value?.value || '');
+										}}
 									/>
-								</label>
-							</div>
-							{uploadedFileName && (
-								<div className={`mt-2 ${!isCredSelected ? 'opacity-50' : ''}`}>
-									<p className="text-primary-700 dark:text-primary-700">
-										{uploadedFileName}
-									</p>
+								</div>
+								<div className="mt-4">
 									<button
-										onClick={handleDiscardFile}
-										className="dark:text-white cursor-pointer"
+										className={` py-2 px-4 rounded inline-flex items-center border ${
+											!isCredSelected ? 'opacity-50 text-gray-700 dark:text-gray-400 border-gray-700' : 'text-primary-700 dark:text-primary-700 border-primary-700'
+										}`}
+										disabled={!isCredSelected}
+										onClick={DownloadSchemaTemplate}
 									>
 										<svg
-											className="h-6 w-6"
-											fill="none"
+											className={`h-6 w-6 pr-2 ${!isCredSelected ? 'text-gray-700 dark:text-gray-400' : 'text-primary-700'}`}
+											fill="none" 
 											viewBox="0 0 24 24"
 											stroke="currentColor"
 										>
@@ -288,151 +222,250 @@ const BulkIssuance = () => {
 												stroke-linecap="round"
 												stroke-linejoin="round"
 												stroke-width="2"
-												d="M6 18L18 6M6 6l12 12"
+												d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
 											/>
 										</svg>
+										<span>Download Template</span>
 									</button>
 								</div>
-							)}
-							{error && (
-								<div className="text-red-500 flex items-center mt-2">
-									<svg
-										onClick={clearError}
-										className="h-6 w-6 cursor-pointer"
-										fill="none"
-										viewBox="0 0 24 24"
-										stroke="currentColor"
+							</div>
+{/* ---------------- */}
+							<div onDrop={handleDrop} onDragOver={handleDragOver}>
+								<div className='lg:flex'>
+									<div>
+								<label
+									htmlFor="csv-file"
+									className="flex flex-col items-center justify-center w-40 h-36 border-2 border-gray-200 border-dashed rounded-md cursor-pointer bg-white dark:bg-gray-700 dark-border-gray-600"
+								>
+									<div
+										className={`flex flex-col items-center justify-center pt-5 pb-6 ${
+											!isCredSelected ? 'opacity-50 text-gray-700 dark:text-gray-700 border-gray-700' : 'text-primary-700 dark:text-primary-700 border-primary-700'
+										}`}
 									>
-										<path
+										<svg
+											className={`h-12 w-12 ${!isCredSelected ? 'text-gray-700 dark:text-gray-400' : 'text-primary-700'}`}
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="1"
 											stroke-linecap="round"
 											stroke-linejoin="round"
-											stroke-width="2"
-											d="M6 18L18 6M6 6l12 12"
-										/>
-									</svg>
-									<p className="ml-2">{error}</p>
+										>
+											{' '}
+											<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />{' '}
+											<polyline points="16 6 12 2 8 6" />{' '}
+											<line x1="12" y1="2" x2="12" y2="15" />
+										</svg>
+										<p className={`mb-2 mt-2 text-sm ${!isCredSelected ? ' text-gray-500 dark:text-gray-400' : 'text-primary-700'}`}>
+											Drag file here
+										</p>
+									</div>
+								</label>
+								<div className="lg:flex ">
+									<div className="w-fit">
+										<label htmlFor="organizationlogo">
+											<div
+												className={`px-4 py-2 mt-4 ml-4 rounded-md text-center border text-white ${
+													!isCredSelected ? 'opacity-50 bg-gray-400 dark:bg-transparent dark:text-gray-400 border-gray-400' : 'bg-primary-700 hover:bg-primary-800 dark:border-primary-800  '
+												}`}
+											>
+												Choose file
+											</div>
+											<input
+												disabled={!isCredSelected}
+												type="file"
+												accept=".csv"
+												name="file"
+												className="hidden"
+												id="organizationlogo"
+												onChange={handleInputChange}
+												title=""
+											/>
+										</label>
+									</div>
+									</div>
+									</div>
+									<div className='flex items-center lg:p-6 lg:pb-12'>
+										{uploadedFileName && (
+											<div
+												className={`mt-2 ${
+													!isCredSelected ? 'opacity-50' : ''
+												} flex`}
+											>
+												<p className="text-gray-700 dark:text-gray-700 p-2">
+													{uploadedFileName}
+												</p>
+												<button
+													onClick={handleDiscardFile}
+													className="dark:text-white cursor-pointer"
+												>
+													<svg
+														className="h-6 w-6"
+														fill="none"
+														viewBox="0 0 24 24"
+														stroke="currentColor"
+													>
+														<path
+															stroke-linecap="round"
+															stroke-linejoin="round"
+															stroke-width="2"
+															d="M6 18L18 6M6 6l12 12"
+														/>
+													</svg>
+												</button>
+											</div>
+										)}
+										{error && (
+											<div className="text-red-500 p-2 flex mt-2 items-center">
+												<p className="ml-2">{error}</p>
+												<svg
+													onClick={clearError}
+													className="h-6 w-6 cursor-pointer"
+													fill="none"
+													viewBox="0 0 24 24"
+													stroke="currentColor"
+												>
+													<path
+														stroke-linecap="round"
+														stroke-linejoin="round"
+														stroke-width="2"
+														d="M6 18L18 6M6 6l12 12"
+													/>
+												</svg>
+											</div>
+										)}
+									</div>
 								</div>
-							)}
+							</div>
+{/* ---------------- */}
 						</div>
 					</div>
-				</div>
 
+					
+				</Card>
+{/* ----------------- */}
+
+<div className=''>
 				{csvData.length > 0 && (
-					<div className="mt-4">
-						<h2 className="text-primary-700 dark:text-primary-700">
-							CSV Data:
-						</h2>
-						<table className="table-auto text-primary-700 dark:text-primary-700">
-							<thead>
-								<tr>
-									{csvData[0].map((header, index) => (
-										<th
-											key={index}
-											className="border px-4 py-2 text-primary-700 dark:text-primary-700"
-										>
-											{header}
-										</th>
-									))}
-								</tr>
-							</thead>
-							<tbody>
-								{csvData.slice(1).map((row, rowIndex) => (
-									<tr key={rowIndex}>
-										{row.map((cell, cellIndex) => (
-											<td
-												key={cellIndex}
+						<div className="mt-4 py-4 my-2">
+							<h2 className="text-primary-700 dark:text-primary-700">
+								CSV Data:
+							</h2>
+							<table className="table-auto text-primary-700 dark:text-primary-700">
+								<thead>
+									<tr>
+										{csvData[0].map((header, index) => (
+											<th
+												key={index}
 												className="border px-4 py-2 text-primary-700 dark:text-primary-700"
 											>
-												{cell}
-											</td>
+												{header}
+											</th>
 										))}
 									</tr>
-								))}
-							</tbody>
-						</table>
-					</div>
-				)}
-			</Card>
+								</thead>
+								<tbody>
+									{csvData.slice(1).map((row, rowIndex) => (
+										<tr key={rowIndex}>
+											{row.map((cell, cellIndex) => (
+												<td
+													key={cellIndex}
+													className="border px-4 py-2 text-primary-700 dark:text-primary-700"
+												>
+													{cell}
+												</td>
+											))}
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+					)}
 
-			<div>
-				{!isCredSelected && (
-					<ul className="timelinestatic m-12">
-						<li className="">
-							<p className="steps-active-text text-primary-700 dark-text-primary-700">
-								Select and download
-							</p>
-							<p className="text-primary-700 dark-text-primary-700">
-								Select Credential definition and download .CSV template template
-							</p>
-						</li>
-						<li className="mt-5">
-							<p className="steps-active-text text-primary-700 dark-text-primary-700">
-								Fill the data
-							</p>
-							<p className="text-primary-700 dark-text-primary-700">
-								Fill issuance data in the downloaded .CSV template
-							</p>
-						</li>
-						<li className="mt-5">
-							<p className="steps-active-text text-primary-700 dark-text-primary-700">
-								Check the issunace details on history page
-							</p>
-							<p className="text-primary-700 dark-text-primary-700">
-								After the completion of issuance, see the details of issuance on
-								history page
-							</p>
-						</li>
-					</ul>
-				)}
+</div>
+{/* ------------ */}
 				<div>
-					<Button
-						disabled={!isFileUploaded}
-						type="reset"
-						color="bg-primary-800"
-						className="float-right py-2 bg-primary-700 ring-primary-700  hover:bg-primary-800 ring-2 text-white font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto dark:text-white dark:hover:text-white dark:hover:bg-primary-800"
-						style={{ height: '2.6rem', width: '6rem', minWidth: '2rem' }}
-					>
-						<svg
-							className="pr-2"
-							xmlns="http://www.w3.org/2000/svg"
-							width="30"
-							height="25"
-							fill="none"
-							viewBox="0 0 25 18"
+					{!isCredSelected && (
+						<>
+							<p className="m-6 text-lg dark:text-white">Steps</p>
+							<ul className="timelinestatic m-6">
+								<li className="">
+									<p className="steps-active-text text-gray-600 dark:text-white text-lg">
+										Select and Download
+									</p>
+									<p className=" dark:text-white text-sm text-gray-500">
+										Select credential definition and download .CSV file
+									</p>
+								</li>
+								<li className="">
+									<p className="steps-active-text text-gray-600 dark:text-white text-lg">
+										Fill the data
+									</p>
+									<p className="dark:text-white text-sm text-gray-500">
+										Fill issuance data in the downloaded .CSV file
+									</p>
+								</li>
+								<li className="">
+									<p className="steps-active-text text-gray-600 dark:text-white text-lg">
+										Upload and Issue
+									</p>
+									<p className="dark:text-white text-sm text-gray-500">
+										Upload .CSV file and click on issue
+									</p>
+								</li>
+							</ul>
+						</>
+					)}
+					<div>
+						<Button
+							disabled={!isFileUploaded}
+							type="reset"
+							color="bg-primary-800"
+							className="float-right py-2 mb-4 bg-primary-700 ring-primary-700  hover:bg-primary-800 ring-2 text-white font-medium rounded-lg text-sm px-4 lg:px-5 lg:py-2.5 mr-2 ml-auto dark:text-white dark:hover:text-white dark:hover:bg-primary-800"
+							style={{ height: '2.6rem', width: '6rem', minWidth: '2rem' }}
 						>
-							<path
-								fill="#fff"
-								d="M.702 10.655a.703.703 0 1 0-.001-1.406.703.703 0 0 0 .001 1.406Z"
-							/>
-							<path
-								fill="#fff"
-								d="m24.494 5.965-5.8-5.8a.562.562 0 0 0-.795 0l-2.06 2.06H8.884c-1.602 0-3.128.73-4.137 1.966H3.652V3.35a.562.562 0 0 0-.562-.562H.562a.562.562 0 0 0 0 1.123h1.966v7.866H.562a.562.562 0 0 0 0 1.124H3.09c.31 0 .562-.252.562-.562v-1.404h1.096A5.358 5.358 0 0 0 8.885 12.9h.653l4.01 4.01a.56.56 0 0 0 .795 0l10.15-10.15a.562.562 0 0 0 0-.795ZM5.478 10.04a.562.562 0 0 0-.455-.231h-1.37V5.315h1.37c.18 0 .349-.086.455-.23a4.23 4.23 0 0 1 3.407-1.736h5.83L11.38 6.682a5.675 5.675 0 0 1-1.238-1.243.562.562 0 0 0-.908.66 6.74 6.74 0 0 0 4.429 2.71.633.633 0 0 1-.197 1.25 8 8 0 0 1-4.14-1.974.562.562 0 0 0-.755.833c.1.091.204.18.308.266l-1.132 1.131a.562.562 0 0 0 0 .795l.637.636a4.235 4.235 0 0 1-2.907-1.705Zm8.468 5.677L8.94 10.713l.86-.86a9.16 9.16 0 0 0 3.492 1.316 1.759 1.759 0 0 0 2.008-1.46 1.758 1.758 0 0 0-1.461-2.01 5.69 5.69 0 0 1-1.454-.432l5.911-5.91 5.006 5.005-9.356 9.356Z"
-							/>
-						</svg>
-						Issue
-					</Button>
-					<Button
-						disabled={!isFileUploaded}
-						type="reset"
-						color="bg-primary-800"
-						className="float-right py-4 bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto dark:text-white dark:hover:text-black dark:hover:bg-primary-50"
-						style={{ height: '2.6rem', width: '6rem', minWidth: '2rem' }}
-					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							className="mr-2"
-							width="18"
-							height="18"
-							fill="none"
-							viewBox="0 0 20 20"
+							<svg
+								className="pr-2"
+								xmlns="http://www.w3.org/2000/svg"
+								width="30"
+								height="25"
+								fill="none"
+								viewBox="0 0 25 18"
+							>
+								<path
+									fill="#fff"
+									d="M.702 10.655a.703.703 0 1 0-.001-1.406.703.703 0 0 0 .001 1.406Z"
+								/>
+								<path
+									fill="#fff"
+									d="m24.494 5.965-5.8-5.8a.562.562 0 0 0-.795 0l-2.06 2.06H8.884c-1.602 0-3.128.73-4.137 1.966H3.652V3.35a.562.562 0 0 0-.562-.562H.562a.562.562 0 0 0 0 1.123h1.966v7.866H.562a.562.562 0 0 0 0 1.124H3.09c.31 0 .562-.252.562-.562v-1.404h1.096A5.358 5.358 0 0 0 8.885 12.9h.653l4.01 4.01a.56.56 0 0 0 .795 0l10.15-10.15a.562.562 0 0 0 0-.795ZM5.478 10.04a.562.562 0 0 0-.455-.231h-1.37V5.315h1.37c.18 0 .349-.086.455-.23a4.23 4.23 0 0 1 3.407-1.736h5.83L11.38 6.682a5.675 5.675 0 0 1-1.238-1.243.562.562 0 0 0-.908.66 6.74 6.74 0 0 0 4.429 2.71.633.633 0 0 1-.197 1.25 8 8 0 0 1-4.14-1.974.562.562 0 0 0-.755.833c.1.091.204.18.308.266l-1.132 1.131a.562.562 0 0 0 0 .795l.637.636a4.235 4.235 0 0 1-2.907-1.705Zm8.468 5.677L8.94 10.713l.86-.86a9.16 9.16 0 0 0 3.492 1.316 1.759 1.759 0 0 0 2.008-1.46 1.758 1.758 0 0 0-1.461-2.01 5.69 5.69 0 0 1-1.454-.432l5.911-5.91 5.006 5.005-9.356 9.356Z"
+								/>
+							</svg>
+							Issue
+						</Button>
+						<Button
+							disabled={!isFileUploaded}
+							type="reset"
+							color="bg-primary-800"
+							className="float-right py-4 bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto dark:text-white dark:hover:text-black dark:hover:bg-primary-50"
+							style={{ height: '2.6rem', width: '6rem', minWidth: '2rem' }}
 						>
-							<path
-								fill="#1F4EAD"
-								d="M19.414 9.414a.586.586 0 0 0-.586.586c0 4.868-3.96 8.828-8.828 8.828-4.868 0-8.828-3.96-8.828-8.828 0-4.868 3.96-8.828 8.828-8.828 1.96 0 3.822.635 5.353 1.807l-1.017.18a.586.586 0 1 0 .204 1.153l2.219-.392a.586.586 0 0 0 .484-.577V1.124a.586.586 0 0 0-1.172 0v.928A9.923 9.923 0 0 0 10 0a9.935 9.935 0 0 0-7.071 2.929A9.935 9.935 0 0 0 0 10a9.935 9.935 0 0 0 2.929 7.071A9.935 9.935 0 0 0 10 20a9.935 9.935 0 0 0 7.071-2.929A9.935 9.935 0 0 0 20 10a.586.586 0 0 0-.586-.586Z"
-							/>
-						</svg>
-						Reset
-					</Button>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								className="mr-2"
+								width="18"
+								height="18"
+								fill="none"
+								viewBox="0 0 20 20"
+							>
+								<path
+									fill="#1F4EAD"
+									d="M19.414 9.414a.586.586 0 0 0-.586.586c0 4.868-3.96 8.828-8.828 8.828-4.868 0-8.828-3.96-8.828-8.828 0-4.868 3.96-8.828 8.828-8.828 1.96 0 3.822.635 5.353 1.807l-1.017.18a.586.586 0 1 0 .204 1.153l2.219-.392a.586.586 0 0 0 .484-.577V1.124a.586.586 0 0 0-1.172 0v.928A9.923 9.923 0 0 0 10 0a9.935 9.935 0 0 0-7.071 2.929A9.935 9.935 0 0 0 0 10a9.935 9.935 0 0 0 2.929 7.071A9.935 9.935 0 0 0 10 20a9.935 9.935 0 0 0 7.071-2.929A9.935 9.935 0 0 0 20 10a.586.586 0 0 0-.586-.586Z"
+								/>
+							</svg>
+							Reset
+						</Button>
+					</div>
 				</div>
 			</div>
 		</div>
