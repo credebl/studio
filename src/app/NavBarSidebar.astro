@@ -9,6 +9,7 @@ import DisplayProfileImg from '../components/Profile/DisplayProfileImg';
 import { pathRoutes } from '../config/pathRoutes.js';
 import SignOutButton from '../components/SignOutButton/index';
 import AgentHealth from '../commonComponents/AgentHealth';
+import { PLATFORM_DATA } from './constants';
 
 ---
 
@@ -51,13 +52,13 @@ import AgentHealth from '../commonComponents/AgentHealth';
 				</button>
 				<a href={pathRoutes.users.dashboard} class="flex ml-2 md:mr-24">
 					<img
-						src="/images/CREDEBL_ICON.png"
+						src={`${PLATFORM_DATA.logo}`}
 						class="h-8 mr-3"
-						alt="CREDEBL Logo"
+						alt={`${PLATFORM_DATA.name} logo`}
 					/>
 					<span
 						class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white"
-						>CREDEBL</span
+						>{PLATFORM_DATA.name}</span
 					>
 				</a>
 			</div>

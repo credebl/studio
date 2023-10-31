@@ -7,7 +7,7 @@ const instance = axios.create({
 })
 
 instance.interceptors.request.use(async config => { 
-    config.baseURL = globalThis.baseUrl;    
+    config.baseURL = globalThis.PUBLIC_BASE_URL;    
     return config; 
 }, error => Promise.reject(error));
 

@@ -106,6 +106,7 @@ const OrganisationPublicProfile = () => {
 								orgSlug: string;
 							}) => (
 								<Card
+									key={org.id}
 									onClick={() => {
 										window.location.href = `/org/${org?.orgSlug}`;
 									}}
@@ -141,14 +142,14 @@ const OrganisationPublicProfile = () => {
 					</div>
 				) : (
 					<div className="flex justify-center items-center">
-					{organizationsList && (
-						<div className="flex justify-center items-center">
-							<EmptyListMessage
-								message={'No Matching Organization'}
-								description={''}
-							/>
-						</div>
-					)}
+						{organizationsList && (
+							<div className="flex justify-center items-center">
+								<EmptyListMessage
+									message={'No Matching Organization'}
+									description={''}
+								/>
+							</div>
+						)}
 					</div>
 				)}
 

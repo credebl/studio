@@ -1,3 +1,5 @@
+import { PLATFORM_DATA } from "../app/constants";
+
 export const pathRoutes = {
     auth: {
         signUp: '/authentication/sign-up',
@@ -42,7 +44,7 @@ export const pathRoutes = {
 				sentinvitation:'/ecosystems/invitations'
     },
     documentation: {
-        root: 'https://docs.credebl.id'
+        root: PLATFORM_DATA.docs
     },
     schema: {
         create: '/schemas',

@@ -3,6 +3,7 @@ import { pathRoutes } from '../../config/pathRoutes';
 import LayoutCommon from "../../app/LayoutCommon.astro";
 
 import PublicOrganizationDetails from '../../components/organization/PublicOrganizationDetails';
+import { PLATFORM_DATA } from '../../app/constants';
 
 const { org } = Astro.params;
 ---
@@ -15,13 +16,13 @@ const { org } = Astro.params;
 			<div class="flex items-center justify-start">
 				<a href={pathRoutes?.users?.dashboard} class="flex ml-2 md:mr-24">
 					<img
-						src="/images/CREDEBL_ICON.png"
+						src={PLATFORM_DATA.logo}
 						class="h-8 mr-3"
-						alt="CREDEBL Logo"
+						alt={`${PLATFORM_DATA.name} Logo`}
 					/>
 					<span
 						class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white"
-						>CREDEBL</span
+						>{PLATFORM_DATA.name}</span
 					>
 				</a>
 			</div>

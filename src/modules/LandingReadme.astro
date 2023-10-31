@@ -7,7 +7,7 @@ import AstroLogo from '../assets/astro-icon.svg?raw';
 import CREDEBLLogo from '../assets/credebl-logo.png?raw';
 
 import * as readMe from '../../README.md';
-import { SITE_TITLE } from '../app/constants.js';
+import { PLATFORM_DATA, SITE_TITLE } from '../app/constants.js';
 ---
 
 <div
@@ -30,9 +30,9 @@ import { SITE_TITLE } from '../app/constants.js';
 				Hello there…
 				<br />meet <a
 					rel="noopener nofollow"
-					href="https://credebl.id"
+					href={PLATFORM_DATA.webUrl}
 					class="font-bold text-blue-600 dark:text-blue-500 no-underline"
-					>CREDEBL</a
+					>{PLATFORM_DATA.name}</a
 				>!
 			</p>
 
