@@ -87,7 +87,7 @@ const OrgDropDown = () => {
 								) : (
 									<CustomAvatar size="20" name={activeOrg?.name} round />
 								)}
-								<text className="ml-2 text-primary-700 dark:text-white">{activeOrg?.name}</text>
+								<text className="ml-2 text-primary-700 dark:text-white">{activeOrg?.name.substring(0,25)+ '...'}</text>
 							</>
 							:
 							<text className='text-primary-700 dark:text-white'>
@@ -137,7 +137,7 @@ const OrgDropDown = () => {
 
 				<a
 					href="#"
-					className="flex items-center p-3 text-sm font-medium text-primary-700 border-t border-gray-200 rounded-b-lg bg-gray-50 dark:border-gray-600 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white hover:underline"
+					className="flex items-center p-5 text-sm font-medium text-primary-700 border-t border-gray-200 rounded-b-lg bg-gray-50 dark:border-gray-600 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white hover:underline"
 					onClick={redirectToCreateOrgModal}
 				>
 					<svg xmlns="http://www.w3.org/2000/svg" className='pr-2 dark:text-white' width="24" height="24" fill="none" viewBox="0 0 24 24">
