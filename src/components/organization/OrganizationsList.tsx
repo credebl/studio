@@ -177,10 +177,10 @@ const OrganizationsList = () => {
               {
                 organizationsList.map((org) => (
                   <Card key={org.id} onClick={() => redirectOrgDashboard(org)} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer overflow-hidden overflow-ellipsis' style={{ maxHeight: '100%', maxWidth: '100%', overflow: 'auto' }}>
-                    <div className='flex items-center'>
-                      {(org.logoUrl) ? <CustomAvatar size='100' src={org.logoUrl} /> : <CustomAvatar size='100' name={org.name} />}
+                    <div className='flex items-center '>
+                      {(org.logoUrl) ? <CustomAvatar size='80' src={org.logoUrl} /> : <CustomAvatar size='80' name={org.name} />}
 
-                      <div className='ml-4'>
+                      <div className='ml-4 line-clamp-4 '>
                         <h5 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
                           {org?.name}
                         </h5>

@@ -172,14 +172,37 @@ const EcosystemList = () => {
 						<SearchInput onInputChange={searchInputChange} />
 					</div>
 
-					<AlertComponent
-						message={message ?? error}
-						type={message ? 'success' : 'failure'}
-						onAlertClose={() => {
-							setMessage(null);
-							setError(null);
-						}}
-					/>
+        <BreadCrumbs />
+      </div>
+      <div className='mb-4 flex justify-between '>
+        <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white ">
+          Ecosystems
+        </h1>
+        {
+          showCreateButton &&
+          <RoleViewButton
+            buttonTitle='Create'
+            feature={Features.CRETAE_ORG}
+            svgComponent={
+              <div className='pr-3'>
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
+                  <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+                </svg>
+              </div>
+            }
+            onClickEvent={createOrganizationModel}
+          />
+        }
+      </div>
+      <div>
+        <div
+          className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800 min-h-100/18rem flex flex-col justify-between"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <SearchInput
+              onInputChange={searchInputChange}
+            />
+          </div>
 
 					{loading ? (
 						<div className="flex items-center justify-center mb-4">
@@ -211,106 +234,91 @@ const EcosystemList = () => {
 												<CustomAvatar size="80" name={item.name} />
 											)}
 
-											<div className="ml-4 w-full">
-												<h5 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-													{item.name}
-												</h5>
-												<p className="text-base tracking-tight text-gray-900 dark:text-white truncate">
-													{item.description}
-												</p>
-												<div className="flow-root h-auto">
-													<ul className="divide-y divide-gray-200 dark:divide-gray-700">
-														<li className="pt-2 sm:pt-3 overflow-auto">
-															<div className="flex items-center space-x-4">
-																<div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-																	Roles:
-																	{item?.ecosystemOrgs &&
-																		item?.ecosystemOrgs?.length > 0 &&
-																		item?.ecosystemOrgs[0].ecosystemRole &&
-																		item?.ecosystemOrgs[0]?.ecosystemRole
-																			?.name && (
-																			<span className="m-1 bg-primary-50 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
-																				{
-																					item?.ecosystemOrgs[0]?.ecosystemRole
-																						?.name
-																				}
-																			</span>
-																		)}
-																</div>
-															</div>
-															<div>
-																<p>
-																	Auto Endorsement:{' '}
-																	{item.autoEndorsement ? 'Yes' : 'No'}
-																</p>
-															</div>
-														</li>
-													</ul>
-												</div>
-											</div>
-										</div>
-									</Card>
-								);
-							})}
-						</div>
-					) : (
-						ecosystemList && (
-							<EmptyListMessage
-								message={'No Ecosystem'}
-								description={'Get started by creating a new Ecosystem'}
-								buttonContent={'Create Ecosystem'}
-								onClick={createOrganizationModel}
-								svgComponent={
-									<svg
-										className="pr-2 mr-1"
-										xmlns="http://www.w3.org/2000/svg"
-										width="24"
-										height="15"
-										fill="none"
-										viewBox="0 0 24 24"
-									>
-										<path
-											fill="#fff"
-											d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"
-										/>
-									</svg>
-								}
-							/>
-						)
-					)}
+          {loading
+            ? <div className="flex items-center justify-center mb-4">
+              <CustomSpinner />
+            </div>
+            : isEcosystemList ? (<div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
+              {
+                ecosystemList?.map((item) => {
+                  const role = item?.ecosystemOrgs && item?.ecosystemOrgs.length > 0 && item?.ecosystemOrgs[0]?.ecosystemRole?.name || ""
+                  return (
+                    <Card key={item.id} onClick={() => redirectOrgDashboard(item.id, role)} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer overflow-hidden' style={{ maxHeight: '100%', maxWidth: '100%', overflow: 'auto'}}>
+                      <div className='flex items-center'>
+                       
+                        {(item.logoUrl)  ? <CustomAvatar size='80' src={item.logoUrl} /> : <CustomAvatar size='80' name={item.name}/>}
+                        <div className='ml-4 w-full line-clamp-4 '>
+                          <h5 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+                            {item.name}
+                          </h5>
+                          <p className="text-base tracking-tight text-gray-900 dark:text-white truncate">{item.description} </p>
+                          <div className="flow-root h-auto">
+                            <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+                              <li className="pt-2 sm:pt-3 overflow-auto">
+                                <div className="flex items-center space-x-4">
+                                  <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                    Roles:
+                                    {item?.ecosystemOrgs && item?.ecosystemOrgs?.length > 0 && item?.ecosystemOrgs[0].ecosystemRole &&
+                                      item?.ecosystemOrgs[0]?.ecosystemRole?.name &&
+                                      <span
+                                        className="m-1 bg-primary-50 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
+                                      >
+                                        {item?.ecosystemOrgs[0]?.ecosystemRole?.name}
+                                      </span>
+                                    }
+                                  </div>
+                                </div>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  )
+                })
+              }
+            </div>)
+              : ecosystemList && (
+                <EmptyListMessage
+                  message={'No Ecosystem'}
+                  description={'Get started by creating a new Ecosystem'}
+                  buttonContent={'Create Ecosystem'}
+                  onClick={createOrganizationModel}
+                  svgComponent={<svg className='pr-2 mr-1' xmlns="http://www.w3.org/2000/svg" width="24" height="15" fill="none" viewBox="0 0 24 24">
+                    <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+                  </svg>} />)
+          }
 
-					<div
-						className={`flex items-center justify-end ${
-							isEcosystemList && 'mt-auto'
-						}`}
-					>
-						{isEcosystemList && ecosystemList && ecosystemList?.length > 10 && (
-							<Pagination
-								currentPage={currentPage.pageNumber}
-								onPageChange={onPageChange}
-								totalPages={currentPage.total}
-							/>
-						)}
-					</div>
-					<CreateEcosystemOrgModal
-						openModal={openModal}
-						setOpenModal={setOpenModal}
-						setMessage={(value) => {
-							setMessage(value);
-							if (value) {
-								setTimeout(() => {
-									 window.location.reload();
-								}, 2000);
-							} else {
-								fetchEcosystems();
-							}
-						}}
-						isorgModal={false}
-					/>
-				</div>
-			</div>
-		</div>
-	);
-};
+          <div className={`flex items-center justify-end ${isEcosystemList && "mt-auto"}`}>
+            {
+              isEcosystemList && ecosystemList && ecosystemList?.length > 10 && (
+                <Pagination
+                  currentPage={currentPage.pageNumber}
+                  onPageChange={onPageChange}
+                  totalPages={currentPage.total}
+                />
+              )
+            }
+          </div>
+          <CreateEcosystemOrgModal
+            openModal={openModal}
+            setOpenModal={setOpenModal}
+            setMessage={(value) => {
+              setMessage(value)
+              if (value) {
+                setTimeout(() => {
+                  window.location.reload();
+                }, 2000);
+              } else {
+                fetchEcosystems();
+              }
+            }}
+            isorgModal={false}
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
 
 export default EcosystemList;
