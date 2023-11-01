@@ -164,17 +164,17 @@ const Invitations = () => {
                                                     </div>
                                                     <div className="flex-1">
                                                         <p
-                                                            className="text-base font-semibold text-gray-900 leading-none truncate mb-0.5 dark:text-white"
+                                                            className="text-base font-regular text-gray-900 leading-none mb-0.5 dark:text-white "
                                                         >
                                                             {invitation.email}
                                                         </p>
 
                                                         <div className="flow-root h-auto">
                                                             <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-                                                                <li className="pt-3 sm:pt-3 overflow-auto">
+                                                                <li className="pt-1 sm:pt-3 overflow-auto">
                                                                     <div className="items-center space-x-4">
                                                                         <div className="inline-flex items-center text-base font-normal text-gray-900 dark:text-white">
-                                                                            Roles:
+                                                                            {invitation.orgRoles.length>1 ? 'Roles:' : 'Role:'}
                                                                             {invitation.orgRoles &&
                                                                                 invitation.orgRoles.length > 0 &&
                                                                                 invitation.orgRoles.map((role: OrgRole, index: number) => {
@@ -226,7 +226,6 @@ const Invitations = () => {
                                                 >
                                                     Invited On: &nbsp;<DateTooltip date={invitation.createDateTime}>{dateConversion(invitation.createDateTime)}</DateTooltip>
                                                 </p>          
-
                                             </div>
                                         </li>
                                     ))

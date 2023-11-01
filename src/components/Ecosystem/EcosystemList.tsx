@@ -116,9 +116,8 @@ const EcosystemList = () => {
   const isEcosystemList = Boolean(ecosystemList && ecosystemList?.length > 0)
   const showCreateButton = Boolean(isEcosystemList && (isEcosystemData?.isMultiEcosystem || isEcosystemData?.isEcosystemLead))
   return (
-    <div className="px-4 pt-6">
-      <div className="pl-6 mb-4 col-span-full xl:mb-2">
-
+    <div className="px-4 pt-2">
+      <div className="mb-2 col-span-full xl:mb-2">
         <BreadCrumbs />
       </div>
       <div className='mb-4 flex justify-between '>
