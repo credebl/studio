@@ -6,6 +6,7 @@ import { getFromLocalStorage } from '../../api/Auth';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
+import { pathRoutes } from '../../config/pathRoutes';
 
 interface IValues {
 	value: string;
@@ -14,7 +15,7 @@ interface IValues {
 
 const BulkIssuance = () => {
 	const [csvData, setCsvData] = useState<string[][]>([]);
-	
+
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
 	const [credentialOptions, setCredentialOptions] = useState([]);
@@ -97,6 +98,7 @@ const BulkIssuance = () => {
 
 		reader.onload = (event) => {
 			const result = event?.target && event?.target?.result;
+
 			if (typeof result === 'string') {
 				const text = result;
 				const rows = text.split('\n');
@@ -161,6 +163,9 @@ const BulkIssuance = () => {
 					color="bg-primary-800"
 					className="flex float-right bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-primary-600 font-medium rounded-md text-lg px-2 lg:px-3 py-2 lg:py-2.5 mr-2 ml-auto border-blue-600 hover:text-primary-600 dark:text-blue-500 dark:border-blue-500 dark:hover:text-blue-500 dark:hover:bg-primary-50"
 					style={{ height: '2.4rem', minWidth: '2rem' }}
+					onClick={() => {
+						window.location.href = pathRoutes.organizations.Issuance.history;
+					}}
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -207,14 +212,20 @@ const BulkIssuance = () => {
 								<div className="mt-4">
 									<button
 										className={` py-2 px-4 rounded inline-flex items-center border ${
-											!isCredSelected ? 'opacity-50 text-gray-700 dark:text-gray-400 border-gray-700' : 'text-primary-700 dark:text-primary-700 border-primary-700'
+											!isCredSelected
+												? 'opacity-50 text-gray-700 dark:text-gray-400 border-gray-700'
+												: 'text-primary-700 dark:text-primary-700 border-primary-700'
 										}`}
 										disabled={!isCredSelected}
 										onClick={DownloadSchemaTemplate}
 									>
 										<svg
-											className={`h-6 w-6 pr-2 ${!isCredSelected ? 'text-gray-700 dark:text-gray-400' : 'text-primary-700'}`}
-											fill="none" 
+											className={`h-6 w-6 pr-2 ${
+												!isCredSelected
+													? 'text-gray-700 dark:text-gray-400'
+													: 'text-primary-700'
+											}`}
+											fill="none"
 											viewBox="0 0 24 24"
 											stroke="currentColor"
 										>
@@ -229,63 +240,81 @@ const BulkIssuance = () => {
 									</button>
 								</div>
 							</div>
-{/* ---------------- */}
+							{/* ---------------- */}
 							<div onDrop={handleDrop} onDragOver={handleDragOver}>
-								<div className='lg:flex'>
+								<div className="lg:flex">
 									<div>
-								<label
-									htmlFor="csv-file"
-									className="flex flex-col items-center justify-center w-40 h-36 border-2 border-gray-200 border-dashed rounded-md cursor-pointer bg-white dark:bg-gray-700 dark-border-gray-600"
-								>
-									<div
-										className={`flex flex-col items-center justify-center pt-5 pb-6 ${
-											!isCredSelected ? 'opacity-50 text-gray-700 dark:text-gray-700 border-gray-700' : 'text-primary-700 dark:text-primary-700 border-primary-700'
-										}`}
-									>
-										<svg
-											className={`h-12 w-12 ${!isCredSelected ? 'text-gray-700 dark:text-gray-400' : 'text-primary-700'}`}
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke="currentColor"
-											stroke-width="1"
-											stroke-linecap="round"
-											stroke-linejoin="round"
+										<label
+											htmlFor="csv-file"
+											className={`flex flex-col items-center justify-center w-40 h-36 border-2  border-dashed rounded-md cursor-pointer bg-white dark:bg-gray-700 dark-border-gray-600 ${
+												!isCredSelected
+													? 'border-gray-200'
+													: 'border-primary-700'
+											}`}
 										>
-											{' '}
-											<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />{' '}
-											<polyline points="16 6 12 2 8 6" />{' '}
-											<line x1="12" y1="2" x2="12" y2="15" />
-										</svg>
-										<p className={`mb-2 mt-2 text-sm ${!isCredSelected ? ' text-gray-500 dark:text-gray-400' : 'text-primary-700'}`}>
-											Drag file here
-										</p>
-									</div>
-								</label>
-								<div className="lg:flex ">
-									<div className="w-fit">
-										<label htmlFor="organizationlogo">
 											<div
-												className={`px-4 py-2 mt-4 ml-4 rounded-md text-center border text-white ${
-													!isCredSelected ? 'opacity-50 bg-gray-400 dark:bg-transparent dark:text-gray-400 border-gray-400' : 'bg-primary-700 hover:bg-primary-800 dark:border-primary-800  '
+												className={`flex flex-col items-center justify-center pt-5 pb-6 ${
+													!isCredSelected
+														? 'opacity-50 text-gray-700 dark:text-gray-700 border-gray-700'
+														: 'text-primary-700 dark:text-primary-700 border-primary-700'
 												}`}
 											>
-												Choose file
+												<svg
+													className={`h-12 w-12 ${
+														!isCredSelected
+															? 'text-gray-700 dark:text-gray-400'
+															: 'text-primary-700'
+													}`}
+													viewBox="0 0 24 24"
+													fill="none"
+													stroke="currentColor"
+													stroke-width="1"
+													stroke-linecap="round"
+													stroke-linejoin="round"
+												>
+													{' '}
+													<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />{' '}
+													<polyline points="16 6 12 2 8 6" />{' '}
+													<line x1="12" y1="2" x2="12" y2="15" />
+												</svg>
+												<p
+													className={`mb-2 mt-2 text-sm ${
+														!isCredSelected
+															? ' text-gray-500 dark:text-gray-400'
+															: 'text-primary-700'
+													}`}
+												>
+													Drag file here
+												</p>
 											</div>
-											<input
-												disabled={!isCredSelected}
-												type="file"
-												accept=".csv"
-												name="file"
-												className="hidden"
-												id="organizationlogo"
-												onChange={handleInputChange}
-												title=""
-											/>
 										</label>
+										<div className="lg:flex ">
+											<div className="w-fit">
+												<label htmlFor="organizationlogo">
+													<div
+														className={`px-4 py-2 mt-4 ml-4 rounded-md text-center border text-white ${
+															!isCredSelected
+																? 'opacity-50 bg-gray-400 dark:bg-transparent dark:text-gray-400 border-gray-400'
+																: 'bg-primary-700 hover:bg-primary-800 dark:border-primary-800  '
+														}`}
+													>
+														Choose file
+													</div>
+													<input
+														disabled={!isCredSelected}
+														type="file"
+														accept=".csv"
+														name="file"
+														className="hidden"
+														id="organizationlogo"
+														onChange={handleInputChange}
+														title=""
+													/>
+												</label>
+											</div>
+										</div>
 									</div>
-									</div>
-									</div>
-									<div className='flex items-center lg:p-6 lg:pb-12'>
+									<div className="flex items-center lg:p-6 lg:pb-12">
 										{uploadedFileName && (
 											<div
 												className={`mt-2 ${
@@ -337,53 +366,62 @@ const BulkIssuance = () => {
 									</div>
 								</div>
 							</div>
-{/* ---------------- */}
 						</div>
 					</div>
-
-					
 				</Card>
-{/* ----------------- */}
 
-<div className=''>
-				{csvData.length > 0 && (
-						<div className="mt-4 py-4 my-2">
-							<h2 className="text-primary-700 dark:text-primary-700">
-								CSV Data:
-							</h2>
-							<table className="table-auto text-primary-700 dark:text-primary-700">
-								<thead>
-									<tr>
-										{csvData[0].map((header, index) => (
-											<th
-												key={index}
-												className="border px-4 py-2 text-primary-700 dark:text-primary-700"
-											>
-												{header}
-											</th>
-										))}
-									</tr>
-								</thead>
-								<tbody>
-									{csvData.slice(1).map((row, rowIndex) => (
-										<tr key={rowIndex}>
-											{row.map((cell, cellIndex) => (
-												<td
-													key={cellIndex}
-													className="border px-4 py-2 text-primary-700 dark:text-primary-700"
-												>
-													{cell}
-												</td>
-											))}
-										</tr>
-									))}
-								</tbody>
-							</table>
+				{csvData && csvData.length > 0 && (
+					<Card className="mt-6">
+						<div className="overflow-x-auto rounded-lg">
+							<div className="inline-block min-w-full align-middle">
+								<div className="overflow-hidden shadow sm:rounded-lg">
+									{csvData && csvData.length > 0 && (
+										<div className="mt-4 py-4 my-2">
+											<table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
+												<thead className="bg-gray-50 dark:bg-gray-700">
+													<tr>
+														{csvData.length > 0 &&
+															csvData[0].map((header, index) => (
+																<th
+																	key={index}
+																	className={`p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white`}
+																>
+																	{header}
+																</th>
+															))}
+													</tr>
+												</thead>
+												<tbody className="bg-white dark:bg-gray-800">
+													{csvData &&
+														csvData.length > 0 &&
+														csvData.slice(1).map((row, rowIndex) => (
+															<tr
+																key={rowIndex}
+																className={`${
+																	rowIndex % 2 !== 0
+																		? 'bg-gray-50 dark:bg-gray-700'
+																		: ''
+																}`}
+															>
+																{row.map((cell, cellIndex) => (
+																	<td
+																		key={cellIndex}
+																		className={`p-4 text-sm font-normal text-gray-900 whitespace-nowrap dark:text-white align-middle	`}
+																	>
+																		{cell}
+																	</td>
+																))}
+															</tr>
+														))}
+												</tbody>
+											</table>
+										</div>
+									)}
+								</div>
+							</div>
 						</div>
-					)}
-
-</div>
-{/* ------------ */}
+					</Card>
+				)}
 				<div>
 					{!isCredSelected && (
 						<>

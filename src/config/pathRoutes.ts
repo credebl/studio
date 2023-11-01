@@ -25,7 +25,9 @@ export const pathRoutes = {
             schema: '/organizations/credentials/schemas',
             credDef: '/organizations/credentials/schemas/cred-defs',
             connections: '/organizations/credentials/schemas/cred-defs/connections',
-            issuance: '/organizations/credentials/schemas/cred-defs/connections/issuance'
+            issuance: '/organizations/credentials/schemas/cred-defs/connections/issuance',
+						history : '/organizations/credentials/schemas/cred-defs/connections/history',
+						details : '/organizations/credentials/schemas/cred-defs/connections/history/details',
         },
         verification: {
             schema: '/organizations/verification/schemas',
