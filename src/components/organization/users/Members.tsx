@@ -144,15 +144,16 @@ const Members = () => {
 				) : (
 					usersList &&
 					usersList?.length > 0 && (
-						<div className="p-2 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-3 dark:bg-gray-800">
-							<div className="flow-root">
+						<div className="p-2 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-3 dark:bg-gray-800 ">
+							<div className="flow-root display: flex">
 								<ul className="divide-y divide-gray-200 dark:divide-gray-700">
+								<div className='grid '>
 									{usersList.map((user) => (
 										<li className="p-4">
-											<div className="flex flex-wrap justify-between xl:block 2xl:flex align-center 2xl:space-x-4">
+											<div className="flex flex-wrap justify-between 2xl:flex align-center 2xl:space-x-4">
 												<div className="min-w-[40%] flex space-x-4 xl:mb-4 2xl:mb-0">
 													<div className="flex-1">
-														<p className="text-base font-semibold text-gray-900 leading-none truncate dark:text-white">
+														<p className="text-base font-regular text-gray-900 leading-none truncate dark:text-white">
 															{user.firstName} {user.lastName}
 														</p>
 
@@ -160,8 +161,8 @@ const Members = () => {
 															<ul className="divide-y divide-gray-200 dark:divide-gray-700">
 																<li className="pt-3 sm:pt-3 overflow-auto">
 																	<div className="items-center space-x-4">
-																		<div className="inline-flex items-center text-base font-normal text-gray-900 dark:text-white">
-																			Roles:
+																		<div className="flex items-center text-base font-normal text-gray-900 dark:text-white">
+																		{user.roles.length >1 ? 'Roles:' : 'Role:'}
 																			{user.roles &&
 																				user.roles.length > 0 &&
 																				user.roles.map(
@@ -197,7 +198,7 @@ const Members = () => {
 														className="cursor-pointer mr-2 flex items-center text-sm font-medium text-gray-500 dark:text-gray-400"
 													>
 														<svg
-															className="h-5 w-6 mr-1 text-black dark:text-white"
+															className="h-5 w-6 mr-1 text-primary-700 dark:text-white"
 															viewBox="0 0 24 24"
 															strokeWidth="2"
 															stroke="currentColor"
@@ -235,9 +236,10 @@ const Members = () => {
 											</div>
 										</li>
 									))}
+									</div>
 								</ul>
-							</div>
 						</div>
+					  </div>
 					)
 				)}
 
