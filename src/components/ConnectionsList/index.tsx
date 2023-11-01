@@ -5,13 +5,14 @@ import { useEffect, useState } from 'react';
 import { getConnectionsByOrg } from '../../api/connection';
 import DataTable from '../../commonComponents/datatable';
 import type { TableData } from '../../commonComponents/datatable/interface';
-import { apiStatusCodes } from '../../config/CommonConstant';
+import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';
 import { dateConversion } from '../../utils/DateConversion';
 import DateTooltip from '../Tooltip';
 import BreadCrumbs from '../BreadCrumbs';
 import CustomSpinner from '../CustomSpinner';
 import { EmptyListMessage } from '../EmptyListComponent';
+import { getFromLocalStorage } from '../../api/Auth';
 
 const ConnectionList = () => {
 	const [connectionList, setConnectionList] = useState<TableData[]>([]);
@@ -23,35 +24,38 @@ const ConnectionList = () => {
 	}, []);
 
 	const getConnections = async () => {
-		setLoading(true);
-		const response = await getConnectionsByOrg();
-		const { data } = response as AxiosResponse;
-
-		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			const connections = data?.data?.map(
-				(ele: { theirLabel: string; id: string; createdAt: string }) => {
-					const userName = ele?.theirLabel ? ele.theirLabel : 'Not available';
-					const connectionId = ele.id ? ele.id : 'Not available';
-					const createdOn = ele?.createdAt ? ele?.createdAt : 'Not available';
-					return {
-						data: [
-							{ data: userName },
-							{ data: connectionId },
-							{
-								data: (
-									<DateTooltip date={createdOn} id="issuance_connection_list">
-										{' '}
-										{dateConversion(createdOn)}{' '}
-									</DateTooltip>
-								),
-							},
-						],
-					};
-				},
-			);
-			setConnectionList(connections);
-		} else {
-			setError(response as string);
+		const orgId= await getFromLocalStorage(storageKeys.ORG_ID)
+		if(orgId){
+			setLoading(true);
+			const response = await getConnectionsByOrg();
+			const { data } = response as AxiosResponse;
+	
+			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+				const connections = data?.data?.map(
+					(ele: { theirLabel: string; id: string; createdAt: string }) => {
+						const userName = ele?.theirLabel ? ele.theirLabel : 'Not available';
+						const connectionId = ele.id ? ele.id : 'Not available';
+						const createdOn = ele?.createdAt ? ele?.createdAt : 'Not available';
+						return {
+							data: [
+								{ data: userName },
+								{ data: connectionId },
+								{
+									data: (
+										<DateTooltip date={createdOn} id="issuance_connection_list">
+											{' '}
+											{dateConversion(createdOn)}{' '}
+										</DateTooltip>
+									),
+								},
+							],
+						};
+					},
+				);
+				setConnectionList(connections);
+			} else {
+				setError(response as string);
+			}
 		}
 		setLoading(false);
 	};
