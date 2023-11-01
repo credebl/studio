@@ -24,8 +24,10 @@ import { getLedgers } from '../../api/Agent';
 
 interface Values {
 	seed: string;
-	name: string;
+	walletName: string;
 	password: string;
+	did: string;
+	network: string;
 }
 
 interface ValuesShared {
@@ -63,7 +65,6 @@ interface IDedicatedAgentForm {
 const fetchNetworks = async () => {
 	try {
 		const { data } = await getLedgers() as AxiosResponse
-		console.log(7576, data)
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			return data?.data
 		}
@@ -83,6 +84,22 @@ const SharedAgentForm = ({ orgName, seeds, isCopied, loading, copyTextVal, submi
 	useEffect(() => {
 		getLedgerList()
 	}, [])
+
+	const validation = {
+		label: yup.string()
+			.required('Wallet label is required')
+			.trim()
+			.test('no-spaces', 'Spaces are not allowed', value => !value || !value.includes(' '))
+			.matches(
+				/^[A-Za-z0-9-][^ !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]*$/,
+				'Wallet label must be alphanumeric only',
+			)
+			.min(2, 'Wallet label must be at least 2 characters')
+			.max(25, 'Wallet label must be at most 25 characters'),
+		seed: haveDid ? yup.string().required("Seed is required") : yup.string(),
+		did: haveDid ? yup.string().required("DID is required") : yup.string(),
+		network: yup.string().required("Network is required")
+	}
 
 	return (
 		<div className='mt-4 max-w-lg flex-col gap-4'>
@@ -124,25 +141,12 @@ const SharedAgentForm = ({ orgName, seeds, isCopied, loading, copyTextVal, submi
 			}
 			<Formik
 				initialValues={{
-					label: orgName,
+					label: orgName || '',
 					seed: "",
 					did: "",
 					network: ""
 				}}
-				validationSchema={yup.object().shape({
-					label: yup.string()
-						.required('Wallet label is required')
-						.trim()
-						.test('no-spaces', 'Spaces are not allowed', value => !value || !value.includes(' '))
-						.matches(
-							/^[A-Za-z0-9-][^ !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]*$/,
-							'Wallet label must be alphanumeric only',
-						)
-						.min(2, 'Wallet label must be at least 2 characters')
-						.max(25, 'Wallet label must be at most 25 characters'),
-					seed: yup.string().required("Seed is required"),
-					did: yup.string().required("DID is required")
-				})}
+				validationSchema={yup.object().shape(validation)}
 				validateOnBlur
 				validateOnChange
 				enableReinitialize
@@ -198,6 +202,33 @@ const SharedAgentForm = ({ orgName, seeds, isCopied, loading, copyTextVal, submi
 						}
 						<div>
 							<div className="mb-1 block">
+								<Label htmlFor="network" value="Network" />
+								<span className="text-red-500 text-xs">*</span>
+							</div>
+
+							<select
+								onChange={(e) => formikHandlers.handleChange(e)}
+								id="network"
+								name="network"
+								className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+							>
+								<option value="">Select network</option>
+								{networks && networks.length > 0 && networks.map((item: INetworks) => (
+									<option key={item.id} value={item.id}>
+										{item.name}
+									</option>
+								))}
+							</select>
+
+							{formikHandlers?.errors?.network &&
+								formikHandlers?.touched?.network && (
+									<span className="text-red-500 text-xs">
+										{formikHandlers?.errors?.network}
+									</span>
+								)}
+						</div>
+						<div>
+							<div className="mb-1 block">
 								<Label htmlFor="name" value="Wallet Label" />
 								<span className="text-red-500 text-xs">*</span>
 							</div>
@@ -215,32 +246,6 @@ const SharedAgentForm = ({ orgName, seeds, isCopied, loading, copyTextVal, submi
 									</span>
 								)}
 						</div>
-						<div>
-							<div className="mb-1 block">
-								<Label htmlFor="network" value="Network" />
-								<span className="text-red-500 text-xs">*</span>
-							</div>
-
-							<select
-								// onChange={(e) => handleFilter(e, 'statusFilter')}
-								id="statusfilter"
-								className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
-							>
-								{networks && networks.length > 0 && networks.map((item: INetworks) => (
-									<option key={item.id} className="" value={item.id}>
-										{item.name}
-									</option>
-								))}
-							</select>
-
-							{formikHandlers?.errors?.network &&
-								formikHandlers?.touched?.network && (
-									<span className="text-red-500 text-xs">
-										{formikHandlers?.errors?.network}
-									</span>
-								)}
-						</div>
-
 						<Button
 							isProcessing={loading}
 							type="submit"
@@ -258,110 +263,197 @@ const SharedAgentForm = ({ orgName, seeds, isCopied, loading, copyTextVal, submi
 	)
 };
 
-const DedicatedAgentForm = ({ seeds, loading, submitDedicatedWallet }: IDedicatedAgentForm) => (
-	<Formik
-		initialValues={{
-			seed: seeds,
-			name: '',
-			password: '',
-		}}
-		validationSchema={yup.object().shape({
-			name: yup
-				.string()
-				.min(6, 'Wallet name must be at least 6 characters')
-				.max(20, 'Wallet name must be at most 20 characters')
-				.trim()
-				.required('Wallet name is required')
-				.matches(
-					/^[A-Za-z0-9-][^ !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]*$/,
-					'Wallet name must be alphanumeric only',
-				)
-				.label('Wallet name'),
-			password: yup
-				.string()
-				.matches(
-					passwordRegex,
-					'Password must contain one Capital, Special character',
-				)
-				.required('Wallet password is required')
-				.label('Wallet password'),
-		})}
-		validateOnBlur
-		validateOnChange
-		enableReinitialize
-		onSubmit={(values: Values) => submitDedicatedWallet(values)}
-	>
-		{(formikHandlers): JSX.Element => (
-			<Form
-				className="mt-8 space-y-6 max-w-lg flex-col gap-4"
-				onSubmit={formikHandlers.handleSubmit}
-			>
-				<div>
-					<div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
-						<Label htmlFor="seed" value="Seed" />
-						<span className="text-red-500 text-xs">*</span>
-					</div>
-					<Field
-						id="seed"
-						name="seed"
-						disabled={true}
-						value={seeds}
-						component={InputCopy}
-						className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-						type="text"
-					/>
-					{formikHandlers?.errors?.seed && formikHandlers?.touched?.seed && (
-						<span className="text-red-500 text-xs">
-							{formikHandlers?.errors?.seed}
-						</span>
-					)}
-				</div>
-				<div>
-					<div className="mb-1 block">
-						<Label htmlFor="name" value="Wallet Name" />
-						<span className="text-red-500 text-xs">*</span>
-					</div>
-					<Field
-						id="name"
-						name="name"
-						className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-						type="text"
-					/>
-					{formikHandlers?.errors?.name && formikHandlers?.touched?.name && (
-						<span className="text-red-500 text-xs">
-							{formikHandlers?.errors?.name}
-						</span>
-					)}
-				</div>
-				<div>
-					<div className="mb-2 block">
-						<Label htmlFor="password" value="Password" />
-						<span className="text-red-500 text-xs">*</span>
-					</div>
-					<Field
-						id="password"
-						name="password"
-						className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-						type="password"
-					/>
-					{formikHandlers?.errors?.password &&
-						formikHandlers?.touched?.password && (
-							<span className="text-red-500 text-xs">
-								{formikHandlers?.errors?.password}
-							</span>
-						)}
-				</div>
-				<Button
-					isProcessing={loading}
-					type="submit"
-					className='float-right text-base font-medium text-center text-white bg-primary-700 hover:bg-primary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+const DedicatedAgentForm = ({ seeds, loading, submitDedicatedWallet }: IDedicatedAgentForm) => {
+	const [haveDid, setHaveDid] = useState(false)
+	const [networks, setNetworks] = useState([])
+	const getLedgerList = async () => {
+		const res = await fetchNetworks()
+		setNetworks(res)
+	}
+	useEffect(() => {
+		getLedgerList()
+	}, [])
+
+	const validation = {
+		walletName: yup
+			.string()
+			.min(6, 'Wallet name must be at least 6 characters')
+			.max(20, 'Wallet name must be at most 20 characters')
+			.trim()
+			.required('Wallet name is required')
+			.matches(
+				/^[A-Za-z0-9-][^ !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]*$/,
+				'Wallet name must be alphanumeric only',
+			)
+			.label('Wallet name'),
+		password: yup
+			.string()
+			.matches(
+				passwordRegex,
+				'Password must contain one Capital, Special character',
+			)
+			.required('Wallet password is required')
+			.label('Wallet password'),
+		did: haveDid ? yup.string().required("DID is required") : yup.string(),
+		network: yup.string().required("Network is required")
+	}
+
+	if (haveDid) {
+		validation.seed = yup.string().required("Seed is required")
+	}
+
+
+	return (
+		<>
+			<div className="flex items-center gap-2 mt-4">
+				<Checkbox id="haveDid" onChange={(e) => setHaveDid(e.target.checked)} />
+				<Label
+					className="flex"
+					htmlFor="haveDid"
 				>
-					Setup Agent
-				</Button>
-			</Form>
-		)}
-	</Formik>
-);
+					<p>
+						Already have DID?
+					</p>
+
+				</Label>
+			</div>
+			<Formik
+				initialValues={{
+					seed: haveDid ? "" : seeds,
+					walletName: '',
+					password: '',
+					did: "",
+					network: ""
+				}}
+				validationSchema={yup.object().shape(validation)}
+				validateOnBlur
+				validateOnChange
+				enableReinitialize
+				onSubmit={(values: Values) => submitDedicatedWallet(values)}
+			>
+				{(formikHandlers): JSX.Element => (
+					<Form
+						className="mt-8 space-y-4 max-w-lg flex-col gap-4"
+						onSubmit={formikHandlers.handleSubmit}
+					>
+						<div>
+							<div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
+								<Label htmlFor="seed" value="Seed" />
+								<span className="text-red-500 text-xs">*</span>
+							</div>
+							<Field
+								id="seed"
+								name="seed"
+								disabled={!haveDid}
+								value={haveDid ? formikHandlers.values.seed : seeds}
+								component={!haveDid && InputCopy}
+								className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+								type="text"
+							/>
+							{formikHandlers?.errors?.seed && formikHandlers?.touched?.seed && (
+								<span className="text-red-500 text-xs">
+									{formikHandlers?.errors?.seed}
+								</span>
+							)}
+						</div>
+						{
+							haveDid &&
+							<div className=''>
+								<div className="mb-1 block">
+									<Label htmlFor="did" value="DID" />
+									<span className="text-red-500 text-xs">*</span>
+								</div>
+
+								<Field
+									id="did"
+									name="did"
+									className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+									type="text"
+								/>
+								{formikHandlers?.errors?.did &&
+									formikHandlers?.touched?.did && (
+										<span className="text-red-500 text-xs">
+											{formikHandlers?.errors?.did}
+										</span>
+									)}
+							</div>
+						}
+						<div>
+							<div className="mb-1 block">
+								<Label htmlFor="network" value="Network" />
+								<span className="text-red-500 text-xs">*</span>
+							</div>
+
+							<select
+								onChange={(e) => formikHandlers.handleChange(e)}
+								id="network"
+								name="network"
+								className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+							>
+								<option value="">Select network</option>
+								{networks && networks.length > 0 && networks.map((item: INetworks) => (
+									<option key={item.id} value={item.id}>
+										{item.name}
+									</option>
+								))}
+							</select>
+
+							{formikHandlers?.errors?.network &&
+								formikHandlers?.touched?.network && (
+									<span className="text-red-500 text-xs">
+										{formikHandlers?.errors?.network}
+									</span>
+								)}
+						</div>
+
+						<div>
+							<div className="mb-1 block">
+								<Label htmlFor="walletName" value="Wallet Name" />
+								<span className="text-red-500 text-xs">*</span>
+							</div>
+							<Field
+								id="walletName"
+								name="walletName"
+								className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+								type="text"
+							/>
+							{formikHandlers?.errors?.walletName && formikHandlers?.touched?.walletName && (
+								<span className="text-red-500 text-xs">
+									{formikHandlers?.errors?.walletName}
+								</span>
+							)}
+						</div>
+						<div>
+							<div className="mb-2 block">
+								<Label htmlFor="password" value="Password" />
+								<span className="text-red-500 text-xs">*</span>
+							</div>
+							<Field
+								id="password"
+								name="password"
+								className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+								type="password"
+							/>
+							{formikHandlers?.errors?.password &&
+								formikHandlers?.touched?.password && (
+									<span className="text-red-500 text-xs">
+										{formikHandlers?.errors?.password}
+									</span>
+								)}
+						</div>
+						<Button
+							isProcessing={loading}
+							type="submit"
+							className='float-right text-base font-medium text-center text-white bg-primary-700 hover:bg-primary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+						>
+							Setup Agent
+						</Button>
+					</Form>
+				)}
+			</Formik>
+		</>
+	)
+};
 
 const WalletSpinup = (props: {
 	setWalletSpinupStatus: (flag: boolean) => void;
@@ -401,13 +493,17 @@ const WalletSpinup = (props: {
 	};
 
 	const submitDedicatedWallet = async (values: Values) => {
-
 		const payload = {
-			walletName: values.name,
-			seed: seeds,
+			walletName: values.walletName,
+			seed: values.seed || seeds,
 			walletPassword: passwordEncryption(values.password),
-			clientSocketId: SOCKET.id,
-		};
+			did: values.did,
+			ledgerId: [
+				Number(values.network)
+			],
+			clientSocketId: SOCKET.id
+		}
+
 		setLoading(true);
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		const spinupRes = await spinupDedicatedAgent(payload, parseInt(orgId));
@@ -427,24 +523,24 @@ const WalletSpinup = (props: {
 
 	const submitSharedWallet = async (values: ValuesShared) => {
 		setLoading(true);
-
-		console.log(45456, values)
-
 		const payload = {
 			label: values.label,
-			seed: seeds,
+			seed: values.seed || seeds,
+			ledgerId: [
+				Number(values.network)
+			],
+			did: values.did,
 			clientSocketId: SOCKET.id,
 		};
+
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-		const spinupRes = {}
-		// const spinupRes = await spinupSharedAgent(payload, parseInt(orgId));
+		const spinupRes = await spinupSharedAgent(payload, parseInt(orgId));
 		const { data } = spinupRes as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			setLoading(false);
 
 			if (data?.data['agentSpinupStatus'] === 1) {
-
 				setAgentSpinupCall(true);
 			} else {
 				setFailure(spinupRes as string);
