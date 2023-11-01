@@ -174,7 +174,7 @@ const Invitations = () => {
                                                                 <li className="pt-3 sm:pt-3 overflow-auto">
                                                                     <div className="items-center space-x-4">
                                                                         <div className="inline-flex items-center text-base font-normal text-gray-900 dark:text-white">
-                                                                            Roles:
+                                                                            {invitation.orgRoles.length>1 ? 'Roles:' : 'Role:'}
                                                                             {invitation.orgRoles &&
                                                                                 invitation.orgRoles.length > 0 &&
                                                                                 invitation.orgRoles.map((role: OrgRole, index: number) => {
