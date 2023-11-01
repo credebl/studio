@@ -87,7 +87,7 @@ const OrgDropDown = () => {
 								) : (
 									<CustomAvatar size="20" name={activeOrg?.name} round />
 								)}
-								<text className="ml-2 text-primary-700 dark:text-white">{activeOrg?.name.substring(0,25)+ '...'}</text>
+								<text className="ml-2 text-primary-700 dark:text-white">{activeOrg?.name.length > 20 ? activeOrg?.name.substring(0,20) + '...' : activeOrg?.name}</text>
 							</>
 							:
 							<text className='text-primary-700 dark:text-white'>
