@@ -138,8 +138,13 @@ const SendInvitationModal = (props: {
 		const { data } = resCreateOrg as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+			if(invitations.length<1) {
+				props?.setMessage('Organization Invitation Sent');
+			}
+			else {
+				props?.setMessage('Organization Invitations Sent');
+			}
 
-			props?.setMessage(data?.message);
 			props?.setOpenModal(false);
 			props?.getAllSentInvitations()
 

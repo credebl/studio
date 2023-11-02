@@ -222,12 +222,14 @@ const SignInUser = () => {
 																/>
 															</svg>
 
+															<div className="bg-gray-200">
 															<Field
 																id="signinemail"
 																name="email"
-																className="truncate outline-none flex-grow bg-transparent focus:outline-none border-none focus:border-none focus:ring-0"
-																placeholder="name@company.com"
+																className="truncate outline-none flex gray-200-bg bg-transparent focus:outline-none border-none focus:border-none focus:ring-0"
+																placeholder="name@company.com" 
 															/>
+															</div>
 														</div>
 														{!isEmailValid && formikHandlers.touched.email && (
 															<span className="text-red-500 text-xs absolute mt-1">

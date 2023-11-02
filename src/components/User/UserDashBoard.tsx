@@ -50,7 +50,7 @@ const UserDashBoard = () => {
 			const totalPages = data?.data?.totalPages;
 			const invitationList = data?.data?.invitations;
 			if (invitationList.length > 0) {
-				setMessage(`You have received invitations to join organisation`);
+				setMessage(`You have received invitations to join organization`);
 				setViewButton(true);
 			}
 			setCurrentPage({
@@ -231,7 +231,7 @@ const UserDashBoard = () => {
 						{organizationsList && organizationsList?.length > 0 && (
 							<a
 								href="/organizations"
-								className="float-right inline-flex items-center p-2 text-sm font-medium rounded-lg text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700"
+								className="float-right flex items-end p-2 text-sm font-medium rounded-lg text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700"
 							>
 								View More..
 							</a>
