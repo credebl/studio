@@ -161,7 +161,7 @@ const HistoryDetails = () => {
 		<div className="p-4" id="connection_list">
 			<div className="flex justify-between items-center">
 				<BreadCrumbs />
-				<BackButton path={pathRoutes.organizations.Issuance.connections} />
+				<BackButton path={pathRoutes.organizations.Issuance.history} />
 			</div>
 			<div
 				className="flex items-center justify-between mb-4"

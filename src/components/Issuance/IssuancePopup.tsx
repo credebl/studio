@@ -1,222 +1,118 @@
 import { Button, Modal } from 'flowbite-react';
-import React, { useState } from 'react';
-import { verifyPresentation } from '../../api/verification';
 
-import type { AxiosResponse } from 'axios';
-import CustomSpinner from '../CustomSpinner';
-import { apiStatusCodes } from '../../config/CommonConstant';
-import { pathRoutes } from '../../config/pathRoutes';
-// import AttributesListData from './AttributesListData';
-// import SchemaCredDefDetails from './SchemaCredDefDetails';
-
-const ProofRequest = (props: {
+interface IProps {
 	openModal: boolean;
-	closeModal: (flag: boolean, id: string, state:boolean) => void;
-	onSucess: (verifyPresentationId: string) => void;
-	requestId: string;
-	userData: object[];
-	view: boolean;
-}) => {
+	closeModal: (flag: boolean) => void;
+	onSuccess: (flag: boolean) => void;
+	message: string;
+	isProcessing: boolean;
+}
 
-	const [buttonLoader, setButtonLoader] = useState<boolean>(false);
-	const [navigation, setNavigation] = useState(false);
-	const [succesMsg, setSuccesMsg] = useState('');
-
-	const handleConfirmClick = async (id: string) => {
-		try {
-			setButtonLoader(true);
-			const response = await verifyPresentation(id);
-			const { data } = response as AxiosResponse;
-			if (data?.statusCode === apiStatusCodes?.API_STATUS_CREATED) {
-				setButtonLoader(false);
-				setNavigation(true);
-				setSuccesMsg(data?.message);
-			}
-		} catch (error) {
-			console.error('Error:', error);
-		} finally {
-			setButtonLoader(false);
-		}
-	};
-
-	const aggregatedData: { entity: string; properties: any[] }[] = [];
-
-	props?.userData?.forEach((item: { [key: string]: any } = {}) => {
-		const entity = Object.keys(item)[0];
-		const propertyValue = item[entity];
-
-		const existingEntry = aggregatedData.find(
-				(entry) => entry.entity === entity,
-			);
-			if (existingEntry) {
-				existingEntry.properties.push(propertyValue);
-			} else {
-				aggregatedData.push({
-					entity,
-					properties: [propertyValue],
-			});
-		}
-		
-	});
-
+const IssuancePopup = (props: IProps) => {
 	return (
-		<div>
-			{!props.view ? (
-				<Modal show={props.openModal} size="2xl">
-					<div className="relative p-4 text-center bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
+		<Modal show={props.openModal} size="md">
+			<div className="relative w-full max-w-md max-h-full">
+				<div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+					<button
+						type="button"
+						className="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+						data-modal-hide="popup-modal"
+						onClick={() => {
+							props.closeModal(false);
+						}}
+					>
+						<svg
+							className="w-3 h-3"
+							aria-hidden="true"
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 14 14"
+						>
+							<path
+								stroke="currentColor"
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth={2}
+								d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+							/>
+						</svg>
+						<span className="sr-only">Close modal</span>
+					</button>
+					<div className="p-6 text-center">
+						<svg
+							className="mx-auto mb-4 text-yellow-300 w-12 h-12 dark:text-gray-200"
+							aria-hidden="true"
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 20 20"
+						>
+							<path
+								stroke="currentColor"
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth={2}
+								d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+							/>
+						</svg>
+						<p className="text-2xl text-primary-700">Confirmation</p>
+						<h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+							{props.message}
+						</h3>
+
+						<div className='flex justify-center'>
 						<button
+							data-modal-hide="popup-modal"
+							type="button"
+							className="flex justify-center items-center text-red-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-lg font-medium px-5 py-2.5 mr-8 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
 							onClick={() => {
-								setButtonLoader(false);
-								props.closeModal(false, '',false);
-								if (navigation === true) {
-									window.location.href = `${pathRoutes.organizations.credentials}`
-								}
-								
+								props.closeModal(false);
 							}}
-							className="text-gray-400 absolute top-2.5 right-2.5 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
 						>
 							<svg
-								aria-hidden="true"
-								className="w-5 h-5"
-								fill="currentColor"
-								viewBox="0 0 20 20"
 								xmlns="http://www.w3.org/2000/svg"
+								width="20"
+								height="20"
+								viewBox="0 0 30 30"
+								fill="none"
+								className='mr-2'
 							>
 								<path
-									fillRule="evenodd"
-									d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-									clipRule="evenodd"
-								></path>
+									d="M15 0C6.705 0 0 6.705 0 15C0 23.295 6.705 30 15 30C23.295 30 30 23.295 30 15C30 6.705 23.295 0 15 0ZM15 27C8.385 27 3 21.615 3 15C3 8.385 8.385 3 15 3C21.615 3 27 8.385 27 15C27 21.615 21.615 27 15 27ZM20.385 7.5L15 12.885L9.615 7.5L7.5 9.615L12.885 15L7.5 20.385L9.615 22.5L15 17.115L20.385 22.5L22.5 20.385L17.115 15L22.5 9.615L20.385 7.5Z"
+									fill="#EA5455"
+								/>
 							</svg>
-							<span className="sr-only">Close modal</span>
+						<p>	Cancel </p>
 						</button>
-						<div className="sm:p-2 lg:p-6 m-4">
-							<p className="text-xl text-gray-700 pb-2 dark:bg-gray-800 dark:text-white font-semibold flex flex-start">
-								{' '}
-								Verification Details
-							</p>
-							{!props.userData ? (
-								<div className="flex items-center justify-center m-4">
-									<CustomSpinner />
-
-								</div>
-							) : (
-								<div className=" text-gray-500 dark:text-gray-300 w-full">
-									<div className="mt-1 ">
-										<AttributesListData 
-										attributeDataList = {aggregatedData}
-										/>									
-										<SchemaCredDefDetails
-										  schemaCredDefList={props?.userData?.slice(0, 1)}
-										/>								
-									</div>
-								</div>
-							)}
-						</div>
-						{succesMsg && (
-							<div
-								className="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400"
-								role="alert"
-							>
-								{succesMsg}
-							</div>
-						)}
-
-						<div className="flex justify-center items-center space-x-4">
-							<button
-								onClick={() => {
-									setButtonLoader(false);
-									props.closeModal(false, '',false);
-									if (navigation === true) {
-										window.location.href = `${pathRoutes.organizations.credentials}`
-									}									
-								}}
-								style={{ height: '2.5rem', minWidth: '100px' }}
-								className="py-1 px-2 medium text-center font-medium text-gray-600 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600 "
-							>
-								{navigation ? 'Close' : 'No, cancel'}
-							</button>
-							<Button
-								isProcessing={buttonLoader}
-								onClick={() => handleConfirmClick(props.requestId)}
-								disabled={navigation || buttonLoader}
-								className="py-1 px-2 medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-								style={{ height: '2.5rem', minWidth: '3rem' }}
-							>
-								<svg className='pr-2 flex items-center' xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="none" viewBox="0 0 17 17">
-									<path fill="#fff" d="M15.749 6.99c-.334-.21-.813-.503-.813-.697.01-.397.113-.786.3-1.136.277-.69.561-1.395.204-1.915-.358-.519-1.122-.462-1.853-.405-.358.082-.73.082-1.089 0a2.74 2.74 0 0 1-.374-1.087c-.162-.739-.333-1.501-.942-1.704-.61-.203-1.154.3-1.699.811-.309.276-.723.65-.934.65-.212 0-.634-.374-.943-.65C7.07.362 6.51-.14 5.908.046c-.602.187-.805.933-.967 1.671-.05.383-.18.75-.382 1.08a2.295 2.295 0 0 1-1.09 0c-.722-.066-1.478-.13-1.844.405-.365.535-.081 1.225.195 1.914.19.35.295.739.31 1.136-.066.195-.521.487-.854.698C.65 7.34 0 7.76 0 8.41c0 .649.65 1.07 1.276 1.468.333.211.812.495.853.69-.014.4-.12.791-.309 1.144-.276.69-.56 1.395-.195 1.914.366.52 1.122.463 1.845.398a2.441 2.441 0 0 1 1.089.04c.2.33.33.697.382 1.08.162.738.333 1.508.934 1.711a.86.86 0 0 0 .277.106 2.439 2.439 0 0 0 1.422-.812c.308-.275.731-.657.942-.657.212 0 .626.382.935.657.544.487 1.105.998 1.698.812.593-.187.813-.974.943-1.712a2.69 2.69 0 0 1 .374-1.08 2.472 2.472 0 0 1 1.089-.04c.73.065 1.479.138 1.852-.397.374-.536.073-1.225-.203-1.915a2.585 2.585 0 0 1-.3-1.144c.056-.194.511-.478.812-.69C16.35 9.587 17 9.174 17 8.517c0-.658-.618-1.136-1.251-1.526Zm-.431 2.248c-.537.332-1.04.649-1.195 1.135a2.73 2.73 0 0 0 .325 1.68c.155.373.399.99.293 1.151-.106.163-.731.09-1.113.057a2.393 2.393 0 0 0-1.626.203 2.594 2.594 0 0 0-.682 1.55c-.082.365-.236 1.054-.406 1.111-.171.057-.667-.422-.894-.625a2.585 2.585 0 0 0-1.48-.868c-.58.11-1.105.417-1.486.868-.22.203-.756.674-.894.625-.138-.049-.325-.746-.407-1.111a2.594 2.594 0 0 0-.674-1.55 1.522 1.522 0 0 0-.95-.243 7.016 7.016 0 0 0-.708.04c-.374 0-1.008.09-1.105-.056-.098-.146.097-.78.26-1.112.285-.51.4-1.1.325-1.68-.146-.486-.65-.81-1.186-1.135-.358-.227-.902-.568-.902-.811 0-.244.544-.552.902-.811.536-.333 1.04-.658 1.186-1.136a2.754 2.754 0 0 0-.325-1.688c-.163-.348-.398-.973-.284-1.127.113-.154.73-.09 1.105-.057.549.122 1.123.05 1.625-.203.392-.427.629-.972.674-1.55.082-.364.236-1.054.407-1.11.17-.058.674.421.894.624.381.45.907.753 1.487.86a2.569 2.569 0 0 0 1.479-.86c.227-.203.756-.673.894-.625.138.049.325.747.406 1.112.048.578.288 1.123.682 1.55a2.397 2.397 0 0 0 1.626.202c.382 0 1.007-.09 1.113.057.106.146-.138.811-.292 1.144a2.755 2.755 0 0 0-.326 1.687c.155.479.659.811 1.195 1.136.357.227.902.568.902.811 0 .243-.488.527-.845.755Z" />
-									<path fill="#fff" d="m11.253 6.126-3.78 3.943-1.687-1.403a.473.473 0 0 0-.149-.08.556.556 0 0 0-.352 0 .473.473 0 0 0-.148.08.377.377 0 0 0-.101.12.306.306 0 0 0 0 .284.377.377 0 0 0 .101.12l2.002 1.7a.459.459 0 0 0 .152.083.548.548 0 0 0 .181.027.601.601 0 0 0 .19-.043.499.499 0 0 0 .153-.097l4.105-4.284a.312.312 0 0 0 .074-.265.365.365 0 0 0-.174-.234.55.55 0 0 0-.632.049h.065Z" />
-								</svg>
-								Verify
-							</Button>
-						</div>
-					</div>
-				</Modal>
-			) : (
-				<Modal show={props.openModal} size="2xl">
-					<div className="relative p-4 text-center bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
-						<button
+						<Button
+							type="submit"
+							isProcessing={props.isProcessing}
+							disabled={props.isProcessing}
 							onClick={() => {
-								setButtonLoader(false);
-								props.closeModal(false, '',false);
+								props.onSuccess(true);
 							}}
-							className="text-gray-400 absolute top-2.5 right-2.5 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+							className="bg-primary-700 hover:!bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 font-medium rounded-lg inline-flex items-center text-center ml-2"
 						>
 							<svg
-								aria-hidden="true"
-								className="w-5 h-5"
-								fill="currentColor"
-								viewBox="0 0 20 20"
 								xmlns="http://www.w3.org/2000/svg"
+								width="25"
+								height="25"
+								viewBox="0 0 39 27"
+								fill="none"
+								className='mr-2'
 							>
 								<path
-									fillRule="evenodd"
-									d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-									clipRule="evenodd"
-								></path>
+									d="M38.7397 9.43217L29.5658 0.260136C29.2187 -0.0867122 28.6561 -0.0867122 28.309 0.260136L25.0503 3.51815H14.0521C11.5184 3.51815 9.10581 4.67242 7.50894 6.62771H5.77611V5.29504C5.77611 4.80444 5.37827 4.40659 4.88747 4.40659H0.888632C0.39784 4.40659 0 4.80444 0 5.29504C0 5.78564 0.39784 6.18348 0.888632 6.18348H3.99884V18.6217H0.888632C0.39784 18.6217 0 19.0195 0 19.5101C0 20.0007 0.39784 20.3986 0.888632 20.3986H4.88747C5.37827 20.3986 5.77611 20.0007 5.77611 19.5101V17.289H7.50894C9.10581 19.2443 11.5184 20.3986 14.0521 20.3986H15.0859L21.4285 26.7398C21.602 26.9132 21.8294 27 22.0568 27C22.2842 27 22.5117 26.9132 22.6852 26.7398L38.7397 10.6887C38.9063 10.522 39 10.2961 39 10.0605C39 9.82486 38.9063 9.59884 38.7397 9.43217ZM8.66327 15.8773C8.49603 15.6478 8.22908 15.5121 7.94508 15.5121H5.77611V8.40459H7.94517C8.22917 8.40459 8.49603 8.26893 8.66336 8.03944C9.91606 6.32101 11.9306 5.29504 14.0522 5.29504H23.2731L18.0009 10.5661C17.2596 10.0237 16.5988 9.36376 16.0428 8.59978C15.7541 8.20301 15.1984 8.11541 14.8014 8.40406C14.4045 8.69272 14.3169 9.24835 14.6056 9.64513C16.2918 11.9624 18.7796 13.4844 21.6108 13.9307C22.1554 14.0166 22.5285 14.5294 22.4427 15.0738C22.3568 15.6181 21.8446 15.9907 21.2994 15.9053C18.8398 15.5175 16.5753 14.4386 14.7509 12.7852C14.3873 12.4557 13.8253 12.4833 13.4957 12.8468C13.1661 13.2104 13.1937 13.7722 13.5573 14.1017C13.7166 14.246 13.8796 14.3852 14.0446 14.5217L12.2546 16.3112C12.088 16.4778 11.9943 16.7038 11.9943 16.9394C11.9943 17.175 12.088 17.401 12.2546 17.5677L13.2611 18.5739C11.4377 18.3537 9.75904 17.3804 8.66327 15.8773ZM22.0568 24.855L14.1395 16.9394L15.4998 15.5795C17.164 16.6368 19.0372 17.3474 21.0224 17.6604C21.1684 17.6834 21.3133 17.6946 21.4566 17.6946C22.7986 17.6944 23.9826 16.7167 24.1981 15.3505C24.4366 13.8382 23.4002 12.414 21.8876 12.1754C21.083 12.0485 20.3117 11.8174 19.5886 11.4915L28.9374 2.14488L36.8547 10.0605L22.0568 24.855Z"
+									fill="white"
+								/>
 							</svg>
-							<span className="sr-only">Close modal</span>
-						</button>
-						<div className="sm:p-2 lg:p-6 m-4">
-							<p className="text-xl font-semibold text-gray-700 dark:bg-gray-800 dark:text-white flex flex-start pb-2">
-								Verified Details
-							</p>
-							{!props.userData ? (
-								<div className="flex items-center justify-center m-4">
-									<CustomSpinner />
-								</div>
-							) : (
-								<div className=" text-gray-500 dark:text-gray-300 w-full">
-									<div className="mt-1">
-										<AttributesListData 
-										attributeDataList = {aggregatedData}
-										/>											
-
-										<SchemaCredDefDetails
-										  schemaCredDefList={props?.userData?.slice(0, 1)}
-										/>									
-									</div>
-								</div>
-							)}
-
-						</div>
-						<div className="flex justify-center items-center space-x-4">
-							<button
-								onClick={() => {
-									setButtonLoader(false);
-									props.closeModal(false, '',false);
-								}}
-								className="py-1 px-2 medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-								style={{ height: '2.5rem', minWidth: '100px' }}
-							>
-								Close
-							</button>
+							<p className='text-lg'>Issue</p>
+						</Button>
 						</div>
 					</div>
-				</Modal>
-			)}
-		</div>
+				</div>
+			</div>
+		</Modal>
 	);
 };
 
-export default ProofRequest;
+export default IssuancePopup;
