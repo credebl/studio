@@ -7,6 +7,7 @@ import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import { pathRoutes } from '../../config/pathRoutes';
+import IssuancePopup from './IssuancePopup';
 
 interface IValues {
 	value: string;
@@ -23,6 +24,8 @@ const BulkIssuance = () => {
 	const [isFileUploaded, setIsFileUploaded] = useState(false);
 	const [uploadedFileName, setUploadedFileName] = useState('');
 	const [uploadedFile, setUploadedFile] = useState(null);
+	const [openModal, setOpenModal] = useState<boolean>(false);
+
 
 	const getSchemaCredentials = async () => {
 		setLoading(true);
@@ -147,6 +150,33 @@ const BulkIssuance = () => {
 	const clearError = () => {
 		setError(null);
 	};
+
+	const handleOpenConfirmation=()=>{
+		setOpenModal(true)
+
+	}
+	const handleCloseConfirmation = () => {
+    setOpenModal(false);
+  };
+	const handleReset=()=>{
+		handleDiscardFile()
+		setCredentialSelected('')
+	}
+
+	const confirmCredentialIssuance = () => {
+		console.log("Credentials Issues Successfully...");
+		setLoading(true)
+		setTimeout(()=>{
+		console.log("Credentials Issues Successfully 1111...");
+
+			setOpenModal(false)
+			handleDiscardFile()
+			setCredentialSelected('')
+			// window.location.href=pathRoutes.organizations.Issuance.connections
+		console.log("Credentials Issues Successfully 2222 ...");
+
+		},1500)	
+}	
 
 	const isCredSelected = Boolean(credentialSelected);
 
@@ -454,8 +484,13 @@ const BulkIssuance = () => {
 							</ul>
 						</>
 					)}
+{/* <ConfirmModal openModal={showPopup} closeModal={() => setShowPopup(false)} onSuccess={confirmCreateSchema} message={"Would you like to proceed? Keep in mind that this action cannot be undone."} isProcessing={createloader} /> */}
+
+<IssuancePopup openModal={openModal} closeModal={handleCloseConfirmation} message={"Are you sure you want to Offer Credentials ?"} isProcessing={loading}  onSuccess={confirmCredentialIssuance} />
+
 					<div>
 						<Button
+						  onClick={handleOpenConfirmation}
 							disabled={!isFileUploaded}
 							type="reset"
 							color="bg-primary-800"
@@ -482,6 +517,7 @@ const BulkIssuance = () => {
 							Issue
 						</Button>
 						<Button
+						  onClick={handleReset}
 							disabled={!isFileUploaded}
 							type="reset"
 							color="bg-primary-800"
