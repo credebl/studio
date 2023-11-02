@@ -20,7 +20,8 @@ import EcosystemProfileCard from '../../../commonComponents/EcosystemProfileCard
 const options = [
     { value: 'string', label: 'String' },
     { value: 'number', label: 'Number' },
-    { value: 'date', label: 'Date' },
+    { value: 'time', label: 'Time' },
+    { value: 'datetime-local', label: 'Date & Time' },
 ];
 
 interface IAttributes {
