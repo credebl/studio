@@ -244,10 +244,10 @@ const EcosystemList = () => {
                   const role = item?.ecosystemOrgs && item?.ecosystemOrgs.length > 0 && item?.ecosystemOrgs[0]?.ecosystemRole?.name || ""
                   return (
                     <Card key={item.id} onClick={() => redirectOrgDashboard(item.id, role)} className='transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer overflow-hidden' style={{ maxHeight: '100%', maxWidth: '100%', overflow: 'auto'}}>
-                      <div className='flex items-center'>
+                      <div className='flex items-center min-[401px]:flex-nowrap flex-wrap'>
                        
-                        {(item.logoUrl)  ? <CustomAvatar size='80' src={item.logoUrl} /> : <CustomAvatar size='80' name={item.name}/>}
-                        <div className='ml-4 w-full line-clamp-4 '>
+                        {(item.logoUrl)  ? <CustomAvatar className='min-w-[80px]' size='80' src={item.logoUrl} /> : <CustomAvatar size='80' name={item.name}/>}
+                        <div className='ml-4 w-100/6rem line-clamp-4 '>
                           <h5 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
                             {item.name}
                           </h5>
