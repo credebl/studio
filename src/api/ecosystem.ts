@@ -11,6 +11,7 @@ interface CreateEcosystemPayload {
 	logo: string;
 	tags?: string;
 	userId: number;
+	autoEndorsement: boolean;
 }
 
 export interface GetEndorsementListParameter {
