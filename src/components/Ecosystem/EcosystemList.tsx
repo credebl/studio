@@ -312,3 +312,4 @@ const EcosystemList = () => {
 		</div>
 	);
 };
+export default EcosystemList
