@@ -69,7 +69,7 @@ const EcosystemList = () => {
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 				const ecosystemData = data?.data;
 				if (ecosystemData) {
-					console.log(6565, data);
+					
 					setEcosystemList(ecosystemData);
 				} else {
 					await removeFromLocalStorage(storageKeys.ECOSYSTEM_ID);
@@ -132,7 +132,7 @@ const EcosystemList = () => {
 		isEcosystemList &&
 			(isEcosystemData?.isMultiEcosystem || isEcosystemData?.isEcosystemLead),
 	);
-	console.log('11', ecosystemList);
+	
 	return (
 		<div className="px-4 pt-2">
 			<div className="mb-2 col-span-full xl:mb-2">
