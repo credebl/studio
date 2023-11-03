@@ -435,7 +435,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 											/>
 											<span className="ml-2 text-gray-900 dark:text-white text-sm">
 												Sign
-												<span className="block pl-6 text-gray-500 text-sm"></span>
+												
 											</span>
 										</div>
 
@@ -450,7 +450,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 											/>
 											<span className="ml-2 text-gray-900 dark:text-white text-sm">
 												Sign and Submit
-												<span className="block pl-6 text-gray-500 text-sm"></span>
+												
 											</span>
 										</div>
 									</div>
