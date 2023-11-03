@@ -334,6 +334,7 @@ const EcosystemList = () => {
 				</div>
 			</div>
 		</div>
-	);
-};
-export default EcosystemList
+
+)
+}
+export default EcosystemList;
