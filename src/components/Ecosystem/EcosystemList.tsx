@@ -253,6 +253,7 @@ const EcosystemList = () => {
 								);
 							})}
 						</div>
+						
 					) : (
 						ecosystemList && (
 							<EmptyListMessage
