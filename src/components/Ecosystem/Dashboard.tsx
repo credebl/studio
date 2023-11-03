@@ -49,26 +49,25 @@ export const RoleTablet = ({ role }: IRoleTablet) => (
 );
 
 const Dashboard = () => {
-    const [ecosystemDetails, setEcosystemDetails] = useState<IEcosystem | null>();
-    const [success, setSuccess] = useState<string | null>(null);
-    const [failure, setFailure] = useState<string | null>(null);
-    const [message, setMessage] = useState<string | null>(null);
-    const [loading, setLoading] = useState<boolean | null>(true);
-    const [leadOrg, setLeadOrg] = useState("")
-    const [ecosystemId, setEcosystemId] = useState('');
-    const [editOpenModal, setEditOpenModal] = useState<boolean>(false);
-    const [dropdownOpen, setDropdownOpen] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [openModal, setOpenModal] = useState<boolean>(false);
-    const [viewButton, setViewButton] = useState<boolean>(false);
-    const [currentPage, setCurrentPage] = useState(initialPageState);
-    const [isEcosystemLead, setIsEcosystemLead] = useState(false);
-    const [ecosystemDashboard, setEcosystemDashboard] =
-        useState<EcosystemDashboard | null>(null);
-    const [ecosystemDetailsNotFound, setEcosystemDetailsNotFound] =
-        useState(false);
-    const [orgId, setOrgId] = useState('');
-    const [isOrgModal, setIsOrgModal] = useState(false);
+	const [ecosystemDetails, setEcosystemDetails] = useState<IEcosystem | null>();
+	const [success, setSuccess] = useState<string | null>(null);
+	const [failure, setFailure] = useState<string | null>(null);
+	const [message, setMessage] = useState<string | null>(null);
+	const [loading, setLoading] = useState<boolean | null>(true);
+	const [editOpenModal, setEditOpenModal] = useState<boolean>(false);
+	const [dropdownOpen, setDropdownOpen] = useState(true);
+	const [leadOrg, setLeadOrg] = useState('');
+	const [error, setError] = useState<string | null>(null);
+	const [openModal, setOpenModal] = useState<boolean>(false);
+	const [viewButton, setViewButton] = useState<boolean>(false);
+	const [currentPage, setCurrentPage] = useState(initialPageState);
+	const [isEcosystemLead, setIsEcosystemLead] = useState(false);
+	const [ecosystemDashboard, setEcosystemDashboard] =
+		useState<EcosystemDashboard | null>(null);
+	const [ecosystemDetailsNotFound, setEcosystemDetailsNotFound] =
+		useState(false);
+	const [orgId, setOrgId] = useState('');
+	const [isOrgModal, setIsOrgModal] = useState(false);
 
 	const createEcosystemModel = () => {
 		setOpenModal(true);
@@ -116,62 +115,64 @@ const Dashboard = () => {
 		setLoading(false);
 	};
 
-    const fetchEcosystemDetails = async () => {
-        setLoading(true);
-        const id = await getFromLocalStorage(storageKeys.ORG_ID);
-        const ecosystemId = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID);
-        setOrgId(id);
-        if (id) {
-            const response = await getEcosystems(id);
-            const { data } = response as AxiosResponse;
+	const fetchEcosystemDetails = async () => {
+		setLoading(true);
+		const id = await getFromLocalStorage(storageKeys.ORG_ID);
+		const ecosystemId = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID);
+		setOrgId(id);
+		if (id) {
+			const response = await getEcosystems(id);
+			const { data } = response as AxiosResponse;
 
-            if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-                const ecosystemData = data?.data.find((item: { id: string }) => item.id === ecosystemId);
-                if (ecosystemData) {
-                    const ecosystemOrg =
-                        ecosystemData?.ecosystemOrgs &&
-                        ecosystemData?.ecosystemOrgs.length > 0 &&
-                        ecosystemData?.ecosystemOrgs[0];
-                    setEcosystemDetails({
-                        id: ecosystemData?.id,
-                        logoUrl: ecosystemData?.logoUrl,
-                        name: ecosystemData?.name,
-                        description: ecosystemData?.description,
-                        joinedDate:
-                            ecosystemOrg && ecosystemOrg?.createDateTime
-                                ? ecosystemOrg?.createDateTime
-                                : '',
-                        role:
-                            ecosystemOrg && ecosystemOrg?.ecosystemRole?.name
-                                ? ecosystemOrg?.ecosystemRole?.name
-                                : '',
-                    });
-                } else {
-                    await removeFromLocalStorage(storageKeys.ECOSYSTEM_ID);
-                }
-            } else {
-                await removeFromLocalStorage(storageKeys.ECOSYSTEM_ID);
-                setEcosystemDetailsNotFound(true);
-            }
-        }
-        setLoading(false);
-    };
+			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+				const ecosystemData = data?.data.find(
+					(item: { id: string }) => item.id === ecosystemId,
+				);
+				if (ecosystemData) {
+					const ecosystemOrg =
+						ecosystemData?.ecosystemOrgs &&
+						ecosystemData?.ecosystemOrgs.length > 0 &&
+						ecosystemData?.ecosystemOrgs[0];
+					setEcosystemDetails({
+                        autoEndorsement:ecosystemData?.autoEndorsement,
+						id: ecosystemData?.id,
+						logoUrl: ecosystemData?.logoUrl,
+						name: ecosystemData?.name,
+						description: ecosystemData?.description,
+						joinedDate:
+							ecosystemOrg && ecosystemOrg?.createDateTime
+								? ecosystemOrg?.createDateTime
+								: '',
+						role:
+							ecosystemOrg && ecosystemOrg?.ecosystemRole?.name
+								? ecosystemOrg?.ecosystemRole?.name
+								: '',
+					});
+				} else {
+					await removeFromLocalStorage(storageKeys.ECOSYSTEM_ID);
+				}
+			} else {
+				await removeFromLocalStorage(storageKeys.ECOSYSTEM_ID);
+				setEcosystemDetailsNotFound(true);
+			}
+		}
+		setLoading(false);
+	};
 
 	const fetchEcosystemDashboard = async () => {
 		setLoading(true);
 
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		const ecosystemId = await getEcosystemId();
-		const data: ICheckEcosystem = await checkEcosystem();
 
 		if (ecosystemId && orgId) {
 			const response = await getEcosystemDashboard(ecosystemId, orgId);
 
-        if (ecosystemId && orgId) {
-            const response = await getEcosystemDashboard(ecosystemId, orgId);
+			const { data } = response as AxiosResponse;
 
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 				setEcosystemDashboard(data?.data);
+				setLeadOrg(data?.data?.ecosystemLead?.orgName || '');
 			} else {
 				setFailure(response as string);
 				setFailure(response as string);
@@ -181,17 +182,12 @@ const Dashboard = () => {
 		setLoading(false);
 	};
 
-            if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-                setEcosystemDashboard(data?.data);
-                setLeadOrg(data?.data?.ecosystemLead?.orgName || "")
-            } else {
-                setFailure(response as string);
-                setFailure(response as string);
-                setLoading(false);
-            }
-        }
-        setLoading(false);
-    };
+	const checkOrgId = async () => {
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		if (orgId) {
+			await getAllEcosystemInvitations();
+		}
+	};
 
 	const getDashboardData = async () => {
 		await checkOrgId();
@@ -217,77 +213,52 @@ const Dashboard = () => {
 		setDropdownOpen(!editOpenModal);
 	}, [editOpenModal]);
 
-    return (
-        <div className="pt-2">
-            <div className="mb-4 col-span-full xl:mb-2">
-                <BreadCrumbs />
-            </div>
+	return (
+		<div className="pt-6">
+			<div className="mb-4 col-span-full xl:mb-2">
+				<BreadCrumbs />
+			</div>
 
-            {error ? (
-                <>
-                    {' '}
-                    {(success || failure) && (
-                        <AlertComponent
-                            message={success ?? failure}
-                            type={success ? 'success' : 'failure'}
-                            onAlertClose={() => {
-                                setSuccess(null);
-                                setFailure(null);
-                            }}
-                        />
-                    )}
-                </>
-            ) : (
-                <>
-                    <div className="cursor-pointer">
-                        {
-                            <AlertComponent
-                                message={message || error}
-                                type={
-                                    message
-                                        ? message === 'Ecosystem invitations sent successfully'
-                                            ? 'success'
-                                            : 'warning'
-                                        : 'failure'
-                                }
-                                viewButton={
-                                    message === 'Ecosystem invitations sent successfully'
-                                        ? false
-                                        : true
-                                }
-                                path={pathRoutes.ecosystem.invitation}
-                                onAlertClose={() => {
-                                    setMessage(null);
-                                    setError(null);
-                                }}
-                            />}
-                    </div>
-
-                    {(success || failure) && (
-                        <AlertComponent
-                            message={success ?? failure}
-                            type={success ? 'success' : 'failure'}
-                            onAlertClose={() => {
-                                setSuccess(null);
-                                setFailure(null);
-                            }}
-                        />
-                    )}
-                </>
-            )}
-
-            {
-                ecosystemDetailsNotFound && (
-                    <AlertComponent
-                        message="Ecosystem details not found."
-                        type="failure"
-                        onAlertClose={() => {
-                            setEcosystemDetailsNotFound(false);
-                            setFailure(null);
-                        }}
-                    />
-                )
-            }
+			{error ? (
+				<>
+					{' '}
+					{(success || failure) && (
+						<AlertComponent
+							message={success ?? failure}
+							type={success ? 'success' : 'failure'}
+							onAlertClose={() => {
+								setSuccess(null);
+								setFailure(null);
+							}}
+						/>
+					)}
+				</>
+			) : (
+				<>
+					<div className="cursor-pointer">
+						{
+							<AlertComponent
+								message={message || error}
+								type={
+									message
+										? message === 'Ecosystem invitations sent successfully'
+											? 'success'
+											: 'warning'
+										: 'failure'
+								}
+								viewButton={
+									message === 'Ecosystem invitations sent successfully'
+										? false
+										: true
+								}
+								path={pathRoutes.ecosystem.invitation}
+								onAlertClose={() => {
+									setMessage(null);
+									setError(null);
+								}}
+							/>
+						}
+					</div>
 
 					{(success || failure) && (
 						<AlertComponent
@@ -302,45 +273,16 @@ const Dashboard = () => {
 				</>
 			)}
 
-                                    <p className="mb-1 text-base font-normal text-gray-900 dark:text-white">
-                                        {ecosystemDetails?.description}
-                                    </p>
-                                    {!isEcosystemLead ? (
-                                        <div className="text-md font-semibold mt-6">
-                                            <div className="flex">
-                                                <span className="text-[#3D3D3D] dark:text-white min-w-[10rem]">
-                                                    Ecosystem Owner
-                                                </span>
-                                                <span className="dark:text-white">:</span>{' '}
-                                                <span className="text-[#5E5972] dark:text-white ml-2">
-                                                    {leadOrg}
-                                                </span>
-                                            </div>
-                                            <div className="flex">
-                                                <span className="text-[#3D3D3D] dark:text-white min-w-[10rem]">
-                                                    Ecosystem Lead
-                                                </span>
-                                                <span className="dark:text-white">:</span>
-                                                <span className="text-[#5E5972] dark:text-white ml-2">
-                                                    {leadOrg}
-                                                </span>
-                                            </div>
-                                            <div className="flex">
-                                                <span className='text-[#3D3D3D] dark:text-white min-w-[10rem]'>Joined since</span> <span className='dark:text-white'>:</span><span className='text-[#5E5972] dark:text-white ml-2'><DateTooltip date={ecosystemDetails.joinedDate}>
-                                                    {dateConversion(ecosystemDetails.joinedDate || "")}
-                                                </DateTooltip ></span>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className="flex items-center">
-                                            <span className="dark:text-white">Role: </span>{' '}
-                                            <RoleTablet role={ecosystemDetails?.role || ''} />
-                                        </div>
-                                    )}
-                                </div>
-                            ) : (
-                                <CustomSpinner />
-                            )}
+			{ecosystemDetailsNotFound && (
+				<AlertComponent
+					message="Ecosystem details not found."
+					type="failure"
+					onAlertClose={() => {
+						setEcosystemDetailsNotFound(false);
+						setFailure(null);
+					}}
+				/>
+			)}
 
 			{ecosystemDetails ? (
 				<div>
@@ -378,7 +320,7 @@ const Dashboard = () => {
 												</span>
 												<span className="dark:text-white">:</span>{' '}
 												<span className="text-[#5E5972] dark:text-white ml-2">
-													NA
+													{leadOrg}
 												</span>
 											</div>
 											<div className="flex">
@@ -387,7 +329,7 @@ const Dashboard = () => {
 												</span>{' '}
 												<span className="dark:text-white">:</span>
 												<span className="text-[#5E5972] dark:text-white ml-2">
-													NA
+													{leadOrg}
 												</span>
 											</div>
 											<div className="flex">
@@ -408,6 +350,11 @@ const Dashboard = () => {
 											<RoleTablet role={ecosystemDetails?.role || ''} />
 										</div>
 									)}
+                                    <div>
+									Auto Endorsement:{' '}
+									{ecosystemDetails.autoEndorsement ? 'Yes' : 'No'}
+								
+							</div>
 								</div>
 							) : (
 								<CustomSpinner />
@@ -419,7 +366,7 @@ const Dashboard = () => {
 									<RoleTablet role={ecosystemDetails?.role || ''} />
 								</div>
 							)}
-
+							
 							{isEcosystemLead && (
 								<div className="inline-flex items-center ml-auto">
 									<Button
@@ -470,112 +417,115 @@ const Dashboard = () => {
 											{/* <Dropdown.Item>
                                                 <div>Manual Registration</div>
                                             </Dropdown.Item> */}
-                                        </Dropdown>
-                                    ) : (
-                                        <svg
-                                            className="ml-4 w-4 h-4 text-gray-800 cursor-pointer dark:text-white"
-                                            aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="currentColor"
-                                            viewBox="0 0 4 15"
-                                        >
-                                            <path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
-                                        </svg>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                    <div className="mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-                        <div className="grid w-full grid-cols-1 gap-4 mt-0 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2">
-                            <DashboardCard
-                                icon={memberIcon}
-                                backgroundColor="linear-gradient(279deg, #FFF -18.24%, #2F80ED -0.8%, #1F4EAD 61.45%)"
-                                label="Member"
-                                value={ecosystemDashboard?.membersCount ?? 0}
-                            />
-                            <DashboardCard
-                                icon={endorseIcon}
-                                backgroundColor="linear-gradient(279deg, #FFF -15.85%, #40F683 22.4%, #22C55E 59.86%)"
-                                label="Endorsements"
-                                value={ecosystemDashboard?.endorsementsCount ?? 0}
-                                onClickHandler={() => window.location.href = pathRoutes.ecosystem.endorsements}
-                            />
-                        </div>
-                    </div>
-                    <div>
-                        <MemberList />
-                    </div>
-                    <EditPopupModal
-                        openModal={editOpenModal}
-                        setOpenModal={setEditOpenModal}
-                        setMessage={(value) => {
-                            setSuccess(value);
-                        }}
-                        isOrganization={false}
-                        onEditSuccess={handleEditModalClose}
-                        entityData={ecosystemDetails}
-                    />
-                </div>
-            ) : (
-                <div>
-                    {!ecosystemDetails && loading ? (
-                        <div className="min-h-100/18rem flex justify-center items-center">
-                            <CustomSpinner />
-                        </div>
-                    ) : (
-                        <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-                            <div className="flex items-center justify-center mb-4">
-                                <CreateEcosystemOrgModal
-                                    openModal={openModal}
-                                    setOpenModal={setOpenModal}
-                                    setMessage={(value) => {
-                                        setSuccess(value);
-                                        if (isOrgModal && value) {
-                                            setTimeout(() => {
-                                                window.location.reload();
-                                            }, 2000);
-                                        } else {
-                                            getDashboardData();
-                                        }
-                                    }}
-                                    isorgModal={isOrgModal}
-                                />
-                                <EmptyListMessage
-                                    feature={!orgId ? Features.CRETAE_ORG : ''}
-                                    message={'No Ecosystem found'}
-                                    description={`Get started by creating ${!orgId
-                                        ? 'a new Organization to set up your Ecosystem'
-                                        : 'an Ecosystem'
-                                        }`}
-                                    buttonContent={`${!orgId ? '' : 'Create Ecosystem'}`}
-                                    svgComponent={
-                                        <svg
-                                            className="pr-2 mr-1"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="24"
-                                            height="15"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                fill="#fff"
-                                                d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"
-                                            />
-                                        </svg>
-                                    }
-                                    onClick={() => {
-                                        setIsOrgModal(Boolean(!orgId));
-                                        createEcosystemModel();
-                                    }}
-                                />
-                            </div>
-                        </div>
-                    )}
-                </div>
-            )}
-        </div>
-    );
+										</Dropdown>
+									) : (
+										<svg
+											className="ml-4 w-4 h-4 text-gray-800 cursor-pointer dark:text-white"
+											aria-hidden="true"
+											xmlns="http://www.w3.org/2000/svg"
+											fill="currentColor"
+											viewBox="0 0 4 15"
+										>
+											<path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
+										</svg>
+									)}
+								</div>
+							)}
+						</div>
+					</div>
+					<div className="mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+						<div className="grid w-full grid-cols-1 gap-4 mt-0 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2">
+							<DashboardCard
+								icon={memberIcon}
+								backgroundColor="linear-gradient(279deg, #FFF -18.24%, #2F80ED -0.8%, #1F4EAD 61.45%)"
+								label="Member"
+								value={ecosystemDashboard?.membersCount ?? 0}
+							/>
+							<DashboardCard
+								icon={endorseIcon}
+								backgroundColor="linear-gradient(279deg, #FFF -15.85%, #40F683 22.4%, #22C55E 59.86%)"
+								label="Endorsements"
+								value={ecosystemDashboard?.endorsementsCount ?? 0}
+								onClickHandler={() =>
+									(window.location.href = pathRoutes.ecosystem.endorsements)
+								}
+							/>
+						</div>
+					</div>
+					<div>
+						<MemberList />
+					</div>
+					<EditPopupModal
+						openModal={editOpenModal}
+						setOpenModal={setEditOpenModal}
+						setMessage={(value) => {
+							setSuccess(value);
+						}}
+						isOrganization={false}
+						onEditSuccess={handleEditModalClose}
+						entityData={ecosystemDetails}
+					/>
+				</div>
+			) : (
+				<div>
+					{!ecosystemDetails && loading ? (
+						<div className="min-h-100/18rem flex justify-center items-center">
+							<CustomSpinner />
+						</div>
+					) : (
+						<div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+							<div className="flex items-center justify-center mb-4">
+								<CreateEcosystemOrgModal
+									openModal={openModal}
+									setOpenModal={setOpenModal}
+									setMessage={(value) => {
+										setSuccess(value);
+										if (isOrgModal && value) {
+											setTimeout(() => {
+												window.location.reload();
+											}, 2000);
+										} else {
+											getDashboardData();
+										}
+									}}
+									isorgModal={isOrgModal}
+								/>
+								<EmptyListMessage
+									feature={!orgId ? Features.CRETAE_ORG : ''}
+									message={'No Ecosystem found'}
+									description={`Get started by creating ${
+										!orgId
+											? 'a new Organization to set up your Ecosystem'
+											: 'an Ecosystem'
+									}`}
+									buttonContent={`${!orgId ? '' : 'Create Ecosystem'}`}
+									svgComponent={
+										<svg
+											className="pr-2 mr-1"
+											xmlns="http://www.w3.org/2000/svg"
+											width="24"
+											height="15"
+											fill="none"
+											viewBox="0 0 24 24"
+										>
+											<path
+												fill="#fff"
+												d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"
+											/>
+										</svg>
+									}
+									onClick={() => {
+										setIsOrgModal(Boolean(!orgId));
+										createEcosystemModel();
+									}}
+								/>
+							</div>
+						</div>
+					)}
+				</div>
+			)}
+		</div>
+	);
 };
 
 export default Dashboard;
