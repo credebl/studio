@@ -289,36 +289,37 @@ const EcosystemList = () => {
                   </svg>} />)
           }
 
-          <div className={`flex items-center justify-end ${isEcosystemList && "mt-auto"}`}>
-            {
-              isEcosystemList && ecosystemList && ecosystemList?.length > 10 && (
-                <Pagination
-                  currentPage={currentPage.pageNumber}
-                  onPageChange={onPageChange}
-                  totalPages={currentPage.total}
-                />
-              )
-            }
-          </div>
-          <CreateEcosystemOrgModal
-            openModal={openModal}
-            setOpenModal={setOpenModal}
-            setMessage={(value) => {
-              setMessage(value)
-              if (value) {
-                setTimeout(() => {
-                  window.location.reload();
-                }, 2000);
-              } else {
-                fetchEcosystems();
-              }
-            }}
-            isorgModal={false}
-          />
-        </div>
-      </div>
-    </div>
-  )
-}
-
-export default EcosystemList;
+					<div
+						className={`flex items-center justify-end ${
+							isEcosystemList && 'mt-auto'
+						}`}
+					>
+						{isEcosystemList && ecosystemList && ecosystemList?.length > 10 && (
+							<Pagination
+								currentPage={currentPage.pageNumber}
+								onPageChange={onPageChange}
+								totalPages={currentPage.total}
+							/>
+						)}
+					</div>
+					<CreateEcosystemOrgModal
+						openModal={openModal}
+						setOpenModal={setOpenModal}
+						setMessage={(value) => {
+							setMessage(value);
+							if (value) {
+								setTimeout(() => {
+									 window.location.reload();
+								}, 2000);
+							} else {
+								fetchEcosystems();
+							}
+						}}
+						isorgModal={false}
+					/>
+				</div>
+			</div>
+		</div>
+	);
+};
+export default EcosystemList
