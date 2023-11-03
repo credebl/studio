@@ -120,7 +120,7 @@ const EcosystemList = () => {
       <div className="mb-2 col-span-full xl:mb-2">
         <BreadCrumbs />
       </div>
-      <div className='mb-4 flex justify-between'>
+      <div className='mb-2 flex justify-between'>
         <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
           Ecosystems
         </h1>

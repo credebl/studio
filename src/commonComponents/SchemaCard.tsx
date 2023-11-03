@@ -36,13 +36,13 @@ const SchemaCard = (props: IProps) => {
         </div>
       </div>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
+        <p className="truncate text-sm font-regular text-gray-900 dark:text-white pb-2">
           <span className="font-semibold">Schema ID:</span> {props.schemaId}
         </p>
-        <p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
+        <p className="truncate text-sm font-regular text-gray-900 dark:text-white pb-2">
           <span className="font-semibold">Issuer DID:</span> {props.issuerDid}
         </p>
-        <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
+        <p className="truncate text-sm font-regular text-gray-900 dark:text-white">
           <span className="font-semibold">Ledger:</span> {props.issuerDid.split(":")[2]}
         </p>
       </div>
