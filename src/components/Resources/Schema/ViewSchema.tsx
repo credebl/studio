@@ -214,7 +214,7 @@ const ViewSchemas = () => {
   }
 
   return (
-    <div className="px-4 pt-6">
+    <div className="px-4 pt-2">
       <div className="mb-4 col-span-full xl:mb-2">
         <BreadCrumbs />
 
@@ -278,19 +278,19 @@ const ViewSchemas = () => {
                 <div className="">
                   <div>
                     <p className='p-1 dark:text-white break-words'>
-                      Name:  {schemaDetails?.schema?.name}
+                      <span className='font-semibold'>Name: </span>  {schemaDetails?.schema?.name}
                     </p>
                   </div>
                   <div>
                     <p className='p-1 dark:text-white break-words'>
-                      Version: {schemaDetails?.schema?.version}
+                    <span className='font-semibold'>Version: </span>{schemaDetails?.schema?.version}
                     </p>
                   </div>
                   <p className='p-1 dark:text-white break-all'>
-                    Schema ID: {schemaDetails?.schemaId}
+                  <span className='font-semibold'>Schema ID: </span>{schemaDetails?.schemaId}
                   </p>
                   <p className='p-1 dark:text-white break-words'>
-                    Issuer DID: {schemaDetails?.schema?.issuerId}
+                  <span className='font-semibold'>Issuer DID: </span>{schemaDetails?.schema?.issuerId}
                   </p>
                 </div>
                 <div className="flow-root overflow-y-auto">
@@ -368,7 +368,7 @@ const ViewSchemas = () => {
                           }
                         </div>
                       </div>
-
+                      
                       <div className='flex items-center'>
                         {/* <div className="custom-control custom-checkbox d-flex align-items-center pt-4 p-2"> */}
                         {/* <Field type="checkbox" id="Revocable" name="revocable" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" /> */}
@@ -404,21 +404,22 @@ const ViewSchemas = () => {
                           </Alert>
                         </div>
                       }
-                      <div className='float-right py-4'>
+                      <div className=''>
+                      <div className='float-right py-4 px-2'>
                         <Button
                           type="submit"
                           title="Add new credential-definition on ledger"
                           isProcessing={createloader}
                           color='bg-primary-800'
                           disabled={createloader}
-                          className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+                          className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 py-1'
+                          style= {{height:'2.8em'}}
                         >
                           {submitButtonTitle.svg}
                           {submitButtonTitle.title}
                         </Button>
                       </div>
-
-                      <div className='float-right py-4 px-2'>
+                      <div className='float-right py-5 px-2'>
                         <Button
                           type="reset"
                           color='bg-primary-800'
@@ -426,23 +427,22 @@ const ViewSchemas = () => {
                             setCredDefAuto('')
                           }}
                           disabled={createloader}
-                          className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto dark:text-white dark:hover:text-black dark:hover:bg-primary-50'
+                          className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm dark:text-white dark:hover:text-black dark:hover:bg-primary-50'
+                          style= {{height:'2.6rem'}}
 
-                          style={{ height: '2.6rem', width: '6rem', minWidth: '2rem' }}
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" className='mr-2' width="18" height="18" fill="none" viewBox="0 0 20 20">
                             <path fill="#1F4EAD" d="M19.414 9.414a.586.586 0 0 0-.586.586c0 4.868-3.96 8.828-8.828 8.828-4.868 0-8.828-3.96-8.828-8.828 0-4.868 3.96-8.828 8.828-8.828 1.96 0 3.822.635 5.353 1.807l-1.017.18a.586.586 0 1 0 .204 1.153l2.219-.392a.586.586 0 0 0 .484-.577V1.124a.586.586 0 0 0-1.172 0v.928A9.923 9.923 0 0 0 10 0a9.935 9.935 0 0 0-7.071 2.929A9.935 9.935 0 0 0 0 10a9.935 9.935 0 0 0 2.929 7.071A9.935 9.935 0 0 0 10 20a9.935 9.935 0 0 0 7.071-2.929A9.935 9.935 0 0 0 20 10a.586.586 0 0 0-.586-.586Z" />
                           </svg>
-
                           Reset
                         </Button>
+                      </div>
                       </div>
                     </Form>
                   )}
                 </Formik>
               </div>
             </Card >
-
           }
         </div>
       </div>
@@ -503,6 +503,4 @@ const ViewSchemas = () => {
     </div>
   )
 }
-
-
 export default ViewSchemas

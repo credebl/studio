@@ -102,7 +102,7 @@ const ReceivedInvitations = () => {
     }
 
     return (
-        <div className="px-4 pt-6">
+        <div className="px-4 pt-2">
             <div className="pl-6 mb-4 col-span-full xl:mb-2">
 
                 <BreadCrumbs />

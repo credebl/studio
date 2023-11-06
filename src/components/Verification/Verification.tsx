@@ -197,7 +197,7 @@ const VerificationCred = () => {
 
 
 	return (
-		<><div className="px-4 pt-6">
+		<><div className="px-4 pt-2">
 			<div className="mb-4 col-span-full xl:mb-2">
 			<div className="flex justify-between items-center">
 					<BreadCrumbs />

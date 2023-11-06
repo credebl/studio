@@ -5,6 +5,7 @@ export interface IEcosystem {
     logoUrl: string
     joinedDate?: string
     role?: string
+    autoEndorsement:boolean
     ecosystemOrgs?: {
         ecosystemRole: {
             name: string
@@ -18,6 +19,7 @@ export interface Ecosystem {
     createdBy: string
     lastChangedDateTime: string
     lastChangedBy: string
+    autoEndorsement:boolean
     name: string
     description: string
     logoUrl: string
