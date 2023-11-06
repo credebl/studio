@@ -16,6 +16,7 @@ import { ICheckEcosystem, checkEcosystem, getEcosystemId } from '../../../config
 import { createSchemaRequest } from '../../../api/ecosystem';
 import ConfirmModal from '../../../commonComponents/ConfirmPopup';
 import EcosystemProfileCard from '../../../commonComponents/EcosystemProfileCard'
+import React from 'react';
 
 const options = [
     { value: 'string', label: 'String' },
