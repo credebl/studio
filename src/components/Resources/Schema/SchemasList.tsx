@@ -166,7 +166,7 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 	const emptyListDesc = "Get started by creating a new Schema"
 	const emptyListBtn = isEcosystemData?.isEcosystemMember ? { title: "Schema Endorsement", svg: schemaEndorsement } : { title: "Create Schema", svg: create }
 	return (
-		<div className="px-4 pt-6">
+		<div className="px-4 pt-2">
 			<div className="mb-4 col-span-full xl:mb-2">
 				<BreadCrumbs />
 			</div>

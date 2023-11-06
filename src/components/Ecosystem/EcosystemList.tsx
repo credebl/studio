@@ -254,6 +254,7 @@ const EcosystemList = () => {
 								);
 							})}
 						</div>
+						
 					) : (
 						ecosystemList && (
 							<EmptyListMessage
@@ -311,7 +312,7 @@ const EcosystemList = () => {
 				</div>
 			</div>
 		</div>
-	);
-};
 
+)
+}
 export default EcosystemList;
