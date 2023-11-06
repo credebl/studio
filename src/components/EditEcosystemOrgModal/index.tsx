@@ -16,13 +16,15 @@ interface EditEntityModalProps {
     setMessage: (message: string) => void;
     setOpenModal: (flag: boolean) => void;
     onEditSuccess?: () => void;
-    entityData: Organisation | Ecosystem | null;
+    entityData: Ecosystem | null;
     isOrganization: boolean; 
+    
 }
 
 interface EditEntityValues {
     name: string;
     description: string;
+    autoEndorsement: boolean;
 }
 
 interface ILogoImage {
@@ -43,14 +45,17 @@ const EditPopupModal = (props: EditEntityModalProps) => {
     const [initialEntityData, setInitialEntityData] = useState<EditEntityValues>({
         name: "",
         description: "",
+        autoEndorsement: false,
     });
 
     useEffect(() => {
-        if (props.openModal && props.entityData) {
+                if (props.openModal && props.entityData) {
             setInitialEntityData({
                 name: props.entityData.name ?? "",
                 description: props.entityData.description ?? "",
+                autoEndorsement: props.entityData.autoEndorsement ?? false
             });
+            isSetautoEndorse(props.entityData.autoEndorsement)
             setLogoImage({
                 logoFile: "",
                 imagePreviewUrl: props.entityData.logoUrl ?? "",
@@ -61,6 +66,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
 
     const [errMsg, setErrMsg] = useState<string | null>(null);
     const [imgError, setImgError] = useState('');
+    const [isautoEndorse, isSetautoEndorse] = useState(false)
 
 
     useEffect(() => {
@@ -68,6 +74,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
             setInitialEntityData({
                 name: "",
                 description: "",
+                autoEndorsement: false
             });
 
             setLogoImage({
@@ -157,7 +164,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
             name: values.name,
             description: values.description,
             logo: logoImage?.imagePreviewUrl as string || props?.entityData?.logoUrl,
-
+            autoEndorsement:isautoEndorse
         };
 
         try {
@@ -200,6 +207,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
             setInitialEntityData({
                 name: "",
                 description: "",
+               
             });
             props.setOpenModal(false);
         }}>
@@ -341,6 +349,41 @@ const EditPopupModal = (props: EditEntityModalProps) => {
                                     <span className="text-red-500 text-xs">{formikHandlers?.errors?.description}</span>
                                 )}
                             </div>
+                            <div>
+										<Label
+											htmlFor="name"
+											value="Endorsement Transaction Type"
+										/>
+										<label htmlFor="sign" className="block w-fit">
+											<input
+												className=""
+												type="radio"
+												id="sign"
+												name="autoEndorsement"
+                                                checked={isautoEndorse === false}
+                                                onChange={() => isSetautoEndorse(false)}
+											/>
+											<span className="ml-2 text-gray-900 dark:text-white text-sm">
+												Sign
+												
+											</span>
+										</label>
+
+										<label htmlFor="sign-submit" className="block w-fit">
+											<input
+												className=""
+												type="radio"
+												id="sign-submit"
+												name="autoEndorsement"
+                                                checked={isautoEndorse === true}
+                                                onChange={() => isSetautoEndorse(true)}
+											/>
+											<span className="ml-2 text-gray-900 dark:text-white text-sm">
+												Sign and Submit
+												
+											</span>
+										</label>
+									</div>
                             <Button
                                 type="submit"
                                 isProcessing={loading}
