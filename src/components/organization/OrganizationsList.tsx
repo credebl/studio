@@ -121,12 +121,11 @@ const OrganizationsList = () => {
 
 
   return (
-    <div className="px-4 pt-6">
-      <div className="pl-6 mb-4 col-span-full xl:mb-2">
-
+    <div className="px-4 pt-2">
+      <div className="mb-2 col-span-full xl:mb-2">
         <BreadCrumbs />
       </div>
-      <div className='mb-4 flex justify-between'>
+      <div className='mb-2 flex justify-between'>
         <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
           Organizations
         </h1>
