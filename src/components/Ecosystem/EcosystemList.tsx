@@ -23,6 +23,7 @@ import CreateEcosystemOrgModal from '../CreateEcosystemOrgModal';
 import { getEcosystems } from '../../api/ecosystem';
 import type { IEcosystem } from './interfaces';
 import { checkEcosystem, type ICheckEcosystem } from '../../config/ecosystem';
+import React from 'react';
 
 const initialPageState = {
 	pageNumber: 1,
@@ -262,7 +263,7 @@ const EcosystemList = () => {
 																</div>
 															</div>
 															<div>
-																<p>
+																<p className='dark:text-white'>
 																	Auto Endorsement:{' '}
 																	{item.autoEndorsement ? 'Yes' : 'No'}
 																</p>

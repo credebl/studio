@@ -1,7 +1,7 @@
 import * as yup from 'yup';
 
-import { Avatar, Button, Label, Modal } from 'flowbite-react';
-import { Field, Form, Formik, FormikHelpers } from 'formik';
+import { Avatar, Button, Label, Modal, Tooltip } from 'flowbite-react';
+import { Field, Form, Formik, FormikHelpers} from 'formik';
 import {
 	IMG_MAX_HEIGHT,
 	IMG_MAX_WIDTH,
@@ -60,7 +60,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 	const [imgError, setImgError] = useState('');
     const [autoEndorse, setautoEndorse] = useState(false)
 
-	const initialFormData = formData;
+	
 	useEffect(() => {
 		setFormData({
 			name: '',
@@ -261,7 +261,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 					setFormData({
 						name: ' ',
 						description: ' ',
-                        autoEndorsement: false
+						autoEndorsement: false,
 					});
 					props.setOpenModal(false);
 				}}
@@ -277,7 +277,11 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 					/>
 					<Formik
 						initialValues={formData}
-						validationSchema={yup.object().shape(props.isorgModal ? { ...orgErrorMsg } : {...ecoErrorMsg} )}
+						validationSchema={yup
+							.object()
+							.shape(
+								props.isorgModal ? { ...orgErrorMsg } : { ...ecoErrorMsg },
+							)}
 						validateOnBlur
 						validateOnChange
 						enableReinitialize
@@ -420,22 +424,89 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 
 								{!props.isorgModal && (
 									<div>
-										<Label
-											htmlFor="name"
-											value="Endorsement Transaction Type"
-										/>
+										<div className="flex items-center">
+											<Label htmlFor="name" value="Endorsement Flow" />
+											<div className="block dark:hidden">
+												<Tooltip
+													className="shadow-[0_0_12px_12px_rgba(0,0,0,0.1)]"
+													placement='right-end'
+													style="light"
+													content={
+														<img
+															src="images/Endorsement_Infographic_Ligh_Mode.svg"
+															height={500}
+															width={400}
+														/>
+													}
+												>
+													<svg
+														className="ml-2"
+														xmlns="http://www.w3.org/2000/svg"
+														width="12"
+														height="12"
+														fill="none"
+														viewBox="0 0 12 12"
+													>
+														<path
+															fill="#1D4EB5"
+															fill-rule="evenodd"
+															d="M0 6a6 6 0 1 1 12 0A6 6 0 0 1 0 6ZM6 .837a5.163 5.163 0 1 0 0 10.326A5.163 5.163 0 0 0 6 .837Z"
+															clip-rule="evenodd"
+														/>
+														<path
+															fill="#1D4EB5"
+															d="M6 9.21a.419.419 0 0 0 .42-.42V5.443a.419.419 0 0 0-.838 0v3.349c0 .231.187.418.419.418Zm0-6a.558.558 0 1 1 0 1.117.558.558 0 0 1 0-1.116Z"
+														/>
+													</svg>
+												</Tooltip>
+											</div>
+											<div className="hidden dark:block">
+												<Tooltip
+												className="shadow-[0_0_12px_12px_rgba(0,0,0,0.1)] "
+												placement='right-end'
+													style="dark"
+													content={
+														<img
+															src="images/Endorsement_Infographic_Dark_Mode.svg"
+															height={500}
+															width={400}
+														/>
+													}
+												>
+													<svg
+														className="ml-2 dark:text-white"
+														xmlns="http://www.w3.org/2000/svg"
+														width="12"
+														height="12"
+														fill="none"
+														viewBox="0 0 12 12"
+													>
+														<path
+															fill="currentColor"
+															fill-rule="evenodd"
+															d="M0 6a6 6 0 1 1 12 0A6 6 0 0 1 0 6ZM6 .837a5.163 5.163 0 1 0 0 10.326A5.163 5.163 0 0 0 6 .837Z"
+															clip-rule="evenodd"
+														/>
+														<path
+															fill="currentColor"
+															d="M6 9.21a.419.419 0 0 0 .42-.42V5.443a.419.419 0 0 0-.838 0v3.349c0 .231.187.418.419.418Zm0-6a.558.558 0 1 1 0 1.117.558.558 0 0 1 0-1.116Z"
+														/>
+													</svg>
+												</Tooltip>
+											</div>
+										</div>
+
 										<div>
 											<input
 												className=""
 												type="radio"
 												id="autoEndorsement"
 												name="autoEndorsement"
-                                                checked={autoEndorse === false}
-                                                onChange={() => setautoEndorse(false)}
+												checked={autoEndorse === false}
+												onChange={() => setautoEndorse(false)}
 											/>
 											<span className="ml-2 text-gray-900 dark:text-white text-sm">
 												Sign
-												
 											</span>
 										</div>
 
@@ -445,36 +516,62 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 												type="radio"
 												id="autoEndorsement"
 												name="autoEndorsement"
-                                                checked={autoEndorse === true}
-                                                onChange={() => setautoEndorse(true)}
+												checked={autoEndorse === true}
+												onChange={() => setautoEndorse(true)}
 											/>
 											<span className="ml-2 text-gray-900 dark:text-white text-sm">
 												Sign and Submit
-												
 											</span>
 										</div>
 									</div>
 								)}
-								<Button
-									type="submit"
-									isProcessing={loading}
-									className="float-right text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-700 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-								>
-									<svg
-										className="pr-2"
-										xmlns="http://www.w3.org/2000/svg"
-										width="20"
-										height="20"
-										fill="none"
-										viewBox="0 0 24 24"
+								<div className="flex mr-2">
+									<Button
+										type="reset"
+										color="bg-primary-800"
+										className="dark:text-white bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 ml-auto dark:hover:text-black mr-2"
+										style={{
+											height: '2.6rem',
+											width: '6rem',
+											minWidth: '2rem',
+										}}
 									>
-										<path
-											fill="#fff"
-											d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"
-										/>
-									</svg>
-									Create
-								</Button>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											className="mr-2 dark:text-white dark:group-hover:text-primary-700"
+											width="18"
+											height="18"
+											fill="none"
+											viewBox="0 0 20 20"
+										>
+											<path
+												fill="currentColor"
+												d="M19.414 9.414a.586.586 0 0 0-.586.586c0 4.868-3.96 8.828-8.828 8.828-4.868 0-8.828-3.96-8.828-8.828 0-4.868 3.96-8.828 8.828-8.828 1.96 0 3.822.635 5.353 1.807l-1.017.18a.586.586 0 1 0 .204 1.153l2.219-.392a.586.586 0 0 0 .484-.577V1.124a.586.586 0 0 0-1.172 0v.928A9.923 9.923 0 0 0 10 0a9.935 9.935 0 0 0-7.071 2.929A9.935 9.935 0 0 0 0 10a9.935 9.935 0 0 0 2.929 7.071A9.935 9.935 0 0 0 10 20a9.935 9.935 0 0 0 7.071-2.929A9.935 9.935 0 0 0 20 10a.586.586 0 0 0-.586-.586Z"
+											/>
+										</svg>
+										Reset
+									</Button>
+									<Button
+										type="submit"
+										isProcessing={loading}
+										className="float-right text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-700 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+									>
+										<svg
+											className="pr-2"
+											xmlns="http://www.w3.org/2000/svg"
+											width="20"
+											height="20"
+											fill="none"
+											viewBox="0 0 24 24"
+										>
+											<path
+												fill="#fff"
+												d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"
+											/>
+										</svg>
+										Create
+									</Button>
+								</div>
 							</Form>
 						)}
 					</Formik>

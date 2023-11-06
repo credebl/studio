@@ -350,7 +350,7 @@ const Dashboard = () => {
 											<RoleTablet role={ecosystemDetails?.role || ''} />
 										</div>
 									)}
-                                    <div>
+                                    <div className='dark:text-white'>
 									Auto Endorsement:{' '}
 									{ecosystemDetails.autoEndorsement ? 'Yes' : 'No'}
 								
