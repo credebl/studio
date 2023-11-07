@@ -1,8 +1,9 @@
 import type { AstroCookies } from "astro";
 import { getSupabaseClient } from "../supabase";
+import { getFromCookies } from "../api/Auth";
 
 export const checkUserSession = async (cookies: AstroCookies): Promise<boolean> => {
-    const sessionCookie = cookies.get("session").value;
+    const sessionCookie = getFromCookies(cookies, "session");
 
     if (!sessionCookie) {
         return false
