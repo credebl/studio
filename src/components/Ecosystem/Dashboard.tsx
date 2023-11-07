@@ -346,13 +346,13 @@ const Dashboard = () => {
 										</div>
 									) : (
 										<div className="flex items-center">
-											<span className="dark:text-white">Role: </span>{' '}
+											<span className="text-base font-semibold text-gray-900 dark:text-white">Role: </span>{' '}
 											<RoleTablet role={ecosystemDetails?.role || ''} />
 										</div>
 									)}
                                     <div className='dark:text-white'>
-									Auto Endorsement:{' '}
-									{ecosystemDetails.autoEndorsement ? 'Yes' : 'No'}
+									<span className='text-base font-semibold text-gray-900 dark:text-white'>Endorsement Flow:{' '}</span>
+									{ecosystemDetails.autoEndorsement ? 'Sign and Submit' : 'Sign'}
 								
 							</div>
 								</div>

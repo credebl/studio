@@ -235,7 +235,7 @@ const EcosystemList = () => {
 												<CustomAvatar size="80" name={item.name} />
 											)}
 
-											<div className="ml-4 w-full">
+											<div className="ml-4 w-100/6rem line-clamp-4 ">
 												<h5 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
 													{item.name}
 												</h5>
@@ -247,7 +247,7 @@ const EcosystemList = () => {
 														<li className="pt-2 sm:pt-3 overflow-auto">
 															<div className="flex items-center space-x-4">
 																<div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-																	Roles:
+																	Role:
 																	{item?.ecosystemOrgs &&
 																		item?.ecosystemOrgs?.length > 0 &&
 																		item?.ecosystemOrgs[0].ecosystemRole &&
@@ -264,8 +264,8 @@ const EcosystemList = () => {
 															</div>
 															<div>
 																<p className='dark:text-white'>
-																	Auto Endorsement:{' '}
-																	{item.autoEndorsement ? 'Yes' : 'No'}
+																	<span className='text-base font-semibold text-gray-900 dark:text-white'>Endorsement Flow:{' '}</span>
+																	{item.autoEndorsement ? 'Sign and Submit' : 'Sign'}
 																</p>
 															</div>
 														</li>
