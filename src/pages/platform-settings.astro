@@ -1,0 +1,33 @@
+---
+import LayoutStacked from '../app/LayoutStacked.astro';
+import PlatformSetting from '../components/PlatformSetting';
+import { apiRoutes } from '../config/apiRoutes';
+import { envConfig } from '../config/envConfig';
+import { pathRoutes } from '../config/pathRoutes';
+import { checkUserSession } from '../utils/check-session';
+
+const authenticated = await checkUserSession(Astro.cookies);
+const route: string = pathRoutes.auth.sinIn
+if (!authenticated) {
+	return Astro.redirect(route);
+}
+
+const token = Astro.cookies.get('session').value;
+const baseURL = globalThis.baseUrl || envConfig.PUBLIC_BASE_URL
+
+const response = await fetch(
+	`${baseURL}${apiRoutes.users.platformSettings}`,
+	{
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`,
+		},
+	},
+);
+const fetchPlatformAddminSetting = await response.json() || {}
+console.log(65652, fetchPlatformAddminSetting);
+---
+
+<LayoutStacked showOptions={true}>
+	<PlatformSetting data={fetchPlatformAddminSetting} client:visible />
+</LayoutStacked>

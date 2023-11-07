@@ -2,11 +2,14 @@
 import FooterStacked from './FooterStacked.astro';
 import LayoutCommon from './LayoutCommon.astro';
 import NavBarStacked from './NavBarStacked.astro';
-import '../styles/markdown.css'
+import '../styles/markdown.css';
+import NavBarSidebar from './NavBarSidebar.astro';
+
+const { showOptions } = Astro.props;
 ---
 
 <LayoutCommon>
-	<NavBarStacked />
+	{showOptions ? <NavBarSidebar hideOrgAgent={showOptions} /> : <NavBarStacked />}
 
 	<div class="flex pt-16 overflow-hidden bg-gray-50 dark:bg-gray-900">
 		<div
