@@ -1,7 +1,7 @@
 import * as yup from 'yup';
 
 import { Avatar, Button, Label, Modal, Tooltip } from 'flowbite-react';
-import { Field, Form, Formik, FormikHelpers} from 'formik';
+import { Field, Form, Formik, FormikHelpers } from 'formik';
 import {
 	IMG_MAX_HEIGHT,
 	IMG_MAX_WIDTH,
@@ -32,7 +32,7 @@ interface ILogoImage {
 interface EcoValues {
 	name: string;
 	description: string;
-    autoEndorsement: boolean;
+	autoEndorsement: boolean;
 }
 
 interface IProps {
@@ -53,19 +53,18 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 	const [formData, setFormData] = useState({
 		name: '',
 		description: '',
-        autoEndorsement: false
+		autoEndorsement: false,
 	});
 	const [errMsg, setErrMsg] = useState<string | null>(null);
 
 	const [imgError, setImgError] = useState('');
-    const [autoEndorse, setautoEndorse] = useState(false)
+	const [autoEndorse, setautoEndorse] = useState(false);
 
-	
 	useEffect(() => {
 		setFormData({
 			name: '',
 			description: '',
-            autoEndorsement: false
+			autoEndorsement: false,
 		});
 		setLogoImage({
 			...logoImage,
@@ -189,8 +188,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 				userId: Number(user_data?.id),
 				orgName: orgDetails?.orgName,
 				orgDid: orgDetails?.orgDid,
-                autoEndorsement: autoEndorse,
-                
+				autoEndorsement: autoEndorse,
 			};
 			const resCreateEco = await createEcosystems(ecoData);
 
@@ -245,12 +243,12 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 			.min(2, 'Description must be at least 2 characters')
 			.max(255, 'Description must be at most 255 characters')
 			.required('Description is required'),
-            
 	};
 	const renderEcosystemModal = () => {
 		const popupName = props.isorgModal ? 'Organization' : 'Ecosystem';
 		return (
 			<Modal
+				size={!props.isorgModal ? '3xl' : '2xl'}
 				show={props.openModal}
 				onClose={() => {
 					setLogoImage({
@@ -426,16 +424,50 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 									<div>
 										<div className="flex items-center">
 											<Label htmlFor="name" value="Endorsement Flow" />
-											<div className="block dark:hidden">
+											<div className="hidden sm:block dark:hidden">
 												<Tooltip
 													className="shadow-[0_0_12px_12px_rgba(0,0,0,0.1)]"
-													placement='right-end'
+													placement="top-start"
+													style="light"
+													content={
+														
+														<img
+															src="images/Endorsement_Infographic_Ligh_Mode.svg"
+															height={600}
+															width={450}
+														/>	
+													}
+												>
+													<svg
+														className="ml-2"
+														xmlns="http://www.w3.org/2000/svg"
+														width="12"
+														height="12"
+														fill="none"
+														viewBox="0 0 12 12"
+													>
+														<path
+															fill="#1D4EB5"
+															fill-rule="evenodd"
+															d="M0 6a6 6 0 1 1 12 0A6 6 0 0 1 0 6ZM6 .837a5.163 5.163 0 1 0 0 10.326A5.163 5.163 0 0 0 6 .837Z"
+															clip-rule="evenodd"
+														/>
+														<path
+															fill="#1D4EB5"
+															d="M6 9.21a.419.419 0 0 0 .42-.42V5.443a.419.419 0 0 0-.838 0v3.349c0 .231.187.418.419.418Zm0-6a.558.558 0 1 1 0 1.117.558.558 0 0 1 0-1.116Z"
+														/>
+													</svg>
+												</Tooltip>
+											</div> 
+											 <div className="block sm:hidden dark:hidden">
+												<Tooltip
+													className="shadow-[0_0_12px_12px_rgba(0,0,0,0.1)]"
 													style="light"
 													content={
 														<img
 															src="images/Endorsement_Infographic_Ligh_Mode.svg"
-															height={500}
-															width={400}
+															height={600}
+															width={450}
 														/>
 													}
 												>
@@ -462,14 +494,14 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 											</div>
 											<div className="hidden dark:block">
 												<Tooltip
-												className="shadow-[0_0_12px_12px_rgba(0,0,0,0.1)] "
-												placement='right-end'
+													className="shadow-[0_0_12px_12px_rgba(0,0,0,0.1)]"
+													placement="top-start"
 													style="dark"
 													content={
 														<img
 															src="images/Endorsement_Infographic_Dark_Mode.svg"
-															height={500}
-															width={400}
+															height={600}
+															width={450}
 														/>
 													}
 												>
@@ -493,7 +525,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 														/>
 													</svg>
 												</Tooltip>
-											</div>
+											</div> 
 										</div>
 
 										<div>
