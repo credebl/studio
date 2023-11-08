@@ -30,7 +30,8 @@ import { pathRoutes } from '../../config/pathRoutes';
 import type { EcosystemDashboard } from '../organization/interfaces';
 import { dateConversion } from '../../utils/DateConversion';
 import DateTooltip from '../Tooltip';
-import DashboardCard from '../../commonComponents/DashboardCard'
+import DashboardCard from '../../commonComponents/DashboardCard';
+import React from 'react';
 
 interface IRoleTablet {
 	role: string;
@@ -332,7 +333,7 @@ const Dashboard = () => {
 													{leadOrg}
 												</span>
 											</div>
-											<div className="flex">
+											<div className="flex text-md font-semibold">
 												<span className="text-[#3D3D3D] dark:text-white min-w-[10rem]">
 													Joined since
 												</span>{' '}
@@ -350,11 +351,15 @@ const Dashboard = () => {
 											<RoleTablet role={ecosystemDetails?.role || ''} />
 										</div>
 									)}
-                                    <div className='dark:text-white'>
-									<span className='text-base font-semibold text-gray-900 dark:text-white'>Endorsement Flow:{' '}</span>
-									{ecosystemDetails.autoEndorsement ? 'Sign and Submit' : 'Sign'}
-								
-							</div>
+							<div className="flex text-md font-semibold ">
+												<span className="text-[#3D3D3D] dark:text-white min-w-[10rem]">
+												Endorsement Flow
+												</span>{' '}
+												<span className="dark:text-white">:</span>
+												<span className="text-[#5E5972] dark:text-white ml-2">
+												{ecosystemDetails.autoEndorsement ? '  Sign and Submit' : '  Sign'}
+												</span>
+											</div>
 								</div>
 							) : (
 								<CustomSpinner />
