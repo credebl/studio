@@ -198,44 +198,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
             setLoading(false);
         }
     };
-	const tooltipData = [
-		{
-			outerClass: 'hidden sm:block dark:hidden',
-			placement: 'top-start',
-			style: 'light',
-			content: (
-				<img
-					src="/images/Endorsement_Infographic_Ligh_Mode.svg"
-					height={600}
-					width={450}
-				/>
-			),
-		},
-		{
-			outerClass: 'block sm:hidden dark:hidden',
-			placement: '',
-			style: 'light',
-			content: (
-				<img
-					src="/images/Endorsement_Infographic_Ligh_Mode.svg"
-					height={600}
-					width={450}
-				/>
-			),
-		},
-		{
-			outerClass: 'hidden dark:block',
-			placement: 'top-start',
-			style: 'dark',
-			content: (
-				<img
-					src="/images/Endorsement_Infographic_Dark_Mode.svg"
-					height={600}
-					width={450}
-				/>
-			),
-		},
-	];
+	
     return (
 			<Modal
 			size={'3xl'}
