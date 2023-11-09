@@ -10,6 +10,7 @@ import CustomSpinner from '../CustomSpinner';
 import CustomAvatar from '../Avatar';
 import { EmptyListMessage } from '../EmptyListComponent';
 import { AlertComponent } from '../AlertComponent';
+import PublicNavbar from '../../commonComponents/PublicNavbar';
 
 const OrganisationPublicProfile = () => {
 	const initialPageState = {
@@ -86,7 +87,7 @@ const OrganisationPublicProfile = () => {
 					setError(null);
 				}}
 			/>
-			<div className="flex items-center justify-between mb-4 p-2 pl-0">
+			<div className="flex items-center justify-end mb-4 p-2 pl-0">
 				<SearchInput onInputChange={searchInputChange} />
 			</div>
 
@@ -96,7 +97,7 @@ const OrganisationPublicProfile = () => {
 						<CustomSpinner />
 					</div>
 				) : organizationsList && organizationsList?.length > 0 ? (
-					<div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2">
+					<div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-3">
 						{organizationsList?.map(
 							(org: {
 								logoUrl: string;
@@ -106,6 +107,7 @@ const OrganisationPublicProfile = () => {
 								orgSlug: string;
 							}) => (
 								<Card
+								key={org.orgSlug}
 									onClick={() => {
 										window.location.href = `/org/${org?.orgSlug}`;
 									}}
@@ -118,15 +120,15 @@ const OrganisationPublicProfile = () => {
 											<CustomAvatar size="80" name={org?.name} />
 										)}
 
-										<div className="ml-4">
-											<h5 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+										<div className="ml-4 line-clamp-4">
+											<h5 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white truncate">
 												<p>{org?.name}</p>
 											</h5>
-											<div className="flow-root h-auto">
+											<div className="flow-root h-auto ">
 												<ul className="divide-y divide-gray-200 dark:divide-gray-700">
 													<li className="py-3 sm:py-4 overflow-auto">
 														<div className="flex items-center space-x-4">
-															<div className="inline-flex items-center text-base text-lg text-gray-900 dark:text-white">
+															<div className="inline-flex tracking-tight items-center text-base text-lg text-gray-900 dark:text-white truncate">
 																{org?.description}
 															</div>
 														</div>
@@ -140,6 +142,7 @@ const OrganisationPublicProfile = () => {
 						)}
 					</div>
 				) : (
+					
 					<div className="flex justify-center items-center">
 					{organizationsList && (
 						<div className="flex justify-center items-center">
@@ -152,7 +155,7 @@ const OrganisationPublicProfile = () => {
 					</div>
 				)}
 
-				<div className="flex items-center justify-end mb-4">
+				<div className="flex items-center justify-end mb-4 flex-grow">
 					{organizationsList && organizationsList?.length > 0 && (
 						<Pagination
 							currentPage={currentPage?.pageNumber}
