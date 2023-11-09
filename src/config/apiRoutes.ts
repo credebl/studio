@@ -49,7 +49,9 @@ export const apiRoutes = {
 		getAllConnections: '/connections',
 		issueCredential: '/credentials/offer',
 		bulk:{
-			credefList:'/bulk/cred-defs'
+			credefList:'/bulk/cred-defs',
+			uploadCsv: '/bulk/upload',
+			preview: '/preview'
 		},
 		download:'/download'
 	},

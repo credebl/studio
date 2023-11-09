@@ -12,3 +12,16 @@ export const getHeaderConfigs = async () => {
     }
 
 }
+
+
+export const getHeaderConfigsForFormData = async () => {
+	const token = await getFromLocalStorage(storageKeys.TOKEN)
+
+	return {
+			headers: {
+				"Content-Type": "multipart/form-data",
+					Authorization: `Bearer ${token}`
+			}
+	}
+
+}
