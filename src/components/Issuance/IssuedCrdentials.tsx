@@ -21,6 +21,7 @@ import { dateConversion } from '../../utils/DateConversion';
 import { getIssuedCredentials } from '../../api/issuance';
 import { pathRoutes } from '../../config/pathRoutes';
 import { getFromLocalStorage } from '../../api/Auth';
+import { getOrgDetails } from '../../config/ecosystem'
 
 interface IssuedCredential {
 	metadata: { [x: string]: { schemaId: string } };
@@ -34,11 +35,15 @@ const CredentialList = () => {
 	const [error, setError] = useState<string | null>(null);
 	const [searchText, setSearchText] = useState('');
 	const [issuedCredList, setIssuedCredList] = useState<TableData[]>([]);
+	const [walletCreated, setWalletCreated] = useState(false)
 
 	const getIssuedCredDefs = async () => {
 		setLoading(true)
+		const orgData = await getOrgDetails()
+		const isWalletCreated = Boolean(orgData.orgDid)
+		setWalletCreated(isWalletCreated)
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-		if (orgId) {
+		if (orgId && isWalletCreated) {
 			const response = await getIssuedCredentials();
 
 			const { data } = response as AxiosResponse;
@@ -141,19 +146,17 @@ const CredentialList = () => {
 	]
 
 	return (
-		<div className="px-4 pt-6">
+		<div className="px-4 pt-2">
 			<div className="mb-4 col-span-full xl:mb-2">
 				<BreadCrumbs />
+			</div>
+			<div className='mb-4 flex justify-between'>
 				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 					Credentials
 				</h1>
-			</div>
-
-			<div>
-				<div
-					className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-					<div className="flex items-center justify-end mb-4">
-
+				<div>
+					{
+						walletCreated &&
 						<RoleViewButton
 							buttonTitle='Issue'
 							feature={Features.ISSUENCE}
@@ -165,8 +168,12 @@ const CredentialList = () => {
 							}
 							onClickEvent={schemeSelection}
 						/>
-
-					</div>
+					}
+				</div>
+			</div>
+			<div>
+				<div
+					className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 					<AlertComponent
 						message={error}
 						type={'failure'}
@@ -174,28 +181,43 @@ const CredentialList = () => {
 							setError(null)
 						}}
 					/>
-					{loading ? (
-						<div className="flex items-center justify-center mb-4">
-							<CustomSpinner />
-						</div>
-					) : issuedCredList && issuedCredList.length > 0 ? (
-						<div
-							className="Flex-wrap"
-							style={{ display: 'flex', flexDirection: 'column' }}
-						>
-							<div className="">
-								{issuedCredList && issuedCredList.length > 0 &&
-									<DataTable header={header} data={issuedCredList} loading={loading}></DataTable>
+					{
+						!walletCreated && !loading ?
+							<div className="flex justify-center items-center">
+								<EmptyListMessage
+									message={'No Wallet Details Found'}
+									description={'The owner is required to create a wallet'}
+									buttonContent={''}
+								/>
+							</div>
+							:
+							<div>
+								{
+									loading ? (
+										<div className="flex items-center justify-center mb-4">
+											<CustomSpinner />
+										</div>
+									) : issuedCredList && issuedCredList.length > 0 ? (
+										<div
+											className="Flex-wrap"
+											style={{ display: 'flex', flexDirection: 'column' }}
+										>
+											<div className="">
+												{issuedCredList && issuedCredList.length > 0 &&
+													<DataTable header={header} data={issuedCredList} loading={loading}></DataTable>
+												}
+											</div>
+										</div>
+									) : (
+										<div>
+											<span className="dark:text-white block text-center p-4 m-8">
+												There isn't any data available.
+											</span>
+										</div>
+									)
 								}
 							</div>
-						</div>
-					) : (
-						<div>
-							<span className="dark:text-white block text-center p-4 m-8">
-								There isn't any data available.
-							</span>
-						</div>
-					)}
+					}
 				</div>
 			</div>
 		</div>

@@ -2,19 +2,15 @@
 import LayoutSidebar from '../../app/LayoutSidebar.astro';
 import { checkUserSession } from '../../utils/check-session';
 import { pathRoutes } from '../../config/pathRoutes';
-import SentInvitations from '../../components/EcosystemInvite/SentInvitations'
+import SentInvitations from '../../components/EcosystemInvite/SentInvitations';
 
 const response = await checkUserSession(Astro.cookies);
-const route = pathRoutes.auth.sinIn
+const route = pathRoutes.auth.sinIn;
 if (!response) {
 	return Astro.redirect(route);
 }
 ---
 
 <LayoutSidebar>
-	<SentInvitations client:visible/>
+	<SentInvitations client:visible />
 </LayoutSidebar>
-
-
-
-

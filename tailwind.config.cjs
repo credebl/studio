@@ -100,6 +100,7 @@ module.exports = {
 			textDecoration: ['active'],
 			width: {
 				'100/22rem': 'calc(100% - 22rem)',
+				'100/6rem': 'calc(100% - 6rem)',
 			},
 			minWidth: {
 				kanban: '28rem',
@@ -108,7 +109,7 @@ module.exports = {
 				'100/6rem': 'calc(100% - 6rem)',
 				'100/13rem': 'calc(100% - 13rem)',
 				'100/10rem': 'calc(100% - 10rem)',
-				'100/8rem': 'calc(100% - 8rem)'
+				'100/8rem': 'calc(100% - 8rem)',
 			},
 			minHeight: {
 				'100/18rem': 'calc(100vh - 18rem)',
@@ -121,37 +122,38 @@ module.exports = {
 				103: '1.03',
 			},
 		},
+		
+
+		safelist: [
+			// In Markdown (README…)
+			'justify-evenly',
+			'overflow-hidden',
+			'rounded-md',
+
+			// From the Hugo Dashboard
+			'w-64',
+			'w-1/2',
+			'rounded-l-lg',
+			'rounded-r-lg',
+			'bg-gray-200',
+			'grid-cols-4',
+			'grid-cols-7',
+			'h-6',
+			'leading-6',
+			'h-9',
+			'leading-9',
+			'shadow-lg',
+			'bg-opacity-50',
+			'dark:bg-opacity-80',
+
+			// For Astro one
+			'grid',
+		],
+
+		plugins: [
+			require('flowbite/plugin'),
+			require('flowbite-typography'),
+			require('tailwind-scrollbar')({ nocompatible: true }),
+		],
 	},
-
-	safelist: [
-		// In Markdown (README…)
-		'justify-evenly',
-		'overflow-hidden',
-		'rounded-md',
-
-		// From the Hugo Dashboard
-		'w-64',
-		'w-1/2',
-		'rounded-l-lg',
-		'rounded-r-lg',
-		'bg-gray-200',
-		'grid-cols-4',
-		'grid-cols-7',
-		'h-6',
-		'leading-6',
-		'h-9',
-		'leading-9',
-		'shadow-lg',
-		'bg-opacity-50',
-		'dark:bg-opacity-80',
-
-		// For Astro one
-		'grid',
-	],
-
-	plugins: [
-		require('flowbite/plugin'),
-		require('flowbite-typography'),
-		require('tailwind-scrollbar')({ nocompatible: true }),
-	],
 };

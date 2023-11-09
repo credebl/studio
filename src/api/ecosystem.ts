@@ -11,6 +11,7 @@ interface CreateEcosystemPayload {
 	logo: string;
 	tags?: string;
 	userId: number;
+	autoEndorsement: boolean;
 }
 
 export interface GetEndorsementListParameter {
@@ -62,9 +63,8 @@ export const updateEcosystem = async (dataPayload: CreateEcosystemPayload) => {
 	}
 };
 
-export const getEcosystem = async (orgId: string) => {
+export const getEcosystems = async (orgId: string, pageNumber?: number, pageSize?: number, search = '') => {
 	const url = `${apiRoutes.Ecosystem.root}/${orgId}`;
-
 	const axiosPayload = {
 		url,
 		config: await getHeaderConfigs(),

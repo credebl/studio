@@ -9,6 +9,7 @@ export const pathRoutes = {
         profile: '/profile',
         invitations: '/invitations',
         fetchUsers: '/users',
+				connectionList: '/connections'
     },
     organizations: {
         root: '/organizations',
@@ -34,11 +35,11 @@ export const pathRoutes = {
         },
     },
     ecosystem: {
-        root: '/ecosystem',
-        profile: "/ecosystem/profile",
-        endorsements: "/ecosystem/endorsement",
-        invitation:"/ecosystem/invitation",
-				sentinvitation:'/ecosystem/invitations'
+        root: '/ecosystems',
+        dashboard: "/ecosystems/dashboard",
+        endorsements: "/ecosystems/endorsement",
+        invitation:"/ecosystems/invitation",
+				sentinvitation:'/ecosystems/invitations'
     },
     documentation: {
         root: 'https://docs.credebl.id'
