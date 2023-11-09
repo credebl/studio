@@ -163,7 +163,7 @@ const SignInUser = () => {
 												</h2>
 
 												<p className="text-gray-500 font-inter text-base font-medium leading-5 mt-2">
-													Enter your Email to login
+													Enter your email to login
 												</p>
 											</div>
 										</div>
