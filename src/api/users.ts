@@ -9,7 +9,7 @@ export interface IPlatformSetting {
 	lastInternalId: string;
 	sgApiKey: string;
 	emailFrom: string;
-	apiEndpoint: string;
+	apiEndPoint: string;
 	enableEcosystem: boolean;
 	multiEcosystemSupport: boolean;
 }
