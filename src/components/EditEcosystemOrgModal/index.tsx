@@ -7,17 +7,18 @@ import { AlertComponent } from "../AlertComponent";
 import type { AxiosResponse } from 'axios';
 import { updateOrganization } from "../../api/organization";
 import { updateEcosystem } from "../../api/ecosystem";
-import type { Organisation } from "../organization/interfaces";
 import type { Ecosystem } from "../Ecosystem/interfaces";
 import React, { useEffect, useState } from "react";
+import EndorsementTooltip from "../../commonComponents/EndorsementTooltip";
 
 interface EditEntityModalProps {
     openModal: boolean;
     setMessage: (message: string) => void;
     setOpenModal: (flag: boolean) => void;
     onEditSuccess?: () => void;
-    entityData: Organisation | Ecosystem | null;
+    entityData: Ecosystem | null;
     isOrganization: boolean; 
+    
 }
 
 interface EditEntityValues {
@@ -42,15 +43,16 @@ const EditPopupModal = (props: EditEntityModalProps) => {
     const [isImageEmpty, setIsImageEmpty] = useState(true);
     const [initialEntityData, setInitialEntityData] = useState<EditEntityValues>({
         name: "",
-        description: "",
+        description: ""
     });
 
     useEffect(() => {
-        if (props.openModal && props.entityData) {
+                if (props.openModal && props.entityData) {
             setInitialEntityData({
                 name: props.entityData.name ?? "",
                 description: props.entityData.description ?? "",
             });
+            SetisAutoEndorse(props.entityData.autoEndorsement)
             setLogoImage({
                 logoFile: "",
                 imagePreviewUrl: props.entityData.logoUrl ?? "",
@@ -61,6 +63,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
 
     const [errMsg, setErrMsg] = useState<string | null>(null);
     const [imgError, setImgError] = useState('');
+    const [isAutoEndorse, SetisAutoEndorse] = useState(false)
 
 
     useEffect(() => {
@@ -157,7 +160,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
             name: values.name,
             description: values.description,
             logo: logoImage?.imagePreviewUrl as string || props?.entityData?.logoUrl,
-
+            autoEndorsement:isAutoEndorse
         };
 
         try {
@@ -191,7 +194,9 @@ const EditPopupModal = (props: EditEntityModalProps) => {
         }
     };
     return (
-        <Modal show={props.openModal} onClose={() => {
+        <Modal 
+		size={'3xl'}
+		show={props.openModal} onClose={() => {
             setLogoImage({
                 logoFile: "",
                 imagePreviewUrl: "",
@@ -199,7 +204,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
             });
             setInitialEntityData({
                 name: "",
-                description: "",
+                description: ""               
             });
             props.setOpenModal(false);
         }}>
@@ -244,7 +249,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
                                 {logoImage.imagePreviewUrl ? (
                                         <img
                                             className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
-                                            src={logoImage.imagePreviewUrl}
+                                            src={logoImage?.imagePreviewUrl || ""}
                                             alt={`${props.isOrganization ? "Organization" : "Ecosystem"} Logo`}
                                         />
                                     ) : (
@@ -341,6 +346,41 @@ const EditPopupModal = (props: EditEntityModalProps) => {
                                     <span className="text-red-500 text-xs">{formikHandlers?.errors?.description}</span>
                                 )}
                             </div>
+                            <div>
+							<div className="flex items-center">
+											<Label htmlFor="name" value="Endorsement Flow" />
+											<EndorsementTooltip />
+										</div>
+                                               <div>
+                                             <input
+												className=""
+												type="radio"
+												id="sign"
+												name="autoEndorsement"
+                                                checked={isAutoEndorse === false}
+                                                onChange={() => SetisAutoEndorse(false)}
+											/>
+											<span className="ml-2 text-gray-900 dark:text-white text-sm">
+												Sign
+												
+											</span>
+                                           </div>
+										<div>
+										<input
+												className=""
+												type="radio"
+												id="sign-submit"
+												name="autoEndorsement"
+                                                checked={isAutoEndorse === true}
+                                                onChange={() => SetisAutoEndorse(true)}
+											/>
+											<span className="ml-2 text-gray-900 dark:text-white text-sm">
+												Sign and Submit
+												
+											</span>
+											</div>	
+									
+									</div>
                             <Button
                                 type="submit"
                                 isProcessing={loading}
