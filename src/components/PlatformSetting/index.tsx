@@ -9,6 +9,7 @@ import { updatePlatformSettings, type IPlatformSetting, getPlatformSettings } fr
 import type { AxiosResponse } from 'axios';
 import { apiStatusCodes } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent'
+import React from 'react';
 
 interface IForm {
     externalIp: string;
@@ -29,9 +30,9 @@ const getConfigKeys = (data: AxiosResponse) => {
     const ecosystemConfig = data?.data?.ecosystem_config && data?.data?.ecosystem_config.length > 0 && data?.data?.ecosystem_config
     const enableEcosystem = ecosystemConfig?.find((item: { key: string; }) => item.key === "enableEcosystem").value === "true"
     const multiEcosystemSupport = ecosystemConfig?.find((item: { key: string; }) => item.key === "multiEcosystemSupport").value === "true"
-    const { externalIp, lastInternalId, sgApiKey, emailFrom, apiEndPoint } = platformConfig || {}
+    const { externalIp, lastInternalId, sgApiKey, emailFrom, apiEndpoint } = platformConfig || {}
     return {
-        externalIp, lastInternalId, sgApiKey, emailFrom, apiEndPoint, enableEcosystem, multiEcosystemSupport
+        externalIp, lastInternalId, sgApiKey, emailFrom, apiEndPoint: apiEndpoint, enableEcosystem, multiEcosystemSupport
     }
 }
 
