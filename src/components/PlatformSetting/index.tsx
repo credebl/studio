@@ -1,54 +1,141 @@
 'use client';
 
-import React, { useState } from 'react'
+import { useEffect, useState } from 'react'
 import * as yup from 'yup'
 import { Field, Form, Formik } from 'formik'
 import { Button, Label } from "flowbite-react"
 import Toggle from '../../commonComponents/Toggle'
-import type { IPlatformSetting } from '../../api/users';
+import { updatePlatformSettings, type IPlatformSetting, getPlatformSettings } from '../../api/users';
+import type { AxiosResponse } from 'axios';
+import { apiStatusCodes } from '../../config/CommonConstant';
+import { AlertComponent } from '../AlertComponent'
+import React from 'react';
 
 interface IForm {
     externalIp: string;
     sgApiKey: string;
-    apiEndPoint: string;
+    apiEndpoint: string;
     emailFrom: string;
     enableEcosystem: boolean;
     multiEcosystemSupport: boolean;
 }
 
-const PlatformSetting = ({data}: any) => {
-    const initFormData = {
-        externalIp: "",
-        sgApiKey: "",
-        apiEndPoint: "",
-        emailFrom: "",
-        lastInternalId: "",
-        enableEcosystem: false,
-        multiEcosystemSupport: true
+interface IMessage {
+    type: "success" | "failure",
+    message: string
+}
+
+const getConfigKeys = (data: AxiosResponse) => {
+    const platformConfig = data?.data?.platform_config && data?.data?.platform_config.length > 0 && data?.data?.platform_config[0]
+    const ecosystemConfig = data?.data?.ecosystem_config && data?.data?.ecosystem_config.length > 0 && data?.data?.ecosystem_config
+    const enableEcosystem = ecosystemConfig?.find((item: { key: string; }) => item.key === "enableEcosystem").value === "true"
+    const multiEcosystemSupport = ecosystemConfig?.find((item: { key: string; }) => item.key === "multiEcosystemSupport").value === "true"
+    const { externalIp, lastInternalId, sgApiKey, emailFrom, apiEndpoint } = platformConfig || {}
+    return {
+        externalIp, lastInternalId, sgApiKey, emailFrom, apiEndpoint, enableEcosystem, multiEcosystemSupport
+    }
+}
+
+const PlatformSetting = ({ data }: any) => {
+    const { externalIp, lastInternalId, sgApiKey, emailFrom, apiEndpoint, enableEcosystem, multiEcosystemSupport } = getConfigKeys(data)
+    const initFormData: IPlatformSetting = {
+        externalIp: externalIp || "",
+        sgApiKey: sgApiKey || "",
+        apiEndpoint: apiEndpoint || "",
+        emailFrom: emailFrom || "",
+        lastInternalId: lastInternalId || "",
+        enableEcosystem: enableEcosystem || false,
+        multiEcosystemSupport: multiEcosystemSupport || false
     }
     const [formData, setFormData] = useState(initFormData)
-    // const [switch1, setSwitch1] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const [message, setMessage] = useState<IMessage>({
+        type: "success",
+        message: ""
+    })
 
-    const updateSettings = (values: IPlatformSetting) => {
-        const { externalIp, lastInternalId, sgApiKey, emailFrom, apiEndPoint, enableEcosystem, multiEcosystemSupport } = values || {}
-        const payload = {
-            externalIp,
-            lastInternalId,
-            sgApiKey,
-            emailFrom,
-            apiEndPoint,
-            enableEcosystem,
-            multiEcosystemSupport
+    const setAlertMessage = ({ message, type }) => {
+        setMessage({
+            message,
+            type
+        })
+
+        if (type === "success") {
+            setTimeout(() => {
+                setMessage({
+                    message: "",
+                    type: "success"
+                })
+            }, 5000);
         }
-
-        console.log(6565, payload)
     }
 
-    console.log(3434, formData)
+    const fetchSettings = async () => {
+        try {
+            const { data } = await getPlatformSettings() as AxiosResponse
+            const { externalIp, lastInternalId, sgApiKey, emailFrom, apiEndpoint, enableEcosystem, multiEcosystemSupport } = getConfigKeys(data)
+            setFormData({
+                externalIp,
+                sgApiKey,
+                apiEndpoint,
+                emailFrom,
+                lastInternalId,
+                enableEcosystem,
+                multiEcosystemSupport
+            })
+        } catch (err) {
+            setAlertMessage({
+                message: err.message,
+                type: "failure"
+            })
+        }
+    }
+
+    const updateSettings = async (values: IPlatformSetting) => {
+        setLoading(true)
+        try {
+            const { externalIp, lastInternalId, sgApiKey, emailFrom, apiEndpoint, enableEcosystem, multiEcosystemSupport } = values || {}
+            const payload = {
+                externalIp,
+                lastInternalId,
+                sgApiKey,
+                emailFrom,
+                apiEndpoint,
+                enableEcosystem,
+                multiEcosystemSupport
+            }
+            const response = await updatePlatformSettings(payload)
+            const { data } = response as AxiosResponse
+            setLoading(false)
+            if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+                setAlertMessage({
+                    type: "success",
+                    message: data?.message
+                })
+            } else {
+                setAlertMessage({
+                    type: "failure",
+                    message: response as string
+                })
+            }
+        } catch (err) {
+            setLoading(false)
+            setAlertMessage({
+                type: "failure",
+                message: err?.message
+            })
+            console.error("ERROR-UPDATE-CONFIG", err)
+        }
+    }
+
+    useEffect(() => {
+        fetchSettings()
+    }, [])
+
     return (
         <div className='py-4 px-4 mx-auto max-w-screen-xl text-start lg:py-8 lg:px-12'>
             <div className='mb-5'>
-                <h1 className='text-xl font-semibold text-primary-700'>Platform Configuration</h1>
+                <h1 className='class="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white"'>Platform Configuration</h1>
                 <p className='text-xs font-normal'>You can configure entire platform settings from here</p>
             </div>
             <hr />
@@ -70,7 +157,7 @@ const PlatformSetting = ({data}: any) => {
                         .string()
                         .required('SendGrid Key is required')
                         .trim(),
-                    apiEndPoint: yup
+                    apiEndpoint: yup
                         .string()
                         .required('API Endpoint is required')
                         .trim(),
@@ -158,20 +245,20 @@ const PlatformSetting = ({data}: any) => {
                             </div>
                             <div className='max-w-[420px] mb-4'>
                                 <div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                    <Label htmlFor="apiEndPoint" value="API Endpoint" className='text-base' />
+                                    <Label htmlFor="apiEndpoint" value="API Endpoint" className='text-base' />
                                     <span className='text-red-500 text-xs'>*</span>
                                     <p className='text-xs font-normal'>Enter Platform domain (URL) name</p>
                                 </div>
                                 <Field
-                                    id="apiEndPoint"
-                                    name="apiEndPoint"
+                                    id="apiEndpoint"
+                                    name="apiEndpoint"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                     type="text"
                                     placeholder="Ex. www.example.com"
                                 />
                                 {
-                                    (formikHandlers?.errors?.apiEndPoint && formikHandlers?.touched?.apiEndPoint) &&
-                                    <span className="text-red-500 text-xs">{formikHandlers?.errors?.apiEndPoint}</span>
+                                    (formikHandlers?.errors?.apiEndpoint && formikHandlers?.touched?.apiEndpoint) &&
+                                    <span className="text-red-500 text-xs">{formikHandlers?.errors?.apiEndpoint}</span>
                                 }
                             </div>
                             <div className='max-w-[420px]'>
@@ -213,6 +300,20 @@ const PlatformSetting = ({data}: any) => {
                                 <Toggle id="multiEcosystemSupport" name="multiEcosystemSupport" label={""} checked={formikHandlers.values.multiEcosystemSupport} onChangeHandle={(e) => formikHandlers.handleChange(e)} />
                             </div>
                         </div>
+                        {
+                            message.message &&
+                            <AlertComponent
+                                message={message.message}
+                                type={message.type}
+                                viewButton={false}
+                                onAlertClose={() => {
+                                    setMessage({
+                                        type: "success",
+                                        message: ""
+                                    });
+                                }}
+                            />
+                        }
 
                         <div className="flex justify-end items-center space-x-4 mb-4">
                             <Button
@@ -231,6 +332,8 @@ const PlatformSetting = ({data}: any) => {
                             <Button
                                 type="submit"
                                 className="text-base p-0 font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                                disabled={loading}
+                                isProcessing={loading}
                             >
                                 <div className='pr-2'>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="27" height="24" viewBox="0 0 27 18" className='text-white'>

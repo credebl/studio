@@ -4,6 +4,7 @@ import { apiRoutes } from '../config/apiRoutes'
 import { envConfig } from '../config/envConfig'
 import { storageKeys } from '../config/CommonConstant'
 import type { AddPassword } from '../components/Profile/interfaces'
+import type { AstroCookies } from 'astro'
 
 export interface UserSignUpData {
     email: string,
@@ -195,6 +196,21 @@ export const setToLocalStorage = async (key: string, value: any) =>{
 export const getFromLocalStorage = async (key: string) =>{
     const value = await localStorage.getItem(key)
     const convertedValue = value ? await decryptData(value) : ''
+    return convertedValue
+}
+
+export const setToCookies = (cookies: AstroCookies, key: string, value: any, option: {}) =>{
+    if(!value.trim()){
+        return
+    }
+    const convertedValue = encryptData(value)
+    cookies.set(key, convertedValue as string, option)
+    return true
+}
+
+export const getFromCookies = (cookies: AstroCookies, key: string) =>{
+    const value = cookies.get(key).value
+    const convertedValue = value ? decryptData(value) : ''
     return convertedValue
 }
 

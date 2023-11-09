@@ -9,7 +9,7 @@ export interface IPlatformSetting {
 	lastInternalId: string;
 	sgApiKey: string;
 	emailFrom: string;
-	apiEndPoint: string;
+	apiEndpoint: string;
 	enableEcosystem: boolean;
 	multiEcosystemSupport: boolean;
 }
@@ -30,20 +30,12 @@ export const getUserActivity = async (limit: number) => {
 	}
 };
 
-export const getPlatformSettings = async (token: string) => {
+export const getPlatformSettings = async () => {
 	const url = `${apiRoutes.users.platformSettings}`;
-	console.log(65658, token)
 	const axiosPayload = {
 		url,
-		config: {
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${token}`
-			}
-		},
+		config: await getHeaderConfigs()
 	};
-
-	console.log(6565, axiosPayload)
 
 	try {
 		return await axiosGet(axiosPayload);
@@ -54,7 +46,7 @@ export const getPlatformSettings = async (token: string) => {
 };
 
 export const updatePlatformSettings = async (payload: IPlatformSetting) => {
-	const url = `${apiRoutes.users.platformSettings}-check`;
+	const url = `${apiRoutes.users.platformSettings}`;
 	const axiosPayload = {
 		url,
 		config: await getHeaderConfigs(),
