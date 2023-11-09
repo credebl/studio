@@ -40,8 +40,8 @@ interface IFormData {
 
 const CreateSchema = () => {
     const [failure, setFailure] = useState<string | null>(null);
-    const [orgId, setOrgId] = useState<string>('');
-    const [createloader, setCreateLoader] = useState<boolean>(false);
+    const [orgId, setOrgId] = useState<number>(0);
+    const [createLoader, setCreateLoader] = useState<boolean>(false);
     const [showPopup, setShowPopup] = useState(false)
     const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 
@@ -81,7 +81,7 @@ const CreateSchema = () => {
             schemaName: values.schemaName,
             schemaVersion: values.schemaVersion,
             attributes: values.attribute,
-            orgId: orgId,
+            orgId,
         };
 
         const createSchema = await addSchema(schemaFieldName, String(orgId));
@@ -579,7 +579,7 @@ const CreateSchema = () => {
                                         <Button
                                             type="reset"
                                             color='bg-primary-800'
-                                            disabled={createloader}
+                                            disabled={createLoader}
                                             className='dark:text-white bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 ml-auto dark:hover:text-black'
 
                                             style={{ height: '2.6rem', width: '6rem', minWidth: '2rem' }}
@@ -592,7 +592,7 @@ const CreateSchema = () => {
                                         </Button>
                                     </div>
 
-                                    <ConfirmModal openModal={showPopup} closeModal={() => setShowPopup(false)} onSuccess={confirmCreateSchema} message={"Would you like to proceed? Keep in mind that this action cannot be undone."} isProcessing={createloader} />
+                                    <ConfirmModal openModal={showPopup} closeModal={() => setShowPopup(false)} onSuccess={confirmCreateSchema} message={"Would you like to proceed? Keep in mind that this action cannot be undone."} isProcessing={createLoader} />
 
                                 </Form>
                             )}
