@@ -130,7 +130,6 @@ const CreateSchema = () => {
         setShowPopup(false)
     };
 
-
     const formTitle = isEcosystemData?.isEcosystemMember ? "Schema Endorsement" : "Create Schema"
     const submitButtonTitle = isEcosystemData?.isEcosystemMember ? {
         title: "Request Endorsement",
