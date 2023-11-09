@@ -30,8 +30,15 @@ interface IOrgData {
 	orgName: string
 }
 
+export interface InvitationProps {
+	invitationId: string;
+	ecosytem: {
+		name: string;
+		logoUrl: string;
+	};
+}
 export interface EcosystemInvitation {
-	ecosystem: []
+	ecosystem: { name: string; logoUrl: string; };
 	id: string
 	createDateTime: string
 	createdBy: string
@@ -227,14 +234,16 @@ const ReceivedInvitations = () => {
 	const rejectEnv =
 		<svg
 			className="mr-1 h-6 w-6 text-primary-700"
+			width="20"
+		  height="20"
 			fill="none"
 			viewBox="0 0 24 24"
 			stroke="currentColor"
 		>
 			<path
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				stroke-width="2"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				strokeWidth="2"
 				d="M6 18L18 6M6 6l12 12"
 			/>
 		</svg>
@@ -244,11 +253,11 @@ const ReceivedInvitations = () => {
 		width="20"
 		height="20"
 		viewBox="0 0 24 24"
-		stroke-width="2"
+		strokeWidth="2"
 		stroke="currentColor"
 		fill="none"
-		stroke-linecap="round"
-		stroke-linejoin="round"
+		strokeLinecap="round"
+		strokeLinejoin="round"
 	>
 		<path stroke="none" d="M0 0h24v24H0z" />
 		<path d="M5 12l5 5l10 -10" />
@@ -303,7 +312,8 @@ const ReceivedInvitations = () => {
 															}
 															id={invitation.id}
 															color="bg-white"
-															className='mx-5 mt-5 text-base font-medium text-center text-gray-00 bg-secondary-700 hover:!bg-secondary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600  dark:focus:ring-primary-800 dark:bg-gray-800"'
+															className='mr-5 mt-5 text-base font-medium text-center text-gray-00 bg-secondary-700 hover:!bg-secondary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600  dark:focus:ring-primary-800 dark:bg-gray-800"'
+															style={{ height: '2.5rem', width: '100%', minWidth: '2rem' }}
 														>
 															{rejectEnv}
 															Reject
@@ -317,7 +327,8 @@ const ReceivedInvitations = () => {
 															}
 															disabled={!invitation?.orgData}
 															id={invitation.id}
-															className='mx-5 mt-5 text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-700 dark:hover:!bg-primary-800 dark:focus:ring-primary-800"'
+															className='mt-5 text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-700 dark:hover:!bg-primary-800 dark:focus:ring-primary-800"'
+															style={{ height: '2.5rem', width: '100%', minWidth: '2rem' }}
 														>
 															{acceptEnv}
 															Accept
