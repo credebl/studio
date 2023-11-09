@@ -9,12 +9,11 @@ import { updatePlatformSettings, type IPlatformSetting, getPlatformSettings } fr
 import type { AxiosResponse } from 'axios';
 import { apiStatusCodes } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent'
-import React from 'react';
 
 interface IForm {
     externalIp: string;
     sgApiKey: string;
-    apiEndpoint: string;
+    apiEndPoint: string;
     emailFrom: string;
     enableEcosystem: boolean;
     multiEcosystemSupport: boolean;
@@ -30,18 +29,18 @@ const getConfigKeys = (data: AxiosResponse) => {
     const ecosystemConfig = data?.data?.ecosystem_config && data?.data?.ecosystem_config.length > 0 && data?.data?.ecosystem_config
     const enableEcosystem = ecosystemConfig?.find((item: { key: string; }) => item.key === "enableEcosystem").value === "true"
     const multiEcosystemSupport = ecosystemConfig?.find((item: { key: string; }) => item.key === "multiEcosystemSupport").value === "true"
-    const { externalIp, lastInternalId, sgApiKey, emailFrom, apiEndpoint } = platformConfig || {}
+    const { externalIp, lastInternalId, sgApiKey, emailFrom, apiEndPoint } = platformConfig || {}
     return {
-        externalIp, lastInternalId, sgApiKey, emailFrom, apiEndpoint, enableEcosystem, multiEcosystemSupport
+        externalIp, lastInternalId, sgApiKey, emailFrom, apiEndPoint, enableEcosystem, multiEcosystemSupport
     }
 }
 
 const PlatformSetting = ({ data }: any) => {
-    const { externalIp, lastInternalId, sgApiKey, emailFrom, apiEndpoint, enableEcosystem, multiEcosystemSupport } = getConfigKeys(data)
+    const { externalIp, lastInternalId, sgApiKey, emailFrom, apiEndPoint, enableEcosystem, multiEcosystemSupport } = getConfigKeys(data)
     const initFormData: IPlatformSetting = {
         externalIp: externalIp || "",
         sgApiKey: sgApiKey || "",
-        apiEndpoint: apiEndpoint || "",
+        apiEndPoint: apiEndPoint || "",
         emailFrom: emailFrom || "",
         lastInternalId: lastInternalId || "",
         enableEcosystem: enableEcosystem || false,
@@ -73,11 +72,11 @@ const PlatformSetting = ({ data }: any) => {
     const fetchSettings = async () => {
         try {
             const { data } = await getPlatformSettings() as AxiosResponse
-            const { externalIp, lastInternalId, sgApiKey, emailFrom, apiEndpoint, enableEcosystem, multiEcosystemSupport } = getConfigKeys(data)
+            const { externalIp, lastInternalId, sgApiKey, emailFrom, apiEndPoint, enableEcosystem, multiEcosystemSupport } = getConfigKeys(data)
             setFormData({
                 externalIp,
                 sgApiKey,
-                apiEndpoint,
+                apiEndPoint,
                 emailFrom,
                 lastInternalId,
                 enableEcosystem,
@@ -94,13 +93,13 @@ const PlatformSetting = ({ data }: any) => {
     const updateSettings = async (values: IPlatformSetting) => {
         setLoading(true)
         try {
-            const { externalIp, lastInternalId, sgApiKey, emailFrom, apiEndpoint, enableEcosystem, multiEcosystemSupport } = values || {}
+            const { externalIp, lastInternalId, sgApiKey, emailFrom, apiEndPoint, enableEcosystem, multiEcosystemSupport } = values || {}
             const payload = {
                 externalIp,
                 lastInternalId,
                 sgApiKey,
                 emailFrom,
-                apiEndpoint,
+                apiEndPoint,
                 enableEcosystem,
                 multiEcosystemSupport
             }
@@ -157,7 +156,7 @@ const PlatformSetting = ({ data }: any) => {
                         .string()
                         .required('SendGrid Key is required')
                         .trim(),
-                    apiEndpoint: yup
+                    apiEndPoint: yup
                         .string()
                         .required('API Endpoint is required')
                         .trim(),
@@ -245,20 +244,20 @@ const PlatformSetting = ({ data }: any) => {
                             </div>
                             <div className='max-w-[420px] mb-4'>
                                 <div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                    <Label htmlFor="apiEndpoint" value="API Endpoint" className='text-base' />
+                                    <Label htmlFor="apiEndPoint" value="API Endpoint" className='text-base' />
                                     <span className='text-red-500 text-xs'>*</span>
                                     <p className='text-xs font-normal'>Enter Platform domain (URL) name</p>
                                 </div>
                                 <Field
-                                    id="apiEndpoint"
-                                    name="apiEndpoint"
+                                    id="apiEndPoint"
+                                    name="apiEndPoint"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                     type="text"
                                     placeholder="Ex. www.example.com"
                                 />
                                 {
-                                    (formikHandlers?.errors?.apiEndpoint && formikHandlers?.touched?.apiEndpoint) &&
-                                    <span className="text-red-500 text-xs">{formikHandlers?.errors?.apiEndpoint}</span>
+                                    (formikHandlers?.errors?.apiEndPoint && formikHandlers?.touched?.apiEndPoint) &&
+                                    <span className="text-red-500 text-xs">{formikHandlers?.errors?.apiEndPoint}</span>
                                 }
                             </div>
                             <div className='max-w-[420px]'>
