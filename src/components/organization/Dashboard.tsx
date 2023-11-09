@@ -130,14 +130,9 @@ const Dashboard = () => {
     return (
         <div className="px-4 pt-2">
             <div className="col-span-full xl:mb-2">
-
                 <BreadCrumbs />
-                <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-
-                </h1>
             </div>
-            <div>
-
+            <div className='mt-4'>
                 <div
                     className="flex flex-wrap items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
                 >
