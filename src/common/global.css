@@ -20,3 +20,8 @@ ul[role="tablist"] li[role="presentation"] button[aria-selected="true"] {
 #schema-cards div[data-testid="flowbite-card"] div {
   @apply justify-start;
 }
+
+div[data-testid="modal"] .max-h-\[90vh\] {
+  max-height: calc(100vh - 2rem) !important;
+  @apply overflow-hidden;
+}

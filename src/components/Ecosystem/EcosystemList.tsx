@@ -168,7 +168,7 @@ const EcosystemList = () => {
 				)}
 			</div>
 			<div>
-				<div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800 min-h-100/18rem flex flex-col justify-between">
+				<div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800 min-h-100/18rem">
 					<div className="flex items-center justify-between mb-4">
 						<SearchInput onInputChange={searchInputChange} />
 					</div>

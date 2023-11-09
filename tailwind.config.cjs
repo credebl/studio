@@ -116,7 +116,7 @@ module.exports = {
 				'100/25rem': 'calc(100vh - 25rem)',
 			},
 			maxHeight: {
-				'[90vh]': 'fit-content !important',
+				'[90vh]': 'calc(100vh - 2rem) !important',
 			},
 			scale: {
 				103: '1.03',

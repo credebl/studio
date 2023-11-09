@@ -244,7 +244,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
                 >
                     {(formikHandlers): JSX.Element => (
                         <Form className="space-y-6" onSubmit={formikHandlers.handleSubmit}>
-                            <div className="mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+                            <div className="mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 p-4 sm:p-6 dark:bg-gray-800">
                                 <div className="items-center sm:flex 2xl:flex sm:space-x-4 xl:space-x-4 2xl:space-x-4">
                                 {logoImage.imagePreviewUrl ? (
                                         <img
@@ -381,14 +381,16 @@ const EditPopupModal = (props: EditEntityModalProps) => {
 											</div>	
 									
 									</div>
+                            <div className="w-full flex justify-end">
                             <Button
                                 type="submit"
                                 isProcessing={loading}
-                                className='float-right text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-700 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
+                                className='text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-700 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
                             >
 
                                 Update
                             </Button>
+                            </div>
                         </Form>
                     )}
                 </Formik>
