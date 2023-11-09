@@ -8,6 +8,7 @@ import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import { pathRoutes } from '../../config/pathRoutes';
 import IssuancePopup from './IssuancePopup';
+import { getCsvFileData, uploadCsvFile } from '../../api/issuance';
 
 interface IValues {
 	value: string;
@@ -16,16 +17,32 @@ interface IValues {
 
 const BulkIssuance = () => {
 	const [csvData, setCsvData] = useState<string[][]>([]);
-
+  const [process, setProcess] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(true);
-	const [error, setError] = useState<string | null>(null);
 	const [credentialOptions, setCredentialOptions] = useState([]);
 	const [credentialSelected, setCredentialSelected] = useState('');
 	const [isFileUploaded, setIsFileUploaded] = useState(false);
 	const [uploadedFileName, setUploadedFileName] = useState('');
 	const [uploadedFile, setUploadedFile] = useState(null);
 	const [openModal, setOpenModal] = useState<boolean>(false);
+	const [message, setMessage] = useState('');
+	const [searchText, setSearchText] = useState('');
+	const [error, setError] = useState<string | null>(null);
+	const [success, setSuccess] = useState<string | null>(null);
+	const [failure, setFailure] = useState<string | null>(null);
 
+	const onPageChange = (page: number) => {
+		setCurrentPage({
+			...currentPage,
+			pageNumber: page,
+		});
+	};
+	const initialPageState = {
+		pageNumber: 1,
+		pageSize: 10,
+		total: 0,
+	};
+	const [currentPage, setCurrentPage] = useState(initialPageState);
 
 	const getSchemaCredentials = async () => {
 		setLoading(true);
@@ -59,62 +76,181 @@ const BulkIssuance = () => {
 		getSchemaCredentials();
 	}, []);
 
-	const DownloadSchemaTemplate = async () => {
-		setLoading(true);
-		const orgId = await getFromLocalStorage(storageKeys.CRED_DEF_ID);
+	// const DownloadSchemaTemplate = async () => {
+	// 	setLoading(true);
+	// 	const credDefId = await getFromLocalStorage(storageKeys.CRED_DEF_ID);
 
-		if (orgId) {
-			const response = await DownloadCsvTemplate();
-			const { data } = response as AxiosResponse;
+	// 	if (credDefId) {
+	// 		const response = await DownloadCsvTemplate();
 
-			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				const credentialDefs = data.data;
+	// 		const { data } = response as AxiosResponse;
+	// 		console.log("response1212",data);
 
-				const options = credentialDefs.map(
-					(credDef: {
-						credentialDefinitionId: string;
-						schemaCredDefName: string;
-					}) => ({
-						value: credDef.credentialDefinitionId,
-						label: credDef.schemaCredDefName,
-					}),
-				);
+	// 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+	// 			// const fileUrl = data
 
-				setCredentialOptions(options);
-			} else {
-				setError(response as string);
-			}
-			setLoading(false);
-		}
+	// 			// Open the file in a new tab
+	// 			window.open(data, '_blank');
+	// 		} else {
+	// 			setError(response as string);
+	// 		}
+	// 		setLoading(false);
+	// 	}
+	// };
+	const downloadFile = (url: string, fileName: string) => {
+		const link = document.createElement('a');
+		link.href = url;
+		link.download = fileName;
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
 	};
-	// useEffect(() => {
-	// 	DownloadSchemaTemplate();
-	// }, []);
 
-	const handleFileUpload = (file) => {
+	const DownloadSchemaTemplate = async () => {
+		setProcess(true);
+		const credDefId = await getFromLocalStorage(storageKeys.CRED_DEF_ID);
+
+		if (credDefId) {
+			try {
+				setProcess(true);
+
+				const response = await DownloadCsvTemplate();
+				const { data } = response as AxiosResponse;
+
+				if (data) {
+					const fileUrl = data;
+					// Adjust this based on the response structure
+					if (fileUrl) {
+						// Open the file in a new tab
+						// window.open(data);
+						downloadFile(fileUrl, 'downloadedFile.csv');
+						setSuccess('File downloaded successfully');
+						setProcess(false);
+					} else {
+						setError('File URL is missing in the response');
+					}
+				} else {
+					setError('API request was not successful');
+				}
+			} catch (error) {
+				setError(error as string);
+			}
+		}
+
+		setLoading(false);
+	};
+
+	const wait = (ms: any) => new Promise((resolve) => setTimeout(resolve, ms));
+
+	const handleFileUpload = async (file: any) => {
+		// setLoading(true);
+
 		if (file.type !== 'text/csv') {
 			// Check if the file type is not CSV
 			setError('Invalid file type. Please select only CSV files.');
 			return;
 		}
-		const reader = new FileReader();
+		wait;
 
-		reader.onload = (event) => {
-			const result = event?.target && event?.target?.result;
+		try {
+			// setCsvData(data);
+			// setIsFileUploaded(true);
+			// setUploadedFileName(file.name);
+			// setUploadedFile(file);
+			// setError(null);
 
-			if (typeof result === 'string') {
-				const text = result;
-				const rows = text.split('\n');
-				const data = rows.map((row) => row.split(','));
-				setCsvData(data);
-				setIsFileUploaded(true);
-				setUploadedFileName(file.name);
-				setUploadedFile(file);
-				setError(null);
+			const formData = new FormData();
+			formData.append('file', file);
+
+			console.log('formData', formData.get('file'));
+			console.log('formData', formData);
+
+			const waits = wait(1000);
+			console.log('formData', formData);
+
+			const response = await uploadCsvFile(formData);
+	// setIsFileUploaded(true);
+			// setUploadedFileName(file.name);
+			// setUploadedFile(file);
+			// setError(null);
+			setLoading(false);
+			const { data } = response as unknown as AxiosResponse;
+			console.log('data9999', data);
+
+			if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+				setSuccess(data?.message);
+	    setIsFileUploaded(true);
+			setUploadedFileName(file.name);
+			setUploadedFile(file);
+			setError(null);
+				// await handleCsvFileData('12345abcd');
+			} else {
+				setError(response as string);
 			}
-		};
+			setLoading(false);
+		} catch (err) {
+			console.log('ERROR - bulk issuance::', err);
 
-		reader.readAsText(file);
+			// const reader = new FileReader();
+
+			// reader.onload = (event) => {
+			// 	const result = event?.target && event?.target?.result;
+			// 	if (typeof result === 'string') {
+			// 		const text = result;
+			// 		const rows = text.split('\n');
+			// 		const data = rows.map((row) => row.split(','));
+			// 		/////////// call api of get csv and set to setCsvData
+
+			// 		setCsvData(data);
+			// 		setIsFileUploaded(true);
+			// 		setUploadedFileName(file.name);
+			// 		setUploadedFile(file);
+			// 		setError(null);
+			// 	}
+			// };
+
+			// const binaryFile=	reader.(file);
+			// console.log("binaryFile",binaryFile);
+
+			// 		try {
+			// 				console.log("File data",file);
+			// 				const response = await uploadCsvFile(file);
+			// 				setLoading(false);
+			// 				const { data } = response as AxiosResponse;
+			// 				if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+			// 					setMessage(data?.message);
+			// 					await handleCsvFileData('a8bf2b51-0772-44f5-b016-274b56961f21');
+			// 				} else {
+			// 					setError(response as string);
+			// 				}
+			// 				setLoading(false);
+			// 			} catch (err) {
+			// 				console.log('ERROR - bulk issuance::', err);
+
+			// }
+		}
+	};
+
+	const handleCsvFileData = async (requestId: any) => {
+		console.log('----s1212121---');
+
+		setLoading(true);
+		try {
+			const response = await getCsvFileData(
+				requestId,
+				currentPage.pageNumber,
+				currentPage.pageSize,
+				searchText,
+			);
+			const { data } = response as AxiosResponse;
+			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+				setLoading(false);
+				setCsvData(data?.data);
+			}
+		} catch (err) {
+			setLoading(false);
+		}
+		setLoading(false);
 	};
 
 	const handleDiscardFile = () => {
@@ -143,6 +279,7 @@ const BulkIssuance = () => {
 
 	const handleInputChange = (e: { target: { files: any[] } }) => {
 		const file = e.target.files[0];
+
 		if (file) {
 			handleFileUpload(file);
 		}
@@ -151,37 +288,43 @@ const BulkIssuance = () => {
 		setError(null);
 	};
 
-	const handleOpenConfirmation=()=>{
-		setOpenModal(true)
+	const handleOpenConfirmation = () => {
+		setOpenModal(true);
+	};
 
-	}
 	const handleCloseConfirmation = () => {
-    setOpenModal(false);
-  };
-	const handleReset=()=>{
-		handleDiscardFile()
-		setCredentialSelected('')
-	}
+		setOpenModal(false);
+	};
+
+	const handleReset = () => {
+		handleDiscardFile();
+		setCredentialSelected('');
+	};
 
 	const confirmCredentialIssuance = () => {
-		console.log("Credentials Issues Successfully...");
-		setLoading(true)
-		setTimeout(()=>{
-		console.log("Credentials Issues Successfully 1111...");
-
-			setOpenModal(false)
-			handleDiscardFile()
-			setCredentialSelected('')
+		setLoading(true);
+		setTimeout(() => {
+			setOpenModal(false);
+			handleDiscardFile();
+			setCredentialSelected('');
 			// window.location.href=pathRoutes.organizations.Issuance.connections
-		console.log("Credentials Issues Successfully 2222 ...");
-
-		},1500)	
-}	
+		}, 1500);
+	};
 
 	const isCredSelected = Boolean(credentialSelected);
 
 	return (
 		<div>
+			{(success || failure) && (
+				<AlertComponent
+					message={success ?? failure}
+					type={success ? 'success' : 'failure'}
+					onAlertClose={() => {
+						setSuccess(null);
+						setFailure(null);
+					}}
+				/>
+			)}
 			<div className="flex justify-between mb-4 items-center ml-1">
 				<div>
 					<p className="text-2xl font-semibold dark:text-white">
@@ -240,12 +383,18 @@ const BulkIssuance = () => {
 									/>
 								</div>
 								<div className="mt-4">
-									<button
-										className={` py-2 px-4 rounded inline-flex items-center border ${
+									<Button
+										id="signinsubmit"
+										isProcessing={process}
+										type="submit"
+										color="bg-primary-800"
+										// className="  hover:bg-secondary-700 ring-2 text-lg px-2 lg:px-3 py-2 lg:py-2.5 mr-2 ml-auto border-blue-600 hover:text-primary-600 dark:text-blue-500 dark:border-blue-500 dark:hover:text-blue-500 dark:hover:bg-primary-50"
+										className={`py-2 px-4 rounded-md inline-flex items-center border text-2xl ${
 											!isCredSelected
 												? 'opacity-50 text-gray-700 dark:text-gray-400 border-gray-700'
-												: 'text-primary-700 dark:text-primary-700 border-primary-700'
+												: 'text-primary-700 dark:text-primary-700 border-primary-700 bg-white-700'
 										}`}
+										style={{ height: '2.4rem', minWidth: '2rem' }}
 										disabled={!isCredSelected}
 										onClick={DownloadSchemaTemplate}
 									>
@@ -267,7 +416,7 @@ const BulkIssuance = () => {
 											/>
 										</svg>
 										<span>Download Template</span>
-									</button>
+									</Button>
 								</div>
 							</div>
 							{/* ---------------- */}
@@ -385,9 +534,9 @@ const BulkIssuance = () => {
 													stroke="currentColor"
 												>
 													<path
-														stroke-linecap="round"
-														stroke-linejoin="round"
-														stroke-width="2"
+														strokeLinecap="round"
+														strokeLinejoin="round"
+														strokeWidth="2"
 														d="M6 18L18 6M6 6l12 12"
 													/>
 												</svg>
@@ -457,7 +606,7 @@ const BulkIssuance = () => {
 						<>
 							<p className="m-6 text-lg dark:text-white">Steps</p>
 							<ul className="timelinestatic m-6">
-								<li className="">
+								<li>
 									<p className="steps-active-text text-gray-600 dark:text-white text-lg">
 										Select and Download
 									</p>
@@ -465,7 +614,7 @@ const BulkIssuance = () => {
 										Select credential definition and download .CSV file
 									</p>
 								</li>
-								<li className="">
+								<li>
 									<p className="steps-active-text text-gray-600 dark:text-white text-lg">
 										Fill the data
 									</p>
@@ -473,7 +622,7 @@ const BulkIssuance = () => {
 										Fill issuance data in the downloaded .CSV file
 									</p>
 								</li>
-								<li className="">
+								<li>
 									<p className="steps-active-text text-gray-600 dark:text-white text-lg">
 										Upload and Issue
 									</p>
@@ -484,13 +633,19 @@ const BulkIssuance = () => {
 							</ul>
 						</>
 					)}
-{/* <ConfirmModal openModal={showPopup} closeModal={() => setShowPopup(false)} onSuccess={confirmCreateSchema} message={"Would you like to proceed? Keep in mind that this action cannot be undone."} isProcessing={createloader} /> */}
+					{/* <ConfirmModal openModal={showPopup} closeModal={() => setShowPopup(false)} onSuccess={confirmCreateSchema} message={"Would you like to proceed? Keep in mind that this action cannot be undone."} isProcessing={createloader} /> */}
 
-<IssuancePopup openModal={openModal} closeModal={handleCloseConfirmation} message={"Are you sure you want to Offer Credentials ?"} isProcessing={loading}  onSuccess={confirmCredentialIssuance} />
+					<IssuancePopup
+						openModal={openModal}
+						closeModal={handleCloseConfirmation}
+						message={'Are you sure you want to Offer Credentials ?'}
+						isProcessing={loading}
+						onSuccess={confirmCredentialIssuance}
+					/>
 
 					<div>
 						<Button
-						  onClick={handleOpenConfirmation}
+							onClick={handleOpenConfirmation}
 							disabled={!isFileUploaded}
 							type="reset"
 							color="bg-primary-800"
@@ -517,11 +672,11 @@ const BulkIssuance = () => {
 							Issue
 						</Button>
 						<Button
-						  onClick={handleReset}
+							onClick={handleReset}
 							disabled={!isFileUploaded}
 							type="reset"
 							color="bg-primary-800"
-							className="float-right py-4 bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto dark:text-white dark:hover:text-black dark:hover:bg-primary-50"
+							className="float-right bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ml-auto dark:text-white dark:hover:text-black dark:hover:bg-primary-50"
 							style={{ height: '2.6rem', width: '6rem', minWidth: '2rem' }}
 						>
 							<svg
@@ -533,7 +688,7 @@ const BulkIssuance = () => {
 								viewBox="0 0 20 20"
 							>
 								<path
-									fill="#1F4EAD"
+									fill="#1F4EAD"    
 									d="M19.414 9.414a.586.586 0 0 0-.586.586c0 4.868-3.96 8.828-8.828 8.828-4.868 0-8.828-3.96-8.828-8.828 0-4.868 3.96-8.828 8.828-8.828 1.96 0 3.822.635 5.353 1.807l-1.017.18a.586.586 0 1 0 .204 1.153l2.219-.392a.586.586 0 0 0 .484-.577V1.124a.586.586 0 0 0-1.172 0v.928A9.923 9.923 0 0 0 10 0a9.935 9.935 0 0 0-7.071 2.929A9.935 9.935 0 0 0 0 10a9.935 9.935 0 0 0 2.929 7.071A9.935 9.935 0 0 0 10 20a9.935 9.935 0 0 0 7.071-2.929A9.935 9.935 0 0 0 20 10a.586.586 0 0 0-.586-.586Z"
 								/>
 							</svg>
