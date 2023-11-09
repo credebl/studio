@@ -26,10 +26,10 @@ const Users = () => {
 
             <div className="mb-4 border-b border-gray-200 dark:border-gray-700">
                 <ul className="pl-5 flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
-                    <li className="mr-2" role="presentation">
+                    <li className="mr-2">
                         <button className="text-xl inline-block p-4 border-b-2 rounded-t-lg " id="profile-tab" data-tabs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">Users</button>
                     </li>
-                    <li className="mr-2" role="presentation">
+                    <li className="mr-2">
                         <button className="text-xl inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="dashboard-tab" data-tabs-target="#dashboard" type="button" role="tab" aria-controls="dashboard" aria-selected="false">Invitations</button>
                     </li>
                 </ul>
