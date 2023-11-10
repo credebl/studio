@@ -14,7 +14,7 @@ import { AlertComponent } from '../AlertComponent';
 const OrganisationPublicProfile = () => {
 	const initialPageState = {
 		pageNumber: 1,
-		pageSize: 10,
+		pageSize: 12,
 		total: 0,
 	};
 
