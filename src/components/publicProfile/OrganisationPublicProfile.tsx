@@ -10,7 +10,6 @@ import CustomSpinner from '../CustomSpinner';
 import CustomAvatar from '../Avatar';
 import { EmptyListMessage } from '../EmptyListComponent';
 import { AlertComponent } from '../AlertComponent';
-import PublicNavbar from '../../commonComponents/PublicNavbar';
 
 const OrganisationPublicProfile = () => {
 	const initialPageState = {
