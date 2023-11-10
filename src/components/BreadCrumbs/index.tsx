@@ -49,8 +49,6 @@ export default function BreadCrumbs() {
 				</Breadcrumb.Item>
 
 				{breadcrumbList.map((crumb, idx) => {
-					console.log("crumb",);
-					
 					const crumbData =
 						crumb.text.charAt(0).toUpperCase() + crumb.text.slice(1);
 					const routes = crumbData
