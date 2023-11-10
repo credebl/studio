@@ -55,8 +55,6 @@ export const checkUserSession = async ({
 				authorized: true,
 			};
 		} else {
-			console.log(34341, permittedPages, currentPath);
-
 			return {
 				permitted: true,
 				redirect: pathRoutes.users.dashboard,

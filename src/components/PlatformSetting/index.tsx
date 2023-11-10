@@ -180,7 +180,6 @@ const PlatformSetting = ({ data }: any) => {
                 validateOnChange
                 enableReinitialize
                 onSubmit={(values) => {
-                    console.log(3434, values)
                     updateSettings(values)
                 }
                 }
