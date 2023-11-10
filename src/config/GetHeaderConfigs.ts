@@ -1,8 +1,8 @@
 import { getFromLocalStorage } from "../api/Auth";
 import { storageKeys } from "./CommonConstant";
 
-export const getHeaderConfigs = async () => {
-    const token = await getFromLocalStorage(storageKeys.TOKEN)
+export const getHeaderConfigs = async (tokenVal?: string) => {
+    const token = await getFromLocalStorage(storageKeys.TOKEN) || (typeof tokenVal === "string" ? tokenVal : "")
 
     return {
         headers: {

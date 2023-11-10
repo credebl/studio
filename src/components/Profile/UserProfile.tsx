@@ -16,7 +16,7 @@ interface IUserProfile {
   profileImg: string
 }
 
-const UserProfile = () => {
+const UserProfile = ({ noBreadcrumb }: { noBreadcrumb?: boolean }) => {
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [prePopulatedUserProfile, setPrePopulatedUserProfile] = useState<IUserProfile | null>(null);
 
@@ -52,8 +52,8 @@ const UserProfile = () => {
 
   return (
 
-    <div className="mb-4 col-span-full xl:mb-2 p-4">
-      <BreadCrumbs />
+    <div className={`mb-4 col-span-full xl:mb-2 p-4 ${noBreadcrumb ? "mx-auto max-w-screen-xl" : ""}`}>
+      {!noBreadcrumb && <BreadCrumbs />}
       <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
         User's Profile
       </h1>

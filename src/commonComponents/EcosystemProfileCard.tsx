@@ -22,7 +22,6 @@ const EcosystemProfileCard = () => {
         try {
             const id = await getFromLocalStorage(storageKeys.ORG_ID);
             const ecosystemId = ecoId || await getFromLocalStorage(storageKeys.ECOSYSTEM_ID);
-            console.log(4561, id)
             if (id) {
                 const response = await getEcosystems(id);
                 setLoading(false)
@@ -30,7 +29,6 @@ const EcosystemProfileCard = () => {
                 if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
                     setEcosystemList(data?.data)
                     const ecosystemData = data?.data?.find((item: { id: string }) => item.id === ecosystemId);
-                    console.log(4545, ecosystemData)
                     if (ecosystemData) {
                         setEcosystemId(ecosystemData?.id)
                         const ecosystemOrg =

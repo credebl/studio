@@ -11,7 +11,7 @@ const DisplayUserProfile = ({ toggleEditProfile, userProfileInfo }: DisplayUserP
         <div>
             <div className='h-full'>
                 <div className='page-container relative h-full flex flex-auto flex-col px-4 py-4 sm:py-6'>
-                    <div className='container mx-auto bg-white border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700'>
+                    <div className='w-full mx-auto bg-white border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700'>
                         <div className="px-6 py-6">
 
                             <form action="#">
