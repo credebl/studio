@@ -5,7 +5,7 @@ export default function PublicNavbar() {
   return (
     <div>
 <nav className="bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-gray-200 dark:border-gray-600">
-					<div className="w-full mx-auto flex flex-wrap items-center p-4 lg:pl-12">
+					<div className="w-full mx-auto flex flex-wrap items-center p-4 lg:pl-12 max-w-screen-xl mx-auto">
 						<button
 							data-drawer-target="default-sidebar"
 							data-drawer-toggle="default-sidebar"
