@@ -11,7 +11,7 @@ const SharedIllustrate = () => {
                 <h3 className="mb-2 text-xl font-bold text-gray-900 dark:text-white">
                     Your Hassle-Free Multi-Tenant Solution
                 </h3>
-                <ul className="list-disc">
+                <ul className="list-disc dark:text-white">
                     <li>
                         <p className='mb-1 text-base font-normal text-gray-900 dark:text-white'>
                             Multi-tenant solution enables multiple organizations to utilize a single agent.
