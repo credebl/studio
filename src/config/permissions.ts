@@ -9,6 +9,6 @@ interface IPermission {
 export const RolePermissions: IPermission[] = [
 	{
 		role: PlatformRoles.platformAdmin,
-		pages: [pathRoutes.users.platformSetting],
+		pages: [pathRoutes.users.platformSetting, pathRoutes.users.profile],
 	},
 ];

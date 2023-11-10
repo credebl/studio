@@ -9,9 +9,18 @@ import DisplayProfileImg from '../components/Profile/DisplayProfileImg';
 import { pathRoutes } from '../config/pathRoutes.js';
 import SignOutButton from '../components/SignOutButton/index';
 import AgentHealth from '../commonComponents/AgentHealth';
+import { getFromCookies } from '../api/Auth';
+import { RolePermissions } from '../config/permissions';
 
 const { hideOrgAgent } = Astro.props;
 console.log(3242, hideOrgAgent)
+
+const role = getFromCookies(Astro.cookies, 'role');
+
+const permittedPages = RolePermissions.find(
+	(item) => item.role === role,
+)?.pages;
+
 ---
 
 <nav
@@ -54,7 +63,7 @@ console.log(3242, hideOrgAgent)
 						</svg>
 					</button>
 				}
-				<a href={pathRoutes.users.dashboard} class="flex ml-2 md:mr-24">
+				<a href={permittedPages && permittedPages[0] || pathRoutes.users.dashboard} class="flex ml-2 md:mr-24">
 					<img
 						src="/images/CREDEBL_ICON.png"
 						class="h-8 mr-3"

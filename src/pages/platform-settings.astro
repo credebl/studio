@@ -8,16 +8,16 @@ import { envConfig } from '../config/envConfig';
 import { pathRoutes } from '../config/pathRoutes';
 import API from '../config/ssrApiConfig';
 import { checkUserSession } from '../utils/check-session';
+import ErrorNotFound from '../modules/ErrorNotFound.astro';
 
-const authenticated = await checkUserSession(Astro.cookies);
+const role = getFromCookies(Astro.cookies, "role")
+const response = await checkUserSession({
+	cookies: Astro.cookies,
+	currentPath: Astro.url.pathname,
+});
 const route: string = pathRoutes.auth.sinIn;
-if (!authenticated) {
-	return Astro.redirect(route);
-}
-
-const role = getFromCookies(Astro.cookies, 'role');
-if (role !== PlatformRoles.platformAdmin) {
-	return Astro.redirect(pathRoutes.users.dashboard);
+if (!response.authorized) {
+	return Astro.redirect(response.redirect);
 }
 
 const token = getFromCookies(Astro.cookies, 'session');
@@ -28,6 +28,6 @@ const fetchPlatformAddminSetting = await API({
 });
 ---
 
-<LayoutStacked showOptions={true}>
+<LayoutStacked showOptions={true} notFoundPage={role !== PlatformRoles.platformAdmin}>
 	<PlatformSetting data={fetchPlatformAddminSetting} client:visible />
 </LayoutStacked>
