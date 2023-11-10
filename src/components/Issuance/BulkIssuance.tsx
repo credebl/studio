@@ -8,7 +8,11 @@ import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import { pathRoutes } from '../../config/pathRoutes';
 import IssuancePopup from './IssuancePopup';
-import { getCsvFileData, uploadCsvFile } from '../../api/issuance';
+import {
+	getCsvFileData,
+	issueBulkCredential,
+	uploadCsvFile,
+} from '../../api/BulkIssuance';
 
 interface IValues {
 	value: string;
@@ -17,7 +21,8 @@ interface IValues {
 
 const BulkIssuance = () => {
 	const [csvData, setCsvData] = useState<string[][]>([]);
-  const [process, setProcess] = useState<boolean>(false);
+	const [requestId, setRequestId] = useState();
+	const [process, setProcess] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [credentialOptions, setCredentialOptions] = useState([]);
 	const [credentialSelected, setCredentialSelected] = useState('');
@@ -143,15 +148,12 @@ const BulkIssuance = () => {
 	const wait = (ms: any) => new Promise((resolve) => setTimeout(resolve, ms));
 
 	const handleFileUpload = async (file: any) => {
-		// setLoading(true);
+		setLoading(true);
 
 		if (file.type !== 'text/csv') {
-			// Check if the file type is not CSV
 			setError('Invalid file type. Please select only CSV files.');
 			return;
 		}
-		wait;
-
 		try {
 			// setCsvData(data);
 			// setIsFileUploaded(true);
@@ -161,29 +163,20 @@ const BulkIssuance = () => {
 
 			const formData = new FormData();
 			formData.append('file', file);
-
-			console.log('formData', formData.get('file'));
-			console.log('formData', formData);
-
-			const waits = wait(1000);
-			console.log('formData', formData);
+			await wait(500);
 
 			const response = await uploadCsvFile(formData);
-	// setIsFileUploaded(true);
-			// setUploadedFileName(file.name);
-			// setUploadedFile(file);
-			// setError(null);
-			setLoading(false);
-			const { data } = response as unknown as AxiosResponse;
-			console.log('data9999', data);
+			const { data } = response as AxiosResponse;
 
-			if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+			if (data?.statusCode === apiStatusCodes?.API_STATUS_CREATED) {
+				setLoading(false);
+				setRequestId(data?.data);
 				setSuccess(data?.message);
-	    setIsFileUploaded(true);
-			setUploadedFileName(file.name);
-			setUploadedFile(file);
-			setError(null);
-				// await handleCsvFileData('12345abcd');
+				setIsFileUploaded(true);
+				setUploadedFileName(file?.name);
+				setUploadedFile(file);
+				setError(null);
+				await handleCsvFileData(data?.data);
 			} else {
 				setError(response as string);
 			}
@@ -232,8 +225,6 @@ const BulkIssuance = () => {
 	};
 
 	const handleCsvFileData = async (requestId: any) => {
-		console.log('----s1212121---');
-
 		setLoading(true);
 		try {
 			const response = await getCsvFileData(
@@ -245,7 +236,7 @@ const BulkIssuance = () => {
 			const { data } = response as AxiosResponse;
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 				setLoading(false);
-				setCsvData(data?.data);
+				setCsvData(data?.data?.response?.data);
 			}
 		} catch (err) {
 			setLoading(false);
@@ -301,14 +292,29 @@ const BulkIssuance = () => {
 		setCredentialSelected('');
 	};
 
-	const confirmCredentialIssuance = () => {
+	const confirmCredentialIssuance = async () => {
 		setLoading(true);
-		setTimeout(() => {
-			setOpenModal(false);
-			handleDiscardFile();
-			setCredentialSelected('');
-			// window.location.href=pathRoutes.organizations.Issuance.connections
-		}, 1500);
+		const response = await issueBulkCredential(requestId);
+		const { data } = response as AxiosResponse;
+		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+			if (data?.data) {
+				setLoading(false);
+				setOpenModal(false);
+				setSuccess(data.message);
+				setTimeout(() => {
+					window.location.href = pathRoutes.organizations.Issuance.connections;
+				}, 500);
+			} else {
+				setFailure(response as string);
+				setLoading(false);
+			}
+		} else {
+			setLoading(false);
+			setFailure(response as string);
+			setTimeout(() => {
+				setFailure(null);
+			}, 4000);
+		}
 	};
 
 	const isCredSelected = Boolean(credentialSelected);
@@ -556,11 +562,11 @@ const BulkIssuance = () => {
 								<div className="overflow-hidden shadow sm:rounded-lg">
 									{csvData && csvData.length > 0 && (
 										<div className="mt-4 py-4 my-2">
-											<table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
+											{/* <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
 												<thead className="bg-gray-50 dark:bg-gray-700">
 													<tr>
 														{csvData.length > 0 &&
-															csvData[0].map((header, index) => (
+															Object.keys(csvData[0]).map((header, index) => (
 																<th
 																	key={index}
 																	className={`p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white`}
@@ -573,7 +579,7 @@ const BulkIssuance = () => {
 												<tbody className="bg-white dark:bg-gray-800">
 													{csvData &&
 														csvData.length > 0 &&
-														csvData.slice(1).map((row, rowIndex) => (
+														csvData.map((row, rowIndex) => (
 															<tr
 																key={rowIndex}
 																className={`${
@@ -583,6 +589,45 @@ const BulkIssuance = () => {
 																}`}
 															>
 																{row.map((cell, cellIndex) => (
+																	<td
+																		key={cellIndex}
+																		className={`p-4 text-sm font-normal text-gray-900 whitespace-nowrap dark:text-white align-middle	`}
+																	>
+																		{cell}
+																	</td>
+																))}
+															</tr>
+														))}
+												</tbody>
+											</table> */}
+
+											<table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
+												<thead className="bg-gray-50 dark:bg-gray-700">
+													<tr>
+														{csvData.length > 0 &&
+															Object.keys(csvData[0]).map((header, index) => (
+																<th
+																	key={index}
+																	className={`p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white`}
+																>
+																	{header}
+																</th>
+															))}
+													</tr>
+												</thead>
+												<tbody className="bg-white dark:bg-gray-800">
+													{csvData &&
+														csvData.length > 0 &&
+														csvData.map((row, rowIndex) => (
+															<tr
+																key={rowIndex}
+																className={`${
+																	rowIndex % 2 !== 0
+																		? 'bg-gray-50 dark:bg-gray-700'
+																		: ''
+																}`}
+															>
+																{Object.values(row).map((cell, cellIndex) => (
 																	<td
 																		key={cellIndex}
 																		className={`p-4 text-sm font-normal text-gray-900 whitespace-nowrap dark:text-white align-middle	`}
@@ -688,7 +733,7 @@ const BulkIssuance = () => {
 								viewBox="0 0 20 20"
 							>
 								<path
-									fill="#1F4EAD"    
+									fill="#1F4EAD"
 									d="M19.414 9.414a.586.586 0 0 0-.586.586c0 4.868-3.96 8.828-8.828 8.828-4.868 0-8.828-3.96-8.828-8.828 0-4.868 3.96-8.828 8.828-8.828 1.96 0 3.822.635 5.353 1.807l-1.017.18a.586.586 0 1 0 .204 1.153l2.219-.392a.586.586 0 0 0 .484-.577V1.124a.586.586 0 0 0-1.172 0v.928A9.923 9.923 0 0 0 10 0a9.935 9.935 0 0 0-7.071 2.929A9.935 9.935 0 0 0 0 10a9.935 9.935 0 0 0 2.929 7.071A9.935 9.935 0 0 0 10 20a9.935 9.935 0 0 0 7.071-2.929A9.935 9.935 0 0 0 20 10a.586.586 0 0 0-.586-.586Z"
 								/>
 							</svg>
