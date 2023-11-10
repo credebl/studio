@@ -87,7 +87,7 @@ const OrgDropDown = () => {
 								) : (
 									<CustomAvatar size="20" name={activeOrg?.name} round />
 								)}
-								<text className="ml-2 text-primary-700 dark:text-white">{activeOrg?.name.length > 20 ? activeOrg?.name.substring(0,20) + '...' : activeOrg?.name}</text>
+								<text className="ml-2 text-primary-700 dark:text-white">{activeOrg?.name.length > 20 ? activeOrg?.name.substring(0, 20) + '...' : activeOrg?.name}</text>
 							</>
 							:
 							<text className='text-primary-700 dark:text-white'>
@@ -111,19 +111,21 @@ const OrgDropDown = () => {
 							const roles: string[] = org.userOrgRoles.map(role => role.orgRole.name)
 							org.roles = roles
 							return (
-								<li key={org?.id} onClick={() => goToOrgDashboard(org)}>
-									<a
-										href="#"
-										className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-									>
-										{org.logoUrl ? (
-											<CustomAvatar className='dark:text-white' size="25" src={org?.logoUrl} round />
-										) : (
-											<CustomAvatar className='dark:text-white' size="25" name={org?.name} round />
-										)}
+								<li key={org?.id}>
+									<button onClick={() => goToOrgDashboard(org)}>
+										<a
+											href="#"
+											className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+										>
+											{org.logoUrl ? (
+												<CustomAvatar className='shrink-0 dark:text-white' size="25" src={org?.logoUrl} round />
+											) : (
+												<CustomAvatar className='shrink-0 dark:text-white' size="25" name={org?.name} round />
+											)}
 
-										<span className="ml-3 text-base font-bold text-gray-500 dark:text-white">{org?.name}</span>
-									</a>
+											<span className="ml-3 text-base text-start font-bold text-gray-500 dark:text-white">{org?.name}</span>
+										</a>
+									</button>
 								</li>
 							)
 						})
