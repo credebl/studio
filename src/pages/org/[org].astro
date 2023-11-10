@@ -10,23 +10,6 @@ const { org } = Astro.params;
 <LayoutCommon>
 
 <div class="max-h-fit">
-	<!-- <div class="w-full mx-0">
-		<div class="flex px-3 py-2 justify-start">
-			<div class="flex items-center justify-start">
-				<a href={pathRoutes?.users?.dashboard} class="flex ml-2 md:mr-24">
-					<img
-						src="/images/CREDEBL_ICON.png"
-						class="h-8 mr-3"
-						alt="CREDEBL Logo"
-					/>
-					<span
-						class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white"
-						>CREDEBL</span
-					>
-				</a>
-			</div>
-		</div>
-	</div> -->
 <PublicNavbar limitedWidth={false}/>	{
 		org && <PublicOrganizationDetails client:visible orgSlug = {org}/>
 	}
