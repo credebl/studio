@@ -330,9 +330,6 @@ const EndorsementList = () => {
 												/>
 											</svg>
 										}
-										onClick={() => {
-											window.location.href = `${pathRoutes.organizations.createSchema}?OrgId=${orgId}`;
-										}}
 									/>
 								) : (
 									<EmptyListMessage
@@ -355,9 +352,6 @@ const EndorsementList = () => {
 												/>
 											</svg>
 										}
-										onClick={() => {
-											window.location.href = `${pathRoutes.organizations.dashboard}?OrgId=${orgId}`;
-										}}
 									/>
 								)}
 							</div>
