@@ -6,7 +6,7 @@ import ProfilesDesign from "../publicProfile/ProfilesDesign";
 import OrgWalletDetails from "../publicProfile/OrgWalletDetails";
 import { AlertComponent } from "../AlertComponent";
 import CustomSpinner from "../CustomSpinner";
-import { OrgInterface } from "./interfaces";
+import type { OrgInterface } from "./interfaces";
 
 const PublicOrganizationDetails = ({ orgSlug }: { orgSlug: string }) => {
 
@@ -52,7 +52,11 @@ const PublicOrganizationDetails = ({ orgSlug }: { orgSlug: string }) => {
                 loading ? <div className="flex items-center justify-center mb-4 ">
                     <CustomSpinner />
                 </div>
-                    : <div className="grid grid-cols-1 lg:grid-cols-4 gap-2 p-2 bg-gray-100">
+                    : 
+                    <div>
+                   
+                    <div>
+                        <div className="grid grid-cols-1 lg:grid-cols-4 gap-2 p-2 bg-gray-100">
                         <div className="col-span-1 border">
                             {
                                 orgData && <ProfilesDesign orgData={orgData} />
@@ -64,6 +68,9 @@ const PublicOrganizationDetails = ({ orgSlug }: { orgSlug: string }) => {
                     
                         </div>
                     </div>
+                    </div>
+                    </div>
+                    
             }
 
         </div>
