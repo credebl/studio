@@ -46,7 +46,6 @@ export const axiosPublicOrganisationGet = async ({ url }: APIParameters): Promis
 export const axiosPost = async ({ url, payload, config }: APIParameters): Promise<AxiosResponse> => {
     try {		
         const response = await axiosUser.post(url, payload, config);
-console.log("response1122",response);
 
         return response
     }

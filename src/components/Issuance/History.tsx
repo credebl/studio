@@ -1,7 +1,7 @@
 'use client';
 
 import type { AxiosResponse } from 'axios';
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { getConnectionsByOrg } from '../../api/connection';
 import DataTable from '../../commonComponents/datatable';
 import type { TableData } from '../../commonComponents/datatable/interface';
@@ -15,72 +15,68 @@ import { EmptyListMessage } from '../EmptyListComponent';
 import BackButton from '../../commonComponents/backbutton';
 import { pathRoutes } from '../../config/pathRoutes';
 import SearchInput from '../SearchInput';
-import { Button } from 'flowbite-react';
+import { Button, Pagination } from 'flowbite-react';
+import { getFilesHistory } from '../../api/BulkIssuance';
+import type { setToLocalStorage } from '../../api/Auth';
 
 const History = () => {
+	const initialPageState = {
+		pageNumber: 1,
+		pageSize: 9,
+		total: 0,
+	};
+
 	const [connectionList, setConnectionList] = useState<TableData[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
+	const [currentPage, setCurrentPage] = useState(initialPageState);
+	const onPageChange = (page: number) => {
+		setCurrentPage({
+			...currentPage,
+			pageNumber: page,
+		});
+	};
+	const [searchText, setSearchText] = useState('');
 
 	useEffect(() => {
 		getConnections();
 	}, []);
 
+	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setSearchText(e.target.value);
+	};
+
 	const getConnections = async () => {
 		setLoading(true);
-		const response = await getConnectionsByOrg();
+		const response = await getFilesHistory(currentPage.pageNumber,
+			currentPage.pageSize,
+			searchText);
 
-		// const { data } = response as AxiosResponse;
-		// console.log("data11",data);
-		const data = {
-			statusCode: 200,
-			message: 'Connection fetched successfully',
-			data: [
-				{
-					_tags: {
-						did: 'did:peer:1zQmQnwgpcbQTqgrr2ieTL6Fn9ZQRboUt57aXmFKiiYJAM4y',
-						outOfBandId: 'f0919eb2-03d4-41da-85ac-0195aac497c0',
-						role: 'responder',
-						state: 'completed',
-						theirDid:
-							'did:peer:1zQmbCEkLbcjUNVHTijvWnpafMwuwCsrktEWVPMf9oA4KW7Y',
-						threadId: 'e08e244e-d247-4e44-9588-c0423435fe20',
-					},
-					metadata: {},
-					connectionTypes: [],
-					id: 'e01c18c9-7c0b-4b20-ba4e-a559e6e575f5',
-					createdAt: '2023-10-19T08:10:31.687Z',
-					did: 'did:peer:1zQmQnwgpcbQTqgrr2ieTL6Fn9ZQRboUt57aXmFKiiYJAM4y',
-					theirDid: 'did:peer:1zQmbCEkLbcjUNVHTijvWnpafMwuwCsrktEWVPMf9oA4KW7Y',
-					theirLabel: 'ADEYA SSI',
-					state: 'completed',
-					role: 'responder',
-					autoAcceptConnection: true,
-					threadId: 'e08e244e-d247-4e44-9588-c0423435fe20',
-					protocol: 'https://didcomm.org/connections/1.0',
-					outOfBandId: 'f0919eb2-03d4-41da-85ac-0195aac497c0',
-					updatedAt: '2023-10-19T08:10:33.582Z',
-					totalRecords: '1000',
-					successfulRecords: '945',
-					failedRecords: '55',
-				},
-			],
-		};
-
+		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			const connections = data?.data?.map(
-				(ele: { theirLabel: string; id: string; createdAt: string }) => {
-					const userName = ele?.theirLabel ? ele.theirLabel : 'Not available';
-					const totalRecords = ele.totalRecords
-						? ele.totalRecords
+			console.log('data----1', data.data);
+			const totalPages = data?.data?.totalPages;
+			const connections = data?.data?.data?.map(
+				(ele: {
+					createDateTime: any;
+					name: any;
+					theirLabel: string;
+					id: string;
+					createdAt: string;
+				}) => {
+					const userName = ele?.name ? ele.name : 'Not available';
+					// const totalRecords = ele.totalRecords
+					// 	? ele.totalRecords
+					// 	: 'Not available';
+					// const successfulRecords = ele.successfulRecords
+					// 	? ele.successfulRecords
+					// 	: 'Not available';
+					// const failedRecords = ele.failedRecords
+					// 	? ele.failedRecords
+					// 	: 'Not available';
+					const createdOn = ele?.createDateTime
+						? ele?.createDateTime
 						: 'Not available';
-					const successfulRecords = ele.successfulRecords
-						? ele.successfulRecords
-						: 'Not available';
-					const failedRecords = ele.failedRecords
-						? ele.failedRecords
-						: 'Not available';
-					const createdOn = ele?.createdAt ? ele?.createdAt : 'Not available';
 					return {
 						data: [
 							{ data: userName },
@@ -93,16 +89,17 @@ const History = () => {
 									</DateTooltip>
 								),
 							},
-							{ data: totalRecords },
-							{ data: successfulRecords },
-							{ data: failedRecords },
+							// { data: totalRecords },
+							// { data: successfulRecords },
+							// { data: failedRecords },
 							{
 								data: (
 									<Button
 										onClick={() => {
 											window.location.href =
-												pathRoutes.organizations.Issuance.details;
-										}}
+												`${pathRoutes.organizations.Issuance.details}`
+										}
+									}
 										className='text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
 										style={{ height: '2.5rem', minWidth: '4rem' }}
 									>
@@ -136,6 +133,10 @@ const History = () => {
 				},
 			);
 			setConnectionList(connections);
+			setCurrentPage({
+				...currentPage,
+				total: totalPages,
+			});
 		} else {
 			setError(response as string);
 		}
@@ -145,9 +146,9 @@ const History = () => {
 	const header = [
 		{ columnName: 'File Name' },
 		{ columnName: 'Uploaded Date' },
-		{ columnName: 'Total Records' },
-		{ columnName: 'Successful Records' },
-		{ columnName: 'Failed Records' },
+		// { columnName: 'Total Records' },
+		// { columnName: 'Successful Records' },
+		// { columnName: 'Failed Records' },
 		{ columnName: 'Action' },
 	];
 
@@ -167,7 +168,9 @@ const History = () => {
 					</p>
 					<p className="text-sm text-gray-400">Bulk Issuance History</p>
 				</h1>
-				<SearchInput />
+				<div className="flex items-center justify-between mb-4">
+					<SearchInput onInputChange={searchInputChange} />
+				</div>
 			</div>
 			<AlertComponent
 				message={error}
@@ -191,6 +194,16 @@ const History = () => {
 						data={connectionList}
 						loading={loading}
 					></DataTable>
+
+					{/* {currentPage.total > 0 && ( */}
+						{/* <div className="flex items-center justify-end mb-4">
+							<Pagination
+								currentPage={currentPage.pageNumber}
+								onPageChange={onPageChange}
+								totalPages={currentPage.total}
+							/>
+						</div> */}
+					{/* )} */}
 				</div>
 			) : (
 				<div className="bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">

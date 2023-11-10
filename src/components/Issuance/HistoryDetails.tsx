@@ -12,13 +12,23 @@ import { EmptyListMessage } from '../EmptyListComponent';
 import { pathRoutes } from '../../config/pathRoutes';
 import BackButton from '../../commonComponents/backbutton';
 import SearchInput from '../SearchInput';
+import { getFilesDataHistory } from '../../api/BulkIssuance';
+import type { AxiosResponse } from 'axios';
 
-const HistoryDetails = () => {
+const HistoryDetails = (requestId: string) => {
+	console.log("requestId",requestId);
+	
+	const initialPageState = {
+		pageNumber: 1,
+		pageSize: 10,
+		total: 0,
+	};
 	const [historyList, setHistoryList] = useState<TableData[]>([]);
 	console.log('historyList', historyList);
 	const [options, setOptions] = useState(['All', 'Successful', 'Failed']);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
+	const [currentPage, setCurrentPage] = useState(initialPageState);
 
 	useEffect(() => {
 		getConnections();
@@ -26,93 +36,96 @@ const HistoryDetails = () => {
 
 	const getConnections = async () => {
 		setLoading(true);
-		// const response = await getConnectionsByOrg();
+		const response = await getFilesDataHistory(requestId,currentPage.pageNumber,
+			currentPage.pageSize,
+			'',);
 
-		// const { data } = response as AxiosResponse;
+		const { data } = response as AxiosResponse;
+console.log("data121212",data);
 
-		const data = {
-			statusCode: 200,
-			message: 'Proof presentation received successfully.',
-			data: [
-				{
-					_tags: {
-						connectionId: 'e01c18c9-7c0b-4b20-ba4e-a559e6e575f5',
-						state: 'abandoned',
-						threadId: 'e31a778c-9e5a-4937-a7da-1cecdb6ac616',
-					},
-					metadata: {},
-					id: 'b3de22d4-1d35-454e-aa06-2b2b547c181b',
-					createdAt: '2023-10-19T08:11:50.223Z',
-					protocolVersion: 'v1',
-					state: 'Successful',
-					connectionId: 'e01c18c9-7c0b-4b20-ba4e-a559e6e575f5',
-					threadId: 'e31a778c-9e5a-4937-a7da-1cecdb6ac616',
-					autoAcceptProof: 'never',
-					updatedAt: '2023-10-19T08:12:35.180Z',
-					errorMessage: 'abandoned: Declined',
-					email: 'user1@gmail.com',
-					description: '-',
-				},
-				{
-					_tags: {
-						connectionId: 'e01c18c9-7c0b-4b20-ba4e-a559e6e575f5',
-						state: 'presentation-received',
-						threadId: '859f4a1d-0011-4f61-93e7-587f148a4d43',
-					},
-					metadata: {},
-					id: 'e16ec669-a892-412e-90ed-05f3c9734139',
-					createdAt: '2023-10-19T08:13:59.807Z',
-					protocolVersion: 'v1',
-					state: 'Failed',
-					connectionId: 'e01c18c9-7c0b-4b20-ba4e-a559e6e575f5',
-					threadId: '859f4a1d-0011-4f61-93e7-587f148a4d43',
-					autoAcceptProof: 'never',
-					updatedAt: '2023-10-19T08:14:17.694Z',
-					isVerified: true,
-					email: 'user2@gmail.com',
-					description: 'Error',
-				},
-				{
-					_tags: {
-						connectionId: 'e01c18c9-7c0b-4b20-ba4e-a559e6e575f5',
-						state: 'presentation-received',
-						threadId: '57419aa2-1b94-4e47-bdf2-628f9c07b128',
-					},
-					metadata: {},
-					id: '623eeedc-4c7f-4d26-827f-8fe72921e0e1',
-					createdAt: '2023-10-19T08:14:26.155Z',
-					protocolVersion: 'v1',
-					state: 'Successful',
-					connectionId: 'e01c18c9-7c0b-4b20-ba4e-a559e6e575f5',
-					threadId: '57419aa2-1b94-4e47-bdf2-628f9c07b128',
-					autoAcceptProof: 'never',
-					updatedAt: '2023-10-19T08:14:41.712Z',
-					isVerified: true,
-					email: 'user2@gmail.com',
-					status: 'Successful',
-					description: '-',
-				},
-				{
-					_tags: {
-						connectionId: 'e01c18c9-7c0b-4b20-ba4e-a559e6e575f5',
-						state: 'abandoned',
-						threadId: '0dac50c2-7be2-401a-9fbb-18de36b42730',
-					},
-					metadata: {},
-					id: '7b3d9744-6c7f-4530-8b40-a44a332cc290',
-					createdAt: '2023-10-19T08:13:05.254Z',
-					protocolVersion: 'v1',
-					state: 'Failed',
-					connectionId: 'e01c18c9-7c0b-4b20-ba4e-a559e6e575f5',
-					threadId: '0dac50c2-7be2-401a-9fbb-18de36b42730',
-					autoAcceptProof: 'never',
-					updatedAt: '2023-10-19T08:13:15.489Z',
-					errorMessage: 'abandoned: Declined',
-					email: 'user3@gmail.com',
-					description: 'Information Not Provided',
-				},
-			],
-		};
+		// const data = {
+		// 	statusCode: 200,
+		// 	message: 'Proof presentation received successfully.',
+		// 	data: [
+		// 		{
+		// 			_tags: {
+		// 				connectionId: 'e01c18c9-7c0b-4b20-ba4e-a559e6e575f5',
+		// 				state: 'abandoned',
+		// 				threadId: 'e31a778c-9e5a-4937-a7da-1cecdb6ac616',
+		// 			},
+		// 			metadata: {},
+		// 			id: 'b3de22d4-1d35-454e-aa06-2b2b547c181b',
+		// 			createdAt: '2023-10-19T08:11:50.223Z',
+		// 			protocolVersion: 'v1',
+		// 			state: 'Successful',
+		// 			connectionId: 'e01c18c9-7c0b-4b20-ba4e-a559e6e575f5',
+		// 			threadId: 'e31a778c-9e5a-4937-a7da-1cecdb6ac616',
+		// 			autoAcceptProof: 'never',
+		// 			updatedAt: '2023-10-19T08:12:35.180Z',
+		// 			errorMessage: 'abandoned: Declined',
+		// 			email: 'user1@gmail.com',
+		// 			description: '-',
+		// 		},
+		// 		{
+		// 			_tags: {
+		// 				connectionId: 'e01c18c9-7c0b-4b20-ba4e-a559e6e575f5',
+		// 				state: 'presentation-received',
+		// 				threadId: '859f4a1d-0011-4f61-93e7-587f148a4d43',
+		// 			},
+		// 			metadata: {},
+		// 			id: 'e16ec669-a892-412e-90ed-05f3c9734139',
+		// 			createdAt: '2023-10-19T08:13:59.807Z',
+		// 			protocolVersion: 'v1',
+		// 			state: 'Failed',
+		// 			connectionId: 'e01c18c9-7c0b-4b20-ba4e-a559e6e575f5',
+		// 			threadId: '859f4a1d-0011-4f61-93e7-587f148a4d43',
+		// 			autoAcceptProof: 'never',
+		// 			updatedAt: '2023-10-19T08:14:17.694Z',
+		// 			isVerified: true,
+		// 			email: 'user2@gmail.com',
+		// 			description: 'Error',
+		// 		},
+		// 		{
+		// 			_tags: {
+		// 				connectionId: 'e01c18c9-7c0b-4b20-ba4e-a559e6e575f5',
+		// 				state: 'presentation-received',
+		// 				threadId: '57419aa2-1b94-4e47-bdf2-628f9c07b128',
+		// 			},
+		// 			metadata: {},
+		// 			id: '623eeedc-4c7f-4d26-827f-8fe72921e0e1',
+		// 			createdAt: '2023-10-19T08:14:26.155Z',
+		// 			protocolVersion: 'v1',
+		// 			state: 'Successful',
+		// 			connectionId: 'e01c18c9-7c0b-4b20-ba4e-a559e6e575f5',
+		// 			threadId: '57419aa2-1b94-4e47-bdf2-628f9c07b128',
+		// 			autoAcceptProof: 'never',
+		// 			updatedAt: '2023-10-19T08:14:41.712Z',
+		// 			isVerified: true,
+		// 			email: 'user2@gmail.com',
+		// 			status: 'Successful',
+		// 			description: '-',
+		// 		},
+		// 		{
+		// 			_tags: {
+		// 				connectionId: 'e01c18c9-7c0b-4b20-ba4e-a559e6e575f5',
+		// 				state: 'abandoned',
+		// 				threadId: '0dac50c2-7be2-401a-9fbb-18de36b42730',
+		// 			},
+		// 			metadata: {},
+		// 			id: '7b3d9744-6c7f-4530-8b40-a44a332cc290',
+		// 			createdAt: '2023-10-19T08:13:05.254Z',
+		// 			protocolVersion: 'v1',
+		// 			state: 'Failed',
+		// 			connectionId: 'e01c18c9-7c0b-4b20-ba4e-a559e6e575f5',
+		// 			threadId: '0dac50c2-7be2-401a-9fbb-18de36b42730',
+		// 			autoAcceptProof: 'never',
+		// 			updatedAt: '2023-10-19T08:13:15.489Z',
+		// 			errorMessage: 'abandoned: Declined',
+		// 			email: 'user3@gmail.com',
+		// 			description: 'Information Not Provided',
+		// 		},
+		// 	],
+		// };
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const connections = data?.data?.map((requestProof) => {
@@ -146,7 +159,7 @@ const HistoryDetails = () => {
 			});
 			setHistoryList(connections);
 		} else {
-			// setError(response as string);
+			setError(response as string);
 		}
 		setLoading(false);
 	};

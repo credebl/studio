@@ -51,7 +51,10 @@ export const apiRoutes = {
 		bulk:{
 			credefList:'/bulk/cred-defs',
 			uploadCsv: '/bulk/upload',
-			preview: '/preview'
+			preview: '/preview',
+			bulk: '/bulk',
+			files: '/bulk/files',
+			filesData: '/bulk/file-data'
 		},
 		download:'/download'
 	},
