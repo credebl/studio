@@ -45,12 +45,10 @@ export default function BreadCrumbs() {
 						/>
 					</svg>
 
-					<p>Home</p>
+					<p className='mb-0'>Home</p>
 				</Breadcrumb.Item>
 
 				{breadcrumbList.map((crumb, idx) => {
-					console.log("crumb",);
-					
 					const crumbData =
 						crumb.text.charAt(0).toUpperCase() + crumb.text.slice(1);
 					const routes = crumbData
@@ -65,7 +63,7 @@ export default function BreadCrumbs() {
 								)
 						: '';
 					return (
-						<Breadcrumb.Item href={crumb.href} key={crumb.text}>
+						<Breadcrumb.Item className='mb-0' href={crumb.href} key={crumb.text}>
 							{routes}
 						</Breadcrumb.Item>
 					);

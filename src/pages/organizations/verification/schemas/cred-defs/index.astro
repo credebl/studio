@@ -4,8 +4,16 @@ import { getFromLocalStorage } from '../../../../../api/Auth';
 import LayoutSidebar from '../../../../../app/LayoutSidebar.astro';
 import CredDefSelection from '../../../../../components/Verification/CredDefSelection';
 import { storageKeys } from '../../../../../config/CommonConstant';
+import { checkUserSession } from '../../../../../utils/check-session';
+import { pathRoutes } from '../../../../../config/pathRoutes';
+
+const response = await checkUserSession({cookies: Astro.cookies, currentPath: Astro.url.pathname});
+const route: string = pathRoutes.auth.sinIn
+if (!response.authorized) {
+	return Astro.redirect(response.redirect);
+}
 ---
 
-<LayoutSidebar>
+<LayoutSidebar notFoundPage={!response.permitted}>
 	<CredDefSelection client:load />
 </LayoutSidebar>
