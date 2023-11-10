@@ -25,7 +25,7 @@ const API = async ({ token, url, method, payload }: IProps) => {
 		return data;
 	} catch (err) {
 		console.error('ERROR::', err);
-		return null;
+		return err;
 	}
 };
 
