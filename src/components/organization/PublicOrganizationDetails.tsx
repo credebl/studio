@@ -6,8 +6,7 @@ import ProfilesDesign from "../publicProfile/ProfilesDesign";
 import OrgWalletDetails from "../publicProfile/OrgWalletDetails";
 import { AlertComponent } from "../AlertComponent";
 import CustomSpinner from "../CustomSpinner";
-import { OrgInterface } from "./interfaces";
-import PublicNavbar from "../../commonComponents/PublicNavbar";
+import type { OrgInterface } from "./interfaces";
 
 const PublicOrganizationDetails = ({ orgSlug }: { orgSlug: string }) => {
 

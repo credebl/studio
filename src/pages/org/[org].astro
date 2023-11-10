@@ -27,7 +27,7 @@ const { org } = Astro.params;
 			</div>
 		</div>
 	</div> -->
-<PublicNavbar />	{
+<PublicNavbar limitedWidth={false}/>	{
 		org && <PublicOrganizationDetails client:visible orgSlug = {org}/>
 	}
 
