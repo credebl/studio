@@ -139,7 +139,7 @@ const PlatformSetting = ({ data }: any) => {
             </div>
             <hr />
             <h2 className='mt-5 text-lg font-semibold'>
-                Loren ipsum
+                General
             </h2>
             <Formik
                 initialValues={formData}
@@ -158,7 +158,7 @@ const PlatformSetting = ({ data }: any) => {
                         .trim(),
                     apiEndPoint: yup
                         .string()
-                        .required('API Endpoint is required')
+                        .required('Agent Webhook Endpoint is required')
                         .trim(),
                     emailFrom: yup
                         .string()
@@ -225,6 +225,24 @@ const PlatformSetting = ({ data }: any) => {
                             </div>
                             <div className='max-w-[420px] mb-4'>
                                 <div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                    <Label htmlFor="apiEndPoint" value="Agent Webhook Endpoint" className='text-base' />
+                                    <span className='text-red-500 text-xs'>*</span>
+                                    <p className='text-xs font-normal'>This endpoint is used to access transactions from Webhook (Connection, Issuance, Verifications)</p>
+                                </div>
+                                <Field
+                                    id="apiEndPoint"
+                                    name="apiEndPoint"
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                    type="text"
+                                    placeholder="Ex. www.example.com"
+                                />
+                                {
+                                    (formikHandlers?.errors?.apiEndPoint && formikHandlers?.touched?.apiEndPoint) &&
+                                    <span className="text-red-500 text-xs">{formikHandlers?.errors?.apiEndPoint}</span>
+                                }
+                            </div>
+                            <div className='max-w-[420px] mb-4'>
+                                <div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     <Label htmlFor="sgApiKey" value="SendGrid Key" className='text-base' />
                                     <span className='text-red-500 text-xs  '>*</span>
                                     <p className='text-xs font-normal'>This keys will be use to authenticate access to SendGrid services</p>
@@ -239,24 +257,6 @@ const PlatformSetting = ({ data }: any) => {
                                 {
                                     (formikHandlers?.errors?.sgApiKey && formikHandlers?.touched?.sgApiKey) &&
                                     <span className="text-red-500 text-xs">{formikHandlers?.errors?.sgApiKey}</span>
-                                }
-                            </div>
-                            <div className='max-w-[420px] mb-4'>
-                                <div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                    <Label htmlFor="apiEndPoint" value="API Endpoint" className='text-base' />
-                                    <span className='text-red-500 text-xs'>*</span>
-                                    <p className='text-xs font-normal'>Enter Platform domain (URL) name</p>
-                                </div>
-                                <Field
-                                    id="apiEndPoint"
-                                    name="apiEndPoint"
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    type="text"
-                                    placeholder="Ex. www.example.com"
-                                />
-                                {
-                                    (formikHandlers?.errors?.apiEndPoint && formikHandlers?.touched?.apiEndPoint) &&
-                                    <span className="text-red-500 text-xs">{formikHandlers?.errors?.apiEndPoint}</span>
                                 }
                             </div>
                             <div className='max-w-[420px]'>
@@ -285,7 +285,7 @@ const PlatformSetting = ({ data }: any) => {
                                 <div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     <Label htmlFor="enableEcosystem" value="Enable Ecosystem" className='text-base' />
                                     <span className='text-red-500 text-xs'>*</span>
-                                    <p className='text-xs font-normal'>This keys will be use to authenticate access to SendGrid services</p>
+                                    <p className='text-xs font-normal'>This flag is used to enable/disable ecosystem feature</p>
                                 </div>
                                 <Toggle id="enableEcosystem" name="enableEcosystem" label={""} checked={formikHandlers.values.enableEcosystem} onChangeHandle={(e) => formikHandlers.handleChange(e)} />
                             </div>
@@ -293,7 +293,7 @@ const PlatformSetting = ({ data }: any) => {
                                 <div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     <Label htmlFor="multiEcosystemSupport" value="Multi Ecosystem support" className='text-base' />
                                     <span className='text-red-500 text-xs'>*</span>
-                                    <p className='text-xs font-normal'>This keys will be use to authenticate access to SendGrid services</p>
+                                    <p className='text-xs font-normal'>This flag is allow you to join multiple ecosystems</p>
                                 </div>
                                 <Toggle id="multiEcosystemSupport" name="multiEcosystemSupport" label={""} checked={formikHandlers.values.multiEcosystemSupport} onChangeHandle={(e) => formikHandlers.handleChange(e)} />
                             </div>
