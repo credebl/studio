@@ -9,7 +9,6 @@ import { updatePlatformSettings, type IPlatformSetting, getPlatformSettings } fr
 import type { AxiosResponse } from 'axios';
 import { apiStatusCodes } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent'
-import React from 'react';
 
 interface IForm {
     externalIp: string;
@@ -54,7 +53,7 @@ const PlatformSetting = ({ data }: any) => {
         message: ""
     })
 
-    const setAlertMessage = ({ message, type }) => {
+    const setAlertMessage = ({ message, type }: IMessage) => {
         setMessage({
             message,
             type

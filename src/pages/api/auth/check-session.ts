@@ -4,7 +4,7 @@ import { getSupabaseClient } from "../../../supabase";
 import { getFromCookies } from "../../../api/Auth";
 
 export const get: APIRoute = async ({ redirect, cookies }) => {
-    const sessionCookie = await getFromCookies(cookies, 'session');
+    const sessionCookie = getFromCookies(cookies, 'session');
 
     if (!sessionCookie) {
         return redirect(pathRoutes.auth.sinIn)
