@@ -212,7 +212,7 @@ const EndorsementList = () => {
 	}, []);
 
 	return (
-		<div className="px-4 pt-6">
+		<div className="px-4 pt-2">
 			<div className="mb-4 col-span-full xl:mb-2">
 				<BreadCrumbs />
 			</div>
@@ -330,9 +330,6 @@ const EndorsementList = () => {
 												/>
 											</svg>
 										}
-										onClick={() => {
-											window.location.href = `${pathRoutes.organizations.createSchema}?OrgId=${orgId}`;
-										}}
 									/>
 								) : (
 									<EmptyListMessage
@@ -355,9 +352,6 @@ const EndorsementList = () => {
 												/>
 											</svg>
 										}
-										onClick={() => {
-											window.location.href = `${pathRoutes.organizations.dashboard}?OrgId=${orgId}`;
-										}}
 									/>
 								)}
 							</div>

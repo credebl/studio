@@ -31,6 +31,7 @@ import type { EcosystemDashboard } from '../organization/interfaces';
 import { dateConversion } from '../../utils/DateConversion';
 import DateTooltip from '../Tooltip';
 import DashboardCard from '../../commonComponents/DashboardCard';
+import React from 'react';
 
 interface IRoleTablet {
 	role: string;
@@ -214,7 +215,7 @@ const Dashboard = () => {
 	}, [editOpenModal]);
 
 	return (
-		<div className="pt-6">
+		<div className="pt-2 px-4">
 			<div className="mb-4 col-span-full xl:mb-2">
 				<BreadCrumbs />
 			</div>
@@ -332,7 +333,7 @@ const Dashboard = () => {
 													{leadOrg}
 												</span>
 											</div>
-											<div className="flex">
+											<div className="flex text-md font-semibold">
 												<span className="text-[#3D3D3D] dark:text-white min-w-[10rem]">
 													Joined since
 												</span>{' '}
@@ -346,15 +347,19 @@ const Dashboard = () => {
 										</div>
 									) : (
 										<div className="flex items-center">
-											<span className="dark:text-white">Role: </span>{' '}
+											<span className="text-base font-semibold text-gray-900 dark:text-white">Role: </span>{' '}
 											<RoleTablet role={ecosystemDetails?.role || ''} />
 										</div>
 									)}
-                                    <div>
-									Auto Endorsement:{' '}
-									{ecosystemDetails.autoEndorsement ? 'Yes' : 'No'}
-								
-							</div>
+							<div className="flex text-md font-semibold ">
+												<span className="text-[#3D3D3D] dark:text-white min-w-[10rem]">
+												Endorsement Flow
+												</span>{' '}
+												<span className="dark:text-white">:</span>
+												<span className="text-[#5E5972] dark:text-white ml-2">
+												{ecosystemDetails.autoEndorsement ? '  Sign and Submit' : '  Sign'}
+												</span>
+											</div>
 								</div>
 							) : (
 								<CustomSpinner />

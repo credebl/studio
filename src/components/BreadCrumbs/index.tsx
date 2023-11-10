@@ -21,14 +21,14 @@ export default function BreadCrumbs() {
 			const href = `/${asPathNestedRoutes.slice(0, idx + 1).join('/')}`;
 			return { href, text: subpath };
 		});
-
+		
 		setBreadcrumbList(crumblist);
 	}, []);
 
 	return (
 		<Breadcrumb
 			aria-label="Solid background breadcrumb example"
-			className="bg-gray-50 py-3 dark:bg-gray-900"
+			className="bg-gray-50 mt-2 dark:bg-gray-900"
 		>
 			<div className="flex flex-wrap">
 				<Breadcrumb.Item href="/dashboard">

@@ -1,5 +1,6 @@
 ---
 import pkg from '../../package.json' assert { type: 'json' };
+import HelmetHead from '../components/HelmetHead';
 import { url } from '../lib/data.js';
 
 import { SITE_TITLE } from './constants.js';
@@ -17,18 +18,15 @@ const supabaseKey = process.env.PUBLIC_SUPABASE_KEY || import.meta.env.PUBLIC_SU
 <html lang="en">
 
 <head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>{SITE_TITLE} — v{pkg.version}</title>
-
-	<meta name="generator" content={Astro.generator} />
-	<meta name="description" content={pkg.description} />
-	<meta name="" content={pkg.description} />
-	<link rel="icon" type="image/svg+xml" href={url('favicon.svg')} />
-	<link rel="sitemap" type="application/xml" href={url('sitemap-index.xml')} />
-
-	<meta name="author" content="Julian Cataldo, Zoltán Szőgyényi, Robert Tanislav" />
-	<meta name="copyright" content="MIT" />
+	<HelmetHead
+		siteTitle={SITE_TITLE}
+		version={pkg.version}
+		generator={Astro.generator}
+		desc={pkg.description}
+		icon={url('favicon.svg')}
+		sitemap={url('sitemap-index.xml')}
+		client:load
+	/>
 
 	<script is:inline>
 			if (

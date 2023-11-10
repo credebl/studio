@@ -62,7 +62,7 @@ const UserProfile = () => {
         <div className=' h-full flex flex-auto flex-col justify-between'>
           <div className="mb-4 border-b border-gray-200 dark:border-gray-700">
             <ul className="pl-5 flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
-              <li className="mr-2" role="presentation">
+              <li className="mr-2">
                 <button
                   className="text-xl inline-block p-4 border-b-2 rounded-t-lg text-blue-600 hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-500 border-blue-600 dark:border-blue-500"
                   id="profile-tab"
@@ -74,7 +74,7 @@ const UserProfile = () => {
                   Profile
                 </button>
               </li>
-              <li className="mr-2" role="presentation">
+              <li className="mr-2">
                 <button
                   className="inline-block p-4 border-b-2 rounded-t-lg text-gray-500 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 text-xl"
                   id="passkey-tab"
