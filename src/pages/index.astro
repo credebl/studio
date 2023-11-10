@@ -2,7 +2,6 @@
 import LayoutCommon from '../app/LayoutCommon.astro';
 import PublicNavbar from '../commonComponents/PublicNavbar';
 import { pathRoutes } from '../config/pathRoutes';
-
 ---
 
 <LayoutCommon>
@@ -116,8 +115,8 @@ import { pathRoutes } from '../config/pathRoutes';
 			<section class="bg-white dark:bg-gray-900">
 				<div class="grid grid-cols-1 md:grid-cols-2 max-w-screen-xl mx-auto">
 					<div class="col-span-2">
-						<div class="py-8 px-4 lg:py-16 lg:px-12">
-							<div>
+						<div class="py-8 px-4 lg:py-16 lg:px-12 flex items-center flex-col">
+							<div class="flex justify-center">
                                 <a
 								href="https://github.com/credebl/platform/releases"
 								class="inline-flex justify-between items-center py-1 px-1 pr-4 mb-7 text-sm text-gray-700 bg-gray-100 rounded-full dark:bg-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
@@ -142,20 +141,21 @@ import { pathRoutes } from '../config/pathRoutes';
 								>
 							    </a>
 							</div>
+							
 							<h1
-								class="mb-4 text-2xl font-extrabold tracking-tight leading-none text-gray-900 lg:text-3xl dark:text-white"
+								class="md:mb-4 md:text-center md:flex md:justify-center font-extrabold tracking-tight leading-none text-gray-900 lg:text-4xl md:text-xl sm:text-sm dark:text-white lg:max-w-[736px]  md:max-w-[430px] sm:max-w-[365px]"
 							>
 								Build Self-Sovereign Identity (SSI) solutions faster - for
 								global scale.
 							</h1>
 							<p
-								class="mt-10 mb-8 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400"
+								class="mt-10 mb-8 md:flex md:text-center md:justify-center font-normal text-gray-500 lg:text-xl md:text-sm sm:text-xs dark:text-gray-400 lg:max-w-[583px] md:max-w-[409px] sm:max-w-[333px]"
 							>
 								CREDEBL aims to significantly reduce the tedious work required
 								to build SSI solutions from scratch.
 							</p>
 							<div
-								class="flex w-fit flex-col mt-10 mb-8 lg:mb-16 space-y-4 sm:flex-row sm:justify-start sm:space-y-0 sm:space-x-4"
+								class="justify-center flex"
 							>
 								<a
 									href="https://docs.credebl.id"
@@ -179,11 +179,11 @@ import { pathRoutes } from '../config/pathRoutes';
 				</div>
 			</section>
             <section>
-	           <div class="col-span-2 w-full flex justify-center py-16 px-12 mx-auto bg-cover bg-no-repeat bg-center " style="background-image: url(/images/bg_banner_image.png)">
-	            	<img src="/images/credebl-screenshot.png" alt="bg_banner_image" class="" />
+	           <div class="col-span-2 max-w-screen-xl flex justify-center mx-auto bg-cover bg-no-repeat bg-center ">
+	            	<img src="/images/Black bg.svg" alt="black_bg_image" class="" />
 	        </div>
             </section>
-			<section class="bg-gray-100 dark:bg-gray-900">
+			<section class="bg-gray-100 dark:bg-gray-900 max-w-screen-xl mx-auto">
 				<div class="py-4 px-4 sm:py-4 lg:px-6 max-w-screen-xl mx-auto">
 					<div class="py-8 lg:py-4 mx-auto">
 						<h2
@@ -202,11 +202,11 @@ import { pathRoutes } from '../config/pathRoutes';
 						</p>
 					</div>
 					<div
-						class="space-y-8 grid md:grid-cols-2 grid-cos-1 md:gap-8 md:px-28 md:pb-8"
+						class="grid md:grid-cols-2 grid-cos-1 md:gap-8 md:px-28 md:pb-8"
 					>
 						<div class="mt-8 flex">
 							<div
-								class="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900"
+								class="flex mr-8 justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900 shrink-0"
 							>
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -231,11 +231,10 @@ import { pathRoutes } from '../config/pathRoutes';
 								         Verifiable Credentials, DIF Protocols & Hyperledger Aries.
 							            </p>
 						        </div>
-							
 						</div>
-						<div>
+						<div class="mt-8 flex">
 							<div
-								class="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900"
+								class="flex mr-8 justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900 shrink-0"
 							>
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -255,17 +254,19 @@ import { pathRoutes } from '../config/pathRoutes';
 									></path>
 								</svg>
 							</div>
-							<h3 class="mb-2 text-xl font-bold dark:text-white">
-								Multiple credential exchange formats
-							</h3>
-							<p class="text-gray-500 dark:text-gray-400">
-								Supports multiple verifiable credential exchange formats such as
-								AnonCreds, JSON-LD, JWT, etc.
-							</p>
+							<div>
+								<h3 class="mb-2 text-xl font-bold dark:text-white">
+									Multiple credential exchange formats
+								</h3>
+								<p class="text-gray-500 dark:text-gray-400">
+									Supports multiple verifiable credential exchange formats such as
+									AnonCreds, JSON-LD, JWT, etc.
+								</p>
+							</div>							
 						</div>
-						<div>
+						<div class="mt-8 flex">
 							<div
-								class="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900"
+								class="flex mr-8 justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900 shrink-0"
 							>
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -279,18 +280,20 @@ import { pathRoutes } from '../config/pathRoutes';
 										fill="#255ED0"></path>
 								</svg>
 							</div>
-							<h3 class="mb-2 text-xl font-bold dark:text-white">
-								Ledger-agnostic & Ledger-less
-							</h3>
-							<p class="text-gray-500 dark:text-gray-400">
-								Supports multiple ledgers such as Indy, Cheqd, Polygon. Also
-								issue ledger-less VCs using did methods like did:web, did:peer,
-								did:key
-							</p>
+							<div>
+								<h3 class="mb-2 text-xl font-bold dark:text-white">
+									Ledger-agnostic & Ledger-less
+								</h3>
+								<p class="text-gray-500 dark:text-gray-400">
+									Supports multiple ledgers such as Indy, Cheqd, Polygon. Also
+									issue ledger-less VCs using did methods like did:web, did:peer,
+									did:key
+								</p>
+							</div>
 						</div>
-						<div>
+						<div class="mt-8 flex">
 							<div
-								class="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900"
+								class="flex mr-8 justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900 shrink-0"
 							>
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -304,18 +307,20 @@ import { pathRoutes } from '../config/pathRoutes';
 										fill="#255ED0"></path>
 								</svg>
 							</div>
-							<h3 class="mb-2 text-xl font-bold dark:text-white">
-								Self-host on your cloud infra
-							</h3>
-							<p class="text-gray-500 dark:text-gray-400">
-								You can self-host the entire CREDEBL platform and it's
-								components on your organization's cloud infrastructure of
-								choice.
-							</p>
+							<div>
+								<h3 class="mb-2 text-xl font-bold dark:text-white">
+									Self-host on your cloud infra
+								</h3>
+								<p class="text-gray-500 dark:text-gray-400">
+									You can self-host the entire CREDEBL platform and it's
+									components on your organization's cloud infrastructure of
+									choice.
+								</p>
+							</div>	
 						</div>
-						<div>
+						<div class="mt-8 flex">
 							<div
-								class="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900"
+								class="flex mr-8 justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900 shrink-0"
 							>
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -334,19 +339,20 @@ import { pathRoutes } from '../config/pathRoutes';
 										fill="#255ED0"></path>
 								</svg>
 							</div>
-							<h3 class="mb-2 text-xl font-bold dark:text-white">
-								Digital Public Good (DPG)
-							</h3>
-							<p class="text-gray-500 dark:text-gray-400">
-								CREDEBL is an open-souce Digital Public Good (DPG), designed to
-								host Digital Public Infrastructure (DPI) for trusted digital
-								ecosystems.
-							</p>
+							<div>
+								<h3 class="mb-2 text-xl font-bold dark:text-white">
+									Digital Public Good (DPG)
+								</h3>
+								<p class="text-gray-500 dark:text-gray-400">
+									CREDEBL is an open-souce Digital Public Good (DPG), designed to
+									host Digital Public Infrastructure (DPI) for trusted digital
+									ecosystems.
+								</p>
+							</div>
 						</div>
-
-						<div>
+						<div class="mt-8 flex">
 							<div
-								class="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900"
+								class="flex mr-8 justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900 shrink-0"
 							>
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -362,13 +368,15 @@ import { pathRoutes } from '../config/pathRoutes';
 										fill="#255ED0"></path>
 								</svg>
 							</div>
-							<h3 class="mb-2 text-xl font-bold dark:text-white">
-								Enterprise Grade, Large Scale
-							</h3>
-							<p class="text-gray-500 dark:text-gray-400">
-								Build for large scale using highly scalable micro-services
-								architecture, and asynchronous message-driven communication.
-							</p>
+							<div>
+								<h3 class="mb-2 text-xl font-bold dark:text-white">
+									Enterprise Grade, Large Scale
+								</h3>
+								<p class="text-gray-500 dark:text-gray-400">
+									Build for large scale using highly scalable micro-services
+									architecture, and asynchronous message-driven communication.
+								</p>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -379,7 +387,7 @@ import { pathRoutes } from '../config/pathRoutes';
 				</div>
 			</section>
 			<section>
-				<div class="bg-[url('/images/blue_background.png')] bg-cover bg-center">
+				<div class="bg-[url('/images/blue_background.png')] bg-cover bg-center max-w-screen-xl mx-auto">
 					<div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-12 lg:px-6">
 						<div
 							class="mx-auto flex w-full max-w-7xl flex-col items-center gap-12"
@@ -459,34 +467,6 @@ import { pathRoutes } from '../config/pathRoutes';
 										</div>
 									</div>
 
-									<div class="w-fit" data-testid="flowbite-tooltip-target">
-										<a
-											class="cursor-pointer"
-											href="https://github.com/amitayanworks"
-											><img
-												src="https://avatars.githubusercontent.com/u/142207827?v=4"
-												alt="amitayanworks avatar"
-												class="h-10 w-10 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300 sm:h-12 sm:w-12 lg:h-16 lg:w-16"
-											/></a
-										>
-									</div>
-									<div
-										data-testid="flowbite-tooltip"
-										tabindex="-1"
-										class="absolute inline-block z-10 rounded-lg py-2 px-3 text-sm font-medium shadow-sm transition-opacity duration-300 invisible opacity-0 bg-gray-900 text-white dark:bg-gray-700"
-										id=":r8:"
-										role="tooltip"
-										style="position: absolute;"
-									>
-										<div class="relative z-20">amitayanworks</div>
-										<div
-											class="absolute z-10 h-2 w-2 rotate-45 bg-gray-900 dark:bg-gray-700"
-											data-testid="flowbite-tooltip-arrow"
-											style="bottom: -4px; left: 44px;"
-										>
-											&nbsp;
-										</div>
-									</div>
 									<div class="w-fit" data-testid="flowbite-tooltip-target">
 										<a
 											class="cursor-pointer"
@@ -1095,7 +1075,7 @@ import { pathRoutes } from '../config/pathRoutes';
 					</div>
 				</div>
 			</section>
-			<footer class="p-4 bg-gray-200 md:p-8 lg:p-10 dark:bg-gray-800">
+			<footer class="p-4 bg-gray-200 md:p-8 lg:p-10 dark:bg-gray-800 mx-auto max-w-screen-xl">
 				<div class="mt-4 mx-auto max-w-screen-xl text-center">
 					<a
 						class="flex justify-center items-center text-2xl font-semibold text-gray-900 dark:text-white"
