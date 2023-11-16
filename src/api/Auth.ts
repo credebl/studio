@@ -208,15 +208,8 @@ export const setToCookies = (cookies: AstroCookies, key: string, value: any, opt
         return
     }
     const convertedValue = encryptData(value)
-    // Set HttpOnly, Secure, and SameSite attributes in the options
-    const updatedOption: { [key: string]: any }= {
-        ...option,
-        httpOnly: true,
-        secure: true, // Set to true if using HTTPS
-        sameSite: 'Strict', 
-      };
-    cookies.set(key, convertedValue as string, updatedOption)
-
+    cookies.set(key, convertedValue as string, option)
+    document.cookie = 'exampleCookie=cookieValue; HttpOnly';
     return true
 }
 
