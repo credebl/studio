@@ -209,7 +209,6 @@ export const setToCookies = (cookies: AstroCookies, key: string, value: any, opt
     }
     const convertedValue = encryptData(value)
     cookies.set(key, convertedValue as string, option)
-    document.cookie = 'exampleCookie=cookieValue; HttpOnly';
     return true
 }
 
