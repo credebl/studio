@@ -1,6 +1,6 @@
 import type { IEcosystem } from './interfaces'
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Features } from '../../utils/enums/features';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
@@ -22,8 +22,7 @@ import { Button, Dropdown } from 'flowbite-react';
 import EditPopupModal from '../EditEcosystemOrgModal';
 import {
 	getFromLocalStorage,
-	removeFromLocalStorage,
-	setToLocalStorage,
+	removeFromLocalStorage
 } from '../../api/Auth';
 import { getUserEcosystemInvitations } from '../../api/invitations';
 import { pathRoutes } from '../../config/pathRoutes';
@@ -31,7 +30,7 @@ import type { EcosystemDashboard } from '../organization/interfaces';
 import { dateConversion } from '../../utils/DateConversion';
 import DateTooltip from '../Tooltip';
 import DashboardCard from '../../commonComponents/DashboardCard';
-import React from 'react';
+import { Roles } from '../../utils/enums/roles';
 
 interface IRoleTablet {
 	role: string;
@@ -135,7 +134,7 @@ const Dashboard = () => {
 						ecosystemData?.ecosystemOrgs.length > 0 &&
 						ecosystemData?.ecosystemOrgs[0];
 					setEcosystemDetails({
-                        autoEndorsement:ecosystemData?.autoEndorsement,
+						autoEndorsement: ecosystemData?.autoEndorsement,
 						id: ecosystemData?.id,
 						logoUrl: ecosystemData?.logoUrl,
 						name: ecosystemData?.name,
@@ -191,7 +190,10 @@ const Dashboard = () => {
 	};
 
 	const getDashboardData = async () => {
-		await checkOrgId();
+		const role = await getFromLocalStorage(storageKeys.ORG_ROLES)
+		if (role === Roles.OWNER) {
+			await checkOrgId();
+		}
 		await fetchEcosystemDetails();
 		await fetchEcosystemDashboard();
 	};
@@ -288,14 +290,12 @@ const Dashboard = () => {
 			{ecosystemDetails ? (
 				<div>
 					<div
-						className={`mt-4 flex-wrap items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800 ${
-							isEcosystemLead ? 'w-full block' : 'flex'
-						}`}
+						className={`mt-4 flex-wrap items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800 ${isEcosystemLead ? 'w-full block' : 'flex'
+							}`}
 					>
 						<div
-							className={`flex flex-wrap ${
-								!isEcosystemLead ? 'w-full items-start' : 'items-center'
-							}`}
+							className={`flex flex-wrap ${!isEcosystemLead ? 'w-full items-start' : 'items-center'
+								}`}
 						>
 							<div className="mr-4">
 								{ecosystemDetails?.logoUrl ? (
@@ -351,15 +351,15 @@ const Dashboard = () => {
 											<RoleTablet role={ecosystemDetails?.role || ''} />
 										</div>
 									)}
-							<div className="flex text-md font-semibold ">
-												<span className="text-[#3D3D3D] dark:text-white min-w-[10rem]">
-												Endorsement Flow
-												</span>{' '}
-												<span className="dark:text-white">:</span>
-												<span className="text-[#5E5972] dark:text-white ml-2">
-												{ecosystemDetails.autoEndorsement ? '  Sign and Submit' : '  Sign'}
-												</span>
-											</div>
+									<div className="flex text-md font-semibold ">
+										<span className="text-[#3D3D3D] dark:text-white min-w-[10rem]">
+											Endorsement Flow
+										</span>{' '}
+										<span className="dark:text-white">:</span>
+										<span className="text-[#5E5972] dark:text-white ml-2">
+											{ecosystemDetails.autoEndorsement ? '  Sign and Submit' : '  Sign'}
+										</span>
+									</div>
 								</div>
 							) : (
 								<CustomSpinner />
@@ -371,7 +371,7 @@ const Dashboard = () => {
 									<RoleTablet role={ecosystemDetails?.role || ''} />
 								</div>
 							)}
-							
+
 							{isEcosystemLead && (
 								<div className="inline-flex items-center ml-auto">
 									<Button
@@ -498,11 +498,10 @@ const Dashboard = () => {
 								<EmptyListMessage
 									feature={!orgId ? Features.CRETAE_ORG : ''}
 									message={'No Ecosystem found'}
-									description={`Get started by creating ${
-										!orgId
+									description={`Get started by creating ${!orgId
 											? 'a new Organization to set up your Ecosystem'
 											: 'an Ecosystem'
-									}`}
+										}`}
 									buttonContent={`${!orgId ? '' : 'Create Ecosystem'}`}
 									svgComponent={
 										<svg
