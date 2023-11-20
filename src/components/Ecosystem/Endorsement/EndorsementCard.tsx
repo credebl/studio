@@ -14,6 +14,11 @@ interface IProps {
     onClickCallback?: (data: any) => void;
 }
 
+interface IAttributeData {
+    data: string[],
+    sliced: boolean
+}
+
 const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTransitionDisabled, allAttributes }: IProps) => {
     const [isEcosystemLead, setIsEcosystemLead] = useState(false);
     const isSchema = data?.type === EndorsementType.schema
@@ -26,30 +31,47 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
         checkEcosystemData();
     }, [])
 
-    const getAttributes = () => {
+    const isSliced = (list: string[]): boolean => {
+        return Boolean(list && list?.length > 3)
+    }
+
+    const getAttributes = (): IAttributeData | null => {
         try {
             switch (true) {
                 case isSchema:
                     if (requestData?.attr_names && requestData?.attr_names.length > 0) {
                         if (allAttributes) {
-                            return requestData?.attr_names
+                            return {
+                                data: requestData?.attr_names,
+                                sliced: isSliced(requestData?.attr_names)
+                            }
                         }
-                        return requestData?.attr_names?.slice(0, 3)
+                        return {
+                            data: requestData?.attr_names?.slice(0, 3),
+                            sliced: isSliced(requestData?.attr_names)
+                        }
                     }
-                    return []
+                    return null
                 case !isSchema:
                     if (data?.requestBody && data?.requestBody?.schemaDetails && data?.requestBody?.schemaDetails?.attributes && data?.requestBody?.schemaDetails?.attributes.length > 0) {
                         if (allAttributes) {
-                            return data?.requestBody?.schemaDetails?.attributes
+                            return {
+                                data: data?.requestBody?.schemaDetails?.attributes,
+                                sliced: isSliced(data?.requestBody?.schemaDetails?.attributes)
+                            }
                         }
-                        return data?.requestBody?.schemaDetails?.attributes?.slice(0, 3)
+                        return {
+                            data: data?.requestBody?.schemaDetails?.attributes?.slice(0, 3),
+                            sliced: isSliced(data?.requestBody?.schemaDetails?.attributes)
+                        }
                     }
-                    return []
+                    return null
                 default:
-                    return []
+                    return null
             }
         } catch (err) {
             console.log("Attribute Error::", err)
+            return null
         }
     }
 
@@ -60,7 +82,7 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
     const requestPayload = data?.requestPayload && JSON.parse(data?.requestPayload)
 
     const requestData = isSchema ? requestPayload?.operation?.data : requestPayload?.operation
-    const attributesData = getAttributes()
+    const attributesData: IAttributeData | null = getAttributes()
 
     return (
         <Card onClick={() => {
@@ -68,11 +90,11 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
                 onClickCallback(data)
             }
         }}
-id="schema-cards"
-className={`${cardTransitionDisabled ? "" : "transform transition duration-500 hover:scale-105 hover:bg-gray-50 min-[w-320px]: cursor-default"}  ${enableAction && "lg:cursor-pointer cursor-default" }${ cardTransitionDisabled ? "cursor-default" : "lg:cursor-not-allowed cursor-default"} ${cardTransitionDisabled && "shadow-none"} m-3 h-full`}
+            id="schema-cards"
+            className={`${cardTransitionDisabled ? "" : "transform transition duration-500 hover:scale-105 hover:bg-gray-50 min-[w-320px]: cursor-default"}  ${enableAction && "lg:cursor-pointer cursor-default"}${cardTransitionDisabled ? "cursor-default" : "lg:cursor-not-allowed cursor-default"} ${cardTransitionDisabled && "shadow-none"} m-3 h-full`}
         >
             <div className="flex justify-between items-start">
-            <div className='min-w-[6rem] max-w-100/13rem'>
+                <div className='min-w-[6rem] max-w-100/13rem'>
                     <h5 className="text-xl font-bold leading-[1.1] text-gray-900 dark:text-white break-words truncate line-clamp-2 max-h-[43px] whitespace-normal" style={{ display: "-webkit-box" }}>
                         {isSchema ? requestData?.name : requestData?.tag}
                     </h5>
@@ -133,7 +155,7 @@ className={`${cardTransitionDisabled ? "" : "transform transition duration-500 h
                     </p>
                 }
             </div>
-            {attributesData && attributesData.length > 0 &&
+            {attributesData?.data && attributesData?.data?.length > 0 &&
                 <div className="flow-root mt-auto">
                     <ul className="divide-y divide-gray-200 dark:divide-gray-700">
                         <li className="">
@@ -143,7 +165,7 @@ className={`${cardTransitionDisabled ? "" : "transform transition duration-500 h
                                 </div>
                                 <div className="flex flex-wrap items-start overflow-hidden overflow-ellipsis">
 
-                                    {attributesData.map((element: string | { attributeName: string }) => {
+                                    {attributesData?.data?.map((element: string | { attributeName: string }) => {
                                         const attribute = typeof element === "string" ? element : element?.attributeName
                                         return (
                                             <div key={`schema-card-attributes${attribute}`}>
@@ -156,7 +178,7 @@ className={`${cardTransitionDisabled ? "" : "transform transition duration-500 h
                                             </div>
                                         )
                                     })}
-                                    {!allAttributes && attributesData.length === 3 && <span>...</span>}
+                                    {!allAttributes && attributesData.sliced && <span>...</span>}
                                 </div>
                             </div>
                         </li>
