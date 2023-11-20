@@ -1,0 +1,23 @@
+---
+import { apiRoutes } from '../../config/apiRoutes';
+import API from '../../config/ssrApiConfig';
+
+console.log(Astro.params)
+const fetchApi = await API({
+	url: `${apiRoutes.users.userCredentials}/${Astro.params.uuid}`,
+	token:"",
+	method: 'GET',
+});
+console.log(11,fetchApi);
+const imageUrl = fetchApi?.imageUrl;
+---
+<head>
+<meta property="og:title" content="User Certificate">
+<meta property="og:description" content="User Certificate">
+<meta property="og:image" content={imageUrl}>
+</head>
+
+<div>
+	<img src={imageUrl} alt="">
+</div>
+
