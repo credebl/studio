@@ -199,13 +199,20 @@ export const getFromLocalStorage = async (key: string) =>{
     return convertedValue
 }
 
-export const setToCookies = (cookies: AstroCookies, key: string, value: any, option: {}) =>{
+export const setToCookies = (cookies: AstroCookies, key: string, value: any, option: {[key: string]: any }) =>{
     if(!value.trim()){
         return
     }
     const convertedValue = encryptData(value)
-    cookies.set(key, convertedValue as string, option)
-    document.cookie = 'exampleCookie=cookieValue; HttpOnly';
+    // Set HttpOnly, Secure, and SameSite attributes in the options
+    const updatedOption: { [key: string]: any }= {
+        ...option,
+        httpOnly: true,
+        secure: true, // Set to true if using HTTPS
+        sameSite: 'Strict', 
+      };
+    cookies.set(key, convertedValue as string, updatedOption)
+
     return true
 }
 
