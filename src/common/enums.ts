@@ -57,3 +57,22 @@ export enum EcosystemRoles {
 export enum PlatformRoles {
 	platformAdmin = "platform_admin"
 }
+
+export enum BulkIssuanceHistory {
+ 	started = 'PROCESS_STARTED',
+ 	completed = 'PROCESS_COMPLETED',
+ 	interrupted= 'PROCESS_INTERRUPTED',
+ 	retry= 'PROCESS_REINITIATED'
+}
+
+export enum BulkIssuanceHistoryData {
+	started = 'Process Started',
+	completed = 'Process Completed',
+	interrupted= 'Process Interrupted',
+	retry= 'Process Reinitiated'
+}
+
+export enum BulkIssuanceStatus {
+	successful= 'Successful',
+	failed= 'Failed'
+}
