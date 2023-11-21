@@ -23,7 +23,7 @@ interface IProps {
 	requestId: string
 }
 
-const HistoryDetails = ({requestId}: IProps) => {
+const HistoryDetails = ({requestId}: IProps) => {	
 	const initialPageState = {
 		pageNumber: 1,
 		pageSize: 10,
