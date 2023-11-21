@@ -10,8 +10,8 @@ interface IProps {
 
 const IssuancePopup = (props: IProps) => {
 	return (
-		<Modal show={props.openModal} size="md">
-			<div className="relative w-full max-w-md max-h-full">
+		<Modal show={props.openModal} size="xl">
+			<div className="relative w-full max-w-xl max-h-full">
 				<div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
 					<button
 						type="button"
@@ -54,16 +54,17 @@ const IssuancePopup = (props: IProps) => {
 								d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
 							/>
 						</svg>
-						<p className="text-2xl text-primary-700">Confirmation</p>
-						<h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+						<p className="text-3xl text-primary-700 mb-4">Confirmation</p>
+						<h3 className="mb-6 text-xl font-normal text-gray-500 dark:text-gray-400">
 							{props.message}
 						</h3>
+					
 
 						<div className='flex justify-center'>
 						<button
 							data-modal-hide="popup-modal"
 							type="button"
-							className="flex justify-center items-center text-red-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-lg font-medium px-5 py-2.5 mr-8 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
+							className="flex justify-center items-center text-red-500 dark:text-red-500 bg-white hover:bg-gray-50 focus:ring-4 focus:outline-none focus:ring-red-200 rounded-lg border border-red-500 dark:border-red-500  text-lg font-medium px-5 py-2.5 mr-8 hover:text-red-600 focus:z-10 dark:bg-gray-700 dark:hover:text-red:700 dark:hover:bg-gray-600 dark:focus:ring-red-600"
 							onClick={() => {
 								props.closeModal(false);
 							}}

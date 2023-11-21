@@ -54,7 +54,8 @@ export const apiRoutes = {
 			preview: '/preview',
 			bulk: '/bulk',
 			files: '/bulk/files',
-			filesData: '/bulk/file-data'
+			filesData: '/bulk/file-data',
+			retry: '/retry/bulk'
 		},
 		download:'/download'
 	},
