@@ -10,15 +10,18 @@ interface IProps {
 
 const API = async ({ token, url, method, payload }: IProps) => {
 	try {
+		const headers = {
+			'Content-Type': 'application/json',
+		}
+		if(token) {
+			headers["Authorization"]= `Bearer ${token}`
+		}
 		const config = {
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${token}`
-			},
+			headers,
 			method,
 			body: JSON.stringify(payload),
 		};
-		const baseURL = globalThis.baseUrl || envConfig.PUBLIC_BASE_URL;
+		const baseURL = globalThis.baseUrl || envConfig.PUBLIC_BASE_URL || process.env.PUBLIC_BASE_URL;
 		console.log(77,baseURL);
 		const apiURL = baseURL + url;
 		const res = await fetch(apiURL, {
