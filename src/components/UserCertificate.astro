@@ -3,14 +3,12 @@ import { apiRoutes } from '../config/apiRoutes'
 import API from '../config/ssrApiConfig';
 
 const { credId } = Astro.props;
-console.log(`CRED::`, credId);
 
 const fetchApi = await API({
 	url: `${apiRoutes.users.userCredentials}/${credId}`,
 	token: '',
 	method: 'GET',
 });
-console.log(11, fetchApi);
 const imageUrl = fetchApi?.imageUrl;
 ---
 
