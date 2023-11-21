@@ -16,7 +16,7 @@ interface IUserProfile {
   profileImg: string
 }
 
-const UserProfile = () => {
+const UserProfile = ({ noBreadcrumb }: { noBreadcrumb?: boolean }) => {
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [prePopulatedUserProfile, setPrePopulatedUserProfile] = useState<IUserProfile | null>(null);
 
@@ -52,8 +52,8 @@ const UserProfile = () => {
 
   return (
 
-    <div className="mb-4 col-span-full xl:mb-2 p-4">
-      <BreadCrumbs />
+    <div className={`mb-4 col-span-full xl:mb-2 p-4 ${noBreadcrumb ? "mx-auto max-w-screen-xl" : ""}`}>
+      {!noBreadcrumb && <BreadCrumbs />}
       <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
         User's Profile
       </h1>
@@ -62,7 +62,7 @@ const UserProfile = () => {
         <div className=' h-full flex flex-auto flex-col justify-between'>
           <div className="mb-4 border-b border-gray-200 dark:border-gray-700">
             <ul className="pl-5 flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
-              <li className="mr-2" role="presentation">
+              <li className="mr-2">
                 <button
                   className="text-xl inline-block p-4 border-b-2 rounded-t-lg text-blue-600 hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-500 border-blue-600 dark:border-blue-500"
                   id="profile-tab"
@@ -74,7 +74,7 @@ const UserProfile = () => {
                   Profile
                 </button>
               </li>
-              <li className="mr-2" role="presentation">
+              <li className="mr-2">
                 <button
                   className="inline-block p-4 border-b-2 rounded-t-lg text-gray-500 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 text-xl"
                   id="passkey-tab"

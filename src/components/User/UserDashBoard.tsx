@@ -50,7 +50,7 @@ const UserDashBoard = () => {
 			const totalPages = data?.data?.totalPages;
 			const invitationList = data?.data?.invitations;
 			if (invitationList.length > 0) {
-				setMessage(`You have received invitations to join organisation`);
+				setMessage(`You have received invitations to join organization`);
 				setViewButton(true);
 			}
 			setCurrentPage({
@@ -196,7 +196,8 @@ const UserDashBoard = () => {
 							);
 							org.roles = roles;
 							return (
-								<div
+								<button
+								className='block'
 									key={org?.id}
 									onClick={() => goToOrgDashboard(org?.id, org?.roles)}
 								>
@@ -224,7 +225,7 @@ const UserDashBoard = () => {
 											{org?.name}
 										</span>
 									</a>
-								</div>
+								</button>
 							);
 						})}
 

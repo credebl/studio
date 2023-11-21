@@ -21,14 +21,14 @@ export default function BreadCrumbs() {
 			const href = `/${asPathNestedRoutes.slice(0, idx + 1).join('/')}`;
 			return { href, text: subpath };
 		});
-
+		
 		setBreadcrumbList(crumblist);
 	}, []);
 
 	return (
 		<Breadcrumb
 			aria-label="Solid background breadcrumb example"
-			className="bg-gray-50 py-3 dark:bg-gray-900"
+			className="bg-gray-50 mt-2 dark:bg-gray-900"
 		>
 			<div className="flex flex-wrap">
 				<Breadcrumb.Item href="/dashboard">
@@ -45,12 +45,10 @@ export default function BreadCrumbs() {
 						/>
 					</svg>
 
-					<p>Home</p>
+					<p className='mb-0'>Home</p>
 				</Breadcrumb.Item>
 
 				{breadcrumbList.map((crumb, idx) => {
-					console.log("crumb",);
-					
 					const crumbData =
 						crumb.text.charAt(0).toUpperCase() + crumb.text.slice(1);
 					const routes = crumbData
@@ -65,7 +63,7 @@ export default function BreadCrumbs() {
 								)
 						: '';
 					return (
-						<Breadcrumb.Item href={crumb.href} key={crumb.text}>
+						<Breadcrumb.Item className='mb-0' href={crumb.href} key={crumb.text}>
 							{routes}
 						</Breadcrumb.Item>
 					);

@@ -22,6 +22,7 @@ export const apiRoutes = {
 		fetchUsers: '/users',
 		update: '/users',
 		recentActivity: '/users/activity',
+		platformSettings: '/users/platform-settings'
 	},
 	organizations: {
 		root: '/orgs',
@@ -48,6 +49,16 @@ export const apiRoutes = {
 		getIssuedCredentials: '/credentials',
 		getAllConnections: '/connections',
 		issueCredential: '/credentials/offer',
+		bulk:{
+			credefList:'/bulk/cred-defs',
+			uploadCsv: '/bulk/upload',
+			preview: '/preview',
+			bulk: '/bulk',
+			files: '/bulk/files',
+			filesData: '/bulk/file-data',
+			retry: '/retry/bulk'
+		},
+		download:'/download'
 	},
 	Verification: {
 		getAllRequestList: '/credentials/proofs',
