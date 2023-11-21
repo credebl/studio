@@ -1,8 +1,8 @@
-import { Button, Card } from 'flowbite-react';
+import { Button, Card, Pagination } from 'flowbite-react';
 import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
 import { DownloadCsvTemplate, getSchemaCredDef } from '../../api/BulkIssuance';
-import { getFromLocalStorage } from '../../api/Auth';
+import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
@@ -13,19 +13,20 @@ import {
 	issueBulkCredential,
 	uploadCsvFile,
 } from '../../api/BulkIssuance';
+import SOCKET from '../../config/SocketConfig';
+import { ToastContainer, toast } from 'react-toastify';
 
 interface IValues {
 	value: string;
-	label: string;
 }
 
 const BulkIssuance = () => {
 	const [csvData, setCsvData] = useState<string[][]>([]);
-	const [requestId, setRequestId] = useState();
+	const [requestId, setRequestId] = useState("");
 	const [process, setProcess] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [credentialOptions, setCredentialOptions] = useState([]);
-	const [credentialSelected, setCredentialSelected] = useState('');
+	const [credentialSelected, setCredentialSelected] = useState(null);
 	const [isFileUploaded, setIsFileUploaded] = useState(false);
 	const [uploadedFileName, setUploadedFileName] = useState('');
 	const [uploadedFile, setUploadedFile] = useState(null);
@@ -81,27 +82,7 @@ const BulkIssuance = () => {
 		getSchemaCredentials();
 	}, []);
 
-	// const DownloadSchemaTemplate = async () => {
-	// 	setLoading(true);
-	// 	const credDefId = await getFromLocalStorage(storageKeys.CRED_DEF_ID);
 
-	// 	if (credDefId) {
-	// 		const response = await DownloadCsvTemplate();
-
-	// 		const { data } = response as AxiosResponse;
-	// 		console.log("response1212",data);
-
-	// 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-	// 			// const fileUrl = data
-
-	// 			// Open the file in a new tab
-	// 			window.open(data, '_blank');
-	// 		} else {
-	// 			setError(response as string);
-	// 		}
-	// 		setLoading(false);
-	// 	}
-	// };
 	const downloadFile = (url: string, fileName: string) => {
 		const link = document.createElement('a');
 		link.href = url;
@@ -145,7 +126,65 @@ const BulkIssuance = () => {
 		setLoading(false);
 	};
 
+	const readFileAsBinary = (file: File): Promise<Uint8Array> => {
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader();
+
+			reader.onload = (event) => {
+				if (event.target?.result) {
+					const binaryData = new Uint8Array(event.target.result as ArrayBuffer);
+					resolve(binaryData);
+				} else {
+					reject(new Error('Failed to read file as binary.'));
+				}
+			};
+
+			reader.onerror = (error) => {
+				reject(error);
+			};
+
+			reader.readAsArrayBuffer(file);
+		});
+	};
+
 	const wait = (ms: any) => new Promise((resolve) => setTimeout(resolve, ms));
+
+
+	useEffect(() => {
+// 		debugger
+		SOCKET.emit('bulk-connection', (res) => {
+console.log(6448, res)
+		})
+		SOCKET.on('bulk-issuance-process-completed', () => {
+			console.log(`bulk-issuance-process-initiated`);
+			toast.success('Bulk issuance process initiated.', {
+				position: 'top-right',
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: 'colored',
+			});
+		});
+	
+		SOCKET.on('error-in-bulk-issuance-process', () => {
+			console.log(`error-in-bulk-issuance-process-initiated`);
+			toast.error('Oops! Something went wrong.', {
+				position: 'top-right',
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: 'colored',
+			});
+		});
+
+		console.log(65652, SOCKET.id)
+	}, [])
 
 	const handleFileUpload = async (file: any) => {
 		setLoading(true);
@@ -155,17 +194,22 @@ const BulkIssuance = () => {
 			return;
 		}
 		try {
-			// setCsvData(data);
-			// setIsFileUploaded(true);
-			// setUploadedFileName(file.name);
-			// setUploadedFile(file);
-			// setError(null);
 
-			const formData = new FormData();
-			formData.append('file', file);
+			const binaryData = await readFileAsBinary(file);
+
+			const clientId = SOCKET.id || ''; 
+			
+			await setToLocalStorage(storageKeys.SOCKET_ID,clientId)
+			const payload = {
+				file: binaryData,
+			};
+
+			// const formData = new FormData();
+			// formData.append('file', file);
 			await wait(500);
 
-			const response = await uploadCsvFile(formData);
+
+			const response = await uploadCsvFile(payload);
 			const { data } = response as AxiosResponse;
 
 			if (data?.statusCode === apiStatusCodes?.API_STATUS_CREATED) {
@@ -183,49 +227,26 @@ const BulkIssuance = () => {
 			setLoading(false);
 		} catch (err) {
 			console.log('ERROR - bulk issuance::', err);
-
-			// const reader = new FileReader();
-
-			// reader.onload = (event) => {
-			// 	const result = event?.target && event?.target?.result;
-			// 	if (typeof result === 'string') {
-			// 		const text = result;
-			// 		const rows = text.split('\n');
-			// 		const data = rows.map((row) => row.split(','));
-			// 		/////////// call api of get csv and set to setCsvData
-
-			// 		setCsvData(data);
-			// 		setIsFileUploaded(true);
-			// 		setUploadedFileName(file.name);
-			// 		setUploadedFile(file);
-			// 		setError(null);
-			// 	}
-			// };
-
-			// const binaryFile=	reader.(file);
-			// console.log("binaryFile",binaryFile);
-
-			// 		try {
-			// 				console.log("File data",file);
-			// 				const response = await uploadCsvFile(file);
-			// 				setLoading(false);
-			// 				const { data } = response as AxiosResponse;
-			// 				if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-			// 					setMessage(data?.message);
-			// 					await handleCsvFileData('a8bf2b51-0772-44f5-b016-274b56961f21');
-			// 				} else {
-			// 					setError(response as string);
-			// 				}
-			// 				setLoading(false);
-			// 			} catch (err) {
-			// 				console.log('ERROR - bulk issuance::', err);
-
-			// }
 		}
 	};
 
+	useEffect(() => {
+		let getData: NodeJS.Timeout;
+
+		if (searchText.length >= 1) {
+			getData = setTimeout(() => {
+				handleCsvFileData(requestId);
+			}, 1000);
+		} else {
+			handleCsvFileData(requestId);
+		}
+
+		return () => clearTimeout(getData);
+	}, [searchText, currentPage.pageNumber]);
+
 	const handleCsvFileData = async (requestId: any) => {
 		setLoading(true);
+		if(requestId) {	
 		try {
 			const response = await getCsvFileData(
 				requestId,
@@ -235,12 +256,17 @@ const BulkIssuance = () => {
 			);
 			const { data } = response as AxiosResponse;
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+				const totalPages = data?.data?.response?.lastPage;
 				setLoading(false);
 				setCsvData(data?.data?.response?.data);
+				setCurrentPage({
+					...currentPage,
+					total: totalPages,
+				});
 			}
 		} catch (err) {
 			setLoading(false);
-		}
+		}}
 		setLoading(false);
 	};
 
@@ -289,21 +315,23 @@ const BulkIssuance = () => {
 
 	const handleReset = () => {
 		handleDiscardFile();
-		setCredentialSelected('');
+		setCredentialSelected(null);
+		setSuccess(null);
 	};
 
 	const confirmCredentialIssuance = async () => {
 		setLoading(true);
-		const response = await issueBulkCredential(requestId);
+		const response = await issueBulkCredential(requestId, 'JgkNdAevZncsLd04AABL');
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			if (data?.data) {
 				setLoading(false);
 				setOpenModal(false);
 				setSuccess(data.message);
-				setTimeout(() => {
-					window.location.href = pathRoutes.organizations.Issuance.connections;
-				}, 500);
+				handleReset()
+				// setTimeout(() => {
+				// 	window.location.href = pathRoutes.organizations.Issuance.connections;
+				// }, 2000);
 			} else {
 				setFailure(response as string);
 				setLoading(false);
@@ -321,6 +349,18 @@ const BulkIssuance = () => {
 
 	return (
 		<div>
+			<ToastContainer
+				position="top-right"
+				autoClose={5000}
+				hideProgressBar={false}
+				newestOnTop={false}
+				closeOnClick
+				rtl={false}
+				pauseOnFocusLoss
+				draggable
+				pauseOnHover
+				theme="colored"
+			/>
 			{(success || failure) && (
 				<AlertComponent
 					message={success ?? failure}
@@ -340,7 +380,7 @@ const BulkIssuance = () => {
 				</div>
 				<Button
 					color="bg-primary-800"
-					className="flex float-right bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-primary-600 font-medium rounded-md text-lg px-2 lg:px-3 py-2 lg:py-2.5 mr-2 ml-auto border-blue-600 hover:text-primary-600 dark:text-blue-500 dark:border-blue-500 dark:hover:text-blue-500 dark:hover:bg-primary-50"
+					className="flex float-right bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-primary-600 font-medium rounded-md text-lg px-2 lg:px-3 py-2 lg:py-2.5 mr-2 ml-auto border-blue-600 hover:text-primary-600 dark:text-blue-500 dark:border-blue-500 dark:hover:text-blue-500 dark:hover:bg-secondary-700"
 					style={{ height: '2.4rem', minWidth: '2rem' }}
 					onClick={() => {
 						window.location.href = pathRoutes.organizations.Issuance.history;
@@ -384,7 +424,7 @@ const BulkIssuance = () => {
 										name="color"
 										options={credentialOptions}
 										onChange={(value: IValues | null) => {
-											setCredentialSelected(value?.value || '');
+											setCredentialSelected(value?.value || null);
 										}}
 									/>
 								</div>
@@ -398,7 +438,7 @@ const BulkIssuance = () => {
 										className={`py-2 px-4 rounded-md inline-flex items-center border text-2xl ${
 											!isCredSelected
 												? 'opacity-50 text-gray-700 dark:text-gray-400 border-gray-700'
-												: 'text-primary-700 dark:text-primary-700 border-primary-700 bg-white-700'
+												: 'text-primary-700 dark:text-primary-700 border-primary-700 bg-white-700 hover:bg-secondary-700'
 										}`}
 										style={{ height: '2.4rem', minWidth: '2rem' }}
 										disabled={!isCredSelected}
@@ -415,9 +455,9 @@ const BulkIssuance = () => {
 											stroke="currentColor"
 										>
 											<path
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												stroke-width="2"
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												strokeWidth="2"
 												d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
 											/>
 										</svg>
@@ -453,9 +493,9 @@ const BulkIssuance = () => {
 													viewBox="0 0 24 24"
 													fill="none"
 													stroke="currentColor"
-													stroke-width="1"
-													stroke-linecap="round"
-													stroke-linejoin="round"
+													strokeWidth="1"
+													strokeLinecap="round"
+													strokeLinejoin="round"
 												>
 													{' '}
 													<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />{' '}
@@ -506,7 +546,7 @@ const BulkIssuance = () => {
 													!isCredSelected ? 'opacity-50' : ''
 												} flex`}
 											>
-												<p className="text-gray-700 dark:text-gray-700 p-2">
+												<p className="text-gray-700 dark:text-white p-2">
 													{uploadedFileName}
 												</p>
 												<button
@@ -520,9 +560,9 @@ const BulkIssuance = () => {
 														stroke="currentColor"
 													>
 														<path
-															stroke-linecap="round"
-															stroke-linejoin="round"
-															stroke-width="2"
+															strokeLinecap="round"
+															strokeLinejoin="round"
+															strokeWidth="2"
 															d="M6 18L18 6M6 6l12 12"
 														/>
 													</svg>
@@ -562,44 +602,6 @@ const BulkIssuance = () => {
 								<div className="overflow-hidden shadow sm:rounded-lg">
 									{csvData && csvData.length > 0 && (
 										<div className="mt-4 py-4 my-2">
-											{/* <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
-												<thead className="bg-gray-50 dark:bg-gray-700">
-													<tr>
-														{csvData.length > 0 &&
-															Object.keys(csvData[0]).map((header, index) => (
-																<th
-																	key={index}
-																	className={`p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white`}
-																>
-																	{header}
-																</th>
-															))}
-													</tr>
-												</thead>
-												<tbody className="bg-white dark:bg-gray-800">
-													{csvData &&
-														csvData.length > 0 &&
-														csvData.map((row, rowIndex) => (
-															<tr
-																key={rowIndex}
-																className={`${
-																	rowIndex % 2 !== 0
-																		? 'bg-gray-50 dark:bg-gray-700'
-																		: ''
-																}`}
-															>
-																{row.map((cell, cellIndex) => (
-																	<td
-																		key={cellIndex}
-																		className={`p-4 text-sm font-normal text-gray-900 whitespace-nowrap dark:text-white align-middle	`}
-																	>
-																		{cell}
-																	</td>
-																))}
-															</tr>
-														))}
-												</tbody>
-											</table> */}
 
 											<table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
 												<thead className="bg-gray-50 dark:bg-gray-700">
@@ -644,6 +646,15 @@ const BulkIssuance = () => {
 								</div>
 							</div>
 						</div>
+						{currentPage.total > 0 && (
+							<div className="flex items-center justify-end mb-4">
+								<Pagination
+									currentPage={currentPage.pageNumber}
+									onPageChange={onPageChange}
+									totalPages={currentPage.total}
+								/>
+							</div>
+						)}
 					</Card>
 				)}
 				<div>
@@ -678,7 +689,6 @@ const BulkIssuance = () => {
 							</ul>
 						</>
 					)}
-					{/* <ConfirmModal openModal={showPopup} closeModal={() => setShowPopup(false)} onSuccess={confirmCreateSchema} message={"Would you like to proceed? Keep in mind that this action cannot be undone."} isProcessing={createloader} /> */}
 
 					<IssuancePopup
 						openModal={openModal}
@@ -688,7 +698,7 @@ const BulkIssuance = () => {
 						onSuccess={confirmCredentialIssuance}
 					/>
 
-					<div>
+					<div className="mt-2">
 						<Button
 							onClick={handleOpenConfirmation}
 							disabled={!isFileUploaded}
