@@ -152,15 +152,14 @@ export const getFilesHistory = async (
 };
 
 export const getFilesDataHistory = async (
-	requestId: {requestId: string},
+	requestId: string,
 	pageNumber: number,
 	pageSize: number,
 	search: string,
 	sortBy:string
 ) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url = `${apiRoutes.organizations.root}/${orgId}/${requestId.requestId}${apiRoutes.Issuance.bulk.filesData}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}&sortBy=${sortBy}`;
-console.log("url1212",requestId.requestId);
+	const url = `${apiRoutes.organizations.root}/${orgId}/${requestId}${apiRoutes.Issuance.bulk.filesData}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}&sortBy=${sortBy}`;
 
 	const axiosPayload = {
 		url,
