@@ -1,10 +1,6 @@
 'use client';
 
-import {
-	ChangeEvent,
-	useEffect,
-	useState,
-} from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import DataTable from '../../commonComponents/datatable';
 import type { TableData } from '../../commonComponents/datatable/interface';
 import { apiStatusCodes } from '../../config/CommonConstant';
@@ -20,10 +16,10 @@ import type { AxiosResponse } from 'axios';
 import { Pagination } from 'flowbite-react';
 
 interface IProps {
-	requestId: string
+	requestId: string;
 }
 
-const HistoryDetails = ({requestId}: IProps) => {	
+const HistoryDetails = ({ requestId }: IProps) => {
 	const initialPageState = {
 		pageNumber: 1,
 		pageSize: 10,
@@ -118,12 +114,14 @@ const HistoryDetails = ({requestId}: IProps) => {
 												: 'bg-red-100 text-red-800 border border-red-100 dark:border-red-400 dark:bg-gray-700 dark:text-red-400'
 										}	text-md font-medium sm:mr-0 md:mr-2 min-[320]:px-3 sm:px-3 lg:px-3 py-0.5 rounded-md flex justify-center min-[320]:w-full md:w-1/3`}
 									>
-										{history?.isError=== false ? 'Successful' : 'Failed'}
+										{history?.isError === false ? 'Successful' : 'Failed'}
 									</span>
 								),
 							},
 							{
-								data: history?.error ? history?.error : '-',
+								data: history?.error
+									? history?.error.replace(/[[\]"]/g, '')
+									: '-',
 							},
 						],
 					};
@@ -203,7 +201,7 @@ const HistoryDetails = ({requestId}: IProps) => {
 						data={historyList}
 						loading={loading}
 					></DataTable>
-					{currentPage.total > 0 && (
+					{currentPage.total > 1 && (
 						<div className="flex items-center justify-end mb-4">
 							<Pagination
 								currentPage={currentPage.pageNumber}
@@ -213,7 +211,6 @@ const HistoryDetails = ({requestId}: IProps) => {
 						</div>
 					)}
 				</div>
-				
 			) : (
 				<div className="bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 					<EmptyListMessage
