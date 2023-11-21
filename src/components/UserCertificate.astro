@@ -1,0 +1,25 @@
+---
+import { apiRoutes } from '../config/apiRoutes'
+import API from '../config/ssrApiConfig';
+import LayoutCommon from '../app/LayoutCommon.astro';
+
+const { credId } = Astro.props;
+
+console.log(credId);
+const fetchApi = await API({
+	url: `${apiRoutes.users.userCredentials}/${credId}`,
+	token: '',
+	method: 'GET',
+});
+console.log(11, fetchApi);
+const imageUrl = fetchApi?.imageUrl;
+---
+
+<head>
+	<meta property="og:title" content="User Certificate" />
+	<meta property="og:description" content="User Certificate" />
+	<meta property="og:image" content={imageUrl} />
+</head>
+<div>
+	<img src={imageUrl} alt="UserCertificate" />
+</div>
