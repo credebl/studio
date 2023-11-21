@@ -1,5 +1,5 @@
-import { getFromLocalStorage } from "../api/Auth";
-import { storageKeys } from "./CommonConstant";
+import { getFromLocalStorage } from '../api/Auth';
+import { storageKeys } from './CommonConstant';
 
 export const getHeaderConfigs = async (tokenVal?: string) => {
     const token = await getFromLocalStorage(storageKeys.TOKEN) || (typeof tokenVal === "string" ? tokenVal : "")
@@ -12,8 +12,6 @@ export const getHeaderConfigs = async (tokenVal?: string) => {
     }
 
 }
-
-
 export const getHeaderConfigsForFormData = async () => {
 	const token = await getFromLocalStorage(storageKeys.TOKEN)
 
