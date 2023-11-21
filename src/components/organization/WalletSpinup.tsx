@@ -75,8 +75,7 @@ const fetchNetworks = async () => {
 	}
 }
 
-const SharedAgentForm = ({ orgName, seeds, isCopied, loading, copyTextVal, submitSharedWallet }: ISharedAgentForm) => {
-	const [haveDidShared, setHaveDidShared] = useState(false)
+const NetworkInput = ({formikHandlers}) => {
 	const [networks, setNetworks] = useState([])
 	const getLedgerList = async () => {
 		const res = await fetchNetworks()
@@ -85,7 +84,39 @@ const SharedAgentForm = ({ orgName, seeds, isCopied, loading, copyTextVal, submi
 	useEffect(() => {
 		getLedgerList()
 	}, [])
+	return (
+		<div>
+			<div className="mb-1 block">
+				<Label htmlFor="network" value="Network" />
+				<span className="text-red-500 text-xs">*</span>
+			</div>
 
+			<select
+				onChange={(e) => formikHandlers.handleChange(e)}
+				id="network"
+				name="network"
+				className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+			>
+				<option value="">Select network</option>
+				{networks && networks.length > 0 && networks.map((item: INetworks) => (
+					<option key={item.id} value={item.id}>
+						{item.name}
+					</option>
+				))}
+			</select>
+
+			{formikHandlers?.errors?.network &&
+				formikHandlers?.touched?.network && (
+					<span className="text-red-500 text-xs">
+						{formikHandlers?.errors?.network}
+					</span>
+				)}
+		</div>
+	)
+}
+
+const SharedAgentForm = ({ orgName, seeds, isCopied, loading, copyTextVal, submitSharedWallet }: ISharedAgentForm) => {
+	const [haveDidShared, setHaveDidShared] = useState(false)
 	const validation = {
 		label: yup.string()
 			.required('Wallet label is required')
@@ -201,33 +232,7 @@ const SharedAgentForm = ({ orgName, seeds, isCopied, loading, copyTextVal, submi
 								</div>
 							</>
 						}
-						<div>
-							<div className="mb-1 block">
-								<Label htmlFor="network" value="Network" />
-								<span className="text-red-500 text-xs">*</span>
-							</div>
-
-							<select
-								onChange={(e) => formikHandlers.handleChange(e)}
-								id="network"
-								name="network"
-								className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
-							>
-								<option value="">Select network</option>
-								{networks && networks.length > 0 && networks.map((item: INetworks) => (
-									<option key={item.id} value={item.id}>
-										{item.name}
-									</option>
-								))}
-							</select>
-
-							{formikHandlers?.errors?.network &&
-								formikHandlers?.touched?.network && (
-									<span className="text-red-500 text-xs">
-										{formikHandlers?.errors?.network}
-									</span>
-								)}
-						</div>
+						<NetworkInput formikHandlers={formikHandlers} />
 						<div>
 							<div className="mb-1 block">
 								<Label htmlFor="name" value="Wallet Label" />
@@ -379,33 +384,7 @@ const DedicatedAgentForm = ({ seeds, loading, submitDedicatedWallet }: IDedicate
 									)}
 							</div>
 						}
-						<div>
-							<div className="mb-1 block">
-								<Label htmlFor="network" value="Network" />
-								<span className="text-red-500 text-xs">*</span>
-							</div>
-
-							<select
-								onChange={(e) => formikHandlers.handleChange(e)}
-								id="network"
-								name="network"
-								className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
-							>
-								<option value="">Select network</option>
-								{networks && networks.length > 0 && networks.map((item: INetworks) => (
-									<option key={item.id} value={item.id}>
-										{item.name}
-									</option>
-								))}
-							</select>
-
-							{formikHandlers?.errors?.network &&
-								formikHandlers?.touched?.network && (
-									<span className="text-red-500 text-xs">
-										{formikHandlers?.errors?.network}
-									</span>
-								)}
-						</div>
+						<NetworkInput formikHandlers={formikHandlers} />
 
 						<div>
 							<div className="mb-1 block">
@@ -640,7 +619,7 @@ const WalletSpinup = (props: {
 												onChange={() => onRadioSelect(AgentType.SHARED)}
 												name="list-radio"
 												className="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500 mr-2"
-/>
+											/>
 											Shared
 										</label>
 									</div>
