@@ -11,7 +11,10 @@ interface IProps {
 const API = async ({ token, url, method, payload }: IProps) => {
 	try {
 		const config = {
-			...(await getHeaderConfigs(token)),
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`
+			},
 			method,
 			body: JSON.stringify(payload),
 		};
