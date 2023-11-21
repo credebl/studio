@@ -253,7 +253,7 @@ console.log(6448, res)
 			);
 			const { data } = response as AxiosResponse;
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				const totalPages = data?.data?.response?.lastPage;
+				const totalPages = data?.data?.response?.lastPage;				
 				setLoading(false);
 				setCsvData(data?.data?.response?.data);
 				setCurrentPage({
@@ -435,7 +435,6 @@ console.log(6448, res)
 										isProcessing={process}
 										type="submit"
 										color="bg-primary-800"
-										// className="  hover:bg-secondary-700 ring-2 text-lg px-2 lg:px-3 py-2 lg:py-2.5 mr-2 ml-auto border-blue-600 hover:text-primary-600 dark:text-blue-500 dark:border-blue-500 dark:hover:text-blue-500 dark:hover:bg-primary-50"
 										className={`py-2 px-4 rounded-md inline-flex items-center border text-2xl ${
 											!isCredSelected
 												? 'opacity-50 text-gray-700 dark:text-gray-400 border-gray-700'
@@ -647,7 +646,7 @@ console.log(6448, res)
 								</div>
 							</div>
 						</div>
-						{currentPage.total > 0 && (
+						{currentPage.total > 1 && (
 							<div className="flex items-center justify-end mb-4">
 								<Pagination
 									currentPage={currentPage.pageNumber}
