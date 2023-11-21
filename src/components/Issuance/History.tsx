@@ -18,6 +18,7 @@ import SearchInput from '../SearchInput';
 import { Button, Pagination } from 'flowbite-react';
 import { getFilesHistory, retryBulkIssuance } from '../../api/BulkIssuance';
 import SOCKET from '../../config/SocketConfig';
+import { BulkIssuanceHistory, BulkIssuanceHistoryData } from '../../common/enums';
 
 const HistoryBulkIssuance = () => {
 	const initialPageState = {
@@ -54,9 +55,9 @@ const HistoryBulkIssuance = () => {
 			if (data?.data) {
 				setLoading(false);
 				setSuccess(data?.message);
-				setTimeout(()=>{
+				setTimeout(() => {
 					getConnections();
-				},500)
+				}, 500);
 			} else {
 				setLoading(false);
 			}
@@ -149,21 +150,26 @@ const HistoryBulkIssuance = () => {
 							{ data: failedRecords },
 
 							{
-								data:
-									status === 'PROCESS_STARTED' ? (
-										<p className="bg-primary-100 text-primary-800 dark:bg-gray-700 dark:text-primary-400 border border-primary-100 dark:border-primary-500 text-xs font-medium mr-0.5 px-0.5 py-0.5 rounded-md flex pl-4">
-											Process Started
-										</p>
-									) : (
-										<p className="bg-green-100 text-green-800 dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500 text-xs font-medium mr-0.5 px-0.5 py-0.5 rounded-md flex pl-2">
-											Process Completed
-										</p>
-									),
+								data: (
+									<p
+										className={`${
+											status === BulkIssuanceHistory.started
+												? 'bg-primary-100 text-primary-800 dark:bg-gray-700 dark:text-primary-400 border border-primary-100 dark:border-primary-500'
+												: status === BulkIssuanceHistory.completed
+												? 'bg-green-100 text-green-800 dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500'
+												:status === BulkIssuanceHistory.interrupted ? 'bg-orange-100 text-orange-800 dark:bg-orange-700 dark:text-orange-400 border border-orange-100 dark:border-orange-500': 
+												'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400 border border-gray-100 dark:border-gray-500'
+										} text-sm font-medium mr-0.5 px-0.5 py-0.5 rounded-md flex pl-4`}
+									>
+										{status === BulkIssuanceHistory.started ? BulkIssuanceHistoryData.started : status === BulkIssuanceHistory.completed ? BulkIssuanceHistoryData.completed : status === BulkIssuanceHistory.interrupted ? BulkIssuanceHistoryData.interrupted : BulkIssuanceHistoryData.retry }
+									</p>
+								),
 							},
 							{
 								data: (
 									<div className="flex">
 										<Button
+											disabled={status === BulkIssuanceHistory.started}
 											onClick={() => {
 												window.location.href = `${pathRoutes.organizations.Issuance.history}/${ele?.id}`;
 											}}
@@ -196,7 +202,7 @@ const HistoryBulkIssuance = () => {
 										{failedRecords > 0 && (
 											<Button
 												onClick={() => handleRetry(fileId)}
-												className='text-base ml-4 font-medium text-center hover:!bg-secondary-700 dark:bg-transparent hover:bg-secondary-700 bg-secondary-700 focus:ring-4 focus:ring-primary-300 ring-primary-700 bg-white-700 text-primary-600 rounded-md lg:px-3 py-2 lg:py-2.5 mr-2 border-blue-600 hover:text-primary-600 dark:text-blue-500 dark:border-blue-500 dark:hover:text-blue-500 dark:hover:bg-secondary-700'
+												className="text-base ml-4 font-medium text-center hover:!bg-secondary-700 dark:bg-transparent hover:bg-secondary-700 bg-secondary-700 focus:ring-4 focus:ring-primary-300 ring-primary-700 bg-white-700 text-primary-600 rounded-md lg:px-3 py-2 lg:py-2.5 mr-2 border-blue-600 hover:text-primary-600 dark:text-blue-500 dark:border-blue-500 dark:hover:text-blue-500 dark:hover:bg-secondary-700"
 												style={{ height: '2.5rem', minWidth: '4rem' }}
 											>
 												<p className="pr-1 flex text-center justify-center item-center">
@@ -234,7 +240,7 @@ const HistoryBulkIssuance = () => {
 				total: totalPages,
 			});
 		} else {
-			setError(response as string);
+			setFailure(response as string);
 		}
 		setLoading(false);
 	};
