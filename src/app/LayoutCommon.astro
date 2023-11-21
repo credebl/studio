@@ -5,7 +5,7 @@ import { url } from '../lib/data.js';
 
 import { SITE_TITLE } from './constants.js';
 
-const { class: clazz } = Astro.props;
+const { class: clazz, metaData } = Astro.props;
 
 const baseUrl = process.env.PUBLIC_BASE_URL || import.meta.env.PUBLIC_BASE_URL
 const encryptKey = process.env.PUBLIC_CRYPTO_PRIVATE_KEY || import.meta.env.PUBLIC_CRYPTO_PRIVATE_KEY
@@ -17,6 +17,7 @@ const supabaseKey = process.env.PUBLIC_SUPABASE_KEY || import.meta.env.PUBLIC_SU
 <!DOCTYPE html>
 <html lang="en">
 
+<head set:html={metaData}/>
 <head>
 	<HelmetHead
 		siteTitle={SITE_TITLE}
@@ -27,7 +28,7 @@ const supabaseKey = process.env.PUBLIC_SUPABASE_KEY || import.meta.env.PUBLIC_SU
 		sitemap={url('sitemap-index.xml')}
 		client:load
 	/>
-
+	
 	<script is:inline>
 			if (
 				localStorage.getItem('color-theme') === 'dark' ||
