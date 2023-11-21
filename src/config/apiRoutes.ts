@@ -75,6 +75,7 @@ export const apiRoutes = {
 	},
 	Platform: {
 		getAllSchemaFromPlatform: '/platform/schemas',
+		getLedgers: '/platform/ledgers',
 	},
 	Public: {
 		organizations: '/orgs/public-profile',
