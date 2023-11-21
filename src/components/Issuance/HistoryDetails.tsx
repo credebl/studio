@@ -19,7 +19,11 @@ import { getFilesDataHistory } from '../../api/BulkIssuance';
 import type { AxiosResponse } from 'axios';
 import { Pagination } from 'flowbite-react';
 
-const HistoryDetails = (requestId: { requestId: string; }) => {
+interface IProps {
+	requestId: string
+}
+
+const HistoryDetails = ({requestId}: IProps) => {
 	const initialPageState = {
 		pageNumber: 1,
 		pageSize: 10,
