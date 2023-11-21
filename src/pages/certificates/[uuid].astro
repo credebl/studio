@@ -1,21 +1,15 @@
 ---
 import { apiRoutes } from '../../config/apiRoutes';
 import API from '../../config/ssrApiConfig';
-import LayoutCommon from '../../app/LayoutCommon.astro'
+import LayoutCommon from '../../app/LayoutCommon.astro';
 
-console.log(Astro.params)
-const fetchApi = await API({
-	url: `${apiRoutes.users.userCredentials}/${Astro.params.uuid}`,
-	token:"",
-	method: 'GET',
-});
-console.log(11,fetchApi);
-const imageUrl = fetchApi?.imageUrl;
+const credId = Astro.params.uuid;
+console.log(credId);
+
 ---
-<LayoutCommon metaData={`<meta property="og:title" content="User Certificate"><meta property="og:description" content="User Certificate"><meta property="og:image" content="${imageUrl}">`}>
 
-<div>
-	<img src={imageUrl} alt="UserCertificate">
-</div>
-
+<LayoutCommon
+	metaData={`<meta property="og:title" content="User Certificate"><meta property="og:description" content="User Certificate"><meta property="og:image" content="${imageUrl}">`}
+>
+	<UserCertificate credId={credId} />
 </LayoutCommon>
