@@ -19,6 +19,13 @@ interface IValues {
 	value: string;
 }
 
+interface ICredentials {
+	credentialDefinitionId: string;
+	schemaCredDefName: string;
+	schemaName:string;
+	schemaVersion:string;
+	schemaAttributes:string;
+}
 const BulkIssuance = () => {
 	const [csvData, setCsvData] = useState<string[][]>([]);
 	const [requestId, setRequestId] = useState("");
@@ -60,12 +67,12 @@ const BulkIssuance = () => {
 				const credentialDefs = data.data;
 
 				const options = credentialDefs.map(
-					(credDef: {
-						credentialDefinitionId: string;
-						schemaCredDefName: string;
-					}) => ({
+					(credDef: ICredentials) => ({
 						value: credDef.credentialDefinitionId,
 						label: credDef.schemaCredDefName,
+						schemaName:credDef.schemaName,
+						schemaVersion:credDef.schemaVersion,
+						schemaAttributes:credDef.schemaAttributes
 					}),
 				);
 
@@ -347,6 +354,14 @@ const BulkIssuance = () => {
 
 	const isCredSelected = Boolean(credentialSelected);
 
+	
+
+const selectedCred = credentialOptions && credentialOptions.length > 0 && credentialOptions.find(
+	(item: {value:string}) =>
+		item.value &&
+		item.value === credentialSelected,	
+);
+
 	return (
 		<div>
 			<ToastContainer />
@@ -419,6 +434,12 @@ const BulkIssuance = () => {
 										}}
 									/>
 								</div>
+
+								<div>{
+									
+									}
+									</div>
+
 								<div className="mt-4">
 									<Button
 										id="signinsubmit"
@@ -584,8 +605,7 @@ const BulkIssuance = () => {
 							<div className="inline-block min-w-full align-middle">
 								<div className="overflow-hidden shadow sm:rounded-lg">
 									{csvData && csvData.length > 0 && (
-										<div className="mt-4 pb-4 mb-2">
-
+										<div className="mt-4 py-4 my-2">
 											<table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
 												<thead className="bg-gray-50 dark:bg-gray-700">
 													<tr>
