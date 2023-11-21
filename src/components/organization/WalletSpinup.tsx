@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 
-import { Alert, Button, Checkbox, Label } from 'flowbite-react';
+import { Button, Checkbox, Label } from 'flowbite-react';
 import { Field, Form, Formik } from 'formik';
 import {
 	apiStatusCodes,
@@ -12,7 +12,7 @@ import {
 	spinupDedicatedAgent,
 	spinupSharedAgent,
 } from '../../api/organization';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import type { AxiosResponse } from 'axios';
 import DedicatedIllustrate from './DedicatedIllustrate';
@@ -21,6 +21,7 @@ import SOCKET from '../../config/SocketConfig';
 import SharedIllustrate from './SharedIllustrate';
 import { nanoid } from 'nanoid';
 import { getLedgers } from '../../api/Agent';
+import { AlertComponent } from '../AlertComponent'
 
 interface Values {
 	seed: string;
@@ -596,23 +597,27 @@ const WalletSpinup = (props: {
 		console.log(`error-in-wallet-creation-process`, JSON.stringify(data));
 	});
 
-	const orgName = props?.orgName ? props?.orgName?.split(" ").reduce((s, c) => (s.charAt(0).toUpperCase() + s.slice(1)) + (c.charAt(0).toUpperCase() + c.slice(1))
+	const generateAlphaNumeric = props?.orgName ? props?.orgName?.split(" ").reduce((s, c) => (s.charAt(0).toUpperCase() + s.slice(1)) + (c.charAt(0).toUpperCase() + c.slice(1))
 	) : ""
+
+	const orgName = generateAlphaNumeric.slice(0, 19) + "Wallet"
 
 	return (
 		<div className="mt-4 flex-col p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 			<div className="items-center sm:flex xl:block 2xl:flex sm:space-x-4 xl:space-x-0 2xl:space-x-4">
 				<div>
+
 					{(success || failure) && (
-						<Alert
-							color={success ? 'success' : 'failure'}
-							onDismiss={() => setFailure(null)}
-						>
-							<span>
-								<p>{success || failure}</p>
-							</span>
-						</Alert>
+						<AlertComponent
+							message={success ?? failure}
+							type={success ? 'success' : 'failure'}
+							onAlertClose={() => {
+								setSuccess(null);
+								setFailure(null);
+							}}
+						/>
 					)}
+
 					<h3 className="mb-1 mt-1 text-xl font-bold text-gray-900 dark:text-white">
 						Create Wallet
 					</h3>
