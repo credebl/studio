@@ -19,7 +19,7 @@ import { Button, Pagination } from 'flowbite-react';
 import { getFilesHistory, retryBulkIssuance } from '../../api/BulkIssuance';
 import SOCKET from '../../config/SocketConfig';
 
-const History = () => {
+const HistoryBulkIssuance = () => {
 	const initialPageState = {
 		pageNumber: 1,
 		pageSize: 9,
@@ -311,4 +311,4 @@ const History = () => {
 	);
 };
 
-export default History;
+export default HistoryBulkIssuance;
