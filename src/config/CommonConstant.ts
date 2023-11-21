@@ -30,5 +30,6 @@ export const storageKeys = {
     LOGIN_USER_EMAIL: 'login_user_email',
 	ECOSYSTEM_ID: "ecosystem_id",
     ORG_DETAILS: "org_details",
-    ECOSYSTEM_ROLE: "ecosystem_role"
+    ECOSYSTEM_ROLE: "ecosystem_role",
+		SOCKET_ID: "socket_id"
 }

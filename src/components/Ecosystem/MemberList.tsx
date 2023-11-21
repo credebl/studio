@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { getEcosystemMemberList } from '../../api/ecosystem';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import type { AxiosResponse } from 'axios';
@@ -9,6 +9,7 @@ import { dateConversion } from '../../utils/DateConversion';
 import { AlertComponent } from '../AlertComponent';
 import { Pagination } from 'flowbite-react';
 import { getFromLocalStorage } from '../../api/Auth';
+import SearchInput from '../SearchInput';
 
 const initialPageState = {
 	pageNumber: 1,
@@ -21,6 +22,12 @@ const MemberList = () => {
 	const [memberList, setMemberList] = useState<TableData[]>([]);
 	const [error, setError] = useState<string | null>(null);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
+	const [searchText, setSearchText] = useState('');
+
+
+	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setSearchText(e.target.value);
+	};
 
 	const getEcosystemMembers = async () => {
 		const userOrgId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -28,7 +35,7 @@ const MemberList = () => {
 		const response = await getEcosystemMemberList(
 			currentPage.pageNumber,
 			currentPage.pageSize,
-			'',
+			searchText
 		);
 		const { data } = response as AxiosResponse;
 
@@ -167,6 +174,9 @@ const MemberList = () => {
 					Ecosystem Members
 				</h2>
 			</div>
+			<div className="flex items-center justify-between mb-4">
+					<SearchInput onInputChange={searchInputChange} />
+				</div>
 			<AlertComponent
 				message={error}
 				type={'failure'}
