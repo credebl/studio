@@ -20,7 +20,6 @@ const API = async ({ token, url, method, payload }: IProps) => {
 		const res = await fetch(apiURL, {
 			...config,
 		});
-
 		const { data } = (await res.json()) || {};
 		return data;
 	} catch (err) {
