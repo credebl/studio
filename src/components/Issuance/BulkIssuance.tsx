@@ -1,18 +1,15 @@
 import { Button, Card, Pagination } from 'flowbite-react';
 import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
-import { DownloadCsvTemplate, getSchemaCredDef } from '../../api/BulkIssuance';
+import { DownloadCsvTemplate, getSchemaCredDef,getCsvFileData,
+	issueBulkCredential,
+	uploadCsvFile, } from '../../api/BulkIssuance';
 import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import { pathRoutes } from '../../config/pathRoutes';
 import IssuancePopup from './IssuancePopup';
-import {
-	getCsvFileData,
-	issueBulkCredential,
-	uploadCsvFile,
-} from '../../api/BulkIssuance';
 import SOCKET from '../../config/SocketConfig';
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -318,6 +315,10 @@ console.log(6448, res)
 		setCredentialSelected(null);
 		setSuccess(null);
 	};
+	const handleResetForConfirm = () => {
+		handleDiscardFile();
+		setCredentialSelected(null);
+	};
 
 	const confirmCredentialIssuance = async () => {
 		setLoading(true);
@@ -328,7 +329,7 @@ console.log(6448, res)
 				setLoading(false);
 				setOpenModal(false);
 				setSuccess(data.message);
-				handleReset()
+				handleResetForConfirm()
 				// setTimeout(() => {
 				// 	window.location.href = pathRoutes.organizations.Issuance.connections;
 				// }, 2000);
