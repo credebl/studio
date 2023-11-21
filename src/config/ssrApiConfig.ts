@@ -20,7 +20,9 @@ const API = async ({ token, url, method, payload }: IProps) => {
 		const res = await fetch(apiURL, {
 			...config,
 		});
+		console.log(22,res);	
 		const { data } = (await res.json()) || {};
+		console.log(33,data)
 		return data;
 	} catch (err) {
 		console.error('ERROR::', err);
