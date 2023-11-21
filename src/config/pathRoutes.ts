@@ -28,6 +28,8 @@ export const pathRoutes = {
 			connections: '/organizations/credentials/schemas/cred-defs/connections',
 			issuance:
 				'/organizations/credentials/schemas/cred-defs/connections/issuance',
+				history : '/organizations/credentials/schemas/cred-defs/connections/history',
+				details : '/organizations/credentials/schemas/cred-defs/connections/history/details',
 		},
 		verification: {
 			schema: '/organizations/verification/schemas',
