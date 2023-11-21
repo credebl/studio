@@ -1,16 +1,36 @@
 ---
+import { getFromCookies } from '../api/Auth';
 import LayoutSidebar from '../app/LayoutSidebar.astro';
+import LayoutStacked from '../app/LayoutStacked.astro';
+import { PlatformRoles } from '../common/enums';
 import UserProfile from '../components/Profile/UserProfile';
 import { pathRoutes } from '../config/pathRoutes';
 import { checkUserSession } from '../utils/check-session';
 
-const response = await checkUserSession(Astro.cookies);
-const route: string = pathRoutes.auth.sinIn
-if (!response) {
-	return Astro.redirect(route);
+const role = getFromCookies(Astro.cookies, 'role');
+
+const response = await checkUserSession({
+	cookies: Astro.cookies,
+	currentPath: Astro.url.pathname,
+});
+const route: string = pathRoutes.auth.sinIn;
+if (!response.authorized) {
+	return Astro.redirect(response.redirect);
 }
+const isPlatformAdmin = role === PlatformRoles.platformAdmin;
 ---
 
-<LayoutSidebar>
-	<UserProfile client:visible/>
-</LayoutSidebar>
+{
+	isPlatformAdmin ? (
+		<LayoutStacked
+			showOptions={true}
+			notFoundPage={role !== PlatformRoles.platformAdmin}
+		>
+			<UserProfile noBreadcrumb={isPlatformAdmin} client:visible />
+		</LayoutStacked>
+	) : (
+		<LayoutSidebar notFoundPage={!response.permitted}>
+			<UserProfile client:visible />
+		</LayoutSidebar>
+	)
+}

@@ -4,13 +4,13 @@ import { checkUserSession } from '../../utils/check-session';
 import { pathRoutes } from '../../config/pathRoutes';
 import EcoSystemReceivedInvitations from '../../components/EcosystemInvite/EcoSystemReceivedInvitations';
 
-const response = await checkUserSession(Astro.cookies);
+const response = await checkUserSession({cookies: Astro.cookies, currentPath: Astro.url.pathname});
 const route = pathRoutes.auth.sinIn;
-if (!response) {
-	return Astro.redirect(route);
+if (!response.authorized) {
+	return Astro.redirect(response.redirect);
 }
 ---
 
-<LayoutSidebar>
+<LayoutSidebar notFoundPage={!response.permitted}>
 	<EcoSystemReceivedInvitations client:visible />
 </LayoutSidebar>

@@ -215,7 +215,7 @@ const Dashboard = () => {
 	}, [editOpenModal]);
 
 	return (
-		<div className="pt-2">
+		<div className="pt-2 px-4">
 			<div className="mb-4 col-span-full xl:mb-2">
 				<BreadCrumbs />
 			</div>

@@ -67,7 +67,6 @@ const SignUpUser = () => {
 		const userRsp = await checkUserExist(values?.email)
 		const { data } = userRsp as AxiosResponse
 		setLoading(false)
-		console.log("data:56576", data)
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			if (data?.data?.isExist === false) {
 				console.log('email data::', data.data)
