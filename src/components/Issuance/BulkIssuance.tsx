@@ -1,9 +1,11 @@
 import { Button, Card, Pagination } from 'flowbite-react';
 import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
-import { DownloadCsvTemplate, getSchemaCredDef,getCsvFileData,
+import {
+	DownloadCsvTemplate, getSchemaCredDef, getCsvFileData,
 	issueBulkCredential,
-	uploadCsvFile, } from '../../api/BulkIssuance';
+	uploadCsvFile,
+} from '../../api/BulkIssuance';
 import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';
@@ -148,13 +150,10 @@ const BulkIssuance = () => {
 
 
 	useEffect(() => {
-// 		debugger
-		SOCKET.emit('bulk-connection', (res) => {
-console.log(6448, res)
-		})
+		SOCKET.emit('bulk-connection')
 		SOCKET.on('bulk-issuance-process-completed', () => {
-			console.log(`bulk-issuance-process-initiated`);
-			toast.success('Bulk issuance process initiated.', {
+			console.log(`bulk-issuance-process-completed`);
+			toast.success('Bulk issuance process completed', {
 				position: 'top-right',
 				autoClose: 5000,
 				hideProgressBar: false,
@@ -165,7 +164,7 @@ console.log(6448, res)
 				theme: 'colored',
 			});
 		});
-	
+
 		SOCKET.on('error-in-bulk-issuance-process', () => {
 			console.log(`error-in-bulk-issuance-process-initiated`);
 			toast.error('Oops! Something went wrong.', {
@@ -179,8 +178,6 @@ console.log(6448, res)
 				theme: 'colored',
 			});
 		});
-
-		console.log(65652, SOCKET.id)
 	}, [])
 
 	const handleFileUpload = async (file: any) => {
@@ -194,9 +191,9 @@ console.log(6448, res)
 
 			const binaryData = await readFileAsBinary(file);
 
-			const clientId = SOCKET.id || ''; 
-			
-			await setToLocalStorage(storageKeys.SOCKET_ID,clientId)
+			const clientId = SOCKET.id || '';
+
+			await setToLocalStorage(storageKeys.SOCKET_ID, clientId)
 			const payload = {
 				file: binaryData,
 			};
@@ -243,27 +240,28 @@ console.log(6448, res)
 
 	const handleCsvFileData = async (requestId: any) => {
 		setLoading(true);
-		if(requestId) {	
-		try {
-			const response = await getCsvFileData(
-				requestId,
-				currentPage.pageNumber,
-				currentPage.pageSize,
-				searchText,
-			);
-			const { data } = response as AxiosResponse;
-			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				const totalPages = data?.data?.response?.lastPage;
+		if (requestId) {
+			try {
+				const response = await getCsvFileData(
+					requestId,
+					currentPage.pageNumber,
+					currentPage.pageSize,
+					searchText,
+				);
+				const { data } = response as AxiosResponse;
+				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+					const totalPages = data?.data?.response?.lastPage;
+					setLoading(false);
+					setCsvData(data?.data?.response?.data);
+					setCurrentPage({
+						...currentPage,
+						total: totalPages,
+					});
+				}
+			} catch (err) {
 				setLoading(false);
-				setCsvData(data?.data?.response?.data);
-				setCurrentPage({
-					...currentPage,
-					total: totalPages,
-				});
 			}
-		} catch (err) {
-			setLoading(false);
-		}}
+		}
 		setLoading(false);
 	};
 
@@ -322,7 +320,7 @@ console.log(6448, res)
 
 	const confirmCredentialIssuance = async () => {
 		setLoading(true);
-		const response = await issueBulkCredential(requestId, 'JgkNdAevZncsLd04AABL');
+		const response = await issueBulkCredential(requestId, SOCKET.id);
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			if (data?.data) {
@@ -436,21 +434,19 @@ console.log(6448, res)
 										type="submit"
 										color="bg-primary-800"
 										// className="  hover:bg-secondary-700 ring-2 text-lg px-2 lg:px-3 py-2 lg:py-2.5 mr-2 ml-auto border-blue-600 hover:text-primary-600 dark:text-blue-500 dark:border-blue-500 dark:hover:text-blue-500 dark:hover:bg-primary-50"
-										className={`py-2 px-4 rounded-md inline-flex items-center border text-2xl ${
-											!isCredSelected
+										className={`py-2 px-4 rounded-md inline-flex items-center border text-2xl ${!isCredSelected
 												? 'opacity-50 text-gray-700 dark:text-gray-400 border-gray-700'
 												: 'text-primary-700 dark:text-primary-700 border-primary-700 bg-white-700 hover:bg-secondary-700'
-										}`}
+											}`}
 										style={{ height: '2.4rem', minWidth: '2rem' }}
 										disabled={!isCredSelected}
 										onClick={DownloadSchemaTemplate}
 									>
 										<svg
-											className={`h-6 w-6 pr-2 ${
-												!isCredSelected
+											className={`h-6 w-6 pr-2 ${!isCredSelected
 													? 'text-gray-700 dark:text-gray-400'
 													: 'text-primary-700'
-											}`}
+												}`}
 											fill="none"
 											viewBox="0 0 24 24"
 											stroke="currentColor"
@@ -472,25 +468,22 @@ console.log(6448, res)
 									<div>
 										<label
 											htmlFor="csv-file"
-											className={`flex flex-col items-center justify-center w-40 h-36 border-2  border-dashed rounded-md cursor-pointer bg-white dark:bg-gray-700 dark-border-gray-600 ${
-												!isCredSelected
+											className={`flex flex-col items-center justify-center w-40 h-36 border-2  border-dashed rounded-md cursor-pointer bg-white dark:bg-gray-700 dark-border-gray-600 ${!isCredSelected
 													? 'border-gray-200'
 													: 'border-primary-700'
-											}`}
+												}`}
 										>
 											<div
-												className={`flex flex-col items-center justify-center pt-5 pb-6 ${
-													!isCredSelected
+												className={`flex flex-col items-center justify-center pt-5 pb-6 ${!isCredSelected
 														? 'opacity-50 text-gray-700 dark:text-gray-700 border-gray-700'
 														: 'text-primary-700 dark:text-primary-700 border-primary-700'
-												}`}
+													}`}
 											>
 												<svg
-													className={`h-12 w-12 ${
-														!isCredSelected
+													className={`h-12 w-12 ${!isCredSelected
 															? 'text-gray-700 dark:text-gray-400'
 															: 'text-primary-700'
-													}`}
+														}`}
 													viewBox="0 0 24 24"
 													fill="none"
 													stroke="currentColor"
@@ -504,11 +497,10 @@ console.log(6448, res)
 													<line x1="12" y1="2" x2="12" y2="15" />
 												</svg>
 												<p
-													className={`mb-2 mt-2 text-sm ${
-														!isCredSelected
+													className={`mb-2 mt-2 text-sm ${!isCredSelected
 															? ' text-gray-500 dark:text-gray-400'
 															: 'text-primary-700'
-													}`}
+														}`}
 												>
 													Drag file here
 												</p>
@@ -518,11 +510,10 @@ console.log(6448, res)
 											<div className="w-fit">
 												<label htmlFor="organizationlogo">
 													<div
-														className={`px-4 py-2 mt-4 ml-4 rounded-md text-center border text-white ${
-															!isCredSelected
+														className={`px-4 py-2 mt-4 ml-4 rounded-md text-center border text-white ${!isCredSelected
 																? 'opacity-50 bg-gray-400 dark:bg-transparent dark:text-gray-400 border-gray-400'
 																: 'bg-primary-700 hover:bg-primary-800 dark:border-primary-800  '
-														}`}
+															}`}
 													>
 														Choose file
 													</div>
@@ -543,11 +534,10 @@ console.log(6448, res)
 									<div className="flex items-center lg:p-6 lg:pb-12">
 										{uploadedFileName && (
 											<div
-												className={`mt-2 ${
-													!isCredSelected ? 'opacity-50' : ''
-												} flex`}
+												className={`mt-2 ${!isCredSelected ? 'opacity-50' : ''
+													} flex`}
 											>
-												<p className="text-gray-700 dark:text-white p-2">
+												<p className="text-gray-700 dark:text-white p-2 break-words	">
 													{uploadedFileName}
 												</p>
 												<button
@@ -624,11 +614,10 @@ console.log(6448, res)
 														csvData.map((row, rowIndex) => (
 															<tr
 																key={rowIndex}
-																className={`${
-																	rowIndex % 2 !== 0
+																className={`${rowIndex % 2 !== 0
 																		? 'bg-gray-50 dark:bg-gray-700'
 																		: ''
-																}`}
+																	}`}
 															>
 																{Object.values(row).map((cell, cellIndex) => (
 																	<td
