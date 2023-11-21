@@ -2,14 +2,13 @@
 import { apiRoutes } from '../../config/apiRoutes';
 import API from '../../config/ssrApiConfig';
 import LayoutCommon from '../../app/LayoutCommon.astro';
+import UserCertificate from '../../components/UserCertificate.astro'
 
 const credId = Astro.params.uuid;
-console.log(credId);
+
 
 ---
 
-<LayoutCommon
-	metaData={`<meta property="og:title" content="User Certificate"><meta property="og:description" content="User Certificate"><meta property="og:image" content="${imageUrl}">`}
->
+<LayoutCommon>
 	<UserCertificate credId={credId} />
 </LayoutCommon>
