@@ -1,6 +1,7 @@
 ---
 import { apiRoutes } from '../../config/apiRoutes';
 import API from '../../config/ssrApiConfig';
+import LayoutCommon from '../../app/LayoutCommon.astro'
 
 console.log(Astro.params)
 const fetchApi = await API({
@@ -11,13 +12,10 @@ const fetchApi = await API({
 console.log(11,fetchApi);
 const imageUrl = fetchApi?.imageUrl;
 ---
-<head>
-<meta property="og:title" content="User Certificate">
-<meta property="og:description" content="User Certificate">
-<meta property="og:image" content={imageUrl}>
-</head>
+<LayoutCommon metaData={`<meta property="og:title" content="User Certificate"><meta property="og:description" content="User Certificate"><meta property="og:image" content="${imageUrl}">`}>
 
 <div>
 	<img src={imageUrl} alt="UserCertificate">
 </div>
 
+</LayoutCommon>
