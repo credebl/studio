@@ -75,7 +75,7 @@ const HistoryBulkIssuance = () => {
 		SOCKET.emit('bulk-connection');
 		SOCKET.on('bulk-issuance-process-completed', () => {
 			console.log(`bulk-issuance-process-completed`);
-			toast.success('Bulk issuance process completed.', {
+			toast.success('Issuance process completed.', {
 				position: 'top-right',
 				autoClose: 5000,
 				hideProgressBar: false,
