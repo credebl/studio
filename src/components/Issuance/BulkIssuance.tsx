@@ -17,6 +17,14 @@ interface IValues {
 	value: string;
 }
 
+interface ICredentials {
+	credentialDefinitionId: string;
+	schemaCredDefName: string;
+	schemaName:string;
+	schemaVersion:string;
+	schemaAttributes:string;
+	credentialDefinition:string;
+}
 const BulkIssuance = () => {
 	const [csvData, setCsvData] = useState<string[][]>([]);
 	const [requestId, setRequestId] = useState("");
@@ -48,6 +56,7 @@ const BulkIssuance = () => {
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 
 	const getSchemaCredentials = async () => {
+		try{
 		setLoading(true);
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		if (orgId) {
@@ -58,20 +67,24 @@ const BulkIssuance = () => {
 				const credentialDefs = data.data;
 
 				const options = credentialDefs.map(
-					(credDef: {
-						credentialDefinitionId: string;
-						schemaCredDefName: string;
-					}) => ({
+					(credDef: ICredentials) => ({
 						value: credDef.credentialDefinitionId,
-						label: credDef.schemaCredDefName,
+						label:`${credDef.schemaName} [${credDef.schemaVersion}] - (${credDef.credentialDefinition})`,
+						schemaName:credDef.schemaName,
+						schemaVersion:credDef.schemaVersion,
+						credentialDefinition:credDef.credentialDefinition,
+						schemaAttributes:credDef.schemaAttributes && JSON.parse(credDef.schemaAttributes )
 					}),
 				);
-
 				setCredentialOptions(options);
 			} else {
 				setError(response as string);
 			}
 			setLoading(false);
+		}
+		}catch (error)
+		{
+			setError(error as string);
 		}
 	};
 
@@ -148,7 +161,7 @@ const BulkIssuance = () => {
 
 
 	useEffect(() => {
-// 		debugger
+
 		SOCKET.emit('bulk-connection', (res) => {
 console.log(6448, res)
 		})
@@ -348,6 +361,12 @@ console.log(6448, res)
 
 	const isCredSelected = Boolean(credentialSelected);
 
+    const selectedCred = credentialOptions && credentialOptions.length > 0 && credentialOptions.find(
+	(item: {value:string}) =>
+		item.value &&
+		item.value === credentialSelected,	
+);
+
 	return (
 		<div>
 			<ToastContainer
@@ -428,7 +447,40 @@ console.log(6448, res)
 											setCredentialSelected(value?.value || null);
 										}}
 									/>
+									<div>
+										{credentialSelected && (
+											<Card className="mt-4">
+												<div>
+													<p className="text-black dark:text-white pb-4">
+														<span className="font-semibold">Schema: </span>
+														{selectedCred?.schemaName}{' '}
+														<span>[{selectedCred?.schemaVersion}]</span>
+													</p>
+													<p className="text-black dark:text-white pb-4">
+														{' '}
+														<span className="font-semibold">
+															Credential Definition:
+														</span>{' '}
+														{selectedCred?.credentialDefinition}
+													</p>
+													<span className='text-black dark:text-white font-semibold'>Attributes:</span>
+													<div className="flex flex-wrap overflow-hidden">
+														{selectedCred?.schemaAttributes.map(
+															(element, index) => (
+																<div key={index}>
+																	<span className="m-1 bg-blue-100 text-black text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-white">
+																		{element.attributeName}
+																	</span>
+																</div>
+															),
+														)}
+													</div>
+												</div>
+											</Card>
+										)}
+									</div>
 								</div>
+
 								<div className="mt-4">
 									<Button
 										id="signinsubmit"
@@ -602,7 +654,6 @@ console.log(6448, res)
 								<div className="overflow-hidden shadow sm:rounded-lg">
 									{csvData && csvData.length > 0 && (
 										<div className="mt-4 py-4 my-2">
-
 											<table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
 												<thead className="bg-gray-50 dark:bg-gray-700">
 													<tr>
