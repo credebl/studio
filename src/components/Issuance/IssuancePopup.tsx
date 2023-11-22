@@ -107,16 +107,30 @@ const IssuancePopup = (props: IProps) => {
 									props.closeModal(false);
 								}}
 							>
-								No, Cancel
-							</button>
-							<Button
-								type="submit"
-								isProcessing={props.isProcessing}
-								disabled={props.isProcessing}
-								onClick={() => {
-									props.onSuccess(true);
-								}}
-								className="bg-primary-700 hover:!bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 rounded-lg inline-flex items-center text-center ml-2"
+								<path
+									d="M15 0C6.705 0 0 6.705 0 15C0 23.295 6.705 30 15 30C23.295 30 30 23.295 30 15C30 6.705 23.295 0 15 0ZM15 27C8.385 27 3 21.615 3 15C3 8.385 8.385 3 15 3C21.615 3 27 8.385 27 15C27 21.615 21.615 27 15 27ZM20.385 7.5L15 12.885L9.615 7.5L7.5 9.615L12.885 15L7.5 20.385L9.615 22.5L15 17.115L20.385 22.5L22.5 20.385L17.115 15L22.5 9.615L20.385 7.5Z"
+									fill="#EA5455"
+								/>
+							</svg>
+						<p>	Cancel </p>
+						</button>
+						<Button
+							type="submit"
+							isProcessing={props.isProcessing}
+							disabled={props.isProcessing}
+							onClick={() => {
+								props.onSuccess(true);
+								window.scrollTo({top: 0, left: 0, behavior: 'smooth'});
+							}}
+							className="bg-primary-700 hover:!bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 font-medium rounded-lg inline-flex items-center text-center ml-2"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="25"
+								height="25"
+								viewBox="0 0 39 27"
+								fill="none"
+								className='mr-2'
 							>
 								<p className="text-lg font-normal">Yes, I'm sure</p>
 							</Button>
