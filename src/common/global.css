@@ -17,6 +17,13 @@ ul[role="tablist"] li[role="presentation"] button[aria-selected="true"] {
   @apply text-primary-700 border-primary-700;
 }
 
+button.role-btn span {
+  @apply overflow-hidden;
+  border-radius: 8px;
+  padding-top: 6.5px;
+  padding-bottom: 6.5px;
+}
+
 .word-break-word{
   word-break: break-word !important;
 }

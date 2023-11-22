@@ -30,6 +30,7 @@ export const pathRoutes = {
 				'/organizations/credentials/schemas/cred-defs/connections/issuance',
 				history : '/organizations/credentials/schemas/cred-defs/connections/history',
 				details : '/organizations/credentials/schemas/cred-defs/connections/history/details',
+			bulkIssuance: '/organizations/credentials/bulk-issuance'
 		},
 		verification: {
 			schema: '/organizations/verification/schemas',
