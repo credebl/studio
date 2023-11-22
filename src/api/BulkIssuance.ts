@@ -116,7 +116,7 @@ export const retryBulkIssuance = async (fileId:string, clientId:string) => {
 	
 		const axiosPayload = {
 			url,
-			payload: clientId,
+			payload:{clientId:clientId},
 			config: await getHeaderConfigs(),
 		};		
 	

@@ -17,7 +17,10 @@ import SearchInput from '../SearchInput';
 import { Button, Pagination } from 'flowbite-react';
 import { getFilesHistory, retryBulkIssuance } from '../../api/BulkIssuance';
 import SOCKET from '../../config/SocketConfig';
-import { BulkIssuanceHistory, BulkIssuanceHistoryData } from '../../common/enums';
+import {
+	BulkIssuanceHistory,
+	BulkIssuanceHistoryData,
+} from '../../common/enums';
 import { ToastContainer, toast } from 'react-toastify';
 
 const HistoryBulkIssuance = () => {
@@ -47,19 +50,15 @@ const HistoryBulkIssuance = () => {
 	};
 
 	const handleRetry = async (fileId: string) => {
-		setSuccess("Issuance process reinitiated. Please await a moment.")
+		setSuccess('Issuance process reinitiated. Please wait a moment.');
 		setLoading(true);
 		const retryIssunace = await retryBulkIssuance(fileId, SOCKET.id);
 		const { data } = retryIssunace as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-			  setSuccess(null)
 			if (data?.data) {
 				setLoading(false);
-				setSuccess(data?.message);
-				setTimeout(() => {
-					getConnections();
-				}, 500);
+				getConnections();
 			} else {
 				setLoading(false);
 			}
@@ -72,62 +71,37 @@ const HistoryBulkIssuance = () => {
 		}
 	};
 
-useEffect(()=>{
-	SOCKET.emit('bulk-connection', (res) => {
-		console.log(6448, res)
-				})
-				SOCKET.on('bulk-issuance-process-completed', () => {
-					console.log(`bulk-issuance-process-initiated`);
-					toast.success('Bulk issuance process initiated.', {
-						position: 'top-right',
-						autoClose: 5000,
-						hideProgressBar: false,
-						closeOnClick: true,
-						pauseOnHover: true,
-						draggable: true,
-						progress: undefined,
-						theme: 'colored',
-					});
-				});
-			
-				SOCKET.on('error-in-bulk-issuance-process', () => {
-					console.log(`error-in-bulk-issuance-process-initiated`);
-					toast.error('Oops! Something went wrong.', {
-						position: 'top-right',
-						autoClose: 5000,
-						hideProgressBar: false,
-						closeOnClick: true,
-						pauseOnHover: true,
-						draggable: true,
-						progress: undefined,
-						theme: 'colored',
-					});
-				});
-		
-		
-},[])
-
-
 	useEffect(() => {
+		SOCKET.emit('bulk-connection');
+		SOCKET.on('bulk-issuance-process-completed', () => {
+			console.log(`bulk-issuance-process-completed`);	
+			toast.success('Bulk issuance process completed.', {
+				position: 'top-right',
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: 'colored',
+			});
+			setSuccess("Bulk issuance process completed.");
+		});
 
-		SOCKET.emit('bulk-connection', (res) => {
-			console.log(6448, res)
-					})
-
-					SOCKET.on('bulk-issuance-process-completed', () => {
-						console.log(`bulk-issuance-process-initiated`);
-						toast.success('Bulk issuance process initiated.', {
-							position: 'top-right',
-							autoClose: 5000,
-							hideProgressBar: false,
-							closeOnClick: true,
-							pauseOnHover: true,
-							draggable: true,
-							progress: undefined,
-							theme: 'colored',
-						});
-					});
-
+		SOCKET.on('error-in-bulk-issuance-process', () => {
+			console.log(`error-in-bulk-issuance-retry-process-initiated`);
+			toast.error('Issuance process failed. Please retry', {
+				position: 'top-right',
+				autoClose: 3000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: 'colored',
+			});
+			setError('Issuance process failed, please retry');
+		});
 
 		let getData: NodeJS.Timeout;
 
@@ -200,13 +174,25 @@ useEffect(()=>{
 										className={`${
 											status === BulkIssuanceHistory.started
 												? 'bg-primary-100 text-primary-800 dark:bg-gray-700 dark:text-primary-400 border border-primary-100 dark:border-primary-500'
-												: status === BulkIssuanceHistory.completed
+												: status === BulkIssuanceHistory.completed ||
+												  status === BulkIssuanceHistory.retry
 												? 'bg-green-100 text-green-800 dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500'
-												:status === BulkIssuanceHistory.interrupted ? 'bg-orange-100 text-orange-800 dark:bg-orange-700 dark:text-orange-400 border border-orange-100 dark:border-orange-500': 
-												'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400 border border-gray-100 dark:border-gray-500'
+												: status === BulkIssuanceHistory.interrupted
+												? 'bg-orange-100 text-orange-800 dark:bg-orange-700 dark:text-orange-400 border border-orange-100 dark:border-orange-500'
+												: status === BulkIssuanceHistory.partially_completed
+												? 'bg-red-100 text-red-800 dark:bg-red-700 dark:text-red-400 border border-red-100 dark:border-red-500'
+												: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400 border border-gray-100 dark:border-gray-500'
 										} text-sm font-medium mr-0.5 px-0.5 py-0.5 rounded-md flex justify-center items-center max-w-[180px]`}
 									>
-										{status === BulkIssuanceHistory.started ? BulkIssuanceHistoryData.started : status === BulkIssuanceHistory.completed ? BulkIssuanceHistoryData.completed : status === BulkIssuanceHistory.interrupted ? BulkIssuanceHistoryData.interrupted : BulkIssuanceHistoryData.retry }
+										{status === BulkIssuanceHistory.started
+											? BulkIssuanceHistoryData.started
+											: status === BulkIssuanceHistory.completed
+											? BulkIssuanceHistoryData.completed
+											: status === BulkIssuanceHistory.interrupted
+											? BulkIssuanceHistoryData.interrupted
+											: status === BulkIssuanceHistory.partially_completed
+											? BulkIssuanceHistoryData.partially_completed
+											: BulkIssuanceHistoryData.retry}
 									</p>
 								),
 							},
@@ -302,18 +288,7 @@ useEffect(()=>{
 
 	return (
 		<div className="p-4" id="connection_list">
-			<ToastContainer
-				position="top-right"
-				autoClose={5000}
-				hideProgressBar={false}
-				newestOnTop={false}
-				closeOnClick
-				rtl={false}
-				pauseOnFocusLoss
-				draggable
-				pauseOnHover
-				theme="colored"
-			/>
+			<ToastContainer />
 			<div className="flex justify-between items-center">
 				<BreadCrumbs />
 				<BackButton path={pathRoutes.organizations.Issuance.connections} />
