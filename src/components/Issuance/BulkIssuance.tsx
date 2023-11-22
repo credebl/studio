@@ -436,12 +436,12 @@ console.log(6448, res)
 										{credentialSelected && (
 											<Card className="mt-4">
 												<div>
-													<p className="text-black dark:text-white">
+													<p className="text-black dark:text-white pb-4">
 														<span className="font-semibold">Schema: </span>
 														{selectedCred?.schemaName}{' '}
 														<span>[{selectedCred?.schemaVersion}]</span>
 													</p>
-													<p className="text-black dark:text-white">
+													<p className="text-black dark:text-white pb-4">
 														{' '}
 														<span className="font-semibold">
 															Credential Definition:
@@ -449,7 +449,7 @@ console.log(6448, res)
 														{selectedCred?.credentialDefinition}
 													</p>
 													<span className='text-black dark:text-white font-semibold'>Attributes:</span>
-													<div className="flex mt-4 flex-wrap overflow-hidden">
+													<div className="flex flex-wrap overflow-hidden">
 														{selectedCred?.schemaAttributes.map(
 															(element, index) => (
 																<div key={index}>
