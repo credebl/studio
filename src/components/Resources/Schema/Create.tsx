@@ -40,7 +40,7 @@ interface IFormData {
 
 const CreateSchema = () => {
     const [failure, setFailure] = useState<string | null>(null);
-    const [orgId, setOrgId] = useState<number>(0);
+    const [orgId, setOrgId] = useState<string>('');
     const [createLoader, setCreateLoader] = useState<boolean>(false);
     const [showPopup, setShowPopup] = useState(false)
     const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
@@ -84,7 +84,7 @@ const CreateSchema = () => {
             orgId,
         };
 
-        const createSchema = await addSchema(schemaFieldName, String(orgId));
+        const createSchema = await addSchema(schemaFieldName, orgId);
         const { data } = createSchema as AxiosResponse;
         if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 

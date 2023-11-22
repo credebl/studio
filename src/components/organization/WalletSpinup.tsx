@@ -67,7 +67,7 @@ const fetchNetworks = async () => {
 	try {
 		const { data } = await getLedgers() as AxiosResponse
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			return data?.data
+			return data?.data 
 		}
 		return []
 	} catch (err) {
@@ -479,7 +479,7 @@ const WalletSpinup = (props: {
 			walletPassword: passwordEncryption(values.password),
 			did: values.did,
 			ledgerId: [
-				Number(values.network)
+				(values.network.toString())
 			],
 			clientSocketId: SOCKET.id
 		}
@@ -507,14 +507,14 @@ const WalletSpinup = (props: {
 			label: values.label,
 			seed: values.seed || seeds,
 			ledgerId: [
-				Number(values.network)
+				(values.network.toString())
 			],
 			did: values.did,
 			clientSocketId: SOCKET.id,
 		};
 
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-		const spinupRes = await spinupSharedAgent(payload, parseInt(orgId));
+		const spinupRes = await spinupSharedAgent(payload, orgId);
 		const { data } = spinupRes as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
