@@ -31,6 +31,8 @@ const HistoryBulkIssuance = () => {
 	const [error, setError] = useState<string | null>(null);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const [failure, setFailure] = useState<string | null>(null);
+	const [success, setSuccess] = useState<string | null>(null);
+
 	const onPageChange = (page: number) => {
 		setCurrentPage({
 			...currentPage,
@@ -44,16 +46,17 @@ const HistoryBulkIssuance = () => {
 	};
 
 	const handleRetry = async (fileId: string) => {
-		// write the function for retry API
 		setLoading(true);
-
 		const retryIssunace = await retryBulkIssuance(fileId);
 		const { data } = retryIssunace as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			if (data?.data) {
 				setLoading(false);
-				getConnections()
+				setSuccess(data?.message);
+				setTimeout(()=>{
+					getConnections();
+				},500)
 			} else {
 				setLoading(false);
 			}
@@ -61,7 +64,7 @@ const HistoryBulkIssuance = () => {
 			setLoading(false);
 			setFailure(retryIssunace as string);
 			setTimeout(() => {
-					setFailure(null);
+				setFailure(null);
 			}, 4000);
 		}
 	};
@@ -193,7 +196,7 @@ const HistoryBulkIssuance = () => {
 										{failedRecords > 0 && (
 											<Button
 												onClick={() => handleRetry(fileId)}
-												className='text-base ml-4 font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+												className='text-base ml-4 font-medium text-center hover:!bg-secondary-700 dark:bg-transparent hover:bg-secondary-700 bg-secondary-700 focus:ring-4 focus:ring-primary-300 ring-primary-700 bg-white-700 text-primary-600 rounded-md lg:px-3 py-2 lg:py-2.5 mr-2 border-blue-600 hover:text-primary-600 dark:text-blue-500 dark:border-blue-500 dark:hover:text-blue-500 dark:hover:bg-secondary-700'
 												style={{ height: '2.5rem', minWidth: '4rem' }}
 											>
 												<p className="pr-1 flex text-center justify-center item-center">
@@ -266,13 +269,18 @@ const HistoryBulkIssuance = () => {
 					<SearchInput onInputChange={searchInputChange} />
 				</div>
 			</div>
-			<AlertComponent
-				message={error}
-				type={'failure'}
-				onAlertClose={() => {
-					setError(null);
-				}}
-			/>
+
+			{(success || failure) && (
+				<AlertComponent
+					message={success ?? failure}
+					type={success ? 'success' : 'failure'}
+					onAlertClose={() => {
+						setSuccess(null);
+						setFailure(null);
+						setError(null);
+					}}
+				/>
+			)}
 
 			{loading ? (
 				<div className="flex items-center justify-center mt-36 mb-4">
@@ -289,7 +297,7 @@ const HistoryBulkIssuance = () => {
 						loading={loading}
 					></DataTable>
 
-					{currentPage.total > 0 && (
+					{currentPage.total > 1 && (
 						<div className="flex items-center justify-end mb-4">
 							<Pagination
 								currentPage={currentPage.pageNumber}

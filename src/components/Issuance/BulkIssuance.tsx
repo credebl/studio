@@ -1,5 +1,5 @@
 import { Button, Card, Pagination } from 'flowbite-react';
-import React, { useEffect, useState } from 'react';
+import React, { Attributes, useEffect, useState } from 'react';
 import Select from 'react-select';
 import {
 	DownloadCsvTemplate, getSchemaCredDef, getCsvFileData,
@@ -19,6 +19,20 @@ interface IValues {
 	value: string;
 }
 
+interface IAttributes {
+	attributeName: string
+	schemaDataType: string
+	displayName: string
+}
+
+interface ICredentials {
+	credentialDefinitionId: string;
+	schemaCredDefName: string;
+	schemaName: string;
+	schemaVersion: string;
+	schemaAttributes: IAttributes | boolean;
+	credentialDefinition: string;
+}
 const BulkIssuance = () => {
 	const [csvData, setCsvData] = useState<string[][]>([]);
 	const [requestId, setRequestId] = useState("");
@@ -50,30 +64,34 @@ const BulkIssuance = () => {
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 
 	const getSchemaCredentials = async () => {
-		setLoading(true);
-		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-		if (orgId) {
-			const response = await getSchemaCredDef();
-			const { data } = response as AxiosResponse;
+		try {
+			setLoading(true);
+			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+			if (orgId) {
+				const response = await getSchemaCredDef();
+				const { data } = response as AxiosResponse;
 
-			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				const credentialDefs = data.data;
+				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+					const credentialDefs = data.data;
 
-				const options = credentialDefs.map(
-					(credDef: {
-						credentialDefinitionId: string;
-						schemaCredDefName: string;
-					}) => ({
-						value: credDef.credentialDefinitionId,
-						label: credDef.schemaCredDefName,
-					}),
-				);
-
-				setCredentialOptions(options);
-			} else {
-				setError(response as string);
+					const options = credentialDefs.map(
+						(credDef: ICredentials) => ({
+							value: credDef.credentialDefinitionId,
+							label: `${credDef.schemaName} [${credDef.schemaVersion}] - (${credDef.credentialDefinition})`,
+							schemaName: credDef.schemaName,
+							schemaVersion: credDef.schemaVersion,
+							credentialDefinition: credDef.credentialDefinition,
+							schemaAttributes: credDef.schemaAttributes && typeof credDef.schemaAttributes === "string" && JSON.parse(credDef.schemaAttributes)
+						}),
+					);
+					setCredentialOptions(options);
+				} else {
+					setError(response as string);
+				}
+				setLoading(false);
 			}
-			setLoading(false);
+		} catch (error) {
+			setError(error as string);
 		}
 	};
 
@@ -347,6 +365,12 @@ const BulkIssuance = () => {
 
 	const isCredSelected = Boolean(credentialSelected);
 
+	const selectedCred: ICredentials | boolean | undefined = credentialOptions && credentialOptions.length > 0 && credentialOptions.find(
+		(item: { value: string }) =>
+			item.value &&
+			item.value === credentialSelected,
+	);
+
 	return (
 		<div>
 			<ToastContainer />
@@ -420,12 +444,43 @@ const BulkIssuance = () => {
 									/>
 								</div>
 								<div className="mt-4">
+									{credentialSelected && (
+										<Card className='max-w-[30rem]'>
+											<div>
+												<p className="text-black dark:text-white pb-2">
+													<span className="font-semibold">Schema: </span>
+													{selectedCred?.schemaName || ""}{' '}
+													<span>[{selectedCred?.schemaVersion}]</span>
+												</p>
+												<p className="text-black dark:text-white pb-2">
+													{' '}
+													<span className="font-semibold">
+														Credential Definition:
+													</span>{' '}
+													{selectedCred?.credentialDefinition}
+												</p>
+												<span className='text-black dark:text-white font-semibold'>Attributes:</span>
+												<div className="flex flex-wrap overflow-hidden">
+													{selectedCred?.schemaAttributes.map(
+														(element: IAttributes) => (
+															<div key={element.attributeName}>
+																<span className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
+																	{element.attributeName}
+																</span>
+															</div>
+														),
+													)}
+												</div>
+											</div>
+										</Card>
+									)}
+								</div>
+								<div className="mt-4">
 									<Button
 										id="signinsubmit"
 										isProcessing={process}
 										type="submit"
 										color="bg-primary-800"
-										// className="  hover:bg-secondary-700 ring-2 text-lg px-2 lg:px-3 py-2 lg:py-2.5 mr-2 ml-auto border-blue-600 hover:text-primary-600 dark:text-blue-500 dark:border-blue-500 dark:hover:text-blue-500 dark:hover:bg-primary-50"
 										className={`py-2 px-4 rounded-md inline-flex items-center border text-2xl ${!isCredSelected
 											? 'opacity-50 text-gray-700 dark:text-gray-400 border-gray-700'
 											: 'text-primary-700 dark:text-primary-700 border-primary-700 bg-white-700 hover:bg-secondary-700'
@@ -628,7 +683,7 @@ const BulkIssuance = () => {
 								</div>
 							</div>
 						</div>
-						{currentPage.total > 0 && (
+						{currentPage.total > 1 && (
 							<div className="flex items-center justify-end mb-4">
 								<Pagination
 									currentPage={currentPage.pageNumber}
