@@ -1,9 +1,11 @@
 import { Button, Card, Pagination } from 'flowbite-react';
-import React, { useEffect, useState } from 'react';
+import React, { Attributes, useEffect, useState } from 'react';
 import Select from 'react-select';
-import { DownloadCsvTemplate, getSchemaCredDef,getCsvFileData,
+import {
+	DownloadCsvTemplate, getSchemaCredDef, getCsvFileData,
 	issueBulkCredential,
-	uploadCsvFile, } from '../../api/BulkIssuance';
+	uploadCsvFile,
+} from '../../api/BulkIssuance';
 import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';
@@ -17,13 +19,19 @@ interface IValues {
 	value: string;
 }
 
+interface IAttributes {
+	attributeName: string
+	schemaDataType: string
+	displayName: string
+}
+
 interface ICredentials {
 	credentialDefinitionId: string;
 	schemaCredDefName: string;
-	schemaName:string;
-	schemaVersion:string;
-	schemaAttributes:string;
-	credentialDefinition:string;
+	schemaName: string;
+	schemaVersion: string;
+	schemaAttributes: IAttributes | boolean;
+	credentialDefinition: string;
 }
 const BulkIssuance = () => {
 	const [csvData, setCsvData] = useState<string[][]>([]);
@@ -31,7 +39,7 @@ const BulkIssuance = () => {
 	const [process, setProcess] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [credentialOptions, setCredentialOptions] = useState([]);
-	const [credentialSelected, setCredentialSelected] = useState(null);
+	const [credentialSelected, setCredentialSelected] = useState<string>("");
 	const [isFileUploaded, setIsFileUploaded] = useState(false);
 	const [uploadedFileName, setUploadedFileName] = useState('');
 	const [uploadedFile, setUploadedFile] = useState(null);
@@ -56,34 +64,33 @@ const BulkIssuance = () => {
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 
 	const getSchemaCredentials = async () => {
-		try{
-		setLoading(true);
-		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-		if (orgId) {
-			const response = await getSchemaCredDef();
-			const { data } = response as AxiosResponse;
+		try {
+			setLoading(true);
+			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+			if (orgId) {
+				const response = await getSchemaCredDef();
+				const { data } = response as AxiosResponse;
 
-			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				const credentialDefs = data.data;
+				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+					const credentialDefs = data.data;
 
-				const options = credentialDefs.map(
-					(credDef: ICredentials) => ({
-						value: credDef.credentialDefinitionId,
-						label:`${credDef.schemaName} [${credDef.schemaVersion}] - (${credDef.credentialDefinition})`,
-						schemaName:credDef.schemaName,
-						schemaVersion:credDef.schemaVersion,
-						credentialDefinition:credDef.credentialDefinition,
-						schemaAttributes:credDef.schemaAttributes && JSON.parse(credDef.schemaAttributes )
-					}),
-				);
-				setCredentialOptions(options);
-			} else {
-				setError(response as string);
+					const options = credentialDefs.map(
+						(credDef: ICredentials) => ({
+							value: credDef.credentialDefinitionId,
+							label: `${credDef.schemaName} [${credDef.schemaVersion}] - (${credDef.credentialDefinition})`,
+							schemaName: credDef.schemaName,
+							schemaVersion: credDef.schemaVersion,
+							credentialDefinition: credDef.credentialDefinition,
+							schemaAttributes: credDef.schemaAttributes && typeof credDef.schemaAttributes === "string" && JSON.parse(credDef.schemaAttributes)
+						}),
+					);
+					setCredentialOptions(options);
+				} else {
+					setError(response as string);
+				}
+				setLoading(false);
 			}
-			setLoading(false);
-		}
-		}catch (error)
-		{
+		} catch (error) {
 			setError(error as string);
 		}
 	};
@@ -161,15 +168,12 @@ const BulkIssuance = () => {
 
 
 	useEffect(() => {
-
-		SOCKET.emit('bulk-connection', (res) => {
-console.log(6448, res)
-		})
+		SOCKET.emit('bulk-connection')
 		SOCKET.on('bulk-issuance-process-completed', () => {
-			console.log(`bulk-issuance-process-initiated`);
-			toast.success('Bulk issuance process initiated.', {
+			console.log(`bulk-issuance-process-completed`);
+			toast.success('Issuance process completed', {
 				position: 'top-right',
-				autoClose: 5000,
+				autoClose: 3000,
 				hideProgressBar: false,
 				closeOnClick: true,
 				pauseOnHover: true,
@@ -177,13 +181,14 @@ console.log(6448, res)
 				progress: undefined,
 				theme: 'colored',
 			});
+			setSuccess("Issuance process completed")
 		});
-	
+
 		SOCKET.on('error-in-bulk-issuance-process', () => {
 			console.log(`error-in-bulk-issuance-process-initiated`);
-			toast.error('Oops! Something went wrong.', {
+			toast.error('Issuance process failed, please retry', {
 				position: 'top-right',
-				autoClose: 5000,
+				autoClose: 3000,
 				hideProgressBar: false,
 				closeOnClick: true,
 				pauseOnHover: true,
@@ -191,9 +196,9 @@ console.log(6448, res)
 				progress: undefined,
 				theme: 'colored',
 			});
+			setError("Issuance process failed, please retry")
 		});
 
-		console.log(65652, SOCKET.id)
 	}, [])
 
 	const handleFileUpload = async (file: any) => {
@@ -207,15 +212,13 @@ console.log(6448, res)
 
 			const binaryData = await readFileAsBinary(file);
 
-			const clientId = SOCKET.id || ''; 
-			
-			await setToLocalStorage(storageKeys.SOCKET_ID,clientId)
+			const clientId = SOCKET.id || '';
+
+			await setToLocalStorage(storageKeys.SOCKET_ID, clientId)
 			const payload = {
 				file: binaryData,
 			};
 
-			// const formData = new FormData();
-			// formData.append('file', file);
 			await wait(500);
 
 
@@ -256,27 +259,28 @@ console.log(6448, res)
 
 	const handleCsvFileData = async (requestId: any) => {
 		setLoading(true);
-		if(requestId) {	
-		try {
-			const response = await getCsvFileData(
-				requestId,
-				currentPage.pageNumber,
-				currentPage.pageSize,
-				searchText,
-			);
-			const { data } = response as AxiosResponse;
-			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				const totalPages = data?.data?.response?.lastPage;				
+		if (requestId) {
+			try {
+				const response = await getCsvFileData(
+					requestId,
+					currentPage.pageNumber,
+					currentPage.pageSize,
+					searchText,
+				);
+				const { data } = response as AxiosResponse;
+				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+					const totalPages = data?.data?.response?.lastPage;
+					setLoading(false);
+					setCsvData(data?.data?.response?.data);
+					setCurrentPage({
+						...currentPage,
+						total: totalPages,
+					});
+				}
+			} catch (err) {
 				setLoading(false);
-				setCsvData(data?.data?.response?.data);
-				setCurrentPage({
-					...currentPage,
-					total: totalPages,
-				});
 			}
-		} catch (err) {
-			setLoading(false);
-		}}
+		}
 		setLoading(false);
 	};
 
@@ -325,17 +329,17 @@ console.log(6448, res)
 
 	const handleReset = () => {
 		handleDiscardFile();
-		setCredentialSelected(null);
+		setCredentialSelected("");
 		setSuccess(null);
 	};
 	const handleResetForConfirm = () => {
 		handleDiscardFile();
-		setCredentialSelected(null);
+		setCredentialSelected("");
 	};
 
 	const confirmCredentialIssuance = async () => {
 		setLoading(true);
-		const response = await issueBulkCredential(requestId, 'JgkNdAevZncsLd04AABL');
+		const response = await issueBulkCredential(requestId, SOCKET.id);
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			if (data?.data) {
@@ -361,26 +365,15 @@ console.log(6448, res)
 
 	const isCredSelected = Boolean(credentialSelected);
 
-    const selectedCred = credentialOptions && credentialOptions.length > 0 && credentialOptions.find(
-	(item: {value:string}) =>
-		item.value &&
-		item.value === credentialSelected,	
-);
+	const selectedCred: ICredentials | boolean | undefined = credentialOptions && credentialOptions.length > 0 && credentialOptions.find(
+		(item: { value: string }) =>
+			item.value &&
+			item.value === credentialSelected,
+	);
 
 	return (
 		<div>
-			<ToastContainer
-				position="top-right"
-				autoClose={5000}
-				hideProgressBar={false}
-				newestOnTop={false}
-				closeOnClick
-				rtl={false}
-				pauseOnFocusLoss
-				draggable
-				pauseOnHover
-				theme="colored"
-			/>
+			<ToastContainer />
 			{(success || failure) && (
 				<AlertComponent
 					message={success ?? failure}
@@ -389,6 +382,8 @@ console.log(6448, res)
 						setSuccess(null);
 						setFailure(null);
 					}}
+					viewButton={Boolean((success && success === "Issuance process completed") || (error && error === "Issuance process failed, please retry"))}
+					path={pathRoutes.organizations.Issuance.history}
 				/>
 			)}
 			<div className="flex justify-between mb-4 items-center ml-1">
@@ -444,64 +439,61 @@ console.log(6448, res)
 										name="color"
 										options={credentialOptions}
 										onChange={(value: IValues | null) => {
-											setCredentialSelected(value?.value || null);
+											setCredentialSelected(value?.value ?? "");
 										}}
 									/>
-									<div>
-										{credentialSelected && (
-											<Card className="mt-4">
-												<div>
-													<p className="text-black dark:text-white pb-4">
-														<span className="font-semibold">Schema: </span>
-														{selectedCred?.schemaName}{' '}
-														<span>[{selectedCred?.schemaVersion}]</span>
-													</p>
-													<p className="text-black dark:text-white pb-4">
-														{' '}
-														<span className="font-semibold">
-															Credential Definition:
-														</span>{' '}
-														{selectedCred?.credentialDefinition}
-													</p>
-													<span className='text-black dark:text-white font-semibold'>Attributes:</span>
-													<div className="flex flex-wrap overflow-hidden">
-														{selectedCred?.schemaAttributes.map(
-															(element, index) => (
-																<div key={index}>
-																	<span className="m-1 bg-blue-100 text-black text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-white">
-																		{element.attributeName}
-																	</span>
-																</div>
-															),
-														)}
-													</div>
-												</div>
-											</Card>
-										)}
-									</div>
 								</div>
-
+								<div className="mt-4">
+									{credentialSelected && (
+										<Card className='max-w-[30rem]'>
+											<div>
+												<p className="text-black dark:text-white pb-2">
+													<span className="font-semibold">Schema: </span>
+													{selectedCred?.schemaName || ""}{' '}
+													<span>[{selectedCred?.schemaVersion}]</span>
+												</p>
+												<p className="text-black dark:text-white pb-2">
+													{' '}
+													<span className="font-semibold">
+														Credential Definition:
+													</span>{' '}
+													{selectedCred?.credentialDefinition}
+												</p>
+												<span className='text-black dark:text-white font-semibold'>Attributes:</span>
+												<div className="flex flex-wrap overflow-hidden">
+													{selectedCred?.schemaAttributes.map(
+														(element: IAttributes) => (
+															<div key={element.attributeName}>
+																<span className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
+																	{element.attributeName}
+																</span>
+															</div>
+														),
+													)}
+												</div>
+											</div>
+										</Card>
+									)}
+								</div>
 								<div className="mt-4">
 									<Button
 										id="signinsubmit"
 										isProcessing={process}
 										type="submit"
 										color="bg-primary-800"
-										className={`py-2 px-4 rounded-md inline-flex items-center border text-2xl ${
-											!isCredSelected
-												? 'opacity-50 text-gray-700 dark:text-gray-400 border-gray-700'
-												: 'text-primary-700 dark:text-primary-700 border-primary-700 bg-white-700 hover:bg-secondary-700'
-										}`}
+										className={`py-2 px-4 rounded-md inline-flex items-center border text-2xl ${!isCredSelected
+											? 'opacity-50 text-gray-700 dark:text-gray-400 border-gray-700'
+											: 'text-primary-700 dark:text-primary-700 border-primary-700 bg-white-700 hover:bg-secondary-700'
+											}`}
 										style={{ height: '2.4rem', minWidth: '2rem' }}
 										disabled={!isCredSelected}
 										onClick={DownloadSchemaTemplate}
 									>
 										<svg
-											className={`h-6 w-6 pr-2 ${
-												!isCredSelected
-													? 'text-gray-700 dark:text-gray-400'
-													: 'text-primary-700'
-											}`}
+											className={`h-6 w-6 pr-2 ${!isCredSelected
+												? 'text-gray-700 dark:text-gray-400'
+												: 'text-primary-700'
+												}`}
 											fill="none"
 											viewBox="0 0 24 24"
 											stroke="currentColor"
@@ -523,25 +515,22 @@ console.log(6448, res)
 									<div>
 										<label
 											htmlFor="csv-file"
-											className={`flex flex-col items-center justify-center w-40 h-36 border-2  border-dashed rounded-md cursor-pointer bg-white dark:bg-gray-700 dark-border-gray-600 ${
-												!isCredSelected
-													? 'border-gray-200'
-													: 'border-primary-700'
-											}`}
+											className={`flex flex-col items-center justify-center w-40 h-36 border-2  border-dashed rounded-md cursor-pointer bg-white dark:bg-gray-700 dark-border-gray-600 ${!isCredSelected
+												? 'border-gray-200'
+												: 'border-primary-700'
+												}`}
 										>
 											<div
-												className={`flex flex-col items-center justify-center pt-5 pb-6 ${
-													!isCredSelected
-														? 'opacity-50 text-gray-700 dark:text-gray-700 border-gray-700'
-														: 'text-primary-700 dark:text-primary-700 border-primary-700'
-												}`}
+												className={`flex flex-col items-center justify-center pt-5 pb-6 ${!isCredSelected
+													? 'opacity-50 text-gray-700 dark:text-gray-700 border-gray-700'
+													: 'text-primary-700 dark:text-primary-700 border-primary-700'
+													}`}
 											>
 												<svg
-													className={`h-12 w-12 ${
-														!isCredSelected
-															? 'text-gray-700 dark:text-gray-400'
-															: 'text-primary-700'
-													}`}
+													className={`h-12 w-12 ${!isCredSelected
+														? 'text-gray-700 dark:text-gray-400'
+														: 'text-primary-700'
+														}`}
 													viewBox="0 0 24 24"
 													fill="none"
 													stroke="currentColor"
@@ -555,11 +544,10 @@ console.log(6448, res)
 													<line x1="12" y1="2" x2="12" y2="15" />
 												</svg>
 												<p
-													className={`mb-2 mt-2 text-sm ${
-														!isCredSelected
-															? ' text-gray-500 dark:text-gray-400'
-															: 'text-primary-700'
-													}`}
+													className={`mb-2 mt-2 text-sm ${!isCredSelected
+														? ' text-gray-500 dark:text-gray-400'
+														: 'text-primary-700'
+														}`}
 												>
 													Drag file here
 												</p>
@@ -569,11 +557,10 @@ console.log(6448, res)
 											<div className="w-fit">
 												<label htmlFor="organizationlogo">
 													<div
-														className={`px-4 py-2 mt-4 ml-4 rounded-md text-center border text-white ${
-															!isCredSelected
-																? 'opacity-50 bg-gray-400 dark:bg-transparent dark:text-gray-400 border-gray-400'
-																: 'bg-primary-700 hover:bg-primary-800 dark:border-primary-800  '
-														}`}
+														className={`px-4 py-2 mt-4 ml-4 rounded-md text-center border text-white ${!isCredSelected
+															? 'opacity-50 bg-gray-400 dark:bg-transparent dark:text-gray-400 border-gray-400'
+															: 'bg-primary-700 hover:bg-primary-800 dark:border-primary-800  '
+															}`}
 													>
 														Choose file
 													</div>
@@ -594,11 +581,10 @@ console.log(6448, res)
 									<div className="flex items-center lg:p-6 lg:pb-12">
 										{uploadedFileName && (
 											<div
-												className={`mt-2 ${
-													!isCredSelected ? 'opacity-50' : ''
-												} flex`}
+												className={`mt-2 ${!isCredSelected ? 'opacity-50' : ''
+													} flex`}
 											>
-												<p className="text-gray-700 dark:text-white p-2">
+												<p className="text-gray-700 dark:text-white p-2 word-break-word">
 													{uploadedFileName}
 												</p>
 												<button
@@ -653,7 +639,8 @@ console.log(6448, res)
 							<div className="inline-block min-w-full align-middle">
 								<div className="overflow-hidden shadow sm:rounded-lg">
 									{csvData && csvData.length > 0 && (
-										<div className="mt-4 py-4 my-2">
+										<div className="mt-4 pb-4 mb-2">
+
 											<table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
 												<thead className="bg-gray-50 dark:bg-gray-700">
 													<tr>
@@ -674,11 +661,10 @@ console.log(6448, res)
 														csvData.map((row, rowIndex) => (
 															<tr
 																key={rowIndex}
-																className={`${
-																	rowIndex % 2 !== 0
-																		? 'bg-gray-50 dark:bg-gray-700'
-																		: ''
-																}`}
+																className={`${rowIndex % 2 !== 0
+																	? 'bg-gray-50 dark:bg-gray-700'
+																	: ''
+																	}`}
 															>
 																{Object.values(row).map((cell, cellIndex) => (
 																	<td
