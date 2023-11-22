@@ -1,4 +1,5 @@
 import { Button, Card, Pagination } from 'flowbite-react';
+import 'react-toastify/dist/ReactToastify.css';
 import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
 import { DownloadCsvTemplate, getSchemaCredDef,getCsvFileData,
@@ -148,7 +149,6 @@ const BulkIssuance = () => {
 
 
 	useEffect(() => {
-// 		debugger
 		SOCKET.emit('bulk-connection', (res) => {
 console.log(6448, res)
 		})
@@ -322,7 +322,7 @@ console.log(6448, res)
 
 	const confirmCredentialIssuance = async () => {
 		setLoading(true);
-		const response = await issueBulkCredential(requestId, 'JgkNdAevZncsLd04AABL');
+		const response = await issueBulkCredential(requestId, SOCKET.id);
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			if (data?.data) {
