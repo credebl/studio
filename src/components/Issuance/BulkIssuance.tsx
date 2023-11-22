@@ -184,7 +184,7 @@ console.log(6448, res)
 
 		SOCKET.on('error-in-bulk-issuance-process', () => {
 			console.log(`error-in-bulk-issuance-process-initiated`);
-			toast.error('Issuance process failed, please retry', {
+			toast.error('Issuance process failed. Please retry', {
 				position: 'top-right',
 				autoClose: 3000,
 				hideProgressBar: false,
