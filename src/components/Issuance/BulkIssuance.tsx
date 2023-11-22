@@ -730,7 +730,6 @@ const BulkIssuance = () => {
 					<IssuancePopup
 						openModal={openModal}
 						closeModal={handleCloseConfirmation}
-						message={'Are you sure you want to Offer Credentials ?'}
 						isProcessing={loading}
 						onSuccess={confirmCredentialIssuance}
 					/>
