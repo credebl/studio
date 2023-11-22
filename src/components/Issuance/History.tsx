@@ -1,8 +1,7 @@
 'use client';
-
+import 'react-toastify/dist/ReactToastify.css';
 import type { AxiosResponse } from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { getConnectionsByOrg } from '../../api/connection';
 import DataTable from '../../commonComponents/datatable';
 import type { TableData } from '../../commonComponents/datatable/interface';
 import { apiStatusCodes } from '../../config/CommonConstant';
@@ -19,6 +18,7 @@ import { Button, Pagination } from 'flowbite-react';
 import { getFilesHistory, retryBulkIssuance } from '../../api/BulkIssuance';
 import SOCKET from '../../config/SocketConfig';
 import { BulkIssuanceHistory, BulkIssuanceHistoryData } from '../../common/enums';
+import { ToastContainer, toast } from 'react-toastify';
 
 const HistoryBulkIssuance = () => {
 	const initialPageState = {
@@ -47,11 +47,13 @@ const HistoryBulkIssuance = () => {
 	};
 
 	const handleRetry = async (fileId: string) => {
+		setSuccess("Issuance process reinitiated. Please await a moment.")
 		setLoading(true);
-		const retryIssunace = await retryBulkIssuance(fileId);
+		const retryIssunace = await retryBulkIssuance(fileId, SOCKET.id);
 		const { data } = retryIssunace as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+			  setSuccess(null)
 			if (data?.data) {
 				setLoading(false);
 				setSuccess(data?.message);
@@ -70,20 +72,63 @@ const HistoryBulkIssuance = () => {
 		}
 	};
 
-	SOCKET.on('bulk-issuance-process-completed', () => {
-		console.log(`bulk-issuance-process-completed`);
-		// toast.success('Bulk issuance process completed.', {
-		// 	position: 'top-right',
-		// 	autoClose: 5000,
-		// 	hideProgressBar: false,
-		// 	closeOnClick: true,
-		// 	pauseOnHover: true,
-		// 	draggable: true,
-		// 	progress: undefined,
-		// 	theme: 'colored',
-		// });
-	});
+useEffect(()=>{
+	SOCKET.emit('bulk-connection', (res) => {
+		console.log(6448, res)
+				})
+				SOCKET.on('bulk-issuance-process-completed', () => {
+					console.log(`bulk-issuance-process-initiated`);
+					toast.success('Bulk issuance process initiated.', {
+						position: 'top-right',
+						autoClose: 5000,
+						hideProgressBar: false,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true,
+						progress: undefined,
+						theme: 'colored',
+					});
+				});
+			
+				SOCKET.on('error-in-bulk-issuance-process', () => {
+					console.log(`error-in-bulk-issuance-process-initiated`);
+					toast.error('Oops! Something went wrong.', {
+						position: 'top-right',
+						autoClose: 5000,
+						hideProgressBar: false,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true,
+						progress: undefined,
+						theme: 'colored',
+					});
+				});
+		
+		
+},[])
+
+
 	useEffect(() => {
+
+		SOCKET.emit('bulk-connection', (res) => {
+			console.log(6448, res)
+					})
+
+					SOCKET.on('bulk-issuance-process-completed', () => {
+						console.log(`bulk-issuance-process-initiated`);
+						toast.success('Bulk issuance process initiated.', {
+							position: 'top-right',
+							autoClose: 5000,
+							hideProgressBar: false,
+							closeOnClick: true,
+							pauseOnHover: true,
+							draggable: true,
+							progress: undefined,
+							theme: 'colored',
+						});
+					});
+
+
 		let getData: NodeJS.Timeout;
 
 		if (searchText.length >= 1) {
@@ -159,7 +204,7 @@ const HistoryBulkIssuance = () => {
 												? 'bg-green-100 text-green-800 dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500'
 												:status === BulkIssuanceHistory.interrupted ? 'bg-orange-100 text-orange-800 dark:bg-orange-700 dark:text-orange-400 border border-orange-100 dark:border-orange-500': 
 												'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400 border border-gray-100 dark:border-gray-500'
-										} text-sm font-medium mr-0.5 px-0.5 py-0.5 rounded-md flex pl-4`}
+										} text-sm font-medium mr-0.5 px-0.5 py-0.5 rounded-md flex justify-center items-center max-w-[180px]`}
 									>
 										{status === BulkIssuanceHistory.started ? BulkIssuanceHistoryData.started : status === BulkIssuanceHistory.completed ? BulkIssuanceHistoryData.completed : status === BulkIssuanceHistory.interrupted ? BulkIssuanceHistoryData.interrupted : BulkIssuanceHistoryData.retry }
 									</p>
@@ -257,6 +302,18 @@ const HistoryBulkIssuance = () => {
 
 	return (
 		<div className="p-4" id="connection_list">
+			<ToastContainer
+				position="top-right"
+				autoClose={5000}
+				hideProgressBar={false}
+				newestOnTop={false}
+				closeOnClick
+				rtl={false}
+				pauseOnFocusLoss
+				draggable
+				pauseOnHover
+				theme="colored"
+			/>
 			<div className="flex justify-between items-center">
 				<BreadCrumbs />
 				<BackButton path={pathRoutes.organizations.Issuance.connections} />

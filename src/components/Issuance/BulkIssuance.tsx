@@ -1,4 +1,5 @@
 import { Button, Card, Pagination } from 'flowbite-react';
+import 'react-toastify/dist/ReactToastify.css';
 import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
 import {
@@ -163,7 +164,6 @@ const BulkIssuance = () => {
 
 
 	useEffect(() => {
-
 		SOCKET.emit('bulk-connection', (res) => {
 console.log(6448, res)
 		})
