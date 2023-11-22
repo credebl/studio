@@ -408,7 +408,7 @@ const ViewSchemas = () => {
                       <div className='float-right py-4 px-2'>
                         <Button
                           type="submit"
-                          title="Add new credential-definition on ledger"
+                          title="Add new credential-definition request"
                           isProcessing={createloader}
                           color='bg-primary-800'
                           disabled={createloader}

@@ -198,8 +198,8 @@ const AddPasskey = () => {
 					</Alert>
 				</div>
 			)}
-			<div className="page-container relative h-full flex flex-auto flex-col py-3 sm:py-4">
-				<div className="container mx-auto bg-white border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700">
+			<div className="page-container relative h-full flex flex-auto flex-col p-3 sm:p-4">
+				<div className="w-full mx-auto bg-white border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700">
 					<div className="px-6 py-6">
 						{fidoLoader ? (
 							<div className="flex items-center justify-center mb-4">

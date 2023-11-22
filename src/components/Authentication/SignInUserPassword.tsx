@@ -19,6 +19,8 @@ import { getSupabaseClient } from '../../supabase';
 import NavBar from './NavBar';
 import FooterBar from './FooterBar';
 import React, { useState } from 'react';
+import { PlatformRoles } from '../../common/enums';
+import { pathRoutes } from '../../config/pathRoutes';
 
 interface emailValue {
 	email: string;
@@ -47,20 +49,22 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 
 
 	const getUserDetails = async (access_token: string) => {
-		
+
 		const userDetails = await getUserProfile(access_token);
 		const { data } = userDetails as AxiosResponse
 		if (data?.data?.userOrgRoles?.length > 0) {
-			
+			const role = data?.data?.userOrgRoles.find((item: { orgRole: { name: PlatformRoles; }; }) => item.orgRole.name === PlatformRoles.platformAdmin)
 			const permissionArray: number | string[] = []
 			data?.data?.userOrgRoles?.forEach((element: { orgRole: { name: string } }) => permissionArray.push(element?.orgRole?.name));
 			await setToLocalStorage(storageKeys.USER_PROFILE, data?.data)
 			await setToLocalStorage(storageKeys.USER_EMAIL, data?.data?.email)
-			window.location.href = '/dashboard'
+			return {
+				role: role?.orgRole || ""
+			}
 		} else {
 			setFailure(userDetails as string)
 		}
-	
+
 		setLoading(false)
 	}
 	const signInUser = async (values: passwordValue) => {
@@ -74,17 +78,25 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 		const { data } = loginRsp as AxiosResponse
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			await setToLocalStorage(storageKeys.TOKEN, data?.data?.access_token)
-			const response = await fetch('/api/auth/signin', {
+			const userRole = await getUserDetails(data?.data?.access_token)
+
+			const userPayload = {
+				...data,
+				data: {
+					...data.data,
+					role: userRole?.role?.name || ""
+				}
+			}
+
+			await fetch('/api/auth/signin', {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify(data),
+				body: JSON.stringify(userPayload),
 			});
 
-			if (response.redirected) {
-				getUserDetails(data?.data?.access_token)
-			}
+			window.location.href = userRole?.role?.name === PlatformRoles.platformAdmin ? pathRoutes.users.platformSetting : pathRoutes.users.dashboard
 		} else {
 			setLoading(false)
 			setFailure(loginRsp as string)
@@ -257,7 +269,7 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 												<div className="text-sm flex justify-end font-sm text-gray-500 dark:text-gray-400 text-primary-700  dark:text-primary-500  ml-auto">
 
 													{isForgotPassLoading
-														? <CustomSpinner/>
+														? <CustomSpinner />
 														: <span onClick={forgotPassword} className='hover:underline cursor-pointer'>
 
 															{`Forgot Password?`}
