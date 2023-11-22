@@ -25,7 +25,7 @@ const BulkIssuance = () => {
 	const [process, setProcess] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [credentialOptions, setCredentialOptions] = useState([]);
-	const [credentialSelected, setCredentialSelected] = useState(null);
+	const [credentialSelected, setCredentialSelected] = useState<string>("");
 	const [isFileUploaded, setIsFileUploaded] = useState(false);
 	const [uploadedFileName, setUploadedFileName] = useState('');
 	const [uploadedFile, setUploadedFile] = useState(null);
@@ -153,9 +153,9 @@ const BulkIssuance = () => {
 		SOCKET.emit('bulk-connection')
 		SOCKET.on('bulk-issuance-process-completed', () => {
 			console.log(`bulk-issuance-process-completed`);
-			toast.success('Bulk issuance process completed', {
+			toast.success('Issuance process completed', {
 				position: 'top-right',
-				autoClose: 5000,
+				autoClose: 3000,
 				hideProgressBar: false,
 				closeOnClick: true,
 				pauseOnHover: true,
@@ -163,13 +163,14 @@ const BulkIssuance = () => {
 				progress: undefined,
 				theme: 'colored',
 			});
+			setSuccess("Issuance process completed")
 		});
 
 		SOCKET.on('error-in-bulk-issuance-process', () => {
 			console.log(`error-in-bulk-issuance-process-initiated`);
-			toast.error('Oops! Something went wrong.', {
+			toast.error('Issuance process failed, please retry', {
 				position: 'top-right',
-				autoClose: 5000,
+				autoClose: 3000,
 				hideProgressBar: false,
 				closeOnClick: true,
 				pauseOnHover: true,
@@ -177,7 +178,9 @@ const BulkIssuance = () => {
 				progress: undefined,
 				theme: 'colored',
 			});
+			setError("Issuance process failed, please retry")
 		});
+
 	}, [])
 
 	const handleFileUpload = async (file: any) => {
@@ -198,8 +201,6 @@ const BulkIssuance = () => {
 				file: binaryData,
 			};
 
-			// const formData = new FormData();
-			// formData.append('file', file);
 			await wait(500);
 
 
@@ -310,12 +311,12 @@ const BulkIssuance = () => {
 
 	const handleReset = () => {
 		handleDiscardFile();
-		setCredentialSelected(null);
+		setCredentialSelected("");
 		setSuccess(null);
 	};
 	const handleResetForConfirm = () => {
 		handleDiscardFile();
-		setCredentialSelected(null);
+		setCredentialSelected("");
 	};
 
 	const confirmCredentialIssuance = async () => {
@@ -348,18 +349,7 @@ const BulkIssuance = () => {
 
 	return (
 		<div>
-			<ToastContainer
-				position="top-right"
-				autoClose={5000}
-				hideProgressBar={false}
-				newestOnTop={false}
-				closeOnClick
-				rtl={false}
-				pauseOnFocusLoss
-				draggable
-				pauseOnHover
-				theme="colored"
-			/>
+			<ToastContainer />
 			{(success || failure) && (
 				<AlertComponent
 					message={success ?? failure}
@@ -368,6 +358,8 @@ const BulkIssuance = () => {
 						setSuccess(null);
 						setFailure(null);
 					}}
+					viewButton={Boolean((success && success === "Issuance process completed") || (error && error === "Issuance process failed, please retry"))}
+					path={pathRoutes.organizations.Issuance.history}
 				/>
 			)}
 			<div className="flex justify-between mb-4 items-center ml-1">
@@ -423,7 +415,7 @@ const BulkIssuance = () => {
 										name="color"
 										options={credentialOptions}
 										onChange={(value: IValues | null) => {
-											setCredentialSelected(value?.value || null);
+											setCredentialSelected(value?.value ?? "");
 										}}
 									/>
 								</div>
@@ -435,8 +427,8 @@ const BulkIssuance = () => {
 										color="bg-primary-800"
 										// className="  hover:bg-secondary-700 ring-2 text-lg px-2 lg:px-3 py-2 lg:py-2.5 mr-2 ml-auto border-blue-600 hover:text-primary-600 dark:text-blue-500 dark:border-blue-500 dark:hover:text-blue-500 dark:hover:bg-primary-50"
 										className={`py-2 px-4 rounded-md inline-flex items-center border text-2xl ${!isCredSelected
-												? 'opacity-50 text-gray-700 dark:text-gray-400 border-gray-700'
-												: 'text-primary-700 dark:text-primary-700 border-primary-700 bg-white-700 hover:bg-secondary-700'
+											? 'opacity-50 text-gray-700 dark:text-gray-400 border-gray-700'
+											: 'text-primary-700 dark:text-primary-700 border-primary-700 bg-white-700 hover:bg-secondary-700'
 											}`}
 										style={{ height: '2.4rem', minWidth: '2rem' }}
 										disabled={!isCredSelected}
@@ -444,8 +436,8 @@ const BulkIssuance = () => {
 									>
 										<svg
 											className={`h-6 w-6 pr-2 ${!isCredSelected
-													? 'text-gray-700 dark:text-gray-400'
-													: 'text-primary-700'
+												? 'text-gray-700 dark:text-gray-400'
+												: 'text-primary-700'
 												}`}
 											fill="none"
 											viewBox="0 0 24 24"
@@ -469,20 +461,20 @@ const BulkIssuance = () => {
 										<label
 											htmlFor="csv-file"
 											className={`flex flex-col items-center justify-center w-40 h-36 border-2  border-dashed rounded-md cursor-pointer bg-white dark:bg-gray-700 dark-border-gray-600 ${!isCredSelected
-													? 'border-gray-200'
-													: 'border-primary-700'
+												? 'border-gray-200'
+												: 'border-primary-700'
 												}`}
 										>
 											<div
 												className={`flex flex-col items-center justify-center pt-5 pb-6 ${!isCredSelected
-														? 'opacity-50 text-gray-700 dark:text-gray-700 border-gray-700'
-														: 'text-primary-700 dark:text-primary-700 border-primary-700'
+													? 'opacity-50 text-gray-700 dark:text-gray-700 border-gray-700'
+													: 'text-primary-700 dark:text-primary-700 border-primary-700'
 													}`}
 											>
 												<svg
 													className={`h-12 w-12 ${!isCredSelected
-															? 'text-gray-700 dark:text-gray-400'
-															: 'text-primary-700'
+														? 'text-gray-700 dark:text-gray-400'
+														: 'text-primary-700'
 														}`}
 													viewBox="0 0 24 24"
 													fill="none"
@@ -498,8 +490,8 @@ const BulkIssuance = () => {
 												</svg>
 												<p
 													className={`mb-2 mt-2 text-sm ${!isCredSelected
-															? ' text-gray-500 dark:text-gray-400'
-															: 'text-primary-700'
+														? ' text-gray-500 dark:text-gray-400'
+														: 'text-primary-700'
 														}`}
 												>
 													Drag file here
@@ -511,8 +503,8 @@ const BulkIssuance = () => {
 												<label htmlFor="organizationlogo">
 													<div
 														className={`px-4 py-2 mt-4 ml-4 rounded-md text-center border text-white ${!isCredSelected
-																? 'opacity-50 bg-gray-400 dark:bg-transparent dark:text-gray-400 border-gray-400'
-																: 'bg-primary-700 hover:bg-primary-800 dark:border-primary-800  '
+															? 'opacity-50 bg-gray-400 dark:bg-transparent dark:text-gray-400 border-gray-400'
+															: 'bg-primary-700 hover:bg-primary-800 dark:border-primary-800  '
 															}`}
 													>
 														Choose file
@@ -537,7 +529,7 @@ const BulkIssuance = () => {
 												className={`mt-2 ${!isCredSelected ? 'opacity-50' : ''
 													} flex`}
 											>
-												<p className="text-gray-700 dark:text-white p-2 break-words	">
+												<p className="text-gray-700 dark:text-white p-2 word-break-word">
 													{uploadedFileName}
 												</p>
 												<button
@@ -592,7 +584,7 @@ const BulkIssuance = () => {
 							<div className="inline-block min-w-full align-middle">
 								<div className="overflow-hidden shadow sm:rounded-lg">
 									{csvData && csvData.length > 0 && (
-										<div className="mt-4 py-4 my-2">
+										<div className="mt-4 pb-4 mb-2">
 
 											<table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
 												<thead className="bg-gray-50 dark:bg-gray-700">
@@ -615,8 +607,8 @@ const BulkIssuance = () => {
 															<tr
 																key={rowIndex}
 																className={`${rowIndex % 2 !== 0
-																		? 'bg-gray-50 dark:bg-gray-700'
-																		: ''
+																	? 'bg-gray-50 dark:bg-gray-700'
+																	: ''
 																	}`}
 															>
 																{Object.values(row).map((cell, cellIndex) => (
