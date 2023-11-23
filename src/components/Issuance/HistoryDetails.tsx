@@ -121,7 +121,7 @@ const HistoryDetails = ({ requestId }: IProps) => {
 							},
 							{
 								data: history?.error
-									? history?.error.replace(/[[\]"]/g, '')
+									? history?.error.replace(/[[\]"{},]/g, ' ')
 									: '-',
 							},
 						],
