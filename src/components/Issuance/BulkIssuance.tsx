@@ -30,6 +30,12 @@ interface ICredentials {
 	schemaAttributes:string;
 	credentialDefinition:string;
 }
+
+interface IUploadMessage {
+	message: string
+	type : "success" | "failure"
+}
+
 const BulkIssuance = () => {
 	const [csvData, setCsvData] = useState<string[][]>([]);
 	const [requestId, setRequestId] = useState("");
@@ -43,7 +49,7 @@ const BulkIssuance = () => {
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [message, setMessage] = useState('');
 	const [searchText, setSearchText] = useState('');
-	const [error, setError] = useState<string | null>(null);
+	const [uploadMessage, setUploadMessage] = useState<IUploadMessage | null>(null)
 	const [success, setSuccess] = useState<string | null>(null);
 	const [failure, setFailure] = useState<string | null>(null);
 
@@ -71,25 +77,28 @@ const BulkIssuance = () => {
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 				const credentialDefs = data.data;
 
-				const options = credentialDefs.map(
-					(credDef: ICredentials) => ({
-						value: credDef.credentialDefinitionId,
-						label:`${credDef.schemaName} [${credDef.schemaVersion}] - (${credDef.credentialDefinition})`,
-						schemaName:credDef.schemaName,
-						schemaVersion:credDef.schemaVersion,
-						credentialDefinition:credDef.credentialDefinition,
-						schemaAttributes:credDef.schemaAttributes && JSON.parse(credDef.schemaAttributes )
-					}),
-				);
-				setCredentialOptions(options);
-			} else {
-				setError(response as string);
+					const options = credentialDefs.map(
+						(credDef: ICredentials) => ({
+							value: credDef.credentialDefinitionId,
+							label: `${credDef.schemaName} [${credDef.schemaVersion}] - (${credDef.credentialDefinition})`,
+							schemaName: credDef.schemaName,
+							schemaVersion: credDef.schemaVersion,
+							credentialDefinition: credDef.credentialDefinition,
+							schemaAttributes: credDef.schemaAttributes && typeof credDef.schemaAttributes === "string" && JSON.parse(credDef.schemaAttributes)
+						}),
+					);
+					setCredentialOptions(options);
+				} else {
+					setUploadMessage({message: response as string, type: "failure"});
+					setSuccess(null)
+					setFailure(null)
+				}
+				setLoading(false);
 			}
-			setLoading(false);
-		}
-		}catch (error)
-		{
-			setError(error as string);
+		} catch (error) {
+			setUploadMessage({message: error as string, type: "failure"});
+			setSuccess(null)
+			setFailure(null)
 		}
 	};
 
@@ -110,7 +119,6 @@ const BulkIssuance = () => {
 	const DownloadSchemaTemplate = async () => {
 		setProcess(true);
 		// const credDefId = await getFromLocalStorage(storageKeys.CRED_DEF_ID);
-console.log(65658, credentialSelected)
 		if (credentialSelected) {
 			try {
 				setProcess(true);
@@ -128,13 +136,19 @@ console.log(65658, credentialSelected)
 						setSuccess('File downloaded successfully');
 						setProcess(false);
 					} else {
-						setError('File URL is missing in the response');
+						setUploadMessage({message: 'File URL is missing in the response', type: "failure"});
+						setSuccess(null)
+						setFailure(null)
 					}
 				} else {
-					setError('API request was not successful');
+					setUploadMessage({message: 'API request was not successful', type: "failure"});
+					setSuccess(null)
+					setFailure(null)
 				}
 			} catch (error) {
-				setError(error as string);
+				setUploadMessage({message: error as string, type: "failure"});
+				setSuccess(null)
+				setFailure(null)
 			}
 		}
 
@@ -196,7 +210,7 @@ console.log(6448, res)
 				progress: undefined,
 				theme: 'colored',
 			});
-			setError("Issuance process failed, please retry")
+			setFailure("Issuance process failed, please retry")
 		});
 
 	}, [])
@@ -205,7 +219,9 @@ console.log(6448, res)
 		setLoading(true);
 
 		if (file.type !== 'text/csv') {
-			setError('Invalid file type. Please select only CSV files.');
+			setUploadMessage({message:'Invalid file type. Please select only CSV files.', type: "failure"});
+			setSuccess(null)
+			setFailure(null)
 			return;
 		}
 		try {
@@ -221,20 +237,22 @@ console.log(6448, res)
 
 			await wait(500);
 
+			setUploadedFileName(file?.name);
+			setUploadedFile(file);
+
 			const response = await uploadCsvFile(payload, credentialSelected);
 			const { data } = response as AxiosResponse;
 
 			if (data?.statusCode === apiStatusCodes?.API_STATUS_CREATED) {
 				setLoading(false);
 				setRequestId(data?.data);
-				setSuccess(data?.message);
 				setIsFileUploaded(true);
-				setUploadedFileName(file?.name);
-				setUploadedFile(file);
-				setError(null);
+				setUploadMessage({message: data?.message, type: "success"});
 				await handleCsvFileData(data?.data);
 			} else {
-				setError(response as string);
+				setUploadMessage({message: response as string, type: "failure"});
+				setSuccess(null)
+				setFailure(null)
 			}
 			setLoading(false);
 		} catch (err) {
@@ -307,7 +325,7 @@ console.log(6448, res)
 		}
 	};
 	const clearError = () => {
-		setError(null);
+		setUploadMessage(null);
 	};
 
 	const handleOpenConfirmation = () => {
@@ -338,10 +356,8 @@ console.log(6448, res)
 				setLoading(false);
 				setOpenModal(false);
 				setSuccess(data.message);
+				setUploadMessage(null)
 				handleResetForConfirm()
-				// setTimeout(() => {
-				// 	window.location.href = pathRoutes.organizations.Issuance.connections;
-				// }, 2000);
 			} else {
 				setFailure(response as string);
 				setLoading(false);
@@ -381,7 +397,7 @@ console.log(6448, res)
 							setSuccess(null);
 							setFailure(null);
 						}}
-						viewButton={Boolean((success && success === "Issuance process completed") || (error && error === "Issuance process failed, please retry"))}
+						viewButton={Boolean((success && success === "Issuance process completed") || (failure && failure === "Issuance process failed, please retry"))}
 						path={pathRoutes.organizations.Issuance.history}
 					/>
 				)}
@@ -390,11 +406,11 @@ console.log(6448, res)
 						<p className="text-2xl font-semibold dark:text-white">
 							Bulk Issuance
 						</p>
-						<span className="text-sm text-gray-400">Upload a .csv file for bulk issuance</span>
+						<span className="text-sm text-gray-400">Upload a .CSV file for bulk issuance</span>
 					</div>
 					<Button
 						color="bg-primary-800"
-						className="flex float-right bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-primary-600 font-medium rounded-md text-lg px-2 lg:px-3 py-2 lg:py-2.5 mr-2 ml-auto border-blue-600 hover:text-primary-600 dark:text-blue-500 dark:border-blue-500 dark:hover:text-blue-500 dark:hover:bg-secondary-700"
+						className="flex float-right bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-primary-600 font-medium rounded-md text-lg px-2 lg:px-3 py-2 lg:py-2.5 mr-2 ml-auto border-blue-600 hover:text-primary-600 dark:text-white dark:border-blue-500 dark:hover:text-primary-700 dark:hover:bg-secondary-700"
 						style={{ height: '2.4rem', minWidth: '2rem' }}
 						onClick={() => {
 							window.location.href = pathRoutes.organizations.Issuance.history;
@@ -428,7 +444,7 @@ console.log(6448, res)
 								<div className="flex flex-col justify-between">
 									<div className="search-dropdown text-primary-700 drak:text-primary-700">
 										<Select
-											placeholder="Select Schema-Cred def"
+											placeholder="Select Schema - Credential definition"
 											className="basic-single "
 											classNamePrefix="select"
 											isDisabled={false}
@@ -443,7 +459,7 @@ console.log(6448, res)
 										/>
 									</div>
 									<div className="mt-4">
-										{credentialSelected && (
+										{credentialSelected && selectedCred && (
 											<Card className='max-w-[30rem]'>
 												<div>
 													<p className="text-black dark:text-white pb-2">
@@ -482,7 +498,7 @@ console.log(6448, res)
 											color="bg-primary-800"
 											className={`py-2 px-4 rounded-md inline-flex items-center border text-2xl ${!isCredSelected
 												? 'opacity-50 text-gray-700 dark:text-gray-400 border-gray-700'
-												: 'text-primary-700 dark:text-primary-700 border-primary-700 bg-white-700 hover:bg-secondary-700'
+												: 'text-primary-700 dark:text-white border-primary-700 bg-white-700 dark:hover:text-primary-700 hover:bg-secondary-700'
 												}`}
 											style={{ height: '2.4rem', minWidth: '2rem' }}
 											disabled={!isCredSelected}
@@ -510,25 +526,25 @@ console.log(6448, res)
 								</div>
 								{/* ---------------- */}
 								<div onDrop={handleDrop} onDragOver={handleDragOver}>
-									<div className="lg:flex">
+									<div className="lg:flex h-full">
 										<div>
 											<label
 												htmlFor="csv-file"
 												className={`flex flex-col items-center justify-center w-40 h-36 border-2  border-dashed rounded-md cursor-pointer bg-white dark:bg-gray-700 dark-border-gray-600 ${!isCredSelected
 													? 'border-gray-200'
-													: 'border-primary-700'
+													: 'border-primary-700 dark:border-white'
 													}`}
 											>
 												<div
 													className={`flex flex-col items-center justify-center pt-5 pb-6 ${!isCredSelected
 														? 'opacity-50 text-gray-700 dark:text-gray-700 border-gray-700'
-														: 'text-primary-700 dark:text-primary-700 border-primary-700'
+														: 'text-primary-700 dark:text-white dark:border-white border-primary-700'
 														}`}
 												>
 													<svg
 														className={`h-12 w-12 ${!isCredSelected
 															? 'text-gray-700 dark:text-gray-400'
-															: 'text-primary-700'
+															: 'dark:text-white text-primary-700'
 															}`}
 														viewBox="0 0 24 24"
 														fill="none"
@@ -545,7 +561,7 @@ console.log(6448, res)
 													<p
 														className={`mb-2 mt-2 text-sm ${!isCredSelected
 															? ' text-gray-500 dark:text-gray-400'
-															: 'text-primary-700'
+															: 'text-primary-700 dark:text-white'
 															}`}
 													>
 														Drag file here
@@ -572,26 +588,28 @@ console.log(6448, res)
 															id="organizationlogo"
 															onChange={handleInputChange}
 															title=""
-														/>
+															onClick={(event) => {
+																event.target.value = null
+															}} />
 													</label>
 												</div>
 											</div>
 										</div>
-										<div className="flex items-center lg:py-6 lg:pl-6 lg:pb-12">
+										<div className="flex flex-col justify-between lg:pb-8 lg:pl-6 lg:pb-12 w-full">
 											{uploadedFileName && (
 												<div
-													className={`mt-2 ${!isCredSelected ? 'opacity-50' : ''
-														} flex`}
+													className={`${!isCredSelected ? 'opacity-50' : ''
+														} flex justify-between items-center bg-gray-100 dark:bg-gray-700 gap-2 p-4 text-sm rounded-lg mb-4`}
 												>
-													<p className="text-gray-700 dark:text-white p-2 word-break-word">
+													<p className="text-gray-700 dark:text-white px-2 word-break-word">
 														{uploadedFileName}
 													</p>
 													<button
 														onClick={handleDiscardFile}
-														className="dark:text-white cursor-pointer"
+														className="dark:text-white cursor-pointer shrink-0"
 													>
 														<svg
-															className="h-6 w-6"
+															className="h-5 w-5"
 															fill="none"
 															viewBox="0 0 24 24"
 															stroke="currentColor"
@@ -606,24 +624,12 @@ console.log(6448, res)
 													</button>
 												</div>
 											)}
-											{error && (
-												<div className="text-red-500 p-2 flex mt-2 items-center">
-													<p className="ml-2">{error}</p>
-													<svg
-														onClick={clearError}
-														className="h-6 w-6 cursor-pointer"
-														fill="none"
-														viewBox="0 0 24 24"
-														stroke="currentColor"
-													>
-														<path
-															strokeLinecap="round"
-															strokeLinejoin="round"
-															strokeWidth="2"
-															d="M6 18L18 6M6 6l12 12"
-														/>
-													</svg>
-												</div>
+											{uploadMessage !== null && (
+												<AlertComponent
+													message={uploadMessage.message}
+													type={uploadMessage?.type || "success"}
+													onAlertClose={clearError}
+												/>
 											)}
 										</div>
 									</div>
