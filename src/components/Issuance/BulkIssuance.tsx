@@ -232,6 +232,7 @@ const BulkIssuance = () => {
 			await setToLocalStorage(storageKeys.SOCKET_ID, clientId)
 			const payload = {
 				file: binaryData,
+				fileName: file?.name || "Not available"
 			};
 
 			await wait(500);
