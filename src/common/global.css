@@ -110,7 +110,7 @@ ul.timelinestatic {
 }
 
 .search-dropdown .select__control .select__placeholder {
-  @apply absolute flex items-start;
+  @apply absolute flex items-start ml-2;
 }
 
 .search-dropdown .select__control .select__value-container{
@@ -119,8 +119,11 @@ ul.timelinestatic {
 }
 
 .select__single-value{
-  @apply !text-primary-700;
-  width: calc(100% - 5px);
+  @apply dark:!text-white !text-primary-700 w-fit;
+}
+
+.select__value-container .select__value-container--has-value .select__single-value {
+  @apply w-fit;
 }
 
 .search-dropdown{

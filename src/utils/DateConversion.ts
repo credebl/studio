@@ -12,27 +12,27 @@ export const dateConversion = (date: string): string => {
 	
 	else if (timeDifferenceInSeconds < 3600) {
 		const minutes = Math.floor(timeDifferenceInSeconds / 60);
-		return (timeDifferenceInSeconds===1)? 'A minute ago':`${minutes} minutes ago`;
+		return (minutes===1)? 'A minute ago':`${minutes} minutes ago`;
 	} 
 	
 	else if (timeDifferenceInSeconds < 86400) {
 		const hours = Math.floor(timeDifferenceInSeconds / 3600);
-		return (timeDifferenceInSeconds===1)? 'An hour ago':`${hours} hours ago`;
+		return (hours===1)? 'An hour ago':`${hours} hours ago`;
 	} 
 	
 	else if (timeDifferenceInSeconds < 604800) {
 		const days = Math.floor(timeDifferenceInSeconds / 86400);
-		return (timeDifferenceInSeconds===1)? 'Yesterday':`${days} days ago`;
+		return (days===1)? 'Yesterday':`${days} days ago`;
 	} 
 	
 	else if (timeDifferenceInSeconds < 2629440 ) {
 		const weeks = Math.floor(timeDifferenceInSeconds / 604800);
-		return (timeDifferenceInSeconds===1)? 'Last Week':`${weeks} weeks ago`;
+		return (weeks===1)? 'Last Week':`${weeks} weeks ago`;
 	} 
 	
 	else if (timeDifferenceInSeconds < 31579200 ) {
 		const months = Math.floor( timeDifferenceInSeconds / 2629440);
-		return (timeDifferenceInSeconds===1)? 'Last Month':`${months} months ago`;
+		return (months===1)? 'Last Month':`${months} months ago`;
 	}
 	
 	else {
