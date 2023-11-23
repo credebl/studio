@@ -303,15 +303,13 @@ const EditPopupModal = (props: EditEntityModalProps) => {
                                     onChange={(e) => {
                                         const value = e.target.value;
                                         formikHandlers.setFieldValue('name', value);
-                                        formikHandlers.setFieldTouched('name', true);
-                                    
+                                        formikHandlers.setFieldTouched('name', true, false);
+                                        console.log('name::', formikHandlers.setFieldTouched.name);
+
                                         if (value.length > 50) {
                                           formikHandlers.setFieldError('name', props.isOrganization ? 'Organization name must be at most 50 characters' : 'Ecosystem name must be at most 50 characters');
-                                        } else {
-                                          formikHandlers.setFieldError('name', undefined); 
-                                        }
+                                        } 
                                       }}
-
                                 />
                                 {formikHandlers?.errors?.name && formikHandlers?.touched?.name && (
                                     <span className="text-red-500 text-xs">{formikHandlers?.errors?.name}</span>
@@ -332,12 +330,10 @@ const EditPopupModal = (props: EditEntityModalProps) => {
                                     onChange={(e) => {
                                         const value = e.target.value;
                                         formikHandlers.setFieldValue('description', value);
-                                        formikHandlers.setFieldTouched('description', true);
+                                        formikHandlers.setFieldTouched('description', true, false);
                                     
                                         if (value.length > 50) {
                                           formikHandlers.setFieldError('description', 'Description must be at most 255 characters');
-                                        } else {
-                                          formikHandlers.setFieldError('description', undefined); 
                                         }
                                       }}
 

@@ -263,13 +263,12 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
                             onChange={(e) => {
                               const value = e.target.value;
                               formikHandlers.setFieldValue('firstName', value);
-                              formikHandlers.setFieldTouched('firstName', true);
+                              formikHandlers.setFieldTouched('firstName', true, false);
                           
                               if (value.length > 50) {
                                 formikHandlers.setFieldError('firstName', 'First name must be at most 50 characters');
-                              } else {
-                                formikHandlers.setFieldError('firstName', undefined);
-                              }
+                              } 
+              
                             }}
                             onBlur={formikHandlers.handleBlur}
                             ref={firstNameInputRef}
@@ -298,13 +297,12 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
                             onChange={(e) => {
                               const value = e.target.value;
                               formikHandlers.setFieldValue('lastName', value);
-                              formikHandlers.setFieldTouched('lastName', true);
+                              formikHandlers.setFieldTouched('lastName', true, false);
                           
                               if (value.length > 50) {
                                 formikHandlers.setFieldError('lastName', 'Last name must be at most 50 characters');
-                              } else {
-                                formikHandlers.setFieldError('lastName', undefined);
-                              }
+                              } 
+                              
                             }}
                             onBlur={formikHandlers.handleBlur}
                             className="bg-gray-50 py-3 px-4 font-medium text-gray-900 border border-gray-300 w-full rounded-md focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 max-w-100/6rem" />
