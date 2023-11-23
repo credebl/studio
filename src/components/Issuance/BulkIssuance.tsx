@@ -1,5 +1,5 @@
 import { Button, Card, Pagination } from 'flowbite-react';
-import React, { Attributes, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
 import {
 	DownloadCsvTemplate, getSchemaCredDef, getCsvFileData,
@@ -52,7 +52,6 @@ const BulkIssuance = () => {
 	const [uploadedFileName, setUploadedFileName] = useState('');
 	const [uploadedFile, setUploadedFile] = useState(null);
 	const [openModal, setOpenModal] = useState<boolean>(false);
-	const [message, setMessage] = useState('');
 	const [searchText, setSearchText] = useState('');
 	const [uploadMessage, setUploadMessage] = useState<IUploadMessage | null>(null)
 	const [success, setSuccess] = useState<string | null>(null);
@@ -135,19 +134,31 @@ const BulkIssuance = () => {
 					if (fileUrl) {
 						downloadFile(fileUrl, 'downloadedFile.csv');
 						setSuccess('File downloaded successfully');
+						setTimeout(()=>{
+							setSuccess(null)
+						},5000)
 						setProcess(false);
 					} else {
 						setUploadMessage({message: 'File URL is missing in the response', type: "failure"});
+						setTimeout(()=>{
+							setUploadMessage(null)
+						},5000)
 						setSuccess(null)
 						setFailure(null)
 					}
 				} else {
 					setUploadMessage({message: 'API request was not successful', type: "failure"});
+					setTimeout(()=>{
+						setUploadMessage(null)
+					},5000)
 					setSuccess(null)
 					setFailure(null)
 				}
 			} catch (error) {
 				setUploadMessage({message: error as string, type: "failure"});
+				setTimeout(()=>{
+					setUploadMessage(null)
+				},5000)
 				setSuccess(null)
 				setFailure(null)
 			}
@@ -194,7 +205,6 @@ const BulkIssuance = () => {
 				progress: undefined,
 				theme: 'colored',
 			});
-			setSuccess("Issuance process completed")
 		});
 
 		SOCKET.on('error-in-bulk-issuance-process', () => {
@@ -209,7 +219,6 @@ const BulkIssuance = () => {
 				progress: undefined,
 				theme: 'colored',
 			});
-			setFailure("Issuance process failed, please retry")
 		});
 
 	}, [])
@@ -219,6 +228,9 @@ const BulkIssuance = () => {
 
 		if (file.type !== 'text/csv') {
 			setUploadMessage({message:'Invalid file type. Please select only CSV files.', type: "failure"});
+			setTimeout(()=>{
+				setUploadMessage(null)
+			},5000)
 			setSuccess(null)
 			setFailure(null)
 			return;
@@ -247,9 +259,15 @@ const BulkIssuance = () => {
 				setRequestId(data?.data);
 				setIsFileUploaded(true);
 				setUploadMessage({message: data?.message, type: "success"});
+				setTimeout(()=>{
+					setUploadMessage(null)
+				},5000)
 				await handleCsvFileData(data?.data);
 			} else {
 				setUploadMessage({message: response as string, type: "failure"});
+				setTimeout(()=>{
+					setUploadMessage(null)
+				},5000)
 				setSuccess(null)
 				setFailure(null)
 			}
@@ -363,10 +381,16 @@ const BulkIssuance = () => {
 				setLoading(false);
 				setOpenModal(false);
 				setSuccess(data.message);
+				setTimeout(()=>{
+					setSuccess(null)
+				},5000)
 				setUploadMessage(null)
 				handleResetForConfirm()
 			} else {
 				setFailure(response as string);
+				setTimeout(()=>{
+					setFailure(null)
+				},5000)
 				setLoading(false);
 			}
 		} else {
@@ -374,7 +398,7 @@ const BulkIssuance = () => {
 			setFailure(response as string);
 			setTimeout(() => {
 				setFailure(null);
-			}, 4000);
+			}, 5000);
 		}
 	};
 
