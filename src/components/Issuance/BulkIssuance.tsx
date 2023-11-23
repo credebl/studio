@@ -118,7 +118,6 @@ const BulkIssuance = () => {
 
 	const DownloadSchemaTemplate = async () => {
 		setProcess(true);
-		// const credDefId = await getFromLocalStorage(storageKeys.CRED_DEF_ID);
 		if (credentialSelected) {
 			try {
 				setProcess(true);
