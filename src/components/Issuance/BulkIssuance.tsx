@@ -295,6 +295,7 @@ console.log(6448, res)
 		setIsFileUploaded(false);
 		setUploadedFileName('');
 		setUploadedFile(null);
+		setUploadMessage(null)
 	};
 
 	const handleDrop = (e: {
@@ -437,7 +438,7 @@ console.log(6448, res)
 				<div className="flex flex-col justify-between min-h-100/21rem">
 					<Card>
 						<div>
-							<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+							<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 								<div className="flex flex-col justify-between">
 									<div className="search-dropdown text-primary-700 drak:text-primary-700">
 										<Select

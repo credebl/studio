@@ -206,7 +206,7 @@ const UserDashBoard = () => {
 							org.roles = roles;
 							return (
 								<button
-									className='block'
+									className='block w-full'
 									key={org?.id}
 									onClick={() => goToOrgDashboard(org?.id, org?.roles)}
 								>
