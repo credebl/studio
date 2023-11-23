@@ -50,7 +50,9 @@ const HistoryBulkIssuance = () => {
 	};
 
 	const handleRetry = async (fileId: string) => {
-		setSuccess('Issuance process reinitiated. Please wait a moment.');
+		setTimeout(()=>{
+			setSuccess('Issuance process reinitiated. Please wait a moment.');
+		},5000)
 		setLoading(true);
 		const retryIssunace = await retryBulkIssuance(fileId, SOCKET.id);
 		const { data } = retryIssunace as AxiosResponse;
@@ -85,7 +87,6 @@ const HistoryBulkIssuance = () => {
 				progress: undefined,
 				theme: 'colored',
 			});
-			setSuccess('Issuance process completed');
 		});
 
 		SOCKET.on('error-in-bulk-issuance-retry-process', () => {
@@ -100,7 +101,6 @@ const HistoryBulkIssuance = () => {
 				progress: undefined,
 				theme: 'colored',
 			});
-			setError('Issuance process failed, please retry');
 		});
 
 		let getData: NodeJS.Timeout;
@@ -156,7 +156,6 @@ const HistoryBulkIssuance = () => {
 					return {
 						data: [
 							{ data: userName },
-
 							{
 								data: (
 									<DateTooltip date={createdOn} id="issuance_connection_list">

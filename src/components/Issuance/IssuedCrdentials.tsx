@@ -200,8 +200,8 @@ const CredentialList = () => {
 			<div className="mb-4 col-span-full xl:mb-2">
 				<BreadCrumbs />
 			</div>
-			<div className="mb-4 flex justify-between flex-wrap flex-col sm:flex-row gap-4">
-				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white mr-auto">
+			<div className='mb-4 flex justify-between flex-col sm:flex-row items-center'>
+				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 					Credentials
 				</h1>
 				<div>
