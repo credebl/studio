@@ -309,7 +309,7 @@ const HistoryBulkIssuance = () => {
 						</svg>
 					</button>
 
-					<BackButton path={pathRoutes.organizations.Issuance.connections} />
+					<BackButton path={pathRoutes.organizations.Issuance.bulkIssuance} />
 				</div>
 			</div>
 			<div
