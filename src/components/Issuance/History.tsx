@@ -1,8 +1,7 @@
 'use client';
-
+import 'react-toastify/dist/ReactToastify.css';
 import type { AxiosResponse } from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { getConnectionsByOrg } from '../../api/connection';
 import DataTable from '../../commonComponents/datatable';
 import type { TableData } from '../../commonComponents/datatable/interface';
 import { apiStatusCodes } from '../../config/CommonConstant';
@@ -18,6 +17,11 @@ import SearchInput from '../SearchInput';
 import { Button, Pagination } from 'flowbite-react';
 import { getFilesHistory, retryBulkIssuance } from '../../api/BulkIssuance';
 import SOCKET from '../../config/SocketConfig';
+import {
+	BulkIssuanceHistory,
+	BulkIssuanceHistoryData,
+} from '../../common/enums';
+import { ToastContainer, toast } from 'react-toastify';
 
 const HistoryBulkIssuance = () => {
 	const initialPageState = {
@@ -46,17 +50,15 @@ const HistoryBulkIssuance = () => {
 	};
 
 	const handleRetry = async (fileId: string) => {
+		setSuccess('Issuance process reinitiated. Please wait a moment.');
 		setLoading(true);
-		const retryIssunace = await retryBulkIssuance(fileId);
+		const retryIssunace = await retryBulkIssuance(fileId, SOCKET.id);
 		const { data } = retryIssunace as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			if (data?.data) {
 				setLoading(false);
-				setSuccess(data?.message);
-				setTimeout(()=>{
-					getConnections();
-				},500)
+				getConnections();
 			} else {
 				setLoading(false);
 			}
@@ -69,20 +71,38 @@ const HistoryBulkIssuance = () => {
 		}
 	};
 
-	SOCKET.on('bulk-issuance-process-completed', () => {
-		console.log(`bulk-issuance-process-completed`);
-		// toast.success('Bulk issuance process completed.', {
-		// 	position: 'top-right',
-		// 	autoClose: 5000,
-		// 	hideProgressBar: false,
-		// 	closeOnClick: true,
-		// 	pauseOnHover: true,
-		// 	draggable: true,
-		// 	progress: undefined,
-		// 	theme: 'colored',
-		// });
-	});
 	useEffect(() => {
+		SOCKET.emit('bulk-connection');
+		SOCKET.on('bulk-issuance-process-completed', () => {
+			console.log(`bulk-issuance-process-completed`);
+			toast.success('Issuance process completed.', {
+				position: 'top-right',
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: 'colored',
+			});
+			setSuccess('Bulk issuance process completed.');
+		});
+
+		SOCKET.on('error-in-bulk-issuance-process', () => {
+			console.log(`error-in-bulk-issuance-retry-process-initiated`);
+			toast.error('Issuance process failed. Please retry', {
+				position: 'top-right',
+				autoClose: 3000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: 'colored',
+			});
+			setError('Issuance process failed, please retry');
+		});
+
 		let getData: NodeJS.Timeout;
 
 		if (searchText.length >= 1) {
@@ -149,21 +169,38 @@ const HistoryBulkIssuance = () => {
 							{ data: failedRecords },
 
 							{
-								data:
-									status === 'PROCESS_STARTED' ? (
-										<p className="bg-primary-100 text-primary-800 dark:bg-gray-700 dark:text-primary-400 border border-primary-100 dark:border-primary-500 text-xs font-medium mr-0.5 px-0.5 py-0.5 rounded-md flex pl-4">
-											Process Started
-										</p>
-									) : (
-										<p className="bg-green-100 text-green-800 dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500 text-xs font-medium mr-0.5 px-0.5 py-0.5 rounded-md flex pl-2">
-											Process Completed
-										</p>
-									),
+								data: (
+									<p
+										className={`${
+											status === BulkIssuanceHistory.started
+												? 'bg-primary-100 text-primary-800 dark:bg-gray-700 dark:text-primary-400 border border-primary-100 dark:border-primary-500'
+												: status === BulkIssuanceHistory.completed ||
+												  status === BulkIssuanceHistory.retry
+												? 'bg-green-100 text-green-800 dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500'
+												: status === BulkIssuanceHistory.interrupted
+												? 'bg-orange-100 text-orange-800 dark:bg-gray-700 dark:text-orange-400 border border-orange-100 dark:border-orange-400'
+												: status === BulkIssuanceHistory.partially_completed
+												? 'bg-red-100 text-red-800 dark:bg-gray-700 dark:text-red-400 border border-red-100 dark:border-red-500'
+												: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400 border border-gray-100 dark:border-gray-500'
+										} text-sm font-medium mr-0.5 px-0.5 py-0.5 rounded-md flex justify-center items-center max-w-[180px]`}
+									>
+										{status === BulkIssuanceHistory.started
+											? BulkIssuanceHistoryData.started
+											: status === BulkIssuanceHistory.completed
+											? BulkIssuanceHistoryData.completed
+											: status === BulkIssuanceHistory.interrupted
+											? BulkIssuanceHistoryData.interrupted
+											: status === BulkIssuanceHistory.partially_completed
+											? BulkIssuanceHistoryData.partially_completed
+											: BulkIssuanceHistoryData.retry}
+									</p>
+								),
 							},
 							{
 								data: (
 									<div className="flex">
 										<Button
+											disabled={status === BulkIssuanceHistory.started}
 											onClick={() => {
 												window.location.href = `${pathRoutes.organizations.Issuance.history}/${ele?.id}`;
 											}}
@@ -196,7 +233,7 @@ const HistoryBulkIssuance = () => {
 										{failedRecords > 0 && (
 											<Button
 												onClick={() => handleRetry(fileId)}
-												className='text-base ml-4 font-medium text-center hover:!bg-secondary-700 dark:bg-transparent hover:bg-secondary-700 bg-secondary-700 focus:ring-4 focus:ring-primary-300 ring-primary-700 bg-white-700 text-primary-600 rounded-md lg:px-3 py-2 lg:py-2.5 mr-2 border-blue-600 hover:text-primary-600 dark:text-blue-500 dark:border-blue-500 dark:hover:text-blue-500 dark:hover:bg-secondary-700'
+												className="text-base ml-4 font-medium text-center hover:!bg-secondary-700 dark:bg-transparent hover:bg-secondary-700 bg-secondary-700 focus:ring-4 focus:ring-primary-300 ring-primary-700 bg-white-700 text-primary-600 rounded-md lg:px-3 py-2 lg:py-2.5 mr-2 border-blue-600 hover:text-primary-600 dark:text-blue-500 dark:border-blue-500 dark:hover:text-blue-500 dark:hover:bg-secondary-700"
 												style={{ height: '2.5rem', minWidth: '4rem' }}
 											>
 												<p className="pr-1 flex text-center justify-center item-center">
@@ -234,7 +271,7 @@ const HistoryBulkIssuance = () => {
 				total: totalPages,
 			});
 		} else {
-			setError(response as string);
+			setFailure(response as string);
 		}
 		setLoading(false);
 	};
@@ -251,9 +288,29 @@ const HistoryBulkIssuance = () => {
 
 	return (
 		<div className="p-4" id="connection_list">
+			<ToastContainer />
 			<div className="flex justify-between items-center">
 				<BreadCrumbs />
-				<BackButton path={pathRoutes.organizations.Issuance.connections} />
+
+				<div className="flex items-center">
+					<button onClick={() => getConnections()}>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="40"
+							height="40"
+							viewBox="0 0 24 24"
+							fill="none"
+							className='mr-3'
+						>
+							<path
+								d="M12 20C9.76667 20 7.875 19.225 6.325 17.675C4.775 16.125 4 14.2333 4 12C4 9.76667 4.775 7.875 6.325 6.325C7.875 4.775 9.76667 4 12 4C13.15 4 14.25 4.2375 15.3 4.7125C16.35 5.1875 17.25 5.86667 18 6.75V4H20V11H13V9H17.2C16.6667 8.06667 15.9375 7.33333 15.0125 6.8C14.0875 6.26667 13.0833 6 12 6C10.3333 6 8.91667 6.58333 7.75 7.75C6.58333 8.91667 6 10.3333 6 12C6 13.6667 6.58333 15.0833 7.75 16.25C8.91667 17.4167 10.3333 18 12 18C13.2833 18 14.4417 17.6333 15.475 16.9C16.5083 16.1667 17.2333 15.2 17.65 14H19.75C19.2833 15.7667 18.3333 17.2083 16.9 18.325C15.4667 19.4417 13.8333 20 12 20Z"
+								fill="#1F4EAD"
+							/>
+						</svg>
+					</button>
+
+					<BackButton path={pathRoutes.organizations.Issuance.connections} />
+				</div>
 			</div>
 			<div
 				className="flex items-center justify-between mb-4"

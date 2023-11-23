@@ -186,7 +186,7 @@ const BulkIssuance = () => {
 
 		SOCKET.on('error-in-bulk-issuance-process', () => {
 			console.log(`error-in-bulk-issuance-process-initiated`);
-			toast.error('Issuance process failed, please retry', {
+			toast.error('Issuance process failed. Please retry', {
 				position: 'top-right',
 				autoClose: 3000,
 				hideProgressBar: false,
@@ -730,7 +730,6 @@ const BulkIssuance = () => {
 					<IssuancePopup
 						openModal={openModal}
 						closeModal={handleCloseConfirmation}
-						message={'Are you sure you want to Offer Credentials ?'}
 						isProcessing={loading}
 						onSuccess={confirmCredentialIssuance}
 					/>
