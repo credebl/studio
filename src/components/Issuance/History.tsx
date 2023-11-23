@@ -73,11 +73,11 @@ const HistoryBulkIssuance = () => {
 
 	useEffect(() => {
 		SOCKET.emit('bulk-connection');
-		SOCKET.on('bulk-issuance-process-completed', () => {
-			console.log(`bulk-issuance-process-completed`);
-			toast.success('Issuance process completed.', {
+		SOCKET.on('bulk-issuance-process-retry-completed', () => {
+			console.log(`bulk-issuance-process-retry-completed`);
+			toast.success('Issuance process completed', {
 				position: 'top-right',
-				autoClose: 5000,
+				autoClose: 3000,
 				hideProgressBar: false,
 				closeOnClick: true,
 				pauseOnHover: true,
@@ -85,10 +85,10 @@ const HistoryBulkIssuance = () => {
 				progress: undefined,
 				theme: 'colored',
 			});
-			setSuccess('Bulk issuance process completed.');
+			setSuccess('Issuance process completed');
 		});
 
-		SOCKET.on('error-in-bulk-issuance-process', () => {
+		SOCKET.on('error-in-bulk-issuance-retry-process', () => {
 			console.log(`error-in-bulk-issuance-retry-process-initiated`);
 			toast.error('Issuance process failed. Please retry', {
 				position: 'top-right',

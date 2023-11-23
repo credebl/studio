@@ -40,7 +40,7 @@ export const DownloadCsvTemplate = async (credDefId: string) => {
 	}
 };
 
-export const uploadCsvFile = async (payload: {file: Uint8Array | Blob}, credefId: string) => {	
+export const uploadCsvFile = async (payload: {file: Uint8Array | Blob, fileName:string}, credefId: string) => {	
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.bulk.uploadCsv}?credDefId=${credefId}`;
 
