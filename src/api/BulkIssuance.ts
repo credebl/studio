@@ -23,9 +23,8 @@ export const getSchemaCredDef = async () => {
 	}
 };
 
-export const DownloadCsvTemplate = async () => {
+export const DownloadCsvTemplate = async (credDefId: string) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const credDefId = await getFromLocalStorage(storageKeys.CRED_DEF_ID);
 	const url = `${apiRoutes.organizations.root}/${orgId}/${credDefId}${apiRoutes.Issuance.download}`;
 
 	const axiosPayload = {
