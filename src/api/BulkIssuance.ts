@@ -1,4 +1,3 @@
-import type download from 'downloadjs';
 import { apiRoutes } from '../config/apiRoutes';
 import { storageKeys } from '../config/CommonConstant';
 import {
@@ -41,13 +40,8 @@ export const DownloadCsvTemplate = async (credDefId: string) => {
 	}
 };
 
-// bulk issuance
-
-// upload file
-
-export const uploadCsvFile = async (payload: any, credefId: string) => {
+export const uploadCsvFile = async (payload: {file: Uint8Array | Blob}, credefId: string) => {	
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-
 	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.bulk.uploadCsv}?credDefId=${credefId}`;
 
 	const axiosPayload = {
@@ -63,8 +57,6 @@ export const uploadCsvFile = async (payload: any, credefId: string) => {
 		return err?.message;
 	}
 };
-
-//get file data
 
 export const getCsvFileData = async (
 	requestId: any,
