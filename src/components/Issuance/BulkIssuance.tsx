@@ -381,7 +381,7 @@ console.log(6448, res)
 			<div className="mb-4 col-span-full xl:mb-2">
 				<div className="flex justify-between items-center">
 					<BreadCrumbs />
-					<BackButton path={pathRoutes?.back?.issuance?.credDef} />
+					<BackButton path={pathRoutes.organizations.issuedCredentials} />
 				</div>
 			</div>
 			<div>
