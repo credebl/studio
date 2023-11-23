@@ -16,6 +16,7 @@ import { ICheckEcosystem, checkEcosystem, getEcosystemId } from '../../../config
 import { createSchemaRequest } from '../../../api/ecosystem';
 import ConfirmModal from '../../../commonComponents/ConfirmPopup';
 import EcosystemProfileCard from '../../../commonComponents/EcosystemProfileCard'
+import React from 'react';
 
 const options = [
     { value: 'string', label: 'String' },
@@ -39,7 +40,7 @@ interface IFormData {
 
 const CreateSchema = () => {
     const [failure, setFailure] = useState<string | null>(null);
-    const [orgId, setOrgId] = useState<number>(0);
+    const [orgId, setOrgId] = useState<string>('');
     const [createLoader, setCreateLoader] = useState<boolean>(false);
     const [showPopup, setShowPopup] = useState(false)
     const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
@@ -60,7 +61,7 @@ const CreateSchema = () => {
         const fetchData = async () => {
             const organizationId = await getFromLocalStorage(
                 storageKeys.ORG_ID);
-            setOrgId(Number(organizationId));
+            setOrgId(organizationId);
         };
 
         fetchData();

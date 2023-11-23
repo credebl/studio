@@ -66,7 +66,7 @@ const SentInvitations = () => {
 		setLoading(false);
 	};
 
-	const deletInvitations = async (invitationId: number) => {
+	const deletInvitations = async (invitationId: string) => {
 		const response = await deleteEcosystemInvitations(invitationId);
 		const { data } = response as AxiosResponse;
 

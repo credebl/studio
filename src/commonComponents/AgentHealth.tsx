@@ -29,7 +29,7 @@ const AgentHealth = () => {
             const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
             setCheckOrgExist(Number(organizationId))
             if (Number(organizationId) !== 0) {
-                const agentData = await getAgentHealth(Number(organizationId));
+                const agentData = await getAgentHealth(organizationId);
                 const { data } = agentData as AxiosResponse;
                 if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
                     setAgentHealthDetails(data?.data);
