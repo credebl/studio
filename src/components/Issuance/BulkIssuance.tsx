@@ -39,7 +39,7 @@ const BulkIssuance = () => {
 	const [process, setProcess] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [credentialOptions, setCredentialOptions] = useState([]);
-	const [credentialSelected, setCredentialSelected] = useState<string>("");
+	const [credentialSelected, setCredentialSelected] = useState<string>("");	
 	const [isFileUploaded, setIsFileUploaded] = useState(false);
 	const [uploadedFileName, setUploadedFileName] = useState('');
 	const [uploadedFile, setUploadedFile] = useState(null);
@@ -122,10 +122,7 @@ const BulkIssuance = () => {
 
 				if (data) {
 					const fileUrl = data;
-					// Adjust this based on the response structure
 					if (fileUrl) {
-						// Open the file in a new tab
-						// window.open(data);
 						downloadFile(fileUrl, 'downloadedFile.csv');
 						setSuccess('File downloaded successfully');
 						setProcess(false);
@@ -222,7 +219,7 @@ const BulkIssuance = () => {
 			await wait(500);
 
 
-			const response = await uploadCsvFile(payload);
+			const response = await uploadCsvFile(payload, credentialSelected);
 			const { data } = response as AxiosResponse;
 
 			if (data?.statusCode === apiStatusCodes?.API_STATUS_CREATED) {
