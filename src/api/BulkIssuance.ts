@@ -110,15 +110,13 @@ export const issueBulkCredential = async (requestId: string, clientId: string) =
 	}
 };
 
-export const retryBulkIssuance = async (fileId:string) => {
-	 const socketId=  await getFromLocalStorage(storageKeys.SOCKET_ID)
-	 
+export const retryBulkIssuance = async (fileId:string, clientId:string) => {	 
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		const url = `${apiRoutes.organizations.root}/${orgId}/${fileId}${apiRoutes.Issuance.bulk.retry}`;
 	
 		const axiosPayload = {
 			url,
-			payload:{clientId:socketId},
+			payload:{clientId:clientId},
 			config: await getHeaderConfigs(),
 		};		
 	

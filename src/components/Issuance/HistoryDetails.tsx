@@ -14,6 +14,7 @@ import SearchInput from '../SearchInput';
 import { getFilesDataHistory } from '../../api/BulkIssuance';
 import type { AxiosResponse } from 'axios';
 import { Pagination } from 'flowbite-react';
+import { BulkIssuanceStatus } from '../../common/enums';
 
 interface IProps {
 	requestId: string;
@@ -114,7 +115,7 @@ const HistoryDetails = ({ requestId }: IProps) => {
 												: 'bg-red-100 text-red-800 border border-red-100 dark:border-red-400 dark:bg-gray-700 dark:text-red-400'
 										}	text-md font-medium sm:mr-0 md:mr-2 min-[320]:px-3 sm:px-3 lg:px-3 py-0.5 rounded-md flex justify-center min-[320]:w-full md:w-1/3`}
 									>
-										{history?.isError === false ? 'Successful' : 'Failed'}
+										{history?.isError === false ? BulkIssuanceStatus.successful : BulkIssuanceStatus.failed}
 									</span>
 								),
 							},

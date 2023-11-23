@@ -17,6 +17,10 @@ ul[role="tablist"] li[role="presentation"] button[aria-selected="true"] {
   @apply text-primary-700 border-primary-700;
 }
 
+.word-break-word{
+  word-break: break-word !important;
+}
+
 #schema-cards div[data-testid="flowbite-card"] div {
   @apply justify-start;
 }

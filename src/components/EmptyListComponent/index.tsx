@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 import RoleViewButton from "../RoleViewButton";
 
-export const EmptyListMessage = ({ message, description, buttonContent, svgComponent, onClick, feature }
+export const EmptyListMessage = ({ message, description, buttonContent, svgComponent, onClick, feature, noExtraHeight }
     : {
         message: string,
         description: string,
@@ -9,9 +9,10 @@ export const EmptyListMessage = ({ message, description, buttonContent, svgCompo
         svgComponent?: ReactElement,
         feature?: string
         onClick?: () => void,
+        noExtraHeight?: true
     }) => {
     return (
-        <div className='flex mt-20 mb-16 justify-start items-center flex-col'>
+        <div className={`flex ${noExtraHeight ? "" : "mt-20 mb-16"} justify-start items-center flex-col`}>
             <p className='text-2xl font-bold mb-4 text-gray-900 dark:text-white'>{message}</p>
             <p className='text-lg mb-4 text-gray-900 dark:text-white'>{description}</p>
             {
