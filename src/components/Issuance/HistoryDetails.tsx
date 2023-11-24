@@ -122,7 +122,7 @@ const HistoryDetails = ({ requestId }: IProps) => {
 							},
 							{
 								data: history?.error
-									? history?.error.replace(/[[\]"{},]/g, ' ')
+									? history?.error === 'Http Exception' ? 'Credential Issuance failed due to error in Wallet Agent' : history?.error?.replace(/[[\]"{},]/g, ' ')
 									: '-',
 							},
 						],
