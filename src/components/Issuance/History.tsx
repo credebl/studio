@@ -185,7 +185,7 @@ const HistoryBulkIssuance = () => {
 														: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400 border border-gray-100 dark:border-gray-500'
 											} text-sm font-medium mr-0.5 px-0.5 py-0.5 rounded-md flex justify-center items-center w-fit px-2`}
 									>
-										{status === BulkIssuanceHistory.started
+										{/* {status === BulkIssuanceHistory.started
 											? BulkIssuanceHistoryData.started
 											: status === BulkIssuanceHistory.completed
 												? BulkIssuanceHistoryData.completed
@@ -193,7 +193,13 @@ const HistoryBulkIssuance = () => {
 													? BulkIssuanceHistoryData.interrupted
 													: status === BulkIssuanceHistory.partially_completed
 														? BulkIssuanceHistoryData.partially_completed
-														: BulkIssuanceHistoryData.retry}
+														: BulkIssuanceHistoryData.retry} */}
+
+														{
+																failedRecords > 0
+																	? BulkIssuanceHistoryData.interrupted
+																	: BulkIssuanceHistoryData.completed
+														}
 									</p>
 								),
 							},
