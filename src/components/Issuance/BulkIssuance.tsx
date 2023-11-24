@@ -194,6 +194,7 @@ const BulkIssuance = () => {
 	useEffect(() => {
 		SOCKET.emit('bulk-connection')
 		SOCKET.on('bulk-issuance-process-completed', () => {
+			setSuccess(null)
 			console.log(`bulk-issuance-process-completed`);
 			toast.success('Issuance process completed', {
 				position: 'top-right',
@@ -208,6 +209,7 @@ const BulkIssuance = () => {
 		});
 
 		SOCKET.on('error-in-bulk-issuance-process', () => {
+			setFailure(null)
 			console.log(`error-in-bulk-issuance-process-initiated`);
 			toast.error('Issuance process failed. Please retry', {
 				position: 'top-right',
@@ -383,9 +385,6 @@ const BulkIssuance = () => {
 				setLoading(false);
 				setOpenModal(false);
 				setSuccess(data.message);
-				setTimeout(()=>{
-					setSuccess(null)
-				},5000)
 				setUploadMessage(null)
 				handleResetForConfirm()
 			} else {

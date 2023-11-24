@@ -50,9 +50,7 @@ const HistoryBulkIssuance = () => {
 	};
 
 	const handleRetry = async (fileId: string) => {
-		setTimeout(()=>{
-			setSuccess('Issuance process reinitiated. Please wait a moment.');
-		},5000)
+		setSuccess('Issuance process reinitiated. Please wait a moment.');
 		setLoading(true);
 		const retryIssunace = await retryBulkIssuance(fileId, SOCKET.id);
 		const { data } = retryIssunace as AxiosResponse;
@@ -76,6 +74,7 @@ const HistoryBulkIssuance = () => {
 	useEffect(() => {
 		SOCKET.emit('bulk-connection');
 		SOCKET.on('bulk-issuance-process-retry-completed', () => {
+			setSuccess(null)
 			console.log(`bulk-issuance-process-retry-completed`);
 			toast.success('Issuance process completed', {
 				position: 'top-right',
@@ -91,6 +90,7 @@ const HistoryBulkIssuance = () => {
 		});
 
 		SOCKET.on('error-in-bulk-issuance-retry-process', () => {
+			setFailure(null)
 			console.log(`error-in-bulk-issuance-retry-process-initiated`);
 			toast.error('Issuance process failed. Please retry', {
 				position: 'top-right',
@@ -168,38 +168,40 @@ const HistoryBulkIssuance = () => {
 							{ data: totalRecords },
 							{ data: successfulRecords },
 							{ data: failedRecords },
-
 							{
 								data: (
-									<p
-										className={`${status === BulkIssuanceHistory.started
-											? 'bg-primary-100 text-primary-800 dark:bg-gray-700 dark:text-primary-400 border border-primary-100 dark:border-primary-500'
-											: status === BulkIssuanceHistory.completed ||
-												status === BulkIssuanceHistory.retry
-												? 'bg-green-100 text-green-800 dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500'
-												: status === BulkIssuanceHistory.interrupted
-													? 'bg-orange-100 text-orange-800 dark:bg-gray-700 dark:text-orange-400 border border-orange-100 dark:border-orange-400'
-													: status === BulkIssuanceHistory.partially_completed
-														? 'bg-red-100 text-red-800 dark:bg-gray-700 dark:text-red-400 border border-red-100 dark:border-red-500'
-														: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400 border border-gray-100 dark:border-gray-500'
-											} text-sm font-medium mr-0.5 px-0.5 py-0.5 rounded-md flex justify-center items-center w-fit px-2`}
+									<p className={`${failedRecords > 0 ? 'bg-orange-100 text-orange-800 dark:bg-gray-700 dark:text-orange-400 border border-orange-100 dark:border-orange-400' :'bg-green-100 text-green-800 dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500'}text-sm font-medium mr-0.5 py-0.5 rounded-md flex justify-center items-center w-fit px-2`}
 									>
-										{/* {status === BulkIssuanceHistory.started
-											? BulkIssuanceHistoryData.started
-											: status === BulkIssuanceHistory.completed
-												? BulkIssuanceHistoryData.completed
-												: status === BulkIssuanceHistory.interrupted
+											{
+												failedRecords > 0
 													? BulkIssuanceHistoryData.interrupted
-													: status === BulkIssuanceHistory.partially_completed
-														? BulkIssuanceHistoryData.partially_completed
-														: BulkIssuanceHistoryData.retry} */}
-
-														{
-																failedRecords > 0
-																	? BulkIssuanceHistoryData.interrupted
-																	: BulkIssuanceHistoryData.completed
-														}
+													: BulkIssuanceHistoryData.completed
+											}
 									</p>
+									// remove above paragraph once BE issue resolved and uncomment below code
+									// <p
+									// 	className={`${status === BulkIssuanceHistory.started
+									// 		? 'bg-primary-100 text-primary-800 dark:bg-gray-700 dark:text-primary-400 border border-primary-100 dark:border-primary-500'
+									// 		: status === BulkIssuanceHistory.completed ||
+									// 			status === BulkIssuanceHistory.retry
+									// 			? 'bg-green-100 text-green-800 dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500'
+									// 			: status === BulkIssuanceHistory.interrupted
+									// 				? 'bg-orange-100 text-orange-800 dark:bg-gray-700 dark:text-orange-400 border border-orange-100 dark:border-orange-400'
+									// 				: status === BulkIssuanceHistory.partially_completed
+									// 					? 'bg-red-100 text-red-800 dark:bg-gray-700 dark:text-red-400 border border-red-100 dark:border-red-500'
+									// 					: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400 border border-gray-100 dark:border-gray-500'
+									// 		} text-sm font-medium mr-0.5 px-0.5 py-0.5 rounded-md flex justify-center items-center w-fit px-2`}
+									// >
+										//  {status === BulkIssuanceHistory.started
+										// 	? BulkIssuanceHistoryData.started
+										// 	: status === BulkIssuanceHistory.completed
+										// 		? BulkIssuanceHistoryData.completed
+										// 		: status === BulkIssuanceHistory.interrupted
+										// 			? BulkIssuanceHistoryData.interrupted
+										// 			: status === BulkIssuanceHistory.partially_completed
+										// 				? BulkIssuanceHistoryData.partially_completed
+										// 				: BulkIssuanceHistoryData.retry} 												
+									// </p>
 								),
 							},
 							{
