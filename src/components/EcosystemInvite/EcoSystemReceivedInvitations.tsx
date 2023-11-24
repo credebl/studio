@@ -29,13 +29,20 @@ interface IOrgData {
 	orgName: string
 }
 
+export interface InvitationProps {
+	invitationId: string;
+	ecosytem: {
+		name: string;
+		logoUrl: string;
+	};
+}
 export interface EcosystemInvitation {
-	ecosystem: []
+	ecosystem: { name: string; logoUrl: string; };
 	id: string
 	createDateTime: string
-	createdBy: number
+	createdBy: string
 	lastChangedDateTime: string
-	lastChangedBy: number
+	lastChangedBy: string
 	deletedAt: any
 	userId: string
 	orgId: string
@@ -53,7 +60,7 @@ const ReceivedInvitations = () => {
 	const [error, setError] = useState<string | null>(null);
 	const [organizationsList, setOrganizationsList] = useState<Array<Organisation> | null>(null);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
-	const [selectedId, setSelectedId] = useState<number>();
+	const [selectedId, setSelectedId] = useState<string>('');
 	const [searchText, setSearchText] = useState('');
 	const [invitationsData, setInvitationsData] = useState<Array<EcosystemInvitation> | null>(null);
 	const [getOrgError, setGetOrgError] = useState<string | null>(null);
@@ -147,7 +154,7 @@ const ReceivedInvitations = () => {
 			if (orgDid) {
 				const response = await acceptRejectEcosystemInvitations(
 					invite.id,
-					Number(selectedId),
+					selectedId,
 					status,
 					orgName,
 					orgDid
@@ -215,7 +222,7 @@ const ReceivedInvitations = () => {
 	const getOrgId = async () => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		if (orgId) {
-			setSelectedId(Number(orgId));
+			setSelectedId(orgId);
 		}
 	};
 
@@ -226,14 +233,16 @@ const ReceivedInvitations = () => {
 	const rejectEnv =
 		<svg
 			className="mr-1 h-6 w-6 text-primary-700"
+			width="20"
+		  height="20"
 			fill="none"
 			viewBox="0 0 24 24"
 			stroke="currentColor"
 		>
 			<path
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				stroke-width="2"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				strokeWidth="2"
 				d="M6 18L18 6M6 6l12 12"
 			/>
 		</svg>
@@ -243,11 +252,11 @@ const ReceivedInvitations = () => {
 		width="20"
 		height="20"
 		viewBox="0 0 24 24"
-		stroke-width="2"
+		strokeWidth="2"
 		stroke="currentColor"
 		fill="none"
-		stroke-linecap="round"
-		stroke-linejoin="round"
+		strokeLinecap="round"
+		strokeLinejoin="round"
 	>
 		<path stroke="none" d="M0 0h24v24H0z" />
 		<path d="M5 12l5 5l10 -10" />
@@ -302,7 +311,8 @@ const ReceivedInvitations = () => {
 															}
 															id={invitation.id}
 															color="bg-white"
-															className='mx-5 mt-5 text-base font-medium text-center text-gray-00 bg-secondary-700 hover:!bg-secondary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600  dark:focus:ring-primary-800 dark:bg-gray-800"'
+															className='mr-5 mt-5 text-base font-medium text-center text-gray-00 bg-secondary-700 hover:!bg-secondary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600  dark:focus:ring-primary-800 dark:bg-gray-800"'
+															style={{ height: '2.5rem', width: '100%', minWidth: '2rem' }}
 														>
 															{rejectEnv}
 															Reject
@@ -316,7 +326,8 @@ const ReceivedInvitations = () => {
 															}
 															disabled={!invitation?.orgData}
 															id={invitation.id}
-															className='mx-5 mt-5 text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-700 dark:hover:!bg-primary-800 dark:focus:ring-primary-800"'
+															className='mt-5 text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-700 dark:hover:!bg-primary-800 dark:focus:ring-primary-800"'
+															style={{ height: '2.5rem', width: '100%', minWidth: '2rem' }}
 														>
 															{acceptEnv}
 															Accept
@@ -325,7 +336,7 @@ const ReceivedInvitations = () => {
 												</div>
 												<div className='flex items-center h-fit'>
 													<select
-														className="ml-3 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+														className="ml-3 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full px-2 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-700 dark:focus:border-primary-700"
 														id="dropdown"
 														onChange={(e) => handleDropdownChange(e, invitation.id)}
 														value={invitation.orgId || ""}

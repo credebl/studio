@@ -1,0 +1,33 @@
+---
+import { getFromCookies } from '../api/Auth';
+import LayoutStacked from '../app/LayoutStacked.astro';
+import { PlatformRoles } from '../common/enums';
+import PlatformSetting from '../components/PlatformSetting';
+import { apiRoutes } from '../config/apiRoutes';
+import { envConfig } from '../config/envConfig';
+import { pathRoutes } from '../config/pathRoutes';
+import API from '../config/ssrApiConfig';
+import { checkUserSession } from '../utils/check-session';
+import ErrorNotFound from '../modules/ErrorNotFound.astro';
+
+const role = getFromCookies(Astro.cookies, "role")
+const response = await checkUserSession({
+	cookies: Astro.cookies,
+	currentPath: Astro.url.pathname,
+});
+const route: string = pathRoutes.auth.sinIn;
+if (!response.authorized) {
+	return Astro.redirect(response.redirect);
+}
+
+const token = getFromCookies(Astro.cookies, 'session');
+const fetchPlatformAddminSetting = await API({
+	url: `${apiRoutes.users.platformSettings}`,
+	token,
+	method: 'GET',
+});
+---
+
+<LayoutStacked showOptions={true} notFoundPage={role !== PlatformRoles.platformAdmin}>
+	<PlatformSetting data={fetchPlatformAddminSetting} client:visible />
+</LayoutStacked>

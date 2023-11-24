@@ -1,45 +1,31 @@
 'use client';
 
 import OrganisationPublicProfile from './OrganisationPublicProfile';
+import PublicNavbar from '../../commonComponents/PublicNavbar';
 
 const PublicProfile = () => {
 	return (
-		<div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800 shadow-sm">
-			<div className="pt-6">
-				<div className="mb-4 border-b border-gray-200 dark:border-gray-700">
-					<ul
-						className="pl-5 flex flex-wrap -mb-px text-sm font-medium text-center"
-						id="myTab"
-						data-tabs-toggle="#myTabContent"
-						role="tablist"
-					>
-						<li className="mr-2" role="presentation">
-							<button
-								className="text-xl inline-block p-4 border-b-2 rounded-t-lg "
-								id="profile-tab"
-								data-tabs-target="#profile"
-								type="button"
-								role="tab"
-								aria-controls="profile"
-								aria-selected="true"
-							>
-								Organisations
-							</button>
-						</li>
-					</ul>
-				</div>
-				<div id="myTabContent">
-					<div
-						className="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800"
-						id="profile"
-						role="tabpanel"
-						aria-labelledby="profile-tab"
-					>
-						<OrganisationPublicProfile />
+		<>
+			<PublicNavbar limitedWidth={false} />
+			<div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800 shadow-sm">
+				<header></header>
+				<div className="pt-6">
+					<h1 className="ml-1 px-4 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
+						Organizations
+					</h1>
+					<div id="myTabContent">
+						<div
+							className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800"
+							id="profile"
+							role="tabpanel"
+							aria-labelledby="profile-tab"
+						>
+							<OrganisationPublicProfile />
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</>
 	);
 };
 

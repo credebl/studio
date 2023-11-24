@@ -206,7 +206,7 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 									createSchemaTitle.svg
 								}
 								onClickEvent={() => {
-									window.location.href = `${pathRoutes.organizations.createSchema}?OrgId=${orgId}`
+									window.location.href = `${pathRoutes.organizations.createSchema}`
 								}}
 							/>
 								:
@@ -217,7 +217,7 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 										createSchemaTitle.svg
 									}
 									onClickEvent={() => {
-										window.location.href = `${pathRoutes.organizations.dashboard}?OrgId=${orgId}`
+										window.location.href = `${pathRoutes.organizations.dashboard}`
 									}}
 								/>}
 						</div>
@@ -278,7 +278,7 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 												buttonContent={emptyListBtn.title}
 												svgComponent={emptyListBtn.svg}
 												onClick={() => {
-													window.location.href = `${pathRoutes.organizations.createSchema}?OrgId=${orgId}`
+													window.location.href = `${pathRoutes.organizations.createSchema}`
 												}}
 											/>
 										)

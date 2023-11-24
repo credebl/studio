@@ -17,6 +17,7 @@ import { pathRoutes } from '../../config/pathRoutes';
 import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { dateConversion } from '../../utils/DateConversion';
 import DateTooltip from '../Tooltip';
+import { Roles } from '../../utils/enums/roles';
 
 const initialPageState = {
 	pageNumber: 1,
@@ -145,15 +146,23 @@ const UserDashBoard = () => {
 			await getAllEcosystemInvitations();
 		}
 	};
-	useEffect(() => {
-		getAllInvitations();
+
+	const getAllResponses = async () => {
+		const role = await getFromLocalStorage(storageKeys.ORG_ROLES)
+		if (role === Roles.OWNER) {
+			checkOrgId();
+		}
 		getAllOrganizations();
+		getAllInvitations();
 		getUserRecentActivity();
-		checkOrgId();
+	}
+
+	useEffect(() => {
+		getAllResponses()
 	}, []);
 
-	const goToOrgDashboard = async (orgId: number, roles: string[]) => {
-		await setToLocalStorage(storageKeys.ORG_ID, orgId.toString());
+	const goToOrgDashboard = async (orgId: string, roles: string[]) => {
+		await setToLocalStorage(storageKeys.ORG_ID, orgId);
 		window.location.href = pathRoutes.organizations.dashboard;
 	};
 
@@ -196,7 +205,8 @@ const UserDashBoard = () => {
 							);
 							org.roles = roles;
 							return (
-								<div
+								<button
+									className='block w-full'
 									key={org?.id}
 									onClick={() => goToOrgDashboard(org?.id, org?.roles)}
 								>
@@ -224,7 +234,7 @@ const UserDashBoard = () => {
 											{org?.name}
 										</span>
 									</a>
-								</div>
+								</button>
 							);
 						})}
 

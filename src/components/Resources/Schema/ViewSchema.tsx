@@ -59,7 +59,7 @@ const ViewSchemas = () => {
   const [credDefListErr, setCredDefListErr] = useState<string | null>(null)
   const [schemaDetailErr, setSchemaDetailErr] = useState<string | null>(null)
   const [failure, setFailure] = useState<string | null>(null)
-  const [orgId, setOrgId] = useState<number>(0)
+  const [orgId, setOrgId] = useState<string>('')
   const [credDefAuto, setCredDefAuto] = useState<string>('')
   const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 
@@ -67,7 +67,7 @@ const ViewSchemas = () => {
   const [userRoles, setUserRoles] = useState<string[]>([])
 
 
-  const getSchemaDetails = async (SchemaId: string, organizationId: number) => {
+  const getSchemaDetails = async (SchemaId: string, organizationId: string) => {
     try {
       setLoading(true);
       const SchemaDetails = await getSchemaById(SchemaId, organizationId);
@@ -88,7 +88,7 @@ const ViewSchemas = () => {
     }
   };
 
-  const getCredentialDefinitionList = async (id: string, orgId: number) => {
+  const getCredentialDefinitionList = async (id: string, orgId: string) => {
     try {
       setCredDeffloader(true);
       const credentialDefinitions = await getCredDeffById(id, orgId);
@@ -113,12 +113,12 @@ const ViewSchemas = () => {
   useEffect(() => {
     const fetchData = async () => {
       const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
-      setOrgId(Number(organizationId));
+      setOrgId(String(organizationId));
       if (window?.location?.search) {
         const str = window?.location?.search;
         const schemaId = str.substring(str.indexOf('=') + 1);
-        await getSchemaDetails(schemaId, Number(organizationId));
-        await getCredentialDefinitionList(schemaId, Number(organizationId));
+        await getSchemaDetails(schemaId, String(organizationId));
+        await getCredentialDefinitionList(schemaId, String(organizationId));
       }
     };
 
@@ -408,7 +408,7 @@ const ViewSchemas = () => {
                       <div className='float-right py-4 px-2'>
                         <Button
                           type="submit"
-                          title="Add new credential-definition on ledger"
+                          title="Add new credential-definition request"
                           isProcessing={createloader}
                           color='bg-primary-800'
                           disabled={createloader}

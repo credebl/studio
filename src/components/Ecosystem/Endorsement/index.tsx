@@ -42,7 +42,7 @@ interface IEndorsementList {
 	status: string;
 	type: string;
 	ecosystemOrgs: {
-		orgId: number;
+		orgId: string;
 	};
 	requestPayload: string;
 	responsePayload: string;
@@ -274,8 +274,7 @@ const EndorsementList = () => {
 				)}
 				{schemaList && schemaList.length > 0 ? (
 					<div
-						className="Flex-wrap"
-						style={{ display: 'flex', flexDirection: 'column' }}
+						className="flex flex-col flex-wrap"
 					>
 						<div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
 							{schemaList.map((item: IEndorsementList) => (
@@ -330,9 +329,6 @@ const EndorsementList = () => {
 												/>
 											</svg>
 										}
-										onClick={() => {
-											window.location.href = `${pathRoutes.organizations.createSchema}?OrgId=${orgId}`;
-										}}
 									/>
 								) : (
 									<EmptyListMessage
@@ -355,9 +351,6 @@ const EndorsementList = () => {
 												/>
 											</svg>
 										}
-										onClick={() => {
-											window.location.href = `${pathRoutes.organizations.dashboard}?OrgId=${orgId}`;
-										}}
 									/>
 								)}
 							</div>
