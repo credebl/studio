@@ -420,18 +420,6 @@ const BulkIssuance = () => {
 			</div>
 			<div>
 				<ToastContainer />
-				{(success || failure) && (
-					<AlertComponent
-						message={success ?? failure}
-						type={success ? 'success' : 'failure'}
-						onAlertClose={() => {
-							setSuccess(null);
-							setFailure(null);
-						}}
-						viewButton={Boolean((success && success === "Issuance process completed") || (failure && failure === "Issuance process failed, please retry"))}
-						path={pathRoutes.organizations.Issuance.history}
-					/>
-				)}
 				<div className="flex justify-between mb-4 items-center ml-1">
 					<div>
 						<p className="text-2xl font-semibold dark:text-white">
@@ -468,6 +456,18 @@ const BulkIssuance = () => {
 						View History
 					</Button>
 				</div>
+				{(success || failure) && (
+					<AlertComponent
+						message={success ?? failure}
+						type={success ? 'success' : 'failure'}
+						onAlertClose={() => {
+							setSuccess(null);
+							setFailure(null);
+						}}
+						viewButton={Boolean((success && success === "Issuance process completed") || (failure && failure === "Issuance process failed, please retry"))}
+						path={pathRoutes.organizations.Issuance.history}
+					/>
+				)}
 				<div className="flex flex-col justify-between min-h-100/21rem">
 					<Card>
 						<div>
@@ -800,7 +800,6 @@ const BulkIssuance = () => {
 							</Button>
 							<Button
 								onClick={handleReset}
-								disabled={!isFileUploaded}
 								type="reset"
 								color="bg-primary-800"
 								className="float-right bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-4 ml-auto dark:text-white dark:hover:text-black dark:hover:bg-primary-50"

@@ -87,6 +87,7 @@ const HistoryBulkIssuance = () => {
 				progress: undefined,
 				theme: 'colored',
 			});
+			getConnections()
 		});
 
 		SOCKET.on('error-in-bulk-issuance-process', () => {
@@ -101,6 +102,7 @@ const HistoryBulkIssuance = () => {
 				progress: undefined,
 				theme: 'colored',
 			});
+			getConnections()
 		});
 
 		let getData: NodeJS.Timeout;

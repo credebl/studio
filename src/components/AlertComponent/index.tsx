@@ -28,7 +28,7 @@ export const AlertComponent = ({
   return message !== null ? (
     <div className="w-full">
       <div
-        className={`flex flex-col gap-2 p-4 text-sm rounded-lg mb-4 ${getAlertClass()}`}
+        className={`flex flex-col gap-2 p-4 text-sm rounded-lg my-2 ${getAlertClass()}`}
         role="alert"
       >
         <div className="flex items-center w-full" data-testid="flowbite-alert-wrapper">
