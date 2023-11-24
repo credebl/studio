@@ -1,9 +1,20 @@
 export const TextTittlecase = (text: string): string => {
-	return text.charAt(0).toUpperCase() + text.slice(1);
-};
-
-export const copyText = (copiedText: string | undefined) => {
+	console.log(66, text);
+  
+	const words = text.split(',');
+  
+	const capitalizedWords = words.map((word) => word.trim().charAt(0).toUpperCase() + word.trim().slice(1));
+  
+	const result = capitalizedWords.join(', ');
+  
+	return result;
+  };
+  
+  export const copyText = (copiedText: string | undefined) => {
 	if (copiedText) {
-		navigator.clipboard.writeText(copiedText);
+	  navigator.clipboard.writeText(copiedText);
 	}
-};
+  };
+  
+  
+  
