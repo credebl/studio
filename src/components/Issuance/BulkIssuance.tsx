@@ -244,6 +244,7 @@ const BulkIssuance = () => {
 			await setToLocalStorage(storageKeys.SOCKET_ID, clientId)
 			const payload = {
 				file: binaryData,
+				fileName: file?.name || "Not available"
 			};
 
 			await wait(500);
@@ -323,6 +324,7 @@ const BulkIssuance = () => {
 		setIsFileUploaded(false);
 		setUploadedFileName('');
 		setUploadedFile(null);
+		setUploadMessage(null)
 	};
 
 	const handleDrop = (e: {
@@ -471,7 +473,7 @@ const BulkIssuance = () => {
 				<div className="flex flex-col justify-between min-h-100/21rem">
 					<Card>
 						<div>
-							<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+							<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 								<div className="flex flex-col justify-between">
 									<div className="search-dropdown text-primary-700 drak:text-primary-700">
 										<Select
