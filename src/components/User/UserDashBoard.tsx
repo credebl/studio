@@ -161,8 +161,8 @@ const UserDashBoard = () => {
 		getAllResponses()
 	}, []);
 
-	const goToOrgDashboard = async (orgId: number, roles: string[]) => {
-		await setToLocalStorage(storageKeys.ORG_ID, orgId.toString());
+	const goToOrgDashboard = async (orgId: string, roles: string[]) => {
+		await setToLocalStorage(storageKeys.ORG_ID, orgId);
 		window.location.href = pathRoutes.organizations.dashboard;
 	};
 
@@ -206,7 +206,7 @@ const UserDashBoard = () => {
 							org.roles = roles;
 							return (
 								<button
-									className='block'
+									className='block w-full'
 									key={org?.id}
 									onClick={() => goToOrgDashboard(org?.id, org?.roles)}
 								>

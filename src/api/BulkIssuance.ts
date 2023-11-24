@@ -1,4 +1,3 @@
-import type download from 'downloadjs';
 import { apiRoutes } from '../config/apiRoutes';
 import { storageKeys } from '../config/CommonConstant';
 import {
@@ -24,9 +23,8 @@ export const getSchemaCredDef = async () => {
 	}
 };
 
-export const DownloadCsvTemplate = async () => {
+export const DownloadCsvTemplate = async (credDefId: string) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const credDefId = await getFromLocalStorage(storageKeys.CRED_DEF_ID);
 	const url = `${apiRoutes.organizations.root}/${orgId}/${credDefId}${apiRoutes.Issuance.download}`;
 
 	const axiosPayload = {
@@ -42,14 +40,8 @@ export const DownloadCsvTemplate = async () => {
 	}
 };
 
-// bulk issuance
-
-// upload file
-
-export const uploadCsvFile = async (payload: any) => {
+export const uploadCsvFile = async (payload: {file: Uint8Array | Blob, fileName:string}, credefId: string) => {	
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const credefId = await getFromLocalStorage(storageKeys.CRED_DEF_ID);
-
 	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.bulk.uploadCsv}?credDefId=${credefId}`;
 
 	const axiosPayload = {
@@ -65,8 +57,6 @@ export const uploadCsvFile = async (payload: any) => {
 		return err?.message;
 	}
 };
-
-//get file data
 
 export const getCsvFileData = async (
 	requestId: any,
@@ -110,15 +100,13 @@ export const issueBulkCredential = async (requestId: string, clientId: string) =
 	}
 };
 
-export const retryBulkIssuance = async (fileId:string) => {
-	 const socketId=  await getFromLocalStorage(storageKeys.SOCKET_ID)
-	 
+export const retryBulkIssuance = async (fileId:string, clientId:string) => {	 
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		const url = `${apiRoutes.organizations.root}/${orgId}/${fileId}${apiRoutes.Issuance.bulk.retry}`;
 	
 		const axiosPayload = {
 			url,
-			payload:{clientId:socketId},
+			payload:{clientId:clientId},
 			config: await getHeaderConfigs(),
 		};		
 	
