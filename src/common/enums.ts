@@ -72,7 +72,7 @@ export enum BulkIssuanceHistoryData {
 	completed = 'Process Completed',
 	interrupted= 'Process Interrupted',
 	retry= 'Process Reinitiated',
-	partially_completed= "Process Failed"
+	partially_completed= "Partially Completed",
 }
 
 export enum BulkIssuanceStatus {
