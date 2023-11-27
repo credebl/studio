@@ -46,3 +46,25 @@ export const getLedgers = async () => {
     return err?.message
   }
 }
+
+export const getLedgersPlatformUrl = async (indyNamespace: string) => {
+  const token = await getFromLocalStorage(storageKeys.TOKEN)
+  const details = {
+    url: `${apiRoutes.Platform.getLedgerPlatformUrl}${indyNamespace}`,
+    config: {
+      headers: {
+        'Content-type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    },
+  };
+
+  try {
+    const response = await axiosGet(details)
+    return response
+  }
+  catch (error) {
+    const err = error as Error
+    return err?.message
+  }
+}
