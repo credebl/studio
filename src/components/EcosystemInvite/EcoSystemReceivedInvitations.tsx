@@ -310,6 +310,7 @@ const ReceivedInvitations = () => {
 																	'rejected',
 																)
 															}
+															disabled={!invitation?.orgData}
 															id={invitation.id}
 															color="bg-white"
 															className='mr-5 mt-5 text-base font-medium text-center text-gray-00 bg-secondary-700 hover:!bg-secondary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600  dark:focus:ring-primary-800 dark:bg-gray-800"'
