@@ -66,12 +66,12 @@ export default function PublicNavbar({ limitedWidth }: Props) {
 						</span>
 					</a>
 					<div className="hidden lg:block ml-2">
-						<a
+						{/* <a
 							href="/"
 							className="text-gray-600 py-2 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-md px-4 lg:px-3 lg:py-2.5 ml-4 dark:text-white dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
 						>
 							Pricing
-						</a>
+						</a> */}
 						<a
 							href="https://docs.credebl.id"
 							className="text-gray-600 py-2 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-md px-4 lg:px-3 lg:py-2.5 ml-4 dark:text-white dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
