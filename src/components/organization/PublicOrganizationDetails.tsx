@@ -51,7 +51,7 @@ const PublicOrganizationDetails = ({ orgSlug }: { orgSlug: string }) => {
                     <div>
 
                         <div>
-                            <div className="p-6 pb-0 bg-gray-100 min-h-100/5rem">
+                            <div className="p-6 pb-6 bg-gray-50 dark:bg-gray-800 min-h-100/5rem">
                                 {(error) && (
                                     <AlertComponent
                                         message={error}

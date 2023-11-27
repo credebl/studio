@@ -1,8 +1,5 @@
-import React from "react"
 import CustomAvatar from "../../components/Avatar"
 import type { IExploreOrg } from "../organization/interfaces"
-import { Card } from "flowbite-react"
-
 
 const ProfilesDesign = ({ orgData }: IExploreOrg) => {
     return (
@@ -10,9 +7,9 @@ const ProfilesDesign = ({ orgData }: IExploreOrg) => {
             <div className="flex flex-col items-center pb-10 mx-auto">
 
                 {orgData?.logoUrl ? (
-                    <CustomAvatar className="my-4 rounded-full shadow-lg" size="100" src={orgData?.logoUrl} />
+                    <CustomAvatar className="rounded-full shadow-lg" size="100" src={orgData?.logoUrl} />
                 ) : (
-                    <CustomAvatar className="my-4 rounded-full shadow-lg" size="180" name={orgData?.name || "NA"} />
+                    <CustomAvatar className="rounded-full shadow-lg" size="180" name={orgData?.name || "NA"} />
                 )}
 
                 <h3 className="mb-1 text-center text-3xl font-medium text-gray-900 dark:text-white pt-4">{orgData?.name}</h3>
