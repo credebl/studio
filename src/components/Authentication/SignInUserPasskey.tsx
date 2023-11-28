@@ -20,7 +20,7 @@ import SignInUserPassword from './SignInUserPassword';
 import { pathRoutes } from '../../config/pathRoutes';
 import NavBar from './NavBar';
 import FooterBar from './FooterBar';
-
+import { PlatformRoles } from '../../common/enums';
 interface signInUserProps {
 	email: string;
 }
@@ -60,6 +60,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 		const userDetails = await getUserProfile(access_token);
 		const { data } = userDetails as AxiosResponse;
 		if (data?.data?.userOrgRoles?.length > 0) {
+			const role = data?.data?.userOrgRoles.find((item: { orgRole: { name: PlatformRoles; }; }) => item.orgRole.name === PlatformRoles.platformAdmin)
 			const permissionArray: number | string[] = [];
 			data?.data?.userOrgRoles?.forEach(
 				(element: { orgRole: { name: string } }) =>
@@ -68,8 +69,9 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 			await setToLocalStorage(storageKeys.PERMISSIONS, permissionArray);
 			await setToLocalStorage(storageKeys.USER_PROFILE, data?.data);
 			await setToLocalStorage(storageKeys.USER_EMAIL, data?.data?.email);
-
-			window.location.href = '/dashboard';
+			return {
+				role: role?.orgRole || ""
+			}
 		} else {
 			setFailure(userDetails as string);
 		}
@@ -123,17 +125,25 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 					await setToLocalStorage(storageKeys.TOKEN, data?.data?.access_token);
+					const userRole = await getUserDetails(data?.data?.access_token)
+
+					const userPayload = {
+						...data,
+						data: {
+							...data.data,
+							role: userRole?.role?.name || ""
+						}
+					}
+		
 					const response = await fetch('/api/auth/signin', {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json',
 						},
-						body: JSON.stringify(data),
+						body: JSON.stringify(userPayload),
 					});
 
-					if (response.redirected) {
-						getUserDetails(data?.data?.access_token);
-					}
+					window.location.href = userRole?.role?.name === PlatformRoles.platformAdmin ? pathRoutes.users.platformSetting : pathRoutes.users.dashboard
 				} else if (data?.error) {
 				}
 			} else {
