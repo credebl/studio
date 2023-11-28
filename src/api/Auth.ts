@@ -200,7 +200,7 @@ export const getFromLocalStorage = async (key: string) =>{
 }
 
 export const setToCookies = (cookies: AstroCookies, key: string, value: any, option: {[key: string]: any }) =>{
-    if(!value.trim()){
+    if(!value?.trim()){
         return
     }
     const convertedValue = encryptData(value)
