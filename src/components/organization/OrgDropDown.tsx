@@ -50,7 +50,7 @@ const OrgDropDown = () => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
 
 		if (orgId) {
-			activeOrg = organizations?.find(org => org.id === Number(orgId)) as Organisation
+			activeOrg = organizations?.find(org => org.id === String(orgId)) as Organisation
 			setactiveOrg(activeOrg || null)
 		} else {
 			activeOrg = organizations && organizations[0]
@@ -112,10 +112,10 @@ const OrgDropDown = () => {
 							org.roles = roles
 							return (
 								<li key={org?.id}>
-									<button onClick={() => goToOrgDashboard(org)}>
+									<button className='w-full' onClick={() => goToOrgDashboard(org)}>
 										<a
 											href="#"
-											className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+											className="flex items-center w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
 										>
 											{org.logoUrl ? (
 												<CustomAvatar className='shrink-0 dark:text-white' size="25" src={org?.logoUrl} round />

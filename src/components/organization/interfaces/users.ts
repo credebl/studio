@@ -1,7 +1,7 @@
 import type { UserOrgRole } from "."
 
 export interface User {
-    id: number
+    id: string
     username: string
     email: string
     firstName: string

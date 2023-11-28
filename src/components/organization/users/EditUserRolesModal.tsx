@@ -8,7 +8,7 @@ import type { User } from "../interfaces/users";
 import { apiStatusCodes } from "../../../config/CommonConstant";
 
 interface RoleI {
-    id: number
+    id: string
     name: string,
     checked: boolean
     disabled: boolean
@@ -64,7 +64,7 @@ const EditUserRoleModal = (props: { openModal: boolean; user: User; setMessage: 
 
         const roleIds = roles?.filter(role => role.checked).map(role => role.id)
 
-        const response = await editOrganizationUserRole(props.user.id, roleIds as number[])
+        const response = await editOrganizationUserRole(props.user.id, roleIds as string[])
 
         const { data } = response as AxiosResponse
 
@@ -79,7 +79,7 @@ const EditUserRoleModal = (props: { openModal: boolean; user: User; setMessage: 
 
     }
 
-    const onRoleChanged = (event: any, id: number) => {
+    const onRoleChanged = (event: any, id: string) => {
 
      if (
             (event?.target?.name === 'issuer' && event?.target?.checked === true) || (event?.target?.name === 'verifier' && event?.target?.checked === true)

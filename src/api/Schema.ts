@@ -49,7 +49,7 @@ export const getAllSchemasByOrgId = async ({ search, itemPerPage, page }: GetAll
   }
 }
 
-export const addSchema = async (payload: createSchema, orgId: number) => {
+export const addSchema = async (payload: createSchema, orgId: string) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
     url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.create}`,
@@ -72,7 +72,7 @@ export const addSchema = async (payload: createSchema, orgId: number) => {
   }
 }
 
-export const getSchemaById = async (schemaId: string, orgId: number) => {
+export const getSchemaById = async (schemaId: string, orgId: string) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
     url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.getSchemaById}/${schemaId}`,
@@ -94,7 +94,7 @@ export const getSchemaById = async (schemaId: string, orgId: number) => {
   }
 }
 
-export const createCredentialDefinition = async (payload: createCredDeffFieldName, orgId:number) => {
+export const createCredentialDefinition = async (payload: createCredDeffFieldName, orgId:string) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
     url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.createCredentialDefinition}`,
@@ -118,7 +118,7 @@ export const createCredentialDefinition = async (payload: createCredDeffFieldNam
   }
 }
 
-export const getCredDeffById = async (schemaId: string, orgId: number) => {
+export const getCredDeffById = async (schemaId: string, orgId: string) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
     url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.getCredDefBySchemaId}/${schemaId}/cred-defs`,

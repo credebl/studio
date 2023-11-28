@@ -42,7 +42,7 @@ interface IEndorsementList {
 	status: string;
 	type: string;
 	ecosystemOrgs: {
-		orgId: number;
+		orgId: string;
 	};
 	requestPayload: string;
 	responsePayload: string;

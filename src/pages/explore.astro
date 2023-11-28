@@ -1,10 +1,10 @@
 ---
-import PublicProfile from "../components/publicProfile/PublicProfiles"
+import PublicProfile from "../components/publicProfile/PublicProfiles.astro"
 import LayoutCommon from "../app/LayoutCommon.astro";
+import PublicNavbar from "../commonComponents/PublicNavbar.astro";
 
 ---
 <LayoutCommon>
-
-	<PublicProfile client:load/>
-
+	<PublicNavbar limitedWidth={false} />
+	<PublicProfile />
 <LayoutCommon>

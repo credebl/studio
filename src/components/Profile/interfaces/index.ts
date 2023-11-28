@@ -39,7 +39,7 @@ export interface UserEmail {
 }
 
 export interface UserProfile {
-  id: number
+  id: string
   profileImg?: string
   username?: string
   email: string

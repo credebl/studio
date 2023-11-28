@@ -36,7 +36,7 @@ interface IssuanceFormPayload {
 	connectionId: string;
 	attributes: Attributes[];
 	credentialDefinitionId: string;
-	orgId: number;
+	orgId: string;
 }
 
 interface DataTypeAttributes {
@@ -81,7 +81,7 @@ const IssueCred = () => {
 		const selectedUsers = await getSelectedUsers();
 		const attributes = await getSchemaDetails();
 		if (attributes && attributes.length) {
-			createIssuanceForm(selectedUsers, attributes, credDefId, Number(orgId));
+			createIssuanceForm(selectedUsers, attributes, credDefId, orgId);
 		} else {
 			setFailure('Attributes are not available');
 		}
@@ -91,7 +91,7 @@ const IssueCred = () => {
 		selectedUsers: SelectedUsers[],
 		attributes: DataTypeAttributes[],
 		credDefId: string,
-		orgId: number,
+		orgId: string,
 	) => {
 		const attrObj = attributes.map((attr) => ({
 			name: attr?.attributeName,

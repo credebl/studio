@@ -21,11 +21,11 @@ interface Values {
 interface Invitations {
 	email: string;
 	role: string;
-	roleId: number;
+	roleId: string;
 }
 
 interface RoleI {
-	id: number;
+	id: string;
 	name: string;
 }
 
@@ -87,7 +87,7 @@ const SendInvitationModal = (props: {
 			{
 				email: values.email,
 				role: memberRole?.name as string,
-				roleId: memberRole?.id as number,
+				roleId: String(memberRole?.id),
 			},
 		]);
 	};

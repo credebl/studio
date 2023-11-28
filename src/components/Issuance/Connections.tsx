@@ -10,7 +10,6 @@ import { pathRoutes } from '../../config/pathRoutes';
 import BreadCrumbs from '../BreadCrumbs';
 import ConnectionList from './ConnectionList';
 import BackButton from '../../commonComponents/backbutton';
-import BulkIssuance from './BulkIssuance';
 
 const Connections = () => {
 	const [selectedConnectionList, setSelectedConnectionList] = useState<
@@ -63,7 +62,8 @@ const Connections = () => {
 							Connection
 						</button>
 					</li>
-					<li className="mr-2" role="presentation">
+					{/* Keep this code as it is, this is required in future use. */}
+					{/* <li className="mr-2" role="presentation">
 						<button
 							className="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 text-xl"
 							id="dashboard-tab"
@@ -75,7 +75,7 @@ const Connections = () => {
 						>
 							Bulk Issuance
 						</button>
-					</li>
+					</li> */}
 				</ul>
 			</div>
 			<div id="myTabContent">
@@ -129,14 +129,15 @@ const Connections = () => {
 						)}
 					</div>
 				</div>
-				<div
+				{/* Keep this code as it is, this is required in future use. */}
+				{/* <div
 					className="hidden rounded-lg bg-gray-50 dark:bg-gray-800"
 					id="dashboard"
 					role="tabpanel"
 					aria-labelledby="dashboard-tab"
 				>
 					<BulkIssuance />
-				</div>
+				</div> */}
 			</div>
 		</div>
 	);

@@ -56,19 +56,19 @@
 		(!('color-theme' in localStorage) &&
 			window.matchMedia('(prefers-color-scheme: dark)').matches)
 	) {
-		themeToggleLightIcon.classList.remove('hidden');
+		themeToggleLightIcon?.classList.remove('hidden');
 	} else {
-		themeToggleDarkIcon.classList.remove('hidden');
+		themeToggleDarkIcon?.classList.remove('hidden');
 	}
 
 	const themeToggleBtn = document.getElementById('theme-toggle');
 
 	let event = new Event('dark-mode');
 
-	themeToggleBtn.addEventListener('click', function () {
+	themeToggleBtn?.addEventListener('click', function () {
 		// toggle icons
-		themeToggleDarkIcon.classList.toggle('hidden');
-		themeToggleLightIcon.classList.toggle('hidden');
+		themeToggleDarkIcon?.classList.toggle('hidden');
+		themeToggleLightIcon?.classList.toggle('hidden');
 
 		// if set via local storage previously
 		if (localStorage.getItem('color-theme')) {

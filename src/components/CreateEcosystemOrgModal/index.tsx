@@ -10,7 +10,7 @@ import {
 	storageKeys,
 } from '../../config/CommonConstant';
 import { calculateSize, dataURItoBlob } from '../../utils/CompressImage';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import { asset } from '../../lib/data.js';
@@ -186,7 +186,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 				description: values.description,
 				logo: (logoImage?.imagePreviewUrl as string) || '',
 				tags: '',
-				userId: Number(user_data?.id),
+				userId: user_data?.id,
 				orgName: orgDetails?.orgName,
 				orgDid: orgDetails?.orgDid,
 				autoEndorsement: autoEndorse,

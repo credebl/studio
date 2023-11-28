@@ -14,12 +14,12 @@ export interface IEcosystem {
 }
 
 export interface Ecosystem {
-    id: number
+    id: string
     createDateTime: string
-    createdBy: number
+    createdBy: string
     lastChangedDateTime: string
+    lastChangedBy: string
     autoEndorsement:boolean
-    lastChangedBy: number
     name: string
     description: string
     logoUrl: string

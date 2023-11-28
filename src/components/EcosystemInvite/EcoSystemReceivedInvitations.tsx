@@ -40,9 +40,9 @@ export interface EcosystemInvitation {
 	ecosystem: { name: string; logoUrl: string; };
 	id: string
 	createDateTime: string
-	createdBy: number
+	createdBy: string
 	lastChangedDateTime: string
-	lastChangedBy: number
+	lastChangedBy: string
 	deletedAt: any
 	userId: string
 	orgId: string
@@ -60,7 +60,7 @@ const ReceivedInvitations = () => {
 	const [error, setError] = useState<string | null>(null);
 	const [organizationsList, setOrganizationsList] = useState<Array<Organisation> | null>(null);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
-	const [selectedId, setSelectedId] = useState<number>();
+	const [selectedId, setSelectedId] = useState<string>('');
 	const [searchText, setSearchText] = useState('');
 	const [invitationsData, setInvitationsData] = useState<Array<EcosystemInvitation> | null>(null);
 	const [getOrgError, setGetOrgError] = useState<string | null>(null);
@@ -154,7 +154,7 @@ const ReceivedInvitations = () => {
 			if (orgDid) {
 				const response = await acceptRejectEcosystemInvitations(
 					invite.id,
-					Number(selectedId),
+					selectedId,
 					status,
 					orgName,
 					orgDid
@@ -222,7 +222,7 @@ const ReceivedInvitations = () => {
 	const getOrgId = async () => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		if (orgId) {
-			setSelectedId(Number(orgId));
+			setSelectedId(orgId);
 		}
 	};
 
@@ -309,6 +309,7 @@ const ReceivedInvitations = () => {
 																	'rejected',
 																)
 															}
+															disabled={!invitation?.orgData}
 															id={invitation.id}
 															color="bg-white"
 															className='mr-5 mt-5 text-base font-medium text-center text-gray-00 bg-secondary-700 hover:!bg-secondary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600  dark:focus:ring-primary-800 dark:bg-gray-800"'
