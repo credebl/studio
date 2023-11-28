@@ -4,18 +4,19 @@ import * as yup from 'yup';
 import React, { useState } from 'react';
 import type { Organisation } from './interfaces';
 
-interface EditOrgdetailsModalProps {
+interface DeleteOrgdetailsModalProps {
 	openModal: boolean;
 	onClose: () => void;
+	orgData: Organisation | null;
 }
 
 interface OrgNameValue {
 	orgName: string;
 }
-const DeleteOrgModal = (props: EditOrgdetailsModalProps) => {
-	const [orgData, setOrgData] = useState<Organisation | null>(null);
+const DeleteOrgModal = (props: DeleteOrgdetailsModalProps) => {
 	const [confirmationModal, setConfirmationModal] = useState(false);
 	const [secondModal, setSecondModal] = useState(false);
+	const [socketModal, setSocketModal] = useState(false);
 
 	const handleDeleteClick = () => {
 		setConfirmationModal(true);
@@ -32,12 +33,22 @@ const DeleteOrgModal = (props: EditOrgdetailsModalProps) => {
 
 	const handleCloseSecondModal = () => {
 		setSecondModal(false);
+		props.onClose();
 	};
 
 	const handleDeleteSecondConfirmation = () => {
+		setSocketModal(true);
 		setSecondModal(false);
 		props.onClose();
 	};
+
+	const handleSocketStepsModal = () => {
+		setSecondModal(false);
+		props.onClose();
+	};
+
+	console.log(76576, props.openModal, confirmationModal, secondModal, socketModal);
+
 	return (
 		<div>
 			<Modal
@@ -46,10 +57,13 @@ const DeleteOrgModal = (props: EditOrgdetailsModalProps) => {
 					props.onClose();
 				}}
 			>
-				<Modal.Header>Delete Organization</Modal.Header>
+				<Modal.Header>
+					Delete organization "
+					<span className="font-semibold">{props?.orgData?.name}</span>"
+				</Modal.Header>
 				<Modal.Body>
 					<div className="text-center text-3xl font-montserrat text-gray-700">
-						Privi Tech
+						{props?.orgData?.name}
 					</div>
 
 					<div className="flex justify-center mt-10">
@@ -67,13 +81,13 @@ const DeleteOrgModal = (props: EditOrgdetailsModalProps) => {
 				<Modal show={confirmationModal} onClose={handleConfirmationClose}>
 					<Modal.Header>
 						<div className="flex items-center justify-center text-gray-700">
-							Delete Organization &nbsp;{' '}
-							<p className="font-semibold">Privi Tech</p>
+							Delete organization "
+							<span className="font-semibold">{props?.orgData?.name}</span>"
 						</div>
 					</Modal.Header>
 					<Modal.Body>
 						<div className="text-center text-3xl font-montserrat text-gray-700">
-							Privi Tech
+							{props?.orgData?.name}
 						</div>
 						<div className="flex justify-center mt-4">
 							<div className="flex items-center p-2 rounded-md border-2 border-yellow-400 bg-orange-50">
@@ -107,11 +121,13 @@ const DeleteOrgModal = (props: EditOrgdetailsModalProps) => {
 						</div>
 						<div className="flex flex-col mt-4">
 							<p className="flex justify-center text-gray-700">
-								This will permanently&nbsp;
+								This will permanently
 								<span className="text-red-600">Delete</span>
 							</p>
 							<p className="flex justify-center text-gray-700">
-								<span className="font-semibold">Privi Tech &nbsp;</span>{' '}
+								<span className="font-semibold">
+									{props?.orgData?.name} &nbsp;
+								</span>{' '}
 								organization, its wallet and all related data.
 							</p>
 						</div>
@@ -131,28 +147,26 @@ const DeleteOrgModal = (props: EditOrgdetailsModalProps) => {
 				<Modal show={secondModal} onClose={handleCloseSecondModal}>
 					<Modal.Header>
 						<div className="flex items-center justify-center text-gray-700">
-							Delete Organization &nbsp;{' '}
-							<p className="font-semibold">Privi Tech</p>
+							Delete organization "
+							<span className="font-semibold">{props?.orgData?.name}</span>"
 						</div>
 					</Modal.Header>
 					<Modal.Body>
 						<div className="text-center text-3xl font-montserrat text-gray-700">
-							Privi Tech
+							{props?.orgData?.name}
 						</div>
 						<p className="flex justify-center text-xl font-montserrat text-gray-700 mt-4 px-8">
-							To confirm, type "Privi Tech" in the box below
+							To confirm, type "{props?.orgData?.name}" in the box below
 						</p>
 
 						<Formik
 							initialValues={{
-								orgName: '',
+								orgNamePassword: '',
 							}}
 							validationSchema={yup.object().shape({
-								orgName: yup
+								orgNamePassword: yup
 									.string()
 									.required('Organization name is required')
-									.min(2, 'Organization name must be at least 2 characters')
-									.max(50, 'Organization name must be at most 50 characters')
 									.trim(),
 							})}
 							validateOnBlur
@@ -167,33 +181,61 @@ const DeleteOrgModal = (props: EditOrgdetailsModalProps) => {
 								>
 									<div className="flex justify-center">
 										<Field
-											id="signinpassword"
-											name="password"
+											id="orgNamePassword"
+											name="orgNamePassword"
 											className="truncate px-4 py-2 text-gray-900 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
-											placeholder="Privi Tech"
+											placeholder="Enter organization name"
 										/>
 									</div>
-									{formikHandlers?.errors?.orgName &&
-										formikHandlers?.touched?.orgName && (
-											<span className="text-red-500 text-xs absolute mt-1">
-												{formikHandlers?.errors?.orgName}
+									{formikHandlers?.errors?.orgNamePassword &&
+										formikHandlers?.touched?.orgNamePassword && (
+											<span className="flex justify-center text-red-500 text-xs">
+												{formikHandlers?.errors?.orgNamePassword}
 											</span>
 										)}
 
 									<div className="flex justify-center mt-4">
 										<Button
-											className="text-lg px-8 font-montserrat text-red-600 hover:text-white border-orange-600 bg-transparent hover:!bg-red-600 rounded-lg inline-flex items-center text-center"
-                                            style={{width: '70%'}}                                         
+											className="text-lg px-8 font-montserrat text-red-600 hover:text-white border-orange-600 bg-transparent hover:!bg-red-600 rounded-lg inline-flex items-center text-center disabled:hover:bg-white"
+											style={{ width: '70%' }}
 											onClick={handleDeleteConfirmation}
+											disabled={
+												!(
+													formikHandlers.values.orgNamePassword &&
+													formikHandlers.values.orgNamePassword ===
+														props.orgData?.name
+												)
+											}
+											type="submit"
 										>
-											<span>
-												Delete this Organization
-											</span>
+											<span>Delete this Organization</span>
 										</Button>
 									</div>
 								</Form>
 							)}
 						</Formik>
+					</Modal.Body>
+				</Modal>
+			)}
+			{socketModal && (
+				<Modal show={socketModal} onClose={handleDeleteConfirmation}>
+					<Modal.Header>
+						Delet "<span className="font-semibold">{props?.orgData?.name}</span>
+						"
+					</Modal.Header>
+					<Modal.Body>
+						<div className="text-center text-3xl font-montserrat text-gray-700">
+							{props?.orgData?.name}
+						</div>
+
+						<div className="flex justify-center mt-10">
+							<Button
+								className="w-full mx-10 text-lg font-montserrat text-red-600 hover:text-white border-orange-600 bg-transparent hover:!bg-red-600 rounded-lg inline-flex items-center text-center"
+								onClick={handleSocketStepsModal}
+							>
+								<span>I would like to delete this organization</span>
+							</Button>
+						</div>
 					</Modal.Body>
 				</Modal>
 			)}

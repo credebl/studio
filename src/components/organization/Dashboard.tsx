@@ -2,7 +2,7 @@ import type { OrgDashboard, Organisation } from './interfaces'
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { getOrgDashboard, getOrganizationById } from '../../api/organization';
 import { useEffect, useState } from 'react';
-
+import React from 'react';
 import { Alert, Dropdown } from 'flowbite-react';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
@@ -210,35 +210,38 @@ const Dashboard = () => {
 											</div>
 										</Dropdown.Item>
 										<hr className='mx-2'/>
-										<Dropdown.Item className='hover:bg-red-600 hover:text-white'>
-											<div className="flex justify-between text-red-500 hover:text-white">
+										<Dropdown.Item 
+										onClick={DeleteOrgAndWalletDetails}
+										className='text-red-500 group hover:text-white hover:bg-red-500'>
+											<div className="flex justify-between">
 												<svg
 													xmlns="http://www.w3.org/2000/svg"
-													className="mr-1 -ml-1 w-5 h-5 mt-1 text-xl hover:text-white"
+													className="mr-1 -ml-1 w-5 h-5 mt-1"
 													width="19"
 													height="18"
 													viewBox="0 0 15 18"
-													fill="none"
-													onClick={DeleteOrgAndWalletDetails}
+													fill="currentColor"
+													
 												>
 													<path
 														d="M9.80045 6.98438C9.56761 6.98438 9.37891 7.17308 9.37891 7.40592V15.3731C9.37891 15.6058 9.56761 15.7947 9.80045 15.7947C10.0333 15.7947 10.222 15.6058 10.222 15.3731V7.40592C10.222 7.17308 10.0333 6.98438 9.80045 6.98438Z"
-														fill="#FF0002"
+														fill="currentColor"
 													/>
 													<path
 														d="M4.8278 6.98438C4.59496 6.98438 4.40625 7.17308 4.40625 7.40592V15.3731C4.40625 15.6058 4.59496 15.7947 4.8278 15.7947C5.06063 15.7947 5.24934 15.6058 5.24934 15.3731V7.40592C5.24934 7.17308 5.06063 6.98438 4.8278 6.98438Z"
-														fill="#FF0002"
+														fill="currentColor"
 													/>
 													<path
 														d="M1.19725 5.35877V15.7447C1.19725 16.3586 1.42235 16.9351 1.81557 17.3487C2.20699 17.7635 2.7517 17.999 3.32177 18H11.2975C11.8678 17.999 12.4125 17.7635 12.8037 17.3487C13.1969 16.9351 13.422 16.3586 13.422 15.7447V5.35877C14.2037 5.15129 14.7102 4.39614 14.6057 3.59405C14.5009 2.79213 13.8177 2.19225 13.0089 2.19209H10.8506V1.66516C10.8531 1.22204 10.6779 0.796544 10.3642 0.483514C10.0505 0.170649 9.62436 -0.00356726 9.18124 5.53875e-05H5.43806C4.99494 -0.00356726 4.56879 0.170649 4.2551 0.483514C3.94141 0.796544 3.76621 1.22204 3.76868 1.66516V2.19209H1.6104C0.801563 2.19225 0.118365 2.79213 0.0136372 3.59405C-0.0909256 4.39614 0.415586 5.15129 1.19725 5.35877ZM11.2975 17.1569H3.32177C2.60103 17.1569 2.04034 16.5378 2.04034 15.7447V5.39582H12.579V15.7447C12.579 16.5378 12.0183 17.1569 11.2975 17.1569ZM4.61176 1.66516C4.60896 1.44566 4.69525 1.23439 4.85102 1.07944C5.00663 0.924489 5.21839 0.839357 5.43806 0.843144H9.18124C9.4009 0.839357 9.61266 0.924489 9.76827 1.07944C9.92405 1.23423 10.0103 1.44566 10.0075 1.66516V2.19209H4.61176V1.66516ZM1.6104 3.03517H13.0089C13.428 3.03517 13.7677 3.37488 13.7677 3.79395C13.7677 4.21303 13.428 4.55273 13.0089 4.55273H1.6104C1.19133 4.55273 0.851621 4.21303 0.851621 3.79395C0.851621 3.37488 1.19133 3.03517 1.6104 3.03517Z"
-														fill="#FF0002"
+														fill="currentColor"
 													/>
 													<path
 														d="M7.30826 6.98438C7.07543 6.98438 6.88672 7.17308 6.88672 7.40592V15.3731C6.88672 15.6058 7.07543 15.7947 7.30826 15.7947C7.5411 15.7947 7.72981 15.6058 7.72981 15.3731V7.40592C7.72981 7.17308 7.5411 6.98438 7.30826 6.98438Z"
-														fill="#FF0002"
+														fill="currentColor"
 													/>
 												</svg>
-												<span className="text-red-500 text-xl hover:text-white">Delete</span>
+												
+												<span className="text-xl">Delete</span>
 											</div>
 										</Dropdown.Item>
 									</Dropdown>
@@ -268,6 +271,7 @@ const Dashboard = () => {
 						<DeleteOrgModal
 							openModal={isDeleteModalOpen}
 							onClose={() => setDeleteModalOpen(false)}
+							orgData={orgData}
 						/>
 					</div>
 
