@@ -4,26 +4,11 @@ import React, { useEffect, useState } from "react"
 import { EmptyListMessage } from "../EmptyListComponent";
 import CustomQRCode from "../../commonComponents/QRcode";
 import type { IExploreOrg, IWalletData } from "../organization/interfaces";
+import CopyDid from "../../commonComponents/CopyDid";
 
 const OrgWalletDetails = ({ orgData }: IExploreOrg) => {
 
     const [connectionInvitation, setConnectionInvitation] = useState<string | null>(null);
-    const [isCopied, setIsCopied] = useState<boolean>(false);
-
-    function copyTextVal(e: React.MouseEvent<HTMLButtonElement>, orgDid: string) {
-
-        e.preventDefault()
-
-        setIsCopied(true);
-
-        // Copy the text inside the text field
-        navigator.clipboard.writeText(orgDid);
-
-        // Reset copied state after 1 second
-        setTimeout(() => {
-            setIsCopied(false);
-        }, 2000);
-    }
 
     useEffect(() => {
         if (orgData && orgData?.org_agents?.length > 0) {
@@ -52,14 +37,7 @@ const OrgWalletDetails = ({ orgData }: IExploreOrg) => {
                                                         <li className="flex z-10 items-center text-xl">
                                                             <span className="z-10 w-fit lg:w-40 shrink-0">DID</span>
                                                             <span className="mx-2">:</span>
-                                                            <span className="ml-4 lg:ml-9 text-gray-600 dark:text-gray-400 truncate">
-                                                                {agentData?.orgDid}
-                                                            </span>
-                                                            <button id="myButton" className={`${false}`} onClick={(e) => copyTextVal(e, agentData?.orgDid)}>
-                                                                {isCopied
-                                                                    ? <svg className="h-6 w-6 text-white ml-3 text-base" width="25" height="25" viewBox="0 0 24 24" strokeWidth={2} stroke="green" fill="none" strokeLinecap="round" strokeLinejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <path d="M5 12l5 5l10 -10" /></svg>
-                                                                    : <svg className="h-6 w-6 text-green ml-3 text-base" width="25" height="25" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <rect x="8" y="8" width="12" height="12" rx="2" />  <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" /></svg>}
-                                                            </button>
+                                                            <CopyDid className="ml-4 lg:ml-9 text-gray-600 dark:text-gray-400 truncate font-courier pt-2" value={agentData?.orgDid} />
                                                         </li>
                                                         <li className="flex items-center text-xl">
                                                             <span className="shrink-0 w-fit lg:w-40">Ledger</span>
