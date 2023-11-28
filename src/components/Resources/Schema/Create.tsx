@@ -326,7 +326,7 @@ const CreateSchema = () => {
                                                                         Attribute: {index + 1}
                                                                     </label> */}
 																		<div
-																			className="relative flex flex-col rounded-lg border border-gray-200 bg-white p-6 cursor-pointer overflow-hidden overflow-ellipsis"
+																			className="relative flex flex-col justify-around rounded-lg border border-gray-200 bg-white p-6 cursor-pointer overflow-hidden overflow-ellipsis"
 																			style={{ overflow: 'auto' }}
 																		>
 																			<div
@@ -443,7 +443,11 @@ const CreateSchema = () => {
 																							<label className="pt-1 text-red-500 text-xs h-5"></label>
 																						)}
 																					</div>
-																					<div className="max-w-[50px]">
+																				
+																				</div>
+																			</div>
+
+																			<div className="max-w-[50px]">
 																						{index === 0 &&
 																						attribute.length === 1 ? (
 																							<div
@@ -509,8 +513,6 @@ const CreateSchema = () => {
 																							</div>
 																						)}
 																					</div>
-																				</div>
-																			</div>
 																		</div>
 																		{index === attribute.length - 1 && (
 																			<div
@@ -554,6 +556,8 @@ const CreateSchema = () => {
 																				)}
 																			</div>
 																		)}
+
+
 																	</div>
 																),
 															)}
