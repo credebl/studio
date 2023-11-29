@@ -9,6 +9,18 @@
   min-height: calc(100vh - 64px);
 }
 
+/* Scrollbar design */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px
+}
+::-webkit-scrollbar-track-piece {
+  background: #eee
+}
+::-webkit-scrollbar-thumb {
+  background: #ccc
+}​
+
 input[type="radio"], input[type="checkbox"] {
   @apply !text-primary-700 focus:!ring-primary-700;
 }
