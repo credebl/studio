@@ -364,7 +364,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 										onChange={(e) => {
 											const value = e.target.value;
 											formikHandlers.setFieldValue('name', value);
-											formikHandlers.setFieldTouched('name', true);
+											formikHandlers.setFieldTouched('name', true, false);
 
 											if (value.length > 50) {
 												formikHandlers.setFieldError(
@@ -373,8 +373,6 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 														? 'Organization name must be at most 50 characters'
 														: 'Ecosystem name must be at most 50 characters',
 												);
-											} else {
-												formikHandlers.setFieldError('name', undefined);
 											}
 										}}
 									/>
@@ -401,15 +399,13 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 										onChange={(e) => {
 											const value = e.target.value;
 											formikHandlers.setFieldValue('description', value);
-											formikHandlers.setFieldTouched('description', true);
+											formikHandlers.setFieldTouched('description', true, false);
 
 											if (value.length > 50) {
 												formikHandlers.setFieldError(
 													'description',
 													'Description must be at most 255 characters',
 												);
-											} else {
-												formikHandlers.setFieldError('description', undefined);
 											}
 										}}
 									/>
