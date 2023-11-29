@@ -233,14 +233,12 @@ export const getEcosystemInvitations = async (pageNumber: number, pageSize: numb
 }
 
 // Accept/ Reject Invitations
-export const acceptRejectEcosystemInvitations = async (invitationId: string, orgId: string, status: string, orgName: string, orgDid: string) => {
+export const acceptRejectEcosystemInvitations = async (invitationId: string, orgId: string, status: string) => {
 
 	const url = `${apiRoutes.Ecosystem.root}/${orgId}${apiRoutes.Ecosystem.invitations}/${invitationId}`
 
 	const payload = {
-		status,
-		orgName,
-		orgDid
+		status
 	}
 	const token = await getFromLocalStorage(storageKeys.TOKEN)
 
