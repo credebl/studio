@@ -187,8 +187,6 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 				logo: (logoImage?.imagePreviewUrl as string) || '',
 				tags: '',
 				userId: user_data?.id,
-				orgName: orgDetails?.orgName,
-				orgDid: orgDetails?.orgDid,
 				autoEndorsement: autoEndorse,
 			};
 			const resCreateEco = await createEcosystems(ecoData);

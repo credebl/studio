@@ -22,8 +22,9 @@ interface IMemberList {
 	orgId: string;
 	ecosystem: { createDateTime: string };
 	ecosystemRole: { name: string };
-	orgName: string;
-	orgDid: string;
+	organisation: { name: string; orgSlug: string; org_agents: {orgDid: string}[] };
+	// orgName: string;
+	// orgDid: string;
 	role: string;
 	createDateTime: any;
 	status: string;
@@ -70,10 +71,15 @@ const MemberList = () => {
 		const sortedMemberList = memberList && memberList.length > 0 && memberList?.sort(compareMembers);
 		const membersData = sortedMemberList && sortedMemberList.length > 0 && sortedMemberList?.map(
 			(member: IMemberList) => {
+				let orgDid ='Not available'
+				if(member.organisation.org_agents.length > 0){
+					const orgAgent = member.organisation.org_agents[0];
+					orgDid = orgAgent.orgDid
+				}
 				return {
 					data: [
 						{
-							data: member?.orgName || 'Not available',
+							data: member?.organisation.name || 'Not available',
 						},
 						{
 							data:
@@ -84,9 +90,9 @@ const MemberList = () => {
 								) || 'Not available',
 						},
 						{
-							data: member?.orgDid ? (
+							data: orgDid? (
 								<div className='flex items-center'>
-									<CopyDid className="text-sm mr-2 py-1 font-courier pt-[0.55rem]" value={member?.orgDid} />
+									<CopyDid className="text-sm mr-2 py-1 font-courier pt-[0.55rem]" value={orgDid} />
 								</div>
 							) : (
 								<span className="text-sm mr-2 px-2.5 py-1 rounded-md">
