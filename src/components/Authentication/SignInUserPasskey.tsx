@@ -142,7 +142,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 							role: userRole?.role?.name || ""
 						}
 					}
-		
+
 					const response = await fetch('/api/auth/signin', {
 						method: 'POST',
 						headers: {
@@ -189,6 +189,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 							<div className="w-full">
 								{(success || failure || fidoUserError) && (
 									<Alert
+										className='mb-4'
 										color={success ? 'success' : 'failure'}
 										onDismiss={() => {
 											setSuccess(null);

@@ -162,6 +162,7 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 									{
 										(success || failure || fidoUserError) &&
 										<Alert
+											className='mb-4'
 											color={success ? "success" : "failure"}
 											onDismiss={() => {
 												setSuccess(null)
