@@ -201,7 +201,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 									</Alert>
 								)}
 
-								<div className="flex mt-2 xl:mt-8">
+								<div className="flex xl:mt-8">
 									<button className="flex mt-2" onClick={handleSvgClick}>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
