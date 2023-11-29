@@ -20,13 +20,18 @@ import type {
 	VerifyRegistrationObjInterface,
 } from './interfaces';
 import type { AxiosError, AxiosResponse } from 'axios';
+import { AlertComponent } from '../AlertComponent';
 
-const AddPasskey = () => {
+interface IResponseMessages {type: "error" | "success", message: string}
+
+const AddPasskey = ({ responseMessages }: { responseMessages: (value: IResponseMessages) => IResponseMessages }) => {
 	const [fidoError, setFidoError] = useState('');
 	const [fidoLoader, setFidoLoader] = useState(true);
 	const [OrgUserEmail, setOrgUserEmail] = useState<string>('');
 	const [deviceList, setDeviceList] = useState<IDeviceData[]>([]);
 	const [addSuccess, setAddSuccess] = useState<string | null>(null);
+	const [editSuccess, setEditSuccess] = useState<string | null>(null);
+	const [editFailure, setEditFailure] = useState<string | null>(null);
 	const [addfailure, setAddFailure] = useState<string | null>(null);
 	const [disableFlag, setDisableFlag] = useState<boolean>(false);
 
@@ -217,16 +222,36 @@ const AddPasskey = () => {
 										</p>
 									</div>
 
+									{(editSuccess || editFailure) && (
+										<AlertComponent
+										message={editSuccess ?? editFailure}
+										type={editSuccess ? 'success' : 'error'}
+										onAlertClose={() => {
+											setEditSuccess(null);
+											setEditFailure(null);
+										}}
+									/>
+									)}
+
 									{deviceList &&
 										deviceList.length > 0 &&
-										deviceList.map((element, key) => (
-											<DeviceDetails
+										deviceList.map((element) => (
+											<div key={element['credentialId']}>
+												<DeviceDetails
 												deviceFriendlyName={element['deviceFriendlyName']}
 												createDateTime={element['createDateTime']}
 												credentialID={element['credentialId']}
 												refreshList={userDeviceDetails}
 												disableRevoke={disableFlag}
+												responseMessages={(value) => {
+													if (value.type === 'success') {
+													  setEditSuccess(value.message);
+													} else {
+													  setEditFailure(value.message);
+													}
+												  }}
 											/>
+												</div>
 										))}
 
 									<div>
