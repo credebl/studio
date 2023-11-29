@@ -176,17 +176,13 @@ const SignUpUserName = () => {
 																formikHandlers.setFieldTouched(
 																	'firstName',
 																	true,
+																	false
 																);
 
 																if (value.length > 50) {
 																	formikHandlers.setFieldError(
 																		'firstName',
 																		'First name must be at most 50 characters',
-																	);
-																} else {
-																	formikHandlers.setFieldError(
-																		'firstName',
-																		undefined,
 																	);
 																}
 															}}
@@ -219,6 +215,7 @@ const SignUpUserName = () => {
 																formikHandlers.setFieldTouched(
 																	'lastName',
 																	true,
+																	false
 																);
 
 																if (value.length > 50) {
@@ -226,12 +223,7 @@ const SignUpUserName = () => {
 																		'lastName',
 																		'Last name must be at most 50 characters',
 																	);
-																} else {
-																	formikHandlers.setFieldError(
-																		'lastName',
-																		undefined,
-																	);
-																}
+																} 
 															}}
 														/>
 														{formikHandlers?.errors?.lastName &&
