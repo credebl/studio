@@ -15,10 +15,12 @@
   height: 7px
 }
 ::-webkit-scrollbar-track-piece {
-  background: #eee
+  /* background: #eee */
+  @apply bg-[#eee] dark:bg-red-700
 }
 ::-webkit-scrollbar-thumb {
-  background: #ccc
+  /* background: #ccc */
+  @apply bg-[#ccc] dark:bg-green-700
 }​
 
 input[type="radio"], input[type="checkbox"] {
