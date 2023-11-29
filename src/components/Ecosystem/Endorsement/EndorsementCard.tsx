@@ -151,7 +151,7 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
                 </p>
                 {isEcosystemLead &&
                     <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                        <span className="font-semibold">Organization:</span> {data?.ecosystemOrgs?.orgName}
+                        <span className="font-semibold">Organization:</span> {data?.ecosystemOrgs?.organisation?.name}
                     </p>
                 }
             </div>

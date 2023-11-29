@@ -63,17 +63,21 @@ const MemberList = () => {
 				(member: {
 					orgId: string;
 					ecosystem: { createDateTime: string };
-					ecosystemRole: { name: string };
-					orgName: string;
-					orgDid: string;
+					organisation: { name: string; orgSlug: string; org_agents: {orgDid: string}[] };
+					ecosystemRole: { name: string };					
 					role: string;
 					createDateTime: any;
 					status: string;
 				}) => {
+					let orgDid ='Not available'
+					if(member.organisation.org_agents.length > 0){
+						const orgAgent = member.organisation.org_agents[0];
+						orgDid = orgAgent.orgDid
+					}
 					return {
 						data: [
 							{
-								data: member.orgName || 'Not available',
+								data: member.organisation.name || 'Not available',
 							},
 							{
 								data:
@@ -84,9 +88,9 @@ const MemberList = () => {
 									) || 'Not available',
 							},
 							{
-								data: member.orgDid ? (
+								data: orgDid ? (
 									<span className="text-sm mr-2 px-2.5 py-1 rounded-md">
-										{member?.orgDid}
+										{orgDid}
 									</span>
 								) : (
 									<span className="text-sm mr-2 px-2.5 py-1 rounded-md">
