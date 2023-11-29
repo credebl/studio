@@ -10,44 +10,42 @@ interface DeleteOrgdetailsModalProps {
 	orgData: Organisation | null;
 }
 
-interface OrgNameValue {
-	orgName: string;
-}
+// interface OrgNameValue {
+// 	orgName: string;
+// }
 const DeleteOrgModal = (props: DeleteOrgdetailsModalProps) => {
-	const [confirmationModal, setConfirmationModal] = useState(false);
-	const [secondModal, setSecondModal] = useState(false);
-	const [socketModal, setSocketModal] = useState(false);
+	const [firstConfirmationModal, setFirstConfirmationModal] = useState(false);
+	const [secondConfirmationModal, setSecondConfirmationModal] = useState(false);
+	// const [socketModal, setSocketModal] = useState(false);
 
 	const handleDeleteClick = () => {
-		setConfirmationModal(true);
+		setFirstConfirmationModal(true);
 	};
 
 	const handleConfirmationClose = () => {
-		setConfirmationModal(false);
+		setFirstConfirmationModal(false);
 	};
 	const handleDeleteConfirmation = () => {
-		setConfirmationModal(false);
-		setSecondModal(true);
+		setFirstConfirmationModal(false);
+		setSecondConfirmationModal(true);
 		props.onClose();
 	};
 
 	const handleCloseSecondModal = () => {
-		setSecondModal(false);
+		setSecondConfirmationModal(false);
 		props.onClose();
 	};
 
 	const handleDeleteSecondConfirmation = () => {
-		setSocketModal(true);
-		setSecondModal(false);
+		// setSocketModal(true);
+		setSecondConfirmationModal(false);
 		props.onClose();
 	};
 
-	const handleSocketStepsModal = () => {
-		setSecondModal(false);
-		props.onClose();
-	};
-
-	console.log(76576, props.openModal, confirmationModal, secondModal, socketModal);
+	// const handleSocketStepsModal = () => {
+	// 	setSecondModal(false);
+	// 	props.onClose();
+	// };
 
 	return (
 		<div>
@@ -58,8 +56,7 @@ const DeleteOrgModal = (props: DeleteOrgdetailsModalProps) => {
 				}}
 			>
 				<Modal.Header>
-					Delete organization "
-					<span className="font-semibold">{props?.orgData?.name}</span>"
+					Delete organization "<span className="font-semibold">{props?.orgData?.name}</span>"
 				</Modal.Header>
 				<Modal.Body>
 					<div className="text-center text-3xl font-montserrat text-gray-700">
@@ -77,12 +74,11 @@ const DeleteOrgModal = (props: DeleteOrgdetailsModalProps) => {
 				</Modal.Body>
 			</Modal>
 
-			{confirmationModal && (
-				<Modal show={confirmationModal} onClose={handleConfirmationClose}>
+			{firstConfirmationModal && (
+				<Modal show={firstConfirmationModal} onClose={handleConfirmationClose}>
 					<Modal.Header>
 						<div className="flex items-center justify-center text-gray-700">
-							Delete organization "
-							<span className="font-semibold">{props?.orgData?.name}</span>"
+							Delete organization "<span className="font-semibold">{props?.orgData?.name}</span>"
 						</div>
 					</Modal.Header>
 					<Modal.Body>
@@ -121,8 +117,7 @@ const DeleteOrgModal = (props: DeleteOrgdetailsModalProps) => {
 						</div>
 						<div className="flex flex-col mt-4">
 							<p className="flex justify-center text-gray-700">
-								This will permanently
-								<span className="text-red-600">Delete</span>
+								This will permanently<span className="text-red-600">Delete</span>
 							</p>
 							<p className="flex justify-center text-gray-700">
 								<span className="font-semibold">
@@ -143,12 +138,11 @@ const DeleteOrgModal = (props: DeleteOrgdetailsModalProps) => {
 				</Modal>
 			)}
 
-			{secondModal && (
-				<Modal show={secondModal} onClose={handleCloseSecondModal}>
+			{secondConfirmationModal && (
+				<Modal show={secondConfirmationModal} onClose={handleCloseSecondModal}>
 					<Modal.Header>
 						<div className="flex items-center justify-center text-gray-700">
-							Delete organization "
-							<span className="font-semibold">{props?.orgData?.name}</span>"
+							Delete organization "<span className="font-semibold">{props?.orgData?.name}</span>"
 						</div>
 					</Modal.Header>
 					<Modal.Body>
@@ -217,10 +211,10 @@ const DeleteOrgModal = (props: DeleteOrgdetailsModalProps) => {
 					</Modal.Body>
 				</Modal>
 			)}
-			{socketModal && (
+			{/* {socketModal && (
 				<Modal show={socketModal} onClose={handleDeleteConfirmation}>
 					<Modal.Header>
-						Delet "<span className="font-semibold">{props?.orgData?.name}</span>
+						Delete "<span className="font-semibold">{props?.orgData?.name}</span>
 						"
 					</Modal.Header>
 					<Modal.Body>
@@ -238,7 +232,7 @@ const DeleteOrgModal = (props: DeleteOrgdetailsModalProps) => {
 						</div>
 					</Modal.Body>
 				</Modal>
-			)}
+			)} */}
 		</div>
 	);
 };
