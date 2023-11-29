@@ -314,17 +314,13 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                                         formikHandlers.setFieldTouched(
                                             'name',
                                             true,
+                                            false
                                         );
 
                                         if (value.length > 50) {
                                             formikHandlers.setFieldError(
                                                 'name',
                                                 'Organization name must be at most 50 characters',
-                                            );
-                                        } else {
-                                            formikHandlers.setFieldError(
-                                                'name',
-                                                undefined,
                                             );
                                         }
                                     }}
