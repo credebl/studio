@@ -7,20 +7,6 @@
   flex-direction: column;
   justify-content: space-between;
   min-height: calc(100vh - 64px);
-}
-
-/* Scrollbar design */
-::-webkit-scrollbar {
-  width: 7px;
-  height: 7px
-}
-::-webkit-scrollbar-track-piece {
-  /* background: #eee */
-  @apply bg-[#eee] dark:bg-red-700
-}
-::-webkit-scrollbar-thumb {
-  /* background: #ccc */
-  @apply bg-[#ccc] dark:bg-green-700
 }​
 
 input[type="radio"], input[type="checkbox"] {
