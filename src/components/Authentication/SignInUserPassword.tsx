@@ -148,7 +148,7 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 								<div className='flex justify-center'>
 
 									<img
-										className='max-h-100/10rem mb-8'
+										className='max-h-100/10rem'
 										src="/images/signInPassword.svg"
 										alt="img" />
 
