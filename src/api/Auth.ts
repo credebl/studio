@@ -192,9 +192,16 @@ export const decryptData = (value: any): string => {
 }
 
 export const setToLocalStorage = async (key: string, value: any) =>{
-    if(!(value && typeof value === "string" && value?.trim())){
-        return
-    }
+    // If passed value is object then checked empty object
+	if (typeof value === 'object' && Boolean(Object.keys(value).length < 0)) {
+		return;
+	}
+
+	// If passed value is string then checked if value is falsy
+	if (typeof value === 'string' && !value?.trim()) {
+		return;
+	}
+
     const convertedValue = await encryptData(value)
     const setValue = await localStorage.setItem(key, convertedValue as string)
     return true
@@ -207,9 +214,16 @@ export const getFromLocalStorage = async (key: string) =>{
 }
 
 export const setToCookies = (cookies: AstroCookies, key: string, value: any, option: {[key: string]: any }) =>{
-    if(!(value && typeof value === "string" && value?.trim())){
-        return
-    }
+    // If passed value is object then checked empty object
+	if (typeof value === 'object' && Boolean(Object.keys(value).length < 0)) {
+		return;
+	}
+
+	// If passed value is string then checked if value is falsy
+	if (typeof value === 'string' && !value?.trim()) {
+		return;
+	}
+    
     const convertedValue = encryptData(value)
     cookies.set(key, convertedValue as string, option)
     return true
