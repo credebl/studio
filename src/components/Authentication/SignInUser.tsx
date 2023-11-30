@@ -1,17 +1,16 @@
 import './global.css';
 
 import * as yup from 'yup';
-import { Button, Label } from 'flowbite-react';
+import { Button, Label, Alert } from 'flowbite-react';
 import { Field, Form, Formik } from 'formik';
 import { getFromLocalStorage, removeFromLocalStorage, setToLocalStorage } from '../../api/Auth';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import NavBar from './NavBar';
-import { Alert } from 'flowbite-react';
 import RegistrationSuccess from './RegistrationSuccess';
 import SignInUserPasskey from './SignInUserPasskey';
 import { storageKeys } from '../../config/CommonConstant';
 import FooterBar from './FooterBar';
-import React from 'react';
+
 interface emailValue {
 	email: string | null;
 }
@@ -46,8 +45,8 @@ const SignInUser = () => {
 				const loginMethod = searchParam.get('method');
 				const showMsg = searchParam.get('showmsg');
 
-				setUserLoginEmail(storedEmail || userEmail);
-				setEmail({ email: storedEmail || newEmail });
+				setUserLoginEmail(userEmail || storedEmail);
+				setEmail({ email: newEmail || storedEmail });
 
 				const entries = performance.getEntriesByType(
 					'navigation',
@@ -88,7 +87,13 @@ const SignInUser = () => {
 
 	const saveEmail = async (values: emailValue) => {
 		setEmail(values);
-		await localStorage.clear();
+		await removeFromLocalStorage(storageKeys.TOKEN)
+		await removeFromLocalStorage(storageKeys.USER_EMAIL)
+		await removeFromLocalStorage(storageKeys.ORG_ID)
+		await removeFromLocalStorage(storageKeys.ORG_ROLES)
+		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ID)
+		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ROLE)
+		await removeFromLocalStorage(storageKeys.USER_PROFILE)
 		setCurrentComponent('password');
 		const fg = await getFromLocalStorage(storageKeys.LOGIN_USER_EMAIL)
 		console.log(3455, values, fg)
@@ -124,7 +129,7 @@ const SignInUser = () => {
 								<div className="hidden md:block md:w-3/5 w-full bg-blue-500 bg-opacity-10 lg:p-4 md:p-4">
 									<div className="flex justify-center">
 										<img
-											className="max-h-[435px]"
+											className="max-h-100/10rem"
 											src="/images/signin.svg"
 											alt="img"
 										/>
@@ -145,7 +150,7 @@ const SignInUser = () => {
 											</Alert>
 										)}
 
-										<div className="flex xl:mt-16">
+										<div className='flex mt-2 xl:mt-8'>
 											<button
 												className="flex mt-2"
 												onClick={redirectLandingPage}
