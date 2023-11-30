@@ -10,13 +10,13 @@ const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-g
 <div>
 	<nav class={navbarClass}>
 		<div
-			class={`w-full mx-auto flex flex-wrap items-center p-4 lg:pl-12 mx-auto ${
+			class={`w-full mx-auto flex flex-wrap items-center p-4 lg:pl-12 ${
 				limitedWidth ? 'max-w-screen-xl' : ''
 			}`}
 		>
 			<button
-				data-drawer-target="default-sstroke-linejoin"
-				data-drawer-toggle="default-sstroke-linejoin"
+				data-drawer-target="default-sidebar"
+				data-drawer-toggle="default-sidebar"
 				aria-controls="default-sidebar"
 				type="button"
 				class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
@@ -36,8 +36,7 @@ const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-g
 						stroke-linecap="round"
 						stroke-linejoin="round"
 						stroke-width="2"
-						d="M1 1h15M1 7h15M1 13h15"
-					></path>
+						d="M1 1h15M1 7h15M1 13h15"></path>
 				</svg>
 
 				<svg
@@ -50,8 +49,7 @@ const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-g
 					<path
 						fill-rule="evenodd"
 						d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-						clip-rule="evenodd"
-					></path>
+						clip-rule="evenodd"></path>
 				</svg>
 			</button>
 			<a href="/" class="flex items-center">
@@ -60,7 +58,9 @@ const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-g
 					class="h-8 mr-3"
 					alt="CREDEBL Logo"
 				/>
-				<span class="hidden md:block self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
+				<span
+					class="hidden md:block self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
+				>
 					CREDEBL
 				</span>
 			</a>
@@ -78,11 +78,10 @@ const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-g
 					Explore Organizations
 				</a>
 			</div>
-			<div class="flex md:order-2 ml-auto flex mt-4 space-x-6 justify-center items-center">
-			<a
-					href="https://github.com/credebl"
-					class="hidden md:block"
+			<div
+				class="flex md:order-2 ml-auto sm:mt-0 mt-4 space-x-4 justify-center items-center"
 			>
+				<a href="https://github.com/credebl" class="hidden md:block">
 					<svg
 						class="w-6 h-6 text-gray-700 hover:text-gray-800"
 						xmlns="http://www.w3.org/2000/svg"
@@ -129,7 +128,7 @@ const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-g
 							fill="currentColor"></path>
 					</svg>
 				</a>
-				
+
 				<a
 					href={pathRoutes.auth.sinIn}
 					class="ml-3 hover:bg-secondary-700 bg-transparent ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:text-primary-700"
@@ -142,7 +141,7 @@ const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-g
 				>
 					Sign Up
 				</a>
-				<div class="hidden lg:block">
+				<div class="">
 					<ColorModeSwitcher />
 				</div>
 			</div>
@@ -153,7 +152,7 @@ const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-g
 	<aside
 		id="default-sidebar"
 		class="fixed lg:hidden top-0 left-0 z-40 w-64 h-screen -translate-x-full"
-		aria-label="Sidebar"
+		aria-label="default-sidebar"
 	>
 		<div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
 			<div

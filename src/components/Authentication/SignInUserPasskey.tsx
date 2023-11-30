@@ -2,6 +2,7 @@ import '../../common/global.css'
 import { Alert, Button } from 'flowbite-react';
 import {
 	UserSignInData,
+	getFromLocalStorage,
 	getUserProfile,
 	loginUser,
 	setToLocalStorage,
@@ -15,7 +16,7 @@ import {
 import type { AxiosError, AxiosResponse } from 'axios';
 import SignInUser from './SignInUser';
 import { startAuthentication } from '@simplewebauthn/browser';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import SignInUserPassword from './SignInUserPassword';
 import { pathRoutes } from '../../config/pathRoutes';
 import NavBar from './NavBar';
@@ -32,6 +33,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 	const [fidoUserError, setFidoUserError] = useState('');
 	const [failure, setFailure] = useState<string | null>(null);
 	const [success, setSuccess] = useState<string | null>(null);
+	const [email, setEmail] = useState("")
 
 	const handleSvgClick = () => {
 		window.history.pushState(null, '', pathRoutes.auth.sinIn);
@@ -58,6 +60,11 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 
 	const getUserDetails = async (access_token: string) => {
 		const userDetails = await getUserProfile(access_token);
+		console.log(344, userDetails)
+
+		const userEmail = await getFromLocalStorage(storageKeys.LOGIN_USER_EMAIL)
+		console.log(76576, userEmail)
+
 		const { data } = userDetails as AxiosResponse;
 		if (data?.data?.userOrgRoles?.length > 0) {
 			const role = data?.data?.userOrgRoles.find((item: { orgRole: { name: PlatformRoles; }; }) => item.orgRole.name === PlatformRoles.platformAdmin)
@@ -134,7 +141,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 							role: userRole?.role?.name || ""
 						}
 					}
-		
+
 					const response = await fetch('/api/auth/signin', {
 						method: 'POST',
 						headers: {
@@ -162,16 +169,16 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 			setLoading(false);
 		}
 	};
+
 	return (
 		<div>
 			{showSignInUser ? (
 				<div className="flex flex-col min-h-screen">
 					<NavBar />
 					<div className="flex flex-1 flex-col md:flex-row">
-						<div className="md:w-3/5 w-full bg-blue-500 bg-opacity-10 lg:p-4 md:p-4">
+						<div className="md:w-3/5 w-full bg-blue-500 bg-opacity-10 lg:p-4 md:p-4 hidden md:block">
 							<div className="flex justify-center">
 								<img
-									className="hidden sm:block"
 									src="/images/choose-password-passkey.svg"
 									alt="img"
 								/>
@@ -181,6 +188,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 							<div className="w-full">
 								{(success || failure || fidoUserError) && (
 									<Alert
+										className='mb-4'
 										color={success ? 'success' : 'failure'}
 										onDismiss={() => {
 											setSuccess(null);
@@ -194,7 +202,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 									</Alert>
 								)}
 
-								<div className="flex lg:mt-16 lg:mb-20 sm:mb-8">
+								<div className='flex mt-2 xl:mt-8'>
 									<button className="flex mt-2" onClick={handleSvgClick}>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
@@ -211,27 +219,44 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 									</button>
 
 									<div className="w-full flex flex-col items-center justify-center ">
-										<h2 className="text-primary-700 text-blue-600 font-inter text-3xl font-bold leading-10">
+										<h2 className="text-primary-700 dark:text-gray-200 font-inter text-3xl font-bold leading-10">
 											Login
 										</h2>
 
-										<p className="text-gray-500 font-inter text-base font-medium leading-5 mt-2">
+										<p className="text-gray-500 text-center font-inter text-base font-medium leading-5 mt-2">
 											Choose authentication method to Login
 										</p>
 									</div>
 								</div>
-								<div className="lg:hidden sm:block md:hidden sm:block bg-blue-500 bg-opacity-10 mt-4 mb-8">
+								<div className='my-8 mx-auto px-4 py-2 flex justify-center w-full sm:w-fit items-center bg-gray-50 gap-2 border border-gray-200 rounded-md text-gray-600 dark:text-white dark:bg-gray-800'>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="24"
+										height="16"
+										viewBox="0 0 30 24"
+										fill="none"
+									>
+										<path
+											d="M27 0H3C1.35 0 0.015 1.35 0.015 3L0 21C0 22.65 1.35 24 3 24H27C28.65 24 30 22.65 30 21V3C30 1.35 28.65 0 27 0ZM27 6L15 13.5L3 6V3L15 10.5L27 3V6Z"
+											fill="#1F4EAD"
+										/>
+									</svg>
+									<span className='truncate text-gray-600 dark:text-gray-100'>
+										{signInUserProps?.email}
+									</span>
+								</div>
+								<div className="block md:hidden bg-blue-500 bg-opacity-10 mt-4 mb-8">
 									<img src="/images/choose-password-passkey.svg" alt="img" />
 								</div>
 
-								<div className="flex mb-20 text-gray-700 font-inter text-xl font-medium leading-[1.05] justify-center items-center">
-									With Passkey you don’t need to <br /> remember complex
+								<div className="flex mb-16 text-gray-700 dark:text-gray-200 font-inter text-xl font-medium leading-[1.05] justify-center items-center max-w-sm text-center mx-auto">
+									With Passkey you don’t need to remember complex
 									passwords
 								</div>
 
-								<div className="flex justify-between">
+								<div className="flex flex-col items-center gap-4">
 									<button
-										className="w-2/5 px-4 rounded-md text-center font-medium leading-5 border-blue-600 flex items-center justify-center hover:bg-secondary-700 bg-transparent ring-2 text-black rounded-lg text-sm"
+										className="px-12 py-2 min-w-fit min-h-[43px] sm:min-w-[12rem] rounded-md text-center font-medium leading-5 border-blue-600 flex items-center justify-center hover:bg-secondary-700 bg-transparent ring-2 text-black rounded-lg text-sm"
 										onClick={handlePasswordButtonClick}
 									>
 										<svg
@@ -289,14 +314,13 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 
 										<span className="ml-2 text-primary-700">Password</span>
 									</button>
-
 									<Button
 										id="loginwithpasskey"
 										isProcessing={loading}
 										onClick={() => {
 											authenticateWithPasskey(signInUserProps?.email);
 										}}
-										className="w-2/5 font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+										className="px-10 min-w-fit sm:min-w-[12rem] font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 									>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
@@ -323,13 +347,10 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 										</svg>
 										<span className="ml-2">Passkey</span>
 									</Button>
-								</div>
-								<div className="text-sm font-medium text-gray-500 dark:text-gray-400 pt-6 flex flex-col md:flex-row md:justify-center items-center justify-center">
-									Don't have an account yet? &nbsp;
 									<a
 										id="navigatetosignup"
 										href="/authentication/sign-up"
-										className="text-primary-700 hover:underline dark:text-primary-500"
+										className="text-sm text-primary-700 dark:text-gray-200 hover:underline"
 									>
 										{` Create an account`}
 									</a>

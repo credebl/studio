@@ -104,10 +104,10 @@ const ResetPassword = () => {
 
                 <NavBar />
                 <div className="flex flex-1 flex-col md:flex-row">
-                    <div className="md:w-3/5 w-full bg-blue-500 bg-opacity-10 lg:p-4 md:p-4">
+                    <div className="hidden md:block md:w-3/5 w-full bg-blue-500 bg-opacity-10 lg:p-4 md:p-4">
                         <div className="flex justify-center" >
                             <img
-                                className='hidden sm:block'
+                                className='max-h-100/10rem'
                                 src="/images/signin.svg"
                                 alt="img" />
                         </div>
@@ -129,7 +129,6 @@ const ResetPassword = () => {
                             }
 
                             <div className='flex lg:mt-8 w-full flex-col'>
-
                                 <div className="flex justify-center text-center text-primary-700 text-blue-600 font-inter text-3xl font-bold leading-10 ">
                                     Reset Password
                                 </div>
@@ -139,7 +138,7 @@ const ResetPassword = () => {
 
                             </div>
 
-                            <div className="lg:hidden sm:block md:hidden sm:block bg-blue-500 bg-opacity-10 mt-4" >
+                            <div className="md:hidden block bg-blue-500 bg-opacity-10 mt-4" >
 
                                 <img
                                     src="/images/signin.svg"
@@ -194,12 +193,12 @@ const ResetPassword = () => {
                                                         className="truncate w-full bg-gray-200 px-4 py-2 text-gray-700 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
                                                         type={passwordVisible ? 'text' : 'password'}
                                                         onFocus={(): void => {
-															setShowSuggestion(true);
-														}}
-														onBlurCapture={(e: any): void => {
-															setShowSuggestion(false);
-															formikHandlers.handleBlur(e);
-														}}
+                                                            setShowSuggestion(true);
+                                                        }}
+                                                        onBlurCapture={(e: any): void => {
+                                                            setShowSuggestion(false);
+                                                            formikHandlers.handleBlur(e);
+                                                        }}
                                                     />
                                                     <button
                                                         type="button"
@@ -215,13 +214,13 @@ const ResetPassword = () => {
                                                     </button>
                                                 </div>
                                                 {showSuggestion &&
-													formikHandlers?.errors?.password &&
-													formikHandlers.values.password && (
-														<PasswordSuggestionBox
-															show={true}
-															value={formikHandlers?.values?.password}
-														/>
-													)}
+                                                    formikHandlers?.errors?.password &&
+                                                    formikHandlers.values.password && (
+                                                        <PasswordSuggestionBox
+                                                            show={true}
+                                                            value={formikHandlers?.values?.password}
+                                                        />
+                                                    )}
 
                                                 {
                                                     (formikHandlers?.errors?.password && formikHandlers?.touched?.password) &&
@@ -242,8 +241,8 @@ const ResetPassword = () => {
                                                         className="truncate w-full bg-gray-200 px-4 py-2 text-gray-900 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
                                                         type={confirmPasswordVisible ? 'text' : 'password'}
                                                         onBlur={(e: any): void => {
-															formikHandlers.handleBlur(e);
-														}}
+                                                            formikHandlers.handleBlur(e);
+                                                        }}
                                                     />
 
                                                     <button
