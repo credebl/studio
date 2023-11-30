@@ -202,7 +202,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 									</Alert>
 								)}
 
-								<div className="flex xl:mt-8">
+								<div className='flex mt-2 xl:mt-8'>
 									<button className="flex mt-2" onClick={handleSvgClick}>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
@@ -228,7 +228,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 										</p>
 									</div>
 								</div>
-								<div className='my-8 mx-auto px-4 py-2 flex justify-center w-fit items-center bg-gray-50 gap-4 border border-gray-200 rounded-md text-gray-600 dark:text-white dark:bg-gray-800'>
+								<div className='my-8 mx-auto px-4 py-2 flex justify-center w-full sm:w-fit items-center bg-gray-50 gap-2 border border-gray-200 rounded-md text-gray-600 dark:text-white dark:bg-gray-800'>
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										width="24"
@@ -350,21 +350,11 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 									<a
 										id="navigatetosignup"
 										href="/authentication/sign-up"
-										className="text-sm text-primary-700 dark:text-gray-200 hover:underline dark:text-primary-500"
+										className="text-sm text-primary-700 dark:text-gray-200 hover:underline"
 									>
 										{` Create an account`}
 									</a>
 								</div>
-								{/* <div className="text-sm font-medium text-gray-500 dark:text-gray-400 pt-6 flex flex-col md:flex-row md:justify-center items-center justify-center">
-									Don't have an account yet? &nbsp;
-									<a
-										id="navigatetosignup"
-										href="/authentication/sign-up"
-										className="text-primary-700 hover:underline dark:text-primary-500"
-									>
-										{` Create an account`}
-									</a>
-								</div> */}
 							</div>
 						</div>
 					</div>
