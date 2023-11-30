@@ -189,7 +189,7 @@ export const decryptData = (value: any): string => {
 
 export const setToLocalStorage = async (key: string, value: any) =>{
     // If passed value is object then checked empty object
-	if (typeof value === 'object' && Boolean(Object.keys(value).length < 0)) {
+	if (typeof value === 'object' && Boolean(Object.keys(value).length <= 0)) {
 		return;
 	}
 
@@ -211,7 +211,7 @@ export const getFromLocalStorage = async (key: string) =>{
 
 export const setToCookies = (cookies: AstroCookies, key: string, value: any, option: {[key: string]: any }) =>{
     // If passed value is object then checked empty object
-	if (typeof value === 'object' && Boolean(Object.keys(value).length < 0)) {
+	if (typeof value === 'object' && Boolean(Object.keys(value).length <= 0)) {
 		return;
 	}
 
