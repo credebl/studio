@@ -88,7 +88,7 @@ const DeviceDetails = (props: { deviceFriendlyName: string, createDateTime: stri
 							</div>
 							<div className="flex-1 min-w-0">
 								<div className="flex">
-									<p className="text-base font-semibold text-gray-900 truncate dark:text-white pr-3">
+									<p className="!mb-0 text-base font-semibold text-gray-900 truncate dark:text-white pr-3">
 										{props?.deviceFriendlyName}
 									</p>
 									<button
