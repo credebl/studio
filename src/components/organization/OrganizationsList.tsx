@@ -139,7 +139,7 @@ const OrganizationsList = () => {
 								<CustomAvatar
 									className="min-w-[80px]"
 									size="80"
-									src={org.logoUrl}
+									src={org?.logoUrl}
 								/>
 							) : (
 								<CustomAvatar size="80" name={org.name} />
