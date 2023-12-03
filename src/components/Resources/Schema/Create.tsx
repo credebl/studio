@@ -24,6 +24,7 @@ import {
 import { createSchemaRequest } from '../../../api/ecosystem';
 import CreateSchemaConfirmModal from '../../../commonComponents/CreateSchemaConfirmModal';
 import EcosystemProfileCard from '../../../commonComponents/EcosystemProfileCard';
+import React from 'react';
 
 const options = [
 	{
@@ -48,7 +49,7 @@ const CreateSchema = () => {
 	const [failure, setFailure] = useState<string | null>(null);
 	const [success, setSuccess] = useState<string | null>(null);
 	const [orgId, setOrgId] = useState<string>('');
-	const [createloader, setCreateLoader] = useState<boolean>(false);
+	const [createLoader, setCreateLoader] = useState<boolean>(true);
 	const [showPopup, setShowPopup] = useState(false);
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 
@@ -326,232 +327,226 @@ const CreateSchema = () => {
 													values.schemaName && values.schemaVersion;
 
 												return (
-													<>
-														<div className=" relative flex flex-col dark:bg-gray-800">
-															{attribute?.map(
-																(element: IAttributes, index: number) => (
+													<div className=" relative flex flex-col dark:bg-gray-800">
+														{attribute?.map(
+															(element: IAttributes, index: number) => (
+																<div
+																	key={`attribute-${index}`}
+																	className="mt-5 relative"
+																>
 																	<div
 																		key={`attribute-${index}`}
-																		className="mt-5 relative"
+																		className="relative flex flex-col sm:flex-row dark:bg-gray-800 md:flex-row justify-between rounded-lg border border-gray-200 bg-white p-6 cursor-pointer overflow-hidden overflow-ellipsis "
+																		style={{ overflow: 'auto' }}
 																	>
 																		<div
 																			key={`attribute-${index}`}
-																			className="relative flex flex-col sm:flex-row dark:bg-gray-800 md:flex-row justify-between rounded-lg border border-gray-200 bg-white p-6 cursor-pointer overflow-hidden overflow-ellipsis "
-																			style={{ overflow: 'auto' }}
+																			style={{
+																				overflow: 'auto',
+																				width: '95%',
+																			}}
+																			className="grid min-[320]:grid-cols-1 sm:grid-cols-3 md:grid-cols-3 gap-2"
 																		>
-																			<div
-																				key={`attribute-${index}`}
-																				style={{
-																					overflow: 'auto',
-																					width: '95%',
-																				}}
-																				className="grid min-[320]:grid-cols-1 sm:grid-cols-3 md:grid-cols-3 gap-2"
-																			>
-																				<div className="relative flex max-w-[411px] flex-col items-start gap-2">
-																					<Field
-																						id={`attribute[${index}]`}
-																						name={`attribute.${index}.attributeName`}
-																						placeholder="Attribute eg. NAME, ID"
-																						disabled={!areFirstInputsSelected}
-																						className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-md rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-																					/>
-																					{formikHandlers.touched.attribute &&
-																					attribute[index] &&
-																					formikHandlers?.errors?.attribute &&
-																					formikHandlers?.errors?.attribute[
-																						index
-																					] &&
-																					formikHandlers?.touched?.attribute[
-																						index
-																					]?.attributeName &&
-																					formikHandlers?.errors?.attribute[
-																						index
-																					]?.attributeName ? (
-																						<label className="pt-1 text-red-500 text-xs h-5">
-																							{
-																								formikHandlers?.errors
-																									?.attribute[index]
-																									?.attributeName
-																							}
-																						</label>
-																					) : (
-																						<label className="pt-1 text-red-500 text-xs h-5"></label>
-																					)}
-																				</div>
-
-																				<div className="relative flex max-w-[411px] flex-col items-start gap-2">
-																					<Field
-																						component="select"
-																						id={`attribute[${index}]`}
-																						name={`attribute.${index}.schemaDataType`}
-																						placeholder="Select"
-																						disabled={!areFirstInputsSelected}
-																						className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-md rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 "
-																					>
-																						{options.map((opt) => {
-																							return (
-																								<option
-																									key={opt.value}
-																									className="py-2"
-																									value={opt.value}
-																								>
-																									{opt.label}
-																								</option>
-																							);
-																						})}
-																					</Field>
-																					{formikHandlers?.touched?.attribute &&
-																					attribute[index] &&
-																					formikHandlers?.errors?.attribute &&
-																					formikHandlers?.errors?.attribute[
-																						index
-																					] &&
-																					formikHandlers?.touched?.attribute[
-																						index
-																					]?.schemaDataType &&
-																					formikHandlers?.errors?.attribute[
-																						index
-																					]?.schemaDataType ? (
-																						<label className="pt-1 text-red-500 text-xs h-5">
-																							{
-																								formikHandlers?.errors
-																									?.attribute[index]
-																									?.schemaDataType
-																							}
-																						</label>
-																					) : (
-																						<label className="pt-1 text-red-500 text-xs h-5"></label>
-																					)}
-																				</div>
-																				<div className="relative flex max-w-[411px] flex-col items-start gap-2">
-																					<Field
-																						id={`attribute[${index}]`}
-																						name={`attribute.${index}.displayName`}
-																						placeholder="Display Name"
-																						disabled={!areFirstInputsSelected}
-																						className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-md rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-																					/>
-
-																					{formikHandlers?.touched?.attribute &&
-																					attribute[index] &&
-																					formikHandlers?.errors?.attribute &&
-																					formikHandlers?.errors?.attribute[
-																						index
-																					] &&
-																					formikHandlers?.touched?.attribute[
-																						index
-																					]?.displayName &&
-																					formikHandlers?.errors?.attribute[
-																						index
-																					]?.displayName ? (
-																						<label className="pt-1 text-red-500 text-xs h-5">
-																							{
-																								formikHandlers?.errors
-																									?.attribute[index]
-																									?.displayName
-																							}
-																						</label>
-																					) : (
-																						<label className="pt-1 text-red-500 text-xs h-5"></label>
-																					)}
-																				</div>
+																			<div className="relative flex max-w-[411px] flex-col items-start gap-2">
+																				<Field
+																					id={`attribute[${index}]`}
+																					name={`attribute.${index}.attributeName`}
+																					placeholder="Attribute eg. NAME, ID"
+																					disabled={!areFirstInputsSelected}
+																					className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-md rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+																				/>
+																				{formikHandlers.touched.attribute &&
+																				attribute[index] &&
+																				formikHandlers?.errors?.attribute &&
+																				formikHandlers?.errors?.attribute[
+																					index
+																				] &&
+																				formikHandlers?.touched?.attribute[
+																					index
+																				]?.attributeName &&
+																				formikHandlers?.errors?.attribute[index]
+																					?.attributeName ? (
+																					<label className="pt-1 text-red-500 text-xs h-5">
+																						{
+																							formikHandlers?.errors?.attribute[
+																								index
+																							]?.attributeName
+																						}
+																					</label>
+																				) : (
+																					<label className="pt-1 text-red-500 text-xs h-5"></label>
+																				)}
 																			</div>
 
-																			<div
-																				className="max-w-[50px]"
-																				style={{ width: '5%' }}
-																			>
-																				<div
-																					key={element.id}
-																					className="sm:w-0.5/3 text-red-600 "
+																			<div className="relative flex max-w-[411px] flex-col items-start gap-2">
+																				<Field
+																					component="select"
+																					id={`attribute[${index}]`}
+																					name={`attribute.${index}.schemaDataType`}
+																					placeholder="Select"
+																					disabled={!areFirstInputsSelected}
+																					className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-md rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 "
 																				>
-																					<Button
-																						data-testid="deleteBtn"
-																						type="button"
-																						color="danger"
-																						onClick={() => remove(index)}
-																						className={`${
-																							index === 0 &&
-																							values.attribute.length === 1
-																								? 'hidden'
-																								: 'block'
-																						}dark:bg-gray-700 flex justify-end`}
-																					>
-																						<svg
-																							xmlns="http://www.w3.org/2000/svg"
-																							fill="none"
-																							viewBox="0 0 24 24"
-																							strokeWidth={1.5}
-																							stroke="currentColor"
-																							className="w-6 h-6"
-																						>
-																							<path
-																								strokeLinecap="round"
-																								strokeLinejoin="round"
-																								d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-																							/>
-																						</svg>
-																					</Button>
-																				</div>
+																					{options.map((opt) => {
+																						return (
+																							<option
+																								key={opt.value}
+																								className="py-2"
+																								value={opt.value}
+																							>
+																								{opt.label}
+																							</option>
+																						);
+																					})}
+																				</Field>
+																				{formikHandlers?.touched?.attribute &&
+																				attribute[index] &&
+																				formikHandlers?.errors?.attribute &&
+																				formikHandlers?.errors?.attribute[
+																					index
+																				] &&
+																				formikHandlers?.touched?.attribute[
+																					index
+																				]?.schemaDataType &&
+																				formikHandlers?.errors?.attribute[index]
+																					?.schemaDataType ? (
+																					<label className="pt-1 text-red-500 text-xs h-5">
+																						{
+																							formikHandlers?.errors?.attribute[
+																								index
+																							]?.schemaDataType
+																						}
+																					</label>
+																				) : (
+																					<label className="pt-1 text-red-500 text-xs h-5"></label>
+																				)}
+																			</div>
+																			<div className="relative flex max-w-[411px] flex-col items-start gap-2">
+																				<Field
+																					id={`attribute[${index}]`}
+																					name={`attribute.${index}.displayName`}
+																					placeholder="Display Name"
+																					disabled={!areFirstInputsSelected}
+																					className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-md rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+																				/>
+
+																				{formikHandlers?.touched?.attribute &&
+																				attribute[index] &&
+																				formikHandlers?.errors?.attribute &&
+																				formikHandlers?.errors?.attribute[
+																					index
+																				] &&
+																				formikHandlers?.touched?.attribute[
+																					index
+																				]?.displayName &&
+																				formikHandlers?.errors?.attribute[index]
+																					?.displayName ? (
+																					<label className="pt-1 text-red-500 text-xs h-5">
+																						{
+																							formikHandlers?.errors?.attribute[
+																								index
+																							]?.displayName
+																						}
+																					</label>
+																				) : (
+																					<label className="pt-1 text-red-500 text-xs h-5"></label>
+																				)}
 																			</div>
 																		</div>
-																		<div>
-																			{index ===
-																				values.attribute.length - 1 && (
-																				<button
-																					key={element.id}
-																					className={`${
-																						!formikHandlers.isValid ||
-																						!formikHandlers.dirty
-																							? 'hover:bg-white hover:text-primary-700 dark:hover:bg-gray-700 cursor-not-allowed'
-																							: 'dark:hover:bg-secondary-700 dark:hover:text-black cursor-pointer hover:bg-primary-800 hover:text-white dark:hover:bg-primary-700 focus:ring-2'
-																					} absolute text-primary-700 dark:text-white top-[311px] sm:top-[104px] bottom-35 w-40 left-0 right-0 m-auto flex flex-row items-center gap-2 rounded-full border text-primary-700 bg-white dark:bg-gray-700 focus:ring-primary-300 border-primary-500 dark:border-gray-300 dark:bg-gray-600 dark:focus:ring-primary-800 py-0.5 px-2`}
+
+																		<div
+																			className="max-w-[50px]"
+																			style={{ width: '5%' }}
+																		>
+																			<div
+																				key={element.id}
+																				className="sm:w-0.5/3 text-red-600 "
+																			>
+																				<Button
+																					data-testid="deleteBtn"
 																					type="button"
-																					onClick={() =>
-																						push({
-																							attributeName: '',
-																							schemaDataType: 'string',
-																							displayName: '',
-																						})
-																					}
-																					disabled={
-																						!formikHandlers.isValid ||
-																						!formikHandlers.dirty
-																					}
+																					color="danger"
+																					onClick={() => remove(index)}
+																					className={`${
+																						index === 0 &&
+																						values.attribute.length === 1
+																							? 'hidden'
+																							: 'block'
+																					}dark:bg-gray-700 flex justify-end`}
 																				>
 																					<svg
 																						xmlns="http://www.w3.org/2000/svg"
-																						width="22"
-																						height="22"
 																						fill="none"
-																						viewBox="0 0 17 16"
+																						viewBox="0 0 24 24"
+																						strokeWidth={1.5}
+																						stroke="currentColor"
+																						className="w-6 h-6"
 																					>
-																						<rect
-																							width="15"
-																							height="15"
-																							x="1.258"
-																							y=".5"
-																							fill="currentColor"
-																							stroke="#fff"
-																							rx="7.5"
-																							className="text-primary-700 hover:bg-white dark:text-gray-700"
-																						/>
 																						<path
-																							fill="#fff"
-																							d="M8.596 11.068V5.132h.882v5.936h-.882ZM5.992 8.52v-.826h6.09v.826h-6.09Z"
+																							strokeLinecap="round"
+																							strokeLinejoin="round"
+																							d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
 																						/>
 																					</svg>
-																					<span className="ml-1 my-0.5">
-																						Add attribute
-																					</span>
-																				</button>
-																			)}
+																				</Button>
+																			</div>
 																		</div>
 																	</div>
-																),
-															)}
-														</div>
-													</>
+																	<div>
+																		{index === values.attribute.length - 1 && (
+																			<button
+																				key={element.id}
+																				className={`${
+																					!formikHandlers.isValid ||
+																					!formikHandlers.dirty
+																						? 'hover:bg-white hover:text-primary-700 dark:hover:bg-gray-700 cursor-not-allowed'
+																						: 'dark:hover:bg-secondary-700 dark:hover:text-black cursor-pointer hover:bg-primary-800 hover:text-white dark:hover:bg-primary-700 focus:ring-2'
+																				} absolute text-primary-700 dark:text-white top-[311px] sm:top-[104px] bottom-35 w-40 left-0 right-0 m-auto flex flex-row items-center gap-2 rounded-full border text-primary-700 bg-white dark:bg-gray-700 focus:ring-primary-300 border-primary-500 dark:border-gray-300 dark:bg-gray-600 dark:focus:ring-primary-800 py-0.5 px-2`}
+																				type="button"
+																				onClick={() =>
+																					push({
+																						attributeName: '',
+																						schemaDataType: 'string',
+																						displayName: '',
+																					})
+																				}
+																				disabled={
+																					!formikHandlers.isValid ||
+																					!formikHandlers.dirty
+																				}
+																			>
+																				<svg
+																					xmlns="http://www.w3.org/2000/svg"
+																					width="22"
+																					height="22"
+																					fill="none"
+																					viewBox="0 0 17 16"
+																				>
+																					<rect
+																						width="15"
+																						height="15"
+																						x="1.258"
+																						y=".5"
+																						fill="currentColor"
+																						stroke="#fff"
+																						rx="7.5"
+																						className="text-primary-700 hover:bg-white dark:text-gray-700"
+																					/>
+																					<path
+																						fill="#fff"
+																						d="M8.596 11.068V5.132h.882v5.936h-.882ZM5.992 8.52v-.826h6.09v.826h-6.09Z"
+																					/>
+																				</svg>
+																				<span className="ml-1 my-0.5">
+																					Add attribute
+																				</span>
+																			</button>
+																		)}
+																	</div>
+																</div>
+															),
+														)}
+													</div>
 												);
 											}}
 										</FieldArray>
@@ -561,7 +556,7 @@ const CreateSchema = () => {
 										<Button
 											type="reset"
 											color="bg-primary-800"
-											disabled={createloader}
+											disabled={createLoader}
 											className="dark:text-white bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-base px-4 lg:px-5 py-2 lg:py-2.5 ml-auto dark:hover:text-black"
 											style={{
 												height: '2.6rem',
@@ -611,7 +606,7 @@ const CreateSchema = () => {
 										message={
 											'Would you like to proceed? Keep in mind that this action cannot be undone.'
 										}
-										isProcessing={createloader}
+										isProcessing={createLoader}
 										setFailure={setFailure}
 										setSuccess={setSuccess}
 									/>

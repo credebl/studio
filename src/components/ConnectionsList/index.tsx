@@ -65,9 +65,7 @@ const ConnectionList = () => {
 					);
 					setConnectionList(connections);
 				} else {
-					if (data?.statuscode === 500) {
-						setError(response as unknown as string);
-					}
+					setError(response as unknown as string);
 				}
 			} catch (error) {
 				setError(error as string);
