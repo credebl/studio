@@ -116,38 +116,37 @@ const Members = () => {
 	};
 
 	return (
-		<div>
-			<div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-				<div className="flex items-center justify-between mb-4">
-					<SearchInput onInputChange={searchInputChange} />
+		<div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+			<div className="flex items-center justify-between mb-4">
+				<SearchInput onInputChange={searchInputChange} />
+			</div>
+
+			<EditUserRoleModal
+				openModal={props.openModal}
+				user={selectedUser as User}
+				setMessage={(data) => setMessage(data)}
+				setOpenModal={props.setOpenModal}
+			/>
+
+			<AlertComponent
+				message={message ? message : error}
+				type={message ? 'success' : 'failure'}
+				onAlertClose={() => {
+					setMessage(null);
+					setError(null);
+				}}
+			/>
+			{loading ? (
+				<div className="flex items-center justify-center mb-4">
+					<CustomSpinner />
 				</div>
-
-				<EditUserRoleModal
-					openModal={props.openModal}
-					user={selectedUser as User}
-					setMessage={(data) => setMessage(data)}
-					setOpenModal={props.setOpenModal}
-				/>
-
-				<AlertComponent
-					message={message ? message : error}
-					type={message ? 'success' : 'failure'}
-					onAlertClose={() => {
-						setMessage(null);
-						setError(null);
-					}}
-				/>
-				{loading ? (
-					<div className="flex items-center justify-center mb-4">
-						<CustomSpinner />
-					</div>
-				) : (
-					usersList &&
-					usersList?.length > 0 && (
-						<div className="p-2 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-3 dark:bg-gray-800 ">
-							<div className="flow-root display: flex">
-								<ul className="divide-y divide-gray-200 dark:divide-gray-700">
-								<div className='grid '>
+			) : (
+				usersList &&
+				usersList?.length > 0 && (
+					<div className="p-2 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-3 dark:bg-gray-800 ">
+						<div className="flow-root display: flex">
+							<ul className="divide-y divide-gray-200 dark:divide-gray-700">
+								<div className="grid ">
 									{usersList.map((user) => (
 										<li className="p-4">
 											<div className="flex flex-wrap justify-between 2xl:flex align-center 2xl:space-x-4">
@@ -162,7 +161,7 @@ const Members = () => {
 																<li className="pt-3 sm:pt-3 overflow-auto">
 																	<div className="items-center space-x-4">
 																		<div className="flex items-center text-base font-normal text-gray-900 dark:text-white">
-																		{user.roles.length >1 ? 'Roles:' : 'Role:'}
+																			Role(s):
 																			{user.roles &&
 																				user.roles.length > 0 &&
 																				user.roles.map(
@@ -210,7 +209,7 @@ const Members = () => {
 															<path d="M9 7 h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3" />
 															<path d="M9 15h3l8.5 -8.5a1.5 1.5 0 0 0 -3 -3l-8.5 8.5v3" />
 															<line x1="16" y1="5" x2="19" y2="8" />
-														</svg>{''}
+														</svg>
 													</button>
 												) : (
 													<button
@@ -236,13 +235,13 @@ const Members = () => {
 											</div>
 										</li>
 									))}
-									</div>
-								</ul>
+								</div>
+							</ul>
 						</div>
-					  </div>
-					)
-				)}
-
+					</div>
+				)
+			)}
+			{currentPage.total > 1 && (
 				<div className="flex items-center justify-end mb-4">
 					<Pagination
 						currentPage={currentPage.pageNumber}
@@ -250,7 +249,7 @@ const Members = () => {
 						totalPages={currentPage.total}
 					/>
 				</div>
-			</div>
+			)}
 		</div>
 	);
 };
