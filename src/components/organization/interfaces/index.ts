@@ -146,4 +146,25 @@ export interface UserDetails {
     username: string;
 }
 
+export interface IWalletData {
+    agent_invitations: {
+        connectionInvitation: string
+    }[]
+    orgDid: string
+    ledgers: {
+        name: string
+        networkType: string
+    }
+}
+
+export interface IOrgData {
+    org_agents: IWalletData[]
+    logoUrl: string
+    name: string
+    website: string
+    description: string
+}
+export interface IExploreOrg {
+    orgData: IOrgData
+}
 

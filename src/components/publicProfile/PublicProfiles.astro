@@ -1,0 +1,19 @@
+---
+import OrganisationPublicProfile from './OrganisationPublicProfile';
+---
+	<>
+		<div class="p-4 rounded-lg bg-gray-50 dark:bg-gray-800 shadow-sm">
+			<div class="">
+				<div id="myTabContent">
+					<div
+						class="p-4 rounded-lg bg-gray-50 dark:bg-gray-800"
+						id="profile"
+						role="tabpanel"
+						aria-labelledby="profile-tab"
+					>
+						<OrganisationPublicProfile client:visible />
+					</div>
+				</div>
+			</div>
+		</div>
+	</>

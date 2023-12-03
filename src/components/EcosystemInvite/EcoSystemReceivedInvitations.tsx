@@ -149,15 +149,10 @@ const ReceivedInvitations = () => {
 		status: string,
 	) => {
 		try {
-			const orgDid = invite?.orgData?.orgDid || ""
-			const orgName = invite?.orgData?.orgName || ""
-			if (orgDid) {
 				const response = await acceptRejectEcosystemInvitations(
 					invite.id,
 					selectedId,
-					status,
-					orgName,
-					orgDid
+					status					
 				);
 				setLoading(false)
 				const { data } = response as AxiosResponse;
@@ -167,7 +162,7 @@ const ReceivedInvitations = () => {
 				} else {
 					setError(response as string);
 				}
-			}
+			
 			setLoading(false)
 		} catch (err) {
 			console.log("ERROR - Accept/Reject Ecosystem::", err)
@@ -179,7 +174,7 @@ const ReceivedInvitations = () => {
 			const response = await getOrganizationById(orgId);
 			const { data } = response as AxiosResponse;
 			const orgData = data?.data
-			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {						
 				if (orgData.org_agents[0]?.orgDid) {
 					setGetOrgError(null)
 					return {
@@ -309,6 +304,7 @@ const ReceivedInvitations = () => {
 																	'rejected',
 																)
 															}
+															disabled={!invitation?.orgData}
 															id={invitation.id}
 															color="bg-white"
 															className='mr-5 mt-5 text-base font-medium text-center text-gray-00 bg-secondary-700 hover:!bg-secondary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600  dark:focus:ring-primary-800 dark:bg-gray-800"'

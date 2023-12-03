@@ -82,7 +82,7 @@ const SignUpUserPassword = ({
 		confirmPassword: '',
 	};
 
-	const schemaValidation=yup.object().shape({
+	const schemaValidation = yup.object().shape({
 		password: yup
 			.string()
 			.required('Password is required')
@@ -101,10 +101,10 @@ const SignUpUserPassword = ({
 				<div className="flex flex-col min-h-screen">
 					<NavBar />
 					<div className="flex flex-1 flex-col md:flex-row">
-						<div className="md:w-3/5 w-full bg-blue-500 bg-opacity-10 lg:p-4 md:p-4">
+						<div className="hidden md:block md:w-3/5 w-full bg-blue-500 bg-opacity-10 lg:p-4 md:p-4">
 							<div className="flex justify-center">
 								<img
-									className="hidden sm:block"
+									className="max-h-100/10rem"
 									src="/images/signin.svg"
 									alt="img"
 								/>
@@ -124,7 +124,7 @@ const SignUpUserPassword = ({
 									</Alert>
 								)}
 
-								<div className="flex lg:mt-8">
+								<div className='flex mt-2 xl:mt-8'>
 									<button className="flex mt-2" onClick={handleBackButtonClick}>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
@@ -141,7 +141,7 @@ const SignUpUserPassword = ({
 									</button>
 
 									<div className="w-full flex flex-col items-center justify-center ">
-										<h2 className="text-primary-700 text-blue-600 font-inter text-3xl font-bold leading-10">
+										<h2 className="text-primary-700 dark:text-gray-200 font-inter text-3xl font-bold leading-10">
 											Create password
 										</h2>
 
@@ -151,7 +151,7 @@ const SignUpUserPassword = ({
 									</div>
 								</div>
 
-								<div className="lg:hidden sm:block md:hidden sm:block bg-blue-500 bg-opacity-10 mt-4">
+								<div className="md:hidden block bg-blue-500 bg-opacity-10 mt-4">
 									<img src="/images/signin.svg" alt="img" />
 								</div>
 
@@ -174,7 +174,7 @@ const SignUpUserPassword = ({
 												<div className="text-primary-700 font-inter text-base font-medium leading-5">
 													<div className="block mb-2 text-sm font-medium  dark:text-white">
 														<Label
-															className="text-primary-700 dark:!text-primary-700"
+															className="text-primary-700 dark:text-gray-200"
 															htmlFor="password"
 															value="Password"
 														/>
@@ -185,7 +185,7 @@ const SignUpUserPassword = ({
 															id="signuppassword"
 															name="password"
 															placeholder="Please enter password"
-															className="truncate w-full bg-gray-200 px-4 py-2 text-gray-700 text-sm rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
+															className="truncate w-full bg-gray-200 px-4 py-2 text-gray-700 dark:text-white dark:bg-gray-800 text-sm rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
 															type={passwordVisible ? 'text' : 'password'}
 															onFocus={(): void => {
 																setShowSuggestion(true);
@@ -211,15 +211,15 @@ const SignUpUserPassword = ({
 															)}
 														</button>
 													</div>
-													
+
 													{showSuggestion &&
-													formikHandlers?.errors?.password &&
-													formikHandlers.values.password && (
-														<PasswordSuggestionBox
-															show={true}
-															value={formikHandlers?.values?.password}
-														/>
-													)}
+														formikHandlers?.errors?.password &&
+														formikHandlers.values.password && (
+															<PasswordSuggestionBox
+																show={true}
+																value={formikHandlers?.values?.password}
+															/>
+														)}
 													{formikHandlers?.errors?.password &&
 														formikHandlers?.touched?.password && (
 															<span className="text-red-500 text-xs absolute mt-1">
@@ -230,7 +230,7 @@ const SignUpUserPassword = ({
 												<div className="text-primary-700 font-inter text-base font-medium leading-5 mt-8">
 													<div className="block mb-2 text-sm font-medium  dark:text-white">
 														<Label
-															className="text-primary-700 dark:!text-primary-700"
+															className="text-primary-700 dark:text-gray-200"
 															htmlFor="confirmPassword"
 															value="Confirm Password"
 														/>
@@ -241,7 +241,7 @@ const SignUpUserPassword = ({
 															id="signupconfirmpassword"
 															name="confirmPassword"
 															placeholder="Please re-enter password"
-															className="truncate w-full bg-gray-200 px-4 py-2 text-gray-700 text-sm rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
+															className="truncate w-full bg-gray-200 px-4 py-2 text-gray-700 dark:text-white dark:bg-gray-800 text-sm rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
 															type={
 																confirmPasswordVisible ? 'text' : 'password'
 															}
@@ -274,29 +274,24 @@ const SignUpUserPassword = ({
 															</span>
 														)}
 												</div>
-												<div
-													className='flex mt-16'
-												>
+												<div className='flex justify-between items-center flex-wrap gap-4 sm:flex-row flex-col-reverse mt-8'>
+													<a
+														id="navigatetosignup"
+														href="/authentication/sign-in"
+														className="text-sm shrink-0 ml-2 text-primary-700 hover:underline dark:text-gray-200"
+													>
+														{`Login here`}
+													</a>
 													<Button
 														id="signupbutton"
 														type="submit"
 														isProcessing={loading}
-														className="w-full font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+														className="w-fit px-12 sm:px-4 xl:px-12 font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 													>
 														<SignUpArrow />
 														<span className="ml-2">Sign Up</span>
 													</Button>
 												</div>
-											</div>
-											<div className="text-sm font-medium text-gray-500 dark:text-gray-400 flex items-center justify-center">
-												Already have an account? &nbsp;
-												<a
-													id="navigatetosignup"
-													href="/authentication/sign-in"
-													className="text-primary-700 hover:underline dark:text-primary-500"
-												>
-													{` Login here`}
-												</a>
 											</div>
 										</Form>
 									)}
@@ -304,7 +299,7 @@ const SignUpUserPassword = ({
 							</div>
 						</div>
 					</div>
-  				<FooterBar />
+					<FooterBar />
 				</div>
 			)}
 		</div>

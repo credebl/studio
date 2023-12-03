@@ -2,7 +2,7 @@
 	id="theme-toggle"
 	data-tooltip-target="tooltip-toggle"
 	type="button"
-	class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5"
+	class="text-gray-500 bg-gray-50 dark:bg-gray-800 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5"
 >
 	<svg
 		id="theme-toggle-dark-icon"
@@ -56,19 +56,19 @@
 		(!('color-theme' in localStorage) &&
 			window.matchMedia('(prefers-color-scheme: dark)').matches)
 	) {
-		themeToggleLightIcon.classList.remove('hidden');
+		themeToggleLightIcon?.classList.remove('hidden');
 	} else {
-		themeToggleDarkIcon.classList.remove('hidden');
+		themeToggleDarkIcon?.classList.remove('hidden');
 	}
 
 	const themeToggleBtn = document.getElementById('theme-toggle');
 
 	let event = new Event('dark-mode');
 
-	themeToggleBtn.addEventListener('click', function () {
+	themeToggleBtn?.addEventListener('click', function () {
 		// toggle icons
-		themeToggleDarkIcon.classList.toggle('hidden');
-		themeToggleLightIcon.classList.toggle('hidden');
+		themeToggleDarkIcon?.classList.toggle('hidden');
+		themeToggleLightIcon?.classList.toggle('hidden');
 
 		// if set via local storage previously
 		if (localStorage.getItem('color-theme')) {
