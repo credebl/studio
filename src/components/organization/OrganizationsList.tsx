@@ -163,8 +163,6 @@ const OrganizationsList = () => {
 						setOpenModal={props.setOpenModal}
 						isorgModal={true}
 					/>
-					{message ||
-						(error && (
 							<AlertComponent
 								message={message || error}
 								type={message ? 'success' : 'failure'}
@@ -173,7 +171,6 @@ const OrganizationsList = () => {
 									setError(null);
 								}}
 							/>
-						))}
 
 					{loading ? (
 						<div className="flex items-center justify-center mb-4 ">

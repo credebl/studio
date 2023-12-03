@@ -1,3 +1,4 @@
+import React from "react";
 import type { IAlertComponent } from "./interface";
 
 export const AlertComponent = ({
