@@ -17,6 +17,7 @@ import { setToLocalStorage } from '../../api/Auth';
 import { EmptyListMessage } from '../EmptyListComponent';
 import CustomSpinner from '../CustomSpinner';
 import CreateEcosystemOrgModal from '../CreateEcosystemOrgModal';
+import React from 'react';
 
 const initialPageState = {
 	pageNumber: 1,
@@ -96,7 +97,7 @@ const OrganizationsList = () => {
 
 	useEffect(() => {
 		const queryParameters = new URLSearchParams(window?.location?.search);
-		const isModel = queryParameters.get('orgModal') || '';
+		const isModel = queryParameters.get('orgModal') ?? '';
 
 		if (isModel !== '') {
 			props.setOpenModal(true);
