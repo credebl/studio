@@ -125,10 +125,15 @@ const OrganizationsList = () => {
       <div className="mb-2 col-span-full xl:mb-2">
         <BreadCrumbs />
       </div>
-      <div className='mb-2 flex justify-between'>
-        <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
+      <div className='mb-4 flex justify-between flex-wrap gap-4 items-center'>
+        <h1 className="ml-1 text-xl font-semibold mb-4 flex justify-between flex-wrap gap-4  text-gray-900 sm:text-2xl dark:text-white">
           Organizations
         </h1>
+        <div className="ml-auto">
+            <SearchInput
+              onInputChange={searchInputChange}
+            />
+         </div> 
         <RoleViewButton
           buttonTitle='Create'
           feature={Features.CRETAE_ORG}
@@ -141,16 +146,12 @@ const OrganizationsList = () => {
           }
           onClickEvent={createOrganizationModel}
         />
+        {/* </div> */}
       </div>
       <div>
         <div
           className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
         >
-          <div className="flex items-center justify-between mb-4">
-            <SearchInput
-              onInputChange={searchInputChange}
-            />
-          </div>
 
           <CreateEcosystemOrgModal
             openModal={props.openModal}
