@@ -78,10 +78,10 @@ import { pathRoutes } from '../config/pathRoutes';
 			<section>
 				<div 
 				
-					class="col-span-2 flex justify-center mx-auto"
+					class="col-span-2 flex justify-center mx-auto n"
 				>
-					<img src="/images/second_block.svg" alt="" class="-mt-28 pl-12 pr-12 max-w-7xl" />
-					<!-- <img src="/images/image 16.png" alt="" class="-mt-28 pl-12 pr-12 max-w-7xl" /> -->
+					<img src="/images/second_block.svg" alt="" class="-mt-28 pl-12 pr-12 max-w-7xl block dark:hidden w-full" />
+					<img src="/images/image 16.png" alt="" class="-mt-28 pl-12 pr-12 max-w-7xl dark:block hidden w-full" />
 
 				</div>
 			</section>
@@ -283,50 +283,53 @@ import { pathRoutes } from '../config/pathRoutes';
 			</section>
 			<section>
 				<div class=" mx-auto object-center">
-					<img src="/images/Group_image.svg" alt="frame_img" class="max-w-7xl" style="    
+					<img src="/images/Group_image.svg" alt="frame_img" class="w-full max-w-7xl block dark:hidden" style="    
 					margin: 32px auto;
-					width: 1250px;
+					max-width: 1250px;
 					"/>
-					<!-- <img src="/images/Group 626165.png" alt="frame_img" class="max-w-7xl" style="    
+					<img src="/images/Group 626165.png" alt="frame_img" class="w-full max-w-7xl hidden dark:block" style="    
 					margin: 32px auto;
-					width: 1250px;
-					"/> -->
+					max-width: 1250px;
+					"/> 
 
 				</div>
 			</section>
-			<section class="grid grid-cols-2 sm:grid-cols-2 mx-auto bg-blue-300 dark:bg-blue-900
+			<section class="grid grid-cols-1 md:grid-cols-2 mx-auto bg-blue-300 dark:bg-blue-900
 			">
-				<div>
-					<p class="text-gray-800 dark:text-white pl-72 font-medium pr-24 text-4xl pt-16">One Wallet for all your identity needs</p>
+				<div class="p-4">
+					<p class="text-gray-800 dark:text-white font-medium text-4xl pl-4 lg:pl-72 pr-4 lg:pr-24 pt-16">One Wallet for all your identity needs</p>
 
-					<p class="text-gray-800 dark:text-white text-xl font-normal pt-12 pl-72 pr-16 ">Store user credentials securely using advanced
+					<p class="text-gray-800 dark:text-gray-300 text-xl font-normal pl-4 lg:pl-72 pr-4 lg:pr-24 pt-4">Store user credentials securely using advanced
 						cryptography. It is built using standards defined 
 						as per Hyperledger Aries framework.</p>
 				</div >
-					<img src="/images/mobile_mockup.png" style="margin-top:48px">
+				<div class="flex justify-center">
+					<img class="px-4 pb-0" src="/images/mockup_image.png" style="margin-top:48px; width: 412px;">
+				</div>
+					
 			</section>
-			<section>
-				<div class="grid grid-cols-2 md:grid-cols-2 text-xl font-normal max-w-7xl mx-auto">
-					<div class="flex items-start">
-						<div class="">
-							<p class="mr-12 mt-12 dark:text-white">Store user credentials securely using advanced
+			<section >
+				<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 text-xl font-normal max-w-7xl mx-auto py-12">
+					<!-- <div class="flex items-start"> -->
+						<div class="flex  md:text-start text-center dark:text-gray-400 p-4 ">
+							Store user credentials securely using advanced
 								cryptography. It is built using standards defined
-								as per Hyperledger Aries framework.</p>
+								as per Hyperledger Aries framework.
 						</div>
-						<div class="shrink-0">
-							<img src="/images/mobile_screen2.png" alt="frame_img" class="mb-24"/>
+						<div class="shrink-0 flex justify-center  md:block">
+							<img src="/images/mobile_screen2.png" alt="frame_img" class="md:mb-12"/>
 						</div>
-					</div>
-					<div class="flex items-end">
-						<div class="shrink-0">
-							<img src="/images/mobile_screen1.png" alt="frame_img" class="mt-24"/>
+					<!-- </div>
+					<div class="flex items-end"> -->
+						<div class="shrink-0 flex justify-center  md:block">
+							<img src="/images/mobile_screen1.png" alt="frame_img" class="md:mt-12"/>
 						</div>
-						<div class="">
-							<p class=" mr-12 mb-12 dark:text-white">Store user credentials securely using advanced
+						<div class="flex  md:text-start text-center dark:text-gray-400 items-end p-4 ">
+							Store user credentials securely using advanced
 								cryptography. It is built using standards defined
-								as per Hyperledger Aries framework.</p>
+								as per Hyperledger Aries framework.
 						</div>
-					</div>
+					<!-- </div> -->
 				</div>
 			</section>
 			<section>
