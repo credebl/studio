@@ -19,6 +19,7 @@ import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
 import { getOrganizationById } from '../../../api/organization';
 import { ICheckEcosystem, checkEcosystem } from '../../../config/ecosystem';
+import React from 'react';
 
 const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaDetails: SchemaDetails) => void; }) => {
 	const [schemaList, setSchemaList] = useState([])
@@ -170,21 +171,23 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 			<div className="mb-4 col-span-full xl:mb-2">
 				<BreadCrumbs />
 			</div>
-			<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-				Schemas
-			</h1>
+			
 			<div>
 				<div
 					className=""
 				>
-					<div className="flex flex-col items-center justify-between mb-4 pr-4 sm:flex-row">
+
+					<div className="mb-4 flex justify-between flex-wrap gap-4 items-center">
+						<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
+				Schemas
+			</h1>
 						<div id='schemasSearchInput' className='mb-2 pl-0 sm:pl-2 flex space-x-2 items-end'>
 							<SearchInput
 								onInputChange={onSearch}
 							/>
 
 							<select onChange={handleFilter} id="schamfilter"
-								className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 ">
+								className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 gap-4">
 								<option selected>Organization's schema</option>
 								{options.map((opt) => (
 									<option
