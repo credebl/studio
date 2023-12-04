@@ -52,7 +52,7 @@ const CreateSchema = () => {
 	const [createLoader, setCreateLoader] = useState<boolean>(false);
 	const [showPopup, setShowPopup] = useState(false);
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
-
+	const [btnState, setBtnState]= useState<boolean>(false)
 	const initFormData: IFormData = {
 		schemaName: '',
 		schemaVersion: '',
@@ -325,7 +325,7 @@ const CreateSchema = () => {
 
 												const areFirstInputsSelected =
 													values.schemaName && values.schemaVersion;
-
+													setBtnState(Boolean(areFirstInputsSelected))
 												return (
 													<div className=" relative flex flex-col dark:bg-gray-800">
 														{attribute?.map(
@@ -583,7 +583,7 @@ const CreateSchema = () => {
 											type="submit"
 											color="bg-primary-700"
 											disabled={
-												!formikHandlers.isValid || !formikHandlers.dirty
+												!formikHandlers.isValid || !btnState
 											}
 											className="text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 ring-2 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 lg:px-5 py-2 lg:py-2.5 ml-auto"
 											style={{
