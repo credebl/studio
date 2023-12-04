@@ -49,7 +49,7 @@ const CreateSchema = () => {
 	const [failure, setFailure] = useState<string | null>(null);
 	const [success, setSuccess] = useState<string | null>(null);
 	const [orgId, setOrgId] = useState<string>('');
-	const [createLoader, setCreateLoader] = useState<boolean>(true);
+	const [createLoader, setCreateLoader] = useState<boolean>(false);
 	const [showPopup, setShowPopup] = useState(false);
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 
@@ -588,7 +588,7 @@ const CreateSchema = () => {
 											className="text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 ring-2 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 lg:px-5 py-2 lg:py-2.5 ml-auto"
 											style={{
 												height: '2.6rem',
-												width: '6rem',
+												width: 'auto',
 												minWidth: '2rem',
 											}}
 										>
