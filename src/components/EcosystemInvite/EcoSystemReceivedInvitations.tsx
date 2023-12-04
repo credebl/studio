@@ -217,7 +217,7 @@ const ReceivedInvitations = () => {
 								...item,
 								orgId: value,
 								selected: true,
-								orgData: orgData || undefined,
+								orgData: orgData ?? undefined,
 							};
 						}
 						return {
