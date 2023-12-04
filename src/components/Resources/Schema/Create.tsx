@@ -52,7 +52,7 @@ const CreateSchema = () => {
 	const [createLoader, setCreateLoader] = useState<boolean>(false);
 	const [showPopup, setShowPopup] = useState(false);
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
-	const [btnState, setBtnState]= useState<boolean>(false)
+	const [btnState, setBtnState] = useState<boolean>(false);
 	const initFormData: IFormData = {
 		schemaName: '',
 		schemaVersion: '',
@@ -325,7 +325,7 @@ const CreateSchema = () => {
 
 												const areFirstInputsSelected =
 													values.schemaName && values.schemaVersion;
-													setBtnState(Boolean(areFirstInputsSelected))
+												setBtnState(Boolean(areFirstInputsSelected));
 												return (
 													<div className=" relative flex flex-col dark:bg-gray-800">
 														{attribute?.map(
@@ -497,8 +497,7 @@ const CreateSchema = () => {
 																			<button
 																				key={element.id}
 																				className={`${
-																					!formikHandlers.isValid ||
-																					!formikHandlers.dirty
+																					!formikHandlers.isValid || !btnState
 																						? 'hover:bg-white hover:text-primary-700 dark:hover:bg-gray-700 cursor-not-allowed'
 																						: 'dark:hover:bg-secondary-700 dark:hover:text-black cursor-pointer hover:bg-primary-800 hover:text-white dark:hover:bg-primary-700 focus:ring-2'
 																				} absolute text-primary-700 dark:text-white top-[311px] sm:top-[104px] bottom-35 w-40 left-0 right-0 m-auto flex flex-row items-center gap-2 rounded-full border text-primary-700 bg-white dark:bg-gray-700 focus:ring-primary-300 border-primary-500 dark:border-gray-300 dark:bg-gray-600 dark:focus:ring-primary-800 py-0.5 px-2`}
@@ -511,8 +510,7 @@ const CreateSchema = () => {
 																					})
 																				}
 																				disabled={
-																					!formikHandlers.isValid ||
-																					!formikHandlers.dirty
+																					!formikHandlers.isValid || !btnState
 																				}
 																			>
 																				<svg
@@ -582,9 +580,7 @@ const CreateSchema = () => {
 										<Button
 											type="submit"
 											color="bg-primary-700"
-											disabled={
-												!formikHandlers.isValid || !btnState
-											}
+											disabled={!formikHandlers.isValid || !btnState}
 											className="text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 ring-2 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 lg:px-5 py-2 lg:py-2.5 ml-auto"
 											style={{
 												height: '2.6rem',
