@@ -274,7 +274,7 @@ const OrganizationsList = () => {
 							<CustomSpinner />
 						</div>
 					) : (
-						<div>{content && content}</div>
+						<div>{content}</div>
 					)}
 				</div>
 			</div>
