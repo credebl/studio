@@ -78,14 +78,20 @@ const CredentialList = () => {
 												'bg-green-100 text-green-800 dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500'
 												} ${issuedCredential?.state === IssueCredential.abandoned &&
 												'bg-red-100 text-red-800 border border-red-100 dark:border-red-400 dark:bg-gray-700 dark:text-red-400'
-												} text-xs font-medium mr-0.5 px-0.5 py-0.5 rounded-md border flex justify-center min-[320]:w-full xl:w-9/12 2xl:w-6/12`}
+												} ${issuedCredential?.state === IssueCredential.requestReceived &&
+												'bg-secondary-700 text-primary-600 border border-secondary-100 dark:border-secondary-700 dark:bg-gray-700 dark:text-secondary-800'
+												} ${issuedCredential?.state === IssueCredential.proposalReceived &&
+												'bg-gray-100 text-gray-800 border border-gray-100 dark:border-gray-400 dark:bg-gray-700 dark:text-gray-400'}
+												text-xs font-medium mr-0.5 px-0.5 py-0.5 rounded-md border flex justify-center min-[320]:w-full xl:w-9/12 2xl:w-6/12`}
 										>
 											{issuedCredential.state === IssueCredential.offerSent
 												? IssueCredentialUserText.offerSent
 												: issuedCredential.state === IssueCredential.done
 													? IssueCredentialUserText.done
 													: issuedCredential.state === IssueCredential.abandoned
-														? IssueCredentialUserText.abandoned : ''}
+														? IssueCredentialUserText.abandoned 
+														: issuedCredential.state === IssueCredential.requestReceived
+														  ? IssueCredentialUserText.received : IssueCredentialUserText.proposalReceived}
 										</span>
 									),
 								},
@@ -120,8 +126,8 @@ const CredentialList = () => {
 		if (searchText.length >= 1) {
 			getData = setTimeout(() => {
 				getIssuedCredDefs()
-
 			}, 1000)
+			return () => clearTimeout(getData);
 		} else {
 			getIssuedCredDefs()
 		}
