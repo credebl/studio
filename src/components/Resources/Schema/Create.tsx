@@ -316,7 +316,7 @@ const CreateSchema = () => {
 										</div>
 									</div>
 
-									<div className="pt-8">
+									<div className="pt-4 mt-6 rounded-lg border border-gray-200">
 										<FieldArray name="attribute">
 											{(fieldArrayProps: any): JSX.Element => {
 												const { form, remove, push } = fieldArrayProps;
@@ -327,7 +327,7 @@ const CreateSchema = () => {
 													values.schemaName && values.schemaVersion;
 												setBtnState(Boolean(areFirstInputsSelected));
 												return (
-													<div className=" relative flex flex-col dark:bg-gray-800">
+													<div className="relative flex flex-col dark:bg-gray-800">
 														{attribute?.map(
 															(element: IAttributes, index: number) => (
 																<div
@@ -336,7 +336,7 @@ const CreateSchema = () => {
 																>
 																	<div
 																		key={`attribute-${index}`}
-																		className="relative flex flex-col sm:flex-row dark:bg-gray-800 md:flex-row justify-between rounded-lg border border-gray-200 bg-white p-6 cursor-pointer overflow-hidden overflow-ellipsis "
+																		className="relative flex flex-col sm:flex-row dark:bg-gray-800 md:flex-row justify-between bg-white px-6 cursor-pointer overflow-hidden overflow-ellipsis "
 																		style={{ overflow: 'auto' }}
 																	>
 																		<div
@@ -458,38 +458,43 @@ const CreateSchema = () => {
 																			className="max-w-[50px]"
 																			style={{ width: '5%' }}
 																		>
-																			<div
-																				key={element.id}
-																				className="sm:w-0.5/3 text-red-600 "
-																			>
-																				<Button
-																					data-testid="deleteBtn"
-																					type="button"
-																					color="danger"
-																					onClick={() => remove(index)}
-																					className={`${
-																						index === 0 &&
-																						values.attribute.length === 1
-																							? 'hidden'
-																							: 'block'
-																					}dark:bg-gray-700 flex justify-end`}
+																			{index === 0 &&
+																			values.attribute.length === 1 ? (
+																				<div key={element.id}></div>
+																			) : (
+																				<div
+																					key={element.id}
+																					className="sm:w-0.5/3 text-red-600 "
 																				>
-																					<svg
-																						xmlns="http://www.w3.org/2000/svg"
-																						fill="none"
-																						viewBox="0 0 24 24"
-																						strokeWidth={1.5}
-																						stroke="currentColor"
-																						className="w-6 h-6"
+																					<Button
+																						data-testid="deleteBtn"
+																						type="button"
+																						color="danger"
+																						onClick={() => remove(index)}
+																						className={`${
+																							index === 0 &&
+																							values.attribute.length === 1
+																								? 'hidden'
+																								: 'block'
+																						}dark:bg-gray-700 flex justify-end`}
 																					>
-																						<path
-																							strokeLinecap="round"
-																							strokeLinejoin="round"
-																							d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-																						/>
-																					</svg>
-																				</Button>
-																			</div>
+																						<svg
+																							xmlns="http://www.w3.org/2000/svg"
+																							fill="none"
+																							viewBox="0 0 24 24"
+																							strokeWidth={1.5}
+																							stroke="currentColor"
+																							className="w-6 h-6"
+																						>
+																							<path
+																								strokeLinecap="round"
+																								strokeLinejoin="round"
+																								d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+																							/>
+																						</svg>
+																					</Button>
+																				</div>
+																			)}
 																		</div>
 																	</div>
 																	<div>
@@ -500,7 +505,7 @@ const CreateSchema = () => {
 																					!formikHandlers.isValid || !btnState
 																						? 'hover:bg-white hover:text-primary-700 dark:hover:bg-gray-700 cursor-not-allowed'
 																						: 'dark:hover:bg-secondary-700 dark:hover:text-black cursor-pointer hover:bg-primary-800 hover:text-white dark:hover:bg-primary-700 focus:ring-2'
-																				} absolute text-primary-700 dark:text-white top-[311px] sm:top-[104px] bottom-35 w-40 left-0 right-0 m-auto flex flex-row items-center gap-2 rounded-full border text-primary-700 bg-white dark:bg-gray-700 focus:ring-primary-300 border-primary-500 dark:border-gray-300 dark:bg-gray-600 dark:focus:ring-primary-800 py-0.5 px-2`}
+																				} absolute text-primary-700 dark:text-white top-[262px] sm:top-[58px] bottom-35 w-40 left-0 right-0 m-auto flex flex-row items-center gap-2 rounded-full border text-primary-700 bg-white dark:bg-gray-700 focus:ring-primary-300 border-primary-500 dark:border-gray-300 dark:bg-gray-600 dark:focus:ring-primary-800 py-0.5 px-2`}
 																				type="button"
 																				onClick={() =>
 																					push({
@@ -581,7 +586,7 @@ const CreateSchema = () => {
 											type="submit"
 											color="bg-primary-700"
 											disabled={!formikHandlers.isValid || !btnState}
-											className="text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 ring-2 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 lg:px-5 py-2 lg:py-2.5 ml-auto"
+											className="text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 ring-2 focus:ring-4 focus:ring-primary-400 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 lg:px-5 py-2 lg:py-2.5 ml-auto"
 											style={{
 												height: '2.6rem',
 												width: 'auto',
