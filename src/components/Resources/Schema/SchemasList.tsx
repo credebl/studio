@@ -181,7 +181,7 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 						<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 				Schemas
 			</h1>
-						<div id='schemasSearchInput' className='mb-2 pl-0 sm:pl-2 flex space-x-2 items-end'>
+						<div id='schemasSearchInput' className='mb-2 pl-0 sm:pl-2 flex space-x-2 items-end ml-auto'>
 							<SearchInput
 								onInputChange={onSearch}
 							/>
