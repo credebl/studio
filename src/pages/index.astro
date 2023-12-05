@@ -11,7 +11,7 @@ import { pathRoutes } from '../config/pathRoutes';
 		</header>
 
 		<main class="grow" transition:animate="slide">
-			<section class="bg-white dark:bg-gray-900 bg-no-repeat bg-contain bg-left " style="background-image: url('/images/landing-page.svg'); padding-bottom:10rem">
+			<section class="bg-white dark:bg-gray-900 bg-no-repeat bg-cover" style="background-image: url('/images/blue_line_bg.svg'); padding-bottom:10rem">
 				<div class="grid grid-cols-1 md:grid-cols-2 max-w-screen-xl mx-auto">
 					<div class="col-span-2">
 						<div class="py-8 px-4 lg:py-16 lg:px-12 flex items-center flex-col">
@@ -55,7 +55,7 @@ import { pathRoutes } from '../config/pathRoutes';
 							</p>
 							<div class="justify-center flex">
 								<a
-									href="https://docs.credebl.id"
+									href="https://docs.credebl.id/en/intro/what-is-credebl/"
 									class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900"
 								>
 									Get Started
@@ -75,17 +75,17 @@ import { pathRoutes } from '../config/pathRoutes';
 					</div>
 				</div>
 			</section>
-			<section>
+			<section class="md:p-8 sm:p-4"> 
 				<div 
 				
-					class="col-span-2 flex justify-center mx-auto n"
+					class="col-span-2 flex justify-center mx-auto"
 				>
-					<img src="/images/second_block.svg" alt="" class="-mt-28 pl-12 pr-12 max-w-7xl block dark:hidden w-full" />
-					<img src="/images/Dark_Mockup.svg" alt="" class="-mt-28 pl-12 pr-12 max-w-7xl dark:block hidden w-full" />
+					<img src="/images/first_screen.svg" alt="" class="-mt-28 md:pl-12 md:pr-12 sm:pl-3 sm:pr-3  max-w-7xl block dark:hidden" />
+					<img src="/images/dark_screen.svg" alt="" class="-mt-28 md:pl-12 md:pr-12 sm:pl-3 sm:pr-3 max-w-7xl dark:block hidden" />
 
 				</div>
 			</section>
-			<section class="bg-gray-100 dark:bg-gray-900 mx-auto">
+			<section class="bg-gray-100 dark:bg-gray-900 mx-auto md:p-8 sm:p-4">
 				<div class="py-4 px-4 sm:py-4 lg:px-6 max-w-screen-xl mx-auto">
 					<div class="py-8 lg:py-4 mx-auto">
 						<h2
@@ -103,7 +103,7 @@ import { pathRoutes } from '../config/pathRoutes';
 							> standards.
 						</p>
 					</div>
-					<div class="grid md:grid-cols-2 grid-cos-1 md:gap-8 md:px-28 md:pb-8">
+					<div class="grid md:grid-cols-2 grid-cos-1 md:px-28 md:pb-8 md:gap-16 lg:gap-28 sm:gap-12">
 						<div class="mt-8 flex">
 							<div
 								class="flex mr-8 justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900 shrink-0"
@@ -281,20 +281,20 @@ import { pathRoutes } from '../config/pathRoutes';
 					</div>
 				</div>
 			</section>
-			<section>
+			<section class="md:p-8 sm:p-4">
 				<div class=" mx-auto object-center">
-					<img src="/images/Group_image.svg" alt="frame_img" class="-mt-28 pl-12 pr-12 w-full max-w-7xl block dark:hidden" style="    
+					<img src="/images/first_group.svg" alt="frame_img" class="-mt-28 pl-12 pr-12 w-full max-w-7xl block dark:hidden" style="    
 					margin: 32px auto;
 					max-width: 1250px;
 					"/>
-					<img src="/images/2_screen_mockup.svg" alt="frame_img" class="-mt-28 pl-12 pr-12 w-full max-w-7xl hidden dark:block" style="    
+					<img src="/images/dark_first_group.svg" alt="frame_img" class="-mt-28 pl-12 pr-12 w-full max-w-7xl hidden dark:block" style="    
 					margin: 32px auto;
 					max-width: 1250px;
 					"/> 
 
 				</div>
 			</section>
-			<section class="grid grid-cols-1 md:grid-cols-2 mx-auto bg-blue-300 dark:bg-blue-900
+			<section class="grid grid-cols-1 md:grid-cols-2 mx-auto bg-blue-300 dark:bg-blue-900 md:p-8 sm:p-4
 			">
 				<div class="p-4">
 					<p class="text-gray-800 dark:text-white font-medium text-4xl pl-4 lg:pl-72 pr-4 lg:pr-24 pt-16">One Wallet for all your identity needs</p>
@@ -304,11 +304,11 @@ import { pathRoutes } from '../config/pathRoutes';
 						as per Hyperledger Aries framework.</p>
 				</div >
 				<div class="flex justify-center">
-					<img class="px-4 pb-0" src="/images/mobile.svg" style="margin-top:48px; width: 412px;">
+					<img class="px-4 pb-0" src="/images/mobile_mockup.svg" style="margin-top:48px; width: 412px;">
 				</div>
 					
 			</section>
-			<section >
+			<section class="mx-auto md:p-8 sm:p-4">
 				<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 text-xl font-normal max-w-7xl mx-auto py-12">
 					
 						<div class="flex  md:text-start text-center dark:text-gray-400 p-4 ">
@@ -316,12 +316,12 @@ import { pathRoutes } from '../config/pathRoutes';
 								cryptography. It is built using standards defined
 								as per Hyperledger Aries framework.
 						</div>
-						<div class="shrink-0 flex justify-center  md:block">
-							<img src="/images/2.svg" alt="frame_img" class="md:mb-12"/>
+						<div class="shrink-0 flex justify-center md:block">
+							<img src="/images/mobile_1.svg" alt="frame_img" class="md:mb-32"/>
 						</div>
 					
-						<div class="shrink-0 flex justify-center  md:block">
-							<img src="/images/1.svg" alt="frame_img" class="md:mt-12"/>
+						<div class="shrink-0 flex justify-center md:block">
+							<img src="/images/mobile_2.svg" alt="frame_img" class="md:mt-32"/>
 						</div>
 						<div class="flex  md:text-start text-center dark:text-gray-400 items-end p-4 ">
 							Store user credentials securely using advanced
@@ -331,7 +331,7 @@ import { pathRoutes } from '../config/pathRoutes';
 					
 				</div>
 			</section>
-			<section>
+			<section class="md:p-8 sm:p-4">
 				<div
 					class="bg-[url('/images/blue_background.png')] bg-cover bg-center mx-auto"
 				>
@@ -960,6 +960,62 @@ import { pathRoutes } from '../config/pathRoutes';
 											&nbsp;
 										</div>
 									</div>
+									<div class="w-fit" data-testid="flowbite-tooltip-target">
+										<a
+											class="cursor-pointer"
+											href="https://github.com/sanjay-k1910"
+											><img
+												src="https://avatars.githubusercontent.com/u/114503410?v=4"
+												alt=" SanjayKhatal avatar"
+												class="h-10 w-10 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300 sm:h-12 sm:w-12 lg:h-16 lg:w-16"
+											/></a
+										>
+									</div>
+									<div
+										data-testid="flowbite-tooltip"
+										tabindex="-1"
+										class="absolute inline-block z-10 rounded-lg py-2 px-3 text-sm font-medium shadow-sm transition-opacity duration-300 invisible opacity-0 bg-gray-900 text-white dark:bg-gray-700"
+										id=":r6:"
+										role="tooltip"
+										style="position: absolute;"
+									>
+										<div class="relative z-20">SanjayKhatal</div>
+										<div
+											class="absolute z-10 h-2 w-2 rotate-45 bg-gray-900 dark:bg-gray-700"
+											data-testid="flowbite-tooltip-arrow"
+											style="bottom: -4px; left: 43.5px;"
+										>
+											&nbsp;
+										</div>
+									</div>
+									<div class="w-fit" data-testid="flowbite-tooltip-target">
+										<a
+											class="cursor-pointer"
+											href="https://github.com/pallavicoder"
+											><img
+												src="https://avatars.githubusercontent.com/u/61926403?v=4"
+												alt=" PallaviGhule avatar"
+												class="h-10 w-10 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300 sm:h-12 sm:w-12 lg:h-16 lg:w-16"
+											/></a
+										>
+									</div>
+									<div
+										data-testid="flowbite-tooltip"
+										tabindex="-1"
+										class="absolute inline-block z-10 rounded-lg py-2 px-3 text-sm font-medium shadow-sm transition-opacity duration-300 invisible opacity-0 bg-gray-900 text-white dark:bg-gray-700"
+										id=":r6:"
+										role="tooltip"
+										style="position: absolute;"
+									>
+										<div class="relative z-20">PallaviGhule</div>
+										<div
+											class="absolute z-10 h-2 w-2 rotate-45 bg-gray-900 dark:bg-gray-700"
+											data-testid="flowbite-tooltip-arrow"
+											style="bottom: -4px; left: 43.5px;"
+										>
+											&nbsp;
+										</div>
+									</div>
 								</div>
 							</div>
 							<div
@@ -1023,7 +1079,7 @@ import { pathRoutes } from '../config/pathRoutes';
 				</div>
 			</section>
 			<footer
-				class="p-4 bg-gray-200 md:p-8 lg:p-10 dark:bg-gray-800 mx-auto"
+				class="md:p-8 sm:p-4 bg-gray-200 dark:bg-gray-800 mx-auto"
 			>
 				<div class="mt-4 mx-auto max-w-screen-xl text-center">
 					<a
