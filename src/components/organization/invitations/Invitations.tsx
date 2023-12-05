@@ -219,11 +219,11 @@ const Invitations = () => {
                                                 </span>
 
 
-                                                <p 
-                                                className="mr-2 flex items-center text-sm font-medium text-gray-500 dark:text-gray-400"
+                                                <div 
+                                                className="mr-2 flex items-center justify-start text-sm font-medium text-gray-500 dark:text-gray-400 w-44"
                                                 >
                                                     Invited On: &nbsp;<DateTooltip date={invitation.createDateTime}>{dateConversion(invitation.createDateTime)}</DateTooltip>
-                                                </p>          
+                                                </div>          
                                             </div>
                                         </li>
                                     ))
@@ -242,15 +242,17 @@ const Invitations = () => {
                         </svg>}
                     />)
                 }
+               {
+	              currentPage.total > 1 &&
+								<div className="flex items-center justify-end mb-4">
+								<Pagination
+										currentPage={currentPage.pageNumber}
+										onPageChange={onPageChange}
+										totalPages={currentPage.total}
+								/>
+						</div>
+                 }
 
-                <div className="flex items-center justify-end mb-4">
-
-                    <Pagination
-                        currentPage={currentPage.pageNumber}
-                        onPageChange={onPageChange}
-                        totalPages={currentPage.total}
-                    />
-                </div>
             </div>
         </div>
 

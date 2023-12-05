@@ -78,5 +78,16 @@ export interface createCredDeffFieldName {
   schemaLedgerId: string;
 }
 
+export interface IAttributes {
+	id?: string;
+	attributeName: string;
+	schemaDataType: string;
+	displayName: string;
+}
+export interface IFormData {
+	schemaName: string;
+	schemaVersion: string;
+	attribute: IAttributes[];
+}
 
 
