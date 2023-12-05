@@ -80,6 +80,7 @@ const ReceivedInvitations = () => {
 			getData = setTimeout(() => {
 				getAllInvitations();
 			}, 1000);
+			return () => clearTimeout(getData);
 		} else {
 			getAllInvitations();
 		}

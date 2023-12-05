@@ -126,8 +126,8 @@ const CredentialList = () => {
 		if (searchText.length >= 1) {
 			getData = setTimeout(() => {
 				getIssuedCredDefs()
-
 			}, 1000)
+			return () => clearTimeout(getData);
 		} else {
 			getIssuedCredDefs()
 		}
