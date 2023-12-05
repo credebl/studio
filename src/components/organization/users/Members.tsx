@@ -13,6 +13,7 @@ import SearchInput from '../../SearchInput';
 import type { User } from '../interfaces/users';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { getOrganizationUsers } from '../../../api/organization';
+import React from 'react';
 
 const initialPageState = {
 	pageNumber: 1,
@@ -81,7 +82,7 @@ const Members = () => {
 
 	//This useEffect is called when the searchText changes
 	useEffect(() => {
-		// let getData: string | number | NodeJS.Timeout | undefined;
+		
 		let getData: NodeJS.Timeout;
 
 		if (searchText.length >= 1) {
@@ -116,10 +117,11 @@ const Members = () => {
 	};
 
 	return (
-		<div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-			<div className="flex items-center justify-between mb-4">
-				<SearchInput onInputChange={searchInputChange} />
-			</div>
+		<div>
+			<div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+				<div className="flex items-end justify-end mb-4 ">
+					<SearchInput onInputChange={searchInputChange} />
+				</div>
 
 			<EditUserRoleModal
 				openModal={props.openModal}
@@ -146,10 +148,11 @@ const Members = () => {
 					<div className="p-2 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-3 dark:bg-gray-800 ">
 						<div className="flow-root display: flex">
 							<ul className="divide-y divide-gray-200 dark:divide-gray-700">
-								<div className="grid ">
+								<div className="grid divide-y divide-gray-200 dark:divide-gray-700">
 									{usersList.map((user) => (
-										<li className="p-4">
-											<div className="flex flex-wrap justify-between 2xl:flex align-center 2xl:space-x-4">
+										<li key={user?.id}
+										className="p-4" >
+											<div className="flex flex-wrap justify-between 2xl:flex align-center 2xl:space-x-4 ">
 												<div className="min-w-[40%] flex space-x-4 xl:mb-4 2xl:mb-0">
 													<div className="flex-1">
 														<p className="text-base font-regular text-gray-900 leading-none truncate dark:text-white">
@@ -161,7 +164,7 @@ const Members = () => {
 																<li className="pt-3 sm:pt-3 overflow-auto">
 																	<div className="items-center space-x-4">
 																		<div className="flex items-center text-base font-normal text-gray-900 dark:text-white">
-																			Role(s):
+																		{user.roles.length>1 ? 'Roles:' : 'Role:'}
 																			{user.roles &&
 																				user.roles.length > 0 &&
 																				user.roles.map(
@@ -250,6 +253,7 @@ const Members = () => {
 					/>
 				</div>
 			)}
+		</div>
 		</div>
 	);
 };
