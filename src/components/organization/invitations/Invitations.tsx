@@ -83,8 +83,8 @@ const Invitations = () => {
         if (searchText.length >= 1) {
             getData = setTimeout(() => {
                 getAllInvitations()
-
             }, 1000)
+						return () => clearTimeout(getData);
         } else {
             getAllInvitations()
         }

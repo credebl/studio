@@ -247,8 +247,11 @@ const VerificationCredentialList = () => {
 		useEffect(() => {
 			let getData: NodeJS.Timeout
 
-			if (searchText.length >= 1) {
-				getData = setTimeout(() => { }, 1000);
+			if (searchText?.length >= 1) {
+				getData = setTimeout(() => {
+					getproofRequestList()
+				}, 1000);
+				return () => clearTimeout(getData);
 			} else {
 				getproofRequestList()
 			}

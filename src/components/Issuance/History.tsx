@@ -109,6 +109,7 @@ const HistoryBulkIssuance = () => {
 			getData = setTimeout(() => {
 				getConnections();
 			}, 1000);
+			return () => clearTimeout(getData);
 		} else {
 			getConnections();
 		}

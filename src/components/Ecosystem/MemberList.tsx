@@ -54,6 +54,7 @@ const MemberList = () => {
 			firstMember: { ecosystemRole: { name: string } },
 			secondMember: { ecosystemRole: { name: string } },
 		) => {
+			// remove this sorting logic when implemented from backend
 			const firstName = firstMember?.ecosystemRole?.name;
 			const secondName = secondMember?.ecosystemRole?.name;
 
