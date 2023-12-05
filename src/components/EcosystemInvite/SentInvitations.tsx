@@ -150,7 +150,7 @@ const SentInvitations = () => {
 					/>
 
 					{invitationsList && invitationsList?.length > 0 ? (
-						<div className="p-2 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-3 dark:bg-gray-800">
+						<div className="p-2 mb-4 bg-white  rounded-lg shadow-sm 2xl:col-span-2  sm:p-3 border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
 							<div className="flow-root">
 								<ul className="divide-y divide-gray-200 dark:divide-gray-700">
 									{invitationsList.map((invitation) => (
