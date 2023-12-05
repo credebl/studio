@@ -316,7 +316,7 @@ const CreateSchema = () => {
 										</div>
 									</div>
 
-									<div className="pt-8">
+									<div className="pt-4 mt-6 rounded-lg border border-gray-200">
 										<FieldArray name="attribute">
 											{(fieldArrayProps: any): JSX.Element => {
 												const { form, remove, push } = fieldArrayProps;
@@ -327,7 +327,7 @@ const CreateSchema = () => {
 													values.schemaName && values.schemaVersion;
 												setBtnState(Boolean(areFirstInputsSelected));
 												return (
-													<div className=" relative flex flex-col dark:bg-gray-800">
+													<div className="relative flex flex-col dark:bg-gray-800">
 														{attribute?.map(
 															(element: IAttributes, index: number) => (
 																<div
@@ -336,7 +336,7 @@ const CreateSchema = () => {
 																>
 																	<div
 																		key={`attribute-${index}`}
-																		className="relative flex flex-col sm:flex-row dark:bg-gray-800 md:flex-row justify-between rounded-lg border border-gray-200 bg-white p-6 cursor-pointer overflow-hidden overflow-ellipsis "
+																		className="relative flex flex-col sm:flex-row dark:bg-gray-800 md:flex-row justify-between bg-white px-6 cursor-pointer overflow-hidden overflow-ellipsis "
 																		style={{ overflow: 'auto' }}
 																	>
 																		<div
@@ -500,7 +500,7 @@ const CreateSchema = () => {
 																					!formikHandlers.isValid || !btnState
 																						? 'hover:bg-white hover:text-primary-700 dark:hover:bg-gray-700 cursor-not-allowed'
 																						: 'dark:hover:bg-secondary-700 dark:hover:text-black cursor-pointer hover:bg-primary-800 hover:text-white dark:hover:bg-primary-700 focus:ring-2'
-																				} absolute text-primary-700 dark:text-white top-[311px] sm:top-[104px] bottom-35 w-40 left-0 right-0 m-auto flex flex-row items-center gap-2 rounded-full border text-primary-700 bg-white dark:bg-gray-700 focus:ring-primary-300 border-primary-500 dark:border-gray-300 dark:bg-gray-600 dark:focus:ring-primary-800 py-0.5 px-2`}
+																				} absolute text-primary-700 dark:text-white top-[262px] sm:top-[58px] bottom-35 w-40 left-0 right-0 m-auto flex flex-row items-center gap-2 rounded-full border text-primary-700 bg-white dark:bg-gray-700 focus:ring-primary-300 border-primary-500 dark:border-gray-300 dark:bg-gray-600 dark:focus:ring-primary-800 py-0.5 px-2`}
 																				type="button"
 																				onClick={() =>
 																					push({
