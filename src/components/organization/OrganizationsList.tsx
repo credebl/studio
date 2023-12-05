@@ -88,6 +88,7 @@ const OrganizationsList = () => {
 			getData = setTimeout(() => {
 				getAllOrganizations();
 			}, 1000);
+			return () => clearTimeout(getData);
 		} else {
 			getAllOrganizations();
 		}

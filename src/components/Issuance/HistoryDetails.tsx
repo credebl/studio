@@ -47,6 +47,7 @@ const HistoryDetails = ({ requestId }: IProps) => {
 			getData = setTimeout(() => {
 				getHistoryDetails();
 			}, 1000);
+			return () => clearTimeout(getData);
 		} else {
 			getHistoryDetails();
 		}

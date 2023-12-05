@@ -89,6 +89,7 @@ const Members = () => {
 			getData = setTimeout(() => {
 				getAllUsers();
 			}, 1000);
+			return () => clearTimeout(getData);
 		} else {
 			getAllUsers();
 		}

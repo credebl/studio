@@ -92,6 +92,7 @@ const EcosystemList = () => {
 			getData = setTimeout(() => {
 				fetchEcosystems();
 			}, 1000);
+			return () => clearTimeout(getData);
 		} else {
 			fetchEcosystems();
 		}
