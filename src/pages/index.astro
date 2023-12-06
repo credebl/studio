@@ -11,10 +11,10 @@ import { pathRoutes } from '../config/pathRoutes';
 		</header>
 
 		<main class="grow" transition:animate="slide">
-			<section class="bg-white dark:bg-gray-900 bg-no-repeat bg-cover" style="background-image: url('/images/blue_line_bg.svg'); padding-bottom:10rem">
-				<div class="grid grid-cols-1 md:grid-cols-2 max-w-screen-xl mx-auto">
+			<div class="bg-white dark:bg-gray-900 bg-no-repeat bg-cover bg-center bg-[url('/images/blue_line_bg.svg')] pb-8">
+				<div class="grid grid-cols-1 md:grid-cols-2 max-w-screen-xl mx-auto ">
 					<div class="col-span-2">
-						<div class="py-8 px-4 lg:py-16 lg:px-12 flex items-center flex-col">
+						<div class="py-4 px-4 lg:py-16 lg:px-12 flex items-center flex-col">
 							<div class="flex justify-center">
 								<a
 									href="https://github.com/credebl/platform/releases"
@@ -48,7 +48,7 @@ import { pathRoutes } from '../config/pathRoutes';
 								global scale.
 							</h1>
 							<p
-								class="mt-10 mb-8 md:flex md:text-center md:justify-center font-normal text-gray-500 lg:text-xl md:text-sm sm:text-xs dark:text-gray-400 lg:max-w-[583px] md:max-w-[409px] sm:max-w-[333px]"
+								class="mt-8 mb-8 md:flex md:text-center md:justify-center font-normal text-gray-500 lg:text-xl md:text-sm sm:text-xs dark:text-gray-400 lg:max-w-[583px] md:max-w-[409px] sm:max-w-[333px]"
 							>
 								CREDEBL aims to significantly reduce the tedious work required
 								to build SSI solutions from scratch.
@@ -74,14 +74,14 @@ import { pathRoutes } from '../config/pathRoutes';
 						</div>
 					</div>
 				</div>
-			</section>
+			</div>
 			<section class="md:p-8 sm:p-4"> 
 				<div 
 				
 					class="col-span-2 flex justify-center mx-auto"
 				>
-					<img src="/images/first_screen.svg" alt="" class="-mt-28 md:pl-12 md:pr-12 sm:pl-3 sm:pr-3  max-w-7xl block dark:hidden" />
-					<img src="/images/dark_screen.svg" alt="" class="-mt-28 md:pl-12 md:pr-12 sm:pl-3 sm:pr-3 max-w-7xl dark:block hidden" />
+					<img src="/images/first_screen.svg" alt="" class="w-full -mt-24 md:pl-12 md:pr-12 sm:pl-3 sm:pr-3  max-w-screen block dark:hidden" />
+					<img src="/images/dark_screen.svg" alt="" class="w-full -mt-24 md:pl-12 md:pr-12 sm:pl-3 sm:pr-3 max-w-screen dark:block hidden" />
 
 				</div>
 			</section>
@@ -283,33 +283,33 @@ import { pathRoutes } from '../config/pathRoutes';
 			</section>
 			<section class="md:p-8 sm:p-4">
 				<div class=" mx-auto object-center">
-					<img src="/images/first_group.svg" alt="frame_img" class="-mt-28 pl-12 pr-12 w-full max-w-7xl block dark:hidden" style="    
-					margin: 32px auto;
-					max-width: 1250px;
+					<img src="/images/first_group.svg" alt="frame_img" class="-mt-28 pl-12 pr-12 w-full max-w-screen block dark:hidden" style="    
+					margin: auto;
+					
 					"/>
-					<img src="/images/dark_first_group.svg" alt="frame_img" class="-mt-28 pl-12 pr-12 w-full max-w-7xl hidden dark:block" style="    
-					margin: 32px auto;
-					max-width: 1250px;
+					<img src="/images/dark_first_group.svg" alt="frame_img" class="-mt-28 pl-12 pr-12 w-full max-w-screen hidden dark:block" style="    
+					margin: auto;
+					
 					"/> 
 
 				</div>
 			</section>
-			<section class="grid grid-cols-1 md:grid-cols-2 mx-auto bg-blue-300 dark:bg-blue-900 md:p-8 sm:p-4
+			<section class="flex justify-between w-full mx-auto bg-blue-300 dark:bg-blue-900
 			">
-				<div class="p-4">
-					<p class="text-gray-800 dark:text-white font-medium text-4xl pl-4 lg:pl-72 pr-4 lg:pr-24 pt-16">One Wallet for all your identity needs</p>
+				<div class="p-4 w-1/2">
+					<p class="text-gray-800 dark:text-white font-medium text-[40px] lg:pl-44 lg:pr-40 pt-16 " >One Wallet for all your identity needs </p>
 
-					<p class="text-gray-800 dark:text-gray-300 text-xl font-normal pl-4 lg:pl-72 pr-4 lg:pr-24 pt-4">Store user credentials securely using advanced
+					<p class="text-gray-800 dark:text-gray-300 text-2xl font-normal lg:pl-44 lg:pr-40 pt-4">Store user credentials securely using advanced
 						cryptography. It is built using standards defined 
 						as per Hyperledger Aries framework.</p>
 				</div >
-				<div class="flex justify-center">
+				<div class="flex justify-center w-1/2">
 					<img class="px-4 pb-0" src="/images/mobile_mockup.svg" style="margin-top:48px; width: 412px;">
 				</div>
 					
 			</section>
 			<section class="mx-auto md:p-8 sm:p-4">
-				<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 text-xl font-normal max-w-7xl mx-auto py-12">
+				<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 text-xl font-normal max-w-screen mx-auto py-12">
 					
 						<div class="flex  md:text-start text-center dark:text-gray-400 p-4 ">
 							Store user credentials securely using advanced

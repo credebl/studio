@@ -176,7 +176,7 @@ const SignUpUserPassword = ({
 														<Label
 															className="text-primary-700 dark:text-gray-200"
 															htmlFor="password"
-															value="Password"
+															value="Password "
 														/>
 														<span className="text-red-500 text-xs">*</span>
 													</div>
@@ -232,7 +232,7 @@ const SignUpUserPassword = ({
 														<Label
 															className="text-primary-700 dark:text-gray-200"
 															htmlFor="confirmPassword"
-															value="Confirm Password"
+															value="Confirm Password "
 														/>
 														<span className="text-red-500 text-xs">*</span>
 													</div>

@@ -232,7 +232,7 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 												<div className="text-primary-700 font-inter text-base font-medium leading-5 ">
 
 													<div className="block mb-2 text-sm font-medium  dark:text-white">
-														<Label className="text-primary-700 dark:text-gray-200" htmlFor="email2" value="Your Password" />
+														<Label className="text-primary-700 dark:text-gray-200" htmlFor="email2" value="Your Password " />
 														<span className='text-red-500 text-xs'>*</span>
 													</div>
 

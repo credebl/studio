@@ -213,7 +213,7 @@ const SignInUser = () => {
 															<Label
 																className="text-primary-700 dark:text-gray-200"
 																htmlFor="email2"
-																value="Your Email"
+																value="Your Email "
 															/>
 															<span className="text-red-500 text-xs">*</span>
 														</div>

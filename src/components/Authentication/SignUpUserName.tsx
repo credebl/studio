@@ -157,7 +157,7 @@ const SignUpUserName = () => {
 															<Label
 																className="text-primary-700 dark:text-gray-200"
 																htmlFor="firstName"
-																value="First name"
+																value="First name "
 															/>
 															<span className="text-red-500 text-xs">*</span>
 														</div>
@@ -199,7 +199,7 @@ const SignUpUserName = () => {
 															<Label
 																className="text-primary-700 dark:text-gray-200"
 																htmlFor="lastName"
-																value="Last name"
+																value="Last name "
 															/>
 															<span className="text-red-500 text-xs">*</span>
 														</div>
