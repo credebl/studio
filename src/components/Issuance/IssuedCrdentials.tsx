@@ -112,8 +112,8 @@ const CredentialList = () => {
 												  IssueCredential.requestReceived
 												? IssueCredentialUserText.received
 												: issuedCredential.state ===
-												  IssueCredential.requestReceived
-												? IssueCredentialUserText.received
+												  IssueCredential.proposalReceived
+												? IssueCredentialUserText.proposalReceived
 												: IssueCredentialUserText.credIssued}
 										</span>
 									),
