@@ -36,7 +36,8 @@ export enum IssueCredentialUserText {
 	done = 'Accepted',
 	abandoned = 'Declined',
 	received = 'Pending',
-	proposalReceived= 'Proposal Received'
+	proposalReceived= 'Proposal Received',
+	credIssued = 'Credential Issued'
 }
 
 export enum EndorsementType {
