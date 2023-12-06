@@ -16,30 +16,7 @@ import SOCKET from '../../config/SocketConfig';
 import { ToastContainer, toast } from 'react-toastify';
 import BreadCrumbs from '../BreadCrumbs';
 import BackButton from '../../commonComponents/backbutton'
-
-interface IValues {
-	value: string;
-}
-
-interface IAttributes {
-	attributeName: string
-	schemaDataType: string
-	displayName: string
-}
-
-interface ICredentials {
-	credentialDefinitionId: string;
-	schemaCredDefName: string;
-	schemaName: string;
-	schemaVersion: string;
-	schemaAttributes: IAttributes | boolean;
-	credentialDefinition: string;
-}
-
-interface IUploadMessage {
-	message: string
-	type : "success" | "failure"
-}
+import type { ICredentials, IValues, IAttributes, IUploadMessage } from './interface';
 
 const BulkIssuance = () => {
 	const [csvData, setCsvData] = useState<string[][]>([]);
