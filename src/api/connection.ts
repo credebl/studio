@@ -4,9 +4,9 @@ import { getHeaderConfigs } from '../config/GetHeaderConfigs';
 import { axiosGet } from '../services/apiRequests';
 import { getFromLocalStorage } from './Auth';
 
-export const getConnectionsByOrg = async () => {
+export const getConnectionsByOrg = async (pageNumber: number, pageSize: number, search = '') => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.getAllConnections}`;	
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.getAllConnections}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`;	
 	const axiosPayload = {
 		url,
 		config: await getHeaderConfigs(),
