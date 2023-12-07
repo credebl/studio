@@ -13,6 +13,7 @@ import BreadCrumbs from '../BreadCrumbs';
 import CustomSpinner from '../CustomSpinner';
 import { EmptyListMessage } from '../EmptyListComponent';
 import { getFromLocalStorage } from '../../api/Auth';
+import { getOrgDetails } from '../../config/ecosystem';
 
 const ConnectionList = () => {
 	const [connectionList, setConnectionList] = useState<TableData[]>([]);
@@ -24,40 +25,56 @@ const ConnectionList = () => {
 	}, []);
 
 	const getConnections = async () => {
-		const orgId= await getFromLocalStorage(storageKeys.ORG_ID)
-		if(orgId){
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		const orgData = await getOrgDetails();
+		const checkWalletCreated = Boolean(orgData.orgDid);
+
+		if (orgId && checkWalletCreated) {
 			setLoading(true);
-			const response = await getConnectionsByOrg();
-			const { data } = response as AxiosResponse;
-	
-			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				const connections = data?.data?.map(
-					(ele: { theirLabel: string; id: string; createdAt: string }) => {
-						const userName = ele?.theirLabel ? ele.theirLabel : 'Not available';
-						const connectionId = ele.id ? ele.id : 'Not available';
-						const createdOn = ele?.createdAt ? ele?.createdAt : 'Not available';
-						return {
-							data: [
-								{ data: userName },
-								{ data: connectionId },
-								{
-									data: (
-										<DateTooltip date={createdOn} id="issuance_connection_list">
-											{' '}
-											{dateConversion(createdOn)}{' '}
-										</DateTooltip>
-									),
-								},
-							],
-						};
-					},
-				);
-				setConnectionList(connections);
-			} else {
-				setError(response as string);
+			try {
+				const response = await getConnectionsByOrg();
+				const { data } = response as AxiosResponse;
+				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+					const connections = data?.data?.map(
+						(ele: { theirLabel: string; id: string; createdAt: string }) => {
+							const userName = ele?.theirLabel
+								? ele.theirLabel
+								: 'Not available';
+							const connectionId = ele.id ? ele.id : 'Not available';
+							const createdOn = ele?.createdAt
+								? ele?.createdAt
+								: 'Not available';
+							return {
+								data: [
+									{ data: userName },
+									{ data: connectionId },
+									{
+										data: (
+											<DateTooltip
+												date={createdOn}
+												id="issuance_connection_list"
+											>
+												{' '}
+												{dateConversion(createdOn)}{' '}
+											</DateTooltip>
+										),
+									},
+								],
+							};
+						},
+					);
+					setConnectionList(connections);
+				} else {
+					setError(response as unknown as string);
+				}
+			} catch (error) {
+				setError(error as string);
+			} finally {
+				setLoading(false);
 			}
+		} else {
+			setLoading(false);
 		}
-		setLoading(false);
 	};
 
 	const header = [
@@ -77,14 +94,15 @@ const ConnectionList = () => {
 					Connections
 				</h1>
 			</div>
-			<AlertComponent
-				message={error}
-				type={'failure'}
-				onAlertClose={() => {
-					setError(null);
-				}}
-			/>
-
+			{error && (
+				<AlertComponent
+					message={error}
+					type={'failure'}
+					onAlertClose={() => {
+						setError(null);
+					}}
+				/>
+			)}
 			{loading ? (
 				<div className="flex items-center justify-center mt-36 mb-4">
 					<CustomSpinner />
