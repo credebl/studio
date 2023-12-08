@@ -316,7 +316,7 @@ const CreateSchema = () => {
 										</div>
 									</div>
 
-									<div className="pt-4 mt-6 rounded-lg border border-gray-200 pb-2">
+									<div className="py-4 mt-6 rounded-lg border border-gray-200">
 										<FieldArray name="attribute">
 											{(fieldArrayProps: any): JSX.Element => {
 												const { form, remove, push } = fieldArrayProps;
@@ -344,9 +344,9 @@ const CreateSchema = () => {
 																				overflow: 'auto',
 																				width: '95%',
 																			}}
-																			className="grid min-[320]:grid-cols-1 sm:grid-cols-3 md:grid-cols-3 gap-2"
+																			className="grid min-[320]:grid-cols-1 sm:grid-cols-3 md:grid-cols-3 gap-4"
 																		>
-																			<div className="relative flex max-w-[411px] flex-col items-start gap-2">
+																			<div className="relative flex max-w-[411px] flex-col items-start gap-x-4">
 																				<Field
 																					id={`attribute[${index}]`}
 																					name={`attribute.${index}.attributeName`}
@@ -377,7 +377,7 @@ const CreateSchema = () => {
 																				)}
 																			</div>
 
-																			<div className="relative flex max-w-[411px] flex-col items-start gap-2">
+																			<div className="relative flex max-w-[411px] flex-col items-start gap-x-4">
 																				<Field
 																					component="select"
 																					id={`attribute[${index}]`}
@@ -420,7 +420,7 @@ const CreateSchema = () => {
 																					<label className="pt-1 text-red-500 text-xs h-5"></label>
 																				)}
 																			</div>
-																			<div className="relative flex max-w-[411px] flex-col items-start gap-2">
+																			<div className="relative flex max-w-[411px] flex-col items-start gap-x-4">
 																				<Field
 																					id={`attribute[${index}]`}
 																					name={`attribute.${index}.displayName`}
@@ -475,7 +475,7 @@ const CreateSchema = () => {
 																							values.attribute.length === 1
 																								? 'hidden'
 																								: 'block'
-																						}dark:bg-gray-700 flex justify-end`}
+																						} dark:bg-gray-700 flex justify-end focus:ring-0`}
 																					>
 																						<svg
 																							xmlns="http://www.w3.org/2000/svg"
@@ -504,7 +504,7 @@ const CreateSchema = () => {
 																					!formikHandlers.isValid || !btnState
 																						? 'hover:bg-white hover:text-primary-700 dark:hover:bg-gray-700 cursor-not-allowed'
 																						: 'dark:hover:bg-secondary-700 dark:hover:text-black cursor-pointer hover:bg-primary-800 hover:text-white dark:hover:bg-primary-700 focus:ring-2'
-																				} absolute text-primary-700 dark:text-white bottom-35 w-40 left-0 right-0 m-auto flex flex-row items-center gap-2 rounded-full border text-primary-700 bg-white dark:bg-gray-700 focus:ring-primary-300 border-primary-500 dark:border-gray-300 dark:bg-gray-600 dark:focus:ring-primary-800 py-0.5 px-2 sm:top-[64px] ${values.attribute.length > 1 ? "top-[270px]" : "top-[226px]" }`}
+																				} absolute text-primary-700 dark:text-white bottom-35 w-40 left-0 right-0 m-auto flex flex-row items-center gap-2 rounded-full border text-primary-700 bg-white dark:bg-gray-700 focus:ring-primary-300 border-primary-500 dark:border-gray-300 dark:bg-gray-600 dark:focus:ring-primary-800 py-0.5 px-2 sm:top-[65px] ${values.attribute.length > 1 ? "top-[272px]" : "top-[228px]" }`}
 																				type="button"
 																				onClick={() =>
 																					push({
