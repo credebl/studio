@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { pathRoutes } from '../../config/pathRoutes';
 import BreadCrumbs from '../BreadCrumbs';
 import BackButton from '../../commonComponents/backbutton';
-import { Button, Card } from 'flowbite-react';
+import { Alert, Button, Card } from 'flowbite-react';
 import Select from 'react-select';
 import { ToastContainer } from 'react-toastify';
 import { AlertComponent } from '../AlertComponent';
@@ -11,9 +11,31 @@ import type { AxiosResponse } from 'axios';
 import { getFromLocalStorage } from '../../api/Auth';
 import { getSchemaCredDef } from '../../api/BulkIssuance';
 import { storageKeys, apiStatusCodes } from '../../config/CommonConstant';
-import type { ICredentials, IValues } from './interface';
+import type {
+	IAttributes,
+	ICredentials,
+	IUploadMessage,
+	IValues,
+} from './interface';
+import { ErrorMessage, Field, FieldArray, Form, Formik } from 'formik';
+import CustomSpinner from '../CustomSpinner';
 
+interface IFormData {
+	emailId: string;
+	attributes: Attributes[];
+}
+interface IssuanceFormPayload {
+	emailId: string;
+	attributes: Attributes[];
+	credentialDefinitionId: string;
+	orgId: string;
+}
+interface Attributes {
+	value: string;
+	name: string;
+}
 const EmailIssuance = () => {
+	const [formData, setFormData] = useState();
 	const [csvData, setCsvData] = useState<string[][]>([]);
 	const [requestId, setRequestId] = useState('');
 	const [process, setProcess] = useState<boolean>(false);
@@ -29,10 +51,14 @@ const EmailIssuance = () => {
 	const [uploadMessage, setUploadMessage] = useState<IUploadMessage | null>(
 		null,
 	);
+	const [issuanceFormPayload, setIssuanceFormPayload] = useState<
+		IssuanceFormPayload[]
+	>([]);
+	const [attributes, setAttributes] = useState([]);
 	const [success, setSuccess] = useState<string | null>(null);
 	const [failure, setFailure] = useState<string | null>(null);
-	console.log('credentialOptions', credentialOptions);
 	console.log('credentialSelected', credentialSelected);
+	console.log('credentialSelected1111', attributes);
 
 	const getSchemaCredentials = async () => {
 		try {
@@ -72,6 +98,50 @@ const EmailIssuance = () => {
 	useEffect(() => {
 		getSchemaCredentials();
 	}, []);
+	const handleSubmit = async (values: IssuanceFormPayload) => {
+		console.log('values111', values);
+
+		// const convertedAttributes = values.attributes.map((attr) => ({
+		// 	...attr,
+		// 	value: String(attr.value),
+		// }));
+
+		// const convertedAttributesValues = {
+		// 	...values,
+		// 	attributes: convertedAttributes,
+		// };
+		// console.log("values1112233",convertedAttributesValues);
+
+		// setIssuanceLoader(true);
+		// const issueCredRes = await issueCredential(convertedAttributesValues);
+		// const { data } = issueCredRes as AxiosResponse;
+		// setIssuanceLoader(false);
+
+		// if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+		// 	// goToIssueCredList();
+		// } else {
+		// 	setFailure(issueCredRes as string);
+		// }
+	};
+
+	// const defaultNames = ['John', 'Jane', 'Doe'];
+
+	useEffect(() => {
+		const initFormData = {
+			email: '',
+			attributes: attributes.map((item) => {
+				return {
+					...item,
+					value: '', // Initialize with an empty string
+					name: item.attributeName,
+				};
+			}),
+		};
+
+		setFormData({ formData: [initFormData] });
+	}, [attributes]);
+
+	console.log(34534534, formData);
 
 	const isCredSelected = Boolean(credentialSelected);
 
@@ -114,6 +184,7 @@ const EmailIssuance = () => {
 								Select the schema and credential definition for issuing
 								credentials
 							</p>
+							value?.schemaAttributes
 							<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 								<div className="flex flex-col justify-between">
 									<div className="search-dropdown text-primary-700 drak:text-primary-700">
@@ -128,7 +199,9 @@ const EmailIssuance = () => {
 											name="color"
 											options={credentialOptions}
 											onChange={(value: IValues | null) => {
+												console.log('value11', value);
 												setCredentialSelected(value?.value ?? '');
+												setAttributes(value?.schemaAttributes);
 											}}
 										/>
 									</div>
@@ -170,9 +243,9 @@ const EmailIssuance = () => {
 							</div>
 						</div>
 					</Card>
-					<div className="flex flex-col justify-between min-h-100/21rem">
+					<div className="flex flex-col justify-between min-h-100/21rem w-full">
 						<Card>
-							<div className="h-72">
+							<div className="min-h-100/21rem w-full">
 								<div className="flex justify-between mb-4 items-center ml-1">
 									<div>
 										<p className="text-2xl font-semibold dark:text-white">
@@ -212,68 +285,171 @@ const EmailIssuance = () => {
 										View History
 									</Button>
 								</div>
-								<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+								{/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-6"> */}
+								<div>
 									<div className="flex flex-col justify-between">
-										start from here
+										{loading ? (
+											<div className="flex items-center justify-center mb-4">
+												<CustomSpinner />
+											</div>
+										) : (
+											<div>
+												<Card className="m-0 md:m-6" id="createSchemaCard">
+													<h1 className="md:pl-6 mb-4 col-span-full xl:mb-2 ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
+														issuance
+													</h1>
+													<div>
+														<Formik
+															initialValues={formData}
+															// validationSchema={yup.object().shape({
+															// 	schemaName: yup
+															// 		.string()
+															// 		.trim()
+															// 		.required('Schema is required'),
+															// 	schemaVersion: yup
+															// 		.string()
+															// 		.matches(
+															// 			schemaVersionRegex,
+															// 			'Enter valid schema version (eg. 0.1 or 0.0.1)',
+															// 		)
+															// 		.required('Schema version is required'),
+															// 	attribute: yup.array().of(
+															// 		yup.object().shape({
+															// 			attributeName: yup
+															// 				.mixed()
+															// 				.required('Attribute name is required'),
+															// 			displayName: yup
+															// 				.mixed()
+															// 				.required('Display name is required'),
+															// 		}),
+															// 	),
+															// })}
+															validateOnBlur
+															validateOnChange
+															enableReinitialize
+															onSubmit={async (values): Promise<void> => {
+																// setFormData(values);
+																// setShowPopup(true);
+																console.log('12112values', values);
+															}}
+														>
+															{(formikHandlers): JSX.Element => (
+																<Form onSubmit={formikHandlers.handleSubmit}>
+																	<FieldArray
+																		name="formData"
+																		render={(arrayHelpers) => {
+																			console.log(
+																				32535,
+																				arrayHelpers.form.values.formData,
+																			);
+																			return (
+																				<div>
+																					{arrayHelpers.form.values.formData &&
+																					arrayHelpers.form.values.formData
+																						.length > 0 ? (
+																						arrayHelpers.form.values.formData.map(
+																							(formData1, index) => {
+																								console.log(
+																									6767887,
+																									formData1,
+																									formData1.attributes,
+																								);
+																								return (
+																									<div key={index}>
+																										<Field
+																											name={`formData[${index}].email`}
+																										/>
+																										{formData1.attributes &&
+																											formData1?.attributes
+																												.length > 0 &&
+																											formData1?.attributes.map(
+																												(item, attIndex) => (
+																													<Field
+																														type={item.schemaDataType}
+																														placeholder={
+																															item.name
+																														}
+																														name={`formData[${index}].attributes.${attIndex}.value`}
+																													/>
+																												),
+																											)}
+																										<button
+																											type="button"
+																											onClick={() =>
+																												arrayHelpers.remove(
+																													index,
+																												)
+																											} // remove a friend from the list
+																										>
+																											-
+																										</button>
+																										<button
+																											type="button"
+																											onClick={() =>
+																												arrayHelpers.insert(
+																													index,
+																													{
+																														email: '',
+																														attributes:
+																															attributes?.map(
+																																(item) => {
+																																	return {
+																																		value: '', // Initialize with an empty string
+																																		name: item.attributeName,
+																																	};
+																																},
+																															),
+																													},
+																												)
+																											} // insert an empty string at a position
+																										>
+																											+
+																										</button>
+																									</div>
+																								);
+																							},
+																						)
+																					) : (
+																						<button
+																							type="button"
+																							onClick={() =>
+																								arrayHelpers.push({
+																									email: '',
+																									attributes: attributes?.map(
+																										(item) => {
+																											return {
+																												value: '', // Initialize with an empty string
+																												name: item.attributeName,
+																											};
+																										},
+																									),
+																								})
+																							}
+																						>
+																							{/* show this when user has removed all friends from the list */}
+																							Add a friend
+																						</button>
+																					)}
+																					<div>
+																						<button type="submit">
+																							Submit
+																						</button>
+																					</div>
+																				</div>
+																			);
+																		}}
+																	/>
+																</Form>
+															)}
+														</Formik>
+													</div>
+												</Card>
+											</div>
+										)}
 									</div>
 								</div>
 							</div>
 						</Card>
-					</div>
-
-					<div>
-						<div className="mt-4">
-							<Button
-								// onClick={handleOpenConfirmation}
-								// disabled={!isFileUploaded}
-								type="reset"
-								color="bg-primary-800"
-								className="float-right py-2 mb-4 bg-primary-700 ring-primary-700  hover:bg-primary-800 ring-2 text-white font-medium rounded-lg text-sm px-4 lg:px-5 lg:py-2.5 mr-0 ml-auto dark:text-white dark:hover:text-white dark:hover:bg-primary-800"
-								style={{ height: '2.6rem', width: '6rem', minWidth: '2rem' }}
-							>
-								<svg
-									className="pr-2"
-									xmlns="http://www.w3.org/2000/svg"
-									width="30"
-									height="25"
-									fill="none"
-									viewBox="0 0 25 18"
-								>
-									<path
-										fill="#fff"
-										d="M.702 10.655a.703.703 0 1 0-.001-1.406.703.703 0 0 0 .001 1.406Z"
-									/>
-									<path
-										fill="#fff"
-										d="m24.494 5.965-5.8-5.8a.562.562 0 0 0-.795 0l-2.06 2.06H8.884c-1.602 0-3.128.73-4.137 1.966H3.652V3.35a.562.562 0 0 0-.562-.562H.562a.562.562 0 0 0 0 1.123h1.966v7.866H.562a.562.562 0 0 0 0 1.124H3.09c.31 0 .562-.252.562-.562v-1.404h1.096A5.358 5.358 0 0 0 8.885 12.9h.653l4.01 4.01a.56.56 0 0 0 .795 0l10.15-10.15a.562.562 0 0 0 0-.795ZM5.478 10.04a.562.562 0 0 0-.455-.231h-1.37V5.315h1.37c.18 0 .349-.086.455-.23a4.23 4.23 0 0 1 3.407-1.736h5.83L11.38 6.682a5.675 5.675 0 0 1-1.238-1.243.562.562 0 0 0-.908.66 6.74 6.74 0 0 0 4.429 2.71.633.633 0 0 1-.197 1.25 8 8 0 0 1-4.14-1.974.562.562 0 0 0-.755.833c.1.091.204.18.308.266l-1.132 1.131a.562.562 0 0 0 0 .795l.637.636a4.235 4.235 0 0 1-2.907-1.705Zm8.468 5.677L8.94 10.713l.86-.86a9.16 9.16 0 0 0 3.492 1.316 1.759 1.759 0 0 0 2.008-1.46 1.758 1.758 0 0 0-1.461-2.01 5.69 5.69 0 0 1-1.454-.432l5.911-5.91 5.006 5.005-9.356 9.356Z"
-									/>
-								</svg>
-								Issue
-							</Button>
-							<Button
-								// onClick={handleReset}
-								// disabled={!isFileUploaded}
-								type="reset"
-								color="bg-primary-800"
-								className="float-right bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-4 ml-auto dark:text-white dark:hover:text-black dark:hover:bg-primary-50"
-								style={{ height: '2.6rem', width: '6rem', minWidth: '2rem' }}
-							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									className="mr-2"
-									width="18"
-									height="18"
-									fill="none"
-									viewBox="0 0 20 20"
-								>
-									<path
-										fill="#1F4EAD"
-										d="M19.414 9.414a.586.586 0 0 0-.586.586c0 4.868-3.96 8.828-8.828 8.828-4.868 0-8.828-3.96-8.828-8.828 0-4.868 3.96-8.828 8.828-8.828 1.96 0 3.822.635 5.353 1.807l-1.017.18a.586.586 0 1 0 .204 1.153l2.219-.392a.586.586 0 0 0 .484-.577V1.124a.586.586 0 0 0-1.172 0v.928A9.923 9.923 0 0 0 10 0a9.935 9.935 0 0 0-7.071 2.929A9.935 9.935 0 0 0 0 10a9.935 9.935 0 0 0 2.929 7.071A9.935 9.935 0 0 0 10 20a9.935 9.935 0 0 0 7.071-2.929A9.935 9.935 0 0 0 20 10a.586.586 0 0 0-.586-.586Z"
-									/>
-								</svg>
-								Reset
-							</Button>
-						</div>
 					</div>
 				</div>
 			</div>
