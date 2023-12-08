@@ -1,0 +1,16 @@
+---
+import LayoutSidebar from '../../app/LayoutSidebar.astro';
+import { checkUserSession } from '../../utils/check-session';
+import { pathRoutes } from '../../config/pathRoutes';
+import EcosystemList from '../../components/Ecosystem/EcosystemList';
+
+const response = await checkUserSession({cookies: Astro.cookies, currentPath: Astro.url.pathname});
+const route: string = pathRoutes.auth.sinIn
+if (!response.authorized) {
+	return Astro.redirect(response.redirect);
+}
+---
+
+<LayoutSidebar notFoundPage={!response.permitted}>
+	<EcosystemList client:visible />
+</LayoutSidebar>

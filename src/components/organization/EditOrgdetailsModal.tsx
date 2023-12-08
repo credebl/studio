@@ -2,34 +2,32 @@ import * as yup from "yup"
 
 import { Avatar, Button, Label, Modal } from 'flowbite-react';
 import { Field, Form, Formik, FormikHelpers } from 'formik';
-import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, apiStatusCodes, imageSizeAccepted, storageKeys } from '../../config/CommonConstant'
+import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, apiStatusCodes, imageSizeAccepted} from '../../config/CommonConstant'
 import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { AlertComponent } from "../AlertComponent";
 import type { AxiosResponse } from 'axios';
 import { updateOrganization } from "../../api/organization";
 import type { Organisation } from "./interfaces";
+import defaultUserIcon from '../../../public/images/person_FILL1_wght400_GRAD0_opsz24.svg'
 
 interface Values {
 		website: any;
     name: string;
     description: string;
 }
-
 interface ILogoImage {
     logoFile: string | File
     imagePreviewUrl: string | ArrayBuffer | null | File,
     fileName: string
 }
-
 interface EditOrgdetailsModalProps {
     openModal: boolean;
     setMessage: (message: string) => void;
     setOpenModal: (flag: boolean) => void;
     onEditSucess?: () => void;
     orgData: Organisation | null;
-
 }
 
 const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
@@ -55,7 +53,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
             setOrgData({
                 name: props.orgData.name || '',
                 description: props.orgData.description || '',
-								website: props?.orgData?.website || "",
+				website: props?.orgData?.website || "",
             });
 
             setLogoImage({
@@ -76,7 +74,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
             setOrgData({
                 name: '',
                 description: '',
-								website:''
+				website:''
             })
 
             setLogoImage({
@@ -136,9 +134,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
         setIsImageEmpty(true)
         return true
     }
-
-
-    const handleImageChange = (event: any): void => {
+      const handleImageChange = (event: any): void => {
         setImgError('')
         const reader = new FileReader()
         const file = event?.target?.files
@@ -223,8 +219,8 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                                 .trim(),
                             description: yup
                                 .string()
-                                .min(2, 'Organization description must be at least 2 characters')
-                                .max(255, 'Organization description must be at most 255 characters')
+                                .min(2, 'Description must be at least 2 characters')
+                                .max(255, 'Description must be at most 255 characters')
                                 .required('Description is required')
                         })}
                     validateOnBlur
@@ -235,6 +231,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                         { resetForm }: FormikHelpers<Values>
                     ) => {
                         submitUpdateOrganization(values)
+                        window.location.reload();
                     }}
                 >
                     {(formikHandlers): JSX.Element => (
@@ -248,8 +245,6 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                                 <div
                                     className="items-center sm:flex 2xl:flex sm:space-x-4 xl:space-x-4 2xl:space-x-4"
                                 >
-
-
                                     {
                                         (typeof (logoImage.logoFile) === "string" && props?.orgData?.logoUrl) ?
                                             <img
@@ -260,6 +255,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                                             : typeof (logoImage.logoFile) === "string" ?
                                                 <Avatar
                                                     size="lg"
+                                                    img={defaultUserIcon}
                                                 /> :
                                                 <img
                                                     className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
@@ -267,8 +263,6 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                                                     alt="Jese picture"
                                                 />
                                     }
-
-
                                     <div>
                                         <h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
                                             Organization Logo
@@ -285,7 +279,6 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                                                         className="hidden"
                                                         id="organizationlogo" title=""
                                                         onChange={(event): void => handleImageChange(event)} />
-                                                    {/* <span>{selectedImage || 'No File Chosen'}</span> */}
                                                     {imgError ? <div className="text-red-500">{imgError}</div> : <span className="mt-1 text-sm text-gray-500 dark:text-gray-400">{logoImage.fileName || 'No File Chosen'}</span>}
                                                 </label>
 
@@ -311,14 +304,33 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                                     name="name"
                                     value={formikHandlers.values.name}
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Your organization name" />
+                                    placeholder="Your organization name" 
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        formikHandlers.setFieldValue(
+                                            'name',
+                                            value,
+                                        );
+                                        formikHandlers.setFieldTouched(
+                                            'name',
+                                            true,
+                                            false
+                                        );
+
+                                        if (value.length > 50) {
+                                            formikHandlers.setFieldError(
+                                                'name',
+                                                'Organization name must be at most 50 characters',
+                                            );
+                                        }
+                                    }}
+                                />
                                 {
                                     (formikHandlers?.errors?.name && formikHandlers?.touched?.name) &&
                                     <span className="text-red-500 text-xs">{formikHandlers?.errors?.name}</span>
                                 }
 
                             </div>
-
 
                             <div>
                                 <div
@@ -338,7 +350,31 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                                     value={formikHandlers.values.description}
                                     as='textarea'
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Description of your organization" />
+                                    placeholder="Description of your organization"
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        formikHandlers.setFieldValue(
+                                            'description',
+                                            value,
+                                        );
+                                        formikHandlers.setFieldTouched(
+                                            'description',
+                                            true,
+                                        );
+
+                                        if (value.length > 50) {
+                                            formikHandlers.setFieldError(
+                                                'description',
+                                                'Description must be at most 50 characters',
+                                            );
+                                        } else {
+                                            formikHandlers.setFieldError(
+                                                'description',
+                                                undefined,
+                                            );
+                                        }
+                                    }}
+                                />
                                 {
                                     (formikHandlers?.errors?.description && formikHandlers?.touched?.description) &&
                                     <span className="text-red-500 text-xs">{formikHandlers?.errors?.description}</span>
@@ -379,10 +415,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                                         onChange={() => setIsPublic(false)}
                                         id="private"
                                         name="private"
-                                    />                                   
-                                    <span className="ml-2 text-gray-900">Private
-                                        <span className="block pl-6 text-gray-500 text-sm">Only the connected organization can see you organization details</span>
-                                    </span>
+                                    /><span className="ml-2 text-gray-900 dark:text-white">Private<span className="block pl-6 text-gray-500 text-sm">Only the connected organization can see your organization details</span></span>
                                 </div>
                                 <div>
                                     <div
@@ -401,12 +434,10 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                                         id="public"
                                         name="public"
                                     />
-                                   
-                                    <span className="ml-2 text-gray-900">Public
+                                    <span className="ml-2 text-gray-900 dark:text-white">Public
                                         <span className="block pl-6 text-gray-500 text-sm">Your profile and organization details can be seen by everyone</span></span>
                                 </div>
                             </div>
-
                             <Button type="submit"
                                 isProcessing={loading}
                                 className='mb-2 float-right text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'

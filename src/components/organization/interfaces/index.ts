@@ -1,17 +1,18 @@
 export interface UserOrgRole {
-    id: number
-    userId: number
-    orgRoleId: number
-    orgId: number
+    id: string
+    userId: string
+    orgRoleId: string
+    orgId: string
     orgRole: OrgRole
 }
 
 export interface Organisation {
-    id: number
+    logoFile: string
+    id: string
     createDateTime: string
-    createdBy: number
+    createdBy: string
     lastChangedDateTime: string
-    lastChangedBy: number
+    lastChangedBy: string
     name: string
     description: string
     logoUrl: string
@@ -20,25 +21,26 @@ export interface Organisation {
     userOrgRoles: UserOrgRole[]
     org_agents: OrgAgent[]
     publicProfile: boolean
+    
 }
 
 export interface OrgRole {
-    id: number
+    id: string
     name: string
     description: string
     createDateTime?: string
-    createdBy?: number
+    createdBy?: string
     lastChangedDateTime?: string
-    lastChangedBy?: number
+    lastChangedBy?: string
     deletedAt?: any
 }
 
 export interface OrgAgent {
-    id: number
+    id: string
     createDateTime: string
-    createdBy: number
+    createdBy: string
     lastChangedDateTime: string
-    lastChangedBy: number
+    lastChangedBy: string
     orgDid: string
     verkey: string
     agentEndPoint: string
@@ -48,39 +50,39 @@ export interface OrgAgent {
     agentOptions: any
     walletName: string
     tenantId: any
-    agentsTypeId: number
-    orgId: number
-    orgAgentTypeId: number
+    agentsTypeId: string
+    orgId: string
+    orgAgentTypeId: string
     ledgers: ledgers
     org_agent_type: org_agent_type 
     agents_type: AgentsType
 }
 
 export interface AgentsType {
-    id: number
+    id: string
     createDateTime: string
-    createdBy: number
+    createdBy: string
     lastChangedDateTime: string
-    lastChangedBy: number
+    lastChangedBy: string
     agent: string
 }
 
 export interface org_agent_type{
-id: number
+id: string
 createDateTime: string
-createdBy: number
+createdBy: string
 lastChangedDateTime: string
-lastChangedBy: number
+lastChangedBy: string
 agent: string
 
 }
 
 export interface ledgers{
 createDateTime: string
-createdBy: number
-id: number
+createdBy: string
+id: string
 isActive: boolean
-lastChangedBy: number
+lastChangedBy: string
 lastChangedDateTime: string
 name: string
 networkString: string
@@ -96,13 +98,73 @@ export interface OrgDashboard {
 }
 
 export interface Connection {
-    id: number
-    orgId: number
-    agentId: number
+    id: string
+    orgId: string
+    agentId: string
     connectionInvitation: string
     multiUse: boolean
     createDateTime: string
-    createdBy: number
+    createdBy: string
     lastChangedDateTime: string
-    lastChangedBy: number
+    lastChangedBy: string
   }
+
+  export interface EcosystemDashboard {
+    membersCount: number
+    endorsementsCount: number
+  }
+
+export interface OrgInterface {
+    name: string;
+    website: string;
+    logoUrl: string;
+    description: string;
+}
+
+export interface OrgDataInterface {
+    orgData: OrgInterface
+}
+
+export interface OrgWalletDetailsObject {
+	orgDid:string
+	ledgers:{
+		name:string
+	  networkType:string
+	}
+	networkType:string
+	walletName:string
+	createDateTime:string
+}
+
+export interface UserDetails {
+    profileImg: string;
+    lastName: string;
+    firstName: string;
+    email: string;
+    publicProfile: boolean;
+    id: string;
+    username: string;
+}
+
+export interface IWalletData {
+    agent_invitations: {
+        connectionInvitation: string
+    }[]
+    orgDid: string
+    ledgers: {
+        name: string
+        networkType: string
+    }
+}
+
+export interface IOrgData {
+    org_agents: IWalletData[]
+    logoUrl: string
+    name: string
+    website: string
+    description: string
+}
+export interface IExploreOrg {
+    orgData: IOrgData
+}
+

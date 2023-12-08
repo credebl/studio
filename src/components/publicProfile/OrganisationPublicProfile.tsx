@@ -5,19 +5,20 @@ import { getPublicOrganizations } from '../../api/organization';
 import type { AxiosResponse } from 'axios';
 import { apiStatusCodes } from '../../config/CommonConstant';
 import SearchInput from '../SearchInput';
-import { Button, Card, Pagination } from 'flowbite-react';
+import { Card, Pagination } from 'flowbite-react';
 import CustomSpinner from '../CustomSpinner';
 import CustomAvatar from '../Avatar';
 import { EmptyListMessage } from '../EmptyListComponent';
+import { AlertComponent } from '../AlertComponent';
 
 const OrganisationPublicProfile = () => {
 	const initialPageState = {
 		pageNumber: 1,
-		pageSize: 10,
+		pageSize: 12,
 		total: 0,
 	};
 
-	const [organizationsList, setOrganizationList] = useState([]);
+	const [organizationList, setOrganizationList] = useState([]);
 
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
@@ -65,6 +66,7 @@ const OrganisationPublicProfile = () => {
 			getData = setTimeout(() => {
 				getAllOrganizations();
 			}, 1000);
+			return () => clearTimeout(getData);
 		} else {
 			getAllOrganizations();
 		}
@@ -78,26 +80,40 @@ const OrganisationPublicProfile = () => {
 
 	return (
 		<div>
-			<div className="flex items-center justify-between mb-4 p-2 pl-0">
-				<SearchInput onInputChange={searchInputChange} />
+			<div className='flex justify-between items-center w-full'>
+				<h1 className="ml-1 px-4 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
+					Organizations
+				</h1>
+				<div className="flex items-end justify-end mb-4 p-2 pl-0">
+					<SearchInput onInputChange={searchInputChange} />
+				</div>
 			</div>
 
-			<div className="flex flex-wrap">
+			<AlertComponent
+				message={error}
+				type={'failure'}
+				onAlertClose={() => {
+					setError(null);
+				}}
+			/>
+
+			<div className="flex flex-wrap justify-center">
 				{loading ? (
-					<div className="flex items-center justify-center mb-4 ">
+					<div className="flex items-center justify-center mb-4 min-h-[5rem]">
 						<CustomSpinner />
 					</div>
-				) : organizationsList && organizationsList?.length > 0 ? (
-					<div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2">
-						{organizationsList?.map(
+				) : organizationList && organizationList?.length > 0 ? (
+					<div className="mt-1 grid w-full grid-cols-1 gap-4 md:gap-6 mt-0 mb-4 sm:grid-cols-2 lg:grid-cols-3">
+						{organizationList?.map(
 							(org: {
 								logoUrl: string;
 								name: string;
 								description: string;
-								id: number;
+								id: string;
 								orgSlug: string;
 							}) => (
 								<Card
+									key={org.orgSlug}
 									onClick={() => {
 										window.location.href = `/org/${org?.orgSlug}`;
 									}}
@@ -110,15 +126,15 @@ const OrganisationPublicProfile = () => {
 											<CustomAvatar size="80" name={org?.name} />
 										)}
 
-										<div className="ml-4">
-											<h5 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+										<div className="ml-4 line-clamp-4">
+											<h5 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white truncate">
 												<p>{org?.name}</p>
 											</h5>
-											<div className="flow-root h-auto">
+											<div className="flow-root h-auto ">
 												<ul className="divide-y divide-gray-200 dark:divide-gray-700">
 													<li className="py-3 sm:py-4 overflow-auto">
 														<div className="flex items-center space-x-4">
-															<div className="inline-flex items-center text-base text-lg text-gray-900 dark:text-white">
+															<div className="inline-flex tracking-tight items-center text-base text-lg text-gray-900 dark:text-white truncate">
 																{org?.description}
 															</div>
 														</div>
@@ -132,18 +148,23 @@ const OrganisationPublicProfile = () => {
 						)}
 					</div>
 				) : (
-					organizationsList && (
-						<div className="flex justify-center items-center">
-							<EmptyListMessage
-								message={'No Matching Organization'}
-								description={''}
-							/>
-						</div>
-					)
+
+					<div className="flex justify-center items-center">
+						{organizationList && (
+							<div className="flex justify-center items-center">
+								<EmptyListMessage
+									message={'No Matching Organization'}
+									description={''}
+								/>
+							</div>
+						)}
+					</div>
 				)}
 
-				<div className="flex items-center justify-end mb-4">
-					{organizationsList && organizationsList?.length > 0 && (
+			</div>
+			<div className="relative mt-16 flex items-center justify-end mb-4 flex-grow">
+				<div className='absolute bottom-4 right-4'>
+					{organizationList && organizationList?.length > 0 && (
 						<Pagination
 							currentPage={currentPage?.pageNumber}
 							onPageChange={onPageChange}

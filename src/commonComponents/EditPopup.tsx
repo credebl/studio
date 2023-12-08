@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import * as yup from 'yup';
 
 const EditModal = (props: { openModal: boolean; closeModal: (flag: boolean) => void; onSucess: (name: string) => void }) => {
-  const [name, setName] = useState<nameValue | null>(null)
   interface nameValue {
     name: string;
   }

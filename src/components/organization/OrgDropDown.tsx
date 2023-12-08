@@ -1,5 +1,5 @@
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
-import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
+import { getFromLocalStorage, removeFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { useEffect, useState } from 'react';
 
 import type { AxiosResponse } from 'axios';
@@ -27,6 +27,9 @@ const OrgDropDown = () => {
 	};
 
 	const goToOrgDashboard = async (org: Organisation) => {
+		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ID)
+		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ROLE)
+		await removeFromLocalStorage(storageKeys.ORG_DETAILS)
 
 		await setOrgRoleDetails(org)
 		window.location.href = pathRoutes.organizations.dashboard;
@@ -36,7 +39,7 @@ const OrgDropDown = () => {
 
 		await setToLocalStorage(storageKeys.ORG_ID, org.id.toString());
 		const roles: string[] = org?.userOrgRoles.map(role => role.orgRole.name)
-		
+
 		await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
 	}
 
@@ -45,8 +48,9 @@ const OrgDropDown = () => {
 		let activeOrg: Organisation | null = null
 
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
+
 		if (orgId) {
-			activeOrg = organizations?.find(org => org.id === Number(orgId)) as Organisation
+			activeOrg = organizations?.find(org => org.id === String(orgId)) as Organisation
 			setactiveOrg(activeOrg || null)
 		} else {
 			activeOrg = organizations && organizations[0]
@@ -83,7 +87,7 @@ const OrgDropDown = () => {
 								) : (
 									<CustomAvatar size="20" name={activeOrg?.name} round />
 								)}
-								<text className="ml-2 text-primary-700 dark:text-white">{activeOrg?.name}</text>
+								<text className="ml-2 text-primary-700 dark:text-white">{activeOrg?.name.length > 20 ? activeOrg?.name.substring(0, 20) + '...' : activeOrg?.name}</text>
 							</>
 							:
 							<text className='text-primary-700 dark:text-white'>
@@ -100,26 +104,28 @@ const OrgDropDown = () => {
 			>
 				{orgList?.length > 0 ? (
 					<ul
-						className="max-h-48 py-2 overflow-y-auto text-gray-700 dark:text-gray-200 text-sm"
+						className="max-h-48 py-2 overflow-y-auto text-gray-700 dark:text-gray-200 text-sm scrollbar scrollbar-w-3 scrollbar-thumb-rounded-[0.25rem] scrollbar-track-slate-200 scrollbar-thumb-gray-400 dark:scrollbar-track-gray-900 dark:scrollbar-thumb-gray-700"
 						aria-labelledby="dropdownUsersButton"
 					>
 						{orgList?.map((org) => {
 							const roles: string[] = org.userOrgRoles.map(role => role.orgRole.name)
 							org.roles = roles
 							return (
-								<li key={org?.id} onClick={() => goToOrgDashboard(org)}>
-									<a
-										href="#"
-										className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-									>
-										{org.logoUrl ? (
-											<CustomAvatar className='dark:text-white' size="25" src={org?.logoUrl} round />
-										) : (
-											<CustomAvatar className='dark:text-white' size="25" name={org?.name} round />
-										)}
+								<li key={org?.id}>
+									<button className='w-full' onClick={() => goToOrgDashboard(org)}>
+										<a
+											href="#"
+											className="flex items-center w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+										>
+											{org.logoUrl ? (
+												<CustomAvatar className='shrink-0 dark:text-white' size="25" src={org?.logoUrl} round />
+											) : (
+												<CustomAvatar className='shrink-0 dark:text-white' size="25" name={org?.name} round />
+											)}
 
-										<span className="ml-3 text-base font-bold text-gray-500 dark:text-white">{org?.name}</span>
-									</a>
+											<span className="ml-3 text-base text-start font-bold text-gray-500 dark:text-white">{org?.name}</span>
+										</a>
+									</button>
 								</li>
 							)
 						})
@@ -133,7 +139,7 @@ const OrgDropDown = () => {
 
 				<a
 					href="#"
-					className="flex items-center p-3 text-sm font-medium text-primary-700 border-t border-gray-200 rounded-b-lg bg-gray-50 dark:border-gray-600 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white hover:underline"
+					className="flex items-center p-5 text-sm font-medium text-primary-700 border-t border-gray-200 rounded-b-lg bg-gray-50 dark:border-gray-600 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white hover:underline"
 					onClick={redirectToCreateOrgModal}
 				>
 					<svg xmlns="http://www.w3.org/2000/svg" className='pr-2 dark:text-white' width="24" height="24" fill="none" viewBox="0 0 24 24">

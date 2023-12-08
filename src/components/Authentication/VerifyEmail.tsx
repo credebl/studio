@@ -70,7 +70,7 @@ const VerifyEmail = () => {
 
                                 <div className="w-full">
 
-                                    <div className="mt-16 mb-24 flex justify-center mb-4 text-center text-primary-700 text-blue-600 font-inter text-4xl font-bold leading-10 ">
+                                    <div className="mt-16 mb-24 flex justify-center mb-4 text-center text-primary-700 dark:text-gray-200 font-inter text-4xl font-bold leading-10 ">
                                         Congratulations!
                                     </div>
 
@@ -81,7 +81,7 @@ const VerifyEmail = () => {
                                         </svg>
 
                                     </div>
-                                    <p className="text-gray-500 mt-6 font-inter text-base font-medium leading-5 flex w-84 h-5.061 flex-col justify-center items-center flex-shrink-0">
+                                    <p className="text-gray-500 dark:text-gray-300 dark mt-6 font-inter text-base font-medium leading-5 flex w-84 h-5.061 flex-col justify-center items-center flex-shrink-0">
                                         Email verified successfully
                                     </p>
 

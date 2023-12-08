@@ -1,0 +1,12 @@
+---
+import { apiRoutes } from '../../config/apiRoutes';
+import API from '../../config/ssrApiConfig';
+import LayoutCommon from '../../app/LayoutCommon.astro';
+import UserCertificate from '../../components/UserCertificate.astro'
+
+const credId = Astro.params.uuid;
+---
+
+<LayoutCommon>
+	<UserCertificate credId={credId} />
+</LayoutCommon>

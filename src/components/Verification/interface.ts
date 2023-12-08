@@ -36,3 +36,11 @@ export interface SchemaDetails {
 	createdDate:string
 }
   
+export interface IProofRrquestDetails {
+	openModal: boolean;
+	closeModal: (flag: boolean, id: string, state: boolean) => void;
+	onSucess: (verifyPresentationId: string) => void;
+	requestId: string;
+	userData: object[];
+	view: boolean;
+}

@@ -1,4 +1,4 @@
-import { axiosGet, axiosPost, axiosPut } from "../services/apiRequests"
+import { axiosGet, axiosPost, axiosPublicOrganisationGet, axiosPut } from "../services/apiRequests"
 
 import { apiRoutes } from "../config/apiRoutes";
 import { getFromLocalStorage } from "./Auth";
@@ -138,7 +138,7 @@ export const getOrgDashboard = async (orgId: string) => {
     }
 }
 
-export const spinupDedicatedAgent = async (data: object, orgId:number) => {
+export const spinupDedicatedAgent = async (data: object, orgId:string) => {
 
     const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.agentDedicatedSpinup}`
     const payload = data
@@ -166,7 +166,7 @@ export const spinupDedicatedAgent = async (data: object, orgId:number) => {
     }
 }
 
-export const spinupSharedAgent = async (data: object, orgId:number) => {
+export const spinupSharedAgent = async (data: object, orgId:string) => {
 
     const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.agentSharedSpinup}`
     const payload = data
@@ -247,7 +247,7 @@ export const getOrganizationUsers = async (pageNumber: number, pageSize: number,
 }
 
 // Edit user roles
-export const editOrganizationUserRole = async (userId: number, roles: number[]) => {
+export const editOrganizationUserRole = async (userId: string, roles: string[]) => {
 
     const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
 
@@ -284,7 +284,7 @@ export const createConnection = async (orgName: string) => {
         label: orgName,
         multiUseInvitation: true,
         autoAcceptConnection: true,
-        orgId: Number(orgId)
+        orgId: orgId
     }
     const payload = data
 
@@ -305,26 +305,9 @@ export const createConnection = async (orgName: string) => {
 
 // public profile
 
-export const getPublicUsers = async (pageNumber: number, pageSize: number, search :string) => {
-
-	const url = `${apiRoutes.public.users}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
-
-	const axiosPayload = {
-			url,
-	}
-
-	try {
-			return await axiosPublicUserGet(axiosPayload);
-	}
-	catch (error) {
-			const err = error as Error
-			return err?.message
-	}
-}
-
 export const getPublicOrganizations = async (pageNumber: number, pageSize: number, search :string) => {
 
-	const url = `${apiRoutes.public.organizations}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
+	const url = `${apiRoutes.Public.organizations}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
 
 	const config = {
 			headers: {
@@ -337,11 +320,35 @@ export const getPublicOrganizations = async (pageNumber: number, pageSize: numbe
 	}
 
 	try {
-			return await axiosGet(axiosPayload);
+			return await axiosPublicOrganisationGet(axiosPayload);
 	}
 	catch (error) {
 			const err = error as Error
 			return err?.message
 	}
 }
+
+export const getPublicOrgDetails = async (orgSlug: string) => {
+
+	const url = `${apiRoutes.Public.organizationDetails}/${orgSlug}`
+
+	const config = {
+			headers: {
+					'Content-Type': 'application/json',
+			}
+	}
+	const axiosPayload = {
+			url,
+			config
+	}
+
+	try {
+			return await axiosPublicOrganisationGet(axiosPayload);
+	}
+	catch (error) {
+			const err = error as Error
+			return err?.message
+	}
+}
+
 

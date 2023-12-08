@@ -2,22 +2,38 @@
 import FooterStacked from './FooterStacked.astro';
 import LayoutCommon from './LayoutCommon.astro';
 import NavBarStacked from './NavBarStacked.astro';
-import '../styles/markdown.css'
+import '../styles/markdown.css';
+import NavBarSidebar from './NavBarSidebar.astro';
+import ErrorNotFound from '../modules/ErrorNotFound.astro';
+
+const { showOptions, notFoundPage } = Astro.props || {};
 ---
 
 <LayoutCommon>
-	<NavBarStacked />
+	{
+		notFoundPage === false ? (
+			<NavBarSidebar hideOrgAgent={showOptions} />
+		) : (
+			<NavBarStacked />
+		)
+	}
 
-	<div class="flex pt-16 overflow-hidden bg-gray-50 dark:bg-gray-900">
-		<div
-			id="main-content"
-			class="relative w-full max-w-screen-2xl mx-auto h-full overflow-y-auto bg-gray-50 dark:bg-gray-900 min-h-screen"
-		>
-			<div class="px-4 pt-6 2xl:px-0">
-				<slot />
+	{
+		notFoundPage ? (
+			<ErrorNotFound />
+		) : (
+			<div class="flex pt-16 overflow-hidden bg-gray-50 dark:bg-gray-900">
+				<div
+					id="main-content"
+					class="relative w-full max-w-screen-2xl mx-auto h-full overflow-y-auto bg-gray-50 dark:bg-gray-900 min-h-screen"
+				>
+					<div class="px-4 pt-6 2xl:px-0">
+						<slot />
+					</div>
+
+					<FooterStacked />
+				</div>
 			</div>
-
-			<FooterStacked />
-		</div>
-	</div>
+		)
+	}
 </LayoutCommon>

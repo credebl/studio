@@ -8,7 +8,7 @@ import type { User } from "../interfaces/users";
 import { apiStatusCodes } from "../../../config/CommonConstant";
 
 interface RoleI {
-    id: number
+    id: string
     name: string,
     checked: boolean
     disabled: boolean
@@ -64,7 +64,7 @@ const EditUserRoleModal = (props: { openModal: boolean; user: User; setMessage: 
 
         const roleIds = roles?.filter(role => role.checked).map(role => role.id)
 
-        const response = await editOrganizationUserRole(props.user.id, roleIds as number[])
+        const response = await editOrganizationUserRole(props.user.id, roleIds as string[])
 
         const { data } = response as AxiosResponse
 
@@ -79,7 +79,7 @@ const EditUserRoleModal = (props: { openModal: boolean; user: User; setMessage: 
 
     }
 
-    const onRoleChanged = (event: any, id: number) => {
+    const onRoleChanged = (event: any, id: string) => {
 
      if (
             (event?.target?.name === 'issuer' && event?.target?.checked === true) || (event?.target?.name === 'verifier' && event?.target?.checked === true)
@@ -142,7 +142,7 @@ const EditUserRoleModal = (props: { openModal: boolean; user: User; setMessage: 
             <Modal.Body>
 
                 <div
-                    className="mb-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800"
+                    className="mb-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 dark:text-white sm:p-6 dark:bg-gray-800"
                 >
 
                     <div className="space-y-6">
@@ -182,8 +182,9 @@ const EditUserRoleModal = (props: { openModal: boolean; user: User; setMessage: 
                                                             disabled={role.disabled}
                                                             checked={role.checked}
                                                             onChange={(event: any) => onRoleChanged(event, role.id)}
+                                                            className={`mr-2 ${role.disabled ? 'text-gray-500' : ''}`}
                                                         />
-                                                        <span className={`ml-3 ${role.disabled ? 'text-gray-500' : ''}`}>{TextTittlecase(role.name)}</span>
+                                                        <span className={`ml-3 ${role.disabled ? 'text-gray-500 ' : ''}`}>{TextTittlecase(role.name)}</span>
                                                     </label>
                                                 </div>
                                             ))

@@ -1,9 +1,10 @@
 import type { APIRoute } from "astro";
 import {pathRoutes} from '../../../config/pathRoutes'
 import { getSupabaseClient } from "../../../supabase";
+import { getFromCookies } from "../../../api/Auth";
 
 export const get: APIRoute = async ({ redirect, cookies }) => {
-    const sessionCookie = cookies.get("session").value;
+    const sessionCookie = getFromCookies(cookies, 'session');
 
     if (!sessionCookie) {
         return redirect(pathRoutes.auth.sinIn)

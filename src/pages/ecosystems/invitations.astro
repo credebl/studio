@@ -1,0 +1,16 @@
+---
+import LayoutSidebar from '../../app/LayoutSidebar.astro';
+import { checkUserSession } from '../../utils/check-session';
+import { pathRoutes } from '../../config/pathRoutes';
+import SentInvitations from '../../components/EcosystemInvite/SentInvitations';
+
+const response = await checkUserSession({cookies: Astro.cookies, currentPath: Astro.url.pathname});
+const route = pathRoutes.auth.sinIn;
+if (!response.authorized) {
+	return Astro.redirect(response.redirect);
+}
+---
+
+<LayoutSidebar notFoundPage={!response.permitted}>
+	<SentInvitations client:visible />
+</LayoutSidebar>

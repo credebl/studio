@@ -89,7 +89,7 @@ export const getProofAttributes=async (proofId:string)=>{
 
 export const getCredentialDefinitionsForVerification = async (schemaId: string) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url= `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.getCredDefBySchemaId}/${schemaId}/cred-defs`;
+	const url= `${apiRoutes.Verification.verificationCredDef}/${schemaId}`;
 
 	const axiosPayload = {
 		url,
