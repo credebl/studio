@@ -459,7 +459,10 @@ const CreateSchema = () => {
 																		>
 																			{index === 0 &&
 																			values.attribute.length === 1 ? (
-																				<div key={element.id} className='sm:w-0.5/3 text-red-600'></div>
+																				<div
+																					key={element.id}
+																					className="sm:w-0.5/3 text-red-600"
+																				></div>
 																			) : (
 																				<div
 																					key={element.id}
@@ -475,7 +478,7 @@ const CreateSchema = () => {
 																							values.attribute.length === 1
 																								? 'hidden'
 																								: 'block'
-																						} dark:bg-gray-700 flex justify-end focus:ring-0`}
+																						} flex justify-end focus:ring-0`}
 																					>
 																						<svg
 																							xmlns="http://www.w3.org/2000/svg"
@@ -504,7 +507,11 @@ const CreateSchema = () => {
 																					!formikHandlers.isValid || !btnState
 																						? 'hover:bg-white hover:text-primary-700 dark:hover:bg-gray-700 cursor-not-allowed'
 																						: 'dark:hover:bg-secondary-700 dark:hover:text-black cursor-pointer hover:bg-primary-800 hover:text-white dark:hover:bg-primary-700 focus:ring-2'
-																				} absolute text-primary-700 dark:text-white bottom-35 w-40 left-0 right-0 m-auto flex flex-row items-center gap-2 rounded-full border text-primary-700 bg-white dark:bg-gray-700 focus:ring-primary-300 border-primary-500 dark:border-gray-300 dark:bg-gray-600 dark:focus:ring-primary-800 py-0.5 px-2 sm:top-[65px] ${values.attribute.length > 1 ? "top-[272px]" : "top-[228px]" }`}
+																				} absolute text-primary-700 dark:text-white bottom-35 w-40 left-0 right-0 m-auto flex flex-row items-center gap-2 rounded-full border text-primary-700 bg-white dark:bg-gray-700 focus:ring-primary-300 border-primary-500 dark:border-gray-300 dark:bg-gray-600 dark:focus:ring-primary-800 py-0.5 px-2 sm:top-[65px] ${
+																					values.attribute.length > 1
+																						? 'top-[272px]'
+																						: 'top-[228px]'
+																				}`}
 																				type="button"
 																				onClick={() =>
 																					push({
@@ -579,13 +586,13 @@ const CreateSchema = () => {
 													d="M19.414 9.414a.586.586 0 0 0-.586.586c0 4.868-3.96 8.828-8.828 8.828-4.868 0-8.828-3.96-8.828-8.828 0-4.868 3.96-8.828 8.828-8.828 1.96 0 3.822.635 5.353 1.807l-1.017.18a.586.586 0 1 0 .204 1.153l2.219-.392a.586.586 0 0 0 .484-.577V1.124a.586.586 0 0 0-1.172 0v.928A9.923 9.923 0 0 0 10 0a9.935 9.935 0 0 0-7.071 2.929A9.935 9.935 0 0 0 0 10a9.935 9.935 0 0 0 2.929 7.071A9.935 9.935 0 0 0 10 20a9.935 9.935 0 0 0 7.071-2.929A9.935 9.935 0 0 0 20 10a.586.586 0 0 0-.586-.586Z"
 												/>
 											</svg>
-											Reset 
+											Reset
 										</Button>
 										<Button
 											type="submit"
 											color="bg-primary-700"
 											disabled={!formikHandlers.isValid || !btnState}
-											className="text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 ring-2 focus:ring-4 focus:ring-primary-400 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 lg:px-5 py-2 lg:py-2.5 ml-auto"
+											className="text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 ring-2 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-600 lg:px-5 py-2 lg:py-2.5 ml-auto"
 											style={{
 												height: '2.6rem',
 												width: 'auto',
