@@ -1,7 +1,11 @@
-import BreadCrumbs from '../../components/BreadCrumbs';
+import BreadCrumbs from '../BreadCrumbs'
 import React from 'react'
 
-const OrgSubscriptionDetails = () => {
+interface IProps {
+    name: string
+}
+
+const OrgSubscriptionDetails = ({ name }: IProps) => {
     const data = [{
 
         name: "Create organization",
@@ -31,30 +35,32 @@ const OrgSubscriptionDetails = () => {
 
 
     return (
-        <section className="bg-gray-50 dark:bg-gray-900">
-            <BreadCrumbs />
-            <div className='mx-4'>
+        <section className="pt-2 px-4">
+            <div className="mb-4 col-span-full xl:mb-2">
+                <BreadCrumbs />
+            </div>
+            <div className=''>
 
                 <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-                    Subscription
+                    Subscription ORG SUB DETAILS
                 </h1>
 
                 <p className='flex justify-end dark:text-white'>Back</p>
                 <div className='flex'>
-                <div>
-                <img src="public/images/CREDEBL_ICON.png"className="w-12 h-12" />
-                </div>
-                <div className='ml-2'>
-                    <p className='text-blue-700 font-semibold text-2xl '> 
-                        Blockster Labs
-                    </p>
-                    <p className='dark:text-white'>
-                        SSI based company
-                    </p>
-                    <p className='dark:text-white'>
-                        Role:Admin
-                    </p>
-                </div>
+                    <div>
+                        <img src="public/images/CREDEBL_ICON.png" className="w-12 h-12" />
+                    </div>
+                    <div className='ml-2'>
+                        <p className='text-blue-700 font-semibold text-2xl '>
+                            {name}
+                        </p>
+                        <p className='dark:text-white'>
+                            SSI based company
+                        </p>
+                        <p className='dark:text-white'>
+                            Role:Admin
+                        </p>
+                    </div>
                 </div>
                 <div className="mt-4 dark:text-white border-b border-blue-500 dark:text-white items-center mb-4">
                     Plan :

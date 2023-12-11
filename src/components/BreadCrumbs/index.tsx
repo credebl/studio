@@ -14,7 +14,7 @@ export default function BreadCrumbs() {
 	const [breadcrumbList, setBreadcrumbList] = useState<BreadCrumbI[]>([]);
 
 	useEffect(() => {
-		const pathUrl = window.location.pathname;
+		const pathUrl = decodeURIComponent(window.location.pathname);
 		const asPathNestedRoutes = pathUrl.split('/').filter((v) => v.length > 0);
 
 		const crumblist = asPathNestedRoutes.map((subpath, idx) => {

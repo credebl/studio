@@ -1,0 +1,10 @@
+---
+import LayoutSidebar from "../../../app/LayoutSidebar.astro";
+import OrgSubscriptionDetails from "../../../components/Subscription/OrgSubscriptionDetails";
+
+const params = Astro.params
+---
+
+<LayoutSidebar>
+	<OrgSubscriptionDetails name={params.slug || ""} client:visible/>
+</LayoutSidebar>

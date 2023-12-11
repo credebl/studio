@@ -13,7 +13,9 @@ export const pathRoutes = {
 		platformSetting: '/platform-settings',
 	},
 	subscription:{
-        subscription: '/subscription'
+        root: '/subscriptions',
+		organization: '/subscriptions/organizations',
+		plans: '/subscriptions/plans',
     },
 	organizations: {
 		root: '/organizations',
