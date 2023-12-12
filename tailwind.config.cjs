@@ -103,7 +103,7 @@ module.exports = {
 			},
 			textDecoration: ['active'],
 			width: {
-				'100/22rem': 'calc(100% - 22rem)',
+				'100/22rem': 'calc(100% - 26rem)',
 				'100/6rem': 'calc(100% - 6rem)',
 			},
 			minWidth: {
