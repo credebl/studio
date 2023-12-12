@@ -221,7 +221,7 @@ const CreateSchema = () => {
 				<BreadCrumbs />
 			</div>
 			{isEcosystemData?.isEnabledEcosystem && (
-				<div className="pb-3 mx-6 mb-6">
+				<div className="mx-6 mb-4">
 					<EcosystemProfileCard />
 				</div>
 			)}
@@ -509,8 +509,7 @@ const CreateSchema = () => {
 																			<Button
 																				key={element.id}
 																				className={`
-																				text-primary-700 hover:text-white dark:disabled:text-secondary-disabled disabled:text-primary-disabled bg-white hover:enabled:bg-primary-700 dark:text-white dark:bg-gray-700 dark:hover:enabled:!bg-gray-500 dark:hover:enabled:!text-gray-50 border border-primary-700 disabled:border-primary-disabled dark:border-gray-600
-																				absolute bottom-[-62px] w-fit left-[50%] translate-x-[-50%] m-auto flex flex-row items-center gap-2 rounded-full  
+																				text-primary-700 hover:text-white dark:disabled:text-secondary-disabled disabled:text-primary-disabled bg-white hover:enabled:bg-primary-700 dark:text-white dark:bg-gray-700 dark:hover:enabled:!bg-gray-500 dark:hover:enabled:!text-gray-50 border border-primary-700 disabled:border-primary-disabled dark:border-gray-600 absolute bottom-[-62px] w-max left-[50%] translate-x-[-50%] m-auto flex flex-row items-center gap-2 rounded-full  
 																				 disabled:opacity-100 group py-0`}
 																				type="button"
 																				onClick={() =>
@@ -574,7 +573,7 @@ const CreateSchema = () => {
 											type="submit"
 											color="bg-primary-700"
 											disabled={!formikHandlers.isValid || !btnState}
-											className="text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 ring-2 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-600 lg:px-5 py-2 lg:py-2.5 ml-auto"
+											className="text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 ring-2 ring-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-600 py-2 lg:py-2.5 ml-auto"
 											style={{
 												height: '2.6rem',
 												width: 'auto',
@@ -596,7 +595,7 @@ const CreateSchema = () => {
 											setShowResetPopup(false)
 										}}
 										message={
-											'Would you like to proceed? Keep in mind that this action cannot be undone.'
+											<div>This will reset all the entries you entered. <br />Do you want to proceed?</div>
 										}
 										isProcessing={createLoader}
 										setFailure={setFailure}

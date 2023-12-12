@@ -1,12 +1,12 @@
 import { Button, Modal } from 'flowbite-react';
 import { AlertComponent } from '../components/AlertComponent';
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 interface IProps {
 	openModal: boolean;
 	closeModal: (flag: boolean) => void;
 	onSuccess: (flag: boolean) => void;
-	message: string;
+	message: string | ReactElement;
 	isProcessing: boolean;
 	success: string | null;
 	failure: string | null;
@@ -45,7 +45,7 @@ const ConfirmationModal = (props: IProps) => {
 						<span className="sr-only">Close modal</span>
 					</button>
 
-					<div className="p-6 text-center h-[300px] float-bottom">
+					<div className="p-6 text-center float-bottom">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="22"
@@ -94,16 +94,16 @@ const ConfirmationModal = (props: IProps) => {
 								</div>
 							)}
 						</div>
-						<div className="mt-16 flex gap-4 items-center justify-center">
+						<div className="mt-8 flex gap-4 items-center justify-around">
 							<button
 								data-modal-hide="popup-modal"
 								type="button"
-								className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-md font-medium px-5 py-2 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
+								className="sm:min-w-[197px] text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-md font-medium px-5 py-2 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
 								onClick={() => {
 									props.closeModal(false);
 								}}
 							>
-								No, cancel
+								No
 							</button>
 							<Button
 								type="submit"
@@ -112,9 +112,9 @@ const ConfirmationModal = (props: IProps) => {
 								onClick={() => {
 									props.onSuccess(true);
 								}}
-								className="text-md bg-primary-700 hover:!bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 font-medium rounded-lg text-md inline-flex items-center text-center"
+								className="sm:min-w-[197px] text-md bg-primary-700 hover:!bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 font-medium rounded-lg text-md inline-flex items-center text-center"
 							>
-								Yes, I'm sure
+								Yes
 							</Button>
 						</div>
 					</div>
