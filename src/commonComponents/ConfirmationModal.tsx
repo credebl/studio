@@ -1,10 +1,23 @@
 import { Button, Modal } from 'flowbite-react';
 import { AlertComponent } from '../components/AlertComponent';
-import type { IProps } from './interface';
+import React, { ReactElement } from 'react';
 
-const CreateSchemaConfirmModal = (props: IProps) => {
+interface IProps {
+	openModal: boolean;
+	closeModal: (flag: boolean) => void;
+	onSuccess: (flag: boolean) => void;
+	message: string | ReactElement;
+	isProcessing: boolean;
+	success: string | null;
+	failure: string | null;
+	setFailure: (flag: string | null) => void;
+	setSuccess: (flag: string | null) => void;
+	buttonTitles: string[]
+}
+
+const ConfirmationModal = ({ openModal, closeModal, onSuccess, message, isProcessing, success, failure, setFailure, setSuccess, buttonTitles }: IProps) => {
 	return (
-		<Modal show={props.openModal} size="xl">
+		<Modal show={openModal} size="xl">
 			<div className="relative w-full max-w-xl max-h-[450px]">
 				<div className="relative bg-white rounded-lg shadow dark:bg-gray-700 max-h-[450px]">
 					<button
@@ -12,7 +25,7 @@ const CreateSchemaConfirmModal = (props: IProps) => {
 						className="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
 						data-modal-hide="popup-modal"
 						onClick={() => {
-							props.closeModal(false);
+							closeModal(false);
 						}}
 					>
 						<svg
@@ -33,7 +46,7 @@ const CreateSchemaConfirmModal = (props: IProps) => {
 						<span className="sr-only">Close modal</span>
 					</button>
 
-					<div className="p-6 text-center h-[300px] float-bottom">
+					<div className="p-6 text-center float-bottom">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="22"
@@ -55,54 +68,54 @@ const CreateSchemaConfirmModal = (props: IProps) => {
 								d="M9.989 15.875c1.013-.78 2.34-.282 2.54.94.133.817-.438 1.586-1.29 1.736-.785.138-1.588-.419-1.738-1.208-.108-.572.056-1.057.488-1.468Z"
 							/>
 						</svg>
-						<h3 className="py-2 text-lg font-normal text-gray-500 dark:text-gray-200">
-							{props.message}
+						<h3 className="py-2 text-lg font-normal text-gray-500 dark:text-gray-200 mb-4">
+							{message}
 						</h3>
 						<div className="w-full">
-							{props.success && (
-								<div className="absolute w-[91%]" role="alert">
+							{success && (
+								<div className="w-full" role="alert">
 									<AlertComponent
-										message={props.success}
+										message={success}
 										type={'success'}
 										onAlertClose={() => {
-											props?.setSuccess(null);
+											setSuccess && setSuccess(null);
 										}}
 									/>
 								</div>
 							)}
-							{props.failure && (
-								<div className="absolute w-[91%]" role="alert">
+							{failure && (
+								<div className="w-full" role="alert">
 									<AlertComponent
-										message={props.failure}
+										message={failure}
 										type={'failure'}
 										onAlertClose={() => {
-											props?.setFailure(null);
+											setFailure && setFailure(null);
 										}}
 									/>
 								</div>
 							)}
 						</div>
-						<div className="mt-16 flex gap-4 items-center justify-center">
+						<div className="mt-8 flex gap-4 items-center justify-around">
 							<button
 								data-modal-hide="popup-modal"
 								type="button"
-								className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-md font-medium px-5 py-2 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
+								className="sm:min-w-[197px] text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-md font-medium px-5 py-2 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
 								onClick={() => {
-									props.closeModal(false);
+									closeModal(false);
 								}}
 							>
-								No, cancel
+								{buttonTitles[0]}
 							</button>
 							<Button
 								type="submit"
-								isProcessing={props.isProcessing}
-								disabled={props.isProcessing}
+								isProcessing={isProcessing}
+								disabled={isProcessing}
 								onClick={() => {
-									props.onSuccess(true);
+									onSuccess(true);
 								}}
-								className="text-md bg-primary-700 hover:!bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 font-medium rounded-lg text-md inline-flex items-center text-center"
+								className="sm:min-w-[197px] text-md bg-primary-700 hover:!bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 font-medium rounded-lg text-md inline-flex items-center text-center"
 							>
-								Yes, I'm sure
+								{buttonTitles[1]}
 							</Button>
 						</div>
 					</div>
@@ -112,4 +125,4 @@ const CreateSchemaConfirmModal = (props: IProps) => {
 	);
 };
 
-export default CreateSchemaConfirmModal;
+export default ConfirmationModal;

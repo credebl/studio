@@ -6,6 +6,6 @@ export interface IProps {
 	isProcessing: boolean;
 	success: string | null;
 	failure: string | null;
-	setFailure: string | null;
-	setSuccess: string | null;
+	setFailure: (flag: string | null) => void;
+	setSuccess: (flag: string | null) => void;
 }

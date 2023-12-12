@@ -9,7 +9,7 @@ import {
 	schemaVersionRegex,
 	storageKeys,
 } from '../../../config/CommonConstant';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../../BreadCrumbs';
 import type { FieldName, IFormData, IAttributes } from './interfaces';
@@ -22,9 +22,8 @@ import {
 	getEcosystemId,
 } from '../../../config/ecosystem';
 import { createSchemaRequest } from '../../../api/ecosystem';
-import CreateSchemaConfirmModal from '../../../commonComponents/CreateSchemaConfirmModal';
 import EcosystemProfileCard from '../../../commonComponents/EcosystemProfileCard';
-import React from 'react';
+import ConfirmationModal from '../../../commonComponents/ConfirmationModal'
 
 const options = [
 	{
@@ -45,12 +44,17 @@ const options = [
 	},
 ];
 
+interface IPopup {
+	show: boolean,
+	type: "reset" | "create"
+}
+
 const CreateSchema = () => {
 	const [failure, setFailure] = useState<string | null>(null);
 	const [success, setSuccess] = useState<string | null>(null);
 	const [orgId, setOrgId] = useState<string>('');
 	const [createLoader, setCreateLoader] = useState<boolean>(false);
-	const [showPopup, setShowPopup] = useState(false);
+	const [showPopup, setShowPopup] = useState<IPopup>({ show: false, type: "reset" });
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [btnState, setBtnState] = useState<boolean>(false);
 	const initFormData: IFormData = {
@@ -100,7 +104,10 @@ const CreateSchema = () => {
 					setSuccess(null);
 				}, 3000);
 				setTimeout(() => {
-					setShowPopup(false);
+					setShowPopup({
+						type: "create",
+						show: false
+					});
 					window.location.href = pathRoutes?.organizations?.schemas;
 				}, 4000);
 			} else {
@@ -115,7 +122,10 @@ const CreateSchema = () => {
 			}, 3000);
 		}
 		setTimeout(() => {
-			setShowPopup(false);
+			setShowPopup({
+				type: "create",
+				show: false
+			});
 		}, 4000);
 	};
 
@@ -147,7 +157,10 @@ const CreateSchema = () => {
 			}, 4000);
 		}
 		setTimeout(() => {
-			setShowPopup(false);
+			setShowPopup({
+				type: "create",
+				show: false
+			});
 		}, 4000);
 	};
 
@@ -156,42 +169,42 @@ const CreateSchema = () => {
 		: 'Create Schema';
 	const submitButtonTitle = isEcosystemData?.isEcosystemMember
 		? {
-				title: 'Request Endorsement',
-				svg: (
+			title: 'Request Endorsement',
+			svg: (
+				<svg
+					className="mr-2 mt-1"
+					xmlns="http://www.w3.org/2000/svg"
+					width="20"
+					height="20"
+					fill="none"
+					viewBox="0 0 25 25"
+				>
+					<path
+						fill="currentColor"
+						d="M21.094 0H3.906A3.906 3.906 0 0 0 0 3.906v12.5a3.906 3.906 0 0 0 3.906 3.907h.781v3.906a.781.781 0 0 0 1.335.553l4.458-4.46h10.614A3.906 3.906 0 0 0 25 16.407v-12.5A3.907 3.907 0 0 0 21.094 0Zm2.343 16.406a2.343 2.343 0 0 1-2.343 2.344H10.156a.782.782 0 0 0-.553.228L6.25 22.333V19.53a.781.781 0 0 0-.781-.781H3.906a2.344 2.344 0 0 1-2.344-2.344v-12.5a2.344 2.344 0 0 1 2.344-2.344h17.188a2.343 2.343 0 0 1 2.343 2.344v12.5Zm-3.184-5.951a.81.81 0 0 1-.17.254l-3.125 3.125a.781.781 0 0 1-1.105-1.106l1.792-1.79h-7.489a2.343 2.343 0 0 0-2.344 2.343.781.781 0 1 1-1.562 0 3.906 3.906 0 0 1 3.906-3.906h7.49l-1.793-1.79a.78.78 0 0 1 .254-1.277.781.781 0 0 1 .852.17l3.125 3.125a.79.79 0 0 1 .169.852Z"
+					/>
+				</svg>
+			),
+		}
+		: {
+			title: 'Create',
+			svg: (
+				<div className="pr-3">
 					<svg
-						className="mr-2 mt-1"
 						xmlns="http://www.w3.org/2000/svg"
-						width="20"
-						height="20"
+						width="15"
+						height="15"
 						fill="none"
-						viewBox="0 0 25 25"
+						viewBox="0 0 24 24"
 					>
 						<path
 							fill="currentColor"
-							d="M21.094 0H3.906A3.906 3.906 0 0 0 0 3.906v12.5a3.906 3.906 0 0 0 3.906 3.907h.781v3.906a.781.781 0 0 0 1.335.553l4.458-4.46h10.614A3.906 3.906 0 0 0 25 16.407v-12.5A3.907 3.907 0 0 0 21.094 0Zm2.343 16.406a2.343 2.343 0 0 1-2.343 2.344H10.156a.782.782 0 0 0-.553.228L6.25 22.333V19.53a.781.781 0 0 0-.781-.781H3.906a2.344 2.344 0 0 1-2.344-2.344v-12.5a2.344 2.344 0 0 1 2.344-2.344h17.188a2.343 2.343 0 0 1 2.343 2.344v12.5Zm-3.184-5.951a.81.81 0 0 1-.17.254l-3.125 3.125a.781.781 0 0 1-1.105-1.106l1.792-1.79h-7.489a2.343 2.343 0 0 0-2.344 2.343.781.781 0 1 1-1.562 0 3.906 3.906 0 0 1 3.906-3.906h7.49l-1.793-1.79a.78.78 0 0 1 .254-1.277.781.781 0 0 1 .852.17l3.125 3.125a.79.79 0 0 1 .169.852Z"
+							d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"
 						/>
 					</svg>
-				),
-		  }
-		: {
-				title: 'Create',
-				svg: (
-					<div className="pr-3">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="15"
-							height="15"
-							fill="none"
-							viewBox="0 0 24 24"
-						>
-							<path
-								fill="currentColor"
-								d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"
-							/>
-						</svg>
-					</div>
-				),
-		  };
+				</div>
+			),
+		};
 
 	const confirmCreateSchema = () => {
 		if (
@@ -219,14 +232,14 @@ const CreateSchema = () => {
 				<BreadCrumbs />
 			</div>
 			{isEcosystemData?.isEnabledEcosystem && (
-				<div className="pb-3 mx-6 mb-6">
+				<div className="mx-6 mb-4">
 					<EcosystemProfileCard />
 				</div>
 			)}
 
 			<div>
 				<Card className="m-0 md:m-6" id="createSchemaCard">
-					<h1 className="md:pl-6 mb-4 col-span-full xl:mb-2 ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
+					<h1 className="mb-4 col-span-full xl:mb-2 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 						{formTitle}
 					</h1>
 					<div>
@@ -257,7 +270,10 @@ const CreateSchema = () => {
 							enableReinitialize
 							onSubmit={async (values): Promise<void> => {
 								setFormData(values);
-								setShowPopup(true);
+								setShowPopup({
+									type: "create",
+									show: true
+								});
 							}}
 						>
 							{(formikHandlers): JSX.Element => (
@@ -277,8 +293,8 @@ const CreateSchema = () => {
 													className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 												/>
 												{formikHandlers.errors &&
-												formikHandlers.touched.schemaName &&
-												formikHandlers.errors.schemaName ? (
+													formikHandlers.touched.schemaName &&
+													formikHandlers.errors.schemaName ? (
 													<label className="pt-1 text-red-500 text-xs h-5">
 														{formikHandlers.errors.schemaName}
 													</label>
@@ -304,8 +320,8 @@ const CreateSchema = () => {
 													className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 												/>
 												{formikHandlers.errors &&
-												formikHandlers.touched.schemaVersion &&
-												formikHandlers.errors.schemaVersion ? (
+													formikHandlers.touched.schemaVersion &&
+													formikHandlers.errors.schemaVersion ? (
 													<label className="pt-1 text-red-500 text-xs h-5">
 														{formikHandlers.errors.schemaVersion}
 													</label>
@@ -316,7 +332,7 @@ const CreateSchema = () => {
 										</div>
 									</div>
 
-									<div className="py-4 mt-6 rounded-lg border border-gray-200">
+									<div className="pt-4 pb-10 mt-6 rounded-lg border border-gray-200">
 										<FieldArray name="attribute">
 											{(fieldArrayProps: any): JSX.Element => {
 												const { form, remove, push } = fieldArrayProps;
@@ -336,7 +352,7 @@ const CreateSchema = () => {
 																>
 																	<div
 																		key={`attribute-${index}`}
-																		className="relative flex flex-col sm:flex-row dark:bg-gray-800 md:flex-row justify-between bg-white px-6 cursor-pointer"
+																		className="relative flex flex-col sm:flex-row dark:bg-gray-800 md:flex-row justify-between bg-white px-4 cursor-pointer"
 																	>
 																		<div
 																			key={`attribute-${index}`}
@@ -344,27 +360,31 @@ const CreateSchema = () => {
 																				overflow: 'auto',
 																				width: '95%',
 																			}}
-																			className="grid min-[320]:grid-cols-1 sm:grid-cols-3 md:grid-cols-3 gap-4"
+																			className="grid min-[320]:grid-cols-1 sm:grid-cols-3 md:grid-cols-3"
 																		>
-																			<div className="relative flex max-w-[411px] flex-col items-start gap-x-4">
+																			<div className="relative flex max-w-[411px] flex-col items-start p-2 gap-x-4">
 																				<Field
 																					id={`attribute[${index}]`}
 																					name={`attribute.${index}.attributeName`}
 																					placeholder="Attribute eg. NAME, ID"
 																					disabled={!areFirstInputsSelected}
-																					className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-md rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+																					onChange={(e: any) => {
+																						formikHandlers.handleChange(e)
+																						formikHandlers.setFieldValue(`attribute.${index}.displayName`, e.target.value, true)
+																					}}
+																					className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 																				/>
 																				{formikHandlers.touched.attribute &&
-																				attribute[index] &&
-																				formikHandlers?.errors?.attribute &&
-																				formikHandlers?.errors?.attribute[
+																					attribute[index] &&
+																					formikHandlers?.errors?.attribute &&
+																					formikHandlers?.errors?.attribute[
 																					index
-																				] &&
-																				formikHandlers?.touched?.attribute[
-																					index
-																				]?.attributeName &&
-																				formikHandlers?.errors?.attribute[index]
-																					?.attributeName ? (
+																					] &&
+																					formikHandlers?.touched?.attribute[
+																						index
+																					]?.attributeName &&
+																					formikHandlers?.errors?.attribute[index]
+																						?.attributeName ? (
 																					<label className="pt-1 text-red-500 text-xs h-5">
 																						{
 																							formikHandlers?.errors?.attribute[
@@ -377,14 +397,14 @@ const CreateSchema = () => {
 																				)}
 																			</div>
 
-																			<div className="relative flex max-w-[411px] flex-col items-start gap-x-4">
+																			<div className="relative flex max-w-[411px] flex-col items-start p-2 gap-x-4">
 																				<Field
 																					component="select"
 																					id={`attribute[${index}]`}
 																					name={`attribute.${index}.schemaDataType`}
 																					placeholder="Select"
 																					disabled={!areFirstInputsSelected}
-																					className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-md rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 "
+																					className="w-full h-select-input bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 																				>
 																					{options.map((opt) => {
 																						return (
@@ -399,16 +419,16 @@ const CreateSchema = () => {
 																					})}
 																				</Field>
 																				{formikHandlers?.touched?.attribute &&
-																				attribute[index] &&
-																				formikHandlers?.errors?.attribute &&
-																				formikHandlers?.errors?.attribute[
+																					attribute[index] &&
+																					formikHandlers?.errors?.attribute &&
+																					formikHandlers?.errors?.attribute[
 																					index
-																				] &&
-																				formikHandlers?.touched?.attribute[
-																					index
-																				]?.schemaDataType &&
-																				formikHandlers?.errors?.attribute[index]
-																					?.schemaDataType ? (
+																					] &&
+																					formikHandlers?.touched?.attribute[
+																						index
+																					]?.schemaDataType &&
+																					formikHandlers?.errors?.attribute[index]
+																						?.schemaDataType ? (
 																					<label className="pt-1 text-red-500 text-xs h-5">
 																						{
 																							formikHandlers?.errors?.attribute[
@@ -420,26 +440,26 @@ const CreateSchema = () => {
 																					<label className="pt-1 text-red-500 text-xs h-5"></label>
 																				)}
 																			</div>
-																			<div className="relative flex max-w-[411px] flex-col items-start gap-x-4">
+																			<div className="relative flex max-w-[411px] flex-col items-start p-2 gap-x-4">
 																				<Field
 																					id={`attribute[${index}]`}
 																					name={`attribute.${index}.displayName`}
 																					placeholder="Display Name"
 																					disabled={!areFirstInputsSelected}
-																					className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-md rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+																					className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 																				/>
 
 																				{formikHandlers?.touched?.attribute &&
-																				attribute[index] &&
-																				formikHandlers?.errors?.attribute &&
-																				formikHandlers?.errors?.attribute[
+																					attribute[index] &&
+																					formikHandlers?.errors?.attribute &&
+																					formikHandlers?.errors?.attribute[
 																					index
-																				] &&
-																				formikHandlers?.touched?.attribute[
-																					index
-																				]?.displayName &&
-																				formikHandlers?.errors?.attribute[index]
-																					?.displayName ? (
+																					] &&
+																					formikHandlers?.touched?.attribute[
+																						index
+																					]?.displayName &&
+																					formikHandlers?.errors?.attribute[index]
+																						?.displayName ? (
 																					<label className="pt-1 text-red-500 text-xs h-5">
 																						{
 																							formikHandlers?.errors?.attribute[
@@ -458,7 +478,7 @@ const CreateSchema = () => {
 																			style={{ width: '5%' }}
 																		>
 																			{index === 0 &&
-																			values.attribute.length === 1 ? (
+																				values.attribute.length === 1 ? (
 																				<div
 																					key={element.id}
 																					className="sm:w-0.5/3 text-red-600"
@@ -473,12 +493,11 @@ const CreateSchema = () => {
 																						type="button"
 																						color="danger"
 																						onClick={() => remove(index)}
-																						className={`${
-																							index === 0 &&
+																						className={`${index === 0 &&
 																							values.attribute.length === 1
-																								? 'hidden'
-																								: 'block'
-																						} flex justify-end focus:ring-0`}
+																							? 'hidden'
+																							: 'block'
+																							} flex justify-end focus:ring-0`}
 																					>
 																						<svg
 																							xmlns="http://www.w3.org/2000/svg"
@@ -501,17 +520,11 @@ const CreateSchema = () => {
 																	</div>
 																	<div>
 																		{index === values.attribute.length - 1 && (
-																			<button
+																			<Button
 																				key={element.id}
-																				className={`${
-																					!formikHandlers.isValid || !btnState
-																						? 'hover:bg-white hover:text-primary-700 dark:hover:bg-gray-700 cursor-not-allowed'
-																						: 'dark:hover:bg-secondary-700 dark:hover:text-black cursor-pointer hover:bg-primary-800 hover:text-white dark:hover:bg-primary-700 focus:ring-2'
-																				} absolute text-primary-700 dark:text-white bottom-35 w-40 left-0 right-0 m-auto flex flex-row items-center gap-2 rounded-full border text-primary-700 bg-white dark:bg-gray-700 focus:ring-primary-300 border-primary-500 dark:border-gray-300 dark:bg-gray-600 dark:focus:ring-primary-800 py-0.5 px-2 sm:top-[65px] ${
-																					values.attribute.length > 1
-																						? 'top-[272px]'
-																						: 'top-[228px]'
-																				}`}
+																				className={`
+																				text-primary-700 hover:text-white dark:disabled:text-secondary-disabled disabled:text-primary-disabled bg-white hover:enabled:bg-primary-700 dark:text-white dark:bg-gray-700 dark:hover:enabled:!bg-gray-500 dark:hover:enabled:!text-gray-50 border border-primary-700 disabled:border-primary-disabled dark:border-gray-600 absolute bottom-[-62px] w-max left-[50%] translate-x-[-50%] m-auto flex flex-row items-center gap-2 rounded-full  
+																				 disabled:opacity-100 group py-0`}
 																				type="button"
 																				onClick={() =>
 																					push({
@@ -524,32 +537,14 @@ const CreateSchema = () => {
 																					!formikHandlers.isValid || !btnState
 																				}
 																			>
-																				<svg
-																					xmlns="http://www.w3.org/2000/svg"
-																					width="22"
-																					height="22"
-																					fill="none"
-																					viewBox="0 0 17 16"
-																				>
-																					<rect
-																						width="15"
-																						height="15"
-																						x="1.258"
-																						y=".5"
-																						fill="currentColor"
-																						stroke="#fff"
-																						rx="7.5"
-																						className="text-primary-700 hover:bg-white dark:text-gray-700"
-																					/>
-																					<path
-																						fill="#fff"
-																						d="M8.596 11.068V5.132h.882v5.936h-.882ZM5.992 8.52v-.826h6.09v.826h-6.09Z"
-																					/>
+																				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6">
+																					<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
 																				</svg>
+
 																				<span className="ml-1 my-0.5">
 																					Add attribute
 																				</span>
-																			</button>
+																			</Button>
 																		)}
 																	</div>
 																</div>
@@ -560,18 +555,18 @@ const CreateSchema = () => {
 											}}
 										</FieldArray>
 									</div>
-
-									<div className="flex gap-4 float-right mt-8 ml-4">
+									<div className="flex gap-4 float-right mt-16 ml-4">
 										<Button
-											type="reset"
+											type="button"
 											color="bg-primary-800"
-											disabled={createLoader}
+											disabled={createLoader || !(formikHandlers.values.schemaName || formikHandlers.values.schemaVersion)}
 											className="dark:text-white bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-base px-4 lg:px-5 py-2 lg:py-2.5 ml-auto dark:hover:text-black"
 											style={{
 												height: '2.6rem',
 												width: '6rem',
 												minWidth: '2rem',
 											}}
+											onClick={() => setShowPopup({ show: true, type: "reset" })}
 										>
 											<svg
 												xmlns="http://www.w3.org/2000/svg"
@@ -592,7 +587,7 @@ const CreateSchema = () => {
 											type="submit"
 											color="bg-primary-700"
 											disabled={!formikHandlers.isValid || !btnState}
-											className="text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 ring-2 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-600 lg:px-5 py-2 lg:py-2.5 ml-auto"
+											className="text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 ring-2 ring-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-600 py-2 lg:py-2.5 ml-auto"
 											style={{
 												height: '2.6rem',
 												width: 'auto',
@@ -603,16 +598,30 @@ const CreateSchema = () => {
 											{submitButtonTitle.title}
 										</Button>
 									</div>
-
-									<CreateSchemaConfirmModal
+									<ConfirmationModal
 										success={success}
 										failure={failure}
-										openModal={showPopup}
-										closeModal={() => setShowPopup(false)}
-										onSuccess={confirmCreateSchema}
+										openModal={showPopup.show}
+										closeModal={() => setShowPopup({
+											...showPopup,
+											show: false
+										})}
+										onSuccess={() => {
+											if (showPopup.type === "create") {
+												// TODO document why this block is empty
+												confirmCreateSchema()
+											} else {
+												formikHandlers.resetForm()
+												setFormData(initFormData)
+												setShowPopup({ show: false, type: "reset" })
+											}
+										}}
 										message={
-											'Would you like to proceed? Keep in mind that this action cannot be undone.'
+											showPopup.type === "create" ?
+												'Would you like to proceed? Keep in mind that this action cannot be undone.' :
+												<div>This will reset all the entries you entered. <br />Do you want to proceed?</div>
 										}
+										buttonTitles={["No, cancel", "Yes, I'm sure"]}
 										isProcessing={createLoader}
 										setFailure={setFailure}
 										setSuccess={setSuccess}

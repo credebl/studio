@@ -75,26 +75,26 @@ const OrgDropDown = () => {
 				data-dropdown-toggle="dropdownUsers"
 				data-dropdown-placement="bottom"
 				className="text-primary-700 text-lg h-10 bg-primary-100 hover:!bg-primary-200 dark:bg-primary-700 cursor-pointer focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium 
-					rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-primary-700 dark:focus:ring-blue-800"
+					rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:hover:bg-primary-700 dark:focus:ring-blue-800"
 			>
 
-				<>
-					{
-						activeOrg
-							? <>
+				{
+					activeOrg
+						? <>
+							<div className='shrink-0'>
 								{activeOrg.logoUrl ? (
 									<CustomAvatar size="20" src={activeOrg?.logoUrl} round />
 								) : (
 									<CustomAvatar size="20" name={activeOrg?.name} round />
 								)}
-								<text className="ml-2 text-primary-700 dark:text-white">{activeOrg?.name.length > 20 ? activeOrg?.name.substring(0, 20) + '...' : activeOrg?.name}</text>
-							</>
-							:
-							<text className='text-primary-700 dark:text-white'>
-								Select organization
-							</text>
-					}
-				</>
+							</div>
+							<text className="ml-2 text-primary-700 dark:text-white truncate max-w-[100px]">{activeOrg?.name.length > 20 ? activeOrg?.name.substring(0, 20) + '...' : activeOrg?.name}</text>
+						</>
+						:
+						<text className='text-primary-700 dark:text-white'>
+							Select organization
+						</text>
+				}
 
 				<BiChevronDown size={25} color='primary-700' className=' text-primary-700 dark:text-white' />
 			</div>
