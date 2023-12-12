@@ -11,8 +11,10 @@ import { pathRoutes } from '../config/pathRoutes';
 		</header>
 
 		<main class="grow" transition:animate="slide">
-			<div class="bg-white dark:bg-gray-900 bg-no-repeat bg-cover bg-center bg-[url('/images/blue_line_bg.svg')] pb-8">
-				<div class="grid grid-cols-1 md:grid-cols-2 max-w-screen-xl mx-auto ">
+			<section
+				class="bg-white dark:bg-gray-900 bg-no-repeat bg-cover bg-center bg-[url('/images/blue_line_bg.svg')] pb-32 md:pb-44"
+			>
+				<div class="grid grid-cols-1 md:grid-cols-2 max-w-screen-xl mx-auto">
 					<div class="col-span-2">
 						<div class="py-4 px-4 lg:py-16 lg:px-12 flex items-center flex-col">
 							<div class="flex justify-center">
@@ -74,20 +76,24 @@ import { pathRoutes } from '../config/pathRoutes';
 						</div>
 					</div>
 				</div>
-			</div>
-			<section class="md:p-8 sm:p-4"> 
-				<div 
-				
-					class="col-span-2 flex justify-center mx-auto"
-				>
-					<img src="/images/first_screen.svg" alt="" class="w-full -mt-24 md:pl-12 md:pr-12 sm:pl-3 sm:pr-3  max-w-screen block dark:hidden" />
-					<img src="/images/dark_screen.svg" alt="" class="w-full -mt-24 md:pl-12 md:pr-12 sm:pl-3 sm:pr-3 max-w-screen dark:block hidden" />
-
+			</section>
+			<section class="p-4 py-10 md:py-20">
+				<div class="col-span-2 flex justify-center mx-auto">
+					<img
+						src="/images/first_screen.svg"
+						alt=""
+						class="w-full -mt-40 md:pl-12 md:pr-12 sm:pl-3 sm:pr-3 max-w-screen block dark:hidden"
+					/>
+					<img
+						src="/images/dark_screen.svg"
+						alt=""
+						class="w-full -mt-40 md:pl-12 md:pr-12 sm:pl-3 sm:pr-3 max-w-screen dark:block hidden"
+					/>
 				</div>
 			</section>
-			<section class="bg-gray-100 dark:bg-gray-900 mx-auto md:p-8 sm:p-4">
-				<div class="py-4 px-4 sm:py-4 lg:px-6 max-w-screen-xl mx-auto">
-					<div class="py-8 lg:py-4 mx-auto">
+			<section class="bg-gray-100 dark:bg-gray-900 mx-auto p-4 py-10 md:py-20">
+				<div class="max-w-screen-xl mx-auto">
+					<div class="pb-8 lg:pb-4 mx-auto">
 						<h2
 							class="mb-4 text-2xl lg:text-3xl tracking-tight leading-tight text-center font-extrabold text-gray-900 dark:text-white"
 						>
@@ -103,7 +109,9 @@ import { pathRoutes } from '../config/pathRoutes';
 							> standards.
 						</p>
 					</div>
-					<div class="grid md:grid-cols-2 grid-cos-1 md:px-28 md:pb-8 md:gap-16 lg:gap-28 sm:gap-12">
+					<div
+						class="grid md:grid-cols-2 grid-cos-1 md:px-28 md:gap-x-16 lg:gap-x-28 sm:gap-x-12 gap-y-8 md:gap-y-16"
+					>
 						<div class="mt-8 flex">
 							<div
 								class="flex mr-8 justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900 shrink-0"
@@ -281,61 +289,75 @@ import { pathRoutes } from '../config/pathRoutes';
 					</div>
 				</div>
 			</section>
-			<section class="md:p-8 sm:p-4">
-				<div class=" mx-auto object-center">
-					<img src="/images/first_group.svg" alt="frame_img" class="-mt-28 pl-12 pr-12 w-full max-w-screen block dark:hidden" style="    
-					margin: auto;
-					
-					"/>
-					<img src="/images/dark_first_group.svg" alt="frame_img" class="-mt-28 pl-12 pr-12 w-full max-w-screen hidden dark:block" style="    
-					margin: auto;
-					
-					"/> 
-
+			<section class="p-4 py-10 md:py-20">
+				<div class="mx-auto object-center">
+					<img
+						src="/images/first_group.svg"
+						alt="frame_img"
+						class="md:pl-12 md:pr-12 w-full max-w-screen block dark:hidden m-auto"
+						/>
+					<img
+						src="/images/dark_first_group.svg"
+						alt="frame_img"
+						class="md:pl-12 md:pr-12 w-full max-w-screen hidden dark:block m-auto"
+						/>
 				</div>
 			</section>
-			<section class="flex justify-between w-full mx-auto bg-blue-300 dark:bg-blue-900
-			">
-				<div class="p-4 w-1/2">
-					<p class="text-gray-800 dark:text-white font-medium text-[40px] lg:pl-44 lg:pr-40 pt-16 " >One Wallet for all your identity needs </p>
+			<section
+				class="p-4 !pb-0 md:pt-20 w-full mx-auto bg-blue-300 dark:bg-blue-900"
+			>
+				<div class="max-w-screen-xl flex flex-wrap justify-around mx-auto">
+					<div class="p-4 lg:w-[60%]">
+						<p
+							class="text-gray-800 dark:text-white font-medium text-[40px] lg:pt-12 lg:text-start text-center"
+						>
+							One Wallet for all your identity needs
+						</p>
 
-					<p class="text-gray-800 dark:text-gray-300 text-2xl font-normal lg:pl-44 lg:pr-40 pt-4">Store user credentials securely using advanced
-						cryptography. It is built using standards defined 
-						as per Hyperledger Aries framework.</p>
-				</div >
-				<div class="flex justify-center w-1/2">
-					<img class="px-4 pb-0" src="/images/mobile_mockup.svg" style="margin-top:48px; width: 412px;">
+						<p
+							class="text-gray-800 dark:text-gray-300 text-2xl font-normal pt-4 lg:text-start text-center"
+						>
+							Store user credentials securely using advanced cryptography. It is
+							built using standards defined as per Hyperledger Aries framework.
+						</p>
+					</div>
+					<div class="flex justify-center">
+						<img
+							class="px-4 pb-0"
+							src="/images/mobile_mockup.svg"
+							style="width: 412px;"
+						/>
+					</div>
 				</div>
-					
 			</section>
-			<section class="mx-auto md:p-8 sm:p-4">
-				<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 text-xl font-normal max-w-screen mx-auto py-12">
-					
-						<div class="flex  md:text-start text-center dark:text-gray-400 p-4 ">
-							Store user credentials securely using advanced
-								cryptography. It is built using standards defined
-								as per Hyperledger Aries framework.
-						</div>
-						<div class="shrink-0 flex justify-center md:block">
-							<img src="/images/mobile_1.svg" alt="frame_img" class="md:mb-32"/>
-						</div>
-					
-						<div class="shrink-0 flex justify-center md:block">
-							<img src="/images/mobile_2.svg" alt="frame_img" class="md:mt-32"/>
-						</div>
-						<div class="flex  md:text-start text-center dark:text-gray-400 items-end p-4 ">
-							Store user credentials securely using advanced
-								cryptography. It is built using standards defined
-								as per Hyperledger Aries framework.
-						</div>
-					
+			<section class="mx-auto p-4 py-10 md:py-20 max-w-screen-xl">
+				<div
+					class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 text-xl font-normal max-w-screen mx-auto"
+				>
+					<div class="flex md:text-start text-center dark:text-gray-400 p-4">
+						Store user credentials securely using advanced cryptography. It is
+						built using standards defined as per Hyperledger Aries framework.
+					</div>
+					<div class="shrink-0 flex justify-center md:block">
+						<img src="/images/mobile_1.svg" alt="frame_img" class="md:mb-32" />
+					</div>
+
+					<div class="shrink-0 flex justify-center md:block">
+						<img src="/images/mobile_2.svg" alt="frame_img" class="md:mt-32" />
+					</div>
+					<div
+						class="flex md:text-start text-center dark:text-gray-400 items-end p-4"
+					>
+						Store user credentials securely using advanced cryptography. It is
+						built using standards defined as per Hyperledger Aries framework.
+					</div>
 				</div>
 			</section>
 			<section class="">
 				<div
-					class="bg-[url('/images/blue_background.png')] bg-cover bg-center md:p-8 sm:p-4"
+					class="bg-[url('/images/blue_background.png')] bg-cover bg-center p-4 py-10 md:py-20"
 				>
-					<div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-12 lg:px-6">
+					<div class="mx-auto max-w-screen-xl">
 						<div
 							class="mx-auto flex w-full max-w-7xl flex-col items-center gap-12"
 						>
@@ -1078,10 +1100,8 @@ import { pathRoutes } from '../config/pathRoutes';
 					</div>
 				</div>
 			</section>
-			<footer
-				class="md:p-8 sm:p-4 bg-gray-200 dark:bg-gray-800 mx-auto"
-			>
-				<div class="mt-4 mx-auto max-w-screen-xl text-center">
+			<footer class="p-4 py-10 md:py-20 bg-gray-200 dark:bg-gray-800 mx-auto">
+				<div class="mx-auto max-w-screen-xl text-center">
 					<a
 						class="flex justify-center items-center text-2xl font-semibold text-gray-900 dark:text-white"
 					>
