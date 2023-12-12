@@ -22,7 +22,7 @@ const HelmetHead = ({ generator, desc, icon, sitemap, siteTitle, version }: IPro
 
 		<meta name="author" content="Julian Cataldo, Zoltán Szőgyényi, Robert Tanislav" />
 		<meta name="copyright" content="MIT" />
-		<meta property="og:image" content="/images/CREDEBL_ICON.png" />
+		<meta property="og:image" content={`/images/CREDEBL_ICON.png?lastmod=${new Date().getTime()}`} />
 	</Helmet>
 )
 
