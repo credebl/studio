@@ -612,6 +612,7 @@ const CreateSchema = () => {
 												confirmCreateSchema()
 											} else {
 												formikHandlers.resetForm()
+												setFormData(initFormData)
 												setShowPopup({ show: false, type: "reset" })
 											}
 										}}
@@ -620,7 +621,7 @@ const CreateSchema = () => {
 												'Would you like to proceed? Keep in mind that this action cannot be undone.' :
 												<div>This will reset all the entries you entered. <br />Do you want to proceed?</div>
 										}
-										buttonTitles={showPopup.type === "create" ? ["No, cancel", "Yes, I'm sure"] : ["No", "Yes"]}
+										buttonTitles={["No, cancel", "Yes, I'm sure"]}
 										isProcessing={createLoader}
 										setFailure={setFailure}
 										setSuccess={setSuccess}
