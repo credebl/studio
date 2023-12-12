@@ -1,8 +1,20 @@
 import { Button, Modal } from 'flowbite-react';
 import { AlertComponent } from '../components/AlertComponent';
-import type { IProps } from './interface';
+import React from 'react';
 
-const CreateSchemaConfirmModal = (props: IProps) => {
+interface IProps {
+	openModal: boolean;
+	closeModal: (flag: boolean) => void;
+	onSuccess: (flag: boolean) => void;
+	message: string;
+	isProcessing: boolean;
+	success: string | null;
+	failure: string | null;
+	setFailure: (flag: string | null) => void;
+	setSuccess: (flag: string | null) => void;
+}
+
+const ConfirmationModal = (props: IProps) => {
 	return (
 		<Modal show={props.openModal} size="xl">
 			<div className="relative w-full max-w-xl max-h-[450px]">
@@ -112,4 +124,4 @@ const CreateSchemaConfirmModal = (props: IProps) => {
 	);
 };
 
-export default CreateSchemaConfirmModal;
+export default ConfirmationModal;
