@@ -16,7 +16,6 @@ module.exports = {
 		extend: {
 			colors: {
 				accentColor: '#20ACDF',
-
 				primary: {
 					DEFAULT: '#1F4EAD',
 					50: '#DCE6F9',
@@ -30,6 +29,7 @@ module.exports = {
 					800: '#16397D',
 					900: '#0E234E',
 					950: '#0A1836',
+					disabled: '#1f4ead80'
 				},
 
 				secondary: {
@@ -45,6 +45,7 @@ module.exports = {
 					800: '#A9EAEA',
 					900: '#7CDFDF',
 					950: '#65DADA',
+					disabled: '#d6f5f589'
 				},
 			},
 			fontFamily: {
