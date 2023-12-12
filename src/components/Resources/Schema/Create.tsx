@@ -9,7 +9,7 @@ import {
 	schemaVersionRegex,
 	storageKeys,
 } from '../../../config/CommonConstant';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../../BreadCrumbs';
 import type { FieldName, IFormData, IAttributes } from './interfaces';
@@ -22,10 +22,8 @@ import {
 	getEcosystemId,
 } from '../../../config/ecosystem';
 import { createSchemaRequest } from '../../../api/ecosystem';
-import CreateSchemaConfirmModal from '../../../commonComponents/CreateSchemaConfirmModal';
 import EcosystemProfileCard from '../../../commonComponents/EcosystemProfileCard';
 import ConfirmationModal from '../../../commonComponents/ConfirmationModal'
-import React from 'react';
 
 const options = [
 	{
@@ -46,12 +44,17 @@ const options = [
 	},
 ];
 
+interface IPopup {
+	show: boolean,
+	type: "reset" | "create"
+}
+
 const CreateSchema = () => {
 	const [failure, setFailure] = useState<string | null>(null);
 	const [success, setSuccess] = useState<string | null>(null);
 	const [orgId, setOrgId] = useState<string>('');
 	const [createLoader, setCreateLoader] = useState<boolean>(false);
-	const [showPopup, setShowPopup] = useState(false);
+	const [showPopup, setShowPopup] = useState<IPopup>({ show: false, type: "reset" });
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [btnState, setBtnState] = useState<boolean>(false);
 	const initFormData: IFormData = {
@@ -65,7 +68,6 @@ const CreateSchema = () => {
 			},
 		],
 	};
-	const [showResetPopup, setShowResetPopup] = useState(false)
 	const [formData, setFormData] = useState(initFormData);
 	useEffect(() => {
 		const fetchData = async () => {
@@ -102,7 +104,10 @@ const CreateSchema = () => {
 					setSuccess(null);
 				}, 3000);
 				setTimeout(() => {
-					setShowPopup(false);
+					setShowPopup({
+						type: "create",
+						show: false
+					});
 					window.location.href = pathRoutes?.organizations?.schemas;
 				}, 4000);
 			} else {
@@ -117,7 +122,10 @@ const CreateSchema = () => {
 			}, 3000);
 		}
 		setTimeout(() => {
-			setShowPopup(false);
+			setShowPopup({
+				type: "create",
+				show: false
+			});
 		}, 4000);
 	};
 
@@ -149,7 +157,10 @@ const CreateSchema = () => {
 			}, 4000);
 		}
 		setTimeout(() => {
-			setShowPopup(false);
+			setShowPopup({
+				type: "create",
+				show: false
+			});
 		}, 4000);
 	};
 
@@ -259,7 +270,10 @@ const CreateSchema = () => {
 							enableReinitialize
 							onSubmit={async (values): Promise<void> => {
 								setFormData(values);
-								setShowPopup(true);
+								setShowPopup({
+									type: "create",
+									show: true
+								});
 							}}
 						>
 							{(formikHandlers): JSX.Element => (
@@ -545,14 +559,14 @@ const CreateSchema = () => {
 										<Button
 											type="button"
 											color="bg-primary-800"
-											disabled={createLoader || !(formikHandlers.values.schemaName || formikHandlers.values.schemaName)}
+											disabled={createLoader || !(formikHandlers.values.schemaName || formikHandlers.values.schemaVersion)}
 											className="dark:text-white bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-base px-4 lg:px-5 py-2 lg:py-2.5 ml-auto dark:hover:text-black"
 											style={{
 												height: '2.6rem',
 												width: '6rem',
 												minWidth: '2rem',
 											}}
-											onClick={() => setShowResetPopup(true)}
+											onClick={() => setShowPopup({ show: true, type: "reset" })}
 										>
 											<svg
 												xmlns="http://www.w3.org/2000/svg"
@@ -587,29 +601,26 @@ const CreateSchema = () => {
 									<ConfirmationModal
 										success={success}
 										failure={failure}
-										openModal={showResetPopup}
-										closeModal={() => setShowResetPopup(false)}
+										openModal={showPopup.show}
+										closeModal={() => setShowPopup({
+											...showPopup,
+											show: false
+										})}
 										onSuccess={() => {
-											console.log(54657, formikHandlers)
-											formikHandlers.resetForm()
-											setShowResetPopup(false)
+											if (showPopup.type === "create") {
+												// TODO document why this block is empty
+												confirmCreateSchema()
+											} else {
+												formikHandlers.resetForm()
+												setShowPopup({ show: false, type: "reset" })
+											}
 										}}
 										message={
-											<div>This will reset all the entries you entered. <br />Do you want to proceed?</div>
+											showPopup.type === "create" ?
+												'Would you like to proceed? Keep in mind that this action cannot be undone.' :
+												<div>This will reset all the entries you entered. <br />Do you want to proceed?</div>
 										}
-										isProcessing={createLoader}
-										setFailure={setFailure}
-										setSuccess={setSuccess}
-									/>
-									<CreateSchemaConfirmModal
-										success={success}
-										failure={failure}
-										openModal={showPopup}
-										closeModal={() => setShowPopup(false)}
-										onSuccess={confirmCreateSchema}
-										message={
-											'Would you like to proceed? Keep in mind that this action cannot be undone.'
-										}
+										buttonTitles={showPopup.type === "create" ? ["No, cancel", "Yes, I'm sure"] : ["No", "Yes"]}
 										isProcessing={createLoader}
 										setFailure={setFailure}
 										setSuccess={setSuccess}
