@@ -370,7 +370,7 @@ const BulkIssuance = () => {
 			<div className="mb-4 col-span-full xl:mb-2">
 				<div className="flex justify-between items-center">
 					<BreadCrumbs />
-					<BackButton path={pathRoutes.organizations.issuedCredentials} />
+					<BackButton path={pathRoutes.organizations.Issuance.issue} />
 				</div>
 			</div>
 			<div>

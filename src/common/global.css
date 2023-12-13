@@ -152,3 +152,11 @@ ul.timelinestatic {
   width: 1px;
  }
  
+ .custom-card:hover {
+  background-color: #1a202c;
+}
+
+.custom-card:hover h5,
+.custom-card:hover p {
+  color: white;
+}
