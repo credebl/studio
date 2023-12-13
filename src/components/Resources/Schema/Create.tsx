@@ -226,27 +226,50 @@ const CreateSchema = () => {
 		}
 	};
 
-	const isSimilarAttribute = (index, attributes, value) => {
-		console.log(76576, index, attributes, value)
-		const sameAttr = attributes.filter((item, i) => {
-			if (item.attributeName === value) {
-				return {
-					...item,
-					index: i
+	const validSameAttribute = (formikHandlers, index, field) => {
+		const attributeError = formikHandlers?.errors?.attribute
+		const attributeTouched = formikHandlers?.touched?.attribute
+		const attributeValue = formikHandlers?.values?.attribute
+		const isErrorAttribute = attributeError && attributeError.length > 0 && attributeError[index] && attributeError[index][field]
+		const isTouchedAttribute = attributeTouched && attributeTouched.length > 0 && attributeTouched[index] && attributeTouched[index][field]
+		const isValueAttribute = attributeValue && attributeValue.length > 0 && attributeValue[index] && attributeValue[index][field]
+
+		if (!(isTouchedAttribute && isErrorAttribute) && isValueAttribute) {
+			const isValid = attributeValue.filter((item, i) => {
+				const itemAttribute = item[field]?.trim()
+				const enteredAttribute = attributeValue[index][field]?.trim()
+				if ((itemAttribute && enteredAttribute) && itemAttribute === enteredAttribute) {
+					return {
+						...item,
+						index: i
+					}
 				}
-			}
-		})
-		console.log(765767, sameAttr)
-		if (sameAttr.length > 0) {
-			return {
-				index,
-				valid: false
-			}
+			}).length > 1
+			return isValid
 		} else {
-			return {
-				index,
-				valid: true
+			return false
+		}
+	}
+
+	const inValidAttributes = (formikHandlers, propertyName) => {
+		const attributeValue = formikHandlers?.values?.attribute
+		const isValueAttribute = attributeValue && attributeValue.length > 0
+
+		if (isValueAttribute) {
+			const seen = {};
+
+			for (const obj of attributeValue) {
+				const propertyValue = obj[propertyName];
+				if (seen[propertyValue]) {
+					return true;
+				}
+				seen[propertyValue] = true;
 			}
+
+			// No duplicates found
+			return false;
+		} else {
+			return true
 		}
 	}
 
@@ -281,10 +304,12 @@ const CreateSchema = () => {
 								attribute: yup.array().of(
 									yup.object().shape({
 										attributeName: yup
-											.mixed()
+											.string()
+											.trim()
 											.required('Attribute name is required'),
 										displayName: yup
-											.mixed()
+											.string()
+											.trim()
 											.required('Display name is required'),
 									}),
 								),
@@ -395,27 +420,11 @@ const CreateSchema = () => {
 																					onChange={(e: any) => {
 																						formikHandlers.handleChange(e)
 																						formikHandlers.setFieldValue(`attribute[${index}].displayName`, e.target.value, true)
-																						const dta = isSimilarAttribute(index, formikHandlers.values.attribute, e.target.value)
-																						if (!dta.valid) {
-																							console.log(444433, dta, formikHandlers, attribute[dta.index].attributeName)
-																							formikHandlers.setFieldError(`attribute.${dta.index}.attributeName`, "Attribute Name already exist")
-																						}
 																					}}
 																					className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 																				/>
 																				{
-																					!Boolean(formikHandlers.touched.attribute && attribute[index] && formikHandlers?.errors?.attribute && formikHandlers?.errors?.attribute[index] && formikHandlers?.touched?.attribute[
-																						index]?.attributeName && formikHandlers?.errors?.attribute[index]?.attributeName) && formikHandlers?.values?.attribute && formikHandlers?.values?.attribute.length > 0 && formikHandlers?.values?.attribute[index]
-																						?.attributeName &&
-																					formikHandlers.values.attribute.filter((item, i) => {
-																						if (item.attributeName === (formikHandlers?.values?.attribute[index]
-																							?.attributeName)) {
-																							return {
-																								...item,
-																								index: i
-																							}
-																						}
-																					}).length > 1 && <label className="pt-1 text-red-500 text-xs h-5">Attribute name repeated</label>
+																					validSameAttribute(formikHandlers, index, 'attributeName') && <label className="pt-1 text-red-500 text-xs h-5">Attribute name already exists</label>
 																				}
 																				{formikHandlers.touched.attribute &&
 																					attribute[index] &&
@@ -491,7 +500,9 @@ const CreateSchema = () => {
 																					disabled={!areFirstInputsSelected}
 																					className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 																				/>
-
+																				{
+																					validSameAttribute(formikHandlers, index, 'displayName') && <label className="pt-1 text-red-500 text-xs h-5">Display name of attribute already exists</label>
+																				}
 																				{formikHandlers?.touched?.attribute &&
 																					attribute[index] &&
 																					formikHandlers?.errors?.attribute &&
@@ -629,7 +640,7 @@ const CreateSchema = () => {
 										<Button
 											type="submit"
 											color="bg-primary-700"
-											disabled={!formikHandlers.isValid || !btnState}
+											disabled={!formikHandlers.isValid || !btnState || inValidAttributes(formikHandlers, "attributeName") || inValidAttributes(formikHandlers, "displayName")}
 											className="text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 ring-2 ring-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-600 py-2 lg:py-2.5 ml-auto"
 											style={{
 												height: '2.6rem',
