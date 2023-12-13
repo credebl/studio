@@ -190,7 +190,7 @@ const ResetPassword = () => {
                                                         id="resetpassword"
                                                         name="password"
                                                         placeholder="Please enter password"
-                                                        className="truncate w-full bg-gray-200 px-4 py-2 text-gray-700 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                                                        className="truncate w-full bg-gray-200 pl-4 py-2 !pr-10 text-gray-700 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
                                                         type={passwordVisible ? 'text' : 'password'}
                                                         onFocus={(): void => {
                                                             setShowSuggestion(true);

@@ -29,11 +29,18 @@ interface IOrgData {
 	orgName: string;
 }
 
+export interface NetworkDetails {
+	id: string;
+	name: string;
+	indyNamespace: string;
+}
+
 export interface InvitationProps {
 	invitationId: string;
 	ecosytem: {
 		name: string;
 		logoUrl: string;
+		networkDetails: NetworkDetails[]
 	};
 }
 export interface EcosystemInvitation {
