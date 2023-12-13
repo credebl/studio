@@ -58,8 +58,8 @@ const CreateSchema = () => {
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [btnState, setBtnState] = useState<boolean>(false);
 	const initFormData: IFormData = {
-		schemaName: '',
-		schemaVersion: '',
+		schemaName: 'text',
+		schemaVersion: '1.2',
 		attribute: [
 			{
 				attributeName: '',
@@ -226,6 +226,30 @@ const CreateSchema = () => {
 		}
 	};
 
+	const isSimilarAttribute = (index, attributes, value) => {
+		console.log(76576, index, attributes, value)
+		const sameAttr = attributes.filter((item, i) => {
+			if (item.attributeName === value) {
+				return {
+					...item,
+					index: i
+				}
+			}
+		})
+		console.log(765767, sameAttr)
+		if (sameAttr.length > 0) {
+			return {
+				index,
+				valid: false
+			}
+		} else {
+			return {
+				index,
+				valid: true
+			}
+		}
+	}
+
 	return (
 		<div className="pt-2">
 			<div className="pl-6 mb-4 col-span-full xl:mb-2">
@@ -370,10 +394,29 @@ const CreateSchema = () => {
 																					disabled={!areFirstInputsSelected}
 																					onChange={(e: any) => {
 																						formikHandlers.handleChange(e)
-																						formikHandlers.setFieldValue(`attribute.${index}.displayName`, e.target.value, true)
+																						formikHandlers.setFieldValue(`attribute[${index}].displayName`, e.target.value, true)
+																						const dta = isSimilarAttribute(index, formikHandlers.values.attribute, e.target.value)
+																						if (!dta.valid) {
+																							console.log(444433, dta, formikHandlers, attribute[dta.index].attributeName)
+																							formikHandlers.setFieldError(`attribute.${dta.index}.attributeName`, "Attribute Name already exist")
+																						}
 																					}}
 																					className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 																				/>
+																				{
+																					!Boolean(formikHandlers.touched.attribute && attribute[index] && formikHandlers?.errors?.attribute && formikHandlers?.errors?.attribute[index] && formikHandlers?.touched?.attribute[
+																						index]?.attributeName && formikHandlers?.errors?.attribute[index]?.attributeName) && formikHandlers?.values?.attribute && formikHandlers?.values?.attribute.length > 0 && formikHandlers?.values?.attribute[index]
+																						?.attributeName &&
+																					formikHandlers.values.attribute.filter((item, i) => {
+																						if (item.attributeName === (formikHandlers?.values?.attribute[index]
+																							?.attributeName)) {
+																							return {
+																								...item,
+																								index: i
+																							}
+																						}
+																					}).length > 1 && <label className="pt-1 text-red-500 text-xs h-5">Attribute name repeated</label>
+																				}
 																				{formikHandlers.touched.attribute &&
 																					attribute[index] &&
 																					formikHandlers?.errors?.attribute &&
@@ -404,7 +447,7 @@ const CreateSchema = () => {
 																					name={`attribute.${index}.schemaDataType`}
 																					placeholder="Select"
 																					disabled={!areFirstInputsSelected}
-																					className="w-full h-select-input bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+																					className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 																				>
 																					{options.map((opt) => {
 																						return (
