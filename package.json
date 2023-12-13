@@ -47,7 +47,7 @@
 		"flowbite": "^1.7.0",
 		"flowbite-react": "^0.4.10",
 		"flowbite-typography": "^1.0.3",
-		"formik": "^2.4.2",
+		"formik": "^2.4.5",
 		"html2canvas": "^1.4.1",
 		"i": "^0.3.7",
 		"moment": "^2.29.4",

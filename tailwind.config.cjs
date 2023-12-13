@@ -47,6 +47,9 @@ module.exports = {
 					950: '#65DADA',
 				},
 			},
+			extend: {
+				textColor: ['hover', 'group-hover'],
+			},
 			fontFamily: {
 				sans: [
 					...defaultTheme.fontFamily.sans,
