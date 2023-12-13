@@ -3,7 +3,7 @@
 import * as yup from 'yup';
 
 import { Button, Card, Label } from 'flowbite-react';
-import { Field, FieldArray, Form, Formik } from 'formik';
+import { Field, FieldArray, Form, Formik, FormikConfig, FormikErrors, FormikHandlers, FormikHelpers, FormikProps } from 'formik';
 import {
 	apiStatusCodes,
 	schemaVersionRegex,
@@ -226,6 +226,53 @@ const CreateSchema = () => {
 		}
 	};
 
+	const validSameAttribute = (formikHandlers: FormikProps<IFormData>, index: number, field: "attributeName" | "displayName") => {
+		const attributeError: string | string[] | FormikErrors<IAttributes>[] | undefined = formikHandlers?.errors?.attribute
+		const attributeTouched = formikHandlers?.touched?.attribute
+		const attributeValue = formikHandlers?.values?.attribute
+		const isErrorAttribute = attributeError && attributeError.length > 0 && attributeError[index] && attributeError[index][field]
+		const isTouchedAttribute = attributeTouched && attributeTouched.length > 0 && attributeTouched[index] && attributeTouched[index][field]
+		const isValueAttribute = attributeValue && attributeValue.length > 0 && attributeValue[index] && attributeValue[index][field]
+
+		if (!(isTouchedAttribute && isErrorAttribute) && isValueAttribute) {
+			const isValid = attributeValue.filter((item: IAttributes, i: number) => {
+				const itemAttribute = item[field]?.trim()?.toLocaleLowerCase()
+				const enteredAttribute = attributeValue[index][field]?.trim()?.toLocaleLowerCase()
+				if ((itemAttribute && enteredAttribute) && itemAttribute === enteredAttribute) {
+					return {
+						...item,
+						index: i
+					}
+				}
+			}).length > 1
+			return isValid
+		} else {
+			return false
+		}
+	}
+
+	const inValidAttributes = (formikHandlers: FormikProps<IFormData>, propertyName: "attributeName" | "displayName") => {
+		const attributeValue: IAttributes[] = formikHandlers?.values?.attribute
+		const isValueAttribute = attributeValue && attributeValue.length > 0
+
+		if (isValueAttribute) {
+			const seen: {[key: string]: boolean} = {};
+
+			for (const obj of attributeValue) {
+				const propertyValue = obj[propertyName];
+				if (seen[propertyValue]) {
+					return true
+				}
+				seen[propertyValue] = true;
+			}
+
+			// No duplicates found
+			return false;
+		} else {
+			return true
+		}
+	}
+
 	return (
 		<div className="pt-2">
 			<div className="pl-6 mb-4 col-span-full xl:mb-2">
@@ -257,10 +304,12 @@ const CreateSchema = () => {
 								attribute: yup.array().of(
 									yup.object().shape({
 										attributeName: yup
-											.mixed()
+											.string()
+											.trim()
 											.required('Attribute name is required'),
 										displayName: yup
-											.mixed()
+											.string()
+											.trim()
 											.required('Display name is required'),
 									}),
 								),
@@ -370,10 +419,13 @@ const CreateSchema = () => {
 																					disabled={!areFirstInputsSelected}
 																					onChange={(e: any) => {
 																						formikHandlers.handleChange(e)
-																						formikHandlers.setFieldValue(`attribute.${index}.displayName`, e.target.value, true)
+																						formikHandlers.setFieldValue(`attribute[${index}].displayName`, e.target.value, true)
 																					}}
 																					className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 																				/>
+																				{
+																					validSameAttribute(formikHandlers, index, 'attributeName') && <label className="pt-1 text-red-500 text-xs h-5">Attribute name already exists</label>
+																				}
 																				{formikHandlers.touched.attribute &&
 																					attribute[index] &&
 																					formikHandlers?.errors?.attribute &&
@@ -404,7 +456,7 @@ const CreateSchema = () => {
 																					name={`attribute.${index}.schemaDataType`}
 																					placeholder="Select"
 																					disabled={!areFirstInputsSelected}
-																					className="w-full h-select-input bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+																					className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 																				>
 																					{options.map((opt) => {
 																						return (
@@ -448,7 +500,9 @@ const CreateSchema = () => {
 																					disabled={!areFirstInputsSelected}
 																					className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 																				/>
-
+																				{
+																					validSameAttribute(formikHandlers, index, 'displayName') && <label className="pt-1 text-red-500 text-xs h-5">Display name of attribute already exists</label>
+																				}
 																				{formikHandlers?.touched?.attribute &&
 																					attribute[index] &&
 																					formikHandlers?.errors?.attribute &&
@@ -586,7 +640,7 @@ const CreateSchema = () => {
 										<Button
 											type="submit"
 											color="bg-primary-700"
-											disabled={!formikHandlers.isValid || !btnState}
+											disabled={!formikHandlers.isValid || !btnState || inValidAttributes(formikHandlers, "attributeName") || inValidAttributes(formikHandlers, "displayName")}
 											className="text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 ring-2 ring-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-600 py-2 lg:py-2.5 ml-auto"
 											style={{
 												height: '2.6rem',
