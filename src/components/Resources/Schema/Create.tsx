@@ -3,7 +3,7 @@
 import * as yup from 'yup';
 
 import { Button, Card, Label } from 'flowbite-react';
-import { Field, FieldArray, Form, Formik } from 'formik';
+import { Field, FieldArray, Form, Formik, FormikConfig, FormikErrors, FormikHandlers, FormikHelpers, FormikProps } from 'formik';
 import {
 	apiStatusCodes,
 	schemaVersionRegex,
@@ -226,8 +226,8 @@ const CreateSchema = () => {
 		}
 	};
 
-	const validSameAttribute = (formikHandlers, index, field) => {
-		const attributeError = formikHandlers?.errors?.attribute
+	const validSameAttribute = (formikHandlers: FormikProps<IFormData>, index: number, field: "attributeName" | "displayName") => {
+		const attributeError: string | string[] | FormikErrors<IAttributes>[] | undefined = formikHandlers?.errors?.attribute
 		const attributeTouched = formikHandlers?.touched?.attribute
 		const attributeValue = formikHandlers?.values?.attribute
 		const isErrorAttribute = attributeError && attributeError.length > 0 && attributeError[index] && attributeError[index][field]
@@ -235,9 +235,9 @@ const CreateSchema = () => {
 		const isValueAttribute = attributeValue && attributeValue.length > 0 && attributeValue[index] && attributeValue[index][field]
 
 		if (!(isTouchedAttribute && isErrorAttribute) && isValueAttribute) {
-			const isValid = attributeValue.filter((item, i) => {
-				const itemAttribute = item[field]?.trim()
-				const enteredAttribute = attributeValue[index][field]?.trim()
+			const isValid = attributeValue.filter((item: IAttributes, i: number) => {
+				const itemAttribute = item[field]?.trim()?.toLocaleLowerCase()
+				const enteredAttribute = attributeValue[index][field]?.trim()?.toLocaleLowerCase()
 				if ((itemAttribute && enteredAttribute) && itemAttribute === enteredAttribute) {
 					return {
 						...item,
@@ -251,17 +251,17 @@ const CreateSchema = () => {
 		}
 	}
 
-	const inValidAttributes = (formikHandlers, propertyName) => {
-		const attributeValue = formikHandlers?.values?.attribute
+	const inValidAttributes = (formikHandlers: FormikProps<IFormData>, propertyName: "attributeName" | "displayName") => {
+		const attributeValue: IAttributes[] = formikHandlers?.values?.attribute
 		const isValueAttribute = attributeValue && attributeValue.length > 0
 
 		if (isValueAttribute) {
-			const seen = {};
+			const seen: {[key: string]: boolean} = {};
 
 			for (const obj of attributeValue) {
 				const propertyValue = obj[propertyName];
 				if (seen[propertyValue]) {
-					return true;
+					return true
 				}
 				seen[propertyValue] = true;
 			}

@@ -61,10 +61,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 
 	const getUserDetails = async (access_token: string) => {
 		const userDetails = await getUserProfile(access_token);
-		console.log(344, userDetails)
-
 		const userEmail = await getFromLocalStorage(storageKeys.LOGIN_USER_EMAIL)
-		console.log(76576, userEmail)
 
 		const { data } = userDetails as AxiosResponse;
 		if (data?.data?.userOrgRoles?.length > 0) {
@@ -102,7 +99,9 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 		try {
 			setFidoLoader(true);
 
-			const obj = { userName: email };
+			const obj = {
+				userName: email?.trim()?.toLocaleLowerCase()
+			};
 
 			const generateAuthenticationResponse: any =
 				await generateAuthenticationOption(obj);

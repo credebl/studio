@@ -72,7 +72,7 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 	}
 	const signInUser = async (values: passwordValue) => {
 		const payload: SignInUser3Props = {
-			email: email,
+			email: email?.trim()?.toLocaleLowerCase(),
 			isPasskey: false,
 			password: passwordEncryption(values.password)
 		}
