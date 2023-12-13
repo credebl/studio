@@ -58,8 +58,8 @@ const CreateSchema = () => {
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [btnState, setBtnState] = useState<boolean>(false);
 	const initFormData: IFormData = {
-		schemaName: 'text',
-		schemaVersion: '1.2',
+		schemaName: '',
+		schemaVersion: '',
 		attribute: [
 			{
 				attributeName: '',
