@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { pathRoutes } from '../../config/pathRoutes';
 import BreadCrumbs from '../BreadCrumbs';
 import BackButton from '../../commonComponents/backbutton';
-import { Alert, Button, Card } from 'flowbite-react';
+import { Button, Card } from 'flowbite-react';
 import Select from 'react-select';
 import { AlertComponent } from '../AlertComponent';
 import IssuancePopup from './IssuancePopup';
@@ -11,31 +11,13 @@ import type { AxiosResponse } from 'axios';
 import { getFromLocalStorage } from '../../api/Auth';
 import { getSchemaCredDef } from '../../api/BulkIssuance';
 import { storageKeys, apiStatusCodes } from '../../config/CommonConstant';
-import type {
-	IAttributes,
-	ICredentials,
-	IUploadMessage,
-	IValues,
-} from './interface';
-import { ErrorMessage, Field, FieldArray, Form, Formik } from 'formik';
+import type { IAttributes, ICredentials, IValues } from './interface';
+import { Field, FieldArray, Form, Formik } from 'formik';
 import CustomSpinner from '../CustomSpinner';
 import { issueOobEmailCredential } from '../../api/issuance';
 import { EmptyListMessage } from '../EmptyListComponent';
+import ResetPopup from './ResetPopup';
 
-interface IFormData {
-	emailId: string;
-	attributes: Attributes[];
-}
-interface IssuanceFormPayload {
-	emailId: string;
-	attributes: Attributes[];
-	credentialDefinitionId: string;
-	orgId: string;
-}
-interface Attributes {
-	value: string;
-	name: string;
-}
 const EmailIssuance = () => {
 	const [formData, setFormData] = useState();
 	const [userData, setUserData] = useState();
@@ -44,12 +26,15 @@ const EmailIssuance = () => {
 	const [credentialSelected, setCredentialSelected] = useState<string>('');
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [batchName, setBatchName] = useState('');
+	const [openResetModal, setOpenResetModal] = useState<boolean>(false);
 	const [attributes, setAttributes] = useState([]);
 	const [success, setSuccess] = useState<string | null>(null);
 	const [failure, setFailure] = useState<string | null>(null);
 	const [isEditing, setIsEditing] = useState(false);
 	const [issueLoader, setIssueLoader] = useState(false);
 	const inputRef = useRef(null);
+	console.log('11openModal', openModal);
+	console.log('22openModal', openResetModal);
 
 	const getSchemaCredentials = async () => {
 		try {
@@ -128,17 +113,14 @@ const EmailIssuance = () => {
 					setTimeout(() => {
 						setSuccess(null);
 					}, 3000);
-					handleReset()
+					handleReset();
 					setTimeout(() => {
-						// setShowPopup(false);
 						window.location.href = pathRoutes?.organizations?.issuedCredentials;
-					}, 1000);
+					}, 500);
 				} else {
 					setFailure(response as string);
 					setLoading(false);
 				}
-
-				// goToIssueCredList();
 			} else {
 				setLoading(false);
 				setFailure(response as string);
@@ -146,10 +128,6 @@ const EmailIssuance = () => {
 					setFailure(null);
 				}, 4000);
 			}
-
-			setTimeout(() => {
-				// setShowPopup(false);
-			}, 4000);
 		}
 	};
 
@@ -176,6 +154,7 @@ const EmailIssuance = () => {
 			(item: { value: string }) =>
 				item.value && item.value === credentialSelected,
 		);
+
 	const handleEditClick = () => {
 		if (isCredSelected) {
 			setIsEditing(!isEditing);
@@ -193,8 +172,9 @@ const EmailIssuance = () => {
 	};
 
 	const handleReset = () => {
-		setCredentialSelected(null)
-		setBatchName('')
+		setCredentialSelected(null);
+		setBatchName('');
+		setOpenResetModal(false);
 	};
 
 	const handleCloseConfirmation = () => {
@@ -204,19 +184,21 @@ const EmailIssuance = () => {
 	const handleOpenConfirmation = () => {
 		setOpenModal(true);
 	};
+	const handleResetCloseConfirmation = () => {
+		setOpenResetModal(false);
+	};
 
+	const handleResetOpenConfirmation = () => {
+		setOpenResetModal(true);
+	};
 	const MailError = ({
 		handler,
 		formindex,
 		error,
-		attIndex,
-		length,
 	}: {
 		handler: { touched: boolean; errors: string; formData: Array<T>[] };
 		formindex: Number;
 		error: string;
-		attIndex?: number;
-		length?: number;
 	}) => {
 		if (error === 'email') {
 			return (
@@ -235,18 +217,16 @@ const EmailIssuance = () => {
 			return (
 				<>
 					{handler?.touched?.formData &&
-						handler?.touched?.formData &&
+						handler?.touched?.formData[formindex]?.attributes &&
 						handler?.errors?.formData &&
-						handler?.errors?.formData[formindex] &&
-						handler?.errors?.formData[formindex].attributes && (
+						handler?.errors?.formData[formindex]?.attributes && (
 							<label style={{ color: 'red' }} className="text-sm font-light">
-								Attributes are required
+								All attributes are required{' '}
 							</label>
 						)}
 				</>
 			);
 		}
-
 		return null;
 	};
 
@@ -322,7 +302,10 @@ const EmailIssuance = () => {
 													<div className="flex flex-wrap overflow-hidden">
 														{selectedCred?.schemaAttributes.map(
 															(element: IAttributes) => (
-																<div key={element.attributeName} className='truncate'>
+																<div
+																	key={element.attributeName}
+																	className="truncate"
+																>
 																	<span className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
 																		{element.attributeName}
 																	</span>
@@ -335,6 +318,7 @@ const EmailIssuance = () => {
 										)}
 									</div>
 								</div>
+								{/* required for batch application */}
 								{/* <div className="flex justify-between h-10">
 									<input
 										ref={inputRef}
@@ -378,18 +362,12 @@ const EmailIssuance = () => {
 					</Card>
 					<div
 						className={`${
-							isCredSelected
-								? 'min-h-100/21rem'
-								: 'md:h-[300px] min-h-100/21rem'
+							isCredSelected ? '' : 'md:h-[300px] '
 						} flex flex-col justify-between w-full`}
 					>
 						<Card>
 							<div
-								className={`${
-									isCredSelected
-										? 'min-h-100/21rem'
-										: 'md:h-[300px] min-h-100/21rem'
-								} w-full`}
+								className={`${isCredSelected ? '' : 'md:h-[300px] '} w-full`}
 							>
 								<div className="flex justify-between mb-4 items-center ml-1">
 									<div>
@@ -452,39 +430,19 @@ const EmailIssuance = () => {
 																			attributes: Yup.array().of(
 																				Yup.object().shape({
 																					value: Yup.string().required(
-																						'Attribute value is required',
+																						'All attribute are required',
 																					),
 																				}),
 																			),
-																			// 	.min(
-																			// 		1,
-																			// 		'At least one attribute value should be filled',
-																			// 	),
 																		}),
 																	),
 																})}
-																// {Yup.object().shape({
-																// 	email: Yup.string()
-																// 		.email('Invalid email address')
-																// 		.required('Email is required'),
-																// 	attributes: Yup.array().of(
-																// 		Yup.object().shape({
-																// 			value: Yup.string().required(
-																// 				'Attribute value is required',
-																// 			),
-																// 		}),
-																// 	),
-																// })}
 																validateOnBlur
 																validateOnChange
 																enableReinitialize
 																onSubmit={async (values): Promise<void> => {
 																	setUserData(values);
-																	// setShowPopup(true);
-																	// console.log('12112values', values);
 																	handleOpenConfirmation();
-
-																	// await confirmOOBCredentialIssuance(values);
 																}}
 															>
 																{(formikHandlers): JSX.Element => (
@@ -512,11 +470,6 @@ const EmailIssuance = () => {
 																									.formData.length > 0 &&
 																								arrayHelpers.form.values.formData.map(
 																									(formData1, index) => {
-																										console.log(
-																											3435345,
-																											formData1,
-																											index,
-																										);
 																										return (
 																											<div
 																												key={index}
@@ -681,6 +634,7 @@ const EmailIssuance = () => {
 																															),
 																														)}
 																												</div>
+																												{/* // required for validation of only one attribute is required */}
 																												{/* {!formData1.attributes.some(
 																													(item) => item?.value,
 																												) && (
@@ -689,13 +643,13 @@ const EmailIssuance = () => {
 																														attribute should
 																														have a value
 																													</div>
-																												)} */} 
+																												)} */}
 																											</div>
 																										);
 																									},
 																								)}
 																						</div>
-																						<div className="absolute bottom-[60px] flex justify-center w-full">
+																						<div className="absolute flex justify-center w-full">
 																							<Button
 																								onClick={() =>
 																									arrayHelpers.push({
@@ -710,7 +664,14 @@ const EmailIssuance = () => {
 																										),
 																									})
 																								}
-																								className="hover:!text-white hover:text-primary-700 dark:hover:!bg-secondary-800 hover:!bg-primary-800 dark:hover:bg-secondary-700 dark:hover:!text-black text-primary-700 dark:text-white w-40 left-0 right-0 m-auto flex flex-row items-center gap-2 rounded-full border text-primary-700 bg-white dark:bg-gray-700 focus:ring-primary-300 border-primary-500 dark:border-gray-300 dark:bg-gray-600 dark:focus:ring-primary-800"
+																								disabled={
+																									arrayHelpers.form.values
+																										.formData.length >= 10 ||
+																									!formikHandlers?.isValid
+																								}
+																								className={`bottom-0 focus:ring-primary-700 focus:ring-2 dark:focus:ring-gray-500
+																				text-primary-700 hover:text-white dark:disabled:text-secondary-disabled disabled:text-primary-disabled bg-white hover:enabled:bg-primary-700 dark:text-white dark:bg-gray-700 dark:hover:enabled:!bg-gray-500 dark:hover:enabled:!text-gray-50 border border-primary-700 disabled:border-primary-disabled dark:border-gray-600 absolute w-max left-[50%] translate-x-[-50%] m-auto flex flex-row items-center rounded-full  
+																				 disabled:opacity-100 group`}
 																								type="button"
 																								style={{
 																									height: '2rem',
@@ -720,25 +681,17 @@ const EmailIssuance = () => {
 																							>
 																								<svg
 																									xmlns="http://www.w3.org/2000/svg"
-																									width="22"
-																									height="22"
 																									fill="none"
-																									viewBox="0 0 17 16"
+																									viewBox="0 0 24 24"
+																									stroke-width="1.5"
+																									stroke="currentColor"
+																									className="w-6 h-6"
 																								>
-																									<rect
-																										width="15"
-																										height="15"
-																										x="1.258"
-																										y=".5"
-																										fill="currentColor"
-																										stroke="#fff"
-																										rx="7.5"
-																										className="text-primary-700 hover:bg-white dark:text-gray-700"
-																									></rect>
 																									<path
-																										fill="#fff"
-																										d="M8.596 11.068V5.132h.882v5.936h-.882ZM5.992 8.52v-.826h6.09v.826h-6.09Z"
-																									></path>
+																										stroke-linecap="round"
+																										stroke-linejoin="round"
+																										d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+																									/>
 																								</svg>
 																								<span className="ml-1 my-0.5">
 																									Add another
@@ -755,9 +708,15 @@ const EmailIssuance = () => {
 																			isProcessing={issueLoader}
 																			onSuccess={confirmOOBCredentialIssuance}
 																		/>
+																		<ResetPopup
+																			openModal={openResetModal}
+																			closeModal={handleResetCloseConfirmation}
+																			isProcessing={issueLoader}
+																			onSuccess={handleReset}
+																		/>
 																		<div className="flex justify-end gap-4">
 																			<Button
-																				type="reset"
+																				type="button"
 																				color="bg-primary-800"
 																				disabled={loading}
 																				className="dark:text-white bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-base px-4 lg:px-5 py-2 lg:py-2.5 ml-auto dark:hover:text-black"
@@ -766,7 +725,7 @@ const EmailIssuance = () => {
 																					width: '6rem',
 																					minWidth: '2rem',
 																				}}
-																				onClick={handleReset}
+																				onClick={handleResetOpenConfirmation}
 																			>
 																				<svg
 																					xmlns="http://www.w3.org/2000/svg"
@@ -787,6 +746,7 @@ const EmailIssuance = () => {
 																				type="submit"
 																				color="bg-primary-800"
 																				className="text-white px-6 py-1 items-center justify-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+																				disabled={!formikHandlers?.isValid}
 																			>
 																				<svg
 																					xmlns="http://www.w3.org/2000/svg"
