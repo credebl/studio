@@ -13,6 +13,7 @@ export interface CredDefData {
 }
 
 export interface RequestProof {
+	createDateTime: string;
 	_tags: {
 	  state: string;
 	  threadId: string;

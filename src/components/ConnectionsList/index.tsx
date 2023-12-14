@@ -14,6 +14,7 @@ import CustomSpinner from '../CustomSpinner';
 import { EmptyListMessage } from '../EmptyListComponent';
 import { getFromLocalStorage } from '../../api/Auth';
 import { getOrgDetails } from '../../config/ecosystem';
+import React from 'react';
 
 const ConnectionList = () => {
 	const [connectionList, setConnectionList] = useState<TableData[]>([]);
@@ -34,15 +35,24 @@ const ConnectionList = () => {
 			try {
 				const response = await getConnectionsByOrg();
 				const { data } = response as AxiosResponse;
+
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-					const connections = data?.data?.map(
-						(ele: { theirLabel: string; id: string; createdAt: string }) => {
+					const connections = data?.data?.data?.map(
+						(ele: {
+							connectionId: any;
+							createDateTime: any;
+							theirLabel: string;
+							id: string;
+							createdAt: string;
+						}) => {
 							const userName = ele?.theirLabel
 								? ele.theirLabel
 								: 'Not available';
-							const connectionId = ele.id ? ele.id : 'Not available';
-							const createdOn = ele?.createdAt
-								? ele?.createdAt
+							const connectionId = ele.connectionId
+								? ele.connectionId
+								: 'Not available';
+							const createdOn = ele?.createDateTime
+								? ele?.createDateTime
 								: 'Not available';
 							return {
 								data: [

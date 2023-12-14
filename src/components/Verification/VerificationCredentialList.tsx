@@ -78,7 +78,7 @@ const VerificationCredentialList = () => {
 
 					if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 
-						const credentialList = data?.data?.map((requestProof: RequestProof) => {
+						const credentialList = data?.data?.data?.map((requestProof: RequestProof) => {
 							return {
 								data: [
 									{ data: requestProof?.id ? requestProof?.id : 'Not available' },
@@ -87,7 +87,7 @@ const VerificationCredentialList = () => {
 											? requestProof?.connectionId
 											: 'Not available',
 									},
-									{ data: <DateTooltip date={requestProof.updatedAt}> {dateConversion(requestProof.updatedAt)} </DateTooltip> },
+									{ data: <DateTooltip date={requestProof.createDateTime}> {dateConversion(requestProof.createDateTime)} </DateTooltip> },
 									{
 										data: (
 											<span

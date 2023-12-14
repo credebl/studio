@@ -34,10 +34,10 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 		const { data } = response as AxiosResponse
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			const connections = data?.data?.map((ele) => {
+			const connections = data?.data?.data?.map((ele) => {
 				const userName = ele?.theirLabel ? ele.theirLabel : 'Not available';
-				const connectionId = ele.id ? ele.id : 'Not available'
-				const createdOn = ele?.createdAt ? ele?.createdAt : 'Not available'
+				const connectionId = ele.connectionId ? ele.connectionId : 'Not available'
+				const createdOn = ele?.createDateTime ? ele?.createDateTime : 'Not available'
 				return {
 					data: [{
 						data: <div className="flex items-center" id="issuance_checkbox">

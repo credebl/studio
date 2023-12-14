@@ -24,6 +24,8 @@ import { getFromLocalStorage } from '../../api/Auth';
 import { getOrgDetails } from '../../config/ecosystem';
 
 interface IssuedCredential {
+	createDateTime: string;
+	schemaId: any;
 	metadata: { [x: string]: { schemaId: string } };
 	connectionId: string;
 	updatedAt: string;
@@ -49,15 +51,10 @@ const CredentialList = () => {
 			const { data } = response as AxiosResponse;
 
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				const credentialList = data?.data?.map(
+				const credentialList = data?.data?.data?.map(
 					(issuedCredential: IssuedCredential) => {
-						const schemaName = issuedCredential.metadata[
-							'_anoncreds/credential'
-						].schemaId
-							? issuedCredential.metadata['_anoncreds/credential'].schemaId
-									.split(':')
-									.slice(2)
-									.join(':')
+						const schemaName = issuedCredential.schemaId
+							? issuedCredential.schemaId.split(':').slice(2).join(':')
 							: 'Not available';
 
 						return {
@@ -70,9 +67,9 @@ const CredentialList = () => {
 								{ data: schemaName },
 								{
 									data: (
-										<DateTooltip date={issuedCredential.updatedAt}>
+										<DateTooltip date={issuedCredential.createDateTime}>
 											{' '}
-											{dateConversion(issuedCredential.updatedAt)}{' '}
+											{dateConversion(issuedCredential.createDateTime)}{' '}
 										</DateTooltip>
 									),
 								},
