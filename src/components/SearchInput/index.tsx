@@ -5,7 +5,7 @@ const SearchInput = ({onInputChange}) => {
     return (
     <div>
         <label className="sr-only">Search</label>
-	<div className="relative mt-1 lg:w-96">
+	<div className="relative lg:w-96">
 		<div
 			className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
 		>

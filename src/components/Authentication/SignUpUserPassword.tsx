@@ -185,7 +185,7 @@ const SignUpUserPassword = ({
 															id="signuppassword"
 															name="password"
 															placeholder="Please enter password"
-															className="truncate w-full bg-gray-200 px-4 py-2 text-gray-700 dark:text-white dark:bg-gray-800 text-sm rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
+															className="truncate w-full bg-gray-200 pl-4 !pr-10 py-2 text-gray-700 dark:text-white dark:bg-gray-800 text-sm rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
 															type={passwordVisible ? 'text' : 'password'}
 															onFocus={(): void => {
 																setShowSuggestion(true);
@@ -241,7 +241,7 @@ const SignUpUserPassword = ({
 															id="signupconfirmpassword"
 															name="confirmPassword"
 															placeholder="Please re-enter password"
-															className="truncate w-full bg-gray-200 px-4 py-2 text-gray-700 dark:text-white dark:bg-gray-800 text-sm rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
+															className="truncate w-full bg-gray-200 pl-4 !pr-10 py-2 text-gray-700 dark:text-white dark:bg-gray-800 text-sm rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
 															type={
 																confirmPasswordVisible ? 'text' : 'password'
 															}

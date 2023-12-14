@@ -69,7 +69,7 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 	}
 	const signInUser = async (values: passwordValue) => {
 		const payload: SignInUser3Props = {
-			email: email,
+			email: email?.trim()?.toLocaleLowerCase(),
 			isPasskey: false,
 			password: passwordEncryption(values.password)
 		}
@@ -239,7 +239,7 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 													<div className="relative">
 														<Field id='signinpassword'
 															name='password'
-															className="truncate w-full dark:text-white bg-gray-200 dark:bg-gray-800 px-4 py-2 text-gray-900 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
+															className="truncate w-full dark:text-white bg-gray-200 dark:bg-gray-800 px-4 py-2 !pr-10 text-gray-900 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
 															placeholder="Please enter your password"
 															type={passwordVisible ? 'text' : 'password'} />
 

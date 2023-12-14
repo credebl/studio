@@ -171,36 +171,34 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 			<div className="mb-4 col-span-full xl:mb-2">
 				<BreadCrumbs />
 			</div>
-			
+
 			<div>
 				<div
 					className=""
 				>
-
 					<div className="mb-4 flex justify-between flex-wrap gap-4 items-center">
-						<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-				Schemas
-			</h1>
-						<div id='schemasSearchInput' className='mb-2 pl-0 sm:pl-2 flex space-x-2 items-end ml-auto'>
-							<SearchInput
-								onInputChange={onSearch}
-							/>
+						<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white mr-auto">
+							Schemas
+						</h1>
+						<SearchInput
+							onInputChange={onSearch}
+						/>
 
-							<select onChange={handleFilter} id="schamfilter"
-								className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 gap-4">
-								<option selected>Organization's schema</option>
-								{options.map((opt) => (
-									<option
-										key={opt}
-										className=""
-										value={opt}
-									>
-										{opt}
-									</option>
-								))}
-							</select>
+						<select onChange={handleFilter} id="schamfilter"
+							className="min-h-[42px] h-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+						>
+							<option selected>Organization's schema</option>
+							{options.map((opt) => (
+								<option
+									key={opt}
+									className=""
+									value={opt}
+								>
+									{opt}
+								</option>
+							))}
+						</select>
 
-						</div>
 						<div className='flex space-x-2'>
 							{walletStatus ? <RoleViewButton
 								buttonTitle={createSchemaTitle.title}
