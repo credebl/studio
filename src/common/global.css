@@ -165,6 +165,18 @@ ul.timelinestatic {
 	@apply dark:bg-gray-900;
 }
 
+ .search-dropdown .select__control .select__value-container .select__input-container {
+  width: 1px;
+ }
+ 
+ .custom-card:hover {
+  background-color: #1d4ed8;
+}
+
+.custom-card:hover h5,
+.custom-card:hover p {
+  color: white;
+}
 .search-dropdown
 	.select__control
 	.select__value-container
