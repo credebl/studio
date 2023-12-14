@@ -1,8 +1,8 @@
 'use client';
 
 import type { AxiosResponse } from 'axios';
-import { useEffect, useState } from 'react';
-import { getConnectionsByOrg } from '../../api/connection';
+import { ChangeEvent, useEffect, useState } from 'react';
+import { IConnectionListAPIParameter, getConnectionsByOrg } from '../../api/connection';
 import DataTable from '../../commonComponents/datatable';
 import type { TableData } from '../../commonComponents/datatable/interface';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
@@ -14,17 +14,25 @@ import CustomSpinner from '../CustomSpinner';
 import { EmptyListMessage } from '../EmptyListComponent';
 import { getFromLocalStorage } from '../../api/Auth';
 import { getOrgDetails } from '../../config/ecosystem';
+import { Pagination } from 'flowbite-react';
+import SearchInput from '../SearchInput';
 
+const initialPageState = {
+	itemPerPage: 4,
+	page: 1,
+	search: "",
+	sortBy: "createDateTime",
+	sortingOrder: "ASC",
+	allSearch: ""
+};
 const ConnectionList = () => {
+	const [listAPIParameter, setListAPIParameter] = useState(initialPageState)
 	const [connectionList, setConnectionList] = useState<TableData[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
+	const [totalItem, setTotalItem] = useState(0)
 
-	useEffect(() => {
-		getConnections();
-	}, []);
-
-	const getConnections = async () => {
+	const getConnections = async (apiParameter: IConnectionListAPIParameter) => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		const orgData = await getOrgDetails();
 		const checkWalletCreated = Boolean(orgData.orgDid);
@@ -32,17 +40,18 @@ const ConnectionList = () => {
 		if (orgId && checkWalletCreated) {
 			setLoading(true);
 			try {
-				const response = await getConnectionsByOrg();
+				const response = await getConnectionsByOrg(apiParameter);
 				const { data } = response as AxiosResponse;
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-					const connections = data?.data?.map(
-						(ele: { theirLabel: string; id: string; createdAt: string }) => {
+					setTotalItem(data?.data.totalItems)
+					const connections = data?.data?.data?.map(
+						(ele: { theirLabel: string; connectionId: string; createDateTime: string }) => {
 							const userName = ele?.theirLabel
 								? ele.theirLabel
 								: 'Not available';
-							const connectionId = ele.id ? ele.id : 'Not available';
-							const createdOn = ele?.createdAt
-								? ele?.createdAt
+							const connectionId = ele.connectionId ? ele.connectionId : 'Not available';
+							const createdOn = ele?.createDateTime
+								? ele?.createDateTime
 								: 'Not available';
 							return {
 								data: [
@@ -77,11 +86,25 @@ const ConnectionList = () => {
 		}
 	};
 
+
 	const header = [
 		{ columnName: 'User' },
 		{ columnName: 'Connection ID' },
 		{ columnName: 'Created on' },
 	];
+
+	//onChange of Search input text
+	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setListAPIParameter({
+			...listAPIParameter,
+			search: e.target.value,
+			page: 1
+		})
+	};
+
+	useEffect(() => {
+		getConnections(listAPIParameter)
+	}, [listAPIParameter])
 
 	return (
 		<div className="p-4" id="connection_list">
@@ -93,6 +116,9 @@ const ConnectionList = () => {
 				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 					Connections
 				</h1>
+				<div>
+					<SearchInput onInputChange={searchInputChange} />
+				</div>
 			</div>
 			{error && (
 				<AlertComponent
@@ -108,16 +134,34 @@ const ConnectionList = () => {
 					<CustomSpinner />
 				</div>
 			) : connectionList && connectionList?.length > 0 ? (
-				<div
-					id="issuance_datatable"
-					className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
-				>
-					<DataTable
-						header={header}
-						data={connectionList}
-						loading={loading}
-					></DataTable>
-				</div>
+				<>
+					<div
+						id="issuance_datatable"
+						className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
+					>
+						<DataTable
+							header={header}
+							data={connectionList}
+							loading={loading}
+						></DataTable>
+					</div>
+
+					{
+						Math.ceil(totalItem / listAPIParameter?.itemPerPage) > 1 &&
+						<div className="flex items-center justify-end my-4">
+							<Pagination
+								currentPage={listAPIParameter?.page}
+								onPageChange={(page) => {
+									setListAPIParameter(prevState => ({
+										...prevState,
+										page: page
+									}));
+								}}
+								totalPages={Math.ceil(totalItem / listAPIParameter?.itemPerPage)}
+							/>
+						</div>
+					}
+				</>
 			) : (
 				<div className="bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 					<EmptyListMessage
