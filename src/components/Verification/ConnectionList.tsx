@@ -1,15 +1,25 @@
 'use client';
 
 import type { AxiosResponse } from "axios";
-import {  useEffect, useState } from "react";
-import { getConnectionsByOrg } from "../../api/connection";
+import React, { ChangeEvent, useEffect, useState } from "react";
+import { IConnectionListAPIParameter, getConnectionsByOrg } from "../../api/connection";
 import DataTable from "../../commonComponents/datatable";
 import type { TableData } from "../../commonComponents/datatable/interface";
 import { apiStatusCodes } from "../../config/CommonConstant";
 import { AlertComponent } from "../AlertComponent";
 import { dateConversion } from "../../utils/DateConversion";
 import DateTooltip from "../Tooltip";
-import React from "react";
+import SearchInput from "../SearchInput";
+import { Pagination } from "flowbite-react";
+
+const initialPageState = {
+	itemPerPage: 9,
+	page: 1,
+	search: "",
+	sortBy: "createDateTime",
+	sortingOrder: "DESC",
+	allSearch: ""
+};
 
 const ConnectionList = (props: { selectConnection: (connections: TableData[]) => void; }) => {
 
@@ -18,24 +28,34 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 	const [selectedConnectionList, setSelectedConnectionList] = useState<TableData[]>([])
 
 	const [loading, setLoading] = useState<boolean>(false)
-	const [searchText, setSearchText] = useState("");
+	const [listAPIParameter, setListAPIParameter] = useState<IConnectionListAPIParameter>(initialPageState)
+	const [totalItem, setTotalItem] = useState(0)
 	const [error, setError] = useState<string | null>(null)
 
 	//This useEffect is called when the searchText changes 
 	useEffect(() => {
-		getConnectionsVerification()
-	}, [])
+		getConnectionsVerification(listAPIParameter)
+	}, [listAPIParameter])
 
-	const getConnectionsVerification = async () => {
+	//onChange of Search input text
+	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setListAPIParameter({
+			...listAPIParameter,
+			search: e.target.value,
+			page: 1
+		})
+	};
+
+	const getConnectionsVerification = async (apiParameter: IConnectionListAPIParameter) => {
 		setLoading(true)
-		const response = await getConnectionsByOrg();
-		const { data } = response as AxiosResponse
-
+		const response = await getConnectionsByOrg(apiParameter);
+		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			const connections = data?.data?.map((ele) => {
+			setTotalItem(data?.data.totalItems)
+			const connections = data?.data?.data?.map((ele: { theirLabel: string, connectionId: string, createDateTime: string }) => {
 				const userName = ele?.theirLabel ? ele?.theirLabel : 'Not available';
-				const connectionId = ele?.id ? ele?.id : 'Not available'
-				const createdOn = ele?.createdAt ? ele?.createdAt : 'Not available'
+				const connectionId = ele?.connectionId ? ele?.connectionId : 'Not available'
+				const createdOn = ele?.createDateTime ? ele?.createDateTime : 'Not available'
 				return {
 					data: [{
 						data: <div className="flex items-center" id="verification_checkbox">
@@ -43,25 +63,27 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 								const inputElement = event.target as HTMLInputElement;
 								selectConnection(userName, connectionId, inputElement.checked)
 							}}
-								value="" 
+								value=""
 								className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-lg focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 cursor-pointer" />
 						</div>
 					},
-					{ data: userName }, 
-					{ data: connectionId }, 
-					{data:<DateTooltip date={createdOn} id="connectionlist" >  {dateConversion(createdOn)}  </DateTooltip>},
+					{ data: userName },
+					{ data: connectionId },
+					{ data: <DateTooltip date={createdOn} id="connectionlist" >  {dateConversion(createdOn)}  </DateTooltip> },
 					]
 				}
 			})
 
 			setConnectionList(connections)
+			setError(null)
 		} else {
+			setConnectionList([])
 			setError(response as string)
 		}
 
 		setLoading(false)
 	}
-	
+
 	const verification_header = [
 		{ columnName: '', width: 'w-0.5' },
 		{ columnName: 'User' },
@@ -88,7 +110,6 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 
 	useEffect(() => {
 		props.selectConnection(selectedConnectionList);
-
 	}, [selectedConnectionList])
 
 	return (
@@ -98,8 +119,11 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 					Connection List
 				</h1>
+				<div>
+					<SearchInput onInputChange={searchInputChange} />
+				</div>
 			</div>
-			<AlertComponent 
+			<AlertComponent
 				message={error}
 				type={'failure'}
 				onAlertClose={() => {
@@ -110,6 +134,21 @@ const ConnectionList = (props: { selectConnection: (connections: TableData[]) =>
 				className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 				<DataTable header={verification_header} data={connectionList} loading={loading} ></DataTable>
 			</div>
+			{
+				Math.ceil(totalItem / listAPIParameter?.itemPerPage) > 1 &&
+				<div className="flex items-center justify-end my-4">
+					<Pagination
+						currentPage={listAPIParameter?.page}
+						onPageChange={(page: number) => {
+							setListAPIParameter(prevState => ({
+								...prevState,
+								page
+							}));
+						}}
+						totalPages={Math.ceil(totalItem / listAPIParameter?.itemPerPage)}
+					/>
+				</div>
+			}
 		</div>
 	)
 }

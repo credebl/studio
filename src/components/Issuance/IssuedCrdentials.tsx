@@ -1,18 +1,17 @@
 'use client';
 
-import { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { IssueCredential, IssueCredentialUserText } from '../../common/enums';
 
 import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
-import { Button } from 'flowbite-react';
+import { Button, Pagination } from 'flowbite-react';
 import CustomSpinner from '../CustomSpinner';
 import DataTable from '../../commonComponents/datatable';
 import DateTooltip from '../Tooltip';
 import { EmptyListMessage } from '../EmptyListComponent';
 import { Features } from '../../utils/enums/features';
-import React from 'react';
 import RoleViewButton from '../RoleViewButton';
 import SearchInput from '../SearchInput';
 import type { TableData } from '../../commonComponents/datatable/interface';
@@ -22,144 +21,167 @@ import { getIssuedCredentials } from '../../api/issuance';
 import { pathRoutes } from '../../config/pathRoutes';
 import { getFromLocalStorage } from '../../api/Auth';
 import { getOrgDetails } from '../../config/ecosystem';
+import type { IConnectionListAPIParameter } from '../../api/connection';
 
 interface IssuedCredential {
 	metadata: { [x: string]: { schemaId: string } };
 	connectionId: string;
-	updatedAt: string;
+	createDateTime: string;
 	state: string;
 	isRevocable: boolean;
+	schemaId: string;
 }
+
+const initialPageState = {
+	itemPerPage: 9,
+	page: 1,
+	search: "",
+	sortBy: "createDateTime",
+	sortingOrder: "DESC",
+	allSearch: ""
+};
+
 const CredentialList = () => {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
-	const [searchText, setSearchText] = useState('');
 	const [issuedCredList, setIssuedCredList] = useState<TableData[]>([]);
 	const [walletCreated, setWalletCreated] = useState(false);
+	const [listAPIParameter, setListAPIParameter] = useState<IConnectionListAPIParameter>(initialPageState)
+	const [totalItem, setTotalItem] = useState(0)
 
-	const getIssuedCredDefs = async () => {
+	const getIssuedCredDefs = async (listAPIParameter: IConnectionListAPIParameter) => {
 		setLoading(true);
-		const orgData = await getOrgDetails();
-		const isWalletCreated = Boolean(orgData.orgDid);
-		setWalletCreated(isWalletCreated);
-		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-		if (orgId && isWalletCreated) {
-			const response = await getIssuedCredentials();
+		try {
+			const orgData = await getOrgDetails();
+			const isWalletCreated = Boolean(orgData.orgDid);
+			setWalletCreated(isWalletCreated);
+			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 
-			const { data } = response as AxiosResponse;
+			if (orgId && isWalletCreated) {
+				const response = await getIssuedCredentials(listAPIParameter);
+				setLoading(false)
+				const { data } = response as AxiosResponse;
 
-			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				const credentialList = data?.data?.map(
-					(issuedCredential: IssuedCredential) => {
-						const schemaName = issuedCredential.metadata[
-							'_anoncreds/credential'
-						].schemaId
-							? issuedCredential.metadata['_anoncreds/credential'].schemaId
+				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+					setTotalItem(data?.data.totalItems)
+					const credentialList = data?.data?.data?.map(
+						(issuedCredential: IssuedCredential) => {
+							const schemaName = issuedCredential.schemaId
+								? issuedCredential.schemaId
 									.split(':')
 									.slice(2)
 									.join(':')
-							: 'Not available';
+								: 'Not available';
 
-						return {
-							data: [
-								{
-									data: issuedCredential.connectionId
-										? issuedCredential.connectionId
-										: 'Not available',
-								},
-								{ data: schemaName },
-								{
-									data: (
-										<DateTooltip date={issuedCredential.updatedAt}>
-											{' '}
-											{dateConversion(issuedCredential.updatedAt)}{' '}
-										</DateTooltip>
-									),
-								},
-								{
-									data: (
-										<span
-											className={` ${
-												issuedCredential.state === IssueCredential.offerSent &&
-												'bg-orange-100 text-orange-800 border border-orange-100 dark:bg-gray-700 dark:border-orange-300 dark:text-orange-300'
-											} ${
-												issuedCredential?.state === IssueCredential.done &&
-												'bg-green-100 text-green-800 dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500'
-											} ${
-												issuedCredential?.state === IssueCredential.abandoned &&
-												'bg-red-100 text-red-800 border border-red-100 dark:border-red-400 dark:bg-gray-700 dark:text-red-400'
-											} ${
-												issuedCredential?.state ===
+							return {
+								data: [
+									{
+										data: issuedCredential.connectionId
+											? issuedCredential.connectionId
+											: 'Not available',
+									},
+									{ data: schemaName },
+									{
+										data: (
+											<DateTooltip date={issuedCredential.createDateTime}>
+												{' '}
+												{dateConversion(issuedCredential.createDateTime)}{' '}
+											</DateTooltip>
+										),
+									},
+									{
+										data: (
+											<span
+												className={` ${issuedCredential.state === IssueCredential.offerSent &&
+													'bg-orange-100 text-orange-800 border border-orange-100 dark:bg-gray-700 dark:border-orange-300 dark:text-orange-300'
+													} ${issuedCredential?.state === IssueCredential.done &&
+													'bg-green-100 text-green-800 dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500'
+													} ${issuedCredential?.state === IssueCredential.abandoned &&
+													'bg-red-100 text-red-800 border border-red-100 dark:border-red-400 dark:bg-gray-700 dark:text-red-400'
+													} ${issuedCredential?.state ===
 													IssueCredential.requestReceived &&
-												'bg-primary-100 text-primary-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300'
-											} ${
-												issuedCredential?.state ===
+													'bg-primary-100 text-primary-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300'
+													} ${issuedCredential?.state ===
 													IssueCredential.proposalReceived &&
-												'bg-secondary-700 text-primary-600 border border-secondary-100 dark:border-secondary-700 dark:bg-gray-700 dark:text-secondary-800'
-											} ${
-												issuedCredential?.state ===
+													'bg-secondary-700 text-primary-600 border border-secondary-100 dark:border-secondary-700 dark:bg-gray-700 dark:text-secondary-800'
+													} ${issuedCredential?.state ===
 													IssueCredential.credentialIssued &&
-												'bg-sky-300 text-primary-700 border border-sky-100 dark:border-sky-700 dark:bg-gray-700 dark:text-sky-500'
-											} text-xs font-medium mr-0.5 px-0.5 py-0.5 rounded-md border flex justify-center rounded-md items-center w-fit px-2`}
-										>
-											{issuedCredential.state === IssueCredential.offerSent
-												? IssueCredentialUserText.offerSent
-												: issuedCredential.state === IssueCredential.done
-												? IssueCredentialUserText.done
-												: issuedCredential.state === IssueCredential.abandoned
-												? IssueCredentialUserText.abandoned
-												: issuedCredential.state ===
-												  IssueCredential.requestReceived
-												? IssueCredentialUserText.received
-												: issuedCredential.state ===
-												  IssueCredential.proposalReceived
-												? IssueCredentialUserText.proposalReceived
-												: IssueCredentialUserText.credIssued}
-										</span>
-									),
-								},
-								{
-									data: issuedCredential?.isRevocable ? (
-										<Button
-											disabled
-											className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
-										>
-											Revoke
-										</Button>
-									) : (
-										<span className="text-gray-400">Non revocable</span>
-									),
-								},
-							],
-						};
-					},
-				);
+													'bg-sky-300 text-primary-700 border border-sky-100 dark:border-sky-700 dark:bg-gray-700 dark:text-sky-500'
+													} text-xs font-medium mr-0.5 px-0.5 py-0.5 rounded-md border flex justify-center rounded-md items-center w-fit px-2`}
+											>
+												{issuedCredential.state === IssueCredential.offerSent
+													? IssueCredentialUserText.offerSent
+													: issuedCredential.state === IssueCredential.done
+														? IssueCredentialUserText.done
+														: issuedCredential.state === IssueCredential.abandoned
+															? IssueCredentialUserText.abandoned
+															: issuedCredential.state ===
+																IssueCredential.requestReceived
+																? IssueCredentialUserText.received
+																: issuedCredential.state ===
+																	IssueCredential.proposalReceived
+																	? IssueCredentialUserText.proposalReceived
+																	: IssueCredentialUserText.credIssued}
+											</span>
+										),
+									},
+									{
+										data: issuedCredential?.isRevocable ? (
+											<Button
+												disabled
+												className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+											>
+												Revoke
+											</Button>
+										) : (
+											<span className="text-gray-400">Non revocable</span>
+										),
+									},
+								],
+							};
+						},
+					);
 
-				setIssuedCredList(credentialList);
-			} else {
-				setError(response as string);
+					setIssuedCredList(credentialList);
+					setError(null)
+				} else {
+					setError(response as string);
+					setIssuedCredList([])
+				}
 			}
+		} catch (error) {
+			console.error("ISSUED CREDENTIALS:::", error)
+			setIssuedCredList([])
 		}
 		setLoading(false);
 	};
 
+	// useEffect(() => {
+	// 	let getData: NodeJS.Timeout;
+
+	// 	if (searchText.length >= 1) {
+	// 		getData = setTimeout(() => {
+	// 			getIssuedCredDefs();
+	// 		}, 1000);
+	// 		return () => clearTimeout(getData);
+	// 	} else {
+	// 		getIssuedCredDefs();
+	// 	}
+
+	// 	return () => clearTimeout(getData);
+	// }, [searchText]);
+
 	useEffect(() => {
-		let getData: NodeJS.Timeout;
+		getIssuedCredDefs(listAPIParameter)
+	}, [listAPIParameter])
 
-		if (searchText.length >= 1) {
-			getData = setTimeout(() => {
-				getIssuedCredDefs();
-			}, 1000);
-			return () => clearTimeout(getData);
-		} else {
-			getIssuedCredDefs();
-		}
-
-		return () => clearTimeout(getData);
-	}, [searchText]);
-
+	//onChange of Search input text
 	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-		setSearchText(e.target.value);
+		setListAPIParameter({
+			...listAPIParameter,
+			search: e.target.value,
+			page: 1
+		})
 	};
 
 	const schemeSelection = () => {
@@ -167,7 +189,7 @@ const CredentialList = () => {
 	};
 
 	const refreshPage = () => {
-		getIssuedCredDefs();
+		getIssuedCredDefs(listAPIParameter);
 	};
 
 	const header = [
@@ -183,10 +205,13 @@ const CredentialList = () => {
 			<div className="mb-4 col-span-full xl:mb-2">
 				<BreadCrumbs />
 			</div>
-			<div className="mb-4 flex justify-between flex-col sm:flex-row">
-				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
+			<div className="mb-4 flex justify-between flex-wrap flex-col sm:flex-row gap-4">
+				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white mr-auto">
 					Credentials
 				</h1>
+				<div>
+					<SearchInput onInputChange={searchInputChange} />
+				</div>
 				<div className="flex gap-4 items-center">
 					<button
 						className="focus:z-10 focus:ring-2 bg-white-700 hover:bg-secondary-700 rounded-lg"
@@ -257,8 +282,8 @@ const CredentialList = () => {
 								</svg>
 							}
 							onClickEvent={() =>
-								(window.location.href =
-									pathRoutes.organizations.Issuance.bulkIssuance)
+							(window.location.href =
+								pathRoutes.organizations.Issuance.bulkIssuance)
 							}
 						/>
 					)}
@@ -301,6 +326,21 @@ const CredentialList = () => {
 											></DataTable>
 										)}
 									</div>
+									{
+										Math.ceil(totalItem / listAPIParameter?.itemPerPage) > 1 &&
+										<div className="flex items-center justify-end my-4">
+											<Pagination
+												currentPage={listAPIParameter?.page}
+												onPageChange={(page: number) => {
+													setListAPIParameter(prevState => ({
+														...prevState,
+														page
+													}));
+												}}
+												totalPages={Math.ceil(totalItem / listAPIParameter?.itemPerPage)}
+											/>
+										</div>
+									}
 								</div>
 							) : (
 								<div>

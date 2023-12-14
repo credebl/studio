@@ -18,11 +18,11 @@ import { Pagination } from 'flowbite-react';
 import SearchInput from '../SearchInput';
 
 const initialPageState = {
-	itemPerPage: 4,
+	itemPerPage: 9,
 	page: 1,
 	search: "",
 	sortBy: "createDateTime",
-	sortingOrder: "ASC",
+	sortingOrder: "DESC",
 	allSearch: ""
 };
 const ConnectionList = () => {
@@ -73,15 +73,19 @@ const ConnectionList = () => {
 						},
 					);
 					setConnectionList(connections);
+					setError(null)
 				} else {
+					setConnectionList([])
 					setError(response as unknown as string);
 				}
 			} catch (error) {
+				setConnectionList([])
 				setError(error as string);
 			} finally {
 				setLoading(false);
 			}
 		} else {
+			setConnectionList([])
 			setLoading(false);
 		}
 	};
