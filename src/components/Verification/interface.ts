@@ -26,7 +26,7 @@ export interface RequestProof {
 	connectionId: string;
 	threadId: string;
 	autoAcceptProof: string;
-	updatedAt: string;
+	createDateTime: string;
 	isVerified?: boolean;
   }
 
