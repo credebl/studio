@@ -20,13 +20,14 @@ export interface RequestProof {
 	};
 	metadata: Record<string, any>;
 	id: string;
+	presentationId: string;
 	createdAt: string;
 	protocolVersion: string;
 	state: string;
 	connectionId: string;
 	threadId: string;
 	autoAcceptProof: string;
-	updatedAt: string;
+	createDateTime: string;
 	isVerified?: boolean;
   }
 
