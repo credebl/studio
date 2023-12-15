@@ -4,11 +4,12 @@ import React, { useEffect, useState } from 'react';
 import type { AxiosResponse } from 'axios';
 import CustomQRCode from '../../commonComponents/QRcode';
 import CustomSpinner from '../CustomSpinner';
-import { apiStatusCodes } from '../../config/CommonConstant';
+import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { createConnection } from '../../api/organization';
 import { dateConversion } from '../../utils/DateConversion';
 import DateTooltip from '../Tooltip';
 import CopyDid from '../../commonComponents/CopyDid'
+import { setToLocalStorage } from '../../api/Auth';
 
 const OrganizationDetails = ({orgData}: {orgData: Organisation}) => {
 
@@ -32,8 +33,13 @@ const OrganizationDetails = ({orgData}: {orgData: Organisation}) => {
         setLoading(false)
     }
 
+    const storeLedgerDetails = async () => {
+        await setToLocalStorage(storageKeys.LEDGER_ID, agentData?.ledgers.id);
+    }
+
     useEffect(() => {
         createQrConnection()
+        storeLedgerDetails()
     }, [])
 
     return (
