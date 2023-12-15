@@ -71,9 +71,10 @@ export const pathRoutes = {
 			verification: '/organizations/verification/schemas/cred-defs/connections',
 		},
 		issuance: {
-			credDef: '/organizations/credentials/schemas/cred-defs',
-			schemas: '/organizations/credentials/schemas',
-			connections: '/organizations/credentials/schemas/cred-defs/connections',
+			credDef: '/organizations/credentials/issue/schemas/cred-defs',
+			schemas: '/organizations/credentials/issue/schemas',
+			connections:
+				'/organizations/credentials/issue/schemas/cred-defs/connections',
 		},
 	},
 };

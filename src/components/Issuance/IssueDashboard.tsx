@@ -43,7 +43,7 @@ const IssueDashboard = () => {
 						return (
 							<Card
 								key={option.heading}
-								className="custom-card group transform transition duration-500 ease-in-out hover:scale-105 cursor-pointer overflow-hidden overflow-ellipsis dark:hover:bg-primary-700 hover:bg-primary-700"
+								className="custom-card group transform transition duration-500 ease-in-out hover:scale-105 cursor-pointer overflow-hidden overflow-ellipsis dark:hover:bg-primary-700 hover:bg-primary-700 border border-gray-200 shadow-md dark:border-gray-600 dark:bg-gray-700"
 								style={{
 									maxHeight: '100%',
 									overflow: 'auto',

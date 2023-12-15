@@ -120,10 +120,12 @@ const EmailIssuance = () => {
 				} else {
 					setFailure(response as string);
 					setLoading(false);
+					setOpenModal(false);
 				}
 			} else {
 				setLoading(false);
 				setFailure(response as string);
+				setOpenModal(false);
 				setTimeout(() => {
 					setFailure(null);
 				}, 4000);
@@ -378,7 +380,8 @@ const EmailIssuance = () => {
 											Please enter an email address to issue the credential to
 										</span>
 									</div>
-									<Button
+									{/* rquired for history details  */}
+									{/* <Button
 										color="bg-primary-800"
 										className="flex float-right bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-primary-600 font-medium rounded-md text-lg px-2 lg:px-3 py-2 lg:py-2.5 mr-2 ml-auto border-blue-600 hover:text-primary-600 dark:text-white dark:border-blue-500 dark:hover:text-primary-700 dark:hover:bg-secondary-700"
 										style={{ height: '2.4rem', minWidth: '2rem' }}
@@ -406,7 +409,7 @@ const EmailIssuance = () => {
 											/>
 										</svg>
 										View History
-									</Button>
+									</Button> */}
 								</div>
 								{isCredSelected ? (
 									<div>
@@ -600,7 +603,14 @@ const EmailIssuance = () => {
 																																						10,
 																																				}}
 																																			>
-																																				{item?.name?.charAt(0).toUpperCase() + item?.name?.slice(1)}
+																																				{item?.name
+																																					?.charAt(
+																																						0,
+																																					)
+																																					.toUpperCase() +
+																																					item?.name?.slice(
+																																						1,
+																																					)}
 																																			</label>
 																																			<Field
 																																				type={
