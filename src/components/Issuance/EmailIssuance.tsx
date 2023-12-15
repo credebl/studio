@@ -588,12 +588,19 @@ const EmailIssuance = () => {
 																																				className="text-base dark:text-white text-gray-800"
 																																				style={{
 																																					minWidth:
-																																						'80px',
+																																						Math.max(
+																																							...formData1.attributes.map(
+																																								(
+																																									item,
+																																								) =>
+																																									item.name.toString()
+																																										.length,
+																																							),
+																																						) *
+																																						10,
 																																				}}
 																																			>
-																																				{
-																																					item.name
-																																				}
+																																				{item?.name?.charAt(0).toUpperCase() + item?.name?.slice(1)}
 																																			</label>
 																																			<Field
 																																				type={
