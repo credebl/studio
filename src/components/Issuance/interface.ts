@@ -36,3 +36,12 @@ export interface IUploadMessage {
 	message: string
 	type : "success" | "failure"
 }
+
+export interface IssuedCredential {
+	metadata: { [x: string]: { schemaId: string } };
+	connectionId: string;
+	createDateTime: string;
+	state: string;
+	isRevocable: boolean;
+	schemaId: string;
+}
