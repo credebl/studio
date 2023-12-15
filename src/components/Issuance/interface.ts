@@ -45,3 +45,10 @@ export interface IssuedCredential {
 	isRevocable: boolean;
 	schemaId: string;
 }
+
+export interface IProps {
+	openModal: boolean;
+	closeModal: (flag: boolean) => void;
+	onSuccess: (flag: boolean) => void;
+	isProcessing: boolean;
+}
