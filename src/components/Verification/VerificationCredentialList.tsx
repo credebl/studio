@@ -264,25 +264,6 @@ const VerificationCredentialList = () => {
 		}
 	}
 
-	// useEffect(() => {
-	// 	let getData: NodeJS.Timeout
-
-	// 	if (searchText?.length >= 1) {
-	// 		getData = setTimeout(() => {
-	// 			getproofRequestList(listAPIParameter)
-	// 		}, 1000);
-	// 		return () => clearTimeout(getData);
-	// 	} else {
-	// 		getproofRequestList(listAPIParameter)
-	// 	}
-
-	// 	return () => clearTimeout(getData)
-	// }, [searchText])
-
-	// const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-	// 	setSearchText(e.target.value);
-	// }
-
 	useEffect(() => {
 		getproofRequestList(listAPIParameter)
 	}, [listAPIParameter])

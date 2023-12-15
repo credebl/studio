@@ -156,21 +156,6 @@ const CredentialList = () => {
 		setLoading(false);
 	};
 
-	// useEffect(() => {
-	// 	let getData: NodeJS.Timeout;
-
-	// 	if (searchText.length >= 1) {
-	// 		getData = setTimeout(() => {
-	// 			getIssuedCredDefs();
-	// 		}, 1000);
-	// 		return () => clearTimeout(getData);
-	// 	} else {
-	// 		getIssuedCredDefs();
-	// 	}
-
-	// 	return () => clearTimeout(getData);
-	// }, [searchText]);
-
 	useEffect(() => {
 		getIssuedCredDefs(listAPIParameter)
 	}, [listAPIParameter])
