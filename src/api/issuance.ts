@@ -2,15 +2,19 @@ import axios from 'axios';
 import { apiRoutes } from '../config/apiRoutes';
 import { storageKeys } from '../config/CommonConstant';
 import {
-	getHeaderConfigs,
-	getHeaderConfigsForFormData,
+	getHeaderConfigs
 } from '../config/GetHeaderConfigs';
 import { axiosGet, axiosPost } from '../services/apiRequests';
 import { getFromLocalStorage } from './Auth';
+import type { IConnectionListAPIParameter } from './connection';
 
-export const getIssuedCredentials = async () => {
+export const getIssuedCredentials = async ({page,
+	itemPerPage,
+	search,
+	sortBy,
+	sortingOrder}: IConnectionListAPIParameter) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.getIssuedCredentials}`;
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.getIssuedCredentials}?pageSize=${itemPerPage}&pageNumber=${page}&searchByText=${search}&sortByValue=${sortingOrder}&sorting=${sortBy}`;
 
 	const axiosPayload = {
 		url,
