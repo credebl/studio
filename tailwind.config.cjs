@@ -48,6 +48,9 @@ module.exports = {
 					disabled: '#d6f5f589'
 				},
 			},
+			extend: {
+				textColor: ['hover', 'group-hover'],
+			},
 			fontFamily: {
 				sans: [
 					...defaultTheme.fontFamily.sans,
