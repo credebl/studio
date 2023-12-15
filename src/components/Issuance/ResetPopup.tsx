@@ -1,12 +1,6 @@
 import { Button, Modal } from 'flowbite-react';
 import React from 'react';
-
-interface IProps {
-	openModal: boolean;
-	closeModal: (flag: boolean) => void;
-	onSuccess: (flag: boolean) => void;
-	isProcessing: boolean;
-}
+import { IProps } from './interface';
 
 const ResetPopup = (props: IProps) => {
 	return (
