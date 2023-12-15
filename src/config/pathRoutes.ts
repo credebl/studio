@@ -23,14 +23,18 @@ export const pathRoutes = {
 		createSchema: '/organizations/schemas/create',
 		viewSchema: '/organizations/schemas/view-schema',
 		Issuance: {
-			schema: '/organizations/credentials/schemas',
-			credDef: '/organizations/credentials/schemas/cred-defs',
-			connections: '/organizations/credentials/schemas/cred-defs/connections',
+			issue: '/organizations/credentials/issue',
+			schema: '/organizations/credentials/issue/schemas',
+			credDef: '/organizations/credentials/issue/schemas/cred-defs',
+			connections:
+				'/organizations/credentials/issue/schemas/cred-defs/connections',
 			issuance:
-				'/organizations/credentials/schemas/cred-defs/connections/issuance',
-				history : '/organizations/credentials/bulk-issuance/history',
-				details : '/organizations/credentials/bulk-issuance/history/details',
-			bulkIssuance: '/organizations/credentials/bulk-issuance'
+				'/organizations/credentials/issue/schemas/cred-defs/connections/issuance',
+			history: '/organizations/credentials/issue/bulk-issuance/history',
+			details: '/organizations/credentials/issue/bulk-issuance/history/details',
+			bulkIssuance: '/organizations/credentials/issue/bulk-issuance',
+			email: '/organizations/credentials/issue/email',
+			emailHistory: '/organizations/credentials/issue/email/history',
 		},
 		verification: {
 			schema: '/organizations/verification/schemas',
@@ -67,9 +71,10 @@ export const pathRoutes = {
 			verification: '/organizations/verification/schemas/cred-defs/connections',
 		},
 		issuance: {
-			credDef: '/organizations/credentials/schemas/cred-defs',
-			schemas: '/organizations/credentials/schemas',
-			connections: '/organizations/credentials/schemas/cred-defs/connections',
+			credDef: '/organizations/credentials/issue/schemas/cred-defs',
+			schemas: '/organizations/credentials/issue/schemas',
+			connections:
+				'/organizations/credentials/issue/schemas/cred-defs/connections',
 		},
 	},
 };
