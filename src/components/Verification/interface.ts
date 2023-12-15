@@ -20,6 +20,7 @@ export interface RequestProof {
 	};
 	metadata: Record<string, any>;
 	id: string;
+	presentationId: string;
 	createdAt: string;
 	protocolVersion: string;
 	state: string;

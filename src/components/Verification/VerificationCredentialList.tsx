@@ -97,10 +97,9 @@ const VerificationCredentialList = () => {
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 					setTotalItem(data?.data.totalItems)
 					const credentialList = data?.data?.data?.map((requestProof: RequestProof) => {
-						console.log(8768768, requestProof)
 						return {
 							data: [
-								{ data: requestProof?.id ? requestProof?.id : 'Not available' },
+								{ data: requestProof?.presentationId ? requestProof?.presentationId : 'Not available' },
 								{
 									data: requestProof?.connectionId
 										? requestProof?.connectionId
@@ -147,10 +146,10 @@ const VerificationCredentialList = () => {
 											onClick={() => {
 												openProofRequestModel(
 													true,
-													requestProof?.id,
+													requestProof?.presentationId,
 													requestProof?.state,
 												);
-												getProofPresentationData(requestProof?.id);
+												getProofPresentationData(requestProof?.presentationId);
 											}}
 										>
 											{requestProof?.state === 'done' ? (
