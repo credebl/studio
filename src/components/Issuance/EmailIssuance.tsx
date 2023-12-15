@@ -625,7 +625,23 @@ const EmailIssuance = () => {
 																																		</div>
 																																	</div>
 																																	<>
-																																		<div className="absolute bottom-24 left-28">
+																																		<div
+																																			className="absolute bottom-24"
+																																			style={{
+																																				left:
+																																					Math.max(
+																																						...formData1.attributes.map(
+																																							(
+																																								item,
+																																							) =>
+																																								item.name.toString()
+																																									.length,
+																																						),
+																																					) *
+																																						10 +
+																																					28,
+																																			}}
+																																		>
 																																			<MailError
 																																				handler={
 																																					formikHandlers
