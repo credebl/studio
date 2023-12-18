@@ -124,7 +124,7 @@ const PasskeyAddDevice = (props: {
 											className="bg-transparent ml-4 absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-white hover:text-gray-800 dark:hover:text-white"
 										>
 											{passwordVisible ? (
-												<svg className="h-6 w-6 text-black"
+												<svg className="h-6 w-6 text-black dark:text-gray-300"
 												    id="visible"
 													viewBox="0 0 24 24"
 													fill="none"
@@ -135,7 +135,7 @@ const PasskeyAddDevice = (props: {
 													<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
 													<circle cx="12" cy="12" r="3" /></svg>
 											) : (
-												<svg className="h-6 w-6 text-black"
+												<svg className="h-6 w-6 text-black dark:text-gray-300"
 													viewBox="0 0 24 24"
 													fill="none"
 													id="invisible"
