@@ -90,7 +90,7 @@ const SignUpUserName = () => {
 										</svg>
 									</button>
 
-									<div className="w-full flex flex-col items-center justify-center ">
+									<div className="w-full flex flex-col items-center justify-center text-center ">
 
 										<h2 className="text-primary-700 dark:text-gray-200 font-inter text-3xl font-bold leading-10">
 											Create account
