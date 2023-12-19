@@ -24,7 +24,10 @@ const IssueDashboard = () => {
 		},
 	];
 	return (
-		<div className="md:h-[750px] h-screen mx-2">
+		<div
+			className="mx-2"
+			style={{ height: 'calc(100vh - 15rem)', minHeight: '300px' }}
+		>
 			<div className="flex justify-between items-center mt-1">
 				<BreadCrumbs />
 				<BackButton path={pathRoutes.organizations.issuedCredentials} />
@@ -37,37 +40,35 @@ const IssueDashboard = () => {
 					Select the appropriate action for issuing credential(s){' '}
 				</p>
 			</div>
-			<div className="bg-white text-lg shadow-md dark:border-gray-700 dark:bg-gray-800 h-full flex justify-center items-center w-full">
-				<div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mx-8">
-					{options.map((option) => {
-						return (
-							<Card
-								key={option.heading}
-								className="custom-card group transform transition duration-500 ease-in-out hover:scale-105 cursor-pointer overflow-hidden overflow-ellipsis dark:hover:bg-primary-700 hover:bg-primary-700 border border-gray-200 shadow-md dark:border-gray-600 dark:bg-gray-700"
-								style={{
-									maxHeight: '100%',
-									overflow: 'auto',
-									height: '168px',
-									color: 'inherit',
-								}}
-								onClick={() => (window.location.href = option?.path)}
+			<div className="bg-white text-lg shadow-md dark:border-gray-700 dark:bg-gray-800 flex justify-center items-center w-full h-full">
+				<div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mx-8 mt-4 lg:mt-0">
+					{options.map((option) => (
+						<Card
+							key={option.heading}
+							className="custom-card group transform transition duration-500 ease-in-out hover:scale-105 cursor-pointer overflow-hidden overflow-ellipsis dark:hover:bg-primary-700 hover:bg-primary-700 border border-gray-200 shadow-md dark:border-gray-600 dark:bg-gray-700"
+							style={{
+								maxHeight: '100%',
+								overflow: 'auto',
+								height: '168px',
+								color: 'inherit',
+							}}
+							onClick={() => (window.location.href = option?.path)}
+						>
+							<div
+								className="flex items-center min-[401px]:flex-nowrap flex-wrap group-hover:text-white"
+								style={{ color: 'inherit' }}
 							>
-								<div
-									className="flex items-center min-[401px]:flex-nowrap flex-wrap group-hover:text-white"
-									style={{ color: 'inherit' }}
-								>
-									<div className="ml-4">
-										<h5 className="text-2xl font-semibold text-primary-700 dark:text-white pb-2">
-											{option.heading}
-										</h5>
-										<p className="text-sm text-gray-700 dark:text-white">
-											{option.description}
-										</p>
-									</div>
+								<div className="ml-4">
+									<h5 className="text-2xl font-semibold text-primary-700 dark:text-white pb-2">
+										{option.heading}
+									</h5>
+									<p className="text-sm text-gray-700 dark:text-white">
+										{option.description}
+									</p>
 								</div>
-							</Card>
-						);
-					})}
+							</div>
+						</Card>
+					))}
 				</div>
 			</div>
 		</div>
