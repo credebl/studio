@@ -1,7 +1,7 @@
 import '../../common/global.css'
 import { Alert, Button } from 'flowbite-react';
 import {
-	UserSignInData,
+	type UserSignInData,
 	getFromLocalStorage,
 	getUserProfile,
 	loginUser,

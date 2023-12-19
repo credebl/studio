@@ -2,6 +2,8 @@
 import pkg from '../../package.json' assert { type: 'json' };
 import HelmetHead from '../components/HelmetHead';
 import { url } from '../lib/data.js';
+import { ViewTransitions } from "astro:transitions";
+
 
 import { SITE_TITLE } from './constants.js';
 
@@ -20,6 +22,7 @@ const supabaseKey =
 <!DOCTYPE html>
 <html lang="en">
 	<head set:html={metaData}>
+		<ViewTransitions />
 		<HelmetHead
 			siteTitle={SITE_TITLE}
 			version={pkg.version}
