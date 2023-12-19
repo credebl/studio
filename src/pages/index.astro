@@ -73,6 +73,30 @@ import { pathRoutes } from '../config/pathRoutes';
 									>
 								</a>
 							</div>
+							<div class="mt-8 flex flex-col items-center">
+								<div class="flex items-center">
+									<div class="flex mr-2">
+										<img
+											src="/images/CREDEBL_ICON.png"
+											class="h-8 mr-3"
+											alt="CREDEBL Logo"
+										/>
+										<span
+											class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white"
+											>CREDEBL</span
+										>
+									</div>
+									<span
+										class="font-normal text-gray-500 lg:text-xl md:text-sm sm:text-xs dark:text-gray-400"
+										>has been recognized by</span
+									>
+								</div>
+								<img
+									class="mt-6"
+									src="/images/DPG-alliance.png"
+									width="173px"
+								/>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -93,7 +117,9 @@ import { pathRoutes } from '../config/pathRoutes';
 					/>
 				</div>
 			</section>
-			<section class="bg-gray-100 dark:bg-gray-800 mx-auto p-4 py-10 md:py-20 md:pl-12 md:pr-12 sm:pl-3 sm:pr-3">
+			<section
+				class="bg-gray-100 dark:bg-gray-800 mx-auto p-4 py-10 md:py-12 md:pl-12 md:pr-12 sm:pl-3 sm:pr-3"
+			>
 				<div class="max-w-screen-xl mx-auto p-4 lg:pl-12">
 					<div class="pb-8 lg:pb-4 mx-auto">
 						<h2
@@ -291,37 +317,75 @@ import { pathRoutes } from '../config/pathRoutes';
 					</div>
 				</div>
 			</section>
-			<section class="md:py-12 md:px-8 sm:p-4 p-4 !pb-[28rem] max-w-screen-xl mx-auto">
-				<div class="mx-auto object-center pl-12 pr-12">
-					<div class="relative">
-						<img
-							src="/images/sec3-1-light.png"
-							alt="frame_img"
-							class="w-full shadow-[0_0_12px_12px_rgba(0,0,0,0.1)] rounded-lg overflow-hidden max-w-screen-md block dark:hidden"
-						/>
-						<img
-							src="/images/sec3-2-light.png"
-							alt="frame_img"
-							class="w-full absolute -bottom-[25rem] right-0 shadow-[0_0_12px_12px_rgba(0,0,0,0.1)] rounded-lg overflow-hidden max-w-screen-md block dark:hidden float-right"
-						/>
+			<section class="md:py-12 md:px-8 sm:p-4 p-4 max-w-screen-xl mx-auto">
+				<div class="mx-auto object-center relative">
+					<div class="flex flex-wrap lg:flex-row flex-col-reverse my-4">
+						<div class="">
+							<img
+								src="/images/sec3-1-light.png"
+								alt="frame_img"
+								class="w-full shadow-[0_0_12px_12px_rgba(0,0,0,0.1)] rounded-lg overflow-hidden max-w-screen-md block dark:hidden"
+							/>
+							<img
+								src="/images/sec3-1-dark.png"
+								alt="frame_img"
+								class="w-full shadow-[0_0_12px_12px_rgba(0,0,0,0.1)] rounded-lg overflow-hidden max-w-screen-md dark:block hidden"
+							/>
+						</div>
+						<div
+							class="px-0 lg:px-4 py-4 lg:py-0 min-w-[185px] max-w-[100%] lg:max-w-landing-image-sec3"
+						>
+							<p
+								class="text-gray-800 dark:text-white font-medium text-[40px] text-start"
+							>
+								One Wallet needs
+							</p>
+
+							<p
+								class="text-gray-800 dark:text-gray-300 text-lg font-normal pt-4 text-start"
+							>
+								Store user credentials securely using advanced cryptography. It
+								is built using standards defined as per Hyperledger Aries
+								framework.
+							</p>
+						</div>
 					</div>
 
-					<div class="relative">
-						<img
-							src="/images/sec3-1-dark.png"
-							alt="frame_img"
-							class="w-full shadow-[0_0_12px_12px_rgba(0,0,0,0.1)] rounded-lg overflow-hidden max-w-screen-md dark:block hidden"
-						/>
-						<img
-							src="/images/sec3-2-dark.png"
-							alt="frame_img"
-							class="w-full absolute -bottom-[25rem] right-0 shadow-[0_0_12px_12px_rgba(0,0,0,0.1)] rounded-lg overflow-hidden max-w-screen-md dark:block hidden float-right"
-						/>
+					<div class="flex flex-wrap items-end my-4 lg:-mt-40">
+						<div
+							class="px-0 lg:px-4 py-4 lg:py-0 min-w-[185px] max-w-[100%] lg:max-w-landing-image-sec3"
+						>
+							<p
+								class="text-gray-800 dark:text-white font-medium text-[40px] text-start"
+							>
+								One Wallet needs
+							</p>
+
+							<p
+								class="text-gray-800 dark:text-gray-300 text-lg font-normal pt-4 text-start"
+							>
+								Store user credentials securely using advanced cryptography. It
+								is built using standards defined as per Hyperledger Aries
+								framework.
+							</p>
+						</div>
+						<div class="">
+							<img
+								src="/images/sec3-2-dark.png"
+								alt="frame_img"
+								class="w-full shadow-[0_0_12px_12px_rgba(0,0,0,0.1)] rounded-lg overflow-hidden max-w-screen-md dark:block hidden float-right"
+							/>
+							<img
+								src="/images/sec3-2-light.png"
+								alt="frame_img"
+								class="w-full shadow-[0_0_12px_12px_rgba(0,0,0,0.1)] rounded-lg overflow-hidden max-w-screen-md block dark:hidden float-right"
+							/>
+						</div>
 					</div>
 				</div>
 			</section>
 			<section
-				class="p-4 !pb-0 md:pt-20 w-full mx-auto bg-blue-300 dark:bg-blue-900"
+				class="p-4 !pb-0 md:pt-12 w-full mx-auto bg-blue-300 dark:bg-blue-900"
 			>
 				<div class="max-w-screen-xl flex flex-wrap justify-around mx-auto">
 					<div class="p-4 lg:w-[60%]">
@@ -347,7 +411,7 @@ import { pathRoutes } from '../config/pathRoutes';
 					</div>
 				</div>
 			</section>
-			<section class="mx-auto p-4 py-10 md:py-20 max-w-screen-xl">
+			<section class="mx-auto p-4 py-10 md:py-12 max-w-screen-xl">
 				<div
 					class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 text-xl font-normal max-w-screen mx-auto"
 				>
@@ -372,7 +436,7 @@ import { pathRoutes } from '../config/pathRoutes';
 			</section>
 			<section class="">
 				<div
-					class="bg-[url('/images/blue_background.png')] bg-cover bg-center p-4 py-10 md:py-20"
+					class="bg-[url('/images/blue_background.png')] bg-cover bg-center p-4 py-10 md:py-12"
 				>
 					<div class="mx-auto max-w-screen-xl">
 						<div
@@ -1116,7 +1180,7 @@ import { pathRoutes } from '../config/pathRoutes';
 					</div>
 				</div>
 			</section>
-			<footer class="p-4 py-10 md:py-20 bg-gray-200 dark:bg-gray-800 mx-auto">
+			<footer class="p-4 py-10 md:py-12 bg-gray-200 dark:bg-gray-800 mx-auto">
 				<div class="mx-auto max-w-screen-xl text-center">
 					<a
 						class="flex justify-center items-center text-2xl font-semibold text-gray-900 dark:text-white"
