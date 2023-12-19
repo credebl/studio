@@ -100,7 +100,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 			setFidoLoader(true);
 
 			const obj = {
-				userName: email?.trim()?.toLocaleLowerCase()
+				userName: email?.trim()?.toLowerCase()
 			};
 
 			const generateAuthenticationResponse: any =
@@ -124,7 +124,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 
 			if (data?.data.verified) {
 				const payload: UserSignInData = {
-					email: email,
+					email: email.toLowerCase(),
 					isPasskey: true,
 				};
 				const loginRsp = await loginUser(payload);

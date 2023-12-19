@@ -145,16 +145,16 @@ const CredentialList = () => {
 					setIssuedCredList(credentialList);
 					setError(null)
 				} else {
-					setError(response as string);
-					setIssuedCredList([])
+					setIssuedCredList([]);
 				}
 			}
 		} catch (error) {
-			console.error("ISSUED CREDENTIALS:::", error)
-			setIssuedCredList([])
+			setIssuedCredList([]);
+			setError(error as string);
+		} finally {
+			setLoading(false);
 		}
-		setLoading(false);
-	};
+	}
 
 	useEffect(() => {
 		getIssuedCredDefs(listAPIParameter)
