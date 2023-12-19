@@ -2,7 +2,10 @@
 
 import type { AxiosResponse } from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { IConnectionListAPIParameter, getConnectionsByOrg } from '../../api/connection';
+import {
+	IConnectionListAPIParameter,
+	getConnectionsByOrg,
+} from '../../api/connection';
 import DataTable from '../../commonComponents/datatable';
 import type { TableData } from '../../commonComponents/datatable/interface';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
@@ -20,17 +23,17 @@ import SearchInput from '../SearchInput';
 const initialPageState = {
 	itemPerPage: 9,
 	page: 1,
-	search: "",
-	sortBy: "createDateTime",
-	sortingOrder: "DESC",
-	allSearch: ""
+	search: '',
+	sortBy: 'createDateTime',
+	sortingOrder: 'DESC',
+	allSearch: '',
 };
 const ConnectionList = () => {
-	const [listAPIParameter, setListAPIParameter] = useState(initialPageState)
+	const [listAPIParameter, setListAPIParameter] = useState(initialPageState);
 	const [connectionList, setConnectionList] = useState<TableData[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
-	const [totalItem, setTotalItem] = useState(0)
+	const [totalItem, setTotalItem] = useState(0);
 
 	const getConnections = async (apiParameter: IConnectionListAPIParameter) => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -43,13 +46,19 @@ const ConnectionList = () => {
 				const response = await getConnectionsByOrg(apiParameter);
 				const { data } = response as AxiosResponse;
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-					setTotalItem(data?.data.totalItems)
+					setTotalItem(data?.data.totalItems);
 					const connections = data?.data?.data?.map(
-						(ele: { theirLabel: string; connectionId: string; createDateTime: string }) => {
+						(ele: {
+							theirLabel: string;
+							connectionId: string;
+							createDateTime: string;
+						}) => {
 							const userName = ele?.theirLabel
 								? ele.theirLabel
 								: 'Not available';
-							const connectionId = ele.connectionId ? ele.connectionId : 'Not available';
+							const connectionId = ele.connectionId
+								? ele.connectionId
+								: 'Not available';
 							const createdOn = ele?.createDateTime
 								? ele?.createDateTime
 								: 'Not available';
@@ -73,23 +82,21 @@ const ConnectionList = () => {
 						},
 					);
 					setConnectionList(connections);
-					setError(null)
+					setError(null);
 				} else {
-					setConnectionList([])
-					setError(response as unknown as string);
+					setConnectionList([]);
 				}
 			} catch (error) {
-				setConnectionList([])
+				setConnectionList([]);
 				setError(error as string);
 			} finally {
 				setLoading(false);
 			}
 		} else {
-			setConnectionList([])
+			setConnectionList([]);
 			setLoading(false);
 		}
 	};
-
 
 	const header = [
 		{ columnName: 'User' },
@@ -102,13 +109,13 @@ const ConnectionList = () => {
 		setListAPIParameter({
 			...listAPIParameter,
 			search: e.target.value,
-			page: 1
-		})
+			page: 1,
+		});
 	};
 
 	useEffect(() => {
-		getConnections(listAPIParameter)
-	}, [listAPIParameter])
+		getConnections(listAPIParameter);
+	}, [listAPIParameter]);
 
 	return (
 		<div className="p-4" id="connection_list">
@@ -150,21 +157,22 @@ const ConnectionList = () => {
 						></DataTable>
 					</div>
 
-					{
-						Math.ceil(totalItem / listAPIParameter?.itemPerPage) > 1 &&
+					{Math.ceil(totalItem / listAPIParameter?.itemPerPage) > 1 && (
 						<div className="flex items-center justify-end my-4">
 							<Pagination
 								currentPage={listAPIParameter?.page}
 								onPageChange={(page) => {
-									setListAPIParameter(prevState => ({
+									setListAPIParameter((prevState) => ({
 										...prevState,
-										page: page
+										page: page,
 									}));
 								}}
-								totalPages={Math.ceil(totalItem / listAPIParameter?.itemPerPage)}
+								totalPages={Math.ceil(
+									totalItem / listAPIParameter?.itemPerPage,
+								)}
 							/>
 						</div>
-					}
+					)}
 				</>
 			) : (
 				<div className="bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
