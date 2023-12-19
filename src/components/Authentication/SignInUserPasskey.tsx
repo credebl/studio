@@ -123,7 +123,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 
 			if (data?.data.verified) {
 				const payload: UserSignInData = {
-					email: email.toLowerCase(),
+					email: email.toLowerCase() ,
 					isPasskey: true,
 				};
 				const loginRsp = await loginUser(payload);
