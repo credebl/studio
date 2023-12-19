@@ -114,6 +114,7 @@ module.exports = {
 				'100/13rem': 'calc(100% - 13rem)',
 				'100/10rem': 'calc(100% - 10rem)',
 				'100/8rem': 'calc(100% - 8rem)',
+				'landing-image-sec3': 'calc(100% - 768px)'
 			},
 			minHeight: {
 				'100/5rem': 'calc(100vh - 4.8rem)',
