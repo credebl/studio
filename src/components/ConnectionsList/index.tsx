@@ -19,6 +19,7 @@ import { getFromLocalStorage } from '../../api/Auth';
 import { getOrgDetails } from '../../config/ecosystem';
 import { Pagination } from 'flowbite-react';
 import SearchInput from '../SearchInput';
+import type { IConnectionList } from '../../components/Issuance/interface'
 
 const initialPageState = {
 	itemPerPage: 10,
@@ -47,40 +48,29 @@ const ConnectionList = () => {
 				const { data } = response as AxiosResponse;
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 					setTotalItem(data?.data.totalItems);
-					const connections = data?.data?.data?.map(
-						(ele: {
-							theirLabel: string;
-							connectionId: string;
-							createDateTime: string;
-						}) => {
-							const userName = ele?.theirLabel
-								? ele.theirLabel
-								: 'Not available';
-							const connectionId = ele.connectionId
-								? ele.connectionId
-								: 'Not available';
-							const createdOn = ele?.createDateTime
-								? ele?.createDateTime
-								: 'Not available';
-							return {
-								data: [
-									{ data: userName },
-									{ data: connectionId },
-									{
-										data: (
-											<DateTooltip
-												date={createdOn}
-												id="issuance_connection_list"
-											>
-												{' '}
-												{dateConversion(createdOn)}{' '}
-											</DateTooltip>
-										),
-									},
-								],
-							};
-						},
-					);
+					const connections = data?.data?.data?.map((ele: IConnectionList) => {
+						const userName = ele?.theirLabel ? ele.theirLabel : 'Not available';
+						const connectionId = ele.connectionId
+							? ele.connectionId
+							: 'Not available';
+						const createdOn = ele?.createDateTime
+							? ele?.createDateTime
+							: 'Not available';
+						return {
+							data: [
+								{ data: userName },
+								{ data: connectionId },
+								{
+									data: (
+										<DateTooltip date={createdOn} id="issuance_connection_list">
+											{' '}
+											{dateConversion(createdOn)}{' '}
+										</DateTooltip>
+									),
+								},
+							],
+						};
+					});
 					setConnectionList(connections);
 					setError(null);
 				} else {
