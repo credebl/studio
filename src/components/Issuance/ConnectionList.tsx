@@ -14,6 +14,8 @@ import { dateConversion } from '../../utils/DateConversion';
 import DateTooltip from '../Tooltip';
 import SearchInput from '../SearchInput';
 import { Pagination } from 'flowbite-react';
+import type { IConnectionList } from './interface'
+
 
 const initialPageState = {
 	itemPerPage: 10,
@@ -51,11 +53,7 @@ const ConnectionList = (props: {
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 				setTotalItem(data?.data.totalItems);
 				const connections = data?.data?.data?.map(
-					(ele: {
-						theirLabel: string;
-						connectionId: string;
-						createDateTime: string;
-					}) => {
+					(ele: IConnectionList) => {
 						const userName = ele?.theirLabel ? ele.theirLabel : 'Not available';
 						const connectionId = ele.connectionId
 							? ele.connectionId
