@@ -7,8 +7,10 @@ import { storageKeys } from "../config/CommonConstant";
 
 export const getAllSchemas = async ({itemPerPage, page, allSearch }: GetAllSchemaListParameter) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
+  const ledgerId = await getFromLocalStorage(storageKeys.LEDGER_ID)
+
   const details = {
-		url: `${apiRoutes.Platform.getAllSchemaFromPlatform}?pageSize=${itemPerPage}&searchByText=${allSearch}&pageNumber=${page}`,
+		url: `${apiRoutes.Platform.getAllSchemaFromPlatform}?pageSize=${itemPerPage}&searchByText=${allSearch}&pageNumber=${page}&ledgerId=${ledgerId}`,
     config: {
       headers: {
         'Content-type': 'application/json',
@@ -49,7 +51,7 @@ export const getAllSchemasByOrgId = async ({ search, itemPerPage, page }: GetAll
   }
 }
 
-export const addSchema = async (payload: createSchema, orgId: string) => {
+export const createSchemas = async (payload: createSchema, orgId: string) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
     url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.create}`,

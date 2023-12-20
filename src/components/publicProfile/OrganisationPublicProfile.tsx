@@ -18,7 +18,7 @@ const OrganisationPublicProfile = () => {
 		total: 0,
 	};
 
-	const [organizationsList, setOrganizationList] = useState([]);
+	const [organizationList, setOrganizationList] = useState([]);
 
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
@@ -66,6 +66,7 @@ const OrganisationPublicProfile = () => {
 			getData = setTimeout(() => {
 				getAllOrganizations();
 			}, 1000);
+			return () => clearTimeout(getData);
 		} else {
 			getAllOrganizations();
 		}
@@ -79,6 +80,15 @@ const OrganisationPublicProfile = () => {
 
 	return (
 		<div>
+			<div className='flex justify-between items-center w-full'>
+				<h1 className="ml-1 px-4 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
+					Organizations
+				</h1>
+				<div className="flex items-end justify-end mb-4 p-2 pl-0">
+					<SearchInput onInputChange={searchInputChange} />
+				</div>
+			</div>
+
 			<AlertComponent
 				message={error}
 				type={'failure'}
@@ -86,18 +96,15 @@ const OrganisationPublicProfile = () => {
 					setError(null);
 				}}
 			/>
-			<div className="flex items-center justify-end mb-4 p-2 pl-0">
-				<SearchInput onInputChange={searchInputChange} />
-			</div>
 
-			<div className="flex flex-wrap">
+			<div className="flex flex-wrap justify-center">
 				{loading ? (
-					<div className="flex items-center justify-center mb-4 ">
+					<div className="flex items-center justify-center mb-4 min-h-[5rem]">
 						<CustomSpinner />
 					</div>
-				) : organizationsList && organizationsList?.length > 0 ? (
-					<div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-3">
-						{organizationsList?.map(
+				) : organizationList && organizationList?.length > 0 ? (
+					<div className="mt-1 grid w-full grid-cols-1 gap-4 md:gap-6 mt-0 mb-4 sm:grid-cols-2 lg:grid-cols-3">
+						{organizationList?.map(
 							(org: {
 								logoUrl: string;
 								name: string;
@@ -106,7 +113,7 @@ const OrganisationPublicProfile = () => {
 								orgSlug: string;
 							}) => (
 								<Card
-								key={org.orgSlug}
+									key={org.orgSlug}
 									onClick={() => {
 										window.location.href = `/org/${org?.orgSlug}`;
 									}}
@@ -141,21 +148,23 @@ const OrganisationPublicProfile = () => {
 						)}
 					</div>
 				) : (
-					
+
 					<div className="flex justify-center items-center">
-					{organizationsList && (
-						<div className="flex justify-center items-center">
-							<EmptyListMessage
-								message={'No Matching Organization'}
-								description={''}
-							/>
-						</div>
-					)}
+						{organizationList && (
+							<div className="flex justify-center items-center">
+								<EmptyListMessage
+									message={'No Matching Organization'}
+									description={''}
+								/>
+							</div>
+						)}
 					</div>
 				)}
 
-				<div className="flex items-center justify-end mb-4 flex-grow">
-					{organizationsList && organizationsList?.length > 0 && (
+			</div>
+			<div className="relative mt-16 flex items-center justify-end mb-4 flex-grow">
+				<div className='absolute bottom-4 right-4'>
+					{organizationList && organizationList?.length > 0 && (
 						<Pagination
 							currentPage={currentPage?.pageNumber}
 							onPageChange={onPageChange}

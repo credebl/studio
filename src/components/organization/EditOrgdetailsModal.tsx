@@ -243,7 +243,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                                 className="mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
                             >
                                 <div
-                                    className="items-center sm:flex 2xl:flex sm:space-x-4 xl:space-x-4 2xl:space-x-4"
+                                    className="flex flex-col items-center sm:flex-row 2xl:flex-row p-2 gap-0 sm:gap-4"
                                 >
                                     {
                                         (typeof (logoImage.logoFile) === "string" && props?.orgData?.logoUrl) ?
@@ -258,19 +258,19 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                                                     img={defaultUserIcon}
                                                 /> :
                                                 <img
-                                                    className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
+                                                    className="m-2 rounded-md w-28 h-28"
                                                     src={URL.createObjectURL(logoImage?.logoFile)}
                                                     alt="Jese picture"
                                                 />
                                     }
                                     <div>
-                                        <h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
+                                        <h3 className="flex items-center justify-center sm:justify-start mb-1 text-xl font-bold text-gray-900 dark:text-white">
                                             Organization Logo
                                         </h3>
-                                        <div className="mb-4 text-sm text-gray-500 dark:text-gray-400">
+                                        <div className="flex items-center justify-center sm:justify-start mb-4 text-sm text-gray-500 dark:text-gray-400">
                                             JPG, JPEG and PNG . Max size of 1MB
                                         </div>
-                                        <div className="flex items-center space-x-4">
+                                        <div className="flex items-center space-x-4 justify-center sm:justify-start">
 
                                             <div>
                                                 <label htmlFor="organizationlogo">
@@ -279,7 +279,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                                                         className="hidden"
                                                         id="organizationlogo" title=""
                                                         onChange={(event): void => handleImageChange(event)} />
-                                                    {imgError ? <div className="text-red-500">{imgError}</div> : <span className="mt-1 text-sm text-gray-500 dark:text-gray-400">{logoImage.fileName || 'No File Chosen'}</span>}
+                                                    {imgError ? <div className="text-red-500">{imgError}</div> : <span className="mt-1 flex justify-center text-sm text-gray-500 dark:text-gray-400">{logoImage.fileName || 'No File Chosen'}</span>}
                                                 </label>
 
                                             </div>
@@ -314,17 +314,13 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
                                         formikHandlers.setFieldTouched(
                                             'name',
                                             true,
+                                            false
                                         );
 
                                         if (value.length > 50) {
                                             formikHandlers.setFieldError(
                                                 'name',
                                                 'Organization name must be at most 50 characters',
-                                            );
-                                        } else {
-                                            formikHandlers.setFieldError(
-                                                'name',
-                                                undefined,
                                             );
                                         }
                                     }}

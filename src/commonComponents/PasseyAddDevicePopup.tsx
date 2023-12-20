@@ -114,7 +114,7 @@ const PasskeyAddDevice = (props: {
 										<Field
 											id="signinPassword"
 											name="Password"
-											className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+											className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 !pr-10 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 											type={passwordVisible ? 'text' : 'password'}
 										/>
 										<button
@@ -124,7 +124,7 @@ const PasskeyAddDevice = (props: {
 											className="bg-transparent ml-4 absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-white hover:text-gray-800 dark:hover:text-white"
 										>
 											{passwordVisible ? (
-												<svg className="h-6 w-6 text-black"
+												<svg className="h-6 w-6 text-black dark:text-gray-300"
 												    id="visible"
 													viewBox="0 0 24 24"
 													fill="none"
@@ -135,7 +135,7 @@ const PasskeyAddDevice = (props: {
 													<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
 													<circle cx="12" cy="12" r="3" /></svg>
 											) : (
-												<svg className="h-6 w-6 text-black"
+												<svg className="h-6 w-6 text-black dark:text-gray-300"
 													viewBox="0 0 24 24"
 													fill="none"
 													id="invisible"

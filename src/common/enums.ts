@@ -34,7 +34,10 @@ export enum ProofRequestStateUserText {
 export enum IssueCredentialUserText {
 	offerSent = 'Offered',
 	done = 'Accepted',
-	abandoned = 'Declined'
+	abandoned = 'Declined',
+	received = 'Pending',
+	proposalReceived= 'Proposal Received',
+	credIssued = 'Credential Issued'
 }
 
 export enum EndorsementType {

@@ -50,6 +50,7 @@ export const apiRoutes = {
 		getIssuedCredentials: '/credentials',
 		getAllConnections: '/connections',
 		issueCredential: '/credentials/offer',
+		issueOobEmailCredential: '/credentials/oob',
 		bulk:{
 			credefList:'/bulk/cred-defs',
 			uploadCsv: '/bulk/upload',
@@ -76,6 +77,7 @@ export const apiRoutes = {
 	Platform: {
 		getAllSchemaFromPlatform: '/platform/schemas',
 		getLedgers: '/platform/ledgers',
+		getLedgerPlatformUrl: '/platform/network/url/'
 	},
 	Public: {
 		organizations: '/orgs/public-profile',

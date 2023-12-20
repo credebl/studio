@@ -61,7 +61,7 @@ const CredDefSelection = () => {
 		{ columnName: 'Name' },
 		{ columnName: 'Credential definition Id' },
 		{ columnName: 'Revocable' },
-		{ columnName: 'check' }
+		{ columnName: 'Select' }
 	]
 
 	const getCredDefs = async (schemaId: string) => {

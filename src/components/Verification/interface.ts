@@ -20,13 +20,14 @@ export interface RequestProof {
 	};
 	metadata: Record<string, any>;
 	id: string;
+	presentationId: string;
 	createdAt: string;
 	protocolVersion: string;
 	state: string;
 	connectionId: string;
 	threadId: string;
 	autoAcceptProof: string;
-	updatedAt: string;
+	createDateTime: string;
 	isVerified?: boolean;
   }
 
@@ -36,3 +37,17 @@ export interface SchemaDetails {
 	createdDate:string
 }
   
+export interface IProofRrquestDetails {
+	openModal: boolean;
+	closeModal: (flag: boolean, id: string, state: boolean) => void;
+	onSucess: (verifyPresentationId: string) => void;
+	requestId: string;
+	userData: object[];
+	view: boolean;
+}
+
+export interface IConnectionList {
+	theirLabel: string;
+	connectionId: string;
+	createDateTime: string;
+}

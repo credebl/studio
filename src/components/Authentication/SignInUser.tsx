@@ -1,15 +1,15 @@
 import '../../common/global.css'
 import * as yup from 'yup';
-import { Button, Label} from 'flowbite-react';
+import { Button, Label, Alert } from 'flowbite-react';
 import { Field, Form, Formik } from 'formik';
-import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
-import { useEffect, useRef, useState } from 'react';
+import { getFromLocalStorage, removeFromLocalStorage, setToLocalStorage } from '../../api/Auth';
+import React, { useEffect, useRef, useState } from 'react';
 import NavBar from './NavBar';
-import { Alert } from 'flowbite-react';
 import RegistrationSuccess from './RegistrationSuccess';
 import SignInUserPasskey from './SignInUserPasskey';
 import { storageKeys } from '../../config/CommonConstant';
 import FooterBar from './FooterBar';
+
 interface emailValue {
 	email: string | null;
 }
@@ -28,7 +28,7 @@ const SignInUser = () => {
 	const [userLoginEmail, setUserLoginEmail] = useState<string | null>(null);
 	const nextButtonRef = useRef<HTMLButtonElement | null>(null);
 
-	
+
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -44,8 +44,8 @@ const SignInUser = () => {
 				const loginMethod = searchParam.get('method');
 				const showMsg = searchParam.get('showmsg');
 
-				setUserLoginEmail(storedEmail || userEmail);
-				setEmail({ email: storedEmail || newEmail });
+				setUserLoginEmail(userEmail || storedEmail);
+				setEmail({ email: newEmail || storedEmail });
 
 				const entries = performance.getEntriesByType(
 					'navigation',
@@ -54,7 +54,7 @@ const SignInUser = () => {
 					entries.length > 0 && entries[0].type === 'reload';
 
 				if (isRefreshPage) {
-					await setToLocalStorage(storageKeys.LOGIN_USER_EMAIL, '');
+					await removeFromLocalStorage(storageKeys.LOGIN_USER_EMAIL);
 				}
 				if (
 					signUpStatus === 'true' &&
@@ -86,9 +86,19 @@ const SignInUser = () => {
 
 	const saveEmail = async (values: emailValue) => {
 		setEmail(values);
-		await localStorage.clear();
+		await removeFromLocalStorage(storageKeys.TOKEN)
+		await removeFromLocalStorage(storageKeys.USER_EMAIL)
+		await removeFromLocalStorage(storageKeys.ORG_ID)
+		await removeFromLocalStorage(storageKeys.ORG_ROLES)
+		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ID)
+		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ROLE)
+		await removeFromLocalStorage(storageKeys.USER_PROFILE)
 		setCurrentComponent('password');
+		const fg = await getFromLocalStorage(storageKeys.LOGIN_USER_EMAIL)
+		console.log(3455, values, fg)
 		await setToLocalStorage(storageKeys.LOGIN_USER_EMAIL, values.email);
+		const fg1 = await getFromLocalStorage(storageKeys.LOGIN_USER_EMAIL)
+		console.log(34551, values, fg1)
 		setIsPasskeySuccess(true);
 	};
 
@@ -105,20 +115,20 @@ const SignInUser = () => {
 	return (
 		<div>
 			{currentComponent === 'email' && isPasskeySuccess ? (
-				<RegistrationSuccess email= {email} />
+				<RegistrationSuccess email={email} />
 			) : (
 				<div>
 					{!(currentComponent === 'email' && isPasskeySuccess) &&
-					currentComponent === 'password' ? (
+						currentComponent === 'password' ? (
 						<SignInUserPasskey email={email?.email as string} />
 					) : (
 						<div className="flex flex-col min-h-screen">
 							<NavBar />
 							<div className="flex flex-1 flex-col md:flex-row">
-								<div className="md:w-3/5 w-full bg-blue-500 bg-opacity-10 lg:p-4 md:p-4">
+								<div className="hidden md:block md:w-3/5 w-full bg-blue-500 bg-opacity-10 lg:p-4 md:p-4">
 									<div className="flex justify-center">
 										<img
-											className="hidden sm:block"
+											className="max-h-100/10rem"
 											src="/images/signin.svg"
 											alt="img"
 										/>
@@ -129,6 +139,7 @@ const SignInUser = () => {
 									<div className="w-full">
 										{(success || failure || fidoUserError) && (
 											<Alert
+												className='mb-4'
 												color={success ? 'success' : 'failure'}
 												onDismiss={() => setSuccess(null)}
 											>
@@ -138,7 +149,7 @@ const SignInUser = () => {
 											</Alert>
 										)}
 
-										<div className="flex lg:mt-16">
+										<div className='flex mt-2 xl:mt-8'>
 											<button
 												className="flex mt-2"
 												onClick={redirectLandingPage}
@@ -158,7 +169,7 @@ const SignInUser = () => {
 											</button>
 
 											<div className="w-full flex flex-col items-center justify-center ">
-												<h2 className="text-primary-700 text-blue-600 font-inter text-3xl font-bold leading-10">
+												<h2 className="text-primary-700 dark:text-gray-200 font-inter text-3xl font-bold leading-10">
 													Login
 												</h2>
 
@@ -168,7 +179,7 @@ const SignInUser = () => {
 											</div>
 										</div>
 
-										<div className="lg:hidden sm:block md:hidden sm:block bg-blue-500 bg-opacity-10 mt-4">
+										<div className="block md:hidden bg-blue-500 bg-opacity-10 mt-4 flex justify-center">
 											<img src="/images/signin.svg" alt="img" />
 										</div>
 
@@ -194,20 +205,20 @@ const SignInUser = () => {
 										>
 											{(formikHandlers): JSX.Element => (
 												<Form
-													className="mt-16 space-y-6"
+													className="mt-8 md:mt-16 space-y-6"
 													onSubmit={formikHandlers.handleSubmit}
 												>
-													<div className="text-primary-700 font-inter text-base font-medium leading-5 mb-20">
+													<div className="text-primary-700 font-inter text-base font-medium leading-5 mb-16">
 														<div className="block mb-2 text-sm font-medium dark:text-white">
 															<Label
-																className="text-primary-700 dark:!text-primary-700"
+																className="text-primary-700 dark:text-gray-200"
 																htmlFor="email2"
 																value="Your Email"
 															/>
 															<span className="text-red-500 text-xs">*</span>
 														</div>
 
-														<div className="w-full flex items-center bg-gray-200 px-4 py-3 text-gray-700 text-sm border rounded-md focus:border-blue-400 focus:ring-1 focus:ring-blue-600">
+														<div className="w-full flex items-center bg-gray-200 dark:bg-gray-800 px-4 py-3 text-gray-700 dark:text-white text-sm border rounded-md focus:border-blue-400 focus:ring-1 focus:ring-blue-600">
 															<svg
 																xmlns="http://www.w3.org/2000/svg"
 																width="24"
@@ -235,12 +246,19 @@ const SignInUser = () => {
 															</span>
 														)}
 													</div>
-													<div>
+													<div className='flex justify-between items-center flex-wrap gap-4 sm:flex-row flex-col-reverse'>
+														<a
+															id="navigatetosignup"
+															href="/authentication/sign-up"
+															className="text-sm shrink-0 ml-2 text-primary-700 hover:underline dark:text-gray-200"
+														>
+															{` Create an account`}
+														</a>
 														<Button
 															id="signinnext"
 															isProcessing={loading}
 															type="submit"
-															className="w-full font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+															className="w-fit px-12 sm:px-4 xl:px-12 font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 														>
 															<svg
 																xmlns="http://www.w3.org/2000/svg"
@@ -256,16 +274,6 @@ const SignInUser = () => {
 															</svg>
 															<span className="ml-2">Next</span>
 														</Button>
-													</div>
-													<div className="text-sm font-medium text-gray-500 dark:text-gray-400 pt-6 flex flex-col md:flex-row md:justify-center items-center justify-center">
-														Don't have an account yet? &nbsp;
-														<a
-															id="navigatetosignup"
-															href="/authentication/sign-up"
-															className="text-primary-700 hover:underline dark:text-primary-500"
-														>
-															{` Create an account`}
-														</a>
 													</div>
 												</Form>
 											)}
