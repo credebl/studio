@@ -25,7 +25,7 @@ import type { IConnectionListAPIParameter } from '../../api/connection';
 import type { IssuedCredential } from './interface';
 
 const initialPageState = {
-	itemPerPage: 9,
+	itemPerPage: 10,
 	page: 1,
 	search: '',
 	sortBy: 'createDateTime',
