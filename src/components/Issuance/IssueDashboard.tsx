@@ -25,8 +25,7 @@ const IssueDashboard = () => {
 	];
 	return (
 		<div
-			className="mx-2"
-			style={{ height: 'calc(100vh - 15rem)', minHeight: '300px' }}
+			className="mx-2 sm:h-[calc(100vh - 15rem)] h-[720px] min-h-80"
 		>
 			<div className="flex justify-between items-center mt-1">
 				<BreadCrumbs />
