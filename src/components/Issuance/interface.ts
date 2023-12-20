@@ -52,3 +52,9 @@ export interface IProps {
 	onSuccess: (flag: boolean) => void;
 	isProcessing: boolean;
 }
+
+export interface IConnectionList {
+	theirLabel: string;
+	connectionId: string;
+	createDateTime: string;
+}
