@@ -33,7 +33,7 @@ import { getOrgDetails } from '../../config/ecosystem';
 import type { IConnectionListAPIParameter } from '../../api/connection';
 
 const initialPageState = {
-	itemPerPage: 9,
+	itemPerPage: 10,
 	page: 1,
 	search: '',
 	sortBy: 'createDateTime',

@@ -3,6 +3,7 @@ import { Card } from 'flowbite-react';
 import BreadCrumbs from '../BreadCrumbs';
 import { pathRoutes } from '../../config/pathRoutes';
 import BackButton from '../../commonComponents/backbutton';
+import React from 'react';
 
 const IssueDashboard = () => {
 	const options = [
@@ -24,9 +25,7 @@ const IssueDashboard = () => {
 		},
 	];
 	return (
-		<div
-			className="mx-2 sm:h-[calc(100vh - 15rem)] h-[720px] min-h-80"
-		>
+		<div className="mx-2 h-full h-[700px] sm:h-100/15rem min-h-[300px]">
 			<div className="flex justify-between items-center mt-1">
 				<BreadCrumbs />
 				<BackButton path={pathRoutes.organizations.issuedCredentials} />
