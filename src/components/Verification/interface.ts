@@ -45,3 +45,9 @@ export interface IProofRrquestDetails {
 	userData: object[];
 	view: boolean;
 }
+
+export interface IConnectionList {
+	theirLabel: string;
+	connectionId: string;
+	createDateTime: string;
+}
