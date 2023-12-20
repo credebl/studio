@@ -33,8 +33,6 @@ const EmailIssuance = () => {
 	const [isEditing, setIsEditing] = useState(false);
 	const [issueLoader, setIssueLoader] = useState(false);
 	const inputRef = useRef(null);
-	console.log('11openModal', openModal);
-	console.log('22openModal', openResetModal);
 
 	const getSchemaCredentials = async () => {
 		try {
@@ -126,6 +124,7 @@ const EmailIssuance = () => {
 				setLoading(false);
 				setFailure(response as string);
 				setOpenModal(false);
+				setIssueLoader(false);
 				setTimeout(() => {
 					setFailure(null);
 				}, 4000);
@@ -193,6 +192,7 @@ const EmailIssuance = () => {
 	const handleResetOpenConfirmation = () => {
 		setOpenResetModal(true);
 	};
+	
 	const MailError = ({
 		handler,
 		formindex,
@@ -567,6 +567,8 @@ const EmailIssuance = () => {
 																														formData1?.attributes.map(
 																															(
 																																item: {
+																																	displayName: ReactNode | string;
+																																	attributeName: ReactNode | string;
 																																	name:
 																																		| string
 																																		| number
@@ -596,21 +598,13 @@ const EmailIssuance = () => {
 																																								(
 																																									item,
 																																								) =>
-																																									item.name.toString()
-																																										.length,
+																																									item?.displayName?.toString()?.length,
 																																							),
 																																						) *
 																																						10,
 																																				}}
 																																			>
-																																				{item?.name
-																																					?.charAt(
-																																						0,
-																																					)
-																																					.toUpperCase() +
-																																					item?.name?.slice(
-																																						1,
-																																					)}
+																																				{item?.displayName}
 																																			</label>
 																																			<Field
 																																				type={
@@ -634,8 +628,7 @@ const EmailIssuance = () => {
 																																							(
 																																								item,
 																																							) =>
-																																								item.name.toString()
-																																									.length,
+																																								item?.name?.toString().length,
 																																						),
 																																					) *
 																																						10 +
@@ -688,8 +681,15 @@ const EmailIssuance = () => {
 																									arrayHelpers.push({
 																										email: '',
 																										attributes: attributes?.map(
+																											
 																											(item) => {
 																												return {
+																													attributeName:
+																														item.attributeName,
+																													schemaDataType:
+																														item.schemaDataType,
+																													displayName:
+																														item.displayName,
 																													value: '',
 																													name: item.attributeName,
 																												};

@@ -25,7 +25,7 @@ import type { IConnectionListAPIParameter } from '../../api/connection';
 import type { IssuedCredential } from './interface';
 
 const initialPageState = {
-	itemPerPage: 9,
+	itemPerPage: 10,
 	page: 1,
 	search: '',
 	sortBy: 'createDateTime',
@@ -145,16 +145,16 @@ const CredentialList = () => {
 					setIssuedCredList(credentialList);
 					setError(null);
 				} else {
-					setError(response as string);
 					setIssuedCredList([]);
 				}
 			}
 		} catch (error) {
-			console.error('ISSUED CREDENTIALS:::', error);
 			setIssuedCredList([]);
+			setError(error as string);
+		} finally {
+			setLoading(false);
 		}
-		setLoading(false);
-	};
+	}
 
 	useEffect(() => {
 		getIssuedCredDefs(listAPIParameter);
