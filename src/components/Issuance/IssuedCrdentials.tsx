@@ -29,7 +29,7 @@ const initialPageState = {
 	page: 1,
 	search: '',
 	sortBy: 'createDateTime',
-	sortingOrder: 'DESC',
+	sortingOrder: '',
 	allSearch: '',
 };
 
@@ -41,6 +41,15 @@ const CredentialList = () => {
 	const [listAPIParameter, setListAPIParameter] =
 		useState<IConnectionListAPIParameter>(initialPageState);
 	const [totalItem, setTotalItem] = useState(0);
+	const [pageInfo, setPageInfo] = useState({
+		totalItem: '',
+		nextPage: '',
+		lastPage: '',
+	});
+	const [statusValues, setStatusValues] = useState([]);
+	console.log('statusValues::', statusValues);
+
+	console.log('listAPIParameter::', listAPIParameter.sortingOrder);
 
 	const getIssuedCredDefs = async (
 		listAPIParameter: IConnectionListAPIParameter,
@@ -59,12 +68,22 @@ const CredentialList = () => {
 
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 					setTotalItem(data?.data.totalItems);
+					const { totalItems, nextPage, lastPage } = data.data;
+
+					setPageInfo({
+						totalItem: totalItems,
+						nextPage: nextPage,
+						lastPage: lastPage,
+					});
 					const credentialList = data?.data?.data?.map(
 						(issuedCredential: IssuedCredential) => {
 							const schemaName = issuedCredential.schemaId
 								? issuedCredential.schemaId.split(':').slice(2).join(':')
 								: 'Not available';
-
+							  setStatusValues((prevStatusValues) => [
+									...prevStatusValues,
+									issuedCredential?.state 
+								]);
 							return {
 								data: [
 									{
@@ -141,7 +160,6 @@ const CredentialList = () => {
 							};
 						},
 					);
-
 					setIssuedCredList(credentialList);
 					setError(null);
 				} else {
@@ -154,10 +172,23 @@ const CredentialList = () => {
 		} finally {
 			setLoading(false);
 		}
-	}
+	};
 
 	useEffect(() => {
-		getIssuedCredDefs(listAPIParameter);
+		let getData: NodeJS.Timeout;
+
+		if (listAPIParameter.search.length >= 1) {
+			getData = setTimeout(() => {
+				getIssuedCredDefs(listAPIParameter);
+			}, 1000);
+			return () => clearTimeout(getData);
+		} else {
+			getIssuedCredDefs(listAPIParameter);
+		}
+
+		return () => clearTimeout(getData);
+
+		// getIssuedCredDefs(listAPIParameter);
 	}, [listAPIParameter]);
 
 	//onChange of Search input text
@@ -166,6 +197,22 @@ const CredentialList = () => {
 			...listAPIParameter,
 			search: e.target.value,
 			page: 1,
+		});
+	};
+
+	const searchSortByValue = (value: any) => {
+		setListAPIParameter({
+			...listAPIParameter,
+			page: 1,
+			sortingOrder: value,
+		});
+	};
+
+	const filterByValue = (value: any) => {
+		setListAPIParameter({
+			...listAPIParameter,
+			page: 1,
+			sortBy: value,
 		});
 	};
 
@@ -194,9 +241,7 @@ const CredentialList = () => {
 				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white mr-auto">
 					Credentials
 				</h1>
-				<div>
-					<SearchInput onInputChange={searchInputChange} />
-				</div>
+				<div>{/* <SearchInput onInputChange={searchInputChange} /> */}</div>
 				<div className="flex gap-4 items-center">
 					<button
 						className="focus:z-10 focus:ring-2 bg-white-700 hover:bg-secondary-700 rounded-lg"
@@ -258,27 +303,39 @@ const CredentialList = () => {
 						</div>
 					) : (
 						<div>
-							{loading ? (
-								<div className="flex items-center justify-center mb-4">
-									<CustomSpinner />
-								</div>
-							) : issuedCredList && issuedCredList.length > 0 ? (
+							{issuedCredList && (
 								<div
 									className="Flex-wrap"
 									style={{ display: 'flex', flexDirection: 'column' }}
 								>
 									<div className="">
-										{issuedCredList && issuedCredList.length > 0 && (
-											<DataTable
-												header={header}
-												data={issuedCredList}
-												loading={loading}
-											></DataTable>
-										)}
+										{/* {issuedCredList && issuedCredList.length > 0 && ( */}
+										<DataTable
+											onInputChange={searchInputChange}
+											refresh={refreshPage}
+											header={header}
+											data={issuedCredList}
+											loading={loading}
+											currentPage={listAPIParameter?.page}
+											onPageChange={(page: number) => {
+												setListAPIParameter((prevState) => ({
+													...prevState,
+													page,
+												}));
+											}}
+											totalPages={Math.ceil(
+												totalItem / listAPIParameter?.itemPerPage,
+											)}
+											pageInfo={pageInfo}
+											searchSortByValue={searchSortByValue}
+											statusValues={statusValues}
+											filterByValue={filterByValue}
+										></DataTable>
+										{/* )} */}
 									</div>
 									{Math.ceil(totalItem / listAPIParameter?.itemPerPage) > 1 && (
 										<div className="flex items-center justify-end my-4">
-											<Pagination
+											{/* <Pagination
 												currentPage={listAPIParameter?.page}
 												onPageChange={(page: number) => {
 													setListAPIParameter((prevState) => ({
@@ -289,15 +346,9 @@ const CredentialList = () => {
 												totalPages={Math.ceil(
 													totalItem / listAPIParameter?.itemPerPage,
 												)}
-											/>
+											/> */}
 										</div>
 									)}
-								</div>
-							) : (
-								<div>
-									<span className="dark:text-white block text-center p-4 m-8">
-										There isn't any data available.
-									</span>
 								</div>
 							)}
 						</div>
@@ -308,4 +359,5 @@ const CredentialList = () => {
 	);
 };
 
-export default CredentialList;
+
+export default CredentialList
