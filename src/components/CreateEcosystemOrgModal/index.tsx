@@ -262,6 +262,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 						autoEndorsement: false,
 					});
 					props.setOpenModal(false);
+					setImgError(' ')
 				}}
 			>
 				<Modal.Header>Create {popupName}</Modal.Header>
