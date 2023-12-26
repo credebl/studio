@@ -468,6 +468,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 											width: '6rem',
 											minWidth: '2rem',
 										}}
+										onClick={() => setImgError('')}
 									>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
