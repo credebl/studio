@@ -2,8 +2,8 @@ import type { InvitationProps } from "./EcoSystemReceivedInvitations";
 import CustomAvatar from '../Avatar';
 
 const EcoInvitationList = (props: InvitationProps) => {
-	const { invitationId, ecosytem } = props;
-	const { name, logoUrl, networkDetails } = ecosytem;
+	const { invitationId, ecosystem } = props;
+	const { name, logoUrl, networkDetails } = ecosystem;
 
 	return (
 		<div className="flex space-x-2">

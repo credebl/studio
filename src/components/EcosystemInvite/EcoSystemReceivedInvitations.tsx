@@ -38,7 +38,7 @@ export interface NetworkDetails {
 
 export interface InvitationProps {
 	invitationId: string;
-	ecosytem: {
+	ecosystem: {
 		name: string;
 		logoUrl: string;
 		networkDetails: NetworkDetails[]
@@ -219,19 +219,19 @@ const ReceivedInvitations = () => {
 		const updateInvitationData =
 			invitationsData && invitationsData.length > 0
 				? invitationsData.map((item) => {
-						if (id === item.id) {
-							return {
-								...item,
-								orgId: value,
-								selected: true,
-								orgData: orgData ?? undefined,
-							};
-						}
+					if (id === item.id) {
 						return {
 							...item,
-							selected: false,
+							orgId: value,
+							selected: true,
+							orgData: orgData ?? undefined,
 						};
-				  })
+					}
+					return {
+						...item,
+						selected: false,
+					};
+				})
 				: null;
 		setInvitationsData(updateInvitationData);
 		setSelectedId(value);
@@ -286,13 +286,13 @@ const ReceivedInvitations = () => {
 	return (
 		<div className="px-4 pt-2">
 			<div className="mb-4 col-span-full xl:mb-2">
+				<BreadCrumbs />
 				<div className="flex justify-between items-center">
-					<BreadCrumbs />
+					<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
+						Received Ecosystem Invitations
+					</h1>
 					<BackButton path={pathRoutes.ecosystem.root} />
 				</div>
-				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-					Received Ecosystem Invitations
-				</h1>
 			</div>
 			<div>
 				<div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
