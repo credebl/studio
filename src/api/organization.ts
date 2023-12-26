@@ -356,7 +356,7 @@ export const deleteOrganizationInvitation = async (
 	};
 
 	try {
-		return axiosDelete(axiosPayload);
+		return await axiosDelete(axiosPayload);
 	} catch (error) {
 		const err = error as Error;
 		return err?.message;
