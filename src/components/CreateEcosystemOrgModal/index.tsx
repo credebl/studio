@@ -19,7 +19,7 @@ import { getFromLocalStorage } from '../../api/Auth';
 import { createEcosystems } from '../../api/ecosystem';
 import { getOrgDetails } from '../../config/ecosystem';
 import defaultUserIcon from '../../../public/images/person_FILL1_wght400_GRAD0_opsz24.svg';
-import EndorsementTooltip from '../../commonComponents/EndorsementTooltip'
+import EndorsementTooltip from '../../commonComponents/EndorsementTooltip';
 interface Values {
 	name: string;
 	description: string;
@@ -246,7 +246,6 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 	const renderEcosystemModal = () => {
 		const popupName = props.isorgModal ? 'Organization' : 'Ecosystem';
 
-		
 		return (
 			<Modal
 				size={!props.isorgModal ? '3xl' : '2xl'}
@@ -263,6 +262,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 						autoEndorsement: false,
 					});
 					props.setOpenModal(false);
+					setImgError(' ')
 				}}
 			>
 				<Modal.Header>Create {popupName}</Modal.Header>
@@ -297,13 +297,13 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 								className="space-y-6"
 								onSubmit={formikHandlers.handleSubmit}
 							>
-								<div className="mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-									<div className="items-center sm:flex 2xl:flex sm:space-x-4 xl:space-x-4 2xl:space-x-4">
+								<div className="mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-2 dark:bg-gray-800">
+									<div className="flex flex-col items-center sm:flex-row 2xl:flex-row p-2 gap-0 sm:gap-4">
 										{typeof logoImage.logoFile === 'string' ? (
 											<Avatar size="lg" img={defaultUserIcon} />
 										) : (
 											<img
-												className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
+												className="m-2 rounded-md w-28 h-28"
 												src={
 													typeof logoImage.logoFile === 'string'
 														? asset('images/users/bonnie-green-2x.png')
@@ -314,13 +314,13 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 										)}
 
 										<div>
-											<h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
+											<h3 className="flex items-center justify-center sm:justify-start mb-1 text-xl font-bold text-gray-900 dark:text-white">
 												{popupName} Logo
 											</h3>
-											<div className="mb-4 text-sm text-gray-500 dark:text-gray-400">
+											<div className="flex items-center justify-center sm:justify-start mb-4 text-sm text-gray-500 dark:text-gray-400">
 												JPG, JPEG and PNG . Max size of 1MB
 											</div>
-											<div className="flex items-center space-x-4">
+											<div className="flex items-center justify-center sm:justify-start space-x-4">
 												<div>
 													<label htmlFor="organizationlogo">
 														<div className="px-4 py-2 bg-primary-700 hover:bg-primary-800 text-white text-center rounded-lg">
@@ -338,9 +338,11 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 															}
 														/>
 														{imgError ? (
-															<div className="text-red-500">{imgError}</div>
+															<div className="flex justify-center text-red-500">
+																{imgError}
+															</div>
 														) : (
-															<span className="mt-1  text-sm text-gray-500 dark:text-gray-400">
+															<span className="mt-1 flex justify-center text-sm text-gray-500 dark:text-gray-400">
 																{logoImage.fileName || 'No File Chosen'}
 															</span>
 														)}
@@ -399,7 +401,11 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 										onChange={(e) => {
 											const value = e.target.value;
 											formikHandlers.setFieldValue('description', value);
-											formikHandlers.setFieldTouched('description', true, false);
+											formikHandlers.setFieldTouched(
+												'description',
+												true,
+												false,
+											);
 
 											if (value.length > 50) {
 												formikHandlers.setFieldError(
@@ -453,7 +459,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 										</div>
 									</div>
 								)}
-								<div className="flex mr-2">
+								<div className="flex">
 									<Button
 										type="reset"
 										color="bg-primary-800"
@@ -463,6 +469,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 											width: '6rem',
 											minWidth: '2rem',
 										}}
+										onClick={() => setImgError('')}
 									>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
