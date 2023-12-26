@@ -1,6 +1,6 @@
 'use client';
 
-import { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
 
 import { AlertComponent } from '../../AlertComponent';
@@ -20,9 +20,9 @@ import { getOrganizationInvitations } from '../../../api/invitations';
 import CustomSpinner from '../../CustomSpinner';
 import { dateConversion } from '../../../utils/DateConversion';
 import DateTooltip from '../../Tooltip';
-import React from 'react';
 import { deleteOrganizationInvitation } from '../../../api/organization';
 import { getFromLocalStorage } from '../../../api/Auth';
+import ConfirmationModal from '../../../commonComponents/ConfirmationModal';
 
 const initialPageState = {
     pageNumber: 1,
@@ -34,10 +34,12 @@ const initialPageState = {
 const Invitations = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false)
+    const [deleteLoading, setDeleteLoading] = useState<boolean>(false)
+    const [selectedInvitation, setSelectedInvitation] = useState<string>('')
     const [message, setMessage] = useState<string | null>(null)
+    const [showPopup, setShowPopup] = useState<boolean>(false)
+    const [error, setError] = useState<string | null>(null)
     const [currentPage, setCurrentPage] = useState(initialPageState);
-    const [userRoles, setUserRoles] = useState<string[]>([])
-    const timestamp = Date.now();
 
     const onPageChange = (page: number) => {
         setCurrentPage({
@@ -63,11 +65,8 @@ const Invitations = () => {
         setLoading(false)
 
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-
             const totalPages = data?.data?.totalPages;
-
             const invitationList = data?.data?.invitations
-
             setInvitationsList(invitationList)
             setCurrentPage({
                 ...currentPage,
@@ -82,8 +81,6 @@ const Invitations = () => {
 
     //This useEffect is called when the searchText changes 
     useEffect(() => {
-
-        // let getData: string | number | NodeJS.Timeout | undefined;
         let getData: NodeJS.Timeout
 
         if (searchText.length >= 1) {
@@ -99,7 +96,7 @@ const Invitations = () => {
     }, [searchText, openModal, currentPage.pageNumber])
 
 
-    //onCHnage of Search input text
+    //onChange of Search input text
     const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         setSearchText(e.target.value);
     }
@@ -108,20 +105,22 @@ const Invitations = () => {
         props.setOpenModal(true)
     }
 
-    const deleteInvitations = async (invitationId: string) => {
+    const deleteInvitations = async () => {
         const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
-		const response = await deleteOrganizationInvitation(orgId, invitationId);
-		const { data } = response as AxiosResponse;
+        const invitationId = selectedInvitation
+        const response = await deleteOrganizationInvitation(orgId, invitationId);
+        const { data } = response as AxiosResponse;
 
-		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			setLoading(true);
-			await getAllInvitations();
-			setMessage(data?.message || 'Invitation deleted successfully');
-		} else {
-			setError(response as string);
-		}
-		setLoading(false);
-	};
+        if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+            setDeleteLoading(true);
+            await getAllInvitations();
+            setMessage(data?.message || 'Invitation deleted successfully');
+            setShowPopup(false)
+        } else {
+            setError(response as string);
+        }
+        setDeleteLoading(false);
+    };
 
     return (
         <div>
@@ -151,7 +150,7 @@ const Invitations = () => {
                     } />
 
                 <AlertComponent
-                    message={message ? message : error}
+                    message={message || error}
                     type={message ? 'success' : 'failure'}
                     onAlertClose={() => {
                         setMessage(null)
@@ -246,7 +245,12 @@ const Invitations = () => {
                                                     {invitation.status === 'pending' && (
                                                         <div className="flex justify-end">
                                                             <Button
-                                                                onClick={() => deleteInvitations(invitation.id)}
+                                                                onClick={() => {
+                                                                    setSelectedInvitation(invitation.id)
+                                                                    setShowPopup(true)
+                                                                    setError(null)
+                                                                    setMessage(null)
+                                                                }}
                                                                 color="bg-white"
                                                                 className="ml-5 p-0 font-normal items-center mt-5 text-sm text-primary-700 border border-blue-700 text-center hover:!bg-primary-800 hover:text-white rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:hover:bg-primary-700 dark:text-white dark:bg-primary-700 dark:focus:ring-blue-800"
                                                             >
@@ -300,7 +304,18 @@ const Invitations = () => {
                         />
                     </div>
                 }
-
+                <ConfirmationModal
+                    success={message}
+                    failure={error}
+                    openModal={showPopup}
+                    closeModal={() => setShowPopup(false)}
+                    onSuccess={() => deleteInvitations()}
+                    message={'Would you like to proceed? Keep in mind that this action cannot be undone.'}
+                    buttonTitles={["No, cancel", "Yes, I'm sure"]}
+                    isProcessing={deleteLoading}
+                    setFailure={setError}
+                    setSuccess={setMessage}
+                />
             </div>
         </div>
 
