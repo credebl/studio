@@ -35,10 +35,10 @@ interface IssuedCredential {
 const initialPageState = {
 	itemPerPage: 10,
 	page: 1,
-	search: "",
-	sortBy: "createDateTime",
-	sortingOrder: "DESC",
-	allSearch: ""
+	search: '',
+	sortBy: 'createDateTime',
+	sortingOrder: '',
+	allSearch: '',
 };
 
 const CredentialList = () => {
@@ -46,8 +46,18 @@ const CredentialList = () => {
 	const [error, setError] = useState<string | null>(null);
 	const [issuedCredList, setIssuedCredList] = useState<TableData[]>([]);
 	const [walletCreated, setWalletCreated] = useState(false);
-	const [listAPIParameter, setListAPIParameter] = useState<IConnectionListAPIParameter>(initialPageState)
-	const [totalItem, setTotalItem] = useState(0)
+	const [listAPIParameter, setListAPIParameter] =
+		useState<IConnectionListAPIParameter>(initialPageState);
+	const [totalItem, setTotalItem] = useState(0);
+	const [pageInfo, setPageInfo] = useState({
+		totalItem: '',
+		nextPage: '',
+		lastPage: '',
+	});
+	const [statusValues, setStatusValues] = useState([]);
+	console.log('statusValues::', statusValues);
+
+	console.log('listAPIParameter::', listAPIParameter.sortingOrder);
 
 	const getIssuedCredDefs = async (listAPIParameter: IConnectionListAPIParameter) => {
 		setLoading(true);
@@ -63,7 +73,14 @@ const CredentialList = () => {
 				const { data } = response as AxiosResponse;
 
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-					setTotalItem(data?.data.totalItems)
+					setTotalItem(data?.data.totalItems);
+					const { totalItems, nextPage, lastPage } = data.data;
+
+					setPageInfo({
+						totalItem: totalItems,
+						nextPage: nextPage,
+						lastPage: lastPage,
+					});
 					const credentialList = data?.data?.data?.map(
 						(issuedCredential: IssuedCredential) => {
 							const schemaName = issuedCredential.schemaId
@@ -72,7 +89,10 @@ const CredentialList = () => {
 									.slice(2)
 									.join(':')
 								: 'Not available';
-
+							  setStatusValues((prevStatusValues) => [
+									...prevStatusValues,
+									issuedCredential?.state 
+								]);
 							return {
 								data: [
 									{
@@ -141,7 +161,6 @@ const CredentialList = () => {
 							};
 						},
 					);
-
 					setIssuedCredList(credentialList);
 					setError(null)
 				} else {
@@ -159,7 +178,7 @@ const CredentialList = () => {
 	useEffect(() => {
 		let getData: NodeJS.Timeout;
 
-		if (listAPIParameter?.search?.length >= 1) {
+		if (listAPIParameter.search.length >= 1) {
 			getData = setTimeout(() => {
 				getIssuedCredDefs(listAPIParameter);
 			}, 1000);
@@ -167,7 +186,10 @@ const CredentialList = () => {
 		} else {
 			getIssuedCredDefs(listAPIParameter);
 		}
+
 		return () => clearTimeout(getData);
+
+		// getIssuedCredDefs(listAPIParameter);
 	}, [listAPIParameter]);
 
 	//onChange of Search input text
@@ -177,6 +199,22 @@ const CredentialList = () => {
 			search: e.target.value,
 			page: 1
 		})
+	};
+
+	const searchSortByValue = (value: any) => {
+		setListAPIParameter({
+			...listAPIParameter,
+			page: 1,
+			sortingOrder: value,
+		});
+	};
+
+	const filterByValue = (value: any) => {
+		setListAPIParameter({
+			...listAPIParameter,
+			page: 1,
+			sortBy: value,
+		});
 	};
 
 	const schemeSelection = () => {
@@ -204,9 +242,7 @@ const CredentialList = () => {
 				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 					Credentials
 				</h1>
-				<div>
-					<SearchInput onInputChange={searchInputChange} />
-				</div>
+				<div>{/* <SearchInput onInputChange={searchInputChange} /> */}</div>
 				<div className="flex gap-4 items-center">
 					<button
 						className="focus:z-10 focus:ring-2 bg-white-700 hover:bg-secondary-700 rounded-lg"
@@ -303,33 +339,40 @@ const CredentialList = () => {
 						</div>
 					) : (
 						<div>
-							{loading ? (
-								<div className="flex items-center justify-center mb-4">
-									<CustomSpinner />
-								</div>
-							) : (
+							{issuedCredList && (
 								<div
 									className="Flex-wrap"
 									style={{ display: 'flex', flexDirection: 'column' }}
 								>
 									<div className="">
-										{issuedCredList && issuedCredList.length > 0 ? (
-											<DataTable
-												header={header}
-												data={issuedCredList}
-												loading={loading}
-											></DataTable>
-										) : (
-											<EmptyListMessage
-												message={'No issuance records'}
-												description={'You have no issuance record yet'}
-											/>
-										)}
+										{/* {issuedCredList && issuedCredList.length > 0 && ( */}
+										<DataTable
+											onInputChange={searchInputChange}
+											refresh={refreshPage}
+											header={header}
+											data={issuedCredList}
+											loading={loading}
+											currentPage={listAPIParameter?.page}
+											onPageChange={(page: number) => {
+												setListAPIParameter((prevState) => ({
+													...prevState,
+													page,
+												}));
+											}}
+											totalPages={Math.ceil(
+												totalItem / listAPIParameter?.itemPerPage,
+											)}
+											pageInfo={pageInfo}
+											searchSortByValue={searchSortByValue}
+											statusValues={statusValues}
+											filterByValue={filterByValue}
+										></DataTable>
+										{/* )} */}
 									</div>
 									{
 										Math.ceil(totalItem / listAPIParameter?.itemPerPage) > 1 &&
 										<div className="flex items-center justify-end my-4">
-											<Pagination
+											{/* <Pagination
 												currentPage={listAPIParameter?.page}
 												onPageChange={(page: number) => {
 													setListAPIParameter(prevState => ({
@@ -337,10 +380,12 @@ const CredentialList = () => {
 														page
 													}));
 												}}
-												totalPages={Math.ceil(totalItem / listAPIParameter?.itemPerPage)}
-											/>
+												totalPages={Math.ceil(
+													totalItem / listAPIParameter?.itemPerPage,
+												)}
+											/> */}
 										</div>
-									}
+									)}
 								</div>
 							)}
 						</div>
@@ -351,4 +396,5 @@ const CredentialList = () => {
 	);
 };
 
-export default CredentialList;
+
+export default CredentialList
