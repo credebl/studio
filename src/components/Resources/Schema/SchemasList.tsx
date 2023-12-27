@@ -251,7 +251,7 @@ const SchemaList = (props: { schemaSelectionCallback: (schemaId: string, schemaD
 							</div>
 							<div className="flex items-center justify-end mb-4" id="schemasPagination">
 
-								{schemaList.length > 0 && (<Pagination
+								{totalItem > 1 && (<Pagination
 									currentPage={schemaListAPIParameter?.page}
 									onPageChange={(page) => {
 										setSchemaListAPIParameter(prevState => ({
