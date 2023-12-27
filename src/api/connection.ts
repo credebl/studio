@@ -19,7 +19,7 @@ export const getConnectionsByOrg = async ({
 	sortingOrder
 }: IConnectionListAPIParameter) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.getAllConnections}?pageSize=${itemPerPage}&pageNumber=${page}&searchByText=${search}&sortBy=${sortingOrder}&sortField=${sortBy}`;
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.getAllConnections}?pageSize=${itemPerPage}&pageNumber=${page}&searchByText=${search}&sortByValue=${sortingOrder}&sorting=${sortBy}`;
 	
 	const axiosPayload = {
 		url,
