@@ -57,6 +57,8 @@ const CreateSchema = () => {
 	const [showPopup, setShowPopup] = useState<IPopup>({ show: false, type: "reset" });
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [btnState, setBtnState] = useState<boolean>(false);
+	const [loading, setLoading] = useState<boolean>(false);
+	
 	const initFormData: IFormData = {
 		schemaName: '',
 		schemaVersion: '',
@@ -100,6 +102,7 @@ const CreateSchema = () => {
 			if (data) {
 				setSuccess(data?.message);
 				setCreateLoader(false);
+				setLoading(true)
 				setTimeout(() => {
 					setSuccess(null);
 				}, 3000);
@@ -679,6 +682,7 @@ const CreateSchema = () => {
 										isProcessing={createLoader}
 										setFailure={setFailure}
 										setSuccess={setSuccess}
+										loading={loading}
 									/>
 								</Form>
 							)}
