@@ -145,6 +145,7 @@ const CredentialList = () => {
 					setIssuedCredList(credentialList);
 					setError(null)
 				} else {
+					setError(response as string)
 					setIssuedCredList([]);
 				}
 			}
@@ -218,7 +219,7 @@ const CredentialList = () => {
 					{walletCreated && (
 						<RoleViewButton
 							buttonTitle="Issue"
-							feature={Features.ISSUENCE}
+							feature={Features.ISSUANCE}
 							svgComponent={
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
