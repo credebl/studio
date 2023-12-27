@@ -96,8 +96,8 @@ const CreateSchema = () => {
 
 		const createSchema = await createSchemas(schemaFieldName, orgId);
 		const { data } = createSchema as AxiosResponse;
-		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-			if (data?.data) {
+		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {		
+			if (data) {
 				setSuccess(data?.message);
 				setCreateLoader(false);
 				setTimeout(() => {
@@ -109,7 +109,7 @@ const CreateSchema = () => {
 						show: false
 					});
 					window.location.href = pathRoutes?.organizations?.schemas;
-				}, 4000);
+				}, 3500);
 			} else {
 				setFailure(createSchema as string);
 				setCreateLoader(false);
@@ -126,7 +126,7 @@ const CreateSchema = () => {
 				type: "create",
 				show: false
 			});
-		}, 4000);
+		}, 3500);
 	};
 
 	const submitSchemaCreationRequest = async (values: IFormData) => {
