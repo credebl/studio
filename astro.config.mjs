@@ -7,10 +7,6 @@ import tailwind from '@astrojs/tailwind';
 const DEV_PORT = 3000;
 
 export default defineConfig({
-	// experimental: {
-    // viewTransitions: true,
-  // },
-
 	redirects: {
     '/login': '/authentication/sign-in',
 		'/register': '/authentication/sign-up',
