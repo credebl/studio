@@ -296,8 +296,6 @@ const SchemaList = (props: {
 								<Pagination
 									currentPage={schemaListAPIParameter?.page}
 									onPageChange={(page) => {
-										console.log('page', page);
-
 										setSchemaListAPIParameter((prevState) => ({
 											...prevState,
 											page: page,
@@ -315,15 +313,17 @@ const SchemaList = (props: {
 								<CustomSpinner />
 							</div>
 						) : (
-							<EmptyListMessage
-								message={emptyListTitle}
-								description={emptyListDesc}
-								buttonContent={emptyListBtn.title}
-								svgComponent={emptyListBtn.svg}
-								onClick={() => {
-									window.location.href = `${pathRoutes.organizations.createSchema}`;
-								}}
-							/>
+							<div className="bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+								<EmptyListMessage
+									message={emptyListTitle}
+									description={emptyListDesc}
+									buttonContent={emptyListBtn.title}
+									svgComponent={emptyListBtn.svg}
+									onClick={() => {
+										window.location.href = `${pathRoutes.organizations.createSchema}`;
+									}}
+								/>
+							</div>
 						)}
 					</div>
 				)}
