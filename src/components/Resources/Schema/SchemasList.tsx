@@ -308,7 +308,7 @@ const SchemaList = (props: {
 					</div>
 				) : (
 					<div>
-						{!(schemaList && schemaList.length > 0) && loading ? (
+						{ loading ? (
 							<div className="flex items-center justify-center mb-4">
 								<CustomSpinner />
 							</div>
