@@ -105,14 +105,14 @@ const CreateSchema = () => {
 				setLoading(true)
 				setTimeout(() => {
 					setSuccess(null);
-				}, 3000);
+				}, 2000);
 				setTimeout(() => {
 					setShowPopup({
 						type: "create",
 						show: false
 					});
 					window.location.href = pathRoutes?.organizations?.schemas;
-				}, 3500);
+				}, 2000);
 			} else {
 				setFailure(createSchema as string);
 				setCreateLoader(false);
@@ -122,14 +122,14 @@ const CreateSchema = () => {
 			setFailure(createSchema as string);
 			setTimeout(() => {
 				setFailure(null);
-			}, 3000);
+			}, 2000);
 		}
 		setTimeout(() => {
 			setShowPopup({
 				type: "create",
 				show: false
 			});
-		}, 3500);
+		}, 2000);
 	};
 
 	const submitSchemaCreationRequest = async (values: IFormData) => {
@@ -151,20 +151,20 @@ const CreateSchema = () => {
 			window.location.href = pathRoutes.ecosystem.endorsements;
 			setTimeout(() => {
 				setSuccess(null);
-			}, 3000);
+			}, 2000);
 		} else {
 			setCreateLoader(false);
 			setFailure(createSchema as string);
 			setTimeout(() => {
 				setFailure(null);
-			}, 4000);
+			}, 2000);
 		}
 		setTimeout(() => {
 			setShowPopup({
 				type: "create",
 				show: false
 			});
-		}, 4000);
+		}, 2000);
 	};
 
 	const formTitle = isEcosystemData?.isEcosystemMember
