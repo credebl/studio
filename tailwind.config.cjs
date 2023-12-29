@@ -106,6 +106,9 @@ module.exports = {
 				'100/22rem': 'calc(100% - 26rem)',
 				'100/6rem': 'calc(100% - 6rem)',
 			},
+			height: {
+				'100/15rem': 'calc(100vh - 15rem)'
+			},
 			minWidth: {
 				kanban: '28rem',
 			},
@@ -114,12 +117,14 @@ module.exports = {
 				'100/13rem': 'calc(100% - 13rem)',
 				'100/10rem': 'calc(100% - 10rem)',
 				'100/8rem': 'calc(100% - 8rem)',
+				'landing-image-sec3': 'calc(100% - 768px)'
 			},
 			minHeight: {
 				'100/5rem': 'calc(100vh - 4.8rem)',
 				'100/18rem': 'calc(100vh - 18rem)',
 				'100/25rem': 'calc(100vh - 25rem)',
 				'100/21rem' : 'calc(100vh - 21rem)',
+				'100/15rem' : 'calc(100vh - 15rem)',
 			},
 			maxHeight: {
 				'[90vh]': 'fit-content !important',

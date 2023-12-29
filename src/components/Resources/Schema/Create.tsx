@@ -57,6 +57,8 @@ const CreateSchema = () => {
 	const [showPopup, setShowPopup] = useState<IPopup>({ show: false, type: "reset" });
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [btnState, setBtnState] = useState<boolean>(false);
+	const [loading, setLoading] = useState<boolean>(false);
+	
 	const initFormData: IFormData = {
 		schemaName: '',
 		schemaVersion: '',
@@ -96,20 +98,21 @@ const CreateSchema = () => {
 
 		const createSchema = await createSchemas(schemaFieldName, orgId);
 		const { data } = createSchema as AxiosResponse;
-		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-			if (data?.data) {
+		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {		
+			if (data) {
 				setSuccess(data?.message);
 				setCreateLoader(false);
+				setLoading(true)
 				setTimeout(() => {
 					setSuccess(null);
-				}, 3000);
+				}, 2000);
 				setTimeout(() => {
 					setShowPopup({
 						type: "create",
 						show: false
 					});
 					window.location.href = pathRoutes?.organizations?.schemas;
-				}, 4000);
+				}, 2000);
 			} else {
 				setFailure(createSchema as string);
 				setCreateLoader(false);
@@ -119,14 +122,14 @@ const CreateSchema = () => {
 			setFailure(createSchema as string);
 			setTimeout(() => {
 				setFailure(null);
-			}, 3000);
+			}, 2000);
 		}
 		setTimeout(() => {
 			setShowPopup({
 				type: "create",
 				show: false
 			});
-		}, 4000);
+		}, 2000);
 	};
 
 	const submitSchemaCreationRequest = async (values: IFormData) => {
@@ -148,20 +151,20 @@ const CreateSchema = () => {
 			window.location.href = pathRoutes.ecosystem.endorsements;
 			setTimeout(() => {
 				setSuccess(null);
-			}, 3000);
+			}, 2000);
 		} else {
 			setCreateLoader(false);
 			setFailure(createSchema as string);
 			setTimeout(() => {
 				setFailure(null);
-			}, 4000);
+			}, 2000);
 		}
 		setTimeout(() => {
 			setShowPopup({
 				type: "create",
 				show: false
 			});
-		}, 4000);
+		}, 2000);
 	};
 
 	const formTitle = isEcosystemData?.isEcosystemMember
@@ -679,6 +682,7 @@ const CreateSchema = () => {
 										isProcessing={createLoader}
 										setFailure={setFailure}
 										setSuccess={setSuccess}
+										loading={loading}
 									/>
 								</Form>
 							)}
