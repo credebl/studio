@@ -1,7 +1,7 @@
 'use client';
 
-import { Alert, Button } from 'flowbite-react';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { Alert, Button, Pagination } from 'flowbite-react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import {
 	ProofRequestState,
 	ProofRequestStateUserText,
@@ -13,7 +13,6 @@ import {
 	verifyPresentation,
 } from '../../api/verification';
 
-import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
 import CustomSpinner from '../CustomSpinner';
@@ -22,7 +21,6 @@ import DateTooltip from '../Tooltip';
 import { EmptyListMessage } from '../EmptyListComponent';
 import { Features } from '../../utils/enums/features';
 import ProofRequest from './ProofRequestPopup';
-import React from 'react';
 import type { RequestProof } from './interface';
 import RoleViewButton from '../RoleViewButton';
 import SearchInput from '../SearchInput';
@@ -30,11 +28,20 @@ import type { TableData } from '../../commonComponents/datatable/interface';
 import { dateConversion } from '../../utils/DateConversion';
 import { pathRoutes } from '../../config/pathRoutes';
 import { getFromLocalStorage, removeFromLocalStorage } from '../../api/Auth';
-import { getOrgDetails } from '../../config/ecosystem'
+import { getOrgDetails } from '../../config/ecosystem';
+import type { IConnectionListAPIParameter } from '../../api/connection';
+
+const initialPageState = {
+	itemPerPage: 10,
+	page: 1,
+	search: '',
+	sortBy: 'createDateTime',
+	sortingOrder: 'DESC',
+	allSearch: '',
+};
 
 const VerificationCredentialList = () => {
 	const [loading, setLoading] = useState<boolean>(true);
-	const [searchText, setSearchText] = useState('');
 	const [verificationList, setVerificationList] = useState<TableData[]>([]);
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [requestId, setRequestId] = useState<string>('');
@@ -43,11 +50,15 @@ const VerificationCredentialList = () => {
 	const [verifyLoader, setVerifyloader] = useState<boolean>(false);
 	const [userData, setUserData] = useState(null);
 	const [view, setView] = useState(false);
-	const [walletCreated, setWalletCreated] = useState(false)
+	const [walletCreated, setWalletCreated] = useState(false);
+	const [listAPIParameter, setListAPIParameter] =
+		useState<IConnectionListAPIParameter>(initialPageState);
+	const [totalItem, setTotalItem] = useState(0);
 
 	const getProofPresentationData = async (id: string) => {
 		try {
-			const response = await getProofAttributes(id);
+			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+			const response = await getProofAttributes(id, orgId);
 
 			const { data } = response as AxiosResponse;
 			if (data?.statusCode === apiStatusCodes?.API_STATUS_SUCCESS) {
@@ -60,7 +71,18 @@ const VerificationCredentialList = () => {
 		}
 	};
 
-	const getproofRequestList = async () => {
+	//onChange of Search input text
+	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setListAPIParameter({
+			...listAPIParameter,
+			search: e.target.value,
+			page: 1,
+		});
+	};
+
+	const getproofRequestList = async (
+		apiParameter: IConnectionListAPIParameter,
+	) => {
 		await removeFromLocalStorage(storageKeys.SELECTED_USER);
 		await removeFromLocalStorage(storageKeys.SCHEMA_ID);
 		await removeFromLocalStorage(storageKeys.CRED_DEF_ID);
@@ -68,49 +90,66 @@ const VerificationCredentialList = () => {
 		setLoading(true);
 
 		try {
-			const orgData = await getOrgDetails()
-			const isWalletCreated = Boolean(orgData.orgDid)
-			setWalletCreated(isWalletCreated)
+			const orgData = await getOrgDetails();
+			const isWalletCreated = Boolean(orgData.orgDid);
+			setWalletCreated(isWalletCreated);
 			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 			if (orgId && isWalletCreated) {
-					const response = await getVerificationList();
-					const { data } = response as AxiosResponse;
-
-					if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-
-						const credentialList = data?.data?.map((requestProof: RequestProof) => {
+				const response = await getVerificationList(apiParameter);
+				const { data } = response as AxiosResponse;
+				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+					setTotalItem(data?.data.totalItems);
+					const credentialList = data?.data?.data?.map(
+						(requestProof: RequestProof) => {
 							return {
 								data: [
-									{ data: requestProof?.id ? requestProof?.id : 'Not available' },
+									{
+										data: requestProof?.presentationId
+											? requestProof?.presentationId
+											: 'Not available',
+									},
 									{
 										data: requestProof?.connectionId
 											? requestProof?.connectionId
 											: 'Not available',
 									},
-									{ data: <DateTooltip date={requestProof.updatedAt}> {dateConversion(requestProof.updatedAt)} </DateTooltip> },
+									{
+										data: (
+											<DateTooltip date={requestProof.createDateTime}>
+												{' '}
+												{dateConversion(requestProof.createDateTime)}{' '}
+											</DateTooltip>
+										),
+									},
 									{
 										data: (
 											<span
-												className={`${requestProof?.state === ProofRequestState.requestSent &&
+												className={`${
+													requestProof?.state ===
+														ProofRequestState.requestSent &&
 													'bg-orange-100 text-orange-800 border border-orange-100 dark:bg-gray-700 dark:border-orange-300 dark:text-orange-300'
-													} ${requestProof?.state === ProofRequestState.done &&
+												} ${
+													requestProof?.state === ProofRequestState.done &&
 													'bg-green-100 text-green-800 dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500'
-													} ${requestProof?.state === ProofRequestState.abandoned &&
+												} ${
+													requestProof?.state === ProofRequestState.abandoned &&
 													'bg-red-100 text-red-800 border border-red-100 dark:border-red-400 dark:bg-gray-700 dark:text-red-400'
-													} ${requestProof?.state === ProofRequestState.presentationReceived &&
+												} ${
+													requestProof?.state ===
+														ProofRequestState.presentationReceived &&
 													'bg-secondary-700 text-primary-600 border border-secondary-100 dark:border-secondary-700 dark:bg-gray-700 dark:text-secondary-800'
-													}	text-xs font-medium sm:mr-0 md:mr-2 min-[320]:px-1 sm:px-0 lg:px-0.5 py-0.5 rounded-md flex justify-center min-[320]:w-full 2xl:w-8/12`}
+												}	text-xs font-medium sm:mr-0 md:mr-2 min-[320]:px-1 sm:px-0 lg:px-0.5 py-0.5 rounded-md flex justify-center min-[320]:w-full 2xl:w-8/12`}
 											>
 												{requestProof?.state === ProofRequestState.requestSent
 													? ProofRequestStateUserText.requestSent
 													: requestProof?.state ===
-														ProofRequestState.presentationReceived
-														? ProofRequestStateUserText.requestReceived
-														: requestProof?.state === ProofRequestState.done
-															? ProofRequestStateUserText.done
-															: requestProof?.state === ProofRequestState.abandoned
-																? ProofRequestStateUserText.abandoned
-																: ''}
+													  ProofRequestState.presentationReceived
+													? ProofRequestStateUserText.requestReceived
+													: requestProof?.state === ProofRequestState.done
+													? ProofRequestStateUserText.done
+													: requestProof?.state === ProofRequestState.abandoned
+													? ProofRequestStateUserText.abandoned
+													: ''}
 											</span>
 										),
 									},
@@ -118,20 +157,21 @@ const VerificationCredentialList = () => {
 										data: (
 											<Button
 												disabled={
-													(
-														requestProof.state !==
-														ProofRequestState.presentationReceived
-													) && requestProof?.state !== 'done'
+													requestProof.state !==
+														ProofRequestState.presentationReceived &&
+													requestProof?.state !== 'done'
 												}
 												className='text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
 												style={{ height: '2.5rem', minWidth: '4rem' }}
 												onClick={() => {
 													openProofRequestModel(
 														true,
-														requestProof?.id,
-														requestProof.state,
+														requestProof?.presentationId,
+														requestProof?.state,
 													);
-													getProofPresentationData(requestProof?.id);
+													getProofPresentationData(
+														requestProof?.presentationId,
+													);
 												}}
 											>
 												{requestProof?.state === 'done' ? (
@@ -149,8 +189,7 @@ const VerificationCredentialList = () => {
 															<path
 																fill="#fff"
 																d="M23.385 7.042C23.175 6.755 18.165 0 11.767 0 5.37 0 .36 6.755.15 7.042a.777.777 0 0 0 0 .916C.36 8.245 5.37 15 11.767 15c6.398 0 11.408-6.755 11.618-7.042.2-.273.2-.643 0-.916Zm-11.618 6.406c-4.713 0-8.795-4.483-10.003-5.949 1.207-1.466 5.28-5.947 10.003-5.947 4.713 0 8.794 4.482 10.003 5.949-1.207 1.466-5.28 5.947-10.003 5.947Z"
-															/>
-															{' '}
+															/>{' '}
 															<path
 																fill="#fff"
 																d="M11.772 2.84a4.66 4.66 0 0 0-4.655 4.655 4.66 4.66 0 0 0 4.655 4.655 4.66 4.66 0 0 0 4.656-4.655 4.66 4.66 0 0 0-4.656-4.655Zm0 7.758A3.107 3.107 0 0 1 8.67 7.495a3.107 3.107 0 0 1 3.103-3.103 3.107 3.107 0 0 1 3.104 3.103 3.107 3.107 0 0 1-3.104 3.103Z"
@@ -186,190 +225,228 @@ const VerificationCredentialList = () => {
 									},
 								],
 							};
-						});
+						},
+					);
 
-						setVerificationList(credentialList);
-					} else {
-						setErrMsg(response as string);
-					}
-				}
-			} catch (error) {
-				setErrMsg('An error occurred while fetching the proof request list');
-			}
-
-			setLoading(false);
-		};
-
-		const presentProofById = async (id: string) => {
-			try {
-				const response = await verifyPresentation(id);
-				const { data } = response as AxiosResponse;
-
-				if (data?.statusCode === apiStatusCodes?.API_STATUS_CREATED) {
-					setOpenModal(false)
-					setProofReqSuccess(data.message)
-					setVerifyloader(false)
-					setTimeout(() => {
-						getproofRequestList()
-					}, 2000)
+					setVerificationList(credentialList);
+					setErrMsg(null);
 				} else {
-					setOpenModal(false)
-					setErrMsg(response as string);
-					setVerifyloader(false)
+					setVerificationList([]);
 				}
+			}
+		} catch (error) {
+			setVerificationList([]);
+			setErrMsg('An error occurred while fetching the proof request list');
+		}
+
+		setLoading(false);
+	};
+
+	const presentProofById = async (id: string) => {
+		try {
+			const response = await verifyPresentation(id);
+			const { data } = response as AxiosResponse;
+
+			if (data?.statusCode === apiStatusCodes?.API_STATUS_CREATED) {
+				setOpenModal(false);
+				setProofReqSuccess(data.message);
+				setVerifyloader(false);
 				setTimeout(() => {
-					setProofReqSuccess('')
-					setErrMsg('')
-				}, 4000)
-			} catch (error) {
-				setOpenModal(false)
-				setVerifyloader(false)
-				console.error("An error occurred:", error);
-				setErrMsg("An error occurred while processing the presentation.");
-			}
-		};
-
-		const openProofRequestModel = (flag: boolean, requestId: string, state: boolean) => {
-			setRequestId(requestId)
-			setOpenModal(flag)
-			setView(state === "done" ? true : false)
-
-		}
-
-		const requestProof = async (proofVericationId: string) => {
-			if (proofVericationId) {
-				setOpenModal(false)
-				presentProofById(proofVericationId)
-			}
-		}
-
-		useEffect(() => {
-			let getData: NodeJS.Timeout
-
-			if (searchText.length >= 1) {
-				getData = setTimeout(() => { }, 1000);
+					getproofRequestList(listAPIParameter);
+				}, 2000);
 			} else {
-				getproofRequestList()
+				setOpenModal(false);
+				setErrMsg(response as string);
+				setVerifyloader(false);
 			}
-
-			return () => clearTimeout(getData)
-		}, [searchText])
-
-		const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-			setSearchText(e.target.value);
+			setTimeout(() => {
+				setProofReqSuccess('');
+				setErrMsg('');
+			}, 4000);
+		} catch (error) {
+			setOpenModal(false);
+			setVerifyloader(false);
+			console.error('An error occurred:', error);
+			setErrMsg('An error occurred while processing the presentation.');
 		}
+	};
 
-		const schemeSelection = () => {
-			window.location.href = pathRoutes.organizations.verification.schema
+	const openProofRequestModel = (
+		flag: boolean,
+		requestId: string,
+		state: string,
+	) => {
+		setRequestId(requestId);
+		setOpenModal(flag);
+		setView(state === 'done');
+	};
+
+	const refreshPage = () => {
+		getproofRequestList(listAPIParameter);
+	};
+
+
+	const requestProof = async (proofVericationId: string) => {
+		if (proofVericationId) {
+			setOpenModal(false);
+			presentProofById(proofVericationId);
 		}
+	};
 
-		const header = [
-			{ columnName: 'Request Id' },
-			{ columnName: 'Connection Id' },
-			{ columnName: 'Requested On' },
-			{ columnName: 'Status' },
-			{ columnName: 'Action' },
-		];
+	useEffect(() => {
+		getproofRequestList(listAPIParameter);
+	}, [listAPIParameter]);
 
-		return (
-			<div className="px-4 pt-2">
+	const schemeSelection = () => {
+		window.location.href = pathRoutes.organizations.verification.schema;
+	};
+
+	const header = [
+		{ columnName: 'Request Id' },
+		{ columnName: 'Connection Id' },
+		{ columnName: 'Requested On' },
+		{ columnName: 'Status' },
+		{ columnName: 'Action' },
+	];
+
+	return (
+		<div className="px-4 pt-2">
 			<div className="mb-4 col-span-full xl:mb-2">
 				<BreadCrumbs />
 			</div>
-			<div className='mb-4 flex justify-between'>
-				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
+			<div className="mb-4 flex flex-wrap justify-between gap-4">
+				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white mr-auto">
 					Verification List
 				</h1>
 				<div>
-					{
-						walletCreated &&
+					<SearchInput onInputChange={searchInputChange} />
+				</div>
+				<div className="flex gap-4 items-center">
+					<button
+						className="focus:z-10 focus:ring-2 bg-white-700 hover:bg-secondary-700 rounded-lg"
+						onClick={refreshPage}
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="36"
+							height="36"
+							viewBox="0 0 24 24"
+							fill="none"
+						>
+							<path
+								d="M12 20C9.76667 20 7.875 19.225 6.325 17.675C4.775 16.125 4 14.2333 4 12C4 9.76667 4.775 7.875 6.325 6.325C7.875 4.775 9.76667 4 12 4C13.15 4 14.25 4.2375 15.3 4.7125C16.35 5.1875 17.25 5.86667 18 6.75V4H20V11H13V9H17.2C16.6667 8.06667 15.9375 7.33333 15.0125 6.8C14.0875 6.26667 13.0833 6 12 6C10.3333 6 8.91667 6.58333 7.75 7.75C6.58333 8.91667 6 10.3333 6 12C6 13.6667 6.58333 15.0833 7.75 16.25C8.91667 17.4167 10.3333 18 12 18C13.2833 18 14.4417 17.6333 15.475 16.9C16.5083 16.1667 17.2333 15.2 17.65 14H19.75C19.2833 15.7667 18.3333 17.2083 16.9 18.325C15.4667 19.4417 13.8333 20 12 20Z"
+								fill="#1F4EAD"
+							/>
+						</svg>
+					</button>
+					{walletCreated && (
 						<RoleViewButton
-							buttonTitle='Request'
+							buttonTitle="Request"
 							feature={Features.VERIFICATION}
 							svgComponent={
-								<svg className='mr-2 mt-1' xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 25 25">
-									<path fill="#fff" d="M21.094 0H3.906A3.906 3.906 0 0 0 0 3.906v12.5a3.906 3.906 0 0 0 3.906 3.907h.781v3.906a.781.781 0 0 0 1.335.553l4.458-4.46h10.614A3.906 3.906 0 0 0 25 16.407v-12.5A3.907 3.907 0 0 0 21.094 0Zm2.343 16.406a2.343 2.343 0 0 1-2.343 2.344H10.156a.782.782 0 0 0-.553.228L6.25 22.333V19.53a.781.781 0 0 0-.781-.781H3.906a2.344 2.344 0 0 1-2.344-2.344v-12.5a2.344 2.344 0 0 1 2.344-2.344h17.188a2.343 2.343 0 0 1 2.343 2.344v12.5Zm-3.184-5.951a.81.81 0 0 1-.17.254l-3.125 3.125a.781.781 0 0 1-1.105-1.106l1.792-1.79h-7.489a2.343 2.343 0 0 0-2.344 2.343.781.781 0 1 1-1.562 0 3.906 3.906 0 0 1 3.906-3.906h7.49l-1.793-1.79a.78.78 0 0 1 .254-1.277.781.781 0 0 1 .852.17l3.125 3.125a.79.79 0 0 1 .169.852Z" />
+								<svg
+									className="mr-2 mt-1"
+									xmlns="http://www.w3.org/2000/svg"
+									width="20"
+									height="20"
+									fill="none"
+									viewBox="0 0 25 25"
+								>
+									<path
+										fill="#fff"
+										d="M21.094 0H3.906A3.906 3.906 0 0 0 0 3.906v12.5a3.906 3.906 0 0 0 3.906 3.907h.781v3.906a.781.781 0 0 0 1.335.553l4.458-4.46h10.614A3.906 3.906 0 0 0 25 16.407v-12.5A3.907 3.907 0 0 0 21.094 0Zm2.343 16.406a2.343 2.343 0 0 1-2.343 2.344H10.156a.782.782 0 0 0-.553.228L6.25 22.333V19.53a.781.781 0 0 0-.781-.781H3.906a2.344 2.344 0 0 1-2.344-2.344v-12.5a2.344 2.344 0 0 1 2.344-2.344h17.188a2.343 2.343 0 0 1 2.343 2.344v12.5Zm-3.184-5.951a.81.81 0 0 1-.17.254l-3.125 3.125a.781.781 0 0 1-1.105-1.106l1.792-1.79h-7.489a2.343 2.343 0 0 0-2.344 2.343.781.781 0 1 1-1.562 0 3.906 3.906 0 0 1 3.906-3.906h7.49l-1.793-1.79a.78.78 0 0 1 .254-1.277.781.781 0 0 1 .852.17l3.125 3.125a.79.79 0 0 1 .169.852Z"
+									/>
 								</svg>
 							}
 							onClickEvent={schemeSelection}
 						/>
-					}
+					)}
 				</div>
 			</div>
 			<div>
-				<div
-					className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-					{
-						(proofReqSuccess || errMsg) && (
-							<div className="p-2">
-								<Alert
-									color={proofReqSuccess ? 'success' : 'failure'}
-									onDismiss={() => setErrMsg(null)}
+				<div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+					{(proofReqSuccess || errMsg) && (
+						<div className="p-2">
+							<Alert
+								color={proofReqSuccess ? 'success' : 'failure'}
+								onDismiss={() => setErrMsg(null)}
+							>
+								<span>
+									<p>{proofReqSuccess || errMsg}</p>
+								</span>
+							</Alert>
+						</div>
+					)}
+
+					{!walletCreated && !loading ? (
+						<div className="flex justify-center items-center">
+							<EmptyListMessage
+								message={'No Wallet Details Found'}
+								description={'The owner is required to create a wallet'}
+								buttonContent={''}
+							/>
+						</div>
+					) : (
+						<div>
+							{loading ? (
+								<div className="flex items-center justify-center mb-4">
+									<CustomSpinner />
+								</div>
+							) : verificationList && verificationList.length > 0 ? (
+								<div
+									className="Flex-wrap"
+									style={{ display: 'flex', flexDirection: 'column' }}
 								>
-									<span>
-										<p>
-											{proofReqSuccess || errMsg}
-										</p>
-									</span>
-								</Alert>
-							</div>
-						)}
-
-						{
-							!walletCreated && !loading ?
-								<div className="flex justify-center items-center">
-									<EmptyListMessage
-										message={'No Wallet Details Found'}
-										description={'The owner is required to create a wallet'}
-										buttonContent={''}
-									/>
+									<div className="">
+										{verificationList && verificationList.length > 0 && (
+											<DataTable
+												header={header}
+												data={verificationList}
+												loading={loading}
+											></DataTable>
+										)}
+									</div>
+									{Math.ceil(totalItem / listAPIParameter?.itemPerPage) > 1 && (
+										<div className="flex items-center justify-end my-4">
+											<Pagination
+												currentPage={listAPIParameter?.page}
+												onPageChange={(page: number) => {
+													setListAPIParameter((prevState) => ({
+														...prevState,
+														page,
+													}));
+												}}
+												totalPages={Math.ceil(
+													totalItem / listAPIParameter?.itemPerPage,
+												)}
+											/>
+										</div>
+									)}
 								</div>
-								:
+							) : (
 								<div>
-									{
-
-										loading ? (
-											<div className="flex items-center justify-center mb-4">
-												<CustomSpinner />
-											</div>
-										) : verificationList && verificationList.length > 0 ? (
-											<div
-												className="Flex-wrap"
-												style={{ display: 'flex', flexDirection: 'column' }}
-											>
-												<div className="">
-													{verificationList && verificationList.length > 0 &&
-														<DataTable header={header} data={verificationList} loading={loading}></DataTable>
-													}
-												</div>
-											</div>
-										) : (
-											<div>
-												<span className="dark:text-white block text-center p-4 m-8">
-													There isn't any data available.
-												</span>
-											</div>
-										)
-
-									}
+									<span className="dark:text-white block text-center p-4 m-8">
+										There isn't any data available.
+									</span>
 								</div>
-						}
+							)}
+						</div>
+					)}
 
-						<ProofRequest openModal={openModal}
-							closeModal={
-								openProofRequestModel
-							}
-							onSucess={
-								requestProof
-							}
+					{userData && (
+						<ProofRequest
+							openModal={openModal}
+							closeModal={() => openProofRequestModel(false, '', '')}
+							onSucess={requestProof}
 							requestId={requestId}
 							userData={userData}
 							view={view}
 						/>
-					</div>
+					)}
 				</div>
 			</div>
-		)
-	}
+		</div>
+	);
+};
 
-	export default VerificationCredentialList;
+export default VerificationCredentialList;

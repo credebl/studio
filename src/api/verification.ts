@@ -4,10 +4,12 @@ import { storageKeys } from '../config/CommonConstant';
 import { getHeaderConfigs } from '../config/GetHeaderConfigs';
 import { axiosGet, axiosPost } from '../services/apiRequests';
 import { getFromLocalStorage } from './Auth';
+import type { IConnectionListAPIParameter } from './connection';
 
 export const verifyCredential = async (payload: any) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Verification.verifyCredential}`;	const axiosPayload = {
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Verification.verifyCredential}`;
+	const axiosPayload = {
 		url,
 		payload,
 		config: await getHeaderConfigs(),
@@ -37,10 +39,16 @@ export const getVerificationCredential = async (state: IssueCredential) => {
 	}
 };
 
-export const getVerificationList = async () => {
+export const getVerificationList = async ({
+	page,
+	itemPerPage,
+	search,
+	sortBy,
+	sortingOrder,
+}: IConnectionListAPIParameter) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Verification.verifyCredential}`
-	
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Verification.verifyCredential}?pageSize=${itemPerPage}&pageNumber=${page}&searchByText=${search}&sortByValue=${sortingOrder}&sorting=${sortBy}`;
+
 	const axiosPayload = {
 		url,
 		config: await getHeaderConfigs(),
@@ -71,8 +79,7 @@ export const verifyPresentation = async (proofId:string) => {
 };
 
 
-export const getProofAttributes=async (proofId:string)=>{
-	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+export const getProofAttributes=async (proofId:string, orgId: string)=>{
 	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Verification.proofRequestAttributesVerification}/${proofId}/form`;
 	const axiosPayload = {
 		url,

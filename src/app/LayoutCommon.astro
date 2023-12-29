@@ -7,29 +7,30 @@ import { SITE_TITLE } from './constants.js';
 
 const { class: clazz, metaData } = Astro.props;
 
-const baseUrl = process.env.PUBLIC_BASE_URL || import.meta.env.PUBLIC_BASE_URL
-const encryptKey = process.env.PUBLIC_CRYPTO_PRIVATE_KEY || import.meta.env.PUBLIC_CRYPTO_PRIVATE_KEY
-const supabaseUrl = process.env.PUBLIC_SUPABASE_URL || import.meta.env.PUBLIC_SUPABASE_URL
-const supabaseKey = process.env.PUBLIC_SUPABASE_KEY || import.meta.env.PUBLIC_SUPABASE_KEY
-
+const baseUrl = process.env.PUBLIC_BASE_URL || import.meta.env.PUBLIC_BASE_URL;
+const encryptKey =
+	process.env.PUBLIC_CRYPTO_PRIVATE_KEY ||
+	import.meta.env.PUBLIC_CRYPTO_PRIVATE_KEY;
+const supabaseUrl =
+	process.env.PUBLIC_SUPABASE_URL || import.meta.env.PUBLIC_SUPABASE_URL;
+const supabaseKey =
+	process.env.PUBLIC_SUPABASE_KEY || import.meta.env.PUBLIC_SUPABASE_KEY;
 ---
 
 <!DOCTYPE html>
 <html lang="en">
-
-<head set:html={metaData}/>
-<head>
-	<HelmetHead
-		siteTitle={SITE_TITLE}
-		version={pkg.version}
-		generator={Astro.generator}
-		desc={pkg.description}
-		icon={url('favicon.svg')}
-		sitemap={url('sitemap-index.xml')}
-		client:load
-	/>
-	
-	<script is:inline>
+	<head set:html={metaData}>
+		<HelmetHead
+			siteTitle={SITE_TITLE}
+			version={pkg.version}
+			generator={Astro.generator}
+			desc={pkg.description}
+			icon={url('favicon.svg')}
+			sitemap={url('sitemap-index.xml')}
+			client:load
+		/>
+		<meta property="og:image" content="https://credebl.id/images/CREDEBL_ICON.png" />
+		<script is:inline>
 			if (
 				localStorage.getItem('color-theme') === 'dark' ||
 				(!('color-theme' in localStorage) &&
@@ -40,29 +41,53 @@ const supabaseKey = process.env.PUBLIC_SUPABASE_KEY || import.meta.env.PUBLIC_SU
 				document.documentElement.classList.remove('dark');
 			}
 		</script>
-</head>
+	</head>
 
-<body class:list={[ // clazz, 'bg-gray-50 dark:bg-gray-800'
-	, 'scrollbar scrollbar-w-3 scrollbar-thumb-rounded-[0.25rem]'
-	, 'scrollbar-track-slate-200  scrollbar-thumb-gray-400'
-	, 'dark:scrollbar-track-gray-900 dark:scrollbar-thumb-gray-700' , 'dark:bg-[#111827]']}>
-	<slot />
-</body>
+	<body
+		class:list={[
+			,
+			// clazz, 'bg-gray-50 dark:bg-gray-800'
+			'scrollbar scrollbar-w-3 scrollbar-thumb-rounded-[0.25rem]',
+			'scrollbar-track-slate-200  scrollbar-thumb-gray-400',
+			'dark:scrollbar-track-gray-900 dark:scrollbar-thumb-gray-700',
+			'dark:bg-[#111827]',
+		]}
+	>
+		<slot />
+		<script>
+			import 'flowbite';
+			import 'flowbite/dist/datepicker.js';
+		</script>
 
+		<script define:vars={{ baseUrl, encryptKey, supabaseUrl, supabaseKey }}>
+			globalThis.baseUrl = baseUrl;
+			globalThis.encryptKey = encryptKey;
+			globalThis.supabaseUrl = supabaseUrl;
+			globalThis.supabaseKey = supabaseKey;
+		</script>
+
+		<style is:global>
+			@import url('https://fonts.googleapis.com/css2?family=Courier+Prime&family=Inter:wght@400&display=swap');
+
+			body {
+				font-family: 'Inter', sans-serif;
+			}
+
+			.font-courier {
+				font-family: 'Courier Prime', monospace;
+			}
+
+			/* Scrollbar design */
+			::-webkit-scrollbar {
+				width: 7px;
+				height: 7px;
+			}
+			::-webkit-scrollbar-track-piece {
+				background: #eee;
+			}
+			::-webkit-scrollbar-thumb {
+				background: #9a9a9a;
+			}
+		</style>
+	</body>
 </html>
-
-<script>
-	import 'flowbite';
-	import 'flowbite/dist/datepicker.js';
-</script>
-
-<script define:vars={{ baseUrl, encryptKey, supabaseUrl, supabaseKey }}>
-	globalThis.baseUrl = baseUrl;
-	globalThis.encryptKey = encryptKey;
-	globalThis.supabaseUrl = supabaseUrl;
-	globalThis.supabaseKey = supabaseKey;
-</script>
-
-<style is:global>
-	@import url('https://fonts.cdnfonts.com/css/inter');
-</style>

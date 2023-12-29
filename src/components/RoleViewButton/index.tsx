@@ -65,7 +65,7 @@ const RoleViewButton = ({ buttonTitle, svgComponent, onClickEvent, feature, isOu
                     outline={Boolean(isOutline)}
                     onClick={onClickEvent}
                     color={isOutline ? "bg-primary-800" : "bg-primary-700"}
-                    className={`${isOutline ? "!p-0 role-btn group flex h-min items-center justify-center text-center focus:z-10 focus:ring-2 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm dark:text-white dark:hover:text-primary-700" : "text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"}`}
+                    className={`${isOutline ? "!p-0 role-btn group flex h-min items-center justify-center text-center focus:z-10 focus:ring-2 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-md text-sm dark:text-white dark:hover:text-primary-700" : "text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-md hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"}`}
                 >
                     {svgComponent}
                     {buttonTitle}

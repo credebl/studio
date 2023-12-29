@@ -92,6 +92,7 @@ const EcosystemList = () => {
 			getData = setTimeout(() => {
 				fetchEcosystems();
 			}, 1000);
+			return () => clearTimeout(getData);
 		} else {
 			fetchEcosystems();
 		}
@@ -139,10 +140,15 @@ const EcosystemList = () => {
 			<div className="mb-2 col-span-full xl:mb-2">
 				<BreadCrumbs />
 			</div>
-			<div className="mb-4 flex justify-between">
+			<div className="mb-4 flex justify-between flex-wrap gap-4 items-center">
 				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 					Ecosystems
 				</h1>
+				<div className="ml-auto">
+            <SearchInput
+              onInputChange={searchInputChange}
+            />
+         </div> 
 				{showCreateButton && (
 					<RoleViewButton
 						buttonTitle="Create"
@@ -169,9 +175,7 @@ const EcosystemList = () => {
 			</div>
 			<div>
 				<div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800 min-h-100/18rem flex flex-col justify-between">
-					<div className="flex items-center justify-between mb-4">
-						<SearchInput onInputChange={searchInputChange} />
-					</div>
+				
 
 					<AlertComponent
 						message={message ?? error}

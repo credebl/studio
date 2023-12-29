@@ -2,7 +2,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { Alert, Button } from 'flowbite-react';
 import type { AxiosError, AxiosResponse } from 'axios';
-import type { IdeviceBody, RegistrationOptionInterface, VerifyRegistrationObjInterface} from '../Profile/interfaces/index.js';
+import type { IdeviceBody, RegistrationOptionInterface, VerifyRegistrationObjInterface } from '../Profile/interfaces/index.js';
 import { addDeviceDetails, generateRegistrationOption, verifyRegistration } from '../../api/Fido.js';
 import { AddPasswordDetails, addPasswordDetails, getFromLocalStorage, passwordEncryption } from '../../api/Auth.js';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant.js';
@@ -13,7 +13,7 @@ import SignUpUserName from './SignUpUserName.js';
 import { v4 as uuidv4 } from 'uuid';
 import NavBar from './NavBar.js';
 import FooterBar from './FooterBar.js';
-  
+
 interface passwordValues {
 
     password: string,
@@ -42,16 +42,16 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
     }, [])
 
     const showFidoError = (error: unknown): void => {
-		const err = error as AxiosError;
-		if (
-			err.message.includes('The operation either timed out or was not allowed')
-		) {
-			const [errorMsg] = err.message.split('.');
-			setFidoError(errorMsg);
-		} else {
-			setFidoError(err.message);
-		}
-	};
+        const err = error as AxiosError;
+        if (
+            err.message.includes('The operation either timed out or was not allowed')
+        ) {
+            const [errorMsg] = err.message.split('.');
+            setFidoError(errorMsg);
+        } else {
+            setFidoError(err.message);
+        }
+    };
 
 
     const submit = async (fidoFlag: boolean, passwordDetails?: passwordValues) => {
@@ -180,10 +180,10 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
                 <div className="flex flex-col min-h-screen">
                     <NavBar />
                     <div className="flex flex-1 flex-col md:flex-row">
-                        <div className="md:w-3/5 w-full bg-blue-500 bg-opacity-10 lg:p-4 md:p-4">
+                        <div className="hidden md:block md:w-3/5 w-full bg-blue-500 bg-opacity-10 lg:p-4 md:p-4">
                             <div className='flex justify-center'>
                                 <img
-                                    className='hidden sm:block'
+                                    className='max-h-100/10rem'
                                     src="/images/signin.svg"
                                     alt="img" />
                             </div>
@@ -209,8 +209,8 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
                                         </span>
                                     </Alert>
                                 }
-                                <div className='flex lg:mt-4 mb-8'>
 
+                                <div className='flex mt-2 xl:mt-8'>
                                     <button className='flex mt-2 '
                                         onClick={handleBackButton}
                                     >
@@ -221,46 +221,44 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
 
                                     <div className="w-full flex flex-col items-center justify-center ">
 
-                                        <h2 className="text-primary-700 text-blue-600 font-inter text-3xl font-bold leading-10">
+                                        <h2 className="text-center text-primary-700 dark:text-gray-200 font-inter text-3xl font-bold leading-10">
                                             Create account
                                         </h2>
 
-                                        <p className="text-gray-500 font-inter text-base font-medium leading-5 mt-2">
+                                        <p className="text-gray-500 text-center font-inter text-base font-medium leading-5 mt-2">
                                             Please choose your authentication method
                                         </p>
 
                                     </div>
                                 </div>
 
-                                <div className="lg:hidden sm:block md:hidden sm:block bg-blue-500 bg-opacity-10 mt-4 mb-8" >
-
+                                <div className="block md:hidden bg-blue-500 bg-opacity-10 mt-4 mb-8" >
                                     <img
                                         src="/images/signin.svg"
                                         alt="img" />
                                 </div>
 
 
-                                <div className='text-[#6B7280] font-inter font-normal leading-[1.05] justify-center items-center'>
-                                    <div className='text-base'>With Passkey you don’t need to remember complex passwords</div>
+                                <div className='text-[#6B7280] mt-8 font-inter font-normal leading-[1.05] justify-center items-center'>
+                                    <div className='text-base dark:text-gray-400'>With Passkey you don’t need to remember complex passwords</div>
 
                                     <div className='mt-4'>
-                                        <p className='text-lg text-gray-600'>What are passkeys?</p>
-                                        <p className='text-base'>Passkeys are encrypted digital keys you create using fingerprint, face, or screen lock</p>
+                                        <p className='text-lg text-gray-600 dark:text-gray-400'>What are passkeys?</p>
+                                        <p className='text-base dark:text-gray-300'>Passkeys are encrypted digital keys you create using fingerprint, face, or screen lock</p>
 
                                     </div>
 
                                     <div className='mt-4'>
-                                        <p className='text-lg text-gray-600'>Where are passkeys saved?</p>
-                                        <p className=' text-base'>Passkeys are saved to your password manager, so you can sign in on other devices.</p>
+                                        <p className='text-lg text-gray-600 dark:text-gray-400'>Where are passkeys saved?</p>
+                                        <p className=' text-base dark:text-gray-300'>Passkeys are saved to your password manager, so you can sign in on other devices.</p>
 
                                     </div>
 
                                 </div>
 
-                                <div className="flex justify-between mt-8">
-
+                                <div className="flex flex-col items-center gap-4 mt-8">
                                     <button
-                                        className="w-2/5 px-4 rounded-md text-center font-medium leading-5 border-blue-600 flex items-center justify-center hover:bg-secondary-700 bg-transparent ring-2 text-black rounded-lg text-sm"
+                                        className="px-12 py-2 min-w-fit min-h-[43px] sm:min-w-[12rem] rounded-md text-center font-medium leading-5 border-blue-600 flex items-center justify-center hover:bg-secondary-700 bg-transparent ring-2 text-black rounded-lg text-sm"
                                         onClick={() => setCurrentComponent('password')}
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 39 39" fill="none">
@@ -274,19 +272,15 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
                                             <path d="M24.9868 17.9689V14.5625H8.5" stroke="#1F4EAD" stroke-width="1.5" stroke-miterlimit="10" />
                                             <path d="M22.1118 10.8079C22.1118 5.40476 18.0309 1 13.025 1C8.01912 1 3.88382 5.40476 3.88382 10.8079V14.5667H1V38H24.9956V34.1238" stroke="#1F4EAD" stroke-width="1.5" stroke-miterlimit="10" />
                                         </svg>
-
                                         <span className="ml-2 text-primary-700">Password</span>
-
                                     </button>
-
                                     <Button
+                                        className="px-10 min-w-fit sm:min-w-[12rem] font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                                         id='signupcreatepasskey'
                                         isProcessing={loading}
                                         onClick={() => {
                                             registerWithPasskey(true)
                                         }}
-
-                                        className='w-2/5 font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 37 37" fill="none">
                                             <path d="M22.9319 8.88C22.9319 13.3701 19.292 17.01 14.8019 17.01C10.3118 17.01 6.67188 13.3701 6.67188 8.88C6.67188 4.38993 10.3118 0.75 14.8019 0.75C19.292 0.75 22.9319 4.38993 22.9319 8.88Z" stroke="white" stroke-width="1.5" />
@@ -296,21 +290,14 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
                                         <span className="ml-2">Passkey</span>
 
                                     </Button>
-
-                                </div>
-
-                                <div className="text-sm mt-6 font-medium text-gray-500 dark:text-gray-400 flex items-center justify-center">
-                                    Already have an account?
-                                    &nbsp;<a
-                                        id='navigatetosignup'
+                                    <a
+                                        id="navigatetosignup"
                                         href="/authentication/sign-in"
-                                        className="text-primary-700 hover:underline dark:text-primary-500"
+                                        className="text-sm text-primary-700 dark:text-gray-200 hover:underline"
                                     >
-                                        {` Login here`}
+                                        {`Login here`}
                                     </a>
                                 </div>
-
-
                             </div>
                         </div>
                     </div>
