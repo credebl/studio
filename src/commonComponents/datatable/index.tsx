@@ -20,7 +20,6 @@ interface DataTableProps {
 	pageInfo: { totalItem: number; nextPage: number; lastPage: number };
 	searchSortByValue: () => void;
 	statusValues: [];
-	filterByValue: ()=>void
 }
 
 const DataTable: React.FC<DataTableProps> = ({
@@ -37,24 +36,15 @@ const DataTable: React.FC<DataTableProps> = ({
 	totalPages,
 	pageInfo,
 	searchSortByValue,
-	statusValues,
-	filterByValue
 }) => {
 	const [selectedValue, setSelectedValue] = useState('');
-	const [filterValue, setFilerValue]= useState('')
 
-	console.log("filterValue",filterValue);
-	
 	const handleSortByValues = (event: { target: { value: any } }) => {
-		const newSelectedFruit = event.target.value;
-		setSelectedValue(newSelectedFruit);
-		searchSortByValue(newSelectedFruit);
+		const newSelectedValue = event.target.value;
+		setSelectedValue(newSelectedValue);
+		searchSortByValue(newSelectedValue);
 	};
-	const handleFilterByValues = (event: { target: { value: any } }) => {
-		const newFilteredValue = event.target.value;
-		setFilerValue(newFilteredValue);
-		filterByValue(newFilteredValue);
-	};
+
 	const { totalItem, nextPage, lastPage } = pageInfo;
 	const startItem = (nextPage - 2) * 10 + 1;
 	const endItem = Math.min((nextPage - 1) * 10, totalItem);
@@ -128,28 +118,29 @@ const DataTable: React.FC<DataTableProps> = ({
 									onChange={handleSortByValues}
 								>
 									{/* <option selected>Choose a country</option> */}
-									<option selected>sortBy</option>
+									<option value={'DESC'} selected>sortBy</option>
 									{sortValues.map((sort) => {
 										return (
 											<>
-												<option value={sort.value}>{sort.label}</option>
+												<option key={sort.value} value={sort.value}>{sort.label}</option>
 											</>
 										);
 									})}
 								</select>
 
-								<select
+								{/* <select
 									id="small"
 									className="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
 									name="selectedValue"
-									value={filterValue}
+									// value={filterValue}
 									onChange={handleFilterByValues}
 								>
-									<option selected value=' '>Filter</option>
-									{statusValues.map((sort) => {
-										return <option value={sort}>{sort}</option>;
-									})}
-								</select>
+									{options.map((option) => (
+										<option key={option.value} value={option.value}>
+											{option.label}
+										</option>
+									))}
+								</select> */}
 							</div>
 						</div>
 					</div>

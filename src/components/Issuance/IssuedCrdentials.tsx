@@ -39,6 +39,7 @@ const initialPageState = {
 	sortBy: 'createDateTime',
 	sortingOrder: '',
 	allSearch: '',
+	filter: '',
 };
 
 const CredentialList = () => {
@@ -54,10 +55,6 @@ const CredentialList = () => {
 		nextPage: '',
 		lastPage: '',
 	});
-	const [statusValues, setStatusValues] = useState([]);
-	console.log('statusValues::', statusValues);
-
-	console.log('listAPIParameter::', listAPIParameter.sortingOrder);
 
 	const getIssuedCredDefs = async (listAPIParameter: IConnectionListAPIParameter) => {
 		setLoading(true);
@@ -89,10 +86,6 @@ const CredentialList = () => {
 									.slice(2)
 									.join(':')
 								: 'Not available';
-							  setStatusValues((prevStatusValues) => [
-									...prevStatusValues,
-									issuedCredential?.state 
-								]);
 							return {
 								data: [
 									{
@@ -206,14 +199,6 @@ const CredentialList = () => {
 			...listAPIParameter,
 			page: 1,
 			sortingOrder: value,
-		});
-	};
-
-	const filterByValue = (value: any) => {
-		setListAPIParameter({
-			...listAPIParameter,
-			page: 1,
-			sortBy: value,
 		});
 	};
 
@@ -364,8 +349,6 @@ const CredentialList = () => {
 											)}
 											pageInfo={pageInfo}
 											searchSortByValue={searchSortByValue}
-											statusValues={statusValues}
-											filterByValue={filterByValue}
 										></DataTable>
 										{/* )} */}
 									</div>
@@ -396,5 +379,4 @@ const CredentialList = () => {
 	);
 };
 
-
-export default CredentialList
+export default CredentialList;
