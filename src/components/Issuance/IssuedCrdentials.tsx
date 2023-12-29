@@ -307,18 +307,23 @@ const CredentialList = () => {
 								<div className="flex items-center justify-center mb-4">
 									<CustomSpinner />
 								</div>
-							) : issuedCredList && issuedCredList.length > 0 ? (
+							) : (
 								<div
 									className="Flex-wrap"
 									style={{ display: 'flex', flexDirection: 'column' }}
 								>
 									<div className="">
-										{issuedCredList && issuedCredList.length > 0 && (
+										{issuedCredList && issuedCredList.length > 0 ? (
 											<DataTable
 												header={header}
 												data={issuedCredList}
 												loading={loading}
 											></DataTable>
+										) : (
+											<EmptyListMessage
+												message={'No issuance records'}
+												description={'You have no issuance record yet'}
+											/>
 										)}
 									</div>
 									{
@@ -337,11 +342,6 @@ const CredentialList = () => {
 										</div>
 									}
 								</div>
-							) : (
-								<EmptyListMessage
-									message={'No issuance records'}
-									description={'You have no issuance record yet'}
-								/>
 							)}
 						</div>
 					)}
