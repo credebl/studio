@@ -235,12 +235,10 @@ const Members = () => {
 						</div>
 					</div>
 				) : (
-					<div className="p-2 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-3 dark:bg-gray-800 ">
-						<EmptyListMessage
-							message={'No Member Details Found'}
-							description={'You have no matching member'}
-						/>
-					</div>
+					<EmptyListMessage
+						message={'No Member Details Found'}
+						description={'You have no matching member'}
+					/>
 				)}
 				{currentPage.total > 1 && (
 					<div className="flex items-center justify-end mb-4">
