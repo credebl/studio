@@ -46,6 +46,7 @@ const SendInvitationModal = (props: {
 	const [invitations, setInvitations] = useState<Invitations[]>([]);
 
 	const [memberRole, setMemberRole] = useState<RoleI | null>(null);
+	
 	const [initialData, setInitialData] = useState({
 		email: '',
 	});
@@ -60,8 +61,7 @@ const SendInvitationModal = (props: {
 		const { data } = resRoles as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			const roles: Array<RoleI> = data?.data.response;
-
+			const roles: Array<RoleI> = data?.data;
 			const memberRole = roles.find((role) => role.name === 'member');
 			setMemberRole(memberRole as RoleI);
 		} else {
@@ -106,10 +106,9 @@ const SendInvitationModal = (props: {
 				email: invitation.email,
 				orgRoleId: [invitation.roleId],
 			};
-		});
+		});		
 
 		const resCreateOrg = await createInvitations(invitationPayload);
-
 		const { data } = resCreateOrg as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
