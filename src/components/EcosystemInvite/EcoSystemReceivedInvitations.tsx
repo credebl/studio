@@ -36,13 +36,14 @@ export interface NetworkDetails {
 	indyNamespace: string;
 }
 
+export interface IPropsEcoInvitationList {
+	name: string;
+	logoUrl: string;
+	networkDetails?: NetworkDetails[]
+}
 export interface InvitationProps {
 	invitationId: string;
-	ecosystem: {
-		name: string;
-		logoUrl: string;
-		networkDetails: NetworkDetails[]
-	};
+	ecosystem: IPropsEcoInvitationList;
 }
 export interface EcosystemInvitation {
 	ecosystem: { name: string; logoUrl: string };
@@ -316,99 +317,102 @@ const ReceivedInvitations = () => {
 						>
 							<div id={selectedId?.toString()} className="flow-root">
 								<ul id={selectedId?.toString()}>
-									{invitationsData.map((invitation) => (
-										<Card key={invitation.id} className="p-2 mb-4">
-											<div
-												id={invitation.email}
-												className="flex flex-wrap justify-between 2xl:flex align-center"
-											>
+									{invitationsData.map((invitation) => {
+										const ecosystem: IPropsEcoInvitationList = invitation?.ecosystem;
+										return (
+											<Card key={invitation.id} className="p-2 mb-4">
 												<div
 													id={invitation.email}
-													className=" xl:mb-4 2xl:mb-0"
+													className="flex flex-wrap justify-between 2xl:flex align-center"
 												>
-													<EcoInvitationList
-														invitationId={invitation.id}
-														ecosytem={invitation.ecosystem}
-													/>
-
-													<div id={invitation.email} className="flex">
-														<Button
-															onClick={() =>
-																respondToEcosystemInvitations(
-																	invitation,
-																	'rejected',
-																)
+													<div
+														id={invitation.email}
+														className=" xl:mb-4 2xl:mb-0"
+													>
+														<EcoInvitationList
+															invitationId={invitation.id}
+															ecosystem={ecosystem}
+														/>
+	
+														<div id={invitation.email} className="flex">
+															<Button
+																onClick={() =>
+																	respondToEcosystemInvitations(
+																		invitation,
+																		'rejected',
+																	)
+																}
+																disabled={!invitation?.orgData}
+																id={invitation.id}
+																color="bg-white"
+																className='mr-5 mt-5 text-base font-medium text-center text-gray-00 bg-secondary-700 hover:!bg-secondary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600  dark:focus:ring-primary-800 dark:bg-gray-800"'
+																style={{
+																	height: '2.5rem',
+																	width: '100%',
+																	minWidth: '2rem',
+																}}
+															>
+																{rejectEnv}
+																Reject
+															</Button>
+															<Button
+																onClick={() =>
+																	respondToEcosystemInvitations(
+																		invitation,
+																		'accepted',
+																	)
+																}
+																disabled={!invitation?.orgData}
+																id={invitation.id}
+																className='mt-5 text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-700 dark:hover:!bg-primary-800 dark:focus:ring-primary-800"'
+																style={{
+																	height: '2.5rem',
+																	width: '100%',
+																	minWidth: '2rem',
+																}}
+															>
+																{acceptEnv}
+																Accept
+															</Button>
+														</div>
+													</div>
+													<div className="flex items-center h-fit">
+														<select
+															className="ml-3 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full px-2 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-700 dark:focus:border-primary-700"
+															id="dropdown"
+															onChange={(e) =>
+																handleDropdownChange(e, invitation.id)
 															}
-															disabled={!invitation?.orgData}
-															id={invitation.id}
-															color="bg-white"
-															className='mr-5 mt-5 text-base font-medium text-center text-gray-00 bg-secondary-700 hover:!bg-secondary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600  dark:focus:ring-primary-800 dark:bg-gray-800"'
-															style={{
-																height: '2.5rem',
-																width: '100%',
-																minWidth: '2rem',
-															}}
+															value={invitation.orgId || ''}
 														>
-															{rejectEnv}
-															Reject
-														</Button>
-														<Button
-															onClick={() =>
-																respondToEcosystemInvitations(
-																	invitation,
-																	'accepted',
-																)
-															}
-															disabled={!invitation?.orgData}
-															id={invitation.id}
-															className='mt-5 text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-700 dark:hover:!bg-primary-800 dark:focus:ring-primary-800"'
-															style={{
-																height: '2.5rem',
-																width: '100%',
-																minWidth: '2rem',
-															}}
-														>
-															{acceptEnv}
-															Accept
-														</Button>
+															<option value="">Select Organization</option>
+															{organizationsList &&
+																organizationsList.length > 0 &&
+																organizationsList.map((orgs) => {
+																	return (
+																		<option
+																			key={orgs.id}
+																			value={orgs.id.toString()}
+																		>
+																			{orgs.name}
+																		</option>
+																	);
+																})}
+														</select>
 													</div>
 												</div>
-												<div className="flex items-center h-fit">
-													<select
-														className="ml-3 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full px-2 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-700 dark:focus:border-primary-700"
-														id="dropdown"
-														onChange={(e) =>
-															handleDropdownChange(e, invitation.id)
-														}
-														value={invitation.orgId || ''}
-													>
-														<option value="">Select Organization</option>
-														{organizationsList &&
-															organizationsList.length > 0 &&
-															organizationsList.map((orgs) => {
-																return (
-																	<option
-																		key={orgs.id}
-																		value={orgs.id.toString()}
-																	>
-																		{orgs.name}
-																	</option>
-																);
-															})}
-													</select>
-												</div>
-											</div>
-											{invitation.selected && (
-												<AlertComponent
-													message={getOrgError}
-													type={'failure'}
-													onAlertClose={() => {
-														setGetOrgError(null);
-													}}
-												/>
-											)}
-										</Card>
-									))}
+												{invitation.selected && (
+													<AlertComponent
+														message={getOrgError}
+														type={'failure'}
+														onAlertClose={() => {
+															setGetOrgError(null);
+														}}
+													/>
+												)}
+											</Card>
+										)
+									})}
 								</ul>
 							</div>
 						</div>
