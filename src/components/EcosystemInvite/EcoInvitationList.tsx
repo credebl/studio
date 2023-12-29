@@ -3,7 +3,7 @@ import CustomAvatar from '../Avatar';
 import React from "react";
 
 const EcoInvitationList = (props: InvitationProps) => {
-	const { invitationId, ecosystem } = props;
+	const { invitationId, ecosystem } = props || {};
 	const { name, logoUrl, networkDetails } = ecosystem || {};
 
 	return (
