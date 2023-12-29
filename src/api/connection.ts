@@ -9,6 +9,7 @@ export interface IConnectionListAPIParameter {
 	search: string,
 	sortBy: string,
 	sortingOrder: string,
+	filter?: string
   }
 
 export const getConnectionsByOrg = async ({
