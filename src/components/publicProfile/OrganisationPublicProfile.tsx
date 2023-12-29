@@ -119,28 +119,22 @@ const OrganisationPublicProfile = () => {
 									}}
 									className="transform transition duration-500 hover:scale-[1.02] hover:bg-gray-50 cursor-pointer"
 								>
-									<div className="flex items-center">
-										{org.logoUrl ? (
-											<CustomAvatar size="80" src={org?.logoUrl} />
-										) : (
-											<CustomAvatar size="80" name={org?.name} />
-										)}
+									<div className="flex items-start">
+										<div className="shrink-0">
+											{org.logoUrl ? (
+												<CustomAvatar size="80" src={org?.logoUrl} />
+											) : (
+												<CustomAvatar size="80" name={org?.name} />
+											)}
+										</div>
 
 										<div className="ml-4 line-clamp-4">
 											<h5 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white truncate">
-												<p>{org?.name}</p>
+												{org?.name}
 											</h5>
-											<div className="flow-root h-auto ">
-												<ul className="divide-y divide-gray-200 dark:divide-gray-700">
-													<li className="py-3 sm:py-4 overflow-auto">
-														<div className="flex items-center space-x-4">
-															<div className="inline-flex tracking-tight items-center text-base text-lg text-gray-900 dark:text-white truncate">
-																{org?.description}
-															</div>
-														</div>
-													</li>
-												</ul>
-											</div>
+											<p className="text-lg tracking-tight text-gray-900 dark:text-white truncate line-clamp-2 whitespace-pre-wrap">
+												{org?.description}
+											</p>
 										</div>
 									</div>
 								</Card>
