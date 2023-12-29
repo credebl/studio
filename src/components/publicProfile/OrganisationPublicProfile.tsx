@@ -80,7 +80,7 @@ const OrganisationPublicProfile = () => {
 
 	return (
 		<div>
-			<div className='flex justify-between items-center w-full'>
+			<div className="flex justify-between items-center w-full">
 				<h1 className="ml-1 px-4 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 					Organizations
 				</h1>
@@ -142,22 +142,22 @@ const OrganisationPublicProfile = () => {
 						)}
 					</div>
 				) : (
-
-					<div className="flex justify-center items-center">
+					<div className="flex justify-center items-center w-full">
 						{organizationList && (
-							<div className="flex justify-center items-center">
+							<div className="w-full flex justify-center items-center bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 								<EmptyListMessage
-									message={'No Matching Organization'}
-									description={''}
+									message={'No Organization Found'}
+									description={
+										'There is no organization that matches your search'
+									}
 								/>
 							</div>
 						)}
 					</div>
 				)}
-
 			</div>
 			<div className="relative mt-16 flex items-center justify-end mb-4 flex-grow">
-				<div className='absolute bottom-4 right-4'>
+				<div className="absolute bottom-4 right-4">
 					{organizationList && organizationList?.length > 0 && (
 						<Pagination
 							currentPage={currentPage?.pageNumber}
