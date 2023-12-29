@@ -13,7 +13,6 @@ import SearchInput from '../../SearchInput';
 import type { User } from '../interfaces/users';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { getOrganizationUsers } from '../../../api/organization';
-import React from 'react';
 import { EmptyListMessage } from '../../EmptyListComponent';
 
 const initialPageState = {
@@ -24,7 +23,7 @@ const initialPageState = {
 
 const Members = () => {
 	const [openModal, setOpenModal] = useState<boolean>(false);
-	const [loading, setLoading] = useState<boolean>(false);
+	const [loading, setLoading] = useState<boolean>(true);
 	const [message, setMessage] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [userRoles, setUserRoles] = useState<string[]>([]);
