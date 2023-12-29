@@ -1,5 +1,5 @@
-import React from "react";
-import type { IAlertComponent } from "./interface";
+import React from 'react';
+import type { IAlertComponent } from './interface';
 
 export const AlertComponent = ({
 	message,
@@ -7,7 +7,7 @@ export const AlertComponent = ({
 	viewButton,
 	onAlertClose,
 	path = '',
-}:IAlertComponent) => {
+}: IAlertComponent) => {
 	const getAlertClass = () => {
 		switch (type) {
 			case 'warning':
