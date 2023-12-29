@@ -36,29 +36,28 @@ interface EditOrgdetailsModalProps {
 const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 	const [logoImage, setLogoImage] = useState<ILogoImage>({
 		logoFile: '',
-		imagePreviewUrl: props?.orgData?.logoUrl || '',
+		imagePreviewUrl: props?.orgData?.logoUrl ?? '',
 		fileName: '',
 	});
 	const [loading, setLoading] = useState<boolean>(false);
-	const [isImageEmpty, setIsImageEmpty] = useState(true);
 	const [isPublic, setIsPublic] = useState<boolean>();
 	const [initialOrgData, setInitialOrgData] = useState({
-		name: props?.orgData?.name || '',
-		description: props?.orgData?.description || '',
-		website: props?.orgData?.website || '',
+		name: props?.orgData?.name ?? '',
+		description: props?.orgData?.description ?? '',
+		website: props?.orgData?.website ?? '',
 	});
 
 	useEffect(() => {
 		if (props.orgData) {
 			setInitialOrgData({
-				name: props.orgData.name || '',
-				description: props.orgData.description || '',
-				website: props?.orgData?.website || '',
+				name: props.orgData.name ?? '',
+				description: props.orgData.description ?? '',
+				website: props?.orgData?.website ?? '',
 			});
 
 			setLogoImage({
 				logoFile: '',
-				imagePreviewUrl: props.orgData.logoUrl || '',
+				imagePreviewUrl: props.orgData.logoUrl ?? '',
 				fileName: '',
 			});
 
@@ -137,10 +136,8 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 
 	const isEmpty = (object: any): boolean => {
 		for (const property in object) {
-			setIsImageEmpty(false);
 			return false;
 		}
-		setIsImageEmpty(true);
 		return true;
 	};
 	const handleImageChange = (event: any): void => {
