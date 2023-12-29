@@ -42,8 +42,8 @@ const EditUserRoleModal = (props: { openModal: boolean;  setMessage: (message: s
         const { data } = resRoles as AxiosResponse
 
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-            
-            const roles: Array<RoleI> = data?.data.response
+
+            const roles: Array<RoleI> = data?.data
             const filterRole = roles.filter(role => {
                 if (props?.user?.roles.includes(role.name) && role.name !== 'member') {
                     role.checked = true
@@ -56,7 +56,7 @@ const EditUserRoleModal = (props: { openModal: boolean;  setMessage: (message: s
                     role.disabled = false
                 }
                 return !role.name.includes("owner") && !role.name.includes("holder");
-            })
+            })						
             setRoles(filterRole)
         } else {
             setErrMsg(resRoles as string)
