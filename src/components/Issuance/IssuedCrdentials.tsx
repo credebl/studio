@@ -154,10 +154,20 @@ const CredentialList = () => {
 		} finally {
 			setLoading(false);
 		}
-	}
+	};
 
 	useEffect(() => {
-		getIssuedCredDefs(listAPIParameter);
+		let getData: NodeJS.Timeout;
+
+		if (listAPIParameter?.search?.length >= 1) {
+			getData = setTimeout(() => {
+				getIssuedCredDefs(listAPIParameter);
+			}, 1000);
+			return () => clearTimeout(getData);
+		} else {
+			getIssuedCredDefs(listAPIParameter);
+		}
+		return () => clearTimeout(getData);
 	}, [listAPIParameter]);
 
 	//onChange of Search input text
@@ -218,7 +228,7 @@ const CredentialList = () => {
 					{walletCreated && (
 						<RoleViewButton
 							buttonTitle="Issue"
-							feature={Features.ISSUENCE}
+							feature={Features.ISSUANCE}
 							svgComponent={
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -262,18 +272,23 @@ const CredentialList = () => {
 								<div className="flex items-center justify-center mb-4">
 									<CustomSpinner />
 								</div>
-							) : issuedCredList && issuedCredList.length > 0 ? (
+							) : (
 								<div
 									className="Flex-wrap"
 									style={{ display: 'flex', flexDirection: 'column' }}
 								>
 									<div className="">
-										{issuedCredList && issuedCredList.length > 0 && (
+										{issuedCredList && issuedCredList.length > 0 ? (
 											<DataTable
 												header={header}
 												data={issuedCredList}
 												loading={loading}
 											></DataTable>
+										) : (
+											<EmptyListMessage
+												message={'No issuance records'}
+												description={'You have no issuance record yet'}
+											/>
 										)}
 									</div>
 									{Math.ceil(totalItem / listAPIParameter?.itemPerPage) > 1 && (
@@ -292,12 +307,6 @@ const CredentialList = () => {
 											/>
 										</div>
 									)}
-								</div>
-							) : (
-								<div>
-									<span className="dark:text-white block text-center p-4 m-8">
-										There isn't any data available.
-									</span>
 								</div>
 							)}
 						</div>

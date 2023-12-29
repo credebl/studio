@@ -170,7 +170,7 @@ const UserDashBoard = () => {
 		<div className="px-4 pt-6">
 			<div className="cursor-pointer">
 				<AlertComponent
-					message={message ? message : error}
+					message={message || error}
 					type={message ? 'warning' : 'failure'}
 					viewButton={viewButton}
 					path={pathRoutes.users.invitations}
