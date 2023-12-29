@@ -1,9 +1,10 @@
-import type { InvitationProps } from "./EcoSystemReceivedInvitations";
+import type { InvitationProps, NetworkDetails } from "./EcoSystemReceivedInvitations";
 import CustomAvatar from '../Avatar';
+import React from "react";
 
 const EcoInvitationList = (props: InvitationProps) => {
 	const { invitationId, ecosystem } = props;
-	const { name, logoUrl, networkDetails } = ecosystem;
+	const { name, logoUrl, networkDetails } = ecosystem || {};
 
 	return (
 		<div className="flex space-x-2">
@@ -32,20 +33,22 @@ const EcoInvitationList = (props: InvitationProps) => {
 									>
 										Ecosystem Member
 									</span>
-								</div>								
+								</div>
 							</div>
-						</li>					
+						</li>
 					</ul>
 				</div>
 				<div className="inline-flex items-center text-base font-normal text-gray-900 dark:text-white">
 					Network:{' '}
-					<span
-						key={invitationId}
-						className="m-1 text-gray-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
-					>
-						{(Array.isArray(networkDetails) && networkDetails.map((network: NetworkDetails) => network.name)).join(', ')}
-					</span>
-				</div>		
+					{Array.isArray(networkDetails) && networkDetails.length > 0 &&
+						<span
+							key={invitationId}
+							className="m-1 text-gray-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
+						>
+							{networkDetails.map((network: NetworkDetails) => network.name)?.join(', ')}
+						</span>
+					}
+				</div>
 			</div>
 		</div>
 	);

@@ -34,6 +34,7 @@ const initialPageState = {
 const EcosystemList = () => {
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(true);
+	const [selectedOrgId, setSelectedOrgId] = useState<string>("");
 	const [message, setMessage] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
@@ -55,9 +56,9 @@ const EcosystemList = () => {
 	};
 
 	const fetchEcosystems = async () => {
-		setLoading(true);
 		const id = await getFromLocalStorage(storageKeys.ORG_ID);
-		// setOrgId(id);
+		setSelectedOrgId(id)
+		setLoading(true);
 		if (id) {
 			const response = await getEcosystems(
 				id,
@@ -70,7 +71,7 @@ const EcosystemList = () => {
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 				const ecosystemData = data?.data;
 				if (ecosystemData) {
-					
+
 					setEcosystemList(ecosystemData);
 				} else {
 					await removeFromLocalStorage(storageKeys.ECOSYSTEM_ID);
@@ -132,9 +133,9 @@ const EcosystemList = () => {
 	const isEcosystemList = Boolean(ecosystemList && ecosystemList?.length > 0);
 	const showCreateButton = Boolean(
 		isEcosystemList &&
-			(isEcosystemData?.isMultiEcosystem || isEcosystemData?.isEcosystemLead),
+		(isEcosystemData?.isMultiEcosystem || isEcosystemData?.isEcosystemLead),
 	);
-	
+
 	return (
 		<div className="px-4 pt-2">
 			<div className="mb-2 col-span-full xl:mb-2">
@@ -145,10 +146,10 @@ const EcosystemList = () => {
 					Ecosystems
 				</h1>
 				<div className="ml-auto">
-            <SearchInput
-              onInputChange={searchInputChange}
-            />
-         </div> 
+					<SearchInput
+						onInputChange={searchInputChange}
+					/>
+				</div>
 				{showCreateButton && (
 					<RoleViewButton
 						buttonTitle="Create"
@@ -174,8 +175,8 @@ const EcosystemList = () => {
 				)}
 			</div>
 			<div>
-				<div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800 min-h-100/18rem flex flex-col justify-between">
-				
+				<div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800 flex flex-col justify-between">
+
 
 					<AlertComponent
 						message={message ?? error}
@@ -258,37 +259,63 @@ const EcosystemList = () => {
 								);
 							})}
 						</div>
-						
+
 					) : (
-						ecosystemList && (
-							<EmptyListMessage
-								message={'No Ecosystem'}
-								description={'Get started by creating a new Ecosystem'}
-								buttonContent={'Create Ecosystem'}
-								onClick={createOrganizationModel}
-								svgComponent={
-									<svg
-										className="pr-2 mr-1"
-										xmlns="http://www.w3.org/2000/svg"
-										width="24"
-										height="15"
-										fill="none"
-										viewBox="0 0 24 24"
-									>
-										<path
-											fill="#fff"
-											d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"
-										/>
-									</svg>
-								}
-							/>
-						)
+						<>
+							{ecosystemList && (
+								<EmptyListMessage
+									message={'No Ecosystem'}
+									description={'Get started by creating a new Ecosystem'}
+									buttonContent={'Create Ecosystem'}
+									onClick={createOrganizationModel}
+									svgComponent={
+										<svg
+											className="pr-2 mr-1"
+											xmlns="http://www.w3.org/2000/svg"
+											width="24"
+											height="15"
+											fill="none"
+											viewBox="0 0 24 24"
+										>
+											<path
+												fill="#fff"
+												d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"
+											/>
+										</svg>
+									}
+								/>
+							)}
+							{
+								!selectedOrgId &&
+								<EmptyListMessage
+									message={'No Organization'}
+									description={'Get started by creating a new Organization'}
+									buttonContent={'Create Organization'}
+									onClick={createOrganizationModel}
+									svgComponent={
+										<svg
+											className="pr-2 mr-1"
+											xmlns="http://www.w3.org/2000/svg"
+											width="24"
+											height="15"
+											fill="none"
+											viewBox="0 0 24 24"
+										>
+											<path
+												fill="#fff"
+												d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"
+											/>
+										</svg>
+									}
+								/>
+							}
+						</>
+
 					)}
 
 					<div
-						className={`flex items-center justify-end ${
-							isEcosystemList && 'mt-auto'
-						}`}
+						className={`flex items-center justify-end ${isEcosystemList && 'mt-auto'
+							}`}
 					>
 						{isEcosystemList && ecosystemList && ecosystemList?.length > 10 && (
 							<Pagination
@@ -305,7 +332,7 @@ const EcosystemList = () => {
 							setMessage(value);
 							if (value) {
 								setTimeout(() => {
-									 window.location.reload();
+									window.location.reload();
 								}, 2000);
 							} else {
 								fetchEcosystems();
@@ -317,6 +344,6 @@ const EcosystemList = () => {
 			</div>
 		</div>
 
-)
+	)
 }
 export default EcosystemList;
