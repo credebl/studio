@@ -1,5 +1,4 @@
 import * as yup from 'yup';
-
 import { Avatar, Button, Label, Modal } from 'flowbite-react';
 import { Field, Form, Formik, FormikHelpers } from 'formik';
 import {
@@ -10,7 +9,6 @@ import {
 } from '../../config/CommonConstant';
 import { calculateSize, dataURItoBlob } from '../../utils/CompressImage';
 import React, { useEffect, useState } from 'react';
-
 import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import { updateOrganization } from '../../api/organization';
@@ -44,7 +42,6 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [isImageEmpty, setIsImageEmpty] = useState(true);
 	const [isPublic, setIsPublic] = useState<boolean>();
-
 	const [initialOrgData, setInitialOrgData] = useState({
 		name: props?.orgData?.name || '',
 		description: props?.orgData?.description || '',
