@@ -45,7 +45,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 	const [isImageEmpty, setIsImageEmpty] = useState(true);
 	const [isPublic, setIsPublic] = useState<boolean>();
 
-	const [initialOrgData, setOrgData] = useState({
+	const [initialOrgData, setInitialOrgData] = useState({
 		name: props?.orgData?.name || '',
 		description: props?.orgData?.description || '',
 		website: props?.orgData?.website || '',
@@ -53,7 +53,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 
 	useEffect(() => {
 		if (props.orgData) {
-			setOrgData({
+			setInitialOrgData({
 				name: props.orgData.name || '',
 				description: props.orgData.description || '',
 				website: props?.orgData?.website || '',
@@ -75,7 +75,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 
 	useEffect(() => {
 		if (props.openModal === false) {
-			setOrgData({
+			setInitialOrgData({
 				name: '',
 				description: '',
 				website: '',
@@ -210,7 +210,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 					imagePreviewUrl: '',
 					fileName: '',
 				});
-				setOrgData(initialOrgData);
+				setInitialOrgData(initialOrgData);
 				props.setOpenModal(false);
 			}}
 		>
