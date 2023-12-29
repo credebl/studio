@@ -229,9 +229,11 @@ const Invitations = () => {
 
                                                 <div>
                                                     <div
-                                                        className="flex items-center justify-end text-sm font-medium text-gray-500 dark:text-gray-400 w-full"
+                                                        className="flex items-center justify-end text-sm font-medium text-gray-500 dark:text-gray-400"
                                                     >
-                                                        Invited On: &nbsp;<DateTooltip date={invitation.createDateTime}>{dateConversion(invitation.createDateTime)}</DateTooltip>
+                                                        Invited On: &nbsp;<div className='w-24'>
+                                                            <DateTooltip date={invitation.createDateTime}>{dateConversion(invitation.createDateTime)}</DateTooltip>
+                                                        </div>
                                                     </div>
                                                     {invitation.status === 'pending' && (
                                                         <div className="flex justify-end">
