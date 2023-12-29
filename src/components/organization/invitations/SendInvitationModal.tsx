@@ -46,6 +46,7 @@ const SendInvitationModal = (props: {
 	const [invitations, setInvitations] = useState<Invitations[]>([]);
 
 	const [memberRole, setMemberRole] = useState<RoleI | null>(null);
+
 	const [initialData, setInitialData] = useState({
 		email: '',
 	});
@@ -60,8 +61,7 @@ const SendInvitationModal = (props: {
 		const { data } = resRoles as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			const roles: Array<RoleI> = data?.data.response;
-
+			const roles: Array<RoleI> = data?.data;
 			const memberRole = roles.find((role) => role.name === 'member');
 			setMemberRole(memberRole as RoleI);
 		} else {
@@ -109,7 +109,6 @@ const SendInvitationModal = (props: {
 		});
 
 		const resCreateOrg = await createInvitations(invitationPayload);
-
 		const { data } = resCreateOrg as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
@@ -188,6 +187,7 @@ const SendInvitationModal = (props: {
 							.string()
 							.required('Email is required')
 							.email('Email is invalid')
+							.test('is-self-email', "You can't send invitation to self", (value) => value.trim() !== selfEmail.email.trim())
 							.trim(),
 					})}
 					validateOnBlur
@@ -197,17 +197,6 @@ const SendInvitationModal = (props: {
 						values: Values,
 						{ resetForm }: FormikHelpers<Values>,
 					) => {
-						if(values.email === selfEmail.email){
-							setSelfEmail({
-								...selfEmail,
-								error: "You can't send invitation to self."
-							})
-							return
-						}
-						setSelfEmail({
-							...selfEmail,
-							error: ""
-						})
 						await includeInvitation(values);
 						resetForm({ values: initialInvitationData });
 					}}
@@ -227,23 +216,13 @@ const SendInvitationModal = (props: {
 										id="email"
 										name="email"
 										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-										onChange={(e) => {
-											formikHandlers.handleChange(e)
-										}}
 									/>
 									{formikHandlers?.errors?.email &&
 										formikHandlers?.touched?.email ? (
 										<span className="text-red-500 text-xs">
 											{formikHandlers?.errors?.email}
 										</span>
-									) : selfEmail.error ?
-										<span className="text-red-500 text-xs">
-											{selfEmail.error}
-										</span>
-										:
-										(
-											<span className="invisible text-xs">Error</span>
-										)}
+									) : <span className="text-red-500 text-xs invisible">Error</span>}
 								</div>
 
 								<div className="">

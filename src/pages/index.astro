@@ -11,53 +11,53 @@ import { pathRoutes } from '../config/pathRoutes';
 		</header>
 
 		<main class="grow" transition:animate="slide">
-			<section class="bg-white dark:bg-gray-900">
+			<section
+				class="bg-white dark:bg-gray-900 bg-no-repeat bg-cover bg-center bg-[url('/images/blue_line_bg.svg')] pb-32 md:pb-44"
+			>
 				<div class="grid grid-cols-1 md:grid-cols-2 max-w-screen-xl mx-auto">
 					<div class="col-span-2">
-						<div class="py-8 px-4 lg:py-16 lg:px-12 flex items-center flex-col">
+						<div class="py-4 px-4 lg:py-16 lg:px-12 flex items-center flex-col">
 							<div class="flex justify-center">
-                                <a
-								href="https://github.com/credebl/platform/releases"
-								class="inline-flex justify-between items-center py-1 px-1 pr-4 mb-7 text-sm text-gray-700 bg-gray-100 rounded-full dark:bg-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
-								role="alert"
-							>
-								<span
-									class="text-xs bg-primary-600 rounded-full text-white px-4 py-1.5 mr-3"
-									>New</span
+								<a
+									href="https://github.com/credebl/platform/releases"
+									class="inline-flex justify-between items-center py-1 px-1 pr-4 mb-7 text-sm text-gray-700 bg-gray-100 rounded-full dark:bg-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
+									role="alert"
 								>
-								<span class="text-sm font-medium"
-									>CREDEBL 2.0 is out! See what's new</span
-								>
-								<svg
-									class="ml-2 w-5 h-5"
-									fill="currentColor"
-									viewBox="0 0 20 20"
-									xmlns="http://www.w3.org/2000/svg"
-									><path
-										fill-rule="evenodd"
-										d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-										clip-rule="evenodd"></path></svg
-								>
-							    </a>
+									<span
+										class="text-xs bg-primary-600 rounded-full text-white px-4 py-1.5 mr-3"
+										>New</span
+									>
+									<span class="text-sm font-medium"
+										>CREDEBL 2.0 is out! See what's new</span
+									>
+									<svg
+										class="ml-2 w-5 h-5"
+										fill="currentColor"
+										viewBox="0 0 20 20"
+										xmlns="http://www.w3.org/2000/svg"
+										><path
+											fill-rule="evenodd"
+											d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+											clip-rule="evenodd"></path></svg
+									>
+								</a>
 							</div>
-							
+
 							<h1
-								class="md:mb-4 md:text-center md:flex md:justify-center font-extrabold tracking-tight leading-none text-gray-900 lg:text-4xl md:text-xl sm:text-sm dark:text-white lg:max-w-[736px]  md:max-w-[430px] sm:max-w-[365px]"
+								class="md:mb-4 md:text-center md:flex md:justify-center font-extrabold tracking-tight leading-none text-gray-900 lg:text-4xl md:text-xl sm:text-sm dark:text-white lg:max-w-[736px] md:max-w-[430px] sm:max-w-[365px]"
 							>
 								Build Self-Sovereign Identity (SSI) solutions faster - for
 								global scale.
 							</h1>
 							<p
-								class="mt-10 mb-8 md:flex md:text-center md:justify-center font-normal text-gray-500 lg:text-xl md:text-sm sm:text-xs dark:text-gray-400 lg:max-w-[583px] md:max-w-[409px] sm:max-w-[333px]"
+								class="mt-8 mb-8 md:flex md:text-center md:justify-center font-normal text-gray-500 lg:text-xl md:text-sm sm:text-xs dark:text-gray-400 lg:max-w-[583px] md:max-w-[409px] sm:max-w-[333px]"
 							>
 								CREDEBL aims to significantly reduce the tedious work required
 								to build SSI solutions from scratch.
 							</p>
-							<div
-								class="justify-center flex"
-							>
+							<div class="justify-center flex">
 								<a
-									href="https://docs.credebl.id"
+									href="https://docs.credebl.id/en/intro/what-is-credebl/"
 									class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900"
 								>
 									Get Started
@@ -73,18 +73,64 @@ import { pathRoutes } from '../config/pathRoutes';
 									>
 								</a>
 							</div>
+							<div class="mt-8 flex flex-col items-center">
+								<div class="flex items-center">
+									<div class="flex mr-2">
+										<img
+											src="/images/CREDEBL_ICON.png"
+											class="h-8 mr-3"
+											alt="CREDEBL Logo"
+										/>
+										<span
+											class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white"
+											>CREDEBL</span
+										>
+									</div>
+									<span
+										class="font-normal text-gray-500 lg:text-xl md:text-sm sm:text-xs dark:text-gray-400"
+										>has been recognized by</span
+									>
+								</div>
+								<a href="https://app.digitalpublicgoods.net/a/10902" target="_blank" class="block dark:hidden hover:bg-gray-50 p-4 rounded-md">
+									<img
+									class="mt-6"
+									src="/images/DPG-alliance.png"
+									width="173px"
+									/>
+								</a>
+								<a href="https://app.digitalpublicgoods.net/a/10902" target="_blank" class="hidden dark:block hover:bg-gray-800 p-4 rounded-md">
+									<img
+									class="mt-6"
+									src="/images/dark-dpg-alliance.svg"
+									width="173px"
+									/>
+								</a>
+							</div>
 						</div>
 					</div>
 				</div>
 			</section>
-            <section>
-	           <div class="col-span-2 max-w-screen-xl flex justify-center mx-auto bg-cover bg-no-repeat bg-center ">
-	            	<img src="/images/Black bg.svg" alt="black_bg_image" class="" />
-	        </div>
-            </section>
-			<section class="bg-gray-100 dark:bg-gray-900 max-w-screen-xl mx-auto">
-				<div class="py-4 px-4 sm:py-4 lg:px-6 max-w-screen-xl mx-auto">
-					<div class="py-8 lg:py-4 mx-auto">
+			<section class="md:p-8 sm:p-4 p-4">
+				<div
+					class="col-span-2 flex justify-center mx-auto -mt-36 md:pl-12 md:pr-12 sm:pl-3 sm:pr-3 max-w-screen-xl"
+				>
+					<img
+						src="/images/org-dashboard-light.png"
+						alt=""
+						class="max-w-screen-xl w-full block dark:hidden rounded-lg shadow-[0_0_12px_12px_rgba(0,0,0,0.1)]"
+					/>
+					<img
+						src="/images/org-dashboard-dark.png"
+						alt=""
+						class="max-w-screen-xl w-full dark:block hidden rounded-lg shadow-[0_0_12px_12px_rgba(0,0,0,0.1)]"
+					/>
+				</div>
+			</section>
+			<section
+				class="bg-gray-100 dark:bg-gray-800 mx-auto p-4 py-10 md:py-12 md:pl-12 md:pr-12 sm:pl-3 sm:pr-3"
+			>
+				<div class="max-w-screen-xl mx-auto p-4 lg:pl-12">
+					<div class="pb-8 lg:pb-4 mx-auto">
 						<h2
 							class="mb-4 text-2xl lg:text-3xl tracking-tight leading-tight text-center font-extrabold text-gray-900 dark:text-white"
 						>
@@ -101,7 +147,7 @@ import { pathRoutes } from '../config/pathRoutes';
 						</p>
 					</div>
 					<div
-						class="grid md:grid-cols-2 grid-cos-1 md:gap-8 md:px-28 md:pb-8"
+						class="grid md:grid-cols-2 grid-cos-1 md:px-28 md:gap-x-16 lg:gap-x-28 sm:gap-x-12 gap-y-8 md:gap-y-16"
 					>
 						<div class="mt-8 flex">
 							<div
@@ -121,15 +167,15 @@ import { pathRoutes } from '../config/pathRoutes';
 										fill="#255ED0"></path>
 								</svg>
 							</div>
-						        <div>
-							          <h3 class="mb-2 text-xl font-bold dark:text-white">
-								           Open Standards & Open Source
-							             </h3>
-							          <p class="text-gray-500 dark:text-gray-400">
-								         Built upon open standards of W3C Decentralized Identifiers,
-								         Verifiable Credentials, DIF Protocols & Hyperledger Aries.
-							            </p>
-						        </div>
+							<div>
+								<h3 class="mb-2 text-xl font-bold dark:text-white">
+									Open Standards & Open Source
+								</h3>
+								<p class="text-gray-500 dark:text-gray-400">
+									Built upon open standards of W3C Decentralized Identifiers,
+									Verifiable Credentials, DIF Protocols & Hyperledger Aries.
+								</p>
+							</div>
 						</div>
 						<div class="mt-8 flex">
 							<div
@@ -158,10 +204,10 @@ import { pathRoutes } from '../config/pathRoutes';
 									Multiple credential exchange formats
 								</h3>
 								<p class="text-gray-500 dark:text-gray-400">
-									Supports multiple verifiable credential exchange formats such as
-									AnonCreds, JSON-LD, JWT, etc.
+									Supports multiple verifiable credential exchange formats such
+									as AnonCreds, JSON-LD, JWT, etc.
 								</p>
-							</div>							
+							</div>
 						</div>
 						<div class="mt-8 flex">
 							<div
@@ -185,8 +231,8 @@ import { pathRoutes } from '../config/pathRoutes';
 								</h3>
 								<p class="text-gray-500 dark:text-gray-400">
 									Supports multiple ledgers such as Indy, Cheqd, Polygon. Also
-									issue ledger-less VCs using did methods like did:web, did:peer,
-									did:key
+									issue ledger-less VCs using did methods like did:web,
+									did:peer, did:key
 								</p>
 							</div>
 						</div>
@@ -215,7 +261,7 @@ import { pathRoutes } from '../config/pathRoutes';
 									components on your organization's cloud infrastructure of
 									choice.
 								</p>
-							</div>	
+							</div>
 						</div>
 						<div class="mt-8 flex">
 							<div
@@ -243,9 +289,9 @@ import { pathRoutes } from '../config/pathRoutes';
 									Digital Public Good (DPG)
 								</h3>
 								<p class="text-gray-500 dark:text-gray-400">
-									CREDEBL is an open-souce Digital Public Good (DPG), designed to
-									host Digital Public Infrastructure (DPI) for trusted digital
-									ecosystems.
+									CREDEBL is an open-souce Digital Public Good (DPG), designed
+									to host Digital Public Infrastructure (DPI) for trusted
+									digital ecosystems.
 								</p>
 							</div>
 						</div>
@@ -280,14 +326,158 @@ import { pathRoutes } from '../config/pathRoutes';
 					</div>
 				</div>
 			</section>
-			<section>
-				<div class="max-w-screen-xl mx-auto">
-					<img src="/images/Frame.svg" alt="frame_img" />
+			<section class="md:py-12 md:px-8 sm:p-4 p-4 max-w-screen-xl mx-auto">
+				<div class="mx-auto object-center relative">
+					<div class="flex flex-wrap lg:flex-row flex-col-reverse my-4">
+						<div class="">
+							<img
+								src="/images/sec3-1-light.png"
+								alt="frame_img"
+								class="w-full shadow-[0_0_12px_12px_rgba(0,0,0,0.1)] rounded-lg overflow-hidden max-w-screen-md block dark:hidden"
+							/>
+							<img
+								src="/images/sec3-1-dark.png"
+								alt="frame_img"
+								class="w-full shadow-[0_0_12px_12px_rgba(0,0,0,0.1)] rounded-lg overflow-hidden max-w-screen-md dark:block hidden"
+							/>
+						</div>
+						<div
+							class="px-0 lg:px-4 py-4 lg:py-0 min-w-[185px] max-w-[100%] lg:max-w-landing-image-sec3"
+						>
+							<h2
+								class="mb-4 text-2xl lg:text-3xl tracking-tight leading-tight text-start font-extrabold text-gray-900 dark:text-white"
+							>
+								Streamlined Credential Management
+							</h2>
+							<p
+								class="text-gray-500 sm:text-xl dark:text-gray-400 pt-4 text-start"
+							>
+								Effortlessly define and tailor credentials with our
+								user-friendly schema template. Customize credentials for
+								employees, customers, students, citizens, or any user,
+								incorporating detailed schema information and intuitive controls
+								for seamless management.
+							</p>
+						</div>
+					</div>
+
+					<div class="flex flex-wrap items-end my-4 xl:-mt-40">
+						<div
+							class="px-0 lg:px-4 py-4 lg:py-0 min-w-[185px] max-w-[100%] lg:max-w-landing-image-sec3"
+						>
+							<h2
+								class="mb-4 text-2xl lg:text-3xl tracking-tight leading-tight text-start font-extrabold text-gray-900 dark:text-white"
+							>
+								Digital Credential issuance
+							</h2>
+							<p
+								class="text-gray-500 sm:text-xl dark:text-gray-400 pt-4 text-start"
+							>
+								Seamlessly issue digital credentials and explore a comprehensive
+								overview on the platform for efficient credential verification
+								and management.
+							</p>
+						</div>
+						<div class="">
+							<img
+								src="/images/sec3-2-dark.png"
+								alt="frame_img"
+								class="w-full shadow-[0_0_12px_12px_rgba(0,0,0,0.1)] rounded-lg overflow-hidden max-w-screen-md dark:block hidden float-right"
+							/>
+							<img
+								src="/images/sec3-2-light.png"
+								alt="frame_img"
+								class="w-full shadow-[0_0_12px_12px_rgba(0,0,0,0.1)] rounded-lg overflow-hidden max-w-screen-md block dark:hidden float-right"
+							/>
+						</div>
+					</div>
 				</div>
 			</section>
-			<section>
-				<div class="bg-[url('/images/blue_background.png')] bg-cover bg-center max-w-screen-xl mx-auto">
-					<div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-12 lg:px-6">
+			<section
+				class="p-4 !pb-0 md:pt-12 w-full mx-auto bg-blue-300 dark:bg-blue-900"
+			>
+				<div class="max-w-screen-xl flex flex-wrap justify-around mx-auto">
+					<div class="p-4 lg:w-[60%]">
+						<h2
+							class="mb-4 text-2xl lg:text-3xl tracking-tight leading-tight text-start font-extrabold text-gray-900 dark:text-white"
+						>
+							One wallet for all your verifiable digital credentials
+						</h2>
+
+						<p
+							class="text-gray-900 sm:text-xl dark:text-gray-400 pt-4 text-start"
+						>
+							Streamline your identity & credentials effortlessly through
+							advanced cryptography. From academic achievements to professional
+							certifications, government
+							identities/licenses/permits/certificates, event tickets,
+							enterprise identities & certificates and personal milestones. It
+							is built using privacy-respecting W3C DID & VC standard and
+							Hyperledger Aries RFCs.
+						</p>
+					</div>
+					<div class="flex justify-center">
+						<img
+							class="px-4 pb-0"
+							src="/images/mobile_mockup.svg"
+							style="width: 412px;"
+						/>
+					</div>
+				</div>
+			</section>
+			<section class="mx-auto p-4 py-10 md:py-12 max-w-screen-xl">
+				<div
+					class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 font-normal max-w-screen mx-auto"
+				>
+					<div
+						class="flex flex-col md:text-start text-center dark:text-gray-400 p-4"
+					>
+						<h2
+							class="mb-4 text-2xl lg:text-3xl tracking-tight leading-tight text-start font-extrabold text-gray-900 dark:text-white"
+						>
+							Store credentials with ease
+						</h2>
+						<p
+							class="text-gray-500 sm:text-xl dark:text-gray-400 pt-4 text-start"
+						>
+							Securely connect with and receive credentials from diverse
+							organizations & ecosystems with a simple tap on your screen.
+						</p>
+					</div>
+					<div class="shrink-0 flex justify-center md:block">
+						<img src="/images/mobile_1.svg" alt="frame_img" class="md:mb-32" />
+					</div>
+
+					<div class="shrink-0 flex justify-center md:block">
+						<img src="/images/mobile_2.svg" alt="frame_img" class="md:mt-32" />
+					</div>
+					<div
+						class="flex flex-col justify-end md:text-start text-center dark:text-gray-400 items-end p-4"
+					>
+						<h2
+							class="mb-4 text-2xl lg:text-3xl tracking-tight leading-tight text-start font-extrabold text-gray-900 dark:text-white"
+						>
+							Selectively share data from your credentials
+						</h2>
+
+						<p
+							class="text-gray-500 sm:text-xl dark:text-gray-400 pt-4 text-start"
+						>
+							Instantly share the verifiable proof of your digital credential
+							certificates. Empower your identity with selective (partial)
+							disclosure on our SSI mobile wallet. Seamlessly present only the
+							data you choose with confidence. Alternatively, you can share your
+							personal milestones (e.g. achievements in sports) on social media
+							directly.
+						</p>
+					</div>
+				</div>
+			</section>
+			<section class="">
+				<div
+					class="bg-[url('/images/blue_background.png')] bg-cover bg-center p-4 py-10 md:py-12"
+				>
+					<div class="mx-auto max-w-screen-xl">
 						<div
 							class="mx-auto flex w-full max-w-7xl flex-col items-center gap-12"
 						>
@@ -911,6 +1101,62 @@ import { pathRoutes } from '../config/pathRoutes';
 											&nbsp;
 										</div>
 									</div>
+									<div class="w-fit" data-testid="flowbite-tooltip-target">
+										<a
+											class="cursor-pointer"
+											href="https://github.com/sanjay-k1910"
+											><img
+												src="https://avatars.githubusercontent.com/u/114503410?v=4"
+												alt=" SanjayKhatal avatar"
+												class="h-10 w-10 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300 sm:h-12 sm:w-12 lg:h-16 lg:w-16"
+											/></a
+										>
+									</div>
+									<div
+										data-testid="flowbite-tooltip"
+										tabindex="-1"
+										class="absolute inline-block z-10 rounded-lg py-2 px-3 text-sm font-medium shadow-sm transition-opacity duration-300 invisible opacity-0 bg-gray-900 text-white dark:bg-gray-700"
+										id=":r6:"
+										role="tooltip"
+										style="position: absolute;"
+									>
+										<div class="relative z-20">SanjayKhatal</div>
+										<div
+											class="absolute z-10 h-2 w-2 rotate-45 bg-gray-900 dark:bg-gray-700"
+											data-testid="flowbite-tooltip-arrow"
+											style="bottom: -4px; left: 43.5px;"
+										>
+											&nbsp;
+										</div>
+									</div>
+									<div class="w-fit" data-testid="flowbite-tooltip-target">
+										<a
+											class="cursor-pointer"
+											href="https://github.com/pallavicoder"
+											><img
+												src="https://avatars.githubusercontent.com/u/61926403?v=4"
+												alt=" PallaviGhule avatar"
+												class="h-10 w-10 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300 sm:h-12 sm:w-12 lg:h-16 lg:w-16"
+											/></a
+										>
+									</div>
+									<div
+										data-testid="flowbite-tooltip"
+										tabindex="-1"
+										class="absolute inline-block z-10 rounded-lg py-2 px-3 text-sm font-medium shadow-sm transition-opacity duration-300 invisible opacity-0 bg-gray-900 text-white dark:bg-gray-700"
+										id=":r6:"
+										role="tooltip"
+										style="position: absolute;"
+									>
+										<div class="relative z-20">PallaviGhule</div>
+										<div
+											class="absolute z-10 h-2 w-2 rotate-45 bg-gray-900 dark:bg-gray-700"
+											data-testid="flowbite-tooltip-arrow"
+											style="bottom: -4px; left: 43.5px;"
+										>
+											&nbsp;
+										</div>
+									</div>
 								</div>
 							</div>
 							<div
@@ -973,8 +1219,8 @@ import { pathRoutes } from '../config/pathRoutes';
 					</div>
 				</div>
 			</section>
-			<footer class="p-4 bg-gray-200 md:p-8 lg:p-10 dark:bg-gray-800 mx-auto max-w-screen-xl">
-				<div class="mt-4 mx-auto max-w-screen-xl text-center">
+			<footer class="p-4 py-10 md:py-12 bg-gray-200 dark:bg-gray-800 mx-auto">
+				<div class="mx-auto max-w-screen-xl text-center">
 					<a
 						class="flex justify-center items-center text-2xl font-semibold text-gray-900 dark:text-white"
 					>
@@ -986,28 +1232,25 @@ import { pathRoutes } from '../config/pathRoutes';
 						CREDEBL
 					</a>
 					<p class="my-6 mb-4 text-gray-500 dark:text-gray-400">
-						Open-source self-soveriegn identity (SSI) platform to build robust,
+						Open-source self-sovereign identity (SSI) platform to build robust,
 						privacy-enhancing identity & digital credential solutions.
 					</p>
 					<span
 						class="mt-8 text-sm text-gray-500 sm:text-center dark:text-gray-400"
 					>
 						&copy; 2019-{new Date().getFullYear()}
-						<a href="https://blockster.global" target="_blank"
+						<a href="https://blockster.global" target="_blank" class="hover:underline hover:underline-offset-2"
 							>Blockster Labs Private Limited.</a
 						> All Rights Reserved. &nbsp; &nbsp; | &nbsp; &nbsp;
-						<a href="/terms-of-use">Terms of Use</a> &nbsp; &nbsp; <a
-							href="/privacy-policy">Privacy Policy</a
+						<a href="/terms-of-use" class="hover:underline hover:underline-offset-2">Terms of Use</a> &nbsp; &nbsp; <a
+							href="/privacy-policy" class="hover:underline hover:underline-offset-2">Privacy Policy</a
 						>
 					</span>
 
 					<div class="flex mt-4 space-x-6 justify-center items-center">
-						<a
-							href="https://github.com/credebl"
-							class=""
-						>
+						<a href="https://github.com/credebl" class="hover:opacity-50">
 							<svg
-								class="w-6 h-6 text-gray-700 hover:text-gray-900 "
+								class="w-6 h-6 text-gray-700 hover:text-gray-900 dark:text-white"
 								xmlns="http://www.w3.org/2000/svg"
 								fill="currentColor"
 								viewBox="0 0 20 20"
@@ -1018,13 +1261,9 @@ import { pathRoutes } from '../config/pathRoutes';
 									clip-rule="evenodd"></path>
 							</svg>
 						</a>
-						<a
-							href="https://discord.gg/w4hnQT7NJG"
-							class=""
-							target="_blank"
-						>
+						<a href="https://discord.gg/w4hnQT7NJG" class="hover:opacity-50" target="_blank">
 							<svg
-								class="w-6 h-6 text-gray-700 hover:text-gray-900"
+								class="w-6 h-6 text-gray-700 hover:text-gray-900 dark:text-white"
 								aria-hidden="true"
 								xmlns="http://www.w3.org/2000/svg"
 								fill="currentColor"
@@ -1037,7 +1276,7 @@ import { pathRoutes } from '../config/pathRoutes';
 						</a>
 						<a
 							href="https://twitter.com/i/flow/login?redirect_after_login=%2Fcredebl"
-							class=""
+							class="dark:text:white hover:opacity-50"
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -1045,7 +1284,7 @@ import { pathRoutes } from '../config/pathRoutes';
 								height="18"
 								viewBox="0 0 20 18"
 								fill="currentColor"
-								class="w-6 h-6 text-gray-700 hover:text-gray-900"
+								class="w-6 h-6 text-gray-700 hover:text-gray-900 dark:text-white"
 							>
 								<path
 									d="M0.500972 0.0306835C0.484277 0.0511379 0.684618 0.352842 0.946175 0.710796C1.2133 1.06364 1.55833 1.52898 1.71415 1.73864C1.86997 1.9483 2.13709 2.30625 2.30404 2.53125C2.61569 2.94034 4.27963 5.16989 4.95856 6.08523C5.15891 6.35114 5.48724 6.79091 5.68202 7.05682C5.88236 7.32273 6.17731 7.71648 6.33313 7.92614C6.48895 8.1358 6.8952 8.68296 7.24023 9.13807C7.58526 9.59318 7.86351 9.99205 7.86351 10.0227C7.86351 10.0534 7.75778 10.1864 7.62422 10.3193C7.49066 10.4523 6.97311 10.9943 6.47782 11.5313C5.97697 12.0631 5.37038 12.7227 5.11995 12.9835C2.99411 15.2438 0.517667 17.9233 0.517667 17.954C0.517667 17.9795 0.868264 18 1.29677 18H2.07588L2.29848 17.775C2.42091 17.6523 2.60456 17.458 2.70473 17.3506C2.79933 17.2381 3.33357 16.6653 3.88451 16.0824C4.43545 15.4943 4.95856 14.9318 5.05317 14.8347C5.14221 14.7324 5.67089 14.1699 6.22183 13.5818C6.77277 12.9938 7.40718 12.3136 7.62978 12.0733C8.38106 11.2602 8.59253 11.0455 8.63149 11.0455C8.65375 11.0455 8.74835 11.158 8.84852 11.2909C8.94313 11.4239 9.19355 11.7614 9.40503 12.0426C9.6165 12.3239 9.9504 12.7739 10.1507 13.0398C10.3511 13.3057 10.6794 13.7455 10.8798 14.0114C11.0801 14.2773 11.798 15.2438 12.4769 16.1591C13.1559 17.0744 13.7569 17.8619 13.8125 17.9131C13.9016 17.9949 14.0964 18 16.7008 17.9898L19.5 17.9744L18.988 17.2841C18.5094 16.6347 18.1533 16.1591 17.4632 15.2386C17.3074 15.029 17.0069 14.625 16.7954 14.3438C16.5839 14.0625 15.9829 13.2494 15.4487 12.5438C14.5137 11.2909 14.2355 10.9176 13.512 9.94602C13.3228 9.69034 13.0334 9.30171 12.8665 9.0767C12.0317 7.96193 11.8147 7.66534 11.8147 7.62955C11.8147 7.60909 12.0317 7.35852 12.2988 7.07216C12.5715 6.79091 13.0668 6.26421 13.4007 5.90114C13.7402 5.54318 14.4024 4.83239 14.8755 4.32102C15.3485 3.81477 15.8159 3.31875 15.905 3.21648C15.9996 3.1142 16.5227 2.55682 17.0736 1.96875C18.2089 0.761932 18.643 0.296593 18.7877 0.122728L18.8934 0H18.0642L17.2406 0.0051136L15.7826 1.575C12.7886 4.79148 11.1191 6.56591 11.0634 6.58125C11.0356 6.59148 10.6182 6.075 10.1452 5.4358C9.67215 4.79659 9.11565 4.05511 8.9153 3.7892C8.45897 3.17045 7.95812 2.50568 7.35153 1.6875C7.08997 1.33466 6.70599 0.818184 6.49451 0.536934L6.10496 0.0255699L3.32244 0.0102272C1.79206 0.0051136 0.523232 0.0153427 0.500972 0.0306835Z"
