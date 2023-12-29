@@ -207,7 +207,6 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 					imagePreviewUrl: '',
 					fileName: '',
 				});
-				setInitialOrgData(initialOrgData);
 				props.setOpenModal(false);
 			}}
 		>
