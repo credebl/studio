@@ -145,7 +145,6 @@ const CredentialList = () => {
 					setIssuedCredList(credentialList);
 					setError(null)
 				} else {
-					setError(response as string)
 					setIssuedCredList([]);
 				}
 			}
@@ -155,11 +154,21 @@ const CredentialList = () => {
 		} finally {
 			setLoading(false);
 		}
-	}
+	};
 
 	useEffect(() => {
-		getIssuedCredDefs(listAPIParameter)
-	}, [listAPIParameter])
+		let getData: NodeJS.Timeout;
+
+		if (listAPIParameter?.search?.length >= 1) {
+			getData = setTimeout(() => {
+				getIssuedCredDefs(listAPIParameter);
+			}, 1000);
+			return () => clearTimeout(getData);
+		} else {
+			getIssuedCredDefs(listAPIParameter);
+		}
+		return () => clearTimeout(getData);
+	}, [listAPIParameter]);
 
 	//onChange of Search input text
 	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -329,11 +338,10 @@ const CredentialList = () => {
 									}
 								</div>
 							) : (
-								<div>
-									<span className="dark:text-white block text-center p-4 m-8">
-										There isn't any data available.
-									</span>
-								</div>
+								<EmptyListMessage
+									message={'No issuance records'}
+									description={'You have no issuance record yet'}
+								/>
 							)}
 						</div>
 					)}
