@@ -357,7 +357,9 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 										}
 									}}
 								/>
-								{formikHandlers?.errors?.description &&
+								{formikHandlers?.errors &&
+									formikHandlers?.errors?.description &&
+									formikHandlers?.touched &&
 									formikHandlers?.touched?.description && (
 										<span className="text-red-500 text-xs">
 											{formikHandlers?.errors?.description}
@@ -388,13 +390,13 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 										id="private"
 										name="private"
 									/>
-									<span className="ml-2 text-gray-900 dark:text-white">
+									<p className="ml-2 text-gray-900 dark:text-white">
 										Private
 										<span className="block pl-6 text-gray-500 text-sm">
 											Only the connected organization can see your organization
 											details
 										</span>
-									</span>
+									</p>
 								</div>
 								<div>
 									<div className="block mb-2 mt-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -408,13 +410,13 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 										id="public"
 										name="public"
 									/>
-									<span className="ml-2 text-gray-900 dark:text-white">
+									<p className="ml-2 text-gray-900 dark:text-white">
 										Public
 										<span className="block pl-6 text-gray-500 text-sm">
 											Your profile and organization details can be seen by
 											everyone
 										</span>
-									</span>
+									</p>
 								</div>
 							</div>
 							<Button
@@ -432,9 +434,9 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 								>
 									<path
 										stroke="#fff"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth="2"
 										d="M13 1v12l-4-2-4 2V1h8ZM3 17h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z"
 									/>
 								</svg>
