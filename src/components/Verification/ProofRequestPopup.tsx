@@ -185,7 +185,7 @@ const ProofRequest = (props: IProofRrquestDetails) => {
 							</svg>
 							<span className="sr-only">Close modal</span>
 						</button>
-						<div className="sm:p-2 lg:p-6 m-4">
+						<div className="p-2 m-2">
 							<p className="text-xl font-semibold text-gray-700 dark:bg-gray-800 dark:text-white flex flex-start pb-2">
 								Verified Details
 							</p>
