@@ -284,12 +284,12 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 														title=""
 														onChange={(event): void => handleImageChange(event)}
 													/>
-													{imgError ? (
-														<div className="text-red-500">{imgError}</div>
-													) : (
+													{!imgError ? (
 														<span className="mt-1 flex justify-center text-sm text-gray-500 dark:text-gray-400">
 															{logoImage.fileName || 'No File Chosen'}
 														</span>
+													) : (
+														<div className="text-red-500">{imgError}</div>
 													)}
 												</label>
 											</div>
@@ -321,7 +321,8 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 										}
 									}}
 								/>
-								{formikHandlers?.errors?.name &&
+								{formikHandlers?.errors &&
+									formikHandlers?.errors?.name &&
 									formikHandlers?.touched?.name && (
 										<span className="text-red-500 text-xs">
 											{formikHandlers?.errors?.name}
