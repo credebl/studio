@@ -163,6 +163,8 @@ const CredDefSelection = () => {
 							attributes={schemaDetailsState.attributes}
 							created={schemaDetailsState.createdDateTime}
 							onClickCallback={schemaSelectionCallback}
+							isClickable={false}
+							limitedAttributes={false}
 						/>
 					</div>
 				)}

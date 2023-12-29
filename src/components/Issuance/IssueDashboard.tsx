@@ -25,21 +25,21 @@ const IssueDashboard = () => {
 		},
 	];
 	return (
-		<div className="mx-2 h-full h-[700px] sm:h-100/15rem min-h-[300px]">
-			<div className="flex justify-between items-center mt-1">
+		<div className="px-4 pt-2 h-full h-[700px]">
+			<div className="mt-1">
 				<BreadCrumbs />
-				<BackButton path={pathRoutes.organizations.issuedCredentials} />
 			</div>
-			<div className="mb-2 relative">
-				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
+			<div className="mb-2 flex justify-between items-center relative">
+				<h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 					Issue Credential
 				</h1>
-				<p className="absolute top-6 pl-8 pt-6 text-gray-900 text-lg font-medium dark:text-white">
+				<BackButton path={pathRoutes.organizations.issuedCredentials} />
+			</div>
+			<div className="px-6 pt-6 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 dark:bg-gray-800">
+				<p className="text-gray-900 text-xl text-start font-medium dark:text-white">
 					Select the appropriate action for issuing credential(s){' '}
 				</p>
-			</div>
-			<div className="bg-white text-lg shadow-md dark:border-gray-700 dark:bg-gray-800 flex justify-center items-center w-full h-full">
-				<div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mx-8 mt-4 lg:mt-0">
+				<div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-16 pt-12">
 					{options.map((option) => (
 						<Card
 							key={option.heading}

@@ -12,10 +12,11 @@ interface IProps {
 	failure: string | null;
 	setFailure: (flag: string | null) => void;
 	setSuccess: (flag: string | null) => void;
-	buttonTitles: string[]
+	buttonTitles: string[];
+	loading:boolean;
 }
 
-const ConfirmationModal = ({ openModal, closeModal, onSuccess, message, isProcessing, success, failure, setFailure, setSuccess, buttonTitles }: IProps) => {
+const ConfirmationModal = ({ openModal, closeModal, onSuccess, message, isProcessing, success, failure, setFailure, setSuccess, buttonTitles, loading }: IProps) => {
 	return (
 		<Modal show={openModal} size="xl">
 			<div className="relative w-full max-w-xl max-h-[450px]">
@@ -109,7 +110,7 @@ const ConfirmationModal = ({ openModal, closeModal, onSuccess, message, isProces
 							<Button
 								type="submit"
 								isProcessing={isProcessing}
-								disabled={isProcessing}
+								disabled={isProcessing || loading}
 								onClick={() => {
 									onSuccess(true);
 								}}
