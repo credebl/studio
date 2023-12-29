@@ -14,6 +14,7 @@ import type { User } from '../interfaces/users';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { getOrganizationUsers } from '../../../api/organization';
 import React from 'react';
+import { EmptyListMessage } from '../../EmptyListComponent';
 
 const initialPageState = {
 	pageNumber: 1,
@@ -63,11 +64,6 @@ const Members = () => {
 				userOrg.roles = roles;
 				return userOrg;
 			});
-
-			if (usersList.length === 0) {
-				setError('No Data Found');
-			}
-
 			setUsersList(usersList);
 			setCurrentPage({
 				...currentPage,
@@ -76,13 +72,11 @@ const Members = () => {
 		} else {
 			setError(response as string);
 		}
-
 		setLoading(false);
 	};
 
 	//This useEffect is called when the searchText changes
 	useEffect(() => {
-		// let getData: string | number | NodeJS.Timeout | undefined;
 		let getData: NodeJS.Timeout;
 
 		if (searchText.length >= 1) {
@@ -123,35 +117,32 @@ const Members = () => {
 				<SearchInput onInputChange={searchInputChange} />
 			</div>
 
-			<EditUserRoleModal
-				openModal={props.openModal}
-				user={selectedUser as User}
-				setMessage={(data) => setMessage(data)}
-				setOpenModal={props.setOpenModal}
-			/>
+				<EditUserRoleModal
+					openModal={props.openModal}
+					user={selectedUser as User}
+					setMessage={(data) => setMessage(data)}
+					setOpenModal={props.setOpenModal}
+				/>
 
-			<AlertComponent
-				message={message ? message : error}
-				type={message ? 'success' : 'failure'}
-				onAlertClose={() => {
-					setMessage(null);
-					setError(null);
-				}}
-			/>
-			{loading ? (
-				<div className="flex items-center justify-center mb-4">
-					<CustomSpinner />
-				</div>
-			) : (
-				usersList &&
-				usersList?.length > 0 && (
+				<AlertComponent
+					message={message ? message : error}
+					type={message ? 'success' : 'failure'}
+					onAlertClose={() => {
+						setMessage(null);
+						setError(null);
+					}}
+				/>
+				{loading ? (
+					<div className="flex items-center justify-center mb-4">
+						<CustomSpinner />
+					</div>
+				) : usersList && usersList?.length > 0 ? (
 					<div className="p-2 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-3 dark:bg-gray-800 ">
 						<div className="flow-root display: flex">
 							<ul className="divide-y divide-gray-200 dark:divide-gray-700">
 								<div className="grid divide-y divide-gray-200 dark:divide-gray-700">
 									{usersList.map((user) => (
-										<li key={user?.id}
-										className="p-4" >
+										<li key={user?.id} className="p-4">
 											<div className="flex flex-wrap justify-between 2xl:flex align-center 2xl:space-x-4 ">
 												<div className="min-w-[40%] flex space-x-4 xl:mb-4 2xl:mb-0">
 													<div className="flex-1">
@@ -164,7 +155,9 @@ const Members = () => {
 																<li className="pt-3 sm:pt-3 overflow-auto">
 																	<div className="items-center space-x-4">
 																		<div className="flex items-center text-base font-normal text-gray-900 dark:text-white">
-																		{user.roles.length>1 ? 'Roles:' : 'Role:'}
+																			{user.roles.length > 1
+																				? 'Roles:'
+																				: 'Role:'}
 																			{user.roles &&
 																				user.roles.length > 0 &&
 																				user.roles.map(
@@ -242,17 +235,24 @@ const Members = () => {
 							</ul>
 						</div>
 					</div>
-				)
-			)}
-			{currentPage.total > 1 && (
-				<div className="flex items-center justify-end mb-4">
-					<Pagination
-						currentPage={currentPage.pageNumber}
-						onPageChange={onPageChange}
-						totalPages={currentPage.total}
-					/>
-				</div>
-			)}
+				) : (
+					<div className="p-2 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-3 dark:bg-gray-800 ">
+						<EmptyListMessage
+							message={'No Member Details Found'}
+							description={'You have no matching member'}
+						/>
+					</div>
+				)}
+				{currentPage.total > 1 && (
+					<div className="flex items-center justify-end mb-4">
+						<Pagination
+							currentPage={currentPage.pageNumber}
+							onPageChange={onPageChange}
+							totalPages={currentPage.total}
+						/>
+					</div>
+				)}
+			</div>
 		</div>
 	);
 };
