@@ -391,13 +391,13 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 										id="private"
 										name="private"
 									/>
-									<p className="ml-2 text-gray-900 dark:text-white">
+									<span className="ml-2 text-gray-900 dark:text-white">
 										Private
 										<span className="block pl-6 text-gray-500 text-sm">
 											Only the connected organization can see your organization
 											details
 										</span>
-									</p>
+									</span>
 								</div>
 								<div>
 									<div className="block mb-2 mt-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -411,13 +411,13 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 										id="public"
 										name="public"
 									/>
-									<p className="ml-2 text-gray-900 dark:text-white">
+									<span className="ml-2 text-gray-900 dark:text-white">
 										Public
 										<span className="block pl-6 text-gray-500 text-sm">
 											Your profile and organization details can be seen by
 											everyone
 										</span>
-									</p>
+									</span>
 								</div>
 							</div>
 							<Button
