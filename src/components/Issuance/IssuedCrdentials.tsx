@@ -125,18 +125,18 @@ const CredentialList = () => {
 											</span>
 										),
 									},
-									{
-										data: issuedCredential?.isRevocable ? (
-											<Button
-												disabled
-												className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
-											>
-												Revoke
-											</Button>
-										) : (
-											<span className="text-gray-400">Non revocable</span>
-										),
-									},
+									// {
+									// 	data: issuedCredential?.isRevocable ? (
+									// 		<Button
+									// 			disabled
+									// 			className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+									// 		>
+									// 			Revoke
+									// 		</Button>
+									// 	) : (
+									// 		<span className="text-gray-400">Non revocable</span>
+									// 	),
+									// },
 								],
 							};
 						},
@@ -145,7 +145,6 @@ const CredentialList = () => {
 					setIssuedCredList(credentialList);
 					setError(null);
 				} else {
-					setError(response as string)
 					setIssuedCredList([]);
 				}
 			}
@@ -155,10 +154,20 @@ const CredentialList = () => {
 		} finally {
 			setLoading(false);
 		}
-	}
+	};
 
 	useEffect(() => {
-		getIssuedCredDefs(listAPIParameter);
+		let getData: NodeJS.Timeout;
+
+		if (listAPIParameter?.search?.length >= 1) {
+			getData = setTimeout(() => {
+				getIssuedCredDefs(listAPIParameter);
+			}, 1000);
+			return () => clearTimeout(getData);
+		} else {
+			getIssuedCredDefs(listAPIParameter);
+		}
+		return () => clearTimeout(getData);
 	}, [listAPIParameter]);
 
 	//onChange of Search input text
@@ -183,7 +192,7 @@ const CredentialList = () => {
 		{ columnName: 'Schema Name' },
 		{ columnName: 'Date' },
 		{ columnName: 'Status' },
-		{ columnName: 'Action' },
+		// { columnName: 'Action' },
 	];
 
 	return (
@@ -263,18 +272,23 @@ const CredentialList = () => {
 								<div className="flex items-center justify-center mb-4">
 									<CustomSpinner />
 								</div>
-							) : issuedCredList && issuedCredList.length > 0 ? (
+							) : (
 								<div
 									className="Flex-wrap"
 									style={{ display: 'flex', flexDirection: 'column' }}
 								>
 									<div className="">
-										{issuedCredList && issuedCredList.length > 0 && (
+										{issuedCredList && issuedCredList.length > 0 ? (
 											<DataTable
 												header={header}
 												data={issuedCredList}
 												loading={loading}
 											></DataTable>
+										) : (
+											<EmptyListMessage
+												message={'No issuance records'}
+												description={'You have no issuance record yet'}
+											/>
 										)}
 									</div>
 									{Math.ceil(totalItem / listAPIParameter?.itemPerPage) > 1 && (
@@ -293,12 +307,6 @@ const CredentialList = () => {
 											/>
 										</div>
 									)}
-								</div>
-							) : (
-								<div>
-									<span className="dark:text-white block text-center p-4 m-8">
-										There isn't any data available.
-									</span>
 								</div>
 							)}
 						</div>

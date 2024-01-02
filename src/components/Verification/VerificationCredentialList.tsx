@@ -285,7 +285,6 @@ const VerificationCredentialList = () => {
 		getproofRequestList(listAPIParameter);
 	};
 
-
 	const requestProof = async (proofVericationId: string) => {
 		if (proofVericationId) {
 			setOpenModal(false);
@@ -294,7 +293,17 @@ const VerificationCredentialList = () => {
 	};
 
 	useEffect(() => {
-		getproofRequestList(listAPIParameter);
+		let getData: NodeJS.Timeout;
+
+		if (listAPIParameter?.search?.length >= 1) {
+			getData = setTimeout(() => {
+				getproofRequestList(listAPIParameter);
+			}, 1000);
+			return () => clearTimeout(getData);
+		} else {
+			getproofRequestList(listAPIParameter);
+		}
+		return () => clearTimeout(getData);
 	}, [listAPIParameter]);
 
 	const schemeSelection = () => {
@@ -424,11 +433,10 @@ const VerificationCredentialList = () => {
 									)}
 								</div>
 							) : (
-								<div>
-									<span className="dark:text-white block text-center p-4 m-8">
-										There isn't any data available.
-									</span>
-								</div>
+								<EmptyListMessage
+									message={'No verification records'}
+									description={'You have no verification record yet'}
+								/>
 							)}
 						</div>
 					)}
