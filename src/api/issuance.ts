@@ -64,7 +64,7 @@ export const issueCredential = async (data: object) => {
 	}
 };
 
-export const issueOobEmailCredential = async (data: object) => {
+export const issueOobEmailCredential = async (data: string) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.issueOobEmailCredential}`;
 	const payload = data;

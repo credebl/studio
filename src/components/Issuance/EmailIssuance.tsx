@@ -1,36 +1,84 @@
 import * as Yup from 'yup';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { pathRoutes } from '../../config/pathRoutes';
 import BreadCrumbs from '../BreadCrumbs';
 import BackButton from '../../commonComponents/backbutton';
 import { Button, Card } from 'flowbite-react';
 import Select from 'react-select';
 import { AlertComponent } from '../AlertComponent';
-import IssuancePopup from './IssuancePopup';
 import type { AxiosResponse } from 'axios';
 import { getFromLocalStorage } from '../../api/Auth';
 import { getSchemaCredDef } from '../../api/BulkIssuance';
 import { storageKeys, apiStatusCodes } from '../../config/CommonConstant';
-import type { IAttributes, ICredentials, IValues } from './interface';
-import { Field, FieldArray, Form, Formik } from 'formik';
+import type { IAttributes, ICredentials } from './interface';
+import { Field, FieldArray, Form, Formik, FormikProps } from 'formik';
 import CustomSpinner from '../CustomSpinner';
 import { issueOobEmailCredential } from '../../api/issuance';
 import { EmptyListMessage } from '../EmptyListComponent';
-import ResetPopup from './ResetPopup';
+import ConfirmationModal from '../../commonComponents/ConfirmationModal';
+
+interface IValues {
+	value: string;
+	schemaAttributes: IAttributes[]
+}
+
+
+interface IExistingFormData {
+	attributes: IAttributeFormData[];
+	email: string;
+}
+
+interface IAttributeFormData {
+	value: string;
+	name: string;
+	attributeName: string;
+	schemaDataType: string;
+	displayName: string;
+}
+
+interface IFormData {
+	formData: IFormDataList[]
+}
+
+
+interface IFormDataList {
+	emailId: string;
+	attributes: IAttributeFormData[]
+}
+
+interface IIssueEmailCredential {
+	credentialOffer: IFormDataList[];
+	credentialDefinitionId: string;
+}
+
+interface IPopup {
+	show: boolean,
+	type: "reset" | "issue"
+}
 
 const EmailIssuance = () => {
-	const [formData, setFormData] = useState();
+	const initFormData = {
+		formData: [
+			{
+				email: '',
+				attributes: [],
+			}
+		]
+	};
+	const [formData, setFormData] = useState(initFormData);
 	const [userData, setUserData] = useState();
 	const [loading, setLoading] = useState<boolean>(true);
 	const [credentialOptions, setCredentialOptions] = useState([]);
 	const [credentialSelected, setCredentialSelected] = useState<string>('');
 	const [openModal, setOpenModal] = useState<boolean>(false);
-	const [batchName, setBatchName] = useState('');
+	const [showDetails, setShowDetails] = useState<boolean>(false);
+	// const [batchName, setBatchName] = useState('');
 	const [openResetModal, setOpenResetModal] = useState<boolean>(false);
-	const [attributes, setAttributes] = useState([]);
+	const [attributes, setAttributes] = useState<IAttributes[]>();
 	const [success, setSuccess] = useState<string | null>(null);
+	const [showPopup, setShowPopup] = useState<IPopup>({ show: false, type: "reset" });
 	const [failure, setFailure] = useState<string | null>(null);
-	const [isEditing, setIsEditing] = useState(false);
+	// const [isEditing, setIsEditing] = useState(false);
 	const [issueLoader, setIssueLoader] = useState(false);
 	const inputRef = useRef(null);
 
@@ -73,22 +121,22 @@ const EmailIssuance = () => {
 		getSchemaCredentials();
 	}, []);
 
-	useEffect(() => {
-		if (isEditing && inputRef.current) {
-			inputRef.current.focus();
-		}
-	}, [isEditing]);
+	// useEffect(() => {
+	// 	if (isEditing && inputRef.current) {
+	// 		inputRef.current.focus();
+	// 	}
+	// }, [isEditing]);
 
 	const confirmOOBCredentialIssuance = async () => {
 		setIssueLoader(true);
-		const existingData = userData;
+		const existingData: { formData: IExistingFormData[] } | null = userData || { formData: [] };
 
-		let transformedData = { credentialOffer: [] };
-		if (existingData && existingData.formData) {
-			existingData.formData.forEach((entry) => {
-				const transformedEntry = { emailId: entry.email, attributes: [] };
-				entry.attributes.forEach((attribute) => {
-					const transformedAttribute = {
+		let transformedData: IIssueEmailCredential = { credentialOffer: [], credentialDefinitionId: '' };
+		if (existingData?.formData?.length > 0) {
+			existingData?.formData.forEach((entry: IExistingFormData) => {
+				const transformedEntry: IFormDataList = { emailId: entry.email, attributes: [] };
+				entry.attributes.forEach((attribute: IAttributeFormData) => {
+					const transformedAttribute: IAttributeFormData = {
 						value: String(attribute.value || ''),
 						name: attribute.name || '',
 					};
@@ -107,7 +155,10 @@ const EmailIssuance = () => {
 					setLoading(false);
 					setIssueLoader(false);
 					setSuccess(data?.message);
-					setOpenModal(false);
+					setShowPopup({
+						type: "issue",
+						show: false
+					})
 					setTimeout(() => {
 						setSuccess(null);
 					}, 3000);
@@ -118,12 +169,18 @@ const EmailIssuance = () => {
 				} else {
 					setFailure(response as string);
 					setLoading(false);
-					setOpenModal(false);
+					setShowPopup({
+						type: "issue",
+						show: false
+					})
 				}
 			} else {
 				setLoading(false);
 				setFailure(response as string);
-				setOpenModal(false);
+				setShowPopup({
+					type: "issue",
+					show: false
+				})
 				setIssueLoader(false);
 				setTimeout(() => {
 					setFailure(null);
@@ -133,84 +190,78 @@ const EmailIssuance = () => {
 	};
 
 	useEffect(() => {
-		const initFormData = {
-			email: '',
-			attributes: attributes?.map((item) => {
-				return {
-					...item,
-					value: '',
-					name: item?.attributeName,
-				};
-			}),
-		};
+		if (attributes && attributes?.length > 0) {
+			const updateFormData: IFormData = {
+				...formData,
+				attributes: attributes?.map((item: IAttributes) => {
+					return {
+						...item,
+						value: '',
+						name: item?.attributeName,
+					};
+				}),
+			};
 
-		setFormData({ formData: [initFormData] });
-	}, [attributes]);
-	const isCredSelected = Boolean(credentialSelected);
-
-	const selectedCred: ICredentials | boolean | undefined =
-		credentialOptions &&
-		credentialOptions.length > 0 &&
-		credentialOptions.find(
-			(item: { value: string }) =>
-				item.value && item.value === credentialSelected,
-		);
-
-	const handleEditClick = () => {
-		if (isCredSelected) {
-			setIsEditing(!isEditing);
+			setFormData({ formData: [updateFormData] });
 		}
-	};
+	}, [attributes]);
+	const isCredSelected = credentialSelected && credentialSelected.length > 0;
 
-	const handleInputChange = (e: {
-		target: { value: React.SetStateAction<string> };
-	}) => {
-		setBatchName(e.target.value);
-	};
+	// const handleEditClick = () => {
+	// 	if (isCredSelected) {
+	// 		setIsEditing(!isEditing);
+	// 	}
+	// };
 
-	const handleBlur = () => {
-		setIsEditing(false);
-	};
+	// const handleInputChange = (e: {
+	// 	target: { value: React.SetStateAction<string> };
+	// }) => {
+	// 	setBatchName(e.target.value);
+	// };
+
+	// const handleBlur = () => {
+	// 	setIsEditing(false);
+	// };
 
 	const handleReset = () => {
-		setCredentialSelected(null);
-		setBatchName('');
-		setOpenResetModal(false);
+		setAttributes([])
+		setSuccess('')
+		setCredentialSelected('');
+		setShowDetails(false)
 	};
 
-	const handleCloseConfirmation = () => {
-		setOpenModal(false);
-	};
-
-	const handleOpenConfirmation = () => {
-		setOpenModal(true);
-	};
 	const handleResetCloseConfirmation = () => {
-		setOpenResetModal(false);
+		setShowPopup({
+			type: "reset",
+			show: false
+		})
 	};
 
 	const handleResetOpenConfirmation = () => {
-		setOpenResetModal(true);
+		setShowPopup({
+			type: "reset",
+			show: true
+		})
 	};
-	
+
 	const MailError = ({
 		handler,
-		formindex,
+		formIndex,
 		error,
 	}: {
-		handler: { touched: boolean; errors: string; formData: Array<T>[] };
-		formindex: Number;
+		handler: FormikProps<IFormData>;
+		formIndex: Number;
 		error: string;
-	}) => {
+	}): ReactNode | null => {
 		if (error === 'email') {
 			return (
 				<>
 					{handler?.touched?.formData &&
-						handler?.touched?.formData[formindex]?.email &&
+						handler?.touched?.formData[formIndex]?.email &&
 						handler?.errors?.formData &&
-						handler?.errors?.formData[formindex]?.email && (
+						handler?.errors?.formData[formIndex]?.email && (
 							<label style={{ color: 'red' }} className="text-sm">
-								{handler?.errors?.formData[formindex]?.email}
+								{handler?.errors?.formData[formIndex]?.email}
 							</label>
 						)}
 				</>
@@ -219,9 +270,9 @@ const EmailIssuance = () => {
 			return (
 				<>
 					{handler?.touched?.formData &&
-						handler?.touched?.formData[formindex]?.attributes &&
+						handler?.touched?.formData[formIndex]?.attributes &&
 						handler?.errors?.formData &&
-						handler?.errors?.formData[formindex]?.attributes && (
+						handler?.errors?.formData[formIndex]?.attributes && (
 							<label style={{ color: 'red' }} className="text-sm font-light">
 								All attributes are required{' '}
 							</label>
@@ -232,12 +283,21 @@ const EmailIssuance = () => {
 		return null;
 	};
 
+	const selectedCred: ICredentials | null =
+		credentialOptions &&
+			credentialOptions.length > 0 ?
+			credentialOptions.find(
+				(item: { value: string }) =>
+					item.value && item.value === credentialSelected,
+			) : null
+
+	console.log(76576, credentialSelected)
+
 	return (
 		<div className="px-4 pt-2">
 			<div className="col-span-full xl:mb-2">
 				<div className="flex justify-between items-center">
 					<BreadCrumbs />
-					<BackButton path={pathRoutes.organizations.Issuance.issue} />
 				</div>
 			</div>
 			<div>
@@ -251,20 +311,19 @@ const EmailIssuance = () => {
 						}}
 					/>
 				)}
-				<div className="flex justify-between mb-3 items-center ml-1">
-					<div>
-						<p className="text-2xl font-semibold dark:text-white">Email</p>
-					</div>
+				<div className="flex justify-between mb-3 items-center">
+					<h3 className="text-2xl font-semibold dark:text-white">Email</h3>
+					<BackButton path={pathRoutes.organizations.Issuance.issue} />
 				</div>
 				<div className="flex flex-col justify-between gap-4">
 					<Card>
-						<div className="md:h-72">
+						<div className="md:min-h-[18rem]">
 							<p className="text-xl pb-6 font-normal dark:text-white">
 								Select Schema and credential definition
 							</p>
 							<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 								<div className="flex flex-col justify-between">
-									<div className="search-dropdown text-primary-700 drak:text-primary-700">
+									<div className="search-dropdown text-primary-700 dark:text-primary-700">
 										<Select
 											placeholder="Select Schema-Credential definition"
 											className="basic-single "
@@ -276,19 +335,19 @@ const EmailIssuance = () => {
 											name="color"
 											options={credentialOptions}
 											onChange={(value: IValues | null) => {
-												setBatchName(value?.label ?? '');
 												setCredentialSelected(value?.value ?? '');
-												setAttributes(value?.schemaAttributes);
+												setShowDetails(Boolean(value?.value))
+												setAttributes(value?.schemaAttributes ?? []);
 											}}
 										/>
 									</div>
-									<div className="mt-4">
-										{credentialSelected && (
+									{(showDetails && selectedCred) && (
+										<div className="mt-4">
 											<Card className="max-w-[30rem]">
 												<div>
 													<p className="text-black dark:text-white pb-2">
 														<span className="font-semibold">Schema: </span>
-														{selectedCred?.schemaName || ''}{' '}
+														{selectedCred?.schemaName || ''}
 														<span>[{selectedCred?.schemaVersion}]</span>
 													</p>
 													<p className="text-black dark:text-white pb-2">
@@ -302,13 +361,13 @@ const EmailIssuance = () => {
 														Attributes:
 													</span>
 													<div className="flex flex-wrap overflow-hidden">
-														{selectedCred?.schemaAttributes.map(
+														{Array.isArray(selectedCred?.schemaAttributes) && selectedCred?.schemaAttributes?.length > 0 && selectedCred?.schemaAttributes?.map(
 															(element: IAttributes) => (
 																<div
 																	key={element.attributeName}
-																	className="truncate"
+																	className="truncate mt-2 mr-2"
 																>
-																	<span className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
+																	<span className="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
 																		{element.attributeName}
 																	</span>
 																</div>
@@ -317,8 +376,8 @@ const EmailIssuance = () => {
 													</div>
 												</div>
 											</Card>
-										)}
-									</div>
+										</div>
+									)}
 								</div>
 								{/* required for batch application */}
 								{/* <div className="flex justify-between h-10">
@@ -362,14 +421,12 @@ const EmailIssuance = () => {
 							</div>
 						</div>
 					</Card>
+
 					<div
-						className={`${
-							isCredSelected ? '' : 'md:h-[300px] '
-						} flex flex-col justify-between w-full`}
+						className="flex flex-col justify-between w-full"
 					>
 						<Card>
 							<div
-								className={`${isCredSelected ? '' : 'md:h-[300px] '} w-full`}
 							>
 								<div className="flex justify-between mb-4 items-center ml-1">
 									<div>
@@ -445,7 +502,11 @@ const EmailIssuance = () => {
 																enableReinitialize
 																onSubmit={async (values): Promise<void> => {
 																	setUserData(values);
-																	handleOpenConfirmation();
+																	// handleOpenConfirmation();
+																	setShowPopup({
+																		type: 'issue',
+																		show: true
+																	})
 																}}
 															>
 																{(formikHandlers): JSX.Element => (
@@ -467,12 +528,11 @@ const EmailIssuance = () => {
 																				return (
 																					<div className="pb-4">
 																						<div className="">
-																							{arrayHelpers.form.values
-																								.formData &&
-																								arrayHelpers.form.values
-																									.formData.length > 0 &&
-																								arrayHelpers.form.values.formData.map(
-																									(formData1, index) => {
+																							{
+																								arrayHelpers?.form?.values?.formData &&
+																								arrayHelpers?.form?.values?.formData?.length > 0 &&
+																								arrayHelpers?.form?.values?.formData?.map(
+																									(attributeFormData, index) => {
 																										return (
 																											<div
 																												key={index}
@@ -513,75 +573,63 @@ const EmailIssuance = () => {
 																													{arrayHelpers.form
 																														.values.formData
 																														.length > 1 && (
-																														<div
-																															key={index}
-																															className="sm:w-2/12 text-red-600 flex justify-end"
-																														>
-																															<Button
-																																data-testid="deleteBtn"
-																																type="button"
-																																color="danger"
-																																onClick={() =>
-																																	arrayHelpers.remove(
-																																		index,
-																																	)
-																																}
-																																disabled={
-																																	arrayHelpers
-																																		.form.values
-																																		.formData
-																																		.length ===
-																																	1
-																																}
-																																className={` dark:bg-gray-700 flex justify-end focus:ring-0`}
+																															<div
+																																key={index}
+																																className="sm:w-2/12 text-red-600 flex justify-end"
 																															>
-																																<svg
-																																	xmlns="http://www.w3.org/2000/svg"
-																																	fill="none"
-																																	viewBox="0 0 24 24"
-																																	strokeWidth={
-																																		1.5
+																																<Button
+																																	data-testid="deleteBtn"
+																																	type="button"
+																																	color="danger"
+																																	onClick={() =>
+																																		arrayHelpers.remove(
+																																			index,
+																																		)
 																																	}
-																																	stroke="currentColor"
-																																	className="w-6 h-6"
+																																	disabled={
+																																		arrayHelpers
+																																			.form.values
+																																			.formData
+																																			.length ===
+																																		1
+																																	}
+																																	className={` dark:bg-gray-700 flex justify-end focus:ring-0`}
 																																>
-																																	<path
-																																		strokeLinecap="round"
-																																		strokeLinejoin="round"
-																																		d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-																																	/>
-																																</svg>
-																															</Button>
-																														</div>
-																													)}
+																																	<svg
+																																		xmlns="http://www.w3.org/2000/svg"
+																																		fill="none"
+																																		viewBox="0 0 24 24"
+																																		strokeWidth={
+																																			1.5
+																																		}
+																																		stroke="currentColor"
+																																		className="w-6 h-6"
+																																	>
+																																		<path
+																																			strokeLinecap="round"
+																																			strokeLinejoin="round"
+																																			d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+																																		/>
+																																	</svg>
+																																</Button>
+																															</div>
+																														)}
 																												</div>
 
 																												<label className="w-20 font-semibold text-base dark:text-white">
 																													Credential data
 																												</label>
 																												<div className="grid md:grid-cols-2 grid-cols-1 gap-8 w-full gap-2">
-																													{formData1.attributes &&
-																														formData1
+																													{attributeFormData.attributes &&
+																														attributeFormData
 																															?.attributes
 																															.length > 0 &&
-																														formData1?.attributes.map(
+																														attributeFormData?.attributes.map(
 																															(
 																																item: {
 																																	displayName: ReactNode | string;
 																																	attributeName: ReactNode | string;
-																																	name:
-																																		| string
-																																		| number
-																																		| boolean
-																																		| React.ReactElement<
-																																				any,
-																																				| string
-																																				| React.JSXElementConstructor<any>
-																																		  >
-																																		| Iterable<React.ReactNode>
-																																		| React.ReactPortal
-																																		| null
-																																		| undefined;
+																																	name: string;
 																																	schemaDataType: any;
 																																},
 																																attIndex: any,
@@ -594,7 +642,7 @@ const EmailIssuance = () => {
 																																				style={{
 																																					minWidth:
 																																						Math.max(
-																																							...formData1.attributes.map(
+																																							...attributeFormData.attributes.map(
 																																								(
 																																									item,
 																																								) =>
@@ -624,14 +672,14 @@ const EmailIssuance = () => {
 																																			style={{
 																																				left:
 																																					Math.max(
-																																						...formData1.attributes.map(
+																																						...attributeFormData.attributes.map(
 																																							(
 																																								item,
 																																							) =>
 																																								item?.name?.toString().length,
 																																						),
 																																					) *
-																																						10 +
+																																					10 +
 																																					28,
 																																			}}
 																																		>
@@ -649,7 +697,7 @@ const EmailIssuance = () => {
 																																					attIndex
 																																				}
 																																				length={
-																																					formData1
+																																					attributeFormData
 																																						?.attributes
 																																						?.length
 																																				}
@@ -661,7 +709,7 @@ const EmailIssuance = () => {
 																														)}
 																												</div>
 																												{/* // required for validation of only one attribute is required */}
-																												{/* {!formData1.attributes.some(
+																												{/* {!attributeFormData.attributes.some(
 																													(item) => item?.value,
 																												) && (
 																													<div className="text-red-700">
@@ -681,7 +729,6 @@ const EmailIssuance = () => {
 																									arrayHelpers.push({
 																										email: '',
 																										attributes: attributes?.map(
-																											
 																											(item) => {
 																												return {
 																													attributeName:
@@ -735,17 +782,34 @@ const EmailIssuance = () => {
 																				);
 																			}}
 																		/>
-																		<IssuancePopup
-																			openModal={openModal}
-																			closeModal={handleCloseConfirmation}
+																		<ConfirmationModal
+																			success={success}
+																			failure={failure}
+																			openModal={showPopup.show}
+																			closeModal={() => setShowPopup({
+																				...showPopup,
+																				show: false
+																			})}
+																			onSuccess={() => {
+																				if (showPopup.type === "issue") {
+																					// TODO document why this block is empty
+																					confirmOOBCredentialIssuance()
+																				} else {
+																					handleReset()
+																					formikHandlers.resetForm()
+																					setShowPopup({ show: false, type: "reset" })
+																				}
+																			}}
+																			message={
+																				showPopup.type === "issue" ?
+																					<div>Are you sure you want to <span className='text-primary-700 dark:text-primary-600'> Offer</span> Credentials ?</div> :
+																					<div>This will reset all the entries you entered. <br />Do you want to proceed?</div>
+																			}
+																			buttonTitles={["No, cancel", "Yes, I'm sure"]}
 																			isProcessing={issueLoader}
-																			onSuccess={confirmOOBCredentialIssuance}
-																		/>
-																		<ResetPopup
-																			openModal={openResetModal}
-																			closeModal={handleResetCloseConfirmation}
-																			isProcessing={issueLoader}
-																			onSuccess={handleReset}
+																			setFailure={setFailure}
+																			setSuccess={setSuccess}
+																			loading={loading}
 																		/>
 																		<div className="flex justify-end gap-4">
 																			<Button
@@ -844,6 +908,7 @@ const EmailIssuance = () => {
 							</div>
 						</Card>
 					</div>
+
 				</div>
 			</div>
 		</div>
