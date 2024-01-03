@@ -41,7 +41,7 @@ const DataTable: React.FC<DataTableProps> = ({
 													scope="col"
 													className={`p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white ${ele.width}`}
 												>
-													<div>{ele.columnName}</div>
+													<div key={ele.columnName}>{ele.columnName}</div>
 													{ele.subColumnName && (
 														<div className="flex text-gray-500">
 															{ele.subColumnName}{' '}
@@ -65,13 +65,14 @@ const DataTable: React.FC<DataTableProps> = ({
 														key={index}
 														className={` p-4 text-sm font-normal text-gray-900 whitespace-nowrap dark:text-white align-middle	`}
 													>
-														<div>{subEle.data}</div>
+														<div key={index}>{subEle.data}</div>
 														{subEle.subData}
 													</td>
 												))}
 												{displaySelect ||
 													(showBtn && (
 														<button
+															key={index}
 															onClick={() =>
 																callback ? callback(ele?.clickId) : ''
 															}
@@ -88,6 +89,7 @@ const DataTable: React.FC<DataTableProps> = ({
 											<td
 												className="p-2 text-center text-gray-500"
 												colSpan={header.length}
+												key={header.length}
 											>
 												Empty data
 											</td>
