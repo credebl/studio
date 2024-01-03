@@ -402,6 +402,15 @@ const VerificationCredentialList = () => {
 									style={{ display: 'flex', flexDirection: 'column' }}
 								>
 									<SortDataTable
+										pageInfo={pageInfo}
+										searchSortByValue={searchSortByValue}
+										isHeader={true}
+										isSearch={true}
+										isRefresh={true}
+										isSort={true}
+										isPagination={true}
+										message={'No Verification Records'}
+										discription={'You have no verification record yet'}
 										onInputChange={searchInputChange}
 										refresh={refreshPage}
 										header={header}
@@ -417,15 +426,6 @@ const VerificationCredentialList = () => {
 										totalPages={Math.ceil(
 											totalItem / listAPIParameter?.itemPerPage,
 										)}
-										pageInfo={pageInfo}
-										searchSortByValue={searchSortByValue}
-										isHeader={true}
-										isSearch={true}
-										isRefresh={true}
-										isSort={true}
-										isPagination={true}
-										message={'No Verification Records'}
-										discription={'You have no verification record yet'}
 									></SortDataTable>
 								</div>
 							)}
