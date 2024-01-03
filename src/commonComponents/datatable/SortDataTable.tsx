@@ -27,7 +27,6 @@ interface DataTableProps {
 		  }
 		| {};
 	searchSortByValue: (value: any) => void;
-	statusValues: [];
 	isPagination: boolean;
 	isSearch: boolean;
 	isRefresh: boolean;
