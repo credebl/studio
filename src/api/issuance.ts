@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { apiRoutes } from '../config/apiRoutes';
 import { storageKeys } from '../config/CommonConstant';
 import {
@@ -16,7 +15,6 @@ export const getIssuedCredentials = async ({page,
 filter}: IConnectionListAPIParameter) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.getIssuedCredentials}?pageSize=${itemPerPage}&pageNumber=${page}&searchByText=${search}&sortBy=${sortingOrder}&sortField=${sortBy}`;
-
 	const axiosPayload = {
 		url,
 		config: await getHeaderConfigs(),

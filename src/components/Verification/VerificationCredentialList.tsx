@@ -292,6 +292,10 @@ const VerificationCredentialList = () => {
 		setView(state === 'done');
 	};
 
+	const refreshPage = () => {
+		getproofRequestList(listAPIParameter);
+	};
+
 	const requestProof = async (proofVericationId: string) => {
 		if (proofVericationId) {
 			setOpenModal(false);
@@ -308,7 +312,17 @@ const VerificationCredentialList = () => {
 	};
 
 	useEffect(() => {
-		getproofRequestList(listAPIParameter);
+		let getData: NodeJS.Timeout;
+
+		if (listAPIParameter?.search?.length >= 1) {
+			getData = setTimeout(() => {
+				getproofRequestList(listAPIParameter);
+			}, 1000);
+			return () => clearTimeout(getData);
+		} else {
+			getproofRequestList(listAPIParameter);
+		}
+		return () => clearTimeout(getData);
 	}, [listAPIParameter]);
 
 	const schemeSelection = () => {

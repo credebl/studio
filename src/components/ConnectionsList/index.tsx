@@ -134,7 +134,7 @@ const ConnectionList = () => {
 				className="flex items-center justify-between mb-4"
 				id="connection-list"
 			>
-				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
+				<h1 className="ml-1 mr-auto text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 					Connections
 				</h1>
 			</div>
