@@ -1,6 +1,7 @@
 import type { TableData, TableHeader } from './interface';
 
 import CustomSpinner from '../../components/CustomSpinner';
+import React from 'react';
 
 interface DataTableProps {
 	header: TableHeader[];
@@ -38,9 +39,7 @@ const DataTable: React.FC<DataTableProps> = ({
 												<th
 													key={ele.columnName}
 													scope="col"
-													className={`p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white ${
-														ele.width && ele.width
-													}`}
+													className={`p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white ${ele.width}`}
 												>
 													<div>{ele.columnName}</div>
 													{ele.subColumnName && (
@@ -67,7 +66,7 @@ const DataTable: React.FC<DataTableProps> = ({
 														className={` p-4 text-sm font-normal text-gray-900 whitespace-nowrap dark:text-white align-middle	`}
 													>
 														<div>{subEle.data}</div>
-														{subEle.subData && subEle.subData}
+														{subEle.subData}
 													</td>
 												))}
 												{displaySelect ||
