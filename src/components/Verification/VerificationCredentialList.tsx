@@ -292,10 +292,6 @@ const VerificationCredentialList = () => {
 		setView(state === 'done');
 	};
 
-	const refreshPage = () => {
-		getproofRequestList(listAPIParameter);
-	};
-
 	const requestProof = async (proofVericationId: string) => {
 		if (proofVericationId) {
 			setOpenModal(false);
