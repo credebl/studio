@@ -6,20 +6,16 @@ import {
 	IConnectionListAPIParameter,
 	getConnectionsByOrg,
 } from '../../api/connection';
-import DataTable from '../../commonComponents/datatable';
 import type { TableData } from '../../commonComponents/datatable/interface';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';
 import { dateConversion } from '../../utils/DateConversion';
 import DateTooltip from '../Tooltip';
 import BreadCrumbs from '../BreadCrumbs';
-import CustomSpinner from '../CustomSpinner';
-import { EmptyListMessage } from '../EmptyListComponent';
 import { getFromLocalStorage } from '../../api/Auth';
 import { getOrgDetails } from '../../config/ecosystem';
-import { Pagination } from 'flowbite-react';
-import SearchInput from '../SearchInput';
-import type { IConnectionList } from '../../components/Issuance/interface'
+import type { IConnectionList } from '../../components/Issuance/interface';
+import SortDataTable from '../../commonComponents/datatable/SortDataTable';
 
 const initialPageState = {
 	itemPerPage: 10,
@@ -35,6 +31,11 @@ const ConnectionList = () => {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
 	const [totalItem, setTotalItem] = useState(0);
+	const [pageInfo, setPageInfo] = useState({
+		totalItem: '',
+		nextPage: '',
+		lastPage: '',
+	});
 
 	const getConnections = async (apiParameter: IConnectionListAPIParameter) => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -48,6 +49,13 @@ const ConnectionList = () => {
 				const { data } = response as AxiosResponse;
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 					setTotalItem(data?.data.totalItems);
+					const { totalItems, nextPage, lastPage } = data.data;
+
+					setPageInfo({
+						totalItem: totalItems,
+						nextPage: nextPage,
+						lastPage: lastPage,
+					});
 					const connections = data?.data?.data?.map((ele: IConnectionList) => {
 						const userName = ele?.theirLabel ? ele.theirLabel : 'Not available';
 						const connectionId = ele.connectionId
@@ -103,6 +111,18 @@ const ConnectionList = () => {
 		});
 	};
 
+	const searchSortByValue = (value: any) => {
+		setListAPIParameter({
+			...listAPIParameter,
+			page: 1,
+			sortingOrder: value,
+		});
+	};
+
+	const refreshPage = () => {
+		getConnections(listAPIParameter);
+	};
+
 	useEffect(() => {
 		getConnections(listAPIParameter);
 	}, [listAPIParameter]);
@@ -117,9 +137,6 @@ const ConnectionList = () => {
 				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 					Connections
 				</h1>
-				<div>
-					<SearchInput onInputChange={searchInputChange} />
-				</div>
 			</div>
 			{error && (
 				<AlertComponent
@@ -130,48 +147,29 @@ const ConnectionList = () => {
 					}}
 				/>
 			)}
-			{loading ? (
-				<div className="flex items-center justify-center mt-36 mb-4">
-					<CustomSpinner />
-				</div>
-			) : connectionList && connectionList?.length > 0 ? (
-				<>
-					<div
-						id="issuance_datatable"
-						className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
-					>
-						<DataTable
-							header={header}
-							data={connectionList}
-							loading={loading}
-						></DataTable>
-					</div>
-
-					{Math.ceil(totalItem / listAPIParameter?.itemPerPage) > 1 && (
-						<div className="flex items-center justify-end my-4">
-							<Pagination
-								currentPage={listAPIParameter?.page}
-								onPageChange={(page) => {
-									setListAPIParameter((prevState) => ({
-										...prevState,
-										page: page,
-									}));
-								}}
-								totalPages={Math.ceil(
-									totalItem / listAPIParameter?.itemPerPage,
-								)}
-							/>
-						</div>
-					)}
-				</>
-			) : (
-				<div className="bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-					<EmptyListMessage
-						message={'No Connections'}
-						description={"You don't have any connection"}
-					/>
-				</div>
-			)}
+			<SortDataTable
+				onInputChange={searchInputChange}
+				refresh={refreshPage}
+				header={header}
+				data={connectionList}
+				loading={loading}
+				currentPage={listAPIParameter?.page}
+				onPageChange={(page: number) => {
+					setListAPIParameter((prevState) => ({
+						...prevState,
+						page,
+					}));
+				}}
+				totalPages={Math.ceil(totalItem / listAPIParameter?.itemPerPage)}
+				pageInfo={pageInfo}
+				searchSortByValue={searchSortByValue}
+				isHeader={true}
+				isSearch={true}
+				isRefresh={true}
+				isSort={true}
+				message={'No Connections'}
+				discription={"You don't have any connections yet"}
+			></SortDataTable>
 		</div>
 	);
 };
