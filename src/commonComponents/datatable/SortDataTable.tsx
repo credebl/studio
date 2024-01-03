@@ -5,6 +5,7 @@ import SearchInput from '../../components/SearchInput';
 import { Pagination } from 'flowbite-react';
 import { useState } from 'react';
 import { EmptyListMessage } from '../../components/EmptyListComponent';
+import React from 'react';
 
 interface DataTableProps {
 	header: TableHeader[];
@@ -109,9 +110,9 @@ const SortDataTable: React.FC<DataTableProps> = ({
 													xmlns="http://www.w3.org/2000/svg"
 												>
 													<path
-														fill-rule="evenodd"
+														fillRule="evenodd"
 														d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-														clip-rule="evenodd"
+														clipRule="evenodd"
 													/>
 												</svg>
 											</div>
@@ -155,11 +156,9 @@ const SortDataTable: React.FC<DataTableProps> = ({
 										>
 											{sortValues.map((sort) => {
 												return (
-													<>
-														<option key={sort.value} value={sort.value}>
-															{sort.label}
-														</option>
-													</>
+													<option key={sort.value} value={sort.value}>
+														{sort.label}
+													</option>
 												);
 											})}
 										</select>
@@ -178,9 +177,7 @@ const SortDataTable: React.FC<DataTableProps> = ({
 											<th
 												key={ele.columnName}
 												scope="col"
-												className={`p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white ${
-													ele.width && ele.width
-												}`}
+												className={`p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white ${ele.width}`}
 											>
 												<div>{ele.columnName}</div>
 												{ele.subColumnName && (
@@ -221,7 +218,7 @@ const SortDataTable: React.FC<DataTableProps> = ({
 														className={`p-4 text-sm font-normal text-gray-900 whitespace-nowrap dark:text-white align-middle	`}
 													>
 														<div>{subEle.data}</div>
-														{subEle.subData && subEle.subData}
+														{subEle.subData}
 													</td>
 												))}
 												{displaySelect ||
@@ -244,7 +241,6 @@ const SortDataTable: React.FC<DataTableProps> = ({
 												className="p-2 text-center text-gray-500"
 												colSpan={header.length}
 											>
-												{' '}
 												<div className="w-full h-full mx-auto flex items-center justify-center">
 													<EmptyListMessage
 														message={message}
