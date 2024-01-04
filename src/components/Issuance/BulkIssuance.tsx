@@ -1,5 +1,5 @@
 import { Button, Card, Pagination } from 'flowbite-react';
-import React, { Attributes, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
 import {
 	DownloadCsvTemplate, getSchemaCredDef, getCsvFileData,
@@ -29,7 +29,6 @@ const BulkIssuance = () => {
 	const [uploadedFileName, setUploadedFileName] = useState('');
 	const [uploadedFile, setUploadedFile] = useState(null);
 	const [openModal, setOpenModal] = useState<boolean>(false);
-	const [message, setMessage] = useState('');
 	const [searchText, setSearchText] = useState('');
 	const [uploadMessage, setUploadMessage] = useState<IUploadMessage | null>(null)
 	const [success, setSuccess] = useState<string | null>(null);
@@ -112,19 +111,31 @@ const BulkIssuance = () => {
 					if (fileUrl) {
 						downloadFile(fileUrl, 'downloadedFile.csv');
 						setSuccess('File downloaded successfully');
+						setTimeout(()=>{
+							setSuccess(null)
+						},5000)
 						setProcess(false);
 					} else {
 						setUploadMessage({message: 'File URL is missing in the response', type: "failure"});
+						setTimeout(()=>{
+							setUploadMessage(null)
+						},5000)
 						setSuccess(null)
 						setFailure(null)
 					}
 				} else {
 					setUploadMessage({message: 'API request was not successful', type: "failure"});
+					setTimeout(()=>{
+						setUploadMessage(null)
+					},5000)
 					setSuccess(null)
 					setFailure(null)
 				}
 			} catch (error) {
 				setUploadMessage({message: error as string, type: "failure"});
+				setTimeout(()=>{
+					setUploadMessage(null)
+				},5000)
 				setSuccess(null)
 				setFailure(null)
 			}
@@ -160,6 +171,7 @@ const BulkIssuance = () => {
 	useEffect(() => {
 		SOCKET.emit('bulk-connection')
 		SOCKET.on('bulk-issuance-process-completed', () => {
+			setSuccess(null)
 			console.log(`bulk-issuance-process-completed`);
 			toast.success('Issuance process completed', {
 				position: 'top-right',
@@ -171,10 +183,10 @@ const BulkIssuance = () => {
 				progress: undefined,
 				theme: 'colored',
 			});
-			setSuccess("Issuance process completed")
 		});
 
 		SOCKET.on('error-in-bulk-issuance-process', () => {
+			setFailure(null)
 			console.log(`error-in-bulk-issuance-process-initiated`);
 			toast.error('Issuance process failed. Please retry', {
 				position: 'top-right',
@@ -186,7 +198,6 @@ const BulkIssuance = () => {
 				progress: undefined,
 				theme: 'colored',
 			});
-			setFailure("Issuance process failed, please retry")
 		});
 
 	}, [])
@@ -196,6 +207,9 @@ const BulkIssuance = () => {
 
 		if (file.type !== 'text/csv') {
 			setUploadMessage({message:'Invalid file type. Please select only CSV files.', type: "failure"});
+			setTimeout(()=>{
+				setUploadMessage(null)
+			},5000)
 			setSuccess(null)
 			setFailure(null)
 			return;
@@ -225,9 +239,15 @@ const BulkIssuance = () => {
 				setRequestId(data?.data);
 				setIsFileUploaded(true);
 				setUploadMessage({message: data?.message, type: "success"});
+				setTimeout(()=>{
+					setUploadMessage(null)
+				},5000)
 				await handleCsvFileData(data?.data);
 			} else {
 				setUploadMessage({message: response as string, type: "failure"});
+				setTimeout(()=>{
+					setUploadMessage(null)
+				},5000)
 				setSuccess(null)
 				setFailure(null)
 			}
@@ -346,6 +366,9 @@ const BulkIssuance = () => {
 				handleResetForConfirm()
 			} else {
 				setFailure(response as string);
+				setTimeout(()=>{
+					setFailure(null)
+				},5000)
 				setLoading(false);
 			}
 		} else {
@@ -353,7 +376,7 @@ const BulkIssuance = () => {
 			setFailure(response as string);
 			setTimeout(() => {
 				setFailure(null);
-			}, 4000);
+			}, 5000);
 		}
 	};
 
@@ -375,18 +398,6 @@ const BulkIssuance = () => {
 			</div>
 			<div>
 				<ToastContainer />
-				{(success || failure) && (
-					<AlertComponent
-						message={success ?? failure}
-						type={success ? 'success' : 'failure'}
-						onAlertClose={() => {
-							setSuccess(null);
-							setFailure(null);
-						}}
-						viewButton={Boolean((success && success === "Issuance process completed") || (failure && failure === "Issuance process failed, please retry"))}
-						path={pathRoutes.organizations.Issuance.history}
-					/>
-				)}
 				<div className="flex justify-between mb-4 items-center ml-1">
 					<div>
 						<p className="text-2xl font-semibold dark:text-white">
@@ -423,6 +434,18 @@ const BulkIssuance = () => {
 						View History
 					</Button>
 				</div>
+				{(success || failure) && (
+					<AlertComponent
+						message={success ?? failure}
+						type={success ? 'success' : 'failure'}
+						onAlertClose={() => {
+							setSuccess(null);
+							setFailure(null);
+						}}
+						viewButton={Boolean((success && success === "Issuance process completed") || (failure && failure === "Issuance process failed, please retry"))}
+						path={pathRoutes.organizations.Issuance.history}
+					/>
+				)}
 				<div className="flex flex-col justify-between min-h-100/21rem">
 					<Card>
 						<div>
@@ -755,7 +778,6 @@ const BulkIssuance = () => {
 							</Button>
 							<Button
 								onClick={handleReset}
-								disabled={!isFileUploaded}
 								type="reset"
 								color="bg-primary-800"
 								className="float-right bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-4 ml-auto dark:text-white dark:hover:text-black dark:hover:bg-primary-50"
