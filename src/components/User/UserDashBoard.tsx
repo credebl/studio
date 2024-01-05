@@ -25,6 +25,7 @@ import { getEcosystems } from '../../api/ecosystem';
 import { getEcosystemId } from '../../config/ecosystem';
 import { getSchemaCredDef } from '../../api/BulkIssuance';
 import type { ICredentials } from '../Issuance/interface';
+import React from 'react';
 const initialPageState = {
 	pageNumber: 1,
 	pageSize: 10,
@@ -321,6 +322,11 @@ const UserDashBoard = () => {
 					}}
 				/>
 			</div>
+			<div
+				className="grid w-full grid-cols-1 gap-4 mt-0 mb-4 rounded-md border-gray-200 shadow-sm dark:border-gray-700 dark:bg-gray-800 bg-[url('/images/Frame.png')] bg-cover bg-center bg-no-repeat p-0"
+				style={{ minHeight: '100px'}}
+			></div>
+
 			<div
 				className="grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-3"
 				style={{ minHeight: '300px' }}
@@ -647,7 +653,7 @@ const UserDashBoard = () => {
 													</span>
 												</a>
 											</div>
-											<div className="flex space-x-3 items-center justify-start">
+											<div className="flex space-x-3 items-center justify-start dark:text-white">
 												<span>v.{schema?.version}</span>
 											</div>
 										</button>
