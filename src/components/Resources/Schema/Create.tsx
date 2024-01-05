@@ -105,13 +105,13 @@ const CreateSchema = () => {
 				setLoading(true)
 				setTimeout(() => {
 					setSuccess(null);
-				}, 2000);
+					window.location.href = pathRoutes?.organizations?.schemas;
+				}, 1500);
 				setTimeout(() => {
 					setShowPopup({
 						type: "create",
 						show: false
 					});
-					window.location.href = pathRoutes?.organizations?.schemas;
 				}, 2000);
 			} else {
 				setFailure(createSchema as string);
