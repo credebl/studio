@@ -65,15 +65,14 @@ const SignUpUser = () => {
 	const ValidateEmail = async (values: emailValue) => {
 		setLoading(true)
 		const userRsp = await checkUserExist(values?.email)
-		const { data } = userRsp as AxiosResponse
-		setLoading(false)
+				const { data } = userRsp as AxiosResponse
+				setLoading(false)
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			if (data?.data?.isExist === false) {
-				console.log('email data::', data.data)
+			if (data?.data?.isRegistrationCompleted === false && data.data.isEmailVerified === false) {
 				setEmail(values?.email)
 				await VerifyMail(values?.email)
 			}
-			else if (data.data.isEmailVerified === true && data?.data?.isSupabase !== true) {
+			else if (data.data.isEmailVerified === true && data?.data?.isRegistrationCompleted !== true) {
 				setEmail(values?.email)
 				await setToLocalStorage(storageKeys.USER_EMAIL, values?.email)
 				setNextFlag(true)
