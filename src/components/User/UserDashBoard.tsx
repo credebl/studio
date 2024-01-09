@@ -30,6 +30,21 @@ const initialPageState = {
 	total: 0,
 };
 
+interface ISchema {
+	version: string;
+	name: string;
+	schemaLedgerId: string;
+	id: string;
+}
+
+interface ICredDef {
+	credentialDefinition: string;
+	schemaVersion: string;
+	schemaName: string;
+	credentialDefinitionId: string;
+	id: string;
+}
+
 const UserDashBoard = () => {
 	const [message, setMessage] = useState<string | null>(null);
 	const [ecoMessage, setEcoMessage] = useState<string | null>(null);
@@ -43,8 +58,7 @@ const UserDashBoard = () => {
 	);
 	const [orgCount, setOrgCount] = useState(0);
 	const [schemaCount, setSchemaCount] = useState(0);
-	const [schemaList, setSchemaList] =
-		useState<Array<GetAllSchemaListParameter> | null>(null);
+	const [schemaList, setSchemaList] = useState<Array<ISchema> | null>(null);
 	const [schemaListAPIParameter, setSchemaListAPIParameter] = useState({
 		itemPerPage: 9,
 		page: 1,
@@ -302,18 +316,47 @@ const UserDashBoard = () => {
 		}
 	}, [organizationsList]);
 
-	const goToOrgDashboard = async (orgId: string, roles: string[]) => {
+	const goToOrgDashboard = async (orgId: string, rogRoles: string[]) => {
 		await setToLocalStorage(storageKeys.ORG_ID, orgId);
 		window.location.href = pathRoutes.organizations.dashboard;
 	};
 
 	const goToSchemaCredDef = async (schemaId: string) => {
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		await setToLocalStorage(storageKeys.ORG_ID, orgId);
 		const url = `${
 			pathRoutes.organizations.viewSchema
 		}?schemaId=${encodeURIComponent(schemaId)}`;
 		window.location.href = url;
 	};
+
+	const goToCredDef = async (
+		credentialDefinitionId: string,
+		schemaName: string,
+		schemaVersion: string,
+	) => {
+		const schemaId =
+			credentialDefinitionId.split(':')[0] +
+			':2:' +
+			schemaName +
+			':' +
+			schemaVersion;
+		console.log(
+			credentialDefinitionId.split(':')[0] +
+				':2:' +
+				schemaName +
+				':' +
+				schemaVersion,
+		);
+
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		await setToLocalStorage(storageKeys.ORG_ID, orgId);
+		const url = `${
+			pathRoutes.organizations.viewSchema
+		}?schemaId=${encodeURIComponent(schemaId)}`;
+		window.location.href = url;
+	};
+
 	const goToEcoDashboard = async (ecosystemId: string) => {
 		await setToLocalStorage(storageKeys.ECOSYSTEM_ID, ecosystemId);
 		window.location.href = pathRoutes.ecosystem.dashboard;
@@ -372,7 +415,7 @@ const UserDashBoard = () => {
 							<div className="flex text-center justify-start sm:justify-end items-center mr-8">
 								<Button
 									className="min-w-[180px] sm:col-span-1 group flex h-min text-center justify-center items-center p-0.5 focus:z-10 focus:outline-none border border-transparent enabled:hover:bg-cyan-800 dark:enabled:hover:bg-cyan-700 w-fit sm:px-4 font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-md hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-									onClick={() => goToOrgDashboard('', '')}
+									onClick={() => goToOrgDashboard('', [])}
 								>
 									Create wallet
 									<svg
@@ -408,7 +451,7 @@ const UserDashBoard = () => {
 					className="xl:col-span-2 justify-between p-4 bg-white border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
 					style={{ minHeight: '300px' }}
 				>
-					<div className="w-full relative">
+					<div className="w-full relative h-full">
 						<div className="flex justify-between pb-2 flex text-center">
 							<div className="flex text-center justify-center">
 								<h2 className="text-xl font-semibold text-gray-900 dark:text-white items-center ">
@@ -549,7 +592,7 @@ const UserDashBoard = () => {
 															<button
 																onClick={() => {
 																	window.location.href =
-																		pathRoutes.organizations.viewSchema;
+																		pathRoutes.organizations.schemas;
 																}}
 																className="p-1 rounded-md"
 															>
@@ -659,7 +702,7 @@ const UserDashBoard = () => {
 										{organizationsList && organizationsList?.length > 0 && (
 											<a
 												href="/organizations"
-												className="absolute bottom-[-13px] right-0 float-right inline-flex items-center text-sm font-medium rounded-lg text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700"
+												className="absolute bottom-0 sm:bottom-[-13px] right-0 float-right inline-flex items-center text-sm font-medium rounded-lg text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700"
 											>
 												View All
 											</a>
@@ -679,10 +722,10 @@ const UserDashBoard = () => {
 					</div>
 				</div>
 				<div
-					className="xl:col-span-1 justify-between p-4 bg-white border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
 					style={{ minHeight: '300px' }}
+					className="xl:col-span-1 justify-between p-4 bg-white border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
 				>
-					<div className="w-full relative">
+					<div className="w-full relative h-full">
 						<div className="flex justify-between pb-2 flex text-center">
 							<div className="flex text-center justify-center">
 								<h2 className="text-xl font-semibold text-gray-900 dark:text-white items-center ">
@@ -725,7 +768,7 @@ const UserDashBoard = () => {
 						{!schemaLoading ? (
 							<>
 								{schemaList && schemaList?.length > 0 ? (
-									<>
+									<div>
 										{' '}
 										{schemaList?.map((schema) => {
 											return (
@@ -757,12 +800,12 @@ const UserDashBoard = () => {
 										{schemaList && schemaList?.length > 0 && (
 											<a
 												href="/organizations/schemas"
-												className="absolute bottom-[-13px] right-0 float-right inline-flex items-center text-sm font-medium rounded-lg text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700 mt-1"
+												className="absolute bottom-0 sm:bottom-[-13px] right-0 float-right inline-flex items-center text-sm font-medium rounded-lg text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700 mt-1"
 											>
 												View All
 											</a>
 										)}
-									</>
+									</div>
 								) : (
 									<div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
 										<p>You have no schemas created</p>
@@ -785,7 +828,7 @@ const UserDashBoard = () => {
 					className="xl:col-span-2 justify-between p-4 bg-white border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
 					style={{ minHeight: '300px' }}
 				>
-					<div className="w-full relative">
+					<div className="w-full relative h-full">
 						<div className="flex justify-between pb-2 flex text-center">
 							<div className="flex text-center justify-center">
 								<h2 className="text-xl font-semibold text-gray-900 dark:text-white items-center ">
@@ -891,7 +934,7 @@ const UserDashBoard = () => {
 										{ecosystemList && ecosystemList?.length > 0 && (
 											<a
 												href="/ecosystems"
-												className="absolute bottom-[-13px] right-0 float-right inline-flex items-center text-sm font-medium rounded-lg text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700"
+												className="absolute bottom-0 sm:bottom-[-13px] right-0 float-right inline-flex items-center text-sm font-medium rounded-lg text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700"
 											>
 												View All
 											</a>
@@ -914,7 +957,7 @@ const UserDashBoard = () => {
 					className="xl:col-span-1 justify-between p-4 bg-white border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
 					style={{ minHeight: '300px' }}
 				>
-					<div className="w-full relative">
+					<div className="w-full relative h-full">
 						<div className="flex justify-between pb-2 flex text-center">
 							<div className="flex text-center justify-center">
 								<h2 className="text-xl font-semibold text-gray-900 dark:text-white items-center ">
@@ -962,7 +1005,7 @@ const UserDashBoard = () => {
 								{credDefList && credDefList.length > 0 ? (
 									<>
 										{' '}
-										{credDefList?.map((cred) => {
+										{credDefList?.map((cred: ICredDef) => {
 											return (
 												<button
 													className="flex justify-between w-full mt-4 items-center"
@@ -970,7 +1013,13 @@ const UserDashBoard = () => {
 												>
 													<div
 														className="w-full"
-														// onClick={() => goToSchemaCredDef(cred?.schemaLedgerId)}
+														onClick={() =>
+															goToCredDef(
+																cred?.credentialDefinitionId,
+																cred?.schemaName,
+																cred?.schemaVersion,
+															)
+														}
 													>
 														<a
 															href="#"
@@ -983,20 +1032,12 @@ const UserDashBoard = () => {
 													</div>
 													<div className="min-w-6 flex space-x-3 items-center justify-start dark:text-white">
 														<span className="truncate">
-															{cred?.credentialDefinitionId.slice(0, 5)}...
+															{cred?.credentialDefinitionId.slice(0, 8)}...
 														</span>
 													</div>
 												</button>
 											);
 										})}
-										{/* {credDefList && credDefList?.length > 0 && (
-									<a
-										href="/organizations/schemas"
-										className="absolute bottom-[-13px] right-0 float-right inline-flex items-center text-sm font-medium rounded-lg text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700 mt-1"
-									>
-										View All
-									</a>
-								)} */}
 									</>
 								) : (
 									<div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
@@ -1019,11 +1060,6 @@ const UserDashBoard = () => {
 							Recent Activity
 						</h3>
 						<hr />
-						{/* {activityList && activityList?.length === 0 && (
-							<div className="py-1 text-black-800 dark:text-white text-xs flex items-center">
-								Looks like there is no activity to display at the moment.
-							</div>
-						)} */}
 					</div>
 
 					{!loading ? (
