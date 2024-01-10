@@ -66,7 +66,7 @@ export const apiRoutes = {
 		getAllRequestList: '/credentials/proofs',
 		verifyCredential: '/proofs',
 		presentationVerification: '/proofs',
-		proofRequestAttributesVerification: '/proofs',
+		proofRequestAttributesVerification: '/verified-proofs',
 		verificationCredDef: '/verifiation/cred-defs'
 	},
 	Agent: {

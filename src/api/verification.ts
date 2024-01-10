@@ -78,8 +78,9 @@ export const verifyPresentation = async (proofId: string) => {
 	}
 };
 
-export const getProofAttributes = async (proofId: string, orgId: string) => {
-	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Verification.proofRequestAttributesVerification}/${proofId}/form`;
+
+export const getVerifiedProofDetails=async (proofId:string, orgId: string)=>{
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Verification.proofRequestAttributesVerification}/${proofId}`;
 	const axiosPayload = {
 		url,
 		config: await getHeaderConfigs(),
