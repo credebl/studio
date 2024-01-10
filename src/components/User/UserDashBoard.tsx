@@ -17,7 +17,7 @@ import { dateConversion } from '../../utils/DateConversion';
 import DateTooltip from '../Tooltip';
 import { Roles } from '../../utils/enums/roles';
 import { Button, Tooltip } from 'flowbite-react';
-import { getAllSchemasByOrgId } from '../../api/Schema';
+import { getAllCredDef, getAllSchemasByOrgId } from '../../api/Schema';
 import type { GetAllSchemaListParameter } from '../Resources/Schema/interfaces';
 import { getEcosystems } from '../../api/ecosystem';
 import { getSchemaCredDef } from '../../api/BulkIssuance';
@@ -38,6 +38,7 @@ interface ISchema {
 }
 
 interface ICredDef {
+	tag: string;
 	credentialDefinition: string;
 	schemaVersion: string;
 	schemaName: string;
@@ -256,14 +257,15 @@ const UserDashBoard = () => {
 			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 			if (orgId) {
 				setCredDefLoading(true);
-				const response = await getSchemaCredDef();
+				const response = await getAllCredDef();
 				const { data } = response as AxiosResponse;
 
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-					setCredDefCount(data.data.length);
-					const credentialDefs = data?.data?.filter(
+					setCredDefCount(data.data.totalItems);
+					const credentialDefs = data?.data?.data?.filter(
 						(ecosystem: Organisation, index: number) => index < 3,
 					);
+
 					setCredDefList(credentialDefs);
 				}
 				setCredDefLoading(false);
@@ -330,30 +332,12 @@ const UserDashBoard = () => {
 		window.location.href = url;
 	};
 
-	const goToCredDef = async (
-		credentialDefinitionId: string,
-		schemaName: string,
-		schemaVersion: string,
-	) => {
-		const schemaId =
-			credentialDefinitionId.split(':')[0] +
-			':2:' +
-			schemaName +
-			':' +
-			schemaVersion;
-		console.log(
-			credentialDefinitionId.split(':')[0] +
-				':2:' +
-				schemaName +
-				':' +
-				schemaVersion,
-		);
-
+	const goToCredDef = async (credentialDefinitionId: string) => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		await setToLocalStorage(storageKeys.ORG_ID, orgId);
 		const url = `${
 			pathRoutes.organizations.viewSchema
-		}?schemaId=${encodeURIComponent(schemaId)}`;
+		}?schemaId=${encodeURIComponent(credentialDefinitionId)}`;
 		window.location.href = url;
 	};
 
@@ -1013,20 +997,14 @@ const UserDashBoard = () => {
 												>
 													<div
 														className="w-full"
-														onClick={() =>
-															goToCredDef(
-																cred?.credentialDefinitionId,
-																cred?.schemaName,
-																cred?.schemaVersion,
-															)
-														}
+														onClick={() => goToCredDef(cred?.schemaLedgerId)}
 													>
 														<a
 															href="#"
 															className="flex items-center py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-md mr-2"
 														>
 															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white text-primary-700">
-																{cred?.credentialDefinition}
+																{cred?.tag}
 															</span>
 														</a>
 													</div>
