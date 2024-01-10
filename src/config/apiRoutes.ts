@@ -50,7 +50,7 @@ export const apiRoutes = {
 		getIssuedCredentials: '/credentials',
 		getAllConnections: '/connections',
 		issueCredential: '/credentials/offer',
-		issueOobEmailCredential: '/credentials/oob',
+		issueOobEmailCredential: '/credentials/oob/email',
 		bulk:{
 			credefList:'/bulk/cred-defs',
 			uploadCsv: '/bulk/upload',

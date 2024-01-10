@@ -192,7 +192,7 @@ const EmailIssuance = () => {
 	const handleResetOpenConfirmation = () => {
 		setOpenResetModal(true);
 	};
-	
+
 	const MailError = ({
 		handler,
 		formindex,
@@ -256,10 +256,10 @@ const EmailIssuance = () => {
 						<p className="text-2xl font-semibold dark:text-white">Email</p>
 					</div>
 				</div>
-				<div className="flex flex-col justify-between gap-4">
+				<div className="flex flex-col justify-between gap-4 email-bulk-issuance">
 					<Card>
-						<div className="md:h-72">
-							<p className="text-xl pb-6 font-normal dark:text-white">
+						<div className="md:min-h-[10rem]">
+							<p className="text-xl font-semibold dark:text-white pb-6">
 								Select Schema and credential definition
 							</p>
 							<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -362,18 +362,12 @@ const EmailIssuance = () => {
 							</div>
 						</div>
 					</Card>
-					<div
-						className={`${
-							isCredSelected ? '' : 'md:h-[300px] '
-						} flex flex-col justify-between w-full`}
-					>
+					<div>
 						<Card>
-							<div
-								className={`${isCredSelected ? '' : 'md:h-[300px] '} w-full`}
-							>
+							<div>
 								<div className="flex justify-between mb-4 items-center ml-1">
 									<div>
-										<p className="text-2xl font-semibold dark:text-white">
+										<p className="text-xl font-semibold dark:text-white">
 											Issue Credential(s) to the email
 										</p>
 										<span className="text-sm text-gray-400">
@@ -513,51 +507,51 @@ const EmailIssuance = () => {
 																													{arrayHelpers.form
 																														.values.formData
 																														.length > 1 && (
-																														<div
-																															key={index}
-																															className="sm:w-2/12 text-red-600 flex justify-end"
-																														>
-																															<Button
-																																data-testid="deleteBtn"
-																																type="button"
-																																color="danger"
-																																onClick={() =>
-																																	arrayHelpers.remove(
-																																		index,
-																																	)
-																																}
-																																disabled={
-																																	arrayHelpers
-																																		.form.values
-																																		.formData
-																																		.length ===
-																																	1
-																																}
-																																className={` dark:bg-gray-700 flex justify-end focus:ring-0`}
+																															<div
+																																key={index}
+																																className="sm:w-2/12 text-red-600 flex justify-end"
 																															>
-																																<svg
-																																	xmlns="http://www.w3.org/2000/svg"
-																																	fill="none"
-																																	viewBox="0 0 24 24"
-																																	strokeWidth={
-																																		1.5
+																																<Button
+																																	data-testid="deleteBtn"
+																																	type="button"
+																																	color="danger"
+																																	onClick={() =>
+																																		arrayHelpers.remove(
+																																			index,
+																																		)
 																																	}
-																																	stroke="currentColor"
-																																	className="w-6 h-6"
+																																	disabled={
+																																		arrayHelpers
+																																			.form.values
+																																			.formData
+																																			.length ===
+																																		1
+																																	}
+																																	className={` dark:bg-gray-700 flex justify-end focus:ring-0`}
 																																>
-																																	<path
-																																		strokeLinecap="round"
-																																		strokeLinejoin="round"
-																																		d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-																																	/>
-																																</svg>
-																															</Button>
-																														</div>
-																													)}
+																																	<svg
+																																		xmlns="http://www.w3.org/2000/svg"
+																																		fill="none"
+																																		viewBox="0 0 24 24"
+																																		strokeWidth={
+																																			1.5
+																																		}
+																																		stroke="currentColor"
+																																		className="w-6 h-6"
+																																	>
+																																		<path
+																																			strokeLinecap="round"
+																																			strokeLinejoin="round"
+																																			d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+																																		/>
+																																	</svg>
+																																</Button>
+																															</div>
+																														)}
 																												</div>
 
 																												<label className="w-20 font-semibold text-base dark:text-white">
-																													Credential data
+																													Credential data:
 																												</label>
 																												<div className="grid md:grid-cols-2 grid-cols-1 gap-8 w-full gap-2">
 																													{formData1.attributes &&
@@ -570,18 +564,18 @@ const EmailIssuance = () => {
 																																	displayName: ReactNode | string;
 																																	attributeName: ReactNode | string;
 																																	name:
+																																	| string
+																																	| number
+																																	| boolean
+																																	| React.ReactElement<
+																																		any,
 																																		| string
-																																		| number
-																																		| boolean
-																																		| React.ReactElement<
-																																				any,
-																																				| string
-																																				| React.JSXElementConstructor<any>
-																																		  >
-																																		| Iterable<React.ReactNode>
-																																		| React.ReactPortal
-																																		| null
-																																		| undefined;
+																																		| React.JSXElementConstructor<any>
+																																	>
+																																	| Iterable<React.ReactNode>
+																																	| React.ReactPortal
+																																	| null
+																																	| undefined;
 																																	schemaDataType: any;
 																																},
 																																attIndex: any,
@@ -590,20 +584,7 @@ const EmailIssuance = () => {
 																																	<div className="mt-3">
 																																		<div className="relative flex items-center w-full gap-2">
 																																			<label
-																																				className="text-base dark:text-white text-gray-800"
-																																				style={{
-																																					minWidth:
-																																						Math.max(
-																																							...formData1.attributes.map(
-																																								(
-																																									item,
-																																								) =>
-																																									item?.displayName?.toString()?.length,
-																																							),
-																																						) *
-																																						10,
-																																				}}
-																																			>
+																																				className="text-base dark:text-white text-gray-800 w-[300px] word-break-word">
 																																				{item?.displayName}
 																																			</label>
 																																			<Field
@@ -631,7 +612,7 @@ const EmailIssuance = () => {
 																																								item?.name?.toString().length,
 																																						),
 																																					) *
-																																						10 +
+																																					10 +
 																																					28,
 																																			}}
 																																		>
@@ -681,7 +662,7 @@ const EmailIssuance = () => {
 																									arrayHelpers.push({
 																										email: '',
 																										attributes: attributes?.map(
-																											
+
 																											(item) => {
 																												return {
 																													attributeName:
