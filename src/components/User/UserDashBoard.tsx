@@ -148,7 +148,7 @@ const UserDashBoard = () => {
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const totalPages = data?.data?.totalPages;
-			setOrgCount(data?.data?.organizations?.length);
+			setOrgCount(data?.data?.totalCount);
 			const orgList = data?.data?.organizations.filter(
 				(userOrg: Organisation, index: number) => index < 3,
 			);
@@ -236,7 +236,7 @@ const UserDashBoard = () => {
 			const { data } = response as AxiosResponse;
 
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				setEcoCount(data?.data?.length);
+				setEcoCount(data?.data?.totalCount);
 				const ecosystemData = data?.data?.filter(
 					(ecosystem: Organisation, index: number) => index < 3,
 				);
