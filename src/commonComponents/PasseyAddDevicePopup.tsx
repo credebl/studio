@@ -43,7 +43,6 @@ const PasskeyAddDevice = (props: {
 					const passkeyUserDetailsResp = await addPasskeyUserDetails(payload, storedEmail)
 					const { data } = passkeyUserDetailsResp as AxiosResponse
 					if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-						setSuccess('User details updated successfully')
 						setNextFlag(true)
 					} else {
 						setFidoUserError(passkeyUserDetailsResp as string)
