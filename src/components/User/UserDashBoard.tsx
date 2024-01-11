@@ -20,7 +20,6 @@ import { Button, Tooltip } from 'flowbite-react';
 import { getAllCredDef, getAllSchemasByOrgId } from '../../api/Schema';
 import type { GetAllSchemaListParameter } from '../Resources/Schema/interfaces';
 import { getEcosystems } from '../../api/ecosystem';
-import { getSchemaCredDef } from '../../api/BulkIssuance';
 import React from 'react';
 
 import CustomSpinner from '../CustomSpinner';
@@ -79,7 +78,6 @@ const UserDashBoard = () => {
 	const [orgLoading, setOrgLoading] = useState(true);
 	const [schemaLoading, setSchemaLoading] = useState(true);
 	const [walletLoading, setWalletLoading] = useState(true);
-
 	const getAllInvitations = async () => {
 		setLoading(true);
 		const response = await getUserInvitations(
@@ -232,10 +230,10 @@ const UserDashBoard = () => {
 			const { data } = response as AxiosResponse;
 
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				setEcoCount(data?.data?.totalCount);
-				const ecosystemData = data?.data?.filter(
+				setEcoCount(data?.data?.totalCount);				
+				const ecosystemData = data?.data?.ecosystemDetails.filter(
 					(ecosystem: Organisation, index: number) => index < 3,
-				);
+				);				
 				if (ecosystemData) {
 					setEcosystemList(ecosystemData);
 				} else {
@@ -878,6 +876,8 @@ const UserDashBoard = () => {
 													className="flex justify-between w-full mt-2 items-center"
 													key={ecosystem?.id}
 												>
+													<>{console.log("ecosystem1111",ecosystem)
+													}</>
 													<div
 														className="w-full"
 														onClick={() => goToEcoDashboard(ecosystem?.id)}
