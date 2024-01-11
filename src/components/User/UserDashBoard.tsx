@@ -147,17 +147,11 @@ const UserDashBoard = () => {
 		);
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			const totalPages = data?.data?.totalPages;
 			setOrgCount(data?.data?.totalCount);
 			const orgList = data?.data?.organizations.filter(
 				(userOrg: Organisation, index: number) => index < 3,
 			);
-
 			setOrganizationList(orgList);
-			setCurrentPage({
-				...currentPage,
-				total: totalPages,
-			});
 		} else {
 			setError(response as string);
 		}
@@ -181,12 +175,14 @@ const UserDashBoard = () => {
 		}
 		setLoading(false);
 	};
+	
 	const checkOrgId = async () => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		if (orgId) {
 			await getAllEcosystemInvitations();
 		}
 	};
+
 	const getSchemaList = async (
 		schemaListAPIParameter: GetAllSchemaListParameter,
 		flag: boolean,
