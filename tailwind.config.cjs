@@ -105,6 +105,7 @@ module.exports = {
 			width: {
 				'100/22rem': 'calc(100% - 26rem)',
 				'100/6rem': 'calc(100% - 6rem)',
+				'100/12rem': 'calc(100% - 12rem)',
 			},
 			height: {
 				'100/15rem': 'calc(100vh - 15rem)'
