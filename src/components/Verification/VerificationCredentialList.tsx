@@ -8,7 +8,7 @@ import {
 } from '../../common/enums';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import {
-	getProofAttributes,
+	getVerifiedProofDetails,
 	getVerificationList,
 	verifyPresentation,
 } from '../../api/verification';
@@ -58,10 +58,10 @@ const VerificationCredentialList = () => {
 		lastPage: '',
 	});
 
-	const getProofPresentationData = async (id: string) => {
+	const getProofPresentationData = async (proofId: string) => {
 		try {
 			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-			const response = await getProofAttributes(id, orgId);
+			const response = await getVerifiedProofDetails(proofId, orgId);
 
 			const { data } = response as AxiosResponse;
 			if (data?.statusCode === apiStatusCodes?.API_STATUS_SUCCESS) {
