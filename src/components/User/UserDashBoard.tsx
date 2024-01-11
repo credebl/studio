@@ -37,6 +37,7 @@ interface ISchema {
 }
 
 interface ICredDef {
+	schemaLedgerId: string;
 	tag: string;
 	credentialDefinition: string;
 	schemaVersion: string;
@@ -173,7 +174,7 @@ const UserDashBoard = () => {
 		}
 		setLoading(false);
 	};
-	
+
 	const checkOrgId = async () => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		if (orgId) {
@@ -230,10 +231,10 @@ const UserDashBoard = () => {
 			const { data } = response as AxiosResponse;
 
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				setEcoCount(data?.data?.totalCount);				
+				setEcoCount(data?.data?.totalCount);
 				const ecosystemData = data?.data?.ecosystemDetails.filter(
 					(ecosystem: Organisation, index: number) => index < 3,
-				);				
+				);
 				if (ecosystemData) {
 					setEcosystemList(ecosystemData);
 				} else {
@@ -340,6 +341,36 @@ const UserDashBoard = () => {
 		window.location.href = pathRoutes.ecosystem.dashboard;
 	};
 
+	const ToolTipData = () => {
+		return (
+			<div className="text-left text-xs">
+				<p className="text-base">What is ecosystem?</p> Contacts are people or
+				organizations you've <br />
+				interacted with.
+				<br />
+				You're connected over a secure and private
+				<br /> line that no one but you or them can see.
+				<br /> Nothing is shared without your permission.
+				<br /> You can:
+				<br />
+				<ul>
+					<li>Direct message your Contacts</li>
+					<li>Get offered new credentials</li>
+					<li>
+						Get notified of updates to your credentials <br />
+						issued by them
+					</li>
+					<li>
+						Request for information from your Contact <br />
+						or they request information from you
+					</li>
+				</ul>
+				You can always remove Contacts at any <br />
+				time from your Contacts list.
+			</div>
+		);
+	};
+
 	return (
 		<div className="px-4 pt-6">
 			<div className="cursor-pointer">
@@ -436,33 +467,7 @@ const UserDashBoard = () => {
 									Organizations{' '}
 								</h2>
 								<Tooltip
-									content={
-										<div className="text-left text-xs">
-											<p className="text-base">What is organisation?</p>{' '}
-											Contacts are people or organizations you've <br />
-											interacted with.
-											<br />
-											You're connected over a secure and private
-											<br /> line that no one but you or them can see.
-											<br /> Nothing is shared without your permission.
-											<br /> You can:
-											<br />
-											<ul>
-												<li>Direct message your Contacts</li>
-												<li>Get offered new credentials</li>
-												<li>
-													Get notified of updates to your credentials <br />
-													issued by them
-												</li>
-												<li>
-													Request for information from your Contact <br />
-													or they request information from you
-												</li>
-											</ul>
-											You can always remove Contacts at any <br />
-											time from your Contacts list.
-										</div>
-									}
+									content={<ToolTipData />}
 									placement="bottom"
 									className="items-center text-center dark:text-white"
 								>
@@ -483,7 +488,7 @@ const UserDashBoard = () => {
 							</div>
 							<div className="bg-primary-700 w-10 rounded-md text-lg">
 								<span className="flex justify-center items-center text-white p-2 text-lg">
-									{orgCount ? orgCount : 0}
+									{orgCount ?? 0}
 								</span>
 							</div>
 						</div>
@@ -737,7 +742,7 @@ const UserDashBoard = () => {
 							</div>
 							<div className="bg-primary-700 w-10 rounded-md text-lg">
 								<span className="flex justify-center items-center text-white p-2 text-lg">
-									{schemaCount ? schemaCount : 0}
+									{schemaCount ?? 0}
 								</span>
 							</div>
 						</div>
@@ -813,33 +818,7 @@ const UserDashBoard = () => {
 									Ecosystems{' '}
 								</h2>
 								<Tooltip
-									content={
-										<div className="text-left text-xs">
-											<p className="text-base">What is ecosystem?</p> Contacts
-											are people or organizations you've <br />
-											interacted with.
-											<br />
-											You're connected over a secure and private
-											<br /> line that no one but you or them can see.
-											<br /> Nothing is shared without your permission.
-											<br /> You can:
-											<br />
-											<ul>
-												<li>Direct message your Contacts</li>
-												<li>Get offered new credentials</li>
-												<li>
-													Get notified of updates to your credentials <br />
-													issued by them
-												</li>
-												<li>
-													Request for information from your Contact <br />
-													or they request information from you
-												</li>
-											</ul>
-											You can always remove Contacts at any <br />
-											time from your Contacts list.
-										</div>
-									}
+									content={<ToolTipData />}
 									placement="bottom"
 									className="items-center text-center dark:text-white"
 								>
@@ -860,7 +839,7 @@ const UserDashBoard = () => {
 							</div>
 							<div className="bg-primary-700 w-10 rounded-md text-lg">
 								<span className="flex justify-center items-center text-white p-2 text-lg">
-									{ecoCount ? ecoCount : 0}
+									{ecoCount ?? 0}
 								</span>
 							</div>
 						</div>
@@ -876,8 +855,6 @@ const UserDashBoard = () => {
 													className="flex justify-between w-full mt-2 items-center"
 													key={ecosystem?.id}
 												>
-													<>{console.log("ecosystem1111",ecosystem)
-													}</>
 													<div
 														className="w-full"
 														onClick={() => goToEcoDashboard(ecosystem?.id)}
@@ -974,7 +951,7 @@ const UserDashBoard = () => {
 							</div>
 							<div className="bg-primary-700 w-10 rounded-md text-lg">
 								<span className="flex justify-center items-center text-white p-2 text-lg">
-									{credDefCount ? credDefCount : 0}
+									{credDefCount ?? 0}
 								</span>
 							</div>
 						</div>
