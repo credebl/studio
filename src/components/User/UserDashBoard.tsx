@@ -534,26 +534,26 @@ const UserDashBoard = () => {
 														>
 															{org.logoUrl ? (
 																<CustomAvatar
-																	className="dark:text-white"
+																	className="dark:text-white shrink-0"
 																	size="40"
 																	src={org?.logoUrl}
 																	round
 																/>
 															) : (
 																<CustomAvatar
-																	className="dark:text-white"
+																	className="dark:text-white shrink-0"
 																	size="40"
 																	name={org?.name}
 																	round
 																/>
 															)}
 
-															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white">
+															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white text-start">
 																{org?.name}
 															</span>
 														</a>
 													</button>
-													<div className="flex space-x-3 items-center ">
+													<div className="hidden sm:flex space-x-3 items-center">
 														<Tooltip
 															content={'Create Schema'}
 															placement="bottom"
@@ -879,21 +879,21 @@ const UserDashBoard = () => {
 														>
 															{ecosystem.logoUrl ? (
 																<CustomAvatar
-																	className="dark:text-white"
+																	className="dark:text-white shrink-0"
 																	size="40"
 																	src={ecosystem?.logoUrl}
 																	round={false}
 																/>
 															) : (
 																<CustomAvatar
-																	className="dark:text-white"
+																	className="dark:text-white shrink-0"
 																	size="40"
 																	name={ecosystem?.name}
 																	round={false}
 																/>
 															)}
 
-															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white">
+															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white text-start">
 																{ecosystem?.name}
 															</span>
 														</a>
