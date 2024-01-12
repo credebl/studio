@@ -508,7 +508,7 @@ const UserDashBoard = () => {
 													className="flex justify-between w-full mt-2 items-center"
 													key={org?.id}
 												>
-													<div
+													<button
 														className="w-full"
 														onClick={() =>
 															goToOrgDashboard(org?.id, org?.roles)
@@ -538,7 +538,7 @@ const UserDashBoard = () => {
 																{org?.name}
 															</span>
 														</a>
-													</div>
+													</button>
 													<div className="flex space-x-3 items-center ">
 														<Tooltip
 															content={'Create Schema'}
@@ -759,7 +759,7 @@ const UserDashBoard = () => {
 													className="flex justify-between w-full mt-4 items-center"
 													key={schema?.id}
 												>
-													<div
+													<button
 														className="w-full"
 														onClick={() =>
 															goToSchemaCredDef(schema?.schemaLedgerId)
@@ -773,7 +773,7 @@ const UserDashBoard = () => {
 																{schema?.name}
 															</span>
 														</a>
-													</div>
+													</button>
 													<div className="flex space-x-3 items-center justify-start dark:text-white">
 														<span>v.{schema?.version}</span>
 													</div>
@@ -855,7 +855,7 @@ const UserDashBoard = () => {
 													className="flex justify-between w-full mt-2 items-center"
 													key={ecosystem?.id}
 												>
-													<div
+													<button
 														className="w-full"
 														onClick={() => goToEcoDashboard(ecosystem?.id)}
 													>
@@ -883,7 +883,7 @@ const UserDashBoard = () => {
 																{ecosystem?.name}
 															</span>
 														</a>
-													</div>
+													</button>
 												</button>
 											);
 										})}
@@ -968,7 +968,7 @@ const UserDashBoard = () => {
 													className="flex justify-between w-full mt-4 items-center"
 													key={cred?.id}
 												>
-													<div
+													<button
 														className="w-full"
 														onClick={() => goToCredDef(cred?.schemaLedgerId)}
 													>
@@ -980,7 +980,7 @@ const UserDashBoard = () => {
 																{cred?.tag}
 															</span>
 														</a>
-													</div>
+													</button>
 													<div className="min-w-6 flex space-x-3 items-center justify-start dark:text-white">
 														<span className="truncate">
 															{cred?.credentialDefinitionId.slice(0, 8)}...
