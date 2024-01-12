@@ -187,7 +187,10 @@ const UserDashBoard = () => {
 		flag: boolean,
 	) => {
 		try {
-			const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
+			let organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
+			if (!organizationId && organizationsList) {
+				organizationId = organizationsList[0].id;
+			}
 			setSchemaLoading(true);
 			let schemaList;
 
@@ -219,11 +222,14 @@ const UserDashBoard = () => {
 	};
 
 	const fetchEcosystems = async () => {
-		const id = await getFromLocalStorage(storageKeys.ORG_ID);
-		if (id) {
+		let organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
+		if (!organizationId && organizationsList) {
+			organizationId = organizationsList[0].id;
+		}
+		if (organizationId) {
 			setEcoLoading(true);
 			const response = await getEcosystems(
-				id,
+				organizationId,
 				currentPage.pageNumber,
 				currentPage.pageSize,
 				'',
@@ -249,7 +255,12 @@ const UserDashBoard = () => {
 
 	const getSchemaCredentials = async () => {
 		try {
-			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+			let orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+
+			if (!orgId && organizationsList) {
+				orgId = organizationsList[0].id;
+			}
+
 			if (orgId) {
 				setCredDefLoading(true);
 				const response = await getAllCredDef();
@@ -295,12 +306,10 @@ const UserDashBoard = () => {
 		if (role === Roles.OWNER) {
 			checkOrgId();
 		}
+
 		getAllOrganizations();
 		getAllInvitations();
 		getUserRecentActivity();
-		getSchemaList(schemaListAPIParameter, false);
-		fetchEcosystems();
-		getSchemaCredentials();
 	};
 
 	useEffect(() => {
@@ -310,6 +319,9 @@ const UserDashBoard = () => {
 	useEffect(() => {
 		if (organizationsList && organizationsList?.length > 0) {
 			fetchOrganizationDetails();
+			getSchemaList(schemaListAPIParameter, false);
+			fetchEcosystems();
+			getSchemaCredentials();
 		}
 	}, [organizationsList]);
 
@@ -336,16 +348,65 @@ const UserDashBoard = () => {
 		window.location.href = url;
 	};
 
+	const setOrgRoleDetails = async (org: Organisation) => {
+		await setToLocalStorage(storageKeys.ORG_ID, org.id.toString());
+		const roles: string[] = org?.userOrgRoles.map((role) => role.orgRole.name);
+
+		await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
+	};
+
 	const goToEcoDashboard = async (ecosystemId: string) => {
 		await setToLocalStorage(storageKeys.ECOSYSTEM_ID, ecosystemId);
 		window.location.href = pathRoutes.ecosystem.dashboard;
 	};
 
-	const ToolTipData = () => {
+	const goToOrgSchema = async (
+		org: Organisation,
+		orgId: string,
+		rogRoles: string[],
+	) => {
+		await setToLocalStorage(storageKeys.ORG_ID, orgId);
+		setOrgRoleDetails(org);
+		window.location.href = pathRoutes.organizations.createSchema;
+	};
+
+	const goToOrgCredDef = async (
+		org: Organisation,
+		orgId: string,
+		rogRoles: string[],
+	) => {
+		await setToLocalStorage(storageKeys.ORG_ID, orgId);
+		setOrgRoleDetails(org);
+		window.location.href = pathRoutes.organizations.schemas;
+	};
+
+	const goToOrgIssuance = async (
+		org: Organisation,
+		orgId: string,
+		rogRoles: string[],
+	) => {
+		await setToLocalStorage(storageKeys.ORG_ID, orgId);
+		setOrgRoleDetails(org);
+		window.location.href = pathRoutes.organizations.issuedCredentials;
+	};
+
+	const goToOrgCredVerification = async (
+		org: Organisation,
+		orgId: string,
+		rogRoles: string[],
+	) => {
+		await setToLocalStorage(storageKeys.ORG_ID, orgId);
+		setOrgRoleDetails(org);
+		window.location.href = pathRoutes.organizations.credentials;
+	};
+
+	const ToolTipData = ({ isEcosystem }) => {
 		return (
 			<div className="text-left text-xs">
-				<p className="text-base">What is ecosystem?</p> Contacts are people or
-				organizations you've <br />
+				<p className="text-base">
+					What is {isEcosystem ? 'Ecosystem' : 'Organization'}?
+				</p>{' '}
+				Contacts are people or organizations you've <br />
 				interacted with.
 				<br />
 				You're connected over a secure and private
@@ -467,7 +528,7 @@ const UserDashBoard = () => {
 									Organizations{' '}
 								</h2>
 								<Tooltip
-									content={<ToolTipData />}
+									content={<ToolTipData isEcosystem={false} />}
 									placement="bottom"
 									className="items-center text-center dark:text-white"
 								>
@@ -520,26 +581,26 @@ const UserDashBoard = () => {
 														>
 															{org.logoUrl ? (
 																<CustomAvatar
-																	className="dark:text-white"
+																	className="dark:text-white shrink-0"
 																	size="40"
 																	src={org?.logoUrl}
 																	round
 																/>
 															) : (
 																<CustomAvatar
-																	className="dark:text-white"
+																	className="dark:text-white shrink-0"
 																	size="40"
 																	name={org?.name}
 																	round
 																/>
 															)}
 
-															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white">
+															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white text-start">
 																{org?.name}
 															</span>
 														</a>
 													</button>
-													<div className="flex space-x-3 items-center ">
+													<div className="hidden sm:flex space-x-3 items-center">
 														<Tooltip
 															content={'Create Schema'}
 															placement="bottom"
@@ -548,8 +609,7 @@ const UserDashBoard = () => {
 															{' '}
 															<button
 																onClick={() => {
-																	window.location.href =
-																		pathRoutes.organizations.createSchema;
+																	goToOrgSchema(org, org.id, org.roles);
 																}}
 																className="p-1 rounded-md"
 															>
@@ -574,8 +634,7 @@ const UserDashBoard = () => {
 														>
 															<button
 																onClick={() => {
-																	window.location.href =
-																		pathRoutes.organizations.schemas;
+																	goToOrgCredDef(org, org.id, org.roles);
 																}}
 																className="p-1 rounded-md"
 															>
@@ -604,8 +663,7 @@ const UserDashBoard = () => {
 															{' '}
 															<button
 																onClick={() => {
-																	window.location.href =
-																		pathRoutes.organizations.issuedCredentials;
+																	goToOrgIssuance(org, org.id, org.roles);
 																}}
 																className="p-1 rounded-md"
 															>
@@ -645,8 +703,11 @@ const UserDashBoard = () => {
 															{' '}
 															<button
 																onClick={() => {
-																	window.location.href =
-																		pathRoutes.organizations.credentials;
+																	goToOrgCredVerification(
+																		org,
+																		org.id,
+																		org.roles,
+																	);
 																}}
 																className="p-1 rounded-md"
 															>
@@ -769,7 +830,7 @@ const UserDashBoard = () => {
 															href="#"
 															className="flex items-center py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-md mr-2"
 														>
-															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white text-primary-700">
+															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white text-primary-700 text-start">
 																{schema?.name}
 															</span>
 														</a>
@@ -818,7 +879,7 @@ const UserDashBoard = () => {
 									Ecosystems{' '}
 								</h2>
 								<Tooltip
-									content={<ToolTipData />}
+									content={<ToolTipData isEcosystem={true} />}
 									placement="bottom"
 									className="items-center text-center dark:text-white"
 								>
@@ -865,21 +926,21 @@ const UserDashBoard = () => {
 														>
 															{ecosystem.logoUrl ? (
 																<CustomAvatar
-																	className="dark:text-white"
+																	className="dark:text-white shrink-0"
 																	size="40"
 																	src={ecosystem?.logoUrl}
 																	round={false}
 																/>
 															) : (
 																<CustomAvatar
-																	className="dark:text-white"
+																	className="dark:text-white shrink-0"
 																	size="40"
 																	name={ecosystem?.name}
 																	round={false}
 																/>
 															)}
 
-															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white">
+															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white text-start">
 																{ecosystem?.name}
 															</span>
 														</a>
@@ -976,7 +1037,7 @@ const UserDashBoard = () => {
 															href="#"
 															className="flex items-center py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-md mr-2"
 														>
-															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white text-primary-700">
+															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white text-primary-700 text-start">
 																{cred?.tag}
 															</span>
 														</a>
