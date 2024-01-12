@@ -20,7 +20,6 @@ import {
 import { ToastContainer, toast } from 'react-toastify';
 import React from 'react';
 import SortDataTable from '../../commonComponents/datatable/SortDataTable';
-import type { IConnectionListAPIParameter } from '../../api/connection';
 
 const HistoryBulkIssuance = () => {
 	const initialPageState = {
@@ -43,6 +42,7 @@ const HistoryBulkIssuance = () => {
 		nextPage: '',
 		lastPage: '',
 	});
+	const [searchText, setSearchText] = useState('');
 
 	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setListAPIParameter({
@@ -60,7 +60,7 @@ const HistoryBulkIssuance = () => {
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			if (data?.data) {
 				setLoading(false);
-				getHistory(listAPIParameter);
+				getHistory();
 			} else {
 				setLoading(false);
 			}
@@ -96,7 +96,7 @@ const HistoryBulkIssuance = () => {
 				progress: undefined,
 				theme: 'colored',
 			});
-			getHistory(listAPIParameter);
+			getHistory();
 		});
 
 		SOCKET.on('error-in-bulk-issuance-retry-process', () => {
@@ -112,24 +112,24 @@ const HistoryBulkIssuance = () => {
 				progress: undefined,
 				theme: 'colored',
 			});
-			getHistory(listAPIParameter);
+			getHistory();
 		});
 
 		let getData: NodeJS.Timeout;
 
 		if (listAPIParameter.search.length >= 1) {
 			getData = setTimeout(() => {
-				getHistory(listAPIParameter);
+				getHistory();
 			}, 1000);
 			return () => clearTimeout(getData);
 		} else {
-			getHistory(listAPIParameter);
+			getHistory();
 		}
 
 		return () => clearTimeout(getData);
 	}, [listAPIParameter]);
 
-	const getHistory = async (apiParameter: IConnectionListAPIParameter) => {
+	const getHistory = async () => {
 		setLoading(true);
 		const response = await getFilesHistory(apiParameter	);
 
@@ -143,6 +143,7 @@ const HistoryBulkIssuance = () => {
 				nextPage: nextPage,
 				lastPage: lastPage,
 			});
+			const totalPages = data?.data?.lastPage;
 			const connections = data?.data?.data?.map(
 				(ele: {
 					totalRecords: any;
@@ -286,7 +287,7 @@ const HistoryBulkIssuance = () => {
 	];
 
 	const refreshPage = () => {
-		getHistory(listAPIParameter);
+		getHistory();
 	};
 
 	return (
@@ -330,20 +331,19 @@ const HistoryBulkIssuance = () => {
 				header={header}
 				data={connectionList}
 				loading={loading}
-				currentPage={currentPage?.page}
+				currentPage={currentPage?.pageNumber}
 				onPageChange={(page: number) => {
 					setCurrentPage((prevState) => ({
 						...prevState,
 						page,
 					}));
 				}}
-				searchSortByValue={searchSortByValue}
-				totalPages={Math.ceil(totalItem / listAPIParameter?.itemPerPage)}
+				totalPages={Math.ceil(totalItem / currentPage?.pageSize)}
 				pageInfo={pageInfo}
 				isHeader={true}
 				isSearch={true}
 				isRefresh={true}
-				isSort={true}
+				isSort={false}
 				message={'No History'}
 				discription={"You don't have any activities yet"}
 			></SortDataTable>
