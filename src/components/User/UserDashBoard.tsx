@@ -400,11 +400,11 @@ const UserDashBoard = () => {
 		window.location.href = pathRoutes.organizations.credentials;
 	};
 
-	const ToolTipData = ({ isEco }) => {
+	const ToolTipData = ({ isEcosystem }) => {
 		return (
 			<div className="text-left text-xs">
 				<p className="text-base">
-					What is {isEco ? 'Ecosystem' : 'Organization'}?
+					What is {isEcosystem ? 'Ecosystem' : 'Organization'}?
 				</p>{' '}
 				Contacts are people or organizations you've <br />
 				interacted with.
@@ -528,7 +528,7 @@ const UserDashBoard = () => {
 									Organizations{' '}
 								</h2>
 								<Tooltip
-									content={<ToolTipData isEco={false} />}
+									content={<ToolTipData isEcosystem={false} />}
 									placement="bottom"
 									className="items-center text-center dark:text-white"
 								>
@@ -879,7 +879,7 @@ const UserDashBoard = () => {
 									Ecosystems{' '}
 								</h2>
 								<Tooltip
-									content={<ToolTipData isEco={true} />}
+									content={<ToolTipData isEcosystem={true} />}
 									placement="bottom"
 									className="items-center text-center dark:text-white"
 								>
