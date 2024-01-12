@@ -348,9 +348,56 @@ const UserDashBoard = () => {
 		window.location.href = url;
 	};
 
+	const setOrgRoleDetails = async (org: Organisation) => {
+		await setToLocalStorage(storageKeys.ORG_ID, org.id.toString());
+		const roles: string[] = org?.userOrgRoles.map((role) => role.orgRole.name);
+
+		await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
+	};
+
 	const goToEcoDashboard = async (ecosystemId: string) => {
 		await setToLocalStorage(storageKeys.ECOSYSTEM_ID, ecosystemId);
 		window.location.href = pathRoutes.ecosystem.dashboard;
+	};
+
+	const goToOrgSchema = async (
+		org: Organisation,
+		orgId: string,
+		rogRoles: string[],
+	) => {
+		await setToLocalStorage(storageKeys.ORG_ID, orgId);
+		setOrgRoleDetails(org);
+		window.location.href = pathRoutes.organizations.createSchema;
+	};
+
+	const goToOrgCredDef = async (
+		org: Organisation,
+		orgId: string,
+		rogRoles: string[],
+	) => {
+		await setToLocalStorage(storageKeys.ORG_ID, orgId);
+		setOrgRoleDetails(org);
+		window.location.href = pathRoutes.organizations.schemas;
+	};
+
+	const goToOrgIssuance = async (
+		org: Organisation,
+		orgId: string,
+		rogRoles: string[],
+	) => {
+		await setToLocalStorage(storageKeys.ORG_ID, orgId);
+		setOrgRoleDetails(org);
+		window.location.href = pathRoutes.organizations.issuedCredentials;
+	};
+
+	const goToOrgCredVerification = async (
+		org: Organisation,
+		orgId: string,
+		rogRoles: string[],
+	) => {
+		await setToLocalStorage(storageKeys.ORG_ID, orgId);
+		setOrgRoleDetails(org);
+		window.location.href = pathRoutes.organizations.credentials;
 	};
 
 	const ToolTipData = ({ isEco }) => {
@@ -562,8 +609,7 @@ const UserDashBoard = () => {
 															{' '}
 															<button
 																onClick={() => {
-																	window.location.href =
-																		pathRoutes.organizations.createSchema;
+																	goToOrgSchema(org, org.id, org.roles);
 																}}
 																className="p-1 rounded-md"
 															>
@@ -588,8 +634,7 @@ const UserDashBoard = () => {
 														>
 															<button
 																onClick={() => {
-																	window.location.href =
-																		pathRoutes.organizations.schemas;
+																	goToOrgCredDef(org, org.id, org.roles);
 																}}
 																className="p-1 rounded-md"
 															>
@@ -618,8 +663,7 @@ const UserDashBoard = () => {
 															{' '}
 															<button
 																onClick={() => {
-																	window.location.href =
-																		pathRoutes.organizations.issuedCredentials;
+																	goToOrgIssuance(org, org.id, org.roles);
 																}}
 																className="p-1 rounded-md"
 															>
@@ -659,8 +703,11 @@ const UserDashBoard = () => {
 															{' '}
 															<button
 																onClick={() => {
-																	window.location.href =
-																		pathRoutes.organizations.credentials;
+																	goToOrgCredVerification(
+																		org,
+																		org.id,
+																		org.roles,
+																	);
 																}}
 																className="p-1 rounded-md"
 															>
@@ -783,7 +830,7 @@ const UserDashBoard = () => {
 															href="#"
 															className="flex items-center py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-md mr-2"
 														>
-															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white text-primary-700">
+															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white text-primary-700 text-start">
 																{schema?.name}
 															</span>
 														</a>
@@ -990,7 +1037,7 @@ const UserDashBoard = () => {
 															href="#"
 															className="flex items-center py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-md mr-2"
 														>
-															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white text-primary-700">
+															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white text-primary-700 text-start">
 																{cred?.tag}
 															</span>
 														</a>
