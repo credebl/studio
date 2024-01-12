@@ -187,7 +187,10 @@ const UserDashBoard = () => {
 		flag: boolean,
 	) => {
 		try {
-			const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
+			let organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
+			if (!organizationId && organizationsList) {
+				organizationId = organizationsList[0].id;
+			}
 			setSchemaLoading(true);
 			let schemaList;
 
@@ -219,11 +222,14 @@ const UserDashBoard = () => {
 	};
 
 	const fetchEcosystems = async () => {
-		const id = await getFromLocalStorage(storageKeys.ORG_ID);
-		if (id) {
+		let organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
+		if (!organizationId && organizationsList) {
+			organizationId = organizationsList[0].id;
+		}
+		if (organizationId) {
 			setEcoLoading(true);
 			const response = await getEcosystems(
-				id,
+				organizationId,
 				currentPage.pageNumber,
 				currentPage.pageSize,
 				'',
@@ -249,7 +255,12 @@ const UserDashBoard = () => {
 
 	const getSchemaCredentials = async () => {
 		try {
-			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+			let orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+
+			if (!orgId && organizationsList) {
+				orgId = organizationsList[0].id;
+			}
+
 			if (orgId) {
 				setCredDefLoading(true);
 				const response = await getAllCredDef();
@@ -295,12 +306,10 @@ const UserDashBoard = () => {
 		if (role === Roles.OWNER) {
 			checkOrgId();
 		}
+
 		getAllOrganizations();
 		getAllInvitations();
 		getUserRecentActivity();
-		getSchemaList(schemaListAPIParameter, false);
-		fetchEcosystems();
-		getSchemaCredentials();
 	};
 
 	useEffect(() => {
@@ -310,6 +319,9 @@ const UserDashBoard = () => {
 	useEffect(() => {
 		if (organizationsList && organizationsList?.length > 0) {
 			fetchOrganizationDetails();
+			getSchemaList(schemaListAPIParameter, false);
+			fetchEcosystems();
+			getSchemaCredentials();
 		}
 	}, [organizationsList]);
 
@@ -341,11 +353,13 @@ const UserDashBoard = () => {
 		window.location.href = pathRoutes.ecosystem.dashboard;
 	};
 
-	const ToolTipData = () => {
+	const ToolTipData = ({ isEco }) => {
 		return (
 			<div className="text-left text-xs">
-				<p className="text-base">What is ecosystem?</p> Contacts are people or
-				organizations you've <br />
+				<p className="text-base">
+					What is {isEco ? 'Ecosystem' : 'Organization'}?
+				</p>{' '}
+				Contacts are people or organizations you've <br />
 				interacted with.
 				<br />
 				You're connected over a secure and private
@@ -467,7 +481,7 @@ const UserDashBoard = () => {
 									Organizations{' '}
 								</h2>
 								<Tooltip
-									content={<ToolTipData />}
+									content={<ToolTipData isEco={false} />}
 									placement="bottom"
 									className="items-center text-center dark:text-white"
 								>
@@ -818,7 +832,7 @@ const UserDashBoard = () => {
 									Ecosystems{' '}
 								</h2>
 								<Tooltip
-									content={<ToolTipData />}
+									content={<ToolTipData isEco={true} />}
 									placement="bottom"
 									className="items-center text-center dark:text-white"
 								>
