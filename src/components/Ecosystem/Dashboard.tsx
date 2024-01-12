@@ -123,9 +123,8 @@ const Dashboard = () => {
 		if (id) {
 			const response = await getEcosystems(id);
 			const { data } = response as AxiosResponse;
-
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				const ecosystemData = data?.data.find(
+				const ecosystemData = data?.data?.ecosystemDetails?.find(
 					(item: { id: string }) => item.id === ecosystemId,
 				);
 				if (ecosystemData) {
