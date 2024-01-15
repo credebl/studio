@@ -153,8 +153,7 @@ export const getFilesDataHistory = async (
 	itemPerPage: number,
 	page: number,
 	search: string,
-	sortingOrder: string,
-	sortBy: string,
+	sortBy: string = '',
 ) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 	const url = `${apiRoutes.organizations.root}/${orgId}/${requestId}${apiRoutes.Issuance.bulk.filesData}?pageSize=${itemPerPage}&pageNumber=${page}&searchByText=${search}&sortBy=${sortBy}&sortField=${sortingOrder}`;

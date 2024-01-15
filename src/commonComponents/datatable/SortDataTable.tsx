@@ -5,7 +5,37 @@ import { Pagination } from 'flowbite-react';
 import { ChangeEvent, useState } from 'react';
 import { EmptyListMessage } from '../../components/EmptyListComponent';
 
-const SortDataTable: React.FC<IDataTable> = ({
+interface DataTableProps {
+  header: TableHeader[];
+  data: TableData[];
+  loading: boolean;
+  message: string;
+  discription: string;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  callback?: (clickId: string | null | undefined) => void;
+  displaySelect?: boolean;
+  showBtn?: boolean;
+  onInputChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  refresh?: () => void;
+  currentPage?: any;
+  pageInfo?:
+    | {
+        totalItem: number | undefined;
+        nextPage: number | undefined;
+        lastPage: number | undefined;
+      }
+    | {};
+  searchSortByValue?: (value: any) => void;
+  isPagination?: boolean;
+  isSearch?: boolean;
+  isRefresh?: boolean;
+  isSort?: boolean;
+  isHeader?: boolean;
+}
+
+
+const SortDataTable: React.FC<DataTableProps> = ({
 	header,
 	displaySelect,
 	data,

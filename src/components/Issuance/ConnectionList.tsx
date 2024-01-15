@@ -11,8 +11,9 @@ import { apiStatusCodes } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';
 import { dateConversion } from '../../utils/DateConversion';
 import DateTooltip from '../Tooltip';
-import type { IConnectionList } from './interface';
-import NewDataTable from '../../commonComponents/datatable/SortDataTable';
+import type { IConnectionList } from './interface'
+import SortDataTable from '../../commonComponents/datatable/SortDataTable';
+
 
 const initialPageState = {
 	itemPerPage: 10,
@@ -63,56 +64,61 @@ const ConnectionList = (props: {
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 				const { totalItems, nextPage, lastPage } = data.data;
 				setTotalItem(data?.data.totalItems);
+				const { totalItems, nextPage, lastPage } = data.data;
 
 				setPageInfo({
 					totalItem: totalItems,
 					nextPage: nextPage,
 					lastPage: lastPage,
 				});
-				const connections = data?.data?.data?.map((ele: IConnectionList) => {
-					const createdOn = ele?.createDateTime
-					? ele?.createDateTime
-					: 'Not available';
-					const connectionId = ele.connectionId
-					? ele.connectionId
-					: 'Not available';
-					const userName = ele?.theirLabel ? ele.theirLabel : 'Not available';
-					return {
-						data: [
-							{
-								data: (
-									<div className="flex items-center" id="issuance_checkbox">
-										<input
-											id="default-checkbox"
-											type="radio"
-											name="connection"
-											onClick={(event: React.MouseEvent<HTMLInputElement>) => {
-												const inputElement = event.target as HTMLInputElement;
-												selectConnection(
-													userName,
-													connectionId,
-													inputElement.checked,
-												);
-											}}
-											value=""
-											className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-lg dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600 cursor-pointer"
-										/>
-									</div>
-								),
-							},
-							{ data: userName },
-							{ data: connectionId },
-							{
-								data: (
-									<DateTooltip date={createdOn} id="issuance_connection_list">
-										{' '}
-										{dateConversion(createdOn)}{' '}
-									</DateTooltip>
-								),
-							},
-						],
-					};
-				});
+				const connections = data?.data?.data?.map(
+					(ele: IConnectionList) => {
+						const userName = ele?.theirLabel ? ele.theirLabel : 'Not available';
+						const connectionId = ele.connectionId
+							? ele.connectionId
+							: 'Not available';
+						const createdOn = ele?.createDateTime
+							? ele?.createDateTime
+							: 'Not available';
+						return {
+							data: [
+								{
+									data: (
+										<div className="flex items-center" id="issuance_checkbox">
+											<input
+												id="default-checkbox"
+												type="radio"
+												name="connection"
+												onClick={(
+													event: React.MouseEvent<HTMLInputElement>,
+												) => {
+													const inputElement = event.target as HTMLInputElement;
+													selectConnection(
+														userName,
+														connectionId,
+														inputElement.checked,
+													);
+												}}
+												value=""
+												className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-lg dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600 cursor-pointer"
+											/>
+										</div>
+									),
+								},
+								{ data: userName },
+								{ data: connectionId },
+								{
+									data: (
+										<DateTooltip date={createdOn} id="issuance_connection_list">
+											{' '}
+											{dateConversion(createdOn)}{' '}
+										</DateTooltip>
+									),
+								},
+							],
+						};
+					},
+				);
 
 				setConnectionList(connections);
 				setError(null);
@@ -190,8 +196,9 @@ const ConnectionList = (props: {
 		});
 	};
 
+
 	const refreshPage = () => {
-		setSelectedConnectionList([]);
+		setSelectedConnectionList([])
 		getConnections(listAPIParameter);
 	};
 
@@ -216,11 +223,7 @@ const ConnectionList = (props: {
 					setError(null);
 				}}
 			/>
-			<NewDataTable
-				isHeader={true}
-				isSearch={true}
-				isRefresh={true}
-				isSort={true}
+			<SortDataTable
 				onInputChange={searchInputChange}
 				refresh={refreshPage}
 				header={header}
@@ -236,9 +239,13 @@ const ConnectionList = (props: {
 				totalPages={Math.ceil(totalItem / listAPIParameter?.itemPerPage)}
 				pageInfo={pageInfo}
 				searchSortByValue={searchSortByValue}
+				isHeader={true}
+				isSearch={true}
+				isRefresh={true}
+				isSort={true}
 				message={'No Connections'}
 				discription={"You don't have any connections yet"}
-			></NewDataTable>
+			></SortDataTable>
 		</div>
 	);
 };
