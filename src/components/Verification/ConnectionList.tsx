@@ -42,10 +42,19 @@ const ConnectionList = (props: {
 	});
 
 	useEffect(() => {
-		getConnectionsVerification(listAPIParameter);
-	}, [listAPIParameter]);
+		let getData: NodeJS.Timeout;
 
-	//onChange of Search input text
+		if (listAPIParameter?.search?.length >= 1) {
+			getData = setTimeout(() => {
+				getConnectionsVerification(listAPIParameter);
+			}, 1000);
+			return () => clearTimeout(getData);
+		} else {
+			getConnectionsVerification(listAPIParameter);
+		}
+		return () => clearTimeout(getData);
+	}, [listAPIParameter]);
+	
 	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setListAPIParameter({
 			...listAPIParameter,
