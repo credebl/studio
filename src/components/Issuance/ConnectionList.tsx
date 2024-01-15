@@ -61,8 +61,8 @@ const ConnectionList = (props: {
 			const { data } = response as AxiosResponse;
 
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				setTotalItem(data?.data.totalItems);
 				const { totalItems, nextPage, lastPage } = data.data;
+				setTotalItem(data?.data.totalItems);
 
 				setPageInfo({
 					totalItem: totalItems,
@@ -70,13 +70,13 @@ const ConnectionList = (props: {
 					lastPage: lastPage,
 				});
 				const connections = data?.data?.data?.map((ele: IConnectionList) => {
-					const userName = ele?.theirLabel ? ele.theirLabel : 'Not available';
-					const connectionId = ele.connectionId
-						? ele.connectionId
-						: 'Not available';
 					const createdOn = ele?.createDateTime
-						? ele?.createDateTime
-						: 'Not available';
+					? ele?.createDateTime
+					: 'Not available';
+					const connectionId = ele.connectionId
+					? ele.connectionId
+					: 'Not available';
+					const userName = ele?.theirLabel ? ele.theirLabel : 'Not available';
 					return {
 						data: [
 							{
