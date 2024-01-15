@@ -3,38 +3,39 @@ import type { TableData, TableHeader } from './interface';
 import CustomSpinner from '../../components/CustomSpinner';
 import SearchInput from '../../components/SearchInput';
 import { Pagination } from 'flowbite-react';
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { EmptyListMessage } from '../../components/EmptyListComponent';
 import React from 'react';
 
 interface DataTableProps {
-	header: TableHeader[];
-	data: TableData[];
-	loading: boolean;
-	callback?: (clickId: string | null | undefined) => void;
-	displaySelect?: boolean;
-	showBtn?: boolean;
-	onInputChange: () => void;
-	refresh: () => void;
-	currentPage: any;
-	onPageChange: () => void;
-	totalPages: number;
-	pageInfo?:
-		| {
-				totalItem: number | undefined;
-				nextPage: number | undefined;
-				lastPage: number | undefined;
-		  }
-		| {};
-	searchSortByValue: (value: any) => void;
-	isPagination: boolean;
-	isSearch: boolean;
-	isRefresh: boolean;
-	isSort: boolean;
-	isHeader: boolean;
-	message: string;
-	discription: string;
+  header: TableHeader[];
+  data: TableData[];
+  loading: boolean;
+  message: string;
+  discription: string;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  callback?: (clickId: string | null | undefined) => void;
+  displaySelect?: boolean;
+  showBtn?: boolean;
+  onInputChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  refresh?: () => void;
+  currentPage?: any;
+  pageInfo?:
+    | {
+        totalItem: number | undefined;
+        nextPage: number | undefined;
+        lastPage: number | undefined;
+      }
+    | {};
+  searchSortByValue?: (value: any) => void;
+  isPagination?: boolean;
+  isSearch?: boolean;
+  isRefresh?: boolean;
+  isSort?: boolean;
+  isHeader?: boolean;
 }
+
 
 const SortDataTable: React.FC<DataTableProps> = ({
 	header,
@@ -63,7 +64,9 @@ const SortDataTable: React.FC<DataTableProps> = ({
 	const handleSortByValues = (event: { target: { value: any } }) => {
 		const newSelectedValue = event.target.value;
 		setSelectedValue(newSelectedValue);
-		searchSortByValue(newSelectedValue);
+		if(searchSortByValue){
+			searchSortByValue(newSelectedValue);
+		}
 	};
 
 	const {
