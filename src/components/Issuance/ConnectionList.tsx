@@ -12,7 +12,7 @@ import { AlertComponent } from '../AlertComponent';
 import { dateConversion } from '../../utils/DateConversion';
 import DateTooltip from '../Tooltip';
 import type { IConnectionList } from './interface'
-import SortDataTable from '../../commonComponents/datatable/SortDataTable';
+import NewDataTable from '../../commonComponents/datatable/SortDataTable';
 
 
 const initialPageState = {
@@ -223,7 +223,7 @@ const ConnectionList = (props: {
 					setError(null);
 				}}
 			/>
-			<SortDataTable
+			<NewDataTable
 				onInputChange={searchInputChange}
 				refresh={refreshPage}
 				header={header}
@@ -245,7 +245,7 @@ const ConnectionList = (props: {
 				isSort={true}
 				message={'No Connections'}
 				discription={"You don't have any connections yet"}
-			></SortDataTable>
+			></NewDataTable>
 		</div>
 	);
 };
