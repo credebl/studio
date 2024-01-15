@@ -28,7 +28,7 @@ const EcosystemProfileCard = () => {
                 const { data } = response as AxiosResponse;
                 if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
                     setEcosystemList(data?.data)
-                    const ecosystemData = data?.data?.find((item: { id: string }) => item.id === ecosystemId);
+                    const ecosystemData = data?.data?.ecosystemDetails?.find((item: { id: string }) => item.id === ecosystemId);
                     if (ecosystemData) {
                         setEcosystemId(ecosystemData?.id)
                         const ecosystemOrg =

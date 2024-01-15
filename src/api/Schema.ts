@@ -4,6 +4,7 @@ import { axiosGet, axiosPost } from "../services/apiRequests";
 import { apiRoutes } from "../config/apiRoutes";
 import { getFromLocalStorage } from "./Auth";
 import { storageKeys } from "../config/CommonConstant";
+import { getHeaderConfigs } from "../config/GetHeaderConfigs";
 
 export const getAllSchemas = async ({itemPerPage, page, allSearch }: GetAllSchemaListParameter) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
@@ -119,6 +120,23 @@ export const createCredentialDefinition = async (payload: createCredDeffFieldNam
     return err?.message
   }
 }
+
+export const getAllCredDef = async () => {
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.createCredentialDefinition}`;
+	const axiosPayload = {
+		url,
+		config: await getHeaderConfigs(),
+	};
+
+	try {
+		return await axiosGet(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};
+
 
 export const getCredDeffById = async (schemaId: string, orgId: string) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)

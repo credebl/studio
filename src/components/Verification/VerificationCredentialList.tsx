@@ -1,6 +1,6 @@
 'use client';
 
-import { Alert, Button, Pagination } from 'flowbite-react';
+import { Alert, Button } from 'flowbite-react';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import {
 	ProofRequestState,
@@ -8,28 +8,26 @@ import {
 } from '../../common/enums';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import {
-	getProofAttributes,
+	getVerifiedProofDetails,
 	getVerificationList,
 	verifyPresentation,
 } from '../../api/verification';
 
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
-import CustomSpinner from '../CustomSpinner';
-import DataTable from '../../commonComponents/datatable';
 import DateTooltip from '../Tooltip';
 import { EmptyListMessage } from '../EmptyListComponent';
 import { Features } from '../../utils/enums/features';
 import ProofRequest from './ProofRequestPopup';
 import type { RequestProof } from './interface';
 import RoleViewButton from '../RoleViewButton';
-import SearchInput from '../SearchInput';
 import type { TableData } from '../../commonComponents/datatable/interface';
 import { dateConversion } from '../../utils/DateConversion';
 import { pathRoutes } from '../../config/pathRoutes';
 import { getFromLocalStorage, removeFromLocalStorage } from '../../api/Auth';
 import { getOrgDetails } from '../../config/ecosystem';
 import type { IConnectionListAPIParameter } from '../../api/connection';
+import SortDataTable from '../../commonComponents/datatable/SortDataTable';
 
 const initialPageState = {
 	itemPerPage: 10,
@@ -54,11 +52,16 @@ const VerificationCredentialList = () => {
 	const [listAPIParameter, setListAPIParameter] =
 		useState<IConnectionListAPIParameter>(initialPageState);
 	const [totalItem, setTotalItem] = useState(0);
+	const [pageInfo, setPageInfo] = useState({
+		totalItem: '',
+		nextPage: '',
+		lastPage: '',
+	});
 
-	const getProofPresentationData = async (id: string) => {
+	const getProofPresentationData = async (proofId: string) => {
 		try {
 			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-			const response = await getProofAttributes(id, orgId);
+			const response = await getVerifiedProofDetails(proofId, orgId);
 
 			const { data } = response as AxiosResponse;
 			if (data?.statusCode === apiStatusCodes?.API_STATUS_SUCCESS) {
@@ -98,6 +101,14 @@ const VerificationCredentialList = () => {
 				const response = await getVerificationList(apiParameter);
 				const { data } = response as AxiosResponse;
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+					const { totalItems, nextPage, lastPage } = data.data;
+					console.log('data.data', data.data);
+
+					setPageInfo({
+						totalItem: totalItems,
+						nextPage: nextPage,
+						lastPage: lastPage,
+					});
 					setTotalItem(data?.data.totalItems);
 					const credentialList = data?.data?.data?.map(
 						(requestProof: RequestProof) => {
@@ -281,15 +292,19 @@ const VerificationCredentialList = () => {
 		setView(state === 'done');
 	};
 
-	const refreshPage = () => {
-		getproofRequestList(listAPIParameter);
-	};
-
 	const requestProof = async (proofVericationId: string) => {
 		if (proofVericationId) {
 			setOpenModal(false);
 			presentProofById(proofVericationId);
 		}
+	};
+
+	const searchSortByValue = (value: any) => {
+		setListAPIParameter({
+			...listAPIParameter,
+			page: 1,
+			sortingOrder: value,
+		});
 	};
 
 	useEffect(() => {
@@ -310,6 +325,10 @@ const VerificationCredentialList = () => {
 		window.location.href = pathRoutes.organizations.verification.schema;
 	};
 
+	const refreshPage = () => {
+		getproofRequestList(listAPIParameter);
+	};
+
 	const header = [
 		{ columnName: 'Request Id' },
 		{ columnName: 'Connection Id' },
@@ -328,26 +347,6 @@ const VerificationCredentialList = () => {
 					Verification List
 				</h1>
 				<div>
-					<SearchInput onInputChange={searchInputChange} />
-				</div>
-				<div className="flex gap-4 items-center">
-					<button
-						className="focus:z-10 focus:ring-2 bg-white-700 hover:bg-secondary-700 rounded-lg"
-						onClick={refreshPage}
-					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="36"
-							height="36"
-							viewBox="0 0 24 24"
-							fill="none"
-						>
-							<path
-								d="M12 20C9.76667 20 7.875 19.225 6.325 17.675C4.775 16.125 4 14.2333 4 12C4 9.76667 4.775 7.875 6.325 6.325C7.875 4.775 9.76667 4 12 4C13.15 4 14.25 4.2375 15.3 4.7125C16.35 5.1875 17.25 5.86667 18 6.75V4H20V11H13V9H17.2C16.6667 8.06667 15.9375 7.33333 15.0125 6.8C14.0875 6.26667 13.0833 6 12 6C10.3333 6 8.91667 6.58333 7.75 7.75C6.58333 8.91667 6 10.3333 6 12C6 13.6667 6.58333 15.0833 7.75 16.25C8.91667 17.4167 10.3333 18 12 18C13.2833 18 14.4417 17.6333 15.475 16.9C16.5083 16.1667 17.2333 15.2 17.65 14H19.75C19.2833 15.7667 18.3333 17.2083 16.9 18.325C15.4667 19.4417 13.8333 20 12 20Z"
-								fill="#1F4EAD"
-							/>
-						</svg>
-					</button>
 					{walletCreated && (
 						<RoleViewButton
 							buttonTitle="Request"
@@ -373,7 +372,7 @@ const VerificationCredentialList = () => {
 				</div>
 			</div>
 			<div>
-				<div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+				<div className="bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 dark:bg-gray-800">
 					{(proofReqSuccess || errMsg) && (
 						<div className="p-2">
 							<Alert
@@ -397,46 +396,38 @@ const VerificationCredentialList = () => {
 						</div>
 					) : (
 						<div>
-							{loading ? (
-								<div className="flex items-center justify-center mb-4">
-									<CustomSpinner />
-								</div>
-							) : verificationList && verificationList.length > 0 ? (
+							{verificationList && (
 								<div
 									className="Flex-wrap"
 									style={{ display: 'flex', flexDirection: 'column' }}
 								>
-									<div className="">
-										{verificationList && verificationList.length > 0 && (
-											<DataTable
-												header={header}
-												data={verificationList}
-												loading={loading}
-											></DataTable>
+									<SortDataTable
+										pageInfo={pageInfo}
+										searchSortByValue={searchSortByValue}
+										isHeader={true}
+										isSearch={true}
+										isRefresh={true}
+										isSort={true}
+										isPagination={true}
+										message={'No Verification Records'}
+										discription={'You have no verification record yet'}
+										onInputChange={searchInputChange}
+										refresh={refreshPage}
+										header={header}
+										data={verificationList}
+										loading={loading}
+										currentPage={listAPIParameter?.page}
+										onPageChange={(page: number) => {
+											setListAPIParameter((prevState) => ({
+												...prevState,
+												page,
+											}));
+										}}
+										totalPages={Math.ceil(
+											totalItem / listAPIParameter?.itemPerPage,
 										)}
-									</div>
-									{Math.ceil(totalItem / listAPIParameter?.itemPerPage) > 1 && (
-										<div className="flex items-center justify-end my-4">
-											<Pagination
-												currentPage={listAPIParameter?.page}
-												onPageChange={(page: number) => {
-													setListAPIParameter((prevState) => ({
-														...prevState,
-														page,
-													}));
-												}}
-												totalPages={Math.ceil(
-													totalItem / listAPIParameter?.itemPerPage,
-												)}
-											/>
-										</div>
-									)}
+									></SortDataTable>
 								</div>
-							) : (
-								<EmptyListMessage
-									message={'No verification records'}
-									description={'You have no verification record yet'}
-								/>
 							)}
 						</div>
 					)}
