@@ -23,6 +23,7 @@ import { getEcosystems } from '../../api/ecosystem';
 import React from 'react';
 
 import CustomSpinner from '../CustomSpinner';
+import { ICheckEcosystem, checkEcosystem } from '../../config/ecosystem';
 const initialPageState = {
 	pageNumber: 1,
 	pageSize: 10,
@@ -79,6 +80,7 @@ const UserDashBoard = () => {
 	const [orgLoading, setOrgLoading] = useState(true);
 	const [schemaLoading, setSchemaLoading] = useState(true);
 	const [walletLoading, setWalletLoading] = useState(true);
+	const [isEcosystemLead, setIsEcosystemLead] = useState(false);
 
 	const getAllInvitations = async () => {
 		setLoading(true);
@@ -246,6 +248,7 @@ const UserDashBoard = () => {
 				);
 				if (ecosystemData) {
 					setEcosystemList(ecosystemData);
+					checkEcosystemData();
 				} else {
 					setError(response as string);
 				}
@@ -254,6 +257,11 @@ const UserDashBoard = () => {
 			}
 		}
 		setEcoLoading(false);
+	};
+
+	const checkEcosystemData = async () => {
+		const data: ICheckEcosystem = await checkEcosystem();
+		setIsEcosystemLead(data.isEcosystemLead);
 	};
 
 	const getSchemaCredentials = async () => {
@@ -411,7 +419,10 @@ const UserDashBoard = () => {
 		window.location.href = pathRoutes.organizations.credentials;
 	};
 
-	const ToolTipData = ({ isEcosystem }) => {
+	const navigateToInvitation = () => {
+		window.location.href = pathRoutes.ecosystem.sentinvitation;
+	};
+	const ToolTipData = ({ isEcosystem }: { isEcosystem: boolean }) => {
 		return (
 			<div className="text-left text-xs">
 				<p className="text-base">
@@ -584,7 +595,7 @@ const UserDashBoard = () => {
 													key={org?.id}
 												>
 													<button
-														className="w-full"
+														className="sm:w-[70%] w-full"
 														onClick={() =>
 															goToOrgDashboard(org?.id, org?.roles)
 														}
@@ -609,7 +620,7 @@ const UserDashBoard = () => {
 																/>
 															)}
 
-															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white text-start">
+															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white text-start truncate">
 																{org?.name}
 															</span>
 														</a>
@@ -845,16 +856,16 @@ const UserDashBoard = () => {
 													>
 														<a
 															href="#"
-															className="flex items-center py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-md mr-2"
+															className="flex items-center space-x-2 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-md"
 														>
 															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white text-primary-700 text-start">
 																{schema?.name}
 															</span>
+															<span className="items-center font-normal text-md justify-start dark:text-white text-gray-600 truncate">
+																{schema?.version}
+															</span>
 														</a>
 													</button>
-													<div className="flex space-x-3 items-center justify-start dark:text-white">
-														<span>v.{schema?.version}</span>
-													</div>
 												</button>
 											);
 										})}
@@ -937,7 +948,7 @@ const UserDashBoard = () => {
 													key={ecosystem?.id}
 												>
 													<button
-														className="w-full"
+														className="w-full flex items-center"
 														onClick={() => goToEcoDashboard(ecosystem?.id)}
 													>
 														<a
@@ -960,11 +971,43 @@ const UserDashBoard = () => {
 																/>
 															)}
 
-															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white text-start">
+															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white text-start truncate">
 																{ecosystem?.name}
 															</span>
 														</a>
 													</button>
+													<div className="hidden sm:flex space-x-3 items-center">
+														<Tooltip
+															content={'Invite'}
+															placement="bottom"
+															className="items-center text-center dark:text-white"
+														>
+															{' '}
+															{isEcosystemLead && (
+																<button
+																	onClick={() => {
+																		navigateToInvitation();
+																	}}
+																	className="rounded-md flex items-center"
+																>
+																	<svg
+																		xmlns="http://www.w3.org/2000/svg"
+																		width="28"
+																		height="28"
+																		viewBox="0 0 24 24"
+																		fill="none"
+																	>
+																		<path
+																			d="M21.25 0.5H5.75C4.65 0.5 3.75 1.4 3.75 2.5V3.25C3.75 3.525 3.975 3.75 4.25 3.75C4.525 3.75 4.75 3.525 4.75 3.25V2.5C4.75 2.4 4.775 2.3 4.8 2.2L10.4 7L4.8 11.8C4.775 11.7 4.75 11.6 4.75 11.5V10.75C4.75 10.475 4.525 10.25 4.25 10.25C3.975 10.25 3.75 10.475 3.75 10.75V11.5C3.75 12.6 4.65 13.5 5.75 13.5H21.25C22.35 13.5 23.25 12.6 23.25 11.5V2.5C23.25 1.4 22.35 0.5 21.25 0.5ZM5.55 1.525C5.6 1.5 5.675 1.5 5.75 1.5H21.25C21.325 1.5 21.4 1.5 21.45 1.525L13.825 8.05C13.625 8.2 13.375 8.2 13.175 8.05L5.55 1.525ZM21.25 12.5H5.75C5.675 12.5 5.6 12.5 5.55 12.475L11.175 7.65L12.525 8.825C12.8 9.075 13.15 9.2 13.5 9.2C13.85 9.2 14.2 9.075 14.475 8.825L15.825 7.65L21.45 12.475C21.4 12.5 21.325 12.5 21.25 12.5ZM22.25 11.5C22.25 11.6 22.225 11.7 22.2 11.8L16.6 7L22.2 2.2C22.225 2.3 22.25 2.4 22.25 2.5V11.5ZM2.25 5.75C2.25 5.475 2.475 5.25 2.75 5.25H5.75C6.025 5.25 6.25 5.475 6.25 5.75C6.25 6.025 6.025 6.25 5.75 6.25H2.75C2.475 6.25 2.25 6.025 2.25 5.75ZM5.75 8.75H1.25C0.975 8.75 0.75 8.525 0.75 8.25C0.75 7.975 0.975 7.75 1.25 7.75H5.75C6.025 7.75 6.25 7.975 6.25 8.25C6.25 8.525 6.025 8.75 5.75 8.75Z"
+																			fill="#6B7280"
+																			stroke="#6B7280"
+																			stroke-width="0.3"
+																		/>
+																	</svg>
+																</button>
+															)}
+														</Tooltip>
+													</div>
 												</button>
 											);
 										})}
@@ -1058,18 +1101,16 @@ const UserDashBoard = () => {
 													>
 														<a
 															href="#"
-															className="flex items-center py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-md mr-2"
+															className="flex items-center space-x-2 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-md"
 														>
-															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white text-primary-700 text-start">
+															<span className="ml-3 text-lg font-bold text-gray-500 text-start dark:text-white text-primary-700 shrink-0">
 																{cred?.tag}
+															</span>
+															<span className="truncate text-md font-normal dark:text-white text-gray-600">
+																{cred?.credentialDefinitionId}
 															</span>
 														</a>
 													</button>
-													<div className="min-w-6 flex space-x-3 items-center justify-start dark:text-white">
-														<span className="truncate">
-															{cred?.credentialDefinitionId.slice(0, 8)}...
-														</span>
-													</div>
 												</button>
 											);
 										})}
