@@ -77,4 +77,7 @@ export const pathRoutes = {
 				'/organizations/credentials/issue/schemas/cred-defs/connections',
 		},
 	},
+	explore: {
+		explore: '/explore'
+	}
 };
