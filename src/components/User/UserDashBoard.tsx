@@ -79,6 +79,7 @@ const UserDashBoard = () => {
 	const [orgLoading, setOrgLoading] = useState(true);
 	const [schemaLoading, setSchemaLoading] = useState(true);
 	const [walletLoading, setWalletLoading] = useState(true);
+
 	const getAllInvitations = async () => {
 		setLoading(true);
 		const response = await getUserInvitations(
@@ -218,6 +219,8 @@ const UserDashBoard = () => {
 			}
 		} catch (error) {
 			setSchemaLoading(false);
+		} finally {
+			setSchemaLoading(false);
 		}
 	};
 
@@ -315,6 +318,14 @@ const UserDashBoard = () => {
 	useEffect(() => {
 		getAllResponses();
 	}, []);
+
+	useEffect(() => {
+		if (!orgLoading) {
+			setSchemaLoading(false);
+			setCredDefLoading(false);
+			setEcoLoading(false);
+		}
+	}, [orgLoading]);
 
 	useEffect(() => {
 		if (organizationsList && organizationsList?.length > 0) {
@@ -463,7 +474,7 @@ const UserDashBoard = () => {
 			) : (
 				<div
 					className="p-8 grid w-full grid-cols-1 sm:grid-cols-3 gap-4 mt-0 mb-4 rounded-md border-gray-200 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:bg-[url('/images/bg-darkwallet.png')] bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-0"
-					style={{ minHeight: '100px' }}
+					style={{ minHeight: '130px' }}
 				>
 					{walletLoading ? (
 						<></>
@@ -523,8 +534,8 @@ const UserDashBoard = () => {
 				>
 					<div className="w-full relative h-full">
 						<div className="flex justify-between pb-2 flex text-center">
-							<div className="flex text-center justify-center">
-								<h2 className="text-xl font-semibold text-gray-900 dark:text-white items-center ">
+							<div className="flex text-center justify-center items-center">
+								<h2 className="text-xl font-semibold text-gray-900 dark:text-white items-center">
 									Organizations{' '}
 								</h2>
 								<Tooltip
@@ -538,7 +549,7 @@ const UserDashBoard = () => {
 										height="20"
 										fill="none"
 										viewBox="0 0 20 20"
-										className="mt-[6px] ml-3 dark:text-white text-primary-700"
+										className="ml-3 dark:text-white text-primary-700"
 									>
 										<path
 											fill="currentColor"
@@ -547,8 +558,11 @@ const UserDashBoard = () => {
 									</svg>
 								</Tooltip>
 							</div>
-							<div className="bg-primary-700 w-10 rounded-md text-lg">
-								<span className="flex justify-center items-center text-white p-2 text-lg">
+							<div
+								className="bg-primary-700 rounded-md text-lg"
+								style={{ minWidth: '44px' }}
+							>
+								<span className="flex justify-center items-center text-white p-2 text-lg font-medium">
 									{orgCount ?? 0}
 								</span>
 							</div>
@@ -771,8 +785,8 @@ const UserDashBoard = () => {
 				>
 					<div className="w-full relative h-full">
 						<div className="flex justify-between pb-2 flex text-center">
-							<div className="flex text-center justify-center">
-								<h2 className="text-xl font-semibold text-gray-900 dark:text-white items-center ">
+							<div className="flex text-center justify-center items-center">
+								<h2 className="text-xl font-semibold text-gray-900 dark:text-white items-center">
 									Schemas
 								</h2>
 								<Tooltip
@@ -792,7 +806,7 @@ const UserDashBoard = () => {
 										height="20"
 										fill="none"
 										viewBox="0 0 20 20"
-										className="mt-[6px] ml-3 dark:text-white text-primary-700"
+										className="ml-3 dark:text-white text-primary-700"
 									>
 										<path
 											fill="currentColor"
@@ -801,8 +815,11 @@ const UserDashBoard = () => {
 									</svg>
 								</Tooltip>
 							</div>
-							<div className="bg-primary-700 w-10 rounded-md text-lg">
-								<span className="flex justify-center items-center text-white p-2 text-lg">
+							<div
+								className="bg-primary-700 rounded-md text-lg"
+								style={{ minWidth: '44px' }}
+							>
+								<span className="flex justify-center items-center text-white p-2 text-lg font-medium">
 									{schemaCount ?? 0}
 								</span>
 							</div>
@@ -874,8 +891,8 @@ const UserDashBoard = () => {
 				>
 					<div className="w-full relative h-full">
 						<div className="flex justify-between pb-2 flex text-center">
-							<div className="flex text-center justify-center">
-								<h2 className="text-xl font-semibold text-gray-900 dark:text-white items-center ">
+							<div className="flex text-center justify-center items-center">
+								<h2 className="text-xl font-semibold text-gray-900 dark:text-white items-center">
 									Ecosystems{' '}
 								</h2>
 								<Tooltip
@@ -889,7 +906,7 @@ const UserDashBoard = () => {
 										height="20"
 										fill="none"
 										viewBox="0 0 20 20"
-										className="mt-[6px] ml-3 dark:text-white text-primary-700"
+										className="ml-3 dark:text-white text-primary-700"
 									>
 										<path
 											fill="currentColor"
@@ -898,8 +915,11 @@ const UserDashBoard = () => {
 									</svg>
 								</Tooltip>
 							</div>
-							<div className="bg-primary-700 w-10 rounded-md text-lg">
-								<span className="flex justify-center items-center text-white p-2 text-lg">
+							<div
+								className="bg-primary-700 rounded-md text-lg"
+								style={{ minWidth: '44px' }}
+							>
+								<span className="flex justify-center items-center text-white p-2 text-lg font-medium">
 									{ecoCount ?? 0}
 								</span>
 							</div>
@@ -977,8 +997,8 @@ const UserDashBoard = () => {
 				>
 					<div className="w-full relative h-full">
 						<div className="flex justify-between pb-2 flex text-center">
-							<div className="flex text-center justify-center">
-								<h2 className="text-xl font-semibold text-gray-900 dark:text-white items-center ">
+							<div className="flex text-center justify-center items-center">
+								<h2 className="text-xl font-semibold text-gray-900 dark:text-white items-center">
 									Cred - def
 								</h2>
 								<Tooltip
@@ -1001,7 +1021,7 @@ const UserDashBoard = () => {
 										height="20"
 										fill="none"
 										viewBox="0 0 20 20"
-										className="mt-[6px] ml-3 dark:text-white text-primary-700"
+										className="ml-3 dark:text-white text-primary-700"
 									>
 										<path
 											fill="currentColor"
@@ -1010,8 +1030,11 @@ const UserDashBoard = () => {
 									</svg>
 								</Tooltip>
 							</div>
-							<div className="bg-primary-700 w-10 rounded-md text-lg">
-								<span className="flex justify-center items-center text-white p-2 text-lg">
+							<div
+								className="bg-primary-700 rounded-md text-lg"
+								style={{ minWidth: '44px' }}
+							>
+								<span className="flex justify-center items-center text-white p-2 text-lg font-medium">
 									{credDefCount ?? 0}
 								</span>
 							</div>
