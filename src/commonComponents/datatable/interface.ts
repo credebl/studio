@@ -9,7 +9,7 @@ export interface TableData {
 	data: Data[];
 }
 
-interface Data {
+export interface Data {
 	data: string | JSX.Element;
 	subData?: string;
 }
