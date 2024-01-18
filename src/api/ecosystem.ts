@@ -243,7 +243,7 @@ export const getEcosystemMemberList = async ({
 }: IMemberListAPIParameter) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 	const ecosystemId = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID);
-	const url = `${apiRoutes.Ecosystem.root}/${ecosystemId}/${orgId}${apiRoutes.Ecosystem.members}?pageNumber=${page}&pageSize=${itemPerPage}&search=${search}&sortBy=${sortingOrder}&sortField=${sortBy}`;
+	const url = `${apiRoutes.Ecosystem.root}/${ecosystemId}/${orgId}${apiRoutes.Ecosystem.members}?pageNumber=${page}&pageSize=${itemPerPage}&search=${search}&sortBy=${sortingOrder.toLocaleLowerCase()}&sortField=${sortBy}`;
 
 	const axiosPayload = {
 		url,

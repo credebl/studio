@@ -15,7 +15,7 @@ const initialPageState = {
 	page: 1,
 	search: '',
 	sortBy: 'createDateTime',
-	sortingOrder: 'DESC',
+	sortingOrder: 'ASC',
 	allSearch: '',
 };
 
@@ -47,8 +47,6 @@ const MemberList = () => {
 	const [listAPIParameter, setListAPIParameter] = useState(initialPageState);
 	const [memberList, setMemberList] = useState<IMemberList[]>([]);
 	const [error, setError] = useState<string | null>(null);
-	const [currentPage, setCurrentPage] = useState(initialPageState);
-	const [searchText, setSearchText] = useState('');
 	const [totalItem, setTotalItem] = useState(0);
 	const [pageInfo, setPageInfo] = useState({
 		totalItem: '',
@@ -235,9 +233,11 @@ const MemberList = () => {
 				isSearch={true}
 				isRefresh={true}
 				isSort={true}
+				isPagination={true}
 				message={'No Members'}
 				discription={"The ecosystem doesn't have any matching member"}
 				noExtraHeight={true}
+				sortOrder={listAPIParameter.sortingOrder}
 			></SortDataTable>
 		</div>
 	);
