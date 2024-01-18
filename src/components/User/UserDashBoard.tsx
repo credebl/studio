@@ -642,7 +642,7 @@ const UserDashBoard = () => {
 													key={org?.id}
 												>
 													<button
-														className="sm:w-[70%] w-full"
+														className="sm:w-100/11rem w-full"
 														onClick={() =>
 															goToOrgDashboard(org?.id, org?.roles)
 														}
