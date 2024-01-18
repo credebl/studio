@@ -422,34 +422,81 @@ const UserDashBoard = () => {
 	const navigateToInvitation = () => {
 		window.location.href = pathRoutes.ecosystem.sentinvitation;
 	};
-	const ToolTipData = ({ isEcosystem }: { isEcosystem: boolean }) => {
+
+	const ToolTipDataForOrganization = () => {
 		return (
 			<div className="text-left text-xs">
-				<p className="text-base">
-					What is {isEcosystem ? 'Ecosystem' : 'Organization'}?
-				</p>{' '}
-				Contacts are people or organizations you've <br />
-				interacted with.
+				<p className="text-base">What is Organization?</p>
+				An organization is a participating entity, such as
+				<br />a business, institution, or group. Organizations
 				<br />
-				You're connected over a secure and private
-				<br /> line that no one but you or them can see.
-				<br /> Nothing is shared without your permission.
-				<br /> You can:
+				typically issue and verify some kind of digital
 				<br />
-				<ul>
-					<li>Direct message your Contacts</li>
-					<li>Get offered new credentials</li>
-					<li>
-						Get notified of updates to your credentials <br />
-						issued by them
-					</li>
-					<li>
-						Request for information from your Contact <br />
-						or they request information from you
-					</li>
-				</ul>
-				You can always remove Contacts at any <br />
-				time from your Contacts list.
+				credentials, fostering trust within the digital
+				<br />
+				ecosystem.
+				<br />
+				Each organization is uniquely identified by a DID
+				<br />
+				(Decentralized Identifier), which is verifiable
+				<br />
+				publicly, thus enhancing the level of trust.
+			</div>
+		);
+	};
+	const ToolTipDataForEcosystem = () => {
+		return (
+			<div className="text-left text-xs">
+				<p className="text-base">What is Ecosystem?</p>
+				Ecosystem is a trusted network of organizations
+				<br />
+				that empowers people and businesses with safe
+				<br />
+				and secure ways of identifying themselves online
+				<br />
+				and communicating confidentially with others.
+				<br />
+				Examples are supply chain, marketplace, healthcare,
+				<br />
+				banking, etc. where participants exchange
+				<br />
+				information in an interoperable & trusted manner.
+			</div>
+		);
+	};
+
+	const ToolTipDataForSchema = () => {
+		return (
+			<div className="text-left text-xs">
+				<p className="text-base">What is Schema?</p>
+				Schema is a machine-readable semantic structure,
+				<br />a predefined data template that provides a
+				<br />
+				standard format for the digital credential
+				<br />
+				contents. Schemas define attributes that are
+				<br />
+				used in one or more Credential Definitions.
+				<br />
+				Schemas are stored on the ledger.
+			</div>
+		);
+	};
+
+	const ToolTipDataForCredDef = () => {
+		return (
+			<div className="text-left text-xs">
+				<p className="text-base">What is Credential Definition?</p>
+				A Credential Definition is a machine-readable
+				<br />
+				definition of any Schema or in simple terms,
+				<br />a tag created specific to an issuer and Schema.
+				<br />
+				Credentials are always issued by an issuer
+				<br />
+				using Cred-Def created by them.
+				<br />
+				Credential Definitions are stored on the ledger.
 			</div>
 		);
 	};
@@ -550,7 +597,7 @@ const UserDashBoard = () => {
 									Organizations{' '}
 								</h2>
 								<Tooltip
-									content={<ToolTipData isEcosystem={false} />}
+									content={<ToolTipDataForOrganization />}
 									placement="bottom"
 									className="items-center text-center dark:text-white"
 								>
@@ -801,13 +848,7 @@ const UserDashBoard = () => {
 									Schemas
 								</h2>
 								<Tooltip
-									content={
-										<div className="text-left text-xs">
-											<p className="text-base">What is schema?</p> Schemas
-											define the attributes that
-											<br /> can be included in a credential.
-										</div>
-									}
+									content={<ToolTipDataForSchema />}
 									placement="bottom"
 									className="items-center text-center dark:text-white"
 								>
@@ -907,7 +948,7 @@ const UserDashBoard = () => {
 									Ecosystems{' '}
 								</h2>
 								<Tooltip
-									content={<ToolTipData isEcosystem={true} />}
+									content={<ToolTipDataForEcosystem />}
 									placement="bottom"
 									className="items-center text-center dark:text-white"
 								>
@@ -1045,16 +1086,7 @@ const UserDashBoard = () => {
 									Cred - def
 								</h2>
 								<Tooltip
-									content={
-										<div className="text-left text-xs">
-											<p className="text-base">What is Cred-def?</p> A
-											credential is a set of one or more <br />
-											claims made by an issuer. A verifiable <br />
-											credential is a tamper-evident <br /> credential that has
-											authorship
-											<br /> that can be cryptographically verified.
-										</div>
-									}
+									content={<ToolTipDataForCredDef />}
 									placement="bottom"
 									className="items-center text-center dark:text-white"
 								>
