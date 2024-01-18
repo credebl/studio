@@ -2,178 +2,190 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { getEcosystemMemberList } from '../../api/ecosystem';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import type { AxiosResponse } from 'axios';
-import DataTable from '../../commonComponents/datatable';
-import type { TableData } from '../../commonComponents/datatable/interface';
+import type { Data } from '../../commonComponents/datatable/interface';
 import DateTooltip from '../Tooltip';
 import { dateConversion } from '../../utils/DateConversion';
 import { AlertComponent } from '../AlertComponent';
-import { Pagination } from 'flowbite-react';
 import { getFromLocalStorage } from '../../api/Auth';
-import SearchInput from '../SearchInput';
 import CopyDid from '../../commonComponents/CopyDid';
+import SortDataTable from '../../commonComponents/datatable/SortDataTable';
 
 const initialPageState = {
-	pageNumber: 1,
-	pageSize: 10,
-	total: 0,
+	itemPerPage: 10,
+	page: 1,
+	search: '',
+	sortBy: 'createDateTime',
+	sortingOrder: 'ASC',
+	allSearch: '',
 };
 
 interface IMemberList {
 	orgId: string;
 	ecosystem: { createDateTime: string };
 	ecosystemRole: { name: string };
-	organisation: { name: string; orgSlug: string; org_agents: {orgDid: string}[] };
-	// orgName: string;
-	// orgDid: string;
+	organisation: {
+		name: string;
+		orgSlug: string;
+		org_agents: { orgDid: string }[];
+	};
 	role: string;
 	createDateTime: any;
 	status: string;
 	copied?: boolean;
+	data: Data[];
 }
-
-
+export interface IMemberListAPIParameter {
+	itemPerPage: number;
+	page: number;
+	search: string;
+	sortBy: string;
+	sortingOrder: string;
+	filter?: string;
+}
 const MemberList = () => {
 	const [loading, setLoading] = useState<boolean>(false);
+	const [listAPIParameter, setListAPIParameter] = useState(initialPageState);
 	const [memberList, setMemberList] = useState<IMemberList[]>([]);
 	const [error, setError] = useState<string | null>(null);
-	const [currentPage, setCurrentPage] = useState(initialPageState);
-	const [searchText, setSearchText] = useState('');
-	const [memberTableData, setMemberTableData] = useState<TableData[]>([])
+	const [totalItem, setTotalItem] = useState(0);
+	const [pageInfo, setPageInfo] = useState({
+		totalItem: '',
+		nextPage: '',
+		lastPage: '',
+	});
 
 	useEffect(() => {
-		generateTable(memberList)
-	}, [memberList])
+		let getData: NodeJS.Timeout;
 
-	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-		setSearchText(e.target.value);
+		if (listAPIParameter?.search?.length >= 1) {
+			getData = setTimeout(() => {
+				getEcosystemMembers(listAPIParameter);
+			}, 1000);
+			return () => clearTimeout(getData);
+		} else {
+			getEcosystemMembers(listAPIParameter);
+		}
+
+		return () => clearTimeout(getData);
+	}, [listAPIParameter]);
+
+	const refreshPage = () => {
+		getEcosystemMembers(listAPIParameter);
 	};
 
-	const generateTable = async (memberList: IMemberList[]): Promise<void> => {
+	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setListAPIParameter({
+			...listAPIParameter,
+			search: e.target.value,
+			page: 1,
+		});
+	};
 
+	const searchSortByValue = (value: any) => {
+		setListAPIParameter({
+			...listAPIParameter,
+			page: 1,
+			sortingOrder: value,
+		});
+	};
+
+	const getEcosystemMembers = async (apiParameter: IMemberListAPIParameter) => {
 		const userOrgId = await getFromLocalStorage(storageKeys.ORG_ID);
-		const compareMembers = (
-			firstMember: { ecosystemRole: { name: string } },
-			secondMember: { ecosystemRole: { name: string } },
-		) => {
-			// remove this sorting logic when implemented from backend
-			const firstName = firstMember?.ecosystemRole?.name;
-			const secondName = secondMember?.ecosystemRole?.name;
-
-			switch (true) {
-				case firstName > secondName:
-					return 1;
-				case secondName > firstName:
-					return -1;
-				default:
-					return 0;
-			}
-		};
-
-		const sortedMemberList = memberList && memberList.length > 0 && memberList?.sort(compareMembers);
-		const membersData = sortedMemberList && sortedMemberList.length > 0 && sortedMemberList?.map(
-			(member: IMemberList) => {
-				let orgDid ='Not available'
-				if(member.organisation.org_agents.length > 0){
-					const orgAgent = member.organisation.org_agents[0];
-					orgDid = orgAgent.orgDid
-				}
-				return {
-					data: [
-						{
-							data: member?.organisation.name || 'Not available',
-						},
-						{
-							data:
-								(
-									<DateTooltip date={member?.createDateTime}>
-										{dateConversion(member?.createDateTime)}{' '}
-									</DateTooltip>
-								) || 'Not available',
-						},
-						{
-							data: orgDid? (
-								<div className='flex items-center'>
-									<CopyDid className="text-sm mr-2 py-1 font-courier pt-[0.55rem]" value={orgDid} />
-								</div>
-							) : (
-								<span className="text-sm mr-2 px-2.5 py-1 rounded-md">
-									Not available
-								</span>
-							),
-						},
-						{
-							data: member?.ecosystemRole?.name ? (
-								<span className="text-sm px-2.5 py-1 rounded-md">
-									<span
-										className={`${member?.ecosystemRole?.name === 'Ecosystem Lead'
-											? 'bg-primary-100 text-primary-800 dark:bg-gray-900 dark:text-primary-400 border border-primary-100 dark:border-primary-500'
-											: 'bg-green-100 text-green-800 dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500'
-											} text-sm font-medium mr-1 px-2.5 py-1 rounded-md`}
-									>
-										{member?.ecosystemRole?.name}
-									</span>
-									{member?.orgId === userOrgId ? '(You)' : ''}
-								</span>
-							) : (
-								'Not available'
-							),
-						},
-						{
-							data: member.status ? (
-								<span
-									className={`${member.status === 'SUSPENDED'
-										? 'bg-red-100 text-red-800 rounded dark:bg-gray-900 dark:text-red-300  border-red-100 dark:border-red-500 border'
-										: 'bg-green-100 text-green-700 dark:bg-gray-700 dark:text-green-400 rounded border border-green-100 dark:border-green-500'
-										} text-sm font-medium mr-2 px-2.5 py-1 rounded-md`}
-								>
-									{member.status.charAt(0) +
-										member.status.slice(1).toLowerCase()}
-								</span>
-							) : (
-								'Not available'
-							),
-						},
-					],
-				};
-			},
-		);
-
-		if(membersData){	
-			setMemberTableData(membersData);
-		}
-	}
-
-	const getEcosystemMembers = async () => {
 		setLoading(true);
-		const response = await getEcosystemMemberList(
-			currentPage.pageNumber,
-			currentPage.pageSize,
-			searchText
-		);
+		const response = await getEcosystemMemberList(apiParameter);
 		const { data } = response as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			const totalPages = data?.data?.totalPages;
-			setMemberList(data?.data?.members)
-			setCurrentPage({
-				...currentPage,
-				total: totalPages,
+			setTotalItem(data?.data.totalItems);
+			const { totalItems, nextPage, lastPage } = data.data;
+
+			setPageInfo({
+				totalItem: totalItems,
+				nextPage: nextPage,
+				lastPage: lastPage,
 			});
+			const memberList =
+				data?.data?.data?.length > 0 &&
+				data?.data?.data?.map((member: IMemberList) => {
+					let orgDid = 'Not available';
+					if (member.organisation.org_agents.length > 0) {
+						const orgAgent = member.organisation.org_agents[0];
+						orgDid = orgAgent.orgDid;
+					}
+					return {
+						data: [
+							{
+								data: member?.organisation.name || 'Not available',
+							},
+							{
+								data:
+									(
+										<DateTooltip date={member?.createDateTime}>
+											{dateConversion(member?.createDateTime)}{' '}
+										</DateTooltip>
+									) || 'Not available',
+							},
+							{
+								data: orgDid ? (
+									<div className="flex items-center">
+										<CopyDid
+											className="text-sm mr-2 py-1 font-courier pt-[0.55rem]"
+											value={orgDid}
+										/>
+									</div>
+								) : (
+									<span className="text-sm mr-2 px-2.5 py-1 rounded-md">
+										Not available
+									</span>
+								),
+							},
+							{
+								data: member?.ecosystemRole?.name ? (
+									<span className="text-sm px-2.5 py-1 rounded-md">
+										<span
+											className={`${
+												member?.ecosystemRole?.name === 'Ecosystem Lead'
+													? 'bg-primary-100 text-primary-800 dark:bg-gray-900 dark:text-primary-400 border border-primary-100 dark:border-primary-500'
+													: 'bg-green-100 text-green-800 dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500'
+											} text-sm font-medium mr-1 px-2.5 py-1 rounded-md`}
+										>
+											{member?.ecosystemRole?.name}
+										</span>
+										{member?.orgId === userOrgId ? '(You)' : ''}
+									</span>
+								) : (
+									'Not available'
+								),
+							},
+							{
+								data: member.status ? (
+									<span
+										className={`${
+											member.status === 'SUSPENDED'
+												? 'bg-red-100 text-red-800 rounded dark:bg-gray-900 dark:text-red-300  border-red-100 dark:border-red-500 border'
+												: 'bg-green-100 text-green-700 dark:bg-gray-700 dark:text-green-400 rounded border border-green-100 dark:border-green-500'
+										} text-sm font-medium mr-2 px-2.5 py-1 rounded-md`}
+									>
+										{member.status.charAt(0) +
+											member.status.slice(1).toLowerCase()}
+									</span>
+								) : (
+									'Not available'
+								),
+							},
+						],
+					};
+				});
+
+			setMemberList(memberList);
 		} else {
 			setError(response as string);
 		}
 		setLoading(false);
 	};
 
-	const onPageChange = (page: number) => {
-		setCurrentPage({
-			...currentPage,
-			pageNumber: page,
-		});
-	};
-
 	useEffect(() => {
-		getEcosystemMembers();
+		getEcosystemMembers(listAPIParameter);
 	}, []);
 
 	const header = [
@@ -187,38 +199,46 @@ const MemberList = () => {
 	return (
 		<div
 			id="ecosystem-datable"
-			className="p-4 mt-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
+			className="mt-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 dark:bg-gray-800"
 		>
-			<div className="flex justify-between mb-4 gap-4">
-				<h2 className="text-xl dark:text-white font-medium font-body">
-					Ecosystem Members
-				</h2>
-				<div className="">
-					<SearchInput onInputChange={searchInputChange} />
-				</div>
+			<h2 className="pl-3 pt-2 text-xl dark:text-white font-semibold">
+				Ecosystem Members
+			</h2>
+			<div className="px-3">
+				<AlertComponent
+					message={error}
+					type={'failure'}
+					onAlertClose={() => {
+						setError(null);
+					}}
+				/>
 			</div>
-			<AlertComponent
-				message={error}
-				type={'failure'}
-				onAlertClose={() => {
-					setError(null);
-				}}
-			/>
-			<DataTable
+			<SortDataTable
+				onInputChange={searchInputChange}
+				refresh={refreshPage}
 				header={header}
-				data={memberTableData}
+				data={memberList}
 				loading={loading}
-			></DataTable>
-
-			{currentPage.total > 1 && (
-				<div className="flex items-center justify-end mb-4">
-					<Pagination
-						currentPage={currentPage.pageNumber}
-						onPageChange={onPageChange}
-						totalPages={currentPage.total}
-					/>
-				</div>
-			)}
+				currentPage={listAPIParameter.page}
+				onPageChange={(page: number) => {
+					setListAPIParameter((prevState) => ({
+						...prevState,
+						page,
+					}));
+				}}
+				searchSortByValue={searchSortByValue}
+				totalPages={totalItem}
+				pageInfo={pageInfo}
+				isHeader={true}
+				isSearch={true}
+				isRefresh={true}
+				isSort={true}
+				isPagination={true}
+				message={'No Members'}
+				discription={"The ecosystem doesn't have any matching member"}
+				noExtraHeight={true}
+				sortOrder={listAPIParameter.sortingOrder}
+			></SortDataTable>
 		</div>
 	);
 };
