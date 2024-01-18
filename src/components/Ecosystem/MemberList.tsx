@@ -201,7 +201,7 @@ const MemberList = () => {
 			id="ecosystem-datable"
 			className="mt-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 dark:bg-gray-800"
 		>
-			<h2 className="pl-4 py-2 text-xl dark:text-white font-medium font-body">
+			<h2 className="pl-3 pt-2 text-xl dark:text-white font-semibold">
 				Ecosystem Members
 			</h2>
 			<div className="px-3">
