@@ -11,9 +11,12 @@ import CopyDid from '../../commonComponents/CopyDid';
 import SortDataTable from '../../commonComponents/datatable/SortDataTable';
 
 const initialPageState = {
-	pageNumber: 1,
-	pageSize: 10,
-	total: 0,
+	itemPerPage: 10,
+	page: 1,
+	search: '',
+	sortBy: 'createDateTime',
+	sortingOrder: 'DESC',
+	allSearch: '',
 };
 
 interface IMemberList {
@@ -31,9 +34,17 @@ interface IMemberList {
 	copied?: boolean;
 	data: Data[];
 }
-
+export interface IMemberListAPIParameter {
+	itemPerPage: number;
+	page: number;
+	search: string;
+	sortBy: string;
+	sortingOrder: string;
+	filter?: string;
+}
 const MemberList = () => {
 	const [loading, setLoading] = useState<boolean>(false);
+	const [listAPIParameter, setListAPIParameter] = useState(initialPageState);
 	const [memberList, setMemberList] = useState<IMemberList[]>([]);
 	const [error, setError] = useState<string | null>(null);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
@@ -48,34 +59,42 @@ const MemberList = () => {
 	useEffect(() => {
 		let getData: NodeJS.Timeout;
 
-		if (searchText.length >= 1) {
+		if (listAPIParameter?.search?.length >= 1) {
 			getData = setTimeout(() => {
-				getEcosystemMembers();
+				getEcosystemMembers(listAPIParameter);
 			}, 1000);
 			return () => clearTimeout(getData);
 		} else {
-			getEcosystemMembers();
+			getEcosystemMembers(listAPIParameter);
 		}
 
 		return () => clearTimeout(getData);
-	}, [searchText, currentPage.pageNumber]);
+	}, [listAPIParameter]);
 
 	const refreshPage = () => {
-		getEcosystemMembers();
+		getEcosystemMembers(listAPIParameter);
 	};
 
 	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-		setSearchText(e.target.value);
+		setListAPIParameter({
+			...listAPIParameter,
+			search: e.target.value,
+			page: 1,
+		});
 	};
 
-	const getEcosystemMembers = async () => {
+	const searchSortByValue = (value: any) => {
+		setListAPIParameter({
+			...listAPIParameter,
+			page: 1,
+			sortingOrder: value,
+		});
+	};
+
+	const getEcosystemMembers = async (apiParameter: IMemberListAPIParameter) => {
 		const userOrgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		setLoading(true);
-		const response = await getEcosystemMemberList(
-			currentPage.pageNumber,
-			currentPage.pageSize,
-			searchText,
-		);
+		const response = await getEcosystemMemberList(apiParameter);
 		const { data } = response as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -168,7 +187,7 @@ const MemberList = () => {
 	};
 
 	useEffect(() => {
-		getEcosystemMembers();
+		getEcosystemMembers(listAPIParameter);
 	}, []);
 
 	const header = [
@@ -202,19 +221,20 @@ const MemberList = () => {
 				header={header}
 				data={memberList}
 				loading={loading}
-				currentPage={currentPage?.pageNumber}
+				currentPage={listAPIParameter.page}
 				onPageChange={(page: number) => {
-					setCurrentPage({
-						...currentPage,
-						pageNumber: page,
-					});
+					setListAPIParameter((prevState) => ({
+						...prevState,
+						page,
+					}));
 				}}
+				searchSortByValue={searchSortByValue}
 				totalPages={totalItem}
 				pageInfo={pageInfo}
 				isHeader={true}
 				isSearch={true}
 				isRefresh={true}
-				isSort={false}
+				isSort={true}
 				message={'No Members'}
 				discription={"The ecosystem doesn't have any matching member"}
 				noExtraHeight={true}

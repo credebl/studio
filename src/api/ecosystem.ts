@@ -4,6 +4,7 @@ import { apiRoutes } from '../config/apiRoutes';
 import { getFromLocalStorage } from './Auth';
 import { storageKeys } from '../config/CommonConstant';
 import { getHeaderConfigs } from '../config/GetHeaderConfigs';
+import type { IMemberListAPIParameter } from '../components/Ecosystem/MemberList';
 
 interface CreateEcosystemPayload {
 	name: string;
@@ -63,7 +64,12 @@ export const updateEcosystem = async (dataPayload: CreateEcosystemPayload) => {
 	}
 };
 
-export const getEcosystems = async (orgId: string, pageNumber?: number, pageSize?: number, search = '') => {
+export const getEcosystems = async (
+	orgId: string,
+	pageNumber?: number,
+	pageSize?: number,
+	search = '',
+) => {
 	const url = `${apiRoutes.Ecosystem.root}/${orgId}`;
 	const axiosPayload = {
 		url,
@@ -228,14 +234,16 @@ export const getEcosystemDashboard = async (
 	}
 };
 
-export const getEcosystemMemberList = async (
-	pageNumber: number,
-	pageSize: number,
-	search: string,
-) => {
+export const getEcosystemMemberList = async ({
+	page,
+	itemPerPage,
+	search,
+	sortBy,
+	sortingOrder,
+}: IMemberListAPIParameter) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 	const ecosystemId = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID);
-	const url = `${apiRoutes.Ecosystem.root}/${ecosystemId}/${orgId}${apiRoutes.Ecosystem.members}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`;
+	const url = `${apiRoutes.Ecosystem.root}/${ecosystemId}/${orgId}${apiRoutes.Ecosystem.members}?pageNumber=${page}&pageSize=${itemPerPage}&search=${search}&sortBy=${sortingOrder}&sortField=${sortBy}`;
 
 	const axiosPayload = {
 		url,
