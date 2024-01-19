@@ -57,6 +57,13 @@ export enum EcosystemRoles {
 	lead = "lead"
 }
 
+export enum OrganizationRoles {
+	organizationMember = "member",
+	organizationOwner = "owner",
+	organizationIssuer = "issuer",
+	organizationVerifier = "verifier"
+}
+
 export enum PlatformRoles {
 	platformAdmin = "platform_admin"
 }
