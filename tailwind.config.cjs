@@ -107,6 +107,7 @@ module.exports = {
 				'100/6rem': 'calc(100% - 6rem)',
 				'100/12rem': 'calc(100% - 12rem)',
 				'100/11rem': 'calc(100% - 11rem)',
+				'100/3rem': 'calc(100% - 3rem)',
 			},
 			height: {
 				'100/15rem': 'calc(100vh - 15rem)'
