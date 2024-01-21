@@ -190,8 +190,10 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 				props?.onEditSucess();
 			}
 			props.setOpenModal(false);
+			window.location.reload();
 		} else {
 			setErrMsg(resUpdateOrg as string);
+			props.setOpenModal(true);
 		}
 	};
 
@@ -224,6 +226,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 							.min(2, 'Organization name must be at least 2 characters')
 							.max(50, 'Organization name must be at most 50 characters')
 							.required('Organization name is required')
+							// .test('is-orgName-exists', "An organization name is already exist", (value) => value?.trim() !== initialOrgData.name.trim())
 							.trim(),
 						description: yup
 							.string()
@@ -239,7 +242,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 						{ resetForm }: FormikHelpers<Values>,
 					) => {
 						submitUpdateOrganization(values);
-						window.location.reload();
+						
 					}}
 				>
 					{(formikHandlers): JSX.Element => (
@@ -326,6 +329,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 									formikHandlers?.touched?.name && (
 										<span className="text-red-500 text-xs">
 											{formikHandlers?.errors?.name}
+											 
 										</span>
 									)}
 							</div>

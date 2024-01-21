@@ -185,7 +185,8 @@ const EditPopupModal = (props: EditEntityModalProps) => {
                     }
                     props.setOpenModal(false);
                 } else {
-                    setErrMsg(data?.message as string);
+                    setErrMsg(response as string);
+                    setLoading(false);
                 }
             }
         } catch (error) {
