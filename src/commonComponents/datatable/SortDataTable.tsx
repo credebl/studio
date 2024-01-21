@@ -1,43 +1,11 @@
-import type { TableData, TableHeader } from './interface';
-
+import type { IDataTable } from './interface';
 import CustomSpinner from '../../components/CustomSpinner';
 import SearchInput from '../../components/SearchInput';
 import { Pagination } from 'flowbite-react';
 import { ChangeEvent, useState } from 'react';
 import { EmptyListMessage } from '../../components/EmptyListComponent';
-import React from 'react';
 
-interface DataTableProps {
-  header: TableHeader[];
-  data: TableData[];
-  loading: boolean;
-  message: string;
-  discription: string;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-  callback?: (clickId: string | null | undefined) => void;
-  displaySelect?: boolean;
-  showBtn?: boolean;
-  onInputChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-  refresh?: () => void;
-  currentPage?: any;
-  pageInfo?:
-    | {
-        totalItem: number | undefined;
-        nextPage: number | undefined;
-        lastPage: number | undefined;
-      }
-    | {};
-  searchSortByValue?: (value: any) => void;
-  isPagination?: boolean;
-  isSearch?: boolean;
-  isRefresh?: boolean;
-  isSort?: boolean;
-  isHeader?: boolean;
-}
-
-
-const SortDataTable: React.FC<DataTableProps> = ({
+const SortDataTable: React.FC<IDataTable> = ({
 	header,
 	displaySelect,
 	data,
@@ -58,8 +26,10 @@ const SortDataTable: React.FC<DataTableProps> = ({
 	isHeader,
 	message,
 	discription,
+	noExtraHeight,
+	sortOrder,
 }) => {
-	const [selectedValue, setSelectedValue] = useState('');
+	const [selectedValue, setSelectedValue] = useState(sortOrder ?? '');
 
 	const handleSortByValues = (event: { target: { value: any } }) => {
 		const newSelectedValue = event.target.value;
@@ -247,6 +217,7 @@ const SortDataTable: React.FC<DataTableProps> = ({
 													<EmptyListMessage
 														message={message}
 														description={discription}
+														noExtraHeight={noExtraHeight}
 													/>
 												</div>
 											</td>
