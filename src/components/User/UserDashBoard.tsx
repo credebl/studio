@@ -868,7 +868,7 @@ const UserDashBoard = () => {
 									</>
 								) : (
 									<div className="flex items-center justify-center h-full dark:text-gray-400 text-gray-500">
-										<p>You have no organisations created or joined</p>
+										<p>You have no organizations created or joined</p>
 									</div>
 								)}
 							</>
