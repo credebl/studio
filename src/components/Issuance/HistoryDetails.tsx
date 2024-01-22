@@ -11,6 +11,7 @@ import { getFilesDataHistory } from '../../api/BulkIssuance';
 import type { AxiosResponse } from 'axios';
 import { BulkIssuanceStatus } from '../../common/enums';
 import SortDataTable from '../../commonComponents/datatable/SortDataTable';
+import type { IConnectionListAPIParameter } from '../../api/connection';
 
 interface IProps {
 	requestId: string;
@@ -29,8 +30,6 @@ const HistoryDetails = ({ requestId }: IProps) => {
 	const [historyList, setHistoryList] = useState<TableData[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
-	const [currentPage, setCurrentPage] = useState(initialPageState);
-	const [searchText, setSearchText] = useState('');
 	const [totalItem, setTotalItem] = useState(0);
 	const [pageInfo, setPageInfo] = useState({
 		totalItem: '',
@@ -53,18 +52,9 @@ const HistoryDetails = ({ requestId }: IProps) => {
 		return () => clearTimeout(getData);
 	}, [listAPIParameter]);
 
-	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-		setSearchText(e.target.value);
-	};
-
-	const getHistoryDetails = async () => {
+	const getHistoryDetails = async (apiParameter: IConnectionListAPIParameter) => {
 		setLoading(true);
-		const response = await getFilesDataHistory(
-			requestId,
-			currentPage.pageNumber,
-			currentPage.pageSize,
-			searchText,
-		);
+		const response = await getFilesDataHistory(requestId, apiParameter.itemPerPage, apiParameter.page, apiParameter.search, apiParameter.sortBy, apiParameter.sortingOrder);
 
 		const { data } = response as AxiosResponse;
 
@@ -126,8 +116,24 @@ const HistoryDetails = ({ requestId }: IProps) => {
 		setLoading(false);
 	};
 
+	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setListAPIParameter({
+			...listAPIParameter,
+			search: e.target.value,
+			page: 1,
+		});
+	};
+
+	const searchSortByValue = (value: any) => {
+		setListAPIParameter({
+			...listAPIParameter,
+			page: 1,
+			sortingOrder: value,
+		});
+	};
+
 	const refreshPage = () => {
-		getHistoryDetails();
+		getHistoryDetails(listAPIParameter);
 	};
 	const header = [
 		{ columnName: 'User' },
@@ -166,19 +172,20 @@ const HistoryDetails = ({ requestId }: IProps) => {
 				header={header}
 				data={historyList}
 				loading={loading}
-				currentPage={currentPage?.pageNumber}
+				currentPage={listAPIParameter?.page}
 				onPageChange={(page: number) => {
-					setCurrentPage({
-						...currentPage,
-						pageNumber: page,
-					});
+					setListAPIParameter((prevState) => ({
+						...prevState,
+						page,
+					}));
 				}}
-				totalPages={Math.ceil(totalItem / currentPage?.pageSize)}
+				searchSortByValue={searchSortByValue}
+				totalPages={Math.ceil(totalItem / listAPIParameter?.itemPerPage)}
 				pageInfo={pageInfo}
 				isHeader={true}
 				isSearch={true}
 				isRefresh={true}
-				isSort={false}
+				isSort={true}
 				message={'No History'}
 				discription={"You don't have any activities yet"}
 			></SortDataTable>
