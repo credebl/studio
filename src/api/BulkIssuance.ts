@@ -6,6 +6,7 @@ import {
 } from '../config/GetHeaderConfigs';
 import { axiosGet, axiosPost } from '../services/apiRequests';
 import { getFromLocalStorage } from './Auth';
+import type { IConnectionListAPIParameter } from './connection';
 
 export const getSchemaCredDef = async () => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -124,13 +125,15 @@ export const retryBulkIssuance = async (fileId: string, clientId: string) => {
 	}
 };
 
-export const getFilesHistory = async (
-	pageNumber: number,
-	pageSize: number,
-	search: string,
-) => {
+export const getFilesHistory = async ({
+	page,
+	itemPerPage,
+	search,
+	sortBy,
+	sortingOrder,
+}: IConnectionListAPIParameter) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.bulk.files}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`;
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.bulk.files}?pageSize=${itemPerPage}&pageNumber=${page}&searchByText=${search}&sortBy=${sortingOrder}&sortField=${sortBy}`;
 
 	const axiosPayload = {
 		url,
@@ -147,13 +150,14 @@ export const getFilesHistory = async (
 
 export const getFilesDataHistory = async (
 	requestId: string,
-	pageNumber: number,
-	pageSize: number,
+	itemPerPage: number,
+	page: number,
 	search: string,
-	sortBy: string = '',
+	sortingOrder: string,
+	sortBy: string,
 ) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url = `${apiRoutes.organizations.root}/${orgId}/${requestId}${apiRoutes.Issuance.bulk.filesData}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}&sortBy=${sortBy}`;
+	const url = `${apiRoutes.organizations.root}/${orgId}/${requestId}${apiRoutes.Issuance.bulk.filesData}?pageSize=${itemPerPage}&pageNumber=${page}&searchByText=${search}&sortBy=${sortBy}&sortField=${sortingOrder}`;
 
 	const axiosPayload = {
 		url,

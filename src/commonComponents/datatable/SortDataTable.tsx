@@ -55,9 +55,9 @@ const SortDataTable: React.FC<IDataTable> = ({
 	const sortValues = [
 		{
 			label: 'Descending',
-			value: 'DESC',
+			value: 'desc',
 		},
-		{ label: 'Ascending', value: 'ASC' },
+		{ label: 'Ascending', value: 'asc' },
 	];
 
 	return (
