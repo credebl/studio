@@ -98,4 +98,7 @@ export const apiRoutes = {
 		usersInvitation: '/users/invitations',
 		members: '/members',
 	},
+	setting:{
+		setting: '/client_credentials'
+	}
 };
