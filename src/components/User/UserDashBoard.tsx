@@ -461,16 +461,13 @@ const UserDashBoard = () => {
 		return (
 			<div className="text-left text-xs">
 				<p className="text-base">What is Schema?</p>
-				Schema is a machine-readable semantic structure,
-				<br />a predefined data template that provides a
-				<br />
-				standard format for the digital credential
-				<br />
-				contents. Schemas define attributes that are
-				<br />
-				used in one or more Credential Definitions.
-				<br />
-				Schemas are stored on the ledger.
+				      Schema is a machine-readable semantic
+				<br />structure, a predefined data template
+				<br />that provides a standard format for the 
+				<br />digital credential contents. Schemas
+				<br />define attributes that are used in one 
+				<br />or more Credential Definitions.
+				<br />Schemas are stored on the ledger.
 			</div>
 		);
 	};
@@ -523,7 +520,7 @@ const UserDashBoard = () => {
 				<></>
 			) : (
 				<div
-					className="p-8 grid w-full grid-cols-1 sm:grid-cols-3 gap-4 mt-0 mb-4 rounded-md border-gray-200 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:bg-[url('/images/bg-darkwallet.png')] bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-0"
+					className="p-8 grid w-full grid-cols-1 sm:grid-cols-3 gap-4 mt-0 mb-4 rounded-md border-gray-200 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:bg-[url('/images/bg-darkwallet.png')] bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-0 bg-auto"
 					style={{ minHeight: '130px' }}
 				>
 					{walletLoading ? (
@@ -867,8 +864,8 @@ const UserDashBoard = () => {
 										)}{' '}
 									</>
 								) : (
-									<div className="flex items-center justify-center h-full dark:text-gray-400 text-gray-500">
-										<p>You have no organizations created or joined</p>
+									<div className="flex items-center justify-center dark:text-gray-400 text-gray-500 min-h-[195px]">
+										<p className='mb-8'>You have no organizations created or joined</p>
 									</div>
 								)}
 							</>
@@ -963,7 +960,7 @@ const UserDashBoard = () => {
 									</div>
 								) : (
 									<div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
-										<p>You have no schemas created</p>
+										<p className='mb-8'>You have no schemas created</p>
 									</div>
 								)}
 							</>
@@ -1148,7 +1145,7 @@ const UserDashBoard = () => {
 									</>
 								) : (
 									<div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
-										<p>You have no ecosystems created or joined</p>
+										<p className='mb-8'>You have no ecosystems created or joined</p>
 									</div>
 								)}
 							</>
@@ -1233,7 +1230,7 @@ const UserDashBoard = () => {
 									</>
 								) : (
 									<div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
-										<p>You have no cred-defs created</p>
+										<p className='mb-8'>You have no cred-defs created</p>
 									</div>
 								)}{' '}
 							</>
