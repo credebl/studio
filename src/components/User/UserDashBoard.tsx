@@ -21,8 +21,9 @@ import { getAllCredDef, getAllSchemasByOrgId } from '../../api/Schema';
 import type { GetAllSchemaListParameter } from '../Resources/Schema/interfaces';
 import { getEcosystems } from '../../api/ecosystem';
 import React from 'react';
-
+import { EcosystemRoles, OrganizationRoles } from '../../common/enums';
 import CustomSpinner from '../CustomSpinner';
+
 const initialPageState = {
 	pageNumber: 1,
 	pageSize: 10,
@@ -79,6 +80,7 @@ const UserDashBoard = () => {
 	const [orgLoading, setOrgLoading] = useState(true);
 	const [schemaLoading, setSchemaLoading] = useState(true);
 	const [walletLoading, setWalletLoading] = useState(true);
+
 	const getAllInvitations = async () => {
 		setLoading(true);
 		const response = await getUserInvitations(
@@ -218,6 +220,8 @@ const UserDashBoard = () => {
 			}
 		} catch (error) {
 			setSchemaLoading(false);
+		} finally {
+			setSchemaLoading(false);
 		}
 	};
 
@@ -235,7 +239,6 @@ const UserDashBoard = () => {
 				'',
 			);
 			const { data } = response as AxiosResponse;
-
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 				setEcoCount(data?.data?.totalCount);
 				const ecosystemData = data?.data?.ecosystemDetails.filter(
@@ -315,6 +318,14 @@ const UserDashBoard = () => {
 	useEffect(() => {
 		getAllResponses();
 	}, []);
+
+	useEffect(() => {
+		if (!orgLoading) {
+			setSchemaLoading(false);
+			setCredDefLoading(false);
+			setEcoLoading(false);
+		}
+	}, [orgLoading]);
 
 	useEffect(() => {
 		if (organizationsList && organizationsList?.length > 0) {
@@ -400,34 +411,81 @@ const UserDashBoard = () => {
 		window.location.href = pathRoutes.organizations.credentials;
 	};
 
-	const ToolTipData = ({ isEcosystem }) => {
+	const navigateToInvitation = () => {
+		window.location.href = pathRoutes.ecosystem.sentinvitation;
+	};
+
+	const ToolTipDataForOrganization = () => {
 		return (
 			<div className="text-left text-xs">
-				<p className="text-base">
-					What is {isEcosystem ? 'Ecosystem' : 'Organization'}?
-				</p>{' '}
-				Contacts are people or organizations you've <br />
-				interacted with.
+				<p className="text-base">What is Organization?</p>
+				An organization is a participating entity, such as
+				<br />a business, institution, or group. Organizations
 				<br />
-				You're connected over a secure and private
-				<br /> line that no one but you or them can see.
-				<br /> Nothing is shared without your permission.
-				<br /> You can:
+				typically issue and verify some kind of digital
 				<br />
-				<ul>
-					<li>Direct message your Contacts</li>
-					<li>Get offered new credentials</li>
-					<li>
-						Get notified of updates to your credentials <br />
-						issued by them
-					</li>
-					<li>
-						Request for information from your Contact <br />
-						or they request information from you
-					</li>
-				</ul>
-				You can always remove Contacts at any <br />
-				time from your Contacts list.
+				credentials, fostering trust within the digital
+				<br />
+				ecosystem.
+				<br />
+				Each organization is uniquely identified by a DID
+				<br />
+				(Decentralized Identifier), which is verifiable
+				<br />
+				publicly, thus enhancing the level of trust.
+			</div>
+		);
+	};
+	const ToolTipDataForEcosystem = () => {
+		return (
+			<div className="text-left text-xs">
+				<p className="text-base">What is Ecosystem?</p>
+				Ecosystem is a trusted network of organizations
+				<br />
+				that empowers people and businesses with safe
+				<br />
+				and secure ways of identifying themselves online
+				<br />
+				and communicating confidentially with others.
+				<br />
+				Examples are supply chain, marketplace, healthcare,
+				<br />
+				banking, etc. where participants exchange
+				<br />
+				information in an interoperable & trusted manner.
+			</div>
+		);
+	};
+
+	const ToolTipDataForSchema = () => {
+		return (
+			<div className="text-left text-xs">
+				<p className="text-base">What is Schema?</p>
+				      Schema is a machine-readable semantic
+				<br />structure, a predefined data template
+				<br />that provides a standard format for the 
+				<br />digital credential contents. Schemas
+				<br />define attributes that are used in one 
+				<br />or more Credential Definitions.
+				<br />Schemas are stored on the ledger.
+			</div>
+		);
+	};
+
+	const ToolTipDataForCredDef = () => {
+		return (
+			<div className="text-left text-xs">
+				<p className="text-base">What is Credential Definition?</p>
+				A Credential Definition is a machine-readable
+				<br />
+				definition of any Schema or in simple terms,
+				<br />a tag created specific to an issuer and Schema.
+				<br />
+				Credentials are always issued by an issuer
+				<br />
+				using Cred-Def created by them.
+				<br />
+				Credential Definitions are stored on the ledger.
 			</div>
 		);
 	};
@@ -462,8 +520,8 @@ const UserDashBoard = () => {
 				<></>
 			) : (
 				<div
-					className="p-8 grid w-full grid-cols-1 sm:grid-cols-3 gap-4 mt-0 mb-4 rounded-md border-gray-200 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:bg-[url('/images/bg-darkwallet.png')] bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-0"
-					style={{ minHeight: '100px' }}
+					className="p-8 grid w-full grid-cols-1 sm:grid-cols-3 gap-4 mt-0 mb-4 rounded-md border-gray-200 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:bg-[url('/images/bg-darkwallet.png')] bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-0 bg-auto"
+					style={{ minHeight: '130px' }}
 				>
 					{walletLoading ? (
 						<></>
@@ -523,12 +581,12 @@ const UserDashBoard = () => {
 				>
 					<div className="w-full relative h-full">
 						<div className="flex justify-between pb-2 flex text-center">
-							<div className="flex text-center justify-center">
-								<h2 className="text-xl font-semibold text-gray-900 dark:text-white items-center ">
+							<div className="flex text-center justify-center items-center">
+								<h2 className="text-xl font-semibold text-gray-900 dark:text-white items-center">
 									Organizations{' '}
 								</h2>
 								<Tooltip
-									content={<ToolTipData isEcosystem={false} />}
+									content={<ToolTipDataForOrganization />}
 									placement="bottom"
 									className="items-center text-center dark:text-white"
 								>
@@ -538,7 +596,7 @@ const UserDashBoard = () => {
 										height="20"
 										fill="none"
 										viewBox="0 0 20 20"
-										className="mt-[6px] ml-3 dark:text-white text-primary-700"
+										className="ml-3 dark:text-white text-primary-700"
 									>
 										<path
 											fill="currentColor"
@@ -547,8 +605,11 @@ const UserDashBoard = () => {
 									</svg>
 								</Tooltip>
 							</div>
-							<div className="bg-primary-700 w-10 rounded-md text-lg">
-								<span className="flex justify-center items-center text-white p-2 text-lg">
+							<div
+								className="bg-primary-700 rounded-md text-lg"
+								style={{ minWidth: '44px' }}
+							>
+								<span className="flex justify-center items-center text-white p-2 text-lg font-medium">
 									{orgCount ?? 0}
 								</span>
 							</div>
@@ -559,7 +620,7 @@ const UserDashBoard = () => {
 								{organizationsList && organizationsList?.length > 0 ? (
 									<>
 										{' '}
-										{organizationsList?.map((org) => {
+										{organizationsList?.map((org, index) => {
 											const roles: string[] = org.userOrgRoles.map(
 												(role) => role.orgRole.name,
 											);
@@ -570,7 +631,7 @@ const UserDashBoard = () => {
 													key={org?.id}
 												>
 													<button
-														className="w-full"
+														className="sm:w-100/11rem w-full"
 														onClick={() =>
 															goToOrgDashboard(org?.id, org?.roles)
 														}
@@ -595,8 +656,65 @@ const UserDashBoard = () => {
 																/>
 															)}
 
-															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white text-start">
-																{org?.name}
+															<span className="flex items-center space-x-2 ml-3 text-lg font-bold text-gray-500 dark:text-white text-start truncate">
+																<span className="truncate"> {org?.name}</span>
+																<span>
+																	{organizationsList[index].userOrgRoles[0]
+																		.orgRole.name ===
+																	OrganizationRoles.organizationOwner ? (
+																		<svg
+																			xmlns="http://www.w3.org/2000/svg"
+																			width="24"
+																			height="24"
+																			viewBox="0 0 24 24"
+																			fill="none"
+																		>
+																			<path
+																				d="M19 23L17.5 21.5V16.85C16.7667 16.6333 16.1667 16.2208 15.7 15.6125C15.2333 15.0042 15 14.3 15 13.5C15 12.5333 15.3417 11.7083 16.025 11.025C16.7083 10.3417 17.5333 10 18.5 10C19.4667 10 20.2917 10.3417 20.975 11.025C21.6583 11.7083 22 12.5333 22 13.5C22 14.25 21.7875 14.9167 21.3625 15.5C20.9375 16.0833 20.4 16.5 19.75 16.75L21 18L19.5 19.5L21 21L19 23ZM18.5 14C18.7833 14 19.0208 13.9042 19.2125 13.7125C19.4042 13.5208 19.5 13.2833 19.5 13C19.5 12.7167 19.4042 12.4792 19.2125 12.2875C19.0208 12.0958 18.7833 12 18.5 12C18.2167 12 17.9792 12.0958 17.7875 12.2875C17.5958 12.4792 17.5 12.7167 17.5 13C17.5 13.2833 17.5958 13.5208 17.7875 13.7125C17.9792 13.9042 18.2167 14 18.5 14Z"
+																				fill="#1F4EAD"
+																			/>
+																			<path
+																				d="M3.9 19.1V17.2C3.9 16.7967 4.0013 16.4393 4.20445 16.1084C4.41153 15.7712 4.67665 15.5247 5.00841 15.352C5.98228 14.8656 6.96654 14.5033 7.96184 14.2622C8.95899 14.0207 9.9712 13.9 11 13.9C11.3108 13.9 11.6217 13.9117 11.9327 13.935C11.988 13.9391 12.0434 13.9437 12.0987 13.9485C12.1495 14.7586 12.355 15.5381 12.7154 16.2805C13.1307 17.1362 13.7117 17.8619 14.45 18.4523V19.1H3.9ZM11 11.1C10.1406 11.1 9.42729 10.8045 8.8114 10.1886C8.1955 9.57271 7.9 8.85941 7.9 8C7.9 7.14059 8.1955 6.42729 8.8114 5.8114C9.42729 5.1955 10.1406 4.9 11 4.9C11.8594 4.9 12.5727 5.1955 13.1886 5.8114C13.8045 6.42729 14.1 7.14059 14.1 8C14.1 8.85941 13.8045 9.57271 13.1886 10.1886C12.5727 10.8045 11.8594 11.1 11 11.1Z"
+																				stroke="#1F4EAD"
+																				stroke-width="1.8"
+																			/>
+																		</svg>
+																	) : organizationsList[index].userOrgRoles[0]
+																			.orgRole.name ===
+																	  OrganizationRoles.organizationMember ? (
+																		<svg
+																			xmlns="http://www.w3.org/2000/svg"
+																			width="18"
+																			height="18"
+																			viewBox="0 0 20 20"
+																			fill="none"
+																		>
+																			<path
+																				id="Vector"
+																				d="M-0.00195312 18V14.85C-0.00195312 14.2125 0.162109 13.6266 0.490234 13.0922C0.818359 12.5578 1.2543 12.15 1.79805 11.8688C2.96055 11.2875 4.1418 10.8516 5.3418 10.5609C6.5418 10.2703 7.76055 10.125 8.99805 10.125C10.2355 10.125 11.4543 10.2703 12.6543 10.5609C13.8543 10.8516 15.0355 11.2875 16.198 11.8688C16.7418 12.15 17.1777 12.5578 17.5059 13.0922C17.834 13.6266 17.998 14.2125 17.998 14.85V18H-0.00195312ZM8.99805 9C7.76055 9 6.70117 8.55938 5.81992 7.67813C4.93867 6.79688 4.49805 5.7375 4.49805 4.5C4.49805 3.2625 4.93867 2.20312 5.81992 1.32188C6.70117 0.440625 7.76055 0 8.99805 0C10.2355 0 11.2949 0.440625 12.1762 1.32188C13.0574 2.20312 13.498 3.2625 13.498 4.5C13.498 5.7375 13.0574 6.79688 12.1762 7.67813C11.2949 8.55938 10.2355 9 8.99805 9ZM2.24805 15.75H15.748V14.85C15.748 14.6438 15.6965 14.4563 15.5934 14.2875C15.4902 14.1187 15.3543 13.9875 15.1855 13.8938C14.173 13.3875 13.1512 13.0078 12.1199 12.7547C11.0887 12.5016 10.048 12.375 8.99805 12.375C7.94805 12.375 6.90742 12.5016 5.87617 12.7547C4.84492 13.0078 3.82305 13.3875 2.81055 13.8938C2.6418 13.9875 2.50586 14.1187 2.40273 14.2875C2.29961 14.4563 2.24805 14.6438 2.24805 14.85V15.75ZM8.99805 6.75C9.6168 6.75 10.1465 6.52969 10.5871 6.08906C11.0277 5.64844 11.248 5.11875 11.248 4.5C11.248 3.88125 11.0277 3.35156 10.5871 2.91094C10.1465 2.47031 9.6168 2.25 8.99805 2.25C8.3793 2.25 7.84961 2.47031 7.40898 2.91094C6.96836 3.35156 6.74805 3.88125 6.74805 4.5C6.74805 5.11875 6.96836 5.64844 7.40898 6.08906C7.84961 6.52969 8.3793 6.75 8.99805 6.75Z"
+																				fill="#1F4EAD"
+																			/>
+																		</svg>
+																	) : (
+																		<svg
+																			xmlns="http://www.w3.org/2000/svg"
+																			width="24"
+																			height="24"
+																			viewBox="0 0 24 24"
+																			fill="none"
+																		>
+																			<path
+																				d="M19 23L17.5 21.5V16.85C16.7667 16.6333 16.1667 16.2208 15.7 15.6125C15.2333 15.0042 15 14.3 15 13.5C15 12.5333 15.3417 11.7083 16.025 11.025C16.7083 10.3417 17.5333 10 18.5 10C19.4667 10 20.2917 10.3417 20.975 11.025C21.6583 11.7083 22 12.5333 22 13.5C22 14.25 21.7875 14.9167 21.3625 15.5C20.9375 16.0833 20.4 16.5 19.75 16.75L21 18L19.5 19.5L21 21L19 23ZM18.5 14C18.7833 14 19.0208 13.9042 19.2125 13.7125C19.4042 13.5208 19.5 13.2833 19.5 13C19.5 12.7167 19.4042 12.4792 19.2125 12.2875C19.0208 12.0958 18.7833 12 18.5 12C18.2167 12 17.9792 12.0958 17.7875 12.2875C17.5958 12.4792 17.5 12.7167 17.5 13C17.5 13.2833 17.5958 13.5208 17.7875 13.7125C17.9792 13.9042 18.2167 14 18.5 14Z"
+																				fill="#1F4EAD"
+																			/>
+																			<path
+																				d="M3.9 19.1V17.2C3.9 16.7967 4.0013 16.4393 4.20445 16.1084C4.41153 15.7712 4.67665 15.5247 5.00841 15.352C5.98228 14.8656 6.96654 14.5033 7.96184 14.2622C8.95899 14.0207 9.9712 13.9 11 13.9C11.3108 13.9 11.6217 13.9117 11.9327 13.935C11.988 13.9391 12.0434 13.9437 12.0987 13.9485C12.1495 14.7586 12.355 15.5381 12.7154 16.2805C13.1307 17.1362 13.7117 17.8619 14.45 18.4523V19.1H3.9ZM11 11.1C10.1406 11.1 9.42729 10.8045 8.8114 10.1886C8.1955 9.57271 7.9 8.85941 7.9 8C7.9 7.14059 8.1955 6.42729 8.8114 5.8114C9.42729 5.1955 10.1406 4.9 11 4.9C11.8594 4.9 12.5727 5.1955 13.1886 5.8114C13.8045 6.42729 14.1 7.14059 14.1 8C14.1 8.85941 13.8045 9.57271 13.1886 10.1886C12.5727 10.8045 11.8594 11.1 11 11.1Z"
+																				stroke="#1F4EAD"
+																				stroke-width="1.8"
+																			/>
+																		</svg>
+																	)}
+																</span>
 															</span>
 														</a>
 													</button>
@@ -617,12 +735,15 @@ const UserDashBoard = () => {
 																	xmlns="http://www.w3.org/2000/svg"
 																	width="24"
 																	height="24"
-																	fill="none"
 																	viewBox="0 0 24 24"
+																	fill="none"
 																>
 																	<path
-																		fill="#6B7280"
-																		d="M7.596 2.5a.487.487 0 0 0-.476.498v5.544c0 .275.213.498.476.498h8.808a.487.487 0 0 0 .476-.498V2.998a.487.487 0 0 0-.476-.498H7.596Zm.475.997h7.858v4.546H8.071V3.497Zm1.553.354a.487.487 0 0 0-.481.498c0 .278.216.502.481.498h4.752a.487.487 0 0 0 .482-.498.487.487 0 0 0-.482-.498H9.624Zm0 1.345a.487.487 0 0 0-.481.499c0 .278.216.502.481.498h4.752a.487.487 0 0 0 .482-.498.487.487 0 0 0-.482-.499H9.624Zm0 1.346a.487.487 0 0 0-.481.498c0 .278.216.502.481.498h4.752a.487.487 0 0 0 .482-.498.487.487 0 0 0-.482-.498H9.624ZM12 9.427a.487.487 0 0 0-.475.498v2.746H4.559a.487.487 0 0 0-.475.498v3.244c0 .275.213.498.475.498a.487.487 0 0 0 .476-.498v-2.745h6.49v2.745c0 .275.213.498.475.498a.487.487 0 0 0 .475-.498v-2.745h6.49v2.745c0 .275.213.498.476.498a.487.487 0 0 0 .475-.498v-3.244a.487.487 0 0 0-.476-.498h-6.965V9.925A.487.487 0 0 0 12 9.427ZM1.975 17.41a.487.487 0 0 0-.475.498v3.094c0 .275.213.498.475.498h5.169a.487.487 0 0 0 .475-.498v-3.094a.487.487 0 0 0-.475-.498H1.975Zm7.44 0a.487.487 0 0 0-.475.498v3.094c0 .275.213.498.476.498h5.168a.487.487 0 0 0 .476-.498v-3.094a.487.487 0 0 0-.476-.498H9.416Zm7.441 0a.487.487 0 0 0-.475.498v3.094c0 .275.213.498.475.498h5.169a.487.487 0 0 0 .475-.498v-3.094a.487.487 0 0 0-.475-.498h-5.169Zm-14.406.996h4.22v2.097H2.45v-2.097Zm7.44 0h4.22v2.097H9.89v-2.097Zm7.441 0h4.219v2.097h-4.22v-2.097Z"
+																		d="M7 9H18.75M7 12H18.75M7 15H13M4.5 19.5H19.5C20.0967 19.5 20.669 19.2629 21.091 18.841C21.5129 18.419 21.75 17.8467 21.75 17.25V6.75C21.75 6.15326 21.5129 5.58097 21.091 5.15901C20.669 4.73705 20.0967 4.5 19.5 4.5H4.5C3.90326 4.5 3.33097 4.73705 2.90901 5.15901C2.48705 5.58097 2.25 6.15326 2.25 6.75V17.25C2.25 17.8467 2.48705 18.419 2.90901 18.841C3.33097 19.2629 3.90326 19.5 4.5 19.5Z"
+																		stroke="#6B7280"
+																		stroke-width="1.8"
+																		stroke-linecap="round"
+																		stroke-linejoin="round"
 																	/>
 																</svg>
 															</button>
@@ -715,27 +836,17 @@ const UserDashBoard = () => {
 																	xmlns="http://www.w3.org/2000/svg"
 																	width="24"
 																	height="24"
-																	fill="none"
 																	viewBox="0 0 24 24"
+																	fill="none"
 																>
 																	<path
+																		d="M3.44444 21C2.77222 21 2.19676 20.7745 1.71806 20.3235C1.23935 19.8725 1 19.3303 1 18.697V6.60606C1 5.97273 1.23935 5.43056 1.71806 4.97955C2.19676 4.52854 2.77222 4.30303 3.44444 4.30303H8.57778C8.84259 3.61212 9.28565 3.05556 9.90694 2.63333C10.5282 2.21111 11.2259 2 12 2C12.7741 2 13.4718 2.21111 14.0931 2.63333C14.7144 3.05556 15.1574 3.61212 15.4222 4.30303H20.5556C21.2278 4.30303 21.8032 4.52854 22.2819 4.97955C22.7606 5.43056 23 5.97273 23 6.60606V18.697C23 19.3303 22.7606 19.8725 22.2819 20.3235C21.8032 20.7745 21.2278 21 20.5556 21H3.44444ZM3.17284 18.8889H20.8323V6.22222H3.17284V18.8889ZM12 5.74242C12.2648 5.74242 12.4838 5.66086 12.6569 5.49773C12.8301 5.3346 12.9167 5.12828 12.9167 4.87879C12.9167 4.62929 12.8301 4.42298 12.6569 4.25985C12.4838 4.09672 12.2648 4.01515 12 4.01515C11.7352 4.01515 11.5162 4.09672 11.3431 4.25985C11.1699 4.42298 11.0833 4.62929 11.0833 4.87879C11.0833 5.12828 11.1699 5.3346 11.3431 5.49773C11.5162 5.66086 11.7352 5.74242 12 5.74242Z"
 																		fill="#6B7280"
-																		d="M3.444 21a2.428 2.428 0 0 1-1.726-.677C1.24 19.873 1 19.33 1 18.697V6.607c0-.634.24-1.176.718-1.627a2.428 2.428 0 0 1 1.726-.677h5.134a3.486 3.486 0 0 1 1.329-1.67A3.639 3.639 0 0 1 12 2a3.64 3.64 0 0 1 2.093.633 3.486 3.486 0 0 1 1.33 1.67h5.133c.672 0 1.247.226 1.726.677.479.45.718.993.718 1.626v12.091c0 .633-.24 1.175-.718 1.627a2.428 2.428 0 0 1-1.726.676H3.444Zm-.271-2.111h17.66V6.222H3.172V18.89ZM12 5.742a.92.92 0 0 0 .657-.244.814.814 0 0 0 .26-.62.814.814 0 0 0-.26-.618.92.92 0 0 0-.657-.245.92.92 0 0 0-.657.245.814.814 0 0 0-.26.619c0 .25.087.456.26.619a.92.92 0 0 0 .657.244Z"
 																	/>
-																	<g clip-path="url(#a)">
-																		<path
-																			fill="#6B7280"
-																			d="m16.031 20.297-.89-1.5-1.688-.375.164-1.735-1.148-1.312 1.148-1.313-.164-1.734 1.688-.375.89-1.5 1.594.68 1.594-.68.89 1.5 1.688.375-.164 1.735 1.148 1.312-1.148 1.313.164 1.734-1.688.375-.89 1.5-1.594-.68-1.594.68Zm.399-1.195 1.195-.516 1.219.516.656-1.125 1.29-.305-.118-1.313.867-.984-.867-1.008.117-1.312-1.289-.282-.68-1.125-1.195.516-1.219-.516-.656 1.125-1.29.282.118 1.312-.867 1.008.867.984-.117 1.336 1.289.282.68 1.125Zm.703-2.063 2.648-2.648-.656-.68-1.992 1.992-1.008-.984-.656.656 1.664 1.664Z"
-																		/>
-																	</g>
-																	<defs>
-																		<clipPath id="a">
-																			<path
-																				fill="#fff"
-																				d="M10 9.75h11.25V21H10z"
-																			/>
-																		</clipPath>
-																	</defs>
+																	<path
+																		d="M10.0312 17.5469L9.14062 16.0469L7.45312 15.6719L7.61719 13.9375L6.46875 12.625L7.61719 11.3125L7.45312 9.57812L9.14062 9.20312L10.0312 7.70312L11.625 8.38281L13.2187 7.70312L14.1094 9.20312L15.7969 9.57812L15.6328 11.3125L16.7812 12.625L15.6328 13.9375L15.7969 15.6719L14.1094 16.0469L13.2187 17.5469L11.625 16.8672L10.0312 17.5469ZM10.4297 16.3516L11.625 15.8359L12.8437 16.3516L13.5 15.2266L14.7891 14.9219L14.6719 13.6094L15.5391 12.625L14.6719 11.6172L14.7891 10.3047L13.5 10.0234L12.8203 8.89844L11.625 9.41406L10.4062 8.89844L9.75 10.0234L8.46094 10.3047L8.57812 11.6172L7.71094 12.625L8.57812 13.6094L8.46094 14.9453L9.75 15.2266L10.4297 16.3516ZM11.1328 14.2891L13.7812 11.6406L13.125 10.9609L11.1328 12.9531L10.125 11.9688L9.46875 12.625L11.1328 14.2891Z"
+																		fill="#6B7280"
+																	/>
 																</svg>
 															</button>
 														</Tooltip>
@@ -753,8 +864,8 @@ const UserDashBoard = () => {
 										)}{' '}
 									</>
 								) : (
-									<div className="flex items-center justify-center h-full dark:text-gray-400 text-gray-500">
-										<p>You have no organisations created or joined</p>
+									<div className="flex items-center justify-center dark:text-gray-400 text-gray-500 min-h-[195px]">
+										<p className='mb-8'>You have no organizations created or joined</p>
 									</div>
 								)}
 							</>
@@ -771,18 +882,12 @@ const UserDashBoard = () => {
 				>
 					<div className="w-full relative h-full">
 						<div className="flex justify-between pb-2 flex text-center">
-							<div className="flex text-center justify-center">
-								<h2 className="text-xl font-semibold text-gray-900 dark:text-white items-center ">
+							<div className="flex text-center justify-center items-center">
+								<h2 className="text-xl font-semibold text-gray-900 dark:text-white items-center">
 									Schemas
 								</h2>
 								<Tooltip
-									content={
-										<div className="text-left text-xs">
-											<p className="text-base">What is schema?</p> Schemas
-											define the attributes that
-											<br /> can be included in a credential.
-										</div>
-									}
+									content={<ToolTipDataForSchema />}
 									placement="bottom"
 									className="items-center text-center dark:text-white"
 								>
@@ -792,7 +897,7 @@ const UserDashBoard = () => {
 										height="20"
 										fill="none"
 										viewBox="0 0 20 20"
-										className="mt-[6px] ml-3 dark:text-white text-primary-700"
+										className="ml-3 dark:text-white text-primary-700"
 									>
 										<path
 											fill="currentColor"
@@ -801,8 +906,11 @@ const UserDashBoard = () => {
 									</svg>
 								</Tooltip>
 							</div>
-							<div className="bg-primary-700 w-10 rounded-md text-lg">
-								<span className="flex justify-center items-center text-white p-2 text-lg">
+							<div
+								className="bg-primary-700 rounded-md text-lg"
+								style={{ minWidth: '44px' }}
+							>
+								<span className="flex justify-center items-center text-white p-2 text-lg font-medium">
 									{schemaCount ?? 0}
 								</span>
 							</div>
@@ -828,16 +936,16 @@ const UserDashBoard = () => {
 													>
 														<a
 															href="#"
-															className="flex items-center py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-md mr-2"
+															className="flex items-center space-x-2 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-md"
 														>
 															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white text-primary-700 text-start">
 																{schema?.name}
 															</span>
+															<span className="items-center font-normal text-md justify-start dark:text-white text-gray-600 truncate">
+																{schema?.version}
+															</span>
 														</a>
 													</button>
-													<div className="flex space-x-3 items-center justify-start dark:text-white">
-														<span>v.{schema?.version}</span>
-													</div>
 												</button>
 											);
 										})}
@@ -852,7 +960,7 @@ const UserDashBoard = () => {
 									</div>
 								) : (
 									<div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
-										<p>You have no schemas created</p>
+										<p className='mb-8'>You have no schemas created</p>
 									</div>
 								)}
 							</>
@@ -874,12 +982,12 @@ const UserDashBoard = () => {
 				>
 					<div className="w-full relative h-full">
 						<div className="flex justify-between pb-2 flex text-center">
-							<div className="flex text-center justify-center">
-								<h2 className="text-xl font-semibold text-gray-900 dark:text-white items-center ">
+							<div className="flex text-center justify-center items-center">
+								<h2 className="text-xl font-semibold text-gray-900 dark:text-white items-center">
 									Ecosystems{' '}
 								</h2>
 								<Tooltip
-									content={<ToolTipData isEcosystem={true} />}
+									content={<ToolTipDataForEcosystem />}
 									placement="bottom"
 									className="items-center text-center dark:text-white"
 								>
@@ -889,7 +997,7 @@ const UserDashBoard = () => {
 										height="20"
 										fill="none"
 										viewBox="0 0 20 20"
-										className="mt-[6px] ml-3 dark:text-white text-primary-700"
+										className="ml-3 dark:text-white text-primary-700"
 									>
 										<path
 											fill="currentColor"
@@ -898,8 +1006,11 @@ const UserDashBoard = () => {
 									</svg>
 								</Tooltip>
 							</div>
-							<div className="bg-primary-700 w-10 rounded-md text-lg">
-								<span className="flex justify-center items-center text-white p-2 text-lg">
+							<div
+								className="bg-primary-700 rounded-md text-lg"
+								style={{ minWidth: '44px' }}
+							>
+								<span className="flex justify-center items-center text-white p-2 text-lg font-medium">
 									{ecoCount ?? 0}
 								</span>
 							</div>
@@ -917,7 +1028,12 @@ const UserDashBoard = () => {
 													key={ecosystem?.id}
 												>
 													<button
-														className="w-full"
+														className={`${
+															ecosystem?.ecosystemOrgs[0]?.ecosystemRole
+																?.name === EcosystemRoles.ecosystemLead
+																? 'sm:w-100/3rem w-full'
+																: 'w-full'
+														}`}
 														onClick={() => goToEcoDashboard(ecosystem?.id)}
 													>
 														<a
@@ -940,11 +1056,80 @@ const UserDashBoard = () => {
 																/>
 															)}
 
-															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white text-start">
-																{ecosystem?.name}
+															<span className="flex space-x-2 ml-3 text-lg font-bold text-gray-500 dark:text-white text-start truncate items-center">
+																<span className="truncate">
+																	{' '}
+																	{ecosystem?.name}
+																</span>{' '}
+																<span>
+																	{ecosystem?.ecosystemOrgs[0]?.ecosystemRole
+																		?.name === EcosystemRoles.ecosystemLead ? (
+																		<svg
+																			xmlns="http://www.w3.org/2000/svg"
+																			width="24"
+																			height="24"
+																			viewBox="0 0 24 24"
+																			fill="none"
+																		>
+																			<path
+																				d="M19 23L17.5 21.5V16.85C16.7667 16.6333 16.1667 16.2208 15.7 15.6125C15.2333 15.0042 15 14.3 15 13.5C15 12.5333 15.3417 11.7083 16.025 11.025C16.7083 10.3417 17.5333 10 18.5 10C19.4667 10 20.2917 10.3417 20.975 11.025C21.6583 11.7083 22 12.5333 22 13.5C22 14.25 21.7875 14.9167 21.3625 15.5C20.9375 16.0833 20.4 16.5 19.75 16.75L21 18L19.5 19.5L21 21L19 23ZM18.5 14C18.7833 14 19.0208 13.9042 19.2125 13.7125C19.4042 13.5208 19.5 13.2833 19.5 13C19.5 12.7167 19.4042 12.4792 19.2125 12.2875C19.0208 12.0958 18.7833 12 18.5 12C18.2167 12 17.9792 12.0958 17.7875 12.2875C17.5958 12.4792 17.5 12.7167 17.5 13C17.5 13.2833 17.5958 13.5208 17.7875 13.7125C17.9792 13.9042 18.2167 14 18.5 14Z"
+																				fill="#1F4EAD"
+																			/>
+																			<path
+																				d="M3.9 19.1V17.2C3.9 16.7967 4.0013 16.4393 4.20445 16.1084C4.41153 15.7712 4.67665 15.5247 5.00841 15.352C5.98228 14.8656 6.96654 14.5033 7.96184 14.2622C8.95899 14.0207 9.9712 13.9 11 13.9C11.3108 13.9 11.6217 13.9117 11.9327 13.935C11.988 13.9391 12.0434 13.9437 12.0987 13.9485C12.1495 14.7586 12.355 15.5381 12.7154 16.2805C13.1307 17.1362 13.7117 17.8619 14.45 18.4523V19.1H3.9ZM11 11.1C10.1406 11.1 9.42729 10.8045 8.8114 10.1886C8.1955 9.57271 7.9 8.85941 7.9 8C7.9 7.14059 8.1955 6.42729 8.8114 5.8114C9.42729 5.1955 10.1406 4.9 11 4.9C11.8594 4.9 12.5727 5.1955 13.1886 5.8114C13.8045 6.42729 14.1 7.14059 14.1 8C14.1 8.85941 13.8045 9.57271 13.1886 10.1886C12.5727 10.8045 11.8594 11.1 11 11.1Z"
+																				stroke="#1F4EAD"
+																				stroke-width="1.8"
+																			/>
+																		</svg>
+																	) : (
+																		<svg
+																			xmlns="http://www.w3.org/2000/svg"
+																			width="18"
+																			height="18"
+																			viewBox="0 0 20 20"
+																			fill="none"
+																		>
+																			<path
+																				id="Vector"
+																				d="M-0.00195312 18V14.85C-0.00195312 14.2125 0.162109 13.6266 0.490234 13.0922C0.818359 12.5578 1.2543 12.15 1.79805 11.8688C2.96055 11.2875 4.1418 10.8516 5.3418 10.5609C6.5418 10.2703 7.76055 10.125 8.99805 10.125C10.2355 10.125 11.4543 10.2703 12.6543 10.5609C13.8543 10.8516 15.0355 11.2875 16.198 11.8688C16.7418 12.15 17.1777 12.5578 17.5059 13.0922C17.834 13.6266 17.998 14.2125 17.998 14.85V18H-0.00195312ZM8.99805 9C7.76055 9 6.70117 8.55938 5.81992 7.67813C4.93867 6.79688 4.49805 5.7375 4.49805 4.5C4.49805 3.2625 4.93867 2.20312 5.81992 1.32188C6.70117 0.440625 7.76055 0 8.99805 0C10.2355 0 11.2949 0.440625 12.1762 1.32188C13.0574 2.20312 13.498 3.2625 13.498 4.5C13.498 5.7375 13.0574 6.79688 12.1762 7.67813C11.2949 8.55938 10.2355 9 8.99805 9ZM2.24805 15.75H15.748V14.85C15.748 14.6438 15.6965 14.4563 15.5934 14.2875C15.4902 14.1187 15.3543 13.9875 15.1855 13.8938C14.173 13.3875 13.1512 13.0078 12.1199 12.7547C11.0887 12.5016 10.048 12.375 8.99805 12.375C7.94805 12.375 6.90742 12.5016 5.87617 12.7547C4.84492 13.0078 3.82305 13.3875 2.81055 13.8938C2.6418 13.9875 2.50586 14.1187 2.40273 14.2875C2.29961 14.4563 2.24805 14.6438 2.24805 14.85V15.75ZM8.99805 6.75C9.6168 6.75 10.1465 6.52969 10.5871 6.08906C11.0277 5.64844 11.248 5.11875 11.248 4.5C11.248 3.88125 11.0277 3.35156 10.5871 2.91094C10.1465 2.47031 9.6168 2.25 8.99805 2.25C8.3793 2.25 7.84961 2.47031 7.40898 2.91094C6.96836 3.35156 6.74805 3.88125 6.74805 4.5C6.74805 5.11875 6.96836 5.64844 7.40898 6.08906C7.84961 6.52969 8.3793 6.75 8.99805 6.75Z"
+																				fill="#1F4EAD"
+																			/>
+																		</svg>
+																	)}
+																</span>
 															</span>
 														</a>
 													</button>
+													<div className="hidden sm:flex space-x-3 items-center">
+														<Tooltip
+															content={'Invite'}
+															placement="bottom"
+															className="items-center text-center dark:text-white"
+														>
+															{ecosystem?.ecosystemOrgs[0]?.ecosystemRole
+																?.name === EcosystemRoles.ecosystemLead && (
+																<button
+																	onClick={() => {
+																		navigateToInvitation();
+																	}}
+																	className="rounded-md flex "
+																>
+																	<svg
+																		xmlns="http://www.w3.org/2000/svg"
+																		width="30"
+																		height="24"
+																		viewBox="0 0 42 24"
+																		fill="none"
+																	>
+																		<path
+																			d="M37.8462 0H9.23077C7.2 0 5.53846 1.66154 5.53846 3.69231V5.07692C5.53846 5.58462 5.95385 6 6.46154 6C6.96923 6 7.38462 5.58462 7.38462 5.07692V3.69231C7.38462 3.50769 7.43077 3.32308 7.47692 3.13846L17.8154 12L7.47692 20.8615C7.43077 20.6769 7.38462 20.4923 7.38462 20.3077V18.9231C7.38462 18.4154 6.96923 18 6.46154 18C5.95385 18 5.53846 18.4154 5.53846 18.9231V20.3077C5.53846 22.3385 7.2 24 9.23077 24H37.8462C39.8769 24 41.5385 22.3385 41.5385 20.3077V3.69231C41.5385 1.66154 39.8769 0 37.8462 0ZM8.86154 1.89231C8.95385 1.84615 9.09231 1.84615 9.23077 1.84615H37.8462C37.9846 1.84615 38.1231 1.84615 38.2154 1.89231L24.1385 13.9385C23.7692 14.2154 23.3077 14.2154 22.9385 13.9385L8.86154 1.89231ZM37.8462 22.1538H9.23077C9.09231 22.1538 8.95385 22.1538 8.86154 22.1077L19.2462 13.2L21.7385 15.3692C22.2462 15.8308 22.8923 16.0615 23.5385 16.0615C24.1846 16.0615 24.8308 15.8308 25.3385 15.3692L27.8308 13.2L38.2154 22.1077C38.1231 22.1538 37.9846 22.1538 37.8462 22.1538ZM39.6923 20.3077C39.6923 20.4923 39.6462 20.6769 39.6 20.8615L29.2615 12L39.6 3.13846C39.6462 3.32308 39.6923 3.50769 39.6923 3.69231V20.3077ZM2.76923 9.69231C2.76923 9.18462 3.18462 8.76923 3.69231 8.76923H9.23077C9.73846 8.76923 10.1538 9.18462 10.1538 9.69231C10.1538 10.2 9.73846 10.6154 9.23077 10.6154H3.69231C3.18462 10.6154 2.76923 10.2 2.76923 9.69231ZM9.23077 15.2308H0.923077C0.415385 15.2308 0 14.8154 0 14.3077C0 13.8 0.415385 13.3846 0.923077 13.3846H9.23077C9.73846 13.3846 10.1538 13.8 10.1538 14.3077C10.1538 14.8154 9.73846 15.2308 9.23077 15.2308Z"
+																			fill="#6B7280"
+																		/>
+																	</svg>
+																</button>
+															)}
+														</Tooltip>
+													</div>
 												</button>
 											);
 										})}
@@ -960,7 +1145,7 @@ const UserDashBoard = () => {
 									</>
 								) : (
 									<div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
-										<p>You have no ecosystems created or joined</p>
+										<p className='mb-8'>You have no ecosystems created or joined</p>
 									</div>
 								)}
 							</>
@@ -977,21 +1162,12 @@ const UserDashBoard = () => {
 				>
 					<div className="w-full relative h-full">
 						<div className="flex justify-between pb-2 flex text-center">
-							<div className="flex text-center justify-center">
-								<h2 className="text-xl font-semibold text-gray-900 dark:text-white items-center ">
+							<div className="flex text-center justify-center items-center">
+								<h2 className="text-xl font-semibold text-gray-900 dark:text-white items-center">
 									Cred - def
 								</h2>
 								<Tooltip
-									content={
-										<div className="text-left text-xs">
-											<p className="text-base">What is Cred-def?</p> A
-											credential is a set of one or more <br />
-											claims made by an issuer. A verifiable <br />
-											credential is a tamper-evident <br /> credential that has
-											authorship
-											<br /> that can be cryptographically verified.
-										</div>
-									}
+									content={<ToolTipDataForCredDef />}
 									placement="bottom"
 									className="items-center text-center dark:text-white"
 								>
@@ -1001,7 +1177,7 @@ const UserDashBoard = () => {
 										height="20"
 										fill="none"
 										viewBox="0 0 20 20"
-										className="mt-[6px] ml-3 dark:text-white text-primary-700"
+										className="ml-3 dark:text-white text-primary-700"
 									>
 										<path
 											fill="currentColor"
@@ -1010,8 +1186,11 @@ const UserDashBoard = () => {
 									</svg>
 								</Tooltip>
 							</div>
-							<div className="bg-primary-700 w-10 rounded-md text-lg">
-								<span className="flex justify-center items-center text-white p-2 text-lg">
+							<div
+								className="bg-primary-700 rounded-md text-lg"
+								style={{ minWidth: '44px' }}
+							>
+								<span className="flex justify-center items-center text-white p-2 text-lg font-medium">
 									{credDefCount ?? 0}
 								</span>
 							</div>
@@ -1035,25 +1214,23 @@ const UserDashBoard = () => {
 													>
 														<a
 															href="#"
-															className="flex items-center py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-md mr-2"
+															className="flex items-center space-x-2 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-md"
 														>
-															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white text-primary-700 text-start">
+															<span className="ml-3 text-lg font-bold text-gray-500 text-start dark:text-white text-primary-700 shrink-0">
 																{cred?.tag}
+															</span>
+															<span className="truncate text-md font-normal dark:text-white text-gray-600">
+																{cred?.credentialDefinitionId}
 															</span>
 														</a>
 													</button>
-													<div className="min-w-6 flex space-x-3 items-center justify-start dark:text-white">
-														<span className="truncate">
-															{cred?.credentialDefinitionId.slice(0, 8)}...
-														</span>
-													</div>
 												</button>
 											);
 										})}
 									</>
 								) : (
 									<div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
-										<p>You have no cred-defs created</p>
+										<p className='mb-8'>You have no cred-defs created</p>
 									</div>
 								)}{' '}
 							</>
