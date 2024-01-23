@@ -9,6 +9,7 @@ import { axiosGet, axiosPost } from '../../services/apiRequests';
 import type { AxiosResponse } from 'axios';
 import CopyDid from '../../commonComponents/CopyDid';
 import { AlertComponent } from '../AlertComponent';
+import { Roles } from '../../utils/enums/roles';
 
 const index = () => {
 	const [loading, setLoading] = useState(true);
@@ -18,6 +19,8 @@ const index = () => {
 	const [failure, setFailure] = useState<string | null>(null);
 	const [warning, setWarning] = useState<string | null>(null);
 	const [hideCopy, setHideCopy] = useState<boolean>(true);
+	const [userRoles, setUserRoles] = useState<string[]>([]);
+	console.log('userRoles', userRoles);
 
 	const getCredentials = async () => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -127,8 +130,15 @@ const index = () => {
 		setClientSecret(null);
 	};
 
+	const getUserRoles = async () => {
+		const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES);
+		const roles = orgRoles.split(',');
+		setUserRoles(roles);
+	};
+
 	useEffect(() => {
 		getClientCredentials();
+		getUserRoles();
 	}, []);
 
 	return (
@@ -172,31 +182,34 @@ const index = () => {
 											<h1 className="text-gray-500 text-xl font-medium font-montserrat dark:text-white">
 												Client Secrate
 											</h1>
-											<div className="items-center">
-												<Button
-													onClick={createClientCredentials}
-													type="button"
-													disabled={Boolean(clientSecret)}
-													isProcessing={loading}
-													color="bg-primary-800"
-													className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
-												>
-													<svg
-														xmlns="http://www.w3.org/2000/svg"
-														className="mr-4"
-														width="18"
-														height="18"
-														fill="none"
-														viewBox="0 0 18 18"
+											{(userRoles.includes(Roles.OWNER) ||
+												userRoles.includes(Roles.ADMIN)) && (
+												<div className="items-center">
+													<Button
+														onClick={createClientCredentials}
+														type="button"
+														disabled={Boolean(clientSecret)}
+														isProcessing={loading}
+														color="bg-primary-800"
+														className='text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
 													>
-														<path
-															stroke="#fff"
-															d="M11.03 4.32a3.82 3.82 0 1 1-7.64 0 3.82 3.82 0 0 1 7.64 0Zm6.473 4.047a2.94 2.94 0 0 1-.486 1.62c-.315.476-.76.838-1.273 1.044l-.691.276.517.535.812.842-1.053 1.091-.335.348.335.347 1.053 1.091-1.619 1.678-.888-.92v-5.241l-.28-.138a2.774 2.774 0 0 1-1.098-.98 2.958 2.958 0 0 1-.168-2.917c.226-.455.566-.838.98-1.109a2.65 2.65 0 0 1 2.775-.081 2.79 2.79 0 0 1 1.038 1.05c.25.443.383.948.38 1.463Zm-1.55-1.761-.42.27.42-.27a1.434 1.434 0 0 0-.638-.542 1.396 1.396 0 0 0-1.566.32 1.491 1.491 0 0 0-.305 1.578c.105.265.286.494.52.656a1.403 1.403 0 0 0 1.813-.183 1.484 1.484 0 0 0 .175-1.83Zm-7.48 3.934c.664 0 1.32.122 1.934.359a5.18 5.18 0 0 0 1.332 1.626v4.213H.5v-1.3c0-1.291.537-2.535 1.5-3.456a5.284 5.284 0 0 1 3.649-1.443h2.824Z"
-														/>
-													</svg>
-													Generate Client Secrate{' '}
-												</Button>
-											</div>
+														<svg
+															xmlns="http://www.w3.org/2000/svg"
+															className="mr-4"
+															width="18"
+															height="18"
+															fill="none"
+															viewBox="0 0 18 18"
+														>
+															<path
+																stroke="#fff"
+																d="M11.03 4.32a3.82 3.82 0 1 1-7.64 0 3.82 3.82 0 0 1 7.64 0Zm6.473 4.047a2.94 2.94 0 0 1-.486 1.62c-.315.476-.76.838-1.273 1.044l-.691.276.517.535.812.842-1.053 1.091-.335.348.335.347 1.053 1.091-1.619 1.678-.888-.92v-5.241l-.28-.138a2.774 2.774 0 0 1-1.098-.98 2.958 2.958 0 0 1-.168-2.917c.226-.455.566-.838.98-1.109a2.65 2.65 0 0 1 2.775-.081 2.79 2.79 0 0 1 1.038 1.05c.25.443.383.948.38 1.463Zm-1.55-1.761-.42.27.42-.27a1.434 1.434 0 0 0-.638-.542 1.396 1.396 0 0 0-1.566.32 1.491 1.491 0 0 0-.305 1.578c.105.265.286.494.52.656a1.403 1.403 0 0 0 1.813-.183 1.484 1.484 0 0 0 .175-1.83Zm-7.48 3.934c.664 0 1.32.122 1.934.359a5.18 5.18 0 0 0 1.332 1.626v4.213H.5v-1.3c0-1.291.537-2.535 1.5-3.456a5.284 5.284 0 0 1 3.649-1.443h2.824Z"
+															/>
+														</svg>
+														Generate Client Secrate{' '}
+													</Button>
+												</div>
+											)}
 										</div>
 										{warning && (
 											<AlertComponent
@@ -208,38 +221,76 @@ const index = () => {
 												}}
 											/>
 										)}
+										{/* 
+										{clentId && (
+											<div
+												className="p-4 border rounded-md w-full gap-4 flex justify-between sm:flex-row flex-col"
+												style={{ minHeight: '100px' }}
+											>
+												<div className="flex items-center space-x-4 w-full sm:w-4/5">
+													<div className="">SVG</div>
+													<div>
+														<h1 className="">
+															{!hideCopy ? (
+																clientSecret && (
+																	<CopyDid
+																		className="flex font-courier text-base text-gray-500 dark:text-gray-400 font-semibold text-gray-900 truncate dark:text-white"
+																		value={clientSecret}
+																	/>
+																)
+															) : (
+<div className="flex items-center text-base text-gray-500 dark:text-gray-400 font-semibold text-gray-900 truncate dark:text-white">
+  {clientSecret}
+</div>
+															)}
+														</h1>
+													</div>
+												</div>
+												{(userRoles.includes(Roles.OWNER) ||
+													userRoles.includes(Roles.ADMIN)) && (
+													<div className="flex justify-center items-center">
+														<button
+															onClick={deleteKey}
+															className="bg-gray-100 border text-red-400 px-2 rounded-md text-center h-8"
+														>
+															Delete
+														</button>
+													</div>
+												)}
+											</div>
+										)} */}
 
 										{clentId && (
 											<div
-												className="p-4 border rounded-md grid w-full grid-cols-1 sm:grid-cols-4 gap-4"
+												className="p-4 border rounded-md w-full gap-4 flex justify-between sm:flex-row flex-col"
 												style={{ minHeight: '100px' }}
 											>
-												<div className="sm:col-span-1">kkk</div>
-												<div className="sm:col-span-2 flex items-center">
-													<h1 className="flex items-center">
-														{!hideCopy ? (
-															clientSecret && (
-																<CopyDid
-																	className="flex font-courier text-base text-gray-500 dark:text-gray-400 font-semibold text-gray-900 truncate dark:text-white"
-																	value={clientSecret}
-																/>
-															)
-														) : (
-															<p className="flex items-center text-base text-gray-500 dark:text-gray-400 font-semibold text-gray-900 truncate dark:text-white">
-																{' '}
-																{clientSecret}
-															</p>
-														)}
-													</h1>
+												<div className="flex items-center space-x-4 w-full sm:w-4/5 truncate dark:text-white">
+													<div>SVG</div>
+													<div className='truncate'>
+														<h1 className="text-base text-gray-500 dark:text-gray-400 font-semibold truncate dark:text-white">
+															{!hideCopy
+																? clientSecret && (
+																		<CopyDid
+																			className="flex font-courier text-base text-gray-500 dark:text-gray-400 font-semibold text-gray-900 truncate dark:text-white"
+																			value={clientSecret}
+																		/>
+																  )
+																: <span className='font-courier text-base text-gray-500 dark:text-gray-400 font-semibold text-gray-900 truncate dark:text-white'>{clientSecret}</span>}
+														</h1>
+													</div>
 												</div>
-												<div className="sm:col-span-1 flex justify-center items-center">
-													<button
-														onClick={deleteKey}
-														className="bg-gray-100 border text-red-400 px-2 rounded-md text-center h-8"
-													>
-														Delete
-													</button>
-												</div>
+												{(userRoles.includes(Roles.OWNER) ||
+													userRoles.includes(Roles.ADMIN)) && (
+													<div className="flex text-start sm:justify-center items-center w-auto sm:w-1/5 ">
+														<button
+															onClick={deleteKey}
+															className="bg-gray-100 border text-red-400 px-2 rounded-md text-center h-8"
+														>
+															Delete
+														</button>
+													</div>
+												)}
 											</div>
 										)}
 									</div>
