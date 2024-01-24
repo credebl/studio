@@ -7,19 +7,23 @@ export const getHeaderConfigs = async (tokenVal?: string) => {
     return {
         headers: {
             'Content-Type': 'application/json',
+            "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+            "X-Content-Type-Options": "nosniff",
             Authorization: `Bearer ${token}`
         }
     }
 
 }
 export const getHeaderConfigsForFormData = async () => {
-	const token = await getFromLocalStorage(storageKeys.TOKEN)
+    const token = await getFromLocalStorage(storageKeys.TOKEN)
 
-	return {
-			headers: {
-				"Content-Type": "multipart/form-data",
-					Authorization: `Bearer ${token}`
-			}
-	}
+    return {
+        headers: {
+            "Content-Type": "multipart/form-data",
+            "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+            "X-Content-Type-Options": "nosniff",
+            Authorization: `Bearer ${token}`
+        }
+    }
 
 }
