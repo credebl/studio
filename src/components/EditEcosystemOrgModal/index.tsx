@@ -12,7 +12,7 @@ import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import { updateOrganization } from '../../api/organization';
 import { updateEcosystem } from '../../api/ecosystem';
-import type { Ecosystem, EditEntityModalProps, EditEntityValues, ILogoImage } from '../Ecosystem/interfaces';
+import type { EditEntityModalProps, EditEntityValues, ILogoImage } from '../Ecosystem/interfaces';
 import React, { useEffect, useState } from 'react';
 import EndorsementTooltip from '../../commonComponents/EndorsementTooltip';
 
@@ -113,13 +113,6 @@ const EditPopupModal = (props: EditEntityModalProps) => {
 				};
 			}
 		};
-	};
-
-	const isEmpty = (object: any): boolean => {
-		for (const property in object) {
-			return false;
-		}
-		return true;
 	};
 	
 	const handleImageChange = (event: any): void => {
