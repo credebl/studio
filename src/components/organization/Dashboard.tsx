@@ -2,7 +2,6 @@ import type { OrgDashboard, Organisation } from './interfaces';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { getOrgDashboard, getOrganizationById } from '../../api/organization';
 import { useEffect, useState } from 'react';
-
 import { Alert } from 'flowbite-react';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
@@ -19,16 +18,14 @@ import { getFromLocalStorage } from '../../api/Auth';
 import { pathRoutes } from '../../config/pathRoutes';
 import DashboardCard from '../../commonComponents/DashboardCard';
 import { AlertComponent } from '../AlertComponent';
+import React from 'react';
 
 const Dashboard = () => {
 	const [orgData, setOrgData] = useState<Organisation | null>(null);
-
 	const [walletStatus, setWalletStatus] = useState<boolean>(false);
-
 	const [orgDashboard, setOrgDashboard] = useState<OrgDashboard | null>(null);
 	const [success, setSuccess] = useState<string | null>(null);
 	const [failure, setFailure] = useState<string | null>(null);
-
 	const [loading, setLoading] = useState<boolean | null>(true);
 	const [userRoles, setUserRoles] = useState<string[]>([]);
 	const [orgSuccess, setOrgSuccess] = useState<string | null>(null);
