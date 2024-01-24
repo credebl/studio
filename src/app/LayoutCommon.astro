@@ -31,6 +31,8 @@ const supabaseKey =
 			sitemap={url('sitemap-index.xml')}
 			client:load
 		/>
+		<meta http-equiv="Content-Security-Policy"
+          content="default-src 'self'; img-src https://*; child-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests">
 		<!-- <meta
 			http-equiv="Content-Security-Policy"
 			content="default-src 'self'; script-src 'self';"
