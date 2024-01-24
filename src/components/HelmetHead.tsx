@@ -1,5 +1,6 @@
 import React from 'react'
-import { Helmet } from "react-helmet";
+// import { Helmet } from "react-helmet-async";
+import { Helmet } from "react-helmet"
 
 interface IProps {
 	generator: string;
@@ -9,6 +10,8 @@ interface IProps {
 	siteTitle: string;
 	version: string;
 }
+
+export const prerender = true
 
 const HelmetHead = ({ generator, desc, icon, sitemap, siteTitle, version }: IProps) => (
 	<Helmet>
@@ -23,6 +26,14 @@ const HelmetHead = ({ generator, desc, icon, sitemap, siteTitle, version }: IPro
 		<meta name="author" content="Julian Cataldo, Zoltán Szőgyényi, Robert Tanislav" />
 		<meta name="copyright" content="MIT" />
 		<meta property="og:image" content="https://credebl.id/images/CREDEBL_ICON.png" />
+		<meta
+			httpEquiv="Content-Security-Policy"
+			content="default-src 'self'; script-src 'self';"
+		/>
+		<meta
+			property="og:image"
+			content="https://credebl.id/images/CREDEBL_ICON.png"
+		/>
 	</Helmet>
 )
 

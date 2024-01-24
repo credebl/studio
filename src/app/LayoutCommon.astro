@@ -1,5 +1,6 @@
 ---
 import pkg from '../../package.json' assert { type: 'json' };
+// import { HelmetProvider } from 'react-helmet-async';
 import HelmetHead from '../components/HelmetHead';
 import { url } from '../lib/data.js';
 
@@ -15,6 +16,7 @@ const supabaseUrl =
 	process.env.PUBLIC_SUPABASE_URL || import.meta.env.PUBLIC_SUPABASE_URL;
 const supabaseKey =
 	process.env.PUBLIC_SUPABASE_KEY || import.meta.env.PUBLIC_SUPABASE_KEY;
+
 ---
 
 <!DOCTYPE html>
@@ -29,7 +31,14 @@ const supabaseKey =
 			sitemap={url('sitemap-index.xml')}
 			client:load
 		/>
-		<meta property="og:image" content="https://credebl.id/images/CREDEBL_ICON.png" />
+		<!-- <meta
+			http-equiv="Content-Security-Policy"
+			content="default-src 'self'; script-src 'self';"
+		/>
+		<meta
+			property="og:image"
+			content="https://credebl.id/images/CREDEBL_ICON.png"
+		/> -->
 		<script is:inline>
 			if (
 				localStorage.getItem('color-theme') === 'dark' ||
@@ -42,7 +51,6 @@ const supabaseKey =
 			}
 		</script>
 	</head>
-
 	<body
 		class:list={[
 			,
