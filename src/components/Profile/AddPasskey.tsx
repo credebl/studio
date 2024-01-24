@@ -58,7 +58,7 @@ const AddPasskey = ({ responseMessages }: { responseMessages: (value: IResponseM
 
 	const addDevice = async (): Promise<void> => {
 		try {
-			if(deviceList.length > 0){
+			if(deviceList?.length > 0){
 				registerWithPasskey(true)
 				setOpenModel(false);
 			}else{
