@@ -10,8 +10,7 @@ import type { AxiosResponse } from 'axios';
 import { updateOrganization } from '../../api/organization';
 import type { EditOrgdetailsModalProps, ILogoImage, Organisation, Values } from './interfaces';
 import defaultUserIcon from '../../../public/images/person_FILL1_wght400_GRAD0_opsz24.svg';
-import { processImage } from '../../utils/processImage';
-import FormikErrorMessage from '../../commonComponents/formikerror/index'
+import { processImage } from '../../utils/enums/processImage';
 
 const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 	const [logoImage, setLogoImage] = useState<ILogoImage>({
@@ -168,12 +167,11 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 						<Form className="space-y-6" onSubmit={formikHandlers.handleSubmit}>
 							<div className="mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 								<div className="flex flex-col items-center sm:flex-row 2xl:flex-row p-2 gap-0 sm:gap-4">
-									{typeof logoImage.logoFile === 'string' &&
-										props?.orgData?.logoUrl ? (
+									{logoImage?.imagePreviewUrl ? (
 										<img
 											className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
-											src={props?.orgData?.logoUrl}
-											alt="Organization logo"
+											src={logoImage?.imagePreviewUrl}
+											alt="Jese picture"
 										/>
 									) : typeof logoImage.logoFile === 'string' ? (
 										<Avatar size="lg" img={defaultUserIcon} />

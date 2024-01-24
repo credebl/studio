@@ -1,23 +1,21 @@
 import * as yup from 'yup';
 import { Avatar, Button, Label, Modal } from 'flowbite-react';
 import { Field, Form, Formik, FormikHelpers } from 'formik';
-import {
-	IMG_MAX_HEIGHT,
-	IMG_MAX_WIDTH,
-	apiStatusCodes,
-	imageSizeAccepted,
-} from '../../config/CommonConstant';
-import { calculateSize, dataURItoBlob } from '../../utils/CompressImage';
+import { apiStatusCodes } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import { updateOrganization } from '../../api/organization';
 import { updateEcosystem } from '../../api/ecosystem';
-import type { EditEntityModalProps, EditEntityValues, ILogoImage } from '../Ecosystem/interfaces';
+import type {
+	EditEntityModalProps,
+	EditEntityValues,
+	ILogoImage,
+} from '../Ecosystem/interfaces';
 import React, { useEffect, useState } from 'react';
 import EndorsementTooltip from '../../commonComponents/EndorsementTooltip';
+import { processImage } from '../../utils/enums/processImage';
 
 const EditPopupModal = (props: EditEntityModalProps) => {
-	
 	const [logoImage, setLogoImage] = useState<ILogoImage>({
 		logoFile: '',
 		imagePreviewUrl: props?.entityData?.logoUrl ?? '',
@@ -68,85 +66,20 @@ const EditPopupModal = (props: EditEntityModalProps) => {
 		}
 	}, [props.openModal]);
 
-	const processImage = (e: any): string | undefined => {
-		const file = e?.target?.files[0];
-		if (!file) return;
-
-		const reader = new FileReader();
-		reader.readAsDataURL(file);
-
-		reader.onload = (event): void => {
-			const imgElement = document.createElement('img');
-			if (imgElement) {
-				imgElement.src =
-					typeof event?.target?.result === 'string' ? event.target.result : '';
-				imgElement.onload = (e): void => {
-					let fileUpdated: File | string = file;
-					let srcEncoded = '';
-					const canvas = document.createElement('canvas');
-
-					const { width, height, ev } = calculateSize(
-						imgElement,
-						IMG_MAX_WIDTH,
-						IMG_MAX_HEIGHT,
-					);
-					canvas.width = width;
-					canvas.height = height;
-
-					const ctx = canvas.getContext('2d');
-					if (ctx && e?.target) {
-						ctx.imageSmoothingEnabled = true;
-						ctx.imageSmoothingQuality = 'high';
-						ctx.drawImage(ev, 0, 0, canvas.width, canvas.height);
-						srcEncoded = ctx.canvas.toDataURL(ev, file.type);
-						const blob = dataURItoBlob(srcEncoded, file.type);
-						fileUpdated = new File([blob], file.name, {
-							type: file.type,
-							lastModified: new Date().getTime(),
-						});
-						setLogoImage({
-							logoFile: fileUpdated,
-							imagePreviewUrl: srcEncoded,
-							fileName: file.name,
-						});
-					}
-				};
-			}
-		};
-	};
-	
 	const handleImageChange = (event: any): void => {
 		setImgError('');
-		const reader = new FileReader();
-		const file = event?.target?.files;
-
-		const fileSize = Number((file[0]?.size / 1024 / 1024)?.toFixed(2));
-		const extension = file[0]?.name
-			?.substring(file[0]?.name?.lastIndexOf('.') + 1)
-			?.toLowerCase();
-
-		if (extension === 'png' || extension === 'jpeg' || extension === 'jpg') {
-			if (fileSize <= imageSizeAccepted) {
-				reader.onloadend = (): void => {
-					processImage(event);
-					setIsImageEmpty(false);
-				};
-				reader.readAsDataURL(file[0]);
-				event.preventDefault();
+		processImage(event, (result, error) => {
+			if (result) {
+				setLogoImage({
+					logoFile: '',
+					imagePreviewUrl: result,
+					fileName: event.target.files[0].name,
+				});
 			} else {
-				setImgError('Please check image size');
+				setImgError(error || 'An error occurred while processing the image.');
 			}
-		} else {
-			setImgError('Invalid image type');
-		}
+		});
 	};
-
-	useEffect(() => {
-		if (!props.openModal) {
-			setInitialEntityData({
-				name: '',
-				description: '',
-			});
 
 	const submitUpdateEntity = async (values: EditEntityValues) => {
 		setLoading(true);
@@ -172,7 +105,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
 						props?.onEditSuccess();
 					}
 					props.setOpenModal(false);
-					props.setMessage(data?.message)
+					props.setMessage(data?.message);
 				} else {
 					setErrMsg(response as string);
 					setLoading(false);
@@ -186,7 +119,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
 						props?.onEditSuccess();
 					}
 					props.setOpenModal(false);
-					props.setMessage(data?.message)
+					props.setMessage(data?.message);
 				} else {
 					setErrMsg(response as string);
 					setLoading(false);
