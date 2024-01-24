@@ -61,7 +61,8 @@ export enum OrganizationRoles {
 	organizationMember = "member",
 	organizationOwner = "owner",
 	organizationIssuer = "issuer",
-	organizationVerifier = "verifier"
+	organizationVerifier = "verifier",
+	organizationAdmin= 'admin'
 }
 
 export enum PlatformRoles {
