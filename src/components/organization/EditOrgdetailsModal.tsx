@@ -11,6 +11,7 @@ import { updateOrganization } from '../../api/organization';
 import type { EditOrgdetailsModalProps, ILogoImage, Organisation, Values } from './interfaces';
 import defaultUserIcon from '../../../public/images/person_FILL1_wght400_GRAD0_opsz24.svg';
 import { processImage } from '../../utils/enums/processImage';
+import FormikErrorMessage from '../../commonComponents/formikerror/index'
 
 const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 	const [logoImage, setLogoImage] = useState<ILogoImage>({
@@ -241,13 +242,10 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 										}
 									}}
 								/>
-								{formikHandlers?.errors &&
-									formikHandlers?.errors?.name &&
-									formikHandlers?.touched?.name && (
-										<span className="text-red-500 text-xs">
-											{formikHandlers?.errors?.name}
-										</span>
-									)}
+									<FormikErrorMessage
+									error={formikHandlers?.errors?.name}
+									touched={formikHandlers?.touched?.name}
+								/>
 							</div>
 
 							<div>
@@ -278,14 +276,10 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 										}
 									}}
 								/>
-								{formikHandlers?.errors &&
-									formikHandlers?.errors?.description &&
-									formikHandlers?.touched &&
-									formikHandlers?.touched?.description && (
-										<span className="text-red-500 text-xs">
-											{formikHandlers?.errors?.description}
-										</span>
-									)}
+									<FormikErrorMessage
+									error={formikHandlers?.errors?.description}
+									touched={formikHandlers?.touched?.description}
+								/>
 							</div>
 							<div>
 								<div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">

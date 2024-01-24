@@ -14,6 +14,7 @@ import type {
 import React, { useEffect, useState } from 'react';
 import EndorsementTooltip from '../../commonComponents/EndorsementTooltip';
 import { processImage } from '../../utils/enums/processImage';
+import FormikErrorMessage from '../../commonComponents/formikerror/index'
 
 const EditPopupModal = (props: EditEntityModalProps) => {
 	const [logoImage, setLogoImage] = useState<ILogoImage>({
@@ -130,6 +131,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
 			setLoading(false);
 		}
 	};
+
 	return (
 		<Modal
 			size={'3xl'}
@@ -278,12 +280,10 @@ const EditPopupModal = (props: EditEntityModalProps) => {
 										}
 									}}
 								/>
-								{formikHandlers?.errors?.name &&
-									formikHandlers?.touched?.name && (
-										<span className="text-red-500 text-xs">
-											{formikHandlers?.errors?.name}
-										</span>
-									)}
+								<FormikErrorMessage
+									error={formikHandlers?.errors?.name}
+									touched={formikHandlers?.touched?.name}
+								/>
 							</div>
 							<div>
 								<div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -312,12 +312,10 @@ const EditPopupModal = (props: EditEntityModalProps) => {
 										}
 									}}
 								/>
-								{formikHandlers?.errors?.description &&
-									formikHandlers?.touched?.description && (
-										<span className="text-red-500 text-xs">
-											{formikHandlers?.errors?.description}
-										</span>
-									)}
+								<FormikErrorMessage
+									error={formikHandlers?.errors?.description}
+									touched={formikHandlers?.touched?.description}
+								/>
 							</div>
 							<div>
 								<div className="flex items-center">
