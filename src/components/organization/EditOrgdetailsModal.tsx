@@ -48,7 +48,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 	});
 
 	useEffect(() => {
-		if (props.orgData) {
+		if (props.openModal && props.orgData) {
 			setInitialOrgData({
 				name: props.orgData.name ?? '',
 				description: props.orgData.description ?? '',
@@ -63,14 +63,14 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 
 			setIsPublic(props?.orgData?.publicProfile);
 		}
-	}, [props]);
+	}, [props.orgData, props.openModal]);
 
 	const [erroMsg, setErrMsg] = useState<string | null>(null);
 
 	const [imgError, setImgError] = useState('');
 
 	useEffect(() => {
-		if (props.openModal === false) {
+		if (!props.openModal) {
 			setInitialOrgData({
 				name: '',
 				description: '',
@@ -176,22 +176,26 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 			website: values.website,
 			isPublic: isPublic,
 		};
-
-		const resUpdateOrg = await updateOrganization(
-			orgData,
-			orgData.orgId?.toString() as string,
-		);
-
-		const { data } = resUpdateOrg as AxiosResponse;
-		setLoading(false);
-
-		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			if (props?.onEditSucess) {
-				props?.onEditSucess();
+		try {
+			const response = await updateOrganization(
+				orgData,
+				orgData.orgId?.toString() as string,
+			);
+			const { data } = response as AxiosResponse;
+			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+				if (props?.onEditSucess) {
+					props?.onEditSucess();
+				}
+				props.setOpenModal(false);
+				props.setMessage(data?.message);
+				setLoading(false);
+			} else {
+				setErrMsg(response as string);
+				setLoading(false);
 			}
-			props.setOpenModal(false);
-		} else {
-			setErrMsg(resUpdateOrg as string);
+		} catch (error) {
+			console.error('An error occurred:', error);
+			setLoading(false);
 		}
 	};
 
@@ -203,6 +207,11 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 					logoFile: '',
 					imagePreviewUrl: '',
 					fileName: '',
+				});
+				setInitialOrgData({
+					name: props?.orgData?.name ?? '',
+					description: props?.orgData?.description ?? '',
+					website: props?.orgData?.website ?? '',
 				});
 				props.setOpenModal(false);
 			}}
@@ -239,7 +248,6 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 						{ resetForm }: FormikHelpers<Values>,
 					) => {
 						submitUpdateOrganization(values);
-						window.location.reload();
 					}}
 				>
 					{(formikHandlers): JSX.Element => (
