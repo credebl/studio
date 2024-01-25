@@ -10,7 +10,7 @@ import type { AxiosResponse } from 'axios';
 import { updateOrganization } from '../../api/organization';
 import type { EditOrgdetailsModalProps, ILogoImage, Organisation, Values } from './interfaces';
 import defaultUserIcon from '../../../public/images/person_FILL1_wght400_GRAD0_opsz24.svg';
-import { processImage } from '../../utils/enums/processImage';
+import { processImage } from '../../utils/processImage';
 import FormikErrorMessage from '../../commonComponents/formikerror/index'
 
 const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {

@@ -1,11 +1,12 @@
+import type { ChangeEvent } from 'react';
 import {
 	imageSizeAccepted,
-} from '../../config/CommonConstant';
+} from '../config/CommonConstant';
 
-export const processImage = (event, callback) => {
+export const processImage = (event: ChangeEvent<HTMLInputElement>, callback:any) => {
   const reader = new FileReader();
   const file = event?.target?.files;
-
+if(file){
   const fileSize = Number((file[0]?.size / 1024 / 1024)?.toFixed(2));
   const extension = file[0]?.name
     ?.substring(file[0]?.name?.lastIndexOf('.') + 1)
@@ -23,4 +24,6 @@ export const processImage = (event, callback) => {
   } else {
     callback(null, extension === 'png' || extension === 'jpeg' || extension === 'jpg' ? 'Please check image size' : 'Invalid image type');
   }
+}
+
 };
