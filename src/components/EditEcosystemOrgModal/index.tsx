@@ -24,7 +24,6 @@ const EditPopupModal = (props: EditEntityModalProps) => {
 	});
 
 	const [loading, setLoading] = useState<boolean>(false);
-	const [isImageEmpty, setIsImageEmpty] = useState(true);
 	const [initialEntityData, setInitialEntityData] = useState<EditEntityValues>({
 		name: '',
 		description: '',
@@ -36,7 +35,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
 				name: props.entityData.name ?? '',
 				description: props.entityData.description ?? '',
 			});
-			SetisAutoEndorse(props.entityData.autoEndorsement);
+			setIsAutoEndorse(props.entityData.autoEndorsement);
 			setLogoImage({
 				logoFile: '',
 				imagePreviewUrl: props.entityData.logoUrl ?? '',
@@ -47,7 +46,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
 
 	const [errMsg, setErrMsg] = useState<string | null>(null);
 	const [imgError, setImgError] = useState('');
-	const [isAutoEndorse, SetisAutoEndorse] = useState(false);
+	const [isAutoEndorse, setIsAutoEndorse] = useState(false);
 
 	useEffect(() => {
 		if (!props.openModal) {
@@ -329,7 +328,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
 										id="sign"
 										name="autoEndorsement"
 										checked={isAutoEndorse === false}
-										onChange={() => SetisAutoEndorse(false)}
+										onChange={() => setIsAutoEndorse(false)}
 									/>
 									<span className="ml-2 text-gray-900 dark:text-white text-sm">
 										Sign
@@ -342,7 +341,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
 										id="sign-submit"
 										name="autoEndorsement"
 										checked={isAutoEndorse === true}
-										onChange={() => SetisAutoEndorse(true)}
+										onChange={() => setIsAutoEndorse(true)}
 									/>
 									<span className="ml-2 text-gray-900 dark:text-white text-sm">
 										Sign and Submit
