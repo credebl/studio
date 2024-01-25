@@ -58,7 +58,13 @@ const AddPasskey = ({ responseMessages }: { responseMessages: (value: IResponseM
 
 	const addDevice = async (): Promise<void> => {
 		try {
-			setOpenModel(true);
+			if(deviceList?.length > 0){
+				registerWithPasskey(true)
+				setOpenModel(false);
+			}else{
+				setOpenModel(true);
+
+			}
 		} catch (error) {
 			setFidoLoader(false);
 		}

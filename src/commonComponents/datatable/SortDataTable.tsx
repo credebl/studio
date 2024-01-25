@@ -2,7 +2,7 @@ import type { IDataTable } from './interface';
 import CustomSpinner from '../../components/CustomSpinner';
 import SearchInput from '../../components/SearchInput';
 import { Pagination } from 'flowbite-react';
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { EmptyListMessage } from '../../components/EmptyListComponent';
 
 const SortDataTable: React.FC<IDataTable> = ({
@@ -34,7 +34,9 @@ const SortDataTable: React.FC<IDataTable> = ({
 	const handleSortByValues = (event: { target: { value: any } }) => {
 		const newSelectedValue = event.target.value;
 		setSelectedValue(newSelectedValue);
-		searchSortByValue(newSelectedValue);
+		if(searchSortByValue){
+			searchSortByValue(newSelectedValue);
+		}
 	};
 
 	const {
@@ -53,9 +55,9 @@ const SortDataTable: React.FC<IDataTable> = ({
 	const sortValues = [
 		{
 			label: 'Descending',
-			value: 'DESC',
+			value: 'desc',
 		},
-		{ label: 'Ascending', value: 'ASC' },
+		{ label: 'Ascending', value: 'asc' },
 	];
 
 	return (
