@@ -1,13 +1,13 @@
 import { Button } from 'flowbite-react';
 
-const index = ({ path }: { path: string }) => {
+const index = ({ path, history }: { path: string, history?:any }) => {
 	return (
 		<div>
 			<Button
 				type="submit"
 				color="bg-primary-800"
 				onClick={() => {
-					window.location.href = path;
+					history? window.history.back() :	window.location.href = path ;
 				}}
 				className="bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 m-2 ml-2 dark:text-white dark:hover:text-black"
 				style={{ height: '2.5rem', width: '5rem', minWidth: '2rem' }}

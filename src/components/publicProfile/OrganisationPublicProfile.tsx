@@ -10,6 +10,7 @@ import CustomSpinner from '../CustomSpinner';
 import CustomAvatar from '../Avatar';
 import { EmptyListMessage } from '../EmptyListComponent';
 import { AlertComponent } from '../AlertComponent';
+import BackButton from '../../commonComponents/backbutton'
 
 const OrganisationPublicProfile = () => {
 	const initialPageState = {
@@ -77,15 +78,16 @@ const OrganisationPublicProfile = () => {
 	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setSearchText(e.target.value);
 	};
-
+	
 	return (
 		<div>
 			<div className="flex justify-between items-center w-full">
 				<h1 className="ml-1 px-4 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 					Organizations
 				</h1>
-				<div className="flex items-end justify-end mb-4 p-2 pl-0">
+				<div className="flex items-center justify-end p-2 pl-0">
 					<SearchInput onInputChange={searchInputChange} />
+				<BackButton history={true} path='' />
 				</div>
 			</div>
 

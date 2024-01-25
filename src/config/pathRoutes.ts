@@ -78,6 +78,6 @@ export const pathRoutes = {
 		},
 	},
 	explore: {
-		explore: '/explore'
+		explore: '/explore-organization'
 	}
 };
