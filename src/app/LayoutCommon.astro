@@ -16,7 +16,6 @@ const supabaseUrl =
 	process.env.PUBLIC_SUPABASE_URL || import.meta.env.PUBLIC_SUPABASE_URL;
 const supabaseKey =
 	process.env.PUBLIC_SUPABASE_KEY || import.meta.env.PUBLIC_SUPABASE_KEY;
-
 ---
 
 <!DOCTYPE html>
@@ -31,8 +30,29 @@ const supabaseKey =
 			sitemap={url('sitemap-index.xml')}
 			client:load
 		/>
-		<meta http-equiv="Content-Security-Policy"
-          content="default-src 'self'; img-src https://*; child-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests">
+		<meta
+			http-equiv="Content-Security-Policy"
+			content=""
+		/>
+		<!-- <meta
+		http-equiv="Content-Security-Policy"
+		content="frame-ancestors SAMEORIGIN"
+	/> -->
+		<!-- <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self'" >
+		<meta http-equiv="Content-Security-Policy" content="default-src 'self'"> -->
+
+		<!-- <meta http-equiv="Content-Security-Policy" 
+          content="default-src 'self'; 
+                   script-src 'self'; 
+                   style-src 'self' https://fonts.googleapis.com; 
+                   img-src 'self' data: https://avatars.githubusercontent.com; 
+                   font-src 'self' https://fonts.gstatic.com; 
+                   frame-src 'none'; 
+                   object-src 'none'; 
+                   base-uri 'self'; 
+                   form-action 'self'; 
+                   upgrade-insecure-requests"> -->
+		<!-- <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" > -->
 		<!-- <meta
 			http-equiv="Content-Security-Policy"
 			content="default-src 'self'; script-src 'self';"
