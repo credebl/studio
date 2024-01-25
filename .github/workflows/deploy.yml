@@ -11,8 +11,8 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      id-token: write # Needed for auth with Deno Deploy
-      contents: read # Needed to clone the repository
+      id-token: write  # Needed for auth with Deno Deploy
+      contents: read  # Needed to clone the repository
 
     steps:
       - name: Clone repository
@@ -29,11 +29,14 @@ jobs:
           node-version: lts/*
 
       - name: Build step
-        run: "npm install && npm run build" # 📝 Update the build command(s) if necessary
+        run: "npm install && npm run build"  # 📝 Update the build command(s) if necessary
+
+      - name: Copy deployctl.yaml
+        run: cp deployctl.yaml dist/deployctl.yaml  # 📝 Update the paths accordingly
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
         with:
           project: "credebl-studio"
-          entrypoint: "server/entry.mjs" # 📝 Update the entrypoint if necessary
-          root: "dist" # 📝 Update the root if necessary
+          entrypoint: "server/entry.mjs"  # 📝 Update the entrypoint if necessary
+          root: "dist"  # 📝 Update the root if necessary

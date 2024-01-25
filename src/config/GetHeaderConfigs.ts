@@ -8,6 +8,7 @@ export const getHeaderConfigs = async (tokenVal?: string) => {
         headers: {
             'Content-Type': 'application/json',
             "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+            "X-Frame-Options": "DENY",
             "X-Content-Type-Options": "nosniff",
             Authorization: `Bearer ${token}`
         }
@@ -21,6 +22,7 @@ export const getHeaderConfigsForFormData = async () => {
         headers: {
             "Content-Type": "multipart/form-data",
             "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+            "X-Frame-Options": "DENY",
             "X-Content-Type-Options": "nosniff",
             Authorization: `Bearer ${token}`
         }

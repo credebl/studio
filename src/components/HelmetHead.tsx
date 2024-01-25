@@ -34,6 +34,10 @@ const HelmetHead = ({ generator, desc, icon, sitemap, siteTitle, version }: IPro
 			property="og:image"
 			content="https://credebl.id/images/CREDEBL_ICON.png"
 		/>
+		{/* <meta
+			http-equiv="Content-Security-Policy"
+			content="default-src 'self'; img-src https://*; child-src 'none';" /> */}
+
 	</Helmet>
 )
 
