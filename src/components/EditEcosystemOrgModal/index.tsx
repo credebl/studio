@@ -13,7 +13,7 @@ import type {
 } from '../Ecosystem/interfaces';
 import React, { useEffect, useState } from 'react';
 import EndorsementTooltip from '../../commonComponents/EndorsementTooltip';
-import { processImage } from '../../utils/enums/processImage';
+import { processImage } from '../../utils/processImage';
 import FormikErrorMessage from '../../commonComponents/formikerror/index'
 
 const EditPopupModal = (props: EditEntityModalProps) => {
@@ -68,7 +68,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
 
 	const handleImageChange = (event: any): void => {
 		setImgError('');
-		processImage(event, (result, error) => {
+		processImage(event, (result: any, error: any) => {
 			if (result) {
 				setLogoImage({
 					logoFile: '',
