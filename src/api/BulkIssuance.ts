@@ -6,6 +6,7 @@ import {
 } from '../config/GetHeaderConfigs';
 import { axiosGet, axiosPost } from '../services/apiRequests';
 import { getFromLocalStorage } from './Auth';
+import type { IConnectionListAPIParameter } from './connection';
 
 export const getSchemaCredDef = async () => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -40,7 +41,10 @@ export const DownloadCsvTemplate = async (credDefId: string) => {
 	}
 };
 
-export const uploadCsvFile = async (payload: {file: Uint8Array | Blob, fileName:string}, credefId: string) => {	
+export const uploadCsvFile = async (
+	payload: { file: Uint8Array | Blob; fileName: string },
+	credefId: string,
+) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.bulk.uploadCsv}?credDefId=${credefId}`;
 
@@ -80,7 +84,10 @@ export const getCsvFileData = async (
 	}
 };
 
-export const issueBulkCredential = async (requestId: string, clientId: string) => {
+export const issueBulkCredential = async (
+	requestId: string,
+	clientId: string,
+) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 	const url = `${apiRoutes.organizations.root}/${orgId}/${requestId}${apiRoutes.Issuance.bulk.bulk}`;
 
@@ -88,8 +95,8 @@ export const issueBulkCredential = async (requestId: string, clientId: string) =
 		url,
 		config: await getHeaderConfigs(),
 		payload: {
-			clientId
-		}
+			clientId,
+		},
 	};
 
 	try {
@@ -100,31 +107,33 @@ export const issueBulkCredential = async (requestId: string, clientId: string) =
 	}
 };
 
-export const retryBulkIssuance = async (fileId:string, clientId:string) => {	 
-		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-		const url = `${apiRoutes.organizations.root}/${orgId}/${fileId}${apiRoutes.Issuance.bulk.retry}`;
-	
-		const axiosPayload = {
-			url,
-			payload:{clientId:clientId},
-			config: await getHeaderConfigs(),
-		};		
-	
-		try {
-			return await axiosPost(axiosPayload);
-		} catch (error) {
-			const err = error as Error;
-			return err?.message;
-		}
+export const retryBulkIssuance = async (fileId: string, clientId: string) => {
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+	const url = `${apiRoutes.organizations.root}/${orgId}/${fileId}${apiRoutes.Issuance.bulk.retry}`;
+
+	const axiosPayload = {
+		url,
+		payload: { clientId: clientId },
+		config: await getHeaderConfigs(),
+	};
+
+	try {
+		return await axiosPost(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
 };
 
-export const getFilesHistory = async (
-	pageNumber: number,
-	pageSize: number,
-	search: string,
-) => {
+export const getFilesHistory = async ({
+	page,
+	itemPerPage,
+	search,
+	sortBy,
+	sortingOrder,
+}: IConnectionListAPIParameter) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.bulk.files}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`;
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.bulk.files}?pageSize=${itemPerPage}&pageNumber=${page}&searchByText=${search}&sortBy=${sortingOrder}&sortField=${sortBy}`;
 
 	const axiosPayload = {
 		url,
@@ -141,13 +150,14 @@ export const getFilesHistory = async (
 
 export const getFilesDataHistory = async (
 	requestId: string,
-	pageNumber: number,
-	pageSize: number,
+	itemPerPage: number,
+	page: number,
 	search: string,
-	sortBy:string
+	sortingOrder: string,
+	sortBy: string,
 ) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url = `${apiRoutes.organizations.root}/${orgId}/${requestId}${apiRoutes.Issuance.bulk.filesData}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}&sortBy=${sortBy}`;
+	const url = `${apiRoutes.organizations.root}/${orgId}/${requestId}${apiRoutes.Issuance.bulk.filesData}?pageSize=${itemPerPage}&pageNumber=${page}&searchByText=${search}&sortBy=${sortBy}&sortField=${sortingOrder}`;
 
 	const axiosPayload = {
 		url,
