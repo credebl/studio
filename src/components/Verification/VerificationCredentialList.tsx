@@ -52,6 +52,7 @@ const VerificationCredentialList = () => {
 	const [listAPIParameter, setListAPIParameter] =
 		useState<IConnectionListAPIParameter>(initialPageState);
 	const [totalItem, setTotalItem] = useState(0);
+	const [verifyLoading, setVerifyLoading]= useState(true)
 	const [pageInfo, setPageInfo] = useState({
 		totalItem: '',
 		nextPage: '',
@@ -60,14 +61,17 @@ const VerificationCredentialList = () => {
 
 	const getProofPresentationData = async (proofId: string) => {
 		try {
+			setVerifyLoading(true)
 			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 			const response = await getVerifiedProofDetails(proofId, orgId);
 
 			const { data } = response as AxiosResponse;
 			if (data?.statusCode === apiStatusCodes?.API_STATUS_SUCCESS) {
 				setUserData(data?.data);
+				setVerifyLoading(false)
 			} else {
 				setErrMsg(response as string);
+				setVerifyLoading(false)
 			}
 		} catch (error) {
 			throw error;
@@ -102,8 +106,6 @@ const VerificationCredentialList = () => {
 				const { data } = response as AxiosResponse;
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 					const { totalItems, nextPage, lastPage } = data.data;
-					console.log('data.data', data.data);
-
 					setPageInfo({
 						totalItem: totalItems,
 						nextPage: nextPage,
@@ -435,11 +437,12 @@ const VerificationCredentialList = () => {
 					{userData && (
 						<ProofRequest
 							openModal={openModal}
-							closeModal={() => openProofRequestModel(false, '', '')}
+							closeModal={() => {openProofRequestModel(false, '', '')}}
 							onSucess={requestProof}
 							requestId={requestId}
 							userData={userData}
 							view={view}
+							verifyLoading={verifyLoading}
 						/>
 					)}
 				</div>
