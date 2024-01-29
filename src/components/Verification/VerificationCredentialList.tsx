@@ -45,7 +45,6 @@ const VerificationCredentialList = () => {
 	const [requestId, setRequestId] = useState<string>('');
 	const [errMsg, setErrMsg] = useState<string | null>(null);
 	const [proofReqSuccess, setProofReqSuccess] = useState<string>('');
-	const [verifyLoader, setVerifyloader] = useState<boolean>(false);
 	const [userData, setUserData] = useState(null);
 	const [view, setView] = useState(false);
 	const [walletCreated, setWalletCreated] = useState(false);
@@ -263,14 +262,14 @@ const VerificationCredentialList = () => {
 			if (data?.statusCode === apiStatusCodes?.API_STATUS_CREATED) {
 				setOpenModal(false);
 				setProofReqSuccess(data.message);
-				setVerifyloader(false);
+				setVerifyLoading(false);
 				setTimeout(() => {
 					getproofRequestList(listAPIParameter);
 				}, 2000);
 			} else {
 				setOpenModal(false);
 				setErrMsg(response as string);
-				setVerifyloader(false);
+				setVerifyLoading(false);
 			}
 			setTimeout(() => {
 				setProofReqSuccess('');
@@ -278,7 +277,7 @@ const VerificationCredentialList = () => {
 			}, 4000);
 		} catch (error) {
 			setOpenModal(false);
-			setVerifyloader(false);
+			setVerifyLoading(false);
 			console.error('An error occurred:', error);
 			setErrMsg('An error occurred while processing the presentation.');
 		}
