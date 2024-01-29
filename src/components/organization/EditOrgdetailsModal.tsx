@@ -247,11 +247,11 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 							<div className="mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 								<div className="flex flex-col items-center sm:flex-row 2xl:flex-row p-2 gap-0 sm:gap-4">
 									{typeof logoImage.logoFile === 'string' &&
-									props?.orgData?.logoUrl ? (
+										props?.orgData?.logoUrl ? (
 										<img
 											className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
 											src={props?.orgData?.logoUrl}
-											alt="Jese picture"
+											alt="Organization logo"
 										/>
 									) : typeof logoImage.logoFile === 'string' ? (
 										<Avatar size="lg" img={defaultUserIcon} />
@@ -259,7 +259,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 										<img
 											className="m-2 rounded-md w-28 h-28"
 											src={URL.createObjectURL(logoImage?.logoFile)}
-											alt="Jese picture"
+											alt="Organization logo"
 										/>
 									)}
 									<div>
@@ -420,29 +420,31 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 									</span>
 								</div>
 							</div>
-							<Button
-								type="submit"
-								isProcessing={loading}
-								className="mb-2 float-right text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-							>
-								<svg
-									className="pr-2"
-									xmlns="http://www.w3.org/2000/svg"
-									width="22"
-									height="22"
-									fill="none"
-									viewBox="0 0 18 18"
+							<div className='flex justify-end'>
+								<Button
+									type="submit"
+									isProcessing={loading}
+									className="mb-2 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 								>
-									<path
-										stroke="#fff"
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth="2"
-										d="M13 1v12l-4-2-4 2V1h8ZM3 17h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z"
-									/>
-								</svg>
-								Save
-							</Button>
+									<svg
+										className="pr-2"
+										xmlns="http://www.w3.org/2000/svg"
+										width="22"
+										height="22"
+										fill="none"
+										viewBox="0 0 18 18"
+									>
+										<path
+											stroke="#fff"
+											strokeLinecap="round"
+											strokeLinejoin="round"
+											strokeWidth="2"
+											d="M13 1v12l-4-2-4 2V1h8ZM3 17h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z"
+										/>
+									</svg>
+									Save
+								</Button>
+							</div>
 						</Form>
 					)}
 				</Formik>
