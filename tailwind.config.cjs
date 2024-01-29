@@ -130,7 +130,7 @@ module.exports = {
 				'100/15rem' : 'calc(100vh - 15rem)',
 			},
 			maxHeight: {
-				'[90vh]': 'fit-content !important',
+				'[90vh]': 'calc(100vh - 4rem) !important',
 				'100/10rem': 'calc(100vh - 10rem)',
 			},
 			scale: {
