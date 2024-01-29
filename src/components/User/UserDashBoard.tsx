@@ -66,7 +66,7 @@ const UserDashBoard = () => {
 		page: 1,
 		search: '',
 		sortBy: 'id',
-		sortingOrder: 'DESC',
+		sortingOrder: 'desc',
 		allSearch: '',
 	});
 	const [ecoCount, setEcoCount] = useState(0);

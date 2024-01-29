@@ -36,7 +36,7 @@ const SchemaList = (props: {
 		page: 1,
 		search: '',
 		sortBy: 'id',
-		sortingOrder: 'DESC',
+		sortingOrder: 'desc',
 		allSearch: '',
 	});
 	const [walletStatus, setWalletStatus] = useState(false);
