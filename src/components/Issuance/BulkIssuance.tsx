@@ -452,7 +452,7 @@ console.log(6448, res)
 							onClickEvent={() => {
 								window.location.href = `${pathRoutes.organizations.createSchema}`;
 							}}
-							isPadding={createSchemaTitle.title === 'Create' ? false : true}
+							isPadding={createSchemaTitle.title !== 'Create'}
 						/>
 					</div>
 				</div>
