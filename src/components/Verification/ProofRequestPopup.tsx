@@ -14,6 +14,7 @@ const ProofRequest = (props: IProofRrquestDetails) => {
 	const [navigation, setNavigation] = useState(false);
 	const [succesMsg, setSuccesMsg] = useState('');
 	const [error, setError] = useState('');
+	
 	const handleConfirmClick = async (id: string) => {
 		try {
 			setButtonLoader(true);
@@ -85,7 +86,7 @@ const ProofRequest = (props: IProofRrquestDetails) => {
 								{' '}
 								Verification Details
 							</p>
-							{!props.userData ? (
+							{props.verifyLoading ? (
 								<div className="flex items-center justify-center m-4">
 									<CustomSpinner />
 								</div>
