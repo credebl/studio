@@ -16,7 +16,11 @@ import SOCKET from '../../config/SocketConfig';
 import { ToastContainer, toast } from 'react-toastify';
 import BreadCrumbs from '../BreadCrumbs';
 import BackButton from '../../commonComponents/backbutton'
+import { checkEcosystem, type ICheckEcosystem } from '../../config/ecosystem';
 import type { ICredentials, IValues, IAttributes, IUploadMessage } from './interface';
+import RoleViewButton from '../RoleViewButton';
+import { Features } from '../../utils/enums/features';
+import { Create, SchemaEndorsement } from './Constant';
 
 const BulkIssuance = () => {
 	const [csvData, setCsvData] = useState<string[][]>([]);
@@ -33,6 +37,7 @@ const BulkIssuance = () => {
 	const [uploadMessage, setUploadMessage] = useState<IUploadMessage | null>(null)
 	const [success, setSuccess] = useState<string | null>(null);
 	const [failure, setFailure] = useState<string | null>(null);
+	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 
 	const onPageChange = (page: number) => {
 		setCurrentPage({
@@ -85,6 +90,14 @@ const BulkIssuance = () => {
 
 	useEffect(() => {
 		getSchemaCredentials();
+		(async () => {
+			try {
+				const data: ICheckEcosystem = await checkEcosystem();				
+				setIsEcosystemData(data);
+			} catch (error) {
+				console.log(error);
+			}
+		})();
 	}, []);
 
 
@@ -387,7 +400,11 @@ const BulkIssuance = () => {
 			item.value &&
 			item.value === credentialSelected,
 	);
-
+	
+	const createSchemaTitle = isEcosystemData?.isEcosystemMember
+		? { title: 'Schema Endorsement', svg: <SchemaEndorsement/> }
+		: { title: 'Create Schema', svg: <Create/> };
+		
 	return (
 		<div className="px-4 pt-2">
 			<div className="mb-4 col-span-full xl:mb-2">
@@ -405,23 +422,24 @@ const BulkIssuance = () => {
 						</p>
 						<span className="text-sm text-gray-400">Upload a .CSV file for bulk issuance</span>
 					</div>
+					<div className='flex sm:flex-row flex-col sm:space-x-2 sm:space-y-0 space-y-2  sm:items-center'>
 					<Button
 						color="bg-primary-800"
-						className="flex float-right bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-primary-600 font-medium rounded-md text-lg px-2 lg:px-3 py-2 lg:py-2.5 mr-2 ml-auto border-blue-600 hover:text-primary-600 dark:text-white dark:border-blue-500 dark:hover:text-primary-700 dark:hover:bg-secondary-700"
-						style={{ height: '2.4rem', minWidth: '2rem' }}
+						className="flex shrink-0 bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-primary-600 font-medium rounded-md text-lg px-2 lg:px-3 py-2 lg:py-2.5 ml-auto border-blue-600 hover:text-primary-600 dark:text-white dark:border-blue-500 dark:hover:text-primary-700 dark:hover:bg-secondary-700"
+						style={{ height: '2.2rem', minWidth: '2rem' }}
 						onClick={() => {
 							window.location.href = pathRoutes.organizations.Issuance.history;
 						}}
-					>
+						>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
-							className="pr-2"
+							className="pr-2 shrink-0"
 							width="30"
 							color="text-white"
-							height="20"
+							height="18"
 							fill="none"
 							viewBox="0 0 18 18"
-						>
+							>
 							<path
 								fill="#1F4EAD"
 								d="M15.483 18H2.518A2.518 2.518 0 0 1 0 15.482V2.518A2.518 2.518 0 0 1 2.518 0h12.965a2.518 2.518 0 0 1 2.518 2.518v12.964A2.518 2.518 0 0 1 15.483 18ZM2.518 1.007a1.51 1.51 0 0 0-1.51 1.51v12.965a1.51 1.51 0 0 0 1.51 1.51h12.965a1.51 1.51 0 0 0 1.51-1.51V2.518a1.51 1.51 0 0 0-1.51-1.51H2.518Z"
@@ -429,10 +447,20 @@ const BulkIssuance = () => {
 							<path
 								fill="#1F4EAD"
 								d="M3.507 5.257a.504.504 0 0 1 0-1.007h5.495a.504.504 0 1 1 0 1.007H3.507ZM6.254 9.5a.504.504 0 1 1 0-1.008h5.492a.504.504 0 0 1 0 1.007H6.254ZM9 13.757a.503.503 0 1 1 0-1.007h5.493a.504.504 0 0 1 0 1.007H9Z"
-							/>
+								/>
 						</svg>
 						View History
 					</Button>
+					<RoleViewButton
+							buttonTitle={createSchemaTitle.title}
+							feature={Features.CRETAE_SCHEMA}
+							svgComponent={createSchemaTitle.svg}
+							onClickEvent={() => {
+								window.location.href = `${pathRoutes.organizations.createSchema}`;
+							}}
+							isPadding={createSchemaTitle.title !== 'Create Schema'}
+						/>
+					</div>
 				</div>
 				{(success || failure) && (
 					<AlertComponent
