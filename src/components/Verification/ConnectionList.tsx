@@ -19,7 +19,7 @@ const initialPageState = {
 	page: 1,
 	search: '',
 	sortBy: 'createDateTime',
-	sortingOrder: 'DESC',
+	sortingOrder: 'desc',
 	allSearch: '',
 };
 
