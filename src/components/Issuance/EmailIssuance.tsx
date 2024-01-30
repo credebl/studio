@@ -17,6 +17,7 @@ import CustomSpinner from '../CustomSpinner';
 import { issueOobEmailCredential } from '../../api/issuance';
 import { EmptyListMessage } from '../EmptyListComponent';
 import ResetPopup from './ResetPopup';
+import type { SelectRef } from './BulkIssuance';
 
 const EmailIssuance = () => {
 	const [formData, setFormData] = useState();
@@ -171,11 +172,16 @@ const EmailIssuance = () => {
 	const handleBlur = () => {
 		setIsEditing(false);
 	};
+	const selectInputRef = React.useRef<SelectRef | null>(null);
 
 	const handleReset = () => {
 		setCredentialSelected(null);
 		setBatchName('');
 		setOpenResetModal(false);
+		if(selectInputRef.current){
+
+			selectInputRef.current.clearValue();
+		}
 	};
 
 	const handleCloseConfirmation = () => {
@@ -192,6 +198,17 @@ const EmailIssuance = () => {
 	const handleResetOpenConfirmation = () => {
 		setOpenResetModal(true);
 	};
+
+	// const selectInputRef = React.useRef<SelectRef | null>(null);
+
+  // const onClear = () => {
+		
+	// 	// if (selectInputRef.current) {
+	// 		console.log("kkkkkkkkkkkkkk");
+	// 		selectInputRef.current.clearValue();
+	// 	// }
+	//   };
+	
 	
 	const MailError = ({
 		handler,
@@ -258,7 +275,7 @@ const EmailIssuance = () => {
 				</div>
 				<div className="flex flex-col justify-between gap-4">
 					<Card>
-						<div className="md:h-72">
+						<div>
 							<p className="text-xl pb-6 font-normal dark:text-white">
 								Select Schema and credential definition
 							</p>
@@ -280,6 +297,7 @@ const EmailIssuance = () => {
 												setCredentialSelected(value?.value ?? '');
 												setAttributes(value?.schemaAttributes);
 											}}
+											ref={selectInputRef}
 										/>
 									</div>
 									<div className="mt-4">

@@ -18,6 +18,9 @@ import BreadCrumbs from '../BreadCrumbs';
 import BackButton from '../../commonComponents/backbutton'
 import type { ICredentials, IValues, IAttributes, IUploadMessage } from './interface';
 
+export interface SelectRef {
+  clearValue(): void;
+}
 const BulkIssuance = () => {
 	const [csvData, setCsvData] = useState<string[][]>([]);
 	const [requestId, setRequestId] = useState("");
@@ -341,11 +344,18 @@ const BulkIssuance = () => {
 	const handleCloseConfirmation = () => {
 		setOpenModal(false);
 	};
+  const selectInputRef = React.useRef<SelectRef | null>(null);
 
+  const onClear = () => {
+		if (selectInputRef.current) {
+			selectInputRef.current.clearValue();
+		}  };
+	
 	const handleReset = () => {
 		handleDiscardFile();
 		setCredentialSelected("");
 		setSuccess(null);
+		onClear()
 	};
 	const handleResetForConfirm = () => {
 		handleDiscardFile();
@@ -465,6 +475,7 @@ const BulkIssuance = () => {
 											onChange={(value: IValues | null) => {
 												setCredentialSelected(value?.value ?? "");
 											}}
+											ref={selectInputRef}
 										/>
 									</div>
 									<div className="mt-4">
