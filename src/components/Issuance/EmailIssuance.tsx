@@ -17,10 +17,7 @@ import CustomSpinner from '../CustomSpinner';
 import { issueOobEmailCredential } from '../../api/issuance';
 import { EmptyListMessage } from '../EmptyListComponent';
 import ResetPopup from './ResetPopup';
-import RoleViewButton from '../RoleViewButton';
-import { checkEcosystem, type ICheckEcosystem } from '../../config/ecosystem';
-import { Features } from '../../utils/enums/features';
-import {SchemaEndorsement, Create} from './Constant'
+import type { SelectRef } from './BulkIssuance';
 
 const EmailIssuance = () => {
 	const [formData, setFormData] = useState();
@@ -186,11 +183,16 @@ const EmailIssuance = () => {
 	const handleBlur = () => {
 		setIsEditing(false);
 	};
+	const selectInputRef = React.useRef<SelectRef | null>(null);
 
 	const handleReset = () => {
 		setCredentialSelected(null);
 		setBatchName('');
 		setOpenResetModal(false);
+		if(selectInputRef.current){
+
+			selectInputRef.current.clearValue();
+		}
 	};
 
 	const handleCloseConfirmation = () => {
@@ -208,10 +210,17 @@ const EmailIssuance = () => {
 		setOpenResetModal(true);
 	};
 
-	const createSchemaTitle = isEcosystemData?.isEcosystemMember
-		? { title: 'Schema Endorsement', svg: <SchemaEndorsement/> }
-		: { title: 'Create Schema', svg: <Create/> };
+	// const selectInputRef = React.useRef<SelectRef | null>(null);
+
+  // const onClear = () => {
 		
+	// 	// if (selectInputRef.current) {
+	// 		console.log("kkkkkkkkkkkkkk");
+	// 		selectInputRef.current.clearValue();
+	// 	// }
+	//   };
+	
+	
 	const MailError = ({
 		handler,
 		formindex,
@@ -285,8 +294,8 @@ const EmailIssuance = () => {
 				</div>
 				<div className="flex flex-col justify-between gap-4">
 					<Card>
-						<div className="md:min-h-[10rem]">
-							<p className="text-xl pb-6 font-semibold dark:text-white">
+						<div>
+							<p className="text-xl pb-6 font-normal dark:text-white">
 								Select Schema and credential definition
 							</p>
 							<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -307,6 +316,7 @@ const EmailIssuance = () => {
 												setCredentialSelected(value?.value ?? '');
 												setAttributes(value?.schemaAttributes);
 											}}
+											ref={selectInputRef}
 										/>
 									</div>
 									<div className="mt-4">

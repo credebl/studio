@@ -39,7 +39,7 @@ export interface NetworkDetails {
 export interface IPropsEcoInvitationList {
 	name: string;
 	logoUrl: string;
-	networkDetails?: NetworkDetails[]
+	networkDetails?: NetworkDetails[];
 }
 export interface InvitationProps {
 	invitationId: string;
@@ -70,7 +70,6 @@ const ReceivedInvitations = () => {
 		useState<Array<Organisation> | null>(null);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const [selectedId, setSelectedId] = useState<string>('');
-	const [searchText, setSearchText] = useState('');
 	const [invitationsData, setInvitationsData] =
 		useState<Array<EcosystemInvitation> | null>(null);
 	const [getOrgError, setGetOrgError] = useState<string | null>(null);
@@ -87,15 +86,12 @@ const ReceivedInvitations = () => {
 		const response = await getOrganizations(
 			currentPage.pageNumber,
 			currentPage.pageSize,
-			searchText,
+			'',
 		);
 		const { data } = response as AxiosResponse;
-
 		if (data?.statusCode !== apiStatusCodes.API_STATUS_SUCCESS) {
 			setError(response as string);
 		} else {
-			const totalPages = data?.data?.totalPages;
-
 			const orgList = data?.data?.organizations.map((userOrg: Organisation) => {
 				const roles: string[] = userOrg.userOrgRoles.map(
 					(role) => role.orgRole.name,
@@ -103,12 +99,7 @@ const ReceivedInvitations = () => {
 				userOrg.roles = roles;
 				return userOrg;
 			});
-
 			setOrganizationsList(orgList);
-			setCurrentPage({
-				...currentPage,
-				total: totalPages,
-			});
 		}
 		setLoading(false);
 	};
@@ -118,7 +109,7 @@ const ReceivedInvitations = () => {
 		const response = await getUserEcosystemInvitations(
 			currentPage.pageNumber,
 			currentPage.pageSize,
-			searchText,
+			'',
 		);
 		const { data } = response as AxiosResponse;
 
@@ -138,23 +129,13 @@ const ReceivedInvitations = () => {
 		} else {
 			setError(response as string);
 		}
-
 		setLoading(false);
 	};
 
 	useEffect(() => {
-		let getData: NodeJS.Timeout;
 		getAllOrganizationsForEcosystem();
-		if (searchText.length >= 1) {
-			getData = setTimeout(() => {
-				getAllInvitations();
-			}, 1000);
-		} else {
-			getAllInvitations();
-		}
-
-		return () => clearTimeout(getData);
-	}, [searchText, openModal, currentPage.pageNumber]);
+		getAllInvitations();
+	}, [openModal, currentPage.pageNumber]);
 
 	const respondToEcosystemInvitations = async (
 		invite: EcosystemInvitation,
@@ -220,19 +201,19 @@ const ReceivedInvitations = () => {
 		const updateInvitationData =
 			invitationsData && invitationsData.length > 0
 				? invitationsData.map((item) => {
-					if (id === item.id) {
+						if (id === item.id) {
+							return {
+								...item,
+								orgId: value,
+								selected: true,
+								orgData: orgData ?? undefined,
+							};
+						}
 						return {
 							...item,
-							orgId: value,
-							selected: true,
-							orgData: orgData ?? undefined,
+							selected: false,
 						};
-					}
-					return {
-						...item,
-						selected: false,
-					};
-				})
+				  })
 				: null;
 		setInvitationsData(updateInvitationData);
 		setSelectedId(value);
@@ -318,22 +299,27 @@ const ReceivedInvitations = () => {
 							<div id={selectedId?.toString()} className="flow-root">
 								<ul id={selectedId?.toString()}>
 									{invitationsData.map((invitation) => {
-										const ecosystem: IPropsEcoInvitationList = invitation?.ecosystem;
+										const ecosystem: IPropsEcoInvitationList =
+											invitation?.ecosystem;
 										return (
-											<Card key={invitation.id} className="p-2 mb-4">
+											<Card
+												key={invitation.id}
+												className="p-2 mb-4 overflow-auto"
+											>
 												<div
 													id={invitation.email}
-													className="flex justify-between md:flex-row flex-col overflow-auto"
+													className="flex justify-between md:flex-row flex-col"
 												>
-													<div
-														id={invitation.email}
-													>
+													<div id={invitation.email}>
 														<EcoInvitationList
 															invitationId={invitation.id}
 															ecosystem={ecosystem}
 														/>
-	
-														<div id={invitation.email} className="flex space-x-8 my-3">
+
+														<div
+															id={invitation.email}
+															className="flex space-x-8 my-3"
+														>
 															<Button
 																onClick={() =>
 																	respondToEcosystemInvitations(
@@ -373,9 +359,9 @@ const ReceivedInvitations = () => {
 															</Button>
 														</div>
 													</div>
-													<div className="flex items-center h-fit shrink-0 mb-2">
+													<div className="flex items-center h-fit shrink-0 w-[300px]">
 														<select
-															className="flex w-[300px] shrink-0 justify-end ml-0 md:ml-3 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full px-2 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-700 dark:focus:border-primary-700"
+															className="flex shrink-0 justify-end ml-0 md:ml-3 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full px-2 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-700 dark:focus:border-primary-700"
 															id="dropdown"
 															onChange={(e) =>
 																handleDropdownChange(e, invitation.id)
@@ -408,7 +394,7 @@ const ReceivedInvitations = () => {
 													/>
 												)}
 											</Card>
-										)
+										);
 									})}
 								</ul>
 							</div>
