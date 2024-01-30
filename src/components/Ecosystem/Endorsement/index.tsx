@@ -61,7 +61,7 @@ const EndorsementList = () => {
 			page: 1,
 			search: '',
 			sortBy: 'id',
-			sortingOrder: 'DESC',
+			sortingOrder: 'desc',
 			type: '',
 			status: '',
 		});
