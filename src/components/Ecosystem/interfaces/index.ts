@@ -27,3 +27,23 @@ export interface Ecosystem {
     roles: string[] 
     logoFile:string
 }
+
+export interface EditEntityModalProps {
+	openModal: boolean;
+	setMessage: (message: string) => void;
+	setOpenModal: (flag: boolean) => void;
+	onEditSuccess?: () => void;
+	entityData: Ecosystem | null;
+	isOrganization: boolean;
+}
+
+export interface EditEntityValues {
+	name: string;
+	description: string;
+}
+
+export interface ILogoImage {
+	logoFile: string | File;
+	imagePreviewUrl: string | ArrayBuffer | null | File;
+	fileName: string;
+}

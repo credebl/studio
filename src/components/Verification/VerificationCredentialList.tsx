@@ -36,7 +36,7 @@ const initialPageState = {
 	page: 1,
 	search: '',
 	sortBy: 'createDateTime',
-	sortingOrder: 'DESC',
+	sortingOrder: 'desc',
 	allSearch: '',
 };
 
@@ -47,13 +47,13 @@ const VerificationCredentialList = () => {
 	const [requestId, setRequestId] = useState<string>('');
 	const [errMsg, setErrMsg] = useState<string | null>(null);
 	const [proofReqSuccess, setProofReqSuccess] = useState<string>('');
-	const [verifyLoader, setVerifyloader] = useState<boolean>(false);
 	const [userData, setUserData] = useState(null);
 	const [view, setView] = useState(false);
 	const [walletCreated, setWalletCreated] = useState(false);
 	const [listAPIParameter, setListAPIParameter] =
 		useState<IConnectionListAPIParameter>(initialPageState);
 	const [totalItem, setTotalItem] = useState(0);
+	const [verifyLoading, setVerifyLoading]= useState(true)
 	const [pageInfo, setPageInfo] = useState({
 		totalItem: '',
 		nextPage: '',
@@ -62,14 +62,17 @@ const VerificationCredentialList = () => {
 
 	const getProofPresentationData = async (proofId: string) => {
 		try {
+			setVerifyLoading(true)
 			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 			const response = await getVerifiedProofDetails(proofId, orgId);
 
 			const { data } = response as AxiosResponse;
 			if (data?.statusCode === apiStatusCodes?.API_STATUS_SUCCESS) {
 				setUserData(data?.data);
+				setVerifyLoading(false)
 			} else {
 				setErrMsg(response as string);
+				setVerifyLoading(false)
 			}
 		} catch (error) {
 			throw error;
@@ -104,8 +107,6 @@ const VerificationCredentialList = () => {
 				const { data } = response as AxiosResponse;
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 					const { totalItems, nextPage, lastPage } = data.data;
-					console.log('data.data', data.data);
-
 					setPageInfo({
 						totalItem: totalItems,
 						nextPage: nextPage,
@@ -263,14 +264,14 @@ const VerificationCredentialList = () => {
 			if (data?.statusCode === apiStatusCodes?.API_STATUS_CREATED) {
 				setOpenModal(false);
 				setProofReqSuccess(data.message);
-				setVerifyloader(false);
+				setVerifyLoading(false);
 				setTimeout(() => {
 					getproofRequestList(listAPIParameter);
 				}, 2000);
 			} else {
 				setOpenModal(false);
 				setErrMsg(response as string);
-				setVerifyloader(false);
+				setVerifyLoading(false);
 			}
 			setTimeout(() => {
 				setProofReqSuccess('');
@@ -278,7 +279,7 @@ const VerificationCredentialList = () => {
 			}, 4000);
 		} catch (error) {
 			setOpenModal(false);
-			setVerifyloader(false);
+			setVerifyLoading(false);
 			console.error('An error occurred:', error);
 			setErrMsg('An error occurred while processing the presentation.');
 		}
@@ -437,11 +438,12 @@ const VerificationCredentialList = () => {
 					{userData && (
 						<ProofRequest
 							openModal={openModal}
-							closeModal={() => openProofRequestModel(false, '', '')}
+							closeModal={() => {openProofRequestModel(false, '', '')}}
 							onSucess={requestProof}
 							requestId={requestId}
 							userData={userData}
 							view={view}
+							verifyLoading={verifyLoading}
 						/>
 					)}
 				</div>
