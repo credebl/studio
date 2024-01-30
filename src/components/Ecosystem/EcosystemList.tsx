@@ -283,12 +283,7 @@ const EcosystemList = () => {
 									<Card
 										key={item.id}
 										onClick={() => redirectOrgDashboard(item.id, role)}
-										className="transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer overflow-hidden"
-										style={{
-											maxHeight: '100%',
-											maxWidth: '100%',
-											overflow: 'auto',
-										}}
+										className="transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer overflow-hidden max-w-full max-h-fit overflow-auto"
 									>
 										<div className="flex items-center">
 											{item.logoUrl ? (
@@ -342,8 +337,6 @@ const EcosystemList = () => {
 
 					) : (
 						<>
-						{console.log(345345345, isWalletSpinUp, Boolean(selectedOrgId), Boolean(ecosystemList && ecosystemList?.length === 0))
-						}
 							{emptyListMessage(isWalletSpinUp, Boolean(selectedOrgId), Boolean(ecosystemList && ecosystemList?.length === 0))}
 						</>
 					)}
