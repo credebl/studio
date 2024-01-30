@@ -403,7 +403,7 @@ const BulkIssuance = () => {
 	
 	const createSchemaTitle = isEcosystemData?.isEcosystemMember
 		? { title: 'Schema Endorsement', svg: <SchemaEndorsement/> }
-		: { title: 'Create', svg: <Create/> };
+		: { title: 'Create Schema', svg: <Create/> };
 		
 	return (
 		<div className="px-4 pt-2">
@@ -458,7 +458,7 @@ const BulkIssuance = () => {
 							onClickEvent={() => {
 								window.location.href = `${pathRoutes.organizations.createSchema}`;
 							}}
-							isPadding={createSchemaTitle.title !== 'Create'}
+							isPadding={createSchemaTitle.title !== 'Create Schema'}
 						/>
 					</div>
 				</div>

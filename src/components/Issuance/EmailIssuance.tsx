@@ -210,7 +210,7 @@ const EmailIssuance = () => {
 
 	const createSchemaTitle = isEcosystemData?.isEcosystemMember
 		? { title: 'Schema Endorsement', svg: <SchemaEndorsement/> }
-		: { title: 'Create', svg: <Create/> };
+		: { title: 'Create Schema', svg: <Create/> };
 		
 	const MailError = ({
 		handler,
