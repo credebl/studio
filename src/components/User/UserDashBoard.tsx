@@ -531,10 +531,10 @@ const UserDashBoard = () => {
 								<div className="flex text-start items-center">
 									<div>
 										<p className="text-xl font-medium dark:text-white">
-											Wallet lets you create schemas and credential-definitions
+											Wallet lets you create schemas and credential definitions
 										</p>
 										<span className="flex justify-start items-start text-sm font-normal text-gray-500 dark:text-gray-400">
-											Please create wallet for your organisation which would
+											Please create wallet for your organization which would
 											help you to issue and verify credentials for your users.
 										</span>
 									</div>
