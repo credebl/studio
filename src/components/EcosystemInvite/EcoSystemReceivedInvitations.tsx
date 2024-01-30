@@ -15,8 +15,8 @@ import CustomSpinner from '../CustomSpinner';
 import { getFromLocalStorage } from '../../api/Auth';
 import { getOrganizationById, getOrganizations } from '../../api/organization';
 import EcoInvitationList from './EcoInvitationList';
-import { getOrgDetails } from '../../config/ecosystem';
 import BackButton from '../../commonComponents/backbutton';
+import React from 'react';
 
 const initialPageState = {
 	pageNumber: 1,
@@ -322,18 +322,17 @@ const ReceivedInvitations = () => {
 											<Card key={invitation.id} className="p-2 mb-4">
 												<div
 													id={invitation.email}
-													className="flex flex-wrap justify-between 2xl:flex align-center"
+													className="flex justify-between md:flex-row flex-col overflow-auto"
 												>
 													<div
 														id={invitation.email}
-														className=" xl:mb-4 2xl:mb-0"
 													>
 														<EcoInvitationList
 															invitationId={invitation.id}
 															ecosystem={ecosystem}
 														/>
 	
-														<div id={invitation.email} className="flex">
+														<div id={invitation.email} className="flex space-x-8 my-3">
 															<Button
 																onClick={() =>
 																	respondToEcosystemInvitations(
@@ -344,10 +343,9 @@ const ReceivedInvitations = () => {
 																disabled={!invitation?.orgData}
 																id={invitation.id}
 																color="bg-white"
-																className='mr-5 mt-5 text-base font-medium text-center text-gray-00 bg-secondary-700 hover:!bg-secondary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600  dark:focus:ring-primary-800 dark:bg-gray-800"'
+																className='shrink-0 text-base font-medium text-center text-gray-00 bg-secondary-700 hover:!bg-secondary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600  dark:focus:ring-primary-800 dark:bg-gray-800"'
 																style={{
 																	height: '2.5rem',
-																	width: '100%',
 																	minWidth: '2rem',
 																}}
 															>
@@ -363,10 +361,9 @@ const ReceivedInvitations = () => {
 																}
 																disabled={!invitation?.orgData}
 																id={invitation.id}
-																className='mt-5 text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-700 dark:hover:!bg-primary-800 dark:focus:ring-primary-800"'
+																className='shrink-0 text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-700 dark:hover:!bg-primary-800 dark:focus:ring-primary-800"'
 																style={{
 																	height: '2.5rem',
-																	width: '100%',
 																	minWidth: '2rem',
 																}}
 															>
@@ -375,9 +372,9 @@ const ReceivedInvitations = () => {
 															</Button>
 														</div>
 													</div>
-													<div className="flex items-center h-fit">
+													<div className="flex items-center h-fit shrink-0 mb-2">
 														<select
-															className="ml-3 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full px-2 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-700 dark:focus:border-primary-700"
+															className="flex w-[300px] shrink-0 justify-end ml-0 md:ml-3 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-700 focus:border-primary-700 block w-full px-2 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-700 dark:focus:border-primary-700"
 															id="dropdown"
 															onChange={(e) =>
 																handleDropdownChange(e, invitation.id)
