@@ -132,7 +132,6 @@ const EcosystemList = () => {
 		window.location.href = pathRoutes.ecosystem.dashboard;
 	};
 
-	console.log(35345, selectedOrgId);
 	const emptyListMessage = (isWalletSpinUp: boolean, selectedOrgId: boolean, ecosystemList: boolean) => {
 		try {
 			switch (true) {
