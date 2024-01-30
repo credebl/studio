@@ -71,7 +71,7 @@ const fetchNetworks = async () => {
 		}
 		return []
 	} catch (err) {
-		console.log(7578, err)
+		console.log("Fetch Network ERROR::::", err)
 	}
 }
 
