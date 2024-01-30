@@ -14,6 +14,7 @@ const ProofRequest = (props: IProofRrquestDetails) => {
 	const [navigation, setNavigation] = useState(false);
 	const [succesMsg, setSuccesMsg] = useState('');
 	const [error, setError] = useState('');
+	
 	const handleConfirmClick = async (id: string) => {
 		try {
 			setButtonLoader(true);
@@ -85,7 +86,7 @@ const ProofRequest = (props: IProofRrquestDetails) => {
 								{' '}
 								Verification Details
 							</p>
-							{!props.userData ? (
+							{props.verifyLoading ? (
 								<div className="flex items-center justify-center m-4">
 									<CustomSpinner />
 								</div>
@@ -189,7 +190,7 @@ const ProofRequest = (props: IProofRrquestDetails) => {
 							<p className="text-xl font-semibold text-gray-700 dark:bg-gray-800 dark:text-white flex flex-start pb-2">
 								Verified Details
 							</p>
-							{!props.userData ? (
+							{props.verifyLoading ? (
 								<div className="flex items-center justify-center m-4">
 									<CustomSpinner />
 								</div>
@@ -206,16 +207,17 @@ const ProofRequest = (props: IProofRrquestDetails) => {
 							)}
 						</div>
 						<div className="flex justify-center items-center space-x-4">
-							<button
+							<Button
 								onClick={() => {
 									setButtonLoader(false);
 									props.closeModal(false, '', false);
 								}}
+								disabled={props.verifyLoading}
 								className="py-1 px-2 medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 								style={{ height: '2.5rem', minWidth: '100px' }}
 							>
 								Close
-							</button>
+							</Button>
 						</div>
 					</div>
 				</Modal>
