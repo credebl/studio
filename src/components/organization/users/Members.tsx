@@ -2,7 +2,6 @@
 
 import { ChangeEvent, useEffect, useState } from 'react';
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
-
 import { AlertComponent } from '../../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import CustomSpinner from '../../CustomSpinner';
@@ -28,7 +27,6 @@ const Members = () => {
 	const [error, setError] = useState<string | null>(null);
 	const [userRoles, setUserRoles] = useState<string[]>([]);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
-	const timestamp = Date.now();
 
 	const onPageChange = (page: number) => {
 		setCurrentPage({
@@ -42,7 +40,6 @@ const Members = () => {
 	const [selectedUser, setSelectedUser] = useState<User | null>(null);
 	const props = { openModal, setOpenModal };
 
-	//Fetch the user organization list
 	const getAllUsers = async () => {
 		setLoading(true);
 
