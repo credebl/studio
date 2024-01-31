@@ -381,6 +381,7 @@ console.log(6448, res)
 				setSuccess(data.message);
 				setUploadMessage(null)
 				handleResetForConfirm()
+				onClear()
 			} else {
 				setFailure(response as string);
 				setTimeout(()=>{
