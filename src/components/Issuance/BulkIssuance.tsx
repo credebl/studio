@@ -387,6 +387,7 @@ const BulkIssuance = () => {
 				setSuccess(data.message);
 				setUploadMessage(null)
 				handleResetForConfirm()
+				onClear()
 			} else {
 				setFailure(response as string);
 				setTimeout(()=>{
