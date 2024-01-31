@@ -50,7 +50,6 @@ const Invitations = () => {
     const [invitationsList, setInvitationsList] = useState<Array<Invitation> | null>(null)
     const props = { openModal, setOpenModal };
 
-    //Fetch the user organization list
     const getAllInvitations = async () => {
         setLoading(true)
 
@@ -68,14 +67,9 @@ const Invitations = () => {
                 total: totalPages
             })
         }
-        else {
-            setError(response as string)
-
-        }
     }
 
-    //This useEffect is called when the searchText changes 
-    useEffect(() => {
+   useEffect(() => {
         let getData: NodeJS.Timeout
 
         if (searchText.length >= 1) {
@@ -90,8 +84,6 @@ const Invitations = () => {
         return () => clearTimeout(getData)
     }, [searchText, openModal, currentPage.pageNumber])
 
-
-    //onChange of Search input text
     const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         setSearchText(e.target.value);
     }
@@ -276,9 +268,9 @@ const Invitations = () => {
                             </ul>
                         </div>
                     </div>)
-                        : invitationsList && (<EmptyListMessage
+                        : (<EmptyListMessage
                             message={'No Invitations'}
-                            description={'Get started by inviting a users'}
+                            description={'Get started by inviting a user'}
                             buttonContent={'Invite'}
                             feature={Features.SEND_INVITATION}
                             onClick={createInvitationsModel}

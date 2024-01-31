@@ -68,13 +68,10 @@ const Members = () => {
 				...currentPage,
 				total: totalPages,
 			});
-		} else {
-			setError(response as string);
 		}
 		setLoading(false);
 	};
 
-	//This useEffect is called when the searchText changes
 	useEffect(() => {
 		let getData: NodeJS.Timeout;
 
@@ -100,7 +97,6 @@ const Members = () => {
 		getUserRoles();
 	}, []);
 
-	//onCHnage of Search input text
 	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setSearchText(e.target.value);
 	};
