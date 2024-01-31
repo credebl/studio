@@ -2,7 +2,6 @@
 
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
-
 import { AlertComponent } from '../../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import CustomSpinner from '../../CustomSpinner';
@@ -57,17 +56,17 @@ const Invitations = () => {
         const response = await getOrganizationInvitations(currentPage.pageNumber, currentPage.pageSize, searchText);
         const { data } = response as AxiosResponse
 
-        setLoading(false)
-
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-            const totalPages = data?.data?.totalPages;
-            const invitationList = data?.data?.invitations
-            setInvitationsList(invitationList)
-            setCurrentPage({
-                ...currentPage,
-                total: totalPages
-            })
+					const totalPages = data?.data?.totalPages;
+					const invitationList = data?.data?.invitations
+					setInvitationsList(invitationList)
+					setCurrentPage({
+						...currentPage,
+						total: totalPages
+					})
+					setLoading(false)
         }
+				setLoading(false)
     }
 
    useEffect(() => {
@@ -94,6 +93,7 @@ const Invitations = () => {
     }
 
     const deleteInvitations = async () => {
+		  	setDeleteLoading(true);
         const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
         const invitationId = selectedInvitation
         const response = await deleteOrganizationInvitation(orgId, invitationId);
@@ -106,6 +106,7 @@ const Invitations = () => {
             setShowPopup(false)
         } else {
             setError(response as string);
+						setDeleteLoading(false);
         }
         setDeleteLoading(false);
     };
@@ -145,7 +146,11 @@ const Invitations = () => {
                         setError(null)
                     }}
                 />
-                    {
+              {loading ? (
+					      <div className="flex items-center justify-center mb-4">
+						       <CustomSpinner />
+					      </div>
+			        	) :
                     invitationsList && invitationsList?.length > 0 ? (<div
                         className="p-2 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-3 dark:bg-gray-800"
                     >
@@ -269,7 +274,7 @@ const Invitations = () => {
                             </ul>
                         </div>
                     </div>)
-                        : (<EmptyListMessage
+                        :  (<EmptyListMessage
                             message={'No Invitations'}
                             description={'Get started by inviting a user'}
                             buttonContent={'Invite'}
@@ -291,6 +296,7 @@ const Invitations = () => {
                     </div>
                 }
                 <ConfirmationModal
+								    loading={deleteLoading}
                     success={message}
                     failure={error}
                     openModal={showPopup}
