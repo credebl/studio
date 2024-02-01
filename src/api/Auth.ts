@@ -26,6 +26,12 @@ export interface EmailVerifyData {
     email: string
 }
 
+export interface KeyCloakData {
+	email: string,
+	oldPassword: string,
+	newPassword: string
+}
+
 export const sendVerificationMail = async(payload:UserSignUpData) => {
     const details ={
         url: apiRoutes.auth.sendMail,
@@ -56,6 +62,23 @@ export const loginUser = async(payload: UserSignInData) => {
         const err = error as Error
         return err?.message
     } 
+}
+
+export const resetPasswordKeyCloak = async(payload: KeyCloakData) => {
+	
+	const details = {
+			url: apiRoutes.auth.keyClockResetPassword,
+			payload,
+			config: { headers: { "Content-type": "application/json" } }
+	}
+	try{
+			const response = await axiosPost(details)
+			return response
+	}
+	catch(error){
+			const err = error as Error
+			return err?.message
+	} 
 }
 
 export const getUserProfile = async(accessToken: string) => {

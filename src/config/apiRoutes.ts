@@ -14,6 +14,7 @@ export const apiRoutes = {
 		fidoDevice: 'auth/passkey',
 		fidoAuthentication: 'auth/passkey/authentication-options',
 		fidoVerifyAuthentication: 'auth/passkey/verify-authentication/',
+		keyClockResetPassword: 'auth/reset-password'
 	},
 	users: {
 		userProfile: '/users/profile',

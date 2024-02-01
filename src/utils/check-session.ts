@@ -29,18 +29,18 @@ export const checkUserSession = async ({
 		};
 	}
 
-	const {
-		data: { user },
-		error,
-	} = await getSupabaseClient().auth.getUser(sessionCookie);
+	// const {
+	// 	data: { user },
+	// 	error,
+	// } = await getSupabaseClient().auth.getUser(sessionCookie);
 
-	if (!user || user.role !== 'authenticated') {
-		return {
-			permitted: false,
-			redirect: pathRoutes.auth.sinIn,
-			authorized: false,
-		};
-	}
+	// if (!user || user.role !== 'authenticated') {
+	// 	return {
+	// 		permitted: false,
+	// 		redirect: pathRoutes.auth.sinIn,
+	// 		authorized: false,
+	// 	};
+	// }
 
 	const role = getFromCookies(cookies, 'role');
 	const permittedPages = RolePermissions.find(
