@@ -10,7 +10,6 @@ import CustomSpinner from '../../CustomSpinner';
 import { EmptyListMessage } from '../../EmptyListComponent';
 import SearchInput from '../../SearchInput';
 import { getFromLocalStorage } from '../../../api/Auth';
-import { pathRoutes } from '../../../config/pathRoutes';
 import { getOrganizationById } from '../../../api/organization';
 import {
 	ICheckEcosystem,
@@ -219,7 +218,7 @@ const EndorsementList = () => {
 			{
 				isEcosystemData?.isEnabledEcosystem &&
 				<div className='pb-3'>
-					<EcosystemProfileCard />
+					<EcosystemProfileCard getEndorsementListData={() => getEndorsementListData(endorsementListAPIParameter)} />
 				</div>
 			}
 			<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
