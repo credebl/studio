@@ -31,11 +31,11 @@ const DisplayUserProfile = ({
 							<svg
 								className="h-5 w-6 mr-1 text-white"
 								viewBox="0 0 24 24"
-								stroke-width="2"
+								strokeWidth="2"
 								stroke="currentColor"
 								fill="none"
-								stroke-linecap="round"
-								stroke-linejoin="round"
+								strokeLinecap="round"
+								strokeLinejoin="round"
 							>
 								<path stroke="none" d="M0 0h24v24H0z" />
 								<path d="M9 7 h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3" />
@@ -79,7 +79,7 @@ const DisplayUserProfile = ({
 										className="mb-4 border border-b rounded-full w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
 										size="90"
 										src={
-											userProfileInfo?.firstName ||
+											userProfileInfo?.firstName ??
 											'../../public/images/profile.png'
 										}
 										name={userProfileInfo?.firstName}
