@@ -139,7 +139,7 @@ const ProofRequest = (props: IProofRrquestDetails) => {
 								disabled={
 									navigation ||
 									buttonLoader ||
-									(props?.userRoles || []).every(role =>
+									(props?.userRoles ?? []).every(role =>
 										[Roles.MEMBER, Roles.ISSUER].includes(role as Roles)
 									)
 								}	
