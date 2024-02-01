@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Card } from 'flowbite-react';
-import type { IEcosystem } from '../components/Ecosystem/interfaces';
+import type { EndorsementInterface, IEcosystem } from '../components/Ecosystem/interfaces';
 import { getFromLocalStorage, removeFromLocalStorage, setToLocalStorage } from '../api/Auth';
 import { apiStatusCodes, storageKeys } from '../config/CommonConstant';
 import type { AxiosResponse } from 'axios';
@@ -11,11 +11,8 @@ import CustomSpinner from '../components/CustomSpinner';
 import { pathRoutes } from '../config/pathRoutes';
 import { EmptyListMessage } from '../components/EmptyListComponent';
 
-interface endordememntInterface {
-  getEndorsementListData: () => void;
-}
 
-const EcosystemProfileCard = ({getEndorsementListData}:endordememntInterface) => {
+const EcosystemProfileCard = ({getEndorsementListData}:EndorsementInterface) => {
     const [ecosystemDetails, setEcosystemDetails] = useState<IEcosystem | null>();
     const [ecosystemList, setEcosystemList] = useState<IEcosystem[] | null>();
     const [loading, setLoading] = useState<boolean>();
