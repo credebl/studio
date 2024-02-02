@@ -8,6 +8,7 @@ import { pathRoutes } from '../../config/pathRoutes';
 import AttributesListData from './AttributesListData';
 import SchemaCredDefDetails from './SchemaCredDefDetails';
 import type { IProofRrquestDetails } from './interface';
+import { Roles } from '../../utils/enums/roles';
 
 const ProofRequest = (props: IProofRrquestDetails) => {
 	const [buttonLoader, setButtonLoader] = useState<boolean>(false);
@@ -135,7 +136,13 @@ const ProofRequest = (props: IProofRrquestDetails) => {
 							<Button
 								isProcessing={buttonLoader}
 								onClick={() => handleConfirmClick(props.requestId)}
-								disabled={navigation || buttonLoader}
+								disabled={
+									navigation ||
+									buttonLoader ||
+									(props?.userRoles ?? []).every(role =>
+										[Roles.MEMBER, Roles.ISSUER].includes(role as Roles)
+									)
+								}	
 								className="py-1 px-2 medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 								style={{ height: '2.5rem', minWidth: '3rem' }}
 							>

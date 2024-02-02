@@ -80,7 +80,7 @@ const Connections = () => {
 			</div>
 			<div id="myTabContent">
 				<div
-					className="hidden rounded-lg bg-gray-50 dark:bg-gray-800"
+					className="hidden rounded-lg bg-gray-50 dark:bg-gray-900"
 					id="profile"
 					role="tabpanel"
 					aria-labelledby="profile-tab"
