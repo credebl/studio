@@ -17,10 +17,11 @@ import CustomSpinner from '../CustomSpinner';
 import { issueOobEmailCredential } from '../../api/issuance';
 import { EmptyListMessage } from '../EmptyListComponent';
 import ResetPopup from './ResetPopup';
+import type { SelectRef } from './BulkIssuance';
 import RoleViewButton from '../RoleViewButton';
 import { checkEcosystem, type ICheckEcosystem } from '../../config/ecosystem';
 import { Features } from '../../utils/enums/features';
-import {SchemaEndorsement, Create} from './Constant'
+import { Create, SchemaEndorsement } from './Constant';
 
 const EmailIssuance = () => {
 	const [formData, setFormData] = useState();
@@ -186,11 +187,16 @@ const EmailIssuance = () => {
 	const handleBlur = () => {
 		setIsEditing(false);
 	};
+	const selectInputRef = React.useRef<SelectRef | null>(null);
 
 	const handleReset = () => {
 		setCredentialSelected(null);
 		setBatchName('');
 		setOpenResetModal(false);
+		if(selectInputRef.current){
+
+			selectInputRef.current.clearValue();
+		}
 	};
 
 	const handleCloseConfirmation = () => {
@@ -207,7 +213,7 @@ const EmailIssuance = () => {
 	const handleResetOpenConfirmation = () => {
 		setOpenResetModal(true);
 	};
-
+	
 	const createSchemaTitle = isEcosystemData?.isEcosystemMember
 		? { title: 'Schema Endorsement', svg: <SchemaEndorsement/> }
 		: { title: 'Create Schema', svg: <Create/> };
@@ -253,7 +259,7 @@ const EmailIssuance = () => {
 
 	return (
 		<div className="px-4 pt-2">
-			<div className="col-span-full xl:mb-2">
+			<div className="col-span-full mb-3">
 				<div className="flex justify-between items-center">
 					<BreadCrumbs />
 					<BackButton path={pathRoutes.organizations.Issuance.issue} />
@@ -307,6 +313,7 @@ const EmailIssuance = () => {
 												setCredentialSelected(value?.value ?? '');
 												setAttributes(value?.schemaAttributes);
 											}}
+											ref={selectInputRef}
 										/>
 									</div>
 									<div className="mt-4">
