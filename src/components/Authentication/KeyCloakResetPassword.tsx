@@ -1,33 +1,26 @@
 import * as yup from 'yup';
-import { Avatar, Button, Label, Modal } from 'flowbite-react';
-import { Field, Form, Formik, FormikHelpers } from 'formik';
+import { Button, Label, Modal } from 'flowbite-react';
+import { Field, Form, Formik } from 'formik';
 import { apiStatusCodes, passwordRegex } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
-import { updateOrganization } from '../../api/organization';
-import { updateEcosystem } from '../../api/ecosystem';
-import type {
-	EditEntityModalProps,
-	EditEntityValues,
-	ILogoImage,
-} from '../Ecosystem/interfaces';
-import React, { useEffect, useState } from 'react';
-import EndorsementTooltip from '../../commonComponents/EndorsementTooltip';
-import { processImage } from '../../utils/processImage';
-import FormikErrorMessage from '../../commonComponents/formikerror/index';
+import { useState } from 'react';
 import { passwordEncryption, resetPasswordKeyCloak } from '../../api/Auth';
 import { PassInvisible, PassVisible } from './Svg.js';
+import { pathRoutes } from '../../config/pathRoutes';
+import type { IPassword, IProps, IValues } from './interfaces';
 
-// EditEntityModalProps
-const KeyClockResetPassword = (props) => {
+const KeyClockResetPassword = (props: IProps) => {
 	const [loading, setLoading] = useState(false);
-	// const [passwordVisible, setPasswordVisible] = useState(false);
-	const [passwordVisibility, setPasswordVisibility] = useState({
+	const [success, setSuccess] = useState<string | null>(null);
+	const [error, setError] = useState<string | null>(null);
+	const [passwordVisibility, setPasswordVisibility] = useState<IPassword>({
 		currentPassword: false,
 		newPassword: false,
 		confirmPassword: false,
 	});
-	const submitUpdatePassword = async (values) => {
+
+	const submitUpdatePassword = async (values: IValues) => {
 		setLoading(true);
 		const entityData = {
 			email: props.email,
@@ -38,23 +31,21 @@ const KeyClockResetPassword = (props) => {
 			const response = await resetPasswordKeyCloak(entityData);
 			const { data } = response as AxiosResponse;
 
-			// if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			// 	if (props?.onEditSuccess) {
-			// 		props?.onEditSuccess();
-			// 	}
-			// 	props.setOpenModal(false);
-			// 	props.setMessage(data?.message);
-			// } else {
-			// setErrMsg(response as string);
-			// setLoading(false);
-			// }
+			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+				setSuccess(data.message);
+				setLoading(false);
+				window.location.href = pathRoutes.landingPage.landingPage;
+			} else {
+				setError(response as string);
+				setLoading(false);
+			}
 		} catch (error) {
 			console.error('An error occurred:', error);
 			setLoading(false);
 		}
 	};
 
-	const handleToggleVisibility = (passwordType: string) => {
+	const handleToggleVisibility = (passwordType: keyof IPassword) => {
 		setPasswordVisibility((prevVisibility) => ({
 			...prevVisibility,
 			[passwordType]: !prevVisibility[passwordType],
@@ -64,7 +55,7 @@ const KeyClockResetPassword = (props) => {
 	return (
 		<Modal
 			size={'3xl'}
-			show={props.openModal}
+			show={props.openModel}
 			onClose={() => {
 				props.setOpenModal(false);
 			}}
@@ -75,18 +66,19 @@ const KeyClockResetPassword = (props) => {
 					Choose a new password for your account
 				</p>
 				<p className="text-yellow-600 text-sm font-normal">
-					Note: CREDEBL has an update for your seamless experience, we request
-					you to please reset your password for it.
+					CREDEBL has an update for your seamless experience. We request you to
+					please reset your password for it.
 				</p>
 			</Modal.Header>
 			<Modal.Body>
-				{/* <AlertComponent
-					message={errMsg}
-					type={'failure'}
-					onAlertClose={() => {
-						setErrMsg(null);
-					}}
-				/> */}
+						<AlertComponent
+							message={ success ?? error}
+							type={success ? 'success' : 'failure'}
+							onAlertClose={() => {
+								setError(null);
+								setSuccess(null);
+							}}
+						/>
 				<Formik
 					initialValues={{
 						currentPassword: '',
@@ -98,12 +90,12 @@ const KeyClockResetPassword = (props) => {
 							.string()
 							.required('Current Password is required')
 							.min(8, 'Password must be at least 8 characters')
-							.matches(passwordRegex, 'Invalid password'),
+							.matches(passwordRegex, 'Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character'),
 						newPassword: yup
 							.string()
 							.required('New Password is required')
 							.min(8, 'Password must be at least 8 characters')
-							.matches(passwordRegex, 'Invalid password'),
+							.matches(passwordRegex, 'Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character'),
 						confirmPassword: yup
 							.string()
 							.required('Confirm Password is required')
@@ -113,7 +105,7 @@ const KeyClockResetPassword = (props) => {
 					validateOnBlur
 					validateOnChange
 					enableReinitialize
-					onSubmit={(values: any) => submitUpdatePassword(values)}
+					onSubmit={(values: IValues) => submitUpdatePassword(values)}
 				>
 					{(formikHandlers): JSX.Element => (
 						<Form className="space-y-6" onSubmit={formikHandlers.handleSubmit}>
@@ -135,13 +127,6 @@ const KeyClockResetPassword = (props) => {
 										type={
 											passwordVisibility.currentPassword ? 'text' : 'password'
 										}
-										// onFocus={(): void => {
-										// 	setShowSuggestion(true);
-										// }}
-										// onBlurCapture={(e: any): void => {
-										// 	setShowSuggestion(false);
-										// 	formikHandlers.handleBlur(e);
-										// }}
 									/>
 									<button
 										type="button"
@@ -155,20 +140,12 @@ const KeyClockResetPassword = (props) => {
 										)}
 									</button>
 								</div>
-
-								{/* {showSuggestion &&
-														formikHandlers?.errors?.password &&
-														formikHandlers.values.password && (
-															<PasswordSuggestionBox
-																show={true}
-																value={formikHandlers?.values?.password}
-															/>
-														)} */}
 								{formikHandlers?.errors?.currentPassword &&
+									typeof formikHandlers?.errors?.currentPassword === 'string' &&
 									formikHandlers?.touched?.currentPassword && (
-										<span className="text-red-500 text-xs absolute mt-1">
+										<div className="text-red-500 text-xs mt-1">
 											{formikHandlers?.errors?.currentPassword}
-										</span>
+										</div>
 									)}
 							</div>
 							<div className="text-primary-700 font-inter text-base font-medium leading-5">
@@ -187,13 +164,6 @@ const KeyClockResetPassword = (props) => {
 										placeholder="Please enter password"
 										className="truncate w-full bg-gray-200 pl-4 !pr-10 py-2 text-gray-700 dark:text-white dark:bg-gray-800 text-sm rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
 										type={passwordVisibility.newPassword ? 'text' : 'password'}
-										// onFocus={(): void => {
-										// 	setShowSuggestion(true);
-										// }}
-										// onBlurCapture={(e: any): void => {
-										// 	setShowSuggestion(false);
-										// 	formikHandlers.handleBlur(e);
-										// }}
 									/>
 									<button
 										type="button"
@@ -207,16 +177,9 @@ const KeyClockResetPassword = (props) => {
 										)}
 									</button>
 								</div>
-
-								{/* {showSuggestion &&
-														formikHandlers?.errors?.password &&
-														formikHandlers.values.password && (
-															<PasswordSuggestionBox
-																show={true}
-																value={formikHandlers?.values?.password}
-															/>
-														)} */}
 								{formikHandlers?.errors?.newPassword &&
+									typeof formikHandlers?.errors?.newPassword === 'string' &&
+									formikHandlers?.errors?.newPassword &&
 									formikHandlers?.touched?.newPassword && (
 										<span className="text-red-500 text-xs absolute mt-1">
 											{formikHandlers?.errors?.newPassword}
@@ -241,13 +204,6 @@ const KeyClockResetPassword = (props) => {
 										type={
 											passwordVisibility.confirmPassword ? 'text' : 'password'
 										}
-										// onFocus={(): void => {
-										// 	setShowSuggestion(true);
-										// }}
-										// onBlurCapture={(e: any): void => {
-										// 	setShowSuggestion(false);
-										// 	formikHandlers.handleBlur(e);
-										// }}
 									/>
 									<button
 										type="button"
@@ -261,16 +217,8 @@ const KeyClockResetPassword = (props) => {
 										)}
 									</button>
 								</div>
-
-								{/* {showSuggestion &&
-														formikHandlers?.errors?.password &&
-														formikHandlers.values.password && (
-															<PasswordSuggestionBox
-																show={true}
-																value={formikHandlers?.values?.password}
-															/>
-														)} */}
 								{formikHandlers?.errors?.confirmPassword &&
+									typeof formikHandlers?.errors?.confirmPassword === 'string' &&
 									formikHandlers?.touched?.confirmPassword && (
 										<span className="text-red-500 text-xs absolute mt-1">
 											{formikHandlers?.errors?.confirmPassword}
@@ -281,6 +229,7 @@ const KeyClockResetPassword = (props) => {
 								<Button
 									type="submit"
 									isProcessing={loading}
+									disabled={loading}
 									className="w-full mt-12 text-base py-1 font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 dark:bg-primary-700 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 								>
 									Reset Password

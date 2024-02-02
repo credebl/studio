@@ -26,10 +26,6 @@ import { PlatformRoles } from '../../common/enums';
 import { pathRoutes } from '../../config/pathRoutes';
 import KeyClockResetPassword from './KeyCloakResetPassword';
 
-interface emailValue {
-	email: string;
-}
-
 interface passwordValue {
 	password: string;
 }
@@ -76,6 +72,7 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 
 		setLoading(false);
 	};
+
 	const signInUser = async (values: passwordValue) => {
 		const payload: SignInUser3Props = {
 			email: email?.trim()?.toLocaleLowerCase(),
@@ -85,8 +82,9 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 		setLoading(true);
 		const loginRsp = await loginUser(payload);
 		const { data } = loginRsp as AxiosResponse;
+		
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			if (data.data.isRegisteredToSupabase) {
+			if (data?.data?.isRegisteredToSupabase) {
 				setOpenModel(true);
 				setLoading(false);
 			} else {
@@ -227,11 +225,13 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 									<div className="block md:hidden bg-blue-500 bg-opacity-10 mt-4 mb-8">
 										<img src="/images/signInPassword.svg" alt="img" />
 									</div>
-									<KeyClockResetPassword
-										openModal={openModel}
-										email={email}
-										setOpenModal={setOpenModel}
-									/>
+									{openModel && (
+										<KeyClockResetPassword
+											openModel={openModel}
+											email={email}
+											setOpenModal={setOpenModel}
+										/>
+									)}
 									<Formik
 										initialValues={{
 											password: '',
