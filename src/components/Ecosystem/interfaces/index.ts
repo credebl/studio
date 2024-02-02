@@ -71,6 +71,6 @@ export interface IEndorsementList {
 	createDateTime: string;
 }
 
-export interface EndorsementInterface {
+export interface IEndorsement {
   getEndorsementListData: () => void;
 }
