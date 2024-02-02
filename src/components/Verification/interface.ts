@@ -45,6 +45,7 @@ export interface IProofRrquestDetails {
 	requestId: string;
 	userData: object[];
 	view: boolean;
+  userRoles?: string[],
 }
 
 export interface IConnectionList {
