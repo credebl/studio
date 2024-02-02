@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Card } from 'flowbite-react';
-import type { EndorsementInterface, IEcosystem } from '../components/Ecosystem/interfaces';
+import type { IEndorsement, IEcosystem } from '../components/Ecosystem/interfaces';
 import { getFromLocalStorage, removeFromLocalStorage, setToLocalStorage } from '../api/Auth';
 import { apiStatusCodes, storageKeys } from '../config/CommonConstant';
 import type { AxiosResponse } from 'axios';
@@ -12,7 +12,7 @@ import { pathRoutes } from '../config/pathRoutes';
 import { EmptyListMessage } from '../components/EmptyListComponent';
 
 
-const EcosystemProfileCard = ({getEndorsementListData}:EndorsementInterface) => {
+const EcosystemProfileCard = ({getEndorsementListData}:IEndorsement) => {
     const [ecosystemDetails, setEcosystemDetails] = useState<IEcosystem | null>();
     const [ecosystemList, setEcosystemList] = useState<IEcosystem[] | null>();
     const [loading, setLoading] = useState<boolean>();
@@ -68,9 +68,6 @@ const EcosystemProfileCard = ({getEndorsementListData}:EndorsementInterface) => 
     const handleSelectEcosystem = async (e: { target: { value: string; }; }) => {
         await fetchEcosystemDetails(e.target.value)
         await setToLocalStorage(storageKeys.ECOSYSTEM_ID, e.target.value);
-				let kkkk= await getFromLocalStorage(storageKeys.ECOSYSTEM_ID)
-				console.log("kkkk",kkkk);
-				
 				await getEndorsementListData()
     }
 
