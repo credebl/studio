@@ -64,7 +64,7 @@ const KeyClockResetPassword = (props) => {
 	return (
 		<Modal
 			size={'3xl'}
-			show={true}
+			show={props.openModal}
 			onClose={() => {
 				props.setOpenModal(false);
 			}}
