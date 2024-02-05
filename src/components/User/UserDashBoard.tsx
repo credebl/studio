@@ -461,13 +461,19 @@ const UserDashBoard = () => {
 		return (
 			<div className="text-left text-xs">
 				<p className="text-base">What is Schema?</p>
-				      Schema is a machine-readable semantic
-				<br />structure, a predefined data template
-				<br />that provides a standard format for the 
-				<br />digital credential contents. Schemas
-				<br />define attributes that are used in one 
-				<br />or more Credential Definitions.
-				<br />Schemas are stored on the ledger.
+				Schema is a machine-readable semantic
+				<br />
+				structure, a predefined data template
+				<br />
+				that provides a standard format for the
+				<br />
+				digital credential contents. Schemas
+				<br />
+				define attributes that are used in one
+				<br />
+				or more Credential Definitions.
+				<br />
+				Schemas are stored on the ledger.
 			</div>
 		);
 	};
@@ -729,7 +735,24 @@ const UserDashBoard = () => {
 																onClick={() => {
 																	goToOrgSchema(org, org.id, org.roles);
 																}}
-																className="p-1 rounded-md"
+																className={`p-1 rounded-md ${
+																	organizationsList[index].userOrgRoles[0]
+																		.orgRole.name !==
+																		OrganizationRoles.organizationOwner ||
+																	organizationsList[index].userOrgRoles[0]
+																		.orgRole.name ===
+																		OrganizationRoles.organizationAdmin
+																		? 'cursor-not-allowed opacity-50'
+																		: ''
+																}`}
+																disabled={
+																	organizationsList[index].userOrgRoles[0]
+																		.orgRole.name !==
+																		OrganizationRoles.organizationOwner ||
+																	organizationsList[index].userOrgRoles[0]
+																		.orgRole.name ===
+																		OrganizationRoles.organizationAdmin
+																}
 															>
 																<svg
 																	xmlns="http://www.w3.org/2000/svg"
@@ -865,7 +888,9 @@ const UserDashBoard = () => {
 									</>
 								) : (
 									<div className="flex items-center justify-center dark:text-gray-400 text-gray-500 min-h-[195px]">
-										<p className='mb-8'>You have no organizations created or joined</p>
+										<p className="mb-8">
+											You have no organizations created or joined
+										</p>
 									</div>
 								)}
 							</>
@@ -960,7 +985,7 @@ const UserDashBoard = () => {
 									</div>
 								) : (
 									<div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
-										<p className='mb-8'>You have no schemas created</p>
+										<p className="mb-8">You have no schemas created</p>
 									</div>
 								)}
 							</>
@@ -1145,7 +1170,9 @@ const UserDashBoard = () => {
 									</>
 								) : (
 									<div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
-										<p className='mb-8'>You have no ecosystems created or joined</p>
+										<p className="mb-8">
+											You have no ecosystems created or joined
+										</p>
 									</div>
 								)}
 							</>
@@ -1230,7 +1257,7 @@ const UserDashBoard = () => {
 									</>
 								) : (
 									<div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
-										<p className='mb-8'>You have no cred-defs created</p>
+										<p className="mb-8">You have no cred-defs created</p>
 									</div>
 								)}{' '}
 							</>
