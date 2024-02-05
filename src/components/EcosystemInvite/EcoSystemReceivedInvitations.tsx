@@ -1,5 +1,5 @@
 import { Button, Card, Pagination } from 'flowbite-react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 	acceptRejectEcosystemInvitations,
 	getUserEcosystemInvitations,
@@ -17,7 +17,6 @@ import { getFromLocalStorage } from '../../api/Auth';
 import { getOrganizationById, getOrganizations } from '../../api/organization';
 import EcoInvitationList from './EcoInvitationList';
 import BackButton from '../../commonComponents/backbutton';
-import React from 'react';
 
 const initialPageState = {
 	pageNumber: 1,
