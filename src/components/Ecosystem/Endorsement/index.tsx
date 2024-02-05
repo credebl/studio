@@ -10,14 +10,12 @@ import CustomSpinner from '../../CustomSpinner';
 import { EmptyListMessage } from '../../EmptyListComponent';
 import SearchInput from '../../SearchInput';
 import { getFromLocalStorage } from '../../../api/Auth';
-import { pathRoutes } from '../../../config/pathRoutes';
 import { getOrganizationById } from '../../../api/organization';
 import {
 	ICheckEcosystem,
 	checkEcosystem,
 	getEcosystemId,
 } from '../../../config/ecosystem';
-import type { IAttributes } from '../../Resources/Schema/interfaces';
 import EndorsementCard from './EndorsementCard';
 import {
 	GetEndorsementListParameter,
@@ -27,27 +25,8 @@ import { EndorsementStatus, EndorsementType } from '../../../common/enums';
 import { AlertComponent } from '../../AlertComponent';
 import { Features } from '../../../utils/enums/features';
 import EcosystemProfileCard from '../../../commonComponents/EcosystemProfileCard';
+import type { IEndorsementList, ISelectedRequest } from '../interfaces';
 
-interface ISelectedRequest {
-	attribute: IAttributes[];
-	issuerDid: string;
-	createdDate: string;
-	schemaId: string;
-}
-
-interface IEndorsementList {
-	id: string;
-	endorserDid: string;
-	authorDid: string;
-	status: string;
-	type: string;
-	ecosystemOrgs: {
-		orgId: string;
-	};
-	requestPayload: string;
-	responsePayload: string;
-	createDateTime: string;
-}
 
 const EndorsementList = () => {
 	const [schemaList, setSchemaList] = useState<IEndorsementList[]>([]);
@@ -219,7 +198,7 @@ const EndorsementList = () => {
 			{
 				isEcosystemData?.isEnabledEcosystem &&
 				<div className='pb-3'>
-					<EcosystemProfileCard />
+					<EcosystemProfileCard getEndorsementListData={() => getEndorsementListData(endorsementListAPIParameter)} />
 				</div>
 			}
 			<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
