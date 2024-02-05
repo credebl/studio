@@ -211,7 +211,7 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
                                     </Alert>
                                 }
 
-                                <div className='flex mt-2 xl:mt-8'>
+                                <div className='flex mt-2 xl:mt-8 space-x-4'>
                                     <button className='flex mt-2 '
                                         onClick={handleBackButton}
                                     >
@@ -220,7 +220,7 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
                                         </svg>
                                     </button>
 
-                                    <div className="w-full flex flex-col items-center justify-center ">
+                                    <div className="w-full space-x-4 flex flex-col items-center justify-center ">
 
                                         <h2 className="text-center text-primary-700 dark:text-gray-200 font-inter text-3xl font-bold leading-10">
                                             Create account
