@@ -75,10 +75,10 @@ const getEcosystemId = async (): Promise<string> => {
 
 				if (
 					data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS &&
-					data?.data &&
-					data?.data.length > 0
+					data?.data && data?.data.ecosystemDetails &&
+					data?.data.ecosystemDetails.length > 0
 				) {
-					const response = data?.data[0];
+					const response = data?.data.ecosystemDetails[0];
 					const id = response?.id;
 					const role =
 						response?.ecosystemOrgs &&

@@ -38,12 +38,14 @@ export interface SchemaDetails {
 }
   
 export interface IProofRrquestDetails {
+	verifyLoading: boolean;
 	openModal: boolean;
 	closeModal: (flag: boolean, id: string, state: boolean) => void;
 	onSucess: (verifyPresentationId: string) => void;
 	requestId: string;
 	userData: object[];
 	view: boolean;
+  userRoles?: string[],
 }
 
 export interface IConnectionList {

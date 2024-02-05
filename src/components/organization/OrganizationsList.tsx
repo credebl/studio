@@ -98,9 +98,9 @@ const OrganizationsList = () => {
 
 	useEffect(() => {
 		const queryParameters = new URLSearchParams(window?.location?.search);
-		const isModel = queryParameters.get('orgModal') ?? '';
+		const isModel = queryParameters.get('orgModal') === 'true' || false;
 
-		if (isModel !== '') {
+		if (isModel) {
 			props.setOpenModal(true);
 		}
 	}, []);

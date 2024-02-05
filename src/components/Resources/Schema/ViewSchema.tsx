@@ -197,9 +197,8 @@ const ViewSchemas = () => {
     }
   }
 
-  const credDefSelectionCallback = async (schemaId: string, credentialDefinitionId: string) => {
-    await setToLocalStorage(storageKeys.CRED_DEF_ID, credentialDefinitionId)
-    window.location.href = `${pathRoutes.organizations.Issuance.connections}`
+  const credDefSelectionCallback = async () => {
+    window.location.href = `${pathRoutes.organizations.Issuance.issue}`
   }
 
   const fetchLedgerPlatformUrl = async (indyNamespace: string) => {
@@ -509,7 +508,7 @@ const ViewSchemas = () => {
               />
             </div>
           </div>) : (<EmptyListMessage
-            message={'No credential definition'}
+            message={'No Credential Definition'}
             description={'Get started by creating a new credential definition'}
             buttonContent={''}
             svgComponent={<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">

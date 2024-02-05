@@ -187,3 +187,7 @@ ul.timelinestatic {
 	.select__input-container {
 	width: 1px;
 }
+
+.email-bulk-issuance .select__single-value{
+	width: calc(100% - 15px) !important;
+}

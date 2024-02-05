@@ -6,23 +6,20 @@ import {
 	IConnectionListAPIParameter,
 	getConnectionsByOrg,
 } from '../../api/connection';
-import DataTable from '../../commonComponents/datatable';
 import type { TableData } from '../../commonComponents/datatable/interface';
 import { apiStatusCodes } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';
 import { dateConversion } from '../../utils/DateConversion';
 import DateTooltip from '../Tooltip';
-import SearchInput from '../SearchInput';
-import { Pagination } from 'flowbite-react';
-import type { IConnectionList } from './interface'
-
+import type { IConnectionList } from './interface';
+import NewDataTable from '../../commonComponents/datatable/SortDataTable';
 
 const initialPageState = {
 	itemPerPage: 10,
 	page: 1,
 	search: '',
 	sortBy: 'createDateTime',
-	sortingOrder: 'DESC',
+	sortingOrder: 'desc',
 	allSearch: '',
 };
 const ConnectionList = (props: {
@@ -37,13 +34,26 @@ const ConnectionList = (props: {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [totalItem, setTotalItem] = useState(0);
 	const [error, setError] = useState<string | null>(null);
+	const [pageInfo, setPageInfo] = useState({
+		totalItem: '',
+		nextPage: '',
+		lastPage: '',
+	});
 
-	//This useEffect is called when the searchText changes
 	useEffect(() => {
-		getConnections(listAPIParameter);
+		let getData: NodeJS.Timeout;
+
+		if (listAPIParameter?.search?.length >= 1) {
+			getData = setTimeout(() => {
+				getConnections(listAPIParameter);
+			}, 1000);
+			return () => clearTimeout(getData);
+		} else {
+			getConnections(listAPIParameter);
+		}
+		return () => clearTimeout(getData);
 	}, [listAPIParameter]);
 
-	//Fetch the connection list against organization id
 	const getConnections = async (apiParameter: IConnectionListAPIParameter) => {
 		setLoading(true);
 		try {
@@ -51,55 +61,58 @@ const ConnectionList = (props: {
 			const { data } = response as AxiosResponse;
 
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+				const { totalItems, nextPage, lastPage } = data.data;
 				setTotalItem(data?.data.totalItems);
-				const connections = data?.data?.data?.map(
-					(ele: IConnectionList) => {
-						const userName = ele?.theirLabel ? ele.theirLabel : 'Not available';
-						const connectionId = ele.connectionId
-							? ele.connectionId
-							: 'Not available';
-						const createdOn = ele?.createDateTime
-							? ele?.createDateTime
-							: 'Not available';
-						return {
-							data: [
-								{
-									data: (
-										<div className="flex items-center" id="issuance_checkbox">
-											<input
-												id="default-checkbox"
-												type="radio"
-												name="connection"
-												onClick={(
-													event: React.MouseEvent<HTMLInputElement>,
-												) => {
-													const inputElement = event.target as HTMLInputElement;
-													selectConnection(
-														userName,
-														connectionId,
-														inputElement.checked,
-													);
-												}}
-												value=""
-												className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-lg focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 cursor-pointer"
-											/>
-										</div>
-									),
-								},
-								{ data: userName },
-								{ data: connectionId },
-								{
-									data: (
-										<DateTooltip date={createdOn} id="issuance_connection_list">
-											{' '}
-											{dateConversion(createdOn)}{' '}
-										</DateTooltip>
-									),
-								},
-							],
-						};
-					},
-				);
+
+				setPageInfo({
+					totalItem: totalItems,
+					nextPage: nextPage,
+					lastPage: lastPage,
+				});
+				const connections = data?.data?.data?.map((ele: IConnectionList) => {
+					const createdOn = ele?.createDateTime
+					? ele?.createDateTime
+					: 'Not available';
+					const connectionId = ele.connectionId
+					? ele.connectionId
+					: 'Not available';
+					const userName = ele?.theirLabel ? ele.theirLabel : 'Not available';
+					return {
+						data: [
+							{
+								data: (
+									<div className="flex items-center" id="issuance_checkbox">
+										<input
+											id="default-checkbox"
+											type="radio"
+											name="connection"
+											onClick={(event: React.MouseEvent<HTMLInputElement>) => {
+												const inputElement = event.target as HTMLInputElement;
+												selectConnection(
+													userName,
+													connectionId,
+													inputElement.checked,
+												);
+											}}
+											value=""
+											className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-lg dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600 cursor-pointer"
+										/>
+									</div>
+								),
+							},
+							{ data: userName },
+							{ data: connectionId },
+							{
+								data: (
+									<DateTooltip date={createdOn} id="issuance_connection_list">
+										{' '}
+										{dateConversion(createdOn)}{' '}
+									</DateTooltip>
+								),
+							},
+						],
+					};
+				});
 
 				setConnectionList(connections);
 				setError(null);
@@ -169,6 +182,19 @@ const ConnectionList = (props: {
 		}
 	};
 
+	const searchSortByValue = (value: any) => {
+		setListAPIParameter({
+			...listAPIParameter,
+			page: 1,
+			sortingOrder: value,
+		});
+	};
+
+	const refreshPage = () => {
+		setSelectedConnectionList([]);
+		getConnections(listAPIParameter);
+	};
+
 	useEffect(() => {
 		props.selectConnection(selectedConnectionList);
 	}, [selectedConnectionList]);
@@ -182,9 +208,6 @@ const ConnectionList = (props: {
 				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 					Connection List
 				</h1>
-				<div>
-					<SearchInput onInputChange={searchInputChange} />
-				</div>
 			</div>
 			<AlertComponent
 				message={error}
@@ -193,30 +216,29 @@ const ConnectionList = (props: {
 					setError(null);
 				}}
 			/>
-			<div
-				id="issuance_datatable"
-				className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
-			>
-				<DataTable
-					header={header}
-					data={connectionList}
-					loading={loading}
-				></DataTable>
-			</div>
-			{Math.ceil(totalItem / listAPIParameter?.itemPerPage) > 1 && (
-				<div className="flex items-center justify-end my-4">
-					<Pagination
-						currentPage={listAPIParameter?.page}
-						onPageChange={(page) => {
-							setListAPIParameter((prevState) => ({
-								...prevState,
-								page: page,
-							}));
-						}}
-						totalPages={Math.ceil(totalItem / listAPIParameter?.itemPerPage)}
-					/>
-				</div>
-			)}
+			<NewDataTable
+				isHeader={true}
+				isSearch={true}
+				isRefresh={true}
+				isSort={true}
+				onInputChange={searchInputChange}
+				refresh={refreshPage}
+				header={header}
+				data={connectionList}
+				loading={loading}
+				currentPage={listAPIParameter?.page}
+				onPageChange={(page: number) => {
+					setListAPIParameter((prevState) => ({
+						...prevState,
+						page,
+					}));
+				}}
+				totalPages={Math.ceil(totalItem / listAPIParameter?.itemPerPage)}
+				pageInfo={pageInfo}
+				searchSortByValue={searchSortByValue}
+				message={'No Connections'}
+				discription={"You don't have any connections yet"}
+			></NewDataTable>
 		</div>
 	);
 };

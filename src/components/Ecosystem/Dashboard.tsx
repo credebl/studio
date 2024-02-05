@@ -123,9 +123,8 @@ const Dashboard = () => {
 		if (id) {
 			const response = await getEcosystems(id);
 			const { data } = response as AxiosResponse;
-
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				const ecosystemData = data?.data.find(
+				const ecosystemData = data?.data?.ecosystemDetails?.find(
 					(item: { id: string }) => item.id === ecosystemId,
 				);
 				if (ecosystemData) {
@@ -305,7 +304,7 @@ const Dashboard = () => {
 								)}
 							</div>
 							{ecosystemDetails ? (
-								<div className="w-full sm:w-100/22rem min-w-[12rem]">
+								<div className="w-full sm:w-100/22rem min-w-[12rem] word-break-word">
 									<h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
 										{ecosystemDetails?.name}
 									</h3>
