@@ -125,7 +125,7 @@ const SignUpUser = () => {
 									</Alert>
 								}
 
-								<div className='flex mt-2 xl:mt-8'>
+								<div className='flex mt-2 xl:mt-8 space-x-4'>
 
 									<button className='flex mt-2' onClick={redirectLandingPage} >
 										<svg xmlns="http://www.w3.org/2000/svg" width="26" height="24" viewBox="0 0 37 20" fill="none">
