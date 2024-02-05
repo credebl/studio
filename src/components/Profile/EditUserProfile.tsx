@@ -241,7 +241,7 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
 
                         <div>
                           <h1 className="text-gray-500 text-xl font-medium font-montserrat dark:text-white">General</h1>
-                          <p className="mt-2 text-gray-700 font-montserrat text-sm font-normal font-light leading-normal dark:text-white">Basic info, like your first name, last name and profile image that will be displayed</p>
+                          <p className="text-start mt-2 text-gray-700 font-montserrat text-sm font-normal font-light leading-normal dark:text-white">Basic info, like your first name, last name and profile image that will be displayed</p>
                         </div>
 
                       </div>

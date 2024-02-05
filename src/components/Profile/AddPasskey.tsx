@@ -1,5 +1,5 @@
 import { Alert, Button } from 'flowbite-react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DeviceDetails from '../../commonComponents/DeviceDetailsCard';
 import PasskeyAddDevice from '../../commonComponents/PasseyAddDevicePopup';
 import {
@@ -223,7 +223,7 @@ const AddPasskey = ({ responseMessages }: { responseMessages: (value: IResponseM
 										<h1 className="text-gray-500 text-xl font-medium font-montserrat dark:text-white">
 											Add Passkey
 										</h1>
-										<p className="mt-2 text-gray-700 font-montserrat text-sm font-normal font-light leading-normal dark:text-white">
+										<p className="text-start mt-2 text-gray-700 font-montserrat text-sm font-normal font-light leading-normal dark:text-white">
 											With Passkey, no complex passwords to remember.
 										</p>
 									</div>
