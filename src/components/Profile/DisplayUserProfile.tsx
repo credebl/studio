@@ -15,7 +15,7 @@ const DisplayUserProfile = ({
 							<h1 className="text-gray-500 text-xl font-medium dark:text-white">
 								General
 							</h1>
-							<span className="flex flex-wrap text-gray-700 text-sm dark:text-white whitespace-normal	">
+							<span className="flex flex-wrap text-start text-gray-700 text-sm dark:text-white whitespace-normal">
 								Basic info, like your first name, last name and profile image
 								that will be displayed
 							</span>

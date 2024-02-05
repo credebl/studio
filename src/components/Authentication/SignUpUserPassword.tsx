@@ -124,7 +124,7 @@ const SignUpUserPassword = ({
 									</Alert>
 								)}
 
-								<div className='flex mt-2 xl:mt-8'>
+								<div className='flex space-x-4 mt-2 xl:mt-8'>
 									<button className="flex mt-2" onClick={handleBackButtonClick}>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
@@ -141,7 +141,7 @@ const SignUpUserPassword = ({
 									</button>
 
 									<div className="w-full flex flex-col items-center justify-center ">
-										<h2 className="text-primary-700 dark:text-gray-200 font-inter text-3xl font-bold leading-10">
+										<h2 className="text-center text-primary-700 dark:text-gray-200 font-inter text-3xl font-bold leading-10">
 											Create password
 										</h2>
 
