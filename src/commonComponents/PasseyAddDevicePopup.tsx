@@ -18,7 +18,8 @@ interface PasswordValue {
 }
 
 const PasskeyAddDevice = (props: {
-	setOpenModel(arg0: boolean): unknown; openModal: boolean; closeModal: (flag: boolean) => void; registerWithPasskey: (flag: boolean) => Promise<void>
+	setOpenModel(arg0: boolean): unknown; openModal: boolean; closeModal: (flag: boolean) => void; 
+	registerWithPasskey: (flag: boolean) => Promise<void>
 }
 ) => {
 	const [fidoUserError, setFidoUserError] = useState<string | null>(null)

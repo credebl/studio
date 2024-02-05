@@ -50,3 +50,8 @@ export interface UserProfile {
   publicProfile?: boolean
   isPublic?:boolean
 }
+
+export interface DisplayUserProfileProps {
+	toggleEditProfile: () => void;
+	userProfileInfo: UserProfile | null;
+}

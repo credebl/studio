@@ -66,7 +66,7 @@ const UserDashBoard = () => {
 		page: 1,
 		search: '',
 		sortBy: 'id',
-		sortingOrder: 'DESC',
+		sortingOrder: 'desc',
 		allSearch: '',
 	});
 	const [ecoCount, setEcoCount] = useState(0);
@@ -526,7 +526,7 @@ const UserDashBoard = () => {
 				<></>
 			) : (
 				<div
-					className="p-8 grid w-full grid-cols-1 sm:grid-cols-3 gap-4 mt-0 mb-4 rounded-md border-gray-200 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:bg-[url('/images/bg-darkwallet.png')] bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-0 bg-auto"
+					className="p-8 grid w-full grid-cols-1 sm:grid-cols-3 gap-4 mt-0 mb-4 rounded-md border border-gray-200 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:bg-[url('/images/bg-darkwallet.png')] bg-[url('/images/bg-lightwallet.png')] bg-center bg-no-repeat p-0 bg-auto"
 					style={{ minHeight: '130px' }}
 				>
 					{walletLoading ? (
@@ -537,10 +537,10 @@ const UserDashBoard = () => {
 								<div className="flex text-start items-center">
 									<div>
 										<p className="text-xl font-medium dark:text-white">
-											Wallet lets you create schemas and credential-definitions
+											Wallet lets you create schemas and credential definitions
 										</p>
 										<span className="flex justify-start items-start text-sm font-normal text-gray-500 dark:text-gray-400">
-											Please create wallet for your organisation which would
+											Please create wallet for your organization which would
 											help you to issue and verify credentials for your users.
 										</span>
 									</div>

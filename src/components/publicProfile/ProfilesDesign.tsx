@@ -1,4 +1,5 @@
 import CustomAvatar from "../../components/Avatar"
+import '../../common/global.css'
 import type { IExploreOrg } from "../organization/interfaces"
 
 const ProfilesDesign = ({ orgData }: IExploreOrg) => {
@@ -12,7 +13,7 @@ const ProfilesDesign = ({ orgData }: IExploreOrg) => {
                     <CustomAvatar className="rounded-full shadow-lg" size="180" name={orgData?.name || "NA"} />
                 )}
 
-                <h3 className="mb-1 text-center text-3xl font-medium text-gray-900 dark:text-white pt-4">{orgData?.name}</h3>
+                <h3 className="mb-1 text-center text-3xl font-medium text-gray-900 dark:text-white pt-4 word-break-word">{orgData?.name}</h3>
                 <div className="flex text-center align-middle ">
                     {orgData?.website &&
                         <><svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 19 19">
