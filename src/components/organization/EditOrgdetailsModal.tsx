@@ -128,6 +128,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 					website: props?.orgData?.website ?? '',
 				});
 				props.setOpenModal(false);
+				setErrMsg(null);
 			}}
 		>
 			<Modal.Header>Edit Organization</Modal.Header>
