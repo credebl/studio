@@ -1,7 +1,7 @@
 import { Button } from 'flowbite-react';
 import React, { useEffect, useState } from 'react';
 import CustomSpinner from '../CustomSpinner';
-import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
+import { getFromLocalStorage } from '../../api/Auth';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import type { AxiosResponse } from 'axios';
 import CopyDid from '../../commonComponents/CopyDid';
@@ -16,7 +16,7 @@ import {
 import { EmptyListMessage } from '../EmptyListComponent';
 
 const index = () => {
-	const [loading, setLoading] = useState(false);
+	const [loading, setLoading] = useState(true);
 	const [clentId, setClientId] = useState<string | null>(null);
 	const [clientSecret, setClientSecret] = useState<string | null>(null);
 	const [success, setSuccess] = useState<string | null>(null);
@@ -46,6 +46,7 @@ const index = () => {
 				}
 			} catch (error) {
 				setFailure(error as string);
+				setLoading(false);
 			} finally {
 				setLoading(false);
 			}
@@ -144,7 +145,7 @@ const index = () => {
 							<div className="flex items-center justify-center mb-4">
 								<CustomSpinner />
 							</div>
-						) : orgnizationId ? (
+						) : !loading && orgnizationId ? (
 							<>
 								{' '}
 								<form action="#">
