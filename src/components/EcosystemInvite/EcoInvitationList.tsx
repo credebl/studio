@@ -23,7 +23,7 @@ const EcoInvitationList = (props: InvitationProps) => {
 
 				<div className="flow-root h-auto">
 					<ul className="divide-y divide-gray-200 dark:divide-gray-700">
-						<li className="pt-3 sm:pt-3 overflow-auto">
+						<li>
 							<div className="items-center flex-column space-x-4">
 								<div className="inline-flex items-center text-base font-normal text-gray-900 dark:text-white">
 									Role:{' '}

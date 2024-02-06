@@ -90,7 +90,7 @@ export const apiRoutes = {
 			createSchemaRequest: '/transaction/schema',
 			createCredDefRequest: '/transaction/cred-def',
 			signRequest: '/transaction/sign/',
-			submitRequest: '/transaction/sumbit/',
+			submitRequest: '/transaction/submit/',
 			rejectRequest: '/transactions/',
 			transactionApproval: '/transaction-approval/',
 		},
