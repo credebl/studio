@@ -28,6 +28,7 @@ export const checkUserSession = async ({
 			authorized: false,
 		};
 	}
+
 	const role = getFromCookies(cookies, 'role');
 	const permittedPages = RolePermissions.find(
 		(item) => item.role === role,

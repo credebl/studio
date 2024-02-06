@@ -1,4 +1,7 @@
 export const pathRoutes = {
+	landingPage:{
+		landingPage:'/'
+	},
 	auth: {
 		signUp: '/authentication/sign-up',
 		sinIn: '/authentication/sign-in',
