@@ -22,6 +22,7 @@ import DateTooltip from '../../Tooltip';
 import { deleteOrganizationInvitation } from '../../../api/organization';
 import { getFromLocalStorage } from '../../../api/Auth';
 import ConfirmationModal from '../../../commonComponents/ConfirmationModal';
+import { Roles } from '../../../utils/enums/roles';
 
 const initialPageState = {
     pageNumber: 1,
@@ -38,8 +39,9 @@ const Invitations = () => {
     const [message, setMessage] = useState<string | null>(null)
     const [showPopup, setShowPopup] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
-    const [currentPage, setCurrentPage] = useState(initialPageState);
-
+		const [roles, setRoles] = useState<string[]>([]);
+		const [currentPage, setCurrentPage] = useState(initialPageState);
+		
     const onPageChange = (page: number) => {
         setCurrentPage({
             ...currentPage,
@@ -47,11 +49,12 @@ const Invitations = () => {
         })
     };
     const [searchText, setSearchText] = useState("");
-
     const [invitationsList, setInvitationsList] = useState<Array<Invitation> | null>(null)
     const props = { openModal, setOpenModal };
-
+		
     const getAllInvitations = async () => {
+			const roles = await getFromLocalStorage(storageKeys.ORG_ROLES)			
+			  setRoles(roles?.split(','))
         setLoading(true)
         const response = await getOrganizationInvitations(currentPage.pageNumber, currentPage.pageSize, searchText);
         const { data } = response as AxiosResponse
@@ -244,7 +247,8 @@ const Invitations = () => {
                                                                 }}
                                                                 color="bg-white"
                                                                 className="ml-5 p-0 font-normal items-center mt-5 text-sm text-primary-700 border border-blue-700 text-center hover:!bg-primary-800 hover:text-white rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:hover:bg-primary-700 dark:text-white dark:bg-primary-700 dark:focus:ring-blue-800"
-                                                            >
+																																disabled={!roles?.includes(Roles.ADMIN) && !roles?.includes(Roles.OWNER)}
+																																>
                                                                 <svg
                                                                     className="w-5 h-5"
                                                                     aria-hidden="true"
