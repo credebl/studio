@@ -232,7 +232,7 @@ const EcosystemList = () => {
 				{showCreateButton && (
 					<RoleViewButton
 						buttonTitle="Create"
-						feature={Features.CRETAE_ORG}
+						feature={Features.CREATE_ECOSYSTEMS}
 						svgComponent={
 							<div className="pr-3">
 								<svg
