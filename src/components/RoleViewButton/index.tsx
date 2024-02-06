@@ -50,6 +50,13 @@ const RoleViewButton = ({ buttonTitle, svgComponent, onClickEvent, feature, isOu
                 return true
             }
             return false
+					} else if (feature === Features.CREATE_ECOSYSTEMS) {
+            if (userRoles.includes(Roles.OWNER)
+                || userRoles.includes(Roles.ADMIN)
+            ) {
+                return true
+            }
+            return false
         } else if (userRoles.includes(Roles.OWNER) || userRoles.includes(Roles.ADMIN)) {
             return true
         } else {
