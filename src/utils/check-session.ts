@@ -6,7 +6,6 @@ import { RolePermissions } from '../config/permissions';
 
 interface IProps {
 	cookies: AstroCookies;
-	currentPath: string;
 }
 
 interface IOutput {
@@ -17,7 +16,6 @@ interface IOutput {
 
 export const checkUserSession = async ({
 	cookies,
-	currentPath,
 }: IProps): Promise<IOutput> => {
 	const sessionCookie = getFromCookies(cookies, 'session');
 
@@ -28,40 +26,6 @@ export const checkUserSession = async ({
 			authorized: false,
 		};
 	}
-
-	// const {
-	// 	data: { user },
-	// 	error,
-	// } = await getSupabaseClient().auth.getUser(sessionCookie);
-
-	// if (!user || user.role !== 'authenticated') {
-	// 	return {
-	// 		permitted: false,
-	// 		redirect: pathRoutes.auth.sinIn,
-	// 		authorized: false,
-	// 	};
-	// }
-
-	// const role = getFromCookies(cookies, 'role');
-	// const permittedPages = RolePermissions.find(
-	// 	(item) => item.role === role,
-	// )?.pages;
-
-	// if (!permittedPages?.includes(currentPath)) {
-	// 	if (permittedPages) {
-	// 		return {
-	// 			permitted: false,
-	// 			redirect: permittedPages[0],
-	// 			authorized: true,
-	// 		};
-	// 	} else {
-	// 		return {
-	// 			permitted: true,
-	// 			redirect: pathRoutes.users.dashboard,
-	// 			authorized: true,
-	// 		};
-	// 	}
-	// }
 
 	return {
 		permitted: true,
