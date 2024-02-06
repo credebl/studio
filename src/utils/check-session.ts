@@ -17,7 +17,7 @@ interface IOutput {
 
 export const checkUserSession = async ({
 	cookies,
-	currentPath,
+	currentPath
 }: IProps): Promise<IOutput> => {
 	const sessionCookie = getFromCookies(cookies, 'session');
 
@@ -49,7 +49,6 @@ export const checkUserSession = async ({
 			};
 		}
 	}
-
 	return {
 		permitted: true,
 		authorized: true,

@@ -51,7 +51,8 @@ const VerificationCredentialList = () => {
 	const [listAPIParameter, setListAPIParameter] =
 		useState<IConnectionListAPIParameter>(initialPageState);
 	const [totalItem, setTotalItem] = useState(0);
-	const [verifyLoading, setVerifyLoading]= useState(true)
+	const [verifyLoading, setVerifyLoading] = useState(true);
+	const [userRoles, setUserRoles] = useState<string[]>([]);
 	const [pageInfo, setPageInfo] = useState({
 		totalItem: '',
 		nextPage: '',
@@ -60,24 +61,29 @@ const VerificationCredentialList = () => {
 
 	const getProofPresentationData = async (proofId: string) => {
 		try {
-			setVerifyLoading(true)
+			setVerifyLoading(true);
 			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 			const response = await getVerifiedProofDetails(proofId, orgId);
 
 			const { data } = response as AxiosResponse;
 			if (data?.statusCode === apiStatusCodes?.API_STATUS_SUCCESS) {
 				setUserData(data?.data);
-				setVerifyLoading(false)
+				setVerifyLoading(false);
 			} else {
 				setErrMsg(response as string);
-				setVerifyLoading(false)
+				setVerifyLoading(false);
 			}
 		} catch (error) {
 			throw error;
 		}
 	};
 
-	//onChange of Search input text
+	const getUserRoles = async () => {
+		const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES);
+		const roles = orgRoles.split(',');
+		setUserRoles(roles);
+	};
+
 	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setListAPIParameter({
 			...listAPIParameter,
@@ -330,6 +336,10 @@ const VerificationCredentialList = () => {
 		getproofRequestList(listAPIParameter);
 	};
 
+	useEffect(() => {
+		getUserRoles();
+	}, []);
+
 	const header = [
 		{ columnName: 'Request Id' },
 		{ columnName: 'Connection Id' },
@@ -436,12 +446,15 @@ const VerificationCredentialList = () => {
 					{userData && (
 						<ProofRequest
 							openModal={openModal}
-							closeModal={() => {openProofRequestModel(false, '', '')}}
+							closeModal={() => {
+								openProofRequestModel(false, '', '');
+							}}
 							onSucess={requestProof}
 							requestId={requestId}
 							userData={userData}
 							view={view}
 							verifyLoading={verifyLoading}
+							userRoles={userRoles}
 						/>
 					)}
 				</div>
