@@ -98,6 +98,12 @@ const getEcosystemId = async (): Promise<string> => {
 	return ecoId;
 };
 
+const getUserRoles = async () => {
+	const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES)
+	const roles = orgRoles.split(',')
+	return roles
+}
+
 const getOrgDetails = async (): Promise<IOrgDetails> => {
 	const orgId = await getOrgId();
 	const org = await getOrgData();
@@ -131,4 +137,4 @@ const getOrgDetails = async (): Promise<IOrgDetails> => {
 	return orgData;
 };
 
-export { checkEcosystem, getEcosystemId, getOrgDetails };
+export { checkEcosystem, getEcosystemId, getOrgDetails, getUserRoles };

@@ -27,11 +27,7 @@ import { EmptyListMessage } from '../../EmptyListComponent';
 import { Roles } from '../../../utils/enums/roles';
 import { nanoid } from 'nanoid';
 import { pathRoutes } from '../../../config/pathRoutes';
-import {
-	ICheckEcosystem,
-	checkEcosystem,
-	getEcosystemId,
-} from '../../../config/ecosystem';
+import { ICheckEcosystem, checkEcosystem, getEcosystemId, getUserRoles } from '../../../config/ecosystem';
 import { createCredDefRequest } from '../../../api/ecosystem';
 import EcosystemProfileCard from '../../../commonComponents/EcosystemProfileCard';
 import { getLedgersPlatformUrl } from '../../../api/Agent';
@@ -187,31 +183,17 @@ const ViewSchemas = () => {
 				},
 			};
 
-			const ecoId = await getEcosystemId();
+  const getUserOrgRoles = async () => {
+		const roles = await getUserRoles()
+    setUserRoles(roles)
+  }
 
-			const createCredDeff = await createCredDefRequest(
-				requestPayload,
-				ecoId,
-				orgId,
-			);
-			const { data } = createCredDeff as AxiosResponse;
-			if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-				setCreateLoader(false);
-				setSuccess(data?.message);
-			} else {
-				setFailure(createCredDeff as string);
-				setCreateLoader(false);
-			}
-			getCredentialDefinitionList(schemaId, orgId);
-		} else {
-			setCreateLoader(true);
-			const schemaId = schemaDetails?.schemaId || '';
-			const CredDeffFieldName: CredDeffFieldNameType = {
-				tag: values?.tagName,
-				revocable: values?.revocable,
-				orgId: orgId,
-				schemaLedgerId: schemaId,
-			};
+  useEffect(() => {
+    getUserOrgRoles()
+    const checkEcosystemData = async () => {
+      const data: ICheckEcosystem = await checkEcosystem();
+      setIsEcosystemData(data)
+    }
 
 			const createCredDeff = await createCredentialDefinition(
 				CredDeffFieldName,
