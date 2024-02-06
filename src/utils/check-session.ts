@@ -17,7 +17,7 @@ interface IOutput {
 
 export const checkUserSession = async ({
 	cookies,
-	currentPath,
+	currentPath
 }: IProps): Promise<IOutput> => {
 	const sessionCookie = getFromCookies(cookies, 'session');
 
@@ -28,20 +28,6 @@ export const checkUserSession = async ({
 			authorized: false,
 		};
 	}
-
-	const {
-		data: { user },
-		error,
-	} = await getSupabaseClient().auth.getUser(sessionCookie);
-
-	if (!user || user.role !== 'authenticated') {
-		return {
-			permitted: false,
-			redirect: pathRoutes.auth.sinIn,
-			authorized: false,
-		};
-	}
-
 	const role = getFromCookies(cookies, 'role');
 	const permittedPages = RolePermissions.find(
 		(item) => item.role === role,
@@ -62,7 +48,6 @@ export const checkUserSession = async ({
 			};
 		}
 	}
-
 	return {
 		permitted: true,
 		authorized: true,
