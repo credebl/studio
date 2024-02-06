@@ -178,7 +178,7 @@ const EndorsementPopup = (props: {
 											fill="#1F4EAD"
 										/>
 									</svg>
-									<span className="ml-2 mr-2">Reject</span>
+									<span className="ml-2 mr-2">Decline</span>
 								</span>
 							</button>
 
@@ -205,7 +205,7 @@ const EndorsementPopup = (props: {
 									/>
 								</svg>
 								<span className='ml-2 mr-2'>
-									Accept
+									Endorse
 								</span>
 							</Button>
 						</div>
@@ -238,7 +238,7 @@ const EndorsementPopup = (props: {
 											/>
 										</svg>
 										<span className='ml-2 mr-2'>
-											Submit
+										Submit
 										</span>
 									</Button>
 								</div>
