@@ -15,7 +15,7 @@ import {
 } from './setting';
 import { EmptyListMessage } from '../EmptyListComponent';
 
-const index = () => {
+const Index = () => {
 	const [loading, setLoading] = useState(true);
 	const [clentId, setClientId] = useState<string | null>(null);
 	const [clientSecret, setClientSecret] = useState<string | null>(null);
@@ -24,7 +24,7 @@ const index = () => {
 	const [warning, setWarning] = useState<string | null>(null);
 	const [hideCopy, setHideCopy] = useState<boolean>(true);
 	const [userRoles, setUserRoles] = useState<string[]>([]);
-	const [orgnizationId, setOrgnizationId] = useState(null);
+	const [orgnizationId, setOrgnizationId] = useState<string | null>(null);
 
 	const createClientCredentials = async () => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -233,7 +233,6 @@ const index = () => {
 																<h1 className="flex ml-4 text-base text-gray-500 dark:text-gray-400 truncate dark:text-white">
 																	{!hideCopy ? (
 																		clientSecret && (
-																			// font-courier font-semibold
 																			<CopyDid
 																				className="text-base text-gray-500 dark:text-gray-400 text-gray-900 truncate dark:text-white"
 																				value={clientSecret}
@@ -293,4 +292,4 @@ const index = () => {
 	);
 };
 
-export default index;
+export default Index;
