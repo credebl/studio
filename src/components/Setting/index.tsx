@@ -17,7 +17,7 @@ import { EmptyListMessage } from '../EmptyListComponent';
 
 const Index = () => {
 	const [loading, setLoading] = useState(true);
-	const [clentId, setClientId] = useState<string | null>(null);
+	const [clientId, setClientId] = useState<string | null>(null);
 	const [clientSecret, setClientSecret] = useState<string | null>(null);
 	const [success, setSuccess] = useState<string | null>(null);
 	const [failure, setFailure] = useState<string | null>(null);
@@ -155,10 +155,10 @@ const Index = () => {
 												Client Id
 											</h1>
 											<p className="flex my-2 text-gray-700 text-sm leading-normal dark:text-white">
-												{clentId && (
+												{clientId && (
 													<CopyDid
 														className="text-base text-gray-500 dark:text-gray-400 text-gray-900 truncate dark:text-white"
-														value={clentId}
+														value={clientId}
 													/>
 												)}
 											</p>
@@ -195,7 +195,7 @@ const Index = () => {
 												)}
 											</div>
 
-											{clentId && (
+											{clientId && (
 												<>
 													<hr />
 													<div className="mt-4">
