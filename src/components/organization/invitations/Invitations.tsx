@@ -21,6 +21,7 @@ import { deleteOrganizationInvitation } from '../../../api/organization';
 import { getFromLocalStorage } from '../../../api/Auth';
 import ConfirmationModal from '../../../commonComponents/ConfirmationModal';
 import { Roles } from '../../../utils/enums/roles';
+import { getUserRoles } from '../../../config/ecosystem';
 
 const initialPageState = {
     pageNumber: 1,
@@ -51,8 +52,8 @@ const Invitations = () => {
     const props = { openModal, setOpenModal };
 		
     const getAllInvitations = async () => {
-			const roles = await getFromLocalStorage(storageKeys.ORG_ROLES)			
-			  setRoles(roles?.split(','))
+			const roles = await getUserRoles()				
+			  setRoles(roles)
         setLoading(true)
         const response = await getOrganizationInvitations(currentPage.pageNumber, currentPage.pageSize, searchText);
         const { data } = response as AxiosResponse
