@@ -180,9 +180,8 @@ const KeyClockResetPassword = (props: IProps) => {
 								</div>
 								{formikHandlers?.errors?.newPassword &&
 									typeof formikHandlers?.errors?.newPassword === 'string' &&
-									formikHandlers?.errors?.newPassword &&
 									formikHandlers?.touched?.newPassword && (
-										<span className="text-red-500 text-xs absolute mt-1">
+										<span className="text-red-500 text-xs mt-1">
 											{formikHandlers?.errors?.newPassword}
 										</span>
 									)}
