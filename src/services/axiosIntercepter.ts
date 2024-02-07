@@ -1,6 +1,8 @@
 import axios from 'axios'
 import { envConfig } from '../config/envConfig';
 import { pathRoutes } from '../config/pathRoutes';
+import { getFromLocalStorage } from '../api/Auth';
+import { storageKeys } from '../config/CommonConstant';
 
 const instance = axios.create({
     baseURL: envConfig.PUBLIC_BASE_URL
@@ -21,8 +23,8 @@ instance.interceptors.response.use(function (response) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
     const errorRes = error?.response;
-
-    if(errorRes?.status === 401){
+    const token = await getFromLocalStorage(storageKeys.TOKEN)
+    if(errorRes?.status === 401 && token){
         await localStorage.clear()
         window.location.href = pathRoutes.auth.sinIn
     }
