@@ -71,7 +71,6 @@ const EcosystemProfileCard = ({getEndorsementListData}:IEndorsement) => {
 				await getEndorsementListData()
     }
 
-
     useEffect(() => {
         fetchEcosystemDetails();
     }, []);

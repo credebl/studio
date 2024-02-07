@@ -24,9 +24,9 @@ const CopyDid = ({ value, className }: IProps) => {
     }
     return (
         <>
-            <span className={className}>
+            <div className={className}>
                 {value}
-            </span>
+            </div>
             <button
                 className="shrink-0"
                 onClick={e => !copied && copyTextVal(e)}
