@@ -80,7 +80,7 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 		setLoading(true);
 		const loginRsp = await loginUser(payload);
 		const { data } = loginRsp as AxiosResponse;
-		
+
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			if (data?.data?.isRegisteredToSupabase) {
 				setOpenModel(true);
@@ -112,8 +112,13 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 			}
 		} else {
 			setLoading(false);
-			setFailure(loginRsp as string);
+			if (loginRsp.toString().includes('401')) {
+				setFailure('Invalid Credntials');
+			} else {
+				setFailure(loginRsp as string);
+			}
 		}
+		setLoading(false);
 	};
 
 	const handleBackButtonClick = () => {

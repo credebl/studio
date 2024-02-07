@@ -9,6 +9,7 @@ import { passwordEncryption, resetPasswordKeyCloak } from '../../api/Auth';
 import { PassInvisible, PassVisible } from './Svg.js';
 import { pathRoutes } from '../../config/pathRoutes';
 import type { IPassword, IProps, IValues } from './interfaces';
+import React from 'react';
 
 const KeyClockResetPassword = (props: IProps) => {
 	const [loading, setLoading] = useState(false);
@@ -34,7 +35,7 @@ const KeyClockResetPassword = (props: IProps) => {
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 				setSuccess(data.message);
 				setLoading(false);
-				window.location.href = pathRoutes.landingPage.landingPage;
+				window.location.href= pathRoutes.auth.sinIn
 			} else {
 				setError(response as string);
 				setLoading(false);
@@ -179,9 +180,8 @@ const KeyClockResetPassword = (props: IProps) => {
 								</div>
 								{formikHandlers?.errors?.newPassword &&
 									typeof formikHandlers?.errors?.newPassword === 'string' &&
-									formikHandlers?.errors?.newPassword &&
 									formikHandlers?.touched?.newPassword && (
-										<span className="text-red-500 text-xs absolute mt-1">
+										<span className="text-red-500 text-xs mt-1">
 											{formikHandlers?.errors?.newPassword}
 										</span>
 									)}
