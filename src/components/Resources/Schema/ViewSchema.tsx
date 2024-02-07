@@ -27,11 +27,7 @@ import { EmptyListMessage } from '../../EmptyListComponent';
 import { Roles } from '../../../utils/enums/roles';
 import { nanoid } from 'nanoid';
 import { pathRoutes } from '../../../config/pathRoutes';
-import {
-	ICheckEcosystem,
-	checkEcosystem,
-	getEcosystemId,
-} from '../../../config/ecosystem';
+import { ICheckEcosystem, checkEcosystem, getEcosystemId, getUserRoles } from '../../../config/ecosystem';
 import { createCredDefRequest } from '../../../api/ecosystem';
 import EcosystemProfileCard from '../../../commonComponents/EcosystemProfileCard';
 import { getLedgersPlatformUrl } from '../../../api/Agent';

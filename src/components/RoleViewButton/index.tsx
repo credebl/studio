@@ -5,6 +5,7 @@ import { Features } from '../../utils/enums/features';
 import { Roles } from '../../utils/enums/roles';
 import { getFromLocalStorage } from '../../api/Auth';
 import { storageKeys } from '../../config/CommonConstant';
+import { getUserRoles } from '../../config/ecosystem'
 
 interface RoleViewButtonProps {
     buttonTitle?: string,
@@ -20,14 +21,13 @@ const RoleViewButton = ({ buttonTitle, svgComponent, onClickEvent, feature, isOu
 
     const [userRoles, setUserRoles] = useState<string[]>([])
 
-    const getUserRoles = async () => {
-        const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES)
-        const roles = orgRoles.split(',')
+    const getUserOrgRoles = async () => {
+				const roles = await getUserRoles()				
         setUserRoles(roles)
     }
 
     useEffect(() => {
-        getUserRoles()
+			getUserOrgRoles()
     }, [])
 
     const isRoleAccess = (): boolean => {
@@ -46,6 +46,13 @@ const RoleViewButton = ({ buttonTitle, svgComponent, onClickEvent, feature, isOu
             if (userRoles.includes(Roles.OWNER)
                 || userRoles.includes(Roles.ADMIN)
                 || userRoles.includes(Roles.VERIFIER)
+            ) {
+                return true
+            }
+            return false
+					} else if (feature === Features.CREATE_ECOSYSTEMS) {
+            if (userRoles.includes(Roles.OWNER)
+                || userRoles.includes(Roles.ADMIN)
             ) {
                 return true
             }
