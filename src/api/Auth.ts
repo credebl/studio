@@ -48,6 +48,36 @@ export const sendVerificationMail = async(payload:UserSignUpData) => {
     }
 }
 
+export const resetPassword = async(payload: { password: string; token: string | null }, email: string | null) => {   
+	const details = {
+			url: `${apiRoutes.auth.resetPassword}/${email}`,
+			payload
+	}
+	try{
+			const response = await axiosPost(details)
+			return response
+	}
+	catch(error){
+			const err = error as Error
+			return err?.message
+	} 
+}
+
+export const forgotPassword = async(payload: {email: string}) => {
+	const details = {
+			url: apiRoutes.auth.forgotPassword,
+			payload
+	}
+	try{
+			const response = await axiosPost(details)
+			return response
+	}
+	catch(error){
+			const err = error as Error
+			return err?.message
+	} 
+}
+
 export const loginUser = async(payload: UserSignInData) => {
     const details = {
         url: apiRoutes.auth.sinIn,

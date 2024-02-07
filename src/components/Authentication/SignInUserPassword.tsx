@@ -1,24 +1,21 @@
 import '../../common/global.css';
-
 import * as yup from 'yup';
-
 import { Button, Label } from 'flowbite-react';
 import { Field, Form, Formik } from 'formik';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import {
+	forgotPassword,
 	getUserProfile,
 	loginUser,
 	passwordEncryption,
 	setToLocalStorage,
 } from '../../api/Auth';
-
 import { Alert } from 'flowbite-react';
 import type { AxiosResponse } from 'axios';
 import CustomSpinner from '../CustomSpinner';
 import FooterBar from './FooterBar';
 import NavBar from './NavBar';
 import SignInUserPasskey from './SignInUserPasskey';
-import { getSupabaseClient } from '../../supabase';
 import NavBar from './NavBar';
 import FooterBar from './FooterBar';
 import React, { useState } from 'react';
@@ -64,12 +61,11 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 			await setToLocalStorage(storageKeys.USER_PROFILE, data?.data);
 			await setToLocalStorage(storageKeys.USER_EMAIL, data?.data?.email);
 			return {
-				role: role?.orgRole || '',
+				role: role?.orgRole ?? '',
 			};
 		} else {
 			setFailure(userDetails as string);
 		}
-
 		setLoading(false);
 	};
 
@@ -127,21 +123,22 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 		setShowSignInUser2(!showSignInUser2);
 	};
 
-	const forgotPassword = async () => {
+	const forgotUserPassword = async () => {		
 		setForgotPassLoading(true);
+		try {
+			const response = await forgotPassword({email});
+			const { data } = response as AxiosResponse;
 
-		var base_url = window.location.origin;
-
-		const { data, error } =
-			await getSupabaseClient().auth.resetPasswordForEmail(email, {
-				redirectTo: `${base_url}/reset-password`,
-			});
-		setForgotPassLoading(false);
-
-		if (!error) {
-			setSuccess('Reset password link has been sent to you on mail');
-		} else {
-			setFailure('Unable to send reset link for the password');
+			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+				setSuccess(data.message);
+				setForgotPassLoading(false);
+			} else {
+				setFailure(response as string);
+				setForgotPassLoading(false);
+			}
+		} catch (error) {
+			console.error('An error occurred:', error);
+			setForgotPassLoading(false);
 		}
 	};
 
@@ -322,7 +319,7 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 													) : (
 														<button
 															type="button"
-															onClick={forgotPassword}
+															onClick={forgotUserPassword}
 															className="dark:text-gray-200 hover:underline cursor-pointer"
 														>
 															{`Forgot Password?`}
