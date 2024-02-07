@@ -1,4 +1,7 @@
 export const pathRoutes = {
+	landingPage:{
+		landingPage:'/'
+	},
 	auth: {
 		signUp: '/authentication/sign-up',
 		sinIn: '/authentication/sign-in',
@@ -11,6 +14,7 @@ export const pathRoutes = {
 		fetchUsers: '/users',
 		connectionList: '/connections',
 		platformSetting: '/platform-settings',
+		setting: '/setting'
 	},
 	organizations: {
 		root: '/organizations',

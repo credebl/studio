@@ -70,19 +70,18 @@ const CreateSchema = () => {
 			},
 		],
 	};
+	const checkEcosystemData = async () => {
+		const data: ICheckEcosystem = await checkEcosystem();
+		setIsEcosystemData(data);
+	};
+
 	const [formData, setFormData] = useState(initFormData);
+
 	useEffect(() => {
-		const fetchData = async () => {
+		(async () => {
 			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 			setOrgId(orgId);
-		};
-
-		fetchData();
-
-		const checkEcosystemData = async () => {
-			const data: ICheckEcosystem = await checkEcosystem();
-			setIsEcosystemData(data);
-		};
+	})();
 
 		checkEcosystemData();
 	}, []);
@@ -283,7 +282,7 @@ const CreateSchema = () => {
 			</div>
 			{isEcosystemData?.isEnabledEcosystem && (
 				<div className="mx-6 mb-4">
-					<EcosystemProfileCard />
+					<EcosystemProfileCard getEndorsementListData={checkEcosystemData} />
 				</div>
 			)}
 

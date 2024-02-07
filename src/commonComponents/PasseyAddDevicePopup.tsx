@@ -30,14 +30,6 @@ const PasskeyAddDevice = (props: {
 	const savePassword = async (values: PasswordValue) => {
 		try {
 			const storedEmail = await getFromLocalStorage(storageKeys.LOGIN_USER_EMAIL);
-			const { error } = await getSupabaseClient().auth.signInWithPassword({
-				email: storedEmail,
-				password: values.Password,
-			});
-			if (error) {
-				setFidoUserError(error?.message)
-
-			} else {
 					const payload = {
 						password: passwordEncryption(values.Password)
 					}
@@ -48,8 +40,6 @@ const PasskeyAddDevice = (props: {
 					} else {
 						setFidoUserError(passkeyUserDetailsResp as string)
 					}
-				
-			}
 		} catch (error) {
 			console.error('An unexpected error occurred:', error.message);
 			setFidoUserError('An unexpected error occurred')

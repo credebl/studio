@@ -10,12 +10,12 @@ const StatusTabletTag = ({ status }: IStatusTabletTag) => {
             case status === EndorsementStatus.signed:
                 return {
                     style: `bg-[#fca20033] text-[#FCA200]`,
-                    title: "Accepted"
+                    title: "Endorsed"
                 }
             case status === EndorsementStatus.rejected:
                 return {
                     style: `bg-[#FFE4E4] text-[#EA5455]`,
-                    title: "Rejected"
+                    title: "Declined"
                 }
             case status === EndorsementStatus.requested:
                 return {
