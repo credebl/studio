@@ -168,7 +168,7 @@ const Index = () => {
 											<div className="sm:flex justify-between sm:space-x-2 items-center py-4">
 												<div>
 													<h1 className="text-gray-800 text-xl font-medium font-montserrat dark:text-white mb-3">
-														Client Secrate
+														Client Secret
 													</h1>
 													<span className="text-gray-600 dark:text-gray-500 flex flex-wrap">
 														You need a client secret to authenticate as the
@@ -189,7 +189,7 @@ const Index = () => {
 																	: 'bg-primary-700 hover:!bg-primary-800 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
 															}`}
 														>
-															Generate Client Secrate{' '}
+															Generate Client Secret{' '}
 														</Button>
 													</div>
 												)}
