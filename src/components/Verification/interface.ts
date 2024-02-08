@@ -53,3 +53,25 @@ export interface IConnectionList {
 	connectionId: string;
 	createDateTime: string;
 }
+
+export interface SchemaDetail {
+	schemaName: string,
+	version: string,
+	schemaId: string,
+	credDefId: string
+}
+
+export interface SelectedUsers {
+	userName: string,
+	connectionId: string
+}
+
+export interface VerifyCredentialPayload {
+	connectionId: string;
+	attributes: Array<{
+		attributeName: string;
+		credDefId?: string  ;
+	}>;
+	comment: string;
+	orgId: string;
+}

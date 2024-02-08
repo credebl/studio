@@ -3,7 +3,7 @@
 import type { AxiosResponse } from "axios";
 import { Alert, Button, Card } from "flowbite-react";
 import { useEffect, useState } from "react";
-import { getFromLocalStorage, removeFromLocalStorage } from "../../api/Auth";
+import { getFromLocalStorage } from "../../api/Auth";
 import { apiStatusCodes, storageKeys } from "../../config/CommonConstant";
 import BreadCrumbs from "../BreadCrumbs";
 import DataTable from "../../commonComponents/datatable";
@@ -12,49 +12,26 @@ import { verifyCredential } from "../../api/verification";
 import { pathRoutes } from "../../config/pathRoutes";
 import CustomSpinner from "../CustomSpinner";
 import BackButton from '../../commonComponents/backbutton'
-
-interface SchemaDetails {
-	schemaName: string,
-	version: string,
-	schemaId: string,
-	credDefId: string
-}
-
-interface SelectedUsers {
-	userName: string,
-	connectionId: string
-}
-
-interface VerifyCredentialPayload {
-	connectionId: string;
-	attributes: Array<{
-		attributeName: string;
-		credDefId?: string  ;
-	}>;
-	comment: string;
-	orgId: string;
-}
+import type { SchemaDetail, SelectedUsers, VerifyCredentialPayload } from "./interface";
 
 const VerificationCred = () => {
 	const [attributeList, setAttributeList] = useState<TableData[]>([])
 	const [proofReqSuccess, setProofReqSuccess] = useState<string>('')
 	const [errMsg, setErrMsg] = useState<string|null>(null)
-	const [schemaLoader, setSchemaLoader] = useState<boolean>(false)
-	const [schemaDetails, setSchemaDetails] = useState<SchemaDetails>({
+	const [schemaDetails, setSchemaDetails] = useState<SchemaDetail>({
 		schemaName: '', version: '', schemaId: '', credDefId: ''
 	})
 	const [loading, setLoading] = useState<boolean>(true)
-	const [schemaAttributes, setSchemaAttributes] = useState<string[]>([]);
 	const [selectedUsersData, setSelectedUsersData] = useState<Array<{ name: string, selected: boolean }>>([]);
 	const [requestLoader, setRequestLoader] = useState<boolean>(false)
 
 
 	useEffect(() => {
-		const fetchData = async () => {
+		const fetchData = async () => {			
 			try {
 				setLoading(true)
 				await getSchemaAndUsers();
-				const schemaAttributes = await getFromLocalStorage(storageKeys.SCHEMA_ATTR)
+				const schemaAttributes = await getFromLocalStorage(storageKeys.SCHEMA_ATTR)				
 				const parsedSchemaDetails = JSON.parse(schemaAttributes) || [];
 				const attributes = parsedSchemaDetails.attribute.map((ele: any) => {
 					const attributesName = ele.attributeName ? ele.attributeName : 'Not available';
@@ -91,6 +68,8 @@ const VerificationCred = () => {
 		};
 
 		fetchData();
+		return (()=>{	setRequestLoader(false);
+		})
 	}, []);
 
 
@@ -109,10 +88,6 @@ const VerificationCred = () => {
 
 
 	const getSchemaAndUsers = async () => {
-		const schemaAttributes = await getFromLocalStorage(storageKeys.SCHEMA_ATTR)
-		const parsedSchemaAttributes = JSON.parse(schemaAttributes) || [];
-
-		setSchemaAttributes(parsedSchemaAttributes);
 		const credDefId = await getFromLocalStorage(storageKeys.CRED_DEF_ID)
 		const schemaId = await getFromLocalStorage(storageKeys.SCHEMA_ID)
 		createSchemaPayload(schemaId, credDefId)
@@ -122,12 +97,10 @@ const VerificationCred = () => {
 
 	const createSchemaPayload = async (schemaId: string, credDefId: string) => {
 		if (schemaId) {
-			setSchemaLoader(true)
 			const parts = schemaId.split(":");
 			const schemaName = parts[2];
 			const version = parts[3];
 			setSchemaDetails({ schemaName, version, schemaId, credDefId })
-			setSchemaLoader(false)
 		}
 	}
 
@@ -135,14 +108,6 @@ const VerificationCred = () => {
 		const selectedUsers = await getFromLocalStorage(storageKeys.SELECTED_USER)
 		return JSON.parse(selectedUsers)
 	}
-
-	const clearLocalStorage = () => {
-		removeFromLocalStorage(storageKeys.SELECTED_USER)
-		removeFromLocalStorage(storageKeys.SCHEMA_ID)
-		removeFromLocalStorage(storageKeys.CRED_DEF_ID)
-	
-	}
-
 
 	const verifyCredentialSubmit = async () => {
 		try {
@@ -168,33 +133,22 @@ const VerificationCred = () => {
 				const { data } = response as AxiosResponse;
 				if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 					setProofReqSuccess(data?.message);
-					setRequestLoader(false);
-					clearLocalStorage()
-					setTimeout(()=>{
-						window.location.href = '/organizations/verification'
-					}, 2000)
+					window.location.href = pathRoutes.organizations.credentials
 				} else {
 					setErrMsg(response as string);
+					setRequestLoader(false);
 				}
 			}
-			setTimeout(()=>{
-				setErrMsg('');
-				setProofReqSuccess('')
-
-			}, 4000)
 		} catch (error) {
-			console.error("Error:", error);
 			setErrMsg("An error occurred. Please try again.");
 			setRequestLoader(false);
 		}
 	};
 	
-
 	const header = [
 		{ columnName: '', width: 'w-0.5' },
 		{ columnName: 'Attributes' }
 	]
-
 
 	return (
 		<><div className="px-4 pt-2">
@@ -263,7 +217,7 @@ const VerificationCred = () => {
 				<Button
 					onClick={verifyCredentialSubmit}
 					isProcessing={requestLoader}
-					disabled={!selectedUsersData.length}
+					disabled={!Boolean(selectedUsersData.length>0) || requestLoader}
 					className='text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mt-2 ml-auto mr-8'
 				>
 					<svg className='mr-2 mt-1'xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 25 25">

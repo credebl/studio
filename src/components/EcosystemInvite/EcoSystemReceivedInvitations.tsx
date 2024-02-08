@@ -111,7 +111,6 @@ const ReceivedInvitations = () => {
 			'',
 		);
 		const { data } = response as AxiosResponse;
-
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const totalPages = data?.data?.totalPages;
 
@@ -147,8 +146,8 @@ const ReceivedInvitations = () => {
 				status,
 			);
 			setLoading(false);
-			const { data } = response as AxiosResponse;
-			if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+			const { data } = response as AxiosResponse;			
+			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 				setMessage(data?.message);
 				getAllInvitations();
 			} else {
@@ -158,6 +157,7 @@ const ReceivedInvitations = () => {
 			setLoading(false);
 		} catch (err) {
 			console.log('ERROR - Accept/Reject Ecosystem::', err);
+			setLoading(false);
 		}
 	};
 
