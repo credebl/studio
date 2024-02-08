@@ -135,6 +135,10 @@ ul.timelinestatic {
 	@apply dark:!text-white !text-primary-700 w-fit;
 }
 
+.email-bulk-issuance .select__single-value{
+	width: calc(100% - 15px) !important;
+}
+
 .select__value-container
 	.select__value-container--has-value
 	.select__single-value {
