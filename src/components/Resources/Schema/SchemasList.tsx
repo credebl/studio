@@ -209,6 +209,7 @@ const SchemaList = (props: {
 						<div className="flex space-x-2">
 							{walletStatus ? (
 								<RoleViewButton
+								title={createSchemaTitle.toolTip}
 									buttonTitle={createSchemaTitle.title}
 									feature={Features.CRETAE_SCHEMA}
 									svgComponent={createSchemaTitle.svg}
@@ -221,7 +222,6 @@ const SchemaList = (props: {
 									buttonTitle={createSchemaTitle.title}
 									feature={Features.CRETAE_SCHEMA}
 									svgComponent={createSchemaTitle.svg}
-									title={createSchemaTitle.toolTip}
 									onClickEvent={() => {
 										window.location.href = `${pathRoutes.organizations.dashboard}`;
 									}}
