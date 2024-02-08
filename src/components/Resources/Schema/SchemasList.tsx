@@ -1,7 +1,7 @@
 'use client';
 
 import { Alert, Pagination } from 'flowbite-react';
-import { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import type { GetAllSchemaListParameter } from './interfaces';
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
 import { getAllSchemas, getAllSchemasByOrgId } from '../../../api/Schema';
@@ -172,8 +172,8 @@ const SchemaList = (props: {
 	}, []);
 
 	const createSchemaTitle = isEcosystemData?.isEcosystemMember
-		? { title: 'Schema Endorsement', svg: <SchemaEndorsement/> }
-		: { title: 'Create', svg: <Create/> };
+		? { title: 'Schema Endorsement', toolTip: 'Add new schema request', svg: <SchemaEndorsement/> }
+		: { title: 'Create', svg: <Create/>, toolTip: 'Create new schema' };
 	const emptyListTitle = 'No Schemas';
 	const emptyListDesc = 'Get started by creating a new Schema';
 	const emptyListBtn = isEcosystemData?.isEcosystemMember
@@ -209,6 +209,7 @@ const SchemaList = (props: {
 						<div className="flex space-x-2">
 							{walletStatus ? (
 								<RoleViewButton
+								title={createSchemaTitle.toolTip}
 									buttonTitle={createSchemaTitle.title}
 									feature={Features.CRETAE_SCHEMA}
 									svgComponent={createSchemaTitle.svg}
