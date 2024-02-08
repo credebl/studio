@@ -302,7 +302,7 @@ const Dashboard = () => {
 										)}
 									</div>
 									<div>
-										<div className="w-full">
+										<div className="w-full sm:max-w-100/13rem">
 											<h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
 												{ecosystemDetails?.name}
 											</h3>

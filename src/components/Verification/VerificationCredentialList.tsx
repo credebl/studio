@@ -95,12 +95,7 @@ const VerificationCredentialList = () => {
 	const getproofRequestList = async (
 		apiParameter: IConnectionListAPIParameter,
 	) => {
-		await removeFromLocalStorage(storageKeys.SELECTED_USER);
-		await removeFromLocalStorage(storageKeys.SCHEMA_ID);
-		await removeFromLocalStorage(storageKeys.CRED_DEF_ID);
-		await removeFromLocalStorage(storageKeys.SCHEMA_ATTR);
 		setLoading(true);
-
 		try {
 			const orgData = await getOrgDetails();
 			const isWalletCreated = Boolean(orgData.orgDid);
