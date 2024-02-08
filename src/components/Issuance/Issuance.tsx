@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import { Alert, Button, Card } from 'flowbite-react';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
-import { getFromLocalStorage, removeFromLocalStorage } from '../../api/Auth';
+import { getFromLocalStorage } from '../../api/Auth';
 import { useEffect, useState } from 'react';
 import BackButton from '../../commonComponents/backbutton'
 import type { AxiosResponse } from 'axios';
@@ -13,42 +13,8 @@ import BreadCrumbs from '../BreadCrumbs';
 import CustomSpinner from '../CustomSpinner';
 import { issueCredential } from '../../api/issuance';
 import { pathRoutes } from '../../config/pathRoutes';
-
-interface SchemaDetails {
-	schemaName: string;
-	version: string;
-	schemaId: string;
-	credDefId: string;
-}
-
-interface SelectedUsers {
-	userName: string;
-	connectionId: string;
-}
-
-interface Attributes {
-	name: string;
-	value: string;
-	dataType: string;
-}
-interface IssuanceFormPayload {
-	userName?: string;
-	connectionId: string;
-	attributes: Attributes[];
-	credentialDefinitionId: string;
-	orgId: string;
-}
-
-interface DataTypeAttributes {
-	schemaDataType: string;
-	attributeName:string
-}
-
-interface Attribute {
-    attributeName: string;
-    schemaDataType: string;
-    displayName: string;
-}
+import { AlertComponent } from '../AlertComponent';
+import type {Attribute, DataTypeAttributes, IssuanceFormPayload, SchemaDetails, SelectedUsers} from './interface'
 
 const IssueCred = () => {
 	const [schemaLoader, setSchemaLoader] = useState<boolean>(true);
@@ -65,10 +31,13 @@ const IssueCred = () => {
 	const [issuanceLoader, setIssuanceLoader] = useState<boolean>(false);
 	const [failure, setFailure] = useState<string | null>(null);
 	const [schemaAttributesDetails, setSchemaAttributesDetails] = useState<Attribute[]>([]);
+	const [success, setSuccess]= useState<string | null>(null) 
+	const [error, setError]= useState<string | null>(null)
 
 	useEffect(() => {
 		getSchemaAndUsers();
 		getSchemaDetails();
+		return(() => setUserLoader(false))
 	}, []);
 
 	const getSchemaAndUsers = async () => {
@@ -170,20 +139,14 @@ const IssueCred = () => {
 		setIssuanceLoader(true);
 		const issueCredRes = await issueCredential(convertedAttributesValues);
 		const { data } = issueCredRes as AxiosResponse;
-		setIssuanceLoader(false);
-
+		
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-			goToIssueCredList();
+			setSuccess(data?.message)
+			window.location.href = `${pathRoutes.organizations.issuedCredentials}`;
 		} else {
 			setFailure(issueCredRes as string);
+			setIssuanceLoader(false);
 		}
-	};
-
-	const goToIssueCredList = () => {
-		removeFromLocalStorage(storageKeys.SELECTED_USER);
-		removeFromLocalStorage(storageKeys.SCHEMA_ID);
-		removeFromLocalStorage(storageKeys.CRED_DEF_ID);
-		window.location.href = `${pathRoutes.organizations.issuedCredentials}`;
 	};
 
 	return (
@@ -193,6 +156,14 @@ const IssueCred = () => {
 					<BreadCrumbs />
 					<BackButton path={pathRoutes.back.issuance.connections} />
 				</div>
+				<AlertComponent
+							message={ success ?? error}
+							type={success ? 'success' : 'failure'}
+							onAlertClose={() => {
+								setError(null);
+								setSuccess(null);
+							}}
+						/>
 				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 					Issuance
 				</h1>
@@ -260,10 +231,6 @@ const IssueCred = () => {
 													<h5 className="text-xl font-bold leading-none dark:text-white">
 														{user.userName}
 													</h5>
-													{/* Needed for multiple users issuance */}
-													{/* <div className="flex justify-end">
-												<img src={DeleteIcon}></img>
-											</div> */}
 												</div>
 												<div className="flex">
 													<h5 className="text-xl font-bold leading-none dark:text-white flex flex-wrap">
