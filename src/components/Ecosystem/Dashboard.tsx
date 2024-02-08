@@ -286,7 +286,6 @@ const Dashboard = () => {
 			{ecosystemDetails ? (
 				<div>
 					{isEcosystemLead ? (
-						<>
 							<div
 								className={`mt-4 items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800 w-full`}
 							>
@@ -386,9 +385,7 @@ const Dashboard = () => {
 									</div>
 								</div>
 							</div>
-						</>
 					) : (
-						<>
 							<div
 								className={`mt-4 relative flex flex-wrap items-center p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800`}
 							>
@@ -459,7 +456,6 @@ const Dashboard = () => {
 									<RoleTablet role={ecosystemDetails?.role || ''} />
 								</div>
 							</div>
-						</>
 					)}
 
 					<div className="mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">

@@ -2,7 +2,7 @@
 
 import type { AxiosResponse } from "axios";
 import { Alert, Button, Card } from "flowbite-react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getFromLocalStorage } from "../../api/Auth";
 import { apiStatusCodes, storageKeys } from "../../config/CommonConstant";
 import BreadCrumbs from "../BreadCrumbs";
@@ -217,7 +217,7 @@ const VerificationCred = () => {
 				<Button
 					onClick={verifyCredentialSubmit}
 					isProcessing={requestLoader}
-					disabled={!Boolean(selectedUsersData.length>0) || requestLoader}
+					disabled={!selectedUsersData.length || requestLoader}
 					className='text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mt-2 ml-auto mr-8'
 				>
 					<svg className='mr-2 mt-1'xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 25 25">
