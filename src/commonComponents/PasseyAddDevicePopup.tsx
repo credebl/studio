@@ -65,11 +65,7 @@ const PasskeyAddDevice = (props: {
 								}
 								}
 							>
-								<span>
-									<p>
 										{success || fidoUserError}
-									</p>
-								</span>
 							</Alert>
 						</div>
 					}
