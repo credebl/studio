@@ -1,4 +1,5 @@
-import type { IEcosystem } from './interfaces'
+import type { IEcosystem } from './interfaces';
+import '../../common/global.css'
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import React, { useEffect, useState } from 'react';
 import { Features } from '../../utils/enums/features';
@@ -305,7 +306,7 @@ const Dashboard = () => {
 											<h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
 												{ecosystemDetails?.name}
 											</h3>
-											<p className="mb-1 text-base font-normal text-gray-900 dark:text-white">
+											<p className="mb-1 text-base font-normal text-gray-900 dark:text-white word-break-word">
 												{ecosystemDetails?.description}
 											</p>
 											<div className="flex items-center">

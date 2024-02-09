@@ -53,15 +53,13 @@ export enum EndorsementStatus {
 }
 
 export enum EcosystemRoles {
-	member = "member",
-	lead = "lead"
+	ecosystemMember = "Ecosystem Member",
+	ecosystemLead = "Ecosystem Lead",
 }
 
-export enum OrganizationRoles {
-	organizationMember = "member",
-	organizationOwner = "owner",
-	organizationIssuer = "issuer",
-	organizationVerifier = "verifier"
+export enum EcoRoles {
+	ecosystemMember = "Member",
+	ecosystemLead = "Lead",
 }
 
 export enum OrganizationRoles {
