@@ -38,7 +38,11 @@ const PasskeyAddDevice = (props: {
 					if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 						setNextFlag(true)
 					} else {
-						setFidoUserError(passkeyUserDetailsResp as string)
+						if (passkeyUserDetailsResp.toString().includes('401')) {
+							setFidoUserError('Invalid Credntials');
+						} else {
+							setFidoUserError(passkeyUserDetailsResp as string);
+						}
 					}
 		} catch (error) {
 			console.error('An unexpected error occurred:', error.message);
