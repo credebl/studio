@@ -1,7 +1,7 @@
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { getFromLocalStorage, removeFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { useEffect, useState } from 'react';
-
+import '../../common/global.css'
 import type { AxiosResponse } from 'axios';
 import { BiChevronDown } from "react-icons/bi";
 import CustomAvatar from '../Avatar'
@@ -123,7 +123,7 @@ const OrgDropDown = () => {
 												<CustomAvatar className='shrink-0 dark:text-white' size="25" name={org?.name} round />
 											)}
 
-											<span className="ml-3 text-base text-start font-bold text-gray-500 dark:text-white">{org?.name}</span>
+											<span className="ml-3 text-base text-start font-bold text-gray-500 dark:text-white word-break-word">{org.name.length > 25 ? org?.name.substring(0, 25) + '...' : org?.name}</span>
 										</a>
 									</button>
 								</li>
