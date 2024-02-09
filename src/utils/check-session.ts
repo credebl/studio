@@ -31,8 +31,14 @@ export const checkUserSession = async ({
 	}
 
 	try {
+		console.log("session", sessionCookie);
+		
 		const response = await getUserProfile(sessionCookie) as AxiosResponse;
+		console.log("response:::",response);
+		
 		if(response && typeof response === "string" && response === "Unauthorized"){
+			console.log("response:::1111",response, pathRoutes.auth.sinIn);
+
 			return {
 				permitted: false,
 				redirect: pathRoutes.auth.sinIn,
