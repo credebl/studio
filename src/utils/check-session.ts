@@ -1,8 +1,9 @@
 import type { AstroCookies } from 'astro';
 import { getSupabaseClient } from '../supabase';
-import { getFromCookies } from '../api/Auth';
+import { getFromCookies, getUserProfile } from '../api/Auth';
 import { pathRoutes } from '../config/pathRoutes';
 import { RolePermissions } from '../config/permissions';
+import type { AxiosResponse } from 'axios';
 
 interface IProps {
 	cookies: AstroCookies;
@@ -17,7 +18,7 @@ interface IOutput {
 
 export const checkUserSession = async ({
 	cookies,
-	currentPath
+	currentPath,
 }: IProps): Promise<IOutput> => {
 	const sessionCookie = getFromCookies(cookies, 'session');
 
@@ -27,6 +28,19 @@ export const checkUserSession = async ({
 			redirect: pathRoutes.auth.sinIn,
 			authorized: false,
 		};
+	}
+
+	try {
+		const response = await getUserProfile(sessionCookie) as AxiosResponse;
+		if(response && typeof response === "string" && response === "Unauthorized"){
+			return {
+				permitted: false,
+				redirect: pathRoutes.auth.sinIn,
+				authorized: false,
+			};  
+		}
+	} catch (error) {
+		console.log("GET USER DETAILS ERROR::::", error);
 	}
 
 	const role = getFromCookies(cookies, 'role');
