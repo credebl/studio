@@ -27,7 +27,6 @@ import {
 	OrganizationRoles,
 } from '../../common/enums';
 import CustomSpinner from '../CustomSpinner';
-import type { string } from 'yup';
 
 const initialPageState = {
 	pageNumber: 1,
