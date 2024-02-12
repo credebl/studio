@@ -33,8 +33,6 @@ const HistoryBulkIssuance = () => {
 	const [listAPIParameter, setListAPIParameter] = useState(initialPageState);
 	const [connectionList, setConnectionList] = useState<TableData[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
-	const [error, setError] = useState<string | null>(null);
-	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const [failure, setFailure] = useState<string | null>(null);
 	const [success, setSuccess] = useState<string | null>(null);
 	const [totalItem, setTotalItem] = useState(0);
@@ -319,7 +317,6 @@ const HistoryBulkIssuance = () => {
 					onAlertClose={() => {
 						setSuccess(null);
 						setFailure(null);
-						setError(null);
 					}}
 				/>
 			)}
@@ -330,9 +327,9 @@ const HistoryBulkIssuance = () => {
 				header={header}
 				data={connectionList}
 				loading={loading}
-				currentPage={currentPage?.page}
+				currentPage={listAPIParameter?.page}
 				onPageChange={(page: number) => {
-					setCurrentPage((prevState) => ({
+					setListAPIParameter((prevState) => ({
 						...prevState,
 						page,
 					}));
