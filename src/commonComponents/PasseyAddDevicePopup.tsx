@@ -37,15 +37,13 @@ const PasskeyAddDevice = (props: {
 					const { data } = passkeyUserDetailsResp as AxiosResponse
 					if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 						setNextFlag(true)
-					} else if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-						setNextFlag(true);
-				} else if (passkeyUserDetailsResp.toString().includes('401')) {
+					} else if (passkeyUserDetailsResp.toString().includes('401')) {
 						setFidoUserError('Invalid Credentials');
 				} else {
 						setFidoUserError(passkeyUserDetailsResp as string);
 				}
 		} catch (error) {
-			console.error('An unexpected error occurred:', error.message);
+			console.error('An unexpected error occurred:', error);
 			setFidoUserError('An unexpected error occurred')
 		}
 	};
