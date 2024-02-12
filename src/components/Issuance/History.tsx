@@ -33,8 +33,6 @@ const HistoryBulkIssuance = () => {
 	const [listAPIParameter, setListAPIParameter] = useState(initialPageState);
 	const [connectionList, setConnectionList] = useState<TableData[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
-	const [error, setError] = useState<string | null>(null);
-	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const [failure, setFailure] = useState<string | null>(null);
 	const [success, setSuccess] = useState<string | null>(null);
 	const [totalItem, setTotalItem] = useState(0);
@@ -131,7 +129,7 @@ const HistoryBulkIssuance = () => {
 
 	const getHistory = async (apiParameter: IConnectionListAPIParameter) => {
 		setLoading(true);
-		const response = await getFilesHistory(apiParameter	);
+		const response = await getFilesHistory(apiParameter);
 
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -145,23 +143,23 @@ const HistoryBulkIssuance = () => {
 			});
 			const connections = data?.data?.data?.map(
 				(ele: {
-					totalRecords: any;
-					successfulRecords: any;
-					failedRecords: any;
-					status: any;
-					createDateTime: any;
-					name: any;
+					totalRecords: number;
+					successfulRecords: number;
+					failedRecords: number;
+					status: string;
+					createDateTime: string;
+					name: string;
 					theirLabel: string;
 					id: string;
 					createdAt: string;
 				}) => {
 					const fileId = ele?.id;
 					const userName = ele?.name ? ele.name : 'Not available';
-					const totalRecords = ele.totalRecords ? ele.totalRecords : '0';
+					const totalRecords = ele.totalRecords ? ele.totalRecords : 0;
 					const successfulRecords = ele.successfulRecords
 						? ele.successfulRecords
-						: '0';
-					const failedRecords = ele.failedRecords ? ele.failedRecords : '0';
+						: 0;
+					const failedRecords = ele.failedRecords ? ele.failedRecords : 0;
 					const createdOn = ele?.createDateTime
 						? ele?.createDateTime
 						: 'Not available';
@@ -296,7 +294,6 @@ const HistoryBulkIssuance = () => {
 				<BreadCrumbs />
 
 				<div className="flex items-center">
-
 					<BackButton path={pathRoutes.organizations.Issuance.bulkIssuance} />
 				</div>
 			</div>
@@ -319,20 +316,23 @@ const HistoryBulkIssuance = () => {
 					onAlertClose={() => {
 						setSuccess(null);
 						setFailure(null);
-						setError(null);
 					}}
 				/>
 			)}
 
 			<SortDataTable
+				isHeader={true}
+				isSearch={true}
+				isRefresh={true}
+				isSort={true}
 				onInputChange={searchInputChange}
 				refresh={refreshPage}
 				header={header}
 				data={connectionList}
 				loading={loading}
-				currentPage={currentPage?.page}
+				currentPage={listAPIParameter?.page}
 				onPageChange={(page: number) => {
-					setCurrentPage((prevState) => ({
+					setListAPIParameter((prevState) => ({
 						...prevState,
 						page,
 					}));
@@ -340,10 +340,6 @@ const HistoryBulkIssuance = () => {
 				searchSortByValue={searchSortByValue}
 				totalPages={Math.ceil(totalItem / listAPIParameter?.itemPerPage)}
 				pageInfo={pageInfo}
-				isHeader={true}
-				isSearch={true}
-				isRefresh={true}
-				isSort={true}
 				message={'No History'}
 				discription={"You don't have any activities yet"}
 			></SortDataTable>
