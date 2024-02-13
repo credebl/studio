@@ -109,7 +109,7 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 		} else {
 			setLoading(false);
 			if (loginRsp.toString().includes('401')) {
-				setFailure('Invalid Credntials');
+				 setFailure('Invalid Credentials');
 			} else {
 				setFailure(loginRsp as string);
 			}
