@@ -20,8 +20,8 @@ import type {
 interface SelectedUser {
 	name: string;
 	selected: boolean;
-	condition: string;
-	value: number;
+	condition?: string;
+	value?: number;
 }
 
 const VerificationCred = () => {
@@ -40,6 +40,8 @@ const VerificationCred = () => {
 	const [selectedUsersData, setSelectedUsersData] = useState<SelectedUser[]>(
 		[],
 	);
+	const [inputError, setInputError] = useState<string | null>(null);
+	const [inputTouched, setInputTouched] = useState(false);
 	const [requestLoader, setRequestLoader] = useState<boolean>(false);
 
 	useEffect(() => {
@@ -51,7 +53,8 @@ const VerificationCred = () => {
 					storageKeys.SCHEMA_ATTR,
 				);
 				const parsedSchemaDetails = JSON.parse(schemaAttributes) || [];
-				const attributes = parsedSchemaDetails.attribute.map((ele: any) => {
+				
+				const attributes = parsedSchemaDetails.attribute.map((ele: any, index:number) => {
 					const attributesName = ele.attributeName
 						? ele.attributeName
 						: 'Not available';
@@ -59,7 +62,7 @@ const VerificationCred = () => {
 						? ele.displayName
 						: 'Not available';
 					const attributeType = ele.schemaDataType === 'number';
-					setDisplay(attributeType);
+					// setDisplay(attributeType);
 
 					return {
 						data: [
@@ -67,7 +70,8 @@ const VerificationCred = () => {
 								data: (
 									<div className="flex items-center">
 										<input
-											id="default-checkbox"
+										  key={index}
+											id='check-box'
 											type="checkbox"
 											onClick={(event: React.MouseEvent<HTMLInputElement>) => {
 												const inputElement = event?.target as HTMLInputElement;
@@ -90,6 +94,7 @@ const VerificationCred = () => {
 								data: predicates && attributeType && (
 									<div className="flex items-center">
 										<select
+										  key={index +1 }
 											className="flex shrink-0 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-md focus:ring-primary-700 focus:border-primary-700 block px-2 py-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-700 dark:focus:border-primary-700"
 											id="dropdown"
 											onChange={(e) => {
@@ -103,6 +108,10 @@ const VerificationCred = () => {
 													return updatedData;
 												});
 											}}
+											disabled={
+												!selectedUsersData[selectedUsersData.length - 1]
+													?.selected
+											}
 										>
 											<option value={''}>Select</option>
 											<option value={'>'}>
@@ -125,21 +134,56 @@ const VerificationCred = () => {
 							},
 							{
 								data: predicates && attributeType && (
-									<div className="flex items-center">
+									<div className="flex flex-col items-center">
 										<input
+										key={index + 2}
 											className="flex shrink-0 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-md focus:ring-primary-700 focus:border-primary-700 block px-4 py-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-700 dark:focus:border-primary-700"
 											type="number"
-											onChange={(e) =>
+											// onChange={(e) =>
+											// 	setSelectedUsersData((prev) => {
+											// 		const updatedData = [...prev];
+											// 		if (updatedData.length > 0) {
+											// 			updatedData[updatedData.length - 1].value =
+											// 				parseInt(e.target.value);
+											// 		}
+											// 		return updatedData;
+											// 	})
+											// }
+											onChange={(e) => {
+												const value = e.target.value;
 												setSelectedUsersData((prev) => {
 													const updatedData = [...prev];
 													if (updatedData.length > 0) {
 														updatedData[updatedData.length - 1].value =
-															parseInt(e.target.value);
+															parseInt(value);
 													}
 													return updatedData;
-												})
+												});
+												setInputTouched(true);
+												setInputError(null);
+											}}
+											onBlur={() => {
+												const inputValue =
+													selectedUsersData[selectedUsersData.length - 1]
+														?.value;
+												if (
+													(!inputValue || inputValue.toString().length < 1) &&
+													selectedUsersData[selectedUsersData.length - 1]
+														?.selected
+												) {
+													setInputError('Value cannot be empty');
+												} else {
+													setInputError(null);
+												}
+											}}
+											disabled={
+												!selectedUsersData[selectedUsersData.length - 1]
+													?.selected
 											}
 										/>
+										{inputError && inputTouched && (
+											<p className="text-red-500 text-xs mt-1">{inputError}</p>
+										)}
 									</div>
 								),
 							},
@@ -147,6 +191,8 @@ const VerificationCred = () => {
 					};
 				});
 				setAttributeList(attributes);
+				const attributeTypeArray = parsedSchemaDetails.attribute.map((ele: any) => ele.schemaDataType === 'number');
+        setDisplay(attributeTypeArray.includes(true));
 				setLoading(false);
 			} catch (error) {
 				setLoading(false);
@@ -158,13 +204,13 @@ const VerificationCred = () => {
 		return () => {
 			setRequestLoader(false);
 		};
-	}, [predicates]);
+	}, [predicates, selectedUsersData, inputError]);
 
 	const selectConnection = (
 		attributes: string,
 		checked: boolean,
-		condition: string,
-		value: number | null,
+		condition?: string,
+		value?: number | null,
 	) => {
 		if (checked) {
 			setSelectedUsersData((prevSelectedUsersData) => [
@@ -172,7 +218,7 @@ const VerificationCred = () => {
 				{
 					name: attributes,
 					selected: true,
-					condition: condition,
+					condition: condition !== '' ? condition : undefined,
 					value: value,
 				},
 			]);
@@ -200,9 +246,10 @@ const VerificationCred = () => {
 
 	const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 		const selectedUsers = await getFromLocalStorage(storageKeys.SELECTED_USER);
+		
 		return JSON.parse(selectedUsers);
 	};
-
+	
 	const verifyCredentialSubmit = async () => {
 		try {
 			setRequestLoader(true);
@@ -213,12 +260,11 @@ const VerificationCred = () => {
 
 			const attributes = selectedUsersData.map((user) => ({
 				attributeName: user.name,
-				condition: user.condition,
-				value: user.value.toString(),
+				condition: user.condition ?? undefined,
+				value: user?.value?.toString(),
 				...(credDefId ? { credDefId } : {}),
 				schemaId: schemaId,
 			}));
-			console.log('attributes', attributes);
 
 			const verifyCredentialPayload: VerifyCredentialPayload = {
 				connectionId: `${selectedUsers[0].connectionId}`,
@@ -272,7 +318,7 @@ const VerificationCred = () => {
 					</div>
 				) : (
 					<Card
-						className="transform transition duration-500 hover:scale-105 hover:bg-gray-50"
+						className="transform transition duration-500 hover:bg-gray-50"
 						style={{
 							width: '470px',
 							height: '140px',
@@ -313,17 +359,18 @@ const VerificationCred = () => {
 								setProofReqSuccess(null), setErrMsg(null);
 							}}
 						>
-							<span>
-								<p>{proofReqSuccess || errMsg}</p>
-							</span>
+							{proofReqSuccess || errMsg}
 						</Alert>
 					</div>
 				)}
-				<div className="font-montserrat space-x-2 text-base font-semibold leading-6 tracking-normal text-left dark:text-white p-4">
-					<input type="checkbox" onChange={() => handelPredicates()} />
+				<div className="flex justify-between font-montserrat space-x-2 text-base font-semibold leading-6 tracking-normal text-left dark:text-white p-2">
+					<p>Attribute List</p>
+					<div className='flex items-center space-x-2'>
+					<input className='w-4 h-4' type="checkbox" onChange={() => handelPredicates()} />
 					<label> Select checkbox to enable predicates</label>
-				</div>
-				<div className="p-6 mr-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+					</div>
+						</div>
+				<div className="p-6 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 					<DataTable
 						header={header}
 						data={attributeList}
