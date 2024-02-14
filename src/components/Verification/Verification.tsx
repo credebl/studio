@@ -53,146 +53,154 @@ const VerificationCred = () => {
 					storageKeys.SCHEMA_ATTR,
 				);
 				const parsedSchemaDetails = JSON.parse(schemaAttributes) || [];
-				
-				const attributes = parsedSchemaDetails.attribute.map((ele: any, index:number) => {
-					const attributesName = ele.attributeName
-						? ele.attributeName
-						: 'Not available';
-					const displayName = ele.displayName
-						? ele.displayName
-						: 'Not available';
-					const attributeType = ele.schemaDataType === 'number';
-					// setDisplay(attributeType);
 
-					return {
-						data: [
-							{
-								data: (
-									<div className="flex items-center">
-										<input
-										  key={index}
-											id='check-box'
-											type="checkbox"
-											onClick={(event: React.MouseEvent<HTMLInputElement>) => {
-												const inputElement = event?.target as HTMLInputElement;
-												selectConnection(
-													attributesName,
-													inputElement?.checked,
-													'',
-													null,
-												);
-											}}
-											value=""
-											className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600 cursor-pointer"
-										/>
-									</div>
-								),
-							},
-							{ data: displayName },
+				const attributes = parsedSchemaDetails.attribute.map(
+					(ele: any, index: number) => {
+						const attributesName = ele.attributeName
+							? ele.attributeName
+							: 'Not available';
+						const displayName = ele.displayName
+							? ele.displayName
+							: 'Not available';
+						const attributeType = ele.schemaDataType === 'number';
+						return {
+							data: [
+								{
+									data: (
+										<div className="flex items-center">
+											<input
+												key={index}
+												id="check-box"
+												type="checkbox"
+												onClick={(
+													event: React.MouseEvent<HTMLInputElement>,
+												) => {
+													const inputElement =
+														event?.target as HTMLInputElement;
+													selectConnection(
+														attributesName,
+														inputElement?.checked,
+														'',
+														null,
+													);
+												}}
+												value=""
+												className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600 cursor-pointer"
+											/>
+										</div>
+									),
+								},
+								{ data: displayName },
 
-							{
-								data: predicates && attributeType && (
-									<div className="flex items-center">
-										<select
-										  key={index +1 }
-											className="flex shrink-0 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-md focus:ring-primary-700 focus:border-primary-700 block px-2 py-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-700 dark:focus:border-primary-700"
-											id="dropdown"
-											onChange={(e) => {
-												const selectedValue = e.target.value;
-												setSelectedUsersData((prev) => {
-													const updatedData = [...prev];
-													updatedData[updatedData.length - 1] = {
-														...updatedData[updatedData.length - 1],
-														condition: selectedValue,
-													};
-													return updatedData;
-												});
-											}}
-											disabled={
-												!selectedUsersData[selectedUsersData.length - 1]
-													?.selected
-											}
-										>
-											<option value={''}>Select</option>
-											<option value={'>'}>
-												<p className="w-8">{'>'}</p> : <span>Greater Than</span>
-											</option>
-											<option value={'<'}>
-												<p className="w-4">{'<'}</p> : <span> Less Than</span>
-											</option>
-											<option value={'>='}>
-												<p className="w-4">{'>='}</p> :{' '}
-												<span>Greater Than Equal To</span>
-											</option>
-											<option value={'<='}>
-												<p className="w-4">{'<='}</p> :{' '}
-												<span>Less Than Equal To</span>
-											</option>
-										</select>
-									</div>
-								),
-							},
-							{
-								data: predicates && attributeType && (
-									<div className="flex flex-col items-center">
-										<input
-										key={index + 2}
-											className="flex shrink-0 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-md focus:ring-primary-700 focus:border-primary-700 block px-4 py-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-700 dark:focus:border-primary-700"
-											type="number"
-											// onChange={(e) =>
-											// 	setSelectedUsersData((prev) => {
-											// 		const updatedData = [...prev];
-											// 		if (updatedData.length > 0) {
-											// 			updatedData[updatedData.length - 1].value =
-											// 				parseInt(e.target.value);
-											// 		}
-											// 		return updatedData;
-											// 	})
-											// }
-											onChange={(e) => {
-												const value = e.target.value;
-												setSelectedUsersData((prev) => {
-													const updatedData = [...prev];
-													if (updatedData.length > 0) {
-														updatedData[updatedData.length - 1].value =
-															parseInt(value);
-													}
-													return updatedData;
-												});
-												setInputTouched(true);
-												setInputError(null);
-											}}
-											onBlur={() => {
-												const inputValue =
-													selectedUsersData[selectedUsersData.length - 1]
-														?.value;
-												if (
-													(!inputValue || inputValue.toString().length < 1) &&
-													selectedUsersData[selectedUsersData.length - 1]
+								{
+									data: predicates && attributeType && (
+										<div className="flex items-center">
+											<select
+												key={index + 1}
+												className="flex shrink-0 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-md focus:ring-primary-700 focus:border-primary-700 block px-2 py-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-700 dark:focus:border-primary-700"
+												id="dropdown"
+												onChange={(e) => {
+													const selectedValue = e.target.value;
+													setSelectedUsersData((prev) => {
+														const updatedData = [...prev];
+														updatedData[updatedData.length - 1] = {
+															...updatedData[updatedData.length - 1],
+															condition: selectedValue,
+														};
+														return updatedData;
+													});
+												}}
+												disabled={
+													!selectedUsersData[selectedUsersData.length - 1]
 														?.selected
-												) {
-													setInputError('Value cannot be empty');
-												} else {
-													setInputError(null);
 												}
-											}}
-											disabled={
-												!selectedUsersData[selectedUsersData.length - 1]
-													?.selected
-											}
-										/>
-										{inputError && inputTouched && (
-											<p className="text-red-500 text-xs mt-1">{inputError}</p>
-										)}
-									</div>
-								),
-							},
-						],
-					};
-				});
+											>
+												<option value={''}>Select</option>
+												<option value={'>'}>
+													<p className="w-8">{'>'}</p> :{' '}
+													<span>Greater Than</span>
+												</option>
+												<option value={'<'}>
+													<p className="w-4">{'<'}</p> : <span> Less Than</span>
+												</option>
+												<option value={'>='}>
+													<p className="w-4">{'>='}</p> :{' '}
+													<span>Greater Than Equal To</span>
+												</option>
+												<option value={'<='}>
+													<p className="w-4">{'<='}</p> :{' '}
+													<span>Less Than Equal To</span>
+												</option>
+											</select>
+										</div>
+									),
+								},
+								{
+									data: predicates && attributeType && (
+										<div className="flex flex-col items-start">
+											<input
+												key={index + 2}
+												className="flex shrink-0 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-md focus:ring-primary-700 focus:border-primary-700 block px-4 py-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-700 dark:focus:border-primary-700"
+												type="number"
+												// onChange={(e) =>
+												// 	setSelectedUsersData((prev) => {
+												// 		const updatedData = [...prev];
+												// 		if (updatedData.length > 0) {
+												// 			updatedData[updatedData.length - 1].value =
+												// 				parseInt(e.target.value);
+												// 		}
+												// 		return updatedData;
+												// 	})
+												// }
+												onChange={(e) => {
+													const value = e.target.value;
+													setSelectedUsersData((prev) => {
+														const updatedData = [...prev];
+														if (updatedData.length > 0) {
+															updatedData[updatedData.length - 1].value =
+																parseInt(value);
+														}
+														return updatedData;
+													});
+													setInputTouched(true);
+													setInputError(null);
+												}}
+												onBlur={() => {
+													const inputValue =
+														selectedUsersData[selectedUsersData.length - 1]
+															?.value;
+													if (
+														(!inputValue || inputValue.toString().length < 1) &&
+														selectedUsersData[selectedUsersData.length - 1]
+															?.selected
+													) {
+														setInputError('Value cannot be empty');
+													} else {
+														setInputError(null);
+													}
+												}}
+												disabled={
+													!selectedUsersData[selectedUsersData.length - 1]
+														?.selected
+												}
+											/>
+											{inputError && inputTouched && (
+												<p className="text-red-500 text-xs mt-1">
+													{inputError}
+												</p>
+											)}
+										</div>
+									),
+								},
+							],
+						};
+					},
+				);
 				setAttributeList(attributes);
-				const attributeTypeArray = parsedSchemaDetails.attribute.map((ele: any) => ele.schemaDataType === 'number');
-        setDisplay(attributeTypeArray.includes(true));
+				const attributeTypeArray = parsedSchemaDetails.attribute.map(
+					(ele: any) => ele.schemaDataType === 'number',
+				);
+				setDisplay(attributeTypeArray.includes(true));
 				setLoading(false);
 			} catch (error) {
 				setLoading(false);
@@ -246,10 +254,10 @@ const VerificationCred = () => {
 
 	const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 		const selectedUsers = await getFromLocalStorage(storageKeys.SELECTED_USER);
-		
+
 		return JSON.parse(selectedUsers);
 	};
-	
+
 	const verifyCredentialSubmit = async () => {
 		try {
 			setRequestLoader(true);
@@ -297,7 +305,7 @@ const VerificationCred = () => {
 		{ columnName: 'Attributes' },
 
 		predicates && display && { columnName: 'Condition' },
-		predicates && display && { columnName: 'Predicates', width: 'w-0.5' },
+		predicates && display && { columnName: 'Predicates', width: 'w-0.75' },
 	];
 
 	return (
@@ -363,13 +371,17 @@ const VerificationCred = () => {
 						</Alert>
 					</div>
 				)}
-				<div className="flex justify-between font-montserrat space-x-2 text-base font-semibold leading-6 tracking-normal text-left dark:text-white p-2">
+				<div className="flex sm:flex-row flex-col sm:justify-between font-montserrat sm:space-x-2 text-base font-semibold leading-6 tracking-normal text-left dark:text-white p-2">
 					<p>Attribute List</p>
-					<div className='flex items-center space-x-2'>
-					<input className='w-4 h-4' type="checkbox" onChange={() => handelPredicates()} />
-					<label> Select checkbox to enable predicates</label>
+					<div className="flex items-center space-x-2">
+						<input
+							className="w-4 h-4 cursor-pointer"
+							type="checkbox"
+							onChange={() => handelPredicates()}
+						/>
+						<label> Select checkbox to enable predicates</label>
 					</div>
-						</div>
+				</div>
 				<div className="p-6 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 					<DataTable
 						header={header}
