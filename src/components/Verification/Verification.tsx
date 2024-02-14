@@ -40,10 +40,47 @@ const VerificationCred = () => {
 	const [selectedUsersData, setSelectedUsersData] = useState<SelectedUser[]>(
 		[],
 	);
-	const [inputError, setInputError] = useState<string | null>(null);
+	const [inputErrors, setInputErrors] = useState<
+		Record<number | string, string | null>
+	>({});
 	const [inputTouched, setInputTouched] = useState(false);
 	const [requestLoader, setRequestLoader] = useState<boolean>(false);
 
+	const conditionOptions = [
+		{ value: undefined, label: 'Select' },
+		{
+			value: '>',
+			label: (
+				<>
+					<p className="w-8">{'>'}</p> : <span>Greater Than</span>
+				</>
+			),
+		},
+		{
+			value: '<',
+			label: (
+				<>
+					<p className="w-4">{'<'}</p> : <span>Less Than</span>
+				</>
+			),
+		},
+		{
+			value: '>=',
+			label: (
+				<>
+					<p className="w-4">{'>='}</p> : <span>Greater Than Equal To</span>
+				</>
+			),
+		},
+		{
+			value: '<=',
+			label: (
+				<>
+					<p className="w-4">{'<='}</p> : <span>Less Than Equal To</span>
+				</>
+			),
+		},
+	];
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
@@ -63,6 +100,7 @@ const VerificationCred = () => {
 							? ele.displayName
 							: 'Not available';
 						const attributeType = ele.schemaDataType === 'number';
+
 						return {
 							data: [
 								{
@@ -82,6 +120,7 @@ const VerificationCred = () => {
 														inputElement?.checked,
 														'',
 														null,
+														index,
 													);
 												}}
 												value=""
@@ -91,102 +130,103 @@ const VerificationCred = () => {
 									),
 								},
 								{ data: displayName },
-
 								{
-									data: predicates && attributeType && (
+									data: predicates && (
 										<div className="flex items-center">
-											<select
-												key={index + 1}
-												className="flex shrink-0 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-md focus:ring-primary-700 focus:border-primary-700 block px-2 py-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-700 dark:focus:border-primary-700"
-												id="dropdown"
-												onChange={(e) => {
-													const selectedValue = e.target.value;
-													setSelectedUsersData((prev) => {
-														const updatedData = [...prev];
-														updatedData[updatedData.length - 1] = {
-															...updatedData[updatedData.length - 1],
-															condition: selectedValue,
-														};
-														return updatedData;
-													});
-												}}
-												disabled={
-													!selectedUsersData[selectedUsersData.length - 1]
-														?.selected
-												}
-											>
-												<option value={''}>Select</option>
-												<option value={'>'}>
-													<p className="w-8">{'>'}</p> :{' '}
-													<span>Greater Than</span>
-												</option>
-												<option value={'<'}>
-													<p className="w-4">{'<'}</p> : <span> Less Than</span>
-												</option>
-												<option value={'>='}>
-													<p className="w-4">{'>='}</p> :{' '}
-													<span>Greater Than Equal To</span>
-												</option>
-												<option value={'<='}>
-													<p className="w-4">{'<='}</p> :{' '}
-													<span>Less Than Equal To</span>
-												</option>
-											</select>
+											{attributeType && (
+												<select
+													key={index}
+													className={`flex shrink-0 bg-gray-50 border border-gray-400 text-gray-900 sm:text-sm rounded-md focus:ring-primary-700 focus:border-primary-700 block px-2 py-1.5 dark:bg-gray-700 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-700 dark:focus:border-primary-700 ${!selectedUsersData.find(item => item.name === attributesName)?.selected ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer '}`}
+													id="dropdown"
+													onChange={(e) => {
+														const selectedValue = e.target.value;
+														setSelectedUsersData((prev) => {
+															const updatedData = [...prev];
+															updatedData[updatedData.length - 1] = {
+																...updatedData[updatedData.length - 1],
+																condition: selectedValue,
+															};
+															return updatedData;
+														});
+													}}
+													disabled={
+														!selectedUsersData.find(
+															(item) => item.name === attributesName,
+														)?.selected
+													}
+												>
+													{conditionOptions?.map((option, optionIndex) => (
+														<option key={optionIndex} value={option?.value}>
+															{option?.label}
+														</option>
+													))}
+												</select>
+											)}
 										</div>
 									),
 								},
 								{
 									data: predicates && attributeType && (
 										<div className="flex flex-col items-start">
-											<input
-												key={index + 2}
-												className="flex shrink-0 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-md focus:ring-primary-700 focus:border-primary-700 block px-4 py-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-700 dark:focus:border-primary-700"
-												type="number"
-												// onChange={(e) =>
-												// 	setSelectedUsersData((prev) => {
-												// 		const updatedData = [...prev];
-												// 		if (updatedData.length > 0) {
-												// 			updatedData[updatedData.length - 1].value =
-												// 				parseInt(e.target.value);
-												// 		}
-												// 		return updatedData;
-												// 	})
-												// }
-												onChange={(e) => {
-													const value = e.target.value;
-													setSelectedUsersData((prev) => {
-														const updatedData = [...prev];
-														if (updatedData.length > 0) {
-															updatedData[updatedData.length - 1].value =
-																parseInt(value);
+											{attributeType && (
+												<input
+													key={index}
+													className={`flex shrink-0 bg-gray-50 border border-gray-400 text-gray-900 sm:text-sm rounded-md focus:ring-primary-700 focus:border-primary-700 block px-2 py-1.5 dark:bg-gray-700 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-700 dark:focus:border-primary-700 ${!selectedUsersData.find(item => item.name === attributesName)?.selected ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer '}`}
+													type="number"
+													min="0"
+													onChange={(e) => {
+														const value = e.target.value;
+														setSelectedUsersData((prev) => {
+															const updatedData = [...prev];
+															if (updatedData.length > 0) {
+																updatedData[updatedData.length - 1].value =
+																	parseInt(value);
+															}
+															return updatedData;
+														});
+														setInputTouched(true);
+														setInputErrors({});
+													}}
+													onBlur={() => {
+														setInputTouched(true);
+														const inputValue =
+															selectedUsersData[selectedUsersData.length - 1]
+																?.value;
+														const attributeName = attributesName;
+														if (
+															(inputValue === undefined ||
+																inputValue === null ||
+																Number.isNaN(inputValue)) &&
+															selectedUsersData[selectedUsersData.length - 1]
+																?.selected
+														) {
+															setInputErrors((prevErrors) => ({
+																...prevErrors,
+																[attributeName]: 'Value cannot be empty',
+															}));
+														} else if (inputValue && inputValue < 0) {
+															setInputErrors((prevErrors) => ({
+																...prevErrors,
+																[attributeName]:
+																	'Please enter a positive number',
+															}));
+														} else {
+															setInputErrors((prevErrors) => ({
+																...prevErrors,
+																[attributeName]: null,
+															}));
 														}
-														return updatedData;
-													});
-													setInputTouched(true);
-													setInputError(null);
-												}}
-												onBlur={() => {
-													const inputValue =
-														selectedUsersData[selectedUsersData.length - 1]
-															?.value;
-													if (
-														(!inputValue || inputValue.toString().length < 1) &&
-														selectedUsersData[selectedUsersData.length - 1]
-															?.selected
-													) {
-														setInputError('Value cannot be empty');
-													} else {
-														setInputError(null);
+													}}
+													disabled={
+														!selectedUsersData.find(
+															(item) => item.name === attributesName,
+														)?.selected
 													}
-												}}
-												disabled={
-													!selectedUsersData[selectedUsersData.length - 1]
-														?.selected
-												}
-											/>
-											{inputError && inputTouched && (
+												/>
+											)}
+											{inputErrors[attributesName] && inputTouched && (
 												<p className="text-red-500 text-xs mt-1">
-													{inputError}
+													{inputErrors[attributesName]}
 												</p>
 											)}
 										</div>
@@ -196,6 +236,7 @@ const VerificationCred = () => {
 						};
 					},
 				);
+
 				setAttributeList(attributes);
 				const attributeTypeArray = parsedSchemaDetails.attribute.map(
 					(ele: any) => ele.schemaDataType === 'number',
@@ -212,7 +253,7 @@ const VerificationCred = () => {
 		return () => {
 			setRequestLoader(false);
 		};
-	}, [predicates, selectedUsersData, inputError]);
+	}, [predicates, selectedUsersData, inputErrors]);
 
 	const selectConnection = (
 		attributes: string,
@@ -226,7 +267,7 @@ const VerificationCred = () => {
 				{
 					name: attributes,
 					selected: true,
-					condition: condition !== '' ? condition : undefined,
+					condition: condition,
 					value: value,
 				},
 			]);
@@ -268,11 +309,11 @@ const VerificationCred = () => {
 
 			const attributes = selectedUsersData.map((user) => ({
 				attributeName: user.name,
-				condition: user.condition ?? undefined,
+				condition: user.condition === '' ? undefined : user.condition,
 				value: user?.value?.toString(),
 				...(credDefId ? { credDefId } : {}),
 				schemaId: schemaId,
-			}));
+			}));			
 
 			const verifyCredentialPayload: VerifyCredentialPayload = {
 				connectionId: `${selectedUsers[0].connectionId}`,
@@ -389,30 +430,36 @@ const VerificationCred = () => {
 						loading={loading}
 					></DataTable>
 				</div>
-			</div>
-
-			<div>
-				<Button
-					onClick={verifyCredentialSubmit}
-					isProcessing={requestLoader}
-					disabled={requestLoader || !selectedUsersData.length}
-					className="text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mt-2 ml-auto mr-8"
-				>
-					<svg
-						className="mr-2 mt-1"
-						xmlns="http://www.w3.org/2000/svg"
-						width="20"
-						height="20"
-						fill="none"
-						viewBox="0 0 25 25"
+				<div>
+					<Button
+						onClick={verifyCredentialSubmit}
+						isProcessing={requestLoader}
+					disabled={
+						requestLoader ||
+						(!selectedUsersData.length && !Object.values(inputErrors).some(error => error !== null)) ||
+						(
+								selectedUsersData.some(item => item.selected && item.condition !== '' && item.value === undefined) ||
+								Object.values(inputErrors).some(error => error !== null)
+						)
+				}
+						className="text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mt-2 ml-auto mr-8"
 					>
-						<path
-							fill="#fff"
-							d="M21.094 0H3.906A3.906 3.906 0 0 0 0 3.906v12.5a3.906 3.906 0 0 0 3.906 3.907h.781v3.906a.781.781 0 0 0 1.335.553l4.458-4.46h10.614A3.906 3.906 0 0 0 25 16.407v-12.5A3.907 3.907 0 0 0 21.094 0Zm2.343 16.406a2.343 2.343 0 0 1-2.343 2.344H10.156a.782.782 0 0 0-.553.228L6.25 22.333V19.53a.781.781 0 0 0-.781-.781H3.906a2.344 2.344 0 0 1-2.344-2.344v-12.5a2.344 2.344 0 0 1 2.344-2.344h17.188a2.343 2.343 0 0 1 2.343 2.344v12.5Zm-3.184-5.951a.81.81 0 0 1-.17.254l-3.125 3.125a.781.781 0 0 1-1.105-1.106l1.792-1.79h-7.489a2.343 2.343 0 0 0-2.344 2.343.781.781 0 1 1-1.562 0 3.906 3.906 0 0 1 3.906-3.906h7.49l-1.793-1.79a.78.78 0 0 1 .254-1.277.781.781 0 0 1 .852.17l3.125 3.125a.79.79 0 0 1 .169.852Z"
-						/>
-					</svg>
-					Request Proof
-				</Button>
+						<svg
+							className="mr-2 mt-1"
+							xmlns="http://www.w3.org/2000/svg"
+							width="20"
+							height="20"
+							fill="none"
+							viewBox="0 0 25 25"
+						>
+							<path
+								fill="#fff"
+								d="M21.094 0H3.906A3.906 3.906 0 0 0 0 3.906v12.5a3.906 3.906 0 0 0 3.906 3.907h.781v3.906a.781.781 0 0 0 1.335.553l4.458-4.46h10.614A3.906 3.906 0 0 0 25 16.407v-12.5A3.907 3.907 0 0 0 21.094 0Zm2.343 16.406a2.343 2.343 0 0 1-2.343 2.344H10.156a.782.782 0 0 0-.553.228L6.25 22.333V19.53a.781.781 0 0 0-.781-.781H3.906a2.344 2.344 0 0 1-2.344-2.344v-12.5a2.344 2.344 0 0 1 2.344-2.344h17.188a2.343 2.343 0 0 1 2.343 2.344v12.5Zm-3.184-5.951a.81.81 0 0 1-.17.254l-3.125 3.125a.781.781 0 0 1-1.105-1.106l1.792-1.79h-7.489a2.343 2.343 0 0 0-2.344 2.343.781.781 0 1 1-1.562 0 3.906 3.906 0 0 1 3.906-3.906h7.49l-1.793-1.79a.78.78 0 0 1 .254-1.277.781.781 0 0 1 .852.17l3.125 3.125a.79.79 0 0 1 .169.852Z"
+							/>
+						</svg>
+						Request Proof
+					</Button>
+				</div>
 			</div>
 		</>
 	);
