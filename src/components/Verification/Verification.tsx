@@ -2,7 +2,7 @@
 
 import type { AxiosResponse } from 'axios';
 import { Alert, Button, Card } from 'flowbite-react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { getFromLocalStorage } from '../../api/Auth';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import BreadCrumbs from '../BreadCrumbs';
@@ -18,6 +18,7 @@ import type {
 	VerifyCredentialPayload,
 } from './interface';
 interface SelectedUser {
+	dataType: string;
 	name: string;
 	selected: boolean;
 	condition?: string;
@@ -28,7 +29,7 @@ const VerificationCred = () => {
 	const [attributeList, setAttributeList] = useState<TableData[]>([]);
 	const [proofReqSuccess, setProofReqSuccess] = useState<string | null>(null);
 	const [errMsg, setErrMsg] = useState<string | null>(null);
-	const [display, setDisplay] = useState(false);
+	const [display, setDisplay] = useState<boolean>(false);
 	const [schemaDetails, setSchemaDetails] = useState<SchemaDetail>({
 		schemaName: '',
 		version: '',
@@ -43,11 +44,22 @@ const VerificationCred = () => {
 	const [inputErrors, setInputErrors] = useState<
 		Record<number | string, string | null>
 	>({});
-	const [inputTouched, setInputTouched] = useState(false);
+	const [inputTouched, setInputTouched] = useState<boolean>(false);
 	const [requestLoader, setRequestLoader] = useState<boolean>(false);
 
+	const inputRefs = useRef({});
+	const selectRefs = useRef({});
+
 	const conditionOptions = [
-		{ value: undefined, label: 'Select' },
+		{
+			value: '',
+			label: (
+				<>
+					{' '}
+					<span>Select</span>
+				</>
+			),
+		},
 		{
 			value: '>',
 			label: (
@@ -81,174 +93,189 @@ const VerificationCred = () => {
 			),
 		},
 	];
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				setLoading(true);
-				await getSchemaAndUsers();
-				const schemaAttributes = await getFromLocalStorage(
-					storageKeys.SCHEMA_ATTR,
-				);
-				const parsedSchemaDetails = JSON.parse(schemaAttributes) || [];
 
-				const attributes = parsedSchemaDetails.attribute.map(
-					(ele: any, index: number) => {
-						const attributesName = ele.attributeName
-							? ele.attributeName
-							: 'Not available';
-						const displayName = ele.displayName
-							? ele.displayName
-							: 'Not available';
-						const attributeType = ele.schemaDataType === 'number';
+	const fetchData = async () => {
+		try {
+			setLoading(true);
+			await getSchemaAndUsers();
+			const schemaAttributes = await getFromLocalStorage(
+				storageKeys.SCHEMA_ATTR,
+			);
+			const parsedSchemaDetails = JSON.parse(schemaAttributes) || [];
 
-						return {
-							data: [
-								{
-									data: (
-										<div className="flex items-center">
+			const attributes = parsedSchemaDetails.attribute.map(
+				(ele: any, index: number) => {
+					const attributesName = ele.attributeName
+						? ele.attributeName
+						: 'Not available';
+					const displayName = ele.displayName
+						? ele.displayName
+						: 'Not available';
+					const attributeType = ele.schemaDataType === 'number';
+
+					return {
+						data: [
+							{
+								data: (
+									<div className="flex items-center">
+										<input
+											key={index}
+											id="check-box"
+											type="checkbox"
+											onClick={(event: React.MouseEvent<HTMLInputElement>) => {
+												const inputElement = event?.target as HTMLInputElement;
+												selectConnection(
+													attributesName,
+													inputElement?.checked,
+													'',
+													null,
+												);
+											}}
+											value=""
+											className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600 cursor-pointer"
+										/>
+									</div>
+								),
+							},
+							{ data: displayName },
+							{
+								data: predicates && (
+									<div className="flex items-center">
+										{attributeType && (
+											<select
+												key={index}
+												ref={(ref) => (selectRefs.current[index] = ref)}
+												className={`flex shrink-0 bg-gray-50 border border-gray-400 text-gray-900 sm:text-sm rounded-md focus:ring-primary-700 focus:border-primary-700 block px-2 py-1.5 dark:bg-gray-700 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-700 dark:focus:border-primary-700 ${
+													!selectedUsersData.find(
+														(item) => item.name === attributesName,
+													)?.selected
+														? 'opacity-50 cursor-not-allowed'
+														: 'cursor-pointer '
+												}`}
+												id="dropdown"
+												onChange={(e) => {
+													const selectedValue = e.target.value;
+													setSelectedUsersData((prev) => {
+														const updatedData = [...prev];
+														updatedData[updatedData.length - 1] = {
+															...updatedData[updatedData.length - 1],
+															condition: selectedValue,
+														};
+														return updatedData;
+													});
+												}}
+												disabled={
+													!selectedUsersData.find(
+														(item) => item.name === attributesName,
+													)?.selected
+												}
+											>
+												{conditionOptions?.map((option, optionIndex) => (
+													<option key={optionIndex} value={option.value}>
+														{option.label}{' '}
+													</option>
+												))}
+											</select>
+										)}
+									</div>
+								),
+							},
+							{
+								data: predicates && attributeType && (
+									<div className="flex flex-col items-start">
+										{attributeType && (
 											<input
 												key={index}
-												id="check-box"
-												type="checkbox"
-												onClick={(
-													event: React.MouseEvent<HTMLInputElement>,
-												) => {
-													const inputElement =
-														event?.target as HTMLInputElement;
-													selectConnection(
-														attributesName,
-														inputElement?.checked,
-														'',
-														null,
-														index,
-													);
-												}}
-												value=""
-												className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600 cursor-pointer"
-											/>
-										</div>
-									),
-								},
-								{ data: displayName },
-								{
-									data: predicates && (
-										<div className="flex items-center">
-											{attributeType && (
-												<select
-													key={index}
-													className={`flex shrink-0 bg-gray-50 border border-gray-400 text-gray-900 sm:text-sm rounded-md focus:ring-primary-700 focus:border-primary-700 block px-2 py-1.5 dark:bg-gray-700 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-700 dark:focus:border-primary-700 ${!selectedUsersData.find(item => item.name === attributesName)?.selected ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer '}`}
-													id="dropdown"
-													onChange={(e) => {
-														const selectedValue = e.target.value;
-														setSelectedUsersData((prev) => {
-															const updatedData = [...prev];
-															updatedData[updatedData.length - 1] = {
-																...updatedData[updatedData.length - 1],
-																condition: selectedValue,
-															};
-															return updatedData;
-														});
-													}}
-													disabled={
-														!selectedUsersData.find(
-															(item) => item.name === attributesName,
-														)?.selected
-													}
-												>
-													{conditionOptions?.map((option, optionIndex) => (
-														<option key={optionIndex} value={option?.value}>
-															{option?.label}
-														</option>
-													))}
-												</select>
-											)}
-										</div>
-									),
-								},
-								{
-									data: predicates && attributeType && (
-										<div className="flex flex-col items-start">
-											{attributeType && (
-												<input
-													key={index}
-													className={`flex shrink-0 bg-gray-50 border border-gray-400 text-gray-900 sm:text-sm rounded-md focus:ring-primary-700 focus:border-primary-700 block px-2 py-1.5 dark:bg-gray-700 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-700 dark:focus:border-primary-700 ${!selectedUsersData.find(item => item.name === attributesName)?.selected ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer '}`}
-													type="number"
-													min="0"
-													onChange={(e) => {
-														const value = e.target.value;
-														setSelectedUsersData((prev) => {
-															const updatedData = [...prev];
-															if (updatedData.length > 0) {
-																updatedData[updatedData.length - 1].value =
-																	parseInt(value);
-															}
-															return updatedData;
-														});
-														setInputTouched(true);
-														setInputErrors({});
-													}}
-													onBlur={() => {
-														setInputTouched(true);
-														const inputValue =
-															selectedUsersData[selectedUsersData.length - 1]
-																?.value;
-														const attributeName = attributesName;
-														if (
-															(inputValue === undefined ||
-																inputValue === null ||
-																Number.isNaN(inputValue)) &&
-															selectedUsersData[selectedUsersData.length - 1]
-																?.selected
-														) {
-															setInputErrors((prevErrors) => ({
-																...prevErrors,
-																[attributeName]: 'Value cannot be empty',
-															}));
-														} else if (inputValue && inputValue < 0) {
-															setInputErrors((prevErrors) => ({
-																...prevErrors,
-																[attributeName]:
-																	'Please enter a positive number',
-															}));
-														} else {
-															setInputErrors((prevErrors) => ({
-																...prevErrors,
-																[attributeName]: null,
-															}));
+												ref={(ref) => (inputRefs.current[index] = ref)}
+												className={`flex shrink-0 bg-gray-50 border border-gray-400 text-gray-900 sm:text-sm rounded-md focus:ring-primary-700 focus:border-primary-700 block px-2 py-1.5 dark:bg-gray-700 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-700 dark:focus:border-primary-700 ${
+													!selectedUsersData.find(
+														(item) => item.name === attributesName,
+													)?.selected ||
+													selectedUsersData.find(
+														(item) => item.name === attributesName,
+													)?.condition === ''
+														? 'opacity-50 cursor-not-allowed'
+														: 'cursor-pointer '
+												}`}
+												type="number"
+												min="0"
+												onChange={(e) => {
+													const value = e.target.value;
+													setSelectedUsersData((prev) => {
+														const updatedData = [...prev];
+														if (updatedData.length > 0) {
+															updatedData[updatedData.length - 1].value =
+																parseInt(value);
 														}
-													}}
-													disabled={
-														!selectedUsersData.find(
-															(item) => item.name === attributesName,
-														)?.selected
+														return updatedData;
+													});
+													setInputTouched(true);
+													setInputErrors({});
+												}}
+												onBlur={() => {
+													setInputTouched(true);
+													const inputValue =
+														selectedUsersData[selectedUsersData.length - 1]
+															?.value;
+													const attributeName = attributesName;
+													if (
+														(inputValue === undefined ||
+															inputValue === null ||
+															Number.isNaN(inputValue)) &&
+														selectedUsersData[selectedUsersData.length - 1]
+															?.selected
+													) {
+														setInputErrors((prevErrors) => ({
+															...prevErrors,
+															[attributeName]: 'Value cannot be empty',
+														}));
+													} else if (inputValue && inputValue < 0) {
+														setInputErrors((prevErrors) => ({
+															...prevErrors,
+															[attributeName]: 'Please enter a positive number',
+														}));
+													} else {
+														setInputErrors((prevErrors) => ({
+															...prevErrors,
+															[attributeName]: null,
+														}));
 													}
-												/>
-											)}
-											{inputErrors[attributesName] && inputTouched && (
-												<p className="text-red-500 text-xs mt-1">
-													{inputErrors[attributesName]}
-												</p>
-											)}
-										</div>
-									),
-								},
-							],
-						};
-					},
-				);
+												}}
+												disabled={
+													!selectedUsersData.find(
+														(item) => item.name === attributesName,
+													)?.selected ||
+													selectedUsersData.find(
+														(item) => item.name === attributesName,
+													)?.condition === ''
+												}
+											/>
+										)}
+										{inputErrors[attributesName] && inputTouched && (
+											<p className="text-red-500 text-xs mt-1">
+												{inputErrors[attributesName]}
+											</p>
+										)}
+									</div>
+								),
+							},
+						],
+					};
+				},
+			);
 
-				setAttributeList(attributes);
-				const attributeTypeArray = parsedSchemaDetails.attribute.map(
-					(ele: any) => ele.schemaDataType === 'number',
-				);
-				setDisplay(attributeTypeArray.includes(true));
-				setLoading(false);
-			} catch (error) {
-				setLoading(false);
-				console.error('Error fetching data:', error);
-			}
-		};
-
+			setAttributeList(attributes);
+			const attributeTypeArray = parsedSchemaDetails.attribute.map(
+				(ele: any) => ele.schemaDataType === 'number',
+			);
+			setDisplay(attributeTypeArray.includes(true));
+			setLoading(false);
+		} catch (error) {
+			setLoading(false);
+			console.error('Error fetching data:', error);
+		}
+	};
+	useEffect(() => {
 		fetchData();
 		return () => {
 			setRequestLoader(false);
@@ -275,6 +302,14 @@ const VerificationCred = () => {
 			setSelectedUsersData((prevSelectedUsersData) =>
 				prevSelectedUsersData.filter((item) => item.name !== attributes),
 			);
+			if (inputRefs.current[attributes]) {
+				inputRefs.current[attributes].value = '';
+			}
+
+			// Clear select value
+			if (selectRefs.current[attributes]) {
+				selectRefs.current[attributes].value = '';
+			}
 		}
 	};
 
@@ -295,7 +330,6 @@ const VerificationCred = () => {
 
 	const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 		const selectedUsers = await getFromLocalStorage(storageKeys.SELECTED_USER);
-
 		return JSON.parse(selectedUsers);
 	};
 
@@ -313,7 +347,7 @@ const VerificationCred = () => {
 				value: user?.value?.toString(),
 				...(credDefId ? { credDefId } : {}),
 				schemaId: schemaId,
-			}));			
+			}));
 
 			const verifyCredentialPayload: VerifyCredentialPayload = {
 				connectionId: `${selectedUsers[0].connectionId}`,
@@ -326,7 +360,7 @@ const VerificationCred = () => {
 				const { data } = response as AxiosResponse;
 				if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 					setProofReqSuccess(data?.message);
-					// window.location.href = pathRoutes.organizations.credentials
+					window.location.href = pathRoutes.organizations.credentials;
 				} else {
 					setErrMsg(response as string);
 					setRequestLoader(false);
@@ -340,11 +374,19 @@ const VerificationCred = () => {
 
 	const handelPredicates = () => {
 		setPredicates(!predicates);
+		setSelectedUsersData((prevSelectedUsersData) => {
+			return prevSelectedUsersData.map((user) => {
+				return {
+					...user,
+					condition: '',
+					value: undefined,
+				};
+			});
+		});
 	};
 	const header = [
 		{ columnName: '', width: 'w-0.5' },
 		{ columnName: 'Attributes' },
-
 		predicates && display && { columnName: 'Condition' },
 		predicates && display && { columnName: 'Predicates', width: 'w-0.75' },
 	];
@@ -430,35 +472,67 @@ const VerificationCred = () => {
 						loading={loading}
 					></DataTable>
 				</div>
+
 				<div>
-					<Button
-						onClick={verifyCredentialSubmit}
-						isProcessing={requestLoader}
-					disabled={
-						requestLoader ||
-						(!selectedUsersData.length && !Object.values(inputErrors).some(error => error !== null)) ||
-						(
-								selectedUsersData.some(item => item.selected && item.condition !== '' && item.value === undefined) ||
-								Object.values(inputErrors).some(error => error !== null)
-						)
-				}
-						className="text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mt-2 ml-auto mr-8"
-					>
-						<svg
-							className="mr-2 mt-1"
-							xmlns="http://www.w3.org/2000/svg"
-							width="20"
-							height="20"
-							fill="none"
-							viewBox="0 0 25 25"
+					{predicates ? (
+						<Button
+							onClick={verifyCredentialSubmit}
+							isProcessing={requestLoader}
+							disabled={
+								requestLoader ||
+								!selectedUsersData.length ||
+								(!selectedUsersData.length &&
+									!Object.values(inputErrors).some(
+										(error) => error !== null,
+									)) ||
+								selectedUsersData.some(
+									(item) =>
+										item.selected &&
+										item.condition !== '' &&
+										item.value === undefined,
+								) ||
+								Object.values(inputErrors).some((error) => error !== null)
+							}
+							className="text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mt-2 ml-auto mr-8"
 						>
-							<path
-								fill="#fff"
-								d="M21.094 0H3.906A3.906 3.906 0 0 0 0 3.906v12.5a3.906 3.906 0 0 0 3.906 3.907h.781v3.906a.781.781 0 0 0 1.335.553l4.458-4.46h10.614A3.906 3.906 0 0 0 25 16.407v-12.5A3.907 3.907 0 0 0 21.094 0Zm2.343 16.406a2.343 2.343 0 0 1-2.343 2.344H10.156a.782.782 0 0 0-.553.228L6.25 22.333V19.53a.781.781 0 0 0-.781-.781H3.906a2.344 2.344 0 0 1-2.344-2.344v-12.5a2.344 2.344 0 0 1 2.344-2.344h17.188a2.343 2.343 0 0 1 2.343 2.344v12.5Zm-3.184-5.951a.81.81 0 0 1-.17.254l-3.125 3.125a.781.781 0 0 1-1.105-1.106l1.792-1.79h-7.489a2.343 2.343 0 0 0-2.344 2.343.781.781 0 1 1-1.562 0 3.906 3.906 0 0 1 3.906-3.906h7.49l-1.793-1.79a.78.78 0 0 1 .254-1.277.781.781 0 0 1 .852.17l3.125 3.125a.79.79 0 0 1 .169.852Z"
-							/>
-						</svg>
-						Request Proof
-					</Button>
+							<svg
+								className="mr-2 mt-1"
+								xmlns="http://www.w3.org/2000/svg"
+								width="20"
+								height="20"
+								fill="none"
+								viewBox="0 0 25 25"
+							>
+								<path
+									fill="#fff"
+									d="M21.094 0H3.906A3.906 3.906 0 0 0 0 3.906v12.5a3.906 3.906 0 0 0 3.906 3.907h.781v3.906a.781.781 0 0 0 1.335.553l4.458-4.46h10.614A3.906 3.906 0 0 0 25 16.407v-12.5A3.907 3.907 0 0 0 21.094 0Zm2.343 16.406a2.343 2.343 0 0 1-2.343 2.344H10.156a.782.782 0 0 0-.553.228L6.25 22.333V19.53a.781.781 0 0 0-.781-.781H3.906a2.344 2.344 0 0 1-2.344-2.344v-12.5a2.344 2.344 0 0 1 2.344-2.344h17.188a2.343 2.343 0 0 1 2.343 2.344v12.5Zm-3.184-5.951a.81.81 0 0 1-.17.254l-3.125 3.125a.781.781 0 0 1-1.105-1.106l1.792-1.79h-7.489a2.343 2.343 0 0 0-2.344 2.343.781.781 0 1 1-1.562 0 3.906 3.906 0 0 1 3.906-3.906h7.49l-1.793-1.79a.78.78 0 0 1 .254-1.277.781.781 0 0 1 .852.17l3.125 3.125a.79.79 0 0 1 .169.852Z"
+								/>
+							</svg>
+							Request Proof
+						</Button>
+					) : (
+						<Button
+							onClick={verifyCredentialSubmit}
+							isProcessing={requestLoader}
+							disabled={requestLoader || !selectedUsersData.length}
+							className="text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mt-2 ml-auto mr-8"
+						>
+							<svg
+								className="mr-2 mt-1"
+								xmlns="http://www.w3.org/2000/svg"
+								width="20"
+								height="20"
+								fill="none"
+								viewBox="0 0 25 25"
+							>
+								<path
+									fill="#fff"
+									d="M21.094 0H3.906A3.906 3.906 0 0 0 0 3.906v12.5a3.906 3.906 0 0 0 3.906 3.907h.781v3.906a.781.781 0 0 0 1.335.553l4.458-4.46h10.614A3.906 3.906 0 0 0 25 16.407v-12.5A3.907 3.907 0 0 0 21.094 0Zm2.343 16.406a2.343 2.343 0 0 1-2.343 2.344H10.156a.782.782 0 0 0-.553.228L6.25 22.333V19.53a.781.781 0 0 0-.781-.781H3.906a2.344 2.344 0 0 1-2.344-2.344v-12.5a2.344 2.344 0 0 1 2.344-2.344h17.188a2.343 2.343 0 0 1 2.343 2.344v12.5Zm-3.184-5.951a.81.81 0 0 1-.17.254l-3.125 3.125a.781.781 0 0 1-1.105-1.106l1.792-1.79h-7.489a2.343 2.343 0 0 0-2.344 2.343.781.781 0 1 1-1.562 0 3.906 3.906 0 0 1 3.906-3.906h7.49l-1.793-1.79a.78.78 0 0 1 .254-1.277.781.781 0 0 1 .852.17l3.125 3.125a.79.79 0 0 1 .169.852Z"
+								/>
+							</svg>
+							Request Proof
+						</Button>
+					)}
 				</div>
 			</div>
 		</>
