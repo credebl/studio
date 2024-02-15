@@ -388,7 +388,7 @@ const VerificationCred = () => {
 		{ columnName: '', width: 'w-0.5' },
 		{ columnName: 'Attributes' },
 		predicates && display && { columnName: 'Condition' },
-		predicates && display && { columnName: 'Predicates', width: 'w-0.75' },
+		predicates && display && { columnName: 'Value', width: 'w-0.75' },
 	];
 
 	return (
