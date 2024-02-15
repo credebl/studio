@@ -38,16 +38,40 @@ export interface SchemaDetails {
 }
   
 export interface IProofRrquestDetails {
+	verifyLoading: boolean;
 	openModal: boolean;
 	closeModal: (flag: boolean, id: string, state: boolean) => void;
 	onSucess: (verifyPresentationId: string) => void;
 	requestId: string;
 	userData: object[];
 	view: boolean;
+  userRoles?: string[],
 }
 
 export interface IConnectionList {
 	theirLabel: string;
 	connectionId: string;
 	createDateTime: string;
+}
+
+export interface SchemaDetail {
+	schemaName: string,
+	version: string,
+	schemaId: string,
+	credDefId: string
+}
+
+export interface SelectedUsers {
+	userName: string,
+	connectionId: string
+}
+
+export interface VerifyCredentialPayload {
+	connectionId: string;
+	attributes: Array<{
+		attributeName: string;
+		credDefId?: string  ;
+	}>;
+	comment: string;
+	orgId: string;
 }

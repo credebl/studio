@@ -94,11 +94,7 @@ const SignInUser = () => {
 		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ROLE)
 		await removeFromLocalStorage(storageKeys.USER_PROFILE)
 		setCurrentComponent('password');
-		const fg = await getFromLocalStorage(storageKeys.LOGIN_USER_EMAIL)
-		console.log(3455, values, fg)
 		await setToLocalStorage(storageKeys.LOGIN_USER_EMAIL, values.email);
-		const fg1 = await getFromLocalStorage(storageKeys.LOGIN_USER_EMAIL)
-		console.log(34551, values, fg1)
 		setIsPasskeySuccess(true);
 	};
 

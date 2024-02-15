@@ -2,7 +2,6 @@
 
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
-
 import { AlertComponent } from '../../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import { EmptyListMessage } from '../../EmptyListComponent';
@@ -21,6 +20,8 @@ import DateTooltip from '../../Tooltip';
 import { deleteOrganizationInvitation } from '../../../api/organization';
 import { getFromLocalStorage } from '../../../api/Auth';
 import ConfirmationModal from '../../../commonComponents/ConfirmationModal';
+import { Roles } from '../../../utils/enums/roles';
+import { getUserRoles } from '../../../config/ecosystem';
 
 const initialPageState = {
     pageNumber: 1,
@@ -37,8 +38,9 @@ const Invitations = () => {
     const [message, setMessage] = useState<string | null>(null)
     const [showPopup, setShowPopup] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
-    const [currentPage, setCurrentPage] = useState(initialPageState);
-
+		const [roles, setRoles] = useState<string[]>([]);
+		const [currentPage, setCurrentPage] = useState(initialPageState);
+		
     const onPageChange = (page: number) => {
         setCurrentPage({
             ...currentPage,
@@ -46,36 +48,30 @@ const Invitations = () => {
         })
     };
     const [searchText, setSearchText] = useState("");
-
     const [invitationsList, setInvitationsList] = useState<Array<Invitation> | null>(null)
     const props = { openModal, setOpenModal };
-
-    //Fetch the user organization list
+		
     const getAllInvitations = async () => {
+			const roles = await getUserRoles()				
+			  setRoles(roles)
         setLoading(true)
-
         const response = await getOrganizationInvitations(currentPage.pageNumber, currentPage.pageSize, searchText);
         const { data } = response as AxiosResponse
 
-        setLoading(false)
-
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-            const totalPages = data?.data?.totalPages;
-            const invitationList = data?.data?.invitations
-            setInvitationsList(invitationList)
-            setCurrentPage({
-                ...currentPage,
-                total: totalPages
-            })
+					const totalPages = data?.data?.totalPages;
+					const invitationList = data?.data?.invitations
+					setInvitationsList(invitationList)
+					setCurrentPage({
+						...currentPage,
+						total: totalPages
+					})
+					setLoading(false)
         }
-        else {
-            setError(response as string)
-
-        }
+				setLoading(false)
     }
 
-    //This useEffect is called when the searchText changes 
-    useEffect(() => {
+   useEffect(() => {
         let getData: NodeJS.Timeout
 
         if (searchText.length >= 1) {
@@ -90,8 +86,6 @@ const Invitations = () => {
         return () => clearTimeout(getData)
     }, [searchText, openModal, currentPage.pageNumber])
 
-
-    //onChange of Search input text
     const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         setSearchText(e.target.value);
     }
@@ -101,6 +95,7 @@ const Invitations = () => {
     }
 
     const deleteInvitations = async () => {
+		  	setDeleteLoading(true);
         const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
         const invitationId = selectedInvitation
         const response = await deleteOrganizationInvitation(orgId, invitationId);
@@ -113,6 +108,7 @@ const Invitations = () => {
             setShowPopup(false)
         } else {
             setError(response as string);
+						setDeleteLoading(false);
         }
         setDeleteLoading(false);
     };
@@ -152,7 +148,11 @@ const Invitations = () => {
                         setError(null)
                     }}
                 />
-                    {
+              {loading ? (
+					      <div className="flex items-center justify-center mb-4">
+						       <CustomSpinner />
+					      </div>
+			        	) :
                     invitationsList && invitationsList?.length > 0 ? (<div
                         className="p-2 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-3 dark:bg-gray-800"
                     >
@@ -246,7 +246,8 @@ const Invitations = () => {
                                                                 }}
                                                                 color="bg-white"
                                                                 className="ml-5 p-0 font-normal items-center mt-5 text-sm text-primary-700 border border-blue-700 text-center hover:!bg-primary-800 hover:text-white rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:hover:bg-primary-700 dark:text-white dark:bg-primary-700 dark:focus:ring-blue-800"
-                                                            >
+																																disabled={!roles?.includes(Roles.ADMIN) && !roles?.includes(Roles.OWNER)}
+																																>
                                                                 <svg
                                                                     className="w-5 h-5"
                                                                     aria-hidden="true"
@@ -276,9 +277,9 @@ const Invitations = () => {
                             </ul>
                         </div>
                     </div>)
-                        : invitationsList && (<EmptyListMessage
+                        :  (<EmptyListMessage
                             message={'No Invitations'}
-                            description={'Get started by inviting a users'}
+                            description={'Get started by inviting a user'}
                             buttonContent={'Invite'}
                             feature={Features.SEND_INVITATION}
                             onClick={createInvitationsModel}
@@ -298,6 +299,7 @@ const Invitations = () => {
                     </div>
                 }
                 <ConfirmationModal
+								    loading={deleteLoading}
                     success={message}
                     failure={error}
                     openModal={showPopup}

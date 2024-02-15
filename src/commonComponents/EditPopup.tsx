@@ -1,7 +1,7 @@
 import { Button, Label, Modal } from 'flowbite-react';
 import { Field, Form, Formik } from 'formik';
-import React, { useEffect, useState } from 'react';
 import * as yup from 'yup';
+import { useRef } from 'react';
 
 const EditModal = (props: {
 	openModal: boolean;
@@ -11,6 +11,7 @@ const EditModal = (props: {
 	interface nameValue {
 		name: string;
 	}
+	const formikRef = useRef<any>(null);
 
 	const saveName = (values: nameValue) => {
 		props.onSucess(values.name);
@@ -21,11 +22,15 @@ const EditModal = (props: {
 		<Modal
 			size="lg"
 			show={props.openModal}
-			onClose={() => props.closeModal(false)}
+			onClose={() => {
+				formikRef.current.resetForm();
+				props.closeModal(false);
+			}}
 		>
 			<Modal.Header>Edit Device</Modal.Header>
 			<div className="relative p-2 text-center bg-white rounded-lg shadow dark:bg-gray-800 pr-5 pl-5">
 				<Formik
+				  innerRef={formikRef}
 					initialValues={{
 						name: '',
 					}}

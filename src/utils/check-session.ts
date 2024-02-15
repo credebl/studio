@@ -1,8 +1,10 @@
 import type { AstroCookies } from 'astro';
-import { getSupabaseClient } from '../supabase';
 import { getFromCookies } from '../api/Auth';
 import { pathRoutes } from '../config/pathRoutes';
 import { RolePermissions } from '../config/permissions';
+import { apiStatusCodes } from '../config/CommonConstant';
+import { apiRoutes } from '../config/apiRoutes';
+import { envConfig } from '../config/envConfig';
 
 interface IProps {
 	cookies: AstroCookies;
@@ -17,7 +19,7 @@ interface IOutput {
 
 export const checkUserSession = async ({
 	cookies,
-	currentPath,
+	currentPath
 }: IProps): Promise<IOutput> => {
 	const sessionCookie = getFromCookies(cookies, 'session');
 
@@ -29,17 +31,36 @@ export const checkUserSession = async ({
 		};
 	}
 
-	const {
-		data: { user },
-		error,
-	} = await getSupabaseClient().auth.getUser(sessionCookie);
-
-	if (!user || user.role !== 'authenticated') {
-		return {
-			permitted: false,
-			redirect: pathRoutes.auth.sinIn,
-			authorized: false,
+	try {
+		const baseURL =
+			globalThis.baseUrl ||
+			envConfig.PUBLIC_BASE_URL ||
+			process.env.PUBLIC_BASE_URL;
+		const config = {
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${sessionCookie + ''}`,
+			},
+			method: 'GET',
 		};
+		const res = await fetch(`${baseURL + apiRoutes.users.userProfile}`, {
+			...config,
+		});
+		const userData = await res.json();
+		console.log('Check Authorized User:::', {
+			status: userData.statusCode,
+			message: userData.message,
+		});
+
+		if (userData?.statusCode === apiStatusCodes.API_STATUS_UNAUTHORIZED) {
+			return {
+				permitted: false,
+				redirect: pathRoutes.auth.sinIn,
+				authorized: false,
+			};
+		}
+	} catch (error) {
+		console.log('GET USER DETAILS ERROR::::', error);
 	}
 
 	const role = getFromCookies(cookies, 'role');
@@ -62,7 +83,6 @@ export const checkUserSession = async ({
 			};
 		}
 	}
-
 	return {
 		permitted: true,
 		authorized: true,

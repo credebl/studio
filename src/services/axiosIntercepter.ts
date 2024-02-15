@@ -1,6 +1,5 @@
 import axios from 'axios'
 import { envConfig } from '../config/envConfig';
-import { pathRoutes } from '../config/pathRoutes';
 
 const instance = axios.create({
     baseURL: envConfig.PUBLIC_BASE_URL
@@ -19,14 +18,7 @@ instance.interceptors.response.use(function (response) {
     return response;
 }, async function (error) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
-    const errorRes = error?.response;
-
-    if(errorRes?.status === 401){
-        await localStorage.clear()
-        window.location.href = pathRoutes.auth.sinIn
-    }
-    
+    // Do something with response error    
     return Promise.reject(error);
 });
 

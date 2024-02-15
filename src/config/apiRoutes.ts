@@ -14,6 +14,9 @@ export const apiRoutes = {
 		fidoDevice: 'auth/passkey',
 		fidoAuthentication: 'auth/passkey/authentication-options',
 		fidoVerifyAuthentication: 'auth/passkey/verify-authentication/',
+		keyClockResetPassword: 'auth/reset-password',
+		forgotPassword: 'auth/forgot-password',
+		resetPassword: 'auth/password-reset'
 	},
 	users: {
 		userProfile: '/users/profile',
@@ -50,7 +53,7 @@ export const apiRoutes = {
 		getIssuedCredentials: '/credentials',
 		getAllConnections: '/connections',
 		issueCredential: '/credentials/offer',
-		issueOobEmailCredential: '/credentials/oob',
+		issueOobEmailCredential: '/credentials/oob/email',
 		bulk:{
 			credefList:'/bulk/cred-defs',
 			uploadCsv: '/bulk/upload',
@@ -66,7 +69,7 @@ export const apiRoutes = {
 		getAllRequestList: '/credentials/proofs',
 		verifyCredential: '/proofs',
 		presentationVerification: '/proofs',
-		proofRequestAttributesVerification: '/proofs',
+		proofRequestAttributesVerification: '/verified-proofs',
 		verificationCredDef: '/verifiation/cred-defs'
 	},
 	Agent: {
@@ -90,7 +93,7 @@ export const apiRoutes = {
 			createSchemaRequest: '/transaction/schema',
 			createCredDefRequest: '/transaction/cred-def',
 			signRequest: '/transaction/sign/',
-			submitRequest: '/transaction/sumbit/',
+			submitRequest: '/transaction/submit/',
 			rejectRequest: '/transactions/',
 			transactionApproval: '/transaction-approval/',
 		},
@@ -98,4 +101,7 @@ export const apiRoutes = {
 		usersInvitation: '/users/invitations',
 		members: '/members',
 	},
+	setting:{
+		setting: '/client_credentials'
+	}
 };

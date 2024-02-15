@@ -185,8 +185,9 @@ const SendInvitationModal = (props: {
 					validationSchema={yup.object().shape({
 						email: yup
 							.string()
-							.required('Email is required')
+							.matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g, "Email is invalid")
 							.email('Email is invalid')
+							.required('Email is required')
 							.test('is-self-email', "You can't send invitation to self", (value) => value.trim() !== selfEmail.email.trim())
 							.trim(),
 					})}

@@ -58,7 +58,13 @@ const AddPasskey = ({ responseMessages }: { responseMessages: (value: IResponseM
 
 	const addDevice = async (): Promise<void> => {
 		try {
-			setOpenModel(true);
+			if(deviceList?.length > 0){
+				registerWithPasskey(true)
+				setOpenModel(false);
+			}else{
+				setOpenModel(true);
+
+			}
 		} catch (error) {
 			setFidoLoader(false);
 		}
@@ -217,7 +223,7 @@ const AddPasskey = ({ responseMessages }: { responseMessages: (value: IResponseM
 										<h1 className="text-gray-500 text-xl font-medium font-montserrat dark:text-white">
 											Add Passkey
 										</h1>
-										<p className="mt-2 text-gray-700 font-montserrat text-sm font-normal font-light leading-normal dark:text-white">
+										<p className="text-start mt-2 text-gray-700 font-montserrat text-sm font-normal font-light leading-normal dark:text-white">
 											With Passkey, no complex passwords to remember.
 										</p>
 									</div>
