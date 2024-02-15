@@ -447,7 +447,8 @@ const VerificationCred = () => {
 						<Alert
 							color={proofReqSuccess ? 'success' : 'failure'}
 							onDismiss={() => {
-								setProofReqSuccess(null), setErrMsg(null);
+								setProofReqSuccess(null);
+								setErrMsg(null);
 							}}
 						>
 							{proofReqSuccess || errMsg}
