@@ -83,6 +83,7 @@ export interface IAttributes {
 	attributeName: string;
 	schemaDataType: string;
 	displayName: string;
+	isRequired?: boolean;
 }
 export interface IFormData {
 	schemaName: string;
