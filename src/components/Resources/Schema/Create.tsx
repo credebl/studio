@@ -96,38 +96,24 @@ const CreateSchema = () => {
 		checkEcosystemData();
 	}, []);
 
-
-	const areAllInputsFilled = (formData) => {
-		// Destructure formData to extract schemaName, schemaVersion, and attribute
+	const areAllInputsFilled = (formData: IFormData) => {
 		const { schemaName, schemaVersion, attribute } = formData;
-	
-		// Check if schemaName and schemaVersion are filled
 		if (!schemaName || !schemaVersion) {
 			return false;
 		}
-	
-		// Check if at least one attribute is required
-		const isAtLeastOneRequired = attribute.some(attr => attr.isRequired);
-	
+		const isAtLeastOneRequired = attribute.some((attr) => attr.isRequired);
 		if (!isAtLeastOneRequired) {
 			return false;
 		}
-	
-		// Check if all attributes are filled
 		for (const attr of attribute) {
 			if (!attr.attributeName || !attr.schemaDataType || !attr.displayName) {
 				return false;
 			}
 		}
-	
 		return true;
 	};
 
-	
-
 	const submit = async (values: IFormData) => {
-		console.log('values::::', values);
-
 		setCreateLoader(true);
 		const schemaFieldName: FieldName = {
 			schemaName: values.schemaName,
@@ -136,46 +122,44 @@ const CreateSchema = () => {
 			orgId: orgId,
 		};
 
-		// const createSchema = await createSchemas(schemaFieldName, orgId);
-		// const { data } = createSchema as AxiosResponse;
-		// if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-		// 	if (data) {
-		// 		setSuccess(data?.message);
-		// 		setCreateLoader(false);
-		// 		setLoading(true);
-		// 		setTimeout(() => {
-		// 			setSuccess(null);
-		// 			window.location.href = pathRoutes?.organizations?.schemas;
-		// 		}, 1500);
-		// 		setTimeout(() => {
-		// 			setShowPopup({
-		// 				type: 'create',
-		// 				show: false,
-		// 			});
-		// 		}, 2000);
-		// 	} else {
-		// 		setFailure(createSchema as string);
-		// 		setCreateLoader(false);
-		// 	}
-		// } else {
-		// 	setCreateLoader(false);
-		// 	setFailure(createSchema as string);
-		// 	setTimeout(() => {
-		// 		setFailure(null);
-		// 	}, 2000);
-		// }
-		// setTimeout(() => {
-		// 	setShowPopup({
-		// 		type: 'create',
-		// 		show: false,
-		// 	});
-		// }, 2000);
+		const createSchema = await createSchemas(schemaFieldName, orgId);
+		const { data } = createSchema as AxiosResponse;
+		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+			if (data) {
+				setSuccess(data?.message);
+				setCreateLoader(false);
+				setLoading(true);
+				setTimeout(() => {
+					setSuccess(null);
+					window.location.href = pathRoutes?.organizations?.schemas;
+				}, 1500);
+				setTimeout(() => {
+					setShowPopup({
+						type: 'create',
+						show: false,
+					});
+				}, 2000);
+			} else {
+				setFailure(createSchema as string);
+				setCreateLoader(false);
+			}
+		} else {
+			setCreateLoader(false);
+			setFailure(createSchema as string);
+			setTimeout(() => {
+				setFailure(null);
+			}, 2000);
+		}
+		setTimeout(() => {
+			setShowPopup({
+				type: 'create',
+				show: false,
+			});
+		}, 2000);
 	};
 
 	const submitSchemaCreationRequest = async (values: IFormData) => {
 		setCreateLoader(true);
-		console.log('values::::', values);
-
 		const schemaFieldName = {
 			endorse: true,
 			attributes: values.attribute,
@@ -187,20 +171,20 @@ const CreateSchema = () => {
 
 		const createSchema = await createSchemaRequest(schemaFieldName, id, orgId);
 		const { data } = createSchema as AxiosResponse;
-		// if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-		// 	setSuccess(data?.message);
-		// 	setCreateLoader(false);
-		// 	window.location.href = pathRoutes.ecosystem.endorsements;
-		// 	setTimeout(() => {
-		// 		setSuccess(null);
-		// 	}, 2000);
-		// } else {
-		// 	setCreateLoader(false);
-		// 	setFailure(createSchema as string);
-		// 	setTimeout(() => {
-		// 		setFailure(null);
-		// 	}, 2000);
-		// }
+		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+			setSuccess(data?.message);
+			setCreateLoader(false);
+			window.location.href = pathRoutes.ecosystem.endorsements;
+			setTimeout(() => {
+				setSuccess(null);
+			}, 2000);
+		} else {
+			setCreateLoader(false);
+			setFailure(createSchema as string);
+			setTimeout(() => {
+				setFailure(null);
+			}, 2000);
+		}
 		setTimeout(() => {
 			setShowPopup({
 				type: 'create',
@@ -370,35 +354,39 @@ const CreateSchema = () => {
 							validationSchema={yup.object().shape({
 								schemaName: yup.string().trim().required('Schema is required'),
 								schemaVersion: yup
-										.string()
-										.matches(
-												schemaVersionRegex,
-												'Enter valid schema version (eg. 0.1 or 0.0.1)',
-										)
-										.required('Schema version is required'),
-								attribute: yup.array().of(
-										yup.object().shape({
+									.string()
+									.matches(
+										schemaVersionRegex,
+										'Enter valid schema version (eg. 0.1 or 0.0.1)',
+									)
+									.required('Schema version is required'),
+								attribute: yup
+									.array()
+									.of(
+										yup
+											.object()
+											.shape({
 												attributeName: yup
-														.string()
-														.trim()
-														.required('Attribute name is required'),
+													.string()
+													.trim()
+													.required('Attribute name is required'),
 												displayName: yup
-														.string()
-														.trim()
-														.required('Display name is required'),
+													.string()
+													.trim()
+													.required('Display name is required'),
 												isRequired: yup.boolean(), // Define isRequired as boolean without validation
-										}).default(() => ({ isRequired: false })) // Default isRequired to false
-								).required('At least one attribute is required')
-								.test({
+											})
+											.default(() => ({ isRequired: false })), // Default isRequired to false
+									)
+									.required('At least one attribute is required')
+									.test({
 										name: 'at-least-one-is-required',
 										message: 'At least one attribute must be required',
 										test: (value) => {
-												return value.some((attr) => attr.isRequired === true);
+											return value.some((attr) => attr.isRequired === true);
 										},
-								}),
-						})}
-						
-							
+									}),
+							})}
 							validateOnBlur
 							validateOnChange
 							enableReinitialize
@@ -477,9 +465,12 @@ const CreateSchema = () => {
 
 												const areFirstInputsSelected =
 													values.schemaName && values.schemaVersion;
-												// setBtnState(Boolean(areFirstInputsSelected));
-												const isAtLeastOneRequired = attribute.some(attr => attr.isRequired);
-												const btnState = Boolean(areFirstInputsSelected && isAtLeastOneRequired);
+												const isAtLeastOneRequired = attribute.some(
+													(attr: { isRequired: boolean; }) => attr.isRequired,
+												);
+												const btnState = Boolean(
+													areFirstInputsSelected && isAtLeastOneRequired,
+												);
 												setBtnState(btnState);
 												return (
 													<div className="relative flex flex-col dark:bg-gray-800">
@@ -635,12 +626,15 @@ const CreateSchema = () => {
 																		</div>
 
 																		<div className="absolute bottom-[-8px] left-6">
-																			<label className="flex space-x-2 items-center">
+																			<label
+																				className="flex space-x-2 items-center"
+																				title="This will make the field required when issuing a credential "
+																			>
 																				<Field
 																					type="checkbox"
 																					name={`attribute[${index}].isRequired`}
 																					className="w-4 h-4"
-																					disabled={!areFirstInputsSelected }
+																					disabled={!areFirstInputsSelected}
 																					checked={
 																						formikHandlers.values.attribute[
 																							index
@@ -666,8 +660,6 @@ const CreateSchema = () => {
 																					Required
 																				</span>
 																			</label>
-																		</div>
-																		<div>
 																		</div>
 
 																		<div
@@ -755,11 +747,13 @@ const CreateSchema = () => {
 																						attributeName: '',
 																						schemaDataType: 'string',
 																						displayName: '',
-																						isRequired:false
+																						isRequired: false,
 																					})
 																				}
 																				disabled={
-																					!areAllInputsFilled(formikHandlers.values) 
+																					!areAllInputsFilled(
+																						formikHandlers.values,
+																					)
 																				}
 																			>
 																				<svg
@@ -827,8 +821,6 @@ const CreateSchema = () => {
 											</svg>
 											Reset
 										</Button>
-										<>{console.log("formikHandlers.isValid",formikHandlers.isValid)
-										}</>
 										<Button
 											type="submit"
 											color="bg-primary-700"
