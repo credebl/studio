@@ -72,6 +72,7 @@ export interface SelectedUsers {
 }
 
 export interface Attributes {
+	isRequired: boolean;
 	name: string;
 	value: string;
 	dataType: string;
@@ -85,11 +86,13 @@ export interface IssuanceFormPayload {
 }
 
 export interface DataTypeAttributes {
+	isRequired: any;
 	schemaDataType: string;
 	attributeName:string
 }
 
 export interface Attribute {
+		isRequired: string;
     attributeName: string;
     schemaDataType: string;
     displayName: string;
