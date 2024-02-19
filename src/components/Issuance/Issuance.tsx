@@ -15,7 +15,7 @@ import { issueCredential } from '../../api/issuance';
 import { pathRoutes } from '../../config/pathRoutes';
 import { AlertComponent } from '../AlertComponent';
 import type { Attribute, DataTypeAttributes, IssuanceFormPayload, SchemaDetails, SelectedUsers } from './interface'
-import CopyDid from '../../commonComponents/CopyDid';
+import SummaryCard from '../../commonComponents/SummaryCard'
 
 const IssueCred = () => {
 	const [schemaLoader, setSchemaLoader] = useState<boolean>(true);
@@ -184,34 +184,7 @@ const IssueCred = () => {
 				/>
 			</div>
 			{!schemaLoader ? (
-				<div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3'>
-					<Card				>
-						<div className="flex justify-between items-start">
-							<div>
-								<h5 className="text-xl font-bold leading-none dark:text-white">
-									{schemaDetails.schemaName}
-								</h5>
-								<p className="dark:text-white">
-									Version: {schemaDetails.version}
-								</p>
-							</div>
-						</div>
-						<div className="min-w-0 flex-1 issuance">
-							<p className="truncate dark:text-white break-all flex">
-								<span className="font-semibold mr-2">Schema ID: </span>
-								<span className='flex w-schema-id'>
-									<CopyDid value={schemaDetails?.schemaId || ""} className='truncate font-courier mt-[2px]' />
-								</span>
-							</p>
-							<p className="truncate dark:text-white break-all flex">
-								<span className="font-semibold mr-2">Credential Definition: </span>
-								<span className='flex w-cred-id'>
-									<CopyDid value={schemaDetails.credDefId || ""} className='truncate font-courier mt-[2px]' />
-								</span>
-							</p>
-						</div>
-					</Card>
-				</div>
+				<SummaryCard schemaId={schemaDetails.schemaId} schemaName={schemaDetails.schemaName} version={schemaDetails.schemaName} credDefId={schemaDetails.credDefId} hideCredDefId={false} />
 			) : (
 				''
 			)}
