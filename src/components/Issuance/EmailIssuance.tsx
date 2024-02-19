@@ -612,68 +612,66 @@ const EmailIssuance = () => {
 																																				name={`formData[${index}].attributes.${attIndex}.value`}
 																																				className="w-8/12 bg-gray-50 border border-gray-300 text-gray-900 sm:text-md rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 																																			/>
+																																			<div className="flex absolute bottom-[-20px] right-0">
+																																				{formikHandlers
+																																					?.touched
+																																					?.formData &&
+																																					formikHandlers
+																																						?.touched
+																																						?.formData[
+																																						index
+																																					]
+																																						?.attributes &&
+																																					formikHandlers
+																																						?.touched
+																																						?.formData[
+																																						index
+																																					]
+																																						?.attributes[
+																																						attIndex
+																																					]
+																																						?.value &&
+																																					formikHandlers
+																																						?.errors
+																																						?.formData &&
+																																					formikHandlers
+																																						?.errors
+																																						?.formData[
+																																						index
+																																					]
+																																						?.attributes &&
+																																					formikHandlers
+																																						?.errors
+																																						?.formData[
+																																						index
+																																					]
+																																						?.attributes[
+																																						attIndex
+																																					]
+																																						?.value && (
+																																						<label
+																																							style={{
+																																								color:
+																																									'red',
+																																							}}
+																																							className="text-sm"
+																																						>
+																																							{
+																																								formikHandlers
+																																									?.errors
+																																									?.formData[
+																																									index
+																																								]
+																																									?.attributes[
+																																									attIndex
+																																								]
+																																									?.value
+																																							}
+																																						</label>
+																																					)}
+																																			</div>
 																																		</div>
 																																	</div>
-																																	<>
-																																		<div className='flex'>
-																																			{formikHandlers
-																																				?.touched
-																																				?.formData &&
-																																				formikHandlers
-																																					?.touched
-																																					?.formData[
-																																					index
-																																				]
-																																					?.attributes &&
-																																				formikHandlers
-																																					?.touched
-																																					?.formData[
-																																					index
-																																				]
-																																					?.attributes[
-																																					attIndex
-																																				]
-																																					?.value &&
-																																				formikHandlers
-																																					?.errors
-																																					?.formData &&
-																																				formikHandlers
-																																					?.errors
-																																					?.formData[
-																																					index
-																																				]
-																																					?.attributes &&
-																																				formikHandlers
-																																					?.errors
-																																					?.formData[
-																																					index
-																																				]
-																																					?.attributes[
-																																					attIndex
-																																				]
-																																					?.value && (
-																																					<label
-																																						style={{
-																																							color:
-																																								'red',
-																																						}}
-																																						className="text-sm"
-																																					>
-																																						{
-																																							formikHandlers
-																																								?.errors
-																																								?.formData[
-																																								index
-																																							]
-																																								?.attributes[
-																																								attIndex
-																																							]
-																																								?.value
-																																						}
-																																					</label>
-																																				)}
-																																		</div>
-																																	</>
 																																</>
 																															),
 																														)}
