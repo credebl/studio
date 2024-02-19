@@ -1,6 +1,7 @@
 import { Card } from 'flowbite-react';
 import { dateConversion } from '../utils/DateConversion';
 import DateTooltip from '../components/Tooltip';
+import CopyDid from './CopyDid';
 
 interface IProps {
   className?: string,
@@ -22,8 +23,8 @@ const SchemaCard = (props: IProps) => {
     <Card onClick={() => {
       props.onClickCallback(props.schemaId, props.attributes, props.issuerDid, props.created)
     }}
-    id="schema-cards" 
-    className={`transform transition duration-500 ${props.isClickable !== false ? "hover:scale-105" : "hover:!cursor-default"} hover:bg-gray-50 cursor-pointer h-full w-full overflow-hidden`}>
+      id="schema-cards"
+      className={`transform transition duration-500 ${props.isClickable !== false ? "hover:scale-105 hover:bg-gray-50 cursor-pointer" : "hover:!cursor-default"} h-full w-full overflow-hidden`}>
       <div className="flex justify-between items-baseline">
         <div className='min-w-[8rem] max-w-100/10rem'>
           <h5 className="text-xl font-bold leading-[1.1] text-gray-900 dark:text-white break-words truncate line-clamp-2 max-h-[43px] whitespace-normal" style={{ display: "-webkit-box" }}>
@@ -41,14 +42,28 @@ const SchemaCard = (props: IProps) => {
         </div>
       </div>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-regular text-gray-900 dark:text-white pb-2">
-          <span className="font-semibold">Schema ID:</span> {props.schemaId}
+        <p className="truncate dark:text-white break-all flex">
+          <span className="font-semibold mr-2">Schema ID: </span>
+          <span className='flex w-schema-id'>
+            {
+              props.isClickable !== false ?
+                <div className="truncate">{props?.schemaId}</div>
+                : <CopyDid value={props?.schemaId || ""} className='truncate font-courier mt-[2px]' />
+            }
+          </span>
         </p>
-        <p className="truncate text-sm font-regular text-gray-900 dark:text-white pb-2">
-          <span className="font-semibold">Issuer DID:</span> {props.issuerDid}
+        <p className="truncate dark:text-white break-all flex">
+          <span className="font-semibold mr-2">Issuer DID: </span>
+          <span className='flex w-issuer-id'>
+            {
+              props.isClickable !== false ?
+              <div className="truncate">{props?.issuerDid}</div>
+                : <CopyDid value={props.issuerDid || ""} className='truncate font-courier mt-[2px]' />
+            }
+          </span>
         </p>
-        <p className="truncate text-sm font-regular text-gray-900 dark:text-white">
-          <span className="font-semibold">Ledger:</span> {props.issuerDid.split(":")[2]}
+        <p className="truncate dark:text-white break-all flex">
+          <span className="font-semibold mr-2">Ledger:</span> {props?.issuerDid?.split(":")[2]}
         </p>
       </div>
 
