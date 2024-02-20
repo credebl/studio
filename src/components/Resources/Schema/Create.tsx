@@ -3,14 +3,7 @@
 import * as yup from 'yup';
 
 import { Button, Card, Label } from 'flowbite-react';
-import {
-	Field,
-	FieldArray,
-	Form,
-	Formik,
-	FormikErrors,
-	FormikProps,
-} from 'formik';
+import { Field,	FieldArray,	Form,	Formik,	FormikErrors,	FormikProps} from 'formik';
 import {
 	apiStatusCodes,
 	schemaVersionRegex,
