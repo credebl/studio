@@ -7,9 +7,10 @@ export interface GetAllSchemaListParameter {
 }
 
 export interface IAttributes {
-  attributeName: string
-  schemaDataType: string
-  displayName: string
+  attributeName: string;
+  schemaDataType: string;
+  displayName: string;
+	isRequired?: boolean;
 }
 export interface Values {
   schemaName: string;

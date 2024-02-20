@@ -8,10 +8,7 @@ import {
 	FieldArray,
 	Form,
 	Formik,
-	FormikConfig,
 	FormikErrors,
-	FormikHandlers,
-	FormikHelpers,
 	FormikProps,
 } from 'formik';
 import {
@@ -69,7 +66,6 @@ const CreateSchema = () => {
 		type: 'reset',
 	});
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
-	const [btnState, setBtnState] = useState<boolean>(true);
 	const [loading, setLoading] = useState<boolean>(false);
 
 	const initFormData: IFormData = {
@@ -378,9 +374,9 @@ const CreateSchema = () => {
 													.string()
 													.trim()
 													.required('Display name is required'),
-												isRequired: yup.boolean(), // Define isRequired as boolean without validation
+												isRequired: yup.boolean(),
 											})
-											.default(() => ({ isRequired: false })), // Default isRequired to false
+											.default(() => ({ isRequired: false })),
 									)
 									.required('At least one attribute is required')
 									.test({
@@ -430,7 +426,7 @@ const CreateSchema = () => {
 											</div>
 										</div>
 										<div
-											className="md:w-1/3 sm:w-full md:w-96  flex-col md:flex"
+											className="md:w-1/3 sm:w-full md:w-96 flex-col md:flex"
 											style={{ marginLeft: 0 }}
 										>
 											<div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -457,7 +453,7 @@ const CreateSchema = () => {
 											</div>
 										</div>
 									</div>
-									<p className="mt-2 text-gray-700 text-sm">
+									<p className="mt-2 text-gray-700 font-normal dark:text-gray-200 text-sm">
 										You must select at least one attribute to create schema
 									</p>
 									<div className="pt-4 pb-10 mt-2 rounded-lg border border-gray-200">
@@ -469,13 +465,6 @@ const CreateSchema = () => {
 
 												const areFirstInputsSelected =
 													values.schemaName && values.schemaVersion;
-												const isAtLeastOneRequired = attribute.some(
-													(attr: { isRequired: boolean; }) => attr.isRequired,
-												);
-												const btnState = Boolean(
-													areFirstInputsSelected && isAtLeastOneRequired,
-												);
-												setBtnState(btnState);
 												return (
 													<div className="relative flex flex-col dark:bg-gray-800">
 														{attribute?.map(
@@ -657,7 +646,7 @@ const CreateSchema = () => {
 																					className={`${
 																						!areFirstInputsSelected
 																							? 'text-gray-400'
-																							: 'text-gray-700'
+																							: 'text-gray-700 dark:text-gray-200'
 																					} text-sm`}
 																				>
 																					{' '}
@@ -725,7 +714,7 @@ const CreateSchema = () => {
 																				formikHandlers?.errors?.attribute[index]
 																					?.isRequired &&
 																				!attribute.some(
-																					(item) => item.isRequired === true,
+																					(item: { isRequired: boolean; }) => item.isRequired === true,
 																				) ? (
 																					<label className="text-red-500 text-xs h-5">
 																						{
@@ -764,13 +753,13 @@ const CreateSchema = () => {
 																					xmlns="http://www.w3.org/2000/svg"
 																					fill="none"
 																					viewBox="0 0 24 24"
-																					stroke-width="1.5"
+																					strokeWidth="1.5"
 																					stroke="currentColor"
 																					className="w-6 h-6"
 																				>
 																					<path
-																						stroke-linecap="round"
-																						stroke-linejoin="round"
+																						strokeLinecap="round"
+																						strokeLinejoin="round"
 																						d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
 																					/>
 																				</svg>
