@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { pathRoutes } from '../../config/pathRoutes';
 import BreadCrumbs from '../BreadCrumbs';
 import BackButton from '../../commonComponents/backbutton';
@@ -24,7 +24,7 @@ const EmailIssuance = () => {
 	const [userData, setUserData] = useState();
 	const [loading, setLoading] = useState<boolean>(true);
 	const [credentialOptions, setCredentialOptions] = useState([]);
-	const [credentialSelected, setCredentialSelected] = useState<string>('');
+	const [credentialSelected, setCredentialSelected] = useState<string | null>('');
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [batchName, setBatchName] = useState('');
 	const [openResetModal, setOpenResetModal] = useState<boolean>(false);
@@ -95,7 +95,7 @@ const EmailIssuance = () => {
 
 		let transformedData = { credentialOffer: [] };
 		if (existingData && existingData.formData) {
-			existingData.formData.forEach((entry) => {
+			existingData.formData.forEach((entry: { email: any; attributes: any[]; }) => {
 				const transformedEntry = { emailId: entry.email, attributes: [] };
 				entry.attributes.forEach((attribute) => {
 					const transformedAttribute = {
@@ -103,7 +103,7 @@ const EmailIssuance = () => {
 						name: attribute.name || '',
 						isRequired: attribute.isRequired,
 					};
-					transformedEntry.attributes.push(transformedAttribute);
+					transformedEntry?.attributes?.push(transformedAttribute);
 				});
 
 				transformedData.credentialOffer.push(transformedEntry);
@@ -144,17 +144,17 @@ const EmailIssuance = () => {
 	};
 
 	useEffect(() => {
-		const initFormData = {
-			email: '',
-			attributes: attributes?.map((item) => {
-				return {
-					...item,
-					value: '',
-					name: item?.attributeName,
-					isRequired: item?.isRequired,
-				};
-			}),
-		};
+			const initFormData = {
+				email: '',
+				attributes: attributes?.map((item:IAttributes) => {
+					return {
+						...item,
+						value: '',
+						name: item?.attributeName,
+						isRequired: item?.isRequired,
+					};
+				}),
+			};
 
 		setFormData({ formData: [initFormData] });
 	}, [attributes]);
@@ -292,7 +292,7 @@ const EmailIssuance = () => {
 														Attributes:
 													</span>
 													<div className="flex flex-wrap overflow-hidden">
-														{selectedCred?.schemaAttributes.map(
+														{selectedCred?.schemaAttributes?.map(
 															(element: IAttributes) => (
 																<div
 																	key={element.attributeName}
@@ -644,8 +644,7 @@ const EmailIssuance = () => {
 																									arrayHelpers.push({
 																										email: '',
 																										attributes: attributes?.map(
-
-																											(item) => {
+																											(item:IAttributes) => {
 																												return {
 																													attributeName:
 																														item.attributeName,

@@ -15,12 +15,15 @@ export interface CredDefData {
 
 export interface IValues {
 	value: string;
+	schemaAttributes?:any;
+	label?: string;
 }
 
 export interface IAttributes {
 	attributeName: string
 	schemaDataType: string
 	displayName: string
+	isRequired?: boolean
 }
 
 export interface ICredentials {
