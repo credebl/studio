@@ -16,11 +16,7 @@ import type { FieldName, IFormData, IAttributes } from './interfaces';
 import { createSchemas } from '../../../api/Schema';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
-import {
-	ICheckEcosystem,
-	checkEcosystem,
-	getEcosystemId,
-} from '../../../config/ecosystem';
+import { ICheckEcosystem,	checkEcosystem,	getEcosystemId } from '../../../config/ecosystem';
 import { createSchemaRequest } from '../../../api/ecosystem';
 import EcosystemProfileCard from '../../../commonComponents/EcosystemProfileCard';
 import ConfirmationModal from '../../../commonComponents/ConfirmationModal';
