@@ -233,7 +233,7 @@ const IssueCred = () => {
 									validationSchema={validationSchema}
 									onSubmit={handleSubmit}
 								>
-									{({ values, errors, touched, isValid }) => (
+									{({ values, errors, touched, isValid }) => (										
 										<Form>
 											<Card
 												className="hover:bg-gray-50 my-5"
@@ -262,20 +262,20 @@ const IssueCred = () => {
 												<h3 className="dark:text-white">Attributes</h3>
 												<div className="container mx-auto pr-2">
 													<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2">
-														{schemaAttributesDetails.map((attr, index) => (
+														{schemaAttributesDetails && schemaAttributesDetails.length > 0 && schemaAttributesDetails?.map((attr, index) => (
 															<div>
-																<div key={attr.attributeName} className="flex">
+																<div key={attr?.attributeName} className="flex">
 																	<label
 																		htmlFor={`attributes.${index}.value`}
 																		className="dark:text-white w-1/3 pr-2 flex justify-end items-center font-light"
 																	>
 																		<div className="flex items-center">
 																			{' '}
-																			{attr.displayName
+																			{attr?.displayName
 																				.charAt(0)
 																				.toUpperCase() +
-																				attr.displayName.slice(1).toLowerCase()}
-																			{attr.isRequired && (
+																				attr?.displayName.slice(1).toLowerCase()}
+																			{attr?.isRequired && (
 																				<span className="text-red-500">*</span>
 																			)}{' '}
 																			{':'}{' '}
@@ -283,9 +283,9 @@ const IssueCred = () => {
 																	</label>
 																	<Field
 																		type={
-																			attr.schemaDataType === 'date'
+																			attr?.schemaDataType === 'date'
 																				? 'date'
-																				: attr.schemaDataType
+																				: attr?.schemaDataType
 																		}
 																		id={`attributes.${index}.value`}
 																		name={`attributes.${index}.value`}
@@ -294,12 +294,12 @@ const IssueCred = () => {
 																</div>
 																<div className="flex">
 																	<div className="w-1/4 pr-2"></div>
-																	{errors.attributes &&
-																		errors.attributes[index] &&
-																		touched.attributes[index] &&
-																		errors.attributes[index].value && (
+																	{errors?.attributes &&
+																		errors?.attributes[index] &&
+																		touched?.attributes[index] &&
+																		errors?.attributes[index]?.value && (
 																			<div className="text-red-500 text-xs w-3/4 p-1">
-																				{errors.attributes[index].value}
+																				{errors?.attributes[index]?.value}
 																			</div>
 																		)}
 																</div>
@@ -323,7 +323,7 @@ const IssueCred = () => {
 											<div className="flex justify-end">
 												<Button
 													type="submit"
-													disabled={!isValid || issuanceLoader}
+													disabled={(!isValid || issuanceLoader)}
 													isProcessing={issuanceLoader}
 													className='text-base text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-accent-00 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
 												>
