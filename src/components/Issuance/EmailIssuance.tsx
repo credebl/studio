@@ -124,7 +124,7 @@ const EmailIssuance = () => {
 					}, 3000);
 					handleReset();
 					setTimeout(() => {
-						// window.location.href = pathRoutes?.organizations?.issuedCredentials;
+						window.location.href = pathRoutes?.organizations?.issuedCredentials;
 					}, 500);
 				} else {
 					setFailure(response as string);
@@ -212,45 +212,6 @@ const EmailIssuance = () => {
 	const createSchemaTitle = isEcosystemData?.isEcosystemMember
 		? { title: 'Schema Endorsement', svg: <SchemaEndorsement /> }
 		: { title: 'Create Schema', svg: <Create /> };
-
-	const MailError = ({
-		handler,
-		formindex,
-		error,
-	}: {
-		handler: { touched: boolean; errors: string; formData: Array<T>[] };
-		formindex: Number;
-		error: string;
-	}) => {
-		if (error === 'email') {
-			return (
-				<>
-					{handler?.touched?.formData &&
-						handler?.touched?.formData[formindex]?.email &&
-						handler?.errors?.formData &&
-						handler?.errors?.formData[formindex]?.email && (
-							<label style={{ color: 'red' }} className="text-sm">
-								{handler?.errors?.formData[formindex]?.email}
-							</label>
-						)}
-				</>
-			);
-		} else if (error === 'attribute') {
-			return (
-				<>
-					{handler?.touched?.formData &&
-						handler?.touched?.formData[formindex]?.attributes &&
-						handler?.errors?.formData &&
-						handler?.errors?.formData[formindex]?.attributes && (
-							<label style={{ color: 'red' }} className="text-sm font-light">
-								All attributes are required{' '}
-							</label>
-						)}
-				</>
-			);
-		}
-		return null;
-	};
 
 	return (
 		<div className="px-4 pt-2">
