@@ -694,6 +694,7 @@ const EmailIssuance = () => {
 																														item.displayName,
 																													value: '',
 																													name: item.attributeName,
+																													isRequired:item.isRequired
 																												};
 																											},
 																										),
