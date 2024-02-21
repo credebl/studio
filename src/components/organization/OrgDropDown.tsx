@@ -12,17 +12,21 @@ import { pathRoutes } from '../../config/pathRoutes';
 const OrgDropDown = () => {
 	const [orgList, setOrgList] = useState<Organisation[]>([]);
 	const [activeOrg, setactiveOrg] = useState<Organisation | null>(null)
+	const [count, setCount]= useState(10)
 
 	useEffect(() => {
-		getAllorgs()
-	}, []);
+			getAllorgs();
+	}, [count]);
 
 	const getAllorgs = async () => {
-		const response = await getOrganizations(1, 10, '');
+		const response = await getOrganizations(1, count, '');
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			setOrgList(data?.data?.organizations);
 			setActiveOrg(data?.data?.organizations)
+			if (data?.data?.totalCount > count) {
+				setCount(data?.data.totalCount);
+		}
 		}
 	};
 
