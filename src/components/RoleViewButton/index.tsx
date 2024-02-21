@@ -5,13 +5,13 @@ import { Roles } from '../../utils/enums/roles';
 import { getUserRoles } from '../../config/ecosystem'
 
 interface RoleViewButtonProps {
-	  title?:string
+    title?: string
     buttonTitle?: string,
     svgComponent?: ReactElement,
     onClickEvent?: () => void,
     feature: string,
     isOutline?: boolean,
-		isPadding?: boolean,
+    isPadding?: boolean,
 }
 
 
@@ -20,12 +20,12 @@ const RoleViewButton = ({ title, buttonTitle, svgComponent, onClickEvent, featur
     const [userRoles, setUserRoles] = useState<string[]>([])
 
     const getUserOrgRoles = async () => {
-				const roles = await getUserRoles()				
+        const roles = await getUserRoles()
         setUserRoles(roles)
     }
 
     useEffect(() => {
-			getUserOrgRoles()
+        getUserOrgRoles()
     }, [])
 
     const isRoleAccess = (): boolean => {
@@ -48,7 +48,7 @@ const RoleViewButton = ({ title, buttonTitle, svgComponent, onClickEvent, featur
                 return true
             }
             return false
-					} else if (feature === Features.CREATE_ECOSYSTEMS) {
+        } else if (feature === Features.CREATE_ECOSYSTEMS) {
             if (userRoles.includes(Roles.OWNER)
                 || userRoles.includes(Roles.ADMIN)
             ) {
@@ -64,23 +64,20 @@ const RoleViewButton = ({ title, buttonTitle, svgComponent, onClickEvent, featur
     }
 
     return (
-        <>
-            {
-                isRoleAccess()
-                && <Button
-								    title={title}
-                    outline={Boolean(isOutline)}
-                    onClick={onClickEvent}
-                    color={isOutline ? "bg-primary-800" : "bg-primary-700"}
-										className={`${isOutline
-											? "!p-0 role-btn group flex h-min items-center justify-center text-center focus:z-10 focus:ring-2 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-md text-sm dark:text-white dark:hover:text-primary-700"
-											: `${isPadding ? "!p-0" : ""} text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-md hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800`
-										}`}>
-                    {svgComponent}
-                    {buttonTitle}
-                </Button>
-            }
-        </>
+        <Button
+            title={title}
+            outline={Boolean(isOutline)}
+            onClick={isRoleAccess() ? onClickEvent : null}
+            color={isOutline ? "bg-primary-800" : "bg-primary-700"}
+            className={`${isOutline
+                ? "!p-0 role-btn group flex h-min items-center justify-center text-center focus:z-10 focus:ring-2 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-md text-sm dark:text-white dark:hover:text-primary-700"
+                : `${isPadding ? "!p-0" : ""} text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-md hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800`
+                }`}
+            disabled={!(isRoleAccess())}
+        >
+            {svgComponent}
+            {buttonTitle}
+        </Button>
     )
 
 }
