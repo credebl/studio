@@ -8,8 +8,8 @@ interface IProps {
 const CopyDid = ({ value, className }: IProps) => {
     const [copied, setCopied] = useState(false)
     function copyTextVal(e: React.MouseEvent<HTMLButtonElement>) {
-
         e.preventDefault()
+        e.stopPropagation();
 
         setCopied(true);
 
