@@ -4,12 +4,13 @@ import { getEcosystems } from '../api/ecosystem';
 import { EcosystemRoles } from '../common/enums';
 import { apiStatusCodes, storageKeys } from './CommonConstant';
 import { getOrganizationById } from '../api/organization';
+import { Roles } from '../utils/enums/roles';
 
 export interface ICheckEcosystem {
 	isEnabledEcosystem: boolean;
 	isEcosystemMember: boolean;
 	isEcosystemLead: boolean;
-    isMultiEcosystem: boolean;
+	isMultiEcosystem: boolean;
 }
 
 export interface IOrgDetails {
@@ -51,16 +52,18 @@ const checkEcosystem = async (): Promise<ICheckEcosystem> => {
 	const isEnabledEcosystem = userData?.enableEcosystem;
 	const ecosystemRole = role || EcosystemRoles.ecosystemLead;
 
+	const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES)
+
 	const isMultiEcosystem = userData?.multiEcosystemSupport;
 	// const isMultiEcosystem = false
+
+	const isLead = ecosystemRole === EcosystemRoles.ecosystemLead && isEnabledEcosystem && (orgRoles.includes(Roles.ADMIN) || orgRoles.includes(Roles.OWNER))
 
 	return {
 		isEnabledEcosystem,
 		isMultiEcosystem,
-		isEcosystemMember:
-			ecosystemRole === EcosystemRoles.ecosystemMember && isEnabledEcosystem,
-		isEcosystemLead:
-			ecosystemRole === EcosystemRoles.ecosystemLead && isEnabledEcosystem,
+		isEcosystemMember: !isLead,
+		isEcosystemLead: isLead,
 	};
 };
 
