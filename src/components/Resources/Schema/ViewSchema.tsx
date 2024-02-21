@@ -15,8 +15,8 @@ import {
 	getCredDeffById,
 	getSchemaById,
 } from '../../../api/Schema';
-import { getFromLocalStorage, setToLocalStorage } from '../../../api/Auth';
-import { useEffect, useState } from 'react';
+import { getFromLocalStorage } from '../../../api/Auth';
+import React, { useEffect, useState } from 'react';
 import BackButton from '../../../commonComponents/backbutton';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../../BreadCrumbs';
@@ -31,7 +31,7 @@ import { ICheckEcosystem, checkEcosystem, getEcosystemId, getUserRoles } from '.
 import { createCredDefRequest } from '../../../api/ecosystem';
 import EcosystemProfileCard from '../../../commonComponents/EcosystemProfileCard';
 import { getLedgersPlatformUrl } from '../../../api/Agent';
-import React from 'react';
+import CopyDid from '../../../commonComponents/CopyDid';
 
 interface Values {
 	tagName: string;
@@ -250,44 +250,44 @@ const ViewSchemas = () => {
 		: 'Create Credential Definition';
 	const submitButtonTitle = isEcosystemData?.isEcosystemMember
 		? {
-				title: 'Request Endorsement',
-				svg: (
+			title: 'Request Endorsement',
+			svg: (
+				<svg
+					className="mr-2 mt-1"
+					xmlns="http://www.w3.org/2000/svg"
+					width="20"
+					height="20"
+					fill="none"
+					viewBox="0 0 25 25"
+				>
+					<path
+						fill="#fff"
+						d="M21.094 0H3.906A3.906 3.906 0 0 0 0 3.906v12.5a3.906 3.906 0 0 0 3.906 3.907h.781v3.906a.781.781 0 0 0 1.335.553l4.458-4.46h10.614A3.906 3.906 0 0 0 25 16.407v-12.5A3.907 3.907 0 0 0 21.094 0Zm2.343 16.406a2.343 2.343 0 0 1-2.343 2.344H10.156a.782.782 0 0 0-.553.228L6.25 22.333V19.53a.781.781 0 0 0-.781-.781H3.906a2.344 2.344 0 0 1-2.344-2.344v-12.5a2.344 2.344 0 0 1 2.344-2.344h17.188a2.343 2.343 0 0 1 2.343 2.344v12.5Zm-3.184-5.951a.81.81 0 0 1-.17.254l-3.125 3.125a.781.781 0 0 1-1.105-1.106l1.792-1.79h-7.489a2.343 2.343 0 0 0-2.344 2.343.781.781 0 1 1-1.562 0 3.906 3.906 0 0 1 3.906-3.906h7.49l-1.793-1.79a.78.78 0 0 1 .254-1.277.781.781 0 0 1 .852.17l3.125 3.125a.79.79 0 0 1 .169.852Z"
+					/>
+				</svg>
+			),
+			tooltip: 'Add new credential-definition request'
+		}
+		: {
+			title: 'Create',
+			svg: (
+				<div className="pr-3">
 					<svg
-						className="mr-2 mt-1"
 						xmlns="http://www.w3.org/2000/svg"
-						width="20"
-						height="20"
+						width="15"
+						height="15"
 						fill="none"
-						viewBox="0 0 25 25"
+						viewBox="0 0 24 24"
 					>
 						<path
 							fill="#fff"
-							d="M21.094 0H3.906A3.906 3.906 0 0 0 0 3.906v12.5a3.906 3.906 0 0 0 3.906 3.907h.781v3.906a.781.781 0 0 0 1.335.553l4.458-4.46h10.614A3.906 3.906 0 0 0 25 16.407v-12.5A3.907 3.907 0 0 0 21.094 0Zm2.343 16.406a2.343 2.343 0 0 1-2.343 2.344H10.156a.782.782 0 0 0-.553.228L6.25 22.333V19.53a.781.781 0 0 0-.781-.781H3.906a2.344 2.344 0 0 1-2.344-2.344v-12.5a2.344 2.344 0 0 1 2.344-2.344h17.188a2.343 2.343 0 0 1 2.343 2.344v12.5Zm-3.184-5.951a.81.81 0 0 1-.17.254l-3.125 3.125a.781.781 0 0 1-1.105-1.106l1.792-1.79h-7.489a2.343 2.343 0 0 0-2.344 2.343.781.781 0 1 1-1.562 0 3.906 3.906 0 0 1 3.906-3.906h7.49l-1.793-1.79a.78.78 0 0 1 .254-1.277.781.781 0 0 1 .852.17l3.125 3.125a.79.79 0 0 1 .169.852Z"
+							d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"
 						/>
 					</svg>
-				),
-				tooltip: 'Add new credential-definition request'
-		  }
-		: {
-				title: 'Create',
-				svg: (
-					<div className="pr-3">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="15"
-							height="15"
-							fill="none"
-							viewBox="0 0 24 24"
-						>
-							<path
-								fill="#fff"
-								d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"
-							/>
-						</svg>
-					</div>
-				),
-				tooltip: 'Create new credential-definition'
-		  };
+				</div>
+			),
+			tooltip: 'Create new credential-definition'
+		};
 
 	return (
 		<div className="px-4 pt-2">
@@ -321,7 +321,7 @@ const ViewSchemas = () => {
 								style={{ overflow: 'auto' }}
 							>
 								<div className="mb-1 flex items-center justify-between flex-wrap">
-									<h5 className="w-fit text-xl font-bold leading-none text-gray-900 dark:text-white p-1 pb-2">
+									<h5 className="w-fit text-xl font-bold leading-none text-gray-900 dark:text-white pt-1 pb-2">
 										Schema Details
 									</h5>
 									<div className="w-fit p-2 lg:mt-0">
@@ -366,24 +366,28 @@ const ViewSchemas = () => {
 								</div>
 								<div className="">
 									<div>
-										<p className="p-1 dark:text-white break-words">
+										<p className="py-1 dark:text-white break-words">
 											<span className="font-semibold">Name: </span>{' '}
 											{schemaDetails?.schema?.name}
 										</p>
 									</div>
 									<div>
-										<p className="p-1 dark:text-white break-words">
+										<p className="py-1 dark:text-white break-words">
 											<span className="font-semibold">Version: </span>
 											{schemaDetails?.schema?.version}
 										</p>
 									</div>
-									<p className="p-1 dark:text-white break-all">
-										<span className="font-semibold">Schema ID: </span>
-										{schemaDetails?.schemaId}
+									<p className="truncate dark:text-white break-all flex">
+										<span className="font-semibold mr-2">Schema ID: </span>
+										<span className='flex w-schema-id'>
+											<CopyDid value={schemaDetails?.schemaId || ""} className='truncate font-courier mt-[2px]' />
+										</span>
 									</p>
-									<p className="p-1 dark:text-white break-words">
-										<span className="font-semibold">Issuer DID: </span>
-										{schemaDetails?.schema?.issuerId}
+									<p className="truncate dark:text-white break-all flex">
+										<span className="font-semibold mr-2">Issuer DID: </span>
+										<span className='flex w-schema-id'>
+											<CopyDid value={schemaDetails?.schema?.issuerId || ""} className='truncate font-courier mt-[2px]' />
+										</span>
 									</p>
 								</div>
 								<div className="flow-root overflow-y-auto">
@@ -415,157 +419,157 @@ const ViewSchemas = () => {
 					</Card>
 					{(userRoles.includes(Roles.OWNER) ||
 						userRoles.includes(Roles.ADMIN)) && (
-						<Card
-							className="p-2 overflow-hidden overflow-ellipsis"
-							style={{ overflow: 'auto' }}
-							id="credentialDefinitionCard"
-						>
-							<div>
-								<h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
-									{formTitle}
-								</h5>
-							</div>
-							<div>
-								<Formik
-									initialValues={{
-										tagName: '',
-										revocable: false,
-									}}
-									validationSchema={yup.object().shape({
-										tagName: yup
-											.string()
-											.trim()
-											.required('Credential Definition is required'),
-										evocable: yup.bool(),
-									})}
-									validateOnBlur
-									validateOnChange
-									enableReinitialize
-									onSubmit={async (values, formikHandlers): Promise<void> => {
-										await submit(values);
-										formikHandlers.resetForm();
-									}}
-								>
-									{(formikHandlers): JSX.Element => (
-										<Form onSubmit={formikHandlers.handleSubmit}>
-											<div className=" flex items-center space-x-4">
-												<div className="w-full">
-													<div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-														<Label
-															htmlFor="credential-definition"
-															value="Name"
+							<Card
+								className="p-2 overflow-hidden overflow-ellipsis"
+								style={{ overflow: 'auto' }}
+								id="credentialDefinitionCard"
+							>
+								<div>
+									<h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
+										{formTitle}
+									</h5>
+								</div>
+								<div>
+									<Formik
+										initialValues={{
+											tagName: '',
+											revocable: false,
+										}}
+										validationSchema={yup.object().shape({
+											tagName: yup
+												.string()
+												.trim()
+												.required('Credential Definition is required'),
+											evocable: yup.bool(),
+										})}
+										validateOnBlur
+										validateOnChange
+										enableReinitialize
+										onSubmit={async (values, formikHandlers): Promise<void> => {
+											await submit(values);
+											formikHandlers.resetForm();
+										}}
+									>
+										{(formikHandlers): JSX.Element => (
+											<Form onSubmit={formikHandlers.handleSubmit}>
+												<div className=" flex items-center space-x-4">
+													<div className="w-full">
+														<div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+															<Label
+																htmlFor="credential-definition"
+																value="Name"
+															/>
+															<span className="text-red-600">*</span>
+														</div>
+														<Field
+															id="tagName"
+															name="tagName"
+															placeholder="Enter Credential definition"
+															className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+															disabled={createloader}
 														/>
-														<span className="text-red-600">*</span>
+														{formikHandlers?.errors?.tagName &&
+															formikHandlers?.touched?.tagName && (
+																<span className="text-red-500 text-xs">
+																	{formikHandlers?.errors?.tagName}
+																</span>
+															)}
 													</div>
-													<Field
-														id="tagName"
-														name="tagName"
-														placeholder="Enter Credential definition"
-														className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-														disabled={createloader}
-													/>
-													{formikHandlers?.errors?.tagName &&
-														formikHandlers?.touched?.tagName && (
-															<span className="text-red-500 text-xs">
-																{formikHandlers?.errors?.tagName}
-															</span>
-														)}
 												</div>
-											</div>
 
-											<div className="flex items-center">
-												{createloader && (
-													<div className="ml-auto">
-														<p className="text-gray-500 text-sm italic ml-5">
-															<svg
-																className="animate-spin mr-1 h-4 w-4 text-blue-600 inline-block"
-																xmlns="http://www.w3.org/2000/svg"
-																fill="none"
-																viewBox="0 0 24 24"
-															>
-																<circle
-																	className="opacity-25"
-																	cx="12"
-																	cy="12"
-																	r="10"
-																	stroke="currentColor"
-																	strokeWidth="4"
-																></circle>
-																<path
-																	className="opacity-75"
-																	fill="currentColor"
-																	d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.86 3.182 8.009l2.01-2.01zM12 20a8 8 0 008-8h-4a4 4 0 11-8 0H0a8 8 0 008 8v-4a4 4 0 018 0v4z"
-																></path>
-															</svg>
-															Hold your coffee, this might take a moment...
-														</p>
+												<div className="flex items-center">
+													{createloader && (
+														<div className="ml-auto">
+															<p className="text-gray-500 text-sm italic ml-5">
+																<svg
+																	className="animate-spin mr-1 h-4 w-4 text-blue-600 inline-block"
+																	xmlns="http://www.w3.org/2000/svg"
+																	fill="none"
+																	viewBox="0 0 24 24"
+																>
+																	<circle
+																		className="opacity-25"
+																		cx="12"
+																		cy="12"
+																		r="10"
+																		stroke="currentColor"
+																		strokeWidth="4"
+																	></circle>
+																	<path
+																		className="opacity-75"
+																		fill="currentColor"
+																		d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.86 3.182 8.009l2.01-2.01zM12 20a8 8 0 008-8h-4a4 4 0 11-8 0H0a8 8 0 008 8v-4a4 4 0 018 0v4z"
+																	></path>
+																</svg>
+																Hold your coffee, this might take a moment...
+															</p>
+														</div>
+													)}
+												</div>
+												{(success || failure) && (
+													<div className="py-3">
+														<Alert
+															color={success ? 'success' : 'failure'}
+															onDismiss={() => {
+																setSuccess(null);
+																setFailure(null);
+															}}
+														>
+															<span>
+																<p>{success || failure}</p>
+															</span>
+														</Alert>
 													</div>
 												)}
-											</div>
-											{(success || failure) && (
-												<div className="py-3">
-													<Alert
-														color={success ? 'success' : 'failure'}
-														onDismiss={() => {
-															setSuccess(null);
-															setFailure(null);
-														}}
-													>
-														<span>
-															<p>{success || failure}</p>
-														</span>
-													</Alert>
-												</div>
-											)}
-											<div className="">
-												<div className="float-right py-4 px-2">
-													<Button
-														type="submit"
-														title={submitButtonTitle.tooltip}
-														isProcessing={createloader}
-														color="bg-primary-800"
-														disabled={createloader}
-														className="text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 py-1"
-														style={{ height: '2.8em' }}
-													>
-														{submitButtonTitle.svg}
-														{submitButtonTitle.title}
-													</Button>
-												</div>
-												<div className="float-right py-5 px-2">
-													<Button
-														type="reset"
-														color="bg-primary-800"
-														onClick={() => {
-															setCredDefAuto('');
-														}}
-														disabled={createloader}
-														className="bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm dark:text-white dark:hover:text-black dark:hover:bg-primary-50"
-														style={{ height: '2.6rem' }}
-													>
-														<svg
-															xmlns="http://www.w3.org/2000/svg"
-															className="mr-2"
-															width="18"
-															height="18"
-															fill="none"
-															viewBox="0 0 20 20"
+												<div className="">
+													<div className="float-right py-4 px-2">
+														<Button
+															type="submit"
+															title={submitButtonTitle.tooltip}
+															isProcessing={createloader}
+															color="bg-primary-800"
+															disabled={createloader}
+															className="text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 py-1"
+															style={{ height: '2.8em' }}
 														>
-															<path
-																fill="#1F4EAD"
-																d="M19.414 9.414a.586.586 0 0 0-.586.586c0 4.868-3.96 8.828-8.828 8.828-4.868 0-8.828-3.96-8.828-8.828 0-4.868 3.96-8.828 8.828-8.828 1.96 0 3.822.635 5.353 1.807l-1.017.18a.586.586 0 1 0 .204 1.153l2.219-.392a.586.586 0 0 0 .484-.577V1.124a.586.586 0 0 0-1.172 0v.928A9.923 9.923 0 0 0 10 0a9.935 9.935 0 0 0-7.071 2.929A9.935 9.935 0 0 0 0 10a9.935 9.935 0 0 0 2.929 7.071A9.935 9.935 0 0 0 10 20a9.935 9.935 0 0 0 7.071-2.929A9.935 9.935 0 0 0 20 10a.586.586 0 0 0-.586-.586Z"
-															/>
-														</svg>
-														Reset
-													</Button>
+															{submitButtonTitle.svg}
+															{submitButtonTitle.title}
+														</Button>
+													</div>
+													<div className="float-right py-5 px-2">
+														<Button
+															type="reset"
+															color="bg-primary-800"
+															onClick={() => {
+																setCredDefAuto('');
+															}}
+															disabled={createloader}
+															className="bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-sm dark:text-white dark:hover:text-black dark:hover:bg-primary-50"
+															style={{ height: '2.6rem' }}
+														>
+															<svg
+																xmlns="http://www.w3.org/2000/svg"
+																className="mr-2"
+																width="18"
+																height="18"
+																fill="none"
+																viewBox="0 0 20 20"
+															>
+																<path
+																	fill="#1F4EAD"
+																	d="M19.414 9.414a.586.586 0 0 0-.586.586c0 4.868-3.96 8.828-8.828 8.828-4.868 0-8.828-3.96-8.828-8.828 0-4.868 3.96-8.828 8.828-8.828 1.96 0 3.822.635 5.353 1.807l-1.017.18a.586.586 0 1 0 .204 1.153l2.219-.392a.586.586 0 0 0 .484-.577V1.124a.586.586 0 0 0-1.172 0v.928A9.923 9.923 0 0 0 10 0a9.935 9.935 0 0 0-7.071 2.929A9.935 9.935 0 0 0 0 10a9.935 9.935 0 0 0 2.929 7.071A9.935 9.935 0 0 0 10 20a9.935 9.935 0 0 0 7.071-2.929A9.935 9.935 0 0 0 20 10a.586.586 0 0 0-.586-.586Z"
+																/>
+															</svg>
+															Reset
+														</Button>
+													</div>
 												</div>
-											</div>
-										</Form>
-									)}
-								</Formik>
-							</div>
-						</Card>
-					)}
+											</Form>
+										)}
+									</Formik>
+								</div>
+							</Card>
+						)}
 				</div>
 			</div>
 			<div className="p-4">
@@ -638,7 +642,6 @@ const ViewSchemas = () => {
 							/>
 						</svg>
 					}
-					onClick={() => {}}
 				/>
 			)}
 		</div>

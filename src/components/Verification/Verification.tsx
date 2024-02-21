@@ -17,6 +17,8 @@ import type {
 	SelectedUsers,
 	VerifyCredentialPayload,
 } from './interface';
+import SummaryCard from '../../commonComponents/SummaryCard';
+
 interface SelectedUser {
 	dataType: string;
 	name: string;
@@ -49,7 +51,7 @@ const VerificationCred = () => {
 
 	const inputRefs = useRef({});
 	const selectRefs = useRef({});
-
+	
 	const conditionOptions = [
 		{
 			value: '',
@@ -94,6 +96,7 @@ const VerificationCred = () => {
 		},
 	];
 
+
 	const fetchData = async () => {
 		try {
 			setLoading(true);
@@ -112,6 +115,7 @@ const VerificationCred = () => {
 						? ele.displayName
 						: 'Not available';
 					const attributeType = ele.schemaDataType === 'number';
+					console.log('attributeType');
 
 					return {
 						data: [
@@ -182,7 +186,7 @@ const VerificationCred = () => {
 							},
 							{
 								data: predicates && attributeType && (
-									<div className="flex flex-col items-start">
+									<div className="relative flex flex-col items-start">
 										{attributeType && (
 											<input
 												key={index}
@@ -252,7 +256,7 @@ const VerificationCred = () => {
 											/>
 										)}
 										{inputErrors[attributesName] && inputTouched && (
-											<p className="text-red-500 text-xs mt-1">
+											<p className="absolute bottom-[-18px] text-red-500 text-xs">
 												{inputErrors[attributesName]}
 											</p>
 										)}
@@ -270,11 +274,13 @@ const VerificationCred = () => {
 			);
 			setDisplay(attributeTypeArray.includes(true));
 			setLoading(false);
+
 		} catch (error) {
 			setLoading(false);
 			console.error('Error fetching data:', error);
 		}
 	};
+
 	useEffect(() => {
 		fetchData();
 		return () => {
@@ -306,7 +312,6 @@ const VerificationCred = () => {
 				inputRefs.current[attributes].value = '';
 			}
 
-			// Clear select value
 			if (selectRefs.current[attributes]) {
 				selectRefs.current[attributes].value = '';
 			}
@@ -362,7 +367,12 @@ const VerificationCred = () => {
 					setProofReqSuccess(data?.message);
 					window.location.href = pathRoutes.organizations.credentials;
 				} else {
-					setErrMsg(response as string);
+					if(response=== 'value must be an integer'){
+						setErrMsg('Please provide a value for the predicate')
+					}else{
+
+						setErrMsg(response as string);
+					}
 					setRequestLoader(false);
 				}
 			}
@@ -392,7 +402,6 @@ const VerificationCred = () => {
 	];
 
 	return (
-		<>
 			<div className="px-4 pt-2">
 				<div className="mb-4 col-span-full xl:mb-2">
 					<div className="flex justify-between items-center">
@@ -408,39 +417,13 @@ const VerificationCred = () => {
 						<CustomSpinner />
 					</div>
 				) : (
-					<Card
-						className="transform transition duration-500 hover:bg-gray-50"
-						style={{
-							width: '470px',
-							height: '140px',
-							maxWidth: '100%',
-							maxHeight: '100%',
-							overflow: 'auto',
-						}}
-					>
-						<div className="flex justify-between items-start">
-							<div>
-								<h5 className="text-xl font-bold leading-none text-primary dark:text-white">
-									{schemaDetails.schemaName}
-								</h5>
-								<p className="text-primary dark:text-white">
-									Version: {schemaDetails.version}
-								</p>
-							</div>
-						</div>
-						<div className="min-w-0 flex-1">
-							<p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
-								<span className="font-semibold text-primary">Schema ID:</span>{' '}
-								{schemaDetails.schemaId}
-							</p>
-							<p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
-								<span className="font-semibold text-primary">
-									Credential definition restriction:
-								</span>
-								{schemaDetails.credDefId ? ' Yes' : ' No'}
-							</p>
-						</div>
-					</Card>
+					<SummaryCard
+						schemaId={schemaDetails.schemaId}
+						schemaName={schemaDetails.schemaName}
+						version={schemaDetails.version}
+						credDefId={schemaDetails.credDefId}
+						hideCredDefId={true}
+					/>
 				)}
 				{(proofReqSuccess || errMsg) && (
 					<div className="p-2">
@@ -455,13 +438,18 @@ const VerificationCred = () => {
 						</Alert>
 					</div>
 				)}
-				<div className="flex sm:flex-row flex-col sm:justify-between font-montserrat sm:space-x-2 text-base font-semibold leading-6 tracking-normal text-left dark:text-white p-2">
+				<div className={` flex sm:flex-row flex-col sm:justify-between font-montserrat sm:space-x-2 text-base font-semibold leading-6 tracking-normal text-left dark:text-white p-2`}>
 					<p>Attribute List</p>
-					<div className="flex items-center space-x-2">
+					<div className={`${!display ? 'text-gray-500 dark:text-gray-400':''} flex items-center space-x-2`} title={
+								!display
+									? 'To enable predicates, at least one attribute type must be a number.'
+									: 'Enable predicates'
+							}>
 						<input
 							className="w-4 h-4 cursor-pointer"
 							type="checkbox"
 							onChange={() => handelPredicates()}
+							disabled={!display}
 						/>
 						<label> Select checkbox to enable predicates</label>
 					</div>
@@ -536,7 +524,6 @@ const VerificationCred = () => {
 					)}
 				</div>
 			</div>
-		</>
 	);
 };
 

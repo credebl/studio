@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { pathRoutes } from '../../config/pathRoutes';
 import BreadCrumbs from '../BreadCrumbs';
 import BackButton from '../../commonComponents/backbutton';
@@ -28,7 +28,7 @@ const EmailIssuance = () => {
 	const [userData, setUserData] = useState();
 	const [loading, setLoading] = useState<boolean>(true);
 	const [credentialOptions, setCredentialOptions] = useState([]);
-	const [credentialSelected, setCredentialSelected] = useState<string>('');
+	const [credentialSelected, setCredentialSelected] = useState<string | null>('');
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [batchName, setBatchName] = useState('');
 	const [openResetModal, setOpenResetModal] = useState<boolean>(false);
@@ -80,8 +80,6 @@ const EmailIssuance = () => {
 		(async () => {
 			try {
 				const data: ICheckEcosystem = await checkEcosystem();
-				console.log("data",data);
-				
 				setIsEcosystemData(data);
 			} catch (error) {
 				console.log(error);
@@ -101,14 +99,15 @@ const EmailIssuance = () => {
 
 		let transformedData = { credentialOffer: [] };
 		if (existingData && existingData.formData) {
-			existingData.formData.forEach((entry) => {
+			existingData.formData.forEach((entry: { email: any; attributes: any[]; }) => {
 				const transformedEntry = { emailId: entry.email, attributes: [] };
 				entry.attributes.forEach((attribute) => {
 					const transformedAttribute = {
 						value: String(attribute.value || ''),
 						name: attribute.name || '',
+						isRequired: attribute.isRequired,
 					};
-					transformedEntry.attributes.push(transformedAttribute);
+					transformedEntry?.attributes?.push(transformedAttribute);
 				});
 
 				transformedData.credentialOffer.push(transformedEntry);
@@ -149,16 +148,17 @@ const EmailIssuance = () => {
 	};
 
 	useEffect(() => {
-		const initFormData = {
-			email: '',
-			attributes: attributes?.map((item) => {
-				return {
-					...item,
-					value: '',
-					name: item?.attributeName,
-				};
-			}),
-		};
+			const initFormData = {
+				email: '',
+				attributes: attributes?.map((item:IAttributes) => {
+					return {
+						...item,
+						value: '',
+						name: item?.attributeName,
+						isRequired: item?.isRequired,
+					};
+				}),
+			};
 
 		setFormData({ formData: [initFormData] });
 	}, [attributes]);
@@ -193,8 +193,7 @@ const EmailIssuance = () => {
 		setCredentialSelected(null);
 		setBatchName('');
 		setOpenResetModal(false);
-		if(selectInputRef.current){
-
+		if (selectInputRef.current) {
 			selectInputRef.current.clearValue();
 		}
 	};
@@ -213,49 +212,10 @@ const EmailIssuance = () => {
 	const handleResetOpenConfirmation = () => {
 		setOpenResetModal(true);
 	};
-	
+
 	const createSchemaTitle = isEcosystemData?.isEcosystemMember
-		? { title: 'Schema Endorsement', svg: <SchemaEndorsement/> }
-		: { title: 'Create Schema', svg: <Create/> };
-		
-	const MailError = ({
-		handler,
-		formindex,
-		error,
-	}: {
-		handler: { touched: boolean; errors: string; formData: Array<T>[] };
-		formindex: Number;
-		error: string;
-	}) => {
-		if (error === 'email') {
-			return (
-				<>
-					{handler?.touched?.formData &&
-						handler?.touched?.formData[formindex]?.email &&
-						handler?.errors?.formData &&
-						handler?.errors?.formData[formindex]?.email && (
-							<label style={{ color: 'red' }} className="text-sm">
-								{handler?.errors?.formData[formindex]?.email}
-							</label>
-						)}
-				</>
-			);
-		} else if (error === 'attribute') {
-			return (
-				<>
-					{handler?.touched?.formData &&
-						handler?.touched?.formData[formindex]?.attributes &&
-						handler?.errors?.formData &&
-						handler?.errors?.formData[formindex]?.attributes && (
-							<label style={{ color: 'red' }} className="text-sm font-light">
-								All attributes are required{' '}
-							</label>
-						)}
-				</>
-			);
-		}
-		return null;
-	};
+		? { title: 'Schema Endorsement', svg: <SchemaEndorsement /> }
+		: { title: 'Create Schema', svg: <Create /> };
 
 	return (
 		<div className="px-4 pt-2">
@@ -336,7 +296,7 @@ const EmailIssuance = () => {
 														Attributes:
 													</span>
 													<div className="flex flex-wrap overflow-hidden">
-														{selectedCred?.schemaAttributes.map(
+														{selectedCred?.schemaAttributes?.map(
 															(element: IAttributes) => (
 																<div
 																	key={element.attributeName}
@@ -390,11 +350,15 @@ const EmailIssuance = () => {
 																				.email('Invalid email address')
 																				.required('Email is required'),
 																			attributes: Yup.array().of(
-																				Yup.object().shape({
-																					value: Yup.string().required(
-																						'All attribute are required',
-																					),
-																				}),
+																				Yup.lazy((value) =>
+																					Yup.object().shape({
+																						value: value.isRequired
+																							? Yup.string().required(
+																									'This field is required',
+																							  )
+																							: Yup.string(),
+																					}),
+																				),
 																			),
 																		}),
 																	),
@@ -432,6 +396,11 @@ const EmailIssuance = () => {
 																									.formData.length > 0 &&
 																								arrayHelpers.form.values.formData.map(
 																									(formData1, index) => {
+																										console.log(
+																											'formData1',
+																											formData1,
+																										);
+
 																										return (
 																											<div
 																												key={index}
@@ -446,7 +415,10 @@ const EmailIssuance = () => {
 																																	'80px',
 																															}}
 																														>
-																															Email ID
+																															Email ID{' '}
+																															<span className="text-red-500">
+																																*
+																															</span>
 																														</label>
 																														<Field
 																															name={`formData[${index}].email`}
@@ -457,62 +429,85 @@ const EmailIssuance = () => {
 																															className="w-full md:w-5/12 bg-gray-50 border border-gray-300 text-gray-900 sm:text-md rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 																														/>
 																														<div className="absolute top-11 left-24">
-																															<MailError
-																																handler={
-																																	formikHandlers
-																																}
-																																formindex={
+																															{formikHandlers
+																																?.touched
+																																?.formData &&
+																																formikHandlers
+																																	?.touched
+																																	?.formData[
 																																	index
-																																}
-																																error={'email'}
-																															/>
+																																]?.email &&
+																																formikHandlers
+																																	?.errors
+																																	?.formData &&
+																																formikHandlers
+																																	?.errors
+																																	?.formData[
+																																	index
+																																]?.email && (
+																																	<label
+																																		style={{
+																																			color:
+																																				'red',
+																																		}}
+																																		className="text-sm"
+																																	>
+																																		{
+																																			formikHandlers
+																																				?.errors
+																																				?.formData[
+																																				index
+																																			]?.email
+																																		}
+																																	</label>
+																																)}
 																														</div>
 																													</div>
 
 																													{arrayHelpers.form
 																														.values.formData
 																														.length > 1 && (
-																															<div
-																																key={index}
-																																className="sm:w-2/12 text-red-600 flex justify-end"
+																														<div
+																															key={index}
+																															className="sm:w-2/12 text-red-600 flex justify-end"
+																														>
+																															<Button
+																																data-testid="deleteBtn"
+																																type="button"
+																																color="danger"
+																																onClick={() =>
+																																	arrayHelpers.remove(
+																																		index,
+																																	)
+																																}
+																																disabled={
+																																	arrayHelpers
+																																		.form.values
+																																		.formData
+																																		.length ===
+																																	1
+																																}
+																																className={` dark:bg-gray-700 flex justify-end focus:ring-0`}
 																															>
-																																<Button
-																																	data-testid="deleteBtn"
-																																	type="button"
-																																	color="danger"
-																																	onClick={() =>
-																																		arrayHelpers.remove(
-																																			index,
-																																		)
+																																<svg
+																																	xmlns="http://www.w3.org/2000/svg"
+																																	fill="none"
+																																	viewBox="0 0 24 24"
+																																	strokeWidth={
+																																		1.5
 																																	}
-																																	disabled={
-																																		arrayHelpers
-																																			.form.values
-																																			.formData
-																																			.length ===
-																																		1
-																																	}
-																																	className={` dark:bg-gray-700 flex justify-end focus:ring-0`}
+																																	stroke="currentColor"
+																																	className="w-6 h-6"
 																																>
-																																	<svg
-																																		xmlns="http://www.w3.org/2000/svg"
-																																		fill="none"
-																																		viewBox="0 0 24 24"
-																																		strokeWidth={
-																																			1.5
-																																		}
-																																		stroke="currentColor"
-																																		className="w-6 h-6"
-																																	>
-																																		<path
-																																			strokeLinecap="round"
-																																			strokeLinejoin="round"
-																																			d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-																																		/>
-																																	</svg>
-																																</Button>
-																															</div>
-																														)}
+																																	<path
+																																		strokeLinecap="round"
+																																		strokeLinejoin="round"
+																																		d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+																																	/>
+																																</svg>
+																															</Button>
+																														</div>
+																													)}
 																												</div>
 
 																												<label className="w-20 font-semibold text-base dark:text-white">
@@ -526,6 +521,7 @@ const EmailIssuance = () => {
 																														formData1?.attributes.map(
 																															(
 																																item: {
+																																	isRequired: boolean;
 																																	displayName:
 																																		| ReactNode
 																																		| string;
@@ -533,29 +529,39 @@ const EmailIssuance = () => {
 																																		| ReactNode
 																																		| string;
 																																	name:
-																																	| string
-																																	| number
-																																	| boolean
-																																	| React.ReactElement<
-																																		any,
 																																		| string
-																																		| React.JSXElementConstructor<any>
-																																	>
-																																	| Iterable<React.ReactNode>
-																																	| React.ReactPortal
-																																	| null
-																																	| undefined;
+																																		| number
+																																		| boolean
+																																		| React.ReactElement<
+																																				any,
+																																				| string
+																																				| React.JSXElementConstructor<any>
+																																		  >
+																																		| Iterable<React.ReactNode>
+																																		| React.ReactPortal
+																																		| null
+																																		| undefined;
 																																	schemaDataType: any;
 																																},
-																																attIndex: any,
+																																attIndex: number,
 																															) => (
 																																<>
-																																	<div className="mt-3">
+																																	<div
+																																		className="mt-3"
+																																		key={
+																																			attIndex
+																																		}
+																																	>
 																																		<div className="relative flex items-center w-full gap-2">
 																																			<label className="text-base dark:text-white text-gray-800 w-[300px] word-break-word">
 																																				{
 																																					item?.displayName
 																																				}
+																																				{item.isRequired && (
+																																					<span className="text-red-500">
+																																						*
+																																					</span>
+																																				)}
 																																			</label>
 																																			<Field
 																																				type={
@@ -567,47 +573,66 @@ const EmailIssuance = () => {
 																																				name={`formData[${index}].attributes.${attIndex}.value`}
 																																				className="w-8/12 bg-gray-50 border border-gray-300 text-gray-900 sm:text-md rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 																																			/>
+																																			<div className="flex absolute bottom-[-20px] right-0">
+																																				{formikHandlers
+																																					?.touched
+																																					?.formData &&
+																																					formikHandlers
+																																						?.touched
+																																						?.formData[
+																																						index
+																																					]
+																																						?.attributes &&
+																																					formikHandlers
+																																						?.touched
+																																						?.formData[
+																																						index
+																																					]
+																																						?.attributes[
+																																						attIndex
+																																					]
+																																						?.value &&
+																																					formikHandlers
+																																						?.errors
+																																						?.formData &&
+																																					formikHandlers
+																																						?.errors
+																																						?.formData[
+																																						index
+																																					]
+																																						?.attributes &&
+																																					formikHandlers
+																																						?.errors
+																																						?.formData[
+																																						index
+																																					]
+																																						?.attributes[
+																																						attIndex
+																																					]
+																																						?.value && (
+																																						<label
+																																							style={{
+																																								color:
+																																									'red',
+																																							}}
+																																							className="text-sm"
+																																						>
+																																							{
+																																								formikHandlers
+																																									?.errors
+																																									?.formData[
+																																									index
+																																								]
+																																									?.attributes[
+																																									attIndex
+																																								]
+																																									?.value
+																																							}
+																																						</label>
+																																					)}
+																																			</div>
 																																		</div>
 																																	</div>
-																																	<>
-																																		<div
-																																			className="absolute bottom-24"
-																																			style={{
-																																				left:
-																																					Math.max(
-																																						...formData1.attributes.map(
-																																							(
-																																								item,
-																																							) =>
-																																								item?.name?.toString()
-																																									.length,
-																																						),
-																																					) *
-																																					10 +
-																																					28,
-																																			}}
-																																		>
-																																			<MailError
-																																				handler={
-																																					formikHandlers
-																																				}
-																																				formindex={
-																																					index
-																																				}
-																																				error={
-																																					'attribute'
-																																				}
-																																				attrIndex={
-																																					attIndex
-																																				}
-																																				length={
-																																					formData1
-																																						?.attributes
-																																						?.length
-																																				}
-																																			/>
-																																		</div>
-																																	</>
 																																</>
 																															),
 																														)}
@@ -623,7 +648,7 @@ const EmailIssuance = () => {
 																									arrayHelpers.push({
 																										email: '',
 																										attributes: attributes?.map(
-																											(item) => {
+																											(item:IAttributes) => {
 																												return {
 																													attributeName:
 																														item.attributeName,
@@ -633,6 +658,8 @@ const EmailIssuance = () => {
 																														item.displayName,
 																													value: '',
 																													name: item.attributeName,
+																													isRequired:
+																														item.isRequired,
 																												};
 																											},
 																										),
