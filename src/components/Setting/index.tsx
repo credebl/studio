@@ -10,13 +10,12 @@ import { Roles } from '../../utils/enums/roles';
 import BreadCrumbs from '../BreadCrumbs';
 import {
 	createCredentials,
-	deleteCredentials,
 	getCredentials,
 } from './setting';
 import { EmptyListMessage } from '../EmptyListComponent';
 
 const Index = () => {
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState<boolean>(true);
 	const [clientId, setClientId] = useState<string | null>(null);
 	const [clientSecret, setClientSecret] = useState<string | null>(null);
 	const [success, setSuccess] = useState<string | null>(null);
@@ -25,6 +24,8 @@ const Index = () => {
 	const [hideCopy, setHideCopy] = useState<boolean>(true);
 	const [userRoles, setUserRoles] = useState<string[]>([]);
 	const [orgnizationId, setOrgnizationId] = useState<string | null>(null);
+	const [buttonDisplay, setButtonDisplay] = useState<boolean>(true);
+	const [regenerate, setRegenerate] = useState<boolean>(false);
 
 	const createClientCredentials = async () => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -35,8 +36,8 @@ const Index = () => {
 				const { data } = response as AxiosResponse;
 
 				if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+					setButtonDisplay(false);
 					setHideCopy(false);
-
 					setClientId(data.data.clientId);
 					setClientSecret(data.data.clientSecret);
 					setSuccess(data.message);
@@ -64,9 +65,11 @@ const Index = () => {
 				const { data } = response as AxiosResponse;
 
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+					setRegenerate(true);
 					setHideCopy(true);
 					setClientId(data.data.clientId);
 					setClientSecret(data.data.clientSecret);
+					setButtonDisplay(true);
 				} else {
 					setClientId(null);
 					setClientSecret(null);
@@ -74,32 +77,6 @@ const Index = () => {
 			} catch (error) {
 				setFailure(error as string);
 				setLoading(false);
-			} finally {
-				setLoading(false);
-			}
-		} else {
-			setLoading(false);
-		}
-	};
-
-	const deleteClientCredentials = async () => {
-		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-
-		if (orgId) {
-			setLoading(true);
-			try {
-				const response = await deleteCredentials();
-				const { data } = response as AxiosResponse;
-
-				if (data?.statusCode === apiStatusCodes.API_STATUS_DELETED) {
-					setSuccess(data?.message);
-					await getClientCredentials();
-				}
-			} catch (error) {
-				setFailure(error as string);
-				setLoading(false);
-				setClientId(null);
-				setClientSecret(null);
 			} finally {
 				setLoading(false);
 			}
@@ -175,22 +152,24 @@ const Index = () => {
 														organization to the API.
 													</span>
 												</div>
+
 												{(userRoles.includes(Roles.OWNER) ||
 													userRoles.includes(Roles.ADMIN)) && (
 													<div className="text-start items-center mt-4 sm:mt-0 shrink-0">
-														<Button
-															onClick={createClientCredentials}
-															type="button"
-															disabled={Boolean(clientSecret)}
-															isProcessing={loading}
-															className={`text-base font-medium text-center text-white rounded-md focus:ring-4 focus:ring-primary-300 sm:w-auto dark:focus:ring-primary-800 ${
-																Boolean(clientSecret)
-																	? 'bg-gray-400 dark:bg-gray-600 dark:text-white cursor-not-allowed'
-																	: 'bg-primary-700 hover:!bg-primary-800 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
-															}`}
-														>
-															Generate Client Secret{' '}
-														</Button>
+														{buttonDisplay && (
+															<Button
+																onClick={createClientCredentials}
+																type="button"
+																isProcessing={loading}
+																className={
+																	'text-base font-medium text-center text-white rounded-md focus:ring-4 focus:ring-primary-300 sm:w-auto dark:focus:ring-primary-800 bg-primary-700 hover:!bg-primary-800 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
+																}
+															>
+																{regenerate
+																	? 'Regenerate Client Secret'
+																	: 'Generate Client Secret'}{' '}
+															</Button>
+														)}
 													</div>
 												)}
 											</div>
@@ -246,17 +225,6 @@ const Index = () => {
 																</h1>
 															</div>
 														</div>
-														{(userRoles.includes(Roles.OWNER) ||
-															userRoles.includes(Roles.ADMIN)) && (
-															<div className="flex text-start sm:justify-end items-center w-auto sm:w-1/5 ">
-																<button
-																	onClick={() => deleteClientCredentials()}
-																	className="bg-red-100 border text-red-600 px-2 rounded-md text-center h-8"
-																>
-																	Delete
-																</button>
-															</div>
-														)}
 													</div>
 												</>
 											)}
