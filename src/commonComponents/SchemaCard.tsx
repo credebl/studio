@@ -45,21 +45,13 @@ const SchemaCard = (props: IProps) => {
         <p className="truncate dark:text-white break-all flex">
           <span className="font-semibold mr-2">Schema ID: </span>
           <span className='flex w-schema-id'>
-            {
-              props.isClickable !== false ?
-                <div className="truncate">{props?.schemaId}</div>
-                : <CopyDid value={props?.schemaId || ""} className='truncate font-courier mt-[2px]' />
-            }
+            <CopyDid value={props?.schemaId || ""} className='truncate font-courier mt-[2px]' />
           </span>
         </p>
         <p className="truncate dark:text-white break-all flex">
           <span className="font-semibold mr-2">Issuer DID: </span>
           <span className='flex w-issuer-id'>
-            {
-              props.isClickable !== false ?
-              <div className="truncate">{props?.issuerDid}</div>
-                : <CopyDid value={props.issuerDid || ""} className='truncate font-courier mt-[2px]' />
-            }
+           <CopyDid value={props.issuerDid || ""} className='truncate font-courier mt-[2px]' />
           </span>
         </p>
         <p className="truncate dark:text-white break-all flex">
