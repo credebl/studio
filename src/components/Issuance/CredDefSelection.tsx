@@ -153,9 +153,9 @@ const CredDefSelection = () => {
 						<CustomSpinner />
 					</div>
 				) : (
-					<div className="m-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap4">
+					<div className="m-1 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
 						<SchemaCard
-							className="col-span-1 sm:col-span-2 md:col-span-1"
+							className="col-span-1 lg:col-span-2 xl:col-span-1"
 							schemaName={schemaState?.schemaName}
 							version={schemaState?.version}
 							schemaId={schemaDetailsState.schemaId}

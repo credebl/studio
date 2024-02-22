@@ -32,7 +32,7 @@ const EndorsementPopup = (props: {
 			setIsEcosystemData(data);
 		};
 		checkEcosystemData();
-	}, []);
+	}, [props?.openModal]);
 
 	useEffect(() => {
 		props.setMessage("");
