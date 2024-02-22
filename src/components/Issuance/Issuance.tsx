@@ -243,7 +243,7 @@ const IssueCred = () => {
 																<div key={attr.attributeName}>
 																	<div
 																		key={attr?.attributeName}
-																		className="flex"
+																		className="flex relative"
 																	>
 																		<label
 																			htmlFor={`attributes.${index}.value`}
@@ -269,17 +269,16 @@ const IssueCred = () => {
 																			name={`attributes.${index}.value`}
 																			className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 w-3/5"
 																		/>
-																	</div>
-																	<div className="flex">
-																		<div className="w-1/4 pr-2"></div>
+																		<div className="absolute bottom-[-20px] right-0">
 																		{errors?.attributes &&
 																			errors?.attributes[index] &&
 																			touched?.attributes[index] &&
 																			errors?.attributes[index]?.value && (
-																				<div className="text-red-500 text-xs w-3/4 p-1">
+																				<div className="text-red-500 text-xs p-1">
 																					{errors?.attributes[index]?.value}
 																				</div>
 																			)}
+																	</div>
 																	</div>
 																</div>
 															))}
