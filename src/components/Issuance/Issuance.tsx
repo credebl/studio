@@ -142,7 +142,7 @@ const IssueCred = () => {
 	});
 
 	const handleSubmit = async (values: IssuanceFormPayload) => {
-		const convertedAttributes = values.attributes.map((attr) => ({
+		const convertedAttributes = values?.attributes.map((attr) => ({
 			...attr,
 			value: String(attr.value),
 		}));
@@ -197,23 +197,23 @@ const IssueCred = () => {
 					<div className="flex justify-between items-start">
 						<div>
 							<h5 className="text-xl font-bold leading-none text-primary dark:text-white">
-								{schemaDetails.schemaName}
+								{schemaDetails?.schemaName}
 							</h5>
 							<p className="text-primary dark:text-white">
-								Version: {schemaDetails.version}
+								Version: {schemaDetails?.version}
 							</p>
 						</div>
 					</div>
 					<div className="min-w-0 flex-1">
 						<p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
 							<span className="font-semibold text-primary">Schema ID:</span>{' '}
-							{schemaDetails.schemaId}
+							{schemaDetails?.schemaId}
 						</p>
 						<p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
 							<span className="font-semibold text-primary">
 								Credential Definition:
 							</span>{' '}
-							{schemaDetails.credDefId}
+							{schemaDetails?.credDefId}
 						</p>
 					</div>
 				</Card>
@@ -226,8 +226,8 @@ const IssueCred = () => {
 				</div>
 			) : (
 				<>
-					{issuanceFormPayload.length
-						? issuanceFormPayload.map((user) => (
+					{issuanceFormPayload?.length
+						? issuanceFormPayload?.map((user) => (
 								<Formik
 									initialValues={user}
 									validationSchema={validationSchema}
@@ -256,13 +256,13 @@ const IssueCred = () => {
 														:
 													</span>
 													<p className="dark:text-white pl-1">
-														{user.connectionId}
+														{user?.connectionId}
 													</p>
 												</div>
 												<h3 className="dark:text-white">Attributes</h3>
 												<div className="container mx-auto pr-2">
 													<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2">
-														{schemaAttributesDetails && schemaAttributesDetails.length > 0 && schemaAttributesDetails?.map((attr, index) => (
+														{schemaAttributesDetails && schemaAttributesDetails?.length > 0 && schemaAttributesDetails?.map((attr, index) => (
 															<div>
 																<div key={attr?.attributeName} className="flex">
 																	<label
