@@ -105,17 +105,6 @@ const IssueCred = () => {
 		}
 	};
 
-	const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
-		try {
-			const selectedUsers = await getFromLocalStorage(storageKeys.SELECTED_USER);
-			return JSON.parse(selectedUsers);
-		} catch (error) {
-			setUserLoader(false)
-			setError("Selected user details not found")
-			return []
-		}
-	};
-
 	const createAttributeValidationSchema = (
 		dataType: string,
 		isRequired: boolean,
@@ -143,6 +132,11 @@ const IssueCred = () => {
 			),
 		),
 	});
+
+	const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
+		const selectedUsers = await getFromLocalStorage(storageKeys.SELECTED_USER);
+		return JSON.parse(selectedUsers);
+	};
 
 	const handleSubmit = async (values: IssuanceFormPayload) => {
 		const convertedAttributes = values?.attributes.map((attr) => ({
