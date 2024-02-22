@@ -686,8 +686,10 @@ const UserDashBoard = () => {
 																			</svg>
 																		</span>
 																	) : org.roles.includes(
-																			OrganizationRoles.organizationVerifier ??
-																				OrganizationRoles.organizationIssuer,
+																			OrganizationRoles.organizationVerifier,
+																	  ) ||
+																	  org.roles.includes(
+																			OrganizationRoles.organizationIssuer,
 																	  ) ? (
 																		<span
 																			title={org.roles.slice(
@@ -765,28 +767,31 @@ const UserDashBoard = () => {
 															placement="bottom"
 															className="items-center text-center dark:text-white"
 														>
-															{' '}
 															<button
 																onClick={() => {
 																	goToOrgSchema(org, org.id, org.roles);
 																}}
 																className={`p-1 rounded-md ${
-																	organizationsList[index].userOrgRoles[0]
-																		.orgRole.name !==
-																		OrganizationRoles.organizationOwner ||
-																	organizationsList[index].userOrgRoles[0]
-																		.orgRole.name !==
-																		OrganizationRoles.organizationAdmin
+																	!(
+																		organizationsList[index].userOrgRoles[0]
+																			.orgRole.name ===
+																			OrganizationRoles.organizationOwner ||
+																		organizationsList[index].userOrgRoles[0]
+																			.orgRole.name ===
+																			OrganizationRoles.organizationAdmin
+																	)
 																		? 'cursor-not-allowed opacity-50'
 																		: ''
 																}`}
 																disabled={
-																	organizationsList[index].userOrgRoles[0]
-																		.orgRole.name !==
-																		OrganizationRoles.organizationOwner ||
-																	organizationsList[index].userOrgRoles[0]
-																		.orgRole.name !==
-																		OrganizationRoles.organizationAdmin
+																	!(
+																		organizationsList[index].userOrgRoles[0]
+																			.orgRole.name ===
+																			OrganizationRoles.organizationOwner ||
+																		organizationsList[index].userOrgRoles[0]
+																			.orgRole.name ===
+																			OrganizationRoles.organizationAdmin
+																	)
 																}
 															>
 																<svg
