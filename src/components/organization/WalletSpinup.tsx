@@ -121,10 +121,10 @@ const SharedAgentForm = ({ orgName, seeds, isCopied, loading, copyTextVal, submi
 		label: yup.string()
 			.required('Wallet label is required')
 			.trim()
-			.test('no-spaces', 'Spaces are not allowed', value => !value || !value.includes(' '))
 			.matches(
-				/^[A-Za-z0-9-][^ !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]*$/,
+				/^[A-Za-z0-9 -]+$/,
 				'Wallet label must be alphanumeric only',
+
 			)
 			.min(2, 'Wallet label must be at least 2 characters')
 			.max(25, 'Wallet label must be at most 25 characters'),
@@ -578,8 +578,7 @@ const WalletSpinup = (props: {
 
 	const generateAlphaNumeric = props?.orgName ? props?.orgName?.split(" ").reduce((s, c) => (s.charAt(0).toUpperCase() + s.slice(1)) + (c.charAt(0).toUpperCase() + c.slice(1))
 	) : ""
-
-	const orgName = generateAlphaNumeric.slice(0, 19) + "Wallet"
+	const orgName = generateAlphaNumeric.slice(0, 19)
 
 	return (
 		<div className="mt-4 flex-col p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
