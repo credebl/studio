@@ -6,7 +6,7 @@ import { Alert, Button, Card } from 'flowbite-react';
 import { Field, Form, Formik } from 'formik';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { getFromLocalStorage } from '../../api/Auth';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import BackButton from '../../commonComponents/backbutton';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
@@ -107,11 +107,6 @@ const IssueCred = () => {
 		}
 	};
 
-	const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
-		const selectedUsers = await getFromLocalStorage(storageKeys.SELECTED_USER);
-		return JSON.parse(selectedUsers);
-	};
-
 	const createAttributeValidationSchema = (
 		dataType: string,
 		isRequired: boolean,
@@ -142,8 +137,13 @@ const IssueCred = () => {
 		),
 	});
 
+	const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
+		const selectedUsers = await getFromLocalStorage(storageKeys.SELECTED_USER);
+		return JSON.parse(selectedUsers);
+	};
+
 	const handleSubmit = async (values: IssuanceFormPayload) => {
-		const convertedAttributes = values.attributes.map((attr) => ({
+		const convertedAttributes = values?.attributes.map((attr) => ({
 			...attr,
 			value: String(attr.value),
 		}));
@@ -200,10 +200,10 @@ const IssueCred = () => {
 				</div>
 			) : (
 				<>
-					{issuanceFormPayload.length
-						? issuanceFormPayload.map((user) => (
+					{issuanceFormPayload?.length
+						? issuanceFormPayload?.map((user) => (
 								<Formik
-								key={user.connectionId}
+									key={user.connectionId}
 									initialValues={user}
 									validationSchema={validationSchema}
 									onSubmit={handleSubmit}
@@ -231,33 +231,32 @@ const IssueCred = () => {
 														:
 													</span>
 													<p className="dark:text-white pl-1">
-														{user.connectionId}
+														{user?.connectionId}
 													</p>
 												</div>
 												<h3 className="dark:text-white">Attributes</h3>
 												<div className="container mx-auto pr-2">
 													<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2">
 														{schemaAttributesDetails &&
-															schemaAttributesDetails.length > 0 &&
+															schemaAttributesDetails?.length > 0 &&
 															schemaAttributesDetails?.map((attr, index) => (
 																<div key={attr.attributeName}>
 																	<div
 																		key={attr?.attributeName}
-																		className="flex"
+																		className="flex relative"
 																	>
 																		<label
 																			htmlFor={`attributes.${index}.value`}
 																			className="dark:text-white w-2/5 pr-3 flex justify-end items-center font-light"
 																		>
 																			<div className="flex items-center word-break-word text-end">
-																				{' '}
-																				{attr?.displayName
-																					.split("_").map(item => item[0].toUpperCase() + item.slice(1,  item.length)).join(" ")}
+																				<Name attr={attr} />
 																				{attr?.isRequired && (
 																					<span className="text-red-500">
 																						*
 																					</span>
-																				)} :
+																				)}{' '}
+																				:
 																			</div>
 																		</label>
 																		<Field
@@ -270,17 +269,16 @@ const IssueCred = () => {
 																			name={`attributes.${index}.value`}
 																			className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 w-3/5"
 																		/>
-																	</div>
-																	<div className="flex">
-																		<div className="w-1/4 pr-2"></div>
+																		<div className="absolute bottom-[-20px] right-0">
 																		{errors?.attributes &&
 																			errors?.attributes[index] &&
 																			touched?.attributes[index] &&
 																			errors?.attributes[index]?.value && (
-																				<div className="text-red-500 text-xs w-3/4 p-1">
+																				<div className="text-red-500 text-xs p-1">
 																					{errors?.attributes[index]?.value}
 																				</div>
 																			)}
+																	</div>
 																	</div>
 																</div>
 															))}
@@ -335,6 +333,20 @@ const IssueCred = () => {
 				</>
 			)}
 		</div>
+	);
+};
+
+const Name = (attr: { attr: any; displayName: string }) => {
+	return (
+		<>
+			{attr?.attr?.displayName
+				?.split('_')
+				.map(
+					(item: string | any[]) =>
+						item[0].toUpperCase() + item.slice(1, item.length),
+				)
+				.join(' ')}
+		</>
 	);
 };
 
