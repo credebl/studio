@@ -161,17 +161,6 @@ const IssueCred = () => {
 			setIssuanceLoader(false);
 		}
 	};
-	const Name = (attr: { displayName: string; }) => {
-		return (
-			<>
-				{' '}
-				{attr?.displayName
-					.split('_')
-					.map((item) => item[0].toUpperCase() + item.slice(1, item.length))
-					.join(' ')}
-			</>
-		);
-	};
 
 	return (
 		<div className="px-4 pt-2">
@@ -423,6 +412,20 @@ const IssueCred = () => {
 				</>
 			)}
 		</div>
+	);
+};
+
+const Name = (attr: { attr: any; displayName: string }) => {
+	return (
+		<>
+			{attr?.attr?.displayName
+				?.split('_')
+				.map(
+					(item: string | any[]) =>
+						item[0].toUpperCase() + item.slice(1, item.length),
+				)
+				.join(' ')}
+		</>
 	);
 };
 
