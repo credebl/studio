@@ -6,7 +6,7 @@ import { Alert, Button, Card } from 'flowbite-react';
 import { Field, Form, Formik } from 'formik';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { getFromLocalStorage } from '../../api/Auth';
-import React,{ useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import BackButton from '../../commonComponents/backbutton';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
@@ -165,6 +165,17 @@ const IssueCred = () => {
 			setIssuanceLoader(false);
 		}
 	};
+	const Name = (attr: { displayName: string; }) => {
+		return (
+			<>
+				{' '}
+				{attr?.displayName
+					.split('_')
+					.map((item) => item[0].toUpperCase() + item.slice(1, item.length))
+					.join(' ')}
+			</>
+		);
+	};
 
 	return (
 		<div className="px-4 pt-2">
@@ -203,7 +214,7 @@ const IssueCred = () => {
 					{issuanceFormPayload?.length
 						? issuanceFormPayload?.map((user) => (
 								<Formik
-								key={user.connectionId}
+									key={user.connectionId}
 									initialValues={user}
 									validationSchema={validationSchema}
 									onSubmit={handleSubmit}
@@ -250,21 +261,21 @@ const IssueCred = () => {
 																			className="dark:text-white w-2/5 pr-3 flex justify-end items-center font-light"
 																		>
 																			<div className="flex items-center word-break-word text-end">
-																				{' '}
-																				{attr?.displayName
-																					.split("_").map(item => item[0].toUpperCase() + item.slice(1,  item.length)).join(" ")}
+																				<Name attr={attr} />
 																				{attr?.isRequired && (
 																					<span className="text-red-500">
 																						*
 																					</span>
-																				)} :
+																				)}{' '}
+																				:
 																			</div>
 																		</label>
 																		<Field
 																			type={
 																				attr?.schemaDataType === 'date'
 																					? 'date'
-																					: attr?.schemaDataType}
+																					: attr?.schemaDataType
+																			}
 																			id={`attributes.${index}.value`}
 																			name={`attributes.${index}.value`}
 																			className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 w-3/5"
