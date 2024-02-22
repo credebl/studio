@@ -107,11 +107,6 @@ const IssueCred = () => {
 		}
 	};
 
-	const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
-		const selectedUsers = await getFromLocalStorage(storageKeys.SELECTED_USER);
-		return JSON.parse(selectedUsers);
-	};
-
 	const createAttributeValidationSchema = (
 		dataType: string,
 		isRequired: boolean,
@@ -141,6 +136,11 @@ const IssueCred = () => {
 			),
 		),
 	});
+
+	const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
+		const selectedUsers = await getFromLocalStorage(storageKeys.SELECTED_USER);
+		return JSON.parse(selectedUsers);
+	};
 
 	const handleSubmit = async (values: IssuanceFormPayload) => {
 		const convertedAttributes = values?.attributes.map((attr) => ({
