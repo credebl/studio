@@ -108,8 +108,8 @@ const MemberList = () => {
 				data?.data?.data?.length > 0 &&
 				data?.data?.data?.map((member: IMemberList) => {
 					let orgDid = 'Not available';
-					if (member.organisation.org_agents.length > 0) {
-						const orgAgent = member.organisation.org_agents[0];
+					if (member?.organisation.org_agents.length > 0) {
+						const orgAgent = member?.organisation.org_agents[0];
 						orgDid = orgAgent.orgDid;
 					}
 					return {
@@ -158,16 +158,16 @@ const MemberList = () => {
 								),
 							},
 							{
-								data: member.status ? (
+								data: member?.status ? (
 									<span
 										className={`${
-											member.status === 'SUSPENDED'
+											member?.status === 'SUSPENDED'
 												? 'bg-red-100 text-red-800 rounded dark:bg-gray-900 dark:text-red-300  border-red-100 dark:border-red-500 border'
 												: 'bg-green-100 text-green-700 dark:bg-gray-700 dark:text-green-400 rounded border border-green-100 dark:border-green-500'
 										} text-sm font-medium mr-2 px-2.5 py-1 rounded-md`}
 									>
-										{member.status.charAt(0) +
-											member.status.slice(1).toLowerCase()}
+										{member?.status.charAt(0) +
+											member?.status.slice(1).toLowerCase()}
 									</span>
 								) : (
 									'Not available'

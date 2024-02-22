@@ -1,7 +1,6 @@
 'use client';
-import React from 'react';
 import { Card, Pagination } from 'flowbite-react';
-import { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 
 import { AlertComponent } from '../AlertComponent';
@@ -14,7 +13,7 @@ import RoleViewButton from '../RoleViewButton';
 import SearchInput from '../SearchInput';
 import { getOrganizations } from '../../api/organization';
 import { pathRoutes } from '../../config/pathRoutes';
-import { setToLocalStorage } from '../../api/Auth';
+import { removeFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { EmptyListMessage } from '../EmptyListComponent';
 import CustomSpinner from '../CustomSpinner';
 import CreateEcosystemOrgModal from '../CreateEcosystemOrgModal';
@@ -116,7 +115,8 @@ const OrganizationsList = () => {
 			(role) => role.orgRole.name,
 		);
 		activeOrg.roles = roles;
-
+		
+		await removeFromLocalStorage(storageKeys.ORG_DETAILS)
 		await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
 		window.location.href = pathRoutes.organizations.dashboard;
 	};

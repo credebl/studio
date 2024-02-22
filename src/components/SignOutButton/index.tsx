@@ -1,15 +1,10 @@
-import { removeFromLocalStorage } from '../../api/Auth';
-import { storageKeys } from '../../config/CommonConstant';
+import React from "react";
 
 const SignOutButton = () => {
 	const signOut = async () => {
-		await removeFromLocalStorage(storageKeys.TOKEN);
-		await removeFromLocalStorage(storageKeys.USER_EMAIL);
-		await removeFromLocalStorage(storageKeys.ORG_ID);
-		await removeFromLocalStorage(storageKeys.ORG_ROLES);
-		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ID);
-		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ROLE);
-		await removeFromLocalStorage(storageKeys.USER_PROFILE);
+		if (localStorage && typeof window !== "undefined") {
+			localStorage?.clear()
+		}
 
 		const response = await fetch('/api/auth/signout', {
 			method: 'GET',

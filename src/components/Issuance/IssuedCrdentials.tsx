@@ -221,7 +221,6 @@ const CredentialList = () => {
 					Credentials
 				</h1>
 				<div className="flex gap-4 items-center">
-					{walletCreated && (
 						<RoleViewButton
 							buttonTitle="Issue"
 							feature={Features.ISSUANCE}
@@ -241,8 +240,8 @@ const CredentialList = () => {
 								</svg>
 							}
 							onClickEvent={schemeSelection}
+							isDisabled={!walletCreated}
 						/>
-					)}
 				</div>
 			</div>
 

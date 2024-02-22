@@ -12,10 +12,11 @@ interface RoleViewButtonProps {
     feature: string,
     isOutline?: boolean,
     isPadding?: boolean,
+    isDisabled?: boolean
 }
 
 
-const RoleViewButton = ({ title, buttonTitle, svgComponent, onClickEvent, feature, isOutline, isPadding }: RoleViewButtonProps) => {
+const RoleViewButton = ({ title, buttonTitle, svgComponent, onClickEvent, feature, isOutline, isPadding, isDisabled }: RoleViewButtonProps) => {
 
     const [userRoles, setUserRoles] = useState<string[]>([])
 
@@ -73,7 +74,7 @@ const RoleViewButton = ({ title, buttonTitle, svgComponent, onClickEvent, featur
                 ? "!p-0 role-btn group flex h-min items-center justify-center text-center focus:z-10 focus:ring-2 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-md text-sm dark:text-white dark:hover:text-primary-700"
                 : `${isPadding ? "!p-0" : ""} text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-md hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800`
                 }`}
-            disabled={!(isRoleAccess())}
+            disabled={!(isRoleAccess()) || isDisabled}
         >
             {svgComponent}
             {buttonTitle}
