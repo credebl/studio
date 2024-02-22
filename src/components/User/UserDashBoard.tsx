@@ -775,7 +775,7 @@ const UserDashBoard = () => {
 																		.orgRole.name !==
 																		OrganizationRoles.organizationOwner ||
 																	organizationsList[index].userOrgRoles[0]
-																		.orgRole.name ===
+																		.orgRole.name !==
 																		OrganizationRoles.organizationAdmin
 																		? 'cursor-not-allowed opacity-50'
 																		: ''
@@ -785,7 +785,7 @@ const UserDashBoard = () => {
 																		.orgRole.name !==
 																		OrganizationRoles.organizationOwner ||
 																	organizationsList[index].userOrgRoles[0]
-																		.orgRole.name ===
+																		.orgRole.name !==
 																		OrganizationRoles.organizationAdmin
 																}
 															>
