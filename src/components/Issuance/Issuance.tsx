@@ -6,7 +6,7 @@ import { Alert, Button, Card } from 'flowbite-react';
 import { Field, Form, Formik } from 'formik';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { getFromLocalStorage } from '../../api/Auth';
-import { useEffect, useState } from 'react';
+import React,{ useEffect, useState } from 'react';
 import BackButton from '../../commonComponents/backbutton';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
@@ -14,8 +14,14 @@ import CustomSpinner from '../CustomSpinner';
 import { issueCredential } from '../../api/issuance';
 import { pathRoutes } from '../../config/pathRoutes';
 import { AlertComponent } from '../AlertComponent';
-import type { Attribute, DataTypeAttributes, IssuanceFormPayload, SchemaDetails, SelectedUsers } from './interface'
-import SummaryCard from '../../commonComponents/SummaryCard'
+import type {
+	Attribute,
+	DataTypeAttributes,
+	IssuanceFormPayload,
+	SchemaDetails,
+	SelectedUsers,
+} from './interface';
+import SummaryCard from '../../commonComponents/SummaryCard';
 
 const IssueCred = () => {
 	const [schemaLoader, setSchemaLoader] = useState<boolean>(true);
