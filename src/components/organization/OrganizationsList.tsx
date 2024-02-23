@@ -13,10 +13,15 @@ import RoleViewButton from '../RoleViewButton';
 import SearchInput from '../SearchInput';
 import { getOrganizations } from '../../api/organization';
 import { pathRoutes } from '../../config/pathRoutes';
-import { removeFromLocalStorage, setToLocalStorage } from '../../api/Auth';
+import { getFromLocalStorage, removeFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { EmptyListMessage } from '../EmptyListComponent';
 import CustomSpinner from '../CustomSpinner';
 import CreateEcosystemOrgModal from '../CreateEcosystemOrgModal';
+
+interface IProps {
+	orgListDataSSR: Organisation[];
+	pageCountSSR: number;
+}
 
 const initialPageState = {
 	pageNumber: 1,
@@ -24,9 +29,20 @@ const initialPageState = {
 	total: 100,
 };
 
-const OrganizationsList = () => {
+const OrganizationsList = ({ orgListDataSSR, pageCountSSR }: IProps) => {
+	const orgListData = orgListDataSSR?.map((userOrg: Organisation) => {
+		const roles: string[] = userOrg.userOrgRoles.map(
+			(role) => role.orgRole.name,
+		);
+		userOrg.roles = roles;
+		return userOrg;
+	});
+
+	initialPageState.total = pageCountSSR
+
 	const [openModal, setOpenModal] = useState<boolean>(false);
-	const [loading, setLoading] = useState<boolean>(true);
+	const [orgId, setOrgId] = useState<string>("");
+	const [loading, setLoading] = useState<boolean>(false);
 	const [message, setMessage] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
@@ -39,7 +55,7 @@ const OrganizationsList = () => {
 	const [searchText, setSearchText] = useState('');
 
 	const [organizationsList, setOrganizationsList] =
-		useState<Array<Organisation> | null>(null);
+		useState<Array<Organisation> | null>(orgListData);
 
 	const props = { openModal, setOpenModal };
 
@@ -56,13 +72,14 @@ const OrganizationsList = () => {
 			searchText,
 		);
 		const { data } = response as AxiosResponse;
+		setLoading(false);
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const totalPages = data?.data?.totalPages;
 
-			const orgList = data?.data?.organizations.map((userOrg: Organisation) => {
-				const roles: string[] = userOrg.userOrgRoles.map(
-					(role) => role.orgRole.name,
+			const orgList = data?.data?.organizations?.map((userOrg: Organisation) => {
+				const roles: string[] = userOrg?.userOrgRoles?.map(
+					(role) => role?.orgRole?.name,
 				);
 				userOrg.roles = roles;
 				return userOrg;
@@ -75,6 +92,7 @@ const OrganizationsList = () => {
 			});
 		} else {
 			setError(response as string);
+			setLoading(false);
 		}
 		setLoading(false);
 	};
@@ -89,13 +107,21 @@ const OrganizationsList = () => {
 			}, 1000);
 			return () => clearTimeout(getData);
 		} else {
-			getAllOrganizations();
+			if (!(organizationsList && organizationsList?.length > 0)) {
+				getAllOrganizations();
+			}
 		}
 
 		return () => clearTimeout(getData);
 	}, [searchText, openModal, currentPage.pageNumber]);
 
+	const getOrgId = async () => {
+		const id = await getFromLocalStorage(storageKeys.ORG_ID);
+		setOrgId(id)
+	}
+
 	useEffect(() => {
+		getOrgId()
 		const queryParameters = new URLSearchParams(window?.location?.search);
 		const isModel = queryParameters.get('orgModal') === 'true' || false;
 
@@ -115,7 +141,7 @@ const OrganizationsList = () => {
 			(role) => role.orgRole.name,
 		);
 		activeOrg.roles = roles;
-		
+
 		await removeFromLocalStorage(storageKeys.ORG_DETAILS)
 		await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
 
@@ -125,7 +151,7 @@ const OrganizationsList = () => {
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify({orgId: activeOrg.id.toString()}),
+			body: JSON.stringify({ orgId: activeOrg.id.toString() }),
 		});
 
 		window.location.href = pathRoutes.organizations.dashboard;
@@ -134,12 +160,12 @@ const OrganizationsList = () => {
 	if (organizationsList && organizationsList?.length > 0) {
 		content = (
 			<div>
-				<div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
-					{organizationsList.map((org) => (
+				<div className="mt-1 grid w-full grid-cols-1 gap-5 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
+					{organizationsList?.map((org) => (
 						<Card
 							key={org.id}
 							onClick={() => redirectOrgDashboard(org)}
-							className="transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer overflow-hidden overflow-ellipsis"
+							className={`transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer overflow-hidden overflow-ellipsis ${org.id === orgId ? "border-primary-700" : ""}`}
 							style={{
 								maxHeight: '100%',
 								maxWidth: '100%',

@@ -36,6 +36,7 @@ const EcosystemList = () => {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [isWalletSpinUp, setIsWalletSpinUp] = useState<boolean>(false);
 	const [selectedOrgId, setSelectedOrgId] = useState<string>("");
+	const [ecosystemId, setEcosystemId] = useState<string>("");
 	const [message, setMessage] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
@@ -104,7 +105,13 @@ const EcosystemList = () => {
 		return () => clearTimeout(getData);
 	}, [searchText, openModal, currentPage.pageNumber]);
 
+	const getEcosystemId = async () => {
+		const id = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID);
+		setEcosystemId(id)
+	}
+
 	useEffect(() => {
+		getEcosystemId()
 		const queryParameters = new URLSearchParams(window?.location?.search);
 		const isModel = queryParameters.get('orgModal') === 'true' || false;
 
@@ -282,7 +289,7 @@ const EcosystemList = () => {
 									<Card
 										key={item.id}
 										onClick={() => redirectOrgDashboard(item.id, role)}
-										className="transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer overflow-hidden max-w-full max-h-fit overflow-auto"
+										className={`transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer overflow-hidden max-w-full max-h-fit overflow-auto ${item.id === ecosystemId ? "border-primary-700" : ""}`}
 									>
 										<div className="flex items-center">
 											{item.logoUrl ? (
