@@ -118,6 +118,16 @@ const OrganizationsList = () => {
 		
 		await removeFromLocalStorage(storageKeys.ORG_DETAILS)
 		await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
+
+		// to set orgId in cookies for SSR
+		await fetch('/api/auth/signin', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({orgId: activeOrg.id.toString()}),
+		});
+
 		window.location.href = pathRoutes.organizations.dashboard;
 	};
 	let content: React.JSX.Element = <></>;

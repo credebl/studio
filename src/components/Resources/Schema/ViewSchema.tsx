@@ -137,9 +137,10 @@ const ViewSchemas = () => {
 		await checkEcosystemData();
 		const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
 		setOrgId(String(organizationId));
-		if (window?.location?.search) {
-			const str = window?.location?.search;
-			const schemaId = str.substring(str.indexOf('=') + 1);
+		const schemaUrl = window?.location?.search;
+		if (schemaUrl) {
+			const str = schemaUrl;
+			const schemaId = str?.split("?schemaId=")[1]
 			await getSchemaDetails(schemaId, String(organizationId));
 			await getCredentialDefinitionList(schemaId, String(organizationId));
 		}

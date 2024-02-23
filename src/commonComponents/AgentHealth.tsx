@@ -12,22 +12,25 @@ interface Agent {
     isInitialized: boolean;
 }
 
-const AgentHealth = () => {
-    const [agentHealthDetails, setAgentHealthDetails] = useState<Agent>();
+interface IProps {
+    agent: Agent
+    orgId: string
+}
+
+const AgentHealth = ({ agent, orgId }: IProps) => {
+    const [agentHealthDetails, setAgentHealthDetails] = useState<Agent>(agent);
     const [loader, setLoader] = useState<boolean>(true);
     const [agentErrMessage, setAgentErrMessage] = useState<string>('');
-    const [checkOrgExist, setCheckOrgExist] = useState<number>(0);
+    const [checkOrgExist, setCheckOrgExist] = useState<string>(orgId);
 
     useEffect(() => {
-        setTimeout(() => {
-            getAgentHealthDetails();
-        }, 4000)
+        getAgentHealthDetails();
     }, []);
 
     const getAgentHealthDetails = async () => {
         try {
             const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
-            setCheckOrgExist(Number(organizationId))
+            setCheckOrgExist(organizationId)
             if (Number(organizationId) !== 0) {
                 const agentData = await getAgentHealth(organizationId);
                 const { data } = agentData as AxiosResponse;
@@ -49,11 +52,11 @@ const AgentHealth = () => {
     };
     return (
         <div className=''>
-            {checkOrgExist !== 0 && (
+            {checkOrgExist !== "" && (
                 <>
-                    {loader ? (
+                    {loader && !(agentHealthDetails?.isInitialized) ? (
                         <div>
-                            <CustomSpinner/>
+                            <CustomSpinner />
                         </div>
                     ) : (
                         agentHealthDetails?.isInitialized ? (
@@ -62,9 +65,8 @@ const AgentHealth = () => {
                                 Wallet Agent is up and running
                             </div>
                         ) : (
-                            <span className="inline-flex items-center bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">
+                            <span title={agentErrMessage} className="inline-flex items-center bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">
                                 <span className="w-2 h-2 mr-1 bg-red-500 rounded-full" />
-                                {/* {agentErrMessage} */}
                                 Wallet Agent is not running
                             </span>
                         )

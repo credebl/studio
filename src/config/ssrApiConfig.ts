@@ -12,14 +12,13 @@ const API = async ({ token, url, method, payload }: IProps) => {
 	try {
 		const headers = {
 			'Content-Type': 'application/json',
+			...(token && {"Authorization": `Bearer ${token}`})
 		}
-		if(token) {
-			headers["Authorization"]= `Bearer ${token}`
-		}
+		
 		const config = {
 			headers,
 			method,
-			body: JSON.stringify(payload),
+			...(payload && {body: JSON.stringify(payload)})
 		};
 		const baseURL = globalThis.baseUrl || envConfig.PUBLIC_BASE_URL || process.env.PUBLIC_BASE_URL;
 		const apiURL = baseURL + url;

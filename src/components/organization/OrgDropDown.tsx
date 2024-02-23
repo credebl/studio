@@ -6,14 +6,20 @@ import type { AxiosResponse } from 'axios';
 import { BiChevronDown } from "react-icons/bi";
 import CustomAvatar from '../Avatar'
 import type { Organisation } from './interfaces'
-import { getOrganizations } from '../../api/organization';
+import { getOrganizationById, getOrganizations } from '../../api/organization';
 import { pathRoutes } from '../../config/pathRoutes';
 
-const OrgDropDown = () => {
-	const [orgList, setOrgList] = useState<Organisation[]>([]);
-	const [activeOrg, setactiveOrg] = useState<Organisation | null>(null)
+interface IProps {
+	data: Organisation[],
+	orgId: Organisation
+}
+
+const OrgDropDown = ({data, orgId}: IProps) => {
+	const [orgList, setOrgList] = useState<Organisation[]>(data);
+	const [activeOrg, setactiveOrg] = useState<Organisation | null>(orgId)
 
 	useEffect(() => {
+		setActiveOrg()
 		getAllorgs()
 	}, []);
 
@@ -22,7 +28,7 @@ const OrgDropDown = () => {
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			setOrgList(data?.data?.organizations);
-			setActiveOrg(data?.data?.organizations)
+			// setActiveOrg(data?.data?.organizations)
 		}
 	};
 
@@ -41,21 +47,29 @@ const OrgDropDown = () => {
 		const roles: string[] = org?.userOrgRoles.map(role => role.orgRole.name)
 
 		await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
+
+		// to set orgId in cookies for SSR
+		await fetch('/api/auth/signin', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({orgId: org.id.toString()}),
+		});
 	}
 
-	const setActiveOrg = async (organizations: Organisation[]) => {
+	const setActiveOrg = async () => {
 
 		let activeOrg: Organisation | null = null
 
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
 
 		if (orgId) {
-			activeOrg = organizations?.find(org => org.id === String(orgId)) as Organisation
-			setactiveOrg(activeOrg || null)
-		} else {
-			activeOrg = organizations && organizations[0]
-			setactiveOrg(activeOrg || null)
-
+			const response = await getOrganizationById(orgId) as AxiosResponse;
+			if(response?.data.statusCode === apiStatusCodes.API_STATUS_SUCCESS){
+				activeOrg = response?.data?.data;
+				setactiveOrg(activeOrg || null)
+			}
 		}
 
 		if (activeOrg) {

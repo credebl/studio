@@ -6,7 +6,7 @@ import SchemaList from "./SchemasList"
 const Schemas = () => {
     const schemaSelectionCallback = async (schemaId: string, attributes:any) => {
         await setToLocalStorage(storageKeys.SCHEMA_ATTR, attributes)
-        window.location.href = `${pathRoutes.organizations.viewSchema}?schemaId=${schemaId}`
+        window.location.href = `${pathRoutes.organizations.viewSchema}?schemaId=${encodeURIComponent(schemaId)}`
     }
     return (
         <SchemaList schemaSelectionCallback={schemaSelectionCallback} />
