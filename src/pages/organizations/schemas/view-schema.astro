@@ -1,7 +1,26 @@
 ---
+import { getFromCookies } from '../../../api/Auth';
 import LayoutSidebar from '../../../app/LayoutSidebar.astro';
-import ViewSchemas from '../../../components/Resources/Schema/ViewSchema'
+import ViewSchemas from '../../../components/Resources/Schema/ViewSchema';
+import { apiRoutes } from '../../../config/apiRoutes';
+import API from '../../../config/ssrApiConfig';
+
+const orgId = getFromCookies(Astro.cookies, 'orgId');
+const token = getFromCookies(Astro.cookies, 'session');
+
+const schemaId = Astro.url.search.split('?schemaId=')[1];
+
+let schemaDetails;
+
+if (orgId) {
+	schemaDetails = await API({
+		url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.getSchemaById}/${schemaId}`,
+		token,
+		method: 'GET',
+	});
+}
 ---
+
 <LayoutSidebar>
-	<ViewSchemas client:load/>
+	<ViewSchemas data={schemaDetails} client:load />
 </LayoutSidebar>

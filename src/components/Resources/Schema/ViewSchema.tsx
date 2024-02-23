@@ -59,14 +59,19 @@ interface ICredDefCard {
 	schemaLedgerId: string;
 	revocable: boolean;
 }
+interface IProps {
+	data: SchemaData
+}
+
 const initialPageState = {
 	pageNumber: 1,
 	pageSize: 9,
 	total: 0,
 };
 
-const ViewSchemas = () => {
-	const [schemaDetails, setSchemaDetails] = useState<SchemaData | null>(null);
+
+const ViewSchemas = ({data}: IProps) => {
+	const [schemaDetails, setSchemaDetails] = useState<SchemaData | null>(data);
 	const [credDeffList, setCredDeffList] = useState<any>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [createloader, setCreateLoader] = useState<boolean>(false);
@@ -312,7 +317,7 @@ const ViewSchemas = () => {
 			<div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 				<div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
 					<Card className="" id="viewSchemaDetailsCard">
-						{loading ? (
+						{loading && !(schemaDetails?.schemaId) ? (
 							<div className="flex items-center justify-center mb-4">
 								<CustomSpinner />
 							</div>

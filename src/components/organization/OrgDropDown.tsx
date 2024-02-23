@@ -14,7 +14,7 @@ interface IProps {
 	orgId: Organisation
 }
 
-const OrgDropDown = ({data, orgId}: IProps) => {
+const OrgDropDown = ({ data, orgId }: IProps) => {
 	const [orgList, setOrgList] = useState<Organisation[]>(data);
 	const [activeOrg, setactiveOrg] = useState<Organisation | null>(orgId)
 
@@ -54,7 +54,7 @@ const OrgDropDown = ({data, orgId}: IProps) => {
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify({orgId: org.id.toString()}),
+			body: JSON.stringify({ orgId: org.id.toString() }),
 		});
 	}
 
@@ -66,10 +66,18 @@ const OrgDropDown = ({data, orgId}: IProps) => {
 
 		if (orgId) {
 			const response = await getOrganizationById(orgId) as AxiosResponse;
-			if(response?.data.statusCode === apiStatusCodes.API_STATUS_SUCCESS){
+			if (response?.data.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 				activeOrg = response?.data?.data;
 				setactiveOrg(activeOrg || null)
 			}
+			// to set orgId in cookies for SSR
+			await fetch('/api/auth/signin', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ orgId }),
+			});
 		}
 
 		if (activeOrg) {
