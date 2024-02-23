@@ -21,7 +21,7 @@ import SOCKET from '../../config/SocketConfig';
 import SharedIllustrate from './SharedIllustrate';
 import { nanoid } from 'nanoid';
 import { getLedgers } from '../../api/Agent';
-import { AlertComponent } from '../AlertComponent'
+import { AlertComponent } from '../AlertComponent';
 
 interface Values {
 	seed: string;
@@ -44,241 +44,847 @@ enum AgentType {
 }
 
 interface INetworks {
-	id: number
-	name: string
+	id: number;
+	name: string;
 }
 
 interface ISharedAgentForm {
-	seeds: string
-	isCopied: boolean
-	copyTextVal: (e: any) => void
-	orgName: string
-	loading: boolean
-	submitSharedWallet: (values: ValuesShared) => void
+	seeds: string;
+	isCopied: boolean;
+	copyTextVal: (e: any) => void;
+	orgName: string;
+	loading: boolean;
+	submitSharedWallet: (values: ValuesShared) => void;
 }
 
 interface IDedicatedAgentForm {
-	seeds: string
-	loading: boolean
-	submitDedicatedWallet: (values: Values) => void
+	seeds: string;
+	loading: boolean;
+	submitDedicatedWallet: (values: Values) => void;
 }
 
 const fetchNetworks = async () => {
 	try {
-		const { data } = await getLedgers() as AxiosResponse
+		const { data } = (await getLedgers()) as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			return data?.data 
+			return data?.data;
 		}
-		return []
+		return [];
 	} catch (err) {
-		console.log("Fetch Network ERROR::::", err)
+		console.log('Fetch Network ERROR::::', err);
 	}
-}
+};
 
-const NetworkInput = ({formikHandlers}) => {
-	const [networks, setNetworks] = useState([])
-	const getLedgerList = async () => {
-		const res = await fetchNetworks()
-		setNetworks(res)
-	}
-	useEffect(() => {
-		getLedgerList()
-	}, [])
-	return (
-		<div>
-			<div className="mb-1 block">
-				<Label htmlFor="network" value="Network" />
-				<span className="text-red-500 text-xs">*</span>
-			</div>
+// const NetworkInput = ({formikHandlers}) => {
 
-			<select
-				onChange={(e) => formikHandlers.handleChange(e)}
-				id="network"
-				name="network"
-				className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
-			>
-				<option value="">Select network</option>
-				{networks && networks.length > 0 && networks.map((item: INetworks) => (
-					<option key={item.id} value={item.id}>
-						{item.name}
-					</option>
-				))}
-			</select>
+// 	return (
+// 		<div>
+// 			<div className="mb-1 block">
+// 				<Label htmlFor="network" value="Network" />
+// 				<span className="text-red-500 text-xs">*</span>
+// 			</div>
 
-			{formikHandlers?.errors?.network &&
-				formikHandlers?.touched?.network && (
-					<span className="text-red-500 text-xs">
-						{formikHandlers?.errors?.network}
-					</span>
-				)}
-		</div>
-	)
-}
+// 			<select
+// 				onChange={(e) => formikHandlers.handleChange(e)}
+// 				id="network"
+// 				name="network"
+// 				className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+// 			>
+// 				<option value="">Select network</option>
+// 				{networks && networks.length > 0 && networks.map((item: INetworks) => (
+// 					<option key={item.id} value={item.id}>
+// 						{item.name}
+// 					</option>
+// 				))}
+// 			</select>
 
-const SharedAgentForm = ({ orgName, seeds, isCopied, loading, copyTextVal, submitSharedWallet }: ISharedAgentForm) => {
-	const [haveDidShared, setHaveDidShared] = useState(false)
+// 			{formikHandlers?.errors?.network &&
+// 				formikHandlers?.touched?.network && (
+// 					<span className="text-red-500 text-xs">
+// 						{formikHandlers?.errors?.network}
+// 					</span>
+// 				)}
+// 		</div>
+// 	)
+// }
+
+const SharedAgentForm = ({
+	orgName,
+	seeds,
+	isCopied,
+	loading,
+	copyTextVal,
+	submitSharedWallet,
+}: ISharedAgentForm) => {
+	const [haveDidShared, setHaveDidShared] = useState(false);
+	const [networks, setNetworks] = useState([]);
+	const data = [
+		{
+			indy: {
+				bcovrin: {
+					Testnet: 'did:indy:bcovrin:testnet',
+					mainnet: 'did:indy:bcovrin:mainnet',
+				},
+				indicio: {
+					Testnet: 'did:indy:indcio:testnet',
+					mainnet: 'did:indy:indcio:mainnet',
+				},
+			},
+			polygon: {
+				mainnet: 'did:polygon:testnet',
+				testnet: 'did:polygon:mainnet',
+			},
+		},
+	];
+
+	const [selectedLedger, setSelectedLedger] = useState('');
+	const [selectedNetwork, setSelectedNetwork] = useState('');
+	const [selectedDid, setSelectedDid] = useState('');
+
+	const handleLedgerChange = (e) => {
+		setSelectedLedger(e.target.value);
+		setSelectedNetwork('');
+		setSelectedDid('');
+	};
+
+	// const getLedgerList = async () => {
+	// 	const res = await fetchNetworks()
+	// 	setNetworks(res)
+	// }
+	// useEffect(() => {
+	// 	getLedgerList()
+	// }, [])
 	const validation = {
-		label: yup.string()
+		label: yup
+			.string()
 			.required('Wallet label is required')
 			.trim()
-			.test('no-spaces', 'Spaces are not allowed', value => !value || !value.includes(' '))
+			.test(
+				'no-spaces',
+				'Spaces are not allowed',
+				(value) => !value || !value.includes(' '),
+			)
 			.matches(
 				/^[A-Za-z0-9-][^ !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]*$/,
 				'Wallet label must be alphanumeric only',
 			)
 			.min(2, 'Wallet label must be at least 2 characters')
 			.max(25, 'Wallet label must be at most 25 characters'),
-		seed: haveDidShared ? yup.string().required("Seed is required") : yup.string(),
-		did: haveDidShared ? yup.string().required("DID is required") : yup.string(),
-		network: yup.string().required("Network is required")
-	}
+		seed: haveDidShared
+			? yup.string().required('Seed is required')
+			: yup.string(),
+		did: haveDidShared
+			? yup.string().required('DID is required')
+			: yup.string(),
+		network: yup.string().required('Network is required'),
+	};
 
 	return (
-		<div className='mt-4 max-w-lg flex-col gap-4'>
+		<div className="mt-4 max-w-lg flex-col gap-4">
 			<div className="flex items-center gap-2 mt-4">
-				<Checkbox id="haveDidShared" onChange={(e) => setHaveDidShared(e.target.checked)} />
-				<Label
-					className="flex"
-					htmlFor="haveDidShared"
-				>
-					<p>
-						Already have DID?
-					</p>
-
+				<Checkbox
+					id="haveDidShared"
+					onChange={(e) => setHaveDidShared(e.target.checked)}
+				/>
+				<Label className="flex" htmlFor="haveDidShared">
+					<p>Already have DID?</p>
 				</Label>
 			</div>
-			{
-				!haveDidShared &&
-				<div className='mt-4'>
+			{!haveDidShared && (
+				<div className="mt-4">
 					<div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
 						<Label value="Seed" />
 					</div>
 					<div className="flex align-center block mb-1 text-sm text-gray-900 dark:text-white">
 						{seeds}
-						<span
-							className="text-base font-semibold text-gray-900 truncate dark:text-white"
-						>
-							<button
-								className=
-								{`${isCopied}`} onClick={(e) => copyTextVal(e)}
-							>
-								{isCopied
-									? <svg className="h-6 w-6 text-white ml-2 text-base" width="25" height="25" viewBox="0 0 24 24" strokeWidth={2} stroke="green" fill="none" strokeLinecap="round" strokeLinejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <path d="M5 12l5 5l10 -10" /></svg>
-									: <svg className="h-6 w-6 text-green ml-2 text-base" width="25" height="25" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <rect x="8" y="8" width="12" height="12" rx="2" />  <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" /></svg>
-								}
+						<span className="text-base font-semibold text-gray-900 truncate dark:text-white">
+							<button className={`${isCopied}`} onClick={(e) => copyTextVal(e)}>
+								{isCopied ? (
+									<svg
+										className="h-6 w-6 text-white ml-2 text-base"
+										width="25"
+										height="25"
+										viewBox="0 0 24 24"
+										strokeWidth={2}
+										stroke="green"
+										fill="none"
+										strokeLinecap="round"
+										strokeLinejoin="round"
+									>
+										{' '}
+										<path stroke="none" d="M0 0h24v24H0z" />{' '}
+										<path d="M5 12l5 5l10 -10" />
+									</svg>
+								) : (
+									<svg
+										className="h-6 w-6 text-green ml-2 text-base"
+										width="25"
+										height="25"
+										viewBox="0 0 24 24"
+										strokeWidth={2}
+										stroke="currentColor"
+										fill="none"
+										strokeLinecap="round"
+										strokeLinejoin="round"
+									>
+										{' '}
+										<path stroke="none" d="M0 0h24v24H0z" />{' '}
+										<rect x="8" y="8" width="12" height="12" rx="2" />{' '}
+										<path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" />
+									</svg>
+								)}
 							</button>
 						</span>
 					</div>
 				</div>
-			}
-			<Formik
+			)}
+			{/* ----------------------------
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			my work area bwloe
+			
+			*/}
+
+			{/* <Formik
+      initialValues={{
+        ledger: '',
+        network: '',
+        did: '',
+      }}
+      validationSchema={yup.object().shape({
+        ledger: yup.string().required('Ledger is required'),
+        network: yup.string().required('Network is required'),
+        did: yup.string().required('DID Method is required'),
+      })}
+      onSubmit={(values) => {
+        // handle form submission here
+        console.log(values);
+      }}
+    >
+      {(formikHandlers) => (
+        <Form className="">
+          <div>
+            <label htmlFor="ledger">Ledger</label>
+            <select
+              onChange={(e) => {
+                formikHandlers.handleChange(e);
+                handleLedgerChange(e);
+              }}
+              id="ledger"
+              name="ledger"
+            >
+              <option value="">Select Ledger</option>
+              {Object.keys(data[0]).map((ledger) => (
+                <option key={ledger} value={ledger}>
+                  {ledger}
+                </option>
+              ))}
+            </select>
+            {formikHandlers.errors.ledger && formikHandlers.touched.ledger && (
+              <span>{formikHandlers.errors.ledger}</span>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="network">Network</label>
+            <select
+              onChange={formikHandlers.handleChange}
+              value={selectedNetwork}
+              id="network"
+              name="network"
+            >
+              <option value="">Select Network</option>
+              {selectedLedger &&
+                data[0][selectedLedger] &&
+                Object.keys(data[0][selectedLedger]).map((network) => (
+                  <option key={network} value={network}>
+                    {network}
+                  </option>
+                ))}
+            </select>
+            {formikHandlers.errors.network && formikHandlers.touched.network && (
+              <span>{formikHandlers.errors.network}</span>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="did">DID Method</label>
+            <select
+              onChange={formikHandlers.handleChange}
+              value={formikHandlers.values.did}
+              id="did"
+              name="did"
+            >
+              <option value="">Select DID Method</option>
+              {selectedLedger &&
+                selectedNetwork &&
+                data[0][selectedLedger][selectedNetwork] &&
+                Object.entries(data[0][selectedLedger][selectedNetwork]).map(([key, value]) => (
+                  <option key={key} value={value}>
+                    {key}
+                  </option>
+                ))}
+            </select>
+            {formikHandlers.errors.did && formikHandlers.touched.did && (
+              <span>{formikHandlers.errors.did}</span>
+            )}
+          </div>
+
+          <button type="submit">Submit</button>
+        </Form>
+      )}
+    </Formik> */}
+			{/* <Formik
+      initialValues={{
+        ledger: '',
+        network: '',
+        did: '',
+      }}
+      validationSchema={yup.object().shape({
+        ledger: yup.string().required('Ledger is required'),
+        network: yup.string().required('Network is required'),
+        did: yup.string().required('DID Method is required'),
+      })}
+      onSubmit={(values) => {
+        console.log(values);
+      }}
+    >
+      {(formikHandlers) => (
+        <Form className="">
+          <div>
+            <label htmlFor="ledger">Ledger</label>
+            <select
+              onChange={(e) => {
+                formikHandlers.handleChange(e);
+                handleLedgerChange(e);
+              }}
+              id="ledger"
+              name="ledger"
+            >
+              <option value="">Select Ledger</option>
+              {Object.keys(data[0]).map((ledger) => (
+                <option key={ledger} value={ledger}>
+                  {ledger}
+                </option>
+              ))}
+            </select>
+            {formikHandlers.errors.ledger && formikHandlers.touched.ledger && (
+              <span>{formikHandlers.errors.ledger}</span>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="network">Network</label>
+            <select
+              onChange={(e) => {
+                formikHandlers.handleChange(e);
+                setSelectedNetwork(e.target.value);
+              }}
+              value={selectedNetwork}
+              id="network"
+              name="network"
+            >
+              <option value="">Select Network</option>
+              {selectedLedger &&
+                data[0][selectedLedger] &&
+                Object.keys(data[0][selectedLedger]).map((network) => (
+                  <option key={network} value={network}>
+                    {network}
+                  </option>
+                ))}
+            </select>
+            {formikHandlers.errors.network && formikHandlers.touched.network && (
+              <span>{formikHandlers.errors.network}</span>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="did">DID Method</label>
+            <select
+              onChange={formikHandlers.handleChange}
+              value={formikHandlers.values.did}
+              id="did"
+              name="did"
+            >
+              <option value="">Select DID Method</option>
+              {selectedLedger &&
+                selectedNetwork &&
+                data[0][selectedLedger][selectedNetwork] &&
+                Object.entries(data[0][selectedLedger][selectedNetwork]).map(([key, value]) => (
+                  <option key={value} value={value}>
+                    {key}
+                  </option>
+                ))}
+            </select>
+            {formikHandlers.errors.did && formikHandlers.touched.did && (
+              <span>{formikHandlers.errors.did}</span>
+            )}
+          </div>
+
+          <button type="submit">Submit</button>
+        </Form>
+      )}
+    </Formik> */}
+			{/* <Formik
 				initialValues={{
-					label: orgName || '',
-					seed: "",
-					did: "",
-					network: ""
+					method: '',
+					network: '',
+					did: '',
+					ledger: '',
 				}}
-				validationSchema={yup.object().shape(validation)}
-				validateOnBlur
-				validateOnChange
-				enableReinitialize
-				onSubmit={(values: ValuesShared) => submitSharedWallet(values)}
+				validationSchema={yup.object().shape({
+					method: yup.string().required('Method is required'),
+					network: yup.string().required('Network is required'),
+					did: yup.string().required('DID Method is required'),
+					ledger: yup
+						.string()
+						.required('ledger is required'),
+				})}
+				onSubmit={(values) => {
+					// handle form submission here
+					console.log("values",values);
+				}}
 			>
-				{(formikHandlers): JSX.Element => (
-					<Form
-						className=""
-						onSubmit={formikHandlers.handleSubmit}
-					>
-						{
-							haveDidShared &&
-							<>
-								<div className='mt-4'>
-									<div className="mb-1 block">
-										<Label htmlFor="seed" value="Seed" />
-										<span className="text-red-500 text-xs">*</span>
-									</div>
-
-									<Field
-										id="seed"
-										name="seed"
-										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-										type="text"
-									/>
-									{formikHandlers?.errors?.seed &&
-										formikHandlers?.touched?.seed && (
-											<span className="text-red-500 text-xs">
-												{formikHandlers?.errors?.seed}
-											</span>
-										)}
-								</div>
-								<div className=''>
-									<div className="mb-1 block">
-										<Label htmlFor="did" value="DID" />
-										<span className="text-red-500 text-xs">*</span>
-									</div>
-
-									<Field
-										id="did"
-										name="did"
-										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-										type="text"
-									/>
-									{formikHandlers?.errors?.did &&
-										formikHandlers?.touched?.did && (
-											<span className="text-red-500 text-xs">
-												{formikHandlers?.errors?.did}
-											</span>
-										)}
-								</div>
-							</>
-						}
-						<NetworkInput formikHandlers={formikHandlers} />
+				{(formikHandlers) => (
+					<Form className="">
 						<div>
-							<div className="mb-1 block">
-								<Label htmlFor="name" value="Wallet Label" />
-								<span className="text-red-500 text-xs">*</span>
-							</div>
-
-							<Field
-								id="label"
-								name="label"
-								className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-								type="text"
-							/>
-							{formikHandlers?.errors?.label &&
-								formikHandlers?.touched?.label && (
-									<span className="text-red-500 text-xs">
-										{formikHandlers?.errors?.label}
-									</span>
+							<label htmlFor="method">Method</label>
+							<select
+								onChange={(e) => {
+									formikHandlers.handleChange(e);
+									handleLedgerChange(e);
+								}}
+								id="method"additionalDID
+								name="method"
+							>
+								<option value="">Select Ledger</option>
+								{Object.keys(data[0]).map((ledger) => (
+									<option key={ledger} value={ledger}>
+										{ledger}
+									</option>
+								))}
+							</select>
+							{formikHandlers.errors.method &&
+								formikHandlers.touched.method && (
+									<span>{formikHandlers.errors.method}</span>
 								)}
 						</div>
-						<Button
-							isProcessing={loading}
-							type="submit"
-							className='mt-4 float-right text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
-						>
-							<svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
-								<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
-							</svg>
-							Create
-						</Button>
+
+						<div>
+							<label htmlFor="ledger">Ledger</label>
+							<select
+								onChange={(e) => {
+									formikHandlers.handleChange(e);
+									setSelectedNetwork(e.target.value);
+								}}
+								value={selectedNetwork}
+								id="ledger"
+								name="ledger"
+							>
+								<option value="">Select Network</option>
+								{selectedLedger &&
+									data[0][selectedLedger] &&
+									Object.keys(data[0][selectedLedger]).map((ledger) => (
+										<option key={ledger} value={ledger}>
+											{ledger}
+										</option>
+									))}
+							</select>
+							{formikHandlers.errors.ledger &&
+								formikHandlers.touched.ledger && (
+									<span>{formikHandlers.errors.ledger}</span>
+								)}
+						</div>
+
+						<div>
+							<label htmlFor="network">Network</label>
+							<select
+								onChange={(e) => {
+									formikHandlers.handleChange(e);
+									setSelectedDid(e.target.value);
+								}}
+								value={selectedDid}
+								id="network"
+								name="network"
+							>
+								<option value="">Select Network</option>
+								{selectedLedger &&
+									selectedNetwork &&
+									Object.keys(data[0][selectedLedger][selectedNetwork]).map(
+										(network) => (
+											<option key={network} value={network}>
+												{network}
+											</option>
+										),
+									)}
+							</select>
+							{formikHandlers.errors.network && formikHandlers.touched.network && (
+								<span>{formikHandlers.errors.network}</span>
+							)}
+						</div>
+
+						<div>
+							<label htmlFor="DID Method">Additional DID Method</label>
+							<select
+								onChange={formikHandlers.handleChange}
+								value={formikHandlers.values.additionalDID}
+								id="did"
+								name="did"
+							>
+								<option value="">Select Additional DID Method</option>
+								{selectedLedger && selectedNetwork && selectedDid && (
+									<option
+										key={data[0][selectedLedger][selectedNetwork][selectedDid]}
+										value={
+											data[0][selectedLedger][selectedNetwork][selectedDid]
+										}
+									>
+										{Object.values(
+											data[0][selectedLedger][selectedNetwork][selectedDid],
+										)}
+									</option>
+								)}
+							</select>
+							{formikHandlers.errors.did &&
+								formikHandlers.touched.did && (
+									<span>{formikHandlers.errors.did}</span>
+								)}
+						</div>
+
+						<button type="submit">Submit</button>
+					</Form>
+				)}
+			</Formik> */}
+			{/* <Formik
+    initialValues={{
+        method: '',
+        network: '',
+        did: '',
+        ledger: '',
+    }}
+    validationSchema={yup.object().shape({
+        method: yup.string().required('Method is required'),
+        network: yup.string().required('Network is required'),
+        did: yup.string().required('DID Method is required'),
+        ledger: yup.string().when('method', {
+            is: (val) => val !== 'Polygon',
+            then: yup.string().required('Ledger is required'),
+        }),
+    })}
+    onSubmit={(values) => {
+        // handle form submission here
+        console.log("values", values);
+    }}
+>
+    {(formikHandlers) => (
+        <Form className="">
+            <div>
+                <label htmlFor="method">Method</label>
+                <select
+                    onChange={(e) => {
+                        formikHandlers.handleChange(e);
+                        handleLedgerChange(e);
+                    }}
+                    id="method"
+                    name="method"
+                >
+                    <option value="">Select Ledger</option>
+                    {Object.keys(data[0]).map((ledger) => (
+                        <option key={ledger} value={ledger}>
+                            {ledger}
+                        </option>
+                    ))}
+                </select>
+                {formikHandlers.errors.method &&
+                    formikHandlers.touched.method && (
+                        <span>{formikHandlers.errors.method}</span>
+                    )}
+            </div>
+
+            {formikHandlers.values.method !== 'Polygon' && (
+                <div>
+                    <label htmlFor="ledger">Ledger</label>
+                    <select
+                        onChange={(e) => {
+                            formikHandlers.handleChange(e);
+                            setSelectedNetwork(e.target.value);
+                        }}
+                        value={selectedNetwork}
+                        id="ledger"
+                        name="ledger"
+                    >
+                        <option value="">Select Network</option>
+                        {selectedLedger &&
+                            data[0][selectedLedger] &&
+                            Object.keys(data[0][selectedLedger]).map((ledger) => (
+                                <option key={ledger} value={ledger}>
+                                    {ledger}
+                                </option>
+                            ))}
+                    </select>
+                    {formikHandlers.errors.ledger &&
+                        formikHandlers.touched.ledger && (
+                            <span>{formikHandlers.errors.ledger}</span>
+                        )}
+                </div>
+            )}
+
+            <div>
+                <label htmlFor="network">Network</label>
+                <select
+                    onChange={(e) => {
+                        formikHandlers.handleChange(e);
+                        setSelectedDid(e.target.value);
+                    }}
+                    value={selectedDid}
+                    id="network"
+                    name="network"
+                >
+                    <option value="">Select Network</option>
+                    {selectedLedger &&
+                        selectedNetwork &&
+                        Object.keys(data[0][selectedLedger][selectedNetwork]).map(
+                            (network) => (
+                                <option key={network} value={network}>
+                                    {network}
+                                </option>
+                            ),
+                        )}
+                </select>
+                {formikHandlers.errors.network && formikHandlers.touched.network && (
+                    <span>{formikHandlers.errors.network}</span>
+                )}
+            </div>
+
+            <div>
+                <label htmlFor="DID Method">Additional DID Method</label>
+                <select
+                    onChange={formikHandlers.handleChange}
+                    value={formikHandlers.values.additionalDID}
+                    id="did"
+                    name="did"
+                >
+                    <option value="">Select Additional DID Method</option>
+                    {selectedLedger && selectedNetwork && selectedDid && (
+                        <option
+                            key={data[0][selectedLedger][selectedNetwork][selectedDid]}
+                            value={
+                                data[0][selectedLedger][selectedNetwork][selectedDid]
+                            }
+                        >
+                            {Object.values(
+                                data[0][selectedLedger][selectedNetwork][selectedDid],
+                            )}
+                        </option>
+                    )}
+                </select>
+                {formikHandlers.errors.did &&
+                    formikHandlers.touched.did && (
+                        <span>{formikHandlers.errors.did}</span>
+                    )}
+            </div>
+
+            <button type="submit">Submit</button>
+        </Form>
+    )}
+</Formik> */}
+			<Formik
+				initialValues={{
+					method: '',
+					network: '',
+					did: '',
+					ledger: '',
+				}}
+				// validationSchema={yup.object().shape({
+				//     method: yup.string().required('Method is required'),
+				//     network: yup.string().required('Network is required'),
+				//     did: yup.string().required('DID Method is required'),
+				//     ledger: yup.string().when('method', {
+				//         is: (val) => val !== 'Polygon',
+				//         then: yup.string().required('Ledger is required'),
+				//     }),
+				// })}
+				onSubmit={(values) => {
+					// handle form submission here
+					console.log('values', values);
+				}}
+			>
+				{(formikHandlers) => (
+					<Form className="">
+						<div>
+							<label htmlFor="method">Method</label>
+							<select
+								onChange={(e) => {
+									formikHandlers.handleChange(e);
+									handleLedgerChange(e);
+								}}
+								id="method"
+								name="method"
+								className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+							>
+								<option value="">Select Ledger</option>
+								{Object.keys(data[0]).map((ledger) => (
+									<option key={ledger} value={ledger}>
+										{ledger}
+									</option>
+								))}
+							</select>
+							{formikHandlers.errors.method &&
+								formikHandlers.touched.method && (
+									<span>{formikHandlers.errors.method}</span>
+								)}
+						</div>
+
+						{formikHandlers.values.method !== 'polygon' && (
+							<div>
+								<label htmlFor="ledger">Ledger</label>
+								<select
+									onChange={(e) => {
+										formikHandlers.handleChange(e);
+										setSelectedNetwork(e.target.value);
+									}}
+									value={selectedNetwork}
+									id="ledger"
+									name="ledger"
+									className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+								>
+									<option value="">Select Network</option>
+									{selectedLedger &&
+										data[0][selectedLedger] &&
+										Object.keys(data[0][selectedLedger]).map((ledger) => (
+											<option key={ledger} value={ledger}>
+												{ledger}
+											</option>
+										))}
+								</select>
+								{formikHandlers.errors.ledger &&
+									formikHandlers.touched.ledger && (
+										<span>{formikHandlers.errors.ledger}</span>
+									)}
+							</div>
+						)}
+
+						<div>
+							<label htmlFor="network">Network</label>
+							<select
+								onChange={(e) => {
+									formikHandlers.handleChange(e);
+									setSelectedDid(e.target.value);
+								}}
+								value={selectedDid}
+								id="network"
+								name="network"
+								className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+							>
+								<option value="">Select Network</option>
+								{formikHandlers.values.method === 'polygon' &&
+									data[0] &&
+									Object.keys(data[0][selectedLedger]).map((network) => (
+										<option key={network} value={network}>
+											{network}
+										</option>
+									))}
+								{formikHandlers.values.method !== 'polygon' &&
+									selectedLedger &&
+									selectedNetwork &&
+									Object.keys(data[0][selectedLedger][selectedNetwork]).map(
+										(network) => (
+											<option key={network} value={network}>
+												{network}
+											</option>
+										),
+									)}
+							</select>
+							{formikHandlers.errors.network &&
+								formikHandlers.touched.network && (
+									<span>{formikHandlers.errors.network}</span>
+								)}
+						</div>
+
+						<div>
+							<label htmlFor="DID Method">DID Method</label>
+							<select
+								onChange={formikHandlers.handleChange}
+								value={formikHandlers.values.additionalDID}
+								id="did"
+								name="did"
+								className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+							>
+								<option value="">Select Additional DID Method</option>
+								{formikHandlers.values.method === 'polygon'
+									? selectedLedger &&
+									  selectedDid && (
+											<option
+												key={selectedDid}
+												value={Object.values(
+													data[0][selectedLedger][selectedDid],
+												)}
+											>
+												{Object.values(data[0][selectedLedger][selectedDid])}
+											</option>
+									  )
+									: selectedLedger &&
+									  selectedNetwork &&
+									  selectedDid && (
+											<option
+												key={selectedDid}
+												value={Object.values(
+													data[0][selectedLedger][selectedNetwork][selectedDid],
+												)}
+											>
+												{Object.values(
+													data[0][selectedLedger][selectedNetwork][selectedDid],
+												)}
+											</option>
+									  )}
+							</select>
+							{formikHandlers.errors.did && formikHandlers.touched.did && (
+								<span>{formikHandlers.errors.did}</span>
+							)}
+						</div>
+						<div className="w-full flex justify-end">
+							<Button
+								type="submit"
+								className="flex h-min p-0.5 focus:z-10 focus:outline-none border border-transparent enabled:hover:bg-cyan-800 dark:enabled:hover:bg-cyan-700 mt-4 text-base font-medium text-center text-white bg-primary-700 rounded-md hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+							>
+								Submit
+							</Button>
+						</div>
 					</Form>
 				)}
 			</Formik>
 		</div>
-	)
+	);
 };
 
-const DedicatedAgentForm = ({ seeds, loading, submitDedicatedWallet }: IDedicatedAgentForm) => {
-	const [haveDid, setHaveDid] = useState(false)
-	const [networks, setNetworks] = useState([])
+const DedicatedAgentForm = ({
+	seeds,
+	loading,
+	submitDedicatedWallet,
+}: IDedicatedAgentForm) => {
+	const [haveDid, setHaveDid] = useState(false);
+	const [networks, setNetworks] = useState([]);
 	const getLedgerList = async () => {
-		const res = await fetchNetworks()
-		setNetworks(res)
-	}
+		const res = await fetchNetworks();
+		setNetworks(res);
+	};
 	useEffect(() => {
-		getLedgerList()
-	}, [])
+		getLedgerList();
+	}, []);
 
 	const validation = {
 		walletName: yup
@@ -300,36 +906,29 @@ const DedicatedAgentForm = ({ seeds, loading, submitDedicatedWallet }: IDedicate
 			)
 			.required('Wallet password is required')
 			.label('Wallet password'),
-		did: haveDid ? yup.string().required("DID is required") : yup.string(),
-		network: yup.string().required("Network is required")
-	}
+		did: haveDid ? yup.string().required('DID is required') : yup.string(),
+		network: yup.string().required('Network is required'),
+	};
 
 	if (haveDid) {
-		validation.seed = yup.string().required("Seed is required")
+		validation.seed = yup.string().required('Seed is required');
 	}
-
 
 	return (
 		<>
 			<div className="flex items-center gap-2 mt-4">
 				<Checkbox id="haveDid" onChange={(e) => setHaveDid(e.target.checked)} />
-				<Label
-					className="flex"
-					htmlFor="haveDid"
-				>
-					<p>
-						Already have DID?
-					</p>
-
+				<Label className="flex" htmlFor="haveDid">
+					<p>Already have DID?</p>
 				</Label>
 			</div>
 			<Formik
 				initialValues={{
-					seed: haveDid ? "" : seeds,
+					seed: haveDid ? '' : seeds,
 					walletName: '',
 					password: '',
-					did: "",
-					network: ""
+					did: '',
+					network: '',
 				}}
 				validationSchema={yup.object().shape(validation)}
 				validateOnBlur
@@ -356,15 +955,15 @@ const DedicatedAgentForm = ({ seeds, loading, submitDedicatedWallet }: IDedicate
 								className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 								type="text"
 							/>
-							{formikHandlers?.errors?.seed && formikHandlers?.touched?.seed && (
-								<span className="text-red-500 text-xs">
-									{formikHandlers?.errors?.seed}
-								</span>
-							)}
+							{formikHandlers?.errors?.seed &&
+								formikHandlers?.touched?.seed && (
+									<span className="text-red-500 text-xs">
+										{formikHandlers?.errors?.seed}
+									</span>
+								)}
 						</div>
-						{
-							haveDid &&
-							<div className=''>
+						{haveDid && (
+							<div className="">
 								<div className="mb-1 block">
 									<Label htmlFor="did" value="DID" />
 									<span className="text-red-500 text-xs">*</span>
@@ -383,7 +982,7 @@ const DedicatedAgentForm = ({ seeds, loading, submitDedicatedWallet }: IDedicate
 										</span>
 									)}
 							</div>
-						}
+						)}
 						<NetworkInput formikHandlers={formikHandlers} />
 
 						<div>
@@ -397,11 +996,12 @@ const DedicatedAgentForm = ({ seeds, loading, submitDedicatedWallet }: IDedicate
 								className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 								type="text"
 							/>
-							{formikHandlers?.errors?.walletName && formikHandlers?.touched?.walletName && (
-								<span className="text-red-500 text-xs">
-									{formikHandlers?.errors?.walletName}
-								</span>
-							)}
+							{formikHandlers?.errors?.walletName &&
+								formikHandlers?.touched?.walletName && (
+									<span className="text-red-500 text-xs">
+										{formikHandlers?.errors?.walletName}
+									</span>
+								)}
 						</div>
 						<div>
 							<div className="mb-2 block">
@@ -432,12 +1032,12 @@ const DedicatedAgentForm = ({ seeds, loading, submitDedicatedWallet }: IDedicate
 				)}
 			</Formik>
 		</>
-	)
+	);
 };
 
 const WalletSpinup = (props: {
 	setWalletSpinupStatus: (flag: boolean) => void;
-	orgName: string
+	orgName: string;
 }) => {
 	const [agentType, setAgentType] = useState<string>(AgentType.SHARED);
 	const [loading, setLoading] = useState<boolean>(false);
@@ -454,7 +1054,7 @@ const WalletSpinup = (props: {
 	}, []);
 
 	const copyTextVal = (event: React.MouseEvent<HTMLButtonElement>) => {
-		event.preventDefault()
+		event.preventDefault();
 
 		setIsCopied(true);
 
@@ -465,8 +1065,7 @@ const WalletSpinup = (props: {
 		setTimeout(() => {
 			setIsCopied(false);
 		}, 1500);
-
-	}
+	};
 
 	const onRadioSelect = (type: string) => {
 		setAgentType(type);
@@ -478,11 +1077,9 @@ const WalletSpinup = (props: {
 			seed: values.seed || seeds,
 			walletPassword: passwordEncryption(values.password),
 			did: values.did,
-			ledgerId: [
-				(values.network.toString())
-			],
-			clientSocketId: SOCKET.id
-		}
+			ledgerId: [values.network.toString()],
+			clientSocketId: SOCKET.id,
+		};
 
 		setLoading(true);
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -506,9 +1103,7 @@ const WalletSpinup = (props: {
 		const payload = {
 			label: values.label,
 			seed: values.seed || seeds,
-			ledgerId: [
-				(values.network.toString())
-			],
+			ledgerId: [values.network.toString()],
 			did: values.did,
 			clientSocketId: SOCKET.id,
 		};
@@ -564,7 +1159,7 @@ const WalletSpinup = (props: {
 			setWalletSpinStep(6);
 			props.setWalletSpinupStatus(true);
 		}, 3000);
-		window.location.href = "/organizations/dashboard"
+		window.location.href = '/organizations/dashboard';
 		console.log(`invitation-url-creation-success`, JSON.stringify(data));
 	});
 
@@ -576,16 +1171,23 @@ const WalletSpinup = (props: {
 		console.log(`error-in-wallet-creation-process`, JSON.stringify(data));
 	});
 
-	const generateAlphaNumeric = props?.orgName ? props?.orgName?.split(" ").reduce((s, c) => (s.charAt(0).toUpperCase() + s.slice(1)) + (c.charAt(0).toUpperCase() + c.slice(1))
-	) : ""
+	const generateAlphaNumeric = props?.orgName
+		? props?.orgName
+				?.split(' ')
+				.reduce(
+					(s, c) =>
+						s.charAt(0).toUpperCase() +
+						s.slice(1) +
+						(c.charAt(0).toUpperCase() + c.slice(1)),
+				)
+		: '';
 
-	const orgName = generateAlphaNumeric.slice(0, 19) + "Wallet"
+	const orgName = generateAlphaNumeric.slice(0, 19) + 'Wallet';
 
 	return (
 		<div className="mt-4 flex-col p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 			<div className="items-center sm:flex xl:block 2xl:flex sm:space-x-4 xl:space-x-0 2xl:space-x-4">
 				<div>
-
 					{(success || failure) && (
 						<AlertComponent
 							message={success ?? failure}
@@ -604,7 +1206,7 @@ const WalletSpinup = (props: {
 			</div>
 
 			<div className="grid w-full grid-cols-1 md:grid-cols-2 gap-4 mt-0 mb-4 xl:grid-cols-3 2xl:grid-cols-3">
-				<div className='col-span-1'>
+				<div className="col-span-1">
 					{!agentSpinupCall && !loading && (
 						<div className="mt-4 flex max-w-lg flex-col gap-4">
 							<ul className="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex dark:bg-gray-700 dark:border-gray-600 dark:text-white">
@@ -647,9 +1249,20 @@ const WalletSpinup = (props: {
 
 					{!agentSpinupCall ? (
 						agentType === AgentType.SHARED ? (
-							<SharedAgentForm seeds={seeds} isCopied={isCopied} copyTextVal={copyTextVal} orgName={orgName} loading={loading} submitSharedWallet={submitSharedWallet} />
+							<SharedAgentForm
+								seeds={seeds}
+								isCopied={isCopied}
+								copyTextVal={copyTextVal}
+								orgName={orgName}
+								loading={loading}
+								submitSharedWallet={submitSharedWallet}
+							/>
 						) : (
-							<DedicatedAgentForm seeds={seeds} loading={loading} submitDedicatedWallet={submitDedicatedWallet} />
+							<DedicatedAgentForm
+								seeds={seeds}
+								loading={loading}
+								submitDedicatedWallet={submitDedicatedWallet}
+							/>
 						)
 					) : (
 						<WalletSteps
@@ -658,7 +1271,7 @@ const WalletSpinup = (props: {
 						/>
 					)}
 				</div>
-				<div className='col-span-2'>
+				<div className="col-span-2">
 					{agentType === AgentType.DEDICATED ? (
 						<DedicatedIllustrate />
 					) : (
