@@ -20,9 +20,13 @@ import DashboardCard from '../../commonComponents/DashboardCard';
 import { AlertComponent } from '../AlertComponent';
 import React from 'react';
 
-const Dashboard = () => {
-	const [orgData, setOrgData] = useState<Organisation | null>(null);
-	const [walletStatus, setWalletStatus] = useState<boolean>(false);
+interface IProps {
+	orgDataSSR: Organisation
+}
+
+const Dashboard = ({orgDataSSR}: IProps) => {
+	const [orgData, setOrgData] = useState<Organisation | null>(orgDataSSR);
+	const [walletStatus, setWalletStatus] = useState<boolean>(orgDataSSR?.org_agents?.length > 0);
 	const [orgDashboard, setOrgDashboard] = useState<OrgDashboard | null>(null);
 	const [success, setSuccess] = useState<string | null>(null);
 	const [failure, setFailure] = useState<string | null>(null);
@@ -232,7 +236,7 @@ const Dashboard = () => {
 						</span>
 					</Alert>
 				)}
-				{loading ? (
+				{loading && !(orgData?.id) ? (
 					<div className="flex items-center justify-center m-4">
 						<CustomSpinner />
 					</div>

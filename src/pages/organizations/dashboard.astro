@@ -3,14 +3,30 @@ import LayoutSidebar from '../../app/LayoutSidebar.astro';
 import Dashboard from '../../components/organization/Dashboard';
 import { checkUserSession } from '../../utils/check-session';
 import { pathRoutes } from '../../config/pathRoutes';
+import API from '../../config/ssrApiConfig';
+import { apiRoutes } from '../../config/apiRoutes';
+import { getFromCookies } from '../../api/Auth';
 
 const response = await checkUserSession({cookies: Astro.cookies, currentPath: Astro.url.pathname});
 const route: string = pathRoutes.auth.sinIn
 if (!response.authorized) {
 	return Astro.redirect(response.redirect);
 }
+
+let orgId = getFromCookies(Astro.cookies, 'orgId');
+const token = getFromCookies(Astro.cookies, 'session');
+
+let selectedOrg;
+
+if (orgId) {
+	selectedOrg = await API({
+		url: `${apiRoutes.organizations.root}/${orgId}`,
+		token,
+		method: 'GET',
+	});
+}
 ---
 
 <LayoutSidebar notFoundPage={!response.permitted}>
-	<Dashboard client:visible/>
+	<Dashboard orgDataSSR={selectedOrg} client:visible/>
 </LayoutSidebar>
