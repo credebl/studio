@@ -262,7 +262,7 @@ export const getFromLocalStorage = async (key: string) =>{
     return convertedValue
 }
 
-export const setToCookies = (cookies: AstroCookies, key: string, value: any, option: {[key: string]: any }) =>{
+export const setToCookies = (cookies: AstroCookies, key: string, value: any, option?: {[key: string]: any }) =>{
     // If passed value is object then checked empty object
 	if (typeof value === 'object' && Boolean(Object.keys(value).length <= 0)) {
 		return;

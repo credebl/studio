@@ -178,6 +178,19 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
 
     updateProfile(userData);
     await setToLocalStorage(storageKeys.USER_PROFILE, updatedUserData);
+
+    const updatedUserCookie = {
+      ...updatedUserData,
+      userOrgRoles: []
+    }
+    // to set userProfile in cookies for SSR
+			await fetch('/api/auth/signin', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ userProfile: updatedUserCookie }),
+			});
     window.location.reload();
     setLoading(false)
   }

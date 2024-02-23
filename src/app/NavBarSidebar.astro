@@ -17,7 +17,7 @@ import API from '../config/ssrApiConfig';
 const { hideOrgAgent } = Astro.props;
 
 let orgData = [];
-const orgId = getFromCookies(Astro.cookies, 'orgId');
+let orgId = getFromCookies(Astro.cookies, 'orgId');
 
 const token = getFromCookies(Astro.cookies, 'session');
 const orgDataResponse = await API({
@@ -29,18 +29,22 @@ const orgDataResponse = await API({
 let selectedOrg;
 let agentHealth;
 
-if (orgId) {
-	selectedOrg = await API({
-		url: `${apiRoutes.organizations.root}/${orgId}`,
-		token,
-		method: 'GET',
-	});
-	agentHealth = await API({
-		url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.checkAgentHealth}`,
-		token,
-		method: 'GET',
-	});
+if (!orgId) {
+	const [firstOrg] = orgDataResponse?.organizations;
+	orgId = firstOrg.id;
+	selectedOrg = firstOrg;
 }
+
+selectedOrg = await API({
+	url: `${apiRoutes.organizations.root}/${orgId}`,
+	token,
+	method: 'GET',
+});
+agentHealth = await API({
+	url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.checkAgentHealth}`,
+	token,
+	method: 'GET',
+});
 
 const role = getFromCookies(Astro.cookies, 'role');
 
@@ -117,7 +121,11 @@ orgData = orgDataResponse?.organizations;
 						!hideOrgAgent && (
 							<>
 								<div class="hidden sm:block mr-5">
-									<AgentHealth agent={agentHealth} orgId={orgId} client:visible />
+									<AgentHealth
+										agent={agentHealth || ''}
+										orgId={orgId || ''}
+										client:visible
+									/>
 								</div>
 								<div class="hidden sm:block mr-5">
 									<OrgDropDwon

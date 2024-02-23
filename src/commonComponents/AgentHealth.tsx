@@ -30,8 +30,8 @@ const AgentHealth = ({ agent, orgId }: IProps) => {
     const getAgentHealthDetails = async () => {
         try {
             const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
-            setCheckOrgExist(organizationId)
-            if (Number(organizationId) !== 0) {
+            if (organizationId) {
+                setCheckOrgExist(organizationId)
                 const agentData = await getAgentHealth(organizationId);
                 const { data } = agentData as AxiosResponse;
                 if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -42,6 +42,7 @@ const AgentHealth = ({ agent, orgId }: IProps) => {
                     setAgentErrMessage(agentData as string);
                 }
             } else {
+                setLoader(false);
                 console.error("Organization not created yet")
             }
 
@@ -52,7 +53,7 @@ const AgentHealth = ({ agent, orgId }: IProps) => {
     };
     return (
         <div className=''>
-            {checkOrgExist !== "" && (
+            {checkOrgExist && (
                 <>
                     {loader && !(agentHealthDetails?.isInitialized) ? (
                         <div>
@@ -66,7 +67,7 @@ const AgentHealth = ({ agent, orgId }: IProps) => {
                             </div>
                         ) : (
                             <span title={agentErrMessage} className="inline-flex items-center bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">
-                                <span className="w-2 h-2 mr-1 bg-red-500 rounded-full" />
+                                <div className="w-2 h-2 mr-1 bg-red-500 rounded-full" />
                                 Wallet Agent is not running
                             </span>
                         )

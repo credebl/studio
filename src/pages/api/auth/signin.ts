@@ -18,7 +18,14 @@ export const post: APIRoute = async ({ request, cookies, redirect }) => {
             })
             break;
         case Boolean(sessionCookie?.orgId):
-            setToCookies(cookies, "orgId", sessionCookie?.orgId as string, {
+            setToCookies(cookies, 'orgId', sessionCookie?.orgId as string, {
+                path: "/"
+            })
+            break;
+        case Boolean(sessionCookie?.userProfile):
+            const data = sessionCookie?.userProfile
+            console.log(8773287737, data)
+            setToCookies(cookies, "userProfile", sessionCookie?.userProfile, {
                 path: "/"
             })
             break;

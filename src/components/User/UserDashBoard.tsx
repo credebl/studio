@@ -27,6 +27,7 @@ import {
 	OrganizationRoles,
 } from '../../common/enums';
 import CustomSpinner from '../CustomSpinner';
+import type { IEcosystem } from '../Ecosystem/interfaces';
 
 const initialPageState = {
 	pageNumber: 1,
@@ -51,20 +52,35 @@ interface ICredDef {
 	id: string;
 }
 
-const UserDashBoard = () => {
+interface IProps {
+	orgListDataSSR: Organisation[];
+	orgCountSSR: number;
+	walletDataSSR: any;
+	schemaListSSR: ISchema[];
+	schemaCountSSR: number;
+	ecosystemListSSR: IEcosystem[];
+	ecosystemCountSSR: number;
+	credDefListSSR: ICredDef[];
+	credDefCountSSR: number;
+	activitySSR: UserActivity[];
+}
+
+const UserDashBoard = ({ orgListDataSSR, orgCountSSR, walletDataSSR, schemaListSSR, schemaCountSSR, ecosystemListSSR, ecosystemCountSSR, credDefListSSR, credDefCountSSR, activitySSR }: IProps) => {
+	const orgData = orgListDataSSR?.slice(0, 3);
+	const schemaData = schemaListSSR?.slice(0, 3);
+	const ecosystemData = ecosystemListSSR?.slice(0, 3);
+	const credDefData = credDefListSSR?.slice(0, 3);
 	const [message, setMessage] = useState<string | null>(null);
 	const [ecoMessage, setEcoMessage] = useState<string | null>(null);
 	const [viewButton, setViewButton] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const [organizationsList, setOrganizationList] =
-		useState<Array<Organisation> | null>(null);
-	const [activityList, setActivityList] = useState<Array<UserActivity> | null>(
-		null,
-	);
-	const [orgCount, setOrgCount] = useState(0);
-	const [schemaCount, setSchemaCount] = useState(0);
-	const [schemaList, setSchemaList] = useState<Array<ISchema> | null>(null);
+		useState<Array<Organisation> | null>(orgData);
+	const [activityList, setActivityList] = useState<Array<UserActivity> | null>(activitySSR);
+	const [orgCount, setOrgCount] = useState(orgCountSSR);
+	const [schemaCount, setSchemaCount] = useState(schemaCountSSR);
+	const [schemaList, setSchemaList] = useState<Array<ISchema> | null>(schemaData);
 	const [schemaListAPIParameter, setSchemaListAPIParameter] = useState({
 		itemPerPage: 9,
 		page: 1,
@@ -73,11 +89,11 @@ const UserDashBoard = () => {
 		sortingOrder: 'desc',
 		allSearch: '',
 	});
-	const [ecoCount, setEcoCount] = useState(0);
-	const [ecosystemList, setEcosystemList] = useState([]);
-	const [credDefList, setCredDefList] = useState([]);
-	const [credDefCount, setCredDefCount] = useState(0);
-	const [walletData, setWalletData] = useState([]);
+	const [ecoCount, setEcoCount] = useState(ecosystemCountSSR);
+	const [ecosystemList, setEcosystemList] = useState(ecosystemData);
+	const [credDefList, setCredDefList] = useState(credDefData);
+	const [credDefCount, setCredDefCount] = useState(credDefCountSSR);
+	const [walletData, setWalletData] = useState(walletDataSSR);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [ecoLoading, setEcoLoading] = useState(true);
 	const [credDefLoading, setCredDefLoading] = useState(true);
@@ -206,6 +222,7 @@ const UserDashBoard = () => {
 			);
 
 			const { data } = schemaList as AxiosResponse;
+			setSchemaLoading(false);
 
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 				setSchemaCount(data?.data?.totalItems);
@@ -234,8 +251,8 @@ const UserDashBoard = () => {
 		if (!organizationId && organizationsList) {
 			organizationId = organizationsList[0].id;
 		}
+		setEcoLoading(true);
 		if (organizationId) {
-			setEcoLoading(true);
 			const response = await getEcosystems(
 				organizationId,
 				currentPage.pageNumber,
@@ -243,6 +260,7 @@ const UserDashBoard = () => {
 				'',
 			);
 			const { data } = response as AxiosResponse;
+			setEcoLoading(false);
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 				setEcoCount(data?.data?.totalCount);
 				const ecosystemData = data?.data?.ecosystemDetails.filter(
@@ -272,6 +290,7 @@ const UserDashBoard = () => {
 				setCredDefLoading(true);
 				const response = await getAllCredDef();
 				const { data } = response as AxiosResponse;
+				setCredDefLoading(false);
 
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 					setCredDefCount(data.data.totalItems);
@@ -327,7 +346,7 @@ const UserDashBoard = () => {
 		if (!orgLoading) {
 			setSchemaLoading(false);
 			setCredDefLoading(false);
-			setEcoLoading(false);
+			// setEcoLoading(false);
 		}
 	}, [orgLoading]);
 
@@ -348,18 +367,16 @@ const UserDashBoard = () => {
 	const goToSchemaCredDef = async (schemaId: string) => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		await setToLocalStorage(storageKeys.ORG_ID, orgId);
-		const url = `${
-			pathRoutes.organizations.viewSchema
-		}?schemaId=${encodeURIComponent(schemaId)}`;
+		const url = `${pathRoutes.organizations.viewSchema
+			}?schemaId=${encodeURIComponent(schemaId)}`;
 		window.location.href = url;
 	};
 
 	const goToCredDef = async (credentialDefinitionId: string) => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		await setToLocalStorage(storageKeys.ORG_ID, orgId);
-		const url = `${
-			pathRoutes.organizations.viewSchema
-		}?schemaId=${encodeURIComponent(credentialDefinitionId)}`;
+		const url = `${pathRoutes.organizations.viewSchema
+			}?schemaId=${encodeURIComponent(credentialDefinitionId)}`;
 		window.location.href = url;
 	};
 
@@ -533,52 +550,46 @@ const UserDashBoard = () => {
 					className="p-8 grid w-full grid-cols-1 sm:grid-cols-3 gap-4 mt-0 mb-4 rounded-md border border-gray-200 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:bg-[url('/images/bg-darkwallet.png')] bg-[url('/images/bg-lightwallet.png')] bg-center bg-no-repeat p-0 bg-auto"
 					style={{ minHeight: '130px' }}
 				>
-					{walletLoading ? (
-						<></>
-					) : (
-						<>
-							<div className="sm:col-span-2 w-full flex justify-between">
-								<div className="flex text-start items-center">
-									<div>
-										<p className="text-xl font-medium dark:text-white">
-											Wallet lets you create schemas and credential definitions
-										</p>
-										<span className="flex justify-start items-start text-sm font-normal text-gray-500 dark:text-gray-400">
-											Please create wallet for your organization which would
-											help you to issue and verify credentials for your users.
-										</span>
-									</div>
-								</div>
+					<div className="sm:col-span-2 w-full flex justify-between">
+						<div className="flex text-start items-center">
+							<div>
+								<p className="text-xl font-medium dark:text-white">
+									Wallet lets you create schemas and credential definitions
+								</p>
+								<span className="flex justify-start items-start text-sm font-normal text-gray-500 dark:text-gray-400">
+									Please create wallet for your organization which would
+									help you to issue and verify credentials for your users.
+								</span>
 							</div>
-							<div className="flex text-center justify-start sm:justify-end items-center mr-8">
-								<Button
-									className="min-w-[180px] sm:col-span-1 group flex h-min text-center justify-center items-center p-0.5 focus:z-10 focus:outline-none border border-transparent enabled:hover:bg-cyan-800 dark:enabled:hover:bg-cyan-700 w-fit sm:px-4 font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-md hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-									onClick={() => goToOrgDashboard('', [])}
-								>
-									Create wallet
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										width="24"
-										height="24"
-										viewBox="0 0 24 24"
-										fill="none"
-									>
-										<g clip-path="url(#clip0_9624_8899)">
-											<path
-												d="M9.99984 6L8.58984 7.41L13.1698 12L8.58984 16.59L9.99984 18L15.9998 12L9.99984 6Z"
-												fill="white"
-											/>
-										</g>
-										<defs>
-											<clipPath id="clip0_9624_8899">
-												<rect width="24" height="24" fill="white" />
-											</clipPath>
-										</defs>
-									</svg>
-								</Button>
-							</div>
-						</>
-					)}
+						</div>
+					</div>
+					<div className="flex text-center justify-start sm:justify-end items-center mr-8">
+						<Button
+							className="min-w-[180px] sm:col-span-1 group flex h-min text-center justify-center items-center p-0.5 focus:z-10 focus:outline-none border border-transparent enabled:hover:bg-cyan-800 dark:enabled:hover:bg-cyan-700 w-fit sm:px-4 font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-md hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+							onClick={() => goToOrgDashboard('', [])}
+						>
+							Create wallet
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="24"
+								height="24"
+								viewBox="0 0 24 24"
+								fill="none"
+							>
+								<g clip-path="url(#clip0_9624_8899)">
+									<path
+										d="M9.99984 6L8.58984 7.41L13.1698 12L8.58984 16.59L9.99984 18L15.9998 12L9.99984 6Z"
+										fill="white"
+									/>
+								</g>
+								<defs>
+									<clipPath id="clip0_9624_8899">
+										<rect width="24" height="24" fill="white" />
+									</clipPath>
+								</defs>
+							</svg>
+						</Button>
+					</div>
 				</div>
 			)}
 			<div
@@ -625,7 +636,11 @@ const UserDashBoard = () => {
 							</div>
 						</div>
 						<hr />
-						{!orgLoading ? (
+						{orgLoading && !(organizationsList && organizationsList?.length > 0) ? (
+							<div className="flex items-center justify-center h-full dark:text-gray-400 text-gray-500">
+								<CustomSpinner />
+							</div>
+						) : (
 							<>
 								{organizationsList && organizationsList?.length > 0 ? (
 									<>
@@ -635,9 +650,10 @@ const UserDashBoard = () => {
 											);
 											org.roles = roles;
 											return (
-												<button
+												<div
 													className="flex justify-between w-full mt-2 items-center"
 													key={org?.id}
+													style={{display: 'flex'}}
 												>
 													<button
 														className="sm:w-100/11rem w-full"
@@ -686,9 +702,9 @@ const UserDashBoard = () => {
 																			</svg>
 																		</span>
 																	) : org.roles.includes(
-																			OrganizationRoles.organizationVerifier ??
-																				OrganizationRoles.organizationIssuer,
-																	  ) ? (
+																		OrganizationRoles.organizationVerifier ??
+																		OrganizationRoles.organizationIssuer,
+																	) ? (
 																		<span
 																			title={org.roles.slice(
 																				0,
@@ -709,8 +725,8 @@ const UserDashBoard = () => {
 																			</svg>
 																		</span>
 																	) : org.roles.includes(
-																			OrganizationRoles.organizationAdmin,
-																	  ) ? (
+																		OrganizationRoles.organizationAdmin,
+																	) ? (
 																		<span
 																			title={
 																				OrganizationRoles.organizationAdmin
@@ -770,23 +786,22 @@ const UserDashBoard = () => {
 																onClick={() => {
 																	goToOrgSchema(org, org.id, org.roles);
 																}}
-																className={`p-1 rounded-md ${
-																	organizationsList[index].userOrgRoles[0]
-																		.orgRole.name !==
-																		OrganizationRoles.organizationOwner ||
+																className={`p-1 rounded-md ${organizationsList[index].userOrgRoles[0]
+																	.orgRole.name !==
+																	OrganizationRoles.organizationOwner ||
 																	organizationsList[index].userOrgRoles[0]
 																		.orgRole.name ===
-																		OrganizationRoles.organizationAdmin
-																		? 'cursor-not-allowed opacity-50'
-																		: ''
-																}`}
+																	OrganizationRoles.organizationAdmin
+																	? 'cursor-not-allowed opacity-50'
+																	: ''
+																	}`}
 																disabled={
 																	organizationsList[index].userOrgRoles[0]
 																		.orgRole.name !==
-																		OrganizationRoles.organizationOwner ||
+																	OrganizationRoles.organizationOwner ||
 																	organizationsList[index].userOrgRoles[0]
 																		.orgRole.name ===
-																		OrganizationRoles.organizationAdmin
+																	OrganizationRoles.organizationAdmin
 																}
 															>
 																<svg
@@ -909,7 +924,7 @@ const UserDashBoard = () => {
 															</button>
 														</Tooltip>
 													</div>
-												</button>
+												</div>
 											);
 										})}
 										{organizationsList && organizationsList?.length > 0 && (
@@ -929,10 +944,6 @@ const UserDashBoard = () => {
 									</div>
 								)}
 							</>
-						) : (
-							<div className="flex items-center justify-center h-full dark:text-gray-400 text-gray-500">
-								<CustomSpinner />
-							</div>
 						)}
 					</div>
 				</div>
@@ -976,15 +987,18 @@ const UserDashBoard = () => {
 							</div>
 						</div>
 						<hr />
-
-						{!schemaLoading ? (
+						{(schemaLoading && (schemaList && schemaList?.length === 0)) ? (
+							<div className="flex items-center justify-center h-full dark:text-gray-400 text-gray-500">
+								<CustomSpinner />
+							</div>
+						) : (
 							<>
 								{schemaList && schemaList?.length > 0 ? (
 									<div>
 										{' '}
 										{schemaList?.map((schema) => {
 											return (
-												<button
+												<div
 													className="flex justify-between w-full mt-4 items-center"
 													key={schema?.id}
 												>
@@ -994,19 +1008,16 @@ const UserDashBoard = () => {
 															goToSchemaCredDef(schema?.schemaLedgerId)
 														}
 													>
-														<a
-															href="#"
-															className="flex items-center space-x-2 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-md"
-														>
+														<div className="flex items-center space-x-2 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-md">
 															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white text-primary-700 text-start">
 																{schema?.name}
 															</span>
 															<span className="items-center font-normal text-md justify-start dark:text-white text-gray-600 truncate">
 																{schema?.version}
 															</span>
-														</a>
+														</div>
 													</button>
-												</button>
+												</div>
 											);
 										})}
 										{schemaList && schemaList?.length > 0 && (
@@ -1024,10 +1035,6 @@ const UserDashBoard = () => {
 									</div>
 								)}
 							</>
-						) : (
-							<div className="flex items-center justify-center h-full dark:text-gray-400 text-gray-500">
-								<CustomSpinner />
-							</div>
 						)}
 					</div>
 				</div>
@@ -1076,24 +1083,26 @@ const UserDashBoard = () => {
 							</div>
 						</div>
 						<hr />
-
-						{!ecoLoading ? (
+						{(ecoLoading && !(ecosystemList && ecosystemList.length > 0)) ? (
+							<div className="flex items-center justify-center h-full dark:text-gray-400 text-gray-500">
+								<CustomSpinner />
+							</div>
+						) : (
 							<>
 								{ecosystemList && ecosystemList.length > 0 ? (
 									<>
 										{ecosystemList?.map((ecosystem: any) => {
 											return (
-												<button
+												<div
 													className="flex justify-between w-full mt-2 items-center"
 													key={ecosystem?.id}
 												>
 													<button
-														className={`${
-															ecosystem?.ecosystemOrgs[0]?.ecosystemRole
-																?.name === EcosystemRoles.ecosystemLead
-																? 'sm:w-100/3rem w-full'
-																: 'w-full'
-														}`}
+														className={`${ecosystem?.ecosystemOrgs[0]?.ecosystemRole
+															?.name === EcosystemRoles.ecosystemLead
+															? 'sm:w-100/3rem w-full'
+															: 'w-full'
+															}`}
 														onClick={() => goToEcoDashboard(ecosystem?.id)}
 													>
 														<a
@@ -1172,29 +1181,29 @@ const UserDashBoard = () => {
 														>
 															{ecosystem?.ecosystemOrgs[0]?.ecosystemRole
 																?.name === EcosystemRoles.ecosystemLead && (
-																<button
-																	onClick={() => {
-																		navigateToInvitation();
-																	}}
-																	className="rounded-md flex "
-																>
-																	<svg
-																		xmlns="http://www.w3.org/2000/svg"
-																		width="30"
-																		height="24"
-																		viewBox="0 0 42 24"
-																		fill="none"
+																	<button
+																		onClick={() => {
+																			navigateToInvitation();
+																		}}
+																		className="rounded-md flex "
 																	>
-																		<path
-																			d="M37.8462 0H9.23077C7.2 0 5.53846 1.66154 5.53846 3.69231V5.07692C5.53846 5.58462 5.95385 6 6.46154 6C6.96923 6 7.38462 5.58462 7.38462 5.07692V3.69231C7.38462 3.50769 7.43077 3.32308 7.47692 3.13846L17.8154 12L7.47692 20.8615C7.43077 20.6769 7.38462 20.4923 7.38462 20.3077V18.9231C7.38462 18.4154 6.96923 18 6.46154 18C5.95385 18 5.53846 18.4154 5.53846 18.9231V20.3077C5.53846 22.3385 7.2 24 9.23077 24H37.8462C39.8769 24 41.5385 22.3385 41.5385 20.3077V3.69231C41.5385 1.66154 39.8769 0 37.8462 0ZM8.86154 1.89231C8.95385 1.84615 9.09231 1.84615 9.23077 1.84615H37.8462C37.9846 1.84615 38.1231 1.84615 38.2154 1.89231L24.1385 13.9385C23.7692 14.2154 23.3077 14.2154 22.9385 13.9385L8.86154 1.89231ZM37.8462 22.1538H9.23077C9.09231 22.1538 8.95385 22.1538 8.86154 22.1077L19.2462 13.2L21.7385 15.3692C22.2462 15.8308 22.8923 16.0615 23.5385 16.0615C24.1846 16.0615 24.8308 15.8308 25.3385 15.3692L27.8308 13.2L38.2154 22.1077C38.1231 22.1538 37.9846 22.1538 37.8462 22.1538ZM39.6923 20.3077C39.6923 20.4923 39.6462 20.6769 39.6 20.8615L29.2615 12L39.6 3.13846C39.6462 3.32308 39.6923 3.50769 39.6923 3.69231V20.3077ZM2.76923 9.69231C2.76923 9.18462 3.18462 8.76923 3.69231 8.76923H9.23077C9.73846 8.76923 10.1538 9.18462 10.1538 9.69231C10.1538 10.2 9.73846 10.6154 9.23077 10.6154H3.69231C3.18462 10.6154 2.76923 10.2 2.76923 9.69231ZM9.23077 15.2308H0.923077C0.415385 15.2308 0 14.8154 0 14.3077C0 13.8 0.415385 13.3846 0.923077 13.3846H9.23077C9.73846 13.3846 10.1538 13.8 10.1538 14.3077C10.1538 14.8154 9.73846 15.2308 9.23077 15.2308Z"
-																			fill="#6B7280"
-																		/>
-																	</svg>
-																</button>
-															)}
+																		<svg
+																			xmlns="http://www.w3.org/2000/svg"
+																			width="30"
+																			height="24"
+																			viewBox="0 0 42 24"
+																			fill="none"
+																		>
+																			<path
+																				d="M37.8462 0H9.23077C7.2 0 5.53846 1.66154 5.53846 3.69231V5.07692C5.53846 5.58462 5.95385 6 6.46154 6C6.96923 6 7.38462 5.58462 7.38462 5.07692V3.69231C7.38462 3.50769 7.43077 3.32308 7.47692 3.13846L17.8154 12L7.47692 20.8615C7.43077 20.6769 7.38462 20.4923 7.38462 20.3077V18.9231C7.38462 18.4154 6.96923 18 6.46154 18C5.95385 18 5.53846 18.4154 5.53846 18.9231V20.3077C5.53846 22.3385 7.2 24 9.23077 24H37.8462C39.8769 24 41.5385 22.3385 41.5385 20.3077V3.69231C41.5385 1.66154 39.8769 0 37.8462 0ZM8.86154 1.89231C8.95385 1.84615 9.09231 1.84615 9.23077 1.84615H37.8462C37.9846 1.84615 38.1231 1.84615 38.2154 1.89231L24.1385 13.9385C23.7692 14.2154 23.3077 14.2154 22.9385 13.9385L8.86154 1.89231ZM37.8462 22.1538H9.23077C9.09231 22.1538 8.95385 22.1538 8.86154 22.1077L19.2462 13.2L21.7385 15.3692C22.2462 15.8308 22.8923 16.0615 23.5385 16.0615C24.1846 16.0615 24.8308 15.8308 25.3385 15.3692L27.8308 13.2L38.2154 22.1077C38.1231 22.1538 37.9846 22.1538 37.8462 22.1538ZM39.6923 20.3077C39.6923 20.4923 39.6462 20.6769 39.6 20.8615L29.2615 12L39.6 3.13846C39.6462 3.32308 39.6923 3.50769 39.6923 3.69231V20.3077ZM2.76923 9.69231C2.76923 9.18462 3.18462 8.76923 3.69231 8.76923H9.23077C9.73846 8.76923 10.1538 9.18462 10.1538 9.69231C10.1538 10.2 9.73846 10.6154 9.23077 10.6154H3.69231C3.18462 10.6154 2.76923 10.2 2.76923 9.69231ZM9.23077 15.2308H0.923077C0.415385 15.2308 0 14.8154 0 14.3077C0 13.8 0.415385 13.3846 0.923077 13.3846H9.23077C9.73846 13.3846 10.1538 13.8 10.1538 14.3077C10.1538 14.8154 9.73846 15.2308 9.23077 15.2308Z"
+																				fill="#6B7280"
+																			/>
+																		</svg>
+																	</button>
+																)}
 														</Tooltip>
 													</div>
-												</button>
+												</div>
 											);
 										})}
 
@@ -1215,10 +1224,6 @@ const UserDashBoard = () => {
 									</div>
 								)}
 							</>
-						) : (
-							<div className="flex items-center justify-center h-full dark:text-gray-400 text-gray-500">
-								<CustomSpinner />
-							</div>
 						)}
 					</div>
 				</div>
@@ -1263,7 +1268,11 @@ const UserDashBoard = () => {
 						</div>
 						<hr />
 
-						{!credDefLoading ? (
+						{(credDefLoading && !(credDefList && credDefList.length > 0)) ? (
+							<div className="flex items-center justify-center h-full dark:text-gray-400 text-gray-500">
+								<CustomSpinner />
+							</div>
+						) : (
 							<>
 								{credDefList && credDefList.length > 0 ? (
 									<>
@@ -1300,10 +1309,6 @@ const UserDashBoard = () => {
 									</div>
 								)}{' '}
 							</>
-						) : (
-							<div className="flex items-center justify-center h-full dark:text-gray-400 text-gray-500">
-								<CustomSpinner />
-							</div>
 						)}
 					</div>
 				</div>
@@ -1317,7 +1322,11 @@ const UserDashBoard = () => {
 						<hr />
 					</div>
 
-					{!loading ? (
+					{(loading && !(activityList && activityList?.length > 0)) ? (
+						<div className="flex items-center justify-center h-full dark:text-gray-400 text-gray-500">
+							<CustomSpinner />
+						</div>
+					) : (
 						<>
 							{activityList && activityList?.length > 0 ? (
 								<ol className="relative border-l pl-8 border-gray-200 dark:border-gray-700">
@@ -1344,10 +1353,6 @@ const UserDashBoard = () => {
 								</div>
 							)}
 						</>
-					) : (
-						<div className="flex items-center justify-center h-full dark:text-gray-400 text-gray-500">
-							<CustomSpinner />
-						</div>
 					)}
 				</div>
 			</div>

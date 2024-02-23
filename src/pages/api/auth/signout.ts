@@ -8,5 +8,11 @@ export const get: APIRoute = async ({ redirect, cookies }) => {
   cookies.delete("role", {
     path: "/",
   });
+  cookies.delete("userProfile", {
+    path: "/",
+  });
+  cookies.delete("orgId", {
+    path: "/",
+  });
   return redirect(pathRoutes.auth.sinIn);
 };

@@ -58,6 +58,15 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 			);
 			await setToLocalStorage(storageKeys.USER_PROFILE, data?.data);
 			await setToLocalStorage(storageKeys.USER_EMAIL, data?.data?.email);
+			
+			// to set userProfile in cookies for SSR
+			await fetch('/api/auth/signin', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ userProfile: {...data?.data, userOrgRoles: role} }),
+			});
 			return {
 				role: role?.orgRole ?? '',
 			};

@@ -1,7 +1,10 @@
 ---
+import { getFromCookies } from '../api/Auth';
 import LayoutSidebar from '../app/LayoutSidebar.astro';
 import UserDashBoard from '../components/User/UserDashBoard';
+import { apiRoutes } from '../config/apiRoutes';
 import { pathRoutes } from '../config/pathRoutes';
+import API from '../config/ssrApiConfig';
 import { checkUserSession } from '../utils/check-session';
 
 const response = await checkUserSession({cookies: Astro.cookies, currentPath: Astro.url.pathname});
@@ -10,8 +13,72 @@ if (!response.authorized) {
 	return Astro.redirect(response.redirect);
 }
 
+const activityLimit = 5;
+let orgData = [];
+const orgId = getFromCookies(Astro.cookies, 'orgId');
+
+const token = getFromCookies(Astro.cookies, 'session');
+const orgDataResponse = await API({
+	url: `${apiRoutes.organizations.root}`,
+	token,
+	method: 'GET',
+});
+
+let selectedOrg;
+let agentHealth;
+let schemaList;
+let ecosystemList;
+let credDefList;
+let activity;
+
+if (orgId) {
+	// org details by id
+	selectedOrg = await API({
+		url: `${apiRoutes.organizations.root}/${orgId}`,
+		token,
+		method: 'GET',
+	});
+
+	// Agent health
+	agentHealth = await API({
+		url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.checkAgentHealth}`,
+		token,
+		method: 'GET',
+	});
+
+	// schema details
+	schemaList = await API({
+		url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.getAll}`,
+		token,
+		method: 'GET',
+	});
+
+	// ecosystem details
+	ecosystemList = await API({
+		url: `${apiRoutes.Ecosystem.root}/${orgId}`,
+		token,
+		method: 'GET',
+	});
+
+	// cred-def details
+	credDefList = await API({
+		url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.createCredentialDefinition}`,
+		token,
+		method: 'GET',
+	});
+
+	// Activity details
+	activity = await API({
+		url: `${apiRoutes.users.recentActivity}?limit=${activityLimit}`,
+		token,
+		method: 'GET',
+	});
+}
+
+orgData = orgDataResponse?.organizations;
+
 ---
 
 <LayoutSidebar notFoundPage={!response.permitted}>
-	<UserDashBoard client:load/>	
+	<UserDashBoard orgListDataSSR={orgDataResponse?.organizations} orgCountSSR={orgDataResponse?.totalCount || 0} walletDataSSR={selectedOrg?.org_agents} schemaListSSR={schemaList?.data} schemaCountSSR={schemaList?.totalItems} ecosystemListSSR={ecosystemList?.ecosystemDetails} ecosystemCountSSR={ecosystemList?.totalCount} credDefListSSR={credDefList?.data} credDefCountSSR={credDefList?.totalItems} activitySSR={activity} client:load/>	
 </LayoutSidebar>
