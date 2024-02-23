@@ -139,7 +139,7 @@ const CredDefSelection = () => {
 					</div>
 					: <div className="m-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap4">
 						<SchemaCard className="col-span-1 sm:col-span-2 md:col-span-1" schemaName={schemaState?.schemaName} version={schemaState?.version} schemaId={schemaDetailsState.schemaId} issuerDid={schemaDetailsState.issuerDid} attributes={schemaDetailsState.attributes} created={schemaDetailsState.createdDateTime}
-							onClickCallback={schemaSelectionCallback} />
+							onClickCallback={schemaSelectionCallback} isClickable={false} />
 					</div>}
 
 			</div>

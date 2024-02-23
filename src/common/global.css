@@ -135,7 +135,7 @@ ul.timelinestatic {
 	@apply dark:!text-white !text-primary-700 w-fit;
 }
 
-.email-bulk-issuance .select__single-value{
+.email-bulk-issuance .select__single-value {
 	width: calc(100% - 15px) !important;
 }
 
@@ -169,17 +169,20 @@ ul.timelinestatic {
 	@apply dark:bg-gray-900;
 }
 
- .search-dropdown .select__control .select__value-container .select__input-container {
-  width: 1px;
- }
- 
- .custom-card:hover {
-  background-color: #1d4ed8;
+.search-dropdown
+	.select__control
+	.select__value-container
+	.select__input-container {
+	width: 1px;
+}
+
+.custom-card:hover {
+	background-color: #1d4ed8;
 }
 
 .custom-card:hover h5,
 .custom-card:hover p {
-  color: white;
+	color: white;
 }
 .search-dropdown
 	.select__control
@@ -188,6 +191,22 @@ ul.timelinestatic {
 	width: 1px;
 }
 
-.email-bulk-issuance .select__single-value{
-	width: calc(100% - 15px) !important;
+.w-view-cred-def-id {
+	width: calc(100% - 1.5rem);
+}
+
+.w-view-schema-id {
+    width: calc(100% - 5.1rem);
+}
+
+.issuance .w-cred-id {
+    width: calc(100% - 10.5rem);
+}
+
+.w-schema-id {
+    width: calc(100% - 5.8rem);
+}
+
+.w-issuer-id {
+    width: calc(100% - 5.6rem);
 }
