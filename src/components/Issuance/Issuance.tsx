@@ -89,24 +89,6 @@ const IssueCred = () => {
 		setUserLoader(false);
 	};
 
-	const getSchemaDetails = async (): Promise<DataTypeAttributes[] | null> => {
-		const schemaAttributes = await getFromLocalStorage(storageKeys.SCHEMA_ATTR);
-		const parsedSchemaAttributes = JSON.parse(schemaAttributes) || [];
-		setSchemaAttributesDetails(parsedSchemaAttributes?.attribute);
-		return parsedSchemaAttributes.attribute;
-	};
-
-	const createSchemaPayload = async (schemaId: string, credDefId: string) => {
-		if (schemaId) {
-			setSchemaLoader(true);
-			const parts = schemaId.split(':');
-			const schemaName = parts[2];
-			const version = parts[3];
-			setSchemaDetails({ schemaName, version, schemaId, credDefId });
-			setSchemaLoader(false);
-		}
-	};
-
 	const createAttributeValidationSchema = (
 		dataType: string,
 		isRequired: boolean,
@@ -136,6 +118,25 @@ const IssueCred = () => {
 			),
 		),
 	});
+
+
+	const getSchemaDetails = async (): Promise<DataTypeAttributes[] | null> => {
+		const schemaAttributes = await getFromLocalStorage(storageKeys.SCHEMA_ATTR);
+		const parsedSchemaAttributes = JSON.parse(schemaAttributes) || [];
+		setSchemaAttributesDetails(parsedSchemaAttributes?.attribute);
+		return parsedSchemaAttributes.attribute;
+	};
+
+	const createSchemaPayload = async (schemaId: string, credDefId: string) => {
+		if (schemaId) {
+			setSchemaLoader(true);
+			const parts = schemaId.split(':');
+			const schemaName = parts[2];
+			const version = parts[3];
+			setSchemaDetails({ schemaName, version, schemaId, credDefId });
+			setSchemaLoader(false);
+		}
+	};
 
 	const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 		const selectedUsers = await getFromLocalStorage(storageKeys.SELECTED_USER);
