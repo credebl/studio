@@ -7,8 +7,11 @@ import API from '../../config/ssrApiConfig';
 import { apiRoutes } from '../../config/apiRoutes';
 import { getFromCookies } from '../../api/Auth';
 
-const response = await checkUserSession({cookies: Astro.cookies, currentPath: Astro.url.pathname});
-const route: string = pathRoutes.auth.sinIn
+const response = await checkUserSession({
+	cookies: Astro.cookies,
+	currentPath: Astro.url.pathname,
+});
+const route: string = pathRoutes.auth.sinIn;
 if (!response.authorized) {
 	return Astro.redirect(response.redirect);
 }
@@ -17,6 +20,7 @@ let orgId = getFromCookies(Astro.cookies, 'orgId');
 const token = getFromCookies(Astro.cookies, 'session');
 
 let selectedOrg;
+let invitation;
 
 if (orgId) {
 	selectedOrg = await API({
@@ -24,9 +28,27 @@ if (orgId) {
 		token,
 		method: 'GET',
 	});
+
+	// Connection QR Code
+	const data = {
+		label: selectedOrg?.orgName,
+		multiUseInvitation: true,
+		autoAcceptConnection: true,
+		orgId: selectedOrg?.id,
+	};
+	invitation = await API({
+		url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.connection.create}`,
+		token,
+		method: 'POST',
+		payload: data,
+	});
 }
 ---
 
 <LayoutSidebar notFoundPage={!response.permitted}>
-	<Dashboard orgDataSSR={selectedOrg} client:visible/>
+	<Dashboard
+		invitationSSR={invitation}
+		orgDataSSR={selectedOrg}
+		client:visible
+	/>
 </LayoutSidebar>

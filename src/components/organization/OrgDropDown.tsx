@@ -44,9 +44,9 @@ const OrgDropDown = ({ data, orgId }: IProps) => {
 	const setOrgRoleDetails = async (org: Organisation) => {
 
 		await setToLocalStorage(storageKeys.ORG_ID, org.id.toString());
-		const roles: string[] = org?.userOrgRoles.map(role => role.orgRole.name)
+		const roles: string[] = org?.userOrgRoles?.map(role => role?.orgRole.name)
 
-		await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
+		await setToLocalStorage(storageKeys.ORG_ROLES, roles?.toString());
 
 		// to set orgId in cookies for SSR
 		await fetch('/api/auth/signin', {
@@ -130,7 +130,7 @@ const OrgDropDown = ({ data, orgId }: IProps) => {
 						aria-labelledby="dropdownUsersButton"
 					>
 						{orgList?.map((org) => {
-							const roles: string[] = org.userOrgRoles.map(role => role.orgRole.name)
+							const roles: string[] = org?.userOrgRoles?.map(role => role.orgRole.name)
 							org.roles = roles
 							return (
 								<li key={org?.id}>

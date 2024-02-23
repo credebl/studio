@@ -11,12 +11,12 @@ import DateTooltip from '../Tooltip';
 import CopyDid from '../../commonComponents/CopyDid'
 import { setToLocalStorage } from '../../api/Auth';
 
-const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
+const OrganizationDetails = ({ orgData, connectionInvite }: { orgData: Organisation | null, connectionInvite: Connection }) => {
 
     const { org_agents } = orgData as Organisation
     const agentData: OrgAgent | null = org_agents.length > 0 ? org_agents[0] : null
     const [loading, setLoading] = useState<boolean>(true)
-    const [connectionData, setConnectionData] = useState<Connection | null>(null)
+    const [connectionData, setConnectionData] = useState<Connection | null>(connectionInvite)
 
     const createQrConnection = async () => {
 
@@ -38,7 +38,9 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
     }
 
     useEffect(() => {
-        createQrConnection()
+        if(!connectionData?.connectionInvitation){
+            createQrConnection()
+        }
         storeLedgerDetails()
     }, [])
 
@@ -159,7 +161,7 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
             </div>
             <div className='flex flex-col justify-center text-wrap'>
                 {
-                    loading
+                    loading && !(connectionData?.connectionInvitation)
                         ? (
                             <div className='flex justify-center'>
                                 <CustomSpinner />

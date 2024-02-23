@@ -1,4 +1,4 @@
-import type { OrgDashboard, Organisation } from './interfaces';
+import type { Connection, OrgDashboard, Organisation } from './interfaces';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { getOrgDashboard, getOrganizationById } from '../../api/organization';
 import { useEffect, useState } from 'react';
@@ -21,10 +21,11 @@ import { AlertComponent } from '../AlertComponent';
 import React from 'react';
 
 interface IProps {
-	orgDataSSR: Organisation
+	orgDataSSR: Organisation;
+	invitationSSR: Connection;
 }
 
-const Dashboard = ({orgDataSSR}: IProps) => {
+const Dashboard = ({orgDataSSR, invitationSSR}: IProps) => {
 	const [orgData, setOrgData] = useState<Organisation | null>(orgDataSSR);
 	const [walletStatus, setWalletStatus] = useState<boolean>(orgDataSSR?.org_agents?.length > 0);
 	const [orgDashboard, setOrgDashboard] = useState<OrgDashboard | null>(null);
@@ -241,7 +242,7 @@ const Dashboard = ({orgDataSSR}: IProps) => {
 						<CustomSpinner />
 					</div>
 				) : walletStatus === true ? (
-					<OrganizationDetails orgData={orgData} />
+					<OrganizationDetails connectionInvite={invitationSSR} orgData={orgData} />
 				) : (
 					(userRoles.includes(Roles.OWNER) ||
 						userRoles.includes(Roles.ADMIN)) && (

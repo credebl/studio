@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import CustomAvatar from '../Avatar';
@@ -317,14 +317,18 @@ const UserDashBoard = ({ orgListDataSSR, orgCountSSR, walletDataSSR, schemaListS
 		}
 		const response = await getOrganizationById(orgId);
 		const { data } = response as AxiosResponse;
+		setWalletLoading(false);
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			if (data?.data?.org_agents) {
 				setWalletData(data?.data?.org_agents);
+				return data?.data?.org_agents;
 			} else {
 				setWalletData([]);
+				return []
 			}
 		}
 		setWalletLoading(false);
+		return []
 	};
 
 	const getAllResponses = async () => {
@@ -353,6 +357,11 @@ const UserDashBoard = ({ orgListDataSSR, orgCountSSR, walletDataSSR, schemaListS
 	useEffect(() => {
 		if (organizationsList && organizationsList?.length > 0) {
 			fetchOrganizationDetails();
+		}
+	}, []);
+
+	useEffect(() => {
+		if (organizationsList && organizationsList?.length > 0) {
 			getSchemaList(schemaListAPIParameter, false);
 			fetchEcosystems();
 			getSchemaCredentials();
@@ -543,9 +552,8 @@ const UserDashBoard = ({ orgListDataSSR, orgCountSSR, walletDataSSR, schemaListS
 					}}
 				/>
 			</div>
-			{walletData && walletData.length > 0 ? (
-				<></>
-			) : (
+			{console.log(43485498, walletLoading, walletData)}
+			{!walletLoading && !(walletData && walletData?.length > 0) ? (
 				<div
 					className="p-8 grid w-full grid-cols-1 sm:grid-cols-3 gap-4 mt-0 mb-4 rounded-md border border-gray-200 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:bg-[url('/images/bg-darkwallet.png')] bg-[url('/images/bg-lightwallet.png')] bg-center bg-no-repeat p-0 bg-auto"
 					style={{ minHeight: '130px' }}
@@ -591,6 +599,8 @@ const UserDashBoard = ({ orgListDataSSR, orgCountSSR, walletDataSSR, schemaListS
 						</Button>
 					</div>
 				</div>
+			) : (
+				<></>
 			)}
 			<div
 				className="grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-3"
