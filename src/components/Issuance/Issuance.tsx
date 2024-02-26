@@ -89,24 +89,6 @@ const IssueCred = () => {
 		setUserLoader(false);
 	};
 
-	const getSchemaDetails = async (): Promise<DataTypeAttributes[] | null> => {
-		const schemaAttributes = await getFromLocalStorage(storageKeys.SCHEMA_ATTR);
-		const parsedSchemaAttributes = JSON.parse(schemaAttributes) || [];
-		setSchemaAttributesDetails(parsedSchemaAttributes?.attribute);
-		return parsedSchemaAttributes.attribute;
-	};
-
-	const createSchemaPayload = async (schemaId: string, credDefId: string) => {
-		if (schemaId) {
-			setSchemaLoader(true);
-			const parts = schemaId.split(':');
-			const schemaName = parts[2];
-			const version = parts[3];
-			setSchemaDetails({ schemaName, version, schemaId, credDefId });
-			setSchemaLoader(false);
-		}
-	};
-
 	const createAttributeValidationSchema = (
 		dataType: string,
 		isRequired: boolean,
@@ -136,6 +118,25 @@ const IssueCred = () => {
 			),
 		),
 	});
+
+
+	const getSchemaDetails = async (): Promise<DataTypeAttributes[] | null> => {
+		const schemaAttributes = await getFromLocalStorage(storageKeys.SCHEMA_ATTR);
+		const parsedSchemaAttributes = JSON.parse(schemaAttributes) || [];
+		setSchemaAttributesDetails(parsedSchemaAttributes?.attribute);
+		return parsedSchemaAttributes.attribute;
+	};
+
+	const createSchemaPayload = async (schemaId: string, credDefId: string) => {
+		if (schemaId) {
+			setSchemaLoader(true);
+			const parts = schemaId.split(':');
+			const schemaName = parts[2];
+			const version = parts[3];
+			setSchemaDetails({ schemaName, version, schemaId, credDefId });
+			setSchemaLoader(false);
+		}
+	};
 
 	const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 		const selectedUsers = await getFromLocalStorage(storageKeys.SELECTED_USER);
@@ -270,15 +271,16 @@ const IssueCred = () => {
 																			className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 w-3/5"
 																		/>
 																		<div className="absolute bottom-[-20px] right-0">
-																		{errors?.attributes &&
-																			errors?.attributes[index] &&
-																			touched?.attributes[index] &&
-																			errors?.attributes[index]?.value && (
-																				<div className="text-red-500 text-xs p-1">
-																					{errors?.attributes[index]?.value}
-																				</div>
-																			)}
-																	</div>
+																			{errors?.attributes &&
+																				errors?.attributes[index] &&
+																				touched?.attributes &&
+																				touched?.attributes[index] &&
+																				errors?.attributes[index]?.value && (
+																					<div className="text-red-500 text-xs p-1">
+																						{errors?.attributes[index]?.value}
+																					</div>
+																				)}
+																		</div>
 																	</div>
 																</div>
 															))}
