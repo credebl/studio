@@ -552,7 +552,6 @@ const UserDashBoard = ({ orgListDataSSR, orgCountSSR, walletDataSSR, schemaListS
 					}}
 				/>
 			</div>
-			{console.log(43485498, walletLoading, walletData)}
 			{!walletLoading && !(walletData && walletData?.length > 0) ? (
 				<div
 					className="p-8 grid w-full grid-cols-1 sm:grid-cols-3 gap-4 mt-0 mb-4 rounded-md border border-gray-200 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:bg-[url('/images/bg-darkwallet.png')] bg-[url('/images/bg-lightwallet.png')] bg-center bg-no-repeat p-0 bg-auto"
@@ -697,7 +696,7 @@ const UserDashBoard = ({ orgListDataSSR, orgCountSSR, walletDataSSR, schemaListS
 																	{org.roles.includes(
 																		OrganizationRoles.organizationOwner,
 																	) ? (
-																		<span title={org.roles}>
+																		<span title={org.roles.toString()}>
 																			<svg
 																				width="24"
 																				height="24"
@@ -712,14 +711,16 @@ const UserDashBoard = ({ orgListDataSSR, orgCountSSR, walletDataSSR, schemaListS
 																			</svg>
 																		</span>
 																	) : org.roles.includes(
-																		OrganizationRoles.organizationVerifier ??
-																		OrganizationRoles.organizationIssuer,
-																	) ? (
+																			OrganizationRoles.organizationVerifier,
+																	  ) ||
+																	  org.roles.includes(
+																			OrganizationRoles.organizationIssuer,
+																	  ) ? (
 																		<span
 																			title={org.roles.slice(
 																				0,
 																				org.roles.length - 1,
-																			)}
+																			).toString()}
 																		>
 																			<svg
 																				width="24"
@@ -791,27 +792,31 @@ const UserDashBoard = ({ orgListDataSSR, orgCountSSR, walletDataSSR, schemaListS
 															placement="bottom"
 															className="items-center text-center dark:text-white"
 														>
-															{' '}
 															<button
 																onClick={() => {
 																	goToOrgSchema(org, org.id, org.roles);
 																}}
-																className={`p-1 rounded-md ${organizationsList[index].userOrgRoles[0]
-																	.orgRole.name !==
-																	OrganizationRoles.organizationOwner ||
-																	organizationsList[index].userOrgRoles[0]
-																		.orgRole.name ===
-																	OrganizationRoles.organizationAdmin
-																	? 'cursor-not-allowed opacity-50'
-																	: ''
-																	}`}
+																className={`p-1 rounded-md ${
+																	!(
+																		organizationsList[index].userOrgRoles[0]
+																			.orgRole.name ===
+																			OrganizationRoles.organizationOwner ||
+																		organizationsList[index].userOrgRoles[0]
+																			.orgRole.name ===
+																			OrganizationRoles.organizationAdmin
+																	)
+																		? 'cursor-not-allowed opacity-50'
+																		: ''
+																}`}
 																disabled={
-																	organizationsList[index].userOrgRoles[0]
-																		.orgRole.name !==
-																	OrganizationRoles.organizationOwner ||
-																	organizationsList[index].userOrgRoles[0]
-																		.orgRole.name ===
-																	OrganizationRoles.organizationAdmin
+																	!(
+																		organizationsList[index].userOrgRoles[0]
+																			.orgRole.name ===
+																			OrganizationRoles.organizationOwner ||
+																		organizationsList[index].userOrgRoles[0]
+																			.orgRole.name ===
+																			OrganizationRoles.organizationAdmin
+																	)
 																}
 															>
 																<svg
