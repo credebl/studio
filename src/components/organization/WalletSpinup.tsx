@@ -1,7 +1,6 @@
 import * as yup from 'yup';
-
 import { Button, Checkbox, Label } from 'flowbite-react';
-import { Field, Form, Formik } from 'formik';
+import { ErrorMessage, Field, Form, Formik } from 'formik';
 import {
 	apiStatusCodes,
 	passwordRegex,
@@ -238,470 +237,6 @@ const SharedAgentForm = ({
 					</div>
 				</div>
 			)}
-			{/* ----------------------------
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			my work area bwloe
-			
-			*/}
-
-			{/* <Formik
-      initialValues={{
-        ledger: '',
-        network: '',
-        did: '',
-      }}
-      validationSchema={yup.object().shape({
-        ledger: yup.string().required('Ledger is required'),
-        network: yup.string().required('Network is required'),
-        did: yup.string().required('DID Method is required'),
-      })}
-      onSubmit={(values) => {
-        // handle form submission here
-        console.log(values);
-      }}
-    >
-      {(formikHandlers) => (
-        <Form className="">
-          <div>
-            <label htmlFor="ledger">Ledger</label>
-            <select
-              onChange={(e) => {
-                formikHandlers.handleChange(e);
-                handleLedgerChange(e);
-              }}
-              id="ledger"
-              name="ledger"
-            >
-              <option value="">Select Ledger</option>
-              {Object.keys(data[0]).map((ledger) => (
-                <option key={ledger} value={ledger}>
-                  {ledger}
-                </option>
-              ))}
-            </select>
-            {formikHandlers.errors.ledger && formikHandlers.touched.ledger && (
-              <span>{formikHandlers.errors.ledger}</span>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="network">Network</label>
-            <select
-              onChange={formikHandlers.handleChange}
-              value={selectedNetwork}
-              id="network"
-              name="network"
-            >
-              <option value="">Select Network</option>
-              {selectedLedger &&
-                data[0][selectedLedger] &&
-                Object.keys(data[0][selectedLedger]).map((network) => (
-                  <option key={network} value={network}>
-                    {network}
-                  </option>
-                ))}
-            </select>
-            {formikHandlers.errors.network && formikHandlers.touched.network && (
-              <span>{formikHandlers.errors.network}</span>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="did">DID Method</label>
-            <select
-              onChange={formikHandlers.handleChange}
-              value={formikHandlers.values.did}
-              id="did"
-              name="did"
-            >
-              <option value="">Select DID Method</option>
-              {selectedLedger &&
-                selectedNetwork &&
-                data[0][selectedLedger][selectedNetwork] &&
-                Object.entries(data[0][selectedLedger][selectedNetwork]).map(([key, value]) => (
-                  <option key={key} value={value}>
-                    {key}
-                  </option>
-                ))}
-            </select>
-            {formikHandlers.errors.did && formikHandlers.touched.did && (
-              <span>{formikHandlers.errors.did}</span>
-            )}
-          </div>
-
-          <button type="submit">Submit</button>
-        </Form>
-      )}
-    </Formik> */}
-			{/* <Formik
-      initialValues={{
-        ledger: '',
-        network: '',
-        did: '',
-      }}
-      validationSchema={yup.object().shape({
-        ledger: yup.string().required('Ledger is required'),
-        network: yup.string().required('Network is required'),
-        did: yup.string().required('DID Method is required'),
-      })}
-      onSubmit={(values) => {
-        console.log(values);
-      }}
-    >
-      {(formikHandlers) => (
-        <Form className="">
-          <div>
-            <label htmlFor="ledger">Ledger</label>
-            <select
-              onChange={(e) => {
-                formikHandlers.handleChange(e);
-                handleLedgerChange(e);
-              }}
-              id="ledger"
-              name="ledger"
-            >
-              <option value="">Select Ledger</option>
-              {Object.keys(data[0]).map((ledger) => (
-                <option key={ledger} value={ledger}>
-                  {ledger}
-                </option>
-              ))}
-            </select>
-            {formikHandlers.errors.ledger && formikHandlers.touched.ledger && (
-              <span>{formikHandlers.errors.ledger}</span>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="network">Network</label>
-            <select
-              onChange={(e) => {
-                formikHandlers.handleChange(e);
-                setSelectedNetwork(e.target.value);
-              }}
-              value={selectedNetwork}
-              id="network"
-              name="network"
-            >
-              <option value="">Select Network</option>
-              {selectedLedger &&
-                data[0][selectedLedger] &&
-                Object.keys(data[0][selectedLedger]).map((network) => (
-                  <option key={network} value={network}>
-                    {network}
-                  </option>
-                ))}
-            </select>
-            {formikHandlers.errors.network && formikHandlers.touched.network && (
-              <span>{formikHandlers.errors.network}</span>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="did">DID Method</label>
-            <select
-              onChange={formikHandlers.handleChange}
-              value={formikHandlers.values.did}
-              id="did"
-              name="did"
-            >
-              <option value="">Select DID Method</option>
-              {selectedLedger &&
-                selectedNetwork &&
-                data[0][selectedLedger][selectedNetwork] &&
-                Object.entries(data[0][selectedLedger][selectedNetwork]).map(([key, value]) => (
-                  <option key={value} value={value}>
-                    {key}
-                  </option>
-                ))}
-            </select>
-            {formikHandlers.errors.did && formikHandlers.touched.did && (
-              <span>{formikHandlers.errors.did}</span>
-            )}
-          </div>
-
-          <button type="submit">Submit</button>
-        </Form>
-      )}
-    </Formik> */}
-			{/* <Formik
-				initialValues={{
-					method: '',
-					network: '',
-					did: '',
-					ledger: '',
-				}}
-				validationSchema={yup.object().shape({
-					method: yup.string().required('Method is required'),
-					network: yup.string().required('Network is required'),
-					did: yup.string().required('DID Method is required'),
-					ledger: yup
-						.string()
-						.required('ledger is required'),
-				})}
-				onSubmit={(values) => {
-					// handle form submission here
-					console.log("values",values);
-				}}
-			>
-				{(formikHandlers) => (
-					<Form className="">
-						<div>
-							<label htmlFor="method">Method</label>
-							<select
-								onChange={(e) => {
-									formikHandlers.handleChange(e);
-									handleLedgerChange(e);
-								}}
-								id="method"additionalDID
-								name="method"
-							>
-								<option value="">Select Ledger</option>
-								{Object.keys(data[0]).map((ledger) => (
-									<option key={ledger} value={ledger}>
-										{ledger}
-									</option>
-								))}
-							</select>
-							{formikHandlers.errors.method &&
-								formikHandlers.touched.method && (
-									<span>{formikHandlers.errors.method}</span>
-								)}
-						</div>
-
-						<div>
-							<label htmlFor="ledger">Ledger</label>
-							<select
-								onChange={(e) => {
-									formikHandlers.handleChange(e);
-									setSelectedNetwork(e.target.value);
-								}}
-								value={selectedNetwork}
-								id="ledger"
-								name="ledger"
-							>
-								<option value="">Select Network</option>
-								{selectedLedger &&
-									data[0][selectedLedger] &&
-									Object.keys(data[0][selectedLedger]).map((ledger) => (
-										<option key={ledger} value={ledger}>
-											{ledger}
-										</option>
-									))}
-							</select>
-							{formikHandlers.errors.ledger &&
-								formikHandlers.touched.ledger && (
-									<span>{formikHandlers.errors.ledger}</span>
-								)}
-						</div>
-
-						<div>
-							<label htmlFor="network">Network</label>
-							<select
-								onChange={(e) => {
-									formikHandlers.handleChange(e);
-									setSelectedDid(e.target.value);
-								}}
-								value={selectedDid}
-								id="network"
-								name="network"
-							>
-								<option value="">Select Network</option>
-								{selectedLedger &&
-									selectedNetwork &&
-									Object.keys(data[0][selectedLedger][selectedNetwork]).map(
-										(network) => (
-											<option key={network} value={network}>
-												{network}
-											</option>
-										),
-									)}
-							</select>
-							{formikHandlers.errors.network && formikHandlers.touched.network && (
-								<span>{formikHandlers.errors.network}</span>
-							)}
-						</div>
-
-						<div>
-							<label htmlFor="DID Method">Additional DID Method</label>
-							<select
-								onChange={formikHandlers.handleChange}
-								value={formikHandlers.values.additionalDID}
-								id="did"
-								name="did"
-							>
-								<option value="">Select Additional DID Method</option>
-								{selectedLedger && selectedNetwork && selectedDid && (
-									<option
-										key={data[0][selectedLedger][selectedNetwork][selectedDid]}
-										value={
-											data[0][selectedLedger][selectedNetwork][selectedDid]
-										}
-									>
-										{Object.values(
-											data[0][selectedLedger][selectedNetwork][selectedDid],
-										)}
-									</option>
-								)}
-							</select>
-							{formikHandlers.errors.did &&
-								formikHandlers.touched.did && (
-									<span>{formikHandlers.errors.did}</span>
-								)}
-						</div>
-
-						<button type="submit">Submit</button>
-					</Form>
-				)}
-			</Formik> */}
-			{/* <Formik
-    initialValues={{
-        method: '',
-        network: '',
-        did: '',
-        ledger: '',
-    }}
-    validationSchema={yup.object().shape({
-        method: yup.string().required('Method is required'),
-        network: yup.string().required('Network is required'),
-        did: yup.string().required('DID Method is required'),
-        ledger: yup.string().when('method', {
-            is: (val) => val !== 'Polygon',
-            then: yup.string().required('Ledger is required'),
-        }),
-    })}
-    onSubmit={(values) => {
-        // handle form submission here
-        console.log("values", values);
-    }}
->
-    {(formikHandlers) => (
-        <Form className="">
-            <div>
-                <label htmlFor="method">Method</label>
-                <select
-                    onChange={(e) => {
-                        formikHandlers.handleChange(e);
-                        handleLedgerChange(e);
-                    }}
-                    id="method"
-                    name="method"
-                >
-                    <option value="">Select Ledger</option>
-                    {Object.keys(data[0]).map((ledger) => (
-                        <option key={ledger} value={ledger}>
-                            {ledger}
-                        </option>
-                    ))}
-                </select>
-                {formikHandlers.errors.method &&
-                    formikHandlers.touched.method && (
-                        <span>{formikHandlers.errors.method}</span>
-                    )}
-            </div>
-
-            {formikHandlers.values.method !== 'Polygon' && (
-                <div>
-                    <label htmlFor="ledger">Ledger</label>
-                    <select
-                        onChange={(e) => {
-                            formikHandlers.handleChange(e);
-                            setSelectedNetwork(e.target.value);
-                        }}
-                        value={selectedNetwork}
-                        id="ledger"
-                        name="ledger"
-                    >
-                        <option value="">Select Network</option>
-                        {selectedLedger &&
-                            data[0][selectedLedger] &&
-                            Object.keys(data[0][selectedLedger]).map((ledger) => (
-                                <option key={ledger} value={ledger}>
-                                    {ledger}
-                                </option>
-                            ))}
-                    </select>
-                    {formikHandlers.errors.ledger &&
-                        formikHandlers.touched.ledger && (
-                            <span>{formikHandlers.errors.ledger}</span>
-                        )}
-                </div>
-            )}
-
-            <div>
-                <label htmlFor="network">Network</label>
-                <select
-                    onChange={(e) => {
-                        formikHandlers.handleChange(e);
-                        setSelectedDid(e.target.value);
-                    }}
-                    value={selectedDid}
-                    id="network"
-                    name="network"
-                >
-                    <option value="">Select Network</option>
-                    {selectedLedger &&
-                        selectedNetwork &&
-                        Object.keys(data[0][selectedLedger][selectedNetwork]).map(
-                            (network) => (
-                                <option key={network} value={network}>
-                                    {network}
-                                </option>
-                            ),
-                        )}
-                </select>
-                {formikHandlers.errors.network && formikHandlers.touched.network && (
-                    <span>{formikHandlers.errors.network}</span>
-                )}
-            </div>
-
-            <div>
-                <label htmlFor="DID Method">Additional DID Method</label>
-                <select
-                    onChange={formikHandlers.handleChange}
-                    value={formikHandlers.values.additionalDID}
-                    id="did"
-                    name="did"
-                >
-                    <option value="">Select Additional DID Method</option>
-                    {selectedLedger && selectedNetwork && selectedDid && (
-                        <option
-                            key={data[0][selectedLedger][selectedNetwork][selectedDid]}
-                            value={
-                                data[0][selectedLedger][selectedNetwork][selectedDid]
-                            }
-                        >
-                            {Object.values(
-                                data[0][selectedLedger][selectedNetwork][selectedDid],
-                            )}
-                        </option>
-                    )}
-                </select>
-                {formikHandlers.errors.did &&
-                    formikHandlers.touched.did && (
-                        <span>{formikHandlers.errors.did}</span>
-                    )}
-            </div>
-
-            <button type="submit">Submit</button>
-        </Form>
-    )}
-</Formik> */}
 			<Formik
 				initialValues={{
 					method: '',
@@ -714,18 +249,36 @@ const SharedAgentForm = ({
 				//     network: yup.string().required('Network is required'),
 				//     did: yup.string().required('DID Method is required'),
 				//     ledger: yup.string().when('method', {
-				//         is: (val) => val !== 'Polygon',
+				//         is: (val) => val !== 'polygon',
 				//         then: yup.string().required('Ledger is required'),
 				//     }),
-				// })}
+				// })}		
+				validationSchema={yup.object().shape({
+					method: yup.string().required('Method is required'),
+					network: yup.string().required('Network is required'),
+					did: yup.string().required('DID Method is required'),
+					ledger: yup.string().test({
+							name: 'ledger-required',
+							test: function(value) {
+									if (this.parent.method !== 'Polygon' && !value) {
+											throw new yup.ValidationError('Ledger is required', value, 'ledger');
+									}
+									return true; 
+							}
+					})
+			})}
+			
+			
+				
 				onSubmit={(values) => {
-					// handle form submission here
 					console.log('values', values);
+					console.log('values', values.did.split(',').join(''));
+
 				}}
 			>
 				{(formikHandlers) => (
 					<Form className="">
-						<div>
+						<div className='mb-3 relative'>
 							<label htmlFor="method">Method</label>
 							<select
 								onChange={(e) => {
@@ -743,14 +296,15 @@ const SharedAgentForm = ({
 									</option>
 								))}
 							</select>
-							{formikHandlers.errors.method &&
-								formikHandlers.touched.method && (
-									<span>{formikHandlers.errors.method}</span>
+							{formikHandlers?.errors?.method &&
+								formikHandlers?.touched?.method && (
+									<span className='absolute botton-0 text-red-500 text-xs'>{formikHandlers?.errors?.method}</span>
 								)}
+
 						</div>
 
 						{formikHandlers.values.method !== 'polygon' && (
-							<div>
+							<div className='my-3 relative'>
 								<label htmlFor="ledger">Ledger</label>
 								<select
 									onChange={(e) => {
@@ -771,14 +325,15 @@ const SharedAgentForm = ({
 											</option>
 										))}
 								</select>
-								{formikHandlers.errors.ledger &&
-									formikHandlers.touched.ledger && (
-										<span>{formikHandlers.errors.ledger}</span>
+								{formikHandlers?.errors?.ledger &&
+									formikHandlers?.touched?.ledger && (
+										<span className='absolute botton-0 text-red-500 text-xs'>{formikHandlers?.errors?.ledger}</span>
 									)}
+
 							</div>
 						)}
 
-						<div>
+						<div className='my-3 relative'>
 							<label htmlFor="network">Network</label>
 							<select
 								onChange={(e) => {
@@ -809,22 +364,23 @@ const SharedAgentForm = ({
 										),
 									)}
 							</select>
-							{formikHandlers.errors.network &&
-								formikHandlers.touched.network && (
-									<span>{formikHandlers.errors.network}</span>
+							{formikHandlers?.errors?.network &&
+								formikHandlers?.touched?.network && (
+									<span className='absolute botton-0 text-red-500 text-xs'>{formikHandlers?.errors?.network}</span>
 								)}
+
 						</div>
 
-						<div>
+						<div className='my-3 relative'>
 							<label htmlFor="DID Method">DID Method</label>
 							<select
 								onChange={formikHandlers.handleChange}
-								value={formikHandlers.values.additionalDID}
+								value={formikHandlers.values.did}
 								id="did"
 								name="did"
 								className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
 							>
-								<option value="">Select Additional DID Method</option>
+								<option value="">Select DID Method</option>
 								{formikHandlers.values.method === 'polygon'
 									? selectedLedger &&
 									  selectedDid && (
@@ -852,9 +408,10 @@ const SharedAgentForm = ({
 											</option>
 									  )}
 							</select>
-							{formikHandlers.errors.did && formikHandlers.touched.did && (
-								<span>{formikHandlers.errors.did}</span>
+							{formikHandlers?.errors?.did && formikHandlers?.touched?.did && (
+								<span className='absolute botton-0 text-red-500 text-xs'>{formikHandlers?.errors?.did}</span>
 							)}
+
 						</div>
 						<div className="w-full flex justify-end">
 							<Button
