@@ -190,7 +190,7 @@ const IssueCred = () => {
 				<SummaryCard
 					schemaId={schemaDetails.schemaId}
 					schemaName={schemaDetails.schemaName}
-					version={schemaDetails.schemaName}
+					version={schemaDetails.version}
 					credDefId={schemaDetails.credDefId}
 					hideCredDefId={false}
 				/>
