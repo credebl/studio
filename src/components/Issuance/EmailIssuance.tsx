@@ -24,7 +24,9 @@ const EmailIssuance = () => {
 	const [userData, setUserData] = useState();
 	const [loading, setLoading] = useState<boolean>(true);
 	const [credentialOptions, setCredentialOptions] = useState([]);
-	const [credentialSelected, setCredentialSelected] = useState<string | null>('');
+	const [credentialSelected, setCredentialSelected] = useState<string | null>(
+		'',
+	);
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [batchName, setBatchName] = useState('');
 	const [openResetModal, setOpenResetModal] = useState<boolean>(false);
@@ -95,19 +97,21 @@ const EmailIssuance = () => {
 
 		let transformedData = { credentialOffer: [] };
 		if (existingData && existingData.formData) {
-			existingData.formData.forEach((entry: { email: any; attributes: any[]; }) => {
-				const transformedEntry = { emailId: entry.email, attributes: [] };
-				entry.attributes.forEach((attribute) => {
-					const transformedAttribute = {
-						value: String(attribute.value || ''),
-						name: attribute.name || '',
-						isRequired: attribute.isRequired,
-					};
-					transformedEntry?.attributes?.push(transformedAttribute);
-				});
+			existingData?.formData?.forEach(
+				(entry: { email: any; attributes: any[] }) => {
+					const transformedEntry = { emailId: entry.email, attributes: [] };
+					entry.attributes.forEach((attribute) => {
+						const transformedAttribute = {
+							value: String(attribute.value || ''),
+							name: attribute.name || '',
+							isRequired: attribute.isRequired,
+						};
+						transformedEntry?.attributes?.push(transformedAttribute);
+					});
 
-				transformedData.credentialOffer.push(transformedEntry);
-			});
+					transformedData.credentialOffer.push(transformedEntry);
+				},
+			);
 			transformedData.credentialDefinitionId = credentialSelected;
 			const transformedJson = JSON.stringify(transformedData, null, 2);
 			const response = await issueOobEmailCredential(transformedJson);
@@ -144,17 +148,17 @@ const EmailIssuance = () => {
 	};
 
 	useEffect(() => {
-			const initFormData = {
-				email: '',
-				attributes: attributes?.map((item:IAttributes) => {
-					return {
-						...item,
-						value: '',
-						name: item?.attributeName,
-						isRequired: item?.isRequired,
-					};
-				}),
-			};
+		const initFormData = {
+			email: '',
+			attributes: attributes?.map((item: IAttributes) => {
+				return {
+					...item,
+					value: '',
+					name: item?.attributeName,
+					isRequired: item?.isRequired,
+				};
+			}),
+		};
 
 		setFormData({ formData: [initFormData] });
 	}, [attributes]);
@@ -559,17 +563,17 @@ const EmailIssuance = () => {
 																																					</span>
 																																				)}
 																																			</label>
-																																			<Field
-																																				type={
-																																					item.schemaDataType
-																																				}
-																																				placeholder={
-																																					item.name
-																																				}
-																																				name={`formData[${index}].attributes.${attIndex}.value`}
-																																				className="w-8/12 bg-gray-50 border border-gray-300 text-gray-900 sm:text-md rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-																																			/>
-																																			<div className="flex absolute bottom-[-20px] right-0">
+																																			<div className="w-8/12">
+																																				<Field
+																																					type={
+																																						item.schemaDataType
+																																					}
+																																					placeholder={
+																																						item.name
+																																					}
+																																					name={`formData[${index}].attributes.${attIndex}.value`}
+																																					className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-md rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+																																				/>
 																																				{formikHandlers
 																																					?.touched
 																																					?.formData &&
@@ -606,13 +610,7 @@ const EmailIssuance = () => {
 																																						attIndex
 																																					]
 																																						?.value && (
-																																						<label
-																																							style={{
-																																								color:
-																																									'red',
-																																							}}
-																																							className="text-sm"
-																																						>
+																																						<label className="text-xs text-red-500 absolute">
 																																							{
 																																								formikHandlers
 																																									?.errors
@@ -644,7 +642,7 @@ const EmailIssuance = () => {
 																									arrayHelpers.push({
 																										email: '',
 																										attributes: attributes?.map(
-																											(item:IAttributes) => {
+																											(item: IAttributes) => {
 																												return {
 																													attributeName:
 																														item.attributeName,
