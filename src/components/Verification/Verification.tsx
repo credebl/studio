@@ -2,7 +2,7 @@
 
 import type { AxiosResponse } from 'axios';
 import { Alert, Button } from 'flowbite-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getFromLocalStorage } from '../../api/Auth';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import BreadCrumbs from '../BreadCrumbs';
@@ -37,7 +37,6 @@ const VerificationCred = () => {
 	const [attributeData, setAttributeData] = useState<ISelectedUser[] | null>(
 		null,
 	);
-	const inputRefs = useRef([]);
 
 	const handleCheckboxChange = (attributeName: string) => {
 		setAttributeData(
@@ -80,7 +79,6 @@ const VerificationCred = () => {
 					return attribute;
 				}),
 		);
-		inputRefs?.current[attributeName]?.focus();
 	};
 
 	const validateInputs = () => {
@@ -272,9 +270,6 @@ const VerificationCred = () => {
 													? 'opacity-50 cursor-not-allowed'
 													: 'cursor-pointer'
 											} p-1 border border-black rounded-md`}
-											ref={(ref) =>
-												(inputRefs.current[attribute?.attributeName] = ref)
-											}
 										/>
 									)}
 									{attribute?.inputError && (

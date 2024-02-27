@@ -57,7 +57,7 @@ const checkEcosystem = async (): Promise<ICheckEcosystem> => {
 	const isMultiEcosystem = userData?.multiEcosystemSupport;
 	// const isMultiEcosystem = false
 
-	const isLead = ecosystemRole === EcosystemRoles.ecosystemLead && isEnabledEcosystem && (orgRoles.includes(Roles.ADMIN) || orgRoles.includes(Roles.OWNER))
+	const isLead = ecosystemRole === EcosystemRoles.ecosystemLead && isEnabledEcosystem
 
 	return {
 		isEnabledEcosystem,
