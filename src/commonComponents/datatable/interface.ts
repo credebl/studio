@@ -12,6 +12,8 @@ export interface TableData {
 }
 
 export interface Data {
+	handleChange(value: string): void;
+	inputType: string;
 	data: string | JSX.Element;
 	subData?: string;
 }
