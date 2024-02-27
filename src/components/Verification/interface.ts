@@ -14,9 +14,9 @@ export interface CredDefData {
 
 export interface RequestProof {
 	_tags: {
-	  state: string;
-	  threadId: string;
-	  connectionId: string;
+		state: string;
+		threadId: string;
+		connectionId: string;
 	};
 	metadata: Record<string, any>;
 	id: string;
@@ -29,14 +29,14 @@ export interface RequestProof {
 	autoAcceptProof: string;
 	createDateTime: string;
 	isVerified?: boolean;
-  }
+}
 
 export interface SchemaDetails {
-	attribute:string[],
-	issuerDid:string,
-	createdDate:string
+	attribute: string[];
+	issuerDid: string;
+	createdDate: string;
 }
-  
+
 export interface IProofRrquestDetails {
 	verifyLoading: boolean;
 	openModal: boolean;
@@ -45,7 +45,7 @@ export interface IProofRrquestDetails {
 	requestId: string;
 	userData: object[];
 	view: boolean;
-  userRoles?: string[],
+	userRoles?: string[];
 }
 
 export interface IConnectionList {
@@ -55,23 +55,54 @@ export interface IConnectionList {
 }
 
 export interface SchemaDetail {
-	schemaName: string,
-	version: string,
-	schemaId: string,
-	credDefId: string
+	schemaName: string;
+	version: string;
+	schemaId: string;
+	credDefId: string;
 }
 
+export interface IInput {
+	attributeName: string;
+	value: string;
+}
+export interface IAttribute {
+	displayName: string;
+	attributeName: string;
+	schemaDataType: string;
+}
 export interface SelectedUsers {
-	userName: string,
-	connectionId: string
+	userName: string;
+	connectionId: string;
 }
 
+interface IAttributes {
+	schemaId: string;
+	credDefId?: string | undefined;
+	attributeName: string;
+	condition: undefined;
+	value: number | undefined;
+}
 export interface VerifyCredentialPayload {
 	connectionId: string;
-	attributes: Array<{
-		attributeName: string;
-		credDefId?: string  ;
-	}>;
+	attributes: IAttributes;
 	comment: string;
 	orgId: string;
+}
+export interface ISelectedUser {
+	name: any;
+	condition: string;
+	dataType: string;
+	displayName: string;
+	attributeName: string;
+	isChecked: false;
+	value: number;
+	selectedOption: 'Select';
+	inputError: '';
+	selectError: '';
+	options: [
+		{
+			label: string;
+			value: string;
+		},
+	];
 }

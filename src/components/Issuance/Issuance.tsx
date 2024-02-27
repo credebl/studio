@@ -119,7 +119,6 @@ const IssueCred = () => {
 		),
 	});
 
-
 	const getSchemaDetails = async (): Promise<DataTypeAttributes[] | null> => {
 		const schemaAttributes = await getFromLocalStorage(storageKeys.SCHEMA_ATTR);
 		const parsedSchemaAttributes = JSON.parse(schemaAttributes) || [];
@@ -190,7 +189,7 @@ const IssueCred = () => {
 				<SummaryCard
 					schemaId={schemaDetails.schemaId}
 					schemaName={schemaDetails.schemaName}
-					version={schemaDetails.schemaName}
+					version={schemaDetails.version}
 					credDefId={schemaDetails.credDefId}
 					hideCredDefId={false}
 				/>
@@ -244,7 +243,7 @@ const IssueCred = () => {
 																<div key={attr.attributeName}>
 																	<div
 																		key={attr?.attributeName}
-																		className="flex relative"
+																		className="flex"
 																	>
 																		<label
 																			htmlFor={`attributes.${index}.value`}
@@ -260,23 +259,23 @@ const IssueCred = () => {
 																				:
 																			</div>
 																		</label>
-																		<Field
-																			type={
-																				attr?.schemaDataType === 'date'
-																					? 'date'
-																					: attr?.schemaDataType
-																			}
-																			id={`attributes.${index}.value`}
-																			name={`attributes.${index}.value`}
-																			className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 w-3/5"
-																		/>
-																		<div className="absolute bottom-[-20px] right-0">
+																		<div className='w-3/5'>
+																			<Field
+																				type={
+																					attr?.schemaDataType === 'date'
+																						? 'date'
+																						: attr?.schemaDataType
+																				}
+																				id={`attributes.${index}.value`}
+																				name={`attributes.${index}.value`}
+																				className="bg-gray-50 relative border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+																			/>
 																			{errors?.attributes &&
 																				errors?.attributes[index] &&
 																				touched?.attributes &&
 																				touched?.attributes[index] &&
 																				errors?.attributes[index]?.value && (
-																					<div className="text-red-500 text-xs p-1">
+																					<div className="text-red-500 absolute text-xs word-break-word">
 																						{errors?.attributes[index]?.value}
 																					</div>
 																				)}
@@ -304,7 +303,7 @@ const IssueCred = () => {
 													type="submit"
 													disabled={!isValid || issuanceLoader}
 													isProcessing={issuanceLoader}
-													className='text-base text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-accent-00 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+													className='text-base text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-accent-00 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
 												>
 													<div className="pr-3">
 														<svg
