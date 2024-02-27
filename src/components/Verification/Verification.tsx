@@ -226,7 +226,7 @@ const VerificationCred = () => {
 												!attribute?.isChecked
 													? 'opacity-50 cursor-not-allowed'
 													: 'cursor-pointer'
-											} p-1 border border-black rounded-md`}
+											} p-1 border border-black rounded-md dark:text-gray-200 dark:bg-gray-700 dark:border-gray-200`}
 										>
 											{attribute?.options?.map(
 												(
@@ -269,7 +269,7 @@ const VerificationCred = () => {
 												!attribute?.isChecked
 													? 'opacity-50 cursor-not-allowed'
 													: 'cursor-pointer'
-											} p-1 border border-black rounded-md`}
+											} p-1 border border-black rounded-md dark:text-gray-200 dark:bg-gray-700 dark:border-gray-200`}
 										/>
 									)}
 									{attribute?.inputError && (
