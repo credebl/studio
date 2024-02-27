@@ -186,7 +186,42 @@ const VerificationCred = () => {
 		}
 	};
 
-	const myFunction = () => {
+	const fetchData = async () => {
+		try {
+			setLoading(true);
+			await getSchemaAndUsers();
+			const schemaAttributes = await getFromLocalStorage(
+				storageKeys.SCHEMA_ATTR,
+			);
+			const parsedSchemaDetails = JSON.parse(schemaAttributes) || [];
+			const inputArray: SelectedUsers[] = parsedSchemaDetails.attribute.map(
+				(attribute: IAttribute) => {
+					return {
+						displayName: attribute.displayName,
+						attributeName: attribute.attributeName,
+						isChecked: false,
+						value: '',
+						condition: '',
+						options: [
+							{ value: '', label: 'Select' },
+							{ value: '>', label: 'Greater than' },
+							{ value: '<', label: 'Less than' },
+							{ value: '>=', label: 'Greater than or equal to' },
+							{ value: '<=', label: 'Less than or equal to' },
+						],
+						dataType: attribute.schemaDataType,
+					};
+				},
+			);
+			setAttributeData(inputArray);
+			setLoading(false);
+		} catch (error) {
+			setLoading(false);
+			console.error('Error fetching data:', error);
+		}
+	};
+
+	const attributeFunction = () => {
 		const attributes =
 			attributeData &&
 			attributeData.map((attribute: ISelectedUser, index: number) => {
@@ -226,7 +261,7 @@ const VerificationCred = () => {
 												!attribute?.isChecked
 													? 'opacity-50 cursor-not-allowed'
 													: 'cursor-pointer'
-											} p-1 border border-black rounded-md`}
+											} p-1 border border-black rounded-md dark:text-gray-200 dark:bg-gray-700 dark:border-gray-300 dark:placeholder-gray-400 dark:text-white`}
 										>
 											{attribute?.options?.map(
 												(
@@ -269,7 +304,7 @@ const VerificationCred = () => {
 												!attribute?.isChecked
 													? 'opacity-50 cursor-not-allowed'
 													: 'cursor-pointer'
-											} p-1 border border-black rounded-md`}
+											} p-1 border border-black rounded-md dark:text-gray-200 dark:bg-gray-700 dark:border-gray-300 dark:placeholder-gray-400 dark:text-white`}
 										/>
 									)}
 									{attribute?.inputError && (
@@ -290,41 +325,6 @@ const VerificationCred = () => {
 		);
 	};
 
-	const fetchData = async () => {
-		try {
-			setLoading(true);
-			await getSchemaAndUsers();
-			const schemaAttributes = await getFromLocalStorage(
-				storageKeys.SCHEMA_ATTR,
-			);
-			const parsedSchemaDetails = JSON.parse(schemaAttributes) || [];
-			const inputArray: SelectedUsers[] = parsedSchemaDetails.attribute.map(
-				(attribute: IAttribute) => {
-					return {
-						displayName: attribute.displayName,
-						attributeName: attribute.attributeName,
-						isChecked: false,
-						value: '',
-						condition: '',
-						options: [
-							{ value: '', label: 'Select' },
-							{ value: '>', label: 'Greater than' },
-							{ value: '<', label: 'Less than' },
-							{ value: '>=', label: 'Greater than or equal to' },
-							{ value: '<=', label: 'Less than or equal to' },
-						],
-						dataType: attribute.schemaDataType,
-					};
-				},
-			);
-			setAttributeData(inputArray);
-			setLoading(false);
-		} catch (error) {
-			setLoading(false);
-			console.error('Error fetching data:', error);
-		}
-	};
-
 	useEffect(() => {
 		fetchData();
 		return () => {
@@ -333,7 +333,7 @@ const VerificationCred = () => {
 	}, []);
 
 	useEffect(() => {
-		attributeData && myFunction();
+		attributeData && attributeFunction();
 	}, [attributeData]);
 
 	const getSchemaAndUsers = async () => {
