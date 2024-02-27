@@ -258,7 +258,7 @@ const VerificationCred = () => {
 								<div className="relative flex flex-col items-start">
 									{attribute?.dataType === 'number' && (
 										<input
-											type="text"
+											type="number"
 											value={attribute?.value}
 											onChange={(e) =>
 												handleInputChange(
@@ -313,10 +313,10 @@ const VerificationCred = () => {
 						condition: '',
 						options: [
 							{ value: '', label: 'Select' },
-							{ value: '>', label: 'Greater Than' },
-							{ value: '<', label: 'Less Than' },
-							{ value: '>=', label: 'Greater Than Equal To' },
-							{ value: '<=', label: 'Less Than Equal To' },
+							{ value: '>', label: 'Greater than' },
+							{ value: '<', label: 'Less than' },
+							{ value: '>=', label: 'Greater than or equal to' },
+							{ value: '<=', label: 'Less than or equal to' },
 						],
 						dataType: attribute.schemaDataType,
 					};
