@@ -261,7 +261,7 @@ const VerificationCred = () => {
 												!attribute?.isChecked
 													? 'opacity-50 cursor-not-allowed'
 													: 'cursor-pointer'
-											} p-1 border border-black rounded-md dark:text-gray-200 dark:bg-gray-700 dark:border-gray-200`}
+											} p-1 border border-black rounded-md dark:text-gray-200 dark:bg-gray-700 dark:border-gray-300 dark:placeholder-gray-400 dark:text-white`}
 										>
 											{attribute?.options?.map(
 												(
@@ -304,7 +304,7 @@ const VerificationCred = () => {
 												!attribute?.isChecked
 													? 'opacity-50 cursor-not-allowed'
 													: 'cursor-pointer'
-											} p-1 border border-black rounded-md dark:text-gray-200 dark:bg-gray-700 dark:border-gray-200`}
+											} p-1 border border-black rounded-md dark:text-gray-200 dark:bg-gray-700 dark:border-gray-300 dark:placeholder-gray-400 dark:text-white`}
 										/>
 									)}
 									{attribute?.inputError && (
