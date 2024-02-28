@@ -18,6 +18,7 @@ import {
 	ICheckEcosystem,
 	checkEcosystem,
 	getEcosystemId,
+	getOwnerAdminRole,
 } from '../../config/ecosystem';
 import { Button, Dropdown } from 'flowbite-react';
 import EditPopupModal from '../EditEcosystemOrgModal';
@@ -198,14 +199,19 @@ const Dashboard = () => {
 	const navigateToInvitation = () => {
 		window.location.href = pathRoutes.ecosystem.sentinvitation;
 	};
+	const [isAccess, setIsAccess] = useState(false);
 
+	const checkEcosystemData = async () => {
+		const data: ICheckEcosystem = await checkEcosystem();
+		setIsEcosystemLead(Boolean(data));
+	};
+	const checkEcosystemAccess = async () => {
+		const datas = await getOwnerAdminRole();
+		setIsAccess(datas);
+	};
 	useEffect(() => {
 		getDashboardData();
-
-		const checkEcosystemData = async () => {
-			const data: ICheckEcosystem = await checkEcosystem();
-			setIsEcosystemLead(data.isEcosystemLead);
-		};
+		checkEcosystemAccess()
 		checkEcosystemData();
 	}, []);
 
@@ -330,7 +336,8 @@ const Dashboard = () => {
 										<div className="inline-flex items-center ml-auto absolute top-0 right-0">
 											<Button
 												onClick={navigateToInvitation}
-												className='text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+												className={`${isAccess ? "hover:bg-primary-800 dark:hover:text-primary-700 dark:hover:bg-primary-700" : ""} hover:!bg-primary-800 text-base font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:focus:ring-primary-800 mr-3`}
+												disabled={loading || !isAccess}
 											>
 												<svg
 													className="pr-2"

@@ -1,7 +1,7 @@
 import type { AxiosResponse } from 'axios';
 import { getFromLocalStorage, setToLocalStorage } from '../api/Auth';
 import { getEcosystems } from '../api/ecosystem';
-import { EcosystemRoles } from '../common/enums';
+import { EcosystemRoles, OrganizationRoles } from '../common/enums';
 import { apiStatusCodes, storageKeys } from './CommonConstant';
 import { getOrganizationById } from '../api/organization';
 import { Roles } from '../utils/enums/roles';
@@ -52,10 +52,7 @@ const checkEcosystem = async (): Promise<ICheckEcosystem> => {
 	const isEnabledEcosystem = userData?.enableEcosystem;
 	const ecosystemRole = role || EcosystemRoles.ecosystemLead;
 
-	const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES)
-
 	const isMultiEcosystem = userData?.multiEcosystemSupport;
-	// const isMultiEcosystem = false
 
 	const isLead = ecosystemRole === EcosystemRoles.ecosystemLead && isEnabledEcosystem
 
@@ -107,6 +104,12 @@ const getUserRoles = async () => {
 	return roles
 }
 
+	const getOwnerAdminRole = async () => {
+		const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES);
+		const roles = orgRoles.includes(OrganizationRoles.organizationOwner) || orgRoles.includes(OrganizationRoles.organizationAdmin)
+    return roles
+	};
+
 const getOrgDetails = async (): Promise<IOrgDetails> => {
 	const orgId = await getOrgId();
 	const org = await getOrgData();
@@ -140,4 +143,4 @@ const getOrgDetails = async (): Promise<IOrgDetails> => {
 	return orgData;
 };
 
-export { checkEcosystem, getEcosystemId, getOrgDetails, getUserRoles };
+export { checkEcosystem, getEcosystemId, getOrgDetails, getUserRoles, getOwnerAdminRole };
