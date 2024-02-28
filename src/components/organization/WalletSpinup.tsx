@@ -21,6 +21,7 @@ import SharedIllustrate from './SharedIllustrate';
 import { nanoid } from 'nanoid';
 import { getLedgers } from '../../api/Agent';
 import { AlertComponent } from '../AlertComponent';
+import CopyDid from '../../commonComponents/CopyDid';
 
 interface Values {
 	seed: string;
@@ -31,10 +32,12 @@ interface Values {
 }
 
 interface ValuesShared {
-	label: string;
-	seed?: string;
-	did?: string;
+	seed: string;
+	method: string;
 	network: string;
+	did: string;
+	ledger: string;
+	label: string;
 }
 
 enum AgentType {
@@ -74,45 +77,43 @@ const fetchNetworks = async () => {
 	}
 };
 
-// const NetworkInput = ({formikHandlers}) => {
+const NetworkInput = ({formikHandlers}) => {
 
-// 	return (
-// 		<div>
-// 			<div className="mb-1 block">
-// 				<Label htmlFor="network" value="Network" />
-// 				<span className="text-red-500 text-xs">*</span>
-// 			</div>
+	return (
+		<div>
+			<div className="mb-1 block">
+				<Label htmlFor="network" value="Network" />
+				<span className="text-red-500 text-xs">*</span>
+			</div>
 
-// 			<select
-// 				onChange={(e) => formikHandlers.handleChange(e)}
-// 				id="network"
-// 				name="network"
-// 				className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
-// 			>
-// 				<option value="">Select network</option>
-// 				{networks && networks.length > 0 && networks.map((item: INetworks) => (
-// 					<option key={item.id} value={item.id}>
-// 						{item.name}
-// 					</option>
-// 				))}
-// 			</select>
+			<select
+				onChange={(e) => formikHandlers.handleChange(e)}
+				id="network"
+				name="network"
+				className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+			>
+				<option value="">Select network</option>
+				{networks && networks.length > 0 && networks.map((item: INetworks) => (
+					<option key={item.id} value={item.id}>
+						{item.name}
+					</option>
+				))}
+			</select>
 
-// 			{formikHandlers?.errors?.network &&
-// 				formikHandlers?.touched?.network && (
-// 					<span className="text-red-500 text-xs">
-// 						{formikHandlers?.errors?.network}
-// 					</span>
-// 				)}
-// 		</div>
-// 	)
-// }
+			{formikHandlers?.errors?.network &&
+				formikHandlers?.touched?.network && (
+					<span className="text-red-500 text-xs">
+						{formikHandlers?.errors?.network}
+					</span>
+				)}
+		</div>
+	)
+}
 
 const SharedAgentForm = ({
 	orgName,
 	seeds,
-	isCopied,
 	loading,
-	copyTextVal,
 	submitSharedWallet,
 }: ISharedAgentForm) => {
 	const [haveDidShared, setHaveDidShared] = useState(false);
@@ -121,17 +122,17 @@ const SharedAgentForm = ({
 		{
 			indy: {
 				bcovrin: {
-					Testnet: 'did:indy:bcovrin:testnet',
+					testnet: 'did:indy:bcovrin:testnet',
 					mainnet: 'did:indy:bcovrin:mainnet',
 				},
 				indicio: {
-					Testnet: 'did:indy:indcio:testnet',
+					testnet: 'did:indy:indcio:testnet',
 					mainnet: 'did:indy:indcio:mainnet',
 				},
 			},
 			polygon: {
-				mainnet: 'did:polygon:testnet',
-				testnet: 'did:polygon:mainnet',
+				testnet: 'did:polygon:testnet',
+				mainnet: 'did:polygon:mainnet',
 			},
 		},
 	];
@@ -146,37 +147,13 @@ const SharedAgentForm = ({
 		setSelectedDid('');
 	};
 
-	// const getLedgerList = async () => {
-	// 	const res = await fetchNetworks()
-	// 	setNetworks(res)
-	// }
-	// useEffect(() => {
-	// 	getLedgerList()
-	// }, [])
-	const validation = {
-		label: yup
-			.string()
-			.required('Wallet label is required')
-			.trim()
-			.test(
-				'no-spaces',
-				'Spaces are not allowed',
-				(value) => !value || !value.includes(' '),
-			)
-			.matches(
-				/^[A-Za-z0-9-][^ !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]*$/,
-				'Wallet label must be alphanumeric only',
-			)
-			.min(2, 'Wallet label must be at least 2 characters')
-			.max(25, 'Wallet label must be at most 25 characters'),
-		seed: haveDidShared
-			? yup.string().required('Seed is required')
-			: yup.string(),
-		did: haveDidShared
-			? yup.string().required('DID is required')
-			: yup.string(),
-		network: yup.string().required('Network is required'),
+	const getLedgerList = async () => {
+		const res = await fetchNetworks();
+		setNetworks(res);
 	};
+	useEffect(() => {
+		getLedgerList();
+	}, []);
 
 	return (
 		<div className="mt-4 max-w-lg flex-col gap-4">
@@ -189,241 +166,371 @@ const SharedAgentForm = ({
 					<p>Already have DID?</p>
 				</Label>
 			</div>
-			{!haveDidShared && (
-				<div className="mt-4">
-					<div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
-						<Label value="Seed" />
-					</div>
-					<div className="flex align-center block mb-1 text-sm text-gray-900 dark:text-white">
-						{seeds}
-						<span className="text-base font-semibold text-gray-900 truncate dark:text-white">
-							<button className={`${isCopied}`} onClick={(e) => copyTextVal(e)}>
-								{isCopied ? (
-									<svg
-										className="h-6 w-6 text-white ml-2 text-base"
-										width="25"
-										height="25"
-										viewBox="0 0 24 24"
-										strokeWidth={2}
-										stroke="green"
-										fill="none"
-										strokeLinecap="round"
-										strokeLinejoin="round"
-									>
-										{' '}
-										<path stroke="none" d="M0 0h24v24H0z" />{' '}
-										<path d="M5 12l5 5l10 -10" />
-									</svg>
-								) : (
-									<svg
-										className="h-6 w-6 text-green ml-2 text-base"
-										width="25"
-										height="25"
-										viewBox="0 0 24 24"
-										strokeWidth={2}
-										stroke="currentColor"
-										fill="none"
-										strokeLinecap="round"
-										strokeLinejoin="round"
-									>
-										{' '}
-										<path stroke="none" d="M0 0h24v24H0z" />{' '}
-										<rect x="8" y="8" width="12" height="12" rx="2" />{' '}
-										<path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" />
-									</svg>
-								)}
-							</button>
-						</span>
-					</div>
-				</div>
-			)}
-			<Formik
-				initialValues={{
-					method: '',
-					network: '',
-					did: '',
-					ledger: '',
-				}}
-				// validationSchema={yup.object().shape({
-				//     method: yup.string().required('Method is required'),
-				//     network: yup.string().required('Network is required'),
-				//     did: yup.string().required('DID Method is required'),
-				//     ledger: yup.string().when('method', {
-				//         is: (val) => val !== 'polygon',
-				//         then: yup.string().required('Ledger is required'),
-				//     }),
-				// })}		
-				validationSchema={yup.object().shape({
-					method: yup.string().required('Method is required'),
-					network: yup.string().required('Network is required'),
-					did: yup.string().required('DID Method is required'),
-					ledger: yup.string().test({
-							name: 'ledger-required',
-							test: function(value) {
-									if (this.parent.method !== 'Polygon' && !value) {
-											throw new yup.ValidationError('Ledger is required', value, 'ledger');
-									}
-									return true; 
-							}
-					})
-			})}
-			
-			
-				
-				onSubmit={(values) => {
-					console.log('values', values);
-					console.log('values', values.did.split(',').join(''));
-
-				}}
-			>
-				{(formikHandlers) => (
-					<Form className="">
-						<div className='mb-3 relative'>
-							<label htmlFor="method">Method</label>
-							<select
-								onChange={(e) => {
-									formikHandlers.handleChange(e);
-									handleLedgerChange(e);
-								}}
-								id="method"
-								name="method"
-								className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
-							>
-								<option value="">Select Ledger</option>
-								{Object.keys(data[0]).map((ledger) => (
-									<option key={ledger} value={ledger}>
-										{ledger}
-									</option>
-								))}
-							</select>
-							{formikHandlers?.errors?.method &&
-								formikHandlers?.touched?.method && (
-									<span className='absolute botton-0 text-red-500 text-xs'>{formikHandlers?.errors?.method}</span>
-								)}
-
+			{!haveDidShared ? (
+				<>
+					<div className="my-3">
+						<div className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
+							<Label value="Seed" />
 						</div>
+						<div className="flex">
+							<CopyDid
+								className="align-center block text-sm text-gray-900 dark:text-white"
+								value={seeds}
+							/>
+						</div>
+					</div>
 
-						{formikHandlers.values.method !== 'polygon' && (
-							<div className='my-3 relative'>
-								<label htmlFor="ledger">Ledger</label>
-								<select
-									onChange={(e) => {
-										formikHandlers.handleChange(e);
-										setSelectedNetwork(e.target.value);
-									}}
-									value={selectedNetwork}
-									id="ledger"
-									name="ledger"
-									className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
-								>
-									<option value="">Select Network</option>
-									{selectedLedger &&
-										data[0][selectedLedger] &&
-										Object.keys(data[0][selectedLedger]).map((ledger) => (
+					<Formik
+						initialValues={{
+							seed: seeds,
+							method: '',
+							network: '',
+							did: '',
+							ledger: '',
+							label: orgName || '',
+						}}
+						validationSchema={yup.object().shape({
+							method: yup.string().required('Method is required'),
+							network: yup.string().required('Network is required'),
+							did: yup.string().required('DID Method is required'),
+							label: yup.string().required('Wallet label is required'),
+							// ledger: yup.string().test({
+							// 	name: 'ledger-required',
+							// 	test: function (value) {
+							// 		if (this.parent.method !== 'Polygon' && !value) {
+							// 			throw new yup.ValidationError(
+							// 				'Ledger is required',
+							// 				value,
+							// 				'ledger',
+							// 			);
+							// 		}
+							// 		return true;
+							// 	},
+							// }),
+						})
+					}
+						onSubmit={(values: ValuesShared) => {
+							console.log(values, 'values');
+
+							submitSharedWallet(values);
+						}}
+					>
+						{(formikHandlers) => (
+							<Form className="">
+								<div className="mb-3 relative">
+									<label
+										htmlFor="method"
+										className="text-sm font-medium text-gray-900 dark:text-gray-300"
+									>
+										Method
+									</label>
+									<select
+										onChange={(e) => {
+											formikHandlers.handleChange(e);
+											handleLedgerChange(e);
+										}}
+										id="method"
+										name="method"
+										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+									>
+										<option value="">Select Ledger</option>
+										{Object.keys(data[0]).map((ledger) => (
 											<option key={ledger} value={ledger}>
 												{ledger}
 											</option>
 										))}
-								</select>
-								{formikHandlers?.errors?.ledger &&
-									formikHandlers?.touched?.ledger && (
-										<span className='absolute botton-0 text-red-500 text-xs'>{formikHandlers?.errors?.ledger}</span>
-									)}
+									</select>
+									{formikHandlers?.errors?.method &&
+										formikHandlers?.touched?.method && (
+											<span className="absolute botton-0 text-red-500 text-xs">
+												{formikHandlers?.errors?.method}
+											</span>
+										)}
+								</div>
 
-							</div>
-						)}
-
-						<div className='my-3 relative'>
-							<label htmlFor="network">Network</label>
-							<select
-								onChange={(e) => {
-									formikHandlers.handleChange(e);
-									setSelectedDid(e.target.value);
-								}}
-								value={selectedDid}
-								id="network"
-								name="network"
-								className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
-							>
-								<option value="">Select Network</option>
-								{formikHandlers.values.method === 'polygon' &&
-									data[0] &&
-									Object.keys(data[0][selectedLedger]).map((network) => (
-										<option key={network} value={network}>
-											{network}
-										</option>
-									))}
-								{formikHandlers.values.method !== 'polygon' &&
-									selectedLedger &&
-									selectedNetwork &&
-									Object.keys(data[0][selectedLedger][selectedNetwork]).map(
-										(network) => (
-											<option key={network} value={network}>
-												{network}
-											</option>
-										),
-									)}
-							</select>
-							{formikHandlers?.errors?.network &&
-								formikHandlers?.touched?.network && (
-									<span className='absolute botton-0 text-red-500 text-xs'>{formikHandlers?.errors?.network}</span>
+								{formikHandlers.values.method !== 'polygon' && (
+									<div className="my-3 relative">
+										<label
+											htmlFor="ledger"
+											className="text-sm font-medium text-gray-900 dark:text-gray-300"
+										>
+											Ledger
+										</label>
+										<select
+											onChange={(e) => {
+												formikHandlers.handleChange(e);
+												setSelectedNetwork(e.target.value);
+											}}
+											value={selectedNetwork}
+											id="ledger"
+											name="ledger"
+											className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+										>
+											<option value="">Select Network</option>
+											{selectedLedger &&
+												data[0][selectedLedger] &&
+												Object.keys(data[0][selectedLedger]).map((ledger) => (
+													<option key={ledger} value={ledger}>
+														{ledger}
+													</option>
+												))}
+										</select>
+										{formikHandlers?.errors?.ledger &&
+											formikHandlers?.touched?.ledger && (
+												<span className="absolute botton-0 text-red-500 text-xs">
+													{formikHandlers?.errors?.ledger}
+												</span>
+											)}
+									</div>
 								)}
 
-						</div>
+								<div className="my-3 relative">
+									<label
+										htmlFor="network"
+										className="text-sm font-medium text-gray-900 dark:text-gray-300"
+									>
+										Network
+									</label>
+									<select
+										onChange={(e) => {
+											formikHandlers.handleChange(e);
+											setSelectedDid(e.target.value);
+										}}
+										value={selectedDid}
+										id="network"
+										name="network"
+										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+									>
+										<option value="">Select Network</option>
+										{formikHandlers.values.method === 'polygon' &&
+											data[0] &&
+											Object.keys(data[0][selectedLedger]).map((network) => (
+												<option key={network} value={network}>
+													{network}
+												</option>
+											))}
+										{formikHandlers.values.method !== 'polygon' &&
+											selectedLedger &&
+											selectedNetwork &&
+											Object.keys(data[0][selectedLedger][selectedNetwork]).map(
+												(network) => (
+													<option key={network} value={network}>
+														{network}
+													</option>
+												),
+											)}
+									</select>
+									{formikHandlers?.errors?.network &&
+										formikHandlers?.touched?.network && (
+											<span className="absolute botton-0 text-red-500 text-xs">
+												{formikHandlers?.errors?.network}
+											</span>
+										)}
+								</div>
 
-						<div className='my-3 relative'>
-							<label htmlFor="DID Method">DID Method</label>
-							<select
-								onChange={formikHandlers.handleChange}
-								value={formikHandlers.values.did}
-								id="did"
-								name="did"
-								className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
-							>
-								<option value="">Select DID Method</option>
-								{formikHandlers.values.method === 'polygon'
-									? selectedLedger &&
-									  selectedDid && (
-											<option
-												key={selectedDid}
-												value={Object.values(
-													data[0][selectedLedger][selectedDid],
-												)}
-											>
-												{Object.values(data[0][selectedLedger][selectedDid])}
-											</option>
-									  )
-									: selectedLedger &&
-									  selectedNetwork &&
-									  selectedDid && (
-											<option
-												key={selectedDid}
-												value={Object.values(
-													data[0][selectedLedger][selectedNetwork][selectedDid],
-												)}
-											>
-												{Object.values(
-													data[0][selectedLedger][selectedNetwork][selectedDid],
-												)}
-											</option>
-									  )}
-							</select>
-							{formikHandlers?.errors?.did && formikHandlers?.touched?.did && (
-								<span className='absolute botton-0 text-red-500 text-xs'>{formikHandlers?.errors?.did}</span>
-							)}
+								<div className="my-3 relative">
+									<label
+										htmlFor="DID Method"
+										className="text-sm font-medium text-gray-900 dark:text-gray-300"
+									>
+										DID Method
+									</label>
+									<select
+										onChange={formikHandlers.handleChange}
+										value={formikHandlers.values.did}
+										id="did"
+										name="did"
+										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+									>
+										<option value="">Select DID Method</option>
+										{formikHandlers.values.method === 'polygon'
+											? selectedLedger &&
+											  selectedDid && (
+													<option
+														key={selectedDid}
+														value={Object.values(
+															data[0][selectedLedger][selectedDid],
+														)}
+													>
+														{Object.values(
+															data[0][selectedLedger][selectedDid],
+														)}
+													</option>
+											  )
+											: selectedLedger &&
+											  selectedNetwork &&
+											  selectedDid && (
+													<option
+														key={selectedDid}
+														value={Object.values(
+															data[0][selectedLedger][selectedNetwork][
+																selectedDid
+															],
+														)}
+													>
+														{Object.values(
+															data[0][selectedLedger][selectedNetwork][
+																selectedDid
+															],
+														)}
+													</option>
+											  )}
+									</select>
+									{formikHandlers?.errors?.did &&
+										formikHandlers?.touched?.did && (
+											<span className="absolute botton-0 text-red-500 text-xs">
+												{formikHandlers?.errors?.did}
+											</span>
+										)}
+								</div>
+								<div className="mt-3 relative">
+									<Label htmlFor="name" value="Wallet Label" />
+									<span className="text-red-500 text-xs">*</span>
 
-						</div>
-						<div className="w-full flex justify-end">
-							<Button
-								type="submit"
-								className="flex h-min p-0.5 focus:z-10 focus:outline-none border border-transparent enabled:hover:bg-cyan-800 dark:enabled:hover:bg-cyan-700 mt-4 text-base font-medium text-center text-white bg-primary-700 rounded-md hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-							>
-								Submit
-							</Button>
-						</div>
-					</Form>
-				)}
-			</Formik>
+									<Field
+										id="label"
+										name="label"
+										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+										type="text"
+									/>
+									{formikHandlers?.errors?.label &&
+										formikHandlers?.touched?.label && (
+											<span className="text-red-500 absolute text-xs">
+												{formikHandlers?.errors?.label}
+											</span>
+										)}
+								</div>
+								<div className="w-full flex justify-end">
+									<Button
+										type="submit"
+										className="flex h-min p-0.5 focus:z-10 focus:outline-none border border-transparent enabled:hover:bg-cyan-800 dark:enabled:hover:bg-cyan-700 mt-4 text-base font-medium text-center text-white bg-primary-700 rounded-md hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+									>
+										Submit
+									</Button>
+								</div>
+							</Form>
+						)}
+					</Formik>
+				</>
+			) : (
+				<Formik
+					initialValues={{
+						seed: '',
+						network: '',
+						did: '',
+						label: orgName || '',
+					}}
+					validationSchema={yup.object().shape({
+						seed: yup.string().required('Seed is required'),
+						network: yup.string().required('Network is required'),
+						did: yup.string().required('DID Method is required'),
+						label: yup.string().required('Wallet label is required'),
+					})}
+					onSubmit={(values: ValuesShared) => {
+						console.log('values', values);
+						submitSharedWallet(values);
+					}}
+				>
+					{(formikHandlers) => (
+						<Form className="">
+							<div className="mb-3">
+								<div className="mt-3 relative">
+									<div className="block">
+										<Label htmlFor="seed" value="Seed" />
+										<span className="text-red-500 text-xs">*</span>
+									</div>
+
+									<Field
+										id="seed"
+										name="seed"
+										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+										type="text"
+									/>
+									{formikHandlers?.errors?.seed &&
+										formikHandlers?.touched?.seed && (
+											<span className="text-red-500 absolute text-xs">
+												{formikHandlers?.errors?.seed}
+											</span>
+										)}
+								</div>
+								<div className="mt-3 relative">
+									<div className="block">
+										<Label htmlFor="did" value="DID" />
+										<span className="text-red-500 text-xs">*</span>
+									</div>
+
+									<Field
+										id="did"
+										name="did"
+										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+										type="text"
+									/>
+									{formikHandlers?.errors?.did &&
+										formikHandlers?.touched?.did && (
+											<span className="text-red-500 absolute text-xs">
+												{formikHandlers?.errors?.did}
+											</span>
+										)}
+								</div>
+								<div className="mt-3 relative">
+									<Label htmlFor="network" value="Network" />
+									<span className="text-red-500 text-xs">*</span>
+
+									<select
+										onChange={(e) => formikHandlers.handleChange(e)}
+										id="network"
+										name="network"
+										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+									>
+										<option value="">Select network</option>
+										{networks &&
+											networks.length > 0 &&
+											networks.map((item: INetworks) => (
+												<option key={item.id} value={item.id}>
+													{item.name}
+												</option>
+											))}
+									</select>
+
+									{formikHandlers?.errors?.network &&
+										formikHandlers?.touched?.network && (
+											<span className="text-red-500 absolute text-xs">
+												{formikHandlers?.errors?.network}
+											</span>
+										)}
+								</div>
+
+								<div className="mt-3 relative">
+									<Label htmlFor="name" value="Wallet Label" />
+									<span className="text-red-500 text-xs">*</span>
+
+									<Field
+										id="label"
+										name="label"
+										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+										type="text"
+										value={orgName}
+									/>
+									{formikHandlers?.errors?.label &&
+										formikHandlers?.touched?.label && (
+											<span className="text-red-500 absolute text-xs">
+												{formikHandlers?.errors?.label}
+											</span>
+										)}
+								</div>
+							</div>
+							<div className="w-full flex justify-end">
+								<Button
+									type="submit"
+									className="flex h-min p-0.5 focus:z-10 focus:outline-none border border-transparent enabled:hover:bg-cyan-800 dark:enabled:hover:bg-cyan-700 mt-4 text-base font-medium text-center text-white bg-primary-700 rounded-md hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+								>
+									Submit
+								</Button>
+							</div>
+						</Form>
+					)}
+				</Formik>
+			)}
 		</div>
 	);
 };
@@ -540,7 +647,7 @@ const DedicatedAgentForm = ({
 									)}
 							</div>
 						)}
-						<NetworkInput formikHandlers={formikHandlers} />
+												<NetworkInput formikHandlers={formikHandlers} />
 
 						<div>
 							<div className="mb-1 block">
@@ -658,12 +765,15 @@ const WalletSpinup = (props: {
 	const submitSharedWallet = async (values: ValuesShared) => {
 		setLoading(true);
 		const payload = {
+			method:values.method|| '',
+			ledger:values.ledger|| '',
 			label: values.label,
 			seed: values.seed || seeds,
-			ledgerId: [values.network.toString()],
-			did: values.did,
+			network: [values.network.toString()],
+			did: values.did?.split(',').join(''),
 			clientSocketId: SOCKET.id,
 		};
+		console.log('payload', payload);
 
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		const spinupRes = await spinupSharedAgent(payload, orgId);
@@ -739,7 +849,7 @@ const WalletSpinup = (props: {
 				)
 		: '';
 
-	const orgName = generateAlphaNumeric.slice(0, 19) + 'Wallet';
+	const orgName = generateAlphaNumeric.slice(0, 19);
 
 	return (
 		<div className="mt-4 flex-col p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
@@ -808,8 +918,6 @@ const WalletSpinup = (props: {
 						agentType === AgentType.SHARED ? (
 							<SharedAgentForm
 								seeds={seeds}
-								isCopied={isCopied}
-								copyTextVal={copyTextVal}
 								orgName={orgName}
 								loading={loading}
 								submitSharedWallet={submitSharedWallet}
