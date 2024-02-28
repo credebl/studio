@@ -415,7 +415,8 @@ const UserDashBoard = () => {
 		window.location.href = pathRoutes.organizations.credentials;
 	};
 
-	const navigateToInvitation = () => {
+	const navigateToInvitation = async (ecosystemId: string) => {
+		await setToLocalStorage(storageKeys.ECOSYSTEM_ID, ecosystemId);
 		window.location.href = pathRoutes.ecosystem.sentinvitation;
 	};
 
@@ -1179,7 +1180,7 @@ const UserDashBoard = () => {
 																?.name === EcosystemRoles.ecosystemLead && (
 																<button
 																	onClick={() => {
-																		navigateToInvitation();
+																		navigateToInvitation(ecosystem?.id);
 																	}}
 																	className="rounded-md flex "
 																>
