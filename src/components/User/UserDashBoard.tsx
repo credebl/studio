@@ -531,7 +531,7 @@ const UserDashBoard = () => {
 				<></>
 			) : (
 				<div
-					className="p-8 grid w-full grid-cols-1 sm:grid-cols-3 gap-4 mt-0 mb-4 rounded-md border border-gray-200 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:bg-[url('/images/bg-darkwallet.png')] bg-[url('/images/bg-lightwallet.png')] bg-center bg-no-repeat p-0 bg-auto"
+					className="p-8 grid w-full grid-cols-1 sm:grid-cols-3 gap-4 mt-0 mb-4 rounded-md border border-gray-200 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:bg-[url('/images/bg-darkwallet.png')] bg-[url('/images/bg-lightwallet.png')] bg-center bg-no-repeat p-0 bg-auto dark:bg-cover"
 					style={{ minHeight: '130px' }}
 				>
 					{walletLoading ? (
