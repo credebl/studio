@@ -37,8 +37,8 @@ const EndorsementPopup = (props: {
 		setIsEcosystemData(data);
 	};
 	const checkEcosystemAccess = async () => {
-		const datas = await getOwnerAdminRole();
-		setIsAccess(datas);
+		const data = await getOwnerAdminRole();
+		setIsAccess(data);
 	};
 
 	useEffect(() => {
