@@ -18,6 +18,7 @@ import {
 	ICheckEcosystem,
 	checkEcosystem,
 	getEcosystemId,
+	getOwnerAdminRole,
 } from '../../config/ecosystem';
 import { Button, Dropdown } from 'flowbite-react';
 import EditPopupModal from '../EditEcosystemOrgModal';
@@ -198,14 +199,19 @@ const Dashboard = () => {
 	const navigateToInvitation = () => {
 		window.location.href = pathRoutes.ecosystem.sentinvitation;
 	};
+	const [isAccess, setIsAccess] = useState(false);
 
+	const checkEcosystemData = async () => {
+		const data: ICheckEcosystem = await checkEcosystem();
+		setIsEcosystemLead(Boolean(data));
+	};
+	const checkEcosystemAccess = async () => {
+		const data = await getOwnerAdminRole();
+		setIsAccess(data);
+	};
 	useEffect(() => {
 		getDashboardData();
-
-		const checkEcosystemData = async () => {
-			const data: ICheckEcosystem = await checkEcosystem();
-			setIsEcosystemLead(data.isEcosystemLead);
-		};
+		checkEcosystemAccess()
 		checkEcosystemData();
 	}, []);
 
@@ -330,7 +336,8 @@ const Dashboard = () => {
 										<div className="inline-flex items-center ml-auto absolute top-0 right-0">
 											<Button
 												onClick={navigateToInvitation}
-												className='text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+												className={`${isAccess ? "hover:bg-primary-800 dark:hover:text-primary-700 dark:hover:bg-primary-700" : ""} hover:!bg-primary-800 text-base font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:focus:ring-primary-800 mr-3`}
+												disabled={loading || !isAccess}
 											>
 												<svg
 													className="pr-2"
@@ -347,7 +354,7 @@ const Dashboard = () => {
 												</svg>
 												Invitations
 											</Button>
-											{dropdownOpen ? (
+											{dropdownOpen && isAccess ? (
 												<Dropdown
 													label={'test'}
 													renderTrigger={() => (
@@ -373,7 +380,7 @@ const Dashboard = () => {
 												</Dropdown>
 											) : (
 												<svg
-													className="ml-4 w-4 h-4 text-gray-800 cursor-pointer dark:text-white"
+													className="ml-4 w-4 h-4 text-gray-800 dark:text-white cursor-not-allowed"
 													aria-hidden="true"
 													xmlns="http://www.w3.org/2000/svg"
 													fill="currentColor"
