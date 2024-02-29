@@ -67,6 +67,7 @@ const Dashboard = () => {
 		useState(false);
 	const [orgId, setOrgId] = useState('');
 	const [isOrgModal, setIsOrgModal] = useState(false);
+console.log("isEcosystemLead",ecosystemDetails,isEcosystemLead);
 
 	const createEcosystemModel = () => {
 		setOpenModal(true);
@@ -203,7 +204,7 @@ const Dashboard = () => {
 
 	const checkEcosystemData = async () => {
 		const data: ICheckEcosystem = await checkEcosystem();
-		setIsEcosystemLead(Boolean(data));
+		setIsEcosystemLead(data.isEcosystemLead);
 	};
 	const checkEcosystemAccess = async () => {
 		const data = await getOwnerAdminRole();
