@@ -354,7 +354,7 @@ const Dashboard = () => {
 												</svg>
 												Invitations
 											</Button>
-											{dropdownOpen ? (
+											{dropdownOpen && isAccess ? (
 												<Dropdown
 													label={'test'}
 													renderTrigger={() => (
@@ -380,7 +380,7 @@ const Dashboard = () => {
 												</Dropdown>
 											) : (
 												<svg
-													className="ml-4 w-4 h-4 text-gray-800 cursor-pointer dark:text-white"
+													className="ml-4 w-4 h-4 text-gray-800 dark:text-white cursor-not-allowed"
 													aria-hidden="true"
 													xmlns="http://www.w3.org/2000/svg"
 													fill="currentColor"

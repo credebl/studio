@@ -176,7 +176,7 @@ const EndorsementPopup = (props: {
 								onClick={() => RejectEndorsement(props.endorsementData.id)}
 								disabled={loadingReject || !isAccess}
 								style={{ cursor: !isAccess ? "not-allowed" : "default" }}
-								className={`${isAccess ? "hover:bg-secondary-700 dark:hover:text-primary-700" : ""}  !ring-2 dark:text-white text-primary-700 font-medium rounded-md text-sm`}
+								className={`${isAccess ? "hover:bg-secondary-700 dark:hover:text-primary-700" : ""} !ring-2 dark:text-white text-primary-700 font-medium rounded-md text-sm`}
 							>
 								<span className="flex items-center rounded-md text-sm px-4 py-2">
 									{loadingReject && (
