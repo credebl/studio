@@ -75,7 +75,8 @@ const getEcosystemId = async (): Promise<string> => {
 
 				if (
 					data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS &&
-					data?.data && data?.data.ecosystemDetails &&
+					data?.data &&
+					data?.data.ecosystemDetails &&
 					data?.data.ecosystemDetails.length > 0
 				) {
 					const response = data?.data.ecosystemDetails[0];
@@ -99,16 +100,23 @@ const getEcosystemId = async (): Promise<string> => {
 };
 
 const getUserRoles = async () => {
-	const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES)
-	const roles = orgRoles.split(',')
-	return roles
-}
+	const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES);
+	const roles = orgRoles.split(',');
+	return roles;
+};
 
-	const getOwnerAdminRole = async () => {
-		const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES);
-		const roles = orgRoles.includes(OrganizationRoles.organizationOwner) || orgRoles.includes(OrganizationRoles.organizationAdmin)
-    return roles
-	};
+const getOwnerAdminRole = async (props?: string) => {
+	const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES);
+	if (props) {
+		const roles = orgRoles.includes(OrganizationRoles.organizationOwner);
+		return roles;
+	} else {
+		const roles =
+			orgRoles.includes(OrganizationRoles.organizationOwner) ||
+			orgRoles.includes(OrganizationRoles.organizationAdmin);
+		return roles;
+	}
+};
 
 const getOrgDetails = async (): Promise<IOrgDetails> => {
 	const orgId = await getOrgId();
@@ -143,4 +151,10 @@ const getOrgDetails = async (): Promise<IOrgDetails> => {
 	return orgData;
 };
 
-export { checkEcosystem, getEcosystemId, getOrgDetails, getUserRoles, getOwnerAdminRole };
+export {
+	checkEcosystem,
+	getEcosystemId,
+	getOrgDetails,
+	getUserRoles,
+	getOwnerAdminRole,
+};

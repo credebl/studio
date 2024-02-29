@@ -17,6 +17,7 @@ import {
 import type { AxiosResponse } from 'axios';
 import { AlertComponent } from '../../AlertComponent';
 import { getFromLocalStorage } from '../../../api/Auth';
+import React from 'react';
 
 const EndorsementPopup = (props: {
 	openModal: boolean;
@@ -78,6 +79,7 @@ const EndorsementPopup = (props: {
 	const SubmitEndorsement = async (endorsementId: string) => {
 		try {
 			setLoading(true);
+			setLoadingReject(true);
 			const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
 			const ecoId = await getEcosystemId();
 			const SubmitEndorsementrequest = await SubmitEndorsementRequest(
@@ -96,6 +98,7 @@ const EndorsementPopup = (props: {
 			setLoading(false);
 		} catch (error) {
 			setLoading(false);
+			setLoadingReject(false);
 			console.error('Error while Submit schema:', error);
 		}
 	};
@@ -172,16 +175,11 @@ const EndorsementPopup = (props: {
 					{isEcosystemData?.isEcosystemLead &&
 					props.endorsementData?.status === EndorsementStatus.requested ? (
 						<div className="flex gap-3 pt-1 pb-3">
-							<button
+							<Button
 								onClick={() => RejectEndorsement(props.endorsementData.id)}
-								disabled={loadingReject || !isAccess}
-								style={{ cursor: !isAccess ? "not-allowed" : "default" }}
-								className={`${isAccess ? "hover:bg-secondary-700 dark:hover:text-primary-700" : ""} !ring-2 dark:text-white text-primary-700 font-medium rounded-md text-sm`}
+								disabled={loading || !isAccess || loadingReject}
+								className={`${isAccess ? "hover:bg-secondary-700 hover:!bg-secondary-700 dark:hover:text-primary-700 dark:hover:bg-secondary-700" : ""} h-12 text-base font-medium text-center !ring-2 dark:text-white text-primary-700 rounded-md bg-white sm:w-auto dark:bg-primary-600 dark:focus:ring-primary-800 mr-3`}
 							>
-								<span className="flex items-center rounded-md text-sm px-4 py-2">
-									{loadingReject && (
-										<Spinner className="mr-2" color={'info'} size={'md'} />
-									)}
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										width="24"
@@ -199,13 +197,12 @@ const EndorsementPopup = (props: {
 										/>
 									</svg>
 									<span className="ml-2 mr-2">Decline</span>
-								</span>
-							</button>
+							</Button>
 
 							<Button
 								isProcessing={loading}
 								color="bg-primary-800"
-								disabled={loading || !isAccess}
+								disabled={loading || !isAccess || loadingReject}
 								className={`${isAccess ? "hover:bg-primary-800 dark:hover:text-primary-700 dark:hover:bg-primary-700" : ""} text-base font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:focus:ring-primary-800 mr-3`}
 								onClick={() => {
 									SignEndorsement(props.endorsementData.id);
