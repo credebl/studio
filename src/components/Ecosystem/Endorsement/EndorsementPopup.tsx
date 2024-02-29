@@ -1,4 +1,4 @@
-import { Button, Modal, Spinner } from 'flowbite-react';
+import { Button, Modal } from 'flowbite-react';
 import { EndorsementStatus, EndorsementType } from '../../../common/enums';
 import {
 	ICheckEcosystem,
@@ -7,7 +7,7 @@ import {
 	getOwnerAdminRole,
 } from '../../../config/ecosystem';
 import EndorsementCard from './EndorsementCard';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
 import {
 	RejectEndorsementRequest,
@@ -17,7 +17,6 @@ import {
 import type { AxiosResponse } from 'axios';
 import { AlertComponent } from '../../AlertComponent';
 import { getFromLocalStorage } from '../../../api/Auth';
-import React from 'react';
 
 const EndorsementPopup = (props: {
 	openModal: boolean;
