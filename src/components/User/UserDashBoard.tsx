@@ -60,7 +60,6 @@ const UserDashBoard = () => {
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const [organizationsList, setOrganizationList] =
 		useState<Array<Organisation> | null>(null);
-		console.log("organizationsList",organizationsList);
 		
 	const [activityList, setActivityList] = useState<Array<UserActivity> | null>(
 		null,
