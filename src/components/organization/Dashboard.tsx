@@ -123,7 +123,7 @@ const Dashboard = () => {
 			<div className="mt-4 w-full">
 				<div className="flex flex-wrap w-full items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex-row sm:items-center sm:w-full sm:p-6 dark:border-gray-700 dark:bg-gray-800">
 					<div className="relative w-full">
-						<div className="items-center block sm:flex flex-wrap break-normal w-full space-x-4 justify-center sm:justify-start">
+						<div className="items-center block sm:flex flex-wrap break-normal w-full sm:space-x-4 justify-center sm:justify-start">
 							<div>
 								{orgData?.logoUrl ? (
 									<CustomAvatar size="80" src={orgData?.logoUrl} />
@@ -131,7 +131,7 @@ const Dashboard = () => {
 									<CustomAvatar size="90" name={orgData?.name} />
 								)}
 							</div>
-							<div className="sm:w-100/12rem">
+							<div className="sm:w-100/12rem mt-2">
 								{orgData ? (
 									<div className="break-normal">
 										<h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">

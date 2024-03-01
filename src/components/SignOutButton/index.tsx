@@ -10,7 +10,11 @@ const SignOutButton = () => {
 		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ID);
 		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ROLE);
 		await removeFromLocalStorage(storageKeys.USER_PROFILE);
-
+		await removeFromLocalStorage(storageKeys.ORG_DETAILS);
+		await removeFromLocalStorage(storageKeys.CRED_DEF_ID);
+		await removeFromLocalStorage(storageKeys.SCHEMA_ATTR);
+		await removeFromLocalStorage(storageKeys.LEDGER_ID);
+		
 		const response = await fetch('/api/auth/signout', {
 			method: 'GET',
 			headers: {

@@ -26,7 +26,8 @@ const permittedPages = RolePermissions.find(
 >
 	<div class="px-3 py-3 lg:px-5 lg:pl-3">
 		<div class="flex items-center justify-between">
-			<div class="flex items-center justify-start">
+			<>
+			<div class="flex items-center justify-start min-w-fit">
 				{
 					!hideOrgAgent && (
 						<button
@@ -67,7 +68,7 @@ const permittedPages = RolePermissions.find(
 				<a
 					href={(permittedPages && permittedPages[0]) ||
 						pathRoutes.users.dashboard}
-					class="flex ml-2 md:mr-24"
+					class="flex ml-2 lg:mr-24 mr-2"
 				>
 					<img
 						src="/images/CREDEBL_ICON.png"
@@ -80,13 +81,14 @@ const permittedPages = RolePermissions.find(
 					>
 				</a>
 			</div>
-
+			</>
+			<div>
 			<div class="flex items-center">
 				<>
 					{
 						!hideOrgAgent && (
 							<>
-								<div class="hidden sm:block mr-5">
+								<div class="flex w-full items-center sm:mr-5">
 									<AgentHealth client:visible />
 								</div>
 								<div class="hidden sm:block mr-5">
@@ -418,9 +420,9 @@ const permittedPages = RolePermissions.find(
 						id="apps-dropdown"
 					>
 					</div>
+					<ColorModeSwitcher />
 				</>
 
-				<ColorModeSwitcher />
 
 				<!-- Profile -->
 				<div class="flex items-center ml-3">
@@ -496,4 +498,5 @@ const permittedPages = RolePermissions.find(
 			</div>
 		</div>
 	</div>
+</div>
 </nav>

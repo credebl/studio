@@ -7,7 +7,8 @@ import { storageKeys } from "../../config/CommonConstant";
 const DisplayUser = () => {
 
     const [userObj, setUserObj] = useState(null)
-
+		
+    let timer:any= null
     const getUserDetails = async () => {
         const userProfile = await getFromLocalStorage(storageKeys.USER_PROFILE)
         const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES)
@@ -15,10 +16,18 @@ const DisplayUser = () => {
         parsedUser.roles = orgRoles
         setUserObj(parsedUser)
     }
-
     useEffect(() => {
-        getUserDetails()
-    }, [])
+			const fetchData = async () => {
+					await getUserDetails();
+			};
+			if (userObj === null && timer === null) {
+				timer = setTimeout(fetchData, 1000);
+			}
+			return () => {
+					clearTimeout(timer);
+					timer = null;
+			};
+	}, [userObj]);
 
 
     return (
