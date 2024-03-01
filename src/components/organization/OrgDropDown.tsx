@@ -42,32 +42,32 @@ const OrgDropDown = () => {
 	};
 
 	const goToOrgDashboard = async (org: Organisation) => {
+		await removeFromLocalStorage(storageKeys.ORG_INFO);
+		await removeFromLocalStorage(storageKeys.ORG_DETAILS);
 		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ID);
 		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ROLE);
-		await removeFromLocalStorage(storageKeys.ORG_DETAILS);
 
 		await setOrgRoleDetails(org);
-		await setToLocalStorage(storageKeys.ORG_DETAILS, org);
+		await setToLocalStorage(storageKeys.ORG_INFO, org);
 		window.location.href = pathRoutes.organizations.dashboard;
 	};
 
 	const setOrgRoleDetails = async (org: Organisation) => {
-		await setToLocalStorage(storageKeys.ORG_ID, org.id.toString());
-		const roles: string[] = org?.userOrgRoles.map((role) => role.orgRole.name);
-
-		await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
+		await setToLocalStorage(storageKeys.ORG_ID, org?.id?.toString());
+		const roles: string[] = org?.userOrgRoles.map(
+			(role) => role?.orgRole?.name,
+		);
+		await setToLocalStorage(storageKeys.ORG_ROLES, roles?.toString());
 	};
 
 	const handleActiveOrg = async (organizations: Iorg[]) => {
-		let activeOrg = null;
-
-		activeOrg = await getFromLocalStorage(storageKeys.ORG_DETAILS);
-
+		let activeOrg;
+		activeOrg = await getFromLocalStorage(storageKeys.ORG_INFO);
 		if (activeOrg) {
 			setActiveOrg(JSON.parse(activeOrg));
 		} else {
 			activeOrg = organizations?.[0];
-			await setToLocalStorage(storageKeys.ORG_DETAILS, organizations[0]);
+			await setToLocalStorage(storageKeys.ORG_INFO, organizations[0]);
 
 			setActiveOrg(activeOrg);
 			const roles: string[] = activeOrg?.userOrgRoles.map(
@@ -75,9 +75,8 @@ const OrgDropDown = () => {
 			);
 			await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
 		}
-
 		if (activeOrg) {
-			await setOrgRoleDetails(activeOrg);
+			await setOrgRoleDetails(JSON.parse(activeOrg));
 		}
 	};
 
@@ -95,18 +94,18 @@ const OrgDropDown = () => {
 					rounded-md text-sm px-4 py-2.5 text-center inline-flex items-center dark:hover:bg-primary-700 dark:focus:ring-blue-800"
 			>
 				{activeOrg ? (
-						<div className="shrink-0 flex items-center w-40">
-							{activeOrg.logoUrl ? (
-								<CustomAvatar size="20" src={activeOrg?.logoUrl} round />
-							) : (
-								<CustomAvatar size="20" name={activeOrg?.name} round />
-							)}
-							<text className="ml-2 text-primary-700 dark:text-white truncate">
-								{activeOrg?.name?.length > 20
-									? activeOrg?.name?.substring(0, 20) + '...'
-									: activeOrg?.name}
-							</text>
-						</div>
+					<div className="shrink-0 flex items-center w-40">
+						{activeOrg.logoUrl ? (
+							<CustomAvatar size="20" src={activeOrg?.logoUrl} round />
+						) : (
+							<CustomAvatar size="20" name={activeOrg?.name} round />
+						)}
+						<text className="ml-2 text-primary-700 dark:text-white truncate">
+							{activeOrg?.name?.length > 20
+								? activeOrg?.name?.substring(0, 20) + '...'
+								: activeOrg?.name}
+						</text>
+					</div>
 				) : (
 					<text className="text-primary-700 dark:text-white">
 						Select organization

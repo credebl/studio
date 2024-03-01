@@ -347,7 +347,8 @@ const UserDashBoard = () => {
 		}
 	}, [organizationsList]);
 
-	const goToOrgDashboard = async (orgId: string, rogRoles: string[]) => {
+	const goToOrgDashboard = async (orgId: string, rogRoles: string[], org: Organisation | undefined) => {
+		await setToLocalStorage(storageKeys.ORG_INFO, org);
 		await setToLocalStorage(storageKeys.ORG_ID, orgId);
 		window.location.href = pathRoutes.organizations.dashboard;
 	};
@@ -650,7 +651,7 @@ const UserDashBoard = () => {
 													<button
 														className="sm:w-100/11rem w-full"
 														onClick={() =>
-															goToOrgDashboard(org?.id, org?.roles)
+															goToOrgDashboard(org?.id, org?.roles, org)
 														}
 													>
 														<a

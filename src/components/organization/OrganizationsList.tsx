@@ -120,7 +120,7 @@ const OrganizationsList = () => {
 			(role) => role.orgRole.name,
 		);
 		activeOrg.roles = roles;
-		await setToLocalStorage(storageKeys.ORG_DETAILS, activeOrg)
+		await setToLocalStorage(storageKeys.ORG_INFO, activeOrg)
 		await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
 		window.location.href = pathRoutes.organizations.dashboard;
 	};
