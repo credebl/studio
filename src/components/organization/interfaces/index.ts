@@ -184,3 +184,8 @@ export interface EditOrgdetailsModalProps {
 	onEditSucess?: () => void;
 	orgData: Organisation | null;
 }
+export interface Iorg {
+	userOrgRoles: any[];
+	name: string;
+	logoUrl: string;
+}

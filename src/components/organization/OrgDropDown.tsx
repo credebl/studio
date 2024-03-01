@@ -10,16 +10,13 @@ import type { AxiosResponse } from 'axios';
 import { BiChevronDown } from 'react-icons/bi';
 import { AiOutlineSearch } from 'react-icons/ai';
 import CustomAvatar from '../Avatar';
-import type { Organisation } from './interfaces';
+import type { Iorg, Organisation } from './interfaces';
 import { getOrganizations } from '../../api/organization';
 import { pathRoutes } from '../../config/pathRoutes';
-interface Iorg {
-	name: string;
-	logoUrl: string;
-}
+
 const OrgDropDown = () => {
 	const [orgList, setOrgList] = useState<Organisation[]>([]);
-	const [activeOrg, setactiveOrg] = useState<Iorg>();
+	const [activeOrg, setActiveOrg] = useState<Iorg>();
 	const [input, setInput] = useState('');
 
 	useEffect(() => {
@@ -40,7 +37,7 @@ const OrgDropDown = () => {
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			setOrgList(data?.data?.organizations);
-			setActiveOrg(data?.data?.organizations);
+			handleActiveOrg(data?.data?.organizations);
 		}
 	};
 
@@ -61,18 +58,18 @@ const OrgDropDown = () => {
 		await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
 	};
 
-	const setActiveOrg = async (organizations: Iorg[]) => {
+	const handleActiveOrg = async (organizations: Iorg[]) => {
 		let activeOrg = null;
 
 		activeOrg = await getFromLocalStorage(storageKeys.ORG_DETAILS);
 
 		if (activeOrg) {
-			setactiveOrg(JSON.parse(activeOrg));
+			setActiveOrg(JSON.parse(activeOrg));
 		} else {
-			activeOrg = organizations && organizations[0];
+			activeOrg = organizations?.[0];
 			await setToLocalStorage(storageKeys.ORG_DETAILS, organizations[0]);
 
-			setactiveOrg(activeOrg);
+			setActiveOrg(activeOrg);
 			const roles: string[] = activeOrg?.userOrgRoles.map(
 				(role: { orgRole: { name: string } }) => role.orgRole.name,
 			);
@@ -98,7 +95,6 @@ const OrgDropDown = () => {
 					rounded-md text-sm px-4 py-2.5 text-center inline-flex items-center dark:hover:bg-primary-700 dark:focus:ring-blue-800"
 			>
 				{activeOrg ? (
-					<>
 						<div className="shrink-0 flex items-center w-40">
 							{activeOrg.logoUrl ? (
 								<CustomAvatar size="20" src={activeOrg?.logoUrl} round />
@@ -111,7 +107,6 @@ const OrgDropDown = () => {
 									: activeOrg?.name}
 							</text>
 						</div>
-					</>
 				) : (
 					<text className="text-primary-700 dark:text-white">
 						Select organization
