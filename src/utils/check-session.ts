@@ -33,7 +33,6 @@ export const checkUserSession = async ({
 
 	try {
 		const baseURL =
-			globalThis.baseUrl ||
 			envConfig.PUBLIC_BASE_URL ||
 			process.env.PUBLIC_BASE_URL;
 		const config = {
@@ -51,8 +50,11 @@ export const checkUserSession = async ({
 			status: userData.statusCode,
 			message: userData.message,
 		});
+console.log("-------------");
 
 		if (userData?.statusCode === apiStatusCodes.API_STATUS_UNAUTHORIZED) {
+			console.log("-------------1111111");
+
 			return {
 				permitted: false,
 				redirect: pathRoutes.auth.sinIn,
