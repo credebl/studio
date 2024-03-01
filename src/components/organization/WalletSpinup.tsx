@@ -19,7 +19,7 @@ import InputCopy from '../InputCopy';
 import SOCKET from '../../config/SocketConfig';
 import SharedIllustrate from './SharedIllustrate';
 import { nanoid } from 'nanoid';
-import { getLedgers } from '../../api/Agent';
+import { getLedgerConfig, getLedgers } from '../../api/Agent';
 import { AlertComponent } from '../AlertComponent';
 import CopyDid from '../../commonComponents/CopyDid';
 
@@ -116,31 +116,62 @@ const SharedAgentForm = ({
 	loading,
 	submitSharedWallet,
 }: ISharedAgentForm) => {
+	// console.log("pppppppp,",seeds);
+	
 	const [haveDidShared, setHaveDidShared] = useState(false);
 	const [networks, setNetworks] = useState([]);
-	const data = [
-		{
-			indy: {
-				bcovrin: {
-					testnet: 'did:indy:bcovrin:testnet',
-					mainnet: 'did:indy:bcovrin:mainnet',
-				},
-				indicio: {
-					testnet: 'did:indy:indcio:testnet',
-					mainnet: 'did:indy:indcio:mainnet',
-				},
-			},
-			polygon: {
-				testnet: 'did:polygon:testnet',
-				mainnet: 'did:polygon:mainnet',
-			},
-		},
-	];
+	// const data = [
+	// 	{
+	// 		indy: {
+	// 			bcovrin: {
+	// 				testnet: 'did:indy:bcovrin:testnet',
+	// 				mainnet: 'did:indy:bcovrin:mainnet',
+	// 			},
+	// 			indicio: {
+	// 				testnet: 'did:indy:indcio:testnet',
+	// 				mainnet: 'did:indy:indcio:mainnet',
+	// 			},
+	// 		},
+	// 		polygon: {
+	// 			testnet: 'did:polygon:testnet',
+	// 			mainnet: 'did:polygon:mainnet',
+	// 		},
+	// 	},
+	// ];
 
 	const [selectedLedger, setSelectedLedger] = useState('');
 	const [selectedNetwork, setSelectedNetwork] = useState('');
 	const [selectedDid, setSelectedDid] = useState('');
+const [mappedData, setMappedData]= useState([])
 
+	const fetchLedgerConfig = async () => {
+    try {
+        const { data } = await getLedgerConfig() as AxiosResponse;
+        if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+					console.log("data::::::::",data);
+					
+            const mapped = [{
+                indy: {
+                    bcovrin: {
+                        testnet: data.data.find(item => item.name === 'indy').details.bcovrin.testnet,
+                    },
+                    indicio: {
+                        testnet: data.data.find(item => item.name === 'indy').details.indicio.testnet,
+                        mainnet: data.data.find(item => item.name === 'indy').details.indicio.mainnet,
+												demonet: data.data.find(item => item.name === 'indy').details.indicio.demonet,
+                    },
+                },
+                polygon: {
+                    testnet: data.data.find(item => item.name === 'polygon').details.testnet,
+                    mainnet: data.data.find(item => item.name === 'polygon').details.mainnet,
+                },
+            }];
+            setMappedData(mapped);
+        }
+    } catch (err) {
+        console.log('Fetch Network ERROR::::', err);
+    }}
+	
 	const handleLedgerChange = (e) => {
 		setSelectedLedger(e.target.value);
 		setSelectedNetwork('');
@@ -153,6 +184,7 @@ const SharedAgentForm = ({
 	};
 	useEffect(() => {
 		getLedgerList();
+		fetchLedgerConfig()
 	}, []);
 
 	return (
@@ -210,9 +242,10 @@ const SharedAgentForm = ({
 						})
 					}
 						onSubmit={(values: ValuesShared) => {
-							console.log(values, 'values');
 
-							submitSharedWallet(values);
+							console.log("values:::11", values);
+
+							// submitSharedWallet(values);
 						}}
 					>
 						{(formikHandlers) => (
@@ -234,7 +267,7 @@ const SharedAgentForm = ({
 										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
 									>
 										<option value="">Select Ledger</option>
-										{Object.keys(data[0]).map((ledger) => (
+										{mappedData[0] && Object.keys(mappedData[0])?.map((ledger) => (
 											<option key={ledger} value={ledger}>
 												{ledger}
 											</option>
@@ -267,9 +300,9 @@ const SharedAgentForm = ({
 											className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
 										>
 											<option value="">Select Network</option>
-											{selectedLedger &&
-												data[0][selectedLedger] &&
-												Object.keys(data[0][selectedLedger]).map((ledger) => (
+											{mappedData[0] && selectedLedger &&
+												mappedData[0][selectedLedger] &&
+												Object.keys(mappedData[0][selectedLedger])?.map((ledger) => (
 													<option key={ledger} value={ledger}>
 														{ledger}
 													</option>
@@ -303,16 +336,16 @@ const SharedAgentForm = ({
 									>
 										<option value="">Select Network</option>
 										{formikHandlers.values.method === 'polygon' &&
-											data[0] &&
-											Object.keys(data[0][selectedLedger]).map((network) => (
+											mappedData[0] &&
+											Object.keys(mappedData[0][selectedLedger])?.map((network) => (
 												<option key={network} value={network}>
 													{network}
 												</option>
 											))}
 										{formikHandlers.values.method !== 'polygon' &&
-											selectedLedger &&
+										mappedData[0] &&	selectedLedger &&
 											selectedNetwork &&
-											Object.keys(data[0][selectedLedger][selectedNetwork]).map(
+											Object.keys(mappedData[0][selectedLedger][selectedNetwork])?.map(
 												(network) => (
 													<option key={network} value={network}>
 														{network}
@@ -344,16 +377,16 @@ const SharedAgentForm = ({
 									>
 										<option value="">Select DID Method</option>
 										{formikHandlers.values.method === 'polygon'
-											? selectedLedger &&
+											? mappedData[0] && selectedLedger &&
 											  selectedDid && (
 													<option
 														key={selectedDid}
 														value={Object.values(
-															data[0][selectedLedger][selectedDid],
+															mappedData[0][selectedLedger][selectedDid],
 														)}
 													>
 														{Object.values(
-															data[0][selectedLedger][selectedDid],
+															mappedData[0][selectedLedger][selectedDid],
 														)}
 													</option>
 											  )
@@ -363,13 +396,13 @@ const SharedAgentForm = ({
 													<option
 														key={selectedDid}
 														value={Object.values(
-															data[0][selectedLedger][selectedNetwork][
+															mappedData[0][selectedLedger][selectedNetwork][
 																selectedDid
 															],
 														)}
 													>
 														{Object.values(
-															data[0][selectedLedger][selectedNetwork][
+															mappedData[0][selectedLedger][selectedNetwork][
 																selectedDid
 															],
 														)}
@@ -713,7 +746,9 @@ const WalletSpinup = (props: {
 	const [isCopied, setIsCopied] = useState(false);
 	// const [organization, setOrganization] = useState(props.orgName)
 
+	console.log("seedsdsds",seeds);
 	useEffect(() => {
+		
 		setSeeds(nanoid(32));
 	}, []);
 
