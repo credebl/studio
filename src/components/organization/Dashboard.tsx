@@ -14,7 +14,7 @@ import { Roles } from '../../utils/enums/roles';
 import schemaCard from '../../assets/schema-icon.svg';
 import userCard from '../../assets/users-icon.svg';
 import WalletSpinup from './WalletSpinup';
-import { getFromLocalStorage } from '../../api/Auth';
+import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { pathRoutes } from '../../config/pathRoutes';
 import DashboardCard from '../../commonComponents/DashboardCard';
 import { AlertComponent } from '../AlertComponent';
@@ -48,6 +48,7 @@ const Dashboard = () => {
 	const fetchOrganizationDetails = async () => {
 		setLoading(true);
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		const orgInfo = await getFromLocalStorage(storageKeys.ORG_INFO);
 		const response = await getOrganizationById(orgId as string);
 		const { data } = response as AxiosResponse;
 
@@ -56,6 +57,11 @@ const Dashboard = () => {
 				setWalletStatus(true);
 			}
 			setOrgData(data?.data);
+			const organizationData = JSON.parse(orgInfo);
+			organizationData.name = data?.data?.name;
+			organizationData.description = data?.data?.description;
+			organizationData.logoUrl = data?.data?.logoUrl;
+			await setToLocalStorage(storageKeys.ORG_INFO, organizationData);
 		} else {
 			setFailure(response as string);
 		}
@@ -84,6 +90,7 @@ const Dashboard = () => {
 	const handleEditModalClose = () => {
 		setOpenModal(false);
 		fetchOrganizationDetails();
+		window.location.reload();
 	};
 
 	useEffect(() => {
