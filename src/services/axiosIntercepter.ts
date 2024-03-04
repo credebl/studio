@@ -16,11 +16,10 @@ const checkAuthentication = async (sessionCookie: string) => {
 		const config = {
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${sessionCookie + ''}`,
+				Authorization: `Bearer ${sessionCookie}`,
 			},
 			method: 'GET',
 		};
-		console.log(232323, baseURL, config);
 		const res = await fetch(`${baseURL + apiRoutes.users.userProfile}`, {
 			...config,
 		});
@@ -50,7 +49,6 @@ instance.interceptors.response.use(
 	function (response) {
 		// Any status code that lie within the range of 2xx cause this function to trigger
 		// Do something with response data
-		console.log(8282828, response);
 		return response;
 	},
 	async function (error) {
@@ -62,8 +60,6 @@ instance.interceptors.response.use(
 		if (errorRes?.status === 401) {
 			await checkAuthentication(token);
 		}
-
-		console.log(82828281, error);
 		return Promise.reject(error);
 	},
 );
