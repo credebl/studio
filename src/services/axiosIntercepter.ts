@@ -10,7 +10,7 @@ const instance = axios.create({
 });
 
 const checkAuthentication = async (sessionCookie: string) => {
-	const token = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID)
+	const token = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID);
 	try {
 		const baseURL = envConfig.PUBLIC_BASE_URL || process.env.PUBLIC_BASE_URL;
 		const config = {
@@ -28,7 +28,10 @@ const checkAuthentication = async (sessionCookie: string) => {
 			status: userData.statusCode,
 			message: userData.message,
 		});
-		if (userData.statusCode === apiStatusCodes.API_STATUS_UNAUTHORIZED && token) {
+		if (
+			userData.statusCode === apiStatusCodes.API_STATUS_UNAUTHORIZED &&
+			token
+		) {
 			await localStorage.clear();
 			window.location.href = pathRoutes.auth.sinIn;
 		}
@@ -38,7 +41,6 @@ const checkAuthentication = async (sessionCookie: string) => {
 instance.interceptors.request.use(
 	async (config) => {
 		config.baseURL = globalThis.baseUrl;
-		console.log(883838, config);
 		return config;
 	},
 	(error) => Promise.reject(error),
@@ -56,7 +58,6 @@ instance.interceptors.response.use(
 		// Do something with response error
 		const errorRes = error?.response;
 		const token = await getFromLocalStorage(storageKeys.TOKEN);
-		console.log(82992, errorRes);
 		if (errorRes?.status === 401) {
 			await checkAuthentication(token);
 		}
