@@ -32,10 +32,16 @@ interface Values {
 }
 
 interface ValuesShared {
+	keyType: string;
 	seed: string;
 	method: string;
-	network: string;
-	did: string;
+	network?: string;
+	did?: string;
+	endorserDid?: string;
+	privatekey?: string;
+	endpoint?: string;
+	domain?: string;
+	role?: string;
 	ledger: string;
 	label: string;
 }
@@ -148,7 +154,7 @@ const [mappedData, setMappedData]= useState([])
     try {
         const { data } = await getLedgerConfig() as AxiosResponse;
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-					console.log("data::::::::",data);
+		console.log("data::::::::",data);
 					
             const mapped = [{
                 indy: {
@@ -158,7 +164,7 @@ const [mappedData, setMappedData]= useState([])
                     indicio: {
                         testnet: data.data.find(item => item.name === 'indy').details.indicio.testnet,
                         mainnet: data.data.find(item => item.name === 'indy').details.indicio.mainnet,
-												demonet: data.data.find(item => item.name === 'indy').details.indicio.demonet,
+						demonet: data.data.find(item => item.name === 'indy').details.indicio.demonet,
                     },
                 },
                 polygon: {
@@ -166,6 +172,8 @@ const [mappedData, setMappedData]= useState([])
                     mainnet: data.data.find(item => item.name === 'polygon').details.mainnet,
                 },
             }];
+			console.log("mapped",mapped);
+			
             setMappedData(mapped);
         }
     } catch (err) {
@@ -224,7 +232,6 @@ const [mappedData, setMappedData]= useState([])
 						validationSchema={yup.object().shape({
 							method: yup.string().required('Method is required'),
 							network: yup.string().required('Network is required'),
-							did: yup.string().required('DID Method is required'),
 							label: yup.string().required('Wallet label is required'),
 							// ledger: yup.string().test({
 							// 	name: 'ledger-required',
@@ -239,13 +246,11 @@ const [mappedData, setMappedData]= useState([])
 							// 		return true;
 							// 	},
 							// }),
-						})
-					}
+						})}
 						onSubmit={(values: ValuesShared) => {
+							console.log('values:::11', values);
 
-							console.log("values:::11", values);
-
-							// submitSharedWallet(values);
+							submitSharedWallet(values);
 						}}
 					>
 						{(formikHandlers) => (
@@ -266,12 +271,13 @@ const [mappedData, setMappedData]= useState([])
 										name="method"
 										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
 									>
-										<option value="">Select Ledger</option>
-										{mappedData[0] && Object.keys(mappedData[0])?.map((ledger) => (
-											<option key={ledger} value={ledger}>
-												{ledger}
-											</option>
-										))}
+										<option value="">Select Method</option>
+										{mappedData[0] &&
+											Object.keys(mappedData[0])?.map((ledger) => (
+												<option key={ledger} value={ledger}>
+													{ledger}
+												</option>
+											))}
 									</select>
 									{formikHandlers?.errors?.method &&
 										formikHandlers?.touched?.method && (
@@ -299,14 +305,17 @@ const [mappedData, setMappedData]= useState([])
 											name="ledger"
 											className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
 										>
-											<option value="">Select Network</option>
-											{mappedData[0] && selectedLedger &&
+											<option value="">Select Ledger</option>
+											{mappedData[0] &&
+												selectedLedger &&
 												mappedData[0][selectedLedger] &&
-												Object.keys(mappedData[0][selectedLedger])?.map((ledger) => (
-													<option key={ledger} value={ledger}>
-														{ledger}
-													</option>
-												))}
+												Object.keys(mappedData[0][selectedLedger])?.map(
+													(ledger) => (
+														<option key={ledger} value={ledger}>
+															{ledger}
+														</option>
+													),
+												)}
 										</select>
 										{formikHandlers?.errors?.ledger &&
 											formikHandlers?.touched?.ledger && (
@@ -337,21 +346,24 @@ const [mappedData, setMappedData]= useState([])
 										<option value="">Select Network</option>
 										{formikHandlers.values.method === 'polygon' &&
 											mappedData[0] &&
-											Object.keys(mappedData[0][selectedLedger])?.map((network) => (
-												<option key={network} value={network}>
-													{network}
-												</option>
-											))}
-										{formikHandlers.values.method !== 'polygon' &&
-										mappedData[0] &&	selectedLedger &&
-											selectedNetwork &&
-											Object.keys(mappedData[0][selectedLedger][selectedNetwork])?.map(
+											Object.keys(mappedData[0][selectedLedger])?.map(
 												(network) => (
 													<option key={network} value={network}>
 														{network}
 													</option>
 												),
 											)}
+										{formikHandlers.values.method !== 'polygon' &&
+											mappedData[0] &&
+											selectedLedger &&
+											selectedNetwork &&
+											Object.keys(
+												mappedData[0][selectedLedger][selectedNetwork],
+											)?.map((network) => (
+												<option key={network} value={network}>
+													{network}
+												</option>
+											))}
 									</select>
 									{formikHandlers?.errors?.network &&
 										formikHandlers?.touched?.network && (
@@ -368,7 +380,7 @@ const [mappedData, setMappedData]= useState([])
 									>
 										DID Method
 									</label>
-									<select
+									{/* <select
 										onChange={formikHandlers.handleChange}
 										value={formikHandlers.values.did}
 										id="did"
@@ -388,6 +400,7 @@ const [mappedData, setMappedData]= useState([])
 														{Object.values(
 															mappedData[0][selectedLedger][selectedDid],
 														)}
+
 													</option>
 											  )
 											: selectedLedger &&
@@ -408,7 +421,31 @@ const [mappedData, setMappedData]= useState([])
 														)}
 													</option>
 											  )}
-									</select>
+									</select> */}
+									<div className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11">
+										{formikHandlers.values.method === 'polygon'
+											? mappedData[0] &&
+											  selectedLedger &&
+											  selectedDid && (
+													<span>
+														{Object.values(
+															mappedData[0][selectedLedger][selectedDid],
+														)}
+													</span>
+											  )
+											: selectedLedger &&
+											  selectedNetwork &&
+											  selectedDid && (
+													<span>
+														{Object.values(
+															mappedData[0][selectedLedger][selectedNetwork][
+																selectedDid
+															],
+														)}
+													</span>
+											  )}
+									</div>
+
 									{formikHandlers?.errors?.did &&
 										formikHandlers?.touched?.did && (
 											<span className="absolute botton-0 text-red-500 text-xs">
@@ -798,14 +835,21 @@ const WalletSpinup = (props: {
 	};
 
 	const submitSharedWallet = async (values: ValuesShared) => {
+		console.log('values:::', values);
 		setLoading(true);
 		const payload = {
+			keyType:values.keyType || 'ed25519',
 			method:values.method|| '',
 			ledger:values.ledger|| '',
 			label: values.label,
+			privatekey: values?.privatekey,   //add default private key while testing
+			endpoint: values?.endpoint || 'http://localhost:6006/docs',
 			seed: values.seed || seeds,
-			network: [values.network.toString()],
-			did: values.did?.split(',').join(''),
+			network: `${values?.ledger}:${values?.network}`,
+			// network: `Polygon Testnet`,
+			domain: values?.domain,
+			role: values?.role || 'endorser',
+			endorserDid: values?.endorserDid,
 			clientSocketId: SOCKET.id,
 		};
 		console.log('payload', payload);
