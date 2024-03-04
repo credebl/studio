@@ -50,11 +50,8 @@ export const checkUserSession = async ({
 			status: userData.statusCode,
 			message: userData.message,
 		});
-console.log("-------------");
 
 		if (userData?.statusCode === apiStatusCodes.API_STATUS_UNAUTHORIZED) {
-			console.log("-------------1111111");
-
 			return {
 				permitted: false,
 				redirect: pathRoutes.auth.sinIn,
