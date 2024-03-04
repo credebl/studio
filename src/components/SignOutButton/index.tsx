@@ -4,6 +4,7 @@ import { storageKeys } from '../../config/CommonConstant';
 const SignOutButton = () => {
 	const signOut = async () => {
 		await removeFromLocalStorage(storageKeys.TOKEN);
+		await removeFromLocalStorage(storageKeys.ORG_INFO);
 		await removeFromLocalStorage(storageKeys.USER_EMAIL);
 		await removeFromLocalStorage(storageKeys.ORG_ID);
 		await removeFromLocalStorage(storageKeys.ORG_ROLES);
