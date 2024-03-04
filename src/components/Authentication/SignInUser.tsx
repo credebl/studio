@@ -86,6 +86,11 @@ const SignInUser = () => {
 
 	const saveEmail = async (values: emailValue) => {
 		setEmail(values);
+		await removeFromLocalStorage(storageKeys.ORG_DETAILS);
+		await removeFromLocalStorage(storageKeys.ORG_INFO);
+		await removeFromLocalStorage(storageKeys.CRED_DEF_ID);
+		await removeFromLocalStorage(storageKeys.SCHEMA_ATTR);
+		await removeFromLocalStorage(storageKeys.LEDGER_ID);
 		await removeFromLocalStorage(storageKeys.TOKEN)
 		await removeFromLocalStorage(storageKeys.USER_EMAIL)
 		await removeFromLocalStorage(storageKeys.ORG_ID)
