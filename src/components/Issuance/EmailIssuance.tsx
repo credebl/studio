@@ -115,7 +115,7 @@ const EmailIssuance = () => {
 			transformedData.credentialDefinitionId = credentialSelected;
 			const transformedJson = JSON.stringify(transformedData, null, 2);
 			const response = await issueOobEmailCredential(transformedJson);
-			const { data } = response as AxiosResponse;
+			const { data } = response as AxiosResponse;			
 
 			if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 				if (data?.data) {
@@ -130,9 +130,10 @@ const EmailIssuance = () => {
 					setTimeout(() => {
 						window.location.href = pathRoutes?.organizations?.issuedCredentials;
 					}, 500);
-				} else {
-					setFailure(response as string);
+				} else {					
+					setFailure(data?.message);
 					setLoading(false);
+					setIssueLoader(false);
 					setOpenModal(false);
 				}
 			} else {
