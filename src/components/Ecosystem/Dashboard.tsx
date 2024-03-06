@@ -67,6 +67,7 @@ const Dashboard = () => {
 		useState(false);
 	const [orgId, setOrgId] = useState('');
 	const [isOrgModal, setIsOrgModal] = useState(false);
+console.log("isEcosystemLead",ecosystemDetails,isEcosystemLead);
 
 	const createEcosystemModel = () => {
 		setOpenModal(true);
