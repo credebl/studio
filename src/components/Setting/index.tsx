@@ -65,10 +65,10 @@ const Index = () => {
 				const { data } = response as AxiosResponse;
 
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-					setRegenerate(true);
+					setRegenerate(data?.data?.clientSecret ? true : false);
 					setHideCopy(true);
-					setClientId(data.data.clientId);
-					setClientSecret(data.data.clientSecret);
+					setClientId(data?.data?.clientId);
+					setClientSecret(data?.data?.clientSecret);
 					setButtonDisplay(true);
 				} else {
 					setClientId(null);
