@@ -95,3 +95,10 @@ export enum BulkIssuanceStatus {
 	successful= 'Successful',
 	failed= 'Failed'
 }
+
+export enum DidMethod {
+    INDY = 'indy',
+    KEY = 'key',
+    WEB = 'web',
+    POLYGON = 'polygon'
+}

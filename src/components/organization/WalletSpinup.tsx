@@ -11,7 +11,7 @@ import {
 	spinupDedicatedAgent,
 	spinupSharedAgent,
 } from '../../api/organization';
-import React, { useEffect, useState } from 'react';
+import React, { ReactElement, ReactNode, useEffect, useState } from 'react';
 
 import type { AxiosResponse } from 'axios';
 import DedicatedIllustrate from './DedicatedIllustrate';
@@ -19,9 +19,14 @@ import InputCopy from '../InputCopy';
 import SOCKET from '../../config/SocketConfig';
 import SharedIllustrate from './SharedIllustrate';
 import { nanoid } from 'nanoid';
-import { getLedgerConfig, getLedgers } from '../../api/Agent';
+import {
+	createPolygonKeyValuePair,
+	getLedgerConfig,
+	getLedgers
+} from '../../api/Agent';
 import { AlertComponent } from '../AlertComponent';
 import CopyDid from '../../commonComponents/CopyDid';
+import { DidMethod } from '../../common/enums';
 
 interface Values {
 	seed: string;
@@ -50,7 +55,6 @@ enum AgentType {
 	SHARED = 'shared',
 	DEDICATED = 'dedicated',
 }
-
 interface INetworks {
 	id: number;
 	name: string;
@@ -62,13 +66,19 @@ interface ISharedAgentForm {
 	copyTextVal: (e: any) => void;
 	orgName: string;
 	loading: boolean;
-	submitSharedWallet: (values: ValuesShared) => void;
+	submitSharedWallet: (values: ValuesShared, privateKey: string, domain: string, endPoint: string) => void;
 }
 
 interface IDedicatedAgentForm {
 	seeds: string;
 	loading: boolean;
 	submitDedicatedWallet: (values: Values) => void;
+}
+
+interface IPolygonKeys {
+	privateKey: string;
+	 publicKeyBase58: string;
+	 address: string;
 }
 
 const fetchNetworks = async () => {
@@ -83,8 +93,7 @@ const fetchNetworks = async () => {
 	}
 };
 
-const NetworkInput = ({formikHandlers}) => {
-
+const NetworkInput = ({ formikHandlers }) => {
 	return (
 		<div>
 			<div className="mb-1 block">
@@ -99,22 +108,23 @@ const NetworkInput = ({formikHandlers}) => {
 				className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
 			>
 				<option value="">Select network</option>
-				{networks && networks.length > 0 && networks.map((item: INetworks) => (
-					<option key={item.id} value={item.id}>
-						{item.name}
-					</option>
-				))}
+				{networks &&
+					networks.length > 0 &&
+					networks.map((item: INetworks) => (
+						<option key={item.id} value={item.id}>
+							{item.name}
+						</option>
+					))}
 			</select>
 
-			{formikHandlers?.errors?.network &&
-				formikHandlers?.touched?.network && (
-					<span className="text-red-500 text-xs">
-						{formikHandlers?.errors?.network}
-					</span>
-				)}
+			{formikHandlers?.errors?.network && formikHandlers?.touched?.network && (
+				<span className="text-red-500 text-xs">
+					{formikHandlers?.errors?.network}
+				</span>
+			)}
 		</div>
-	)
-}
+	);
+};
 
 const SharedAgentForm = ({
 	orgName,
@@ -122,68 +132,88 @@ const SharedAgentForm = ({
 	loading,
 	submitSharedWallet,
 }: ISharedAgentForm) => {
-	// console.log("pppppppp,",seeds);
-	
 	const [haveDidShared, setHaveDidShared] = useState(false);
 	const [networks, setNetworks] = useState([]);
-	// const data = [
-	// 	{
-	// 		indy: {
-	// 			bcovrin: {
-	// 				testnet: 'did:indy:bcovrin:testnet',
-	// 				mainnet: 'did:indy:bcovrin:mainnet',
-	// 			},
-	// 			indicio: {
-	// 				testnet: 'did:indy:indcio:testnet',
-	// 				mainnet: 'did:indy:indcio:mainnet',
-	// 			},
-	// 		},
-	// 		polygon: {
-	// 			testnet: 'did:polygon:testnet',
-	// 			mainnet: 'did:polygon:mainnet',
-	// 		},
-	// 	},
-	// ];
-
 	const [selectedLedger, setSelectedLedger] = useState('');
 	const [selectedNetwork, setSelectedNetwork] = useState('');
 	const [selectedDid, setSelectedDid] = useState('');
-const [mappedData, setMappedData]= useState([])
+	const [mappedData, setMappedData] = useState(null);
+	const [generatedKeys, setGeneratedKeys] = useState<IPolygonKeys | null>(null);
+	const [domainValue, setDomainValue] = useState<string>('');
+	const [endPointValue, setEndPointValue] = useState<string>('');
+	const [privateKeyValue, setPrivateKeyValue] = useState<string>('');
 
 	const fetchLedgerConfig = async () => {
-    try {
-        const { data } = await getLedgerConfig() as AxiosResponse;
-        if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-		console.log("data::::::::",data);
-					
-            const mapped = [{
-                indy: {
-                    bcovrin: {
-                        testnet: data.data.find(item => item.name === 'indy').details.bcovrin.testnet,
-                    },
-                    indicio: {
-                        testnet: data.data.find(item => item.name === 'indy').details.indicio.testnet,
-                        mainnet: data.data.find(item => item.name === 'indy').details.indicio.mainnet,
-						demonet: data.data.find(item => item.name === 'indy').details.indicio.demonet,
-                    },
-                },
-                polygon: {
-                    testnet: data.data.find(item => item.name === 'polygon').details.testnet,
-                    mainnet: data.data.find(item => item.name === 'polygon').details.mainnet,
-                },
-            }];
-			console.log("mapped",mapped);
-			
-            setMappedData(mapped);
-        }
-    } catch (err) {
-        console.log('Fetch Network ERROR::::', err);
-    }}
-	
+		try {
+			const { data } = (await getLedgerConfig()) as AxiosResponse;
+			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+				const obj = {
+					indy: {},
+					web: {},
+					key: {},
+					polygon: {}
+				};
+				data.data.forEach((item: {name: string, details: object}) => {
+					switch (item.name) {
+						case DidMethod.INDY:
+							obj.indy = {
+								...item.details,
+							};
+							break;
+
+						case DidMethod.WEB:
+							obj.web = {
+								...item.details,
+							};
+							break;
+
+						case DidMethod.KEY:
+							obj.key = {
+								...item.details,
+							};
+							break;
+
+						case DidMethod.POLYGON:
+							obj.polygon = {
+								...item.details,
+							};
+							break;
+
+						default:
+							break;
+					}
+				});
+
+				const mapped = {
+					...obj,
+				};
+
+				setMappedData(mapped);
+			}
+		} catch (err) {
+			console.log('Fetch Network ERROR::::', err);
+		}
+	};
+
 	const handleLedgerChange = (e) => {
 		setSelectedLedger(e.target.value);
 		setSelectedNetwork('');
 		setSelectedDid('');
+	};
+
+	const generatePolygonKeyValuePair = async () => {
+		try {
+			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+			const resCreatePolygonKeys = await createPolygonKeyValuePair(orgId);
+			const { data } = resCreatePolygonKeys as AxiosResponse;
+
+			if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+				setGeneratedKeys(data?.data);
+			}
+
+		} catch (err) {
+			console.log('Generate private key ERROR::::', err);
+		}
 	};
 
 	const getLedgerList = async () => {
@@ -192,9 +222,38 @@ const [mappedData, setMappedData]= useState([])
 	};
 	useEffect(() => {
 		getLedgerList();
-		fetchLedgerConfig()
+		fetchLedgerConfig();
 	}, []);
 
+	const showMethod = (method: string): ReactElement => {
+		switch (method) {
+			case DidMethod.POLYGON:
+				{
+					return mappedData && selectedLedger && selectedDid ? (
+						<span>{mappedData[selectedLedger][selectedDid] || ''}</span>
+					) : <></>
+				}
+			case DidMethod.INDY: {
+				return mappedData && selectedLedger && selectedNetwork && selectedDid ? (
+					<span>
+						{mappedData[selectedLedger][selectedNetwork][selectedDid] || ''}
+					</span>
+				) : <></>
+			}
+
+			case DidMethod.KEY:
+			case DidMethod.WEB:{
+				return mappedData && selectedLedger ? (
+					<span>
+						{mappedData[selectedLedger][selectedLedger] || ''}
+					</span>
+				) : <></>
+			}
+			default:
+				return <></>
+		}
+	};
+	
 	return (
 		<div className="mt-4 max-w-lg flex-col gap-4">
 			<div className="flex items-center gap-2 mt-4">
@@ -231,26 +290,15 @@ const [mappedData, setMappedData]= useState([])
 						}}
 						validationSchema={yup.object().shape({
 							method: yup.string().required('Method is required'),
-							network: yup.string().required('Network is required'),
 							label: yup.string().required('Wallet label is required'),
-							// ledger: yup.string().test({
-							// 	name: 'ledger-required',
-							// 	test: function (value) {
-							// 		if (this.parent.method !== 'Polygon' && !value) {
-							// 			throw new yup.ValidationError(
-							// 				'Ledger is required',
-							// 				value,
-							// 				'ledger',
-							// 			);
-							// 		}
-							// 		return true;
-							// 	},
-							// }),
 						})}
 						onSubmit={(values: ValuesShared) => {
-							console.log('values:::11', values);
-
-							submitSharedWallet(values);
+							submitSharedWallet(
+								values,
+								privateKeyValue,
+								domainValue,
+								endPointValue,
+							);
 						}}
 					>
 						{(formikHandlers) => (
@@ -266,14 +314,16 @@ const [mappedData, setMappedData]= useState([])
 										onChange={(e) => {
 											formikHandlers.handleChange(e);
 											handleLedgerChange(e);
+											setSelectedNetwork('');
+											setSelectedDid('');
 										}}
 										id="method"
 										name="method"
 										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
 									>
 										<option value="">Select Method</option>
-										{mappedData[0] &&
-											Object.keys(mappedData[0])?.map((ledger) => (
+										{mappedData &&
+											Object.keys(mappedData)?.map((ledger) => (
 												<option key={ledger} value={ledger}>
 													{ledger}
 												</option>
@@ -287,91 +337,204 @@ const [mappedData, setMappedData]= useState([])
 										)}
 								</div>
 
-								{formikHandlers.values.method !== 'polygon' && (
-									<div className="my-3 relative">
-										<label
-											htmlFor="ledger"
-											className="text-sm font-medium text-gray-900 dark:text-gray-300"
+								{formikHandlers.values.method === DidMethod.POLYGON && (
+									<div className="my-3 relative flex justify-between">
+										<div className="mt-4">
+											<Label value="Generate private key" />
+											<span className="text-red-500 text-xs">*</span>
+										</div>
+
+										<Button
+											type="button"
+											className="h-min p-0 focus:z-10 focus:outline-none border border-transparent enabled:hover:bg-cyan-800 dark:enabled:hover:bg-cyan-700 mt-4 text-base font-medium text-center text-white bg-primary-700 rounded-md hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+											onClick={() => generatePolygonKeyValuePair()}
 										>
-											Ledger
-										</label>
-										<select
-											onChange={(e) => {
-												formikHandlers.handleChange(e);
-												setSelectedNetwork(e.target.value);
-											}}
-											value={selectedNetwork}
-											id="ledger"
-											name="ledger"
-											className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
-										>
-											<option value="">Select Ledger</option>
-											{mappedData[0] &&
-												selectedLedger &&
-												mappedData[0][selectedLedger] &&
-												Object.keys(mappedData[0][selectedLedger])?.map(
-													(ledger) => (
-														<option key={ledger} value={ledger}>
-															{ledger}
-														</option>
-													),
-												)}
-										</select>
-										{formikHandlers?.errors?.ledger &&
-											formikHandlers?.touched?.ledger && (
-												<span className="absolute botton-0 text-red-500 text-xs">
-													{formikHandlers?.errors?.ledger}
-												</span>
-											)}
+											Generate
+										</Button>
 									</div>
 								)}
 
-								<div className="my-3 relative">
-									<label
-										htmlFor="network"
-										className="text-sm font-medium text-gray-900 dark:text-gray-300"
-									>
-										Network
-									</label>
-									<select
-										onChange={(e) => {
-											formikHandlers.handleChange(e);
-											setSelectedDid(e.target.value);
-										}}
-										value={selectedDid}
-										id="network"
-										name="network"
-										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
-									>
-										<option value="">Select Network</option>
-										{formikHandlers.values.method === 'polygon' &&
-											mappedData[0] &&
-											Object.keys(mappedData[0][selectedLedger])?.map(
-												(network) => (
-													<option key={network} value={network}>
-														{network}
-													</option>
-												),
-											)}
-										{formikHandlers.values.method !== 'polygon' &&
-											mappedData[0] &&
-											selectedLedger &&
-											selectedNetwork &&
-											Object.keys(
-												mappedData[0][selectedLedger][selectedNetwork],
-											)?.map((network) => (
-												<option key={network} value={network}>
-													{network}
-												</option>
-											))}
-									</select>
-									{formikHandlers?.errors?.network &&
-										formikHandlers?.touched?.network && (
-											<span className="absolute botton-0 text-red-500 text-xs">
-												{formikHandlers?.errors?.network}
+								{generatedKeys && (
+									<div className="my-3 relative">
+										<p className="text-sm truncate">
+											<span className="font-semibold">Private Key:</span>
+											<div className="flex ">
+												<CopyDid
+													className="align-center block text-sm text-gray-900 dark:text-white"
+													value={generatedKeys?.privateKey}
+												/>
+											</div>
+										</p>
+
+										<p className="text-sm truncate break-all flex ">
+											<span className="font-semibold">Public Key Base58:</span>
+											<span className='flex w-issuer-id'>
+											<CopyDid
+												className="align-center block text-sm text-gray-900 dark:text-white truncate"
+												value={generatedKeys?.publicKeyBase58}
+											/>
 											</span>
-										)}
-								</div>
+			
+										</p>
+										<p className="text-sm truncate">
+											<span className="font-semibold">Address:</span>
+											<CopyDid
+												className="align-center block text-sm text-gray-900 dark:text-white line-clamp-1"
+												value={generatedKeys?.address}
+											/>
+										</p>
+									</div>
+								)}
+
+								{formikHandlers.values.method === DidMethod.POLYGON && (
+									<>
+										<div className="my-3 relative">
+											<div className="mt-4">
+												<Label value="Private Key" />
+												<span className="text-red-500 text-xs">*</span>
+											</div>
+										</div>
+										<Field
+											id="endpoint"
+											name="endpoint"
+											className="truncate bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+											value={privateKeyValue}
+											onChange={(e) => setPrivateKeyValue(e.target.value)}
+											placeholder="Enter private key"
+										/>
+									</>
+								)}
+
+								{formikHandlers.values.method === DidMethod.POLYGON && (
+									<>
+										<div className="my-3 relative">
+											<div className="mt-4">
+												<Label value="Enter Endpoint" />
+												<span className="text-red-500 text-xs">*</span>
+											</div>
+										</div>
+										<Field
+											id="endpoint"
+											name="endpoint"
+											className="truncate bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+											value={endPointValue}
+											onChange={(e) => setEndPointValue(e.target.value)}
+											placeholder="Please enter endpoint"
+										/>
+									</>
+								)}
+
+								{formikHandlers.values.method === DidMethod.WEB && (
+									<>
+										<div className="my-3 relative">
+											<div className="mt-4">
+												<Label value="Enter Domain" />
+												<span className="text-red-500 text-xs">*</span>
+											</div>
+										</div>
+										<Field
+											id="webdomain"
+											name="password"
+											className="truncate bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+											value={domainValue}
+											onChange={(e) => setDomainValue(e.target.value)}
+											placeholder="Please enter domain"
+										/>
+									</>
+								)}
+
+								{formikHandlers.values.method !== DidMethod.POLYGON &&
+									formikHandlers.values.method !== DidMethod.KEY &&
+									formikHandlers.values.method !== DidMethod.WEB && (
+										<div className="my-3 relative">
+											<label
+												htmlFor="ledger"
+												className="text-sm font-medium text-gray-900 dark:text-gray-300"
+											>
+												Ledger
+											</label>
+											<select
+												onChange={(e) => {
+													formikHandlers.handleChange(e);
+													setSelectedNetwork(e.target.value);
+													setSelectedDid('');
+												}}
+												value={selectedNetwork}
+												id="ledger"
+												name="ledger"
+												className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+											>
+												<option value="">Select Ledger</option>
+												{mappedData &&
+													selectedLedger &&
+													mappedData[selectedLedger] &&
+													Object.keys(mappedData[selectedLedger])?.map(
+														(ledger) => (
+															<option key={ledger} value={ledger}>
+																{ledger}
+															</option>
+														),
+													)}
+											</select>
+											{formikHandlers?.errors?.ledger &&
+												formikHandlers?.touched?.ledger && (
+													<span className="absolute botton-0 text-red-500 text-xs">
+														{formikHandlers?.errors?.ledger}
+													</span>
+												)}
+										</div>
+									)}
+								{formikHandlers.values.method !== DidMethod.WEB &&
+									formikHandlers.values.method !== DidMethod.KEY && (
+										<div className="my-3 relative">
+											<label
+												htmlFor="network"
+												className="text-sm font-medium text-gray-900 dark:text-gray-300"
+											>
+												Network
+											</label>
+
+											<select
+												onChange={(e) => {
+													formikHandlers.handleChange(e);
+													setSelectedDid(e.target.value);
+												}}
+												value={selectedDid}
+												id="network"
+												name="network"
+												className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+											>
+												<option value="">Select Network</option>
+												{formikHandlers.values.method === DidMethod.POLYGON &&
+													mappedData &&
+													Object.keys(mappedData[selectedLedger])?.map(
+														(network) => (
+															<option key={network} value={network}>
+																{network}
+															</option>
+														),
+													)}
+												{formikHandlers.values.method !== DidMethod.POLYGON &&
+													mappedData &&
+													selectedLedger &&
+													selectedNetwork &&
+													Object.keys(
+														mappedData[selectedLedger][selectedNetwork],
+													)?.map((network) => (
+														<option key={network} value={network}>
+															{network}
+														</option>
+													))}
+											</select>
+
+											{formikHandlers?.errors?.network &&
+												formikHandlers?.touched?.network && (
+													<span className="absolute botton-0 text-red-500 text-xs">
+														{formikHandlers?.errors?.network}
+													</span>
+												)}
+										</div>
+									)}
 
 								<div className="my-3 relative">
 									<label
@@ -380,72 +543,9 @@ const [mappedData, setMappedData]= useState([])
 									>
 										DID Method
 									</label>
-									{/* <select
-										onChange={formikHandlers.handleChange}
-										value={formikHandlers.values.did}
-										id="did"
-										name="did"
-										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
-									>
-										<option value="">Select DID Method</option>
-										{formikHandlers.values.method === 'polygon'
-											? mappedData[0] && selectedLedger &&
-											  selectedDid && (
-													<option
-														key={selectedDid}
-														value={Object.values(
-															mappedData[0][selectedLedger][selectedDid],
-														)}
-													>
-														{Object.values(
-															mappedData[0][selectedLedger][selectedDid],
-														)}
-
-													</option>
-											  )
-											: selectedLedger &&
-											  selectedNetwork &&
-											  selectedDid && (
-													<option
-														key={selectedDid}
-														value={Object.values(
-															mappedData[0][selectedLedger][selectedNetwork][
-																selectedDid
-															],
-														)}
-													>
-														{Object.values(
-															mappedData[0][selectedLedger][selectedNetwork][
-																selectedDid
-															],
-														)}
-													</option>
-											  )}
-									</select> */}
-									<div className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11">
-										{formikHandlers.values.method === 'polygon'
-											? mappedData[0] &&
-											  selectedLedger &&
-											  selectedDid && (
-													<span>
-														{Object.values(
-															mappedData[0][selectedLedger][selectedDid],
-														)}
-													</span>
-											  )
-											: selectedLedger &&
-											  selectedNetwork &&
-											  selectedDid && (
-													<span>
-														{Object.values(
-															mappedData[0][selectedLedger][selectedNetwork][
-																selectedDid
-															],
-														)}
-													</span>
-											  )}
+									<div className="bg-gray-100 font-semibold text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11">
+										{showMethod(formikHandlers.values.method)}
 									</div>
-
 									{formikHandlers?.errors?.did &&
 										formikHandlers?.touched?.did && (
 											<span className="absolute botton-0 text-red-500 text-xs">
@@ -497,8 +597,12 @@ const [mappedData, setMappedData]= useState([])
 						label: yup.string().required('Wallet label is required'),
 					})}
 					onSubmit={(values: ValuesShared) => {
-						console.log('values', values);
-						submitSharedWallet(values);
+						submitSharedWallet(
+							values,
+							privateKeyValue,
+							domainValue,
+							endPointValue,
+						);
 					}}
 				>
 					{(formikHandlers) => (
@@ -717,7 +821,7 @@ const DedicatedAgentForm = ({
 									)}
 							</div>
 						)}
-												<NetworkInput formikHandlers={formikHandlers} />
+						<NetworkInput formikHandlers={formikHandlers} />
 
 						<div>
 							<div className="mb-1 block">
@@ -781,11 +885,9 @@ const WalletSpinup = (props: {
 	const [failure, setFailure] = useState<string | null>(null);
 	const [seeds, setSeeds] = useState<string>('');
 	const [isCopied, setIsCopied] = useState(false);
-	// const [organization, setOrganization] = useState(props.orgName)
 
-	console.log("seedsdsds",seeds);
+
 	useEffect(() => {
-		
 		setSeeds(nanoid(32));
 	}, []);
 
@@ -834,26 +936,24 @@ const WalletSpinup = (props: {
 		}
 	};
 
-	const submitSharedWallet = async (values: ValuesShared) => {
-		console.log('values:::', values);
+	const submitSharedWallet = async (values: ValuesShared, privateKey: string, domain: string, endPoint: string) => {
+		const polygonPrivateKey = privateKey.slice(2);
 		setLoading(true);
 		const payload = {
-			keyType:values.keyType || 'ed25519',
-			method:values.method|| '',
-			ledger:values.ledger|| '',
+			keyType: values.keyType || 'ed25519',
+			method: values.method || '',
+			ledger: values.method === DidMethod.INDY ? values.ledger : '',
 			label: values.label,
-			privatekey: values?.privatekey,   //add default private key while testing
-			endpoint: values?.endpoint || 'http://localhost:6006/docs',
-			seed: values.seed || seeds,
-			network: `${values?.ledger}:${values?.network}`,
-			// network: `Polygon Testnet`,
-			domain: values?.domain,
-			role: values?.role || 'endorser',
+			privatekey: values.method === DidMethod.POLYGON ? polygonPrivateKey : '', 
+			endpoint: values.method === DidMethod.POLYGON ? endPoint : '',
+			seed: values.method === DidMethod.POLYGON ? '' : values.seed || seeds,
+			network: values.method === DidMethod.POLYGON ? `${values?.method}:${values?.network}` : `${values?.ledger}:${values?.network}`,
+			domain: values.method === DidMethod.WEB ? domain : '',
+			role: values.method === DidMethod.INDY ? values?.role || 'endorser' : '',
 			endorserDid: values?.endorserDid,
 			clientSocketId: SOCKET.id,
 		};
-		console.log('payload', payload);
-
+        
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		const spinupRes = await spinupSharedAgent(payload, orgId);
 		const { data } = spinupRes as AxiosResponse;
