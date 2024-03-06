@@ -6,7 +6,7 @@ import { Alert, Button, Card } from 'flowbite-react';
 import { Field, Form, Formik } from 'formik';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { getFromLocalStorage } from '../../api/Auth';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import BackButton from '../../commonComponents/backbutton';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
@@ -89,29 +89,6 @@ const IssueCred = () => {
 		setUserLoader(false);
 	};
 
-	const getSchemaDetails = async (): Promise<DataTypeAttributes[] | null> => {
-		const schemaAttributes = await getFromLocalStorage(storageKeys.SCHEMA_ATTR);
-		const parsedSchemaAttributes = JSON.parse(schemaAttributes) || [];
-		setSchemaAttributesDetails(parsedSchemaAttributes?.attribute);
-		return parsedSchemaAttributes.attribute;
-	};
-
-	const createSchemaPayload = async (schemaId: string, credDefId: string) => {
-		if (schemaId) {
-			setSchemaLoader(true);
-			const parts = schemaId.split(':');
-			const schemaName = parts[2];
-			const version = parts[3];
-			setSchemaDetails({ schemaName, version, schemaId, credDefId });
-			setSchemaLoader(false);
-		}
-	};
-
-	const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
-		const selectedUsers = await getFromLocalStorage(storageKeys.SELECTED_USER);
-		return JSON.parse(selectedUsers);
-	};
-
 	const createAttributeValidationSchema = (
 		dataType: string,
 		isRequired: boolean,
@@ -142,8 +119,31 @@ const IssueCred = () => {
 		),
 	});
 
+	const getSchemaDetails = async (): Promise<DataTypeAttributes[] | null> => {
+		const schemaAttributes = await getFromLocalStorage(storageKeys.SCHEMA_ATTR);
+		const parsedSchemaAttributes = JSON.parse(schemaAttributes) || [];
+		setSchemaAttributesDetails(parsedSchemaAttributes?.attribute);
+		return parsedSchemaAttributes.attribute;
+	};
+
+	const createSchemaPayload = async (schemaId: string, credDefId: string) => {
+		if (schemaId) {
+			setSchemaLoader(true);
+			const parts = schemaId.split(':');
+			const schemaName = parts[2];
+			const version = parts[3];
+			setSchemaDetails({ schemaName, version, schemaId, credDefId });
+			setSchemaLoader(false);
+		}
+	};
+
+	const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
+		const selectedUsers = await getFromLocalStorage(storageKeys.SELECTED_USER);
+		return JSON.parse(selectedUsers);
+	};
+
 	const handleSubmit = async (values: IssuanceFormPayload) => {
-		const convertedAttributes = values.attributes.map((attr) => ({
+		const convertedAttributes = values?.attributes.map((attr) => ({
 			...attr,
 			value: String(attr.value),
 		}));
@@ -189,7 +189,7 @@ const IssueCred = () => {
 				<SummaryCard
 					schemaId={schemaDetails.schemaId}
 					schemaName={schemaDetails.schemaName}
-					version={schemaDetails.schemaName}
+					version={schemaDetails.version}
 					credDefId={schemaDetails.credDefId}
 					hideCredDefId={false}
 				/>
@@ -200,10 +200,10 @@ const IssueCred = () => {
 				</div>
 			) : (
 				<>
-					{issuanceFormPayload.length
-						? issuanceFormPayload.map((user) => (
+					{issuanceFormPayload?.length
+						? issuanceFormPayload?.map((user) => (
 								<Formik
-								key={user.connectionId}
+									key={user.connectionId}
 									initialValues={user}
 									validationSchema={validationSchema}
 									onSubmit={handleSubmit}
@@ -231,14 +231,14 @@ const IssueCred = () => {
 														:
 													</span>
 													<p className="dark:text-white pl-1">
-														{user.connectionId}
+														{user?.connectionId}
 													</p>
 												</div>
 												<h3 className="dark:text-white">Attributes</h3>
 												<div className="container mx-auto pr-2">
 													<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2">
 														{schemaAttributesDetails &&
-															schemaAttributesDetails.length > 0 &&
+															schemaAttributesDetails?.length > 0 &&
 															schemaAttributesDetails?.map((attr, index) => (
 																<div key={attr.attributeName}>
 																	<div
@@ -250,37 +250,36 @@ const IssueCred = () => {
 																			className="dark:text-white w-2/5 pr-3 flex justify-end items-center font-light"
 																		>
 																			<div className="flex items-center word-break-word text-end">
-																				{' '}
-																				{attr?.displayName
-																					.split("_").map(item => item[0].toUpperCase() + item.slice(1,  item.length)).join(" ")}
+																				<Name attr={attr} />
 																				{attr?.isRequired && (
 																					<span className="text-red-500">
 																						*
 																					</span>
-																				)} :
+																				)}{' '}
+																				:
 																			</div>
 																		</label>
-																		<Field
-																			type={
-																				attr?.schemaDataType === 'date'
-																					? 'date'
-																					: attr?.schemaDataType
-																			}
-																			id={`attributes.${index}.value`}
-																			name={`attributes.${index}.value`}
-																			className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 w-3/5"
-																		/>
-																	</div>
-																	<div className="flex">
-																		<div className="w-1/4 pr-2"></div>
-																		{errors?.attributes &&
-																			errors?.attributes[index] &&
-																			touched?.attributes[index] &&
-																			errors?.attributes[index]?.value && (
-																				<div className="text-red-500 text-xs w-3/4 p-1">
-																					{errors?.attributes[index]?.value}
-																				</div>
-																			)}
+																		<div className='w-3/5'>
+																			<Field
+																				type={
+																					attr?.schemaDataType === 'date'
+																						? 'date'
+																						: attr?.schemaDataType
+																				}
+																				id={`attributes.${index}.value`}
+																				name={`attributes.${index}.value`}
+																				className="bg-gray-50 relative border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+																			/>
+																			{errors?.attributes &&
+																				errors?.attributes[index] &&
+																				touched?.attributes &&
+																				touched?.attributes[index] &&
+																				errors?.attributes[index]?.value && (
+																					<div className="text-red-500 absolute text-xs word-break-word">
+																						{errors?.attributes[index]?.value}
+																					</div>
+																				)}
+																		</div>
 																	</div>
 																</div>
 															))}
@@ -304,7 +303,7 @@ const IssueCred = () => {
 													type="submit"
 													disabled={!isValid || issuanceLoader}
 													isProcessing={issuanceLoader}
-													className='text-base text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-accent-00 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+													className='text-base text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-accent-00 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
 												>
 													<div className="pr-3">
 														<svg
@@ -335,6 +334,20 @@ const IssueCred = () => {
 				</>
 			)}
 		</div>
+	);
+};
+
+const Name = (attr: { attr: any; displayName: string }) => {
+	return (
+		<>
+			{attr?.attr?.displayName
+				?.split('_')
+				.map(
+					(item: string | any[]) =>
+						item[0].toUpperCase() + item.slice(1, item.length),
+				)
+				.join(' ')}
+		</>
 	);
 };
 

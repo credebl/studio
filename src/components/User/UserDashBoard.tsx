@@ -27,6 +27,7 @@ import {
 	OrganizationRoles,
 } from '../../common/enums';
 import CustomSpinner from '../CustomSpinner';
+import { getOwnerAdminRole } from '../../config/ecosystem';
 
 const initialPageState = {
 	pageNumber: 1,
@@ -59,6 +60,7 @@ const UserDashBoard = () => {
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const [organizationsList, setOrganizationList] =
 		useState<Array<Organisation> | null>(null);
+		
 	const [activityList, setActivityList] = useState<Array<UserActivity> | null>(
 		null,
 	);
@@ -74,7 +76,7 @@ const UserDashBoard = () => {
 		allSearch: '',
 	});
 	const [ecoCount, setEcoCount] = useState(0);
-	const [ecosystemList, setEcosystemList] = useState([]);
+	const [ecosystemList, setEcosystemList] = useState([]);	
 	const [credDefList, setCredDefList] = useState([]);
 	const [credDefCount, setCredDefCount] = useState(0);
 	const [walletData, setWalletData] = useState([]);
@@ -84,6 +86,7 @@ const UserDashBoard = () => {
 	const [orgLoading, setOrgLoading] = useState(true);
 	const [schemaLoading, setSchemaLoading] = useState(true);
 	const [walletLoading, setWalletLoading] = useState(true);
+  const [isAccess, setIsAccess]= useState(false)
 
 	const getAllInvitations = async () => {
 		setLoading(true);
@@ -156,15 +159,13 @@ const UserDashBoard = () => {
 			const orgList = data?.data?.organizations.filter(
 				(userOrg: Organisation, index: number) => index < 3,
 			);
-			setOrganizationList(orgList);
+			setOrganizationList(orgList);			
 		} else {
 			setError(response as string);
 		}
-
 		setOrgLoading(false);
 	};
 
-	//Fetch the user recent activity
 	const getUserRecentActivity = async () => {
 		setLoading(true);
 		const response = await getUserActivity(5);
@@ -307,6 +308,11 @@ const UserDashBoard = () => {
 		}
 		setWalletLoading(false);
 	};
+	
+	const checkEcosystemAccess = async () => {
+		const data = await getOwnerAdminRole();
+		setIsAccess(data);
+	};
 
 	const getAllResponses = async () => {
 		const role = await getFromLocalStorage(storageKeys.ORG_ROLES);
@@ -337,6 +343,7 @@ const UserDashBoard = () => {
 			getSchemaList(schemaListAPIParameter, false);
 			fetchEcosystems();
 			getSchemaCredentials();
+			checkEcosystemAccess()
 		}
 	}, [organizationsList]);
 
@@ -415,7 +422,8 @@ const UserDashBoard = () => {
 		window.location.href = pathRoutes.organizations.credentials;
 	};
 
-	const navigateToInvitation = () => {
+	const navigateToInvitation = async (ecosystemId: string) => {
+		await setToLocalStorage(storageKeys.ECOSYSTEM_ID, ecosystemId);
 		window.location.href = pathRoutes.ecosystem.sentinvitation;
 	};
 
@@ -530,7 +538,7 @@ const UserDashBoard = () => {
 				<></>
 			) : (
 				<div
-					className="p-8 grid w-full grid-cols-1 sm:grid-cols-3 gap-4 mt-0 mb-4 rounded-md border border-gray-200 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:bg-[url('/images/bg-darkwallet.png')] bg-[url('/images/bg-lightwallet.png')] bg-center bg-no-repeat p-0 bg-auto"
+					className="p-8 grid w-full grid-cols-1 sm:grid-cols-3 gap-4 mt-0 mb-4 rounded-md border border-gray-200 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:bg-[url('/images/bg-darkwallet.png')] bg-[url('/images/bg-lightwallet.png')] bg-center bg-no-repeat p-0 bg-auto dark:bg-cover"
 					style={{ minHeight: '130px' }}
 				>
 					{walletLoading ? (
@@ -686,8 +694,10 @@ const UserDashBoard = () => {
 																			</svg>
 																		</span>
 																	) : org.roles.includes(
-																			OrganizationRoles.organizationVerifier ??
-																				OrganizationRoles.organizationIssuer,
+																			OrganizationRoles.organizationVerifier,
+																	  ) ||
+																	  org.roles.includes(
+																			OrganizationRoles.organizationIssuer,
 																	  ) ? (
 																		<span
 																			title={org.roles.slice(
@@ -765,28 +775,31 @@ const UserDashBoard = () => {
 															placement="bottom"
 															className="items-center text-center dark:text-white"
 														>
-															{' '}
 															<button
 																onClick={() => {
 																	goToOrgSchema(org, org.id, org.roles);
 																}}
 																className={`p-1 rounded-md ${
-																	organizationsList[index].userOrgRoles[0]
-																		.orgRole.name !==
-																		OrganizationRoles.organizationOwner ||
-																	organizationsList[index].userOrgRoles[0]
-																		.orgRole.name ===
-																		OrganizationRoles.organizationAdmin
+																	!(
+																		organizationsList[index].userOrgRoles[0]
+																			.orgRole.name ===
+																			OrganizationRoles.organizationOwner ||
+																		organizationsList[index].userOrgRoles[0]
+																			.orgRole.name ===
+																			OrganizationRoles.organizationAdmin
+																	)
 																		? 'cursor-not-allowed opacity-50'
 																		: ''
 																}`}
 																disabled={
-																	organizationsList[index].userOrgRoles[0]
-																		.orgRole.name !==
-																		OrganizationRoles.organizationOwner ||
-																	organizationsList[index].userOrgRoles[0]
-																		.orgRole.name ===
-																		OrganizationRoles.organizationAdmin
+																	!(
+																		organizationsList[index].userOrgRoles[0]
+																			.orgRole.name ===
+																			OrganizationRoles.organizationOwner ||
+																		organizationsList[index].userOrgRoles[0]
+																			.orgRole.name ===
+																			OrganizationRoles.organizationAdmin
+																	)
 																}
 															>
 																<svg
@@ -1174,9 +1187,10 @@ const UserDashBoard = () => {
 																?.name === EcosystemRoles.ecosystemLead && (
 																<button
 																	onClick={() => {
-																		navigateToInvitation();
+																		navigateToInvitation(ecosystem?.id);
 																	}}
-																	className="rounded-md flex "
+																	className={`${!isAccess ? "cursor-not-allowed opacity-50":""} rounded-md flex`}
+																	disabled={!isAccess}
 																>
 																	<svg
 																		xmlns="http://www.w3.org/2000/svg"

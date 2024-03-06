@@ -15,6 +15,8 @@ import RoleViewButton from '../RoleViewButton';
 import SendInvitationModal from '../organization/invitations/SendInvitationModal';
 import { getFromLocalStorage } from '../../api/Auth';
 import { Features } from '../../utils/enums/features';
+import { getOwnerAdminRole } from '../../config/ecosystem';
+import { OrganizationRoles } from '../../common/enums';
 
 const initialPageState = {
 	pageNumber: 1,
@@ -32,12 +34,18 @@ const SentInvitations = () => {
 		useState<Array<Invitation> | null>(null);
 	const [ecosystemId, setEcosystemId] = useState<string>('');
 	const [openModal, setOpenModal] = useState<boolean>(false);
-
+	const [isAccess, setIsAccess] = useState(false);
+	
 	const onPageChange = (page: number) => {
 		setCurrentPage({
 			...currentPage,
 			pageNumber: page,
 		});
+	};
+
+	const checkEcosystemAccess = async () => {
+		const data = await getOwnerAdminRole(OrganizationRoles.organizationOwner);
+		setIsAccess(data);
 	};
 
 	const getAllSentInvitations = async () => {
@@ -94,6 +102,7 @@ const SentInvitations = () => {
 		} else {
 			getAllSentInvitations();
 		}
+		checkEcosystemAccess();
 		return () => clearTimeout(getData);
 	}, [searchText, currentPage.pageNumber]);
 
@@ -110,7 +119,7 @@ const SentInvitations = () => {
 						</h1>
 						<div className="inline-flex items-center ml-auto">
 							<SendInvitationModal
-							  getAllSentInvitations={getAllSentInvitations}
+								getAllSentInvitations={getAllSentInvitations}
 								flag={true}
 								ecosystemId={ecosystemId}
 								openModal={openModal}
@@ -249,6 +258,7 @@ const SentInvitations = () => {
 																onClick={() => deletInvitations(invitation.id)}
 																color="bg-white"
 																className="ml-5 font-normal items-center mt-5 text-xl text-primary-700 border border-blue-700 text-center hover:!bg-primary-800 hover:text-white rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:hover:bg-primary-700 dark:text-white dark:bg-primary-700 dark:focus:ring-blue-800"
+																disabled={!isAccess}
 															>
 																<svg
 																	className="w-6 h-6"
