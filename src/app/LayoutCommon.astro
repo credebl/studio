@@ -3,23 +3,24 @@ import pkg from '../../package.json' assert { type: 'json' };
 // import { HelmetProvider } from 'react-helmet-async';
 import HelmetHead from '../components/HelmetHead';
 import { url } from '../lib/data.js';
+import { PLATFORM_DATA } from '../app/constants';
 
 import { SITE_TITLE } from './constants.js';
 
 const { class: clazz, metaData } = Astro.props;
 
-const baseUrl = process.env.PUBLIC_BASE_URL || import.meta.env.PUBLIC_BASE_URL;
-const encryptKey =
-	process.env.PUBLIC_CRYPTO_PRIVATE_KEY ||
-	import.meta.env.PUBLIC_CRYPTO_PRIVATE_KEY;
-const supabaseUrl =
-	process.env.PUBLIC_SUPABASE_URL || import.meta.env.PUBLIC_SUPABASE_URL;
-const supabaseKey =
-	process.env.PUBLIC_SUPABASE_KEY || import.meta.env.PUBLIC_SUPABASE_KEY;
+const initData: any = {};
+
+const envKeys = [...Object.keys(process.env), ...Object.keys(import.meta.env)];
+envKeys.forEach((item) => {
+	initData[item] = process.env[item] || import.meta.env[item];
+});
+
 ---
 
 <!DOCTYPE html>
 <html lang="en">
+
 	<head set:html={metaData}>
 		<HelmetHead
 			siteTitle={SITE_TITLE}
@@ -30,39 +31,7 @@ const supabaseKey =
 			sitemap={url('sitemap-index.xml')}
 			client:load
 		/>
-		<meta http-equiv="Content-Security-Policy" content="" />
-		<!-- <meta
-		http-equiv="Content-Security-Policy"
-		content="frame-ancestors SAMEORIGIN"
-	/> -->
-		<!-- <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self'" >
-		<meta http-equiv="Content-Security-Policy" content="default-src 'self'"> -->
-
-		<meta
-			http-equiv="Content-Security-Policy"
-			content="
-				default-src 'self'; 
-				script-src 'self' https://qaapi.credebl.id https://devapi.credebl.id; 
-				style-src 'self' https://qaapi.credebl.id https://devapi.credebl.id; 
-				font-src 'self' https://qaapi.credebl.id https://devapi.credebl.id; 
-				img-src 'self' https://s3-aws-credebl.com; 
-				frame-src 'self' https://qaapi.credebl.id https://devapi.credebl.id; 
-				object-src 'none'; 
-				media-src 'self'; 
-				connect-src 'self' https://qaapi.credebl.id https://devapi.credebl.id;"
-		/>
-
-		<meta http-equiv="X-Frame-Options" content="DENY" />
-
-		<!-- <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" > -->
-		<!-- <meta
-			http-equiv="Content-Security-Policy"
-			content="default-src 'self'; script-src 'self';"
-		/>
-		<meta
-			property="og:image"
-			content="https://credebl.id/images/CREDEBL_ICON.png"
-		/> -->
+		<meta property="og:image" content={PLATFORM_DATA.logo}/>
 		<script is:inline>
 			if (
 				localStorage.getItem('color-theme') === 'dark' ||
@@ -91,11 +60,10 @@ const supabaseKey =
 			import 'flowbite/dist/datepicker.js';
 		</script>
 
-		<script define:vars={{ baseUrl, encryptKey, supabaseUrl, supabaseKey }}>
-			globalThis.baseUrl = baseUrl;
-			globalThis.encryptKey = encryptKey;
-			globalThis.supabaseUrl = supabaseUrl;
-			globalThis.supabaseKey = supabaseKey;
+		<script define:vars={{ initData, envKeys }}>
+			envKeys.forEach((item) => {
+				globalThis[item] = initData[item];
+			});
 		</script>
 
 		<style is:global>

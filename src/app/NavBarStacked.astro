@@ -1,22 +1,25 @@
 ---
-import { asset, url } from '../lib/data.js';
+// import { asset, url } from '../lib/data.js';
+import { PLATFORM_DATA } from './constants';
 ---
 
 <nav
 	class="fixed z-50 w-full bg-white border-b border-gray-200 sm:py-2 dark:bg-gray-800 dark:border-gray-700"
 >
-	<div class="container py-3 mx-auto">
+	<!-- <div class="container py-3 mx-auto"> -->
+	<div>
+
 		<div class="flex items-center justify-between">
 			<div class="flex items-center justify-start">
-				<a class="flex mr-4" href='/'>
+				<a class="flex ml-2 md:mr-24" href="/">
 					<img
-						src='/images/CREDEBL_ICON.png'
+						src={PLATFORM_DATA.logo}
 						class="h-8 mr-3"
-						alt="CREDEBL Logo"
+						alt={`${PLATFORM_DATA.name} Logo`}
 					/>
 					<span
-						class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
-						>CREDEBL</span
+						class="ml-2 self-center text-2xl font-semibold whitespace-nowrap text-black"
+						>{PLATFORM_DATA.name}</span
 					>
 				</a>			
 				

@@ -1,6 +1,11 @@
+---
+import { PLATFORM_DATA } from "../app/constants";
+const copyright = PLATFORM_DATA.poweredBy
+---
+
 <p class="my-10 text-sm text-center text-gray-500">
 	&copy; 2019 - {new Date().getFullYear()}
 	<a class="hover:underline" target="_blank"
-		>Blockster Labs</a
+		>{copyright}</a
 	> | All rights reserved.
 </p>

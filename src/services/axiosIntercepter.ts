@@ -6,7 +6,26 @@ import { apiStatusCodes, storageKeys } from '../config/CommonConstant';
 import { pathRoutes } from '../config/pathRoutes';
 
 const instance = axios.create({
-	baseURL: envConfig.PUBLIC_BASE_URL,
+    baseURL: envConfig.PUBLIC_BASE_URL
+})
+
+const { PUBLIC_BASE_URL}: any = globalThis
+
+instance.interceptors.request.use(async config => { 
+    config.baseURL = PUBLIC_BASE_URL;    
+    return config; 
+}, error => Promise.reject(error));
+
+
+// Add a response interceptor
+instance.interceptors.response.use(function (response) {
+    // Any status code that lie within the range of 2xx cause this function to trigger
+    // Do something with response data
+    return response;
+}, async function (error) {
+    // Any status codes that falls outside the range of 2xx cause this function to trigger
+    // Do something with response error    
+    return Promise.reject(error);
 });
 
 const checkAuthentication = async (sessionCookie: string) => {

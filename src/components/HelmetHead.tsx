@@ -1,6 +1,6 @@
 import React from 'react'
-// import { Helmet } from "react-helmet-async";
-import { Helmet } from "react-helmet"
+import { Helmet } from "react-helmet";
+import { PLATFORM_DATA } from '../app/constants';
 
 interface IProps {
 	generator: string;
@@ -25,19 +25,7 @@ const HelmetHead = ({ generator, desc, icon, sitemap, siteTitle, version }: IPro
 
 		<meta name="author" content="Julian Cataldo, Zoltán Szőgyényi, Robert Tanislav" />
 		<meta name="copyright" content="MIT" />
-		<meta property="og:image" content="https://credebl.id/images/CREDEBL_ICON.png" />
-		<meta
-			httpEquiv="Content-Security-Policy"
-			content="default-src 'self'; script-src 'self';"
-		/>
-		<meta
-			property="og:image"
-			content="https://credebl.id/images/CREDEBL_ICON.png"
-		/>
-		{/* <meta
-			http-equiv="Content-Security-Policy"
-			content="default-src 'self'; img-src https://*; child-src 'none';" /> */}
-
+		<meta property="og:image" content={PLATFORM_DATA.logo} />
 	</Helmet>
 )
 
