@@ -980,7 +980,6 @@ const WalletSpinup = (props: {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		const spinupRes = await spinupSharedAgent(payload, orgId);
 		const { data } = spinupRes as AxiosResponse;
-		console.log('data::::', data);
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			setLoading(false);
 
