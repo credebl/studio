@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 import { Button, Checkbox, Label } from 'flowbite-react';
-import { ErrorMessage, Field, Form, Formik } from 'formik';
+import { Field, Form, Formik } from 'formik';
 import {
 	apiStatusCodes,
 	passwordRegex,
@@ -11,7 +11,7 @@ import {
 	spinupDedicatedAgent,
 	spinupSharedAgent,
 } from '../../api/organization';
-import React, { ReactElement, ReactNode, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 
 import type { AxiosResponse } from 'axios';
 import DedicatedIllustrate from './DedicatedIllustrate';
@@ -22,7 +22,7 @@ import { nanoid } from 'nanoid';
 import {
 	createPolygonKeyValuePair,
 	getLedgerConfig,
-	getLedgers
+	getLedgers,
 } from '../../api/Agent';
 import { AlertComponent } from '../AlertComponent';
 import CopyDid from '../../commonComponents/CopyDid';
@@ -66,7 +66,12 @@ interface ISharedAgentForm {
 	copyTextVal: (e: any) => void;
 	orgName: string;
 	loading: boolean;
-	submitSharedWallet: (values: ValuesShared, privateKey: string, domain: string, endPoint: string) => void;
+	submitSharedWallet: (
+		values: ValuesShared,
+		privateKey: string,
+		domain: string,
+		endPoint: string,
+	) => void;
 }
 
 interface IDedicatedAgentForm {
@@ -77,8 +82,8 @@ interface IDedicatedAgentForm {
 
 interface IPolygonKeys {
 	privateKey: string;
-	 publicKeyBase58: string;
-	 address: string;
+	publicKeyBase58: string;
+	address: string;
 }
 
 const fetchNetworks = async () => {
@@ -151,9 +156,9 @@ const SharedAgentForm = ({
 					indy: {},
 					web: {},
 					key: {},
-					polygon: {}
+					polygon: {},
 				};
-				data.data.forEach((item: {name: string, details: object}) => {
+				data.data.forEach((item: { name: string; details: object }) => {
 					switch (item.name) {
 						case DidMethod.INDY:
 							obj.indy = {
@@ -210,7 +215,6 @@ const SharedAgentForm = ({
 			if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 				setGeneratedKeys(data?.data);
 			}
-
 		} catch (err) {
 			console.log('Generate private key ERROR::::', err);
 		}
@@ -227,33 +231,38 @@ const SharedAgentForm = ({
 
 	const showMethod = (method: string): ReactElement => {
 		switch (method) {
-			case DidMethod.POLYGON:
-				{
-					return mappedData && selectedLedger && selectedDid ? (
-						<span>{mappedData[selectedLedger][selectedDid] || ''}</span>
-					) : <></>
-				}
+			case DidMethod.POLYGON: {
+				return mappedData && selectedLedger && selectedDid ? (
+					<span>{mappedData[selectedLedger][selectedDid] || ''}</span>
+				) : (
+					<></>
+				);
+			}
 			case DidMethod.INDY: {
-				return mappedData && selectedLedger && selectedNetwork && selectedDid ? (
+				return mappedData &&
+					selectedLedger &&
+					selectedNetwork &&
+					selectedDid ? (
 					<span>
 						{mappedData[selectedLedger][selectedNetwork][selectedDid] || ''}
 					</span>
-				) : <></>
+				) : (
+					<></>
+				);
 			}
 
 			case DidMethod.KEY:
-			case DidMethod.WEB:{
+			case DidMethod.WEB: {
 				return mappedData && selectedLedger ? (
-					<span>
-						{mappedData[selectedLedger][selectedLedger] || ''}
-					</span>
-				) : <></>
+					<span>{mappedData[selectedLedger][selectedLedger] || ''}</span>
+				) : (
+					<></>
+				);
 			}
 			default:
-				return <></>
+				return <></>;
 		}
 	};
-	
 	return (
 		<div className="mt-4 max-w-lg flex-col gap-4">
 			<div className="flex items-center gap-2 mt-4">
@@ -316,6 +325,7 @@ const SharedAgentForm = ({
 											handleLedgerChange(e);
 											setSelectedNetwork('');
 											setSelectedDid('');
+											setGeneratedKeys(null);
 										}}
 										id="method"
 										name="method"
@@ -357,31 +367,38 @@ const SharedAgentForm = ({
 								{generatedKeys && (
 									<div className="my-3 relative">
 										<p className="text-sm truncate">
-											<span className="font-semibold">Private Key:</span>
+											<span className="font-semibold text-gray-900 dark:text-white">
+												Private Key:
+											</span>
 											<div className="flex ">
 												<CopyDid
-													className="align-center block text-sm text-gray-900 dark:text-white"
+													className="align-center block text-sm text-gray-900 dark:text-white truncate"
 													value={generatedKeys?.privateKey}
 												/>
 											</div>
 										</p>
 
-										<p className="text-sm truncate break-all flex ">
-											<span className="font-semibold">Public Key Base58:</span>
-											<span className='flex w-issuer-id'>
-											<CopyDid
-												className="align-center block text-sm text-gray-900 dark:text-white truncate"
-												value={generatedKeys?.publicKeyBase58}
-											/>
+										<p className="text-sm truncate">
+											<span className="font-semibold text-gray-900 dark:text-white">
+												Public Key Base58:
 											</span>
-			
+											<div className="flex ">
+												<CopyDid
+													className="align-center block text-sm text-gray-900 dark:text-white truncate"
+													value={generatedKeys?.publicKeyBase58}
+												/>
+											</div>
 										</p>
 										<p className="text-sm truncate">
-											<span className="font-semibold">Address:</span>
-											<CopyDid
-												className="align-center block text-sm text-gray-900 dark:text-white line-clamp-1"
-												value={generatedKeys?.address}
-											/>
+											<span className="font-semibold text-gray-900 dark:text-white">
+												Address:
+											</span>
+											<div className="flex ">
+												<CopyDid
+													className="align-center block text-sm text-gray-900 dark:text-white truncate"
+													value={generatedKeys?.address}
+												/>
+											</div>
 										</p>
 									</div>
 								)}
@@ -886,7 +903,6 @@ const WalletSpinup = (props: {
 	const [seeds, setSeeds] = useState<string>('');
 	const [isCopied, setIsCopied] = useState(false);
 
-
 	useEffect(() => {
 		setSeeds(nanoid(32));
 	}, []);
@@ -936,7 +952,12 @@ const WalletSpinup = (props: {
 		}
 	};
 
-	const submitSharedWallet = async (values: ValuesShared, privateKey: string, domain: string, endPoint: string) => {
+	const submitSharedWallet = async (
+		values: ValuesShared,
+		privateKey: string,
+		domain: string,
+		endPoint: string,
+	) => {
 		const polygonPrivateKey = privateKey.slice(2);
 		setLoading(true);
 		const payload = {
@@ -944,20 +965,22 @@ const WalletSpinup = (props: {
 			method: values.method || '',
 			ledger: values.method === DidMethod.INDY ? values.ledger : '',
 			label: values.label,
-			privatekey: values.method === DidMethod.POLYGON ? polygonPrivateKey : '', 
+			privatekey: values.method === DidMethod.POLYGON ? polygonPrivateKey : '',
 			endpoint: values.method === DidMethod.POLYGON ? endPoint : '',
 			seed: values.method === DidMethod.POLYGON ? '' : values.seed || seeds,
-			network: values.method === DidMethod.POLYGON ? `${values?.method}:${values?.network}` : `${values?.ledger}:${values?.network}`,
+			network:
+				values.method === DidMethod.POLYGON
+					? `${values?.method}:${values?.network}`
+					: `${values?.ledger}:${values?.network}`,
 			domain: values.method === DidMethod.WEB ? domain : '',
 			role: values.method === DidMethod.INDY ? values?.role || 'endorser' : '',
 			endorserDid: values?.endorserDid,
 			clientSocketId: SOCKET.id,
 		};
-        
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		const spinupRes = await spinupSharedAgent(payload, orgId);
 		const { data } = spinupRes as AxiosResponse;
-
+		console.log('data::::', data);
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			setLoading(false);
 
