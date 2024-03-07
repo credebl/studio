@@ -3,6 +3,7 @@
 
 import { fetchData } from '../lib/data.js';
 import NavPagination from '../components/NavPagination.astro';
+import { PLATFORM_DATA } from '../app/constants';
 
 const products = await fetchData('products');
 ---
@@ -415,7 +416,7 @@ const products = await fetchData('products');
 						id="category"
 						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 					>
-						<option selected="">CREDEBL</option>
+						<option selected="">{PLATFORM_DATA.name}</option>
 						<option value="RE">React</option>
 						<option value="AN">Angular</option>
 						<option value="VU">Vue JS</option>
@@ -643,7 +644,7 @@ const products = await fetchData('products');
 						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 					>
 						<option selected="">Select category</option>
-						<option value="FL">CREDEBL</option>
+						<option value="FL">{PLATFORM_DATA.name}</option>
 						<option value="RE">React</option>
 						<option value="AN">Angular</option>
 						<option value="VU">Vue</option>

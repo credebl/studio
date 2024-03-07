@@ -1,4 +1,5 @@
 ---
+import { PLATFORM_DATA } from '../../app/constants';
 import CustomAvatar from '../../components/Avatar';
 import { pathRoutes } from '../../config/pathRoutes';
 
@@ -17,13 +18,13 @@ const userData = data?.data;
 					<div class="flex items-center justify-start">
 						<a href={pathRoutes.users.dashboard} class="flex ml-2 md:mr-24">
 							<img
-								src="/images/CREDEBL_ICON.png"
+								src={PLATFORM_DATA.logo}
 								class="h-8 mr-3"
-								alt="CREDEBL Logo"
+								alt={`${PLATFORM_DATA.name} Logo`}
 							/>
 							<span
 								class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white"
-								>CREDEBL</span
+								>{PLATFORM_DATA.name}</span
 							>
 						</a>
 					</div>

@@ -5,8 +5,10 @@ const instance = axios.create({
     baseURL: envConfig.PUBLIC_BASE_URL
 })
 
+const { PUBLIC_BASE_URL}: any = globalThis
+
 instance.interceptors.request.use(async config => { 
-    config.baseURL = globalThis.baseUrl;    
+    config.baseURL = PUBLIC_BASE_URL;    
     return config; 
 }, error => Promise.reject(error));
 
