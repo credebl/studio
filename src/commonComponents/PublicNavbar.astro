@@ -58,19 +58,19 @@ const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-g
 			<a href="/" class="flex items-center">
 				<!-- src={PLATFORM_DATA.logo} -->
 				<img
-				src={PLATFORM_DATA.logo}
+				src={PLATFORM_DATA.logo || "/images/CREDEBL_ICON.png" } 
 					class="h-8 mr-3"
-					alt={`${PLATFORM_DATA.name} logo`}
+					alt={`${PLATFORM_DATA.name} logo` || "CREDEBL logo"}
 				/>
 				<span
 					class="hidden md:block self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
 				>
-				{PLATFORM_DATA.name}
+				{PLATFORM_DATA.name || "CREDEBL"}
 				</span>
 			</a>
 			<div class="hidden lg:block ml-2">
 				<a
-					href={PLATFORM_DATA.docs}
+					href={PLATFORM_DATA.docs || "https://docs.credebl.id/en/intro/what-is-credebl/"}
 					class="text-gray-600 py-2 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-md px-4 lg:px-3 lg:py-2.5 ml-4 dark:text-white focus:outline-none hover:bg-gray-100 dark:hover:bg-gray-800"
 				>
 
@@ -87,7 +87,7 @@ const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-g
 				class="flex md:order-2 ml-auto sm:mt-0 mt-4 space-x-4 justify-center items-center"
 			>
 				<a
-					href={PLATFORM_DATA.git}
+					href={PLATFORM_DATA.git || "https://github.com/credebl"}
 					target="_blank"
 					class="hidden md:block"
 				>
@@ -104,7 +104,7 @@ const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-g
 					</svg>
 				</a>
 				<a
-					href={PLATFORM_DATA.discord}
+					href={PLATFORM_DATA.discord || "https://discord.gg/w4hnQT7NJG"}
 					class="hidden md:block"
 					target="_blank"
 				>
@@ -121,7 +121,7 @@ const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-g
 					</svg>
 				</a>
 				<a
-					href={PLATFORM_DATA.twitter}
+					href={PLATFORM_DATA.twitter || "https://twitter.com/i/flow/login?redirect_after_login=%2Fcredebl"}
 					class="hidden md:block"
 					target="_blank"
 				>
@@ -175,7 +175,7 @@ const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-g
 				>
 					<li>
 						<a
-							href={PLATFORM_DATA.docs}
+							href={PLATFORM_DATA.docs || "https://docs.credebl.id/en/intro/what-is-credebl/"}
 							class="block py-2 pl-3 pr-4 border-b text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
 							>Documentation</a
 						>
@@ -195,7 +195,7 @@ const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-g
 							>
 							
 							<a
-								href={PLATFORM_DATA.git}
+								href={PLATFORM_DATA.git || "https://github.com/credebl"}
 								class="mr-3 mt-2"
 								target="_blank"
 							>
@@ -213,7 +213,7 @@ const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-g
 								</svg>
 							</a>
 							<a
-								href={PLATFORM_DATA.discord}
+								href={PLATFORM_DATA.discord || "https://discord.gg/w4hnQT7NJG"}
 								class="mr-3 mt-2"
 								target="_blank"
 							>
@@ -230,7 +230,7 @@ const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-g
 								</svg>
 							</a>
 							<a
-								href={PLATFORM_DATA.twitter}
+								href={PLATFORM_DATA.twitter || "https://twitter.com/i/flow/login?redirect_after_login=%2Fcredebl"}
 								class="mr-3 mt-2"
 								target="_blank"
 							>
