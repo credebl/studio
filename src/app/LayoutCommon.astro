@@ -8,12 +8,20 @@ import { SITE_TITLE } from './constants.js';
 
 const { class: clazz, metaData } = Astro.props;
 
-const initData: any = {};
+// const initData: any = {};
 
-const envKeys = [...Object.keys(process.env), ...Object.keys(import.meta.env)];
-envKeys.forEach((item) => {
-	initData[item] = process.env[item] || import.meta.env[item];
-});
+// const envKeys = [...Object.keys(process.env), ...Object.keys(import.meta.env)];
+// envKeys.forEach((item) => {
+// 	initData[item] = process.env[item] || import.meta.env[item];
+// });
+
+const baseUrl = process.env.PUBLIC_BASE_URL || import.meta.env.PUBLIC_BASE_URL;
+const encryptKey =
+	process.env.PUBLIC_CRYPTO_PRIVATE_KEY ||
+	import.meta.env.PUBLIC_CRYPTO_PRIVATE_KEY;
+const logo =
+	process.env.PUBLIC_PLATFORM_LOGO || import.meta.env.PUBLIC_PLATFORM_LOGO;
+
 
 ---
 
@@ -60,10 +68,16 @@ envKeys.forEach((item) => {
 			import 'flowbite/dist/datepicker.js';
 		</script>
 
-		<script define:vars={{ initData, envKeys }}>
+		<!-- <script define:vars={{ initData, envKeys }}>
 			envKeys.forEach((item) => {
 				globalThis[item] = initData[item];
 			});
+		</script> -->
+		<script define:vars={{ baseUrl, logo }}>
+			globalThis.baseUrl = baseUrl;
+			globalThis.encryptKey = encryptKey;
+			globalThis.supabaseUrl = supabaseUrl;
+			globalThis.supabaseKey = supabaseKey;
 		</script>
 
 		<style is:global>
