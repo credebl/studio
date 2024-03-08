@@ -61,9 +61,11 @@ envKeys.forEach((item) => {
 		</script>
 
 		<script define:vars={{ initData, envKeys }}>
+		console.log(34222, initData, envKeys);
 			envKeys.forEach((item) => {
 				globalThis[item] = initData[item];
 			});
+			console.log(23423432, globalThis);
 		</script>
 
 		<style is:global>
