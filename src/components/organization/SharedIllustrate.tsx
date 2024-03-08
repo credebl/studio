@@ -1,4 +1,3 @@
-// import SharedIcon from '../../assets/shared.svg';
 import { PLATFORM_DATA } from '../../app/constants';
 
 const SharedIllustrate = () => {
