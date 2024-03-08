@@ -12,9 +12,8 @@ const API = async ({ token, url, method, payload }: IProps) => {
 	try {
 		const headers = {
 			'Content-Type': 'application/json',
+			...(token && {"Authorization": `Bearer ${token}`})
 		}
-
-		{ token && { ...headers, ["Authorization"]: `Bearer ${token}` } }
 
 		const config = {
 			headers,
