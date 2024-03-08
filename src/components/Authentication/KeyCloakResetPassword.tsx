@@ -10,6 +10,7 @@ import { PassInvisible, PassVisible } from './Svg.js';
 import { pathRoutes } from '../../config/pathRoutes';
 import type { IPassword, IProps, IValues } from './interfaces';
 import React from 'react';
+import { PLATFORM_DATA } from '../../app/constants';
 
 const KeyClockResetPassword = (props: IProps) => {
 	const [loading, setLoading] = useState(false);
@@ -67,7 +68,7 @@ const KeyClockResetPassword = (props: IProps) => {
 					Choose a new password for your account
 				</p>
 				<p className="text-yellow-600 text-sm font-normal">
-					CREDEBL has an update for your seamless experience. We request you to
+				{PLATFORM_DATA.name} has an update for your seamless experience. We request you to
 					please reset your password for it.
 				</p>
 			</Modal.Header>
