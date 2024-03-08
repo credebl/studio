@@ -1,13 +1,14 @@
+import React from 'react';
 import { PLATFORM_DATA } from '../../app/constants';
 
 const SharedIllustrate = () => {
-    const sharedIcon = PLATFORM_DATA.images.find(item => item.id === "create_wallet")
+    // const sharedIcon = PLATFORM_DATA.images.find(item => item.id === "create_wallet")
 
     return (
          <div className='mt-4 flex flex-row justify-center flex-wrap'>
-            <div>
+            {/* <div>
             <img src={sharedIcon?.image} alt="dedicated" width={220} />
-            </div>
+            </div> */}
             <div className='ml-8 max-w-xs'>
                 <h3 className="mb-2 text-xl font-bold text-gray-900 dark:text-white">
                     Your Hassle-Free Multi-Tenant Solution

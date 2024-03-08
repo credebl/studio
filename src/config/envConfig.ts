@@ -1,4 +1,3 @@
-import createWallet from '../assets/shared.svg';
 
 const env = import.meta.env || process.env;
 const { PUBLIC_BASE_URL, PUBLIC_CRYPTO_PRIVATE_KEY, PUBLIC_PLATFORM_NAME, PUBLIC_PLATFORM_LOGO, PUBLIC_POWERED_BY, PUBLIC_PLATFORM_WEB_URL, PUBLIC_POWERED_BY_URL, PUBLIC_PLATFORM_DOCS_URL, PUBLIC_PLATFORM_GIT, PUBLIC_PLATFORM_SUPPORT_EMAIL,PUBLIC_PLATFORM_TWITTER_URL, PUBLIC_PLATFORM_SUPPORT_INVITE, PUBLIC_PLATFORM_DISCORD_URL}: any = globalThis || env;
@@ -36,12 +35,12 @@ export const envConfig = {
 				discord:
 				PUBLIC_PLATFORM_DISCORD_URL ||
 				env.PUBLIC_PLATFORM_DISCORD_URL,
-			images: [
-				{
-					id: 'create_wallet',
-					image: createWallet,
-				},
-			]
+			// images: [
+			// 	{
+			// 		id: 'create_wallet',
+			// 		image: createWallet,
+			// 	},
+			// ]
 		}
 }
 
