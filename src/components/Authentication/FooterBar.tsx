@@ -1,4 +1,5 @@
 import React from 'react'
+import { PLATFORM_DATA } from '../../app/constants';
 
 const FooterBar = () => {
     return (
@@ -7,7 +8,7 @@ const FooterBar = () => {
                 <p className="text-sm text-center text-gray-500">
                     &copy; 2019 - {new Date().getFullYear()} 
                     <a className="hover:underline" target="_blank"
-                    > Blockster Labs
+                    > {PLATFORM_DATA.poweredBy}
                     </a> | All rights reserved.
                 </p>
             </div>

@@ -1,7 +1,8 @@
 'use client';
 
 import { Button, Checkbox, Label, TextInput } from 'flowbite-react';
-import { asset, url } from '../lib/data.js';
+import { asset } from '../lib/data.js';
+import { PLATFORM_DATA } from '../app/constants.js';
 
 export default function ShadowInputs() {
 
@@ -17,8 +18,8 @@ export default function ShadowInputs() {
                 href="#"
                 className="flex items-center justify-center mb-8 text-2xl font-semibold lg:mb-10 dark:text-white"
             >
-                <img src={asset('images/logo.svg')} alt="CREDEBL Logo" className="mr-4 h-11" />
-                <span>CREDEBL</span>
+                <img src={asset(`${PLATFORM_DATA.logo}`)} alt={`${PLATFORM_DATA.name} logo`} className="mr-4 h-11" />
+                <span>{PLATFORM_DATA.name}</span>
             </a>
             <div
                 className="w-full max-w-xl p-6 space-y-8 sm:p-8 bg-white rounded-lg shadow dark:bg-gray-800"
@@ -39,7 +40,7 @@ export default function ShadowInputs() {
                         </div>
                         <TextInput
                             id="email2"
-                            placeholder="name@credebl.id"
+                            placeholder="name@company.com"
                             required
                             shadow
                             type="email"
