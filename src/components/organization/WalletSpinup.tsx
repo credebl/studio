@@ -140,6 +140,7 @@ const SharedAgentForm = ({
 	const [haveDidShared, setHaveDidShared] = useState(false);
 	const [networks, setNetworks] = useState([]);
 	const [selectedLedger, setSelectedLedger] = useState('');
+	const [seedVal, setSeedVal] = useState('');
 	const [selectedNetwork, setSelectedNetwork] = useState('');
 	const [selectedDid, setSelectedDid] = useState('');
 	const [mappedData, setMappedData] = useState(null);
@@ -150,55 +151,19 @@ const SharedAgentForm = ({
 
 	const fetchLedgerConfig = async () => {
 		try {
-			const { data } = (await getLedgerConfig()) as AxiosResponse;
+			const { data } = await getLedgerConfig();
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				const obj = {
-					indy: {},
-					web: {},
-					key: {},
-					polygon: {},
-				};
-				data.data.forEach((item: { name: string; details: object }) => {
-					switch (item.name) {
-						case DidMethod.INDY:
-							obj.indy = {
-								...item.details,
-							};
-							break;
-
-						case DidMethod.WEB:
-							obj.web = {
-								...item.details,
-							};
-							break;
-
-						case DidMethod.KEY:
-							obj.key = {
-								...item.details,
-							};
-							break;
-
-						case DidMethod.POLYGON:
-							obj.polygon = {
-								...item.details,
-							};
-							break;
-
-						default:
-							break;
-					}
+				const obj = {};
+				data.data.forEach((item) => {
+					obj[item.name.toLowerCase()] = { ...item.details };
 				});
-
-				const mapped = {
-					...obj,
-				};
-
-				setMappedData(mapped);
+				setMappedData(obj);
 			}
 		} catch (err) {
 			console.log('Fetch Network ERROR::::', err);
 		}
 	};
+	
 
 	const handleLedgerChange = (e) => {
 		setSelectedLedger(e.target.value);
@@ -228,6 +193,10 @@ const SharedAgentForm = ({
 		getLedgerList();
 		fetchLedgerConfig();
 	}, []);
+
+	useEffect(() => {
+		setSeedVal(seeds)
+	}, [seeds])
 
 	const showMethod = (method: string): ReactElement => {
 		switch (method) {
@@ -263,6 +232,14 @@ const SharedAgentForm = ({
 				return <></>;
 		}
 	};
+
+	const validations = {
+		label: yup.string().required('Wallet label is required'),
+		method: yup.string().required('Method is required'),
+		...(DidMethod.INDY === selectedLedger || DidMethod.POLYGON === selectedLedger) && { network: yup.string().required('Network is required') },
+		...(DidMethod.INDY === selectedLedger) && { ledger: yup.string().required('Ledger is required') },
+	}
+
 	return (
 		<div className="mt-4 max-w-lg flex-col gap-4">
 			<div className="flex items-center gap-2 mt-4">
@@ -283,24 +260,21 @@ const SharedAgentForm = ({
 						<div className="flex">
 							<CopyDid
 								className="align-center block text-sm text-gray-900 dark:text-white"
-								value={seeds}
+								value={seedVal}
 							/>
 						</div>
 					</div>
 
 					<Formik
 						initialValues={{
-							seed: seeds,
+							seed: seedVal,
 							method: '',
 							network: '',
 							did: '',
 							ledger: '',
 							label: orgName || '',
 						}}
-						validationSchema={yup.object().shape({
-							method: yup.string().required('Method is required'),
-							label: yup.string().required('Wallet label is required'),
-						})}
+						validationSchema={yup.object().shape(validations)}
 						onSubmit={(values: ValuesShared) => {
 							submitSharedWallet(
 								values,
@@ -308,6 +282,7 @@ const SharedAgentForm = ({
 								domainValue,
 								endPointValue,
 							);
+							
 						}}
 					>
 						{(formikHandlers) => (
@@ -318,11 +293,13 @@ const SharedAgentForm = ({
 										className="text-sm font-medium text-gray-900 dark:text-gray-300"
 									>
 										Method
+										<span className="text-red-500 text-xs">*</span>
 									</label>
 									<select
 										onChange={(e) => {
 											formikHandlers.handleChange(e);
 											handleLedgerChange(e);
+											setSeedVal(seeds)
 											setSelectedNetwork('');
 											setSelectedDid('');
 											setGeneratedKeys(null);
@@ -403,6 +380,27 @@ const SharedAgentForm = ({
 									</div>
 								)}
 
+								{generatedKeys &&
+									formikHandlers.values.method === DidMethod.POLYGON && (
+										<span className="inline-flex items-center bg-amber-200 text-amber-800 text-xs font-medium mr-2 px-2 py-2 rounded-sm dark:bg-amber-200 dark:text-amber-800">
+											<svg
+												width="20"
+												height="17"
+												viewBox="0 0 22 19"
+												fill="none"
+												xmlns="http://www.w3.org/2000/svg"
+												className="text-amber-800 mr-1.5 mb-4"
+											>
+												<path
+													d="M0 19L11 0L22 19H0ZM3.45 17H18.55L11 4L3.45 17ZM11 16C11.2833 16 11.5208 15.9042 11.7125 15.7125C11.9042 15.5208 12 15.2833 12 15C12 14.7167 11.9042 14.4792 11.7125 14.2875C11.5208 14.0958 11.2833 14 11 14C10.7167 14 10.4792 14.0958 10.2875 14.2875C10.0958 14.4792 10 14.7167 10 15C10 15.2833 10.0958 15.5208 10.2875 15.7125C10.4792 15.9042 10.7167 16 11 16ZM10 13H12V8H10V13Z"
+													fill="currentColor"
+												/>
+											</svg>
+											Before creating the wallet, ensure that you have added
+											tokens to the above address
+										</span>
+									)}
+
 								{formikHandlers.values.method === DidMethod.POLYGON && (
 									<>
 										<div className="my-3 relative">
@@ -421,7 +419,6 @@ const SharedAgentForm = ({
 										/>
 									</>
 								)}
-
 
 								{formikHandlers.values.method === DidMethod.WEB && (
 									<>
@@ -451,6 +448,7 @@ const SharedAgentForm = ({
 												className="text-sm font-medium text-gray-900 dark:text-gray-300"
 											>
 												Ledger
+												<span className="text-red-500 text-xs">*</span>
 											</label>
 											<select
 												onChange={(e) => {
@@ -491,6 +489,7 @@ const SharedAgentForm = ({
 												className="text-sm font-medium text-gray-900 dark:text-gray-300"
 											>
 												Network
+												<span className="text-red-500 text-xs">*</span>
 											</label>
 
 											<select
@@ -545,12 +544,6 @@ const SharedAgentForm = ({
 									<div className="bg-gray-100 font-semibold text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11">
 										{showMethod(formikHandlers.values.method)}
 									</div>
-									{formikHandlers?.errors?.did &&
-										formikHandlers?.touched?.did && (
-											<span className="absolute botton-0 text-red-500 text-xs">
-												{formikHandlers?.errors?.did}
-											</span>
-										)}
 								</div>
 								<div className="mt-3 relative">
 									<Label htmlFor="name" value="Wallet Label" />
@@ -585,14 +578,15 @@ const SharedAgentForm = ({
 				<Formik
 					initialValues={{
 						seed: '',
+						method: '',
 						network: '',
 						did: '',
+						ledger: '',
 						label: orgName || '',
 					}}
 					validationSchema={yup.object().shape({
 						seed: yup.string().required('Seed is required'),
 						network: yup.string().required('Network is required'),
-						did: yup.string().required('DID Method is required'),
 						label: yup.string().required('Wallet label is required'),
 					})}
 					onSubmit={(values: ValuesShared) => {
@@ -606,91 +600,316 @@ const SharedAgentForm = ({
 				>
 					{(formikHandlers) => (
 						<Form className="">
-							<div className="mb-3">
-								<div className="mt-3 relative">
-									<div className="block">
-										<Label htmlFor="seed" value="Seed" />
-										<span className="text-red-500 text-xs">*</span>
-									</div>
-
-									<Field
-										id="seed"
-										name="seed"
-										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-										type="text"
-									/>
-									{formikHandlers?.errors?.seed &&
-										formikHandlers?.touched?.seed && (
-											<span className="text-red-500 absolute text-xs">
-												{formikHandlers?.errors?.seed}
-											</span>
-										)}
-								</div>
-								<div className="mt-3 relative">
-									<div className="block">
-										<Label htmlFor="did" value="DID" />
-										<span className="text-red-500 text-xs">*</span>
-									</div>
-
-									<Field
-										id="did"
-										name="did"
-										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-										type="text"
-									/>
-									{formikHandlers?.errors?.did &&
-										formikHandlers?.touched?.did && (
-											<span className="text-red-500 absolute text-xs">
-												{formikHandlers?.errors?.did}
-											</span>
-										)}
-								</div>
-								<div className="mt-3 relative">
-									<Label htmlFor="network" value="Network" />
+							<div className="mt-3 relative">
+								<div className="block">
+									<Label htmlFor="seed" value="Seed" />
 									<span className="text-red-500 text-xs">*</span>
+								</div>
 
-									<select
-										onChange={(e) => formikHandlers.handleChange(e)}
-										id="network"
-										name="network"
-										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+								<Field
+									id="seed"
+									name="seed"
+									className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+									type="text"
+								/>
+								{formikHandlers?.errors?.seed &&
+									formikHandlers?.touched?.seed && (
+										<span className="text-red-500 absolute text-xs">
+											{formikHandlers?.errors?.seed}
+										</span>
+									)}
+							</div>
+
+							<div className="mt-3 relative">
+								<div className="block">
+									<Label htmlFor="did" value="DID" />
+									<span className="text-red-500 text-xs">*</span>
+								</div>
+
+								<Field
+									id="did"
+									name="did"
+									className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+									type="text"
+								/>
+								{formikHandlers?.errors?.did &&
+									formikHandlers?.touched?.did && (
+										<span className="text-red-500 absolute text-xs">
+											{formikHandlers?.errors?.did}
+										</span>
+									)}
+							</div>
+
+							<div className="mb-3 relative mt-3">
+								<label
+									htmlFor="method"
+									className="text-sm font-medium text-gray-900 dark:text-gray-300"
+								>
+									Method
+								</label>
+								<select
+									onChange={(e) => {
+										formikHandlers.handleChange(e);
+										handleLedgerChange(e);
+										setSelectedNetwork('');
+										setSelectedDid('');
+										setGeneratedKeys(null);
+									}}
+									id="method"
+									name="method"
+									className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+								>
+									<option value="">Select Method</option>
+									{mappedData &&
+										Object.keys(mappedData)?.map((ledger) => (
+											<option key={ledger} value={ledger}>
+												{ledger}
+											</option>
+										))}
+								</select>
+								{formikHandlers?.errors?.method &&
+									formikHandlers?.touched?.method && (
+										<span className="absolute botton-0 text-red-500 text-xs">
+											{formikHandlers?.errors?.method}
+										</span>
+									)}
+							</div>
+
+							{formikHandlers.values.method === DidMethod.POLYGON && (
+								<div className="my-3 relative flex justify-between">
+									<div className="mt-4">
+										<Label value="Generate private key" />
+										<span className="text-red-500 text-xs">*</span>
+									</div>
+
+									<Button
+										type="button"
+										className="h-min p-0 focus:z-10 focus:outline-none border border-transparent enabled:hover:bg-cyan-800 dark:enabled:hover:bg-cyan-700 mt-4 text-base font-medium text-center text-white bg-primary-700 rounded-md hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+										onClick={() => generatePolygonKeyValuePair()}
 									>
-										<option value="">Select network</option>
-										{networks &&
-											networks.length > 0 &&
-											networks.map((item: INetworks) => (
-												<option key={item.id} value={item.id}>
-													{item.name}
-												</option>
-											))}
-									</select>
-
-									{formikHandlers?.errors?.network &&
-										formikHandlers?.touched?.network && (
-											<span className="text-red-500 absolute text-xs">
-												{formikHandlers?.errors?.network}
-											</span>
-										)}
+										Generate
+									</Button>
 								</div>
+							)}
 
-								<div className="mt-3 relative">
-									<Label htmlFor="name" value="Wallet Label" />
-									<span className="text-red-500 text-xs">*</span>
+							{generatedKeys && (
+								<div className="my-3 relative">
+									<p className="text-sm truncate">
+										<span className="font-semibold text-gray-900 dark:text-white">
+											Private Key:
+										</span>
+										<div className="flex ">
+											<CopyDid
+												className="align-center block text-sm text-gray-900 dark:text-white truncate"
+												value={generatedKeys?.privateKey}
+											/>
+										</div>
+									</p>
 
+									<p className="text-sm truncate">
+										<span className="font-semibold text-gray-900 dark:text-white">
+											Public Key Base58:
+										</span>
+										<div className="flex ">
+											<CopyDid
+												className="align-center block text-sm text-gray-900 dark:text-white truncate"
+												value={generatedKeys?.publicKeyBase58}
+											/>
+										</div>
+									</p>
+									<p className="text-sm truncate">
+										<span className="font-semibold text-gray-900 dark:text-white">
+											Address:
+										</span>
+										<div className="flex ">
+											<CopyDid
+												className="align-center block text-sm text-gray-900 dark:text-white truncate"
+												value={generatedKeys?.address}
+											/>
+										</div>
+									</p>
+								</div>
+							)}
+
+							{generatedKeys &&
+								formikHandlers.values.method === DidMethod.POLYGON && (
+									<span className="inline-flex items-center bg-amber-200 text-amber-800 text-xs font-medium mr-2 px-2 py-2 rounded-sm dark:bg-amber-200 dark:text-amber-800">
+										<svg
+											width="20"
+											height="17"
+											viewBox="0 0 22 19"
+											fill="none"
+											xmlns="http://www.w3.org/2000/svg"
+											className="text-amber-800 mr-1.5 mb-4"
+										>
+											<path
+												d="M0 19L11 0L22 19H0ZM3.45 17H18.55L11 4L3.45 17ZM11 16C11.2833 16 11.5208 15.9042 11.7125 15.7125C11.9042 15.5208 12 15.2833 12 15C12 14.7167 11.9042 14.4792 11.7125 14.2875C11.5208 14.0958 11.2833 14 11 14C10.7167 14 10.4792 14.0958 10.2875 14.2875C10.0958 14.4792 10 14.7167 10 15C10 15.2833 10.0958 15.5208 10.2875 15.7125C10.4792 15.9042 10.7167 16 11 16ZM10 13H12V8H10V13Z"
+												fill="currentColor"
+											/>
+										</svg>
+										Before creating the wallet, ensure that you have added
+										tokens to the above address
+									</span>
+								)}
+
+							{formikHandlers.values.method === DidMethod.POLYGON && (
+								<>
+									<div className="my-3 relative">
+										<div className="mt-4">
+											<Label value="Private Key" />
+											<span className="text-red-500 text-xs">*</span>
+										</div>
+									</div>
 									<Field
-										id="label"
-										name="label"
-										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-										type="text"
-										value={orgName}
+										id="endpoint"
+										name="endpoint"
+										className="truncate bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+										value={privateKeyValue}
+										onChange={(e) => setPrivateKeyValue(e.target.value)}
+										placeholder="Enter private key"
 									/>
-									{formikHandlers?.errors?.label &&
-										formikHandlers?.touched?.label && (
-											<span className="text-red-500 absolute text-xs">
-												{formikHandlers?.errors?.label}
-											</span>
-										)}
+								</>
+							)}
+
+							{formikHandlers.values.method === DidMethod.WEB && (
+								<>
+									<div className="my-3 relative">
+										<div className="mt-4">
+											<Label value="Enter Domain" />
+											<span className="text-red-500 text-xs">*</span>
+										</div>
+									</div>
+									<Field
+										id="webdomain"
+										name="password"
+										className="truncate bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+										value={domainValue}
+										onChange={(e) => setDomainValue(e.target.value)}
+										placeholder="Please enter domain"
+									/>
+								</>
+							)}
+
+							{formikHandlers.values.method !== DidMethod.POLYGON &&
+								formikHandlers.values.method !== DidMethod.KEY &&
+								formikHandlers.values.method !== DidMethod.WEB && (
+									<div className="my-3 relative">
+										<label
+											htmlFor="ledger"
+											className="text-sm font-medium text-gray-900 dark:text-gray-300"
+										>
+											Ledger
+										</label>
+										<select
+											onChange={(e) => {
+												formikHandlers.handleChange(e);
+												setSelectedNetwork(e.target.value);
+												setSelectedDid('');
+											}}
+											value={selectedNetwork}
+											id="ledger"
+											name="ledger"
+											className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+										>
+											<option value="">Select Ledger</option>
+											{mappedData &&
+												selectedLedger &&
+												mappedData[selectedLedger] &&
+												Object.keys(mappedData[selectedLedger])?.map(
+													(ledger) => (
+														<option key={ledger} value={ledger}>
+															{ledger}
+														</option>
+													),
+												)}
+										</select>
+										{formikHandlers?.errors?.ledger &&
+											formikHandlers?.touched?.ledger && (
+												<span className="absolute botton-0 text-red-500 text-xs">
+													{formikHandlers?.errors?.ledger}
+												</span>
+											)}
+									</div>
+								)}
+							{formikHandlers.values.method !== DidMethod.WEB &&
+								formikHandlers.values.method !== DidMethod.KEY && (
+									<div className="my-3 relative">
+										<label
+											htmlFor="network"
+											className="text-sm font-medium text-gray-900 dark:text-gray-300"
+										>
+											Network
+										</label>
+
+										<select
+											onChange={(e) => {
+												formikHandlers.handleChange(e);
+												setSelectedDid(e.target.value);
+											}}
+											value={selectedDid}
+											id="network"
+											name="network"
+											className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+										>
+											<option value="">Select Network</option>
+											{formikHandlers.values.method === DidMethod.POLYGON &&
+												mappedData &&
+												Object.keys(mappedData[selectedLedger])?.map(
+													(network) => (
+														<option key={network} value={network}>
+															{network}
+														</option>
+													),
+												)}
+											{formikHandlers.values.method !== DidMethod.POLYGON &&
+												mappedData &&
+												selectedLedger &&
+												selectedNetwork &&
+												Object.keys(
+													mappedData[selectedLedger][selectedNetwork],
+												)?.map((network) => (
+													<option key={network} value={network}>
+														{network}
+													</option>
+												))}
+										</select>
+
+										{formikHandlers?.errors?.network &&
+											formikHandlers?.touched?.network && (
+												<span className="absolute botton-0 text-red-500 text-xs">
+													{formikHandlers?.errors?.network}
+												</span>
+											)}
+									</div>
+								)}
+
+							<div className="my-3 relative">
+								<label
+									htmlFor="DID Method"
+									className="text-sm font-medium text-gray-900 dark:text-gray-300"
+								>
+									DID Method
+								</label>
+								<div className="bg-gray-100 font-semibold text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11">
+									{showMethod(formikHandlers.values.method)}
 								</div>
+							</div>
+							<div className="mt-3 relative">
+								<Label htmlFor="name" value="Wallet Label" />
+								<span className="text-red-500 text-xs">*</span>
+
+								<Field
+									id="label"
+									name="label"
+									className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+									type="text"
+								/>
+								{formikHandlers?.errors?.label &&
+									formikHandlers?.touched?.label && (
+										<span className="text-red-500 absolute text-xs">
+											{formikHandlers?.errors?.label}
+										</span>
+									)}
 							</div>
 							<div className="w-full flex justify-end">
 								<Button
