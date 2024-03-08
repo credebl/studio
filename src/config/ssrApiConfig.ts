@@ -14,6 +14,7 @@ const API = async ({ token, url, method, payload }: IProps) => {
 			'Content-Type': 'application/json',
 			...(token && {"Authorization": `Bearer ${token}`})
 		}
+		console.log("")
 
 		const config = {
 			headers,
