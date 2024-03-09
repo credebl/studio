@@ -11,7 +11,6 @@ import SignOutButton from '../components/SignOutButton/index';
 import AgentHealth from '../commonComponents/AgentHealth';
 import { getFromCookies } from '../api/Auth';
 import { RolePermissions } from '../config/permissions';
-import { PLATFORM_DATA } from './constants';
 import { envConfig } from '../config/envConfig';
 
 const { hideOrgAgent } = Astro.props;
@@ -72,17 +71,16 @@ const permittedPages = RolePermissions.find(
 					class="flex ml-2 md:mr-24"
 				>
 					<img
-						src={PLATFORM_DATA.logo}
+						src={envConfig.PLATFORM_DATA.logo}
 						class="h-8 mr-3"
-						alt={`${PLATFORM_DATA.name} logo`}
+						alt={`${envConfig.PLATFORM_DATA.name} logo`}
 					/>
 					<span
 						class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white"
-						>{PLATFORM_DATA.name}</span
+						>{envConfig.PLATFORM_DATA.name}</span
 					>
 				</a>
 			</div>
-sad
 			<div class="flex items-center">
 				<>
 					{

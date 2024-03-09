@@ -1,7 +1,7 @@
 ---
 import LayoutCommon from '../app/LayoutCommon.astro';
-import { PLATFORM_DATA } from '../app/constants';
 import PublicNavbar from '../commonComponents/PublicNavbar.astro';
+import { envConfig } from '../config/envConfig';
 import { pathRoutes } from '../config/pathRoutes';
 ---
 
@@ -1241,7 +1241,7 @@ import { pathRoutes } from '../config/pathRoutes';
 					>
 						&copy; 2019-{new Date().getFullYear()}
 						<a href="https://blockster.global" target="_blank" class="hover:underline hover:underline-offset-2"
-							>{PLATFORM_DATA.poweredBy}</a
+							>{envConfig.PLATFORM_DATA.poweredBy}</a
 						> All Rights Reserved. &nbsp; &nbsp; | &nbsp; &nbsp;
 						<a href="/terms-of-use" class="hover:underline hover:underline-offset-2">Terms of Use</a> &nbsp; &nbsp; <a
 							href="/privacy-policy" class="hover:underline hover:underline-offset-2">Privacy Policy</a

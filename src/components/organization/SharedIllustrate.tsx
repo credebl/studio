@@ -1,12 +1,10 @@
-import { PLATFORM_DATA } from '../../app/constants';
+import { envConfig } from "../../config/envConfig"
 
 const SharedIllustrate = () => {
-    const sharedIcon = PLATFORM_DATA.images.find(item => item.id === "create_wallet")
-
     return (
          <div className='mt-4 flex flex-row justify-center flex-wrap'>
             <div>
-            <img src={sharedIcon?.image} alt="dedicated" width={220} />
+            <img src="/assets/shared.svg" alt="dedicated" width={220} />
             </div>
             <div className='ml-8 max-w-xs'>
                 <h3 className="mb-2 text-xl font-bold text-gray-900 dark:text-white">
@@ -25,7 +23,7 @@ const SharedIllustrate = () => {
                     </li>
                       <li>
                         <p className='mb-1 text-base font-normal text-gray-900 dark:text-white'>
-                        {PLATFORM_DATA.name} handles maintenance, updates, and technical matters.
+                        {envConfig.PLATFORM_DATA.name} handles maintenance, updates, and technical matters.
                         </p>
                     </li>
                      <li>
@@ -35,7 +33,7 @@ const SharedIllustrate = () => {
                     </li>
                     <li>
                         <p className='mb-1 text-base font-normal text-gray-900 dark:text-white'>
-                            Experience seamless efficiency with the Shared Agent from {PLATFORM_DATA.name}.
+                            Experience seamless efficiency with the Shared Agent from {envConfig.PLATFORM_DATA.name}.
                         </p>
                     </li>
                     

@@ -1,4 +1,4 @@
-import { PLATFORM_DATA } from "../app/constants";
+import { envConfig } from "./envConfig";
 
 export const pathRoutes = {
 	landingPage:{
@@ -58,7 +58,7 @@ export const pathRoutes = {
 		sentinvitation: '/ecosystems/invitations',
 	},
 	documentation: {
-		root: PLATFORM_DATA.docs
+		root: envConfig.PLATFORM_DATA.docs
 	},
 	schema: {
 		create: '/schemas',
