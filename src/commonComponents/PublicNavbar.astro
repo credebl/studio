@@ -55,7 +55,7 @@ const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-g
 			</button>
 			<a href="/" class="flex items-center">
 				<img
-					src={PLATFORM_DATA.logo}
+					src={PLATFORM_DATA.logo || globalThis.logo}
 					class="h-8 mr-3"
 					alt={`${PLATFORM_DATA.name} logo`}
 				/>
