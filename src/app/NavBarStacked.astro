@@ -1,6 +1,7 @@
 ---
+import { envConfig } from "../config/envConfig";
+
 // import { asset, url } from '../lib/data.js';
-import { PLATFORM_DATA } from './constants';
 ---
 
 <nav
@@ -13,13 +14,13 @@ import { PLATFORM_DATA } from './constants';
 			<div class="flex items-center justify-start">
 				<a class="flex ml-2 md:mr-24" href="/">
 					<img
-						src={PLATFORM_DATA.logo}
+						src={envConfig.PLATFORM_DATA.logo}
 						class="h-8 mr-3"
-						alt={`${PLATFORM_DATA.name} Logo`}
+						alt={`${envConfig.PLATFORM_DATA.name} Logo`}
 					/>
 					<span
 						class="ml-2 self-center text-2xl font-semibold whitespace-nowrap text-black"
-						>{PLATFORM_DATA.name}</span
+						>{envConfig.PLATFORM_DATA.name}</span
 					>
 				</a>			
 				

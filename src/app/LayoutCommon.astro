@@ -2,7 +2,6 @@
 import pkg from '../../package.json' assert { type: 'json' };
 import HelmetHead from '../components/HelmetHead';
 import { url } from '../lib/data.js';
-import { PLATFORM_DATA } from '../app/constants';
 
 import { SITE_TITLE } from './constants.js';
 
@@ -40,7 +39,7 @@ envKeys.forEach((item) => {
 			sitemap={url('sitemap-index.xml')}
 			client:load
 		/>
-		<meta property="og:image" content={PLATFORM_DATA.logo} />
+		<meta property="og:image" content={initData.PUBLIC_PLATFORM_LOGO} />
 		<script is:inline>
 			if (
 				localStorage.getItem('color-theme') === 'dark' ||
