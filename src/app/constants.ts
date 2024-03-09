@@ -10,7 +10,7 @@ export const PLATFORM_DATA = {
 	name:
 		PUBLIC_PLATFORM_NAME || env.PUBLIC_PLATFORM_NAME || "CREDEBL",
 	logo:
-		PUBLIC_PLATFORM_LOGO || env.PUBLIC_PLATFORM_LOGO || "/images/CREDEBL_ICON.png",
+		PUBLIC_PLATFORM_LOGO || env.PUBLIC_PLATFORM_LOGO,
 	poweredBy:
 		PUBLIC_POWERED_BY || env.PUBLIC_POWERED_BY || "Blockster Labs Pvt. Ltd.",
 	webUrl:
