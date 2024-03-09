@@ -19,9 +19,10 @@ const baseUrl = process.env.PUBLIC_BASE_URL || import.meta.env.PUBLIC_BASE_URL;
 const encryptKey =
 	process.env.PUBLIC_CRYPTO_PRIVATE_KEY ||
 	import.meta.env.PUBLIC_CRYPTO_PRIVATE_KEY;
-const PUBLIC_PLATFORM_LOGO =
-	process.env.PUBLIC_PLATFORM_LOGO || import.meta.env.PUBLIC_PLATFORM_LOGO;
-
+const supabaseUrl =
+	process.env.PUBLIC_SUPABASE_URL || import.meta.env.PUBLIC_SUPABASE_URL;
+const supabaseKey =
+	process.env.PUBLIC_SUPABASE_KEY || import.meta.env.PUBLIC_SUPABASE_KEY;
 const PUBLIC_PLATFORM_NAME = 	process.env.PUBLIC_PLATFORM_NAME || import.meta.env.PUBLIC_PLATFORM_NAME;
 
 
@@ -69,7 +70,7 @@ const PUBLIC_PLATFORM_NAME = 	process.env.PUBLIC_PLATFORM_NAME || import.meta.en
 			import 'flowbite/dist/datepicker.js';
 		</script>
 		<script
-			define:vars={{ baseUrl, encryptKey, PUBLIC_PLATFORM_LOGO, PUBLIC_PLATFORM_NAME }}
+			define:vars={{ baseUrl, encryptKey, supabaseUrl, supabaseKey, PUBLIC_PLATFORM_LOGO, PUBLIC_PLATFORM_NAME }}
 		>
 			console.log(
 				34555,
@@ -77,8 +78,10 @@ const PUBLIC_PLATFORM_NAME = 	process.env.PUBLIC_PLATFORM_NAME || import.meta.en
 				encryptKey,
 				PUBLIC_PLATFORM_LOGO,
 			);
-			globalThis.baseUrl = baseUrl;
+			globalThis.PUBLIC_BASE_URL = baseUrl;
 			globalThis.encryptKey = encryptKey;
+			globalThis.supabaseUrl = supabaseUrl;
+			globalThis.supabaseKey = supabaseKey;
 			globalThis.PUBLIC_PLATFORM_LOGO = PUBLIC_PLATFORM_LOGO;
 			globalThis.PUBLIC_PLATFORM_NAME = PUBLIC_PLATFORM_NAME;
 		</script>
