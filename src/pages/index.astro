@@ -2,13 +2,12 @@
 import LayoutCommon from '../app/LayoutCommon.astro';
 import PublicNavbar from '../commonComponents/PublicNavbar.astro';
 import { envConfig } from '../config/envConfig';
-import { pathRoutes } from '../config/pathRoutes';
 ---
 
 <LayoutCommon>
 	<div class="flex flex-col min-h-screen bg-white dark:bg-gray-900 -z-10">
 		<header>
-			<PublicNavbar limitedWidth={true} />
+			<PublicNavbar limitedWidth={true} client:load/>
 		</header>
 
 		<main class="grow" transition:animate="slide">
