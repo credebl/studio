@@ -8,33 +8,33 @@ const { PUBLIC_PLATFORM_NAME, PUBLIC_PLATFORM_LOGO, PUBLIC_POWERED_BY, PUBLIC_PL
 
 export const PLATFORM_DATA = {
 	name:
-		PUBLIC_PLATFORM_NAME || env.PUBLIC_PLATFORM_NAME || "CREDEBL",
+		PUBLIC_PLATFORM_NAME || env.PUBLIC_PLATFORM_NAME,
 	logo:
 		PUBLIC_PLATFORM_LOGO || env.PUBLIC_PLATFORM_LOGO,
 	poweredBy:
-		PUBLIC_POWERED_BY || env.PUBLIC_POWERED_BY || "Blockster Labs Pvt. Ltd.",
+		PUBLIC_POWERED_BY || env.PUBLIC_POWERED_BY,
 	webUrl:
 		PUBLIC_PLATFORM_WEB_URL ||
-		env.PUBLIC_PLATFORM_WEB_URL || "https://credebl.id/",
+		env.PUBLIC_PLATFORM_WEB_URL,
 	orgUrl:
 		PUBLIC_POWERED_BY_URL ||
-		env.PUBLIC_POWERED_BY_URL || "https://blockster.global",
+		env.PUBLIC_POWERED_BY_URL,
 	docs:
 		PUBLIC_PLATFORM_DOCS_URL ||
-		env.PUBLIC_PLATFORM_DOCS_URL || "https://docs.credebl.id/en/intro/what-is-credebl/",
+		env.PUBLIC_PLATFORM_DOCS_URL,
 	git:
 		PUBLIC_PLATFORM_GIT ||
-		env.PUBLIC_PLATFORM_GIT || "https://github.com/credebl",
+		env.PUBLIC_PLATFORM_GIT,
 	support:
     PUBLIC_PLATFORM_SUPPORT_EMAIL ||
-	env.PUBLIC_PLATFORM_SUPPORT_EMAIL || "support@blockster.global",
+	env.PUBLIC_PLATFORM_SUPPORT_EMAIL,
 
         twitter:
         PUBLIC_PLATFORM_TWITTER_URL ||
-		env.PUBLIC_PLATFORM_TWITTER_URL || "https://twitter.com/i/flow/login?redirect_after_login=%2Fcredebl",
+		env.PUBLIC_PLATFORM_TWITTER_URL,
         discord:
         PUBLIC_PLATFORM_DISCORD_URL ||
-		env.PUBLIC_PLATFORM_DISCORD_URL || "https://discord.gg/w4hnQT7NJG",
+		env.PUBLIC_PLATFORM_DISCORD_URL,
 	images: [
 		{
 			id: 'create_wallet',
