@@ -12,9 +12,9 @@ const { showOptions, notFoundPage } = Astro.props || {};
 <LayoutCommon>
 	{
 		notFoundPage === false ? (
-			<NavBarSidebar hideOrgAgent={showOptions} />
+			<NavBarSidebar hideOrgAgent={showOptions} client:load/>
 		) : (
-			<NavBarStacked />
+			<NavBarStacked client:load/>
 		)
 	}
 
