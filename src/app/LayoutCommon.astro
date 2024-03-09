@@ -20,18 +20,16 @@ const baseUrl = process.env.PUBLIC_BASE_URL || import.meta.env.PUBLIC_BASE_URL;
 const encryptKey =
 	process.env.PUBLIC_CRYPTO_PRIVATE_KEY ||
 	import.meta.env.PUBLIC_CRYPTO_PRIVATE_KEY;
-const supabaseUrl =
-	process.env.PUBLIC_SUPABASE_URL || import.meta.env.PUBLIC_SUPABASE_URL;
-const supabaseKey =
-	process.env.PUBLIC_SUPABASE_KEY || import.meta.env.PUBLIC_SUPABASE_KEY;
-const logo =
+const PUBLIC_PLATFORM_LOGO =
 	process.env.PUBLIC_PLATFORM_LOGO || import.meta.env.PUBLIC_PLATFORM_LOGO;
+
+const PUBLIC_PLATFORM_NAME = 	process.env.PUBLIC_PLATFORM_NAME || import.meta.env.PUBLIC_PLATFORM_NAME;
+
 
 ---
 
 <!DOCTYPE html>
 <html lang="en">
-
 	<head set:html={metaData}>
 		<HelmetHead
 			siteTitle={SITE_TITLE}
@@ -42,7 +40,7 @@ const logo =
 			sitemap={url('sitemap-index.xml')}
 			client:load
 		/>
-		<meta property="og:image" content={PLATFORM_DATA.logo}/>
+		<meta property="og:image" content={PLATFORM_DATA.logo} />
 		<script is:inline>
 			if (
 				localStorage.getItem('color-theme') === 'dark' ||
@@ -70,14 +68,20 @@ const logo =
 			import 'flowbite';
 			import 'flowbite/dist/datepicker.js';
 		</script>
-<script define:vars={{ baseUrl, encryptKey, supabaseUrl, supabaseKey, logo }}>
-console.log(34555, baseUrl, encryptKey, supabaseUrl, supabaseKey, logo);
-	globalThis.baseUrl = baseUrl;
-	globalThis.encryptKey = encryptKey;
-	globalThis.supabaseUrl = supabaseUrl;
-	globalThis.supabaseKey = supabaseKey;
-	globalThis.logo = logo
-</script>
+		<script
+			define:vars={{ baseUrl, encryptKey, PUBLIC_PLATFORM_LOGO, PUBLIC_PLATFORM_NAME }}
+		>
+			console.log(
+				34555,
+				baseUrl,
+				encryptKey,
+				PUBLIC_PLATFORM_LOGO,
+			);
+			globalThis.baseUrl = baseUrl;
+			globalThis.encryptKey = encryptKey;
+			globalThis.PUBLIC_PLATFORM_LOGO = PUBLIC_PLATFORM_LOGO;
+			globalThis.PUBLIC_PLATFORM_NAME = PUBLIC_PLATFORM_NAME;
+		</script>
 		<!-- <script define:vars={{ initData, envKeys }}>
 			envKeys.forEach((item) => {
 				globalThis[item] = initData[item];

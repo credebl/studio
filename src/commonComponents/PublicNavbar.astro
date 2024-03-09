@@ -4,6 +4,7 @@ import ColorModeSwitcher from '../components/ColorModeSwitcher.astro';
 import { PLATFORM_DATA } from '../app/constants';
 
 const { limitedWidth } = Astro.props;
+console.log(8384848, PLATFORM_DATA, globalThis);
 
 const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-gray-200 dark:border-gray-600`;
 ---
@@ -55,14 +56,14 @@ const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-g
 			</button>
 			<a href="/" class="flex items-center">
 				<img
-					src={PLATFORM_DATA.logo || globalThis.logo}
+					src={PLATFORM_DATA.logo || globalThis.PUBLIC_PLATFORM_LOGO}
 					class="h-8 mr-3"
 					alt={`${PLATFORM_DATA.name} logo`}
 				/>
 				<span
 					class="hidden md:block self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
 				>
-				{PLATFORM_DATA.name}
+				{PLATFORM_DATA.name} //
 				</span>
 			</a>
 			<div class="hidden lg:block ml-2">
