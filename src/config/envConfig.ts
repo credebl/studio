@@ -1,9 +1,13 @@
 let envVariables = {}
-if (process?.env) {
-	envVariables = {
-		...envVariables,
-		...process?.env
+try {
+	if (process?.env) {
+		envVariables = {
+			...envVariables,
+			...process?.env
+		}
 	}
+} catch (error) {
+	
 }
 
 if (import.meta.env) {
