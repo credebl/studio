@@ -1,4 +1,4 @@
-import createWallet from '../assets/shared.svg';
+
 import { envConfig } from '../config/envConfig';
 const env = import.meta.env;
 
