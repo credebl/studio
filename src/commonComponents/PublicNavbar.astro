@@ -2,6 +2,7 @@
 import { pathRoutes } from '../config/pathRoutes';
 import ColorModeSwitcher from '../components/ColorModeSwitcher.astro';
 import { envConfig } from '../config/envConfig';
+import LogoFile from './LogoFile';
 
 const { limitedWidth } = Astro.props;
 
@@ -54,16 +55,7 @@ const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-g
 				</svg>
 			</button>
 			<a href="/" class="flex items-center">
-				<img
-					src={envConfig.PLATFORM_DATA.logo}
-					class="h-8 mr-3"
-					alt={`${envConfig.PLATFORM_DATA.name} logo`}
-				/>
-				<span
-					class="hidden md:block self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
-				>
-				{envConfig.PLATFORM_DATA.name}
-				</span>
+				<LogoFile />
 			</a>
 			<div class="hidden lg:block ml-2">
 				<a

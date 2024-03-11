@@ -1,5 +1,5 @@
 ---
-import { envConfig } from "../config/envConfig";
+import LogoFile from "../commonComponents/LogoFile";
 ---
 
 <nav
@@ -10,15 +10,7 @@ import { envConfig } from "../config/envConfig";
 		<div class="flex items-center justify-between">
 			<div class="flex items-center justify-start">
 				<a class="flex ml-2 md:mr-24" href="/">
-					<img
-						src={envConfig.PLATFORM_DATA.logo}
-						class="h-8 mr-3"
-						alt={`${envConfig.PLATFORM_DATA.name} Logo`}
-					/>
-					<span
-						class="ml-2 self-center text-2xl font-semibold whitespace-nowrap text-black"
-						>{envConfig.PLATFORM_DATA.name}</span
-					>
+					<LogoFile />
 				</a>			
 				
 			</div>
