@@ -9,25 +9,10 @@ const { class: clazz, metaData } = Astro.props;
 
 const initData: any = {};
 
-// const cookies = Astro.cookies.get("platform-data").value
-// const platformDataCookie = cookies && JSON.parse(cookies)
 const envKeys = [...Object.keys(process.env), ...Object.keys(import.meta.env)];
 envKeys.forEach((item) => {
 	initData[item] = process.env[item] || import.meta.env[item];
 });
-
-// const baseUrl = process.env.PUBLIC_BASE_URL || import.meta.env.PUBLIC_BASE_URL;
-// const encryptKey =
-// 	process.env.PUBLIC_CRYPTO_PRIVATE_KEY ||
-// 	import.meta.env.PUBLIC_CRYPTO_PRIVATE_KEY;
-// const supabaseUrl =
-// 	process.env.PUBLIC_SUPABASE_URL || import.meta.env.PUBLIC_SUPABASE_URL;
-// const supabaseKey =
-// 	process.env.PUBLIC_SUPABASE_KEY || import.meta.env.PUBLIC_SUPABASE_KEY;
-// const PUBLIC_PLATFORM_NAME = 	process.env.PUBLIC_PLATFORM_NAME || import.meta.env.PUBLIC_PLATFORM_NAME;
-// const PUBLIC_PLATFORM_LOGO = process.env.PUBLIC_PLATFORM_LOGO || import.meta.env.PUBLIC_PLATFORM_LOGO;
-
-// Astro.cookies.set("platform-data", JSON.stringify(initData))
 ---
 
 <!DOCTYPE html>
@@ -71,68 +56,11 @@ envKeys.forEach((item) => {
 			import 'flowbite';
 			import 'flowbite/dist/datepicker.js';
 		</script>
-		<!-- <script
-			define:vars={{ baseUrl, encryptKey, supabaseUrl, supabaseKey, PUBLIC_PLATFORM_LOGO, PUBLIC_PLATFORM_NAME }}
-		>
-			console.log(
-				34555,
-				baseUrl,
-				encryptKey,
-				PUBLIC_PLATFORM_LOGO,
-			);
-			globalThis.PUBLIC_BASE_URL = baseUrl;
-			globalThis.PUBLIC_CRYPTO_PRIVATE_KEY = encryptKey;
-			globalThis.supabaseUrl = supabaseUrl;
-			globalThis.supabaseKey = supabaseKey;
-			globalThis.PUBLIC_PLATFORM_LOGO = PUBLIC_PLATFORM_LOGO;
-			globalThis.PUBLIC_PLATFORM_NAME = PUBLIC_PLATFORM_NAME;
-		</script> -->
-		<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script> -->
-
 		<script define:vars={{ initData, envKeys }}>
-			// function encrypt(plaintext, secret) {
-			// 	var key = CryptoJS.enc.Utf8.parse(secret);
-			// 	let iv = CryptoJS.lib.WordArray.create(key.words.slice(0, 4));
-			// 	console.log('IV : ' + CryptoJS.enc.Base64.stringify(iv));
-
-			// 	// Encrypt the plaintext
-			// 	var cipherText = CryptoJS.AES.encrypt(plainText, key, {
-			// 		iv: iv,
-			// 		mode: CryptoJS.mode.CBC,
-			// 		padding: CryptoJS.pad.Pkcs7,
-			// 	});
-			// 	return cipherText.toString();
-			// }
-
-			// let envVariables = {};
-			// const storeEnv = [
-			// 	'PUBLIC_BASE_URL',
-			// 	'PUBLIC_CRYPTO_PRIVATE_KEY',
-			// 	'PUBLIC_PLATFORM_NAME',
-			// 	'PUBLIC_PLATFORM_LOGO',
-			// 	'PUBLIC_POWERED_BY',
-			// 	'PUBLIC_PLATFORM_WEB_URL',
-			// 	'PUBLIC_POWERED_BY_URL',
-			// 	'PUBLIC_PLATFORM_DOCS_URL',
-			// 	'PUBLIC_PLATFORM_GIT',
-			// 	'PUBLIC_PLATFORM_SUPPORT_EMAIL',
-			// 	'PUBLIC_PLATFORM_TWITTER_URL',
-			// 	'PUBLIC_PLATFORM_SUPPORT_INVITE',
-			// 	'PUBLIC_PLATFORM_DISCORD_URL',
-			// ];
+			
 			envKeys.forEach((item) => {
 				globalThis[item] = initData[item];
-				// if (storeEnv.includes(item)) {
-				// 	envVariables[item] = initData[item];
-				// }
 			});
-			// const CRYPTO_PRIVATE_KEY = `${envVariables['PUBLIC_CRYPTO_PRIVATE_KEY']}`;
-			// const convrtedValue = encrypt(
-			// 	JSON.stringify(envVariables),
-			// 	CRYPTO_PRIVATE_KEY,
-			// ).toString();
-			// const convrtedValue = JSON.stringify(envVariables).toString();
-			// document.cookie = `platform-data=${convrtedValue}; SameSite=None; Secure`;
 		</script>
 
 		<style is:global>

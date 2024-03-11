@@ -1,40 +1,9 @@
 ---
 import { pathRoutes } from '../config/pathRoutes';
 import ColorModeSwitcher from '../components/ColorModeSwitcher.astro';
-// import { envConfig } from '../config/envConfig';
-
-const envConfig = import.meta.env || process.env;
-console.log(234222, envConfig);
-
-const initData: any = {};
-
-// const cookies = Astro.cookies.get("platform-data").value
-// const platformDataCookie = cookies && JSON.parse(cookies)
-const envKeys = [...Object.keys(process.env), ...Object.keys(import.meta.env)];
-envKeys.forEach((item) => {
-	initData[item] = process.env[item] || import.meta.env[item];
-});
-
-console.log(64646, initData, envKeys)
-
-const PLATFORM_DATA = {
-  keys: initData.PUBLIC_SHOW_PLATFORM_NAME_AS_LOGO,
-  name: initData.PUBLIC_PLATFORM_NAME,
-  logo: initData.PUBLIC_PLATFORM_LOGO,
-//   logo: initData.PUBLIC_POWERED_BY,
-//   logo: initData.PUBLIC_PLATFORM_WEB_URL,
-//   logo: initData.PUBLIC_POWERED_BY_URL,
-  docs: initData.PUBLIC_PLATFORM_DOCS_URL,
-  git: initData.PUBLIC_PLATFORM_GIT,
-//   logo: initData.PUBLIC_PLATFORM_SUPPORT,
-//   logo: initData.PUBLIC_PLATFORM_SUPPORT_INVITE
-twitter: initData.PUBLIC_PLATFORM_TWITTER_URL,
-discord: initData.PUBLIC_PLATFORM_DISCORD_URL
-}
-
+import { envConfig } from '../config/envConfig';
 
 const { limitedWidth } = Astro.props;
-// console.log(8384848, envConfig.PLATFORM_DATA, globalThis);
 
 const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-gray-200 dark:border-gray-600`;
 ---
@@ -86,19 +55,19 @@ const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-g
 			</button>
 			<a href="/" class="flex items-center">
 				<img
-					src={PLATFORM_DATA.logo}
+					src={envConfig.PLATFORM_DATA.logo}
 					class="h-8 mr-3"
-					alt={`${PLATFORM_DATA.name} logo`}
+					alt={`${envConfig.PLATFORM_DATA.name} logo`}
 				/>
 				<span
 					class="hidden md:block self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
 				>
-				{PLATFORM_DATA.name}
+				{envConfig.PLATFORM_DATA.name}
 				</span>
 			</a>
 			<div class="hidden lg:block ml-2">
 				<a
-					href={PLATFORM_DATA.docs}
+					href={envConfig.PLATFORM_DATA.docs}
 					class="text-gray-600 py-2 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-md px-4 lg:px-3 lg:py-2.5 ml-4 dark:text-white focus:outline-none hover:bg-gray-100 dark:hover:bg-gray-800"
 				>
 
@@ -115,7 +84,7 @@ const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-g
 				class="flex md:order-2 ml-auto sm:mt-0 mt-4 space-x-4 justify-center items-center"
 			>
 				<a
-					href={PLATFORM_DATA.git}
+					href={envConfig.PLATFORM_DATA.git}
 					target="_blank"
 					class="hidden md:block"
 				>
@@ -132,7 +101,7 @@ const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-g
 					</svg>
 				</a>
 				<a
-					href={PLATFORM_DATA.discord}
+					href={envConfig.PLATFORM_DATA.discord}
 					class="hidden md:block"
 					target="_blank"
 				>
@@ -149,7 +118,7 @@ const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-g
 					</svg>
 				</a>
 				<a
-					href={PLATFORM_DATA.twitter}
+					href={envConfig.PLATFORM_DATA.twitter}
 					class="hidden md:block"
 					target="_blank"
 				>
@@ -203,7 +172,7 @@ const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-g
 				>
 					<li>
 						<a
-							href={PLATFORM_DATA.docs}
+							href={envConfig.PLATFORM_DATA.docs}
 							class="block py-2 pl-3 pr-4 border-b text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
 							>Documentation</a
 						>
@@ -223,7 +192,7 @@ const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-g
 							>
 							
 							<a
-								href={PLATFORM_DATA.git}
+								href={envConfig.PLATFORM_DATA.git}
 								class="mr-3 mt-2"
 								target="_blank"
 							>
@@ -241,7 +210,7 @@ const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-g
 								</svg>
 							</a>
 							<a
-								href={PLATFORM_DATA.discord}
+								href={envConfig.PLATFORM_DATA.discord}
 								class="mr-3 mt-2"
 								target="_blank"
 							>
@@ -258,7 +227,7 @@ const navbarClass = `bg-white dark:bg-gray-900 w-full z-20 top-0 left-0 border-g
 								</svg>
 							</a>
 							<a
-								href={PLATFORM_DATA.twitter}
+								href={envConfig.PLATFORM_DATA.twitter}
 								class="mr-3 mt-2"
 								target="_blank"
 							>
