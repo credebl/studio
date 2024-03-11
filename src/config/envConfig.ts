@@ -1,4 +1,4 @@
-let envVariables = {}
+let envVariables = globalThis || {}
 try {
 	if (process?.env) {
 		envVariables = {
