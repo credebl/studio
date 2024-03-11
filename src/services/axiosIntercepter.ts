@@ -37,14 +37,12 @@ const checkAuthentication = async (sessionCookie: string) => {
 		}
 	} catch (error) {}
 };
+const { PUBLIC_BASE_URL}: any = globalThis
 
-instance.interceptors.request.use(
-	async (config) => {
-		config.baseURL = globalThis.baseUrl;
-		return config;
-	},
-	(error) => Promise.reject(error),
-);
+instance.interceptors.request.use(async config => { 
+    config.baseURL = PUBLIC_BASE_URL;    
+    return config; 
+}, error => Promise.reject(error));
 
 // Add a response interceptor
 instance.interceptors.response.use(

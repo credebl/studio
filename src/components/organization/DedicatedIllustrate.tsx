@@ -1,12 +1,11 @@
 import React from 'react';
-import DedicatedIcon from '../../assets/dedicated.svg';
 
 const DedicatedIllustrate = () => {
 
     return (
         <div className='mt-4 flex flex-row justify-center flex-wrap'>
             <div>
-                <img src={DedicatedIcon} alt="dedicated" width={220} />
+                <img src="/images/dedicated.svg" alt="dedicated" width={220} />
             </div>
             <div className='ml-8 max-w-xs'>
                 <h3 className="mb-2 text-xl font-bold text-gray-900 dark:text-white">

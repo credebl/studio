@@ -1,4 +1,5 @@
 ---
+import { envConfig } from '../config/envConfig';
 import { asset } from '../lib/data.js';
 ---
 
@@ -10,7 +11,7 @@ import { asset } from '../lib/data.js';
 		class="flex items-center justify-center mb-8 text-2xl font-semibold lg:mb-10 dark:text-white"
 	>
 		<img src={asset('images/logo.svg')} alt="FlowBite Logo" class="mr-4 h-11" />
-		<span>CREDEBL</span>
+		<span>{envConfig.PLATFORM_DATA.name}</span>
 	</a>
 	<!-- Card -->
 	<div

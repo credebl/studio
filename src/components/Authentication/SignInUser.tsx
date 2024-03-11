@@ -9,6 +9,7 @@ import RegistrationSuccess from './RegistrationSuccess';
 import SignInUserPasskey from './SignInUserPasskey';
 import { storageKeys } from '../../config/CommonConstant';
 import FooterBar from './FooterBar';
+import { envConfig } from '../../config/envConfig';
 
 interface emailValue {
 	email: string | null;
@@ -28,7 +29,7 @@ const SignInUser = () => {
 	const [userLoginEmail, setUserLoginEmail] = useState<string | null>(null);
 	const nextButtonRef = useRef<HTMLButtonElement | null>(null);
 
-
+	const successMessage = `Congratulations!! 🎉 You have successfully registered on ${envConfig.PLATFORM_DATA.name} 🚀`
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -62,11 +63,11 @@ const SignInUser = () => {
 					loginMethod === 'password'
 				) {
 					setSuccess(
-						'Congratulations!! 🎉 You have successfully registered on CREDEBL 🚀',
+						successMessage,
 					);
 				} else if (showMsg === 'true') {
 					setSuccess(
-						'Congratulations!! 🎉 You have successfully registered on CREDEBL 🚀',
+						successMessage,
 					);
 				} else if (
 					signUpStatus === 'true' &&

@@ -1,5 +1,6 @@
 ---
 import CustomAvatar from '../../components/Avatar';
+import { envConfig } from '../../config/envConfig';
 import { pathRoutes } from '../../config/pathRoutes';
 
 const { user } = Astro.params;
@@ -17,13 +18,13 @@ const userData = data?.data;
 					<div class="flex items-center justify-start">
 						<a href={pathRoutes.users.dashboard} class="flex ml-2 md:mr-24">
 							<img
-								src="/images/CREDEBL_ICON.png"
+								src={envConfig.PLATFORM_DATA.logo}
 								class="h-8 mr-3"
-								alt="CREDEBL Logo"
+								alt={`${envConfig.PLATFORM_DATA.name} Logo`}
 							/>
 							<span
 								class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white"
-								>CREDEBL</span
+								>{envConfig.PLATFORM_DATA.name}</span
 							>
 						</a>
 					</div>
