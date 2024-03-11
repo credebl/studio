@@ -6,6 +6,17 @@ import ColorModeSwitcher from '../components/ColorModeSwitcher.astro';
 const envConfig = import.meta.env || process.env;
 console.log(234222, envConfig);
 
+const initData: any = {};
+
+// const cookies = Astro.cookies.get("platform-data").value
+// const platformDataCookie = cookies && JSON.parse(cookies)
+const envKeys = [...Object.keys(process.env), ...Object.keys(import.meta.env)];
+envKeys.forEach((item) => {
+	initData[item] = process.env[item] || import.meta.env[item];
+});
+
+console.log(64646, initData, envKeys)
+
 const PLATFORM_DATA = {
   keys: envConfig.PUBLIC_SHOW_PLATFORM_NAME_AS_LOGO,
   name: envConfig.PUBLIC_PLATFORM_NAME,
