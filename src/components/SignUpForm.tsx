@@ -2,7 +2,7 @@
 
 import { Button, Checkbox, Label, TextInput } from 'flowbite-react';
 import { asset } from '../lib/data.js';
-import { PLATFORM_DATA } from '../app/constants.js';
+import { envConfig } from '../config/envConfig.js';
 
 export default function ShadowInputs() {
 
@@ -18,8 +18,8 @@ export default function ShadowInputs() {
                 href="#"
                 className="flex items-center justify-center mb-8 text-2xl font-semibold lg:mb-10 dark:text-white"
             >
-                <img src={asset(`${PLATFORM_DATA.logo}`)} alt={`${PLATFORM_DATA.name} logo`} className="mr-4 h-11" />
-                <span>{PLATFORM_DATA.name}</span>
+                <img src={asset(`${envConfig.PLATFORM_DATA.logo}`)} alt={`${envConfig.PLATFORM_DATA.name} logo`} className="mr-4 h-11" />
+                <span>{envConfig.PLATFORM_DATA.name}</span>
             </a>
             <div
                 className="w-full max-w-xl p-6 space-y-8 sm:p-8 bg-white rounded-lg shadow dark:bg-gray-800"

@@ -1,7 +1,7 @@
 ---
 /* eslint max-lines: 'off' */
 
-import { PLATFORM_DATA } from '../app/constants';
+import { envConfig } from '../config/envConfig';
 import { asset } from '../lib/data';
 ---
 
@@ -2302,7 +2302,7 @@ import { asset } from '../lib/data';
 							href="#"
 							class="font-medium hover:underline text-primary-600 dark:text-primary-500"
 							>@jeseleos</a
-						> I need some informations about {PLATFORM_DATA.name} react version.
+						> I need some informations about {envConfig.PLATFORM_DATA.name} react version.
 					</p>
 				</article>
 				<article class="pl-12 mb-5">
@@ -2937,7 +2937,7 @@ import { asset } from '../lib/data';
 						>March 2023</time
 					>
 					<h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-						Marketing UI code in {PLATFORM_DATA.name}
+						Marketing UI code in {envConfig.PLATFORM_DATA.name}
 					</h3>
 					<p
 						class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400"
@@ -2949,7 +2949,7 @@ import { asset } from '../lib/data';
 						href="https://flowbite.com/blocks/"
 						class="inline-flex items-center text-xs font-medium hover:underline text-primary-700 sm:text-sm dark:text-primary-500"
 					>
-						Go to {PLATFORM_DATA.name} Blocks
+						Go to {envConfig.PLATFORM_DATA.name} Blocks
 						<svg
 							class="w-4 h-4 ml-1"
 							fill="none"
@@ -3018,7 +3018,7 @@ import { asset } from '../lib/data';
 						</h3>
 						<p class="mb-4 text-gray-500 dark:text-gray-400">
 							Get started with a free and open-source admin dashboard layout
-							built with Tailwind CSS and {PLATFORM_DATA.name} featuring charts, widgets,
+							built with Tailwind CSS and {envConfig.PLATFORM_DATA.name} featuring charts, widgets,
 							CRUD layouts, authentication pages, and more
 						</p>
 						<p class="mb-2 text-lg font-medium text-gray-900 dark:text-white">
@@ -3257,7 +3257,7 @@ import { asset } from '../lib/data';
 							Features
 						</div>
 						<h3 class="mb-4 text-2xl font-medium text-gray-900 dark:text-white">
-							Go next level with {PLATFORM_DATA.name}
+							Go next level with {envConfig.PLATFORM_DATA.name}
 						</h3>
 						<p class="text-gray-500 dark:text-gray-400">
 							Deliver great service experiences fast - without the complexity of
