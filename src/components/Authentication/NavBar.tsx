@@ -1,5 +1,5 @@
 import React from 'react'
-import { PLATFORM_DATA } from '../../app/constants';
+import { envConfig } from '../../config/envConfig';
 
 const NavBar = () => {
     return (
@@ -10,13 +10,13 @@ const NavBar = () => {
                 <div className="flex items-center justify-start">
                 <a className="flex ml-2 md:mr-24" href="/">
                         <img
-                            src={PLATFORM_DATA.logo}
+                            src={envConfig.PLATFORM_DATA.logo}
                             className="h-8 mr-3"
-                            alt={`${PLATFORM_DATA.name} Logo`}
+                            alt={`${envConfig.PLATFORM_DATA.name} Logo`}
                         />
                         <span
                             className="ml-2 self-center text-2xl font-semibold whitespace-nowrap text-black dark:text-white"
-                        >{PLATFORM_DATA.name}</span>
+                        >{envConfig.PLATFORM_DATA.name}</span>
 
                     </a>
                 </div>
