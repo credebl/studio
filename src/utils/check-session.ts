@@ -33,7 +33,6 @@ export const checkUserSession = async ({
 
 	try {
 		const baseURL =
-			globalThis.baseUrl ||
 			envConfig.PUBLIC_BASE_URL ||
 			process.env.PUBLIC_BASE_URL;
 		const config = {
