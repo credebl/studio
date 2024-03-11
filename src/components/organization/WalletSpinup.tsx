@@ -27,11 +27,6 @@ import {
 import { AlertComponent } from '../AlertComponent';
 import CopyDid from '../../commonComponents/CopyDid';
 import { DidMethod } from '../../common/enums';
-import GenerateBtnPolygon from './walletCommonComponents/GenerateBtnPolygon';
-import SetPrivateKeyValue from './walletCommonComponents/SetPrivateKeyValue';
-import SetDomainValueInput from './walletCommonComponents/SetDomainValueInput';
-import TokenWarningMessage from './walletCommonComponents/TokenWarningMessage';
-
 
 interface Values {
 	seed: string;
@@ -330,8 +325,20 @@ const SharedAgentForm = ({
 								</div>
 
 								{formikHandlers.values.method === DidMethod.POLYGON && (
-									
-									<GenerateBtnPolygon  generatePolygonKeyValuePair={()=>generatePolygonKeyValuePair()}/>
+									<div className="my-3 relative flex justify-between">
+										<div className="mt-4">
+											<Label value="Generate private key" />
+											<span className="text-red-500 text-xs">*</span>
+										</div>
+
+										<Button
+											type="button"
+											className="h-min p-0 focus:z-10 focus:outline-none border border-transparent enabled:hover:bg-cyan-800 dark:enabled:hover:bg-cyan-700 mt-4 text-base font-medium text-center text-white bg-primary-700 rounded-md hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+											onClick={() => generatePolygonKeyValuePair()}
+										>
+											Generate
+										</Button>
+									</div>
 								)}
 
 								{generatedKeys && (
@@ -350,6 +357,17 @@ const SharedAgentForm = ({
 
 										<p className="text-sm truncate">
 											<span className="font-semibold text-gray-900 dark:text-white">
+												Public Key Base58:
+											</span>
+											<div className="flex ">
+												<CopyDid
+													className="align-center block text-sm text-gray-900 dark:text-white truncate"
+													value={generatedKeys?.publicKeyBase58}
+												/>
+											</div>
+										</p>
+										<p className="text-sm truncate">
+											<span className="font-semibold text-gray-900 dark:text-white">
 												Address:
 											</span>
 											<div className="flex ">
@@ -364,21 +382,61 @@ const SharedAgentForm = ({
 
 								{generatedKeys &&
 									formikHandlers.values.method === DidMethod.POLYGON && (
-										
-										<TokenWarningMessage />
+										<span className="inline-flex items-center bg-amber-200 text-amber-800 text-xs font-medium mr-2 px-2 py-2 rounded-sm dark:bg-amber-200 dark:text-amber-800">
+											<svg
+												width="20"
+												height="17"
+												viewBox="0 0 22 19"
+												fill="none"
+												xmlns="http://www.w3.org/2000/svg"
+												className="text-amber-800 mr-1.5 mb-4"
+											>
+												<path
+													d="M0 19L11 0L22 19H0ZM3.45 17H18.55L11 4L3.45 17ZM11 16C11.2833 16 11.5208 15.9042 11.7125 15.7125C11.9042 15.5208 12 15.2833 12 15C12 14.7167 11.9042 14.4792 11.7125 14.2875C11.5208 14.0958 11.2833 14 11 14C10.7167 14 10.4792 14.0958 10.2875 14.2875C10.0958 14.4792 10 14.7167 10 15C10 15.2833 10.0958 15.5208 10.2875 15.7125C10.4792 15.9042 10.7167 16 11 16ZM10 13H12V8H10V13Z"
+													fill="currentColor"
+												/>
+											</svg>
+											Before creating the wallet, ensure that you have added
+											tokens to the above address
+										</span>
 									)}
 
 								{formikHandlers.values.method === DidMethod.POLYGON && (
-
-                   <SetPrivateKeyValue setPrivateKeyValue={(val:string)=>setPrivateKeyValue(val)} privateKeyValue={privateKeyValue}/>
-									
+									<>
+										<div className="my-3 relative">
+											<div className="mt-4">
+												<Label value="Private Key" />
+												<span className="text-red-500 text-xs">*</span>
+											</div>
+										</div>
+										<Field
+											id="endpoint"
+											name="endpoint"
+											className="truncate bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+											value={privateKeyValue}
+											onChange={(e) => setPrivateKeyValue(e.target.value)}
+											placeholder="Enter private key"
+										/>
+									</>
 								)}
 
 								{formikHandlers.values.method === DidMethod.WEB && (
-									
-
-									<SetDomainValueInput setDomainValue={(val:string)=>setDomainValue(val)} domainValue={domainValue}/>
-
+									<>
+										<div className="my-3 relative">
+											<div className="mt-4">
+												<Label value="Enter Domain" />
+												<span className="text-red-500 text-xs">*</span>
+											</div>
+										</div>
+										<Field
+											id="webdomain"
+											name="password"
+											className="truncate bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+											value={domainValue}
+											onChange={(e) => setDomainValue(e.target.value)}
+											placeholder="Please enter domain"
+										/>
+									</>
 								)}
 
 								{formikHandlers.values.method !== DidMethod.POLYGON &&
@@ -618,9 +676,20 @@ const SharedAgentForm = ({
 							</div>
 
 							{formikHandlers.values.method === DidMethod.POLYGON && (
-			
-                                 <GenerateBtnPolygon  generatePolygonKeyValuePair={()=>generatePolygonKeyValuePair()}/>
+								<div className="my-3 relative flex justify-between">
+									<div className="mt-4">
+										<Label value="Generate private key" />
+										<span className="text-red-500 text-xs">*</span>
+									</div>
 
+									<Button
+										type="button"
+										className="h-min p-0 focus:z-10 focus:outline-none border border-transparent enabled:hover:bg-cyan-800 dark:enabled:hover:bg-cyan-700 mt-4 text-base font-medium text-center text-white bg-primary-700 rounded-md hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+										onClick={() => generatePolygonKeyValuePair()}
+									>
+										Generate
+									</Button>
+								</div>
 							)}
 
 							{generatedKeys && (
@@ -664,19 +733,61 @@ const SharedAgentForm = ({
 
 							{generatedKeys &&
 								formikHandlers.values.method === DidMethod.POLYGON && (
-
-									<TokenWarningMessage />
+									<span className="inline-flex items-center bg-amber-200 text-amber-800 text-xs font-medium mr-2 px-2 py-2 rounded-sm dark:bg-amber-200 dark:text-amber-800">
+										<svg
+											width="20"
+											height="17"
+											viewBox="0 0 22 19"
+											fill="none"
+											xmlns="http://www.w3.org/2000/svg"
+											className="text-amber-800 mr-1.5 mb-4"
+										>
+											<path
+												d="M0 19L11 0L22 19H0ZM3.45 17H18.55L11 4L3.45 17ZM11 16C11.2833 16 11.5208 15.9042 11.7125 15.7125C11.9042 15.5208 12 15.2833 12 15C12 14.7167 11.9042 14.4792 11.7125 14.2875C11.5208 14.0958 11.2833 14 11 14C10.7167 14 10.4792 14.0958 10.2875 14.2875C10.0958 14.4792 10 14.7167 10 15C10 15.2833 10.0958 15.5208 10.2875 15.7125C10.4792 15.9042 10.7167 16 11 16ZM10 13H12V8H10V13Z"
+												fill="currentColor"
+											/>
+										</svg>
+										Before creating the wallet, ensure that you have added
+										tokens to the above address
+									</span>
 								)}
 
 							{formikHandlers.values.method === DidMethod.POLYGON && (
-							
-								<SetPrivateKeyValue setPrivateKeyValue={(val:string)=>setPrivateKeyValue(val)} privateKeyValue={privateKeyValue}/>
+								<>
+									<div className="my-3 relative">
+										<div className="mt-4">
+											<Label value="Private Key" />
+											<span className="text-red-500 text-xs">*</span>
+										</div>
+									</div>
+									<Field
+										id="endpoint"
+										name="endpoint"
+										className="truncate bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+										value={privateKeyValue}
+										onChange={(e) => setPrivateKeyValue(e.target.value)}
+										placeholder="Enter private key"
+									/>
+								</>
 							)}
 
 							{formikHandlers.values.method === DidMethod.WEB && (
-
-								<SetDomainValueInput setDomainValue={(val:string)=>setDomainValue(val)} domainValue={domainValue}/>
-
+								<>
+									<div className="my-3 relative">
+										<div className="mt-4">
+											<Label value="Enter Domain" />
+											<span className="text-red-500 text-xs">*</span>
+										</div>
+									</div>
+									<Field
+										id="webdomain"
+										name="password"
+										className="truncate bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+										value={domainValue}
+										onChange={(e) => setDomainValue(e.target.value)}
+										placeholder="Please enter domain"
+									/>
+								</>
 							)}
 
 							{formikHandlers.values.method !== DidMethod.POLYGON &&
