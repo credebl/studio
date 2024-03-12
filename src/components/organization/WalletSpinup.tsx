@@ -27,7 +27,8 @@ import {
 import { AlertComponent } from '../AlertComponent';
 import CopyDid from '../../commonComponents/CopyDid';
 import { DidMethod } from '../../common/enums';
-import GenerateBtnPolygon from './walletCommonComponents/GenerateBtnPolygon'
+import GenerateBtnPolygon from './walletCommonComponents/GenerateBtnPolygon';
+import SetPrivateKeyValue from './walletCommonComponents/SetPrivateKeyValue';
 
 
 interface Values {
@@ -392,22 +393,9 @@ const SharedAgentForm = ({
 									)}
 
 								{formikHandlers.values.method === DidMethod.POLYGON && (
-									<>
-										<div className="my-3 relative">
-											<div className="mt-4">
-												<Label value="Private Key" />
-												<span className="text-red-500 text-xs">*</span>
-											</div>
-										</div>
-										<Field
-											id="endpoint"
-											name="endpoint"
-											className="truncate bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
-											value={privateKeyValue}
-											onChange={(e) => setPrivateKeyValue(e.target.value)}
-											placeholder="Enter private key"
-										/>
-									</>
+
+                   <SetPrivateKeyValue setPrivateKeyValue={(val:string)=>setPrivateKeyValue(val)} privateKeyValue={privateKeyValue}/>
+									
 								)}
 
 								{formikHandlers.values.method === DidMethod.WEB && (
@@ -732,22 +720,8 @@ const SharedAgentForm = ({
 								)}
 
 							{formikHandlers.values.method === DidMethod.POLYGON && (
-								<>
-									<div className="my-3 relative">
-										<div className="mt-4">
-											<Label value="Private Key" />
-											<span className="text-red-500 text-xs">*</span>
-										</div>
-									</div>
-									<Field
-										id="endpoint"
-										name="endpoint"
-										className="truncate bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
-										value={privateKeyValue}
-										onChange={(e) => setPrivateKeyValue(e.target.value)}
-										placeholder="Enter private key"
-									/>
-								</>
+							
+								<SetPrivateKeyValue setPrivateKeyValue={(val:string)=>setPrivateKeyValue(val)} privateKeyValue={privateKeyValue}/>
 							)}
 
 							{formikHandlers.values.method === DidMethod.WEB && (
