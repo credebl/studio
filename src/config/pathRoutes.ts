@@ -1,3 +1,5 @@
+import { envConfig } from "./envConfig";
+
 export const pathRoutes = {
 	landingPage:{
 		landingPage:'/'
@@ -56,7 +58,7 @@ export const pathRoutes = {
 		sentinvitation: '/ecosystems/invitations',
 	},
 	documentation: {
-		root: 'https://docs.credebl.id',
+		root: envConfig.PLATFORM_DATA.docs
 	},
 	schema: {
 		create: '/schemas',
