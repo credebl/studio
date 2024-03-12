@@ -1,5 +1,5 @@
 import React from "react"
-import { Button, Checkbox, Label } from 'flowbite-react';
+import { Button, Label } from 'flowbite-react';
 
 interface IProps {
     generatePolygonKeyValuePair:()=>void
