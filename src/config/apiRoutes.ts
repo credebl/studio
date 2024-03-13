@@ -77,6 +77,8 @@ export const apiRoutes = {
 		checkAgentHealth: '/agents/health',
 		agentDedicatedSpinup: '/agents/spinup',
 		agentSharedSpinup: '/agents/wallet',
+		getLedgerConfig: '/agents/ledgerConfig',
+		createPolygonKeys: '/agents/polygon/create-keys'
 	},
 	Platform: {
 		getAllSchemaFromPlatform: '/platform/schemas',

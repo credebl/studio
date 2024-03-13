@@ -1,8 +1,7 @@
 'use client';
 
 import { Button, Checkbox, Label, TextInput } from 'flowbite-react';
-import { asset } from '../lib/data.js';
-import { envConfig } from '../config/envConfig.js';
+import LogoFile from '../commonComponents/LogoFile'
 
 export default function ShadowInputs() {
 
@@ -18,8 +17,7 @@ export default function ShadowInputs() {
                 href="#"
                 className="flex items-center justify-center mb-8 text-2xl font-semibold lg:mb-10 dark:text-white"
             >
-                <img src={asset(`${envConfig.PLATFORM_DATA.logo}`)} alt={`${envConfig.PLATFORM_DATA.name} logo`} className="mr-4 h-11" />
-                <span>{envConfig.PLATFORM_DATA.name}</span>
+                <LogoFile />
             </a>
             <div
                 className="w-full max-w-xl p-6 space-y-8 sm:p-8 bg-white rounded-lg shadow dark:bg-gray-800"
