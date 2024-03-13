@@ -85,6 +85,7 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 				setLoading(false);
 			} else {
 				await setToLocalStorage(storageKeys.TOKEN, data?.data?.access_token);
+				await setToLocalStorage(storageKeys.REFRESH_TOKEN, data?.data?.refresh_token);
 				const userRole = await getUserDetails(data?.data?.access_token);
 
 				const userPayload = {

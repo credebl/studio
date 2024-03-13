@@ -132,6 +132,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 					await setToLocalStorage(storageKeys.TOKEN, data?.data?.access_token);
+					await setToLocalStorage(storageKeys.REFRESH_TOKEN, data?.data?.refresh_token);
 					const userRole = await getUserDetails(data?.data?.access_token)
 
 					const userPayload = {
