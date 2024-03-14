@@ -277,15 +277,21 @@ export const setToCookies = (cookies: AstroCookies, key: string, value: any, opt
 		return;
 	}
     
-    const convertedValue = encryptData(value)
-    cookies.set(key, convertedValue as string, option)
+    // Set HttpOnly, Secure, and SameSite attributes in the options
+    const updatedOption: { [key: string]: any }= {
+        ...option,
+        httpOnly: true,
+        secure: true, // Set to true if using HTTPS
+        sameSite: 'Strict', 
+      };
+    cookies.set(key, value as string, updatedOption)
+
     return true
 }
 
 export const getFromCookies = (cookies: AstroCookies, key: string) =>{
     const value = cookies.get(key).value
-    const convertedValue = value ? decryptData(value) : ''
-    return convertedValue
+    return value
 }
 
 export const removeFromLocalStorage = async (key: string) => {
