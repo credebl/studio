@@ -15,10 +15,6 @@ interface IOutput {
 	permitted: boolean;
 	redirect?: string;
 	authorized?: boolean;
-	sessionData?: {
-		sessionToken?: string;
-		refreshToken?: string;
-	}
 }
 
 export const checkUserSession = async ({
@@ -89,11 +85,7 @@ export const checkUserSession = async ({
 
 			return {
 				permitted: true,
-				authorized: true,
-				sessionData: {
-					sessionToken: userSession?.data?.access_token,
-					refreshToken: userSession?.data?.refresh_token
-				}
+				authorized: true
 			};
 
 		}
