@@ -32,7 +32,7 @@ const refreshToken = getFromCookies(Astro.cookies, 'refresh');
 			sitemap={url('sitemap-index.xml')}
 			client:load
 		/>
-		<meta http-equiv="Content-Security-Policy" content="" />
+		<!-- <meta http-equiv="Content-Security-Policy" content="" /> -->
 		<!-- <meta
 		http-equiv="Content-Security-Policy"
 		content="frame-ancestors SAMEORIGIN"
@@ -54,7 +54,7 @@ const refreshToken = getFromCookies(Astro.cookies, 'refresh');
 				connect-src 'self' https://qaapi.credebl.id https://devapi.credebl.id;"
 		/>
 
-		<meta http-equiv="X-Frame-Options" content="DENY" />
+		<!-- <meta http-equiv="X-Frame-Options" content="DENY" /> -->
 
 		<!-- <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" > -->
 		<!-- <meta
