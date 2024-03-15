@@ -2,7 +2,6 @@ import type { OrgDashboard, Organisation } from './interfaces';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { getOrgDashboard, getOrganizationById } from '../../api/organization';
 import { useEffect, useState } from 'react';
-
 import { Alert } from 'flowbite-react';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
@@ -18,28 +17,22 @@ import WalletSpinup from './WalletSpinup';
 import { getFromLocalStorage } from '../../api/Auth';
 import { pathRoutes } from '../../config/pathRoutes';
 import DashboardCard from '../../commonComponents/DashboardCard';
+import { AlertComponent } from '../AlertComponent';
+import React from 'react';
 
 const Dashboard = () => {
 	const [orgData, setOrgData] = useState<Organisation | null>(null);
-
 	const [walletStatus, setWalletStatus] = useState<boolean>(false);
-
 	const [orgDashboard, setOrgDashboard] = useState<OrgDashboard | null>(null);
 	const [success, setSuccess] = useState<string | null>(null);
 	const [failure, setFailure] = useState<string | null>(null);
-
 	const [loading, setLoading] = useState<boolean | null>(true);
 	const [userRoles, setUserRoles] = useState<string[]>([]);
-
+	const [orgSuccess, setOrgSuccess] = useState<string | null>(null);
 	const [openModal, setOpenModal] = useState<boolean>(false);
-	const props = { openModal, setOpenModal };
 
 	const EditOrgDetails = () => {
-		props.setOpenModal(true);
-	};
-
-	const updateOrganizationData = (updatedData: Organisation) => {
-		setOrgData(updatedData);
+		setOpenModal(true);
 	};
 
 	const getUserRoles = async () => {
@@ -54,11 +47,8 @@ const Dashboard = () => {
 
 	const fetchOrganizationDetails = async () => {
 		setLoading(true);
-
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-
 		const response = await getOrganizationById(orgId as string);
-
 		const { data } = response as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -74,11 +64,8 @@ const Dashboard = () => {
 
 	const fetchOrganizationDashboard = async () => {
 		setLoading(true);
-
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-
 		const response = await getOrgDashboard(orgId as string);
-
 		const { data } = response as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -94,16 +81,17 @@ const Dashboard = () => {
 		fetchOrganizationDashboard();
 	}, []);
 
+	const handleEditModalClose = () => {
+		setOpenModal(false);
+		fetchOrganizationDetails();
+	};
+
 	useEffect(() => {
 		setTimeout(() => {
 			setSuccess(null);
 			setFailure(null);
 		}, 3000);
 	}, [success !== null, failure !== null]);
-
-	const redirectDashboardInvitations = () => {
-		window.location.href = '/organizations/invitations';
-	};
 
 	const setWalletSpinupStatus = (status: boolean) => {
 		setSuccess('Wallet created successfully');
@@ -118,6 +106,19 @@ const Dashboard = () => {
 		<div className="px-4 pt-2 w-full">
 			<div className="col-span-full xl:mb-2">
 				<BreadCrumbs />
+			</div>
+			<div className="w-full">
+				{orgSuccess && (
+					<div className="w-full" role="alert">
+						<AlertComponent
+							message={orgSuccess}
+							type={'success'}
+							onAlertClose={() => {
+								setOrgSuccess(null);
+							}}
+						/>
+					</div>
+				)}
 			</div>
 			<div className="mt-4 w-full">
 				<div className="flex flex-wrap w-full items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex-row sm:items-center sm:w-full sm:p-6 dark:border-gray-700 dark:bg-gray-800">
@@ -180,18 +181,18 @@ const Dashboard = () => {
 					</div>
 
 					<EditOrgdetailsModal
-						orgData={orgData}
 						openModal={openModal}
-						setOpenModal={props.setOpenModal}
-						onEditSucess={fetchOrganizationDetails}
+						setOpenModal={setOpenModal}
+						onEditSucess={handleEditModalClose}
 						setMessage={(message: string) => {
-							throw new Error('Function not implemented.');
+							setOrgSuccess(message);
 						}}
+						orgData={orgData}
 					/>
 				</div>
 
 				<div className="mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-					<div className="grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-3 2xl:grid-cols-3">
+					<div className="grid w-full grid-cols-1 gap-4 mt-0 xl:grid-cols-3 2xl:grid-cols-3">
 						<DashboardCard
 							icon={userCard}
 							backgroundColor="linear-gradient(279deg, #FFF -18.24%, #2F80ED -0.8%, #1F4EAD 61.45%)"

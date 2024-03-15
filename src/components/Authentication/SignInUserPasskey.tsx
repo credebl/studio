@@ -131,6 +131,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 					await setToLocalStorage(storageKeys.TOKEN, data?.data?.access_token);
+					await setToLocalStorage(storageKeys.REFRESH_TOKEN, data?.data?.refresh_token);
 					const userRole = await getUserDetails(data?.data?.access_token)
 
 					const userPayload = {
@@ -227,7 +228,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 										</p>
 									</div>
 								</div>
-								<div className='my-8 mx-auto px-4 py-2 flex justify-center w-full sm:w-fit items-center bg-gray-50 gap-2 border border-gray-200 rounded-md text-gray-600 dark:text-white dark:bg-gray-800'>
+								<div className='my-8 mx-auto px-4 py-2 flex justify-center w-full max-w-fit items-center bg-gray-50 gap-2 border border-gray-200 rounded-md text-gray-600 dark:text-white dark:bg-gray-800'>
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										width="24"

@@ -10,6 +10,7 @@ export const schemaVersionRegex = /^\d{1,5}(?=.*[0-9])(?:\.\d{1,5})?(?:\.\d{1,5}
 export const apiStatusCodes = {
     API_STATUS_SUCCESS : 200,
     API_STATUS_CREATED : 201,
+		API_STATUS_DELETED : 202,
     API_STATUS_BAD_REQUEST : 400,
     API_STATUS_UNAUTHORIZED : 401,
     API_STATUS_NOT_FOUND : 404
@@ -17,6 +18,7 @@ export const apiStatusCodes = {
 
 export const storageKeys = {
     TOKEN : 'access_token',
+    REFRESH_TOKEN : 'refresh_token',
     ORG_ID: 'orgId',
     ORG_ROLES: 'org_roles',
     USER_PROFILE : 'user_profile',

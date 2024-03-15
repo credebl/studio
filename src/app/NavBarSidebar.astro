@@ -11,16 +11,15 @@ import SignOutButton from '../components/SignOutButton/index';
 import AgentHealth from '../commonComponents/AgentHealth';
 import { getFromCookies } from '../api/Auth';
 import { RolePermissions } from '../config/permissions';
+import LogoFile from '../commonComponents/LogoFile.jsx';
 
 const { hideOrgAgent } = Astro.props;
-console.log(3242, hideOrgAgent)
 
 const role = getFromCookies(Astro.cookies, 'role');
 
 const permittedPages = RolePermissions.find(
 	(item) => item.role === role,
 )?.pages;
-
 ---
 
 <nav
@@ -30,52 +29,50 @@ const permittedPages = RolePermissions.find(
 		<div class="flex items-center justify-between">
 			<div class="flex items-center justify-start">
 				{
-					!hideOrgAgent &&
-					<button
-						id="toggleSidebarMobile"
-						aria-expanded="true"
-						aria-controls="sidebar"
-						class="p-2 text-gray-600 rounded cursor-pointer lg:hidden hover:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-700 focus:ring-2 focus:ring-gray-100 dark:focus:ring-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-					>
-						<svg
-							id="toggleSidebarMobileHamburger"
-							class="w-6 h-6"
-							fill="currentColor"
-							viewBox="0 0 20 20"
-							xmlns="http://www.w3.org/2000/svg"
+					!hideOrgAgent && (
+						<button
+							id="toggleSidebarMobile"
+							aria-expanded="true"
+							aria-controls="sidebar"
+							class="p-2 text-gray-600 rounded cursor-pointer lg:hidden hover:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-700 focus:ring-2 focus:ring-gray-100 dark:focus:ring-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
 						>
-							<path
-								fill-rule="evenodd"
-								d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-								clip-rule="evenodd"></path>
-						</svg>
-						<svg
-							id="toggleSidebarMobileClose"
-							class="hidden w-6 h-6"
-							fill="currentColor"
-							viewBox="0 0 20 20"
-							xmlns="http://www.w3.org/2000/svg"
-						>
-							<path
-								fill-rule="evenodd"
-								d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-								clip-rule="evenodd"></path>
-						</svg>
-					</button>
+							<svg
+								id="toggleSidebarMobileHamburger"
+								class="w-6 h-6"
+								fill="currentColor"
+								viewBox="0 0 20 20"
+								xmlns="http://www.w3.org/2000/svg"
+							>
+								<path
+									fill-rule="evenodd"
+									d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+									clip-rule="evenodd"
+								/>
+							</svg>
+							<svg
+								id="toggleSidebarMobileClose"
+								class="hidden w-6 h-6"
+								fill="currentColor"
+								viewBox="0 0 20 20"
+								xmlns="http://www.w3.org/2000/svg"
+							>
+								<path
+									fill-rule="evenodd"
+									d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+									clip-rule="evenodd"
+								/>
+							</svg>
+						</button>
+					)
 				}
-				<a href={permittedPages && permittedPages[0] || pathRoutes.users.dashboard} class="flex ml-2 md:mr-24">
-					<img
-						src="/images/CREDEBL_ICON.png"
-						class="h-8 mr-3"
-						alt="CREDEBL Logo"
-					/>
-					<span
-						class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white"
-						>CREDEBL</span
-					>
+				<a
+					href={(permittedPages && permittedPages[0]) ||
+						pathRoutes.users.dashboard}
+					class="flex ml-2 md:mr-24"
+				>
+					<LogoFile />
 				</a>
 			</div>
-
 			<div class="flex items-center">
 				<>
 					{
@@ -87,7 +84,6 @@ const permittedPages = RolePermissions.find(
 								<div class="hidden sm:block mr-5">
 									<OrgDropDwon client:visible />
 								</div>
-
 							</>
 						)
 					}
@@ -392,9 +388,21 @@ const permittedPages = RolePermissions.find(
 					>
 						<span class="sr-only">View</span>
 						<!-- Icon -->
-						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-							<path stroke="#6B7280" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.047 16.473c-1.204-1.473-2.053-2.223-2.053-6.285 0-3.72-1.9-5.044-3.463-5.688a.835.835 0 0 1-.466-.495C13.79 3.072 13.022 2.25 12 2.25s-1.791.823-2.063 1.756a.827.827 0 0 1-.466.494c-1.565.645-3.463 1.965-3.463 5.688-.002 4.062-.852 4.812-2.056 6.285-.499.61-.062 1.527.81 1.527h14.48c.867 0 1.301-.92.805-1.527ZM15 18v.75a3 3 0 0 1-6 0V18"/>
-						  </svg>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="24"
+							fill="none"
+							viewBox="0 0 24 24"
+						>
+							<path
+								stroke="#6B7280"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="1.5"
+								d="M20.047 16.473c-1.204-1.473-2.053-2.223-2.053-6.285 0-3.72-1.9-5.044-3.463-5.688a.835.835 0 0 1-.466-.495C13.79 3.072 13.022 2.25 12 2.25s-1.791.823-2.063 1.756a.827.827 0 0 1-.466.494c-1.565.645-3.463 1.965-3.463 5.688-.002 4.062-.852 4.812-2.056 6.285-.499.61-.062 1.527.81 1.527h14.48c.867 0 1.301-.92.805-1.527ZM15 18v.75a3 3 0 0 1-6 0V18"
+							></path>
+						</svg>
 					</button>
 					<!-- Dropdown menu -->
 					<div
@@ -426,13 +434,50 @@ const permittedPages = RolePermissions.find(
 						id="dropdown-2"
 					>
 						<DisplayUser client:load />
-						<ul class="py-1" role="none">
+						<ul class="py-1 divide-y" role="none">
 							<li>
 								<a
 									href={pathRoutes.users.profile}
-									class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-									role="menuitem">Profile</a
+									class="flex space-x-2 px-4 py-2 my-2 text-sm text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+									role="menuitem"
+									><svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="20"
+										height="20"
+										viewBox="0 0 20 20"
+										fill="none"
+									>
+										<path
+											fill-rule="evenodd"
+											clip-rule="evenodd"
+											d="M16.5684 18H3.44404C2.73765 18 2.21601 17.303 2.48244 16.662C3.71863 13.698 6.6228 12 10.0057 12C13.3897 12 16.2938 13.698 17.53 16.662C17.7964 17.303 17.2748 18 16.5684 18ZM5.92253 5.99999C5.92253 3.79399 7.75486 1.99999 10.0057 1.99999C12.2576 1.99999 14.0889 3.79399 14.0889 5.99999C14.0889 8.20599 12.2576 10 10.0057 10C7.75486 10 5.92253 8.20599 5.92253 5.99999ZM19.9616 17.636C19.2194 14.277 16.8981 11.798 13.8429 10.673C15.4619 9.39597 16.4061 7.33094 16.059 5.06994C15.6569 2.44693 13.4295 0.347977 10.7407 0.0419769C7.02908 -0.381024 3.88093 2.44899 3.88093 5.99999C3.88093 7.88999 4.77516 9.57397 6.16957 10.673C3.1133 11.798 0.793024 14.277 0.0498834 17.636C-0.219607 18.857 0.784859 20 2.05983 20H17.9516C19.2276 20 20.2321 18.857 19.9616 17.636Z"
+											fill="#455A64"></path>
+									</svg>
+									<span>Profile</span>
+								</a>
+							</li>
+							<li>
+								<a
+									href={pathRoutes.users.setting}
+									class="flex space-x-2 pl-3 pr-4 py-2 my-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+									role="menuitem"
 								>
+									<!-- <svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="25"
+										height="24"
+										viewBox="0 0 25 24"
+										fill="none"
+									>
+										<path
+											d="M10.5059 23C9.95586 23 9.48503 22.8042 9.09336 22.4125C8.70169 22.0208 8.50586 21.55 8.50586 21V18C7.95586 18 7.48503 17.8042 7.09336 17.4125C6.70169 17.0208 6.50586 16.55 6.50586 16V3C6.50586 2.45 6.70169 1.97917 7.09336 1.5875C7.48503 1.19583 7.95586 1 8.50586 1H16.5059C17.0559 1 17.5267 1.19583 17.9184 1.5875C18.31 1.97917 18.5059 2.45 18.5059 3V16C18.5059 16.55 18.31 17.0208 17.9184 17.4125C17.5267 17.8042 17.0559 18 16.5059 18V21C16.5059 21.55 16.31 22.0208 15.9184 22.4125C15.5267 22.8042 15.0559 23 14.5059 23H10.5059ZM12.5059 12.5C13.3392 12.5 14.0475 12.2083 14.6309 11.625C15.2142 11.0417 15.5059 10.3333 15.5059 9.5C15.5059 8.66667 15.2142 7.95833 14.6309 7.375C14.0475 6.79167 13.3392 6.5 12.5059 6.5C11.6725 6.5 10.9642 6.79167 10.3809 7.375C9.79753 7.95833 9.50586 8.66667 9.50586 9.5C9.50586 10.3333 9.79753 11.0417 10.3809 11.625C10.9642 12.2083 11.6725 12.5 12.5059 12.5ZM10.5059 21H14.5059V18H10.5059V21ZM8.50586 16H16.5059V3H8.50586V16ZM12.5059 10.5C12.2225 10.5 11.985 10.4042 11.7934 10.2125C11.6017 10.0208 11.5059 9.78333 11.5059 9.5C11.5059 9.21667 11.6017 8.97917 11.7934 8.7875C11.985 8.59583 12.2225 8.5 12.5059 8.5C12.7892 8.5 13.0267 8.59583 13.2184 8.7875C13.41 8.97917 13.5059 9.21667 13.5059 9.5C13.5059 9.78333 13.41 10.0208 13.2184 10.2125C13.0267 10.4042 12.7892 10.5 12.5059 10.5Z"
+											fill="#455A64"></path>
+									</svg> -->
+									<svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24" fill="none">
+										<path d="M10.5059 23C9.95586 23 9.48503 22.8042 9.09336 22.4125C8.70169 22.0208 8.50586 21.55 8.50586 21V18C7.95586 18 7.48503 17.8042 7.09336 17.4125C6.70169 17.0208 6.50586 16.55 6.50586 16V3C6.50586 2.45 6.70169 1.97917 7.09336 1.5875C7.48503 1.19583 7.95586 1 8.50586 1H16.5059C17.0559 1 17.5267 1.19583 17.9184 1.5875C18.31 1.97917 18.5059 2.45 18.5059 3V16C18.5059 16.55 18.31 17.0208 17.9184 17.4125C17.5267 17.8042 17.0559 18 16.5059 18V21C16.5059 21.55 16.31 22.0208 15.9184 22.4125C15.5267 22.8042 15.0559 23 14.5059 23H10.5059ZM12.5059 12.5C13.3392 12.5 14.0475 12.2083 14.6309 11.625C15.2142 11.0417 15.5059 10.3333 15.5059 9.5C15.5059 8.66667 15.2142 7.95833 14.6309 7.375C14.0475 6.79167 13.3392 6.5 12.5059 6.5C11.6725 6.5 10.9642 6.79167 10.3809 7.375C9.79753 7.95833 9.50586 8.66667 9.50586 9.5C9.50586 10.3333 9.79753 11.0417 10.3809 11.625C10.9642 12.2083 11.6725 12.5 12.5059 12.5ZM10.5059 21H14.5059V18H10.5059V21ZM8.50586 16H16.5059V3H8.50586V16ZM12.5059 10.5C12.2225 10.5 11.985 10.4042 11.7934 10.2125C11.6017 10.0208 11.5059 9.78333 11.5059 9.5C11.5059 9.21667 11.6017 8.97917 11.7934 8.7875C11.985 8.59583 12.2225 8.5 12.5059 8.5C12.7892 8.5 13.0267 8.59583 13.2184 8.7875C13.41 8.97917 13.5059 9.21667 13.5059 9.5C13.5059 9.78333 13.41 10.0208 13.2184 10.2125C13.0267 10.4042 12.7892 10.5 12.5059 10.5Z" fill="#455A64"/>
+										</svg>
+									<span>Developer Settings</span>
+								</a>
 							</li>
 							<li>
 								<SignOutButton client:load />

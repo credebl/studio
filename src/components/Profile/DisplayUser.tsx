@@ -27,16 +27,16 @@ const DisplayUser = () => {
                 userObj &&
                 <>
                     <p
-                        className="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
+                        className="text-xl font-medium text-gray-900 truncate dark:text-gray-300 mb-1"
                         role="none"
                     >
                         {userObj['firstName']}
                     </p>
-                    <p className="text-sm text-gray-900 dark:text-white" role="none">
+                    <p className="text-sm text-gray-900 dark:text-white mb-1" role="none">
                         {userObj['email']}
                     </p>
                     <p
-                        className="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
+                        className="text-base font-medium text-gray-900 truncate dark:text-gray-300"
                         role="none"
                     >
                         {TextTittlecase(userObj['roles'])}

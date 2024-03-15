@@ -1,14 +1,19 @@
-import { Button, Modal, Spinner } from 'flowbite-react';
+import { Button, Modal } from 'flowbite-react';
 import { EndorsementStatus, EndorsementType } from '../../../common/enums';
 import {
 	ICheckEcosystem,
 	checkEcosystem,
 	getEcosystemId,
+	getOwnerAdminRole,
 } from '../../../config/ecosystem';
 import EndorsementCard from './EndorsementCard';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
-import { RejectEndorsementRequest, SignEndorsementRequest, SubmitEndorsementRequest } from '../../../api/ecosystem';
+import {
+	RejectEndorsementRequest,
+	SignEndorsementRequest,
+	SubmitEndorsementRequest,
+} from '../../../api/ecosystem';
 import type { AxiosResponse } from 'axios';
 import { AlertComponent } from '../../AlertComponent';
 import { getFromLocalStorage } from '../../../api/Auth';
@@ -25,17 +30,24 @@ const EndorsementPopup = (props: {
 	const [loadingReject, setLoadingReject] = useState<boolean>(false);
 	const [errMsg, setErrMsg] = useState<string | null>(null);
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
+	const [isAccess, setIsAccess] = useState(false);
+
+	const checkEcosystemData = async () => {
+		const data: ICheckEcosystem = await checkEcosystem();
+		setIsEcosystemData(data);
+	};
+	const checkEcosystemAccess = async () => {
+		const data = await getOwnerAdminRole();
+		setIsAccess(data);
+	};
 
 	useEffect(() => {
-		const checkEcosystemData = async () => {
-			const data: ICheckEcosystem = await checkEcosystem();
-			setIsEcosystemData(data);
-		};
 		checkEcosystemData();
-	}, []);
+		checkEcosystemAccess();
+	}, [props?.openModal]);
 
 	useEffect(() => {
-		props.setMessage("");
+		props.setMessage('');
 	}, [props.onAlertClose]);
 
 	const SignEndorsement = async (endorsementId: string) => {
@@ -66,6 +78,7 @@ const EndorsementPopup = (props: {
 	const SubmitEndorsement = async (endorsementId: string) => {
 		try {
 			setLoading(true);
+			setLoadingReject(true);
 			const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
 			const ecoId = await getEcosystemId();
 			const SubmitEndorsementrequest = await SubmitEndorsementRequest(
@@ -84,6 +97,7 @@ const EndorsementPopup = (props: {
 			setLoading(false);
 		} catch (error) {
 			setLoading(false);
+			setLoadingReject(false);
 			console.error('Error while Submit schema:', error);
 		}
 	};
@@ -115,16 +129,29 @@ const EndorsementPopup = (props: {
 
 	return (
 		<Modal
-		className='h-full'
-		 show={props.openModal} onClose={() => {
-			props.closeModal()
-			setErrMsg(null)
-		}} size="xl">
+			className="h-full"
+			show={props.openModal}
+			onClose={() => {
+				props.closeModal();
+				setErrMsg(null);
+			}}
+			size="xl"
+		>
 			<Modal.Header>
 				{isEcosystemData?.isEcosystemLead ? (
-					<div>Requested {props.endorsementData?.type === EndorsementType.credDef ? "Credential Definition" : "Schema" }</div>
+					<div>
+						Requested{' '}
+						{props.endorsementData?.type === EndorsementType.credDef
+							? 'Credential Definition'
+							: 'Schema'}
+					</div>
 				) : (
-					<div>View {props.endorsementData?.type === EndorsementType.credDef ? "Credential Definition" : "Schema"}</div>
+					<div>
+						View{' '}
+						{props.endorsementData?.type === EndorsementType.credDef
+							? 'Credential Definition'
+							: 'Schema'}
+					</div>
 				)}
 			</Modal.Header>
 			<div className="mt-3 mx-3 -mb-3">
@@ -145,23 +172,13 @@ const EndorsementPopup = (props: {
 			<div className="justify-between">
 				<div className="flex justify-end">
 					{isEcosystemData?.isEcosystemLead &&
-						props.endorsementData?.status === EndorsementStatus.requested ? (
+					props.endorsementData?.status === EndorsementStatus.requested ? (
 						<div className="flex gap-3 pt-1 pb-3">
-							<button
+							<Button
 								onClick={() => RejectEndorsement(props.endorsementData.id)}
-								disabled={loadingReject}
-								className="hover:bg-secondary-700  !ring-2 dark:text-white text-primary-700 font-medium rounded-lg text-sm dark:hover:text-primary-700 "
+								disabled={loading || !isAccess || loadingReject}
+								className={`${isAccess ? "hover:bg-secondary-700 hover:!bg-secondary-700 dark:hover:text-primary-700 dark:hover:bg-secondary-700" : ""} h-12 text-base font-medium text-center !ring-2 dark:text-white text-primary-700 rounded-md bg-white sm:w-auto dark:bg-primary-600 dark:focus:ring-primary-800 mr-3`}
 							>
-								<span className='flex items-center rounded-md text-sm px-4 py-2'>
-									{
-										loadingReject &&
-										<Spinner
-											className='mr-2'
-											color={'info'}
-											size={'md'}
-
-										/>
-									}
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										width="24"
@@ -178,15 +195,14 @@ const EndorsementPopup = (props: {
 											fill="#1F4EAD"
 										/>
 									</svg>
-									<span className="ml-2 mr-2">Reject</span>
-								</span>
-							</button>
+									<span className="ml-2 mr-2">Decline</span>
+							</Button>
 
 							<Button
 								isProcessing={loading}
 								color="bg-primary-800"
-								disabled={loading}
-								className="text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mr-3"
+								disabled={loading || !isAccess || loadingReject}
+								className={`${isAccess ? "hover:bg-primary-800 dark:hover:text-primary-700 dark:hover:bg-primary-700" : ""} text-base font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:focus:ring-primary-800 mr-3`}
 								onClick={() => {
 									SignEndorsement(props.endorsementData.id);
 								}}
@@ -204,16 +220,14 @@ const EndorsementPopup = (props: {
 										d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
 									/>
 								</svg>
-								<span className='ml-2 mr-2'>
-									Accept
-								</span>
+								<span className="ml-2 mr-2">Endorse</span>
 							</Button>
 						</div>
 					) : (
 						<>
 							{!isEcosystemData?.isEcosystemLead &&
-								isEcosystemData?.isEcosystemMember &&
-								props.endorsementData?.status === EndorsementStatus.signed ? (
+							isEcosystemData?.isEcosystemMember &&
+							props.endorsementData?.status === EndorsementStatus.signed ? (
 								<div className="flex gap-3 pt-1 pb-3">
 									<Button
 										isProcessing={loading}
@@ -237,9 +251,7 @@ const EndorsementPopup = (props: {
 												d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
 											/>
 										</svg>
-										<span className='ml-2 mr-2'>
-											Submit
-										</span>
+										<span className="ml-2 mr-2">Submit</span>
 									</Button>
 								</div>
 							) : (
@@ -273,7 +285,7 @@ const EndorsementPopup = (props: {
 					)}
 				</div>
 			</div>
-		</Modal >
+		</Modal>
 	);
 };
 

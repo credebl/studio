@@ -1,5 +1,6 @@
 ---
 import EcosystemSidebarOption from '../components/Ecosystem/EcosystemSidebarOption';
+import { envConfig } from '../config/envConfig';
 import { pathRoutes } from '../config/pathRoutes';
 /* eslint max-lines: 'off' */
 ---
@@ -236,13 +237,14 @@ import { pathRoutes } from '../config/pathRoutes';
 										height="24"
 										viewBox="0 0 24 24"
 										fill="none"
+										class="text-[#6B7280] group-hover:text-gray-700 dark:group-hover:text-white"
 									>
 										<path
 											d="M3.44444 21C2.77222 21 2.19676 20.7745 1.71806 20.3235C1.23935 19.8725 1 19.3303 1 18.697V6.60606C1 5.97273 1.23935 5.43056 1.71806 4.97955C2.19676 4.52854 2.77222 4.30303 3.44444 4.30303H8.57778C8.84259 3.61212 9.28565 3.05556 9.90694 2.63333C10.5282 2.21111 11.2259 2 12 2C12.7741 2 13.4718 2.21111 14.0931 2.63333C14.7144 3.05556 15.1574 3.61212 15.4222 4.30303H20.5556C21.2278 4.30303 21.8032 4.52854 22.2819 4.97955C22.7606 5.43056 23 5.97273 23 6.60606V18.697C23 19.3303 22.7606 19.8725 22.2819 20.3235C21.8032 20.7745 21.2278 21 20.5556 21H3.44444ZM3.17284 18.8889H20.8323V6.22222H3.17284V18.8889ZM12 5.74242C12.2648 5.74242 12.4838 5.66086 12.6569 5.49773C12.8301 5.3346 12.9167 5.12828 12.9167 4.87879C12.9167 4.62929 12.8301 4.42298 12.6569 4.25985C12.4838 4.09672 12.2648 4.01515 12 4.01515C11.7352 4.01515 11.5162 4.09672 11.3431 4.25985C11.1699 4.42298 11.0833 4.62929 11.0833 4.87879C11.0833 5.12828 11.1699 5.3346 11.3431 5.49773C11.5162 5.66086 11.7352 5.74242 12 5.74242Z"
-											fill="#6B7280"></path>
+											fill="currentColor"></path>
 										<path
 											d="M10.0312 17.5469L9.14062 16.0469L7.45312 15.6719L7.61719 13.9375L6.46875 12.625L7.61719 11.3125L7.45312 9.57812L9.14062 9.20312L10.0312 7.70312L11.625 8.38281L13.2187 7.70312L14.1094 9.20312L15.7969 9.57812L15.6328 11.3125L16.7812 12.625L15.6328 13.9375L15.7969 15.6719L14.1094 16.0469L13.2187 17.5469L11.625 16.8672L10.0312 17.5469ZM10.4297 16.3516L11.625 15.8359L12.8437 16.3516L13.5 15.2266L14.7891 14.9219L14.6719 13.6094L15.5391 12.625L14.6719 11.6172L14.7891 10.3047L13.5 10.0234L12.8203 8.89844L11.625 9.41406L10.4062 8.89844L9.75 10.0234L8.46094 10.3047L8.57812 11.6172L7.71094 12.625L8.57812 13.6094L8.46094 14.9453L9.75 15.2266L10.4297 16.3516ZM11.1328 14.2891L13.7812 11.6406L13.125 10.9609L11.1328 12.9531L10.125 11.9688L9.46875 12.625L11.1328 14.2891Z"
-											fill="#6B7280"></path>
+											fill="currentColor"></path>
 									</svg>
 
 									<span class="ml-2">Verify</span>
@@ -256,7 +258,7 @@ import { pathRoutes } from '../config/pathRoutes';
 					<div class="border-t border-gray-200 dark:!border-gray-700 pt-3">
 						<li>
 							<a
-								href={'https://github.com/credebl'}
+								href={envConfig.PLATFORM_DATA.git}
 								target="_blank"
 								class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
 							>
@@ -304,7 +306,7 @@ import { pathRoutes } from '../config/pathRoutes';
 
 						<li>
 							<a
-								href="https://discord.com/invite/w4hnQT7NJG"
+								href={envConfig.PLATFORM_DATA.discord}
 								target="_blank"
 								class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
 							>

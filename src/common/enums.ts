@@ -54,14 +54,20 @@ export enum EndorsementStatus {
 
 export enum EcosystemRoles {
 	ecosystemMember = "Ecosystem Member",
-	ecosystemLead = "Ecosystem Lead"
+	ecosystemLead = "Ecosystem Lead",
+}
+
+export enum EcoRoles {
+	ecosystemMember = "Member",
+	ecosystemLead = "Lead",
 }
 
 export enum OrganizationRoles {
 	organizationMember = "member",
 	organizationOwner = "owner",
 	organizationIssuer = "issuer",
-	organizationVerifier = "verifier"
+	organizationVerifier = "verifier",
+	organizationAdmin= 'admin'
 }
 
 export enum PlatformRoles {
@@ -88,4 +94,11 @@ export enum BulkIssuanceHistoryData {
 export enum BulkIssuanceStatus {
 	successful= 'Successful',
 	failed= 'Failed'
+}
+
+export enum DidMethod {
+    INDY = 'indy',
+    KEY = 'key',
+    WEB = 'web',
+    POLYGON = 'polygon'
 }

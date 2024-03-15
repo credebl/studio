@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Card } from 'flowbite-react';
-import type { IEcosystem } from '../components/Ecosystem/interfaces';
+import type { IEndorsement, IEcosystem } from '../components/Ecosystem/interfaces';
 import { getFromLocalStorage, removeFromLocalStorage, setToLocalStorage } from '../api/Auth';
 import { apiStatusCodes, storageKeys } from '../config/CommonConstant';
 import type { AxiosResponse } from 'axios';
@@ -11,7 +11,8 @@ import CustomSpinner from '../components/CustomSpinner';
 import { pathRoutes } from '../config/pathRoutes';
 import { EmptyListMessage } from '../components/EmptyListComponent';
 
-const EcosystemProfileCard = () => {
+
+const EcosystemProfileCard = ({getEndorsementListData}:IEndorsement) => {
     const [ecosystemDetails, setEcosystemDetails] = useState<IEcosystem | null>();
     const [ecosystemList, setEcosystemList] = useState<IEcosystem[] | null>();
     const [loading, setLoading] = useState<boolean>();
@@ -26,8 +27,9 @@ const EcosystemProfileCard = () => {
                 const response = await getEcosystems(id);
                 setLoading(false)
                 const { data } = response as AxiosResponse;
-                if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-                    setEcosystemList(data?.data)
+                if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {									
+                    setEcosystemList(data?.data.ecosystemDetails
+											)
                     const ecosystemData = data?.data?.ecosystemDetails?.find((item: { id: string }) => item.id === ecosystemId);
                     if (ecosystemData) {
                         setEcosystemId(ecosystemData?.id)
@@ -66,9 +68,8 @@ const EcosystemProfileCard = () => {
     const handleSelectEcosystem = async (e: { target: { value: string; }; }) => {
         await fetchEcosystemDetails(e.target.value)
         await setToLocalStorage(storageKeys.ECOSYSTEM_ID, e.target.value);
-        window.location.reload()
+				await getEndorsementListData()
     }
-
 
     useEffect(() => {
         fetchEcosystemDetails();
@@ -90,28 +91,27 @@ const EcosystemProfileCard = () => {
                         )}
                     </div>
 
-                    <div className="w-full sm:w-100/22rem min-w-[12rem]">
+                    <div className="w-full sm:w-100/22rem min-w-[12rem] word-break-word">
                         <h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
                             {ecosystemDetails?.name}
                         </h3>
                         <div className="flex items-center">
                             <span className="dark:text-white">Role: </span>{' '}
-                            <RoleTablet role={ecosystemDetails?.role || ''} />
+                            <RoleTablet role={ecosystemDetails?.role ?? ''} />
                         </div>
                     </div>
 
-
                     <div className="inline-flex items-end ml-auto flex-col">
                         {
-                            Boolean(ecosystemOptions && ecosystemOptions.length > 0) &&
+                            Boolean(ecosystemOptions && ecosystemOptions?.length > 0) &&
                             <select
                                 className="mb-4 bg-gray-50 sm:min-w-[244px] border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 onChange={handleSelectEcosystem}
                             >
                                 <option selected>Select Ecosystem</option>
                                 {
-                                    ecosystemOptions && ecosystemOptions.length > 0 && ecosystemOptions.map(item => (
-                                        <option key={item.id} value={item.id}>{item.name}</option>
+                                    ecosystemOptions && ecosystemOptions?.map(item => (
+                                        <option key={item?.id} value={item?.id}>{item?.name}</option>
                                     ))
                                 }
                             </select>

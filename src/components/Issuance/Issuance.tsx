@@ -3,52 +3,25 @@
 import * as Yup from 'yup';
 
 import { Alert, Button, Card } from 'flowbite-react';
-import { ErrorMessage, Field, Form, Formik } from 'formik';
+import { Field, Form, Formik } from 'formik';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
-import { getFromLocalStorage, removeFromLocalStorage } from '../../api/Auth';
-import { useEffect, useState } from 'react';
-import BackButton from '../../commonComponents/backbutton'
+import { getFromLocalStorage } from '../../api/Auth';
+import React, { useEffect, useState } from 'react';
+import BackButton from '../../commonComponents/backbutton';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
 import CustomSpinner from '../CustomSpinner';
 import { issueCredential } from '../../api/issuance';
 import { pathRoutes } from '../../config/pathRoutes';
-
-interface SchemaDetails {
-	schemaName: string;
-	version: string;
-	schemaId: string;
-	credDefId: string;
-}
-
-interface SelectedUsers {
-	userName: string;
-	connectionId: string;
-}
-
-interface Attributes {
-	name: string;
-	value: string;
-	dataType: string;
-}
-interface IssuanceFormPayload {
-	userName?: string;
-	connectionId: string;
-	attributes: Attributes[];
-	credentialDefinitionId: string;
-	orgId: string;
-}
-
-interface DataTypeAttributes {
-	schemaDataType: string;
-	attributeName:string
-}
-
-interface Attribute {
-    attributeName: string;
-    schemaDataType: string;
-    displayName: string;
-}
+import { AlertComponent } from '../AlertComponent';
+import type {
+	Attribute,
+	DataTypeAttributes,
+	IssuanceFormPayload,
+	SchemaDetails,
+	SelectedUsers,
+} from './interface';
+import SummaryCard from '../../commonComponents/SummaryCard';
 
 const IssueCred = () => {
 	const [schemaLoader, setSchemaLoader] = useState<boolean>(true);
@@ -64,11 +37,16 @@ const IssueCred = () => {
 	>([]);
 	const [issuanceLoader, setIssuanceLoader] = useState<boolean>(false);
 	const [failure, setFailure] = useState<string | null>(null);
-	const [schemaAttributesDetails, setSchemaAttributesDetails] = useState<Attribute[]>([]);
+	const [schemaAttributesDetails, setSchemaAttributesDetails] = useState<
+		Attribute[]
+	>([]);
+	const [success, setSuccess] = useState<string | null>(null);
+	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
 		getSchemaAndUsers();
 		getSchemaDetails();
+		return () => setUserLoader(false);
 	}, []);
 
 	const getSchemaAndUsers = async () => {
@@ -80,7 +58,7 @@ const IssueCred = () => {
 		setUserLoader(true);
 		const selectedUsers = await getSelectedUsers();
 		const attributes = await getSchemaDetails();
-		if (attributes && attributes.length) {
+		if (attributes && attributes?.length) {
 			createIssuanceForm(selectedUsers, attributes, credDefId, orgId);
 		} else {
 			setFailure('Attributes are not available');
@@ -97,6 +75,7 @@ const IssueCred = () => {
 			name: attr?.attributeName,
 			value: '',
 			dataType: attr?.schemaDataType,
+			isRequired: attr?.isRequired,
 		}));
 		const issuancePayload = selectedUsers.map((user) => {
 			return {
@@ -110,10 +89,40 @@ const IssueCred = () => {
 		setUserLoader(false);
 	};
 
+	const createAttributeValidationSchema = (
+		dataType: string,
+		isRequired: boolean,
+	) => {
+		let attributeSchema;
+
+		if (isRequired) {
+			attributeSchema = Yup.string().required('This field is required');
+		} else if (dataType === 'string') {
+			attributeSchema = Yup.string().typeError('Value must be a string');
+		} else if (dataType === 'number') {
+			attributeSchema = Yup.number().typeError('Value must be a number');
+		} else if (dataType === 'date') {
+			attributeSchema = Yup.date().typeError('Value must be a valid date');
+		} else {
+			attributeSchema = Yup.mixed();
+		}
+		return Yup.object().shape({
+			value: attributeSchema,
+		});
+	};
+
+	const validationSchema = Yup.object().shape({
+		attributes: Yup.array().of(
+			Yup.lazy(({ dataType, isRequired }) =>
+				createAttributeValidationSchema(dataType, isRequired),
+			),
+		),
+	});
+
 	const getSchemaDetails = async (): Promise<DataTypeAttributes[] | null> => {
 		const schemaAttributes = await getFromLocalStorage(storageKeys.SCHEMA_ATTR);
 		const parsedSchemaAttributes = JSON.parse(schemaAttributes) || [];
-		setSchemaAttributesDetails(parsedSchemaAttributes?.attribute) 
+		setSchemaAttributesDetails(parsedSchemaAttributes?.attribute);
 		return parsedSchemaAttributes.attribute;
 	};
 
@@ -133,31 +142,8 @@ const IssueCred = () => {
 		return JSON.parse(selectedUsers);
 	};
 
-	const createAttributeValidationSchema = (dataType: string) => {
-		let attributeSchema;
-	
-		if (dataType === 'string') {
-			attributeSchema = Yup.string().typeError('Value must be a string');
-		} else if (dataType === 'number') {
-			attributeSchema = Yup.number().typeError('Value must be a number');
-		} else if (dataType === 'date') {
-			attributeSchema = Yup.date().typeError('Value must be a valid date');
-		} else {
-			attributeSchema = Yup.mixed();
-		}
-		return Yup.object().shape({
-			value: attributeSchema,
-		});
-	};
-	
-	const validationSchema = Yup.object().shape({
-		attributes: Yup.array().of(
-			Yup.lazy(({ dataType }) => createAttributeValidationSchema(dataType))
-		),
-	});
-
 	const handleSubmit = async (values: IssuanceFormPayload) => {
-		const convertedAttributes = values.attributes.map((attr) => ({
+		const convertedAttributes = values?.attributes.map((attr) => ({
 			...attr,
 			value: String(attr.value),
 		}));
@@ -170,86 +156,62 @@ const IssueCred = () => {
 		setIssuanceLoader(true);
 		const issueCredRes = await issueCredential(convertedAttributesValues);
 		const { data } = issueCredRes as AxiosResponse;
-		setIssuanceLoader(false);
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-			goToIssueCredList();
+			setSuccess(data?.message);
+			window.location.href = `${pathRoutes.organizations.issuedCredentials}`;
 		} else {
 			setFailure(issueCredRes as string);
+			setIssuanceLoader(false);
 		}
-	};
-
-	const goToIssueCredList = () => {
-		removeFromLocalStorage(storageKeys.SELECTED_USER);
-		removeFromLocalStorage(storageKeys.SCHEMA_ID);
-		removeFromLocalStorage(storageKeys.CRED_DEF_ID);
-		window.location.href = `${pathRoutes.organizations.issuedCredentials}`;
 	};
 
 	return (
 		<div className="px-4 pt-2">
 			<div className="mb-4 col-span-full xl:mb-2">
-			<div className="flex justify-between items-center">
+				<div className="flex justify-between items-center">
 					<BreadCrumbs />
 					<BackButton path={pathRoutes.back.issuance.connections} />
 				</div>
+				<AlertComponent
+					message={success ?? error}
+					type={success ? 'success' : 'failure'}
+					onAlertClose={() => {
+						setError(null);
+						setSuccess(null);
+					}}
+				/>
 				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 					Issuance
 				</h1>
 			</div>
-			{!schemaLoader ? (
-				<Card
-					style={{
-						width: '470px',
-						height: '140px',
-						maxWidth: '100%',
-						maxHeight: '100%',
-						overflow: 'auto',
-					}}
-				>
-					<div className="flex justify-between items-start">
-						<div>
-							<h5 className="text-xl font-bold leading-none text-primary dark:text-white">
-								{schemaDetails.schemaName}
-							</h5>
-							<p className="text-primary dark:text-white">
-								Version: {schemaDetails.version}
-							</p>
-						</div>
-					</div>
-					<div className="min-w-0 flex-1">
-						<p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
-							<span className="font-semibold text-primary">Schema ID:</span>{' '}
-							{schemaDetails.schemaId}
-						</p>
-						<p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
-							<span className="font-semibold text-primary">
-								Credential Definition:
-							</span>{' '}
-							{schemaDetails.credDefId}
-						</p>
-					</div>
-				</Card>
-			) : (
-				''
+			{!schemaLoader && (
+				<SummaryCard
+					schemaId={schemaDetails.schemaId}
+					schemaName={schemaDetails.schemaName}
+					version={schemaDetails.version}
+					credDefId={schemaDetails.credDefId}
+					hideCredDefId={false}
+				/>
 			)}
 			{userLoader ? (
 				<div className="flex items-center justify-center mb-4">
-					<CustomSpinner/>
+					<CustomSpinner />
 				</div>
 			) : (
 				<>
-					{issuanceFormPayload.length
-						? issuanceFormPayload.map((user) => (
+					{issuanceFormPayload?.length
+						? issuanceFormPayload?.map((user) => (
 								<Formik
+									key={user.connectionId}
 									initialValues={user}
 									validationSchema={validationSchema}
 									onSubmit={handleSubmit}
 								>
-									{({ values }) => (
+									{({ values, errors, touched, isValid }) => (
 										<Form>
 											<Card
-												className="hover:bg-gray-50 my-5"
+												className="my-5"
 												style={{
 													maxWidth: '100%',
 													maxHeight: '100%',
@@ -260,52 +222,67 @@ const IssueCred = () => {
 													<h5 className="text-xl font-bold leading-none dark:text-white">
 														{user.userName}
 													</h5>
-													{/* Needed for multiple users issuance */}
-													{/* <div className="flex justify-end">
-												<img src={DeleteIcon}></img>
-											</div> */}
 												</div>
 												<div className="flex">
 													<h5 className="text-xl font-bold leading-none dark:text-white flex flex-wrap">
-														Connection Id 
+														Connection Id
 													</h5>
-													<span className='text-xl font-bold leading-none dark:text-white pl-1'>:</span>
-													<p className="dark:text-white pl-1">{user.connectionId}</p>
+													<span className="text-xl font-bold leading-none dark:text-white pl-1">
+														:
+													</span>
+													<p className="dark:text-white pl-1">
+														{user?.connectionId}
+													</p>
 												</div>
 												<h3 className="dark:text-white">Attributes</h3>
 												<div className="container mx-auto pr-2">
 													<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2">
-														{schemaAttributesDetails.map((attr, index) => (
-															<div>
-																<div key={index} className="flex">
-																	<label
-																		htmlFor={`attributes.${index}.value`}
-																		className="dark:text-white w-1/3 pr-2 flex justify-end items-center font-light"
+														{schemaAttributesDetails &&
+															schemaAttributesDetails?.length > 0 &&
+															schemaAttributesDetails?.map((attr, index) => (
+																<div key={attr.attributeName}>
+																	<div
+																		key={attr?.attributeName}
+																		className="flex"
 																	>
-																		{attr.displayName.charAt(0).toUpperCase() +
-																			attr.displayName.slice(1).toLowerCase() + ":"}
-																	</label>
-																	<Field
-																		type={
-																			attr.schemaDataType === 'date'
-																				? 'date'
-																				: attr.schemaDataType
-																		}
-																		id={`attributes.${index}.value`}
-																		name={`attributes.${index}.value`}
-																		className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 w-2/3"
-																	/>
+																		<label
+																			htmlFor={`attributes.${index}.value`}
+																			className="dark:text-white w-2/5 pr-3 flex justify-end items-center font-light"
+																		>
+																			<div className="flex items-center word-break-word text-end">
+																				<Name attr={attr} />
+																				{attr?.isRequired && (
+																					<span className="text-red-500">
+																						*
+																					</span>
+																				)}{' '}
+																				:
+																			</div>
+																		</label>
+																		<div className='w-3/5'>
+																			<Field
+																				type={
+																					attr?.schemaDataType === 'date'
+																						? 'date'
+																						: attr?.schemaDataType
+																				}
+																				id={`attributes.${index}.value`}
+																				name={`attributes.${index}.value`}
+																				className="bg-gray-50 relative border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+																			/>
+																			{errors?.attributes &&
+																				errors?.attributes[index] &&
+																				touched?.attributes &&
+																				touched?.attributes[index] &&
+																				errors?.attributes[index]?.value && (
+																					<div className="text-red-500 absolute text-xs word-break-word">
+																						{errors?.attributes[index]?.value}
+																					</div>
+																				)}
+																		</div>
+																	</div>
 																</div>
-																<div className="flex">
-																	<div className="w-1/4 pr-2"></div>
-																	<ErrorMessage
-																		className="text-red-500 text-xs w-3/4 p-1"
-																		name={`attributes.${index}.value`}
-																		component="div"
-																	/>
-																</div>
-															</div>
-														))}
+															))}
 													</div>
 												</div>
 											</Card>
@@ -324,9 +301,9 @@ const IssueCred = () => {
 											<div className="flex justify-end">
 												<Button
 													type="submit"
-													disabled={issuanceLoader}
+													disabled={!isValid || issuanceLoader}
 													isProcessing={issuanceLoader}
-													className='text-base text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-accent-00 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+													className='text-base text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-accent-00 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
 												>
 													<div className="pr-3">
 														<svg
@@ -357,6 +334,20 @@ const IssueCred = () => {
 				</>
 			)}
 		</div>
+	);
+};
+
+const Name = (attr: { attr: any; displayName: string }) => {
+	return (
+		<>
+			{attr?.attr?.displayName
+				?.split('_')
+				.map(
+					(item: string | any[]) =>
+						item[0].toUpperCase() + item.slice(1, item.length),
+				)
+				.join(' ')}
+		</>
 	);
 };
 

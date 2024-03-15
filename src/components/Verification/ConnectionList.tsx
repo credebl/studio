@@ -6,22 +6,20 @@ import {
 	IConnectionListAPIParameter,
 	getConnectionsByOrg,
 } from '../../api/connection';
-import DataTable from '../../commonComponents/datatable';
 import type { TableData } from '../../commonComponents/datatable/interface';
 import { apiStatusCodes } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';
 import { dateConversion } from '../../utils/DateConversion';
 import DateTooltip from '../Tooltip';
-import SearchInput from '../SearchInput';
-import { Pagination } from 'flowbite-react';
 import type { IConnectionList } from './interface';
+import SortDataTable from '../../commonComponents/datatable/SortDataTable';
 
 const initialPageState = {
 	itemPerPage: 10,
 	page: 1,
 	search: '',
 	sortBy: 'createDateTime',
-	sortingOrder: 'DESC',
+	sortingOrder: 'desc',
 	allSearch: '',
 };
 
@@ -32,18 +30,31 @@ const ConnectionList = (props: {
 	const [selectedConnectionList, setSelectedConnectionList] = useState<
 		TableData[]
 	>([]);
-
 	const [loading, setLoading] = useState<boolean>(false);
 	const [listAPIParameter, setListAPIParameter] =
 		useState<IConnectionListAPIParameter>(initialPageState);
 	const [totalItem, setTotalItem] = useState(0);
 	const [error, setError] = useState<string | null>(null);
+	const [pageInfo, setPageInfo] = useState({
+		totalItem: '',
+		nextPage: '',
+		lastPage: '',
+	});
 
 	useEffect(() => {
-		getConnectionsVerification(listAPIParameter);
-	}, [listAPIParameter]);
+		let getData: NodeJS.Timeout;
 
-	//onChange of Search input text
+		if (listAPIParameter?.search?.length >= 1) {
+			getData = setTimeout(() => {
+				getConnectionsVerification(listAPIParameter);
+			}, 1000);
+			return () => clearTimeout(getData);
+		} else {
+			getConnectionsVerification(listAPIParameter);
+		}
+		return () => clearTimeout(getData);
+	}, [listAPIParameter]);
+	
 	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setListAPIParameter({
 			...listAPIParameter,
@@ -61,6 +72,13 @@ const ConnectionList = (props: {
 			const { data } = response as AxiosResponse;
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 				setTotalItem(data?.data.totalItems);
+				const { totalItems, nextPage, lastPage } = data.data;
+
+				setPageInfo({
+					totalItem: totalItems,
+					nextPage: nextPage,
+					lastPage: lastPage,
+				});
 				const connections = data?.data?.data?.map(
 					(ele: IConnectionList) => {
 						const userName = ele?.theirLabel
@@ -162,6 +180,21 @@ const ConnectionList = (props: {
 		}
 	};
 
+	const searchSortByValue = (value: any) => {
+		setListAPIParameter({
+			...listAPIParameter,
+			page: 1,
+			sortingOrder: value,
+		});
+	};
+
+
+	const refreshPage = () => {
+		setSelectedConnectionList([]);
+		getConnectionsVerification(listAPIParameter);
+	};
+
+
 	useEffect(() => {
 		props.selectConnection(selectedConnectionList);
 	}, [selectedConnectionList]);
@@ -178,9 +211,6 @@ const ConnectionList = (props: {
 				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 					Connection List
 				</h1>
-				<div>
-					<SearchInput onInputChange={searchInputChange} />
-				</div>
 			</div>
 			<AlertComponent
 				message={error}
@@ -189,30 +219,30 @@ const ConnectionList = (props: {
 					setError(null);
 				}}
 			/>
-			<div
-				id="verification_datatable"
-				className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
-			>
-				<DataTable
-					header={verification_header}
-					data={connectionList}
-					loading={loading}
-				></DataTable>
-			</div>
-			{Math.ceil(totalItem / listAPIParameter?.itemPerPage) > 1 && (
-				<div className="flex items-center justify-end my-4">
-					<Pagination
-						currentPage={listAPIParameter?.page}
-						onPageChange={(page: number) => {
-							setListAPIParameter((prevState) => ({
-								...prevState,
-								page,
-							}));
-						}}
-						totalPages={Math.ceil(totalItem / listAPIParameter?.itemPerPage)}
-					/>
-				</div>
-			)}
+			<SortDataTable
+				onInputChange={searchInputChange}
+				refresh={refreshPage}
+				header={verification_header}
+				data={connectionList}
+				loading={loading}
+				currentPage={listAPIParameter?.page}
+				onPageChange={(page: number) => {
+					setListAPIParameter((prevState) => ({
+						...prevState,
+						page,
+					}));
+				}}
+				totalPages={Math.ceil(totalItem / listAPIParameter?.itemPerPage)}
+				pageInfo={pageInfo}
+				searchSortByValue={searchSortByValue}
+				isHeader={true}
+				isSearch={true}
+				isRefresh={true}
+				isSort={true}
+				isPagination={true}
+				message={'No Connections'}
+				discription={"You don't have any connections yet"}
+			></SortDataTable>
 		</div>
 	);
 };

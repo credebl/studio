@@ -18,7 +18,8 @@ interface PasswordValue {
 }
 
 const PasskeyAddDevice = (props: {
-	setOpenModel(arg0: boolean): unknown; openModal: boolean; closeModal: (flag: boolean) => void; registerWithPasskey: (flag: boolean) => Promise<void>
+	setOpenModel(arg0: boolean): unknown; openModal: boolean; closeModal: (flag: boolean) => void; 
+	registerWithPasskey: (flag: boolean) => Promise<void>
 }
 ) => {
 	const [fidoUserError, setFidoUserError] = useState<string | null>(null)
@@ -29,14 +30,6 @@ const PasskeyAddDevice = (props: {
 	const savePassword = async (values: PasswordValue) => {
 		try {
 			const storedEmail = await getFromLocalStorage(storageKeys.LOGIN_USER_EMAIL);
-			const { error } = await getSupabaseClient().auth.signInWithPassword({
-				email: storedEmail,
-				password: values.Password,
-			});
-			if (error) {
-				setFidoUserError(error?.message)
-
-			} else {
 					const payload = {
 						password: passwordEncryption(values.Password)
 					}
@@ -44,13 +37,13 @@ const PasskeyAddDevice = (props: {
 					const { data } = passkeyUserDetailsResp as AxiosResponse
 					if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 						setNextFlag(true)
-					} else {
-						setFidoUserError(passkeyUserDetailsResp as string)
-					}
-				
-			}
+					} else if (passkeyUserDetailsResp.toString().includes('401')) {
+						setFidoUserError('Invalid Credentials');
+				} else {
+						setFidoUserError(passkeyUserDetailsResp as string);
+				}
 		} catch (error) {
-			console.error('An unexpected error occurred:', error.message);
+			console.error('An unexpected error occurred:', error);
 			setFidoUserError('An unexpected error occurred')
 		}
 	};
@@ -74,11 +67,7 @@ const PasskeyAddDevice = (props: {
 								}
 								}
 							>
-								<span>
-									<p>
 										{success || fidoUserError}
-									</p>
-								</span>
 							</Alert>
 						</div>
 					}

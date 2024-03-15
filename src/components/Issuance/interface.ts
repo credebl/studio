@@ -15,12 +15,15 @@ export interface CredDefData {
 
 export interface IValues {
 	value: string;
+	schemaAttributes?:any;
+	label?: string;
 }
 
 export interface IAttributes {
 	attributeName: string
 	schemaDataType: string
 	displayName: string
+	isRequired?: boolean
 }
 
 export interface ICredentials {
@@ -57,4 +60,43 @@ export interface IConnectionList {
 	theirLabel: string;
 	connectionId: string;
 	createDateTime: string;
+}
+
+export interface SchemaDetails {
+	schemaName: string;
+	version: string;
+	schemaId: string;
+	credDefId: string;
+}
+
+export interface SelectedUsers {
+	userName: string;
+	connectionId: string;
+}
+
+export interface Attributes {
+	isRequired: boolean;
+	name: string;
+	value: string;
+	dataType: string;
+}
+export interface IssuanceFormPayload {
+	userName?: string;
+	connectionId: string;
+	attributes: Attributes[];
+	credentialDefinitionId: string;
+	orgId: string;
+}
+
+export interface DataTypeAttributes {
+	isRequired: any;
+	schemaDataType: string;
+	attributeName:string
+}
+
+export interface Attribute {
+		isRequired: string;
+    attributeName: string;
+    schemaDataType: string;
+    displayName: string;
 }

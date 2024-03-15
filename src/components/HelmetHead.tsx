@@ -1,6 +1,6 @@
 import React from 'react'
-// import { Helmet } from "react-helmet-async";
-import { Helmet } from "react-helmet"
+import { Helmet } from "react-helmet";
+import { envConfig } from '../config/envConfig';
 
 interface IProps {
 	generator: string;
@@ -38,6 +38,7 @@ const HelmetHead = ({ generator, desc, icon, sitemap, siteTitle, version }: IPro
 			http-equiv="Content-Security-Policy"
 			content="default-src 'self'; img-src https://*; child-src 'none';" /> */}
 
+		<meta property="og:image" content={envConfig.PLATFORM_DATA.logo} />
 	</Helmet>
 )
 

@@ -1,11 +1,16 @@
-export const API_URL = `${import.meta.env.SITE}${import.meta.env.BASE_URL}api/`;
+
+import { envConfig } from '../config/envConfig';
+const env = import.meta.env;
+
+export const API_URL = `${env.SITE}${env.BASE_URL}api/`;
+
 
 export const REMOTE_ASSETS_BASE_URL = `https://flowbite-admin-dashboard.vercel.app`;
 
-export const SITE_TITLE = 'CREDEBL - Self-Sovereign Identity Platform';
+export const SITE_TITLE = `${envConfig.PLATFORM_DATA.name} - Self-Sovereign Identity Platform`;
 
 /* Useful flag for sourcing from `./data` entirely, disabling randomize layer */
-export const RANDOMIZE = Boolean(import.meta.env.RANDOMIZE) || true;
+export const RANDOMIZE = Boolean(env.RANDOMIZE) || true;
 
 // NOTE: Unmapped
 // export const SIDEBAR = [

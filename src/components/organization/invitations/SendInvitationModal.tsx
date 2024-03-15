@@ -185,8 +185,9 @@ const SendInvitationModal = (props: {
 					validationSchema={yup.object().shape({
 						email: yup
 							.string()
-							.required('Email is required')
+							.matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g, "Email is invalid")
 							.email('Email is invalid')
+							.required('Email is required')
 							.test('is-self-email', "You can't send invitation to self", (value) => value.trim() !== selfEmail.email.trim())
 							.trim(),
 					})}
@@ -322,7 +323,7 @@ const SendInvitationModal = (props: {
 					<div className="mt-4 flex justify-end">
 						<Button
 							onClick={props.flag ? sendEcoSystemInvitations : sendInvitations}
-							disabled={invitations.length === 0}
+							disabled={loading || invitations.length === 0}
 							isProcessing={loading}
 							className='text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
 						>

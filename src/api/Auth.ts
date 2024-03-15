@@ -26,6 +26,12 @@ export interface EmailVerifyData {
     email: string
 }
 
+export interface KeyCloakData {
+	email: string,
+	oldPassword: string,
+	newPassword: string
+}
+
 export const sendVerificationMail = async(payload:UserSignUpData) => {
     const details ={
         url: apiRoutes.auth.sendMail,
@@ -42,6 +48,36 @@ export const sendVerificationMail = async(payload:UserSignUpData) => {
     }
 }
 
+export const resetPassword = async(payload: { password: string; token: string | null }, email: string | null) => {   
+	const details = {
+			url: `${apiRoutes.auth.resetPassword}/${email}`,
+			payload
+	}
+	try{
+			const response = await axiosPost(details)
+			return response
+	}
+	catch(error){
+			const err = error as Error
+			return err?.message
+	} 
+}
+
+export const forgotPassword = async(payload: {email: string}) => {
+	const details = {
+			url: apiRoutes.auth.forgotPassword,
+			payload
+	}
+	try{
+			const response = await axiosPost(details)
+			return response
+	}
+	catch(error){
+			const err = error as Error
+			return err?.message
+	} 
+}
+
 export const loginUser = async(payload: UserSignInData) => {
     const details = {
         url: apiRoutes.auth.sinIn,
@@ -56,6 +92,23 @@ export const loginUser = async(payload: UserSignInData) => {
         const err = error as Error
         return err?.message
     } 
+}
+
+export const resetPasswordKeyCloak = async(payload: KeyCloakData) => {
+	
+	const details = {
+			url: apiRoutes.auth.keyClockResetPassword,
+			payload,
+			config: { headers: { "Content-type": "application/json" } }
+	}
+	try{
+			const response = await axiosPost(details)
+			return response
+	}
+	catch(error){
+			const err = error as Error
+			return err?.message
+	} 
 }
 
 export const getUserProfile = async(accessToken: string) => {
@@ -220,7 +273,6 @@ export const setToCookies = (cookies: AstroCookies, key: string, value: any, opt
 		return;
 	}
     
-    const convertedValue = encryptData(value)
     // Set HttpOnly, Secure, and SameSite attributes in the options
     const updatedOption: { [key: string]: any }= {
         ...option,
@@ -228,15 +280,14 @@ export const setToCookies = (cookies: AstroCookies, key: string, value: any, opt
         secure: true, // Set to true if using HTTPS
         sameSite: 'Strict', 
       };
-    cookies.set(key, convertedValue as string, updatedOption)
+    cookies.set(key, value as string, updatedOption)
 
     return true
 }
 
 export const getFromCookies = (cookies: AstroCookies, key: string) =>{
     const value = cookies.get(key).value
-    const convertedValue = value ? decryptData(value) : ''
-    return convertedValue
+    return value
 }
 
 export const removeFromLocalStorage = async (key: string) => {
