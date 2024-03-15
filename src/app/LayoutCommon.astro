@@ -2,7 +2,7 @@
 import pkg from '../../package.json' assert { type: 'json' };
 import HelmetHead from '../components/HelmetHead';
 import { url } from '../lib/data.js';
-
+import { getFromCookies } from '../api/Auth';
 import { SITE_TITLE } from './constants.js';
 
 const { class: clazz, metaData } = Astro.props;
@@ -13,6 +13,10 @@ const envKeys = [...Object.keys(process.env), ...Object.keys(import.meta.env)];
 envKeys.forEach((item) => {
 	initData[item] = process.env[item] || import.meta.env[item];
 });
+
+const sessionToken = getFromCookies(Astro.cookies, 'session');
+const refreshToken = getFromCookies(Astro.cookies, 'refresh');
+
 ---
 
 <!DOCTYPE html>
@@ -56,11 +60,15 @@ envKeys.forEach((item) => {
 			import 'flowbite';
 			import 'flowbite/dist/datepicker.js';
 		</script>
-		<script define:vars={{ initData, envKeys }}>
+		<script define:vars={{ initData, envKeys, sessionToken, refreshToken }}>
 			
 			envKeys.forEach((item) => {
 				globalThis[item] = initData[item];
 			});
+
+			globalThis.access_token = sessionToken;
+			globalThis.refresh_token = refreshToken;
+
 		</script>
 
 		<style is:global>
