@@ -26,6 +26,10 @@ export default defineConfig({
   server: {
     /* Dev. server only */
     port: DEV_PORT,
+    headers: {
+      "X-Frame-Options": "SAMEORIGIN",
+      "Content-Security-Policy": "script-src 'self'; frame-ancestors 'self';"
+    }
   },
   integrations: [
   //
