@@ -350,17 +350,6 @@ const SharedAgentForm = ({
 
 										<p className="text-sm truncate">
 											<span className="font-semibold text-gray-900 dark:text-white">
-												Public Key Base58:
-											</span>
-											<div className="flex ">
-												<CopyDid
-													className="align-center block text-sm text-gray-900 dark:text-white truncate"
-													value={generatedKeys?.publicKeyBase58}
-												/>
-											</div>
-										</p>
-										<p className="text-sm truncate">
-											<span className="font-semibold text-gray-900 dark:text-white">
 												Address:
 											</span>
 											<div className="flex ">
