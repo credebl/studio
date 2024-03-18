@@ -85,9 +85,10 @@ instance.interceptors.response.use(
 		const token = await getFromLocalStorage(storageKeys.TOKEN);
 		if (errorRes?.status === 401 && !isAuthPage) {
 			await checkAuthentication(token, originalRequest);
-		} else {
-			return Promise.reject(error);
 		}
+
+		return Promise.reject(error);
+	
 	},
 );
 
