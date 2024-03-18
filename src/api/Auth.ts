@@ -229,14 +229,14 @@ export const passwordEncryption = (password: string): string => {
 }
 
 export const encryptData = (value: any): string => {
-    if(typeof(value) !== 'string'){
-        value = JSON.stringify(value)
-    }
+ 
     const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`
 
     try {
-        const convertedValue: string = CryptoJS.AES.encrypt(value, CRYPTO_PRIVATE_KEY).toString();
-        return convertedValue;
+        const encJson: string = CryptoJS.AES.encrypt(JSON.stringify(value), CRYPTO_PRIVATE_KEY).toString();
+        let encData = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(encJson))
+
+        return encData;
     } catch (error) {
         // Handle encryption error
         console.error('Encryption error:', error);
@@ -248,9 +248,14 @@ export const decryptData = (value: any): string => {
     const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`
 
     try {
-        const bytes = CryptoJS.AES.decrypt(value, CRYPTO_PRIVATE_KEY);
-        const originalValue: string = bytes.toString(CryptoJS.enc.Utf8);
-        return originalValue;
+
+        let decData = CryptoJS.enc.Base64.parse(value).toString(CryptoJS.enc.Utf8)
+        let bytes = CryptoJS.AES.decrypt(decData, CRYPTO_PRIVATE_KEY).toString(CryptoJS.enc.Utf8)
+        const parsedData = JSON.parse(bytes);
+        if (typeof parsedData !== 'string') {
+			return JSON.stringify(parsedData);
+		}
+        return parsedData;
     } catch (error) {
         // Handle decryption error or invalid input
         console.error('Decryption error:', error);
