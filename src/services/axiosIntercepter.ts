@@ -3,7 +3,6 @@ import { envConfig } from '../config/envConfig';
 import { apiRoutes } from '../config/apiRoutes';
 import { getFromLocalStorage, setToLocalStorage } from '../api/Auth';
 import { apiStatusCodes, storageKeys } from '../config/CommonConstant';
-import { pathRoutes } from '../config/pathRoutes';
 
 const instance = axios.create({
 	baseURL: envConfig.PUBLIC_BASE_URL,
@@ -62,9 +61,10 @@ instance.interceptors.response.use(
 		const token = await getFromLocalStorage(storageKeys.TOKEN);
 		if (errorRes?.status === 401) {
 			await checkAuthentication(token, originalRequest);
-		} else {
-			return Promise.reject(error);
 		}
+
+		return Promise.reject(error);
+	
 	},
 );
 
