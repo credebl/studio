@@ -31,6 +31,7 @@ import GenerateBtnPolygon from './walletCommonComponents/GenerateBtnPolygon';
 import SetPrivateKeyValue from './walletCommonComponents/SetPrivateKeyValue';
 import SetDomainValueInput from './walletCommonComponents/SetDomainValueInput';
 import TokenWarningMessage from './walletCommonComponents/TokenWarningMessage';
+import LedgerLessMethodsComponents from './walletCommonComponents/LegderLessMethods'
 
 
 interface Values {
@@ -41,7 +42,7 @@ interface Values {
 	network: string;
 }
 
-interface ValuesShared {
+export interface ValuesShared {
 	keyType: string;
 	seed: string;
 	method: string;
@@ -425,55 +426,8 @@ const SharedAgentForm = ({
 									)}
 								{formikHandlers.values.method !== DidMethod.WEB &&
 									formikHandlers.values.method !== DidMethod.KEY && (
-										<div className="my-3 relative">
-											<label
-												htmlFor="network"
-												className="text-sm font-medium text-gray-900 dark:text-gray-300"
-											>
-												Network
-												<span className="text-red-500 text-xs">*</span>
-											</label>
-
-											<select
-												onChange={(e) => {
-													formikHandlers.handleChange(e);
-													setSelectedDid(e.target.value);
-												}}
-												value={selectedDid}
-												id="network"
-												name="network"
-												className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
-											>
-												<option value="">Select Network</option>
-												{formikHandlers.values.method === DidMethod.POLYGON &&
-													mappedData &&
-													Object.keys(mappedData[selectedLedger])?.map(
-														(network) => (
-															<option key={network} value={network}>
-																{network}
-															</option>
-														),
-													)}
-												{formikHandlers.values.method !== DidMethod.POLYGON &&
-													mappedData &&
-													selectedLedger &&
-													selectedNetwork &&
-													Object.keys(
-														mappedData[selectedLedger][selectedNetwork],
-													)?.map((network) => (
-														<option key={network} value={network}>
-															{network}
-														</option>
-													))}
-											</select>
-
-											{formikHandlers?.errors?.network &&
-												formikHandlers?.touched?.network && (
-													<span className="absolute botton-0 text-red-500 text-xs">
-														{formikHandlers?.errors?.network}
-													</span>
-												)}
-										</div>
+										
+										< LedgerLessMethodsComponents formikHandlers={formikHandlers} setSelectedDid={(val: string) => setSelectedDid(val)} selectedDid={selectedDid} mappedData={mappedData} selectedLedger={selectedLedger} selectedNetwork={selectedNetwork} />
 									)}
 
 								<div className="my-3 relative">
@@ -722,54 +676,8 @@ const SharedAgentForm = ({
 								)}
 							{formikHandlers.values.method !== DidMethod.WEB &&
 								formikHandlers.values.method !== DidMethod.KEY && (
-									<div className="my-3 relative">
-										<label
-											htmlFor="network"
-											className="text-sm font-medium text-gray-900 dark:text-gray-300"
-										>
-											Network
-										</label>
-
-										<select
-											onChange={(e) => {
-												formikHandlers.handleChange(e);
-												setSelectedDid(e.target.value);
-											}}
-											value={selectedDid}
-											id="network"
-											name="network"
-											className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
-										>
-											<option value="">Select Network</option>
-											{formikHandlers.values.method === DidMethod.POLYGON &&
-												mappedData &&
-												Object.keys(mappedData[selectedLedger])?.map(
-													(network) => (
-														<option key={network} value={network}>
-															{network}
-														</option>
-													),
-												)}
-											{formikHandlers.values.method !== DidMethod.POLYGON &&
-												mappedData &&
-												selectedLedger &&
-												selectedNetwork &&
-												Object.keys(
-													mappedData[selectedLedger][selectedNetwork],
-												)?.map((network) => (
-													<option key={network} value={network}>
-														{network}
-													</option>
-												))}
-										</select>
-
-										{formikHandlers?.errors?.network &&
-											formikHandlers?.touched?.network && (
-												<span className="absolute botton-0 text-red-500 text-xs">
-													{formikHandlers?.errors?.network}
-												</span>
-											)}
-									</div>
+									
+									< LedgerLessMethodsComponents formikHandlers={formikHandlers} setSelectedDid={(val: string) => setSelectedDid(val)} selectedDid={selectedDid} mappedData={mappedData} selectedLedger={selectedLedger} selectedNetwork={selectedNetwork} />
 								)}
 
 							<div className="my-3 relative">
