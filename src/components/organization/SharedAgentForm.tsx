@@ -1,7 +1,7 @@
 import * as yup from 'yup';
 import { Button, Checkbox, Label } from 'flowbite-react';
 import { Field, Form, Formik } from 'formik';
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react';
 import {
 	createPolygonKeyValuePair,
 	getLedgerConfig,
@@ -57,6 +57,16 @@ interface IPolygonKeys {
 	address: string;
 }
 
+interface SelectFieldProps {
+    label: string;
+    name: string;
+    value: string;
+    onChange: (e: ChangeEvent<HTMLSelectElement>) => void;
+    options: string[] | null;
+    error?: string | undefined;
+    touched?: boolean | undefined;
+  }
+
 const SharedAgentForm = ({
 	orgName,
 	seeds,
@@ -74,6 +84,45 @@ const SharedAgentForm = ({
 	const [endPointValue, setEndPointValue] = useState<string>('');
 	const [privateKeyValue, setPrivateKeyValue] = useState<string>('');
 
+
+    const SelectField: React.FC<SelectFieldProps> = ({
+        label,
+        name,
+        value,
+        onChange,
+        options,
+        error,
+        touched,
+      }) => {
+        return (
+          <div className="mb-3 relative">
+            <label htmlFor={name} className="text-sm font-medium text-gray-900 dark:text-gray-300">
+              {label}
+              {touched && error && <span className="text-red-500 text-xs">*</span>}
+            </label>
+            <select
+              onChange={onChange}
+              value={value}
+              id={name}
+              name={name}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+            >
+              <option value="">{`Select ${label}`}</option>
+              {options && options.map(option => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+            {touched && error && (
+              <span className="absolute botton-0 text-red-500 text-xs">
+                {error}
+              </span>
+            )}
+          </div>
+        );
+      };
+      
 	const fetchLedgerConfig = async () => {
 		try {
 			const { data } = await getLedgerConfig();
@@ -202,51 +251,34 @@ const SharedAgentForm = ({
 								domainValue,
 								endPointValue,
 							);
-							
 						}}
 					>
 						{(formikHandlers) => (
-							<Form className="">
-								<div className="mb-3 relative">
-									<label
-										htmlFor="method"
-										className="text-sm font-medium text-gray-900 dark:text-gray-300"
-									>
-										Method
-										<span className="text-red-500 text-xs">*</span>
-									</label>
-									<select
-										onChange={(e) => {
-											formikHandlers.handleChange(e);
-											handleLedgerChange(e);
-											setSeedVal(seeds)
-											setSelectedNetwork('');
-											setSelectedDid('');
-											setGeneratedKeys(null);
-										}}
-										id="method"
-										name="method"
-										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
-									>
-										<option value="">Select Method</option>
-										{mappedData &&
-											Object.keys(mappedData)?.map((ledger) => (
-												<option key={ledger} value={ledger}>
-													{ledger}
-												</option>
-											))}
-									</select>
-									{formikHandlers?.errors?.method &&
-										formikHandlers?.touched?.method && (
-											<span className="absolute botton-0 text-red-500 text-xs">
-												{formikHandlers?.errors?.method}
-											</span>
-										)}
-								</div>
+							<Form className="">								
+
+								<SelectField
+									label="Method"
+									name="method"
+									value={formikHandlers.values.method}
+									onChange={(e) => {
+										formikHandlers.handleChange(e);
+										handleLedgerChange(e);
+										setSeedVal(seeds);
+										setSelectedNetwork('');
+										setSelectedDid('');
+										setGeneratedKeys(null);
+									}}
+									options={mappedData && Object.keys(mappedData)}
+									error={formikHandlers.errors.method}
+									touched={formikHandlers.touched.method}
+								/>
 
 								{formikHandlers.values.method === DidMethod.POLYGON && (
-									
-									<GenerateBtnPolygon  generatePolygonKeyValuePair={()=>generatePolygonKeyValuePair()}/>
+									<GenerateBtnPolygon
+										generatePolygonKeyValuePair={() =>
+											generatePolygonKeyValuePair()
+										}
+									/>
 								)}
 
 								{generatedKeys && (
@@ -279,69 +311,58 @@ const SharedAgentForm = ({
 
 								{generatedKeys &&
 									formikHandlers.values.method === DidMethod.POLYGON && (
-										
 										<TokenWarningMessage />
 									)}
 
 								{formikHandlers.values.method === DidMethod.POLYGON && (
-
-                   <SetPrivateKeyValue setPrivateKeyValue={(val:string)=>setPrivateKeyValue(val)} privateKeyValue={privateKeyValue}/>
-									
+									<SetPrivateKeyValue
+										setPrivateKeyValue={(val: string) =>
+											setPrivateKeyValue(val)
+										}
+										privateKeyValue={privateKeyValue}
+									/>
 								)}
 
 								{formikHandlers.values.method === DidMethod.WEB && (
-									
-
-									<SetDomainValueInput setDomainValue={(val:string)=>setDomainValue(val)} domainValue={domainValue}/>
-
+									<SetDomainValueInput
+										setDomainValue={(val: string) => setDomainValue(val)}
+										domainValue={domainValue}
+									/>
 								)}
 
 								{formikHandlers.values.method !== DidMethod.POLYGON &&
 									formikHandlers.values.method !== DidMethod.KEY &&
-									formikHandlers.values.method !== DidMethod.WEB && (
-										<div className="my-3 relative">
-											<label
-												htmlFor="ledger"
-												className="text-sm font-medium text-gray-900 dark:text-gray-300"
-											>
-												Ledger
-												<span className="text-red-500 text-xs">*</span>
-											</label>
-											<select
-												onChange={(e) => {
-													formikHandlers.handleChange(e);
-													setSelectedNetwork(e.target.value);
-													setSelectedDid('');
-												}}
-												value={selectedNetwork}
-												id="ledger"
-												name="ledger"
-												className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
-											>
-												<option value="">Select Ledger</option>
-												{mappedData &&
-													selectedLedger &&
-													mappedData[selectedLedger] &&
-													Object.keys(mappedData[selectedLedger])?.map(
-														(ledger) => (
-															<option key={ledger} value={ledger}>
-																{ledger}
-															</option>
-														),
-													)}
-											</select>
-											{formikHandlers?.errors?.ledger &&
-												formikHandlers?.touched?.ledger && (
-													<span className="absolute botton-0 text-red-500 text-xs">
-														{formikHandlers?.errors?.ledger}
-													</span>
-												)}
-										</div>
+									formikHandlers.values.method !== DidMethod.WEB && (										
+
+										<SelectField
+											label="Ledger"
+											name="ledger"
+											value={selectedNetwork}
+											onChange={(e) => {
+												formikHandlers.handleChange(e);
+												setSelectedNetwork(e.target.value);
+												setSelectedDid('');
+											}}
+											options={
+												mappedData &&
+												selectedLedger &&
+												mappedData[selectedLedger] &&
+												Object.keys(mappedData[selectedLedger])
+											}
+											error={formikHandlers.errors.method}
+											touched={formikHandlers.touched.method}
+										/>
 									)}
 								{formikHandlers.values.method !== DidMethod.WEB &&
 									formikHandlers.values.method !== DidMethod.KEY && (
-										
-										< LedgerLessMethodsComponents formikHandlers={formikHandlers} setSelectedDid={(val: string) => setSelectedDid(val)} selectedDid={selectedDid} mappedData={mappedData} selectedLedger={selectedLedger} selectedNetwork={selectedNetwork} />
+										<LedgerLessMethodsComponents
+											formikHandlers={formikHandlers}
+											setSelectedDid={(val: string) => setSelectedDid(val)}
+											selectedDid={selectedDid}
+											mappedData={mappedData}
+											selectedLedger={selectedLedger}
+											selectedNetwork={selectedNetwork}
+										/>
 									)}
 
 								<div className="my-3 relative">
@@ -448,47 +469,31 @@ const SharedAgentForm = ({
 											{formikHandlers?.errors?.did}
 										</span>
 									)}
-							</div>
+							</div>							
 
-							<div className="mb-3 relative mt-3">
-								<label
-									htmlFor="method"
-									className="text-sm font-medium text-gray-900 dark:text-gray-300"
-								>
-									Method
-								</label>
-								<select
-									onChange={(e) => {
-										formikHandlers.handleChange(e);
-										handleLedgerChange(e);
-										setSelectedNetwork('');
-										setSelectedDid('');
-										setGeneratedKeys(null);
-									}}
-									id="did_method"
-									name="method"
-									className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
-								>
-									<option value="">Select Method</option>
-									{mappedData &&
-										Object.keys(mappedData)?.map((ledger) => (
-											<option key={ledger} value={ledger}>
-												{ledger}
-											</option>
-										))}
-								</select>
-								{formikHandlers?.errors?.method &&
-									formikHandlers?.touched?.method && (
-										<span className="absolute botton-0 text-red-500 text-xs">
-											{formikHandlers?.errors?.method}
-										</span>
-									)}
-							</div>
+							<SelectField
+								label="Method"
+								name="method"
+								value={formikHandlers.values.method}
+								onChange={(e) => {
+									formikHandlers.handleChange(e);
+									handleLedgerChange(e);
+									setSeedVal(seeds);
+									setSelectedNetwork('');
+									setSelectedDid('');
+									setGeneratedKeys(null);
+								}}
+								options={mappedData && Object.keys(mappedData)}
+								error={formikHandlers.errors.method}
+								touched={formikHandlers.touched.method}
+							/>
 
 							{formikHandlers.values.method === DidMethod.POLYGON && (
-			
-                                 <GenerateBtnPolygon  generatePolygonKeyValuePair={()=>generatePolygonKeyValuePair()}/>
-
+								<GenerateBtnPolygon
+									generatePolygonKeyValuePair={() =>
+										generatePolygonKeyValuePair()
+									}
+								/>
 							)}
 
 							{generatedKeys && (
@@ -532,66 +537,56 @@ const SharedAgentForm = ({
 
 							{generatedKeys &&
 								formikHandlers.values.method === DidMethod.POLYGON && (
-
 									<TokenWarningMessage />
 								)}
 
 							{formikHandlers.values.method === DidMethod.POLYGON && (
-							
-								<SetPrivateKeyValue setPrivateKeyValue={(val:string)=>setPrivateKeyValue(val)} privateKeyValue={privateKeyValue}/>
+								<SetPrivateKeyValue
+									setPrivateKeyValue={(val: string) => setPrivateKeyValue(val)}
+									privateKeyValue={privateKeyValue}
+								/>
 							)}
 
 							{formikHandlers.values.method === DidMethod.WEB && (
-
-								<SetDomainValueInput setDomainValue={(val:string)=>setDomainValue(val)} domainValue={domainValue}/>
-
+								<SetDomainValueInput
+									setDomainValue={(val: string) => setDomainValue(val)}
+									domainValue={domainValue}
+								/>
 							)}
 
 							{formikHandlers.values.method !== DidMethod.POLYGON &&
 								formikHandlers.values.method !== DidMethod.KEY &&
-								formikHandlers.values.method !== DidMethod.WEB && (
-									<div className="my-3 relative">
-										<label
-											htmlFor="ledger"
-											className="text-sm font-medium text-gray-900 dark:text-gray-300"
-										>
-											Ledger
-										</label>
-										<select
-											onChange={(e) => {
-												formikHandlers.handleChange(e);
-												setSelectedNetwork(e.target.value);
-												setSelectedDid('');
-											}}
-											value={selectedNetwork}
-											id="did_ledger"
-											name="ledger"
-											className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
-										>
-											<option value="">Select Ledger</option>
-											{mappedData &&
-												selectedLedger &&
-												mappedData[selectedLedger] &&
-												Object.keys(mappedData[selectedLedger])?.map(
-													(ledger) => (
-														<option key={ledger} value={ledger}>
-															{ledger}
-														</option>
-													),
-												)}
-										</select>
-										{formikHandlers?.errors?.ledger &&
-											formikHandlers?.touched?.ledger && (
-												<span className="absolute botton-0 text-red-500 text-xs">
-													{formikHandlers?.errors?.ledger}
-												</span>
-											)}
-									</div>
+								formikHandlers.values.method !== DidMethod.WEB && (								
+
+									<SelectField
+										label="Ledger"
+										name="ledger"
+										value={selectedNetwork}
+										onChange={(e) => {
+											formikHandlers.handleChange(e);
+											setSelectedNetwork(e.target.value);
+											setSelectedDid('');
+										}}
+										options={
+											mappedData &&
+											selectedLedger &&
+											mappedData[selectedLedger] &&
+											Object.keys(mappedData[selectedLedger])
+										}
+										error={formikHandlers.errors.method}
+										touched={formikHandlers.touched.method}
+									/>
 								)}
 							{formikHandlers.values.method !== DidMethod.WEB &&
 								formikHandlers.values.method !== DidMethod.KEY && (
-									
-									< LedgerLessMethodsComponents formikHandlers={formikHandlers} setSelectedDid={(val: string) => setSelectedDid(val)} selectedDid={selectedDid} mappedData={mappedData} selectedLedger={selectedLedger} selectedNetwork={selectedNetwork} />
+									<LedgerLessMethodsComponents
+										formikHandlers={formikHandlers}
+										setSelectedDid={(val: string) => setSelectedDid(val)}
+										selectedDid={selectedDid}
+										mappedData={mappedData}
+										selectedLedger={selectedLedger}
+										selectedNetwork={selectedNetwork}
+									/>
 								)}
 
 							<div className="my-3 relative">
