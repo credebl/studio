@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 import react from "@astrojs/react";
 import sitemap from '@astrojs/sitemap';
 import tailwind from '@astrojs/tailwind';
+// import middleware from './middleware';
 
 const DEV_PORT = 3000;
 
@@ -30,7 +31,8 @@ export default defineConfig({
   integrations: [
   //
   sitemap(), tailwind(), react()],
-  adapter: Deno()
+  adapter: Deno(),
+  // middleware
 });
 
 if (typeof globalThis !== 'undefined' && typeof Deno !== 'undefined') {
