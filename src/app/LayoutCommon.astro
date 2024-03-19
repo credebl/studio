@@ -109,7 +109,7 @@ const allowedDomains = "https://fonts.googleapis.com https://www.ayanworks.com h
 
 		</script>
 
-		<style is:global>
+		<style nonce={"dynamicNONCE" + (new Date().getTime() + Math.random()).toString().split(".").join("_")} is:global>
 			@import url('https://fonts.googleapis.com/css2?family=Courier+Prime&family=Inter:wght@400&display=swap');
 
 			body {

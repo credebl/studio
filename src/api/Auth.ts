@@ -278,7 +278,7 @@ export const setToCookies = (cookies: AstroCookies, key: string, value: any, opt
         ...option,
         httpOnly: true,
         secure: true, // Set to true if using HTTPS
-        sameSite: 'Strict', 
+        sameSite: 'strict', 
       };
     cookies.set(key, value as string, updatedOption)
 
