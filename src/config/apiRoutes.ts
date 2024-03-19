@@ -16,7 +16,8 @@ export const apiRoutes = {
 		fidoVerifyAuthentication: 'auth/passkey/verify-authentication/',
 		keyClockResetPassword: 'auth/reset-password',
 		forgotPassword: 'auth/forgot-password',
-		resetPassword: 'auth/password-reset'
+		resetPassword: 'auth/password-reset',
+		refreshToken: '/auth/refresh-token'
 	},
 	users: {
 		userProfile: '/users/profile',
@@ -76,6 +77,8 @@ export const apiRoutes = {
 		checkAgentHealth: '/agents/health',
 		agentDedicatedSpinup: '/agents/spinup',
 		agentSharedSpinup: '/agents/wallet',
+		getLedgerConfig: '/agents/ledgerConfig',
+		createPolygonKeys: '/agents/polygon/create-keys'
 	},
 	Platform: {
 		getAllSchemaFromPlatform: '/platform/schemas',
