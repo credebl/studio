@@ -58,6 +58,7 @@ interface IPolygonKeys {
 }
 
 interface SelectFieldProps {
+    id: string;
     label: string;
     name: string;
     value: string;
@@ -86,6 +87,7 @@ const SharedAgentForm = ({
 
 
     const SelectField: React.FC<SelectFieldProps> = ({
+        id,
         label,
         name,
         value,
@@ -95,7 +97,7 @@ const SharedAgentForm = ({
         touched,
       }) => {
         return (
-          <div className="mb-3 relative">
+          <div className="mb-3 relative" id={id}>
             <label htmlFor={name} className="text-sm font-medium text-gray-900 dark:text-gray-300">
               {label}
               {touched && error && <span className="text-red-500 text-xs">*</span>}
@@ -257,6 +259,7 @@ const SharedAgentForm = ({
 							<Form className="">								
 
 								<SelectField
+                                    id='method'
 									label="Method"
 									name="method"
 									value={formikHandlers.values.method}
@@ -335,6 +338,7 @@ const SharedAgentForm = ({
 									formikHandlers.values.method !== DidMethod.WEB && (										
 
 										<SelectField
+                                            id='ledger'
 											label="Ledger"
 											name="ledger"
 											value={selectedNetwork}
@@ -472,6 +476,7 @@ const SharedAgentForm = ({
 							</div>							
 
 							<SelectField
+                                id='did_method'
 								label="Method"
 								name="method"
 								value={formikHandlers.values.method}
@@ -559,6 +564,7 @@ const SharedAgentForm = ({
 								formikHandlers.values.method !== DidMethod.WEB && (								
 
 									<SelectField
+                                        id='did_ledger'
 										label="Ledger"
 										name="ledger"
 										value={selectedNetwork}
