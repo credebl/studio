@@ -18,9 +18,9 @@ envKeys.forEach((item) => {
 const sessionToken = getFromCookies(Astro.cookies, 'session');
 const refreshToken = getFromCookies(Astro.cookies, 'refresh');
 
-const allowedDomains = "https://qaapi.credebl.id https://devapi.credebl.id https://fonts.googleapis.com https://avatars.githubusercontent.com"
+const allowedDomains = "'self' https://www.ayanworks.com https://qaapi.credebl.id https://devapi.credebl.id https://fonts.googleapis.com https://avatars.githubusercontent.com"
 
-Astro.response.headers.set('Content-Security-Policy',"script-src 'self'; frame-ancestors 'self'");
+// Astro.response.headers.set('Content-Security-Policy',"script-src 'self'; frame-ancestors 'self'");
 Astro.response.headers.set('X-Frame-Options', "SAMEORIGIN");
 Astro.response.headers.set('X-CREDEBL',"SSI");
 
@@ -29,7 +29,7 @@ Astro.response.headers.set('X-CREDEBL',"SSI");
 <!DOCTYPE html>
 <html lang="en">
 	<head set:html={metaData}>
-		<HelmetHead
+		<!-- <HelmetHead
 			siteTitle={SITE_TITLE}
 			version={pkg.version}
 			generator={Astro.generator}
@@ -37,7 +37,7 @@ Astro.response.headers.set('X-CREDEBL',"SSI");
 			icon={url('favicon.svg')}
 			sitemap={url('sitemap-index.xml')}
 			client:load
-		/>
+		/> -->
 		<!-- <meta http-equiv="Content-Security-Policy" content="" /> -->
 		<!-- <meta
 		http-equiv="Content-Security-Policy"
@@ -46,20 +46,20 @@ Astro.response.headers.set('X-CREDEBL',"SSI");
 		<!-- <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self'" >
 		<meta http-equiv="Content-Security-Policy" content="default-src 'self'"> -->
 
-		<meta
+		<!-- <meta
 			http-equiv="Content-Security-Policy"
 			content=`
 				default-src 'self'; 
-				script-src 'self' ${allowedDomains}; 
-				style-src 'self' ${allowedDomains}; 
-				font-src 'self' ${allowedDomains}; 
+				script-src 'self' ${allowedDomains} theme global pkg; 
+				style-src 'unsafe-inline' ${allowedDomains}; 
+				font-src https://fonts.googleapis.com/css2 ${allowedDomains}; 
 				img-src 'self' ${allowedDomains}; 
 				frame-src 'self' ${allowedDomains}; 
 				object-src 'none'; 
 				media-src 'self'; 
 				connect-src 'self' ${allowedDomains};
-				`
-				/>
+				` /> -->
+				<!-- script-src-elem 'self' ${allowedDomains}; -->
 				<!-- frame-ancestors 'self'; -->
 
 		<!-- <meta http-equiv="X-Frame-Options" content="DENY" /> -->
@@ -74,7 +74,7 @@ Astro.response.headers.set('X-CREDEBL',"SSI");
 			content="https://credebl.id/images/CREDEBL_ICON.png"
 		/> -->
 		<meta property="og:image" content={initData.PUBLIC_PLATFORM_LOGO} />
-		<script is:inline>
+		<script is:inline id="theme">
 			if (
 				localStorage.getItem('color-theme') === 'dark' ||
 				(!('color-theme' in localStorage) &&
@@ -86,6 +86,7 @@ Astro.response.headers.set('X-CREDEBL',"SSI");
 			}
 		</script>
 	</head>
+
 	<body
 		class:list={[
 			,
@@ -97,11 +98,11 @@ Astro.response.headers.set('X-CREDEBL',"SSI");
 		]}
 	>
 		<slot />
-		<script>
+		<script id="pkg">
 			import 'flowbite';
 			import 'flowbite/dist/datepicker.js';
 		</script>
-		<script define:vars={{ initData, envKeys, sessionToken, refreshToken }}>
+		<script id="global" define:vars={{ initData, envKeys, sessionToken, refreshToken }}>
 			
 			envKeys.forEach((item) => {
 				globalThis[item] = initData[item];
