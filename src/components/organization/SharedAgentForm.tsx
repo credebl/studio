@@ -13,7 +13,7 @@ import {
 } from '../../config/CommonConstant';
 import { DidMethod } from '../../common/enums';
 import type { AxiosResponse } from 'axios';
-import { getFromLocalStorage, passwordEncryption } from '../../api/Auth';
+import { getFromLocalStorage } from '../../api/Auth';
 import CopyDid from '../../commonComponents/CopyDid';
 import GenerateBtnPolygon from './walletCommonComponents/GenerateBtnPolygon';
 import SetPrivateKeyValue from './walletCommonComponents/SetPrivateKeyValue';
@@ -64,7 +64,6 @@ const SharedAgentForm = ({
 	submitSharedWallet,
 }: ISharedAgentForm) => {
 	const [haveDidShared, setHaveDidShared] = useState(false);
-	const [networks, setNetworks] = useState([]);
 	const [selectedLedger, setSelectedLedger] = useState('');
 	const [seedVal, setSeedVal] = useState('');
 	const [selectedNetwork, setSelectedNetwork] = useState('');
@@ -74,19 +73,6 @@ const SharedAgentForm = ({
 	const [domainValue, setDomainValue] = useState<string>('');
 	const [endPointValue, setEndPointValue] = useState<string>('');
 	const [privateKeyValue, setPrivateKeyValue] = useState<string>('');
-
-    const fetchNetworks = async () => {
-        try {
-            const { data } = (await getLedgers()) as AxiosResponse;
-            if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-                return data?.data;
-            }
-            return [];
-        } catch (err) {
-            console.log('Fetch Network ERROR::::', err);
-        }
-    };
-    
 
 	const fetchLedgerConfig = async () => {
 		try {
@@ -124,12 +110,7 @@ const SharedAgentForm = ({
 		}
 	};
 
-	const getLedgerList = async () => {
-		const res = await fetchNetworks();
-		setNetworks(res);
-	};
 	useEffect(() => {
-		getLedgerList();
 		fetchLedgerConfig();
 	}, []);
 
