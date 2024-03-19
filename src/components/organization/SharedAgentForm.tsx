@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 import { Button, Checkbox, Label } from 'flowbite-react';
-import { Field, Form, Formik } from 'formik';
+import { Field, Form, Formik, FormikProps } from 'formik';
 import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react';
 import {
 	createPolygonKeyValuePair,
@@ -139,6 +139,27 @@ const SharedAgentForm = ({
 			console.log('Fetch Network ERROR::::', err);
 		}
 	};
+
+    const selectDidMethod = async (
+			e: React.ChangeEvent<HTMLSelectElement>,
+			formikHandlers: FormikProps<ValuesShared>,
+		) => {
+			formikHandlers.handleChange(e);
+			handleLedgerChange(e);
+			setSeedVal(seeds);
+			setSelectedNetwork('');
+			setSelectedDid('');
+			setGeneratedKeys(null);
+		};
+
+        const selectDidLedger = async (
+					e: React.ChangeEvent<HTMLSelectElement>,
+					formikHandlers: FormikProps<ValuesShared>,
+				) => {
+					formikHandlers.handleChange(e);
+					setSelectedNetwork(e.target.value);
+					setSelectedDid('');
+				};
 	
 
 	const handleLedgerChange = (e) => {
@@ -263,14 +284,7 @@ const SharedAgentForm = ({
 									label="Method"
 									name="method"
 									value={formikHandlers.values.method}
-									onChange={(e) => {
-										formikHandlers.handleChange(e);
-										handleLedgerChange(e);
-										setSeedVal(seeds);
-										setSelectedNetwork('');
-										setSelectedDid('');
-										setGeneratedKeys(null);
-									}}
+									onChange={(e) => selectDidMethod(e, formikHandlers)}
 									options={mappedData && Object.keys(mappedData)}
 									error={formikHandlers.errors.method}
 									touched={formikHandlers.touched.method}
@@ -342,11 +356,7 @@ const SharedAgentForm = ({
 											label="Ledger"
 											name="ledger"
 											value={selectedNetwork}
-											onChange={(e) => {
-												formikHandlers.handleChange(e);
-												setSelectedNetwork(e.target.value);
-												setSelectedDid('');
-											}}
+											onChange={(e) => selectDidLedger(e, formikHandlers)}
 											options={
 												mappedData &&
 												selectedLedger &&
@@ -480,14 +490,7 @@ const SharedAgentForm = ({
 								label="Method"
 								name="method"
 								value={formikHandlers.values.method}
-								onChange={(e) => {
-									formikHandlers.handleChange(e);
-									handleLedgerChange(e);
-									setSeedVal(seeds);
-									setSelectedNetwork('');
-									setSelectedDid('');
-									setGeneratedKeys(null);
-								}}
+                                onChange={(e) => selectDidMethod(e, formikHandlers)}							
 								options={mappedData && Object.keys(mappedData)}
 								error={formikHandlers.errors.method}
 								touched={formikHandlers.touched.method}
@@ -568,11 +571,7 @@ const SharedAgentForm = ({
 										label="Ledger"
 										name="ledger"
 										value={selectedNetwork}
-										onChange={(e) => {
-											formikHandlers.handleChange(e);
-											setSelectedNetwork(e.target.value);
-											setSelectedDid('');
-										}}
+                                        onChange={(e) => selectDidLedger(e, formikHandlers)}
 										options={
 											mappedData &&
 											selectedLedger &&
