@@ -366,28 +366,13 @@ const SharedAgentForm = ({
 									</div>
 								)}
 
-								{generatedKeys &&
-									formikHandlers.values.method === DidMethod.POLYGON && (
-										
-										<TokenWarningMessage />
-									)}
+								{generatedKeys && formikHandlers.values.method === DidMethod.POLYGON && (<TokenWarningMessage />)}
 
-								{formikHandlers.values.method === DidMethod.POLYGON && (
+								{formikHandlers.values.method === DidMethod.POLYGON && (<SetPrivateKeyValue setPrivateKeyValue={(val:string)=>setPrivateKeyValue(val)} privateKeyValue={privateKeyValue}/>)}
 
-                   <SetPrivateKeyValue setPrivateKeyValue={(val:string)=>setPrivateKeyValue(val)} privateKeyValue={privateKeyValue}/>
-									
-								)}
+								{formikHandlers.values.method === DidMethod.WEB && (<SetDomainValueInput setDomainValue={(val:string)=>setDomainValue(val)} domainValue={domainValue}/>)}
 
-								{formikHandlers.values.method === DidMethod.WEB && (
-									
-
-									<SetDomainValueInput setDomainValue={(val:string)=>setDomainValue(val)} domainValue={domainValue}/>
-
-								)}
-
-								{formikHandlers.values.method !== DidMethod.POLYGON &&
-									formikHandlers.values.method !== DidMethod.KEY &&
-									formikHandlers.values.method !== DidMethod.WEB && (
+								{formikHandlers.values.method !== DidMethod.POLYGON && formikHandlers.values.method !== DidMethod.KEY && formikHandlers.values.method !== DidMethod.WEB && (
 										<div className="my-3 relative">
 											<label
 												htmlFor="ledger"
@@ -413,12 +398,8 @@ const SharedAgentForm = ({
 														),
 													)}
 											</select>
-											{formikHandlers?.errors?.ledger &&
-												formikHandlers?.touched?.ledger && (
-													<span className="absolute botton-0 text-red-500 text-xs">
-														{formikHandlers?.errors?.ledger}
-													</span>
-												)}
+											{formikHandlers?.errors?.ledger && formikHandlers?.touched?.ledger && (
+													<span className="absolute botton-0 text-red-500 text-xs">{formikHandlers?.errors?.ledger}</span>)}
 										</div>
 									)}
 								{formikHandlers.values.method !== DidMethod.WEB &&
