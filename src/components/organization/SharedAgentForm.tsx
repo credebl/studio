@@ -301,15 +301,9 @@ const SharedAgentForm = ({
 											} error={formikHandlers.errors.method} touched={formikHandlers.touched.method}
 										/>
 									)}
-								{formikHandlers.values.method !== DidMethod.WEB &&
-									formikHandlers.values.method !== DidMethod.KEY && (
-										<LedgerLessMethodsComponents
-											formikHandlers={formikHandlers}
-											setSelectedDid={(val: string) => setSelectedDid(val)}
-											selectedDid={selectedDid}
-											mappedData={mappedData}
-											selectedLedger={selectedLedger}
-											selectedNetwork={selectedNetwork}
+								{formikHandlers.values.method !== DidMethod.WEB && formikHandlers.values.method !== DidMethod.KEY && (
+										<LedgerLessMethodsComponents formikHandlers={formikHandlers}
+											setSelectedDid={(val: string) => setSelectedDid(val)} selectedDid={selectedDid} mappedData={mappedData} selectedLedger={selectedLedger} selectedNetwork={selectedNetwork}
 										/>
 									)}
 

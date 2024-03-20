@@ -218,22 +218,15 @@ const AlreadyDidSharedForm: React.FC<DidSharedFormProps> = ({
 										} error={formikHandlers.errors.method} touched={formikHandlers.touched.method}
 									/>
 								)}
-							{formikHandlers.values.method !== DidMethod.WEB &&
-								formikHandlers.values.method !== DidMethod.KEY && (
-									<LedgerLessMethodsComponents
-										formikHandlers={formikHandlers}
-										setSelectedDid={(val: string) => setSelectedDid(val)}
-										selectedDid={selectedDid}
-										mappedData={mappedData}
-										selectedLedger={selectedLedger}
-										selectedNetwork={selectedNetwork}
+							{formikHandlers.values.method !== DidMethod.WEB && formikHandlers.values.method !== DidMethod.KEY && (
+									<LedgerLessMethodsComponents formikHandlers={formikHandlers} setSelectedDid={(val: string) => setSelectedDid(val)}
+										selectedDid={selectedDid} mappedData={mappedData} selectedLedger={selectedLedger} selectedNetwork={selectedNetwork}
 									/>
 								)}
 
 							<div className="my-3 relative">
 								<label
-									htmlFor="DID Method"
-									className="text-sm font-medium text-gray-900 dark:text-gray-300"
+									htmlFor="DID Method" className="text-sm font-medium text-gray-900 dark:text-gray-300"
 								>
 									DID Method
 								</label>
