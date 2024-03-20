@@ -1,5 +1,5 @@
 import type { AstroCookies } from 'astro';
-import { getFromCookies } from '../api/Auth';
+import { getFromCookies, setToCookies } from '../api/Auth';
 import { pathRoutes } from '../config/pathRoutes';
 import { RolePermissions } from '../config/permissions';
 import { apiStatusCodes } from '../config/CommonConstant';
@@ -52,11 +52,42 @@ export const checkUserSession = async ({
 		});
 
 		if (userData?.statusCode === apiStatusCodes.API_STATUS_UNAUTHORIZED) {
-			return {
-				permitted: false,
-				redirect: pathRoutes.auth.sinIn,
-				authorized: false,
+			const refreshSession = getFromCookies(cookies, 'refresh');
+
+			const configRefreshToken = {
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				method: 'POST',
+				body: JSON.stringify({
+					refreshToken: refreshSession
+				})
 			};
+
+			const res = await fetch(`${baseURL + apiRoutes.auth.refreshToken}`, {
+				...configRefreshToken,
+			});
+			const userSession = await res.json();
+	
+			if (userSession?.statusCode !== apiStatusCodes.API_STATUS_SUCCESS) {
+				return {
+					permitted: false,
+					redirect: pathRoutes.auth.sinIn,
+					authorized: false,
+				};
+			}
+			setToCookies(cookies, "session", userSession?.data?.access_token as string, {
+				path: "/"
+			})
+			setToCookies(cookies, "refresh", userSession?.data?.refresh_token as string, {
+				path: "/"
+			})
+
+			return {
+				permitted: true,
+				authorized: true
+			};
+
 		}
 	} catch (error) {
 		console.log('GET USER DETAILS ERROR::::', error);
