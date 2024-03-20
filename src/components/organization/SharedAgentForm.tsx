@@ -230,15 +230,8 @@ const SharedAgentForm = ({
 						{(formikHandlers) => (
 							<Form className="">								
 
-								<SelectField
-                                    id='method'
-									label="Method"
-									name="method"
-									value={formikHandlers.values.method}
-									onChange={(e) => selectDidMethod(e, formikHandlers)}
-									options={mappedData && Object.keys(mappedData)}
-									error={formikHandlers.errors.method}
-									touched={formikHandlers.touched.method}
+								<SelectField id='method' label="Method"	name="method" value={formikHandlers.values.method}	onChange={(e) => selectDidMethod(e, formikHandlers)}
+									options={mappedData && Object.keys(mappedData)} error={formikHandlers.errors.method}	touched={formikHandlers.touched.method}
 								/>
 
 								{formikHandlers.values.method === DidMethod.POLYGON && (
@@ -302,20 +295,10 @@ const SharedAgentForm = ({
 									formikHandlers.values.method !== DidMethod.KEY &&
 									formikHandlers.values.method !== DidMethod.WEB && (										
 
-										<SelectField
-                                            id='ledger'
-											label="Ledger"
-											name="ledger"
-											value={selectedNetwork}
-											onChange={(e) => selectDidLedger(e, formikHandlers)}
+										<SelectField id='ledger' label="Ledger"	name="ledger" value={selectedNetwork} onChange={(e) => selectDidLedger(e, formikHandlers)}
 											options={
-												mappedData &&
-												selectedLedger &&
-												mappedData[selectedLedger] &&
-												Object.keys(mappedData[selectedLedger])
-											}
-											error={formikHandlers.errors.method}
-											touched={formikHandlers.touched.method}
+												mappedData && selectedLedger &&	mappedData[selectedLedger] && Object.keys(mappedData[selectedLedger])
+											} error={formikHandlers.errors.method} touched={formikHandlers.touched.method}
 										/>
 									)}
 								{formikHandlers.values.method !== DidMethod.WEB &&

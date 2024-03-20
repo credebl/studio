@@ -36,15 +36,6 @@ interface IPolygonKeys {
 
 interface DidSharedFormProps {
     orgName: string,
-    // initialValues: {
-    //   seed: string;
-    //   method: string;
-    //   network: string;
-    //   did: string;
-    //   ledger: string;
-    //   label: string;
-    // };
-    // validations: Record<string, any>; // You can refine the type as per your schema
     submitSharedWallet: (values: ValuesShared, privateKeyValue: string, domainValue: string, endPointValue: string) => void;
     selectDidMethod: (e: React.ChangeEvent<HTMLSelectElement>, formikHandlers: FormikProps<any>) => void;
     generatePolygonKeyValuePair: () => void;
@@ -147,15 +138,8 @@ const AlreadyDidSharedForm: React.FC<DidSharedFormProps> = ({
 									)}
 							</div>							
 
-							<SelectField
-                                id='did_method'
-								label="Method"
-								name="method"
-								value={formikHandlers.values.method}
-                                onChange={(e) => selectDidMethod(e, formikHandlers)}							
-								options={mappedData && Object.keys(mappedData)}
-								error={formikHandlers.errors.method}
-								touched={formikHandlers.touched.method}
+							<SelectField id='did_method' label="Method"	name="method" value={formikHandlers.values.method} onChange={(e) => selectDidMethod(e, formikHandlers)}							
+								options={mappedData && Object.keys(mappedData)} error={formikHandlers.errors.method}	touched={formikHandlers.touched.method}
 							/>
 
 							{formikHandlers.values.method === DidMethod.POLYGON && (
@@ -228,20 +212,10 @@ const AlreadyDidSharedForm: React.FC<DidSharedFormProps> = ({
 								formikHandlers.values.method !== DidMethod.KEY &&
 								formikHandlers.values.method !== DidMethod.WEB && (								
 
-									<SelectField
-                                        id='did_ledger'
-										label="Ledger"
-										name="ledger"
-										value={selectedNetwork}
-                                        onChange={(e) => selectDidLedger(e, formikHandlers)}
+									<SelectField id='did_ledger' label="Ledger"	name="ledger" value={selectedNetwork} onChange={(e) => selectDidLedger(e, formikHandlers)}
 										options={
-											mappedData &&
-											selectedLedger &&
-											mappedData[selectedLedger] &&
-											Object.keys(mappedData[selectedLedger])
-										}
-										error={formikHandlers.errors.method}
-										touched={formikHandlers.touched.method}
+											mappedData && selectedLedger &&	mappedData[selectedLedger] && Object.keys(mappedData[selectedLedger])
+										} error={formikHandlers.errors.method} touched={formikHandlers.touched.method}
 									/>
 								)}
 							{formikHandlers.values.method !== DidMethod.WEB &&
