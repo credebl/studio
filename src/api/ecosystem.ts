@@ -70,7 +70,7 @@ export const getEcosystems = async (
 	pageSize?: number,
 	search = '',
 ) => {
-	const url = `${apiRoutes.Ecosystem.root}/${orgId}`;
+	const url = `${apiRoutes.Ecosystem.root}/${orgId}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`;
 	const axiosPayload = {
 		url,
 		config: await getHeaderConfigs(),
