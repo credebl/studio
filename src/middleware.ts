@@ -32,7 +32,7 @@ export const onRequest = async (context, next) => {
   
   const nonce = "dynamicNONCE" + new Date().getTime().toString();
   
-  response.headers.set('Content-Security-Policy',`default-src 'self'; script-src 'self'; style-src 'self'; font-src ${allowedDomains}; img-src 'self' ${allowedDomains}; frame-src 'self' ${allowedDomains}; object-src 'none'; media-src 'self'; connect-src 'self' ${allowedDomains}; form-action 'self'; frame-ancestors 'self'; `);
+  response.headers.set('Content-Security-Policy',`default-src 'self'; script-src 'self' ${allowedDomains} 'nonce-${nonce}_scripts'; style-src 'self' ${allowedDomains} 'nonce-${nonce}_styles'; font-src ${allowedDomains}; img-src 'self' ${allowedDomains}; frame-src 'self' ${allowedDomains}; object-src 'none'; media-src 'self'; connect-src 'self' ${allowedDomains}; form-action 'self'; frame-ancestors 'self'; `);
   response.headers.set('X-Frame-Options', "DENY");
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('Access-Control-Allow-Origin', allowedDomains)
