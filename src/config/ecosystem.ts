@@ -46,6 +46,7 @@ const getUserProfile = async () => {
 
 const checkEcosystem = async (): Promise<ICheckEcosystem> => {
 	await getEcosystemId();
+
 	const userData = await getUserProfile();
 	const role = await getEcosystemRole();
 
@@ -71,13 +72,12 @@ const getEcosystemId = async (): Promise<string> => {
 	if (!ecoId || !ecoRole) {
 		try {
 			if (orgId) {
-				const { data } = (await getEcosystems(orgId)) as AxiosResponse;
-
+				const { data } = (await getEcosystems(orgId, 1, 10, '')) as AxiosResponse;
 				if (
 					data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS &&
-					data?.data?.ecosystemDetails?.length > 0
+					data?.data?.ecosystemList?.length > 0
 				) {
-					const response = data?.data.ecosystemDetails[0];
+					const response = data?.data.ecosystemList[0];
 					const id = response?.id;
 					const role =
 						response?.ecosystemOrgs &&

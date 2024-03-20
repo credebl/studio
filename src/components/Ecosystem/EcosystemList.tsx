@@ -72,7 +72,7 @@ const EcosystemList = () => {
 			const { data } = response as AxiosResponse;
 
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				const ecosystemData = data?.data.ecosystemDetails;
+				const ecosystemData = data?.data.ecosystemList;
 				if (ecosystemData) {
 
 					setEcosystemList(ecosystemData);

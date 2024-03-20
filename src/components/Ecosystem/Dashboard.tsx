@@ -120,10 +120,10 @@ const Dashboard = () => {
 		const ecosystemId = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID);
 		setOrgId(id);
 		if (id) {
-			const response = await getEcosystems(id);
+			const response = await getEcosystems(id, 1, 10, '');
 			const { data } = response as AxiosResponse;
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				const ecosystemData = data?.data?.ecosystemDetails?.find(
+				const ecosystemData = data?.data?.ecosystemList?.find(
 					(item: { id: string }) => item.id === ecosystemId,
 				);
 				if (ecosystemData) {
@@ -165,7 +165,6 @@ const Dashboard = () => {
 
 		if (ecosystemId && orgId) {
 			const response = await getEcosystemDashboard(ecosystemId, orgId);
-
 			const { data } = response as AxiosResponse;
 
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {

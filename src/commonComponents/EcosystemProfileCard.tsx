@@ -24,13 +24,13 @@ const EcosystemProfileCard = ({getEndorsementListData}:IEndorsement) => {
             const id = await getFromLocalStorage(storageKeys.ORG_ID);
             const ecosystemId = ecoId || await getFromLocalStorage(storageKeys.ECOSYSTEM_ID);
             if (id) {
-                const response = await getEcosystems(id);
+                const response = await getEcosystems(id, 1, 10, '');
                 setLoading(false)
                 const { data } = response as AxiosResponse;
                 if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {									
-                    setEcosystemList(data?.data.ecosystemDetails
+                    setEcosystemList(data?.data.ecosystemList
 											)
-                    const ecosystemData = data?.data?.ecosystemDetails?.find((item: { id: string }) => item.id === ecosystemId);
+                    const ecosystemData = data?.data?.ecosystemList?.find((item: { id: string }) => item.id === ecosystemId);
                     if (ecosystemData) {
                         setEcosystemId(ecosystemData?.id)
                         const ecosystemOrg =
