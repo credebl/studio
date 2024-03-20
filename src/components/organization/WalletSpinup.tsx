@@ -310,23 +310,15 @@ const SharedAgentForm = ({
 											setSelectedDid('');
 											setGeneratedKeys(null);
 										}}
-										id="method"
-										name="method"
-										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+										id="method"	name="method" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
 									>
 										<option value="">Select Method</option>
-										{mappedData &&
-											Object.keys(mappedData)?.map((ledger) => (
-												<option key={ledger} value={ledger}>
-													{ledger}
-												</option>
+										{mappedData && Object.keys(mappedData)?.map((ledger) => (
+												<option key={ledger} value={ledger}>{ledger}</option>
 											))}
 									</select>
-									{formikHandlers?.errors?.method &&
-										formikHandlers?.touched?.method && (
-											<span className="absolute botton-0 text-red-500 text-xs">
-												{formikHandlers?.errors?.method}
-											</span>
+									{formikHandlers?.errors?.method && formikHandlers?.touched?.method && (
+											<span className="absolute botton-0 text-red-500 text-xs">{formikHandlers?.errors?.method}</span>
 										)}
 								</div>
 
@@ -411,19 +403,13 @@ const SharedAgentForm = ({
 													setSelectedDid('');
 												}}
 												value={selectedNetwork}
-												id="ledger"
-												name="ledger"
-												className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+												id="ledger"	name="ledger" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
 											>
 												<option value="">Select Ledger</option>
-												{mappedData &&
-													selectedLedger &&
-													mappedData[selectedLedger] &&
+												{mappedData && selectedLedger && mappedData[selectedLedger] &&
 													Object.keys(mappedData[selectedLedger])?.map(
 														(ledger) => (
-															<option key={ledger} value={ledger}>
-																{ledger}
-															</option>
+															<option key={ledger} value={ledger}>{ledger}</option>
 														),
 													)}
 											</select>
