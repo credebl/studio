@@ -18,7 +18,10 @@ envKeys.forEach((item) => {
 const sessionToken = getFromCookies(Astro.cookies, 'session');
 const refreshToken = getFromCookies(Astro.cookies, 'refresh');
 
-const allowedDomains = "https://fonts.googleapis.com https://www.ayanworks.com https://qaapi.credebl.id https://devapi.credebl.id https://fonts.googleapis.com https://avatars.githubusercontent.com https://fonts.gstatic.com"
+// const allowedDomains = "https://www.ayanworks.com https://qaapi.credebl.id https://devapi.credebl.id https://fonts.googleapis.com https://avatars.githubusercontent.com https://fonts.gstatic.com"
+
+const allowedDomains = "https://www.blockster.global https://www.ayanworks.com https://qaapi.credebl.id https://devapi.credebl.id https://api.credebl.id https://*.credebl.id https://fonts.googleapis.com https://avatars.githubusercontent.com https://fonts.gstatic.com https://dev-org-logo.s3.ap-south-1.amazonaws.com https://flowbite-admin-dashboard.vercel.app/ wss://devapi.credebl.id wss://qaapi.credebl.id wss://api.credebl.id wss://*.credebl.id"
+
 
 ---
 
@@ -41,12 +44,12 @@ const allowedDomains = "https://fonts.googleapis.com https://www.ayanworks.com h
 	/> -->
 		<!-- <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self'" >
 		<meta http-equiv="Content-Security-Policy" content="default-src 'self'"> -->
-<!-- 
+
 		<meta
 			http-equiv="Content-Security-Policy"
 			content=`
 				default-src 'self'; 
-				script-src 'self' ${allowedDomains} theme global pkg; 
+				script-src 'self' ${allowedDomains}; 
 				style-src 'unsafe-inline' ${allowedDomains}; 
 				font-src ${allowedDomains}; 
 				img-src 'self' ${allowedDomains}; 
@@ -54,7 +57,7 @@ const allowedDomains = "https://fonts.googleapis.com https://www.ayanworks.com h
 				object-src 'none'; 
 				media-src 'self'; 
 				connect-src 'self' ${allowedDomains};
-				` /> -->
+				` />
 				<!-- script-src-elem 'self' ${allowedDomains}; -->
 				<!-- frame-ancestors 'self'; -->
 
