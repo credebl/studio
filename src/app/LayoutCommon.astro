@@ -17,61 +17,18 @@ envKeys.forEach((item) => {
 
 const sessionToken = getFromCookies(Astro.cookies, 'session');
 const refreshToken = getFromCookies(Astro.cookies, 'refresh');
-
-// const allowedDomains = "https://www.ayanworks.com https://qaapi.credebl.id https://devapi.credebl.id https://fonts.googleapis.com https://avatars.githubusercontent.com https://fonts.gstatic.com"
-
-const allowedDomains = "https://www.blockster.global https://www.ayanworks.com https://qaapi.credebl.id https://devapi.credebl.id https://api.credebl.id https://*.credebl.id https://fonts.googleapis.com https://avatars.githubusercontent.com https://fonts.gstatic.com https://dev-org-logo.s3.ap-south-1.amazonaws.com https://flowbite-admin-dashboard.vercel.app/ wss://devapi.credebl.id wss://qaapi.credebl.id wss://api.credebl.id wss://*.credebl.id"
-
-
 ---
 
 <!DOCTYPE html>
 <html lang="en">
 	<head set:html={metaData}>
-		<!-- <HelmetHead
-			siteTitle={SITE_TITLE}
-			version={pkg.version}
-			generator={Astro.generator}
-			desc={pkg.description}
-			icon={url('favicon.svg')}
-			sitemap={url('sitemap-index.xml')}
-			client:load
-		/> -->
-		<!-- <meta http-equiv="Content-Security-Policy" content="" /> -->
-		<!-- <meta
-		http-equiv="Content-Security-Policy"
-		content="frame-ancestors SAMEORIGIN"
-	/> -->
-		<!-- <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self'" >
-		<meta http-equiv="Content-Security-Policy" content="default-src 'self'"> -->
-
-		<!-- <meta
-			http-equiv="Content-Security-Policy"
-			content=`
-				default-src 'self'; 
-				script-src 'self' ${allowedDomains}; 
-				style-src 'unsafe-inline' ${allowedDomains}; 
-				font-src ${allowedDomains}; 
-				img-src 'self' ${allowedDomains}; 
-				frame-src 'self' ${allowedDomains}; 
-				object-src 'none'; 
-				media-src 'self'; 
-				connect-src 'self' ${allowedDomains};
-				` /> -->
-				<!-- script-src-elem 'self' ${allowedDomains}; -->
-				<!-- frame-ancestors 'self'; -->
-
-		<!-- <meta http-equiv="X-Frame-Options" content="DENY" /> -->
-
-		<!-- <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" > -->
-		<!-- <meta
-			http-equiv="Content-Security-Policy"
-			content="default-src 'self'; script-src 'self';"
+		<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
+			rel="stylesheet"
 		/>
-		<meta
-			property="og:image"
-			content="https://credebl.id/images/CREDEBL_ICON.png"
-		/> -->
+
 		<meta property="og:image" content={initData.PUBLIC_PLATFORM_LOGO} />
 		<script is:inline id="theme">
 			if (
@@ -101,20 +58,19 @@ const allowedDomains = "https://www.blockster.global https://www.ayanworks.com h
 			import 'flowbite';
 			import 'flowbite/dist/datepicker.js';
 		</script>
-		<script id="global" define:vars={{ initData, envKeys, sessionToken, refreshToken }}>
-			
+		<script
+			id="global"
+			define:vars={{ initData, envKeys, sessionToken, refreshToken }}
+		>
 			envKeys.forEach((item) => {
 				globalThis[item] = initData[item];
 			});
 
 			globalThis.access_token = sessionToken;
 			globalThis.refresh_token = refreshToken;
-
 		</script>
 
-		<style nonce={"dynamicNONCE" + (new Date().getTime() + Math.random()).toString().split(".").join("_")} is:global>
-			@import url('https://fonts.googleapis.com/css2?family=Courier+Prime&family=Inter:wght@400&display=swap');
-
+		<style is:global>
 			body {
 				font-family: 'Inter', sans-serif;
 			}
