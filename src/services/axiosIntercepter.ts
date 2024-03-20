@@ -28,7 +28,6 @@ instance.interceptors.response.use(function (response) {
 });
 
 const checkAuthentication = async (sessionCookie: string, request: AxiosRequestConfig) => {
-	const isAuthPage = window.location.href.includes('/authentication/sign-in') || window.location.href.includes('/authentication/sign-up')
 	try {
 		const baseURL = envConfig.PUBLIC_BASE_URL || process.env.PUBLIC_BASE_URL;
 		const config = {
@@ -47,10 +46,19 @@ const checkAuthentication = async (sessionCookie: string, request: AxiosRequestC
 			message: userData.message,
 		});
 		if (
-			userData.statusCode === apiStatusCodes.API_STATUS_UNAUTHORIZED
+			userData.statusCode === apiStatusCodes.API_STATUS_UNAUTHORIZED &&
+			sessionCookie
 		) {
-			if (sessionCookie && !isAuthPage) {
-				const { access_token, refresh_token }: any = globalThis;
+			const { access_token, refresh_token }: any = globalThis;
+
+			await setToLocalStorage(storageKeys.TOKEN, access_token);
+			await setToLocalStorage(storageKeys.REFRESH_TOKEN, refresh_token);
+
+			window.location.reload();
+		}
+	} catch (error) {}
+};
+const { PUBLIC_BASE_URL}: any = globalThis
 
 				await setToLocalStorage(storageKeys.TOKEN, access_token);
 				await setToLocalStorage(storageKeys.REFRESH_TOKEN, refresh_token);
@@ -81,7 +89,7 @@ instance.interceptors.response.use(
 		const errorRes = error?.response;
 		const originalRequest = error.config;
 		const token = await getFromLocalStorage(storageKeys.TOKEN);
-		if (errorRes?.status === 401 && !isAuthPage) {
+		if (errorRes?.status === 401) {
 			await checkAuthentication(token, originalRequest);
 		}
 
