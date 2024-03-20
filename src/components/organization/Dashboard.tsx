@@ -192,7 +192,7 @@ const Dashboard = () => {
 				</div>
 
 				<div className="mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-					<div className="grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-3 2xl:grid-cols-3">
+					<div className="grid w-full grid-cols-1 gap-4 mt-0 xl:grid-cols-3 2xl:grid-cols-3">
 						<DashboardCard
 							icon={userCard}
 							backgroundColor="linear-gradient(279deg, #FFF -18.24%, #2F80ED -0.8%, #1F4EAD 61.45%)"
