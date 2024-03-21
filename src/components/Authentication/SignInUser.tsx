@@ -205,6 +205,7 @@ const SignInUser = () => {
 													className="mt-8 md:mt-16 space-y-6"
 													onSubmit={formikHandlers.handleSubmit}
 												>
+													<input type="hidden" name="_csrf" value={new Date().getTime()} />
 													<div className="text-primary-700 font-inter text-base font-medium leading-5 mb-16">
 														<div className="block mb-2 text-sm font-medium dark:text-white">
 															<Label

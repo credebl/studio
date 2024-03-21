@@ -1,10 +1,5 @@
 ---
-import pkg from '../../package.json' assert { type: 'json' };
-// import { HelmetProvider } from 'react-helmet-async';
-import HelmetHead from '../components/HelmetHead';
-import { url } from '../lib/data.js';
 import { getFromCookies } from '../api/Auth';
-import { SITE_TITLE } from './constants.js';
 
 const { class: clazz, metaData } = Astro.props;
 
