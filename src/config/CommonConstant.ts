@@ -36,3 +36,5 @@ export const storageKeys = {
 	SOCKET_ID: "socket_id",
 	LEDGER_ID: "ledger_id" 
 }
+
+export const allowedDomains = "https://www.blockster.global https://www.ayanworks.com https://qaapi.credebl.id https://devapi.credebl.id https://api.credebl.id https://*.credebl.id https://fonts.googleapis.com https://fonts.gstatic.com https://avatars.githubusercontent.com  https://dev-org-logo.s3.ap-south-1.amazonaws.com https://flowbite-admin-dashboard.vercel.app/ wss://devapi.credebl.id wss://qaapi.credebl.id wss://api.credebl.id wss://*.credebl.id  https://qa.credebl.id https://dev.credebl.id https://credebl.id"
