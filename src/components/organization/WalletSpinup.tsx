@@ -310,23 +310,15 @@ const SharedAgentForm = ({
 											setSelectedDid('');
 											setGeneratedKeys(null);
 										}}
-										id="method"
-										name="method"
-										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+										id="method"	name="method" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
 									>
 										<option value="">Select Method</option>
-										{mappedData &&
-											Object.keys(mappedData)?.map((ledger) => (
-												<option key={ledger} value={ledger}>
-													{ledger}
-												</option>
+										{mappedData && Object.keys(mappedData)?.map((ledger) => (
+												<option key={ledger} value={ledger}>{ledger}</option>
 											))}
 									</select>
-									{formikHandlers?.errors?.method &&
-										formikHandlers?.touched?.method && (
-											<span className="absolute botton-0 text-red-500 text-xs">
-												{formikHandlers?.errors?.method}
-											</span>
+									{formikHandlers?.errors?.method && formikHandlers?.touched?.method && (
+											<span className="absolute botton-0 text-red-500 text-xs">{formikHandlers?.errors?.method}</span>
 										)}
 								</div>
 
@@ -363,28 +355,13 @@ const SharedAgentForm = ({
 									</div>
 								)}
 
-								{generatedKeys &&
-									formikHandlers.values.method === DidMethod.POLYGON && (
-										
-										<TokenWarningMessage />
-									)}
+								{generatedKeys && formikHandlers.values.method === DidMethod.POLYGON && (<TokenWarningMessage />)}
 
-								{formikHandlers.values.method === DidMethod.POLYGON && (
+								{formikHandlers.values.method === DidMethod.POLYGON && (<SetPrivateKeyValue setPrivateKeyValue={(val:string)=>setPrivateKeyValue(val)} privateKeyValue={privateKeyValue}/>)}
 
-                   <SetPrivateKeyValue setPrivateKeyValue={(val:string)=>setPrivateKeyValue(val)} privateKeyValue={privateKeyValue}/>
-									
-								)}
+								{formikHandlers.values.method === DidMethod.WEB && (<SetDomainValueInput setDomainValue={(val:string)=>setDomainValue(val)} domainValue={domainValue}/>)}
 
-								{formikHandlers.values.method === DidMethod.WEB && (
-									
-
-									<SetDomainValueInput setDomainValue={(val:string)=>setDomainValue(val)} domainValue={domainValue}/>
-
-								)}
-
-								{formikHandlers.values.method !== DidMethod.POLYGON &&
-									formikHandlers.values.method !== DidMethod.KEY &&
-									formikHandlers.values.method !== DidMethod.WEB && (
+								{formikHandlers.values.method !== DidMethod.POLYGON && formikHandlers.values.method !== DidMethod.KEY && formikHandlers.values.method !== DidMethod.WEB && (
 										<div className="my-3 relative">
 											<label
 												htmlFor="ledger"
@@ -400,28 +377,18 @@ const SharedAgentForm = ({
 													setSelectedDid('');
 												}}
 												value={selectedNetwork}
-												id="ledger"
-												name="ledger"
-												className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+												id="ledger"	name="ledger" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
 											>
 												<option value="">Select Ledger</option>
-												{mappedData &&
-													selectedLedger &&
-													mappedData[selectedLedger] &&
+												{mappedData && selectedLedger && mappedData[selectedLedger] &&
 													Object.keys(mappedData[selectedLedger])?.map(
 														(ledger) => (
-															<option key={ledger} value={ledger}>
-																{ledger}
-															</option>
+															<option key={ledger} value={ledger}>{ledger}</option>
 														),
 													)}
 											</select>
-											{formikHandlers?.errors?.ledger &&
-												formikHandlers?.touched?.ledger && (
-													<span className="absolute botton-0 text-red-500 text-xs">
-														{formikHandlers?.errors?.ledger}
-													</span>
-												)}
+											{formikHandlers?.errors?.ledger && formikHandlers?.touched?.ledger && (
+													<span className="absolute botton-0 text-red-500 text-xs">{formikHandlers?.errors?.ledger}</span>)}
 										</div>
 									)}
 								{formikHandlers.values.method !== DidMethod.WEB &&
@@ -445,17 +412,10 @@ const SharedAgentForm = ({
 									<Label htmlFor="name" value="Wallet Label" />
 									<span className="text-red-500 text-xs">*</span>
 
-									<Field
-										id="label"
-										name="label"
-										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-										type="text"
-									/>
-									{formikHandlers?.errors?.label &&
-										formikHandlers?.touched?.label && (
-											<span className="text-red-500 absolute text-xs">
-												{formikHandlers?.errors?.label}
-											</span>
+									<Field id="label" name="label" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+										type="text"/>
+									{formikHandlers?.errors?.label && formikHandlers?.touched?.label && (
+											<span className="text-red-500 absolute text-xs">{formikHandlers?.errors?.label}</span>
 										)}
 								</div>
 								<div className="w-full flex justify-end">
