@@ -30,7 +30,7 @@ export default defineConfig({
   integrations: [
   //
   sitemap(), tailwind(), react()],
-  adapter: Deno(),
+  adapter: Deno()
 });
 
 if (typeof globalThis !== 'undefined' && typeof Deno !== 'undefined') {
