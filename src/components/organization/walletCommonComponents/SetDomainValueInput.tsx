@@ -1,14 +1,16 @@
 import React from "react"
 import {Label } from 'flowbite-react';
-import { Field} from 'formik';
+import { Field, FormikErrors, FormikTouched} from 'formik';
 
 
 interface IProps {
     setDomainValue:(val:string)=>void
     domainValue:string
-}
+    errors?: FormikErrors<{ domain: string }>; //recent changes
+    touched?: FormikTouched<{ domain: boolean }>;  //recent changes
+  }
 
-const SetDomainValueInput = ({ setDomainValue, domainValue }: IProps) => (
+const SetDomainValueInput = ({ setDomainValue, domainValue, errors, touched }: IProps) => (  //recent changes
     <>
         <div className="my-3 relative">
             <div className="mt-4">
@@ -24,6 +26,9 @@ const SetDomainValueInput = ({ setDomainValue, domainValue }: IProps) => (
             onChange={(e) => setDomainValue(e.target.value)}
             placeholder="Please enter domain"
         />
+        {/* {errors && touched && errors.domain && touched.domain && (
+       <span className="static bottom-0 text-red-500 text-xs">{errors.domain}</span>
+    )} */}
     </>
 )
 export default SetDomainValueInput;

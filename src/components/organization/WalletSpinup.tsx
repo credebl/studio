@@ -244,6 +244,7 @@ const SharedAgentForm = ({
 		method: yup.string().required('Method is required'),
 		...(DidMethod.INDY === selectedLedger || DidMethod.POLYGON === selectedLedger) && { network: yup.string().required('Network is required') },
 		...(DidMethod.INDY === selectedLedger) && { ledger: yup.string().required('Ledger is required') },
+		...(DidMethod.WEB === selectedLedger) && { domain: yup.string().required('Domain is required for web method') }, //recent changes
 	}
 
 	return (
@@ -278,6 +279,8 @@ const SharedAgentForm = ({
 							network: '',
 							did: '',
 							ledger: '',
+							domain: '',  //recent changes
+							privatekey: '',  //recent changes
 							label: orgName || '',
 						}}
 						validationSchema={yup.object().shape(validations)}
@@ -359,7 +362,7 @@ const SharedAgentForm = ({
 
 								{formikHandlers.values.method === DidMethod.POLYGON && (<SetPrivateKeyValue setPrivateKeyValue={(val:string)=>setPrivateKeyValue(val)} privateKeyValue={privateKeyValue}/>)}
 
-								{formikHandlers.values.method === DidMethod.WEB && (<SetDomainValueInput setDomainValue={(val:string)=>setDomainValue(val)} domainValue={domainValue}/>)}
+								{formikHandlers.values.method === DidMethod.WEB && (<SetDomainValueInput setDomainValue={(val:string)=>setDomainValue(val)} domainValue={domainValue} errors={formikHandlers.errors} touched={formikHandlers.touched}/>)} 
 
 								{formikHandlers.values.method !== DidMethod.POLYGON && formikHandlers.values.method !== DidMethod.KEY && formikHandlers.values.method !== DidMethod.WEB && (
 										<div className="my-3 relative">
