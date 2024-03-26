@@ -1,5 +1,0 @@
-routes:
-  - handler: "/dist/server/entry.mjs"  # 📝 Update the handler path accordingly
-    headers:
-      Content-Security-Policy: "frame-ancestors 'self';"  # Add other CSP directives as needed
-      X-Frame-Options: "DENY"
