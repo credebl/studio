@@ -28,10 +28,10 @@ import { AlertComponent } from '../AlertComponent';
 import CopyDid from '../../commonComponents/CopyDid';
 import { DidMethod } from '../../common/enums';
 import GenerateBtnPolygon from './walletCommonComponents/GenerateBtnPolygon';
-import SetPrivateKeyValue from './walletCommonComponents/SetPrivateKeyValue';
 import SetDomainValueInput from './walletCommonComponents/SetDomainValueInput';
 import TokenWarningMessage from './walletCommonComponents/TokenWarningMessage';
 import LedgerLessMethodsComponents from './walletCommonComponents/LegderLessMethods'
+import SetPrivateKeyValueInput from './walletCommonComponents/SetPrivateKeyValue';
 
 
 interface Values {
@@ -74,7 +74,7 @@ interface ISharedAgentForm {
 	loading: boolean;
 	submitSharedWallet: (
 		values: ValuesShared,
-		privateKey: string,
+		privatekey: string,
 		domain: string,
 		endPoint: string,
 	) => void;
@@ -244,7 +244,8 @@ const SharedAgentForm = ({
 		method: yup.string().required('Method is required'),
 		...(DidMethod.INDY === selectedLedger || DidMethod.POLYGON === selectedLedger) && { network: yup.string().required('Network is required') },
 		...(DidMethod.INDY === selectedLedger) && { ledger: yup.string().required('Ledger is required') },
-		...(DidMethod.WEB === selectedLedger) && { domain: yup.string().required('Domain is required for web method') }, //recent changes
+		...(DidMethod.WEB === selectedLedger) && { domain: yup.string().required('Domain is required for web method') }, 
+		...(DidMethod.POLYGON === selectedLedger) && { privatekey: yup.string().required('Private key is required') }, 
 	}
 
 	return (
@@ -279,8 +280,8 @@ const SharedAgentForm = ({
 							network: '',
 							did: '',
 							ledger: '',
-							domain: '',  //recent changes
-							privatekey: '',  //recent changes
+							domain: '',  
+							privatekey: '', 
 							label: orgName || '',
 						}}
 						validationSchema={yup.object().shape(validations)}
@@ -371,9 +372,9 @@ const SharedAgentForm = ({
 
 								{generatedKeys && formikHandlers.values.method === DidMethod.POLYGON && (<TokenWarningMessage />)}
 
-								{formikHandlers.values.method === DidMethod.POLYGON && (<SetPrivateKeyValue setPrivateKeyValue={(val:string)=>setPrivateKeyValue(val)} privateKeyValue={privateKeyValue}/>)}
+								{formikHandlers.values.method === DidMethod.POLYGON && (<SetPrivateKeyValueInput setPrivateKeyValue={(val:string)=>setPrivateKeyValue(val)} privateKeyValue={privateKeyValue} formikHandlers={formikHandlers}/>)}
 
-								{formikHandlers.values.method === DidMethod.WEB && (<SetDomainValueInput setDomainValue={(val:string)=>setDomainValue(val)} domainValue={domainValue} errors={formikHandlers.errors} touched={formikHandlers.touched}/>)} 
+								{formikHandlers.values.method === DidMethod.WEB && (<SetDomainValueInput setDomainValue={(val:string)=>setDomainValue(val)} domainValue={domainValue} formikHandlers={formikHandlers}/>)} 
 
 								{formikHandlers.values.method !== DidMethod.POLYGON && formikHandlers.values.method !== DidMethod.KEY && formikHandlers.values.method !== DidMethod.WEB && (
 										<div className="my-3 relative">
@@ -926,11 +927,11 @@ const WalletSpinup = (props: {
 
 	const submitSharedWallet = async (
 		values: ValuesShared,
-		privateKey: string,
+		privatekey: string,
 		domain: string,
 		endPoint: string,
 	) => {
-		const polygonPrivateKey = privateKey.slice(2);
+		const polygonPrivateKey = privatekey.slice(2);
 		setLoading(true);
 		const payload = {
 			keyType: values.keyType || 'ed25519',
