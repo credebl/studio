@@ -110,6 +110,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 
 			const opts = generateAuthenticationResponse?.data?.data;
 			const attResp = await startAuthentication(opts);
+			opts.allowCredentials = [] // to fix the paaskey issue(Patch on PROD)
 			const verifyAuthenticationObj = {
 				...attResp,
 				challangeId,
