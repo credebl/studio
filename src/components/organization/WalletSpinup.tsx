@@ -317,8 +317,8 @@ const SharedAgentForm = ({
 										id="method"	name="method" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
 									>
 										<option value="">Select Method</option>
-										{mappedData && Object.keys(mappedData)?.map((ledger) => (
-												<option key={ledger} value={ledger}>{ledger}</option>
+										{mappedData && Object.keys(mappedData)?.map((method) => (
+												<option key={method} value={method}>{method.charAt(0).toUpperCase() + method.slice(1)}</option>
 											))}
 									</select>
 									{formikHandlers?.errors?.method && formikHandlers?.touched?.method && (
@@ -398,7 +398,7 @@ const SharedAgentForm = ({
 												{mappedData && selectedLedger && mappedData[selectedLedger] &&
 													Object.keys(mappedData[selectedLedger])?.map(
 														(ledger) => (
-															<option key={ledger} value={ledger}>{ledger}</option>
+															<option key={ledger} value={ledger}>{ledger.charAt(0).toUpperCase() + ledger.slice(1)}</option>
 														),
 													)}
 											</select>
