@@ -114,8 +114,10 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 			setFidoUserError(generateAuthenticationResponse?.data?.error);
 
 			const opts = generateAuthenticationResponse?.data?.data;
+			if (opts) {
+				opts.allowCredentials = [] // to fix the paaskey issue(Patch on PROD)
+			}
 			const attResp = await startAuthentication(opts);
-			opts.allowCredentials = [] // to fix the paaskey issue(Patch on PROD)
 			const verifyAuthenticationObj = {
 				...attResp,
 				challangeId,
