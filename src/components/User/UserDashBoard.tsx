@@ -76,7 +76,7 @@ const UserDashBoard = () => {
 		allSearch: '',
 	});
 	const [ecoCount, setEcoCount] = useState(0);
-	const [ecosystemList, setEcosystemList] = useState([]);	
+	const [ecosystemListDetails, setEcosystemListDetails] = useState([]);	
 	const [credDefList, setCredDefList] = useState([]);
 	const [credDefCount, setCredDefCount] = useState(0);
 	const [walletData, setWalletData] = useState([]);
@@ -245,12 +245,12 @@ const UserDashBoard = () => {
 			);
 			const { data } = response as AxiosResponse;
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				setEcoCount(data?.data?.totalCount);
-				const ecosystemData = data?.data?.ecosystemDetails.filter(
+				setEcoCount(data?.data?.totalItems);
+				const ecosystemData = data?.data?.ecosystemList.filter(
 					(ecosystem: Organisation, index: number) => index < 3,
 				);
 				if (ecosystemData) {
-					setEcosystemList(ecosystemData);
+					setEcosystemListDetails(ecosystemData);
 				} else {
 					setError(response as string);
 				}
@@ -1092,9 +1092,9 @@ const UserDashBoard = () => {
 
 						{!ecoLoading ? (
 							<>
-								{ecosystemList && ecosystemList.length > 0 ? (
+								{ecosystemListDetails && ecosystemListDetails.length > 0 ? (
 									<>
-										{ecosystemList?.map((ecosystem: any) => {
+										{ecosystemListDetails?.map((ecosystem: any) => {
 											return (
 												<button
 													className="flex justify-between w-full mt-2 items-center"
@@ -1212,7 +1212,7 @@ const UserDashBoard = () => {
 											);
 										})}
 
-										{ecosystemList && ecosystemList?.length > 0 && (
+										{ecosystemListDetails && ecosystemListDetails?.length > 0 && (
 											<a
 												href="/ecosystems"
 												className="absolute bottom-0 sm:bottom-[-13px] right-0 float-right inline-flex items-center text-sm font-medium rounded-lg text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700"
