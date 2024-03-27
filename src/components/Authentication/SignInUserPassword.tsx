@@ -58,7 +58,11 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 				(element: { orgRole: { name: string } }) =>
 					permissionArray.push(element?.orgRole?.name),
 			);
-			await setToLocalStorage(storageKeys.USER_PROFILE, data?.data);
+			const { id, profileImg, firstName, email, enableEcosystem, multiEcosystemSupport } = data?.data || {}
+			const userProfile = {
+				id, profileImg, firstName, email, enableEcosystem, multiEcosystemSupport
+			}
+			await setToLocalStorage(storageKeys.USER_PROFILE, userProfile);
 			await setToLocalStorage(storageKeys.USER_EMAIL, data?.data?.email);
 			return {
 				role: role?.orgRole ?? '',
