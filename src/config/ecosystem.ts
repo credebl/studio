@@ -38,10 +38,14 @@ const getOrgId = async () => {
 	return id;
 };
 
-const getUserProfile = async () => {
-	const userProfile = await getFromLocalStorage(storageKeys.USER_PROFILE);
-	const userDetails = userProfile && (await JSON.parse(userProfile));
-	return userDetails;
+export const getUserProfile = async () => {
+	try {
+		const userProfile = await getFromLocalStorage(storageKeys.USER_PROFILE);
+		const userDetails = userProfile && (await JSON.parse(userProfile));
+		return userDetails;
+	} catch (err) {
+
+	}
 };
 
 const checkEcosystem = async (): Promise<ICheckEcosystem> => {
