@@ -248,14 +248,8 @@ export const decryptData = (value: any): string => {
     const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`
 
     try {
-
-        let decData = CryptoJS.enc.Base64.parse(value).toString(CryptoJS.enc.Utf8)
-        let bytes = CryptoJS.AES.decrypt(decData, CRYPTO_PRIVATE_KEY).toString(CryptoJS.enc.Utf8)
-        const parsedData = JSON.parse(bytes);
-        if (typeof parsedData !== 'string') {
-			return JSON.stringify(parsedData);
-		}
-        return parsedData;
+        let bytes = CryptoJS.AES.decrypt(value, CRYPTO_PRIVATE_KEY);
+        return bytes.toString(CryptoJS.enc.Utf8);
     } catch (error) {
         // Handle decryption error or invalid input
         console.error('Decryption error:', error);
