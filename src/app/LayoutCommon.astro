@@ -1,5 +1,8 @@
 ---
+import pkg from '../../package.json' assert { type: 'json' };
 import { getFromCookies } from '../api/Auth';
+import { SITE_TITLE } from './constants.js';
+import { envConfig } from '../config/envConfig';
 
 const { class: clazz, metaData } = Astro.props;
 
@@ -17,6 +20,18 @@ const refreshToken = getFromCookies(Astro.cookies, 'refresh');
 <!DOCTYPE html>
 <html lang="en">
 	<head set:html={metaData}>
+		<title>{SITE_TITLE} — v{pkg.version}</title>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="description" content={pkg.description} />
+		<link rel="icon" href={'/favicon.ico'} />
+		<link rel="sitemap" type="application/xml" href={'/sitemap-index.xml'} />
+
+		<meta name="author" content="Julian Cataldo, Zoltán Szőgyényi, Robert Tanislav" />
+		<meta name="copyright" content="MIT" />
+		<meta property="og:image" content={envConfig.PLATFORM_DATA.logo} />
+
 		<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
@@ -49,10 +64,8 @@ const refreshToken = getFromCookies(Astro.cookies, 'refresh');
 		]}
 	>
 		<slot />
-		<script id="pkg">
-			import 'flowbite';
-			import 'flowbite/dist/datepicker.js';
-		</script>
+		<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.0/flowbite.min.js"></script>
+
 		<script
 			id="global"
 			define:vars={{ initData, envKeys, sessionToken, refreshToken }}
