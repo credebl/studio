@@ -3,14 +3,13 @@ import { envConfig } from '../config/envConfig';
 import { apiRoutes } from '../config/apiRoutes';
 import { getFromLocalStorage, setToLocalStorage } from '../api/Auth';
 import { apiStatusCodes, storageKeys } from '../config/CommonConstant';
-import { pathRoutes } from '../config/pathRoutes';
 
 const instance = axios.create({
 	baseURL: envConfig.PUBLIC_BASE_URL,
 });
 
 const checkAuthentication = async (sessionCookie: string, request: AxiosRequestConfig) => {
-	const isLogin = window.location.href.endsWith(pathRoutes.auth.sinIn)
+	const isAuthPage = window.location.href.includes('/authentication/sign-in') || window.location.href.includes('/authentication/sign-up')
 	try {
 		const baseURL = envConfig.PUBLIC_BASE_URL || process.env.PUBLIC_BASE_URL;
 		const config = {
@@ -31,7 +30,7 @@ const checkAuthentication = async (sessionCookie: string, request: AxiosRequestC
 		if (
 			userData.statusCode === apiStatusCodes.API_STATUS_UNAUTHORIZED
 		) {
-			if (sessionCookie) {
+			if (sessionCookie && !isAuthPage) {
 				const { access_token, refresh_token }: any = globalThis;
 
 				await setToLocalStorage(storageKeys.TOKEN, access_token);
@@ -39,9 +38,7 @@ const checkAuthentication = async (sessionCookie: string, request: AxiosRequestC
 
 				window.location.reload();
 			} else {
-				if(!isLogin){
-					window.location.assign(pathRoutes.auth.sinIn)
-				}
+				window.location.assign('/authentication/sign-in')
 			}
 		}
 	} catch (error) { }
@@ -61,11 +58,13 @@ instance.interceptors.response.use(
 	},
 	async function (error) {
 		// Any status codes that falls outside the range of 2xx cause this function to trigger
-		const isLogin = window.location.href.endsWith(pathRoutes.auth.sinIn)
+		console.log(345345111, '/authentication/sign-in');
+		
+		const isAuthPage = window.location.href.includes('/authentication/sign-in') || window.location.href.includes('/authentication/sign-up')
 		const errorRes = error?.response;
 		const originalRequest = error.config;
 		const token = await getFromLocalStorage(storageKeys.TOKEN);
-		if (errorRes?.status === 401 && !isLogin) {
+		if (errorRes?.status === 401 && !isAuthPage) {
 			await checkAuthentication(token, originalRequest);
 		} else {
 			return Promise.reject(error);
