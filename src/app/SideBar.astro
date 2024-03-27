@@ -28,6 +28,7 @@ import { pathRoutes } from '../config/pathRoutes';
 				<ul class="pb-2 space-y-2">
 					<li class="hidden">
 						<form action="#" method="GET">
+							<input type="hidden" name="csrf_token" value={new Date().getTime().toString()}>
 							<label for="mobile-search" class="sr-only">Search</label>
 							<div class="relative">
 								<div

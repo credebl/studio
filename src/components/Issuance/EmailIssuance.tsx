@@ -401,11 +401,6 @@ const EmailIssuance = () => {
 																									.formData.length > 0 &&
 																								arrayHelpers.form.values.formData.map(
 																									(formData1, index) => {
-																										console.log(
-																											'formData1',
-																											formData1,
-																										);
-
 																										return (
 																											<div
 																												key={index}

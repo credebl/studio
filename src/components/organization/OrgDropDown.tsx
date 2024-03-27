@@ -88,12 +88,12 @@ const OrgDropDown = () => {
 									<CustomAvatar size="20" name={activeOrg?.name} round />
 								)}
 							</div>
-							<text className="ml-2 text-primary-700 dark:text-white truncate max-w-[100px]">{activeOrg?.name.length > 20 ? activeOrg?.name.substring(0, 20) + '...' : activeOrg?.name}</text>
+							<span className="ml-2 text-primary-700 dark:text-white truncate max-w-[100px]">{activeOrg?.name.length > 20 ? activeOrg?.name.substring(0, 20) + '...' : activeOrg?.name}</span>
 						</>
 						:
-						<text className='text-primary-700 dark:text-white'>
+						<span className='text-primary-700 dark:text-white'>
 							Select organization
-						</text>
+						</span>
 				}
 
 				<BiChevronDown size={25} color='primary-700' className=' text-primary-700 dark:text-white' />
@@ -133,7 +133,7 @@ const OrgDropDown = () => {
 					</ul>
 				) : (
 					<div className="text-black-100 text-sm text-center p-10">
-						<text>No organizations found</text>
+						<span>No organizations found</span>
 					</div>
 				)}
 
