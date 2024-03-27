@@ -29,6 +29,7 @@ instance.interceptors.response.use(function (response) {
 });
 
 const checkAuthentication = async (sessionCookie: string, request: AxiosRequestConfig) => {
+	const isLogin = window.location.href.endsWith(pathRoutes.auth.sinIn)
 	try {
 		const baseURL = envConfig.PUBLIC_BASE_URL || process.env.PUBLIC_BASE_URL;
 		const config = {
@@ -47,41 +48,43 @@ const checkAuthentication = async (sessionCookie: string, request: AxiosRequestC
 			message: userData.message,
 		});
 		if (
-			userData.statusCode === apiStatusCodes.API_STATUS_UNAUTHORIZED &&
-			sessionCookie
+			userData.statusCode === apiStatusCodes.API_STATUS_UNAUTHORIZED
 		) {
-			const { access_token, refresh_token }: any = globalThis;
+			if (sessionCookie) {
+				const { access_token, refresh_token }: any = globalThis;
 
-			await setToLocalStorage(storageKeys.TOKEN, access_token);
-			await setToLocalStorage(storageKeys.REFRESH_TOKEN, refresh_token);
+				await setToLocalStorage(storageKeys.TOKEN, access_token);
+				await setToLocalStorage(storageKeys.REFRESH_TOKEN, refresh_token);
 
-			window.location.reload();
+				window.location.reload();
+			} else {
+				if(!isLogin){
+					window.location.assign(pathRoutes.auth.sinIn)
+				}
+			}
 		}
-	} catch (error) {}
+	} catch (error) { }
 };
+const { PUBLIC_BASE_URL }: any = globalThis
 
-instance.interceptors.request.use(
-	async (config) => {
-		config.baseURL = globalThis.baseUrl;
-		return config;
-	},
-	(error) => Promise.reject(error),
-);
+instance.interceptors.request.use(async config => {
+	config.baseURL = PUBLIC_BASE_URL;
+	return config;
+}, error => Promise.reject(error));
 
 // Add a response interceptor
 instance.interceptors.response.use(
 	function (response) {
 		// Any status code that lie within the range of 2xx cause this function to trigger
-		// Do something with response data
 		return response;
 	},
 	async function (error) {
 		// Any status codes that falls outside the range of 2xx cause this function to trigger
-		// Do something with response error
+		const isLogin = window.location.href.endsWith(pathRoutes.auth.sinIn)
 		const errorRes = error?.response;
 		const originalRequest = error.config;
 		const token = await getFromLocalStorage(storageKeys.TOKEN);
-		if (errorRes?.status === 401) {
+		if (errorRes?.status === 401 && !isLogin) {
 			await checkAuthentication(token, originalRequest);
 		} else {
 			return Promise.reject(error);

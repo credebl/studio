@@ -146,8 +146,6 @@ const ResetPassword = () => {
 								validateOnChange
 								enableReinitialize
 								onSubmit={(values: passwordValues) => {
-									console.log('values', values);
-
 									submit(values);
 								}}
 							>
