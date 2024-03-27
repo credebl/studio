@@ -42,6 +42,7 @@ export interface OrgAgent {
     lastChangedDateTime: string
     lastChangedBy: string
     orgDid: string
+    didDocument: string
     verkey: string
     agentEndPoint: string
     agentId: any

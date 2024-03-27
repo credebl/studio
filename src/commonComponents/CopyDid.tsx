@@ -3,9 +3,10 @@ import React, { useState } from 'react'
 interface IProps {
     value: string
     className: string
+    hideValue?: boolean
 }
 
-const CopyDid = ({ value, className }: IProps) => {
+const CopyDid = ({ value, className, hideValue }: IProps) => {
     const [copied, setCopied] = useState(false)
     function copyTextVal(e: React.MouseEvent<HTMLButtonElement>) {
         e.preventDefault()
@@ -24,9 +25,12 @@ const CopyDid = ({ value, className }: IProps) => {
     }
     return (
         <>
+        {
+            !hideValue &&
             <span title={value} className={className}>
                 {value}
             </span>
+        }
             <button
                 className="shrink-0"
                 onClick={e => !copied && copyTextVal(e)}

@@ -38,14 +38,19 @@ const getOrgId = async () => {
 	return id;
 };
 
-const getUserProfile = async () => {
-	const userProfile = await getFromLocalStorage(storageKeys.USER_PROFILE);
-	const userDetails = userProfile && (await JSON.parse(userProfile));
-	return userDetails;
+export const getUserProfile = async () => {
+	try {
+		const userProfile = await getFromLocalStorage(storageKeys.USER_PROFILE);
+		const userDetails = userProfile && (await JSON.parse(userProfile));
+		return userDetails;
+	} catch (err) {
+
+	}
 };
 
 const checkEcosystem = async (): Promise<ICheckEcosystem> => {
 	await getEcosystemId();
+
 	const userData = await getUserProfile();
 	const role = await getEcosystemRole();
 
@@ -72,12 +77,11 @@ const getEcosystemId = async (): Promise<string> => {
 		try {
 			if (orgId) {
 				const { data } = (await getEcosystems(orgId)) as AxiosResponse;
-
 				if (
 					data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS &&
-					data?.data?.ecosystemDetails?.length > 0
+					data?.data?.ecosystemList?.length > 0
 				) {
-					const response = data?.data.ecosystemDetails[0];
+					const response = data?.data.ecosystemList[0];
 					const id = response?.id;
 					const role =
 						response?.ecosystemOrgs &&

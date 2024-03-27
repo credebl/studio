@@ -225,19 +225,32 @@ export const passwordEncryption = (password: string): string => {
 }
 
 export const encryptData = (value: any): string => {
-    if(typeof(value) !== 'string'){
-        value = JSON.stringify(value)
-    }
+ 
     const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`
-    const convrtedValue: string = CryptoJS.AES.encrypt(value, CRYPTO_PRIVATE_KEY).toString()
-    return convrtedValue
+
+    try {
+        if (typeof (value) !== 'string') {
+            value = JSON.stringify(value)
+        }
+        return CryptoJS.AES.encrypt(value, CRYPTO_PRIVATE_KEY).toString();
+    } catch (error) {
+        // Handle encryption error
+        console.error('Encryption error:', error);
+        return '';
+    }
 }
 
 export const decryptData = (value: any): string => {
     const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`
-    const bytes = CryptoJS.AES.decrypt(value, CRYPTO_PRIVATE_KEY)
-    var originalValue: string = bytes.toString(CryptoJS.enc.Utf8);
-    return originalValue
+
+    try {
+        let bytes = CryptoJS.AES.decrypt(value, CRYPTO_PRIVATE_KEY);
+        return bytes.toString(CryptoJS.enc.Utf8);
+    } catch (error) {
+        // Handle decryption error or invalid input
+        console.error('Decryption error:', error);
+        return '';
+    }
 }
 
 export const setToLocalStorage = async (key: string, value: any) =>{
