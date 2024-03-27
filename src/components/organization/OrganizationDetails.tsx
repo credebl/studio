@@ -10,7 +10,7 @@ import { dateConversion } from '../../utils/DateConversion';
 import DateTooltip from '../Tooltip';
 import CopyDid from '../../commonComponents/CopyDid';
 import { setToLocalStorage } from '../../api/Auth';
-import Tooltip from '../Tooltip';
+import { Tooltip } from 'flowbite-react';
 
 const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 	const { org_agents } = orgData as Organisation;
@@ -180,8 +180,7 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 					<div className="flex justify-between w-full">
 						<div className="relative flex w-full">
 							<div
-								className="mb-4 sm:mb-0 px-0 sm:px-4 py-4"
-								style={{ width: '100%' }}
+								className="mb-4 sm:mb-0 px-0 sm:px-4 py-4 w-full"
 							>
 								<h3 className="mb-1 mt-1 text-2xl font-bold text-gray-900 dark:text-white">
 									DID Document
@@ -210,16 +209,17 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 										</pre>
 									</div>
 									<div className="flex items-start mt-4 mr-4">
-										<CopyDid
-											className="block text-sm truncate"
-											value={JSON.stringify(agentData?.didDocument)}
-											hideValue={true}
-										/>
 										<Tooltip
 											content={'Copy DID Document'}
 											placement="bottom"
 											className="items-center text-center dark:text-white"
-										></Tooltip>
+										>
+											<CopyDid
+												className="block text-sm truncate"
+												value={JSON.stringify(agentData?.didDocument)}
+												hideValue={true}
+											/>
+										</Tooltip>
 									</div>
 								</div>
 							</div>

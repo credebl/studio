@@ -43,6 +43,7 @@ const SchemaList = (props: {
 	const [walletStatus, setWalletStatus] = useState(false);
 	const [totalItem, setTotalItem] = useState(0);
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
+	const [searchValue, setSearchValue] = useState('');
 
 	const getSchemaList = async (
 		schemaListAPIParameter: GetAllSchemaListParameter,
@@ -97,14 +98,18 @@ const SchemaList = (props: {
 		getSchemaList(schemaListAPIParameter, false);
 	}, [schemaListAPIParameter, allSchemaFlag]);
 
+
 	const onSearch = async (
 		event: ChangeEvent<HTMLInputElement>,
 	): Promise<void> => {
 		event.preventDefault();
+		const inputValue = event.target.value;
+        setSearchValue(inputValue);
+
 		getSchemaList(
 			{
 				...schemaListAPIParameter,
-				search: event.target.value,
+				search: inputValue,
 			},
 			false,
 		);
@@ -113,7 +118,7 @@ const SchemaList = (props: {
 			getSchemaList(
 				{
 					...schemaListAPIParameter,
-					allSearch: event.target.value,
+					allSearch: inputValue,
 				},
 				false,
 			);
@@ -169,6 +174,7 @@ const SchemaList = (props: {
 				console.log(error);
 			}
 		})();
+		setSearchValue('');
 	}, []);
 
 	const createSchemaTitle = isEcosystemData?.isEcosystemMember
@@ -191,7 +197,7 @@ const SchemaList = (props: {
 						<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white mr-auto">
 							Schemas
 						</h1>
-						<SearchInput onInputChange={onSearch} />
+						<SearchInput onInputChange={onSearch} value={searchValue}/>
 
 						<select
 							onChange={handleFilter}
