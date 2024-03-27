@@ -57,9 +57,7 @@ instance.interceptors.response.use(
 		return response;
 	},
 	async function (error) {
-		// Any status codes that falls outside the range of 2xx cause this function to trigger
-		console.log(345345111, '/authentication/sign-in');
-		
+		// Any status codes that falls outside the range of 2xx cause this function to trigger		
 		const isAuthPage = window.location.href.includes('/authentication/sign-in') || window.location.href.includes('/authentication/sign-up')
 		const errorRes = error?.response;
 		const originalRequest = error.config;
