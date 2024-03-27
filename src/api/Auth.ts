@@ -243,20 +243,23 @@ export const encryptData = (value: any): string => {
     }
 }
 
+const parsedData = (value: string) => {
+    try {
+        return JSON.parse(value);
+    } catch (error) {        
+        return value
+    } 
+}
+
 export const decryptData = (value: any): string => {
     const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`
 
     try {
 
-        let decData = CryptoJS.enc.Base64.parse(value).toString(CryptoJS.enc.Utf8)
-        let bytes = CryptoJS.AES.decrypt(decData, CRYPTO_PRIVATE_KEY).toString(CryptoJS.enc.Utf8)
-        
-        try {
-            bytes = JSON.parse(bytes);
-        } catch (error) {
-            
-        }
-
+        const decData = CryptoJS.enc.Base64.parse(value).toString(CryptoJS.enc.Utf8)
+        let bytes = CryptoJS.AES.decrypt(decData, CRYPTO_PRIVATE_KEY).toString(CryptoJS.enc.Utf8)        
+        bytes = parsedData(bytes);
+             
         if (typeof bytes !== 'string') {
 			return JSON.stringify(bytes);
 		}
