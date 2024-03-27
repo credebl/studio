@@ -24,7 +24,7 @@ const EcosystemProfileCard = ({getEndorsementListData}:IEndorsement) => {
             const id = await getFromLocalStorage(storageKeys.ORG_ID);
             const ecosystemId = ecoId || await getFromLocalStorage(storageKeys.ECOSYSTEM_ID);
             if (id) {
-                const response = await getEcosystems(id, 1, 10, '');
+                const response = await getEcosystems(id);
                 setLoading(false)
                 const { data } = response as AxiosResponse;
                 if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {									

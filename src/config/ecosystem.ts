@@ -72,7 +72,7 @@ const getEcosystemId = async (): Promise<string> => {
 	if (!ecoId || !ecoRole) {
 		try {
 			if (orgId) {
-				const { data } = (await getEcosystems(orgId, 1, 10, '')) as AxiosResponse;
+				const { data } = (await getEcosystems(orgId)) as AxiosResponse;
 				if (
 					data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS &&
 					data?.data?.ecosystemList?.length > 0
