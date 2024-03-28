@@ -1,5 +1,6 @@
 import React from 'react'
 import { Helmet } from "react-helmet";
+import { envConfig } from '../config/envConfig';
 
 interface IProps {
 	generator: string;
@@ -22,7 +23,7 @@ const HelmetHead = ({ generator, desc, icon, sitemap, siteTitle, version }: IPro
 
 		<meta name="author" content="Julian Cataldo, Zoltán Szőgyényi, Robert Tanislav" />
 		<meta name="copyright" content="MIT" />
-		<meta property="og:image" content="https://credebl.id/images/CREDEBL_ICON.png" />
+		<meta property="og:image" content={envConfig.PLATFORM_DATA.logo} />
 	</Helmet>
 )
 

@@ -188,11 +188,11 @@ const EndorsementPopup = (props: {
 									>
 										<path
 											d="M20.4848 3.51515C18.2172 1.24747 15.2071 0 12 0C8.79293 0 5.78283 1.24747 3.51515 3.51515C1.24747 5.78283 0 8.79293 0 12C0 15.2071 1.24747 18.2172 3.51515 20.4848C5.78283 22.7525 8.79293 24 12 24C15.2071 24 18.2172 22.7525 20.4848 20.4848C22.7525 18.2172 24 15.2071 24 12C24 8.79293 22.7525 5.78283 20.4848 3.51515ZM19.5202 19.5202C17.5101 21.5303 14.8384 22.6364 12 22.6364C9.16162 22.6364 6.4899 21.5303 4.4798 19.5202C0.333333 15.3737 0.333333 8.62626 4.4798 4.4798C6.4899 2.4697 9.16162 1.36364 12 1.36364C14.8384 1.36364 17.5101 2.4697 19.5202 4.4798C23.6667 8.62626 23.6667 15.3737 19.5202 19.5202Z"
-											fill="#1F4EAD"
+											fill="currentColor"
 										/>
 										<path
 											d="M17.2882 6.71248C17.0206 6.4448 16.5913 6.4448 16.3236 6.71248L12.0004 11.0357L7.67712 6.71248C7.40945 6.4448 6.98015 6.4448 6.71248 6.71248C6.4448 6.98015 6.4448 7.40945 6.71248 7.67712L11.0357 12.0004L6.71248 16.3236C6.4448 16.5913 6.4448 17.0206 6.71248 17.2882C6.84379 17.4195 7.02056 17.4903 7.19227 17.4903C7.36399 17.4903 7.54076 17.4246 7.67207 17.2882L11.9953 12.965L16.3185 17.2882C16.4499 17.4195 16.6266 17.4903 16.7983 17.4903C16.9751 17.4903 17.1468 17.4246 17.2781 17.2882C17.5458 17.0206 17.5458 16.5913 17.2781 16.3236L12.965 12.0004L17.2882 7.67712C17.5559 7.40945 17.5559 6.98015 17.2882 6.71248Z"
-											fill="#1F4EAD"
+											fill="currentColor"
 										/>
 									</svg>
 									<span className="ml-2 mr-2">Decline</span>
@@ -202,13 +202,13 @@ const EndorsementPopup = (props: {
 								isProcessing={loading}
 								color="bg-primary-800"
 								disabled={loading || !isAccess || loadingReject}
-								className={`${isAccess ? "hover:bg-primary-800 dark:hover:text-primary-700 dark:hover:bg-primary-700" : ""} text-base font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:focus:ring-primary-800 mr-3`}
+								className={`${isAccess ? "hover:bg-secondary-700 hover:!bg-secondary-700 dark:hover:text-primary-700 dark:hover:bg-secondary-700" : ""} text-base font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:focus:ring-primary-800 mr-3`}
 								onClick={() => {
 									SignEndorsement(props.endorsementData.id);
 								}}
 							>
 								<svg
-									className="h-8 w-8 text-white"
+									className="h-8 w-8"
 									fill="none"
 									viewBox="0 0 24 24"
 									stroke="currentColor"

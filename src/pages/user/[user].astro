@@ -1,4 +1,5 @@
 ---
+import LogoFile from '../../commonComponents/LogoFile';
 import CustomAvatar from '../../components/Avatar';
 import { pathRoutes } from '../../config/pathRoutes';
 
@@ -16,15 +17,7 @@ const userData = data?.data;
 				<div class="flex px-3 py-2 justify-start">
 					<div class="flex items-center justify-start">
 						<a href={pathRoutes.users.dashboard} class="flex ml-2 md:mr-24">
-							<img
-								src="/images/CREDEBL_ICON.png"
-								class="h-8 mr-3"
-								alt="CREDEBL Logo"
-							/>
-							<span
-								class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white"
-								>CREDEBL</span
-							>
+							<LogoFile />
 						</a>
 					</div>
 				</div>

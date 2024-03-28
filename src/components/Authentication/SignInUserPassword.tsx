@@ -56,7 +56,11 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 				(element: { orgRole: { name: string } }) =>
 					permissionArray.push(element?.orgRole?.name),
 			);
-			await setToLocalStorage(storageKeys.USER_PROFILE, data?.data);
+			const { id, profileImg, firstName, email, enableEcosystem, multiEcosystemSupport } = data?.data || {}
+			const userProfile = {
+				id, profileImg, firstName, email, enableEcosystem, multiEcosystemSupport
+			}
+			await setToLocalStorage(storageKeys.USER_PROFILE, userProfile);
 			await setToLocalStorage(storageKeys.USER_EMAIL, data?.data?.email);
 			return {
 				role: role?.orgRole ?? '',
@@ -83,6 +87,7 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 				setLoading(false);
 			} else {
 				await setToLocalStorage(storageKeys.TOKEN, data?.data?.access_token);
+				await setToLocalStorage(storageKeys.REFRESH_TOKEN, data?.data?.refresh_token);
 				const userRole = await getUserDetails(data?.data?.access_token);
 
 				const userPayload = {

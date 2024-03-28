@@ -3,11 +3,11 @@ import Code from 'astro/components/Code.astro';
 
 import Confettis from '../components/ConfettiLauncher.astro';
 
-import AstroLogo from '../assets/astro-icon.svg?raw';
 import CREDEBLLogo from '../assets/credebl-logo.png?raw';
 
 import * as readMe from '../../README.md';
 import { SITE_TITLE } from '../app/constants.js';
+import { envConfig } from '../config/envConfig';
 ---
 
 <div
@@ -30,9 +30,9 @@ import { SITE_TITLE } from '../app/constants.js';
 				Hello there…
 				<br />meet <a
 					rel="noopener nofollow"
-					href="https://credebl.id"
+					href={envConfig.PLATFORM_DATA.webUrl}
 					class="font-bold text-blue-600 dark:text-blue-500 no-underline"
-					>CREDEBL</a
+					>{envConfig.PLATFORM_DATA.name}</a
 				>!
 			</p>
 

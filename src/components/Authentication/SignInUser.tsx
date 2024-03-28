@@ -9,6 +9,7 @@ import RegistrationSuccess from './RegistrationSuccess';
 import SignInUserPasskey from './SignInUserPasskey';
 import { storageKeys } from '../../config/CommonConstant';
 import FooterBar from './FooterBar';
+import { envConfig } from '../../config/envConfig';
 
 interface emailValue {
 	email: string | null;
@@ -28,7 +29,7 @@ const SignInUser = () => {
 	const [userLoginEmail, setUserLoginEmail] = useState<string | null>(null);
 	const nextButtonRef = useRef<HTMLButtonElement | null>(null);
 
-
+	const successMessage = `Congratulations!! 🎉 You have successfully registered on ${envConfig.PLATFORM_DATA.name} 🚀`
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -62,11 +63,11 @@ const SignInUser = () => {
 					loginMethod === 'password'
 				) {
 					setSuccess(
-						'Congratulations!! 🎉 You have successfully registered on CREDEBL 🚀',
+						successMessage,
 					);
 				} else if (showMsg === 'true') {
 					setSuccess(
-						'Congratulations!! 🎉 You have successfully registered on CREDEBL 🚀',
+						successMessage,
 					);
 				} else if (
 					signUpStatus === 'true' &&
@@ -86,18 +87,11 @@ const SignInUser = () => {
 
 	const saveEmail = async (values: emailValue) => {
 		setEmail(values);
-		await removeFromLocalStorage(storageKeys.ORG_DETAILS);
-		await removeFromLocalStorage(storageKeys.ORG_INFO);
-		await removeFromLocalStorage(storageKeys.CRED_DEF_ID);
-		await removeFromLocalStorage(storageKeys.SCHEMA_ATTR);
-		await removeFromLocalStorage(storageKeys.LEDGER_ID);
-		await removeFromLocalStorage(storageKeys.TOKEN)
-		await removeFromLocalStorage(storageKeys.USER_EMAIL)
-		await removeFromLocalStorage(storageKeys.ORG_ID)
-		await removeFromLocalStorage(storageKeys.ORG_ROLES)
-		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ID)
-		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ROLE)
-		await removeFromLocalStorage(storageKeys.USER_PROFILE)
+
+		for await (const value of Object.values(storageKeys)){
+			await removeFromLocalStorage(value)
+		}
+		
 		setCurrentComponent('password');
 		await setToLocalStorage(storageKeys.LOGIN_USER_EMAIL, values.email);
 		setIsPasskeySuccess(true);

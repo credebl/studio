@@ -66,11 +66,11 @@ export const updateEcosystem = async (dataPayload: CreateEcosystemPayload) => {
 
 export const getEcosystems = async (
 	orgId: string,
-	pageNumber?: number,
-	pageSize?: number,
+	pageNumber: number = 1,
+	pageSize: number = 10,
 	search = '',
 ) => {
-	const url = `${apiRoutes.Ecosystem.root}/${orgId}`;
+	const url = `${apiRoutes.Ecosystem.root}/${orgId}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`;
 	const axiosPayload = {
 		url,
 		config: await getHeaderConfigs(),

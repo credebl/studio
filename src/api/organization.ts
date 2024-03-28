@@ -190,8 +190,8 @@ export const spinupSharedAgent = async (data: object, orgId: string) => {
 };
 
 export const getOrganizationRoles = async () => {
-	const url = `${apiRoutes.organizations.orgRoles}`;
-
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+	const url = `${apiRoutes.organizations.root}/${orgId}/roles`;
 	const token = await getFromLocalStorage(storageKeys.TOKEN);
 
 	const config = {

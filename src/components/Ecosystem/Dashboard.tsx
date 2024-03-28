@@ -67,7 +67,6 @@ const Dashboard = () => {
 		useState(false);
 	const [orgId, setOrgId] = useState('');
 	const [isOrgModal, setIsOrgModal] = useState(false);
-console.log("isEcosystemLead",ecosystemDetails,isEcosystemLead);
 
 	const createEcosystemModel = () => {
 		setOpenModal(true);
@@ -124,7 +123,7 @@ console.log("isEcosystemLead",ecosystemDetails,isEcosystemLead);
 			const response = await getEcosystems(id);
 			const { data } = response as AxiosResponse;
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				const ecosystemData = data?.data?.ecosystemDetails?.find(
+				const ecosystemData = data?.data?.ecosystemList?.find(
 					(item: { id: string }) => item.id === ecosystemId,
 				);
 				if (ecosystemData) {
@@ -166,7 +165,6 @@ console.log("isEcosystemLead",ecosystemDetails,isEcosystemLead);
 
 		if (ecosystemId && orgId) {
 			const response = await getEcosystemDashboard(ecosystemId, orgId);
-
 			const { data } = response as AxiosResponse;
 
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
