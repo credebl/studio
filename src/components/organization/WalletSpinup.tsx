@@ -245,7 +245,7 @@ const SharedAgentForm = ({
 		...(DidMethod.INDY === selectedLedger || DidMethod.POLYGON === selectedLedger) && { network: yup.string().required('Network is required') },
 		...(DidMethod.INDY === selectedLedger) && { ledger: yup.string().required('Ledger is required') },
 		...(DidMethod.WEB === selectedLedger) && { domain: yup.string().required('Domain is required for web method') }, 
-		...(DidMethod.POLYGON === selectedLedger) && { privatekey: yup.string().required('Private key is required') }, 
+		...(DidMethod.POLYGON === selectedLedger) && { privatekey: yup.string().required('Private key is required').trim().length(64, 'Private key must be exactly 64 characters long') }, 
 	}
 
 	return (
@@ -340,7 +340,7 @@ const SharedAgentForm = ({
 											<div className="flex ">
 												<CopyDid
 													className="align-center block text-sm text-gray-900 dark:text-white truncate"
-													value={generatedKeys?.privateKey}
+													value={generatedKeys?.privateKey.slice(2)}
 												/>
 											</div>
 										</p>
@@ -599,12 +599,12 @@ const SharedAgentForm = ({
 
 							{formikHandlers.values.method === DidMethod.POLYGON && (
 							
-								<SetPrivateKeyValue setPrivateKeyValue={(val:string)=>setPrivateKeyValue(val)} privateKeyValue={privateKeyValue}/>
+								<SetPrivateKeyValueInput setPrivateKeyValue={(val:string)=>setPrivateKeyValue(val)} privateKeyValue={privateKeyValue} formikHandlers={formikHandlers}/>
 							)}
 
 							{formikHandlers.values.method === DidMethod.WEB && (
 
-								<SetDomainValueInput setDomainValue={(val:string)=>setDomainValue(val)} domainValue={domainValue}/>
+								<SetDomainValueInput setDomainValue={(val:string)=>setDomainValue(val)} domainValue={domainValue} formikHandlers={formikHandlers}/>
 
 							)}
 
@@ -931,14 +931,13 @@ const WalletSpinup = (props: {
 		domain: string,
 		endPoint: string,
 	) => {
-		const polygonPrivateKey = privatekey.slice(2);
 		setLoading(true);
 		const payload = {
 			keyType: values.keyType || 'ed25519',
 			method: values.method || '',
 			ledger: values.method === DidMethod.INDY ? values.ledger : '',
 			label: values.label,
-			privatekey: values.method === DidMethod.POLYGON ? polygonPrivateKey : '',
+			privatekey: values.method === DidMethod.POLYGON ? privatekey : '',
 			seed: values.method === DidMethod.POLYGON ? '' : values.seed || seeds,
 			network:
 				values.method === DidMethod.POLYGON
