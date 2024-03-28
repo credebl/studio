@@ -3,18 +3,10 @@ import { storageKeys } from '../../config/CommonConstant';
 
 const SignOutButton = () => {
 	const signOut = async () => {
-		await removeFromLocalStorage(storageKeys.TOKEN);
-		await removeFromLocalStorage(storageKeys.ORG_INFO);
-		await removeFromLocalStorage(storageKeys.USER_EMAIL);
-		await removeFromLocalStorage(storageKeys.ORG_ID);
-		await removeFromLocalStorage(storageKeys.ORG_ROLES);
-		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ID);
-		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ROLE);
-		await removeFromLocalStorage(storageKeys.USER_PROFILE);
-		await removeFromLocalStorage(storageKeys.ORG_DETAILS);
-		await removeFromLocalStorage(storageKeys.CRED_DEF_ID);
-		await removeFromLocalStorage(storageKeys.SCHEMA_ATTR);
-		await removeFromLocalStorage(storageKeys.LEDGER_ID);
+		
+		for await (const value of Object.values(storageKeys)){
+			await removeFromLocalStorage(value)
+		}
 		
 		const response = await fetch('/api/auth/signout', {
 			method: 'GET',

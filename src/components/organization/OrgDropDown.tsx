@@ -33,10 +33,12 @@ const OrgDropDown = () => {
 	}, [input]);
 
 	const getAllorgs = async () => {
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		const response = await getOrganizations(1, 20, input);
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			setOrgList(data?.data?.organizations);
+			const removeCurrentOrgFromList = data?.data?.organizations?.length > 0 && data?.data?.organizations.filter((item: Organisation) => item.id !== orgId);
+			setOrgList(removeCurrentOrgFromList);
 			handleActiveOrg(data?.data?.organizations);
 		}
 	};
