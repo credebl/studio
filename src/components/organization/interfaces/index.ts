@@ -185,3 +185,11 @@ export interface EditOrgdetailsModalProps {
 	onEditSucess?: () => void;
 	orgData: Organisation | null;
 }
+export interface IOrgInfo {
+	userOrgRoles: any[];
+	name: string;
+	logoUrl: string;
+    description: string;
+    id: string;
+    roles: string[]
+}
