@@ -10,13 +10,13 @@ import type { AxiosResponse } from 'axios';
 import { BiChevronDown } from 'react-icons/bi';
 import { AiOutlineSearch } from 'react-icons/ai';
 import CustomAvatar from '../Avatar';
-import type { Iorg, Organisation } from './interfaces';
+import type { IOrgInfo, Organisation } from './interfaces';
 import { getOrganizations } from '../../api/organization';
 import { pathRoutes } from '../../config/pathRoutes';
 
 const OrgDropDown = () => {
 	const [orgList, setOrgList] = useState<Organisation[]>([]);
-	const [activeOrg, setActiveOrg] = useState<Iorg>();
+	const [activeOrg, setActiveOrg] = useState<IOrgInfo>();
 	const [input, setInput] = useState('');
 
 	useEffect(() => {
@@ -50,35 +50,50 @@ const OrgDropDown = () => {
 		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ROLE);
 
 		await setOrgRoleDetails(org);
-		await setToLocalStorage(storageKeys.ORG_INFO, org);
+		const roles: string[] = org?.userOrgRoles?.length > 0 ? org?.userOrgRoles?.map(
+			(role) => role?.orgRole?.name,
+		) : [];
+		const { id, name, description, logoUrl } = org || {};
+		const orgInfo = {
+			name, description, logoUrl, roles, id
+		}
+		await setToLocalStorage(storageKeys.ORG_INFO, orgInfo);
 		window.location.href = pathRoutes.organizations.dashboard;
 	};
 
 	const setOrgRoleDetails = async (org: Organisation) => {
+		
 		await setToLocalStorage(storageKeys.ORG_ID, org?.id?.toString());
-		const roles: string[] = org?.userOrgRoles.map(
+		const roles: string[] = org?.userOrgRoles?.length > 0 ? org?.userOrgRoles?.map(
 			(role) => role?.orgRole?.name,
-		);
+		) : [];
 		await setToLocalStorage(storageKeys.ORG_ROLES, roles?.toString());
 	};
 
-	const handleActiveOrg = async (organizations: Iorg[]) => {
-		let activeOrg;
-		activeOrg = await getFromLocalStorage(storageKeys.ORG_INFO);
-		if (activeOrg) {
-			setActiveOrg(JSON.parse(activeOrg));
-		} else {
-			activeOrg = organizations?.[0];
-			await setToLocalStorage(storageKeys.ORG_INFO, organizations[0]);
+	const handleActiveOrg = async (organizations: IOrgInfo[]) => {
+		let activeOrgDetails;
+		const orgInfoDetails = await getFromLocalStorage(storageKeys.ORG_INFO);
+		activeOrgDetails = orgInfoDetails ? JSON.parse(orgInfoDetails) : null;
 
-			setActiveOrg(activeOrg);
-			const roles: string[] = activeOrg?.userOrgRoles.map(
+		if (activeOrgDetails && Object.keys(activeOrgDetails)?.length > 0) {
+			setActiveOrg(activeOrgDetails);
+		} else {
+			activeOrgDetails = organizations?.[0];
+			const roles: string[] = activeOrgDetails?.userOrgRoles.map(
 				(role: { orgRole: { name: string } }) => role.orgRole.name,
 			);
+			const { id, name, description, logoUrl } = organizations[0] || {};
+			const orgInfo = {
+				id, name, description, logoUrl, roles
+			}
+			await setToLocalStorage(storageKeys.ORG_INFO, orgInfo);
+
+			setActiveOrg(activeOrgDetails);
+
 			await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
 		}
-		if (activeOrg) {
-			await setOrgRoleDetails(JSON.parse(activeOrg));
+		if (activeOrgDetails) {
+			await setOrgRoleDetails(activeOrgDetails);
 		}
 	};
 
@@ -136,7 +151,7 @@ const OrgDropDown = () => {
 							/>
 							<input
 								type="text"
-								placeholder="Enter organization name"
+								placeholder="Search organization"
 								onChange={(e) => setInput(e.target.value)}
 								className="placeholder:text-gray-500 dark:placeholder:text-white p-2 w-full outline-none dark:bg-gray-600"
 							/>

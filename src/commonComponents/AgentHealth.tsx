@@ -15,18 +15,18 @@ interface Agent {
 const AgentHealth = () => {
 	const [agentHealthDetails, setAgentHealthDetails] = useState<Agent>();
 	const [loader, setLoader] = useState<boolean>(true);
-	const [checkOrgExist, setCheckOrgExist] = useState<number>(0);
 
 	useEffect(() => {
+		(async () => {
+			const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
 		setTimeout(() => {
-			getAgentHealthDetails();
-		}, 2000);
+			getAgentHealthDetails(organizationId);
+		}, 1500);
+		})()
 	}, []);
 
-	const getAgentHealthDetails = async () => {
-		try {
-			const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
-			setCheckOrgExist(Number(organizationId));
+	const getAgentHealthDetails = async (organizationId: string) => {
+		try {			
 			if (organizationId) {
 				const agentData = await getAgentHealth(organizationId);
 				const { data } = agentData as AxiosResponse;

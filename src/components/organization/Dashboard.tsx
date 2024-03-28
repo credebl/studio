@@ -48,7 +48,7 @@ const Dashboard = () => {
 	const fetchOrganizationDetails = async () => {
 		setLoading(true);
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-		const orgInfo = await getFromLocalStorage(storageKeys.ORG_INFO);
+		const orgInfoData = await getFromLocalStorage(storageKeys.ORG_INFO);
 		const response = await getOrganizationById(orgId as string);
 		const { data } = response as AxiosResponse;
 
@@ -57,11 +57,16 @@ const Dashboard = () => {
 				setWalletStatus(true);
 			}
 			setOrgData(data?.data);
-			const organizationData = JSON.parse(orgInfo);
-			organizationData.name = data?.data?.name;
-			organizationData.description = data?.data?.description;
-			organizationData.logoUrl = data?.data?.logoUrl;
-			await setToLocalStorage(storageKeys.ORG_INFO, organizationData);
+			const organizationData = orgInfoData ? JSON.parse(orgInfoData) : {};
+			const {id, name, description, logoUrl} = data?.data || {};
+			const orgInfo = {
+				...organizationData,
+				...id && { id },
+				...name && { name },
+				...description && { description },
+				...logoUrl && { logoUrl }
+			}
+			await setToLocalStorage(storageKeys.ORG_INFO, orgInfo);
 		} else {
 			setFailure(response as string);
 		}
@@ -71,13 +76,16 @@ const Dashboard = () => {
 	const fetchOrganizationDashboard = async () => {
 		setLoading(true);
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-		const response = await getOrgDashboard(orgId as string);
-		const { data } = response as AxiosResponse;
+		if(orgId){
+			const response = await getOrgDashboard(orgId as string);
+			const { data } = response as AxiosResponse;
+			setLoading(false);
 
-		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			setOrgDashboard(data?.data);
-		} else {
-			setFailure(response as string);
+			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+				setOrgDashboard(data?.data);
+			} else {
+				setFailure(response as string);
+			}
 		}
 		setLoading(false);
 	};
@@ -249,7 +257,7 @@ const Dashboard = () => {
 					(userRoles.includes(Roles.OWNER) ||
 						userRoles.includes(Roles.ADMIN)) && (
 						<WalletSpinup
-							orgName={orgData?.name}
+							orgName={orgData?.name || ''}
 							setWalletSpinupStatus={(flag: boolean) =>
 								setWalletSpinupStatus(flag)
 							}
