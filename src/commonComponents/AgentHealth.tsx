@@ -19,7 +19,7 @@ const AgentHealth = () => {
 	useEffect(() => {
 		setTimeout(() => {
 			getAgentHealthDetails();
-		}, 3000);
+		}, 4000);
 	}, []);
 
 	const getAgentHealthDetails = async () => {
