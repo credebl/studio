@@ -66,8 +66,8 @@ const refreshToken = getFromCookies(Astro.cookies, 'refresh');
 				globalThis[item] = initData[item];
 			});
 
-			globalThis.access_token = sessionToken;
-			globalThis.refresh_token = refreshToken;
+			globalThis.access_token = sessionToken || '';
+			globalThis.refresh_token = refreshToken || '';
 
 		</script>
 

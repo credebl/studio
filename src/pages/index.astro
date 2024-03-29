@@ -2,8 +2,11 @@
 import LayoutCommon from '../app/LayoutCommon.astro';
 import PublicNavbar from '../commonComponents/PublicNavbar.astro';
 import { envConfig } from '../config/envConfig';
+import Deno from '@astrojs/deno';
 const cookie = Astro.cookies.get("platform-data").value;
-const env = import.meta.env || process.env;
+const env = { ...import.meta.env, ...process.env};
+
+console.log("Landing page-env",env);
 
 ---
 
