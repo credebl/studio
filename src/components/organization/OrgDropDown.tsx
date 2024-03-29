@@ -70,7 +70,7 @@ const OrgDropDown = () => {
 		await setToLocalStorage(storageKeys.ORG_ROLES, roles?.toString());
 	};
 
-	const handleActiveOrg = async (organizations: IOrgInfo[]) => {
+	const handleActiveOrg = async (organizations: Organisation[]) => {
 		let activeOrgDetails;
 		const orgInfoDetails = await getFromLocalStorage(storageKeys.ORG_INFO);
 		activeOrgDetails = orgInfoDetails ? JSON.parse(orgInfoDetails) : null;

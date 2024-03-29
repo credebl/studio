@@ -186,7 +186,6 @@ export interface EditOrgdetailsModalProps {
 	orgData: Organisation | null;
 }
 export interface IOrgInfo {
-	userOrgRoles: any[];
 	name: string;
 	logoUrl: string;
     description: string;
