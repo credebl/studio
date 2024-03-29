@@ -51,7 +51,7 @@ const Dashboard = () => {
 		const orgInfoData = await getFromLocalStorage(storageKeys.ORG_INFO);
 		const response = await getOrganizationById(orgId as string);
 		const { data } = response as AxiosResponse;
-
+		setLoading(false)
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			if (data?.data?.org_agents && data?.data?.org_agents?.length > 0) {
 				setWalletStatus(true);
@@ -251,19 +251,20 @@ const Dashboard = () => {
 					<div className="flex items-center justify-center m-4">
 						<CustomSpinner />
 					</div>
-				) : walletStatus === true ? (
-					<OrganizationDetails orgData={orgData} />
 				) : (
-					(userRoles.includes(Roles.OWNER) ||
-						userRoles.includes(Roles.ADMIN)) && (
-						<WalletSpinup
-							orgName={orgData?.name || ''}
-							setWalletSpinupStatus={(flag: boolean) =>
-								setWalletSpinupStatus(flag)
-							}
-						/>
-					)
-				)}
+					walletStatus === true ? (
+						<OrganizationDetails orgData={orgData} />
+					) : (
+						(userRoles.includes(Roles.OWNER) ||
+							userRoles.includes(Roles.ADMIN)) && (
+							<WalletSpinup
+								orgName={orgData?.name || ''}
+								setWalletSpinupStatus={(flag: boolean) =>
+									setWalletSpinupStatus(flag)
+								}
+							/>
+						)
+					))}
 			</div>
 		</div>
 	);

@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 
 import CustomAvatar from '../Avatar'
-import type { UserProfile } from "./interfaces";
+import type { IUserProfile } from "./interfaces";
 import { getFromLocalStorage } from "../../api/Auth";
 import { storageKeys } from "../../config/CommonConstant";
 
 const DisplayProfileImg = () => {
-    const [userObj, setUserObj] = useState<UserProfile | null>(null)
+    const [userObj, setUserObj] = useState<IUserProfile | null>(null)
     const getUserDetails = async () => {
         const userProfile = await getFromLocalStorage(storageKeys.USER_PROFILE)
         const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES)
