@@ -7,9 +7,7 @@ interface SpinnerProps {
     hideMessage?: boolean
 }
 
-const CustomSpinner = ({color, message, size, hideMessage}: SpinnerProps) => {
-
-    return (
+const CustomSpinner = ({color, message, size, hideMessage}: SpinnerProps) => (
         <span className='text-base font-normal text-gray-600 dark:text-gray-400'>
             <Spinner
                 className='mr-2'
@@ -17,11 +15,10 @@ const CustomSpinner = ({color, message, size, hideMessage}: SpinnerProps) => {
                 size={size ?? 'md' }
 
             />
-            {hideMessage ? message : ' Loading...'}
-           
+            {
+                !hideMessage && <span>{message ?? ' Loading...'}</span>
+            }
         </span>
     )
-
-}
 
 export default CustomSpinner
