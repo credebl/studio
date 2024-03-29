@@ -14,8 +14,7 @@ import { Roles } from '../../utils/enums/roles';
 import schemaCard from '../../assets/schema-icon.svg';
 import userCard from '../../assets/users-icon.svg';
 import WalletSpinup from './WalletSpinup';
-import { getFromLocalStorage } from '../../api/Auth';
-import { getOrganizationById } from '../../api/organization';
+import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { pathRoutes } from '../../config/pathRoutes';
 import DashboardCard from '../../commonComponents/DashboardCard';
 import { AlertComponent } from '../AlertComponent';
@@ -49,14 +48,25 @@ const Dashboard = () => {
 	const fetchOrganizationDetails = async () => {
 		setLoading(true);
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		const orgInfoData = await getFromLocalStorage(storageKeys.ORG_INFO);
 		const response = await getOrganizationById(orgId as string);
 		const { data } = response as AxiosResponse;
-
+		setLoading(false)
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			if (data?.data?.org_agents && data?.data?.org_agents?.length > 0) {
 				setWalletStatus(true);
 			}
 			setOrgData(data?.data);
+			const organizationData = orgInfoData ? JSON.parse(orgInfoData) : {};
+			const {id, name, description, logoUrl} = data?.data || {};
+			const orgInfo = {
+				...organizationData,
+				...id && { id },
+				...name && { name },
+				...description && { description },
+				...logoUrl && { logoUrl }
+			}
+			await setToLocalStorage(storageKeys.ORG_INFO, orgInfo);
 		} else {
 			setFailure(response as string);
 		}
@@ -66,13 +76,16 @@ const Dashboard = () => {
 	const fetchOrganizationDashboard = async () => {
 		setLoading(true);
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-		const response = await getOrgDashboard(orgId as string);
-		const { data } = response as AxiosResponse;
+		if(orgId){
+			const response = await getOrgDashboard(orgId as string);
+			const { data } = response as AxiosResponse;
+			setLoading(false);
 
-		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			setOrgDashboard(data?.data);
-		} else {
-			setFailure(response as string);
+			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+				setOrgDashboard(data?.data);
+			} else {
+				setFailure(response as string);
+			}
 		}
 		setLoading(false);
 	};
@@ -85,6 +98,7 @@ const Dashboard = () => {
 	const handleEditModalClose = () => {
 		setOpenModal(false);
 		fetchOrganizationDetails();
+		window.location.reload();
 	};
 
 	useEffect(() => {
@@ -124,7 +138,7 @@ const Dashboard = () => {
 			<div className="mt-4 w-full">
 				<div className="flex flex-wrap w-full items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex-row sm:items-center sm:w-full sm:p-6 dark:border-gray-700 dark:bg-gray-800">
 					<div className="relative w-full">
-						<div className="items-center block sm:flex flex-wrap break-normal w-full space-x-4 justify-center sm:justify-start">
+						<div className="items-center block sm:flex flex-wrap break-normal w-full sm:space-x-4 justify-center sm:justify-start">
 							<div>
 								{orgData?.logoUrl ? (
 									<CustomAvatar size="80" src={orgData?.logoUrl} />
@@ -132,7 +146,7 @@ const Dashboard = () => {
 									<CustomAvatar size="90" name={orgData?.name} />
 								)}
 							</div>
-							<div className="sm:w-100/12rem">
+							<div className="sm:w-100/12rem mt-2">
 								{orgData ? (
 									<div className="break-normal">
 										<h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
@@ -237,19 +251,20 @@ const Dashboard = () => {
 					<div className="flex items-center justify-center m-4">
 						<CustomSpinner />
 					</div>
-				) : walletStatus === true ? (
-					<OrganizationDetails orgData={orgData} />
 				) : (
-					(userRoles.includes(Roles.OWNER) ||
-						userRoles.includes(Roles.ADMIN)) && (
-						<WalletSpinup
-							orgName={orgData?.name}
-							setWalletSpinupStatus={(flag: boolean) =>
-								setWalletSpinupStatus(flag)
-							}
-						/>
-					)
-				)}
+					walletStatus === true ? (
+						<OrganizationDetails orgData={orgData} />
+					) : (
+						(userRoles.includes(Roles.OWNER) ||
+							userRoles.includes(Roles.ADMIN)) && (
+							<WalletSpinup
+								orgName={orgData?.name || ''}
+								setWalletSpinupStatus={(flag: boolean) =>
+									setWalletSpinupStatus(flag)
+								}
+							/>
+						)
+					))}
 			</div>
 		</div>
 	);

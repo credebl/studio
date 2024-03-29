@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState} from "react";
-import type { UserProfile } from "./interfaces";
+import type { IUserProfile } from "./interfaces";
 import { getFromLocalStorage, setToLocalStorage, updateUserProfile } from "../../api/Auth";
 import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, imageSizeAccepted, storageKeys } from "../../config/CommonConstant";
 import type { AxiosResponse } from "axios";
@@ -23,8 +23,8 @@ interface ILogoImage {
 }
 interface EditUserProfileProps {
   toggleEditProfile: () => void;
-  userProfileInfo: UserProfile | null;
-  updateProfile: (updatedProfile: UserProfile) => void;
+  userProfileInfo: IUserProfile | null;
+  updateProfile: (updatedProfile: IUserProfile) => void;
 }
 
 const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: EditUserProfileProps) => {
