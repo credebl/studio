@@ -210,3 +210,8 @@ ul.timelinestatic {
 .w-issuer-id {
     width: calc(100% - 5.6rem);
 }
+
+.min-h-login {
+	min-height: calc(100vh - 6rem);
+	margin-top: 3rem;
+}

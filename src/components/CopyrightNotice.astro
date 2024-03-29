@@ -2,9 +2,10 @@
 import { envConfig } from "../config/envConfig"
 
 const copyright = envConfig.PLATFORM_DATA.poweredBy
+const { classes } = Astro.props;
 ---
 
-<p class="my-10 text-sm text-center text-gray-500">
+<p class={`${classes ? classes : "my-10 text-center"} text-sm text-gray-500`}>
 	&copy; 2019 - {new Date().getFullYear()}
 	<a class="hover:underline" target="_blank"
 		>{copyright}</a

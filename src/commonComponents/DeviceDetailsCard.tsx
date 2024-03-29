@@ -79,9 +79,9 @@ const DeviceDetails = (props: { deviceFriendlyName: string, createDateTime: stri
 									xmlns="http://www.w3.org/2000/svg"
 								>
 									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth="2"
 										d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
 									></path>
 								</svg>
@@ -101,11 +101,11 @@ const DeviceDetails = (props: { deviceFriendlyName: string, createDateTime: stri
 										<svg
 											className="h-4 w-4 dark:text-white dark:hover:text-white"
 											viewBox="0 0 20 24"
-											stroke-width="2"
+											strokeWidth="2"
 											stroke="currentColor"
 											fill="none"
-											stroke-linecap="round"
-											stroke-linejoin="round"
+											strokeLinecap="round"
+											strokeLinejoin="round"
 										>
 											<path stroke="none" d="M0 0h24v24H0z" />
 											<path d="M9 7 h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3" />

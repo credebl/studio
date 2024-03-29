@@ -151,8 +151,7 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 				<SignInUserPasskey email={email as string} />
 			) : (
 				currentComponent === 'email' && (
-					<div className="flex flex-col min-h-screen">
-						<NavBar />
+					<div className="flex flex-col min-h-login">
 						<div className="flex flex-1 flex-col md:flex-row">
 							<div className="hidden md:block md:w-3/5 w-full bg-blue-500 bg-opacity-10 lg:p-4 md:p-4">
 								<div className="flex justify-center">
@@ -375,7 +374,6 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 								</div>
 							</div>
 						</div>
-						<FooterBar />
 					</div>
 				)
 			)}
