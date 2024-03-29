@@ -47,11 +47,11 @@ const AgentHealth = () => {
 		<div className="">
 			{loader ? (
 				<div>
-					<CustomSpinner />
+					<CustomSpinner hideMessage={true} />
 				</div>
 			) : (
 				agentHealthDetails?.isInitialized ? (
-					<div className="w-fit flex shrink-0 items-center bg-green-100 text-green-800 text-xs font-medium rounded-full p-2 md:p-1 dark:bg-green-900 dark:text-green-300">
+					<div className="w-fit flex shrink-0 items-center bg-green-100 text-green-800 text-xs font-medium rounded-full px-2 py-2 md:py-1 dark:bg-green-900 dark:text-green-300">
 						<div className="w-1 h-1 bg-green-500 rounded-full p-1 shrink-0 md:mr-1" />
 						<span className="w-fit mr-1 shrink-0 md:block hidden rounded-full dark:bg-green-900 dark:text-green-300">
 							Wallet Agent is up and running
