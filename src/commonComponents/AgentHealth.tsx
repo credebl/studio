@@ -15,6 +15,7 @@ interface Agent {
 const AgentHealth = () => {
 	const [agentHealthDetails, setAgentHealthDetails] = useState<Agent>();
 	const [loader, setLoader] = useState<boolean>(true);
+	const [orgId, setOrgId] = useState<string>("");
 
 	useEffect(() => {
 		setTimeout(() => {
@@ -23,8 +24,9 @@ const AgentHealth = () => {
 	}, []);
 
 	const getAgentHealthDetails = async () => {
-		try {			
+		try {
 			const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
+			setOrgId(organizationId)
 			if (organizationId) {
 				const agentData = await getAgentHealth(organizationId);
 				const { data } = agentData as AxiosResponse;
@@ -45,27 +47,32 @@ const AgentHealth = () => {
 	};
 	return (
 		<div className="">
-			{loader ? (
+			{
+				orgId &&
 				<div>
-					<CustomSpinner hideMessage={true} />
+					{loader ? (
+						<div>
+							<CustomSpinner hideMessage={true} />
+						</div>
+					) : (
+						agentHealthDetails?.isInitialized ? (
+							<div className="w-fit flex shrink-0 items-center bg-green-100 text-green-800 text-xs font-medium rounded-full px-2 py-2 md:py-1 dark:bg-green-900 dark:text-green-300">
+								<div className="w-1 h-1 bg-green-500 rounded-full p-1 shrink-0 md:mr-1" />
+								<span className="w-fit mr-1 shrink-0 md:block hidden rounded-full dark:bg-green-900 dark:text-green-300">
+									Wallet Agent is up and running
+								</span>
+							</div>
+						) : (
+							<div className="w-fit flex shrink-0 items-center bg-red-100 text-red-800 text-xs font-medium rounded-full p-2 md:p-1 dark:bg-red-900 dark:text-red-300">
+								<div className="w-1 h-1 md:mr-1 bg-red-500 rounded-full p-1 shrink-0 md:mr-1" />
+								<span className="w-fit mr-1 shrink-0 md:block hidden rounded-full text-red-800 dark:bg-red-900 dark:text-red-300">
+									Wallet Agent is not running
+								</span>
+							</div>
+						)
+					)}
 				</div>
-			) : (
-				agentHealthDetails?.isInitialized ? (
-					<div className="w-fit flex shrink-0 items-center bg-green-100 text-green-800 text-xs font-medium rounded-full px-2 py-2 md:py-1 dark:bg-green-900 dark:text-green-300">
-						<div className="w-1 h-1 bg-green-500 rounded-full p-1 shrink-0 md:mr-1" />
-						<span className="w-fit mr-1 shrink-0 md:block hidden rounded-full dark:bg-green-900 dark:text-green-300">
-							Wallet Agent is up and running
-						</span>
-					</div>
-				) : (
-					<div className="w-fit flex shrink-0 items-center bg-red-100 text-red-800 text-xs font-medium rounded-full p-2 md:p-1 dark:bg-red-900 dark:text-red-300">
-						<div className="w-1 h-1 md:mr-1 bg-red-500 rounded-full p-1 shrink-0 md:mr-1" />
-						<span className="w-fit mr-1 shrink-0 md:block hidden rounded-full text-red-800 dark:bg-red-900 dark:text-red-300">
-							Wallet Agent is not running
-						</span>
-					</div>
-				)
-			)}
+			}
 		</div>
 	);
 };
