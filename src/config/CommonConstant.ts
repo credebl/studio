@@ -34,5 +34,6 @@ export const storageKeys = {
     ORG_DETAILS: "org_details",
     ECOSYSTEM_ROLE: "ecosystem_role",
 	SOCKET_ID: "socket_id",
-	LEDGER_ID: "ledger_id" 
+	LEDGER_ID: "ledger_id", 
+	ORG_INFO:'organization_Info'
 }
