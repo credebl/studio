@@ -11,8 +11,11 @@ const initData: any = {};
 
 const envKeys = [...Object.keys(process.env), ...Object.keys(import.meta.env)];
 envKeys.forEach((item) => {
-	initData[item] = process.env[item] || import.meta.env[item];
+	initData[item] = import.meta.env[item] || process.env[item];
 });
+
+console.log("Layout-common envs:::", import.meta.env, initData);
+
 
 const sessionToken = getFromCookies(Astro.cookies, 'session');
 const refreshToken = getFromCookies(Astro.cookies, 'refresh');
