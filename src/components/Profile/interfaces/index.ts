@@ -38,7 +38,7 @@ export interface UserEmail {
   email: string
 }
 
-export interface UserProfile {
+export interface IUserProfile {
   id: string
   profileImg?: string
   username?: string
@@ -53,5 +53,5 @@ export interface UserProfile {
 
 export interface DisplayUserProfileProps {
 	toggleEditProfile: () => void;
-	userProfileInfo: UserProfile | null;
+	userProfileInfo: IUserProfile | null;
 }

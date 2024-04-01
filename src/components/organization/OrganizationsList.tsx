@@ -119,8 +119,11 @@ const OrganizationsList = () => {
 		const roles: string[] = activeOrg?.userOrgRoles.map(
 			(role) => role.orgRole.name,
 		);
-		activeOrg.roles = roles;
-
+		const { id, name, description, logoUrl } = activeOrg || {};
+		const orgInfo = {
+			id, name, description, logoUrl, roles
+		}
+		await setToLocalStorage(storageKeys.ORG_INFO, orgInfo)
 		await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
 		window.location.href = pathRoutes.organizations.dashboard;
 	};

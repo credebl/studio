@@ -70,8 +70,12 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 				(element: { orgRole: { name: string } }) =>
 					permissionArray.push(element?.orgRole?.name),
 			);
+			const { id, profileImg, firstName, email, enableEcosystem, multiEcosystemSupport } = data?.data || {}
+			const userProfile = {
+				id, profileImg, firstName, email, enableEcosystem, multiEcosystemSupport
+			}
 			await setToLocalStorage(storageKeys.PERMISSIONS, permissionArray);
-			await setToLocalStorage(storageKeys.USER_PROFILE, data?.data);
+			await setToLocalStorage(storageKeys.USER_PROFILE, userProfile);
 			await setToLocalStorage(storageKeys.USER_EMAIL, data?.data?.email);
 			return {
 				role: role?.orgRole || ""

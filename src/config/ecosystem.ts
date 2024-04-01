@@ -64,7 +64,7 @@ const checkEcosystem = async (): Promise<ICheckEcosystem> => {
 	return {
 		isEnabledEcosystem,
 		isMultiEcosystem,
-		isEcosystemMember: !isLead,
+		isEcosystemMember: !isLead && isEnabledEcosystem,
 		isEcosystemLead: isLead,
 	};
 };
