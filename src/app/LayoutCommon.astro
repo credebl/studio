@@ -59,11 +59,7 @@ const refreshToken = getFromCookies(Astro.cookies, 'refresh');
 			'dark:bg-[#111827]',
 		]}
 	>
-	<script>
-		import 'flowbite';
-		import 'flowbite/dist/datepicker.js';
-	</script>
-	<script async define:vars={{ initData, envKeys, sessionToken, refreshToken, PUBLIC_BASE_URL, PUBLIC_CRYPTO_PRIVATE_KEY }}>
+	<script defer define:vars={{ initData, envKeys, sessionToken, refreshToken, PUBLIC_BASE_URL, PUBLIC_CRYPTO_PRIVATE_KEY }}>
 		
 		envKeys.forEach((item) => {
 			globalThis[item] = initData[item];
@@ -74,8 +70,12 @@ const refreshToken = getFromCookies(Astro.cookies, 'refresh');
 		globalThis.PUBLIC_BASE_URL = PUBLIC_BASE_URL || '';
 		globalThis.PUBLIC_CRYPTO_PRIVATE_KEY = PUBLIC_CRYPTO_PRIVATE_KEY || '';
 
-		console.log(9982938, globalThis);
+		console.log(9982938, globalThis, process.env);
 
+	</script>
+	<script>
+		import 'flowbite';
+		import 'flowbite/dist/datepicker.js';
 	</script>
 
 		<slot />
