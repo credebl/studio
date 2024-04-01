@@ -99,6 +99,7 @@ const SortDataTable: React.FC<DataTableProps> = ({
 							<div className="w-full sm:w-1/2">
 								{isSearch && (
 									<form className="flex items-center">
+										<input type="hidden" name="_csrf" value={new Date().getTime()} />
 										<label htmlFor="simple-search" className="sr-only">
 											Search
 										</label>

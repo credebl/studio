@@ -389,6 +389,7 @@ const CreateSchema = () => {
 						>
 							{(formikHandlers): JSX.Element => (
 								<Form onSubmit={formikHandlers.handleSubmit}>
+									<input type="hidden" name="_csrf" value={new Date().getTime()} />
 									<div className=" md:flex items-center space-x-4 ">
 										<div className="md:w-1/3 sm:w-full md:w-96 flex-col md:flex pr-0 md:pr-4">
 											<div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
