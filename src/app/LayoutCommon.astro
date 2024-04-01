@@ -14,7 +14,13 @@ envKeys.forEach((item) => {
 	initData[item] = import.meta.env[item] || process.env[item];
 });
 
-console.log("Layout-common envs:::", initData, import.meta.env, process.env);
+console.log("Layout-common envs:::", initData);
+
+console.log("META_ENVS", import.meta.env);
+
+console.log("PROCESS_ENV", process.env);
+
+
 
 const {PUBLIC_BASE_URL, PUBLIC_CRYPTO_PRIVATE_KEY} = initData;
 
