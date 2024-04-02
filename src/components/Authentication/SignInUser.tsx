@@ -11,6 +11,7 @@ import SignInUserPasskey from './SignInUserPasskey';
 import { emailRegex, storageKeys } from '../../config/CommonConstant';
 import FooterBar from './FooterBar';
 import { envConfig } from '../../config/envConfig';
+import { validEmail } from '../../utils/TextTransform';
 
 interface emailValue {
 	email: string | null;
@@ -31,10 +32,6 @@ const SignInUser = () => {
 	const nextButtonRef = useRef<HTMLButtonElement | null>(null);
 
 	const successMessage = `Congratulations!! 🎉 You have successfully registered on ${envConfig.PLATFORM_DATA.name} 🚀`
-
-	const validEmail = (email: string): string => {
-		return emailRegex.test(email) ? email : ''
-	}
 
 	useEffect(() => {
 		const fetchData = async () => {
