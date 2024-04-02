@@ -1,5 +1,6 @@
 import { removeFromLocalStorage } from '../../api/Auth';
 import { storageKeys } from '../../config/CommonConstant';
+import { pathRoutes } from '../../config/pathRoutes';
 
 const SignOutButton = () => {
 	const signOut = async () => {
@@ -15,8 +16,8 @@ const SignOutButton = () => {
 			},
 		});
 
-		if (response.redirected) {
-			window.location.assign(response.url);
+		if (response) {
+			window.location.assign(pathRoutes.auth.sinIn);
 		}
 	};
 	return (
