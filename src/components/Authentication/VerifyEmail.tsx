@@ -8,6 +8,7 @@ import React from 'react';
 import NavBar from './NavBar';
 import FooterBar from './FooterBar';
 import { apiStatusCodes } from '../../config/CommonConstant';
+import { validEmail } from '../../utils/TextTransform';
 
 const VerifyEmail = () => {
     const [loading, setLoading] = useState<boolean>(true)
@@ -36,7 +37,7 @@ const VerifyEmail = () => {
         const queryParameters = new URLSearchParams(window?.location?.search)
         const payload: EmailVerifyData = {
             verificationCode: queryParameters.get("verificationCode") || '',
-            email: queryParameters.get("email") || ''
+            email: validEmail(queryParameters.get("email") || '')
         }
         setEmail(payload?.email)
         verifyEmailSuccess(payload)
