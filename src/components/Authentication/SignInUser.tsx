@@ -7,7 +7,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import NavBar from './NavBar';
 import RegistrationSuccess from './RegistrationSuccess';
 import SignInUserPasskey from './SignInUserPasskey';
-import { storageKeys } from '../../config/CommonConstant';
+import { emailRegex, storageKeys } from '../../config/CommonConstant';
 import FooterBar from './FooterBar';
 import { envConfig } from '../../config/envConfig';
 
@@ -31,6 +31,10 @@ const SignInUser = () => {
 
 	const successMessage = `Congratulations!! 🎉 You have successfully registered on ${envConfig.PLATFORM_DATA.name} 🚀`
 
+	const validEmail = (email: string): string => {
+		return emailRegex.test(email) ? email : ''
+	}
+
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
@@ -45,7 +49,7 @@ const SignInUser = () => {
 				const loginMethod = searchParam.get('method');
 				const showMsg = searchParam.get('showmsg');
 
-				setUserLoginEmail(userEmail || storedEmail);
+				setUserLoginEmail(validEmail(userEmail || storedEmail));
 				setEmail({ email: newEmail || storedEmail });
 
 				const entries = performance.getEntriesByType(
@@ -188,7 +192,7 @@ const SignInUser = () => {
 													.required('Email is required')
 													.email('Email is invalid')
 													.matches(
-														/(\.[a-zA-Z]{2,})$/,
+														emailRegex,
 														'Email domain is invalid',
 													)
 													.trim(),

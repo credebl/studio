@@ -4,6 +4,7 @@ export const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|(
 export const imageSizeAccepted = 1 // mb
 export const IMG_MAX_WIDTH = 500
 export const IMG_MAX_HEIGHT = 291
+export const emailRegex = /(\.[a-zA-Z]{2,})$/
 
 export const schemaVersionRegex = /^\d{1,5}(?=.*[0-9])(?:\.\d{1,5})?(?:\.\d{1,5})?$/gm
 
