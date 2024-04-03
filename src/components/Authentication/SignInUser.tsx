@@ -7,9 +7,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import NavBar from './NavBar';
 import RegistrationSuccess from './RegistrationSuccess';
 import SignInUserPasskey from './SignInUserPasskey';
-import { storageKeys } from '../../config/CommonConstant';
+import { emailRegex, storageKeys } from '../../config/CommonConstant';
 import FooterBar from './FooterBar';
 import { envConfig } from '../../config/envConfig';
+import { validEmail } from '../../utils/TextTransform';
 
 interface emailValue {
 	email: string | null;
@@ -45,7 +46,7 @@ const SignInUser = () => {
 				const loginMethod = searchParam.get('method');
 				const showMsg = searchParam.get('showmsg');
 
-				setUserLoginEmail(userEmail || storedEmail);
+				setUserLoginEmail(validEmail(userEmail || storedEmail));
 				setEmail({ email: newEmail || storedEmail });
 
 				const entries = performance.getEntriesByType(
@@ -188,7 +189,7 @@ const SignInUser = () => {
 													.required('Email is required')
 													.email('Email is invalid')
 													.matches(
-														/(\.[a-zA-Z]{2,})$/,
+														emailRegex,
 														'Email domain is invalid',
 													)
 													.trim(),
