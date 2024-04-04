@@ -57,7 +57,6 @@ const IssueCred = () => {
 		createSchemaPayload(schemaId, credDefId);
 		setUserLoader(true);
 		const selectedUsers = await getSelectedUsers();
-
 		const attributes = await getSchemaDetails();
 		if (attributes && attributes?.length) {
 			createIssuanceForm(selectedUsers, attributes, credDefId, orgId);
