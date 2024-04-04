@@ -1,3 +1,5 @@
+import { emailRegex } from "../config/CommonConstant";
+
 export const TextTittlecase = (text: string): string => {
 	const roles = text.split(',');
 
@@ -15,3 +17,8 @@ export const copyText = (copiedText: string | undefined) => {
 		navigator.clipboard.writeText(copiedText);
 	}
 };
+
+// To check validity of email
+export const validEmail = (email: string): string => {
+	return emailRegex.test(email) ? email : ''
+}

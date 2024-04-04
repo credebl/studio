@@ -4,6 +4,7 @@ export const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|(
 export const imageSizeAccepted = 1 // mb
 export const IMG_MAX_WIDTH = 500
 export const IMG_MAX_HEIGHT = 291
+export const emailRegex = /(\.[a-zA-Z]{2,})$/
 
 export const schemaVersionRegex = /^\d{1,5}(?=.*[0-9])(?:\.\d{1,5})?(?:\.\d{1,5})?$/gm
 
@@ -34,5 +35,8 @@ export const storageKeys = {
     ORG_DETAILS: "org_details",
     ECOSYSTEM_ROLE: "ecosystem_role",
 	SOCKET_ID: "socket_id",
-	LEDGER_ID: "ledger_id" 
+	LEDGER_ID: "ledger_id", 
+	ORG_INFO:'organization_Info'
 }
+
+export const allowedDomains = "https://dev-service.ngotag.com wss://dev-service.ngotag.com https://cdnjs.cloudflare.com https://tailwindcss.com https://www.blockster.global https://www.ayanworks.com https://qaapi.credebl.id https://devapi.credebl.id https://api.credebl.id https://*.credebl.id https://fonts.googleapis.com https://fonts.gstatic.com https://avatars.githubusercontent.com  https://dev-org-logo.s3.ap-south-1.amazonaws.com https://flowbite-admin-dashboard.vercel.app/ wss://devapi.credebl.id wss://qaapi.credebl.id wss://api.credebl.id wss://*.credebl.id  https://qa.credebl.id https://dev.credebl.id https://credebl.id"
