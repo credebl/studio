@@ -24,3 +24,9 @@ ui.env
 
 # misc.
 .dev*
+
+# hidden files
+._darcs
+.bzr
+.hg
+BitKeeper
