@@ -117,7 +117,7 @@ const IssueCred = () => {
         credentialData: Yup.array().of(
             Yup.object().shape({
 				attributes: Yup.array().of(
-                    Yup.lazy((attr: any) => {						
+                    Yup.lazy((attr) => {						
 						return createAttributeValidationSchema(attr?.name, attr?.value, attr?.isRequired)
 					}),
                 ),
@@ -152,7 +152,7 @@ const IssueCred = () => {
 	};
 
 	const handleSubmit = async (values: IssuanceFormPayload) => {
-		const payload = {
+		const issuancePayload = {
             credentialData: values.credentialData.map(item => {
 				return {
 					...item,
@@ -167,7 +167,7 @@ const IssueCred = () => {
         };
 
 		const convertedAttributesValues = {
-			...payload,
+			...issuancePayload,
 		};
 	
 		setIssuanceLoader(true);
