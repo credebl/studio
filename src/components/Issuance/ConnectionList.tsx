@@ -84,7 +84,7 @@ const ConnectionList = (props: {
 									<div className="flex items-center" id="issuance_checkbox">
 										<input
 											id="default-checkbox"
-											type="radio"
+											type="checkbox"
 											name="connection"
 											onClick={(event: React.MouseEvent<HTMLInputElement>) => {
 												const inputElement = event.target as HTMLInputElement;
@@ -150,29 +150,15 @@ const ConnectionList = (props: {
 	) => {
 		if (checked) {
 			// Needed for multiple connection selection
-			// setSelectedConnectionList((prevList) => [...prevList, {
-			// 	data: [
-			// 		{
-			// 			data: user,
-			// 		}, {
-			// 			data: connectionId,
-			// 		}]
-			// }]
-			// )
-
-			// It is for single connection selection
-			setSelectedConnectionList([
-				{
-					data: [
-						{
-							data: user,
-						},
-						{
-							data: connectionId,
-						},
-					],
-				},
-			]);
+			setSelectedConnectionList((prevList) => [...prevList, {
+				data: [
+					{
+						data: user,
+					}, {
+						data: connectionId,
+					}]
+			}]
+			)
 		} else {
 			setSelectedConnectionList((prevList) =>
 				prevList.filter(
