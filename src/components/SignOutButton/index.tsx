@@ -1,16 +1,14 @@
 import { removeFromLocalStorage } from '../../api/Auth';
 import { storageKeys } from '../../config/CommonConstant';
+import { pathRoutes } from '../../config/pathRoutes';
 
 const SignOutButton = () => {
 	const signOut = async () => {
-		await removeFromLocalStorage(storageKeys.TOKEN);
-		await removeFromLocalStorage(storageKeys.USER_EMAIL);
-		await removeFromLocalStorage(storageKeys.ORG_ID);
-		await removeFromLocalStorage(storageKeys.ORG_ROLES);
-		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ID);
-		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ROLE);
-		await removeFromLocalStorage(storageKeys.USER_PROFILE);
-
+		
+		for await (const value of Object.values(storageKeys)){
+			await removeFromLocalStorage(value)
+		}
+		
 		const response = await fetch('/api/auth/signout', {
 			method: 'GET',
 			headers: {
@@ -18,8 +16,8 @@ const SignOutButton = () => {
 			},
 		});
 
-		if (response.redirected) {
-			window.location.assign(response.url);
+		if (response) {
+			window.location.assign(pathRoutes.auth.sinIn);
 		}
 	};
 	return (

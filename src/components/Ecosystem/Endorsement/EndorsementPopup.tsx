@@ -202,7 +202,7 @@ const EndorsementPopup = (props: {
 								isProcessing={loading}
 								color="bg-primary-800"
 								disabled={loading || !isAccess || loadingReject}
-								className={`${isAccess ? "hover:bg-secondary-700 hover:!bg-secondary-700 dark:hover:text-primary-700 dark:hover:bg-secondary-700" : ""} text-base font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:focus:ring-primary-800 mr-3`}
+								className={`${isAccess ? "hover:bg-primary-800 dark:hover:text-primary-700 dark:hover:bg-secondary-700" : ""} text-base font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:focus:ring-primary-800 mr-3`}
 								onClick={() => {
 									SignEndorsement(props.endorsementData.id);
 								}}

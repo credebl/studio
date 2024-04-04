@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react';
 import SignUpUserName from './SignUpUserName'
 import FooterBar from './FooterBar.js';
 import NavBar from './NavBar.js';
+import { validEmail } from '../../utils/TextTransform.js';
 
 interface emailValue {
 	email: string;
@@ -33,9 +34,10 @@ const SignUpUser = () => {
 	const [isEmailValid, setIsEmailValid] = useState(false);
 
 	useEffect(() => {
-
-		if (window?.location?.search.length > 7) {
-			setEmailAutoFill(window?.location?.search.split('=')[1])
+		const searchParam = new URLSearchParams(window?.location?.search);
+		const userEmail = searchParam.get('email');
+		if (userEmail) {
+			setEmailAutoFill(validEmail(userEmail))
 		}
 	}, [])
 
@@ -65,8 +67,8 @@ const SignUpUser = () => {
 	const ValidateEmail = async (values: emailValue) => {
 		setLoading(true)
 		const userRsp = await checkUserExist(values?.email)
-				const { data } = userRsp as AxiosResponse
-				setLoading(false)
+		const { data } = userRsp as AxiosResponse
+		setLoading(false)
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			if (data?.data?.isRegistrationCompleted === false && data.data.isEmailVerified === false) {
 				setEmail(values?.email)
@@ -175,7 +177,7 @@ const SignUpUser = () => {
 									{(formikHandlers): JSX.Element => (
 
 										<Form className='mt-16 space-y-6' onSubmit={formikHandlers.handleSubmit}>
-
+											<input type="hidden" name="_csrf" value={new Date().getTime()} />
 											<div className="text-primary-700 font-inter text-base font-medium leading-5 mb-20">
 
 												<div className="block mb-2 text-sm font-medium  dark:text-white">
