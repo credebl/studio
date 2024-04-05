@@ -348,8 +348,8 @@ const UserDashBoard = () => {
 	}, [organizationsList]);
 
 	const goToOrgDashboard = async (orgId: string, rogRoles: string[], org: Organisation | null) => {
-		const {id, name, description, logoUrl, roles} = org || {};
-		const orgInfo = {id, name, description, logoUrl, roles}
+		const { id, name, description, logoUrl, roles } = org || {};
+		const orgInfo = { id, name, description, logoUrl, roles }
 		await setToLocalStorage(storageKeys.ORG_INFO, orgInfo);
 		await setToLocalStorage(storageKeys.ORG_ID, orgId);
 		window.location.href = pathRoutes.organizations.dashboard;
@@ -358,18 +358,16 @@ const UserDashBoard = () => {
 	const goToSchemaCredDef = async (schemaId: string) => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		await setToLocalStorage(storageKeys.ORG_ID, orgId);
-		const url = `${
-			pathRoutes.organizations.viewSchema
-		}?schemaId=${encodeURIComponent(schemaId)}`;
+		const url = `${pathRoutes.organizations.viewSchema
+			}/${encodeURIComponent(schemaId)}`;
 		window.location.href = url;
 	};
 
 	const goToCredDef = async (credentialDefinitionId: string) => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		await setToLocalStorage(storageKeys.ORG_ID, orgId);
-		const url = `${
-			pathRoutes.organizations.viewSchema
-		}?schemaId=${encodeURIComponent(credentialDefinitionId)}`;
+		const url = `${pathRoutes.organizations.viewSchema
+			}/${encodeURIComponent(credentialDefinitionId)}`;
 		window.location.href = url;
 	};
 
@@ -378,6 +376,12 @@ const UserDashBoard = () => {
 		const roles: string[] = org?.userOrgRoles.map((role) => role.orgRole.name);
 
 		await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
+
+		const { id, name, description, logoUrl } = org || {};
+		const orgInfo = {
+			id, name, description, logoUrl, roles
+		}
+		await setToLocalStorage(storageKeys.ORG_INFO, orgInfo);
 	};
 
 	const goToEcoDashboard = async (ecosystemId: string) => {
@@ -390,8 +394,7 @@ const UserDashBoard = () => {
 		orgId: string,
 		rogRoles: string[],
 	) => {
-		await setToLocalStorage(storageKeys.ORG_ID, orgId);
-		setOrgRoleDetails(org);
+		await setOrgRoleDetails(org);
 		window.location.href = pathRoutes.organizations.createSchema;
 	};
 
@@ -400,8 +403,7 @@ const UserDashBoard = () => {
 		orgId: string,
 		rogRoles: string[],
 	) => {
-		await setToLocalStorage(storageKeys.ORG_ID, orgId);
-		setOrgRoleDetails(org);
+		await setOrgRoleDetails(org);
 		window.location.href = pathRoutes.organizations.schemas;
 	};
 
@@ -410,8 +412,7 @@ const UserDashBoard = () => {
 		orgId: string,
 		rogRoles: string[],
 	) => {
-		await setToLocalStorage(storageKeys.ORG_ID, orgId);
-		setOrgRoleDetails(org);
+		await setOrgRoleDetails(org);
 		window.location.href = pathRoutes.organizations.issuedCredentials;
 	};
 
@@ -420,8 +421,7 @@ const UserDashBoard = () => {
 		orgId: string,
 		rogRoles: string[],
 	) => {
-		await setToLocalStorage(storageKeys.ORG_ID, orgId);
-		setOrgRoleDetails(org);
+		await setOrgRoleDetails(org);
 		window.location.href = pathRoutes.organizations.credentials;
 	};
 
@@ -604,7 +604,7 @@ const UserDashBoard = () => {
 						<div className="flex justify-between pb-2 flex text-center">
 							<div className="flex text-center justify-center items-center">
 								<h2 className="text-xl font-semibold text-gray-900 dark:text-white items-center">
-									Organizations{' '}
+									Organizations
 								</h2>
 								<Tooltip
 									content={<ToolTipDataForOrganization />}
