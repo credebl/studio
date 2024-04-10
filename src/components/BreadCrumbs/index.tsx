@@ -64,7 +64,7 @@ export default function BreadCrumbs() {
 						: '';
 					return (
 						<Breadcrumb.Item className='mb-0' href={crumb.href} key={crumb.text}>
-							{routes}
+							{decodeURIComponent(routes)}
 						</Breadcrumb.Item>
 					);
 				})}
