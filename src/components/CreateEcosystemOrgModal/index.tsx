@@ -170,6 +170,8 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 				props.setMessage(data?.message);
 			}
 			props.setOpenModal(false);
+		    window.location.href = '/organizations?orgModal=false';
+
 		} else {
 			setErrMsg(resCreateOrg as string);
 		}

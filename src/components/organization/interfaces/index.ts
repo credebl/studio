@@ -89,7 +89,7 @@ name: string
 networkString: string
 networkType: string
 poolConfig: string
-registerDIDEndpoint: string
+registeredDIDEndpoint: string
 }
 export interface OrgDashboard {
     usersCount: number
