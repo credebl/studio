@@ -102,6 +102,13 @@ const IssueCred = () => {
 	) => {
 		let attributeSchema = Yup.string();;
 
+		if (name) {
+			name = name
+				.split('_')
+				.map(item => item.charAt(0).toUpperCase() + item.slice(1))
+				.join(' ');
+		}
+	
 		if (isRequired) {
 			if (!value) {
 				attributeSchema = Yup.string().required(`${name} is required`);
@@ -286,6 +293,7 @@ const IssueCred = () => {
 																					credentialData: data,
 																				};
 																				setIssuanceFormPayload(issuancePayload);
+																				window.location.reload();
 
 																				await setToLocalStorage(storageKeys.SELECTED_USER, data);	
 																		  
