@@ -28,10 +28,10 @@ import { AlertComponent } from '../AlertComponent';
 import CopyDid from '../../commonComponents/CopyDid';
 import { DidMethod } from '../../common/enums';
 import GenerateBtnPolygon from './walletCommonComponents/GenerateBtnPolygon';
-import SetPrivateKeyValue from './walletCommonComponents/SetPrivateKeyValue';
 import SetDomainValueInput from './walletCommonComponents/SetDomainValueInput';
 import TokenWarningMessage from './walletCommonComponents/TokenWarningMessage';
 import LedgerLessMethodsComponents from './walletCommonComponents/LegderLessMethods'
+import SetPrivateKeyValueInput from './walletCommonComponents/SetPrivateKeyValue';
 
 
 interface Values {
@@ -74,7 +74,7 @@ interface ISharedAgentForm {
 	loading: boolean;
 	submitSharedWallet: (
 		values: ValuesShared,
-		privateKey: string,
+		privatekey: string,
 		domain: string,
 		endPoint: string,
 	) => void;
@@ -244,6 +244,8 @@ const SharedAgentForm = ({
 		method: yup.string().required('Method is required'),
 		...(DidMethod.INDY === selectedLedger || DidMethod.POLYGON === selectedLedger) && { network: yup.string().required('Network is required') },
 		...(DidMethod.INDY === selectedLedger) && { ledger: yup.string().required('Ledger is required') },
+		...(DidMethod.WEB === selectedLedger) && { domain: yup.string().required('Domain is required for web method') }, 
+		...(DidMethod.POLYGON === selectedLedger) && { privatekey: yup.string().required('Private key is required').trim().length(64, 'Private key must be exactly 64 characters long') }, 
 	}
 
 	return (
@@ -278,6 +280,8 @@ const SharedAgentForm = ({
 							network: '',
 							did: '',
 							ledger: '',
+							domain: '',  
+							privatekey: '', 
 							label: orgName || '',
 						}}
 						validationSchema={yup.object().shape(validations)}
@@ -313,8 +317,8 @@ const SharedAgentForm = ({
 										id="method"	name="method" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
 									>
 										<option value="">Select Method</option>
-										{mappedData && Object.keys(mappedData)?.map((ledger) => (
-												<option key={ledger} value={ledger}>{ledger}</option>
+										{mappedData && Object.keys(mappedData)?.map((method) => (
+												<option key={method} value={method}>{method.charAt(0).toUpperCase() + method.slice(1)}</option>
 											))}
 									</select>
 									{formikHandlers?.errors?.method && formikHandlers?.touched?.method && (
@@ -336,7 +340,7 @@ const SharedAgentForm = ({
 											<div className="flex ">
 												<CopyDid
 													className="align-center block text-sm text-gray-900 dark:text-white truncate"
-													value={generatedKeys?.privateKey}
+													value={generatedKeys?.privateKey.slice(2)}
 												/>
 											</div>
 										</p>
@@ -357,9 +361,9 @@ const SharedAgentForm = ({
 
 								{generatedKeys && formikHandlers.values.method === DidMethod.POLYGON && (<TokenWarningMessage />)}
 
-								{formikHandlers.values.method === DidMethod.POLYGON && (<SetPrivateKeyValue setPrivateKeyValue={(val:string)=>setPrivateKeyValue(val)} privateKeyValue={privateKeyValue}/>)}
+								{formikHandlers.values.method === DidMethod.POLYGON && (<SetPrivateKeyValueInput setPrivateKeyValue={(val:string)=>setPrivateKeyValue(val)} privateKeyValue={privateKeyValue} formikHandlers={formikHandlers}/>)}
 
-								{formikHandlers.values.method === DidMethod.WEB && (<SetDomainValueInput setDomainValue={(val:string)=>setDomainValue(val)} domainValue={domainValue}/>)}
+								{formikHandlers.values.method === DidMethod.WEB && (<SetDomainValueInput setDomainValue={(val:string)=>setDomainValue(val)} domainValue={domainValue} formikHandlers={formikHandlers}/>)} 
 
 								{formikHandlers.values.method !== DidMethod.POLYGON && formikHandlers.values.method !== DidMethod.KEY && formikHandlers.values.method !== DidMethod.WEB && (
 										<div className="my-3 relative">
@@ -383,7 +387,7 @@ const SharedAgentForm = ({
 												{mappedData && selectedLedger && mappedData[selectedLedger] &&
 													Object.keys(mappedData[selectedLedger])?.map(
 														(ledger) => (
-															<option key={ledger} value={ledger}>{ledger}</option>
+															<option key={ledger} value={ledger}>{ledger.charAt(0).toUpperCase() + ledger.slice(1)}</option>
 														),
 													)}
 											</select>
@@ -584,12 +588,12 @@ const SharedAgentForm = ({
 
 							{formikHandlers.values.method === DidMethod.POLYGON && (
 							
-								<SetPrivateKeyValue setPrivateKeyValue={(val:string)=>setPrivateKeyValue(val)} privateKeyValue={privateKeyValue}/>
+								<SetPrivateKeyValueInput setPrivateKeyValue={(val:string)=>setPrivateKeyValue(val)} privateKeyValue={privateKeyValue} formikHandlers={formikHandlers}/>
 							)}
 
 							{formikHandlers.values.method === DidMethod.WEB && (
 
-								<SetDomainValueInput setDomainValue={(val:string)=>setDomainValue(val)} domainValue={domainValue}/>
+								<SetDomainValueInput setDomainValue={(val:string)=>setDomainValue(val)} domainValue={domainValue} formikHandlers={formikHandlers}/>
 
 							)}
 
@@ -912,18 +916,17 @@ const WalletSpinup = (props: {
 
 	const submitSharedWallet = async (
 		values: ValuesShared,
-		privateKey: string,
+		privatekey: string,
 		domain: string,
 		endPoint: string,
 	) => {
-		const polygonPrivateKey = privateKey.slice(2);
 		setLoading(true);
 		const payload = {
 			keyType: values.keyType || 'ed25519',
 			method: values.method || '',
 			ledger: values.method === DidMethod.INDY ? values.ledger : '',
 			label: values.label,
-			privatekey: values.method === DidMethod.POLYGON ? polygonPrivateKey : '',
+			privatekey: values.method === DidMethod.POLYGON ? privatekey : '',
 			seed: values.method === DidMethod.POLYGON ? '' : values.seed || seeds,
 			network:
 				values.method === DidMethod.POLYGON

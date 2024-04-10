@@ -347,7 +347,10 @@ const UserDashBoard = () => {
 		}
 	}, [organizationsList]);
 
-	const goToOrgDashboard = async (orgId: string, rogRoles: string[]) => {
+	const goToOrgDashboard = async (orgId: string, rogRoles: string[], org: Organisation | null) => {
+		const { id, name, description, logoUrl, roles } = org || {};
+		const orgInfo = { id, name, description, logoUrl, roles }
+		await setToLocalStorage(storageKeys.ORG_INFO, orgInfo);
 		await setToLocalStorage(storageKeys.ORG_ID, orgId);
 		window.location.href = pathRoutes.organizations.dashboard;
 	};
@@ -355,18 +358,16 @@ const UserDashBoard = () => {
 	const goToSchemaCredDef = async (schemaId: string) => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		await setToLocalStorage(storageKeys.ORG_ID, orgId);
-		const url = `${
-			pathRoutes.organizations.viewSchema
-		}?schemaId=${encodeURIComponent(schemaId)}`;
+		const url = `${pathRoutes.organizations.viewSchema
+			}/${encodeURIComponent(schemaId)}`;
 		window.location.href = url;
 	};
 
 	const goToCredDef = async (credentialDefinitionId: string) => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		await setToLocalStorage(storageKeys.ORG_ID, orgId);
-		const url = `${
-			pathRoutes.organizations.viewSchema
-		}?schemaId=${encodeURIComponent(credentialDefinitionId)}`;
+		const url = `${pathRoutes.organizations.viewSchema
+			}/${encodeURIComponent(credentialDefinitionId)}`;
 		window.location.href = url;
 	};
 
@@ -375,6 +376,12 @@ const UserDashBoard = () => {
 		const roles: string[] = org?.userOrgRoles.map((role) => role.orgRole.name);
 
 		await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
+
+		const { id, name, description, logoUrl } = org || {};
+		const orgInfo = {
+			id, name, description, logoUrl, roles
+		}
+		await setToLocalStorage(storageKeys.ORG_INFO, orgInfo);
 	};
 
 	const goToEcoDashboard = async (ecosystemId: string) => {
@@ -387,8 +394,7 @@ const UserDashBoard = () => {
 		orgId: string,
 		rogRoles: string[],
 	) => {
-		await setToLocalStorage(storageKeys.ORG_ID, orgId);
-		setOrgRoleDetails(org);
+		await setOrgRoleDetails(org);
 		window.location.href = pathRoutes.organizations.createSchema;
 	};
 
@@ -397,8 +403,7 @@ const UserDashBoard = () => {
 		orgId: string,
 		rogRoles: string[],
 	) => {
-		await setToLocalStorage(storageKeys.ORG_ID, orgId);
-		setOrgRoleDetails(org);
+		await setOrgRoleDetails(org);
 		window.location.href = pathRoutes.organizations.schemas;
 	};
 
@@ -407,8 +412,7 @@ const UserDashBoard = () => {
 		orgId: string,
 		rogRoles: string[],
 	) => {
-		await setToLocalStorage(storageKeys.ORG_ID, orgId);
-		setOrgRoleDetails(org);
+		await setOrgRoleDetails(org);
 		window.location.href = pathRoutes.organizations.issuedCredentials;
 	};
 
@@ -417,8 +421,7 @@ const UserDashBoard = () => {
 		orgId: string,
 		rogRoles: string[],
 	) => {
-		await setToLocalStorage(storageKeys.ORG_ID, orgId);
-		setOrgRoleDetails(org);
+		await setOrgRoleDetails(org);
 		window.location.href = pathRoutes.organizations.credentials;
 	};
 
@@ -561,7 +564,7 @@ const UserDashBoard = () => {
 							<div className="flex text-center justify-start sm:justify-end items-center mr-8">
 								<Button
 									className="min-w-[180px] sm:col-span-1 group flex h-min text-center justify-center items-center p-0.5 focus:z-10 focus:outline-none border border-transparent enabled:hover:bg-cyan-800 dark:enabled:hover:bg-cyan-700 w-fit sm:px-4 font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-md hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-									onClick={() => goToOrgDashboard('', [])}
+									onClick={() => goToOrgDashboard('', [], null)}
 								>
 									Create wallet
 									<svg
@@ -601,7 +604,7 @@ const UserDashBoard = () => {
 						<div className="flex justify-between pb-2 flex text-center">
 							<div className="flex text-center justify-center items-center">
 								<h2 className="text-xl font-semibold text-gray-900 dark:text-white items-center">
-									Organizations{' '}
+									Organizations
 								</h2>
 								<Tooltip
 									content={<ToolTipDataForOrganization />}
@@ -650,7 +653,7 @@ const UserDashBoard = () => {
 													<button
 														className="sm:w-100/11rem w-full"
 														onClick={() =>
-															goToOrgDashboard(org?.id, org?.roles)
+															goToOrgDashboard(org?.id, org?.roles, org)
 														}
 													>
 														<a

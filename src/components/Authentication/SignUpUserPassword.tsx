@@ -170,6 +170,7 @@ const SignUpUserPassword = ({
 											className="mt-12 space-y-6"
 											onSubmit={formikHandlers.handleSubmit}
 										>
+											<input type="hidden" name="_csrf" value={new Date().getTime()} />
 											<div>
 												<div className="text-primary-700 font-inter text-base font-medium leading-5">
 													<div className="block mb-2 text-sm font-medium  dark:text-white">

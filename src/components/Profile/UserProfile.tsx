@@ -3,18 +3,11 @@ import type { AxiosResponse } from 'axios';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { getFromLocalStorage, getUserProfile, setToLocalStorage } from '../../api/Auth';
 import BreadCrumbs from '../BreadCrumbs';
-import type { UserProfile } from './interfaces';
+import type { IUserProfile } from './interfaces';
 import DisplayUserProfile from './DisplayUserProfile';
 import React from 'react';
 import AddPasskey from './AddPasskey';
 import EditUserProfile from './EditUserProfile';
-
-interface IUserProfile {
-  firstName: string
-  lastName: string
-  email: string
-  profileImg: string
-}
 
 const UserProfile = ({ noBreadcrumb }: { noBreadcrumb?: boolean }) => {
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
@@ -28,15 +21,19 @@ const UserProfile = ({ noBreadcrumb }: { noBreadcrumb?: boolean }) => {
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setPrePopulatedUserProfile(data?.data);
-        await setToLocalStorage(storageKeys.USER_PROFILE, data?.data)
+        const { id, profileImg, firstName, email, enableEcosystem, multiEcosystemSupport } = data?.data || {}
+        const userProfile = {
+          id, profileImg, firstName, email, enableEcosystem, multiEcosystemSupport
+        }
+        await setToLocalStorage(storageKeys.USER_PROFILE, userProfile)
         await setToLocalStorage(storageKeys.USER_EMAIL, data?.data?.email)
       }
     } catch (error) {
+      console.error("ERROR in FETCHUSERPROFILE API:::", error);
     }
   };
 
   const toggleEditProfile = async () => {
-    await fetchUserProfile()
     setIsEditProfileOpen(!isEditProfileOpen);
   };
 

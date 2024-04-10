@@ -7,9 +7,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import NavBar from './NavBar';
 import RegistrationSuccess from './RegistrationSuccess';
 import SignInUserPasskey from './SignInUserPasskey';
-import { storageKeys } from '../../config/CommonConstant';
+import { emailRegex, storageKeys } from '../../config/CommonConstant';
 import FooterBar from './FooterBar';
 import { envConfig } from '../../config/envConfig';
+import { validEmail } from '../../utils/TextTransform';
 
 interface emailValue {
 	email: string | null;
@@ -45,7 +46,7 @@ const SignInUser = () => {
 				const loginMethod = searchParam.get('method');
 				const showMsg = searchParam.get('showmsg');
 
-				setUserLoginEmail(userEmail || storedEmail);
+				setUserLoginEmail(validEmail(userEmail || storedEmail));
 				setEmail({ email: newEmail || storedEmail });
 
 				const entries = performance.getEntriesByType(
@@ -87,13 +88,11 @@ const SignInUser = () => {
 
 	const saveEmail = async (values: emailValue) => {
 		setEmail(values);
-		await removeFromLocalStorage(storageKeys.TOKEN)
-		await removeFromLocalStorage(storageKeys.USER_EMAIL)
-		await removeFromLocalStorage(storageKeys.ORG_ID)
-		await removeFromLocalStorage(storageKeys.ORG_ROLES)
-		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ID)
-		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ROLE)
-		await removeFromLocalStorage(storageKeys.USER_PROFILE)
+
+		for await (const value of Object.values(storageKeys)){
+			await removeFromLocalStorage(value)
+		}
+		
 		setCurrentComponent('password');
 		await setToLocalStorage(storageKeys.LOGIN_USER_EMAIL, values.email);
 		setIsPasskeySuccess(true);
@@ -190,7 +189,7 @@ const SignInUser = () => {
 													.required('Email is required')
 													.email('Email is invalid')
 													.matches(
-														/(\.[a-zA-Z]{2,})$/,
+														emailRegex,
 														'Email domain is invalid',
 													)
 													.trim(),
@@ -205,6 +204,7 @@ const SignInUser = () => {
 													className="mt-8 md:mt-16 space-y-6"
 													onSubmit={formikHandlers.handleSubmit}
 												>
+													<input type="hidden" name="_csrf" value={new Date().getTime()} />
 													<div className="text-primary-700 font-inter text-base font-medium leading-5 mb-16">
 														<div className="block mb-2 text-sm font-medium dark:text-white">
 															<Label
