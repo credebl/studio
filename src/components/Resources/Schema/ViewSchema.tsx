@@ -65,7 +65,7 @@ const initialPageState = {
 	total: 0,
 };
 
-const ViewSchemas = () => {
+const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
 	const [schemaDetails, setSchemaDetails] = useState<SchemaData | null>(null);
 	const [credDeffList, setCredDeffList] = useState<any>([]);
 	const [loading, setLoading] = useState<boolean>(true);
@@ -137,11 +137,10 @@ const ViewSchemas = () => {
 		await checkEcosystemData();
 		const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
 		setOrgId(String(organizationId));
-		if (window?.location?.search) {
-			const str = window?.location?.search;
-			const schemaId = str.substring(str.indexOf('=') + 1);
-			await getSchemaDetails(schemaId, String(organizationId));
-			await getCredentialDefinitionList(schemaId, String(organizationId));
+		const id = encodeURIComponent(schemaId);
+		if (id) {
+			await getSchemaDetails(id, String(organizationId));
+			await getCredentialDefinitionList(id, String(organizationId));
 		}
 	};
 
