@@ -118,11 +118,12 @@ const Index = () => {
 				)}
 				<div className="w-full mx-auto bg-white border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700">
 					<div className="px-6 py-6">
-						{loading ? (
+						{loading && (
 							<div className="flex items-center justify-center mb-4">
 								<CustomSpinner />
 							</div>
-						) : !loading && orgnizationId ? (
+						) }
+						 {!loading && orgnizationId && (
 							<>
 								{' '}
 								<form action="#">
@@ -231,7 +232,9 @@ const Index = () => {
 									</div>
 								</form>{' '}
 							</>
-						) : (
+						) } 
+						
+						{!loading && !orgnizationId && (
 							<EmptyListMessage
 								message={'No Organization'}
 								description={'Get started by creating a new Organization'}
