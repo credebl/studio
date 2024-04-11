@@ -20,6 +20,7 @@ import { createEcosystems } from '../../api/ecosystem';
 import { getOrgDetails } from '../../config/ecosystem';
 import defaultUserIcon from '../../../public/images/person_FILL1_wght400_GRAD0_opsz24.svg';
 import EndorsementTooltip from '../../commonComponents/EndorsementTooltip';
+import { processImage } from '../../utils/processImage';
 interface Values {
 	name: string;
 	description: string;
@@ -126,29 +127,20 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 	const isEmpty = (object: any): boolean => {
 		return true;
 	};
+
 	const handleImageChange = (event: any): void => {
 		setImgError('');
-		const reader = new FileReader();
-		const file = event?.target?.files;
-
-		const imgfieSize = Number((file[0]?.size / 1024 / 1024)?.toFixed(2));
-		const extension = file[0]?.name
-			?.substring(file[0]?.name?.lastIndexOf('.') + 1)
-			?.toLowerCase();
-		if (extension === 'png' || extension === 'jpeg' || extension === 'jpg') {
-			if (imgfieSize <= imageSizeAccepted) {
-				reader.onloadend = (): void => {
-					ProcessImg(event);
-					isEmpty(reader.result);
-				};
-				reader.readAsDataURL(file[0]);
-				event.preventDefault();
+		processImage(event, (result, error) => {
+			if (result) {
+				setLogoImage({
+					logoFile: '',
+					imagePreviewUrl: result,
+					fileName: event.target.files[0].name,
+				});
 			} else {
-				setImgError('Please check image size');
+				setImgError(error || 'An error occurred while processing the image.');
 			}
-		} else {
-			setImgError('Invalid image type');
-		}
+		});
 	};
 
 	const submitCreateOrganization = async (values: Values) => {
@@ -170,6 +162,8 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 				props.setMessage(data?.message);
 			}
 			props.setOpenModal(false);
+		    window.location.href = '/organizations';
+
 		} else {
 			setErrMsg(resCreateOrg as string);
 		}
@@ -299,20 +293,21 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 							>
 								<div className="mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-2 dark:bg-gray-800">
 									<div className="flex flex-col items-center sm:flex-row 2xl:flex-row p-2 gap-0 sm:gap-4">
-										{typeof logoImage.logoFile === 'string' ? (
+										{logoImage?.imagePreviewUrl ? (
+											<img
+												className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
+												src={logoImage?.imagePreviewUrl || ""}
+												alt={logoImage.fileName}
+											/>
+										) : typeof logoImage.logoFile === 'string' ? (
 											<Avatar size="lg" img={defaultUserIcon} />
 										) : (
 											<img
 												className="m-2 rounded-md w-28 h-28"
-												src={
-													typeof logoImage.logoFile === 'string'
-														? asset('images/users/bonnie-green-2x.png')
-														: URL.createObjectURL(logoImage.logoFile)
-												}
-												alt="Jese picture"
+												src={URL.createObjectURL(logoImage?.logoFile)}
+												alt={logoImage.fileName}
 											/>
 										)}
-
 										<div>
 											<h3 className="flex items-center justify-center sm:justify-start mb-1 text-xl font-bold text-gray-900 dark:text-white">
 												{popupName} Logo
