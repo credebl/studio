@@ -153,8 +153,7 @@ const Index = () => {
 													</span>
 												</div>
 
-												{(userRoles.includes(Roles.OWNER) ||
-													userRoles.includes(Roles.ADMIN)) && (
+												{(userRoles.includes(Roles.OWNER)) && (
 													<div className="text-start items-center mt-4 sm:mt-0 shrink-0">
 														{buttonDisplay && (
 															<Button
