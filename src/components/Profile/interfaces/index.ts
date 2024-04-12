@@ -38,7 +38,7 @@ export interface UserEmail {
   email: string
 }
 
-export interface UserProfile {
+export interface IUserProfile {
   id: string
   profileImg?: string
   username?: string
@@ -49,4 +49,9 @@ export interface UserProfile {
   keycloakUserId?: string
   publicProfile?: boolean
   isPublic?:boolean
+}
+
+export interface DisplayUserProfileProps {
+	toggleEditProfile: () => void;
+	userProfileInfo: IUserProfile | null;
 }

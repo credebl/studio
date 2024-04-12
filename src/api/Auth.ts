@@ -26,6 +26,12 @@ export interface EmailVerifyData {
     email: string
 }
 
+export interface KeyCloakData {
+	email: string,
+	oldPassword: string,
+	newPassword: string
+}
+
 export const sendVerificationMail = async(payload:UserSignUpData) => {
     const details ={
         url: apiRoutes.auth.sendMail,
@@ -42,6 +48,36 @@ export const sendVerificationMail = async(payload:UserSignUpData) => {
     }
 }
 
+export const resetPassword = async(payload: { password: string; token: string | null }, email: string | null) => {   
+	const details = {
+			url: `${apiRoutes.auth.resetPassword}/${email}`,
+			payload
+	}
+	try{
+			const response = await axiosPost(details)
+			return response
+	}
+	catch(error){
+			const err = error as Error
+			return err?.message
+	} 
+}
+
+export const forgotPassword = async(payload: {email: string}) => {
+	const details = {
+			url: apiRoutes.auth.forgotPassword,
+			payload
+	}
+	try{
+			const response = await axiosPost(details)
+			return response
+	}
+	catch(error){
+			const err = error as Error
+			return err?.message
+	} 
+}
+
 export const loginUser = async(payload: UserSignInData) => {
     const details = {
         url: apiRoutes.auth.sinIn,
@@ -56,6 +92,23 @@ export const loginUser = async(payload: UserSignInData) => {
         const err = error as Error
         return err?.message
     } 
+}
+
+export const resetPasswordKeyCloak = async(payload: KeyCloakData) => {
+	
+	const details = {
+			url: apiRoutes.auth.keyClockResetPassword,
+			payload,
+			config: { headers: { "Content-type": "application/json" } }
+	}
+	try{
+			const response = await axiosPost(details)
+			return response
+	}
+	catch(error){
+			const err = error as Error
+			return err?.message
+	} 
 }
 
 export const getUserProfile = async(accessToken: string) => {
@@ -172,19 +225,32 @@ export const passwordEncryption = (password: string): string => {
 }
 
 export const encryptData = (value: any): string => {
-    if(typeof(value) !== 'string'){
-        value = JSON.stringify(value)
-    }
+ 
     const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`
-    const convrtedValue: string = CryptoJS.AES.encrypt(value, CRYPTO_PRIVATE_KEY).toString()
-    return convrtedValue
+
+    try {
+        if (typeof (value) !== 'string') {
+            value = JSON.stringify(value)
+        }
+        return CryptoJS.AES.encrypt(value, CRYPTO_PRIVATE_KEY).toString();
+    } catch (error) {
+        // Handle encryption error
+        console.error('Encryption error:', error);
+        return '';
+    }
 }
 
 export const decryptData = (value: any): string => {
     const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`
-    const bytes = CryptoJS.AES.decrypt(value, CRYPTO_PRIVATE_KEY)
-    var originalValue: string = bytes.toString(CryptoJS.enc.Utf8);
-    return originalValue
+
+    try {
+        let bytes = CryptoJS.AES.decrypt(value, CRYPTO_PRIVATE_KEY);
+        return bytes.toString(CryptoJS.enc.Utf8);
+    } catch (error) {
+        // Handle decryption error or invalid input
+        console.error('Decryption error:', error);
+        return '';
+    }
 }
 
 export const setToLocalStorage = async (key: string, value: any) =>{
@@ -220,23 +286,21 @@ export const setToCookies = (cookies: AstroCookies, key: string, value: any, opt
 		return;
 	}
     
-    const convertedValue = encryptData(value)
     // Set HttpOnly, Secure, and SameSite attributes in the options
     const updatedOption: { [key: string]: any }= {
         ...option,
         httpOnly: true,
         secure: true, // Set to true if using HTTPS
-        sameSite: 'Strict', 
+        sameSite: 'strict', 
       };
-    cookies.set(key, convertedValue as string, updatedOption)
+    cookies.set(key, value as string, updatedOption)
 
     return true
 }
 
 export const getFromCookies = (cookies: AstroCookies, key: string) =>{
     const value = cookies.get(key).value
-    const convertedValue = value ? decryptData(value) : ''
-    return convertedValue
+    return value
 }
 
 export const removeFromLocalStorage = async (key: string) => {

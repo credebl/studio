@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState} from "react";
-import type { UserProfile } from "./interfaces";
+import type { IUserProfile } from "./interfaces";
 import { getFromLocalStorage, setToLocalStorage, updateUserProfile } from "../../api/Auth";
 import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, imageSizeAccepted, storageKeys } from "../../config/CommonConstant";
 import type { AxiosResponse } from "axios";
@@ -23,8 +23,8 @@ interface ILogoImage {
 }
 interface EditUserProfileProps {
   toggleEditProfile: () => void;
-  userProfileInfo: UserProfile | null;
-  updateProfile: (updatedProfile: UserProfile) => void;
+  userProfileInfo: IUserProfile | null;
+  updateProfile: (updatedProfile: IUserProfile) => void;
 }
 
 const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: EditUserProfileProps) => {
@@ -241,7 +241,7 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
 
                         <div>
                           <h1 className="text-gray-500 text-xl font-medium font-montserrat dark:text-white">General</h1>
-                          <p className="mt-2 text-gray-700 font-montserrat text-sm font-normal font-light leading-normal dark:text-white">Basic info, like your first name, last name and profile image that will be displayed</p>
+                          <p className="text-start mt-2 text-gray-700 font-montserrat text-sm font-normal dark:text-white">Basic info, like your first name, last name and profile image that will be displayed</p>
                         </div>
 
                       </div>

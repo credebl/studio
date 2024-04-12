@@ -47,7 +47,7 @@ export const getVerificationList = async ({
 	sortingOrder,
 }: IConnectionListAPIParameter) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Verification.verifyCredential}?pageSize=${itemPerPage}&pageNumber=${page}&searchByText=${search}&sortByValue=${sortingOrder}&sorting=${sortBy}`;
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Verification.verifyCredential}?pageSize=${itemPerPage}&pageNumber=${page}&searchByText=${search}&sortBy=${sortingOrder}&sortField=${sortBy}`;
 
 	const axiosPayload = {
 		url,
@@ -62,7 +62,7 @@ export const getVerificationList = async ({
 	}
 };
 
-export const verifyPresentation = async (proofId:string) => {
+export const verifyPresentation = async (proofId: string) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Verification.presentationVerification}/${proofId}/verify`;
 	const axiosPayload = {
@@ -79,8 +79,8 @@ export const verifyPresentation = async (proofId:string) => {
 };
 
 
-export const getProofAttributes=async (proofId:string, orgId: string)=>{
-	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Verification.proofRequestAttributesVerification}/${proofId}/form`;
+export const getVerifiedProofDetails=async (proofId:string, orgId: string)=>{
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Verification.proofRequestAttributesVerification}/${proofId}`;
 	const axiosPayload = {
 		url,
 		config: await getHeaderConfigs(),
@@ -92,11 +92,13 @@ export const getProofAttributes=async (proofId:string, orgId: string)=>{
 		const err = error as Error;
 		return err?.message;
 	}
-}
+};
 
-export const getCredentialDefinitionsForVerification = async (schemaId: string) => {
+export const getCredentialDefinitionsForVerification = async (
+	schemaId: string,
+) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url= `${apiRoutes.Verification.verificationCredDef}/${schemaId}`;
+	const url = `${apiRoutes.Verification.verificationCredDef}/${schemaId}`;
 
 	const axiosPayload = {
 		url,

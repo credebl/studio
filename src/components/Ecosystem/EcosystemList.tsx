@@ -22,7 +22,7 @@ import CustomSpinner from '../CustomSpinner';
 import CreateEcosystemOrgModal from '../CreateEcosystemOrgModal';
 import { getEcosystems } from '../../api/ecosystem';
 import type { IEcosystem } from './interfaces';
-import { checkEcosystem, type ICheckEcosystem } from '../../config/ecosystem';
+import { checkEcosystem, getOrgDetails, type ICheckEcosystem } from '../../config/ecosystem';
 import React from 'react';
 
 const initialPageState = {
@@ -34,6 +34,7 @@ const initialPageState = {
 const EcosystemList = () => {
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(true);
+	const [isWalletSpinUp, setIsWalletSpinUp] = useState<boolean>(false);
 	const [selectedOrgId, setSelectedOrgId] = useState<string>("");
 	const [message, setMessage] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
@@ -58,6 +59,8 @@ const EcosystemList = () => {
 	const fetchEcosystems = async () => {
 		const id = await getFromLocalStorage(storageKeys.ORG_ID);
 		setSelectedOrgId(id)
+		const orgData = await getOrgDetails();
+		setIsWalletSpinUp(Boolean(orgData?.orgDid))
 		setLoading(true);
 		if (id) {
 			const response = await getEcosystems(
@@ -69,7 +72,7 @@ const EcosystemList = () => {
 			const { data } = response as AxiosResponse;
 
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				const ecosystemData = data?.data;
+				const ecosystemData = data?.data.ecosystemList;
 				if (ecosystemData) {
 
 					setEcosystemList(ecosystemData);
@@ -103,17 +106,16 @@ const EcosystemList = () => {
 
 	useEffect(() => {
 		const queryParameters = new URLSearchParams(window?.location?.search);
-		const isModel = queryParameters.get('orgModal') || '';
+		const isModel = queryParameters.get('orgModal') === 'true' || false;
 
-		if (isModel !== '') {
+		if (isModel) {
 			setOpenModal(true);
 		}
 
-		const checkEcosystemData = async () => {
+		(async () => {
 			const data: ICheckEcosystem = await checkEcosystem();
 			setIsEcosystemData(data);
-		};
-		checkEcosystemData();
+		})();
 	}, []);
 
 	//onCHnage of Search input text
@@ -129,6 +131,83 @@ const EcosystemList = () => {
 		await setToLocalStorage(storageKeys.ECOSYSTEM_ROLE, ecosystemRole);
 		window.location.href = pathRoutes.ecosystem.dashboard;
 	};
+
+	const emptyListMessage = (isWalletSpinUp: boolean, selectedOrgId: boolean, ecosystemList: boolean) => {
+		try {
+			switch (true) {
+				case !isWalletSpinUp:
+					return <EmptyListMessage
+						message={'No Wallet Found'}
+						description={'Get started by creating a new wallet'}
+						buttonContent={'Create Wallet'}
+						onClick={() => window.location.assign(pathRoutes.organizations.dashboard)}
+						svgComponent={
+							<svg
+								className="pr-2 mr-1"
+								xmlns="http://www.w3.org/2000/svg"
+								width="24"
+								height="15"
+								fill="none"
+								viewBox="0 0 24 24"
+							>
+								<path
+									fill="#fff"
+									d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"
+								/>
+							</svg>
+						}
+					/>
+				case !selectedOrgId:
+					return <EmptyListMessage
+						message={'No Organization'}
+						description={'Get started by creating a new Organization'}
+						buttonContent={'Create Organization'}
+						onClick={createOrganizationModel}
+						svgComponent={
+							<svg
+								className="pr-2 mr-1"
+								xmlns="http://www.w3.org/2000/svg"
+								width="24"
+								height="15"
+								fill="none"
+								viewBox="0 0 24 24"
+							>
+								<path
+									fill="#fff"
+									d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"
+								/>
+							</svg>
+						}
+					/>
+				case ecosystemList:
+					return <EmptyListMessage
+						message={'No Ecosystem'}
+						description={'Get started by creating a new Ecosystem'}
+						buttonContent={'Create Ecosystem'}
+						onClick={createOrganizationModel}
+						svgComponent={
+							<svg
+								className="pr-2 mr-1"
+								xmlns="http://www.w3.org/2000/svg"
+								width="24"
+								height="15"
+								fill="none"
+								viewBox="0 0 24 24"
+							>
+								<path
+									fill="#fff"
+									d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"
+								/>
+							</svg>
+						}
+					/>
+				default:
+					break;
+			}
+		} catch (error) {
+			console.error(error)
+		}
+	}
 
 	const isEcosystemList = Boolean(ecosystemList && ecosystemList?.length > 0);
 	const showCreateButton = Boolean(
@@ -153,7 +232,7 @@ const EcosystemList = () => {
 				{showCreateButton && (
 					<RoleViewButton
 						buttonTitle="Create"
-						feature={Features.CRETAE_ORG}
+						feature={Features.CREATE_ECOSYSTEMS}
 						svgComponent={
 							<div className="pr-3">
 								<svg
@@ -203,12 +282,7 @@ const EcosystemList = () => {
 									<Card
 										key={item.id}
 										onClick={() => redirectOrgDashboard(item.id, role)}
-										className="transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer overflow-hidden"
-										style={{
-											maxHeight: '100%',
-											maxWidth: '100%',
-											overflow: 'auto',
-										}}
+										className="transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer overflow-hidden max-w-full max-h-fit overflow-auto"
 									>
 										<div className="flex items-center">
 											{item.logoUrl ? (
@@ -262,55 +336,8 @@ const EcosystemList = () => {
 
 					) : (
 						<>
-							{ecosystemList && (
-								<EmptyListMessage
-									message={'No Ecosystem'}
-									description={'Get started by creating a new Ecosystem'}
-									buttonContent={'Create Ecosystem'}
-									onClick={createOrganizationModel}
-									svgComponent={
-										<svg
-											className="pr-2 mr-1"
-											xmlns="http://www.w3.org/2000/svg"
-											width="24"
-											height="15"
-											fill="none"
-											viewBox="0 0 24 24"
-										>
-											<path
-												fill="#fff"
-												d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"
-											/>
-										</svg>
-									}
-								/>
-							)}
-							{
-								!selectedOrgId &&
-								<EmptyListMessage
-									message={'No Organization'}
-									description={'Get started by creating a new Organization'}
-									buttonContent={'Create Organization'}
-									onClick={createOrganizationModel}
-									svgComponent={
-										<svg
-											className="pr-2 mr-1"
-											xmlns="http://www.w3.org/2000/svg"
-											width="24"
-											height="15"
-											fill="none"
-											viewBox="0 0 24 24"
-										>
-											<path
-												fill="#fff"
-												d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"
-											/>
-										</svg>
-									}
-								/>
-							}
+							{emptyListMessage(isWalletSpinUp, Boolean(selectedOrgId), Boolean(ecosystemList && ecosystemList?.length === 0))}
 						</>
-
 					)}
 
 					<div

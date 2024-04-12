@@ -153,9 +153,9 @@ const CredDefSelection = () => {
 						<CustomSpinner />
 					</div>
 				) : (
-					<div className="m-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap4">
+					<div className="m-1 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
 						<SchemaCard
-							className="col-span-1 sm:col-span-2 md:col-span-1"
+							className="col-span-1 lg:col-span-2 xl:col-span-1"
 							schemaName={schemaState?.schemaName}
 							version={schemaState?.version}
 							schemaId={schemaDetailsState.schemaId}
@@ -177,7 +177,7 @@ const CredDefSelection = () => {
 				<Button
 					id="createSchemaButton"
 					onClick={() => {
-						window.location.href = `${pathRoutes.organizations.viewSchema}?schemaId=${schemaDetailsState?.schemaId}`;
+						window.location.href = `${pathRoutes.organizations.viewSchema}/${encodeURIComponent(schemaDetailsState?.schemaId)}`;
 					}}
 					className="ml-auto text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 					title="Create new credential-definition"

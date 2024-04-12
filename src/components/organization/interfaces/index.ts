@@ -42,6 +42,7 @@ export interface OrgAgent {
     lastChangedDateTime: string
     lastChangedBy: string
     orgDid: string
+    didDocument: string
     verkey: string
     agentEndPoint: string
     agentId: any
@@ -167,4 +168,27 @@ export interface IOrgData {
 export interface IExploreOrg {
     orgData: IOrgData
 }
-
+export interface Values {
+	website: any;
+	name: string;
+	description: string;
+}
+export interface ILogoImage {
+	logoFile: string | File;
+	imagePreviewUrl: string | ArrayBuffer | null | File;
+	fileName: string;
+}
+export interface EditOrgdetailsModalProps {
+	openModal: boolean;
+	setMessage: (message: string) => void;
+	setOpenModal: (flag: boolean) => void;
+	onEditSucess?: () => void;
+	orgData: Organisation | null;
+}
+export interface IOrgInfo {
+	name: string;
+	logoUrl: string;
+    description: string;
+    id: string;
+    roles: string[]
+}

@@ -1,6 +1,6 @@
 ---
 import LayoutSidebar from '../../app/LayoutSidebar.astro';
-import Users from '../../components/organization/users/index'
+import UsersTab from '../../components/organization/users/index'
 import { checkUserSession } from '../../utils/check-session';
 import { pathRoutes } from '../../config/pathRoutes';
 
@@ -12,5 +12,5 @@ if (!response.authorized) {
 ---
 
 <LayoutSidebar notFoundPage={!response.permitted}>
-	<Users client:visible/>
+	<UsersTab client:visible/>
 </LayoutSidebar>

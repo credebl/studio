@@ -1,20 +1,17 @@
 'use client';
 
 import { ChangeEvent, useEffect, useState } from 'react';
-import DataTable from '../../commonComponents/datatable';
 import type { TableData } from '../../commonComponents/datatable/interface';
 import { apiStatusCodes } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';
 import BreadCrumbs from '../BreadCrumbs';
-import CustomSpinner from '../CustomSpinner';
-import { EmptyListMessage } from '../EmptyListComponent';
 import { pathRoutes } from '../../config/pathRoutes';
 import BackButton from '../../commonComponents/backbutton';
-import SearchInput from '../SearchInput';
 import { getFilesDataHistory } from '../../api/BulkIssuance';
 import type { AxiosResponse } from 'axios';
-import { Pagination } from 'flowbite-react';
 import { BulkIssuanceStatus } from '../../common/enums';
+import SortDataTable from '../../commonComponents/datatable/SortDataTable';
+import type { IConnectionListAPIParameter } from '../../api/connection';
 
 interface IProps {
 	requestId: string;
@@ -22,76 +19,55 @@ interface IProps {
 
 const HistoryDetails = ({ requestId }: IProps) => {
 	const initialPageState = {
-		pageNumber: 1,
-		pageSize: 10,
-		total: 0,
+		itemPerPage: 10,
+		page: 1,
+		search: '',
+		sortBy: 'createDateTime',
+		sortingOrder: 'desc',
 	};
+
+	const [listAPIParameter, setListAPIParameter] = useState(initialPageState);
 	const [historyList, setHistoryList] = useState<TableData[]>([]);
-	const [options, setOptions] = useState(['All', 'Successful', 'Failed']);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
-	const [currentPage, setCurrentPage] = useState(initialPageState);
-	const [searchText, setSearchText] = useState('');
-	const [sortBy, setSortBy] = useState('All');
+	const [totalItem, setTotalItem] = useState(0);
+	const [pageInfo, setPageInfo] = useState({
+		totalItem: '',
+		nextPage: '',
+		lastPage: '',
+	});
 
-	const onPageChange = (page: number) => {
-		setCurrentPage({
-			...currentPage,
-			pageNumber: page,
-		});
-	};
 	useEffect(() => {
 		let getData: NodeJS.Timeout;
 
-		if (searchText.length >= 1) {
+		if (listAPIParameter.search.length >= 1) {
 			getData = setTimeout(() => {
-				getHistoryDetails();
+				getHistoryDetails(listAPIParameter);
 			}, 1000);
 			return () => clearTimeout(getData);
 		} else {
-			getHistoryDetails();
+			getHistoryDetails(listAPIParameter);
 		}
 
 		return () => clearTimeout(getData);
-	}, [searchText, currentPage.pageNumber]);
+	}, [listAPIParameter]);
 
-	useEffect(() => {
-		let getData: NodeJS.Timeout;
-
-		if (sortBy !== 'All') {
-			getData = setTimeout(() => {
-				getHistoryDetails();
-			}, 1000);
-		} else {
-			getHistoryDetails();
-		}
-
-		return () => clearTimeout(getData);
-	}, [sortBy]);
-
-	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-		setSearchText(e.target.value);
-	};
-
-	const handleFilter = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-		setSortBy(e.target.value);
-	};
-
-	const getHistoryDetails = async () => {
+	const getHistoryDetails = async (apiParameter: IConnectionListAPIParameter) => {
 		setLoading(true);
-		const response = await getFilesDataHistory(
-			requestId,
-			currentPage.pageNumber,
-			currentPage.pageSize,
-			searchText,
-			sortBy,
-		);
+		const response = await getFilesDataHistory(requestId, apiParameter.itemPerPage, apiParameter.page, apiParameter.search, apiParameter.sortBy, apiParameter.sortingOrder);
 
 		const { data } = response as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const totalPages = data?.data?.lastPage;
+			setTotalItem(data?.data.totalItems);
+			const { totalItems, nextPage, lastPage } = data.data;
 
+			setPageInfo({
+				totalItem: totalItems,
+				nextPage: nextPage,
+				lastPage: lastPage,
+			});
 			const historyData = data?.data?.data?.map(
 				(history: {
 					isError: any;
@@ -116,13 +92,17 @@ const HistoryDetails = ({ requestId }: IProps) => {
 												: 'bg-red-100 text-red-800 border border-red-100 dark:border-red-400 dark:bg-gray-700 dark:text-red-400'
 										}	text-md font-medium sm:mr-0 md:mr-2 px-2 min-[320]:px-3 sm:px-3 lg:px-3 py-0.5 rounded-md flex justify-center w-fit`}
 									>
-										{history?.isError === false ? BulkIssuanceStatus.successful : BulkIssuanceStatus.failed}
+										{history?.isError === false
+											? BulkIssuanceStatus.successful
+											: BulkIssuanceStatus.failed}
 									</p>
 								),
 							},
 							{
 								data: history?.error
-									? history?.error === 'Http Exception' ? 'Credential Issuance failed due to error in Wallet Agent' : history?.error?.replace(/[[\]"{},]/g, ' ')
+									? history?.error === 'Http Exception'
+										? 'Credential Issuance failed due to error in Wallet Agent'
+										: history?.error?.replace(/[[\]"{},]/g, ' ')
 									: '-',
 							},
 						],
@@ -130,16 +110,31 @@ const HistoryDetails = ({ requestId }: IProps) => {
 				},
 			);
 			setHistoryList(historyData);
-			setCurrentPage({
-				...currentPage,
-				total: totalPages,
-			});
 		} else {
 			setError(response as string);
 		}
 		setLoading(false);
 	};
 
+	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setListAPIParameter({
+			...listAPIParameter,
+			search: e.target.value,
+			page: 1,
+		});
+	};
+
+	const searchSortByValue = (value: any) => {
+		setListAPIParameter({
+			...listAPIParameter,
+			page: 1,
+			sortingOrder: value,
+		});
+	};
+
+	const refreshPage = () => {
+		getHistoryDetails(listAPIParameter);
+	};
 	const header = [
 		{ columnName: 'User' },
 		{ columnName: 'Status' },
@@ -163,24 +158,6 @@ const HistoryDetails = ({ requestId }: IProps) => {
 					<p className="text-sm text-gray-400">Bulk Issuance History Details</p>
 				</h1>
 			</div>
-			<div
-				id="schemasSearchInput"
-				className="mb-2 flex space-x-2 items-end justify-between"
-			>
-				<SearchInput onInputChange={searchInputChange} />
-
-				<select
-					onChange={handleFilter}
-					id="schamfilter"
-					className="bg-gray-50 h-select-input border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
-				>
-					{options.map((opt) => (
-						<option key={opt} className="" value={opt}>
-							{opt}
-						</option>
-					))}
-				</select>
-			</div>
 			<AlertComponent
 				message={error}
 				type={'failure'}
@@ -189,38 +166,29 @@ const HistoryDetails = ({ requestId }: IProps) => {
 				}}
 			/>
 
-			{loading ? (
-				<div className="flex items-center justify-center mt-36 mb-4">
-					<CustomSpinner />
-				</div>
-			) : historyList && historyList?.length > 0 ? (
-				<div
-					id="issuance_datatable"
-					className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
-				>
-					<DataTable
-						header={header}
-						data={historyList}
-						loading={loading}
-					></DataTable>
-					{currentPage.total > 1 && (
-						<div className="flex items-center justify-end mb-4">
-							<Pagination
-								currentPage={currentPage.pageNumber}
-								onPageChange={onPageChange}
-								totalPages={currentPage.total}
-							/>
-						</div>
-					)}
-				</div>
-			) : (
-				<div className="bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-					<EmptyListMessage
-						message={'No Records Found'}
-						description={"You don't have any data"}
-					/>
-				</div>
-			)}
+			<SortDataTable
+				onInputChange={searchInputChange}
+				refresh={refreshPage}
+				header={header}
+				data={historyList}
+				loading={loading}
+				currentPage={listAPIParameter?.page}
+				onPageChange={(page: number) => {
+					setListAPIParameter((prevState) => ({
+						...prevState,
+						page,
+					}));
+				}}
+				searchSortByValue={searchSortByValue}
+				totalPages={Math.ceil(totalItem / listAPIParameter?.itemPerPage)}
+				pageInfo={pageInfo}
+				isHeader={true}
+				isSearch={true}
+				isRefresh={true}
+				isSort={true}
+				message={'No History'}
+				discription={"You don't have any activities yet"}
+			></SortDataTable>
 		</div>
 	);
 };

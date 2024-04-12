@@ -1,7 +1,10 @@
 ---
 import LayoutCommon from '../app/LayoutCommon.astro';
 import PublicNavbar from '../commonComponents/PublicNavbar.astro';
-import { pathRoutes } from '../config/pathRoutes';
+import { envConfig } from '../config/envConfig';
+const cookie = Astro.cookies.get("platform-data").value;
+const env = import.meta.env || process.env;
+
 ---
 
 <LayoutCommon>
@@ -1240,7 +1243,7 @@ import { pathRoutes } from '../config/pathRoutes';
 					>
 						&copy; 2019-{new Date().getFullYear()}
 						<a href="https://blockster.global" target="_blank" class="hover:underline hover:underline-offset-2"
-							>Blockster Labs Private Limited.</a
+							>{envConfig.PLATFORM_DATA.poweredBy}</a
 						> All Rights Reserved. &nbsp; &nbsp; | &nbsp; &nbsp;
 						<a href="/terms-of-use" class="hover:underline hover:underline-offset-2">Terms of Use</a> &nbsp; &nbsp; <a
 							href="/privacy-policy" class="hover:underline hover:underline-offset-2">Privacy Policy</a
@@ -1250,7 +1253,7 @@ import { pathRoutes } from '../config/pathRoutes';
 					<div class="flex mt-4 space-x-6 justify-center items-center">
 						<a href="https://github.com/credebl" class="hover:opacity-50">
 							<svg
-								class="w-6 h-6 text-gray-700 hover:text-gray-900 dark:text-white"
+								class="w-6 h-[1.2rem] text-gray-700 hover:text-gray-900 dark:text-white"
 								xmlns="http://www.w3.org/2000/svg"
 								fill="currentColor"
 								viewBox="0 0 20 20"
@@ -1284,7 +1287,7 @@ import { pathRoutes } from '../config/pathRoutes';
 								height="18"
 								viewBox="0 0 20 18"
 								fill="currentColor"
-								class="w-6 h-6 text-gray-700 hover:text-gray-900 dark:text-white"
+								class="w-6 h-[1.1rem] text-gray-700 hover:text-gray-900 dark:text-white"
 							>
 								<path
 									d="M0.500972 0.0306835C0.484277 0.0511379 0.684618 0.352842 0.946175 0.710796C1.2133 1.06364 1.55833 1.52898 1.71415 1.73864C1.86997 1.9483 2.13709 2.30625 2.30404 2.53125C2.61569 2.94034 4.27963 5.16989 4.95856 6.08523C5.15891 6.35114 5.48724 6.79091 5.68202 7.05682C5.88236 7.32273 6.17731 7.71648 6.33313 7.92614C6.48895 8.1358 6.8952 8.68296 7.24023 9.13807C7.58526 9.59318 7.86351 9.99205 7.86351 10.0227C7.86351 10.0534 7.75778 10.1864 7.62422 10.3193C7.49066 10.4523 6.97311 10.9943 6.47782 11.5313C5.97697 12.0631 5.37038 12.7227 5.11995 12.9835C2.99411 15.2438 0.517667 17.9233 0.517667 17.954C0.517667 17.9795 0.868264 18 1.29677 18H2.07588L2.29848 17.775C2.42091 17.6523 2.60456 17.458 2.70473 17.3506C2.79933 17.2381 3.33357 16.6653 3.88451 16.0824C4.43545 15.4943 4.95856 14.9318 5.05317 14.8347C5.14221 14.7324 5.67089 14.1699 6.22183 13.5818C6.77277 12.9938 7.40718 12.3136 7.62978 12.0733C8.38106 11.2602 8.59253 11.0455 8.63149 11.0455C8.65375 11.0455 8.74835 11.158 8.84852 11.2909C8.94313 11.4239 9.19355 11.7614 9.40503 12.0426C9.6165 12.3239 9.9504 12.7739 10.1507 13.0398C10.3511 13.3057 10.6794 13.7455 10.8798 14.0114C11.0801 14.2773 11.798 15.2438 12.4769 16.1591C13.1559 17.0744 13.7569 17.8619 13.8125 17.9131C13.9016 17.9949 14.0964 18 16.7008 17.9898L19.5 17.9744L18.988 17.2841C18.5094 16.6347 18.1533 16.1591 17.4632 15.2386C17.3074 15.029 17.0069 14.625 16.7954 14.3438C16.5839 14.0625 15.9829 13.2494 15.4487 12.5438C14.5137 11.2909 14.2355 10.9176 13.512 9.94602C13.3228 9.69034 13.0334 9.30171 12.8665 9.0767C12.0317 7.96193 11.8147 7.66534 11.8147 7.62955C11.8147 7.60909 12.0317 7.35852 12.2988 7.07216C12.5715 6.79091 13.0668 6.26421 13.4007 5.90114C13.7402 5.54318 14.4024 4.83239 14.8755 4.32102C15.3485 3.81477 15.8159 3.31875 15.905 3.21648C15.9996 3.1142 16.5227 2.55682 17.0736 1.96875C18.2089 0.761932 18.643 0.296593 18.7877 0.122728L18.8934 0H18.0642L17.2406 0.0051136L15.7826 1.575C12.7886 4.79148 11.1191 6.56591 11.0634 6.58125C11.0356 6.59148 10.6182 6.075 10.1452 5.4358C9.67215 4.79659 9.11565 4.05511 8.9153 3.7892C8.45897 3.17045 7.95812 2.50568 7.35153 1.6875C7.08997 1.33466 6.70599 0.818184 6.49451 0.536934L6.10496 0.0255699L3.32244 0.0102272C1.79206 0.0051136 0.523232 0.0153427 0.500972 0.0306835Z"

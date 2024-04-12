@@ -14,7 +14,10 @@ import RoleViewButton from '../RoleViewButton';
 import SearchInput from '../SearchInput';
 import { getOrganizations } from '../../api/organization';
 import { pathRoutes } from '../../config/pathRoutes';
-import { setToLocalStorage } from '../../api/Auth';
+import {
+	removeFromLocalStorage,
+	setToLocalStorage,
+} from '../../api/Auth';
 import { EmptyListMessage } from '../EmptyListComponent';
 import CustomSpinner from '../CustomSpinner';
 import CreateEcosystemOrgModal from '../CreateEcosystemOrgModal';
@@ -48,7 +51,6 @@ const OrganizationsList = () => {
 		props.setOpenModal(true);
 	};
 
-	//Fetch the user organization list
 	const getAllOrganizations = async () => {
 		setLoading(true);
 		const response = await getOrganizations(
@@ -80,7 +82,6 @@ const OrganizationsList = () => {
 		setLoading(false);
 	};
 
-	//This useEffect is called when the searchText changes
 	useEffect(() => {
 		let getData: NodeJS.Timeout;
 
@@ -98,25 +99,31 @@ const OrganizationsList = () => {
 
 	useEffect(() => {
 		const queryParameters = new URLSearchParams(window?.location?.search);
-		const isModel = queryParameters.get('orgModal') ?? '';
+		const isModel = queryParameters.get('orgModal') === 'true' || false;
 
-		if (isModel !== '') {
+		if (isModel) {
 			props.setOpenModal(true);
 		}
 	}, []);
 
-	//onCHnage of Search input text
 	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setSearchText(e.target.value);
 	};
 
 	const redirectOrgDashboard = async (activeOrg: Organisation) => {
+		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ID);
+		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ROLE);
+		await removeFromLocalStorage(storageKeys.ORG_DETAILS);
+
 		await setToLocalStorage(storageKeys.ORG_ID, activeOrg.id.toString());
 		const roles: string[] = activeOrg?.userOrgRoles.map(
 			(role) => role.orgRole.name,
 		);
-		activeOrg.roles = roles;
-
+		const { id, name, description, logoUrl } = activeOrg || {};
+		const orgInfo = {
+			id, name, description, logoUrl, roles
+		}
+		await setToLocalStorage(storageKeys.ORG_INFO, orgInfo)
 		await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
 		window.location.href = pathRoutes.organizations.dashboard;
 	};
@@ -168,7 +175,8 @@ const OrganizationsList = () => {
 																		key={index}
 																		className="m-1 bg-primary-50 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
 																	>
-																		{role.charAt(0).toUpperCase() + role.slice(1)}
+																		{role.charAt(0).toUpperCase() +
+																			role.slice(1)}
 																	</span>
 																);
 															})}
@@ -228,32 +236,37 @@ const OrganizationsList = () => {
 				<BreadCrumbs />
 			</div>
 
-			<div className='mb-4 flex justify-between flex-wrap gap-4 items-center'>
+			<div className="mb-4 flex justify-between flex-wrap gap-4 items-center">
 				<h1 className="ml-1 text-xl font-semibold mb-4 flex justify-between flex-wrap gap-4  text-gray-900 sm:text-2xl dark:text-white">
 					Organizations
 				</h1>
 				<div className="ml-auto">
-					<SearchInput
-						onInputChange={searchInputChange}
-					/>
+					<SearchInput onInputChange={searchInputChange} />
 				</div>
 				<RoleViewButton
-					buttonTitle='Create'
+					buttonTitle="Create"
 					feature={Features.CRETAE_ORG}
 					svgComponent={
-						<div className='pr-3'>
-							<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
-								<path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
+						<div className="pr-3">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="15"
+								height="15"
+								fill="none"
+								viewBox="0 0 24 24"
+							>
+								<path
+									fill="#fff"
+									d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"
+								/>
 							</svg>
 						</div>
 					}
 					onClickEvent={createOrganizationModel}
 				/>
-
 			</div>
 			<div>
 				<div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700   sm:p-6 dark:bg-gray-800">
-
 					<CreateEcosystemOrgModal
 						openModal={props.openModal}
 						setMessage={(data) => setMessage(data)}

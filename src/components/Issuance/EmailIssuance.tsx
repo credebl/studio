@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { pathRoutes } from '../../config/pathRoutes';
 import BreadCrumbs from '../BreadCrumbs';
 import BackButton from '../../commonComponents/backbutton';
@@ -17,13 +17,20 @@ import CustomSpinner from '../CustomSpinner';
 import { issueOobEmailCredential } from '../../api/issuance';
 import { EmptyListMessage } from '../EmptyListComponent';
 import ResetPopup from './ResetPopup';
+import type { SelectRef } from './BulkIssuance';
+import RoleViewButton from '../RoleViewButton';
+import { checkEcosystem, type ICheckEcosystem } from '../../config/ecosystem';
+import { Features } from '../../utils/enums/features';
+import { Create, SchemaEndorsement } from './Constant';
 
 const EmailIssuance = () => {
 	const [formData, setFormData] = useState();
 	const [userData, setUserData] = useState();
 	const [loading, setLoading] = useState<boolean>(true);
 	const [credentialOptions, setCredentialOptions] = useState([]);
-	const [credentialSelected, setCredentialSelected] = useState<string>('');
+	const [credentialSelected, setCredentialSelected] = useState<string | null>(
+		'',
+	);
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [batchName, setBatchName] = useState('');
 	const [openResetModal, setOpenResetModal] = useState<boolean>(false);
@@ -32,6 +39,7 @@ const EmailIssuance = () => {
 	const [failure, setFailure] = useState<string | null>(null);
 	const [isEditing, setIsEditing] = useState(false);
 	const [issueLoader, setIssueLoader] = useState(false);
+	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const inputRef = useRef(null);
 
 	const getSchemaCredentials = async () => {
@@ -71,6 +79,14 @@ const EmailIssuance = () => {
 
 	useEffect(() => {
 		getSchemaCredentials();
+		(async () => {
+			try {
+				const data: ICheckEcosystem = await checkEcosystem();
+				setIsEcosystemData(data);
+			} catch (error) {
+				console.log(error);
+			}
+		})();
 	}, []);
 
 	useEffect(() => {
@@ -85,22 +101,25 @@ const EmailIssuance = () => {
 
 		let transformedData = { credentialOffer: [] };
 		if (existingData && existingData.formData) {
-			existingData.formData.forEach((entry) => {
-				const transformedEntry = { emailId: entry.email, attributes: [] };
-				entry.attributes.forEach((attribute) => {
-					const transformedAttribute = {
-						value: String(attribute.value || ''),
-						name: attribute.name || '',
-					};
-					transformedEntry.attributes.push(transformedAttribute);
-				});
+			existingData?.formData?.forEach(
+				(entry: { email: any; attributes: any[] }) => {
+					const transformedEntry = { emailId: entry.email, attributes: [] };
+					entry.attributes.forEach((attribute) => {
+						const transformedAttribute = {
+							value: String(attribute.value || ''),
+							name: attribute.name || '',
+							isRequired: attribute.isRequired,
+						};
+						transformedEntry?.attributes?.push(transformedAttribute);
+					});
 
-				transformedData.credentialOffer.push(transformedEntry);
-			});
+					transformedData.credentialOffer.push(transformedEntry);
+				},
+			);
 			transformedData.credentialDefinitionId = credentialSelected;
 			const transformedJson = JSON.stringify(transformedData, null, 2);
 			const response = await issueOobEmailCredential(transformedJson);
-			const { data } = response as AxiosResponse;
+			const { data } = response as AxiosResponse;			
 
 			if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 				if (data?.data) {
@@ -115,9 +134,10 @@ const EmailIssuance = () => {
 					setTimeout(() => {
 						window.location.href = pathRoutes?.organizations?.issuedCredentials;
 					}, 500);
-				} else {
-					setFailure(response as string);
+				} else {					
+					setFailure(data?.message);
 					setLoading(false);
+					setIssueLoader(false);
 					setOpenModal(false);
 				}
 			} else {
@@ -135,11 +155,12 @@ const EmailIssuance = () => {
 	useEffect(() => {
 		const initFormData = {
 			email: '',
-			attributes: attributes?.map((item) => {
+			attributes: attributes?.map((item: IAttributes) => {
 				return {
 					...item,
 					value: '',
 					name: item?.attributeName,
+					isRequired: item?.isRequired,
 				};
 			}),
 		};
@@ -171,11 +192,15 @@ const EmailIssuance = () => {
 	const handleBlur = () => {
 		setIsEditing(false);
 	};
+	const selectInputRef = React.useRef<SelectRef | null>(null);
 
 	const handleReset = () => {
 		setCredentialSelected(null);
 		setBatchName('');
 		setOpenResetModal(false);
+		if (selectInputRef.current) {
+			selectInputRef.current.clearValue();
+		}
 	};
 
 	const handleCloseConfirmation = () => {
@@ -192,49 +217,14 @@ const EmailIssuance = () => {
 	const handleResetOpenConfirmation = () => {
 		setOpenResetModal(true);
 	};
-	
-	const MailError = ({
-		handler,
-		formindex,
-		error,
-	}: {
-		handler: { touched: boolean; errors: string; formData: Array<T>[] };
-		formindex: Number;
-		error: string;
-	}) => {
-		if (error === 'email') {
-			return (
-				<>
-					{handler?.touched?.formData &&
-						handler?.touched?.formData[formindex]?.email &&
-						handler?.errors?.formData &&
-						handler?.errors?.formData[formindex]?.email && (
-							<label style={{ color: 'red' }} className="text-sm">
-								{handler?.errors?.formData[formindex]?.email}
-							</label>
-						)}
-				</>
-			);
-		} else if (error === 'attribute') {
-			return (
-				<>
-					{handler?.touched?.formData &&
-						handler?.touched?.formData[formindex]?.attributes &&
-						handler?.errors?.formData &&
-						handler?.errors?.formData[formindex]?.attributes && (
-							<label style={{ color: 'red' }} className="text-sm font-light">
-								All attributes are required{' '}
-							</label>
-						)}
-				</>
-			);
-		}
-		return null;
-	};
+
+	const createSchemaTitle = isEcosystemData?.isEcosystemMember
+		? { title: 'Schema Endorsement', svg: <SchemaEndorsement /> }
+		: { title: 'Create Schema', svg: <Create /> };
 
 	return (
 		<div className="px-4 pt-2">
-			<div className="col-span-full xl:mb-2">
+			<div className="col-span-full mb-3">
 				<div className="flex justify-between items-center">
 					<BreadCrumbs />
 					<BackButton path={pathRoutes.organizations.Issuance.issue} />
@@ -255,11 +245,19 @@ const EmailIssuance = () => {
 					<div>
 						<p className="text-2xl font-semibold dark:text-white">Email</p>
 					</div>
+					<RoleViewButton
+						buttonTitle={createSchemaTitle.title}
+						feature={Features.CRETAE_SCHEMA}
+						svgComponent={createSchemaTitle.svg}
+						onClickEvent={() => {
+							window.location.href = `${pathRoutes.organizations.createSchema}`;
+						}}
+					/>
 				</div>
-				<div className="flex flex-col justify-between gap-4">
+				<div className="flex flex-col justify-between gap-4 email-bulk-issuance">
 					<Card>
-						<div className="md:h-72">
-							<p className="text-xl pb-6 font-normal dark:text-white">
+						<div className="md:min-h-[10rem]">
+							<p className="text-xl pb-6 font-semibold dark:text-white">
 								Select Schema and credential definition
 							</p>
 							<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -280,6 +278,7 @@ const EmailIssuance = () => {
 												setCredentialSelected(value?.value ?? '');
 												setAttributes(value?.schemaAttributes);
 											}}
+											ref={selectInputRef}
 										/>
 									</div>
 									<div className="mt-4">
@@ -302,7 +301,7 @@ const EmailIssuance = () => {
 														Attributes:
 													</span>
 													<div className="flex flex-wrap overflow-hidden">
-														{selectedCred?.schemaAttributes.map(
+														{selectedCred?.schemaAttributes?.map(
 															(element: IAttributes) => (
 																<div
 																	key={element.attributeName}
@@ -320,96 +319,21 @@ const EmailIssuance = () => {
 										)}
 									</div>
 								</div>
-								{/* required for batch application */}
-								{/* <div className="flex justify-between h-10">
-									<input
-										ref={inputRef}
-										disabled={!isEditing}
-										value={batchName}
-										type="text"
-										id="batch"
-										onBlur={handleBlur}
-										onChange={handleInputChange}
-										className="w-[92%] gap-x-2 p-2.5 bg-gray-50 border border-gray-300 text-gray-900 sm:text-md rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-										placeholder="You can specify batch here"
-									/>
-									<Button
-										disabled={!isCredSelected}
-										color="none"
-										onClick={handleEditClick}
-									>
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											width="18"
-											height="18"
-											viewBox="0 0 18 18"
-											fill="none"
-										>
-											<path
-												d="M16.4013 11.1954V14.396C16.4013 14.8204 16.2327 15.2274 15.9326 15.5275C15.6325 15.8277 15.2255 15.9963 14.8011 15.9963H3.60014C3.17576 15.9963 2.76875 15.8277 2.46867 15.5275C2.16859 15.2274 2 14.8204 2 14.396V3.19403C2 2.76961 2.16859 2.36257 2.46867 2.06246C2.76875 1.76235 3.17576 1.59375 3.60014 1.59375H6.80042"
-												stroke="#1F4EAD"
-												stroke-width="2.5"
-												stroke-linecap="round"
-												stroke-linejoin="round"
-											/>
-											<path
-												d="M10.4011 11.0419L18.0018 3.36058L14.6415 0L7.0408 7.60132L6.80078 11.2019L10.4011 11.0419Z"
-												fill="#1F4EAD"
-											/>
-										</svg>
-									</Button>
-								</div> */}
 							</div>
 						</div>
 					</Card>
-					<div
-						className={`${
-							isCredSelected ? '' : 'md:h-[300px] '
-						} flex flex-col justify-between w-full`}
-					>
+					<div>
 						<Card>
-							<div
-								className={`${isCredSelected ? '' : 'md:h-[300px] '} w-full`}
-							>
+							<div>
 								<div className="flex justify-between mb-4 items-center ml-1">
 									<div>
-										<p className="text-2xl font-semibold dark:text-white">
+										<p className="text-xl font-semibold dark:text-white">
 											Issue Credential(s) to the email
 										</p>
 										<span className="text-sm text-gray-400">
 											Please enter an email address to issue the credential to
 										</span>
 									</div>
-									{/* rquired for history details  */}
-									{/* <Button
-										color="bg-primary-800"
-										className="flex float-right bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-primary-600 font-medium rounded-md text-lg px-2 lg:px-3 py-2 lg:py-2.5 mr-2 ml-auto border-blue-600 hover:text-primary-600 dark:text-white dark:border-blue-500 dark:hover:text-primary-700 dark:hover:bg-secondary-700"
-										style={{ height: '2.4rem', minWidth: '2rem' }}
-										onClick={() => {
-											window.location.href =
-												pathRoutes.organizations.Issuance.emailHistory;
-										}}
-									>
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											className="pr-2"
-											width="30"
-											color="text-white"
-											height="20"
-											fill="none"
-											viewBox="0 0 18 18"
-										>
-											<path
-												fill="#1F4EAD"
-												d="M15.483 18H2.518A2.518 2.518 0 0 1 0 15.482V2.518A2.518 2.518 0 0 1 2.518 0h12.965a2.518 2.518 0 0 1 2.518 2.518v12.964A2.518 2.518 0 0 1 15.483 18ZM2.518 1.007a1.51 1.51 0 0 0-1.51 1.51v12.965a1.51 1.51 0 0 0 1.51 1.51h12.965a1.51 1.51 0 0 0 1.51-1.51V2.518a1.51 1.51 0 0 0-1.51-1.51H2.518Z"
-											/>
-											<path
-												fill="#1F4EAD"
-												d="M3.507 5.257a.504.504 0 0 1 0-1.007h5.495a.504.504 0 1 1 0 1.007H3.507ZM6.254 9.5a.504.504 0 1 1 0-1.008h5.492a.504.504 0 0 1 0 1.007H6.254ZM9 13.757a.503.503 0 1 1 0-1.007h5.493a.504.504 0 0 1 0 1.007H9Z"
-											/>
-										</svg>
-										View History
-									</Button> */}
 								</div>
 								{isCredSelected ? (
 									<div>
@@ -431,11 +355,15 @@ const EmailIssuance = () => {
 																				.email('Invalid email address')
 																				.required('Email is required'),
 																			attributes: Yup.array().of(
-																				Yup.object().shape({
-																					value: Yup.string().required(
-																						'All attribute are required',
-																					),
-																				}),
+																				Yup.lazy((value) =>
+																					Yup.object().shape({
+																						value: value.isRequired
+																							? Yup.string().required(
+																									'This field is required',
+																							  )
+																							: Yup.string(),
+																					}),
+																				),
 																			),
 																		}),
 																	),
@@ -487,7 +415,10 @@ const EmailIssuance = () => {
 																																	'80px',
 																															}}
 																														>
-																															Email ID
+																															Email ID{' '}
+																															<span className="text-red-500">
+																																*
+																															</span>
 																														</label>
 																														<Field
 																															name={`formData[${index}].email`}
@@ -498,15 +429,38 @@ const EmailIssuance = () => {
 																															className="w-full md:w-5/12 bg-gray-50 border border-gray-300 text-gray-900 sm:text-md rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 																														/>
 																														<div className="absolute top-11 left-24">
-																															<MailError
-																																handler={
-																																	formikHandlers
-																																}
-																																formindex={
+																															{formikHandlers
+																																?.touched
+																																?.formData &&
+																																formikHandlers
+																																	?.touched
+																																	?.formData[
 																																	index
-																																}
-																																error={'email'}
-																															/>
+																																]?.email &&
+																																formikHandlers
+																																	?.errors
+																																	?.formData &&
+																																formikHandlers
+																																	?.errors
+																																	?.formData[
+																																	index
+																																]?.email && (
+																																	<label
+																																		style={{
+																																			color:
+																																				'red',
+																																		}}
+																																		className="text-sm"
+																																	>
+																																		{
+																																			formikHandlers
+																																				?.errors
+																																				?.formData[
+																																				index
+																																			]?.email
+																																		}
+																																	</label>
+																																)}
 																														</div>
 																													</div>
 
@@ -557,7 +511,7 @@ const EmailIssuance = () => {
 																												</div>
 
 																												<label className="w-20 font-semibold text-base dark:text-white">
-																													Credential data
+																													Credential data:
 																												</label>
 																												<div className="grid md:grid-cols-2 grid-cols-1 gap-8 w-full gap-2">
 																													{formData1.attributes &&
@@ -567,8 +521,13 @@ const EmailIssuance = () => {
 																														formData1?.attributes.map(
 																															(
 																																item: {
-																																	displayName: ReactNode | string;
-																																	attributeName: ReactNode | string;
+																																	isRequired: boolean;
+																																	displayName:
+																																		| ReactNode
+																																		| string;
+																																	attributeName:
+																																		| ReactNode
+																																		| string;
 																																	name:
 																																		| string
 																																		| number
@@ -584,92 +543,94 @@ const EmailIssuance = () => {
 																																		| undefined;
 																																	schemaDataType: any;
 																																},
-																																attIndex: any,
+																																attIndex: number,
 																															) => (
 																																<>
-																																	<div className="mt-3">
+																																	<div
+																																		className="mt-3"
+																																		key={
+																																			attIndex
+																																		}
+																																	>
 																																		<div className="relative flex items-center w-full gap-2">
-																																			<label
-																																				className="text-base dark:text-white text-gray-800"
-																																				style={{
-																																					minWidth:
-																																						Math.max(
-																																							...formData1.attributes.map(
-																																								(
-																																									item,
-																																								) =>
-																																									item?.displayName?.toString()?.length,
-																																							),
-																																						) *
-																																						10,
-																																				}}
-																																			>
-																																				{item?.displayName}
+																																			<label className="text-base dark:text-white text-gray-800 w-[300px] word-break-word">
+																																				{
+																																					item?.displayName
+																																				}
+																																				{item.isRequired && (
+																																					<span className="text-red-500">
+																																						*
+																																					</span>
+																																				)}
 																																			</label>
-																																			<Field
-																																				type={
-																																					item.schemaDataType
-																																				}
-																																				placeholder={
-																																					item.name
-																																				}
-																																				name={`formData[${index}].attributes.${attIndex}.value`}
-																																				className="w-8/12 bg-gray-50 border border-gray-300 text-gray-900 sm:text-md rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-																																			/>
+																																			<div className="w-8/12">
+																																				<Field
+																																					type={
+																																						item.schemaDataType
+																																					}
+																																					placeholder={
+																																						item.name
+																																					}
+																																					name={`formData[${index}].attributes.${attIndex}.value`}
+																																					className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-md rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+																																				/>
+																																				{formikHandlers
+																																					?.touched
+																																					?.formData &&
+																																					formikHandlers
+																																						?.touched
+																																						?.formData[
+																																						index
+																																					]
+																																						?.attributes &&
+																																					formikHandlers
+																																						?.touched
+																																						?.formData[
+																																						index
+																																					]
+																																						?.attributes[
+																																						attIndex
+																																					]
+																																						?.value &&
+																																					formikHandlers
+																																						?.errors
+																																						?.formData &&
+																																					formikHandlers
+																																						?.errors
+																																						?.formData[
+																																						index
+																																					]
+																																						?.attributes &&
+																																					formikHandlers
+																																						?.errors
+																																						?.formData[
+																																						index
+																																					]
+																																						?.attributes[
+																																						attIndex
+																																					]
+																																						?.value && (
+																																						<label className="text-xs text-red-500 absolute">
+																																							{
+																																								formikHandlers
+																																									?.errors
+																																									?.formData[
+																																									index
+																																								]
+																																									?.attributes[
+																																									attIndex
+																																								]
+																																									?.value
+																																							}
+																																						</label>
+																																					)}
+																																			</div>
 																																		</div>
 																																	</div>
-																																	<>
-																																		<div
-																																			className="absolute bottom-24"
-																																			style={{
-																																				left:
-																																					Math.max(
-																																						...formData1.attributes.map(
-																																							(
-																																								item,
-																																							) =>
-																																								item?.name?.toString().length,
-																																						),
-																																					) *
-																																						10 +
-																																					28,
-																																			}}
-																																		>
-																																			<MailError
-																																				handler={
-																																					formikHandlers
-																																				}
-																																				formindex={
-																																					index
-																																				}
-																																				error={
-																																					'attribute'
-																																				}
-																																				attrIndex={
-																																					attIndex
-																																				}
-																																				length={
-																																					formData1
-																																						?.attributes
-																																						?.length
-																																				}
-																																			/>
-																																		</div>
-																																	</>
 																																</>
 																															),
 																														)}
 																												</div>
-																												{/* // required for validation of only one attribute is required */}
-																												{/* {!formData1.attributes.some(
-																													(item) => item?.value,
-																												) && (
-																													<div className="text-red-700">
-																														Atleast one
-																														attribute should
-																														have a value
-																													</div>
-																												)} */}
 																											</div>
 																										);
 																									},
@@ -681,8 +642,7 @@ const EmailIssuance = () => {
 																									arrayHelpers.push({
 																										email: '',
 																										attributes: attributes?.map(
-																											
-																											(item) => {
+																											(item: IAttributes) => {
 																												return {
 																													attributeName:
 																														item.attributeName,
@@ -692,6 +652,8 @@ const EmailIssuance = () => {
 																														item.displayName,
 																													value: '',
 																													name: item.attributeName,
+																													isRequired:
+																														item.isRequired,
 																												};
 																											},
 																										),

@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react';
 import SignUpUserName from './SignUpUserName'
 import FooterBar from './FooterBar.js';
 import NavBar from './NavBar.js';
+import { validEmail } from '../../utils/TextTransform.js';
 
 interface emailValue {
 	email: string;
@@ -33,9 +34,10 @@ const SignUpUser = () => {
 	const [isEmailValid, setIsEmailValid] = useState(false);
 
 	useEffect(() => {
-
-		if (window?.location?.search.length > 7) {
-			setEmailAutoFill(window?.location?.search.split('=')[1])
+		const searchParam = new URLSearchParams(window?.location?.search);
+		const userEmail = searchParam.get('email');
+		if (userEmail) {
+			setEmailAutoFill(validEmail(userEmail))
 		}
 	}, [])
 
@@ -68,12 +70,11 @@ const SignUpUser = () => {
 		const { data } = userRsp as AxiosResponse
 		setLoading(false)
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			if (data?.data?.isExist === false) {
-				console.log('email data::', data.data)
+			if (data?.data?.isRegistrationCompleted === false && data.data.isEmailVerified === false) {
 				setEmail(values?.email)
 				await VerifyMail(values?.email)
 			}
-			else if (data.data.isEmailVerified === true && data?.data?.isSupabase !== true) {
+			else if (data.data.isEmailVerified === true && data?.data?.isRegistrationCompleted !== true) {
 				setEmail(values?.email)
 				await setToLocalStorage(storageKeys.USER_EMAIL, values?.email)
 				setNextFlag(true)
@@ -126,7 +127,7 @@ const SignUpUser = () => {
 									</Alert>
 								}
 
-								<div className='flex mt-2 xl:mt-8'>
+								<div className='flex mt-2 xl:mt-8 space-x-4'>
 
 									<button className='flex mt-2' onClick={redirectLandingPage} >
 										<svg xmlns="http://www.w3.org/2000/svg" width="26" height="24" viewBox="0 0 37 20" fill="none">
@@ -176,7 +177,7 @@ const SignUpUser = () => {
 									{(formikHandlers): JSX.Element => (
 
 										<Form className='mt-16 space-y-6' onSubmit={formikHandlers.handleSubmit}>
-
+											<input type="hidden" name="_csrf" value={new Date().getTime()} />
 											<div className="text-primary-700 font-inter text-base font-medium leading-5 mb-20">
 
 												<div className="block mb-2 text-sm font-medium  dark:text-white">

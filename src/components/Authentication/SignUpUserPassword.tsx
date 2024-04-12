@@ -124,7 +124,7 @@ const SignUpUserPassword = ({
 									</Alert>
 								)}
 
-								<div className='flex mt-2 xl:mt-8'>
+								<div className='flex space-x-4 mt-2 xl:mt-8'>
 									<button className="flex mt-2" onClick={handleBackButtonClick}>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
@@ -141,7 +141,7 @@ const SignUpUserPassword = ({
 									</button>
 
 									<div className="w-full flex flex-col items-center justify-center ">
-										<h2 className="text-primary-700 dark:text-gray-200 font-inter text-3xl font-bold leading-10">
+										<h2 className="text-center text-primary-700 dark:text-gray-200 font-inter text-3xl font-bold leading-10">
 											Create password
 										</h2>
 
@@ -170,6 +170,7 @@ const SignUpUserPassword = ({
 											className="mt-12 space-y-6"
 											onSubmit={formikHandlers.handleSubmit}
 										>
+											<input type="hidden" name="_csrf" value={new Date().getTime()} />
 											<div>
 												<div className="text-primary-700 font-inter text-base font-medium leading-5">
 													<div className="block mb-2 text-sm font-medium  dark:text-white">

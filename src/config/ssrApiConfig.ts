@@ -12,10 +12,9 @@ const API = async ({ token, url, method, payload }: IProps) => {
 	try {
 		const headers = {
 			'Content-Type': 'application/json',
+			...(token && {"Authorization": `Bearer ${token}`})
 		}
-		if(token) {
-			headers["Authorization"]= `Bearer ${token}`
-		}
+
 		const config = {
 			headers,
 			method,
@@ -25,7 +24,7 @@ const API = async ({ token, url, method, payload }: IProps) => {
 		const apiURL = baseURL + url;
 		const res = await fetch(apiURL, {
 			...config,
-		});	
+		});
 		const { data } = (await res.json()) || {};
 		return data;
 	} catch (err) {
