@@ -1,15 +1,15 @@
-import { allowedDomains } from "./config/CommonConstant";
+import { envConfig } from "./config/envConfig";
 
 export const onRequest = async (context: any, next: any) => {
   const response = await next();
   const html = await response.text();
- 
-  
-  const allowedDomain = `${context.url.origin} ${allowedDomains}`
-  
+
+
+  const allowedDomain = `${context.url.origin} ${envConfig.PUBLIC_ALLOW_DOMAIN}`
+
   const nonce = "dynamicNONCE" + new Date().getTime().toString();
 
-  response.headers.set('Content-Security-Policy',`default-src 'self'; script-src 'self' ${allowedDomain} 'nonce-${nonce}_scripts'; style-src 'unsafe-inline' ${allowedDomain}; font-src ${allowedDomain}; img-src 'self' data: ${allowedDomain}; frame-src 'self' ${allowedDomain}; object-src 'none'; media-src 'self'; connect-src 'self' ${allowedDomain}; form-action 'self'; frame-ancestors 'self'; `);
+  response.headers.set('Content-Security-Policy', `default-src 'self'; script-src 'self' ${allowedDomain} 'nonce-${nonce}_scripts'; style-src 'unsafe-inline' ${allowedDomain}; font-src ${allowedDomain}; img-src 'self' data: ${allowedDomain}; frame-src 'self' ${allowedDomain}; object-src 'none'; media-src 'self'; connect-src 'self' ${allowedDomain}; form-action 'self'; frame-ancestors 'self'; `);
   response.headers.set('X-Frame-Options', "DENY");
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('Access-Control-Allow-Origin', allowedDomain)
@@ -23,7 +23,7 @@ export const onRequest = async (context: any, next: any) => {
   let updatedHtml = await html.split("<script").join(`<script nonce="${nonce}_scripts" `)
 
   return new Response(updatedHtml, {
-      status: 200,
-      headers: response.headers
+    status: 200,
+    headers: response.headers
   });
 };
