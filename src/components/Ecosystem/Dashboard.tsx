@@ -334,6 +334,26 @@ const Dashboard = () => {
 										</div>
 										<div className="inline-flex items-center ml-auto absolute top-0 right-0">
 											<Button
+												onClick={() => window.location.assign(pathRoutes.ecosystem.addOrgs)}
+												className={`${isAccess ? "hover:bg-primary-800 dark:hover:text-white dark:hover:bg-primary-700" : ""} hover:!bg-primary-800 text-base font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:focus:ring-primary-800 mr-3`}
+												disabled={loading || !isAccess}
+											>
+												<svg
+													className="pr-2"
+													xmlns="http://www.w3.org/2000/svg"
+													width="20"
+													height="20"
+													fill="none"
+													viewBox="0 0 24 24"
+												>
+													<path
+														fill="#fff"
+														d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"
+													/>
+												</svg>
+												My Orgs
+											</Button>
+											<Button
 												onClick={navigateToInvitation}
 												className={`${isAccess ? "hover:bg-primary-800 dark:hover:text-white dark:hover:bg-primary-700" : ""} hover:!bg-primary-800 text-base font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:focus:ring-primary-800 mr-3`}
 												disabled={loading || !isAccess}
