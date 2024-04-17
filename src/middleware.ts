@@ -1,11 +1,13 @@
-import { allowedDomains } from "./config/CommonConstant";
+import { envConfig } from "./config/envConfig";
+import { pathRoutes } from "./config/pathRoutes";
 
 export const onRequest = async (context: any, next: any) => {
   const response = await next();
   const html = await response.text();
  
+  const domains = envConfig.PUBLIC_ALLOW_DOMAIN;
   
-  const allowedDomain = `${context.url.origin} ${allowedDomains}`
+  const allowedDomain = `${context.url.origin} ${domains}`
   
   const nonce = "dynamicNONCE" + new Date().getTime().toString();
 
@@ -22,6 +24,11 @@ export const onRequest = async (context: any, next: any) => {
 
   let updatedHtml = await html.split("<script").join(`<script nonce="${nonce}_scripts" `)
 
+  // If Access token and refresh token is not valid then redirect user to login page
+  if(response.status === 302){
+    return context.redirect(pathRoutes.auth.sinIn)
+  }
+  
   return new Response(updatedHtml, {
       status: 200,
       headers: response.headers
