@@ -1,4 +1,5 @@
 import { envConfig } from "./config/envConfig";
+import { pathRoutes } from "./config/pathRoutes";
 
 export const onRequest = async (context: any, next: any) => {
   const response = await next();
@@ -23,6 +24,11 @@ export const onRequest = async (context: any, next: any) => {
 
   let updatedHtml = await html.split("<script").join(`<script nonce="${nonce}_scripts" `)
 
+  // If Access token and refresh token is not valid then redirect user to login page
+  if(response.status === 302){
+    return context.redirect(pathRoutes.auth.sinIn)
+  }
+  
   return new Response(updatedHtml, {
       status: 200,
       headers: response.headers
