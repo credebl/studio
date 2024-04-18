@@ -1,7 +1,7 @@
-'use client';
 import 'react-toastify/dist/ReactToastify.css';
 import type { AxiosResponse } from 'axios';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import type { ChangeEvent } from 'react';
 import type { TableData } from '../../commonComponents/datatable/interface';
 import { apiStatusCodes } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';
@@ -18,7 +18,6 @@ import {
 	BulkIssuanceHistoryData,
 } from '../../common/enums';
 import { ToastContainer, toast } from 'react-toastify';
-import React from 'react';
 import SortDataTable from '../../commonComponents/datatable/SortDataTable';
 import type { IConnectionListAPIParameter } from '../../api/connection';
 

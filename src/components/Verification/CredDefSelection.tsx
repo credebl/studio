@@ -1,4 +1,3 @@
-'use client';
 
 import type { AxiosResponse } from "axios";
 import { Button } from "flowbite-react";
@@ -125,7 +124,7 @@ const CredDefSelection = () => {
 			<div className="mb-4 col-span-full xl:mb-2">
 			<div className="flex justify-between items-center">
 					<BreadCrumbs />
-					<BackButton path={pathRoutes.back.verification.schemas}/>
+					<BackButton path={pathRoutes.organizations.verification.email}/>
 				</div>
 				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 					Schema
@@ -138,7 +137,10 @@ const CredDefSelection = () => {
 						<CustomSpinner/>
 					</div>
 					: <div className="m-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap4">
-						<SchemaCard className="col-span-1 sm:col-span-2 md:col-span-1" schemaName={schemaState?.schemaName} version={schemaState?.version} schemaId={schemaDetailsState.schemaId} issuerDid={schemaDetailsState.issuerDid} attributes={schemaDetailsState.attributes} created={schemaDetailsState.createdDateTime}
+						<SchemaCard className="col-span-1 sm:col-span-2 md:col-span-1" schemaName={schemaState?.schemaName} version={schemaState?.version} schemaId={schemaDetailsState.schemaId} issuerDid={schemaDetailsState.issuerDid} attributes={schemaDetailsState.attributes} created={schemaDetailsState.createdDateTime} 
+						showCheckbox={false}
+
+
 							onClickCallback={schemaSelectionCallback} isClickable={false} />
 					</div>}
 

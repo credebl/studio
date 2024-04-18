@@ -1,9 +1,11 @@
+import type { SchemaTypeValue } from "../../../../common/enums";
+
 export interface GetAllSchemaListParameter {
-  itemPerPage: number,
-  page: number,
-  search: string,
-  sortBy: string,
-  allSearch: string
+  itemPerPage?: number,
+  page?: number,
+  search?: string,
+  sortBy?: string,
+  allSearch?: string
 }
 
 export interface IAttributes {
@@ -58,11 +60,16 @@ export interface CredDeffFieldNameType {
 }
 
 export interface FieldName {
+  type: string,
+  schemaPayload: schemaDetails
+  }
+export interface schemaDetails {
   schemaName: string;
-  schemaVersion: string;
-  attributes: IAttributes[]
+  schemaVersion?: string;
+  schemaType?:SchemaTypeValue;
+  attributes: IAttributes[];
+  description?:string;
   orgId: string;
-
 }
 
 export interface createSchema {
@@ -88,7 +95,9 @@ export interface IAttributes {
 }
 export interface IFormData {
 	schemaName: string;
-	schemaVersion: string;
+	schemaVersion?: string;
+  schemaType?:SchemaTypeValue;
+  description?:string;
 	attribute: IAttributes[];
 }
 

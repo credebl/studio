@@ -1,5 +1,5 @@
 import type { DisplayUserProfileProps } from './interfaces';
-import CustomAvatar from '../Avatar';
+import CustomAvatar from '../Avatar/index';
 import { Button } from 'flowbite-react';
 
 const DisplayUserProfile = ({
@@ -68,21 +68,16 @@ const DisplayUserProfile = ({
 						<div className="focus:ring-indigo-600 col-span-2 w-full focus-within:ring-indigo-600 focus-within:border-indigo-600 focus:border-indigo-600">
 							<div className="flex items-center gap-4 space-x-4">
 								{userProfileInfo?.profileImg ? (
-									<CustomAvatar
-										className="mb-4 rounded-full w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
-										size="90"
-										src={userProfileInfo?.profileImg}
-									/>
+									<img
+									className="mb-4 rounded-full w-24 h-24 sm:mb-0 xl:mb-4 2xl:mb-0"
+									src={userProfileInfo?.profileImg}
+									alt="Profile Picture"
+								  />
 								) : (
-									<CustomAvatar
-										className="mb-4 border border-b rounded-full w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
-										size="90"
-										src={
-											userProfileInfo?.firstName ??
-											'../../public/images/profile.png'
-										}
-										name={userProfileInfo?.firstName}
-									/>
+								  <CustomAvatar
+									className="mb-4 rounded-full w-24 h-24 sm:mb-0 xl:mb-4 2xl:mb-0"
+									size="80px"
+									name={userProfileInfo?.firstName} />
 								)}
 							</div>
 						</div>

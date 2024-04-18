@@ -1,4 +1,3 @@
-'use client';
 
 import type { CredDefData, SchemaState } from './interface';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
@@ -164,6 +163,7 @@ const CredDefSelection = () => {
 							created={schemaDetailsState.createdDateTime}
 							onClickCallback={schemaSelectionCallback}
 							isClickable={false}
+							showCheckbox={false}
 							limitedAttributes={false}
 						/>
 					</div>

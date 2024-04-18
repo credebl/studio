@@ -165,6 +165,9 @@ const Index = () => {
 																	'text-base font-medium text-center text-white rounded-md focus:ring-4 focus:ring-primary-300 sm:w-auto dark:focus:ring-primary-800 bg-primary-700 hover:!bg-primary-800 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
 																}
 															>
+																{
+											                      loading ? <CustomSpinner message=''/> : ""
+										                        }
 																{regenerate
 																	? 'Regenerate Client Secret'
 																	: 'Generate Client Secret'}{' '}

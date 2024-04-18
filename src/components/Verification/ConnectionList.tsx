@@ -1,11 +1,11 @@
-'use client';
 
 import type { AxiosResponse } from 'axios';
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import type { ChangeEvent } from 'react';
 import {
-	IConnectionListAPIParameter,
 	getConnectionsByOrg,
 } from '../../api/connection';
+import type { IConnectionListAPIParameter } from '../../api/connection';
 import type { TableData } from '../../commonComponents/datatable/interface';
 import { apiStatusCodes } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';

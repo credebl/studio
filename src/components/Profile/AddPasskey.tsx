@@ -2,6 +2,8 @@ import { Alert, Button } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import DeviceDetails from '../../commonComponents/DeviceDetailsCard';
 import PasskeyAddDevice from '../../commonComponents/PasseyAddDevicePopup';
+import PasskeyAlert from '../../commonComponents/PasskeyAlert';
+
 import {
 	addDeviceDetails,
 	generateRegistrationOption,
@@ -21,10 +23,12 @@ import type {
 } from './interfaces';
 import type { AxiosError, AxiosResponse } from 'axios';
 import { AlertComponent } from '../AlertComponent';
+import { Devices } from '../../common/enums';
+import React from 'react';
 
 interface IResponseMessages {type: "error" | "success", message: string}
 
-const AddPasskey = ({ responseMessages }: { responseMessages: (value: IResponseMessages) => IResponseMessages }) => {
+const AddPasskey = ({ responseMessages }: { 	responseMessages: (value: IResponseMessages) => IResponseMessages }) => {
 	const [fidoError, setFidoError] = useState('');
 	const [fidoLoader, setFidoLoader] = useState(true);
 	const [OrgUserEmail, setOrgUserEmail] = useState<string>('');
@@ -34,6 +38,7 @@ const AddPasskey = ({ responseMessages }: { responseMessages: (value: IResponseM
 	const [editFailure, setEditFailure] = useState<string | null>(null);
 	const [addfailure, setAddFailure] = useState<string | null>(null);
 	const [disableFlag, setDisableFlag] = useState<boolean>(false);
+	const [isDevice, setIsDevice] = useState<boolean>(false);
 
 	const [openModel, setOpenModel] = useState<boolean>(false);
 
@@ -189,6 +194,10 @@ const AddPasskey = ({ responseMessages }: { responseMessages: (value: IResponseM
 		} else {
 			setProfile();
 		}
+		const platform = navigator.platform.toLowerCase();
+        if (platform.includes(Devices.Linux)) {
+            setIsDevice(true);
+        }
 	}, [OrgUserEmail]);
 
 	return (
@@ -282,6 +291,9 @@ const AddPasskey = ({ responseMessages }: { responseMessages: (value: IResponseM
 											</svg>
 											Add Passkey
 										</Button>
+										{isDevice && (
+                                    <PasskeyAlert />
+                                )}
 									</div>
 
 									<PasskeyAddDevice

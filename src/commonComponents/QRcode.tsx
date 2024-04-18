@@ -1,7 +1,6 @@
 import { useRef, useState } from "react";
 import QRCode from "react-qr-code";
 import domtoimage from 'dom-to-image';
-import { Button } from "flowbite-react";
 
 const CustomQRCode = ({ value, size }: { value: string, size: number }) => {
 
@@ -56,7 +55,7 @@ const CustomQRCode = ({ value, size }: { value: string, size: number }) => {
 			
 			><svg 
 				className='pr-2' 
-				stroke-width="2" stroke="currentColor"
+				strokeWidth="2" stroke="currentColor"
 				xmlns="http://www.w3.org/2000/svg" 
 				width="25" height="25" fill="none" viewBox="0 0 24 23">
 				<path fill="#fff" d="M23.312 10.844a.685.685 0 0 0-.687.688v6.254a3.086 3.086 0 0 1-3.082 3.082H4.457a3.086 3.086 0 0 1-3.082-3.082V11.43a.685.685 0 0 0-.687-.688.685.685 0 0 0-.688.688v6.356a4.462 4.462 0 0 0 4.457 4.457h15.086A4.462 4.462 0 0 0 24 17.786v-6.254a.688.688 0 0 0-.688-.688Z" />
@@ -68,8 +67,8 @@ const CustomQRCode = ({ value, size }: { value: string, size: number }) => {
 				className=
 				{`${isCopied }`} onClick={copyTextVal}>
 				{isCopied
-					? <svg className="h-6 w-6 text-white ml-3 text-base" width="25" height="25" viewBox="0 0 24 24" stroke-width="2" stroke="green" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <path d="M5 12l5 5l10 -10" /></svg>
-					: <svg className="h-6 w-6 text-green ml-3 text-base" width="25" height="25" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <rect x="8" y="8" width="12" height="12" rx="2" />  <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" /></svg>
+					? <svg className="h-6 w-6 text-white ml-3 text-base" width="25" height="25" viewBox="0 0 24 24" strokeWidth="2" stroke="green" fill="none" strokeLinecap="round" strokeLinejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <path d="M5 12l5 5l10 -10" /></svg>
+					: <svg className="h-6 w-6 text-green ml-3 text-base" width="25" height="25" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <rect x="8" y="8" width="12" height="12" rx="2" />  <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" /></svg>
 				}
 				
 			</button>

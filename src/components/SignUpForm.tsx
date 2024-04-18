@@ -1,4 +1,3 @@
-'use client';
 
 import { Button, Checkbox, Label, TextInput } from 'flowbite-react';
 import LogoFile from '../commonComponents/LogoFile'

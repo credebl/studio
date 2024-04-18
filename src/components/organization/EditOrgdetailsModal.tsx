@@ -1,6 +1,7 @@
 import * as yup from 'yup';
 import { Avatar, Button, Label, Modal } from 'flowbite-react';
-import { Field, Form, Formik, FormikHelpers } from 'formik';
+import { Field, Form, Formik} from 'formik';
+import type { FormikHelpers as FormikActions } from 'formik';
 import {
 	apiStatusCodes,
 } from '../../config/CommonConstant';
@@ -9,9 +10,28 @@ import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import { updateOrganization } from '../../api/organization';
 import type { EditOrgdetailsModalProps, ILogoImage, Organisation, Values } from './interfaces';
-import defaultUserIcon from '../../../public/images/person_FILL1_wght400_GRAD0_opsz24.svg';
+// import defaultUserIcon from '../../../public/images/person_FILL1_wght400_GRAD0_opsz24.svg';
 import { processImage } from '../../utils/processImage';
 import FormikErrorMessage from '../../commonComponents/formikerror/index'
+import CustomSpinner from '../CustomSpinner';
+	
+interface IUpdateOrgPayload {
+	orgId: string | undefined;
+	name: string;
+	description: string;
+	website: string;
+	isPublic: boolean | undefined;
+	logo?: string;
+}
+
+interface IUpdateOrgPayload {
+	orgId: string | undefined;
+	name: string;
+	description: string;
+	website: string;
+	isPublic: boolean | undefined;
+	logo?: string;
+}
 
 const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 	const [logoImage, setLogoImage] = useState<ILogoImage>({
@@ -67,7 +87,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 
 	const handleImageChange = (event: any): void => {
     setImgError('');
-    processImage(event, (result, error) => {
+    processImage(event, (result: any, error: any) => {
       if (result) {
         setLogoImage({
           logoFile: '',
@@ -82,14 +102,20 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 	const submitUpdateOrganization = async (values: Values) => {
 		setLoading(true);
 
-		const orgData = {
+		const orgData: IUpdateOrgPayload = {
 			orgId: props?.orgData?.id,
 			name: values.name,
 			description: values.description,
-			logo: (logoImage?.imagePreviewUrl as string) || props?.orgData?.logoUrl,
 			website: values.website,
 			isPublic: isPublic,
 		};
+
+		const logo = (logoImage?.imagePreviewUrl as string) || props?.orgData?.logoUrl
+
+		if ((logo?.includes('data:image/') && logo?.includes(';base64'))) {
+			orgData['logo'] = logo;
+		}
+		
 		try {
 			const response = await updateOrganization(
 				orgData,
@@ -160,7 +186,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 					enableReinitialize
 					onSubmit={async (
 						values: Values,
-						{ resetForm }: FormikHelpers<Values>,
+						{ resetForm }: FormikActions<Values>,
 					) => {
 						submitUpdateOrganization(values);
 					}}
@@ -176,7 +202,8 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 											alt="Jese picture"
 										/>
 									) : typeof logoImage.logoFile === 'string' ? (
-										<Avatar size="lg" img={defaultUserIcon} />
+										<Avatar size="lg" img='/images/person_24dp_FILL0_wght400_GRAD0_opsz24 (2).svg' />
+
 									) : (
 										<img
 											className="m-2 rounded-md w-28 h-28"
@@ -230,7 +257,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 									value={formikHandlers.values.name}
 									className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 									placeholder="Your organization name"
-									onChange={(e) => {
+									onChange={(e: { target: { value: any; }; }) => {
 										const value = e.target.value;
 										formikHandlers.setFieldValue('name', value);
 										formikHandlers.setFieldTouched('name', true, false);
@@ -341,6 +368,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 									isProcessing={loading}
 									className="mb-2 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 								>
+									
 									<svg
 										className="pr-2"
 										xmlns="http://www.w3.org/2000/svg"

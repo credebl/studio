@@ -11,7 +11,6 @@ import SignUpUserPasskey from './SignUpUserPasskey.js';
 import SignUpUser from './SignUpUser.js';
 import NavBar from './NavBar.js';
 import FooterBar from './FooterBar.js';
-import React from 'react';
 
 interface nameValues {
 	firstName: string;

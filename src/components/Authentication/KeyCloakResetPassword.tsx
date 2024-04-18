@@ -11,6 +11,7 @@ import { pathRoutes } from '../../config/pathRoutes';
 import type { IPassword, IProps, IValues } from './interfaces';
 import React from 'react';
 import { envConfig } from '../../config/envConfig';
+import CustomSpinner from '../CustomSpinner/index.js';
 
 const KeyClockResetPassword = (props: IProps) => {
 	const [loading, setLoading] = useState(false);
@@ -233,6 +234,9 @@ const KeyClockResetPassword = (props: IProps) => {
 									disabled={loading}
 									className="w-full mt-12 text-base py-1 font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 dark:bg-primary-700 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 								>
+									{
+											loading ? <CustomSpinner /> : ""
+										}
 									Reset Password
 								</Button>
 							</div>

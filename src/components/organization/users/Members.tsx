@@ -1,6 +1,7 @@
-'use client';
 
-import { ChangeEvent, useEffect, useState } from 'react';
+import {  useEffect, useState } from 'react';
+import type { ChangeEvent } from 'react';
+
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
 import { AlertComponent } from '../../AlertComponent';
 import type { AxiosResponse } from 'axios';

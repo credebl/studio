@@ -1,4 +1,3 @@
-'use client';
 
 import ComingSoonImage from '../../assets/coming-soon.svg'
 const EmailList = () => {

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
-import { TextTittlecase } from "../../utils/TextTransform";
-import { getFromLocalStorage } from "../../api/Auth";
-import { storageKeys } from "../../config/CommonConstant";
+import { TextTittlecase } from "../../utils/TextTransform.ts";
+import { getFromLocalStorage } from "../../api/Auth.ts";
+import { storageKeys } from "../../config/CommonConstant.ts";
 
 const DisplayUser = () => {
 

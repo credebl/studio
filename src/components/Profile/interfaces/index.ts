@@ -49,6 +49,7 @@ export interface IUserProfile {
   keycloakUserId?: string
   publicProfile?: boolean
   isPublic?:boolean
+  roles: string
 }
 
 export interface DisplayUserProfileProps {

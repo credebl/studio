@@ -1,3 +1,4 @@
+import type { SchemaTypes } from '../common/enums';
 import { apiRoutes } from '../config/apiRoutes';
 import { storageKeys } from '../config/CommonConstant';
 import {
@@ -8,9 +9,9 @@ import { axiosGet, axiosPost } from '../services/apiRequests';
 import { getFromLocalStorage } from './Auth';
 import type { IConnectionListAPIParameter } from './connection';
 
-export const getSchemaCredDef = async () => {
+export const getSchemaCredDef = async (schemaType: SchemaTypes) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.bulk.credefList}`;
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.bulk.credefList}?schemaType=${schemaType}`;
 	const axiosPayload = {
 		url,
 		config: await getHeaderConfigs(),
@@ -24,17 +25,21 @@ export const getSchemaCredDef = async () => {
 	}
 };
 
-export const DownloadCsvTemplate = async (credDefId: string) => {
+export const DownloadCsvTemplate = async (templateId: string, schemaType: SchemaTypes) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url = `${apiRoutes.organizations.root}/${orgId}/${credDefId}${apiRoutes.Issuance.download}`;
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.download}`;
 
 	const axiosPayload = {
 		url,
+		payload: {
+			templateId,
+			schemaType
+		},
 		config: await getHeaderConfigs(),
 	};
 
 	try {
-		return await axiosGet(axiosPayload);
+		return await axiosPost(axiosPayload);
 	} catch (error) {
 		const err = error as Error;
 		return err?.message;
@@ -43,10 +48,11 @@ export const DownloadCsvTemplate = async (credDefId: string) => {
 
 export const uploadCsvFile = async (
 	payload: { file: Uint8Array | Blob; fileName: string },
-	credefId: string,
+	templateId: string,
+	schemaType: SchemaTypes
 ) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.bulk.uploadCsv}?credDefId=${credefId}`;
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.bulk.uploadCsv}?templateId=${templateId}&schemaType=${schemaType}`;
 
 	const axiosPayload = {
 		url,
