@@ -2,7 +2,7 @@
 import LayoutSidebar from '../../app/LayoutSidebar.astro';
 import { checkUserSession } from '../../utils/check-session';
 import { pathRoutes } from '../../config/pathRoutes';
-import EcoSystemReceivedInvitations from '../../components/EcosystemInvite/EcoSystemReceivedInvitations';
+import AddOrganizationInEcosystem from '../../components/AddOrganizationInEcosystem';
 
 const response = await checkUserSession({cookies: Astro.cookies, currentPath: Astro.url.pathname});
 const route = pathRoutes.auth.sinIn;
@@ -12,5 +12,5 @@ if (!response.authorized) {
 ---
 
 <LayoutSidebar notFoundPage={!response.permitted}>
-	<div>Add</div>
+	<AddOrganizationInEcosystem client:load />
 </LayoutSidebar>

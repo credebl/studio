@@ -21,7 +21,7 @@ export interface Organisation {
     userOrgRoles: UserOrgRole[]
     org_agents: OrgAgent[]
     publicProfile: boolean
-    
+    checked?: boolean | undefined
 }
 
 export interface OrgRole {

@@ -47,4 +47,5 @@ export interface IDataTable {
 		  }
 		| {};
 	sortOrder?:string;
+	itemPerPage?: number;
 }
