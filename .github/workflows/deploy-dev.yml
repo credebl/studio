@@ -1,9 +1,9 @@
-name: Deploy develop branch to Deno
+name: Deploy dev-zap-testing alias main branch to Deno for zap testing
 on:
   push:
-    branches: develop
+    branches: dev-zap-testing
   pull_request:
-    branches: develop
+    branches: dev-zap-testing
 
 jobs:
   deploy:
