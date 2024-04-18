@@ -1,8 +1,9 @@
 ---
 import LayoutSidebar from "../../../../../../app/LayoutSidebar.astro";
-import VerificationCred  from "../../../../../../components/Verification/Verification";
+import Connections from "../../../../../../components/Verification/Connections";
 import { pathRoutes } from "../../../../../../config/pathRoutes";
 import { checkUserSession } from "../../../../../../utils/check-session";
+
 
 const response = await checkUserSession({cookies: Astro.cookies, currentPath: Astro.url.pathname});
 const route: string = pathRoutes.auth.sinIn
@@ -12,5 +13,5 @@ if (!response.authorized) {
 ---
 
 <LayoutSidebar notFoundPage={!response.permitted}>
-	<VerificationCred client:load/>
+	<Connections client:load/>
 </LayoutSidebar>

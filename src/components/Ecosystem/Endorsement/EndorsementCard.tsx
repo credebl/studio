@@ -3,7 +3,8 @@ import { dateConversion } from '../../../utils/DateConversion';
 import DateTooltip from '../../../components/Tooltip';
 import { EndorsementStatus, EndorsementType } from '../../../common/enums';
 import StatusTabletTag from '../../../commonComponents/StatusTabletTag';
-import { ICheckEcosystem, checkEcosystem } from '../../../config/ecosystem';
+import { checkEcosystem } from '../../../config/ecosystem';
+import type { ICheckEcosystem} from '../../../config/ecosystem';
 import { useEffect, useState } from 'react';
 
 interface IProps {
@@ -106,11 +107,11 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
                     }
                 </div>
                 <div className='float-right ml-auto'>
-                    <p className='dark:text-white'>
+                    <div className='dark:text-white'>
                         <DateTooltip date={data?.createDateTime}>
                             Requested: {dateConversion(data?.createDateTime)}
                         </DateTooltip >
-                    </p >
+                    </div >
                 </div >
             </div >
             <div className='flex flex-wrap justify-between items-center'>

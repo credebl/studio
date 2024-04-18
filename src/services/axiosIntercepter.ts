@@ -1,4 +1,5 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios from 'axios';
+import type { AxiosRequestConfig } from 'axios';
 import { envConfig } from '../config/envConfig';
 import { apiRoutes } from '../config/apiRoutes';
 import { getFromLocalStorage, setToLocalStorage } from '../api/Auth';

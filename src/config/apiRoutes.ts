@@ -39,6 +39,14 @@ export const apiRoutes = {
 		invitations: '/invitations',
 		orgRoles: '/orgs/roles',
 		editUserROle: '/user-roles',
+		didList: '/dids',
+		createDid: '/agents/did',
+		primaryDid: '/primary-did',
+		getOrgReferences:'/activity-count',
+		deleteOrganization:'/organizations/deleteorganizations',
+		deleteVerifications:'/verification-records',  
+		deleteIssaunce:'/issuance-records',
+		deleteConnections:'/connections'
 	},
 	connection: {
 		create: '/connections',
@@ -56,7 +64,7 @@ export const apiRoutes = {
 		issueCredential: '/credentials/offer',
 		issueOobEmailCredential: '/credentials/oob/email',
 		bulk:{
-			credefList:'/bulk/cred-defs',
+			credefList:'/credentials/bulk/template',
 			uploadCsv: '/bulk/upload',
 			preview: '/preview',
 			bulk: '/bulk',
@@ -64,11 +72,12 @@ export const apiRoutes = {
 			filesData: '/bulk/file-data',
 			retry: '/retry/bulk'
 		},
-		download:'/download'
+		download:'/credentials/bulk/template'
 	},
 	Verification: {
 		getAllRequestList: '/credentials/proofs',
 		verifyCredential: '/proofs',
+		oobProofRequest: '/proofs/oob',
 		presentationVerification: '/proofs',
 		proofRequestAttributesVerification: '/verified-proofs',
 		verificationCredDef: '/verifiation/cred-defs'
@@ -78,7 +87,10 @@ export const apiRoutes = {
 		agentDedicatedSpinup: '/agents/spinup',
 		agentSharedSpinup: '/agents/wallet',
 		getLedgerConfig: '/agents/ledgerConfig',
-		createPolygonKeys: '/agents/polygon/create-keys'
+		createPolygonKeys: '/agents/polygon/create-keys',
+		setAgentConfig:'/agents/configure',
+		deleteWallet: '/agents/wallet',
+
 	},
 	Platform: {
 		getAllSchemaFromPlatform: '/platform/schemas',
@@ -103,6 +115,7 @@ export const apiRoutes = {
 		invitations: '/invitations',
 		usersInvitation: '/users/invitations',
 		members: '/members',
+		deleteOrgFromEcosystem:'/member-org'
 	},
 	setting:{
 		setting: '/client_credentials'

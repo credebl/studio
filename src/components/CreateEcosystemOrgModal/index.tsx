@@ -1,7 +1,10 @@
 import * as yup from 'yup';
 
-import { Avatar, Button, Label, Modal, Tooltip } from 'flowbite-react';
-import { Field, Form, Formik, FormikHelpers } from 'formik';
+import { Avatar, Button, Label, Modal } from 'flowbite-react';
+import { Field, Form, Formik} from 'formik';
+import type { FormikHelpers as FormikActions } from 'formik';
+
+
 import {
 	IMG_MAX_HEIGHT,
 	IMG_MAX_WIDTH,
@@ -18,12 +21,13 @@ import { createOrganization } from '../../api/organization';
 import { getFromLocalStorage } from '../../api/Auth';
 import { createEcosystems } from '../../api/ecosystem';
 import { getOrgDetails } from '../../config/ecosystem';
-import defaultUserIcon from '../../../public/images/person_FILL1_wght400_GRAD0_opsz24.svg';
 import EndorsementTooltip from '../../commonComponents/EndorsementTooltip';
 import { processImage } from '../../utils/processImage';
+
 interface Values {
 	name: string;
 	description: string;
+	autoEndorsement:boolean;
 }
 
 interface ILogoImage {
@@ -239,10 +243,10 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 	};
 	const renderEcosystemModal = () => {
 		const popupName = props.isorgModal ? 'Organization' : 'Ecosystem';
-
 		return (
 			<Modal
-				size={!props.isorgModal ? '3xl' : '2xl'}
+			className="bg-gray-900 bg-opacity-50 dark:bg-opacity-80"
+				size={'2xl'}
 				show={props.openModal}
 				onClose={() => {
 					setLogoImage({
@@ -257,6 +261,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 					});
 					props.setOpenModal(false);
 					setImgError(' ')
+					setErrMsg(null);
 				}}
 			>
 				<Modal.Header>Create {popupName}</Modal.Header>
@@ -266,6 +271,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 						type={'failure'}
 						onAlertClose={() => {
 							setErrMsg(null);
+							
 						}}
 					/>
 					<Formik
@@ -280,7 +286,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 						enableReinitialize
 						onSubmit={async (
 							values: Values,
-							{ resetForm }: FormikHelpers<Values>,
+							{ resetForm }: FormikActions<Values>,
 						) => {
 							submit(values);
 							resetForm();
@@ -300,7 +306,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 												alt={logoImage.fileName}
 											/>
 										) : typeof logoImage.logoFile === 'string' ? (
-											<Avatar size="lg" img={defaultUserIcon} />
+											<Avatar size="lg" img='images/person_24dp_FILL0_wght400_GRAD0_opsz24 (2).svg' />
 										) : (
 											<img
 												className="m-2 rounded-md w-28 h-28"
@@ -486,6 +492,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 										isProcessing={loading}
 										className="float-right text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-700 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 									>
+
 										<svg
 											className="pr-2"
 											xmlns="http://www.w3.org/2000/svg"

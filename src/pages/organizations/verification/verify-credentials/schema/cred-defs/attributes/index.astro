@@ -1,0 +1,14 @@
+---
+import LayoutSidebar from "../../../../../../../app/LayoutSidebar.astro";
+import EmailAttributesSelection from "../../../../../../../components/Verification/EmailAttributesSelection";
+import { checkUserSession } from "../../../../../../../utils/check-session";
+
+const response = await checkUserSession({cookies: Astro.cookies, currentPath: Astro.url.pathname});
+if (!response.authorized) {
+	return Astro.redirect(response.redirect);
+}
+---
+
+<LayoutSidebar notFoundPage={!response.permitted}>
+	<EmailAttributesSelection client:load />
+</LayoutSidebar>
