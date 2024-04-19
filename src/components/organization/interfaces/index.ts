@@ -6,6 +6,10 @@ export interface UserOrgRole {
     orgRole: OrgRole
 }
 
+interface IEcosystemOrgs {
+    ecosystemId: string;
+}
+
 export interface Organisation {
     logoFile: string
     id: string
@@ -22,6 +26,8 @@ export interface Organisation {
     org_agents: OrgAgent[]
     publicProfile: boolean
     checked?: boolean | undefined
+    ecosystemOrgs?: IEcosystemOrgs[]
+    error?: string;
 }
 
 export interface OrgRole {

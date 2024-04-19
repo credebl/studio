@@ -2,24 +2,21 @@
 
 import type { AxiosResponse } from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
-import {
-	IConnectionListAPIParameter,
-	getConnectionsByOrg,
-} from '../api/connection';
 import type { TableData } from '../commonComponents/datatable/interface';
 import { apiStatusCodes, storageKeys } from '../config/CommonConstant';
 import { AlertComponent } from './AlertComponent';
-import { dateConversion } from '../utils/DateConversion';
-import DateTooltip from './Tooltip';
 import BreadCrumbs from './BreadCrumbs';
-import { getFromLocalStorage, setToLocalStorage } from '../api/Auth';
-import { getOrgDetails } from '../config/ecosystem';
-import type { IConnectionList } from './Issuance/interface';
+import { getFromLocalStorage, removeFromLocalStorage, setToLocalStorage } from '../api/Auth';
 import SortDataTable from '../commonComponents/datatable/SortDataTable';
 import { getOrganizations } from '../api/organization';
 import CustomAvatar from '../components/Avatar';
 
 import type { Organisation } from '../components/organization/interfaces';
+import React from 'react';
+import { Roles } from '../utils/enums/roles';
+import { Button } from 'flowbite-react';
+import { addOrganizationInEcosystem } from '../api/ecosystem';
+import { pathRoutes } from '../config/pathRoutes';
 
 
 const initialPageState = {
@@ -28,28 +25,29 @@ const initialPageState = {
 	sortBy: 'name',
 	sortingOrder: 'desc',
 	pageSize: 3,
-	total: 100
+	total: 100,
+	role: Roles.OWNER
 };
+
+interface IErrorOrg {
+	id: string;
+	error: string;
+}
 
 const AddOrganizationInEcosystem = () => {
 	const [listAPIParameter, setListAPIParameter] = useState(initialPageState);
-	const [connectionList, setConnectionList] = useState<TableData[]>([]);
+	const [errorList, setErrorList] = useState<IErrorOrg[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
+	const [success, setSuccess] = useState<string | null>(null);
 	const [localOrgs, setLocalOrgs] = useState<string[]>([]);
-	const [totalItem, setTotalItem] = useState(0);
 	const [pageInfo, setPageInfo] = useState({
 		totalItem: 0,
 		nextPage: 0,
 		lastPage: 0,
 	});
 	const [currentPage, setCurrentPage] = useState(initialPageState);
-	const onPageChange = (page: number) => {
-		setCurrentPage({
-			...currentPage,
-			page,
-		});
-	};
+	const [loader, setLoader] = useState(false);
 	const [organizationsList, setOrganizationsList] = useState<Array<Organisation> | null>(null);
 	const [tableData, setTableData] = useState<TableData[]>([])
 
@@ -63,7 +61,7 @@ const AddOrganizationInEcosystem = () => {
 				setLocalOrgs((prev: string[]) => [...prev, item.id])
 			} else {
 				const updateLocalOrgs = [...localOrgs]
-				if(!checked){
+				if (!checked) {
 					updateLocalOrgs.splice(index, 1);
 				}
 				setLocalOrgs(updateLocalOrgs)
@@ -74,16 +72,18 @@ const AddOrganizationInEcosystem = () => {
 	}
 
 	const generateTable = async (organizationsList: Organisation[] | null) => {
-		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-		const updateList = organizationsList && organizationsList.filter(item => item.id !== orgId);
-		const connections = updateList && updateList?.map((ele: Organisation) => {
+		const id = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID);
+		const connections = organizationsList && organizationsList?.map((ele: Organisation) => {
 			const isChecked = localOrgs.includes(ele.id)
+			const alreadyAdded = ele.ecosystemOrgs?.some(item => item.ecosystemId === id)
+			const title = alreadyAdded ? "Already exists in the ecosystem" : ""
+			const error = errorList.find(item => item.id === ele.id)?.error || ele.error;
 
 			return {
 				data: [
 					{
 						data: (
-							<div className="flex items-center" id="issuance_checkbox">
+							<div title={title} className={`flex items-center ${alreadyAdded ? "opacity-50" : ""}`} id="issuance_checkbox">
 								<input
 									id={`default-checkbox-${ele.id}`}
 									type="checkbox"
@@ -103,15 +103,16 @@ const AddOrganizationInEcosystem = () => {
 										})
 										setOrganizationsList(updateOrgList)
 									}}
-									checked={ele.checked || isChecked}
-									className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-lg dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600 cursor-pointer"
+									disabled={alreadyAdded}
+									checked={(ele.checked || isChecked) && !alreadyAdded}
+									className={`w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-lg dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600 disabled:opacity-100 ${alreadyAdded ? "cursor-not-allowed" : "cursor-pointer"}`}
 								/>
 							</div>
 						),
 					},
 					{
 						data: (
-							<div className='flex gap-3 items-center'>
+							<div title={title} className={`flex gap-3 items-center ${alreadyAdded ? "opacity-50 cursor-not-allowed" : ""}`}>
 								<div>
 									{(ele?.logoUrl) ?
 										<CustomAvatar
@@ -122,14 +123,16 @@ const AddOrganizationInEcosystem = () => {
 											className="rounded-full w-8 h-8"
 											name={ele?.name || "NA"} />}
 								</div>
-								<div>{ele.name}</div>
+								<div>
+									{ele.name}
+								</div>
 							</div>
 						)
 					},
-					{ data: ele.id },
+					{ data: (<div title={title} className={`${alreadyAdded ? "opacity-50 cursor-not-allowed" : ""}`}>{ele.id}</div>) },
 					{
 						data: (
-							<div>
+							<div title={title} className={`${alreadyAdded ? "opacity-50 cursor-not-allowed" : ""}`}>
 								{
 									ele?.roles?.length > 0 && ele?.roles?.map(item => (
 										<span
@@ -143,6 +146,15 @@ const AddOrganizationInEcosystem = () => {
 							</div>
 						),
 					},
+					{
+						data: (
+							<div title={title} className={`text-red-500 ${alreadyAdded ? "opacity-50 cursor-not-allowed" : ""}`}>
+								{
+									<div>{error || "-"}</div>
+								}
+							</div>
+						),
+					}
 				],
 			};
 		});
@@ -151,8 +163,6 @@ const AddOrganizationInEcosystem = () => {
 
 	useEffect(() => {
 		generateTable(organizationsList);
-		// console.log(454545, organizationsList);
-
 	}, [organizationsList, localOrgs])
 
 	const getOwnerOrganizations = async (currentPage) => {
@@ -160,13 +170,13 @@ const AddOrganizationInEcosystem = () => {
 		const response = await getOrganizations(
 			currentPage.page,
 			currentPage.pageSize,
-			searchText,
+			currentPage.search,
+			currentPage.role
 		);
 		const { data } = response as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const totalPages = data?.data?.totalPages;
-			setTotalItem(data?.data?.totalCount)
 			const orgList = data?.data?.organizations.map((userOrg: Organisation) => {
 				const roles: string[] = userOrg.userOrgRoles.map(
 					(role) => role.orgRole.name,
@@ -193,9 +203,10 @@ const AddOrganizationInEcosystem = () => {
 
 	const header = [
 		{ columnName: '', width: 'w-0.5' },
-		{ columnName: 'Name' },
+		{ columnName: 'Organization' },
 		{ columnName: 'Id' },
 		{ columnName: 'Role(s)' },
+		{ columnName: 'Error' },
 	];
 
 	//onChange of Search input text
@@ -220,9 +231,52 @@ const AddOrganizationInEcosystem = () => {
 	};
 
 	const updateLocalOrgs = async () => {
-		const res = await localStorage.getItem("selected-orgs")
+		const res = await getFromLocalStorage(storageKeys.SELECT_ORG_IN_ECOSYSTEM)
 		const selectedOrg = res ? JSON.parse(res) : []
 		setLocalOrgs(selectedOrg);
+
+		const err = await getFromLocalStorage(storageKeys.ERROR_ORG_IN_ECOSYSTEM)
+		const errOrgs = err ? JSON.parse(err) : []
+		setErrorList(errOrgs);
+	}
+
+	const handleAddOrganization = async () => {
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID) || "";
+		const ecosystemId = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID) || "";
+		setLoader(true)
+		try {
+			const response = await addOrganizationInEcosystem(localOrgs, ecosystemId, orgId);
+			const { data } = response as AxiosResponse;
+			setLoader(false)
+			switch (data?.statusCode) {
+				case apiStatusCodes.API_STATUS_CREATED:
+					await removeFromLocalStorage(storageKeys.SELECT_ORG_IN_ECOSYSTEM)
+					setSuccess(data.message)
+					setTimeout(() => {
+						window.location.href = pathRoutes.ecosystem.dashboard;
+					}, 2000);
+					break;
+				case apiStatusCodes.API_STATUS_PARTIALLY_COMPLETED:
+					await removeFromLocalStorage(storageKeys.SELECT_ORG_IN_ECOSYSTEM)
+					const errors = data?.data?.filter(item => item.statusCode !== apiStatusCodes.API_STATUS_CREATED)
+					const errorData = errors.map(item => ({ id: item.data.orgId, error: item.message }))
+					await setToLocalStorage(storageKeys.ERROR_ORG_IN_ECOSYSTEM, JSON.stringify(errorData))
+					setErrorList(errorData)
+					const updateWithError = organizationsList && organizationsList?.length > 0 && organizationsList?.map((item => ({
+						...item,
+						error: errors?.find(ele => ele?.data?.orgId === item.id)?.message || ""
+					})))
+					setSuccess(data?.message);
+					setOrganizationsList(updateWithError)
+					break;
+				default:
+					setError(response as string || data?.message)
+					break;
+			}
+		} catch (error) {
+			setError(error.message as string)
+			setLoader(false)
+		}
 	}
 
 	useEffect(() => {
@@ -231,12 +285,16 @@ const AddOrganizationInEcosystem = () => {
 	}, [listAPIParameter]);
 
 	useEffect(() => {
-		updateLocalOrgs()
+		updateLocalOrgs();
+		(async () => {
+			await removeFromLocalStorage(storageKeys.SELECT_ORG_IN_ECOSYSTEM);
+			await removeFromLocalStorage(storageKeys.ERROR_ORG_IN_ECOSYSTEM);
+		})()
 	}, [])
 
 	useEffect(() => {
 		(async () => {
-			await localStorage.setItem("selected-orgs", JSON.stringify(localOrgs))
+			await setToLocalStorage(storageKeys.SELECT_ORG_IN_ECOSYSTEM, JSON.stringify(localOrgs))
 		})()
 	}, [localOrgs])
 
@@ -247,16 +305,17 @@ const AddOrganizationInEcosystem = () => {
 				className="flex items-center justify-between mb-4"
 				id="connection-list"
 			>
-				<h1 className="ml-1 mr-auto text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-					Organizations
+				<h1 className="ml-1 mt-4 mr-auto text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
+					Add Organizations
 				</h1>
 			</div>
-			{error && (
+			{(error || success) && (
 				<AlertComponent
-					message={error}
-					type={'failure'}
+					message={error || success}
+					type={error ? 'failure' : 'success'}
 					onAlertClose={() => {
 						setError(null);
+						setSuccess(null);
 					}}
 				/>
 			)}
@@ -284,6 +343,28 @@ const AddOrganizationInEcosystem = () => {
 				discription={"You don't have any Organization to add"}
 				itemPerPage={listAPIParameter.pageSize}
 			></SortDataTable>
+			<div className='flex w-full justify-end mt-8'>
+				<Button
+					onClick={() => handleAddOrganization()}
+					isProcessing={loader}
+					className={`hover:bg-primary-800 dark:hover:text-white dark:hover:bg-primary-700 hover:!bg-primary-800 text-base font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:focus:ring-primary-800`}
+				>
+					<svg
+						className="pr-2"
+						xmlns="http://www.w3.org/2000/svg"
+						width="20"
+						height="20"
+						fill="none"
+						viewBox="0 0 24 24"
+					>
+						<path
+							fill="#fff"
+							d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"
+						/>
+					</svg>
+					Add Organization
+				</Button>
+			</div>
 		</div>
 	);
 };
