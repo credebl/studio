@@ -27,7 +27,7 @@ export interface IDataTable {
 	currentPage: any;
 	onPageChange: (page: number) => void;
 	totalPages: number;
-	searchSortByValue: (value: any) => void;
+	searchSortByValue?: (value: any) => void;
 	isPagination?: boolean;
 	isSearch: boolean;
 	isRefresh: boolean;

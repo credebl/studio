@@ -12,7 +12,6 @@ import { getOrganizations } from '../api/organization';
 import CustomAvatar from '../components/Avatar';
 
 import type { Organisation } from '../components/organization/interfaces';
-import React from 'react';
 import { Roles } from '../utils/enums/roles';
 import { Button } from 'flowbite-react';
 import { addOrganizationInEcosystem } from '../api/ecosystem';
@@ -22,7 +21,6 @@ import { pathRoutes } from '../config/pathRoutes';
 const initialPageState = {
 	page: 1,
 	search: '',
-	sortBy: 'name',
 	sortingOrder: 'desc',
 	pageSize: 3,
 	total: 100,
@@ -34,8 +32,25 @@ interface IErrorOrg {
 	error: string;
 }
 
+interface IErrorResponse {
+	statusCode: number;
+	message: string;
+	data?: {
+		orgId: string;
+	}
+	error?: string;
+}
+
+interface ICurrentPage {
+	page: number;
+	pageSize: number;
+	search: string;
+	role: string;
+	total: number;
+}
+
 const AddOrganizationInEcosystem = () => {
-	const [listAPIParameter, setListAPIParameter] = useState(initialPageState);
+	const [listAPIParameter, setListAPIParameter] = useState<ICurrentPage>(initialPageState);
 	const [errorList, setErrorList] = useState<IErrorOrg[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
@@ -46,7 +61,7 @@ const AddOrganizationInEcosystem = () => {
 		nextPage: 0,
 		lastPage: 0,
 	});
-	const [currentPage, setCurrentPage] = useState(initialPageState);
+	const [totalPages, setTotalPages] = useState<number>(0);
 	const [loader, setLoader] = useState(false);
 	const [organizationsList, setOrganizationsList] = useState<Array<Organisation> | null>(null);
 	const [tableData, setTableData] = useState<TableData[]>([])
@@ -165,7 +180,7 @@ const AddOrganizationInEcosystem = () => {
 		generateTable(organizationsList);
 	}, [organizationsList, localOrgs])
 
-	const getOwnerOrganizations = async (currentPage) => {
+	const getOwnerOrganizations = async (currentPage: ICurrentPage) => {
 		setLoading(true);
 		const response = await getOrganizations(
 			currentPage.page,
@@ -191,10 +206,7 @@ const AddOrganizationInEcosystem = () => {
 				nextPage: listAPIParameter?.page + 1
 			})
 			setOrganizationsList(orgList);
-			setCurrentPage({
-				...currentPage,
-				total: totalPages,
-			});
+			setTotalPages(totalPages);
 		} else {
 			setError(response as string);
 		}
@@ -215,14 +227,6 @@ const AddOrganizationInEcosystem = () => {
 			...listAPIParameter,
 			search: e.target.value,
 			page: 1,
-		});
-	};
-
-	const searchSortByValue = (value: any) => {
-		setListAPIParameter({
-			...listAPIParameter,
-			page: 1,
-			sortingOrder: value,
 		});
 	};
 
@@ -254,18 +258,18 @@ const AddOrganizationInEcosystem = () => {
 					setSuccess(data.message)
 					setTimeout(() => {
 						window.location.href = pathRoutes.ecosystem.dashboard;
-					}, 2000);
+					}, 1000);
 					break;
 				case apiStatusCodes.API_STATUS_PARTIALLY_COMPLETED:
 					await removeFromLocalStorage(storageKeys.SELECT_ORG_IN_ECOSYSTEM)
-					const errors = data?.data?.filter(item => item.statusCode !== apiStatusCodes.API_STATUS_CREATED)
-					const errorData = errors.map(item => ({ id: item.data.orgId, error: item.message }))
+					const errors = data?.data?.filter((item: IErrorResponse) => item.statusCode !== apiStatusCodes.API_STATUS_CREATED)
+					const errorData = errors.map((item: IErrorResponse) => ({ id: item?.data?.orgId || "", error: item.message }))
 					await setToLocalStorage(storageKeys.ERROR_ORG_IN_ECOSYSTEM, JSON.stringify(errorData))
 					setErrorList(errorData)
-					const updateWithError = organizationsList && organizationsList?.length > 0 && organizationsList?.map((item => ({
+					const updateWithError = organizationsList && organizationsList?.length > 0 ? organizationsList?.map((item => ({
 						...item,
-						error: errors?.find(ele => ele?.data?.orgId === item.id)?.message || ""
-					})))
+						error: errors?.find((ele: IErrorResponse) => ele?.data?.orgId === item.id)?.message || ""
+					}))) : []
 					setSuccess(data?.message);
 					setOrganizationsList(updateWithError)
 					break;
@@ -332,13 +336,12 @@ const AddOrganizationInEcosystem = () => {
 						page,
 					}));
 				}}
-				totalPages={currentPage.total}
+				totalPages={totalPages}
 				pageInfo={pageInfo}
-				searchSortByValue={searchSortByValue}
 				isHeader={true}
 				isSearch={true}
 				isRefresh={true}
-				isSort={true}
+				isSort={false}
 				message={'No Organizations'}
 				discription={"You don't have any Organization to add"}
 				itemPerPage={listAPIParameter.pageSize}

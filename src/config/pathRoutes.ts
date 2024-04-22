@@ -56,7 +56,7 @@ export const pathRoutes = {
 		endorsements: '/ecosystems/endorsement',
 		invitation: '/ecosystems/invitation',
 		sentinvitation: '/ecosystems/invitations',
-		addOrgs: '/ecosystems/add-organizations'
+		addOrgs: '/ecosystems/dashboard/add-organizations'
 	},
 	documentation: {
 		root: envConfig.PLATFORM_DATA.docs

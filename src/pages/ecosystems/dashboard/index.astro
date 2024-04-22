@@ -1,8 +1,8 @@
 ---
-import LayoutSidebar from '../../app/LayoutSidebar.astro';
-import Dashboard from '../../components/Ecosystem/Dashboard';
-import { checkUserSession } from '../../utils/check-session';
-import { pathRoutes } from '../../config/pathRoutes';
+import LayoutSidebar from '../../../app/LayoutSidebar.astro';
+import Dashboard from '../../../components/Ecosystem/Dashboard';
+import { checkUserSession } from '../../../utils/check-session';
+import { pathRoutes } from '../../../config/pathRoutes';
 
 const response = await checkUserSession({cookies: Astro.cookies, currentPath: Astro.url.pathname});
 const route: string = pathRoutes.auth.sinIn
