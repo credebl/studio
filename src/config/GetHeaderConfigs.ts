@@ -1,6 +1,8 @@
 import { getFromLocalStorage } from '../api/Auth';
-import { allowedDomains, storageKeys } from './CommonConstant';
+import { storageKeys } from './CommonConstant';
+import { envConfig } from './envConfig';
 
+const allowedDomains = envConfig.PUBLIC_ALLOW_DOMAIN;
 const commonHeaders = {
     'Content-Security-Policy': `default-src 'self'; script-src 'unsafe-inline' ${allowedDomains}; style-src 'unsafe-inline' ${allowedDomains}; font-src ${allowedDomains}; img-src 'self' ${allowedDomains}; frame-src 'self' ${allowedDomains}; object-src 'none'; media-src 'self'; connect-src 'self' ${allowedDomains}; form-action 'self'; frame-ancestors 'self'; `,
     'X-Frame-Options': "DENY",
