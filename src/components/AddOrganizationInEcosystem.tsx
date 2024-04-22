@@ -66,8 +66,6 @@ const AddOrganizationInEcosystem = () => {
 	const [organizationsList, setOrganizationsList] = useState<Array<Organisation> | null>(null);
 	const [tableData, setTableData] = useState<TableData[]>([])
 
-	const [searchText, setSearchText] = useState('');
-
 	const selectOrganization = async (item: Organisation, checked: boolean) => {
 		try {
 			const index = localOrgs?.length > 0 ? localOrgs.findIndex(ele => ele === item.id) : -1
@@ -88,7 +86,7 @@ const AddOrganizationInEcosystem = () => {
 
 	const generateTable = async (organizationsList: Organisation[] | null) => {
 		const id = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID);
-		const connections = organizationsList && organizationsList?.map((ele: Organisation) => {
+		const connections = organizationsList && organizationsList?.length > 0 && organizationsList?.map((ele: Organisation) => {
 			const isChecked = localOrgs.includes(ele.id)
 			const alreadyAdded = ele.ecosystemOrgs?.some(item => item.ecosystemId === id)
 			const title = alreadyAdded ? "Already exists in the ecosystem" : ""

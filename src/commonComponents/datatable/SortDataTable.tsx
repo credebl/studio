@@ -177,8 +177,8 @@ const SortDataTable: React.FC<IDataTable> = ({
 								</tr>
 							) : (
 								<tbody className="bg-white dark:bg-gray-800 w-full">
-									{data && data?.length ? (
-										data.map((ele, index) => (
+									{data?.length ? (
+										data?.map((ele, index) => (
 											<tr
 												key={index}
 												className={`${index % 2 !== 0 ? 'bg-gray-50 dark:bg-gray-700' : ''
