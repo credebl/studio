@@ -139,6 +139,7 @@ const IssueCred = () => {
 		const parsedSchemaAttributes = JSON.parse(schemaAttributes) || [];
 		
 		setSchemaAttributesDetails(parsedSchemaAttributes?.attribute);
+		
 		return parsedSchemaAttributes.attribute;
 	};
 
