@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import { Alert, Button, Card } from 'flowbite-react';
 import { Field, FieldArray, Form, Formik } from 'formik';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
-import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
+import { getFromLocalStorage, removeFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import React, { useEffect, useState } from 'react';
 import BackButton from '../../commonComponents/backbutton';
 import type { AxiosResponse } from 'axios';
@@ -187,6 +187,8 @@ const IssueCred = () => {
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			setSuccess(data?.message);
 			window.location.href = `${pathRoutes.organizations.issuedCredentials}`;
+			await removeFromLocalStorage(storageKeys.SELECTED_CONNECTIONS);
+			await removeFromLocalStorage(storageKeys.SELECTED_USER);
 		} else {
 			setFailure(issueCredRes as string);
 			setIssuanceLoader(false);
