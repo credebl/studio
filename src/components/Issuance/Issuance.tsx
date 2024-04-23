@@ -76,6 +76,7 @@ const IssueCred = () => {
 			const attributesArray = attributes.map((attr) => ({
 				name: attr.attributeName,
 				value: '',
+				dataType: attr?.schemaDataType,				
 				isRequired: attr.isRequired
 			}));
 	
@@ -139,7 +140,7 @@ const IssueCred = () => {
 		const parsedSchemaAttributes = JSON.parse(schemaAttributes) || [];
 		
 		setSchemaAttributesDetails(parsedSchemaAttributes?.attribute);
-		
+
 		return parsedSchemaAttributes.attribute;
 	};
 
@@ -401,7 +402,7 @@ const IssueCred = () => {
 									<div className="flex justify-end">
 										<Button
 											type="submit"
-											disabled={!isValid || issuanceLoader}
+											disabled={issuanceLoader}
 											isProcessing={issuanceLoader}
 											className="text-base text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-accent-00 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 										>
