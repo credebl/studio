@@ -26,6 +26,7 @@ export const storageKeys = {
     PERMISSIONS: 'user_permissions',
     USER_EMAIL: 'user_email',
 	SELECTED_USER:'selected_user',
+    SELECTED_CONNECTIONS: 'selected_connections',
 	SCHEMA_ID:'schema_id',
     SCHEMA_ATTR:'schema_attr',
 	CRED_DEF_ID:'cred_def_id',

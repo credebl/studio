@@ -60,6 +60,7 @@ export interface IConnectionList {
 	theirLabel: string;
 	connectionId: string;
 	createDateTime: string;
+	checked?: boolean;
 }
 
 export interface SchemaDetails {
