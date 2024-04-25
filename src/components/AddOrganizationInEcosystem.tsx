@@ -22,8 +22,7 @@ const initialPageState = {
 	page: 1,
 	search: '',
 	sortingOrder: 'desc',
-	pageSize: 3,
-	total: 100,
+	pageSize: 10,
 	role: Roles.OWNER
 };
 
@@ -46,7 +45,6 @@ interface ICurrentPage {
 	pageSize: number;
 	search: string;
 	role: string;
-	total: number;
 }
 
 const AddOrganizationInEcosystem = () => {
