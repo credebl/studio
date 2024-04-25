@@ -103,7 +103,6 @@ export const apiRoutes = {
 		invitations: '/invitations',
 		usersInvitation: '/users/invitations',
 		members: '/members',
-		addOrganization: '/orgs'
 	},
 	setting:{
 		setting: '/client_credentials'

@@ -264,7 +264,7 @@ export const addOrganizationInEcosystem = async (
 	ecosystemId: string,
 	orgId: string,
 ) => {
-	const url = `${apiRoutes.Ecosystem.root}/${ecosystemId}/${orgId}${apiRoutes.Ecosystem.addOrganization}`;
+	const url = `${apiRoutes.Ecosystem.root}/${ecosystemId}/${orgId}${apiRoutes.organizations.root}`;
 	const payload = {
 		organizationIds: data
 	};

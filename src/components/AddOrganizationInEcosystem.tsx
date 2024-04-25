@@ -80,7 +80,7 @@ const AddOrganizationInEcosystem = () => {
 				setLocalOrgs(updateLocalOrgs)
 			}
 		} catch (error) {
-			console.error("SELECTED ORGANIZATION:::", error)
+			throw new Error(`SELECTED ORGANIZATION:::${error}`);
 		}
 	}
 

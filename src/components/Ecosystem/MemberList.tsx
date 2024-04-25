@@ -110,7 +110,7 @@ const MemberList = () => {
 			});
 			const memberList =
 				data?.data?.data?.length > 0 &&
-				data?.data?.data?.map((member) => {
+				data?.data?.data?.map((member: IMemberList) => {
 					let orgDid = 'Not available';
 					if (member.organisation.org_agents.length > 0) {
 						const orgAgent = member.organisation.org_agents[0];
