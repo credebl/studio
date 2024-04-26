@@ -192,3 +192,16 @@ export interface IOrgInfo {
     id: string;
     roles: string[]
 }
+
+export interface IUpdatePrimaryDidPayload {
+    id: string;
+    did: string;
+}
+
+export interface IDidList {
+    id: string;
+    did: string;
+    isPrimaryDid: boolean;
+    createDateTime: string;
+    lastChangedDateTime: string;
+}
