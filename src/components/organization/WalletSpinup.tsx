@@ -935,7 +935,7 @@ const WalletSpinup = (props: {
 					: `${values?.ledger}:${values?.network}`,
 			domain: values.method === DidMethod.WEB ? domain : '',
 			role: values.method === DidMethod.INDY ? values?.role || 'endorser' : '',
-			endorserDid: values?.endorserDid,
+			endorserDid: values?.endorserDid || '',
 			clientSocketId: SOCKET.id,
 		};
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
