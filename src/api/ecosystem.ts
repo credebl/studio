@@ -257,3 +257,27 @@ export const getEcosystemMemberList = async ({
 		return err?.message;
 	}
 };
+
+
+export const addOrganizationInEcosystem = async (
+	data: string[],
+	ecosystemId: string,
+	orgId: string,
+) => {
+	const url = `${apiRoutes.Ecosystem.root}/${ecosystemId}/${orgId}${apiRoutes.organizations.root}`;
+	const payload = {
+		organizationIds: data
+	};
+	const axiosPayload = {
+		url,
+		payload,
+		config: await getHeaderConfigs(),
+	};
+
+	try {
+		return await axiosPost(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};

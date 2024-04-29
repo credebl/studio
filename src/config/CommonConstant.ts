@@ -11,7 +11,8 @@ export const schemaVersionRegex = /^\d{1,5}(?=.*[0-9])(?:\.\d{1,5})?(?:\.\d{1,5}
 export const apiStatusCodes = {
     API_STATUS_SUCCESS : 200,
     API_STATUS_CREATED : 201,
-		API_STATUS_DELETED : 202,
+	API_STATUS_DELETED : 202,
+	API_STATUS_PARTIALLY_COMPLETED : 206,
     API_STATUS_BAD_REQUEST : 400,
     API_STATUS_UNAUTHORIZED : 401,
     API_STATUS_NOT_FOUND : 404
@@ -26,6 +27,7 @@ export const storageKeys = {
     PERMISSIONS: 'user_permissions',
     USER_EMAIL: 'user_email',
 	SELECTED_USER:'selected_user',
+    SELECTED_CONNECTIONS: 'selected_connections',
 	SCHEMA_ID:'schema_id',
     SCHEMA_ATTR:'schema_attr',
 	CRED_DEF_ID:'cred_def_id',
@@ -36,5 +38,7 @@ export const storageKeys = {
     ECOSYSTEM_ROLE: "ecosystem_role",
 	SOCKET_ID: "socket_id",
 	LEDGER_ID: "ledger_id", 
-	ORG_INFO:'organization_Info'
+	ORG_INFO:'organization_Info',
+    SELECT_ORG_IN_ECOSYSTEM: 'select_orgs_in_ecosystem',
+    ERROR_ORG_IN_ECOSYSTEM: 'error_orgs_in_ecosystem'
 }
