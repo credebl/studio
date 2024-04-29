@@ -3,7 +3,7 @@
 import { removeFromLocalStorage, setToLocalStorage } from "../../api/Auth";
 import { storageKeys } from "../../config/CommonConstant";
 import { pathRoutes } from "../../config/pathRoutes";
-import SchemaList from "../Resources/Schema/SchemasList";
+import ProofVerificationRequest from "./ProofVerification";
 import type { SchemaDetails } from "./interface";
 
 const SchemaSelection = () => {
@@ -16,7 +16,7 @@ const SchemaSelection = () => {
 	}
 
 	return (
-		<SchemaList schemaSelectionCallback={schemaSelectionCallback} />
+		<ProofVerificationRequest schemaSelectionCallback={schemaSelectionCallback} />
 	)
 }
 

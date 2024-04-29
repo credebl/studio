@@ -106,3 +106,11 @@ export interface ISelectedUser {
 		},
 	];
 }
+
+export interface IProofSchemaDetails {
+	schemaLedgerId: string;
+	name: string;
+	createDateTime: string;
+	checked?: boolean;
+	attributes:IAttribute[];
+}

@@ -6,9 +6,10 @@ interface IProps {
 	url: string;
 	method: 'GET' | 'POST' | 'PUT' | 'DELETE';
 	payload?: any;
+	isBaseURL?: boolean
 }
 
-const API = async ({ token, url, method, payload }: IProps) => {
+const API = async ({ token, url, method, payload, isBaseURL }: IProps) => {
 	try {
 		const headers = {
 			'Content-Type': 'application/json',
@@ -20,13 +21,18 @@ const API = async ({ token, url, method, payload }: IProps) => {
 			method,
 			body: JSON.stringify(payload),
 		};
+
 		const baseURL = globalThis.baseUrl || envConfig.PUBLIC_BASE_URL || process.env.PUBLIC_BASE_URL;
-		const apiURL = baseURL + url;
+		const apiURL = !isBaseURL ? baseURL + url : url;
+		console.log(3434333, apiURL);
+		
 		const res = await fetch(apiURL, {
 			...config,
 		});
-		const { data } = (await res.json()) || {};
-		return data;
+		
+		const data = (await res.json()) || {};
+		console.log(7687, baseURL, data);
+		return data.data;
 	} catch (err) {
 		console.error('ERROR::', err);
 		return err;

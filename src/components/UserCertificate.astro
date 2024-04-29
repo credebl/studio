@@ -1,4 +1,35 @@
 ---
+import { apiRoutes } from '../config/apiRoutes';
+import API from '../config/ssrApiConfig';
+import { envConfig } from '../config/envConfig';
+
+const { credId } = Astro.props;
+
+const fetchApi = await API({
+	url: `${envConfig.PUBLIC_WMC_BASE_URL}/${credId}`,
+	token: '',
+	method: 'GET',
+	isBaseURL: true,
+});
+console.log('fetchApi:::::', fetchApi);
+const imageUrl = fetchApi?.imageUrl;
+---
+
+<head>
+	<meta property="og:title" content="World Memory Championship Certificate" />
+	<meta
+		property="og:description"
+		content="World Memory Championship Certificate for participants, winners, arbitors, and record holders."
+	/>
+	<meta property="og:image" content={imageUrl} />
+</head>
+<div>
+	<img src={imageUrl} alt="World Memory Championship Certificate" />
+</div>
+
+
+
+<!-- ---
 import { apiRoutes } from '../config/apiRoutes'
 import API from '../config/ssrApiConfig';
 
@@ -18,4 +49,4 @@ const imageUrl = fetchApi?.imageUrl;
 </head>
 <div>
 	<img src={imageUrl} alt="World Memory Championship Certificate" />
-</div>
+</div> -->

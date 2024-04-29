@@ -43,11 +43,14 @@ export const pathRoutes = {
 			emailHistory: '/organizations/credentials/issue/email/history',
 		},
 		verification: {
-			schema: '/organizations/verification/schemas',
+			verifications: '/organizations/verification/verify-credentials',
+			schema: '/organizations/verification/verify-credentials/schemas',
 			credDef: '/organizations/verification/schemas/cred-defs',
 			connections: '/organizations/verification/schemas/cred-defs/connections',
+			email:'/organizations/verification/schemas/cred-defs/emails',
 			verify:
 				'/organizations/verification/schemas/cred-defs/connections/verification',
+			bulkIssuance: '/organizations/credentials/issue/bulk-issuance',
 		},
 	},
 	ecosystem: {
