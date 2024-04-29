@@ -65,8 +65,10 @@ export const getOrganizations = async (
 	pageNumber: number,
 	pageSize: number,
 	search = '',
+	role = ''
 ) => {
-	const url = `${apiRoutes.organizations.getAll}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`;
+	const roleQuery = role ? `&role=${role}` : ''
+	const url = `${apiRoutes.organizations.getAll}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}${roleQuery}`;
 
 	const token = await getFromLocalStorage(storageKeys.TOKEN);
 
