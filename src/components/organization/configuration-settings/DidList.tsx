@@ -8,10 +8,13 @@ import { getFromLocalStorage } from "../../../api/Auth"
 import { apiStatusCodes, storageKeys } from "../../../config/CommonConstant"
 import type { AxiosResponse } from "axios"
 import type { IDidList, IUpdatePrimaryDidPayload } from "../interfaces"
+import { AlertComponent } from "../../AlertComponent"
 
 const DIDList = () => {
     const [didList, setDidList] = useState<IDidList[]>([]);
     const [showPopup, setShowPopup] = useState(false);
+    const [erroMsg, setErrMsg] = useState<string | null>(null);
+    const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
     const setPrimaryDid = async (id: string, did: string) => {
         try {
@@ -22,14 +25,13 @@ const DIDList = () => {
             }
             const response = await updatePrimaryDid(orgId, payload);
             const { data } = response as AxiosResponse;
-            console.log(3423423, data);
 
-            // if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-            //     console.log(324234, data);
-            //     setDidList(data?.data)
-            // }
+            if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+                window.location.reload();
+            } else {
+                setErrMsg(response as string);
+            }
         } catch (error) {
-            console.log("ERROR::::", error);
         }
     }
 
@@ -40,7 +42,12 @@ const DIDList = () => {
             const { data } = response as AxiosResponse;
             if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
                 console.log(324234, data);
-                setDidList(data?.data)
+                const sortedDids = data?.data.sort((a, b) => {
+                    if (a.isPrimaryDid && !b.isPrimaryDid) return -1;
+                    if (!a.isPrimaryDid && b.isPrimaryDid) return 1;
+                    return 0;
+                });
+                setDidList(sortedDids)
             }
         } catch (error) {
             console.log("ERROR::::", error);
@@ -54,7 +61,15 @@ const DIDList = () => {
     return (
         <>
             <div className="w-full">
-                <div className="flex justify-between items-center mb-6">
+            <AlertComponent
+					message={successMsg ?? erroMsg}
+					type={successMsg ? 'success' : 'failure'}
+					onAlertClose={() => {
+						setErrMsg(null);
+						setSuccessMsg(null);
+					}}
+				/>
+                <div className="flex justify-between items-center mb-6 mr-10">
                     <h3 className="text-lg font-bold dark:text-white">DID Details</h3>
                     <Button
                         onClick={() => setShowPopup(true)}
@@ -62,13 +77,14 @@ const DIDList = () => {
                     >
                         Create DID
                     </Button>
+
                 </div>
                 <div className="overflow-auto divide-y divide-gray-200 dark:divide-gray-700">
                     {
                         didList.map((item: IDidList, index: number) => {
-                            const primary = item.isPrimaryDid || item.id === "13352939-17c8-4336-9ef6-337db412f89e"
+                            const primary = item.id;
                             return (
-                                <div key={item.id} className={`px-4 dark:text-white sm:px-6 py-4 text-sm w-fit sm:w-full ${primary ? 'bg-[#E6E6E6] dark:bg-gray-600' : ''}`}>
+                                <div key={item.id} className={`px-4 dark:text-white sm:px-6 py-4 text-sm w-fit sm:w-full ${primary && item.isPrimaryDid  ? 'bg-[#E6E6E6] dark:bg-gray-600' : ''}`}>
                                     <div className="flex items-center justify-between gap-6">
                                         <p className="shrink-0">DID {index + 1}</p>
                                         <p>:</p>
@@ -83,7 +99,7 @@ const DIDList = () => {
                                             </span>
                                         )}
                                         {
-                                            primary ?
+                                            primary && item.isPrimaryDid ?
                                                 <div
                                                     className="m-1 bg-[#AFD2EE] text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300 mr-auto"
                                                 >

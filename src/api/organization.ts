@@ -418,7 +418,7 @@ export const updatePrimaryDid = async (orgId: string, payload: IUpdatePrimaryDid
 	};
 
 	try {
-		return await axiosPost(axiosPayload);
+		return await axiosPut(axiosPayload);
 	} catch (error) {
 		const err = error as Error;
 		return err?.message;
