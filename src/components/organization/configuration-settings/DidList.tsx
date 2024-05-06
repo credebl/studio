@@ -7,8 +7,8 @@ import { getDids, updatePrimaryDid } from "../../../api/organization"
 import { getFromLocalStorage } from "../../../api/Auth"
 import { apiStatusCodes, storageKeys } from "../../../config/CommonConstant"
 import type { AxiosResponse } from "axios"
-import type { IDidList, IUpdatePrimaryDidPayload } from "../interfaces"
 import { AlertComponent } from "../../AlertComponent"
+import type { IDidList, IUpdatePrimaryDid } from "../interfaces"
 
 const DIDList = () => {
     const [didList, setDidList] = useState<IDidList[]>([]);
@@ -19,7 +19,7 @@ const DIDList = () => {
     const setPrimaryDid = async (id: string, did: string) => {
         try {
             const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-            const payload: IUpdatePrimaryDidPayload = {
+            const payload: IUpdatePrimaryDid = {
                 id,
                 did
             }
@@ -41,7 +41,6 @@ const DIDList = () => {
             const response = await getDids(orgId);
             const { data } = response as AxiosResponse;
             if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-                console.log(324234, data);
                 const sortedDids = data?.data.sort((a, b) => {
                     if (a.isPrimaryDid && !b.isPrimaryDid) return -1;
                     if (!a.isPrimaryDid && b.isPrimaryDid) return 1;

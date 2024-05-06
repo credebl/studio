@@ -199,7 +199,7 @@ export interface IOrgInfo {
     roles: string[]
 }
 
-export interface IUpdatePrimaryDidPayload {
+export interface IUpdatePrimaryDid {
     id: string;
     did: string;
 }

@@ -10,7 +10,7 @@ import { apiRoutes } from '../config/apiRoutes';
 import { getFromLocalStorage } from './Auth';
 import { getHeaderConfigs } from '../config/GetHeaderConfigs';
 import { storageKeys } from '../config/CommonConstant';
-import type { IUpdatePrimaryDidPayload } from '../components/organization/interfaces';
+import type { IUpdatePrimaryDid } from '../components/organization/interfaces';
 
 export const createOrganization = async (data: object) => {
 	const url = apiRoutes.organizations.create;
@@ -408,7 +408,7 @@ export const createDid = async (payload: any) => {
 	}
 };
 
-export const updatePrimaryDid = async (orgId: string, payload: IUpdatePrimaryDidPayload) => {
+export const updatePrimaryDid = async (orgId: string, payload: IUpdatePrimaryDid) => {
 	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.primaryDid}`;
 
 	const axiosPayload = {
