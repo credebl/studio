@@ -1,4 +1,3 @@
-'use client';
 
 import { ChangeEvent, useEffect, useState } from 'react';
 import type { TableData } from '../../commonComponents/datatable/interface';

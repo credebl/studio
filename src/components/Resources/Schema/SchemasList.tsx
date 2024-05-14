@@ -1,4 +1,3 @@
-'use client';
 
 import { Alert, Pagination } from 'flowbite-react';
 import React, { ChangeEvent, useEffect, useState } from 'react';

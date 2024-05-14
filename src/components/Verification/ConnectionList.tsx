@@ -1,4 +1,3 @@
-'use client';
 
 import type { AxiosResponse } from 'axios';
 import React, { ChangeEvent, useEffect, useState } from 'react';

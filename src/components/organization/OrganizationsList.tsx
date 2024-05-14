@@ -1,4 +1,3 @@
-'use client';
 import React from 'react';
 import { Card, Pagination } from 'flowbite-react';
 import { ChangeEvent, useEffect, useState } from 'react';

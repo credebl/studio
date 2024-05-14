@@ -1,4 +1,3 @@
-'use client';
 
 import { ChangeEvent, useEffect, useState } from 'react';
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';

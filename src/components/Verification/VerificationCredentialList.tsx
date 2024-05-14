@@ -1,4 +1,3 @@
-'use client';
 
 import { Alert, Button } from 'flowbite-react';
 import React, { ChangeEvent, useEffect, useState } from 'react';

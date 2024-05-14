@@ -1,4 +1,3 @@
-'use client';
 
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { HiAdjustments, HiClipboardList, HiUserCircle } from 'react-icons/hi';
