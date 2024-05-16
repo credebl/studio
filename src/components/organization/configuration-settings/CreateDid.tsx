@@ -122,7 +122,6 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 			domain: values.method === DidMethod.WEB ? values.domain : '',
 			role: values.method === DidMethod.INDY ? 'endorser' : '',
 			privatekey: values.method === DidMethod.POLYGON ? values.privatekey : '',
-			endpoint: '',
 			did: '',
 			endorserDid: values?.endorserDid || '',
 			isPrimaryDid: false,
