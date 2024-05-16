@@ -13,6 +13,15 @@ import defaultUserIcon from '../../../public/images/person_FILL1_wght400_GRAD0_o
 import { processImage } from '../../utils/processImage';
 import FormikErrorMessage from '../../commonComponents/formikerror/index'
 
+interface IUpdateOrgPayload {
+	orgId: string | undefined;
+	name: string;
+	description: string;
+	website: string;
+	isPublic: boolean | undefined;
+	logo?: string;
+}
+
 const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 	const [logoImage, setLogoImage] = useState<ILogoImage>({
 		logoFile: '',
@@ -82,14 +91,20 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 	const submitUpdateOrganization = async (values: Values) => {
 		setLoading(true);
 
-		const orgData = {
+		const orgData: IUpdateOrgPayload = {
 			orgId: props?.orgData?.id,
 			name: values.name,
 			description: values.description,
-			logo: (logoImage?.imagePreviewUrl as string) || props?.orgData?.logoUrl,
 			website: values.website,
 			isPublic: isPublic,
 		};
+
+		const logo = (logoImage?.imagePreviewUrl as string) || props?.orgData?.logoUrl
+
+		if ((logo?.includes('data:image/') && logo?.includes(';base64'))) {
+			orgData['logo'] = logo;
+		}
+		
 		try {
 			const response = await updateOrganization(
 				orgData,
