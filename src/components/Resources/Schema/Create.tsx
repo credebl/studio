@@ -158,7 +158,7 @@ const CreateSchema = () => {
 
 		const id = await getEcosystemId();
 
-		const createSchema = await createSchemaRequest(schemaFieldName, id, orgId);
+		const createSchema = await createSchemaRequest(schemaFieldName, 'indy', id, orgId);
 		const { data } = createSchema as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			setSuccess(data?.message);
