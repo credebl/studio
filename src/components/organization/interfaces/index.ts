@@ -211,3 +211,12 @@ export interface IDidList {
     createDateTime: string;
     lastChangedDateTime: string;
 }
+
+export interface IFormikValues {
+	ledger: string;
+	method: string;
+	network: string;
+	domain: string;
+	privatekey: string;
+	endorserDid: string;
+}

@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { AlertComponent } from '../../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import { createDid, getOrganizationById } from '../../../api/organization';
-import type { EditOrgdetailsModalProps, Organisation } from '../interfaces';
+import type { EditOrgdetailsModalProps, IFormikValues, Organisation } from '../interfaces';
 import { createPolygonKeyValuePair, getLedgerConfig } from '../../../api/Agent';
 import { DidMethod } from '../../../common/enums';
 import { nanoid } from 'nanoid';
@@ -14,15 +14,6 @@ import TokenWarningMessage from '../walletCommonComponents/TokenWarningMessage';
 import CopyDid from '../../../commonComponents/CopyDid';
 import GenerateBtnPolygon from '../walletCommonComponents/GenerateBtnPolygon';
 import { getFromLocalStorage } from '../../../api/Auth';
-
-interface IFormikValues {
-	ledger: string;
-	method: string;
-	network: string;
-	domain: string;
-	privatekey: string;
-	endorserDid: string;
-}
 
 interface IPolygonKeys {
 	privateKey: string;
@@ -63,7 +54,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 				setMappedData(ledgerdata);
 			}
 		} catch (err) {
-			console.log('Error in fetching ledger config:::', err);
+			console.error('Error in fetching ledger config:::', err);
 		}
 	};
 
@@ -94,10 +85,10 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 
 					break;
 				default:
-					console.log('Unsupported DID format');
+					console.error('Unsupported DID format');
 			}
 		} else {
-			console.log('Error in fetching organization:::');
+			console.error('Error in fetching organization:::');
 		}
 		setLoading(false);
 	};
@@ -143,7 +134,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 				setLoading(false);
 			}
 		} catch (error) {
-			console.error('An error occurred:', error);
+			console.error('An error occurred while creating did:', error);
 			setLoading(false);
 		}
 	};
@@ -158,7 +149,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 				setGeneratedKeys(data?.data);
 			}
 		} catch (err) {
-			console.log('Generate private key ERROR::::', err);
+			console.error('Generate private key ERROR::::', err);
 		}
 	};
 
@@ -296,7 +287,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 								break;
 
 							default:
-								console.log('Unsupported DID format');
+								console.error('Unsupported DID format');
 						}
 
 						if (ledgerName !== selectedLedgerName) {
