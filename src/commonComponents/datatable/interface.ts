@@ -27,7 +27,7 @@ export interface IDataTable {
 	currentPage: any;
 	onPageChange: (page: number) => void;
 	totalPages: number;
-	searchSortByValue: (value: any) => void;
+	searchSortByValue?: (value: string) => void;
 	isPagination?: boolean;
 	isSearch: boolean;
 	isRefresh: boolean;
@@ -47,4 +47,5 @@ export interface IDataTable {
 		  }
 		| {};
 	sortOrder?:string;
+	itemPerPage?: number;
 }

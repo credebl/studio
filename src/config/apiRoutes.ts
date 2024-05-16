@@ -39,6 +39,9 @@ export const apiRoutes = {
 		invitations: '/invitations',
 		orgRoles: '/orgs/roles',
 		editUserROle: '/user-roles',
+		didList: '/dids',
+		createDid: '/agents/did',
+		primaryDid: '/primary-did'
 	},
 	connection: {
 		create: '/connections',

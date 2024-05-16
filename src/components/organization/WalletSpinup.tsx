@@ -240,7 +240,12 @@ const SharedAgentForm = ({
 	};
 
 	const validations = {
-		label: yup.string().required('Wallet label is required'),
+		label: yup
+		.string()
+		.required('Wallet label is required')
+		.trim()
+		.min(2, 'Wallet label must be at least 2 characters')
+		.max(25, 'Wallet label must be at most 25 characters'),
 		method: yup.string().required('Method is required'),
 		...(DidMethod.INDY === selectedLedger || DidMethod.POLYGON === selectedLedger) && { network: yup.string().required('Network is required') },
 		...(DidMethod.INDY === selectedLedger) && { ledger: yup.string().required('Ledger is required') },
@@ -710,10 +715,6 @@ const DedicatedAgentForm = ({
 			.max(20, 'Wallet name must be at most 20 characters')
 			.trim()
 			.required('Wallet name is required')
-			.matches(
-				/^[A-Za-z0-9-][^ !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]*$/,
-				'Wallet name must be alphanumeric only',
-			)
 			.label('Wallet name'),
 		password: yup
 			.string()
@@ -934,7 +935,7 @@ const WalletSpinup = (props: {
 					: `${values?.ledger}:${values?.network}`,
 			domain: values.method === DidMethod.WEB ? domain : '',
 			role: values.method === DidMethod.INDY ? values?.role || 'endorser' : '',
-			endorserDid: values?.endorserDid,
+			endorserDid: values?.endorserDid || '',
 			clientSocketId: SOCKET.id,
 		};
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);

@@ -10,6 +10,7 @@ import { apiRoutes } from '../config/apiRoutes';
 import { getFromLocalStorage } from './Auth';
 import { getHeaderConfigs } from '../config/GetHeaderConfigs';
 import { storageKeys } from '../config/CommonConstant';
+import type { IUpdatePrimaryDid } from '../components/organization/interfaces';
 
 export const createOrganization = async (data: object) => {
 	const url = apiRoutes.organizations.create;
@@ -65,8 +66,10 @@ export const getOrganizations = async (
 	pageNumber: number,
 	pageSize: number,
 	search = '',
+	role = ''
 ) => {
-	const url = `${apiRoutes.organizations.getAll}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`;
+	const roleQuery = role ? `&role=${role}` : ''
+	const url = `${apiRoutes.organizations.getAll}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}${roleQuery}`;
 
 	const token = await getFromLocalStorage(storageKeys.TOKEN);
 
@@ -357,6 +360,65 @@ export const deleteOrganizationInvitation = async (
 
 	try {
 		return await axiosDelete(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};
+
+export const getDids = async (orgId: string) => {
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.didList}`;
+
+	const token = await getFromLocalStorage(storageKeys.TOKEN);
+
+	const config = {
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`,
+		},
+	};
+	const axiosPayload = {
+		url,
+		config,
+	};
+
+	try {
+		return await axiosGet(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};
+
+export const createDid = async (payload: any) => {
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.createDid}`;
+
+	const axiosPayload = {
+		url,
+		payload,
+		config: await getHeaderConfigs(),
+	};
+
+	try {
+		return await axiosPost(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};
+
+export const updatePrimaryDid = async (orgId: string, payload: IUpdatePrimaryDid) => {
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.primaryDid}`;
+
+	const axiosPayload = {
+		url,
+		payload,
+		config: await getHeaderConfigs(),
+	};
+
+	try {
+		return await axiosPut(axiosPayload);
 	} catch (error) {
 		const err = error as Error;
 		return err?.message;
