@@ -3,7 +3,7 @@ import {pathRoutes} from '../../../config/pathRoutes'
 import { getSupabaseClient } from "../../../supabase";
 import { getFromCookies } from "../../../api/Auth";
 
-export const get: APIRoute = async ({ redirect, cookies }) => {
+export const GET: APIRoute = async ({ redirect, cookies }) => {
     const sessionCookie = getFromCookies(cookies, 'session');
 
     if (!sessionCookie) {
