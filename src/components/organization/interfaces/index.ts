@@ -198,3 +198,25 @@ export interface IOrgInfo {
     id: string;
     roles: string[]
 }
+
+export interface IUpdatePrimaryDid {
+    id: string;
+    did: string;
+}
+
+export interface IDidList {
+    id: string;
+    did: string;
+    isPrimaryDid: boolean;
+    createDateTime: string;
+    lastChangedDateTime: string;
+}
+
+export interface IFormikValues {
+	ledger: string;
+	method: string;
+	network: string;
+	domain: string;
+	privatekey: string;
+	endorserDid: string;
+}
