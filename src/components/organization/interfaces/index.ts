@@ -95,7 +95,7 @@ name: string
 networkString: string
 networkType: string
 poolConfig: string
-nymTxnEndpoint: string
+registerDIDEndpoint: string
 }
 export interface OrgDashboard {
     usersCount: number
