@@ -10,26 +10,58 @@ import { pathRoutes } from '../../config/pathRoutes';
 import BreadCrumbs from '../BreadCrumbs';
 import ConnectionList from './ConnectionList';
 import BackButton from '../../commonComponents/backbutton';
+import type { IConnectionList } from './interface';
+import DateTooltip from '../Tooltip';
+import { dateConversion } from '../../utils/DateConversion';
 
 const Connections = () => {
-	const [selectedConnectionList, setSelectedConnectionList] = useState<
+	const [selectedConnections, setSelectedConnections] = useState<
 		TableData[]
 	>([]);
 
 	const selectedConnectionHeader = [
 		{ columnName: 'User' },
 		{ columnName: 'Connection ID' },
+		{ columnName: 'Created on' }
 	];
 
-	const selectConnection = (connections: TableData[]) => {
-		setSelectedConnectionList(connections);
+	const selectConnection = (connections: IConnectionList[]) => {
+		try {
+			const connectionsData = connections?.length > 0 && connections?.map((ele: IConnectionList) => {
+				const createdOn = ele?.createDateTime
+				? ele?.createDateTime
+				: 'Not available';
+				const connectionId = ele.connectionId
+				? ele.connectionId
+				: 'Not available';
+				const userName = ele?.theirLabel ? ele.theirLabel : 'Not available';
+				
+				return {
+					data: [
+						{ data: userName },
+						{ data: connectionId },
+						{
+							data: (
+								<DateTooltip date={createdOn} id="issuance_connection_list">
+									{' '}
+									{dateConversion(createdOn)}{' '}
+								</DateTooltip>
+							),
+						},
+					],
+				};
+			})
+			setSelectedConnections(connectionsData);
+		} catch (error) {
+			console.log("ERROR IN TABLE GENERATION::", error);
+		}
 	};
 
 	const continueToIssue = async () => {
-		const selectedConnections = selectedConnectionList.map((ele) => {
+		const selectedConnectionData = selectedConnections.map((ele) => {
 			return { userName: ele.data[0].data, connectionId: ele.data[1].data };
 		});
-		await setToLocalStorage(storageKeys.SELECTED_USER, selectedConnections);
+		await setToLocalStorage(storageKeys.SELECTED_USER, selectedConnectionData);
 		window.location.href = `${pathRoutes.organizations.Issuance.issuance}`;
 	};
 
@@ -62,20 +94,6 @@ const Connections = () => {
 							Connection
 						</button>
 					</li>
-					{/* Keep this code as it is, this is required in future use. */}
-					{/* <li className="mr-2" role="presentation">
-						<button
-							className="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 text-xl"
-							id="dashboard-tab"
-							data-tabs-target="#dashboard"
-							type="button"
-							role="tab"
-							aria-controls="dashboard"
-							aria-selected="false"
-						>
-							Bulk Issuance
-						</button>
-					</li> */}
 				</ul>
 			</div>
 			<div id="myTabContent">
@@ -86,7 +104,7 @@ const Connections = () => {
 					aria-labelledby="profile-tab"
 				>
 					<ConnectionList selectConnection={selectConnection} />
-					<div className="flex items-center justify-between mb-4 pt-3">
+					<div className="flex items-center justify-between mb-4 pt-6">
 						<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 							Selected Users
 						</h1>
@@ -94,10 +112,10 @@ const Connections = () => {
 					<div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 						<DataTable
 							header={selectedConnectionHeader}
-							data={selectedConnectionList}
+							data={selectedConnections}
 							loading={false}
 						></DataTable>
-						{selectedConnectionList.length ? (
+						{selectedConnections.length ? (
 							<div className="flex justify-end pt-3">
 								<Button
 									onClick={continueToIssue}
@@ -129,15 +147,6 @@ const Connections = () => {
 						)}
 					</div>
 				</div>
-				{/* Keep this code as it is, this is required in future use. */}
-				{/* <div
-					className="hidden rounded-lg bg-gray-50 dark:bg-gray-800"
-					id="dashboard"
-					role="tabpanel"
-					aria-labelledby="dashboard-tab"
-				>
-					<BulkIssuance />
-				</div> */}
 			</div>
 		</div>
 	);

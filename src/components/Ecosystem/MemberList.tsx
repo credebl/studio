@@ -21,6 +21,7 @@ const initialPageState = {
 
 interface IMemberList {
 	orgId: string;
+	ecosystemId: string;
 	ecosystem: { createDateTime: string };
 	ecosystemRole: { name: string };
 	organisation: {
@@ -90,7 +91,10 @@ const MemberList = () => {
 	};
 
 	const getEcosystemMembers = async (apiParameter: IMemberListAPIParameter) => {
-		const userOrgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		const userProfile = await getFromLocalStorage(storageKeys.USER_PROFILE)
+		const parsedUserProfileData = JSON.parse(userProfile);
+		const userId = parsedUserProfileData.id;
+		
 		setLoading(true);
 		const response = await getEcosystemMemberList(apiParameter);
 		const { data } = response as AxiosResponse;
@@ -151,7 +155,8 @@ const MemberList = () => {
 										>
 											{member?.ecosystemRole?.name}
 										</span>
-										{member?.orgId === userOrgId ? '(You)' : ''}
+										{member.organisation.userOrgRoles.some((item) => item.userId === userId) ? '(You)' : ''}
+
 									</span>
 								) : (
 									'Not available'

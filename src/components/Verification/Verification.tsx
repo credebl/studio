@@ -161,13 +161,16 @@ const VerificationCred = () => {
 						schemaId: schemaId,
 					}));
 
-				const verifyCredentialPayload: VerifyCredentialPayload = {
+				const verifyCredentialPayload = {
 					connectionId: JSON.parse(userData)[0]?.connectionId,
-					attributes: attributes,
 					comment: 'string',
 					orgId: orgId,
+					proofFormats: {
+						indy: {
+							attributes: attributes,
+						}
+					}
 				};
-
 				if (attributes) {
 					const response = await verifyCredential(verifyCredentialPayload);
 					const { data } = response as AxiosResponse;
