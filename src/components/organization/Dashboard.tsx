@@ -140,11 +140,11 @@ const Dashboard = () => {
 					<div className="relative w-full">
 						<div className="items-center block sm:flex flex-wrap break-normal w-full sm:space-x-4 justify-center sm:justify-start">
 							<div>
-								{orgData?.logoUrl ? (
+								{/* {orgData?.logoUrl ? (
 									<CustomAvatar size="80" src={orgData?.logoUrl} />
 								) : (
 									<CustomAvatar size="90" name={orgData?.name} />
-								)}
+								)} */}
 							</div>
 							<div className="sm:w-100/12rem mt-2">
 								{orgData ? (

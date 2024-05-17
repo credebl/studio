@@ -1,7 +1,7 @@
 import * as yup from 'yup';
 
-import { Avatar, Button, Label, Modal, Tooltip } from 'flowbite-react';
-import { Field, Form, Formik, FormikHelpers } from 'formik';
+import { Avatar, Button, Label, Modal } from 'flowbite-react';
+import { Field, Form, Formik, type FormikHelpers} from 'formik';
 import {
 	IMG_MAX_HEIGHT,
 	IMG_MAX_WIDTH,
@@ -21,9 +21,11 @@ import { getOrgDetails } from '../../config/ecosystem';
 import defaultUserIcon from '../../../public/images/person_FILL1_wght400_GRAD0_opsz24.svg';
 import EndorsementTooltip from '../../commonComponents/EndorsementTooltip';
 import { processImage } from '../../utils/processImage';
+
 interface Values {
 	name: string;
 	description: string;
+	autoEndorsement:boolean;
 }
 
 interface ILogoImage {
@@ -239,7 +241,6 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 	};
 	const renderEcosystemModal = () => {
 		const popupName = props.isorgModal ? 'Organization' : 'Ecosystem';
-
 		return (
 			<Modal
 				size={!props.isorgModal ? '3xl' : '2xl'}
