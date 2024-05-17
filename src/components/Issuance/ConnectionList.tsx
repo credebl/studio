@@ -7,12 +7,13 @@ import {
 	getConnectionsByOrg,
 } from '../../api/connection';
 import type { TableData } from '../../commonComponents/datatable/interface';
-import { apiStatusCodes } from '../../config/CommonConstant';
+import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';
 import { dateConversion } from '../../utils/DateConversion';
 import DateTooltip from '../Tooltip';
 import type { IConnectionList } from './interface';
 import NewDataTable from '../../commonComponents/datatable/SortDataTable';
+import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 
 const initialPageState = {
 	itemPerPage: 10,
@@ -22,14 +23,20 @@ const initialPageState = {
 	sortingOrder: 'desc',
 	allSearch: '',
 };
+
+type LocalOrgs = {
+	connectionId: string;
+	theirLabel: string;
+	createDateTime: string;
+}
+
 const ConnectionList = (props: {
-	selectConnection: (connections: TableData[]) => void;
+	selectConnection: (connections: IConnectionList[]) => void;
 }) => {
 	const [listAPIParameter, setListAPIParameter] = useState(initialPageState);
-	const [connectionList, setConnectionList] = useState<TableData[]>([]);
-	const [selectedConnectionList, setSelectedConnectionList] = useState<
-		TableData[]
-	>([]);
+	const [tableData, setTableData] = useState<TableData[]>([]);
+	const [connectionList, setConnectionList] = useState([])
+	const [localOrgs, setLocalOrgs] = useState<LocalOrgs[]>([]);
 
 	const [loading, setLoading] = useState<boolean>(false);
 	const [totalItem, setTotalItem] = useState(0);
@@ -40,19 +47,91 @@ const ConnectionList = (props: {
 		lastPage: '',
 	});
 
-	useEffect(() => {
-		let getData: NodeJS.Timeout;
+	const selectOrganization = async (item: IConnectionList, checked: boolean) => {
+		try {
+			const index = localOrgs?.length > 0 ? localOrgs.findIndex(ele => ele.connectionId === item.connectionId) : -1
 
-		if (listAPIParameter?.search?.length >= 1) {
-			getData = setTimeout(() => {
-				getConnections(listAPIParameter);
-			}, 1000);
-			return () => clearTimeout(getData);
-		} else {
-			getConnections(listAPIParameter);
+			const { connectionId, theirLabel, createDateTime } = item || {};
+			if (index === -1) {
+				setLocalOrgs((prev: LocalOrgs[]) => [...prev, {
+					connectionId,
+					theirLabel,
+					createDateTime
+				}])
+			} else {
+				const updateLocalOrgs = [...localOrgs]
+				if (!checked) {
+					updateLocalOrgs.splice(index, 1);
+				}
+				setLocalOrgs(updateLocalOrgs)
+			}
+		} catch (error) {
+			console.error("SELECTED ORGANIZATION:::", error)
 		}
-		return () => clearTimeout(getData);
-	}, [listAPIParameter]);
+	}
+
+	const generateTable = async (connections: IConnectionList[]) => {
+		try {
+			const connectionsData = connections?.length > 0 && connections?.map((ele: IConnectionList) => {
+				const createdOn = ele?.createDateTime
+					? ele?.createDateTime
+					: 'Not available';
+				const connectionId = ele.connectionId
+					? ele.connectionId
+					: 'Not available';
+				const userName = ele?.theirLabel ? ele.theirLabel : 'Not available';
+
+				const isChecked = localOrgs.map(item => item.connectionId).includes(ele.connectionId)
+
+				return {
+					data: [
+						{
+							data: (
+								<div className="flex items-center" id="issuance_checkbox">
+									<input
+										id="default-checkbox"
+										type="checkbox"
+										name="connection"
+										onClick={async (event: React.MouseEvent<HTMLInputElement>) => {
+											const inputElement = event.target as HTMLInputElement;
+
+											const updateConnectionList = connections?.map(item => {
+												if (item.connectionId === ele.connectionId) {
+													selectOrganization(item, inputElement.checked)
+													return {
+														...item,
+														checked: inputElement.checked
+													}
+												}
+												return item
+											})
+											setConnectionList(updateConnectionList)
+										}}
+										checked={ele.checked || isChecked}
+										className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-lg dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600 cursor-pointer"
+									/>
+								</div>
+							),
+						},
+						{ data: userName },
+						{ data: connectionId },
+						{
+							data: (
+								<DateTooltip date={createdOn} id="issuance_connection_list">
+									{' '}
+									{dateConversion(createdOn)}{' '}
+								</DateTooltip>
+							),
+						},
+					],
+				};
+			});
+
+			setTableData(connectionsData)
+		} catch (err) {
+
+		}
+	}
 
 	const getConnections = async (apiParameter: IConnectionListAPIParameter) => {
 		setLoading(true);
@@ -63,58 +142,12 @@ const ConnectionList = (props: {
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 				const { totalItems, nextPage, lastPage } = data.data;
 				setTotalItem(data?.data.totalItems);
-
 				setPageInfo({
 					totalItem: totalItems,
 					nextPage: nextPage,
 					lastPage: lastPage,
 				});
-				const connections = data?.data?.data?.map((ele: IConnectionList) => {
-					const createdOn = ele?.createDateTime
-					? ele?.createDateTime
-					: 'Not available';
-					const connectionId = ele.connectionId
-					? ele.connectionId
-					: 'Not available';
-					const userName = ele?.theirLabel ? ele.theirLabel : 'Not available';
-					return {
-						data: [
-							{
-								data: (
-									<div className="flex items-center" id="issuance_checkbox">
-										<input
-											id="default-checkbox"
-											type="radio"
-											name="connection"
-											onClick={(event: React.MouseEvent<HTMLInputElement>) => {
-												const inputElement = event.target as HTMLInputElement;
-												selectConnection(
-													userName,
-													connectionId,
-													inputElement.checked,
-												);
-											}}
-											value=""
-											className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-lg dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600 cursor-pointer"
-										/>
-									</div>
-								),
-							},
-							{ data: userName },
-							{ data: connectionId },
-							{
-								data: (
-									<DateTooltip date={createdOn} id="issuance_connection_list">
-										{' '}
-										{dateConversion(createdOn)}{' '}
-									</DateTooltip>
-								),
-							},
-						],
-					};
-				});
-
-				setConnectionList(connections);
+				setConnectionList(data?.data?.data);
 				setError(null);
 			} else {
 				setConnectionList([]);
@@ -143,45 +176,6 @@ const ConnectionList = (props: {
 		});
 	};
 
-	const selectConnection = (
-		user: string,
-		connectionId: string,
-		checked: boolean,
-	) => {
-		if (checked) {
-			// Needed for multiple connection selection
-			// setSelectedConnectionList((prevList) => [...prevList, {
-			// 	data: [
-			// 		{
-			// 			data: user,
-			// 		}, {
-			// 			data: connectionId,
-			// 		}]
-			// }]
-			// )
-
-			// It is for single connection selection
-			setSelectedConnectionList([
-				{
-					data: [
-						{
-							data: user,
-						},
-						{
-							data: connectionId,
-						},
-					],
-				},
-			]);
-		} else {
-			setSelectedConnectionList((prevList) =>
-				prevList.filter(
-					(connection) => connection.data[1].data !== connectionId,
-				),
-			);
-		}
-	};
-
 	const searchSortByValue = (value: any) => {
 		setListAPIParameter({
 			...listAPIParameter,
@@ -191,13 +185,46 @@ const ConnectionList = (props: {
 	};
 
 	const refreshPage = () => {
-		setSelectedConnectionList([]);
 		getConnections(listAPIParameter);
 	};
 
+	const updateLocalOrgs = async () => {
+		const res = await getFromLocalStorage(storageKeys.SELECTED_CONNECTIONS)
+		const selectedOrg = res ? JSON.parse(res) : []
+		setLocalOrgs(selectedOrg);
+	}
+
 	useEffect(() => {
-		props.selectConnection(selectedConnectionList);
-	}, [selectedConnectionList]);
+		props.selectConnection(localOrgs);
+	}, [localOrgs]);
+
+	useEffect(() => {
+		generateTable(connectionList);
+	}, [connectionList, localOrgs])
+
+	useEffect(() => {
+		(async () => {
+			await setToLocalStorage(storageKeys.SELECTED_CONNECTIONS, JSON.stringify(localOrgs))
+		})()
+	}, [localOrgs])
+
+	useEffect(() => {
+		let getData: NodeJS.Timeout;
+		updateLocalOrgs()
+		if (listAPIParameter?.search?.length >= 1) {
+			getData = setTimeout(() => {
+				getConnections(listAPIParameter);
+			}, 1000);
+			return () => clearTimeout(getData);
+		} else {
+			getConnections(listAPIParameter);
+		}
+		return () => clearTimeout(getData);
+	}, [listAPIParameter]);
+
+	useEffect(() => {
+		updateLocalOrgs()
+	}, [])
 
 	return (
 		<div id="issuance_connection_list">
@@ -224,7 +251,7 @@ const ConnectionList = (props: {
 				onInputChange={searchInputChange}
 				refresh={refreshPage}
 				header={header}
-				data={connectionList}
+				data={tableData}
 				loading={loading}
 				currentPage={listAPIParameter?.page}
 				onPageChange={(page: number) => {

@@ -60,6 +60,7 @@ export interface IConnectionList {
 	theirLabel: string;
 	connectionId: string;
 	createDateTime: string;
+	checked?: boolean;
 }
 
 export interface SchemaDetails {
@@ -80,10 +81,14 @@ export interface Attributes {
 	value: string;
 	dataType: string;
 }
-export interface IssuanceFormPayload {
-	userName?: string;
+
+export interface ICredentialdata {
 	connectionId: string;
 	attributes: Attributes[];
+}
+export interface IssuanceFormPayload {
+	userName?: string;
+	credentialData: ICredentialdata[];
 	credentialDefinitionId: string;
 	orgId: string;
 }
@@ -95,7 +100,7 @@ export interface DataTypeAttributes {
 }
 
 export interface Attribute {
-		isRequired: string;
+	isRequired: string;
     attributeName: string;
     schemaDataType: string;
     displayName: string;

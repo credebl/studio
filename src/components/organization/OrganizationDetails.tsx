@@ -11,6 +11,7 @@ import DateTooltip from '../Tooltip';
 import CopyDid from '../../commonComponents/CopyDid';
 import { setToLocalStorage } from '../../api/Auth';
 import { Tooltip } from 'flowbite-react';
+import DIDList from './configuration-settings/DidList';
 
 const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 	const { org_agents } = orgData as Organisation;
@@ -43,14 +44,16 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 
 	return (
 		<>
-			<div className="mt-4 flex justify-start items-center flex-wrap p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800 gap-6">
+			<div className="mt-4 flex justify-start items-start flex-wrap p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800 gap-6">
+				<div className='flex justify-between w-full'>
+					<h3 className="mb-1 mt-1 text-xl font-bold text-gray-900 dark:text-white">
+						Web Wallet Details
+					</h3>
+				</div>
 				<div
 					className="mb-4 sm:mb-0 px-0 sm:px-4 py-4 min-w-full lg:min-w-[550px] lg:max-w-[50rem]"
 					style={{ width: 'calc(100% - 23rem)' }}
 				>
-					<h3 className="mb-1 mt-1 text-xl font-bold text-gray-900 dark:text-white">
-						Web Wallet Details
-					</h3>
 					<div>
 						<ul className="divide-y divide-gray-200 dark:divide-gray-700">
 							<li className="py-4">
@@ -173,8 +176,10 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 						)
 					)}
 				</div>
+				<div className="mt-4 w-full p-4">
+					<DIDList />
+				</div>
 			</div>
-
 			{agentData?.orgDid?.startsWith('did:web') && (
 				<div className="mt-4 flex justify-start items-center flex-wrap p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 					<div className="flex justify-between w-full">

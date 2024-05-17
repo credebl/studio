@@ -7,7 +7,7 @@ export const post: APIRoute = async ({ request, cookies, redirect }) => {
     const body = await request.json();
     
     const sessionCookie = body?.data    
-
+    
     setToCookies(cookies, "session", sessionCookie?.access_token as string, {
         path: "/"
     })
