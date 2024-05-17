@@ -6,8 +6,9 @@ import type { AxiosResponse } from "axios";
 import CustomAvatar from '../Avatar'
 import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
 import { Alert, Button } from "flowbite-react";
-import { Form, Formik, FormikHelpers } from "formik";
+import { Form, Formik,type FormikHelpers } from "formik";
 import * as yup from "yup"
+import React from "react";
 
 interface Values {
   profileImg: string;
