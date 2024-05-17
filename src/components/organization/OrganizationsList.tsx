@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { type ChangeEvent } from 'react';
 import { Card, Pagination } from 'flowbite-react';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 
 import { AlertComponent } from '../AlertComponent';
@@ -141,7 +141,7 @@ const OrganizationsList = () => {
 								maxWidth: '100%',
 								overflow: 'auto',
 							}}
-						>
+						 >
 							<div className="flex items-center min-[401px]:flex-nowrap flex-wrap">
 								{org.logoUrl ? (
 									<CustomAvatar

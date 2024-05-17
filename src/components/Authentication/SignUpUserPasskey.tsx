@@ -4,7 +4,9 @@ import { Alert, Button } from 'flowbite-react';
 import type { AxiosError, AxiosResponse } from 'axios';
 import type { IdeviceBody, RegistrationOptionInterface, VerifyRegistrationObjInterface } from '../Profile/interfaces/index.js';
 import { addDeviceDetails, generateRegistrationOption, verifyRegistration } from '../../api/Fido.js';
-import { AddPasswordDetails, addPasswordDetails, getFromLocalStorage, passwordEncryption } from '../../api/Auth.js';
+import { addPasswordDetails, getFromLocalStorage, passwordEncryption } from '../../api/Auth';
+import type { AddPasswordDetails } from '../../api/Auth';
+
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant.js';
 import { useEffect, useState } from 'react';
 import SignUpUserPassword from './SignUpUserPassword.jsx';
@@ -13,13 +15,13 @@ import SignUpUserName from './SignUpUserName.js';
 import { v4 as uuidv4 } from 'uuid';
 import NavBar from './NavBar.js';
 import FooterBar from './FooterBar.js';
+import React from 'react';
 
 interface passwordValues {
 
     password: string,
     confirmPassword: string
 }
-
 const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firstName: string; lastName: string }) => {
 
     const [loading, setLoading] = useState<boolean>(false)

@@ -16,6 +16,7 @@ import SignUpUserName from './SignUpUserName'
 import FooterBar from './FooterBar.js';
 import NavBar from './NavBar.js';
 import { validEmail } from '../../utils/TextTransform.js';
+import React from 'react';
 
 interface emailValue {
 	email: string;
