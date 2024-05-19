@@ -1,4 +1,5 @@
-import React, { type ChangeEvent } from 'react';
+import React from 'react';
+import  type {ChangeEvent } from 'react';
 import { Card, Pagination } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
@@ -136,22 +137,22 @@ const OrganizationsList = () => {
 							key={org.id}
 							onClick={() => redirectOrgDashboard(org)}
 							className="transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer overflow-hidden overflow-ellipsis"
-							style={{
-								maxHeight: '100%',
-								maxWidth: '100%',
-								overflow: 'auto',
-							}}
+							// style={{
+							// 	maxHeight: '100%',
+							// 	maxWidth: '100%',
+							// 	overflow: 'auto',
+							// }}
 						 >
 							<div className="flex items-center min-[401px]:flex-nowrap flex-wrap">
-								{org.logoUrl ? (
+								{/* {org.logoUrl ? (
 									<CustomAvatar
 										className="min-w-[80px]"
 										size="80"
 										src={org?.logoUrl}
-									/>
+									/>	
 								) : (
 									<CustomAvatar size="80" name={org.name} />
-								)}
+								)} */}
 
 								<div className="ml-4 w-100/6rem line-clamp-4 ">
 									<h5 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">

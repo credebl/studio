@@ -6,7 +6,9 @@ import type { AxiosResponse } from "axios";
 import CustomAvatar from '../Avatar'
 import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
 import { Alert, Button } from "flowbite-react";
-import { Form, Formik,type FormikHelpers } from "formik";
+import { Form, Formik } from "formik";
+import type { FormikHelpers as FormikActions } from 'formik';
+
 import * as yup from "yup"
 import React from "react";
 
@@ -225,7 +227,7 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
                 initialValues={initialProfileData}
                 onSubmit={async (
                   values: Values,
-                  { resetForm }: FormikHelpers<Values>
+                  { resetForm }: FormikActions<Values>
                 ) => {
                   await updateUserDetails(values);
                   toggleEditProfile();

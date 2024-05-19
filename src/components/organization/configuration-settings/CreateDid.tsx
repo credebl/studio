@@ -1,6 +1,7 @@
 import * as yup from 'yup';
 import { Button, Modal } from 'flowbite-react';
-import { Field, Form, Formik, FormikHelpers } from 'formik';
+import { Field, Form, Formik } from 'formik';
+import type { FormikHelpers as FormikActions } from 'formik';
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
 import { useEffect, useState } from 'react';
 import { AlertComponent } from '../../AlertComponent';
@@ -246,7 +247,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 					enableReinitialize
 					onSubmit={async (
 						values: IFormikValues,
-						{ resetForm }: FormikHelpers<IFormikValues>,
+						{ resetForm }: FormikActions<IFormikValues>,
 					) => {
 						const didMethodValue = showMethod(
 							values.method,

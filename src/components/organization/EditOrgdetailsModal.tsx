@@ -1,6 +1,9 @@
 import * as yup from 'yup';
 import { Avatar, Button, Label, Modal } from 'flowbite-react';
-import { Field, Form, Formik, type FormikHelpers } from 'formik';
+import { Field, Form, Formik} from 'formik';
+import type { FormikHelpers as FormikActions } from 'formik';
+
+
 import {
 	apiStatusCodes,
 } from '../../config/CommonConstant';
@@ -175,7 +178,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 					enableReinitialize
 					onSubmit={async (
 						values: Values,
-						{ resetForm }: FormikHelpers<Values>,
+						{ resetForm }: FormikActions<Values>,
 					) => {
 						submitUpdateOrganization(values);
 					}}

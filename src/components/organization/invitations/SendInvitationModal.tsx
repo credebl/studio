@@ -1,7 +1,9 @@
 import * as yup from 'yup';
 
 import { Button, Label, Modal } from 'flowbite-react';
-import { Field, Form, Formik,type FormikHelpers } from 'formik';
+import { Field, Form, Formik } from 'formik';
+import type { FormikHelpers as FormikActions } from 'formik';
+
 import { useEffect, useState } from 'react';
 
 import { AlertComponent } from '../../AlertComponent';
@@ -13,6 +15,7 @@ import {
 } from '../../../api/invitations';
 import { getOrganizationRoles } from '../../../api/organization';
 import { getFromLocalStorage } from '../../../api/Auth';
+import React from 'react';
 
 interface Values {
 	email: string;
@@ -196,7 +199,7 @@ const SendInvitationModal = (props: {
 					enableReinitialize
 					onSubmit={async (
 						values: Values,
-						{ resetForm }: FormikHelpers<Values>,
+						{ resetForm }: FormikActions<Values>,
 					) => {
 						await includeInvitation(values);
 						resetForm({ values: initialInvitationData });

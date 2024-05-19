@@ -13,6 +13,7 @@ import CustomAvatar from '../Avatar';
 import type { IOrgInfo, Organisation } from './interfaces';
 import { getOrganizations } from '../../api/organization';
 import { pathRoutes } from '../../config/pathRoutes';
+import React from 'react';
 
 const OrgDropDown = () => {
 	const [orgList, setOrgList] = useState<Organisation[]>([]);
@@ -104,35 +105,33 @@ const OrgDropDown = () => {
 		<>
 			<div
 				id="dropdownUsersButton"
-				data-dropdown-toggle="dropdownUsers"
-				data-dropdown-placement="bottom"
 				className="text-primary-700 flex justify-between text-lg h-fit sm:h-10 w-fit sm:w-56 bg-primary-100 hover:!bg-primary-200 dark:bg-primary-700 cursor-pointer focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium 
 					rounded-md text-sm px-1 py-1 sm:px-4 sm:py-2.5 text-center inline-flex items-center dark:hover:bg-primary-700 dark:focus:ring-blue-800"
 			>
 				{activeOrg ? (
 					<div className="shrink-0 flex items-center w-6 sm:w-40">
-						{activeOrg.logoUrl ? (
+						{/* {activeOrg.logoUrl ? (
 							<CustomAvatar size="20" src={activeOrg?.logoUrl} round />
 						) : (
 							<CustomAvatar size="20" name={activeOrg?.name} round />
-						)}
-						<text className="ml-2 text-primary-700 dark:text-white truncate hidden sm:block">
+						)} */}
+						<span className="ml-2 text-primary-700 dark:text-white truncate hidden sm:block">
 							{activeOrg?.name?.length > 20
 								? activeOrg?.name?.substring(0, 20) + '...'
 								: activeOrg?.name}
-						</text>
+						</span>
 					</div>
 				) : (
-					<text className="text-primary-700 dark:text-white hidden sm:block">
+					<span className="text-primary-700 dark:text-white hidden sm:block">
 						Select organization
-					</text>
+					</span>
 				)}
 
-				<BiChevronDown
+				{/* <BiChevronDown
 					size={25}
 					color="primary-700"
 					className=" text-primary-700 dark:text-white"
-				/>
+				/> */}
 			</div>
 			<div
 				id="dropdownUsers"
@@ -144,10 +143,10 @@ const OrgDropDown = () => {
 						aria-labelledby="dropdownUsersButton"
 					>
 						<div className="w-full flex items-center sticky top-0 bg-white px-2 border dark:border-gray-500 rounded-t-md border-gray-100 dark:text-gray-200 dark:bg-gray-600 dark:hover:text-white">
-							<AiOutlineSearch
+							{/* <AiOutlineSearch
 								size={22}
 								className="text-gray-700 dark:text-white"
-							/>
+							/> */}
 							<input
 								type="text"
 								placeholder="Search organization"
@@ -171,7 +170,7 @@ const OrgDropDown = () => {
 												href="#"
 												className="flex items-center w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
 											>
-												{org.logoUrl ? (
+												{/* {org.logoUrl ? (
 													<CustomAvatar
 														className="shrink-0 dark:text-white"
 														size="25"
@@ -185,7 +184,7 @@ const OrgDropDown = () => {
 														name={org?.name}
 														round
 													/>
-												)}
+												)} */}
 
 												<span className="ml-3 text-base text-start font-bold text-gray-500 dark:text-white word-break-word">
 													{org.name.length > 25
@@ -199,7 +198,7 @@ const OrgDropDown = () => {
 							})
 						) : (
 							<div className="text-black-100 text-sm text-center p-10">
-								<text>No organizations found</text>
+								<span>No organizations found</span>
 							</div>
 						)}
 					</ul>
