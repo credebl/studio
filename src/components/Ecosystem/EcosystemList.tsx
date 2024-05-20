@@ -1,6 +1,7 @@
 
 import { Card, Pagination } from 'flowbite-react';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import type { ChangeEvent } from 'react';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 
 import { AlertComponent } from '../AlertComponent';
@@ -21,7 +22,8 @@ import CustomSpinner from '../CustomSpinner';
 import CreateEcosystemOrgModal from '../CreateEcosystemOrgModal';
 import { getEcosystems } from '../../api/ecosystem';
 import type { IEcosystem } from './interfaces';
-import { checkEcosystem, getOrgDetails, type ICheckEcosystem } from '../../config/ecosystem';
+import { checkEcosystem, getOrgDetails } from '../../config/ecosystem';
+import type { ICheckEcosystem} from '../../config/ecosystem';
 import React from 'react';
 
 const initialPageState = {

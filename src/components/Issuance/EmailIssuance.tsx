@@ -19,7 +19,8 @@ import { EmptyListMessage } from '../EmptyListComponent';
 import ResetPopup from './ResetPopup';
 import type { SelectRef } from './BulkIssuance';
 import RoleViewButton from '../RoleViewButton';
-import { checkEcosystem, type ICheckEcosystem } from '../../config/ecosystem';
+import { checkEcosystem  } from '../../config/ecosystem';
+import type { ICheckEcosystem} from '../../config/ecosystem';
 import { Features } from '../../utils/enums/features';
 import { Create, SchemaEndorsement } from './Constant';
 

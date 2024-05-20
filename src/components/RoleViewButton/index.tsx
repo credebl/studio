@@ -1,4 +1,6 @@
-import React, { type ReactElement, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import type {ReactElement} from 'react';
+
 import { Button } from 'flowbite-react';
 import { Features } from '../../utils/enums/features';
 import { Roles } from '../../utils/enums/roles';

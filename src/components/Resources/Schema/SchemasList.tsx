@@ -1,6 +1,8 @@
 
 import { Alert, Pagination } from 'flowbite-react';
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, {  useEffect, useState } from 'react';
+import type { ChangeEvent } from 'react';
+
 import type { GetAllSchemaListParameter } from './interfaces';
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
 import { getAllSchemas, getAllSchemasByOrgId } from '../../../api/Schema';
@@ -17,7 +19,9 @@ import SearchInput from '../../SearchInput';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
 import { getOrganizationById } from '../../../api/organization';
-import { ICheckEcosystem, checkEcosystem } from '../../../config/ecosystem';
+import { checkEcosystem } from '../../../config/ecosystem';
+import type { ICheckEcosystem } from '../../../config/ecosystem';
+
 import { Create, SchemaEndorsement } from '../../Issuance/Constant';
 
 const SchemaList = (props: {
@@ -201,9 +205,10 @@ const SchemaList = (props: {
 						<select
 							onChange={handleFilter}
 							id="schamfilter"
+							defaultValue="Organization's schema"
 							className="min-h-[42px] h-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 						>
-							<option selected>Organization's schema</option>
+							<option value="Organization's schema">Organization's schema</option>
 							{options.map((opt) => (
 								<option key={opt} className="" value={opt}>
 									{opt}

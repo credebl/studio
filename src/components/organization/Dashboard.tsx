@@ -5,19 +5,19 @@ import { useEffect, useState } from 'react';
 import { Alert } from 'flowbite-react';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
-import credIcon from '../../assets/cred-icon.svg';
-import CustomAvatar from '../Avatar';
+// import credIcon from '../../assets/cred-icon.svg';
+// import CustomAvatar from '../Avatar';
 import CustomSpinner from '../CustomSpinner';
 import EditOrgdetailsModal from './EditOrgdetailsModal';
 import OrganizationDetails from './OrganizationDetails';
 import { Roles } from '../../utils/enums/roles';
-import schemaCard from '../../assets/schema-icon.svg';
-import userCard from '../../assets/users-icon.svg';
+// import schemaCard from '../../assets/schema-icon.svg';
+// import userCard from '../../assets/users-icon.svg';
 import WalletSpinup from './WalletSpinup';
-import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
+import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth.ts';
 import { pathRoutes } from '../../config/pathRoutes';
-import DashboardCard from '../../commonComponents/DashboardCard';
 import { AlertComponent } from '../AlertComponent';
+import DashboardCard from '../../commonComponents/DashboardCard.tsx';
 import React from 'react';
 
 const Dashboard = () => {
@@ -209,7 +209,7 @@ const Dashboard = () => {
 				<div className="mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 					<div className="grid w-full grid-cols-1 gap-4 mt-0 xl:grid-cols-3 2xl:grid-cols-3">
 						<DashboardCard
-							icon={userCard}
+							// icon={userCard}
 							backgroundColor="linear-gradient(279deg, #FFF -18.24%, #2F80ED -0.8%, #1F4EAD 61.45%)"
 							label="Users"
 							value={orgDashboard?.usersCount ?? 0}
@@ -217,7 +217,7 @@ const Dashboard = () => {
 						/>
 
 						<DashboardCard
-							icon={schemaCard}
+							// icon={schemaCard}
 							classes={!walletStatus ? 'pointer-events-none' : ''}
 							backgroundColor="linear-gradient(279deg, #FFF -28.6%, #5AC2E8 21.61%, #0054FF 68.63%)"
 							label="Schemas"
@@ -229,7 +229,7 @@ const Dashboard = () => {
 							}}
 						/>
 						<DashboardCard
-							icon={credIcon}
+							// icon={credIcon}
 							backgroundColor="linear-gradient(279deg, #FFF -34.06%, #FFC968 43.71%, #FEB431 111.13%)"
 							label="Credentials"
 							value={orgDashboard?.credentialsCount ?? 0}

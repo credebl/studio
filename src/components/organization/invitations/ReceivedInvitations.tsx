@@ -1,5 +1,7 @@
 import { Button, Card, Pagination } from 'flowbite-react';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import type { ChangeEvent } from 'react';
+
 import {
 	acceptRejectInvitations,
 	getUserInvitations,

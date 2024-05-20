@@ -16,7 +16,8 @@ import SOCKET from '../../config/SocketConfig';
 import { ToastContainer, toast } from 'react-toastify';
 import BreadCrumbs from '../BreadCrumbs';
 import BackButton from '../../commonComponents/backbutton'
-import { checkEcosystem, type ICheckEcosystem } from '../../config/ecosystem';
+import { checkEcosystem } from '../../config/ecosystem';
+import type { ICheckEcosystem} from '../../config/ecosystem';
 import type { ICredentials, IValues, IAttributes, IUploadMessage } from './interface';
 import RoleViewButton from '../RoleViewButton';
 import { Features } from '../../utils/enums/features';

@@ -12,7 +12,7 @@ import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import { updateOrganization } from '../../api/organization';
 import type { EditOrgdetailsModalProps, ILogoImage, Organisation, Values } from './interfaces';
-import defaultUserIcon from '../../../public/images/person_FILL1_wght400_GRAD0_opsz24.svg';
+// import defaultUserIcon from '../../../public/images/person_FILL1_wght400_GRAD0_opsz24.svg';
 import { processImage } from '../../utils/processImage';
 import FormikErrorMessage from '../../commonComponents/formikerror/index'
 
@@ -79,7 +79,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 
 	const handleImageChange = (event: any): void => {
     setImgError('');
-    processImage(event, (result, error) => {
+    processImage(event, (result: any, error: any) => {
       if (result) {
         setLogoImage({
           logoFile: '',
@@ -186,7 +186,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 					{(formikHandlers): JSX.Element => (
 						<Form className="space-y-6" onSubmit={formikHandlers.handleSubmit}>
 							<div className="mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-								<div className="flex flex-col items-center sm:flex-row 2xl:flex-row p-2 gap-0 sm:gap-4">
+								{/* <div className="flex flex-col items-center sm:flex-row 2xl:flex-row p-2 gap-0 sm:gap-4">
 									{logoImage?.imagePreviewUrl ? (
 										<img
 											className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
@@ -235,7 +235,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 											</div>
 										</div>
 									</div>
-								</div>
+								</div> */}
 							</div>
 							<div>
 								<div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -248,7 +248,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 									value={formikHandlers.values.name}
 									className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 									placeholder="Your organization name"
-									onChange={(e) => {
+									onChange={(e: { target: { value: any; }; }) => {
 										const value = e.target.value;
 										formikHandlers.setFieldValue('name', value);
 										formikHandlers.setFieldTouched('name', true, false);

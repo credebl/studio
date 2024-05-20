@@ -1,6 +1,7 @@
 
 import { Alert, Button } from 'flowbite-react';
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import type { ChangeEvent } from 'react';
 import {
 	ProofRequestState,
 	ProofRequestStateUserText,

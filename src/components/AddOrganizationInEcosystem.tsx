@@ -1,6 +1,7 @@
 
 import type { AxiosResponse } from 'axios';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import type { ChangeEvent } from 'react';
 import type { TableData } from '../commonComponents/datatable/interface';
 import { apiStatusCodes, storageKeys } from '../config/CommonConstant';
 import { AlertComponent } from './AlertComponent';

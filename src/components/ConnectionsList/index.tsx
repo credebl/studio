@@ -1,6 +1,7 @@
 
 import type { AxiosResponse } from 'axios';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import type {ChangeEvent} from 'react';
 import {
 	IConnectionListAPIParameter,
 	getConnectionsByOrg,
@@ -15,6 +16,7 @@ import { getFromLocalStorage } from '../../api/Auth';
 import { getOrgDetails } from '../../config/ecosystem';
 import type { IConnectionList } from '../../components/Issuance/interface';
 import SortDataTable from '../../commonComponents/datatable/SortDataTable';
+import React from 'react';
 
 const initialPageState = {
 	itemPerPage: 10,

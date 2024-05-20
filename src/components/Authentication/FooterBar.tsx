@@ -8,7 +8,7 @@ const FooterBar = () => {
                 <p className="text-sm text-center text-gray-500">
                     &copy; 2019 - {new Date().getFullYear()} 
                     <a className="hover:underline" target="_blank"
-                    > {envConfig.PLATFORM_DATA.poweredBy}
+                    >{envConfig.PLATFORM_DATA.poweredBy}
                     </a> | All rights reserved.
                 </p>
             </div>

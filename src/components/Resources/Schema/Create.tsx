@@ -2,23 +2,27 @@
 import * as yup from 'yup';
 
 import { Button, Card, Label } from 'flowbite-react';
-import { Field,	FieldArray,	Form,	Formik,	FormikErrors,	FormikProps} from 'formik';
+import { Field,	FieldArray, Form, Formik} from 'formik';
+import type { FormikErrors,	FormikProps } from 'formik';
 import {
 	apiStatusCodes,
 	schemaVersionRegex,
 	storageKeys,
 } from '../../../config/CommonConstant';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../../BreadCrumbs';
 import type { FieldName, IFormData, IAttributes } from './interfaces';
 import { createSchemas } from '../../../api/Schema';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
-import { ICheckEcosystem,	checkEcosystem,	getEcosystemId } from '../../../config/ecosystem';
+import { checkEcosystem, getEcosystemId } from '../../../config/ecosystem';
+import type { ICheckEcosystem} from '../../../config/ecosystem';
+
 import { createSchemaRequest } from '../../../api/ecosystem';
 import EcosystemProfileCard from '../../../commonComponents/EcosystemProfileCard';
 import ConfirmationModal from '../../../commonComponents/ConfirmationModal';
+import React from 'react';
 
 const options = [
 	{

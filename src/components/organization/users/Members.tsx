@@ -1,5 +1,7 @@
 
-import { ChangeEvent, useEffect, useState } from 'react';
+import {  useEffect, useState } from 'react';
+import type { ChangeEvent } from 'react';
+
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
 import { AlertComponent } from '../../AlertComponent';
 import type { AxiosResponse } from 'axios';
@@ -12,6 +14,7 @@ import type { User } from '../interfaces/users';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { getOrganizationUsers } from '../../../api/organization';
 import { EmptyListMessage } from '../../EmptyListComponent';
+import React from 'react';
 
 const initialPageState = {
 	pageNumber: 1,

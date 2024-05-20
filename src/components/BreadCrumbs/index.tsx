@@ -2,7 +2,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { Breadcrumb } from 'flowbite-react';
-import { HiHome } from 'react-icons/hi';
 
 interface BreadCrumbI {
 	href: string;

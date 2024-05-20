@@ -15,11 +15,11 @@ import { EmptyListMessage } from '../EmptyListComponent';
 import CreateEcosystemOrgModal from '../CreateEcosystemOrgModal';
 import { AlertComponent } from '../AlertComponent';
 import {
-	ICheckEcosystem,
 	checkEcosystem,
 	getEcosystemId,
 	getOwnerAdminRole,
 } from '../../config/ecosystem';
+import type { ICheckEcosystem} from '../../config/ecosystem';
 import { Button, Dropdown } from 'flowbite-react';
 import EditPopupModal from '../EditEcosystemOrgModal';
 import { getFromLocalStorage, removeFromLocalStorage } from '../../api/Auth';

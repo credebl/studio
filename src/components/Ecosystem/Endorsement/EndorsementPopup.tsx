@@ -1,11 +1,11 @@
 import { Button, Modal } from 'flowbite-react';
 import { EndorsementStatus, EndorsementType } from '../../../common/enums';
 import {
-	ICheckEcosystem,
 	checkEcosystem,
 	getEcosystemId,
 	getOwnerAdminRole,
 } from '../../../config/ecosystem';
+import type { ICheckEcosystem} from '../../../config/ecosystem';
 import EndorsementCard from './EndorsementCard';
 import React, { useEffect, useState } from 'react';
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
