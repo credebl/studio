@@ -297,7 +297,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 							>
 								<div className="mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-2 dark:bg-gray-800">
 									<div className="flex flex-col items-center sm:flex-row 2xl:flex-row p-2 gap-0 sm:gap-4">
-										{logoImage?.imagePreviewUrl ? (
+										{/* {logoImage?.imagePreviewUrl ? (
 											<img
 												className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
 												src={logoImage?.imagePreviewUrl || ""}
@@ -311,7 +311,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 												src={URL.createObjectURL(logoImage?.logoFile)}
 												alt={logoImage.fileName}
 											/>
-										)}
+										)} */}
 										<div>
 											<h3 className="flex items-center justify-center sm:justify-start mb-1 text-xl font-bold text-gray-900 dark:text-white">
 												{popupName} Logo

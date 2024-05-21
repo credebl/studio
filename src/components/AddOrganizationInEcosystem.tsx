@@ -115,7 +115,7 @@ const AddOrganizationInEcosystem = () => {
 										setOrganizationsList(updateOrgList)
 									}}
 									disabled={alreadyAdded}
-									checked={(ele.checked || isChecked) && !alreadyAdded}
+									defaultChecked={(ele.checked || isChecked) && !alreadyAdded}
 									className={`w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-lg dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600 disabled:opacity-100 ${alreadyAdded ? "cursor-not-allowed" : "cursor-pointer"}`}
 								/>
 							</div>

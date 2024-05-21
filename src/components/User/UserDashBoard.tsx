@@ -574,7 +574,7 @@ const UserDashBoard = () => {
 										viewBox="0 0 24 24"
 										fill="none"
 									>
-										<g clip-path="url(#clip0_9624_8899)">
+										<g clipPath="url(#clip0_9624_8899)">
 											<path
 												d="M9.99984 6L8.58984 7.41L13.1698 12L8.58984 16.59L9.99984 18L15.9998 12L9.99984 6Z"
 												fill="white"
@@ -832,7 +832,7 @@ const UserDashBoard = () => {
 																	goToOrgCredDef(org, org.id, org.roles);
 																}}
 																className="p-1 rounded-md"
-															>
+														    	>
 																<svg
 																	xmlns="http://www.w3.org/2000/svg"
 																	width="24"
@@ -861,7 +861,7 @@ const UserDashBoard = () => {
 																	goToOrgIssuance(org, org.id, org.roles);
 																}}
 																className="p-1 rounded-md"
-															>
+															 >
 																<svg
 																	xmlns="http://www.w3.org/2000/svg"
 																	width="26"
@@ -1000,16 +1000,16 @@ const UserDashBoard = () => {
 										{' '}
 										{schemaList?.map((schema) => {
 											return (
-												<button
+												<div
 													className="flex justify-between w-full mt-4 items-center"
 													key={schema?.id}
-												>
+												 >
 													<button
 														className="w-full"
 														onClick={() =>
 															goToSchemaCredDef(schema?.schemaLedgerId)
 														}
-													>
+													 >
 														<a
 															href="#"
 															className="flex items-center space-x-2 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-md"
@@ -1022,7 +1022,7 @@ const UserDashBoard = () => {
 															</span>
 														</a>
 													</button>
-												</button>
+												</div>
 											);
 										})}
 										{schemaList && schemaList?.length > 0 && (
@@ -1099,10 +1099,10 @@ const UserDashBoard = () => {
 									<>
 										{ecosystemListDetails?.map((ecosystem: any) => {
 											return (
-												<button
+												<div
 													className="flex justify-between w-full mt-2 items-center"
 													key={ecosystem?.id}
-												>
+												 >
 													<button
 														className={`${
 															ecosystem?.ecosystemOrgs[0]?.ecosystemRole
@@ -1111,7 +1111,7 @@ const UserDashBoard = () => {
 																: 'w-full'
 														}`}
 														onClick={() => goToEcoDashboard(ecosystem?.id)}
-													>
+													 >
 														<a
 															href="#"
 															className="flex items-center py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-md mr-2"
@@ -1128,7 +1128,7 @@ const UserDashBoard = () => {
 																	className="dark:text-white shrink-0"
 																	size="40"
 																	name={ecosystem?.name}
-																	round={false}
+																	round={false}	
 																/>
 															)}
 
@@ -1194,7 +1194,7 @@ const UserDashBoard = () => {
 																	}}
 																	className={`${!isAccess ? "cursor-not-allowed opacity-50":""} rounded-md flex`}
 																	disabled={!isAccess}
-																>
+																 >
 																	<svg
 																		xmlns="http://www.w3.org/2000/svg"
 																		width="30"
@@ -1211,7 +1211,7 @@ const UserDashBoard = () => {
 															)}
 														</Tooltip>
 													</div>
-												</button>
+												</div>
 											);
 										})}
 
@@ -1287,7 +1287,7 @@ const UserDashBoard = () => {
 										{' '}
 										{credDefList?.map((cred: ICredDef) => {
 											return (
-												<button
+												<div
 													className="flex justify-between w-full mt-4 items-center"
 													key={cred?.id}
 												>
@@ -1307,7 +1307,7 @@ const UserDashBoard = () => {
 															</span>
 														</a>
 													</button>
-												</button>
+												</div>
 											);
 										})}
 									</>
@@ -1332,7 +1332,7 @@ const UserDashBoard = () => {
 							Recent Activity
 						</h3>
 						<hr />
-					</div>
+					</div>	
 
 					{!loading ? (
 						<>

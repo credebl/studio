@@ -34,13 +34,13 @@ const DataTable: React.FC<DataTableProps> = ({
 									<tr>
 										{header &&
 											header.length > 0 &&
-											header.map((ele) => (
+											header.map((ele, index) => (
 												<th
-													key={ele.columnName}
+													key={index}
 													scope="col"
 													className={`p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white ${ele.width}`}
 												>
-													<div key={ele.columnName}>{ele.columnName}</div>
+													<div>{ele.columnName}</div>
 													{ele.subColumnName && (
 														<div className="flex text-gray-500">
 															{ele.subColumnName}{' '}

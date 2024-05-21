@@ -6,6 +6,7 @@ import type { AxiosResponse } from 'axios';
 import { TextTittlecase } from '../../../utils/TextTransform';
 import type { User } from "../interfaces/users";
 import { apiStatusCodes } from "../../../config/CommonConstant";
+import React from 'react';
 
 interface RoleI {
     id: string
@@ -174,7 +175,7 @@ const EditUserRoleModal = (props: { openModal: boolean; user: User; setMessage: 
 
                                         {
                                             roles.map(role => (
-                                                <div>
+                                                <div key={role.id}>
                                                     <label>
                                                         <input type="checkbox"
                                                             id={`checkbox-${role.id}`}

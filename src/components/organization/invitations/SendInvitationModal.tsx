@@ -310,9 +310,9 @@ const SendInvitationModal = (props: {
 													xmlns="http://www.w3.org/2000/svg"
 												>
 													<path
-														fill-rule="evenodd"
+														fillRule="evenodd"
 														d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-														clip-rule="evenodd"
+														clipRule="evenodd"
 													></path>
 												</svg>
 											</span>
@@ -340,9 +340,9 @@ const SendInvitationModal = (props: {
 							>
 								<path
 									stroke="#fff"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="2"
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth="2"
 									d="M12.201 17.792 28.546 1.454m-15.88 17.073 3.706 7.413c.896 1.79 1.344 2.687 1.908 2.927.49.208 1.05.17 1.506-.102.527-.314.85-1.261 1.498-3.157l7.003-20.507c.564-1.652.845-2.477.652-3.024a1.668 1.668 0 0 0-1.016-1.016c-.547-.193-1.372.089-3.024.652L4.391 8.716c-1.895.647-2.843.97-3.156 1.498a1.667 1.667 0 0 0-.102 1.506c.24.564 1.136 1.012 2.927 1.908l7.413 3.706c.295.148.443.221.57.32.114.087.216.19.303.302.099.128.172.276.32.571Z"
 								/>
 							</svg>

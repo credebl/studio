@@ -106,11 +106,11 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
                     }
                 </div>
                 <div className='float-right ml-auto'>
-                    <p className='dark:text-white'>
+                    <div className='dark:text-white'>
                         <DateTooltip date={data?.createDateTime}>
                             Requested: {dateConversion(data?.createDateTime)}
                         </DateTooltip >
-                    </p >
+                    </div >
                 </div >
             </div >
             <div className='flex flex-wrap justify-between items-center'>

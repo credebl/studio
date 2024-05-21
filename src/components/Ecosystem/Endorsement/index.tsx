@@ -18,9 +18,9 @@ import {
 import type { ICheckEcosystem} from '../../../config/ecosystem';
 import EndorsementCard from './EndorsementCard';
 import {
-	GetEndorsementListParameter,
 	getEndorsementList,
 } from '../../../api/ecosystem';
+import type { GetEndorsementListParameter} from '../../../api/ecosystem';
 import { EndorsementStatus, EndorsementType } from '../../../common/enums';
 import { AlertComponent } from '../../AlertComponent';
 import { Features } from '../../../utils/enums/features';
