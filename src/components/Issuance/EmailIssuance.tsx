@@ -43,6 +43,7 @@ const EmailIssuance = () => {
 	const [issueLoader, setIssueLoader] = useState(false);
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const inputRef = useRef(null);
+	const [mounted, setMounted] = useState<boolean>(false)
 
 	const getSchemaCredentials = async () => {
 		try {
@@ -81,6 +82,7 @@ const EmailIssuance = () => {
 
 	useEffect(() => {
 		getSchemaCredentials();
+		setMounted(true);
 		(async () => {
 			try {
 				const data: ICheckEcosystem = await checkEcosystem();
@@ -226,7 +228,7 @@ const EmailIssuance = () => {
 
 	return (
 		<div className="px-4 pt-2">
-			<div className="col-span-full mb-3">
+			 <div className="col-span-full mb-3">
 				<div className="flex justify-between items-center">
 					<BreadCrumbs />
 					<BackButton path={pathRoutes.organizations.Issuance.issue} />
@@ -265,7 +267,10 @@ const EmailIssuance = () => {
 							<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 								<div className="flex flex-col justify-between">
 									<div className="search-dropdown text-primary-700 drak:text-primary-700">
-										<Select
+										{
+											mounted ?
+											<Select
+									        
 											placeholder="Select Schema-Credential definition"
 											className="basic-single "
 											classNamePrefix="select"
@@ -273,6 +278,9 @@ const EmailIssuance = () => {
 											isClearable={true}
 											isRtl={false}
 											isSearchable={true}
+											id="long-value-select"
+											instanceId="long-value-select"
+
 											name="color"
 											options={credentialOptions}
 											onChange={(value: IValues | null) => {
@@ -282,6 +290,9 @@ const EmailIssuance = () => {
 											}}
 											ref={selectInputRef}
 										/>
+										:
+										null
+										}
 									</div>
 									<div className="mt-4">
 										{credentialSelected && (
@@ -377,7 +388,7 @@ const EmailIssuance = () => {
 																	setUserData(values);
 																	handleOpenConfirmation();
 																}}
-															>
+															 >
 																{(formikHandlers): JSX.Element => (
 																	<Form onSubmit={formikHandlers.handleSubmit}>
 																		<FieldArray
@@ -429,7 +440,7 @@ const EmailIssuance = () => {
 																															}
 																															type="email"
 																															className="w-full md:w-5/12 bg-gray-50 border border-gray-300 text-gray-900 sm:text-md rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-																														/>
+																														 />
 																														<div className="absolute top-11 left-24">
 																															{formikHandlers
 																																?.touched
@@ -809,7 +820,7 @@ const EmailIssuance = () => {
 						</Card>
 					</div>
 				</div>
-			</div>
+			</div> 
 		</div>
 	);
 };
