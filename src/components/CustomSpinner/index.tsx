@@ -1,4 +1,5 @@
 import { Spinner } from 'flowbite-react';
+import React from 'react';
 
 interface SpinnerProps {
     color?: 'info' | 'success' | 'failure' | 'warning' | 'pink' | 'purple' 
@@ -13,10 +14,9 @@ const CustomSpinner = ({color, message, size, hideMessage}: SpinnerProps) => (
                 className='mr-2'
                 color= {color ?? 'info'}
                 size={size ?? 'md' }
-
             />
             {
-                !hideMessage && <span>{message ?? ' Loading...'}</span>
+                !hideMessage && <span>{'' ?? ' Loading...'}</span>
             }
         </span>
     )

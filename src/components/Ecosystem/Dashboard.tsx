@@ -7,8 +7,8 @@ import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
 import CustomAvatar from '../Avatar';
 import CustomSpinner from '../CustomSpinner';
-import endorseIcon from '../../assets/endorser-icon.svg';
-import memberIcon from '../../assets/member-icon.svg';
+// import endorseIcon from '../../assets/endorser-icon.svg';
+// import memberIcon from '../../assets/member-icon.svg';
 import MemberList from './MemberList';
 import { getEcosystems, getEcosystemDashboard } from '../../api/ecosystem';
 import { EmptyListMessage } from '../EmptyListComponent';
@@ -295,18 +295,16 @@ const Dashboard = () => {
 						<div
 							className={`mt-4 items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800 w-full`}
 						>
-							<div
-								className={`flex relative sm:flex-row flex-col w-full items-start
-								`}
-							>
+							<div className={`flex relative sm:flex-row flex-col w-full items-start`}
+							 >
 								<div className="mr-4">
 									{ecosystemDetails?.logoUrl ? (
-										<CustomAvatar size="80" src={ecosystemDetails?.logoUrl} />
+										<CustomAvatar className='text-violet11 leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium'   textSizeRatio={2.5} size="80px" src={ecosystemDetails?.logoUrl} round />
 									) : (
-										<CustomAvatar size="90" name={ecosystemDetails?.name} />
+										<CustomAvatar className='text-violet11 leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium'  textSizeRatio={2.5} size="80px" name={ecosystemDetails?.name} round/>
 									)}
 								</div>
-								<div className='w-full'>
+								<div className='w-full ml-2'>
 									<div className="w-full sm:max-w-100/13rem">
 										<h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
 											{ecosystemDetails?.name}
@@ -421,16 +419,16 @@ const Dashboard = () => {
 							<div className="flex flex-wrap items-center">
 								<div className="mr-4">
 									{ecosystemDetails?.logoUrl ? (
-										<CustomAvatar size="80" src={ecosystemDetails?.logoUrl} />
+									<CustomAvatar className='text-violet11 leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium'   textSizeRatio={2.5} size="80px" src={ecosystemDetails?.logoUrl} round />
 									) : (
-										<CustomAvatar size="90" name={ecosystemDetails?.name} />
+										<CustomAvatar className='text-violet11 leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium'  textSizeRatio={2.5} size="80px" name={ecosystemDetails?.name} round/>
 									)}
 								</div>
 							</div>
 							<div
 								className="w-full overflow-auto flex-start"
 								style={{ maxWidth: '400px' }}
-							>
+							 >
 								<h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">
 									{ecosystemDetails?.name}
 								</h3>
@@ -490,13 +488,13 @@ const Dashboard = () => {
 					<div className="mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 						<div className="grid w-full grid-cols-1 gap-4 mt-0 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2">
 							<DashboardCard
-								icon={memberIcon}
+								icon={'/images/member-icon.svg'}
 								backgroundColor="linear-gradient(279deg, #FFF -18.24%, #2F80ED -0.8%, #1F4EAD 61.45%)"
 								label="Member"
 								value={ecosystemDashboard?.membersCount ?? 0}
 							/>
 							<DashboardCard
-								icon={endorseIcon}
+								icon={'/images/endorser-icon.svg'}
 								backgroundColor="linear-gradient(279deg, #FFF -15.85%, #40F683 22.4%, #22C55E 59.86%)"
 								label="Endorsements"
 								value={ecosystemDashboard?.endorsementsCount ?? 0}

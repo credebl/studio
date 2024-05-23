@@ -22,6 +22,7 @@ import { pathRoutes } from '../../config/pathRoutes';
 import NavBar from './NavBar';
 import FooterBar from './FooterBar';
 import { PlatformRoles } from '../../common/enums';
+import CustomSpinner from '../CustomSpinner';
 interface signInUserProps {
 	email: string;
 }
@@ -326,6 +327,9 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 										}}
 										className="px-10 min-w-fit sm:min-w-[12rem] font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 									>
+										{
+											loading ? <CustomSpinner /> : ""
+										}
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
 											width="21"

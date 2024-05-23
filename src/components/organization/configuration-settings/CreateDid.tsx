@@ -15,6 +15,8 @@ import TokenWarningMessage from '../walletCommonComponents/TokenWarningMessage';
 import CopyDid from '../../../commonComponents/CopyDid';
 import GenerateBtnPolygon from '../walletCommonComponents/GenerateBtnPolygon';
 import { getFromLocalStorage } from '../../../api/Auth';
+import React from 'react';
+import CustomSpinner from '../../CustomSpinner';
 
 interface IPolygonKeys {
 	privateKey: string;
@@ -556,6 +558,9 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 										isProcessing={loading}
 										className="mb-2 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 									>
+										{
+											loading ? <CustomSpinner /> : ""
+										}
 										Submit
 									</Button>
 								</div>

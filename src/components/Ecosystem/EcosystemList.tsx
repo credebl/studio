@@ -7,7 +7,7 @@ import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
-import CustomAvatar from '../Avatar';
+import CustomAvatar from '../Avatar/index';
 import { Features } from '../../utils/enums/features';
 import RoleViewButton from '../RoleViewButton';
 import SearchInput from '../SearchInput';
@@ -285,11 +285,11 @@ const EcosystemList = () => {
 										onClick={() => redirectOrgDashboard(item.id, role)}
 										className="transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer overflow-hidden max-w-full max-h-fit overflow-auto"
 									>
-										<div className="flex items-center">
+										<div className="flex items-center min-[401px]:flex-nowrap flex-wrap">
 											{item.logoUrl ? (
-												<CustomAvatar size="80" src={item.logoUrl} />
+												<CustomAvatar className="min-w-[80px] text-violet11 leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium " size="80px" round  textSizeRatio={2.5} src={item.logoUrl} />
 											) : (
-												<CustomAvatar size="80" name={item.name} />
+												<CustomAvatar className="min-w-[80px] text-violet11 leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium " size="80px" round textSizeRatio={2.5} name={item.name} />
 											)}
 
 											<div className="ml-4 w-100/6rem line-clamp-4 ">

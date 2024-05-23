@@ -137,22 +137,26 @@ const OrganizationsList = () => {
 							key={org.id}
 							onClick={() => redirectOrgDashboard(org)}
 							className="transform transition duration-500 hover:scale-105 hover:bg-gray-50 cursor-pointer overflow-hidden overflow-ellipsis"
-							// style={{
-							// 	maxHeight: '100%',
-							// 	maxWidth: '100%',
-							// 	overflow: 'auto',
-							// }}
+							style={{
+								maxHeight: '100%',
+								maxWidth: '100%',
+								overflow: 'auto',
+							}}
 						 >
 							<div className="flex items-center min-[401px]:flex-nowrap flex-wrap">
-								{/* {org.logoUrl ? (
+								
+								{org.logoUrl ? (
 									<CustomAvatar
-										className="min-w-[80px]"
-										size="80"
+									textSizeRatio={2.5}
+										className="min-w-[80px] text-violet11 leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium "
+										size="80px"
 										src={org?.logoUrl}
+										round
+										
 									/>	
 								) : (
-									<CustomAvatar size="80" name={org.name} />
-								)} */}
+									<CustomAvatar textSizeRatio={2.5} className='text-violet11 leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium ' size="80px" name={org.name} round/>
+								)}
 
 								<div className="ml-4 w-100/6rem line-clamp-4 ">
 									<h5 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">

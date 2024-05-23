@@ -21,9 +21,9 @@ import { createOrganization } from '../../api/organization';
 import { getFromLocalStorage } from '../../api/Auth';
 import { createEcosystems } from '../../api/ecosystem';
 import { getOrgDetails } from '../../config/ecosystem';
-import defaultUserIcon from '../../../public/images/person_FILL1_wght400_GRAD0_opsz24.svg';
 import EndorsementTooltip from '../../commonComponents/EndorsementTooltip';
 import { processImage } from '../../utils/processImage';
+import CustomSpinner from '../CustomSpinner/index.js';
 
 interface Values {
 	name: string;
@@ -246,7 +246,8 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 		const popupName = props.isorgModal ? 'Organization' : 'Ecosystem';
 		return (
 			<Modal
-				size={!props.isorgModal ? '3xl' : '2xl'}
+			className="bg-gray-900 bg-opacity-50 dark:bg-opacity-80"
+				size={!props.isorgModal ? '2xl' : '2xl'}
 				show={props.openModal}
 				onClose={() => {
 					setLogoImage({
@@ -297,21 +298,21 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 							>
 								<div className="mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-2 dark:bg-gray-800">
 									<div className="flex flex-col items-center sm:flex-row 2xl:flex-row p-2 gap-0 sm:gap-4">
-										{/* {logoImage?.imagePreviewUrl ? (
+										{logoImage?.imagePreviewUrl ? (
 											<img
 												className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
 												src={logoImage?.imagePreviewUrl || ""}
 												alt={logoImage.fileName}
 											/>
 										) : typeof logoImage.logoFile === 'string' ? (
-											<Avatar size="lg" img={defaultUserIcon} />
+											<Avatar size="lg" img='images/person_24dp_FILL0_wght400_GRAD0_opsz24 (2).svg' />
 										) : (
 											<img
 												className="m-2 rounded-md w-28 h-28"
 												src={URL.createObjectURL(logoImage?.logoFile)}
 												alt={logoImage.fileName}
 											/>
-										)} */}
+										)}
 										<div>
 											<h3 className="flex items-center justify-center sm:justify-start mb-1 text-xl font-bold text-gray-900 dark:text-white">
 												{popupName} Logo
@@ -490,6 +491,10 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 										isProcessing={loading}
 										className="float-right text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-700 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 									>
+										{
+											loading ? <CustomSpinner /> : ""
+										}
+
 										<svg
 											className="pr-2"
 											xmlns="http://www.w3.org/2000/svg"

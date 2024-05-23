@@ -32,6 +32,7 @@ import SetDomainValueInput from './walletCommonComponents/SetDomainValueInput';
 import TokenWarningMessage from './walletCommonComponents/TokenWarningMessage';
 import LedgerLessMethodsComponents from './walletCommonComponents/LegderLessMethods'
 import SetPrivateKeyValueInput from './walletCommonComponents/SetPrivateKeyValue';
+import CustomSpinner from '../CustomSpinner';
 
 
 interface Values {
@@ -844,6 +845,9 @@ const DedicatedAgentForm = ({
 							type="submit"
 							className='float-right text-base font-medium text-center text-white bg-primary-700 hover:bg-primary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
 						>
+							{
+											loading ? <CustomSpinner /> : ""
+										}
 							Setup Agent
 						</Button>
 					</Form>

@@ -40,3 +40,5 @@ export function getStaticPaths() {
 		params: { entity: endpoint },
 	}));
 }
+
+export const prerender = true;

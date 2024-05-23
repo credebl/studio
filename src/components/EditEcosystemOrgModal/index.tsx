@@ -16,6 +16,7 @@ import React, { useEffect, useState } from 'react';
 import EndorsementTooltip from '../../commonComponents/EndorsementTooltip';
 import { processImage } from '../../utils/processImage';
 import FormikErrorMessage from '../../commonComponents/formikerror/index'
+import CustomSpinner from '../CustomSpinner';
 
 const EditPopupModal = (props: EditEntityModalProps) => {
 	const [logoImage, setLogoImage] = useState<ILogoImage>({
@@ -134,7 +135,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
 
 	return (
 		<Modal
-			size={'3xl'}
+			size={'2xl'}
 			show={props.openModal}
 			onClose={() => {
 				setLogoImage({
@@ -212,7 +213,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
 											} Logo`}
 										/>
 									) : (
-										<Avatar size="lg" />
+										<Avatar size="lg" img='/images/person_24dp_FILL0_wght400_GRAD0_opsz24 (2).svg' />
 									)}
 
 									<div>
@@ -354,6 +355,9 @@ const EditPopupModal = (props: EditEntityModalProps) => {
 								isProcessing={loading}
 								className="float-right text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-700 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 							>
+								{
+											loading ? <CustomSpinner /> : ""
+										}
 								Update
 							</Button>
 						</Form>

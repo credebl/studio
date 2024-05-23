@@ -343,14 +343,21 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 														isProcessing={loading}
 														type="submit"
 														className="w-fit px-0 sm:px-4 xl:px-12 font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-													>
+													 >
+														
+														{
+															loading ?(
+                                                          <CustomSpinner />
+															):""
+														}
+													
 														<svg
 															xmlns="http://www.w3.org/2000/svg"
 															width="22"
 															height="21"
 															viewBox="0 0 38 37"
 															fill="none"
-														>
+														 >
 															<path
 																d="M25.6203 21.2026C25.9292 21.2026 26.2293 21.053 26.389 20.7875C26.6242 20.3982 26.4697 19.9092 26.0451 19.6936C24.8394 19.0839 23.5513 18.6222 22.2245 18.2876C25.6888 16.7062 28.079 13.4342 28.079 9.65217C28.079 4.329 23.3565 0 17.5494 0C11.7423 0 7.01973 4.329 7.01973 9.65217C7.01973 13.4326 9.40823 16.7015 12.8672 18.2844C9.97157 19.0132 7.31283 20.4063 5.13493 22.4027C1.82335 25.4383 0 29.4793 0 33.7826V36.1956C0 36.6396 0.393134 37 0.877497 37C1.36186 37 1.75499 36.6396 1.75499 36.1956V33.7826C1.75499 29.9088 3.39762 26.2732 6.3775 23.5401C9.35739 20.8069 13.3253 19.3043 17.5494 19.3043C20.2257 19.3043 22.8705 19.9269 25.1975 21.1029C25.3308 21.1704 25.4765 21.2026 25.6203 21.2026ZM8.77472 9.65217C8.77472 5.217 12.711 1.60867 17.5494 1.60867C22.3877 1.60867 26.3241 5.217 26.3241 9.65217C26.3241 14.0873 22.3877 17.6957 17.5494 17.6957C12.711 17.6956 8.77472 14.0873 8.77472 9.65217Z"
 																fill="white"
@@ -366,6 +373,7 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 																strokeLinecap="round"
 															/>
 														</svg>
+													
 														<span className="ml-2">Login</span>
 													</Button>
 												</div>

@@ -25,6 +25,7 @@
 		"astro": "astro"
 	},
 	"dependencies": {
+		"@astrojs/markdown-remark": "^5.1.0",
 		"@astrojs/react": "^3.3.4",
 		"@astrojs/sitemap": "^3.1.4",
 		"@astrojs/starlight": "^0.22.3",
@@ -33,6 +34,8 @@
 		"@babel/runtime-corejs3": "^7.24.5",
 		"@deno/astro-adapter": "^0.1.2",
 		"@faker-js/faker": "^8.4.1",
+		"@radix-ui/react-avatar": "^1.0.4",
+		"@shadcn/ui": "^0.0.4",
 		"@simplewebauthn/browser": "10.0.0",
 		"@supabase/supabase-js": "^2.43.2",
 		"@tanstack/react-form": "^0.19.5",
@@ -69,6 +72,7 @@
 		"tailwind-scrollbar": "^3.1.0",
 		"tailwindcss": "^3.4.3",
 		"uuid": "^9.0.1",
+		"vite": "^5.2.11",
 		"yup": "^1.4.0"
 	},
 	"devDependencies": {

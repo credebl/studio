@@ -6,7 +6,7 @@ import { Alert } from 'flowbite-react';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
 // import credIcon from '../../assets/cred-icon.svg';
-// import CustomAvatar from '../Avatar';
+import CustomAvatar from '../Avatar/index';
 import CustomSpinner from '../CustomSpinner';
 import EditOrgdetailsModal from './EditOrgdetailsModal';
 import OrganizationDetails from './OrganizationDetails';
@@ -140,11 +140,11 @@ const Dashboard = () => {
 					<div className="relative w-full">
 						<div className="items-center block sm:flex flex-wrap break-normal w-full sm:space-x-4 justify-center sm:justify-start">
 							<div>
-								{/* {orgData?.logoUrl ? (
-									<CustomAvatar size="80" src={orgData?.logoUrl} />
+								{orgData?.logoUrl ? (
+									<CustomAvatar className='text-violet11 leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium' size="80px" src={orgData?.logoUrl} round />
 								) : (
-									<CustomAvatar size="90" name={orgData?.name} />
-								)} */}
+									<CustomAvatar className='text-violet11 leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium' size="80px" name={orgData?.name} round/>
+								)}
 							</div>
 							<div className="sm:w-100/12rem mt-2">
 								{orgData ? (
@@ -209,7 +209,7 @@ const Dashboard = () => {
 				<div className="mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 					<div className="grid w-full grid-cols-1 gap-4 mt-0 xl:grid-cols-3 2xl:grid-cols-3">
 						<DashboardCard
-							// icon={userCard}
+							icon={'/images/users-icon.svg'}
 							backgroundColor="linear-gradient(279deg, #FFF -18.24%, #2F80ED -0.8%, #1F4EAD 61.45%)"
 							label="Users"
 							value={orgDashboard?.usersCount ?? 0}
@@ -217,7 +217,7 @@ const Dashboard = () => {
 						/>
 
 						<DashboardCard
-							// icon={schemaCard}
+							icon={'/images/schema-icon.svg'}
 							classes={!walletStatus ? 'pointer-events-none' : ''}
 							backgroundColor="linear-gradient(279deg, #FFF -28.6%, #5AC2E8 21.61%, #0054FF 68.63%)"
 							label="Schemas"
@@ -229,7 +229,7 @@ const Dashboard = () => {
 							}}
 						/>
 						<DashboardCard
-							// icon={credIcon}
+							icon={'/images/cred-icon.svg'}
 							backgroundColor="linear-gradient(279deg, #FFF -34.06%, #FFC968 43.71%, #FEB431 111.13%)"
 							label="Credentials"
 							value={orgDashboard?.credentialsCount ?? 0}

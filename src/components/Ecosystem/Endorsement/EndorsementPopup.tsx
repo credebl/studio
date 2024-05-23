@@ -17,6 +17,7 @@ import {
 import type { AxiosResponse } from 'axios';
 import { AlertComponent } from '../../AlertComponent';
 import { getFromLocalStorage } from '../../../api/Auth';
+import CustomSpinner from '../../CustomSpinner';
 
 const EndorsementPopup = (props: {
 	openModal: boolean;
@@ -207,6 +208,9 @@ const EndorsementPopup = (props: {
 									SignEndorsement(props.endorsementData.id);
 								}}
 							>
+								{
+											loading ? <CustomSpinner /> : ""
+										}
 								<svg
 									className="h-8 w-8"
 									fill="none"
@@ -237,7 +241,9 @@ const EndorsementPopup = (props: {
 										onClick={() => {
 											SubmitEndorsement(props.endorsementData.id);
 										}}
-									>
+									>{
+										loading ? <CustomSpinner /> : ""
+									}
 										<svg
 											className="h-8 w-8 text-white"
 											fill="none"

@@ -22,6 +22,7 @@ import NavBar from './NavBar.js';
 import FooterBar from './FooterBar.js';
 import PasswordSuggestionBox from './PasswordSuggestionBox.js';
 import { PassInvisible, PassVisible, SignUpArrow } from './Svg.js';
+import CustomSpinner from '../CustomSpinner/index.js';
 
 interface passwordValues {
 	email: string;
@@ -289,6 +290,9 @@ const SignUpUserPassword = ({
 														isProcessing={loading}
 														className="w-fit px-12 sm:px-4 xl:px-12 font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 													>
+														{
+											loading ? <CustomSpinner /> : ""
+										}
 														<SignUpArrow />
 														<span className="ml-2">Sign Up</span>
 													</Button>

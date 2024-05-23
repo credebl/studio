@@ -2,8 +2,6 @@ import * as yup from 'yup';
 import { Avatar, Button, Label, Modal } from 'flowbite-react';
 import { Field, Form, Formik} from 'formik';
 import type { FormikHelpers as FormikActions } from 'formik';
-
-
 import {
 	apiStatusCodes,
 } from '../../config/CommonConstant';
@@ -15,6 +13,7 @@ import type { EditOrgdetailsModalProps, ILogoImage, Organisation, Values } from 
 // import defaultUserIcon from '../../../public/images/person_FILL1_wght400_GRAD0_opsz24.svg';
 import { processImage } from '../../utils/processImage';
 import FormikErrorMessage from '../../commonComponents/formikerror/index'
+import CustomSpinner from '../CustomSpinner';
 
 interface IUpdateOrgPayload {
 	orgId: string | undefined;
@@ -186,7 +185,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 					{(formikHandlers): JSX.Element => (
 						<Form className="space-y-6" onSubmit={formikHandlers.handleSubmit}>
 							<div className="mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-								{/* <div className="flex flex-col items-center sm:flex-row 2xl:flex-row p-2 gap-0 sm:gap-4">
+								<div className="flex flex-col items-center sm:flex-row 2xl:flex-row p-2 gap-0 sm:gap-4">
 									{logoImage?.imagePreviewUrl ? (
 										<img
 											className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
@@ -194,7 +193,8 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 											alt="Jese picture"
 										/>
 									) : typeof logoImage.logoFile === 'string' ? (
-										<Avatar size="lg" img={defaultUserIcon} />
+										<Avatar size="lg" img='/images/person_24dp_FILL0_wght400_GRAD0_opsz24 (2).svg' />
+
 									) : (
 										<img
 											className="m-2 rounded-md w-28 h-28"
@@ -235,7 +235,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 											</div>
 										</div>
 									</div>
-								</div> */}
+								</div>
 							</div>
 							<div>
 								<div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -359,6 +359,9 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 									isProcessing={loading}
 									className="mb-2 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 								>
+									{
+											loading ? <CustomSpinner /> : ""
+										}
 									<svg
 										className="pr-2"
 										xmlns="http://www.w3.org/2000/svg"

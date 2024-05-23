@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
-import CustomAvatar from '../Avatar';
+import CustomAvatar from '../Avatar/index';
 import type { Organisation } from '../organization/interfaces';
 import type { UserActivity } from './interfaces';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
@@ -662,17 +662,17 @@ const UserDashBoard = () => {
 														 >
 															{org.logoUrl ? (
 																<CustomAvatar
-																	className="dark:text-white shrink-0"
-																	size="40"
+																	className="dark:text-white dark:text-white max-w-[100%] w-full h-full rounded-full"
+																	size="40px"
 																	src={org?.logoUrl}
-																	round
+																	
 																/>
 															) : (
 																<CustomAvatar
-																	className="dark:text-white shrink-0"
-																	size="40"
+																	className="dark:text-white dark:text-white max-w-[100%] w-full h-full rounded-full justify-center items-center bg bg-black"
+																	size="40px"
 																	name={org?.name}
-																	round
+																	
 																/>
 															)}
 
@@ -1116,19 +1116,20 @@ const UserDashBoard = () => {
 															href="#"
 															className="flex items-center py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-md mr-2"
 														>
+
 															{ecosystem.logoUrl ? (
 																<CustomAvatar
-																	className="dark:text-white shrink-0"
-																	size="40"
+																	className="dark:text-white dark:text-white max-w-[100%] w-full h-full rounded-full"
+																	size="40px"
 																	src={ecosystem?.logoUrl}
-																	round={false}
+																	
 																/>
 															) : (
 																<CustomAvatar
-																	className="dark:text-white shrink-0"
-																	size="40"
+																	className="dark:text-white dark:text-white max-w-[100%] w-full h-full rounded-full"
+																	size="40px"
 																	name={ecosystem?.name}
-																	round={false}	
+																	
 																/>
 															)}
 

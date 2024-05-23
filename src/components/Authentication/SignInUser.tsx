@@ -11,6 +11,7 @@ import { emailRegex, storageKeys } from '../../config/CommonConstant';
 import FooterBar from './FooterBar';
 import { envConfig } from '../../config/envConfig';
 import { validEmail } from '../../utils/TextTransform';
+import CustomSpinner from '../CustomSpinner';
 
 interface emailValue {
 	email: string | null;
@@ -257,6 +258,9 @@ const SignInUser = () => {
 															type="submit"
 															className="w-fit px-12 sm:px-4 xl:px-12 font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 														>
+															{
+											loading ? <CustomSpinner /> : ""
+										}
 															<svg
 																xmlns="http://www.w3.org/2000/svg"
 																width="16"
