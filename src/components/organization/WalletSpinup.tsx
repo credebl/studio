@@ -1,6 +1,6 @@
 import * as yup from 'yup';
-import { Button, Checkbox, Label } from 'flowbite-react';
-import { Field, Form, Formik } from 'formik';
+import { Button, Checkbox, Label, ToggleSwitch } from 'flowbite-react';
+import { Field, Form, Formik, FormikHelpers } from 'formik';
 import {
 	apiStatusCodes,
 	passwordRegex,
@@ -32,6 +32,9 @@ import SetDomainValueInput from './walletCommonComponents/SetDomainValueInput';
 import TokenWarningMessage from './walletCommonComponents/TokenWarningMessage';
 import LedgerLessMethodsComponents from './walletCommonComponents/LegderLessMethods'
 import SetPrivateKeyValueInput from './walletCommonComponents/SetPrivateKeyValue';
+import axios from 'axios';
+import { axiosGet, axiosPost } from '../../services/apiRequests';
+import { apiRoutes } from '../../config/apiRoutes';
 
 
 interface Values {
@@ -40,6 +43,20 @@ interface Values {
 	password: string;
 	did: string;
 	network: string;
+}
+
+interface DedicatedAgentConfig {
+	walletName: string;
+	agentEndpoint: string;
+	apiKey: string;
+}
+
+interface DidCreationConfig{
+	seed:string;
+	keyType:string;
+	method:string;
+	network:string;
+	role:string;
 }
 
 export interface ValuesShared {
@@ -154,7 +171,6 @@ const SharedAgentForm = ({
 	const [domainValue, setDomainValue] = useState<string>('');
 	const [endPointValue, setEndPointValue] = useState<string>('');
 	const [privateKeyValue, setPrivateKeyValue] = useState<string>('');
-
 	const fetchLedgerConfig = async () => {
 		try {
 			const { data } = await getLedgerConfig();
@@ -698,16 +714,43 @@ const DedicatedAgentForm = ({
 	loading,
 	submitDedicatedWallet,
 }: IDedicatedAgentForm) => {
-	const [haveDid, setHaveDid] = useState(false);
-	const [networks, setNetworks] = useState([]);
-	const getLedgerList = async () => {
-		const res = await fetchNetworks();
-		setNetworks(res);
+	const [isConfigDone, setIsConfigDone]=useState<boolean>(true)
+	const [seedVal, setSeedVal] = useState('');
+	const [mappedData, setMappedData] = useState(null);
+	const [selectedMethod, setSelectedMethod]=useState(null)
+	const [generatedKeys, setGeneratedKeys] = useState<IPolygonKeys | null>(null);
+	const [privateKeyValue, setPrivateKeyValue] = useState<string>('');
+	const [domainValue, setDomainValue] = useState<string>('');
+	// const [selectedLedger, setSelectedLedger] = useState('');
+	const [selectedNetwork, setSelectedNetwork] = useState('');
+	const [networkOptions, setNetworkOptions]=useState<string[]>([])
+
+	const fetchLedgerConfig = async () => {
+		try {
+			const { data } = await getLedgerConfig();
+			console.log('data',data)
+			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+				const obj = {};
+				data.data.forEach((item) => {
+					obj[item.name.toLowerCase()] = { ...item.details };
+				});
+				setMappedData(obj);
+			}
+		} catch (err) {
+			console.log('Fetch Network ERROR::::', err);
+		}
 	};
 	useEffect(() => {
-		getLedgerList();
+		fetchLedgerConfig();
 	}, []);
 
+	useEffect(() => {
+		console.log('seedVal',seedVal)
+		setSeedVal(seeds)
+	}, [seeds])
+	const handleMethodChange=(e)=>{
+		setSelectedMethod(e.target.value)
+	}
 	const validation = {
 		walletName: yup
 			.string()
@@ -716,101 +759,119 @@ const DedicatedAgentForm = ({
 			.trim()
 			.required('Wallet name is required')
 			.label('Wallet name'),
-		password: yup
+
+		agentEndpoint:yup
 			.string()
-			.matches(
-				passwordRegex,
-				'Password must contain one Capital, Special character',
-			)
-			.required('Wallet password is required')
-			.label('Wallet password'),
-		did: haveDid ? yup.string().required('DID is required') : yup.string(),
-		network: yup.string().required('Network is required'),
+			.url()
+			.trim()
+			.required('agent endpoint is required')
+			.label('Agent Endpoint'),
+			
+		apiKey:yup
+			.string()
+			.trim()
+			.required('Api key is required')
+			.label('Api key')
 	};
 
-	if (haveDid) {
-		validation.seed = yup.string().required('Seed is required');
+	const didCreationValidation={
+		method:yup.string().trim().required().label('Method'),
+		...(DidMethod.INDY === selectedMethod || DidMethod.POLYGON === selectedMethod) && { network: yup.string().required('Network is required') },
+
 	}
+	// {
+	// 	"seed": "jfrekfngdjrkfejhgdjfdkjhjdbeiuff",
+	// 	"keyType": "ed25519",
+	// 	"method": "indy",
+	// 	"network": "bcovrin:testnet",
+	// 	"role": "endorser",
+	//   }
+
+	const setAgentConfig=async (values: DedicatedAgentConfig)=>{
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		const token = await getFromLocalStorage(storageKeys.TOKEN)
+
+		const details = {
+			url:  `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.setAgentConfig}`,
+			payload:{
+				"walletName": values.walletName,
+				"agentEndpoint": values.agentEndpoint,
+				"apiKey": values.apiKey
+			  },
+			config: { headers: {
+				'Content-type': 'application/json',
+				'Authorization': `Bearer ${token}`,
+			  }, }
+		  };
+		
+		  try {
+			const response = await axiosPost(details)
+			console.log('response',response)
+			setIsConfigDone(true)
+			return response
+		  }
+		  catch (error) {
+			const err = error as Error
+			return err?.message
+		  }
+	}
+
+	const generatePolygonKeyValuePair = async () => {
+		try {
+			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+			const resCreatePolygonKeys = await createPolygonKeyValuePair(orgId);
+			const { data } = resCreatePolygonKeys as AxiosResponse;
+
+			if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+				setGeneratedKeys(data?.data);
+			}
+		} catch (err) {
+			console.log('Generate private key ERROR::::', err);
+		}
+	};
+
+	useEffect(()=>{
+		if(selectedMethod && mappedData){
+			const ledgerDetails = mappedData[selectedMethod]
+			const networkList:string[] = []
+			Object.keys(ledgerDetails).map(ledger=>{
+				Object.keys(ledgerDetails[ledger]).map(network=>{
+					networkList.push(`${ledger}:${network}`)
+				})
+			})
+			setNetworkOptions(networkList)
+		}
+	},[selectedMethod])
 
 	return (
 		<>
-			<div className="flex items-center gap-2 mt-4">
-				<Checkbox id="haveDid" onChange={(e) => setHaveDid(e.target.checked)} />
-				<Label className="flex" htmlFor="haveDid">
-					<p>Already have DID?</p>
-				</Label>
-			</div>
-			<Formik
+		{!isConfigDone&&
+ 			<Formik
 				initialValues={{
-					seed: haveDid ? '' : seeds,
 					walletName: '',
-					password: '',
-					did: '',
-					network: '',
+					agentEndpoint: '',
+					apiKey: '',
 				}}
 				validationSchema={yup.object().shape(validation)}
-				validateOnBlur
-				validateOnChange
-				enableReinitialize
-				onSubmit={(values: Values) => submitDedicatedWallet(values)}
-			>
-				{(formikHandlers): JSX.Element => (
-					<Form
-						className="mt-8 space-y-4 max-w-lg flex-col gap-4"
-						onSubmit={formikHandlers.handleSubmit}
-					>
+				onSubmit={async (values: DedicatedAgentConfig) => {
+					console.log('values',values);
+					// agentHealthCheck(values.agentEndpoint,values.apiKey)
+					setAgentConfig(values)
+					
+
+				}}
+				>	
+				{(formikHandlers):JSX.Element => (
+					<Form className="mt-8 space-y-4 max-w-lg flex-col gap-4">
 						<div>
 							<div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
-								<Label htmlFor="seed" value="Seed" />
-								<span className="text-red-500 text-xs">*</span>
-							</div>
-							<Field
-								id="seed"
-								name="seed"
-								disabled={!haveDid}
-								value={haveDid ? formikHandlers.values.seed : seeds}
-								component={!haveDid && InputCopy}
-								className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-								type="text"
-							/>
-							{formikHandlers?.errors?.seed &&
-								formikHandlers?.touched?.seed && (
-									<span className="text-red-500 text-xs">
-										{formikHandlers?.errors?.seed}
-									</span>
-								)}
-						</div>
-						{haveDid && (
-							<div className="">
-								<div className="mb-1 block">
-									<Label htmlFor="did" value="DID" />
-									<span className="text-red-500 text-xs">*</span>
-								</div>
-
-								<Field
-									id="did"
-									name="did"
-									className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-									type="text"
-								/>
-								{formikHandlers?.errors?.did &&
-									formikHandlers?.touched?.did && (
-										<span className="text-red-500 text-xs">
-											{formikHandlers?.errors?.did}
-										</span>
-									)}
-							</div>
-						)}
-						<NetworkInput formikHandlers={formikHandlers} />
-
-						<div>
-							<div className="mb-1 block">
 								<Label htmlFor="walletName" value="Wallet Name" />
 								<span className="text-red-500 text-xs">*</span>
 							</div>
 							<Field
 								id="walletName"
 								name="walletName"
+								value={formikHandlers.values.walletName}
 								className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 								type="text"
 							/>
@@ -822,20 +883,40 @@ const DedicatedAgentForm = ({
 								)}
 						</div>
 						<div>
-							<div className="mb-2 block">
-								<Label htmlFor="password" value="Password" />
+							<div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
+								<Label htmlFor="agentEndpoint" value="Agent Endpoint" />
 								<span className="text-red-500 text-xs">*</span>
 							</div>
 							<Field
-								id="password"
-								name="password"
+								id="agentEndpoint"
+								name="agentEndpoint"
+								value={formikHandlers.values.agentEndpoint}
 								className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-								type="password"
+								type="text"
 							/>
-							{formikHandlers?.errors?.password &&
-								formikHandlers?.touched?.password && (
+							{formikHandlers?.errors?.agentEndpoint &&
+								formikHandlers?.touched?.agentEndpoint && (
 									<span className="text-red-500 text-xs">
-										{formikHandlers?.errors?.password}
+										{formikHandlers?.errors?.agentEndpoint}
+									</span>
+								)}
+						</div>
+						<div>
+							<div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
+								<Label htmlFor="apiKey" value="Api Key" />
+								<span className="text-red-500 text-xs">*</span>
+							</div>
+							<Field
+								id="apiKey"
+								name="apiKey"
+								value={formikHandlers.values.apiKey}
+								className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+								type="text"
+							/>
+							{formikHandlers?.errors?.apiKey &&
+								formikHandlers?.touched?.apiKey && (
+									<span className="text-red-500 text-xs">
+										{formikHandlers?.errors?.apiKey}
 									</span>
 								)}
 						</div>
@@ -844,11 +925,166 @@ const DedicatedAgentForm = ({
 							type="submit"
 							className='float-right text-base font-medium text-center text-white bg-primary-700 hover:bg-primary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
 						>
-							Setup Agent
+							Setup Config
 						</Button>
 					</Form>
+					)}
+				</Formik>
+		}
+		{isConfigDone&&
+		<Formik
+		initialValues={{
+			seed:seedVal,
+			keyType:'ed25519',
+			method:'',
+			network:'',
+			role:''
+		}}
+		validationSchema={yup.object().shape(didCreationValidation)}
+		onSubmit={async (values: DidCreationConfig) => {
+			console.log('did creation values',values);
+		
+		}}
+		>	
+		{(formikHandlers):JSX.Element => (
+			<Form className="mt-8 space-y-4 max-w-lg flex-col gap-4">
+				<div className="my-3">
+						<div className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
+							<Label value="Seed" />
+						</div>
+						<div className="flex">
+							<CopyDid
+								className="align-center block text-sm text-gray-900 dark:text-white"
+								value={seedVal}
+							/>
+						</div>
+					</div>
+				<div>
+					<div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
+						<Label htmlFor="keyType" value="Key Type" />
+					</div>
+					<div className='flex'>ed25519</div>
+				</div>
+				<div className="mb-3 relative">
+					<label
+						htmlFor="method"
+						className="text-sm font-medium text-gray-900 dark:text-gray-300"
+					>
+						Method
+						<span className="text-red-500 text-xs">*</span>
+					</label>
+					<select
+						onChange={(e) => {
+							formikHandlers.handleChange(e);
+							handleMethodChange(e);
+						}}
+						id="method"	name="method" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+					>
+						<option value="">Select Method</option>
+						{mappedData && Object.keys(mappedData)?.map((method) => (
+								<option key={method} value={method}>{method.charAt(0).toUpperCase() + method.slice(1)}</option>
+							))}
+					</select>
+					{formikHandlers?.errors?.method && formikHandlers?.touched?.method && (
+							<span className="absolute botton-0 text-red-500 text-xs">{formikHandlers?.errors?.method}</span>
+						)}
+				</div>
+				{formikHandlers.values.method === DidMethod.POLYGON && (
+									
+					<GenerateBtnPolygon  generatePolygonKeyValuePair={()=>generatePolygonKeyValuePair()}/>
 				)}
-			</Formik>
+				{generatedKeys && (
+									<div className="my-3 relative">
+										<p className="text-sm truncate">
+											<span className="font-semibold text-gray-900 dark:text-white">
+												Private Key:
+											</span>
+											<div className="flex ">
+												<CopyDid
+													className="align-center block text-sm text-gray-900 dark:text-white truncate"
+													value={generatedKeys?.privateKey.slice(2)}
+												/>
+											</div>
+										</p>
+
+										<p className="text-sm truncate">
+											<span className="font-semibold text-gray-900 dark:text-white">
+												Address:
+											</span>
+											<div className="flex ">
+												<CopyDid
+													className="align-center block text-sm text-gray-900 dark:text-white truncate"
+													value={generatedKeys?.address}
+												/>
+											</div>
+										</p>
+									</div>
+				)}
+				{generatedKeys && formikHandlers.values.method === DidMethod.POLYGON && (<TokenWarningMessage />)}
+
+				{formikHandlers.values.method === DidMethod.POLYGON && (<SetPrivateKeyValueInput setPrivateKeyValue={(val:string)=>setPrivateKeyValue(val)} privateKeyValue={privateKeyValue} formikHandlers={formikHandlers}/>)}
+				{formikHandlers.values.method === DidMethod.WEB && (<SetDomainValueInput setDomainValue={(val:string)=>setDomainValue(val)} domainValue={domainValue} formikHandlers={formikHandlers}/>)} 
+
+				{formikHandlers.values.method===DidMethod.INDY&&
+				<div className="my-3 relative">
+					<label
+					htmlFor="network"
+					className="text-sm font-medium text-gray-900 dark:text-gray-300"
+				>
+					Network
+					<span className="text-red-500 text-xs">*</span>
+				</label>
+				<select
+					onChange={(e) => {
+						formikHandlers.handleChange(e);
+						setSelectedNetwork(e.target.value);
+					}}
+					value={selectedNetwork}
+					id="network"
+					name="network"
+					className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+				>
+					<option value="">Select Network</option>
+						{mappedData &&
+						networkOptions &&
+						networkOptions.map(element=>(
+							<option key={element} value={element}>
+						 	{element}
+						 </option>
+						))
+						}
+				</select>
+
+				{formikHandlers?.errors?.network &&
+					formikHandlers?.touched?.network && (
+						<span className="absolute botton-0 text-red-500 text-xs">
+							{formikHandlers?.errors?.network}
+						</span>
+					)}
+				</div>
+				}
+				<div className="my-3 relative">
+					<label
+						htmlFor="DID Method"
+						className="text-sm font-medium text-gray-900 dark:text-gray-300"
+					>
+						DID Method
+					</label>
+					<div className="bg-gray-100 font-semibold text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11">
+						{formikHandlers.values.method}
+					</div>
+				</div>
+				<Button
+					isProcessing={loading}
+					type="submit"
+					className='float-right text-base font-medium text-center text-white bg-primary-700 hover:bg-primary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+				>
+					Create Did
+				</Button>
+			</Form>
+			)}
+		</Formik>
+		}
 		</>
 	);
 };
@@ -1057,7 +1293,7 @@ const WalletSpinup = (props: {
 								</li>
 								<li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
 									<div className="flex items-center pl-3">
-										<label className="w-full py-3 text-sm font-medium text-gray-400 dark:text-gray-300 cursor-not-allowed flex items-center">
+										<label className="w-full py-3 text-sm font-medium text-gray-400 dark:text-gray-300 flex items-center">
 											<input
 												id="horizontal-list-radio-id"
 												type="radio"
@@ -1065,7 +1301,6 @@ const WalletSpinup = (props: {
 												onChange={() => onRadioSelect(AgentType.DEDICATED)}
 												checked={agentType === AgentType.DEDICATED}
 												name="list-radio"
-												disabled
 												className="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500 disabled:cursor-not-allowed mr-2"
 											/>
 											Dedicated

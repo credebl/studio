@@ -81,7 +81,8 @@ export const apiRoutes = {
 		agentDedicatedSpinup: '/agents/spinup',
 		agentSharedSpinup: '/agents/wallet',
 		getLedgerConfig: '/agents/ledgerConfig',
-		createPolygonKeys: '/agents/polygon/create-keys'
+		createPolygonKeys: '/agents/polygon/create-keys',
+		setAgentConfig:'/agents/configure'
 	},
 	Platform: {
 		getAllSchemaFromPlatform: '/platform/schemas',
