@@ -5,8 +5,8 @@ import * as Yup from 'yup';
 import { Alert, Button, Card } from 'flowbite-react';
 import { Field, FieldArray, Form, Formik } from 'formik';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
-import { getFromLocalStorage, removeFromLocalStorage } from '../../api/Auth';
 import { useEffect, useState } from 'react';
+import { getFromLocalStorage, removeFromLocalStorage } from '../../api/Auth';
 import BackButton from '../../commonComponents/backbutton';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
@@ -71,6 +71,7 @@ const IssueCred = () => {
 		credDefId: string,
 		orgId: string,
 	) => {
+		
 		const credentialData = selectedUsers.map((user) => {
 			const attributesArray = attributes.map((attr) => ({
 				name: attr.attributeName,
@@ -84,7 +85,7 @@ const IssueCred = () => {
 				attributes: attributesArray,
 			};
 		});
-
+	
 		const issuancePayload = {
 			credentialData,
 			credentialDefinitionId: credDefId,
@@ -94,7 +95,7 @@ const IssueCred = () => {
 		setIssuanceFormPayload(issuancePayload);
 		setUserLoader(false);
 	};
-
+	
 	const createAttributeValidationSchema = (
 		name: string,
 		value: string,
@@ -108,13 +109,13 @@ const IssueCred = () => {
 				.map((item) => item.charAt(0).toUpperCase() + item.slice(1))
 				.join(' ');
 		}
-
+	
 		if (isRequired) {
 			if (!value) {
 				attributeSchema = Yup.string().required(`${name} is required`);
 			}
 		}
-
+		
 		return Yup.object().shape({
 			value: attributeSchema,
 		});
@@ -140,7 +141,7 @@ const IssueCred = () => {
 		const schemaAttributes = await getFromLocalStorage(storageKeys.SCHEMA_ATTR);
 
 		const parsedSchemaAttributes = JSON.parse(schemaAttributes) || [];
-
+		
 		setSchemaAttributesDetails(parsedSchemaAttributes?.attribute);
 
 		return parsedSchemaAttributes.attribute;
@@ -180,12 +181,12 @@ const IssueCred = () => {
 		const convertedAttributesValues = {
 			...issuancePayload,
 		};
-
+	
 		setIssuanceLoader(true);
 		const issueCredRes = await issueCredential(convertedAttributesValues);
-
+	
 		const { data } = issueCredRes as AxiosResponse;
-
+	
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			setSuccess(data?.message);
 			window.location.href = `${pathRoutes.organizations.issuedCredentials}`;
@@ -196,7 +197,7 @@ const IssueCred = () => {
 			setIssuanceLoader(false);
 		}
 	};
-
+	
 	return (
 		<div className="px-4 pt-2">
 			<div className="mb-4 col-span-full xl:mb-2">
