@@ -323,7 +323,6 @@ const IssueCred = () => {
 																					<div className="flex items-center word-break-word text-end">
 																						<Name
 																							attr={attr?.name}
-																							displayName={''}
 																						/>
 																						{attr.isRequired && (
 																							<span className="text-red-500">
@@ -430,7 +429,7 @@ const IssueCred = () => {
 	);
 };
 
-const Name = (attr: { attr: string; displayName: string }) => {
+const Name = (attr: { attr: string}) => {
 	return (
 		<>
 			{attr?.attr
