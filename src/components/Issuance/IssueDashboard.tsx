@@ -3,7 +3,6 @@ import { Card } from 'flowbite-react';
 import BreadCrumbs from '../BreadCrumbs';
 import { pathRoutes } from '../../config/pathRoutes';
 import BackButton from '../../commonComponents/backbutton';
-import React from 'react';
 
 const IssueDashboard = () => {
 	const options = [

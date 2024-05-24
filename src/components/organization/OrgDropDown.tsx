@@ -13,7 +13,6 @@ import CustomAvatar from '../Avatar/index';
 import type { IOrgInfo, Organisation } from './interfaces';
 import { getOrganizations } from '../../api/organization';
 import { pathRoutes } from '../../config/pathRoutes';
-import React from 'react';
 
 const OrgDropDown = () => {
 	const [orgList, setOrgList] = useState<Organisation[]>([]);
@@ -113,9 +112,9 @@ const OrgDropDown = () => {
 				{activeOrg ? (
 					<div className="shrink-0 flex items-center w-6 sm:w-40 text-sm">
 						{activeOrg.logoUrl ? (
-							<CustomAvatar textSizeRatio={2.5} className='max-w-[100%] w-full h-full rounded-full font-sm ' size="20px" src={activeOrg?.logoUrl}  />
+							<CustomAvatar textSizeRatio={2.5} className='max-w-[100%] w-full h-full rounded-full font-sm ' size="25px" src={activeOrg?.logoUrl}  />
 						) : (
-							<CustomAvatar textSizeRatio={2.5} className='max-w-[100%] w-full h-full rounded-full font-sm' size="20px" name={activeOrg?.name}  />
+							<CustomAvatar textSizeRatio={2.5} className='max-w-[100%] w-full h-full rounded-full font-sm' size="25px" name={activeOrg?.name}  />
 						)}
 						<span className="ml-2 text-sm text-primary-700 dark:text-white truncate hidden sm:block">
 							{activeOrg?.name?.length > 20
@@ -175,14 +174,14 @@ const OrgDropDown = () => {
 												{org.logoUrl ? (
 													<CustomAvatar
 														className="dark:text-white max-w-[100%] w-full h-full rounded-full font-sm"
-														size="25px"
+														size="35px"
 														src={org?.logoUrl}
 														textSizeRatio={2.5}
 													/>
 												) : (
 													<CustomAvatar
 														className=" dark:text-white max-w-[100%] w-full h-full rounded-full font-sm"
-														size="25px"
+														size="35px"
 														name={org?.name}
 														textSizeRatio={2.5}
 													/>

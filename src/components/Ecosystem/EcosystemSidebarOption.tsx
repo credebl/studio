@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { checkEcosystem } from '../../config/ecosystem';
 import type { ICheckEcosystem } from '../../config/ecosystem';
 import { pathRoutes } from '../../config/pathRoutes';
-import React from 'react';
 
 const EcosystemSidebarOption = () => {
 	const [isEcosystemEnabled, setIsEcosystemEnabled] = useState(false);

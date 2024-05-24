@@ -782,7 +782,7 @@ const CreateSchema = () => {
 													formikHandlers.values.schemaVersion
 												)
 											}
-											className="dark:text-white bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-base px-4 lg:px-5 py-2 lg:py-2.5 ml-auto dark:hover:text-black"
+											className="dark:text-white bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-base ml-auto dark:hover:text-black"
 											style={{
 												height: '2.6rem',
 												width: '6rem',
@@ -791,7 +791,7 @@ const CreateSchema = () => {
 											onClick={() =>
 												setShowPopup({ show: true, type: 'reset' })
 											}
-										>
+										 >
 											<svg
 												xmlns="http://www.w3.org/2000/svg"
 												className="mr-2 dark:text-white dark:group-hover:text-primary-700"
@@ -815,7 +815,7 @@ const CreateSchema = () => {
 												inValidAttributes(formikHandlers, 'attributeName') ||
 												inValidAttributes(formikHandlers, 'displayName')
 											}
-											className="text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 ring-2 ring-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-600 py-2 lg:py-2.5 ml-auto"
+											className="text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 ring-2 ring-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-600 ml-auto"
 											style={{
 												height: '2.6rem',
 												width: 'auto',

@@ -2,7 +2,6 @@ import { Card } from 'flowbite-react';
 import { dateConversion } from '../utils/DateConversion';
 import DateTooltip from '../components/Tooltip';
 import CopyDid from './CopyDid';
-import React from 'react';
 
 interface IProps {
   className?: string,

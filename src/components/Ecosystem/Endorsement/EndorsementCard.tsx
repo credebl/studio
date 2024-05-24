@@ -6,7 +6,6 @@ import StatusTabletTag from '../../../commonComponents/StatusTabletTag';
 import { checkEcosystem } from '../../../config/ecosystem';
 import type { ICheckEcosystem} from '../../../config/ecosystem';
 import { useEffect, useState } from 'react';
-import React from 'react';
 
 interface IProps {
     data: any,

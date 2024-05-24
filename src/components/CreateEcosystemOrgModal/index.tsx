@@ -491,9 +491,6 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 										isProcessing={loading}
 										className="float-right text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-700 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 									>
-										{
-											loading ? <CustomSpinner /> : ""
-										}
 
 										<svg
 											className="pr-2"

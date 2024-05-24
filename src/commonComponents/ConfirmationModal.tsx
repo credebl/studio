@@ -116,7 +116,7 @@ const ConfirmationModal = ({ openModal, closeModal, onSuccess, message, isProces
 									onSuccess(true);
 								}}
 								className="sm:min-w-[197px] text-md bg-primary-700 hover:!bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 font-medium rounded-lg text-md inline-flex items-center text-center"
-							>{isProcessing ? <CustomSpinner/> : ""}
+							>
 								{buttonTitles[1]}
 							</Button>
 						</div>

@@ -1,6 +1,5 @@
 import type { TableData, TableHeader } from './interface';
 import CustomSpinner from '../../components/CustomSpinner';
-import React from 'react';
 
 interface DataTableProps {
 	header: TableHeader[];

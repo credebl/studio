@@ -12,6 +12,7 @@ import { pathRoutes } from '../config/pathRoutes';
 import { EmptyListMessage } from '../components/EmptyListComponent';
 
 
+
 const EcosystemProfileCard = ({getEndorsementListData}:IEndorsement) => {
     const [ecosystemDetails, setEcosystemDetails] = useState<IEcosystem | null>();
     const [ecosystemList, setEcosystemList] = useState<IEcosystem[] | null>();

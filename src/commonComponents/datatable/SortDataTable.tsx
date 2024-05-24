@@ -4,7 +4,7 @@ import SearchInput from '../../components/SearchInput';
 import { Pagination } from 'flowbite-react';
 import { useState } from 'react';
 import { EmptyListMessage } from '../../components/EmptyListComponent';
-import React from 'react';
+
 
 const SortDataTable: React.FC<IDataTable> = ({
 	header,

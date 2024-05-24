@@ -1,4 +1,3 @@
-import React from 'react'
 import { envConfig } from '../../config/envConfig';
 
 const FooterBar = () => {

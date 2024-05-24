@@ -14,7 +14,6 @@ import type { User } from '../interfaces/users';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { getOrganizationUsers } from '../../../api/organization';
 import { EmptyListMessage } from '../../EmptyListComponent';
-import React from 'react';
 
 const initialPageState = {
 	pageNumber: 1,

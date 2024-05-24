@@ -12,7 +12,6 @@ import type { AxiosResponse } from 'axios';
 import { BulkIssuanceStatus } from '../../common/enums';
 import SortDataTable from '../../commonComponents/datatable/SortDataTable';
 import type { IConnectionListAPIParameter } from '../../api/connection';
-import React from 'react';
 
 interface IProps {
 	requestId: string;

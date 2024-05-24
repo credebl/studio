@@ -26,7 +26,6 @@ import { AlertComponent } from '../../AlertComponent';
 import { Features } from '../../../utils/enums/features';
 import EcosystemProfileCard from '../../../commonComponents/EcosystemProfileCard';
 import type { IEndorsementList, ISelectedRequest } from '../interfaces';
-import React from 'react';
 
 
 const EndorsementList = () => {

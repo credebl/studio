@@ -166,7 +166,7 @@ const Index = () => {
 																}
 															>
 																{
-											                      loading ? <CustomSpinner /> : ""
+											                      loading ? <CustomSpinner message=''/> : ""
 										                        }
 																{regenerate
 																	? 'Regenerate Client Secret'

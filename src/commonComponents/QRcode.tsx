@@ -1,7 +1,6 @@
 import { useRef, useState } from "react";
 import QRCode from "react-qr-code";
 import domtoimage from 'dom-to-image';
-import React from "react";
 
 const CustomQRCode = ({ value, size }: { value: string, size: number }) => {
 

@@ -1,6 +1,5 @@
 import { Button, Modal } from 'flowbite-react';
 import type { IProps } from './interface';
-import React from 'react';
 
 const ResetPopup = (props: IProps) => {
 	return (

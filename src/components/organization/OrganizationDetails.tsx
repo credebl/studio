@@ -163,7 +163,7 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 				<div className="flex flex-col justify-center text-wrap">
 					{loading ? (
 						<div className="flex justify-center">
-							<CustomSpinner />
+							
 						</div>
 					) : (
 						connectionData && (

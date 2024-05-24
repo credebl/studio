@@ -2,7 +2,6 @@ import { useState } from 'react';
 import BreadCrumbs from '../../BreadCrumbs';
 import Invitations from '../invitations/Invitations';
 import Members from './Members';
-import React from 'react';
 
 const initialPageState = {
     pageNumber: 1,

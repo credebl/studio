@@ -24,7 +24,6 @@ import { getEcosystems } from '../../api/ecosystem';
 import type { IEcosystem } from './interfaces';
 import { checkEcosystem, getOrgDetails } from '../../config/ecosystem';
 import type { ICheckEcosystem} from '../../config/ecosystem';
-import React from 'react';
 
 const initialPageState = {
 	pageNumber: 1,
