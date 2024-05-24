@@ -31,6 +31,10 @@ export enum ProofRequestStateUserText {
 	abandoned = 'Declined',
 }
 
+export enum SchemaType {
+    INDY = 'indy',
+    W3C = 'w3c'
+}
 export enum IssueCredentialUserText {
 	offerSent = 'Offered',
 	done = 'Accepted',

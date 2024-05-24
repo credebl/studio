@@ -20,6 +20,7 @@ import { ICheckEcosystem,	checkEcosystem,	getEcosystemId } from '../../../config
 import { createSchemaRequest } from '../../../api/ecosystem';
 import EcosystemProfileCard from '../../../commonComponents/EcosystemProfileCard';
 import ConfirmationModal from '../../../commonComponents/ConfirmationModal';
+import { SchemaType } from '../../../common/enums';
 
 const options = [
 	{
@@ -158,7 +159,7 @@ const CreateSchema = () => {
 
 		const id = await getEcosystemId();
 
-		const createSchema = await createSchemaRequest(schemaFieldName, id, orgId);
+		const createSchema = await createSchemaRequest(schemaFieldName, SchemaType.INDY, id, orgId);
 		const { data } = createSchema as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			setSuccess(data?.message);
