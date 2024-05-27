@@ -22,7 +22,6 @@ import NavBar from './NavBar.js';
 import FooterBar from './FooterBar.js';
 import PasswordSuggestionBox from './PasswordSuggestionBox.js';
 import { PassInvisible, PassVisible, SignUpArrow } from './Svg.js';
-import CustomSpinner from '../CustomSpinner/index.js';
 
 interface passwordValues {
 	email: string;

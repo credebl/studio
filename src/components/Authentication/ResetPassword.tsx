@@ -20,7 +20,6 @@ import {
 } from '../../api/Auth.js';
 import type { AxiosResponse } from 'axios';
 import { PassInvisible, PassVisible } from './Svg.js';
-import CustomSpinner from '../CustomSpinner/index.js';
 
 interface passwordValues {
 	password: string;

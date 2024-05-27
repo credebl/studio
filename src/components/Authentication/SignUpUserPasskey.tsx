@@ -15,8 +15,6 @@ import SignUpUserName from './SignUpUserName.js';
 import { v4 as uuidv4 } from 'uuid';
 import NavBar from './NavBar.js';
 import FooterBar from './FooterBar.js';
-import CustomSpinner from '../CustomSpinner';
-
 
 interface passwordValues {
 

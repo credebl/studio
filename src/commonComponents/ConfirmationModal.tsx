@@ -1,7 +1,6 @@
 import { Button, Modal } from 'flowbite-react';
 import { AlertComponent } from '../components/AlertComponent';
 import React, {type ReactElement } from 'react';
-import CustomSpinner from '../components/CustomSpinner';
 
 interface IProps {
 	openModal: boolean;

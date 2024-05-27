@@ -4,7 +4,6 @@ import CustomAvatar from '../Avatar/index'
 import type { IUserProfile } from "./interfaces";
 import { getFromLocalStorage } from "../../api/Auth";
 import { storageKeys } from "../../config/CommonConstant";
-import React from "react";
 
 const DisplayProfileImg = () => {
     const [userObj, setUserObj] = useState<IUserProfile | null>(null)

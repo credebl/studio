@@ -32,7 +32,6 @@ import SetDomainValueInput from './walletCommonComponents/SetDomainValueInput';
 import TokenWarningMessage from './walletCommonComponents/TokenWarningMessage';
 import LedgerLessMethodsComponents from './walletCommonComponents/LegderLessMethods'
 import SetPrivateKeyValueInput from './walletCommonComponents/SetPrivateKeyValue';
-import CustomSpinner from '../CustomSpinner';
 
 
 interface Values {

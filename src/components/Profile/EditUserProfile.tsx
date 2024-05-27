@@ -10,8 +10,6 @@ import { Form, Formik } from "formik";
 import type { FormikHelpers as FormikActions } from 'formik';
 
 import * as yup from "yup"
-import React from "react";
-import CustomSpinner from "../CustomSpinner";
 
 interface Values {
   profileImg: string;

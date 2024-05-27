@@ -22,7 +22,6 @@ import { pathRoutes } from '../../config/pathRoutes';
 import NavBar from './NavBar';
 import FooterBar from './FooterBar';
 import { PlatformRoles } from '../../common/enums';
-import CustomSpinner from '../CustomSpinner';
 interface signInUserProps {
 	email: string;
 }

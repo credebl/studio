@@ -11,7 +11,6 @@ import { emailRegex, storageKeys } from '../../config/CommonConstant';
 import FooterBar from './FooterBar';
 import { envConfig } from '../../config/envConfig';
 import { validEmail } from '../../utils/TextTransform';
-import CustomSpinner from '../CustomSpinner';
 
 interface emailValue {
 	email: string | null;

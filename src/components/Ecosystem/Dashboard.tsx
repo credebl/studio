@@ -7,8 +7,6 @@ import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
 import CustomAvatar from '../Avatar';
 import CustomSpinner from '../CustomSpinner';
-// import endorseIcon from '../../assets/endorser-icon.svg';
-// import memberIcon from '../../assets/member-icon.svg';
 import MemberList from './MemberList';
 import { getEcosystems, getEcosystemDashboard } from '../../api/ecosystem';
 import { EmptyListMessage } from '../EmptyListComponent';

@@ -17,7 +17,6 @@ import {
 import type { AxiosResponse } from 'axios';
 import { AlertComponent } from '../../AlertComponent';
 import { getFromLocalStorage } from '../../../api/Auth';
-import CustomSpinner from '../../CustomSpinner';
 
 const EndorsementPopup = (props: {
 	openModal: boolean;

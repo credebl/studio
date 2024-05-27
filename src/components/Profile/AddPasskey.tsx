@@ -21,7 +21,6 @@ import type {
 } from './interfaces';
 import type { AxiosError, AxiosResponse } from 'axios';
 import { AlertComponent } from '../AlertComponent';
-import React from 'react';
 
 interface IResponseMessages {type: "error" | "success", message: string}
 
