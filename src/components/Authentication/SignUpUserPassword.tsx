@@ -172,7 +172,7 @@ const SignUpUserPassword = ({
 										>
 											<input type="hidden" name="_csrf" value={new Date().getTime()} />
 											<div>
-												<div className="text-primary-700 font-inter text-base font-medium leading-5">
+												<div className="text-primary-700 font-inter text-base font-medium leading-5 dark:text-white">
 													<div className="block mb-2 text-sm font-medium  dark:text-white">
 														<Label
 															className="text-primary-700 dark:text-gray-200"

@@ -49,7 +49,7 @@
 		"downloadjs": "^1.4.7",
 		"eslint": "^8.57.0",
 		"flowbite": "^2.3.0",
-		"flowbite-react": "^0.6.4",
+		"flowbite-react": "^0.4.11",
 		"flowbite-typography": "^1.0.3",
 		"formik": "^2.4.6",
 		"html2canvas": "^1.4.1",

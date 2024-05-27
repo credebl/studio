@@ -70,13 +70,13 @@ const DisplayUserProfile = ({
 								{userProfileInfo?.profileImg ? (
 									<CustomAvatar
 										className="mb-4 rounded-full w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
-										size="80"
+										size="80px"
 										src={userProfileInfo?.profileImg}
 									/>
 								) : (
 									<CustomAvatar
 										className="mb-4 border border-b rounded-full w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
-										size="80"
+										size="80px"
 										src={
 											userProfileInfo?.firstName ??
 											'../../public/images/profile.png'
