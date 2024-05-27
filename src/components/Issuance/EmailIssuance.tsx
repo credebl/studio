@@ -22,6 +22,7 @@ import RoleViewButton from '../RoleViewButton';
 import { checkEcosystem, type ICheckEcosystem } from '../../config/ecosystem';
 import { Features } from '../../utils/enums/features';
 import { Create, SchemaEndorsement } from './Constant';
+import { SchemaType } from '../../common/enums';
 
 const EmailIssuance = () => {
 	const [formData, setFormData] = useState();
@@ -47,7 +48,7 @@ const EmailIssuance = () => {
 			setLoading(true);
 			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 			if (orgId) {
-				const response = await getSchemaCredDef();
+				const response = await getSchemaCredDef(SchemaType.INDY);
 				const { data } = response as AxiosResponse;
 
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
