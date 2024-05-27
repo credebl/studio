@@ -23,7 +23,6 @@ import { createEcosystems } from '../../api/ecosystem';
 import { getOrgDetails } from '../../config/ecosystem';
 import EndorsementTooltip from '../../commonComponents/EndorsementTooltip';
 import { processImage } from '../../utils/processImage';
-import CustomSpinner from '../CustomSpinner/index.js';
 
 interface Values {
 	name: string;
@@ -247,7 +246,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 		return (
 			<Modal
 			className="bg-gray-900 bg-opacity-50 dark:bg-opacity-80"
-				size={!props.isorgModal ? '2xl' : '2xl'}
+				size={'2xl'}
 				show={props.openModal}
 				onClose={() => {
 					setLogoImage({

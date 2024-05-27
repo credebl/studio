@@ -16,7 +16,6 @@ import SignUpUserName from './SignUpUserName'
 import FooterBar from './FooterBar.js';
 import NavBar from './NavBar.js';
 import { validEmail } from '../../utils/TextTransform.js';
-import CustomSpinner from '../CustomSpinner/index.js';
 
 interface emailValue {
 	email: string;

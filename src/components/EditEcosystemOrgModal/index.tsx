@@ -16,7 +16,6 @@ import React, { useEffect, useState } from 'react';
 import EndorsementTooltip from '../../commonComponents/EndorsementTooltip';
 import { processImage } from '../../utils/processImage';
 import FormikErrorMessage from '../../commonComponents/formikerror/index'
-import CustomSpinner from '../CustomSpinner';
 
 const EditPopupModal = (props: EditEntityModalProps) => {
 	const [logoImage, setLogoImage] = useState<ILogoImage>({

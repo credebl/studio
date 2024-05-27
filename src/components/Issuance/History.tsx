@@ -18,7 +18,6 @@ import {
 	BulkIssuanceHistoryData,
 } from '../../common/enums';
 import { ToastContainer, toast } from 'react-toastify';
-import React from 'react';
 import SortDataTable from '../../commonComponents/datatable/SortDataTable';
 import type { IConnectionListAPIParameter } from '../../api/connection';
 

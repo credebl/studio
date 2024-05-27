@@ -8,7 +8,6 @@ import { updatePlatformSettings, type IPlatformSetting, getPlatformSettings } fr
 import type { AxiosResponse } from 'axios';
 import { apiStatusCodes } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent'
-import CustomSpinner from '../CustomSpinner'
 
 interface IForm {
     externalIp: string;
