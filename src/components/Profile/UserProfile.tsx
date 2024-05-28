@@ -109,7 +109,7 @@ const UserProfile = ({ noBreadcrumb }: { noBreadcrumb?: boolean }) => {
 
           </div>
           <div className="hidden rounded-lg bg-gray-50 dark:bg-gray-800" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
-          <AddPasskey responseMessages={() => ({ type: "success" || "error", message: "" })} />
+          <AddPasskey responseMessages={() => ({ type: "success",  message: "" })} />
 
           </div>
 
