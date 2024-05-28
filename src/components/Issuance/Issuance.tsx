@@ -5,8 +5,8 @@ import * as Yup from 'yup';
 import { Alert, Button, Card } from 'flowbite-react';
 import { Field, FieldArray, Form, Formik } from 'formik';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
-import { getFromLocalStorage, removeFromLocalStorage, setToLocalStorage } from '../../api/Auth';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { getFromLocalStorage, removeFromLocalStorage } from '../../api/Auth';
 import BackButton from '../../commonComponents/backbutton';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
@@ -76,10 +76,10 @@ const IssueCred = () => {
 			const attributesArray = attributes.map((attr) => ({
 				name: attr.attributeName,
 				value: '',
-				dataType: attr?.schemaDataType,				
-				isRequired: attr.isRequired
+				dataType: attr?.schemaDataType,
+				isRequired: attr.isRequired,
 			}));
-	
+
 			return {
 				connectionId: user.connectionId,
 				attributes: attributesArray,
@@ -99,14 +99,14 @@ const IssueCred = () => {
 	const createAttributeValidationSchema = (
 		name: string,
 		value: string,
-		isRequired: boolean
+		isRequired: boolean,
 	) => {
-		let attributeSchema = Yup.string();;
+		let attributeSchema = Yup.string();
 
 		if (name) {
 			name = name
 				.split('_')
-				.map(item => item.charAt(0).toUpperCase() + item.slice(1))
+				.map((item) => item.charAt(0).toUpperCase() + item.slice(1))
 				.join(' ');
 		}
 	
@@ -122,17 +122,20 @@ const IssueCred = () => {
 	};
 
 	const validationSchema = Yup.object().shape({
-        credentialData: Yup.array().of(
-            Yup.object().shape({
+		credentialData: Yup.array().of(
+			Yup.object().shape({
 				attributes: Yup.array().of(
-                    Yup.lazy((attr) => {						
-						return createAttributeValidationSchema(attr?.name, attr?.value, attr?.isRequired)
+					Yup.lazy((attr) => {
+						return createAttributeValidationSchema(
+							attr?.name,
+							attr?.value,
+							attr?.isRequired,
+						);
 					}),
-                ),
-            }),
-        ),
-    });
-
+				),
+			}),
+		),
+	});
 
 	const getSchemaDetails = async (): Promise<DataTypeAttributes[] | null> => {
 		const schemaAttributes = await getFromLocalStorage(storageKeys.SCHEMA_ATTR);
@@ -162,18 +165,18 @@ const IssueCred = () => {
 
 	const handleSubmit = async (values: IssuanceFormPayload) => {
 		const issuancePayload = {
-            credentialData: values.credentialData.map(item => {
+			credentialData: values.credentialData.map((item) => {
 				return {
 					...item,
-					attributes: item.attributes.map(attr => ({
+					attributes: item.attributes.map((attr) => ({
 						name: attr.name,
-						value: attr.value.toString()
-					}))
-				}
+						value: attr.value.toString(),
+					})),
+				};
 			}),
-            credentialDefinitionId: values.credentialDefinitionId,
-            orgId: values.orgId
-        };
+			credentialDefinitionId: values.credentialDefinitionId,
+			orgId: values.orgId,
+		};
 
 		const convertedAttributesValues = {
 			...issuancePayload,
@@ -237,7 +240,7 @@ const IssueCred = () => {
 							validationSchema={validationSchema}
 							onSubmit={handleSubmit}
 						>
-							{({ values, errors, touched, isValid }) => (
+							{({ values, errors, touched }) => (
 								<Form>
 									{failure && (
 										<div className="pt-1 pb-1">
@@ -248,7 +251,7 @@ const IssueCred = () => {
 											</Alert>
 										</div>
 									)}
-									<FieldArray name="issuanceFormPayload">
+									<FieldArray name="credentialData">
 										{(arrayHelpers) => (
 											<>
 												{values?.credentialData.map((user, index) => (
@@ -280,27 +283,11 @@ const IssueCred = () => {
 																	>
 																		<Button
 																			data-testid="deleteBtn"
-																			type="button"
 																			color="danger"
+																			type="button"
 																			className={` dark:bg-gray-700 flex justify-end focus:ring-0`}
-																			onClick={async () => {
-																				const data =
-																					issuanceFormPayload?.credentialData;
-																				const findIndex = data.findIndex(
-																					(item) =>
-																						item.connectionId ===
-																						user.connectionId,
-																				);
-																				data.splice(findIndex, 1);
-																				const issuancePayload = {
-																					...issuanceFormPayload,
-																					credentialData: data,
-																				};
-																				setIssuanceFormPayload(issuancePayload);
-																				window.location.reload();
-
-																				await setToLocalStorage(storageKeys.SELECTED_USER, data);	
-																		  
+																			onClick={() => {
+																				arrayHelpers.remove(index);
 																			}}
 																		>
 																			<svg
@@ -325,73 +312,77 @@ const IssueCred = () => {
 															<h3 className="dark:text-white">Attributes</h3>
 															<div className="container mx-auto pr-2">
 																<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2">
-																	{schemaAttributesDetails &&
-																		schemaAttributesDetails?.length > 0 &&
-																		schemaAttributesDetails?.map(
-																			(attr, attrIndex) => (
-																				<div key={attr.attributeName}>
-																					<div
-																						key={attr?.attributeName}
-																						className="flex"
-																					>
-																						<label
-																							htmlFor={`values.credentialData.${index}.attributes.${attrIndex}.value`}
-																							className="dark:text-white w-2/5 pr-3 flex justify-end items-center font-light"
-																						>
-																							<div className="flex items-center word-break-word text-end">
-																								<Name attr={attr} />
-																								{attr.isRequired && (
-																									<span className="text-red-500">
-																										*
-																									</span>
-																								)}{' '}
-																								:
-																							</div>
-																						</label>
-																						<div className="w-3/5">
-																							<Field
-																								type={
-																									attr?.schemaDataType ===
-																									'date'
-																										? 'date'
-																										: attr?.schemaDataType
-																								}
-																								id={`credentialData.${index}.attributes.${attrIndex}.value`}
-																								name={`credentialData.${index}.attributes.${attrIndex}.value`}
-																								className="bg-gray-50 relative border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-																								validate={(value) => {
-																									try {
-																										Yup.reach(
-																											validationSchema,
-																											`credentialData.${index}.attributes.${attrIndex}.value`,
-																										).validateSync(value, {
-																											abortEarly: false,
-																										});
-																									} catch (error) {
-																										return error.message;
-																									}
-																								}}
-																							/>
-																							{errors?.credentialData?.[index]
-																								?.attributes?.[attrIndex]
-																								?.value &&
-																								touched?.credentialData?.[index]
-																									?.attributes?.[attrIndex]
-																									?.value && (
-																									<div className="text-red-500 absolute text-xs word-break-word">
-																										{
-																											errors?.credentialData?.[
-																												index
-																											]?.attributes?.[attrIndex]
-																												?.value
-																										}
-																									</div>
-																								)}{' '}
-																						</div>
+																	{user.attributes.map((attr, attrIndex) => (
+																		<div
+																			key={`${user.connectionId}-${attr.name}-${attrIndex}`}
+																		>
+																			<div key={attr?.name} className="flex">
+																				<label
+																					htmlFor={`credentialData.${index}.attributes.${attrIndex}.value`}
+																					className="dark:text-white w-2/5 pr-3 flex justify-end items-center font-light"
+																				>
+																					<div className="flex items-center word-break-word text-end">
+																						<Name
+																							attr={attr?.name}
+																						/>
+																						{attr.isRequired && (
+																							<span className="text-red-500">
+																								*
+																							</span>
+																						)}{' '}
+																						:
 																					</div>
+																				</label>
+																				<div className="w-3/5">
+																					<Field
+																						type={
+																							attr?.dataType === 'date'
+																								? 'date'
+																								: attr?.dataType
+																						}
+																						id={`credentialData.${index}.attributes.${attrIndex}.value`}
+																						name={`credentialData.${index}.attributes.${attrIndex}.value`}
+																						className="bg-gray-50 relative border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+																						validate={(value) => {
+																							try {
+																								Yup.reach(
+																									validationSchema,
+																									`credentialData.${index}.attributes.${attrIndex}.value`,
+																								).validateSync(value, {
+																									abortEarly: false,
+																								});
+																							} catch (error) {
+																								return error.message;
+																							}
+																						}}
+																					/>
+																					{errors?.credentialData &&
+																						errors?.credentialData?.[index] &&
+																						errors?.credentialData[index]
+																							?.attributes &&
+																						errors?.credentialData[index]
+																							?.attributes[attrIndex] &&
+																						errors?.credentialData[index]
+																							?.attributes[attrIndex]?.value &&
+																						touched?.credentialData &&
+																						touched?.credentialData[index]
+																							?.attributes &&
+																						touched?.credentialData[index]
+																							?.attributes[attrIndex]
+																							?.value && (
+																							<div className="text-red-500 absolute text-xs word-break-word">
+																								{
+																									errors?.credentialData?.[
+																										index
+																									]?.attributes?.[attrIndex]
+																										?.value
+																								}
+																							</div>
+																						)}{' '}
 																				</div>
-																			),
-																		)}
+																			</div>
+																		</div>
+																	))}
 																</div>
 															</div>
 														</Card>
@@ -439,10 +430,10 @@ const IssueCred = () => {
 	);
 };
 
-const Name = (attr: { attr: any; displayName: string }) => {
+const Name = (attr: { attr: string}) => {
 	return (
 		<>
-			{attr?.attr?.displayName
+			{attr?.attr
 				?.split('_')
 				.map(
 					(item: string | any[]) =>

@@ -227,6 +227,7 @@ const AddOrganizationInEcosystem = () => {
 	};
 
 	const refreshPage = () => {
+		setLocalOrgs([]);
 		getOwnerOrganizations(listAPIParameter);
 	};
 
@@ -241,43 +242,104 @@ const AddOrganizationInEcosystem = () => {
 	}
 
 	const handleAddOrganization = async () => {
-		const orgId = await getFromLocalStorage(storageKeys.ORG_ID) || "";
-		const ecosystemId = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID) || "";
-		setLoader(true)
+		const orgId = (await getFromLocalStorage(storageKeys.ORG_ID)) || '';
+		const ecosystemId =
+			(await getFromLocalStorage(storageKeys.ECOSYSTEM_ID)) || '';
+		setLoader(true);
 		try {
-			const response = await addOrganizationInEcosystem(localOrgs, ecosystemId, orgId);
+			const response = await addOrganizationInEcosystem(
+				localOrgs,
+				ecosystemId,
+				orgId,
+			);
 			const { data } = response as AxiosResponse;
-			setLoader(false)
+			setLoader(false);
+			setLocalOrgs([]);
+			setErrorList([]);
+			setOrganizationsList(
+				(prevState) =>
+					prevState?.map((org) => ({ ...org, checked: false, error: '' })) ||
+					[],
+			);
+
 			switch (data?.statusCode) {
 				case apiStatusCodes.API_STATUS_CREATED:
-					await removeFromLocalStorage(storageKeys.SELECT_ORG_IN_ECOSYSTEM)
-					setSuccess(data.message)
+					await removeFromLocalStorage(storageKeys.SELECT_ORG_IN_ECOSYSTEM);
+					setSuccess(data.message);
 					setTimeout(() => {
 						window.location.href = pathRoutes.ecosystem.dashboard;
 					}, 1000);
 					break;
+
 				case apiStatusCodes.API_STATUS_PARTIALLY_COMPLETED:
-					await removeFromLocalStorage(storageKeys.SELECT_ORG_IN_ECOSYSTEM)
-					const errors = data?.data?.filter((item: IErrorResponse) => item.statusCode !== apiStatusCodes.API_STATUS_CREATED)
-					const errorData = errors.map((item: IErrorResponse) => ({ id: item?.data?.orgId || "", error: item.message }))
-					await setToLocalStorage(storageKeys.ERROR_ORG_IN_ECOSYSTEM, JSON.stringify(errorData))
-					setErrorList(errorData)
-					const updateWithError = organizationsList && organizationsList?.length > 0 ? organizationsList?.map((item => ({
-						...item,
-						error: errors?.find((ele: IErrorResponse) => ele?.data?.orgId === item.id)?.message || ""
-					}))) : []
+					await removeFromLocalStorage(storageKeys.SELECT_ORG_IN_ECOSYSTEM);
+					const errors = data?.data?.filter(
+						(item: IErrorResponse) =>
+							item.statusCode !== apiStatusCodes.API_STATUS_CREATED,
+					);
+					const errorData = errors.map((item: IErrorResponse) => ({
+						id: item?.data?.orgId || '',
+						error: item.message,
+					}));
+					await setToLocalStorage(
+						storageKeys.ERROR_ORG_IN_ECOSYSTEM,
+						JSON.stringify(errorData),
+					);
+					setErrorList(errorData);
+					setLocalOrgs([]);
+
+					const updateWithError =
+						organizationsList && organizationsList?.length > 0
+							? organizationsList?.map((item) => ({
+									...item,
+									error:
+										errors?.find(
+											(ele: IErrorResponse) => ele?.data?.orgId === item.id,
+										)?.message || '',
+									checked: false
+							  }))
+							: [];
 					setSuccess(data?.message);
-					setOrganizationsList(updateWithError)
+					setOrganizationsList(updateWithError);
+					setErrorList([]);
 					break;
 				default:
-					setError(response as string || data?.message)
+					setError((response as string) || data?.message);
+					setErrorList([]);
+					setLocalOrgs([]);
+					setOrganizationsList(
+						(prevState) =>
+							prevState?.map((org) => ({
+								...org,
+								checked: false,
+								error: '',
+							})) || [],
+					);
+
 					break;
 			}
 		} catch (error) {
-			setError(error.message as string)
-			setLoader(false)
+			setError(error.message as string);
+			setLoader(false);
+			setLocalOrgs([]);
+			setErrorList([]);
+			setOrganizationsList(
+				(prevState) =>
+					prevState?.map((org) => ({ ...org, checked: false, error: '' })) ||
+					[],
+			);
 		}
-	}
+	};
+
+	useEffect(() => {
+		const clearLocalStorage = async () => {
+			await removeFromLocalStorage(storageKeys.SELECT_ORG_IN_ECOSYSTEM);
+			await removeFromLocalStorage(storageKeys.ERROR_ORG_IN_ECOSYSTEM);
+		};
+		clearLocalStorage();
+		refreshPage();
+
+	}, []); 
 
 	useEffect(() => {
 		getOwnerOrganizations(listAPIParameter);
@@ -291,7 +353,7 @@ const AddOrganizationInEcosystem = () => {
 			await removeFromLocalStorage(storageKeys.ERROR_ORG_IN_ECOSYSTEM);
 		})()
 	}, [])
-
+	
 	useEffect(() => {
 		(async () => {
 			await setToLocalStorage(storageKeys.SELECT_ORG_IN_ECOSYSTEM, JSON.stringify(localOrgs))
