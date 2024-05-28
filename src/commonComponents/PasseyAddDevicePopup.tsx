@@ -53,7 +53,7 @@ const PasskeyAddDevice = (props: {
 		}>
 			<Modal.Header>Create Passkey</Modal.Header>
 			<Modal.Body>
-				<div className="">
+				<div>
 					{
 						(success || fidoUserError) &&
 						<div className='pb-2'>
@@ -75,7 +75,9 @@ const PasskeyAddDevice = (props: {
 						</h2>
 					</div>)}
 
-					{!nextflag && (<Formik
+					{!nextflag && (
+					
+					<Formik
 						initialValues={{
 							Password: ''
 						}}
@@ -88,7 +90,7 @@ const PasskeyAddDevice = (props: {
 						validateOnChange
 						enableReinitialize
 						onSubmit={(values: PasswordValue) => savePassword(values)}
-					>
+			     	 >
 						{(formikHandlers): JSX.Element => (
 							<Form className="mt-8 space-y-6" onSubmit={formikHandlers.handleSubmit}>
 								<div>

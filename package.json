@@ -35,7 +35,7 @@
 		"@faker-js/faker": "^8.4.1",
 		"@radix-ui/react-avatar": "^1.0.4",
 		"@shadcn/ui": "^0.0.4",
-		"@simplewebauthn/browser": "10.0.0",
+		"@simplewebauthn/browser": "^9.0.1",
 		"@supabase/supabase-js": "^2.43.2",
 		"@tanstack/react-form": "^0.19.5",
 		"@types/react": "^18.3.2",

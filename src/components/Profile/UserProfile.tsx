@@ -9,6 +9,7 @@ import React from 'react';
 import AddPasskey from './AddPasskey';
 import EditUserProfile from './EditUserProfile';
 
+
 const UserProfile = ({ noBreadcrumb }: { noBreadcrumb?: boolean }) => {
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [prePopulatedUserProfile, setPrePopulatedUserProfile] = useState<IUserProfile | null>(null);
@@ -108,7 +109,8 @@ const UserProfile = ({ noBreadcrumb }: { noBreadcrumb?: boolean }) => {
 
           </div>
           <div className="hidden rounded-lg bg-gray-50 dark:bg-gray-800" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
-            <AddPasskey />
+          <AddPasskey responseMessages={() => ({ type: "success" || "error", message: "" })} />
+
           </div>
 
         </div>
