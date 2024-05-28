@@ -82,9 +82,26 @@ export interface Attributes {
 	dataType: string;
 }
 
+export interface IIssuanceAttribute {
+	name: string;
+	value: string;
+	mimeType?: string;
+}
+
+export interface IIndy {
+	credentialDefinitionId: string;
+	attributes: IAttributes[];
+}
+
+export interface ICredentialFormats {
+	'indy': IIndy;
+}
+
 export interface ICredentialdata {
 	connectionId: string;
-	attributes: Attributes[];
+	credentialFormats?: ICredentialFormats;
+	// To do: should remove attributes later
+	attributes?: Attributes[];
 }
 export interface IssuanceFormPayload {
 	userName?: string;

@@ -164,16 +164,22 @@ const IssueCred = () => {
 
 	const handleSubmit = async (values: IssuanceFormPayload) => {
 		const issuancePayload = {
+			credentialType: 'indy',
+			protocolVersion: 'v2',
 			credentialData: values.credentialData.map((item) => {
 				return {
-					...item,
-					attributes: item.attributes.map((attr) => ({
-						name: attr.name,
-						value: attr.value.toString(),
-					})),
+					connectionId: item.connectionId,
+					credentialFormats: {
+						indy: {
+							credentialDefinitionId: values.credentialDefinitionId,
+							attributes: item.attributes?.map((attr) => ({
+								name: attr.name,
+								value: attr.value.toString(),
+							})),
+						}
+					}
 				};
 			}),
-			credentialDefinitionId: values.credentialDefinitionId,
 			orgId: values.orgId,
 		};
 

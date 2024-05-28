@@ -11,7 +11,7 @@ import type { AxiosResponse } from 'axios';
 import { getFromLocalStorage } from '../../api/Auth';
 import { getSchemaCredDef } from '../../api/BulkIssuance';
 import { storageKeys, apiStatusCodes } from '../../config/CommonConstant';
-import type { IAttributes, ICredentials, IValues } from './interface';
+import type { IAttributes, ICredentials, IValues, ICredentialFormats } from './interface';
 import { Field, FieldArray, Form, Formik } from 'formik';
 import CustomSpinner from '../CustomSpinner';
 import { issueOobEmailCredential } from '../../api/issuance';
@@ -99,24 +99,27 @@ const EmailIssuance = () => {
 		setIssueLoader(true);
 		const existingData = userData;
 
-		let transformedData = { credentialOffer: [] };
+		let transformedData = { credentialType: 'indy', protocolVersion: 'v2', credentialOffer: [] };
 		if (existingData && existingData.formData) {
 			existingData?.formData?.forEach(
 				(entry: { email: any; attributes: any[] }) => {
-					const transformedEntry = { emailId: entry.email, attributes: [] };
+					const transformedEntry = { emailId: entry.email, credentialFormats: {
+						indy: {
+							credentialDefinitionId: credentialSelected,
+							attributes: []
+						}
+					} };
 					entry.attributes.forEach((attribute) => {
 						const transformedAttribute = {
 							value: String(attribute.value || ''),
-							name: attribute.name || '',
-							isRequired: attribute.isRequired,
+							name: attribute.name || ''
 						};
-						transformedEntry?.attributes?.push(transformedAttribute);
+						transformedEntry?.credentialFormats.indy.attributes.push(transformedAttribute);
 					});
 
 					transformedData.credentialOffer.push(transformedEntry);
 				},
 			);
-			transformedData.credentialDefinitionId = credentialSelected;
 			const transformedJson = JSON.stringify(transformedData, null, 2);
 			const response = await issueOobEmailCredential(transformedJson);
 			const { data } = response as AxiosResponse;			
