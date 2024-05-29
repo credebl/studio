@@ -1,6 +1,6 @@
 import { Button, Label, Checkbox } from "flowbite-react";
 import { Field, Form, Formik } from "formik";
-import React, { useState, ReactElement, useEffect } from "react";
+import { useState, type ReactElement, useEffect } from "react";
 import { getFromLocalStorage } from "../../../api/Auth";
 import { createPolygonKeyValuePair, getLedgerConfig, getLedgers } from "../../../api/Agent";
 import { apiStatusCodes, storageKeys } from "../../../config/CommonConstant";
