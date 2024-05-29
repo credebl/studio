@@ -171,6 +171,7 @@ const SharedAgentForm = ({
 	const [domainValue, setDomainValue] = useState<string>('');
 	const [endPointValue, setEndPointValue] = useState<string>('');
 	const [privateKeyValue, setPrivateKeyValue] = useState<string>('');
+	
 	const fetchLedgerConfig = async () => {
 		try {
 			const { data } = await getLedgerConfig();
@@ -447,7 +448,7 @@ const SharedAgentForm = ({
 									<Button
 										type="submit"
 										className="flex h-min p-0.5 focus:z-10 focus:outline-none border border-transparent enabled:hover:bg-cyan-800 dark:enabled:hover:bg-cyan-700 mt-4 text-base font-medium text-center text-white bg-primary-700 rounded-md hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-									>
+									 >
 										Submit
 									</Button>
 								</div>
@@ -471,6 +472,7 @@ const SharedAgentForm = ({
 						label: yup.string().required('Wallet label is required'),
 					})}
 					onSubmit={(values: ValuesShared) => {
+						
 						submitSharedWallet(
 							values,
 							privateKeyValue,
@@ -478,7 +480,7 @@ const SharedAgentForm = ({
 							endPointValue,
 						);
 					}}
-				>
+				 >
 					{(formikHandlers) => (
 						<Form className="">
 							<div className="mt-3 relative">
@@ -712,9 +714,9 @@ const SharedAgentForm = ({
 const DedicatedAgentForm = ({
 	seeds,
 	loading,
-	submitDedicatedWallet,
-}: IDedicatedAgentForm) => {
-	const [isConfigDone, setIsConfigDone]=useState<boolean>(true)
+ 	submitDedicatedWallet,
+ }: IDedicatedAgentForm) => {
+	const [isConfigDone, setIsConfigDone]=useState<boolean>(false)
 	const [seedVal, setSeedVal] = useState('');
 	const [mappedData, setMappedData] = useState(null);
 	const [selectedMethod, setSelectedMethod]=useState(null)
@@ -845,94 +847,17 @@ const DedicatedAgentForm = ({
 
 	return (
 		<>
-		{!isConfigDone&&
- 			<Formik
-				initialValues={{
-					walletName: '',
-					agentEndpoint: '',
-					apiKey: '',
-				}}
-				validationSchema={yup.object().shape(validation)}
-				onSubmit={async (values: DedicatedAgentConfig) => {
-					console.log('values',values);
-					// agentHealthCheck(values.agentEndpoint,values.apiKey)
-					setAgentConfig(values)
-					
-
-				}}
-				>	
-				{(formikHandlers):JSX.Element => (
-					<Form className="mt-8 space-y-4 max-w-lg flex-col gap-4">
-						<div>
-							<div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
-								<Label htmlFor="walletName" value="Wallet Name" />
-								<span className="text-red-500 text-xs">*</span>
-							</div>
-							<Field
-								id="walletName"
-								name="walletName"
-								value={formikHandlers.values.walletName}
-								className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-								type="text"
-							/>
-							{formikHandlers?.errors?.walletName &&
-								formikHandlers?.touched?.walletName && (
-									<span className="text-red-500 text-xs">
-										{formikHandlers?.errors?.walletName}
-									</span>
-								)}
-						</div>
-						<div>
-							<div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
-								<Label htmlFor="agentEndpoint" value="Agent Endpoint" />
-								<span className="text-red-500 text-xs">*</span>
-							</div>
-							<Field
-								id="agentEndpoint"
-								name="agentEndpoint"
-								value={formikHandlers.values.agentEndpoint}
-								className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-								type="text"
-							/>
-							{formikHandlers?.errors?.agentEndpoint &&
-								formikHandlers?.touched?.agentEndpoint && (
-									<span className="text-red-500 text-xs">
-										{formikHandlers?.errors?.agentEndpoint}
-									</span>
-								)}
-						</div>
-						<div>
-							<div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
-								<Label htmlFor="apiKey" value="Api Key" />
-								<span className="text-red-500 text-xs">*</span>
-							</div>
-							<Field
-								id="apiKey"
-								name="apiKey"
-								value={formikHandlers.values.apiKey}
-								className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-								type="text"
-							/>
-							{formikHandlers?.errors?.apiKey &&
-								formikHandlers?.touched?.apiKey && (
-									<span className="text-red-500 text-xs">
-										{formikHandlers?.errors?.apiKey}
-									</span>
-								)}
-						</div>
-						<Button
-							isProcessing={loading}
-							type="submit"
-							className='float-right text-base font-medium text-center text-white bg-primary-700 hover:bg-primary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
-						>
-							Setup Config
-						</Button>
-					</Form>
-					)}
-				</Formik>
-		}
-		{isConfigDone&&
-		<Formik
+		<div className="flex items-center gap-2 mt-4">
+				<Checkbox
+					id="isConfigDone"
+					onChange={(e) => setIsConfigDone(e.target.checked)}
+				/>
+				<Label className="flex" htmlFor="isConfigDone">
+					<p>On-Premises</p>
+				</Label>
+			</div>
+		{!isConfigDone ? (
+			<Formik
 		initialValues={{
 			seed:seedVal,
 			keyType:'ed25519',
@@ -943,12 +868,13 @@ const DedicatedAgentForm = ({
 		validationSchema={yup.object().shape(didCreationValidation)}
 		onSubmit={async (values: DidCreationConfig) => {
 			console.log('did creation values',values);
-		
+
 		}}
 		>	
 		{(formikHandlers):JSX.Element => (
 			<Form className="mt-8 space-y-4 max-w-lg flex-col gap-4">
 				<div className="my-3">
+				
 						<div className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
 							<Label value="Seed" />
 						</div>
@@ -1083,8 +1009,95 @@ const DedicatedAgentForm = ({
 				</Button>
 			</Form>
 			)}
-		</Formik>
-		}
+		    </Formik>
+		) : (
+         <Formik
+				initialValues={{
+					walletName: '',
+					agentEndpoint: '',
+					apiKey: '',
+				}}
+				validationSchema={yup.object().shape(validation)}
+				onSubmit={async (values: DedicatedAgentConfig) => {
+					console.log('values',values);
+					// agentHealthCheck(values.agentEndpoint,values.apiKey)
+					setAgentConfig(values)
+					
+
+				}}
+				>	
+				{(formikHandlers):JSX.Element => (
+					<Form className="mt-8 space-y-4 max-w-lg flex-col gap-4">
+						<div>
+							<div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
+								<Label htmlFor="walletName" value="Wallet Name" />
+								<span className="text-red-500 text-xs">*</span>
+							</div>
+							<Field
+								id="walletName"
+								name="walletName"
+								value={formikHandlers.values.walletName}
+								className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+								type="text"
+							/>
+							{formikHandlers?.errors?.walletName &&
+								formikHandlers?.touched?.walletName && (
+									<span className="text-red-500 text-xs">
+										{formikHandlers?.errors?.walletName}
+									</span>
+								)}
+						</div>
+						<div>
+							<div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
+								<Label htmlFor="agentEndpoint" value="Agent Endpoint" />
+								<span className="text-red-500 text-xs">*</span>
+							</div>
+							<Field
+								id="agentEndpoint"
+								name="agentEndpoint"
+								value={formikHandlers.values.agentEndpoint}
+								className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+								type="text"
+							/>
+							{formikHandlers?.errors?.agentEndpoint &&
+								formikHandlers?.touched?.agentEndpoint && (
+									<span className="text-red-500 text-xs">
+										{formikHandlers?.errors?.agentEndpoint}
+									</span>
+								)}
+						</div>
+						<div>
+							<div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
+								<Label htmlFor="apiKey" value="Api Key" />
+								<span className="text-red-500 text-xs">*</span>
+							</div>
+							<Field
+								id="apiKey"
+								name="apiKey"
+								value={formikHandlers.values.apiKey}
+								className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+								type="text"
+							/>
+							{formikHandlers?.errors?.apiKey &&
+								formikHandlers?.touched?.apiKey && (
+									<span className="text-red-500 text-xs">
+										{formikHandlers?.errors?.apiKey}
+									</span>
+								)}
+						</div>
+						<Button
+							isProcessing={loading}
+							type="submit"
+							className='float-right text-base font-medium text-center text-white bg-primary-700 hover:bg-primary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+						>
+							Setup Config
+						</Button>
+					</Form>
+					)}
+				</Formik>
+		)
+	}	
+		
 		</>
 	);
 };
@@ -1580,4 +1593,4 @@ const WalletSteps = (props: { steps: number; agentSpinupCall: boolean }) => {
 	);
 };
 
-export default WalletSpinup;
+export default WalletSpinup;	
