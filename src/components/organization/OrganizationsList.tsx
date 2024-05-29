@@ -1,7 +1,7 @@
-'use client';
-import React from 'react';
+
+import  type {ChangeEvent } from 'react';
 import { Card, Pagination } from 'flowbite-react';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 
 import { AlertComponent } from '../AlertComponent';
@@ -142,16 +142,20 @@ const OrganizationsList = () => {
 								maxWidth: '100%',
 								overflow: 'auto',
 							}}
-						>
+						 >
 							<div className="flex items-center min-[401px]:flex-nowrap flex-wrap">
+								
 								{org.logoUrl ? (
 									<CustomAvatar
-										className="min-w-[80px]"
-										size="80"
+									textSizeRatio={2.5}
+										className="min-w-[80px] text-violet11 leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium "
+										size="80px"
 										src={org?.logoUrl}
-									/>
+										round
+										
+									/>	
 								) : (
-									<CustomAvatar size="80" name={org.name} />
+									<CustomAvatar textSizeRatio={2.5} className='text-violet11 leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium ' size="80px" name={org.name} round/>
 								)}
 
 								<div className="ml-4 w-100/6rem line-clamp-4 ">

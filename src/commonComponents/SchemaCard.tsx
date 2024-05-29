@@ -35,10 +35,10 @@ const SchemaCard = (props: IProps) => {
           </p>
         </div>
         <div className='float-right ml-auto '>
-          <p className='dark:text-white'>
+          <div className='dark:text-white'>
             <DateTooltip date={props.created}>
               Created: {dateConversion(props.created)}
-            </DateTooltip>          </p>
+            </DateTooltip>          </div>
         </div>
       </div>
       <div className="min-w-0 flex-1">

@@ -1,15 +1,14 @@
-import React, { useState } from 'react'
 
-import Avatar from 'react-avatar'
+import React, { useState } from 'react'
+import * as Avatar from '@radix-ui/react-avatar';
 
 type Props = {
     name?: string,
-    textSizeRatio?: number,
-    size?: string,
     src?: string,
+    textSizeRatio?: number
     className?: string,
-    props?: unknown,
     round?: boolean
+    size?:string;
 }
 
 interface ColorPair {
@@ -17,48 +16,64 @@ interface ColorPair {
     background: string
 }
 
-const CustomAvatar = ({ name, size, src, textSizeRatio, className, round, ...props }: Props): JSX.Element => {
+
+const CustomAvatar = ({ name, src, className,textSizeRatio = 2.5, round=false, size}: Props): JSX.Element => {
     const avatarColorPairs: ColorPair[] = [
-        {
-            text: '#ea5455',
-            background: '#fceaea'
-        },
-        {
-            text: '#b8b2f7',
-            background: '#eeecfe'
-        },
-        {
-            text: '#c1c2c5',
-            background: '#f0f0f1'
-        },
-        {
-            text: '#82ddaa',
-            background: '#e5f8ed'
-        },
-        {
-            text: '#f4a651',
-            background: '#fdf3e8'
-        },
-        {
-            text: '#76ddef',
-            background: '#e0f9fd'
-        }
-    ]
-    const [randomColor] = useState<ColorPair>(avatarColorPairs[Math.floor(Math.random() * avatarColorPairs.length)])
-    
+                {
+                    text: '#ea5455',
+                    background: '#fceaea'
+                },
+                {
+                    text: '#b8b2f7',
+                    background: '#eeecfe'
+                },
+                {
+                    text: '#c1c2c5',
+                    background: '#f0f0f1'
+                },
+                {
+                    text: '#82ddaa',
+                    background: '#e5f8ed'
+                },
+                {   
+                    text: '#f4a651',
+                    background: '#fdf3e8'
+                },
+                {
+                    text: '#76ddef',
+                    background: '#e0f9fd'
+                }
+            ]
+            const [randomColor] = useState<ColorPair>(avatarColorPairs[Math.floor(Math.random() * avatarColorPairs.length)])
+            const fontSize = `calc(${size} / ${textSizeRatio})`;
     return (
-        <Avatar
-            className={className || ""}
-            initials={name === undefined ? " " : name?.split(" ")}
-            maxInitials={2}
-            name={name === undefined ? " " : name}
-            color={randomColor.background}
-            fgColor={randomColor.text}
-            size={size ? size : "38"}
-            textSizeRatio={textSizeRatio ? textSizeRatio : 2.5}
-            src={src === undefined ? '' : src}
-            round={round || false}
-            {...props} />
-    )
+        <Avatar.Root style={{
+            height: size,
+            width: size,
+            borderRadius: round ? '0%' : '100%'
+        }} className={`bg-blackA1 inline-flex h-[45px] w-[45px] select-none items-center justify-center overflow-hidden rounded-full align-middle`}>
+            {src ? (
+                <div >
+                 <Avatar.Image
+                    className={className}
+                    src={src}
+                    color={randomColor.background}
+                    alt={name}
+                    
+                />
+                </div>
+               
+            ) : (
+                <Avatar.Fallback
+                    // className="text-violet11 leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium "
+                    className={className}
+                    style={{ backgroundColor: randomColor.background, color: randomColor.text, fontSize, display:'flex', justifyContent:'center', alignItems:'center' }}
+                >
+                    {name?.split(' ').map(part => part[0]).join('').toUpperCase().slice(0,2)}
+                </Avatar.Fallback>
+            )}
+        </Avatar.Root>
+    );
 }
-export default React.memo(CustomAvatar)
+
+export default CustomAvatar;

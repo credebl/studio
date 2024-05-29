@@ -1,6 +1,6 @@
 import { Button, Modal } from 'flowbite-react';
 import { AlertComponent } from '../components/AlertComponent';
-import React, { ReactElement } from 'react';
+import React, {type ReactElement } from 'react';
 
 interface IProps {
 	openModal: boolean;

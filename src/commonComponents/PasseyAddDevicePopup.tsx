@@ -9,8 +9,6 @@ import { useState } from 'react';
 import type { AxiosResponse } from 'axios';
 import { addPasskeyUserDetails, getFromLocalStorage, passwordEncryption } from '../api/Auth';
 import { apiStatusCodes, storageKeys } from '../config/CommonConstant';
-import { getSupabaseClient } from '../supabase';
-import passkeyAddDevice from '../assets/passkeyAddDevice.svg';
 import React from 'react';
 
 interface PasswordValue {
@@ -55,7 +53,7 @@ const PasskeyAddDevice = (props: {
 		}>
 			<Modal.Header>Create Passkey</Modal.Header>
 			<Modal.Body>
-				<div className="">
+				<div>
 					{
 						(success || fidoUserError) &&
 						<div className='pb-2'>
@@ -77,7 +75,9 @@ const PasskeyAddDevice = (props: {
 						</h2>
 					</div>)}
 
-					{!nextflag && (<Formik
+					{!nextflag && (
+					
+					<Formik
 						initialValues={{
 							Password: ''
 						}}
@@ -90,7 +90,7 @@ const PasskeyAddDevice = (props: {
 						validateOnChange
 						enableReinitialize
 						onSubmit={(values: PasswordValue) => savePassword(values)}
-					>
+			     	 >
 						{(formikHandlers): JSX.Element => (
 							<Form className="mt-8 space-y-6" onSubmit={formikHandlers.handleSubmit}>
 								<div>
@@ -117,9 +117,9 @@ const PasskeyAddDevice = (props: {
 													viewBox="0 0 24 24"
 													fill="none"
 													stroke="currentColor"
-													stroke-width="2"
-													stroke-linecap="round"
-													stroke-linejoin="round">
+													strokeWidth="2"
+													strokeLinecap="round"
+													strokeLinejoin="round">
 													<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
 													<circle cx="12" cy="12" r="3" /></svg>
 											) : (
@@ -128,9 +128,9 @@ const PasskeyAddDevice = (props: {
 													fill="none"
 													id="invisible"
 													stroke="currentColor"
-													stroke-width="2"
-													stroke-linecap="round"
-													stroke-linejoin="round">
+													strokeWidth="2"
+													strokeLinecap="round"
+													strokeLinejoin="round">
 													<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
 													<line x1="1" y1="1" x2="23" y2="23" /></svg>)}
 										</button>
@@ -156,7 +156,7 @@ const PasskeyAddDevice = (props: {
 						<div className=''>
 							<div className='justify-center flex w-full'>
 								<img
-									src={passkeyAddDevice}
+									src={'/images/passkeyAddDevice.svg'}
 									className='justify-items-center'
 									alt="SVG Image"
 									style={{

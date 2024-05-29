@@ -1,11 +1,11 @@
 import { Button, Modal } from 'flowbite-react';
 import { EndorsementStatus, EndorsementType } from '../../../common/enums';
 import {
-	ICheckEcosystem,
 	checkEcosystem,
 	getEcosystemId,
 	getOwnerAdminRole,
 } from '../../../config/ecosystem';
+import type { ICheckEcosystem} from '../../../config/ecosystem';
 import EndorsementCard from './EndorsementCard';
 import React, { useEffect, useState } from 'react';
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
@@ -207,6 +207,7 @@ const EndorsementPopup = (props: {
 									SignEndorsement(props.endorsementData.id);
 								}}
 							>
+								
 								<svg
 									className="h-8 w-8"
 									fill="none"
@@ -258,7 +259,8 @@ const EndorsementPopup = (props: {
 								<div className="flex gap-3 pt-1 pb-3 mr-3">
 									<Button
 										onClick={() => props.closeModal()}
-										class="text-primary-700 hover:bg-secondary-700 bg-transparent ring-2 font-medium rounded-lg text-sm dark:text-white dark:hover:text-primary-700 "
+									
+										className="text-primary-700 hover:bg-secondary-700 bg-transparent ring-2 font-medium rounded-lg text-sm dark:text-white dark:hover:text-primary-700 enabled:hover:bg-cyan-100"
 									>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
