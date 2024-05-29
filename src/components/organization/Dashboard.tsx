@@ -10,12 +10,11 @@ import CustomSpinner from '../CustomSpinner';
 import EditOrgdetailsModal from './EditOrgdetailsModal';
 import OrganizationDetails from './OrganizationDetails';
 import { Roles } from '../../utils/enums/roles';
-import WalletSpinup from './WalletSpinup';
-import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth.ts';
+import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { pathRoutes } from '../../config/pathRoutes';
 import { AlertComponent } from '../AlertComponent';
-import DashboardCard from '../../commonComponents/DashboardCard.tsx';
-import React from 'react';
+import WalletSpinup from './walletCommonComponents/WalletSpinup';
+import DashboardCard from '../../commonComponents/DashboardCard';
 
 const Dashboard = () => {
 	const [orgData, setOrgData] = useState<Organisation | null>(null);
