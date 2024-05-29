@@ -1,9 +1,9 @@
 name: Deploy
 on:
   push:
-    branches: fix/resolve-page-breaking-issues
+    branches: develop
   pull_request:
-    branches: fix/resolve-page-breaking-issues
+    branches: develop
 
 jobs:
   deploy:
