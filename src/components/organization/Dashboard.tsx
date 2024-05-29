@@ -13,12 +13,11 @@ import OrganizationDetails from './OrganizationDetails';
 import { Roles } from '../../utils/enums/roles';
 import schemaCard from '../../assets/schema-icon.svg';
 import userCard from '../../assets/users-icon.svg';
-import WalletSpinup from './WalletSpinup';
 import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { pathRoutes } from '../../config/pathRoutes';
 import DashboardCard from '../../commonComponents/DashboardCard';
 import { AlertComponent } from '../AlertComponent';
-import React from 'react';
+import WalletSpinup from './walletCommonComponents/WalletSpinup';
 
 const Dashboard = () => {
 	const [orgData, setOrgData] = useState<Organisation | null>(null);
