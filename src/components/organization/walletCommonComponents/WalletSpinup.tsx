@@ -100,8 +100,8 @@ const WalletSpinup = (props: {
 					? `${values?.method}:${values?.network}`
 					: `${values?.ledger}:${values?.network}`,
 			domain: values.method === DidMethod.WEB ? domain : '',
-			role: values.method === DidMethod.INDY ? values?.role || 'endorser' : '',
-			endorserDid: values?.endorserDid || '',
+			role: values.method === DidMethod.INDY ? values?.role ?? 'endorser' : '',
+			endorserDid: values?.endorserDid ?? '',
 			clientSocketId: SOCKET.id,
 		};
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
