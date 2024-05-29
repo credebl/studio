@@ -17,12 +17,11 @@ interface IProps {
 			formikHandlers,
 		}: IProps) => (
 			<>
-				<div className="my-3 relative">
-					<div className="mt-4">
+				<div className="mb-3 relative">
+				<div>
 						<Label value="Enter Domain" />
 						<span className="text-red-500 text-xs">*</span>
 					</div>
-				</div>
 				<Field
 					id="webdomain"
 					name="domain"
@@ -35,6 +34,7 @@ interface IProps {
 					onBlur={formikHandlers.handleBlur}
 					placeholder="Please enter domain"
 				/>
+                </div>
 				<span className="static bottom-0 text-red-500 text-xs">
 					{formikHandlers.errors?.domain &&
 						formikHandlers.touched?.domain &&
