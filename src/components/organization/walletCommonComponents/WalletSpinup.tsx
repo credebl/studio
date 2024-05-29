@@ -13,7 +13,7 @@ import SharedIllustrate from '../SharedIllustrate';
 import { nanoid } from 'nanoid';
 import { AlertComponent } from '../../AlertComponent';
 import { DidMethod } from '../../../common/enums';
-import DedicatedAgentForm from './DedicatedAgent';
+import DedicatedAgentForm from '../walletCommonComponents/DedicatedAgent';
 import SharedAgentForm from './SharedAgent';
 import WalletSteps from './WalletSteps';
 import type { IValuesShared } from './interfaces';
@@ -248,7 +248,7 @@ const WalletSpinup = (props: {
 								</li>
 								<li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
 									<div className="flex items-center pl-3">
-										<label className="w-full py-3 text-sm font-medium text-gray-400 dark:text-gray-300 cursor-not-allowed flex items-center">
+										<label className="w-full py-3 text-sm font-medium text-gray-400 dark:text-gray-300 flex items-center">
 											<input
 												id="horizontal-list-radio-id"
 												type="radio"
@@ -256,7 +256,7 @@ const WalletSpinup = (props: {
 												onChange={() => onRadioSelect(AgentType.DEDICATED)}
 												checked={agentType === AgentType.DEDICATED}
 												name="list-radio"
-												disabled
+											
 												className="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500 disabled:cursor-not-allowed mr-2"
 											/>
 											Dedicated
