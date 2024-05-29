@@ -1,4 +1,4 @@
-import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
+import { apiStatusCodes, storageKeys } from '../../config/CommonConstant.ts';
 import {
 	getFromLocalStorage,
 	removeFromLocalStorage,
@@ -9,10 +9,10 @@ import '../../common/global.css';
 import type { AxiosResponse } from 'axios';
 import { BiChevronDown } from 'react-icons/bi';
 import { AiOutlineSearch } from 'react-icons/ai';
-import CustomAvatar from '../Avatar/index';
+import CustomAvatar from '../Avatar/index.tsx';
 import type { IOrgInfo, Organisation } from './interfaces';
-import { getOrganizations } from '../../api/organization';
-import { pathRoutes } from '../../config/pathRoutes';
+import { getOrganizations } from '../../api/organization.ts';
+import { pathRoutes } from '../../config/pathRoutes.ts';
 
 const OrgDropDown = () => {
 	const [orgList, setOrgList] = useState<Organisation[]>([]);
@@ -48,25 +48,29 @@ const OrgDropDown = () => {
 		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ID);
 		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ROLE);
 
-		await setOrgRoleDetails(org);
-		const roles: string[] = org?.userOrgRoles?.length > 0 ? org?.userOrgRoles?.map(
-			(role) => role?.orgRole?.name,
-		) : [];
-		const { id, name, description, logoUrl } = org || {};
-		const orgInfo = {
-			name, description, logoUrl, roles, id
+		if (org) { // Added check
+			await setOrgRoleDetails(org);
+			const roles: string[] = org?.userOrgRoles?.length > 0 ? org?.userOrgRoles?.map((role) => role?.orgRole?.name)
+				: [];
+			const { id, name, description, logoUrl } = org || {};
+			const orgInfo = {
+				name, description, logoUrl, roles, id
+			};
+			await setToLocalStorage(storageKeys.ORG_INFO, orgInfo);
+			window.location.href = pathRoutes.organizations.dashboard;
 		}
-		await setToLocalStorage(storageKeys.ORG_INFO, orgInfo);
-		window.location.href = pathRoutes.organizations.dashboard;
 	};
 
 	const setOrgRoleDetails = async (org: Organisation) => {
-		
-		await setToLocalStorage(storageKeys.ORG_ID, org?.id?.toString());
-		const roles: string[] = org?.userOrgRoles?.length > 0 ? org?.userOrgRoles?.map(
-			(role) => role?.orgRole?.name,
-		) : [];
-		await setToLocalStorage(storageKeys.ORG_ROLES, roles?.toString());
+		if (org && org.id !== undefined && org.id !== null) { // Added check
+			await setToLocalStorage(storageKeys.ORG_ID, org.id.toString());
+		}
+		const roles: string[] = org?.userOrgRoles?.length > 0
+			? org?.userOrgRoles.map((role) => role?.orgRole?.name)
+			: [];
+		if (roles.length > 0) { // Added check
+			await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
+		}
 	};
 
 	const handleActiveOrg = async (organizations: Organisation[]) => {
@@ -74,28 +78,29 @@ const OrgDropDown = () => {
 		const orgInfoDetails = await getFromLocalStorage(storageKeys.ORG_INFO);
 		activeOrgDetails = orgInfoDetails ? JSON.parse(orgInfoDetails) : null;
 
-		if (activeOrgDetails && Object.keys(activeOrgDetails)?.length > 0) {
+		if (activeOrgDetails && Object.keys(activeOrgDetails).length > 0) {
 			setActiveOrg(activeOrgDetails);
-		} else {
-			activeOrgDetails = organizations?.[0];
-			const roles: string[] = activeOrgDetails?.userOrgRoles.map(
+		} else if (organizations?.[0]) {
+			activeOrgDetails = organizations[0];
+			const roles: string[] = activeOrgDetails?.userOrgRoles?.map(
 				(role: { orgRole: { name: string } }) => role.orgRole.name,
 			);
-			const { id, name, description, logoUrl } = organizations[0] || {};
+			const { id, name, description, logoUrl } = organizations[0];
 			const orgInfo = {
 				id, name, description, logoUrl, roles
-			}
+			};
 			await setToLocalStorage(storageKeys.ORG_INFO, orgInfo);
 
 			setActiveOrg(activeOrgDetails);
 
-			await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
+			if (roles.length > 0) { // Added check
+				await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
+			}
 		}
 		if (activeOrgDetails) {
 			await setOrgRoleDetails(activeOrgDetails);
 		}
 	};
-
 	const redirectToCreateOrgModal = () => {
 		window.location.href = '/organizations?orgModal=true';
 	};

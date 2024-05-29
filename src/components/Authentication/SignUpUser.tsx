@@ -9,7 +9,7 @@ import {
 	Form,
 	Formik
 } from 'formik';
-import { checkUserExist, sendVerificationMail, setToLocalStorage } from '../../api/Auth.js';
+import { checkUserExist, sendVerificationMail, setToLocalStorage } from '../../api/Auth';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant.js';
 import { useEffect, useState } from 'react';
 import SignUpUserName from './SignUpUserName'
