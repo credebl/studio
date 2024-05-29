@@ -27,7 +27,9 @@ import { EmptyListMessage } from '../../EmptyListComponent';
 import { Roles } from '../../../utils/enums/roles';
 import { nanoid } from 'nanoid';
 import { pathRoutes } from '../../../config/pathRoutes';
-import { ICheckEcosystem, checkEcosystem, getEcosystemId, getUserRoles } from '../../../config/ecosystem';
+import {  checkEcosystem, getEcosystemId } from '../../../config/ecosystem';
+import type { ICheckEcosystem} from '../../../config/ecosystem';
+
 import { createCredDefRequest } from '../../../api/ecosystem';
 import EcosystemProfileCard from '../../../commonComponents/EcosystemProfileCard';
 import { getLedgersPlatformUrl } from '../../../api/Agent';
@@ -330,7 +332,7 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
 											title="View schema details on ledger"
 											className="py-0 bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 
 												ring-2 text-black font-medium rounded-lg text-sm mr-2 ml-auto dark:text-white dark:hover:text-black 
-												dark:hover:bg-primary-50 h-[1.5rem] min-w-[11rem]"
+												dark:hover:bg-primary-50 h-[1.5rem] min-w-[11rem] mb-2"
 											onClick={() =>
 												fetchLedgerPlatformUrl(
 													schemaDetails?.schemaMetadata?.didIndyNamespace || '',

@@ -20,6 +20,7 @@ import {
 } from '../../api/Auth.js';
 import type { AxiosResponse } from 'axios';
 import { PassInvisible, PassVisible } from './Svg.js';
+
 interface passwordValues {
 	password: string;
 	confirmPassword: string;
@@ -284,6 +285,7 @@ const ResetPassword = () => {
 													isProcessing={loading}
 													className="w-full font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 												>
+													
 													<svg
 														xmlns="http://www.w3.org/2000/svg"
 														width="16"

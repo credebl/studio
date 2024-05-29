@@ -172,7 +172,7 @@ const SignUpUserPassword = ({
 										>
 											<input type="hidden" name="_csrf" value={new Date().getTime()} />
 											<div>
-												<div className="text-primary-700 font-inter text-base font-medium leading-5">
+												<div className="text-primary-700 font-inter text-base font-medium leading-5 dark:text-white">
 													<div className="block mb-2 text-sm font-medium  dark:text-white">
 														<Label
 															className="text-primary-700 dark:text-gray-200"
@@ -289,6 +289,7 @@ const SignUpUserPassword = ({
 														isProcessing={loading}
 														className="w-fit px-12 sm:px-4 xl:px-12 font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 													>
+														
 														<SignUpArrow />
 														<span className="ml-2">Sign Up</span>
 													</Button>

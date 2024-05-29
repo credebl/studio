@@ -1,3 +1,4 @@
+
 interface IProps {
     icon: string
     backgroundColor: string
@@ -7,7 +8,7 @@ interface IProps {
     classes?: string
 }
 
-const DashboardCard = ({ icon, backgroundColor, label, value, onClickHandler, classes }: IProps) => {
+const DashboardCard = ({icon, backgroundColor, label, value, onClickHandler, classes }: IProps) => {
     return (
         <button
             type="button"
@@ -19,7 +20,7 @@ const DashboardCard = ({ icon, backgroundColor, label, value, onClickHandler, cl
             }}
         >
             <div className='absolute bottom-0 -right-4 -z-10'>
-                <img className="w-[150px] h-[125px]" src={icon} alt="icon" />
+                <img src={icon} className="w-[150px] h-[125px]" alt="icon" />
             </div>
             <div className="w-full text-start">
                 <h3 className="text-base font-medium text-white">

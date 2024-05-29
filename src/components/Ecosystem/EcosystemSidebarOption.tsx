@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ICheckEcosystem, checkEcosystem } from '../../config/ecosystem';
+import { checkEcosystem } from '../../config/ecosystem';
+import type { ICheckEcosystem } from '../../config/ecosystem';
 import { pathRoutes } from '../../config/pathRoutes';
 
 const EcosystemSidebarOption = () => {
@@ -29,7 +30,7 @@ const EcosystemSidebarOption = () => {
 						</defs>
 					</svg>
 
-					<span className="ml-3" sidebar-toggle-item>
+					<span className="ml-3" data-sidebar-toggle-item>
 						Ecosystems
 					</span>
 				</a>
