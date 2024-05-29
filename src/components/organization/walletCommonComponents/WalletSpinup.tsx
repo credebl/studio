@@ -7,9 +7,7 @@ import {
 import { useEffect, useState } from 'react';
 
 import type { AxiosResponse } from 'axios';
-import DedicatedIllustrate from '../DedicatedIllustrate';
 import SOCKET from '../../../config/SocketConfig';
-import SharedIllustrate from '../SharedIllustrate';
 import { nanoid } from 'nanoid';
 import { AlertComponent } from '../../AlertComponent';
 import { DidMethod } from '../../../common/enums';
@@ -17,6 +15,7 @@ import DedicatedAgentForm from './DedicatedAgent';
 import SharedAgentForm from './SharedAgent';
 import WalletSteps from './WalletSteps';
 import type { IValuesShared } from './interfaces';
+import React from 'react';
 
 interface Values {
 	seed: string;
@@ -225,10 +224,12 @@ const WalletSpinup = (props: {
 				</div>
 			</div>
 
-			<div className="grid w-full grid-cols-1 md:grid-cols-2 gap-4 mt-0 mb-4 xl:grid-cols-3 2xl:grid-cols-3">
+			{/* <div className="grid w-full grid-cols-1 md:grid-cols-2 gap-4 mt-0 mb-4 xl:grid-cols-3 2xl:grid-cols-3"> */}
+			<div className="grid w-full mb-4">
 				<div className="col-span-1">
 					{!agentSpinupCall && !loading && (
-						<div className="mt-4 flex max-w-lg flex-col gap-4">
+						// <div className="mt-4 flex max-w-lg flex-col gap-4">
+						<div className="mt-4 flex flex-col gap-4 max-w-lg">
 							<ul className="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex dark:bg-gray-700 dark:border-gray-600 dark:text-white">
 								<li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
 									<div className="flex items-center pl-3">
@@ -269,13 +270,13 @@ const WalletSpinup = (props: {
 
 					{formComponent}
 				</div>
-				<div className="col-span-2">
+				{/* <div className="col-span-2">
 					{agentType === AgentType.DEDICATED ? (
 						<DedicatedIllustrate />
 					) : (
 						<SharedIllustrate />
 					)}
-				</div>
+				</div> */}
 			</div>
 		</div>
 	);
