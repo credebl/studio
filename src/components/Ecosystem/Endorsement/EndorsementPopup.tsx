@@ -259,7 +259,7 @@ const EndorsementPopup = (props: {
 								<div className="flex gap-3 pt-1 pb-3 mr-3">
 									<Button
 										onClick={() => props.closeModal()}
-										className="text-primary-700 hover:bg-secondary-700 bg-transparent ring-2 font-medium rounded-lg text-sm dark:text-white dark:hover:text-primary-700 enabled:hover:bg-cyan-100"
+										className="text-primary-700 hover:bg-secondary-700 bg-transparent ring-2 font-medium rounded-lg text-sm dark:text-white dark:hover:text-primary-700 enabled:hover:bg-cyan-100 dark:bg-cyan-600 dark:enabled:hover:bg-cyan-700 dark:focus:ring-cyan-800"
 									>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"

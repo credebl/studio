@@ -328,7 +328,7 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
                           ) : (
                             <CustomAvatar
                               className="mb-4 rounded-full w-24 h-24 sm:mb-0 xl:mb-4 2xl:mb-0"
-                              size="90"
+                              size="80px"
                               name={userProfileInfo?.firstName} />)}
 
                           <div className="flex flex-col mt-2">
