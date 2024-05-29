@@ -5,6 +5,7 @@ import { Pagination } from 'flowbite-react';
 import { useState } from 'react';
 import { EmptyListMessage } from '../../components/EmptyListComponent';
 
+
 const SortDataTable: React.FC<IDataTable> = ({
 	header,
 	displaySelect,
@@ -162,7 +163,7 @@ const SortDataTable: React.FC<IDataTable> = ({
 										))}
 								</tr>
 							</thead>
-
+							<tbody className="bg-white dark:bg-gray-800">
 							{loading ? (
 								<tr className="text-center">
 									<td
@@ -175,10 +176,8 @@ const SortDataTable: React.FC<IDataTable> = ({
 										</div>
 									</td>
 								</tr>
-							) : (
-								<tbody className="bg-white dark:bg-gray-800 w-full">
-									{data?.length ? (
-										data?.map((ele, index) => (
+							) : data?.length ? (
+								data?.map((ele, index) => (
 											<tr
 												key={index}
 												className={`${index % 2 !== 0 ? 'bg-gray-50 dark:bg-gray-700' : ''
@@ -224,11 +223,11 @@ const SortDataTable: React.FC<IDataTable> = ({
 										</tr>
 									)}
 								</tbody>
-							)}
-						</table>
-					</div>
-					{loading && isPagination && data.length > 0 ? (
-						''
+										
+									</table>
+								</div>
+								{loading && isPagination && data.length > 0 ? (
+									''
 					) : (
 						<nav
 							className="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0 p-3 w-full"

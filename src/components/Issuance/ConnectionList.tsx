@@ -1,11 +1,10 @@
-'use client';
 
 import type { AxiosResponse } from 'axios';
-import React, { ChangeEvent, useEffect, useState } from 'react';
-import {
-	IConnectionListAPIParameter,
-	getConnectionsByOrg,
+import React, { useEffect, useState } from 'react';
+import type { ChangeEvent } from 'react';
+import {getConnectionsByOrg,
 } from '../../api/connection';
+import type {IConnectionListAPIParameter} from '../../api/connection'
 import type { TableData } from '../../commonComponents/datatable/interface';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';
@@ -109,6 +108,7 @@ const ConnectionList = (props: {
 											id="default-checkbox"
 											type="checkbox"
 											name="connection"
+											defaultChecked={ele.checked || isChecked}
 											onClick={async (
 												event: React.MouseEvent<HTMLInputElement>,
 											) => {
@@ -128,7 +128,7 @@ const ConnectionList = (props: {
 												);
 												setConnectionList(updateConnectionList);
 											}}
-											checked={ele.checked || isChecked}
+											// checked={ele.checked || isChecked}
 											className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-lg dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600 cursor-pointer"
 										/>
 									</div>

@@ -1,4 +1,3 @@
-'use client';
 
 import type { AxiosResponse } from 'axios';
 import { Alert, Button } from 'flowbite-react';

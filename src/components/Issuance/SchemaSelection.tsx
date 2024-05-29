@@ -1,4 +1,3 @@
-'use client';
 
 import { setToLocalStorage } from "../../api/Auth";
 import { storageKeys } from "../../config/CommonConstant";

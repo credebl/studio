@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import CustomAvatar from '../Avatar'
+import CustomAvatar from '../Avatar/index'
 import type { IUserProfile } from "./interfaces";
 import { getFromLocalStorage } from "../../api/Auth";
 import { storageKeys } from "../../config/CommonConstant";
@@ -21,15 +21,15 @@ const DisplayProfileImg = () => {
 
     return (
         <>
-            {(userObj?.profileImg) ?
-                <CustomAvatar
-                    className="rounded-full w-8 h-8"
-                    src={userObj?.profileImg}
-                /> :
-                <CustomAvatar
-                    className="rounded-full w-8 h-8"
-                    name={userObj?.firstName ? userObj?.firstName : userObj?.email} />}
-        </>
+        {(userObj?.profileImg) ?
+            <CustomAvatar
+                className="rounded-full w-[100%] h-[100%] "
+                src={userObj?.profileImg}
+            /> :
+            <CustomAvatar
+                className="rounded-full w-[100%] h-[100%]"
+                name={userObj?.firstName ? userObj?.firstName : userObj?.email} />}
+    </>
     )
 }
 
