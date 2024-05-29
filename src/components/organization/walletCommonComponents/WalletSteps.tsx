@@ -1,4 +1,4 @@
-const WalletSteps = (props: { steps: number; agentSpinupCall: boolean }) => {
+const WalletSteps = (props: { steps: number}) => {
 	return (
 		<div className="mt-4 ml-4">
 			<ol className="relative text-gray-500 border-l border-gray-200 dark:border-gray-700 dark:text-gray-400">

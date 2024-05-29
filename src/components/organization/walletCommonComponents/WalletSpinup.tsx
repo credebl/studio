@@ -1,7 +1,4 @@
-import {
-	apiStatusCodes,
-	storageKeys,
-} from '../../../config/CommonConstant';
+import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
 import { getFromLocalStorage, passwordEncryption } from '../../../api/Auth';
 import {
 	spinupDedicatedAgent,
@@ -20,7 +17,6 @@ import DedicatedAgentForm from './DedicatedAgent';
 import SharedAgentForm from './SharedAgent';
 import WalletSteps from './WalletSteps';
 import type { IValuesShared } from './interfaces';
-
 
 interface Values {
 	seed: string;
@@ -85,7 +81,7 @@ const WalletSpinup = (props: {
 	const submitSharedWallet = async (
 		values: IValuesShared,
 		privatekey: string,
-		domain: string
+		domain: string,
 	) => {
 		setLoading(true);
 		const payload = {
@@ -174,10 +170,39 @@ const WalletSpinup = (props: {
 						s.charAt(0).toUpperCase() +
 						s.slice(1) +
 						(c.charAt(0).toUpperCase() + c.slice(1)),
+					'',
 				)
 		: '';
 
 	const orgName = generateAlphaNumeric.slice(0, 19);
+
+	let formComponent;
+
+	if (!agentSpinupCall) {
+		if (agentType === AgentType.SHARED) {
+			formComponent = (
+				<SharedAgentForm
+					seeds={seeds}
+					orgName={orgName}
+					loading={loading}
+					submitSharedWallet={submitSharedWallet}
+					isCopied={false}
+				/>
+			);
+		} else {
+			formComponent = (
+				<DedicatedAgentForm
+					seeds={seeds}
+					loading={loading}
+					submitDedicatedWallet={submitDedicatedWallet}
+				/>
+			);
+		}
+	} else {
+		formComponent = (
+			<WalletSteps steps={walletSpinStep}/>
+		);
+	}
 
 	return (
 		<div className="mt-4 flex-col p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
@@ -242,26 +267,7 @@ const WalletSpinup = (props: {
 						</div>
 					)}
 
-					{!agentSpinupCall ? (
-						agentType === AgentType.SHARED ? (
-							<SharedAgentForm
-								seeds={seeds}
-								orgName={orgName}
-								loading={loading}
-								submitSharedWallet={submitSharedWallet} isCopied={false}							/>
-						) : (
-							<DedicatedAgentForm
-								seeds={seeds}
-								loading={loading}
-								submitDedicatedWallet={submitDedicatedWallet}
-							/>
-						)
-					) : (
-						<WalletSteps
-							steps={walletSpinStep}
-							agentSpinupCall={agentSpinupCall}
-						/>
-					)}
+					{formComponent}
 				</div>
 				<div className="col-span-2">
 					{agentType === AgentType.DEDICATED ? (

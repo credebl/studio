@@ -21,7 +21,6 @@ const SharedAgentForm = ({
 	submitSharedWallet,
 }: ISharedAgentForm) => {
 	const [haveDidShared, setHaveDidShared] = useState(false);
-	const [networks, setNetworks] = useState([]);
 	const [selectedLedger, setSelectedLedger] = useState('');
 	const [seedVal, setSeedVal] = useState('');
 	const [selectedNetwork, setSelectedNetwork] = useState('');
@@ -81,7 +80,6 @@ const SharedAgentForm = ({
 
 	const getLedgerList = async () => {
 		const res = await fetchNetworks();
-		setNetworks(res);
 	};
 	useEffect(() => {
 		getLedgerList();
