@@ -78,14 +78,14 @@ const OrgDropDown = () => {
 		const orgInfoDetails = await getFromLocalStorage(storageKeys.ORG_INFO);
 		activeOrgDetails = orgInfoDetails ? JSON.parse(orgInfoDetails) : null;
 
-		if (activeOrgDetails && Object.keys(activeOrgDetails).length > 0) {
+		if (activeOrgDetails && Object.keys(activeOrgDetails)?.length > 0) {
 			setActiveOrg(activeOrgDetails);
 		} else if (organizations?.[0]) {
-			activeOrgDetails = organizations[0];
+			activeOrgDetails = organizations?.[0];
 			const roles: string[] = activeOrgDetails?.userOrgRoles?.map(
 				(role: { orgRole: { name: string } }) => role.orgRole.name,
 			);
-			const { id, name, description, logoUrl } = organizations[0];
+			const { id, name, description, logoUrl } = organizations[0] || {};
 			const orgInfo = {
 				id, name, description, logoUrl, roles
 			};
@@ -93,9 +93,9 @@ const OrgDropDown = () => {
 
 			setActiveOrg(activeOrgDetails);
 
-			if (roles.length > 0) { // Added check
-				await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
-			}
+			
+				await setToLocalStorage(storageKeys.ORG_ROLES, roles?.toString());
+		
 		}
 		if (activeOrgDetails) {
 			await setOrgRoleDetails(activeOrgDetails);
