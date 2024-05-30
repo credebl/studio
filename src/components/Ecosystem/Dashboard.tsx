@@ -8,7 +8,7 @@ import BreadCrumbs from '../BreadCrumbs';
 import CustomAvatar from '../Avatar';
 import CustomSpinner from '../CustomSpinner';
 import MemberList from './MemberList';
-import { getEcosystems, getEcosystemDashboard } from '../../api/ecosystem';
+import { getEcosystems, getEcosystemDashboard } from '../../api/ecosystem.ts';
 import { EmptyListMessage } from '../EmptyListComponent';
 import CreateEcosystemOrgModal from '../CreateEcosystemOrgModal';
 import { AlertComponent } from '../AlertComponent';
@@ -17,16 +17,16 @@ import {
 	getEcosystemId,
 	getOwnerAdminRole,
 } from '../../config/ecosystem';
-import type { ICheckEcosystem} from '../../config/ecosystem';
+import type { ICheckEcosystem} from '../../config/ecosystem.ts';
 import { Button, Dropdown } from 'flowbite-react';
 import EditPopupModal from '../EditEcosystemOrgModal';
-import { getFromLocalStorage, removeFromLocalStorage } from '../../api/Auth';
-import { getUserEcosystemInvitations } from '../../api/invitations';
-import { pathRoutes } from '../../config/pathRoutes';
+import { getFromLocalStorage, removeFromLocalStorage } from '../../api/Auth.ts';
+import { getUserEcosystemInvitations } from '../../api/invitations.ts';
+import { pathRoutes } from '../../config/pathRoutes.ts';
 import type { EcosystemDashboard } from '../organization/interfaces';
-import { dateConversion } from '../../utils/DateConversion';
+import { dateConversion } from '../../utils/DateConversion.ts';
 import DateTooltip from '../Tooltip';
-import DashboardCard from '../../commonComponents/DashboardCard';
+import DashboardCard from '../../commonComponents/DashboardCard.tsx';
 import { Roles } from '../../utils/enums/roles';
 
 interface IRoleTablet {
