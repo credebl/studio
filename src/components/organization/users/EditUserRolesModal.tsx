@@ -174,7 +174,7 @@ const EditUserRoleModal = (props: { openModal: boolean; user: User; setMessage: 
 
                                         {
                                             roles.map(role => (
-                                                <div>
+                                                <div key={role.id}>
                                                     <label>
                                                         <input type="checkbox"
                                                             id={`checkbox-${role.id}`}
@@ -207,8 +207,10 @@ const EditUserRoleModal = (props: { openModal: boolean; user: User; setMessage: 
                         isProcessing={loading}
 												disabled={loading}
                         className="text-white px-6 py-1 items-center justify-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-                    ><svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="none" viewBox="0 0 18 18">
-										<path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 1v12l-4-2-4 2V1h8ZM3 17h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z"/>
+                    >
+                        
+                        <svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="none" viewBox="0 0 18 18">
+										<path stroke="#fff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 1v12l-4-2-4 2V1h8ZM3 17h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z"/>
 									</svg>
                         Save
                     </Button>

@@ -1,5 +1,5 @@
 export const PassVisible = () => (
-	<svg className="h-6 w-6 text-black"
+	<svg className="h-6 w-6 text-black dark:text-white"
 		viewBox="0 0 24 24"
 		fill="none"
 		stroke="currentColor"

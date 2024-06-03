@@ -1,6 +1,5 @@
 import type { InvitationProps, NetworkDetails } from "./EcoSystemReceivedInvitations";
 import CustomAvatar from '../Avatar';
-import React from "react";
 
 const EcoInvitationList = (props: InvitationProps) => {
 	const { invitationId, ecosystem } = props || {};

@@ -1,6 +1,7 @@
 import * as yup from 'yup';
 import { Button, Modal } from 'flowbite-react';
-import { Field, Form, Formik, FormikHelpers } from 'formik';
+import { Field, Form, Formik } from 'formik';
+import type { FormikHelpers as FormikActions } from 'formik';
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
 import { useEffect, useState } from 'react';
 import { AlertComponent } from '../../AlertComponent';
@@ -14,6 +15,7 @@ import TokenWarningMessage from '../walletCommonComponents/TokenWarningMessage';
 import CopyDid from '../../../commonComponents/CopyDid';
 import GenerateBtnPolygon from '../walletCommonComponents/GenerateBtnPolygon';
 import { getFromLocalStorage } from '../../../api/Auth';
+
 
 interface IPolygonKeys {
 	privateKey: string;
@@ -246,7 +248,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 					enableReinitialize
 					onSubmit={async (
 						values: IFormikValues,
-						{ resetForm }: FormikHelpers<IFormikValues>,
+						{ resetForm }: FormikActions<IFormikValues>,
 					) => {
 						const didMethodValue = showMethod(
 							values.method,
@@ -555,6 +557,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 										isProcessing={loading}
 										className="mb-2 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 									>
+
 										Submit
 									</Button>
 								</div>
