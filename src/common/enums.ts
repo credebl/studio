@@ -35,6 +35,18 @@ export enum SchemaType {
     INDY = 'indy',
     W3C = 'w3c'
 }
+
+export enum CredentialType {
+	indy,
+	anoncreds,
+	jsonld
+}
+
+export enum ProtocolVersion {
+	v1,
+	v2
+}
+
 export enum IssueCredentialUserText {
 	offerSent = 'Offered',
 	done = 'Accepted',

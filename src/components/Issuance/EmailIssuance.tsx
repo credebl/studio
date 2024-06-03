@@ -22,6 +22,7 @@ import RoleViewButton from '../RoleViewButton';
 import { checkEcosystem, type ICheckEcosystem } from '../../config/ecosystem';
 import { Features } from '../../utils/enums/features';
 import { Create, SchemaEndorsement } from './Constant';
+import { CredentialType, ProtocolVersion } from '../../common/enums';
 
 const EmailIssuance = () => {
 	const [formData, setFormData] = useState();
@@ -99,12 +100,12 @@ const EmailIssuance = () => {
 		setIssueLoader(true);
 		const existingData = userData;
 
-		let transformedData = { credentialType: 'indy', protocolVersion: 'v2', credentialOffer: [] };
+		let transformedData = { credentialType: CredentialType.indy, protocolVersion: ProtocolVersion.v2, credentialOffer: [] };
 		if (existingData && existingData.formData) {
 			existingData?.formData?.forEach(
 				(entry: { email: any; attributes: any[] }) => {
 					const transformedEntry = { emailId: entry.email, credentialFormats: {
-						indy: {
+						[CredentialType.indy]: {
 							credentialDefinitionId: credentialSelected,
 							attributes: []
 						}
@@ -114,7 +115,7 @@ const EmailIssuance = () => {
 							value: String(attribute.value || ''),
 							name: attribute.name || ''
 						};
-						transformedEntry?.credentialFormats.indy.attributes.push(transformedAttribute);
+						transformedEntry?.credentialFormats[CredentialType.indy].attributes.push(transformedAttribute);
 					});
 
 					transformedData.credentialOffer.push(transformedEntry);

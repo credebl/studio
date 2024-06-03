@@ -22,6 +22,7 @@ import type {
 	SelectedUsers,
 } from './interface';
 import SummaryCard from '../../commonComponents/SummaryCard';
+import { CredentialType, ProtocolVersion } from '../../common/enums';
 
 const IssueCred = () => {
 	const [schemaLoader, setSchemaLoader] = useState<boolean>(true);
@@ -164,13 +165,13 @@ const IssueCred = () => {
 
 	const handleSubmit = async (values: IssuanceFormPayload) => {
 		const issuancePayload = {
-			credentialType: 'indy',
-			protocolVersion: 'v2',
+			credentialType: CredentialType.indy,
+			protocolVersion: ProtocolVersion.v2,
 			credentialData: values.credentialData.map((item) => {
 				return {
 					connectionId: item.connectionId,
 					credentialFormats: {
-						indy: {
+						[CredentialType.indy]: {
 							credentialDefinitionId: values.credentialDefinitionId,
 							attributes: item.attributes?.map((attr) => ({
 								name: attr.name,

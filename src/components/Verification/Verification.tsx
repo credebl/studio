@@ -20,6 +20,7 @@ import type {
 	VerifyCredentialPayload,
 } from './interface';
 import SummaryCard from '../../commonComponents/SummaryCard';
+import { CredentialType, ProtocolVersion } from '../../common/enums';
 
 const VerificationCred = () => {
 	const [attributeList, setAttributeList] = useState<TableData[]>([]);
@@ -189,11 +190,12 @@ const VerificationCred = () => {
 
 				const verifyCredentialPayload = {
 					connectionId: JSON.parse(userData)[0]?.connectionId,
-					type: 'indy',
+					type: CredentialType.indy ,
+					protocolVersion: ProtocolVersion.v2,
 					comment: 'string',
 					orgId: orgId,
 					proofFormats: {
-						indy: {
+						[CredentialType.indy]: {
 							name: 'proof request',
 							version: 'v1',
 							requested_attributes: requested_attributes,
