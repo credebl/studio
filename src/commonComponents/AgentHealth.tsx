@@ -1,10 +1,10 @@
-import { apiStatusCodes, storageKeys } from '../config/CommonConstant';
+import { apiStatusCodes, storageKeys } from '../config/CommonConstant.ts';
 import { useEffect, useState } from 'react';
 
 import type { AxiosResponse } from 'axios';
 import CustomSpinner from '../components/CustomSpinner';
-import { getAgentHealth } from '../api/Agent';
-import { getFromLocalStorage } from '../api/Auth';
+import { getAgentHealth } from '../api/Agent.ts';
+import { getFromLocalStorage } from '../api/Auth.ts';
 
 interface Agent {
 	label: string;
@@ -51,7 +51,7 @@ const AgentHealth = () => {
 				{loader ? (
 					<div>
 						<CustomSpinner hideMessage={true} />
-					</div>
+					</div>	
 				) : orgId && (
 					agentHealthDetails?.isInitialized ? (
 						<div className="w-fit flex shrink-0 items-center bg-green-100 text-green-800 text-xs font-medium rounded-full px-2 py-2 md:py-1 dark:bg-green-900 dark:text-green-300">
