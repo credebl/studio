@@ -23,7 +23,7 @@ const Users = () => {
                 <ul className="pl-5 flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" role="tablist">
                     <li className="mr-2">
                         <button
-                            className={`text-xl inline-block p-4 border-b-2 rounded-t-lg ${activeTab === 'users' ? 'text-blue-600 border-blue-600 dark:text-blue-500 dark:border-blue-500' : 'hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300'}`}
+                            className={`text-xl inline-block p-4 border-b-2 rounded-t-lg ${activeTab === 'users' ? 'border-b-2 text-blue-600 border-blue-600 dark:text-blue-500 dark:border-blue-500' : 'border-blue-100 dark:text-gray-400 text-gray-500 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 hover:border-gray-300 dark:border-transparent'}`}
                             id="users-tab"
                             onClick={() => setActiveTab('users')}
                             type="button"
@@ -36,7 +36,7 @@ const Users = () => {
                     </li>
                     <li className="mr-2">
                         <button
-                            className={`text-xl inline-block p-4 border-b-2 rounded-t-lg ${activeTab === 'invitations' ? 'text-blue-600 border-blue-600 dark:text-blue-500 dark:border-blue-500' : 'hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300'}`}
+                            className={`text-xl inline-block p-4  rounded-t-lg ${activeTab === 'invitations' ? 'border-b-2 text-blue-600 border-blue-600 dark:text-blue-500 dark:border-blue-500' : 'border-blue-100 dark:text-gray-400 text-gray-500 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 dark:border-transparent'}`}
                             id="invitations-tab"
                             onClick={() => setActiveTab('invitations')}
                             type="button"

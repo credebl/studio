@@ -22,6 +22,7 @@ import type { ICredentials, IValues, IAttributes, IUploadMessage } from './inter
 import RoleViewButton from '../RoleViewButton';
 import { Features } from '../../utils/enums/features';
 import { Create, SchemaEndorsement } from './Constant';
+import { SchemaType } from '../../common/enums';
 
 export interface SelectRef {
   clearValue(): void;
@@ -62,7 +63,7 @@ const BulkIssuance = () => {
 			setLoading(true);
 			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 			if (orgId) {
-				const response = await getSchemaCredDef();
+				const response = await getSchemaCredDef(SchemaType.INDY);
 				const { data } = response as AxiosResponse;
 
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -121,10 +122,9 @@ const BulkIssuance = () => {
 		if (credentialSelected) {
 			try {
 				setProcess(true);
-
-				const response = await DownloadCsvTemplate(credentialSelected);
+				const response = await DownloadCsvTemplate(credentialSelected, SchemaType.INDY);
 				const { data } = response as AxiosResponse;
-
+				
 				if (data) {
 					const fileUrl = data;
 					if (fileUrl) {
@@ -250,7 +250,7 @@ const BulkIssuance = () => {
 			setUploadedFileName(file?.name);
 			setUploadedFile(file);
 
-			const response = await uploadCsvFile(payload, credentialSelected);
+			const response = await uploadCsvFile(payload, credentialSelected, SchemaType.INDY);
 			const { data } = response as AxiosResponse;
 
 			if (data?.statusCode === apiStatusCodes?.API_STATUS_CREATED) {

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 
-import CustomAvatar from '../Avatar/index'
+import CustomAvatar from '../Avatar/index.tsx'
 import type { IUserProfile } from "./interfaces";
-import { getFromLocalStorage } from "../../api/Auth";
-import { storageKeys } from "../../config/CommonConstant";
+import { getFromLocalStorage } from "../../api/Auth.ts";
+import { storageKeys } from "../../config/CommonConstant.ts";
 
 const DisplayProfileImg = () => {
     const [userObj, setUserObj] = useState<IUserProfile | null>(null)
