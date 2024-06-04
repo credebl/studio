@@ -216,6 +216,7 @@ export interface IFormikValues {
 	ledger: string;
 	method: string;
 	network: string;
+    did: string;
 	domain: string;
 	privatekey: string;
 	endorserDid: string;

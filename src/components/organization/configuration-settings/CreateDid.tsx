@@ -3,7 +3,7 @@ import { Button, Checkbox, Label, Modal } from 'flowbite-react';
 import { Field, Form, Formik } from 'formik';
 import type { FormikHelpers as FormikActions } from 'formik';
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ChangeEvent } from 'react';
 import { AlertComponent } from '../../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import { createDid, getOrganizationById } from '../../../api/organization';
@@ -95,7 +95,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 			domain: values.method === DidMethod.WEB ? values.domain : '',
 			role: values.method === DidMethod.INDY ? 'endorser' : '',
 			privatekey: values.method === DidMethod.POLYGON ? values.privatekey : '',
-			did: '',
+			did: values?.did ?? '',
 			endorserDid: values?.endorserDid || '',
 			isPrimaryDid: false,
 		};
@@ -145,7 +145,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 	};
 
 	if (method === DidMethod.WEB) {
-		validations['domain'] = yup.string().required('Domain is required').trim();
+		validations.domain = yup.string().required('Domain is required').trim();
 	}
 
 	return (
@@ -280,20 +280,27 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 												Domain
 												<span className="text-red-500 text-xs">*</span>
 											</label>
-											<Field
+											<input
 												id="domain"
 												name="domain"
 												className="bg-gray-50 min-h-[44px] border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 disabled:bg-gray-100"
 												placeholder="Enter Domain"
-												onChange={formikHandlers.handleChange}
-											/>
+												value={formikHandlers.values.domain}
+												onChange={(e: ChangeEvent<HTMLInputElement>) => {
+													formikHandlers.handleChange(e);
+												}}
+												onBlur={formikHandlers.handleBlur}
+
+
+											>
+											</input>
+											<span className="static bottom-0 text-red-500 text-xs">
+												{formikHandlers.errors?.domain &&
+													formikHandlers.touched?.domain &&
+													formikHandlers.errors.domain}
+											</span>
+
 										</div>
-										{formikHandlers?.errors?.domain &&
-											formikHandlers?.touched?.domain && (
-												<span className="absolute botton-0 text-red-500 text-xs">
-													{formikHandlers?.errors?.domain}
-												</span>
-											)}
 									</div>
 								)}
 								<div>
@@ -353,6 +360,12 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 																value={formikHandlers?.values?.privatekey}
 																placeholder="Generated private key"
 																readOnly />
+															{formikHandlers?.errors?.privatekey &&
+																formikHandlers?.touched?.privatekey && (
+																	<span className="static botton-0 text-red-500 text-xs">
+																		{formikHandlers?.errors?.privatekey}
+																	</span>
+																)}
 															<TokenWarningMessage />
 															<div className="my-3 relative">
 																<p className="text-sm truncate">
@@ -378,12 +391,18 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 														className="truncate bg-gray-50 border mt-2 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
 														onChange={formikHandlers.handleChange}
 														placeholder="Enter private key" />
-													<TokenWarningMessage />
 													<span className="static bottom-0 text-red-500 text-xs">
 														{formikHandlers.errors?.privatekey &&
 															formikHandlers.touched?.privatekey &&
 															formikHandlers.errors.privatekey}
 													</span>
+													<TokenWarningMessage />
+													{formikHandlers?.errors?.privatekey &&
+														formikHandlers?.touched?.privatekey && (
+															<span className="static botton-0 text-red-500 text-xs">
+																{formikHandlers?.errors?.privatekey}
+															</span>
+														)}
 												</>
 											)}
 										</div>
@@ -425,6 +444,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 								<Button
 									type="submit"
 									isProcessing={loading}
+									disabled={formikHandlers.values.method === DidMethod.POLYGON && !formikHandlers.values.privatekey}
 									className="mb-2 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 								>
 

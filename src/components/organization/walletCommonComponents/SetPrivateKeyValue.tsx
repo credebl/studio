@@ -56,7 +56,7 @@ const SetPrivateKeyValueInput = ({
 			return etherBalance;
 		} catch (error) {
 			console.error('Error checking wallet balance:', error);
-			setErrorMessage('Error checking wallet balance.');
+			setErrorMessage('Error checking wallet balance');
 			return null;
 		}
 	};
@@ -68,9 +68,20 @@ const SetPrivateKeyValueInput = ({
 		} else {
 			setErrorMessage(null);
 		}
-		
+
 	}, [privateKeyValue]);
 
+	useEffect(() => {
+		if (havePrivateKey) {
+			setPrivateKeyValue('');
+			setErrorMessage(null);
+			setGeneratedKeys(null);
+		} else {
+			setPrivateKeyValue('');
+			setErrorMessage(null);
+		}
+	}, [havePrivateKey]);
+	
 	const generatePolygonKeyValuePair = async () => {
 		try {
 			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -82,7 +93,7 @@ const SetPrivateKeyValueInput = ({
 
 				const privateKey = data?.data?.privateKey.slice(2)
 				setPrivateKeyValue(privateKey || privateKeyValue);
-				const balanceCheck = await checkWalletBalance(privateKey || privateKeyValue);
+				await checkWalletBalance(privateKey || privateKeyValue);
 			}
 		} catch (err) {
 			console.error('Generate private key ERROR::::', err);
@@ -105,15 +116,31 @@ const SetPrivateKeyValueInput = ({
 
 					{generatedKeys && (
 						<>
-							<Field
-								type="text"
-								id="privatekey"
-								name="privatekey"
-								className="truncate bg-gray-50 border mt-2 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[519px] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
-								value={generatedKeys.privateKey.slice(2)}
-								placeholder="Generated private key"
-								readOnly />
+							<div className="mt-3 relative flex items-center">
+								<Field
+									type="text"
+									id="privatekey"
+									name="privatekey"
+									className="truncate bg-gray-50 border mt-2 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[480px] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+									value={generatedKeys.privateKey.slice(2)}
+									placeholder="Generated private key"
+									readOnly />
+
+								<div className='mt-4'>
+									<CopyDid
+										className="align-center hidden text-sm text-gray-900 dark:text-white truncate mt-8"
+										value={generatedKeys.privateKey.slice(2)}
+									/>
+								</div>
+
+							</div>
+							{errorMessage && (
+						<span className="static bottom-0 text-red-500 text-xs">
+							{errorMessage}
+						</span>
+					)}
 							<TokenWarningMessage />
+							
 							<div className="my-3 relative">
 								<p className="text-sm truncate">
 									<span className="font-semibold text-gray-900 dark:text-white">
@@ -126,6 +153,7 @@ const SetPrivateKeyValueInput = ({
 									</div>
 								</p>
 							</div>
+							
 						</>
 					)}
 				</>
@@ -143,7 +171,7 @@ const SetPrivateKeyValueInput = ({
 						}}
 						onBlur={formikHandlers.handleBlur}
 						placeholder="Enter private key" />
-			
+
 					<span className="static bottom-0 text-red-500 text-xs">
 						{formikHandlers.errors?.privatekey &&
 							formikHandlers.touched?.privatekey &&
@@ -155,12 +183,14 @@ const SetPrivateKeyValueInput = ({
 							{errorMessage}
 						</span>
 					)}
-					<TokenWarningMessage />
+
+					<div>
+						<TokenWarningMessage />
+
+					</div>
 
 				</>
 			)}
-
-
 		</div>
 
 

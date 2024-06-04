@@ -45,7 +45,7 @@ const SharedAgentForm = ({
 							testnet: 'did:polygon:testnet',
 						},
 					},
-					'no ledger': {
+					noLedger: {
 						'did:key': 'did:key',
 						'did:web': 'did:web',
 					},
@@ -110,11 +110,13 @@ const SharedAgentForm = ({
 			.min(2, 'Wallet label must be at least 2 characters')
 			.max(25, 'Wallet label must be at most 25 characters'),
 		method: yup.string().required('Method is required'),
-		seed: yup.string().required('Seed is required'),
-		did: yup.string().required('DID is required'),
 		ledger: yup.string().required('Ledger is required'),
+		...(haveDidShared) && {
+			seed: yup.string().required('Seed is required'),
+			did: yup.string().required('DID is required'),
+		},
 		...(DidMethod.INDY === selectedMethod || DidMethod.POLYGON === selectedMethod) && { network: yup.string().required('Network is required') },
-		...(DidMethod.WEB === selectedLedger) && { domain: yup.string().required('Domain is required for web method') },
+		...(DidMethod.WEB === selectedMethod) && { domain: yup.string().required('Domain is required') },
 		...(DidMethod.POLYGON === selectedMethod) && { privatekey: yup.string().required('Private key is required').trim().length(64, 'Private key must be exactly 64 characters long') },
 	};
 
@@ -327,7 +329,7 @@ const SharedAgentForm = ({
 								)}
 							</div>
 
-							{selectedLedger !== 'no ledger' && (
+							{selectedLedger !== 'noLedger' && (
 								<div className="mb-3 relative">
 									<label
 										htmlFor="network"
@@ -347,7 +349,7 @@ const SharedAgentForm = ({
 								</div>
 							)}
 
-							{selectedLedger !== 'no ledger' && (
+							{selectedLedger !== 'noLedger' && (
 
 								<div className="mb-3 relative">
 									<label
@@ -371,13 +373,14 @@ const SharedAgentForm = ({
 
 								{selectedMethod === DidMethod.WEB && (
 									<SetDomainValueInput
-										setDomainValue={(val: string) => setDomainValue(val)}
+										setDomainValue={setDomainValue}
 										domainValue={domainValue}
 										formikHandlers={formikHandlers}
 									/>
+
 								)}
 
-								<div className="mt-3 relative">
+								<div className="mt-3 relative pb-4">
 									<Label htmlFor="name" value="Wallet Label" />
 									<span className="text-red-500 text-xs">*</span>
 
@@ -438,6 +441,7 @@ const SharedAgentForm = ({
 						<div className="w-full flex justify-end">
 							<Button
 								type="submit"
+								disabled={formikHandlers.values.method === DidMethod.POLYGON && !formikHandlers.values.privatekey}
 								className="flex h-min p-0.5 focus:z-10 focus:outline-none border border-transparent enabled:hover:bg-cyan-800 dark:enabled:hover:bg-cyan-700 mt-4 text-base font-medium text-center text-white bg-primary-700 rounded-md hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 							>
 								Submit

@@ -93,13 +93,14 @@ const WalletSpinup = (props: {
 			ledger: values.method === DidMethod.INDY ? ledgerName : '',
 			label: values.label,
 			privatekey: values.method === DidMethod.POLYGON ? privatekey : '',
-			seed: values.method === DidMethod.POLYGON ? '' : values.seed || seeds,
+			seed: values.method === DidMethod.POLYGON ? '' : values?.seed || seeds,
 			network:
 				values.method === DidMethod.POLYGON
 					? polygonNetwork
 					: network,
 			domain: values.method === DidMethod.WEB ? domain : '',
 			role: values.method === DidMethod.INDY ? values?.role ?? 'endorser' : '',
+			did: values?.did ?? '',
 			endorserDid: values?.endorserDid ?? '',
 			clientSocketId: SOCKET.id,
 		};
