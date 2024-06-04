@@ -83,18 +83,21 @@ const WalletSpinup = (props: {
 		domain: string,
 	) => {
 		setLoading(true);
-		console.log('values345678::::::', values);
+		const ledgerName = values?.network?.split(":")[2]
+		const network = values?.network?.split(":").slice(2).join(":");
+		const polygonNetwork = values?.network?.split(":").slice(1).join(":");
+
 		const payload = {
 			keyType: values.keyType || 'ed25519',
-			method: values.method || '',
-			ledger: values.method === DidMethod.INDY ? values.ledger : '',
+			method: values.method.split(':')[1] || '',
+			ledger: values.method === DidMethod.INDY ? ledgerName : '',
 			label: values.label,
 			privatekey: values.method === DidMethod.POLYGON ? privatekey : '',
 			seed: values.method === DidMethod.POLYGON ? '' : values.seed || seeds,
 			network:
 				values.method === DidMethod.POLYGON
-					? `${values?.method}:${values?.network}`
-					: `${values?.ledger}:${values?.network}`,
+					? polygonNetwork
+					: network,
 			domain: values.method === DidMethod.WEB ? domain : '',
 			role: values.method === DidMethod.INDY ? values?.role ?? 'endorser' : '',
 			endorserDid: values?.endorserDid ?? '',
@@ -227,9 +230,10 @@ const WalletSpinup = (props: {
 
 			<div className="grid w-full mb-4">
 				<div className="col-span-1">
+					<div className='bg-[#F4F4F4] max-w-lg'>
 					{!agentSpinupCall && !loading && (
-						<div className="mt-4 flex flex-col gap-4 max-w-lg">
-							<ul className="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+						<div className="mt-4 flex flex-col gap-4 max-w-lg ml-4 mr-4 -mb-4">
+							<ul className="items-center w-full mx-2 my-4 text-sm ml-0 font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex dark:bg-gray-700 dark:border-gray-600 dark:text-white">
 								<li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
 									<div className="flex items-center pl-3">
 										<label className="w-full py-3 text-sm font-medium text-gray-900 dark:text-gray-300 flex items-center">
@@ -266,6 +270,8 @@ const WalletSpinup = (props: {
 							</ul>
 						</div>
 					)}
+					</div>
+					
 
 					{formComponent}
 				</div>
