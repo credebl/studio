@@ -299,7 +299,7 @@ export const setToCookies = (cookies: AstroCookies, key: string, value: any, opt
 }
 
 export const getFromCookies = (cookies: AstroCookies, key: string) =>{
-    const value = cookies.get(key).value
+    const value = cookies.get(key)?.value
     return value
 }
 

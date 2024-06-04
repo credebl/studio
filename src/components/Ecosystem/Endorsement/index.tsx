@@ -1,7 +1,7 @@
-'use client';
 
 import { Alert, Pagination } from 'flowbite-react';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import type { ChangeEvent } from 'react';
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
 import EndorsementPopup from './EndorsementPopup';
 import type { AxiosResponse } from 'axios';
@@ -12,15 +12,15 @@ import SearchInput from '../../SearchInput';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { getOrganizationById } from '../../../api/organization';
 import {
-	ICheckEcosystem,
 	checkEcosystem,
 	getEcosystemId,
 } from '../../../config/ecosystem';
+import type { ICheckEcosystem} from '../../../config/ecosystem';
 import EndorsementCard from './EndorsementCard';
 import {
-	GetEndorsementListParameter,
 	getEndorsementList,
 } from '../../../api/ecosystem';
+import type { GetEndorsementListParameter} from '../../../api/ecosystem';
 import { EndorsementStatus, EndorsementType } from '../../../common/enums';
 import { AlertComponent } from '../../AlertComponent';
 import { Features } from '../../../utils/enums/features';

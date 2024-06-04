@@ -16,7 +16,8 @@ import SOCKET from '../../config/SocketConfig';
 import { ToastContainer, toast } from 'react-toastify';
 import BreadCrumbs from '../BreadCrumbs';
 import BackButton from '../../commonComponents/backbutton'
-import { checkEcosystem, type ICheckEcosystem } from '../../config/ecosystem';
+import { checkEcosystem } from '../../config/ecosystem';
+import type { ICheckEcosystem} from '../../config/ecosystem';
 import type { ICredentials, IValues, IAttributes, IUploadMessage } from './interface';
 import RoleViewButton from '../RoleViewButton';
 import { Features } from '../../utils/enums/features';
@@ -42,6 +43,7 @@ const BulkIssuance = () => {
 	const [success, setSuccess] = useState<string | null>(null);
 	const [failure, setFailure] = useState<string | null>(null);
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
+	const [mounted, setMounted] = useState<boolean>(false)
 
 	const onPageChange = (page: number) => {
 		setCurrentPage({
@@ -94,6 +96,7 @@ const BulkIssuance = () => {
 
 	useEffect(() => {
 		getSchemaCredentials();
+		setMounted(true);
 		(async () => {
 			try {
 				const data: ICheckEcosystem = await checkEcosystem();				
@@ -491,7 +494,9 @@ const BulkIssuance = () => {
 							<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 								<div className="flex flex-col justify-between">
 									<div className="search-dropdown text-primary-700 drak:text-primary-700">
-										<Select
+										{
+											mounted ?
+											<Select
 											placeholder="Select Schema - Credential definition"
 											className="basic-single "
 											classNamePrefix="select"
@@ -505,7 +510,9 @@ const BulkIssuance = () => {
 												setCredentialSelected(value?.value ?? "");
 											}}
 											ref={selectInputRef}
-										/>
+										/>:
+										null
+										}
 									</div>
 									<div className="mt-4">
 										{credentialSelected && selectedCred && (

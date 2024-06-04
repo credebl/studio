@@ -1,4 +1,3 @@
-'use client';
 
 import type { CredDefData, SchemaState } from './interface';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';

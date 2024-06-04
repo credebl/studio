@@ -1,6 +1,6 @@
-import { EmailVerifyData, verifyUserMail } from '../../api/Auth';
+import { verifyUserMail } from '../../api/Auth';
 import { useEffect, useState } from 'react';
-
+import type { EmailVerifyData } from '../../api/Auth';
 import type { AxiosResponse } from 'axios';
 import { Button } from 'flowbite-react';
 import CustomSpinner from '../CustomSpinner';

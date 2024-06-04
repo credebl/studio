@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { ICheckEcosystem, checkEcosystem } from '../../config/ecosystem';
-import { pathRoutes } from '../../config/pathRoutes';
+import { checkEcosystem } from '../../config/ecosystem.ts';
+import type { ICheckEcosystem } from '../../config/ecosystem.ts';
+import { pathRoutes } from '../../config/pathRoutes.ts';
 
 const EcosystemSidebarOption = () => {
 	const [isEcosystemEnabled, setIsEcosystemEnabled] = useState(false);
@@ -29,7 +30,7 @@ const EcosystemSidebarOption = () => {
 						</defs>
 					</svg>
 
-					<span className="ml-3" sidebar-toggle-item>
+					<span className="ml-3" data-sidebar-toggle-item>
 						Ecosystems
 					</span>
 				</a>

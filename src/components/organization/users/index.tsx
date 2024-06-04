@@ -1,13 +1,7 @@
-'use client';
-
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
-import { HiAdjustments, HiClipboardList, HiUserCircle } from 'react-icons/hi';
-
+import { useState } from 'react';
 import BreadCrumbs from '../../BreadCrumbs';
 import Invitations from '../invitations/Invitations';
-import { MdDashboard } from 'react-icons/md';
 import Members from './Members';
-import React from 'react';
 
 const initialPageState = {
     pageNumber: 1,
@@ -17,6 +11,7 @@ const initialPageState = {
 
 
 const Users = () => {
+    const [activeTab, setActiveTab] = useState('users');
 
     return (
         <div className="pt-2">
@@ -25,27 +20,45 @@ const Users = () => {
             </div>
 
             <div className="mb-4 border-b border-gray-200 dark:border-gray-700">
-                <ul className="pl-5 flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
+                <ul className="pl-5 flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" role="tablist">
                     <li className="mr-2">
-                        <button className="text-xl inline-block p-4 border-b-2 rounded-t-lg " id="profile-tab" data-tabs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">Users</button>
+                        <button
+                            className={`text-xl inline-block p-4 border-b-2 rounded-t-lg ${activeTab === 'users' ? 'border-b-2 text-blue-600 border-blue-600 dark:text-blue-500 dark:border-blue-500' : 'border-blue-100 dark:text-gray-400 text-gray-500 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 hover:border-gray-300 dark:border-transparent'}`}
+                            id="users-tab"
+                            onClick={() => setActiveTab('users')}
+                            type="button"
+                            role="tab"
+                            aria-controls="users"
+                            aria-selected={activeTab === 'users'}
+                        >
+                            Users
+                        </button>
                     </li>
                     <li className="mr-2">
-                        <button className="text-xl inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="dashboard-tab" data-tabs-target="#dashboard" type="button" role="tab" aria-controls="dashboard" aria-selected="false">Invitations</button>
+                        <button
+                            className={`text-xl inline-block p-4  rounded-t-lg ${activeTab === 'invitations' ? 'border-b-2 text-blue-600 border-blue-600 dark:text-blue-500 dark:border-blue-500' : 'border-blue-100 dark:text-gray-400 text-gray-500 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 dark:border-transparent'}`}
+                            id="invitations-tab"
+                            onClick={() => setActiveTab('invitations')}
+                            type="button"
+                            role="tab"
+                            aria-controls="invitations"
+                            aria-selected={activeTab === 'invitations'}
+                        >
+                            Invitations
+                        </button>
                     </li>
                 </ul>
             </div>
             <div id="myTabContent">
-                <div className="hidden m-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                <div className={`${activeTab === 'users' ? 'block' : 'hidden'} m-4 rounded-lg bg-gray-50 dark:bg-gray-800`} id="users" role="tabpanel" aria-labelledby="users-tab">
                     <Members />
                 </div>
-                <div className="hidden m-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
+                <div className={`${activeTab === 'invitations' ? 'block' : 'hidden'} m-4 rounded-lg bg-gray-50 dark:bg-gray-800`} id="invitations" role="tabpanel" aria-labelledby="invitations-tab">
                     <Invitations />
                 </div>
             </div>
-
-
         </div>
-    )
-}
+    );
+};
 
 export default Users;
