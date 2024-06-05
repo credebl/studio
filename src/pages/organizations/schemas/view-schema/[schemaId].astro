@@ -5,5 +5,5 @@ import ViewSchemas from '../../../../components/Resources/Schema/ViewSchema'
 const schemaId = Astro.params.schemaId;
 ---
 <LayoutSidebar>
-	<ViewSchemas schemaId={schemaId || ""} client:load/>
+	<ViewSchemas schemaId={schemaId || ""} client:idle/>
 </LayoutSidebar>

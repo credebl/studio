@@ -7,10 +7,10 @@ const env = import.meta.env || process.env;
 
 ---
 
-<LayoutCommon>
+<LayoutCommon client:idle>
 	<div class="flex flex-col min-h-screen bg-white dark:bg-gray-900 -z-10">
 		<header>
-			<PublicNavbar limitedWidth={true} />
+			<PublicNavbar limitedWidth={true} client:idle />
 		</header>
 
 		<main class="grow" transition:animate="slide">

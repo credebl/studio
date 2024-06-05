@@ -35,14 +35,14 @@ const userData = data?.data;
 										className=" w-56 h-56 my-4 rounded-full shadow-lg"
 										size="80"
 										src={userData?.logoUrl}
-										client:load
+										client:idle
 									/>
 								) : (
 									<CustomAvatar
 										className=" w-56 h-56 my-4 rounded-full shadow-lg"
 										size="120"
 										name={userData?.firstName}
-										client:load
+										client:idle
 									/>
 								)
 							}

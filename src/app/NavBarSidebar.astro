@@ -428,7 +428,7 @@ const permittedPages = RolePermissions.find(
 							data-dropdown-toggle="dropdown-2"
 						>
 							<span class="sr-only">Open user menu</span>
-							<DisplayProfileImg client:load />
+							<DisplayProfileImg client:idle />
 						</button>
 					</div>
 					<!-- Dropdown menu -->
@@ -436,7 +436,7 @@ const permittedPages = RolePermissions.find(
 						class="z-50 hidden my-4 text-base list-none bg-white shadow-xl divide-y divide-gray-100 rounded dark:bg-gray-700 dark:divide-gray-600"
 						id="dropdown-2"
 					>
-						<DisplayUser client:load />
+						<DisplayUser client:idle />
 						<ul class="py-1 divide-y" role="none">
 							<li>
 								<a
@@ -483,7 +483,7 @@ const permittedPages = RolePermissions.find(
 								</a>
 							</li>
 							<li>
-								<SignOutButton client:load />
+								<SignOutButton client:idle />
 							</li>
 						</ul>
 					</div>
