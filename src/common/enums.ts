@@ -37,14 +37,14 @@ export enum SchemaType {
 }
 
 export enum CredentialType {
-	indy,
-	anoncreds,
-	jsonld
+	indy = 'indy',
+	anoncreds = 'anoncreds',
+	jsonld = 'jsonld'
 }
 
 export enum ProtocolVersion {
-	v1,
-	v2
+	v1 = 'v1',
+	v2 = 'v2'
 }
 
 export enum IssueCredentialUserText {
