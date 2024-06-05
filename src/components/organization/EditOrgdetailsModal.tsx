@@ -24,15 +24,6 @@ interface IUpdateOrgPayload {
 	logo?: string;
 }
 
-interface IUpdateOrgPayload {
-	orgId: string | undefined;
-	name: string;
-	description: string;
-	website: string;
-	isPublic: boolean | undefined;
-	logo?: string;
-}
-
 const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 	const [logoImage, setLogoImage] = useState<ILogoImage>({
 		logoFile: '',
