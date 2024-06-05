@@ -15,7 +15,6 @@ import DedicatedAgentForm from './DedicatedAgent';
 import SharedAgentForm from './SharedAgent';
 import WalletSteps from './WalletSteps';
 import type { IValuesShared } from './interfaces';
-import React from 'react';
 
 interface Values {
 	seed: string;
