@@ -10,6 +10,7 @@ import { DidMethod } from '../../../common/enums';
 import SetDomainValueInput from './SetDomainValueInput';
 import SetPrivateKeyValueInput from './SetPrivateKeyValue';
 import type { ISharedAgentForm, IValuesShared } from "./interfaces";
+import type { ILedgerDetails, ILedgerItem } from "../interfaces";
 
 const SharedAgentForm = ({
 	orgName,
@@ -29,29 +30,40 @@ const SharedAgentForm = ({
 	const fetchLedgerConfig = async () => {
 		try {
 			const { data } = await getLedgerConfig();
+
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 				const obj = {
 					indy: {
-						'did:indy': {
-							'bcovrin:testnet': 'did:indy:bcovrin:testnet',
-							'indicio:demonet': 'did:indy:indicio:demonet',
-							'indicio:mainnet': 'did:indy:indicio:mainnet',
-							'indicio:testnet': 'did:indy:indicio:testnet',
-						},
+					  'did:indy': {}
 					},
 					polygon: {
-						'did:polygon': {
-							mainnet: 'did:polygon:mainnet',
-							testnet: 'did:polygon:testnet',
-						},
+					  'did:polygon': {}
 					},
-					noLedger: {
-						'did:key': 'did:key',
-						'did:web': 'did:web',
-					},
-				};
-				setMappedData(obj);
-				console.error('obj34567:::::', obj);
+					noLedger: {}
+				  };
+			
+				  data.data.forEach(({ name, details }: ILedgerItem) => {
+					const lowerName = name.toLowerCase();
+			
+					if (lowerName === 'indy') {
+					  for (const [key, subDetails] of Object.entries(details)) {
+						if (typeof subDetails === 'object') {
+						  for (const [subKey, value] of Object.entries(subDetails)) {
+							obj.indy['did:indy'][`${key}:${subKey}`] = value;
+						  }
+						}
+					  }
+					} else if (lowerName === 'polygon') {
+					  for (const [subKey, value] of Object.entries(details)) {
+						if (typeof value === 'string') {
+						  obj.polygon['did:polygon'][subKey] = value;
+						}
+					  }
+					} else if (lowerName === 'key' || lowerName === 'web') {
+					  obj.noLedger[`did:${lowerName}`] = details[lowerName as keyof ILedgerDetails] as string;
+					}
+				  });
+				  setMappedData(obj);							
 			}
 		} catch (err) {
 			console.error('Fetch Network ERROR::::', err);
@@ -441,7 +453,6 @@ const SharedAgentForm = ({
 						<div className="w-full flex justify-end">
 							<Button
 								type="submit"
-								disabled={formikHandlers.values.method === DidMethod.POLYGON && !formikHandlers.values.privatekey}
 								className="flex h-min p-0.5 focus:z-10 focus:outline-none border border-transparent enabled:hover:bg-cyan-800 dark:enabled:hover:bg-cyan-700 mt-4 text-base font-medium text-center text-white bg-primary-700 rounded-md hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 							>
 								Submit
