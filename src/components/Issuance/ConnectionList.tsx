@@ -7,6 +7,7 @@ import {getConnectionsByOrg,
 import type {IConnectionListAPIParameter} from '../../api/connection'
 import type { TableData } from '../../commonComponents/datatable/interface';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
+import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';
 import { dateConversion } from '../../utils/DateConversion';
 import DateTooltip from '../Tooltip';
@@ -106,6 +107,7 @@ const ConnectionList = (props: {
 									<div className="flex items-center" id="issuance_checkbox">
 										<input
 											id="default-checkbox"
+											type="checkbox"
 											type="checkbox"
 											name="connection"
 											defaultChecked={ele.checked || isChecked}
