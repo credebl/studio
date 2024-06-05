@@ -80,9 +80,7 @@ const IssueCred = () => {
 
 			return {
 				connectionId: user.connectionId,
-				attributes: attributesArray,
-				connectionId: user.connectionId,
-				attributes: attributesArray,
+				attributes: attributesArray
 			};
 		});
 
