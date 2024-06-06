@@ -1,9 +1,9 @@
 name: Deploy
 on:
   push:
-    branches: develop
+    branches: fix/component-loading-issues
   pull_request:
-    branches: develop
+    branches: fix/component-loading-issues
 
 jobs:
   deploy:
