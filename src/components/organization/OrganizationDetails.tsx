@@ -141,7 +141,7 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 										<p className="pr-4 text-base font-normal text-gray-500 dark:text-gray-400">
 											:
 										</p>
-										<p className="text-base font-semibold text-gray-900 truncate dark:text-white w-full">
+										<div className="text-base font-semibold text-gray-900 truncate dark:text-white w-full">
 											{agentData?.createDateTime ? (
 												<DateTooltip date={agentData?.createDateTime}>
 													{' '}
@@ -153,7 +153,7 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 													{dateConversion(new Date().toISOString())}{' '}
 												</DateTooltip>
 											)}
-										</p>
+										</div>
 									</div>
 								</div>
 							</li>
@@ -163,7 +163,7 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 				<div className="flex flex-col justify-center text-wrap">
 					{loading ? (
 						<div className="flex justify-center">
-							<CustomSpinner />
+							
 						</div>
 					) : (
 						connectionData && (

@@ -24,7 +24,7 @@ import { AlertComponent } from '../AlertComponent';
 
 interface IResponseMessages {type: "error" | "success", message: string}
 
-const AddPasskey = ({ responseMessages }: { responseMessages: (value: IResponseMessages) => IResponseMessages }) => {
+const AddPasskey = ({ responseMessages }: { 	responseMessages: (value: IResponseMessages) => IResponseMessages }) => {
 	const [fidoError, setFidoError] = useState('');
 	const [fidoLoader, setFidoLoader] = useState(true);
 	const [OrgUserEmail, setOrgUserEmail] = useState<string>('');

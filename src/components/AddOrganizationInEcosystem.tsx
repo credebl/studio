@@ -1,7 +1,7 @@
-'use client';
 
 import type { AxiosResponse } from 'axios';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import type { ChangeEvent } from 'react';
 import type { TableData } from '../commonComponents/datatable/interface';
 import { apiStatusCodes, storageKeys } from '../config/CommonConstant';
 import { AlertComponent } from './AlertComponent';
@@ -115,7 +115,7 @@ const AddOrganizationInEcosystem = () => {
 										setOrganizationsList(updateOrgList)
 									}}
 									disabled={alreadyAdded}
-									checked={(ele.checked || isChecked) && !alreadyAdded}
+									defaultChecked={(ele.checked || isChecked) && !alreadyAdded}
 									className={`w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-lg dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600 disabled:opacity-100 ${alreadyAdded ? "cursor-not-allowed" : "cursor-pointer"}`}
 								/>
 							</div>

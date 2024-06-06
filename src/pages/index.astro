@@ -2,7 +2,7 @@
 import LayoutCommon from '../app/LayoutCommon.astro';
 import PublicNavbar from '../commonComponents/PublicNavbar.astro';
 import { envConfig } from '../config/envConfig';
-const cookie = Astro.cookies.get("platform-data").value;
+const cookie = Astro.cookies.get("platform-data")?.value;
 const env = import.meta.env || process.env;
 
 ---

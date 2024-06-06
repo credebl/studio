@@ -59,7 +59,7 @@ export const apiRoutes = {
 		issueCredential: '/credentials/offer',
 		issueOobEmailCredential: '/credentials/oob/email',
 		bulk:{
-			credefList:'/bulk/cred-defs',
+			credefList:'/credentials/bulk/template',
 			uploadCsv: '/bulk/upload',
 			preview: '/preview',
 			bulk: '/bulk',
@@ -67,7 +67,7 @@ export const apiRoutes = {
 			filesData: '/bulk/file-data',
 			retry: '/retry/bulk'
 		},
-		download:'/download'
+		download:'/credentials/bulk/template'
 	},
 	Verification: {
 		getAllRequestList: '/credentials/proofs',

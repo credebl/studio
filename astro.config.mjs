@@ -1,4 +1,4 @@
-import Deno from '@astrojs/deno';
+import deno from '@deno/astro-adapter';
 import { defineConfig } from 'astro/config';
 import react from "@astrojs/react";
 import sitemap from '@astrojs/sitemap';
@@ -8,15 +8,22 @@ const DEV_PORT = 3000;
 
 // https://astro.build/config
 export default defineConfig({
-	experimental: {
-    viewTransitions: true,
+	// experimental: {
+    
+  // },
+  image: {
+    service: {
+      entrypoint: 'astro/assets/services/noop'
+    }
   },
-
+  viewTransitions: true,
 	redirects: {
     '/login': '/authentication/sign-in',
 		'/register': '/authentication/sign-up',
   },
 
+  build:{
+  },
   site: process.env.CI ? 'https://credebl-dev-ui.deno.dev' : `http://localhost:${DEV_PORT}`,
   base: process.env.CI ? '/' : undefined,
   output: 'server',
@@ -30,7 +37,7 @@ export default defineConfig({
   integrations: [
   //
   sitemap(), tailwind(), react()],
-  adapter: Deno()
+  adapter: deno(),
 });
 
 if (typeof globalThis !== 'undefined' && typeof Deno !== 'undefined') {
