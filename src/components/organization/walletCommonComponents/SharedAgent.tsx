@@ -21,7 +21,6 @@ const SharedAgentForm = ({
 	const [selectedLedger, setSelectedLedger] = useState('');
 	const [selectedMethod, setSelectedMethod] = useState('');
 	const [seedVal, setSeedVal] = useState('');
-	const [selectedNetwork, setSelectedNetwork] = useState('');
 	const [selectedDid, setSelectedDid] = useState('');
 	const [mappedData, setMappedData] = useState(null);
 	const [domainValue, setDomainValue] = useState<string>('');
@@ -32,7 +31,7 @@ const SharedAgentForm = ({
 			const { data } = await getLedgerConfig();
 
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				const obj = {
+				const ledgerConfigData = {
 					indy: {
 					  'did:indy': {}
 					},
@@ -49,21 +48,21 @@ const SharedAgentForm = ({
 					  for (const [key, subDetails] of Object.entries(details)) {
 						if (typeof subDetails === 'object') {
 						  for (const [subKey, value] of Object.entries(subDetails)) {
-							obj.indy['did:indy'][`${key}:${subKey}`] = value;
+							ledgerConfigData.indy['did:indy'][`${key}:${subKey}`] = value;
 						  }
 						}
 					  }
 					} else if (lowerName === 'polygon') {
 					  for (const [subKey, value] of Object.entries(details)) {
 						if (typeof value === 'string') {
-						  obj.polygon['did:polygon'][subKey] = value;
+							ledgerConfigData.polygon['did:polygon'][subKey] = value;
 						}
 					  }
 					} else if (lowerName === 'key' || lowerName === 'web') {
-					  obj.noLedger[`did:${lowerName}`] = details[lowerName as keyof ILedgerDetails] as string;
+						ledgerConfigData.noLedger[`did:${lowerName}`] = details[lowerName as keyof ILedgerDetails] as string;
 					}
 				  });
-				  setMappedData(obj);							
+				  setMappedData(ledgerConfigData);							
 			}
 		} catch (err) {
 			console.error('Fetch Network ERROR::::', err);
@@ -85,18 +84,15 @@ const SharedAgentForm = ({
 	const handleLedgerChange = (e) => {
 		setSelectedLedger(e.target.value);
 		setSelectedMethod('');
-		setSelectedNetwork('');
 		setSelectedDid('');
 	};
 
 	const handleMethodChange = (e) => {
 		setSelectedMethod(e.target.value);
-		setSelectedNetwork('');
 		setSelectedDid('');
 	};
 
 	const handleNetworkChange = (e) => {
-		setSelectedNetwork(e.target.value);
 		const didMethod = `${e.target.value}`;
 		setSelectedDid(didMethod);
 	};
@@ -133,11 +129,16 @@ const SharedAgentForm = ({
 	};
 
 	const renderMethodOptions = (formikHandlers) => {
-		if (!selectedLedger) return null;
+		if (!selectedLedger) {
+			return null;
+		}
 
 		const methods = mappedData?.[selectedLedger];
 
-		if (!methods) return null;
+		if (!methods) {
+			return null;
+		}
+
 
 		return Object.keys(methods).map((method) => (
 			<div key={method} className="mt-2">
@@ -161,9 +162,15 @@ const SharedAgentForm = ({
 	};
 
 	const renderNetworkOptions = (formikHandlers) => {
-		if (!selectedLedger || !selectedMethod) return null;
+		if (!selectedLedger || !selectedMethod) {
+			return null;
+		}
+
 		const networks = mappedData?.[selectedLedger][selectedMethod];
-		if (!networks) return null;
+
+		if (!networks) {
+			return null;
+		}
 
 		return Object.keys(networks).map((network) => (
 			<div key={network} className="mt-2">
@@ -173,8 +180,8 @@ const SharedAgentForm = ({
 					name="network"
 					value={networks[network]}
 					onChange={(e) => {
-						formikHandlers.handleChange(e),
-							handleNetworkChange(e)
+						formikHandlers.handleChange(e)
+						 handleNetworkChange(e)
 					}}
 					className="mr-2"
 				/>
@@ -302,7 +309,6 @@ const SharedAgentForm = ({
 														setSelectedLedger(ledger);
 														setSelectedMethod('');
 														setSeedVal(seeds);
-														setSelectedNetwork('');
 														setSelectedDid('');
 													}}
 													className="mr-2"
@@ -428,7 +434,7 @@ const SharedAgentForm = ({
 													Copy the address and get the free tokens for the testnet.
 													<div> For eg. use&nbsp;
 														<a href='https://faucet.polygon.technology/' className='text-blue-900 text-sm underline'>
-															https://faucet.polygon.technology/&nbsp;
+															`https://faucet.polygon.technology/`&nbsp;
 														</a>
 														to get free token
 													</div>

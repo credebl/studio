@@ -2,18 +2,20 @@ import React, { useEffect, useState } from "react"
 import { Button } from "flowbite-react"
 import CopyDid from '../../../commonComponents/CopyDid'
 import CreateDidPopup from "./CreateDid"
-import { getDids, updatePrimaryDid } from "../../../api/organization"
+import { getDids, getOrganizationById, updatePrimaryDid } from "../../../api/organization"
 import { getFromLocalStorage } from "../../../api/Auth"
 import { apiStatusCodes, storageKeys } from "../../../config/CommonConstant"
 import type { AxiosResponse } from "axios"
 import { AlertComponent } from "../../AlertComponent"
 import type { IDidList, IUpdatePrimaryDid } from "../interfaces"
+import { Roles } from "../../../utils/enums/roles"
 
 const DIDList = () => {
     const [didList, setDidList] = useState<IDidList[]>([]);
     const [showPopup, setShowPopup] = useState(false);
     const [erroMsg, setErrMsg] = useState<string | null>(null);
     const [successMsg, setSuccessMsg] = useState<string | null>(null);
+	const [role, setRole] = useState<string | null>(null);
 
     const setPrimaryDid = async (id: string, did: string) => {
         try {
@@ -34,6 +36,23 @@ const DIDList = () => {
         }
     }
 
+    const fetchOrganizationDetails = async () => {
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		const response = await getOrganizationById(orgId);
+		const { data } = response as AxiosResponse;
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+
+			const ownerRole = data?.data?.userOrgRoles.find(role => role?.orgRole.name === "owner");
+
+			const ownerRoleName = ownerRole ? ownerRole.orgRole.name : null;
+
+			setRole(ownerRoleName);
+
+		} else {
+			console.error('Error in fetching organization:::');
+		}
+	};
+
     const getData = async () => {
         try {
             const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -48,12 +67,13 @@ const DIDList = () => {
                 setDidList(sortedDids)
             }
         } catch (error) {
-            console.log("ERROR::::", error);
+            console.error("ERROR::::", error);
         }
     }
 
     useEffect(() => {
         getData();
+        fetchOrganizationDetails();
     }, [])
 
     return (
@@ -71,6 +91,7 @@ const DIDList = () => {
                     <h3 className="text-lg font-bold dark:text-white">DID Details</h3>
                     <Button
                         onClick={() => setShowPopup(true)}
+                        disabled={role !== Roles.OWNER || Roles.ADMIN}
                         className={`hover:bg-primary-800 dark:hover:text-white dark:hover:bg-primary-700 hover:!bg-primary-800 text-base font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:focus:ring-primary-800`}
                     >
                         Create DID

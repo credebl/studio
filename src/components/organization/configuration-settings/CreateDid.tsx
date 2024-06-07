@@ -126,11 +126,18 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 
 	const createNewDid = async (values: IFormikValues) => {
 		setLoading(true);
+
+		let network = '';
+		if (values.method === DidMethod.INDY) {
+			network = values?.network;
+		} else if (values.method === DidMethod.POLYGON) {
+			network = `${values.ledger}:${values.network}`;
+		}
 		const didData = {
 			seed: values.method === DidMethod.POLYGON ? '' : seed,
 			keyType: 'ed25519',
 			method: values.method.split(':')[1],
-			network: values.method === DidMethod.INDY ? values?.network : values.method === DidMethod.POLYGON ? `${values.ledger}:${values.network}` : '',
+			network: network,
 			domain: values.method === DidMethod.WEB ? values.domain : '',
 			role: values.method === DidMethod.INDY ? 'endorser' : '',
 			privatekey: values.method === DidMethod.POLYGON ? values.privatekey : '',
@@ -170,10 +177,8 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 			if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 				setGeneratedKeys(data?.data);
 				const privateKey = data?.data?.privateKey.slice(2)
-				console.log('');
 				setPrivateKeyValue( privateKeyValue || privateKey);
 				const sdfgh = await checkWalletBalance(privateKeyValue || privateKey);
-				console.log('sdfgh::::', sdfgh);
 
 			}
 		} catch (err) {
@@ -240,10 +245,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 					) => {
 
 						await createNewDid(values);
-
-						setTimeout(() => {
-							window.location.reload();
-						}, 4000);
+						window.location.reload();
 				
 					}}
 				>
