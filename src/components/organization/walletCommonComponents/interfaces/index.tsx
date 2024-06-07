@@ -9,7 +9,7 @@ export interface IValues {
 export interface IDedicatedAgentForm {
 	seeds: string;
 	loading: boolean;
-	submitDedicatedWallet: (values: IValues) => void;
+	submitDedicatedWallet: (values: IValuesShared) => void;
 }
 
 export interface IValuesShared {

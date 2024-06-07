@@ -215,8 +215,15 @@ export interface IDidList {
 export interface IFormikValues {
 	ledger: string;
 	method: string;
+    keyType:string;
 	network: string;
 	domain: string;
 	privatekey: string;
 	endorserDid: string;
+}
+
+export interface IDedicatedAgentConfig {
+	walletName: string;
+	agentEndpoint: string;
+	apiKey: string;
 }

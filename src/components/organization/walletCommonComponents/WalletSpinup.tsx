@@ -1,6 +1,7 @@
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
 import { getFromLocalStorage, passwordEncryption } from '../../../api/Auth';
 import {
+	createDid,
 	spinupDedicatedAgent,
 	spinupSharedAgent,
 } from '../../../api/organization';
@@ -17,6 +18,7 @@ import DedicatedAgentForm from '../walletCommonComponents/DedicatedAgent';
 import SharedAgentForm from './SharedAgent';
 import WalletSteps from './WalletSteps';
 import type { IValuesShared } from './interfaces';
+import React from 'react';
 
 interface Values {
 	seed: string;
@@ -42,6 +44,7 @@ const WalletSpinup = (props: {
 	const [agentSpinupCall, setAgentSpinupCall] = useState<boolean>(false);
 	const [failure, setFailure] = useState<string | null>(null);
 	const [seeds, setSeeds] = useState<string>('');
+	const [didValue, setDidValue] = useState<string | null>('');
 
 	useEffect(() => {
 		setSeeds(nanoid(32));
@@ -51,24 +54,37 @@ const WalletSpinup = (props: {
 		setAgentType(type);
 	};
 
-	const submitDedicatedWallet = async (values: Values) => {
-		const payload = {
-			walletName: values.walletName,
-			seed: values.seed || seeds,
-			walletPassword: passwordEncryption(values.password),
-			did: values.did,
-			ledgerId: [values.network.toString()],
-			clientSocketId: SOCKET.id,
+	const submitDedicatedWallet = async (values: IValuesShared) => {
+			
+		const didData = {
+			seed:seeds || '',
+			keyType: values.keyType || 'ed25519',
+		    method: values.method.split(':')[1] || '',
+			network:
+			values.method === DidMethod.INDY ?
+            values.network?.split(':').slice(2).join(':') :
+				values.method === DidMethod.POLYGON
+					? `${values.method}:${values.network}`
+					: values.method !== DidMethod.KEY
+					? `${values.ledger}:${values.network}`
+					: '',
+			domain: values.method === DidMethod.WEB ? values.domain : '',
+			role: values.method === DidMethod.INDY ? 'endorser' : '',
+			privatekey: values.method === DidMethod.POLYGON ? values.privatekey : '',
+			did: values.did || '',
+			endorserDid: values?.endorserDid || '',
+			isPrimaryDid: true,
 		};
 
 		setLoading(true);
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-		const spinupRes = await spinupDedicatedAgent(payload, orgId);
+		const spinupRes = await createDid(didData);
 		const { data } = spinupRes as AxiosResponse;
-
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			if (data?.data['agentSpinupStatus'] === 1) {
-				setAgentSpinupCall(true);
+       if(didData.did = data?.data?.did || ''){
+	setAgentSpinupCall(true);
+      }				
 			} else {
 				setFailure(spinupRes as string);
 			}
@@ -225,7 +241,7 @@ const WalletSpinup = (props: {
 				</div>
 			</div>
 
-			<div className="grid w-full grid-cols-1 md:grid-cols-2 gap-4 mt-0 mb-4 xl:grid-cols-3 2xl:grid-cols-3">
+			<div className="grid w-full mb-4">
 				<div className="col-span-1">
 					{!agentSpinupCall && !loading && (
 						<div className="mt-4 flex max-w-lg flex-col gap-4">
@@ -268,14 +284,7 @@ const WalletSpinup = (props: {
 					)}
 
 					{formComponent}
-				</div>
-				<div className="col-span-2">
-					{agentType === AgentType.DEDICATED ? (
-						<DedicatedIllustrate />
-					) : (
-						<SharedIllustrate />
-					)}
-				</div>
+				</div>				
 			</div>
 		</div>
 	);

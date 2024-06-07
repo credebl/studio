@@ -14,10 +14,12 @@ import { Tooltip } from 'flowbite-react';
 import DIDList from './configuration-settings/DidList';
 
 const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
+	
+	
 	const { org_agents } = orgData as Organisation;
 	const agentData: OrgAgent | null =
 		org_agents.length > 0 ? org_agents[0] : null;
-
+		
 	const [loading, setLoading] = useState<boolean>(true);
 	const [connectionData, setConnectionData] = useState<Connection | null>(null);
 
@@ -43,8 +45,11 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 	}, []);
 
 	return (
-		<>
-			<div className="mt-4 flex justify-start items-start flex-wrap p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800 gap-6">
+		<div>
+{/* {
+	agentData?.orgDid && ( */}
+		<div>
+    		<div className="mt-4 flex justify-start items-start flex-wrap p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800 gap-6">
 				<div className='flex justify-between w-full'>
 					<h3 className="mb-1 mt-1 text-xl font-bold text-gray-900 dark:text-white">
 						Web Wallet Details
@@ -231,8 +236,11 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 						</div>
 					</div>
 				</div>
-			)}
-		</>
+			)}	</div>
+	{/* )
+} */}	
+		</div>
+		
 	);
 };
 

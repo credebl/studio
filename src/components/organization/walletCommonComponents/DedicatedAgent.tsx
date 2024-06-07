@@ -1,31 +1,26 @@
 import * as yup from 'yup';
-import { Button, Checkbox, Label } from 'flowbite-react';
+import { Button,  Label } from 'flowbite-react';
 import { Field, Form, Formik } from 'formik';
 import {
     apiStatusCodes,
-	passwordRegex,
 	storageKeys,
 } from '../../../config/CommonConstant';
 import { useEffect, useState } from 'react';
-import InputCopy from '../../InputCopy';
-import type { AxiosResponse } from 'axios';
+import { HttpStatusCode, type AxiosResponse } from 'axios';
 import {
-	createPolygonKeyValuePair,
 	getLedgerConfig,
 	getLedgers
 } from '../../../api/Agent';
 import { DidMethod } from '../../../common/enums';
-import NetworkInput from './NetworkInput';
-import type { IDedicatedAgentForm, IPolygonKeys, IValues } from './interfaces';
-import { getFromLocalStorage } from '../../../api/Auth';
+import type { IDedicatedAgentForm, IValuesShared } from './interfaces';
+import { getFromLocalStorage, setToLocalStorage } from '../../../api/Auth';
 import { apiRoutes } from '../../../config/apiRoutes';
 import { axiosPost } from '../../../services/apiRequests';
 import CopyDid from '../../../commonComponents/CopyDid';
-import GenerateBtnPolygon from './GenerateBtnPolygon';
-import TokenWarningMessage from './TokenWarningMessage';
 import SetDomainValueInput from './SetDomainValueInput';
 import SetPrivateKeyValueInput from './SetPrivateKeyValue';
-
+import { getOrganizationById, setAgentConfigDetails } from '../../../api/organization';
+import type { IDedicatedAgentConfig } from '../interfaces';
 
 interface DedicatedAgentConfig {
 	walletName: string;
@@ -40,39 +35,124 @@ interface DidCreationConfig{
 	network:string;
 	role:string;
 }
+interface DedicatedAgentPayload {
+	walletName: string;
+	agentEndpoint: string;
+	apiKey: string;
+	seed:string;
+	keyType:string;
+	method:string;
+	network:string;
+	role:string;
+}
 
 const DedicatedAgentForm = ({
 	seeds,
 	loading,
  	submitDedicatedWallet,
  }: IDedicatedAgentForm) => {
-	const [isConfigDone, setIsConfigDone]=useState<boolean>(true)
+	const [isConfigDone, setIsConfigDone]=useState<boolean>(false)
 	const [seedVal, setSeedVal] = useState('');
 	const [mappedData, setMappedData] = useState(null);
-	const [selectedMethod, setSelectedMethod]=useState(null)
-	const [generatedKeys, setGeneratedKeys] = useState<IPolygonKeys | null>(null);
+	const [selectedLedger, setSelectedLedger] = useState('');
+	const [selectedDid, setSelectedDid] = useState('');
+	const [selectedMethod, setSelectedMethod]=useState('')
 	const [privateKeyValue, setPrivateKeyValue] = useState<string>('');
 	const [domainValue, setDomainValue] = useState<string>('');
-	// const [selectedLedger, setSelectedLedger] = useState('');
 	const [selectedNetwork, setSelectedNetwork] = useState('');
-	const [networkOptions, setNetworkOptions]=useState<string[]>([])
+
+
 
 	const fetchLedgerConfig = async () => {
 		try {
 			const { data } = await getLedgerConfig();
 			console.log('data',data)
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				const obj = {};
-				data.data.forEach((item) => {
-					obj[item.name.toLowerCase()] = { ...item.details };
-				});
+
+				const obj = {
+                    indy: {
+                        'did:indy': {
+                            'bcovrin:testnet': 'did:indy:bcovrin:testnet',
+                            'indicio:demonet': 'did:indy:indicio:demonet',
+                            'indicio:mainnet': 'did:indy:indicio:mainnet',
+                            'indicio:testnet': 'did:indy:indicio:testnet',
+                        },
+                    },
+                    polygon: {
+                        'did:polygon': {
+                            mainnet: 'did:polygon:mainnet',
+                            testnet: 'did:polygon:testnet',
+                        },
+                    },
+                    noLedger: {
+                        'did:key': 'did:key',
+                        'did:web': 'did:web',
+                    },
+                };
 				setMappedData(obj);
 			}
 		} catch (err) {
 			console.log('Fetch Network ERROR::::', err);
 		}
 	};
+
+
+	const fetchOrganizationDetails = async () => {
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		const response = await getOrganizationById(orgId as string);
+		const { data } = response as AxiosResponse;
+		console.log("fetch Org details in form::::::::::::::::::::: ", data);
+		
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			const didExists = data?.data?.org_agents[0]?.orgDid
+				if(!didExists)
+			setIsConfigDone(false)
+		} 
+		
+	};
+
+
+	const fetchNetworks = async () => {
+		try {
+			const { data } = (await getLedgers()) as AxiosResponse;
+			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+				return data?.data;
+			}
+			return [];
+		} catch (err) {
+			console.error('Fetch Network ERROR::::', err);
+		}
+	};
+
+	const handleLedgerChange = (e) => {
+		setSelectedLedger(e.target.value);
+		setSelectedMethod('');
+		setSelectedNetwork('');
+		setSelectedDid('');
+	};
+	const handleMethodChange = (e) => {
+		setSelectedMethod(e.target.value);
+		setSelectedNetwork('');
+		setSelectedDid('');
+	};
+
+	const handleNetworkChange = (e) => {
+		setSelectedNetwork(e.target.value);
+		const didMethod = `${e.target.value}`;
+		setSelectedDid(didMethod);
+	};
+
+	const getLedgerList = async () => {
+		await fetchNetworks();
+	};
+
+useEffect(()=>{
+	fetchOrganizationDetails();
+	setIsConfigDone(true)
+},[])
+
 	useEffect(() => {
+		getLedgerList();
 		fetchLedgerConfig();
 	}, []);
 
@@ -80,9 +160,6 @@ const DedicatedAgentForm = ({
 		console.log('seedVal',seedVal)
 		setSeedVal(seeds)
 	}, [seeds])
-	const handleMethodChange=(e)=>{
-		setSelectedMethod(e.target.value)
-	}
 	const validation = {
 		walletName: yup
 			.string()
@@ -111,101 +188,225 @@ const DedicatedAgentForm = ({
 		...(DidMethod.INDY === selectedMethod || DidMethod.POLYGON === selectedMethod) && { network: yup.string().required('Network is required') },
 
 	}
-	// {
-	// 	"seed": "jfrekfngdjrkfejhgdjfdkjhjdbeiuff",
-	// 	"keyType": "ed25519",
-	// 	"method": "indy",
-	// 	"network": "bcovrin:testnet",
-	// 	"role": "endorser",
-	//   }
-
-	const setAgentConfig=async (values: DedicatedAgentConfig)=>{
+	
+	
+	const setAgentConfig=async (values: IDedicatedAgentConfig)=>{
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-		const token = await getFromLocalStorage(storageKeys.TOKEN)
 
-		const details = {
-			url:  `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.setAgentConfig}`,
-			payload:{
-				"walletName": values.walletName,
-				"agentEndpoint": values.agentEndpoint,
-				"apiKey": values.apiKey
-			  },
-			config: { headers: {
-				'Content-type': 'application/json',
-				'Authorization': `Bearer ${token}`,
-			  }, }
-		  };
-		
+		const payload = {
+				walletName: values.walletName,
+				agentEndpoint: values.agentEndpoint,
+				apiKey: values.apiKey
+			  };
+		// console.log('payload45678::::', details);
 		  try {
-			const response = await axiosPost(details)
-			console.log('response',response)
-			setIsConfigDone(true)
-			return response
+			const agentConfigResponse = await setAgentConfigDetails(payload, orgId)
+            console.log('agentConfigResponse345678:::::', agentConfigResponse);
+			const { data } = agentConfigResponse as AxiosResponse;
+            console.log('data45678::::', data);
+			if (data?.statusCode === HttpStatusCode.Created) {
+				const response = await getOrganizationById(orgId as string);
+				const { data } = response as AxiosResponse;
+
+				// if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+                //     const orgAgents = data?.data?.org_agents;
+                //     console.log("orgAgentsssss", orgAgents);
+
+                //     if (orgAgents.length > 0) {
+                //         setIsConfigDone(true);
+                //         setToLocalStorage(storageKeys.ORG_DETAILS, 'done');
+                //     }
+                //     else {
+                //         setIsConfigDone(false);
+                //     }
+                // }
+        }
 		  }
 		  catch (error) {
 			const err = error as Error
 			return err?.message
 		  }
 	}
+	
 
-	const generatePolygonKeyValuePair = async () => {
-		try {
-			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-			const resCreatePolygonKeys = await createPolygonKeyValuePair(orgId);
-			const { data } = resCreatePolygonKeys as AxiosResponse;
 
-			if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-				setGeneratedKeys(data?.data);
-			}
-		} catch (err) {
-			console.log('Generate private key ERROR::::', err);
-		}
+	const renderMethodOptions = (formikHandlers) => {
+		if (!selectedLedger) return null;
+
+		const methods = mappedData?.[selectedLedger];
+
+		if (!methods) return null;
+
+		return Object.keys(methods).map((method) => (
+			<div key={method} className="mt-2">
+				<input
+					type="radio"
+					id={method}
+					name="method"
+					value={method}
+					onChange={(e) => {
+						formikHandlers.handleChange(e);
+						handleMethodChange(e);
+						setSelectedMethod(method);
+					}}
+					className="mr-2"
+				/>
+				<label htmlFor={method} className="text-gray-700 dark:text-gray-300">
+					{method}
+				</label>
+			</div>
+		));
 	};
 
-	useEffect(()=>{
-		if(selectedMethod && mappedData){
-			const ledgerDetails = mappedData[selectedMethod]
-			const networkList:string[] = []
-			Object.keys(ledgerDetails).map(ledger=>{
-				Object.keys(ledgerDetails[ledger]).map(network=>{
-					networkList.push(`${ledger}:${network}`)
-				})
-			})
-			setNetworkOptions(networkList)
-		}
-	},[selectedMethod])
+	const renderNetworkOptions = (formikHandlers) => {
+		if (!selectedLedger || !selectedMethod) return null;
+		const networks = mappedData?.[selectedLedger][selectedMethod];
+		if (!networks) return null;
+
+		return Object.keys(networks).map((network) => (
+			<div key={network} className="mt-2">
+				<input
+					type="radio"
+					id={network}
+					name="network"
+					value={networks[network]}
+					onChange={(e) => {
+						formikHandlers.handleChange(e),
+							handleNetworkChange(e)
+					}}
+					className="mr-2"
+				/>
+				<label htmlFor={network} className="text-gray-700 dark:text-gray-300">
+					{network}
+				</label>
+			</div>
+		));
+	};
+
+
 
 	return (
 		<>
-		<div className="flex items-center gap-2 mt-4">
-				<Checkbox
-					id="isConfigDone"
-					onChange={(e) => setIsConfigDone(e.target.checked)}
-				/>
-				<Label className="flex" htmlFor="isConfigDone">
-					<p>On-Premises</p>
-				</Label>
-			</div>
-		{!isConfigDone ? (
-			<Formik
+	 {!isConfigDone &&
+ <Formik
+	initialValues={{
+				  walletName: '',
+				  agentEndpoint: '',
+				  apiKey: '',
+			  }}
+			  validationSchema={yup.object().shape(validation)}
+			  onSubmit={async (values: DedicatedAgentPayload) => {
+			
+				 await setAgentConfig(values)
+
+
+			  }}
+			  >	
+			  {(formikHandlers):JSX.Element => (
+				  <Form className="mt-8 space-y-4 max-w-lg flex-col gap-4">
+					  <div>
+						  <div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
+							  <Label htmlFor="walletName" value="Wallet Name" />
+							  <span className="text-red-500 text-xs">*</span>
+						  </div>
+						  <Field
+							  id="walletName"
+							  name="walletName"
+							  value={formikHandlers.values.walletName}
+							  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+							  type="text"
+						  />
+						  {formikHandlers?.errors?.walletName &&
+							  formikHandlers?.touched?.walletName && (
+								  <span className="text-red-500 text-xs">
+									  {formikHandlers?.errors?.walletName}
+								  </span>
+							  )}
+					  </div>
+					  <div>
+						  <div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
+							  <Label htmlFor="agentEndpoint" value="Agent Endpoint" />
+							  <span className="text-red-500 text-xs">*</span>
+						  </div>
+						  <Field
+							  id="agentEndpoint"
+							  name="agentEndpoint"
+							  value={formikHandlers.values.agentEndpoint}
+							  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+							  type="text"
+						  />
+						  {formikHandlers?.errors?.agentEndpoint &&
+							  formikHandlers?.touched?.agentEndpoint && (
+								  <span className="text-red-500 text-xs">
+									  {formikHandlers?.errors?.agentEndpoint}
+								  </span>
+							  )}
+					  </div>
+					  <div>
+						  <div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
+							  <Label htmlFor="apiKey" value="Api Key" />
+							  <span className="text-red-500 text-xs">*</span>
+						  </div>
+						  <Field
+							  id="apiKey"
+							  name="apiKey"
+							  value={formikHandlers.values.apiKey}
+							  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+							  type="text"
+						  />
+						  {formikHandlers?.errors?.apiKey &&
+							  formikHandlers?.touched?.apiKey && (
+								  <span className="text-red-500 text-xs">
+									  {formikHandlers?.errors?.apiKey}
+								  </span>
+							  )}
+					  </div>
+					  <Button
+						  isProcessing={loading}
+						
+						  type="submit"
+						  className='float-right text-base font-medium text-center text-white bg-primary-700 hover:bg-primary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+					     >
+						  Setup Config
+					  </Button>
+					  <div>
+					 
+					  </div>
+				  </Form>
+				  )}
+			  </Formik>
+}
+		{isConfigDone && 
+
+		<Formik
 		initialValues={{
-			seed:seedVal,
-			keyType:'ed25519',
+			seed:'',
+			keyType:'',
 			method:'',
 			network:'',
-			role:''
+			role:'',
+			ledger:''
 		}}
 		validationSchema={yup.object().shape(didCreationValidation)}
-		onSubmit={async (values: DidCreationConfig) => {
-			console.log('did creation values',values);
+		onSubmit={async (values: IValuesShared) => {
+			
+			// await createNewDid(values)
+			submitDedicatedWallet(
+				values	
+				
+			);
+			
+           console.log("values in ded", values);
 
 		}}
-		>	
-		{(formikHandlers):JSX.Element => (
-			<Form className="mt-8 space-y-4 max-w-lg flex-col gap-4">
-				<div className="my-3">
+		
+		>
 				
-						<div className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
+		{(formikHandlers):JSX.Element => (
+			<Form className="mt-4">
+				<div className="my-3  max-w-lg -mt-4 pt-2 pb-4 pl-4 pr-4">
+				
+						<div className="block mt-3 relative">
 							<Label value="Seed" />
 						</div>
 						<div className="flex">
@@ -215,218 +416,199 @@ const DedicatedAgentForm = ({
 							/>
 						</div>
 					</div>
-				<div>
-					<div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
-						<Label htmlFor="keyType" value="Key Type" />
-					</div>
-					<div className='flex'>ed25519</div>
-				</div>
-				<div className="mb-3 relative">
-					<label
-						htmlFor="method"
-						className="text-sm font-medium text-gray-900 dark:text-gray-300"
-					>
-						Method
-						<span className="text-red-500 text-xs">*</span>
-					</label>
-					<select
-						onChange={(e) => {
-							formikHandlers.handleChange(e);
-							handleMethodChange(e);
-						}}
-						id="method"	name="method" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
-					>
-						<option value="">Select Method</option>
-						{mappedData && Object.keys(mappedData)?.map((method) => (
-								<option key={method} value={method}>{method.charAt(0).toUpperCase() + method.slice(1)}</option>
-							))}
-					</select>
-					{formikHandlers?.errors?.method && formikHandlers?.touched?.method && (
-							<span className="absolute botton-0 text-red-500 text-xs">{formikHandlers?.errors?.method}</span>
-						)}
-				</div>
-				{formikHandlers.values.method === DidMethod.POLYGON && (
-									
-					<GenerateBtnPolygon  generatePolygonKeyValuePair={()=>generatePolygonKeyValuePair()}/>
-				)}
-				{generatedKeys && (
-									<div className="my-3 relative">
-										<p className="text-sm truncate">
-											<span className="font-semibold text-gray-900 dark:text-white">
-												Private Key:
-											</span>
-											<div className="flex ">
-												<CopyDid
-													className="align-center block text-sm text-gray-900 dark:text-white truncate"
-													value={generatedKeys?.privateKey.slice(2)}
-												/>
-											</div>
-										</p>
+				
+						<div className="grid grid-cols-4 gap-4 pl-4 pt-4 pb-4">
+							<div className="mb-3 relative">
+								<label	
+									htmlFor="ledger"
+									className="text-sm font-medium text-gray-900 dark:text-gray-300"
+								>
+									Ledger
+									<span className="text-red-500 text-xs">*</span>
+								</label>
+								<div className="mt-2">
 
-										<p className="text-sm truncate">
-											<span className="font-semibold text-gray-900 dark:text-white">
-												Address:
-											</span>
-											<div className="flex ">
-												<CopyDid
-													className="align-center block text-sm text-gray-900 dark:text-white truncate"
-													value={generatedKeys?.address}
+									{mappedData &&
+
+										Object.keys(mappedData).map((ledger) => (
+
+											<div key={ledger} className="mt-2">
+												<input
+													type="radio"
+													id={ledger}
+													name="ledger"
+													value={ledger}
+													onChange={(e) => {
+														formikHandlers.handleChange(e);
+														handleLedgerChange(e);
+														setSelectedLedger(ledger);
+														setSelectedMethod('');
+														setSeedVal(seeds);
+														setSelectedNetwork('');
+														setSelectedDid('');
+													}}
+													className="mr-2"
 												/>
+
+												<label
+													htmlFor={ledger}
+													className="text-gray-700 dark:text-gray-300"
+												>
+													{ledger.charAt(0).toUpperCase() + ledger.slice(1)}
+												</label>
+
+
 											</div>
-										</p>
+
+										))}
+								</div>
+								{formikHandlers.errors.ledger && formikHandlers.touched.ledger && (
+									<span className="text-red-500 text-xs">
+										{formikHandlers.errors.ledger}
+									</span>
+								)}
+							</div>
+							<div className="mb-3 relative">
+								<label
+									htmlFor="method"
+									className="text-sm font-medium text-gray-900 dark:text-gray-300"
+								>
+									Method
+									<span className="text-red-500 text-xs">*</span>
+								</label>
+								<div className="mt-2">
+									{renderMethodOptions(formikHandlers)}
+								</div>
+								{formikHandlers.errors.method && formikHandlers.touched.method && (
+									<span className="text-red-500 text-xs">
+										{formikHandlers.errors.method}
+									</span>
+								)}
+							</div>
+
+
+							{selectedLedger !== 'noLedger' && (
+								<div className="mb-3 relative">
+									<label
+										htmlFor="network"
+										className="text-sm font-medium text-gray-900 dark:text-gray-300"
+									>
+										Network
+										<span className="text-red-500 text-xs">*</span>
+									</label>
+									<div className="mt-2">
+										{renderNetworkOptions(formikHandlers)}
 									</div>
-				)}
-				{generatedKeys && formikHandlers.values.method === DidMethod.POLYGON && (<TokenWarningMessage />)}
+									{formikHandlers.errors.network && formikHandlers.touched.network && (
+										<span className="text-red-500 text-xs">
+											{formikHandlers.errors.network}
+										</span>
+									)}
+								</div>
+							)}
 
-				{formikHandlers.values.method === DidMethod.POLYGON && (<SetPrivateKeyValueInput setPrivateKeyValue={(val:string)=>setPrivateKeyValue(val)} privateKeyValue={privateKeyValue} formikHandlers={formikHandlers}/>)}
-				{formikHandlers.values.method === DidMethod.WEB && (<SetDomainValueInput setDomainValue={(val:string)=>setDomainValue(val)} domainValue={domainValue} formikHandlers={formikHandlers}/>)} 
+							{selectedLedger !== 'noLedger' && (
 
-				{formikHandlers.values.method===DidMethod.INDY&&
-				<div className="my-3 relative">
-					<label
-					htmlFor="network"
-					className="text-sm font-medium text-gray-900 dark:text-gray-300"
-				>
-					Network
-					<span className="text-red-500 text-xs">*</span>
-				</label>
-				<select
-					onChange={(e) => {
-						formikHandlers.handleChange(e);
-						setSelectedNetwork(e.target.value);
-					}}
-					value={selectedNetwork}
-					id="network"
-					name="network"
-					className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
-				>
-					<option value="">Select Network</option>
-						{mappedData &&
-						networkOptions &&
-						networkOptions.map(element=>(
-							<option key={element} value={element}>
-						 	{element}
-						 </option>
-						))
-						}
-				</select>
+								<div className="mb-3 relative">
+									<label
+										htmlFor="did-method"
+										className="text-sm font-medium text-gray-900 dark:text-gray-300"
+									>
+										DID Method
+										<span className="text-red-500 text-xs">*</span>
+									</label>
+									<input
+										type="text"
+										id="did-method"
+										name="did-method"
+										value={selectedDid}
+										readOnly
+										className="mt-2" />
+								</div>
+							)}
 
-				{formikHandlers?.errors?.network &&
-					formikHandlers?.touched?.network && (
-						<span className="absolute botton-0 text-red-500 text-xs">
-							{formikHandlers?.errors?.network}
-						</span>
-					)}
-				</div>
-				}
-				<div className="my-3 relative">
-					<label
-						htmlFor="DID Method"
-						className="text-sm font-medium text-gray-900 dark:text-gray-300"
-					>
-						DID Method
-					</label>
-					<div className="bg-gray-100 font-semibold text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11">
-						{formikHandlers.values.method}
-					</div>
-				</div>
+							<div>
+
+								{selectedMethod === DidMethod.WEB && (
+									<SetDomainValueInput
+										setDomainValue={setDomainValue}
+										domainValue={domainValue}
+										formikHandlers={formikHandlers}
+									/>
+
+								)}
+
+								<div className="mt-3 relative pb-4">
+									<Label htmlFor="name" value="Wallet Label" />
+									<span className="text-red-500 text-xs">*</span>
+
+									<Field
+										id="label"
+										name="label"
+										value={formikHandlers?.values?.label}
+										onChange={formikHandlers.handleChange}
+										className="bg-gray-50 border mt-2 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+										type="text" />
+									{formikHandlers?.errors?.label && formikHandlers?.touched?.label && (
+										<span className="text-red-500 absolute text-xs">{formikHandlers?.errors?.label}</span>
+									)}
+								</div>
+							</div>
+						</div>
+
+
+							<div className="grid grid-cols-2 mt-4 pl-4">
+							{selectedMethod === 'did:polygon' && (
+								<><div className="grid-col-1">
+									<SetPrivateKeyValueInput setPrivateKeyValue={setPrivateKeyValue}
+										privateKeyValue={privateKeyValue} formikHandlers={formikHandlers} />
+								</div>
+									<div className="grid-col-1 mb-2 relative mt-4">
+										<Label className="flex mb-2">
+											<p>Follow these instructions to generate polygon tokens:</p>
+										</Label>
+										<ol>
+											<li className='mb-2'>
+												<span className='font-semibold text-sm text-gray-800'>Step 1:</span>
+												<div className='ml-4 text-sm text-gray-700'>
+													Copy the address and get the free tokens for the testnet.
+													<div> For eg. use&nbsp;
+														<a href='https://faucet.polygon.technology/' className='text-blue-900 text-sm underline'>
+															https://faucet.polygon.technology/&nbsp;
+														</a>
+														to get free token
+													</div>
+												</div>
+											</li>
+											<li className='mb-2'>
+												<span className='font-semibold text-sm'>Step 2:</span>
+												<div className='ml-4 text-sm text-gray-700'>Check that you have recieved the tokens.</div>
+												<div className='ml-4 text-sm text-gray-700'>For eg. copy the address and check the balance on
+													<div>
+														<a href='https://mumbai.polygonscan.com/' className='text-blue-900 text-sm underline'>
+															https://mumbai.polygonscan.com/&nbsp;
+														</a>
+													</div>
+												</div>
+											</li>
+										</ol>
+									</div></>
+							)}
+						</div>
+
+				
 				<Button
-					isProcessing={loading}
-					type="submit"
-					className='float-right text-base font-medium text-center text-white bg-primary-700 hover:bg-primary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
-				>
-					Create Did
-				</Button>
+						  isProcessing={loading}
+						  type="submit"
+						  className='float-right text-base font-medium text-center text-white bg-primary-700 hover:bg-primary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+					     >
+						  Create did
+					  </Button>
+
 			</Form>
 			)}
 		    </Formik>
-		) : (
-         <Formik
-				initialValues={{
-					walletName: '',
-					agentEndpoint: '',
-					apiKey: '',
-				}}
-				validationSchema={yup.object().shape(validation)}
-				onSubmit={async (values: DedicatedAgentConfig) => {
-					console.log('values',values);
-					// agentHealthCheck(values.agentEndpoint,values.apiKey)
-					setAgentConfig(values)
-					
-
-				}}
-				>	
-				{(formikHandlers):JSX.Element => (
-					<Form className="mt-8 space-y-4 max-w-lg flex-col gap-4">
-						<div>
-							<div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
-								<Label htmlFor="walletName" value="Wallet Name" />
-								<span className="text-red-500 text-xs">*</span>
-							</div>
-							<Field
-								id="walletName"
-								name="walletName"
-								value={formikHandlers.values.walletName}
-								className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-								type="text"
-							/>
-							{formikHandlers?.errors?.walletName &&
-								formikHandlers?.touched?.walletName && (
-									<span className="text-red-500 text-xs">
-										{formikHandlers?.errors?.walletName}
-									</span>
-								)}
-						</div>
-						<div>
-							<div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
-								<Label htmlFor="agentEndpoint" value="Agent Endpoint" />
-								<span className="text-red-500 text-xs">*</span>
-							</div>
-							<Field
-								id="agentEndpoint"
-								name="agentEndpoint"
-								value={formikHandlers.values.agentEndpoint}
-								className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-								type="text"
-							/>
-							{formikHandlers?.errors?.agentEndpoint &&
-								formikHandlers?.touched?.agentEndpoint && (
-									<span className="text-red-500 text-xs">
-										{formikHandlers?.errors?.agentEndpoint}
-									</span>
-								)}
-						</div>
-						<div>
-							<div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
-								<Label htmlFor="apiKey" value="Api Key" />
-								<span className="text-red-500 text-xs">*</span>
-							</div>
-							<Field
-								id="apiKey"
-								name="apiKey"
-								value={formikHandlers.values.apiKey}
-								className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-								type="text"
-							/>
-							{formikHandlers?.errors?.apiKey &&
-								formikHandlers?.touched?.apiKey && (
-									<span className="text-red-500 text-xs">
-										{formikHandlers?.errors?.apiKey}
-									</span>
-								)}
-						</div>
-						<Button
-							isProcessing={loading}
-							type="submit"
-							className='float-right text-base font-medium text-center text-white bg-primary-700 hover:bg-primary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
-						>
-							Setup Config
-						</Button>
-					</Form>
-					)}
-				</Formik>
-		)
-	}	
+	}
 		
 		</>
 	);

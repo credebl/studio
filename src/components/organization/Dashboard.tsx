@@ -15,6 +15,7 @@ import { pathRoutes } from '../../config/pathRoutes';
 import { AlertComponent } from '../AlertComponent';
 import WalletSpinup from './walletCommonComponents/WalletSpinup';
 import DashboardCard from '../../commonComponents/DashboardCard';
+import React from 'react';
 
 const Dashboard = () => {
 	const [orgData, setOrgData] = useState<Organisation | null>(null);
@@ -52,7 +53,10 @@ const Dashboard = () => {
 			if (data?.data?.org_agents && data?.data?.org_agents?.length > 0) {
 				setWalletStatus(true);
 			}
+			
 			setOrgData(data?.data);
+		
+			
 			const organizationData = orgInfoData ? JSON.parse(orgInfoData) : {};
 			const {id, name, description, logoUrl} = data?.data || {};
 			const orgInfo = {
@@ -63,11 +67,13 @@ const Dashboard = () => {
 				...logoUrl && { logoUrl }
 			}
 			await setToLocalStorage(storageKeys.ORG_INFO, orgInfo);
+
 		} else {
 			setFailure(response as string);
 		}
 		setLoading(false);
 	};
+	
 
 	const fetchOrganizationDashboard = async () => {
 		setLoading(true);
@@ -84,7 +90,7 @@ const Dashboard = () => {
 			}
 		}
 		setLoading(false);
-	};
+	};	
 
 	useEffect(() => {
 		fetchOrganizationDetails();
@@ -112,6 +118,8 @@ const Dashboard = () => {
 	const redirectOrgUsers = () => {
 		window.location.href = pathRoutes.organizations.users;
 	};
+	
+		
 
 	return (
 		<div className="px-4 pt-2 w-full">
@@ -248,8 +256,13 @@ const Dashboard = () => {
 						<CustomSpinner />
 					</div>
 				) : (
+					// walletStatus === true && orgData?.org_agents?.[0]?.orgDid && (
+					// 	<OrganizationDetails orgData={orgData}
+						
+					// 	/>
 					walletStatus === true ? (
-						<OrganizationDetails orgData={orgData} />
+						<OrganizationDetails orgData={orgData}  />
+
 					) : (
 						(userRoles.includes(Roles.OWNER) ||
 							userRoles.includes(Roles.ADMIN)) && (
