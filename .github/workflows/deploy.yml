@@ -33,9 +33,10 @@ jobs:
           node-version: lts/*
 
       - name: Install step
-        run: |
-          "pnpm i"
-           ls -al
+        run: "pnpm i"
+
+      - name: content display step
+        run: ls -al
 
       - name: Build step
         run: "npm run build"
