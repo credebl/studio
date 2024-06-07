@@ -35,7 +35,7 @@ jobs:
       - name: Install step
         run: |
           "pnpm i"
-          ls -al
+           ls -al
 
       - name: Build step
         run: "npm run build"
