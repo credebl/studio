@@ -29,7 +29,7 @@ jobs:
           node-version: lts/*
 
       - name: Install step
-        run: "npm install"
+        run: "pnpm i"
 
       - name: Build step
         run: "npm run build"
