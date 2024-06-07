@@ -34,7 +34,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 	const [completeDidMethodValue, setCompleteDidMethodValue] = useState<string | null>(null);
 	const [havePrivateKey, setHavePrivateKey] = useState(false);
 	const [privateKeyValue, setPrivateKeyValue] = useState<string>('');
-	const [errorMessage, setErrorMessage] = useState<string | null>(null);
+	const [walletErrorMessage, setWalletErrorMessage] = useState<string | null>(null);
 
 	const fetchOrganizationDetails = async () => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -89,7 +89,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 	}, []);
 
 
-	const checkWalletBalance = async (privateKey: string) => {
+	const checkBalance = async (privateKey: string) => {
 		try {
 			const testnetUrl = 'https://rpc-amoy.polygon.technology';
 
@@ -102,9 +102,9 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 			const etherBalance = ethers.formatEther(balance);
 
 			if (parseFloat(etherBalance) < 0.01) {
-				setErrorMessage('You have insufficient funds.');
+				setWalletErrorMessage('You have insufficient funds.');
 			} else {
-				setErrorMessage(null);
+				setWalletErrorMessage(null);
 			}
 
 
@@ -117,9 +117,9 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 
 	useEffect(() => {
 		if (privateKeyValue && privateKeyValue.length === 64) {
-			checkWalletBalance(privateKeyValue);
+			checkBalance(privateKeyValue);
 		} else {
-			setErrorMessage(null);
+			setWalletErrorMessage(null);
 		}
 
 	}, [privateKeyValue]);
@@ -178,8 +178,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 				setGeneratedKeys(data?.data);
 				const privateKey = data?.data?.privateKey.slice(2)
 				setPrivateKeyValue( privateKeyValue || privateKey);
-				const sdfgh = await checkWalletBalance(privateKeyValue || privateKey);
-
+				await checkBalance(privateKeyValue || privateKey);
 			}
 		} catch (err) {
 			console.error('Generate private key ERROR::::', err);
@@ -193,11 +192,11 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 	useEffect(() => {
 		if (havePrivateKey) {
 			setPrivateKeyValue('');
-			setErrorMessage(null);
+			setWalletErrorMessage(null);
 			setGeneratedKeys(null);
 		} else {
 			setPrivateKeyValue('');
-			setErrorMessage(null);
+			setWalletErrorMessage(null);
 		}
 	}, [havePrivateKey]);
 
@@ -424,9 +423,9 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 																			{formikHandlers?.errors?.privatekey}
 																		</span>
 																	)}
-																{errorMessage && (
+																{walletErrorMessage && (
 																	<span className="static bottom-0 text-red-500 text-xs">
-																		{errorMessage}
+																		{walletErrorMessage}
 																	</span>
 																)}
 																<TokenWarningMessage />
@@ -466,9 +465,9 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 																			{formikHandlers?.errors?.privatekey}
 																		</span>
 																	)}
-																{errorMessage && (
+																{walletErrorMessage && (
 																	<span className="static bottom-0 text-red-500 text-xs">
-																		{errorMessage}
+																		{walletErrorMessage}
 																	</span>
 																)}
 														<TokenWarningMessage />
