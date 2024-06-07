@@ -3,7 +3,6 @@ import { defineConfig } from 'astro/config';
 import react from "@astrojs/react";
 import sitemap from '@astrojs/sitemap';
 import tailwind from '@astrojs/tailwind';
-import clickDirective from './astro-click-directive/register.js'
 
 const DEV_PORT = 3000;
 
@@ -37,7 +36,7 @@ export default defineConfig({
   },
   integrations: [
   //
-  sitemap(), tailwind(), react(),clickDirective()],
+  sitemap(), tailwind(), react()],
   adapter: deno(),
 });
 
