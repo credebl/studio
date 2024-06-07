@@ -40,10 +40,21 @@ const WalletSpinup = (props: {
 	const [agentSpinupCall, setAgentSpinupCall] = useState<boolean>(false);
 	const [failure, setFailure] = useState<string | null>(null);
 	const [seeds, setSeeds] = useState<string>('');
-
-	useEffect(() => {
-		setSeeds(nanoid(32));
-	}, []);
+    const [maskedSeeds, setMaskedSeeds] = useState('');
+	  
+	const maskSeeds = (seed: string) => {
+		const visiblePart = seed.slice(0, -10);
+		const maskedPart = seed.slice(-10).replace(/./g, '*');
+		return visiblePart + maskedPart;
+	};
+	
+    useEffect(() => {
+        const generatedSeeds = nanoid(32);
+        const masked = maskSeeds(generatedSeeds);
+        setSeeds(generatedSeeds);
+        setMaskedSeeds(masked);
+    }, []);
+		
 
 	const onRadioSelect = (type: string) => {
 		setAgentType(type);
@@ -185,6 +196,7 @@ const WalletSpinup = (props: {
 		if (agentType === AgentType.SHARED) {
 			formComponent = (
 				<SharedAgentForm
+				    maskedSeeds={maskedSeeds}
 					seeds={seeds}
 					orgName={orgName}
 					loading={loading}

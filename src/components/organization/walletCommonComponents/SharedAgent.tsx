@@ -14,6 +14,7 @@ import type { ILedgerDetails, ILedgerItem } from "../interfaces";
 
 const SharedAgentForm = ({
 	orgName,
+	maskedSeeds,
 	seeds,
 	submitSharedWallet,
 }: ISharedAgentForm) => {
@@ -21,6 +22,7 @@ const SharedAgentForm = ({
 	const [selectedLedger, setSelectedLedger] = useState('');
 	const [selectedMethod, setSelectedMethod] = useState('');
 	const [seedVal, setSeedVal] = useState('');
+	const [maskedSeedVal, setMaskedSeedVal] = useState('');
 	const [selectedDid, setSelectedDid] = useState('');
 	const [mappedData, setMappedData] = useState(null);
 	const [domainValue, setDomainValue] = useState<string>('');
@@ -108,6 +110,7 @@ const SharedAgentForm = ({
 
 	useEffect(() => {
 		setSeedVal(seeds);
+		setMaskedSeedVal(maskedSeeds);
 	}, [seeds]);
 
 	const validations = {
@@ -211,9 +214,10 @@ const SharedAgentForm = ({
 					<div className="block text-sm font-medium text-gray-900 dark:text-white mb-1 pr-4 pl-4 pt-4 -mt-4">
 						<Label value="Seed" />
 					</div>
-					<div className="flex  ml-4 pb-2">
+					<div className="flex ml-4 pb-2">
+						<p className="align-center block text-sm text-gray-900 dark:text-white">{maskedSeedVal}</p>
 						<CopyDid
-							className="align-center block text-sm text-gray-900 dark:text-white"
+							className="align-center hidden text-sm text-gray-900 dark:text-white"
 							value={seedVal}
 						/>
 					</div>

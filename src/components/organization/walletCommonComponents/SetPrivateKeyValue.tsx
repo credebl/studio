@@ -10,6 +10,8 @@ import TokenWarningMessage from './TokenWarningMessage';
 import CopyDid from '../../../commonComponents/CopyDid';
 import type { IPolygonKeys } from './interfaces';
 import { ethers } from 'ethers';
+import { envConfig } from '../../../config/envConfig';
+import { CommonConstants, Network } from '../../../common/enums';
 interface IProps {
 	setPrivateKeyValue: (val: string) => void
 	privateKeyValue: string | undefined
@@ -34,11 +36,16 @@ const SetPrivateKeyValueInput = ({
 	const [generatedKeys, setGeneratedKeys] = useState<IPolygonKeys | null>(null);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-	const checkWalletBalance = async (privateKey: string) => {
+	const checkWalletBalance = async (privateKey: string, network: Network) => {
 		try {
-			const testnetUrl = 'https://rpc-amoy.polygon.technology';
+			const rpcUrls = {
+				testnet: `${envConfig.PLATFORM_DATA.polygonTestnet}`,
+				mainnet: `${envConfig.PLATFORM_DATA.polygonMainnet}`
+			};
+	
+			const networkUrl = rpcUrls?.[network];
 
-			const provider = new ethers.JsonRpcProvider(testnetUrl)
+			const provider = new ethers.JsonRpcProvider(networkUrl);
 
 			const wallet = new ethers.Wallet(privateKey, provider);
 			const address = await wallet.getAddress();
@@ -46,25 +53,22 @@ const SetPrivateKeyValueInput = ({
 
 			const etherBalance = ethers.formatEther(balance);
 
-			if (parseFloat(etherBalance) < 0.01) {
+			if (parseFloat(etherBalance) < CommonConstants.BALANCELIMIT) {
 				setErrorMessage('You have insufficient funds.');
 			} else {
 				setErrorMessage(null);
 			}
 
-
 			return etherBalance;
 		} catch (error) {
 			console.error('Error checking wallet balance:', error);
-			setErrorMessage('Error checking wallet balance');
 			return null;
 		}
 	};
 
-
 	useEffect(() => {
 		if (privateKeyValue && privateKeyValue.length === 64) {
-			checkWalletBalance(privateKeyValue);
+			checkWalletBalance(privateKeyValue, Network.TESTNET);
 		} else {
 			setErrorMessage(null);
 		}
@@ -93,7 +97,7 @@ const SetPrivateKeyValueInput = ({
 
 				const privateKey = data?.data?.privateKey.slice(2)
 				setPrivateKeyValue(privateKey || privateKeyValue);
-				await checkWalletBalance(privateKey || privateKeyValue);
+				await checkWalletBalance(privateKey || privateKeyValue, Network.TESTNET);
 			}
 		} catch (err) {
 			console.error('Generate private key ERROR::::', err);
