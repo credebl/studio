@@ -101,8 +101,8 @@ export enum BulkIssuanceStatus {
 }
 
 export enum DidMethod {
-    INDY = 'indy',
-    KEY = 'key',
-    WEB = 'web',
-    POLYGON = 'polygon'
+    INDY = 'did:indy',
+    KEY = 'did:key',
+    WEB = 'did:web',
+    POLYGON = 'did:polygon'
 }

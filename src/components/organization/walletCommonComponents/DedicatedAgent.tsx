@@ -22,19 +22,19 @@ import SetPrivateKeyValueInput from './SetPrivateKeyValue';
 import { getOrganizationById, setAgentConfigDetails } from '../../../api/organization';
 import type { IDedicatedAgentConfig } from '../interfaces';
 
-interface DedicatedAgentConfig {
-	walletName: string;
-	agentEndpoint: string;
-	apiKey: string;
-}
+// interface DedicatedAgentConfig {
+// 	walletName: string;
+// 	agentEndpoint: string;
+// 	apiKey: string;
+// }
 
-interface DidCreationConfig{
-	seed:string;
-	keyType:string;
-	method:string;
-	network:string;
-	role:string;
-}
+// interface DidCreationConfig{
+// 	seed:string;
+// 	keyType:string;
+// 	method:string;
+// 	network:string;
+// 	role:string;
+// }
 interface DedicatedAgentPayload {
 	walletName: string;
 	agentEndpoint: string;
@@ -52,6 +52,8 @@ const DedicatedAgentForm = ({
  	submitDedicatedWallet,
  }: IDedicatedAgentForm) => {
 	const [isConfigDone, setIsConfigDone]=useState<boolean>(false)
+	const [firstForm, setfirstForm]=useState<boolean>(false)
+	const [createDidFormFlag, setCreateDidFormFlag]=useState<boolean>(false)
 	const [seedVal, setSeedVal] = useState('');
 	const [mappedData, setMappedData] = useState(null);
 	const [selectedLedger, setSelectedLedger] = useState('');
@@ -66,7 +68,7 @@ const DedicatedAgentForm = ({
 	const fetchLedgerConfig = async () => {
 		try {
 			const { data } = await getLedgerConfig();
-			console.log('data',data)
+		
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 
 				const obj = {
@@ -101,12 +103,15 @@ const DedicatedAgentForm = ({
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		const response = await getOrganizationById(orgId as string);
 		const { data } = response as AxiosResponse;
-		console.log("fetch Org details in form::::::::::::::::::::: ", data);
+		
 		
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			const didExists = data?.data?.org_agents[0]?.orgDid
-				if(!didExists)
-			setIsConfigDone(false)
+			const walletName = data?.data?.org_agents[0]?.walletName
+			
+				if(walletName){
+					setCreateDidFormFlag(true)
+				}
+
 		} 
 		
 	};
@@ -141,15 +146,15 @@ const DedicatedAgentForm = ({
 		const didMethod = `${e.target.value}`;
 		setSelectedDid(didMethod);
 	};
+	
 
 	const getLedgerList = async () => {
 		await fetchNetworks();
 	};
 
-useEffect(()=>{
-	fetchOrganizationDetails();
-	setIsConfigDone(true)
-},[])
+	useEffect(() => {
+        fetchOrganizationDetails();
+    }, []);
 
 	useEffect(() => {
 		getLedgerList();
@@ -188,47 +193,50 @@ useEffect(()=>{
 		...(DidMethod.INDY === selectedMethod || DidMethod.POLYGON === selectedMethod) && { network: yup.string().required('Network is required') },
 
 	}
+
 	
+const setAgentConfig=async (values: IDedicatedAgentConfig)=>{
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+
+	const payload = {
+			walletName: values.walletName,
+			agentEndpoint: values.agentEndpoint,
+			apiKey: values.apiKey
+		  };
 	
-	const setAgentConfig=async (values: IDedicatedAgentConfig)=>{
-		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+	  try {
+		const agentConfigResponse = await setAgentConfigDetails(payload, orgId)
+	  
+		const { data } = agentConfigResponse as AxiosResponse;
+		
+		if (data?.statusCode === HttpStatusCode.Created) {
+			// await fetchOrganizationDetails()
+			setCreateDidFormFlag(true)
 
-		const payload = {
-				walletName: values.walletName,
-				agentEndpoint: values.agentEndpoint,
-				apiKey: values.apiKey
-			  };
-		// console.log('payload45678::::', details);
-		  try {
-			const agentConfigResponse = await setAgentConfigDetails(payload, orgId)
-            console.log('agentConfigResponse345678:::::', agentConfigResponse);
-			const { data } = agentConfigResponse as AxiosResponse;
-            console.log('data45678::::', data);
-			if (data?.statusCode === HttpStatusCode.Created) {
-				const response = await getOrganizationById(orgId as string);
-				const { data } = response as AxiosResponse;
+			const response = await getOrganizationById(orgId as string);
+			const { data } = response as AxiosResponse;
+			const walletName = data?.data?.org_agents[0]?.walletName
+			const orgAgents = data?.data?.org_agents[0]
+			const orgDid = data?.data?.org_agents[0]?.orgDid
 
-				// if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-                //     const orgAgents = data?.data?.org_agents;
-                //     console.log("orgAgentsssss", orgAgents);
+				if(walletName && orgAgents.endpoint && orgAgents.apiKey){
+					setCreateDidFormFlag(true)
+				}
+				// if(walletName && !orgDid){
+				// 	setCreateDidFormFlag(true)
+				// 	setfirstForm(false)
+				// }
+		// console.log("orgAgents in dedicatedform", orgAgents);
+		// console.log("walletName in dedicatedform", walletName);
+		// console.log("orgDid in dedicatedform", orgDid);
 
-                //     if (orgAgents.length > 0) {
-                //         setIsConfigDone(true);
-                //         setToLocalStorage(storageKeys.ORG_DETAILS, 'done');
-                //     }
-                //     else {
-                //         setIsConfigDone(false);
-                //     }
-                // }
-        }
-		  }
-		  catch (error) {
-			const err = error as Error
-			return err?.message
-		  }
 	}
-	
-
+	  }
+	  catch (error) {
+		const err = error as Error
+		return err?.message
+	  }
+}
 
 	const renderMethodOptions = (formikHandlers) => {
 		if (!selectedLedger) return null;
@@ -271,7 +279,7 @@ useEffect(()=>{
 					name="network"
 					value={networks[network]}
 					onChange={(e) => {
-						formikHandlers.handleChange(e),
+						formikHandlers.handleChange(e)
 							handleNetworkChange(e)
 					}}
 					className="mr-2"
@@ -287,7 +295,8 @@ useEffect(()=>{
 
 	return (
 		<>
-	 {!isConfigDone &&
+		{console.log("createDidFormFlag:::::::", createDidFormFlag)}
+	 {!createDidFormFlag &&
  <Formik
 	initialValues={{
 				  walletName: '',
@@ -296,9 +305,7 @@ useEffect(()=>{
 			  }}
 			  validationSchema={yup.object().shape(validation)}
 			  onSubmit={async (values: DedicatedAgentPayload) => {
-			
 				 await setAgentConfig(values)
-
 
 			  }}
 			  >	
@@ -374,9 +381,9 @@ useEffect(()=>{
 					  </div>
 				  </Form>
 				  )}
-			  </Formik>
+</Formik>
 }
-		{isConfigDone && 
+		{	createDidFormFlag && 
 
 		<Formik
 		initialValues={{
@@ -395,8 +402,7 @@ useEffect(()=>{
 				values	
 				
 			);
-			
-           console.log("values in ded", values);
+		
 
 		}}
 		

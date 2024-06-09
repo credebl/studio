@@ -27,6 +27,9 @@ const Dashboard = () => {
 	const [userRoles, setUserRoles] = useState<string[]>([]);
 	const [orgSuccess, setOrgSuccess] = useState<string | null>(null);
 	const [openModal, setOpenModal] = useState<boolean>(false);
+	const [agentConfigure, setAgentConfigure]=useState<Boolean>(false);
+	const [isDidCreated, setIsDidCreated]=useState<Boolean>(false);
+
 
 	const EditOrgDetails = () => {
 		setOpenModal(true);
@@ -50,13 +53,15 @@ const Dashboard = () => {
 		const { data } = response as AxiosResponse;
 		setLoading(false)
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			if (data?.data?.org_agents && data?.data?.org_agents?.length > 0) {
+			if (data?.data?.org_agents && data?.data?.org_agents?.length > 0 && data?.data?.org_agents?.orgDid) {
 				setWalletStatus(true);
 			}
+			console.log("orgInfoData", orgInfoData);
+
+			console.log("data in dashboard", data?.data);
 			
 			setOrgData(data?.data);
-		
-			
+				
 			const organizationData = orgInfoData ? JSON.parse(orgInfoData) : {};
 			const {id, name, description, logoUrl} = data?.data || {};
 			const orgInfo = {
@@ -67,6 +72,7 @@ const Dashboard = () => {
 				...logoUrl && { logoUrl }
 			}
 			await setToLocalStorage(storageKeys.ORG_INFO, orgInfo);
+			console.log("organizationData in dashboard", organizationData);
 
 		} else {
 			setFailure(response as string);
@@ -82,6 +88,7 @@ const Dashboard = () => {
 			const response = await getOrgDashboard(orgId as string);
 			const { data } = response as AxiosResponse;
 			setLoading(false);
+			console.log("data in dashboard:::::::::::", data);
 
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 				setOrgDashboard(data?.data);
@@ -256,10 +263,6 @@ const Dashboard = () => {
 						<CustomSpinner />
 					</div>
 				) : (
-					// walletStatus === true && orgData?.org_agents?.[0]?.orgDid && (
-					// 	<OrganizationDetails orgData={orgData}
-						
-					// 	/>
 					walletStatus === true ? (
 						<OrganizationDetails orgData={orgData}  />
 
