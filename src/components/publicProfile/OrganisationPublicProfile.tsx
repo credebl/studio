@@ -122,9 +122,9 @@ const OrganisationPublicProfile = () => {
 									<div className="flex items-start">
 										<div className="shrink-0">
 											{org.logoUrl ? (
-												<CustomAvatar size="80" src={org?.logoUrl} />
+												<CustomAvatar size="80px" src={org?.logoUrl} />
 											) : (
-												<CustomAvatar size="80" name={org?.name} />
+												<CustomAvatar size="80px" name={org?.name} />
 											)}
 										</div>
 
