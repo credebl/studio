@@ -1,4 +1,3 @@
-
 /// <reference types="astro/client" />
 
 // https://docs.astro.build/en/guides/environment-variables/#intellisense-for-typescript
