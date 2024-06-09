@@ -31,46 +31,55 @@ const SharedAgentForm = ({
 	const fetchLedgerConfig = async () => {
 		try {
 			const { data } = await getLedgerConfig();
-
+	
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 				const ledgerConfigData = {
 					indy: {
-					  'did:indy': {}
+						'did:indy': {}
 					},
 					polygon: {
-					  'did:polygon': {}
+						'did:polygon': {}
 					},
 					noLedger: {}
-				  };
-			
-				  data.data.forEach(({ name, details }: ILedgerItem) => {
+				};
+	
+				data.data.forEach(({ name, details }: ILedgerItem) => {
 					const lowerName = name.toLowerCase();
-			
-					if (lowerName === 'indy') {
-					  for (const [key, subDetails] of Object.entries(details)) {
-						if (typeof subDetails === 'object') {
-						  for (const [subKey, value] of Object.entries(subDetails)) {
-							ledgerConfigData.indy['did:indy'][`${key}:${subKey}`] = value;
-						  }
+	
+					if (lowerName === 'indy' && details) {
+						for (const [key, subDetails] of Object.entries(details)) {
+							if (typeof subDetails === 'object' && subDetails !== null) {
+								for (const [subKey, value] of Object.entries(subDetails)) {
+									ledgerConfigData.indy['did:indy'][`${key}:${subKey}`] = value;
+								}
+							}
 						}
-					  }
-					} else if (lowerName === 'polygon') {
-					  for (const [subKey, value] of Object.entries(details)) {
-						if (typeof value === 'string') {
-							ledgerConfigData.polygon['did:polygon'][subKey] = value;
+					} else if (lowerName === 'polygon' && details) {
+						for (const [key, value] of Object.entries(details)) {
+							if (typeof value === 'object' && value !== null) {
+								for (const [subKey, subValue] of Object.entries(value)) {
+									ledgerConfigData.polygon['did:polygon'][subKey] = subValue;
+								}
+							} else if (typeof value === 'string') {
+								ledgerConfigData.polygon['did:polygon'][key] = value;
+							}
 						}
-					  }
-					} else if (lowerName === 'key' || lowerName === 'web') {
-						ledgerConfigData.noLedger[`did:${lowerName}`] = details[lowerName as keyof ILedgerDetails] as string;
+					} else if (lowerName === 'noledger' && details) {
+						for (const [key, value] of Object.entries(details)) {
+							ledgerConfigData.noLedger[key] = value;
+						}
 					}
-				  });
-				  setMappedData(ledgerConfigData);							
+				});
+	
+				console.log('ledgerConfigData45678::::', ledgerConfigData);
+				setMappedData(ledgerConfigData);
 			}
 		} catch (err) {
 			console.error('Fetch Network ERROR::::', err);
 		}
 	};
-
+	
+	
 	const fetchNetworks = async () => {
 		try {
 			const { data } = (await getLedgers()) as AxiosResponse;
