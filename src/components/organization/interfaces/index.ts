@@ -217,6 +217,7 @@ export interface IFormikValues {
 	method: string;
     keyType:string;
 	network: string;
+    did: string;
 	domain: string;
 	privatekey: string;
 	endorserDid: string;
@@ -227,3 +228,25 @@ export interface IDedicatedAgentConfig {
 	agentEndpoint: string;
 	apiKey: string;
 }
+interface IndySubDetails {
+    [key: string]: string;
+  }
+export interface ILedgerDetails {
+    bcovrin?: IndySubDetails;
+    indicio?: IndySubDetails;
+    mainnet?: string;
+    testnet?: string;
+    key?: string;
+    web?: string;
+  }
+export interface ILedgerItem {
+    id: string;
+    name: string;
+    details: ILedgerDetails;
+    createDateTime: string;
+    createdBy: string;
+    lastChangedDateTime: string;
+    lastChangedBy: string;
+    deletedAt: string | null;
+  }
+

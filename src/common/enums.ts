@@ -106,3 +106,12 @@ export enum DidMethod {
     WEB = 'did:web',
     POLYGON = 'did:polygon'
 }
+
+export enum Network {
+	TESTNET = 'testnet',
+	MAINNET = 'mainnet'
+}
+
+export enum CommonConstants {
+	BALANCELIMIT = 0.01
+}

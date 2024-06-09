@@ -40,14 +40,14 @@ export interface IPolygonKeys {
 
 export interface ISharedAgentForm {
 	seeds: string;
+	maskedSeeds: string;
 	isCopied: boolean;
 	orgName: string;
 	loading: boolean;
 	submitSharedWallet: (
 		values: IValuesShared,
 		privatekey: string,
-		domain: string,
-		endPoint: string,
+		domain: string
 	) => void;
 }
 
