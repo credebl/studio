@@ -1,20 +1,21 @@
 import * as yup from 'yup';
 import { Button, Checkbox, Label, Modal } from 'flowbite-react';
 import { Field, Form, Formik } from 'formik';
-import type { FormikHelpers as FormikActions } from 'formik';
+import type { FormikHelpers as FormikActions, FormikProps } from 'formik';
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AlertComponent } from '../../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import { createDid, getOrganizationById } from '../../../api/organization';
 import type { EditOrgdetailsModalProps, IFormikValues } from '../interfaces';
 import { createPolygonKeyValuePair } from '../../../api/Agent';
-import { DidMethod } from '../../../common/enums';
 import { nanoid } from 'nanoid';
 import TokenWarningMessage from '../walletCommonComponents/TokenWarningMessage';
 import CopyDid from '../../../commonComponents/CopyDid';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { ethers } from 'ethers';
+import { envConfig } from '../../../config/envConfig';
+import { CommonConstants, Network, DidMethod } from '../../../common/enums';
 
 interface IPolygonKeys {
 	privateKey: string;
@@ -24,6 +25,7 @@ interface IPolygonKeys {
 
 const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 	const [loading, setLoading] = useState<boolean>(false);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [errMsg, setErrMsg] = useState<string | null>(null);
 	const [successMsg, setSuccessMsg] = useState<string | null>(null);
 	const [seed, setSeed] = useState('');
@@ -35,6 +37,8 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 	const [havePrivateKey, setHavePrivateKey] = useState(false);
 	const [privateKeyValue, setPrivateKeyValue] = useState<string>('');
 	const [walletErrorMessage, setWalletErrorMessage] = useState<string | null>(null);
+
+	const formikRef = useRef<FormikProps<IFormikValues>>(null);
 
 	const fetchOrganizationDetails = async () => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -89,11 +93,17 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 	}, []);
 
 
-	const checkBalance = async (privateKey: string) => {
+	const checkBalance = async (privateKey: string, network: Network) => {
 		try {
-			const testnetUrl = 'https://rpc-amoy.polygon.technology';
 
-			const provider = new ethers.JsonRpcProvider(testnetUrl)
+			const rpcUrls = {
+				testnet: `${envConfig.PLATFORM_DATA.polygonTestnet}`,
+				mainnet: `${envConfig.PLATFORM_DATA.polygonMainnet}`
+			};
+
+			const networkUrl = rpcUrls?.[network];
+
+			const provider = new ethers.JsonRpcProvider(networkUrl)
 
 			const wallet = new ethers.Wallet(privateKey, provider);
 			const address = await wallet.getAddress();
@@ -101,7 +111,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 
 			const etherBalance = ethers.formatEther(balance);
 
-			if (parseFloat(etherBalance) < 0.01) {
+			if (parseFloat(etherBalance) < CommonConstants.BALANCELIMIT) {
 				setWalletErrorMessage('You have insufficient funds.');
 			} else {
 				setWalletErrorMessage(null);
@@ -117,7 +127,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 
 	useEffect(() => {
 		if (privateKeyValue && privateKeyValue.length === 64) {
-			checkBalance(privateKeyValue);
+			checkBalance(privateKeyValue, Network.TESTNET);
 		} else {
 			setWalletErrorMessage(null);
 		}
@@ -169,6 +179,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 	};
 
 	const generatePolygonKeyValuePair = async () => {
+		setIsLoading(true);
 		try {
 			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 			const resCreatePolygonKeys = await createPolygonKeyValuePair(orgId);
@@ -176,9 +187,10 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 
 			if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 				setGeneratedKeys(data?.data);
+				setIsLoading(false);
 				const privateKey = data?.data?.privateKey.slice(2)
-				setPrivateKeyValue( privateKeyValue || privateKey);
-				await checkBalance(privateKeyValue || privateKey);
+				setPrivateKeyValue(privateKeyValue || privateKey);
+				await checkBalance(privateKeyValue || privateKey, Network.TESTNET);
 			}
 		} catch (err) {
 			console.error('Generate private key ERROR::::', err);
@@ -208,11 +220,12 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 	return (
 		<Modal
 			show={props.openModal}
-			onClose={() => {				
+			onClose={() => {
 				setErrMsg(null);
 				setGeneratedKeys(null);
 				setHavePrivateKey(false);
 				props.setOpenModal(false);
+				formikRef.current?.resetForm();
 			}}
 		>
 			<Modal.Header>Create DID</Modal.Header>
@@ -226,6 +239,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 					}}
 				/>
 				<Formik
+					innerRef={formikRef}
 					initialValues={{
 						method: method,
 						ledger: ledgerValue,
@@ -245,7 +259,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 
 						await createNewDid(values);
 						window.location.reload();
-				
+
 					}}
 				>
 					{(formikHandlers): JSX.Element => {
@@ -390,6 +404,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 
 															<Button
 																type="button"
+																isProcessing={isLoading}
 																className="h-min p-0 focus:z-10 focus:outline-none border border-transparent enabled:hover:bg-cyan-800 dark:enabled:hover:bg-cyan-700 mt-4 text-base font-medium text-center text-white bg-primary-700 rounded-md hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 																onClick={() => generatePolygonKeyValuePair()}
 															>
@@ -454,22 +469,25 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 															value={formikHandlers.values.privatekey}
 															onChange={(e) => {
 																formikHandlers.setFieldValue('privatekey', e.target.value);
-															}
-															}
+																setWalletErrorMessage(null);
+																checkBalance(e.target.value, Network.TESTNET);
+															}}
 															placeholder="Enter private key" />
-														<div>	
+														<div>
 														</div>
 														{formikHandlers?.errors?.privatekey &&
-																	formikHandlers?.touched?.privatekey && (
-																		<span className="static botton-0 text-red-500 text-xs">
-																			{formikHandlers?.errors?.privatekey}
-																		</span>
-																	)}
-																{walletErrorMessage && (
-																	<span className="static bottom-0 text-red-500 text-xs">
-																		{walletErrorMessage}
-																	</span>
-																)}
+															formikHandlers?.touched?.privatekey && (
+																<span className="static botton-0 text-red-500 text-xs">
+																	{formikHandlers?.errors?.privatekey}
+																</span>
+															)}
+														<div>
+															{walletErrorMessage && (
+																<span className="static bottom-0 text-red-500 text-xs">
+																	{walletErrorMessage}
+																</span>
+															)}
+														</div>
 														<TokenWarningMessage />
 													</>
 												)}
@@ -494,7 +512,6 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 																<a href='https://mumbai.polygonscan.com/' className='text-blue-900 text-sm underline'>
 																	https://mumbai.polygonscan.com/&nbsp;
 																</a>
-
 															</div>
 														</div>
 													</li>
@@ -516,7 +533,6 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 							</Form>
 						);
 					}}
-
 				</Formik>
 			</Modal.Body>
 		</Modal>
