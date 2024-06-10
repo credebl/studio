@@ -1,6 +1,6 @@
 import { Button, Label, Checkbox } from "flowbite-react";
 import { Field, Form, Formik } from "formik";
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ChangeEvent } from "react";
 import { getLedgerConfig, getLedgers } from "../../../api/Agent";
 import { apiStatusCodes } from "../../../config/CommonConstant";
 import * as yup from 'yup';
@@ -10,7 +10,31 @@ import { DidMethod } from '../../../common/enums';
 import SetDomainValueInput from './SetDomainValueInput';
 import SetPrivateKeyValueInput from './SetPrivateKeyValue';
 import type { ISharedAgentForm, IValuesShared } from "./interfaces";
-import type { ILedgerDetails, ILedgerItem } from "../interfaces";
+
+interface IDetails {
+    [key: string]: string | { [subKey: string]: string };
+}
+
+interface ILedgerItem {
+    name: string;
+    details: IDetails;
+}
+
+interface ILedgerConfigData {
+    indy: {
+        'did:indy': {
+            [key: string]: string;
+        };
+    };
+    polygon: {
+        'did:polygon': {
+            [key: string]: string;
+        };
+    };
+    noLedger: {
+        [key: string]: string;
+    };
+}
 
 const SharedAgentForm = ({
 	orgName,
@@ -30,10 +54,10 @@ const SharedAgentForm = ({
 
 	const fetchLedgerConfig = async () => {
 		try {
-			const { data } = await getLedgerConfig();
+			const { data } = await getLedgerConfig() as AxiosResponse;
 	
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				const ledgerConfigData = {
+				const ledgerConfigData: ILedgerConfigData = {
 					indy: {
 						'did:indy': {}
 					},
@@ -43,7 +67,7 @@ const SharedAgentForm = ({
 					noLedger: {}
 				};
 				
-				data.data.forEach(({ name, details }) => {
+				data.data.forEach(({ name, details }: ILedgerItem) => {
 					const lowerName = name.toLowerCase();
 				
 					if (lowerName === 'indy' && details) {
@@ -67,7 +91,7 @@ const SharedAgentForm = ({
 						}
 					} else if (lowerName === 'noledger' && details) {
 						for (const [key, value] of Object.entries(details)) {
-							ledgerConfigData.noLedger[key] = value;
+							ledgerConfigData.noLedger[key] = value  as string;
 						}
 					}
 				});
@@ -93,18 +117,18 @@ const SharedAgentForm = ({
 		}
 	};
 
-	const handleLedgerChange = (e) => {
+	const handleLedgerChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setSelectedLedger(e.target.value);
 		setSelectedMethod('');
 		setSelectedDid('');
 	};
 
-	const handleMethodChange = (e) => {
+	const handleMethodChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setSelectedMethod(e.target.value);
 		setSelectedDid('');
 	};
 
-	const handleNetworkChange = (e) => {
+	const handleNetworkChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const didMethod = `${e.target.value}`;
 		setSelectedDid(didMethod);
 	};
@@ -141,7 +165,7 @@ const SharedAgentForm = ({
 		...(DidMethod.POLYGON === selectedMethod) && { privatekey: yup.string().required('Private key is required').trim().length(64, 'Private key must be exactly 64 characters long') },
 	};
 
-	const renderMethodOptions = (formikHandlers) => {
+		const renderMethodOptions = (formikHandlers: { handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) => {
 		if (!selectedLedger) {
 			return null;
 		}
@@ -174,7 +198,7 @@ const SharedAgentForm = ({
 		));
 	};
 
-	const renderNetworkOptions = (formikHandlers) => {
+	const renderNetworkOptions = (formikHandlers: { handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) => {
 		if (!selectedLedger || !selectedMethod) {
 			return null;
 		}
@@ -244,6 +268,7 @@ const SharedAgentForm = ({
 					domain: '',
 					privatekey: '',
 					label: orgName,
+					keyType: ''
 				}}
 				validationSchema={yup.object().shape(validations)}
 				onSubmit={(values: IValuesShared) => {
