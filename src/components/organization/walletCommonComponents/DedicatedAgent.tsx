@@ -22,19 +22,7 @@ import SetPrivateKeyValueInput from './SetPrivateKeyValue';
 import { getOrganizationById, setAgentConfigDetails } from '../../../api/organization';
 import type { IDedicatedAgentConfig } from '../interfaces';
 
-// interface DedicatedAgentConfig {
-// 	walletName: string;
-// 	agentEndpoint: string;
-// 	apiKey: string;
-// }
 
-// interface DidCreationConfig{
-// 	seed:string;
-// 	keyType:string;
-// 	method:string;
-// 	network:string;
-// 	role:string;
-// }
 interface DedicatedAgentPayload {
 	walletName: string;
 	agentEndpoint: string;
@@ -51,8 +39,7 @@ const DedicatedAgentForm = ({
 	loading,
  	submitDedicatedWallet,
  }: IDedicatedAgentForm) => {
-	const [isConfigDone, setIsConfigDone]=useState<boolean>(false)
-	const [firstForm, setfirstForm]=useState<boolean>(false)
+	
 	const [createDidFormFlag, setCreateDidFormFlag]=useState<boolean>(false)
 	const [seedVal, setSeedVal] = useState('');
 	const [mappedData, setMappedData] = useState(null);
@@ -222,13 +209,7 @@ const setAgentConfig=async (values: IDedicatedAgentConfig)=>{
 				if(walletName && orgAgents.endpoint && orgAgents.apiKey){
 					setCreateDidFormFlag(true)
 				}
-				// if(walletName && !orgDid){
-				// 	setCreateDidFormFlag(true)
-				// 	setfirstForm(false)
-				// }
-		// console.log("orgAgents in dedicatedform", orgAgents);
-		// console.log("walletName in dedicatedform", walletName);
-		// console.log("orgDid in dedicatedform", orgDid);
+				
 
 	}
 	  }
@@ -430,7 +411,7 @@ const setAgentConfig=async (values: IDedicatedAgentConfig)=>{
 									className="text-sm font-medium text-gray-900 dark:text-gray-300"
 								>
 									Ledger
-									<span className="text-red-500 text-xs">*</span>
+									<span className="text-xs text-red-500 ">*</span>
 								</label>
 								<div className="mt-2">
 
