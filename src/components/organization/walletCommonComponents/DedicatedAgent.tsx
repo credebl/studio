@@ -22,7 +22,7 @@ import SetPrivateKeyValueInput from './SetPrivateKeyValue';
 import { getOrganizationById, setAgentConfigDetails } from '../../../api/organization';
 import type { IDedicatedAgentConfig } from '../interfaces';
 
-
+const RequiredAsterisk = () => <span className="text-xs text-red-500">*</span>;
 interface DedicatedAgentPayload {
 	walletName: string;
 	agentEndpoint: string;
@@ -295,7 +295,7 @@ const setAgentConfig=async (values: IDedicatedAgentConfig)=>{
 					  <div>
 						  <div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
 							  <Label htmlFor="walletName" value="Wallet Name" />
-							  <span className="text-red-500 text-xs">*</span>
+							  <RequiredAsterisk/>
 						  </div>
 						  <Field
 							  id="walletName"
@@ -314,7 +314,7 @@ const setAgentConfig=async (values: IDedicatedAgentConfig)=>{
 					  <div>
 						  <div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
 							  <Label htmlFor="agentEndpoint" value="Agent Endpoint" />
-							  <span className="text-red-500 text-xs">*</span>
+							  <RequiredAsterisk/>
 						  </div>
 						  <Field
 							  id="agentEndpoint"
@@ -333,7 +333,7 @@ const setAgentConfig=async (values: IDedicatedAgentConfig)=>{
 					  <div>
 						  <div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
 							  <Label htmlFor="apiKey" value="Api Key" />
-							  <span className="text-red-500 text-xs">*</span>
+							  <RequiredAsterisk/>
 						  </div>
 						  <Field
 							  id="apiKey"
@@ -411,7 +411,7 @@ const setAgentConfig=async (values: IDedicatedAgentConfig)=>{
 									className="text-sm font-medium text-gray-900 dark:text-gray-300"
 								>
 									Ledger
-									<span className="text-xs text-red-500 ">*</span>
+									<RequiredAsterisk />
 								</label>
 								<div className="mt-2">
 
@@ -461,7 +461,7 @@ const setAgentConfig=async (values: IDedicatedAgentConfig)=>{
 									className="text-sm font-medium text-gray-900 dark:text-gray-300"
 								>
 									Method
-									<span className="text-red-500 text-xs">*</span>
+									<RequiredAsterisk/>
 								</label>
 								<div className="mt-2">
 									{renderMethodOptions(formikHandlers)}
@@ -481,7 +481,7 @@ const setAgentConfig=async (values: IDedicatedAgentConfig)=>{
 										className="text-sm font-medium text-gray-900 dark:text-gray-300"
 									>
 										Network
-										<span className="text-red-500 text-xs">*</span>
+										<RequiredAsterisk/>
 									</label>
 									<div className="mt-2">
 										{renderNetworkOptions(formikHandlers)}
@@ -502,7 +502,7 @@ const setAgentConfig=async (values: IDedicatedAgentConfig)=>{
 										className="text-sm font-medium text-gray-900 dark:text-gray-300"
 									>
 										DID Method
-										<span className="text-red-500 text-xs">*</span>
+										<RequiredAsterisk/>
 									</label>
 									<input
 										type="text"
@@ -527,7 +527,7 @@ const setAgentConfig=async (values: IDedicatedAgentConfig)=>{
 
 								<div className="mt-3 relative pb-4">
 									<Label htmlFor="name" value="Wallet Label" />
-									<span className="text-red-500 text-xs">*</span>
+									<RequiredAsterisk/>
 
 									<Field
 										id="label"
