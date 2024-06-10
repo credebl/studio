@@ -323,8 +323,12 @@ const VerificationCredentialList = () => {
 		return () => clearTimeout(getData);
 	}, [listAPIParameter]);
 
+	// const schemeSelection = () => {
+	// 	window.location.href = pathRoutes.organizations.verification.schema;
+	// };
+
 	const schemeSelection = () => {
-		window.location.href = pathRoutes.organizations.verification.schema;
+		window.location.href = pathRoutes.organizations.verification.verifyCredential;
 	};
 
 	const refreshPage = () => {

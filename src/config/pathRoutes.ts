@@ -43,7 +43,8 @@ export const pathRoutes = {
 			emailHistory: '/organizations/credentials/issue/email/history',
 		},
 		verification: {
-			schema: '/organizations/verification/schemas',
+			verifyCredential: '/organizations/verification/verifyCredential',
+			schema: '/organizations/verification/verifyCredential/schemas',
 			credDef: '/organizations/verification/schemas/cred-defs',
 			connections: '/organizations/verification/schemas/cred-defs/connections',
 			verify:
