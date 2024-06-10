@@ -42,15 +42,16 @@ const SharedAgentForm = ({
 					},
 					noLedger: {}
 				};
-	
-				data.data.forEach(({ name, details }: ILedgerItem) => {
+				
+				data.data.forEach(({ name, details }) => {
 					const lowerName = name.toLowerCase();
-	
+				
 					if (lowerName === 'indy' && details) {
 						for (const [key, subDetails] of Object.entries(details)) {
 							if (typeof subDetails === 'object' && subDetails !== null) {
 								for (const [subKey, value] of Object.entries(subDetails)) {
-									ledgerConfigData.indy['did:indy'][`${key}:${subKey}`] = value;
+									const formattedKey = `${key}:${subKey}`.replace('did:indy:', '');
+									ledgerConfigData.indy['did:indy'][formattedKey] = value;
 								}
 							}
 						}
@@ -70,8 +71,8 @@ const SharedAgentForm = ({
 						}
 					}
 				});
+				
 	
-				console.log('ledgerConfigData45678::::', ledgerConfigData);
 				setMappedData(ledgerConfigData);
 			}
 		} catch (err) {
