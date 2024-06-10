@@ -219,7 +219,7 @@ const setAgentConfig=async (values: IDedicatedAgentConfig)=>{
 	  }
 }
 
-	const renderMethodOptions = (formikHandlers) => {
+	const renderMethodOption = (formikHandlers) => {
 		if (!selectedLedger) return null;
 
 		const methods = mappedData?.[selectedLedger];
@@ -247,7 +247,7 @@ const setAgentConfig=async (values: IDedicatedAgentConfig)=>{
 		));
 	};
 
-	const renderNetworkOptions = (formikHandlers) => {
+	const renderNetworkOption = (formikHandlers) => {
 		if (!selectedLedger || !selectedMethod) return null;
 		const networks = mappedData?.[selectedLedger][selectedMethod];
 		if (!networks) return null;
@@ -464,7 +464,7 @@ const setAgentConfig=async (values: IDedicatedAgentConfig)=>{
 									<RequiredAsterisk/>
 								</label>
 								<div className="mt-2">
-									{renderMethodOptions(formikHandlers)}
+									{renderMethodOption(formikHandlers)}
 								</div>
 								{formikHandlers.errors.method && formikHandlers.touched.method && (
 									<span className="text-red-500 text-xs">
@@ -484,7 +484,7 @@ const setAgentConfig=async (values: IDedicatedAgentConfig)=>{
 										<RequiredAsterisk/>
 									</label>
 									<div className="mt-2">
-										{renderNetworkOptions(formikHandlers)}
+										{renderNetworkOption(formikHandlers)}
 									</div>
 									{formikHandlers.errors.network && formikHandlers.touched.network && (
 										<span className="text-red-500 text-xs">
