@@ -35,6 +35,7 @@ const SetPrivateKeyValueInput = ({
 	const [havePrivateKey, setHavePrivateKey] = useState(false);
 	const [generatedKeys, setGeneratedKeys] = useState<IPolygonKeys | null>(null);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
+	const [loading, setLoading] = useState(false);
 
 	const checkWalletBalance = async (privateKey: string, network: Network) => {
 		try {
@@ -87,6 +88,7 @@ const SetPrivateKeyValueInput = ({
 	}, [havePrivateKey]);
 	
 	const generatePolygonKeyValuePair = async () => {
+		setLoading(true);
 		try {
 			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 			const resCreatePolygonKeys = await createPolygonKeyValuePair(orgId);
@@ -94,7 +96,7 @@ const SetPrivateKeyValueInput = ({
 
 			if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 				setGeneratedKeys(data?.data);
-
+				setLoading(false);
 				const privateKey = data?.data?.privateKey.slice(2)
 				setPrivateKeyValue(privateKey || privateKeyValue);
 				await checkWalletBalance(privateKey || privateKeyValue, Network.TESTNET);
@@ -116,7 +118,7 @@ const SetPrivateKeyValueInput = ({
 			</div>
 			{!havePrivateKey ? (
 				<>
-					<GenerateBtnPolygon generatePolygonKeyValuePair={() => generatePolygonKeyValuePair()} />
+					<GenerateBtnPolygon generatePolygonKeyValuePair={() => generatePolygonKeyValuePair()} loading={loading}/>
 
 					{generatedKeys && (
 						<>
