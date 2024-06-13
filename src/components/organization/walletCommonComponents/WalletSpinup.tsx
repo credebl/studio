@@ -2,6 +2,7 @@ import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
 import { getFromLocalStorage, passwordEncryption } from '../../../api/Auth';
 import {
 	createDid,
+	getOrganizationById,
 	spinupDedicatedAgent,
 	spinupSharedAgent,
 } from '../../../api/organization';
@@ -17,6 +18,8 @@ import SharedAgentForm from './SharedAgent';
 import WalletSteps from './WalletSteps';
 import type { IValuesShared } from './interfaces';
 import React from 'react';
+import OrganizationDetails from '../OrganizationDetails';
+import type { Organisation } from '../interfaces';
 
 interface Values {
 	seed: string;
@@ -43,6 +46,10 @@ const WalletSpinup = (props: {
 	const [failure, setFailure] = useState<string | null>(null);
 	const [seeds, setSeeds] = useState<string>('');
     const [maskedSeeds, setMaskedSeeds] = useState('');
+	const [orgData, setOrgData] = useState<Organisation | null>(null);
+	const [isShared, setIsShared] = useState<boolean>(false);
+
+
 	  
 	const maskSeeds = (seed: string) => {
 		const visiblePart = seed.slice(0, -10);
@@ -56,43 +63,72 @@ const WalletSpinup = (props: {
         setSeeds(generatedSeeds);
         setMaskedSeeds(masked);
     }, []);
-		
+	
+	
+	const fetchOrganizationDetails = async () => {
+		setLoading(true);
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		const orgInfoData = await getFromLocalStorage(storageKeys.ORG_INFO);
+		const response = await getOrganizationById(orgId as string);
+		const { data } = response as AxiosResponse;
+		setLoading(false)
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			console.log("data?.data?.org_agents?.orgDid",data?.data?.org_agents?.orgDid);
+			console.log("data?.data",data?.data);
+
+			
+			if (data?.data?.org_agents && data?.data?.org_agents?.length > 0 && data?.data?.org_agents?.orgDid) {
+				setOrgData(data?.data);
+			}
+	};
+}
+
+	useEffect(() => {
+       fetchOrganizationDetails()
+    }, []);
 
 	const onRadioSelect = (type: string) => {
 		setAgentType(type);
 	};
 
-	const submitDedicatedWallet = async (values: IValuesShared) => {
-			
+const submitDedicatedWallet = async (
+	values: IValuesShared,
+	privatekey: string,
+	domain: string
+) => {	
+	console.log("Valluuessss", values)
 		const didData = {
-			seed:seeds || '',
+			seed:values.method === DidMethod.POLYGON ? '' : seeds,
 			keyType: values.keyType || 'ed25519',
 		    method: values.method.split(':')[1] || '',
 			network:
 			values.method === DidMethod.INDY ?
             values.network?.split(':').slice(2).join(':') :
 				values.method === DidMethod.POLYGON
-					? `${values.method}:${values.network}`
+					? values.network?.split(':').slice(1).join(':') 
 					: values.method !== DidMethod.KEY
 					? `${values.ledger}:${values.network}`
 					: '',
-			domain: values.method === DidMethod.WEB ? values.domain : '',
+			domain: values.method === DidMethod.WEB ? domain : '',
 			role: values.method === DidMethod.INDY ? 'endorser' : '',
-			privatekey: values.method === DidMethod.POLYGON ? values.privatekey : '',
+			privatekey: values.method === DidMethod.POLYGON ? privatekey : '',
 			did: values.did || '',
 			endorserDid: values?.endorserDid || '',
 			isPrimaryDid: true,
 		};
-
 		setLoading(true);
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		console.log("didData===",didData);
+		
 		const spinupRes = await createDid(didData);
 		const { data } = spinupRes as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-			if (data?.data['agentSpinupStatus'] === 1) {
-       if(didData.did = data?.data?.did || ''){
-	setAgentSpinupCall(true);
-      }				
+			console.log('data?.data:::', data?.data);
+			// if (data?.data['agentSpinupStatus'] === 1) {
+				if (data?.data?.did) {
+	            setAgentSpinupCall(true);
+				// window.location.reload();
+      			
 			} else {
 				setFailure(spinupRes as string);
 			}
@@ -137,6 +173,7 @@ const WalletSpinup = (props: {
 
 			if (data?.data['agentSpinupStatus'] === 1) {
 				setAgentSpinupCall(true);
+				setIsShared(true)
 			} else {
 				setFailure(spinupRes as string);
 			}
@@ -219,7 +256,7 @@ const WalletSpinup = (props: {
 					isCopied={false}
 				/>
 			);
-		} else {
+	    	} else {
 			formComponent = (
 				<DedicatedAgentForm
 					seeds={seeds}
@@ -228,11 +265,19 @@ const WalletSpinup = (props: {
 				/>
 			);
 		}
-	} else {
-		formComponent = (
-			<WalletSteps steps={walletSpinStep}/>
-		);
-	}
+	} 
+	else {
+		        if (agentType === AgentType.SHARED) {
+		            formComponent = (
+		                <WalletSteps steps={walletSpinStep} />
+		            );
+		        }
+		        else {
+		            formComponent = (
+		                <OrganizationDetails orgData={orgData} />
+		            );
+		        }
+		    }
 
 	return (
 		<div className="mt-4 flex-col p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
@@ -305,6 +350,8 @@ const WalletSpinup = (props: {
 			</div>
 		</div>
 	);
-};
+}
+	
 
 export default WalletSpinup;
+

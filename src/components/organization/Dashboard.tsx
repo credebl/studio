@@ -52,13 +52,12 @@ const Dashboard = () => {
 		const response = await getOrganizationById(orgId as string);
 		const { data } = response as AxiosResponse;
 		setLoading(false)
-		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			if (data?.data?.org_agents && data?.data?.org_agents?.length > 0 && data?.data?.org_agents?.orgDid) {
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {			
+			
+			if (data?.data?.org_agents?.length > 0 && data?.data?.org_agents[0]?.orgDid) {
+				// console.log("data?.data?.org_agents?.orgDid",data?.data?.org_agents?.orgDid);
 				setWalletStatus(true);
 			}
-			console.log("orgInfoData", orgInfoData);
-
-			console.log("data in dashboard", data?.data);
 			
 			setOrgData(data?.data);
 				

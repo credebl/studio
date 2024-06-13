@@ -15,10 +15,10 @@ import DIDList from './configuration-settings/DidList';
 
 const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 	
-	
 	const { org_agents } = orgData as Organisation;
 	const agentData: OrgAgent | null =
-		org_agents.length > 0 ? org_agents[0] : null;
+	org_agents.length > 0 ? org_agents[0] : null;
+		console.log("agentData----",agentData);
 		
 	const [loading, setLoading] = useState<boolean>(true);
 	const [connectionData, setConnectionData] = useState<Connection | null>(null);
@@ -44,10 +44,12 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 		storeLedgerDetails();
 	}, []);
 
+
+	console.log("agentData222----",agentData);
+
 	return (
 		<div>
-{/* {
-	agentData?.orgDid && ( */}
+
 		<div>
     		<div className="mt-4 flex justify-start items-start flex-wrap p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800 gap-6">
 				<div className='flex justify-between w-full'>
@@ -237,8 +239,7 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 					</div>
 				</div>
 			)}	</div>
-	{/* )
-} */}	
+
 		</div>
 		
 	);
