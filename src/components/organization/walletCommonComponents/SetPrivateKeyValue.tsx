@@ -43,7 +43,7 @@ const SetPrivateKeyValueInput = ({
 				testnet: `${envConfig.PLATFORM_DATA.polygonTestnet}`,
 				mainnet: `${envConfig.PLATFORM_DATA.polygonMainnet}`
 			};
-	
+
 			const networkUrl = rpcUrls?.[network];
 
 			const provider = new ethers.JsonRpcProvider(networkUrl);
@@ -86,7 +86,7 @@ const SetPrivateKeyValueInput = ({
 			setErrorMessage(null);
 		}
 	}, [havePrivateKey]);
-	
+
 	const generatePolygonKeyValuePair = async () => {
 		setLoading(true);
 		try {
@@ -118,7 +118,7 @@ const SetPrivateKeyValueInput = ({
 			</div>
 			{!havePrivateKey ? (
 				<>
-					<GenerateBtnPolygon generatePolygonKeyValuePair={() => generatePolygonKeyValuePair()} loading={loading}/>
+					<GenerateBtnPolygon generatePolygonKeyValuePair={() => generatePolygonKeyValuePair()} loading={loading} />
 
 					{generatedKeys && (
 						<>
@@ -127,7 +127,7 @@ const SetPrivateKeyValueInput = ({
 									type="text"
 									id="privatekey"
 									name="privatekey"
-									className="truncate bg-gray-50 border mt-2 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[480px] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+									className="truncate bg-gray-50 border mt-2 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[480px] p-2.5 dark:bg-gray-700 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
 									value={generatedKeys.privateKey.slice(2)}
 									placeholder="Generated private key"
 									readOnly />
@@ -140,13 +140,16 @@ const SetPrivateKeyValueInput = ({
 								</div>
 
 							</div>
-							{errorMessage && (
-						<span className="static bottom-0 text-red-500 text-xs">
-							{errorMessage}
-						</span>
-					)}
+							<div>
+								{errorMessage && (
+									<span className="static bottom-0 text-red-500 text-xs">
+										{errorMessage}
+									</span>
+								)}
+
+							</div>
 							<TokenWarningMessage />
-							
+
 							<div className="my-3 relative">
 								<p className="text-sm truncate">
 									<span className="font-semibold text-gray-900 dark:text-white">
@@ -159,25 +162,34 @@ const SetPrivateKeyValueInput = ({
 									</div>
 								</p>
 							</div>
-							
+
 						</>
 					)}
 				</>
 			) : (
 				<>
-					<Field
-						type="text"
-						id="privatekey"
-						name="privatekey"
-						className="truncate bg-gray-50 border mt-2 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-[519px] block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
-						value={privateKeyValue}
-						onChange={(e: ChangeEvent<HTMLInputElement>) => {
-							setPrivateKeyValue(e.target.value);
-							formikHandlers.handleChange(e);
-						}}
-						onBlur={formikHandlers.handleBlur}
-						placeholder="Enter private key" />
+					<div className="mt-3 relative flex items-center">
 
+						<Field
+							type="text"
+							id="privatekey"
+							name="privatekey"
+							className="truncate bg-gray-50 border mt-2 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-[480px] block p-2.5 dark:bg-gray-700 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
+							value={privateKeyValue}
+							onChange={(e: ChangeEvent<HTMLInputElement>) => {
+								setPrivateKeyValue(e.target.value);
+								formikHandlers.handleChange(e);
+							}}
+							onBlur={formikHandlers.handleBlur}
+							placeholder="Enter private key" />
+
+						<div className='mt-4'>
+							<CopyDid
+								className="align-center hidden text-sm text-gray-900 dark:text-white truncate mt-8"
+								value={privateKeyValue}
+							/>
+						</div>
+					</div>
 					<span className="static bottom-0 text-red-500 text-xs">
 						{formikHandlers.errors?.privatekey &&
 							formikHandlers.touched?.privatekey &&
