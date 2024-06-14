@@ -353,7 +353,6 @@ const AddOrganizationInEcosystem = () => {
 			await removeFromLocalStorage(storageKeys.ERROR_ORG_IN_ECOSYSTEM);
 		})()
 	}, [])
-
 	
 	useEffect(() => {
 		(async () => {
