@@ -46,7 +46,6 @@ export interface ISharedAgentForm {
 	loading: boolean;
 	submitSharedWallet: (
 		values: IValuesShared,
-		privatekey: string,
 		domain: string
 	) => void;
 }
