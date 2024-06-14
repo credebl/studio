@@ -216,7 +216,31 @@ export interface IFormikValues {
 	ledger: string;
 	method: string;
 	network: string;
+    did: string;
 	domain: string;
 	privatekey: string;
 	endorserDid: string;
 }
+
+interface IndySubDetails {
+    [key: string]: string;
+  }
+export interface ILedgerDetails {
+    bcovrin?: IndySubDetails;
+    indicio?: IndySubDetails;
+    mainnet?: string;
+    testnet?: string;
+    key?: string;
+    web?: string;
+  }
+export interface ILedgerItem {
+    id: string;
+    name: string;
+    details: ILedgerDetails;
+    createDateTime: string;
+    createdBy: string;
+    lastChangedDateTime: string;
+    lastChangedBy: string;
+    deletedAt: string | null;
+  }
+

@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from "react"
-import BreadCrumbs from '../../BreadCrumbs'
 import { Button } from "flowbite-react"
 import CopyDid from '../../../commonComponents/CopyDid'
 import CreateDidPopup from "./CreateDid"
-import { getDids, updatePrimaryDid } from "../../../api/organization"
+import { getDids, getOrganizationById, updatePrimaryDid } from "../../../api/organization"
 import { getFromLocalStorage } from "../../../api/Auth"
 import { apiStatusCodes, storageKeys } from "../../../config/CommonConstant"
 import type { AxiosResponse } from "axios"
 import { AlertComponent } from "../../AlertComponent"
 import type { IDidList, IUpdatePrimaryDid } from "../interfaces"
+import { Roles } from "../../../utils/enums/roles"
 
 const DIDList = () => {
     const [didList, setDidList] = useState<IDidList[]>([]);
     const [showPopup, setShowPopup] = useState(false);
     const [erroMsg, setErrMsg] = useState<string | null>(null);
     const [successMsg, setSuccessMsg] = useState<string | null>(null);
+	const [roleName, setRoleName] = useState<string | null>(null);
 
     const setPrimaryDid = async (id: string, did: string) => {
         try {
@@ -35,6 +36,22 @@ const DIDList = () => {
         }
     }
 
+    const fetchOrganizationDetails = async () => {
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		const response = await getOrganizationById(orgId);
+		const { data } = response as AxiosResponse;
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+
+			const ownerRole = data?.data?.userOrgRoles.find(role => role?.orgRole.name === "owner");
+            
+			const ownerRoleName = ownerRole ? ownerRole.orgRole.name : null;
+			setRoleName(ownerRoleName);
+
+		} else {
+			console.error('Error in fetching organization:::');
+		}
+	};
+
     const getData = async () => {
         try {
             const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -49,12 +66,13 @@ const DIDList = () => {
                 setDidList(sortedDids)
             }
         } catch (error) {
-            console.log("ERROR::::", error);
+            console.error("ERROR::::", error);
         }
     }
 
     useEffect(() => {
         getData();
+        fetchOrganizationDetails();
     }, [])
 
     return (
@@ -76,7 +94,7 @@ const DIDList = () => {
                     >
                         Create DID
                     </Button>
-
+                    
                 </div>
                 <div className="overflow-auto divide-y divide-gray-200 dark:divide-gray-700">
                     {

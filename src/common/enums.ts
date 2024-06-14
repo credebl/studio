@@ -101,8 +101,17 @@ export enum BulkIssuanceStatus {
 }
 
 export enum DidMethod {
-    INDY = 'indy',
-    KEY = 'key',
-    WEB = 'web',
-    POLYGON = 'polygon'
+    INDY = 'did:indy',
+    KEY = 'did:key',
+    WEB = 'did:web',
+    POLYGON = 'did:polygon'
+}
+
+export enum Network {
+	TESTNET = 'testnet',
+	MAINNET = 'mainnet'
+}
+
+export enum CommonConstants {
+	BALANCELIMIT = 0.01
 }
