@@ -11,7 +11,8 @@ interface IProps {
   issuerDid: string,
   attributes: [],
   created: string,
-  isClickable?: boolean
+  isClickable?: boolean,
+  disabled?: boolean,
   onClickCallback: (schemaId: string, attributes: string[], issuerDid: string, created: string) => void;
   limitedAttributes?: boolean
 }

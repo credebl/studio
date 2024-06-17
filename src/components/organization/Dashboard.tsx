@@ -113,6 +113,8 @@ const Dashboard = () => {
 		window.location.href = pathRoutes.organizations.users;
 	};
 
+	const isPolygon = orgData?.org_agents[0]?.ledgers?.name?.split(" ")[0] === 'Polygon';
+
 	return (
 		<div className="px-4 pt-2 w-full">
 			<div className="col-span-full xl:mb-2">
@@ -213,11 +215,12 @@ const Dashboard = () => {
 						/>
 
 						<DashboardCard
-							icon={'/images/schema-icon.svg'}
+							icon={isPolygon ? '/images/grey-schema-icon.svg' : '/images/schema-icon.svg'}
 							classes={!walletStatus ? 'pointer-events-none' : ''}
-							backgroundColor="linear-gradient(279deg, #FFF -28.6%, #5AC2E8 21.61%, #0054FF 68.63%)"
+							backgroundColor={isPolygon ? "linear-gradient(279deg, #FFF -28.6%, #A9A9A9 21.61%, #6D6E70 68.63%)" : "linear-gradient(279deg, #FFF -28.6%, #5AC2E8 21.61%, #0054FF 68.63%)"}
 							label="Schemas"
-							value={orgDashboard?.schemasCount ?? 0}
+							disabled={isPolygon}
+							value={isPolygon ? 0 : orgDashboard?.schemasCount ?? 0}
 							onClickHandler={() => {
 								if (walletStatus) {
 									window.location.href = pathRoutes.organizations.schemas;
@@ -225,10 +228,11 @@ const Dashboard = () => {
 							}}
 						/>
 						<DashboardCard
-							icon={'/images/cred-icon.svg'}
-							backgroundColor="linear-gradient(279deg, #FFF -34.06%, #FFC968 43.71%, #FEB431 111.13%)"
+							icon={isPolygon ? '/images/grey-cred-icon.svg' : '/images/cred-icon.svg'}
+							backgroundColor={isPolygon ? "linear-gradient(279deg, #FFF -28.6%, #A9A9A9 21.61%, #6D6E70 68.63%)" : "linear-gradient(279deg, #FFF -34.06%, #FFC968 43.71%, #FEB431 111.13%)"}
 							label="Credentials"
-							value={orgDashboard?.credentialsCount ?? 0}
+							disabled={isPolygon}
+							value={isPolygon ? 0 : orgDashboard?.credentialsCount ?? 0}
 						/>
 					</div>
 				</div>

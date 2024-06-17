@@ -5,19 +5,21 @@ interface IProps {
     label: string
     value: number
     onClickHandler?: () => void
-    classes?: string
+    classes?: string,
+    disabled?:boolean
 }
 
-const DashboardCard = ({icon, backgroundColor, label, value, onClickHandler, classes }: IProps) => {
+const DashboardCard = ({icon, backgroundColor, label, value, onClickHandler, classes, disabled}: IProps) => {
     return (
         <button
             type="button"
-            className={`items-center justify-between p-4 border-0 border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 hover:scale-103 hover:bg-gray-50 cursor-pointer bg-no-repeat bg-center bg-cover min-h-[152px] bg-right-bottom bg-transparent overflow-hidden ${classes}`}
+            className={`items-center justify-between p-4 border-0 border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800 transform transition duration-500 ${disabled ? '' : 'hover:scale-103 hover:bg-gray-50'} cursor-pointer bg-no-repeat bg-center bg-cover min-h-[152px] bg-right-bottom bg-transparent overflow-hidden ${classes} ${disabled ? 'pointer-events-none' : ''}`}
             style={{ backgroundImage: backgroundColor }}
             onClick={() => {
-                if (onClickHandler)
+                if (!disabled && onClickHandler)
                     onClickHandler()
             }}
+            disabled={disabled}
         >
             <div className='absolute bottom-0 -right-4 -z-10'>
                 <img src={icon} className="w-[150px] h-[125px]" alt="icon" />

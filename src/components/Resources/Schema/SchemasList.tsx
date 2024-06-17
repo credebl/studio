@@ -23,6 +23,7 @@ import { checkEcosystem } from '../../../config/ecosystem';
 import type { ICheckEcosystem } from '../../../config/ecosystem';
 
 import { Create, SchemaEndorsement } from '../../Issuance/Constant';
+import { SchemaType } from '../../../common/enums';
 
 const SchemaList = (props: {
 	schemaSelectionCallback: (
@@ -47,7 +48,9 @@ const SchemaList = (props: {
 	const [totalItem, setTotalItem] = useState(0);
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [searchValue, setSearchValue] = useState('');
+	const [ledger, setLedger] = useState<string | null>('');
 
+	
 	const getSchemaList = async (
 		schemaListAPIParameter: GetAllSchemaListParameter,
 		flag: boolean,
@@ -58,11 +61,12 @@ const SchemaList = (props: {
 			setLoading(true);
 			let schemaList;
 			if (allSchemaFlag) {
-				schemaList = await getAllSchemas(schemaListAPIParameter);
+				schemaList = await getAllSchemas(schemaListAPIParameter, SchemaType.INDY);
 			} else {
 				schemaList = await getAllSchemasByOrgId(
 					schemaListAPIParameter,
 					organizationId,
+					SchemaType.INDY
 				);
 			}
 			const { data } = schemaList as AxiosResponse;
@@ -160,6 +164,12 @@ const SchemaList = (props: {
 		const response = await getOrganizationById(orgId);
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+
+			const ledgers = data?.data?.org_agents.map(agent => agent.ledgers);
+
+
+			setLedger(data?.data?.org_agents?.ledgers?.name?.split(" ")[0]);
+
 			if (data?.data?.org_agents && data?.data?.org_agents?.length > 0) {
 				setWalletStatus(true);
 			}

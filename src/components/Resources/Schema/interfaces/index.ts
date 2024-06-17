@@ -3,6 +3,7 @@ export interface GetAllSchemaListParameter {
   page: number,
   search: string,
   sortBy: string,
+  schemaType?: string,
   allSearch: string
 }
 

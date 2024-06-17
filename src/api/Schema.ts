@@ -6,12 +6,12 @@ import { getFromLocalStorage } from "./Auth";
 import { storageKeys } from "../config/CommonConstant";
 import { getHeaderConfigs } from "../config/GetHeaderConfigs";
 
-export const getAllSchemas = async ({itemPerPage, page, allSearch }: GetAllSchemaListParameter) => {
+export const getAllSchemas = async ({itemPerPage, page, allSearch }: GetAllSchemaListParameter, schemaType: string) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const ledgerId = await getFromLocalStorage(storageKeys.LEDGER_ID)
 
   const details = {
-		url: `${apiRoutes.Platform.getAllSchemaFromPlatform}?pageSize=${itemPerPage}&searchByText=${allSearch}&pageNumber=${page}&ledgerId=${ledgerId}`,
+		url: `${apiRoutes.Platform.getAllSchemaFromPlatform}?pageSize=${itemPerPage}&searchByText=${allSearch}&pageNumber=${page}&schemaType=${schemaType}&ledgerId=${ledgerId}`,
     config: {
       headers: {
         'Content-type': 'application/json',
@@ -30,10 +30,10 @@ export const getAllSchemas = async ({itemPerPage, page, allSearch }: GetAllSchem
   }
 }
 
-export const getAllSchemasByOrgId = async ({ search, itemPerPage, page }: GetAllSchemaListParameter, orgId: string) => {
+export const getAllSchemasByOrgId = async ({ search, itemPerPage, page }: GetAllSchemaListParameter, orgId: string, schemaType: string) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
-    url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.getAll}?pageNumber=${page}&pageSize=${itemPerPage}&searchByText=${search}`,
+    url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.getAll}?pageNumber=${page}&pageSize=${itemPerPage}&searchByText=${search}&schemaType=${schemaType}`,
     config: {
       headers: {
         'Content-type': 'application/json',

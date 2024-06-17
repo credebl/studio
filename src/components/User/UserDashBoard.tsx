@@ -25,6 +25,7 @@ import {
 	EcoRoles,
 	EcosystemRoles,
 	OrganizationRoles,
+	SchemaType,
 } from '../../common/enums';
 import CustomSpinner from '../CustomSpinner';
 import { getOwnerAdminRole } from '../../config/ecosystem';
@@ -204,6 +205,7 @@ const UserDashBoard = () => {
 			schemaList = await getAllSchemasByOrgId(
 				schemaListAPIParameter,
 				organizationId,
+				SchemaType.INDY
 			);
 
 			const { data } = schemaList as AxiosResponse;
