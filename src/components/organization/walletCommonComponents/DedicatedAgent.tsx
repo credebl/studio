@@ -48,12 +48,12 @@ const DedicatedAgentForm = ({
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 
-	const fetchLedgerConfig = async () => {
+	const fetchLedgerConfigDetails = async () => {
 		try {
 			const { data } = await getLedgerConfig() as AxiosResponse;
 	
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				const ledgerConfigData: ILedgerConfigData = {
+				const ledgerConfigDetails: ILedgerConfigData = {
 					indy: {
 						'did:indy': {}
 					},
@@ -71,7 +71,7 @@ const DedicatedAgentForm = ({
 							if (typeof subDetails === 'object' && subDetails !== null) {
 								for (const [subKey, value] of Object.entries(subDetails)) {
 									const formattedKey = `${key}:${subKey}`.replace('did:indy:', '');
-									ledgerConfigData.indy['did:indy'][formattedKey] = value;
+									ledgerConfigDetails.indy['did:indy'][formattedKey] = value;
 								}
 							}
 						}
@@ -79,21 +79,21 @@ const DedicatedAgentForm = ({
 						for (const [key, value] of Object.entries(details)) {
 							if (typeof value === 'object' && value !== null) {
 								for (const [subKey, subValue] of Object.entries(value)) {
-									ledgerConfigData.polygon['did:polygon'][subKey] = subValue;
+									ledgerConfigDetails.polygon['did:polygon'][subKey] = subValue;
 								}
 							} else if (typeof value === 'string') {
-								ledgerConfigData.polygon['did:polygon'][key] = value;
+								ledgerConfigDetails.polygon['did:polygon'][key] = value;
 							}
 						}
 					} else if (lowerName === 'noledger' && details) {
 						for (const [key, value] of Object.entries(details)) {
-							ledgerConfigData.noLedger[key] = value  as string;
+							ledgerConfigDetails.noLedger[key] = value  as string;
 						}
 					}
 				});
 				
 	
-				setMappedData(ledgerConfigData);
+				setMappedData(ledgerConfigDetails);
 			}
 		} catch (err) {
 			console.error('Fetch Network ERROR::::', err);
@@ -109,7 +109,6 @@ const DedicatedAgentForm = ({
 		
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const walletName = data?.data?.org_agents[0]?.walletName
-			// setOrgData(data?.data);
 
 				if(walletName){
 					setCreateDidFormFlag(true)
@@ -133,17 +132,14 @@ const DedicatedAgentForm = ({
 	const handleLedgerChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setSelectedLedger(e.target.value);
 		setSelectedMethod('');
-		// setSelectedNetwork('');
 		setSelectedDid('');
 	};
 	const handleMethodChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setSelectedMethod(e.target.value);
-		// setSelectedNetwork('');
 		setSelectedDid('');
 	};
 
 	const handleNetworkChange = (e: ChangeEvent<HTMLInputElement>) => {
-		// setSelectedNetwork(e.target.value);
 		const didMethod = `${e.target.value}`;
 		setSelectedDid(didMethod);
 	};
@@ -159,7 +155,7 @@ const DedicatedAgentForm = ({
 
 	useEffect(() => {
 		getLedgerList();
-		fetchLedgerConfig();
+		fetchLedgerConfigDetails();
 	}, []);
 
 	useEffect(() => {
@@ -224,7 +220,7 @@ const setAgentConfig=async (values: IDedicatedAgentConfig)=>{
 	  }
 }
 
-const renderMethodOptions = (formikHandlers: { handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) => {
+const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) => {
 	if (!selectedLedger) {
 		return null;
 	}
@@ -255,7 +251,7 @@ const renderMethodOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 	));
 };
 
-	const renderNetworkOptions = (formikHandlers: { handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) => {
+	const networkRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) => {
 		if (!selectedLedger || !selectedMethod) {
 			return null;
 		}
@@ -475,7 +471,7 @@ const renderMethodOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 									<span className="text-red-500 text-xs">*</span>
 								</label>
 								<div className="mt-2">
-									{renderMethodOptions(formikHandlers)}
+									{methodRenderOptions(formikHandlers)}
 								</div>
 								{formikHandlers.errors.method && formikHandlers.touched.method && (
 									<span className="text-red-500 text-xs">
@@ -495,7 +491,7 @@ const renderMethodOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 										<span className="text-red-500 text-xs">*</span>
 									</label>
 									<div className="mt-2">
-										{renderNetworkOptions(formikHandlers)}
+										{networkRenderOptions(formikHandlers)}
 									</div>
 									{formikHandlers.errors.network && formikHandlers.touched.network && (
 										<span className="text-red-500 text-xs">
