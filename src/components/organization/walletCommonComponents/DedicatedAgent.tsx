@@ -20,6 +20,8 @@ import SetPrivateKeyValueInput from './SetPrivateKeyValue';
 import { getOrganizationById, setAgentConfigDetails } from '../../../api/organization';
 import type { IDedicatedAgentConfig, Organisation } from '../interfaces';
 
+const RequiredAsterisk = () => <span className="text-xs text-red-500">*</span>
+
 interface DedicatedAgentPayload {
 	walletName: string;
 	agentEndpoint: string;
@@ -304,7 +306,7 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 					  <div className='flex flex-wrap w-full'>
 						  <div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
 							  <Label htmlFor="walletName" value="Wallet Name" />
-							  <span className="text-red-500 text-xs">*</span>
+							  <RequiredAsterisk />
 						  </div>
 						  <Field
 							  id="walletName"
@@ -323,8 +325,7 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 					  <div className='flex flex-wrap w-full'>
 						  <div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
 							  <Label htmlFor="agentEndpoint" value="Agent Endpoint" />
-							  <span className="text-red-500 text-xs">*</span>
-						  </div>
+							  <RequiredAsterisk />						  </div>
 						  <Field
 							  id="agentEndpoint"
 							  name="agentEndpoint"
@@ -342,8 +343,7 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 					  <div className='flex flex-wrap w-full'>
 						  <div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
 							  <Label htmlFor="apiKey" value="Api Key" />
-							  <span className="text-red-500 text-xs">*</span>
-						  </div>
+							  <RequiredAsterisk />						  </div>
 						  <Field
 							  id="apiKey"
 							  name="apiKey"
@@ -418,8 +418,8 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 									className="text-sm font-medium text-gray-900 dark:text-gray-300"
 								>
 									Ledger
-									<span className="text-red-500 text-xs">*</span>
-								</label>
+									<RequiredAsterisk />							
+										</label>
 								<div className="mt-2">
 
 									{mappedData &&
@@ -438,7 +438,6 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 														setSelectedLedger(ledger);
 														setSelectedMethod('');
 														setSeedVal(seeds);
-														// setSelectedNetwork('');
 														setSelectedDid('');
 													}}
 													className="mr-2"
@@ -468,7 +467,7 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 									className="text-sm font-medium text-gray-900 dark:text-gray-300"
 								>
 									Method
-									<span className="text-red-500 text-xs">*</span>
+									<RequiredAsterisk />
 								</label>
 								<div className="mt-2">
 									{methodRenderOptions(formikHandlers)}
@@ -488,7 +487,7 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 										className="text-sm font-medium text-gray-900 dark:text-gray-300"
 									>
 										Network
-										<span className="text-red-500 text-xs">*</span>
+										<RequiredAsterisk />
 									</label>
 									<div className="mt-2">
 										{networkRenderOptions(formikHandlers)}
@@ -509,7 +508,7 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 										className="text-sm font-medium text-gray-900 dark:text-gray-300"
 									>
 										DID Method
-										<span className="text-red-500 text-xs">*</span>
+										<RequiredAsterisk />
 									</label>
 									<input
 										type="text"
@@ -534,7 +533,7 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 
 								<div className="mt-3 relative pb-4">
 									<Label htmlFor="name" value="Wallet Label" />
-									<span className="text-red-500 text-xs">*</span>
+									<RequiredAsterisk />
 
 									<Field
 										id="label"
