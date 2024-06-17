@@ -8,7 +8,7 @@ interface IProps {
 
 const GenerateButtonPolygon = ({generatePolygonKeyValuePair, loading}:IProps) =>(
      
-        <div className="my-3 relative grid grid-cols-2 gap-56 w-fit">
+        <div className="my-3 relative grid grid-cols-2 gap-x-9 md:gap-56 w-fit">
             <div className="mt-4">
                 <Label value="Generate private key" />
                 <span className="text-red-500 text-xs">*</span>

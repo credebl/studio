@@ -140,7 +140,6 @@ const submitDedicatedWallet = async (
 
 	const submitSharedWallet = async (
 		values: IValuesShared,
-		privatekey: string,
 		domain: string,
 	) => {
 		setLoading(true);
@@ -153,7 +152,7 @@ const submitDedicatedWallet = async (
 			method: values.method.split(':')[1] || '',
 			ledger: values.method === DidMethod.INDY ? ledgerName : '',
 			label: values.label,
-			privatekey: values.method === DidMethod.POLYGON ? privatekey : '',
+			privatekey: values.method === DidMethod.POLYGON ? values?.privatekey : '',
 			seed: values.method === DidMethod.POLYGON ? '' : values?.seed || seeds,
 			network:
 				values.method === DidMethod.POLYGON
@@ -302,11 +301,11 @@ const submitDedicatedWallet = async (
 
 			<div className="grid w-full mb-4">
 				<div className="col-span-1">
-					<div className='bg-[#F4F4F4] max-w-lg'>
+					<div className='bg-[#F4F4F4] dark:bg-gray-700 max-w-lg'>
 					{!agentSpinupCall && !loading && (
 						<div className="mt-4 flex flex-col gap-4 max-w-lg ml-4 mr-4 -mb-4">
-							<ul className="items-center w-full mx-2 my-4 text-sm ml-0 font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-								<li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
+							<ul className="items-center w-full mx-2 my-4 text-sm ml-0 font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex dark:bg-gray-700 dark:border-gray-500 dark:text-white">
+								<li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-500">
 									<div className="flex items-center pl-3">
 										<label className="w-full py-3 text-sm font-medium text-gray-900 dark:text-gray-300 flex items-center">
 											<input
@@ -322,7 +321,7 @@ const submitDedicatedWallet = async (
 										</label>
 									</div>
 								</li>
-								<li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
+								<li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-500">
 									<div className="flex items-center pl-3">
 										<label className="w-full py-3 text-sm font-medium text-gray-400 dark:text-gray-300 flex items-center">
 											<input

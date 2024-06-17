@@ -10,7 +10,6 @@ import { DidMethod } from '../../../common/enums';
 import SetDomainValueInput from './SetDomainValueInput';
 import SetPrivateKeyValueInput from './SetPrivateKeyValue';
 import type { ISharedAgentForm, IValuesShared } from "./interfaces";
-
 interface IDetails {
     [key: string]: string | { [subKey: string]: string };
 }
@@ -162,7 +161,6 @@ const SharedAgentForm = ({
 		},
 		...(DidMethod.INDY === selectedMethod || DidMethod.POLYGON === selectedMethod) && { network: yup.string().required('Network is required') },
 		...(DidMethod.WEB === selectedMethod) && { domain: yup.string().required('Domain is required') },
-		...(DidMethod.POLYGON === selectedMethod) && { privatekey: yup.string().required('Private key is required').trim().length(64, 'Private key must be exactly 64 characters long') },
 	};
 
 		const renderMethodOptions = (formikHandlers: { handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) => {
@@ -175,7 +173,6 @@ const SharedAgentForm = ({
 		if (!methods) {
 			return null;
 		}
-
 
 		return Object.keys(methods).map((method) => (
 			<div key={method} className="mt-2">
@@ -231,7 +228,7 @@ const SharedAgentForm = ({
 
 	return (
 		<div className="mt-4 flex-col gap-4">
-			<div className="bg-[#F4F4F4] max-w-lg">
+			<div className="bg-[#F4F4F4] dark:bg-gray-700 max-w-lg">
 				<div className="flex items-center gap-2 ml-4">
 					<Checkbox
 						id="haveDidShared"
@@ -244,7 +241,7 @@ const SharedAgentForm = ({
 			</div>
 
 			{!haveDidShared && (
-				<div className="my-3 bg-[#F4F4F4] max-w-lg">
+				<div className="my-3 bg-[#F4F4F4] dark:bg-gray-700 max-w-lg">
 					<div className="block text-sm font-medium text-gray-900 dark:text-white mb-1 pr-4 pl-4 pt-4 -mt-4">
 						<Label value="Seed" />
 					</div>
@@ -272,16 +269,20 @@ const SharedAgentForm = ({
 				}}
 				validationSchema={yup.object().shape(validations)}
 				onSubmit={(values: IValuesShared) => {
+
+					if (!values.privatekey) {
+						values.privatekey = privateKeyValue;
+					}
+	
 					submitSharedWallet(
 						values,
-						privateKeyValue,
 						domainValue,
 					);
 				}}
 			>
 				{(formikHandlers) => (
 					<Form className="mt-4">
-						<div className="my-3 bg-[#F4F4F4] max-w-lg -mt-4 pt-2 pb-4 pl-4 pr-4">
+						<div className="my-3 bg-[#F4F4F4] dark:bg-gray-700 max-w-lg -mt-4 pt-2 pb-4 pl-4 pr-4">
 
 							{haveDidShared && (
 								<><div className="mt-3 relative">
@@ -324,7 +325,7 @@ const SharedAgentForm = ({
 							)
 							}
 						</div>
-						<div className="grid grid-cols-4 gap-4 pl-4 pt-4 bg-[#F4F4F4] pb-4">
+						<div className="grid md:grid-cols-4 gap-4 pl-4 pt-4 bg-[#F4F4F4] dark:bg-gray-700 pb-4">
 							<div className="mb-3 relative">
 								<label
 									htmlFor="ledger"
@@ -416,13 +417,15 @@ const SharedAgentForm = ({
 										DID Method
 										<span className="text-red-500 text-xs">*</span>
 									</label>
+									<div>
 									<input
 										type="text"
 										id="did-method"
 										name="did-method"
 										value={selectedDid}
 										readOnly
-										className="mt-2 bg-[#F4F4F4]" />
+										className="mt-2 bg-[#F4F4F4] w-[180px] md:w-[154px] dark:bg-gray-700 text-gray-900 dark:text-gray-300" />
+										</div>
 								</div>
 							)}
 
@@ -446,7 +449,7 @@ const SharedAgentForm = ({
 										name="label"
 										value={formikHandlers?.values?.label}
 										onChange={formikHandlers.handleChange}
-										className="bg-gray-50 border mt-2 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+										className="bg-gray-50 border mt-2 w-full border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 										type="text" />
 									{formikHandlers?.errors?.label && formikHandlers?.touched?.label && (
 										<span className="text-red-500 absolute text-xs">{formikHandlers?.errors?.label}</span>
@@ -456,11 +459,11 @@ const SharedAgentForm = ({
 
 						</div>
 
-						<div className="grid grid-cols-2 bg-[#F4F4F4] mt-4 pl-4">
+						<div className="grid grid-cols-1 md:grid-cols-2 bg-[#F4F4F4] dark:bg-gray-700 mt-4 pl-4 pr-2 md:pr-0">
 							{selectedMethod === 'did:polygon' && (
 								<><div className="grid-col-1">
 									<SetPrivateKeyValueInput setPrivateKeyValue={setPrivateKeyValue}
-										privateKeyValue={privateKeyValue} formikHandlers={formikHandlers} />
+										privateKeyValue={privateKeyValue} formikHandlers={formikHandlers} />	
 								</div>
 									<div className="grid-col-1 mb-2 relative mt-4">
 										<Label className="flex mb-2">
@@ -468,11 +471,11 @@ const SharedAgentForm = ({
 										</Label>
 										<ol>
 											<li className='mb-2'>
-												<span className='font-semibold text-sm text-gray-800'>Step 1:</span>
-												<div className='ml-4 text-sm text-gray-700'>
+												<span className='font-semibold text-sm text-gray-800 dark:text-white'>Step 1:</span>
+												<div className='ml-4 text-sm text-gray-900 dark:text-white'>
 													Copy the address and get the free tokens for the testnet.
 													<div> For eg. use&nbsp;
-														<a href='https://faucet.polygon.technology/' className='text-blue-900 text-sm underline'>
+														<a href='https://faucet.polygon.technology/' className='text-blue-900 dark:text-primary-500 text-sm underline'>
 															`https://faucet.polygon.technology/`&nbsp;
 														</a>
 														to get free token
@@ -480,11 +483,11 @@ const SharedAgentForm = ({
 												</div>
 											</li>
 											<li className='mb-2'>
-												<span className='font-semibold text-sm'>Step 2:</span>
-												<div className='ml-4 text-sm text-gray-700'>Check that you have recieved the tokens.</div>
-												<div className='ml-4 text-sm text-gray-700'>For eg. copy the address and check the balance on
+												<span className='font-semibold text-sm gray-800 dark:text-white'>Step 2:</span>
+												<div className='ml-4 text-sm text-gray-900 dark:text-white'>Check that you have recieved the tokens.</div>
+												<div className='ml-4 text-sm text-gray-900 dark:text-white'>For eg. copy the address and check the balance on
 													<div>
-														<a href='https://mumbai.polygonscan.com/' className='text-blue-900 text-sm underline'>
+														<a href='https://mumbai.polygonscan.com/' className='text-blue-900 dark:text-primary-500 text-sm underline'>
 															https://mumbai.polygonscan.com/&nbsp;
 														</a>
 													</div>
