@@ -117,7 +117,7 @@ const DedicatedAgentForm = ({
 		
 	};
 
-	const fetchNetworks = async () => {
+	const fetchNetwork = async () => {
 		try {
 			const { data } = (await getLedgers()) as AxiosResponse;
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -129,24 +129,24 @@ const DedicatedAgentForm = ({
 		}
 	};
 
-	const handleLedgerChange = (e: ChangeEvent<HTMLInputElement>) => {
+	const handleLedgerChanges = (e: ChangeEvent<HTMLInputElement>) => {
 		setSelectedLedger(e.target.value);
 		setSelectedMethod('');
 		setSelectedDid('');
 	};
-	const handleMethodChange = (e: ChangeEvent<HTMLInputElement>) => {
+	const handleMethodChanges = (e: ChangeEvent<HTMLInputElement>) => {
 		setSelectedMethod(e.target.value);
 		setSelectedDid('');
 	};
 
-	const handleNetworkChange = (e: ChangeEvent<HTMLInputElement>) => {
+	const handleNetworkChanges = (e: ChangeEvent<HTMLInputElement>) => {
 		const didMethod = `${e.target.value}`;
 		setSelectedDid(didMethod);
 	};
 	
 
 	const getLedgerList = async () => {
-		await fetchNetworks();
+		await fetchNetwork();
 	};
 
 	useEffect(() => {
@@ -239,7 +239,7 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 				value={method}
 				onChange={(e) => {
 					formikHandlers.handleChange(e);
-					handleMethodChange(e);
+					handleMethodChanges(e);
 					setSelectedMethod(method);
 				}}
 				className="mr-2"
@@ -269,7 +269,7 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 					value={networks[network]}
 					onChange={(e) => {
 						formikHandlers.handleChange(e)
-						 handleNetworkChange(e)
+						 handleNetworkChanges(e)
 					}}
 					className="mr-2"
 				/>
@@ -434,7 +434,7 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 													value={ledger}
 													onChange={(e) => {
 														formikHandlers.handleChange(e);
-														handleLedgerChange(e);
+														handleLedgerChanges(e);
 														setSelectedLedger(ledger);
 														setSelectedMethod('');
 														setSeedVal(seeds);
