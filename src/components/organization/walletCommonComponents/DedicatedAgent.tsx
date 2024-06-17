@@ -14,27 +14,12 @@ import {
 import { DidMethod } from '../../../common/enums';
 import type { IDedicatedAgentForm, ILedgerConfigData, ILedgerItem, IValuesShared } from './interfaces';
 import { getFromLocalStorage, setToLocalStorage } from '../../../api/Auth';
-import { apiRoutes } from '../../../config/apiRoutes';
-import { axiosPost } from '../../../services/apiRequests';
 import CopyDid from '../../../commonComponents/CopyDid';
 import SetDomainValueInput from './SetDomainValueInput';
 import SetPrivateKeyValueInput from './SetPrivateKeyValue';
 import { getOrganizationById, setAgentConfigDetails } from '../../../api/organization';
 import type { IDedicatedAgentConfig, Organisation } from '../interfaces';
 
-// interface DedicatedAgentConfig {
-// 	walletName: string;
-// 	agentEndpoint: string;
-// 	apiKey: string;
-// }
-
-// interface DidCreationConfig{
-// 	seed:string;
-// 	keyType:string;
-// 	method:string;
-// 	network:string;
-// 	role:string;
-// }
 interface DedicatedAgentPayload {
 	walletName: string;
 	agentEndpoint: string;
@@ -51,8 +36,7 @@ const DedicatedAgentForm = ({
 	loading,
 	 submitDedicatedWallet,
  }: IDedicatedAgentForm) => {
-	const [isConfigDone, setIsConfigDone]=useState<boolean>(false)
-	const [firstForm, setfirstForm]=useState<boolean>(false)
+
 	const [createDidFormFlag, setCreateDidFormFlag]=useState<boolean>(false)
 	const [seedVal, setSeedVal] = useState('');
 	const [mappedData, setMappedData] = useState(null);
@@ -61,7 +45,6 @@ const DedicatedAgentForm = ({
 	const [selectedMethod, setSelectedMethod]=useState('')
 	const [privateKeyValue, setPrivateKeyValue] = useState<string>('');
 	const [domainValue, setDomainValue] = useState<string>('');
-	// const [selectedNetwork, setSelectedNetwork] = useState('');
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 
@@ -233,15 +216,6 @@ const setAgentConfig=async (values: IDedicatedAgentConfig)=>{
 			setIsLoading(false);
 
 			await fetchOrganizationDetails()
-			// const response = await getOrganizationById(orgId as string);
-			// const { data } = response as AxiosResponse;
-			// const walletName = data?.data?.org_agents[0]?.walletName
-			// const orgAgents = data?.data?.org_agents[0]
-			// const orgDid = data?.data?.org_agents[0]?.orgDid
-
-			// 	if(walletName && orgAgents.endpoint && orgAgents.apiKey){
-			// 		setCreateDidFormFlag(true)
-			// 	}
 	}
 	  }
 	  catch (error) {
