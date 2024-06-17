@@ -41,7 +41,7 @@ const DedicatedAgentForm = ({
 
 	const [createDidFormFlag, setCreateDidFormFlag]=useState<boolean>(false)
 	const [seedVal, setSeedVal] = useState('');
-	const [mappedData, setMappedData] = useState(null);
+	const [mappedDetails, setMappedDetails] = useState(null);
 	const [selectedLedger, setSelectedLedger] = useState('');
 	const [selectedDid, setSelectedDid] = useState('');
 	const [selectedMethod, setSelectedMethod]=useState('')
@@ -95,7 +95,7 @@ const DedicatedAgentForm = ({
 				});
 				
 	
-				setMappedData(ledgerConfigDetails);
+				setMappedDetails(ledgerConfigDetails);
 			}
 		} catch (err) {
 			console.error('Fetch Network ERROR::::', err);
@@ -227,7 +227,7 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 		return null;
 	}
 
-	const methods = mappedData?.[selectedLedger];
+	const methods = mappedDetails?.[selectedLedger];
 
 	if (!methods) {
 		return null;
@@ -257,7 +257,7 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 		if (!selectedLedger || !selectedMethod) {
 			return null;
 		}
-		const networks = mappedData?.[selectedLedger][selectedMethod];
+		const networks = mappedDetails?.[selectedLedger][selectedMethod];
 		if (!networks) {
 			return null;
 		}
@@ -422,9 +422,9 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 										</label>
 								<div className="mt-2">
 
-									{mappedData &&
+									{mappedDetails &&
 
-										Object.keys(mappedData).map((ledger) => (
+										Object.keys(mappedDetails).map((ledger) => (
 
 											<div key={ledger} className="mt-2">
 												<input
