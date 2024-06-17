@@ -8,6 +8,8 @@ import type { AstroCookies } from 'astro'
 
 export interface UserSignUpData {
     email: string,
+    clientId: string,
+    clientSecret: string
 }
 export interface AddPasswordDetails {
     email:string
