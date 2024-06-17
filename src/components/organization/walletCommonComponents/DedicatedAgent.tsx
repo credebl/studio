@@ -64,9 +64,9 @@ const DedicatedAgentForm = ({
 				};
 				
 				data.data.forEach(({ name, details }: ILedgerItem) => {
-					const lowerName = name.toLowerCase();
+					const lowerCaseName = name.toLowerCase();
 				
-					if (lowerName === 'indy' && details) {
+					if (lowerCaseName === 'indy' && details) {
 						for (const [key, subDetails] of Object.entries(details)) {
 							if (typeof subDetails === 'object' && subDetails !== null) {
 								for (const [subKey, value] of Object.entries(subDetails)) {
@@ -75,7 +75,7 @@ const DedicatedAgentForm = ({
 								}
 							}
 						}
-					} else if (lowerName === 'polygon' && details) {
+					} else if (lowerCaseName === 'polygon' && details) {
 						for (const [key, value] of Object.entries(details)) {
 							if (typeof value === 'object' && value !== null) {
 								for (const [subKey, subValue] of Object.entries(value)) {
@@ -85,7 +85,7 @@ const DedicatedAgentForm = ({
 								ledgerConfigDetails.polygon['did:polygon'][key] = value;
 							}
 						}
-					} else if (lowerName === 'noledger' && details) {
+					} else if (lowerCaseName === 'noledger' && details) {
 						for (const [key, value] of Object.entries(details)) {
 							ledgerConfigDetails.noLedger[key] = value  as string;
 						}
