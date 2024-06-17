@@ -127,7 +127,7 @@ const submitDedicatedWallet = async (
 			// if (data?.data['agentSpinupStatus'] === 1) {
 				if (data?.data?.did) {
 	            setAgentSpinupCall(true);
-				// window.location.reload();
+				window.location.reload();
       			
 			} else {
 				setFailure(spinupRes as string);
