@@ -444,12 +444,12 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 													className="mr-2"
 												/>
 
-												<label
+												<Label
 													htmlFor={ledger}
 													className="text-gray-700 dark:text-gray-300"
 												>
 													{ledger.charAt(0).toUpperCase() + ledger.slice(1)}
-												</label>
+												</Label>
 
 
 											</div>
