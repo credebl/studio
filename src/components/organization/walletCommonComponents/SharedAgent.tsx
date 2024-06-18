@@ -185,6 +185,7 @@ const SharedAgentForm = ({
 						formikHandlers.handleChange(e);
 						handleMethodChange(e);
 						setSelectedMethod(method);
+						setDomainValue('');
 					}}
 					className="mr-2"
 				/>
@@ -424,7 +425,7 @@ const SharedAgentForm = ({
 										name="did-method"
 										value={selectedDid}
 										readOnly
-										className="mt-2 bg-[#F4F4F4] w-[180px] md:w-[154px] dark:bg-gray-700 text-gray-900 dark:text-gray-300" />
+										className="mt-2 bg-[#F4F4F4] w-[180px] dark:bg-gray-700 text-gray-900 dark:text-gray-300" />
 										</div>
 								</div>
 							)}
