@@ -22,7 +22,7 @@ import type { IDedicatedAgentConfig} from '../interfaces';
 
 const RequiredAsterisk = () => <span className="text-xs text-red-500">*</span>
 
-interface DedicatedAgentPayload {
+interface IDedicatedAgentData {
 	walletName: string;
 	agentEndpoint: string;
 	apiKey: string;
@@ -105,6 +105,7 @@ const DedicatedAgentForm = ({
 
 
 	const fetchOrganizationDetails = async () => {
+		try {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		const response = await getOrganizationById(orgId as string);
 		const { data } = response as AxiosResponse;
@@ -117,18 +118,10 @@ const DedicatedAgentForm = ({
 					setCreateDidFormFlag(true)
 				}
 		} 
-		
-	};
+	}
+		catch (error) {
+			console.error('Fetch organization details ERROR::::', error);
 
-	const fetchNetwork = async () => {
-		try {
-			const { data } = (await getLedgers()) as AxiosResponse;
-			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				return data?.data;
-			}
-			return [];
-		} catch (err) {
-			console.error('Fetch Network ERROR::::', err);
 		}
 	};
 
@@ -148,16 +141,11 @@ const DedicatedAgentForm = ({
 	};
 	
 
-	const getLedgerList = async () => {
-		await fetchNetwork();
-	};
-
 	useEffect(() => {
 	fetchOrganizationDetails();
 	}, []);
 
 	useEffect(() => {
-		getLedgerList();
 		fetchLedgerConfigDetails();
 	}, []);
 
@@ -188,7 +176,9 @@ const DedicatedAgentForm = ({
 	};
 
 	const didCreationValidation={
-		method:yup.string().trim().required().label('Method'),
+		ledger: yup.string().required('Ledger is required'),
+		method: yup.string().required('Method is required'),
+		seed: yup.string().required('Seed is required'),
 		...(DidMethod.INDY === selectedMethod || DidMethod.POLYGON === selectedMethod) && { network: yup.string().required('Network is required') },
 		...(DidMethod.WEB === selectedMethod) && { domain: yup.string().required('Domain is required') },
 		...(DidMethod.POLYGON === selectedMethod) && { privatekey: yup.string().required('Private key is required').trim().length(64, 'Private key must be exactly 64 characters long') },
@@ -294,7 +284,7 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 				  apiKey: '',
 			  }}
 			  validationSchema={yup.object().shape(validation)}
-			  onSubmit={async (values: DedicatedAgentPayload) => {
+			  onSubmit={async (values: IDedicatedAgentData ) => {
 				 await setAgentConfig(values)
 
 			  }}
@@ -390,7 +380,6 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 		validationSchema={yup.object().shape(didCreationValidation)}
 		onSubmit={async (values: IValuesShared) => {
 			
-			// await createNewDid(values)
 			submitDedicatedWallet(
 				values,
 				privateKeyValue,
