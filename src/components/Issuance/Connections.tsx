@@ -1,4 +1,3 @@
-'use client';
 
 import { Button } from 'flowbite-react';
 import { useState } from 'react';
@@ -119,7 +118,7 @@ const Connections = () => {
 							<div className="flex justify-end pt-3">
 								<Button
 									onClick={continueToIssue}
-									className='text-base text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-accent-00 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+									className="text-base text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-accent-00 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 								>
 									<div className="pr-3">
 										<svg

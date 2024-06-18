@@ -1,9 +1,8 @@
-'use client';
 
-import { setToLocalStorage } from "../../api/Auth";
-import { storageKeys } from "../../config/CommonConstant";
-import { pathRoutes } from "../../config/pathRoutes";
-import SchemaList from "../Resources/Schema/SchemasList";
+import { setToLocalStorage } from "../../api/Auth.ts";
+import { storageKeys } from "../../config/CommonConstant.ts";
+import { pathRoutes } from "../../config/pathRoutes.ts";
+import SchemaList from "../Resources/Schema/SchemasList.tsx";
 
 const SchemaSelection = () => {
 

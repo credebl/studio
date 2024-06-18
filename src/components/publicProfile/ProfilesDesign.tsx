@@ -8,9 +8,9 @@ const ProfilesDesign = ({ orgData }: IExploreOrg) => {
             <div className="flex flex-col items-center pb-10 mx-auto">
 
                 {orgData?.logoUrl ? (
-                    <CustomAvatar className="rounded-full shadow-lg" size="100" src={orgData?.logoUrl} />
+                    <CustomAvatar className="rounded-full shadow-lg" size="100px" src={orgData?.logoUrl} />
                 ) : (
-                    <CustomAvatar className="rounded-full shadow-lg" size="180" name={orgData?.name || "NA"} />
+                    <CustomAvatar className="rounded-full shadow-lg" size="180px" name={orgData?.name || "NA"} />
                 )}
 
                 <h3 className="mb-1 text-center text-3xl font-medium text-gray-900 dark:text-white pt-4 word-break-word">{orgData?.name}</h3>

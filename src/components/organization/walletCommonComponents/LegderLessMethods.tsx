@@ -1,10 +1,9 @@
-import React from "react";
 import { DidMethod } from '../.././../common/enums';
 import type { FormikProps } from "formik";
-import type { ValuesShared } from '../WalletSpinup'
+import type { IValuesShared } from "./interfaces";
 
 interface IProps {
-    formikHandlers: FormikProps<ValuesShared>;
+    formikHandlers: FormikProps<IValuesShared>;
     setSelectedDid: (val: string) => void;
     selectedDid: string;
     mappedData: null | object;

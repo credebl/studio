@@ -1,5 +1,6 @@
 import * as Yup from 'yup';
-import React, { ReactNode, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { pathRoutes } from '../../config/pathRoutes';
 import BreadCrumbs from '../BreadCrumbs';
 import BackButton from '../../commonComponents/backbutton';
@@ -19,9 +20,11 @@ import { EmptyListMessage } from '../EmptyListComponent';
 import ResetPopup from './ResetPopup';
 import type { SelectRef } from './BulkIssuance';
 import RoleViewButton from '../RoleViewButton';
-import { checkEcosystem, type ICheckEcosystem } from '../../config/ecosystem';
+import { checkEcosystem  } from '../../config/ecosystem';
+import type { ICheckEcosystem} from '../../config/ecosystem';
 import { Features } from '../../utils/enums/features';
 import { Create, SchemaEndorsement } from './Constant';
+import { SchemaType } from '../../common/enums';
 
 const EmailIssuance = () => {
 	const [formData, setFormData] = useState();
@@ -41,13 +44,14 @@ const EmailIssuance = () => {
 	const [issueLoader, setIssueLoader] = useState(false);
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const inputRef = useRef(null);
+	const [mounted, setMounted] = useState<boolean>(false)
 
 	const getSchemaCredentials = async () => {
 		try {
 			setLoading(true);
 			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 			if (orgId) {
-				const response = await getSchemaCredDef();
+				const response = await getSchemaCredDef(SchemaType.INDY);
 				const { data } = response as AxiosResponse;
 
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -79,6 +83,7 @@ const EmailIssuance = () => {
 
 	useEffect(() => {
 		getSchemaCredentials();
+		setMounted(true);
 		(async () => {
 			try {
 				const data: ICheckEcosystem = await checkEcosystem();
@@ -224,7 +229,7 @@ const EmailIssuance = () => {
 
 	return (
 		<div className="px-4 pt-2">
-			<div className="col-span-full mb-3">
+			 <div className="col-span-full mb-3">
 				<div className="flex justify-between items-center">
 					<BreadCrumbs />
 					<BackButton path={pathRoutes.organizations.Issuance.issue} />
@@ -263,7 +268,10 @@ const EmailIssuance = () => {
 							<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 								<div className="flex flex-col justify-between">
 									<div className="search-dropdown text-primary-700 drak:text-primary-700">
-										<Select
+										{
+											mounted ?
+											<Select
+									        
 											placeholder="Select Schema-Credential definition"
 											className="basic-single "
 											classNamePrefix="select"
@@ -271,6 +279,9 @@ const EmailIssuance = () => {
 											isClearable={true}
 											isRtl={false}
 											isSearchable={true}
+											id="long-value-select"
+											instanceId="long-value-select"
+
 											name="color"
 											options={credentialOptions}
 											onChange={(value: IValues | null) => {
@@ -280,6 +291,9 @@ const EmailIssuance = () => {
 											}}
 											ref={selectInputRef}
 										/>
+										:
+										null
+										}
 									</div>
 									<div className="mt-4">
 										{credentialSelected && (
@@ -375,7 +389,7 @@ const EmailIssuance = () => {
 																	setUserData(values);
 																	handleOpenConfirmation();
 																}}
-															>
+															 >
 																{(formikHandlers): JSX.Element => (
 																	<Form onSubmit={formikHandlers.handleSubmit}>
 																		<FieldArray
@@ -427,7 +441,7 @@ const EmailIssuance = () => {
 																															}
 																															type="email"
 																															className="w-full md:w-5/12 bg-gray-50 border border-gray-300 text-gray-900 sm:text-md rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-																														/>
+																														 />
 																														<div className="absolute top-11 left-24">
 																															{formikHandlers
 																																?.touched
@@ -678,13 +692,13 @@ const EmailIssuance = () => {
 																									xmlns="http://www.w3.org/2000/svg"
 																									fill="none"
 																									viewBox="0 0 24 24"
-																									stroke-width="1.5"
+																									strokeWidth="1.5"
 																									stroke="currentColor"
 																									className="w-6 h-6"
 																								>
 																									<path
-																										stroke-linecap="round"
-																										stroke-linejoin="round"
+																										strokeLinecap="round"
+																										strokeLinejoin="round"
 																										d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
 																									/>
 																								</svg>
@@ -807,7 +821,7 @@ const EmailIssuance = () => {
 						</Card>
 					</div>
 				</div>
-			</div>
+			</div> 
 		</div>
 	);
 };
