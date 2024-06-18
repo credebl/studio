@@ -36,6 +36,7 @@ interface DedicatedAgentPayload {
 const DedicatedAgentForm = ({
 	seeds,
 	loading,
+	onConfigureDedicated,
 	 submitDedicatedWallet,
  }: IDedicatedAgentForm) => {
 
@@ -211,7 +212,7 @@ const setAgentConfig=async (values: IDedicatedAgentConfig)=>{
 		
 		if (data?.statusCode === HttpStatusCode.Created) {
 			setIsLoading(false);
-
+			onConfigureDedicated()
 			await fetchOrganizationDetails()
 	}
 	  }

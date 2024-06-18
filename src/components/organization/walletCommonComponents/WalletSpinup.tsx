@@ -48,7 +48,7 @@ const WalletSpinup = (props: {
     const [maskedSeeds, setMaskedSeeds] = useState('');
 	const [orgData, setOrgData] = useState<Organisation | null>(null);
 	const [isShared, setIsShared] = useState<boolean>(false);
-
+	const [isConfiguredDedicated, setIsConfiguredDedicated] = useState<boolean>(false);
 
 	  
 	const maskSeeds = (seed: string) => {
@@ -64,7 +64,10 @@ const WalletSpinup = (props: {
         setMaskedSeeds(masked);
     }, []);
 	
-	
+	const configureDedicatedWallet = ()=> {
+		console.log("omdedicated")
+		setIsConfiguredDedicated(true);
+	}
 	const fetchOrganizationDetails = async () => {
 		setLoading(true);
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -75,6 +78,11 @@ const WalletSpinup = (props: {
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 
 			const agentData = data?.data?.org_agents
+
+			if (data?.data?.org_agents && data?.data?.org_agents[0]?.org_agent_type?.agent?.toLowerCase()  === AgentType.DEDICATED){
+				setIsConfiguredDedicated(true)
+				setAgentType(AgentType.DEDICATED)
+			}
 			
 			if (agentData.length > 0 && agentData?.orgDid) {
 				setOrgData(data?.data);
@@ -257,12 +265,15 @@ const submitDedicatedWallet = async (
 				<DedicatedAgentForm
 					seeds={seeds}
 					loading={loading}
+					onConfigureDedicated={configureDedicatedWallet}
 					submitDedicatedWallet={submitDedicatedWallet}
 				/>
 			);
 		}
 	} 
+	
 	else {
+
 		        if (agentType === AgentType.SHARED) {
 		            formComponent = (
 		                <WalletSteps steps={walletSpinStep} />
@@ -306,6 +317,7 @@ const submitDedicatedWallet = async (
 									<div className="flex items-center pl-3">
 										<label className="w-full py-3 text-sm font-medium text-gray-900 dark:text-gray-300 flex items-center">
 											<input
+											disabled={isConfiguredDedicated && agentType === AgentType.DEDICATED}
 												id="horizontal-list-radio-license"
 												type="radio"
 												checked={agentType === AgentType.SHARED}

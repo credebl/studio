@@ -11,6 +11,7 @@ export interface IDedicatedAgentForm {
 	loading: boolean;
 	submitDedicatedWallet: (values: IValuesShared, privatekey: string,
 		domain: string) => void;
+		onConfigureDedicated:() => void,
 }
 
 export interface IValuesShared {
