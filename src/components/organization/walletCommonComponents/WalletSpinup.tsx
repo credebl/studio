@@ -76,8 +76,9 @@ const WalletSpinup = (props: {
 			console.log("data?.data?.org_agents?.orgDid",data?.data?.org_agents?.orgDid);
 			console.log("data?.data",data?.data);
 
+			const agentData = data?.data?.org_agents
 			
-			if (data?.data?.org_agents && data?.data?.org_agents?.length > 0 && data?.data?.org_agents?.orgDid) {
+			if (agentData.length > 0 && agentData?.orgDid) {
 				setOrgData(data?.data);
 			}
 	};
@@ -106,8 +107,6 @@ const submitDedicatedWallet = async (
             values.network?.split(':').slice(2).join(':') :
 				values.method === DidMethod.POLYGON
 					? values.network?.split(':').slice(1).join(':') 
-					: values.method !== DidMethod.KEY
-					? `${values.ledger}:${values.network}`
 					: '',
 			domain: values.method === DidMethod.WEB ? domain : '',
 			role: values.method === DidMethod.INDY ? 'endorser' : '',

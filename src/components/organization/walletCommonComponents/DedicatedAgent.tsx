@@ -302,7 +302,7 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 			  >	
 			  {(formikHandlers):JSX.Element => (
 				  <Form className="mt-8 w-full gap-4">
-					<div className='flex bg-[#F4F4F4] w-full p-4 gap-4'>	
+					<div className='flex bg-[#F4F4F4] dark:bg-gray-700 w-full p-4 gap-4'>	
 					  <div className='flex flex-wrap w-full'>
 						  <div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
 							  <Label htmlFor="walletName" value="Wallet Name" />
@@ -315,12 +315,14 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 							  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 							  type="text"
 						  />
+						  <div>
 						  {formikHandlers?.errors?.walletName &&
 							  formikHandlers?.touched?.walletName && (
 								  <span className="text-red-500 text-xs">
 									  {formikHandlers?.errors?.walletName}
 								  </span>
 							  )}
+						  </div>
 					  </div>
 					  <div className='flex flex-wrap w-full'>
 						  <div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
@@ -333,12 +335,14 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 							  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 							  type="text"
 						  />
+						  <div>
 						  {formikHandlers?.errors?.agentEndpoint &&
 							  formikHandlers?.touched?.agentEndpoint && (
 								  <span className="text-red-500 text-xs">
 									  {formikHandlers?.errors?.agentEndpoint}
 								  </span>
 							  )}
+						  </div>
 					  </div>
 					  <div className='flex flex-wrap w-full'>
 						  <div className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
@@ -351,18 +355,20 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 							  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 							  type="text"
 						  />
-						  {formikHandlers?.errors?.apiKey &&
+						 <div>
+						 {formikHandlers?.errors?.apiKey &&
 							  formikHandlers?.touched?.apiKey && (
 								  <span className="text-red-500 text-xs">
 									  {formikHandlers?.errors?.apiKey}
 								  </span>
 							  )}
+						 </div>
 					  </div> 	
 					</div>
 					  <Button
 						  isProcessing={isLoading}						
 						  type="submit"
-						  className='mt-4 float-right text-base font-medium text-center text-white bg-primary-700 hover:bg-primary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+						  className='mt-4 float-right text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
 					     >
 						  Setup Config
 					  </Button>
@@ -398,7 +404,7 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 				
 		{(formikHandlers):JSX.Element => (
 			<Form className="mt-4">
-				<div className="my-3 bg-[#F4F4F4] max-w-lg -mt-4 pt-2 pb-4 pl-4 pr-4">
+				<div className="my-3 bg-[#F4F4F4] dark:bg-gray-700 max-w-lg -mt-4 pt-2 pb-4 pl-4 pr-4">
 				
 						<div className="block mt-3 relative">
 							<Label value="Seed" />
@@ -411,7 +417,7 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 						</div>
 					</div>
 				
-						<div className="grid grid-cols-4 gap-4 bg-[#F4F4F4] pl-4 pt-4 pb-4">
+						<div className="grid grid-cols-4 gap-4 bg-[#F4F4F4] dark:bg-gray-700 pl-4 pt-4 pb-4">
 							<div className="mb-3 relative">
 								<label	
 									htmlFor="ledger"
@@ -510,13 +516,16 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 										DID Method
 										<RequiredAsterisk />
 									</label>
+									<div>
 									<input
 										type="text"
 										id="did-method"
 										name="did-method"
 										value={selectedDid}
 										readOnly
-										className="mt-2 bg-[#F4F4F4]" />
+										className="mt-2 bg-[#F4F4F4] dark:bg-gray-700" />
+									</div>
+									
 								</div>
 							)}
 
@@ -528,29 +537,13 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 										domainValue={domainValue}
 										formikHandlers={formikHandlers}
 									/>
-
 								)}
 
-								<div className="mt-3 relative pb-4">
-									<Label htmlFor="name" value="Wallet Label" />
-									<RequiredAsterisk />
-
-									<Field
-										id="label"
-										name="label"
-										value={formikHandlers?.values?.label}
-										onChange={formikHandlers.handleChange}
-										className="bg-gray-50 border mt-2 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-										type="text" />
-									{formikHandlers?.errors?.label && formikHandlers?.touched?.label && (
-										<span className="text-red-500 absolute text-xs">{formikHandlers?.errors?.label}</span>
-									)}
-								</div>
 							</div>
 						</div>
 
 
-							<div className="grid grid-cols-2 bg-[#F4F4F4] mt-4 pl-4">
+							<div className="grid grid-cols-2 bg-[#F4F4F4] dark:bg-gray-700 mt-4 pl-4">
 							{selectedMethod === 'did:polygon' && (
 								<>
 								
@@ -596,7 +589,7 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 				<Button
 						  isProcessing={loading}
 						  type="submit"
-						  className='float-right text-base font-medium text-center text-white bg-primary-700 hover:bg-primary-800 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+						  className='float-right mb-2 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
 					     >
 						  Create did
 					  </Button>
