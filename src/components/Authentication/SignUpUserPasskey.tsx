@@ -15,6 +15,7 @@ import SignUpUserName from './SignUpUserName.js';
 import { v4 as uuidv4 } from 'uuid';
 import NavBar from './NavBar.js';
 import FooterBar from './FooterBar.js';
+import React from 'react';
 
 interface passwordValues {
 
@@ -41,9 +42,6 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
             setEmailAutoFill(window?.location?.search.split('=')[1])
         }
     }, [])
-
-const currentDevice = navigator.userAgent; 
-console.log("currentDevice",currentDevice);
 
 
     const showFidoError = (error: unknown): void => {
@@ -296,12 +294,6 @@ console.log("currentDevice",currentDevice);
                                         <span className="ml-2">Passkey</span>
 
                                     </Button>
-                                    { currentDevice==='linux' &&
-                                        <Alert>
-                                        not supported
-                                    </Alert>
-                                    }
-                                    
                                     <a
                                         id="navigatetosignup"
                                         href="/authentication/sign-in"
