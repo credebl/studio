@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 import { Button,  Label } from 'flowbite-react';
-import { Field, Form, Formik, type FormikProps } from 'formik';
+import { Field, Form, Formik } from 'formik';
 import {
 	apiStatusCodes,
 	storageKeys,
@@ -13,12 +13,12 @@ import {
 } from '../../../api/Agent';
 import { DidMethod } from '../../../common/enums';
 import type { IDedicatedAgentForm, ILedgerConfigData, ILedgerItem, IValuesShared } from './interfaces';
-import { getFromLocalStorage, setToLocalStorage } from '../../../api/Auth';
+import { getFromLocalStorage } from '../../../api/Auth';
 import CopyDid from '../../../commonComponents/CopyDid';
 import SetDomainValueInput from './SetDomainValueInput';
 import SetPrivateKeyValueInput from './SetPrivateKeyValue';
 import { getOrganizationById, setAgentConfigDetails } from '../../../api/organization';
-import type { IDedicatedAgentConfig, Organisation } from '../interfaces';
+import type { IDedicatedAgentConfig} from '../interfaces';
 
 const RequiredAsterisk = () => <span className="text-xs text-red-500">*</span>
 
@@ -161,7 +161,6 @@ const DedicatedAgentForm = ({
 	}, []);
 
 	useEffect(() => {
-		console.log('seedVal',seedVal)
 		setSeedVal(seeds)
 	}, [seeds])
 	const validation = {
@@ -286,7 +285,6 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 
 	return (
 		<>
-		{console.log("createDidFormFlag:::::::", createDidFormFlag)}
 	 {!createDidFormFlag ?
  <Formik
 	initialValues={{
@@ -390,7 +388,6 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 		}}
 		validationSchema={yup.object().shape(didCreationValidation)}
 		onSubmit={async (values: IValuesShared) => {
-			{console.log("setPK", privateKeyValue)}
 			
 			// await createNewDid(values)
 			submitDedicatedWallet(
@@ -419,13 +416,11 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 				
 						<div className="grid grid-cols-4 gap-4 bg-[#F4F4F4] dark:bg-gray-700 pl-4 pt-4 pb-4">
 							<div className="mb-3 relative">
-								<label	
-									htmlFor="ledger"
-									className="text-sm font-medium text-gray-900 dark:text-gray-300"
-								>
-									Ledger
-									<RequiredAsterisk />							
-										</label>
+										<Label htmlFor="ledger"
+									className="text-sm font-medium text-gray-900 dark:text-gray-300">
+											<p>Ledger <RequiredAsterisk /></p>
+												
+										</Label>
 								<div className="mt-2">
 
 									{mappedDetails &&
