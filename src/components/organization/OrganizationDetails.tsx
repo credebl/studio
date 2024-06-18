@@ -18,7 +18,6 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 	const { org_agents } = orgData as Organisation;
 	const agentData: OrgAgent | null =
 	org_agents.length > 0 ? org_agents[0] : null;
-		console.log("agentData----",agentData);
 		
 	const [loading, setLoading] = useState<boolean>(true);
 	const [connectionData, setConnectionData] = useState<Connection | null>(null);
@@ -43,9 +42,6 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 		createQrConnection();
 		storeLedgerDetails();
 	}, []);
-
-
-	console.log("agentData222----",agentData);
 
 	return (
 		<div>

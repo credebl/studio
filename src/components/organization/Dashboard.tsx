@@ -55,7 +55,6 @@ const Dashboard = () => {
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {			
 			
 			if (data?.data?.org_agents?.length > 0 && data?.data?.org_agents[0]?.orgDid) {
-				// console.log("data?.data?.org_agents?.orgDid",data?.data?.org_agents?.orgDid);
 				setWalletStatus(true);
 			}
 			
@@ -71,7 +70,6 @@ const Dashboard = () => {
 				...logoUrl && { logoUrl }
 			}
 			await setToLocalStorage(storageKeys.ORG_INFO, orgInfo);
-			console.log("organizationData in dashboard", organizationData);
 
 		} else {
 			setFailure(response as string);
@@ -87,7 +85,6 @@ const Dashboard = () => {
 			const response = await getOrgDashboard(orgId as string);
 			const { data } = response as AxiosResponse;
 			setLoading(false);
-			console.log("data in dashboard:::::::::::", data);
 
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 				setOrgDashboard(data?.data);

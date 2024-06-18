@@ -65,7 +65,6 @@ const WalletSpinup = (props: {
     }, []);
 	
 	const configureDedicatedWallet = ()=> {
-		console.log("omdedicated")
 		setIsConfiguredDedicated(true);
 	}
 	const fetchOrganizationDetails = async () => {
@@ -103,7 +102,6 @@ const submitDedicatedWallet = async (
 	privatekey: string,
 	domain: string
 ) => {	
-	console.log("Valluuessss", values)
 		const didData = {
 			seed:values.method === DidMethod.POLYGON ? '' : seeds,
 			keyType: values.keyType || 'ed25519',
@@ -123,13 +121,11 @@ const submitDedicatedWallet = async (
 		};
 		setLoading(true);
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-		console.log("didData===",didData);
 		
 		const spinupRes = await createDid(didData);
 		const { data } = spinupRes as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-			console.log('data?.data:::', data?.data);
-			// if (data?.data['agentSpinupStatus'] === 1) {
+			
 				if (data?.data?.did) {
 	            setAgentSpinupCall(true);
 				window.location.reload();

@@ -42,6 +42,10 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
         }
     }, [])
 
+const currentDevice = navigator.userAgent; 
+console.log("currentDevice",currentDevice);
+
+
     const showFidoError = (error: unknown): void => {
         const err = error as AxiosError;
         if (
@@ -280,7 +284,7 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
                                         id='signupcreatepasskey'
                                         isProcessing={loading}
                                         onClick={() => {
-                                            registerWithPasskey(true)
+                                            registerWithPasskey(true)   
                                         }}
                                     >
                                         
@@ -292,6 +296,12 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
                                         <span className="ml-2">Passkey</span>
 
                                     </Button>
+                                    { currentDevice==='linux' &&
+                                        <Alert>
+                                        not supported
+                                    </Alert>
+                                    }
+                                    
                                     <a
                                         id="navigatetosignup"
                                         href="/authentication/sign-in"
