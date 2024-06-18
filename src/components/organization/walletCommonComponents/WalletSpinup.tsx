@@ -73,8 +73,6 @@ const WalletSpinup = (props: {
 		const { data } = response as AxiosResponse;
 		setLoading(false)
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			console.log("data?.data?.org_agents?.orgDid",data?.data?.org_agents?.orgDid);
-			console.log("data?.data",data?.data);
 
 			const agentData = data?.data?.org_agents
 			
