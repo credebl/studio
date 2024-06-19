@@ -21,7 +21,7 @@ import SignInUserPassword from './SignInUserPassword';
 import { pathRoutes } from '../../config/pathRoutes';
 import NavBar from './NavBar';
 import FooterBar from './FooterBar';
-import { PlatformRoles } from '../../common/enums';
+import { Devices, PlatformRoles } from '../../common/enums';
 import PasskeyAlert from '../../commonComponents/PasskeyAlert';
 interface signInUserProps {
 	email: string;
@@ -48,8 +48,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 
 	useEffect(() => {
         const platform = navigator.platform.toLowerCase();
-        console.log("platform", platform)
-        if (platform.includes('linux')) {
+        if (platform.includes(Devices.Linux)) {
             setIsDevice(true);
         }
     }, []);

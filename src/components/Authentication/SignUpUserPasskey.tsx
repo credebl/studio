@@ -17,6 +17,7 @@ import NavBar from './NavBar.js';
 import FooterBar from './FooterBar.js';
 import PasskeyAlert from '../../commonComponents/PasskeyAlert.js';
 import React from 'react';
+import { Devices } from '../../common/enums.js';
 
 interface passwordValues {
 
@@ -43,8 +44,7 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
         }
 
         const platform = navigator.platform.toLowerCase();
-        console.log("platform", platform)
-        if (platform.includes('linux')) {
+        if (platform.includes(Devices.Linux)) {
             setIsDevice(true);
         }
     }, []);

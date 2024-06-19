@@ -23,6 +23,8 @@ import type {
 } from './interfaces';
 import type { AxiosError, AxiosResponse } from 'axios';
 import { AlertComponent } from '../AlertComponent';
+import { Devices } from '../../common/enums';
+import React from 'react';
 
 interface IResponseMessages {type: "error" | "success", message: string}
 
@@ -193,8 +195,7 @@ const AddPasskey = ({ responseMessages }: { 	responseMessages: (value: IResponse
 			setProfile();
 		}
 		const platform = navigator.platform.toLowerCase();
-        console.log("platform", platform)
-        if (platform.includes('linux')) {
+        if (platform.includes(Devices.Linux)) {
             setIsDevice(true);
         }
 	}, [OrgUserEmail]);
