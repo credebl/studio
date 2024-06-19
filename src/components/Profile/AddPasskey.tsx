@@ -2,6 +2,8 @@ import { Alert, Button } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import DeviceDetails from '../../commonComponents/DeviceDetailsCard';
 import PasskeyAddDevice from '../../commonComponents/PasseyAddDevicePopup';
+import PasskeyAlert from '../../commonComponents/PasskeyAlert';
+
 import {
 	addDeviceDetails,
 	generateRegistrationOption,
@@ -34,6 +36,7 @@ const AddPasskey = ({ responseMessages }: { 	responseMessages: (value: IResponse
 	const [editFailure, setEditFailure] = useState<string | null>(null);
 	const [addfailure, setAddFailure] = useState<string | null>(null);
 	const [disableFlag, setDisableFlag] = useState<boolean>(false);
+	const [isLinux, setIsLinux] = useState<boolean>(false);
 
 	const [openModel, setOpenModel] = useState<boolean>(false);
 
@@ -189,6 +192,11 @@ const AddPasskey = ({ responseMessages }: { 	responseMessages: (value: IResponse
 		} else {
 			setProfile();
 		}
+		const platform = navigator.platform.toLowerCase();
+        console.log("platform", platform)
+        if (platform.includes('linux')) {
+            setIsLinux(true);
+        }
 	}, [OrgUserEmail]);
 
 	return (
@@ -282,6 +290,9 @@ const AddPasskey = ({ responseMessages }: { 	responseMessages: (value: IResponse
 											</svg>
 											Add Passkey
 										</Button>
+										{isLinux && (
+                                    <PasskeyAlert />
+                                )}
 									</div>
 
 									<PasskeyAddDevice

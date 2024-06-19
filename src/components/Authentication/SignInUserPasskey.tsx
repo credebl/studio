@@ -16,12 +16,13 @@ import {
 import type { AxiosError, AxiosResponse } from 'axios';
 import SignInUser from './SignInUser';
 import { startAuthentication } from '@simplewebauthn/browser';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SignInUserPassword from './SignInUserPassword';
 import { pathRoutes } from '../../config/pathRoutes';
 import NavBar from './NavBar';
 import FooterBar from './FooterBar';
 import { PlatformRoles } from '../../common/enums';
+import PasskeyAlert from '../../commonComponents/PasskeyAlert';
 interface signInUserProps {
 	email: string;
 }
@@ -33,7 +34,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 	const [fidoUserError, setFidoUserError] = useState('');
 	const [failure, setFailure] = useState<string | null>(null);
 	const [success, setSuccess] = useState<string | null>(null);
-	const [email, setEmail] = useState("")
+    const [isLinux, setIsLinux] = useState<boolean>(false);
 
 	const handleSvgClick = () => {
 		window.history.pushState(null, '', pathRoutes.auth.sinIn);
@@ -44,6 +45,16 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 		setShowSignInUserPassword(true);
 		setShowSignInUser(false);
 	};
+
+	useEffect(() => {
+        // Detect the operating system
+        const platform = navigator.platform.toLowerCase();
+        console.log("platform", platform)
+        if (platform.includes('linux')) {
+            setIsLinux(true);
+        }
+    }, []);
+
 
 	const verifyAuthenticationMethod = async (
 		verifyAuthenticationObj: unknown,
@@ -352,6 +363,9 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 										</svg>
 										<span className="ml-2">Passkey</span>
 									</Button>
+									{isLinux && (
+                                    <PasskeyAlert />
+                                )}
 									<a
 										id="navigatetosignup"
 										href="/authentication/sign-up"
