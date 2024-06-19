@@ -47,7 +47,6 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 	};
 
 	useEffect(() => {
-        // Detect the operating system
         const platform = navigator.platform.toLowerCase();
         console.log("platform", platform)
         if (platform.includes('linux')) {

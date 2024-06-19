@@ -41,7 +41,6 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
             setEmailAutoFill(window?.location?.search.split('=')[1])
         }
 
-        // Detect the operating system
         const platform = navigator.platform.toLowerCase();
         console.log("platform", platform)
         if (platform.includes('linux')) {
