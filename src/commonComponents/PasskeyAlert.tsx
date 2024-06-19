@@ -15,7 +15,7 @@ const PasskeyAlert =()=>{
                     <path d="m12 8c-0.552 0-1 0.4477-1 1l0.5 7h1l0.5-7c0-0.5523-0.448-1-1-1zm0 9c-0.552 0-1 0.448-1 1s0.448 1 1 1 1-0.448 1-1-0.448-1-1-1z" transform="translate(0 1028.4)" fill="#34495e"/>
                     </g>
                     </svg>
-                    <p>This browser or device is reporting partial passkey support.</p>
+                    <p>This browser or device partially supports passkey.</p>
                     </div>
                 </Alert>
             </div>
