@@ -16,6 +16,7 @@ import { v4 as uuidv4 } from 'uuid';
 import NavBar from './NavBar.js';
 import FooterBar from './FooterBar.js';
 import PasskeyAlert from '../../commonComponents/PasskeyAlert.js';
+import React from 'react';
 
 interface passwordValues {
 
@@ -34,7 +35,7 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
     const [currentComponent, setCurrentComponent] = useState<string>('email');
     const [showSignUpUserName, setShowSignUpUserName] = useState(false);
     const [showPasskeyComponent, setShowPasskeyComponent] = useState(true);
-    const [isLinux, setIsLinux] = useState<boolean>(false);
+    const [isDevice, setIsDevice] = useState<boolean>(false);
 
     useEffect(() => {
         if (window?.location?.search.length > 7) {
@@ -44,7 +45,7 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
         const platform = navigator.platform.toLowerCase();
         console.log("platform", platform)
         if (platform.includes('linux')) {
-            setIsLinux(true);
+            setIsDevice(true);
         }
     }, []);
 
@@ -298,7 +299,7 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
                                         </svg>
                                         <span className="ml-2">Passkey</span>
                                     </Button>
-                                    {isLinux && (
+                                    {isDevice && (
                                     <PasskeyAlert />
                                 )}
                                     <a

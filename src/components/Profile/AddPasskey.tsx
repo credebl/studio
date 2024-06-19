@@ -36,7 +36,7 @@ const AddPasskey = ({ responseMessages }: { 	responseMessages: (value: IResponse
 	const [editFailure, setEditFailure] = useState<string | null>(null);
 	const [addfailure, setAddFailure] = useState<string | null>(null);
 	const [disableFlag, setDisableFlag] = useState<boolean>(false);
-	const [isLinux, setIsLinux] = useState<boolean>(false);
+	const [isDevice, setIsDevice] = useState<boolean>(false);
 
 	const [openModel, setOpenModel] = useState<boolean>(false);
 
@@ -195,7 +195,7 @@ const AddPasskey = ({ responseMessages }: { 	responseMessages: (value: IResponse
 		const platform = navigator.platform.toLowerCase();
         console.log("platform", platform)
         if (platform.includes('linux')) {
-            setIsLinux(true);
+            setIsDevice(true);
         }
 	}, [OrgUserEmail]);
 
@@ -290,7 +290,7 @@ const AddPasskey = ({ responseMessages }: { 	responseMessages: (value: IResponse
 											</svg>
 											Add Passkey
 										</Button>
-										{isLinux && (
+										{isDevice && (
                                     <PasskeyAlert />
                                 )}
 									</div>

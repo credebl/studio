@@ -34,7 +34,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 	const [fidoUserError, setFidoUserError] = useState('');
 	const [failure, setFailure] = useState<string | null>(null);
 	const [success, setSuccess] = useState<string | null>(null);
-    const [isLinux, setIsLinux] = useState<boolean>(false);
+    const [isDevice, setIsDevice] = useState<boolean>(false);
 
 	const handleSvgClick = () => {
 		window.history.pushState(null, '', pathRoutes.auth.sinIn);
@@ -50,7 +50,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
         const platform = navigator.platform.toLowerCase();
         console.log("platform", platform)
         if (platform.includes('linux')) {
-            setIsLinux(true);
+            setIsDevice(true);
         }
     }, []);
 
@@ -362,7 +362,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 										</svg>
 										<span className="ml-2">Passkey</span>
 									</Button>
-									{isLinux && (
+									{isDevice && (
                                     <PasskeyAlert />
                                 )}
 									<a
