@@ -15,6 +15,7 @@ import { pathRoutes } from '../../config/pathRoutes';
 import { AlertComponent } from '../AlertComponent';
 import WalletSpinup from './walletCommonComponents/WalletSpinup';
 import DashboardCard from '../../commonComponents/DashboardCard';
+import React from 'react';
 
 const Dashboard = () => {
 	const [orgData, setOrgData] = useState<Organisation | null>(null);
@@ -26,6 +27,9 @@ const Dashboard = () => {
 	const [userRoles, setUserRoles] = useState<string[]>([]);
 	const [orgSuccess, setOrgSuccess] = useState<string | null>(null);
 	const [openModal, setOpenModal] = useState<boolean>(false);
+	const [agentConfigure, setAgentConfigure]=useState<Boolean>(false);
+	const [isDidCreated, setIsDidCreated]=useState<Boolean>(false);
+
 
 	const EditOrgDetails = () => {
 		setOpenModal(true);
@@ -48,11 +52,14 @@ const Dashboard = () => {
 		const response = await getOrganizationById(orgId as string);
 		const { data } = response as AxiosResponse;
 		setLoading(false)
-		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			if (data?.data?.org_agents && data?.data?.org_agents?.length > 0) {
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {			
+			
+			if (data?.data?.org_agents?.length > 0 && data?.data?.org_agents[0]?.orgDid) {
 				setWalletStatus(true);
 			}
+			
 			setOrgData(data?.data);
+				
 			const organizationData = orgInfoData ? JSON.parse(orgInfoData) : {};
 			const {id, name, description, logoUrl} = data?.data || {};
 			const orgInfo = {
@@ -63,11 +70,13 @@ const Dashboard = () => {
 				...logoUrl && { logoUrl }
 			}
 			await setToLocalStorage(storageKeys.ORG_INFO, orgInfo);
+
 		} else {
 			setFailure(response as string);
 		}
 		setLoading(false);
 	};
+	
 
 	const fetchOrganizationDashboard = async () => {
 		setLoading(true);
@@ -84,7 +93,7 @@ const Dashboard = () => {
 			}
 		}
 		setLoading(false);
-	};
+	};	
 
 	useEffect(() => {
 		fetchOrganizationDetails();
@@ -112,6 +121,8 @@ const Dashboard = () => {
 	const redirectOrgUsers = () => {
 		window.location.href = pathRoutes.organizations.users;
 	};
+	
+		
 
 	const isPolygon = orgData?.org_agents[0]?.ledgers?.name?.split(" ")[0] === 'Polygon';
 
@@ -253,7 +264,8 @@ const Dashboard = () => {
 					</div>
 				) : (
 					walletStatus === true ? (
-						<OrganizationDetails orgData={orgData} />
+						<OrganizationDetails orgData={orgData}  />
+
 					) : (
 						(userRoles.includes(Roles.OWNER) ||
 							userRoles.includes(Roles.ADMIN)) && (

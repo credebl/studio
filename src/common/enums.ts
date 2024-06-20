@@ -115,3 +115,13 @@ export enum Network {
 export enum CommonConstants {
 	BALANCELIMIT = 0.01
 }
+
+export enum Devices {
+Linux = 'linux'
+}
+
+export enum Ledgers {
+	INDY = 'indy',
+	POLYGON = 'polygon',
+	NOLEDGER = 'noledger'
+}
