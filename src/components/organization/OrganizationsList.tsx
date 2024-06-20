@@ -249,6 +249,7 @@ const OrganizationsList = () => {
 					<SearchInput onInputChange={searchInputChange} />
 				</div>
 				<RoleViewButton
+					disabled={currentPage.totalCount >= 10}
 					buttonTitle="Create"
 					feature={Features.CRETAE_ORG}
 					svgComponent={
@@ -268,7 +269,6 @@ const OrganizationsList = () => {
 						</div>
 					}
 					onClickEvent={createOrganizationModel}
-					disabled={currentPage.totalCount >= 10}
 				/>
 			</div>
 			<div>

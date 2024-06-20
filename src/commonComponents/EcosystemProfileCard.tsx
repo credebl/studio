@@ -86,9 +86,9 @@ const EcosystemProfileCard = ({getEndorsementListData}:IEndorsement) => {
                 >
                     <div className="mr-4">
                         {ecosystemDetails?.logoUrl ? (
-                            <CustomAvatar size="80px" round src={ecosystemDetails?.logoUrl} />
+                            <CustomAvatar size="80px"  textSizeRatio={2.5} round src={ecosystemDetails?.logoUrl} />
                         ) : (
-                            <CustomAvatar size="80px" round name={ecosystemDetails?.name} />
+                            <CustomAvatar size="80px"  textSizeRatio={2.5} round name={ecosystemDetails?.name} />
                         )}
                     </div>
 
