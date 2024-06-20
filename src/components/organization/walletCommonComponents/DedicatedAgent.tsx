@@ -11,8 +11,8 @@ import {
 	getLedgerConfig,
 	getLedgers
 } from '../../../api/Agent';
-import { DidMethod } from '../../../common/enums';
-import type { IDedicatedAgentForm, ILedgerConfigData, ILedgerItem, IValuesShared } from './interfaces';
+import { DidMethod, Ledgers} from '../../../common/enums';
+import type { IDedicatedAgentForm, ILedgerConfigData, ILedgerItem, IValuesShared, IDedicatedAgentData} from './interfaces';
 import { getFromLocalStorage } from '../../../api/Auth';
 import CopyDid from '../../../commonComponents/CopyDid';
 import SetDomainValueInput from './SetDomainValueInput';
@@ -22,16 +22,6 @@ import type { IDedicatedAgentConfig} from '../interfaces';
 
 const RequiredAsterisk = () => <span className="text-xs text-red-500">*</span>
 
-interface IDedicatedAgentData {
-	walletName: string;
-	agentEndpoint: string;
-	apiKey: string;
-	seed:string;
-	keyType:string;
-	method:string;
-	network:string;
-	role:string;
-}
 
 const DedicatedAgentForm = ({
 	seeds,
@@ -58,10 +48,10 @@ const DedicatedAgentForm = ({
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 				const ledgerConfigDetails: ILedgerConfigData = {
 					indy: {
-						'did:indy': {}
+						[`${DidMethod.INDY}`]: {}
 					},
 					polygon: {
-						'did:polygon': {}
+						[`${DidMethod.POLYGON}`]: {}
 					},
 					noLedger: {}
 				};
@@ -69,26 +59,26 @@ const DedicatedAgentForm = ({
 				data.data.forEach(({ name, details }: ILedgerItem) => {
 					const lowerCaseName = name.toLowerCase();
 				
-					if (lowerCaseName === 'indy' && details) {
+					if (lowerCaseName === Ledgers.INDY && details) {
 						for (const [key, subDetails] of Object.entries(details)) {
 							if (typeof subDetails === 'object' && subDetails !== null) {
 								for (const [subKey, value] of Object.entries(subDetails)) {
-									const formattedKey = `${key}:${subKey}`.replace('did:indy:', '');
-									ledgerConfigDetails.indy['did:indy'][formattedKey] = value;
+									const formattedKey = `${key}:${subKey}`.replace(DidMethod.INDY, '');
+									ledgerConfigDetails.indy[DidMethod.INDY][formattedKey] = value;
 								}
 							}
 						}
-					} else if (lowerCaseName === 'polygon' && details) {
+					} else if (lowerCaseName === Ledgers.POLYGON && details) {
 						for (const [key, value] of Object.entries(details)) {
 							if (typeof value === 'object' && value !== null) {
 								for (const [subKey, subValue] of Object.entries(value)) {
-									ledgerConfigDetails.polygon['did:polygon'][subKey] = subValue;
+									ledgerConfigDetails.polygon[DidMethod.POLYGON][subKey] = subValue;
 								}
 							} else if (typeof value === 'string') {
-								ledgerConfigDetails.polygon['did:polygon'][key] = value;
+								ledgerConfigDetails.polygon[DidMethod.POLYGON][key] = value;
 							}
 						}
-					} else if (lowerCaseName === 'noledger' && details) {
+					} else if (lowerCaseName === Ledgers.NOLEDGER && details) {
 						for (const [key, value] of Object.entries(details)) {
 							ledgerConfigDetails.noLedger[key] = value  as string;
 						}
@@ -469,7 +459,7 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 							</div>
 
 
-							{selectedLedger !== 'noLedger' && (
+							{selectedLedger !== Ledgers.NOLEDGER && (
 								<div className="mb-3 relative">
 									<label
 										htmlFor="network"
@@ -489,7 +479,7 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 								</div>
 							)}
 
-							{selectedLedger !== 'noLedger' && (
+							{selectedLedger !==  Ledgers.NOLEDGER && (
 
 								<div className="mb-3 relative">
 									<label
@@ -527,7 +517,7 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 
 
 							<div className="grid grid-cols-2 bg-[#F4F4F4] dark:bg-gray-700 mt-4 pl-4">
-							{selectedMethod === 'did:polygon' && (
+							{selectedMethod === DidMethod.POLYGON && (
 								<>
 								
 								<div className="grid-col-1">

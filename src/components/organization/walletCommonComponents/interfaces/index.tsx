@@ -75,3 +75,14 @@ export interface ILedgerItem {
 interface IDetails {
     [key: string]: string | { [subKey: string]: string };
 }
+
+export interface IDedicatedAgentData {
+	walletName: string;
+	agentEndpoint: string;
+	apiKey: string;
+	seed:string;
+	keyType:string;
+	method:string;
+	network:string;
+	role:string;
+}
