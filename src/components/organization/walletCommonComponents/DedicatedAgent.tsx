@@ -11,7 +11,7 @@ import {
 	getLedgerConfig,
 	getLedgers
 } from '../../../api/Agent';
-import { DidMethod, Ledgers} from '../../../common/enums';
+import { DidMethod, Ledgers, Network} from '../../../common/enums';
 import type { IDedicatedAgentForm, ILedgerConfigData, ILedgerItem, IValuesShared, IDedicatedAgentData} from './interfaces';
 import { getFromLocalStorage } from '../../../api/Auth';
 import CopyDid from '../../../commonComponents/CopyDid';
@@ -63,7 +63,7 @@ const DedicatedAgentForm = ({
 						for (const [key, subDetails] of Object.entries(details)) {
 							if (typeof subDetails === 'object' && subDetails !== null) {
 								for (const [subKey, value] of Object.entries(subDetails)) {
-									const formattedKey = `${key}:${subKey}`.replace(DidMethod.INDY, '');
+									const formattedKey = `${key}:${subKey}`.replace(`${DidMethod.INDY}:`, '');
 									ledgerConfigDetails.indy[DidMethod.INDY][formattedKey] = value;
 								}
 							}
@@ -78,7 +78,7 @@ const DedicatedAgentForm = ({
 								ledgerConfigDetails.polygon[DidMethod.POLYGON][key] = value;
 							}
 						}
-					} else if (lowerCaseName === Ledgers.NOLEDGER && details) {
+					} else if (lowerCaseName === Ledgers.NOLEDGER.toLowerCase() && details) {
 						for (const [key, value] of Object.entries(details)) {
 							ledgerConfigDetails.noLedger[key] = value  as string;
 						}
@@ -223,34 +223,40 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 	));
 };
 
-	const networkRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) => {
-		if (!selectedLedger || !selectedMethod) {
-			return null;
-		}
-		const networks = mappedDetails?.[selectedLedger][selectedMethod];
-		if (!networks) {
-			return null;
-		}
+const networkRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) => {
+	if (!selectedLedger || !selectedMethod) {
+		return null;
+	}
 
-		return Object.keys(networks).map((network) => (
-			<div key={network} className="mt-2">
-				<input
-					type="radio"
-					id={network}
-					name="network"
-					value={networks[network]}
-					onChange={(e) => {
-						formikHandlers.handleChange(e)
-						 handleNetworkChanges(e)
-					}}
-					className="mr-2"
-				/>
-				<label htmlFor={network} className="text-gray-700 dark:text-gray-300">
-					{network}
-				</label>
-			</div>
-		));
-	};
+	const networks = mappedDetails?.[selectedLedger][selectedMethod];
+	if (!networks) {
+		return null;
+	}
+
+	let filteredNetworks = Object.keys(networks);
+	if (selectedMethod === DidMethod.POLYGON) {
+		filteredNetworks = filteredNetworks.filter(network => network === Network.TESTNET);
+	}
+
+	return filteredNetworks.map((network) => (
+		<div key={network} className="mt-2">
+			<input
+				type="radio"
+				id={network}
+				name="network"
+				value={networks[network]}
+				onChange={(e) => {
+					formikHandlers.handleChange(e);
+					handleNetworkChanges(e);
+				}}
+				className="mr-2"
+			/>
+			<label htmlFor={network} className="text-gray-700 dark:text-gray-300">
+				{network}
+			</label>
+		</div>
+	));
+};
 
 
 
@@ -362,7 +368,6 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 		method: yup.string().required('Method is required'),
 		...(DidMethod.INDY === selectedMethod || DidMethod.POLYGON === selectedMethod) && { network: yup.string().required('Network is required') },
 		...(DidMethod.WEB === selectedMethod) && { domain: yup.string().required('Domain is required') },
-		...(DidMethod.POLYGON === selectedMethod) && { privatekey: yup.string().required('Private key is required').trim().length(64, 'Private key must be exactly 64 characters long') },
 	
 		})}
 
