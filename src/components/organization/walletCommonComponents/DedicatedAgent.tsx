@@ -175,6 +175,16 @@ const DedicatedAgentForm = ({
 			.label('Api key')
 	};
 
+	const didCreationValidation={
+		ledger: yup.string().required('Ledger is required'),
+		method: yup.string().required('Method is required'),
+		seed: yup.string().required('Seed is required'),
+		...(DidMethod.INDY === selectedMethod || DidMethod.POLYGON === selectedMethod) && { network: yup.string().required('Network is required') },
+		...(DidMethod.WEB === selectedMethod) && { domain: yup.string().required('Domain is required') },
+		...(DidMethod.POLYGON === selectedMethod) && { privatekey: yup.string().required('Private key is required').trim().length(64, 'Private key must be exactly 64 characters long') },
+	
+	}
+
 	
 const setAgentConfig=async (values: IDedicatedAgentConfig)=>{
 	setIsLoading(true);
@@ -367,16 +377,7 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 			ledger:'',
 			privatekey: ''
 		}}
-		validationSchema={yup.object().shape({
-			ledger: yup.string().required('Ledger is required'),
-		method: yup.string().required('Method is required'),
-		seed: yup.string().required('Seed is required'),
-		...(DidMethod.INDY === selectedMethod || DidMethod.POLYGON === selectedMethod) && { network: yup.string().required('Network is required') },
-		...(DidMethod.WEB === selectedMethod) && { domain: yup.string().required('Domain is required') },
-		...(DidMethod.POLYGON === selectedMethod) && { privatekey: yup.string().required('Private key is required').trim().length(64, 'Private key must be exactly 64 characters long') },
-	
-		})}
-
+		validationSchema={didCreationValidation}
 		onSubmit={async (values: IValuesShared) => {
 			
 			submitDedicatedWallet(
@@ -445,7 +446,7 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 
 										))}
 								</div>
-								{formikHandlers.errors.ledger  && (
+								{formikHandlers.errors.ledger && formikHandlers.touched.ledger && (
 									<span className="text-red-500 text-xs">
 										{formikHandlers.errors.ledger}
 									</span>
@@ -462,7 +463,7 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 								<div className="mt-2">
 									{methodRenderOptions(formikHandlers)}
 								</div>
-								{formikHandlers.errors.method && (
+								{formikHandlers.errors.method && formikHandlers.touched.method && (
 									<span className="text-red-500 text-xs">
 										{formikHandlers.errors.method}
 									</span>
@@ -482,7 +483,7 @@ const methodRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEve
 									<div className="mt-2">
 										{networkRenderOptions(formikHandlers)}
 									</div>
-									{formikHandlers.errors.network && (
+									{formikHandlers.errors.network && formikHandlers.touched.network && (
 										<span className="text-red-500 text-xs">
 											{formikHandlers.errors.network}
 										</span>
