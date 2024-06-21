@@ -78,7 +78,7 @@ const DedicatedAgentForm = ({
 								ledgerConfigDetails.polygon[DidMethod.POLYGON][key] = value;
 							}
 						}
-					} else if (lowerCaseName === Ledgers.NOLEDGER.toLowerCase() && details) {
+					} else if (lowerCaseName === Ledgers.NO_LEDGER.toLowerCase() && details) {
 						for (const [key, value] of Object.entries(details)) {
 							ledgerConfigDetails.noLedger[key] = value  as string;
 						}
@@ -464,7 +464,7 @@ const networkRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEv
 							</div>
 
 
-							{selectedLedger !== Ledgers.NOLEDGER && (
+							{selectedLedger !== Ledgers.NO_LEDGER && (
 								<div className="mb-3 relative">
 									<label
 										htmlFor="network"
@@ -484,7 +484,7 @@ const networkRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEv
 								</div>
 							)}
 
-							{selectedLedger !==  Ledgers.NOLEDGER && (
+							{selectedLedger !==  Ledgers.NO_LEDGER && (
 
 								<div className="mb-3 relative">
 									<label
