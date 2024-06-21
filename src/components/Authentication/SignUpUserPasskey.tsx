@@ -15,6 +15,9 @@ import SignUpUserName from './SignUpUserName.js';
 import { v4 as uuidv4 } from 'uuid';
 import NavBar from './NavBar.js';
 import FooterBar from './FooterBar.js';
+import PasskeyAlert from '../../commonComponents/PasskeyAlert.js';
+import React from 'react';
+import { Devices } from '../../common/enums.js';
 
 interface passwordValues {
 
@@ -33,15 +36,19 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
     const [currentComponent, setCurrentComponent] = useState<string>('email');
     const [showSignUpUserName, setShowSignUpUserName] = useState(false);
     const [showPasskeyComponent, setShowPasskeyComponent] = useState(true);
-
+    const [isDevice, setIsDevice] = useState<boolean>(false);
 
     useEffect(() => {
-
         if (window?.location?.search.length > 7) {
             setEmailAutoFill(window?.location?.search.split('=')[1])
         }
-    }, [])
+        const platform = navigator.platform.toLowerCase();
+        if (platform.includes(Devices.Linux)) {
+            setIsDevice(true);
+        }
+    }, []);
 
+    
     const showFidoError = (error: unknown): void => {
         const err = error as AxiosError;
         if (
@@ -280,7 +287,7 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
                                         id='signupcreatepasskey'
                                         isProcessing={loading}
                                         onClick={() => {
-                                            registerWithPasskey(true)
+                                            registerWithPasskey(true)   
                                         }}
                                     >
                                         
@@ -290,8 +297,10 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
                                             <path d="M17.4183 21.4688C17.4183 21.4688 17.4184 21.4688 17.4185 21.4688C18.8529 21.4695 20.2714 21.7411 21.5925 22.266C22.2661 23.5916 23.2277 24.7608 24.41 25.6964V34.7688H0.75V31.8188C0.75 29.085 1.8858 26.4559 3.9194 24.512C5.95415 22.567 8.7208 21.4688 11.6123 21.4688H17.4183Z" stroke="white" strokeWidth="1.5" />
                                         </svg>
                                         <span className="ml-2">Passkey</span>
-
                                     </Button>
+                                    {isDevice && (
+                                    <PasskeyAlert />
+                                )}
                                     <a
                                         id="navigatetosignup"
                                         href="/authentication/sign-in"
