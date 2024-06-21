@@ -1,12 +1,12 @@
 import { Button, Label, Checkbox } from "flowbite-react";
-import { Field, Form, Formik } from "formik";
+import { Field, Form, Formik, type FormikHelpers } from "formik";
 import { useState, useEffect, type ChangeEvent } from "react";
 import { getLedgerConfig, getLedgers } from "../../../api/Agent";
 import { apiStatusCodes } from "../../../config/CommonConstant";
 import * as yup from 'yup';
 import type { AxiosResponse } from 'axios';
 import CopyDid from '../../../commonComponents/CopyDid';
-import { DidMethod } from '../../../common/enums';
+import { DidMethod, Ledgers, Network } from '../../../common/enums';
 import SetDomainValueInput from './SetDomainValueInput';
 import SetPrivateKeyValueInput from './SetPrivateKeyValue';
 import type { ISharedAgentForm, IValuesShared } from "./interfaces";
@@ -58,10 +58,10 @@ const SharedAgentForm = ({
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 				const ledgerConfigData: ILedgerConfigData = {
 					indy: {
-						'did:indy': {}
+						[`${DidMethod.INDY}`]: {}
 					},
 					polygon: {
-						'did:polygon': {}
+						[`${DidMethod.POLYGON}`]: {}
 					},
 					noLedger: {}
 				};
@@ -69,26 +69,26 @@ const SharedAgentForm = ({
 				data.data.forEach(({ name, details }: ILedgerItem) => {
 					const lowerName = name.toLowerCase();
 				
-					if (lowerName === 'indy' && details) {
+					if (lowerName === Ledgers.INDY && details) {
 						for (const [key, subDetails] of Object.entries(details)) {
 							if (typeof subDetails === 'object' && subDetails !== null) {
 								for (const [subKey, value] of Object.entries(subDetails)) {
-									const formattedKey = `${key}:${subKey}`.replace('did:indy:', '');
-									ledgerConfigData.indy['did:indy'][formattedKey] = value;
+									const formattedKey = `${key}:${subKey}`.replace(`${DidMethod.INDY}:`, '');
+									ledgerConfigData.indy[`${DidMethod.INDY}`][formattedKey] = value;
 								}
 							}
 						}
-					} else if (lowerName === 'polygon' && details) {
+					} else if (lowerName === Ledgers.POLYGON && details) {
 						for (const [key, value] of Object.entries(details)) {
 							if (typeof value === 'object' && value !== null) {
 								for (const [subKey, subValue] of Object.entries(value)) {
-									ledgerConfigData.polygon['did:polygon'][subKey] = subValue;
+									ledgerConfigData.polygon[`${DidMethod.POLYGON}`][subKey] = subValue;
 								}
 							} else if (typeof value === 'string') {
-								ledgerConfigData.polygon['did:polygon'][key] = value;
+								ledgerConfigData.polygon[`${DidMethod.POLYGON}`][key] = value;
 							}
 						}
-					} else if (lowerName === 'noledger' && details) {
+					} else if (lowerName === Ledgers.NO_LEDGER.toLowerCase() && details) {
 						for (const [key, value] of Object.entries(details)) {
 							ledgerConfigData.noLedger[key] = value  as string;
 						}
@@ -207,8 +207,13 @@ const SharedAgentForm = ({
 			return null;
 		}
 
-		return Object.keys(networks).map((network) => (
-			<div key={network} className="mt-2">
+		let filteredNetworks = Object.keys(networks);
+		if (selectedMethod === DidMethod.POLYGON) {
+			filteredNetworks = filteredNetworks.filter(network => network === Network.TESTNET);
+		}
+
+		return filteredNetworks.map((network) => (
+				<div key={network} className="mt-2">
 				<input
 					type="radio"
 					id={network}
@@ -269,8 +274,9 @@ const SharedAgentForm = ({
 					keyType: ''
 				}}
 				validationSchema={yup.object().shape(validations)}
-				onSubmit={(values: IValuesShared) => {
-
+				onSubmit={(values: IValuesShared,
+					actions: FormikHelpers<IValuesShared>
+				) => {
 					if (!values.privatekey) {
 						values.privatekey = privateKeyValue;
 					}
@@ -279,6 +285,7 @@ const SharedAgentForm = ({
 						values,
 						domainValue,
 					);
+					actions.resetForm();
 				}}
 			>
 				{(formikHandlers) => (
@@ -388,7 +395,7 @@ const SharedAgentForm = ({
 								)}
 							</div>
 
-							{selectedLedger !== 'noLedger' && (
+							{selectedLedger !== Ledgers.NO_LEDGER && (
 								<div className="mb-3 relative">
 									<label
 										htmlFor="network"
@@ -408,7 +415,7 @@ const SharedAgentForm = ({
 								</div>
 							)}
 
-							{selectedLedger !== 'noLedger' && (
+							{selectedLedger !== Ledgers.NO_LEDGER && (
 
 								<div className="mb-3 relative">
 									<label
@@ -461,7 +468,7 @@ const SharedAgentForm = ({
 						</div>
 
 						<div className="grid grid-cols-1 md:grid-cols-2 bg-[#F4F4F4] dark:bg-gray-700 mt-4 pl-4 pr-2 md:pr-0">
-							{selectedMethod === 'did:polygon' && (
+							{selectedMethod === DidMethod.POLYGON && (
 								<><div className="grid-col-1">
 									<SetPrivateKeyValueInput setPrivateKeyValue={setPrivateKeyValue}
 										privateKeyValue={privateKeyValue} formikHandlers={formikHandlers} />	
