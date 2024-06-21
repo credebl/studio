@@ -123,5 +123,5 @@ Linux = 'linux'
 export enum Ledgers {
 	INDY = 'indy',
 	POLYGON = 'polygon',
-	NOLEDGER = 'noledger'
+	NO_LEDGER = 'noLedger'
 }
