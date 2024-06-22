@@ -119,3 +119,9 @@ export enum CommonConstants {
 export enum Devices {
 Linux = 'linux'
 }
+
+export enum Ledgers {
+	INDY = 'indy',
+	POLYGON = 'polygon',
+	NO_LEDGER = 'noLedger'
+}

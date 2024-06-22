@@ -42,7 +42,6 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
         if (window?.location?.search.length > 7) {
             setEmailAutoFill(window?.location?.search.split('=')[1])
         }
-
         const platform = navigator.platform.toLowerCase();
         if (platform.includes(Devices.Linux)) {
             setIsDevice(true);
@@ -288,7 +287,7 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
                                         id='signupcreatepasskey'
                                         isProcessing={loading}
                                         onClick={() => {
-                                            registerWithPasskey(true)
+                                            registerWithPasskey(true)   
                                         }}
                                     >
                                         
