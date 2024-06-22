@@ -52,7 +52,7 @@ export const getAllSchemasByOrgId = async ({ search, itemPerPage, page }: GetAll
   }
 }
 
-export const createSchemas = async (payload: createSchema, orgId: string) => {
+export const createSchemas = async (payload: any, orgId: string) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
     url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.create}`,
