@@ -2,7 +2,7 @@ import type { OrgDashboard, Organisation } from './interfaces';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { getOrgDashboard, getOrganizationById } from '../../api/organization';
 import { useEffect, useState } from 'react';
-import { Alert } from 'flowbite-react';
+import { Alert, Button } from 'flowbite-react';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
 import CustomAvatar from '../Avatar/index';
@@ -16,6 +16,7 @@ import { AlertComponent } from '../AlertComponent';
 import WalletSpinup from './walletCommonComponents/WalletSpinup';
 import DashboardCard from '../../commonComponents/DashboardCard';
 import React from 'react';
+import { EcoRoles } from '../../common/enums';
 
 const Dashboard = () => {
 	const [orgData, setOrgData] = useState<Organisation | null>(null);
@@ -25,6 +26,7 @@ const Dashboard = () => {
 	const [failure, setFailure] = useState<string | null>(null);
 	const [loading, setLoading] = useState<boolean | null>(true);
 	const [userRoles, setUserRoles] = useState<string[]>([]);
+	const [ecosystemUserRoles, setEcosystemUserRoles] = useState<string>('');
 	const [orgSuccess, setOrgSuccess] = useState<string | null>(null);
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [agentConfigure, setAgentConfigure]=useState<Boolean>(false);
@@ -35,14 +37,24 @@ const Dashboard = () => {
 		setOpenModal(true);
 	};
 
+	const deleteOrgDetails = () => {
+		window.location.href = pathRoutes.organizations.deleteOrganization
+	};
+
 	const getUserRoles = async () => {
 		const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES);
 		const roles = orgRoles.split(',');
 		setUserRoles(roles);
 	};
 
+	const getEcosystemRole = async () => {
+		const ecosysmetmRoles = await getFromLocalStorage(storageKeys.ECOSYSTEM_ROLE);
+		setEcosystemUserRoles(ecosysmetmRoles)
+	};
+
 	useEffect(() => {
 		getUserRoles();
+		getEcosystemRole();
 	}, []);
 
 	const fetchOrganizationDetails = async () => {
@@ -176,10 +188,25 @@ const Dashboard = () => {
 								)}
 							</div>
 						</div>
+						
+						<div className='absolute top-0 right-0 flex' >
+							<div>
+							{
+								userRoles.includes(Roles.OWNER) && (
+									<div className='mr-4'>
+										<button onClick={deleteOrgDetails}>
+										<img src="/images/delete_24dp_FILL0_wght400_GRAD0_opsz24 1.svg" width={20} height={20} alt="" />
+                                       </button>
 
-						{(userRoles.includes(Roles.OWNER) ||
+									</div>
+								)
+							}
+							</div>
+
+						 <div>
+                             {(userRoles.includes(Roles.OWNER) ||
 							userRoles.includes(Roles.ADMIN)) && (
-							<div className="absolute top-0 right-0">
+							<div className="">
 								<button type="button">
 									<svg
 										aria-hidden="true"
@@ -200,6 +227,8 @@ const Dashboard = () => {
 								</button>
 							</div>
 						)}
+						</div>
+						</div>					
 					</div>
 
 					<EditOrgdetailsModal

@@ -1,4 +1,4 @@
-import { axiosGet, axiosPost, axiosPut } from '../services/apiRequests';
+import { axiosDelete, axiosGet, axiosPost, axiosPut } from '../services/apiRequests';
 
 import { apiRoutes } from '../config/apiRoutes';
 import { getFromLocalStorage } from './Auth';
@@ -277,6 +277,26 @@ export const addOrganizationInEcosystem = async (
 
 	try {
 		return await axiosPost(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};
+
+export const deleteOrganizationFromEcosystem = async (
+) => {
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+
+	const url = `${apiRoutes.Ecosystem.root}/${orgId}${apiRoutes.Ecosystem.deleteOrgFromEcosystem}`;
+
+
+	const axiosPayload = {
+		url,
+		config: await getHeaderConfigs(),
+	};
+
+	try {
+		return await axiosDelete(axiosPayload);
 	} catch (error) {
 		const err = error as Error;
 		return err?.message;
