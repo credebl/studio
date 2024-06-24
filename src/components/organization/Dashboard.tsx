@@ -190,18 +190,7 @@ const Dashboard = () => {
 						</div>
 						
 						<div className='absolute top-0 right-0 flex' >
-							<div>
-							{
-								userRoles.includes(Roles.OWNER) && (
-									<div className='mr-4'>
-										<button onClick={deleteOrgDetails}>
-										<img src="/images/delete_24dp_FILL0_wght400_GRAD0_opsz24 1.svg" width={20} height={20} alt="" />
-                                       </button>
-
-									</div>
-								)
-							}
-							</div>
+						
 
 						 <div>
                              {(userRoles.includes(Roles.OWNER) ||
@@ -228,6 +217,18 @@ const Dashboard = () => {
 							</div>
 						)}
 						</div>
+						<div>
+							{
+								userRoles.includes(Roles.OWNER) && (
+									<div className='ml-4'>
+										<button onClick={deleteOrgDetails}>
+										<img src="/images/delete_24dp_FILL0_wght400_GRAD0_opsz24 1.svg" width={20} height={20} alt="" />
+                                       </button>
+
+									</div>
+								)
+							}
+							</div>
 						</div>					
 					</div>
 

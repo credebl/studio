@@ -14,9 +14,10 @@ interface IProps {
 	setSuccess: (flag: string | null) => void;
 	buttonTitles: string[];
 	loading:boolean;
+	warning?:String
 }
 
-const ConfirmationModal = ({ openModal, closeModal, onSuccess, message, isProcessing, success, failure, setFailure, setSuccess, buttonTitles, loading }: IProps) => {
+const ConfirmationModal = ({ openModal, closeModal, onSuccess, message, isProcessing, success, failure, setFailure, setSuccess, buttonTitles, loading, warning }: IProps) => {
 	return (
 		<Modal show={openModal} size="xl">
 			<div className="relative w-full max-w-xl max-h-[450px]">
@@ -117,6 +118,7 @@ const ConfirmationModal = ({ openModal, closeModal, onSuccess, message, isProces
 								className="sm:min-w-[197px] text-md bg-primary-700 hover:!bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 font-medium rounded-lg text-md inline-flex items-center text-center"
 							>
 								{buttonTitles[1]}
+								{warning}
 							</Button>
 						</div>
 					</div>
