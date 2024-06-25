@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Card } from "flowbite-react";
 import { apiStatusCodes, storageKeys } from "../../config/CommonConstant";
 import type { AxiosResponse } from "axios";
 import {
@@ -17,8 +16,8 @@ import { deleteOrganizationWallet } from "../../api/Agent";
 import ConfirmationModal from "../../commonComponents/ConfirmationModal";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { getFromLocalStorage, removeFromLocalStorage, setToLocalStorage } from "../../api/Auth";
-import { EcosystemRoles, OrganizationRoles } from "../../common/enums";
+import { getFromLocalStorage, removeFromLocalStorage } from "../../api/Auth";
+import { EcosystemRoles } from "../../common/enums";
 import { AlertComponent } from "../AlertComponent";
 import { pathRoutes } from "../../config/pathRoutes";
 import DeleteOrganizationsCard from './DeleteOrganizationsCard'

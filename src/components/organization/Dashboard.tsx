@@ -2,7 +2,7 @@ import type { OrgDashboard, Organisation } from './interfaces';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { getOrgDashboard, getOrganizationById } from '../../api/organization';
 import { useEffect, useState } from 'react';
-import { Alert, Button } from 'flowbite-react';
+import { Alert } from 'flowbite-react';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
 import CustomAvatar from '../Avatar/index';
@@ -16,7 +16,6 @@ import { AlertComponent } from '../AlertComponent';
 import WalletSpinup from './walletCommonComponents/WalletSpinup';
 import DashboardCard from '../../commonComponents/DashboardCard';
 import React from 'react';
-import { EcoRoles } from '../../common/enums';
 
 const Dashboard = () => {
 	const [orgData, setOrgData] = useState<Organisation | null>(null);
