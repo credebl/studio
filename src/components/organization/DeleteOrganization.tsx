@@ -45,6 +45,8 @@ const DeleteOrganizations = () => {
   const [deleteAction, setDeleteAction] = useState<() => void>(() => {});
   const [confirmMessage, setConfirmMessage] = useState<string>('');
   const [description, setDescription] = useState<string>("");
+  const [ecosystemRoles, setEcosystemRoles] = useState<string[]>([]);
+  
 
   interface IEcosystemRole {
     id: string;
@@ -75,14 +77,17 @@ const DeleteOrganizations = () => {
         const ecosystemList = data?.data?.ecosystemList;
 
         if (ecosystemList && ecosystemList.length > 0) {
-          ecosystemList.forEach((ecosystem: { ecosystemOrgs: IEcosystemOrganizations[]; }) => {
+          const leadEcosystemNames: string[] = [];
+          ecosystemList.forEach((ecosystem: { name: string; ecosystemOrgs: IEcosystemOrganizations[]; }) => {
             ecosystem.ecosystemOrgs.forEach(org => {
               const ecosystemRoleName = org.ecosystemRole?.name;
               if (ecosystemRoleName === EcosystemRoles.ecosystemLead) {
                 setEcosystemUserRoles(ecosystemRoleName);
+                leadEcosystemNames.push(ecosystem.name);
               }
             });
           });
+          setEcosystemRoles(leadEcosystemNames)
         }
       }
     } catch (error) {
@@ -285,7 +290,7 @@ const DeleteOrganizations = () => {
       description: "Verifications is the list of verified Credentials",
       count: organizationData?.verificationRecordsCount ?? 0,
       deleteFunc: deleteFunctions.deleteVerifications,
-      confirmMessage:"Are you sure you want to delete Verification records",
+      confirmMessage:"Are you sure you want to delete verification records",
       isDisabled: false
     },
     {
@@ -334,11 +339,12 @@ const DeleteOrganizations = () => {
     }
   ];
   return (
-    <div>
+    <div className="px-4 pt-2">
       <BreadCrumbs />
-      <h1 className="ml-1 mr-auto text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
+      <h1 className="ml-1 mt-2 mr-auto text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white mb-4">
         Delete Organization
       </h1>
+
       <ToastContainer />
       <AlertComponent
         message={message ?? error}
@@ -348,7 +354,11 @@ const DeleteOrganizations = () => {
           setError(null);
         }}
       />
-
+{ecosystemRoles.length > 0 &&
+        <h2 className="mb-4">
+          You are Ecosystem Lead for <strong>{ecosystemRoles.join(', ')}</strong>. You cannot remove yourself from the ecosystem, delete the organization's wallet, and delete your organization.
+        </h2>
+      }
       {organizationData && (
         <div>
           {cardData.map((card, index) => (
