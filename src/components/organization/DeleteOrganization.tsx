@@ -17,10 +17,11 @@ import { deleteOrganizationWallet } from "../../api/Agent";
 import ConfirmationModal from "../../commonComponents/ConfirmationModal";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { getFromLocalStorage } from "../../api/Auth";
-import { EcosystemRoles } from "../../common/enums";
+import { getFromLocalStorage, removeFromLocalStorage, setToLocalStorage } from "../../api/Auth";
+import { EcosystemRoles, OrganizationRoles } from "../../common/enums";
 import { AlertComponent } from "../AlertComponent";
 import { pathRoutes } from "../../config/pathRoutes";
+import DeleteOrganizationsCard from './DeleteOrganizationsCard'
 
 interface OrgCount {
   verificationRecordsCount: number;
@@ -36,17 +37,13 @@ const DeleteOrganizations = () => {
   const [error, setError] = useState<string | null>(null);
   const [organizationData, setOrganizationData] = useState<OrgCount | null>(null);
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
-  const [walletPresent, setIsWalletPresent] = useState<boolean>(false);
+  const [isWalletPresent, setIsWalletPresent] = useState<boolean>(false);
   const [message, setMessage] = useState<string | null>(null);
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [ecosystemUserRoles, setEcosystemUserRoles] = useState<string>('');
   const [deleteAction, setDeleteAction] = useState<() => void>(() => {});
-
-  const getEcosystemRole = async () => {
-    const ecosysmetmRoles = await getFromLocalStorage(storageKeys.ECOSYSTEM_ROLE);
-    console.log("ecosysmetmRoles", ecosysmetmRoles);
-    setEcosystemUserRoles(ecosysmetmRoles);
-  };
+  const [confirmMessage, setConfirmMessage] = useState<string>('');
+  const [description, setDescription] = useState<string>("");
 
   interface IEcosystemRole {
     id: string;
@@ -74,14 +71,14 @@ const DeleteOrganizations = () => {
       const response = await getEcosystems(orgId as string);
       const { data } = response as AxiosResponse;
       console.log("data4372462734832", data);
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) { // Updated condition to check for the success status code
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) { 
         const ecosystemList = data?.data?.ecosystemList;
 
         if (ecosystemList && ecosystemList.length > 0) {
           ecosystemList.forEach((ecosystem: { ecosystemOrgs: EcosystemOrgs[]; }) => {
             ecosystem.ecosystemOrgs.forEach(org => {
               const ecosystemRoleName = org.ecosystemRole?.name;
-              if (ecosystemRoleName) {
+              if (ecosystemRoleName === EcosystemRoles.ecosystemLead) {
                 setEcosystemUserRoles(ecosystemRoleName);
                 console.log("Ecosystem Role Name:", ecosystemRoleName);
               }
@@ -103,8 +100,11 @@ const DeleteOrganizations = () => {
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         const walletName = data?.data?.org_agents[0]?.walletName;
         if (walletName) {
-          setIsWalletPresent(true);
+          setIsWalletPresent(true);         
         }
+        else {
+            setIsWalletPresent(false); 
+          }
       }
     } catch (error) {
       console.error('Fetch organization details ERROR::::', error);
@@ -130,7 +130,6 @@ const DeleteOrganizations = () => {
   };
 
   useEffect(() => {
-    getEcosystemRole();
     fetchOrganizationReferences();
     fetchOrganizationDetails();
     getAllEcosystems();
@@ -157,8 +156,7 @@ const DeleteOrganizations = () => {
       const { data } = response as AxiosResponse;
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        toast.success(data?.message)
-        // Refresh organization data to reflect changes
+        toast.success(data?.message, {autoClose: 3000})
         await fetchOrganizationReferences();
         setShowPopup(false)
       } else {
@@ -178,8 +176,7 @@ const DeleteOrganizations = () => {
       const { data } = response as AxiosResponse;
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        toast.success(data?.message)
-        // Refresh organization data to reflect changes
+        toast.success(data?.message, {autoClose: 3000})
         await fetchOrganizationReferences();
         setShowPopup(false)
       } else {
@@ -199,8 +196,7 @@ const DeleteOrganizations = () => {
       const { data } = response as AxiosResponse;
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        toast.success(data?.message)
-        // Refresh organization data to reflect changes
+        toast.success(data?.message, {autoClose: 3000})
         await fetchOrganizationReferences();
         setShowPopup(false)
       } else {
@@ -219,8 +215,7 @@ const DeleteOrganizations = () => {
       const { data } = response as AxiosResponse;
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        toast.success(data?.message)
-        // Refresh organization data to reflect changes
+        toast.success(data?.message, {autoClose: 3000})
         await fetchOrganizationReferences();
         setShowPopup(false)
       } else {
@@ -238,8 +233,8 @@ const DeleteOrganizations = () => {
       const { data } = response as AxiosResponse;
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        toast.success(data?.message)
-        // Refresh organization data to reflect changes
+        toast.success(data?.message, {autoClose: 3000})
+        setIsWalletPresent(false)
         await fetchOrganizationReferences();
         setShowPopup(false)
       } else {
@@ -257,8 +252,7 @@ const DeleteOrganizations = () => {
       const { data } = response as AxiosResponse;
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        toast.success(data?.message)
-        // Refresh organization data to reflect changes
+        toast.success(data?.message, {autoClose: 3000})
         await fetchOrganizationReferences();
         setShowPopup(false)
       } else {
@@ -268,7 +262,13 @@ const DeleteOrganizations = () => {
       console.error('An error occurred:', error);
       setError('An unexpected error occurred');
     }
-    window.location.href = pathRoutes.users.dashboard;
+    await removeFromLocalStorage(storageKeys.ORG_INFO);
+		await removeFromLocalStorage(storageKeys.ORG_DETAILS);
+        await removeFromLocalStorage(storageKeys.ORG_ROLES);
+        await removeFromLocalStorage(storageKeys.ORG_ID);
+        setTimeout(() => { 
+          window.location.href = pathRoutes.organizations.root;
+        }, 3000);
 
   };
 
@@ -304,7 +304,7 @@ const DeleteOrganizations = () => {
       count: organizationData?.connectionRecordsCount ?? 0,
       deleteFunc: deleteFunctions.deleteConnection,
       confirmMessage:"Are you sure you want to delete connection records",
-      isDisabled: (organizationData?.issuanceRecordsCount ?? 0) > 0 && (organizationData?.verificationRecordsCount ?? 0) > 0
+      isDisabled: (organizationData?.issuanceRecordsCount ?? 0) > 0 || (organizationData?.verificationRecordsCount ?? 0) > 0
     },
     {
       title: "Ecosystem members",
@@ -312,44 +312,29 @@ const DeleteOrganizations = () => {
       count: organizationData?.orgEcosystemsCount ?? 0,
       deleteFunc: deleteFunctions.deleteOrgFromEcosystem,
       confirmMessage:"Are you sure you want to remove your organization from eocystem",
-      isDisabled: ecosystemUserRoles.includes(EcosystemRoles.ecosystemLead) || ((organizationData?.connectionRecordsCount ?? 0) > 0 && (organizationData?.issuanceRecordsCount ?? 0) > 0 && (organizationData?.verificationRecordsCount ?? 0) > 0)
+      isDisabled: ecosystemUserRoles.includes(EcosystemRoles.ecosystemLead) || ((organizationData?.connectionRecordsCount ?? 0) > 0 ||(organizationData?.issuanceRecordsCount ?? 0) > 0 || (organizationData?.verificationRecordsCount ?? 0) > 0)
     },
     {
-      title: "Organization wallet",
-      description: "Organization wallet",
-      deleteFunc: deleteFunctions.deleteOrgWallet,
-      confirmMessage:"Are you sure you want to delete organization wallet",
-      isDisabled: ecosystemUserRoles.includes(EcosystemRoles.ecosystemLead) || ((organizationData?.orgEcosystemsCount ?? 0) > 0 && (organizationData?.connectionRecordsCount ?? 0) > 0 && (organizationData?.issuanceRecordsCount ?? 0) > 0 && (organizationData?.verificationRecordsCount ?? 0) > 0)
-    },
+        title: "Organization wallet",
+        description: "Organization wallet",
+        count: isWalletPresent ? 1 : 0,
+        deleteFunc: deleteFunctions.deleteOrgWallet,
+        confirmMessage: "Are you sure you want to delete organization wallet",
+        isDisabled: ecosystemUserRoles.includes(EcosystemRoles.ecosystemLead) ||
+          ((organizationData?.orgEcosystemsCount ?? 0) > 0 ||
+            (organizationData?.connectionRecordsCount ?? 0) > 0 ||
+            (organizationData?.issuanceRecordsCount ?? 0) > 0 ||
+            (organizationData?.verificationRecordsCount ?? 0) > 0) 
+          
+      },
     {
       title: "Organization",
       description: "Organization",
       deleteFunc: deleteFunctions.deleteOrganizations,
-      confirmMessage:"Are you sure you want to delete organization",
-      
-      isDisabled: walletPresent || ecosystemUserRoles.includes(EcosystemRoles.ecosystemLead)
+      confirmMessage:"Are you sure you want to delete organization",     
+      isDisabled: isWalletPresent || ecosystemUserRoles.includes(EcosystemRoles.ecosystemLead)
     }
   ];
-
-  const renderCard = (title?: string, description?: string, count?: number, deleteFunc?: () => void, isDisabled = false) => (
-    <Card key={title}>
-      <div className={`${isDisabled ? "opacity-50 pointer-events-none" : ""} flex flex-wrap w-full items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex-row sm:items-center sm:w-full sm:p-6 dark:border-gray-700 dark:bg-gray-800`}>
-        <p>
-          <p className="text-lg font-bold">{title}</p>
-          <p>{description}</p>
-          {count &&  <p>Total: {count}</p>}
-         
-        </p>
-        <button  
-        className={`${count === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
-        disabled={count === 0} 
-        onClick={() => { setShowPopup(true); setDeleteAction(() => deleteFunc); }}>
-          <img src="/images/delete_24dp_FILL0_wght400_GRAD0_opsz24 2.svg" width={25} height={25} alt="" />
-        </button>
-      </div>
-    </Card>
-  );
-
   return (
     <div>
       <BreadCrumbs />
@@ -359,23 +344,31 @@ const DeleteOrganizations = () => {
       <ToastContainer />
       <AlertComponent
         message={message ?? error}
-        type={message ? 'success' : 'failure'}
+        type={message ? "success" : "failure"}
         onAlertClose={() => {
           setMessage(null);
           setError(null);
         }}
       />
+
       {organizationData && (
         <div>
-          {cardData.map((card, index) =>
-            renderCard(
-              card.title,
-              card.description,
-              card.count,
-              card.deleteFunc,
-              card.isDisabled
-            )
-          )}
+          {cardData.map((card, index) => (
+            <DeleteOrganizationsCard
+              key={card.title}
+              title={card.title}
+              description={card.description}
+              count={card.count}
+              deleteFunc={card.deleteFunc}
+              isDisabled={card.isDisabled}
+              onDeleteClick={(deleteFunc) => {
+                setShowPopup(true);
+                setDeleteAction(() => deleteFunc);
+                setConfirmMessage(card.confirmMessage);
+                setDescription(card.description)
+              }}
+            />
+          ))}
 
           <ConfirmationModal
             loading={deleteLoading}
@@ -383,12 +376,13 @@ const DeleteOrganizations = () => {
             failure={error}
             openModal={showPopup}
             closeModal={() => setShowPopup(false)}
-            onSuccess={() => deleteHandler(deleteAction)}
-            message={`${cardData[0].confirmMessage}`}
+            onSuccess={() => deleteHandler(deleteAction as () => Promise<void>)}
+            message={confirmMessage}
             buttonTitles={["No, cancel", "Yes, delete"]}
             isProcessing={deleteLoading}
             setFailure={setError}
             setSuccess={setMessage}
+            warning={description}
           />
         </div>
       )}

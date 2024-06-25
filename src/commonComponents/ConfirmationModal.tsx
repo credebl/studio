@@ -73,6 +73,9 @@ const ConfirmationModal = ({ openModal, closeModal, onSuccess, message, isProces
 						<h3 className="py-2 text-lg font-normal text-gray-500 dark:text-gray-200 mb-4">
 							{message}
 						</h3>
+						<h4 className="text-[#C27803]">
+							{warning}
+						</h4>
 						<div className="w-full">
 							{success && (
 								<div className="w-full" role="alert">
@@ -118,7 +121,7 @@ const ConfirmationModal = ({ openModal, closeModal, onSuccess, message, isProces
 								className="sm:min-w-[197px] text-md bg-primary-700 hover:!bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 font-medium rounded-lg text-md inline-flex items-center text-center"
 							>
 								{buttonTitles[1]}
-								{warning}
+								
 							</Button>
 						</div>
 					</div>
