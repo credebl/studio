@@ -219,7 +219,7 @@ const Dashboard = () => {
 								userRoles.includes(Roles.OWNER) && (
 									<div className='ml-4'>
 										<button onClick={deleteOrgDetails}>
-										<img src="/images/delete_24dp_FILL0_wght400_GRAD0_opsz24 2.svg" width={20} height={20} alt="" />
+										<img src="/images/delete_button_image.svg" width={20} height={20} alt="" />
                                        </button>
 
 									</div>

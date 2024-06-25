@@ -37,7 +37,7 @@ const DeleteOrganizationsCard: React.FC<CardProps> = ({
         disabled={isDisabled}
       >
         <img
-          src="/images/delete_24dp_FILL0_wght400_GRAD0_opsz24 2.svg"
+          src="/images/delete_button_image.svg"
           width={25}
           height={25}
           alt=""

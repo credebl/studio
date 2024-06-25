@@ -2,10 +2,7 @@ import { useEffect, useState } from "react";
 import { apiStatusCodes, storageKeys } from "../../config/CommonConstant";
 import type { AxiosResponse } from "axios";
 import {
-  deleteConnectionRecords,
-  deleteIssuanceRecords,
   deleteOrganization,
-  deleteVerificationRecords,
   getOrganizationById,
   getOrganizationReferences
 } from "../../api/organization";
@@ -20,7 +17,12 @@ import { getFromLocalStorage, removeFromLocalStorage } from "../../api/Auth";
 import { EcosystemRoles } from "../../common/enums";
 import { AlertComponent } from "../AlertComponent";
 import { pathRoutes } from "../../config/pathRoutes";
-import DeleteOrganizationsCard from './DeleteOrganizationsCard'
+import DeleteOrganizationsCard from '../../components/organization/DeleteOrganizationsCard'
+import React from "react";
+import { deleteVerificationRecords } from '../../api/verification';
+import { deleteIssuanceRecords } from '../../api/issuance';
+import { deleteConnectionRecords} from '../../api/connection'
+
 
 interface OrgCount {
   verificationRecordsCount: number;
@@ -53,7 +55,7 @@ const DeleteOrganizations = () => {
     deletedAt: string | null;
   }
 
-  interface EcosystemOrgs {
+  interface IEcosystemOrganizations {
     id: string;
     orgId: string;
     status: string;
@@ -73,7 +75,7 @@ const DeleteOrganizations = () => {
         const ecosystemList = data?.data?.ecosystemList;
 
         if (ecosystemList && ecosystemList.length > 0) {
-          ecosystemList.forEach((ecosystem: { ecosystemOrgs: EcosystemOrgs[]; }) => {
+          ecosystemList.forEach((ecosystem: { ecosystemOrgs: IEcosystemOrganizations[]; }) => {
             ecosystem.ecosystemOrgs.forEach(org => {
               const ecosystemRoleName = org.ecosystemRole?.name;
               if (ecosystemRoleName === EcosystemRoles.ecosystemLead) {
@@ -120,7 +122,7 @@ const DeleteOrganizations = () => {
       }
     } catch (error) {
       console.error('An error occurred:', error);
-      setError('An unexpected error occurred');
+      setError(error as string);
     }
     setLoading(false);
   };
@@ -140,7 +142,7 @@ const DeleteOrganizations = () => {
       setShowPopup(false);
     } catch (error) {
       console.error('An error occurred:', error);
-      setError('An unexpected error occurred');
+      setError(error as string);
     }
     setDeleteLoading(false);
   };
@@ -160,7 +162,7 @@ const DeleteOrganizations = () => {
       }
     } catch (error) {
       console.error('An error occurred:', error);
-      setError('An unexpected error occurred');
+      setError(error as string);
     }
     setDeleteLoading(false);
   };
@@ -180,7 +182,7 @@ const DeleteOrganizations = () => {
       }
     } catch (error) {
       console.error('An error occurred:', error);
-      setError('An unexpected error occurred');
+      setError(error as string);
     }
     setDeleteLoading(false);
   };
@@ -200,7 +202,7 @@ const DeleteOrganizations = () => {
       }
     } catch (error) {
       console.error('An error occurred:', error);
-      setError('An unexpected error occurred');
+      setError(error as string);
     }
     setDeleteLoading(false);
   };
@@ -219,7 +221,7 @@ const DeleteOrganizations = () => {
       }
     } catch (error) {
       console.error('An error occurred:', error);
-      setError('An unexpected error occurred');
+      setError(error as string);
     }
   };
 
@@ -238,7 +240,7 @@ const DeleteOrganizations = () => {
       }
     } catch (error) {
       console.error('An error occurred:', error);
-      setError('An unexpected error occurred');
+      setError(error as string);
     }
   };
 
@@ -256,7 +258,7 @@ const DeleteOrganizations = () => {
       }
     } catch (error) {
       console.error('An error occurred:', error);
-      setError('An unexpected error occurred');
+      setError(error as string);
     }
     await removeFromLocalStorage(storageKeys.ORG_INFO);
 		await removeFromLocalStorage(storageKeys.ORG_DETAILS);

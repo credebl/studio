@@ -480,64 +480,6 @@ export const getOrganizationReferences = async () => {
 	}
 };
 
-export const deleteVerificationRecords = async (
-) => {
-	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-
-	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.deleteVerifications}`;
-
-	const axiosPayload = {
-		url,
-		config: await getHeaderConfigs(),
-	};
-
-	try {
-		return await axiosDelete(axiosPayload);
-	} catch (error) {
-		const err = error as Error;
-		return err?.message;
-	}
-};
-
-export const deleteIssuanceRecords = async (
-) => {
-	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-
-	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.deleteIssaunce}`;
-
-	const axiosPayload = {
-		url,
-		config: await getHeaderConfigs(),
-	};
-
-	try {
-		return await axiosDelete(axiosPayload);
-	} catch (error) {
-		const err = error as Error;
-		return err?.message;
-	}
-};
-
-export const deleteConnectionRecords = async (
-) => {
-	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-
-	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.deleteConnections}`;
-
-	const axiosPayload = {
-		url,
-		config: await getHeaderConfigs(),
-	};
-
-	try {
-		return await axiosDelete(axiosPayload);
-	} catch (error) {
-		const err = error as Error;
-		return err?.message;
-	}
-};
-
-
 export const deleteOrganization = async (
 ) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
