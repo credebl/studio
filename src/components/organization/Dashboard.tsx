@@ -15,7 +15,6 @@ import { pathRoutes } from '../../config/pathRoutes';
 import { AlertComponent } from '../AlertComponent';
 import WalletSpinup from './walletCommonComponents/WalletSpinup';
 import DashboardCard from '../../commonComponents/DashboardCard';
-import React from 'react';
 
 const Dashboard = () => {
 	const [orgData, setOrgData] = useState<Organisation | null>(null);
@@ -28,8 +27,7 @@ const Dashboard = () => {
 	const [ecosystemUserRoles, setEcosystemUserRoles] = useState<string>('');
 	const [orgSuccess, setOrgSuccess] = useState<string | null>(null);
 	const [openModal, setOpenModal] = useState<boolean>(false);
-	const [agentConfigure, setAgentConfigure]=useState<Boolean>(false);
-	const [isDidCreated, setIsDidCreated]=useState<Boolean>(false);
+
 
 
 	const EditOrgDetails = () => {
@@ -221,7 +219,7 @@ const Dashboard = () => {
 								userRoles.includes(Roles.OWNER) && (
 									<div className='ml-4'>
 										<button onClick={deleteOrgDetails}>
-										<img src="/images/delete_24dp_FILL0_wght400_GRAD0_opsz24 1.svg" width={20} height={20} alt="" />
+										<img src="/images/delete_24dp_FILL0_wght400_GRAD0_opsz24 2.svg" width={20} height={20} alt="" />
                                        </button>
 
 									</div>
