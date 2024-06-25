@@ -22,7 +22,7 @@ import React from "react";
 import { deleteVerificationRecords } from '../../api/verification';
 import { deleteIssuanceRecords } from '../../api/issuance';
 import { deleteConnectionRecords} from '../../api/connection'
-import { IEcosystemOrganizations, IOrgCount } from "./interfaces";
+import  type { IEcosystemOrganizations, IOrgCount } from "./interfaces";
 
 const DeleteOrganizations = () => {
   const [loading, setLoading] = useState<boolean>(true);
