@@ -70,7 +70,6 @@ const DeleteOrganizations = () => {
       const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
       const response = await getEcosystems(orgId as string);
       const { data } = response as AxiosResponse;
-      console.log("data4372462734832", data);
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) { 
         const ecosystemList = data?.data?.ecosystemList;
 
@@ -80,7 +79,6 @@ const DeleteOrganizations = () => {
               const ecosystemRoleName = org.ecosystemRole?.name;
               if (ecosystemRoleName === EcosystemRoles.ecosystemLead) {
                 setEcosystemUserRoles(ecosystemRoleName);
-                console.log("Ecosystem Role Name:", ecosystemRoleName);
               }
             });
           });
@@ -96,7 +94,6 @@ const DeleteOrganizations = () => {
       const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
       const response = await getOrganizationById(orgId as string);
       const { data } = response as AxiosResponse;
-      console.log("data", data);
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         const walletName = data?.data?.org_agents[0]?.walletName;
         if (walletName) {
