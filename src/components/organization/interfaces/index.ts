@@ -250,3 +250,31 @@ export interface ILedgerItem {
     deletedAt: string | null;
   }
 
+
+  export interface IOrgCount {
+    verificationRecordsCount: number;
+    connectionRecordsCount: number;
+    issuanceRecordsCount: number;
+    orgEcosystemsCount: number;
+    orgInvitationsCount: number;
+    orgUsersCount: number;
+  }
+  export interface IEcosystemRole {
+    id: string;
+    name: string;
+    description: string;
+    createDateTime: string;
+    lastChangedDateTime: string;
+    deletedAt: string | null;
+  }
+  
+  export interface IEcosystemOrganizations {
+    id: string;
+    orgId: string;
+    status: string;
+    createDateTime: string;
+    lastChangedDateTime: string;
+    ecosystemId: string;
+    ecosystemRoleId: string;
+    ecosystemRole: IEcosystemRole;
+  }

@@ -22,21 +22,12 @@ import React from "react";
 import { deleteVerificationRecords } from '../../api/verification';
 import { deleteIssuanceRecords } from '../../api/issuance';
 import { deleteConnectionRecords} from '../../api/connection'
-
-
-interface OrgCount {
-  verificationRecordsCount: number;
-  connectionRecordsCount: number;
-  issuanceRecordsCount: number;
-  orgEcosystemsCount: number;
-  orgInvitationsCount: number;
-  orgUsersCount: number;
-}
+import { IEcosystemOrganizations, IOrgCount } from "./interfaces";
 
 const DeleteOrganizations = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [organizationData, setOrganizationData] = useState<OrgCount | null>(null);
+  const [organizationData, setOrganizationData] = useState<IOrgCount | null>(null);
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
   const [isWalletPresent, setIsWalletPresent] = useState<boolean>(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -47,26 +38,6 @@ const DeleteOrganizations = () => {
   const [description, setDescription] = useState<string>("");
   const [ecosystemRoles, setEcosystemRoles] = useState<string[]>([]);
   
-
-  interface IEcosystemRole {
-    id: string;
-    name: string;
-    description: string;
-    createDateTime: string;
-    lastChangedDateTime: string;
-    deletedAt: string | null;
-  }
-
-  interface IEcosystemOrganizations {
-    id: string;
-    orgId: string;
-    status: string;
-    createDateTime: string;
-    lastChangedDateTime: string;
-    ecosystemId: string;
-    ecosystemRoleId: string;
-    ecosystemRole: IEcosystemRole;
-  }
 
   const getAllEcosystems = async () => {
     try {
