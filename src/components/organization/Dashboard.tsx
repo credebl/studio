@@ -15,7 +15,6 @@ import { pathRoutes } from '../../config/pathRoutes';
 import { AlertComponent } from '../AlertComponent';
 import WalletSpinup from './walletCommonComponents/WalletSpinup';
 import DashboardCard from '../../commonComponents/DashboardCard';
-import React from 'react';
 
 const Dashboard = () => {
 	const [orgData, setOrgData] = useState<Organisation | null>(null);
@@ -25,14 +24,18 @@ const Dashboard = () => {
 	const [failure, setFailure] = useState<string | null>(null);
 	const [loading, setLoading] = useState<boolean | null>(true);
 	const [userRoles, setUserRoles] = useState<string[]>([]);
+	const [ecosystemUserRoles, setEcosystemUserRoles] = useState<string>('');
 	const [orgSuccess, setOrgSuccess] = useState<string | null>(null);
 	const [openModal, setOpenModal] = useState<boolean>(false);
-	const [agentConfigure, setAgentConfigure]=useState<Boolean>(false);
-	const [isDidCreated, setIsDidCreated]=useState<Boolean>(false);
+
 
 
 	const EditOrgDetails = () => {
 		setOpenModal(true);
+	};
+
+	const deleteOrgDetails = () => {
+		window.location.href = pathRoutes.organizations.deleteOrganization
 	};
 
 	const getUserRoles = async () => {
@@ -41,8 +44,14 @@ const Dashboard = () => {
 		setUserRoles(roles);
 	};
 
+	const getEcosystemRole = async () => {
+		const ecosysmetmRoles = await getFromLocalStorage(storageKeys.ECOSYSTEM_ROLE);
+		setEcosystemUserRoles(ecosysmetmRoles)
+	};
+
 	useEffect(() => {
 		getUserRoles();
+		getEcosystemRole();
 	}, []);
 
 	const fetchOrganizationDetails = async () => {
@@ -176,10 +185,14 @@ const Dashboard = () => {
 								)}
 							</div>
 						</div>
+						
+						<div className='absolute top-0 right-0 flex' >
+						
 
-						{(userRoles.includes(Roles.OWNER) ||
+						 <div>
+                             {(userRoles.includes(Roles.OWNER) ||
 							userRoles.includes(Roles.ADMIN)) && (
-							<div className="absolute top-0 right-0">
+							<div className="">
 								<button type="button">
 									<svg
 										aria-hidden="true"
@@ -200,6 +213,20 @@ const Dashboard = () => {
 								</button>
 							</div>
 						)}
+						</div>
+						<div>
+							{
+								userRoles.includes(Roles.OWNER) && (
+									<div className='ml-4'>
+										<button onClick={deleteOrgDetails}>
+										<img src="/images/delete_button_image.svg" width={20} height={20} alt="" />
+                                       </button>
+
+									</div>
+								)
+							}
+							</div>
+						</div>					
 					</div>
 
 					<EditOrgdetailsModal
