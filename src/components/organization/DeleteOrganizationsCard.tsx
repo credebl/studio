@@ -23,11 +23,11 @@ const DeleteOrganizationsCard: React.FC<CardProps> = ({
   onDeleteClick  
 }) => (
   <Card>
-    <div className={`${isDisabled ? "opacity-50 pointer-events-none" : ""} flex flex-wrap w-full items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex-row sm:items-center sm:w-full sm:p-6 dark:border-gray-700 dark:bg-gray-800`}>
+    <div className={`${isDisabled ? "opacity-50 pointer-events-none" : ""} flex flex-wrap dark:text-white w-full items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex-row sm:items-center sm:w-full sm:p-6 dark:border-gray-700 dark:bg-gray-800`}>
       <p>
         <p className="text-lg font-bold">{title}</p>
         <p>{description}</p>
-        {count && <p>Total: {count}</p>}
+        {count && <p>Total:{count}</p>}
       </p>
       <button
         className={`${
