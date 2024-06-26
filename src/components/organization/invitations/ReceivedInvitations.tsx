@@ -159,14 +159,16 @@ const ReceivedInvitations = () => {
 													<div>
 														<div className="mr-2 border border-gray-200 dark:border-gray-700">
 															{invitation.organisation.logoUrl ? (
-																<CustomAvatar
-																	size="60px"
+																<CustomAvatar className='text-violet11 leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium'
+																size="80px"  textSizeRatio={2.5}
+																round
 																	src={invitation?.organisation?.logoUrl}
 																/>
 															) : (
-																<CustomAvatar
-																	size="70px"
+																<CustomAvatar className='text-violet11 leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium'
+																size="80px"  textSizeRatio={2.5}
 																	name={invitation?.organisation?.name}
+																	round
 																/>
 															)}
 														</div>

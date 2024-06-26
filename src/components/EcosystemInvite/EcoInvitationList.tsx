@@ -9,9 +9,9 @@ const EcoInvitationList = (props: InvitationProps) => {
 		<div className="flex space-x-2">
 			<div className="mr-2">
 				{logoUrl ? (
-					<CustomAvatar size="60px" src={logoUrl} />
+					<CustomAvatar className='text-violet11 leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium'round size="80px" src={logoUrl} />
 				) : (
-					<CustomAvatar size="70px" name={name} />
+					<CustomAvatar className='text-violet11 leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium' round size="80px" name={name} />
 				)}
 			</div>
 
