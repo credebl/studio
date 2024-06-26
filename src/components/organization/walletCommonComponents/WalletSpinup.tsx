@@ -1,9 +1,8 @@
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
-import { getFromLocalStorage, passwordEncryption } from '../../../api/Auth';
+import { getFromLocalStorage } from '../../../api/Auth';
 import {
 	createDid,
 	getOrganizationById,
-	spinupDedicatedAgent,
 	spinupSharedAgent,
 } from '../../../api/organization';
 import { useEffect, useState } from 'react';
@@ -17,7 +16,6 @@ import DedicatedAgentForm from '../walletCommonComponents/DedicatedAgent';
 import SharedAgentForm from './SharedAgent';
 import WalletSteps from './WalletSteps';
 import type { IValuesShared } from './interfaces';
-import React from 'react';
 import OrganizationDetails from '../OrganizationDetails';
 import type { Organisation } from '../interfaces';
 
@@ -50,7 +48,6 @@ const WalletSpinup = (props: {
 	const [isShared, setIsShared] = useState<boolean>(false);
 	const [isConfiguredDedicated, setIsConfiguredDedicated] = useState<boolean>(false);
 
-	  
 	const maskSeeds = (seed: string) => {
 		const visiblePart = seed.slice(0, -10);
 		const maskedPart = seed.slice(-10).replace(/./g, '*');
@@ -70,7 +67,6 @@ const WalletSpinup = (props: {
 	const fetchOrganizationDetails = async () => {
 		setLoading(true);
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-		const orgInfoData = await getFromLocalStorage(storageKeys.ORG_INFO);
 		const response = await getOrganizationById(orgId as string);
 		const { data } = response as AxiosResponse;
 		setLoading(false)
@@ -92,6 +88,7 @@ const WalletSpinup = (props: {
 	useEffect(() => {
        fetchOrganizationDetails()
     }, []);
+		
 
 	const onRadioSelect = (type: string) => {
 		setAgentType(type);
