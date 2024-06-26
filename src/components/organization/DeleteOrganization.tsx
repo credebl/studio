@@ -37,6 +37,7 @@ const DeleteOrganizations = () => {
   const [confirmMessage, setConfirmMessage] = useState<string>('');
   const [description, setDescription] = useState<string>("");
   const [ecosystemRoles, setEcosystemRoles] = useState<string[]>([]);
+  const [orgName, setOrgName] = useState<string>("");
   
 
   const getAllEcosystems = async () => {
@@ -73,6 +74,10 @@ const DeleteOrganizations = () => {
       const { data } = response as AxiosResponse;
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         const walletName = data?.data?.org_agents[0]?.walletName;
+        const orgName = data?.data?.name;  
+        if(orgName){
+          setOrgName(orgName)
+        }     
         if (walletName) {
           setIsWalletPresent(true);         
         }
@@ -258,7 +263,7 @@ const DeleteOrganizations = () => {
   const cardData = [
     {
       title: "Verifications",
-      description: "Verifications is the list of verified Credentials",
+      description: "Verifications is the list of verification records",
       count: organizationData?.verificationRecordsCount ?? 0,
       deleteFunc: deleteFunctions.deleteVerifications,
       confirmMessage:"Are you sure you want to delete verification records",
@@ -266,31 +271,31 @@ const DeleteOrganizations = () => {
     },
     {
       title: "Issuance",
-      description: "Issuance is the list of Credentials",
+      description: "Issuance is the list of credential records",
       count: organizationData?.issuanceRecordsCount ?? 0,
       deleteFunc: deleteFunctions.deleteIssuance,
-      confirmMessage:"Are you sure you want to delete issuance records",
+      confirmMessage:"Are you sure you want to delete credential records",
       isDisabled: (organizationData?.verificationRecordsCount ?? 0) > 0
     },
     {
       title: "Connections",
-      description: "Connections is the list of connections",
+      description: "Connections is the list of connection records",
       count: organizationData?.connectionRecordsCount ?? 0,
       deleteFunc: deleteFunctions.deleteConnection,
       confirmMessage:"Are you sure you want to delete connection records",
       isDisabled: (organizationData?.issuanceRecordsCount ?? 0) > 0 || (organizationData?.verificationRecordsCount ?? 0) > 0
     },
     {
-      title: "Ecosystem members",
-      description: "Ecosystem members",
+      title: "Ecosystem",
+      description: "Ecosystems your organization has joined as a member",
       count: organizationData?.orgEcosystemsCount ?? 0,
       deleteFunc: deleteFunctions.deleteOrgFromEcosystem,
-      confirmMessage:"Are you sure you want to remove your organization from eocystem",
+      confirmMessage:"Are you sure you want to remove your organization from ecoystem",
       isDisabled: ecosystemUserRoles.includes(EcosystemRoles.ecosystemLead) || ((organizationData?.connectionRecordsCount ?? 0) > 0 ||(organizationData?.issuanceRecordsCount ?? 0) > 0 || (organizationData?.verificationRecordsCount ?? 0) > 0)
     },
     {
         title: "Organization wallet",
-        description: "Organization wallet",
+        description: "",
         count: isWalletPresent ? 1 : 0,
         deleteFunc: deleteFunctions.deleteOrgWallet,
         confirmMessage: "Are you sure you want to delete organization wallet",
@@ -305,7 +310,7 @@ const DeleteOrganizations = () => {
       title: "Organization",
       description: "Organization",
       deleteFunc: deleteFunctions.deleteOrganizations,
-      confirmMessage:"Are you sure you want to delete organization",     
+      confirmMessage:`Are you sure you want to delete organization ${orgName}`,     
       isDisabled: isWalletPresent || ecosystemUserRoles.includes(EcosystemRoles.ecosystemLead)
     }
   ];
@@ -326,7 +331,7 @@ const DeleteOrganizations = () => {
         }}
       />
 {ecosystemRoles.length > 0 &&
-        <h2 className="mb-4">
+        <h2 className="mb-4 dark:text-white">
           You are Ecosystem Lead for <strong>{ecosystemRoles.join(', ')}</strong>. You cannot remove yourself from the ecosystem, delete the organization's wallet, and delete your organization.
         </h2>
       }
