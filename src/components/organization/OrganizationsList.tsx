@@ -26,6 +26,7 @@ const initialPageState = {
 	pageNumber: 1,
 	pageSize: 9,
 	total: 100,
+	totalCount: 0
 };
 
 const OrganizationsList = () => {
@@ -59,10 +60,9 @@ const OrganizationsList = () => {
 			searchText,
 		);
 		const { data } = response as AxiosResponse;
-
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const totalPages = data?.data?.totalPages;
-
+        const totalCount =data?.data?.totalCount;
 			const orgList = data?.data?.organizations.map((userOrg: Organisation) => {
 				const roles: string[] = userOrg.userOrgRoles.map(
 					(role) => role.orgRole.name,
@@ -75,6 +75,7 @@ const OrganizationsList = () => {
 			setCurrentPage({
 				...currentPage,
 				total: totalPages,
+				totalCount: totalCount,
 			});
 		} else {
 			setError(response as string);
@@ -248,6 +249,7 @@ const OrganizationsList = () => {
 					<SearchInput onInputChange={searchInputChange} />
 				</div>
 				<RoleViewButton
+					disabled={currentPage.totalCount >= 10}
 					buttonTitle="Create"
 					feature={Features.CRETAE_ORG}
 					svgComponent={

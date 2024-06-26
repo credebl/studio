@@ -22,9 +22,9 @@ const OrgUserInfo = ({orgUsersData}) => {
 
                                                 <><span>
                                                     {orgUser?.profileImg ? (
-                                                        <CustomAvatar className="mb-2 rounded-full shadow-lg" size="30" src={orgUser?.profileImg}/>
+                                                        <CustomAvatar className="mb-2 rounded-full shadow-lg" size="30px" src={orgUser?.profileImg}/>
                                                     ) : (
-                                                        <CustomAvatar className="mb-2 rounded-full shadow-lg" size="30" name={orgUser?.firstName}/>
+                                                        <CustomAvatar className="mb-2 rounded-full shadow-lg" size="30px" name={orgUser?.firstName}/>
                                                     )}
                                                 </span><div className="font-bold text-xl pl-2 mb-2">
                                                         {orgUser.firstName} {orgUser.lastName}

@@ -9,7 +9,9 @@ export interface IValues {
 export interface IDedicatedAgentForm {
 	seeds: string;
 	loading: boolean;
-	submitDedicatedWallet: (values: IValues) => void;
+	submitDedicatedWallet: (values: IValuesShared, privatekey: string,
+		domain: string) => void;
+		onConfigureDedicated:() => void,
 }
 
 export interface IValuesShared {
@@ -40,15 +42,47 @@ export interface IPolygonKeys {
 
 export interface ISharedAgentForm {
 	seeds: string;
+	maskedSeeds: string;
 	isCopied: boolean;
 	orgName: string;
 	loading: boolean;
 	submitSharedWallet: (
 		values: IValuesShared,
-		privatekey: string,
-		domain: string,
-		endPoint: string,
+		domain: string
 	) => void;
 }
 
+export interface ILedgerConfigData {
+    indy: {
+        'did:indy': {
+            [key: string]: string;
+        };
+    };
+    polygon: {
+        'did:polygon': {
+            [key: string]: string;
+        };
+    };
+    noLedger: {
+        [key: string]: string;
+    };
+}
 
+export interface ILedgerItem {
+    name: string;
+    details: IDetails;
+}
+interface IDetails {
+    [key: string]: string | { [subKey: string]: string };
+}
+
+export interface IDedicatedAgentData {
+	walletName: string;
+	agentEndpoint: string;
+	apiKey: string;
+	seed:string;
+	keyType:string;
+	method:string;
+	network:string;
+	role:string;
+}

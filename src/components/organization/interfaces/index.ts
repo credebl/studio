@@ -215,8 +215,66 @@ export interface IDidList {
 export interface IFormikValues {
 	ledger: string;
 	method: string;
+    keyType:string;
 	network: string;
+    did: string;
 	domain: string;
 	privatekey: string;
 	endorserDid: string;
 }
+
+export interface IDedicatedAgentConfig {
+	walletName: string;
+	agentEndpoint: string;
+	apiKey: string;
+}
+interface IndySubDetails {
+    [key: string]: string;
+  }
+export interface ILedgerDetails {
+    bcovrin?: IndySubDetails;
+    indicio?: IndySubDetails;
+    mainnet?: string;
+    testnet?: string;
+    key?: string;
+    web?: string;
+  }
+export interface ILedgerItem {
+    id: string;
+    name: string;
+    details: ILedgerDetails;
+    createDateTime: string;
+    createdBy: string;
+    lastChangedDateTime: string;
+    lastChangedBy: string;
+    deletedAt: string | null;
+  }
+
+
+  export interface IOrgCount {
+    verificationRecordsCount: number;
+    connectionRecordsCount: number;
+    issuanceRecordsCount: number;
+    orgEcosystemsCount: number;
+    orgInvitationsCount: number;
+    orgUsersCount: number;
+  }
+  export interface IEcosystemRole {
+    id: string;
+    name: string;
+    description: string;
+    createDateTime: string;
+    lastChangedDateTime: string;
+    deletedAt: string | null;
+  }
+  
+  export interface IEcosystemOrganizations {
+    id: string;
+    orgId: string;
+    status: string;
+    createDateTime: string;
+    lastChangedDateTime: string;
+    ecosystemId: string;
+    ecosystemRoleId: string;
+    ecosystemRole: IEcosystemRole;
+  }

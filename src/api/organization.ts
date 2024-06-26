@@ -10,7 +10,8 @@ import { apiRoutes } from '../config/apiRoutes';
 import { getFromLocalStorage } from './Auth';
 import { getHeaderConfigs } from '../config/GetHeaderConfigs';
 import { storageKeys } from '../config/CommonConstant';
-import type { IUpdatePrimaryDid } from '../components/organization/interfaces';
+import type { IDedicatedAgentConfig, IUpdatePrimaryDid } from '../components/organization/interfaces';
+import { pathRoutes } from '../config/pathRoutes';
 
 export const createOrganization = async (data: object) => {
 	const url = apiRoutes.organizations.create;
@@ -165,6 +166,34 @@ export const spinupDedicatedAgent = async (data: object, orgId: string) => {
 		return err?.message;
 	}
 };
+
+export const setAgentConfigDetails = async (data: IDedicatedAgentConfig, orgId: string) => {
+	const url =`${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.setAgentConfig}`
+	const payload = data;
+
+	const token = await getFromLocalStorage(storageKeys.TOKEN);
+
+	const config = {
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`,
+		},
+	};
+	const axiosPayload = {
+		url,
+		payload,
+		config,
+	};
+
+	try {
+		return await axiosPost(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};
+
+
 
 export const spinupSharedAgent = async (data: object, orgId: string) => {
 	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.agentSharedSpinup}`;
@@ -424,3 +453,50 @@ export const updatePrimaryDid = async (orgId: string, payload: IUpdatePrimaryDid
 		return err?.message;
 	}
 };
+
+
+export const getOrganizationReferences = async () => {
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+	const url = `${apiRoutes.organizations.root}${apiRoutes.organizations.getOrgReferences}/${orgId}`;
+
+	const token = await getFromLocalStorage(storageKeys.TOKEN);
+
+	const config = {
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`,
+		},
+	};
+	const axiosPayload = {
+		url,
+		config,
+	};
+
+	try {
+		return await axiosGet(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};
+
+export const deleteOrganization = async (
+) => {
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+
+	const url = `${apiRoutes.organizations.root}/${orgId}`;
+
+	const axiosPayload = {
+		url,
+		config: await getHeaderConfigs(),
+	};
+
+	try {
+		return await axiosDelete(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};
+
+

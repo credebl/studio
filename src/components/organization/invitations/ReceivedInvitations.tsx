@@ -160,12 +160,12 @@ const ReceivedInvitations = () => {
 														<div className="mr-2 border border-gray-200 dark:border-gray-700">
 															{invitation.organisation.logoUrl ? (
 																<CustomAvatar
-																	size="60"
+																	size="60px"
 																	src={invitation?.organisation?.logoUrl}
 																/>
 															) : (
 																<CustomAvatar
-																	size="70"
+																	size="70px"
 																	name={invitation?.organisation?.name}
 																/>
 															)}

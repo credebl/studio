@@ -58,11 +58,14 @@ export interface CredDeffFieldNameType {
 }
 
 export interface FieldName {
+  type: string,
+  schemaPayload: schemaDetails
+  }
+export interface schemaDetails {
   schemaName: string;
   schemaVersion: string;
   attributes: IAttributes[]
   orgId: string;
-
 }
 
 export interface createSchema {

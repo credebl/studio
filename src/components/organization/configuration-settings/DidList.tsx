@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react"
-import BreadCrumbs from '../../BreadCrumbs'
 import { Button } from "flowbite-react"
 import CopyDid from '../../../commonComponents/CopyDid'
 import CreateDidPopup from "./CreateDid"
@@ -9,13 +8,14 @@ import { apiStatusCodes, storageKeys } from "../../../config/CommonConstant"
 import type { AxiosResponse } from "axios"
 import { AlertComponent } from "../../AlertComponent"
 import type { IDidList, IUpdatePrimaryDid } from "../interfaces"
+import { Roles } from "../../../utils/enums/roles"
 
 const DIDList = () => {
     const [didList, setDidList] = useState<IDidList[]>([]);
     const [showPopup, setShowPopup] = useState(false);
     const [erroMsg, setErrMsg] = useState<string | null>(null);
     const [successMsg, setSuccessMsg] = useState<string | null>(null);
-
+	const [userRoles, setUserRoles] = useState<string[]>([]);
     const setPrimaryDid = async (id: string, did: string) => {
         try {
             const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -49,12 +49,19 @@ const DIDList = () => {
                 setDidList(sortedDids)
             }
         } catch (error) {
-            console.log("ERROR::::", error);
+            console.error("ERROR::::", error);
         }
     }
 
+    const getUserOrgRoles = async () => {
+		const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES);
+		const roles = orgRoles.split(',');
+		setUserRoles(roles);
+	}
+
     useEffect(() => {
         getData();
+        getUserOrgRoles();
     }, [])
 
     return (
@@ -72,11 +79,12 @@ const DIDList = () => {
                     <h3 className="text-lg font-bold dark:text-white">DID Details</h3>
                     <Button
                         onClick={() => setShowPopup(true)}
+                        disabled= {userRoles.includes(Roles.MEMBER) || userRoles.includes(Roles.ISSUER) || userRoles.includes(Roles.VERIFIER)}
                         className={`hover:bg-primary-800 dark:hover:text-white dark:hover:bg-primary-700 hover:!bg-primary-800 text-base font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:focus:ring-primary-800`}
                     >
                         Create DID
                     </Button>
-
+                    
                 </div>
                 <div className="overflow-auto divide-y divide-gray-200 dark:divide-gray-700">
                     {

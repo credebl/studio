@@ -1,22 +1,25 @@
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
 import { getFromLocalStorage, passwordEncryption } from '../../../api/Auth';
 import {
+	createDid,
+	getOrganizationById,
 	spinupDedicatedAgent,
 	spinupSharedAgent,
 } from '../../../api/organization';
 import { useEffect, useState } from 'react';
 
 import type { AxiosResponse } from 'axios';
-import DedicatedIllustrate from '../DedicatedIllustrate';
 import SOCKET from '../../../config/SocketConfig';
-import SharedIllustrate from '../SharedIllustrate';
 import { nanoid } from 'nanoid';
 import { AlertComponent } from '../../AlertComponent';
 import { DidMethod } from '../../../common/enums';
-import DedicatedAgentForm from './DedicatedAgent';
+import DedicatedAgentForm from '../walletCommonComponents/DedicatedAgent';
 import SharedAgentForm from './SharedAgent';
 import WalletSteps from './WalletSteps';
 import type { IValuesShared } from './interfaces';
+import React from 'react';
+import OrganizationDetails from '../OrganizationDetails';
+import type { Organisation } from '../interfaces';
 
 interface Values {
 	seed: string;
@@ -42,33 +45,91 @@ const WalletSpinup = (props: {
 	const [agentSpinupCall, setAgentSpinupCall] = useState<boolean>(false);
 	const [failure, setFailure] = useState<string | null>(null);
 	const [seeds, setSeeds] = useState<string>('');
+    const [maskedSeeds, setMaskedSeeds] = useState('');
+	const [orgData, setOrgData] = useState<Organisation | null>(null);
+	const [isShared, setIsShared] = useState<boolean>(false);
+	const [isConfiguredDedicated, setIsConfiguredDedicated] = useState<boolean>(false);
+
+	  
+	const maskSeeds = (seed: string) => {
+		const visiblePart = seed.slice(0, -10);
+		const maskedPart = seed.slice(-10).replace(/./g, '*');
+		return visiblePart + maskedPart;
+	};
+	
+    useEffect(() => {
+        const generatedSeeds = nanoid(32);
+        const masked = maskSeeds(generatedSeeds);
+        setSeeds(generatedSeeds);
+        setMaskedSeeds(masked);
+    }, []);
+	
+	const configureDedicatedWallet = ()=> {
+		setIsConfiguredDedicated(true);
+	}
+	const fetchOrganizationDetails = async () => {
+		setLoading(true);
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		const orgInfoData = await getFromLocalStorage(storageKeys.ORG_INFO);
+		const response = await getOrganizationById(orgId as string);
+		const { data } = response as AxiosResponse;
+		setLoading(false)
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+
+			const agentData = data?.data?.org_agents
+
+			if (data?.data?.org_agents && data?.data?.org_agents[0]?.org_agent_type?.agent?.toLowerCase()  === AgentType.DEDICATED){
+				setIsConfiguredDedicated(true)
+				setAgentType(AgentType.DEDICATED)
+			}
+			
+			if (agentData.length > 0 && agentData?.orgDid) {
+				setOrgData(data?.data);
+			}
+	};
+}
 
 	useEffect(() => {
-		setSeeds(nanoid(32));
-	}, []);
+       fetchOrganizationDetails()
+    }, []);
 
 	const onRadioSelect = (type: string) => {
 		setAgentType(type);
 	};
 
-	const submitDedicatedWallet = async (values: Values) => {
-		const payload = {
-			walletName: values.walletName,
-			seed: values.seed || seeds,
-			walletPassword: passwordEncryption(values.password),
-			did: values.did,
-			ledgerId: [values.network.toString()],
-			clientSocketId: SOCKET.id,
+const submitDedicatedWallet = async (
+	values: IValuesShared,
+	privatekey: string,
+	domain: string
+) => {	
+		const didData = {
+			seed:values.method === DidMethod.POLYGON ? '' : seeds,
+			keyType: values.keyType || 'ed25519',
+		    method: values.method.split(':')[1] || '',
+			network:
+			values.method === DidMethod.INDY ?
+            values.network?.split(':').slice(2).join(':') :
+				values.method === DidMethod.POLYGON
+					? values.network?.split(':').slice(1).join(':') 
+					: '',
+			domain: values.method === DidMethod.WEB ? domain : '',
+			role: values.method === DidMethod.INDY ? 'endorser' : '',
+			privatekey: values.method === DidMethod.POLYGON ? privatekey : '',
+			did: values.did || '',
+			endorserDid: values?.endorserDid || '',
+			isPrimaryDid: true,
 		};
-
 		setLoading(true);
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-		const spinupRes = await spinupDedicatedAgent(payload, orgId);
+		
+		const spinupRes = await createDid(didData);
 		const { data } = spinupRes as AxiosResponse;
-
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-			if (data?.data['agentSpinupStatus'] === 1) {
-				setAgentSpinupCall(true);
+			
+				if (data?.data?.did) {
+	            setAgentSpinupCall(true);
+				window.location.reload();
+      			
 			} else {
 				setFailure(spinupRes as string);
 			}
@@ -80,23 +141,27 @@ const WalletSpinup = (props: {
 
 	const submitSharedWallet = async (
 		values: IValuesShared,
-		privatekey: string,
 		domain: string,
 	) => {
 		setLoading(true);
+		const ledgerName = values?.network?.split(":")[2]
+		const network = values?.network?.split(":").slice(2).join(":");
+		const polygonNetwork = values?.network?.split(":").slice(1).join(":");
+
 		const payload = {
 			keyType: values.keyType || 'ed25519',
-			method: values.method || '',
-			ledger: values.method === DidMethod.INDY ? values.ledger : '',
+			method: values.method.split(':')[1] || '',
+			ledger: values.method === DidMethod.INDY ? ledgerName : '',
 			label: values.label,
-			privatekey: values.method === DidMethod.POLYGON ? privatekey : '',
-			seed: values.method === DidMethod.POLYGON ? '' : values.seed || seeds,
+			privatekey: values.method === DidMethod.POLYGON ? values?.privatekey : '',
+			seed: values.method === DidMethod.POLYGON ? '' : values?.seed || seeds,
 			network:
 				values.method === DidMethod.POLYGON
-					? `${values?.method}:${values?.network}`
-					: `${values?.ledger}:${values?.network}`,
+					? polygonNetwork
+					: network,
 			domain: values.method === DidMethod.WEB ? domain : '',
 			role: values.method === DidMethod.INDY ? values?.role ?? 'endorser' : '',
+			did: values?.did ?? '',
 			endorserDid: values?.endorserDid ?? '',
 			clientSocketId: SOCKET.id,
 		};
@@ -108,6 +173,7 @@ const WalletSpinup = (props: {
 
 			if (data?.data['agentSpinupStatus'] === 1) {
 				setAgentSpinupCall(true);
+				setIsShared(true)
 			} else {
 				setFailure(spinupRes as string);
 			}
@@ -182,6 +248,7 @@ const WalletSpinup = (props: {
 		if (agentType === AgentType.SHARED) {
 			formComponent = (
 				<SharedAgentForm
+				    maskedSeeds={maskedSeeds}
 					seeds={seeds}
 					orgName={orgName}
 					loading={loading}
@@ -189,20 +256,31 @@ const WalletSpinup = (props: {
 					isCopied={false}
 				/>
 			);
-		} else {
+	    	} else {
 			formComponent = (
 				<DedicatedAgentForm
 					seeds={seeds}
 					loading={loading}
+					onConfigureDedicated={configureDedicatedWallet}
 					submitDedicatedWallet={submitDedicatedWallet}
 				/>
 			);
 		}
-	} else {
-		formComponent = (
-			<WalletSteps steps={walletSpinStep}/>
-		);
-	}
+	} 
+	
+	else {
+
+		        if (agentType === AgentType.SHARED) {
+		            formComponent = (
+		                <WalletSteps steps={walletSpinStep} />
+		            );
+		        }
+		        else {
+		            formComponent = (
+		                <OrganizationDetails orgData={orgData} />
+		            );
+		        }
+		    }
 
 	return (
 		<div className="mt-4 flex-col p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
@@ -225,15 +303,17 @@ const WalletSpinup = (props: {
 				</div>
 			</div>
 
-			<div className="grid w-full grid-cols-1 md:grid-cols-2 gap-4 mt-0 mb-4 xl:grid-cols-3 2xl:grid-cols-3">
+			<div className="grid w-full mb-4">
 				<div className="col-span-1">
+					<div className='bg-[#F4F4F4] dark:bg-gray-700 max-w-lg'>
 					{!agentSpinupCall && !loading && (
-						<div className="mt-4 flex max-w-lg flex-col gap-4">
-							<ul className="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-								<li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
+						<div className="mt-4 flex flex-col gap-4 max-w-lg ml-4 mr-4 -mb-4">
+							<ul className="items-center w-full mx-2 my-4 text-sm ml-0 font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex dark:bg-gray-700 dark:border-gray-500 dark:text-white">
+								<li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-500">
 									<div className="flex items-center pl-3">
 										<label className="w-full py-3 text-sm font-medium text-gray-900 dark:text-gray-300 flex items-center">
 											<input
+											disabled={isConfiguredDedicated && agentType === AgentType.DEDICATED}
 												id="horizontal-list-radio-license"
 												type="radio"
 												checked={agentType === AgentType.SHARED}
@@ -246,9 +326,9 @@ const WalletSpinup = (props: {
 										</label>
 									</div>
 								</li>
-								<li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
+								<li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-500">
 									<div className="flex items-center pl-3">
-										<label className="w-full py-3 text-sm font-medium text-gray-400 dark:text-gray-300 cursor-not-allowed flex items-center">
+										<label className="w-full py-3 text-sm font-medium text-gray-400 dark:text-gray-300 flex items-center">
 											<input
 												id="horizontal-list-radio-id"
 												type="radio"
@@ -256,7 +336,7 @@ const WalletSpinup = (props: {
 												onChange={() => onRadioSelect(AgentType.DEDICATED)}
 												checked={agentType === AgentType.DEDICATED}
 												name="list-radio"
-												disabled
+											
 												className="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500 disabled:cursor-not-allowed mr-2"
 											/>
 											Dedicated
@@ -266,19 +346,16 @@ const WalletSpinup = (props: {
 							</ul>
 						</div>
 					)}
+					</div>
+					
 
 					{formComponent}
-				</div>
-				<div className="col-span-2">
-					{agentType === AgentType.DEDICATED ? (
-						<DedicatedIllustrate />
-					) : (
-						<SharedIllustrate />
-					)}
 				</div>
 			</div>
 		</div>
 	);
-};
+}
+	
 
 export default WalletSpinup;
+
