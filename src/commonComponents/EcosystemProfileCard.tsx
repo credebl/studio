@@ -10,6 +10,7 @@ import { RoleTablet } from '../components/Ecosystem/Dashboard'
 import CustomSpinner from '../components/CustomSpinner';
 import { pathRoutes } from '../config/pathRoutes';
 import { EmptyListMessage } from '../components/EmptyListComponent';
+import React from 'react';
 
 
 
@@ -86,9 +87,13 @@ const EcosystemProfileCard = ({getEndorsementListData}:IEndorsement) => {
                 >
                     <div className="mr-4">
                         {ecosystemDetails?.logoUrl ? (
-                            <CustomAvatar size="80px" round src={ecosystemDetails?.logoUrl} />
+                            <CustomAvatar className='text-violet11 leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium'
+                            size="80px"  textSizeRatio={2.5}
+                            round src={ecosystemDetails?.logoUrl} />
                         ) : (
-                            <CustomAvatar size="80px" round name={ecosystemDetails?.name} />
+                            <CustomAvatar className='text-violet11 leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium'
+                            size="80px"  textSizeRatio={2.5}
+                            round name={ecosystemDetails?.name} />
                         )}
                     </div>
 

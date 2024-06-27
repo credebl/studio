@@ -16,6 +16,7 @@ import SignUpUserName from './SignUpUserName'
 import FooterBar from './FooterBar.js';
 import NavBar from './NavBar.js';
 import { validEmail } from '../../utils/TextTransform.js';
+import { envConfig } from '../../config/envConfig.ts';
 
 interface emailValue {
 	email: string;
@@ -44,7 +45,9 @@ const SignUpUser = () => {
 	const VerifyMail = async (email: string) => {
 		try {
 			const payload = {
-				email: email
+				email: email,
+				clientId: envConfig.PLATFORM_DATA.clientId,
+				clientSecret: envConfig.PLATFORM_DATA.clientSecrete			
 			}
 			setVerifyLoader(true)
 			const userRsp = await sendVerificationMail(payload);

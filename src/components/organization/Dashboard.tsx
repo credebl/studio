@@ -24,11 +24,18 @@ const Dashboard = () => {
 	const [failure, setFailure] = useState<string | null>(null);
 	const [loading, setLoading] = useState<boolean | null>(true);
 	const [userRoles, setUserRoles] = useState<string[]>([]);
+	const [ecosystemUserRoles, setEcosystemUserRoles] = useState<string>('');
 	const [orgSuccess, setOrgSuccess] = useState<string | null>(null);
 	const [openModal, setOpenModal] = useState<boolean>(false);
 
+
+
 	const EditOrgDetails = () => {
 		setOpenModal(true);
+	};
+
+	const deleteOrgDetails = () => {
+		window.location.href = pathRoutes.organizations.deleteOrganization
 	};
 
 	const getUserRoles = async () => {
@@ -37,8 +44,14 @@ const Dashboard = () => {
 		setUserRoles(roles);
 	};
 
+	const getEcosystemRole = async () => {
+		const ecosysmetmRoles = await getFromLocalStorage(storageKeys.ECOSYSTEM_ROLE);
+		setEcosystemUserRoles(ecosysmetmRoles)
+	};
+
 	useEffect(() => {
 		getUserRoles();
+		getEcosystemRole();
 	}, []);
 
 	const fetchOrganizationDetails = async () => {
@@ -48,11 +61,14 @@ const Dashboard = () => {
 		const response = await getOrganizationById(orgId as string);
 		const { data } = response as AxiosResponse;
 		setLoading(false)
-		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			if (data?.data?.org_agents && data?.data?.org_agents?.length > 0) {
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {			
+			
+			if (data?.data?.org_agents?.length > 0 && data?.data?.org_agents[0]?.orgDid) {
 				setWalletStatus(true);
 			}
+			
 			setOrgData(data?.data);
+				
 			const organizationData = orgInfoData ? JSON.parse(orgInfoData) : {};
 			const {id, name, description, logoUrl} = data?.data || {};
 			const orgInfo = {
@@ -63,11 +79,13 @@ const Dashboard = () => {
 				...logoUrl && { logoUrl }
 			}
 			await setToLocalStorage(storageKeys.ORG_INFO, orgInfo);
+
 		} else {
 			setFailure(response as string);
 		}
 		setLoading(false);
 	};
+	
 
 	const fetchOrganizationDashboard = async () => {
 		setLoading(true);
@@ -84,7 +102,7 @@ const Dashboard = () => {
 			}
 		}
 		setLoading(false);
-	};
+	};	
 
 	useEffect(() => {
 		fetchOrganizationDetails();
@@ -112,6 +130,8 @@ const Dashboard = () => {
 	const redirectOrgUsers = () => {
 		window.location.href = pathRoutes.organizations.users;
 	};
+	
+		
 
 	return (
 		<div className="px-4 pt-2 w-full">
@@ -165,10 +185,14 @@ const Dashboard = () => {
 								)}
 							</div>
 						</div>
+						
+						<div className='absolute top-0 right-0 flex' >
+						
 
-						{(userRoles.includes(Roles.OWNER) ||
+						 <div>
+                             {(userRoles.includes(Roles.OWNER) ||
 							userRoles.includes(Roles.ADMIN)) && (
-							<div className="absolute top-0 right-0">
+							<div className="">
 								<button type="button">
 									<svg
 										aria-hidden="true"
@@ -189,6 +213,20 @@ const Dashboard = () => {
 								</button>
 							</div>
 						)}
+						</div>
+						<div>
+							{
+								userRoles.includes(Roles.OWNER) && (
+									<div className='ml-4'>
+										<button onClick={deleteOrgDetails}>
+										<img src="/images/delete_button_image.svg" width={20} height={20} alt="" />
+                                       </button>
+
+									</div>
+								)
+							}
+							</div>
+						</div>					
 					</div>
 
 					<EditOrgdetailsModal
@@ -249,7 +287,8 @@ const Dashboard = () => {
 					</div>
 				) : (
 					walletStatus === true ? (
-						<OrganizationDetails orgData={orgData} />
+						<OrganizationDetails orgData={orgData}  />
+
 					) : (
 						(userRoles.includes(Roles.OWNER) ||
 							userRoles.includes(Roles.ADMIN)) && (

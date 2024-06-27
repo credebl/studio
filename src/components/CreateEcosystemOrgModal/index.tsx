@@ -261,6 +261,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 					});
 					props.setOpenModal(false);
 					setImgError(' ')
+					setErrMsg(null);
 				}}
 			>
 				<Modal.Header>Create {popupName}</Modal.Header>
@@ -270,6 +271,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 						type={'failure'}
 						onAlertClose={() => {
 							setErrMsg(null);
+							
 						}}
 					/>
 					<Formik

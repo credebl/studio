@@ -1,3 +1,4 @@
+import { deleteOrganizationInvitation } from "../api/organization";
 import { envConfig } from "./envConfig";
 
 export const pathRoutes = {
@@ -27,6 +28,10 @@ export const pathRoutes = {
 		issuedCredentials: '/organizations/credentials',
 		credentials: '/organizations/verification',
 		createSchema: '/organizations/schemas/create',
+		deleteOrganization:'/organizations/delete-organizations',
+
+
+
 		viewSchema: '/organizations/schemas/view-schema',
 		Issuance: {
 			issue: '/organizations/credentials/issue',

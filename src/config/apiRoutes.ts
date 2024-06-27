@@ -41,7 +41,12 @@ export const apiRoutes = {
 		editUserROle: '/user-roles',
 		didList: '/dids',
 		createDid: '/agents/did',
-		primaryDid: '/primary-did'
+		primaryDid: '/primary-did',
+		getOrgReferences:'/activity-count',
+		deleteOrganization:'/organizations/deleteorganizations',
+		deleteVerifications:'/verification-records',  
+		deleteIssaunce:'/issuance-records',
+		deleteConnections:'/connections'
 	},
 	connection: {
 		create: '/connections',
@@ -81,7 +86,10 @@ export const apiRoutes = {
 		agentDedicatedSpinup: '/agents/spinup',
 		agentSharedSpinup: '/agents/wallet',
 		getLedgerConfig: '/agents/ledgerConfig',
-		createPolygonKeys: '/agents/polygon/create-keys'
+		createPolygonKeys: '/agents/polygon/create-keys',
+		setAgentConfig:'/agents/configure',
+		deleteWallet: '/agents/wallet',
+
 	},
 	Platform: {
 		getAllSchemaFromPlatform: '/platform/schemas',
@@ -106,6 +114,7 @@ export const apiRoutes = {
 		invitations: '/invitations',
 		usersInvitation: '/users/invitations',
 		members: '/members',
+		deleteOrgFromEcosystem:'/member-org'
 	},
 	setting:{
 		setting: '/client_credentials'

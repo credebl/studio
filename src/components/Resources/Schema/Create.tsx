@@ -108,10 +108,13 @@ const CreateSchema = () => {
 	const submit = async (values: IFormData) => {
 		setCreateLoader(true);
 		const schemaFieldName: FieldName = {
-			schemaName: values.schemaName,
-			schemaVersion: values.schemaVersion,
-			attributes: values.attribute,
-			orgId: orgId,
+			type: SchemaType.INDY,
+			schemaPayload: {
+				schemaName: values.schemaName,
+				schemaVersion: values.schemaVersion,
+				attributes: values.attribute,
+				orgId: orgId,
+			}
 		};
 
 		const createSchema = await createSchemas(schemaFieldName, orgId);
