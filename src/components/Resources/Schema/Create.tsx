@@ -23,6 +23,7 @@ import { createSchemaRequest } from '../../../api/ecosystem';
 import EcosystemProfileCard from '../../../commonComponents/EcosystemProfileCard';
 import ConfirmationModal from '../../../commonComponents/ConfirmationModal';
 import { SchemaType } from '../../../common/enums';
+import React from 'react';
 
 const options = [
 	{
@@ -157,14 +158,17 @@ const CreateSchema = () => {
 		setCreateLoader(true);
 		const schemaFieldName = {
 			endorse: true,
-			attributes: values.attribute,
-			version: values.schemaVersion,
-			name: values.schemaName,
+			type: SchemaType.INDY,
+			schemaPayload: {
+				schemaVersion: values.schemaVersion,
+				schemaName: values.schemaName,
+				attributes: values.attribute
+			},
 		};
 
 		const id = await getEcosystemId();
 
-		const createSchema = await createSchemaRequest(schemaFieldName, SchemaType.INDY, id, orgId);
+		const createSchema = await createSchemaRequest(schemaFieldName, id, orgId);
 		const { data } = createSchema as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			setSuccess(data?.message);
