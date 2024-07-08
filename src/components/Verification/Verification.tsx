@@ -19,6 +19,7 @@ import type {
 	VerifyCredentialPayload,
 } from './interface';
 import SummaryCard from '../../commonComponents/SummaryCard';
+import { CredentialType, ProtocolVersion } from '../../common/enums';
 
 const VerificationCred = () => {
 	const [attributeList, setAttributeList] = useState<TableData[]>([]);
@@ -160,13 +161,44 @@ const VerificationCred = () => {
 						schemaId: schemaId,
 					}));
 
+				// Separate attributes into requested_attributes and requested_predicates
+				const requested_attributes = {};
+				const requested_predicates = {};
+
+				attributes.forEach(attr => {
+					const restrictions = [
+						{
+							schema_id: attr.schemaId,
+							...(attr.credDefId ? { cred_def_id: attr.credDefId } : {})
+						}
+					]
+				    if (attr.condition && attr.value !== undefined) {
+				        requested_predicates[attr.attributeName] = {
+				            name: attr.attributeName,
+				            p_type: attr.condition,
+				            p_value: attr.value,
+							restrictions: restrictions
+				        };
+				    } else {
+				        requested_attributes[attr.attributeName] = {
+				            name: attr.attributeName,
+							restrictions: restrictions
+				        };
+				    }
+				});
+
 				const verifyCredentialPayload = {
 					connectionId: JSON.parse(userData)[0]?.connectionId,
+					type: CredentialType.indy ,
+					protocolVersion: ProtocolVersion.v2,
 					comment: 'string',
 					orgId: orgId,
 					proofFormats: {
-						indy: {
-							attributes: attributes,
+						[CredentialType.indy]: {
+							name: 'proof request',
+							version: 'v1',
+							requested_attributes: requested_attributes,
+							requested_predicates: requested_predicates
 						}
 					}
 				};
