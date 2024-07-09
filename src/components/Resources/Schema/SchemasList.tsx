@@ -23,7 +23,7 @@ import { checkEcosystem } from '../../../config/ecosystem';
 import type { ICheckEcosystem } from '../../../config/ecosystem';
 
 import { Create, SchemaEndorsement } from '../../Issuance/Constant';
-import { AllSchemasType, DidMethod, SchemaType } from '../../../common/enums';
+import { DidMethod, SchemaType } from '../../../common/enums';
 
 const SchemaList = (props: {
 	schemaSelectionCallback: (
@@ -49,8 +49,7 @@ const SchemaList = (props: {
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [searchValue, setSearchValue] = useState('');
 	const [w3cSchema,setW3cSchema]= useState<boolean>(false);
-	const [isNoLedger,setisNoLedger]= useState<boolean>(false);
-	const [schemaTypeValue, setSchemaTypeValue]= useState<AllSchemasType>();		
+	const [isNoLedger,setisNoLedger]= useState<boolean>(false);	
 
 	const getSchemaList = async (
 		schemaListAPIParameter: GetAllSchemaListParameter,
@@ -62,8 +61,7 @@ const SchemaList = (props: {
 			setLoading(true);
 			let schemaList;
 			if (allSchemaFlag) {
-				console.log('schemaTypeValue678:::', schemaTypeValue)
-				schemaList = await getAllSchemas(schemaListAPIParameter, schemaTypeValue);
+				schemaList = await getAllSchemas(schemaListAPIParameter, SchemaType.INDY);
 			} else {
 				schemaList = await getAllSchemasByOrgId(
 					schemaListAPIParameter,
@@ -105,7 +103,7 @@ const SchemaList = (props: {
 
 	useEffect(() => {
 		getSchemaList(schemaListAPIParameter, false);
-	}, [schemaListAPIParameter, allSchemaFlag, schemaTypeValue]);
+	}, [schemaListAPIParameter, allSchemaFlag]);
 
 	const onSearch = async (
 		event: ChangeEvent<HTMLInputElement>,
@@ -173,11 +171,9 @@ const SchemaList = (props: {
 			
 			if (did.includes(DidMethod.POLYGON) || did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
 				setW3cSchema(true);
-				setSchemaTypeValue(AllSchemasType.Schema_W3C);
 			}
 			if (did.includes(DidMethod.INDY)) {
 				setW3cSchema(false);
-				setSchemaTypeValue(AllSchemasType.Schema_INDY);
 			}
 			if (did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
 				setisNoLedger(true);
@@ -207,6 +203,7 @@ const SchemaList = (props: {
 	const emptyListBtn = isEcosystemData?.isEcosystemMember
 		? { title: 'Schema Endorsement', svg: <SchemaEndorsement/> }
 		: { title: 'Create Schema', svg: <Create/> };
+
 	return (
 		<div className="px-4 pt-2">
 			<div className="mb-4 col-span-full xl:mb-2">

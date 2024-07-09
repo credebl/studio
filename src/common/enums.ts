@@ -131,8 +131,3 @@ export enum SchemaTypeValue {
 	POLYGON = 'polygon',
 	NO_LEDGER = 'no_ledger'
 }
-
-export enum AllSchemasType {
-    Schema_INDY = 'indy',
-    Schema_W3C = 'w3c'
-}

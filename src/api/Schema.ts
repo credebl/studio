@@ -5,9 +5,8 @@ import { apiRoutes } from "../config/apiRoutes";
 import { getFromLocalStorage } from "./Auth";
 import { storageKeys } from "../config/CommonConstant";
 import { getHeaderConfigs } from "../config/GetHeaderConfigs";
-import type { AllSchemasType } from "../common/enums";
 
-export const getAllSchemas = async ({itemPerPage, page, allSearch }: GetAllSchemaListParameter, schemaType?: AllSchemasType) => {
+export const getAllSchemas = async ({itemPerPage, page, allSearch }: GetAllSchemaListParameter, schemaType?: string) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const ledgerId = await getFromLocalStorage(storageKeys.LEDGER_ID)
   const details = {
