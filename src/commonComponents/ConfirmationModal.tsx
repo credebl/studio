@@ -6,7 +6,7 @@ interface IProps {
 	openModal: boolean;
 	closeModal: (flag: boolean) => void;
 	onSuccess: (flag: boolean) => void;
-	message: string | ReactElement;
+	message: string | ReactElement |React.ReactNode;
 	isProcessing: boolean;
 	success: string | null;
 	failure: string | null;
