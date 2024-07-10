@@ -222,6 +222,7 @@ export interface IFormikValues {
 	privatekey: string;
 	endorserDid: string;
 }
+
 export interface IDedicatedAgentConfig {
 	walletName: string;
 	agentEndpoint: string;
@@ -248,6 +249,7 @@ export interface ILedgerItem {
     lastChangedBy: string;
     deletedAt: string | null;
   }
+
 
   export interface IOrgCount {
     verificationRecordsCount: number;
