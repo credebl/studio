@@ -11,6 +11,7 @@ import { getFromLocalStorage } from './Auth';
 import { getHeaderConfigs } from '../config/GetHeaderConfigs';
 import { storageKeys } from '../config/CommonConstant';
 import type { IDedicatedAgentConfig, IUpdatePrimaryDid } from '../components/organization/interfaces';
+import { pathRoutes } from '../config/pathRoutes';
 
 export const createOrganization = async (data: object) => {
 	const url = apiRoutes.organizations.create;
@@ -452,3 +453,50 @@ export const updatePrimaryDid = async (orgId: string, payload: IUpdatePrimaryDid
 		return err?.message;
 	}
 };
+
+
+export const getOrganizationReferences = async () => {
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+	const url = `${apiRoutes.organizations.root}${apiRoutes.organizations.getOrgReferences}/${orgId}`;
+
+	const token = await getFromLocalStorage(storageKeys.TOKEN);
+
+	const config = {
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`,
+		},
+	};
+	const axiosPayload = {
+		url,
+		config,
+	};
+
+	try {
+		return await axiosGet(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};
+
+export const deleteOrganization = async (
+) => {
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+
+	const url = `${apiRoutes.organizations.root}/${orgId}`;
+
+	const axiosPayload = {
+		url,
+		config: await getHeaderConfigs(),
+	};
+
+	try {
+		return await axiosDelete(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};
+
+

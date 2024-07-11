@@ -1,4 +1,4 @@
-import { axiosGet, axiosPost, axiosPut } from '../services/apiRequests';
+import { axiosDelete, axiosGet, axiosPost, axiosPut } from '../services/apiRequests';
 
 import { apiRoutes } from '../config/apiRoutes';
 import { getFromLocalStorage } from './Auth';
@@ -110,11 +110,10 @@ export const getEndorsementList = async (
 
 export const createSchemaRequest = async (
 	data: object,
-	schemaType: string,
 	endorsementId: string,
 	orgId: string,
 ) => {
-	const url = `${apiRoutes.Ecosystem.root}/${endorsementId}/${orgId}${apiRoutes.Ecosystem.endorsements.createSchemaRequest}?schemaType=${schemaType}`;
+	const url = `${apiRoutes.Ecosystem.root}/${endorsementId}/${orgId}${apiRoutes.Ecosystem.endorsements.createSchemaRequest}`;
 	const payload = data;
 	const axiosPayload = {
 		url,
@@ -277,6 +276,26 @@ export const addOrganizationInEcosystem = async (
 
 	try {
 		return await axiosPost(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};
+
+export const deleteOrganizationFromEcosystem = async (
+) => {
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+
+	const url = `${apiRoutes.Ecosystem.root}/${orgId}${apiRoutes.Ecosystem.deleteOrgFromEcosystem}`;
+
+
+	const axiosPayload = {
+		url,
+		config: await getHeaderConfigs(),
+	};
+
+	try {
+		return await axiosDelete(axiosPayload);
 	} catch (error) {
 		const err = error as Error;
 		return err?.message;

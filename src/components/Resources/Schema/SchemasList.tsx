@@ -23,6 +23,7 @@ import { checkEcosystem } from '../../../config/ecosystem';
 import type { ICheckEcosystem } from '../../../config/ecosystem';
 
 import { Create, SchemaEndorsement } from '../../Issuance/Constant';
+import { SchemaType } from '../../../common/enums';
 
 const SchemaList = (props: {
 	schemaSelectionCallback: (
@@ -58,7 +59,7 @@ const SchemaList = (props: {
 			setLoading(true);
 			let schemaList;
 			if (allSchemaFlag) {
-				schemaList = await getAllSchemas(schemaListAPIParameter);
+				schemaList = await getAllSchemas(schemaListAPIParameter, SchemaType.INDY);
 			} else {
 				schemaList = await getAllSchemasByOrgId(
 					schemaListAPIParameter,

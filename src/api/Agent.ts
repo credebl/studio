@@ -1,7 +1,8 @@
-import { axiosGet, axiosPost } from "../services/apiRequests";
+import { axiosDelete, axiosGet, axiosPost } from "../services/apiRequests";
 import { apiRoutes } from "../config/apiRoutes";
 import { getFromLocalStorage } from "./Auth";
 import { storageKeys } from "../config/CommonConstant";
+import { getHeaderConfigs } from "../config/GetHeaderConfigs";
 
 export const getLedgerConfig = async () => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
@@ -112,3 +113,23 @@ export const getLedgersPlatformUrl = async (indyNamespace: string) => {
     return err?.message
   }
 }
+
+
+export const deleteOrganizationWallet = async (
+) => {
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.deleteWallet}`;
+
+	const axiosPayload = {
+		url,
+		config: await getHeaderConfigs(),
+	};
+
+	try {
+		return await axiosDelete(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};
