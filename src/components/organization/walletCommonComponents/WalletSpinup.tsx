@@ -1,5 +1,5 @@
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
-import { getFromLocalStorage, passwordEncryption } from '../../../api/Auth';
+import { getFromLocalStorage } from '../../../api/Auth';
 import {
 	createDid,
 	getOrganizationById,
@@ -17,7 +17,6 @@ import DedicatedAgentForm from '../walletCommonComponents/DedicatedAgent';
 import SharedAgentForm from './SharedAgent';
 import WalletSteps from './WalletSteps';
 import type { IValuesShared } from './interfaces';
-import React from 'react';
 import OrganizationDetails from '../OrganizationDetails';
 import type { Organisation } from '../interfaces';
 
@@ -49,8 +48,7 @@ const WalletSpinup = (props: {
 	const [orgData, setOrgData] = useState<Organisation | null>(null);
 	const [isShared, setIsShared] = useState<boolean>(false);
 	const [isConfiguredDedicated, setIsConfiguredDedicated] = useState<boolean>(false);
-
-	  
+  
 	const maskSeeds = (seed: string) => {
 		const visiblePart = seed.slice(0, -10);
 		const maskedPart = seed.slice(-10).replace(/./g, '*');
@@ -92,7 +90,7 @@ const WalletSpinup = (props: {
 	useEffect(() => {
        fetchOrganizationDetails()
     }, []);
-
+		
 	const onRadioSelect = (type: string) => {
 		setAgentType(type);
 	};
