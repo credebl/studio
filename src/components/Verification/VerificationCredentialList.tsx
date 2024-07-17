@@ -324,7 +324,7 @@ const VerificationCredentialList = () => {
 	}, [listAPIParameter]);
 
 	const schemeSelection = () => {
-		window.location.href = pathRoutes.organizations.verification.schema;
+		window.location.href = pathRoutes.organizations.verification.requestProof;
 	};
 
 	const refreshPage = () => {

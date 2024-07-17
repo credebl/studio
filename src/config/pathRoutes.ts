@@ -48,11 +48,14 @@ export const pathRoutes = {
 			emailHistory: '/organizations/credentials/issue/email/history',
 		},
 		verification: {
-			schema: '/organizations/verification/schemas',
-			credDef: '/organizations/verification/schemas/cred-defs',
-			connections: '/organizations/verification/schemas/cred-defs/connections',
+			requestProof: '/organizations/verification/verify-credentials',
+			email: '/organizations/verification/verify-credentials/email',
+			schema: '/organizations/verification/verify-credentials/schemas',
+			credDef: '/organizations/verification/verify-credentials/schemas/cred-defs',
+			emailCredDef: '/organizations/verification/verify-credentials/schemas/cred-defs',
+			connections: '/organizations/verification/verify-credentials/schemas/cred-defs/connections',
 			verify:
-				'/organizations/verification/schemas/cred-defs/connections/verification',
+				'/organizations/verification/verify-credentials/schemas/cred-defs/connections/verification',
 		},
 	},
 	ecosystem: {
@@ -78,9 +81,9 @@ export const pathRoutes = {
 			schemas: '/organizations/schemas',
 		},
 		verification: {
-			credDef: '/organizations/verification/schemas/cred-defs',
-			schemas: '/organizations/verification/schemas',
-			verification: '/organizations/verification/schemas/cred-defs/connections',
+			credDef: '/organizations/verification/verify-credentials/schemas/cred-defs',
+			schemas: '/organizations/verification/verify-credentials/schemas',
+			verification: '/organizations/verification/verify-credentials/schemas/cred-defs/connections',
 		},
 		issuance: {
 			credDef: '/organizations/credentials/issue/schemas/cred-defs',

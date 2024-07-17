@@ -1,11 +1,8 @@
 ---
-import { useEffect } from 'react';
-import { getFromLocalStorage } from '../../../../../api/Auth';
 import LayoutSidebar from '../../../../../app/LayoutSidebar.astro';
-import CredDefSelection from '../../../../../components/Verification/CredDefSelection';
-import { storageKeys } from '../../../../../config/CommonConstant';
-import { checkUserSession } from '../../../../../utils/check-session';
+import EmailVerification from '../../../../../components/Verification/EmailVerification';
 import { pathRoutes } from '../../../../../config/pathRoutes';
+import { checkUserSession } from '../../../../../utils/check-session';
 
 const response = await checkUserSession({cookies: Astro.cookies, currentPath: Astro.url.pathname});
 const route: string = pathRoutes.auth.sinIn
@@ -15,5 +12,5 @@ if (!response.authorized) {
 ---
 
 <LayoutSidebar notFoundPage={!response.permitted}>
-	<CredDefSelection client:load />
+	<EmailVerification client:visible />
 </LayoutSidebar>
