@@ -3,6 +3,7 @@ import { getFromLocalStorage } from '../../../api/Auth';
 import {
 	createDid,
 	getOrganizationById,
+	spinupDedicatedAgent,
 	spinupSharedAgent,
 } from '../../../api/organization';
 import { useEffect, useState } from 'react';
@@ -47,7 +48,7 @@ const WalletSpinup = (props: {
 	const [orgData, setOrgData] = useState<Organisation | null>(null);
 	const [isShared, setIsShared] = useState<boolean>(false);
 	const [isConfiguredDedicated, setIsConfiguredDedicated] = useState<boolean>(false);
-
+  
 	const maskSeeds = (seed: string) => {
 		const visiblePart = seed.slice(0, -10);
 		const maskedPart = seed.slice(-10).replace(/./g, '*');
@@ -67,6 +68,7 @@ const WalletSpinup = (props: {
 	const fetchOrganizationDetails = async () => {
 		setLoading(true);
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		const orgInfoData = await getFromLocalStorage(storageKeys.ORG_INFO);
 		const response = await getOrganizationById(orgId as string);
 		const { data } = response as AxiosResponse;
 		setLoading(false)
@@ -89,7 +91,6 @@ const WalletSpinup = (props: {
        fetchOrganizationDetails()
     }, []);
 		
-
 	const onRadioSelect = (type: string) => {
 		setAgentType(type);
 	};

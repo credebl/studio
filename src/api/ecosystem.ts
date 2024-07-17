@@ -110,11 +110,10 @@ export const getEndorsementList = async (
 
 export const createSchemaRequest = async (
 	data: object,
-	schemaType: string,
 	endorsementId: string,
 	orgId: string,
 ) => {
-	const url = `${apiRoutes.Ecosystem.root}/${endorsementId}/${orgId}${apiRoutes.Ecosystem.endorsements.createSchemaRequest}?schemaType=${schemaType}`;
+	const url = `${apiRoutes.Ecosystem.root}/${endorsementId}/${orgId}${apiRoutes.Ecosystem.endorsements.createSchemaRequest}`;
 	const payload = data;
 	const axiosPayload = {
 		url,
