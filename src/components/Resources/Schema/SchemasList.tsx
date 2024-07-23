@@ -75,7 +75,7 @@ const SchemaList = (props: {
 				setSchemaList([]);
 			}
 
-			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {				
 				if (data?.data?.data) {
 					setTotalItem(data?.data?.lastPage);
 					setSchemaList(data?.data?.data);
@@ -145,6 +145,27 @@ const SchemaList = (props: {
 		props.schemaSelectionCallback(schemaId, schemaDetails);
 	};
 
+	const handleW3CIssue = async (
+		schemaId: string,
+		schemaName: string,
+		version: string,
+		issuerDid: string,
+		attributes: [],
+		created: string
+	  ) => {
+		const schemaDetails = {
+		  schemaId,
+		  schemaName,
+		  version,
+		  issuerDid,
+		  attributes,
+		  created,
+		}; 
+		await setToLocalStorage(storageKeys.W3C_SCHEMA_DETAILS, schemaDetails);
+		
+	  };
+
+
 	const options = ['All schemas'];
 
 	const handleFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -164,11 +185,12 @@ const SchemaList = (props: {
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const did = data?.data?.org_agents?.[0]?.orgDid;
+
+			await setToLocalStorage(storageKeys.ORG_DID, did)
 			console.log('did4567:::', did)
 			if (data?.data?.org_agents && data?.data?.org_agents?.length > 0) {
 				setWalletStatus(true);
 			}
-			
 			if (did.includes(DidMethod.POLYGON) || did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
 				setW3cSchema(true);
 			}
@@ -281,6 +303,7 @@ const SchemaList = (props: {
 											attributes={element['attributes']}
 											created={element['createDateTime']}
 											onClickCallback={schemaSelectionCallback}
+											onClickW3cIssue={handleW3CIssue}
 											w3cSchema={w3cSchema}
 											noLedger={isNoLedger}
 											

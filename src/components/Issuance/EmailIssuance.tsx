@@ -12,7 +12,7 @@ import type { AxiosResponse } from 'axios';
 import { getFromLocalStorage } from '../../api/Auth';
 import { getSchemaCredDef } from '../../api/BulkIssuance';
 import { storageKeys, apiStatusCodes } from '../../config/CommonConstant';
-import type { IAttributes, ICredentials, IValues } from './interface';
+import type { IAttributes, ICredentials, IEmailCredentialData, IIssueAttributes } from './interface';
 import { Field, FieldArray, Form, Formik } from 'formik';
 import CustomSpinner from '../CustomSpinner';
 import { issueOobEmailCredential } from '../../api/issuance';
@@ -24,20 +24,20 @@ import { checkEcosystem  } from '../../config/ecosystem';
 import type { ICheckEcosystem} from '../../config/ecosystem';
 import { Features } from '../../utils/enums/features';
 import { Create, SchemaEndorsement } from './Constant';
-import { SchemaType } from '../../common/enums';
+import { DidMethod, SchemaTypes, CredentialType, SchemaTypeValue } from '../../common/enums';
 
 const EmailIssuance = () => {
 	const [formData, setFormData] = useState();
 	const [userData, setUserData] = useState();
 	const [loading, setLoading] = useState<boolean>(true);
 	const [credentialOptions, setCredentialOptions] = useState([]);
-	const [credentialSelected, setCredentialSelected] = useState<string | null>(
-		'',
+	const [credentialSelected, setCredentialSelected] = useState<ICredentials | null>(
+		
 	);
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [batchName, setBatchName] = useState('');
 	const [openResetModal, setOpenResetModal] = useState<boolean>(false);
-	const [attributes, setAttributes] = useState([]);
+	const [attributes, setAttributes] = useState<IAttributes[]>([]);
 	const [success, setSuccess] = useState<string | null>(null);
 	const [failure, setFailure] = useState<string | null>(null);
 	const [isEditing, setIsEditing] = useState(false);
@@ -45,36 +45,65 @@ const EmailIssuance = () => {
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const inputRef = useRef(null);
 	const [mounted, setMounted] = useState<boolean>(false)
+	const [schemaType, setSchemaType]= useState<SchemaTypes>();
+	const [credentialType, setCredentialType] = useState<CredentialType>();
+	const [credDefId, setCredDefId] = useState<string>();
+	const [schemasIdentifier, setSchemasIdentifier] = useState<string>();
+	const [schemaTypeValue, setSchemaTypeValue] = useState<SchemaTypeValue>();
 
 	const getSchemaCredentials = async () => {
 		try {
 			setLoading(true);
 			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-			if (orgId) {
-				const response = await getSchemaCredDef(SchemaType.INDY);
+			const orgDid = await getFromLocalStorage(storageKeys.ORG_DID);
+			let currentSchemaType = schemaType;
+	
+			if (orgDid?.includes(DidMethod.POLYGON)) {
+				currentSchemaType = SchemaTypes.schema_W3C;
+				setSchemaTypeValue(SchemaTypeValue.POLYGON)
+				setCredentialType(CredentialType.JSONLD)
+				
+			} else if ( orgDid?.includes(DidMethod.KEY) || orgDid?.includes(DidMethod.WEB)) {
+				currentSchemaType = SchemaTypes.schema_W3C;
+				setSchemaTypeValue(SchemaTypeValue.NO_LEDGER)
+
+				setCredentialType(CredentialType.JSONLD)
+			}
+				else if (orgDid?.includes(DidMethod.INDY)) {
+				setCredentialType(CredentialType.INDY)
+				currentSchemaType = SchemaTypes.schema_INDY;
+			}
+
+			setSchemaType(currentSchemaType); 
+			if (currentSchemaType && orgId) {
+				const response = await getSchemaCredDef(currentSchemaType); 
 				const { data } = response as AxiosResponse;
 
-				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-					const credentialDefs = data.data;
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			const credentialDefs = data.data;
 
-					const options = credentialDefs.map((credDef: ICredentials) => ({
-						value: credDef.credentialDefinitionId,
-						label: `${credDef.schemaName} [${credDef.schemaVersion}] - (${credDef.credentialDefinition})`,
-						schemaName: credDef.schemaName,
-						schemaVersion: credDef.schemaVersion,
-						credentialDefinition: credDef.credentialDefinition,
-						schemaAttributes:
-							credDef.schemaAttributes &&
-							typeof credDef.schemaAttributes === 'string' &&
-							JSON.parse(credDef.schemaAttributes),
-					}));
-					setCredentialOptions(options);
-				} else {
-					setSuccess(null);
-					setFailure(null);
-				}
-				setLoading(false);
-			}
+	const options = credentialDefs.map((credDef: ICredentials) => ({
+		value: schemaType===SchemaTypes.schema_INDY ? credDef.credentialDefinitionId : credDef.schemaVersion,
+		label: `${credDef.schemaName} [${credDef.schemaVersion}]${currentSchemaType === SchemaTypes.schema_INDY ? ` - (${credDef.credentialDefinition})` : ''}`,
+		schemaName: credDef.schemaName,
+		schemaVersion: credDef.schemaVersion,
+		credentialDefinition: credDef.credentialDefinition,
+		schemaIdentifier:credDef.schemaIdentifier,
+		credentialDefinitionId:credDef.credentialDefinitionId,
+		schemaAttributes:
+			credDef.schemaAttributes &&
+			typeof credDef.schemaAttributes === 'string' &&
+			JSON.parse(credDef.schemaAttributes),
+	}));
+	setCredentialOptions(options);
+			
+		} else {
+			setSuccess(null);
+			setFailure(null);
+		}
+		setLoading(false);
+	}
+		
 		} catch (error) {
 			setSuccess(null);
 			setFailure(null);
@@ -102,28 +131,77 @@ const EmailIssuance = () => {
 
 	const confirmOOBCredentialIssuance = async () => {
 		setIssueLoader(true);
+		
 		const existingData = userData;
+		const organizationDid = await getFromLocalStorage(storageKeys.ORG_DID);
+		
+	let transformedData: any = { credentialOffer: [] };
+	
+if (existingData && existingData.formData) {
+    if (schemaType === SchemaTypes.schema_INDY) {
+        existingData?.formData.forEach((entry: { email: any; attributes: any[] }) => {
+            const transformedEntry = { emailId: entry.email, attributes: [] };
+            entry.attributes.forEach((attribute) => {
+                const transformedAttribute = {
+                    value: String(attribute.value || ''),
+                    name: attribute.name || '',
+                    isRequired: attribute.isRequired,
+                };
+                transformedEntry.attributes.push(transformedAttribute);
+            });
+            transformedData.credentialOffer.push(transformedEntry);
+        });
+        transformedData.credentialDefinitionId = credDefId;
+		
+    } else if (schemaType=== SchemaTypes.schema_W3C) {
+        existingData.formData.forEach((entry: { email: any; credentialData: IEmailCredentialData; attributes:IIssueAttributes[] }) => {
+			const credentialOffer = {
+				emailId: entry.email,
+                credential: {
+					"@context": [
+						"https://www.w3.org/2018/credentials/v1",
+                        schemasIdentifier
+                    ],
+                    "type": [
+						"VerifiableCredential",
+                        credentialOptions[0].schemaName
+                    ],
+                    "issuer": {
+						"id": organizationDid 
+                    },
+                    "issuanceDate": new Date().toISOString(),
+                    
+					credentialSubject: entry?.attributes?.reduce((acc, attr) => {
+						if (attr.value === null && !attr.isRequired && typeof attr.value === 'number') {
+							return acc;
+						  } else {
+							if (attr.name === 'rollno' && attr.value === '') {
+							  return acc;
+							} else {
+							  acc[attr.name] = attr.value;
+							  return acc;
+							}
+						  }
+						}, {
+						id: "",
+		   }),
+                },
+                options: {
+                    proofType: schemaTypeValue===SchemaTypeValue.POLYGON ? "EcdsaSecp256k1Signature2019" :  "Ed25519Signature2018",
+                    proofPurpose: "assertionMethod"
+                }
+            };
 
-		let transformedData = { credentialOffer: [] };
-		if (existingData && existingData.formData) {
-			existingData?.formData?.forEach(
-				(entry: { email: any; attributes: any[] }) => {
-					const transformedEntry = { emailId: entry.email, attributes: [] };
-					entry.attributes.forEach((attribute) => {
-						const transformedAttribute = {
-							value: String(attribute.value || ''),
-							name: attribute.name || '',
-							isRequired: attribute.isRequired,
-						};
-						transformedEntry?.attributes?.push(transformedAttribute);
-					});
+            transformedData.credentialOffer.push(credentialOffer);
+        });
 
-					transformedData.credentialOffer.push(transformedEntry);
-				},
-			);
-			transformedData.credentialDefinitionId = credentialSelected;
-			const transformedJson = JSON.stringify(transformedData, null, 2);
-			const response = await issueOobEmailCredential(transformedJson);
+        transformedData.protocolVersion = "v2";
+        transformedData.credentialType = "jsonld";
+    }
+	
+
+			const transformedJson = JSON.stringify(transformedData, null, 2);	
+			const response = await issueOobEmailCredential(transformedJson, credentialType);
 			const { data } = response as AxiosResponse;			
 
 			if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
@@ -172,31 +250,9 @@ const EmailIssuance = () => {
 
 		setFormData({ formData: [initFormData] });
 	}, [attributes]);
+
 	const isCredSelected = Boolean(credentialSelected);
-
-	const selectedCred: ICredentials | boolean | undefined =
-		credentialOptions &&
-		credentialOptions.length > 0 &&
-		credentialOptions.find(
-			(item: { value: string }) =>
-				item.value && item.value === credentialSelected,
-		);
-
-	const handleEditClick = () => {
-		if (isCredSelected) {
-			setIsEditing(!isEditing);
-		}
-	};
-
-	const handleInputChange = (e: {
-		target: { value: React.SetStateAction<string> };
-	}) => {
-		setBatchName(e.target.value);
-	};
-
-	const handleBlur = () => {
-		setIsEditing(false);
-	};
+	
 	const selectInputRef = React.useRef<SelectRef | null>(null);
 
 	const handleReset = () => {
@@ -284,11 +340,20 @@ const EmailIssuance = () => {
 
 											name="color"
 											options={credentialOptions}
-											onChange={(value: IValues | null) => {
-												setBatchName(value?.label ?? '');
-												setCredentialSelected(value?.value ?? '');
-												setAttributes(value?.schemaAttributes);
-											}}
+												onChange={(value: ICredentials | null) => {
+													setBatchName(value?.label ?? '');
+													 
+												if (schemaType === SchemaTypes.schema_INDY) {
+													
+													setCredDefId(value?.credentialDefinitionId);
+													setCredentialSelected(value ?? null);
+												} else if (schemaType === SchemaTypes.schema_W3C) {
+
+													setCredentialSelected(value ?? null);
+													setSchemasIdentifier(value?.schemaIdentifier)
+												}
+												setAttributes(value?.schemaAttributes ?? []);
+												}}
 											ref={selectInputRef}
 										/>
 										:
@@ -297,25 +362,31 @@ const EmailIssuance = () => {
 									</div>
 									<div className="mt-4">
 										{credentialSelected && (
+											
+											
 											<Card className="max-w-[30rem]">
 												<div>
 													<p className="text-black dark:text-white pb-2">
 														<span className="font-semibold">Schema: </span>
-														{selectedCred?.schemaName || ''}{' '}
-														<span>[{selectedCred?.schemaVersion}]</span>
+														{credentialSelected?.schemaName || ''}{' '}
+														<span>[{credentialSelected?.schemaVersion}]</span>
 													</p>
+													{
+														schemaType === SchemaTypes.schema_INDY && 
+
 													<p className="text-black dark:text-white pb-2">
 														{' '}
 														<span className="font-semibold">
 															Credential Definition:
 														</span>{' '}
-														{selectedCred?.credentialDefinition}
+														{credentialSelected?.credentialDefinition}
 													</p>
+													}
 													<span className="text-black dark:text-white font-semibold">
 														Attributes:
 													</span>
 													<div className="flex flex-wrap overflow-hidden">
-														{selectedCred?.schemaAttributes?.map(
+														{credentialSelected?.schemaAttributes?.map(
 															(element: IAttributes) => (
 																<div
 																	key={element.attributeName}

@@ -18,11 +18,11 @@ import BreadCrumbs from '../BreadCrumbs';
 import BackButton from '../../commonComponents/backbutton'
 import { checkEcosystem } from '../../config/ecosystem';
 import type { ICheckEcosystem} from '../../config/ecosystem';
-import type { ICredentials, IValues, IAttributes, IUploadMessage } from './interface';
+import type { ICredentials, IAttributes, IUploadMessage } from './interface';
 import RoleViewButton from '../RoleViewButton';
 import { Features } from '../../utils/enums/features';
 import { Create, SchemaEndorsement } from './Constant';
-import { SchemaType } from '../../common/enums';
+import { DidMethod, SchemaTypes } from '../../common/enums';
 
 export interface SelectRef {
   clearValue(): void;
@@ -33,7 +33,7 @@ const BulkIssuance = () => {
 	const [process, setProcess] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [credentialOptions, setCredentialOptions] = useState([]);
-	const [credentialSelected, setCredentialSelected] = useState<string>("");	
+	const [credentialSelected, setCredentialSelected] = useState<ICredentials | null>();	
 	const [isFileUploaded, setIsFileUploaded] = useState(false);
 	const [uploadedFileName, setUploadedFileName] = useState('');
 	const [uploadedFile, setUploadedFile] = useState(null);
@@ -44,6 +44,9 @@ const BulkIssuance = () => {
 	const [failure, setFailure] = useState<string | null>(null);
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [mounted, setMounted] = useState<boolean>(false)
+	const [schemaType, setSchemaType]= useState<SchemaTypes>();
+	const [selectedTemplate, setSelectedTemplate] = useState<any>();
+
 
 	const onPageChange = (page: number) => {
 		setCurrentPage({
@@ -62,8 +65,20 @@ const BulkIssuance = () => {
 		try {
 			setLoading(true);
 			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-			if (orgId) {
-				const response = await getSchemaCredDef(SchemaType.INDY);
+
+			const orgDid = await getFromLocalStorage(storageKeys.ORG_DID);
+		
+			let currentSchemaType = schemaType;
+	
+			if (orgDid?.includes(DidMethod.POLYGON) || orgDid?.includes(DidMethod.KEY) || orgDid?.includes(DidMethod.WEB)) {
+				currentSchemaType = SchemaTypes.schema_W3C;
+			} else if (orgDid?.includes(DidMethod.INDY)) {
+				currentSchemaType = SchemaTypes.schema_INDY;
+			}
+
+			setSchemaType(currentSchemaType); 
+			if (currentSchemaType && orgId) {
+				const response = await getSchemaCredDef(currentSchemaType); 
 				const { data } = response as AxiosResponse;
 
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -71,11 +86,13 @@ const BulkIssuance = () => {
 
 					const options = credentialDefs.map(
 						(credDef: ICredentials) => ({
-							value: credDef.credentialDefinitionId,
-							label: `${credDef.schemaName} [${credDef.schemaVersion}] - (${credDef.credentialDefinition})`,
+							value: schemaType===SchemaTypes.schema_INDY ? credDef.credentialDefinitionId : credDef.schemaVersion,
+							label: `${credDef.schemaName} [${credDef.schemaVersion}]${currentSchemaType === SchemaTypes.schema_INDY ? ` - (${credDef.credentialDefinition})` : ''}`,
 							schemaName: credDef.schemaName,
 							schemaVersion: credDef.schemaVersion,
 							credentialDefinition: credDef.credentialDefinition,
+		                    credentialDefinitionId:credDef.credentialDefinitionId,
+							schemaIdentifier:credDef.schemaIdentifier,
 							schemaAttributes: credDef.schemaAttributes && typeof credDef.schemaAttributes === "string" && JSON.parse(credDef.schemaAttributes)
 						}),
 					);
@@ -122,7 +139,7 @@ const BulkIssuance = () => {
 		if (credentialSelected) {
 			try {
 				setProcess(true);
-				const response = await DownloadCsvTemplate(credentialSelected, SchemaType.INDY);
+				const response = await DownloadCsvTemplate(selectedTemplate, schemaType);
 				const { data } = response as AxiosResponse;
 				
 				if (data) {
@@ -250,7 +267,7 @@ const BulkIssuance = () => {
 			setUploadedFileName(file?.name);
 			setUploadedFile(file);
 
-			const response = await uploadCsvFile(payload, credentialSelected, SchemaType.INDY);
+			const response = await uploadCsvFile(payload, selectedTemplate, schemaType);
 			const { data } = response as AxiosResponse;
 
 			if (data?.statusCode === apiStatusCodes?.API_STATUS_CREATED) {
@@ -369,13 +386,13 @@ const BulkIssuance = () => {
 	
 	const handleReset = () => {
 		handleDiscardFile();
-		setCredentialSelected("");
+		setCredentialSelected(null);
 		setSuccess(null);
 		onClear()
 	};
 	const handleResetForConfirm = () => {
 		handleDiscardFile();
-		setCredentialSelected("");
+		setCredentialSelected(null);
 	};
 
 	const confirmCredentialIssuance = async () => {
@@ -506,8 +523,14 @@ const BulkIssuance = () => {
 											isSearchable={true}
 											name="color"
 											options={credentialOptions}
-											onChange={(value: IValues | null) => {
-												setCredentialSelected(value?.value ?? "");
+											onChange={(value: ICredentials | null) => {
+												if (schemaType === SchemaTypes.schema_INDY) {
+													setSelectedTemplate(value?.credentialDefinitionId);
+													setCredentialSelected(value ?? null);
+												} else if (schemaType === SchemaTypes.schema_W3C) {
+													setCredentialSelected(value ?? null);
+													setSelectedTemplate(value?.schemaIdentifier)
+												}
 											}}
 											ref={selectInputRef}
 										/>:
@@ -515,24 +538,24 @@ const BulkIssuance = () => {
 										}
 									</div>
 									<div className="mt-4">
-										{credentialSelected && selectedCred && (
+										{credentialSelected &&(
 											<Card className='max-w-[30rem]'>
 												<div>
 													<p className="text-black dark:text-white pb-2">
 														<span className="font-semibold">Schema: </span>
-														{selectedCred?.schemaName || ""}{' '}
-														<span>[{selectedCred?.schemaVersion}]</span>
+														{credentialSelected?.schemaName || ""}{' '}
+														<span>[{credentialSelected?.schemaVersion}]</span>
 													</p>
 													<p className="text-black dark:text-white pb-2">
 														{' '}
 														<span className="font-semibold">
 															Credential Definition:
 														</span>{' '}
-														{selectedCred?.credentialDefinition}
+														{credentialSelected?.credentialDefinition}
 													</p>
 													<span className='text-black dark:text-white font-semibold'>Attributes:</span>
 													<div className="flex flex-wrap overflow-hidden">
-														{selectedCred?.schemaAttributes.map(
+														{credentialSelected?.schemaAttributes.map(
 															(element: IAttributes) => (
 																<div key={element.attributeName}>
 																	<span className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">

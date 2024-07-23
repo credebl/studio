@@ -131,3 +131,13 @@ export enum SchemaTypeValue {
 	POLYGON = 'polygon',
 	NO_LEDGER = 'no_ledger'
 }
+
+export enum SchemaTypes {
+    schema_INDY = 'indy',
+    schema_W3C = 'w3c'
+}
+
+export enum CredentialType {
+    INDY = 'indy',
+    JSONLD = 'jsonld'
+}
