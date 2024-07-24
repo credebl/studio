@@ -49,10 +49,11 @@ export const pathRoutes = {
 		},
 		verification: {
 			requestProof: '/organizations/verification/verify-credentials',
-			email: '/organizations/verification/verify-credentials/email',
+			email: '/organizations/verification/verify-credentials/email/schemas',
 			schema: '/organizations/verification/verify-credentials/schemas',
 			credDef: '/organizations/verification/verify-credentials/schemas/cred-defs',
-			emailCredDef: '/organizations/verification/verify-credentials/schemas/cred-defs',
+			attributes: '/organizations/verification/verify-credentials/schemas/cred-defs/attributes',
+			emailCredDef: '/organizations/verification/verify-credentials/email/schemas/cred-defs',
 			connections: '/organizations/verification/verify-credentials/schemas/cred-defs/connections',
 			verify:
 				'/organizations/verification/verify-credentials/schemas/cred-defs/connections/verification',

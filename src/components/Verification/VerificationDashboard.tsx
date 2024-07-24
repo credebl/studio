@@ -10,14 +10,19 @@ const VerificationDashboard = () => {
 		{
 			heading: 'Connection',
 			description:
-				'Issue credential(s) by selecting connection from existing users',
+				'Verify credential(s) by selecting existing connections',
 			path: pathRoutes.organizations.verification.schema,
 		},
 		{
 			heading: 'Email',
-			description: 'Issue credential(s) by entering email ID for specific user',
-			path: pathRoutes.organizations.verification.schema,
-		}
+			description: 'Verify credential(s) by entering email ID for specific user',
+			path: pathRoutes.organizations.verification.email,
+		},
+		{
+			heading: 'Bulk',
+			description: 'Verify credential(s) in bulk by uploading .csv file records',
+			path: null
+		},
 	];
 	return (
 		<div className="px-4 pt-2 h-full h-[700px]">
@@ -38,24 +43,24 @@ const VerificationDashboard = () => {
 					{options.map((option) => (
 						<Card
 							key={option.heading}
-							className="custom-card group transform transition duration-500 ease-in-out hover:scale-105 cursor-pointer overflow-hidden overflow-ellipsis dark:hover:bg-primary-700 hover:bg-primary-700 border border-gray-200 shadow-md dark:border-gray-600 dark:bg-gray-700"
+							className={`custom-card group transform transition duration-500 ease-in-out ${option.path ? 'hover:scale-105 cursor-pointer' : 'cursor-not-allowed bg-gray-300 text-gray-500'} overflow-hidden overflow-ellipsis border border-gray-200 shadow-md ${option.path ? 'dark:hover:bg-primary-700 hover:bg-primary-700 dark:border-gray-600 dark:bg-gray-700' : 'hover:bg-gray-600 dark:border-gray-600 dark:bg-gray-700'}`}
 							style={{
 								maxHeight: '100%',
 								overflow: 'auto',
 								height: '168px',
 								color: 'inherit',
 							}}
-							onClick={() => (window.location.href = option?.path)}
+							onClick={() => option.path && (window.location.href = option.path)}
 						>
 							<div
-								className="flex items-center min-[401px]:flex-nowrap flex-wrap group-hover:text-white"
+								className={`flex items-center min-[401px]:flex-nowrap flex-wrap ${option.path ? 'group-hover:text-white' : ''}`}
 								style={{ color: 'inherit' }}
 							>
 								<div className="ml-4">
-									<h5 className="text-2xl font-semibold text-primary-700 dark:text-white pb-2">
+									<h5 className={`text-2xl font-semibold ${option.path ? 'text-primary-700 dark:text-white' : 'text-gray-500' } pb-2`}>
 										{option.heading}
 									</h5>
-									<p className="text-sm text-gray-700 dark:text-white">
+									<p className={`text-sm ${option.path ? 'text-gray-700 dark:text-white' : 'text-gray-500'}`}>
 										{option.description}
 									</p>
 								</div>
@@ -69,3 +74,4 @@ const VerificationDashboard = () => {
 };
 
 export default VerificationDashboard;
+
