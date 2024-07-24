@@ -164,7 +164,7 @@ const SchemaList = (props: {
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const did = data?.data?.org_agents?.[0]?.orgDid;
-			console.log('did4567:::', did)
+			
 			if (data?.data?.org_agents && data?.data?.org_agents?.length > 0) {
 				setWalletStatus(true);
 			}
