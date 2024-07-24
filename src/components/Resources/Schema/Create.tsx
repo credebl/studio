@@ -384,8 +384,7 @@ if (
 } else if (schemaTypeValues === SchemaTypeValue.INDY) {
   filteredOptions = options;
 }
-console.log("Schema Type Values: ", schemaTypeValues);
-console.log("Filtered Options: ", filteredOptions);
+
 
 	return (
 		<div className="pt-2">

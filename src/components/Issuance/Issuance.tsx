@@ -335,14 +335,10 @@ const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 							},
 							issuanceDate: "2019-10-12T07:20:50.52Z",
 							credentialSubject: item?.attributes?.reduce((acc, attr) => {
-								     console.log('acc9999::::', acc)
 								     if (attr.value === null && !attr.isRequired && typeof attr.value === 'number') {
-								         // Skip adding this attribute to the credentialSubject
 								         return acc;
 								       } else {
-								         // Add attribute to credentialSubject if it's not excluded
 								         if (attr.name === 'rollno' && attr.value === '') {
-								           // Exclude 'rollno' if its value is an empty string
 								           return acc;
 								         } else {
 								           acc[attr.name] = attr.value;

@@ -187,7 +187,6 @@ const SchemaList = (props: {
 			const did = data?.data?.org_agents?.[0]?.orgDid;
 
 			await setToLocalStorage(storageKeys.ORG_DID, did)
-			console.log('did4567:::', did)
 			if (data?.data?.org_agents && data?.data?.org_agents?.length > 0) {
 				setWalletStatus(true);
 			}
