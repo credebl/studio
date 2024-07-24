@@ -1,5 +1,5 @@
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
-import { getFromLocalStorage, passwordEncryption } from '../../../api/Auth';
+import { getFromLocalStorage } from '../../../api/Auth';
 import {
 	createDid,
 	getOrganizationById,
@@ -51,6 +51,7 @@ const WalletSpinup = (props: {
 	const [isConfiguredDedicated, setIsConfiguredDedicated] = useState<boolean>(false);
 
 	  
+  
 	const maskSeeds = (seed: string) => {
 		const visiblePart = seed.slice(0, -10);
 		const maskedPart = seed.slice(-10).replace(/./g, '*');
@@ -93,6 +94,10 @@ const WalletSpinup = (props: {
        fetchOrganizationDetails()
     }, []);
 
+	useEffect(() => {
+       fetchOrganizationDetails()
+    }, []);
+		
 	const onRadioSelect = (type: string) => {
 		setAgentType(type);
 	};
