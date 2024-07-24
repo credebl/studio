@@ -17,7 +17,6 @@ const SummaryCard = ({ schemaName, version, credDefId, schemaId, hideCredDefId }
 
   const fetchOrgData = async () => {
     const orgDid = await getFromLocalStorage(storageKeys.ORG_DID);
-    console.log("orgDid from localStorage:", orgDid);
     
     if (orgDid.includes('polygon') || orgDid.includes('key') || orgDid.includes('web')) {
       setIsW3cDid(true);
