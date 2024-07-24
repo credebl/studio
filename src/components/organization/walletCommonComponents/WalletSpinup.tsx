@@ -93,10 +93,6 @@ const WalletSpinup = (props: {
 	useEffect(() => {
        fetchOrganizationDetails()
     }, []);
-
-	useEffect(() => {
-       fetchOrganizationDetails()
-    }, []);
 		
 	const onRadioSelect = (type: string) => {
 		setAgentType(type);
