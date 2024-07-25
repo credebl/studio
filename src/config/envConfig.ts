@@ -65,7 +65,7 @@ export const envConfig = {
 		clientId:
 		    PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_ID ||
 			import.meta.env.PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_ID,
-		clientSecrete:
+		clientSecret:
 		    PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_SECRETE ||
 			import.meta.env.PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_SECRETE,
 	},

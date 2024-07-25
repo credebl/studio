@@ -47,7 +47,7 @@ const SignUpUser = () => {
 			const payload = {
 				email: email,
 				clientId: passwordEncryption(envConfig.PLATFORM_DATA.clientId),
-				clientSecret:passwordEncryption(envConfig.PLATFORM_DATA.clientSecrete)		
+				clientSecret:passwordEncryption(envConfig.PLATFORM_DATA.clientSecret)		
 			}
 			
 			setVerifyLoader(true)
