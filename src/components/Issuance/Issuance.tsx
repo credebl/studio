@@ -83,7 +83,6 @@ const IssueCred = () => {
 				attributes: attributesArray,
 			};
 		});
-
 		const issuancePayload = {
 			credentialData,
 			credentialDefinitionId: credDefId,
@@ -93,7 +92,7 @@ const IssueCred = () => {
 		setIssuanceFormPayload(issuancePayload);
 		setUserLoader(false);
 	};
-
+	
 	const createAttributeValidationSchema = (
 		name: string,
 		value: string,
@@ -139,7 +138,6 @@ const IssueCred = () => {
 		const schemaAttributes = await getFromLocalStorage(storageKeys.SCHEMA_ATTR);
 
 		const parsedSchemaAttributes = JSON.parse(schemaAttributes) || [];
-
 		setSchemaAttributesDetails(parsedSchemaAttributes?.attribute);
 
 		return parsedSchemaAttributes.attribute;
@@ -179,12 +177,11 @@ const IssueCred = () => {
 		const convertedAttributesValues = {
 			...issuancePayload,
 		};
-
+	
 		setIssuanceLoader(true);
 		const issueCredRes = await issueCredential(convertedAttributesValues);
-
 		const { data } = issueCredRes as AxiosResponse;
-
+	
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			setSuccess(data?.message);
 			window.location.href = `${pathRoutes.organizations.issuedCredentials}`;
@@ -195,7 +192,7 @@ const IssueCred = () => {
 			setIssuanceLoader(false);
 		}
 	};
-
+	
 	return (
 		<div className="px-4 pt-2">
 			<div className="mb-4 col-span-full xl:mb-2">
