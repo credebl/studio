@@ -346,7 +346,6 @@ const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 								         }
 								       }
 								     }, {
-								     id: "",
 								 }),
 								},
 		
