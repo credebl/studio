@@ -55,14 +55,7 @@ const SchemaCard =  (props: IProps) => {
               <span className="">
                 {props.schemaName}
               </span>
-              {props.w3cSchema && (
-                <span
-                  style={{ display: 'block' }}
-                  className="ml-2 bg-blue-100 text-gray-800 text-sm font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
-                >
-                  W3C
-                </span>
-              )}
+
             </span>
           </h5>
          
@@ -70,11 +63,23 @@ const SchemaCard =  (props: IProps) => {
             Version: {props.version}
           </p>
         </div>
-        <div className='float-right ml-auto '>
+        <div className='float-right ml-auto flex'>
+          <div>
+          {props.w3cSchema && (
+                <span
+                  style={{ display: 'block' }}
+                  className="ml-2 bg-blue-100 text-gray-800 text-sm font-medium px-2.5 py-0.5 mr-2 rounded dark:bg-blue-900 dark:text-blue-300"
+                >
+                  W3C
+                </span>
+              )}
+          </div>
+        
           <div className='dark:text-white'>
             <DateTooltip date={props.created}>
               Created: {dateConversion(props.created)}
-            </DateTooltip>          </div>
+            </DateTooltip>          
+            </div>
         </div>
       </div>
       <div className="min-w-0 flex-1">
@@ -118,7 +123,8 @@ const SchemaCard =  (props: IProps) => {
             )}
           </div>
         </div>
-        {props.w3cSchema && (
+        <div className='mt-4'>
+          {props.w3cSchema && (
           <div className="p-2">
             <Button
           onClick={() => {
@@ -142,6 +148,7 @@ const SchemaCard =  (props: IProps) => {
             </Button>
           </div>
         )}
+        </div>
       </div>
     </Card>
   )
