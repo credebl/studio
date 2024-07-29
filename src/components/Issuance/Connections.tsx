@@ -13,6 +13,7 @@ import type { IConnectionList } from './interface';
 import DateTooltip from '../Tooltip';
 import { dateConversion } from '../../utils/DateConversion';
 import React from 'react';
+import { DidMethod } from '../../common/enums';
 
 const Connections = () => {
 	const [selectedConnections, setSelectedConnections] = useState<
@@ -28,7 +29,7 @@ const Connections = () => {
 const [isW3cDid, setisW3cDid] = useState<boolean>(false);
 const orgData =async () =>{
 	const orgDid = await getFromLocalStorage(storageKeys.ORG_DID);	
-	if(orgDid.includes('polygon') || orgDid.includes('key') || orgDid.includes('web')){
+	if(orgDid.includes(DidMethod.POLYGON) || orgDid.includes(DidMethod.KEY) || orgDid.includes(DidMethod.WEB)){
 		setisW3cDid(true)
 	}
 }

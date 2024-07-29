@@ -3,6 +3,7 @@ import { Card } from 'flowbite-react';
 import CopyDid from '../commonComponents/CopyDid';
 import { storageKeys } from '../config/CommonConstant';
 import { getFromLocalStorage } from '../api/Auth';
+import { DidMethod } from '../common/enums';
 
 interface IProps {
   schemaName: string;
@@ -18,7 +19,7 @@ const SummaryCard = ({ schemaName, version, credDefId, schemaId, hideCredDefId }
   const fetchOrgData = async () => {
     const orgDid = await getFromLocalStorage(storageKeys.ORG_DID);
     
-    if (orgDid.includes('polygon') || orgDid.includes('key') || orgDid.includes('web')) {
+    if (orgDid.includes(DidMethod.POLYGON) || orgDid.includes(DidMethod.KEY) || orgDid.includes(DidMethod.WEB)) {
       setIsW3cDid(true);
     } else {
       setIsW3cDid(false);

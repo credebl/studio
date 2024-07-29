@@ -6,6 +6,7 @@ import BackButton from '../../commonComponents/backbutton';
 import { getFromLocalStorage } from '../../api/Auth';
 import { storageKeys } from '../../config/CommonConstant';
 import { useEffect, useState } from 'react';
+import { DidMethod } from '../../common/enums';
 
 const IssueDashboard = () => {
 
@@ -13,7 +14,7 @@ const IssueDashboard = () => {
 
 const orgData =async () =>{
 	const orgDid = await getFromLocalStorage(storageKeys.ORG_DID);	
-	if(orgDid.includes('polygon') || orgDid.includes('web') || orgDid.includes('key')){
+	if(orgDid.includes(DidMethod.POLYGON) || orgDid.includes(DidMethod.WEB) || orgDid.includes(DidMethod.KEY)){
 		setisW3cDid(true)
 	} else {
 		setisW3cDid(false)

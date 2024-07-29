@@ -195,7 +195,7 @@ if (existingData && existingData.formData) {
         });
 
         transformedData.protocolVersion = "v2";
-        transformedData.credentialType = "jsonld";
+        transformedData.credentialType = CredentialType.JSONLD;
     }
 	
 
