@@ -365,7 +365,7 @@ const VerificationCred = () => {
 			<div className="mb-4 col-span-full xl:mb-2">
 				<div className="flex justify-between items-center">
 					<BreadCrumbs />
-					<BackButton path={pathRoutes.back.verification.verification} />
+					<BackButton path={pathRoutes.organizations.verification.schema} />
 				</div>
 				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 					Verification
