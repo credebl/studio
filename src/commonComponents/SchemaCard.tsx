@@ -55,7 +55,14 @@ const SchemaCard =  (props: IProps) => {
               <span className="">
                 {props.schemaName}
               </span>
-
+              {props.w3cSchema && (
+                <span
+                  style={{ display: 'block' }}
+                  className="ml-2 bg-blue-100 text-gray-800 text-sm font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
+                >
+                  W3C
+                </span>
+              )}
             </span>
           </h5>
          

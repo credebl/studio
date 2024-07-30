@@ -24,6 +24,7 @@ import EcosystemProfileCard from '../../../commonComponents/EcosystemProfileCard
 import ConfirmationModal from '../../../commonComponents/ConfirmationModal';
 import { DidMethod, SchemaType, SchemaTypeValue } from '../../../common/enums';
 import { getOrganizationById } from '../../../api/organization';
+import React from 'react';
 
 const options = [
 	{
@@ -384,7 +385,6 @@ if (
 } else if (schemaTypeValues === SchemaTypeValue.INDY) {
   filteredOptions = options;
 }
-
 
 	return (
 		<div className="pt-2">
