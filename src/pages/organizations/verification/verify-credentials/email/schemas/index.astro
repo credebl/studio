@@ -1,6 +1,6 @@
 ---
 import LayoutSidebar from "../../../../../../app/LayoutSidebar.astro";
-import EmailSchemaSelection from "../../../../../../components/Verification/EmailSchemaSelection";
+// import EmailSchemaSelection from "../../../../../../components/Verification/EmailSchemaSelection";
 import SchemaSelection from "../../../../../../components/Verification/SchemaSelection";
 import { pathRoutes } from "../../../../../../config/pathRoutes";
 import { checkUserSession } from "../../../../../../utils/check-session";
@@ -13,5 +13,5 @@ if (!response.authorized) {
 ---
 
 <LayoutSidebar notFoundPage={!response.permitted}>
-	<EmailSchemaSelection client:load/>
+	<!-- <EmailSchemaSelection client:load/> -->
 </LayoutSidebar>
