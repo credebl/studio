@@ -12,7 +12,7 @@ import type { AxiosResponse } from 'axios';
 import { getFromLocalStorage } from '../../api/Auth';
 import { getSchemaCredDef } from '../../api/BulkIssuance';
 import { storageKeys, apiStatusCodes } from '../../config/CommonConstant';
-import type { IAttributes, ICredentials, IEmailCredentialData, IIssueAttributes } from './interface';
+import type { IAttributes, ICredentials, IEmailCredentialData, IIssueAttributes, ITransformedData } from './interface';
 import { Field, FieldArray, Form, Formik } from 'formik';
 import CustomSpinner from '../CustomSpinner';
 import { issueOobEmailCredential } from '../../api/issuance';
@@ -82,18 +82,25 @@ const EmailIssuance = () => {
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const credentialDefs = data.data;
 
-	const options = credentialDefs.map((credDef: ICredentials) => ({
-		value: schemaType===SchemaTypes.schema_INDY ? credDef.credentialDefinitionId : credDef.schemaVersion,
-		label: `${credDef.schemaName} [${credDef.schemaVersion}]${currentSchemaType === SchemaTypes.schema_INDY ? ` - (${credDef.credentialDefinition})` : ''}`,
-		schemaName: credDef.schemaName,
-		schemaVersion: credDef.schemaVersion,
-		credentialDefinition: credDef.credentialDefinition,
-		schemaIdentifier:credDef.schemaIdentifier,
-		credentialDefinitionId:credDef.credentialDefinitionId,
+	const options = credentialDefs.map(({
+		schemaName,
+		schemaVersion,
+		credentialDefinition,
+		credentialDefinitionId,
+		schemaIdentifier,
+		schemaAttributes
+	} : ICredentials) => ({
+		value: schemaType===SchemaTypes.schema_INDY ? credentialDefinitionId : schemaVersion,
+		label: `${schemaName} [${schemaVersion}]${currentSchemaType === SchemaTypes.schema_INDY ? ` - (${credentialDefinition})` : ''}`,
+		schemaName: schemaName,
+		schemaVersion: schemaVersion,
+		credentialDefinition: credentialDefinition,
+		schemaIdentifier: schemaIdentifier,
+		credentialDefinitionId: credentialDefinitionId,
 		schemaAttributes:
-			credDef.schemaAttributes &&
-			typeof credDef.schemaAttributes === 'string' &&
-			JSON.parse(credDef.schemaAttributes),
+			schemaAttributes &&
+			typeof schemaAttributes === 'string' &&
+			JSON.parse(schemaAttributes),
 	}));
 	setCredentialOptions(options);
 			
@@ -135,31 +142,32 @@ const EmailIssuance = () => {
 		const existingData = userData;
 		const organizationDid = await getFromLocalStorage(storageKeys.ORG_DID);
 		
-	let transformedData: any = { credentialOffer: [] };
-	
-if (existingData && existingData.formData) {
-    if (schemaType === SchemaTypes.schema_INDY) {
-        existingData?.formData.forEach((entry: { email: any; attributes: any[] }) => {
-            const transformedEntry = { emailId: entry.email, attributes: [] };
-            entry.attributes.forEach((attribute) => {
-                const transformedAttribute = {
-                    value: String(attribute.value || ''),
-                    name: attribute.name || '',
-                    isRequired: attribute.isRequired,
-                };
-                transformedEntry.attributes.push(transformedAttribute);
-            });
-            transformedData.credentialOffer.push(transformedEntry);
-        });
-        transformedData.credentialDefinitionId = credDefId;
+	let transformedData: ITransformedData = { credentialOffer: [] };
+
+	if (existingData && existingData.formData) {
+		if (schemaType === SchemaTypes.schema_INDY) {
+			existingData.formData.forEach((entry: { email: string; attributes: IIssueAttributes[] }) => {
+				
+				const transformedEntry = { emailId: entry.email, attributes: [] };
+				entry.attributes.forEach((attribute) => {
+					const transformedAttribute = {
+						value: String(attribute.value || ''),
+						name: attribute.name || '',
+						isRequired: attribute.isRequired,
+					};
+					transformedEntry.attributes.push(transformedAttribute);
+				});
+				transformedData.credentialOffer.push(transformedEntry);
+			});
+			transformedData.credentialDefinitionId = credDefId;
 		
     } else if (schemaType=== SchemaTypes.schema_W3C) {
-        existingData.formData.forEach((entry: { email: any; credentialData: IEmailCredentialData; attributes:IIssueAttributes[] }) => {
+        existingData.formData.forEach((entry: { email: string; credentialData: IEmailCredentialData; attributes:IIssueAttributes[] }) => {
 			const credentialOffer = {
 				emailId: entry.email,
                 credential: {
 					"@context": [
-						"https://www.w3.org/2018/credentials/v1",
+						storageKeys.CREDENTIAL_CONTEXT_VALUE,
                         schemasIdentifier
                     ],
                     "type": [
@@ -461,7 +469,9 @@ if (existingData && existingData.formData) {
 																}}
 															 >
 																{(formikHandlers): JSX.Element => (
-																	<Form onSubmit={formikHandlers.handleSubmit}>
+																	<Form 
+																	onSubmit={formikHandlers.handleSubmit}
+																	>
 																		<FieldArray
 																			name="formData"
 																			render={(arrayHelpers: {

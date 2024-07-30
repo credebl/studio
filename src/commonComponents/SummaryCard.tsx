@@ -10,7 +10,7 @@ interface IProps {
   version: string;
   credDefId?: string;
   schemaId: string;
-  hideCredDefId: boolean;
+  hideCredDefId?: boolean;
 }
 
 const SummaryCard = ({ schemaName, version, credDefId, schemaId, hideCredDefId }: Readonly<IProps>) => {

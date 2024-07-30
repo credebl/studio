@@ -82,18 +82,25 @@ const BulkIssuance = () => {
 				const { data } = response as AxiosResponse;
 
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-					const credentialDefs = data.data;
+					const { data: credentialDefs } = data;
 
 					const options = credentialDefs.map(
-						(credDef: ICredentials) => ({
-							value: schemaType===SchemaTypes.schema_INDY ? credDef.credentialDefinitionId : credDef.schemaVersion,
-							label: `${credDef.schemaName} [${credDef.schemaVersion}]${currentSchemaType === SchemaTypes.schema_INDY ? ` - (${credDef.credentialDefinition})` : ''}`,
-							schemaName: credDef.schemaName,
-							schemaVersion: credDef.schemaVersion,
-							credentialDefinition: credDef.credentialDefinition,
-		                    credentialDefinitionId:credDef.credentialDefinitionId,
-							schemaIdentifier:credDef.schemaIdentifier,
-							schemaAttributes: credDef.schemaAttributes && typeof credDef.schemaAttributes === "string" && JSON.parse(credDef.schemaAttributes)
+						({
+							schemaName,
+							schemaVersion,
+							credentialDefinition,
+							credentialDefinitionId,
+							schemaIdentifier,
+							schemaAttributes
+						}: ICredentials) => ({
+							value: schemaType===SchemaTypes.schema_INDY ? credentialDefinitionId : schemaVersion,
+							label: `${schemaName} [${schemaVersion}]${currentSchemaType === SchemaTypes.schema_INDY ? ` - (${credentialDefinition})` : ''}`,
+							schemaName: schemaName,
+							schemaVersion: schemaVersion,
+							credentialDefinition: credentialDefinition,
+		                    credentialDefinitionId: credentialDefinitionId,
+							schemaIdentifier: schemaIdentifier,
+							schemaAttributes: schemaAttributes && typeof schemaAttributes === "string" && JSON.parse(schemaAttributes)
 						}),
 					);
 					setCredentialOptions(options);

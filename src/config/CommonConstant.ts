@@ -43,5 +43,6 @@ export const storageKeys = {
     ORG_DID:'did',
     SCHEMA_TYPE:'type',
     SELECT_ORG_IN_ECOSYSTEM: 'select_orgs_in_ecosystem',
-    ERROR_ORG_IN_ECOSYSTEM: 'error_orgs_in_ecosystem'
+    ERROR_ORG_IN_ECOSYSTEM: 'error_orgs_in_ecosystem',
+    CREDENTIAL_CONTEXT_VALUE: 'https://www.w3.org/2018/credentials/v1'
 }

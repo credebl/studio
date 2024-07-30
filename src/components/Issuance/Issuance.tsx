@@ -14,7 +14,7 @@ import { issueCredential } from '../../api/issuance';
 import { pathRoutes } from '../../config/pathRoutes';
 import { AlertComponent } from '../AlertComponent';
 import type {
-	Attribute,
+	IAttribute,
 	DataTypeAttributes,
 	IssuanceFormPayload,
 	SchemaDetails,
@@ -48,7 +48,7 @@ const IssueCred = () => {
 	const [issuanceLoader, setIssuanceLoader] = useState<boolean>(false);
 	const [failure, setFailure] = useState<string | null>(null);
 	const [schemaAttributesDetails, setSchemaAttributesDetails] = useState<
-		Attribute[]
+	IAttribute[]
 	>([]);
 	const [success, setSuccess] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
@@ -323,7 +323,7 @@ const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 						connectionId: item.connectionId,
 						credential: {
 							"@context": [
-								"https://www.w3.org/2018/credentials/v1",
+								storageKeys.CREDENTIAL_CONTEXT_VALUE,
 								w3cSchemaDetails.schemaId
 							],
 							"type": [
@@ -333,7 +333,7 @@ const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 							issuer: {
 								"id": w3cSchemaDetails.issuerDid
 							},
-							issuanceDate: "2019-10-12T07:20:50.52Z",
+							issuanceDate: new Date().toISOString(),
 							credentialSubject: item?.attributes?.reduce((acc, attr) => {
 								     if (attr.value === null && !attr.isRequired && typeof attr.value === 'number') {
 								         return acc;

@@ -77,7 +77,7 @@ export interface W3cSchemaDetails {
 	schemaName: string;
 	version: string;
 	schemaId: string;
-	w3cAttributes?: Attributes[];
+	w3cAttributes?: IAttributesData[];
 	issuerDid?:string;
 }
 
@@ -86,25 +86,23 @@ export interface IGetSchemaData {
 		schemaName: string;
 		version: string;
 		issuerDid: string;
-		attributes: Attribute[];
+		attributes: IAttribute[];
 		created: string;
 	}
 	
-	export interface Attribute {
+export interface IAttribute {
 		attributeName: string;
 		schemaDataType: string;
 		displayName: string;
 		isRequired: boolean;
-	}
-
-
+}
 
 export interface SelectedUsers {
 	userName: string;
 	connectionId: string;
 }
 
-export interface Attributes {
+export interface IAttributesData {
 	isRequired: boolean;
 	name: string;
 	value: string;
@@ -114,7 +112,7 @@ export interface Attributes {
 export interface ICredentialdata {
 	connectionId: string;
 	options?:IOptions;
-	attributes?: Attributes[];
+	attributes?: IAttributesData[];
 	credential?:IW3cPayload;
 }
 export interface IOptions {
@@ -123,29 +121,31 @@ export interface IOptions {
 }
 
 export interface IEmailCredentialData{
-	attributes?: Attributes[];
+	attributes?: IAttributesData[];
 	credential?:IW3cPayload;
 }
 
+	export interface IW3cPayload {
+		"@context": string[];
+		type: string[];
+		issuer: IIssuerData;
+		issuanceDate: string;
+		credentialSubject:ICredentialSubjectData;
+	}
 
-export interface IW3cPayload {
-        "@context": string[];
-        type: string[];
-        issuer: {
-            id: string;
-        };
-        issuanceDate: string;
-        credentialSubject: {
-			id: string;
-			[key: string]: any; 
-        };
-}
-export interface IssuanceFormPayload {
-	userName?: string;
-	credentialData: ICredentialdata[];
-	credentialDefinitionId?: string;
-	orgId: string;
-}
+	export interface ICredentialSubjectData  {
+		id: string;
+		[key: string]: any; 
+	};
+	export interface IIssuerData {
+		id: string;
+	}
+	export interface IssuanceFormPayload {
+		userName?: string;
+		credentialData: ICredentialdata[];
+		credentialDefinitionId?: string;
+		orgId: string;
+	}
 
 export interface W3cIssuanceFormPayload {
 	userName?: string;
@@ -159,16 +159,28 @@ export interface DataTypeAttributes {
 	attributeName:string
 }
 
-export interface Attribute {
-	isRequired: boolean;
-    attributeName: string;
-    schemaDataType: string;
-    displayName: string;
-}
-
 export interface IIssueAttributes {
 	isRequired: boolean;
 	name: string;
 	value: string;
 	dataType: string;
 }
+
+export interface ICredentialOffer {
+	emailId: string;
+	attributes?: IAttributesData[];
+	credential?: IW3cPayload;
+	options?:IOptionData;
+  }
+
+  export interface IOptionData  {
+	proofType: string;
+	proofPurpose: string;
+  };
+  
+  export interface ITransformedData {
+	credentialOffer: ICredentialOffer[];
+	credentialDefinitionId?: string;
+	protocolVersion?: string;
+	credentialType?: string;
+  }

@@ -6,23 +6,9 @@ import React, { useEffect } from 'react';
 import { pathRoutes } from '../config/pathRoutes';
 import { getFromLocalStorage } from '../api/Auth';
 import { storageKeys } from '../config/CommonConstant';
+import type { ISchemaCardProps } from './interface';
 
-interface IProps {
-  className?: string,
-  schemaName: string,
-  version: string,
-  schemaId: string,
-  issuerDid: string,
-  attributes: [],
-  created: string,
-  isClickable?: boolean
-  onClickCallback: (schemaId: string, attributes: string[], issuerDid: string, created: string) => void;
-  onClickW3cIssue?: (schemaId: string, schemaName: string, version: string, issuerDid: string, attributes: [], created: string) => void;
-  limitedAttributes?: boolean
-  w3cSchema:boolean
-  noLedger:boolean
-}
-const SchemaCard =  (props: IProps) => {
+const SchemaCard =  (props: ISchemaCardProps) => {
   const orgDidDetails = async ()=>{
     const orgDid = await getFromLocalStorage(storageKeys.ORG_DID)
   }
