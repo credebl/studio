@@ -9,14 +9,14 @@ const VerificationDashboard = () => {
 	const options = [
 		{
 			heading: 'Connection',
-			description:
-				'Verify credential(s) by selecting existing connections',
+			description: 'Verify credential(s) by selecting existing connections',
 			path: pathRoutes.organizations.verification.schema,
 		},
 		{
 			heading: 'Email',
 			description: 'Verify credential(s) by entering email ID for specific user',
-			path: pathRoutes.organizations.verification.email,
+			// path: pathRoutes.organizations.verification.email,
+			path: null
 		},
 		{
 			heading: 'Bulk',
@@ -43,7 +43,11 @@ const VerificationDashboard = () => {
 					{options.map((option) => (
 						<Card
 							key={option.heading}
-							className={`custom-card group transform transition duration-500 ease-in-out ${option.path ? 'hover:scale-105 cursor-pointer' : 'cursor-not-allowed bg-gray-300 text-gray-500'} overflow-hidden overflow-ellipsis border border-gray-200 shadow-md ${option.path ? 'dark:hover:bg-primary-700 hover:bg-primary-700 dark:border-gray-600 dark:bg-gray-700' : 'hover:bg-gray-600 dark:border-gray-600 dark:bg-gray-700'}`}
+							className={` ${
+								option.path
+									? 'custom-card group transform transition duration-500 ease-in-out overflow-hidden overflow-ellipsis border border-gray-200 shadow-md hover:scale-105 cursor-pointer dark:hover:bg-primary-700 hover:bg-primary-700'
+									: 'cursor-not-allowed bg-gray-300 text-gray-500 dark:border-gray-600 dark:bg-gray-700'
+							}`}
 							style={{
 								maxHeight: '100%',
 								overflow: 'auto',
@@ -53,14 +57,20 @@ const VerificationDashboard = () => {
 							onClick={() => option.path && (window.location.href = option.path)}
 						>
 							<div
-								className={`flex items-center min-[401px]:flex-nowrap flex-wrap ${option.path ? 'group-hover:text-white' : ''}`}
+								className={`flex items-center min-[401px]:flex-nowrap flex-wrap ${
+									option.path ? 'group-hover:text-white' : ''
+								}`}
 								style={{ color: 'inherit' }}
 							>
 								<div className="ml-4">
-									<h5 className={`text-2xl font-semibold ${option.path ? 'text-primary-700 dark:text-white' : 'text-gray-500' } pb-2`}>
+									<h5 className={`text-2xl font-semibold ${
+										option.path ? 'text-primary-700 dark:text-white group-hover:text-white' : 'text-gray-500'
+									} pb-2`}>
 										{option.heading}
 									</h5>
-									<p className={`text-sm ${option.path ? 'text-gray-700 dark:text-white' : 'text-gray-500'}`}>
+									<p className={`text-sm ${
+										option.path ? 'text-gray-700 dark:text-white group-hover:text-white' : 'text-gray-500'
+									}`}>
 										{option.description}
 									</p>
 								</div>
@@ -74,4 +84,3 @@ const VerificationDashboard = () => {
 };
 
 export default VerificationDashboard;
-
