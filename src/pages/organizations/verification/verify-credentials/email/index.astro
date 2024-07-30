@@ -1,6 +1,6 @@
 ---
 import LayoutSidebar from '../../../../../app/LayoutSidebar.astro';
-import EmailVerification from '../../../../../components/Verification/EmailVerification';
+// import EmailVerification from '../../../../../components/Verification/EmailVerification';
 import { pathRoutes } from '../../../../../config/pathRoutes';
 import { checkUserSession } from '../../../../../utils/check-session';
 
@@ -12,5 +12,5 @@ if (!response.authorized) {
 ---
 
 <LayoutSidebar notFoundPage={!response.permitted}>
-	<EmailVerification client:visible />
+	<!-- <EmailVerification client:visible /> -->
 </LayoutSidebar>
