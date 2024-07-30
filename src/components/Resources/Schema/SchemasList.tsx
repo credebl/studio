@@ -16,14 +16,14 @@ import RoleViewButton from '../../RoleViewButton';
 import SchemaCard from '../../../commonComponents/SchemaCard';
 import type { SchemaDetails } from '../../Verification/interface';
 import SearchInput from '../../SearchInput';
-import { getFromLocalStorage } from '../../../api/Auth';
+import { getFromLocalStorage, setToLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
 import { getOrganizationById } from '../../../api/organization';
 import { checkEcosystem } from '../../../config/ecosystem';
 import type { ICheckEcosystem } from '../../../config/ecosystem';
 
 import { Create, SchemaEndorsement } from '../../Issuance/Constant';
-import { SchemaType } from '../../../common/enums';
+import { DidMethod, SchemaType } from '../../../common/enums';
 
 const SchemaList = (props: {
 	schemaSelectionCallback: (
@@ -48,6 +48,8 @@ const SchemaList = (props: {
 	const [totalItem, setTotalItem] = useState(0);
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [searchValue, setSearchValue] = useState('');
+	const [w3cSchema,setW3cSchema]= useState<boolean>(false);
+	const [isNoLedger,setisNoLedger]= useState<boolean>(false);	
 
 	const getSchemaList = async (
 		schemaListAPIParameter: GetAllSchemaListParameter,
@@ -66,7 +68,8 @@ const SchemaList = (props: {
 					organizationId,
 				);
 			}
-			const { data } = schemaList as AxiosResponse;
+
+			const { data } = schemaList as AxiosResponse;	
 			if (schemaList === 'Schema records not found') {
 				setLoading(false);
 				setSchemaList([]);
@@ -101,7 +104,6 @@ const SchemaList = (props: {
 	useEffect(() => {
 		getSchemaList(schemaListAPIParameter, false);
 	}, [schemaListAPIParameter, allSchemaFlag]);
-
 
 	const onSearch = async (
 		event: ChangeEvent<HTMLInputElement>,
@@ -161,8 +163,20 @@ const SchemaList = (props: {
 		const response = await getOrganizationById(orgId);
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			const did = data?.data?.org_agents?.[0]?.orgDid;
+			
 			if (data?.data?.org_agents && data?.data?.org_agents?.length > 0) {
 				setWalletStatus(true);
+			}
+			
+			if (did.includes(DidMethod.POLYGON) || did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
+				setW3cSchema(true);
+			}
+			if (did.includes(DidMethod.INDY)) {
+				setW3cSchema(false);
+			}
+			if (did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
+				setisNoLedger(true);
 			}
 		}
 		setLoading(false);
@@ -189,6 +203,7 @@ const SchemaList = (props: {
 	const emptyListBtn = isEcosystemData?.isEcosystemMember
 		? { title: 'Schema Endorsement', svg: <SchemaEndorsement/> }
 		: { title: 'Create Schema', svg: <Create/> };
+
 	return (
 		<div className="px-4 pt-2">
 			<div className="mb-4 col-span-full xl:mb-2">
@@ -266,6 +281,9 @@ const SchemaList = (props: {
 											attributes={element['attributes']}
 											created={element['createDateTime']}
 											onClickCallback={schemaSelectionCallback}
+											w3cSchema={w3cSchema}
+											noLedger={isNoLedger}
+											
 										/>
 									</div>
 								))}

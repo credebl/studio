@@ -1,3 +1,5 @@
+import type { SchemaTypeValue } from "../../../../common/enums";
+
 export interface GetAllSchemaListParameter {
   itemPerPage: number,
   page: number,
@@ -64,7 +66,9 @@ export interface FieldName {
 export interface schemaDetails {
   schemaName: string;
   schemaVersion: string;
-  attributes: IAttributes[]
+  schemaType?:SchemaTypeValue;
+  attributes: IAttributes[];
+  description?:string;
   orgId: string;
 }
 
@@ -92,6 +96,8 @@ export interface IAttributes {
 export interface IFormData {
 	schemaName: string;
 	schemaVersion: string;
+  schemaType?:SchemaTypeValue;
+  description?:string;
 	attribute: IAttributes[];
 }
 

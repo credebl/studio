@@ -33,7 +33,7 @@ export enum ProofRequestStateUserText {
 
 export enum SchemaType {
     INDY = 'indy',
-    W3C = 'w3c'
+    W3C = 'json'
 }
 export enum IssueCredentialUserText {
 	offerSent = 'Offered',
@@ -124,4 +124,10 @@ export enum Ledgers {
 	INDY = 'indy',
 	POLYGON = 'polygon',
 	NO_LEDGER = 'noLedger'
+}
+
+export enum SchemaTypeValue {
+	INDY = 'indy',
+	POLYGON = 'polygon',
+	NO_LEDGER = 'no_ledger'
 }
