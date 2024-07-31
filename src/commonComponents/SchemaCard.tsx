@@ -2,25 +2,30 @@ import { Button, Card } from 'flowbite-react';
 import { dateConversion } from '../utils/DateConversion';
 import DateTooltip from '../components/Tooltip';
 import CopyDid from './CopyDid';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { pathRoutes } from '../config/pathRoutes';
+import { getFromLocalStorage } from '../api/Auth';
+import { storageKeys } from '../config/CommonConstant';
+import type { ISchemaCardProps } from './interface';
 
-interface IProps {
-  className?: string,
-  schemaName: string,
-  version: string,
-  schemaId: string,
-  issuerDid: string,
-  attributes: [],
-  created: string,
-  isClickable?: boolean
-  onClickCallback: (schemaId: string, attributes: string[], issuerDid: string, created: string) => void;
-  limitedAttributes?: boolean
-  w3cSchema:boolean
-  noLedger:boolean
-}
-const SchemaCard = (props: IProps) => {
-
+const SchemaCard =  (props: ISchemaCardProps) => {
+  const orgDidDetails = async ()=>{
+    const orgDid = await getFromLocalStorage(storageKeys.ORG_DID)
+  }
+  useEffect(() => {
+		orgDidDetails();
+	}, []);
+  
   const attributes = props.limitedAttributes !== false ? props?.attributes?.slice(0, 3) : props?.attributes
+  
+
+  const handleIssueClick = () => {
+    if (props.onClickW3cIssue) {
+      props.onClickW3cIssue(props.schemaId, props.schemaName, props.version, props.issuerDid, props.attributes, props.created);
+    }
+  };
+
+
   return (
     <Card  onClick={() => {
       if (!props.w3cSchema) {
@@ -36,14 +41,6 @@ const SchemaCard = (props: IProps) => {
               <span className="">
                 {props.schemaName}
               </span>
-              {props.w3cSchema && (
-                <span
-                  style={{ display: 'block' }}
-                  className="ml-2 bg-blue-100 text-gray-800 text-sm font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
-                >
-                  W3C
-                </span>
-              )}
             </span>
           </h5>
          
@@ -51,11 +48,23 @@ const SchemaCard = (props: IProps) => {
             Version: {props.version}
           </p>
         </div>
-        <div className='float-right ml-auto '>
+        <div className='float-right ml-auto flex'>
+          <div>
+          {props.w3cSchema && (
+                <span
+                  style={{ display: 'block' }}
+                  className="ml-2 bg-blue-100 text-gray-800 text-sm font-medium px-2.5 py-0.5 mr-2 rounded dark:bg-blue-900 dark:text-blue-300"
+                >
+                  W3C
+                </span>
+              )}
+          </div>
+        
           <div className='dark:text-white'>
             <DateTooltip date={props.created}>
               Created: {dateConversion(props.created)}
-            </DateTooltip>          </div>
+            </DateTooltip>          
+            </div>
         </div>
       </div>
       <div className="min-w-0 flex-1">
@@ -99,9 +108,14 @@ const SchemaCard = (props: IProps) => {
             )}
           </div>
         </div>
-        {props.w3cSchema && (
+        <div className='mt-4'>
+          {props.w3cSchema && (
           <div className="p-2">
             <Button
+          onClick={() => {
+            handleIssueClick();
+            window.location.href = pathRoutes.organizations.Issuance.issue;
+          }}
               type="submit"
               color='bg-primary-800'
               title='Initiate Credential Issuance'
@@ -112,13 +126,14 @@ const SchemaCard = (props: IProps) => {
             >
               <div className='mr-2'>
                 <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 23 23">
-                  <path fill="#1F4EAD" fill-rule="evenodd" d="M21 21H2V2h9.5V0H2.556A2.563 2.563 0 0 0 0 2.556v17.888A2.563 2.563 0 0 0 2.556 23h17.888A2.563 2.563 0 0 0 23 20.444V11.5h-2V21ZM14.056 0v2H19.5l-13 13 1 1.5L21 3v5.944h2V0h-8.944Z" clip-rule="evenodd" />
+                  <path fill="#1F4EAD" fillRule="evenodd" d="M21 21H2V2h9.5V0H2.556A2.563 2.563 0 0 0 0 2.556v17.888A2.563 2.563 0 0 0 2.556 23h17.888A2.563 2.563 0 0 0 23 20.444V11.5h-2V21ZM14.056 0v2H19.5l-13 13 1 1.5L21 3v5.944h2V0h-8.944Z" clipRule="evenodd" />
                 </svg>
               </div>
               Issue
             </Button>
           </div>
         )}
+        </div>
       </div>
     </Card>
   )

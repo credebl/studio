@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import type { ChangeEvent } from 'react';
-import { IssueCredential, IssueCredentialUserText } from '../../common/enums';
+import { DidMethod, IssueCredential, IssueCredentialUserText } from '../../common/enums';
 
 import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
@@ -36,6 +36,7 @@ const CredentialList = () => {
 	const [error, setError] = useState<string | null>(null);
 	const [issuedCredList, setIssuedCredList] = useState<TableData[]>([]);
 	const [walletCreated, setWalletCreated] = useState(false);
+	const [isW3c, setIsW3c] = useState(false);
 	const [listAPIParameter, setListAPIParameter] =
 		useState<IConnectionListAPIParameter>(initialPageState);
 	const [totalItem, setTotalItem] = useState(0);
@@ -195,9 +196,20 @@ const CredentialList = () => {
 		});
 	};
 
-	const schemeSelection = () => {
-		window.location.href = pathRoutes.organizations.Issuance.issue;
-	};
+	const schemeSelection = async () => {
+		const orgDid = await getFromLocalStorage(storageKeys.ORG_DID);
+		if (
+		  orgDid.includes(DidMethod.POLYGON) ||
+		  orgDid.includes(DidMethod.KEY) ||
+		  orgDid.includes(DidMethod.WEB)
+		) {
+		  setIsW3c(true);
+		  window.location.href = pathRoutes.organizations.Issuance.schema;
+		} else if (orgDid.includes(DidMethod.INDY)) {
+		  setIsW3c(false);
+		  window.location.href = pathRoutes.organizations.Issuance.issue;
+		}
+	  };
 
 	const refreshPage = () => {
 		getIssuedCredDefs(listAPIParameter);

@@ -298,7 +298,7 @@ const DeleteOrganizations = () => {
     },
     {
         title: "Organization wallet",
-        description: "",
+        description: "Organization Wallet is the data of your created DIDs.",
         count: isWalletPresent ? 1 : 0,
         deleteFunc: deleteFunctions.deleteOrgWallet,
         confirmMessage: "Are you sure you want to delete organization wallet",
@@ -311,7 +311,7 @@ const DeleteOrganizations = () => {
       },
     {
       title: "Organization",
-      description: "Organization",
+      description: "Organization is the collection of your users, schemas, cred-defs, connections and wallet.",
       deleteFunc: deleteFunctions.deleteOrganizations,
       confirmMessage:<text>{`Are you sure you want to delete organization `}<text className="font-bold">"{orgName}"</text></text>,     
       isDisabled: isWalletPresent || ecosystemUserRoles.includes(EcosystemRoles.ecosystemLead)

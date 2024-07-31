@@ -30,17 +30,17 @@ export const pathRoutes = {
 		createSchema: '/organizations/schemas/create',
 		deleteOrganization:'/organizations/delete-organizations',
 
-
-
 		viewSchema: '/organizations/schemas/view-schema',
 		Issuance: {
 			issue: '/organizations/credentials/issue',
 			schema: '/organizations/credentials/issue/schemas',
 			credDef: '/organizations/credentials/issue/schemas/cred-defs',
+			connection:'/organizations/credentials/issue/connections',
 			connections:
 				'/organizations/credentials/issue/schemas/cred-defs/connections',
 			issuance:
 				'/organizations/credentials/issue/schemas/cred-defs/connections/issuance',
+			w3cIssuance:'/organizations/credentials/issue/connections/issuance',
 			history: '/organizations/credentials/issue/bulk-issuance/history',
 			details: '/organizations/credentials/issue/bulk-issuance/history/details',
 			bulkIssuance: '/organizations/credentials/issue/bulk-issuance',
