@@ -2,6 +2,7 @@ import { Card } from 'flowbite-react';
 import { dateConversion } from '../utils/DateConversion';
 import DateTooltip from '../components/Tooltip';
 import CopyDid from './CopyDid';
+import CustomCheckbox from './CustomCheckbox'; 
 import React from 'react';
 
 interface IProps {
@@ -12,7 +13,8 @@ interface IProps {
   issuerDid: string,
   attributes: [],
   created: string,
-  isClickable?: boolean
+  isClickable?: boolean,
+  showCheckbox?: boolean,
   onClickCallback: (schemaId: string, attributes: string[], issuerDid: string, created: string) => void;
   limitedAttributes?: boolean
 }
@@ -39,7 +41,8 @@ const SchemaCard = (props: IProps) => {
           <div className='dark:text-white'>
             <DateTooltip date={props.created}>
               Created: {dateConversion(props.created)}
-            </DateTooltip>          </div>
+            </DateTooltip>          
+          </div>
         </div>
       </div>
       <div className="min-w-0 flex-1">
@@ -52,7 +55,7 @@ const SchemaCard = (props: IProps) => {
         <p className="truncate dark:text-white break-all flex">
           <span className="font-semibold mr-2">Issuer DID: </span>
           <span className='flex w-issuer-id'>
-           <CopyDid value={props.issuerDid || ""} className='truncate font-courier mt-[2px]' />
+            <CopyDid value={props.issuerDid || ""} className='truncate font-courier mt-[2px]' />
           </span>
         </p>
         <p className="truncate dark:text-white break-all flex">
@@ -89,6 +92,11 @@ const SchemaCard = (props: IProps) => {
           </li>
         </ul>
       </div>
+
+      {props?.showCheckbox && (
+        <CustomCheckbox showCheckbox={props.showCheckbox} />
+      )}
+
     </Card>
   )
 }

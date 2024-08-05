@@ -3,10 +3,10 @@ import React from "react";
 import { removeFromLocalStorage, setToLocalStorage } from "../../api/Auth";
 import { storageKeys } from "../../config/CommonConstant";
 import { pathRoutes } from "../../config/pathRoutes";
-import SchemaList from "../Resources/Schema/SchemasList";
 import type { SchemaDetails } from "./interface";
+import VerificationSchemasList from "./VerificationSchemasList";
 
-const SchemaSelection = () => {
+const EmailSchemaSelection = () => {
 
 	const schemaSelectionCallback = async (schemaId: string, schemaDetails:SchemaDetails) => {
 		await setToLocalStorage(storageKeys.SCHEMA_ID, schemaId)
@@ -16,8 +16,8 @@ const SchemaSelection = () => {
 	}
 
 	return (
-		<SchemaList schemaSelectionCallback={schemaSelectionCallback} />
+		<VerificationSchemasList schemaSelectionCallback={schemaSelectionCallback} />
 	)
 }
 
-export default SchemaSelection
+export default EmailSchemaSelection;

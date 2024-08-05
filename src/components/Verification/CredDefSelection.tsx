@@ -124,7 +124,7 @@ const CredDefSelection = () => {
 			<div className="mb-4 col-span-full xl:mb-2">
 			<div className="flex justify-between items-center">
 					<BreadCrumbs />
-					<BackButton path={pathRoutes.back.verification.schemas}/>
+					<BackButton path={pathRoutes.organizations.verification.email}/>
 				</div>
 				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
 					Schema
@@ -137,7 +137,10 @@ const CredDefSelection = () => {
 						<CustomSpinner/>
 					</div>
 					: <div className="m-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap4">
-						<SchemaCard className="col-span-1 sm:col-span-2 md:col-span-1" schemaName={schemaState?.schemaName} version={schemaState?.version} schemaId={schemaDetailsState.schemaId} issuerDid={schemaDetailsState.issuerDid} attributes={schemaDetailsState.attributes} created={schemaDetailsState.createdDateTime}
+						<SchemaCard className="col-span-1 sm:col-span-2 md:col-span-1" schemaName={schemaState?.schemaName} version={schemaState?.version} schemaId={schemaDetailsState.schemaId} issuerDid={schemaDetailsState.issuerDid} attributes={schemaDetailsState.attributes} created={schemaDetailsState.createdDateTime} 
+						showCheckbox={false}
+
+
 							onClickCallback={schemaSelectionCallback} isClickable={false} />
 					</div>}
 
@@ -158,7 +161,9 @@ const CredDefSelection = () => {
 			<DataTable header={header} data={credDefList} loading={loading} callback={() => { }}></DataTable>
 			<div>
 				<Button onClick={() => {
-					window.location.href = `${pathRoutes.organizations.verification.connections}`
+										window.location.href = `${pathRoutes.organizations.verification.connections}`
+
+					// window.location.href = `${pathRoutes.organizations.verification.attributes}`
 				}}
 					className='text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mt-2 ml-auto'
 				><svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" viewBox="0 0 24 24">

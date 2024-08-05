@@ -210,3 +210,8 @@ ul.timelinestatic {
 .w-issuer-id {
     width: calc(100% - 5.6rem);
 }
+
+#default-checkbox {
+	border:#1f4ead;
+    border-width: 2rem;
+}
