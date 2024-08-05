@@ -30,6 +30,7 @@ export const storageKeys = {
     SELECTED_CONNECTIONS: 'selected_connections',
 	SCHEMA_ID:'schema_id',
     SCHEMA_ATTR:'schema_attr',
+    W3C_SCHEMA_DETAILS:'schemaDetails',
 	CRED_DEF_ID:'cred_def_id',
     SCHEMA_DID: 'schema_did',
     LOGIN_USER_EMAIL: 'login_user_email',
@@ -40,6 +41,9 @@ export const storageKeys = {
 	SOCKET_ID: "socket_id",
 	LEDGER_ID: "ledger_id", 
 	ORG_INFO:'organization_Info',
+    ORG_DID:'did',
+    SCHEMA_TYPE:'type',
     SELECT_ORG_IN_ECOSYSTEM: 'select_orgs_in_ecosystem',
-    ERROR_ORG_IN_ECOSYSTEM: 'error_orgs_in_ecosystem'
+    ERROR_ORG_IN_ECOSYSTEM: 'error_orgs_in_ecosystem',
+    CREDENTIAL_CONTEXT_VALUE: 'https://www.w3.org/2018/credentials/v1'
 }

@@ -9,7 +9,6 @@ import { getHeaderConfigs } from "../config/GetHeaderConfigs";
 export const getAllSchemas = async ({itemPerPage, page, allSearch }: GetAllSchemaListParameter, schemaType?: string) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const ledgerId = await getFromLocalStorage(storageKeys.LEDGER_ID)
-
   const details = {
 		url: `${apiRoutes.Platform.getAllSchemaFromPlatform}?pageSize=${itemPerPage}&searchByText=${allSearch}&pageNumber=${page}&ledgerId=${ledgerId}&schemaType=${schemaType}`,
     config: {

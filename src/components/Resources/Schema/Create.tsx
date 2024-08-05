@@ -22,7 +22,8 @@ import type { ICheckEcosystem} from '../../../config/ecosystem';
 import { createSchemaRequest } from '../../../api/ecosystem';
 import EcosystemProfileCard from '../../../commonComponents/EcosystemProfileCard';
 import ConfirmationModal from '../../../commonComponents/ConfirmationModal';
-import { SchemaType } from '../../../common/enums';
+import { DidMethod, SchemaType, SchemaTypeValue } from '../../../common/enums';
+import { getOrganizationById } from '../../../api/organization';
 import React from 'react';
 
 const options = [
@@ -60,6 +61,8 @@ const CreateSchema = () => {
 	});
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [loading, setLoading] = useState<boolean>(false);
+    const [schemaTypeValues, setSchemaTypeValues]= useState<SchemaTypeValue>()
+	const [type, setType] = useState<SchemaType>();
 
 	const initFormData: IFormData = {
 		schemaName: '',
@@ -85,7 +88,7 @@ const CreateSchema = () => {
 			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 			setOrgId(orgId);
 		})();
-
+		fetchOrganizationDetails();
 		checkEcosystemData();
 	}, []);
 
@@ -106,14 +109,53 @@ const CreateSchema = () => {
 		return true;
 	};
 
+	const fetchOrganizationDetails = async () => {
+		setLoading(true);
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		const response = await getOrganizationById(orgId as string);
+		const { data } = response as AxiosResponse;
+
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			const did = data?.data?.org_agents?.[0]?.orgDid;
+			if (did) {
+				if (did.includes(DidMethod.INDY)) {
+					setSchemaTypeValues(SchemaTypeValue.INDY);				
+					setType(SchemaType.INDY);
+				} else if (did.includes(DidMethod.POLYGON)) {
+					setType(SchemaType.W3C);
+					setSchemaTypeValues(SchemaTypeValue.POLYGON);				
+				}
+				else if (did.includes(DidMethod.KEY)) {
+					setType(SchemaType.W3C);
+					setSchemaTypeValues(SchemaTypeValue.NO_LEDGER);				
+				}
+				else if (did.includes(DidMethod.WEB)) {
+					setType(SchemaType.W3C);
+					setSchemaTypeValues(SchemaTypeValue.NO_LEDGER);				
+				}
+			}
+		} else {
+			setFailure(response as string);
+		}
+		setLoading(false);
+	};
+
+
 	const submit = async (values: IFormData) => {
 		setCreateLoader(true);
+		if (!type) {
+			setFailure("Schema type not determined.");
+			setCreateLoader(false);
+			return;
+		}
 		const schemaFieldName: FieldName = {
-			type: SchemaType.INDY,
+			type: type,
 			schemaPayload: {
 				schemaName: values.schemaName,
+				schemaType:schemaTypeValues,
 				schemaVersion: values.schemaVersion,
 				attributes: values.attribute,
+				description:values.schemaName,
 				orgId: orgId,
 			}
 		};
@@ -331,6 +373,19 @@ const CreateSchema = () => {
 		}
 	};
 
+	let filteredOptions: any[] = [];
+
+if (
+  schemaTypeValues === SchemaTypeValue.POLYGON ||
+  schemaTypeValues === SchemaTypeValue.NO_LEDGER
+) {
+  filteredOptions = options.filter(
+    (opt) => opt.label === 'String' || opt.label === 'Number'
+  );
+} else if (schemaTypeValues === SchemaTypeValue.INDY) {
+  filteredOptions = options;
+}
+
 	return (
 		<div className="pt-2">
 			<div className="pl-6 mb-4 col-span-full xl:mb-2">
@@ -542,12 +597,12 @@ const CreateSchema = () => {
 																					disabled={!areFirstInputsSelected}
 																					className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 																				>
-																					{options.map((opt) => {
+																					{filteredOptions.map((opt) => {
 																						return (
 																							<option
 																								key={opt.value}
 																								className="py-2"
-																								value={opt.value}
+																							value={opt.value}
 																							>
 																								{opt.label}
 																							</option>

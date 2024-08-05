@@ -1,13 +1,34 @@
 import Dashboard from '../../commonComponents/Dashboard';
 import { pathRoutes } from '../../config/pathRoutes';
+import BackButton from '../../commonComponents/backbutton';
+import { getFromLocalStorage } from '../../api/Auth';
+import { storageKeys } from '../../config/CommonConstant';
+import { useEffect, useState } from 'react';
+import { DidMethod } from '../../common/enums';
 
-const IssuanceDashboard = () => {
+const IssueDashboard = () => {
+
+	const [isW3cDid, setisW3cDid] = useState<boolean>(false);
+
+const orgData =async () =>{
+	const orgDid = await getFromLocalStorage(storageKeys.ORG_DID);	
+	if(orgDid.includes(DidMethod.POLYGON) || orgDid.includes(DidMethod.WEB) || orgDid.includes(DidMethod.KEY)){
+		setisW3cDid(true)
+	} else {
+		setisW3cDid(false)
+	}
+}
+  useEffect(() => {
+	orgData();
+	}, []);
+
 	const options = [
-		{
+		{		
 			heading: 'Connection',
 			description:
-				'Issue credential(s) by selecting connection from existing users',
-			path: pathRoutes.organizations.Issuance.schema,
+			'Issue credential(s) by selecting connection from existing users',
+			path: isW3cDid ? pathRoutes.organizations.Issuance.connection : pathRoutes.organizations.Issuance.schema
+
 		},
 		{
 			heading: 'Email',
@@ -30,4 +51,4 @@ const IssuanceDashboard = () => {
 	);
 };
 
-export default IssuanceDashboard;
+export default IssueDashboard;
