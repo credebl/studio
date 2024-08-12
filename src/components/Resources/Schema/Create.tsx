@@ -94,7 +94,11 @@ const CreateSchema = () => {
 
 	const areAllInputsFilled = (formData: IFormData) => {
 		const { schemaName, schemaVersion, attribute } = formData;
-		if (!schemaName || !schemaVersion) {
+
+		if (
+			(type === SchemaType.INDY && (!schemaName || !schemaVersion)) ||
+			(type === SchemaType.W3C && !schemaName)
+		) {
 			return false;
 		}
 		const isAtLeastOneRequired = attribute.some((attr) => attr.isRequired);
@@ -125,11 +129,7 @@ const CreateSchema = () => {
 					setType(SchemaType.W3C);
 					setSchemaTypeValues(SchemaTypeValue.POLYGON);				
 				}
-				else if (did.includes(DidMethod.KEY)) {
-					setType(SchemaType.W3C);
-					setSchemaTypeValues(SchemaTypeValue.NO_LEDGER);				
-				}
-				else if (did.includes(DidMethod.WEB)) {
+				else if (did.includes(DidMethod.KEY) || (did.includes(DidMethod.WEB))) {
 					setType(SchemaType.W3C);
 					setSchemaTypeValues(SchemaTypeValue.NO_LEDGER);				
 				}
@@ -152,8 +152,8 @@ const CreateSchema = () => {
 			type: type,
 			schemaPayload: {
 				schemaName: values.schemaName,
-				schemaType:schemaTypeValues,
-				schemaVersion: values.schemaVersion,
+				...(type === SchemaType.W3C && { schemaType: schemaTypeValues }),
+				...(type === SchemaType.INDY && { schemaVersion: values.schemaVersion }),
 				attributes: values.attribute,
 				description:values.schemaName,
 				orgId: orgId,
@@ -407,13 +407,15 @@ if (
 							initialValues={formData}
 							validationSchema={yup.object().shape({
 								schemaName: yup.string().trim().required('Schema is required'),
-								schemaVersion: yup
-									.string()
-									.matches(
+								...(type === SchemaType.INDY && {
+									schemaVersion: yup
+									  .string()
+									  .matches(
 										schemaVersionRegex,
-										'Enter valid schema version (eg. 0.1 or 0.0.1)',
-									)
-									.required('Schema version is required'),
+										'Enter valid schema version (eg. 0.1 or 0.0.1)'
+									  )
+									  .required('Schema version is required'),
+								  }),
 								attribute: yup
 									.array()
 									.of(
@@ -480,14 +482,18 @@ if (
 												)}
 											</div>
 										</div>
-										<div
+										{
+												type === SchemaType.INDY &&
+
+<div
 											className="md:w-1/3 sm:w-full md:w-96 flex-col md:flex"
 											style={{ marginLeft: 0 }}
-										>
+										 >
 											<div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
 												<Label htmlFor="schema" value="Version" />
 												<span className="text-red-600">*</span>
 											</div>
+											
 											<div className="md:flex flex-col">
 												{' '}
 												<Field
@@ -507,6 +513,8 @@ if (
 												)}
 											</div>
 										</div>
+										}
+										
 									</div>
 									<p className="mt-2 text-gray-700 font-normal dark:text-gray-200 text-sm">
 										You must select at least one attribute to create schema
@@ -518,8 +526,8 @@ if (
 												const { values } = form;
 												const { attribute } = values;
 
-												const areFirstInputsSelected =
-													values.schemaName && values.schemaVersion;
+												 const areFirstInputsSelected =
+												type === SchemaType.INDY ? values.schemaName && values.schemaVersion : values.schemaName;
 												return (
 													<div className="relative flex flex-col dark:bg-gray-800">
 														{attribute?.map(
