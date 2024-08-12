@@ -19,7 +19,7 @@ const SchemaCard =  (props: ISchemaCardProps) => {
   const attributes = props.limitedAttributes !== false ? props?.attributes?.slice(0, 3) : props?.attributes
   
 
-  const handleIssueClick = () => {
+  const handleButtonClick = () => {
     if (props.onClickW3cIssue) {
       props.onClickW3cIssue(props.schemaId, props.schemaName, props.version, props.issuerDid, props.attributes, props.created);
     }
@@ -113,7 +113,7 @@ const SchemaCard =  (props: ISchemaCardProps) => {
           <div className="p-2">
             <Button
           onClick={() => {
-            handleIssueClick();
+            handleButtonClick();
             window.location.href = pathRoutes.organizations.Issuance.issue;
           }}
               type="submit"
@@ -137,12 +137,12 @@ const SchemaCard =  (props: ISchemaCardProps) => {
           <div className="p-2">
             <Button
           onClick={() => {
-            handleIssueClick();
+            handleButtonClick();
             window.location.href = pathRoutes.organizations.verification.requestProof;
           }}
               type="submit"
               color='bg-primary-800'
-              title='Initiate Credential Issuance'
+              title='Initiate Credential Verfication'
               className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 
               ring-2 text-black font-medium rounded-lg text-sm mr-2 ml-auto dark:text-white dark:hover:text-black 
               dark:hover:bg-primary-50'
