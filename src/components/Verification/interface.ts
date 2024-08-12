@@ -104,7 +104,7 @@ export interface VerifyCredentialPayload {
 	orgId: string;
 }
 
-export type SelectedOption = "Select" | "Greater than" | "Less than" | "Greater than or equal to" | "Less than or equal to";
+export type SelectedOption = "Select" | "Greater than" | "Less than" | "Greater than or equal to" | "Less than or equal to"; 
 
 export interface ISelectedUser {
 	name?: string;
