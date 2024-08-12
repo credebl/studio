@@ -14,13 +14,14 @@ import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { dateConversion } from '../../utils/DateConversion';
 import { getIssuedCredentials } from '../../api/issuance';
 import { pathRoutes } from '../../config/pathRoutes';
-import { getFromLocalStorage } from '../../api/Auth';
+import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { getOrgDetails } from '../../config/ecosystem';
 import type { IConnectionListAPIParameter } from '../../api/connection';
 import type { IssuedCredential } from './interface';
 import SortDataTable from '../../commonComponents/datatable/SortDataTable';
 import RoleViewButton from '../RoleViewButton';
 import { Features } from '../../utils/enums/features';
+import { getOrganizationById } from '../../api/organization';
 
 const initialPageState = {
 	itemPerPage: 10,
@@ -36,7 +37,6 @@ const CredentialList = () => {
 	const [error, setError] = useState<string | null>(null);
 	const [issuedCredList, setIssuedCredList] = useState<TableData[]>([]);
 	const [walletCreated, setWalletCreated] = useState(false);
-	const [isW3c, setIsW3c] = useState(false);
 	const [listAPIParameter, setListAPIParameter] =
 		useState<IConnectionListAPIParameter>(initialPageState);
 	const [totalItem, setTotalItem] = useState(0);
@@ -45,6 +45,8 @@ const CredentialList = () => {
 		nextPage: '',
 		lastPage: '',
 	});
+	const [w3cSchema, setW3cSchema]= useState<boolean>(false);
+
 
 	const getIssuedCredDefs = async (
 		listAPIParameter: IConnectionListAPIParameter,
@@ -163,8 +165,29 @@ const CredentialList = () => {
 			setLoading(false);
 		}
 	};
+	const fetchOrganizationDetails = async () => {
+		setLoading(true);
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		const response = await getOrganizationById(orgId);
+		const { data } = response as AxiosResponse;
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			const did = data?.data?.org_agents?.[0]?.orgDid;
+
+			await setToLocalStorage(storageKeys.ORG_DID, did)
+			if (did.includes(DidMethod.POLYGON) || did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
+				setW3cSchema(true);
+			}
+			if (did.includes(DidMethod.INDY)) {
+				setW3cSchema(false);
+			}
+		}
+		setLoading(false);
+	};
+
 
 	useEffect(() => {
+		fetchOrganizationDetails();
+
 		let getData: NodeJS.Timeout;
 
 		if (listAPIParameter.search.length >= 1) {
@@ -197,19 +220,13 @@ const CredentialList = () => {
 	};
 
 	const schemeSelection = async () => {
-		const orgDid = await getFromLocalStorage(storageKeys.ORG_DID);
-		if (
-		  orgDid.includes(DidMethod.POLYGON) ||
-		  orgDid.includes(DidMethod.KEY) ||
-		  orgDid.includes(DidMethod.WEB)
-		) {
-		  setIsW3c(true);
-		  window.location.href = pathRoutes.organizations.Issuance.schema;
-		} else if (orgDid.includes(DidMethod.INDY)) {
-		  setIsW3c(false);
-		  window.location.href = pathRoutes.organizations.Issuance.issue;
+		if(w3cSchema){
+			window.location.href = pathRoutes.organizations.Issuance.schema;
 		}
-	  };
+		else if(!w3cSchema){
+			window.location.href = pathRoutes.organizations.Issuance.issue;
+		}
+	};
 
 	const refreshPage = () => {
 		getIssuedCredDefs(listAPIParameter);

@@ -141,3 +141,13 @@ export enum CredentialType {
     INDY = 'indy',
     JSONLD = 'jsonld'
 }
+
+export enum RequestType {
+    indy = 'indy',
+    PresentationExchange = 'presentationExchange'
+}
+
+export enum proofType {
+	polygon = 'EcdsaSecp256k1Signature2019',
+	no_ledger = 'Ed25519Signature2018'
+}

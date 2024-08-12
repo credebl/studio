@@ -60,6 +60,21 @@ export interface SchemaDetail {
 	schemaId: string;
 	credDefId: string;
 }
+export interface IW3cSchemaDetails {
+	schemaName: string;
+	version: string;
+	schemaId: string;
+	w3cAttributes?: IAttributesData[];
+	issuerDid?:string;
+}
+
+export interface IAttributesData {
+	isRequired: boolean;
+	name: string;
+	value: string;
+	dataType: string;
+}
+
 
 export interface IInput {
 	attributeName: string;
@@ -88,18 +103,21 @@ export interface VerifyCredentialPayload {
 	comment: string;
 	orgId: string;
 }
+
+export type SelectedOption = "Select" | "Greater than" | "Less than" | "Greater than or equal to" | "Less than or equal to"; // Adjust as needed
+
 export interface ISelectedUser {
-	name: any;
-	condition: string;
+	name?: string;
+	condition?: string;
 	dataType: string;
-	displayName: string;
+	displayName?: string;
 	attributeName: string;
 	isChecked: false;
 	value: number;
-	selectedOption: 'Select';
-	inputError: '';
-	selectError: '';
-	options: [
+	selectedOption?: SelectedOption;
+	inputError?: '';
+	selectError?: '';
+	options?: [
 		{
 			label: string;
 			value: string;

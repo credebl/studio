@@ -26,11 +26,14 @@ import { Create, SchemaEndorsement } from '../../Issuance/Constant';
 import { DidMethod, SchemaType } from '../../../common/enums';
 
 const SchemaList = (props: {
-	schemaSelectionCallback: (
+		schemaSelectionCallback: (
 		schemaId: string,
 		schemaDetails: SchemaDetails,
 	) => void;
+	verificationFlag?: boolean;
 }) => {
+
+	const verificationFlag = props.verificationFlag ?? false;
 	const [schemaList, setSchemaList] = useState([]);
 	const [schemaListErr, setSchemaListErr] = useState<string | null>('');
 	const [loading, setLoading] = useState<boolean>(true);
@@ -305,7 +308,8 @@ const SchemaList = (props: {
 											onClickW3cIssue={handleW3CIssue}
 											w3cSchema={w3cSchema}
 											noLedger={isNoLedger}
-											
+											isVerification={verificationFlag}
+																					
 										/>
 									</div>
 								))}

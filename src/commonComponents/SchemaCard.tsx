@@ -109,7 +109,7 @@ const SchemaCard =  (props: ISchemaCardProps) => {
           </div>
         </div>
         <div className='mt-4'>
-          {props.w3cSchema && (
+          {props.w3cSchema && !props.isVerification && (
           <div className="p-2">
             <Button
           onClick={() => {
@@ -124,17 +124,40 @@ const SchemaCard =  (props: ISchemaCardProps) => {
               dark:hover:bg-primary-50'
               style={{ height: '1.5rem', width: '100%', minWidth: '2rem' }}
             >
-              <div className='mr-2'>
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 23 23">
-                  <path fill="#1F4EAD" fillRule="evenodd" d="M21 21H2V2h9.5V0H2.556A2.563 2.563 0 0 0 0 2.556v17.888A2.563 2.563 0 0 0 2.556 23h17.888A2.563 2.563 0 0 0 23 20.444V11.5h-2V21ZM14.056 0v2H19.5l-13 13 1 1.5L21 3v5.944h2V0h-8.944Z" clipRule="evenodd" />
-                </svg>
-              </div>
+               <div className='mr-2'>
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 23 23">  <path fill="#1F4EAD" fill-rule="evenodd" d="M21 21H2V2h9.5V0H2.556A2.563 2.563 0 0 0 0 2.556v17.888A2.563 2.563 0 0 0 2.556 23h17.888A2.563 2.563 0 0 0 23 20.444V11.5h-2V21ZM14.056 0v2H19.5l-13 13 1 1.5L21 3v5.944h2V0h-8.944Z" clip-rule="evenodd" />
+              </svg>
+            </div>
               Issue
             </Button>
           </div>
-        )}
-        </div>
-      </div>
+          )}
+
+      {props.isVerification && props.w3cSchema &&(
+          <div className="p-2">
+            <Button
+          onClick={() => {
+            handleIssueClick();
+            window.location.href = pathRoutes.organizations.verification.requestProof;
+          }}
+              type="submit"
+              color='bg-primary-800'
+              title='Initiate Credential Issuance'
+              className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 
+              ring-2 text-black font-medium rounded-lg text-sm mr-2 ml-auto dark:text-white dark:hover:text-black 
+              dark:hover:bg-primary-50'
+              style={{ height: '1.5rem', width: '100%', minWidth: '2rem' }}
+            >
+               <div className='mr-2'>
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 23 23">  <path fill="#1F4EAD" fill-rule="evenodd" d="M21 21H2V2h9.5V0H2.556A2.563 2.563 0 0 0 0 2.556v17.888A2.563 2.563 0 0 0 2.556 23h17.888A2.563 2.563 0 0 0 23 20.444V11.5h-2V21ZM14.056 0v2H19.5l-13 13 1 1.5L21 3v5.944h2V0h-8.944Z" clip-rule="evenodd" />
+              </svg>
+            </div>
+              Verification
+            </Button>
+          </div>
+          )}
+          </div>
+       </div>
     </Card>
   )
 }

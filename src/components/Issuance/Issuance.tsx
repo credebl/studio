@@ -3,7 +3,7 @@ import * as Yup from 'yup';
 
 import { Alert, Button, Card } from 'flowbite-react';
 import { Field, FieldArray, Form, Formik } from 'formik';
-import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
+import { apiStatusCodes, CREDENTIAL_CONTEXT_VALUE, storageKeys, proofPurpose } from '../../config/CommonConstant';
 import { getFromLocalStorage, removeFromLocalStorage } from '../../api/Auth';
 import { useEffect, useState } from 'react';
 import BackButton from '../../commonComponents/backbutton';
@@ -24,7 +24,7 @@ import type {
 import SummaryCard from '../../commonComponents/SummaryCard';
 import React from 'react';
 import { getOrganizationById } from '../../api/organization';
-import { DidMethod, CredentialType, SchemaTypeValue } from '../../common/enums';
+import { DidMethod, CredentialType, SchemaTypeValue, proofType } from '../../common/enums';
 
 const IssueCred = () => {
 	const [schemaLoader, setSchemaLoader] = useState<boolean>(true);
@@ -110,7 +110,6 @@ const IssueCred = () => {
 				} else {
 					setFailure('Attributes are not available');
 				}
-	
 			}
 			if (w3cSchema) {
 				const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -323,7 +322,7 @@ const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 						connectionId: item.connectionId,
 						credential: {
 							"@context": [
-								storageKeys.CREDENTIAL_CONTEXT_VALUE,
+								CREDENTIAL_CONTEXT_VALUE,
 								w3cSchemaDetails.schemaId
 							],
 							"type": [
@@ -350,8 +349,8 @@ const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 								},
 		
 						options: {
-							proofType: schemaType=== SchemaTypeValue.POLYGON ? "EcdsaSecp256k1Signature2019" : "Ed25519Signature2018",
-							proofPurpose: "assertionMethod"
+							proofType: schemaType=== SchemaTypeValue.POLYGON ? proofType.polygon : proofType.no_ledger,
+							proofPurpose: proofPurpose
 						}
 					};
 				}),

@@ -16,9 +16,12 @@ import type {
 	ISelectedUser,
 	SchemaDetail,
 	SelectedUsers,
-	VerifyCredentialPayload,
+	IW3cSchemaDetails,
+	SelectedOption,
 } from './interface';
 import SummaryCard from '../../commonComponents/SummaryCard';
+import { getOrganizationById } from '../../api/organization';
+import { DidMethod, RequestType } from '../../common/enums';
 
 const VerificationCred = () => {
 	const [attributeList, setAttributeList] = useState<TableData[]>([]);
@@ -31,13 +34,64 @@ const VerificationCred = () => {
 		schemaId: '',
 		credDefId: '',
 	});
+	const [w3cSchemaDetails, setW3cSchemaDetails] = useState<IW3cSchemaDetails>({
+		schemaName: '',
+		version: '',
+		schemaId: '',
+		w3cAttributes:[],
+		issuerDid:''
+	});
+	const [w3cSchema, setW3cSchema] = useState<boolean>(false);
+	const [requestType, setRequestType] = useState<RequestType>();
+	const [failure, setFailure] = useState<string | null>(null);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [requestLoader, setRequestLoader] = useState<boolean>(false);
 	const [attributeData, setAttributeData] = useState<ISelectedUser[] | null>(
 		null,
 	);
 
+	useEffect(() => {
+		fetchOrganizationDetails();
+		return () => {
+			setRequestLoader(false);
+		};
+	}, []);
+
+	
+	const fetchOrganizationDetails = async () => {
+		try{
+			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+			if (!orgId) return;
+			const response = await getOrganizationById(orgId);
+			const { data } = response as AxiosResponse;
+			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+				const did = data?.data?.org_agents?.[0]?.orgDid;
+				
+				if (did?.includes(DidMethod.POLYGON)) {
+					setW3cSchema(true);
+					setRequestType(RequestType.PresentationExchange)
+					await getSchemaAndUsers(true);
+				}
+				if (did?.includes(DidMethod.KEY) || did?.includes(DidMethod.WEB)) {
+					setW3cSchema(true);
+					setRequestType(RequestType.PresentationExchange)
+					await getSchemaAndUsers(true);
+
+				}
+				if (did?.includes(DidMethod.INDY)) {
+					setW3cSchema(false);
+					setRequestType(RequestType.indy)
+					await getSchemaAndUsers(false);
+				}
+			}
+		} catch(error){
+			console.log('Error in getSchemaAndUsers:', error);
+			setFailure('Error fetching schema and users');
+		}
+		
+	};
 	const handleCheckboxChange = (attributeName: string) => {
+		
 		setAttributeData(
 			attributeData &&
 				attributeData?.map((attribute) => {
@@ -52,11 +106,11 @@ const VerificationCred = () => {
 						};
 					}
 					return attribute;
-				}),
+				}) as ISelectedUser[],
 		);
 	};
 
-	const handleInputChange = (attributeName, value) => {
+	const handleInputChange = (attributeName:string, value:number) => {
 		setAttributeData(
 			attributeData &&
 				attributeData.map((attribute) => {
@@ -68,7 +122,7 @@ const VerificationCred = () => {
 		);
 	};
 
-	const handleSelectChange = (attributeName, selectedOption) => {
+	const handleSelectChange = (attributeName:string, selectedOption:SelectedOption) => {
 		setAttributeData(
 			attributeData &&
 				attributeData?.map((attribute) => {
@@ -160,18 +214,56 @@ const VerificationCred = () => {
 						schemaId: schemaId,
 					}));
 
-				const verifyCredentialPayload = {
-					connectionId: JSON.parse(userData)[0]?.connectionId,
-					comment: 'string',
-					orgId: orgId,
-					proofFormats: {
-						indy: {
-							attributes: attributes,
+				let verifyCredentialPayload;
+	
+				if (!w3cSchema) { 
+					verifyCredentialPayload = {
+							connectionId: JSON.parse(userData)[0]?.connectionId,
+							comment: 'string',
+							orgId: orgId,
+							proofFormats: {
+								indy: {
+									attributes: attributes,
+								}
+							}
+						};
+
+				} 			
+				if(w3cSchema) { 
+
+					const attributePaths = attributes?.map(
+						(attr) => `$.credentialSubject['${attr.attributeName}']`
+					  );
+					verifyCredentialPayload = {
+						connectionId: JSON.parse(userData)[0]?.connectionId,
+						comment: 'proof request',
+						presentationDefinition: {
+						  id: '32f54163-7166-48f1-93d8-ff217bdb0653',
+						  input_descriptors: [
+							{
+								id:'32f54163-7166-48f1-93d8-ff217bdb0653',
+								name:w3cSchemaDetails.schemaName,
+							  schema: [
+								{
+								  uri: w3cSchemaDetails.schemaId
+								}
+							  ],
+							  constraints: {
+								fields: [
+									{
+									  path: attributePaths,
+									},
+								  ],
+							  },
+							  purpose: 'Verify proof'
+							}
+						  ]
 						}
+					  };
 					}
-				};
+
 				if (attributes) {
-					const response = await verifyCredential(verifyCredentialPayload);
+					const response = await verifyCredential(verifyCredentialPayload, requestType);
 					const { data } = response as AxiosResponse;
 					if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 						setProofReqSuccess(data?.message);
@@ -191,37 +283,70 @@ const VerificationCred = () => {
 	const fetchData = async () => {
 		try {
 			setLoading(true);
-			await getSchemaAndUsers();
+		
 			const schemaAttributes = await getFromLocalStorage(
 				storageKeys.SCHEMA_ATTR,
 			);
-			const parsedSchemaDetails = JSON.parse(schemaAttributes) || [];
-			const inputArray: SelectedUsers[] = parsedSchemaDetails.attribute.map(
-				(attribute: IAttribute) => {
-					return {
-						displayName: attribute.displayName,
-						attributeName: attribute.attributeName,
-						isChecked: false,
-						value: '',
-						condition: '',
-						options: [
-							{ value: '', label: 'Select' },
-							{ value: '>', label: 'Greater than' },
-							{ value: '<', label: 'Less than' },
-							{ value: '>=', label: 'Greater than or equal to' },
-							{ value: '<=', label: 'Less than or equal to' },
-						],
-						dataType: attribute.schemaDataType,
-					};
-				},
-			);
-			setAttributeData(inputArray);
+			
+			if(!w3cSchema){
+			
+				const parsedSchemaDetails = JSON.parse(schemaAttributes) || [];
+				const inputArray: SelectedUsers[] = parsedSchemaDetails.attribute.map(
+					(attribute: IAttribute) => {
+						return {
+							displayName: attribute.displayName,
+							attributeName: attribute.attributeName,
+							isChecked: false,
+							value: '',
+							condition: '',
+							options: [
+								{ value: '', label: 'Select' },
+								{ value: '>', label: 'Greater than' },
+								{ value: '<', label: 'Less than' },
+								{ value: '>=', label: 'Greater than or equal to' },
+								{ value: '<=', label: 'Less than or equal to' },
+							],
+							dataType: attribute.schemaDataType,
+						};
+					},
+					
+				);
+				
+				setAttributeData(inputArray);
+			}
+
+			if(w3cSchema){
+
+				const getW3cAttributes = await getFromLocalStorage(storageKeys.W3C_SCHEMA_DETAILS);	
+				const parsedSchemaAttributes = JSON.parse(getW3cAttributes) || [];
+				const w3cInputArray: SelectedUsers[] = parsedSchemaAttributes.attributes.map(
+					(attribute: IAttribute) => {
+						return {
+							displayName: attribute.displayName,
+							attributeName: attribute.attributeName,
+							isChecked: false,
+							value: '',
+							dataType: attribute.schemaDataType,
+						};
+						
+					},
+				);
+
+				setAttributeData(w3cInputArray);
+			
+			}
+
 			setLoading(false);
 		} catch (error) {
 			setLoading(false);
 			console.error('Error fetching data:', error);
 		}
 	};
+
+	useEffect(() => {
+		fetchData();
+	  }, [w3cSchema]);
+
 
 	const attributeFunction = () => {
 		const attributes =
@@ -246,7 +371,7 @@ const VerificationCred = () => {
 							),
 						},
 						{ data: attribute?.displayName },
-						{
+						!w3cSchema && {
 							data: (
 								<div className="flex items-center relative">
 									{attribute?.dataType === 'number' && (
@@ -268,7 +393,7 @@ const VerificationCred = () => {
 											{attribute?.options?.map(
 												(
 													option: {
-														value: number | undefined;
+														value: number | undefined | string;
 														label: string | undefined;
 													},
 													index: React.Key | null | undefined,
@@ -288,7 +413,7 @@ const VerificationCred = () => {
 								</div>
 							),
 						},
-						{
+						!w3cSchema && {
 							data: (
 								<div className="relative flex flex-col items-start">
 									{attribute?.dataType === 'number' && (
@@ -320,28 +445,32 @@ const VerificationCred = () => {
 					],
 				};
 			});
-
-		setAttributeList(attributes);
-		setDisplay(
-			attributeData?.some((attribute) => attribute?.dataType === 'number'),
-		);
-	};
-
-	useEffect(() => {
-		fetchData();
-		return () => {
-			setRequestLoader(false);
+			
+			setAttributeList(attributes);
+			
+			setDisplay(
+				attributeData?.some((attribute) => attribute?.dataType === 'number'),
+			);
 		};
-	}, []);
 
 	useEffect(() => {
 		attributeData && attributeFunction();
 	}, [attributeData]);
 
-	const getSchemaAndUsers = async () => {
+	const getSchemaAndUsers = async (isW3c:boolean) => {
+		if (!isW3c) {
 		const credDefId = await getFromLocalStorage(storageKeys.CRED_DEF_ID);
 		const schemaId = await getFromLocalStorage(storageKeys.SCHEMA_ID);
 		createSchemaPayload(schemaId, credDefId);
+		}
+		
+		if(isW3c){
+			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+			const getW3cSchemaDetails = await getFromLocalStorage(storageKeys.W3C_SCHEMA_DETAILS);	
+		const parsedW3cSchemaDetails = JSON.parse(getW3cSchemaDetails);
+		const schemaId = parsedW3cSchemaDetails?.schemaId
+		createW3cSchemaPayload(schemaId,parsedW3cSchemaDetails)
+		}
 	};
 
 	const createSchemaPayload = async (schemaId: string, credDefId: string) => {
@@ -351,13 +480,23 @@ const VerificationCred = () => {
 			const version = parts[3];
 			setSchemaDetails({ schemaName, version, schemaId, credDefId });
 		}
+		
+	};
+	const createW3cSchemaPayload = async (schemaId: string, parsedW3cSchemaDetails: any) => {
+		if (schemaId) {
+
+			if (parsedW3cSchemaDetails) {
+				setW3cSchemaDetails(parsedW3cSchemaDetails);
+			}
+		}
+		
 	};
 
 	const header = [
 		{ columnName: '', width: 'w-0.5' },
 		{ columnName: 'Attributes' },
-		display && { columnName: 'Condition' },
-		display && { columnName: 'Value', width: 'w-0.75' },
+		display && !w3cSchema && { columnName: 'Condition' },
+		display && !w3cSchema && { columnName: 'Value', width: 'w-0.75' },
 	];
 
 	return (
@@ -372,18 +511,28 @@ const VerificationCred = () => {
 				</h1>
 			</div>
 			{loading ? (
-				<div className="flex items-center justify-center mb-4">
-					<CustomSpinner />
-				</div>
-			) : (
-				<SummaryCard
-					schemaId={schemaDetails.schemaId}
-					schemaName={schemaDetails.schemaName}
-					version={schemaDetails.version}
-					credDefId={schemaDetails.credDefId}
-					hideCredDefId={true}
-				/>
-			)}
+  <div className="flex items-center justify-center mb-4">
+    <CustomSpinner />
+  </div>
+) : (
+  !w3cSchema ? (
+    <SummaryCard
+      schemaId={schemaDetails.schemaId}
+      schemaName={schemaDetails.schemaName}
+      version={schemaDetails.version}
+      credDefId={schemaDetails.credDefId}
+      hideCredDefId={true}
+    />
+  ) : (
+	<SummaryCard
+	schemaName={w3cSchemaDetails.schemaName}
+	schemaId={w3cSchemaDetails.schemaId}
+	version={w3cSchemaDetails.version}
+	hideCredDefId={true}
+  />
+   
+    )
+  )}
 			{(proofReqSuccess || errMsg) && (
 				<div className="p-2">
 					<Alert

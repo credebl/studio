@@ -25,4 +25,5 @@ export interface ISchemaCardProps {
 	limitedAttributes?: boolean
 	w3cSchema:boolean
 	noLedger:boolean
+	isVerification:boolean
   }
