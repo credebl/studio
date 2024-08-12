@@ -85,7 +85,7 @@ const VerificationCred = () => {
 				}
 			}
 		} catch(error){
-			console.log('Error in getSchemaAndUsers:', error);
+			console.error('Error in getSchemaAndUsers:', error);
 			setFailure('Error fetching schema and users');
 		}
 		
