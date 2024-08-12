@@ -24,7 +24,7 @@ import { checkEcosystem  } from '../../config/ecosystem';
 import type { ICheckEcosystem} from '../../config/ecosystem';
 import { Features } from '../../utils/enums/features';
 import { Create, SchemaEndorsement } from './Constant';
-import { DidMethod, SchemaTypes, CredentialType, SchemaTypeValue, proofType } from '../../common/enums';
+import { DidMethod, SchemaTypes, CredentialType, SchemaTypeValue, ProofType } from '../../common/enums';
 
 const EmailIssuance = () => {
 	const [formData, setFormData] = useState();
@@ -194,7 +194,7 @@ const EmailIssuance = () => {
 		   }),
                 },
                 options: {
-                    proofType: schemaTypeValue===SchemaTypeValue.POLYGON ? proofType.polygon : proofType.no_ledger,
+                    proofType: schemaTypeValue===SchemaTypeValue.POLYGON ? ProofType.polygon : ProofType.no_ledger,
                     proofPurpose: proofPurpose
                 }
             };

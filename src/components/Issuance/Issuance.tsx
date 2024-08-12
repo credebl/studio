@@ -24,7 +24,7 @@ import type {
 import SummaryCard from '../../commonComponents/SummaryCard';
 import React from 'react';
 import { getOrganizationById } from '../../api/organization';
-import { DidMethod, CredentialType, SchemaTypeValue, proofType } from '../../common/enums';
+import { DidMethod, CredentialType, SchemaTypeValue, ProofType } from '../../common/enums';
 
 const IssueCred = () => {
 	const [schemaLoader, setSchemaLoader] = useState<boolean>(true);
@@ -349,7 +349,7 @@ const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 								},
 		
 						options: {
-							proofType: schemaType=== SchemaTypeValue.POLYGON ? proofType.polygon : proofType.no_ledger,
+							proofType: schemaType=== SchemaTypeValue.POLYGON ? ProofType.polygon : ProofType.no_ledger,
 							proofPurpose: proofPurpose
 						}
 					};

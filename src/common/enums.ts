@@ -147,7 +147,7 @@ export enum RequestType {
     PresentationExchange = 'presentationExchange'
 }
 
-export enum proofType {
+export enum ProofType {
 	polygon = 'EcdsaSecp256k1Signature2019',
 	no_ledger = 'Ed25519Signature2018'
 }
