@@ -11,6 +11,7 @@ import { verifyCredential } from '../../api/verification';
 import { pathRoutes } from '../../config/pathRoutes';
 import CustomSpinner from '../CustomSpinner';
 import BackButton from '../../commonComponents/backbutton';
+import { v4 as uuidv4 } from 'uuid';
 import type {
 	IAttribute,
 	ISelectedUser,
@@ -69,18 +70,18 @@ const VerificationCred = () => {
 				
 				if (did?.includes(DidMethod.POLYGON)) {
 					setW3cSchema(true);
-					setRequestType(RequestType.PresentationExchange)
+					setRequestType(RequestType.PRESENTATION_EXCHANGE)
 					await getSchemaAndUsers(true);
 				}
 				if (did?.includes(DidMethod.KEY) || did?.includes(DidMethod.WEB)) {
 					setW3cSchema(true);
-					setRequestType(RequestType.PresentationExchange)
+					setRequestType(RequestType.PRESENTATION_EXCHANGE)
 					await getSchemaAndUsers(true);
 
 				}
 				if (did?.includes(DidMethod.INDY)) {
 					setW3cSchema(false);
-					setRequestType(RequestType.indy)
+					setRequestType(RequestType.INDY)
 					await getSchemaAndUsers(false);
 				}
 			}
@@ -238,10 +239,10 @@ const VerificationCred = () => {
 						connectionId: JSON.parse(userData)[0]?.connectionId,
 						comment: 'proof request',
 						presentationDefinition: {
-						  id: '32f54163-7166-48f1-93d8-ff217bdb0653',
+						  id: uuidv4(),
 						  input_descriptors: [
 							{
-								id:'32f54163-7166-48f1-93d8-ff217bdb0653',
+								id:uuidv4(),
 								name:w3cSchemaDetails.schemaName,
 							  schema: [
 								{
@@ -262,7 +263,7 @@ const VerificationCred = () => {
 					  };
 					}
 
-				if (attributes) {
+				if (attributes && verifyCredentialPayload) {
 					const response = await verifyCredential(verifyCredentialPayload, requestType);
 					const { data } = response as AxiosResponse;
 					if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {

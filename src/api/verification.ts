@@ -6,7 +6,7 @@ import { axiosDelete, axiosGet, axiosPost } from '../services/apiRequests';
 import { getFromLocalStorage } from './Auth';
 import type { IConnectionListAPIParameter } from './connection';
 
-export const verifyCredential = async (payload: any, requestType:RequestType) => {
+export const verifyCredential = async (payload: object, requestType:RequestType) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Verification.verifyCredential}?requestType=${requestType}`;
 	const axiosPayload = {

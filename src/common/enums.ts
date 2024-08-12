@@ -143,8 +143,8 @@ export enum CredentialType {
 }
 
 export enum RequestType {
-    indy = 'indy',
-    PresentationExchange = 'presentationExchange'
+    INDY = 'indy',
+    PRESENTATION_EXCHANGE = 'presentationExchange'
 }
 
 export enum ProofType {
