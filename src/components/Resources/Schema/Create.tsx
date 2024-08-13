@@ -92,7 +92,7 @@ const CreateSchema = () => {
 		checkEcosystemData();
 	}, []);
 
-	const areAllInputsFilled = (formData: IFormData) => {
+	const filledInputs = (formData: IFormData) => {
 		const { schemaName, schemaVersion, attribute } = formData;
 
 		if (
@@ -807,7 +807,7 @@ if (
 																					})
 																				}
 																				disabled={
-																					!areAllInputsFilled(
+																					!filledInputs(
 																						formikHandlers.values,
 																					)
 																				}
@@ -881,7 +881,7 @@ if (
 											type="submit"
 											color="bg-primary-700"
 											disabled={
-												!areAllInputsFilled(formikHandlers.values) ||
+												!filledInputs(formikHandlers.values) ||
 												inValidAttributes(formikHandlers, 'attributeName') ||
 												inValidAttributes(formikHandlers, 'displayName')
 											}

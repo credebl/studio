@@ -45,7 +45,7 @@ const CredentialList = () => {
 		nextPage: '',
 		lastPage: '',
 	});
-	const [w3cSchema, setW3cSchema]= useState<boolean>(false);
+	const [w3cSchema, setW3CSchema]= useState<boolean>(false);
 
 
 	const getIssuedCredDefs = async (
@@ -175,10 +175,10 @@ const CredentialList = () => {
 
 			await setToLocalStorage(storageKeys.ORG_DID, did)
 			if (did.includes(DidMethod.POLYGON) || did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
-				setW3cSchema(true);
+				setW3CSchema(true);
 			}
 			if (did.includes(DidMethod.INDY)) {
-				setW3cSchema(false);
+				setW3CSchema(false);
 			}
 		}
 		setLoading(false);

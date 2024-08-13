@@ -35,7 +35,7 @@ const IssueCred = () => {
 		schemaId: '',
 		credDefId: '',
 	});
-	const [w3cSchemaDetails, setW3cSchemaDetails] = useState<W3cSchemaDetails>({
+	const [w3cSchemaDetails, setW3CSchemaDetails] = useState<W3cSchemaDetails>({
 		schemaName: '',
 		version: '',
 		schemaId: '',
@@ -52,7 +52,7 @@ const IssueCred = () => {
 	>([]);
 	const [success, setSuccess] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
-	const [w3cSchema, setW3cSchema]= useState<boolean>(false);
+	const [w3cSchema, setW3CSchema]= useState<boolean>(false);
 	const [credentialType, setCredentialType] = useState<CredentialType>();
 	const [schemaType, setSchemaType] = useState<SchemaTypeValue>();
 
@@ -71,19 +71,19 @@ const IssueCred = () => {
 				const did = data?.data?.org_agents?.[0]?.orgDid;
 				
 				if (did?.includes(DidMethod.POLYGON)) {
-					setW3cSchema(true);
+					setW3CSchema(true);
 					setCredentialType(CredentialType.JSONLD);
 					setSchemaType(SchemaTypeValue.POLYGON)
 					await getSchemaAndUsers(true)
 				}
 				else if (did?.includes(DidMethod.KEY) || did?.includes(DidMethod.WEB)) {
-					setW3cSchema(true);
+					setW3CSchema(true);
 					setSchemaType(SchemaTypeValue.NO_LEDGER)
 					setCredentialType(CredentialType.JSONLD);
 					await getSchemaAndUsers(true)
 				}
 				else if (did?.includes(DidMethod.INDY)) {
-					setW3cSchema(false);
+					setW3CSchema(false);
 					setCredentialType(CredentialType.INDY);	
 					await getSchemaAndUsers(false)
 				}
@@ -273,7 +273,7 @@ const IssueCred = () => {
 		if (schemaId) {
 
 			if (parsedW3cSchemaDetails) {
-				setW3cSchemaDetails(parsedW3cSchemaDetails);
+				setW3CSchemaDetails(parsedW3cSchemaDetails);
 				
 				setSchemaLoader(false);
 

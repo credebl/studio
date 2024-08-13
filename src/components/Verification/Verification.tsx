@@ -35,14 +35,14 @@ const VerificationCred = () => {
 		schemaId: '',
 		credDefId: '',
 	});
-	const [w3cSchemaDetails, setW3cSchemaDetails] = useState<IW3cSchemaDetails>({
+	const [w3cSchemaDetails, setW3CSchemaDetails] = useState<IW3cSchemaDetails>({
 		schemaName: '',
 		version: '',
 		schemaId: '',
 		w3cAttributes:[],
 		issuerDid:''
 	});
-	const [w3cSchema, setW3cSchema] = useState<boolean>(false);
+	const [w3cSchema, setW3CSchema] = useState<boolean>(false);
 	const [requestType, setRequestType] = useState<RequestType>();
 	const [failure, setFailure] = useState<string | null>(null);
 	const [loading, setLoading] = useState<boolean>(true);
@@ -69,18 +69,18 @@ const VerificationCred = () => {
 				const did = data?.data?.org_agents?.[0]?.orgDid;
 				
 				if (did?.includes(DidMethod.POLYGON)) {
-					setW3cSchema(true);
+					setW3CSchema(true);
 					setRequestType(RequestType.PRESENTATION_EXCHANGE)
 					await getSchemaAndUsers(true);
 				}
 				if (did?.includes(DidMethod.KEY) || did?.includes(DidMethod.WEB)) {
-					setW3cSchema(true);
+					setW3CSchema(true);
 					setRequestType(RequestType.PRESENTATION_EXCHANGE)
 					await getSchemaAndUsers(true);
 
 				}
 				if (did?.includes(DidMethod.INDY)) {
-					setW3cSchema(false);
+					setW3CSchema(false);
 					setRequestType(RequestType.INDY)
 					await getSchemaAndUsers(false);
 				}
@@ -487,7 +487,7 @@ const VerificationCred = () => {
 		if (schemaId) {
 
 			if (parsedW3cSchemaDetails) {
-				setW3cSchemaDetails(parsedW3cSchemaDetails);
+				setW3CSchemaDetails(parsedW3cSchemaDetails);
 			}
 		}
 		

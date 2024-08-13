@@ -51,7 +51,7 @@ const SchemaList = (props: {
 	const [totalItem, setTotalItem] = useState(0);
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [searchValue, setSearchValue] = useState('');
-	const [w3cSchema,setW3cSchema]= useState<boolean>(false);
+	const [w3cSchema,setW3CSchema]= useState<boolean>(false);
 	const [isNoLedger,setisNoLedger]= useState<boolean>(false);	
 
 	const getSchemaList = async (
@@ -194,10 +194,10 @@ const SchemaList = (props: {
 				setWalletStatus(true);
 			}
 			if (did.includes(DidMethod.POLYGON) || did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
-				setW3cSchema(true);
+				setW3CSchema(true);
 			}
 			if (did.includes(DidMethod.INDY)) {
-				setW3cSchema(false);
+				setW3CSchema(false);
 			}
 			if (did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
 				setisNoLedger(true);
