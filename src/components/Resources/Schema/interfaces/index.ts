@@ -65,7 +65,7 @@ export interface FieldName {
   }
 export interface schemaDetails {
   schemaName: string;
-  schemaVersion: string;
+  schemaVersion?: string;
   schemaType?:SchemaTypeValue;
   attributes: IAttributes[];
   description?:string;
@@ -95,7 +95,7 @@ export interface IAttributes {
 }
 export interface IFormData {
 	schemaName: string;
-	schemaVersion: string;
+	schemaVersion?: string;
   schemaType?:SchemaTypeValue;
   description?:string;
 	attribute: IAttributes[];

@@ -5,8 +5,9 @@ export const imageSizeAccepted = 1 // mb
 export const IMG_MAX_WIDTH = 500
 export const IMG_MAX_HEIGHT = 291
 export const emailRegex = /(\.[a-zA-Z]{2,})$/
-
+export const CREDENTIAL_CONTEXT_VALUE = 'https://www.w3.org/2018/credentials/v1'
 export const schemaVersionRegex = /^\d{1,5}(?=.*[0-9])(?:\.\d{1,5})?(?:\.\d{1,5})?$/gm
+export const proofPurpose = 'assertionMethod'
 
 export const apiStatusCodes = {
     API_STATUS_SUCCESS : 200,
@@ -43,6 +44,5 @@ export const storageKeys = {
     ORG_DID:'did',
     SCHEMA_TYPE:'type',
     SELECT_ORG_IN_ECOSYSTEM: 'select_orgs_in_ecosystem',
-    ERROR_ORG_IN_ECOSYSTEM: 'error_orgs_in_ecosystem',
-    CREDENTIAL_CONTEXT_VALUE: 'https://www.w3.org/2018/credentials/v1'
+    ERROR_ORG_IN_ECOSYSTEM: 'error_orgs_in_ecosystem'
 }

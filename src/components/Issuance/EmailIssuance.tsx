@@ -11,7 +11,7 @@ import IssuancePopup from './IssuancePopup';
 import type { AxiosResponse } from 'axios';
 import { getFromLocalStorage } from '../../api/Auth';
 import { getSchemaCredDef } from '../../api/BulkIssuance';
-import { storageKeys, apiStatusCodes } from '../../config/CommonConstant';
+import { storageKeys, apiStatusCodes, CREDENTIAL_CONTEXT_VALUE, proofPurpose } from '../../config/CommonConstant';
 import type { IAttributes, ICredentials, IEmailCredentialData, IIssueAttributes, ITransformedData } from './interface';
 import { Field, FieldArray, Form, Formik } from 'formik';
 import CustomSpinner from '../CustomSpinner';
@@ -24,7 +24,7 @@ import { checkEcosystem  } from '../../config/ecosystem';
 import type { ICheckEcosystem} from '../../config/ecosystem';
 import { Features } from '../../utils/enums/features';
 import { Create, SchemaEndorsement } from './Constant';
-import { DidMethod, SchemaTypes, CredentialType, SchemaTypeValue } from '../../common/enums';
+import { DidMethod, SchemaTypes, CredentialType, SchemaTypeValue, ProofType } from '../../common/enums';
 
 const EmailIssuance = () => {
 	const [formData, setFormData] = useState();
@@ -167,7 +167,7 @@ const EmailIssuance = () => {
 				emailId: entry.email,
                 credential: {
 					"@context": [
-						storageKeys.CREDENTIAL_CONTEXT_VALUE,
+						CREDENTIAL_CONTEXT_VALUE,
                         schemasIdentifier
                     ],
                     "type": [
@@ -194,8 +194,8 @@ const EmailIssuance = () => {
 		   }),
                 },
                 options: {
-                    proofType: schemaTypeValue===SchemaTypeValue.POLYGON ? "EcdsaSecp256k1Signature2019" :  "Ed25519Signature2018",
-                    proofPurpose: "assertionMethod"
+                    proofType: schemaTypeValue===SchemaTypeValue.POLYGON ? ProofType.polygon : ProofType.no_ledger,
+                    proofPurpose: proofPurpose
                 }
             };
 
