@@ -161,9 +161,7 @@ const CredDefSelection = () => {
 			<DataTable header={header} data={credDefList} loading={loading} callback={() => { }}></DataTable>
 			<div>
 				<Button onClick={() => {
-										window.location.href = `${pathRoutes.organizations.verification.connections}`
-
-					// window.location.href = `${pathRoutes.organizations.verification.attributes}`
+					window.location.href = `${pathRoutes.organizations.verification.connections}`
 				}}
 					className='text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mt-2 ml-auto'
 				><svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" viewBox="0 0 24 24">

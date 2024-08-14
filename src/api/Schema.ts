@@ -159,3 +159,25 @@ export const getCredDeffById = async (schemaId: string, orgId: string) => {
   }
 }
 
+export const getCredDefDetailsByCredDefId = async (credDefId: string, orgId: string) => {
+  const token = await getFromLocalStorage(storageKeys.TOKEN)
+  const details = {
+    url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.createCredentialDefinition}/${credDefId}`,
+    config: {
+      headers: {
+        'Content-type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    },
+  }
+
+  try {
+    const response = await axiosGet(details)
+    return response
+  }
+  catch (error) {
+    const err = error as Error
+    return err?.message
+  }
+}
+

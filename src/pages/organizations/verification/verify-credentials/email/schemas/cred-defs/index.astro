@@ -1,7 +1,7 @@
 ---
 import LayoutSidebar from "../../../../../../../app/LayoutSidebar.astro";
 import CredDefSelection from "../../../../../../../components/Verification/CredDefSelection";
-// import EmailCredDefSelection from "../../../../../../../components/Verification/EmailCredDefSelection";
+import EmailCredDefSelection from "../../../../../../../components/Verification/EmailCredDefSelection";
 import { pathRoutes } from "../../../../../../../config/pathRoutes";
 import { checkUserSession } from "../../../../../../../utils/check-session";
 
@@ -14,5 +14,5 @@ if (!response.authorized) {
 ---
 
 <LayoutSidebar notFoundPage={!response.permitted}>
-	<!-- <EmailCredDefSelection client:load /> -->
+	<EmailCredDefSelection client:load/>
 </LayoutSidebar>

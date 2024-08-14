@@ -8,7 +8,7 @@ import { checkEcosystem, type ICheckEcosystem } from '../../config/ecosystem';
 import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { getAllSchemas, getAllSchemasByOrgId } from '../../api/Schema';
-import { SchemaType } from '../../common/enums';
+import { DidMethod, SchemaType } from '../../common/enums';
 import { getOrganizationById } from '../../api/organization';
 import { Create, SchemaEndorsement } from '../Issuance/Constant';
 import BreadCrumbs from '../BreadCrumbs';
@@ -43,7 +43,9 @@ const VerificationSchemasList = (props: {
 	const [totalItem, setTotalItem] = useState(0);
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [searchValue, setSearchValue] = useState('');
-	const [selectedSchemas, setSelectedSchemas] = useState<any[]>([]); // State to hold selected schemas
+	const [selectedSchemas, setSelectedSchemas] = useState<any[]>([]);
+	const [w3cSchema, setW3cSchema] = useState<boolean>(false);
+	const [isNoLedger, setisNoLedger] = useState<boolean>(false);
 
 	const getSchemaList = async (
 		schemaListAPIParameter: any,
@@ -62,7 +64,9 @@ const VerificationSchemasList = (props: {
 					organizationId,
 				);
 			}
+
 			const { data } = schemaList as AxiosResponse;
+						
 			if (schemaList === 'Schema records not found') {
 				setLoading(false);
 				setSchemaList([]);
@@ -139,47 +143,105 @@ const VerificationSchemasList = (props: {
 		};
 
 		const isSelected = selectedSchemas.some((schema) => schema.schemaId === schemaId);
-console.log('isSelected567:::', isSelected)
 		if (isSelected) {
 			const updatedSchemas = selectedSchemas.filter((schema) => schema.schemaId !== schemaId);
-			console.log('updatedSchemas777:::', updatedSchemas)
+			
 			setSelectedSchemas(updatedSchemas);
 		} else {
 			setSelectedSchemas([...selectedSchemas, schemaDetails]);
 		}
 	};
 
-	const handleContinue = async () => {
-		console.log('Selected Schemas:', selectedSchemas);
-		const schemaIds = selectedSchemas?.map(schema => schema?.schemaId)
-		console.log('schemaIds5678:::', schemaIds)
-		await setToLocalStorage(storageKeys.SCHEMA_IDS, schemaIds)
-		window.location.href = `${pathRoutes.organizations.verification.emailCredDef}`;
+
+	const handleW3cSchemas = async (checked: boolean, schemaData?: any) => {
+		const updateSchemas = (prevSchemas: any[]) => {
+			let updatedSchemas = [...prevSchemas];
+			if (checked) {
+				updatedSchemas = [...updatedSchemas, schemaData];
+			} else {
+				updatedSchemas = updatedSchemas.filter(schema => schema.schemaId !== schemaData.schemaId);
+			}
+	
+			return updatedSchemas;
+		};
+	
+		setSelectedSchemas(prevSchemas => {
+			if (!Array.isArray(prevSchemas)) {
+				console.error('Previous schemas is not an array:', prevSchemas);
+				return [];
+			}
+	
+			const updatedSchemas = updateSchemas(prevSchemas);
+	
+			setToLocalStorage(storageKeys.SELECTED_SCHEMAS, updatedSchemas)
+				.catch(error => console.error('Failed to save to local storage:', error));
+	
+			return updatedSchemas;
+		});
 	};
-
-	const options = ['All schemas'];
-
-	const handleFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		console.log('Handle filter', e.target.value);
-		if (e.target.value === 'All schemas') {
-			setAllSchemaFlag(true);
-		} else {
-			setAllSchemaFlag(false);
-			getSchemaList(schemaListAPIParameter, false);
-		}
-	};
-
+		
 	const fetchOrganizationDetails = async () => {
 		setLoading(true);
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		const response = await getOrganizationById(orgId);
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			const did = data?.data?.org_agents?.[0]?.orgDid;
+
 			if (data?.data?.org_agents && data?.data?.org_agents?.length > 0) {
 				setWalletStatus(true);
 			}
+			if (did.includes(DidMethod.POLYGON) || did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
+				setW3cSchema(true);
+			}
+			if (did.includes(DidMethod.INDY)) {
+				setW3cSchema(false);
+			}
+			if (did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
+				setisNoLedger(true);
+			}
 		}
 		setLoading(false);
+	};
+
+	const handleContinue = async () => {
+		const schemaIds = selectedSchemas?.map(schema => schema?.schemaId)
+		await setToLocalStorage(storageKeys.SCHEMA_IDS, schemaIds)
+
+		const schemaAttributes = selectedSchemas.map(schema => ({
+			schemaId: schema.schemaId,
+			attributes: schema.attributes,
+		}));
+
+		await setToLocalStorage(storageKeys.SCHEMA_ATTRIBUTES, schemaAttributes);
+
+		window.location.href = `${pathRoutes.organizations.verification.emailCredDef}`;
+	};
+
+	const handleW3CSchemaDetails = async () => {
+		const w3cSchemaDetails = await getFromLocalStorage(storageKeys.SELECTED_SCHEMAS)
+
+        const parsedSchemaDetails = JSON.parse(w3cSchemaDetails);
+
+		const w3cSchemaAttributes = parsedSchemaDetails.map(schema => ({
+			schemaId: schema.schemaId,
+			attributes: schema.attributes,
+			schemaName: schema.schemaName
+		}))
+		await setToLocalStorage(storageKeys.W3C_SCHEMA_ATTRIBUTES, w3cSchemaAttributes);
+
+		window.location.href = `${pathRoutes.organizations.verification.w3cAttributes}`;
+	};
+
+	const options = ['All schemas'];
+
+	const handleFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		if (e.target.value === 'All schemas') {
+			setAllSchemaFlag(true);
+		} else {
+			setAllSchemaFlag(false);
+			getSchemaList(schemaListAPIParameter, false);
+		}
 	};
 
 	useEffect(() => {
@@ -189,7 +251,7 @@ console.log('isSelected567:::', isSelected)
 				const data: ICheckEcosystem = await checkEcosystem();
 				setIsEcosystemData(data);
 			} catch (error) {
-				console.log(error);
+				console.error(error);
 			}
 		})();
 		setSearchValue('');
@@ -281,6 +343,10 @@ console.log('isSelected567:::', isSelected)
 											created={element['createDateTime']}
 											showCheckbox={true}
 											isClickable={false}
+											w3cSchema={w3cSchema}
+											noLedger={isNoLedger}
+											isVerification={true}
+											onChange={(checked) => handleW3cSchemas(checked, element)}
 											onClickCallback={schemaSelectionCallback}
 										/>
 									</div>
@@ -290,7 +356,7 @@ console.log('isSelected567:::', isSelected)
 						<div>
 							<Button
 
-								onClick={handleContinue}
+								onClick={w3cSchema ? handleW3CSchemaDetails : handleContinue}
 								className='text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mt-2 ml-auto'
 							><svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" viewBox="0 0 24 24">
 									<path fill="#fff" d="M12.516 6.444a.556.556 0 1 0-.787.787l4.214 4.214H4.746a.558.558 0 0 0 0 1.117h11.191l-4.214 4.214a.556.556 0 0 0 .396.95.582.582 0 0 0 .397-.163l5.163-5.163a.553.553 0 0 0 .162-.396.576.576 0 0 0-.162-.396l-5.163-5.164Z" />

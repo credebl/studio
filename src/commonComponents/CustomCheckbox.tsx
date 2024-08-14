@@ -1,28 +1,57 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { setToLocalStorage } from '../api/Auth';
+import { storageKeys } from '../config/CommonConstant';
 
 interface CustomCheckboxProps {
   showCheckbox: boolean;
   isVerificationUsingEmail?: boolean;
-  onChange: (checked: boolean) => void;
+  onChange: (checked: boolean, schemaData?: any) => void;
+  schemaData?: any;
 }
 
-const CustomCheckbox: React.FC<CustomCheckboxProps> = ({ showCheckbox, isVerificationUsingEmail, onChange }) => {
-  console.log('in customChecjkbox')
+const CustomCheckbox: React.FC<CustomCheckboxProps> = ({ showCheckbox, isVerificationUsingEmail, onChange, schemaData }) => {
   const [checked, setChecked] = useState<boolean>(false);
 
-  const handleCheckboxChange = () => {
-        const newChecked = !checked;
-        setChecked(newChecked);
-        onChange(newChecked);
-    };
+  useEffect(() => {
+    if (schemaData) {
+      try {
+        const selectedSchemas = JSON.parse(localStorage.getItem('selectedSchemas') || '[]');
+        const isChecked = selectedSchemas.some((schema: any) => schema.schemaId === schemaData.schemaId);
+        setChecked(isChecked);
+      } catch (error) {
+        console.error('Error parsing JSON from localStorage:', error);
+      }
+    }
+  }, [schemaData]);
+
+  const handleCheckboxChange = async() => {
+    const newChecked = !checked;
+    setChecked(newChecked);
+    onChange(newChecked, schemaData);
+
+    try {
+      const selectedSchemas = JSON.parse(localStorage.getItem('selectedSchemas') || '[]');
+      if (newChecked) {
+        selectedSchemas.push(schemaData);
+      } else {
+        const index = selectedSchemas.findIndex((schema: any) => schema.schemaId === schemaData.schemaId);
+        if (index > -1) {
+          selectedSchemas.splice(index, 1);
+        }
+      }
+      await setToLocalStorage(storageKeys.SELECTED_SCHEMAS, JSON.stringify(selectedSchemas));
+    } catch (error) {
+      console.error('Error updating localStorage:', error);
+    }
+  };
 
   return (
     <>
       {showCheckbox && (
         <div
-        className={`w-4 h-4 ${isVerificationUsingEmail ? 'flex items-center cursor-pointer' : 'absolute bottom-8 right-4 cursor-pointer'}`}
-        onClick={handleCheckboxChange}
-      >
+          className={`w-4 h-4 ${isVerificationUsingEmail ? 'flex items-center cursor-pointer' : 'absolute bottom-8 right-4 cursor-pointer'}`}
+          onClick={handleCheckboxChange}
+        >
           <input
             type="checkbox"
             checked={checked}

@@ -1,4 +1,4 @@
-import type { IssueCredential } from '../common/enums';
+import type { CredentialType, IssueCredential, PresentationType } from '../common/enums';
 import { apiRoutes } from '../config/apiRoutes';
 import { storageKeys } from '../config/CommonConstant';
 import { getHeaderConfigs } from '../config/GetHeaderConfigs';
@@ -9,6 +9,23 @@ import type { IConnectionListAPIParameter } from './connection';
 export const verifyCredential = async (payload: any) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Verification.verifyCredential}`;
+	const axiosPayload = {
+		url,
+		payload,
+		config: await getHeaderConfigs(),
+	};
+
+	try {
+		return await axiosPost(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};
+
+export const createOobProofRequest = async (payload: any, requestType: PresentationType) => {
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Verification.oobProofRequest}?requestType=${requestType}`;
 	const axiosPayload = {
 		url,
 		payload,

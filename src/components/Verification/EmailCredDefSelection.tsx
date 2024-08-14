@@ -1,11 +1,11 @@
 import { Button } from "flowbite-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, type ChangeEvent } from "react";
 import { getFromLocalStorage, removeFromLocalStorage, setToLocalStorage } from "../../api/Auth";
 import { apiStatusCodes, storageKeys } from "../../config/CommonConstant";
 import { pathRoutes } from "../../config/pathRoutes";
 import BreadCrumbs from "../BreadCrumbs";
 import { AlertComponent } from "../AlertComponent";
-import type { SchemaState, CredDefData } from "./interface";
+import type { CredDefData } from "./interface";
 import type { TableData } from "../../commonComponents/datatable/interface";
 import DataTable from "../../commonComponents/datatable";
 import { getCredentialDefinitionsForVerification } from "../../api/verification";
@@ -18,10 +18,8 @@ import CustomCheckbox from "../../commonComponents/CustomCheckbox";
 const EmailCredDefSelection = () => {
     const [schemaState, setSchemaState] = useState({ schemaName: '', version: '' });
     const [loading, setLoading] = useState<boolean>(true);
-    const [schemaLoader, setSchemaLoader] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [credDefList, setCredDefList] = useState<TableData[]>([]);
-    const [schemaDetailsState, setSchemaDetailsState] = useState<SchemaState>({ schemaId: '', issuerDid: '', attributes: [], createdDateTime: '' });
     const [searchValue, setSearchValue] = useState('');
 
     useEffect(() => {
@@ -37,15 +35,15 @@ const EmailCredDefSelection = () => {
         try {
             const schemaIdsJSON = await getFromLocalStorage(storageKeys.SCHEMA_IDS);
             const schemaIds = schemaIdsJSON ? JSON.parse(schemaIdsJSON) : [];
-        
+
             if (schemaIds && schemaIds.length > 0) {
 
                 const parts = schemaIds[0]?.split(":");
                 const schemaName = parts[2];
                 const version = parts[3];
-    
+
                 setSchemaState({ schemaName, version });
-    
+
                 getCredDefs(schemaIds);
             } else {
                 setSchemaState({ schemaName: '', version: '' });
@@ -53,17 +51,6 @@ const EmailCredDefSelection = () => {
         } catch (error) {
             console.error('Error fetching schema details:', error);
         }
-    };
-     
-
-    const getSchemaDetails = async (schemaId: string) => {
-        setSchemaLoader(true);
-        const schemaDid = await getFromLocalStorage(storageKeys.SCHEMA_ATTR);
-        const schemaDidObject = JSON.parse(schemaDid);
-        if (schemaDidObject) {
-            setSchemaDetailsState({ schemaId: schemaId, issuerDid: schemaDidObject?.issuerDid, attributes: schemaDidObject?.attribute, createdDateTime: schemaDidObject?.createdDate });
-        }
-        setSchemaLoader(false);
     };
 
     const header = [
@@ -73,75 +60,65 @@ const EmailCredDefSelection = () => {
     ];
 
     const getCredDefs = async (schemaIds: string[]) => {
-    setLoading(true);
-    const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-    let allCredDefs: TableData[] = [];
-    for (const schemaId of schemaIds) {
-        try {
-            const response = await getCredentialDefinitionsForVerification(schemaId);
+        setLoading(true);
+        const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+        let allCredDefs: TableData[] = [];
+        let rawCredDefs: CredDefData[] = []; 
 
-            const { data } = response as AxiosResponse;
+        for (const schemaId of schemaIds) {
+            try {
+                const response = await getCredentialDefinitionsForVerification(schemaId);
 
-            if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-                const getSchemaDetails = await getSchemaById(schemaId, orgId);
-                const schemaName = getSchemaDetails?.data?.data?.schema?.name;
+                const { data } = response as AxiosResponse;
 
-                const credDefs = data?.data?.map((ele: CredDefData) => {
-                    return {
-                        data: [
-                            {
-                                // data: (
-                                //     <div className="flex items-center space-x-4">
-                                //         <input
-                                //             id="default-checkbox"
-                                //             type="checkbox"
-                                //             onClick={(event: React.MouseEvent<HTMLInputElement>) => {
-                                //                 const inputElement = event?.target as HTMLInputElement;
-                                //                 selectConnection(ele?.credentialDefinitionId, inputElement?.checked);
-                                //             }}
-                                //             value=""
-                                //             className="w-4 h-4 text-primary-700 bg-gray-100 border-gray-300 rounded focus:ring-primary-700 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 cursor-pointer"
-                                //         />
-                                //         <span>{ele?.tag ? ele?.tag : 'Not available'}</span>
-                                //     </div>
-                                // )
-                                data: (
-                                                                        <div className="flex items-center space-x-4">
+                if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+                    const getSchemaDetails = await getSchemaById(schemaId, orgId);
+                    const schemaName = getSchemaDetails?.data?.data?.schema?.name;
 
-                                    <CustomCheckbox
-                                        showCheckbox={true}
-                                        isVerificationUsingEmail={true}
-                                        onChange={(checked: boolean) => {
-                                            selectConnection(ele?.credentialDefinitionId, checked);
-                                        }}
-                                    />
-                                    <span>{ele?.tag ? ele?.tag : 'Not available'}</span>
-                                    </div>
-                                )
-                            },
-                            { data: schemaName || 'Not available' },
-                            { data: ele?.revocable === true ? <span className="text-blue-700 dark:text-white">Yes</span> : <span className="text-cyan-500 dark:text-white">No</span> }
-                        ]
-                    };
-                });
+                    const credDefs = data?.data?.map((ele: CredDefData) => {
+                        rawCredDefs.push(ele);
 
-                allCredDefs = [...allCredDefs, ...credDefs];
+                        return {
+                            data: [
+                                {
+                                    data: (
+                                        <div className="flex items-center space-x-4">
 
-            } else {
-                console.log(`Error fetching credential definitions for schema ${schemaId}`);
+                                            <CustomCheckbox
+                                                showCheckbox={true}
+                                                isVerificationUsingEmail={true}
+                                                onChange={(checked: boolean) => {
+                                                    selectConnection(ele?.credentialDefinitionId, checked);
+                                                }}
+                                            />
+                                            <span>{ele?.tag ? ele?.tag : 'Not available'}</span>
+                                        </div>
+                                    )
+                                },
+                                { data: schemaName || 'Not available' },
+                                { data: ele?.revocable === true ? <span className="text-blue-700 dark:text-white">Yes</span> : <span className="text-cyan-500 dark:text-white">No</span> }
+                            ]
+                        };
+                    });
+
+                    allCredDefs = [...allCredDefs, ...credDefs];
+
+                } else {
+                    console.error(`Error fetching credential definitions for schema ${schemaId}`);
+                }
+            } catch (error) {
+                console.error(`Error fetching credential definitions for schema ${schemaId}:`, error);
             }
-        } catch (error) {
-            console.error(`Error fetching credential definitions for schema ${schemaId}:`, error);
         }
-    }
 
-    setLoading(false);
-    setCredDefList(allCredDefs);
+        setLoading(false);
+        setCredDefList(allCredDefs);
+        await setToLocalStorage(storageKeys.SCHEMA_CRED_DEFS, rawCredDefs);
 
-    if (allCredDefs.length === 0) {
-        setError('No Credential Definitions Found');
-    }
-};
+        if (allCredDefs.length === 0) {
+            setError('No Credential Definitions Found');
+        }
+    };
 
 
     const selectConnection = async (credDefId: string, checked: boolean) => {
@@ -163,7 +140,7 @@ const EmailCredDefSelection = () => {
                     <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
                         Credential-definition
                     </h1>
-                    <SearchInput value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
+                    <SearchInput value={searchValue} onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchValue(e.target.value)} />
                 </div>
             </div>
 
@@ -179,7 +156,7 @@ const EmailCredDefSelection = () => {
             <DataTable header={header} data={credDefList} loading={loading} isEmailVerification={true} callback={() => { }} />
             <div>
                 <Button onClick={() => {
-                    window.location.href = `${pathRoutes.organizations.verification.connections}`;
+                    window.location.href = `${pathRoutes.organizations.verification.attributes}`;
                 }}
                     className='text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mt-2 ml-auto'
                 >
