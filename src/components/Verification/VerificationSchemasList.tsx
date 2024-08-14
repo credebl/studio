@@ -345,7 +345,7 @@ const VerificationSchemasList = (props: {
 											isClickable={false}
 											w3cSchema={w3cSchema}
 											noLedger={isNoLedger}
-											isVerification={true}
+											isVerificationUsingEmail={true}
 											onChange={(checked) => handleW3cSchemas(checked, element)}
 											onClickCallback={schemaSelectionCallback}
 										/>
