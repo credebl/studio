@@ -26,11 +26,14 @@ import { Create, SchemaEndorsement } from '../../Issuance/Constant';
 import { DidMethod, SchemaType } from '../../../common/enums';
 
 const SchemaList = (props: {
-	schemaSelectionCallback: (
+		schemaSelectionCallback: (
 		schemaId: string,
 		schemaDetails: SchemaDetails,
 	) => void;
+	verificationFlag?: boolean;
 }) => {
+
+	const verificationFlag = props.verificationFlag ?? false;
 	const [schemaList, setSchemaList] = useState([]);
 	const [schemaListErr, setSchemaListErr] = useState<string | null>('');
 	const [loading, setLoading] = useState<boolean>(true);
@@ -48,7 +51,7 @@ const SchemaList = (props: {
 	const [totalItem, setTotalItem] = useState(0);
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [searchValue, setSearchValue] = useState('');
-	const [w3cSchema,setW3cSchema]= useState<boolean>(false);
+	const [w3cSchema,setW3CSchema]= useState<boolean>(false);
 	const [isNoLedger,setisNoLedger]= useState<boolean>(false);	
 
 	const getSchemaList = async (
@@ -191,10 +194,10 @@ const SchemaList = (props: {
 				setWalletStatus(true);
 			}
 			if (did.includes(DidMethod.POLYGON) || did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
-				setW3cSchema(true);
+				setW3CSchema(true);
 			}
 			if (did.includes(DidMethod.INDY)) {
-				setW3cSchema(false);
+				setW3CSchema(false);
 			}
 			if (did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
 				setisNoLedger(true);
@@ -306,7 +309,8 @@ const SchemaList = (props: {
 											onClickW3cIssue={handleW3CIssue}
 											w3cSchema={w3cSchema}
 											noLedger={isNoLedger}
-											
+											isVerification={verificationFlag}
+																					
 										/>
 									</div>
 								))}

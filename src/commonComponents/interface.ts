@@ -12,7 +12,6 @@ export interface IProps {
 
 
 export interface ISchemaCardProps {
-  isVerificationUsingEmail: boolean | undefined;
 	className?: string;
 	schemaName: string;
 	version: string;
@@ -30,4 +29,5 @@ export interface ISchemaCardProps {
 	w3cSchema?:boolean;
 	noLedger?:boolean;
 	isVerification?: boolean;
+	isVerificationUsingEmail?: boolean;
   }

@@ -157,3 +157,13 @@ export enum AutoAccept {
     ContentApproved = "contentApproved",
     Never = "never"
 }
+
+export enum RequestType {
+    INDY = 'indy',
+    PRESENTATION_EXCHANGE = 'presentationExchange'
+}
+
+export enum ProofType {
+	polygon = 'EcdsaSecp256k1Signature2019',
+	no_ledger = 'Ed25519Signature2018'
+}

@@ -3,7 +3,7 @@ import * as Yup from 'yup';
 
 import { Alert, Button, Card } from 'flowbite-react';
 import { Field, FieldArray, Form, Formik } from 'formik';
-import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
+import { apiStatusCodes, CREDENTIAL_CONTEXT_VALUE, storageKeys, proofPurpose } from '../../config/CommonConstant';
 import { getFromLocalStorage, removeFromLocalStorage } from '../../api/Auth';
 import { useEffect, useState } from 'react';
 import BackButton from '../../commonComponents/backbutton';
@@ -24,7 +24,7 @@ import type {
 import SummaryCard from '../../commonComponents/SummaryCard';
 import React from 'react';
 import { getOrganizationById } from '../../api/organization';
-import { DidMethod, CredentialType, SchemaTypeValue } from '../../common/enums';
+import { DidMethod, CredentialType, SchemaTypeValue, ProofType } from '../../common/enums';
 
 const IssueCred = () => {
 	const [schemaLoader, setSchemaLoader] = useState<boolean>(true);
@@ -35,7 +35,7 @@ const IssueCred = () => {
 		schemaId: '',
 		credDefId: '',
 	});
-	const [w3cSchemaDetails, setW3cSchemaDetails] = useState<W3cSchemaDetails>({
+	const [w3cSchemaDetails, setW3CSchemaDetails] = useState<W3cSchemaDetails>({
 		schemaName: '',
 		version: '',
 		schemaId: '',
@@ -52,7 +52,7 @@ const IssueCred = () => {
 	>([]);
 	const [success, setSuccess] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
-	const [w3cSchema, setW3cSchema]= useState<boolean>(false);
+	const [w3cSchema, setW3CSchema]= useState<boolean>(false);
 	const [credentialType, setCredentialType] = useState<CredentialType>();
 	const [schemaType, setSchemaType] = useState<SchemaTypeValue>();
 
@@ -71,19 +71,19 @@ const IssueCred = () => {
 				const did = data?.data?.org_agents?.[0]?.orgDid;
 				
 				if (did?.includes(DidMethod.POLYGON)) {
-					setW3cSchema(true);
+					setW3CSchema(true);
 					setCredentialType(CredentialType.JSONLD);
 					setSchemaType(SchemaTypeValue.POLYGON)
 					await getSchemaAndUsers(true)
 				}
 				else if (did?.includes(DidMethod.KEY) || did?.includes(DidMethod.WEB)) {
-					setW3cSchema(true);
+					setW3CSchema(true);
 					setSchemaType(SchemaTypeValue.NO_LEDGER)
 					setCredentialType(CredentialType.JSONLD);
 					await getSchemaAndUsers(true)
 				}
 				else if (did?.includes(DidMethod.INDY)) {
-					setW3cSchema(false);
+					setW3CSchema(false);
 					setCredentialType(CredentialType.INDY);	
 					await getSchemaAndUsers(false)
 				}
@@ -110,7 +110,6 @@ const IssueCred = () => {
 				} else {
 					setFailure('Attributes are not available');
 				}
-	
 			}
 			if (w3cSchema) {
 				const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -274,7 +273,7 @@ const IssueCred = () => {
 		if (schemaId) {
 
 			if (parsedW3cSchemaDetails) {
-				setW3cSchemaDetails(parsedW3cSchemaDetails);
+				setW3CSchemaDetails(parsedW3cSchemaDetails);
 				
 				setSchemaLoader(false);
 
@@ -323,7 +322,7 @@ const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 						connectionId: item.connectionId,
 						credential: {
 							"@context": [
-								storageKeys.CREDENTIAL_CONTEXT_VALUE,
+								CREDENTIAL_CONTEXT_VALUE,
 								w3cSchemaDetails.schemaId
 							],
 							"type": [
@@ -350,8 +349,8 @@ const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 								},
 		
 						options: {
-							proofType: schemaType=== SchemaTypeValue.POLYGON ? "EcdsaSecp256k1Signature2019" : "Ed25519Signature2018",
-							proofPurpose: "assertionMethod"
+							proofType: schemaType=== SchemaTypeValue.POLYGON ? ProofType.polygon : ProofType.no_ledger,
+							proofPurpose: proofPurpose
 						}
 					};
 				}),
