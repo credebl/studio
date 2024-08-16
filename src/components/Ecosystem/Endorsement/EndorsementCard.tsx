@@ -23,6 +23,8 @@ interface IAttributeData {
 const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTransitionDisabled, allAttributes }: IProps) => {
     const [isEcosystemLead, setIsEcosystemLead] = useState(false);
     const isSchema = data?.type === EndorsementType.schema
+    const isW3CSchema =data?.type === EndorsementType.w3cSchema
+console.log("opopop",data);
 
     useEffect(() => {
         const checkEcosystemData = async () => {
@@ -81,8 +83,13 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
     const requestPayload = data?.requestPayload && JSON.parse(data?.requestPayload)
 
     const requestData = isSchema ? requestPayload?.operation?.data : requestPayload?.operation
-    const attributesData: IAttributeData | null = getAttributes()
 
+    const   W3CSchemaName = requestPayload?.schemaName
+    const attributesData: IAttributeData | null = getAttributes()
+console.log("W3CSchemaName",W3CSchemaName);
+
+    console.log("reqqqqqqqqqq", requestPayload);
+    
     return (
         <Card onClick={() => {
             if (enableAction && onClickCallback) {
@@ -96,6 +103,7 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
                 <div className='min-w-[6rem] max-w-100/13rem'>
                     <h5 className="text-xl font-bold leading-[1.1] text-gray-900 dark:text-white break-words truncate line-clamp-2 max-h-[43px] whitespace-normal" style={{ display: "-webkit-box" }}>
                         {isSchema ? requestData?.name : requestData?.tag}
+                        {W3CSchemaName}
                     </h5>
                     {
                         isSchema &&
@@ -129,7 +137,7 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
                 </div>
             </div>
             < div className="min-w-0 flex-none" >
-                {!isSchema &&
+                {!isSchema && !isW3CSchema &&
                     <>
                         <p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
                             <span className="font-semibold">Schema Name:</span> {data?.requestBody?.schemaDetails?.name || "-"}

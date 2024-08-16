@@ -17,12 +17,13 @@ import React, { useEffect, useState } from 'react';
 import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import { asset } from '../../lib/data.js';
-import { createOrganization } from '../../api/organization';
+import { createOrganization, getOrganizationById } from '../../api/organization';
 import { getFromLocalStorage } from '../../api/Auth';
 import { createEcosystems } from '../../api/ecosystem';
 import { getOrgDetails } from '../../config/ecosystem';
 import EndorsementTooltip from '../../commonComponents/EndorsementTooltip';
 import { processImage } from '../../utils/processImage';
+import { DidMethod } from '../../common/enums.js';
 
 interface Values {
 	name: string;
@@ -62,6 +63,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 		autoEndorsement: false,
 	});
 	const [errMsg, setErrMsg] = useState<string | null>(null);
+	const [w3cSchema,setW3cSchema]= useState<boolean>(false);
 
 	const [imgError, setImgError] = useState('');
 	const [autoEndorse, setautoEndorse] = useState(false);
@@ -146,6 +148,30 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 			}
 		});
 	};
+
+
+	const fetchOrganizationDetails = async () => {
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		const response = await getOrganizationById(orgId);
+		const { data } = response as AxiosResponse;
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			const did = data?.data?.org_agents?.[0]?.orgDid;
+			
+			if (did.includes(DidMethod.POLYGON) || did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
+				setW3cSchema(true);
+			}
+			if (did.includes(DidMethod.INDY)) {
+				setW3cSchema(false);
+			}
+		}
+		setLoading(false);
+	};
+
+	useEffect(() => {
+		fetchOrganizationDetails();
+		
+	}, []);
+
 
 	const submitCreateOrganization = async (values: Values) => {
 		setLoading(true);
@@ -430,21 +456,22 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 											<Label htmlFor="name" value="Endorsement Flow" />
 											<EndorsementTooltip />
 										</div>
-
-										<div>
-											<input
-												className=""
-												type="radio"
-												id="autoEndorsement"
-												name="autoEndorsement"
-												checked={autoEndorse === false}
-												onChange={() => setautoEndorse(false)}
-											/>
-											<span className="ml-2 text-gray-900 dark:text-white text-sm">
-												Sign
-											</span>
-										</div>
-
+                                    {
+									   !w3cSchema &&
+											<div>
+												<input
+													className=""
+													type="radio"
+													id="autoEndorsement"
+													name="autoEndorsement"
+													checked={autoEndorse === false}
+													onChange={() => setautoEndorse(false)}
+												/>
+												<span className="ml-2 text-gray-900 dark:text-white text-sm">
+													Sign
+												</span>
+											</div>
+									  }
 										<div>
 											<input
 												className=""

@@ -2,10 +2,10 @@ import * as yup from 'yup';
 import { Avatar, Button, Label, Modal } from 'flowbite-react';
 import { Field, Form, Formik } from 'formik';
 import type { FormikHelpers as FormikActions } from 'formik';
-import { apiStatusCodes } from '../../config/CommonConstant';
+import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
-import { updateOrganization } from '../../api/organization';
+import { getOrganizationById, updateOrganization } from '../../api/organization';
 import { updateEcosystem } from '../../api/ecosystem';
 import type {
 	EditEntityModalProps,
@@ -16,6 +16,8 @@ import React, { useEffect, useState } from 'react';
 import EndorsementTooltip from '../../commonComponents/EndorsementTooltip';
 import { processImage } from '../../utils/processImage';
 import FormikErrorMessage from '../../commonComponents/formikerror/index'
+import { getFromLocalStorage } from '../../api/Auth';
+import { DidMethod } from '../../common/enums';
 
 const EditPopupModal = (props: EditEntityModalProps) => {
 	const [logoImage, setLogoImage] = useState<ILogoImage>({
@@ -48,6 +50,8 @@ const EditPopupModal = (props: EditEntityModalProps) => {
 	const [errMsg, setErrMsg] = useState<string | null>(null);
 	const [imgError, setImgError] = useState('');
 	const [isAutoEndorse, setIsAutoEndorse] = useState(false);
+	const [w3cSchema,setW3cSchema]= useState<boolean>(false);
+
 
 	useEffect(() => {
 		if (!props.openModal) {
@@ -81,6 +85,28 @@ const EditPopupModal = (props: EditEntityModalProps) => {
 			}
 		});
 	};
+
+
+	const fetchOrganizationDetails = async () => {
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		const response = await getOrganizationById(orgId);
+		const { data } = response as AxiosResponse;
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			const did = data?.data?.org_agents?.[0]?.orgDid;
+			
+			if (did.includes(DidMethod.POLYGON) || did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
+				setW3cSchema(true);
+			}
+			if (did.includes(DidMethod.INDY)) {
+				setW3cSchema(false);
+			}
+		}
+		setLoading(false);
+	};
+
+	useEffect(() => {
+		fetchOrganizationDetails();	
+	}, []);
 
 	const submitUpdateEntity = async (values: EditEntityValues) => {
 		setLoading(true);
@@ -322,6 +348,8 @@ const EditPopupModal = (props: EditEntityModalProps) => {
 									<Label htmlFor="name" value="Endorsement Flow" />
 									<EndorsementTooltip />
 								</div>
+								{
+								!w3cSchema &&
 								<div>
 									<input
 										className=""
@@ -335,6 +363,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
 										Sign
 									</span>
 								</div>
+								}
 								<div>
 									<input
 										className=""
