@@ -1,3 +1,4 @@
+import type { CredentialType, SchemaType } from '../common/enums';
 import { apiRoutes } from '../config/apiRoutes';
 import { storageKeys } from '../config/CommonConstant';
 import {
@@ -45,9 +46,9 @@ export const getCredentialDefinitions = async (schemaId: string) => {
 	}
 };
 
-export const issueCredential = async (data: object) => {
+export const issueCredential = async (data: object, credentialType:SchemaType) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.issueCredential}`;
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.issueCredential}?credentialType=${credentialType}`;
 	const payload = data;
 
 	const axiosPayload = {
@@ -64,9 +65,9 @@ export const issueCredential = async (data: object) => {
 	}
 };
 
-export const issueOobEmailCredential = async (data: object) => {
+export const issueOobEmailCredential = async (data: object, credentialType:CredentialType) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.issueOobEmailCredential}`;
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.issueOobEmailCredential}?credentialType=${credentialType}`;
 	const payload = data;
 
 	const axiosPayload = {

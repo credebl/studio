@@ -222,6 +222,7 @@ export interface IFormikValues {
 	privatekey: string;
 	endorserDid: string;
 }
+
 export interface IDedicatedAgentConfig {
 	walletName: string;
 	agentEndpoint: string;

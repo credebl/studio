@@ -6,6 +6,7 @@ import SchemaList from "../Resources/Schema/SchemasList";
 import type { SchemaDetails } from "./interface";
 
 const SchemaSelection = () => {
+	const isVerification = true;
 
 	const schemaSelectionCallback = async (schemaId: string, schemaDetails:SchemaDetails) => {
 		await setToLocalStorage(storageKeys.SCHEMA_ID, schemaId)
@@ -15,7 +16,7 @@ const SchemaSelection = () => {
 	}
 
 	return (
-		<SchemaList schemaSelectionCallback={schemaSelectionCallback} />
+		<SchemaList schemaSelectionCallback={schemaSelectionCallback} verificationFlag={isVerification}/>
 	)
 }
 

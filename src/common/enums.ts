@@ -33,7 +33,7 @@ export enum ProofRequestStateUserText {
 
 export enum SchemaType {
     INDY = 'indy',
-    W3C = 'w3c'
+    W3C = 'json'
 }
 export enum IssueCredentialUserText {
 	offerSent = 'Offered',
@@ -124,4 +124,30 @@ export enum Ledgers {
 	INDY = 'indy',
 	POLYGON = 'polygon',
 	NO_LEDGER = 'noLedger'
+}
+
+export enum SchemaTypeValue {
+	INDY = 'indy',
+	POLYGON = 'polygon',
+	NO_LEDGER = 'no_ledger'
+}
+
+export enum SchemaTypes {
+    schema_INDY = 'indy',
+    schema_W3C = 'w3c'
+}
+
+export enum CredentialType {
+    INDY = 'indy',
+    JSONLD = 'jsonld'
+}
+
+export enum RequestType {
+    INDY = 'indy',
+    PRESENTATION_EXCHANGE = 'presentationExchange'
+}
+
+export enum ProofType {
+	polygon = 'EcdsaSecp256k1Signature2019',
+	no_ledger = 'Ed25519Signature2018'
 }

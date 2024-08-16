@@ -34,7 +34,7 @@ const DeleteOrganizations = () => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [ecosystemUserRoles, setEcosystemUserRoles] = useState<string>('');
   const [deleteAction, setDeleteAction] = useState<() => void>(() => {});
-  const [confirmMessage, setConfirmMessage] = useState<string>('');
+  const [confirmMessage, setConfirmMessage] = useState<string | React.ReactNode>('');
   const [description, setDescription] = useState<string>("");
   const [ecosystemRoles, setEcosystemRoles] = useState<string[]>([]);
   const [orgName, setOrgName] = useState<string>("");
@@ -215,6 +215,9 @@ const DeleteOrganizations = () => {
         toast.success(data?.message, {autoClose: 3000})
         setIsWalletPresent(false)
         await fetchOrganizationReferences();
+        setTimeout(() => {
+          window.location.reload();         
+        }, 3000);
         setShowPopup(false)
       } else {
         setError(response as string);
@@ -295,7 +298,7 @@ const DeleteOrganizations = () => {
     },
     {
         title: "Organization wallet",
-        description: "",
+        description: "Organization Wallet is the data of your created DIDs.",
         count: isWalletPresent ? 1 : 0,
         deleteFunc: deleteFunctions.deleteOrgWallet,
         confirmMessage: "Are you sure you want to delete organization wallet",
@@ -308,9 +311,9 @@ const DeleteOrganizations = () => {
       },
     {
       title: "Organization",
-      description: "Organization",
+      description: "Organization is the collection of your users, schemas, cred-defs, connections and wallet.",
       deleteFunc: deleteFunctions.deleteOrganizations,
-      confirmMessage:`Are you sure you want to delete organization ${orgName}`,     
+      confirmMessage:<text>{`Are you sure you want to delete organization `}<text className="font-bold">"{orgName}"</text></text>,     
       isDisabled: isWalletPresent || ecosystemUserRoles.includes(EcosystemRoles.ecosystemLead)
     }
   ];
