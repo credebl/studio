@@ -1,5 +1,5 @@
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
-import { getFromLocalStorage, passwordEncryption } from '../../../api/Auth';
+import { getFromLocalStorage } from '../../../api/Auth';
 import {
 	createDid,
 	getOrganizationById,
@@ -92,7 +92,7 @@ const WalletSpinup = (props: {
 	useEffect(() => {
        fetchOrganizationDetails()
     }, []);
-
+		
 	const onRadioSelect = (type: string) => {
 		setAgentType(type);
 	};
