@@ -36,7 +36,7 @@ const EmailVerification = () => {
         }
     };
 
-    const fetchOrganizationDetails = async () => {
+    const getOrganizationDetails = async () => {
         setLoading(true);
         const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
         const response = await getOrganizationById(orgId);
@@ -55,7 +55,7 @@ const EmailVerification = () => {
     };
 
     useEffect(() => {
-        fetchOrganizationDetails();
+        getOrganizationDetails();
     }, []);
 
     const handleSubmit = async (values: IEmailValues) => {
@@ -277,7 +277,6 @@ const EmailVerification = () => {
                                                                         <Field
                                                                             name={`emailData.${index}.email`}
                                                                             placeholder="email"
-                                                                            // type="email"
                                                                             onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleInputChange(index, event)}
                                                                             className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-md rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                                                         />

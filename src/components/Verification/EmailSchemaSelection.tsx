@@ -8,7 +8,7 @@ import VerificationSchemasList from "./VerificationSchemasList";
 
 const EmailSchemaSelection = () => {
 
-	const schemaSelectionCallback = async (schemaId: string, schemaDetails:SchemaDetails) => {
+	const handleSchemaSelection = async (schemaId: string, schemaDetails:SchemaDetails) => {
 		await setToLocalStorage(storageKeys.SCHEMA_ID, schemaId)
 		await setToLocalStorage(storageKeys.SCHEMA_ATTR, schemaDetails)
 		await removeFromLocalStorage(storageKeys.CRED_DEF_ID)
@@ -16,7 +16,7 @@ const EmailSchemaSelection = () => {
 	}
 
 	return (
-		<VerificationSchemasList schemaSelectionCallback={schemaSelectionCallback} />
+		<VerificationSchemasList handleSchemaSelection={handleSchemaSelection} />
 	)
 }
 

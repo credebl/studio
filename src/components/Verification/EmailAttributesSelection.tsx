@@ -9,12 +9,9 @@ import type { TableData } from '../../commonComponents/datatable/interface';
 import { pathRoutes } from '../../config/pathRoutes';
 import BackButton from '../../commonComponents/backbutton';
 import type {
-	IAttribute,
 	ISelectedAttributes,
-	SchemaDetail,
 } from './interface';
 import CustomCheckbox from '../../commonComponents/CustomCheckbox';
-import type { IAttributes } from '../Resources/Schema/interfaces';
 import { getOrganizationById } from '../../api/organization';
 import type { AxiosResponse } from 'axios';
 import { DidMethod } from '../../common/enums';
@@ -25,7 +22,6 @@ const EmailAttributesSelection = () => {
 	const [errMsg, setErrMsg] = useState<string | null>(null);
 	const [display, setDisplay] = useState<boolean | undefined>(false);
 	const [loading, setLoading] = useState<boolean>(true);
-	const [requestLoader, setRequestLoader] = useState<boolean>(false);
 	const [attributeData, setAttributeData] = useState<ISelectedAttributes[] | null>(
 		null,
 	);
@@ -74,7 +70,7 @@ const EmailAttributesSelection = () => {
 	};
 
 
-	const fetchOrganizationDetails = async () => {
+	const fetchOrgDetails = async () => {
 		setLoading(true);
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		const response = await getOrganizationById(orgId);
@@ -94,7 +90,7 @@ const EmailAttributesSelection = () => {
 	};
 
 	useEffect(() => {
-		fetchOrganizationDetails();
+		fetchOrgDetails();
 	}, []);
 
 	const handleSubmit = () => {
@@ -379,7 +375,6 @@ const EmailAttributesSelection = () => {
 			<div>
 				<Button
 					onClick={handleSubmit}
-					isProcessing={requestLoader}
 					disabled={
 						!attributeData?.some((ele) => ele.isChecked)
 					}

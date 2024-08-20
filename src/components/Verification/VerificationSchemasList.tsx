@@ -21,17 +21,16 @@ import { EmptyListMessage } from '../EmptyListComponent';
 import SchemaCard from '../../commonComponents/SchemaCard';
 
 const VerificationSchemasList = (props: {
-	schemaSelectionCallback: (
+	handleSchemaSelection: (
 		schemaId: string,
 		schemaDetails: SchemaDetails,
 	) => void;
 }) => {
-	const [schemaList, setSchemaList] = useState([]);
-	const [schemaListErr, setSchemaListErr] = useState<string | null>('');
+	const [schemasList, setSchemasList] = useState([]);
+	const [schemasDetailsErr, setSchemasDetailsErr] = useState<string | null>('');
 	const [loading, setLoading] = useState<boolean>(true);
-	const [allSchemaFlag, setAllSchemaFlag] = useState<boolean>(false);
-	const [orgId, setOrgId] = useState<string>('');
-	const [schemaListAPIParameter, setSchemaListAPIParameter] = useState({
+	const [allSchemasFlag, setAllSchemasFlag] = useState<boolean>(false);
+	const [schemaListParameter, setSchemasListParameter] = useState({
 		itemPerPage: 9,
 		page: 1,
 		search: '',
@@ -40,57 +39,56 @@ const VerificationSchemasList = (props: {
 		allSearch: '',
 	});
 	const [walletStatus, setWalletStatus] = useState(false);
-	const [totalItem, setTotalItem] = useState(0);
+	const [totalItems, setTotalItems] = useState(0);
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [searchValue, setSearchValue] = useState('');
 	const [selectedSchemas, setSelectedSchemas] = useState<any[]>([]);
 	const [w3cSchema, setW3cSchema] = useState<boolean>(false);
 	const [isNoLedger, setisNoLedger] = useState<boolean>(false);
 
-	const getSchemaList = async (
-		schemaListAPIParameter: any,
+	const getSchemaListDetails = async (
+		schemaListParameter: any,
 		flag: boolean,
 	) => {
 		try {
 			const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
-			setOrgId(organizationId);
 			setLoading(true);
-			let schemaList;
-			if (allSchemaFlag) {
-				schemaList = await getAllSchemas(schemaListAPIParameter, SchemaType.INDY);
+			let schemasList;
+			if (allSchemasFlag) {
+				schemasList = await getAllSchemas(schemaListParameter, SchemaType.INDY);
 			} else {
-				schemaList = await getAllSchemasByOrgId(
-					schemaListAPIParameter,
+				schemasList = await getAllSchemasByOrgId(
+					schemaListParameter,
 					organizationId,
 				);
 			}
 
-			const { data } = schemaList as AxiosResponse;
+			const { data } = schemasList as AxiosResponse;
 						
-			if (schemaList === 'Schema records not found') {
+			if (schemasList === 'Schema records not found') {
 				setLoading(false);
-				setSchemaList([]);
+				setSchemasList([]);
 			}
 
 			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 				if (data?.data?.data) {
-					setTotalItem(data?.data?.lastPage);
-					setSchemaList(data?.data?.data);
+					setTotalItems(data?.data?.lastPage);
+					setSchemasList(data?.data?.data);
 					setLoading(false);
 				} else {
 					setLoading(false);
-					if (schemaList !== 'Schema records not found') {
-						setSchemaListErr(schemaList as string);
+					if (schemasList !== 'Schema records not found') {
+						setSchemasDetailsErr(schemasList as string);
 					}
 				}
 			} else {
 				setLoading(false);
-				if (schemaList !== 'Schema records not found') {
-					setSchemaListErr(schemaList as string);
+				if (schemasList !== 'Schema records not found') {
+					setSchemasDetailsErr(schemasList as string);
 				}
 			}
 			setTimeout(() => {
-				setSchemaListErr('');
+				setSchemasDetailsErr('');
 			}, 3000);
 		} catch (error) {
 			console.error('Error while fetching schema list:', error);
@@ -99,29 +97,29 @@ const VerificationSchemasList = (props: {
 	};
 
 	useEffect(() => {
-		getSchemaList(schemaListAPIParameter, false);
-	}, [schemaListAPIParameter, allSchemaFlag]);
+		getSchemaListDetails(schemaListParameter, false);
+	}, [schemaListParameter, allSchemasFlag]);
 
 
-	const onSearch = async (
+	const onSchemaListParameterSearch = async (
 		event: ChangeEvent<HTMLInputElement>,
 	): Promise<void> => {
 		event.preventDefault();
 		const inputValue = event.target.value;
 		setSearchValue(inputValue);
 
-		getSchemaList(
+		getSchemaListDetails(
 			{
-				...schemaListAPIParameter,
+				...schemaListParameter,
 				search: inputValue,
 			},
 			false,
 		);
 
-		if (allSchemaFlag) {
-			getSchemaList(
+		if (allSchemasFlag) {
+			getSchemaListDetails(
 				{
-					...schemaListAPIParameter,
+					...schemaListParameter,
 					allSearch: inputValue,
 				},
 				false,
@@ -129,7 +127,7 @@ const VerificationSchemasList = (props: {
 		}
 	};
 
-	const schemaSelectionCallback = (
+	const handleSchemaSelection = (
 		schemaId: string,
 		attributes: string[],
 		issuerId: string,
@@ -237,10 +235,10 @@ const VerificationSchemasList = (props: {
 
 	const handleFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		if (e.target.value === 'All schemas') {
-			setAllSchemaFlag(true);
+			setAllSchemasFlag(true);
 		} else {
-			setAllSchemaFlag(false);
-			getSchemaList(schemaListAPIParameter, false);
+			setAllSchemasFlag(false);
+			getSchemaListDetails(schemaListParameter, false);
 		}
 	};
 
@@ -257,7 +255,7 @@ const VerificationSchemasList = (props: {
 		setSearchValue('');
 	}, []);
 
-	const createSchemaTitle = isEcosystemData?.isEcosystemMember
+	const createSchemaButtonTitle = isEcosystemData?.isEcosystemMember
 		? { title: 'Schema Endorsement', toolTip: 'Add new schema request', svg: <SchemaEndorsement /> }
 		: { title: 'Create', svg: <Create />, toolTip: 'Create new schema' };
 	const emptyListTitle = 'No Schemas';
@@ -277,7 +275,7 @@ const VerificationSchemasList = (props: {
 						<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white mr-auto">
 							Schemas
 						</h1>
-						<SearchInput onInputChange={onSearch} value={searchValue} />
+						<SearchInput onInputChange={onSchemaListParameterSearch} value={searchValue} />
 
 						<select
 							onChange={handleFilter}
@@ -296,19 +294,19 @@ const VerificationSchemasList = (props: {
 						<div className="flex space-x-2">
 							{walletStatus ? (
 								<RoleViewButton
-									title={createSchemaTitle.toolTip}
-									buttonTitle={createSchemaTitle.title}
+									title={createSchemaButtonTitle.toolTip}
+									buttonTitle={createSchemaButtonTitle.title}
 									feature={Features.CRETAE_SCHEMA}
-									svgComponent={createSchemaTitle.svg}
+									svgComponent={createSchemaButtonTitle.svg}
 									onClickEvent={() => {
 										window.location.href = `${pathRoutes.organizations.createSchema}`;
 									}}
 								/>
 							) : (
 								<RoleViewButton
-									buttonTitle={createSchemaTitle.title}
+									buttonTitle={createSchemaButtonTitle.title}
 									feature={Features.CRETAE_SCHEMA}
-									svgComponent={createSchemaTitle.svg}
+									svgComponent={createSchemaButtonTitle.svg}
 									onClickEvent={() => {
 										window.location.href = `${pathRoutes.organizations.dashboard}`;
 									}}
@@ -317,22 +315,22 @@ const VerificationSchemasList = (props: {
 						</div>
 					</div>
 				</div>
-				{schemaListErr && (
-					<Alert color="failure" onDismiss={() => setSchemaListErr(null)}>
+				{schemasDetailsErr && (
+					<Alert color="failure" onDismiss={() => setSchemasDetailsErr(null)}>
 						<span>
-							<p>{schemaListErr}</p>
+							<p>{schemasDetailsErr}</p>
 						</span>
 					</Alert>
 				)}
-				{schemaList && schemaList.length > 0 ? (
+				{schemasList && schemasList.length > 0 ? (
 					<div
 						className="Flex-wrap"
 						style={{ display: 'flex', flexDirection: 'column' }}
 					>
 						<div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
-							{schemaList &&
-								schemaList.length > 0 &&
-								schemaList.map((element, key) => (
+							{schemasList &&
+								schemasList.length > 0 &&
+								schemasList.map((element, key) => (
 									<div className="px-0 sm:px-2" key={`SchemaList-${key}`}>
 										<SchemaCard
 											schemaName={element['name']}
@@ -347,7 +345,7 @@ const VerificationSchemasList = (props: {
 											noLedger={isNoLedger}
 											isVerificationUsingEmail={true}
 											onChange={(checked) => handleW3cSchemas(checked, element)}
-											onClickCallback={schemaSelectionCallback}
+											onClickCallback={handleSchemaSelection}
 										/>
 									</div>
 								))}
@@ -369,16 +367,16 @@ const VerificationSchemasList = (props: {
 							className="flex items-center justify-end mb-4"
 							id="schemasPagination"
 						>
-							{totalItem > 1 && (
+							{totalItems > 1 && (
 								<Pagination
-									currentPage={schemaListAPIParameter?.page}
+									currentPage={schemaListParameter?.page}
 									onPageChange={(page) => {
-										setSchemaListAPIParameter((prevState) => ({
+										setSchemasListParameter((prevState) => ({
 											...prevState,
 											page: page,
 										}));
 									}}
-									totalPages={totalItem}
+									totalPages={totalItems}
 								/>
 							)}
 						</div>
