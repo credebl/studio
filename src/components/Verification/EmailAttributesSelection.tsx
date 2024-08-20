@@ -24,12 +24,6 @@ const EmailAttributesSelection = () => {
 	const [proofReqSuccess, setProofReqSuccess] = useState<string | null>(null);
 	const [errMsg, setErrMsg] = useState<string | null>(null);
 	const [display, setDisplay] = useState<boolean | undefined>(false);
-	const [schemaDetails, setSchemaDetails] = useState<SchemaDetail>({
-		schemaName: '',
-		version: '',
-		schemaId: '',
-		credDefId: '',
-	});
 	const [loading, setLoading] = useState<boolean>(true);
 	const [requestLoader, setRequestLoader] = useState<boolean>(false);
 	const [attributeData, setAttributeData] = useState<ISelectedAttributes[] | null>(
@@ -103,22 +97,6 @@ const EmailAttributesSelection = () => {
 		fetchOrganizationDetails();
 	}, []);
 
-	const createSchemaPayload = async (schemaId: string, credDefId: string) => {
-
-		if (schemaId) {
-			const parts = schemaId.split(':');
-			const schemaName = parts[2];
-			const version = parts[3];
-			setSchemaDetails({ schemaName, version, schemaId, credDefId });
-		}
-	};
-
-	const getSchemaAndUsers = async () => {
-		const credDefId = await getFromLocalStorage(storageKeys.CRED_DEF_ID);
-		const schemaId = await getFromLocalStorage(storageKeys.SCHEMA_ID);
-		createSchemaPayload(schemaId, credDefId);
-	};
-
 	const handleSubmit = () => {
 		setErrMsg(null);
 
@@ -147,19 +125,23 @@ const EmailAttributesSelection = () => {
 
 		window.location.href = w3cSchema ? `${pathRoutes.organizations.verification.w3cEmailVerification}` : `${pathRoutes.organizations.verification.emailVerification}`
 	}
-	
+
 	const fetchData = async () => {
+		console.log('w3cSchema:', w3cSchema);
+	
+		setLoading(true);
+	
 		try {
-
-			setLoading(true);
-
+			setAttributeData([]);
+	
 			if (w3cSchema) {
-				const getW3CSchemaDetails = await getFromLocalStorage(storageKeys.SELECTED_SCHEMAS)
-				const parsedW3CSchemaDetails = JSON.parse(getW3CSchemaDetails)
+				const getW3CSchemaDetails = await getFromLocalStorage(storageKeys.SELECTED_SCHEMAS);
+				const parsedW3CSchemaDetails = JSON.parse(getW3CSchemaDetails || '[]');
+		
 				if (Array.isArray(parsedW3CSchemaDetails) && parsedW3CSchemaDetails.length > 0) {
 					const allAttributes = parsedW3CSchemaDetails.flatMap(schema => {
 						if (schema.attributes && Array.isArray(schema.attributes)) {
-							return schema.attributes.map((attribute: IAttributes) => ({
+							return schema.attributes.map(attribute => ({
 								...attribute,
 								schemaName: schema.name,
 								credDefName: '',
@@ -169,8 +151,8 @@ const EmailAttributesSelection = () => {
 						}
 						return [];
 					});
-
-					const inputArray: ISelectedAttributes[] = allAttributes.map((attribute: IAttribute) => ({
+	
+					const inputArray = allAttributes.map(attribute => ({
 						displayName: attribute.displayName,
 						attributeName: attribute.attributeName,
 						isChecked: false,
@@ -181,7 +163,7 @@ const EmailAttributesSelection = () => {
 							{ value: '>', label: 'Greater than' },
 							{ value: '<', label: 'Less than' },
 							{ value: '>=', label: 'Greater than or equal to' },
-							{ value: '<=', label: 'Less than or equal to' },
+							{ value: '<=', label: 'Less than or equal to' }
 						],
 						dataType: attribute.schemaDataType,
 						schemaName: attribute.schemaName,
@@ -192,78 +174,72 @@ const EmailAttributesSelection = () => {
 						inputError: '',
 						selectError: ''
 					}));
-
+	
 					setAttributeData(inputArray);
+				} else {
+					console.error('W3C schema details are not in the expected format.');
 				}
-
-			}
-			if (!w3cSchema) {
-				await getSchemaAndUsers();
-
+	
+			} else {
+				const getSelectedCredDefData = await getFromLocalStorage(storageKeys.CRED_DEF_DATA);
+				const selectedCredDefs = JSON.parse(getSelectedCredDefData || '[]');
+	
 				const schemaAttributes = await getFromLocalStorage(storageKeys.SCHEMA_ATTRIBUTES);
-
-				const parsedSchemaDetails = JSON.parse(schemaAttributes) || [];
-
-				const rawCredDefs = JSON.parse(await getFromLocalStorage(storageKeys.SCHEMA_CRED_DEFS)) || [];
-
+				const parsedSchemaDetails = JSON.parse(schemaAttributes || '[]');
+	
+	
 				if (Array.isArray(parsedSchemaDetails) && parsedSchemaDetails.length > 0) {
 					const allAttributes = parsedSchemaDetails.flatMap(schema => {
 						if (schema.attributes && Array.isArray(schema.attributes)) {
-							return schema.attributes.map((attribute: IAttributes) => {
-								const matchingCredDef = rawCredDefs.find((credDef: { schemaLedgerId: string }) => credDef.schemaLedgerId === schema.schemaId);
-								return {
-									...attribute,
+							return schema.attributes.flatMap(attribute => {
+								const matchingCredDefs = selectedCredDefs.filter(
+									credDef => credDef.schemaLedgerId === schema.schemaId
+								);
+	
+								return matchingCredDefs.map(credDef => ({
+									displayName: attribute.displayName,
+									attributeName: attribute.attributeName,
+									isChecked: false,
+									value: '',
+									condition: '',
+									options: [
+										{ value: '', label: 'Select' },
+										{ value: '>', label: 'Greater than' },
+										{ value: '<', label: 'Less than' },
+										{ value: '>=', label: 'Greater than or equal to' },
+										{ value: '<=', label: 'Less than or equal to' }
+									],
+									dataType: attribute.schemaDataType,
 									schemaName: schema.schemaId.split(':')[2],
-									credDefName: matchingCredDef ? matchingCredDef.tag : '',
+									credDefName: credDef.tag,
 									schemaId: schema.schemaId,
-									credDefId: matchingCredDef ? matchingCredDef.credentialDefinitionId : ''
-								};
+									credDefId: credDef.credentialDefinitionId,
+									selectedOption: 'Select',
+									inputError: '',
+									selectError: ''
+								}));
 							});
 						}
 						return [];
-
 					});
-
-					const inputArray: ISelectedAttributes[] = allAttributes.map((attribute: IAttribute) => ({
-						displayName: attribute.displayName,
-						attributeName: attribute.attributeName,
-						isChecked: false,
-						value: '',
-						...(!w3cSchema && { condition: '' }),
-						...(!w3cSchema && {
-							options: [
-								{ value: '', label: 'Select' },
-								{ value: '>', label: 'Greater than' },
-								{ value: '<', label: 'Less than' },
-								{ value: '>=', label: 'Greater than or equal to' },
-								{ value: '<=', label: 'Less than or equal to' },
-							]
-						}),
-						dataType: attribute.schemaDataType,
-						schemaName: attribute?.schemaName,
-						credDefName: attribute?.credDefName,
-						schemaId: attribute?.schemaId,
-						credDefId: attribute?.credDefId,
-						selectedOption: 'Select',
-						inputError: '',
-						selectError: ''
-					}));
-
-					setAttributeData(inputArray);
-
+	
+					setAttributeData(allAttributes);
 				} else {
 					console.error('Parsed schema details are not in the expected format.');
-					setAttributeData([]);
 				}
-
 			}
-			setLoading(false);
 		} catch (error) {
-			setLoading(false);
 			console.error('Error fetching data:', error);
+		} finally {
+			setLoading(false);
 		}
 	};
-
+	
+	useEffect(() => {
+		fetchData();
+	}, [w3cSchema]);
+	
+	
 	const attributeFunction = async () => {
 		const attributes = attributeData?.map((attribute: ISelectedAttributes) => {
 			return {
@@ -349,12 +325,6 @@ const EmailAttributesSelection = () => {
 		setDisplay(attributeData?.some((attribute) => attribute?.dataType === 'number'));
 	};
 
-	useEffect(() => {
-		fetchData();
-		return () => {
-			setRequestLoader(false);
-		};
-	}, [w3cSchema]);
 
 	useEffect(() => {
 		attributeData && attributeFunction();

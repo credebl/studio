@@ -21,6 +21,7 @@ const EmailCredDefSelection = () => {
     const [error, setError] = useState<string | null>(null);
     const [credDefList, setCredDefList] = useState<TableData[]>([]);
     const [searchValue, setSearchValue] = useState('');
+    const [selectedCredDefs, setSelectedCredDefs] = useState<CredDefData[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -120,15 +121,44 @@ const EmailCredDefSelection = () => {
         }
     };
 
-
     const selectConnection = async (credDefId: string, checked: boolean) => {
-        if (credDefId && checked) {
-            await setToLocalStorage(storageKeys.CRED_DEF_ID, credDefId);
-        } else {
-            removeFromLocalStorage(storageKeys.CRED_DEF_ID);
+        if (credDefId) {
+            const getRawCredDefs = await getFromLocalStorage(storageKeys.SCHEMA_CRED_DEFS);
+            const parsedRawCredDefs = JSON.parse(getRawCredDefs);
+
+            const selectedCredDef = parsedRawCredDefs.find((credDef: CredDefData) => credDef.credentialDefinitionId === credDefId);
+
+            if (selectedCredDef) {
+                setSelectedCredDefs((prevSelected) => {
+                    const isAlreadySelected = prevSelected.some(
+                        (credDef) => credDef.credentialDefinitionId === selectedCredDef.credentialDefinitionId
+                    );
+
+                    if (!isAlreadySelected) {
+                        const newSelected = [...prevSelected, selectedCredDef];
+                        
+                        setToLocalStorage(storageKeys.CRED_DEF_DATA, JSON.stringify(newSelected));
+                        
+                        return newSelected;
+                    }
+                    return prevSelected;
+                });
+            }
+        } 
+        else if (!checked) {
+            setSelectedCredDefs((prevSelected) => {
+                const newSelected = prevSelected.filter(
+                    (credDef) => credDef.credentialDefinitionId !== credDefId
+                );
+                
+                setToLocalStorage(storageKeys.CRED_DEF_DATA, JSON.stringify(newSelected));
+                
+                return newSelected;
+            });
         }
     };
-
+    
+    
     return (
         <div className="px-4 pt-2">
             <div className="mb-4 col-span-full xl:mb-2">

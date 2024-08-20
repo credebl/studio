@@ -108,34 +108,46 @@ const EmailVerification = () => {
                         input_descriptors: inputDescriptors
                     },
                     comment: "proof request",
-                    autoAcceptProof: AutoAccept.Always,
+                    autoAcceptProof: AutoAccept.Never,
                     emailId: values.emailData.map(input => input.email),
                     reuseConnection: true
                 };
             } else {
 
-                const selectedAttributesString = await getFromLocalStorage(storageKeys.ATTRIBUTE_DATA);
+                const selectedAttributes = await getFromLocalStorage(storageKeys.ATTRIBUTE_DATA);
+                const parsedSelectedAttributes = JSON.parse(selectedAttributes) || [];
 
-                const parsedSelectedAttributes = JSON.parse(selectedAttributesString);
+                const selectedAttributesDetails = parsedSelectedAttributes.filter((attr: ISelectedAttributes) => attr.isChecked && attr.dataType !== 'number') || [];
+                const selectedPredicatesDetails = parsedSelectedAttributes.filter(attr => attr.isChecked && attr.dataType === 'number') || [];
 
-                const selectedAttributesDetails = parsedSelectedAttributes?.filter((attr: ISelectedAttributes) => attr.isChecked && attr.dataType !== 'number') || [];
-
-                const selectedPredicatesDetails = parsedSelectedAttributes.filter(attr =>
-                    attr.isChecked && attr.dataType === 'number'
-                );
                 const requestedAttributes: Record<string, IRequestedAttributes> = {};
                 const requestedPredicates: Record<string, IPredicate> = {};
 
-                selectedAttributesDetails.forEach((attr: ISelectedAttributes) => {
-                    requestedAttributes[attr.attributeName] = {
-                        name: attr.attributeName,
-                        restrictions: [
-                            {
-                                schema_id: attr.schemaId,
-                                cred_def_id: attr.credDefId,
-                            },
-                        ],
-                    };
+                const attributeGroups = selectedAttributesDetails.reduce((acc, attr) => {
+                    const key = `${attr.attributeName}:${attr.schemaId}`;
+                    if (!acc[key]) {
+                        acc[key] = [];
+                    }
+                    acc[key].push(attr.credDefId);
+                    return acc;
+                }, {} as Record<string, string[]>);
+
+                Object.keys(attributeGroups).forEach(key => {
+
+                    const parts = key.split(':');
+                    const attributeName = parts[0];
+                    const schemaId = parts.slice(1).join(':');
+
+                    if (!requestedAttributes[attributeName]) {
+                        requestedAttributes[attributeName] = {
+                            name: attributeName,
+                            restrictions: [],
+                        };
+                    }
+                    requestedAttributes[attributeName].restrictions.push(...attributeGroups[key].map(credDefId => ({
+                        schema_id: schemaId,
+                        cred_def_id: credDefId,
+                    })));
                 });
 
                 selectedPredicatesDetails.forEach(attr => {
@@ -159,7 +171,7 @@ const EmailVerification = () => {
                         name: "proof-request",
                         version: "1.0",
                         requested_attributes: requestedAttributes,
-                        requested_predicates: requestedPredicates
+                        requested_predicates: requestedPredicates,
                     },
                 };
 
