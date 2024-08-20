@@ -90,7 +90,7 @@ const EmailVerification = () => {
                         return acc;
                     }, {});
 
-                const inputDescriptors = Object.values(groupedAttributes).map((descriptor: any) => ({
+                const inputDescriptors = Object.values(groupedAttributes).map((descriptor) => ({
                     ...descriptor,
                     constraints: {
                         fields: [{

@@ -177,3 +177,31 @@ export interface IPredicate extends IRequestedAttributes {
 export interface IRequestedPredicates {
     [key: string]: IPredicate;
 }
+
+export interface IAttributesDetails {
+    attributeName: string;
+    schemaDataType: string;
+    displayName: string;
+    isRequired: boolean;
+}
+
+export interface ISchemaData {
+    createDateTime: string;
+    name: string;
+    version: string;
+    attributes: IAttributesDetails[];
+    schemaLedgerId: string;
+    createdBy: string;
+    publisherDid: string;
+    orgId: string;
+    issuerId: string;
+    organizationName: string;
+    userName: string;
+}
+
+export interface ISchema {
+    schemaId: string;
+    attributes: IAttributesDetails[];
+    issuerId: string;
+    createdDate: string;
+}

@@ -18,6 +18,7 @@ import { pathRoutes } from '../../config/pathRoutes';
 import CustomSpinner from '../CustomSpinner';
 import { EmptyListMessage } from '../EmptyListComponent';
 import SchemaCard from '../../commonComponents/SchemaCard';
+import type { IAttributesDetails, ISchema, ISchemaData } from './interface';
 
 const VerificationSchemasList = () => {
 	const [schemasList, setSchemasList] = useState([]);
@@ -36,12 +37,19 @@ const VerificationSchemasList = () => {
 	const [totalItems, setTotalItems] = useState(0);
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [searchValue, setSearchValue] = useState('');
-	const [selectedSchemas, setSelectedSchemas] = useState<any[]>([]);
+	const [selectedSchemas, setSelectedSchemas] = useState<ISchema[]>([]);
 	const [w3cSchema, setW3cSchema] = useState<boolean>(false);
 	const [isNoLedger, setIsNoLedger] = useState<boolean>(false);
 
 	const getSchemaListDetails = async (
-		schemasListParameter: any,
+		schemasListParameter: {
+			itemPerPage: number,
+			page: number,
+			search: string,
+			sortingOrder: string,
+			sortBy: string,
+			allSearch: string
+		},
 		flag: boolean,
 	) => {
 		try {
@@ -58,7 +66,7 @@ const VerificationSchemasList = () => {
 			}
 
 			const { data } = schemasList as AxiosResponse;
-						
+
 			if (schemasList === 'Schema records not found') {
 				setLoading(false);
 				setSchemasList([]);
@@ -123,7 +131,7 @@ const VerificationSchemasList = () => {
 
 	const handleSchemaSelection = (
 		schemaId: string,
-		attributes: string[],
+		attributes: IAttributesDetails[],
 		issuerId: string,
 		created: string,
 	) => {
@@ -137,7 +145,7 @@ const VerificationSchemasList = () => {
 		const isSelected = selectedSchemas.some((schema) => schema.schemaId === schemaId);
 		if (isSelected) {
 			const updatedSchemas = selectedSchemas.filter((schema) => schema.schemaId !== schemaId);
-			
+
 			setSelectedSchemas(updatedSchemas);
 		} else {
 			setSelectedSchemas([...selectedSchemas, schemaDetails]);
@@ -145,33 +153,33 @@ const VerificationSchemasList = () => {
 	};
 
 
-	const handleW3cSchemas = async (checked: boolean, schemaData?: any) => {
-		const updateSchemas = (prevSchemas: any[]) => {
+	const handleW3cSchemas = async (checked: boolean, schemaData?: ISchemaData) => {
+		const updateSchemas = (prevSchemas: ISchemaData[]) => {
 			let updatedSchemas = [...prevSchemas];
-			if (checked) {
+			if (checked && schemaData) {
 				updatedSchemas = [...updatedSchemas, schemaData];
 			} else {
-				updatedSchemas = updatedSchemas.filter(schema => schema.schemaId !== schemaData.schemaId);
+				updatedSchemas = updatedSchemas.filter(schema => schema?.schemaLedgerId !== schemaData?.schemaLedgerId);
 			}
-	
+
 			return updatedSchemas;
 		};
-	
+
 		setSelectedSchemas(prevSchemas => {
 			if (!Array.isArray(prevSchemas)) {
 				console.error('Previous schemas is not an array:', prevSchemas);
 				return [];
 			}
-	
+
 			const updatedSchemas = updateSchemas(prevSchemas);
-	
+
 			setToLocalStorage(storageKeys.SELECTED_SCHEMAS, updatedSchemas)
 				.catch(error => console.error('Failed to save to local storage:', error));
-	
+
 			return updatedSchemas;
 		});
 	};
-		
+
 	const fetchOrganizationDetails = async () => {
 		setLoading(true);
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -213,7 +221,7 @@ const VerificationSchemasList = () => {
 	const handleW3CSchemaDetails = async () => {
 		const w3cSchemaDetails = await getFromLocalStorage(storageKeys.SELECTED_SCHEMAS)
 
-        const parsedSchemaDetails = JSON.parse(w3cSchemaDetails);
+		const parsedSchemaDetails = JSON.parse(w3cSchemaDetails);
 
 		const w3cSchemaAttributes = parsedSchemaDetails.map(schema => ({
 			schemaId: schema.schemaId,
