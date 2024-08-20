@@ -70,7 +70,7 @@ const EmailAttributesSelection = () => {
 	};
 
 
-	const fetchOrgDetails = async () => {
+	const getOrgDetails = async () => {
 		setLoading(true);
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		const response = await getOrganizationById(orgId);
@@ -90,7 +90,7 @@ const EmailAttributesSelection = () => {
 	};
 
 	useEffect(() => {
-		fetchOrgDetails();
+		getOrgDetails();
 	}, []);
 
 	const handleSubmit = () => {
