@@ -15,7 +15,7 @@ const CustomCheckbox: React.FC<CustomCheckboxProps> = ({ showCheckbox, isVerific
   useEffect(() => {
     if (schemaData) {
       try {
-        const selectedSchemas = JSON.parse(localStorage.getItem('selectedSchemas') || '[]');
+        const selectedSchemas = JSON.parse(localStorage.getItem('selectedSchemas') ?? '[]');
         const isChecked = selectedSchemas.some((schema: any) => schema.schemaId === schemaData.schemaId);
         setChecked(isChecked);
       } catch (error) {
@@ -30,7 +30,7 @@ const CustomCheckbox: React.FC<CustomCheckboxProps> = ({ showCheckbox, isVerific
     onChange(newChecked, schemaData);
 
     try {
-      const selectedSchemas = JSON.parse(localStorage.getItem('selectedSchemas') || '[]');
+      const selectedSchemas = JSON.parse(localStorage.getItem('selectedSchemas') ?? '[]');
       if (newChecked) {
         selectedSchemas.push(schemaData);
       } else {
