@@ -270,8 +270,8 @@ const EmailAttributesSelection = () => {
 											} p-1 border border-black rounded-md dark:text-gray-200 dark:bg-gray-700 dark:border-gray-300 dark:placeholder-gray-400 dark:text-white`}
 									>
 										{attribute?.options?.map(
-											(option, index) => (
-												<option key={index} value={option?.value}>
+											(option) => (
+												<option key={option?.value} value={option?.value}>
 													{option?.label}
 												</option>
 											),

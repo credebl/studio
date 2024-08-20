@@ -30,7 +30,7 @@ const VerificationSchemasList = (props: {
 	const [schemasDetailsErr, setSchemasDetailsErr] = useState<string | null>('');
 	const [loading, setLoading] = useState<boolean>(true);
 	const [allSchemasFlag, setAllSchemasFlag] = useState<boolean>(false);
-	const [schemaListParameter, setSchemasListParameter] = useState({
+	const [schemasListParameter, setSchemasListParameter] = useState({
 		itemPerPage: 9,
 		page: 1,
 		search: '',
@@ -44,10 +44,10 @@ const VerificationSchemasList = (props: {
 	const [searchValue, setSearchValue] = useState('');
 	const [selectedSchemas, setSelectedSchemas] = useState<any[]>([]);
 	const [w3cSchema, setW3cSchema] = useState<boolean>(false);
-	const [isNoLedger, setisNoLedger] = useState<boolean>(false);
+	const [isNoLedger, setIsNoLedger] = useState<boolean>(false);
 
 	const getSchemaListDetails = async (
-		schemaListParameter: any,
+		schemasListParameter: any,
 		flag: boolean,
 	) => {
 		try {
@@ -55,10 +55,10 @@ const VerificationSchemasList = (props: {
 			setLoading(true);
 			let schemasList;
 			if (allSchemasFlag) {
-				schemasList = await getAllSchemas(schemaListParameter, SchemaType.INDY);
+				schemasList = await getAllSchemas(schemasListParameter, SchemaType.INDY);
 			} else {
 				schemasList = await getAllSchemasByOrgId(
-					schemaListParameter,
+					schemasListParameter,
 					organizationId,
 				);
 			}
@@ -97,8 +97,8 @@ const VerificationSchemasList = (props: {
 	};
 
 	useEffect(() => {
-		getSchemaListDetails(schemaListParameter, false);
-	}, [schemaListParameter, allSchemasFlag]);
+		getSchemaListDetails(schemasListParameter, false);
+	}, [schemasListParameter, allSchemasFlag]);
 
 
 	const onSchemaListParameterSearch = async (
@@ -110,7 +110,7 @@ const VerificationSchemasList = (props: {
 
 		getSchemaListDetails(
 			{
-				...schemaListParameter,
+				...schemasListParameter,
 				search: inputValue,
 			},
 			false,
@@ -119,7 +119,7 @@ const VerificationSchemasList = (props: {
 		if (allSchemasFlag) {
 			getSchemaListDetails(
 				{
-					...schemaListParameter,
+					...schemasListParameter,
 					allSearch: inputValue,
 				},
 				false,
@@ -196,7 +196,7 @@ const VerificationSchemasList = (props: {
 				setW3cSchema(false);
 			}
 			if (did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
-				setisNoLedger(true);
+				setIsNoLedger(true);
 			}
 		}
 		setLoading(false);
@@ -238,7 +238,7 @@ const VerificationSchemasList = (props: {
 			setAllSchemasFlag(true);
 		} else {
 			setAllSchemasFlag(false);
-			getSchemaListDetails(schemaListParameter, false);
+			getSchemaListDetails(schemasListParameter, false);
 		}
 	};
 
@@ -258,9 +258,9 @@ const VerificationSchemasList = (props: {
 	const createSchemaButtonTitle = isEcosystemData?.isEcosystemMember
 		? { title: 'Schema Endorsement', toolTip: 'Add new schema request', svg: <SchemaEndorsement /> }
 		: { title: 'Create', svg: <Create />, toolTip: 'Create new schema' };
-	const emptyListTitle = 'No Schemas';
-	const emptyListDesc = 'Get started by creating a new Schema';
-	const emptyListBtn = isEcosystemData?.isEcosystemMember
+	const emptySchemaListTitle = 'No Schemas';
+	const emptySchemaListDescription = 'Get started by creating a new Schema';
+	const emptySchemaListBtn = isEcosystemData?.isEcosystemMember
 		? { title: 'Schema Endorsement', svg: <SchemaEndorsement /> }
 		: { title: 'Create Schema', svg: <Create /> };
 	return (
@@ -369,7 +369,7 @@ const VerificationSchemasList = (props: {
 						>
 							{totalItems > 1 && (
 								<Pagination
-									currentPage={schemaListParameter?.page}
+									currentPage={schemasListParameter?.page}
 									onPageChange={(page) => {
 										setSchemasListParameter((prevState) => ({
 											...prevState,
@@ -390,10 +390,10 @@ const VerificationSchemasList = (props: {
 						) : (
 							<div className="bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 								<EmptyListMessage
-									message={emptyListTitle}
-									description={emptyListDesc}
-									buttonContent={emptyListBtn.title}
-									svgComponent={emptyListBtn.svg}
+									message={emptySchemaListTitle}
+									description={emptySchemaListDescription}
+									buttonContent={emptySchemaListBtn.title}
+									svgComponent={emptySchemaListBtn.svg}
 									onClick={() => {
 										window.location.href = `${pathRoutes.organizations.createSchema}`;
 									}}

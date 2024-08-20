@@ -16,7 +16,6 @@ import type { AxiosResponse } from "axios";
 import CustomCheckbox from "../../commonComponents/CustomCheckbox";
 
 const EmailCredDefSelection = () => {
-    const [schemaState, setSchemaState] = useState({ schemaName: '', version: '' });
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [credDefList, setCredDefList] = useState<TableData[]>([]);
@@ -38,20 +37,19 @@ const EmailCredDefSelection = () => {
             const schemaIds = schemaIdsJSON ? JSON.parse(schemaIdsJSON) : [];
 
             if (schemaIds && schemaIds.length > 0) {
-
-                const parts = schemaIds[0]?.split(":");
-                const schemaName = parts[2];
-                const version = parts[3];
-
-                setSchemaState({ schemaName, version });
-
                 getCredDefs(schemaIds);
-            } else {
-                setSchemaState({ schemaName: '', version: '' });
             }
         } catch (error) {
             console.error('Error fetching schema details:', error);
         }
+    };
+
+    const handleContinue = () => {
+        if (selectedCredDefs.length === 0) {
+            setError('Please select at least one credential definition.');
+            return;
+        }
+        window.location.href = `${pathRoutes.organizations.verification.attributes}`;
     };
 
     const header = [
@@ -185,9 +183,7 @@ const EmailCredDefSelection = () => {
             )}
             <DataTable header={header} data={credDefList} loading={loading} isEmailVerification={true} callback={() => { }} />
             <div>
-                <Button onClick={() => {
-                    window.location.href = `${pathRoutes.organizations.verification.attributes}`;
-                }}
+                <Button onClick={handleContinue}
                     className='text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mt-2 ml-auto'
                 >
                     <svg className="pr-2" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" viewBox="0 0 24 24">

@@ -15,7 +15,7 @@ import { AlertComponent } from '../AlertComponent';
 
 const EmailVerification = () => {
     const [loading, setLoading] = useState<boolean>(false);
-    const [erroMsg, setErrMsg] = useState<string | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [emailInputs, setEmailInputs] = useState([{ value: '' }]);
     const [w3cSchema, setW3cSchema] = useState<boolean>(false);
 
@@ -60,7 +60,7 @@ const EmailVerification = () => {
 
     const handleSubmit = async (values: IEmailValues) => {
         setLoading(true);
-        setErrMsg(null);
+        setErrorMessage(null);
 
         try {
             let payload;
@@ -194,12 +194,12 @@ const EmailVerification = () => {
                 window.location.href = pathRoutes.organizations.credentials;
 
             } else {
-                setErrMsg('Failed to create proof request');
+                setErrorMessage('Failed to create proof request');
                 console.error('API response data:', data);
             }
         } catch (error) {
             console.error('Error during handleSubmit:', error);
-            setErrMsg('An error occurred. Please try again.');
+            setErrorMessage('An error occurred. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -220,12 +220,12 @@ const EmailVerification = () => {
                     </span>
                 </div>
             </div>
-            {(erroMsg) && (
+            {(errorMessage) && (
                 <AlertComponent
-                    message={erroMsg}
-                    type={erroMsg ? 'failure' : 'success'}
+                    message={errorMessage}
+                    type={errorMessage ? 'failure' : 'success'}
                     onAlertClose={() => {
-                        setErrMsg(null);
+                        setErrorMessage(null);
                     }}
                 />
             )}
