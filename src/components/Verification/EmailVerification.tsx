@@ -258,7 +258,7 @@ const EmailVerification = () => {
                                         <Form>
                                             <div className="pb-4">
                                                 {values.emailData.map((input, index) => (
-                                                    <div key={index} className="">
+                                                    <div key={input?.email} className="">
                                                         <div
                                                             className="px-4 pt-8 pb-10 mb-4 rounded-lg border border-gray-200"
                                                         >
@@ -269,6 +269,7 @@ const EmailVerification = () => {
                                                                         style={{
                                                                             minWidth: '80px',
                                                                         }}
+                                                                        htmlFor={`email-${index}`}
                                                                     >
                                                                         Email ID
                                                                         <span className="text-red-500">*</span>
