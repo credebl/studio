@@ -270,9 +270,7 @@ const EmailVerification = () => {
                                                                             minWidth: '80px',
                                                                         }}
                                                                         htmlFor={`email-${index}`}
-                                                                    >
-                                                                        Email ID
-                                                                        <span className="text-red-500">*</span>
+                                                                    >Email ID<span className="text-red-500">*</span>
                                                                     </label>
                                                                     <div className="flex flex-col w-full md:w-5/12">
                                                                         <Field

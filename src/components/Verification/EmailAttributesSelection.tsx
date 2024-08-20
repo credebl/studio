@@ -93,37 +93,58 @@ const EmailAttributesSelection = () => {
 		getOrgDetails();
 	}, []);
 
+
 	const handleSubmit = () => {
 		setErrMsg(null);
-
-		if (!w3cSchema) {
-			const numberAttributes = attributeData?.filter(
-				(attr) => attr.dataType === 'number' && attr.isChecked
-			);
 	
-			for (const attribute of numberAttributes || []) {
-				if (attribute.selectedOption === 'Select' && !attribute.value) {
-					setErrMsg('Condition and value is required')
-					return false
-				} else if (!attribute.value) {
-					setErrMsg('Value is required')
-					return false;
-				} else if (!attribute.selectedOption) {
-					setErrMsg('Condition is required')
-					return false
-				} else {
-					window.location.href = w3cSchema ? `${pathRoutes.organizations.verification.w3cEmailVerification}` : `${pathRoutes.organizations.verification.emailVerification}`
+		if (w3cSchema) {
+			redirectToAppropriatePage();
+			return;
+		}
 	
-				}
+		if (hasInvalidNumberAttributes()) {
+			return;
+		}
+	
+		redirectToAppropriatePage();
+	};
+	
+	const hasInvalidNumberAttributes = (): boolean => {
+		const numberAttributes = attributeData?.filter(
+			(attr) => attr.dataType === 'number' && attr.isChecked
+		);
+	
+		for (const attribute of numberAttributes || []) {
+			if (isInvalidNumberAttribute(attribute)) {
+				return true;
 			}
 		}
-		
-
-		window.location.href = w3cSchema ? `${pathRoutes.organizations.verification.w3cEmailVerification}` : `${pathRoutes.organizations.verification.emailVerification}`
-	}
-
+	
+		return false;
+	};
+	
+	const isInvalidNumberAttribute = (attribute: any): boolean => {
+		if (attribute.selectedOption === 'Select' && !attribute.value) {
+			setErrMsg('Condition and value are required');
+			return true;
+		} else if (!attribute.value) {
+			setErrMsg('Value is required');
+			return true;
+		} else if (!attribute.selectedOption) {
+			setErrMsg('Condition is required');
+			return true;
+		}
+	
+		return false;
+	};
+	
+	const redirectToAppropriatePage = () => {
+		window.location.href = w3cSchema
+			? `${pathRoutes.organizations.verification.w3cEmailVerification}`
+			: `${pathRoutes.organizations.verification.emailVerification}`;
+	};
+	
 	const fetchData = async () => {
-		console.log('w3cSchema:', w3cSchema);
 	
 		setLoading(true);
 	
