@@ -3,7 +3,6 @@ import { Alert, Button, Pagination } from 'flowbite-react';
 import React, { useEffect, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import type { AxiosResponse } from 'axios';
-import type { SchemaDetails } from './interface';
 import { checkEcosystem, type ICheckEcosystem } from '../../config/ecosystem';
 import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
@@ -20,12 +19,7 @@ import CustomSpinner from '../CustomSpinner';
 import { EmptyListMessage } from '../EmptyListComponent';
 import SchemaCard from '../../commonComponents/SchemaCard';
 
-const VerificationSchemasList = (props: {
-	handleSchemaSelection: (
-		schemaId: string,
-		schemaDetails: SchemaDetails,
-	) => void;
-}) => {
+const VerificationSchemasList = () => {
 	const [schemasList, setSchemasList] = useState([]);
 	const [schemasDetailsErr, setSchemasDetailsErr] = useState<string | null>('');
 	const [loading, setLoading] = useState<boolean>(true);
@@ -330,8 +324,8 @@ const VerificationSchemasList = (props: {
 						<div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
 							{schemasList &&
 								schemasList.length > 0 &&
-								schemasList.map((element, key) => (
-									<div className="px-0 sm:px-2" key={`SchemaList-${key}`}>
+								schemasList.map((element) => (
+									<div className="px-0 sm:px-2" key={element['schemaLedgerId']}>
 										<SchemaCard
 											schemaName={element['name']}
 											version={element['version']}
