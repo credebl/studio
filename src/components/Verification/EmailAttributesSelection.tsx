@@ -361,7 +361,7 @@ const EmailAttributesSelection = () => {
 			<div className="mb-4 col-span-full xl:mb-2">
 				<div className="flex justify-between items-center">
 					<BreadCrumbs />
-					<BackButton path={pathRoutes.organizations.verification.schema} />
+					<BackButton path={w3cSchema ? pathRoutes.organizations.verification.email : pathRoutes.organizations.verification.emailCredDef} />
 				</div>
 			</div>
 

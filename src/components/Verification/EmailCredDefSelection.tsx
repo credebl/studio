@@ -162,7 +162,7 @@ const EmailCredDefSelection = () => {
             <div className="mb-4 col-span-full xl:mb-2">
                 <div className="flex justify-between items-center">
                     <BreadCrumbs />
-                    <BackButton path={pathRoutes.back.verification.schemas} />
+                    <BackButton path={pathRoutes.organizations.verification.email} />
                 </div>
                 <div className="flex mt-2 justify-between flex-wrap gap-4 items-center">
                     <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">

@@ -23,7 +23,7 @@ export const verifyCredential = async (payload: object, requestType:RequestType)
 	}
 };
 
-export const createOobProofRequest = async (payload: any, requestType: PresentationType) => {
+export const createOobProofRequest = async (payload: object, requestType: PresentationType) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Verification.oobProofRequest}?requestType=${requestType}`;
 	const axiosPayload = {

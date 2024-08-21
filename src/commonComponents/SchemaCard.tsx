@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { pathRoutes } from '../config/pathRoutes';
 import { getFromLocalStorage } from '../api/Auth';
 import { storageKeys } from '../config/CommonConstant';
-import type { ISchemaCardProps } from './interface';
+import type { ISchemaCardProps, ISchemaData } from './interface';
 import CustomCheckbox from './CustomCheckbox';
 
 const SchemaCard = (props: ISchemaCardProps) => {
@@ -27,13 +27,17 @@ const SchemaCard = (props: ISchemaCardProps) => {
     }
   };
 
-  const handleCheckboxChange = (checked: boolean, schemaData?: any) => {
+const handleCheckboxChange = (checked: boolean, schemaData?: ISchemaData) => {
 
-    if (props.onChange) {
-      props.onChange(checked, schemaData);
-    }
+  if (props.onChange) {
+      if (schemaData) {
+          props.onChange(checked, [schemaData]);
+      } else {
+          props.onChange(checked, []);
+      }
+  }
+};
 
-  };
 
   return (
     <Card onClick={() => {

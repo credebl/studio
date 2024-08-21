@@ -1,22 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { setToLocalStorage } from '../api/Auth';
 import { storageKeys } from '../config/CommonConstant';
+import type { ICustomCheckboxProps, ISchemaData } from './interface';
 
-interface CustomCheckboxProps {
-  showCheckbox: boolean;
-  isVerificationUsingEmail?: boolean;
-  onChange: (checked: boolean, schemaData?: any) => void;
-  schemaData?: any;
-}
-
-const CustomCheckbox: React.FC<CustomCheckboxProps> = ({ showCheckbox, isVerificationUsingEmail, onChange, schemaData }) => {
+const CustomCheckbox: React.FC<ICustomCheckboxProps> = ({ showCheckbox, isVerificationUsingEmail, onChange, schemaData }) => {
   const [checked, setChecked] = useState<boolean>(false);
 
   useEffect(() => {
     if (schemaData) {
       try {
         const selectedSchemas = JSON.parse(localStorage.getItem('selectedSchemas') ?? '[]');
-        const isChecked = selectedSchemas.some((schema: any) => schema.schemaId === schemaData.schemaId);
+        const isChecked = selectedSchemas.some((schema: ISchemaData) => schema.schemaId === schemaData.schemaId);
         setChecked(isChecked);
       } catch (error) {
         console.error('Error parsing JSON from localStorage:', error);
@@ -31,10 +25,11 @@ const CustomCheckbox: React.FC<CustomCheckboxProps> = ({ showCheckbox, isVerific
 
     try {
       const selectedSchemas = JSON.parse(localStorage.getItem('selectedSchemas') ?? '[]');
+      
       if (newChecked) {
         selectedSchemas.push(schemaData);
       } else {
-        const index = selectedSchemas.findIndex((schema: any) => schema.schemaId === schemaData.schemaId);
+        const index = selectedSchemas.findIndex((schema: ISchemaData) => schema.schemaId === schemaData?.schemaId);
         if (index > -1) {
           selectedSchemas.splice(index, 1);
         }
