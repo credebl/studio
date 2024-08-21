@@ -374,7 +374,7 @@ const EmailAttributesSelection = () => {
 							setErrMsg(null);
 						}}
 					>
-						{proofReqSuccess || errMsg}
+						{proofReqSuccess ?? errMsg}
 					</Alert>
 				</div>
 			)}

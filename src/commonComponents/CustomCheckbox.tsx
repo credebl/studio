@@ -24,7 +24,7 @@ const CustomCheckbox: React.FC<CustomCheckboxProps> = ({ showCheckbox, isVerific
     }
   }, [schemaData]);
 
-  const handleCheckboxChange = async() => {
+  const handleCheckboxChange = async () => {
     const newChecked = !checked;
     setChecked(newChecked);
     onChange(newChecked, schemaData);
@@ -48,11 +48,11 @@ const CustomCheckbox: React.FC<CustomCheckboxProps> = ({ showCheckbox, isVerific
   return (
     <>
       {showCheckbox && (
-        <div
-          className={`w-4 h-4 ${isVerificationUsingEmail ? 'flex items-center cursor-pointer' : 'absolute bottom-8 right-4 cursor-pointer'}`}
+        <button
+          className={`w-4 h-4 ${isVerificationUsingEmail ? 'flex items-center' : 'absolute bottom-8 right-4'}`}
           onClick={handleCheckboxChange}
-        >
-          <input
+          aria-label="Checkbox"
+        >          <input
             type="checkbox"
             checked={checked}
             onChange={handleCheckboxChange}
@@ -76,7 +76,7 @@ const CustomCheckbox: React.FC<CustomCheckboxProps> = ({ showCheckbox, isVerific
               </svg>
             )}
           </div>
-        </div>
+        </button>
       )}
     </>
   );
