@@ -1,4 +1,4 @@
-import type { IssueCredential, PresentationType, RequestType } from '../common/enums';
+import type { IssueCredential, RequestType } from '../common/enums';
 import { apiRoutes } from '../config/apiRoutes';
 import { storageKeys } from '../config/CommonConstant';
 import { getHeaderConfigs } from '../config/GetHeaderConfigs';
@@ -23,7 +23,7 @@ export const verifyCredential = async (payload: object, requestType:RequestType)
 	}
 };
 
-export const createOobProofRequest = async (payload: object, requestType: PresentationType) => {
+export const createOobProofRequest = async (payload: object, requestType: RequestType) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Verification.oobProofRequest}?requestType=${requestType}`;
 	const axiosPayload = {

@@ -142,11 +142,6 @@ export enum CredentialType {
     JSONLD = 'jsonld',
 }
 
-export enum PresentationType {
-    INDY = 'indy',
-    PRESENTATION_EXCHANGE = 'presentationExchange',
-}
-
 export enum ProtocolVersion {
 	V1 = 'v1',
 	V2 = 'v2'

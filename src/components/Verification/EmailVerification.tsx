@@ -5,7 +5,7 @@ import { Button } from 'flowbite-react';
 import { Field, Form, Formik } from 'formik';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { createOobProofRequest } from '../../api/verification';
-import { AutoAccept, DidMethod, PresentationType, ProtocolVersion } from '../../common/enums';
+import { AutoAccept, DidMethod, ProtocolVersion, RequestType } from '../../common/enums';
 import type { AxiosResponse } from 'axios';
 import { getFromLocalStorage, removeFromLocalStorage } from '../../api/Auth';
 import type { IEmailValues, IPredicate, IRequestedAttributes, ISelectedAttributes } from './interface';
@@ -185,7 +185,7 @@ const EmailVerification = () => {
                 };
             }
 
-            const requestType = w3cSchema ? PresentationType.PRESENTATION_EXCHANGE : PresentationType.INDY;
+            const requestType = w3cSchema ? RequestType.PRESENTATION_EXCHANGE : RequestType.INDY;
             const response = await createOobProofRequest(payload, requestType);
             const { data } = response as AxiosResponse;
 
