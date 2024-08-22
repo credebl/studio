@@ -1,6 +1,8 @@
 import { Button, Card } from 'flowbite-react';
 import { dateConversion } from '../utils/DateConversion';
 import DateTooltip from '../components/Tooltip';
+import DataTooltip from '../components/Tooltip/dataTooltip'
+
 import CopyDid from './CopyDid';
 import React, { useEffect } from 'react';
 import { pathRoutes } from '../config/pathRoutes';
@@ -92,26 +94,54 @@ const SchemaCard =  (props: ISchemaCardProps) => {
       </div>
 
       <div className="flex justify-between">
-        <div className="block text-base font-semibold text-gray-900 dark:text-white overflow-hidden overflow-ellipsis">
-          Attributes:
-          <div className="flex flex-wrap items-start">
-            {attributes && attributes.length > 0 && (
-              <>
-                {attributes?.map((element) => (
-                  <div key={element.attributeName}>
-                    <span
-                      style={{ display: 'block' }}
-                      className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
-                    >
-                      {element?.attributeName}
-                    </span>
-                  </div>
-                ))}
-                {props?.limitedAttributes !== false && props?.attributes?.length > 3 && <span>...</span>}
-              </>
-            )}
+        {props.w3cSchema ? (
+          <DataTooltip
+            data={props.attributes}
+            renderItem={(attribute) => attribute.attributeName}
+          >
+            <div className="block text-base font-semibold text-gray-900 dark:text-white overflow-hidden overflow-ellipsis">
+              Attributes:
+              <div className="flex flex-wrap items-start">
+                {attributes && attributes.length > 0 && (
+                  <>
+                    {attributes.map((element) => (
+                      <div key={element.attributeName}>
+                        <span
+                          style={{ display: 'block' }}
+                          className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
+                        >
+                          {element?.attributeName}
+                        </span>
+                      </div>
+                    ))}
+                    {props.limitedAttributes !== false && props.attributes.length > 3 && <span>...</span>}
+                  </>
+                )}
+              </div>
+            </div>
+          </DataTooltip>
+        ) : (
+          <div className="block text-base font-semibold text-gray-900 dark:text-white overflow-hidden overflow-ellipsis">
+            Attributes:
+            <div className="flex flex-wrap items-start">
+              {attributes && attributes.length > 0 && (
+                <>
+                  {attributes.map((element) => (
+                    <div key={element.attributeName}>
+                      <span
+                        style={{ display: 'block' }}
+                        className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
+                      >
+                        {element?.attributeName}
+                      </span>
+                    </div>
+                  ))}
+                  {props.limitedAttributes !== false && props.attributes.length > 3 && <span>...</span>}
+                </>
+              )}
+            </div>
           </div>
-        </div>
+        )}
         <div className='mt-4'>
           {props.w3cSchema && !props.isVerification && (
           <div className="p-2">
