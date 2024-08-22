@@ -163,6 +163,7 @@ const CredDefSelection = () => {
 							created={schemaDetailsState.createdDateTime}
 							onClickCallback={schemaSelectionCallback}
 							isClickable={false}
+							showCheckbox={false}
 							limitedAttributes={false}
 						/>
 					</div>

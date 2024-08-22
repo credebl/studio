@@ -330,6 +330,7 @@ const SchemaList = (props: {
 											issuerDid={element['issuerId']}
 											attributes={element['attributes']}
 											created={element['createDateTime']}
+											showCheckbox={false}
 											onClickCallback={schemaSelectionCallback}
 											onClickW3CCallback={W3CSchemaSelectionCallback}
 											onClickW3cIssue={handleW3CIssue}

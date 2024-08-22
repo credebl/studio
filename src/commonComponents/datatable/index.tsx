@@ -8,6 +8,7 @@ interface DataTableProps {
 	callback?: (clickId: string | null | undefined) => void;
 	displaySelect?: boolean;
 	showBtn?: boolean;
+	isEmailVerification?: boolean;
 }
 
 const DataTable: React.FC<DataTableProps> = ({
@@ -17,6 +18,7 @@ const DataTable: React.FC<DataTableProps> = ({
 	loading,
 	callback,
 	showBtn,
+	isEmailVerification
 }) => {
 	return (
 		<div className="flex flex-col ">
@@ -37,7 +39,7 @@ const DataTable: React.FC<DataTableProps> = ({
 												<th
 													key={id}
 													scope="col"
-													className={`p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white ${ele.width}`}
+													className={`p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white ${ele.width} ${id === 0 && isEmailVerification ? 'pl-12' : ''}`}
 												>
 													<div>{ele.columnName}</div>
 													{ele.subColumnName && (

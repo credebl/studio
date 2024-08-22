@@ -4,22 +4,24 @@ import DateTooltip from '../components/Tooltip';
 import DataTooltip from '../components/Tooltip/dataTooltip'
 
 import CopyDid from './CopyDid';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { pathRoutes } from '../config/pathRoutes';
 import { getFromLocalStorage } from '../api/Auth';
 import { storageKeys } from '../config/CommonConstant';
-import type { ISchemaCardProps } from './interface';
+import type { ISchemaCardProps, ISchemaData } from './interface';
+import CustomCheckbox from './CustomCheckbox';
 
-const SchemaCard =  (props: ISchemaCardProps) => {
-  const orgDidDetails = async ()=>{
+const SchemaCard = (props: ISchemaCardProps) => {
+  const orgDidDetails = async () => {
     const orgDid = await getFromLocalStorage(storageKeys.ORG_DID)
   }
   useEffect(() => {
-		orgDidDetails();
-	}, []);
-  
+    orgDidDetails();
+  }, []);
+
   const attributes = props.limitedAttributes !== false ? props?.attributes?.slice(0, 3) : props?.attributes
-  
+
+
 
   const handleButtonClick = () => {
     if (props.onClickW3cIssue) {
@@ -27,9 +29,21 @@ const SchemaCard =  (props: ISchemaCardProps) => {
     }
   };
 
+const handleCheckboxChange = (checked: boolean, schemaData?: ISchemaData) => {
+
+  if (props.onChange) {
+      if (schemaData) {
+          props.onChange(checked, [schemaData]);
+      } else {
+          props.onChange(checked, []);
+      }
+  }
+};
+
 
   return (
-    <Card  onClick={() => {
+    <Card onClick={() => {
+
       if (!props.w3cSchema) {
         props.onClickCallback(props.schemaId, props.attributes, props.issuerDid, props.created)
       }
@@ -42,35 +56,35 @@ const SchemaCard =  (props: ISchemaCardProps) => {
       >
       <div className="flex justify-between items-baseline">
         <div className='min-w-[8rem] max-w-100/10rem'>
-        <h5 className="text-xl font-bold leading-[1.1] text-gray-900 dark:text-white break-words truncate line-clamp-2 max-h-[43px] whitespace-normal" style={{ display: "-webkit-box" }}>
+          <h5 className="text-xl font-bold leading-[1.1] text-gray-900 dark:text-white break-words truncate line-clamp-2 max-h-[43px] whitespace-normal" style={{ display: "-webkit-box" }}>
             <span className='flex items-center'>
               <span className="">
                 {props.schemaName}
               </span>
             </span>
           </h5>
-         
+
           <p className='dark:text-white'>
             Version: {props.version}
           </p>
         </div>
         <div className='float-right ml-auto flex'>
           <div>
-          {props.w3cSchema && (
-                <span
-                  style={{ display: 'block' }}
-                  className="ml-2 bg-blue-100 text-gray-800 text-sm font-medium px-2.5 py-0.5 mr-2 rounded dark:bg-blue-900 dark:text-blue-300"
-                >
-                  W3C
-                </span>
-              )}
+            {props.w3cSchema && (
+              <span
+                style={{ display: 'block' }}
+                className="ml-2 bg-blue-100 text-gray-800 text-sm font-medium px-2.5 py-0.5 mr-2 rounded dark:bg-blue-900 dark:text-blue-300"
+              >
+                W3C
+              </span>
+            )}
           </div>
-        
+
           <div className='dark:text-white'>
             <DateTooltip date={props.created}>
               Created: {dateConversion(props.created)}
-            </DateTooltip>          
-            </div>
+            </DateTooltip>
+          </div>
         </div>
       </div>
       <div className="min-w-0 flex-1">
@@ -83,13 +97,13 @@ const SchemaCard =  (props: ISchemaCardProps) => {
         <p className="truncate dark:text-white break-all flex">
           <span className="font-semibold mr-2">Issuer DID: </span>
           <span className='flex w-issuer-id'>
-           <CopyDid value={props.issuerDid || ""} className='truncate font-courier mt-[2px]' />
+            <CopyDid value={props.issuerDid || ""} className='truncate font-courier mt-[2px]' />
           </span>
         </p>
         {!props.noLedger &&
-         <p className="truncate dark:text-white break-all flex">
-         <span className="font-semibold mr-2">Ledger:</span> {props?.issuerDid?.split(":")[2]}
-       </p>
+          <p className="truncate dark:text-white break-all flex">
+            <span className="font-semibold mr-2">Ledger:</span> {props?.issuerDid?.split(":")[2]}
+          </p>
         }
       </div>
 
@@ -143,7 +157,7 @@ const SchemaCard =  (props: ISchemaCardProps) => {
           </div>
         )}
         <div className='mt-4'>
-          {props.w3cSchema && !props.isVerification && (
+          {props.w3cSchema && !props.isVerification && !props.isVerificationUsingEmail && (
           <div className="p-2">
             <Button
           onClick={() => {
@@ -168,6 +182,15 @@ const SchemaCard =  (props: ISchemaCardProps) => {
           )}
           </div>
        </div>
+
+       {props.showCheckbox && (
+        <CustomCheckbox
+          onChange={handleCheckboxChange}
+          showCheckbox={props.showCheckbox}
+          schemaData={{ schemaId: props.schemaId, schemaName: props.schemaName, attributes: props.attributes }}
+        />
+      )}
+
     </Card>
   )
 }
