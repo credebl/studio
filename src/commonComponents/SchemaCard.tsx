@@ -36,7 +36,8 @@ const SchemaCard =  (props: ISchemaCardProps) => {
       }
     }}
       id="schema-cards"
-      className={`transform transition duration-500 ${(props.isClickable !== false) ? "hover:scale-105 hover:bg-gray-50 cursor-pointer" : "hover:!cursor-default"} h-full w-full overflow-hidden`}>
+      className={`transform transition duration-500 ${props.w3cSchema ? "" : (props.isClickable !== false) ? "hover:scale-105 hover:bg-gray-50 cursor-pointer" : "hover:!cursor-default"} h-full w-full overflow-hidden`}
+      >
       <div className="flex justify-between items-baseline">
         <div className='min-w-[8rem] max-w-100/10rem'>
         <h5 className="text-xl font-bold leading-[1.1] text-gray-900 dark:text-white break-words truncate line-clamp-2 max-h-[43px] whitespace-normal" style={{ display: "-webkit-box" }}>

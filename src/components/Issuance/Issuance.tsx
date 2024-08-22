@@ -333,18 +333,23 @@ const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 								"id": w3cSchemaDetails.issuerDid
 							},
 							issuanceDate: new Date().toISOString(),
-							
+							//FIXME:
 							credentialSubject: item?.attributes?.reduce((acc, attr) => {
-								if (
-								  (attr.value === null || attr.value === '')
-								) {
-								  return acc;
-								} else {
-								  acc[attr.name] = attr.value;
-								  return acc;
+								
+								if (attr.dataType === 'number' && (attr.value === '' || attr.value === null)) {
+									
+									acc[attr.name] = 0;
+								} else if (attr.dataType === 'string' && attr.value === '') {
+								
+									acc[attr.name] = '';
+								} else if (attr.value !== null) {
+									
+									acc[attr.name] = attr.value;
 								}
-							  }, {}),
-							},
+								return acc;
+							}, {}),
+						},
+
 						options: {
 							proofType: schemaType=== SchemaTypeValue.POLYGON ? ProofType.polygon : ProofType.no_ledger,
 							proofPurpose: proofPurpose

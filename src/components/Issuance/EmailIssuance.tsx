@@ -182,16 +182,19 @@ const EmailIssuance = () => {
 						"id": organizationDid 
                     },
                     "issuanceDate": new Date().toISOString(),
-                    
-					credentialSubject: entry?.attributes?.reduce((acc, attr) => {
-						if (attr.value === null || attr.value === '' || (typeof attr.value === 'number' && isNaN(attr.value))) {
-							return acc;
-						} else {
-							acc[attr.name] = attr.value;
-							return acc;
-						}
-					}, {}),
-				},
+					
+                //FIXME:
+				credentialSubject: entry?.attributes?.reduce((acc, attr) => {
+					if (attr.schemaDataType === 'number' && (attr.value === '' || attr.value === null)) {
+						acc[attr.name] = 0;
+					} else if (attr.schemaDataType === 'string' && attr.value === '') {
+						acc[attr.name] = '';
+					} else if (attr.value !== null) {
+						acc[attr.name] = attr.value;
+					}
+					return acc;
+				}, {}),
+			},
                 options: {
                     proofType: schemaTypeValue===SchemaTypeValue.POLYGON ? ProofType.polygon : ProofType.no_ledger,
                     proofPurpose: proofPurpose
