@@ -28,8 +28,11 @@ export const storageKeys = {
     PERMISSIONS: 'user_permissions',
     USER_EMAIL: 'user_email',
 	SELECTED_USER:'selected_user',
+    CRED_DEF_DATA: 'CRED_DEF_DATA',
     SELECTED_CONNECTIONS: 'selected_connections',
 	SCHEMA_ID:'schema_id',
+    W3C_SCHEMA_DATA:'schema_data',
+    W3C_SCHEMA_ATTRIBUTES: 'w3c_schema_attributes',
     SCHEMA_ATTR:'schema_attr',
     W3C_SCHEMA_DETAILS:'schemaDetails',
 	CRED_DEF_ID:'cred_def_id',
@@ -38,6 +41,11 @@ export const storageKeys = {
 	ECOSYSTEM_ID: "ecosystem_id",
     ORG_DETAILS: "org_details",
     ECOSYSTEM_ROLE: "ecosystem_role",
+    SCHEMA_IDS: "schemaIds",
+    SCHEMA_ATTRIBUTES: "schema_attributes",
+    SCHEMA_CRED_DEFS: "schema_cred_defs",
+    ATTRIBUTE_DATA: "attribute_data",
+    SELECTED_SCHEMAS:'selectedSchemas',
 	SOCKET_ID: "socket_id",
 	LEDGER_ID: "ledger_id", 
 	ORG_INFO:'organization_Info',
@@ -46,3 +54,17 @@ export const storageKeys = {
     SELECT_ORG_IN_ECOSYSTEM: 'select_orgs_in_ecosystem',
     ERROR_ORG_IN_ECOSYSTEM: 'error_orgs_in_ecosystem'
 }
+
+export const emailCredDefHeaders = [
+    { columnName: 'Cred def name' },
+    { columnName: 'Schema name' },
+    { columnName: 'Revocable' },
+];
+
+export const predicatesConditions = [
+    { value: '', label: 'Select' },
+    { value: '>', label: 'Greater than' },
+    { value: '<', label: 'Less than' },
+    { value: '>=', label: 'Greater than or equal to' },
+    { value: '<=', label: 'Less than or equal to' }
+]

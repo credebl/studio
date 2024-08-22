@@ -23,6 +23,23 @@ export const verifyCredential = async (payload: object, requestType:RequestType)
 	}
 };
 
+export const createOobProofRequest = async (payload: object, requestType: RequestType) => {
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Verification.oobProofRequest}?requestType=${requestType}`;
+	const axiosPayload = {
+		url,
+		payload,
+		config: await getHeaderConfigs(),
+	};
+
+	try {
+		return await axiosPost(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};
+
 export const getVerificationCredential = async (state: IssueCredential) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 	const url = `${apiRoutes.Issuance.getIssuedCredentials}?orgId=${orgId}&state=${state}`;

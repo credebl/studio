@@ -52,7 +52,10 @@ export const pathRoutes = {
 			email: '/organizations/verification/verify-credentials/email/schemas',
 			schema: '/organizations/verification/verify-credentials/schemas',
 			credDef: '/organizations/verification/verify-credentials/schemas/cred-defs',
-			attributes: '/organizations/verification/verify-credentials/schemas/cred-defs/attributes',
+			w3cAttributes: '/organizations/verification/verify-credentials/email/schemas/attributes',
+			attributes: '/organizations/verification/verify-credentials/email/schemas/cred-defs/attributes',
+			emailVerification: '/organizations/verification/verify-credentials/email/schemas/cred-defs/attributes/verification-email',
+			w3cEmailVerification: '/organizations/verification/verify-credentials/email/schemas/attributes/verification-email',
 			emailCredDef: '/organizations/verification/verify-credentials/email/schemas/cred-defs',
 			connections: '/organizations/verification/verify-credentials/schemas/cred-defs/connections',
 			verify:

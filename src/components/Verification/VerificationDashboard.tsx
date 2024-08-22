@@ -11,7 +11,7 @@ const VerificationDashboard = () => {
 		{
 			heading: 'Email',
 			description: 'Verify credential(s) by entering email ID for specific user',
-			path: null,
+			path: pathRoutes.organizations.verification.email,
 		},
 		{
 			heading: 'Bulk',
