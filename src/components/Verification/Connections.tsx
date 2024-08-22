@@ -1,7 +1,7 @@
 
 import { Button } from "flowbite-react";
-import { useState } from "react";
-import { setToLocalStorage } from "../../api/Auth";
+import { useEffect, useState } from "react";
+import { getFromLocalStorage, setToLocalStorage } from "../../api/Auth";
 import DataTable from "../../commonComponents/datatable";
 import type { TableData } from "../../commonComponents/datatable/interface";
 import { storageKeys } from "../../config/CommonConstant";
@@ -10,8 +10,10 @@ import BreadCrumbs from "../BreadCrumbs";
 import ConnectionList from "./ConnectionList";
 import EmailList from "./EmailList";
 import BackButton from '../../commonComponents/backbutton'
+import { DidMethod } from "../../common/enums";
 
 const Connections = () => {
+	const [isW3cDid, setIsW3cDid] = useState<boolean>(false);
 	const [selectedConnectionList, setSelectedConnectionList] = useState<TableData[]>([])
 	const selectedConnectionHeader = [
 		{ columnName: 'User' },
@@ -21,13 +23,25 @@ const Connections = () => {
 	const selectConnection = (connections: TableData[]) => {
 		setSelectedConnectionList(connections)
 	}
+	const fetchOrgData = async () => {
+		const orgDid = await getFromLocalStorage(storageKeys.ORG_DID);
+		
+		if (orgDid.includes(DidMethod.POLYGON) || orgDid.includes(DidMethod.KEY) || orgDid.includes(DidMethod.WEB)) {
+		  setIsW3cDid(true);
+		} else {
+		  setIsW3cDid(false);
+		}
+	  };
+	 useEffect(() => {
+		fetchOrgData();
+	  }, []);
 
 	const continueToVerify = async () => {
 		const selectedConnections = selectedConnectionList.map(ele =>{
 			return {userName: ele.data[0].data, connectionId:ele.data[1].data}
 	})
 		await setToLocalStorage(storageKeys.SELECTED_USER, selectedConnections)
-		window.location.href = `${pathRoutes.organizations.verification.verify}`
+		window.location.href = isW3cDid ? `${pathRoutes.organizations.verification.W3CVerification}` : `${pathRoutes.organizations.verification.verify}`
 	}
 
 	return (

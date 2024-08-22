@@ -31,7 +31,7 @@ const SchemaList = (props: {
 		schemaDetails: SchemaDetails,
 	) => void;
 
-	schemaW3CSelectionCallback: (
+	W3CSchemaSelectionCallback: (
 		schemaId: string,
 		w3cSchemaDetails: IW3cSchemaDetails,
 	) => void;
@@ -154,7 +154,7 @@ const SchemaList = (props: {
 		props.schemaSelectionCallback(schemaId, schemaDetails);
 	};
 
-	const schemaW3CSelectionCallback = async (
+	const W3CSchemaSelectionCallback = async (
 		schemaId: string,
 		schemaName: string,
 		version: string,
@@ -170,7 +170,7 @@ const SchemaList = (props: {
 			attributes,
 			created,
 		};
-		props.schemaW3CSelectionCallback(schemaId, w3cSchemaDetails);
+		props.W3CSchemaSelectionCallback(schemaId, w3cSchemaDetails);
 		await setToLocalStorage(storageKeys.W3C_SCHEMA_DATA, w3cSchemaDetails);		
 	};
 
@@ -331,7 +331,7 @@ const SchemaList = (props: {
 											attributes={element['attributes']}
 											created={element['createDateTime']}
 											onClickCallback={schemaSelectionCallback}
-											onClickW3CCallback={schemaW3CSelectionCallback}
+											onClickW3CCallback={W3CSchemaSelectionCallback}
 											onClickW3cIssue={handleW3CIssue}
 											w3cSchema={w3cSchema}
 											noLedger={isNoLedger}

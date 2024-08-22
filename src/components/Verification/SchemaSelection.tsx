@@ -15,12 +15,12 @@ const SchemaSelection = () => {
 		window.location.href = `${pathRoutes.organizations.verification.credDef}`
 	}
 
-	const schemaW3CSelectionCallback = async () => {
+	const W3CSchemaSelectionCallback = async () => {
 		window.location.href = `${pathRoutes.organizations.verification.W3CConnections}`
 	}
 
 	return (
-		<SchemaList schemaSelectionCallback={schemaSelectionCallback} schemaW3CSelectionCallback={schemaW3CSelectionCallback} verificationFlag={isVerification}/>
+		<SchemaList schemaSelectionCallback={schemaSelectionCallback} W3CSchemaSelectionCallback={W3CSchemaSelectionCallback} verificationFlag={isVerification}/>
 	)
 }
 

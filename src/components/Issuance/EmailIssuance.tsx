@@ -102,9 +102,6 @@ const EmailIssuance = () => {
 			typeof schemaAttributes === 'string' &&
 			JSON.parse(schemaAttributes),
 	}));
-
-	console.log("options", options);
-
 	setCredentialOptions(options);
 	
 			
@@ -144,7 +141,6 @@ const EmailIssuance = () => {
 		setIssueLoader(true);
 		
 		const existingData = userData;
-		console.log("existingData1111", existingData);
 		
 		const organizationDid = await getFromLocalStorage(storageKeys.ORG_DID);
 		
@@ -152,8 +148,6 @@ const EmailIssuance = () => {
 
 	if (existingData && existingData.formData) {
 		if (schemaType === SchemaTypes.schema_INDY) {
-			console.log("credentialOptions333", credentialOptions);
-
 			existingData.formData.forEach((entry: { email: string; attributes: IIssueAttributes[] }) => {
 				
 				const transformedEntry = { emailId: entry.email, attributes: [] };
@@ -168,7 +162,7 @@ const EmailIssuance = () => {
 				transformedData.credentialOffer.push(transformedEntry);
 			});
 			transformedData.credentialDefinitionId = credDefId;
-			console.log("credentialOptions222", credentialOptions);
+
 		
     } else if (schemaType=== SchemaTypes.schema_W3C) {
 		

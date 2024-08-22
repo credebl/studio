@@ -59,6 +59,8 @@ export const pathRoutes = {
 
 			verify:
 				'/organizations/verification/verify-credentials/schemas/cred-defs/connections/verification',
+				W3CVerification:
+				'/organizations/verification/verify-credentials/schemas/connections/verification',
 		},
 	},
 	ecosystem: {

@@ -353,7 +353,6 @@ const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 				}),
 				orgId: values.orgId,
 			};
-			console.log("issuancePayload",issuancePayload);
 			
 			}
 		
