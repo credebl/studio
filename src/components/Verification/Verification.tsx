@@ -318,8 +318,12 @@ const VerificationCred = () => {
 
 			if(w3cSchema){
 
-				const getW3cAttributes = await getFromLocalStorage(storageKeys.W3C_SCHEMA_DETAILS);	
+				const getW3cAttributes = await getFromLocalStorage(storageKeys.W3C_SCHEMA_DATA);
+				console.log("getW3cAttributes",getW3cAttributes);
+					
 				const parsedSchemaAttributes = JSON.parse(getW3cAttributes) || [];
+				console.log("parsedSchemaAttributes",parsedSchemaAttributes);
+				
 				const w3cInputArray: SelectedUsers[] = parsedSchemaAttributes.attributes.map(
 					(attribute: IAttribute) => {
 						return {
@@ -448,6 +452,8 @@ const VerificationCred = () => {
 			});
 			
 			setAttributeList(attributes);
+			console.log("attributes",attributes);
+			
 			
 			setDisplay(
 				attributeData?.some((attribute) => attribute?.dataType === 'number'),
@@ -467,7 +473,8 @@ const VerificationCred = () => {
 		
 		if(isW3c){
 			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-			const getW3cSchemaDetails = await getFromLocalStorage(storageKeys.W3C_SCHEMA_DETAILS);	
+			const getW3cSchemaDetails = await getFromLocalStorage(storageKeys.W3C_SCHEMA_DATA);
+			
 		const parsedW3cSchemaDetails = JSON.parse(getW3cSchemaDetails);
 		const schemaId = parsedW3cSchemaDetails?.schemaId
 		createW3cSchemaPayload(schemaId,parsedW3cSchemaDetails)
@@ -499,6 +506,7 @@ const VerificationCred = () => {
 		display && !w3cSchema && { columnName: 'Condition' },
 		display && !w3cSchema && { columnName: 'Value', width: 'w-0.75' },
 	];
+console.log("attributeList",attributeList);
 
 	return (
 		<div className="px-4 pt-2">
@@ -531,7 +539,6 @@ const VerificationCred = () => {
 	version={w3cSchemaDetails.version}
 	hideCredDefId={true}
   />
-   
     )
   )}
 			{(proofReqSuccess || errMsg) && (

@@ -21,6 +21,7 @@ export interface ISchemaCardProps {
 	created: string,
 	isClickable?: boolean
 	onClickCallback: (schemaId: string, attributes: string[], issuerDid: string, created: string) => void;
+	onClickW3CCallback: (schemaId: string, schemaName: string, version: string, issuerDid: string, attributes: [], created: string) => void;
 	onClickW3cIssue?: (schemaId: string, schemaName: string, version: string, issuerDid: string, attributes: [], created: string) => void;
 	limitedAttributes?: boolean
 	w3cSchema:boolean

@@ -55,6 +55,8 @@ export const pathRoutes = {
 			attributes: '/organizations/verification/verify-credentials/schemas/cred-defs/attributes',
 			emailCredDef: '/organizations/verification/verify-credentials/email/schemas/cred-defs',
 			connections: '/organizations/verification/verify-credentials/schemas/cred-defs/connections',
+			W3CConnections: '/organizations/verification/verify-credentials/schemas/connections',
+
 			verify:
 				'/organizations/verification/verify-credentials/schemas/cred-defs/connections/verification',
 		},

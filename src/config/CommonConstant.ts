@@ -30,6 +30,8 @@ export const storageKeys = {
 	SELECTED_USER:'selected_user',
     SELECTED_CONNECTIONS: 'selected_connections',
 	SCHEMA_ID:'schema_id',
+    W3C_SCHEMA_DATA:'w3cSchemaDetails',
+    W3C_SCHEMA_ATTRIBUTES: 'w3c_schema_attributes',
     SCHEMA_ATTR:'schema_attr',
     W3C_SCHEMA_DETAILS:'schemaDetails',
 	CRED_DEF_ID:'cred_def_id',

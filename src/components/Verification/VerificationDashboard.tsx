@@ -6,7 +6,8 @@ const VerificationDashboard = () => {
 		{
 			heading: 'Connection',
 			description: 'Verify credential(s) by selecting existing connections',
-			path: pathRoutes.organizations.verification.connections,
+			path: pathRoutes.organizations.verification.schema,
+
 		},
 		{
 			heading: 'Email',

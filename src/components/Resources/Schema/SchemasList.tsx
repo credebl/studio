@@ -14,7 +14,7 @@ import { EmptyListMessage } from '../../EmptyListComponent';
 import { Features } from '../../../utils/enums/features';
 import RoleViewButton from '../../RoleViewButton';
 import SchemaCard from '../../../commonComponents/SchemaCard';
-import type { SchemaDetails } from '../../Verification/interface';
+import type { IW3cSchemaDetails, SchemaDetails } from '../../Verification/interface';
 import SearchInput from '../../SearchInput';
 import { getFromLocalStorage, setToLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
@@ -30,6 +30,12 @@ const SchemaList = (props: {
 		schemaId: string,
 		schemaDetails: SchemaDetails,
 	) => void;
+
+	schemaW3CSelectionCallback: (
+		schemaId: string,
+		w3cSchemaDetails: IW3cSchemaDetails,
+	) => void;
+
 	verificationFlag?: boolean;
 }) => {
 
@@ -146,6 +152,26 @@ const SchemaList = (props: {
 			createdDate: created,
 		};
 		props.schemaSelectionCallback(schemaId, schemaDetails);
+	};
+
+	const schemaW3CSelectionCallback = async (
+		schemaId: string,
+		schemaName: string,
+		version: string,
+		issuerDid: string,
+		attributes: [],
+		created: string
+	) => {
+		const w3cSchemaDetails = {
+			schemaId,
+			schemaName,
+			version,
+			issuerDid,
+			attributes,
+			created,
+		};
+		props.schemaW3CSelectionCallback(schemaId, w3cSchemaDetails);
+		await setToLocalStorage(storageKeys.W3C_SCHEMA_DATA, w3cSchemaDetails);		
 	};
 
 	const handleW3CIssue = async (
@@ -305,6 +331,7 @@ const SchemaList = (props: {
 											attributes={element['attributes']}
 											created={element['createDateTime']}
 											onClickCallback={schemaSelectionCallback}
+											onClickW3CCallback={schemaW3CSelectionCallback}
 											onClickW3cIssue={handleW3CIssue}
 											w3cSchema={w3cSchema}
 											noLedger={isNoLedger}

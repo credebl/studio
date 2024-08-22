@@ -333,21 +333,18 @@ const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 								"id": w3cSchemaDetails.issuerDid
 							},
 							issuanceDate: new Date().toISOString(),
+							
 							credentialSubject: item?.attributes?.reduce((acc, attr) => {
-								     if (attr.value === null && !attr.isRequired && typeof attr.value === 'number') {
-								         return acc;
-								       } else {
-								         if (attr.name === 'rollno' && attr.value === '') {
-								           return acc;
-								         } else {
-								           acc[attr.name] = attr.value;
-								           return acc;
-								         }
-								       }
-								     }, {
-								 }),
-								},
-		
+								if (
+								  (attr.value === null || attr.value === '')
+								) {
+								  return acc;
+								} else {
+								  acc[attr.name] = attr.value;
+								  return acc;
+								}
+							  }, {}),
+							},
 						options: {
 							proofType: schemaType=== SchemaTypeValue.POLYGON ? ProofType.polygon : ProofType.no_ledger,
 							proofPurpose: proofPurpose
@@ -356,6 +353,8 @@ const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 				}),
 				orgId: values.orgId,
 			};
+			console.log("issuancePayload",issuancePayload);
+			
 			}
 		
 		const convertedAttributesValues = {

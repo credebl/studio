@@ -501,7 +501,7 @@ const networkRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEv
 										name="did-method"
 										value={selectedDid}
 										readOnly
-										className="mt-2 bg-[#F4F4F4] dark:bg-gray-700" />
+										className="mt-2 bg-[#F4F4F4] dark:bg-gray-700  text-gray-900 dark:text-gray-300" />
 									</div>
 									
 								</div>

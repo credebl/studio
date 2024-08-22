@@ -102,7 +102,11 @@ const EmailIssuance = () => {
 			typeof schemaAttributes === 'string' &&
 			JSON.parse(schemaAttributes),
 	}));
+
+	console.log("options", options);
+
 	setCredentialOptions(options);
+	
 			
 		} else {
 			setSuccess(null);
@@ -140,12 +144,16 @@ const EmailIssuance = () => {
 		setIssueLoader(true);
 		
 		const existingData = userData;
+		console.log("existingData1111", existingData);
+		
 		const organizationDid = await getFromLocalStorage(storageKeys.ORG_DID);
 		
 	let transformedData: ITransformedData = { credentialOffer: [] };
 
 	if (existingData && existingData.formData) {
 		if (schemaType === SchemaTypes.schema_INDY) {
+			console.log("credentialOptions333", credentialOptions);
+
 			existingData.formData.forEach((entry: { email: string; attributes: IIssueAttributes[] }) => {
 				
 				const transformedEntry = { emailId: entry.email, attributes: [] };
@@ -160,8 +168,10 @@ const EmailIssuance = () => {
 				transformedData.credentialOffer.push(transformedEntry);
 			});
 			transformedData.credentialDefinitionId = credDefId;
+			console.log("credentialOptions222", credentialOptions);
 		
     } else if (schemaType=== SchemaTypes.schema_W3C) {
+		
         existingData.formData.forEach((entry: { email: string; credentialData: IEmailCredentialData; attributes:IIssueAttributes[] }) => {
 			const credentialOffer = {
 				emailId: entry.email,
@@ -172,7 +182,7 @@ const EmailIssuance = () => {
                     ],
                     "type": [
 						"VerifiableCredential",
-                        credentialOptions[0].schemaName
+                        credentialSelected?.schemaName
                     ],
                     "issuer": {
 						"id": organizationDid 
@@ -180,19 +190,14 @@ const EmailIssuance = () => {
                     "issuanceDate": new Date().toISOString(),
                     
 					credentialSubject: entry?.attributes?.reduce((acc, attr) => {
-						if (attr.value === null && !attr.isRequired && typeof attr.value === 'number') {
+						if (attr.value === null || attr.value === '' || (typeof attr.value === 'number' && isNaN(attr.value))) {
 							return acc;
-						  } else {
-							if (attr.name === 'rollno' && attr.value === '') {
-							  return acc;
-							} else {
-							  acc[attr.name] = attr.value;
-							  return acc;
-							}
-						  }
-						}, {
-		   }),
-                },
+						} else {
+							acc[attr.name] = attr.value;
+							return acc;
+						}
+					}, {}),
+				},
                 options: {
                     proofType: schemaTypeValue===SchemaTypeValue.POLYGON ? ProofType.polygon : ProofType.no_ledger,
                     proofPurpose: proofPurpose
