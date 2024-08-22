@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import { pathRoutes } from '../config/pathRoutes';
 import { getFromLocalStorage } from '../api/Auth';
 import { storageKeys } from '../config/CommonConstant';
-import type { ISchemaCardProps, ISchemaData } from './interface';
+import type { IAttribute, ISchemaCardProps, ISchemaData } from './interface';
 import CustomCheckbox from './CustomCheckbox';
 
 const SchemaCard = (props: ISchemaCardProps) => {
@@ -21,7 +21,31 @@ const SchemaCard = (props: ISchemaCardProps) => {
 
   const attributes = props.limitedAttributes !== false ? props?.attributes?.slice(0, 3) : props?.attributes
 
+  const AttributesList: React.FC<{ attributes: IAttribute[], limitedAttributes?: boolean }> = ({ attributes, limitedAttributes }) => {
+    const isLimited = limitedAttributes !== false && attributes.length > 3;
+    const displayedAttributes = isLimited ? attributes.slice(0, 3) : attributes;
 
+    return (
+    <div className="flex justify-between">
+    <div className="block text-base font-semibold text-gray-900 dark:text-white overflow-hidden overflow-ellipsis">
+      Attributes:
+      <div className="flex flex-wrap items-start">
+      {displayedAttributes.map((element) => (
+              <div key={element.attributeName}>
+                <span
+                  style={{ display: 'block' }}
+                  className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
+                >
+                  {element?.attributeName}
+                </span>
+                </div>
+          ))}
+          {isLimited && <span className="ml-2 text-gray-500 dark:text-gray-300">...</span>}
+        </div>
+    </div>
+    </div>
+  );
+}
 
   const handleButtonClick = () => {
     if (props.onClickW3cIssue) {
@@ -113,48 +137,14 @@ const handleCheckboxChange = (checked: boolean, schemaData?: ISchemaData) => {
             data={props.attributes}
             renderItem={(attribute) => attribute.attributeName}
           >
-            <div className="block text-base font-semibold text-gray-900 dark:text-white overflow-hidden overflow-ellipsis">
-              Attributes:
-              <div className="flex flex-wrap items-start">
-                {attributes && attributes.length > 0 && (
-                  <>
-                    {attributes.map((element) => (
-                      <div key={element.attributeName}>
-                        <span
-                          style={{ display: 'block' }}
-                          className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
-                        >
-                          {element?.attributeName}
-                        </span>
-                      </div>
-                    ))}
-                    {props.limitedAttributes !== false && props.attributes.length > 3 && <span>...</span>}
-                  </>
-                )}
-              </div>
-            </div>
+            
+                        <AttributesList attributes={props.attributes} limitedAttributes={props.limitedAttributes} />
+
           </DataTooltip>
         ) : (
-          <div className="block text-base font-semibold text-gray-900 dark:text-white overflow-hidden overflow-ellipsis">
-            Attributes:
-            <div className="flex flex-wrap items-start">
-              {attributes && attributes.length > 0 && (
-                <>
-                  {attributes.map((element) => (
-                    <div key={element.attributeName}>
-                      <span
-                        style={{ display: 'block' }}
-                        className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
-                      >
-                        {element?.attributeName}
-                      </span>
-                    </div>
-                  ))}
-                  {props.limitedAttributes !== false && props.attributes.length > 3 && <span>...</span>}
-                </>
-              )}
-            </div>
-          </div>
+          
+          <AttributesList attributes={props.attributes} limitedAttributes={props.limitedAttributes} />
+
         )}
         <div className='mt-4'>
           {props.w3cSchema && !props.isVerification && !props.isVerificationUsingEmail && (

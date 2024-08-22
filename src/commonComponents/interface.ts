@@ -10,7 +10,7 @@ export interface IProps {
 	setSuccess: (flag: string | null) => void;
 }
 
-interface IAttribute {
+export interface IAttribute {
     attributeName: string;
     schemaDataType: string;
     displayName: string;
