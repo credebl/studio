@@ -148,9 +148,9 @@ export enum ProtocolVersion {
 }
 
 export enum AutoAccept {
-    Always = "always",
-    ContentApproved = "contentApproved",
-    Never = "never"
+    ALWAYS = "always",
+    CONTENT_APPROVED = "contentApproved",
+    NEVER = "never"
 }
 
 export enum RequestType {

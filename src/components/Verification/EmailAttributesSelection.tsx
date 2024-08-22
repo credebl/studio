@@ -2,7 +2,7 @@
 import { Alert, Button } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
-import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
+import { apiStatusCodes, predicatesConditions, storageKeys } from '../../config/CommonConstant';
 import BreadCrumbs from '../BreadCrumbs';
 import DataTable from '../../commonComponents/datatable';
 import type { TableData } from '../../commonComponents/datatable/interface';
@@ -80,8 +80,7 @@ const EmailAttributesSelection = () => {
 
 			if (did.includes(DidMethod.POLYGON) || did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
 				setW3cSchema(true);
-			}
-			if (did.includes(DidMethod.INDY)) {
+			}else if (did.includes(DidMethod.INDY)) {
 				setW3cSchema(false);
 			}
 		}
@@ -144,7 +143,7 @@ const EmailAttributesSelection = () => {
 			: `${pathRoutes.organizations.verification.emailVerification}`;
 	};
 	
-	const fetchData = async () => {
+	const loadAttributesData = async () => {
 	
 		setLoading(true);
 	
@@ -175,13 +174,7 @@ const EmailAttributesSelection = () => {
 						isChecked: false,
 						value: '',
 						condition: '',
-						options: [
-							{ value: '', label: 'Select' },
-							{ value: '>', label: 'Greater than' },
-							{ value: '<', label: 'Less than' },
-							{ value: '>=', label: 'Greater than or equal to' },
-							{ value: '<=', label: 'Less than or equal to' }
-						],
+						options: predicatesConditions,
 						dataType: attribute.schemaDataType,
 						schemaName: attribute.schemaName,
 						credDefName: attribute.credDefName,
@@ -219,13 +212,7 @@ const EmailAttributesSelection = () => {
 									isChecked: false,
 									value: '',
 									condition: '',
-									options: [
-										{ value: '', label: 'Select' },
-										{ value: '>', label: 'Greater than' },
-										{ value: '<', label: 'Less than' },
-										{ value: '>=', label: 'Greater than or equal to' },
-										{ value: '<=', label: 'Less than or equal to' }
-									],
+									options: predicatesConditions,
 									dataType: attribute.schemaDataType,
 									schemaName: schema.schemaId.split(':')[2],
 									credDefName: credDef.tag,
@@ -253,7 +240,7 @@ const EmailAttributesSelection = () => {
 	};
 	
 	useEffect(() => {
-		fetchData();
+		loadAttributesData();
 	}, [w3cSchema]);
 	
 	

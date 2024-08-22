@@ -54,3 +54,17 @@ export const storageKeys = {
     SELECT_ORG_IN_ECOSYSTEM: 'select_orgs_in_ecosystem',
     ERROR_ORG_IN_ECOSYSTEM: 'error_orgs_in_ecosystem'
 }
+
+export const emailCredDefHeaders = [
+    { columnName: 'Cred def name' },
+    { columnName: 'Schema name' },
+    { columnName: 'Revocable' },
+];
+
+export const predicatesConditions = [
+    { value: '', label: 'Select' },
+    { value: '>', label: 'Greater than' },
+    { value: '<', label: 'Less than' },
+    { value: '>=', label: 'Greater than or equal to' },
+    { value: '<=', label: 'Less than or equal to' }
+]

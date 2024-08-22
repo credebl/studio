@@ -108,7 +108,7 @@ const EmailVerification = () => {
                         input_descriptors: inputDescriptors
                     },
                     comment: "proof request",
-                    autoAcceptProof: AutoAccept.Never,
+                    autoAcceptProof: AutoAccept.NEVER,
                     emailId: values.emailData.map(input => input.email),
                     reuseConnection: true
                 };
@@ -179,7 +179,7 @@ const EmailVerification = () => {
                     goalCode: "verification",
                     protocolVersion: ProtocolVersion.V1,
                     isShortenUrl: true,
-                    autoAcceptProof: AutoAccept.Never,
+                    autoAcceptProof: AutoAccept.NEVER,
                     emailId: values.emailData.map(input => input.email),
                     proofFormats,
                 };

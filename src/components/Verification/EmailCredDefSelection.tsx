@@ -1,7 +1,7 @@
 import { Button } from "flowbite-react";
 import React, { useEffect, useState, type ChangeEvent } from "react";
 import { getFromLocalStorage, removeFromLocalStorage, setToLocalStorage } from "../../api/Auth";
-import { apiStatusCodes, storageKeys } from "../../config/CommonConstant";
+import { apiStatusCodes, emailCredDefHeaders, storageKeys } from "../../config/CommonConstant";
 import { pathRoutes } from "../../config/pathRoutes";
 import BreadCrumbs from "../BreadCrumbs";
 import { AlertComponent } from "../AlertComponent";
@@ -51,12 +51,6 @@ const EmailCredDefSelection = () => {
         }
         window.location.href = `${pathRoutes.organizations.verification.attributes}`;
     };
-
-    const header = [
-        { columnName: 'Cred def name' },
-        { columnName: 'Schema name' },
-        { columnName: 'Revocable' },
-    ];
 
     const getCredDefs = async (schemaIds: string[]) => {
         setLoading(true);
@@ -181,7 +175,7 @@ const EmailCredDefSelection = () => {
                     }}
                 />
             )}
-            <DataTable header={header} data={credDefList} loading={loading} isEmailVerification={true} callback={() => { }} />
+            <DataTable header={emailCredDefHeaders} data={credDefList} loading={loading} isEmailVerification={true} callback={() => { }} />
             <div>
                 <Button onClick={handleContinue}
                     className='text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mt-2 ml-auto'
