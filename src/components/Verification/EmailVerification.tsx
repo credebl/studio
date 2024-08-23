@@ -12,6 +12,7 @@ import type { IEmailValues, IPredicate, IRequestedAttributes, ISelectedAttribute
 import { getOrganizationById } from '../../api/organization';
 import { pathRoutes } from '../../config/pathRoutes';
 import { AlertComponent } from '../AlertComponent';
+import React from 'react';
 
 const EmailVerification = () => {
     const [loading, setLoading] = useState<boolean>(false);

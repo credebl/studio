@@ -69,14 +69,7 @@ const handleCheckboxChange = (checked: boolean, schemaData?: ISchemaData) => {
     <Card onClick={() => {
 
       if (!props.w3cSchema) {
-        const schemaData = {
-          schemaId: props.schemaId,
-          attributes: props.attributes,
-          issuerDid: props.issuerDid,
-          created: props.created,
-        };
-      
-        props.onClickCallback(schemaData);
+        props.onClickCallback(props.schemaId, props.attributes, props.issuerDid, props.created)
       }
 
      if (props.w3cSchema) {
