@@ -140,17 +140,12 @@ const SchemaList = (props: {
 		}
 	};
 
-	const schemaSelectionCallback = ({
-		schemaId,
-		attributes,
-		issuerId,
-		created,
-	}: {
-		schemaId: string;
-		attributes: string[];
+	const schemaSelectionCallback = (
+		schemaId: string,
+		attributes: string[],
 		issuerId: string,
-		created: string;
-	}) => {
+		created: string,
+	) => {
 		const schemaDetails = {
 			attribute: attributes,
 			issuerDid: issuerId,
