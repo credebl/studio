@@ -1,4 +1,3 @@
-
 import { removeFromLocalStorage, setToLocalStorage } from "../../api/Auth";
 import { storageKeys } from "../../config/CommonConstant";
 import { pathRoutes } from "../../config/pathRoutes";
@@ -15,8 +14,12 @@ const SchemaSelection = () => {
 		window.location.href = `${pathRoutes.organizations.verification.credDef}`
 	}
 
+	const W3CSchemaSelectionCallback = async () => {
+		window.location.href = `${pathRoutes.organizations.verification.W3CConnections}`
+	}
+
 	return (
-		<SchemaList schemaSelectionCallback={schemaSelectionCallback} verificationFlag={isVerification}/>
+		<SchemaList schemaSelectionCallback={schemaSelectionCallback} W3CSchemaSelectionCallback={W3CSchemaSelectionCallback} verificationFlag={isVerification}/>
 	)
 }
 

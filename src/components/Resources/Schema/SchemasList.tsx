@@ -14,7 +14,7 @@ import { EmptyListMessage } from '../../EmptyListComponent';
 import { Features } from '../../../utils/enums/features';
 import RoleViewButton from '../../RoleViewButton';
 import SchemaCard from '../../../commonComponents/SchemaCard';
-import type { SchemaDetails } from '../../Verification/interface';
+import type { IW3cSchemaDetails, SchemaDetails } from '../../Verification/interface';
 import SearchInput from '../../SearchInput';
 import { getFromLocalStorage, setToLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
@@ -30,6 +30,12 @@ const SchemaList = (props: {
 		schemaId: string,
 		schemaDetails: SchemaDetails,
 	) => void;
+
+	W3CSchemaSelectionCallback: (
+		schemaId: string,
+		w3cSchemaDetails: IW3cSchemaDetails,
+	) => void;
+
 	verificationFlag?: boolean;
 }) => {
 
@@ -147,6 +153,34 @@ const SchemaList = (props: {
 		};
 		props.schemaSelectionCallback(schemaId, schemaDetails);
 	};
+
+	const W3CSchemaSelectionCallback = async ({
+		schemaId,
+		schemaName,
+		version,
+		issuerDid,
+		attributes,
+		created,
+	}: {
+		schemaId: string,
+		schemaName: string,
+		version: string,
+		issuerDid: string,
+		attributes: [],
+		created: string
+	}) => {
+		const w3cSchemaDetails = {
+			schemaId,
+			schemaName,
+			version,
+			issuerDid,
+			attributes,
+			created,
+		};
+		props.W3CSchemaSelectionCallback(schemaId, w3cSchemaDetails);
+		await setToLocalStorage(storageKeys.W3C_SCHEMA_DATA, w3cSchemaDetails);		
+	};
+	
 
 	const handleW3CIssue = async (
 		schemaId: string,
@@ -304,7 +338,9 @@ const SchemaList = (props: {
 											issuerDid={element['issuerId']}
 											attributes={element['attributes']}
 											created={element['createDateTime']}
+											showCheckbox={false}
 											onClickCallback={schemaSelectionCallback}
+											onClickW3CCallback={W3CSchemaSelectionCallback}
 											onClickW3cIssue={handleW3CIssue}
 											w3cSchema={w3cSchema}
 											noLedger={isNoLedger}

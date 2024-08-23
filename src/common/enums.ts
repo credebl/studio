@@ -139,7 +139,18 @@ export enum SchemaTypes {
 
 export enum CredentialType {
     INDY = 'indy',
-    JSONLD = 'jsonld'
+    JSONLD = 'jsonld',
+}
+
+export enum ProtocolVersion {
+	V1 = 'v1',
+	V2 = 'v2'
+}
+
+export enum AutoAccept {
+    ALWAYS = "always",
+    CONTENT_APPROVED = "contentApproved",
+    NEVER = "never"
 }
 
 export enum RequestType {
