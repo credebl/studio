@@ -155,7 +155,7 @@ const EmailVerification = () => {
                         requestedPredicates[attr.attributeName] = {
                             name: attr.attributeName,
                             p_type: attr.selectedOption,
-                            p_value: attr.value,
+                            p_value: Number(attr.value),
                             restrictions: [
                                 {
                                     schema_id: attr.schemaId,
