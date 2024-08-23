@@ -137,7 +137,6 @@ const handleCheckboxChange = (checked: boolean, schemaData?: ISchemaData) => {
             data={props.attributes}
             renderItem={(attribute) => attribute.attributeName}
           >
-            
                         <AttributesList attributes={props.attributes} limitedAttributes={props.limitedAttributes} />
 
           </DataTooltip>
