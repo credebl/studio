@@ -7,7 +7,7 @@ import CopyDid from './CopyDid';
 import { useEffect } from 'react';
 import { pathRoutes } from '../config/pathRoutes';
 import { getFromLocalStorage } from '../api/Auth';
-import { storageKeys } from '../config/CommonConstant';
+import { limitedAttributesLength, storageKeys } from '../config/CommonConstant';
 import type { IAttribute, ISchemaCardProps, ISchemaData } from './interface';
 import CustomCheckbox from './CustomCheckbox';
 
@@ -22,7 +22,7 @@ const SchemaCard = (props: ISchemaCardProps) => {
   const attributes = props.limitedAttributes !== false ? props?.attributes?.slice(0, 3) : props?.attributes
 
   const AttributesList: React.FC<{ attributes: IAttribute[], limitedAttributes?: boolean }> = ({ attributes, limitedAttributes }) => {
-    const isLimited = limitedAttributes !== false && attributes.length > 3;
+    const isLimited = limitedAttributes !== false && attributes.length > limitedAttributesLength;
     const displayedAttributes = isLimited ? attributes.slice(0, 3) : attributes;
 
     return (
