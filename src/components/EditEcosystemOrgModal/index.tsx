@@ -50,7 +50,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
 	const [errMsg, setErrMsg] = useState<string | null>(null);
 	const [imgError, setImgError] = useState('');
 	const [isAutoEndorse, setIsAutoEndorse] = useState(false);
-	const [w3cSchema,setW3cSchema]= useState<boolean>(false);
+	const [isW3CSchema,setIsW3CSchema]= useState<boolean>(false);
 
 
 	useEffect(() => {
@@ -87,7 +87,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
 	};
 
 
-	const fetchOrganizationDetails = async () => {
+	const fetchOrgDetails = async () => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		const response = await getOrganizationById(orgId);
 		const { data } = response as AxiosResponse;
@@ -95,17 +95,17 @@ const EditPopupModal = (props: EditEntityModalProps) => {
 			const did = data?.data?.org_agents?.[0]?.orgDid;
 			
 			if (did.includes(DidMethod.POLYGON) || did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
-				setW3cSchema(true);
+				setIsW3CSchema(true);
 			}
 			if (did.includes(DidMethod.INDY)) {
-				setW3cSchema(false);
+				setIsW3CSchema(false);
 			}
 		}
 		setLoading(false);
 	};
 
 	useEffect(() => {
-		fetchOrganizationDetails();	
+		fetchOrgDetails();	
 	}, []);
 
 	const submitUpdateEntity = async (values: EditEntityValues) => {
@@ -349,7 +349,7 @@ const EditPopupModal = (props: EditEntityModalProps) => {
 									<EndorsementTooltip />
 								</div>
 								{
-								!w3cSchema &&
+								!isW3CSchema &&
 								<div>
 									<input
 										className=""
