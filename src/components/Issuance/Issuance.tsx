@@ -333,7 +333,7 @@ const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 								"id": w3cSchemaDetails.issuerDid
 							},
 							issuanceDate: new Date().toISOString(),
-							//FIXME:
+							//FIXME: Logic for passing default value as 0 for empty value of number dataType attributes.
 							credentialSubject: item?.attributes?.reduce((acc, attr) => {
 								
 								if (attr.dataType === 'number' && (attr.value === '' || attr.value === null)) {

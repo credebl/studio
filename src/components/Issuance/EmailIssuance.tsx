@@ -183,7 +183,7 @@ const EmailIssuance = () => {
                     },
                     "issuanceDate": new Date().toISOString(),
 					
-                //FIXME:
+                //FIXME: Logic for passing default value as 0 for empty value of number dataType attributes.
 				credentialSubject: entry?.attributes?.reduce((acc, attr) => {
 					if (attr.schemaDataType === 'number' && (attr.value === '' || attr.value === null)) {
 						acc[attr.name] = 0;
