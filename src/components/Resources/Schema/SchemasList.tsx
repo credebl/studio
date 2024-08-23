@@ -140,12 +140,17 @@ const SchemaList = (props: {
 		}
 	};
 
-	const schemaSelectionCallback = (
-		schemaId: string,
-		attributes: string[],
+	const schemaSelectionCallback = ({
+		schemaId,
+		attributes,
+		issuerId,
+		created,
+	}: {
+		schemaId: string;
+		attributes: string[];
 		issuerId: string,
-		created: string,
-	) => {
+		created: string;
+	}) => {
 		const schemaDetails = {
 			attribute: attributes,
 			issuerDid: issuerId,
@@ -154,14 +159,21 @@ const SchemaList = (props: {
 		props.schemaSelectionCallback(schemaId, schemaDetails);
 	};
 
-	const W3CSchemaSelectionCallback = async (
+	const W3CSchemaSelectionCallback = async ({
+		schemaId,
+		schemaName,
+		version,
+		issuerDid,
+		attributes,
+		created,
+	}: {
 		schemaId: string,
 		schemaName: string,
 		version: string,
 		issuerDid: string,
 		attributes: [],
 		created: string
-	) => {
+	}) => {
 		const w3cSchemaDetails = {
 			schemaId,
 			schemaName,
@@ -173,6 +185,7 @@ const SchemaList = (props: {
 		props.W3CSchemaSelectionCallback(schemaId, w3cSchemaDetails);
 		await setToLocalStorage(storageKeys.W3C_SCHEMA_DATA, w3cSchemaDetails);		
 	};
+	
 
 	const handleW3CIssue = async (
 		schemaId: string,

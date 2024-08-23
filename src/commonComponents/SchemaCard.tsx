@@ -69,11 +69,28 @@ const handleCheckboxChange = (checked: boolean, schemaData?: ISchemaData) => {
     <Card onClick={() => {
 
       if (!props.w3cSchema) {
-        props.onClickCallback(props.schemaId, props.attributes, props.issuerDid, props.created)
+        const schemaData = {
+          schemaId: props.schemaId,
+          attributes: props.attributes,
+          issuerDid: props.issuerDid,
+          created: props.created,
+        };
+      
+        props.onClickCallback(schemaData);
       }
-      if (props.w3cSchema) {
-        props.onClickW3CCallback(props.schemaId, props.schemaName, props.version, props.issuerDid, props.attributes, props.created)
-      }
+
+     if (props.w3cSchema) {
+    const W3CSchemaData = {
+      schemaId: props.schemaId,
+      schemaName: props.schemaName,
+      version: props.version,
+      issuerDid: props.issuerDid,
+      attributes: props.attributes,
+      created: props.created,
+  };
+
+  props.onClickW3CCallback(W3CSchemaData);
+}
     }}
       id="schema-cards"
       className={`transform transition duration-500 ${props.w3cSchema ? "" : (props.isClickable !== false) ? "hover:scale-105 hover:bg-gray-50 cursor-pointer" : "hover:!cursor-default"} h-full w-full overflow-hidden`}
@@ -162,7 +179,7 @@ const handleCheckboxChange = (checked: boolean, schemaData?: ISchemaData) => {
               style={{ height: '1.5rem', width: '100%', minWidth: '2rem' }}
             >
                <div className='mr-2'>
-              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 23 23">  <path fill="#1F4EAD" fill-rule="evenodd" d="M21 21H2V2h9.5V0H2.556A2.563 2.563 0 0 0 0 2.556v17.888A2.563 2.563 0 0 0 2.556 23h17.888A2.563 2.563 0 0 0 23 20.444V11.5h-2V21ZM14.056 0v2H19.5l-13 13 1 1.5L21 3v5.944h2V0h-8.944Z" clip-rule="evenodd" />
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 23 23">  <path fill="#1F4EAD" fillRule="evenodd" d="M21 21H2V2h9.5V0H2.556A2.563 2.563 0 0 0 0 2.556v17.888A2.563 2.563 0 0 0 2.556 23h17.888A2.563 2.563 0 0 0 23 20.444V11.5h-2V21ZM14.056 0v2H19.5l-13 13 1 1.5L21 3v5.944h2V0h-8.944Z" clipRule="evenodd" />
               </svg>
             </div>
               Issue
