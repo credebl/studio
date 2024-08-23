@@ -1,12 +1,14 @@
 import { Button, Card } from 'flowbite-react';
 import { dateConversion } from '../utils/DateConversion';
 import DateTooltip from '../components/Tooltip';
+import DataTooltip from '../components/Tooltip/dataTooltip'
+
 import CopyDid from './CopyDid';
 import { useEffect } from 'react';
 import { pathRoutes } from '../config/pathRoutes';
 import { getFromLocalStorage } from '../api/Auth';
-import { storageKeys } from '../config/CommonConstant';
-import type { ISchemaCardProps, ISchemaData } from './interface';
+import { limitedAttributesLength, storageKeys } from '../config/CommonConstant';
+import type { IAttribute, ISchemaCardProps, ISchemaData } from './interface';
 import CustomCheckbox from './CustomCheckbox';
 
 const SchemaCard = (props: ISchemaCardProps) => {
@@ -19,7 +21,31 @@ const SchemaCard = (props: ISchemaCardProps) => {
 
   const attributes = props.limitedAttributes !== false ? props?.attributes?.slice(0, 3) : props?.attributes
 
+  const AttributesList: React.FC<{ attributes: IAttribute[], limitedAttributes?: boolean }> = ({ attributes, limitedAttributes }) => {
+    const isLimited = limitedAttributes !== false && attributes.length > limitedAttributesLength;
+    const displayedAttributes = isLimited ? attributes.slice(0, 3) : attributes;
 
+    return (
+    <div className="flex justify-between">
+    <div className="block text-base font-semibold text-gray-900 dark:text-white overflow-hidden overflow-ellipsis">
+      Attributes:
+      <div className="flex flex-wrap items-start">
+      {displayedAttributes.map((element) => (
+              <div key={element.attributeName}>
+                <span
+                  style={{ display: 'block' }}
+                  className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
+                >
+                  {element?.attributeName}
+                </span>
+                </div>
+          ))}
+          {isLimited && <span className="ml-2 text-gray-500 dark:text-gray-300">...</span>}
+        </div>
+    </div>
+    </div>
+  );
+}
 
   const handleButtonClick = () => {
     if (props.onClickW3cIssue) {
@@ -43,11 +69,32 @@ const handleCheckboxChange = (checked: boolean, schemaData?: ISchemaData) => {
     <Card onClick={() => {
 
       if (!props.w3cSchema) {
-        props.onClickCallback(props.schemaId, props.attributes, props.issuerDid, props.created)
+        const schemaData = {
+          schemaId: props.schemaId,
+          attributes: props.attributes,
+          issuerDid: props.issuerDid,
+          created: props.created,
+        };
+      
+        props.onClickCallback(schemaData);
       }
+
+     if (props.w3cSchema) {
+    const W3CSchemaData = {
+      schemaId: props.schemaId,
+      schemaName: props.schemaName,
+      version: props.version,
+      issuerDid: props.issuerDid,
+      attributes: props.attributes,
+      created: props.created,
+  };
+
+  props.onClickW3CCallback(W3CSchemaData);
+}
     }}
       id="schema-cards"
-      className={`transform transition duration-500 ${(props.isClickable !== false && !props.w3cSchema) ? "hover:scale-105 hover:bg-gray-50 cursor-pointer" : "hover:!cursor-default"} h-full w-full overflow-hidden`}>
+      className={`transform transition duration-500 ${props.w3cSchema ? "" : (props.isClickable !== false) ? "hover:scale-105 hover:bg-gray-50 cursor-pointer" : "hover:!cursor-default"} h-full w-full overflow-hidden`}
+      >
       <div className="flex justify-between items-baseline">
         <div className='min-w-[8rem] max-w-100/10rem'>
           <h5 className="text-xl font-bold leading-[1.1] text-gray-900 dark:text-white break-words truncate line-clamp-2 max-h-[43px] whitespace-normal" style={{ display: "-webkit-box" }}>
@@ -102,26 +149,19 @@ const handleCheckboxChange = (checked: boolean, schemaData?: ISchemaData) => {
       </div>
 
       <div className="flex justify-between">
-        <div className="block text-base font-semibold text-gray-900 dark:text-white overflow-hidden overflow-ellipsis">
-          Attributes:
-          <div className="flex flex-wrap items-start">
-            {attributes && attributes.length > 0 && (
-              <>
-                {attributes?.map((element) => (
-                  <div key={element.attributeName}>
-                    <span
-                      style={{ display: 'block' }}
-                      className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
-                    >
-                      {element?.attributeName}
-                    </span>
-                  </div>
-                ))}
-                {props?.limitedAttributes !== false && props?.attributes?.length > 3 && <span>...</span>}
-              </>
-            )}
-          </div>
-        </div>
+        {props.w3cSchema ? (
+          <DataTooltip
+            data={props.attributes}
+            renderItem={(attribute) => attribute.attributeName}
+          >
+                        <AttributesList attributes={props.attributes} limitedAttributes={props.limitedAttributes} />
+
+          </DataTooltip>
+        ) : (
+          
+          <AttributesList attributes={props.attributes} limitedAttributes={props.limitedAttributes} />
+
+        )}
         <div className='mt-4'>
           {props.w3cSchema && !props.isVerification && !props.isVerificationUsingEmail && (
           <div className="p-2">
@@ -139,34 +179,10 @@ const handleCheckboxChange = (checked: boolean, schemaData?: ISchemaData) => {
               style={{ height: '1.5rem', width: '100%', minWidth: '2rem' }}
             >
                <div className='mr-2'>
-              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 23 23">  <path fill="#1F4EAD" fill-rule="evenodd" d="M21 21H2V2h9.5V0H2.556A2.563 2.563 0 0 0 0 2.556v17.888A2.563 2.563 0 0 0 2.556 23h17.888A2.563 2.563 0 0 0 23 20.444V11.5h-2V21ZM14.056 0v2H19.5l-13 13 1 1.5L21 3v5.944h2V0h-8.944Z" clip-rule="evenodd" />
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 23 23">  <path fill="#1F4EAD" fillRule="evenodd" d="M21 21H2V2h9.5V0H2.556A2.563 2.563 0 0 0 0 2.556v17.888A2.563 2.563 0 0 0 2.556 23h17.888A2.563 2.563 0 0 0 23 20.444V11.5h-2V21ZM14.056 0v2H19.5l-13 13 1 1.5L21 3v5.944h2V0h-8.944Z" clipRule="evenodd" />
               </svg>
             </div>
               Issue
-            </Button>
-          </div>
-          )}
-
-      {props.isVerification && props.w3cSchema && !props.isVerificationUsingEmail && (
-          <div className="p-2">
-            <Button
-          onClick={() => {
-            handleButtonClick();
-            window.location.href = pathRoutes.organizations.verification.requestProof;
-          }}
-              type="submit"
-              color='bg-primary-800'
-              title='Initiate Credential Verfication'
-              className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 
-              ring-2 text-black font-medium rounded-lg text-sm mr-2 ml-auto dark:text-white dark:hover:text-black 
-              dark:hover:bg-primary-50'
-              style={{ height: '1.5rem', width: '100%', minWidth: '2rem' }}
-            >
-               <div className='mr-2'>
-              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 23 23">  <path fill="#1F4EAD" fill-rule="evenodd" d="M21 21H2V2h9.5V0H2.556A2.563 2.563 0 0 0 0 2.556v17.888A2.563 2.563 0 0 0 2.556 23h17.888A2.563 2.563 0 0 0 23 20.444V11.5h-2V21ZM14.056 0v2H19.5l-13 13 1 1.5L21 3v5.944h2V0h-8.944Z" clip-rule="evenodd" />
-              </svg>
-            </div>
-              Verification
             </Button>
           </div>
           )}

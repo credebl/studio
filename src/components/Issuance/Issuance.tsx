@@ -333,21 +333,23 @@ const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 								"id": w3cSchemaDetails.issuerDid
 							},
 							issuanceDate: new Date().toISOString(),
+							//FIXME: Logic for passing default value as 0 for empty value of number dataType attributes.
 							credentialSubject: item?.attributes?.reduce((acc, attr) => {
-								     if (attr.value === null && !attr.isRequired && typeof attr.value === 'number') {
-								         return acc;
-								       } else {
-								         if (attr.name === 'rollno' && attr.value === '') {
-								           return acc;
-								         } else {
-								           acc[attr.name] = attr.value;
-								           return acc;
-								         }
-								       }
-								     }, {
-								 }),
-								},
-		
+								
+								if (attr.dataType === 'number' && (attr.value === '' || attr.value === null)) {
+									
+									acc[attr.name] = 0;
+								} else if (attr.dataType === 'string' && attr.value === '') {
+								
+									acc[attr.name] = '';
+								} else if (attr.value !== null) {
+									
+									acc[attr.name] = attr.value;
+								}
+								return acc;
+							}, {}),
+						},
+
 						options: {
 							proofType: schemaType=== SchemaTypeValue.POLYGON ? ProofType.polygon : ProofType.no_ledger,
 							proofPurpose: proofPurpose
@@ -356,6 +358,7 @@ const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 				}),
 				orgId: values.orgId,
 			};
+			
 			}
 		
 		const convertedAttributesValues = {
