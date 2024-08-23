@@ -252,14 +252,13 @@ const EmailVerification = () => {
                                     validateOnChange
                                     enableReinitialize
                                     onSubmit={handleSubmit
-
                                     }
                                 >
                                     {({ values, errors, touched, resetForm }) => (
                                         <Form>
                                             <div className="pb-4">
                                                 {values.emailData.map((input, index) => (
-                                                    <div key={input?.email} className="">
+                                                    <div key={index} className="">
                                                         <div
                                                             className="px-4 pt-8 pb-10 mb-4 rounded-lg border border-gray-200"
                                                         >
@@ -267,11 +266,10 @@ const EmailVerification = () => {
                                                                 <div className="relative flex items-start gap-2 mb-4 w-10/12">
                                                                     <label
                                                                         className="font-semibold text-base dark:text-white mt-2"
-                                                                        style={{
-                                                                            minWidth: '80px',
-                                                                        }}
+                                                                        style={{ minWidth: '80px' }}
                                                                         htmlFor={`email-${index}`}
-                                                                    >Email ID<span className="text-red-500">*</span>
+                                                                    >
+                                                                        Email ID<span className="text-red-500">*</span>
                                                                     </label>
                                                                     <div className="flex flex-col w-full md:w-5/12">
                                                                         <Field
@@ -288,21 +286,19 @@ const EmailVerification = () => {
                                                                     </div>
                                                                 </div>
 
-                                                                {emailInputs.length > 1 &&
-                                                                    <Button
+                                                                {values.emailData.length > 1 && (
+                                                                    <button
                                                                         data-testid="deleteBtn"
                                                                         type="button"
                                                                         color="danger"
                                                                         onClick={() => handleDeleteInput(index)}
-                                                                        className="sm:w-2/12 text-red-600 flex justify-end"
+                                                                        className="sm:w-2/12 flex text-red-600 justify-end focus:outline-none"
                                                                     >
                                                                         <svg
                                                                             xmlns="http://www.w3.org/2000/svg"
                                                                             fill="none"
                                                                             viewBox="0 0 24 24"
-                                                                            strokeWidth={
-                                                                                1.5
-                                                                            }
+                                                                            strokeWidth={1.5}
                                                                             stroke="currentColor"
                                                                             className="w-6 h-6"
                                                                         >
@@ -312,8 +308,8 @@ const EmailVerification = () => {
                                                                                 d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
                                                                             />
                                                                         </svg>
-                                                                    </Button>
-                                                                }
+                                                                    </button>
+                                                                )}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -338,9 +334,7 @@ const EmailVerification = () => {
                                                                 d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
                                                             />
                                                         </svg>
-                                                        <span className="ml-1 my-0.5">
-                                                            Add another
-                                                        </span>
+                                                        <span className="ml-1 my-0.5">Add another</span>
                                                     </Button>
                                                 </div>
                                             </div>
@@ -355,11 +349,7 @@ const EmailVerification = () => {
                                                     }}
                                                     disabled={loading}
                                                     className="dark:text-white bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 ring-2 text-black font-medium rounded-lg text-base px-4 lg:px-5 py-2 lg:py-2.5 ml-auto dark:hover:text-black"
-                                                    style={{
-                                                        height: '2.6rem',
-                                                        width: '6rem',
-                                                        minWidth: '2rem',
-                                                    }}
+                                                    style={{ height: '2.6rem', width: '6rem', minWidth: '2rem' }}
                                                 >
                                                     <svg
                                                         xmlns="http://www.w3.org/2000/svg"
@@ -392,17 +382,14 @@ const EmailVerification = () => {
                                                     >
                                                         <path
                                                             fill="currentColor"
-                                                            d="M8.828 12.171a.75.75 0 0 0 1.06 0l7-7a.75.75 0 0 0-1.06-1.06L9.358 10.94 6.88 8.465a.75.75 0 0 0-1.06 1.06l3.008 3.008Z"
-                                                        />
-                                                        <path
-                                                            fill="currentColor"
-                                                            d="M10 0a9.935 9.935 0 0 0-7.071 2.929A9.935 9.935 0 0 0 0 10c0 5.523 4.478 10 10 10 5.523 0 10-4.478 10-10 0-5.523-4.478-10-10-10Zm0 18.828C5.132 18.828 1.172 14.868 1.172 10S5.132 1.172 10 1.172c4.868 0 8.828 3.96 8.828 8.828s-3.96 8.828-8.828 8.828Z"
+                                                            d="M8.828 12.171a.75.75 0 0 0 1.06 0l7-7a.75.75 0 0 0-1.06-1.06L9.358 10.44l-3.56-3.56a.75.75 0 0 0-1.06 1.06l4 4Z"
                                                         />
                                                     </svg>
                                                     Request Proof
                                                 </Button>
                                             </div>
                                         </Form>
+
                                     )}
                                 </Formik>
                             </div>
