@@ -10,7 +10,7 @@ export interface IProps {
 	setSuccess: (flag: string | null) => void;
 }
 
-interface IAttribute {
+export interface IAttribute {
     attributeName: string;
     schemaDataType: string;
     displayName: string;
@@ -40,7 +40,22 @@ export interface ISchemaCardProps {
 	created: string;
 	isClickable?: boolean;
 	showCheckbox?: boolean;
-	onClickCallback: (schemaId: string, attributes: string[], issuerDid: string, created: string) => void;
+	onClickCallback: (schemaData: {
+		schemaId: string;
+		attributes: string[];
+		issuerDid: string;
+		created: string;
+	  }) => void;
+
+    onClickW3CCallback: (W3CSchemaData: {
+		schemaId: string;
+		schemaName: string;
+		version: string;
+		issuerDid: string;
+		attributes: [];
+		created: string;
+	}) => void;
+	
 	onClickW3cIssue?: (schemaId: string, schemaName: string, version: string, issuerDid: string, attributes: [], created: string) => void;
 	onChange?: (checked: boolean, schemaData: ISchemaData[]) => void;
 	limitedAttributes?: boolean;

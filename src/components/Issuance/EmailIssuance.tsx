@@ -103,6 +103,7 @@ const EmailIssuance = () => {
 			JSON.parse(schemaAttributes),
 	}));
 	setCredentialOptions(options);
+	
 			
 		} else {
 			setSuccess(null);
@@ -140,6 +141,7 @@ const EmailIssuance = () => {
 		setIssueLoader(true);
 		
 		const existingData = userData;
+		
 		const organizationDid = await getFromLocalStorage(storageKeys.ORG_DID);
 		
 	let transformedData: ITransformedData = { credentialOffer: [] };
@@ -160,8 +162,10 @@ const EmailIssuance = () => {
 				transformedData.credentialOffer.push(transformedEntry);
 			});
 			transformedData.credentialDefinitionId = credDefId;
+
 		
     } else if (schemaType=== SchemaTypes.schema_W3C) {
+		
         existingData.formData.forEach((entry: { email: string; credentialData: IEmailCredentialData; attributes:IIssueAttributes[] }) => {
 			const credentialOffer = {
 				emailId: entry.email,
@@ -172,27 +176,25 @@ const EmailIssuance = () => {
                     ],
                     "type": [
 						"VerifiableCredential",
-                        credentialOptions[0].schemaName
+                        credentialSelected?.schemaName
                     ],
                     "issuer": {
 						"id": organizationDid 
                     },
                     "issuanceDate": new Date().toISOString(),
-                    
-					credentialSubject: entry?.attributes?.reduce((acc, attr) => {
-						if (attr.value === null && !attr.isRequired && typeof attr.value === 'number') {
-							return acc;
-						  } else {
-							if (attr.name === 'rollno' && attr.value === '') {
-							  return acc;
-							} else {
-							  acc[attr.name] = attr.value;
-							  return acc;
-							}
-						  }
-						}, {
-		   }),
-                },
+					
+                //FIXME: Logic for passing default value as 0 for empty value of number dataType attributes.
+				credentialSubject: entry?.attributes?.reduce((acc, attr) => {
+					if (attr.schemaDataType === 'number' && (attr.value === '' || attr.value === null)) {
+						acc[attr.name] = 0;
+					} else if (attr.schemaDataType === 'string' && attr.value === '') {
+						acc[attr.name] = '';
+					} else if (attr.value !== null) {
+						acc[attr.name] = attr.value;
+					}
+					return acc;
+				}, {}),
+			},
                 options: {
                     proofType: schemaTypeValue===SchemaTypeValue.POLYGON ? ProofType.polygon : ProofType.no_ledger,
                     proofPurpose: proofPurpose

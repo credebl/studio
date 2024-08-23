@@ -58,8 +58,12 @@ export const pathRoutes = {
 			w3cEmailVerification: '/organizations/verification/verify-credentials/email/schemas/attributes/verification-email',
 			emailCredDef: '/organizations/verification/verify-credentials/email/schemas/cred-defs',
 			connections: '/organizations/verification/verify-credentials/schemas/cred-defs/connections',
+			W3CConnections: '/organizations/verification/verify-credentials/schemas/connections',
+
 			verify:
 				'/organizations/verification/verify-credentials/schemas/cred-defs/connections/verification',
+				W3CVerification:
+				'/organizations/verification/verify-credentials/schemas/connections/verification',
 		},
 	},
 	ecosystem: {

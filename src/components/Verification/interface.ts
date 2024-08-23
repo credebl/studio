@@ -69,6 +69,7 @@ export interface IW3cSchemaDetails {
 	schemaId: string;
 	w3cAttributes?: IAttributesData[];
 	issuerDid?:string;
+	created?:string;
 }
 
 export interface IAttributesData {
