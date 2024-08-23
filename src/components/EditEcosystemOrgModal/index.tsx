@@ -93,13 +93,14 @@ const EditPopupModal = (props: EditEntityModalProps) => {
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const did = data?.data?.org_agents?.[0]?.orgDid;
+			if (did.includes(DidMethod.INDY)) {
+				setIsW3CSchema(false);
+			}
 			
 			if (did.includes(DidMethod.POLYGON) || did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
 				setIsW3CSchema(true);
 			}
-			if (did.includes(DidMethod.INDY)) {
-				setIsW3CSchema(false);
-			}
+			
 		}
 		setLoading(false);
 	};
