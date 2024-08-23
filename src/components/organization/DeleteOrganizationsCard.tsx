@@ -30,11 +30,12 @@ const DeleteOrganizationsCard: React.FC<CardProps> = ({
         {count && <p>Total:{count}</p>}
       </p>
       <button
-        className={`${
-          count === 0 ? "opacity-50 cursor-not-allowed" : ""
-        }`}
-        onClick={() => onDeleteClick(deleteFunc!, confirmMessage!)}
-        disabled={isDisabled}
+         className={`${
+    isDisabled || count === 0 ? "opacity-50 cursor-not-allowed" : ""
+  }`}
+  onClick={() => !isDisabled && onDeleteClick(deleteFunc!, confirmMessage!)}
+  disabled={isDisabled || count === 0}
+
       >
         <img
           src="/images/delete_button_image.svg"

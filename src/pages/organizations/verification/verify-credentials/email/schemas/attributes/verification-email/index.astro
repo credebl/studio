@@ -1,6 +1,6 @@
 ---
 import LayoutSidebar from "../../../../../../../../app/LayoutSidebar.astro";
-import EmailAttributesSelection from "../../../../../../../../components/Verification/EmailAttributesSelection";
+import EmailVerification from "../../../../../../../../components/Verification/EmailVerification";
 import { checkUserSession } from "../../../../../../../../utils/check-session";
 
 const response = await checkUserSession({cookies: Astro.cookies, currentPath: Astro.url.pathname});
@@ -10,5 +10,5 @@ if (!response.authorized) {
 ---
 
 <LayoutSidebar notFoundPage={!response.permitted}>
-	<EmailAttributesSelection client:load />
+	<EmailVerification client:load />
 </LayoutSidebar>

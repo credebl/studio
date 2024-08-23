@@ -318,8 +318,10 @@ const VerificationCred = () => {
 
 			if(w3cSchema){
 
-				const getW3cAttributes = await getFromLocalStorage(storageKeys.W3C_SCHEMA_DETAILS);	
+				const getW3cAttributes = await getFromLocalStorage(storageKeys.W3C_SCHEMA_DATA);
+					
 				const parsedSchemaAttributes = JSON.parse(getW3cAttributes) || [];
+				
 				const w3cInputArray: SelectedUsers[] = parsedSchemaAttributes.attributes.map(
 					(attribute: IAttribute) => {
 						return {
@@ -447,7 +449,7 @@ const VerificationCred = () => {
 				};
 			});
 			
-			setAttributeList(attributes);
+			setAttributeList(attributes);			
 			
 			setDisplay(
 				attributeData?.some((attribute) => attribute?.dataType === 'number'),
@@ -467,7 +469,8 @@ const VerificationCred = () => {
 		
 		if(isW3c){
 			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-			const getW3cSchemaDetails = await getFromLocalStorage(storageKeys.W3C_SCHEMA_DETAILS);	
+			const getW3cSchemaDetails = await getFromLocalStorage(storageKeys.W3C_SCHEMA_DATA);
+			
 		const parsedW3cSchemaDetails = JSON.parse(getW3cSchemaDetails);
 		const schemaId = parsedW3cSchemaDetails?.schemaId
 		createW3cSchemaPayload(schemaId,parsedW3cSchemaDetails)
@@ -531,7 +534,6 @@ const VerificationCred = () => {
 	version={w3cSchemaDetails.version}
 	hideCredDefId={true}
   />
-   
     )
   )}
 			{(proofReqSuccess || errMsg) && (
