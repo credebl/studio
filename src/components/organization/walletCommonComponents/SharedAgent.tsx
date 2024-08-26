@@ -120,7 +120,7 @@ const SharedAgentForm = ({
 	const handleLedgerChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setSelectedLedger(e.target.value);
 		setSelectedMethod('');
-		setSelectedNetwork(''),
+		setSelectedNetwork('');
 		setSelectedDid('');
 	};
 

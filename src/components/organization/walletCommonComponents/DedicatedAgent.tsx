@@ -120,7 +120,7 @@ const DedicatedAgentForm = ({
 	const handleLedgerChanges = (e: ChangeEvent<HTMLInputElement>) => {
 		setSelectedLedger(e.target.value);
 		setSelectedMethod('');
-		setIsSelectedNetwork(''),
+		setIsSelectedNetwork('');
 		setSelectedDid('');
 	};
 	const handleMethodChanges = (e: ChangeEvent<HTMLInputElement>) => {
