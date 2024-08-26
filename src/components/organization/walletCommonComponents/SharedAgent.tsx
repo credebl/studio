@@ -43,7 +43,8 @@ const SharedAgentForm = ({
 }: ISharedAgentForm) => {
 	const [haveDidShared, setHaveDidShared] = useState(false);
 	const [selectedLedger, setSelectedLedger] = useState('');
-	const [selectedMethod, setSelectedMethod] = useState('');
+	const [selectedMethod, setSelectedMethod] = useState(''); 
+	const [selectedNetwork, setSelectedNetwork] = useState(''); 
 	const [seedVal, setSeedVal] = useState('');
 	const [maskedSeedVal, setMaskedSeedVal] = useState('');
 	const [selectedDid, setSelectedDid] = useState('');
@@ -119,6 +120,7 @@ const SharedAgentForm = ({
 	const handleLedgerChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setSelectedLedger(e.target.value);
 		setSelectedMethod('');
+		setSelectedNetwork(''),
 		setSelectedDid('');
 	};
 
@@ -222,6 +224,7 @@ const SharedAgentForm = ({
 					onChange={(e) => {
 						formikHandlers.handleChange(e)
 						 handleNetworkChange(e)
+						 setSelectedNetwork(networks[network])
 					}}
 					className="mr-2"
 				/>
@@ -231,6 +234,21 @@ const SharedAgentForm = ({
 			</div>
 		));
 	};
+
+	const isSubmitDisabled = () => {
+		if (!selectedLedger) {
+			return true;
+		}
+		else if ((selectedLedger === Ledgers.POLYGON && !privateKeyValue) || (selectedLedger === Ledgers.INDY && (!selectedMethod || !selectedNetwork))) {
+			return true;
+		}
+		else if ((selectedLedger === Ledgers.NO_LEDGER && !selectedMethod) ||(selectedLedger === Ledgers.NO_LEDGER && selectedMethod === DidMethod.WEB && !domainValue)) {
+			return true;
+		}
+
+		return false;
+	};
+
 
 	return (
 		<div className="mt-4 flex-col gap-4">
@@ -508,6 +526,7 @@ const SharedAgentForm = ({
 
 						<div className="w-full flex justify-end">
 							<Button
+							disabled={isSubmitDisabled()}
 								type="submit"
 								className="flex h-min p-0.5 focus:z-10 focus:outline-none border border-transparent enabled:hover:bg-cyan-800 dark:enabled:hover:bg-cyan-700 mt-4 text-base font-medium text-center text-white bg-primary-700 rounded-md hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 							>
