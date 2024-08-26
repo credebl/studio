@@ -6,6 +6,7 @@ import StatusTabletTag from '../../../commonComponents/StatusTabletTag';
 import { checkEcosystem } from '../../../config/ecosystem';
 import type { ICheckEcosystem} from '../../../config/ecosystem';
 import { useEffect, useState } from 'react';
+import React from 'react';
 
 interface IProps {
     data: any,
@@ -24,7 +25,6 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
     const [isEcosystemLead, setIsEcosystemLead] = useState(false);
     const isSchema = data?.type === EndorsementType.schema
     const isW3CSchema =data?.type === EndorsementType.w3cSchema
-console.log("opopop",data);
 
     useEffect(() => {
         const checkEcosystemData = async () => {
@@ -55,6 +55,20 @@ console.log("opopop",data);
                         }
                     }
                     return null
+                case isW3CSchema:
+                    if (requestData?.attributes && requestData?.attributes.length > 0) {
+                        if (allAttributes) {
+                            return {
+                                data: requestData?.attributes,
+                                sliced: isSliced(requestData?.attributes)
+                            }
+                        }
+                        return {
+                            data: requestData?.attributes?.slice(0, 3),
+                            sliced: isSliced(requestData?.attributes)
+                        }
+                    }
+                    return null
                 case !isSchema:
                     if (data?.requestBody && data?.requestBody?.schemaDetails && data?.requestBody?.schemaDetails?.attributes && data?.requestBody?.schemaDetails?.attributes.length > 0) {
                         if (allAttributes) {
@@ -82,14 +96,10 @@ console.log("opopop",data);
 
     const requestPayload = data?.requestPayload && JSON.parse(data?.requestPayload)
 
-    const requestData = isSchema ? requestPayload?.operation?.data : requestPayload?.operation
+    const requestData = isSchema ? requestPayload?.operation?.data : isW3CSchema ? requestPayload : requestPayload?.operation
 
     const   W3CSchemaName = requestPayload?.schemaName
     const attributesData: IAttributeData | null = getAttributes()
-console.log("W3CSchemaName",W3CSchemaName);
-
-    console.log("reqqqqqqqqqq", requestPayload);
-    
     return (
         <Card onClick={() => {
             if (enableAction && onClickCallback) {
@@ -133,7 +143,7 @@ console.log("W3CSchemaName",W3CSchemaName);
                     </div>
                 }
                 <div className={`${isSchema ? "text-primary-700 bg-primary-100" : "bg-green-100 text-green-800"} w-fit py-1.5 px-3 rounded-md text-sm h-fit mt-3`}>
-                    {isSchema ? "Schema" : "Credential Definition"}
+                    {isSchema ? "Schema" : isW3CSchema ?'W3C schema' : "Credential Definition"}
                 </div>
             </div>
             < div className="min-w-0 flex-none" >

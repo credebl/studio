@@ -52,10 +52,8 @@ const EndorsementPopup = (props: {
 		props.setMessage('');
 	}, [props.onAlertClose]);
 
-	console.log("propsss", props.endorsementData);
 	const endorserDid = props?.endorsementData?.endorserDid;
 
-	console.log("endorserDid4444",endorserDid);
 	
 	useEffect(() => {
 		if (props.openModal) {
@@ -216,7 +214,7 @@ const EndorsementPopup = (props: {
 										<span className="ml-2 mr-2">Decline</span>
 								</Button>
 
-								{ false ? (<Button
+								{ !isW3CDid ? (<Button
 									isProcessing={loading}
 									color="bg-primary-800"
 									disabled={loading || !isAccess || loadingReject}
