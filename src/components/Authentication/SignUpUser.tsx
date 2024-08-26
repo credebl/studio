@@ -9,7 +9,7 @@ import {
 	Form,
 	Formik
 } from 'formik';
-import { checkUserExist, sendVerificationMail, setToLocalStorage } from '../../api/Auth.ts';
+import { checkUserExist, passwordEncryption, sendVerificationMail, setToLocalStorage } from '../../api/Auth.ts';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant.js';
 import { useEffect, useState } from 'react';
 import SignUpUserName from './SignUpUserName'
@@ -46,9 +46,10 @@ const SignUpUser = () => {
 		try {
 			const payload = {
 				email: email,
-				clientId: envConfig.PLATFORM_DATA.clientId,
-				clientSecret: envConfig.PLATFORM_DATA.clientSecrete			
+				clientId: passwordEncryption(envConfig.PLATFORM_DATA.clientId),
+				clientSecret:passwordEncryption(envConfig.PLATFORM_DATA.clientSecret)		
 			}
+			
 			setVerifyLoader(true)
 			const userRsp = await sendVerificationMail(payload);
 			const { data } = userRsp as AxiosResponse;

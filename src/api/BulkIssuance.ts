@@ -1,3 +1,4 @@
+import type { SchemaTypes } from '../common/enums';
 import { apiRoutes } from '../config/apiRoutes';
 import { storageKeys } from '../config/CommonConstant';
 import {
@@ -8,7 +9,7 @@ import { axiosGet, axiosPost } from '../services/apiRequests';
 import { getFromLocalStorage } from './Auth';
 import type { IConnectionListAPIParameter } from './connection';
 
-export const getSchemaCredDef = async (schemaType: string) => {
+export const getSchemaCredDef = async (schemaType: SchemaTypes) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.bulk.credefList}?schemaType=${schemaType}`;
 	const axiosPayload = {
@@ -24,7 +25,7 @@ export const getSchemaCredDef = async (schemaType: string) => {
 	}
 };
 
-export const DownloadCsvTemplate = async (templateId: string, schemaType: string) => {
+export const DownloadCsvTemplate = async (templateId: string, schemaType: SchemaTypes) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.download}`;
 
@@ -48,7 +49,7 @@ export const DownloadCsvTemplate = async (templateId: string, schemaType: string
 export const uploadCsvFile = async (
 	payload: { file: Uint8Array | Blob; fileName: string },
 	templateId: string,
-	schemaType: string
+	schemaType: SchemaTypes
 ) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.bulk.uploadCsv}?templateId=${templateId}&schemaType=${schemaType}`;

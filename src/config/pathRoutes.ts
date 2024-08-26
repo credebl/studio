@@ -30,17 +30,17 @@ export const pathRoutes = {
 		createSchema: '/organizations/schemas/create',
 		deleteOrganization:'/organizations/delete-organizations',
 
-
-
 		viewSchema: '/organizations/schemas/view-schema',
 		Issuance: {
 			issue: '/organizations/credentials/issue',
 			schema: '/organizations/credentials/issue/schemas',
 			credDef: '/organizations/credentials/issue/schemas/cred-defs',
+			connection:'/organizations/credentials/issue/connections',
 			connections:
 				'/organizations/credentials/issue/schemas/cred-defs/connections',
 			issuance:
 				'/organizations/credentials/issue/schemas/cred-defs/connections/issuance',
+			w3cIssuance:'/organizations/credentials/issue/connections/issuance',
 			history: '/organizations/credentials/issue/bulk-issuance/history',
 			details: '/organizations/credentials/issue/bulk-issuance/history/details',
 			bulkIssuance: '/organizations/credentials/issue/bulk-issuance',
@@ -48,11 +48,22 @@ export const pathRoutes = {
 			emailHistory: '/organizations/credentials/issue/email/history',
 		},
 		verification: {
-			schema: '/organizations/verification/schemas',
-			credDef: '/organizations/verification/schemas/cred-defs',
-			connections: '/organizations/verification/schemas/cred-defs/connections',
+			requestProof: '/organizations/verification/verify-credentials',
+			email: '/organizations/verification/verify-credentials/schema',
+			schema: '/organizations/verification/verify-credentials/schemas',
+			credDef: '/organizations/verification/verify-credentials/schemas/cred-defs',
+			w3cAttributes: '/organizations/verification/verify-credentials/schema/attributes',
+			attributes: '/organizations/verification/verify-credentials/schema/cred-defs/attributes',
+			emailVerification: '/organizations/verification/verify-credentials/schema/cred-defs/attributes/verification-email',
+			w3cEmailVerification: '/organizations/verification/verify-credentials/schema/attributes/verification-email',
+			emailCredDef: '/organizations/verification/verify-credentials/schema/cred-defs',
+			connections: '/organizations/verification/verify-credentials/schemas/cred-defs/connections',
+			W3CConnections: '/organizations/verification/verify-credentials/schemas/connections',
+
 			verify:
-				'/organizations/verification/schemas/cred-defs/connections/verification',
+				'/organizations/verification/verify-credentials/schemas/cred-defs/connections/verification',
+				W3CVerification:
+				'/organizations/verification/verify-credentials/schemas/connections/verification',
 		},
 	},
 	ecosystem: {
@@ -78,9 +89,9 @@ export const pathRoutes = {
 			schemas: '/organizations/schemas',
 		},
 		verification: {
-			credDef: '/organizations/verification/schemas/cred-defs',
-			schemas: '/organizations/verification/schemas',
-			verification: '/organizations/verification/schemas/cred-defs/connections',
+			credDef: '/organizations/verification/verify-credentials/schemas/cred-defs',
+			schemas: '/organizations/verification/verify-credentials/schemas',
+			verification: '/organizations/verification/verify-credentials/schemas/cred-defs/connections',
 		},
 		issuance: {
 			credDef: '/organizations/credentials/issue/schemas/cred-defs',

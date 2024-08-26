@@ -22,7 +22,8 @@ import type { ICheckEcosystem} from '../../../config/ecosystem';
 import { createSchemaRequest } from '../../../api/ecosystem';
 import EcosystemProfileCard from '../../../commonComponents/EcosystemProfileCard';
 import ConfirmationModal from '../../../commonComponents/ConfirmationModal';
-import { SchemaType } from '../../../common/enums';
+import { DidMethod, SchemaType, SchemaTypeValue } from '../../../common/enums';
+import { getOrganizationById } from '../../../api/organization';
 import React from 'react';
 
 const options = [
@@ -60,6 +61,8 @@ const CreateSchema = () => {
 	});
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [loading, setLoading] = useState<boolean>(false);
+    const [schemaTypeValues, setSchemaTypeValues]= useState<SchemaTypeValue>()
+	const [type, setType] = useState<SchemaType>();
 
 	const initFormData: IFormData = {
 		schemaName: '',
@@ -85,13 +88,17 @@ const CreateSchema = () => {
 			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 			setOrgId(orgId);
 		})();
-
+		fetchOrganizationDetails();
 		checkEcosystemData();
 	}, []);
 
-	const areAllInputsFilled = (formData: IFormData) => {
+	const filledInputs = (formData: IFormData) => {
 		const { schemaName, schemaVersion, attribute } = formData;
-		if (!schemaName || !schemaVersion) {
+
+		if (
+			(type === SchemaType.INDY && (!schemaName || !schemaVersion)) ||
+			(type === SchemaType.W3C && !schemaName)
+		) {
 			return false;
 		}
 		const isAtLeastOneRequired = attribute.some((attr) => attr.isRequired);
@@ -106,14 +113,49 @@ const CreateSchema = () => {
 		return true;
 	};
 
+	const fetchOrganizationDetails = async () => {
+		setLoading(true);
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		const response = await getOrganizationById(orgId as string);
+		const { data } = response as AxiosResponse;
+
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			const did = data?.data?.org_agents?.[0]?.orgDid;
+			if (did) {
+				if (did.includes(DidMethod.INDY)) {
+					setSchemaTypeValues(SchemaTypeValue.INDY);				
+					setType(SchemaType.INDY);
+				} else if (did.includes(DidMethod.POLYGON)) {
+					setType(SchemaType.W3C);
+					setSchemaTypeValues(SchemaTypeValue.POLYGON);				
+				}
+				else if (did.includes(DidMethod.KEY) || (did.includes(DidMethod.WEB))) {
+					setType(SchemaType.W3C);
+					setSchemaTypeValues(SchemaTypeValue.NO_LEDGER);				
+				}
+			}
+		} else {
+			setFailure(response as string);
+		}
+		setLoading(false);
+	};
+
+
 	const submit = async (values: IFormData) => {
 		setCreateLoader(true);
+		if (!type) {
+			setFailure("Schema type not determined.");
+			setCreateLoader(false);
+			return;
+		}
 		const schemaFieldName: FieldName = {
-			type: SchemaType.INDY,
+			type: type,
 			schemaPayload: {
 				schemaName: values.schemaName,
-				schemaVersion: values.schemaVersion,
+				...(type === SchemaType.W3C && { schemaType: schemaTypeValues }),
+				...(type === SchemaType.INDY && { schemaVersion: values.schemaVersion }),
 				attributes: values.attribute,
+				description:values.schemaName,
 				orgId: orgId,
 			}
 		};
@@ -331,6 +373,19 @@ const CreateSchema = () => {
 		}
 	};
 
+	let filteredOptions: any[] = [];
+
+if (
+  schemaTypeValues === SchemaTypeValue.POLYGON ||
+  schemaTypeValues === SchemaTypeValue.NO_LEDGER
+) {
+  filteredOptions = options.filter(
+    (opt) => opt.label === 'String' || opt.label === 'Number'
+  );
+} else if (schemaTypeValues === SchemaTypeValue.INDY) {
+  filteredOptions = options;
+}
+
 	return (
 		<div className="pt-2">
 			<div className="pl-6 mb-4 col-span-full xl:mb-2">
@@ -352,13 +407,15 @@ const CreateSchema = () => {
 							initialValues={formData}
 							validationSchema={yup.object().shape({
 								schemaName: yup.string().trim().required('Schema is required'),
-								schemaVersion: yup
-									.string()
-									.matches(
+								...(type === SchemaType.INDY && {
+									schemaVersion: yup
+									  .string()
+									  .matches(
 										schemaVersionRegex,
-										'Enter valid schema version (eg. 0.1 or 0.0.1)',
-									)
-									.required('Schema version is required'),
+										'Enter valid schema version (eg. 0.1 or 0.0.1)'
+									  )
+									  .required('Schema version is required'),
+								  }),
 								attribute: yup
 									.array()
 									.of(
@@ -425,14 +482,18 @@ const CreateSchema = () => {
 												)}
 											</div>
 										</div>
-										<div
+										{
+												type === SchemaType.INDY &&
+
+<div
 											className="md:w-1/3 sm:w-full md:w-96 flex-col md:flex"
 											style={{ marginLeft: 0 }}
-										>
+										 >
 											<div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
 												<Label htmlFor="schema" value="Version" />
 												<span className="text-red-600">*</span>
 											</div>
+											
 											<div className="md:flex flex-col">
 												{' '}
 												<Field
@@ -452,6 +513,8 @@ const CreateSchema = () => {
 												)}
 											</div>
 										</div>
+										}
+										
 									</div>
 									<p className="mt-2 text-gray-700 font-normal dark:text-gray-200 text-sm">
 										You must select at least one attribute to create schema
@@ -463,8 +526,8 @@ const CreateSchema = () => {
 												const { values } = form;
 												const { attribute } = values;
 
-												const areFirstInputsSelected =
-													values.schemaName && values.schemaVersion;
+												 const areFirstInputsSelected =
+												type === SchemaType.INDY ? values.schemaName && values.schemaVersion : values.schemaName;
 												return (
 													<div className="relative flex flex-col dark:bg-gray-800">
 														{attribute?.map(
@@ -542,12 +605,12 @@ const CreateSchema = () => {
 																					disabled={!areFirstInputsSelected}
 																					className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 																				>
-																					{options.map((opt) => {
+																					{filteredOptions.map((opt) => {
 																						return (
 																							<option
 																								key={opt.value}
 																								className="py-2"
-																								value={opt.value}
+																							value={opt.value}
 																							>
 																								{opt.label}
 																							</option>
@@ -744,7 +807,7 @@ const CreateSchema = () => {
 																					})
 																				}
 																				disabled={
-																					!areAllInputsFilled(
+																					!filledInputs(
 																						formikHandlers.values,
 																					)
 																				}
@@ -818,7 +881,7 @@ const CreateSchema = () => {
 											type="submit"
 											color="bg-primary-700"
 											disabled={
-												!areAllInputsFilled(formikHandlers.values) ||
+												!filledInputs(formikHandlers.values) ||
 												inValidAttributes(formikHandlers, 'attributeName') ||
 												inValidAttributes(formikHandlers, 'displayName')
 											}
