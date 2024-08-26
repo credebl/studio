@@ -25,7 +25,7 @@ const VerificationDashboard = () => {
 		<Dashboard
 			title="Verify Credential"
 			options={options}
-			backButtonPath={pathRoutes.organizations.issuedCredentials}
+			backButtonPath={pathRoutes.organizations.credentials}
 		/>
 	);
 };
