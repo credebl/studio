@@ -34,7 +34,7 @@ const BulkIssuance = () => {
 	const [requestId, setRequestId] = useState("");
 	const [process, setProcess] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(true);
-	const [credentialOptions, setCredentialOptions] = useState([]);
+	const [ credentialOptionsData,  setCredentialOptionsData] = useState([]);
 	const [credentialSelected, setCredentialSelected] = useState<ICredentials | null>();	
 	const [isFileUploaded, setIsFileUploaded] = useState(false);
 	const [uploadedFileName, setUploadedFileName] = useState('');
@@ -49,7 +49,7 @@ const BulkIssuance = () => {
 	const [schemaType, setSchemaType]= useState<SchemaTypes>();
 	const [selectedTemplate, setSelectedTemplate] = useState<any>();
 	const [isAllSchema, setIsAllSchema] = useState<string>();
-	const [schemaListAPIParameter, setSchemaListAPIParameter] = useState({
+	const [schemaListAPIParameters, setSchemaListAPIParameters] = useState({
 		itemPerPage: 9,
 		page: 1,
 		search: '',
@@ -72,7 +72,7 @@ const BulkIssuance = () => {
 	};
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 
-	const getSchemaCredentials = async (schemaListAPIParameter: GetAllSchemaListParameter) => {
+	const getSchemaCredentials = async (schemaListAPIParameters: GetAllSchemaListParameter) => {
 		try {
 			setLoading(true);
 			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -96,9 +96,9 @@ const BulkIssuance = () => {
 				const { data } = response as AxiosResponse;
 
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-					const { data: credentialDefs } = data;
+					const { data:  credentialDefsData } = data;
 
-					const options = credentialDefs.map(
+					const options =  credentialDefsData.map(
 						({
 							schemaName,
 							schemaVersion,
@@ -117,7 +117,7 @@ const BulkIssuance = () => {
 							schemaAttributes: schemaAttributes && typeof schemaAttributes === "string" && JSON.parse(schemaAttributes)
 						}),
 					);
-					setCredentialOptions(options);
+					 setCredentialOptionsData(options);
 				} else {
 					setUploadMessage({message: response as string, type: "failure"});
 					setSuccess(null)
@@ -127,15 +127,15 @@ const BulkIssuance = () => {
 			}
 
 			if (currentSchemaType && orgId &&isAllSchemaSelectedFlag =='true') {
-				const response = await getAllSchemas(schemaListAPIParameter,currentSchemaType); 
+				const response = await getAllSchemas(schemaListAPIParameters,currentSchemaType); 
 					const { data } = response as AxiosResponse;
 					
 
 					if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-						const credentialDefs = data.data.data;
+						const  credentialDefsData = data.data.data;
 						
 
-						const options = credentialDefs.map(({
+						const options =  credentialDefsData.map(({
 							name,
 							version,
 							schemaLedgerId,
@@ -150,7 +150,7 @@ const BulkIssuance = () => {
 							schemaIdentifier: schemaLedgerId,
 							attributes: Array.isArray(attributes) ? attributes : (attributes ? JSON.parse(attributes) : []),
 						}));	
-					setCredentialOptions(options);
+					 setCredentialOptionsData(options);
 				} else {
 					setUploadMessage({message: response as string, type: "failure"});
 					setSuccess(null)
@@ -166,7 +166,7 @@ const BulkIssuance = () => {
 	};
 
 	useEffect(() => {
-		getSchemaCredentials(schemaListAPIParameter);
+		getSchemaCredentials(schemaListAPIParameters);
 		setMounted(true);
 		(async () => {
 			try {
@@ -480,7 +480,7 @@ const BulkIssuance = () => {
 
 	const isCredSelected = Boolean(credentialSelected);
 
-	const selectedCred: ICredentials | boolean | undefined = credentialOptions && credentialOptions.length > 0 && credentialOptions.find(
+	const selectedCred: ICredentials | boolean | undefined =  credentialOptionsData &&  credentialOptionsData.length > 0 &&  credentialOptionsData.find(
 		(item: { value: string }) =>
 			item.value &&
 			item.value === credentialSelected,
@@ -576,7 +576,7 @@ const BulkIssuance = () => {
 											isRtl={false}
 											isSearchable={true}
 											name="color"
-											options={credentialOptions}
+											options={ credentialOptionsData}
 											onChange={(value: ICredentials | null) => {
 												if (schemaType === SchemaTypes.schema_INDY) {
 													setSelectedTemplate(value?.credentialDefinitionId);
