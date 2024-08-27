@@ -19,6 +19,7 @@ import SetDomainValueInput from './SetDomainValueInput';
 import SetPrivateKeyValueInput from './SetPrivateKeyValue';
 import { getOrganizationById, setAgentConfigDetails } from '../../../api/organization';
 import type { IDedicatedAgentConfig} from '../interfaces';
+import React from 'react';
 
 const RequiredAsterisk = () => <span className="text-xs text-red-500">*</span>
 
@@ -36,6 +37,7 @@ const DedicatedAgentForm = ({
 	const [selectedLedger, setSelectedLedger] = useState('');
 	const [selectedDid, setSelectedDid] = useState('');
 	const [selectedMethod, setSelectedMethod]=useState('')
+	const [isSelectedNetwork, setIsSelectedNetwork]=useState('')
 	const [privateKeyValue, setPrivateKeyValue] = useState<string>('');
 	const [domainValue, setDomainValue] = useState<string>('');
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -118,6 +120,7 @@ const DedicatedAgentForm = ({
 	const handleLedgerChanges = (e: ChangeEvent<HTMLInputElement>) => {
 		setSelectedLedger(e.target.value);
 		setSelectedMethod('');
+		setIsSelectedNetwork('');
 		setSelectedDid('');
 	};
 	const handleMethodChanges = (e: ChangeEvent<HTMLInputElement>) => {
@@ -248,6 +251,7 @@ const networkRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEv
 				onChange={(e) => {
 					formikHandlers.handleChange(e);
 					handleNetworkChanges(e);
+					setIsSelectedNetwork(networks[network])
 				}}
 				className="mr-2"
 			/>
@@ -258,7 +262,19 @@ const networkRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEv
 	));
 };
 
+const isSubmitButtonDisabled = () => {
+	if (!selectedLedger) {
+		return true;
+	}
+	else if ((selectedLedger === Ledgers.POLYGON && !privateKeyValue) || (selectedLedger === Ledgers.INDY && (!selectedMethod || !isSelectedNetwork))) {
+		return true;
+	}
+	else if ((selectedLedger === Ledgers.NO_LEDGER && !selectedMethod) ||(selectedLedger === Ledgers.NO_LEDGER && selectedMethod === DidMethod.WEB && !domainValue)) {
+		return true;
+	}
 
+	return false;
+};
 
 	return (
 		<>
@@ -565,6 +581,7 @@ const networkRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEv
 
 				
 				<Button
+				disabled={isSubmitButtonDisabled()}
 						  isProcessing={loading}
 						  type="submit"
 						  className='float-right mb-2 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:!bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'

@@ -94,10 +94,9 @@ const ProofRequest = (props: IProofRrquestDetails) => {
 							) : (
 								<div className=" text-gray-500 dark:text-gray-300 w-full">
 									<div className="mt-1 ">
-										<AttributesListData attributeDataList={aggregatedData} />
-										<SchemaCredDefDetails
-											schemaCredDefList={props?.userData?.slice(0, 1)}
-										/>
+
+											<AttributesListData attributeDataList={props?.userData} />
+
 									</div>
 								</div>
 							)}
@@ -204,11 +203,9 @@ const ProofRequest = (props: IProofRrquestDetails) => {
 							) : (
 								<div className=" text-gray-500 dark:text-gray-300 w-full">
 									<div className="mt-1">
-										<AttributesListData attributeDataList={aggregatedData} />
+										<AttributesListData attributeDataList={props?.userData} />
 
-										<SchemaCredDefDetails
-											schemaCredDefList={props?.userData?.slice(0, 1)}
-										/>
+
 									</div>
 								</div>
 							)}

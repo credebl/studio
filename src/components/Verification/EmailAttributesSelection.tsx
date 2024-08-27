@@ -29,18 +29,19 @@ const EmailAttributesSelection = () => {
 
 	const handleAttributeChange = async (
 		attributeName: string,
-		schemaId: string | undefined,
 		changeType: 'checkbox' | 'input' | 'select',
 		value: string | boolean,
+		schemaId?: string | undefined,
+        credDefId?: string | undefined
 	) => {
 		const updatedAttributes = attributeData?.map(attribute => {
-			if (attribute.attributeName === attributeName && attribute.schemaId === schemaId) {
+			if (attribute.attributeName === attributeName && attribute.schemaId === schemaId && attribute.credDefId === credDefId) {
 				switch (changeType) {
 					case 'checkbox':
 						return {
 							...attribute,
 							isChecked: value as boolean,
-							value: attribute?.value || '',
+							value: (value as boolean) ? attribute.value : '',
 							selectedOption: attribute?.condition || 'Select',
 							inputError: '',
 							selectError: '',
@@ -255,7 +256,7 @@ const EmailAttributesSelection = () => {
 									showCheckbox={true}
 									isVerificationUsingEmail={true}
 									onChange={(checked: boolean) => {
-										handleAttributeChange(attribute?.attributeName, attribute?.schemaId, 'checkbox', checked);
+										handleAttributeChange(attribute?.attributeName, 'checkbox', checked, attribute?.schemaId, attribute?.credDefId);
 									}}
 								/>
 							</div>
@@ -270,7 +271,7 @@ const EmailAttributesSelection = () => {
 										disabled={!attribute?.isChecked}
 										value={attribute?.selectedOption}
 										onChange={(e) =>
-											handleAttributeChange(attribute?.attributeName, attribute?.schemaId, 'select', e.target.value)
+											handleAttributeChange(attribute?.attributeName, 'select', e.target.value, attribute?.schemaId, attribute?.credDefId)
 										}
 										className={`${!attribute?.isChecked
 											? 'opacity-50 cursor-not-allowed'
@@ -302,7 +303,7 @@ const EmailAttributesSelection = () => {
 										type="number"
 										value={attribute?.value}
 										onChange={(e) =>
-											handleAttributeChange(attribute?.attributeName, attribute?.schemaId, 'input', e.target.value)
+											handleAttributeChange(attribute?.attributeName, 'input', e.target.value, attribute?.schemaId, attribute?.credDefId)
 										}
 										disabled={!attribute?.isChecked}
 										className={`${!attribute?.isChecked

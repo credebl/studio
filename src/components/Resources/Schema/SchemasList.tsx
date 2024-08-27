@@ -23,7 +23,7 @@ import { checkEcosystem } from '../../../config/ecosystem';
 import type { ICheckEcosystem } from '../../../config/ecosystem';
 
 import { Create, SchemaEndorsement } from '../../Issuance/Constant';
-import { DidMethod, SchemaType } from '../../../common/enums';
+import { DidMethod, SchemaType, SchemaTypes } from '../../../common/enums';
 
 const SchemaList = (props: {
 		schemaSelectionCallback: (
@@ -57,6 +57,8 @@ const SchemaList = (props: {
 	const [totalItem, setTotalItem] = useState(0);
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [searchValue, setSearchValue] = useState('');
+	const [schemaType, setSchemaType] = useState('');
+
 	const [w3cSchema,setW3CSchema]= useState<boolean>(false);
 	const [isNoLedger,setisNoLedger]= useState<boolean>(false);	
 
@@ -70,7 +72,7 @@ const SchemaList = (props: {
 			setLoading(true);
 			let schemaList;
 			if (allSchemaFlag) {
-				schemaList = await getAllSchemas(schemaListAPIParameter, SchemaType.INDY);
+				schemaList = await getAllSchemas(schemaListAPIParameter, schemaType);
 			} else {
 				schemaList = await getAllSchemasByOrgId(
 					schemaListAPIParameter,
@@ -229,9 +231,11 @@ const SchemaList = (props: {
 			}
 			if (did.includes(DidMethod.POLYGON) || did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
 				setW3CSchema(true);
+				setSchemaType(SchemaTypes.schema_W3C)
 			}
 			if (did.includes(DidMethod.INDY)) {
 				setW3CSchema(false);
+				setSchemaType(SchemaTypes.schema_INDY)
 			}
 			if (did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
 				setisNoLedger(true);
