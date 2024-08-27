@@ -496,7 +496,7 @@ const EmailIssuance = () => {
 												<div className="flex items-center justify-center mb-4">
 													<CustomSpinner />
 												</div>
-											) : (IW3CCredentials
+											) : (
 												<div className="relative">
 													<div className="m-0" id="createSchemaCard">
 														<div>
