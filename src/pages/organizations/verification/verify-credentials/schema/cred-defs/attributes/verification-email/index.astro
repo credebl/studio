@@ -3,6 +3,7 @@ import LayoutSidebar from "../../../../../../../../app/LayoutSidebar.astro";
 import EmailVerification from "../../../../../../../../components/Verification/EmailVerification";
 import { checkUserSession } from "../../../../../../../../utils/check-session";
 
+
 const response = await checkUserSession({cookies: Astro.cookies, currentPath: Astro.url.pathname});
 if (!response.authorized) {
 	return Astro.redirect(response.redirect);
