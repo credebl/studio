@@ -23,6 +23,8 @@ import RoleViewButton from '../RoleViewButton';
 import { Features } from '../../utils/enums/features';
 import { Create, SchemaEndorsement } from './Constant';
 import { DidMethod, SchemaTypes } from '../../common/enums';
+import type { GetAllSchemaListParameter } from '../Resources/Schema/interfaces';
+import { getAllSchemas } from '../../api/Schema';
 
 export interface SelectRef {
   clearValue(): void;
@@ -46,6 +48,15 @@ const BulkIssuance = () => {
 	const [mounted, setMounted] = useState<boolean>(false)
 	const [schemaType, setSchemaType]= useState<SchemaTypes>();
 	const [selectedTemplate, setSelectedTemplate] = useState<any>();
+	const [isAllSchema, setIsAllSchema] = useState<string>();
+	const [schemaListAPIParameter, setSchemaListAPIParameter] = useState({
+		itemPerPage: 9,
+		page: 1,
+		search: '',
+		sortBy: 'id',
+		sortingOrder: 'desc',
+		allSearch: '',
+	});
 
 
 	const onPageChange = (page: number) => {
@@ -61,12 +72,15 @@ const BulkIssuance = () => {
 	};
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 
-	const getSchemaCredentials = async () => {
+	const getSchemaCredentials = async (schemaListAPIParameter: GetAllSchemaListParameter) => {
 		try {
 			setLoading(true);
 			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 
 			const orgDid = await getFromLocalStorage(storageKeys.ORG_DID);
+
+			const isAllSchemaSelectedFlag = await getFromLocalStorage(storageKeys.ALL_SCHEMAS)
+			setIsAllSchema(isAllSchemaSelectedFlag)
 		
 			let currentSchemaType = schemaType;
 	
@@ -77,7 +91,7 @@ const BulkIssuance = () => {
 			}
 
 			setSchemaType(currentSchemaType); 
-			if (currentSchemaType && orgId) {
+			if (currentSchemaType && orgId && isAllSchemaSelectedFlag =='false') {
 				const response = await getSchemaCredDef(currentSchemaType); 
 				const { data } = response as AxiosResponse;
 
@@ -111,6 +125,39 @@ const BulkIssuance = () => {
 				}
 				setLoading(false);
 			}
+
+			if (currentSchemaType && orgId &&isAllSchemaSelectedFlag =='true') {
+				const response = await getAllSchemas(schemaListAPIParameter,currentSchemaType); 
+					const { data } = response as AxiosResponse;
+					
+
+					if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+						const credentialDefs = data.data.data;
+						
+
+						const options = credentialDefs.map(({
+							name,
+							version,
+							schemaLedgerId,
+							attributes,
+							type
+						} : ICredentials) => ({
+							value:  version,
+							label: `${name} [${version}]`,
+							schemaName: name,
+							type:type,
+							schemaVersion: version,
+							schemaIdentifier: schemaLedgerId,
+							attributes: Array.isArray(attributes) ? attributes : (attributes ? JSON.parse(attributes) : []),
+						}));	
+					setCredentialOptions(options);
+				} else {
+					setUploadMessage({message: response as string, type: "failure"});
+					setSuccess(null)
+					setFailure(null)
+				}
+				setLoading(false);
+			}
 		} catch (error) {
 			setUploadMessage({message: error as string, type: "failure"});
 			setSuccess(null)
@@ -119,7 +166,7 @@ const BulkIssuance = () => {
 	};
 
 	useEffect(() => {
-		getSchemaCredentials();
+		getSchemaCredentials(schemaListAPIParameter);
 		setMounted(true);
 		(async () => {
 			try {
@@ -562,16 +609,32 @@ const BulkIssuance = () => {
 													</p>
 													<span className='text-black dark:text-white font-semibold'>Attributes:</span>
 													<div className="flex flex-wrap overflow-hidden">
-														{credentialSelected?.schemaAttributes.map(
-															(element: IAttributes) => (
-																<div key={element.attributeName}>
-																	<span className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
-																		{element.attributeName}
-																	</span>
-																</div>
-															),
-														)}
+														{
+															isAllSchema ==='false' ? (
+																credentialSelected?.schemaAttributes?.map(
+																	(element: IAttributes) => (
+																		<div key={element.attributeName}>
+																			<span className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
+																				{element.attributeName}
+																			</span>
+																		</div>
+																	),
+																)
+															) : (
+																credentialSelected?.attributes?.map(
+																	(element: IAttributes) => (
+																		<div key={element.attributeName}>
+																			<span className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
+																				{element.attributeName}
+																			</span>
+																		</div>
+																	),
+																)
+															)
+														
+														}
 													</div>
+													
 												</div>
 											</Card>
 										)}

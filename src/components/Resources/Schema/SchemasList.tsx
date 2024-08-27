@@ -207,14 +207,18 @@ const SchemaList = (props: {
 
 	const options = ['All schemas'];
 
-	const handleFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
+	const handleFilter = async (e: React.ChangeEvent<HTMLSelectElement>) => {
 		console.log('Handle filter', e.target.value);
 		if (e.target.value === 'All schemas') {
 			setAllSchemaFlag(true);
+			await setToLocalStorage (storageKeys.ALL_SCHEMAS, `true`);
+			
 		} else {
 			setAllSchemaFlag(false);
+			await setToLocalStorage (storageKeys.ALL_SCHEMAS, `false`);
 			getSchemaList(schemaListAPIParameter, false);
 		}
+
 	};
 
 	const fetchOrganizationDetails = async () => {
@@ -254,6 +258,10 @@ const SchemaList = (props: {
 				console.log(error);
 			}
 		})();
+
+		(async () => {
+			await setToLocalStorage (storageKeys.ALL_SCHEMAS, `false`);
+				})();
 		setSearchValue('');
 	}, []);
 

@@ -24,13 +24,23 @@ import { checkEcosystem  } from '../../config/ecosystem';
 import type { ICheckEcosystem} from '../../config/ecosystem';
 import { Features } from '../../utils/enums/features';
 import { Create, SchemaEndorsement } from './Constant';
-import { DidMethod, SchemaTypes, CredentialType, SchemaTypeValue, ProofType } from '../../common/enums';
+import { DidMethod, SchemaTypes, CredentialType, SchemaTypeValue, ProofType, SchemaType } from '../../common/enums';
+import { getAllSchemas } from '../../api/Schema';
+import type { GetAllSchemaListParameter } from '../Resources/Schema/interfaces';
 
 const EmailIssuance = () => {
 	const [formData, setFormData] = useState();
 	const [userData, setUserData] = useState();
 	const [loading, setLoading] = useState<boolean>(true);
 	const [credentialOptions, setCredentialOptions] = useState([]);
+	const [schemaListAPIParameter, setSchemaListAPIParameter] = useState({
+		itemPerPage: 9,
+		page: 1,
+		search: '',
+		sortBy: 'id',
+		sortingOrder: 'desc',
+		allSearch: '',
+	});
 	const [credentialSelected, setCredentialSelected] = useState<ICredentials | null>(
 		
 	);
@@ -50,12 +60,17 @@ const EmailIssuance = () => {
 	const [credDefId, setCredDefId] = useState<string>();
 	const [schemasIdentifier, setSchemasIdentifier] = useState<string>();
 	const [schemaTypeValue, setSchemaTypeValue] = useState<SchemaTypeValue>();
+	const [isAllSchemaFlagSelected, setIsAllSchemaFlagSelected] = useState<string>();
 
-	const getSchemaCredentials = async () => {
+	const getSchemaCredentials = async (schemaListAPIParameter: GetAllSchemaListParameter) => {
+		
 		try {
 			setLoading(true);
 			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 			const orgDid = await getFromLocalStorage(storageKeys.ORG_DID);
+
+			const allSchemaSelectedFlag = await getFromLocalStorage(storageKeys.ALL_SCHEMAS)
+			setIsAllSchemaFlagSelected(allSchemaSelectedFlag)
 			let currentSchemaType = schemaType;
 	
 			if (orgDid?.includes(DidMethod.POLYGON)) {
@@ -75,67 +90,100 @@ const EmailIssuance = () => {
 			}
 
 			setSchemaType(currentSchemaType); 
-			if (currentSchemaType && orgId) {
+			
+			if (currentSchemaType && orgId && allSchemaSelectedFlag === 'false') {
+				
 				const response = await getSchemaCredDef(currentSchemaType); 
 				const { data } = response as AxiosResponse;
 
-		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			const credentialDefs = data.data;
+				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+				const credentialDefs = data.data;
+				
+				const options = credentialDefs.map(({
+					schemaName,
+					schemaVersion,
+					credentialDefinition,
+					credentialDefinitionId,
+					schemaIdentifier,
+					schemaAttributes
+				} : ICredentials) => ({
+					value: schemaType===SchemaTypes.schema_INDY ? credentialDefinitionId : schemaVersion,
+					label: `${schemaName} [${schemaVersion}]${currentSchemaType === SchemaTypes.schema_INDY ? ` - (${credentialDefinition})` : ''}`,
+					schemaName: schemaName,
+					schemaVersion: schemaVersion,
+					credentialDefinition: credentialDefinition,
+					schemaIdentifier: schemaIdentifier,
+					credentialDefinitionId: credentialDefinitionId,
+					schemaAttributes:
+						schemaAttributes &&
+						typeof schemaAttributes === 'string' &&
+						JSON.parse(schemaAttributes),
+				}));
+				setCredentialOptions(options);			
+					} else {
+						setSuccess(null);
+						setFailure(null);
+					}
+					setLoading(false);
+				}
 
-	const options = credentialDefs.map(({
-		schemaName,
-		schemaVersion,
-		credentialDefinition,
-		credentialDefinitionId,
-		schemaIdentifier,
-		schemaAttributes
-	} : ICredentials) => ({
-		value: schemaType===SchemaTypes.schema_INDY ? credentialDefinitionId : schemaVersion,
-		label: `${schemaName} [${schemaVersion}]${currentSchemaType === SchemaTypes.schema_INDY ? ` - (${credentialDefinition})` : ''}`,
-		schemaName: schemaName,
-		schemaVersion: schemaVersion,
-		credentialDefinition: credentialDefinition,
-		schemaIdentifier: schemaIdentifier,
-		credentialDefinitionId: credentialDefinitionId,
-		schemaAttributes:
-			schemaAttributes &&
-			typeof schemaAttributes === 'string' &&
-			JSON.parse(schemaAttributes),
-	}));
-	setCredentialOptions(options);
+				if (currentSchemaType === SchemaTypes.schema_W3C && orgId && allSchemaSelectedFlag === 'true') {
+					
+					const response = await getAllSchemas(schemaListAPIParameter,currentSchemaType); 
+					const { data } = response as AxiosResponse;
+					
+					if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+					const credentialDefs = data.data.data;
+					
+					const options = credentialDefs.map(({
+						name,
+						version,
+						schemaLedgerId,
+						attributes,
+						type
+					} : ICredentials) => ({
+						value:  version,
+						label: `${name} [${version}]`,
+						schemaName: name,
+						type:type,
+						schemaVersion: version,
+						schemaIdentifier: schemaLedgerId,
+						attributes: Array.isArray(attributes) ? attributes : (attributes ? JSON.parse(attributes) : []),
+					}));										
+					setCredentialOptions(options);
 	
-			
-		} else {
-			setSuccess(null);
-			setFailure(null);
-		}
-		setLoading(false);
-	}
-		
-		} catch (error) {
-			setSuccess(null);
-			setFailure(null);
-		}
-	};
+							
+						} else {
+							setSuccess(null);
+							setFailure(null);
+						}
+						setLoading(false);
+					}
+					
+					} catch (error) {
+						setSuccess(null);
+						setFailure(null);
+					}
+				};
 
-	useEffect(() => {
-		getSchemaCredentials();
-		setMounted(true);
-		(async () => {
-			try {
-				const data: ICheckEcosystem = await checkEcosystem();
-				setIsEcosystemData(data);
-			} catch (error) {
-				console.log(error);
-			}
-		})();
-	}, []);
+				useEffect(() => {
+					getSchemaCredentials(schemaListAPIParameter);
+					setMounted(true);
+					(async () => {
+						try {
+							const data: ICheckEcosystem = await checkEcosystem();
+							setIsEcosystemData(data);
+						} catch (error) {
+							console.log(error);
+						}
+					})();
+				}, []);
 
-	useEffect(() => {
-		if (isEditing && inputRef.current) {
-			inputRef.current.focus();
-		}
-	}, [isEditing]);
+				useEffect(() => {
+					if (isEditing && inputRef.current) {
+						inputRef.current.focus();
+					}
+				}, [isEditing]);
 
 	const confirmOOBCredentialIssuance = async () => {
 		setIssueLoader(true);
@@ -361,7 +409,9 @@ const EmailIssuance = () => {
 													setCredentialSelected(value ?? null);
 													setSchemasIdentifier(value?.schemaIdentifier)
 												}
-												setAttributes(value?.schemaAttributes ?? []);
+												
+												setAttributes(value?.schemaAttributes ?? value?.attributes ?? []);
+
 												}}
 											ref={selectInputRef}
 										/>
@@ -370,9 +420,9 @@ const EmailIssuance = () => {
 										}
 									</div>
 									<div className="mt-4">
-										{credentialSelected && (
-											
-											
+										{credentialSelected  &&  
+										
+										(	
 											<Card className="max-w-[30rem]">
 												<div>
 													<p className="text-black dark:text-white pb-2">
@@ -394,23 +444,33 @@ const EmailIssuance = () => {
 													<span className="text-black dark:text-white font-semibold">
 														Attributes:
 													</span>
+													
 													<div className="flex flex-wrap overflow-hidden">
-														{credentialSelected?.schemaAttributes?.map(
-															(element: IAttributes) => (
-																<div
-																	key={element.attributeName}
-																	className="truncate"
-																>
-																	<span className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
-																		{element.attributeName}
-																	</span>
-																</div>
-															),
-														)}
+														{
+															isAllSchemaFlagSelected ==='false' ? (
+																credentialSelected?.schemaAttributes?.map((element: IAttributes) => (
+																	<div key={element.attributeName} className="truncate">
+																		<span className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
+																			{element.attributeName}
+																		</span>
+																	</div>
+																))
+															) : (
+																credentialSelected?.attributes?.map((element: IAttributes) => (
+																	<div key={element.attributeName} className="truncate">
+																		<span className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
+																			{element.attributeName}
+																		</span>
+																	</div>
+																))
+															)
+														}
 													</div>
 												</div>
 											</Card>
 										)}
+                    
+                          
 									</div>
 								</div>
 							</div>
@@ -436,7 +496,7 @@ const EmailIssuance = () => {
 												<div className="flex items-center justify-center mb-4">
 													<CustomSpinner />
 												</div>
-											) : (
+											) : (IW3CCredentials
 												<div className="relative">
 													<div className="m-0" id="createSchemaCard">
 														<div>
