@@ -110,41 +110,40 @@ const EmailCredDefSelection = () => {
     };
 
     const selectConnection = async (credDefId: string, checked: boolean) => {
-        if (credDefId) {
-            const getRawCredDefs = await getFromLocalStorage(storageKeys.SCHEMA_CRED_DEFS);
-            const parsedRawCredDefs = JSON.parse(getRawCredDefs);
-
-            const selectedCredDef = parsedRawCredDefs.find((credDef: CredDefData) => credDef.credentialDefinitionId === credDefId);
-
-            if (selectedCredDef) {
-                setSelectedCredDefs((prevSelected) => {
+        if (!credDefId) return;
+    
+        const getRawCredDefs = await getFromLocalStorage(storageKeys.SCHEMA_CRED_DEFS);
+        const parsedRawCredDefs = JSON.parse(getRawCredDefs);
+    
+        const selectedCredDef = parsedRawCredDefs.find(
+            (credDef: CredDefData) => credDef.credentialDefinitionId === credDefId
+        );
+    
+        if (selectedCredDef) {
+            setSelectedCredDefs((prevSelected) => {
+                if (checked) {
                     const isAlreadySelected = prevSelected.some(
                         (credDef) => credDef.credentialDefinitionId === selectedCredDef.credentialDefinitionId
                     );
-
+    
                     if (!isAlreadySelected) {
                         const newSelected = [...prevSelected, selectedCredDef];
-                        
                         setToLocalStorage(storageKeys.CRED_DEF_DATA, JSON.stringify(newSelected));
-                        
                         return newSelected;
                     }
-                    return prevSelected;
-                });
-            }
-        } 
-        else if (!checked) {
-            setSelectedCredDefs((prevSelected) => {
-                const newSelected = prevSelected.filter(
-                    (credDef) => credDef.credentialDefinitionId !== credDefId
-                );
-                
-                setToLocalStorage(storageKeys.CRED_DEF_DATA, JSON.stringify(newSelected));
-                
-                return newSelected;
+                } else {
+                    const newSelected = prevSelected.filter(
+                        (credDef) => credDef.credentialDefinitionId !== selectedCredDef.credentialDefinitionId
+                    );
+                    setToLocalStorage(storageKeys.CRED_DEF_DATA, JSON.stringify(newSelected));
+                    return newSelected;
+                }
+    
+                return prevSelected;
             });
         }
     };
+    
     
     
     return (

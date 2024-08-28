@@ -2,7 +2,7 @@
 import { Alert, Pagination } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import type { ChangeEvent } from 'react';
-import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
+import { apiStatusCodes, itemPerPage, storageKeys } from '../../../config/CommonConstant';
 import EndorsementPopup from './EndorsementPopup';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../../BreadCrumbs';
@@ -36,7 +36,7 @@ const EndorsementList = () => {
 	const [orgId, setOrgId] = useState<string>('');
 	const [endorsementListAPIParameter, setEndorsementListAPIParameter] =
 		useState({
-			itemPerPage: 9,
+			itemPerPage: itemPerPage,
 			page: 1,
 			search: '',
 			sortBy: 'id',

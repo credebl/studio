@@ -11,7 +11,7 @@ import IssuancePopup from './IssuancePopup';
 import type { AxiosResponse } from 'axios';
 import { getFromLocalStorage } from '../../api/Auth';
 import { getSchemaCredDef } from '../../api/BulkIssuance';
-import { storageKeys, apiStatusCodes, CREDENTIAL_CONTEXT_VALUE, proofPurpose } from '../../config/CommonConstant';
+import { storageKeys, apiStatusCodes, CREDENTIAL_CONTEXT_VALUE, proofPurpose, itemPerPage } from '../../config/CommonConstant';
 import type { IAttributes, ICredentials, IEmailCredentialData, IIssueAttributes, ITransformedData } from './interface';
 import { Field, FieldArray, Form, Formik } from 'formik';
 import CustomSpinner from '../CustomSpinner';
@@ -34,7 +34,7 @@ const EmailIssuance = () => {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [credentialOptions, setCredentialOptions] = useState([]);
 	const [schemaListAPIParameter, setSchemaListAPIParameter] = useState({
-		itemPerPage: 9,
+		itemPerPage: itemPerPage,
 		page: 1,
 		search: '',
 		sortBy: 'id',
@@ -210,8 +210,8 @@ const EmailIssuance = () => {
 				transformedData.credentialOffer.push(transformedEntry);
 			});
 			transformedData.credentialDefinitionId = credDefId;
+			transformedData.isReuseConnection = true;
 
-		
     } else if (schemaType=== SchemaTypes.schema_W3C) {
 		
         existingData.formData.forEach((entry: { email: string; credentialData: IEmailCredentialData; attributes:IIssueAttributes[] }) => {
@@ -253,6 +253,7 @@ const EmailIssuance = () => {
         });
 
         transformedData.protocolVersion = "v2";
+		transformedData.isReuseConnection = true;
         transformedData.credentialType = CredentialType.JSONLD;
     }
 	
