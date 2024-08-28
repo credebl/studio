@@ -210,8 +210,8 @@ const EmailIssuance = () => {
 				transformedData.credentialOffer.push(transformedEntry);
 			});
 			transformedData.credentialDefinitionId = credDefId;
+			transformedData.isReuseConnection = true;
 
-		
     } else if (schemaType=== SchemaTypes.schema_W3C) {
 		
         existingData.formData.forEach((entry: { email: string; credentialData: IEmailCredentialData; attributes:IIssueAttributes[] }) => {
@@ -253,6 +253,7 @@ const EmailIssuance = () => {
         });
 
         transformedData.protocolVersion = "v2";
+		transformedData.isReuseConnection = true;
         transformedData.credentialType = CredentialType.JSONLD;
     }
 	
