@@ -187,5 +187,6 @@ export interface ICredentialOffer {
 	credentialOffer: ICredentialOffer[];
 	credentialDefinitionId?: string;
 	protocolVersion?: string;
+	isReuseConnection?: boolean;
 	credentialType?: string;
   }
