@@ -5,7 +5,7 @@ import type { ChangeEvent } from 'react';
 import type { AxiosResponse } from 'axios';
 import { checkEcosystem, type ICheckEcosystem } from '../../config/ecosystem';
 import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
-import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
+import { apiStatusCodes, itemPerPage, storageKeys } from '../../config/CommonConstant';
 import { getAllSchemas, getAllSchemasByOrgId } from '../../api/Schema';
 import { DidMethod, SchemaType } from '../../common/enums';
 import { getOrganizationById } from '../../api/organization';
@@ -26,7 +26,7 @@ const VerificationSchemasList = () => {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [allSchemasFlag, setAllSchemasFlag] = useState<boolean>(false);
 	const [schemasListParameter, setSchemasListParameter] = useState({
-		itemPerPage: 9,
+		itemPerPage: itemPerPage,
 		page: 1,
 		search: '',
 		sortBy: 'id',

@@ -10,6 +10,7 @@ import { DidMethod, Ledgers, Network } from '../../../common/enums';
 import SetDomainValueInput from './SetDomainValueInput';
 import SetPrivateKeyValueInput from './SetPrivateKeyValue';
 import type { ISharedAgentForm, IValuesShared } from "./interfaces";
+import React from "react";
 interface IDetails {
     [key: string]: string | { [subKey: string]: string };
 }
@@ -298,7 +299,7 @@ const SharedAgentForm = ({
 					if (!values.privatekey) {
 						values.privatekey = privateKeyValue;
 					}
-	
+					values.network = selectedNetwork;
 					submitSharedWallet(
 						values,
 						domainValue,

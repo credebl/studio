@@ -7,7 +7,7 @@ import {
 	uploadCsvFile,
 } from '../../api/BulkIssuance';
 import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
-import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
+import { apiStatusCodes, itemPerPage, storageKeys } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import { pathRoutes } from '../../config/pathRoutes';
@@ -50,7 +50,7 @@ const BulkIssuance = () => {
 	const [selectedTemplate, setSelectedTemplate] = useState<any>();
 	const [isAllSchema, setIsAllSchema] = useState<string>();
 	const [schemaListAPIParameters, setSchemaListAPIParameters] = useState({
-		itemPerPage: 9,
+		itemPerPage: itemPerPage,
 		page: 1,
 		search: '',
 		sortBy: 'id',
