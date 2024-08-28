@@ -27,6 +27,11 @@ export interface IAttributes {
 }
 
 export interface ICredentials {
+	name?:string;
+	version?:string;
+	type?:string;
+	attributes?:IAttributes[];
+	schemaLedgerId?:string;
 	value?:String;
 	label?: string;
 	credentialDefinitionId?: string;
@@ -34,7 +39,7 @@ export interface ICredentials {
 	schemaName: string;
 	schemaVersion: string;
 	schemaIdentifier: string;
-	schemaAttributes: IAttributes[];
+	schemaAttributes?: IAttributes[];
 	credentialDefinition?: string;
 }
 

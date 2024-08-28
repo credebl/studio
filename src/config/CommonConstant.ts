@@ -9,6 +9,7 @@ export const CREDENTIAL_CONTEXT_VALUE = 'https://www.w3.org/2018/credentials/v1'
 export const schemaVersionRegex = /^\d{1,5}(?=.*[0-9])(?:\.\d{1,5})?(?:\.\d{1,5})?$/gm
 export const proofPurpose = 'assertionMethod'
 export const limitedAttributesLength = 3
+export const itemPerPage = 9
 
 export const apiStatusCodes = {
     API_STATUS_SUCCESS : 200,
@@ -53,7 +54,8 @@ export const storageKeys = {
     ORG_DID:'did',
     SCHEMA_TYPE:'type',
     SELECT_ORG_IN_ECOSYSTEM: 'select_orgs_in_ecosystem',
-    ERROR_ORG_IN_ECOSYSTEM: 'error_orgs_in_ecosystem'
+    ERROR_ORG_IN_ECOSYSTEM: 'error_orgs_in_ecosystem',
+    ALL_SCHEMAS:'allSchemaFlag'
 }
 
 export const emailCredDefHeaders = [

@@ -4,7 +4,7 @@ import type { AxiosResponse } from 'axios';
 import CustomAvatar from '../Avatar/index';
 import type { Organisation } from '../organization/interfaces';
 import type { UserActivity } from './interfaces';
-import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
+import { apiStatusCodes, itemPerPage, storageKeys } from '../../config/CommonConstant';
 import { getOrganizationById, getOrganizations } from '../../api/organization';
 import { getUserActivity } from '../../api/users';
 import {
@@ -68,7 +68,7 @@ const UserDashBoard = () => {
 	const [schemaCount, setSchemaCount] = useState(0);
 	const [schemaList, setSchemaList] = useState<Array<ISchema> | null>(null);
 	const [schemaListAPIParameter, setSchemaListAPIParameter] = useState({
-		itemPerPage: 9,
+		itemPerPage: itemPerPage,
 		page: 1,
 		search: '',
 		sortBy: 'id',
