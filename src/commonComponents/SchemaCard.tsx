@@ -68,7 +68,7 @@ const handleCheckboxChange = (checked: boolean, schemaData?: ISchemaData) => {
   return (
     <Card onClick={() => {
 
-      if (!props.w3cSchema) {
+      if (!props.w3cSchema && !props.isVerificationUsingEmail) {
         props.onClickCallback(props.schemaId, props.attributes, props.issuerDid, props.created)
       }
 
