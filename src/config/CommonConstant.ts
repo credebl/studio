@@ -53,7 +53,8 @@ export const storageKeys = {
     ORG_DID:'did',
     SCHEMA_TYPE:'type',
     SELECT_ORG_IN_ECOSYSTEM: 'select_orgs_in_ecosystem',
-    ERROR_ORG_IN_ECOSYSTEM: 'error_orgs_in_ecosystem'
+    ERROR_ORG_IN_ECOSYSTEM: 'error_orgs_in_ecosystem',
+    ALL_SCHEMAS:'allSchemaFlag'
 }
 
 export const emailCredDefHeaders = [
