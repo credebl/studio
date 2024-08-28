@@ -388,6 +388,7 @@ const isSubmitButtonDisabled = () => {
 		})}
 
 		onSubmit={async (values: IValuesShared) => {
+	    values.network = isSelectedNetwork;
 			
 			submitDedicatedWallet(
 				values,

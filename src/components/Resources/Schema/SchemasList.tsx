@@ -4,7 +4,7 @@ import React, {  useEffect, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
 import type { GetAllSchemaListParameter } from './interfaces';
-import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
+import { apiStatusCodes, itemPerPage, storageKeys } from '../../../config/CommonConstant';
 import { getAllSchemas, getAllSchemasByOrgId } from '../../../api/Schema';
 
 import type { AxiosResponse } from 'axios';
@@ -46,7 +46,7 @@ const SchemaList = (props: {
 	const [allSchemaFlag, setAllSchemaFlag] = useState<boolean>(false);
 	const [orgId, setOrgId] = useState<string>('');
 	const [schemaListAPIParameter, setSchemaListAPIParameter] = useState({
-		itemPerPage: 9,
+		itemPerPage: itemPerPage,
 		page: 1,
 		search: '',
 		sortBy: 'id',
