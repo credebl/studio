@@ -126,7 +126,7 @@ const BulkIssuance = () => {
 				setLoading(false);
 			}
 
-			if (currentSchemaType && orgId && isAllSchemaSelectedFlag =='false') {
+			else if (currentSchemaType && orgId && isAllSchemaSelectedFlag =='false') {
 
 				
 				const response = await getSchemaCredDef(currentSchemaType); 
@@ -163,7 +163,7 @@ const BulkIssuance = () => {
 				setLoading(false);
 			}
 
-			if (currentSchemaType === SchemaTypes.schema_W3C && orgId && isAllSchemaSelectedFlag === 'true') {
+			else if (currentSchemaType === SchemaTypes.schema_W3C && orgId && isAllSchemaSelectedFlag === 'true') {
 
 				
 				const response = await getAllSchemas(schemaListAPIParameters,currentSchemaType); 
