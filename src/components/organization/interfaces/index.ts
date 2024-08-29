@@ -250,7 +250,6 @@ export interface ILedgerItem {
     deletedAt: string | null;
   }
 
-
   export interface IOrgCount {
     verificationRecordsCount: number;
     connectionRecordsCount: number;
