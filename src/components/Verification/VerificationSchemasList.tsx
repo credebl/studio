@@ -7,7 +7,7 @@ import { checkEcosystem, type ICheckEcosystem } from '../../config/ecosystem';
 import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { apiStatusCodes, itemPerPage, storageKeys } from '../../config/CommonConstant';
 import { getAllSchemas, getAllSchemasByOrgId } from '../../api/Schema';
-import { DidMethod, SchemaType } from '../../common/enums';
+import { DidMethod, SchemaTypes } from '../../common/enums';
 import { getOrganizationById } from '../../api/organization';
 import { Create, SchemaEndorsement } from '../Issuance/Constant';
 import BreadCrumbs from '../BreadCrumbs';
@@ -40,24 +40,16 @@ const VerificationSchemasList = () => {
 	const [selectedSchemas, setSelectedSchemas] = useState<ISchema[]>([]);
 	const [w3cSchema, setW3cSchema] = useState<boolean>(false);
 	const [isNoLedger, setIsNoLedger] = useState<boolean>(false);
+	const [schemaType, setSchemaType] = useState('');
 
-	const getSchemaListDetails = async (
-		schemasListParameter: {
-			itemPerPage: number,
-			page: number,
-			search: string,
-			sortingOrder: string,
-			sortBy: string,
-			allSearch: string
-		},
-		flag: boolean,
-	) => {
+		const getSchemaListDetails = async () => {
+	
 		try {
 			const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
 			setLoading(true);
 			let schemasList;
-			if (allSchemasFlag) {
-				schemasList = await getAllSchemas(schemasListParameter, SchemaType.INDY);
+				if (allSchemasFlag) {
+				schemasList = await getAllSchemas(schemasListParameter, schemaType);
 			} else {
 				schemasList = await getAllSchemasByOrgId(
 					schemasListParameter,
@@ -99,9 +91,8 @@ const VerificationSchemasList = () => {
 	};
 
 	useEffect(() => {
-		getSchemaListDetails(schemasListParameter, false);
+		getSchemaListDetails();
 	}, [schemasListParameter, allSchemasFlag]);
-
 
 	const onSchemaListParameterSearch = async (
 		event: ChangeEvent<HTMLInputElement>,
@@ -109,23 +100,18 @@ const VerificationSchemasList = () => {
 		event.preventDefault();
 		const inputValue = event.target.value;
 		setSearchValue(inputValue);
-
-		getSchemaListDetails(
-			{
-				...schemasListParameter,
-				search: inputValue,
-			},
-			false,
-		);
-
 		if (allSchemasFlag) {
-			getSchemaListDetails(
-				{
-					...schemasListParameter,
-					allSearch: inputValue,
-				},
-				false,
-			);
+			setSchemasListParameter(prevParams => ({
+				...prevParams,
+				allSearch: inputValue,
+				page: 1,
+			}));
+		} else {
+			setSchemasListParameter(prevParams => ({
+				...prevParams,
+				search: inputValue,
+				page: 1,
+			}));
 		}
 	};
 
@@ -134,6 +120,7 @@ const VerificationSchemasList = () => {
 		attributes: IAttributesDetails[],
 		issuerId: string,
 		created: string,
+		checked: boolean,
 	) => {
 		const schemaDetails = {
 			schemaId: schemaId,
@@ -141,17 +128,15 @@ const VerificationSchemasList = () => {
 			issuerId: issuerId,
 			createdDate: created,
 		};
-
-		const isSelected = selectedSchemas.some((schema) => schema.schemaId === schemaId);
-		if (isSelected) {
-			const updatedSchemas = selectedSchemas.filter((schema) => schema.schemaId !== schemaId);
-
-			setSelectedSchemas(updatedSchemas);
+	
+		if (checked) {
+			setSelectedSchemas((prevSelectedSchemas) => [...prevSelectedSchemas, schemaDetails]);
 		} else {
-			setSelectedSchemas([...selectedSchemas, schemaDetails]);
+			setSelectedSchemas((prevSelectedSchemas) =>
+				prevSelectedSchemas.filter((schema) => schema.schemaId !== schemaId)
+			);
 		}
 	};
-
 
 	const handleW3cSchemas = async (checked: boolean, schemaData?: ISchemaData) => {
 		const updateSchemas = (prevSchemas: ISchemaData[]) => {
@@ -193,9 +178,11 @@ const VerificationSchemasList = () => {
 			}
 			if (did.includes(DidMethod.POLYGON) || did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
 				setW3cSchema(true);
+				setSchemaType(SchemaTypes.schema_W3C)
 			}
 			if (did.includes(DidMethod.INDY)) {
 				setW3cSchema(false);
+				setSchemaType(SchemaTypes.schema_INDY)
 			}
 			if (did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
 				setIsNoLedger(true);
@@ -235,15 +222,19 @@ const VerificationSchemasList = () => {
 
 	const options = ['All schemas'];
 
-	const handleFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		if (e.target.value === 'All schemas') {
-			setAllSchemasFlag(true);
-		} else {
-			setAllSchemasFlag(false);
-			getSchemaListDetails(schemasListParameter, false);
-		}
-	};
+	const handleFilter = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+		const selectedFilter = e.target.value;
+		setAllSchemasFlag(selectedFilter === 'All schemas');
+			
+			setSchemasListParameter((prevParams) => ({
+				...prevParams,
+				page: 1,
+				search: '', 
+				allSearch: '', 	  
+			}));
+			setSearchValue(''); 
 
+	};	
 	useEffect(() => {
 		fetchOrganizationDetails();
 		(async () => {
@@ -346,8 +337,17 @@ const VerificationSchemasList = () => {
 											w3cSchema={w3cSchema}
 											noLedger={isNoLedger}
 											isVerificationUsingEmail={true}
-											onChange={(checked) => handleW3cSchemas(checked, element)}
-											onClickCallback={handleSchemaSelection}
+											onChange={(checked) => {
+												w3cSchema 
+													? handleW3cSchemas(checked, element) 
+													: handleSchemaSelection(
+														  element['schemaLedgerId'], 
+														  element['attributes'], 
+														  element['issuerId'], 
+														  element['createDateTime'], 
+														  checked
+													  );
+											}}										
 										/>
 									</div>
 								))}

@@ -178,6 +178,7 @@ const EmailVerification = () => {
 
                 payload = {
                     goalCode: "verification",
+                    reuseConnection: true,
                     protocolVersion: ProtocolVersion.V1,
                     isShortenUrl: true,
                     autoAcceptProof: AutoAccept.NEVER,
