@@ -117,6 +117,7 @@ const BulkIssuance = () => {
 							schemaAttributes: schemaAttributes && typeof schemaAttributes === "string" && JSON.parse(schemaAttributes)
 						}),
 					);
+					
 					 setCredentialOptionsData(options);
 				} else {
 					setUploadMessage({message: response as string, type: "failure"});
