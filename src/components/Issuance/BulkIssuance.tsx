@@ -91,7 +91,7 @@ const BulkIssuance = () => {
 			}
 
 			setSchemaType(currentSchemaType); 
-			if (currentSchemaType && orgId && isAllSchemaSelectedFlag =='false') {
+			if ((currentSchemaType === SchemaTypes.schema_INDY &&  isAllSchemaSelectedFlag === 'true') || (currentSchemaType && orgId && isAllSchemaSelectedFlag =='false')) {
 				const response = await getSchemaCredDef(currentSchemaType); 
 				const { data } = response as AxiosResponse;
 
@@ -117,6 +117,7 @@ const BulkIssuance = () => {
 							schemaAttributes: schemaAttributes && typeof schemaAttributes === "string" && JSON.parse(schemaAttributes)
 						}),
 					);
+					
 					 setCredentialOptionsData(options);
 				} else {
 					setUploadMessage({message: response as string, type: "failure"});
@@ -126,7 +127,10 @@ const BulkIssuance = () => {
 				setLoading(false);
 			}
 
-			if (currentSchemaType && orgId &&isAllSchemaSelectedFlag =='true') {
+
+			else if (currentSchemaType === SchemaTypes.schema_W3C && orgId && isAllSchemaSelectedFlag === 'true') {
+
+				
 				const response = await getAllSchemas(schemaListAPIParameters,currentSchemaType); 
 					const { data } = response as AxiosResponse;
 					
