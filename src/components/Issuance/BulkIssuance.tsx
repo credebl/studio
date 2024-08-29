@@ -91,7 +91,7 @@ const BulkIssuance = () => {
 			}
 
 			setSchemaType(currentSchemaType); 
-			if (currentSchemaType === SchemaTypes.schema_INDY &&  isAllSchemaSelectedFlag === 'true') {
+			if ((currentSchemaType === SchemaTypes.schema_INDY &&  isAllSchemaSelectedFlag === 'true') || (currentSchemaType && orgId && isAllSchemaSelectedFlag =='false')) {
 				const response = await getSchemaCredDef(currentSchemaType); 
 				const { data } = response as AxiosResponse;
 
@@ -126,42 +126,6 @@ const BulkIssuance = () => {
 				setLoading(false);
 			}
 
-			else if (currentSchemaType && orgId && isAllSchemaSelectedFlag =='false') {
-
-				
-				const response = await getSchemaCredDef(currentSchemaType); 
-				const { data } = response as AxiosResponse;
-
-				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-					const { data:  credentialDefsData } = data;
-
-					const options =  credentialDefsData.map(
-						({
-							schemaName,
-							schemaVersion,
-							credentialDefinition,
-							credentialDefinitionId,
-							schemaIdentifier,
-							schemaAttributes
-						}: ICredentials) => ({
-							value: schemaType===SchemaTypes.schema_INDY ? credentialDefinitionId : schemaVersion,
-							label: `${schemaName} [${schemaVersion}]${currentSchemaType === SchemaTypes.schema_INDY ? ` - (${credentialDefinition})` : ''}`,
-							schemaName: schemaName,
-							schemaVersion: schemaVersion,
-							credentialDefinition: credentialDefinition,
-		                    credentialDefinitionId: credentialDefinitionId,
-							schemaIdentifier: schemaIdentifier,
-							schemaAttributes: schemaAttributes && typeof schemaAttributes === "string" && JSON.parse(schemaAttributes)
-						}),
-					);
-					 setCredentialOptionsData(options);
-				} else {
-					setUploadMessage({message: response as string, type: "failure"});
-					setSuccess(null)
-					setFailure(null)
-				}
-				setLoading(false);
-			}
 
 			else if (currentSchemaType === SchemaTypes.schema_W3C && orgId && isAllSchemaSelectedFlag === 'true') {
 
