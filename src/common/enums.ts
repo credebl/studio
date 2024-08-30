@@ -31,6 +31,10 @@ export enum ProofRequestStateUserText {
 	abandoned = 'Declined',
 }
 
+export enum SchemaType {
+    INDY = 'indy',
+    W3C = 'json'
+}
 export enum IssueCredentialUserText {
 	offerSent = 'Offered',
 	done = 'Accepted',
@@ -97,8 +101,64 @@ export enum BulkIssuanceStatus {
 }
 
 export enum DidMethod {
+    INDY = 'did:indy',
+    KEY = 'did:key',
+    WEB = 'did:web',
+    POLYGON = 'did:polygon'
+}
+
+export enum Network {
+	TESTNET = 'testnet',
+	MAINNET = 'mainnet'
+}
+
+export enum CommonConstants {
+	BALANCELIMIT = 0.01
+}
+
+export enum Devices {
+Linux = 'linux'
+}
+
+export enum Ledgers {
+	INDY = 'indy',
+	POLYGON = 'polygon',
+	NO_LEDGER = 'noLedger'
+}
+
+export enum SchemaTypeValue {
+	INDY = 'indy',
+	POLYGON = 'polygon',
+	NO_LEDGER = 'no_ledger'
+}
+
+export enum SchemaTypes {
+    schema_INDY = 'indy',
+    schema_W3C = 'w3c'
+}
+
+export enum CredentialType {
     INDY = 'indy',
-    KEY = 'key',
-    WEB = 'web',
-    POLYGON = 'polygon'
+    JSONLD = 'jsonld',
+}
+
+export enum ProtocolVersion {
+	V1 = 'v1',
+	V2 = 'v2'
+}
+
+export enum AutoAccept {
+    ALWAYS = "always",
+    CONTENT_APPROVED = "contentApproved",
+    NEVER = "never"
+}
+
+export enum RequestType {
+    INDY = 'indy',
+    PRESENTATION_EXCHANGE = 'presentationExchange'
+}
+
+export enum ProofType {
+	polygon = 'EcdsaSecp256k1Signature2019',
+	no_ledger = 'Ed25519Signature2018'
 }

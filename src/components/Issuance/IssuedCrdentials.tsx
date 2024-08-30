@@ -1,7 +1,7 @@
-'use client';
 
-import React, { ChangeEvent, useEffect, useState } from 'react';
-import { IssueCredential, IssueCredentialUserText } from '../../common/enums';
+import React, { useEffect, useState } from 'react';
+import type { ChangeEvent } from 'react';
+import { DidMethod, IssueCredential, IssueCredentialUserText } from '../../common/enums';
 
 import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
@@ -14,13 +14,14 @@ import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { dateConversion } from '../../utils/DateConversion';
 import { getIssuedCredentials } from '../../api/issuance';
 import { pathRoutes } from '../../config/pathRoutes';
-import { getFromLocalStorage } from '../../api/Auth';
+import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { getOrgDetails } from '../../config/ecosystem';
 import type { IConnectionListAPIParameter } from '../../api/connection';
 import type { IssuedCredential } from './interface';
 import SortDataTable from '../../commonComponents/datatable/SortDataTable';
 import RoleViewButton from '../RoleViewButton';
 import { Features } from '../../utils/enums/features';
+import { getOrganizationById } from '../../api/organization';
 
 const initialPageState = {
 	itemPerPage: 10,
@@ -44,6 +45,8 @@ const CredentialList = () => {
 		nextPage: '',
 		lastPage: '',
 	});
+	const [w3cSchema, setW3CSchema]= useState<boolean>(false);
+
 
 	const getIssuedCredDefs = async (
 		listAPIParameter: IConnectionListAPIParameter,
@@ -70,9 +73,8 @@ const CredentialList = () => {
 					});
 					const credentialList = data?.data?.data?.map(
 						(issuedCredential: IssuedCredential) => {
-							const schemaName = issuedCredential.schemaId
-								? issuedCredential.schemaId.split(':').slice(2).join(':')
-								: 'Not available';
+								
+							const schemaName = issuedCredential?.schemaName ?? 'Not available';
 							return {
 								data: [
 									{
@@ -162,8 +164,29 @@ const CredentialList = () => {
 			setLoading(false);
 		}
 	};
+	const fetchOrganizationDetails = async () => {
+		setLoading(true);
+		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		const response = await getOrganizationById(orgId);
+		const { data } = response as AxiosResponse;
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			const did = data?.data?.org_agents?.[0]?.orgDid;
+
+			await setToLocalStorage(storageKeys.ORG_DID, did)
+			if (did.includes(DidMethod.POLYGON) || did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
+				setW3CSchema(true);
+			}
+			if (did.includes(DidMethod.INDY)) {
+				setW3CSchema(false);
+			}
+		}
+		setLoading(false);
+	};
+
 
 	useEffect(() => {
+		fetchOrganizationDetails();
+
 		let getData: NodeJS.Timeout;
 
 		if (listAPIParameter.search.length >= 1) {
@@ -195,8 +218,13 @@ const CredentialList = () => {
 		});
 	};
 
-	const schemeSelection = () => {
-		window.location.href = pathRoutes.organizations.Issuance.issue;
+	const schemeSelection = async () => {
+		if(w3cSchema){
+			window.location.href = pathRoutes.organizations.Issuance.schema;
+		}
+		else if(!w3cSchema){
+			window.location.href = pathRoutes.organizations.Issuance.issue;
+		}
 	};
 
 	const refreshPage = () => {

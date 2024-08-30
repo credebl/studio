@@ -1,7 +1,5 @@
 import type { TableData, TableHeader } from './interface';
-
 import CustomSpinner from '../../components/CustomSpinner';
-import React from 'react';
 
 interface DataTableProps {
 	header: TableHeader[];
@@ -10,6 +8,7 @@ interface DataTableProps {
 	callback?: (clickId: string | null | undefined) => void;
 	displaySelect?: boolean;
 	showBtn?: boolean;
+	isEmailVerification?: boolean;
 }
 
 const DataTable: React.FC<DataTableProps> = ({
@@ -19,6 +18,7 @@ const DataTable: React.FC<DataTableProps> = ({
 	loading,
 	callback,
 	showBtn,
+	isEmailVerification
 }) => {
 	return (
 		<div className="flex flex-col ">
@@ -35,13 +35,13 @@ const DataTable: React.FC<DataTableProps> = ({
 									<tr>
 										{header &&
 											header.length > 0 &&
-											header.map((ele) => (
+											header.map((ele, id) => (
 												<th
-													key={ele.columnName}
+													key={id}
 													scope="col"
-													className={`p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white ${ele.width}`}
+													className={`p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white ${ele.width} ${id === 0 && isEmailVerification ? 'pl-12' : ''}`}
 												>
-													<div key={ele.columnName}>{ele.columnName}</div>
+													<div>{ele.columnName}</div>
 													{ele.subColumnName && (
 														<div className="flex text-gray-500">
 															{ele.subColumnName}{' '}
@@ -53,35 +53,35 @@ const DataTable: React.FC<DataTableProps> = ({
 								</thead>
 								<tbody className="bg-white dark:bg-gray-800">
 									{data.length ? (
-										data.map((ele, index) => (
+										data.map((ele, id) => (
 											<tr
-												key={index}
+												key={id}
 												className={`${
-													index % 2 !== 0 ? 'bg-gray-50 dark:bg-gray-700' : ''
+													id % 2 !== 0 ? 'bg-gray-50 dark:bg-gray-700' : ''
 												}`}
 											>
-												{ele.data.map((subEle, index) => (
+												{ele.data.map((subEle, id) => (
 													<td
-														key={index}
+														key={id}
 														className={` p-4 text-sm font-normal text-gray-900 whitespace-nowrap dark:text-white align-middle	`}
 													>
-														<div key={index}>{subEle.data}</div>
+														<div key={id}>{subEle.data}</div>
 														{subEle.subData}
 													</td>
 												))}
-												{displaySelect ||
-													(showBtn && (
+												<td className="p-4 text-sm font-normal text-gray-900 whitespace-nowrap dark:text-white align-middle"> 
+												
+													{displaySelect || (showBtn && (
 														<button
-															key={index}
-															onClick={() =>
-																callback ? callback(ele?.clickId) : ''
-															}
+															key={id}
+															onClick={() => (callback ? callback(ele?.clickId) : '')}
 															type="button"
 															className="text-center mt-2 text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
 														>
 															Select
 														</button>
 													))}
+												</td>
 											</tr>
 										))
 									) : (

@@ -118,7 +118,7 @@ const IssuancePopup = (props: IProps) => {
 									window.scrollTo({top: 0, left: 0, behavior: 'smooth'});
 								}}
 								className="bg-primary-700 hover:!bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 rounded-lg inline-flex items-center text-center ml-2"
-							>
+							>  
 								<p className="text-lg font-normal">Yes, I'm sure</p>
 							</Button>
 						</div>

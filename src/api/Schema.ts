@@ -1,4 +1,4 @@
-import type { GetAllSchemaListParameter, createCredDeffFieldName, createSchema } from "../components/Resources/Schema/interfaces";
+import type { GetAllSchemaListParameter, createCredDeffFieldName } from "../components/Resources/Schema/interfaces";
 import { axiosGet, axiosPost } from "../services/apiRequests";
 
 import { apiRoutes } from "../config/apiRoutes";
@@ -6,12 +6,11 @@ import { getFromLocalStorage } from "./Auth";
 import { storageKeys } from "../config/CommonConstant";
 import { getHeaderConfigs } from "../config/GetHeaderConfigs";
 
-export const getAllSchemas = async ({itemPerPage, page, allSearch }: GetAllSchemaListParameter) => {
+export const getAllSchemas = async ({itemPerPage, page, allSearch }: GetAllSchemaListParameter, schemaType?: string) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const ledgerId = await getFromLocalStorage(storageKeys.LEDGER_ID)
-
   const details = {
-		url: `${apiRoutes.Platform.getAllSchemaFromPlatform}?pageSize=${itemPerPage}&searchByText=${allSearch}&pageNumber=${page}&ledgerId=${ledgerId}`,
+		url: `${apiRoutes.Platform.getAllSchemaFromPlatform}?pageSize=${itemPerPage}&searchByText=${allSearch}&pageNumber=${page}&ledgerId=${ledgerId}&schemaType=${schemaType}`,
     config: {
       headers: {
         'Content-type': 'application/json',
@@ -52,7 +51,7 @@ export const getAllSchemasByOrgId = async ({ search, itemPerPage, page }: GetAll
   }
 }
 
-export const createSchemas = async (payload: createSchema, orgId: string) => {
+export const createSchemas = async (payload: any, orgId: string) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
     url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.create}`,
@@ -142,6 +141,28 @@ export const getCredDeffById = async (schemaId: string, orgId: string) => {
   const token = await getFromLocalStorage(storageKeys.TOKEN)
   const details = {
     url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.getCredDefBySchemaId}/${schemaId}/cred-defs`,
+    config: {
+      headers: {
+        'Content-type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    },
+  }
+
+  try {
+    const response = await axiosGet(details)
+    return response
+  }
+  catch (error) {
+    const err = error as Error
+    return err?.message
+  }
+}
+
+export const getCredDefDetailsByCredDefId = async (credDefId: string, orgId: string) => {
+  const token = await getFromLocalStorage(storageKeys.TOKEN)
+  const details = {
+    url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.createCredentialDefinition}/${credDefId}`,
     config: {
       headers: {
         'Content-type': 'application/json',

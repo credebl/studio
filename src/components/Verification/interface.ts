@@ -35,6 +35,9 @@ export interface SchemaDetails {
 	attribute: string[];
 	issuerDid: string;
 	createdDate: string;
+	schemaName?: string;
+	version?: string;
+	schemaId?: string;
 }
 
 export interface IProofRrquestDetails {
@@ -60,6 +63,22 @@ export interface SchemaDetail {
 	schemaId: string;
 	credDefId: string;
 }
+export interface IW3cSchemaDetails {
+	schemaName: string;
+	version: string;
+	schemaId: string;
+	w3cAttributes?: IAttributesData[];
+	issuerDid?:string;
+	created?:string;
+}
+
+export interface IAttributesData {
+	isRequired: boolean;
+	name: string;
+	value: string;
+	dataType: string;
+}
+
 
 export interface IInput {
 	attributeName: string;
@@ -69,6 +88,10 @@ export interface IAttribute {
 	displayName: string;
 	attributeName: string;
 	schemaDataType: string;
+	schemaName?: string;
+	credDefName?: string;
+	schemaId?: string;
+	credDefId?: string;
 }
 export interface SelectedUsers {
 	userName: string;
@@ -88,21 +111,98 @@ export interface VerifyCredentialPayload {
 	comment: string;
 	orgId: string;
 }
+
+export type SelectedOption = "Select" | "Greater than" | "Less than" | "Greater than or equal to" | "Less than or equal to"; 
+
 export interface ISelectedUser {
-	name: any;
-	condition: string;
+	name?: string;
+	condition?: string;
 	dataType: string;
-	displayName: string;
+	displayName?: string;
 	attributeName: string;
+	schemaName?: string;
+	schemaId?: string;
+	credDefName?: string;
 	isChecked: false;
 	value: number;
-	selectedOption: 'Select';
-	inputError: '';
-	selectError: '';
-	options: [
+	selectedOption?: SelectedOption;
+	inputError?: '';
+	selectError?: '';
+	options?: [
 		{
 			label: string;
 			value: string;
 		},
 	];
+}
+
+export interface IOption {
+	value: string | number;
+	label: string;
+  }  
+export interface ISelectedAttributes {
+	displayName: string;
+	attributeName: string;
+	isChecked: boolean;
+	value: string;
+	condition: string;
+	options: IOption[];
+	dataType: string;
+	schemaName?: string;
+	credDefName?: string;
+	schemaId?: string;
+	credDefId?: string;
+	selectedOption: string;
+	inputError: string;
+	selectError: string;
+  }
+
+ export interface IRequestedAttributes {
+    name: string;
+    restrictions: Array<{
+        schema_id: string;
+        cred_def_id: string;
+    }>;
+}
+interface IEmailData {
+    email: string;
+}
+export interface IEmailValues {
+    emailData: IEmailData[];
+}
+
+export interface IPredicate extends IRequestedAttributes {
+	p_type: string;
+	p_value: number;
+}
+export interface IRequestedPredicates {
+    [key: string]: IPredicate;
+}
+
+export interface IAttributesDetails {
+    attributeName: string;
+    schemaDataType: string;
+    displayName: string;
+    isRequired: boolean;
+}
+
+export interface ISchemaData {
+    createDateTime: string;
+    name: string;
+    version: string;
+    attributes: IAttributesDetails[];
+    schemaLedgerId: string;
+    createdBy: string;
+    publisherDid: string;
+    orgId: string;
+    issuerId: string;
+    organizationName: string;
+    userName: string;
+}
+
+export interface ISchema {
+    schemaId: string;
+    attributes: IAttributesDetails[];
+    issuerId: string;
+    createdDate: string;
 }
