@@ -27,6 +27,11 @@ export interface IAttributes {
 }
 
 export interface ICredentials {
+	name?:string;
+	version?:string;
+	type?:string;
+	attributes?:IAttributes[];
+	schemaLedgerId?:string;
 	value?:String;
 	label?: string;
 	credentialDefinitionId?: string;
@@ -34,7 +39,7 @@ export interface ICredentials {
 	schemaName: string;
 	schemaVersion: string;
 	schemaIdentifier: string;
-	schemaAttributes: IAttributes[];
+	schemaAttributes?: IAttributes[];
 	credentialDefinition?: string;
 }
 
@@ -50,6 +55,7 @@ export interface IssuedCredential {
 	state: string;
 	isRevocable: boolean;
 	schemaId: string;
+	schemaName: string;
 }
 
 export interface IProps {
@@ -182,5 +188,6 @@ export interface ICredentialOffer {
 	credentialOffer: ICredentialOffer[];
 	credentialDefinitionId?: string;
 	protocolVersion?: string;
+	isReuseConnection?: boolean;
 	credentialType?: string;
   }

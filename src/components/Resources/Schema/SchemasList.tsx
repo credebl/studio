@@ -4,7 +4,7 @@ import React, {  useEffect, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
 import type { GetAllSchemaListParameter } from './interfaces';
-import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
+import { apiStatusCodes, itemPerPage, storageKeys } from '../../../config/CommonConstant';
 import { getAllSchemas, getAllSchemasByOrgId } from '../../../api/Schema';
 
 import type { AxiosResponse } from 'axios';
@@ -16,14 +16,14 @@ import RoleViewButton from '../../RoleViewButton';
 import SchemaCard from '../../../commonComponents/SchemaCard';
 import type { IW3cSchemaDetails, SchemaDetails } from '../../Verification/interface';
 import SearchInput from '../../SearchInput';
-import { getFromLocalStorage, setToLocalStorage } from '../../../api/Auth';
+import { getFromLocalStorage, removeFromLocalStorage, setToLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
 import { getOrganizationById } from '../../../api/organization';
 import { checkEcosystem } from '../../../config/ecosystem';
 import type { ICheckEcosystem } from '../../../config/ecosystem';
-
+import Select, { type SingleValue, type ActionMeta } from 'react-select';
 import { Create, SchemaEndorsement } from '../../Issuance/Constant';
-import { DidMethod, SchemaType } from '../../../common/enums';
+import { DidMethod, SchemaType, SchemaTypes } from '../../../common/enums';
 
 const SchemaList = (props: {
 		schemaSelectionCallback: (
@@ -46,7 +46,7 @@ const SchemaList = (props: {
 	const [allSchemaFlag, setAllSchemaFlag] = useState<boolean>(false);
 	const [orgId, setOrgId] = useState<string>('');
 	const [schemaListAPIParameter, setSchemaListAPIParameter] = useState({
-		itemPerPage: 9,
+		itemPerPage: itemPerPage,
 		page: 1,
 		search: '',
 		sortBy: 'id',
@@ -57,6 +57,10 @@ const SchemaList = (props: {
 	const [totalItem, setTotalItem] = useState(0);
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [searchValue, setSearchValue] = useState('');
+	const [schemaType, setSchemaType] = useState('');
+
+	const [defaultDropdownValue]= useState<string[]>([`Organization's schema`,'All schemas']);
+	const[selectedValue,setSelectedValue]=useState<string>(defaultDropdownValue[0])
 	const [w3cSchema,setW3CSchema]= useState<boolean>(false);
 	const [isNoLedger,setisNoLedger]= useState<boolean>(false);	
 
@@ -70,7 +74,7 @@ const SchemaList = (props: {
 			setLoading(true);
 			let schemaList;
 			if (allSchemaFlag) {
-				schemaList = await getAllSchemas(schemaListAPIParameter, SchemaType.INDY);
+				schemaList = await getAllSchemas(schemaListAPIParameter, schemaType);
 			} else {
 				schemaList = await getAllSchemasByOrgId(
 					schemaListAPIParameter,
@@ -202,17 +206,24 @@ const SchemaList = (props: {
 		
 	  };
 
+	const handleFilter = async (e: React.ChangeEvent<HTMLSelectElement>) => {
 
-	const options = ['All schemas'];
-
-	const handleFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		setSchemaListAPIParameter((prevState) => ({
+			...prevState,
+			page: 1,
+		}));
+		setSelectedValue(e.target.value)
 		console.log('Handle filter', e.target.value);
 		if (e.target.value === 'All schemas') {
 			setAllSchemaFlag(true);
+			await setToLocalStorage (storageKeys.ALL_SCHEMAS, `true`);
+			
 		} else {
 			setAllSchemaFlag(false);
+			await setToLocalStorage (storageKeys.ALL_SCHEMAS, `false`);
 			getSchemaList(schemaListAPIParameter, false);
 		}
+
 	};
 
 	const fetchOrganizationDetails = async () => {
@@ -229,9 +240,11 @@ const SchemaList = (props: {
 			}
 			if (did.includes(DidMethod.POLYGON) || did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
 				setW3CSchema(true);
+				setSchemaType(SchemaTypes.schema_W3C)
 			}
 			if (did.includes(DidMethod.INDY)) {
 				setW3CSchema(false);
+				setSchemaType(SchemaTypes.schema_INDY)
 			}
 			if (did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
 				setisNoLedger(true);
@@ -240,7 +253,12 @@ const SchemaList = (props: {
 		setLoading(false);
 	};
 
+	useEffect(() => {	
+			setSelectedValue(defaultDropdownValue[0])
+	}, []);
+
 	useEffect(() => {
+
 		fetchOrganizationDetails();
 		(async () => {
 			try {
@@ -250,6 +268,10 @@ const SchemaList = (props: {
 				console.log(error);
 			}
 		})();
+
+		(async () => {
+			await setToLocalStorage (storageKeys.ALL_SCHEMAS, `false`);
+				})();
 		setSearchValue('');
 	}, []);
 
@@ -279,12 +301,11 @@ const SchemaList = (props: {
 						<select
 							onChange={handleFilter}
 							id="schamfilter"
-							defaultValue="Organization's schema"
+							value={selectedValue}
 							className="min-h-[42px] h-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 						>
-							<option value="Organization's schema">Organization's schema</option>
-							{options.map((opt) => (
-								<option key={opt} className="" value={opt}>
+							{defaultDropdownValue.map((opt) => (
+								<option key={opt} className="">
 									{opt}
 								</option>
 							))}

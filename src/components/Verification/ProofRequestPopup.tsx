@@ -87,22 +87,7 @@ const ProofRequest = (props: IProofRrquestDetails) => {
 								{' '}
 								Verification Details
 							</p>
-							{props.verifyLoading ? (
-								<div className="flex items-center justify-center m-4">
-									<CustomSpinner />
-								</div>
-							) : (
-								<div className=" text-gray-500 dark:text-gray-300 w-full">
-									<div className="mt-1 ">
-										<AttributesListData attributeDataList={aggregatedData} />
-										<SchemaCredDefDetails
-											schemaCredDefList={props?.userData?.slice(0, 1)}
-										/>
-									</div>
-								</div>
-							)}
-						</div>
-						{succesMsg && (
+							{succesMsg && (
 							<div
 								className="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-100 border-green-500 dark:bg-green-200 dark:text-green-800"
 								role="alert"
@@ -119,6 +104,20 @@ const ProofRequest = (props: IProofRrquestDetails) => {
 							</div>
 						)}
 
+							{props.verifyLoading ? (
+								<div className="flex items-center justify-center m-4">
+									<CustomSpinner />
+								</div>
+							) : (
+								<div className=" text-gray-500 dark:text-gray-300 w-full">
+									<div className="mt-1 ">
+
+											<AttributesListData attributeDataList={props?.userData} />
+
+									</div>
+								</div>
+							)}
+						</div>
 						<div className="flex justify-center items-center space-x-4">
 							<button
 								onClick={() => {
@@ -204,11 +203,9 @@ const ProofRequest = (props: IProofRrquestDetails) => {
 							) : (
 								<div className=" text-gray-500 dark:text-gray-300 w-full">
 									<div className="mt-1">
-										<AttributesListData attributeDataList={aggregatedData} />
+										<AttributesListData attributeDataList={props?.userData} />
 
-										<SchemaCredDefDetails
-											schemaCredDefList={props?.userData?.slice(0, 1)}
-										/>
+
 									</div>
 								</div>
 							)}
