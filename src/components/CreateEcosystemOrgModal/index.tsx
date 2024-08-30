@@ -63,9 +63,9 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 		autoEndorsement: false,
 	});
 	const [errMsg, setErrMsg] = useState<string | null>(null);
-	const [isW3CSchema,setIsW3CSchema]= useState<boolean>(false);
+	const [isW3CSchema,setW3CSchema]= useState<boolean>(false);
 
-	const [imgError, setImgError] = useState('');
+	const [imgError, setImageErrors] = useState('');
 	const [autoEndorse, setautoEndorse] = useState(false);
 
 	useEffect(() => {
@@ -134,8 +134,8 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 		return true;
 	};
 
-	const handleImageChange = (event: any): void => {
-		setImgError('');
+	const handleImagesChanges = (event: any): void => {
+		setImageErrors('');
 		processImage(event, (result, error) => {
 			if (result) {
 				setLogoImage({
@@ -144,31 +144,31 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 					fileName: event.target.files[0].name,
 				});
 			} else {
-				setImgError(error || 'An error occurred while processing the image.');
+				setImageErrors(error || 'An error occurred while processing the image.');
 			}
 		});
 	};
 
 
-	const fetchOrgDetails = async () => {
+	const fetchOrganizationDetails = async () => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		const response = await getOrganizationById(orgId);
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			const did = data?.data?.org_agents?.[0]?.orgDid;
+			const orgDid = data?.data?.org_agents?.[0]?.orgDid;
 			
-			if (did.includes(DidMethod.POLYGON) || did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
-				setIsW3CSchema(true);
+			if (orgDid.includes(DidMethod.POLYGON) || orgDid.includes(DidMethod.KEY) || orgDid.includes(DidMethod.WEB)) {
+				setW3CSchema(true);
 			}
-			if (did.includes(DidMethod.INDY)) {
-				setIsW3CSchema(false);
+			if (orgDid.includes(DidMethod.INDY)) {
+				setW3CSchema(false);
 			}
 		}
 		setLoading(false);
 	};
 
 	useEffect(() => {
-		fetchOrgDetails();
+		fetchOrganizationDetails();
 		
 	}, []);
 
@@ -286,7 +286,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 						autoEndorsement: false,
 					});
 					props.setOpenModal(false);
-					setImgError(' ')
+					setImageErrors(' ')
 					setErrMsg(null);
 				}}
 			>
@@ -361,7 +361,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 															id="organizationlogo"
 															title=""
 															onChange={(event): void =>
-																handleImageChange(event)
+																handleImagesChanges(event)
 															}
 														/>
 														{imgError ? (
@@ -497,7 +497,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 											width: '6rem',
 											minWidth: '2rem',
 										}}
-										onClick={() => setImgError('')}
+										onClick={() => setImageErrors('')}
 									>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
