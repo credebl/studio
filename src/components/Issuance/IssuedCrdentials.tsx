@@ -73,9 +73,8 @@ const CredentialList = () => {
 					});
 					const credentialList = data?.data?.data?.map(
 						(issuedCredential: IssuedCredential) => {
-							const schemaName = issuedCredential.schemaId
-								? issuedCredential.schemaId.split(':').slice(2).join(':')
-								: 'Not available';
+								
+							const schemaName = issuedCredential?.schemaName ?? 'Not available';
 							return {
 								data: [
 									{

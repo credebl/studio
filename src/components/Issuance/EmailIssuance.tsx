@@ -91,44 +91,45 @@ const EmailIssuance = () => {
 
 			setSchemaType(currentSchemaType); 
 			
-			if (currentSchemaType && orgId && allSchemaSelectedFlag === 'false') {
-				
-				const response = await getSchemaCredDef(currentSchemaType); 
-				const { data } = response as AxiosResponse;
+				if((currentSchemaType === SchemaTypes.schema_INDY && orgId && allSchemaSelectedFlag === 'true') || (currentSchemaType && allSchemaSelectedFlag === 'false')){
 
-				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				const credentialDefs = data.data;
-				
-				const options = credentialDefs.map(({
-					schemaName,
-					schemaVersion,
-					credentialDefinition,
-					credentialDefinitionId,
-					schemaIdentifier,
-					schemaAttributes
-				} : ICredentials) => ({
-					value: schemaType===SchemaTypes.schema_INDY ? credentialDefinitionId : schemaVersion,
-					label: `${schemaName} [${schemaVersion}]${currentSchemaType === SchemaTypes.schema_INDY ? ` - (${credentialDefinition})` : ''}`,
-					schemaName: schemaName,
-					schemaVersion: schemaVersion,
-					credentialDefinition: credentialDefinition,
-					schemaIdentifier: schemaIdentifier,
-					credentialDefinitionId: credentialDefinitionId,
-					schemaAttributes:
-						schemaAttributes &&
-						typeof schemaAttributes === 'string' &&
-						JSON.parse(schemaAttributes),
-				}));
-				setCredentialOptions(options);			
-					} else {
-						setSuccess(null);
-						setFailure(null);
-					}
-					setLoading(false);
-				}
-
-				if (currentSchemaType === SchemaTypes.schema_W3C && orgId && allSchemaSelectedFlag === 'true') {
+					const response = await getSchemaCredDef(currentSchemaType); 
+					const { data } = response as AxiosResponse;
+	
+					if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+					const credentialDefs = data.data;
 					
+					const options = credentialDefs.map(({
+						schemaName,
+						schemaVersion,
+						credentialDefinition,
+						credentialDefinitionId,
+						schemaIdentifier,
+						schemaAttributes
+					} : ICredentials) => ({
+						value: schemaType===SchemaTypes.schema_INDY ? credentialDefinitionId : schemaVersion,
+						label: `${schemaName} [${schemaVersion}]${currentSchemaType === SchemaTypes.schema_INDY ? ` - (${credentialDefinition})` : ''}`,
+						schemaName: schemaName,
+						schemaVersion: schemaVersion,
+						credentialDefinition: credentialDefinition,
+						schemaIdentifier: schemaIdentifier,
+						credentialDefinitionId: credentialDefinitionId,
+						schemaAttributes:
+							schemaAttributes &&
+							typeof schemaAttributes === 'string' &&
+							JSON.parse(schemaAttributes),
+					}));
+	
+					setCredentialOptions(options);			
+						} else {
+							setSuccess(null);
+							setFailure(null);
+						}
+						setLoading(false);
+				}
+			    
+
+			  else  if (currentSchemaType === SchemaTypes.schema_W3C && orgId && allSchemaSelectedFlag === 'true') {
 					const response = await getAllSchemas(schemaListAPIParameter,currentSchemaType); 
 					const { data } = response as AxiosResponse;
 					

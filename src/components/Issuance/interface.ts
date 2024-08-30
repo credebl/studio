@@ -55,6 +55,7 @@ export interface IssuedCredential {
 	state: string;
 	isRevocable: boolean;
 	schemaId: string;
+	schemaName: string;
 }
 
 export interface IProps {
