@@ -212,7 +212,7 @@ const SharedAgentForm = ({
 
 		let filteredNetworks = Object.keys(networks);
 		if (selectedMethod === DidMethod.POLYGON) {
-			filteredNetworks = filteredNetworks.filter(network => network === Network.TESTNET);
+			filteredNetworks = filteredNetworks.filter(network => network === Network.MAINNET);
 		}
 
 		return filteredNetworks.map((network) => (
