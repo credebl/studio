@@ -63,7 +63,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 		autoEndorsement: false,
 	});
 	const [errMsg, setErrMsg] = useState<string | null>(null);
-	const [w3cSchema,setW3cSchema]= useState<boolean>(false);
+	const [isW3CSchema,setIsW3CSchema]= useState<boolean>(false);
 
 	const [imgError, setImgError] = useState('');
 	const [autoEndorse, setautoEndorse] = useState(false);
@@ -150,7 +150,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 	};
 
 
-	const fetchOrganizationDetails = async () => {
+	const fetchOrgDetails = async () => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		const response = await getOrganizationById(orgId);
 		const { data } = response as AxiosResponse;
@@ -158,17 +158,17 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 			const did = data?.data?.org_agents?.[0]?.orgDid;
 			
 			if (did.includes(DidMethod.POLYGON) || did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
-				setW3cSchema(true);
+				setIsW3CSchema(true);
 			}
 			if (did.includes(DidMethod.INDY)) {
-				setW3cSchema(false);
+				setIsW3CSchema(false);
 			}
 		}
 		setLoading(false);
 	};
 
 	useEffect(() => {
-		fetchOrganizationDetails();
+		fetchOrgDetails();
 		
 	}, []);
 
@@ -457,7 +457,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 											<EndorsementTooltip />
 										</div>
                                     {
-									   !w3cSchema &&
+									   !isW3CSchema &&
 											<div>
 												<input
 													className=""
