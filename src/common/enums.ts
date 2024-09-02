@@ -46,7 +46,8 @@ export enum IssueCredentialUserText {
 
 export enum EndorsementType {
 	schema = 'schema',
-	credDef = 'credential-definition'
+	credDef = 'credential-definition',
+	w3cSchema = 'w3c Schema'
 }
 
 export enum EndorsementStatus {

@@ -6,6 +6,7 @@ import StatusTabletTag from '../../../commonComponents/StatusTabletTag';
 import { checkEcosystem } from '../../../config/ecosystem';
 import type { ICheckEcosystem} from '../../../config/ecosystem';
 import { useEffect, useState } from 'react';
+import React from 'react';
 
 interface IProps {
     data: any,
@@ -23,6 +24,7 @@ interface IAttributeData {
 const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTransitionDisabled, allAttributes }: IProps) => {
     const [isEcosystemLead, setIsEcosystemLead] = useState(false);
     const isSchema = data?.type === EndorsementType.schema
+    const isW3CSchema =data?.type === EndorsementType.w3cSchema
 
     useEffect(() => {
         const checkEcosystemData = async () => {
@@ -53,6 +55,20 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
                         }
                     }
                     return null
+                case isW3CSchema:
+                    if (requestData?.attributes && requestData?.attributes.length > 0) {
+                        if (allAttributes) {
+                            return {
+                                data: requestData?.attributes,
+                                sliced: isSliced(requestData?.attributes)
+                            }
+                        }
+                        return {
+                            data: requestData?.attributes?.slice(0, 3),
+                            sliced: isSliced(requestData?.attributes)
+                        }
+                    }
+                    return null
                 case !isSchema:
                     if (data?.requestBody && data?.requestBody?.schemaDetails && data?.requestBody?.schemaDetails?.attributes && data?.requestBody?.schemaDetails?.attributes.length > 0) {
                         if (allAttributes) {
@@ -80,9 +96,10 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
 
     const requestPayload = data?.requestPayload && JSON.parse(data?.requestPayload)
 
-    const requestData = isSchema ? requestPayload?.operation?.data : requestPayload?.operation
-    const attributesData: IAttributeData | null = getAttributes()
+    const requestData = isSchema ? requestPayload?.operation?.data : isW3CSchema ? requestPayload : requestPayload?.operation
 
+    const   W3CSchemaName = requestPayload?.schemaName
+    const attributesData: IAttributeData | null = getAttributes()
     return (
         <Card onClick={() => {
             if (enableAction && onClickCallback) {
@@ -96,6 +113,7 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
                 <div className='min-w-[6rem] max-w-100/13rem'>
                     <h5 className="text-xl font-bold leading-[1.1] text-gray-900 dark:text-white break-words truncate line-clamp-2 max-h-[43px] whitespace-normal" style={{ display: "-webkit-box" }}>
                         {isSchema ? requestData?.name : requestData?.tag}
+                        {W3CSchemaName}
                     </h5>
                     {
                         isSchema &&
@@ -125,11 +143,11 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
                     </div>
                 }
                 <div className={`${isSchema ? "text-primary-700 bg-primary-100" : "bg-green-100 text-green-800"} w-fit py-1.5 px-3 rounded-md text-sm h-fit mt-3`}>
-                    {isSchema ? "Schema" : "Credential Definition"}
+                    {isSchema ? "Schema" : isW3CSchema ?'W3C schema' : "Credential Definition"}
                 </div>
             </div>
             < div className="min-w-0 flex-none" >
-                {!isSchema &&
+                {!isSchema && !isW3CSchema &&
                     <>
                         <p className="truncate text-sm font-medium text-gray-900 dark:text-white pb-2">
                             <span className="font-semibold">Schema Name:</span> {data?.requestBody?.schemaDetails?.name || "-"}

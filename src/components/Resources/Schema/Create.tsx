@@ -121,6 +121,7 @@ const CreateSchema = () => {
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const did = data?.data?.org_agents?.[0]?.orgDid;
+			
 			if (did) {
 				if (did.includes(DidMethod.INDY)) {
 					setSchemaTypeValues(SchemaTypeValue.INDY);				
@@ -200,12 +201,17 @@ const CreateSchema = () => {
 		setCreateLoader(true);
 		const schemaFieldName = {
 			endorse: true,
-			type: SchemaType.INDY,
+			type: type,
 			schemaPayload: {
 				schemaVersion: values.schemaVersion,
+				...(type === SchemaType.INDY && { schemaVersion: values.schemaVersion }),				
+				...(type === SchemaType.W3C && { schemaType: schemaTypeValues }),				
 				schemaName: values.schemaName,
-				attributes: values.attribute
+				attributes: values.attribute,
+				description:values.schemaName,
+				orgId: orgId,
 			},
+
 		};
 
 		const id = await getEcosystemId();
