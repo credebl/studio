@@ -8,7 +8,7 @@ import { Button, Card } from 'flowbite-react';
 import Select from 'react-select';
 import { AlertComponent } from '../AlertComponent';
 import IssuancePopup from './IssuancePopup';
-import { type AxiosResponse } from 'axios';
+import type { AxiosResponse } from 'axios';
 import { getFromLocalStorage } from '../../api/Auth';
 import { getSchemaCredDef } from '../../api/BulkIssuance';
 import { storageKeys, apiStatusCodes, CREDENTIAL_CONTEXT_VALUE, proofPurpose, itemPerPage } from '../../config/CommonConstant';
