@@ -134,7 +134,7 @@ const EmailIssuance = () => {
 			    	
 			  else if (currentSchemaType === SchemaTypes.schema_W3C && orgId && allSchemaSelectedFlag) {
 					const  response = await getAllSchemas(schemaListAPIParameter,currentSchemaType); 
-					const { data } = response as unknown as AxiosResponse;
+					const { data } = response as AxiosResponse;
 					
 					if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 					const credentialDefs = data.data.data;
