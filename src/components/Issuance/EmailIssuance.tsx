@@ -95,6 +95,8 @@ const EmailIssuance = () => {
 				currentSchemaType = SchemaTypes.schema_INDY;
 			}
 			setSchemaType(currentSchemaType); 
+
+			//FIXME:  Logic of API call as per schema selection
 				if((currentSchemaType === SchemaTypes.schema_INDY && orgId && isAllSchemaFlagSelected ) || (currentSchemaType && !isAllSchemaFlagSelected)){
 
 					const response = await getSchemaCredDef(currentSchemaType); 
@@ -131,7 +133,8 @@ const EmailIssuance = () => {
 						}
 						setLoading(false);
 				}
-			    	
+			//FIXME:  Logic of API call as per schema selection
+  	
 			  else if (currentSchemaType === SchemaTypes.schema_W3C && orgId && allSchemaSelectedFlag) {
 					const  response = await getAllSchemas(schemaListAPIParameter,currentSchemaType); 
 					const { data } = response as AxiosResponse;
@@ -456,7 +459,7 @@ const EmailIssuance = () => {
 													
 													<div className="flex flex-wrap overflow-hidden">
 														{
-															isAllSchemaFlagSelected ==='false' ? (
+															!isAllSchemaFlagSelected ? (
 																credentialSelected?.schemaAttributes?.map((element: IAttributes) => (
 																	<div key={element.attributeName} className="truncate">
 																		<span className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
