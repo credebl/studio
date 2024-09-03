@@ -48,7 +48,7 @@ const BulkIssuance = () => {
 	const [mounted, setMounted] = useState<boolean>(false)
 	const [schemaType, setSchemaType]= useState<SchemaTypes>();
 	const [selectedTemplate, setSelectedTemplate] = useState<any>();
-	const [isAllSchema, setIsAllSchema] = useState<string>();
+	const [isAllSchema, setIsAllSchema] = useState<boolean>();
 	const [schemaListAPIParameters, setSchemaListAPIParameters] = useState({
 		itemPerPage: itemPerPage,
 		page: 1,
@@ -80,7 +80,12 @@ const BulkIssuance = () => {
 			const orgDid = await getFromLocalStorage(storageKeys.ORG_DID);
 
 			const isAllSchemaSelectedFlag = await getFromLocalStorage(storageKeys.ALL_SCHEMAS)
-			setIsAllSchema(isAllSchemaSelectedFlag)
+			if(isAllSchemaSelectedFlag === `false` || !isAllSchemaSelectedFlag){
+				setIsAllSchema(false)
+			}
+			else if(isAllSchemaSelectedFlag ==='true'){
+				setIsAllSchema(true)
+			}
 		
 			let currentSchemaType = schemaType;
 	
@@ -91,7 +96,7 @@ const BulkIssuance = () => {
 			}
 
 			setSchemaType(currentSchemaType); 
-			if ((currentSchemaType === SchemaTypes.schema_INDY &&  isAllSchemaSelectedFlag === 'true') || (currentSchemaType && orgId && isAllSchemaSelectedFlag =='false')) {
+			if ((currentSchemaType === SchemaTypes.schema_INDY &&  isAllSchema) || (currentSchemaType && orgId && !isAllSchema)) {
 				const response = await getSchemaCredDef(currentSchemaType); 
 				const { data } = response as AxiosResponse;
 
@@ -126,9 +131,7 @@ const BulkIssuance = () => {
 				}
 				setLoading(false);
 			}
-
-
-			else if (currentSchemaType === SchemaTypes.schema_W3C && orgId && isAllSchemaSelectedFlag === 'true') {
+			else if (currentSchemaType === SchemaTypes.schema_W3C && orgId && isAllSchema) {
 
 				
 				const response = await getAllSchemas(schemaListAPIParameters,currentSchemaType); 
@@ -171,6 +174,8 @@ const BulkIssuance = () => {
 
 	useEffect(() => {
 		getSchemaCredentials(schemaListAPIParameters);
+	}, [isAllSchema]);
+	useEffect(() => {	
 		setMounted(true);
 		(async () => {
 			try {
