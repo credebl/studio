@@ -133,38 +133,59 @@ const BulkIssuance = () => {
 			}
 			else if (currentSchemaType === SchemaTypes.schema_W3C && orgId && isAllSchema) {
 
-				
-				const response = await getAllSchemas(schemaListAPIParameters,currentSchemaType); 
+				let allSchemas: ICredentials[] = [];
+				let totalItems = 0;
+				let response;
+			
+				for (let currentPage = 1; ; currentPage++) {
+					response = await getAllSchemas({
+						...schemaListAPIParameters,
+						page: currentPage,
+					}, currentSchemaType);
+			
 					const { data } = response as AxiosResponse;
-					
-
+			
 					if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-						const  credentialDefsData = data.data.data;
-						
-
-						const options =  credentialDefsData.map(({
-							name,
-							version,
-							schemaLedgerId,
-							attributes,
-							type
-						} : ICredentials) => ({
-							value:  version,
-							label: `${name} [${version}]`,
-							schemaName: name,
-							type:type,
-							schemaVersion: version,
-							schemaIdentifier: schemaLedgerId,
-							attributes: Array.isArray(attributes) ? attributes : (attributes ? JSON.parse(attributes) : []),
-						}));	
-					 setCredentialOptionsData(options);
-				} else {
-					setUploadMessage({message: response as string, type: "failure"});
-					setSuccess(null)
-					setFailure(null)
+						const credentialDefs = data.data.data;
+						totalItems = data.data.totalItems;
+						allSchemas = [...allSchemas, ...credentialDefs];
+			
+						if (allSchemas.length >= totalItems) {
+							break;
+						}
+					} else {
+						setSuccess(null);
+						setFailure(null);
+						break;
+					}
 				}
+			
+				if (allSchemas.length > 0) {
+					const options = allSchemas.map(({
+						name,
+						version,
+						schemaLedgerId,
+						attributes,
+						type
+					} : ICredentials) => ({
+						value: version,
+						label: `${name} [${version}]`,
+						schemaName: name,
+						type: type,
+						schemaVersion: version,
+						schemaIdentifier: schemaLedgerId,
+						attributes: Array.isArray(attributes) ? attributes : (attributes ? JSON.parse(attributes) : []),
+					}));
+					setCredentialOptionsData(options);
+				} else {
+					setUploadMessage({ message: response as string, type: "failure" });
+					setSuccess(null);
+					setFailure(null);
+				}
+			
 				setLoading(false);
 			}
+			
 		} catch (error) {
 			setUploadMessage({message: error as string, type: "failure"});
 			setSuccess(null)

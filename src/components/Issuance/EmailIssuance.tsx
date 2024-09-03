@@ -132,38 +132,56 @@ const EmailIssuance = () => {
 						setLoading(false);
 				}
 			    	
-			  else if (currentSchemaType === SchemaTypes.schema_W3C && orgId && allSchemaSelectedFlag) {
-					const  response = await getAllSchemas(schemaListAPIParameter,currentSchemaType); 
-					const { data } = response as AxiosResponse;
-					
-					if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-					const credentialDefs = data.data.data;
-					
-					const options = credentialDefs.map(({
-						name,
-						version,
-						schemaLedgerId,
-						attributes,
-						type
-					} : ICredentials) => ({
-						value:  version,
-						label: `${name} [${version}]`,
-						schemaName: name,
-						type:type,
-						schemaVersion: version,
-						schemaIdentifier: schemaLedgerId,
-						attributes: Array.isArray(attributes) ? attributes : (attributes ? JSON.parse(attributes) : []),
-					}));										
-					setCredentialOptions(options);
-	
-							
+				else if ((currentSchemaType === SchemaTypes.schema_W3C) && (orgId) && (allSchemaSelectedFlag)) {
+					let allSchemas: ICredentials[] = [];
+					let totalItems = 0;
+					let response;
+
+					for (let currentPage = 1; ; currentPage++) {
+						response = await getAllSchemas({
+							...schemaListAPIParameter,
+							page: currentPage,
+						}, currentSchemaType);
+
+						const { data } = response as AxiosResponse;
+
+						if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+							const credentialDefs = data.data.data;
+							totalItems = data.data.totalItems;
+							allSchemas = [...allSchemas, ...credentialDefs];
+
+							if (allSchemas.length >= totalItems) {
+								break;
+							}
 						} else {
 							setSuccess(null);
 							setFailure(null);
+							break;
 						}
-						setLoading(false);
 					}
-					
+		
+					if (allSchemas.length > 0) {
+						const options = allSchemas.map(({
+							name,
+							version,
+							schemaLedgerId,
+							attributes,
+							type
+						}: ICredentials) => ({
+							value: version,
+							label: `${name} [${version}]`,
+							schemaName: name,
+							type: type,
+							schemaVersion: version,
+							schemaIdentifier: schemaLedgerId,
+							attributes: Array.isArray(attributes) ? attributes : (attributes ? JSON.parse(attributes) : []),
+						}));
+		
+						setCredentialOptions(options);
+					}
+		
+					setLoading(false);
+				}					
 					} catch (error) {
 						setSuccess(null);
 						setFailure(null);
