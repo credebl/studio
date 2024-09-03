@@ -60,7 +60,7 @@ const EmailIssuance = () => {
 	const [credDefId, setCredDefId] = useState<string>();
 	const [schemasIdentifier, setSchemasIdentifier] = useState<string>();
 	const [schemaTypeValue, setSchemaTypeValue] = useState<SchemaTypeValue>();
-	const [isAllSchemaFlagSelected, setIsAllSchemaFlagSelected] = useState<string>();
+	const [isAllSchemaFlagSelected, setIsAllSchemaFlagSelected] = useState<boolean>();
 
 	const getSchemaCredentials = async (schemaListAPIParameter: GetAllSchemaListParameter) => {
 		
@@ -70,7 +70,13 @@ const EmailIssuance = () => {
 			const orgDid = await getFromLocalStorage(storageKeys.ORG_DID);
 
 			const allSchemaSelectedFlag = await getFromLocalStorage(storageKeys.ALL_SCHEMAS)
-			setIsAllSchemaFlagSelected(allSchemaSelectedFlag)
+			if(allSchemaSelectedFlag === `false` || !allSchemaSelectedFlag){		
+				setIsAllSchemaFlagSelected(false)
+			}
+			else if(allSchemaSelectedFlag ==='true'){
+			setIsAllSchemaFlagSelected(true)
+	
+			}
 			let currentSchemaType = schemaType;
 	
 			if (orgDid?.includes(DidMethod.POLYGON)) {
@@ -88,10 +94,8 @@ const EmailIssuance = () => {
 				setCredentialType(CredentialType.INDY)
 				currentSchemaType = SchemaTypes.schema_INDY;
 			}
-
 			setSchemaType(currentSchemaType); 
-			
-				if((currentSchemaType === SchemaTypes.schema_INDY && orgId && allSchemaSelectedFlag === 'true') || (currentSchemaType && allSchemaSelectedFlag === 'false')){
+				if((currentSchemaType === SchemaTypes.schema_INDY && orgId && isAllSchemaFlagSelected ) || (currentSchemaType && !isAllSchemaFlagSelected)){
 
 					const response = await getSchemaCredDef(currentSchemaType); 
 					const { data } = response as AxiosResponse;
@@ -127,10 +131,9 @@ const EmailIssuance = () => {
 						}
 						setLoading(false);
 				}
-			    
-
-			  else  if (currentSchemaType === SchemaTypes.schema_W3C && orgId && allSchemaSelectedFlag === 'true') {
-					const response = await getAllSchemas(schemaListAPIParameter,currentSchemaType); 
+			    	
+			  else if (currentSchemaType === SchemaTypes.schema_W3C && orgId && allSchemaSelectedFlag) {
+					const  response = await getAllSchemas(schemaListAPIParameter,currentSchemaType); 
 					const { data } = response as AxiosResponse;
 					
 					if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -168,7 +171,7 @@ const EmailIssuance = () => {
 				};
 
 				useEffect(() => {
-					getSchemaCredentials(schemaListAPIParameter);
+						
 					setMounted(true);
 					(async () => {
 						try {
@@ -185,6 +188,10 @@ const EmailIssuance = () => {
 						inputRef.current.focus();
 					}
 				}, [isEditing]);
+
+				useEffect(() => {
+					getSchemaCredentials(schemaListAPIParameter);
+				}, [isAllSchemaFlagSelected]);
 
 	const confirmOOBCredentialIssuance = async () => {
 		setIssueLoader(true);
