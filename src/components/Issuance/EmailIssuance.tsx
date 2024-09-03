@@ -136,7 +136,7 @@ const EmailIssuance = () => {
 			    
 				//FIXME:  Logic of API call as per schema selection
 			else if ((currentSchemaType === SchemaTypes.schema_W3C) && (orgId) && (allSchemaSelectedFlag)) {
-				let allSchemas: ICredentials[] = [];
+				let allSchemaList: ICredentials[] = [];
 				let totalItems = 0;
 				let response;
 
@@ -151,13 +151,13 @@ const EmailIssuance = () => {
 					if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 						const credentialDefs = data.data.data;
 						totalItems = data.data.totalItems;
-						allSchemas = [...allSchemas, ...credentialDefs];
+						allSchemaList = [...allSchemaList, ...credentialDefs];
 
-						if (allSchemas.length >= totalItems) {
+						if (allSchemaList.length >= totalItems) {
 							break;
 						}
 
-						const options = allSchemas.map(({
+						const dropDownOptions = allSchemaList.map(({
 							name,
 							version,
 							schemaLedgerId,
@@ -172,7 +172,7 @@ const EmailIssuance = () => {
 							schemaIdentifier: schemaLedgerId,
 							attributes: Array.isArray(attributes) ? attributes : (attributes ? JSON.parse(attributes) : []),
 						}));
-						setCredentialOptions(options);
+						setCredentialOptions(dropDownOptions);
 
 
 					} else {
@@ -182,8 +182,8 @@ const EmailIssuance = () => {
 					}
 				}
 
-				if (allSchemas.length > 0) {
-					const options = allSchemas.map(({
+				if (allSchemaList.length > 0) {
+					const dropDownOptions = allSchemaList.map(({
 						name,
 						version,
 						schemaLedgerId,
@@ -199,7 +199,7 @@ const EmailIssuance = () => {
 						attributes: Array.isArray(attributes) ? attributes : (attributes ? JSON.parse(attributes) : []),
 					}));
 
-					setCredentialOptions(options);
+					setCredentialOptions(dropDownOptions);
 				}
 
 				setLoading(false);
