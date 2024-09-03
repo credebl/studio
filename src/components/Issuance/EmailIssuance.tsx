@@ -95,6 +95,8 @@ const EmailIssuance = () => {
 				currentSchemaType = SchemaTypes.schema_INDY;
 			}
 			setSchemaType(currentSchemaType); 
+
+			//FIXME:  Logic of API call as per schema selection
 				if((currentSchemaType === SchemaTypes.schema_INDY && orgId && isAllSchemaFlagSelected ) || (currentSchemaType && !isAllSchemaFlagSelected)){
 
 					const response = await getSchemaCredDef(currentSchemaType); 
@@ -131,7 +133,8 @@ const EmailIssuance = () => {
 						}
 						setLoading(false);
 				}
-			    	
+			//FIXME:  Logic of API call as per schema selection
+  	
 			  else if (currentSchemaType === SchemaTypes.schema_W3C && orgId && allSchemaSelectedFlag) {
 					const  response = await getAllSchemas(schemaListAPIParameter,currentSchemaType); 
 					const { data } = response as AxiosResponse;
