@@ -133,7 +133,7 @@ const BulkIssuance = () => {
 			}
 			else if (currentSchemaType === SchemaTypes.schema_W3C && orgId && isAllSchema) {
 
-				let allSchemas: ICredentials[] = [];
+				let platformSchemas: ICredentials[] = [];
 				let totalItems = 0;
 				let response;
 			
@@ -148,9 +148,9 @@ const BulkIssuance = () => {
 					if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 						const credentialDefs = data.data.data;
 						totalItems = data.data.totalItems;
-						allSchemas = [...allSchemas, ...credentialDefs];
+						platformSchemas = [...platformSchemas, ...credentialDefs];
 			
-						if (allSchemas.length >= totalItems) {
+						if (platformSchemas.length >= totalItems) {
 							break;
 						}
 					} else {
@@ -160,8 +160,8 @@ const BulkIssuance = () => {
 					}
 				}
 			
-				if (allSchemas.length > 0) {
-					const options = allSchemas.map(({
+				if (platformSchemas.length > 0) {
+					const optionsData = platformSchemas.map(({
 						name,
 						version,
 						schemaLedgerId,
@@ -176,7 +176,7 @@ const BulkIssuance = () => {
 						schemaIdentifier: schemaLedgerId,
 						attributes: Array.isArray(attributes) ? attributes : (attributes ? JSON.parse(attributes) : []),
 					}));
-					setCredentialOptionsData(options);
+					setCredentialOptionsData(optionsData);
 				} else {
 					setUploadMessage({ message: response as string, type: "failure" });
 					setSuccess(null);
