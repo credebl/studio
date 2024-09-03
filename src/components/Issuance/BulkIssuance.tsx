@@ -630,6 +630,8 @@ const BulkIssuance = () => {
 														{credentialSelected?.schemaName || ""}{' '}
 														<span>[{credentialSelected?.schemaVersion}]</span>
 													</p>
+													{
+														schemaType === SchemaTypes.schema_INDY && 
 													<p className="text-black dark:text-white pb-2">
 														{' '}
 														<span className="font-semibold">
@@ -637,10 +639,12 @@ const BulkIssuance = () => {
 														</span>{' '}
 														{credentialSelected?.credentialDefinition}
 													</p>
+													}
+
 													<span className='text-black dark:text-white font-semibold'>Attributes:</span>
 													<div className="flex flex-wrap overflow-hidden">
 														{
-															isAllSchema ==='false' ? (
+															!isAllSchema ? (
 																credentialSelected?.schemaAttributes?.map(
 																	(element: IAttributes) => (
 																		<div key={element.attributeName}>

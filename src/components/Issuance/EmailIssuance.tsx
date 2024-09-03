@@ -95,6 +95,8 @@ const EmailIssuance = () => {
 				currentSchemaType = SchemaTypes.schema_INDY;
 			}
 			setSchemaType(currentSchemaType); 
+
+			//FIXME:  Logic of API call as per schema selection
 				if((currentSchemaType === SchemaTypes.schema_INDY && orgId && isAllSchemaFlagSelected ) || (currentSchemaType && !isAllSchemaFlagSelected)){
 
 					const response = await getSchemaCredDef(currentSchemaType); 
@@ -131,36 +133,30 @@ const EmailIssuance = () => {
 						}
 						setLoading(false);
 				}
-			    	
-				else if ((currentSchemaType === SchemaTypes.schema_W3C) && (orgId) && (allSchemaSelectedFlag)) {
-					let allSchemas: ICredentials[] = [];
-					let totalItems = 0;
-					let response;
+			    
+				//FIXME:  Logic of API call as per schema selection
+			else if ((currentSchemaType === SchemaTypes.schema_W3C) && (orgId) && (allSchemaSelectedFlag)) {
+				let allSchemas: ICredentials[] = [];
+				let totalItems = 0;
+				let response;
 
-					for (let currentPage = 1; ; currentPage++) {
-						response = await getAllSchemas({
-							...schemaListAPIParameter,
-							page: currentPage,
-						}, currentSchemaType);
+				for (let currentPage = 1; ; currentPage++) {
+					response = await getAllSchemas({
+						...schemaListAPIParameter,
+						page: currentPage,
+					}, currentSchemaType);
 
-						const { data } = response as AxiosResponse;
+					const { data } = response as AxiosResponse;
 
-						if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-							const credentialDefs = data.data.data;
-							totalItems = data.data.totalItems;
-							allSchemas = [...allSchemas, ...credentialDefs];
+					if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+						const credentialDefs = data.data.data;
+						totalItems = data.data.totalItems;
+						allSchemas = [...allSchemas, ...credentialDefs];
 
-							if (allSchemas.length >= totalItems) {
-								break;
-							}
-						} else {
-							setSuccess(null);
-							setFailure(null);
+						if (allSchemas.length >= totalItems) {
 							break;
 						}
-					}
-		
-					if (allSchemas.length > 0) {
+
 						const options = allSchemas.map(({
 							name,
 							version,
@@ -176,12 +172,38 @@ const EmailIssuance = () => {
 							schemaIdentifier: schemaLedgerId,
 							attributes: Array.isArray(attributes) ? attributes : (attributes ? JSON.parse(attributes) : []),
 						}));
-		
 						setCredentialOptions(options);
+
+
+					} else {
+						setSuccess(null);
+						setFailure(null);
+						break;
 					}
-		
-					setLoading(false);
-				}					
+				}
+
+				if (allSchemas.length > 0) {
+					const options = allSchemas.map(({
+						name,
+						version,
+						schemaLedgerId,
+						attributes,
+						type
+					}: ICredentials) => ({
+						value: version,
+						label: `${name} [${version}]`,
+						schemaName: name,
+						type: type,
+						schemaVersion: version,
+						schemaIdentifier: schemaLedgerId,
+						attributes: Array.isArray(attributes) ? attributes : (attributes ? JSON.parse(attributes) : []),
+					}));
+
+					setCredentialOptions(options);
+				}
+
+				setLoading(false);
+			}					
 					} catch (error) {
 						setSuccess(null);
 						setFailure(null);
@@ -474,7 +496,7 @@ const EmailIssuance = () => {
 													
 													<div className="flex flex-wrap overflow-hidden">
 														{
-															isAllSchemaFlagSelected ==='false' ? (
+															!isAllSchemaFlagSelected ? (
 																credentialSelected?.schemaAttributes?.map((element: IAttributes) => (
 																	<div key={element.attributeName} className="truncate">
 																		<span className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
