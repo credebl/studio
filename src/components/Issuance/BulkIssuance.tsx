@@ -1,6 +1,6 @@
 import { Button, Card, Pagination } from 'flowbite-react';
 import React, { useEffect, useState } from 'react';
-import Select from 'react-select';
+import Select, { type ActionMeta, type SingleValue } from 'react-select';
 import {
 	DownloadCsvTemplate, getSchemaCredDef, getCsvFileData,
 	issueBulkCredential,
@@ -72,6 +72,20 @@ const BulkIssuance = () => {
 	};
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 
+	const [searchValue, setSearchValue] = useState('');
+
+	const onInputChange = (inputValue: string) => {
+		setSearchValue(inputValue); 
+		setSchemaListAPIParameters(prevParams => {
+			const updatedParams = {
+				...prevParams,
+				allSearch: inputValue,
+			};
+			getSchemaCredentials(updatedParams);
+			return updatedParams;
+		});
+	};
+
 	const getSchemaCredentials = async (schemaListAPIParameters: GetAllSchemaListParameter) => {
 		try {
 			setLoading(true);
@@ -95,6 +109,7 @@ const BulkIssuance = () => {
 				currentSchemaType = SchemaTypes.schema_INDY;
 			}
 
+			let dropDownOptions;
 			setSchemaType(currentSchemaType); 
 			if ((currentSchemaType === SchemaTypes.schema_INDY &&  isAllSchema) || (currentSchemaType && orgId && !isAllSchema)) {
 				const response = await getSchemaCredDef(currentSchemaType); 
@@ -103,7 +118,7 @@ const BulkIssuance = () => {
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 					const { data:  credentialDefsData } = data;
 
-					const options =  credentialDefsData.map(
+					dropDownOptions =  credentialDefsData.map(
 						({
 							schemaName,
 							schemaVersion,
@@ -123,7 +138,7 @@ const BulkIssuance = () => {
 						}),
 					);
 					
-					 setCredentialOptionsData(options);
+					 setCredentialOptionsData(dropDownOptions);
 				} else {
 					setUploadMessage({message: response as string, type: "failure"});
 					setSuccess(null)
@@ -133,65 +148,58 @@ const BulkIssuance = () => {
 			}
 			else if (currentSchemaType === SchemaTypes.schema_W3C && orgId && isAllSchema) {
 
-				let platformSchemas: ICredentials[] = [];
-				let totalItems = 0;
-				let response;
-			
-				for (let currentPage = 1; ; currentPage++) {
-					response = await getAllSchemas({
-						...schemaListAPIParameters,
-						page: currentPage,
-					}, currentSchemaType);
-			
+				
+				const response = await getAllSchemas(schemaListAPIParameters,currentSchemaType); 
 					const { data } = response as AxiosResponse;
-			
+					
+
 					if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-						const credentialDefs = data.data.data;
-						totalItems = data.data.totalItems;
-						platformSchemas = [...platformSchemas, ...credentialDefs];
-			
-						if (platformSchemas.length >= totalItems) {
-							break;
-						}
-					} else {
-						setSuccess(null);
-						setFailure(null);
-						break;
-					}
-				}
-			
-				if (platformSchemas.length > 0) {
-					const optionsData = platformSchemas.map(({
-						name,
-						version,
-						schemaLedgerId,
-						attributes,
-						type
-					} : ICredentials) => ({
-						value: version,
-						label: `${name} [${version}]`,
-						schemaName: name,
-						type: type,
-						schemaVersion: version,
-						schemaIdentifier: schemaLedgerId,
-						attributes: Array.isArray(attributes) ? attributes : (attributes ? JSON.parse(attributes) : []),
-					}));
-					setCredentialOptionsData(optionsData);
+						const  credentialDefsData = data.data.data;
+						
+
+						dropDownOptions =  credentialDefsData.map(({
+							name,
+							version,
+							schemaLedgerId,
+							attributes,
+							type
+						} : ICredentials) => ({
+							value:  version,
+							label: `${name} [${version}]`,
+							schemaName: name,
+							type:type,
+							schemaVersion: version,
+							schemaIdentifier: schemaLedgerId,
+							attributes: Array.isArray(attributes) ? attributes : (attributes ? JSON.parse(attributes) : []),
+						}));	
+					 setCredentialOptionsData(dropDownOptions);
 				} else {
-					setUploadMessage({ message: response as string, type: "failure" });
-					setSuccess(null);
-					setFailure(null);
+					setUploadMessage({message: response as string, type: "failure"});
+					setSuccess(null)
+					setFailure(null)
 				}
-			
 				setLoading(false);
 			}
-			
 		} catch (error) {
-			setUploadMessage({message: error as string, type: "failure"});
+			// setUploadMessage({message: error as string, type: "failure"});
+			setUploadMessage({ message: (error as Error).message, type: "failure" });
 			setSuccess(null)
 			setFailure(null)
 		}
 	};
+
+
+	const onSelectChange = (newValue: SingleValue<ICredentials | undefined>, actionMeta: ActionMeta<ICredentials | undefined>) => {
+		const value = newValue as ICredentials | undefined;
+		if (schemaType === SchemaTypes.schema_INDY) {
+			setSelectedTemplate(value?.credentialDefinitionId);
+			setCredentialSelected(value ?? null);
+		} else if (schemaType === SchemaTypes.schema_W3C) {
+			setCredentialSelected(value ?? null);
+			setSelectedTemplate(value?.schemaIdentifier)
+		}
+	};
+
 
 	useEffect(() => {
 		getSchemaCredentials(schemaListAPIParameters);
@@ -607,15 +615,9 @@ const BulkIssuance = () => {
 											isSearchable={true}
 											name="color"
 											options={ credentialOptionsData}
-											onChange={(value: ICredentials | null) => {
-												if (schemaType === SchemaTypes.schema_INDY) {
-													setSelectedTemplate(value?.credentialDefinitionId);
-													setCredentialSelected(value ?? null);
-												} else if (schemaType === SchemaTypes.schema_W3C) {
-													setCredentialSelected(value ?? null);
-													setSelectedTemplate(value?.schemaIdentifier)
-												}
-											}}
+											onInputChange={onInputChange}
+											onChange={onSelectChange}
+											value={credentialOptionsData.find(option => option.value === searchValue)}
 											ref={selectInputRef}
 										/>:
 										null
