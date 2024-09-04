@@ -5,7 +5,7 @@ import { pathRoutes } from '../../config/pathRoutes';
 import BreadCrumbs from '../BreadCrumbs';
 import BackButton from '../../commonComponents/backbutton';
 import { Button, Card } from 'flowbite-react';
-import Select from 'react-select';
+import Select, { type SingleValue } from 'react-select';
 import { AlertComponent } from '../AlertComponent';
 import IssuancePopup from './IssuancePopup';
 import type { AxiosResponse } from 'axios';
@@ -61,59 +61,71 @@ const EmailIssuance = () => {
 	const [schemasIdentifier, setSchemasIdentifier] = useState<string>();
 	const [schemaTypeValue, setSchemaTypeValue] = useState<SchemaTypeValue>();
 	const [isAllSchemaFlagSelected, setIsAllSchemaFlagSelected] = useState<boolean>();
+	const [searchValue, setSearchValue] = useState('');
 
-	const getSchemaCredentials = async (schemaListAPIParameter: GetAllSchemaListParameter) => {
+	const handleInputChange = (inputValue: string) => {
+		setSearchValue(inputValue); 
+		setSchemaListAPIParameter(prevParams => {
+			const updatedParams = {
+				...prevParams,
+				allSearch: inputValue,
+			};
+			getSchemaCredentials(updatedParams);
+			return updatedParams;
+		});
+	};
 		
+	const getSchemaCredentials = async (schemaListAPIParameter: GetAllSchemaListParameter) => {
+
 		try {
 			setLoading(true);
 			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 			const orgDid = await getFromLocalStorage(storageKeys.ORG_DID);
 
 			const allSchemaSelectedFlag = await getFromLocalStorage(storageKeys.ALL_SCHEMAS)
-			if(allSchemaSelectedFlag === `false` || !allSchemaSelectedFlag){		
+			if (allSchemaSelectedFlag === `false` || !allSchemaSelectedFlag) {
 				setIsAllSchemaFlagSelected(false)
 			}
-			else if(allSchemaSelectedFlag ==='true'){
-			setIsAllSchemaFlagSelected(true)
-	
+			else if (allSchemaSelectedFlag === 'true') {
+				setIsAllSchemaFlagSelected(true)
 			}
 			let currentSchemaType = schemaType;
-	
 			if (orgDid?.includes(DidMethod.POLYGON)) {
 				currentSchemaType = SchemaTypes.schema_W3C;
 				setSchemaTypeValue(SchemaTypeValue.POLYGON)
 				setCredentialType(CredentialType.JSONLD)
-				
-			} else if ( orgDid?.includes(DidMethod.KEY) || orgDid?.includes(DidMethod.WEB)) {
+
+			} else if (orgDid?.includes(DidMethod.KEY) || orgDid?.includes(DidMethod.WEB)) {
 				currentSchemaType = SchemaTypes.schema_W3C;
 				setSchemaTypeValue(SchemaTypeValue.NO_LEDGER)
 
 				setCredentialType(CredentialType.JSONLD)
 			}
-				else if (orgDid?.includes(DidMethod.INDY)) {
+			else if (orgDid?.includes(DidMethod.INDY)) {
 				setCredentialType(CredentialType.INDY)
 				currentSchemaType = SchemaTypes.schema_INDY;
 			}
-			setSchemaType(currentSchemaType); 
+			setSchemaType(currentSchemaType);
+
+			let options;
 
 			//FIXME:  Logic of API call as per schema selection
-				if((currentSchemaType === SchemaTypes.schema_INDY && orgId && isAllSchemaFlagSelected ) || (currentSchemaType && !isAllSchemaFlagSelected)){
-
-					const response = await getSchemaCredDef(currentSchemaType); 
-					const { data } = response as AxiosResponse;
-	
-					if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			if((currentSchemaType === SchemaTypes.schema_INDY && orgId 
+			 ) || (currentSchemaType ===SchemaTypes.schema_W3C && isAllSchemaFlagSelected === false)){
+				const response = await getSchemaCredDef(currentSchemaType);
+				const { data } = response as AxiosResponse;
+				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 					const credentialDefs = data.data;
-					
-					const options = credentialDefs.map(({
+
+					options = credentialDefs.map(({
 						schemaName,
 						schemaVersion,
 						credentialDefinition,
 						credentialDefinitionId,
 						schemaIdentifier,
 						schemaAttributes
-					} : ICredentials) => ({
-						value: schemaType===SchemaTypes.schema_INDY ? credentialDefinitionId : schemaVersion,
+					}: ICredentials) => ({
+						value: schemaType === SchemaTypes.schema_INDY ? credentialDefinitionId : schemaVersion,
 						label: `${schemaName} [${schemaVersion}]${currentSchemaType === SchemaTypes.schema_INDY ? ` - (${credentialDefinition})` : ''}`,
 						schemaName: schemaName,
 						schemaVersion: schemaVersion,
@@ -125,65 +137,23 @@ const EmailIssuance = () => {
 							typeof schemaAttributes === 'string' &&
 							JSON.parse(schemaAttributes),
 					}));
-	
-					setCredentialOptions(options);			
-						} else {
-							setSuccess(null);
-							setFailure(null);
-						}
-						setLoading(false);
+
+					setCredentialOptions(options);
+				} else {
+					setSuccess(null);
+					setFailure(null);
 				}
-			    
-				//FIXME:  Logic of API call as per schema selection
+				setLoading(false);
+			}
+			
+			//FIXME:  Logic of API call as per schema selection
 			else if ((currentSchemaType === SchemaTypes.schema_W3C) && (orgId) && (allSchemaSelectedFlag)) {
-				let allSchemaList: ICredentials[] = [];
-				let totalItems = 0;
-				let response;
+				const response = await getAllSchemas(schemaListAPIParameter, currentSchemaType);
+				const { data } = response as AxiosResponse;
 
-				for (let currentPage = 1; ; currentPage++) {
-					response = await getAllSchemas({
-						...schemaListAPIParameter,
-						page: currentPage,
-					}, currentSchemaType);
-
-					const { data } = response as AxiosResponse;
-
-					if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-						const credentialDefs = data.data.data;
-						totalItems = data.data.totalItems;
-						allSchemaList = [...allSchemaList, ...credentialDefs];
-
-						if (allSchemaList.length >= totalItems) {
-							break;
-						}
-
-						const dropDownOptions = allSchemaList.map(({
-							name,
-							version,
-							schemaLedgerId,
-							attributes,
-							type
-						}: ICredentials) => ({
-							value: version,
-							label: `${name} [${version}]`,
-							schemaName: name,
-							type: type,
-							schemaVersion: version,
-							schemaIdentifier: schemaLedgerId,
-							attributes: Array.isArray(attributes) ? attributes : (attributes ? JSON.parse(attributes) : []),
-						}));
-						setCredentialOptions(dropDownOptions);
-
-
-					} else {
-						setSuccess(null);
-						setFailure(null);
-						break;
-					}
-				}
-
-				if (allSchemaList.length > 0) {
-					const dropDownOptions = allSchemaList.map(({
+				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+					const credentialDefs = data.data.data;
+					options = credentialDefs.map(({
 						name,
 						version,
 						schemaLedgerId,
@@ -198,17 +168,36 @@ const EmailIssuance = () => {
 						schemaIdentifier: schemaLedgerId,
 						attributes: Array.isArray(attributes) ? attributes : (attributes ? JSON.parse(attributes) : []),
 					}));
-
-					setCredentialOptions(dropDownOptions);
+					setCredentialOptions(options);
+				} else {
+					setSuccess(null);
+					setFailure(null);
 				}
-
 				setLoading(false);
-			}					
-					} catch (error) {
-						setSuccess(null);
-						setFailure(null);
-					}
-				};
+			}
+
+
+			setCredentialOptions(options);
+		} catch (error) {
+			setSuccess(null);
+			setFailure(null);
+		}
+	};
+
+
+	const handleSelectChange = (newValue: SingleValue<ICredentials> | null) => {
+		const value = newValue as ICredentials | null;
+		setBatchName(value?.label ?? '');
+		if (schemaType === SchemaTypes.schema_INDY) {
+			setCredDefId(value?.credentialDefinitionId);
+			setCredentialSelected(value ?? null);
+		} else if (schemaType === SchemaTypes.schema_W3C) {
+			setCredentialSelected(value ?? null);
+			setSchemasIdentifier(value?.schemaIdentifier);
+		}
+		setAttributes(value?.schemaAttributes ?? value?.attributes ?? []);
+	};
+
 
 				useEffect(() => {
 						
@@ -443,25 +432,11 @@ const EmailIssuance = () => {
 											isSearchable={true}
 											id="long-value-select"
 											instanceId="long-value-select"
-
 											name="color"
 											options={credentialOptions}
-												onChange={(value: ICredentials | null) => {
-													setBatchName(value?.label ?? '');
-													 
-												if (schemaType === SchemaTypes.schema_INDY) {
-													
-													setCredDefId(value?.credentialDefinitionId);
-													setCredentialSelected(value ?? null);
-												} else if (schemaType === SchemaTypes.schema_W3C) {
-
-													setCredentialSelected(value ?? null);
-													setSchemasIdentifier(value?.schemaIdentifier)
-												}
-												
-												setAttributes(value?.schemaAttributes ?? value?.attributes ?? []);
-
-												}}
+											onInputChange={handleInputChange}
+											onChange={handleSelectChange}
+											value={credentialOptions.find(option => option.value === searchValue)}
 											ref={selectInputRef}
 										/>
 										:
