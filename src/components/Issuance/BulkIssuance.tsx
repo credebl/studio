@@ -181,7 +181,6 @@ const BulkIssuance = () => {
 				setLoading(false);
 			}
 		} catch (error) {
-			// setUploadMessage({message: error as string, type: "failure"});
 			setUploadMessage({ message: (error as Error).message, type: "failure" });
 			setSuccess(null)
 			setFailure(null)
@@ -189,7 +188,7 @@ const BulkIssuance = () => {
 	};
 
 
-	const onSelectChange = (newValue: SingleValue<ICredentials | undefined>, actionMeta: ActionMeta<ICredentials | undefined>) => {
+	const onSelectChange = (newValue: SingleValue<ICredentials | undefined>) => {
 		const value = newValue as ICredentials | undefined;
 		if (schemaType === SchemaTypes.schema_INDY) {
 			setSelectedTemplate(value?.credentialDefinitionId);
