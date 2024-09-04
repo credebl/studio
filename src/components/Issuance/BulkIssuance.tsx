@@ -1,6 +1,6 @@
 import { Button, Card, Pagination } from 'flowbite-react';
 import React, { useEffect, useState } from 'react';
-import Select, { type ActionMeta, type SingleValue } from 'react-select';
+import Select, { type SingleValue } from 'react-select';
 import {
 	DownloadCsvTemplate, getSchemaCredDef, getCsvFileData,
 	issueBulkCredential,
