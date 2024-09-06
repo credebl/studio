@@ -35,7 +35,7 @@ export interface ICredentials {
 	value?:String;
 	label?: string;
 	credentialDefinitionId?: string;
-	schemaCredDefName: string;
+	schemaCredDefName?: string;
 	schemaName: string;
 	schemaVersion: string;
 	schemaIdentifier: string;

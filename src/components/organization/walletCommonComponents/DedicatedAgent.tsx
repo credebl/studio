@@ -553,11 +553,11 @@ const isSubmitButtonDisabled = () => {
 										</Label>
 										<ol>
 											<li className='mb-2'>
-												<span className='font-semibold text-sm text-gray-800'>Step 1:</span>
-												<div className='ml-4 text-sm text-gray-700'>
+												<span className='font-semibold text-sm text-gray-800 dark:text-white'>Step 1:</span>
+												<div className='ml-4 text-sm text-gray-900 dark:text-white'>
 													Copy the address and get the free tokens for the testnet.
 													<div> For eg. use&nbsp;
-														<a href='https://faucet.polygon.technology/' className='text-blue-900 text-sm underline'>
+														<a href='https://faucet.polygon.technology/' className='text-blue-900 dark:text-primary-500 text-sm underline'>
 															https://faucet.polygon.technology/&nbsp;
 														</a>
 														to get free token
@@ -565,11 +565,11 @@ const isSubmitButtonDisabled = () => {
 												</div>
 											</li>
 											<li className='mb-2'>
-												<span className='font-semibold text-sm'>Step 2:</span>
-												<div className='ml-4 text-sm text-gray-700'>Check that you have recieved the tokens.</div>
-												<div className='ml-4 text-sm text-gray-700'>For eg. copy the address and check the balance on
+												<span className='font-semibold text-sm gray-800 dark:text-white'>Step 2:</span>
+												<div className='ml-4 text-sm text-gray-900 dark:text-white'>Check that you have recieved the tokens.</div>
+												<div className='ml-4 text-sm text-gray-900 dark:text-white'>For eg. copy the address and check the balance on
 													<div>
-														<a href='https://mumbai.polygonscan.com/' className='text-blue-900 text-sm underline'>
+														<a href='https://mumbai.polygonscan.com/' className='text-blue-900 dark:text-primary-500 text-sm underline'>
 															https://mumbai.polygonscan.com/&nbsp;
 														</a>
 													</div>
