@@ -168,10 +168,13 @@ const EmailIssuance = () => {
 						schemaIdentifier: schemaLedgerId,
 						attributes: Array.isArray(attributes) ? attributes : (attributes ? JSON.parse(attributes) : []),
 					}));
-					setCredentialOptions(options);
-				} else {
-					setSuccess(null);
-					setFailure(null);
+	
+					setCredentialOptions(options);			
+						} else {
+							setSuccess(null);
+							setFailure(null);
+						}
+						setLoading(false);
 				}
 				setLoading(false);
 			}
