@@ -158,38 +158,10 @@ const IssueCred = () => {
 				attributes: attributesArray,
 			};
 		});
+
 		const issuancePayload = {
 			credentialData,
 			credentialDefinitionId: credDefId,
-			orgId,
-		};
-
-		setIssuanceFormPayload(issuancePayload);
-		setUserLoader(false);
-	};
-
-	const createW3cIssuanceForm = (
-		selectedUsers: SelectedUsers[],
-		attributes: DataTypeAttributes[],
-		orgId: string,
-     	) => {
-		const credentialData =  selectedUsers.map((user) => {
-			
-			const attributesArray = attributes.length > 0 && attributes.map((attr) => ({
-				name: attr.attributeName,
-				value: '',
-				dataType: attr?.schemaDataType,
-				isRequired: attr.isRequired,
-			}));
-
-			return {
-				connectionId: user.connectionId,
-				attributes: attributesArray,
-			};
-		});
-
-		const issuancePayload = {
-			credentialData,
 			orgId,
 		};
 
@@ -395,12 +367,12 @@ const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 		const convertedAttributesValues = {
 			...issuancePayload,
 		};
-	
+
 		setIssuanceLoader(true);
 		const issueCredRes = await issueCredential(convertedAttributesValues, credentialType);
 	
 		const { data } = issueCredRes as AxiosResponse;
-	
+
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			setSuccess(data?.message);
 			window.location.href = `${pathRoutes.organizations.issuedCredentials}`;
@@ -411,7 +383,7 @@ const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 			setIssuanceLoader(false);
 		}
 	};
-	
+
 	return (
 		<div className="px-4 pt-2">
 			<div className="mb-4 col-span-full xl:mb-2">
