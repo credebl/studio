@@ -184,17 +184,31 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
 				},
 			};
 
-  const getUserOrgRoles = async () => {
-		const roles = await getUserRoles()
-    setUserRoles(roles)
-  }
+			const ecoId = await getEcosystemId();
 
-  useEffect(() => {
-    getUserOrgRoles()
-    const checkEcosystemData = async () => {
-      const data: ICheckEcosystem = await checkEcosystem();
-      setIsEcosystemData(data)
-    }
+			const createCredDeff = await createCredDefRequest(
+				requestPayload,
+				ecoId,
+				orgId,
+			);
+			const { data } = createCredDeff as AxiosResponse;
+			if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+				setCreateLoader(false);
+				setSuccess(data?.message);
+			} else {
+				setFailure(createCredDeff as string);
+				setCreateLoader(false);
+			}
+			getCredentialDefinitionList(schemaId, orgId);
+		} else {
+			setCreateLoader(true);
+			const schemaId = schemaDetails?.schemaId || '';
+			const CredDeffFieldName: CredDeffFieldNameType = {
+				tag: values?.tagName,
+				revocable: values?.revocable,
+				orgId: orgId,
+				schemaLedgerId: schemaId,
+			};
 
 			const createCredDeff = await createCredentialDefinition(
 				CredDeffFieldName,

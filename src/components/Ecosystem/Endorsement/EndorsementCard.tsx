@@ -78,8 +78,6 @@ const EndorsementCard = ({ fromEndorsementList, data, onClickCallback, cardTrans
 
     const enableAction = (!fromEndorsementList && data?.status === EndorsementStatus.signed) || Boolean(fromEndorsementList)
 
-    const enableAction = (!fromEndorsementList && data?.status === EndorsementStatus.approved) || Boolean(fromEndorsementList)
-
     const requestPayload = data?.requestPayload && JSON.parse(data?.requestPayload)
 
     const requestData = isSchema ? requestPayload?.operation?.data : requestPayload?.operation

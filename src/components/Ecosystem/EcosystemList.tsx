@@ -257,37 +257,14 @@ const EcosystemList = () => {
 				<div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800 flex flex-col justify-between">
 
 
-        <BreadCrumbs />
-      </div>
-      <div className='mb-4 flex justify-between '>
-        <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white ">
-          Ecosystems
-        </h1>
-        {
-          showCreateButton &&
-          <RoleViewButton
-            buttonTitle='Create'
-            feature={Features.CRETAE_ORG}
-            svgComponent={
-              <div className='pr-3'>
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24">
-                  <path fill="#fff" d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z" />
-                </svg>
-              </div>
-            }
-            onClickEvent={createOrganizationModel}
-          />
-        }
-      </div>
-      <div>
-        <div
-          className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800 min-h-100/18rem flex flex-col justify-between"
-        >
-          <div className="flex items-center justify-between mb-4">
-            <SearchInput
-              onInputChange={searchInputChange}
-            />
-          </div>
+					<AlertComponent
+						message={message ?? error}
+						type={message ? 'success' : 'failure'}
+						onAlertClose={() => {
+							setMessage(null);
+							setError(null);
+						}}
+					/>
 
 					{loading ? (
 						<div className="flex items-center justify-center mb-4">

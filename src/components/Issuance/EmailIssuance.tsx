@@ -377,7 +377,7 @@ const EmailIssuance = () => {
 				<div className="flex flex-col justify-between gap-4 email-bulk-issuance">
 					<Card>
 						<div className="md:min-h-[10rem]">
-							<p className="text-xl font-semibold dark:text-white pb-6">
+							<p className="text-xl pb-6 font-semibold dark:text-white">
 								Select Schema and credential definition
 							</p>
 							<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

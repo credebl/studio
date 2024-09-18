@@ -1,4 +1,4 @@
-import type { OrgRole } from "."
+import type { OrgRole, Organisation } from "."
 
 export interface Invitation {
 		ecosystem: any

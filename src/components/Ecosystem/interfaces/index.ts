@@ -20,8 +20,8 @@ export interface Ecosystem {
     createDateTime: string
     createdBy: string
     lastChangedDateTime: string
+    lastChangedBy: string
     autoEndorsement:boolean
-    lastChangedBy: number
     name: string
     description: string
     logoUrl: string
