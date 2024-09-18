@@ -177,9 +177,8 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
     const handleBackButton = () => {
         setShowPasskeyComponent(false);
 
-            setShowSignUpUserName(true);
-        };
-    
+        setShowSignUpUserName(true);
+    };
 
 
     return (
@@ -269,7 +268,7 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
                                     <button
                                         className="px-12 py-2 min-w-fit min-h-[43px] sm:min-w-[12rem] rounded-md text-center font-medium leading-5 border-blue-600 flex items-center justify-center hover:bg-secondary-700 bg-transparent ring-2 text-black rounded-lg text-sm"
                                         onClick={() => setCurrentComponent('password')}
-                                        >
+                                    >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 39 39" fill="none">
                                             <path d="M15.4505 31.8307H9.99045C8.44878 31.8307 7.16406 30.6513 7.16406 29.236V23.6338C7.16406 22.2185 8.44878 21.0391 9.99045 21.0391H27.2057" stroke="#1F4EAD" strokeWidth="1.5" strokeMiterlimit="10" />
                                             <path d="M26.6315 21.0391H34.0613C36.2097 21.0391 38 22.2185 38 23.6338V29.236C38 30.6513 36.2097 31.8307 34.0613 31.8307H10.25" stroke="#1F4EAD" strokeWidth="1.5" strokeMiterlimit="10" />

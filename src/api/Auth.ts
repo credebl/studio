@@ -184,8 +184,7 @@ export const checkUserExist = async(payload: string) => {
     } 
 }
 
-export const addPasswordDetails = async(payload: AddPasswordDetails, email:string) => {
-    // Api call to add password
+export const addPasswordDetails = async(payload: AddPasswordDetails) => {
     const details ={
         url: `${apiRoutes.auth.addDetails}`,
         payload,
@@ -218,11 +217,8 @@ export const addPasskeyUserDetails = async(payload: AddPassword, email:string) =
     catch(error){
         const err = error as Error
         return err?.message
-    }
-
-   
+    }  
 }
-
 
 export const passwordEncryption = (password: string): string => {
     const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`    
@@ -235,10 +231,10 @@ export const encryptData = (value: any): string => {
     const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`
 
     try {
-        const encJson: string = CryptoJS.AES.encrypt(JSON.stringify(value), CRYPTO_PRIVATE_KEY).toString();
-        let encData = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(encJson))
-
-        return encData;
+        if (typeof (value) !== 'string') {
+            value = JSON.stringify(value)
+        }
+        return CryptoJS.AES.encrypt(value, CRYPTO_PRIVATE_KEY).toString();
     } catch (error) {
         // Handle encryption error
         console.error('Encryption error:', error);

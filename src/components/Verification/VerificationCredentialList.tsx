@@ -23,8 +23,6 @@ import type { RequestProof } from './interface';
 import RoleViewButton from '../RoleViewButton';
 import type { TableData } from '../../commonComponents/datatable/interface';
 import { dateConversion } from '../../utils/DateConversion';
-import { ProofRequestState } from '../../common/enums';
-import { AlertComponent } from '../AlertComponent';
 import { pathRoutes } from '../../config/pathRoutes';
 import { getFromLocalStorage, removeFromLocalStorage } from '../../api/Auth';
 import { getOrgDetails } from '../../config/ecosystem';

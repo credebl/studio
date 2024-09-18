@@ -1,5 +1,5 @@
-import type { AxiosResponse } from 'axios';
-import axiosUser from './axoisIntercepter';
+import type { AxiosError, AxiosResponse } from 'axios';
+import axiosUser from './axiosIntercepter';
 
 export interface APIParameters {
     url: string,
@@ -42,30 +42,6 @@ export const axiosPublicOrganisationGet = async ({ url }: APIParameters): Promis
 	}
 }
 
-
-export const axiosPublicUserGet = async ({ url }: APIParameters): Promise<AxiosResponse> => {
-	try {
-			const response = await axiosUser.get(url);
-
-			return response
-	}
-	catch (error) {
-			const err = error as AxiosError
-			return HandleResponse(err.response ? err.response : err)
-	}
-}
-
-export const axiosPublicOrganisationGet = async ({ url }: APIParameters): Promise<AxiosResponse> => {
-	try {
-			const response = await axiosUser.get(url);
-
-			return response
-	}
-	catch (error) {
-			const err = error as AxiosError
-			return HandleResponse(err.response ? err.response : err)
-	}
-}
 
 export const axiosPost = async ({ url, payload, config }: APIParameters): Promise<AxiosResponse> => {
     try {		

@@ -385,13 +385,8 @@ const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 			<div className="mb-4 col-span-full xl:mb-2">
 				<div className="flex justify-between items-center">
 					<BreadCrumbs />
-				</div>
-				<h1 className="flex justify-between items-center ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-					Issuance
 					<BackButton path={pathRoutes.back.issuance.connections} />
-				</h1>
-			</div>
-			<div className='mt-4'>
+				</div>
 				<AlertComponent
 					message={success ?? error}
 					type={success ? 'success' : 'failure'}
@@ -400,6 +395,9 @@ const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 						setSuccess(null);
 					}}
 				/>
+				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
+					Issuance
+				</h1>
 			</div>
 			
   {!schemaLoader && !w3cSchema ? (

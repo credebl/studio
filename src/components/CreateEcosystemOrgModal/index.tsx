@@ -13,7 +13,7 @@ import {
 	storageKeys,
 } from '../../config/CommonConstant';
 import { calculateSize, dataURItoBlob } from '../../utils/CompressImage';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import { asset } from '../../lib/data.js';

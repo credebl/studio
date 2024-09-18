@@ -10,8 +10,6 @@ import {
 import { AlertComponent } from '../../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../../BreadCrumbs';
-import CreateOrgFormModal from "../CreateOrgFormModal";
-import CustomAvatar from '../../Avatar'
 import type { Invitation } from '../interfaces/invitations';
 import type { OrgRole } from '../interfaces';
 import SearchInput from '../../SearchInput';

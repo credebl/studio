@@ -263,9 +263,7 @@ const BulkIssuance = () => {
 
 
 	useEffect(() => {
-		SOCKET.emit('bulk-connection', (res) => {
-console.log(6448, res)
-		})
+		SOCKET.emit('bulk-connection')
 		SOCKET.on('bulk-issuance-process-completed', () => {
 			setSuccess(null)
 			console.log(`bulk-issuance-process-completed`);
@@ -369,17 +367,25 @@ console.log(6448, res)
 
 	const handleCsvFileData = async (requestId: any) => {
 		setLoading(true);
-		if(requestId) {	
-		try {
-			const response = await getCsvFileData(
-				requestId,
-				currentPage.pageNumber,
-				currentPage.pageSize,
-				searchText,
-			);
-			const { data } = response as AxiosResponse;
-			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				const totalPages = data?.data?.response?.lastPage;				
+		if (requestId) {
+			try {
+				const response = await getCsvFileData(
+					requestId,
+					currentPage.pageNumber,
+					currentPage.pageSize,
+					searchText,
+				);
+				const { data } = response as AxiosResponse;
+				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+					const totalPages = data?.data?.response?.lastPage;
+					setLoading(false);
+					setCsvData(data?.data?.response?.data);
+					setCurrentPage({
+						...currentPage,
+						total: totalPages,
+					});
+				}
+			} catch (err) {
 				setLoading(false);
 			}
 		}
@@ -882,7 +888,6 @@ console.log(6448, res)
 						<IssuancePopup
 							openModal={openModal}
 							closeModal={handleCloseConfirmation}
-							message={'Are you sure you want to Offer Credentials ?'}
 							isProcessing={loading}
 							onSuccess={confirmCredentialIssuance}
 						/>

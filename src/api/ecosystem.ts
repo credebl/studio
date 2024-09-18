@@ -11,7 +11,7 @@ interface CreateEcosystemPayload {
 	description: string;
 	logo: string;
 	tags?: string;
-	userId: number;
+	userId: string;
 	autoEndorsement: boolean;
 }
 

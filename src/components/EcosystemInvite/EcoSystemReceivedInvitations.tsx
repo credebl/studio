@@ -8,7 +8,6 @@ import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
 import type { Organisation } from '../organization/interfaces';
-import SendInvitationModal from '../organization/invitations/SendInvitationModal';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { pathRoutes } from '../../config/pathRoutes';
 import { EmptyListMessage } from '../EmptyListComponent';

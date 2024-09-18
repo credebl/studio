@@ -198,7 +198,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 									{logoImage?.imagePreviewUrl ? (
 										<img
 											className="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
-											src={logoImage?.imagePreviewUrl}
+											src={logoImage?.imagePreviewUrl || ""}
 											alt="Jese picture"
 										/>
 									) : typeof logoImage.logoFile === 'string' ? (

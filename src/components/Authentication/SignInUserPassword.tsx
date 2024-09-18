@@ -13,8 +13,6 @@ import {
 import { Alert } from 'flowbite-react';
 import type { AxiosResponse } from 'axios';
 import CustomSpinner from '../CustomSpinner';
-import FooterBar from './FooterBar';
-import NavBar from './NavBar';
 import SignInUserPasskey from './SignInUserPasskey';
 import NavBar from './NavBar';
 import FooterBar from './FooterBar';

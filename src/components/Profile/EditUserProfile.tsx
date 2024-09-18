@@ -40,15 +40,14 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
     profileImg: userProfileInfo?.profileImg || "",
     firstName: userProfileInfo?.firstName || "",
     lastName: userProfileInfo?.lastName || "",
-    email: userProfileInfo?.email || ""    
+    email: userProfileInfo?.email || "",
+
   })
   const [logoImage, setLogoImage] = useState<ILogoImage>({
     logoFile: '',
     imagePreviewUrl: userProfileInfo?.profileImg || "",
     fileName: ''
   })
-  
-
 
   const firstNameInputRef = useRef(null);
 
@@ -158,18 +157,15 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
 
 
   const updateUserDetails = async (values: Values) => {
-
     setLoading(true)
 
     const userData = {
-      id: userProfileInfo?.id as number,
       firstName: values.firstName,
       lastName: values.lastName,
       email: values.email,
       profileImg: logoImage?.imagePreviewUrl as string || values?.profileImg
     }
     const resUpdateUserDetails = await updateUserProfile(userData)
-    setLoading(false)
 
     const existingUser = await getFromLocalStorage(storageKeys.USER_PROFILE)
 

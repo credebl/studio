@@ -65,27 +65,6 @@ export interface OrgAgent {
     agents_type: AgentsType
 }
 
-export interface OrgAgent {
-    id: number
-    createDateTime: string
-    createdBy: number
-    lastChangedDateTime: string
-    lastChangedBy: number
-    orgDid: string
-    verkey: string
-    agentEndPoint: string
-    agentId: any
-    isDidPublic: boolean
-    agentSpinUpStatus: number
-    agentOptions: any
-    walletName: string
-    tenantId: any
-    agentsTypeId: number
-    orgId: number
-    orgAgentTypeId: number
-    agents_type: AgentsType
-}
-
 export interface AgentsType {
     id: string
     createDateTime: string

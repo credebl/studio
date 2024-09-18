@@ -1,5 +1,4 @@
-import './global.css';
-
+import '../../common/global.css'
 import { Alert, Button } from 'flowbite-react';
 import {
 	getFromLocalStorage,
