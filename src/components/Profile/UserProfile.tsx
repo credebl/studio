@@ -22,9 +22,10 @@ const UserProfile = ({ noBreadcrumb }: { noBreadcrumb?: boolean }) => {
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setPrePopulatedUserProfile(data?.data);
-        const { id, profileImg, firstName, email, enableEcosystem, multiEcosystemSupport } = data?.data || {}
+        const { id, profileImg, firstName, email, 
+        } = data?.data || {}
         const userProfile = {
-          id, profileImg, firstName, email, enableEcosystem, multiEcosystemSupport
+          id, profileImg, firstName, email, 
         }
         await setToLocalStorage(storageKeys.USER_PROFILE, userProfile)
         await setToLocalStorage(storageKeys.USER_EMAIL, data?.data?.email)

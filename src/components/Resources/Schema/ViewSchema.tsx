@@ -27,11 +27,6 @@ import { EmptyListMessage } from '../../EmptyListComponent';
 import { Roles } from '../../../utils/enums/roles';
 import { nanoid } from 'nanoid';
 import { pathRoutes } from '../../../config/pathRoutes';
-import {  checkEcosystem, getEcosystemId } from '../../../config/ecosystem';
-import type { ICheckEcosystem} from '../../../config/ecosystem';
-
-import { createCredDefRequest } from '../../../api/ecosystem';
-import EcosystemProfileCard from '../../../commonComponents/EcosystemProfileCard';
 import { getLedgersPlatformUrl } from '../../../api/Agent';
 import CopyDid from '../../../commonComponents/CopyDid';
 
@@ -79,7 +74,6 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
 	const [failure, setFailure] = useState<string | null>(null);
 	const [orgId, setOrgId] = useState<string>('');
 	const [credDefAuto, setCredDefAuto] = useState<string>('');
-	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [ledgerPlatformLoading, setLedgerPlatformLoading] = useState(false);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 
@@ -136,7 +130,6 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
 		}
 	};
 	const fetchData = async () => {
-		await checkEcosystemData();
 		const organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
 		setOrgId(String(organizationId));
 		const id = encodeURIComponent(schemaId);
@@ -155,52 +148,13 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
 		const roles = orgRoles.split(',');
 		setUserRoles(roles);
 	};
-	const checkEcosystemData = async () => {
-		const data: ICheckEcosystem = await checkEcosystem();
-		setIsEcosystemData(data);
-	};
 
 	useEffect(() => {
 		getUserRoles();
-		checkEcosystemData();
 	}, []);
 
 	const submit = async (values: Values) => {
-		if (
-			isEcosystemData?.isEnabledEcosystem &&
-			isEcosystemData?.isEcosystemMember
-		) {
-			console.log('Submitted for endorsement by ecosystem member');
-			setCreateLoader(true);
-			const schemaId = schemaDetails?.schemaId || '';
-			const requestPayload = {
-				endorse: true,
-				tag: values?.tagName,
-				schemaId,
-				schemaDetails: {
-					name: schemaDetails?.schema?.name,
-					version: schemaDetails?.schema?.version,
-					attributes: schemaDetails?.schema?.attrNames,
-				},
-			};
-
-			const ecoId = await getEcosystemId();
-
-			const createCredDeff = await createCredDefRequest(
-				requestPayload,
-				ecoId,
-				orgId,
-			);
-			const { data } = createCredDeff as AxiosResponse;
-			if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-				setCreateLoader(false);
-				setSuccess(data?.message);
-			} else {
-				setFailure(createCredDeff as string);
-				setCreateLoader(false);
-			}
-			getCredentialDefinitionList(schemaId, orgId);
-		} else {
+		
 			setCreateLoader(true);
 			const schemaId = schemaDetails?.schemaId || '';
 			const CredDeffFieldName: CredDeffFieldNameType = {
@@ -223,7 +177,7 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
 				setCreateLoader(false);
 			}
 			getCredentialDefinitionList(schemaId, orgId);
-		}
+		
 	};
 
 	const credDefSelectionCallback = async () => {
@@ -246,30 +200,8 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
 		}
 	};
 
-	const formTitle = isEcosystemData?.isEcosystemMember
-		? 'Credential Definition Endorsement'
-		: 'Create Credential Definition';
-	const submitButtonTitle = isEcosystemData?.isEcosystemMember
-		? {
-			title: 'Request Endorsement',
-			svg: (
-				<svg
-					className="mr-2 mt-1"
-					xmlns="http://www.w3.org/2000/svg"
-					width="20"
-					height="20"
-					fill="none"
-					viewBox="0 0 25 25"
-				>
-					<path
-						fill="#fff"
-						d="M21.094 0H3.906A3.906 3.906 0 0 0 0 3.906v12.5a3.906 3.906 0 0 0 3.906 3.907h.781v3.906a.781.781 0 0 0 1.335.553l4.458-4.46h10.614A3.906 3.906 0 0 0 25 16.407v-12.5A3.907 3.907 0 0 0 21.094 0Zm2.343 16.406a2.343 2.343 0 0 1-2.343 2.344H10.156a.782.782 0 0 0-.553.228L6.25 22.333V19.53a.781.781 0 0 0-.781-.781H3.906a2.344 2.344 0 0 1-2.344-2.344v-12.5a2.344 2.344 0 0 1 2.344-2.344h17.188a2.343 2.343 0 0 1 2.343 2.344v12.5Zm-3.184-5.951a.81.81 0 0 1-.17.254l-3.125 3.125a.781.781 0 0 1-1.105-1.106l1.792-1.79h-7.489a2.343 2.343 0 0 0-2.344 2.343.781.781 0 1 1-1.562 0 3.906 3.906 0 0 1 3.906-3.906h7.49l-1.793-1.79a.78.78 0 0 1 .254-1.277.781.781 0 0 1 .852.17l3.125 3.125a.79.79 0 0 1 .169.852Z"
-					/>
-				</svg>
-			),
-			tooltip: 'Add new credential-definition request'
-		}
-		: {
+	const formTitle =  'Create Credential Definition';
+	const submitButtonTitle = {
 			title: 'Create',
 			svg: (
 				<div className="pr-3">
@@ -294,12 +226,6 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
 		<div className="px-4 pt-2">
 			<div className="mb-4 col-span-full xl:mb-2">
 				<BreadCrumbs />
-
-				{isEcosystemData?.isEnabledEcosystem && (
-					<div className="mb-4 mt-4">
-						<EcosystemProfileCard getEndorsementListData={fetchData} />
-					</div>
-				)}
 
 				<div className="flex items-center justify-between">
 					<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">

@@ -66,14 +66,6 @@ export const pathRoutes = {
 				'/organizations/verification/verify-credentials/schemas/connections/verification',
 		},
 	},
-	ecosystem: {
-		root: '/ecosystems',
-		dashboard: '/ecosystems/dashboard',
-		endorsements: '/ecosystems/endorsement',
-		invitation: '/ecosystems/invitation',
-		sentinvitation: '/ecosystems/invitations',
-		addOrgs: '/ecosystems/dashboard/add-organizations'
-	},
 	documentation: {
 		root: envConfig.PLATFORM_DATA.docs
 	},

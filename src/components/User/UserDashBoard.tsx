@@ -8,7 +8,6 @@ import { apiStatusCodes, itemPerPage, storageKeys } from '../../config/CommonCon
 import { getOrganizationById, getOrganizations } from '../../api/organization';
 import { getUserActivity } from '../../api/users';
 import {
-	getUserEcosystemInvitations,
 	getUserInvitations,
 } from '../../api/invitations';
 import { pathRoutes } from '../../config/pathRoutes';
@@ -19,15 +18,11 @@ import { Roles } from '../../utils/enums/roles';
 import { Button, Tooltip } from 'flowbite-react';
 import { getAllCredDef, getAllSchemasByOrgId } from '../../api/Schema';
 import type { GetAllSchemaListParameter } from '../Resources/Schema/interfaces';
-import { getEcosystems } from '../../api/ecosystem';
 import React from 'react';
 import {
-	EcoRoles,
-	EcosystemRoles,
 	OrganizationRoles,
 } from '../../common/enums';
 import CustomSpinner from '../CustomSpinner';
-import { getOwnerAdminRole } from '../../config/ecosystem';
 
 const initialPageState = {
 	pageNumber: 1,
@@ -75,8 +70,6 @@ const UserDashBoard = () => {
 		sortingOrder: 'desc',
 		allSearch: '',
 	});
-	const [ecoCount, setEcoCount] = useState(0);
-	const [ecosystemListDetails, setEcosystemListDetails] = useState([]);	
 	const [credDefList, setCredDefList] = useState([]);
 	const [credDefCount, setCredDefCount] = useState(0);
 	const [walletData, setWalletData] = useState([]);
@@ -111,38 +104,6 @@ const UserDashBoard = () => {
 		} else {
 			setError(response as string);
 		}
-		setLoading(false);
-	};
-
-	const getAllEcosystemInvitations = async () => {
-		setLoading(true);
-		const response = await getUserEcosystemInvitations(
-			currentPage.pageNumber,
-			currentPage.pageSize,
-			'',
-		);
-		const { data } = response as AxiosResponse;
-
-		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			const totalPages = data?.data?.totalPages;
-			const invitationPendingList =
-				data?.data?.invitations &&
-				data?.data?.invitations?.filter((invitation: { status: string }) => {
-					return invitation.status === 'pending';
-				});
-
-			if (invitationPendingList && invitationPendingList.length > 0) {
-				setEcoMessage(`You have received invitation to join ecosystem `);
-				setViewButton(true);
-			}
-			setCurrentPage({
-				...currentPage,
-				total: totalPages,
-			});
-		} else {
-			setError(response as string);
-		}
-
 		setLoading(false);
 	};
 	//Fetch the user organization list
@@ -184,9 +145,6 @@ const UserDashBoard = () => {
 
 	const checkOrgId = async () => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-		if (orgId) {
-			await getAllEcosystemInvitations();
-		}
 	};
 
 	const getSchemaList = async (
@@ -228,37 +186,6 @@ const UserDashBoard = () => {
 		} finally {
 			setSchemaLoading(false);
 		}
-	};
-
-	const fetchEcosystems = async () => {
-		let organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
-		if (!organizationId && organizationsList) {
-			organizationId = organizationsList[0].id;
-		}
-		if (organizationId) {
-			setEcoLoading(true);
-			const response = await getEcosystems(
-				organizationId,
-				currentPage.pageNumber,
-				currentPage.pageSize,
-				'',
-			);
-			const { data } = response as AxiosResponse;
-			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				setEcoCount(data?.data?.totalItems);
-				const ecosystemData = data?.data?.ecosystemList.filter(
-					(ecosystem: Organisation, index: number) => index < 3,
-				);
-				if (ecosystemData) {
-					setEcosystemListDetails(ecosystemData);
-				} else {
-					setError(response as string);
-				}
-			} else {
-				setError(response as string);
-			}
-		}
-		setEcoLoading(false);
 	};
 
 	const getSchemaCredentials = async () => {
@@ -308,11 +235,6 @@ const UserDashBoard = () => {
 		}
 		setWalletLoading(false);
 	};
-	
-	const checkEcosystemAccess = async () => {
-		const data = await getOwnerAdminRole();
-		setIsAccess(data);
-	};
 
 	const getAllResponses = async () => {
 		const role = await getFromLocalStorage(storageKeys.ORG_ROLES);
@@ -341,9 +263,7 @@ const UserDashBoard = () => {
 		if (organizationsList && organizationsList?.length > 0) {
 			fetchOrganizationDetails();
 			getSchemaList(schemaListAPIParameter, false);
-			fetchEcosystems();
 			getSchemaCredentials();
-			checkEcosystemAccess()
 		}
 	}, [organizationsList]);
 
@@ -384,11 +304,6 @@ const UserDashBoard = () => {
 		await setToLocalStorage(storageKeys.ORG_INFO, orgInfo);
 	};
 
-	const goToEcoDashboard = async (ecosystemId: string) => {
-		await setToLocalStorage(storageKeys.ECOSYSTEM_ID, ecosystemId);
-		window.location.href = pathRoutes.ecosystem.dashboard;
-	};
-
 	const goToOrgSchema = async (
 		org: Organisation,
 		orgId: string,
@@ -425,11 +340,6 @@ const UserDashBoard = () => {
 		window.location.href = pathRoutes.organizations.credentials;
 	};
 
-	const navigateToInvitation = async (ecosystemId: string) => {
-		await setToLocalStorage(storageKeys.ECOSYSTEM_ID, ecosystemId);
-		window.location.href = pathRoutes.ecosystem.sentinvitation;
-	};
-
 	const ToolTipDataForOrganization = () => {
 		return (
 			<div className="text-left text-xs">
@@ -448,26 +358,6 @@ const UserDashBoard = () => {
 				(Decentralized Identifier), which is verifiable
 				<br />
 				publicly, thus enhancing the level of trust.
-			</div>
-		);
-	};
-	const ToolTipDataForEcosystem = () => {
-		return (
-			<div className="text-left text-xs">
-				<p className="text-base">What is Ecosystem?</p>
-				Ecosystem is a trusted network of organizations
-				<br />
-				that empowers people and businesses with safe
-				<br />
-				and secure ways of identifying themselves online
-				<br />
-				and communicating confidentially with others.
-				<br />
-				Examples are supply chain, marketplace, healthcare,
-				<br />
-				banking, etc. where participants exchange
-				<br />
-				information in an interoperable & trusted manner.
 			</div>
 		);
 	};
@@ -521,18 +411,6 @@ const UserDashBoard = () => {
 					path={pathRoutes.users.invitations}
 					onAlertClose={() => {
 						setMessage(null);
-						setError(null);
-					}}
-				/>
-			</div>
-			<div className="cursor-pointer">
-				<AlertComponent
-					message={ecoMessage}
-					type={'warning'}
-					viewButton={viewButton}
-					path={pathRoutes.ecosystem.invitation}
-					onAlertClose={() => {
-						setEcoMessage(null);
 						setError(null);
 					}}
 				/>
@@ -1052,196 +930,9 @@ const UserDashBoard = () => {
 				className="grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-3"
 				style={{ minHeight: '300px' }}
 			>
+				
 				<div
 					className="xl:col-span-2 justify-between p-4 bg-white border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
-					style={{ minHeight: '300px' }}
-				>
-					<div className="w-full relative h-full">
-						<div className="flex justify-between pb-2 flex text-center">
-							<div className="flex text-center justify-center items-center">
-								<h2 className="text-xl font-semibold text-gray-900 dark:text-white items-center">
-									Ecosystems{' '}
-								</h2>
-								<Tooltip
-									content={<ToolTipDataForEcosystem />}
-									placement="bottom"
-									className="items-center text-center dark:text-white"
-								>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										width="20"
-										height="20"
-										fill="none"
-										viewBox="0 0 20 20"
-										className="ml-3 dark:text-white text-primary-700"
-									>
-										<path
-											fill="currentColor"
-											d="M9.168 14.167h1.667v-5H9.168v5Zm.833-6.667c.236 0 .434-.08.594-.24a.803.803 0 0 0 .24-.593.806.806 0 0 0-.24-.594.807.807 0 0 0-.594-.24.806.806 0 0 0-.593.24.806.806 0 0 0-.24.594c0 .236.08.434.24.594.16.16.357.24.593.24Zm0 10.834a8.115 8.115 0 0 1-3.25-.657 8.415 8.415 0 0 1-2.646-1.78 8.416 8.416 0 0 1-1.78-2.647A8.115 8.115 0 0 1 1.667 10c0-1.152.219-2.236.656-3.25a8.416 8.416 0 0 1 1.781-2.646 8.415 8.415 0 0 1 2.646-1.78A8.115 8.115 0 0 1 10 1.667c1.153 0 2.236.219 3.25.656a8.415 8.415 0 0 1 2.646 1.781 8.416 8.416 0 0 1 1.781 2.646 8.115 8.115 0 0 1 .657 3.25 8.115 8.115 0 0 1-.657 3.25 8.416 8.416 0 0 1-1.78 2.646 8.415 8.415 0 0 1-2.647 1.781 8.115 8.115 0 0 1-3.25.657Zm0-1.667c1.861 0 3.438-.646 4.73-1.938 1.291-1.291 1.937-2.868 1.937-4.729 0-1.86-.646-3.437-1.938-4.729-1.291-1.292-2.868-1.937-4.729-1.937-1.86 0-3.437.645-4.729 1.937-1.292 1.292-1.937 2.868-1.937 4.73 0 1.86.645 3.437 1.937 4.729 1.292 1.291 2.868 1.937 4.73 1.937Z"
-										/>
-									</svg>
-								</Tooltip>
-							</div>
-							<div
-								className="bg-primary-700 rounded-md text-lg"
-								style={{ minWidth: '44px' }}
-							>
-								<span className="flex justify-center items-center text-white p-2 text-lg font-medium">
-									{ecoCount ?? 0}
-								</span>
-							</div>
-						</div>
-						<hr />
-
-						{!ecoLoading ? (
-							<>
-								{ecosystemListDetails && ecosystemListDetails.length > 0 ? (
-									<>
-										{ecosystemListDetails?.map((ecosystem: any) => {
-											return (
-												<div
-													className="flex justify-between w-full mt-2 items-center"
-													key={ecosystem?.id}
-												 >
-													<button
-														className={`${
-															ecosystem?.ecosystemOrgs[0]?.ecosystemRole
-																?.name === EcosystemRoles.ecosystemLead
-																? 'sm:w-100/3rem w-full'
-																: 'w-full'
-														}`}
-														onClick={() => goToEcoDashboard(ecosystem?.id)}
-													 >
-														<a
-															href="#"
-															className="flex items-center py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-md mr-2"
-														>
-
-															{ecosystem.logoUrl ? (
-																<CustomAvatar
-																	className="dark:text-white dark:text-white max-w-[100%] w-full h-full rounded-full"
-																	size="40px"
-																	src={ecosystem?.logoUrl}
-																	
-																/>
-															) : (
-																<CustomAvatar
-																	className="dark:text-white dark:text-white max-w-[100%] w-full h-full rounded-full"
-																	size="40px"
-																	name={ecosystem?.name}
-																	
-																/>
-															)}
-
-															<span className="flex space-x-2 ml-3 text-lg font-bold text-gray-500 dark:text-white text-start truncate items-center">
-																<span className="truncate">
-																	{' '}
-																	{ecosystem?.name}
-																</span>{' '}
-																<span>
-																	{ecosystem?.ecosystemOrgs[0]?.ecosystemRole
-																		?.name === EcosystemRoles.ecosystemLead ? (
-																		<span title={EcoRoles.ecosystemLead}>
-																			<svg
-																				xmlns="http://www.w3.org/2000/svg"
-																				width="24"
-																				height="24"
-																				viewBox="0 0 24 24"
-																				fill="none"
-																			>
-																				<path
-																					d="M19 23L17.5 21.5V16.85C16.7667 16.6333 16.1667 16.2208 15.7 15.6125C15.2333 15.0042 15 14.3 15 13.5C15 12.5333 15.3417 11.7083 16.025 11.025C16.7083 10.3417 17.5333 10 18.5 10C19.4667 10 20.2917 10.3417 20.975 11.025C21.6583 11.7083 22 12.5333 22 13.5C22 14.25 21.7875 14.9167 21.3625 15.5C20.9375 16.0833 20.4 16.5 19.75 16.75L21 18L19.5 19.5L21 21L19 23ZM18.5 14C18.7833 14 19.0208 13.9042 19.2125 13.7125C19.4042 13.5208 19.5 13.2833 19.5 13C19.5 12.7167 19.4042 12.4792 19.2125 12.2875C19.0208 12.0958 18.7833 12 18.5 12C18.2167 12 17.9792 12.0958 17.7875 12.2875C17.5958 12.4792 17.5 12.7167 17.5 13C17.5 13.2833 17.5958 13.5208 17.7875 13.7125C17.9792 13.9042 18.2167 14 18.5 14Z"
-																					fill="#1F4EAD"
-																				/>
-																				<path
-																					d="M3.9 19.1V17.2C3.9 16.7967 4.0013 16.4393 4.20445 16.1084C4.41153 15.7712 4.67665 15.5247 5.00841 15.352C5.98228 14.8656 6.96654 14.5033 7.96184 14.2622C8.95899 14.0207 9.9712 13.9 11 13.9C11.3108 13.9 11.6217 13.9117 11.9327 13.935C11.988 13.9391 12.0434 13.9437 12.0987 13.9485C12.1495 14.7586 12.355 15.5381 12.7154 16.2805C13.1307 17.1362 13.7117 17.8619 14.45 18.4523V19.1H3.9ZM11 11.1C10.1406 11.1 9.42729 10.8045 8.8114 10.1886C8.1955 9.57271 7.9 8.85941 7.9 8C7.9 7.14059 8.1955 6.42729 8.8114 5.8114C9.42729 5.1955 10.1406 4.9 11 4.9C11.8594 4.9 12.5727 5.1955 13.1886 5.8114C13.8045 6.42729 14.1 7.14059 14.1 8C14.1 8.85941 13.8045 9.57271 13.1886 10.1886C12.5727 10.8045 11.8594 11.1 11 11.1Z"
-																					stroke="#1F4EAD"
-																					strokeWidth="1.8"
-																				/>
-																			</svg>
-																		</span>
-																	) : (
-																		<span title={EcoRoles.ecosystemMember}>
-																			<svg
-																				xmlns="http://www.w3.org/2000/svg"
-																				width="18"
-																				height="18"
-																				viewBox="0 0 20 20"
-																				fill="none"
-																			>
-																				<path
-																					id="Vector"
-																					d="M-0.00195312 18V14.85C-0.00195312 14.2125 0.162109 13.6266 0.490234 13.0922C0.818359 12.5578 1.2543 12.15 1.79805 11.8688C2.96055 11.2875 4.1418 10.8516 5.3418 10.5609C6.5418 10.2703 7.76055 10.125 8.99805 10.125C10.2355 10.125 11.4543 10.2703 12.6543 10.5609C13.8543 10.8516 15.0355 11.2875 16.198 11.8688C16.7418 12.15 17.1777 12.5578 17.5059 13.0922C17.834 13.6266 17.998 14.2125 17.998 14.85V18H-0.00195312ZM8.99805 9C7.76055 9 6.70117 8.55938 5.81992 7.67813C4.93867 6.79688 4.49805 5.7375 4.49805 4.5C4.49805 3.2625 4.93867 2.20312 5.81992 1.32188C6.70117 0.440625 7.76055 0 8.99805 0C10.2355 0 11.2949 0.440625 12.1762 1.32188C13.0574 2.20312 13.498 3.2625 13.498 4.5C13.498 5.7375 13.0574 6.79688 12.1762 7.67813C11.2949 8.55938 10.2355 9 8.99805 9ZM2.24805 15.75H15.748V14.85C15.748 14.6438 15.6965 14.4563 15.5934 14.2875C15.4902 14.1187 15.3543 13.9875 15.1855 13.8938C14.173 13.3875 13.1512 13.0078 12.1199 12.7547C11.0887 12.5016 10.048 12.375 8.99805 12.375C7.94805 12.375 6.90742 12.5016 5.87617 12.7547C4.84492 13.0078 3.82305 13.3875 2.81055 13.8938C2.6418 13.9875 2.50586 14.1187 2.40273 14.2875C2.29961 14.4563 2.24805 14.6438 2.24805 14.85V15.75ZM8.99805 6.75C9.6168 6.75 10.1465 6.52969 10.5871 6.08906C11.0277 5.64844 11.248 5.11875 11.248 4.5C11.248 3.88125 11.0277 3.35156 10.5871 2.91094C10.1465 2.47031 9.6168 2.25 8.99805 2.25C8.3793 2.25 7.84961 2.47031 7.40898 2.91094C6.96836 3.35156 6.74805 3.88125 6.74805 4.5C6.74805 5.11875 6.96836 5.64844 7.40898 6.08906C7.84961 6.52969 8.3793 6.75 8.99805 6.75Z"
-																					fill="#1F4EAD"
-																				/>
-																			</svg>
-																		</span>
-																	)}
-																</span>
-															</span>
-														</a>
-													</button>
-													<div className="hidden sm:flex space-x-3 items-center">
-														<Tooltip
-															content={'Invite'}
-															placement="bottom"
-															className="items-center text-center dark:text-white"
-														>
-															{ecosystem?.ecosystemOrgs[0]?.ecosystemRole
-																?.name === EcosystemRoles.ecosystemLead && (
-																<button
-																	onClick={() => {
-																		navigateToInvitation(ecosystem?.id);
-																	}}
-																	className={`${!isAccess ? "cursor-not-allowed opacity-50":""} rounded-md flex`}
-																	disabled={!isAccess}
-																 >
-																	<svg
-																		xmlns="http://www.w3.org/2000/svg"
-																		width="30"
-																		height="24"
-																		viewBox="0 0 42 24"
-																		fill="none"
-																	>
-																		<path
-																			d="M37.8462 0H9.23077C7.2 0 5.53846 1.66154 5.53846 3.69231V5.07692C5.53846 5.58462 5.95385 6 6.46154 6C6.96923 6 7.38462 5.58462 7.38462 5.07692V3.69231C7.38462 3.50769 7.43077 3.32308 7.47692 3.13846L17.8154 12L7.47692 20.8615C7.43077 20.6769 7.38462 20.4923 7.38462 20.3077V18.9231C7.38462 18.4154 6.96923 18 6.46154 18C5.95385 18 5.53846 18.4154 5.53846 18.9231V20.3077C5.53846 22.3385 7.2 24 9.23077 24H37.8462C39.8769 24 41.5385 22.3385 41.5385 20.3077V3.69231C41.5385 1.66154 39.8769 0 37.8462 0ZM8.86154 1.89231C8.95385 1.84615 9.09231 1.84615 9.23077 1.84615H37.8462C37.9846 1.84615 38.1231 1.84615 38.2154 1.89231L24.1385 13.9385C23.7692 14.2154 23.3077 14.2154 22.9385 13.9385L8.86154 1.89231ZM37.8462 22.1538H9.23077C9.09231 22.1538 8.95385 22.1538 8.86154 22.1077L19.2462 13.2L21.7385 15.3692C22.2462 15.8308 22.8923 16.0615 23.5385 16.0615C24.1846 16.0615 24.8308 15.8308 25.3385 15.3692L27.8308 13.2L38.2154 22.1077C38.1231 22.1538 37.9846 22.1538 37.8462 22.1538ZM39.6923 20.3077C39.6923 20.4923 39.6462 20.6769 39.6 20.8615L29.2615 12L39.6 3.13846C39.6462 3.32308 39.6923 3.50769 39.6923 3.69231V20.3077ZM2.76923 9.69231C2.76923 9.18462 3.18462 8.76923 3.69231 8.76923H9.23077C9.73846 8.76923 10.1538 9.18462 10.1538 9.69231C10.1538 10.2 9.73846 10.6154 9.23077 10.6154H3.69231C3.18462 10.6154 2.76923 10.2 2.76923 9.69231ZM9.23077 15.2308H0.923077C0.415385 15.2308 0 14.8154 0 14.3077C0 13.8 0.415385 13.3846 0.923077 13.3846H9.23077C9.73846 13.3846 10.1538 13.8 10.1538 14.3077C10.1538 14.8154 9.73846 15.2308 9.23077 15.2308Z"
-																			fill="#6B7280"
-																		/>
-																	</svg>
-																</button>
-															)}
-														</Tooltip>
-													</div>
-												</div>
-											);
-										})}
-
-										{ecosystemListDetails && ecosystemListDetails?.length > 0 && (
-											<a
-												href="/ecosystems"
-												className="absolute bottom-0 sm:bottom-[-13px] right-0 float-right inline-flex items-center text-sm font-medium rounded-lg text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700"
-											>
-												View All
-											</a>
-										)}
-									</>
-								) : (
-									<div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
-										<p className="mb-8">
-											You have no ecosystems created or joined
-										</p>
-									</div>
-								)}
-							</>
-						) : (
-							<div className="flex items-center justify-center h-full dark:text-gray-400 text-gray-500">
-								<CustomSpinner />
-							</div>
-						)}
-					</div>
-				</div>
-				<div
-					className="xl:col-span-1 justify-between p-4 bg-white border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800"
 					style={{ minHeight: '300px' }}
 				>
 					<div className="w-full relative h-full">
@@ -1325,8 +1016,7 @@ const UserDashBoard = () => {
 						)}
 					</div>
 				</div>
-			</div>
-			<div className="">
+				<div className="">
 				<div className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800 xl:mb-0">
 					<div className="items-start justify-start mb-4">
 						<h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
@@ -1369,6 +1059,9 @@ const UserDashBoard = () => {
 					)}
 				</div>
 			</div>
+			</div>
+			
+			
 		</div>
 	);
 };

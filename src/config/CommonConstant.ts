@@ -40,9 +40,7 @@ export const storageKeys = {
 	CRED_DEF_ID:'cred_def_id',
     SCHEMA_DID: 'schema_did',
     LOGIN_USER_EMAIL: 'login_user_email',
-	ECOSYSTEM_ID: "ecosystem_id",
     ORG_DETAILS: "org_details",
-    ECOSYSTEM_ROLE: "ecosystem_role",
     SCHEMA_IDS: "schemaIds",
     SCHEMA_ATTRIBUTES: "schema_attributes",
     SCHEMA_CRED_DEFS: "schema_cred_defs",
@@ -53,8 +51,6 @@ export const storageKeys = {
 	ORG_INFO:'organization_Info',
     ORG_DID:'did',
     SCHEMA_TYPE:'type',
-    SELECT_ORG_IN_ECOSYSTEM: 'select_orgs_in_ecosystem',
-    ERROR_ORG_IN_ECOSYSTEM: 'error_orgs_in_ecosystem',
     ALL_SCHEMAS:'allSchemaFlag'
 }
 

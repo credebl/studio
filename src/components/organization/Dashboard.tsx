@@ -24,7 +24,6 @@ const Dashboard = () => {
 	const [failure, setFailure] = useState<string | null>(null);
 	const [loading, setLoading] = useState<boolean | null>(true);
 	const [userRoles, setUserRoles] = useState<string[]>([]);
-	const [ecosystemUserRoles, setEcosystemUserRoles] = useState<string>('');
 	const [orgSuccess, setOrgSuccess] = useState<string | null>(null);
 	const [openModal, setOpenModal] = useState<boolean>(false);
 
@@ -43,15 +42,8 @@ const Dashboard = () => {
 		const roles = orgRoles.split(',');
 		setUserRoles(roles);
 	};
-
-	const getEcosystemRole = async () => {
-		const ecosysmetmRoles = await getFromLocalStorage(storageKeys.ECOSYSTEM_ROLE);
-		setEcosystemUserRoles(ecosysmetmRoles)
-	};
-
 	useEffect(() => {
 		getUserRoles();
-		getEcosystemRole();
 	}, []);
 
 	const fetchOrganizationDetails = async () => {

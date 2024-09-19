@@ -19,10 +19,8 @@ import SearchInput from '../../SearchInput';
 import { getFromLocalStorage, removeFromLocalStorage, setToLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
 import { getOrganizationById } from '../../../api/organization';
-import { checkEcosystem } from '../../../config/ecosystem';
-import type { ICheckEcosystem } from '../../../config/ecosystem';
 import Select, { type SingleValue, type ActionMeta } from 'react-select';
-import { Create, SchemaEndorsement } from '../../Issuance/Constant';
+import { Create } from '../../Issuance/Constant';
 import { DidMethod, SchemaType, SchemaTypes } from '../../../common/enums';
 
 const SchemaList = (props: {
@@ -55,7 +53,6 @@ const SchemaList = (props: {
 	});
 	const [walletStatus, setWalletStatus] = useState(false);
 	const [totalItem, setTotalItem] = useState(0);
-	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [searchValue, setSearchValue] = useState('');
 	const [schemaType, setSchemaType] = useState('');
 
@@ -261,28 +258,15 @@ const SchemaList = (props: {
 
 		fetchOrganizationDetails();
 		(async () => {
-			try {
-				const data: ICheckEcosystem = await checkEcosystem();				
-				setIsEcosystemData(data);
-			} catch (error) {
-				console.log(error);
-			}
-		})();
-
-		(async () => {
 			await setToLocalStorage (storageKeys.ALL_SCHEMAS, `false`);
 				})();
 		setSearchValue('');
 	}, []);
 
-	const createSchemaTitle = isEcosystemData?.isEcosystemMember
-		? { title: 'Schema Endorsement', toolTip: 'Add new schema request', svg: <SchemaEndorsement/> }
-		: { title: 'Create', svg: <Create/>, toolTip: 'Create new schema' };
+	const createSchemaTitle = { title: 'Create', svg: <Create/>, toolTip: 'Create new schema' };
 	const emptyListTitle = 'No Schemas';
 	const emptyListDesc = 'Get started by creating a new Schema';
-	const emptyListBtn = isEcosystemData?.isEcosystemMember
-		? { title: 'Schema Endorsement', svg: <SchemaEndorsement/> }
-		: { title: 'Create Schema', svg: <Create/> };
+	const emptyListBtn = { title: 'Create Schema', svg: <Create/> };
 
 	return (
 		<div className="px-4 pt-2">
