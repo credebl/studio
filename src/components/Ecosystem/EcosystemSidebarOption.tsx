@@ -1,16 +1,52 @@
 import { useEffect, useState } from 'react';
+import { getOrganizations } from '../../api/organization';
+import type { AxiosResponse } from 'axios';
+import { apiStatusCodes } from '../../config/CommonConstant';
+import type { Organisation } from '../organization/interfaces';
+
+
+const initialPageState = {
+	pageNumber: 1,
+	pageSize: 10,
+	total: 0,
+};
+
 
 const EcosystemSidebarOption = () => {
 	const [isEcosystemEnabled, setIsEcosystemEnabled] = useState(false);
+	//TODO: Logic to disable ecosystem when organzaition and wallet is not created
+	
+	// const [currentPage, setCurrentPage] = useState(initialPageState);
+	// const [orgCount, setOrgCount] = useState(0);
+	// const [error, setError] = useState<string | null>(null);
+
+	// const getAllOrganizations = async () => {
+	// 	const response = await getOrganizations(
+	// 		currentPage.pageNumber,
+	// 		currentPage.pageSize,
+	// 		'',
+	// 	);
+	// 	const { data } = response as AxiosResponse;
+	// 	if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+	// 		setOrgCount(data?.data?.totalCount);			
+	// 	} else {
+	// 		setError(response as string);
+	// 	}
+	// };
 
 	useEffect(() => {
 		const checkEcosystemData = async () => {
 			setIsEcosystemEnabled(true);
 		};
 		checkEcosystemData();
+	//TODO: Logic to disable ecosystem when organzaition and wallet is not created
+		// getAllOrganizations();
 	}, []);
 
-	if (isEcosystemEnabled) {
+	
+	if (isEcosystemEnabled  
+		// && orgCount
+	) {
 		return (
 			<li>
 				<a

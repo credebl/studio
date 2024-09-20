@@ -19,6 +19,9 @@ export const apiRoutes = {
 		resetPassword: 'auth/password-reset',
 		refreshToken: '/auth/refresh-token'
 	},
+	Ecosystem: {
+		root: '/ecosystem'
+	},
 	users: {
 		userProfile: '/users/profile',
 		checkUser: '/users/',

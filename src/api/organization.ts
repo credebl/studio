@@ -500,3 +500,23 @@ export const deleteOrganization = async (
 };
 
 
+export const getEcosystems = async (
+	orgId: string,
+	pageNumber: number = 1,
+	pageSize: number = 10,
+	search = '',
+) => {
+	const url = `${apiRoutes.Ecosystem.root}/${orgId}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`;
+	const axiosPayload = {
+		url,
+		config: await getHeaderConfigs(),
+	};
+
+	try {
+		return await axiosGet(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};
+

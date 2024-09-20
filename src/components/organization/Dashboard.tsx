@@ -1,6 +1,6 @@
 import type { OrgDashboard, Organisation } from './interfaces';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
-import { getOrgDashboard, getOrganizationById } from '../../api/organization';
+import { getEcosystems, getOrgDashboard, getOrganizationById } from '../../api/organization';
 import { useEffect, useState } from 'react';
 import { Alert } from 'flowbite-react';
 import type { AxiosResponse } from 'axios';
@@ -16,6 +16,13 @@ import { AlertComponent } from '../AlertComponent';
 import WalletSpinup from './walletCommonComponents/WalletSpinup';
 import DashboardCard from '../../commonComponents/DashboardCard';
 
+const initialPageState = {
+	pageNumber: 1,
+	pageSize: 10,
+	total: 0,
+};
+
+
 const Dashboard = () => {
 	const [orgData, setOrgData] = useState<Organisation | null>(null);
 	const [walletStatus, setWalletStatus] = useState<boolean>(false);
@@ -26,6 +33,10 @@ const Dashboard = () => {
 	const [userRoles, setUserRoles] = useState<string[]>([]);
 	const [orgSuccess, setOrgSuccess] = useState<string | null>(null);
 	const [openModal, setOpenModal] = useState<boolean>(false);
+	const [currentPage, setCurrentPage] = useState(initialPageState);
+	const [ecoCount, setEcoCount] = useState(0);
+	const [error, setError] = useState<string | null>(null);
+	const [redirectToEndorsment, setRedirectToEndorsment] = useState<boolean>();
 
 
 
@@ -77,6 +88,34 @@ const Dashboard = () => {
 		}
 		setLoading(false);
 	};
+
+	const fetchEcosystems = async () => {
+		let organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
+		
+		if (organizationId) {
+			const response = await getEcosystems(
+				organizationId,
+				currentPage.pageNumber,
+				currentPage.pageSize,
+				'',
+			);
+			const { data } = response as AxiosResponse;
+			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+				setEcoCount(data?.data?.totalItems);
+				const ecosystemData = data?.data?.ecosystemList.filter(
+					(ecosystem: Organisation, index: number) => index < 3,
+				);
+				const ecoData = ecosystemData.ecosystemOrgs[0].ecosystemRole.name	
+				if (ecosystemData && ecoData === 'Ecosystem Member') {
+					setRedirectToEndorsment(true)
+				} else {
+					setError(response as string);
+				}
+			} else {
+				setError(response as string);
+			}
+		}
+	};
 	
 
 	const fetchOrganizationDashboard = async () => {
@@ -99,6 +138,7 @@ const Dashboard = () => {
 	useEffect(() => {
 		fetchOrganizationDetails();
 		fetchOrganizationDashboard();
+		fetchEcosystems();
 	}, []);
 
 	const handleEditModalClose = () => {
@@ -249,8 +289,12 @@ const Dashboard = () => {
 							label="Schemas"
 							value={orgDashboard?.schemasCount ?? 0}
 							onClickHandler={() => {
-								if (walletStatus) {
+								if (walletStatus && !redirectToEndorsment) {
 									window.location.href = pathRoutes.organizations.schemas;
+								}
+								else {
+									window.location.href = 'http://localhost:3001/organizations/schemas/create';
+
 								}
 							}}
 						/>
