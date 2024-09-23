@@ -520,3 +520,23 @@ export const getEcosystems = async (
 	}
 };
 
+export const createSchemaRequest = async (
+	data: object,
+	endorsementId: string,
+	orgId: string,
+) => {
+	const url = `${apiRoutes.Ecosystem.root}/${endorsementId}/${orgId}${apiRoutes.Ecosystem.endorsements.createSchemaRequest}`;
+	const payload = data;
+	const axiosPayload = {
+		url,
+		payload,
+		config: await getHeaderConfigs(),
+	};
+
+	try {
+		return await axiosPost(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};

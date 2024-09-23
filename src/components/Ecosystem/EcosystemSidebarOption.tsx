@@ -3,6 +3,8 @@ import { getOrganizations } from '../../api/organization';
 import type { AxiosResponse } from 'axios';
 import { apiStatusCodes } from '../../config/CommonConstant';
 import type { Organisation } from '../organization/interfaces';
+import { pathRoutes } from '../../config/pathRoutes';
+import { envConfig } from '../../config/envConfig';
 
 
 const initialPageState = {
@@ -50,7 +52,7 @@ const EcosystemSidebarOption = () => {
 		return (
 			<li>
 				<a
-					href='http://localhost:3001/authentication/sign-in'
+				    href={`${envConfig.PUBLIC_ECOSYSTEM_BASE_URL}${pathRoutes.ecosystem.ecosystemLogin}`} target='blank'
 					className="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
 				>
 					<svg className="flex-shrink-0 w-6 h-6 pt-1transition duration-75 dark:text-gray-400 dark:group-hover:text-white text-[#6B7280] group-hover:text-gray-700 dark:group-hover:text-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">

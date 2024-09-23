@@ -18,8 +18,10 @@ import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
 import ConfirmationModal from '../../../commonComponents/ConfirmationModal';
 import { DidMethod, SchemaType, SchemaTypeValue } from '../../../common/enums';
-import { getOrganizationById } from '../../../api/organization';
+import { createSchemaRequest, getOrganizationById } from '../../../api/organization';
 import React from 'react';
+import { checkEcosystem, type ICheckEcosystem, getEcosystemId } from '../../../config/ecosystem';
+import { envConfig } from '../../../config/envConfig';
 
 const options = [
 	{
@@ -48,6 +50,7 @@ interface IPopup {
 const CreateSchema = () => {
 	const [failure, setFailure] = useState<string | null>(null);
 	const [success, setSuccess] = useState<string | null>(null);
+	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [orgId, setOrgId] = useState<string>('');
 	const [createLoader, setCreateLoader] = useState<boolean>(false);
 	const [showPopup, setShowPopup] = useState<IPopup>({
@@ -70,6 +73,12 @@ const CreateSchema = () => {
 			},
 		],
 	};
+
+	const checkEcosystemData = async () => {
+		const data: ICheckEcosystem = await checkEcosystem();
+		setIsEcosystemData(data);
+	};
+
 	const [formData, setFormData] = useState(initFormData);
 
 	useEffect(() => {
@@ -78,6 +87,7 @@ const CreateSchema = () => {
 			setOrgId(orgId);
 		})();
 		fetchOrganizationDetails();
+		checkEcosystemData();
 	}, []);
 
 	const filledInputs = (formData: IFormData) => {
@@ -183,9 +193,70 @@ const CreateSchema = () => {
 			});
 		}, 2000);
 	};
-		const formTitle =  'Create Schema';
-	const submitButtonTitle =
-		 {
+
+	const submitSchemaCreationRequest = async (values: IFormData) => {
+		setCreateLoader(true);
+		const schemaFieldName = {
+			endorse: true,
+			type: SchemaType.INDY,
+			schemaPayload: {
+				schemaVersion: values.schemaVersion,
+				schemaName: values.schemaName,
+				attributes: values.attribute
+			},
+		};
+
+		const id = await getEcosystemId();
+
+		const createSchema = await createSchemaRequest(schemaFieldName, id, orgId);
+		const { data } = createSchema as AxiosResponse;
+		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+			setSuccess(data?.message);
+			setCreateLoader(false);
+			window.location.href = `${envConfig.PUBLIC_ECOSYSTEM_BASE_URL}${pathRoutes.organizations.createSchema}`
+
+			setTimeout(() => {
+				setSuccess(null);
+			}, 2000);
+		} else {
+			setCreateLoader(false);
+			setFailure(createSchema as string);
+			setTimeout(() => {
+				setFailure(null);
+			}, 2000);
+		}
+		setTimeout(() => {
+			setShowPopup({
+				type: 'create',
+				show: false,
+			});
+			setCreateLoader(false);
+		}, 2000);
+	};
+	
+	const formTitle = isEcosystemData?.isEcosystemMember
+	? 'Schema Endorsement'
+	: 'Create Schema';
+	const submitButtonTitle = isEcosystemData?.isEcosystemMember
+		? {
+				title: 'Request Endorsement',
+				svg: (
+					<svg
+						className="mr-2 mt-1"
+						xmlns="http://www.w3.org/2000/svg"
+						width="20"
+						height="20"
+						fill="none"
+						viewBox="0 0 25 25"
+					>
+						<path
+							fill="currentColor"
+							d="M21.094 0H3.906A3.906 3.906 0 0 0 0 3.906v12.5a3.906 3.906 0 0 0 3.906 3.907h.781v3.906a.781.781 0 0 0 1.335.553l4.458-4.46h10.614A3.906 3.906 0 0 0 25 16.407v-12.5A3.907 3.907 0 0 0 21.094 0Zm2.343 16.406a2.343 2.343 0 0 1-2.343 2.344H10.156a.782.782 0 0 0-.553.228L6.25 22.333V19.53a.781.781 0 0 0-.781-.781H3.906a2.344 2.344 0 0 1-2.344-2.344v-12.5a2.344 2.344 0 0 1 2.344-2.344h17.188a2.343 2.343 0 0 1 2.343 2.344v12.5Zm-3.184-5.951a.81.81 0 0 1-.17.254l-3.125 3.125a.781.781 0 0 1-1.105-1.106l1.792-1.79h-7.489a2.343 2.343 0 0 0-2.344 2.343.781.781 0 1 1-1.562 0 3.906 3.906 0 0 1 3.906-3.906h7.49l-1.793-1.79a.78.78 0 0 1 .254-1.277.781.781 0 0 1 .852.17l3.125 3.125a.79.79 0 0 1 .169.852Z"
+						/>
+					</svg>
+				),
+		  }
+		: {
 				title: 'Create',
 				svg: (
 					<div className="pr-3">
@@ -205,22 +276,27 @@ const CreateSchema = () => {
 				),
 		  };
 
-	const confirmCreateSchema = () => {
-		
-			formData.attribute.forEach((element: any) => {
-				if (!element.schemaDataType) {
-					element.schemaDataType = 'string';
-				}
-			});
-			const updatedAttribute: Array<Number> = [];
-			formData.attribute.forEach((element) => {
-				updatedAttribute.push(Number(element));
-			});
-
-			submit(formData);
-		
-	};
-
+		  const confirmCreateSchema = () => {
+			if (
+				isEcosystemData?.isEnabledEcosystem &&
+				isEcosystemData?.isEcosystemMember
+			) {
+				submitSchemaCreationRequest(formData);
+			} else {
+				formData.attribute.forEach((element: any) => {
+					if (!element.schemaDataType) {
+						element.schemaDataType = 'string';
+					}
+				});
+				const updatedAttribute: Array<Number> = [];
+				formData.attribute.forEach((element) => {
+					updatedAttribute.push(Number(element));
+				});
+	
+				submit(formData);
+			}
+		};
+	
 	const validSameAttribute = (
 		formikHandlers: FormikProps<IFormData>,
 		index: number,

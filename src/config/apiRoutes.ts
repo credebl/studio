@@ -20,7 +20,12 @@ export const apiRoutes = {
 		refreshToken: '/auth/refresh-token'
 	},
 	Ecosystem: {
-		root: '/ecosystem'
+		root: '/ecosystem',
+		usersInvitation: '/users/invitations',
+		endorsements: {
+			list: '/endorsement-transactions',
+			createSchemaRequest: '/transaction/schema',
+		},
 	},
 	users: {
 		userProfile: '/users/profile',

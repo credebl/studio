@@ -8,6 +8,7 @@ import { apiStatusCodes, itemPerPage, storageKeys } from '../../config/CommonCon
 import { getOrganizationById, getOrganizations } from '../../api/organization';
 import { getUserActivity } from '../../api/users';
 import {
+	getUserEcosystemInvitations,
 	getUserInvitations,
 } from '../../api/invitations';
 import { pathRoutes } from '../../config/pathRoutes';
@@ -23,6 +24,7 @@ import {
 	OrganizationRoles,
 } from '../../common/enums';
 import CustomSpinner from '../CustomSpinner';
+import { envConfig } from '../../config/envConfig';
 
 const initialPageState = {
 	pageNumber: 1,
@@ -127,6 +129,36 @@ const UserDashBoard = () => {
 		setOrgLoading(false);
 	};
 
+	const getAllEcosystemInvitations = async () => {
+		setLoading(true);
+		const response = await getUserEcosystemInvitations(
+			currentPage.pageNumber,
+			currentPage.pageSize,
+			'',
+		);
+		const { data } = response as AxiosResponse;
+
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			const totalPages = data?.data?.totalPages;
+			const invitationPendingList =
+				data?.data?.invitations &&
+				data?.data?.invitations?.filter((invitation: { status: string }) => {
+					return invitation.status === 'pending';
+				});
+			if (invitationPendingList && invitationPendingList.length > 0) {
+				setEcoMessage(`You have received invitation to join ecosystem `);
+				setViewButton(true);
+			}
+			setCurrentPage({
+				...currentPage,
+				total: totalPages,
+			});
+		} else {
+			setError(response as string);
+		}
+		setLoading(false);
+	};
+
 	const getUserRecentActivity = async () => {
 		setLoading(true);
 		const response = await getUserActivity(5);
@@ -145,6 +177,9 @@ const UserDashBoard = () => {
 
 	const checkOrgId = async () => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		if (orgId) {
+			await getAllEcosystemInvitations();
+		}
 	};
 
 	const getSchemaList = async (
@@ -411,6 +446,19 @@ const UserDashBoard = () => {
 					path={pathRoutes.users.invitations}
 					onAlertClose={() => {
 						setMessage(null);
+						setError(null);
+					}}
+				/>
+			</div>
+			<div className="cursor-pointer">
+				<AlertComponent
+					message={ecoMessage}
+					type={'warning'}
+					viewButton={viewButton}
+					path={`${envConfig.PUBLIC_ECOSYSTEM_BASE_URL}${pathRoutes.users.dashboard}` } 
+
+					onAlertClose={() => {
+						setEcoMessage(null);
 						setError(null);
 					}}
 				/>

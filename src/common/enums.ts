@@ -35,6 +35,12 @@ export enum SchemaType {
     INDY = 'indy',
     W3C = 'json'
 }
+
+export enum EcosystemRoles {
+	ecosystemMember = "Ecosystem Member",
+	ecosystemLead = "Ecosystem Lead",
+}
+
 export enum IssueCredentialUserText {
 	offerSent = 'Offered',
 	done = 'Accepted',

@@ -19,6 +19,10 @@ export const pathRoutes = {
 		platformSetting: '/platform-settings',
 		setting: '/setting'
 	},
+	ecosystem: {
+		root: '/ecosystems',
+		ecosystemLogin: '/authentication/sign-in'
+	},
 	organizations: {
 		root: '/organizations',
 		invitations: '/organizations/invitations',

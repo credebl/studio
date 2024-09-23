@@ -15,6 +15,7 @@ import { pathRoutes } from '../../config/pathRoutes';
 import { AlertComponent } from '../AlertComponent';
 import WalletSpinup from './walletCommonComponents/WalletSpinup';
 import DashboardCard from '../../commonComponents/DashboardCard';
+import { envConfig } from '../../config/envConfig';
 
 const initialPageState = {
 	pageNumber: 1,
@@ -37,6 +38,7 @@ const Dashboard = () => {
 	const [ecoCount, setEcoCount] = useState(0);
 	const [error, setError] = useState<string | null>(null);
 	const [redirectToEndorsment, setRedirectToEndorsment] = useState<boolean>();
+	const [ecosystemUserRoles, setEcosystemUserRoles] = useState<string>('');
 
 
 
@@ -53,10 +55,17 @@ const Dashboard = () => {
 		const roles = orgRoles.split(',');
 		setUserRoles(roles);
 	};
+	// const getEcosystemRole = async () => {
+	// 	const ecosysmetmRoles = await getFromLocalStorage(storageKeys.ECOSYSTEM_ROLE);
+	// 	console.log("ecosysmetmRoles",ecosysmetmRoles);
+	// 	setEcosystemUserRoles(ecosysmetmRoles)
+	// };
 	useEffect(() => {
 		getUserRoles();
+		// getEcosystemRole();
 	}, []);
 
+	
 	const fetchOrganizationDetails = async () => {
 		setLoading(true);
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -91,31 +100,36 @@ const Dashboard = () => {
 
 	const fetchEcosystems = async () => {
 		let organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
-		
+	  
 		if (organizationId) {
-			const response = await getEcosystems(
-				organizationId,
-				currentPage.pageNumber,
-				currentPage.pageSize,
-				'',
-			);
-			const { data } = response as AxiosResponse;
-			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-				setEcoCount(data?.data?.totalItems);
-				const ecosystemData = data?.data?.ecosystemList.filter(
-					(ecosystem: Organisation, index: number) => index < 3,
-				);
-				const ecoData = ecosystemData.ecosystemOrgs[0].ecosystemRole.name	
-				if (ecosystemData && ecoData === 'Ecosystem Member') {
-					setRedirectToEndorsment(true)
-				} else {
-					setError(response as string);
+		  const response = await getEcosystems(
+			organizationId,
+			currentPage.pageNumber,
+			currentPage.pageSize,
+			'',
+		);
+		  const { data } = response as AxiosResponse;	  
+		  if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			setEcoCount(data?.data?.totalItems);
+			const ecosystems = data?.data?.ecosystemList;
+			let isLead = false;
+	  
+			ecosystems.forEach((ecosystem: any) => {
+			  ecosystem.ecosystemOrgs.forEach((org: any) => {
+				const role = org.ecosystemRole?.name;
+				if (role === 'Ecosystem Lead') {
+				  isLead = true;
 				}
-			} else {
-				setError(response as string);
+			  });
+			});
+			if (!isLead) {
+			  setRedirectToEndorsment(true);
 			}
+		  } else {
+			setError(response as string);
+		  }
 		}
-	};
+	  };  
 	
 
 	const fetchOrganizationDashboard = async () => {
@@ -293,8 +307,7 @@ const Dashboard = () => {
 									window.location.href = pathRoutes.organizations.schemas;
 								}
 								else {
-									window.location.href = 'http://localhost:3001/organizations/schemas/create';
-
+									window.location.href = `${envConfig.PUBLIC_ECOSYSTEM_BASE_URL}${pathRoutes.organizations.schemas}`
 								}
 							}}
 						/>

@@ -123,3 +123,31 @@ export const acceptRejectInvitations = async (invitationId: string, orgId: strin
 		return err?.message
 	}
 }
+
+export const getUserEcosystemInvitations = async (pageNumber: number, pageSize: number, search: string) => {
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID)
+
+	const url = `${apiRoutes.Ecosystem.root}/${orgId}${apiRoutes.Ecosystem.usersInvitation}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
+
+	const token = await getFromLocalStorage(storageKeys.TOKEN)
+
+	const config = {
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`
+		}
+	}
+	const axiosPayload = {
+		url,
+		config
+	}
+
+	try {
+		return await axiosGet(axiosPayload);
+	}
+	catch (error) {
+		const err = error as Error
+		return err?.message
+	}
+}
+
