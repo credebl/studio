@@ -213,7 +213,7 @@ const CreateSchema = () => {
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			setSuccess(data?.message);
 			setCreateLoader(false);
-			window.location.href = `${envConfig.PUBLIC_ECOSYSTEM_BASE_URL}${pathRoutes.organizations.createSchema}`
+			window.location.href = `${envConfig.PUBLIC_ECOSYSTEM_FRONT_END_URL}${pathRoutes.organizations.createSchema}`
 
 			setTimeout(() => {
 				setSuccess(null);

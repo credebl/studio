@@ -307,7 +307,7 @@ const Dashboard = () => {
 									window.location.href = pathRoutes.organizations.schemas;
 								}
 								else {
-									window.location.href = `${envConfig.PUBLIC_ECOSYSTEM_BASE_URL}${pathRoutes.organizations.schemas}`
+									window.location.href = `${envConfig.PUBLIC_ECOSYSTEM_FRONT_END_URL}${pathRoutes.organizations.schemas}`
 								}
 							}}
 						/>

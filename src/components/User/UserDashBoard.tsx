@@ -455,7 +455,7 @@ const UserDashBoard = () => {
 					message={ecoMessage}
 					type={'warning'}
 					viewButton={viewButton}
-					path={`${envConfig.PUBLIC_ECOSYSTEM_BASE_URL}${pathRoutes.users.dashboard}` } 
+					path={`${envConfig.PUBLIC_ECOSYSTEM_FRONT_END_URL}${pathRoutes.users.dashboard}` } 
 
 					onAlertClose={() => {
 						setEcoMessage(null);
