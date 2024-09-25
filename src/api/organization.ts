@@ -4,6 +4,8 @@ import {
 	axiosPost,
 	axiosPublicOrganisationGet,
 	axiosPut,
+	ecosystemAxiosGet,
+	ecosystemAxiosPost,
 } from '../services/apiRequests';
 
 import { apiRoutes } from '../config/apiRoutes';
@@ -513,7 +515,7 @@ export const getEcosystems = async (
 	};
 
 	try {
-		return await axiosGet(axiosPayload);
+		return await ecosystemAxiosGet(axiosPayload);
 	} catch (error) {
 		const err = error as Error;
 		return err?.message;
@@ -534,7 +536,7 @@ export const createSchemaRequest = async (
 	};
 
 	try {
-		return await axiosPost(axiosPayload);
+		return await ecosystemAxiosPost(axiosPayload);
 	} catch (error) {
 		const err = error as Error;
 		return err?.message;

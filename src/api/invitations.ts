@@ -1,4 +1,4 @@
-import { axiosDelete, axiosGet, axiosPost, axiosPut } from "../services/apiRequests"
+import { axiosGet, axiosPost, ecosystemAxiosGet } from "../services/apiRequests"
 
 import { apiRoutes } from "../config/apiRoutes";
 import { getFromLocalStorage } from "./Auth";
@@ -143,7 +143,7 @@ export const getUserEcosystemInvitations = async (pageNumber: number, pageSize: 
 	}
 
 	try {
-		return await axiosGet(axiosPayload);
+		return await ecosystemAxiosGet(axiosPayload);
 	}
 	catch (error) {
 		const err = error as Error
