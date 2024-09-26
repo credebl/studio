@@ -122,7 +122,7 @@ const Dashboard = () => {
 				}
 			  });
 			});
-			if (!isLead) {
+			if (!isLead && ecoCount > 0) {
 			  setRedirectToEndorsment(true);
 			}
 		  } else {
@@ -306,7 +306,7 @@ const Dashboard = () => {
 								if (walletStatus && !redirectToEndorsment) {
 									window.location.href = pathRoutes.organizations.schemas;
 								}
-								else {
+								else if(walletStatus && redirectToEndorsment) {
 									window.location.href = `${envConfig.PUBLIC_ECOSYSTEM_FRONT_END_URL}${pathRoutes.organizations.schemas}`
 								}
 							}}
