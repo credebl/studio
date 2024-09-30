@@ -3,13 +3,12 @@ import { Alert, Button, Pagination } from 'flowbite-react';
 import React, { useEffect, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import type { AxiosResponse } from 'axios';
-import { checkEcosystem, type ICheckEcosystem } from '../../config/ecosystem';
 import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { apiStatusCodes, itemPerPage, storageKeys } from '../../config/CommonConstant';
 import { getAllSchemas, getAllSchemasByOrgId } from '../../api/Schema';
 import { DidMethod, SchemaTypes } from '../../common/enums';
 import { getOrganizationById } from '../../api/organization';
-import { Create, SchemaEndorsement } from '../Issuance/Constant';
+import { Create } from '../Issuance/Constant';
 import BreadCrumbs from '../BreadCrumbs';
 import SearchInput from '../SearchInput';
 import RoleViewButton from '../RoleViewButton';
@@ -35,7 +34,6 @@ const VerificationSchemasList = () => {
 	});
 	const [walletStatus, setWalletStatus] = useState(false);
 	const [totalItems, setTotalItems] = useState(0);
-	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [searchValue, setSearchValue] = useState('');
 	const [selectedSchemas, setSelectedSchemas] = useState<ISchema[]>([]);
 	const [w3cSchema, setW3cSchema] = useState<boolean>(false);
@@ -237,25 +235,13 @@ const VerificationSchemasList = () => {
 	};	
 	useEffect(() => {
 		fetchOrganizationDetails();
-		(async () => {
-			try {
-				const data: ICheckEcosystem = await checkEcosystem();
-				setIsEcosystemData(data);
-			} catch (error) {
-				console.error(error);
-			}
-		})();
 		setSearchValue('');
 	}, []);
 
-	const createSchemaButtonTitle = isEcosystemData?.isEcosystemMember
-		? { title: 'Schema Endorsement', toolTip: 'Add new schema request', svg: <SchemaEndorsement /> }
-		: { title: 'Create', svg: <Create />, toolTip: 'Create new schema' };
+	const createSchemaButtonTitle =  { title: 'Create', svg: <Create />, toolTip: 'Create new schema' };
 	const emptySchemaListTitle = 'No Schemas';
 	const emptySchemaListDescription = 'Get started by creating a new Schema';
-	const emptySchemaListBtn = isEcosystemData?.isEcosystemMember
-		? { title: 'Schema Endorsement', svg: <SchemaEndorsement /> }
-		: { title: 'Create Schema', svg: <Create /> };
+	const emptySchemaListBtn = { title: 'Create Schema', svg: <Create /> };
 	return (
 		<div className="px-4 pt-2">
 			<div className="mb-4 col-span-full xl:mb-2">

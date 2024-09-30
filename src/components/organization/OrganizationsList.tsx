@@ -20,7 +20,7 @@ import {
 } from '../../api/Auth';
 import { EmptyListMessage } from '../EmptyListComponent';
 import CustomSpinner from '../CustomSpinner';
-import CreateEcosystemOrgModal from '../CreateEcosystemOrgModal';
+import CreateOrgModal from '../CreateOrgModal';
 
 const initialPageState = {
 	pageNumber: 1,
@@ -112,8 +112,6 @@ const OrganizationsList = () => {
 	};
 
 	const redirectOrgDashboard = async (activeOrg: Organisation) => {
-		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ID);
-		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ROLE);
 		await removeFromLocalStorage(storageKeys.ORG_DETAILS);
 
 		await setToLocalStorage(storageKeys.ORG_ID, activeOrg.id.toString());
@@ -273,7 +271,7 @@ const OrganizationsList = () => {
 			</div>
 			<div>
 				<div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700   sm:p-6 dark:bg-gray-800">
-					<CreateEcosystemOrgModal
+					<CreateOrgModal
 						openModal={props.openModal}
 						setMessage={(data) => setMessage(data)}
 						setOpenModal={props.setOpenModal}
