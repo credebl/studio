@@ -248,3 +248,22 @@ export interface ILedgerItem {
     orgInvitationsCount: number;
     orgUsersCount: number;
   }
+
+  export interface IEcosystemOrganizations {
+    id: string;
+    orgId: string;
+    status: string;
+    createDateTime: string;
+    lastChangedDateTime: string;
+    ecosystemId: string;
+    ecosystemRoleId: string;
+    ecosystemRole: IEcosystemRole;
+  }
+  export interface IEcosystemRole {
+    id: string;
+    name: string;
+    description: string;
+    createDateTime: string;
+    lastChangedDateTime: string;
+    deletedAt: string | null;
+  }

@@ -8,25 +8,6 @@ import {
   getOrganizationReferences
 } from "../../api/organization";
 
-export interface IEcosystemOrganizations {
-  id: string;
-  orgId: string;
-  status: string;
-  createDateTime: string;
-  lastChangedDateTime: string;
-  ecosystemId: string;
-  ecosystemRoleId: string;
-  ecosystemRole: IEcosystemRole;
-}
-export interface IEcosystemRole {
-  id: string;
-  name: string;
-  description: string;
-  createDateTime: string;
-  lastChangedDateTime: string;
-  deletedAt: string | null;
-}
-
 import BreadCrumbs from "../BreadCrumbs";
 import { deleteOrganizationWallet } from "../../api/Agent";
 import ConfirmationModal from "../../commonComponents/ConfirmationModal";
@@ -40,7 +21,7 @@ import React from "react";
 import { deleteVerificationRecords } from '../../api/verification';
 import { deleteIssuanceRecords } from '../../api/issuance';
 import { deleteConnectionRecords} from '../../api/connection'
-import  type { IOrgCount } from "./interfaces";
+import  type { IEcosystemOrganizations, IOrgCount } from "./interfaces";
 import { EcosystemRoles } from "../../common/enums";
 
 const DeleteOrganizations = () => {

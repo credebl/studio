@@ -55,14 +55,9 @@ const Dashboard = () => {
 		const roles = orgRoles.split(',');
 		setUserRoles(roles);
 	};
-	// const getEcosystemRole = async () => {
-	// 	const ecosysmetmRoles = await getFromLocalStorage(storageKeys.ECOSYSTEM_ROLE);
-	// 	console.log("ecosysmetmRoles",ecosysmetmRoles);
-	// 	setEcosystemUserRoles(ecosysmetmRoles)
-	// };
+	
 	useEffect(() => {
 		getUserRoles();
-		// getEcosystemRole();
 	}, []);
 
 	
