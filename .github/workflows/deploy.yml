@@ -1,9 +1,9 @@
 name: Deploy
 on:
   push:
-    branches: refactor/decouple-ecosystem-from-existing-codebase
+    branches: develop
   pull_request:
-    branches: refactor/decouple-ecosystem-from-existing-codebase
+    branches: develop
 
 jobs:
   deploy:
