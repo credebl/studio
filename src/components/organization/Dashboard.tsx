@@ -1,21 +1,22 @@
 import type { OrgDashboard, Organisation } from './interfaces';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { getEcosystems, getOrgDashboard, getOrganizationById } from '../../api/organization';
+import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { useEffect, useState } from 'react';
+
 import { Alert } from 'flowbite-react';
+import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
 import CustomAvatar from '../Avatar/index';
 import CustomSpinner from '../CustomSpinner';
+import DashboardCard from '../../commonComponents/DashboardCard';
 import EditOrgdetailsModal from './EditOrgdetailsModal';
 import OrganizationDetails from './OrganizationDetails';
 import { Roles } from '../../utils/enums/roles';
-import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
-import { pathRoutes } from '../../config/pathRoutes';
-import { AlertComponent } from '../AlertComponent';
 import WalletSpinup from './walletCommonComponents/WalletSpinup';
-import DashboardCard from '../../commonComponents/DashboardCard';
 import { envConfig } from '../../config/envConfig';
+import { pathRoutes } from '../../config/pathRoutes';
 
 const initialPageState = {
 	pageNumber: 1,
@@ -38,8 +39,6 @@ const Dashboard = () => {
 	const [ecoCount, setEcoCount] = useState(0);
 	const [error, setError] = useState<string | null>(null);
 	const [redirectToEndorsment, setRedirectToEndorsment] = useState<boolean>();
-	const [ecosystemUserRoles, setEcosystemUserRoles] = useState<string>('');
-
 
 
 	const EditOrgDetails = () => {
@@ -92,6 +91,7 @@ const Dashboard = () => {
 		}
 		setLoading(false);
 	};
+	
 
 	const fetchEcosystems = async () => {
 		let organizationId = await getFromLocalStorage(storageKeys.ORG_ID);
