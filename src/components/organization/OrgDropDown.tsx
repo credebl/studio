@@ -45,8 +45,6 @@ const OrgDropDown = () => {
 	const goToOrgDashboard = async (org: Organisation) => {
 		await removeFromLocalStorage(storageKeys.ORG_INFO);
 		await removeFromLocalStorage(storageKeys.ORG_DETAILS);
-		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ID);
-		await removeFromLocalStorage(storageKeys.ECOSYSTEM_ROLE);
 
 		if (org) { // Added check
 			await setOrgRoleDetails(org);

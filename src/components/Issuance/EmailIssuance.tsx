@@ -20,10 +20,8 @@ import { EmptyListMessage } from '../EmptyListComponent';
 import ResetPopup from './ResetPopup';
 import type { SelectRef } from './BulkIssuance';
 import RoleViewButton from '../RoleViewButton';
-import { checkEcosystem  } from '../../config/ecosystem';
-import type { ICheckEcosystem} from '../../config/ecosystem';
 import { Features } from '../../utils/enums/features';
-import { Create, SchemaEndorsement } from './Constant';
+import { Create } from './Constant';
 import { DidMethod, SchemaTypes, CredentialType, SchemaTypeValue, ProofType, SchemaType } from '../../common/enums';
 import { getAllSchemas } from '../../api/Schema';
 import type { GetAllSchemaListParameter } from '../Resources/Schema/interfaces';
@@ -52,7 +50,6 @@ const EmailIssuance = () => {
 	const [failure, setFailure] = useState<string | null>(null);
 	const [isEditing, setIsEditing] = useState(false);
 	const [issueLoader, setIssueLoader] = useState(false);
-	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const inputRef = useRef(null);
 	const [mounted, setMounted] = useState<boolean>(false)
 	const [schemaType, setSchemaType]= useState<SchemaTypes>();
@@ -202,14 +199,6 @@ const EmailIssuance = () => {
 				useEffect(() => {
 						
 					setMounted(true);
-					(async () => {
-						try {
-							const data: ICheckEcosystem = await checkEcosystem();
-							setIsEcosystemData(data);
-						} catch (error) {
-							console.log(error);
-						}
-					})();
 				}, []);
 
 				useEffect(() => {
@@ -374,9 +363,7 @@ const EmailIssuance = () => {
 		setOpenResetModal(true);
 	};
 
-	const createSchemaTitle = isEcosystemData?.isEcosystemMember
-		? { title: 'Schema Endorsement', svg: <SchemaEndorsement /> }
-		: { title: 'Create Schema', svg: <Create /> };
+	const createSchemaTitle =  { title: 'Create Schema', svg: <Create /> };
 
 	return (
 		<div className="px-4 pt-2">

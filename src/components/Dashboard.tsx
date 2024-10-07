@@ -1,7 +1,7 @@
 
 import { Button } from 'flowbite-react';
 import { useState } from 'react';
-import CreateEcosystemOrgModal from './CreateEcosystemOrgModal';
+import CreateOrgModal from './CreateOrgModal';
 
 export default function Dashboard() {
 
@@ -30,7 +30,7 @@ export default function Dashboard() {
 
                     {
                         props.openModal &&
-                        <CreateEcosystemOrgModal
+                        <CreateOrgModal
                             openModal={props.openModal}
                             setOpenModal={props.setOpenModal}
                             isorgModal={true}

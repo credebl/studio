@@ -16,12 +16,10 @@ import SOCKET from '../../config/SocketConfig';
 import { ToastContainer, toast } from 'react-toastify';
 import BreadCrumbs from '../BreadCrumbs';
 import BackButton from '../../commonComponents/backbutton'
-import { checkEcosystem } from '../../config/ecosystem';
-import type { ICheckEcosystem} from '../../config/ecosystem';
 import type { ICredentials, IAttributes, IUploadMessage } from './interface';
 import RoleViewButton from '../RoleViewButton';
 import { Features } from '../../utils/enums/features';
-import { Create, SchemaEndorsement } from './Constant';
+import { Create } from './Constant';
 import { DidMethod, SchemaTypes } from '../../common/enums';
 import type { GetAllSchemaListParameter } from '../Resources/Schema/interfaces';
 import { getAllSchemas } from '../../api/Schema';
@@ -44,7 +42,6 @@ const BulkIssuance = () => {
 	const [uploadMessage, setUploadMessage] = useState<IUploadMessage | null>(null)
 	const [success, setSuccess] = useState<string | null>(null);
 	const [failure, setFailure] = useState<string | null>(null);
-	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [mounted, setMounted] = useState<boolean>(false)
 	const [schemaType, setSchemaType]= useState<SchemaTypes>();
 	const [selectedTemplate, setSelectedTemplate] = useState<any>();
@@ -205,17 +202,9 @@ const BulkIssuance = () => {
 	}, [isAllSchema]);
 	useEffect(() => {	
 		setMounted(true);
-		(async () => {
-			try {
-				const data: ICheckEcosystem = await checkEcosystem();				
-				setIsEcosystemData(data);
-			} catch (error) {
-				console.log(error);
-			}
-		})();
 	}, []);
 
-
+	
 	const downloadFile = (url: string, fileName: string) => {
 		const link = document.createElement('a');
 		link.href = url;
@@ -523,9 +512,7 @@ const BulkIssuance = () => {
 			item.value === credentialSelected,
 	);
 	
-	const createSchemaTitle = isEcosystemData?.isEcosystemMember
-		? { title: 'Schema Endorsement', svg: <SchemaEndorsement/> }
-		: { title: 'Create Schema', svg: <Create/> };
+	const createSchemaTitle =  { title: 'Create Schema', svg: <Create/> };
 		
 	return (
 		<div className="px-4 pt-2">

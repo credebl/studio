@@ -19,6 +19,10 @@ export const pathRoutes = {
 		platformSetting: '/platform-settings',
 		setting: '/setting'
 	},
+	ecosystem: {
+		root: '/ecosystems',
+		ecosystemLogin: '/authentication/sign-in'
+	},
 	organizations: {
 		root: '/organizations',
 		invitations: '/organizations/invitations',
@@ -65,14 +69,6 @@ export const pathRoutes = {
 				W3CVerification:
 				'/organizations/verification/verify-credentials/schemas/connections/verification',
 		},
-	},
-	ecosystem: {
-		root: '/ecosystems',
-		dashboard: '/ecosystems/dashboard',
-		endorsements: '/ecosystems/endorsement',
-		invitation: '/ecosystems/invitation',
-		sentinvitation: '/ecosystems/invitations',
-		addOrgs: '/ecosystems/dashboard/add-organizations'
 	},
 	documentation: {
 		root: envConfig.PLATFORM_DATA.docs

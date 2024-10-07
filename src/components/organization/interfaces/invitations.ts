@@ -1,7 +1,6 @@
 import type { OrgRole, Organisation } from "."
 
 export interface Invitation {
-		ecosystem: any
     id: string
     createDateTime: string
     createdBy: string

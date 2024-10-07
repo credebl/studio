@@ -10,8 +10,6 @@ export interface IPlatformSetting {
 	sgApiKey: string;
 	emailFrom: string;
 	apiEndPoint: string;
-	enableEcosystem: boolean;
-	multiEcosystemSupport: boolean;
 }
 
 export const getUserActivity = async (limit: number) => {

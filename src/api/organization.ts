@@ -1,17 +1,19 @@
+import type { IDedicatedAgentConfig, IUpdatePrimaryDid } from '../components/organization/interfaces';
 import {
 	axiosDelete,
 	axiosGet,
 	axiosPost,
 	axiosPublicOrganisationGet,
 	axiosPut,
+	ecosystemAxiosGet,
+	ecosystemAxiosPost,
 } from '../services/apiRequests';
 
 import { apiRoutes } from '../config/apiRoutes';
 import { getFromLocalStorage } from './Auth';
 import { getHeaderConfigs } from '../config/GetHeaderConfigs';
-import { storageKeys } from '../config/CommonConstant';
-import type { IDedicatedAgentConfig, IUpdatePrimaryDid } from '../components/organization/interfaces';
 import { pathRoutes } from '../config/pathRoutes';
+import { storageKeys } from '../config/CommonConstant';
 
 export const createOrganization = async (data: object) => {
 	const url = apiRoutes.organizations.create;
@@ -500,3 +502,43 @@ export const deleteOrganization = async (
 };
 
 
+export const getEcosystems = async (
+	orgId: string,
+	pageNumber: number = 1,
+	pageSize: number = 10,
+	search = '',
+) => {
+	const url = `${apiRoutes.Ecosystem.root}/${orgId}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`;
+	const axiosPayload = {
+		url,
+		config: await getHeaderConfigs(),
+	};
+
+	try {
+		return await ecosystemAxiosGet(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};
+
+export const createSchemaRequest = async (
+	data: object,
+	endorsementId: string,
+	orgId: string,
+) => {
+	const url = `${apiRoutes.Ecosystem.root}/${endorsementId}/${orgId}${apiRoutes.Ecosystem.endorsements.createSchemaRequest}`;
+	const payload = data;
+	const axiosPayload = {
+		url,
+		payload,
+		config: await getHeaderConfigs(),
+	};
+
+	try {
+		return await ecosystemAxiosPost(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};
