@@ -39,6 +39,8 @@ const Dashboard = () => {
 	const [ecoCount, setEcoCount] = useState(0);
 	const [error, setError] = useState<string | null>(null);
 	const [redirectToEndorsment, setRedirectToEndorsment] = useState<boolean>();
+	const [ecosystemUserRoles, setEcosystemUserRoles] = useState<string>('');
+
 
 
 	const EditOrgDetails = () => {
@@ -91,7 +93,6 @@ const Dashboard = () => {
 		}
 		setLoading(false);
 	};
-	
 
 	const fetchEcosystems = async () => {
 		let organizationId = await getFromLocalStorage(storageKeys.ORG_ID);

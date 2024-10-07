@@ -307,11 +307,13 @@ const DeleteOrganizations = () => {
           setError(null);
         }}
       />
+
 {ecosystemRoles.length > 0 &&
         <h2 className="mb-4 dark:text-white">
           You are Ecosystem Lead for <strong>{ecosystemRoles.join(', ')}</strong>. You cannot remove yourself from the ecosystem, delete the organization's wallet, and delete your organization.
         </h2>
       }
+
       {organizationData && (
         <div>
           {cardData.map((card, index) => (
