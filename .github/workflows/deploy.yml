@@ -1,9 +1,9 @@
 name: Deploy
 on:
   push:
-    branches: main
+    branches: develop
   pull_request:
-    branches: main
+    branches: develop
 
 jobs:
   deploy:
@@ -23,12 +23,20 @@ jobs:
         with:
           deno-version: v1.x
 
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install step
+        run: "npm install"
+
       - name: Build step
-        run: "npm install && npm run build"
+        run: "npm run build"
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
         with:
-          project: "credebl-dev-ui"
+          project: "credebl-studio-qa"
           entrypoint: "server/entry.mjs"
           root: "dist"
