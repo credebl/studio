@@ -1,9 +1,9 @@
 name: Deploy
 on:
   push:
-    branches: qa
+    branches: main
   pull_request:
-    branches: qa
+    branches: main
 
 jobs:
   deploy:
@@ -37,6 +37,6 @@ jobs:
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
         with:
-          project: "credebl-studio-qa"
+          project: "credebl-studio"
           entrypoint: "server/entry.mjs"
           root: "dist"
