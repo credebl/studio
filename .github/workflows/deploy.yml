@@ -38,5 +38,5 @@ jobs:
         uses: denoland/deployctl@v1
         with:
           project: "credebl-studio"
-          entrypoint: "server/entry.mjs"
-          root: "dist"
+          entrypoint: "server/entry.mjs" # 📝 Update the entrypoint if necessary
+          root: "dist" # 📝 Update the root if necessary

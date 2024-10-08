@@ -1,3 +1,6 @@
+import '../../common/global.css';
+
+import type { IOrgInfo, Organisation } from './interfaces';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant.ts';
 import {
 	getFromLocalStorage,
@@ -5,12 +8,11 @@ import {
 	setToLocalStorage,
 } from '../../api/Auth';
 import { useEffect, useState } from 'react';
-import '../../common/global.css';
+
+import { AiOutlineSearch } from 'react-icons/ai';
 import type { AxiosResponse } from 'axios';
 import { BiChevronDown } from 'react-icons/bi';
-import { AiOutlineSearch } from 'react-icons/ai';
 import CustomAvatar from '../Avatar/index.tsx';
-import type { IOrgInfo, Organisation } from './interfaces';
 import { getOrganizations } from '../../api/organization.ts';
 import { pathRoutes } from '../../config/pathRoutes.ts';
 
@@ -74,8 +76,14 @@ const OrgDropDown = () => {
 	const handleActiveOrg = async (organizations: Organisation[]) => {
 		let activeOrgDetails;
 		const orgInfoDetails = await getFromLocalStorage(storageKeys.ORG_INFO);
-		activeOrgDetails = orgInfoDetails ? JSON.parse(orgInfoDetails) : null;
-
+		
+		if (orgInfoDetails) {
+			try {
+				activeOrgDetails = JSON.parse(orgInfoDetails);
+			} catch (error) {
+				console.error('Error parsing orgInfoDetails from LocalStorage:', error);
+			}
+		}	
 		if (activeOrgDetails && Object.keys(activeOrgDetails)?.length > 0) {
 			setActiveOrg(activeOrgDetails);
 		} else if (organizations?.[0]) {
