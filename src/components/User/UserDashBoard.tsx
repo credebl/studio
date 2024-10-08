@@ -109,7 +109,7 @@ const UserDashBoard = () => {
 		}
 		setLoading(false);
 	};
-	//Fetch the user organization list
+
 	const getAllOrganizations = async () => {
 		setOrgLoading(true);
 		const response = await getOrganizations(
@@ -265,6 +265,8 @@ const UserDashBoard = () => {
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			if (data?.data?.org_agents) {
 				setWalletData(data?.data?.org_agents);
+				console.log("data?.data?.org_agents",data?.data?.org_agents);
+				
 			} else {
 				setWalletData([]);
 			}
@@ -1064,7 +1066,7 @@ const UserDashBoard = () => {
 					</div>
 				</div>
 				<div className="">
-				<div className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800 xl:mb-0">
+				{/* <div className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800 xl:mb-0">
 					<div className="items-start justify-start mb-4">
 						<h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
 							Recent Activity
@@ -1104,7 +1106,7 @@ const UserDashBoard = () => {
 							<CustomSpinner />
 						</div>
 					)}
-				</div>
+				</div> */}
 			</div>
 			</div>
 			
