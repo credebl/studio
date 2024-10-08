@@ -940,10 +940,10 @@ const UserDashBoard = () => {
 															className="flex items-center space-x-2 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-md"
 														>
 															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white text-primary-700 text-start">
-																{schema?.name}
+																{schema?.name || ''}
 															</span>
 															<span className="items-center font-normal text-md justify-start dark:text-white text-gray-600 truncate">
-																{schema?.version}
+																{schema?.version || ''}
 															</span>
 														</a>
 													</button>
@@ -1039,10 +1039,10 @@ const UserDashBoard = () => {
 															className="flex items-center space-x-2 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-md"
 														>
 															<span className="ml-3 text-lg font-bold text-gray-500 text-start dark:text-white text-primary-700 shrink-0">
-																{cred?.tag}
+																{cred?.tag || ''}
 															</span>
 															<span className="truncate text-md font-normal dark:text-white text-gray-600">
-																{cred?.credentialDefinitionId}
+																{cred?.credentialDefinitionId || ''}
 															</span>
 														</a>
 													</button>
