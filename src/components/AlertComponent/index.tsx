@@ -21,15 +21,9 @@ export const AlertComponent = ({
 	path = '',
 }: IAlertComponent) => {
 
-
 	return (
-		message === null ?
-		
-		 (
-		 <>
-		 </>
-		 ) :
-		 (
+		message !== null ?
+		(
 			(
 				<div className="w-full">
 					<div
@@ -79,7 +73,15 @@ export const AlertComponent = ({
 				</div>
 				
 			)
-		)
+		) :
+		 (
+		 <>
+		 <span>
+			
+		 </span>
+		 </>
+		 ) 
+		
 		
 	);
 };
