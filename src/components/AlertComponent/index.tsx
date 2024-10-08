@@ -1,6 +1,18 @@
 import type { IAlertComponent } from './interface';
-import React from 'react';
 
+const getAlertClass = (type:string) => {
+	switch (type) {
+		case 'warning':
+			return 'text-yellow-700 bg-yellow-100 border-yellow-500 dark:bg-yellow-200 dark:text-yellow-800';
+		case 'failure':
+			return 'text-red-700 bg-red-100 border-red-500 dark:bg-red-200 dark:text-red-800';
+		case 'success':
+			return 'text-green-700 bg-green-100 border-green-500 dark:bg-green-200 dark:text-green-800';
+		default:
+			
+			return 'text-gray-700 bg-gray-100 border-gray-500 dark:bg-gray-200 dark:text-gray-800';
+	}
+};
 export const AlertComponent = ({
 	message,
 	type,
@@ -8,19 +20,7 @@ export const AlertComponent = ({
 	onAlertClose,
 	path = '',
 }: IAlertComponent) => {
-	const getAlertClass = () => {
-		switch (type) {
-			case 'warning':
-				return 'text-yellow-700 bg-yellow-100 border-yellow-500 dark:bg-yellow-200 dark:text-yellow-800';
-			case 'failure':
-				return 'text-red-700 bg-red-100 border-red-500 dark:bg-red-200 dark:text-red-800';
-			case 'success':
-				return 'text-green-700 bg-green-100 border-green-500 dark:bg-green-200 dark:text-green-800';
-			default:
-				
-				return 'text-gray-700 bg-gray-100 border-gray-500 dark:bg-gray-200 dark:text-gray-800';
-		}
-	};
+
 
 	return (
 		message !== null ?
@@ -32,7 +32,7 @@ export const AlertComponent = ({
 		 (
 			<div className="w-full">
 				<div
-					className={`flex flex-col gap-2 p-4 text-sm rounded-lg mb-4 ${getAlertClass()}`}
+					className={`flex flex-col gap-2 p-4 text-sm rounded-lg mb-4 ${() => getAlertClass(type)}`}
 					role="alert"
 				>
 					<div
@@ -51,7 +51,7 @@ export const AlertComponent = ({
 						</div>
 						<button
 							aria-label="Dismiss"
-							className={`-mx-1.5 -my-1.5 ml-auto inline-flex h-8 w-8 rounded-lg p-1.5 ${getAlertClass()}`}
+							className={`-mx-1.5 -my-1.5 ml-auto inline-flex h-8 w-8 rounded-lg p-1.5 ${() => getAlertClass(type)}`}
 							type="button"
 							onClick={onAlertClose}
 						>
@@ -61,7 +61,7 @@ export const AlertComponent = ({
 								strokeWidth="0"
 								viewBox="0 0 20 20"
 								aria-hidden="true"
-								className={`w-5 h-5 ${getAlertClass()}`}
+								className={`w-5 h-5 ${() => getAlertClass(type)}`}
 								height="1em"
 								width="1em"
 								xmlns="http://www.w3.org/2000/svg"
