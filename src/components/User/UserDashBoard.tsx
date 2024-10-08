@@ -605,12 +605,12 @@ const UserDashBoard = () => {
 															)}
 
 															<span className="flex items-center space-x-2 ml-3 text-lg font-bold text-gray-500 dark:text-white text-start truncate">
-																<span className="truncate"> {org?.name}</span>
+																<span className="truncate">{org?.name}</span>
 																<span>
 																	{org.roles.includes(
 																		OrganizationRoles.organizationOwner,
 																	) ? (
-																		<span title={org.roles}>
+																		<span  title={org.roles.join(", ")}>
 																			<svg
 																				width="24"
 																				height="24"
@@ -631,10 +631,7 @@ const UserDashBoard = () => {
 																			OrganizationRoles.organizationIssuer,
 																	  ) ? (
 																		<span
-																			title={org.roles.slice(
-																				0,
-																				org.roles.length - 1,
-																			)}
+																		title={org.roles.slice(0, org.roles.length - 1).join(", ")}
 																		>
 																			<svg
 																				width="24"
