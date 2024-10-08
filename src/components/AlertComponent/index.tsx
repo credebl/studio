@@ -76,6 +76,7 @@ export const AlertComponent = ({
 					</div>
 				</div>
 			</div>
+			
 		)
 	);
 };
