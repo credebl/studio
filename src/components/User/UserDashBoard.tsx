@@ -1021,7 +1021,7 @@ const UserDashBoard = () => {
 						</div>
 						<hr />
 
-						{!credDefLoading ? (
+						{!credDefLoading ? (	
 							<>
 								{credDefList && credDefList.length > 0 ? (
 									<>
@@ -1066,7 +1066,7 @@ const UserDashBoard = () => {
 					</div>
 				</div>
 				<div className="">
-				{/* <div className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800 xl:mb-0">
+				<div className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800 xl:mb-0">
 					<div className="items-start justify-start mb-4">
 						<h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
 							Recent Activity
@@ -1106,7 +1106,7 @@ const UserDashBoard = () => {
 							<CustomSpinner />
 						</div>
 					)}
-				</div> */}
+				</div>
 			</div>
 			</div>
 			

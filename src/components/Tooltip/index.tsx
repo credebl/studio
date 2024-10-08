@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import { Tooltip } from 'flowbite-react';
 import moment from 'moment';
 
@@ -8,9 +10,14 @@ interface DateProps {
 }
 
 const DateTooltip = ({date, children}: DateProps) => {
+  const [formattedDate,setFormattedDate]= useState("")
 
-  const updatedDate = new Date(date);
-  const formattedDate = date ? moment(updatedDate).format("MMM DD, YYYY, h:mm A z") : '';
+  
+  useEffect(() => {
+    const updatedDate = new Date(date);
+    const formatdDate = date ? moment(updatedDate).format("MMM DD, YYYY, h:mm A z") : '';
+    setFormattedDate(formatdDate)
+  }, [])
 
   return (
     <Tooltip 
