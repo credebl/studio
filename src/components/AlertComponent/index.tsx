@@ -23,7 +23,12 @@ export const AlertComponent = ({
 
 
 	return (
-		message !== null ?
+		message === null ?
+		
+		 (
+		 <>
+		 </>
+		 ) :
 		 (
 			(
 				<div className="w-full">
@@ -75,7 +80,6 @@ export const AlertComponent = ({
 				
 			)
 		)
-		:
-		 (<></>)
+		
 	);
 };
