@@ -574,7 +574,7 @@ const UserDashBoard = () => {
 											);
 											org.roles = roles;
 											return (
-												<span
+												<div
 													className="flex justify-between w-full mt-2 items-center"
 													key={org?.id}
 												 >
@@ -853,7 +853,7 @@ const UserDashBoard = () => {
 															</button>
 														</Tooltip>
 													</div>
-												</span>
+												</div>
 											);
 										})}
 										{organizationsList && organizationsList?.length > 0 && (
