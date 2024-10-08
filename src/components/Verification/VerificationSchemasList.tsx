@@ -1,23 +1,23 @@
-
 import { Alert, Button, Pagination } from 'flowbite-react';
+import { DidMethod, SchemaTypes } from '../../common/enums';
+import type { IAttributesDetails, ISchema, ISchemaData } from './interface';
 import React, { useEffect, useState } from 'react';
-import type { ChangeEvent } from 'react';
-import type { AxiosResponse } from 'axios';
-import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { apiStatusCodes, itemPerPage, storageKeys } from '../../config/CommonConstant';
 import { getAllSchemas, getAllSchemasByOrgId } from '../../api/Schema';
-import { DidMethod, SchemaTypes } from '../../common/enums';
-import { getOrganizationById } from '../../api/organization';
-import { Create } from '../Issuance/Constant';
+import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
+
+import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
-import SearchInput from '../SearchInput';
-import RoleViewButton from '../RoleViewButton';
-import { Features } from '../../utils/enums/features';
-import { pathRoutes } from '../../config/pathRoutes';
+import type { ChangeEvent } from 'react';
+import { Create } from '../Issuance/Constant';
 import CustomSpinner from '../CustomSpinner';
 import { EmptyListMessage } from '../EmptyListComponent';
+import { Features } from '../../utils/enums/features';
+import RoleViewButton from '../RoleViewButton';
 import SchemaCard from '../../commonComponents/SchemaCard';
-import type { IAttributesDetails, ISchema, ISchemaData } from './interface';
+import SearchInput from '../SearchInput';
+import { getOrganizationById } from '../../api/organization';
+import { pathRoutes } from '../../config/pathRoutes';
 
 const VerificationSchemasList = () => {
 	const [schemasList, setSchemasList] = useState([]);
