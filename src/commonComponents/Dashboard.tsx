@@ -1,12 +1,14 @@
-import React from 'react';
-import { Card } from 'flowbite-react';
 import BackButton from '../commonComponents/backbutton';
 import BreadCrumbs from '../components/BreadCrumbs'
+import { Card } from 'flowbite-react';
+import React from 'react';
 
-const Dashboard = ({ title, options, backButtonPath }) => {
+const Dashboard = ({
+	//  title, options, backButtonPath 
+	}) => {
 	return (
 		<div className="px-4 pt-2 h-full h-[700px]">
-			<div className="mt-1">
+			{/* <div className="mt-1">
 				<BreadCrumbs />
 			</div>
 			<div className="mb-2 flex justify-between items-center relative">
@@ -66,7 +68,7 @@ const Dashboard = ({ title, options, backButtonPath }) => {
 						</Card>
 					))}
 				</div>
-			</div>
+			</div> */}
 		</div>
 	);
 };
