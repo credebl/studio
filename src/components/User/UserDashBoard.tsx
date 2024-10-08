@@ -1,30 +1,31 @@
-import { useEffect, useState } from 'react';
-import { AlertComponent } from '../AlertComponent';
-import type { AxiosResponse } from 'axios';
-import CustomAvatar from '../Avatar/index';
-import type { Organisation } from '../organization/interfaces';
-import type { UserActivity } from './interfaces';
+import { Button, Tooltip } from 'flowbite-react';
 import { apiStatusCodes, itemPerPage, storageKeys } from '../../config/CommonConstant';
+import { getAllCredDef, getAllSchemasByOrgId } from '../../api/Schema';
+import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { getOrganizationById, getOrganizations } from '../../api/organization';
-import { getUserActivity } from '../../api/users';
 import {
 	getUserEcosystemInvitations,
 	getUserInvitations,
 } from '../../api/invitations';
-import { pathRoutes } from '../../config/pathRoutes';
-import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
-import { dateConversion } from '../../utils/DateConversion';
+import { useEffect, useState } from 'react';
+
+import { AlertComponent } from '../AlertComponent';
+import type { AxiosResponse } from 'axios';
+import CustomAvatar from '../Avatar/index';
+import CustomSpinner from '../CustomSpinner';
 import DateTooltip from '../Tooltip';
-import { Roles } from '../../utils/enums/roles';
-import { Button, Tooltip } from 'flowbite-react';
-import { getAllCredDef, getAllSchemasByOrgId } from '../../api/Schema';
 import type { GetAllSchemaListParameter } from '../Resources/Schema/interfaces';
-import React from 'react';
+import type { Organisation } from '../organization/interfaces';
 import {
 	OrganizationRoles,
 } from '../../common/enums';
-import CustomSpinner from '../CustomSpinner';
+import React from 'react';
+import { Roles } from '../../utils/enums/roles';
+import type { UserActivity } from './interfaces';
+import { dateConversion } from '../../utils/DateConversion';
 import { envConfig } from '../../config/envConfig';
+import { getUserActivity } from '../../api/users';
+import { pathRoutes } from '../../config/pathRoutes';
 
 const initialPageState = {
 	pageNumber: 1,
@@ -437,6 +438,7 @@ const UserDashBoard = () => {
 	};
 
 	return (
+		<>
 		<div className="px-4 pt-6">
 			<div className="cursor-pointer">
 				<AlertComponent
@@ -1111,6 +1113,7 @@ const UserDashBoard = () => {
 			
 			
 		</div>
+		</>
 	);
 };
 export default UserDashBoard;
