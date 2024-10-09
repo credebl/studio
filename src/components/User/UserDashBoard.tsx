@@ -455,7 +455,7 @@ const UserDashBoard = () => {
 		<>
 		<div className="px-4 pt-6">
 			<div className="cursor-pointer">
-				{error !== '' &&
+				{(error !== '' || message !== '') &&
 				<AlertComponent
 				message={message || error}
 				type={message ? 'warning' : 'failure'}
@@ -470,7 +470,7 @@ const UserDashBoard = () => {
 				
 			</div>
 			<div className="cursor-pointer">
-			{error !== '' &&
+			{(error !== '' || ecoMessage !== '') &&
 				<AlertComponent
 					message={ecoMessage || error}
 					type={message ? 'warning' : 'failure'}
