@@ -455,21 +455,23 @@ const UserDashBoard = () => {
 		<>
 		<div className="px-4 pt-6">
 			<div className="cursor-pointer">
-			  
-        <AlertComponent
-            message={message}  
-            type={message ? 'warning' : 'failure'} 
-            viewButton={viewButton}
-            path={pathRoutes.users.invitations}
-            onAlertClose={() => {
-                setMessage(''); 
-                setError('');   
-            }}
-        />
-    
+			  {message && message.length > 0 &&
+
+					<AlertComponent
+					message={message}  
+					type={message ? 'warning' : 'failure'} 
+					viewButton={viewButton}
+					path={pathRoutes.users.invitations}
+					onAlertClose={() => {
+						setMessage(''); 
+						setError('');   
+					}}
+					/>
+			  }
+       
 				
 			</div>
-			<div className="cursor-pointer">
+			{/* <div className="cursor-pointer">
 			
         <AlertComponent
             message={ecoMessage} 
@@ -482,7 +484,7 @@ const UserDashBoard = () => {
             }}
         />
     
-			</div>
+			</div> */}
 			{walletData && walletData.length > 0 ? (
 				<></>
 			) : (
