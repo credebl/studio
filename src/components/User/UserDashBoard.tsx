@@ -108,7 +108,7 @@ const UserDashBoard = () => {
 			});
 		} else {
 			// setError(response as string);
-			setError(data?.message || 'Failed to fetch invitations');
+			setError(data?.data?.message as string || 'Failed to fetch invitations');
 		}
 	} catch(err) {
 		setError('An unexpected error occurred');
@@ -118,7 +118,6 @@ const UserDashBoard = () => {
 
 	const getAllOrganizations = async () => {
 		setOrgLoading(true);
-		try {
 		const response = await getOrganizations(
 			currentPage.pageNumber,
 			currentPage.pageSize,
@@ -132,17 +131,15 @@ const UserDashBoard = () => {
 			);
 			setOrganizationList(orgList);			
 		} else {
-			setError(data?.message || 'Failed to fetch ecosystem invitations');
+			setError(response as string);
 		}
-	}
-	catch(err){
-		setError('An unexpected error occurred');
-	}
 		setOrgLoading(false);
 	};
-
+	
 	const getAllEcosystemInvitations = async () => {
 		setLoading(true);
+		try {
+
 		const response = await getUserEcosystemInvitations(
 			currentPage.pageNumber,
 			currentPage.pageSize,
@@ -166,8 +163,13 @@ const UserDashBoard = () => {
 				total: totalPages,
 			});
 		} else {
-			setError(response as string);
+			// setError(response as string);
+			setError(data?.data?.message as string || 'Failed to fetch invitations');
 		}
+	}
+	catch(err){
+		setError('An unexpected error occurred.');
+	}
 		setLoading(false);
 	};
 
@@ -450,12 +452,20 @@ const UserDashBoard = () => {
 		);
 	};
 
+	const getSafeMessage = (message: string | null, error: string | null): string => {
+		if (message) return message; // return message if it's not null
+		if (typeof error === 'string') return error; // return error if it's a string
+		return ''; // default to an empty string if both are null or error is not a string
+	};
+	
+
 	return (
 		<>
 		<div className="px-4 pt-6">
 			<div className="cursor-pointer">
 				<AlertComponent
-					message={message || (error ? String(error) : '')}
+					// message={message || error}
+					message={getSafeMessage(message, error)}
 					type={message ? 'warning' : 'failure'}
 					viewButton={viewButton}
 					path={pathRoutes.users.invitations}
@@ -467,8 +477,8 @@ const UserDashBoard = () => {
 			</div>
 			<div className="cursor-pointer">
 				<AlertComponent
-					message={ecoMessage || (error ? String(error) : '')}
-					type={'warning'}
+					 message={getSafeMessage(ecoMessage, error)}
+					 type={message ? 'warning' : 'failure'}
 					viewButton={viewButton}
 					path={`${envConfig.PUBLIC_ECOSYSTEM_FRONT_END_URL}${pathRoutes.users.dashboard}` } 
 
