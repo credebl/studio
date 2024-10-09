@@ -1,21 +1,23 @@
 import * as yup from 'yup';
+
 import { Button, Checkbox, Label, Modal } from 'flowbite-react';
+import { CommonConstants, DidMethod, Network } from '../../../common/enums';
+import type { EditOrgdetailsModalProps, IFormikValues } from '../interfaces';
 import { Field, Form, Formik } from 'formik';
 import type { FormikHelpers as FormikActions, FormikProps } from 'formik';
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
+import { createDid, getOrganizationById } from '../../../api/organization';
 import { useEffect, useRef, useState } from 'react';
+
 import { AlertComponent } from '../../AlertComponent';
 import type { AxiosResponse } from 'axios';
-import { createDid, getOrganizationById } from '../../../api/organization';
-import type { EditOrgdetailsModalProps, IFormikValues } from '../interfaces';
-import { createPolygonKeyValuePair } from '../../../api/Agent';
-import { nanoid } from 'nanoid';
-import TokenWarningMessage from '../walletCommonComponents/TokenWarningMessage';
 import CopyDid from '../../../commonComponents/CopyDid';
-import { getFromLocalStorage } from '../../../api/Auth';
-import { ethers } from 'ethers';
+import TokenWarningMessage from '../walletCommonComponents/TokenWarningMessage';
+import { createPolygonKeyValuePair } from '../../../api/Agent';
 import { envConfig } from '../../../config/envConfig';
-import { CommonConstants, Network, DidMethod } from '../../../common/enums';
+import { ethers } from 'ethers';
+import { getFromLocalStorage } from '../../../api/Auth';
+import { nanoid } from 'nanoid';
 
 interface IPolygonKeys {
 	privateKey: string;
@@ -276,7 +278,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 											<span className="text-red-500 text-xs">*</span>
 										</label>
 										<input
-											value={formikHandlers.values.ledger}
+											  value={formikHandlers.values.ledger || ''}
 											onChange={(e) => {
 												formikHandlers.handleChange(e);
 												setLedgerValue(e.target.value);
@@ -298,7 +300,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 											>Method <span className="text-red-500 text-xs">*</span>
 											</label>
 											<input
-												value={formikHandlers.values.method}
+												value={formikHandlers.values.method || ''}
 												onChange={(e) => {
 													formikHandlers.handleChange(e);
 													setMethod(e.target.value);
@@ -323,7 +325,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 													Network <span className="text-red-500 text-xs">*</span>
 												</label>
 												<input
-													value={formikHandlers.values.network}
+													value={formikHandlers.values.network || ''}
 													onChange={(e) => {
 														formikHandlers.handleChange(e);
 														setNetworkValue(e.target.value);
@@ -375,7 +377,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 											id="did-method"
 											disabled={true}
 											name="did-method"
-											value={completeDidMethodValue}
+											value={completeDidMethodValue || ''}
 											className="bg-gray-50 text-gray-600 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white h-11"
 											placeholder="DID Method"
 											readOnly
@@ -466,7 +468,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 															id="privatekey"
 															name="privatekey"
 															className="truncate bg-gray-50 border mt-2 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-11"
-															value={formikHandlers.values.privatekey}
+															value={formikHandlers.values.privatekey || ''}
 															onChange={(e) => {
 																formikHandlers.setFieldValue('privatekey', e.target.value);
 																setWalletErrorMessage(null);
