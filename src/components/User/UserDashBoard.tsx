@@ -86,8 +86,6 @@ const UserDashBoard = () => {
 
 	const getAllInvitations = async () => {
 		setLoading(true);
-		setMessage(''); // Clear any previous messages
-    setError(''); // Clear any previous errors
 		try {
 		const response = await getUserInvitations(
 			currentPage.pageNumber,
@@ -108,8 +106,8 @@ const UserDashBoard = () => {
 				total: totalPages,
 			});
 		} else {
-			// setError(response as string);
-			setError(data?.message as string || 'Failed to fetch invitations');			
+			setError(response as string);
+			// setError(data?.message as string || 'Failed to fetch invitations');			
 		}
 	} catch(err) {
 		setError('An unexpected error occurred');
@@ -139,8 +137,6 @@ const UserDashBoard = () => {
 	
 	const getAllEcosystemInvitations = async () => {
 		setLoading(true);
-		setMessage(''); // Clear any previous messages
-    setError(''); // Clear any previous errors
 		try {
 
 		const response = await getUserEcosystemInvitations(
@@ -166,8 +162,8 @@ const UserDashBoard = () => {
 				total: totalPages,
 			});
 		} else {
-			// setError(response as string);
-			setError(data?.message as string || 'Failed to fetch ecosystem invitations');
+			setError(response as string);
+			// setError(data?.message as string || 'Failed to fetch ecosystem invitations');
 		}
 	}
 	catch(err){

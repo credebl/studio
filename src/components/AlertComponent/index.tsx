@@ -24,10 +24,9 @@ export const AlertComponent = ({
 console.log("message",message);
 console.log(typeof message)
     return (
-        message === null||'' ? (<>
+        (message === null || '') ? (<>
 		</>):
         (
-			
             (
                 <div className="w-full">
                     <div
