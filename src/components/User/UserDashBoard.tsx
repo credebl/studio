@@ -54,7 +54,7 @@ const UserDashBoard = () => {
 	const [message, setMessage] = useState<string | null>('');
 	const [ecoMessage, setEcoMessage] = useState<string | null>('');
 	const [viewButton, setViewButton] = useState<boolean>(false);
-	const [error, setError] = useState<string >('');
+	const [error, setError] = useState<string | null>('');
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const [organizationsList, setOrganizationList] =
 		useState<Array<Organisation> | null>(null);
@@ -450,6 +450,8 @@ const UserDashBoard = () => {
 			</div>
 		);
 	};
+	console.log("errror_:::::::::::", typeof error);
+	console.log("mesaage---:::::::::", typeof message);
 
 	return (
 		<>
