@@ -54,7 +54,7 @@ const UserDashBoard = () => {
 	const [message, setMessage] = useState<string | null>('');
 	const [ecoMessage, setEcoMessage] = useState<string | null>('');
 	const [viewButton, setViewButton] = useState<boolean>(false);
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<string >('');
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const [organizationsList, setOrganizationList] =
 		useState<Array<Organisation> | null>(null);
@@ -92,7 +92,6 @@ const UserDashBoard = () => {
 			currentPage.pageSize,
 			'',
 		);
-		console.log('response', response); 
 		const { data } = response as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -108,7 +107,7 @@ const UserDashBoard = () => {
 			});
 		} else {
 			// setError(response as string);
-			setError(data?.data?.message as string || 'Failed to fetch invitations');
+			setError('Failed to fetch invitations');			
 		}
 	} catch(err) {
 		setError('An unexpected error occurred');
@@ -164,7 +163,7 @@ const UserDashBoard = () => {
 			});
 		} else {
 			// setError(response as string);
-			setError(data?.data?.message as string || 'Failed to fetch invitations');
+			setError('Failed to fetch invitations');
 		}
 	}
 	catch(err){
@@ -451,35 +450,39 @@ const UserDashBoard = () => {
 			</div>
 		);
 	};
-	
 
 	return (
 		<>
 		<div className="px-4 pt-6">
 			<div className="cursor-pointer">
+				{error !== '' &&
 				<AlertComponent
-					message={message ? message : (error ? error : '')}
-					type={message ? 'warning' : 'failure'}
-					viewButton={viewButton}
-					path={pathRoutes.users.invitations}
-					onAlertClose={() => {
-						setMessage('');
-						setError(null);
-					}}
-				/>
+				message={message || error}
+				type={message ? 'warning' : 'failure'}
+				viewButton={viewButton}
+				path={pathRoutes.users.invitations}
+				onAlertClose={() => {
+					setMessage('');
+					setError('');
+				}}
+			/>
+				}
+				
 			</div>
 			<div className="cursor-pointer">
+			{error !== '' &&
 				<AlertComponent
-					message={ecoMessage ? ecoMessage : (error ? error : '')}
-					type={'warning'}
+					message={ecoMessage || error}
+					type={message ? 'warning' : 'failure'}
 					viewButton={viewButton}
 					path={`${envConfig.PUBLIC_ECOSYSTEM_FRONT_END_URL}${pathRoutes.users.dashboard}` } 
 
 					onAlertClose={() => {
 						setEcoMessage('');
-						setError(null);
+						setError('');
 					}}
 				/>
+}
 			</div>
 			{walletData && walletData.length > 0 ? (
 				<></>
