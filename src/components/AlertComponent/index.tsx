@@ -23,7 +23,7 @@ export const AlertComponent = ({
 }: IAlertComponent) => {
 
     return (
-        message !== null ? (<>
+        message === null ? (<>
 		</>):
         (
             (
