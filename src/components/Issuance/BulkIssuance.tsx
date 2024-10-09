@@ -1,6 +1,6 @@
 import { Button, Card, Pagination } from 'flowbite-react';
 import React, { useEffect, useState } from 'react';
-import Select from 'react-select';
+import Select, { type SingleValue } from 'react-select';
 import {
 	DownloadCsvTemplate, getSchemaCredDef, getCsvFileData,
 	issueBulkCredential,
@@ -16,12 +16,10 @@ import SOCKET from '../../config/SocketConfig';
 import { ToastContainer, toast } from 'react-toastify';
 import BreadCrumbs from '../BreadCrumbs';
 import BackButton from '../../commonComponents/backbutton'
-import { checkEcosystem } from '../../config/ecosystem';
-import type { ICheckEcosystem} from '../../config/ecosystem';
 import type { ICredentials, IAttributes, IUploadMessage } from './interface';
 import RoleViewButton from '../RoleViewButton';
 import { Features } from '../../utils/enums/features';
-import { Create, SchemaEndorsement } from './Constant';
+import { Create } from './Constant';
 import { DidMethod, SchemaTypes } from '../../common/enums';
 import type { GetAllSchemaListParameter } from '../Resources/Schema/interfaces';
 import { getAllSchemas } from '../../api/Schema';
@@ -44,11 +42,10 @@ const BulkIssuance = () => {
 	const [uploadMessage, setUploadMessage] = useState<IUploadMessage | null>(null)
 	const [success, setSuccess] = useState<string | null>(null);
 	const [failure, setFailure] = useState<string | null>(null);
-	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [mounted, setMounted] = useState<boolean>(false)
 	const [schemaType, setSchemaType]= useState<SchemaTypes>();
 	const [selectedTemplate, setSelectedTemplate] = useState<any>();
-	const [isAllSchema, setIsAllSchema] = useState<string>();
+	const [isAllSchema, setIsAllSchema] = useState<boolean>();
 	const [schemaListAPIParameters, setSchemaListAPIParameters] = useState({
 		itemPerPage: itemPerPage,
 		page: 1,
@@ -72,6 +69,20 @@ const BulkIssuance = () => {
 	};
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 
+	const [searchValue, setSearchValue] = useState('');
+
+	const onInputChange = (inputValue: string) => {
+		setSearchValue(inputValue); 
+		setSchemaListAPIParameters(prevParams => {
+			const updatedParams = {
+				...prevParams,
+				allSearch: inputValue,
+			};
+			getSchemaCredentials(updatedParams);
+			return updatedParams;
+		});
+	};
+
 	const getSchemaCredentials = async (schemaListAPIParameters: GetAllSchemaListParameter) => {
 		try {
 			setLoading(true);
@@ -80,7 +91,12 @@ const BulkIssuance = () => {
 			const orgDid = await getFromLocalStorage(storageKeys.ORG_DID);
 
 			const isAllSchemaSelectedFlag = await getFromLocalStorage(storageKeys.ALL_SCHEMAS)
-			setIsAllSchema(isAllSchemaSelectedFlag)
+			if(isAllSchemaSelectedFlag === `false` || !isAllSchemaSelectedFlag){
+				setIsAllSchema(false)
+			}
+			else if(isAllSchemaSelectedFlag ==='true'){
+				setIsAllSchema(true)
+			}
 		
 			let currentSchemaType = schemaType;
 	
@@ -90,15 +106,16 @@ const BulkIssuance = () => {
 				currentSchemaType = SchemaTypes.schema_INDY;
 			}
 
+			let dropDownOptions;
 			setSchemaType(currentSchemaType); 
-			if ((currentSchemaType === SchemaTypes.schema_INDY &&  isAllSchemaSelectedFlag === 'true') || (currentSchemaType && orgId && isAllSchemaSelectedFlag =='false')) {
+			if ((currentSchemaType === SchemaTypes.schema_INDY &&  isAllSchema) || (currentSchemaType && orgId && !isAllSchema)) {
 				const response = await getSchemaCredDef(currentSchemaType); 
 				const { data } = response as AxiosResponse;
 
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 					const { data:  credentialDefsData } = data;
 
-					const options =  credentialDefsData.map(
+					dropDownOptions =  credentialDefsData.map(
 						({
 							schemaName,
 							schemaVersion,
@@ -118,7 +135,7 @@ const BulkIssuance = () => {
 						}),
 					);
 					
-					 setCredentialOptionsData(options);
+					 setCredentialOptionsData(dropDownOptions);
 				} else {
 					setUploadMessage({message: response as string, type: "failure"});
 					setSuccess(null)
@@ -126,9 +143,7 @@ const BulkIssuance = () => {
 				}
 				setLoading(false);
 			}
-
-
-			else if (currentSchemaType === SchemaTypes.schema_W3C && orgId && isAllSchemaSelectedFlag === 'true') {
+			else if (currentSchemaType === SchemaTypes.schema_W3C && orgId && isAllSchema) {
 
 				
 				const response = await getAllSchemas(schemaListAPIParameters,currentSchemaType); 
@@ -139,7 +154,7 @@ const BulkIssuance = () => {
 						const  credentialDefsData = data.data.data;
 						
 
-						const options =  credentialDefsData.map(({
+						dropDownOptions =  credentialDefsData.map(({
 							name,
 							version,
 							schemaLedgerId,
@@ -154,7 +169,7 @@ const BulkIssuance = () => {
 							schemaIdentifier: schemaLedgerId,
 							attributes: Array.isArray(attributes) ? attributes : (attributes ? JSON.parse(attributes) : []),
 						}));	
-					 setCredentialOptionsData(options);
+					 setCredentialOptionsData(dropDownOptions);
 				} else {
 					setUploadMessage({message: response as string, type: "failure"});
 					setSuccess(null)
@@ -163,26 +178,33 @@ const BulkIssuance = () => {
 				setLoading(false);
 			}
 		} catch (error) {
-			setUploadMessage({message: error as string, type: "failure"});
+			setUploadMessage({ message: (error as Error).message, type: "failure" });
 			setSuccess(null)
 			setFailure(null)
 		}
 	};
 
+
+	const onSelectChange = (newValue: SingleValue<ICredentials | undefined>) => {
+		const value = newValue as ICredentials | undefined;
+		if (schemaType === SchemaTypes.schema_INDY) {
+			setSelectedTemplate(value?.credentialDefinitionId);
+			setCredentialSelected(value ?? null);
+		} else if (schemaType === SchemaTypes.schema_W3C) {
+			setCredentialSelected(value ?? null);
+			setSelectedTemplate(value?.schemaIdentifier)
+		}
+	};
+
+
 	useEffect(() => {
 		getSchemaCredentials(schemaListAPIParameters);
+	}, [isAllSchema]);
+	useEffect(() => {	
 		setMounted(true);
-		(async () => {
-			try {
-				const data: ICheckEcosystem = await checkEcosystem();				
-				setIsEcosystemData(data);
-			} catch (error) {
-				console.log(error);
-			}
-		})();
 	}, []);
 
-
+	
 	const downloadFile = (url: string, fileName: string) => {
 		const link = document.createElement('a');
 		link.href = url;
@@ -490,9 +512,7 @@ const BulkIssuance = () => {
 			item.value === credentialSelected,
 	);
 	
-	const createSchemaTitle = isEcosystemData?.isEcosystemMember
-		? { title: 'Schema Endorsement', svg: <SchemaEndorsement/> }
-		: { title: 'Create Schema', svg: <Create/> };
+	const createSchemaTitle =  { title: 'Create Schema', svg: <Create/> };
 		
 	return (
 		<div className="px-4 pt-2">
@@ -581,15 +601,9 @@ const BulkIssuance = () => {
 											isSearchable={true}
 											name="color"
 											options={ credentialOptionsData}
-											onChange={(value: ICredentials | null) => {
-												if (schemaType === SchemaTypes.schema_INDY) {
-													setSelectedTemplate(value?.credentialDefinitionId);
-													setCredentialSelected(value ?? null);
-												} else if (schemaType === SchemaTypes.schema_W3C) {
-													setCredentialSelected(value ?? null);
-													setSelectedTemplate(value?.schemaIdentifier)
-												}
-											}}
+											onInputChange={onInputChange}
+											onChange={onSelectChange}
+											value={credentialOptionsData.find(option => option.value === searchValue)}
 											ref={selectInputRef}
 										/>:
 										null
@@ -604,6 +618,8 @@ const BulkIssuance = () => {
 														{credentialSelected?.schemaName || ""}{' '}
 														<span>[{credentialSelected?.schemaVersion}]</span>
 													</p>
+													{
+														schemaType === SchemaTypes.schema_INDY && 
 													<p className="text-black dark:text-white pb-2">
 														{' '}
 														<span className="font-semibold">
@@ -611,10 +627,12 @@ const BulkIssuance = () => {
 														</span>{' '}
 														{credentialSelected?.credentialDefinition}
 													</p>
+													}
+
 													<span className='text-black dark:text-white font-semibold'>Attributes:</span>
 													<div className="flex flex-wrap overflow-hidden">
 														{
-															isAllSchema ==='false' ? (
+															!isAllSchema ? (
 																credentialSelected?.schemaAttributes?.map(
 																	(element: IAttributes) => (
 																		<div key={element.attributeName}>

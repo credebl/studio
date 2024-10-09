@@ -6,7 +6,8 @@ import type { ChangeEvent } from 'react';
 import type { GetAllSchemaListParameter } from './interfaces';
 import { apiStatusCodes, itemPerPage, storageKeys } from '../../../config/CommonConstant';
 import { getAllSchemas, getAllSchemasByOrgId } from '../../../api/Schema';
-
+import { checkEcosystem } from '../../../config/ecosystem';
+import type { ICheckEcosystem } from '../../../config/ecosystem';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../../BreadCrumbs';
 import CustomSpinner from '../../CustomSpinner';
@@ -19,11 +20,10 @@ import SearchInput from '../../SearchInput';
 import { getFromLocalStorage, removeFromLocalStorage, setToLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
 import { getOrganizationById } from '../../../api/organization';
-import { checkEcosystem } from '../../../config/ecosystem';
-import type { ICheckEcosystem } from '../../../config/ecosystem';
 import Select, { type SingleValue, type ActionMeta } from 'react-select';
 import { Create, SchemaEndorsement } from '../../Issuance/Constant';
 import { DidMethod, SchemaType, SchemaTypes } from '../../../common/enums';
+import { envConfig } from '../../../config/envConfig';
 
 const SchemaList = (props: {
 		schemaSelectionCallback: (
@@ -45,6 +45,7 @@ const SchemaList = (props: {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [allSchemaFlag, setAllSchemaFlag] = useState<boolean>(false);
 	const [orgId, setOrgId] = useState<string>('');
+	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [schemaListAPIParameter, setSchemaListAPIParameter] = useState({
 		itemPerPage: itemPerPage,
 		page: 1,
@@ -55,7 +56,6 @@ const SchemaList = (props: {
 	});
 	const [walletStatus, setWalletStatus] = useState(false);
 	const [totalItem, setTotalItem] = useState(0);
-	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [searchValue, setSearchValue] = useState('');
 	const [schemaType, setSchemaType] = useState('');
 
@@ -268,22 +268,22 @@ const SchemaList = (props: {
 				console.log(error);
 			}
 		})();
-
 		(async () => {
 			await setToLocalStorage (storageKeys.ALL_SCHEMAS, `false`);
 				})();
 		setSearchValue('');
 	}, []);
 
+
 	const createSchemaTitle = isEcosystemData?.isEcosystemMember
 		? { title: 'Schema Endorsement', toolTip: 'Add new schema request', svg: <SchemaEndorsement/> }
-		: { title: 'Create', svg: <Create/>, toolTip: 'Create new schema' };
-	const emptyListTitle = 'No Schemas';
+		: { title: 'Create', svg: <Create/>, toolTip: 'Create new schema' };	const emptyListTitle = 'No Schemas';
 	const emptyListDesc = 'Get started by creating a new Schema';
 	const emptyListBtn = isEcosystemData?.isEcosystemMember
-		? { title: 'Schema Endorsement', svg: <SchemaEndorsement/> }
-		: { title: 'Create Schema', svg: <Create/> };
+	? { title: 'Schema Endorsement', svg: <SchemaEndorsement/> }
+	: { title: 'Create Schema', svg: <Create/> };
 
+	
 	return (
 		<div className="px-4 pt-2">
 			<div className="mb-4 col-span-full xl:mb-2">
@@ -319,8 +319,13 @@ const SchemaList = (props: {
 									feature={Features.CRETAE_SCHEMA}
 									svgComponent={createSchemaTitle.svg}
 									onClickEvent={() => {
-										window.location.href = `${pathRoutes.organizations.createSchema}`;
-									}}
+										if (createSchemaTitle.title === 'Schema Endorsement') {
+									window.location.href = `${envConfig.PUBLIC_ECOSYSTEM_FRONT_END_URL}${pathRoutes.organizations.schemas}` 
+
+										} else {
+										  window.location.href = `${pathRoutes.organizations.createSchema}`;
+										}
+									  }}
 								/>
 							) : (
 								<RoleViewButton

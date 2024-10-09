@@ -1,38 +1,24 @@
 import type { AxiosResponse } from 'axios';
 import { getFromLocalStorage, setToLocalStorage } from '../api/Auth';
-import { getEcosystems } from '../api/ecosystem';
 import { EcosystemRoles, OrganizationRoles } from '../common/enums';
 import { apiStatusCodes, storageKeys } from './CommonConstant';
-import { getOrganizationById } from '../api/organization';
+import { getEcosystems, getOrganizationById } from '../api/organization';
 import { Roles } from '../utils/enums/roles';
 
+export interface IOrgDetails {
+	orgName: string;
+	orgDid: string;
+}
 export interface ICheckEcosystem {
 	isEnabledEcosystem: boolean;
 	isEcosystemMember: boolean;
 	isEcosystemLead: boolean;
 	isMultiEcosystem: boolean;
 }
-
-export interface IOrgDetails {
-	orgName: string;
-	orgDid: string;
-}
-
-const ecosystemId = async () => {
-	const id = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID);
-	return id;
-};
-
 const getOrgData = async () => {
 	const data = await getFromLocalStorage(storageKeys.ORG_DETAILS);
 	return data;
 };
-
-const getEcosystemRole = async () => {
-	const data = await getFromLocalStorage(storageKeys.ECOSYSTEM_ROLE);
-	return data;
-};
-
 const getOrgId = async () => {
 	const id = await getFromLocalStorage(storageKeys.ORG_ID);
 	return id;
@@ -46,59 +32,6 @@ export const getUserProfile = async () => {
 	} catch (err) {
 
 	}
-};
-
-const checkEcosystem = async (): Promise<ICheckEcosystem> => {
-	await getEcosystemId();
-
-	const userData = await getUserProfile();
-	const role = await getEcosystemRole();
-
-	const isEnabledEcosystem = userData?.enableEcosystem;
-	const ecosystemRole = role || EcosystemRoles.ecosystemLead;
-
-	const isMultiEcosystem = userData?.multiEcosystemSupport;
-
-	const isLead = ecosystemRole === EcosystemRoles.ecosystemLead && isEnabledEcosystem
-
-	return {
-		isEnabledEcosystem,
-		isMultiEcosystem,
-		isEcosystemMember: !isLead && isEnabledEcosystem,
-		isEcosystemLead: isLead,
-	};
-};
-
-const getEcosystemId = async (): Promise<string> => {
-	const ecoId = await ecosystemId();
-	const ecoRole = await getEcosystemRole();
-	const orgId = await getOrgId();
-	if (!ecoId || !ecoRole) {
-		try {
-			if (orgId) {
-				const { data } = (await getEcosystems(orgId)) as AxiosResponse;
-				if (
-					data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS &&
-					data?.data?.ecosystemList?.length > 0
-				) {
-					const response = data?.data.ecosystemList[0];
-					const id = response?.id;
-					const role =
-						response?.ecosystemOrgs &&
-						response?.ecosystemOrgs.length > 0 &&
-						response?.ecosystemOrgs[0]?.ecosystemRole?.name;
-					await setToLocalStorage(storageKeys.ECOSYSTEM_ID, id);
-					if (role) {
-						await setToLocalStorage(storageKeys.ECOSYSTEM_ROLE, role);
-					}
-					return id;
-				}
-			}
-		} catch (err) {
-			console.log('ERROR-Get Ecosystem', err);
-		}
-	}
-	return ecoId;
 };
 
 const getUserRoles = async () => {
@@ -152,11 +85,73 @@ const getOrgDetails = async (): Promise<IOrgDetails> => {
 	}
 	return orgData;
 };
+const checkEcosystem = async (): Promise<ICheckEcosystem> => {
+	await getEcosystemId();
+
+	const userData = await getUserProfile();
+	const role = await getEcosystemRole();
+
+	const isEnabledEcosystem = userData?.enableEcosystem;
+	const ecosystemRole = role || EcosystemRoles.ecosystemLead;
+
+	const isMultiEcosystem = userData?.multiEcosystemSupport;
+
+	const isLead = ecosystemRole === EcosystemRoles.ecosystemLead && isEnabledEcosystem
+
+	return {
+		isEnabledEcosystem,
+		isMultiEcosystem,
+		isEcosystemMember: !isLead && isEnabledEcosystem,
+		isEcosystemLead: isLead,
+	};
+};
+
+const ecosystemId = async () => {
+	const id = await getFromLocalStorage(storageKeys.ECOSYSTEM_ID);
+	return id;
+};
+
+const getEcosystemRole = async () => {
+	const data = await getFromLocalStorage(storageKeys.ECOSYSTEM_ROLE);
+	return data;
+};
+
+const getEcosystemId = async (): Promise<string> => {
+	const ecoId = await ecosystemId();
+	const ecoRole = await getEcosystemRole();
+	const orgId = await getOrgId();
+	if (!ecoId || !ecoRole) {
+		try {
+			if (orgId) {
+				const { data } = (await getEcosystems(orgId)) as AxiosResponse;
+				if (
+					data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS &&
+					data?.data?.ecosystemList?.length > 0
+				) {
+					const response = data?.data.ecosystemList[0];
+					const id = response?.id;
+					const role =
+						response?.ecosystemOrgs &&
+						response?.ecosystemOrgs.length > 0 &&
+						response?.ecosystemOrgs[0]?.ecosystemRole?.name;
+					await setToLocalStorage(storageKeys.ECOSYSTEM_ID, id);
+					if (role) {
+						await setToLocalStorage(storageKeys.ECOSYSTEM_ROLE, role);
+					}
+					return id;
+				}
+			}
+		} catch (err) {
+			console.log('ERROR-Get Ecosystem', err);
+		}
+	}
+	return ecoId;
+};
 
 export {
-	checkEcosystem,
-	getEcosystemId,
 	getOrgDetails,
 	getUserRoles,
 	getOwnerAdminRole,
+	getEcosystemId,
+	checkEcosystem
 };

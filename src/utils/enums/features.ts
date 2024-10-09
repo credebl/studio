@@ -7,5 +7,4 @@ export enum Features {
   CRETAE_SCHEMA = 'create_schema',
   ISSUANCE = 'issuance',
   VERIFICATION = 'verification',
-  CREATE_ECOSYSTEMS = "CREATE_ECOSYSTEMS"
 }

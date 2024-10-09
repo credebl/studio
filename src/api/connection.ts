@@ -54,4 +54,3 @@ export const deleteConnectionRecords = async (
 		return err?.message;
 	}
 };
-

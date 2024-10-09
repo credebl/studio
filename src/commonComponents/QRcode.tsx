@@ -82,4 +82,3 @@ const CustomQRCode = ({ value, size }: { value: string, size: number }) => {
 
 export default CustomQRCode;
 
-

@@ -19,6 +19,14 @@ export const apiRoutes = {
 		resetPassword: 'auth/password-reset',
 		refreshToken: '/auth/refresh-token'
 	},
+	Ecosystem: {
+		root: '/ecosystem',
+		usersInvitation: '/users/invitations',
+		endorsements: {
+			list: '/endorsement-transactions',
+			createSchemaRequest: '/transaction/schema',
+		},
+	},
 	users: {
 		userProfile: '/users/profile',
 		checkUser: '/users/',
@@ -101,22 +109,7 @@ export const apiRoutes = {
 		organizations: '/orgs/public-profile',
 		organizationDetails: '/orgs/public-profiles',
 	},
-	Ecosystem: {
-		root: '/ecosystem',
-		endorsements: {
-			list: '/endorsement-transactions',
-			createSchemaRequest: '/transaction/schema',
-			createCredDefRequest: '/transaction/cred-def',
-			signRequest: '/transaction/sign/',
-			submitRequest: '/transaction/submit/',
-			rejectRequest: '/transactions/',
-			transactionApproval: '/transaction-approval/',
-		},
-		invitations: '/invitations',
-		usersInvitation: '/users/invitations',
-		members: '/members',
-		deleteOrgFromEcosystem:'/member-org'
-	},
+	
 	setting:{
 		setting: '/client_credentials'
 	}

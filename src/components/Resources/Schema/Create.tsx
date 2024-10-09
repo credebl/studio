@@ -16,15 +16,12 @@ import type { FieldName, IFormData, IAttributes } from './interfaces';
 import { createSchemas } from '../../../api/Schema';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { pathRoutes } from '../../../config/pathRoutes';
-import { checkEcosystem, getEcosystemId } from '../../../config/ecosystem';
-import type { ICheckEcosystem} from '../../../config/ecosystem';
-
-import { createSchemaRequest } from '../../../api/ecosystem';
-import EcosystemProfileCard from '../../../commonComponents/EcosystemProfileCard';
 import ConfirmationModal from '../../../commonComponents/ConfirmationModal';
 import { DidMethod, SchemaType, SchemaTypeValue } from '../../../common/enums';
-import { getOrganizationById } from '../../../api/organization';
+import { createSchemaRequest, getOrganizationById } from '../../../api/organization';
 import React from 'react';
+import { checkEcosystem, type ICheckEcosystem, getEcosystemId } from '../../../config/ecosystem';
+import { envConfig } from '../../../config/envConfig';
 
 const options = [
 	{
@@ -53,13 +50,13 @@ interface IPopup {
 const CreateSchema = () => {
 	const [failure, setFailure] = useState<string | null>(null);
 	const [success, setSuccess] = useState<string | null>(null);
+	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [orgId, setOrgId] = useState<string>('');
 	const [createLoader, setCreateLoader] = useState<boolean>(false);
 	const [showPopup, setShowPopup] = useState<IPopup>({
 		show: false,
 		type: 'reset',
 	});
-	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [loading, setLoading] = useState<boolean>(false);
     const [schemaTypeValues, setSchemaTypeValues]= useState<SchemaTypeValue>()
 	const [type, setType] = useState<SchemaType>();
@@ -76,6 +73,7 @@ const CreateSchema = () => {
 			},
 		],
 	};
+
 	const checkEcosystemData = async () => {
 		const data: ICheckEcosystem = await checkEcosystem();
 		setIsEcosystemData(data);
@@ -215,7 +213,8 @@ const CreateSchema = () => {
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			setSuccess(data?.message);
 			setCreateLoader(false);
-			window.location.href = pathRoutes.ecosystem.endorsements;
+			window.location.href = `${envConfig.PUBLIC_ECOSYSTEM_FRONT_END_URL}${pathRoutes.organizations.createSchema}`
+
 			setTimeout(() => {
 				setSuccess(null);
 			}, 2000);
@@ -234,10 +233,10 @@ const CreateSchema = () => {
 			setCreateLoader(false);
 		}, 2000);
 	};
-
+	
 	const formTitle = isEcosystemData?.isEcosystemMember
-		? 'Schema Endorsement'
-		: 'Create Schema';
+	? 'Schema Endorsement'
+	: 'Create Schema';
 	const submitButtonTitle = isEcosystemData?.isEcosystemMember
 		? {
 				title: 'Request Endorsement',
@@ -277,27 +276,27 @@ const CreateSchema = () => {
 				),
 		  };
 
-	const confirmCreateSchema = () => {
-		if (
-			isEcosystemData?.isEnabledEcosystem &&
-			isEcosystemData?.isEcosystemMember
-		) {
-			submitSchemaCreationRequest(formData);
-		} else {
-			formData.attribute.forEach((element: any) => {
-				if (!element.schemaDataType) {
-					element.schemaDataType = 'string';
-				}
-			});
-			const updatedAttribute: Array<Number> = [];
-			formData.attribute.forEach((element) => {
-				updatedAttribute.push(Number(element));
-			});
-
-			submit(formData);
-		}
-	};
-
+		  const confirmCreateSchema = () => {
+			if (
+				isEcosystemData?.isEnabledEcosystem &&
+				isEcosystemData?.isEcosystemMember
+			) {
+				submitSchemaCreationRequest(formData);
+			} else {
+				formData.attribute.forEach((element: any) => {
+					if (!element.schemaDataType) {
+						element.schemaDataType = 'string';
+					}
+				});
+				const updatedAttribute: Array<Number> = [];
+				formData.attribute.forEach((element) => {
+					updatedAttribute.push(Number(element));
+				});
+	
+				submit(formData);
+			}
+		};
+	
 	const validSameAttribute = (
 		formikHandlers: FormikProps<IFormData>,
 		index: number,
@@ -391,11 +390,6 @@ if (
 			<div className="pl-6 mb-4 col-span-full xl:mb-2">
 				<BreadCrumbs />
 			</div>
-			{isEcosystemData?.isEnabledEcosystem && (
-				<div className="mx-6 mb-4">
-					<EcosystemProfileCard getEndorsementListData={checkEcosystemData} />
-				</div>
-			)}
 
 			<div>
 				<Card className="m-0 md:m-6" id="createSchemaCard">

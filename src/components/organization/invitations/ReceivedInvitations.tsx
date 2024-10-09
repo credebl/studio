@@ -1,4 +1,4 @@
-import { Button, Pagination } from 'flowbite-react';
+import { Button, Card, Pagination } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
@@ -33,6 +33,7 @@ const ReceivedInvitations = () => {
 	const [error, setError] = useState<string | null>(null);
 
 	const [currentPage, setCurrentPage] = useState(initialPageState);
+	const timestamp = Date.now();
 
 	const onPageChange = (page: number) => {
 		setCurrentPage({

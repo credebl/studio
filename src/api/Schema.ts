@@ -180,4 +180,3 @@ export const getCredDefDetailsByCredDefId = async (credDefId: string, orgId: str
     return err?.message
   }
 }
-

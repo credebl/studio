@@ -46,4 +46,3 @@ const SchemaCredDefDetails = ({ schemaCredDefList }: SchemaCredDefProps) => {
 }
 
 export default SchemaCredDefDetails;
-

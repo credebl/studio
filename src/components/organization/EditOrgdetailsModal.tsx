@@ -14,15 +14,6 @@ import type { EditOrgdetailsModalProps, ILogoImage, Organisation, Values } from 
 import { processImage } from '../../utils/processImage';
 import FormikErrorMessage from '../../commonComponents/formikerror/index'
 import CustomSpinner from '../CustomSpinner';
-	
-interface IUpdateOrgPayload {
-	orgId: string | undefined;
-	name: string;
-	description: string;
-	website: string;
-	isPublic: boolean | undefined;
-	logo?: string;
-}
 
 interface IUpdateOrgPayload {
 	orgId: string | undefined;

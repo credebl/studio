@@ -55,6 +55,7 @@ const IssueCred = () => {
 	const [w3cSchema, setW3CSchema]= useState<boolean>(false);
 	const [credentialType, setCredentialType] = useState<CredentialType>();
 	const [schemaType, setSchemaType] = useState<SchemaTypeValue>();
+	const [orgDid, setOrgDid]= useState<string>('');
 
   useEffect(() => {
        fetchOrganizationDetails();
@@ -75,12 +76,14 @@ const IssueCred = () => {
 					setCredentialType(CredentialType.JSONLD);
 					setSchemaType(SchemaTypeValue.POLYGON)
 					await getSchemaAndUsers(true)
+					setOrgDid(did);
 				}
 				else if (did?.includes(DidMethod.KEY) || did?.includes(DidMethod.WEB)) {
 					setW3CSchema(true);
 					setSchemaType(SchemaTypeValue.NO_LEDGER)
 					setCredentialType(CredentialType.JSONLD);
 					await getSchemaAndUsers(true)
+					setOrgDid(did);
 				}
 				else if (did?.includes(DidMethod.INDY)) {
 					setW3CSchema(false);
@@ -155,6 +158,7 @@ const IssueCred = () => {
 				attributes: attributesArray,
 			};
 		});
+
 		const issuancePayload = {
 			credentialData,
 			credentialDefinitionId: credDefId,
@@ -329,7 +333,7 @@ const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 								w3cSchemaDetails.schemaName
 							],
 							issuer: {
-								"id": w3cSchemaDetails.issuerDid
+								"id": orgDid
 							},
 							issuanceDate: new Date().toISOString(),
 							//FIXME: Logic for passing default value as 0 for empty value of number dataType attributes.
@@ -363,12 +367,12 @@ const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 		const convertedAttributesValues = {
 			...issuancePayload,
 		};
-	
+
 		setIssuanceLoader(true);
 		const issueCredRes = await issueCredential(convertedAttributesValues, credentialType);
 	
 		const { data } = issueCredRes as AxiosResponse;
-	
+
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			setSuccess(data?.message);
 			window.location.href = `${pathRoutes.organizations.issuedCredentials}`;
@@ -379,7 +383,7 @@ const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 			setIssuanceLoader(false);
 		}
 	};
-	
+
 	return (
 		<div className="px-4 pt-2">
 			<div className="mb-4 col-span-full xl:mb-2">

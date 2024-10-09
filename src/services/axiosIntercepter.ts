@@ -9,6 +9,10 @@ const instance = axios.create({
 	baseURL: envConfig.PUBLIC_BASE_URL,
 });
 
+const EcosystemInstance = axios.create({
+	baseURL: envConfig.PUBLIC_ECOSYSTEM_BASE_URL,
+});
+
 const checkAuthentication = async (sessionCookie: string, request: AxiosRequestConfig) => {
 	const isAuthPage = window.location.href.includes('/authentication/sign-in') || window.location.href.includes('/authentication/sign-up')
 	try {
@@ -44,12 +48,18 @@ const checkAuthentication = async (sessionCookie: string, request: AxiosRequestC
 		}
 	} catch (error) { }
 };
-const { PUBLIC_BASE_URL }: any = globalThis
+const { PUBLIC_BASE_URL, PUBLIC_ECOSYSTEM_BASE_URL }: any = globalThis
 
 instance.interceptors.request.use(async config => {
 	config.baseURL = PUBLIC_BASE_URL;
 	return config;
 }, error => Promise.reject(error));
+
+EcosystemInstance.interceptors.request.use(async config => {
+	config.baseURL = PUBLIC_ECOSYSTEM_BASE_URL;
+	return config;
+}, error => Promise.reject(error));
+
 
 // Add a response interceptor
 instance.interceptors.response.use(
@@ -72,4 +82,4 @@ instance.interceptors.response.use(
 	},
 );
 
-export default instance;
+export {instance, EcosystemInstance};

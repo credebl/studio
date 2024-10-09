@@ -14,8 +14,6 @@ interface IForm {
     sgApiKey: string;
     apiEndPoint: string;
     emailFrom: string;
-    enableEcosystem: boolean;
-    multiEcosystemSupport: boolean;
 }
 
 interface IMessage {
@@ -25,25 +23,21 @@ interface IMessage {
 
 const getConfigKeys = (data: AxiosResponse) => {
     const platformConfig = data?.data?.platform_config && data?.data?.platform_config.length > 0 && data?.data?.platform_config[0]
-    const ecosystemConfig = data?.data?.ecosystem_config && data?.data?.ecosystem_config.length > 0 && data?.data?.ecosystem_config
-    const enableEcosystem = ecosystemConfig?.find((item: { key: string; }) => item.key === "enableEcosystem").value === "true"
-    const multiEcosystemSupport = ecosystemConfig?.find((item: { key: string; }) => item.key === "multiEcosystemSupport").value === "true"
     const { externalIp, lastInternalId, sgApiKey, emailFrom, apiEndpoint } = platformConfig || {}
     return {
-        externalIp, lastInternalId, sgApiKey, emailFrom, apiEndPoint: apiEndpoint, enableEcosystem, multiEcosystemSupport
+        externalIp, lastInternalId, sgApiKey, emailFrom, apiEndPoint: apiEndpoint, 
     }
 }
 
 const PlatformSetting = ({ data }: any) => {
-    const { externalIp, lastInternalId, sgApiKey, emailFrom, apiEndPoint, enableEcosystem, multiEcosystemSupport } = getConfigKeys(data)
+    const { externalIp, lastInternalId, sgApiKey, emailFrom, apiEndPoint, 
+    } = getConfigKeys(data)
     const initFormData: IPlatformSetting = {
         externalIp: externalIp || "",
         sgApiKey: sgApiKey || "",
         apiEndPoint: apiEndPoint || "",
         emailFrom: emailFrom || "",
         lastInternalId: lastInternalId || "",
-        enableEcosystem: enableEcosystem || false,
-        multiEcosystemSupport: multiEcosystemSupport || false
     }
     const [formData, setFormData] = useState(initFormData)
     const [loading, setLoading] = useState(false)
@@ -71,15 +65,14 @@ const PlatformSetting = ({ data }: any) => {
     const fetchSettings = async () => {
         try {
             const { data } = await getPlatformSettings() as AxiosResponse
-            const { externalIp, lastInternalId, sgApiKey, emailFrom, apiEndPoint, enableEcosystem, multiEcosystemSupport } = getConfigKeys(data)
+            const { externalIp, lastInternalId, sgApiKey, emailFrom, apiEndPoint, 
+            } = getConfigKeys(data)
             setFormData({
                 externalIp,
                 sgApiKey,
                 apiEndPoint,
                 emailFrom,
                 lastInternalId,
-                enableEcosystem,
-                multiEcosystemSupport
             })
         } catch (err) {
             setAlertMessage({
@@ -92,15 +85,14 @@ const PlatformSetting = ({ data }: any) => {
     const updateSettings = async (values: IPlatformSetting) => {
         setLoading(true)
         try {
-            const { externalIp, lastInternalId, sgApiKey, emailFrom, apiEndPoint, enableEcosystem, multiEcosystemSupport } = values || {}
+            const { externalIp, lastInternalId, sgApiKey, emailFrom, apiEndPoint, 
+            } = values || {}
             const payload = {
                 externalIp,
                 lastInternalId,
                 sgApiKey,
                 emailFrom,
                 apiEndPoint,
-                enableEcosystem,
-                multiEcosystemSupport
             }
             const response = await updatePlatformSettings(payload)
             const { data } = response as AxiosResponse
@@ -168,10 +160,6 @@ const PlatformSetting = ({ data }: any) => {
                             'Email domain is invalid',
                         )
                         .trim(),
-                    enableEcosystem: yup
-                        .boolean(),
-                    multiEcosystemSupport: yup
-                        .boolean()
 
                 })}
                 validateOnBlur
@@ -278,25 +266,7 @@ const PlatformSetting = ({ data }: any) => {
                             </div>
                         </div>
                         <hr />
-                        <div>
-                            <h2 className='my-4 text-lg font-semibold'>Ecosystem</h2>
-                            <div className='flex justify-between items-center'>
-                                <div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                    <Label htmlFor="enableEcosystem" value="Enable Ecosystem" className='text-base' />
-                                    <span className='text-red-500 text-xs'>*</span>
-                                    <p className='text-xs font-normal'>This flag is used to enable/disable ecosystem feature</p>
-                                </div>
-                                <Toggle id="enableEcosystem" name="enableEcosystem" label={""} checked={formikHandlers.values.enableEcosystem} onChangeHandle={(e) => formikHandlers.handleChange(e)} />
-                            </div>
-                            <div className='flex justify-between items-center mt-4'>
-                                <div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                    <Label htmlFor="multiEcosystemSupport" value="Multi Ecosystem support" className='text-base' />
-                                    <span className='text-red-500 text-xs'>*</span>
-                                    <p className='text-xs font-normal'>This flag is allow you to join multiple ecosystems</p>
-                                </div>
-                                <Toggle id="multiEcosystemSupport" name="multiEcosystemSupport" label={""} checked={formikHandlers.values.multiEcosystemSupport} onChangeHandle={(e) => formikHandlers.handleChange(e)} />
-                            </div>
-                        </div>
+                       
                         {
                             message.message &&
                             <AlertComponent

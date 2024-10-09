@@ -31,4 +31,3 @@ const VerificationDashboard = () => {
 };
 
 export default VerificationDashboard;
-

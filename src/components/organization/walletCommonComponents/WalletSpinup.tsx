@@ -1,5 +1,5 @@
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
-import { getFromLocalStorage } from '../../../api/Auth';
+import { getFromLocalStorage, passwordEncryption } from '../../../api/Auth';
 import {
 	createDid,
 	getOrganizationById,
@@ -93,7 +93,6 @@ const WalletSpinup = (props: {
        fetchOrganizationDetails()
     }, []);
 
-		
 	const onRadioSelect = (type: string) => {
 		setAgentType(type);
 	};
@@ -359,4 +358,3 @@ const submitDedicatedWallet = async (
 	
 
 export default WalletSpinup;
-

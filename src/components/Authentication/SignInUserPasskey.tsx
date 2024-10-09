@@ -79,9 +79,14 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 				(element: { orgRole: { name: string } }) =>
 					permissionArray.push(element?.orgRole?.name),
 			);
-			const { id, profileImg, firstName, email, enableEcosystem, multiEcosystemSupport } = data?.data || {}
+			const { id, 
+				profileImg, 
+				firstName, 
+				email, 
+			} = data?.data || {}
 			const userProfile = {
-				id, profileImg, firstName, email, enableEcosystem, multiEcosystemSupport
+				id, profileImg, firstName, email, 
+				
 			}
 			await setToLocalStorage(storageKeys.PERMISSIONS, permissionArray);
 			await setToLocalStorage(storageKeys.USER_PROFILE, userProfile);
@@ -122,9 +127,6 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 			setFidoUserError(generateAuthenticationResponse?.data?.error);
 
 			const opts = generateAuthenticationResponse?.data?.data;
-			if (opts) {
-				opts.allowCredentials = [] // to fix the paaskey issue(Patch on PROD)
-			}
 			const attResp = await startAuthentication(opts);
 			const verifyAuthenticationObj = {
 				...attResp,

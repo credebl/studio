@@ -3,10 +3,10 @@ import { apiStatusCodes, storageKeys } from "../../config/CommonConstant";
 import type { AxiosResponse } from "axios";
 import {
   deleteOrganization,
+  getEcosystems,
   getOrganizationById,
   getOrganizationReferences
 } from "../../api/organization";
-import { deleteOrganizationFromEcosystem, getEcosystems } from "../../api/ecosystem";
 
 import BreadCrumbs from "../BreadCrumbs";
 import { deleteOrganizationWallet } from "../../api/Agent";
@@ -14,7 +14,6 @@ import ConfirmationModal from "../../commonComponents/ConfirmationModal";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getFromLocalStorage, removeFromLocalStorage } from "../../api/Auth";
-import { EcosystemRoles } from "../../common/enums";
 import { AlertComponent } from "../AlertComponent";
 import { pathRoutes } from "../../config/pathRoutes";
 import DeleteOrganizationsCard from '../../components/organization/DeleteOrganizationsCard'
@@ -23,6 +22,7 @@ import { deleteVerificationRecords } from '../../api/verification';
 import { deleteIssuanceRecords } from '../../api/issuance';
 import { deleteConnectionRecords} from '../../api/connection'
 import  type { IEcosystemOrganizations, IOrgCount } from "./interfaces";
+import { EcosystemRoles } from "../../common/enums";
 
 const DeleteOrganizations = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -32,13 +32,36 @@ const DeleteOrganizations = () => {
   const [isWalletPresent, setIsWalletPresent] = useState<boolean>(false);
   const [message, setMessage] = useState<string | null>(null);
   const [showPopup, setShowPopup] = useState<boolean>(false);
-  const [ecosystemUserRoles, setEcosystemUserRoles] = useState<string>('');
   const [deleteAction, setDeleteAction] = useState<() => void>(() => {});
   const [confirmMessage, setConfirmMessage] = useState<string | React.ReactNode>('');
   const [description, setDescription] = useState<string>("");
-  const [ecosystemRoles, setEcosystemRoles] = useState<string[]>([]);
   const [orgName, setOrgName] = useState<string>("");
+  const [ecosystemRoles, setEcosystemRoles] = useState<string[]>([]);
+  const [ecosystemUserRoles, setEcosystemUserRoles] = useState<string>('');
   
+
+  const fetchOrganizationDetails = async () => {
+    try {
+      const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+      const response = await getOrganizationById(orgId as string);
+      const { data } = response as AxiosResponse;
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        const walletName = data?.data?.org_agents[0]?.walletName;
+        const orgName = data?.data?.name;  
+        if(orgName){
+          setOrgName(orgName)
+        }     
+        if (walletName) {
+          setIsWalletPresent(true);         
+        }
+        else {
+            setIsWalletPresent(false); 
+          }
+      }
+    } catch (error) {
+      console.error('Fetch organization details ERROR::::', error);
+    }
+  };
 
   const getAllEcosystems = async () => {
     try {
@@ -61,29 +84,6 @@ const DeleteOrganizations = () => {
           });
           setEcosystemRoles(leadEcosystemNames)
         }
-      }
-    } catch (error) {
-      console.error('Fetch organization details ERROR::::', error);
-    }
-  };
-
-  const fetchOrganizationDetails = async () => {
-    try {
-      const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-      const response = await getOrganizationById(orgId as string);
-      const { data } = response as AxiosResponse;
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        const walletName = data?.data?.org_agents[0]?.walletName;
-        const orgName = data?.data?.name;  
-        if(orgName){
-          setOrgName(orgName)
-        }     
-        if (walletName) {
-          setIsWalletPresent(true);         
-        }
-        else {
-            setIsWalletPresent(false); 
-          }
       }
     } catch (error) {
       console.error('Fetch organization details ERROR::::', error);
@@ -188,24 +188,6 @@ const DeleteOrganizations = () => {
     setDeleteLoading(false);
   };
 
-  const deleteOrgFromEcosystem = async () => {
-    try {
-      const response = await deleteOrganizationFromEcosystem();
-      const { data } = response as AxiosResponse;
-
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        toast.success(data?.message, {autoClose: 3000})
-        await fetchOrganizationReferences();
-        setShowPopup(false)
-      } else {
-        setError(response as string);
-      }
-    } catch (error) {
-      console.error('An error occurred:', error);
-      setError(error as string);
-    }
-  };
-
   const deleteOrgWallet = async () => {
     try {
       const response = await deleteOrganizationWallet();
@@ -258,7 +240,6 @@ const DeleteOrganizations = () => {
     deleteVerifications,
     deleteIssuance,
     deleteConnection,
-    deleteOrgFromEcosystem,
     deleteOrgWallet,
     deleteOrganizations
   };
@@ -289,21 +270,13 @@ const DeleteOrganizations = () => {
       isDisabled: (organizationData?.issuanceRecordsCount ?? 0) > 0 || (organizationData?.verificationRecordsCount ?? 0) > 0
     },
     {
-      title: "Ecosystem",
-      description: "Ecosystems your organization has joined as a member",
-      count: organizationData?.orgEcosystemsCount ?? 0,
-      deleteFunc: deleteFunctions.deleteOrgFromEcosystem,
-      confirmMessage:"Are you sure you want to remove your organization from ecoystem",
-      isDisabled: ecosystemUserRoles.includes(EcosystemRoles.ecosystemLead) || ((organizationData?.connectionRecordsCount ?? 0) > 0 ||(organizationData?.issuanceRecordsCount ?? 0) > 0 || (organizationData?.verificationRecordsCount ?? 0) > 0)
-    },
-    {
         title: "Organization wallet",
         description: "Organization Wallet is the data of your created DIDs.",
         count: isWalletPresent ? 1 : 0,
         deleteFunc: deleteFunctions.deleteOrgWallet,
         confirmMessage: "Are you sure you want to delete organization wallet",
-        isDisabled: ecosystemUserRoles.includes(EcosystemRoles.ecosystemLead) ||
-          ((organizationData?.orgEcosystemsCount ?? 0) > 0 ||
+        isDisabled:  ecosystemUserRoles.includes(EcosystemRoles.ecosystemLead) ||
+          (
             (organizationData?.connectionRecordsCount ?? 0) > 0 ||
             (organizationData?.issuanceRecordsCount ?? 0) > 0 ||
             (organizationData?.verificationRecordsCount ?? 0) > 0) 
@@ -333,11 +306,13 @@ const DeleteOrganizations = () => {
           setError(null);
         }}
       />
+
 {ecosystemRoles.length > 0 &&
         <h2 className="mb-4 dark:text-white">
           You are Ecosystem Lead for <strong>{ecosystemRoles.join(', ')}</strong>. You cannot remove yourself from the ecosystem, delete the organization's wallet, and delete your organization.
         </h2>
       }
+
       {organizationData && (
         <div>
           {cardData.map((card, index) => (

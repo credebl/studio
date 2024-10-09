@@ -10,7 +10,6 @@ import { AlertComponent } from '../../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import { apiStatusCodes, storageKeys } from '../../../config/CommonConstant';
 import {
-	createEcoSystemInvitations,
 	createInvitations,
 } from '../../../api/invitations';
 import { getOrganizationRoles } from '../../../api/organization';
@@ -34,7 +33,6 @@ interface RoleI {
 
 const SendInvitationModal = (props: {
 	getAllSentInvitations?: () => void;
-	ecosystemId?: string;
 	flag?: boolean;
 	openModal: boolean;
 	setMessage: (message: string) => void;
@@ -117,34 +115,6 @@ const SendInvitationModal = (props: {
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 			props.setMessage(data?.message);
 			props.setOpenModal(false);
-		} else {
-			setErrMsg(resCreateOrg as string);
-		}
-		setLoading(false);
-	};
-
-	const sendEcoSystemInvitations = async () => {
-
-		setLoading(true);
-		const invitationPayload = invitations.map((invitation) => {
-			return {
-				email: invitation.email,
-			};
-		});
-
-		const resCreateOrg = await createEcoSystemInvitations(
-			invitationPayload,
-			props?.ecosystemId,
-		);
-
-		const { data } = resCreateOrg as AxiosResponse;
-
-		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-
-			props?.setMessage(data?.message);
-			props?.setOpenModal(false);
-			props?.getAllSentInvitations()
-
 		} else {
 			setErrMsg(resCreateOrg as string);
 		}
@@ -325,7 +295,7 @@ const SendInvitationModal = (props: {
 
 					<div className="mt-4 flex justify-end">
 						<Button
-							onClick={props.flag ? sendEcoSystemInvitations : sendInvitations}
+							onClick={ sendInvitations}
 							disabled={loading || invitations.length === 0}
 							isProcessing={loading}
 							className='text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'

@@ -11,34 +11,24 @@ import {
 	apiStatusCodes,
 	imageSizeAccepted,
 	storageKeys,
-} from '../../config/CommonConstant';
-import { calculateSize, dataURItoBlob } from '../../utils/CompressImage';
+} from '../../config/CommonConstant.js';
+import { calculateSize, dataURItoBlob } from '../../utils/CompressImage.js';
 import React, { useEffect, useState } from 'react';
-import { AlertComponent } from '../AlertComponent';
+import { AlertComponent } from '../AlertComponent/index.js';
 import type { AxiosResponse } from 'axios';
 import { asset } from '../../lib/data.js';
-import { createOrganization } from '../../api/organization';
-import { getFromLocalStorage } from '../../api/Auth';
-import { createEcosystems } from '../../api/ecosystem';
-import { getOrgDetails } from '../../config/ecosystem';
-import EndorsementTooltip from '../../commonComponents/EndorsementTooltip';
-import { processImage } from '../../utils/processImage';
+import { createOrganization } from '../../api/organization.js';
+import { processImage } from '../../utils/processImage.js';
 
 interface Values {
 	name: string;
 	description: string;
-	autoEndorsement:boolean;
 }
 
 interface ILogoImage {
 	logoFile: string | File;
 	imagePreviewUrl: string | ArrayBuffer | null | File;
 	fileName: string;
-}
-interface EcoValues {
-	name: string;
-	description: string;
-	autoEndorsement: boolean;
 }
 
 interface IProps {
@@ -48,7 +38,7 @@ interface IProps {
 	setOpenModal: (flag: boolean) => void;
 }
 
-const CreateEcosystemOrgModal = (props: IProps) => {
+const CreateOrgModal = (props: IProps) => {
 	const [logoImage, setLogoImage] = useState<ILogoImage>({
 		logoFile: '',
 		imagePreviewUrl: '',
@@ -59,18 +49,15 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 	const [formData, setFormData] = useState({
 		name: '',
 		description: '',
-		autoEndorsement: false,
 	});
 	const [errMsg, setErrMsg] = useState<string | null>(null);
 
 	const [imgError, setImgError] = useState('');
-	const [autoEndorse, setautoEndorse] = useState(false);
 
 	useEffect(() => {
 		setFormData({
 			name: '',
 			description: '',
-			autoEndorsement: false,
 		});
 		setLogoImage({
 			...logoImage,
@@ -128,10 +115,6 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 		};
 	};
 
-	const isEmpty = (object: any): boolean => {
-		return true;
-	};
-
 	const handleImageChange = (event: any): void => {
 		setImgError('');
 		processImage(event, (result, error) => {
@@ -172,46 +155,14 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 			setErrMsg(resCreateOrg as string);
 		}
 	};
-	const submitCreateEcosystem = async (values: EcoValues) => {
-		try {
-			setLoading(true);
-			const orgDetails = await getOrgDetails();
-			const user_data = JSON.parse(
-				await getFromLocalStorage(storageKeys.USER_PROFILE),
-			);
-			const ecoData = {
-				name: values.name,
-				description: values.description,
-				logo: (logoImage?.imagePreviewUrl as string) || '',
-				tags: '',
-				userId: user_data?.id,
-				autoEndorsement: autoEndorse,
-			};
-			const resCreateEco = await createEcosystems(ecoData);
+	
 
-			const { data } = resCreateEco as AxiosResponse;
-			setLoading(false);
-
-			if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-				if (props.setMessage) {
-					props.setMessage(data?.message);
-				}
-				props.setOpenModal(false);
-			} else {
-				setErrMsg(resCreateEco as string);
-			}
-		} catch (error) {
-			console.error('An error occurred:', error);
-			setLoading(false);
-		}
-	};
-
-	const submit = (values: EcoValues | Values) => {
+	const submit = (values:
+		
+		  Values) => {
 		if (props.isorgModal) {
 			submitCreateOrganization(values);
-		} else {
-			submitCreateEcosystem(values);
-		}
+		} 
 	};
 
 	const orgErrorMsg = {
@@ -228,21 +179,8 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 			.required('Description is required'),
 	};
 
-	const ecoErrorMsg = {
-		name: yup
-			.string()
-			.min(2, 'Ecosystem name must be at least 2 characters')
-			.max(50, 'Ecosystem name must be at most 50 characters')
-			.required('Ecosystem name is required')
-			.trim(),
-		description: yup
-			.string()
-			.min(2, 'Description must be at least 2 characters')
-			.max(255, 'Description must be at most 255 characters')
-			.required('Description is required'),
-	};
-	const renderEcosystemModal = () => {
-		const popupName = props.isorgModal ? 'Organization' : 'Ecosystem';
+	const renderOrganizationModal = () => {
+		const popupName = 'Organization'
 		return (
 			<Modal
 			className="bg-gray-900 bg-opacity-50 dark:bg-opacity-80"
@@ -257,7 +195,6 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 					setFormData({
 						name: ' ',
 						description: ' ',
-						autoEndorsement: false,
 					});
 					props.setOpenModal(false);
 					setImgError(' ')
@@ -279,7 +216,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 						validationSchema={yup
 							.object()
 							.shape(
-								props.isorgModal ? { ...orgErrorMsg } : { ...ecoErrorMsg },
+								orgErrorMsg,
 							)}
 						validateOnBlur
 						validateOnChange
@@ -372,9 +309,8 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 											if (value.length > 50) {
 												formikHandlers.setFieldError(
 													'name',
-													props.isorgModal
-														? 'Organization name must be at most 50 characters'
-														: 'Ecosystem name must be at most 50 characters',
+													 'Organization name must be at most 50 characters'
+														
 												);
 											}
 										}}
@@ -423,43 +359,6 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 											</span>
 										)}
 								</div>
-
-								{!props.isorgModal && (
-									<div>
-										<div className="flex items-center">
-											<Label htmlFor="name" value="Endorsement Flow" />
-											<EndorsementTooltip />
-										</div>
-
-										<div>
-											<input
-												className=""
-												type="radio"
-												id="autoEndorsement"
-												name="autoEndorsement"
-												checked={autoEndorse === false}
-												onChange={() => setautoEndorse(false)}
-											/>
-											<span className="ml-2 text-gray-900 dark:text-white text-sm">
-												Sign
-											</span>
-										</div>
-
-										<div>
-											<input
-												className=""
-												type="radio"
-												id="autoEndorsement"
-												name="autoEndorsement"
-												checked={autoEndorse === true}
-												onChange={() => setautoEndorse(true)}
-											/>
-											<span className="ml-2 text-gray-900 dark:text-white text-sm">
-												Sign and Submit
-											</span>
-										</div>
-									</div>
-								)}
 								<div className="flex">
 									<Button
 										type="reset"
@@ -516,7 +415,7 @@ const CreateEcosystemOrgModal = (props: IProps) => {
 			</Modal>
 		);
 	};
-	return <>{renderEcosystemModal()}</>;
+	return <>{renderOrganizationModal()}</>;
 };
 
-export default CreateEcosystemOrgModal;
+export default CreateOrgModal;

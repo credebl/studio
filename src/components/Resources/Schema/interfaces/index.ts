@@ -101,4 +101,3 @@ export interface IFormData {
 	attribute: IAttributes[];
 }
 
-

@@ -6,10 +6,6 @@ export interface UserOrgRole {
     orgRole: OrgRole
 }
 
-interface IEcosystemOrgs {
-    ecosystemId: string;
-}
-
 export interface Organisation {
     logoFile: string
     id: string
@@ -26,7 +22,6 @@ export interface Organisation {
     org_agents: OrgAgent[]
     publicProfile: boolean
     checked?: boolean | undefined
-    ecosystemOrgs?: IEcosystemOrgs[]
     error?: string;
 }
 
@@ -114,11 +109,6 @@ export interface Connection {
     createdBy: string
     lastChangedDateTime: string
     lastChangedBy: string
-  }
-
-  export interface EcosystemDashboard {
-    membersCount: number
-    endorsementsCount: number
   }
 
 export interface OrgInterface {
@@ -250,23 +240,15 @@ export interface ILedgerItem {
     deletedAt: string | null;
   }
 
+
   export interface IOrgCount {
     verificationRecordsCount: number;
     connectionRecordsCount: number;
     issuanceRecordsCount: number;
-    orgEcosystemsCount: number;
     orgInvitationsCount: number;
     orgUsersCount: number;
   }
-  export interface IEcosystemRole {
-    id: string;
-    name: string;
-    description: string;
-    createDateTime: string;
-    lastChangedDateTime: string;
-    deletedAt: string | null;
-  }
-  
+
   export interface IEcosystemOrganizations {
     id: string;
     orgId: string;
@@ -276,4 +258,12 @@ export interface ILedgerItem {
     ecosystemId: string;
     ecosystemRoleId: string;
     ecosystemRole: IEcosystemRole;
+  }
+  export interface IEcosystemRole {
+    id: string;
+    name: string;
+    description: string;
+    createDateTime: string;
+    lastChangedDateTime: string;
+    deletedAt: string | null;
   }

@@ -401,4 +401,3 @@ const EmailAttributesSelection = () => {
 };
 
 export default EmailAttributesSelection;
-

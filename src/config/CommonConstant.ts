@@ -40,9 +40,7 @@ export const storageKeys = {
 	CRED_DEF_ID:'cred_def_id',
     SCHEMA_DID: 'schema_did',
     LOGIN_USER_EMAIL: 'login_user_email',
-	ECOSYSTEM_ID: "ecosystem_id",
     ORG_DETAILS: "org_details",
-    ECOSYSTEM_ROLE: "ecosystem_role",
     SCHEMA_IDS: "schemaIds",
     SCHEMA_ATTRIBUTES: "schema_attributes",
     SCHEMA_CRED_DEFS: "schema_cred_defs",
@@ -53,9 +51,11 @@ export const storageKeys = {
 	ORG_INFO:'organization_Info',
     ORG_DID:'did',
     SCHEMA_TYPE:'type',
-    SELECT_ORG_IN_ECOSYSTEM: 'select_orgs_in_ecosystem',
-    ERROR_ORG_IN_ECOSYSTEM: 'error_orgs_in_ecosystem',
-    ALL_SCHEMAS:'allSchemaFlag'
+    ALL_SCHEMAS:'allSchemaFlag',
+    ECOSYSTEM_ID: "ecosystem_id",
+    ECOSYSTEM_ROLE: "ecosystem_role",
+
+
 }
 
 export const emailCredDefHeaders = [
@@ -71,4 +71,3 @@ export const predicatesConditions = [
     { value: '>=', label: 'Greater than or equal to' },
     { value: '<=', label: 'Less than or equal to' }
 ]
-export const allowedDomains = "https://credebl-prod-user-certificate.s3.ap-south-1.amazonaws.com https://prod-org-logo.s3.ap-south-1.amazonaws.com https://dev-service.ngotag.com wss://dev-service.ngotag.com https://cdnjs.cloudflare.com https://tailwindcss.com https://www.blockster.global https://www.ayanworks.com https://qaapi.credebl.id https://devapi.credebl.id https://api.credebl.id https://*.credebl.id https://fonts.googleapis.com https://fonts.gstatic.com https://avatars.githubusercontent.com  https://dev-org-logo.s3.ap-south-1.amazonaws.com https://flowbite-admin-dashboard.vercel.app/ wss://devapi.credebl.id wss://qaapi.credebl.id wss://api.credebl.id wss://*.credebl.id  https://qa.credebl.id https://dev.credebl.id https://credebl.id"
