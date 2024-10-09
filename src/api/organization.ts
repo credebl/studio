@@ -1,3 +1,4 @@
+import type { IDedicatedAgentConfig, IUpdatePrimaryDid } from '../components/organization/interfaces';
 import {
 	axiosDelete,
 	axiosGet,
@@ -11,9 +12,8 @@ import {
 import { apiRoutes } from '../config/apiRoutes';
 import { getFromLocalStorage } from './Auth';
 import { getHeaderConfigs } from '../config/GetHeaderConfigs';
-import { storageKeys } from '../config/CommonConstant';
-import type { IDedicatedAgentConfig, IUpdatePrimaryDid } from '../components/organization/interfaces';
 import { pathRoutes } from '../config/pathRoutes';
+import { storageKeys } from '../config/CommonConstant';
 
 export const createOrganization = async (data: object) => {
 	const url = apiRoutes.organizations.create;
