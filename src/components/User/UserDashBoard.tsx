@@ -106,8 +106,8 @@ const UserDashBoard = () => {
 				total: totalPages,
 			});
 		} else {
-			// setError(response as string);
-			setError('Failed to fetch invitations');			
+			setError(response as string);
+			// setError('Failed to fetch invitations');			
 		}
 	} catch(err) {
 		setError('An unexpected error occurred');
@@ -162,8 +162,8 @@ const UserDashBoard = () => {
 				total: totalPages,
 			});
 		} else {
-			// setError(response as string);
-			setError('Failed to fetch invitations');
+			setError(response as string);
+			// setError('Failed to fetch invitations');
 		}
 	}
 	catch(err){
