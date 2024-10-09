@@ -455,7 +455,7 @@ const UserDashBoard = () => {
 		<div className="px-4 pt-6">
 			<div className="cursor-pointer">
 				<AlertComponent
-					message={message || error}
+					message={message}
 					type={message ? 'warning' : 'failure'}
 					viewButton={viewButton}
 					path={pathRoutes.users.invitations}
@@ -467,7 +467,7 @@ const UserDashBoard = () => {
 			</div>
 			<div className="cursor-pointer">
 				<AlertComponent
-					message={ecoMessage || error}
+					message={ecoMessage}
 					type={'warning'}
 					viewButton={viewButton}
 					path={`${envConfig.PUBLIC_ECOSYSTEM_FRONT_END_URL}${pathRoutes.users.dashboard}` } 
