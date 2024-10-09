@@ -54,7 +54,7 @@ const UserDashBoard = () => {
 	const [message, setMessage] = useState<string | null>('');
 	const [ecoMessage, setEcoMessage] = useState<string | null>('');
 	const [viewButton, setViewButton] = useState<boolean>(false);
-	const [error, setError] = useState<string >('');
+	const [error, setError] = useState<string | null>('');
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const [organizationsList, setOrganizationList] =
 		useState<Array<Organisation> | null>(null);
@@ -461,7 +461,7 @@ const UserDashBoard = () => {
 			<div className="cursor-pointer">
 			{(error || message) && (  
         <AlertComponent
-            message={message || error || ''}  
+            message={message}  
             type={message ? 'warning' : 'failure'} 
             viewButton={viewButton}
             path={pathRoutes.users.invitations}
@@ -476,7 +476,7 @@ const UserDashBoard = () => {
 			<div className="cursor-pointer">
 			{(error || ecoMessage) && (  
         <AlertComponent
-            message={ecoMessage || error || ''} 
+            message={ecoMessage} 
             type={ecoMessage ? 'warning' : 'failure'}  
             viewButton={viewButton}
             path={`${envConfig.PUBLIC_ECOSYSTEM_FRONT_END_URL}${pathRoutes.users.dashboard}`}
