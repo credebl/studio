@@ -1,7 +1,7 @@
-import React from 'react';
-import { Card } from 'flowbite-react';
 import BackButton from '../commonComponents/backbutton';
 import BreadCrumbs from '../components/BreadCrumbs'
+import { Card } from 'flowbite-react';
+import React from 'react';
 
 const Dashboard = ({ title, options, backButtonPath }) => {
 	return (
