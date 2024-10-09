@@ -471,8 +471,8 @@ const UserDashBoard = () => {
        
 				
 			</div>
-			{/* <div className="cursor-pointer">
-			
+			<div className="cursor-pointer">
+			{ecoMessage && ecoMessage.length > 0 &&
         <AlertComponent
             message={ecoMessage} 
             type={ecoMessage ? 'warning' : 'failure'}  
@@ -483,8 +483,9 @@ const UserDashBoard = () => {
                 setError('');    
             }}
         />
+}
     
-			</div> */}
+			</div>
 			{walletData && walletData.length > 0 ? (
 				<></>
 			) : (
