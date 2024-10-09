@@ -21,15 +21,17 @@ export const AlertComponent = ({
     onAlertClose,
     path = '',
 }: IAlertComponent) => {
-
+console.log("message",message);
+console.log(typeof message)
     return (
-        // message !== null ? (<>
-		// </>):
-        // (
+        message === null ? (<>
+		</>):
+        (
+			
             (
                 <div className="w-full">
                     <div
-                        className={`flex flex-col gap-2 p-4 text-sm rounded-lg mb-4 ${() => getAlertClass(type)}`}
+                        className={`flex flex-col gap-2 p-4 text-sm rounded-lg mb-4 ${getAlertClass(type)}`}
                         role="alert"
                     >
                         <div
@@ -48,7 +50,7 @@ export const AlertComponent = ({
                             </div>
                             <button
                                 aria-label="Dismiss"
-                                className={`-mx-1.5 -my-1.5 ml-auto inline-flex h-8 w-8 rounded-lg p-1.5 ${() => getAlertClass(type)}`}
+                                className={`-mx-1.5 -my-1.5 ml-auto inline-flex h-8 w-8 rounded-lg p-1.5 ${getAlertClass(type)}`}
                                 type="button"
                                 onClick={onAlertClose}
                             >
@@ -58,7 +60,7 @@ export const AlertComponent = ({
                                     strokeWidth="0"
                                     viewBox="0 0 20 20"
                                     aria-hidden="true"
-                                    className={`w-5 h-5 ${() => getAlertClass(type)}`}
+                                    className={`w-5 h-5 ${getAlertClass(type)}`}
                                     height="1em"
                                     width="1em"
                                     xmlns="http://www.w3.org/2000/svg"
@@ -78,5 +80,5 @@ export const AlertComponent = ({
         ) 
         
         
-    // );
+    );
 };

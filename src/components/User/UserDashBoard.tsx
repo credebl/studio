@@ -51,8 +51,8 @@ interface ICredDef {
 }
 
 const UserDashBoard = () => {
-	const [message, setMessage] = useState<string | null>(null);
-	const [ecoMessage, setEcoMessage] = useState<string | null>(null);
+	const [message, setMessage] = useState<string | null>('');
+	const [ecoMessage, setEcoMessage] = useState<string | null>('');
 	const [viewButton, setViewButton] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
@@ -86,11 +86,13 @@ const UserDashBoard = () => {
 
 	const getAllInvitations = async () => {
 		setLoading(true);
+		try {
 		const response = await getUserInvitations(
 			currentPage.pageNumber,
 			currentPage.pageSize,
 			'',
 		);
+		console.log('response', response); 
 		const { data } = response as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -105,13 +107,18 @@ const UserDashBoard = () => {
 				total: totalPages,
 			});
 		} else {
-			setError(response as string);
+			// setError(response as string);
+			setError(data?.message || 'Failed to fetch invitations');
 		}
+	} catch(err) {
+		setError('An unexpected error occurred');
+	}
 		setLoading(false);
 	};
 
 	const getAllOrganizations = async () => {
 		setOrgLoading(true);
+		try {
 		const response = await getOrganizations(
 			currentPage.pageNumber,
 			currentPage.pageSize,
@@ -125,8 +132,12 @@ const UserDashBoard = () => {
 			);
 			setOrganizationList(orgList);			
 		} else {
-			setError(response as string);
+			setError(data?.message || 'Failed to fetch ecosystem invitations');
 		}
+	}
+	catch(err){
+		setError('An unexpected error occurred');
+	}
 		setOrgLoading(false);
 	};
 
@@ -449,20 +460,20 @@ const UserDashBoard = () => {
 					viewButton={viewButton}
 					path={pathRoutes.users.invitations}
 					onAlertClose={() => {
-						setMessage(null);
+						setMessage('');
 						setError(null);
 					}}
 				/>
 			</div>
 			<div className="cursor-pointer">
 				<AlertComponent
-					message={ecoMessage}
+					message={ecoMessage || error}
 					type={'warning'}
 					viewButton={viewButton}
 					path={`${envConfig.PUBLIC_ECOSYSTEM_FRONT_END_URL}${pathRoutes.users.dashboard}` } 
 
 					onAlertClose={() => {
-						setEcoMessage(null);
+						setEcoMessage('');
 						setError(null);
 					}}
 				/>
