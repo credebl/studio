@@ -1,30 +1,31 @@
-import { useEffect, useState } from 'react';
-import { AlertComponent } from '../AlertComponent';
-import type { AxiosResponse } from 'axios';
-import CustomAvatar from '../Avatar/index';
-import type { Organisation } from '../organization/interfaces';
-import type { UserActivity } from './interfaces';
+import { Button, Tooltip } from 'flowbite-react';
 import { apiStatusCodes, itemPerPage, storageKeys } from '../../config/CommonConstant';
+import { getAllCredDef, getAllSchemasByOrgId } from '../../api/Schema';
+import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { getOrganizationById, getOrganizations } from '../../api/organization';
-import { getUserActivity } from '../../api/users';
 import {
 	getUserEcosystemInvitations,
 	getUserInvitations,
 } from '../../api/invitations';
-import { pathRoutes } from '../../config/pathRoutes';
-import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
-import { dateConversion } from '../../utils/DateConversion';
+import { useEffect, useState } from 'react';
+
+import { AlertComponent } from '../AlertComponent';
+import type { AxiosResponse } from 'axios';
+import CustomAvatar from '../Avatar/index';
+import CustomSpinner from '../CustomSpinner';
 import DateTooltip from '../Tooltip';
-import { Roles } from '../../utils/enums/roles';
-import { Button, Tooltip } from 'flowbite-react';
-import { getAllCredDef, getAllSchemasByOrgId } from '../../api/Schema';
 import type { GetAllSchemaListParameter } from '../Resources/Schema/interfaces';
-import React from 'react';
+import type { Organisation } from '../organization/interfaces';
 import {
 	OrganizationRoles,
 } from '../../common/enums';
-import CustomSpinner from '../CustomSpinner';
+import React from 'react';
+import { Roles } from '../../utils/enums/roles';
+import type { UserActivity } from './interfaces';
+import { dateConversion } from '../../utils/DateConversion';
 import { envConfig } from '../../config/envConfig';
+import { getUserActivity } from '../../api/users';
+import { pathRoutes } from '../../config/pathRoutes';
 
 const initialPageState = {
 	pageNumber: 1,
@@ -50,10 +51,10 @@ interface ICredDef {
 }
 
 const UserDashBoard = () => {
-	const [message, setMessage] = useState<string | null>(null);
-	const [ecoMessage, setEcoMessage] = useState<string | null>(null);
+	const [message, setMessage] = useState<string | null>('');
+	const [ecoMessage, setEcoMessage] = useState<string | null>('');
 	const [viewButton, setViewButton] = useState<boolean>(false);
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<string | null>('');
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const [organizationsList, setOrganizationList] =
 		useState<Array<Organisation> | null>(null);
@@ -85,6 +86,7 @@ const UserDashBoard = () => {
 
 	const getAllInvitations = async () => {
 		setLoading(true);
+		try {
 		const response = await getUserInvitations(
 			currentPage.pageNumber,
 			currentPage.pageSize,
@@ -106,9 +108,12 @@ const UserDashBoard = () => {
 		} else {
 			setError(response as string);
 		}
+	} catch(err) {
+		setError('An unexpected error occurred');
+	}
 		setLoading(false);
 	};
-	//Fetch the user organization list
+
 	const getAllOrganizations = async () => {
 		setOrgLoading(true);
 		const response = await getOrganizations(
@@ -128,9 +133,9 @@ const UserDashBoard = () => {
 		}
 		setOrgLoading(false);
 	};
-
 	const getAllEcosystemInvitations = async () => {
 		setLoading(true);
+		try {
 		const response = await getUserEcosystemInvitations(
 			currentPage.pageNumber,
 			currentPage.pageSize,
@@ -156,6 +161,10 @@ const UserDashBoard = () => {
 		} else {
 			setError(response as string);
 		}
+	}
+	catch(err){
+		setError('An unexpected error occurred.');
+	}
 		setLoading(false);
 	};
 
@@ -437,31 +446,39 @@ const UserDashBoard = () => {
 	};
 
 	return (
+		<>
 		<div className="px-4 pt-6">
 			<div className="cursor-pointer">
-				<AlertComponent
-					message={message || error}
-					type={message ? 'warning' : 'failure'}
+			  {message && message.length > 0 &&
+
+					<AlertComponent
+					message={message}  
+					type={message ? 'warning' : 'failure'} 
 					viewButton={viewButton}
 					path={pathRoutes.users.invitations}
 					onAlertClose={() => {
-						setMessage(null);
-						setError(null);
+						setMessage(''); 
+						setError('');   
 					}}
-				/>
+					/>
+			  }
+       
+				
 			</div>
 			<div className="cursor-pointer">
-				<AlertComponent
-					message={ecoMessage}
-					type={'warning'}
-					viewButton={viewButton}
-					path={`${envConfig.PUBLIC_ECOSYSTEM_FRONT_END_URL}${pathRoutes.users.dashboard}` } 
-
-					onAlertClose={() => {
-						setEcoMessage(null);
-						setError(null);
-					}}
-				/>
+			{ecoMessage && ecoMessage.length > 0 &&
+        <AlertComponent
+            message={ecoMessage} 
+            type={ecoMessage ? 'warning' : 'failure'}  
+            viewButton={viewButton}
+            path={`${envConfig.PUBLIC_ECOSYSTEM_FRONT_END_URL}${pathRoutes.users.dashboard}`}
+            onAlertClose={() => {
+                setEcoMessage('');
+                setError('');    
+            }}
+        />
+}
+    
 			</div>
 			{walletData && walletData.length > 0 ? (
 				<></>
@@ -572,7 +589,7 @@ const UserDashBoard = () => {
 											);
 											org.roles = roles;
 											return (
-												<span
+												<div
 													className="flex justify-between w-full mt-2 items-center"
 													key={org?.id}
 												 >
@@ -603,12 +620,12 @@ const UserDashBoard = () => {
 															)}
 
 															<span className="flex items-center space-x-2 ml-3 text-lg font-bold text-gray-500 dark:text-white text-start truncate">
-																<span className="truncate"> {org?.name}</span>
+																<span className="truncate">{org?.name}</span>
 																<span>
 																	{org.roles.includes(
 																		OrganizationRoles.organizationOwner,
 																	) ? (
-																		<span title={org.roles}>
+																		<span  title={org.roles.join(", ")}>
 																			<svg
 																				width="24"
 																				height="24"
@@ -629,10 +646,7 @@ const UserDashBoard = () => {
 																			OrganizationRoles.organizationIssuer,
 																	  ) ? (
 																		<span
-																			title={org.roles.slice(
-																				0,
-																				org.roles.length - 1,
-																			)}
+																		title={org.roles.slice(0, org.roles.length - 1).join(", ")}
 																		>
 																			<svg
 																				width="24"
@@ -851,7 +865,7 @@ const UserDashBoard = () => {
 															</button>
 														</Tooltip>
 													</div>
-												</span>
+												</div>
 											);
 										})}
 										{organizationsList && organizationsList?.length > 0 && (
@@ -941,10 +955,10 @@ const UserDashBoard = () => {
 															className="flex items-center space-x-2 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-md"
 														>
 															<span className="ml-3 text-lg font-bold text-gray-500 dark:text-white text-primary-700 text-start">
-																{schema?.name}
+																{schema?.name || ''}
 															</span>
 															<span className="items-center font-normal text-md justify-start dark:text-white text-gray-600 truncate">
-																{schema?.version}
+																{schema?.version || ''}
 															</span>
 														</a>
 													</button>
@@ -1040,10 +1054,10 @@ const UserDashBoard = () => {
 															className="flex items-center space-x-2 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-md"
 														>
 															<span className="ml-3 text-lg font-bold text-gray-500 text-start dark:text-white text-primary-700 shrink-0">
-																{cred?.tag}
+																{cred?.tag || ''}
 															</span>
 															<span className="truncate text-md font-normal dark:text-white text-gray-600">
-																{cred?.credentialDefinitionId}
+																{cred?.credentialDefinitionId || ''}
 															</span>
 														</a>
 													</button>
@@ -1111,6 +1125,7 @@ const UserDashBoard = () => {
 			
 			
 		</div>
+		</>
 	);
 };
 export default UserDashBoard;
