@@ -1,28 +1,29 @@
-import { useEffect, useState } from "react";
+import "react-toastify/dist/ReactToastify.css";
+
+import  type { IEcosystemOrganizations, IOrgCount } from "./interfaces";
+import { ToastContainer, toast } from "react-toastify";
 import { apiStatusCodes, storageKeys } from "../../config/CommonConstant";
-import type { AxiosResponse } from "axios";
 import {
   deleteOrganization,
   getEcosystems,
   getOrganizationById,
   getOrganizationReferences
 } from "../../api/organization";
-
-import BreadCrumbs from "../BreadCrumbs";
-import { deleteOrganizationWallet } from "../../api/Agent";
-import ConfirmationModal from "../../commonComponents/ConfirmationModal";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { getFromLocalStorage, removeFromLocalStorage } from "../../api/Auth";
+import { useEffect, useState } from "react";
+
 import { AlertComponent } from "../AlertComponent";
-import { pathRoutes } from "../../config/pathRoutes";
+import type { AxiosResponse } from "axios";
+import BreadCrumbs from "../BreadCrumbs";
+import ConfirmationModal from "../../commonComponents/ConfirmationModal";
 import DeleteOrganizationsCard from '../../components/organization/DeleteOrganizationsCard'
-import React from "react";
-import { deleteVerificationRecords } from '../../api/verification';
-import { deleteIssuanceRecords } from '../../api/issuance';
-import { deleteConnectionRecords} from '../../api/connection'
-import  type { IEcosystemOrganizations, IOrgCount } from "./interfaces";
 import { EcosystemRoles } from "../../common/enums";
+import React from "react";
+import { deleteConnectionRecords } from '../../api/connection'
+import { deleteIssuanceRecords } from '../../api/issuance';
+import { deleteOrganizationWallet } from "../../api/Agent";
+import { deleteVerificationRecords } from '../../api/verification';
+import { pathRoutes } from "../../config/pathRoutes";
 
 const DeleteOrganizations = () => {
   const [loading, setLoading] = useState<boolean>(true);

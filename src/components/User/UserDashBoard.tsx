@@ -1,7 +1,8 @@
 import { Button, Tooltip } from 'flowbite-react';
-import { apiStatusCodes, itemPerPage, storageKeys } from '../../config/CommonConstant';
 import { getAllCredDef, getAllSchemasByOrgId } from '../../api/Schema';
 import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
+
+import { apiStatusCodes, itemPerPage, storageKeys } from '../../config/CommonConstant';
 import { getOrganizationById, getOrganizations } from '../../api/organization';
 import {
 	getUserEcosystemInvitations,
@@ -12,20 +13,21 @@ import { useEffect, useState } from 'react';
 import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import CustomAvatar from '../Avatar/index';
-import CustomSpinner from '../CustomSpinner';
 import DateTooltip from '../Tooltip';
 import type { GetAllSchemaListParameter } from '../Resources/Schema/interfaces';
 import type { Organisation } from '../organization/interfaces';
-import {
-	OrganizationRoles,
-} from '../../common/enums';
-import React from 'react';
+
 import { Roles } from '../../utils/enums/roles';
 import type { UserActivity } from './interfaces';
 import { dateConversion } from '../../utils/DateConversion';
-import { envConfig } from '../../config/envConfig';
 import { getUserActivity } from '../../api/users';
 import { pathRoutes } from '../../config/pathRoutes';
+import React from 'react';
+import {
+	OrganizationRoles,
+} from '../../common/enums';
+import CustomSpinner from '../CustomSpinner';
+import { envConfig } from '../../config/envConfig';
 
 const initialPageState = {
 	pageNumber: 1,
@@ -113,7 +115,6 @@ const UserDashBoard = () => {
 	}
 		setLoading(false);
 	};
-
 	const getAllOrganizations = async () => {
 		setOrgLoading(true);
 		const response = await getOrganizations(
@@ -165,6 +166,36 @@ const UserDashBoard = () => {
 	catch(err){
 		setError('An unexpected error occurred.');
 	}
+		setLoading(false);
+	};
+
+	const getAllEcosystemInvitations = async () => {
+		setLoading(true);
+		const response = await getUserEcosystemInvitations(
+			currentPage.pageNumber,
+			currentPage.pageSize,
+			'',
+		);
+		const { data } = response as AxiosResponse;
+
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			const totalPages = data?.data?.totalPages;
+			const invitationPendingList =
+				data?.data?.invitations &&
+				data?.data?.invitations?.filter((invitation: { status: string }) => {
+					return invitation.status === 'pending';
+				});
+			if (invitationPendingList && invitationPendingList.length > 0) {
+				setEcoMessage(`You have received invitation to join ecosystem `);
+				setViewButton(true);
+			}
+			setCurrentPage({
+				...currentPage,
+				total: totalPages,
+			});
+		} else {
+			setError(response as string);
+		}
 		setLoading(false);
 	};
 
