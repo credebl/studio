@@ -54,7 +54,7 @@ const UserDashBoard = () => {
 	const [message, setMessage] = useState<string | null>('');
 	const [ecoMessage, setEcoMessage] = useState<string | null>('');
 	const [viewButton, setViewButton] = useState<boolean>(false);
-	const [error, setError] = useState<string | null>('');
+	const [error, setError] = useState<string >('');
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const [organizationsList, setOrganizationList] =
 		useState<Array<Organisation> | null>(null);
@@ -106,8 +106,8 @@ const UserDashBoard = () => {
 				total: totalPages,
 			});
 		} else {
-			setError(response as string);
-			// setError('Failed to fetch invitations');			
+			// setError(response as string);
+			setError('Failed to fetch invitations');			
 		}
 	} catch(err) {
 		setError('An unexpected error occurred');
@@ -162,8 +162,8 @@ const UserDashBoard = () => {
 				total: totalPages,
 			});
 		} else {
-			setError(response as string);
-			// setError('Failed to fetch invitations');
+			// setError(response as string);
+			setError('Failed to fetch invitations');
 		}
 	}
 	catch(err){
@@ -450,41 +450,38 @@ const UserDashBoard = () => {
 			</div>
 		);
 	};
-	console.log("errror_:::::::::::", typeof error);
-	console.log("mesaage---:::::::::", typeof message);
 
 	return (
 		<>
 		<div className="px-4 pt-6">
 			<div className="cursor-pointer">
-				{(error !== '' || message !== '') &&
-				<AlertComponent
-				message={message || error}
-				type={message ? 'warning' : 'failure'}
-				viewButton={viewButton}
-				path={pathRoutes.users.invitations}
-				onAlertClose={() => {
-					setMessage('');
-					setError('');
-				}}
-			/>
-				}
+			{(error || message) && (  // Check if either error or message exists
+        <AlertComponent
+            message={message || error || ''}  // Fallback to an empty string
+            type={message ? 'warning' : 'failure'}  // Type based on message presence
+            viewButton={viewButton}
+            path={pathRoutes.users.invitations}
+            onAlertClose={() => {
+                setMessage('');  // Reset message on close
+                setError('');    // Reset error on close
+            }}
+        />
+    )}
 				
 			</div>
 			<div className="cursor-pointer">
-			{(error !== '' || ecoMessage !== '') &&
-				<AlertComponent
-					message={ecoMessage || error}
-					type={message ? 'warning' : 'failure'}
-					viewButton={viewButton}
-					path={`${envConfig.PUBLIC_ECOSYSTEM_FRONT_END_URL}${pathRoutes.users.dashboard}` } 
-
-					onAlertClose={() => {
-						setEcoMessage('');
-						setError('');
-					}}
-				/>
-}
+			{(error || ecoMessage) && (  // Check if either error or ecoMessage exists
+        <AlertComponent
+            message={ecoMessage || error || ''}  // Fallback to an empty string
+            type={ecoMessage ? 'warning' : 'failure'}  // Type based on ecoMessage presence
+            viewButton={viewButton}
+            path={`${envConfig.PUBLIC_ECOSYSTEM_FRONT_END_URL}${pathRoutes.users.dashboard}`}
+            onAlertClose={() => {
+                setEcoMessage('');  // Reset ecoMessage on close
+                setError('');       // Reset error on close
+            }}
+        />
+    )}
 			</div>
 			{walletData && walletData.length > 0 ? (
 				<></>
