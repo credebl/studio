@@ -451,12 +451,6 @@ const UserDashBoard = () => {
 			</div>
 		);
 	};
-
-	const getSafeMessage = (message: string | null, error: string | null): string => {
-		if (message) return message; // return message if it's not null
-		if (typeof error === 'string') return error; // return error if it's a string
-		return ''; // default to an empty string if both are null or error is not a string
-	};
 	
 
 	return (
@@ -464,8 +458,7 @@ const UserDashBoard = () => {
 		<div className="px-4 pt-6">
 			<div className="cursor-pointer">
 				<AlertComponent
-					// message={message || error}
-					message={getSafeMessage(message, error)}
+					message={message ? message : (error ? error : '')}
 					type={message ? 'warning' : 'failure'}
 					viewButton={viewButton}
 					path={pathRoutes.users.invitations}
@@ -477,8 +470,8 @@ const UserDashBoard = () => {
 			</div>
 			<div className="cursor-pointer">
 				<AlertComponent
-					 message={getSafeMessage(ecoMessage, error)}
-					 type={message ? 'warning' : 'failure'}
+					message={ecoMessage ? ecoMessage : (error ? error : '')}
+					type={'warning'}
 					viewButton={viewButton}
 					path={`${envConfig.PUBLIC_ECOSYSTEM_FRONT_END_URL}${pathRoutes.users.dashboard}` } 
 
