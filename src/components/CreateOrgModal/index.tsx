@@ -169,13 +169,13 @@ const CreateOrgModal = (props: IProps) => {
 		name: yup
 			.string()
 			.min(2, 'Organization name must be at least 2 characters')
-			.max(50, 'Organization name must be at most 50 characters')
+			.max(200, 'Organization name must be at most 200 characters')
 			.required('Organization name is required')
 			.trim(),
 		description: yup
 			.string()
 			.min(2, 'Description must be at least 2 characters')
-			.max(255, 'Description must be at most 255 characters')
+			.max(1000, 'Description must be at most 1000 characters')
 			.required('Description is required'),
 	};
 
@@ -306,10 +306,10 @@ const CreateOrgModal = (props: IProps) => {
 											formikHandlers.setFieldValue('name', value);
 											formikHandlers.setFieldTouched('name', true, false);
 
-											if (value.length > 50) {
+											if (value.length > 200) {
 												formikHandlers.setFieldError(
 													'name',
-													 'Organization name must be at most 50 characters'
+													 'Organization name must be at most 200 characters'
 														
 												);
 											}
