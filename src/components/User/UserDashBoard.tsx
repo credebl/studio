@@ -114,7 +114,6 @@ const UserDashBoard = () => {
 	}
 		setLoading(false);
 	};
-
 	const getAllOrganizations = async () => {
 		setOrgLoading(true);
 		const response = await getOrganizations(
@@ -138,7 +137,6 @@ const UserDashBoard = () => {
 	const getAllEcosystemInvitations = async () => {
 		setLoading(true);
 		try {
-
 		const response = await getUserEcosystemInvitations(
 			currentPage.pageNumber,
 			currentPage.pageSize,
