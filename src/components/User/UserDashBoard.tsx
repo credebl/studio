@@ -274,9 +274,7 @@ const UserDashBoard = () => {
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			if (data?.data?.org_agents) {
-				setWalletData(data?.data?.org_agents);
-				console.log("data?.data?.org_agents",data?.data?.org_agents);
-				
+				setWalletData(data?.data?.org_agents);				
 			} else {
 				setWalletData([]);
 			}
