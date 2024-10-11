@@ -283,7 +283,7 @@ const SchemaList = (props: {
 	? { title: 'Schema Endorsement', svg: <SchemaEndorsement/> }
 	: { title: 'Create Schema', svg: <Create/> };
 
-	
+	console.log("schemaListErr",typeof schemaListErr) // this is string
 	return (
 		<div className="px-4 pt-2">
 			<div className="mb-4 col-span-full xl:mb-2">
@@ -341,7 +341,7 @@ const SchemaList = (props: {
 					</div>
 				</div>
 				{schemaListErr && (
-					<Alert color="failure" onDismiss={() => setSchemaListErr(null)}>
+					<Alert color="failure" onDismiss={() => setSchemaListErr('')}>
 						<span>
 							<p>{schemaListErr}</p>
 						</span>

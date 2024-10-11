@@ -1,5 +1,5 @@
-
 import type { IAlertComponent } from './interface';
+import React from 'react';
 
 const getAlertClass = (type:string) => {
     switch (type) {
@@ -21,8 +21,6 @@ export const AlertComponent = ({
     onAlertClose,
     path = '',
 }: IAlertComponent) => {
-console.log("message",message);
-console.log(typeof message)
     return (
         (message === null || '') ? (<>
 		</>):
