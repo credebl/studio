@@ -341,9 +341,9 @@ const SchemaList = (props: {
 					</div>
 				</div>
 				{schemaListErr && (
-					<Alert color="failure" onDismiss={() => setSchemaListErr(null)}>
+					<Alert color="failure" onDismiss={() => setSchemaListErr('')}>
 						<span>
-							<p>{schemaListErr}</p>
+							<p>{typeof schemaListErr === 'string' ? schemaListErr : JSON.stringify(schemaListErr)}</p>
 						</span>
 					</Alert>
 				)}
