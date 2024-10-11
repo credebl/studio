@@ -306,10 +306,10 @@ const CreateOrgModal = (props: IProps) => {
 											formikHandlers.setFieldValue('name', value);
 											formikHandlers.setFieldTouched('name', true, false);
 
-											if (value.length > 50) {
+											if (value.length > 200) {
 												formikHandlers.setFieldError(
 													'name',
-													 'Organization name must be at most 50 characters'
+													 'Organization name must be at most 200 characters'
 														
 												);
 											}
