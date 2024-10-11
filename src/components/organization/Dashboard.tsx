@@ -1,21 +1,22 @@
 import type { OrgDashboard, Organisation } from './interfaces';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { getEcosystems, getOrgDashboard, getOrganizationById } from '../../api/organization';
+import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { useEffect, useState } from 'react';
+
 import { Alert } from 'flowbite-react';
+import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
 import CustomAvatar from '../Avatar/index';
 import CustomSpinner from '../CustomSpinner';
+import DashboardCard from '../../commonComponents/DashboardCard';
 import EditOrgdetailsModal from './EditOrgdetailsModal';
 import OrganizationDetails from './OrganizationDetails';
 import { Roles } from '../../utils/enums/roles';
-import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
-import { pathRoutes } from '../../config/pathRoutes';
-import { AlertComponent } from '../AlertComponent';
 import WalletSpinup from './walletCommonComponents/WalletSpinup';
-import DashboardCard from '../../commonComponents/DashboardCard';
 import { envConfig } from '../../config/envConfig';
+import { pathRoutes } from '../../config/pathRoutes';
 
 const initialPageState = {
 	pageNumber: 1,
@@ -28,11 +29,11 @@ const Dashboard = () => {
 	const [orgData, setOrgData] = useState<Organisation | null>(null);
 	const [walletStatus, setWalletStatus] = useState<boolean>(false);
 	const [orgDashboard, setOrgDashboard] = useState<OrgDashboard | null>(null);
-	const [success, setSuccess] = useState<string | null>(null);
-	const [failure, setFailure] = useState<string | null>(null);
+	const [success, setSuccess] = useState<string>('');
+	const [failure, setFailure] = useState<string>('');
 	const [loading, setLoading] = useState<boolean | null>(true);
 	const [userRoles, setUserRoles] = useState<string[]>([]);
-	const [orgSuccess, setOrgSuccess] = useState<string | null>(null);
+	const [orgSuccess, setOrgSuccess] = useState<string>('');
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const [ecoCount, setEcoCount] = useState(0);
@@ -158,8 +159,8 @@ const Dashboard = () => {
 
 	useEffect(() => {
 		setTimeout(() => {
-			setSuccess(null);
-			setFailure(null);
+			setSuccess('');
+			setFailure('');
 		}, 3000);
 	}, [success !== null, failure !== null]);
 
@@ -186,7 +187,7 @@ const Dashboard = () => {
 							message={orgSuccess}
 							type={'success'}
 							onAlertClose={() => {
-								setOrgSuccess(null);
+								setOrgSuccess('');
 							}}
 						/>
 					</div>
