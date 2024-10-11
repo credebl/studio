@@ -29,11 +29,11 @@ const Dashboard = () => {
 	const [orgData, setOrgData] = useState<Organisation | null>(null);
 	const [walletStatus, setWalletStatus] = useState<boolean>(false);
 	const [orgDashboard, setOrgDashboard] = useState<OrgDashboard | null>(null);
-	const [success, setSuccess] = useState<string | null>(null);
-	const [failure, setFailure] = useState<string | null>(null);
+	const [success, setSuccess] = useState<string>('');
+	const [failure, setFailure] = useState<string>('');
 	const [loading, setLoading] = useState<boolean | null>(true);
 	const [userRoles, setUserRoles] = useState<string[]>([]);
-	const [orgSuccess, setOrgSuccess] = useState<string | null>(null);
+	const [orgSuccess, setOrgSuccess] = useState<string>('');
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const [ecoCount, setEcoCount] = useState(0);
@@ -159,8 +159,8 @@ const Dashboard = () => {
 
 	useEffect(() => {
 		setTimeout(() => {
-			setSuccess(null);
-			setFailure(null);
+			setSuccess('');
+			setFailure('');
 		}, 3000);
 	}, [success !== null, failure !== null]);
 
@@ -187,7 +187,7 @@ const Dashboard = () => {
 							message={orgSuccess}
 							type={'success'}
 							onAlertClose={() => {
-								setOrgSuccess(null);
+								setOrgSuccess('');
 							}}
 						/>
 					</div>
