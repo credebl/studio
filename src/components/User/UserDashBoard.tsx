@@ -281,9 +281,6 @@ const UserDashBoard = () => {
 			}
 			if(orgDid.includes(DidMethod.INDY)){
 				setIsW3C(false);
-			}else{
-				setIsW3C(true);
-
 			}
 		}
 		setWalletLoading(false);
