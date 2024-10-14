@@ -17,6 +17,7 @@ import DateTooltip from '../Tooltip';
 import type { GetAllSchemaListParameter } from '../Resources/Schema/interfaces';
 import type { Organisation } from '../organization/interfaces';
 import {
+	DidMethod,
 	OrganizationRoles,
 } from '../../common/enums';
 import React from 'react';
@@ -83,6 +84,7 @@ const UserDashBoard = () => {
 	const [schemaLoading, setSchemaLoading] = useState(true);
 	const [walletLoading, setWalletLoading] = useState(true);
   const [isAccess, setIsAccess]= useState(false)
+  const [isW3C, setIsW3C]= useState<boolean>(true)
 
 	const getAllInvitations = async () => {
 		setLoading(true);
@@ -271,10 +273,17 @@ const UserDashBoard = () => {
 		const response = await getOrganizationById(orgId);
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			const orgDid =  data?.data?.org_agents[0].orgDid
 			if (data?.data?.org_agents) {
 				setWalletData(data?.data?.org_agents);
 			} else {
 				setWalletData([]);
+			}
+			if(orgDid.includes(DidMethod.INDY)){
+				setIsW3C(false);
+			}else{
+				setIsW3C(true);
+
 			}
 		}
 		setWalletLoading(false);
@@ -319,13 +328,20 @@ const UserDashBoard = () => {
 		window.location.href = pathRoutes.organizations.dashboard;
 	};
 
-	const goToSchemaCredDef = async (schemaId: string) => {
-		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-		await setToLocalStorage(storageKeys.ORG_ID, orgId);
-		const url = `${pathRoutes.organizations.viewSchema
+		const goToSchemaCredDef = async (schemaId: string) => {
+			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+			await setToLocalStorage(storageKeys.ORG_ID, orgId);
+			const url = `${pathRoutes.organizations.viewSchema
 			}/${encodeURIComponent(schemaId)}`;
-		window.location.href = url;
-	};
+			window.location.href = url;
+		};
+
+		const goToSchema = async (schemaId: string) => {
+			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+			await setToLocalStorage(storageKeys.ORG_ID, orgId);
+			const url = `${pathRoutes.organizations.schemas}`;
+			window.location.href = url;
+		};
 
 	const goToCredDef = async (credentialDefinitionId: string) => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -946,9 +962,13 @@ const UserDashBoard = () => {
 												 >
 													<button
 														className="w-full"
-														onClick={() =>
-															goToSchemaCredDef(schema?.schemaLedgerId)
-														}
+														onClick={async () => {
+															if (isW3C){
+																await goToSchema(schema?.schemaLedgerId);
+															} else {
+																await goToSchemaCredDef(schema?.schemaLedgerId);
+															}
+														}}
 													 >
 														<a
 															href="#"
