@@ -84,7 +84,7 @@ const UserDashBoard = () => {
 	const [schemaLoading, setSchemaLoading] = useState(true);
 	const [walletLoading, setWalletLoading] = useState(true);
   const [isAccess, setIsAccess]= useState(false)
-  const [isW3C, setIsW3C]= useState<boolean>(false)
+  const [isW3C, setIsW3C]= useState<boolean>(true)
 
 	const getAllInvitations = async () => {
 		setLoading(true);
@@ -279,10 +279,10 @@ const UserDashBoard = () => {
 			} else {
 				setWalletData([]);
 			}
-			if(orgDid.includes(DidMethod.POLYGON) || orgDid.includes(DidMethod.KEY) || orgDid.includes(DidMethod.POLYGON)){
-				setIsW3C(true);
-			}else if (orgDid.includes(DidMethod.INDY)){
+			if(orgDid.includes(DidMethod.INDY)){
 				setIsW3C(false);
+			}else{
+				setIsW3C(true);
 
 			}
 		}
