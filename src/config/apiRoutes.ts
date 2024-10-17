@@ -34,8 +34,7 @@ export const apiRoutes = {
 		fetchUsers: '/users',
 		update: '/users',
 		recentActivity: '/users/activity',
-		platformSettings: '/users/platform-settings',
-		userCredentials:'/users/user-credentials'
+		platformSettings: '/users/platform-settings'
 	},
 	organizations: {
 		root: '/orgs',
