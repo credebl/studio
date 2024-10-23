@@ -7,15 +7,15 @@ layout: ../app/LayoutStacked.astro
 Effective Date: 01/09/2023
 
 ## 1. Responsible Entity's Name and Contact Information
-Responsible for the processing of data on CREDEBL (Verifiable Credential & Decentralised Identity management platform) and ADEYA (Mobile Wallet App): Blockster Labs Private Limited (“Blockster”); A Company established under provisions of Companies Act 1956 of Government of India, and as amended further from time to time and having its registered office at 409, Navale ICON, Off. Mumbai-Bangalore Highway, Narhe, Pune, Maharashtra, 411021 India
+Responsible for the processing of data on CREDEBL (Verifiable Credential & Decentralised Identity management platform) and ADEYA (Mobile Wallet App): AYANWORKS Technology Solutions Private Limited (“AYANWORKS”); A Company established under provisions of Companies Act 1956 of Government of India, and as amended further from time to time and having its registered office at 409, Navale ICON, Off. Mumbai-Bangalore Highway, Narhe, Pune, Maharashtra, 411021 India
 Email: privacy@blockster.global
 
 Note: A data control officer has not been mandated by the Responsible Entity. If you have queries or wish to assert any of your legal rights regarding data protection, kindly get in touch with the Responsible Entity immediately.
 
 ## 2. Information on the Processing of Personal Data
-CREDEBL Platform and ADEYA Mobile Wallet App are designed to prioritize user privacy. As a basic principle, no data is processed by Blockster when the platform and app are used. All data is securely stored only on the user's end device, and Blockster does not have access to this data.
+CREDEBL Platform and ADEYA Mobile Wallet App are designed to prioritize user privacy. As a basic principle, no data is processed by AYANWORKS when the platform and app are used. All data is securely stored only on the user's end device, and AYANWORKS does not have access to this data.
 
-However, the platform and app are associated with a digital mailbox service ("Mediation Agent") operated by Blockster. The installation ID of the user is saved and processed for the purpose of the mailbox service. This allows incoming messages to be properly assigned to the respective user. The incoming messages are encrypted and sent to the mailbox service, which then forwards them to the user's platform and app. The recipient of the message receives a dedicated code from the mailbox service, which is linked to the installation ID.
+However, the platform and app are associated with a digital mailbox service ("Mediation Agent") operated by AYANWORKS. The installation ID of the user is saved and processed for the purpose of the mailbox service. This allows incoming messages to be properly assigned to the respective user. The incoming messages are encrypted and sent to the mailbox service, which then forwards them to the user's platform and app. The recipient of the message receives a dedicated code from the mailbox service, which is linked to the installation ID.
 
 The Responsible Entity cannot identify individual users or access the content of the messages since they are encrypted and decrypted only on the user's end device.  Once the messages have been properly sent to the platform and app, the mailbox service deletes them. The messages are held on the mailbox service until they can be delivered if the user's platform and app aren't accessible.  
 
@@ -23,12 +23,12 @@ To enhance the user experience and improve platform & app functionality, automat
 
 
 ## 3. Legal Basis of the Processing
-The processing of the installation ID is based on contractual purposes (Article 6(1)(b) of the General Data Protection Regulation - GDPR). The installation ID is automatically provided by Blockster for the functioning of the mailbox service. Without processing the installation ID, Blockster cannot assign or deliver incoming messages to individual users. The processing is necessary to fulfil the purpose of the contract, which involves the exchange of identity information.
+The processing of the installation ID is based on contractual purposes (Article 6(1)(b) of the General Data Protection Regulation - GDPR). The installation ID is automatically provided by AYANWORKS for the functioning of the mailbox service. Without processing the installation ID, AYANWORKS cannot assign or deliver incoming messages to individual users. The processing is necessary to fulfil the purpose of the contract, which involves the exchange of identity information.
 
-Error analysis and other analyses are carried out in the legitimate interests of Blockster (Article 6(1)(f) GDPR). These analyses aim to ensure platform and app functionality and improvement. No automated decision-making is involved in these processes.
+Error analysis and other analyses are carried out in the legitimate interests of AYANWORKS (Article 6(1)(f) GDPR). These analyses aim to ensure platform and app functionality and improvement. No automated decision-making is involved in these processes.
 
 ## 4. Recipients and Categories of Recipients
-In general, data transfer to third parties (other than Blockster) does not occur and is not planned. However, data transfer may occur in specific cases when legally obligated or with user consent. Such cases may include:
+In general, data transfer to third parties (other than AYANWORKS) does not occur and is not planned. However, data transfer may occur in specific cases when legally obligated or with user consent. Such cases may include:
 - Public authorities and institutions (e.g., tax authorities, prosecution authorities, family courts, land registry offices) if legally or officially required for any purposes that is the interest of justice and so called upon by the appropriate legal authorities using the due course of procedure laid down by current provisions of law.
 - Auditors
 - Service providers engaged in order-processing relationships
@@ -37,7 +37,7 @@ In general, data transfer to third parties (other than Blockster) does not occur
 Data transfers to third countries do not occur.
 
 ## 6. Storage Duration
-Blockster processes and stores personal data as long as it is required to fulfil contractual obligations and protect our rights. The Installation ID associated with your personal data is also deleted when you close or uninstall the platform and app, respectively, from your device.
+AYANWORKS processes and stores personal data as long as it is required to fulfil contractual obligations and protect our rights. The Installation ID associated with your personal data is also deleted when you close or uninstall the platform and app, respectively, from your device.
 
 ## 7. Information about data subjects' rights
 
