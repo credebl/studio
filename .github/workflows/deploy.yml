@@ -35,7 +35,7 @@ jobs:
         run: "npm run build"
 
       - name: Upload to Deno Deploy
-        uses: denoland/deployctl@v2
+        uses: denoland/deployctl@v1.13.0
         with:
           project: "credebl-dev-ui"
           entrypoint: "server/entry.mjs"
