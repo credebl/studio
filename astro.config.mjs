@@ -8,40 +8,31 @@ const DEV_PORT = 3000;
 
 // https://astro.build/config
 export default defineConfig({
-	// experimental: {
-    
-  // },
   image: {
     service: {
       entrypoint: 'astro/assets/services/noop'
     }
   },
   viewTransitions: true,
-	redirects: {
+  redirects: {
     '/login': '/authentication/sign-in',
-		'/register': '/authentication/sign-up',
+    '/register': '/authentication/sign-up',
   },
 
-  build:{
-  },
+  build: {},
   site: process.env.CI ? 'https://credebl-dev-ui.deno.dev' : `http://localhost:${DEV_PORT}`,
   base: process.env.CI ? '/' : undefined,
   output: 'server',
-  /* Like Vercel, Netlify,… Mimicking for dev. server */
-  // trailingSlash: 'always',
 
   server: {
-    /* Dev. server only */
     port: DEV_PORT,
   },
-  integrations: [
-  //
-  sitemap(), tailwind(), react()],
+  integrations: [sitemap(), tailwind(), react()],
   adapter: deno(),
 });
 
 if (typeof globalThis !== 'undefined' && typeof Deno !== 'undefined') {
   globalThis.process ||= {
-    env: Deno.env.toObject()
-  }
+    env: Deno.env.toObject(),
+  };
 }
