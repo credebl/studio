@@ -21,7 +21,7 @@ jobs:
       - name: Install Deno
         uses: denoland/setup-deno@v1
         with:
-          deno-version: v1.x
+          deno-version: v2.0.2
 
       - name: Install Node.js
         uses: actions/setup-node@v4
@@ -35,7 +35,7 @@ jobs:
         run: "npm run build"
 
       - name: Upload to Deno Deploy
-        uses: denoland/deployctl
+        uses: denoland/deployctl@v1
         with:
           project: "credebl-dev-ui"
           entrypoint: "server/entry.mjs"
