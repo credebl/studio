@@ -31,7 +31,7 @@
 		"@astrojs/tailwind": "^5.1.2",
 		"@babel/runtime": "^7.24.5",
 		"@babel/runtime-corejs3": "^7.24.5",
-		"@deno/astro-adapter": "^0.1.2",
+		"@deno/astro-adapter": "^0.1.4",
 		"@faker-js/faker": "^8.4.1",
 		"@radix-ui/react-avatar": "^1.0.4",
 		"@shadcn/ui": "^0.0.4",
