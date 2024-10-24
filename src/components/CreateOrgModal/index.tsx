@@ -175,7 +175,7 @@ const CreateOrgModal = (props: IProps) => {
 		description: yup
 			.string()
 			.min(2, 'Description must be at least 2 characters')
-			.max(1000, 'Description must be at most 1000 characters')
+			.max(500, 'Description must be at most 500 characters')
 			.required('Description is required'),
 	};
 
