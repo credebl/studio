@@ -134,11 +134,14 @@ const handleCheckboxChange = (checked: boolean, schemaData?: ISchemaData) => {
             <CopyDid value={props.issuerDid || ""} className='truncate font-courier mt-[2px]' />
           </span>
         </p>
-        {!props.noLedger &&
+        {!props.noLedger && (
           <p className="truncate dark:text-white break-all flex">
-            <span className="font-semibold mr-2">Ledger:</span> {props?.issuerDid?.split(":")[2]}
+            <span className="font-semibold mr-2">Ledger:</span>
+            {props.issuerDid?.includes("polygon") 
+              ? (props.issuerDid?.includes("testnet") ? "Polygon Testnet" : "Polygon Mainnet")
+              : props?.issuerDid?.split(":")[2]}
           </p>
-        }
+)}
       </div>
 
       <div className="flex justify-between">
