@@ -40,3 +40,5 @@ jobs:
           project: "credebl-studio-qa"
           entrypoint: "server/entry.mjs"
           root: "dist"
+          
+          
