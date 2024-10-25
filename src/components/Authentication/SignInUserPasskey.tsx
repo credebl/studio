@@ -138,15 +138,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 				obj,
 			);
 			const { data } = verificationResp as AxiosResponse;
-
-			if (data?.data.verified) {
-				const payload: UserSignInData = {
-					email: email.toLowerCase() ,
-					isPasskey: true,
-				};
-				const loginRsp = await loginUser(payload);
-				const { data } = loginRsp as AxiosResponse;
-
+			if (data) {
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 					await setToLocalStorage(storageKeys.TOKEN, data?.data?.access_token);
 					await setToLocalStorage(storageKeys.REFRESH_TOKEN, data?.data?.refresh_token);
