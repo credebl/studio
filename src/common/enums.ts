@@ -96,6 +96,11 @@ export enum Network {
 	MAINNET = 'mainnet'
 }
 
+export enum PolygonNetworks {
+	TESTNET = 'Polygon Testnet',
+	MAINNET = 'Polygon Mainnet'
+}
+
 export enum CommonConstants {
 	BALANCELIMIT = 0.01
 }
