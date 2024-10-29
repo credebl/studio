@@ -1,0 +1,140 @@
+{
+  "version": "4",
+  "specifiers": {
+    "jsr:@std/assert@0.224": "0.224.0",
+    "jsr:@std/async@0.224": "0.224.2",
+    "jsr:@std/cli@0.224": "0.224.7",
+    "jsr:@std/encoding@0.224": "0.224.3",
+    "jsr:@std/fmt@0.224": "0.224.0",
+    "jsr:@std/http@0.224.0": "0.224.0",
+    "jsr:@std/media-types@0.224": "0.224.1",
+    "jsr:@std/path@0.224": "0.224.0",
+    "jsr:@std/path@0.224.0": "0.224.0",
+    "jsr:@std/streams@0.224": "0.224.5"
+  },
+  "jsr": {
+    "@std/assert@0.224.0": {
+      "integrity": "8643233ec7aec38a940a8264a6e3eed9bfa44e7a71cc6b3c8874213ff401967f"
+    },
+    "@std/async@0.224.2": {
+      "integrity": "4d277d6e165df43d5e061ba0ef3edfddb8e8d558f5b920e3e6b1d2614b44d074"
+    },
+    "@std/cli@0.224.7": {
+      "integrity": "654ca6477518e5e3a0d3fabafb2789e92b8c0febf1a1d24ba4b567aba94b5977"
+    },
+    "@std/encoding@0.224.3": {
+      "integrity": "5e861b6d81be5359fad4155e591acf17c0207b595112d1840998bb9f476dbdaf"
+    },
+    "@std/fmt@0.224.0": {
+      "integrity": "e20e9a2312a8b5393272c26191c0a68eda8d2c4b08b046bad1673148f1d69851"
+    },
+    "@std/http@0.224.0": {
+      "integrity": "fde48c9133d1d7bb94c134d8f0f01c1a737e6e3879f52580e9ca92217a011e82",
+      "dependencies": [
+        "jsr:@std/async",
+        "jsr:@std/cli",
+        "jsr:@std/encoding",
+        "jsr:@std/fmt",
+        "jsr:@std/media-types",
+        "jsr:@std/path@0.224",
+        "jsr:@std/streams"
+      ]
+    },
+    "@std/media-types@0.224.1": {
+      "integrity": "9e69a5daed37c5b5c6d3ce4731dc191f80e67f79bed392b0957d1d03b87f11e1"
+    },
+    "@std/path@0.224.0": {
+      "integrity": "55bca6361e5a6d158b9380e82d4981d82d338ec587de02951e2b7c3a24910ee6",
+      "dependencies": [
+        "jsr:@std/assert"
+      ]
+    },
+    "@std/streams@0.224.5": {
+      "integrity": "bcde7818dd5460d474cdbd674b15f6638b9cd73cd64e52bd852fba2bd4d8ec91"
+    }
+  },
+  "remote": {
+    "https://deno.land/std@0.197.0/collections/filter_values.ts": "16e1fc456a7969e770ec5b89edf5ac97b295ca534b47c1a83f061b409aad7814",
+    "https://deno.land/std@0.197.0/collections/without_all.ts": "1e3cccb1ed0659455b473c0766d9414b7710d8cef48862c899f445178f66b779",
+    "https://deno.land/std@0.197.0/dotenv/load.ts": "0636983549b98f29ab75c9a22a42d9723f0a389ece5498fe971e7bb2556a12e2",
+    "https://deno.land/std@0.197.0/dotenv/mod.ts": "ff7acf1c97ba57af512ecb6f9094fa96e1f63cca1960a7687616fa86bab7e356"
+  },
+  "workspace": {
+    "packageJson": {
+      "dependencies": [
+        "npm:@astrojs/mdx@^3.1.8",
+        "npm:@astrojs/react@^3.3.4",
+        "npm:@astrojs/sitemap@^3.1.4",
+        "npm:@astrojs/starlight@~0.28.4",
+        "npm:@astrojs/tailwind@^5.1.2",
+        "npm:@babel/runtime-corejs3@^7.24.5",
+        "npm:@babel/runtime@^7.24.5",
+        "npm:@deno/astro-adapter@~0.1.4",
+        "npm:@faker-js/faker@^8.4.1",
+        "npm:@radix-ui/react-avatar@^1.0.4",
+        "npm:@shadcn/ui@^0.0.4",
+        "npm:@simplewebauthn/browser@^9.0.1",
+        "npm:@supabase/supabase-js@^2.43.2",
+        "npm:@tanstack/react-form@~0.19.5",
+        "npm:@types/cookie@0.6",
+        "npm:@types/crypto-js@^4.2.2",
+        "npm:@types/dom-to-image@^2.6.7",
+        "npm:@types/downloadjs@^1.4.6",
+        "npm:@types/eslint@^8.56.10",
+        "npm:@types/react-dom@^18.3.0",
+        "npm:@types/react@^18.3.2",
+        "npm:@types/secure-random-password@~0.2.3",
+        "npm:@types/uuid@^9.0.8",
+        "npm:@typescript-eslint/eslint-plugin@^7.9.0",
+        "npm:@typescript-eslint/parser@^7.9.0",
+        "npm:apexcharts@^3.49.1",
+        "npm:astro-eslint-parser@^1.0.2",
+        "npm:astro@^4.16.7",
+        "npm:autoprefixer@^10.4.19",
+        "npm:axios@^1.6.8",
+        "npm:babel-eslint@^10.1.0",
+        "npm:cookie@0.6",
+        "npm:crypto-js@^4.2.0",
+        "npm:dom-to-image@^2.6.0",
+        "npm:downloadjs@^1.4.7",
+        "npm:eslint-config-airbnb-base@15",
+        "npm:eslint-config-airbnb-typescript@18",
+        "npm:eslint-config-prettier@^9.1.0",
+        "npm:eslint-import-resolver-typescript@^3.6.1",
+        "npm:eslint-plugin-astro@^1.2.0",
+        "npm:eslint-plugin-import@^2.29.1",
+        "npm:eslint-plugin-prettier@^5.1.3",
+        "npm:eslint-plugin-tsdoc@~0.2.17",
+        "npm:eslint@^8.57.0",
+        "npm:ethers@^6.12.1",
+        "npm:flowbite-react@~0.4.11",
+        "npm:flowbite-typography@^1.0.3",
+        "npm:flowbite@^2.3.0",
+        "npm:formik@^2.4.6",
+        "npm:html2canvas@^1.4.1",
+        "npm:i@~0.3.7",
+        "npm:moment@^2.30.1",
+        "npm:nanoid@^5.0.7",
+        "npm:npm@^10.8.0",
+        "npm:postcss@^8.4.38",
+        "npm:qrcode.react@^3.1.0",
+        "npm:react-avatar@^5.0.3",
+        "npm:react-dom@^18.3.1",
+        "npm:react-icons@^5.2.1",
+        "npm:react-qr-code@^2.0.13",
+        "npm:react-select@^5.8.0",
+        "npm:react-toastify@^10.0.5",
+        "npm:react@^18.3.1",
+        "npm:secure-random-password@~0.2.3",
+        "npm:sharp@~0.33.3",
+        "npm:shiki@^1.5.2",
+        "npm:socket.io-client@^4.7.5",
+        "npm:tailwind-scrollbar@^3.1.0",
+        "npm:tailwindcss@^3.4.3",
+        "npm:uuid@^9.0.1",
+        "npm:vite@^5.2.11",
+        "npm:yup@^1.4.0"
+      ]
+    }
+  }
+}
