@@ -1,0 +1,29 @@
+name: studio
+id: ari:cloud:compass:6095931c-8137-4ae1-822a-2d7411835fc7:component/9029b47a-062e-4e25-a761-a2c0fc9ebd98/ab57cc79-dffc-4048-a7b6-a13373617391
+description: Modern UI for CREDEBL Platform built using Astro, Flowbite & Tailwind.
+configVersion: 1
+typeId: APPLICATION
+ownerId: ari:cloud:identity::team/6fe50e36-8efb-47a6-aab5-ea47bd10ec4e
+fields:
+  tier: 4
+links:
+  - name: null
+    type: REPOSITORY
+    url: https://github.com/credebl/studio
+relationships:
+  DEPENDS_ON: []
+labels:
+  - decentralized-identifiers
+  - digital-public-goods
+  - digital-public-infrastructure
+  - language:typescript
+  - public-good
+  - public-goods
+  - self-sovereign-identity
+  - source:github
+  - user-interface
+  - verifiable-credentials
+  - w3c-did
+  - w3c-vc
+  - web
+customFields: null
