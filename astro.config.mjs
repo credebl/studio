@@ -8,6 +8,14 @@ const DEV_PORT = 3000;
 
 // https://astro.build/config
 export default defineConfig({
+
+  markdown: {
+    shikiConfig: {
+      langAlias: {
+        cjs: 'javascript',
+      },
+    },
+  },
 	// experimental: {
     
   // },
