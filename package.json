@@ -50,7 +50,7 @@
 		"eslint": "^8.57.0",
 		"ethers": "^6.12.1",
 		"flowbite": "^2.3.0",
-		"flowbite-react": "^0.4.11",
+		"flowbite-react": "^0.10.2",
 		"flowbite-typography": "^1.0.3",
 		"formik": "^2.4.6",
 		"html2canvas": "^1.4.1",
