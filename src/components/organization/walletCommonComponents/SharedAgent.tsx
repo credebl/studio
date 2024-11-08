@@ -204,31 +204,31 @@ const SharedAgentForm = ({
 		if (!selectedLedger || !selectedMethod) {
 			return null;
 		}
-
+	
 		const networks = mappedData?.[selectedLedger][selectedMethod];
-
+	
 		if (!networks) {
 			return null;
 		}
-
+	
 		let filteredNetworks = Object.keys(networks);
 		if (envConfig.MODE === Environment.PROD && selectedMethod === DidMethod.POLYGON) {
 			filteredNetworks = filteredNetworks.filter(network => network === Network.MAINNET);
-		} else if (envConfig.MODE === Environment.DEV || Environment.QA && selectedMethod === DidMethod.POLYGON) {
+		} else if ((envConfig.MODE === Environment.DEV || envConfig.MODE === Environment.QA) && selectedMethod === DidMethod.POLYGON) {
 			filteredNetworks = filteredNetworks.filter(network => network === Network.TESTNET);
 		}
-
+		
 		return filteredNetworks.map((network) => (
-				<div key={network} className="mt-2">
+			<div key={network} className="mt-2">
 				<input
 					type="radio"
 					id={network}
 					name="network"
 					value={networks[network]}
 					onChange={(e) => {
-						formikHandlers.handleChange(e)
-						 handleNetworkChange(e)
-						 setSelectedNetwork(networks[network])
+						formikHandlers.handleChange(e);
+						handleNetworkChange(e);
+						setSelectedNetwork(networks[network]);
 					}}
 					className="mr-2"
 				/>
@@ -238,7 +238,7 @@ const SharedAgentForm = ({
 			</div>
 		));
 	};
-
+	
 	const isSubmitDisabled = () => {
 		if (!selectedLedger) {
 			return true;
