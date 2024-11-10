@@ -75,7 +75,6 @@ const EmailIssuance = () => {
 	const getSchemaCredentials = async (schemaListAPIParameter: GetAllSchemaListParameter) => {
 
 		try {
-			setLoading(true);
 			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 			const orgDid = await getFromLocalStorage(storageKeys.ORG_DID);
 
