@@ -238,11 +238,11 @@ const networkRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEv
 	}
 
 	let filterNetworks = Object.keys(networks);
-	if (envConfig.MODE === Environment.PROD && selectedMethod === DidMethod.POLYGON) {
-		filterNetworks = filterNetworks.filter(network => network === Network.MAINNET);
-	} else if (envConfig.MODE === Environment.DEV || Environment.QA && selectedMethod === DidMethod.POLYGON) {
-		filterNetworks = filterNetworks.filter(network => network === Network.TESTNET);
-	}
+		if (envConfig.MODE === Environment.PROD && selectedMethod === DidMethod.POLYGON) {
+			filterNetworks = filterNetworks.filter(network => network === Network.MAINNET);
+		} else if ((envConfig.MODE === Environment.DEV || envConfig.MODE === Environment.QA) && selectedMethod === DidMethod.POLYGON) {
+			filterNetworks = filterNetworks.filter(network => network === Network.TESTNET);
+		}
 
 	return filterNetworks.map((network) => (
 		<div key={network} className="mt-2">
