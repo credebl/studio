@@ -458,7 +458,7 @@ const EmailIssuance = () => {
 													<div className="flex flex-wrap overflow-hidden">
 														{
 															!isAllSchemaFlagSelected ? (
-																credentialSelected?.schemaAttributes?.map((element: IAttributes) => (
+																attributes?.map((element: IAttributes) => (
 																	<div key={element.attributeName} className="truncate">
 																		<span className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
 																			{element.attributeName}
@@ -466,7 +466,7 @@ const EmailIssuance = () => {
 																	</div>
 																))
 															) : (
-																credentialSelected?.attributes?.map((element: IAttributes) => (
+																attributes?.map((element: IAttributes) => (
 																	<div key={element.attributeName} className="truncate">
 																		<span className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
 																			{element.attributeName}
