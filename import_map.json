@@ -1,0 +1,5 @@
+{
+    "imports": {
+      "@astrojs/markdown-remark": "./node_modules/@astrojs/markdown-remark/dist/index.js"
+    }
+  }
