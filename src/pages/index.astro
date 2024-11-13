@@ -2,7 +2,7 @@
 import LayoutCommon from '../app/LayoutCommon.astro';
 import PublicNavbar from '../commonComponents/PublicNavbar.astro';
 import { envConfig } from '../config/envConfig';
-const cookie = Astro.cookies.get("platform-data").value;
+const cookie = Astro.cookies.get("platform-data")?.value;
 const env = import.meta.env || process.env;
 
 ---
@@ -31,7 +31,7 @@ const env = import.meta.env || process.env;
 										>New</span
 									>
 									<span class="text-sm font-medium"
-										>CREDEBL 2.0 is out! See what's new</span
+										>CREDEBL 1.1 is out! See what's new</span
 									>
 									<svg
 										class="ml-2 w-5 h-5"
@@ -60,7 +60,7 @@ const env = import.meta.env || process.env;
 							</p>
 							<div class="justify-center flex">
 								<a
-									href="https://docs.credebl.id/en/intro/what-is-credebl/"
+									href="https://credebl.gitbook.io/docs/getting-started/getting-started"
 									class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900"
 								>
 									Get Started
@@ -1242,7 +1242,7 @@ const env = import.meta.env || process.env;
 						class="mt-8 text-sm text-gray-500 sm:text-center dark:text-gray-400"
 					>
 						&copy; 2019-{new Date().getFullYear()}
-						<a href="https://blockster.global" target="_blank" class="hover:underline hover:underline-offset-2"
+						<a href="https://ayanworks.com" target="_blank" class="hover:underline hover:underline-offset-2"
 							>{envConfig.PLATFORM_DATA.poweredBy}</a
 						> All Rights Reserved. &nbsp; &nbsp; | &nbsp; &nbsp;
 						<a href="/terms-of-use" class="hover:underline hover:underline-offset-2">Terms of Use</a> &nbsp; &nbsp; <a

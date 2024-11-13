@@ -11,12 +11,14 @@ import DateTooltip from '../Tooltip';
 import CopyDid from '../../commonComponents/CopyDid';
 import { setToLocalStorage } from '../../api/Auth';
 import { Tooltip } from 'flowbite-react';
+import DIDList from './configuration-settings/DidList';
 
 const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
+	
 	const { org_agents } = orgData as Organisation;
 	const agentData: OrgAgent | null =
-		org_agents.length > 0 ? org_agents[0] : null;
-
+	org_agents.length > 0 ? org_agents[0] : null;
+		
 	const [loading, setLoading] = useState<boolean>(true);
 	const [connectionData, setConnectionData] = useState<Connection | null>(null);
 
@@ -42,15 +44,19 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 	}, []);
 
 	return (
-		<>
-			<div className="mt-4 flex justify-start items-center flex-wrap p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800 gap-6">
+		<div>
+
+		<div>
+    		<div className="mt-4 flex justify-start items-start flex-wrap p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800 gap-6">
+				<div className='flex justify-between w-full'>
+					<h3 className="mb-1 mt-1 text-xl font-bold text-gray-900 dark:text-white">
+						Web Wallet Details
+					</h3>
+				</div>
 				<div
 					className="mb-4 sm:mb-0 px-0 sm:px-4 py-4 min-w-full lg:min-w-[550px] lg:max-w-[50rem]"
 					style={{ width: 'calc(100% - 23rem)' }}
 				>
-					<h3 className="mb-1 mt-1 text-xl font-bold text-gray-900 dark:text-white">
-						Web Wallet Details
-					</h3>
 					<div>
 						<ul className="divide-y divide-gray-200 dark:divide-gray-700">
 							<li className="py-4">
@@ -138,7 +144,7 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 										<p className="pr-4 text-base font-normal text-gray-500 dark:text-gray-400">
 											:
 										</p>
-										<p className="text-base font-semibold text-gray-900 truncate dark:text-white w-full">
+										<div className="text-base font-semibold text-gray-900 truncate dark:text-white w-full">
 											{agentData?.createDateTime ? (
 												<DateTooltip date={agentData?.createDateTime}>
 													{' '}
@@ -150,7 +156,7 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 													{dateConversion(new Date().toISOString())}{' '}
 												</DateTooltip>
 											)}
-										</p>
+										</div>
 									</div>
 								</div>
 							</li>
@@ -160,7 +166,7 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 				<div className="flex flex-col justify-center text-wrap">
 					{loading ? (
 						<div className="flex justify-center">
-							<CustomSpinner />
+							
 						</div>
 					) : (
 						connectionData && (
@@ -173,8 +179,10 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 						)
 					)}
 				</div>
+				<div className="mt-4 w-full p-4">
+					<DIDList />
+				</div>
 			</div>
-
 			{agentData?.orgDid?.startsWith('did:web') && (
 				<div className="mt-4 flex justify-start items-center flex-wrap p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 					<div className="flex justify-between w-full">
@@ -226,8 +234,10 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 						</div>
 					</div>
 				</div>
-			)}
-		</>
+			)}	</div>
+
+		</div>
+		
 	);
 };
 

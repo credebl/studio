@@ -1,4 +1,4 @@
-import { axiosGet, axiosPost, axiosPut } from '../services/apiRequests';
+import { axiosDelete, axiosGet, axiosPost, axiosPut } from '../services/apiRequests';
 
 import { apiRoutes } from '../config/apiRoutes';
 import { getFromLocalStorage } from './Auth';
@@ -252,6 +252,50 @@ export const getEcosystemMemberList = async ({
 
 	try {
 		return await axiosGet(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};
+
+
+export const addOrganizationInEcosystem = async (
+	data: string[],
+	ecosystemId: string,
+	orgId: string,
+) => {
+	const url = `${apiRoutes.Ecosystem.root}/${ecosystemId}/${orgId}${apiRoutes.organizations.root}`;
+	const payload = {
+		organizationIds: data
+	};
+	const axiosPayload = {
+		url,
+		payload,
+		config: await getHeaderConfigs(),
+	};
+
+	try {
+		return await axiosPost(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};
+
+export const deleteOrganizationFromEcosystem = async (
+) => {
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+
+	const url = `${apiRoutes.Ecosystem.root}/${orgId}${apiRoutes.Ecosystem.deleteOrgFromEcosystem}`;
+
+
+	const axiosPayload = {
+		url,
+		config: await getHeaderConfigs(),
+	};
+
+	try {
+		return await axiosDelete(axiosPayload);
 	} catch (error) {
 		const err = error as Error;
 		return err?.message;

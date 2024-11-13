@@ -1,9 +1,10 @@
+import type { CredentialType, SchemaType } from '../common/enums';
 import { apiRoutes } from '../config/apiRoutes';
 import { storageKeys } from '../config/CommonConstant';
 import {
 	getHeaderConfigs
 } from '../config/GetHeaderConfigs';
-import { axiosGet, axiosPost } from '../services/apiRequests';
+import { axiosDelete, axiosGet, axiosPost } from '../services/apiRequests';
 import { getFromLocalStorage } from './Auth';
 import type { IConnectionListAPIParameter } from './connection';
 
@@ -14,7 +15,7 @@ export const getIssuedCredentials = async ({page,
 	sortingOrder,
 filter}: IConnectionListAPIParameter) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.getIssuedCredentials}?pageSize=${itemPerPage}&pageNumber=${page}&searchByText=${search}&sortBy=${sortingOrder}&sortField=${sortBy}`;
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.getIssuedCredentials}?pageSize=${itemPerPage}&pageNumber=${page}&search=${search}&sortBy=${sortingOrder}&sortField=${sortBy}`;
 	const axiosPayload = {
 		url,
 		config: await getHeaderConfigs(),
@@ -45,9 +46,9 @@ export const getCredentialDefinitions = async (schemaId: string) => {
 	}
 };
 
-export const issueCredential = async (data: object) => {
+export const issueCredential = async (data: object, credentialType:SchemaType) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.issueCredential}`;
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.issueCredential}?credentialType=${credentialType}`;
 	const payload = data;
 
 	const axiosPayload = {
@@ -64,9 +65,9 @@ export const issueCredential = async (data: object) => {
 	}
 };
 
-export const issueOobEmailCredential = async (data: object) => {
+export const issueOobEmailCredential = async (data: object, credentialType:CredentialType) => {
 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.issueOobEmailCredential}`;
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.issueOobEmailCredential}?credentialType=${credentialType}`;
 	const payload = data;
 
 	const axiosPayload = {
@@ -77,6 +78,27 @@ export const issueOobEmailCredential = async (data: object) => {
 
 	try {
 		return await axiosPost(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};
+
+
+
+export const deleteIssuanceRecords = async (
+) => {
+	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.deleteIssaunce}`;
+
+	const axiosPayload = {
+		url,
+		config: await getHeaderConfigs(),
+	};
+
+	try {
+		return await axiosDelete(axiosPayload);
 	} catch (error) {
 		const err = error as Error;
 		return err?.message;

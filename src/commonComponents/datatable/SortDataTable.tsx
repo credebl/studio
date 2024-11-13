@@ -2,8 +2,9 @@ import type { IDataTable } from './interface';
 import CustomSpinner from '../../components/CustomSpinner';
 import SearchInput from '../../components/SearchInput';
 import { Pagination } from 'flowbite-react';
-import { ChangeEvent, useState } from 'react';
+import { useState } from 'react';
 import { EmptyListMessage } from '../../components/EmptyListComponent';
+
 
 const SortDataTable: React.FC<IDataTable> = ({
 	header,
@@ -28,13 +29,14 @@ const SortDataTable: React.FC<IDataTable> = ({
 	discription,
 	noExtraHeight,
 	sortOrder,
+	itemPerPage
 }) => {
 	const [selectedValue, setSelectedValue] = useState(sortOrder ?? '');
 
 	const handleSortByValues = (event: { target: { value: any } }) => {
 		const newSelectedValue = event.target.value;
 		setSelectedValue(newSelectedValue);
-		if(searchSortByValue){
+		if (searchSortByValue) {
 			searchSortByValue(newSelectedValue);
 		}
 	};
@@ -48,9 +50,8 @@ const SortDataTable: React.FC<IDataTable> = ({
 		nextPage?: number;
 		lastPage?: number;
 	};
-
-	const startItem = (nextPage - 2) * 10 + 1;
-	const endItem = Math.min((nextPage - 1) * 10, totalItem);
+	const startItem = (nextPage - 2) * (itemPerPage || 10) + 1;
+	const endItem = Math.min((nextPage - 1) * (itemPerPage || 10), totalItem);	
 
 	const sortValues = [
 		{
@@ -162,7 +163,7 @@ const SortDataTable: React.FC<IDataTable> = ({
 										))}
 								</tr>
 							</thead>
-
+							<tbody className="bg-white dark:bg-gray-800">
 							{loading ? (
 								<tr className="text-center">
 									<td
@@ -175,15 +176,12 @@ const SortDataTable: React.FC<IDataTable> = ({
 										</div>
 									</td>
 								</tr>
-							) : (
-								<tbody className="bg-white dark:bg-gray-800 w-full">
-									{data.length ? (
-										data.map((ele, index) => (
+							) : data?.length ? (
+								data?.map((ele, index) => (
 											<tr
 												key={index}
-												className={`${
-													index % 2 !== 0 ? 'bg-gray-50 dark:bg-gray-700' : ''
-												}`}
+												className={`${index % 2 !== 0 ? 'bg-gray-50 dark:bg-gray-700' : ''
+													}`}
 											>
 												{ele.data.map((subEle, index) => (
 													<td
@@ -225,11 +223,11 @@ const SortDataTable: React.FC<IDataTable> = ({
 										</tr>
 									)}
 								</tbody>
-							)}
-						</table>
-					</div>
-					{loading && isPagination && data.length > 0 ? (
-						''
+										
+									</table>
+								</div>
+								{loading && isPagination && data.length > 0 ? (
+									''
 					) : (
 						<nav
 							className="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0 p-3 w-full"
