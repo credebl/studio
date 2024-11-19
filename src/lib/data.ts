@@ -38,10 +38,10 @@ export const getFilteredNetworks = (
 	envMode: Environment,
 	selectedMethod: string
   ): string[] => {
-	if (envMode === Environment.PROD && selectedMethod === DidMethod.POLYGON) {
+	if (envMode === Environment.Prod && selectedMethod === DidMethod.POLYGON) {
 	  return networks.filter(network => network === Network.MAINNET);
 	} else if (
-	  (envMode === Environment.DEV || envMode === Environment.QA) &&
+	  (envMode === Environment.Dev || envMode === Environment.Qa) &&
 	  selectedMethod === DidMethod.POLYGON
 	) {
 	  return networks.filter(network => network === Network.TESTNET);

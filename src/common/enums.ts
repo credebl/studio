@@ -164,7 +164,7 @@ export enum ProofType {
 }
 
 export enum Environment {
-	PROD = 'PROD',
-	DEV = 'DEV',
-	QA = 'QA'
-}
+	Prod = 'Prod',
+	Dev = 'Dev',
+	Qa = 'Qa'
+  }  
