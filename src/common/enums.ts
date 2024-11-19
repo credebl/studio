@@ -162,3 +162,9 @@ export enum ProofType {
 	polygon = 'EcdsaSecp256k1Signature2019',
 	no_ledger = 'Ed25519Signature2018'
 }
+
+export enum Environment {
+	Prod = 'Prod',
+	Dev = 'Dev',
+	Qa = 'Qa'
+  }  

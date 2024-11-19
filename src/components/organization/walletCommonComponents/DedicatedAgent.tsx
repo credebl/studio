@@ -11,7 +11,7 @@ import {
 	getLedgerConfig,
 	getLedgers
 } from '../../../api/Agent';
-import { DidMethod, Ledgers, Network} from '../../../common/enums';
+import { DidMethod, Environment, Ledgers, Network} from '../../../common/enums';
 import type { IDedicatedAgentForm, ILedgerConfigData, ILedgerItem, IValuesShared, IDedicatedAgentData} from './interfaces';
 import { getFromLocalStorage } from '../../../api/Auth';
 import CopyDid from '../../../commonComponents/CopyDid';
@@ -20,6 +20,8 @@ import SetPrivateKeyValueInput from './SetPrivateKeyValue';
 import { getOrganizationById, setAgentConfigDetails } from '../../../api/organization';
 import type { IDedicatedAgentConfig} from '../interfaces';
 import React from 'react';
+import { envConfig } from '../../../config/envConfig';
+import { getFilteredNetworks } from '../../../lib/data';
 
 const RequiredAsterisk = () => <span className="text-xs text-red-500">*</span>
 
@@ -236,12 +238,13 @@ const networkRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEv
 		return null;
 	}
 
-	let filteredNetworks = Object.keys(networks);
-	if (selectedMethod === DidMethod.POLYGON) {
-		filteredNetworks = filteredNetworks.filter(network => network === Network.MAINNET);
-	}
+	const filterNetworks = getFilteredNetworks(
+		Object.keys(networks),
+		envConfig.MODE,
+		selectedMethod
+	  );
 
-	return filteredNetworks.map((network) => (
+	return filterNetworks.map((network) => (
 		<div key={network} className="mt-2">
 			<input
 				type="radio"
