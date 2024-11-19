@@ -12,6 +12,7 @@ import SetPrivateKeyValueInput from './SetPrivateKeyValue';
 import type { ISharedAgentForm, IValuesShared } from "./interfaces";
 import React from "react";
 import { envConfig } from "../../../config/envConfig";
+import { getFilteredNetworks } from "../../../lib/data";
 interface IDetails {
     [key: string]: string | { [subKey: string]: string };
 }
@@ -211,12 +212,11 @@ const SharedAgentForm = ({
 			return null;
 		}
 
-		let filteredNetworks = Object.keys(networks);
-		if (envConfig.MODE === Environment.PROD && selectedMethod === DidMethod.POLYGON) {
-			filteredNetworks = filteredNetworks.filter(network => network === Network.MAINNET);
-		} else if ((envConfig.MODE === Environment.DEV || envConfig.MODE === Environment.QA) && selectedMethod === DidMethod.POLYGON) {
-			filteredNetworks = filteredNetworks.filter(network => network === Network.TESTNET);
-		}
+		const filteredNetworks = getFilteredNetworks(
+			Object.keys(networks),
+			envConfig.MODE,
+			selectedMethod
+		  );
 
 		return filteredNetworks.map((network) => (
 				<div key={network} className="mt-2">

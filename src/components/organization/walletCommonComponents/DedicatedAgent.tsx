@@ -21,6 +21,7 @@ import { getOrganizationById, setAgentConfigDetails } from '../../../api/organiz
 import type { IDedicatedAgentConfig} from '../interfaces';
 import React from 'react';
 import { envConfig } from '../../../config/envConfig';
+import { getFilteredNetworks } from '../../../lib/data';
 
 const RequiredAsterisk = () => <span className="text-xs text-red-500">*</span>
 
@@ -237,12 +238,11 @@ const networkRenderOptions = (formikHandlers: { handleChange: (e: React.ChangeEv
 		return null;
 	}
 
-	let filterNetworks = Object.keys(networks);
-		if (envConfig.MODE === Environment.PROD && selectedMethod === DidMethod.POLYGON) {
-			filterNetworks = filterNetworks.filter(network => network === Network.MAINNET);
-		} else if ((envConfig.MODE === Environment.DEV || envConfig.MODE === Environment.QA) && selectedMethod === DidMethod.POLYGON) {
-			filterNetworks = filterNetworks.filter(network => network === Network.TESTNET);
-		}
+	const filterNetworks = getFilteredNetworks(
+		Object.keys(networks),
+		envConfig.MODE,
+		selectedMethod
+	  );
 
 	return filterNetworks.map((network) => (
 		<div key={network} className="mt-2">

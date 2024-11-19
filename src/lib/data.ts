@@ -2,6 +2,7 @@
 // GraphQL, Databases, REST APIs, CDNs, proxies, S3, Matrix, IPFS, you name it…
 
 import { API_URL, REMOTE_ASSETS_BASE_URL } from '../app/constants.js';
+import { DidMethod, Environment, Network } from '../common/enums.js';
 import type { Endpoint, EndpointsToOperations } from '../types/entities.js';
 
 export async function fetchData<Selected extends Endpoint>(endpoint: Selected) {
@@ -31,3 +32,20 @@ export function asset(path: string) {
 	// NOTE: Fetching remote assets from the Hugo admin dashboard Vercel dist.
 	return `${REMOTE_ASSETS_BASE_URL}/${path}`;
 }
+
+export const getFilteredNetworks = (
+	networks: string[],
+	envMode: Environment,
+	selectedMethod: string
+  ): string[] => {
+	if (envMode === Environment.PROD && selectedMethod === DidMethod.POLYGON) {
+	  return networks.filter(network => network === Network.MAINNET);
+	} else if (
+	  (envMode === Environment.DEV || envMode === Environment.QA) &&
+	  selectedMethod === DidMethod.POLYGON
+	) {
+	  return networks.filter(network => network === Network.TESTNET);
+	}
+	return networks;
+  };
+  
