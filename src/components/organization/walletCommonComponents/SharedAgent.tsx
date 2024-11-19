@@ -6,11 +6,12 @@ import { apiStatusCodes } from "../../../config/CommonConstant";
 import * as yup from 'yup';
 import type { AxiosResponse } from 'axios';
 import CopyDid from '../../../commonComponents/CopyDid';
-import { DidMethod, Ledgers, Network } from '../../../common/enums';
+import { DidMethod, Environment, Ledgers, Network } from '../../../common/enums';
 import SetDomainValueInput from './SetDomainValueInput';
 import SetPrivateKeyValueInput from './SetPrivateKeyValue';
 import type { ISharedAgentForm, IValuesShared } from "./interfaces";
 import React from "react";
+import { envConfig } from "../../../config/envConfig";
 interface IDetails {
     [key: string]: string | { [subKey: string]: string };
 }
@@ -211,8 +212,10 @@ const SharedAgentForm = ({
 		}
 
 		let filteredNetworks = Object.keys(networks);
-		if (selectedMethod === DidMethod.POLYGON) {
+		if (envConfig.MODE === Environment.PROD && selectedMethod === DidMethod.POLYGON) {
 			filteredNetworks = filteredNetworks.filter(network => network === Network.MAINNET);
+		} else if ((envConfig.MODE === Environment.DEV || envConfig.MODE === Environment.QA) && selectedMethod === DidMethod.POLYGON) {
+			filteredNetworks = filteredNetworks.filter(network => network === Network.TESTNET);
 		}
 
 		return filteredNetworks.map((network) => (
