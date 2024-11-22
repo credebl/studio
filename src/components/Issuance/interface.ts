@@ -72,6 +72,7 @@ export interface IConnectionList {
 	checked?: boolean;
 }
 
+
 export interface SchemaDetails {
 	schemaName: string;
 	version: string;

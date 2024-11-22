@@ -7,12 +7,13 @@ import {
 } from '../../api/connection';
 import type { IConnectionListAPIParameter } from '../../api/connection';
 import type { TableData } from '../../commonComponents/datatable/interface';
-import { apiStatusCodes } from '../../config/CommonConstant';
+import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';
 import { dateConversion } from '../../utils/DateConversion';
 import DateTooltip from '../Tooltip';
-import type { IConnectionList } from './interface';
+import type { IConnectionList, IVerificationConnectionsList } from './interface';
 import SortDataTable from '../../commonComponents/datatable/SortDataTable';
+import { getFromLocalStorage, removeFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 
 const initialPageState = {
 	itemPerPage: 10,
@@ -23,10 +24,19 @@ const initialPageState = {
 	allSearch: '',
 };
 
+type LocalOrgs = {
+	connectionId: string;
+	theirLabel: string;
+	createDateTime: string;
+};
+
 const ConnectionList = (props: {
-	selectConnection: (connections: TableData[]) => void;
+	selectConnection: (connections: IConnectionList[]) => void;
 }) => {
 	const [connectionList, setConnectionList] = useState<TableData[]>([]);
+	const [tableData, setTableData] = useState<TableData[]>([]);
+	const [localOrgs, setLocalOrgs] = useState<LocalOrgs[]>([]);
+
 	const [selectedConnectionList, setSelectedConnectionList] = useState<
 		TableData[]
 	>([]);
@@ -63,6 +73,164 @@ const ConnectionList = (props: {
 		});
 	};
 
+	const selectOrganization = async (
+		item: IConnectionList,
+		checked: boolean,
+	) => {
+		try {
+			const index =
+				localOrgs?.length > 0
+					? localOrgs.findIndex((ele) => ele.connectionId === item.connectionId)
+					: -1;
+
+			const { connectionId, theirLabel, createDateTime } = item || {};
+			if (index === -1) {
+				setLocalOrgs((prev: LocalOrgs[]) => [
+					...prev,
+					{
+						connectionId,
+						theirLabel,
+						createDateTime,
+					},
+				]);
+			} else {
+				const updateLocalOrgs = [...localOrgs];
+				if (!checked) {
+					updateLocalOrgs.splice(index, 1);
+				}
+				setLocalOrgs(updateLocalOrgs);
+			}
+		} catch (error) {
+			console.error('SELECTED ORGANIZATION:::', error);
+		}
+	};
+
+	const generateTable = async (connections: IConnectionList[]) => {
+		console.log("🚀 ~ generateTable ~ connections: vvv", connections)
+		try {
+			const connectionsData =
+				connections?.length > 0 &&
+				connections?.map((ele: IConnectionList) => {
+					console.log('el56:::', ele)
+					const createdOn = ele?.createDateTime
+						? ele?.createDateTime
+						: 'Not available';
+					const connectionId = ele.connectionId
+						? ele.connectionId
+						: 'Not available';
+					const userName = ele?.theirLabel ? ele.theirLabel : 'Not available';
+
+					const isChecked = localOrgs
+						.map((item) => item.connectionId)
+						.includes(ele.connectionId);
+
+					return {
+						data: [
+							{
+								data: (
+									<div className="flex items-center" id="issuance_checkbox">
+										<input
+											id="default-checkbox"
+											type="checkbox"
+											name="connection"
+											defaultChecked={ele.checked || isChecked}
+											onClick={async (
+												event: React.MouseEvent<HTMLInputElement>,
+											) => {
+												const inputElement = event.target as HTMLInputElement;
+
+												const updateConnectionList = connections?.map(
+													(item) => {
+														console.log('item678::', item)
+														if (item.connectionId === ele.connectionId) {
+															selectOrganization(item, inputElement.checked);
+															return {
+																...item,
+																checked: inputElement.checked,
+															};
+														}
+														return item;
+													},
+												);
+												console.log('updateConnectionList5687878::::', updateConnectionList)
+												setConnectionList(updateConnectionList);
+											}}
+											// checked={ele.checked || isChecked}
+											className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-lg dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600 cursor-pointer"
+										/>
+									</div>
+								),
+							},
+							{ data: userName },
+							{ data: connectionId },
+							{
+								data: (
+									<DateTooltip date={createdOn} id="verification_connecetion_list">
+										{' '}
+										{dateConversion(createdOn)}{' '}
+									</DateTooltip>
+								),
+							},
+						],
+					};
+				});
+
+			setTableData(connectionsData);
+		} catch (err) {}
+	};
+	useEffect(() => {
+		props.selectConnection(localOrgs);
+	}, [localOrgs]);
+
+
+	useEffect(() => {
+		generateTable(connectionList);
+	}, [connectionList, localOrgs]);
+
+	const updateLocalOrgs = async () => {
+		const res = await getFromLocalStorage(storageKeys.SELECTED_CONNECTIONS);
+		const selectedOrg = res ? JSON.parse(res) : [];
+		setLocalOrgs(selectedOrg);
+	};
+
+	useEffect(() => {
+		const clearStorageAndRefresh = async () => {
+			refreshPage();
+			await removeFromLocalStorage(storageKeys.SELECTED_CONNECTIONS);
+			await removeFromLocalStorage(storageKeys.SELECTED_USER);
+		};
+
+		clearStorageAndRefresh();
+	}, []);
+
+	useEffect(() => {
+		(async () => {
+			await setToLocalStorage(
+				storageKeys.SELECTED_CONNECTIONS,
+				JSON.stringify(localOrgs),
+			);
+		})();
+	}, [localOrgs]);
+
+
+	useEffect(() => {
+		let getData: NodeJS.Timeout;
+		updateLocalOrgs();
+		if (listAPIParameter?.search?.length >= 1) {
+			getData = setTimeout(() => {
+				getConnectionsVerification(listAPIParameter);
+			}, 1000);
+			return () => clearTimeout(getData);
+		} else {
+			getConnectionsVerification(listAPIParameter);
+		}
+		return () => clearTimeout(getData);
+	}, [listAPIParameter]);
+
+	useEffect(() => {
+		updateLocalOrgs();
+	}, []);
+
 	const getConnectionsVerification = async (
 		apiParameter: IConnectionListAPIParameter,
 	) => {
@@ -79,61 +247,8 @@ const ConnectionList = (props: {
 					nextPage: nextPage,
 					lastPage: lastPage,
 				});
-				const connections = data?.data?.data?.map(
-					(ele: IConnectionList) => {
-						const userName = ele?.theirLabel
-							? ele?.theirLabel
-							: 'Not available';
-						const connectionId = ele?.connectionId
-							? ele?.connectionId
-							: 'Not available';
-						const createdOn = ele?.createDateTime
-							? ele?.createDateTime
-							: 'Not available';
-						return {
-							data: [
-								{
-									data: (
-										<div
-											className="flex items-center"
-											id="verification_checkbox"
-										>
-											<input
-												id="default-checkbox"
-												type="radio"
-												name="connection"
-												onClick={(
-													event: React.MouseEvent<HTMLInputElement>,
-												) => {
-													const inputElement = event.target as HTMLInputElement;
-													selectConnection(
-														userName,
-														connectionId,
-														inputElement.checked,
-													);
-												}}
-												value=""
-												className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-lg dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600 cursor-pointer"
-											/>
-										</div>
-									),
-								},
-								{ data: userName },
-								{ data: connectionId },
-								{
-									data: (
-										<DateTooltip date={createdOn} id="connectionlist">
-											{' '}
-											{dateConversion(createdOn)}{' '}
-										</DateTooltip>
-									),
-								},
-							],
-						};
-					},
-				);
-
-				setConnectionList(connections);
+				
+				setConnectionList(data?.data?.data);
 				setError(null);
 			} else {
 				setConnectionList([]);
@@ -153,32 +268,32 @@ const ConnectionList = (props: {
 		{ columnName: 'Created on' },
 	];
 
-	const selectConnection = (
-		user: string,
-		connectionId: string,
-		checked: boolean,
-	) => {
-		if (checked) {
-			setSelectedConnectionList([
-				{
-					data: [
-						{
-							data: user,
-						},
-						{
-							data: connectionId,
-						},
-					],
-				},
-			]);
-		} else {
-			setSelectedConnectionList((prevList) =>
-				prevList.filter(
-					(connection) => connection?.data[1]?.data !== connectionId,
-				),
-			);
-		}
-	};
+	// const selectConnection = (
+	// 	user: string,
+	// 	connectionId: string,
+	// 	checked: boolean,
+	// ) => {
+	// 	if (checked) {
+	// 		setSelectedConnectionList([
+	// 			{
+	// 				data: [
+	// 					{
+	// 						data: user,
+	// 					},
+	// 					{
+	// 						data: connectionId,
+	// 					},
+	// 				],
+	// 			},
+	// 		]);
+	// 	} else {
+	// 		setSelectedConnectionList((prevList) =>
+	// 			prevList.filter(
+	// 				(connection) => connection?.data[1]?.data !== connectionId,
+	// 			),
+	// 		);
+	// 	}
+	// };
 
 	const searchSortByValue = (value: any) => {
 		setListAPIParameter({
@@ -201,8 +316,7 @@ const ConnectionList = (props: {
 
 	return (
 		<div
-			id="verification_connection_list
-		"
+			id="verification_connection_list"
 		>
 			<div
 				className="flex items-center justify-between mb-4"
@@ -223,7 +337,7 @@ const ConnectionList = (props: {
 				onInputChange={searchInputChange}
 				refresh={refreshPage}
 				header={verification_header}
-				data={connectionList}
+				data={tableData}
 				loading={loading}
 				currentPage={listAPIParameter?.page}
 				onPageChange={(page: number) => {
@@ -243,6 +357,7 @@ const ConnectionList = (props: {
 				message={'No Connections'}
 				discription={"You don't have any connections yet"}
 			></SortDataTable>
+
 		</div>
 	);
 };

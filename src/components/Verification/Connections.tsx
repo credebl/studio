@@ -11,18 +11,56 @@ import ConnectionList from "./ConnectionList";
 import EmailList from "./EmailList";
 import BackButton from '../../commonComponents/backbutton'
 import { DidMethod } from "../../common/enums";
+import React from "react";
+import type { IConnectionList, IVerificationConnectionsList } from "./interface";
+import DateTooltip from "../Tooltip";
+import { dateConversion } from "../../utils/DateConversion";
 
 const Connections = () => {
 	const [isW3cDid, setIsW3cDid] = useState<boolean>(false);
 	const [selectedConnectionList, setSelectedConnectionList] = useState<TableData[]>([])
+
 	const selectedConnectionHeader = [
 		{ columnName: 'User' },
 		{ columnName: 'Connection ID' },
+		{ columnName: 'Created on' }
 	]
 
-	const selectConnection = (connections: TableData[]) => {
-		setSelectedConnectionList(connections)
-	}
+	const selectConnection = (connections: IConnectionList[]) => {
+		console.log("connections vvv",connections);
+		
+		try {
+			const connectionsData = connections?.length > 0 && connections?.map((ele: IConnectionList) => {
+				const createdOn = ele?.createDateTime
+				? ele?.createDateTime
+				: 'Not available';
+				const connectionId = ele.connectionId
+				? ele.connectionId
+				: 'Not available';
+				const userName = ele?.theirLabel ? ele.theirLabel : 'Not available';
+				
+				return {
+					data: [
+						{ data: userName },
+						{ data: connectionId },
+						{
+							data: (
+								<DateTooltip date={createdOn} id="verification_connection_list">
+									{' '}
+									{dateConversion(createdOn)}{' '}
+								</DateTooltip>
+							),
+						},
+					],
+				};
+			})
+			console.log("🚀 ~ selectConnection ~ connectionsData: vvvvv111111111111", 	)
+			setSelectedConnectionList(connectionsData);
+		} catch (error) {
+			console.log("ERROR IN TABLE GENERATION::", error);
+		}
+	};
+
 	const fetchOrgData = async () => {
 		const orgDid = await getFromLocalStorage(storageKeys.ORG_DID);
 		
@@ -35,7 +73,7 @@ const Connections = () => {
 	 useEffect(() => {
 		fetchOrgData();
 	  }, []);
-
+/////continue button
 	const continueToVerify = async () => {
 		const selectedConnections = selectedConnectionList.map(ele =>{
 			return {userName: ele.data[0].data, connectionId:ele.data[1].data}
@@ -43,6 +81,7 @@ const Connections = () => {
 		await setToLocalStorage(storageKeys.SELECTED_USER, selectedConnections)
 		window.location.href = isW3cDid ? `${pathRoutes.organizations.verification.W3CVerification}` : `${pathRoutes.organizations.verification.verify}`
 	}
+// console.log("selectedConnectionListselectedConnectionList1111",selectedConnectionList);
 
 	return (
 		<div className="px-4 pt-2">
@@ -72,7 +111,10 @@ const Connections = () => {
 			</div>
 			<div
 				className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-				<DataTable header={selectedConnectionHeader} data={selectedConnectionList} loading={false} ></DataTable>
+				<DataTable 
+				header={selectedConnectionHeader} 
+				data={selectedConnectionList} 
+				loading={false} ></DataTable>
 				{selectedConnectionList.length ? <div className="flex justify-end pt-3">
 					<Button
 						onClick={continueToVerify}

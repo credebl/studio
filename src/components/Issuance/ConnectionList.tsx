@@ -38,7 +38,7 @@ const ConnectionList = (props: {
 }) => {
 	const [listAPIParameter, setListAPIParameter] = useState(initialPageState);
 	const [tableData, setTableData] = useState<TableData[]>([]);
-	const [connectionList, setConnectionList] = useState([]);
+	const [connectionList, setConnectionList] = useState<TableData[]>([]);
 	const [localOrgs, setLocalOrgs] = useState<LocalOrgs[]>([]);
 
 	const [loading, setLoading] = useState<boolean>(false);
@@ -83,10 +83,12 @@ const ConnectionList = (props: {
 	};
 
 	const generateTable = async (connections: IConnectionList[]) => {
+		console.log("🚀 ~ generateTable ~ connections:", connections)
 		try {
 			const connectionsData =
 				connections?.length > 0 &&
 				connections?.map((ele: IConnectionList) => {
+console.log('eleissuanc9999', ele)
 					const createdOn = ele?.createDateTime
 						? ele?.createDateTime
 						: 'Not available';
@@ -116,6 +118,7 @@ const ConnectionList = (props: {
 
 												const updateConnectionList = connections?.map(
 													(item) => {
+														console.log('item5677issuance00::', item)
 														if (item.connectionId === ele.connectionId) {
 															selectOrganization(item, inputElement.checked);
 															return {
@@ -126,6 +129,7 @@ const ConnectionList = (props: {
 														return item;
 													},
 												);
+												console.log('updateConnectionList79899:::', updateConnectionList)
 												setConnectionList(updateConnectionList);
 											}}
 											// checked={ele.checked || isChecked}
@@ -151,6 +155,10 @@ const ConnectionList = (props: {
 			setTableData(connectionsData);
 		} catch (err) {}
 	};
+
+	useEffect(() => {
+		generateTable(connectionList);
+	}, [connectionList, localOrgs]);
 
 	const getConnections = async (apiParameter: IConnectionListAPIParameter) => {
 		setLoading(true);
@@ -228,9 +236,7 @@ const ConnectionList = (props: {
 		props.selectConnection(localOrgs);
 	}, [localOrgs]);
 
-	useEffect(() => {
-		generateTable(connectionList);
-	}, [connectionList, localOrgs]);
+	
 
 	useEffect(() => {
 		(async () => {
@@ -258,6 +264,8 @@ const ConnectionList = (props: {
 	useEffect(() => {
 		updateLocalOrgs();
 	}, []);
+	
+console.log("localOrgs",localOrgs);
 
 	return (
 		<div id="issuance_connection_list">

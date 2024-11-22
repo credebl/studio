@@ -20,8 +20,8 @@ import { EmptyListMessage } from '../EmptyListComponent';
 import SchemaCard from '../../commonComponents/SchemaCard';
 import type { IAttributesDetails, ISchema, ISchemaData } from './interface';
 
-const VerificationSchemasList = () => {
-	const [schemasList, setSchemasList] = useState([]);
+const VerificationSchemasList = ({ routeType }: { routeType: string }) => {
+const [schemasList, setSchemasList] = useState([]);
 	const [schemasDetailsErr, setSchemasDetailsErr] = useState<string | null>('');
 	const [loading, setLoading] = useState<boolean>(true);
 	const [allSchemasFlag, setAllSchemasFlag] = useState<boolean>(false);
@@ -89,6 +89,13 @@ const VerificationSchemasList = () => {
 			setLoading(false);
 		}
 	};
+	const handleFlag = async () => {
+		try {
+		  await setToLocalStorage(storageKeys.CONNECTION_FLAG, routeType);
+		} catch (error) {
+		  console.error('Error updating localStorage:', error);
+		}
+	  };
 
 	useEffect(() => {
 		getSchemaListDetails();
@@ -236,6 +243,7 @@ const VerificationSchemasList = () => {
 
 	};	
 	useEffect(() => {
+		handleFlag();
 		fetchOrganizationDetails();
 		(async () => {
 			try {

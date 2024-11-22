@@ -26,6 +26,20 @@ const EmailAttributesSelection = () => {
 		null,
 	);
 	const [w3cSchema, setW3cSchema] = useState<boolean>(false);
+	const [isCon, setIsCon] = useState<boolean>(false);
+
+	const ConnectionVerification = async () => {
+		const conn = await getFromLocalStorage(storageKeys.CONNECTION_FLAG)
+		if(conn === 'Connection'){
+			setIsCon(true)
+		}else{
+			setIsCon(false)
+		}
+	  }
+	  useEffect(() => {
+		ConnectionVerification();
+	  }, []);
+	
 
 	const handleAttributeChange = async (
 		attributeName: string,
@@ -73,6 +87,7 @@ const EmailAttributesSelection = () => {
 
 	const getOrgDetails = async () => {
 		setLoading(true);
+
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		const response = await getOrganizationById(orgId);
 		const { data } = response as AxiosResponse;
@@ -94,20 +109,25 @@ const EmailAttributesSelection = () => {
 	}, []);
 
 
-	const handleSubmit = () => {
-		setErrMsg(null);
-	
-		if (w3cSchema) {
+		const handleSubmit = () => {
+			setErrMsg(null);
+
+			if(isCon){
+				redirectToConnections();
+				return;
+			}
+		
+			if (w3cSchema ) {
+				redirectToAppropriatePage();
+				return;
+			}
+		
+			if (hasInvalidNumberAttributes()) {
+				return;
+			}
+		
 			redirectToAppropriatePage();
-			return;
-		}
-	
-		if (hasInvalidNumberAttributes()) {
-			return;
-		}
-	
-		redirectToAppropriatePage();
-	};
+		};
 	
 	const hasInvalidNumberAttributes = (): boolean => {
 		const numberAttributes = attributeData?.filter(
@@ -143,6 +163,12 @@ const EmailAttributesSelection = () => {
 			? `${pathRoutes.organizations.verification.w3cEmailVerification}`
 			: `${pathRoutes.organizations.verification.emailVerification}`;
 	};
+
+	const redirectToConnections = () => {
+		window.location.href = w3cSchema
+			? `${pathRoutes.organizations.verification.W3CConnections}`
+			: `${pathRoutes.organizations.verification.connections}`;
+	}
 	
 	const loadAttributesData = async () => {
 	
