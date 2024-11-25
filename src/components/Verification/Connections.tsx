@@ -1,24 +1,33 @@
 
-import { Button } from "flowbite-react";
+import { Alert, Button } from "flowbite-react";
 import { useEffect, useState } from "react";
-import { getFromLocalStorage, setToLocalStorage } from "../../api/Auth";
+import { getFromLocalStorage, removeFromLocalStorage, setToLocalStorage } from "../../api/Auth";
 import DataTable from "../../commonComponents/datatable";
 import type { TableData } from "../../commonComponents/datatable/interface";
-import { storageKeys } from "../../config/CommonConstant";
+import { apiStatusCodes, storageKeys } from "../../config/CommonConstant";
 import { pathRoutes } from "../../config/pathRoutes";
 import BreadCrumbs from "../BreadCrumbs";
 import ConnectionList from "./ConnectionList";
 import EmailList from "./EmailList";
 import BackButton from '../../commonComponents/backbutton'
-import { DidMethod } from "../../common/enums";
+import { DidMethod, RequestType } from "../../common/enums";
 import React from "react";
-import type { IConnectionList, IVerificationConnectionsList } from "./interface";
+import type { IConnectionList } from "./interface";
 import DateTooltip from "../Tooltip";
 import { dateConversion } from "../../utils/DateConversion";
+import { verifyCredential } from '../../api/verification';
+import type { AxiosResponse } from "axios";
+import { v4 as uuidv4 } from 'uuid';
+import { getOrganizationById } from "../../api/organization";
 
 const Connections = () => {
 	const [isW3cDid, setIsW3cDid] = useState<boolean>(false);
 	const [selectedConnectionList, setSelectedConnectionList] = useState<TableData[]>([])
+	const [proofReqSuccess, setProofReqSuccess] = useState<string | null>(null);
+	const [errMsg, setErrMsg] = useState<string | null>(null);
+	const [requestLoader, setRequestLoader] = useState<boolean>(false);
+
+	
 
 	const selectedConnectionHeader = [
 		{ columnName: 'User' },
@@ -27,7 +36,6 @@ const Connections = () => {
 	]
 
 	const selectConnection = (connections: IConnectionList[]) => {
-		console.log("connections vvv",connections);
 		
 		try {
 			const connectionsData = connections?.length > 0 && connections?.map((ele: IConnectionList) => {
@@ -54,34 +62,197 @@ const Connections = () => {
 					],
 				};
 			})
-			console.log("🚀 ~ selectConnection ~ connectionsData: vvvvv111111111111", 	)
 			setSelectedConnectionList(connectionsData);
 		} catch (error) {
 			console.log("ERROR IN TABLE GENERATION::", error);
 		}
 	};
 
-	const fetchOrgData = async () => {
-		const orgDid = await getFromLocalStorage(storageKeys.ORG_DID);
-		
-		if (orgDid.includes(DidMethod.POLYGON) || orgDid.includes(DidMethod.KEY) || orgDid.includes(DidMethod.WEB)) {
-		  setIsW3cDid(true);
-		} else {
-		  setIsW3cDid(false);
+	const fetchOrganizationDetails = async () => {
+		try{
+			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+			if (!orgId) return;
+			const response = await getOrganizationById(orgId);
+			const { data } = response as AxiosResponse;
+			if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+				const did = data?.data?.org_agents?.[0]?.orgDid;
+				
+				if (did?.includes(DidMethod.POLYGON)) {
+					setIsW3cDid(true);
+
+				}
+				if (did?.includes(DidMethod.KEY) || did?.includes(DidMethod.WEB)) {
+					setIsW3cDid(true);
+
+
+				}
+				if (did?.includes(DidMethod.INDY)) {
+					setIsW3cDid(false);
+
+				}
+			}
+		} catch(error){
+			console.error('Error in getSchemaAndUsers:', error);
 		}
-	  };
-	 useEffect(() => {
-		fetchOrgData();
-	  }, []);
-/////continue button
-	const continueToVerify = async () => {
-		const selectedConnections = selectedConnectionList.map(ele =>{
-			return {userName: ele.data[0].data, connectionId:ele.data[1].data}
-	})
-		await setToLocalStorage(storageKeys.SELECTED_USER, selectedConnections)
-		window.location.href = isW3cDid ? `${pathRoutes.organizations.verification.W3CVerification}` : `${pathRoutes.organizations.verification.verify}`
+		
+	};
+	useEffect(() => {
+		fetchOrganizationDetails();
+		return () => {
+			setRequestLoader(false);
+		};
+	}, []);
+	
+	const handleSubmit = async () => {
+		setRequestLoader(true);
+    try {
+
+      const selectedConnections = selectedConnectionList.map((ele) => ({
+        userName: ele.data[0].data,
+        connectionId: ele.data[1].data,
+      }));
+
+      await setToLocalStorage(storageKeys.SELECTED_USER, selectedConnections);
+
+      const [attributeData, userData, orgId, attributes] = await Promise.all([
+        getFromLocalStorage(storageKeys.ATTRIBUTE_DATA),
+        getFromLocalStorage(storageKeys.SELECTED_USER),
+        getFromLocalStorage(storageKeys.ORG_ID),
+        getFromLocalStorage(storageKeys.SCHEMA_ATTRIBUTES),		
+      ]);
+
+	const attr= JSON.parse(attributeData)
+	            
+				const checkedAttributes = attr
+				.filter((attribute: any) => attribute.isChecked) 
+				.map((attribute: any) => {
+					const basePayload = {
+						attributeName: attribute.attributeName,
+						credDefId: attribute.credDefId,
+						schemaId: attribute.schemaId,
+					};
+					
+					if (attribute.dataType === "number" && attribute.selectedOption !== "Select") {
+						return {
+							...basePayload,
+							condition: attribute.selectedOption,
+							value: attribute.value, 
+						};
+					}
+					if (attribute.dataType === "string") {
+						return basePayload;
+					}
+					
+					return basePayload; 
+				})
+				.filter((attr: any) => attr !== null); 
+
+				const checkedW3CAttributes = attr
+				.filter((w3cSchemaAttributes: any) => w3cSchemaAttributes.isChecked) 
+				.map((attribute: any) => {
+					return {
+						attributeName: attribute.attributeName,
+						schemaId: attribute.schemaId,
+						schemaName:attribute.schemaName
+						
+					};
+				});
+				let verifyCredentialPayload;
+
+				if (!isW3cDid) {
+						const parsedUserData = JSON.parse(userData); 
+						const connectionIds = parsedUserData.map((connection: { connectionId: string | string[]; }) => connection.connectionId);
+
+						verifyCredentialPayload = {
+							presentationData: {
+							  connectionId: connectionIds, 
+							  orgId,
+							  proofFormats: {
+								indy: {
+								  attributes: checkedAttributes, 
+								},
+							  },
+							  comment: "string"
+							},
+						  };
+						}
+
+				
+				if (isW3cDid) {
+					const parsedUserData = JSON.parse(userData);
+					const connectionIds = parsedUserData.map((connection: { connectionId: string | string[] }) => connection.connectionId);
+				  
+					const schemas = checkedW3CAttributes.map((attr: { schemaId: any; schemaName: any }) => ({
+						schemaId: attr.schemaId,
+						schemaName: attr.schemaName,
+					}));
+				  
+					const groupedAttributes = checkedW3CAttributes.reduce((acc: any, curr: any) => {
+						const schemaName = curr.schemaName;
+						if (!acc[schemaName]) {
+							acc[schemaName] = [];
+						}
+						acc[schemaName].push(curr);
+						return acc;
+					}, {});
+					
+				  
+					verifyCredentialPayload = {
+						presentationData: {
+						connectionId: connectionIds,
+						comment: 'proof request',
+						presentationDefinition: {
+							id: uuidv4(),
+						input_descriptors: Object.keys(groupedAttributes).map((schemaName) => {
+						  const attributesForSchema = groupedAttributes[schemaName];
+						  
+						  const attributePathsForSchema = attributesForSchema.map(
+							  (attr: { attributeName: string }) => `$.credentialSubject['${attr.attributeName}']`
+							);
+				  
+							return {
+								id: uuidv4(),
+								name: schemaName,
+							schema: [
+							  {
+								  uri: schemas.find((schema: { schemaName: string }) => schema.schemaName === schemaName)?.schemaId,
+							  },
+							],
+							constraints: {
+							  fields: [
+								{
+									path: attributePathsForSchema, 
+								},
+							],
+						},
+						purpose: 'Verify proof',
+					};
+				}),
+			},
+		}
 	}
-// console.log("selectedConnectionListselectedConnectionList1111",selectedConnectionList);
+	}
+					  
+				if (attributes && verifyCredentialPayload) {
+					const requestType = isW3cDid ? RequestType.PRESENTATION_EXCHANGE : RequestType.INDY;
+					const response = await verifyCredential(verifyCredentialPayload, requestType);
+					const { data } = response as AxiosResponse;
+					if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+						await removeFromLocalStorage(storageKeys.ATTRIBUTE_DATA);
+						setProofReqSuccess(data?.message);
+						window.location.href = pathRoutes.organizations.credentials;
+                          } else {
+						setErrMsg(response as string);
+						setRequestLoader(false);
+					}
+				}
+			} catch (error) {
+				setErrMsg('An error occurred. Please try again.');
+				setRequestLoader(false);
+			}
+			
+		};
+		
 
 	return (
 		<div className="px-4 pt-2">
@@ -100,6 +271,19 @@ const Connections = () => {
 				</ul>
 			</div>
 			<div id="myTabContent">
+			{(proofReqSuccess || errMsg) && (
+				<div className="p-2">
+					<Alert
+						color={proofReqSuccess ? 'success' : 'failure'}
+						onDismiss={() => {
+							setProofReqSuccess(null);
+							setErrMsg(null);
+						}}
+					>
+						{proofReqSuccess || errMsg}
+					</Alert>
+				</div>
+			)}
 				<div className="hidden rounded-lg bg-gray-50 dark:bg-gray-900" id="profile" role="tabpanel" aria-labelledby="profile-tab">
 					<ConnectionList selectConnection={selectConnection} />
 				</div>
@@ -114,19 +298,31 @@ const Connections = () => {
 				<DataTable 
 				header={selectedConnectionHeader} 
 				data={selectedConnectionList} 
-				loading={false} ></DataTable>
+				loading={false} >
+
+				</DataTable>
 				{selectedConnectionList.length ? <div className="flex justify-end pt-3">
 					<Button
-						onClick={continueToVerify}
-						className='text-base text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-accent-00 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"'
+						onClick={handleSubmit}
+                        isProcessing={requestLoader}
+				className="text-base font-medium text-center text-white bg-primary-700 hover:!bg-primary-800 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mt-2 ml-auto"
 					>
 						<div className='pr-3'>
-							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-								<path fill="#fff" d="M12.516 6.444a.556.556 0 1 0-.787.787l4.214 4.214H4.746a.558.558 0 0 0 0 1.117h11.191l-4.214 4.214a.556.556 0 0 0 .396.95.582.582 0 0 0 .397-.163l5.163-5.163a.553.553 0 0 0 .162-.396.576.576 0 0 0-.162-.396l-5.163-5.164Z" />
-								<path fill="#fff" d="M12.001 0a12 12 0 0 0-8.484 20.485c4.686 4.687 12.283 4.687 16.969 0 4.686-4.685 4.686-12.282 0-16.968A11.925 11.925 0 0 0 12.001 0Zm0 22.886c-6 0-10.884-4.884-10.884-10.885C1.117 6.001 6 1.116 12 1.116s10.885 4.885 10.885 10.885S18.001 22.886 12 22.886Z" />
-							</svg>
+						<svg
+						className="mr-2 mt-1"
+						xmlns="http://www.w3.org/2000/svg"
+						width="20"
+						height="20"
+						fill="none"
+						viewBox="0 0 25 25"
+					>
+						<path
+							fill="#fff"
+							d="M21.094 0H3.906A3.906 3.906 0 0 0 0 3.906v12.5a3.906 3.906 0 0 0 3.906 3.907h.781v3.906a.781.781 0 0 0 1.335.553l4.458-4.46h10.614A3.906 3.906 0 0 0 25 16.407v-12.5A3.907 3.907 0 0 0 21.094 0Zm2.343 16.406a2.343 2.343 0 0 1-2.343 2.344H10.156a.782.782 0 0 0-.553.228L6.25 22.333V19.53a.781.781 0 0 0-.781-.781H3.906a2.344 2.344 0 0 1-2.344-2.344v-12.5a2.344 2.344 0 0 1 2.344-2.344h17.188a2.343 2.343 0 0 1 2.343 2.344v12.5Zm-3.184-5.951a.81.81 0 0 1-.17.254l-3.125 3.125a.781.781 0 0 1-1.105-1.106l1.792-1.79h-7.489a2.343 2.343 0 0 0-2.344 2.343.781.781 0 1 1-1.562 0 3.906 3.906 0 0 1 3.906-3.906h7.49l-1.793-1.79a.78.78 0 0 1 .254-1.277.781.781 0 0 1 .852.17l3.125 3.125a.79.79 0 0 1 .169.852Z"
+						/>
+					</svg>
 						</div>
-						Continue
+						Request Proof
 					</Button>
 				</div>
 					: ''}
