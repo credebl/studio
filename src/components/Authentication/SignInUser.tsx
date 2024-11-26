@@ -13,22 +13,21 @@ import { envConfig } from '../../config/envConfig';
 import { validEmail } from '../../utils/TextTransform';
 
 interface emailValue {
-	email: string | null;
+	email: string;
 }
 
 const resetPasswordSuccess = '?isPasswordSet=true';
 
 const SignInUser = () => {
-	const [email, setEmail] = useState<emailValue | null>(null);
-	const [fidoUserError, setFidoUserError] = useState('');
-	const [success, setSuccess] = useState<string | null>(null);
-	const [failure, setFailur] = useState<string | null>(null);
+	const [email, setEmail] = useState<emailValue>();
+	const [success, setSuccess] = useState<string >('');
+	const [failure, setFailur] = useState<string>('');
 	const [loading, setLoading] = useState<boolean>(false);
 	const [currentComponent, setCurrentComponent] = useState<string>('email');
 	const [isEmailValid, setIsEmailValid] = useState(false);
 	const [isPasskeySuccess, setIsPasskeySuccess] = useState(false);
-	const [userLoginEmail, setUserLoginEmail] = useState<string | null>(null);
-	const nextButtonRef = useRef<HTMLButtonElement | null>(null);
+	const [userLoginEmail, setUserLoginEmail] = useState<string>('');
+	const nextButtonRef = useRef<HTMLButtonElement>();
 
 	const successMessage = `Congratulations!! 🎉 You have successfully registered on ${envConfig.PLATFORM_DATA.name} 🚀`
 
@@ -133,14 +132,14 @@ const SignInUser = () => {
 
 								<div className="md:w-2/5 w-full p-10 flex">
 									<div className="w-full">
-										{(success || failure || fidoUserError) && (
+										{(success || failure) && (
 											<Alert
 												className='mb-4'
 												color={success ? 'success' : 'failure'}
-												onDismiss={() => setSuccess(null)}
+												onDismiss={() => setSuccess('')}
 											>
 												<span>
-													<p>{success || failure || fidoUserError}</p>
+													<p>{success || failure}</p>
 												</span>
 											</Alert>
 										)}

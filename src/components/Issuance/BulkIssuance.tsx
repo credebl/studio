@@ -40,8 +40,8 @@ const BulkIssuance = () => {
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [searchText, setSearchText] = useState('');
 	const [uploadMessage, setUploadMessage] = useState<IUploadMessage | null>(null)
-	const [success, setSuccess] = useState<string | null>('');
-	const [failure, setFailure] = useState<string | null>('');
+	const [success, setSuccess] = useState<string>('');
+	const [failure, setFailure] = useState<string>('');
 	const [mounted, setMounted] = useState<boolean>(false)
 	const [schemaType, setSchemaType]= useState<SchemaTypes>();
 	const [selectedTemplate, setSelectedTemplate] = useState<any>();

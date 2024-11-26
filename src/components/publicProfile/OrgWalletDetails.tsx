@@ -8,7 +8,7 @@ import CopyDid from "../../commonComponents/CopyDid";
 
 const OrgWalletDetails = ({ orgData }: IExploreOrg) => {
 
-    const [connectionInvitation, setConnectionInvitation] = useState<string | null>(null);
+    const [connectionInvitation, setConnectionInvitation] = useState<string>('');
 
     useEffect(() => {
         if (orgData && orgData?.org_agents?.length > 0) {

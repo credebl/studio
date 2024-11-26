@@ -22,7 +22,7 @@ import type { IAttributesDetails, ISchema, ISchemaData } from './interface';
 
 const VerificationSchemasList = () => {
 	const [schemasList, setSchemasList] = useState([]);
-	const [schemasDetailsErr, setSchemasDetailsErr] = useState<string | null>('');
+	const [schemasDetailsErr, setSchemasDetailsErr] = useState<string>('');
 	const [loading, setLoading] = useState<boolean>(true);
 	const [allSchemasFlag, setAllSchemasFlag] = useState<boolean>(false);
 	const [schemasListParameter, setSchemasListParameter] = useState({
@@ -309,7 +309,7 @@ const VerificationSchemasList = () => {
 					</div>
 				</div>
 				{schemasDetailsErr && (
-					<Alert color="failure" onDismiss={() => setSchemasDetailsErr(null)}>
+					<Alert color="failure" onDismiss={() => setSchemasDetailsErr('')}>
 						<span>
 							<p>{schemasDetailsErr}</p>
 						</span>

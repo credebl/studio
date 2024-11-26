@@ -33,10 +33,10 @@ const AddPasskey = ({ responseMessages }: { 	responseMessages: (value: IResponse
 	const [fidoLoader, setFidoLoader] = useState(true);
 	const [OrgUserEmail, setOrgUserEmail] = useState<string>('');
 	const [deviceList, setDeviceList] = useState<IDeviceData[]>([]);
-	const [addSuccess, setAddSuccess] = useState<string | null>('');
-	const [editSuccess, setEditSuccess] = useState<string | null>('');
-	const [editFailure, setEditFailure] = useState<string | null>('');
-	const [addfailure, setAddFailure] = useState<string | null>('');
+	const [addSuccess, setAddSuccess] = useState<string>('');
+	const [editSuccess, setEditSuccess] = useState<string>('');
+	const [editFailure, setEditFailure] = useState<string>('');
+	const [addfailure, setAddFailure] = useState<string>('');
 	const [disableFlag, setDisableFlag] = useState<boolean>(false);
 	const [isDevice, setIsDevice] = useState<boolean>(false);
 

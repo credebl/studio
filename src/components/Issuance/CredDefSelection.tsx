@@ -17,6 +17,7 @@ import { getCredentialDefinitions } from '../../api/issuance';
 import { pathRoutes } from '../../config/pathRoutes';
 import DateTooltip from '../Tooltip';
 import BackButton from '../../commonComponents/backbutton';
+import React from 'react';
 
 const CredDefSelection = () => {
 	const [schemaState, setSchemaState] = useState({
@@ -25,7 +26,7 @@ const CredDefSelection = () => {
 	});
 	const [loading, setLoading] = useState<boolean>(true);
 	const [schemaLoader, setSchemaLoader] = useState<boolean>(true);
-	const [error, setError] = useState<string | null>('');
+	const [error, setError] = useState<string>('');
 	const [credDefList, setCredDefList] = useState<TableData[]>([]);
 	const [schemaDetailsState, setSchemaDetailsState] = useState<SchemaState>({
 		schemaId: '',

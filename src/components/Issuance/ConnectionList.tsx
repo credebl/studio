@@ -43,7 +43,7 @@ const ConnectionList = (props: {
 
 	const [loading, setLoading] = useState<boolean>(false);
 	const [totalItem, setTotalItem] = useState(0);
-	const [error, setError] = useState<string | null>('');
+	const [error, setError] = useState<string>('');
 	const [pageInfo, setPageInfo] = useState({
 		totalItem: '',
 		nextPage: '',

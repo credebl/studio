@@ -16,14 +16,14 @@ import { EmptyListMessage } from '../EmptyListComponent';
 
 const Index = () => {
 	const [loading, setLoading] = useState<boolean>(true);
-	const [clientId, setClientId] = useState<string | null>(null);
-	const [clientSecret, setClientSecret] = useState<string | null>(null);
-	const [success, setSuccess] = useState<string | null>('');
-	const [failure, setFailure] = useState<string | null>('');
-	const [warning, setWarning] = useState<string | null>('');
+	const [clientId, setClientId] = useState<string>('');
+	const [clientSecret, setClientSecret] = useState<string>('');
+	const [success, setSuccess] = useState<string>('');
+	const [failure, setFailure] = useState<string>('');
+	const [warning, setWarning] = useState<string>('');
 	const [hideCopy, setHideCopy] = useState<boolean>(true);
 	const [userRoles, setUserRoles] = useState<string[]>([]);
-	const [orgnizationId, setOrgnizationId] = useState<string | null>(null);
+	const [orgnizationId, setOrgnizationId] = useState<string>('');
 	const [buttonDisplay, setButtonDisplay] = useState<boolean>(true);
 	const [regenerate, setRegenerate] = useState<boolean>(false);
 
@@ -71,8 +71,8 @@ const Index = () => {
 					setClientSecret(data?.data?.clientSecret);
 					setButtonDisplay(true);
 				} else {
-					setClientId(null);
-					setClientSecret(null);
+					setClientId('');
+					setClientSecret('');
 				}
 			} catch (error) {
 				setFailure(error as string);

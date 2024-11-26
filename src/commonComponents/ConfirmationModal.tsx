@@ -8,10 +8,10 @@ interface IProps {
 	onSuccess: (flag: boolean) => void;
 	message: string | ReactElement |React.ReactNode;
 	isProcessing: boolean;
-	success: string | null;
-	failure: string | null;
-	setFailure: (flag: string | null) => void;
-	setSuccess: (flag: string | null) => void;
+	success: string;
+	failure: string;
+	setFailure: (flag: string) => void;
+	setSuccess: (flag: string) => void;
 	buttonTitles: string[];
 	loading:boolean;
 	warning?:String
@@ -83,7 +83,7 @@ const ConfirmationModal = ({ openModal, closeModal, onSuccess, message, isProces
 										message={success}
 										type={'success'}
 										onAlertClose={() => {
-											setSuccess && setSuccess(null);
+											setSuccess && setSuccess('');
 										}}
 									/>
 								</div>
@@ -94,7 +94,7 @@ const ConfirmationModal = ({ openModal, closeModal, onSuccess, message, isProces
 										message={failure}
 										type={'failure'}
 										onAlertClose={() => {
-											setFailure && setFailure(null);
+											setFailure && setFailure('');
 										}}
 									/>
 								</div>

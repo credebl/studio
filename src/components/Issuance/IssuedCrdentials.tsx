@@ -34,7 +34,7 @@ const initialPageState = {
 
 const CredentialList = () => {
 	const [loading, setLoading] = useState<boolean>(true);
-	const [error, setError] = useState<string | null>('');
+	const [error, setError] = useState<string>('');
 	const [issuedCredList, setIssuedCredList] = useState<TableData[]>([]);
 	const [walletCreated, setWalletCreated] = useState(false);
 	const [listAPIParameter, setListAPIParameter] =

@@ -59,7 +59,7 @@ const EyeIconInvisible = () => (
 
 const ResetPassword = () => {
 	const [loading, setLoading] = useState<boolean>(false);
-	const [erroMsg, setErrMsg] = useState<string | null>(null);
+	const [erroMsg, setErrMsg] = useState<string>('');
 	const [message, setMessage] = useState<string>('');
 	const [passwordVisible, setPasswordVisible] = useState(false);
 	const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
@@ -138,7 +138,7 @@ const ResetPassword = () => {
 							{(message || erroMsg) && (
 								<Alert
 									color={message ? 'success' : 'failure'}
-									onDismiss={() => setErrMsg(null)}
+									onDismiss={() => setErrMsg('')}
 								>
 									<span>
 										<p>{message || erroMsg}</p>

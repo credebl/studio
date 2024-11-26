@@ -56,7 +56,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 		}
 	}, [props.orgData, props.openModal]);
 
-	const [erroMsg, setErrMsg] = useState<string | null>('');
+	const [erroMsg, setErrMsg] = useState<string>('');
 
 	const [imgError, setImgError] = useState('');
 

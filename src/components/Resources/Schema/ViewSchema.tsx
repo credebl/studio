@@ -63,15 +63,15 @@ const initialPageState = {
 };
 
 const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
-	const [schemaDetails, setSchemaDetails] = useState<SchemaData | null>(null);
+	const [schemaDetails, setSchemaDetails] = useState<SchemaData>();
 	const [credDeffList, setCredDeffList] = useState<any>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [createloader, setCreateLoader] = useState<boolean>(false);
 	const [credDeffloader, setCredDeffloader] = useState<boolean>(false);
-	const [success, setSuccess] = useState<string | null>(null);
-	const [credDefListErr, setCredDefListErr] = useState<string | null>(null);
-	const [schemaDetailErr, setSchemaDetailErr] = useState<string | null>(null);
-	const [failure, setFailure] = useState<string | null>(null);
+	const [success, setSuccess] = useState<string>('');
+	const [credDefListErr, setCredDefListErr] = useState<string>('');
+	const [schemaDetailErr, setSchemaDetailErr] = useState<string>('');
+	const [failure, setFailure] = useState<string>('');
 	const [orgId, setOrgId] = useState<string>('');
 	const [credDefAuto, setCredDefAuto] = useState<string>('');
 	const [ledgerPlatformLoading, setLedgerPlatformLoading] = useState(false);
@@ -438,8 +438,8 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
 														<Alert
 															color={success ? 'success' : 'failure'}
 															onDismiss={() => {
-																setSuccess(null);
-																setFailure(null);
+																setSuccess('');
+																setFailure('');
 															}}
 														>
 															<span>
@@ -501,7 +501,7 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
 			</div>
 			<div className="p-4">
 				{schemaDetailErr && (
-					<Alert color="failure" onDismiss={() => setSchemaDetailErr(null)}>
+					<Alert color="failure" onDismiss={() => setSchemaDetailErr('')}>
 						<span>
 							<p>{schemaDetailErr}</p>
 						</span>

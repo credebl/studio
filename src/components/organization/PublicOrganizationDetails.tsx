@@ -12,9 +12,9 @@ import { Card } from "flowbite-react";
 
 const PublicOrganizationDetails = ({ orgSlug }: { orgSlug: string }) => {
 
-    const [orgData, setOrgData] = useState<IOrgData | null>(null);
+    const [orgData, setOrgData] = useState<IOrgData>();
     const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>('');
+    const [error, setError] = useState<string>('');
 
     const getOrganizationData = async () => {
         setLoading(true);

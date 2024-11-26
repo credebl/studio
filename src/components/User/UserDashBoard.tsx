@@ -52,20 +52,17 @@ interface ICredDef {
 }
 
 const UserDashBoard = () => {
-	const [message, setMessage] = useState<string | null>('');
-	const [ecoMessage, setEcoMessage] = useState<string | null>('');
+	const [message, setMessage] = useState<string>('');
+	const [ecoMessage, setEcoMessage] = useState<string>('');
 	const [viewButton, setViewButton] = useState<boolean>(false);
-	const [error, setError] = useState<string | null>('');
+	const [error, setError] = useState<string>('');
 	const [currentPage, setCurrentPage] = useState(initialPageState);
-	const [organizationsList, setOrganizationList] =
-		useState<Array<Organisation> | null>(null);
+	const [organizationsList, setOrganizationList] = useState<Organisation[]>([]);
 		
-	const [activityList, setActivityList] = useState<Array<UserActivity> | null>(
-		null,
-	);
+	const [activityList, setActivityList] = useState<UserActivity[]>([]);
 	const [orgCount, setOrgCount] = useState(0);
 	const [schemaCount, setSchemaCount] = useState(0);
-	const [schemaList, setSchemaList] = useState<Array<ISchema> | null>(null);
+	const [schemaList, setSchemaList] = useState<ISchema[]>([]);
 	const [schemaListAPIParameter, setSchemaListAPIParameter] = useState({
 		itemPerPage: itemPerPage,
 		page: 1,
