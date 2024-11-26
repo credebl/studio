@@ -11,7 +11,7 @@ import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';
 import { dateConversion } from '../../utils/DateConversion';
 import DateTooltip from '../Tooltip';
-import type { IConnectionList, IVerificationConnectionsList } from './interface';
+import type { IConnectionList } from './interface';
 import SortDataTable from '../../commonComponents/datatable/SortDataTable';
 import { getFromLocalStorage, removeFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 
@@ -106,12 +106,10 @@ const ConnectionList = (props: {
 	};
 
 	const generateTable = async (connections: IConnectionList[]) => {
-		console.log("🚀 ~ generateTable ~ connections: vvv", connections)
 		try {
 			const connectionsData =
 				connections?.length > 0 &&
 				connections?.map((ele: IConnectionList) => {
-					console.log('el56:::', ele)
 					const createdOn = ele?.createDateTime
 						? ele?.createDateTime
 						: 'Not available';
@@ -141,7 +139,6 @@ const ConnectionList = (props: {
 
 												const updateConnectionList = connections?.map(
 													(item) => {
-														console.log('item678::', item)
 														if (item.connectionId === ele.connectionId) {
 															selectOrganization(item, inputElement.checked);
 															return {
@@ -152,10 +149,8 @@ const ConnectionList = (props: {
 														return item;
 													},
 												);
-												console.log('updateConnectionList5687878::::', updateConnectionList)
 												setConnectionList(updateConnectionList);
 											}}
-											// checked={ele.checked || isChecked}
 											className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-lg dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600 cursor-pointer"
 										/>
 									</div>
@@ -267,33 +262,6 @@ const ConnectionList = (props: {
 		{ columnName: 'Connection ID' },
 		{ columnName: 'Created on' },
 	];
-
-	// const selectConnection = (
-	// 	user: string,
-	// 	connectionId: string,
-	// 	checked: boolean,
-	// ) => {
-	// 	if (checked) {
-	// 		setSelectedConnectionList([
-	// 			{
-	// 				data: [
-	// 					{
-	// 						data: user,
-	// 					},
-	// 					{
-	// 						data: connectionId,
-	// 					},
-	// 				],
-	// 			},
-	// 		]);
-	// 	} else {
-	// 		setSelectedConnectionList((prevList) =>
-	// 			prevList.filter(
-	// 				(connection) => connection?.data[1]?.data !== connectionId,
-	// 			),
-	// 		);
-	// 	}
-	// };
 
 	const searchSortByValue = (value: any) => {
 		setListAPIParameter({
