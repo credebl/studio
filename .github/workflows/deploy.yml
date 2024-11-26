@@ -1,9 +1,9 @@
 name: Deploy
 on:
   push:
-    branches: develop-fixed-dco
+    branches: fix/minified-issue-on-various-components
   pull_request:
-    branches: develop-fixed-dco
+    branches: fix/minified-issue-on-various-components
 
 jobs:
   deploy:
