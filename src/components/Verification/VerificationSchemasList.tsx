@@ -91,7 +91,7 @@ const [schemasList, setSchemasList] = useState([]);
 	};
 	const handleFlag = async () => {
 		try {
-		  await setToLocalStorage(storageKeys.CONNECTION_FLAG, routeType);
+		  await setToLocalStorage(storageKeys.VERIFICATION_ROUTE_TYPE, routeType);
 		} catch (error) {
 		  console.error('Error updating localStorage:', error);
 		}

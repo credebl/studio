@@ -54,7 +54,7 @@ export const storageKeys = {
     ALL_SCHEMAS:'allSchemaFlag',
     ECOSYSTEM_ID: "ecosystem_id",
     ECOSYSTEM_ROLE: "ecosystem_role",
-    CONNECTION_FLAG:"routeType"
+    VERIFICATION_ROUTE_TYPE:"routeType"
 
 
 }
