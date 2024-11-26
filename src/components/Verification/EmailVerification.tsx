@@ -16,7 +16,7 @@ import React from 'react';
 
 const EmailVerification = () => {
     const [loading, setLoading] = useState<boolean>(false);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string | null>('');
     const [emailInputs, setEmailInputs] = useState([{ value: '' }]);
     const [w3cSchema, setW3cSchema] = useState<boolean>(false);
 
@@ -61,7 +61,7 @@ const EmailVerification = () => {
 
     const handleSubmit = async (values: IEmailValues) => {
         setLoading(true);
-        setErrorMessage(null);
+        setErrorMessage('');
 
         try {
             let payload;
@@ -227,7 +227,7 @@ const EmailVerification = () => {
                     message={errorMessage}
                     type={errorMessage ? 'failure' : 'success'}
                     onAlertClose={() => {
-                        setErrorMessage(null);
+                        setErrorMessage('');
                     }}
                 />
             )}

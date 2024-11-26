@@ -33,10 +33,10 @@ const AddPasskey = ({ responseMessages }: { 	responseMessages: (value: IResponse
 	const [fidoLoader, setFidoLoader] = useState(true);
 	const [OrgUserEmail, setOrgUserEmail] = useState<string>('');
 	const [deviceList, setDeviceList] = useState<IDeviceData[]>([]);
-	const [addSuccess, setAddSuccess] = useState<string | null>(null);
-	const [editSuccess, setEditSuccess] = useState<string | null>(null);
-	const [editFailure, setEditFailure] = useState<string | null>(null);
-	const [addfailure, setAddFailure] = useState<string | null>(null);
+	const [addSuccess, setAddSuccess] = useState<string | null>('');
+	const [editSuccess, setEditSuccess] = useState<string | null>('');
+	const [editFailure, setEditFailure] = useState<string | null>('');
+	const [addfailure, setAddFailure] = useState<string | null>('');
 	const [disableFlag, setDisableFlag] = useState<boolean>(false);
 	const [isDevice, setIsDevice] = useState<boolean>(false);
 
@@ -207,7 +207,7 @@ const AddPasskey = ({ responseMessages }: { 	responseMessages: (value: IResponse
 					<Alert
 						color={addSuccess ? 'success' : 'failure'}
 						onDismiss={() => {
-							setAddSuccess(null);
+							setAddSuccess('');
 							setFidoError('');
 							setAddFailure('');
 						}}
@@ -242,8 +242,8 @@ const AddPasskey = ({ responseMessages }: { 	responseMessages: (value: IResponse
 										message={editSuccess ?? editFailure}
 										type={editSuccess ? 'success' : 'error'}
 										onAlertClose={() => {
-											setEditSuccess(null);
-											setEditFailure(null);
+											setEditSuccess('');
+											setEditFailure('');
 										}}
 									/>
 									)}

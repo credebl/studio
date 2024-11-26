@@ -26,11 +26,11 @@ import { EcosystemRoles } from "../../common/enums";
 
 const DeleteOrganizations = () => {
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>('');
   const [organizationData, setOrganizationData] = useState<IOrgCount | null>(null);
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
   const [isWalletPresent, setIsWalletPresent] = useState<boolean>(false);
-  const [message, setMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>('');
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [deleteAction, setDeleteAction] = useState<() => void>(() => {});
   const [confirmMessage, setConfirmMessage] = useState<string | React.ReactNode>('');
@@ -302,8 +302,8 @@ const DeleteOrganizations = () => {
         message={message ?? error}
         type={message ? "success" : "failure"}
         onAlertClose={() => {
-          setMessage(null);
-          setError(null);
+          setMessage('');
+          setError('');
         }}
       />
 

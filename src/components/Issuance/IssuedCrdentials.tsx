@@ -34,7 +34,7 @@ const initialPageState = {
 
 const CredentialList = () => {
 	const [loading, setLoading] = useState<boolean>(true);
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<string | null>('');
 	const [issuedCredList, setIssuedCredList] = useState<TableData[]>([]);
 	const [walletCreated, setWalletCreated] = useState(false);
 	const [listAPIParameter, setListAPIParameter] =
@@ -152,7 +152,7 @@ const CredentialList = () => {
 						},
 					);
 					setIssuedCredList(credentialList);
-					setError(null);
+					setError('');
 				} else {
 					setIssuedCredList([]);
 				}
@@ -280,7 +280,7 @@ const CredentialList = () => {
 						message={error}
 						type={'failure'}
 						onAlertClose={() => {
-							setError(null);
+							setError('');
 						}}
 					/>
 					{!walletCreated && !loading ? (

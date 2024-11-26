@@ -46,8 +46,8 @@ const EmailIssuance = () => {
 	const [batchName, setBatchName] = useState('');
 	const [openResetModal, setOpenResetModal] = useState<boolean>(false);
 	const [attributes, setAttributes] = useState<IAttributes[]>([]);
-	const [success, setSuccess] = useState<string | null>(null);
-	const [failure, setFailure] = useState<string | null>(null);
+	const [success, setSuccess] = useState<string | null>('');
+	const [failure, setFailure] = useState<string | null>('');
 	const [isEditing, setIsEditing] = useState(false);
 	const [issueLoader, setIssueLoader] = useState(false);
 	const inputRef = useRef(null);
@@ -136,8 +136,8 @@ const EmailIssuance = () => {
 
 					setCredentialOptions(options);
 				} else {
-					setSuccess(null);
-					setFailure(null);
+					setSuccess('');
+					setFailure('');
 				}
 				setLoading(false);
 			}
@@ -166,8 +166,8 @@ const EmailIssuance = () => {
 					}));
 					setCredentialOptions(options);
 				} else {
-					setSuccess(null);
-					setFailure(null);
+					setSuccess('');
+					setFailure('');
 				}
 				setLoading(false);
 			}
@@ -175,8 +175,8 @@ const EmailIssuance = () => {
 
 			setCredentialOptions(options);
 		} catch (error) {
-			setSuccess(null);
-			setFailure(null);
+			setSuccess('');
+			setFailure('');
 		}
 	};
 
@@ -294,7 +294,7 @@ const EmailIssuance = () => {
 					setSuccess(data?.message);
 					setOpenModal(false);
 					setTimeout(() => {
-						setSuccess(null);
+						setSuccess('');
 					}, 3000);
 					handleReset();
 					setTimeout(() => {
@@ -312,7 +312,7 @@ const EmailIssuance = () => {
 				setOpenModal(false);
 				setIssueLoader(false);
 				setTimeout(() => {
-					setFailure(null);
+					setFailure('');
 				}, 4000);
 			}
 		}
@@ -378,8 +378,8 @@ const EmailIssuance = () => {
 						message={success ?? failure}
 						type={success ? 'success' : 'failure'}
 						onAlertClose={() => {
-							setSuccess(null);
-							setFailure(null);
+							setSuccess('');
+							setFailure('');
 						}}
 					/>
 				)}

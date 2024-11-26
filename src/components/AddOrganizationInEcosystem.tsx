@@ -16,6 +16,7 @@ import { Roles } from '../utils/enums/roles';
 import { Button } from 'flowbite-react';
 import { addOrganizationInEcosystem } from '../api/ecosystem';
 import { pathRoutes } from '../config/pathRoutes';
+import React from 'react';
 
 
 const initialPageState = {

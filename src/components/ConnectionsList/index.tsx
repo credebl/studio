@@ -29,7 +29,7 @@ const ConnectionList = () => {
 	const [listAPIParameter, setListAPIParameter] = useState(initialPageState);
 	const [connectionList, setConnectionList] = useState<TableData[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<string | null>('');
 	const [totalItem, setTotalItem] = useState(0);
 	const [pageInfo, setPageInfo] = useState({
 		totalItem: '',
@@ -80,7 +80,7 @@ const ConnectionList = () => {
 						};
 					});
 					setConnectionList(connections);
-					setError(null);
+					setError('');
 				} else {
 					setConnectionList([]);
 				}
@@ -143,7 +143,7 @@ const ConnectionList = () => {
 					message={error}
 					type={'failure'}
 					onAlertClose={() => {
-						setError(null);
+						setError('');
 					}}
 				/>
 			)}

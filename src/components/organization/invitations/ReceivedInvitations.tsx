@@ -29,8 +29,8 @@ const initialPageState = {
 const ReceivedInvitations = () => {
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
-	const [message, setMessage] = useState<string | null>(null);
-	const [error, setError] = useState<string | null>(null);
+	const [message, setMessage] = useState<string | null>('');
+	const [error, setError] = useState<string | null>('');
 
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const timestamp = Date.now();
@@ -139,8 +139,8 @@ const ReceivedInvitations = () => {
 						message={message ? message : error}
 						type={message ? 'success' : 'failure'}
 						onAlertClose={() => {
-							setMessage(null);
-							setError(null);
+							setMessage('');
+							setError('');
 						}}
 					/>
 

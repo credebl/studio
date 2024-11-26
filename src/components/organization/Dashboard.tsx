@@ -17,6 +17,7 @@ import { Roles } from '../../utils/enums/roles';
 import WalletSpinup from './walletCommonComponents/WalletSpinup';
 import { envConfig } from '../../config/envConfig';
 import { pathRoutes } from '../../config/pathRoutes';
+import React from 'react';
 
 const initialPageState = {
 	pageNumber: 1,

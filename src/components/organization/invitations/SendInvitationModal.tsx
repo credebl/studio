@@ -54,7 +54,7 @@ const SendInvitationModal = (props: {
 	const [initialInvitationData, setInitialInvitationData] = useState({
 		email: '',
 	});
-	const [erroMsg, setErrMsg] = useState<string | null>(null);
+	const [erroMsg, setErrMsg] = useState<string | null>('');
 
 	const getRoles = async () => {
 		const resRoles = await getOrganizationRoles();
@@ -150,7 +150,7 @@ const SendInvitationModal = (props: {
 					message={erroMsg}
 					type={'failure'}
 					onAlertClose={() => {
-						setErrMsg(null);
+						setErrMsg('');
 					}}
 				/>
 				<Formik

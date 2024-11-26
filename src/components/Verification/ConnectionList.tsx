@@ -34,7 +34,7 @@ const ConnectionList = (props: {
 	const [listAPIParameter, setListAPIParameter] =
 		useState<IConnectionListAPIParameter>(initialPageState);
 	const [totalItem, setTotalItem] = useState(0);
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<string | null>('');
 	const [pageInfo, setPageInfo] = useState({
 		totalItem: '',
 		nextPage: '',
@@ -134,7 +134,7 @@ const ConnectionList = (props: {
 				);
 
 				setConnectionList(connections);
-				setError(null);
+				setError('');
 			} else {
 				setConnectionList([]);
 			}
@@ -216,7 +216,7 @@ const ConnectionList = (props: {
 				message={error}
 				type={'failure'}
 				onAlertClose={() => {
-					setError(null);
+					setError('');
 				}}
 			/>
 			<SortDataTable

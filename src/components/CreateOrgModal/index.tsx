@@ -50,7 +50,7 @@ const CreateOrgModal = (props: IProps) => {
 		name: '',
 		description: '',
 	});
-	const [errMsg, setErrMsg] = useState<string | null>(null);
+	const [errMsg, setErrMsg] = useState<string | null>('');
 
 	const [imgError, setImgError] = useState('');
 
@@ -198,7 +198,7 @@ const CreateOrgModal = (props: IProps) => {
 					});
 					props.setOpenModal(false);
 					setImgError(' ')
-					setErrMsg(null);
+					setErrMsg('');
 				}}
 			>
 				<Modal.Header>Create {popupName}</Modal.Header>
@@ -207,7 +207,7 @@ const CreateOrgModal = (props: IProps) => {
 						message={errMsg}
 						type={'failure'}
 						onAlertClose={() => {
-							setErrMsg(null);
+							setErrMsg('');
 							
 						}}
 					/>

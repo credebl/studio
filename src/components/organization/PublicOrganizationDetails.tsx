@@ -14,7 +14,7 @@ const PublicOrganizationDetails = ({ orgSlug }: { orgSlug: string }) => {
 
     const [orgData, setOrgData] = useState<IOrgData | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>('');
 
     const getOrganizationData = async () => {
         setLoading(true);
@@ -57,7 +57,7 @@ const PublicOrganizationDetails = ({ orgSlug }: { orgSlug: string }) => {
                                         message={error}
                                         type={'failure'}
                                         onAlertClose={() => {
-                                            setError(null);
+                                            setError('');
                                         }}
                                     />
                                 )}

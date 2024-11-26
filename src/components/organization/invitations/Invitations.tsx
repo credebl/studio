@@ -36,9 +36,9 @@ const Invitations = () => {
     const [loading, setLoading] = useState<boolean>(false)
     const [deleteLoading, setDeleteLoading] = useState<boolean>(false)
     const [selectedInvitation, setSelectedInvitation] = useState<string>('')
-    const [message, setMessage] = useState<string | null>(null)
+    const [message, setMessage] = useState<string | null>('')
     const [showPopup, setShowPopup] = useState<boolean>(false)
-    const [error, setError] = useState<string | null>(null)
+    const [error, setError] = useState<string | null>('')
 		const [roles, setRoles] = useState<string[]>([]);
 		const [currentPage, setCurrentPage] = useState(initialPageState);
 		
@@ -145,8 +145,8 @@ const Invitations = () => {
                     message={message || error}
                     type={message ? 'success' : 'failure'}
                     onAlertClose={() => {
-                        setMessage(null)
-                        setError(null)
+                        setMessage('')
+                        setError('')
                     }}
                 />
               {loading ? (
@@ -242,8 +242,8 @@ const Invitations = () => {
                                                                 onClick={() => {
                                                                     setSelectedInvitation(invitation.id)
                                                                     setShowPopup(true)
-                                                                    setError(null)
-                                                                    setMessage(null)
+                                                                    setError('')
+                                                                    setMessage('')
                                                                 }}
                                                                 color="bg-white"
                                                                 className="ml-5 p-0 font-normal items-center mt-5 text-sm text-primary-700 border border-blue-700 text-center hover:!bg-primary-800 hover:text-white rounded-lg focus:ring-4 focus:ring-primary-300 sm:w-auto dark:hover:bg-primary-700 dark:text-white dark:bg-primary-700 dark:focus:ring-blue-800"

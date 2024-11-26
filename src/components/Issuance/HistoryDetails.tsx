@@ -12,6 +12,7 @@ import type { AxiosResponse } from 'axios';
 import { BulkIssuanceStatus } from '../../common/enums';
 import SortDataTable from '../../commonComponents/datatable/SortDataTable';
 import type { IConnectionListAPIParameter } from '../../api/connection';
+import React from 'react';
 
 interface IProps {
 	requestId: string;
@@ -29,7 +30,7 @@ const HistoryDetails = ({ requestId }: IProps) => {
 	const [listAPIParameter, setListAPIParameter] = useState(initialPageState);
 	const [historyList, setHistoryList] = useState<TableData[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<string | null>('');
 	const [totalItem, setTotalItem] = useState(0);
 	const [pageInfo, setPageInfo] = useState({
 		totalItem: '',
@@ -162,7 +163,7 @@ const HistoryDetails = ({ requestId }: IProps) => {
 				message={error}
 				type={'failure'}
 				onAlertClose={() => {
-					setError(null);
+					setError('');
 				}}
 			/>
 

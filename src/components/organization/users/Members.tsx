@@ -24,8 +24,8 @@ const initialPageState = {
 const Members = () => {
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(true);
-	const [message, setMessage] = useState<string | null>(null);
-	const [error, setError] = useState<string | null>(null);
+	const [message, setMessage] = useState<string | null>('');
+	const [error, setError] = useState<string | null>('');
 	const [userRoles, setUserRoles] = useState<string[]>([]);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 
@@ -122,8 +122,8 @@ const Members = () => {
 					message={message ? message : error}
 					type={message ? 'success' : 'failure'}
 					onAlertClose={() => {
-						setMessage(null);
-						setError(null);
+						setMessage('');
+						setError('');
 					}}
 				/>
 				{loading ? (

@@ -14,12 +14,13 @@ import DataTable from "../../commonComponents/datatable";
 import { getCredentialDefinitionsForVerification } from "../../api/verification";
 import CustomSpinner from "../CustomSpinner";
 import BackButton from  '../../commonComponents/backbutton'
+import React from "react";
 
 const CredDefSelection = () => {
 	const [schemaState, setSchemaState] = useState({ schemaName: '', version: '' })
 	const [loading, setLoading] = useState<boolean>(true)
 	const [schemaLoader, setSchemaLoader] = useState<boolean>(true)
-	const [error, setError] = useState<string | null>(null)
+	const [error, setError] = useState<string | null>('')
 	const [credDefList, setCredDefList] = useState<TableData[]>([])
 	const [schemaDetailsState, setSchemaDetailsState] = useState<SchemaState>({ schemaId: '', issuerDid: '', attributes: [], createdDateTime: '' })
 
@@ -155,7 +156,7 @@ const CredDefSelection = () => {
 				message={error}
 				type={'failure'}
 				onAlertClose={() => {
-					setError(null)
+					setError('')
 				}}
 			/>
 			<DataTable header={header} data={credDefList} loading={loading} callback={() => { }}></DataTable>

@@ -41,9 +41,9 @@ const WalletSpinup = (props: {
 	const [agentType, setAgentType] = useState<string>(AgentType.SHARED);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [walletSpinStep, setWalletSpinStep] = useState<number>(0);
-	const [success, setSuccess] = useState<string | null>(null);
+	const [success, setSuccess] = useState<string | null>('');
 	const [agentSpinupCall, setAgentSpinupCall] = useState<boolean>(false);
-	const [failure, setFailure] = useState<string | null>(null);
+	const [failure, setFailure] = useState<string | null>('');
 	const [seeds, setSeeds] = useState<string>('');
     const [maskedSeeds, setMaskedSeeds] = useState('');
 	const [orgData, setOrgData] = useState<Organisation | null>(null);
@@ -291,8 +291,8 @@ const submitDedicatedWallet = async (
 							message={success ?? failure}
 							type={success ? 'success' : 'failure'}
 							onAlertClose={() => {
-								setSuccess(null);
-								setFailure(null);
+								setSuccess('');
+								setFailure('');
 							}}
 						/>
 					)}

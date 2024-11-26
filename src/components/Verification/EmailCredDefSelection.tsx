@@ -17,7 +17,7 @@ import CustomCheckbox from "../../commonComponents/CustomCheckbox";
 
 const EmailCredDefSelection = () => {
     const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>('');
     const [credDefList, setCredDefList] = useState<TableData[]>([]);
     const [searchValue, setSearchValue] = useState('');
     const [selectedCredDefs, setSelectedCredDefs] = useState<CredDefData[]>([]);
@@ -166,7 +166,7 @@ const EmailCredDefSelection = () => {
                     message={error}
                     type={'failure'}
                     onAlertClose={() => {
-                        setError(null);
+                        setError('');
                     }}
                 />
             )}
