@@ -15,6 +15,7 @@ import CustomCheckbox from '../../commonComponents/CustomCheckbox';
 import { getOrganizationById } from '../../api/organization';
 import type { AxiosResponse } from 'axios';
 import { DidMethod } from '../../common/enums';
+import React from 'react';
 
 const EmailAttributesSelection = () => {
 	const [attributeList, setAttributeList] = useState<TableData[]>([]);
@@ -26,14 +27,14 @@ const EmailAttributesSelection = () => {
 		null,
 	);
 	const [w3cSchema, setW3cSchema] = useState<boolean>(false);
-	const [isCon, setIsCon] = useState<boolean>(false);
+	const [isConnectionProof, setIsConnectionProof] = useState<boolean>(false);
 
 	const ConnectionVerification = async () => {
-		const conn = await getFromLocalStorage(storageKeys.CONNECTION_FLAG)
+		const conn = await getFromLocalStorage(storageKeys.VERIFICATION_ROUTE_TYPE)
 		if(conn === 'Connection'){
-			setIsCon(true)
+			setIsConnectionProof(true)
 		}else{
-			setIsCon(false)
+			setIsConnectionProof(false)
 		}
 	  }
 	  useEffect(() => {
@@ -112,7 +113,7 @@ const EmailAttributesSelection = () => {
 		const handleSubmit = () => {
 			setErrMsg(null);
 
-			if(isCon){
+			if(isConnectionProof){
 				redirectToConnections();
 				return;
 			}
