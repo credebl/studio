@@ -16,6 +16,7 @@ import { getFromLocalStorage } from '../../../api/Auth';
 import { ethers } from 'ethers';
 import { envConfig } from '../../../config/envConfig';
 import { CommonConstants, Network, DidMethod } from '../../../common/enums';
+import React from 'react';
 
 interface IPolygonKeys {
 	privateKey: string;
@@ -26,8 +27,8 @@ interface IPolygonKeys {
 const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [errMsg, setErrMsg] = useState<string | null>(null);
-	const [successMsg, setSuccessMsg] = useState<string | null>(null);
+	const [errMsg, setErrMsg] = useState<string | null>('');
+	const [successMsg, setSuccessMsg] = useState<string | null>('');
 	const [seed, setSeed] = useState('');
 	const [generatedKeys, setGeneratedKeys] = useState<IPolygonKeys | null>(null);
 	const [ledgerValue, setLedgerValue] = useState<string | null>(null);
@@ -221,7 +222,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 		<Modal
 			show={props.openModal}
 			onClose={() => {
-				setErrMsg(null);
+				setErrMsg('');
 				setGeneratedKeys(null);
 				setHavePrivateKey(false);
 				props.setOpenModal(false);
@@ -234,8 +235,8 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 					message={successMsg ?? errMsg}
 					type={successMsg ? 'success' : 'failure'}
 					onAlertClose={() => {
-						setErrMsg(null);
-						setSuccessMsg(null);
+						setErrMsg('');
+						setSuccessMsg('');
 					}}
 				/>
 				<Formik

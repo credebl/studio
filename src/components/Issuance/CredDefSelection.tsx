@@ -25,7 +25,7 @@ const CredDefSelection = () => {
 	});
 	const [loading, setLoading] = useState<boolean>(true);
 	const [schemaLoader, setSchemaLoader] = useState<boolean>(true);
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<string | null>('');
 	const [credDefList, setCredDefList] = useState<TableData[]>([]);
 	const [schemaDetailsState, setSchemaDetailsState] = useState<SchemaState>({
 		schemaId: '',
@@ -206,7 +206,7 @@ const CredDefSelection = () => {
 				message={error}
 				type={'failure'}
 				onAlertClose={() => {
-					setError(null);
+					setError('');
 				}}
 			/>
 			<DataTable

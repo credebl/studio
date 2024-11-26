@@ -56,7 +56,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 		}
 	}, [props.orgData, props.openModal]);
 
-	const [erroMsg, setErrMsg] = useState<string | null>(null);
+	const [erroMsg, setErrMsg] = useState<string | null>('');
 
 	const [imgError, setImgError] = useState('');
 
@@ -145,7 +145,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 					website: props?.orgData?.website ?? '',
 				});
 				props.setOpenModal(false);
-				setErrMsg(null);
+				setErrMsg('');
 			}}
 		>
 			<Modal.Header>Edit Organization</Modal.Header>
@@ -154,7 +154,7 @@ const EditOrgdetailsModal = (props: EditOrgdetailsModalProps) => {
 					message={erroMsg}
 					type={'failure'}
 					onAlertClose={() => {
-						setErrMsg(null);
+						setErrMsg('');
 					}}
 				/>
 				<Formik

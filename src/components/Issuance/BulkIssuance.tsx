@@ -40,8 +40,8 @@ const BulkIssuance = () => {
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [searchText, setSearchText] = useState('');
 	const [uploadMessage, setUploadMessage] = useState<IUploadMessage | null>(null)
-	const [success, setSuccess] = useState<string | null>(null);
-	const [failure, setFailure] = useState<string | null>(null);
+	const [success, setSuccess] = useState<string | null>('');
+	const [failure, setFailure] = useState<string | null>('');
 	const [mounted, setMounted] = useState<boolean>(false)
 	const [schemaType, setSchemaType]= useState<SchemaTypes>();
 	const [selectedTemplate, setSelectedTemplate] = useState<any>();
@@ -139,8 +139,8 @@ const BulkIssuance = () => {
 					 setCredentialOptionsData(dropDownOptions);
 				} else {
 					setUploadMessage({message: response as string, type: "failure"});
-					setSuccess(null)
-					setFailure(null)
+					setSuccess('')
+					setFailure('')
 				}
 				setLoading(false);
 			}
@@ -173,15 +173,15 @@ const BulkIssuance = () => {
 					 setCredentialOptionsData(dropDownOptions);
 				} else {
 					setUploadMessage({message: response as string, type: "failure"});
-					setSuccess(null)
-					setFailure(null)
+					setSuccess('')
+					setFailure('')
 				}
 				setLoading(false);
 			}
 		} catch (error) {
 			setUploadMessage({ message: (error as Error).message, type: "failure" });
-			setSuccess(null)
-			setFailure(null)
+			setSuccess('')
+			setFailure('')
 		}
 	};
 
@@ -230,7 +230,7 @@ const BulkIssuance = () => {
 						downloadFile(fileUrl, 'downloadedFile.csv');
 						setSuccess('File downloaded successfully');
 						setTimeout(()=>{
-							setSuccess(null)
+							setSuccess('')
 						},5000)
 						setProcess(false);
 					} else {
@@ -238,24 +238,24 @@ const BulkIssuance = () => {
 						setTimeout(()=>{
 							setUploadMessage(null)
 						},5000)
-						setSuccess(null)
-						setFailure(null)
+						setSuccess('')
+						setFailure('')
 					}
 				} else {
 					setUploadMessage({message: 'API request was not successful', type: "failure"});
 					setTimeout(()=>{
 						setUploadMessage(null)
 					},5000)
-					setSuccess(null)
-					setFailure(null)
+					setSuccess('')
+					setFailure('')
 				}
 			} catch (error) {
 				setUploadMessage({message: error as string, type: "failure"});
 				setTimeout(()=>{
 					setUploadMessage(null)
 				},5000)
-				setSuccess(null)
-				setFailure(null)
+				setSuccess('')
+				setFailure('')
 			}
 		}
 
@@ -289,7 +289,7 @@ const BulkIssuance = () => {
 	useEffect(() => {
 		SOCKET.emit('bulk-connection')
 		SOCKET.on('bulk-issuance-process-completed', () => {
-			setSuccess(null)
+			setSuccess('')
 			console.log(`bulk-issuance-process-completed`);
 			toast.success('Issuance process completed', {
 				position: 'top-right',
@@ -304,7 +304,7 @@ const BulkIssuance = () => {
 		});
 
 		SOCKET.on('error-in-bulk-issuance-process', () => {
-			setFailure(null)
+			setFailure('')
 			console.log(`error-in-bulk-issuance-process-initiated`);
 			toast.error('Issuance process failed. Please retry', {
 				position: 'top-right',
@@ -328,8 +328,8 @@ const BulkIssuance = () => {
 			setTimeout(()=>{
 				setUploadMessage(null)
 			},5000)
-			setSuccess(null)
-			setFailure(null)
+			setSuccess('')
+			setFailure('')
 			return;
 		}
 		try {
@@ -366,8 +366,8 @@ const BulkIssuance = () => {
 				setTimeout(()=>{
 					setUploadMessage(null)
 				},5000)
-				setSuccess(null)
-				setFailure(null)
+				setSuccess('')
+				setFailure('')
 			}
 			setLoading(false);
 		} catch (err) {
@@ -469,7 +469,7 @@ const BulkIssuance = () => {
 	const handleReset = () => {
 		handleDiscardFile();
 		setCredentialSelected(null);
-		setSuccess(null);
+		setSuccess('');
 		onClear()
 	};
 	const handleResetForConfirm = () => {
@@ -493,7 +493,7 @@ const BulkIssuance = () => {
 			} else {
 				setFailure(response as string);
 				setTimeout(()=>{
-					setFailure(null)
+					setFailure('')
 				},5000)
 				setLoading(false);
 			}
@@ -501,7 +501,7 @@ const BulkIssuance = () => {
 			setLoading(false);
 			setFailure(response as string);
 			setTimeout(() => {
-				setFailure(null);
+				setFailure('');
 			}, 5000);
 		}
 	};
@@ -578,8 +578,8 @@ const BulkIssuance = () => {
 						message={success ?? failure}
 						type={success ? 'success' : 'failure'}
 						onAlertClose={() => {
-							setSuccess(null);
-							setFailure(null);
+							setSuccess('');
+							setFailure('');
 						}}
 						viewButton={Boolean((success && success === "Issuance process completed") || (failure && failure === "Issuance process failed, please retry"))}
 						path={pathRoutes.organizations.Issuance.history}

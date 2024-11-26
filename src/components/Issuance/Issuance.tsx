@@ -50,8 +50,8 @@ const IssueCred = () => {
 	const [schemaAttributesDetails, setSchemaAttributesDetails] = useState<
 	IAttribute[]
 	>([]);
-	const [success, setSuccess] = useState<string | null>(null);
-	const [error, setError] = useState<string | null>(null);
+	const [success, setSuccess] = useState<string | null>('');
+	const [error, setError] = useState<string | null>('');
 	const [w3cSchema, setW3CSchema]= useState<boolean>(false);
 	const [credentialType, setCredentialType] = useState<CredentialType>();
 	const [schemaType, setSchemaType] = useState<SchemaTypeValue>();
@@ -395,8 +395,8 @@ const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 					message={success ?? error}
 					type={success ? 'success' : 'failure'}
 					onAlertClose={() => {
-						setError(null);
-						setSuccess(null);
+						setError('');
+						setSuccess('');
 					}}
 				/>
 				<h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">

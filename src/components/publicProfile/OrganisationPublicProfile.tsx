@@ -21,7 +21,7 @@ const OrganisationPublicProfile = () => {
 	const [organizationList, setOrganizationList] = useState([]);
 
 	const [loading, setLoading] = useState<boolean>(true);
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<string | null>('');
 	const [searchText, setSearchText] = useState('');
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const onPageChange = (page: number) => {
@@ -93,7 +93,7 @@ const OrganisationPublicProfile = () => {
 				message={error}
 				type={'failure'}
 				onAlertClose={() => {
-					setError(null);
+					setError('');
 				}}
 			/>
 

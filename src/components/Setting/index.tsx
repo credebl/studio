@@ -18,9 +18,9 @@ const Index = () => {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [clientId, setClientId] = useState<string | null>(null);
 	const [clientSecret, setClientSecret] = useState<string | null>(null);
-	const [success, setSuccess] = useState<string | null>(null);
-	const [failure, setFailure] = useState<string | null>(null);
-	const [warning, setWarning] = useState<string | null>(null);
+	const [success, setSuccess] = useState<string | null>('');
+	const [failure, setFailure] = useState<string | null>('');
+	const [warning, setWarning] = useState<string | null>('');
 	const [hideCopy, setHideCopy] = useState<boolean>(true);
 	const [userRoles, setUserRoles] = useState<string[]>([]);
 	const [orgnizationId, setOrgnizationId] = useState<string | null>(null);
@@ -111,8 +111,8 @@ const Index = () => {
 						message={success ?? failure}
 						type={success ? 'success' : 'failure'}
 						onAlertClose={() => {
-							setSuccess(null);
-							setFailure(null);
+							setSuccess('');
+							setFailure('');
 						}}
 					/>
 				)}
@@ -186,8 +186,8 @@ const Index = () => {
 																message={warning}
 																type={'warning'}
 																onAlertClose={() => {
-																	setWarning(null);
-																	setFailure(null);
+																	setWarning('');
+																	setFailure('');
 																}}
 															/>
 														)}

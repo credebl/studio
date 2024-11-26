@@ -43,7 +43,7 @@ const ConnectionList = (props: {
 
 	const [loading, setLoading] = useState<boolean>(false);
 	const [totalItem, setTotalItem] = useState(0);
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<string | null>('');
 	const [pageInfo, setPageInfo] = useState({
 		totalItem: '',
 		nextPage: '',
@@ -167,7 +167,7 @@ const ConnectionList = (props: {
 					lastPage: lastPage,
 				});
 				setConnectionList(data?.data?.data);
-				setError(null);
+				setError('');
 			} else {
 				setConnectionList([]);
 			}
@@ -273,7 +273,7 @@ const ConnectionList = (props: {
 				message={error}
 				type={'failure'}
 				onAlertClose={() => {
-					setError(null);
+					setError('');
 				}}
 			/>
 			<NewDataTable

@@ -32,8 +32,8 @@ const initialPageState = {
 const OrganizationsList = () => {
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(true);
-	const [message, setMessage] = useState<string | null>(null);
-	const [error, setError] = useState<string | null>(null);
+	const [message, setMessage] = useState<string | null>('');
+	const [error, setError] = useState<string | null>('');
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const onPageChange = (page: number) => {
 		setCurrentPage({
@@ -281,8 +281,8 @@ const OrganizationsList = () => {
 						message={message || error}
 						type={message ? 'success' : 'failure'}
 						onAlertClose={() => {
-							setMessage(null);
-							setError(null);
+							setMessage('');
+							setError('');
 						}}
 					/>
 
