@@ -57,13 +57,6 @@ export interface IConnectionList {
 	checked?: boolean;
 
 }
-export interface IVerificationConnectionsList {
-	theirLabel: string;
-	connectionId: string;
-	createDateTime: string;
-	checked?: boolean;
-}
-
 export interface SchemaDetail {
 	schemaName: string;
 	version: string;
