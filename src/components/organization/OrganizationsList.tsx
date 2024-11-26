@@ -127,6 +127,7 @@ const OrganizationsList = () => {
 		window.location.href = pathRoutes.organizations.dashboard;
 	};
 	let content: React.JSX.Element = <></>;
+	console.log("🚀 ~ OrganizationsList ~ organizationsList:", organizationsList)
 	if (organizationsList && organizationsList?.length > 0) {
 		console.log("test1");
 		content = (
