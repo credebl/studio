@@ -53,6 +53,7 @@ const OrganizationsList = () => {
 	};
 
 	const getAllOrganizations = async () => {
+		try {
 		setLoading(true);
 		const response = await getOrganizations(
 			currentPage.pageNumber,
@@ -78,10 +79,14 @@ const OrganizationsList = () => {
 				totalCount: totalCount,
 			});
 		} else {
-			setError(response as string);
-		}
-		setLoading(false);
-	};
+            setError(data?.message || 'Unable to fetch organizations');
+        }
+    } catch (err) {
+        setError('An error occurred while fetching organizations');
+    } finally {
+        setLoading(false);
+    }
+};
 
 	useEffect(() => {
 		let getData: NodeJS.Timeout;
@@ -237,6 +242,7 @@ const OrganizationsList = () => {
 	}
 
 	console.log("test3333");
+	console.log({ message, error, organizationsList, currentPage });
 	
 	return (
 
