@@ -46,12 +46,12 @@ const IssueCred = () => {
 		IssuanceFormPayload[]
 	>([]);
 	const [issuanceLoader, setIssuanceLoader] = useState<boolean>(false);
-	const [failure, setFailure] = useState<string | null>(null);
+	const [failure, setFailure] = useState<string>('');
 	const [schemaAttributesDetails, setSchemaAttributesDetails] = useState<
 	IAttribute[]
 	>([]);
-	const [success, setSuccess] = useState<string | null>('');
-	const [error, setError] = useState<string | null>('');
+	const [success, setSuccess] = useState<string>('');
+	const [error, setError] = useState<string>('');
 	const [w3cSchema, setW3CSchema]= useState<boolean>(false);
 	const [credentialType, setCredentialType] = useState<CredentialType>();
 	const [schemaType, setSchemaType] = useState<SchemaTypeValue>();
@@ -442,7 +442,7 @@ const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 								<Form>
 									{failure && (
 										<div className="pt-1 pb-1">
-											<Alert color="failure" onDismiss={() => setFailure(null)}>
+											<Alert color="failure" onDismiss={() => setFailure('')}>
 												<span>
 													<p>{failure}</p>
 												</span>

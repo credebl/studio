@@ -26,7 +26,7 @@ const SignUpUser = () => {
 
 	const [loading, setLoading] = useState<boolean>(false)
 	const [verifyLoader, setVerifyLoader] = useState<boolean>(false)
-	const [erroMsg, setErrMsg] = useState<string | null>(null)
+	const [erroMsg, setErrMsg] = useState<string>('')
 	const [verificationSuccess, setVerificationSuccess] = useState<string>('')
 	const [email, setEmail] = useState<string>('')
 	const [nextflag, setNextFlag] = useState<boolean>(false)
@@ -119,7 +119,7 @@ const SignUpUser = () => {
 									<Alert
 										color={verificationSuccess ? "success" : "failure"}
 										onDismiss={() => {
-											setErrMsg(null);
+											setErrMsg('');
 											setVerificationSuccess('');
 										}}
 									>

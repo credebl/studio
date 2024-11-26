@@ -41,7 +41,7 @@ const SchemaList = (props: {
 
 	const verificationFlag = props.verificationFlag ?? false;
 	const [schemaList, setSchemaList] = useState([]);
-	const [schemaListErr, setSchemaListErr] = useState<string | null>('');
+	const [schemaListErr, setSchemaListErr] = useState<string>('');
 	const [loading, setLoading] = useState<boolean>(true);
 	const [allSchemaFlag, setAllSchemaFlag] = useState<boolean>(false);
 	const [orgId, setOrgId] = useState<string>('');

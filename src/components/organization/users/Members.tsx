@@ -14,6 +14,7 @@ import type { User } from '../interfaces/users';
 import { getFromLocalStorage } from '../../../api/Auth';
 import { getOrganizationUsers } from '../../../api/organization';
 import { EmptyListMessage } from '../../EmptyListComponent';
+import React from 'react';
 
 const initialPageState = {
 	pageNumber: 1,
@@ -24,8 +25,8 @@ const initialPageState = {
 const Members = () => {
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(true);
-	const [message, setMessage] = useState<string | null>('');
-	const [error, setError] = useState<string | null>('');
+	const [message, setMessage] = useState<string>('');
+	const [error, setError] = useState<string>('');
 	const [userRoles, setUserRoles] = useState<string[]>([]);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 
@@ -37,8 +38,8 @@ const Members = () => {
 	};
 	const [searchText, setSearchText] = useState('');
 
-	const [usersList, setUsersList] = useState<Array<User> | null>(null);
-	const [selectedUser, setSelectedUser] = useState<User | null>(null);
+	const [usersList, setUsersList] = useState<User[]>([]);
+	const [selectedUser, setSelectedUser] = useState<User>();
 	const props = { openModal, setOpenModal };
 
 	const getAllUsers = async () => {

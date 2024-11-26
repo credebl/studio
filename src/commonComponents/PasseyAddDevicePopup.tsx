@@ -20,9 +20,9 @@ const PasskeyAddDevice = (props: {
 	registerWithPasskey: (flag: boolean) => Promise<void>
 }
 ) => {
-	const [fidoUserError, setFidoUserError] = useState<string | null>(null)
+	const [fidoUserError, setFidoUserError] = useState<string>('')
 	const [nextflag, setNextFlag] = useState<boolean>(false)
-	const [success, setSuccess] = useState<string | null>(null)
+	const [success, setSuccess] = useState<string>('')
 	const [passwordVisible, setPasswordVisible] = useState(false);
 
 	const savePassword = async (values: PasswordValue) => {
@@ -60,8 +60,8 @@ const PasskeyAddDevice = (props: {
 							<Alert
 								color={success ? "success" : "failure"}
 								onDismiss={() => {
-									setSuccess(null)
-									setFidoUserError(null)
+									setSuccess('')
+									setFidoUserError('')
 								}
 								}
 							>

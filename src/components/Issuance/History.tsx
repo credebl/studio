@@ -20,6 +20,7 @@ import {
 import { ToastContainer, toast } from 'react-toastify';
 import SortDataTable from '../../commonComponents/datatable/SortDataTable';
 import type { IConnectionListAPIParameter } from '../../api/connection';
+import React from 'react';
 
 const HistoryBulkIssuance = () => {
 	const initialPageState = {
@@ -32,8 +33,8 @@ const HistoryBulkIssuance = () => {
 	const [listAPIParameter, setListAPIParameter] = useState(initialPageState);
 	const [connectionList, setConnectionList] = useState<TableData[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
-	const [failure, setFailure] = useState<string | null>('');
-	const [success, setSuccess] = useState<string | null>('');
+	const [failure, setFailure] = useState<string>('');
+	const [success, setSuccess] = useState<string>('');
 	const [totalItem, setTotalItem] = useState(0);
 	const [pageInfo, setPageInfo] = useState({
 		totalItem: '',

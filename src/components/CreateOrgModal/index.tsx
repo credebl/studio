@@ -50,7 +50,7 @@ const CreateOrgModal = (props: IProps) => {
 		name: '',
 		description: '',
 	});
-	const [errMsg, setErrMsg] = useState<string | null>('');
+	const [errMsg, setErrMsg] = useState<string>('');
 
 	const [imgError, setImgError] = useState('');
 

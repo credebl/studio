@@ -17,7 +17,7 @@ import CustomCheckbox from "../../commonComponents/CustomCheckbox";
 
 const EmailCredDefSelection = () => {
     const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>('');
+    const [error, setError] = useState<string>('');
     const [credDefList, setCredDefList] = useState<TableData[]>([]);
     const [searchValue, setSearchValue] = useState('');
     const [selectedCredDefs, setSelectedCredDefs] = useState<CredDefData[]>([]);

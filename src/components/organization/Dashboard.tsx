@@ -27,20 +27,20 @@ const initialPageState = {
 
 
 const Dashboard = () => {
-	const [orgData, setOrgData] = useState<Organisation | null>(null);
+	// FIXME: initial state of setOrgData and setOrgDashboard
+	const [orgData, setOrgData] = useState<Organisation | undefined>(undefined);
 	const [walletStatus, setWalletStatus] = useState<boolean>(false);
-	const [orgDashboard, setOrgDashboard] = useState<OrgDashboard | null>(null);
+	const [orgDashboard, setOrgDashboard] = useState<OrgDashboard | undefined>(undefined);
 	const [success, setSuccess] = useState<string>('');
 	const [failure, setFailure] = useState<string>('');
-	const [loading, setLoading] = useState<boolean | null>(true);
+	const [loading, setLoading] = useState<boolean>(true);
 	const [userRoles, setUserRoles] = useState<string[]>([]);
 	const [orgSuccess, setOrgSuccess] = useState<string>('');
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const [ecoCount, setEcoCount] = useState(0);
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<string>('');
 	const [redirectToEndorsment, setRedirectToEndorsment] = useState<boolean>();
-	const [ecosystemUserRoles, setEcosystemUserRoles] = useState<string>('');
 
 
 
@@ -163,7 +163,7 @@ const Dashboard = () => {
 			setSuccess('');
 			setFailure('');
 		}, 3000);
-	}, [success !== null, failure !== null]);
+	}, [success !== '', failure !== '']);
 
 	const setWalletSpinupStatus = (status: boolean) => {
 		setSuccess('Wallet created successfully');
@@ -320,7 +320,7 @@ const Dashboard = () => {
 				{(success || failure) && (
 					<Alert
 						color={success ? 'success' : 'failure'}
-						onDismiss={() => setFailure(null)}
+						onDismiss={() => setFailure('')}
 					>
 						<span>
 							<p>{success || failure}</p>

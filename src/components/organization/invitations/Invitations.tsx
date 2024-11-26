@@ -36,9 +36,9 @@ const Invitations = () => {
     const [loading, setLoading] = useState<boolean>(false)
     const [deleteLoading, setDeleteLoading] = useState<boolean>(false)
     const [selectedInvitation, setSelectedInvitation] = useState<string>('')
-    const [message, setMessage] = useState<string | null>('')
+    const [message, setMessage] = useState<string>('')
     const [showPopup, setShowPopup] = useState<boolean>(false)
-    const [error, setError] = useState<string | null>('')
+    const [error, setError] = useState<string>('')
 		const [roles, setRoles] = useState<string[]>([]);
 		const [currentPage, setCurrentPage] = useState(initialPageState);
 		
@@ -49,7 +49,7 @@ const Invitations = () => {
         })
     };
     const [searchText, setSearchText] = useState("");
-    const [invitationsList, setInvitationsList] = useState<Array<Invitation> | null>(null)
+        const [invitationsList, setInvitationsList] = useState<Invitation[]>([])
     const props = { openModal, setOpenModal };
 		
     const getAllInvitations = async () => {

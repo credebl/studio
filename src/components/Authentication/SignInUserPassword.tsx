@@ -34,8 +34,8 @@ interface SignInUser3Props {
 const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 	const [email, setEmail] = useState(signInUserProps?.email);
 	const [fidoUserError, setFidoUserError] = useState('');
-	const [success, setSuccess] = useState<string | null>(null);
-	const [failure, setFailure] = useState<string | null>(null);
+	const [success, setSuccess] = useState<string>('');
+	const [failure, setFailure] = useState<string>('');
 	const [isForgotPassLoading, setForgotPassLoading] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [currentComponent, setCurrentComponent] = useState<string>('email');
@@ -174,8 +174,8 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 											className="mb-4"
 											color={success ? 'success' : 'failure'}
 											onDismiss={() => {
-												setSuccess(null);
-												setFailure(null);
+												setSuccess('');
+												setFailure('');
 											}}
 										>
 											<span>

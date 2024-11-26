@@ -16,7 +16,7 @@ import React from 'react';
 
 const EmailVerification = () => {
     const [loading, setLoading] = useState<boolean>(false);
-    const [errorMessage, setErrorMessage] = useState<string | null>('');
+    const [errorMessage, setErrorMessage] = useState<string>('');
     const [emailInputs, setEmailInputs] = useState([{ value: '' }]);
     const [w3cSchema, setW3cSchema] = useState<boolean>(false);
 

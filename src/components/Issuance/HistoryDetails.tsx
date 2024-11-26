@@ -30,7 +30,7 @@ const HistoryDetails = ({ requestId }: IProps) => {
 	const [listAPIParameter, setListAPIParameter] = useState(initialPageState);
 	const [historyList, setHistoryList] = useState<TableData[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
-	const [error, setError] = useState<string | null>('');
+	const [error, setError] = useState<string>('');
 	const [totalItem, setTotalItem] = useState(0);
 	const [pageInfo, setPageInfo] = useState({
 		totalItem: '',

@@ -6,6 +6,7 @@ import type { AxiosResponse } from 'axios';
 import { TextTittlecase } from '../../../utils/TextTransform';
 import type { User } from "../interfaces/users";
 import { apiStatusCodes } from "../../../config/CommonConstant";
+import React from 'react';
 
 interface RoleI {
     id: string
@@ -19,9 +20,9 @@ const EditUserRoleModal = (props: { openModal: boolean; user: User; setMessage: 
 
     const [loading, setLoading] = useState<boolean>(false)
 
-    const [roles, setRoles] = useState<RoleI[] | null>(null)
+    const [roles, setRoles] = useState<RoleI[]>([])
 
-    const [erroMsg, setErrMsg] = useState<string | null>(null)
+    const [erroMsg, setErrMsg] = useState<string>('')
 
     const getRoles = async () => {
 

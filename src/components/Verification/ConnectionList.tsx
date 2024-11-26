@@ -34,7 +34,7 @@ const ConnectionList = (props: {
 	const [listAPIParameter, setListAPIParameter] =
 		useState<IConnectionListAPIParameter>(initialPageState);
 	const [totalItem, setTotalItem] = useState(0);
-	const [error, setError] = useState<string | null>('');
+	const [error, setError] = useState<string>('');
 	const [pageInfo, setPageInfo] = useState({
 		totalItem: '',
 		nextPage: '',

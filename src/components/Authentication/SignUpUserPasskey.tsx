@@ -27,10 +27,10 @@ interface passwordValues {
 const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firstName: string; lastName: string }) => {
 
     const [loading, setLoading] = useState<boolean>(false)
-    const [erroMsg, setErrMsg] = useState<string | null>(null)
+    const [erroMsg, setErrMsg] = useState<string>('')
     const [verificationSuccess, setVerificationSuccess] = useState<string>('')
-    const [addSuccess, setAddSuccess] = useState<string | null>(null)
-    const [addfailure, setAddFailure] = useState<string | null>(null)
+    const [addSuccess, setAddSuccess] = useState<string>('')
+    const [addfailure, setAddFailure] = useState<string>('')
     const [emailAutoFill, setEmailAutoFill] = useState<string>('')
     const [fidoError, setFidoError] = useState("")
     const [currentComponent, setCurrentComponent] = useState<string>('email');
@@ -205,7 +205,7 @@ const SignUpUserPasskey = ({ email, firstName, lastName }: { email: string, firs
                                     <Alert
                                         color={verificationSuccess ? "success" : "failure"}
                                         onDismiss={() => {
-                                            setAddSuccess(null)
+                                            setAddSuccess('')
                                             setFidoError('')
                                             setErrMsg('')
                                         }}

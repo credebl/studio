@@ -26,8 +26,8 @@ import { DidMethod, RequestType } from '../../common/enums';
 
 const VerificationCred = () => {
 	const [attributeList, setAttributeList] = useState<TableData[]>([]);
-	const [proofReqSuccess, setProofReqSuccess] = useState<string | null>(null);
-	const [errMsg, setErrMsg] = useState<string | null>(null);
+	const [proofReqSuccess, setProofReqSuccess] = useState<string>('');
+	const [errMsg, setErrMsg] = useState<string>('');
 	const [display, setDisplay] = useState<boolean | undefined>(false);
 	const [schemaDetails, setSchemaDetails] = useState<SchemaDetail>({
 		schemaName: '',
@@ -44,11 +44,11 @@ const VerificationCred = () => {
 	});
 	const [w3cSchema, setW3CSchema] = useState<boolean>(false);
 	const [requestType, setRequestType] = useState<RequestType>();
-	const [failure, setFailure] = useState<string | null>(null);
+	const [failure, setFailure] = useState<string>('');
 	const [loading, setLoading] = useState<boolean>(true);
 	const [requestLoader, setRequestLoader] = useState<boolean>(false);
-	const [attributeData, setAttributeData] = useState<ISelectedUser[] | null>(
-		null,
+	const [attributeData, setAttributeData] = useState<ISelectedUser[]>(
+		[],
 	);
 
 	useEffect(() => {
@@ -541,8 +541,8 @@ const VerificationCred = () => {
 					<Alert
 						color={proofReqSuccess ? 'success' : 'failure'}
 						onDismiss={() => {
-							setProofReqSuccess(null);
-							setErrMsg(null);
+							setProofReqSuccess('');
+							setErrMsg('');
 						}}
 					>
 						{proofReqSuccess || errMsg}

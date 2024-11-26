@@ -19,6 +19,7 @@ import { pathRoutes } from '../../../config/pathRoutes';
 import { EmptyListMessage } from '../../EmptyListComponent';
 import CustomSpinner from '../../CustomSpinner';
 import CustomAvatar from '../../Avatar';
+import React from 'react';
 
 const initialPageState = {
 	pageNumber: 1,
@@ -29,8 +30,8 @@ const initialPageState = {
 const ReceivedInvitations = () => {
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
-	const [message, setMessage] = useState<string | null>('');
-	const [error, setError] = useState<string | null>('');
+	const [message, setMessage] = useState<string>('');
+	const [error, setError] = useState<string>('');
 
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const timestamp = Date.now();
@@ -44,7 +45,7 @@ const ReceivedInvitations = () => {
 	const [searchText, setSearchText] = useState('');
 
 	const [invitationsList, setInvitationsList] =
-		useState<Array<Invitation> | null>(null);
+		useState<Invitation[]>([]);
 	const props = { openModal, setOpenModal };
 
 	//Fetch the user organization list

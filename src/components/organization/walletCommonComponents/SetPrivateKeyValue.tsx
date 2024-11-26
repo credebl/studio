@@ -34,7 +34,7 @@ const SetPrivateKeyValueInput = ({
 }: IProps) => {
 	const [havePrivateKey, setHavePrivateKey] = useState(false);
 	const [generatedKeys, setGeneratedKeys] = useState<IPolygonKeys | null>(null);
-	const [errorMessage, setErrorMessage] = useState<string | null>(null);
+	const [errorMessage, setErrorMessage] = useState<string>('');
 	const [loading, setLoading] = useState(false);
 
 	const checkWalletBalance = async (privateKey: string, network: Network) => {
@@ -57,7 +57,7 @@ const SetPrivateKeyValueInput = ({
 			if (parseFloat(etherBalance) < CommonConstants.BALANCELIMIT) {
 				setErrorMessage('You have insufficient funds.');
 			} else {
-				setErrorMessage(null);
+				setErrorMessage('');
 			}
 
 			return etherBalance;
@@ -71,7 +71,7 @@ const SetPrivateKeyValueInput = ({
 		if (privateKeyValue && privateKeyValue.length === 64) {
 			checkWalletBalance(privateKeyValue, Network.TESTNET);
 		} else {
-			setErrorMessage(null);
+			setErrorMessage('');
 		}
 
 	}, [privateKeyValue]);
@@ -79,11 +79,11 @@ const SetPrivateKeyValueInput = ({
 	useEffect(() => {
 		if (havePrivateKey) {
 			setPrivateKeyValue('');
-			setErrorMessage(null);
+			setErrorMessage('');
 			setGeneratedKeys(null);
 		} else {
 			setPrivateKeyValue('');
-			setErrorMessage(null);
+			setErrorMessage('');
 		}
 	}, [havePrivateKey]);
 

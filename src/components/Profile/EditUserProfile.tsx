@@ -33,8 +33,8 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
 
   const [loading, setLoading] = useState<boolean>(false)
   const [isImageEmpty, setIsImageEmpty] = useState(true)
-  const [success, setSuccess] = useState<string | null>(null)
-  const [failure, setFailure] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string>('')
+  const [failure, setFailure] = useState<string>('')
 
   const [initialProfileData, setInitialProfileData] = useState({
     profileImg: userProfileInfo?.profileImg || "",
@@ -209,8 +209,8 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
                 <Alert
                   color={success ? "success" : "failure"}
                   onDismiss={() => {
-                    setSuccess(null)
-                    setFailure(null)
+                    setSuccess('')
+                    setFailure('')
                   }}
                 >
                   <span>

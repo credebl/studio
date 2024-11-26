@@ -14,6 +14,7 @@ import {
 } from '../../../api/invitations';
 import { getOrganizationRoles } from '../../../api/organization';
 import { getFromLocalStorage } from '../../../api/Auth';
+import React from 'react';
 
 
 interface Values {
@@ -46,7 +47,7 @@ const SendInvitationModal = (props: {
 
 	const [invitations, setInvitations] = useState<Invitations[]>([]);
 
-	const [memberRole, setMemberRole] = useState<RoleI | null>(null);
+	const [memberRole, setMemberRole] = useState<RoleI>();
 
 	const [initialData, setInitialData] = useState({
 		email: '',
@@ -54,7 +55,7 @@ const SendInvitationModal = (props: {
 	const [initialInvitationData, setInitialInvitationData] = useState({
 		email: '',
 	});
-	const [erroMsg, setErrMsg] = useState<string | null>('');
+	const [erroMsg, setErrMsg] = useState<string>('');
 
 	const getRoles = async () => {
 		const resRoles = await getOrganizationRoles();

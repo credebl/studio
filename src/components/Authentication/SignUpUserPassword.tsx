@@ -39,7 +39,7 @@ const SignUpUserPassword = ({
 	lastName: string;
 }) => {
 	const [loading, setLoading] = useState<boolean>(false);
-	const [erroMsg, setErrMsg] = useState<string | null>(null);
+	const [erroMsg, setErrMsg] = useState<string>('');
 	const [verificationSuccess] = useState<string>('');
 	const [passwordVisible, setPasswordVisible] = useState(false);
 	const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
@@ -116,7 +116,7 @@ const SignUpUserPassword = ({
 								{(verificationSuccess || erroMsg) && (
 									<Alert
 										color={verificationSuccess ? 'success' : 'failure'}
-										onDismiss={() => setErrMsg(null)}
+										onDismiss={() => setErrMsg('')}
 									>
 										<span>
 											<p>{verificationSuccess || erroMsg}</p>

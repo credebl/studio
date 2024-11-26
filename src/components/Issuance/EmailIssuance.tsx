@@ -46,8 +46,8 @@ const EmailIssuance = () => {
 	const [batchName, setBatchName] = useState('');
 	const [openResetModal, setOpenResetModal] = useState<boolean>(false);
 	const [attributes, setAttributes] = useState<IAttributes[]>([]);
-	const [success, setSuccess] = useState<string | null>('');
-	const [failure, setFailure] = useState<string | null>('');
+	const [success, setSuccess] = useState<string>('');
+	const [failure, setFailure] = useState<string>('');
 	const [isEditing, setIsEditing] = useState(false);
 	const [issueLoader, setIssueLoader] = useState(false);
 	const inputRef = useRef(null);

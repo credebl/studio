@@ -20,7 +20,7 @@ const CredDefSelection = () => {
 	const [schemaState, setSchemaState] = useState({ schemaName: '', version: '' })
 	const [loading, setLoading] = useState<boolean>(true)
 	const [schemaLoader, setSchemaLoader] = useState<boolean>(true)
-	const [error, setError] = useState<string | null>('')
+	const [error, setError] = useState<string>('')
 	const [credDefList, setCredDefList] = useState<TableData[]>([])
 	const [schemaDetailsState, setSchemaDetailsState] = useState<SchemaState>({ schemaId: '', issuerDid: '', attributes: [], createdDateTime: '' })
 

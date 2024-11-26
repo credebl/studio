@@ -10,6 +10,7 @@ import CustomSpinner from '../CustomSpinner';
 import CustomAvatar from '../Avatar';
 import { EmptyListMessage } from '../EmptyListComponent';
 import { AlertComponent } from '../AlertComponent';
+import React from 'react';
 
 const OrganisationPublicProfile = () => {
 	const initialPageState = {
@@ -21,7 +22,7 @@ const OrganisationPublicProfile = () => {
 	const [organizationList, setOrganizationList] = useState([]);
 
 	const [loading, setLoading] = useState<boolean>(true);
-	const [error, setError] = useState<string | null>('');
+	const [error, setError] = useState<string>('');
 	const [searchText, setSearchText] = useState('');
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const onPageChange = (page: number) => {

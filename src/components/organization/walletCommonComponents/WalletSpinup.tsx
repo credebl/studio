@@ -41,12 +41,12 @@ const WalletSpinup = (props: {
 	const [agentType, setAgentType] = useState<string>(AgentType.SHARED);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [walletSpinStep, setWalletSpinStep] = useState<number>(0);
-	const [success, setSuccess] = useState<string | null>('');
+	const [success, setSuccess] = useState<string>('');
 	const [agentSpinupCall, setAgentSpinupCall] = useState<boolean>(false);
-	const [failure, setFailure] = useState<string | null>('');
+	const [failure, setFailure] = useState<string>('');
 	const [seeds, setSeeds] = useState<string>('');
     const [maskedSeeds, setMaskedSeeds] = useState('');
-	const [orgData, setOrgData] = useState<Organisation | null>(null);
+	const [orgData, setOrgData] = useState<Organisation>();
 	const [isShared, setIsShared] = useState<boolean>(false);
 	const [isConfiguredDedicated, setIsConfiguredDedicated] = useState<boolean>(false);
 
