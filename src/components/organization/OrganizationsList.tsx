@@ -128,6 +128,7 @@ const OrganizationsList = () => {
 	};
 	let content: React.JSX.Element = <></>;
 	if (organizationsList && organizationsList?.length > 0) {
+		console.log("test1");
 		content = (
 			<div>
 				<div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
@@ -207,6 +208,7 @@ const OrganizationsList = () => {
 			</div>
 		);
 	} else if (organizationsList) {
+		console.log("test2");
 		content = (
 			<EmptyListMessage
 				message={'No Organization'}
@@ -233,7 +235,10 @@ const OrganizationsList = () => {
 		);
 	}
 
+	console.log("test3333");
+	
 	return (
+
 		<div className="px-4 pt-2">
 			<div className="mb-2 col-span-full xl:mb-2">
 				<BreadCrumbs />
