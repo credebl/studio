@@ -174,6 +174,7 @@ export interface ILogoImage {
 	imagePreviewUrl: string | ArrayBuffer | null | File;
 	fileName: string;
 }
+// FIXME:
 export interface EditOrgdetailsModalProps {
 	openModal: boolean;
 	setMessage: (message: string) => void;
