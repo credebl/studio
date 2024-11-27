@@ -27,11 +27,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
+      
+      - name: Install step
+        run: "deno add jsr:@astrojs/markdown-remark"
 
       - name: Install step
-        run: |
-        "deno add jsr:@astrojs/markdown-remark"
-        "npm install"
+        run: "npm install"
 
       - name: Build step
         run: |
