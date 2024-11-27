@@ -29,17 +29,19 @@ jobs:
           node-version: lts/*
 
       - name: Install step
-        run: "deno add npm:@astrojs/markdown-remark && npm install"
+        run: "deno add npm:@astrojs/markdown-remark && deno install --allow-scripts=npm:sharp@0.33.5,npm:core-js-pure@3.39.0 && npm install"
 
       - name: Build step
         run: "npm run build"
+        
+      - name: Include files
+        run: "deno.lock && deno.json"
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
         with:
           project: "credebl-dev-ui"
           entrypoint: "server/entry.mjs"
-          include files: "deno.lock && deno.json"
           root: "dist"
           
           
