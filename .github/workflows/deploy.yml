@@ -33,15 +33,12 @@ jobs:
 
       - name: Build step
         run: "npm run build"
-        
-    
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
         with:
           project: "credebl-dev-ui"
           entrypoint: "server/entry.mjs"
-          include_file: "deno.lock , deno.json"
           root: "dist"
-          
+          include: deno.json, deno.lock
           
