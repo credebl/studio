@@ -174,13 +174,12 @@ export interface ILogoImage {
 	imagePreviewUrl: string | ArrayBuffer | null | File;
 	fileName: string;
 }
-// FIXME:
 export interface EditOrgdetailsModalProps {
 	openModal: boolean;
 	setMessage: (message: string) => void;
 	setOpenModal: (flag: boolean) => void;
 	onEditSucess?: () => void;
-	orgData: Organisation | undefined;
+	orgData: Organisation;
 }
 export interface IOrgInfo {
 	name: string;

@@ -12,8 +12,8 @@ import CopyDid from '../../commonComponents/CopyDid';
 import { setToLocalStorage } from '../../api/Auth';
 import { Tooltip } from 'flowbite-react';
 import DIDList from './configuration-settings/DidList';
-// FIXME: undefined type
-const OrganizationDetails = ({ orgData }: { orgData: Organisation | undefined }) => {
+
+const OrganizationDetails = ({ orgData }: { orgData: Organisation }) => {
 	
 	const { org_agents } = orgData as Organisation;
 	const agentData: OrgAgent | null =
