@@ -40,5 +40,5 @@ jobs:
           project: "credebl-dev-ui"
           entrypoint: "server/entry.mjs"
           root: "dist"
-          include: deno.lock
+          
           
