@@ -33,8 +33,6 @@ jobs:
 
       - name: Build step
         run: "npm run build"
-        
-    
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
@@ -43,5 +41,5 @@ jobs:
           entrypoint: "server/entry.mjs"
           include_file: "deno.lock"
           root: "dist"
-          
+          include: deno.json, deno.lock
           
