@@ -41,7 +41,7 @@ jobs:
         with:
           project: "credebl-dev-ui"
           entrypoint: "server/entry.mjs"
-          include_file: "deno.lock , deno.json"
+          include_file: "deno.lock"
           root: "dist"
           
           
