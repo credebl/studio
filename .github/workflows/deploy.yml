@@ -29,10 +29,7 @@ jobs:
           node-version: lts/*
       
       - name: Install step
-        run: "deno add npm:@astrojs/markdown-remark"
-
-      - name: Install step
-        run: "npm install"
+        run: "deno add jsr:@astrojs/markdown-remark && npm install"
 
       - name: Build step
         run: "npm run build"
