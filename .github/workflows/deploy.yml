@@ -1,9 +1,9 @@
 name: Deploy
 on:
   push:
-    branches: develop-fixed-dco
+    branches: fix/astro-deno-compatibility-issues
   pull_request:
-    branches: develop-fixed-dco
+    branches: fix/astro-deno-compatibility-issues
 
 jobs:
   deploy:
