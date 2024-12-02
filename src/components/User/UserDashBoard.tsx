@@ -279,7 +279,7 @@ const UserDashBoard = () => {
 			} else {
 				setWalletData([]);
 			}
-			if(orgDid && orgDid.includes(DidMethod.INDY)){
+			if(orgDid?.includes(DidMethod.INDY)){
 				setIsW3C(false);
 			}
 		}
