@@ -46,6 +46,7 @@ const BulkIssuance = () => {
 	const [schemaType, setSchemaType]= useState<SchemaTypes>();
 	const [selectedTemplate, setSelectedTemplate] = useState<any>();
 	const [isAllSchema, setIsAllSchema] = useState<boolean>();
+	const [attributes, setAttributes] = useState<IAttributes[]>([]);
 	const [schemaListAPIParameters, setSchemaListAPIParameters] = useState({
 		itemPerPage: itemPerPage,
 		page: 1,
@@ -194,6 +195,7 @@ const BulkIssuance = () => {
 			setCredentialSelected(value ?? null);
 			setSelectedTemplate(value?.schemaIdentifier)
 		}
+		setAttributes(value?.schemaAttributes ?? value?.attributes ?? []);
 	};
 
 
@@ -631,9 +633,7 @@ const BulkIssuance = () => {
 
 													<span className='text-black dark:text-white font-semibold'>Attributes:</span>
 													<div className="flex flex-wrap overflow-hidden">
-														{
-															!isAllSchema ? (
-																credentialSelected?.schemaAttributes?.map(
+													{attributes?.map(
 																	(element: IAttributes) => (
 																		<div key={element.attributeName}>
 																			<span className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
@@ -641,20 +641,7 @@ const BulkIssuance = () => {
 																			</span>
 																		</div>
 																	),
-																)
-															) : (
-																credentialSelected?.attributes?.map(
-																	(element: IAttributes) => (
-																		<div key={element.attributeName}>
-																			<span className="m-1 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
-																				{element.attributeName}
-																			</span>
-																		</div>
-																	),
-																)
-															)
-														
-														}
+																)}
 													</div>
 													
 												</div>
