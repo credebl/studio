@@ -242,12 +242,13 @@ export const encryptData = (value: any): string => {
     }
 }
 
-export const decryptData = (value: any): string => {
+export const decryptData = (value: any , isUserProfile?: boolean): string => {
     const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`
 
     try {
         let bytes = CryptoJS.AES.decrypt(value, CRYPTO_PRIVATE_KEY);
-        console.log(bytes , 'bytes........................')
+        if(isUserProfile){
+        console.log(bytes , 'bytes........................')}
         return bytes.toString(CryptoJS.enc.Utf8);
     } catch (error) {
         // Handle decryption error or invalid input
@@ -272,10 +273,11 @@ export const setToLocalStorage = async (key: string, value: any) =>{
     return true
 }
 
-export const getFromLocalStorage = async (key: string) =>{
+export const getFromLocalStorage = async (key: string , isUserProfile?: boolean) =>{
     const value = await localStorage.getItem(key)
-    console.log(value , 'local storage value ............................')
-    const convertedValue = value ? await decryptData(value) : ''
+    if(isUserProfile){
+    console.log(value , 'local storage value ............................')}
+    const convertedValue = value ? await decryptData(value ,isUserProfile ) : ''
     return convertedValue
 }
 

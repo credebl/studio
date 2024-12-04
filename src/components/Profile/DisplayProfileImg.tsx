@@ -8,7 +8,7 @@ import { storageKeys } from "../../config/CommonConstant.ts";
 const DisplayProfileImg = () => {
     const [userObj, setUserObj] = useState<IUserProfile | null>(null)
     const getUserDetails = async () => {
-        const userProfile = await getFromLocalStorage(storageKeys.USER_PROFILE)
+        const userProfile = await getFromLocalStorage(storageKeys.USER_PROFILE , true)
         const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES)
         const parsedUser = userProfile ? JSON.parse(userProfile) : null;
         console.log(parsedUser, 'in display profile image......................................')

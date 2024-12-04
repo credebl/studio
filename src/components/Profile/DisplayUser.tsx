@@ -11,7 +11,7 @@ const DisplayUser = () => {
     let timer:any= null
     const getUserDetails = async () => {
 
-        const userProfile = await getFromLocalStorage(storageKeys.USER_PROFILE)
+        const userProfile = await getFromLocalStorage(storageKeys.USER_PROFILE , true)
         const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES)
         const parsedUser = userProfile ? JSON.parse(userProfile) : null
         console.log("in display user .....................", parsedUser)
