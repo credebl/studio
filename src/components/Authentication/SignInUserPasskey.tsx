@@ -89,7 +89,7 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 				
 			}
 			await setToLocalStorage(storageKeys.PERMISSIONS, permissionArray);
-			await setToLocalStorage(storageKeys.USER_PROFILE, JSON.stringify(userProfile));
+			await setToLocalStorage(storageKeys.USER_PROFILE, JSON.stringify(userProfile) , true);
 			await setToLocalStorage(storageKeys.USER_EMAIL, data?.data?.email);
 			return {
 				role: role?.orgRole || ""

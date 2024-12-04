@@ -248,6 +248,8 @@ export const decryptData = (value: any , isUserProfile?: boolean): string => {
     try {
         let bytes = CryptoJS.AES.decrypt(value, CRYPTO_PRIVATE_KEY);
         if(isUserProfile){
+            const convertedData = bytes.toString(CryptoJS.enc.Utf8)
+            console.log()
         console.log(bytes , 'bytes........................')}
         return bytes.toString(CryptoJS.enc.Utf8);
     } catch (error) {
@@ -257,7 +259,7 @@ export const decryptData = (value: any , isUserProfile?: boolean): string => {
     }
 }
 
-export const setToLocalStorage = async (key: string, value: any) =>{
+export const setToLocalStorage = async (key: string, value: any , isUserProfile?: boolean) =>{
     // If passed value is object then checked empty object
 	if (typeof value === 'object' && Boolean(Object.keys(value).length <= 0)) {
 		return;
@@ -267,8 +269,12 @@ export const setToLocalStorage = async (key: string, value: any) =>{
 	if (typeof value === 'string' && !value?.trim()) {
 		return;
 	}
-
+    if(isUserProfile){
+    console.log(value, 'in set local storage value .................................')}
     const convertedValue = await encryptData(value)
+        if(isUserProfile){
+    console.log(convertedValue , 'converted value in set method ..........................')
+        }
     const setValue = await localStorage.setItem(key, convertedValue as string)
     return true
 }

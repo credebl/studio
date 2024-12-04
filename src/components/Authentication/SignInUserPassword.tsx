@@ -63,7 +63,7 @@ const SignInUserPassword = (signInUserProps: SignInUser3Props) => {
 				id, profileImg, firstName, email, 
 				
 			}
-			await setToLocalStorage(storageKeys.USER_PROFILE, JSON.stringify(userProfile));
+			await setToLocalStorage(storageKeys.USER_PROFILE, JSON.stringify(userProfile) , true);
 			await setToLocalStorage(storageKeys.USER_EMAIL, data?.data?.email);
 			return {
 				role: role?.orgRole ?? '',
