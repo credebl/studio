@@ -67,9 +67,7 @@ const OrgDropDown = () => {
 			? org?.userOrgRoles.map((role) => role?.orgRole?.name)
 			: [];
 		if (roles.length > 0) { // Added check
-			// await setToLocalStorage(storageKeys.ORG_ROLES, roles?.toString());
-			await setToLocalStorage(storageKeys.ORG_ROLES, JSON.stringify(roles));
-
+			await setToLocalStorage(storageKeys.ORG_ROLES, roles?.toString());
 		}
 	};
 
@@ -93,9 +91,8 @@ const OrgDropDown = () => {
 
 			setActiveOrg(activeOrgDetails);
 
-			await setToLocalStorage(storageKeys.ORG_ROLES, JSON.stringify(roles));
-
-				// await setToLocalStorage(storageKeys.ORG_ROLES, roles?.toString());
+			
+				await setToLocalStorage(storageKeys.ORG_ROLES, roles?.toString());
 		
 		}
 		if (activeOrgDetails) {
