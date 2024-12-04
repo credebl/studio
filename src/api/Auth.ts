@@ -245,15 +245,15 @@ export const encryptData = (value: any): string => {
 export const decryptData = (value: any): string => {
     const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`
 
-    // try {
+    try {
         let bytes = CryptoJS.AES.decrypt(value, CRYPTO_PRIVATE_KEY);
         console.log(bytes , 'bytes........................')
         return bytes.toString(CryptoJS.enc.Utf8);
-    // } catch (error) {
+    } catch (error) {
         // Handle decryption error or invalid input
-        // console.error('Decryption error:kkkkkkk', error);
-        // return '';
-    // }
+        console.error('Decryption error:kkkkkkk', error);
+        return '';
+    }
 }
 
 export const setToLocalStorage = async (key: string, value: any) =>{
