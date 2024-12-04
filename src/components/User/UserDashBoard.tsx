@@ -275,7 +275,7 @@ const UserDashBoard = () => {
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const orgAgentsList =  data?.data?.org_agents;
 			if (orgAgentsList && orgAgentsList.length > 0) {
-				const orgDid = orgAgentsList[0].orgDid;
+				const orgDid = orgAgentsList[0]?.orgDid;
 				setWalletData(data?.data?.org_agents);
 				
 				if(orgDid?.includes(DidMethod.INDY)){

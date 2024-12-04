@@ -9,16 +9,34 @@ const DisplayUser = () => {
     const [userObj, setUserObj] = useState(null)
 		
     let timer:any= null
-    const getUserDetails = async () => {
-        const userProfile = await getFromLocalStorage(storageKeys.USER_PROFILE)
-        const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES)
-        const parsedUser = userProfile ? JSON.parse(userProfile) : null
+    // const getUserDetails = async () => {
+    //     const userProfile = await getFromLocalStorage(storageKeys.USER_PROFILE)
+    //     const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES)
+    //     const parsedUser = userProfile ? JSON.parse(userProfile) : null
 
-         if (parsedUser) {
-            parsedUser.roles = orgRoles;
-            setUserObj(parsedUser);
+    //      if (parsedUser) {
+    //         parsedUser.roles = orgRoles;
+    //         setUserObj(parsedUser);
+    //     }
+    // }
+
+    const getUserDetails = async () => {
+        try {
+            const userProfile = await getFromLocalStorage(storageKeys.USER_PROFILE);
+            const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES);
+            const parsedUser = userProfile ? JSON.parse(userProfile) : null;
+
+            if (parsedUser) {
+                parsedUser.roles = orgRoles || []; // Default to an empty array if orgRoles is null
+                setUserObj(parsedUser);
+            } else {
+                console.warn("User profile is not available in local storage.");
+            }
+        } catch (error) {
+            console.error("Error fetching user details:", error);
         }
-    }
+    };
+    
     useEffect(() => {
 			const fetchData = async () => {
 					await getUserDetails();
