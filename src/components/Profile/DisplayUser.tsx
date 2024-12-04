@@ -13,8 +13,11 @@ const DisplayUser = () => {
         const userProfile = await getFromLocalStorage(storageKeys.USER_PROFILE)
         const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES)
         const parsedUser = userProfile ? JSON.parse(userProfile) : null
-        parsedUser.roles = orgRoles
-        setUserObj(parsedUser)
+
+         if (parsedUser) {
+            parsedUser.roles = orgRoles;
+            setUserObj(parsedUser);
+        }
     }
     useEffect(() => {
 			const fetchData = async () => {
@@ -39,10 +42,10 @@ const DisplayUser = () => {
                         className="text-xl font-medium text-gray-900 truncate dark:text-gray-300 mb-1"
                         role="none"
                     >
-                        {userObj['firstName']}
+                        {userObj?.['firstName']}
                     </p>
                     <p className="text-sm text-gray-900 dark:text-white mb-1" role="none">
-                        {userObj['email']}
+                        {userObj?.['email']}
                     </p>
                     <p
                         className="text-base font-medium text-gray-900 truncate dark:text-gray-300"
