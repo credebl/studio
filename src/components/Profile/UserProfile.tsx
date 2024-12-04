@@ -27,7 +27,8 @@ const UserProfile = ({ noBreadcrumb }: { noBreadcrumb?: boolean }) => {
         const userProfile = {
           id, profileImg, firstName, email, 
         }
-        await setToLocalStorage(storageKeys.USER_PROFILE, userProfile)
+        // await setToLocalStorage(storageKeys.USER_PROFILE, userProfile)
+        await setToLocalStorage(storageKeys.USER_PROFILE, JSON.stringify(userProfile))
         await setToLocalStorage(storageKeys.USER_EMAIL, data?.data?.email)
       }
     } catch (error) {

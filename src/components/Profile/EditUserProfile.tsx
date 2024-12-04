@@ -179,7 +179,8 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
     }
 
     updateProfile(userData);
-    await setToLocalStorage(storageKeys.USER_PROFILE, updatedUserData);
+    // await setToLocalStorage(storageKeys.USER_PROFILE, updatedUserData);
+    await setToLocalStorage(storageKeys.USER_PROFILE, JSON.stringify(updatedUserData));
     window.location.reload();
     setLoading(false)
   }
