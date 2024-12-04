@@ -250,7 +250,7 @@ export const decryptData = (value: any): string => {
         return bytes.toString(CryptoJS.enc.Utf8);
     } catch (error) {
         // Handle decryption error or invalid input
-        console.error('Decryption error:', error);
+        console.error('Decryption error:kkkkkkk', error);
         return '';
     }
 }
