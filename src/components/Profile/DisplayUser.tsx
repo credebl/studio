@@ -10,9 +10,12 @@ const DisplayUser = () => {
 		
     let timer:any= null
     const getUserDetails = async () => {
+
         const userProfile = await getFromLocalStorage(storageKeys.USER_PROFILE)
         const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES)
         const parsedUser = userProfile ? JSON.parse(userProfile) : null
+        console.log("in display user .....................", parsedUser)
+        
 
          if (parsedUser) {
             parsedUser.roles = orgRoles;

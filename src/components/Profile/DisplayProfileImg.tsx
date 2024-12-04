@@ -11,6 +11,7 @@ const DisplayProfileImg = () => {
         const userProfile = await getFromLocalStorage(storageKeys.USER_PROFILE)
         const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES)
         const parsedUser = userProfile ? JSON.parse(userProfile) : null;
+        console.log(parsedUser, 'in display profile image......................................')
 
         if (parsedUser) {
             parsedUser.roles = orgRoles;
