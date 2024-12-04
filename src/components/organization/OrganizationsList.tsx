@@ -123,7 +123,8 @@ const OrganizationsList = () => {
 			id, name, description, logoUrl, roles
 		}
 		await setToLocalStorage(storageKeys.ORG_INFO, orgInfo)
-		await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
+		// await setToLocalStorage(storageKeys.ORG_ROLES, roles?.toString());
+		await setToLocalStorage(storageKeys.ORG_ROLES, JSON.stringify(roles));
 		window.location.href = pathRoutes.organizations.dashboard;
 	};
 	let content: React.JSX.Element = <></>;
