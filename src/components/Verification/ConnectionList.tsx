@@ -73,6 +73,39 @@ const ConnectionList = (props: {
 		});
 	};
 
+	const renderCheckbox = (
+		ele: IConnectionList,
+		isChecked: boolean,
+		connections: IConnectionList[],
+	  ) => {
+		return (
+		  <div className="flex items-center" id="issuance_checkbox">
+			<input
+			  id="default-checkbox"
+			  type="checkbox"
+			  name="connection"
+			  defaultChecked={ele.checked || isChecked}
+			  onClick={async (event: React.MouseEvent<HTMLInputElement>) => {
+				const inputElement = event.target as HTMLInputElement;
+	  
+				const updateConnectionList = connections.map((item) => {
+				  if (item.connectionId === ele.connectionId) {
+					selectOrganization(item, inputElement.checked);
+					return {
+					  ...item,
+					  checked: inputElement.checked,
+					};
+				  }
+				  return item;
+				});
+				setConnectionList(updateConnectionList);
+			  }}
+			  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-lg dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600 cursor-pointer"
+			/>
+		  </div>
+		);
+	  };
+
 	
 	const selectOrganization = async (
 		item: IConnectionList,
@@ -126,38 +159,7 @@ const ConnectionList = (props: {
 
 					return {
 						data: [
-							{
-								data: (
-									<div className="flex items-center" id="issuance_checkbox">
-										<input
-											id="default-checkbox"
-											type="checkbox"
-											name="connection"
-											defaultChecked={ele.checked || isChecked}
-											onClick={async (
-												event: React.MouseEvent<HTMLInputElement>,
-											) => {
-												const inputElement = event.target as HTMLInputElement;
-
-												const updateConnectionList = connections?.map(
-													(item) => {
-														if (item.connectionId === ele.connectionId) {
-															selectOrganization(item, inputElement.checked);
-															return {
-																...item,
-																checked: inputElement.checked,
-															};
-														}
-														return item;
-													},
-												);
-												setConnectionList(updateConnectionList);
-											}}
-											className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-lg dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600 cursor-pointer"
-										/>
-									</div>
-								),
-							},
+							{ data: renderCheckbox(ele, isChecked, connections) },
 							{ data: userName },
 							{ data: connectionId },
 							{
