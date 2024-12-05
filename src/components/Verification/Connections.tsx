@@ -164,7 +164,7 @@ const Connections = () => {
 						const connectionIds = parsedUserData.map((connection: { connectionId: string | string[]; }) => connection.connectionId);
 
 						verifyCredentialPayload = {
-							presentationData: {
+							
 							  connectionId: connectionIds, 
 							  orgId,
 							  proofFormats: {
@@ -173,7 +173,6 @@ const Connections = () => {
 								},
 							  },
 							  comment: "string"
-							},
 						  };
 						}
 
@@ -198,7 +197,7 @@ const Connections = () => {
 					
 				  
 					verifyCredentialPayload = {
-						presentationData: {
+						
 						connectionId: connectionIds,
 						comment: 'proof request',
 						presentationDefinition: {
@@ -229,7 +228,7 @@ const Connections = () => {
 					};
 				}),
 			},
-		}
+		
 	}
 	}
 					  
