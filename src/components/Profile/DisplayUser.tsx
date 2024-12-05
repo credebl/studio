@@ -13,10 +13,11 @@ const DisplayUser = () => {
         const userProfile = await getFromLocalStorage(storageKeys.USER_PROFILE)
         const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES)
         const parsedUser = userProfile ? JSON.parse(userProfile) : null
-        
-        parsedUser.roles = orgRoles	
-        setUserObj(parsedUser)
 
+         if (parsedUser) {
+            parsedUser.roles = orgRoles;
+            setUserObj(parsedUser);
+        }
     }
     useEffect(() => {
 			const fetchData = async () => {
