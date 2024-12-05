@@ -73,38 +73,6 @@ const ConnectionList = (props: {
 		});
 	};
 
-	const selectOrganization = async (
-		item: IConnectionList,
-		checked: boolean,
-	) => {
-		try {
-			const index =
-				localOrgs?.length > 0
-					? localOrgs.findIndex((ele) => ele.connectionId === item.connectionId)
-					: -1;
-
-			const { connectionId, theirLabel, createDateTime } = item || {};
-			if (index === -1) {
-				setLocalOrgs((prev: LocalOrgs[]) => [
-					...prev,
-					{
-						connectionId,
-						theirLabel,
-						createDateTime,
-					},
-				]);
-			} else {
-				const updateLocalOrgs = [...localOrgs];
-				if (!checked) {
-					updateLocalOrgs.splice(index, 1);
-				}
-				setLocalOrgs(updateLocalOrgs);
-			}
-		} catch (error) {
-			console.error('SELECTED ORGANIZATION:::', error);
-		}
-	};
-
 	const generateTable = async (connections: IConnectionList[]) => {
 		try {
 			const connectionsData =
@@ -281,6 +249,40 @@ const ConnectionList = (props: {
 	useEffect(() => {
 		props.selectConnection(selectedConnectionList);
 	}, [selectedConnectionList]);
+
+
+	const selectOrganization = async (
+		item: IConnectionList,
+		checked: boolean,
+	) => {
+		try {
+			const index =
+				localOrgs?.length > 0
+					? localOrgs.findIndex((ele) => ele.connectionId === item.connectionId)
+					: -1;
+
+			const { connectionId, theirLabel, createDateTime } = item || {};
+			if (index === -1) {
+				setLocalOrgs((prev: LocalOrgs[]) => [
+					...prev,
+					{
+						connectionId,
+						theirLabel,
+						createDateTime,
+					},
+				]);
+			} else {
+				const updateLocalOrgs = [...localOrgs];
+				if (!checked) {
+					updateLocalOrgs.splice(index, 1);
+				}
+				setLocalOrgs(updateLocalOrgs);
+			}
+		} catch (error) {
+			console.error('SELECTED ORGANIZATION:::', error);
+		}
+	};
+
 
 	return (
 		<div
