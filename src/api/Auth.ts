@@ -283,11 +283,31 @@ export const setToLocalStorage = async (key: string, value: any) =>{
     return true
 }
 
-export const getFromLocalStorage = async (key: string) =>{
-    const value = await localStorage.getItem(key)
-    const convertedValue = value ? await decryptData(value) : ''
-    return convertedValue
-}
+// export const getFromLocalStorage = async (key: string) =>{
+//     const value = await localStorage.getItem(key)
+//     const convertedValue = value ? await decryptData(value) : ''
+//     return convertedValue
+// }
+
+export const getFromLocalStorage = async (key: string) => {
+    try {
+        const encryptedValue = localStorage.getItem(key);
+        console.log(`Retrieved from localStorage [${key}]:`, encryptedValue);
+
+        if (!encryptedValue) {
+            console.warn(`No value found in localStorage for key: ${key}`);
+            return null;
+        }
+
+        const decryptedValue = decryptData(encryptedValue);
+        console.log(`Decrypted value for [${key}]:`, decryptedValue);
+
+        return decryptedValue ? JSON.parse(decryptedValue) : null;
+    } catch (error) {
+        console.error(`Error getting localStorage [${key}]:`, error);
+        return null;
+    }
+};
 
 export const setToCookies = (cookies: AstroCookies, key: string, value: any, option: {[key: string]: any }) =>{
     // If passed value is object then checked empty object
