@@ -273,16 +273,14 @@ const UserDashBoard = () => {
 		const response = await getOrganizationById(orgId);
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			const orgAgentsList =  data?.data?.org_agents;
-			if (orgAgentsList && orgAgentsList.length > 0) {
-				const orgDid = orgAgentsList[0].orgDid;
+			const orgDid =  data?.data?.org_agents[0].orgDid
+			if (data?.data?.org_agents) {
 				setWalletData(data?.data?.org_agents);
-				
-				if(orgDid?.includes(DidMethod.INDY)){
-					setIsW3C(false);
-				}
 			} else {
 				setWalletData([]);
+			}
+			if(orgDid.includes(DidMethod.INDY)){
+				setIsW3C(false);
 			}
 		}
 		setWalletLoading(false);
