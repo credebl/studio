@@ -137,7 +137,6 @@ const extractConnectionFields = (item: IConnectionList) => {
 	}
   };
 
-
   const generateTable = async (connections: IConnectionList[]) => {
 	try {
 	  const connectionsData =
