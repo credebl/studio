@@ -7,14 +7,15 @@ import type { AxiosResponse } from "axios";
 import { apiStatusCodes } from "../config/CommonConstant";
 import { dateConversion } from "../utils/DateConversion";
 import DateTooltip from "../components/Tooltip";
+import React from "react";
 
 interface IResponseMessages {type: "error" | "success", message: string}
 
 const DeviceDetails = (props: { deviceFriendlyName: string, createDateTime: string, credentialID: string, refreshList: () => void, disableRevoke: boolean, responseMessages: (value: IResponseMessages) => void }) => {
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [openEditModel, setOpenEditModel] = useState<boolean>(false)
-    const [editSuccess, setEditSuccess] = useState<string | null>(null)
-    const [editfailure, setEditFailure] = useState<string | null>(null)
+    const [editSuccess, setEditSuccess] = useState<string>('')
+    const [editfailure, setEditFailure] = useState<string>('')
     const handleDeleteModel = (flag: boolean) => {
         setOpenModal(flag)
     }

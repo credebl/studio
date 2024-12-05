@@ -12,7 +12,7 @@ import EditUserProfile from './EditUserProfile';
 
 const UserProfile = ({ noBreadcrumb }: { noBreadcrumb?: boolean }) => {
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
-  const [prePopulatedUserProfile, setPrePopulatedUserProfile] = useState<IUserProfile | null>(null);
+  const [prePopulatedUserProfile, setPrePopulatedUserProfile] = useState<IUserProfile>();
 
   const fetchUserProfile = async () => {
     try {

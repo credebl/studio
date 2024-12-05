@@ -48,8 +48,8 @@ interface IPopup {
 }
 
 const CreateSchema = () => {
-	const [failure, setFailure] = useState<string | null>(null);
-	const [success, setSuccess] = useState<string | null>(null);
+	const [failure, setFailure] = useState<string>('');
+	const [success, setSuccess] = useState<string>('');
 	const [isEcosystemData, setIsEcosystemData] = useState<ICheckEcosystem>();
 	const [orgId, setOrgId] = useState<string>('');
 	const [createLoader, setCreateLoader] = useState<boolean>(false);
@@ -166,7 +166,7 @@ const CreateSchema = () => {
 				setCreateLoader(false);
 				setLoading(true);
 				setTimeout(() => {
-					setSuccess(null);
+					setSuccess('');
 					window.location.href = pathRoutes?.organizations?.schemas;
 				}, 1500);
 				setTimeout(() => {
@@ -183,7 +183,7 @@ const CreateSchema = () => {
 			setCreateLoader(false);
 			setFailure(createSchema as string);
 			setTimeout(() => {
-				setFailure(null);
+				setFailure('');
 			}, 2000);
 		}
 		setTimeout(() => {
@@ -216,13 +216,13 @@ const CreateSchema = () => {
 			window.location.href = `${envConfig.PUBLIC_ECOSYSTEM_FRONT_END_URL}${pathRoutes.organizations.createSchema}`
 
 			setTimeout(() => {
-				setSuccess(null);
+				setSuccess('');
 			}, 2000);
 		} else {
 			setCreateLoader(false);
 			setFailure(createSchema as string);
 			setTimeout(() => {
-				setFailure(null);
+				setFailure('');
 			}, 2000);
 		}
 		setTimeout(() => {

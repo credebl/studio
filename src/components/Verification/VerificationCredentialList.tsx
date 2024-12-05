@@ -43,9 +43,10 @@ const VerificationCredentialList = () => {
 	const [verificationList, setVerificationList] = useState<TableData[]>([]);
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [requestId, setRequestId] = useState<string>('');
-	const [errMsg, setErrMsg] = useState<string | null>(null);
+	const [errMsg, setErrMsg] = useState<string>('');
 	const [proofReqSuccess, setProofReqSuccess] = useState<string>('');
-	const [userData, setUserData] = useState(null);
+	// FIXME:give initial state for userData
+	const [userData, setUserData] = useState();
 	const [view, setView] = useState(false);
 	const [walletCreated, setWalletCreated] = useState(false);
 	const [listAPIParameter, setListAPIParameter] =
@@ -242,7 +243,7 @@ const VerificationCredentialList = () => {
 					);
 
 					setVerificationList(credentialList);
-					setErrMsg(null);
+					setErrMsg('');
 				} else {
 					setVerificationList([]);
 				}
@@ -384,7 +385,7 @@ const VerificationCredentialList = () => {
 						<div className="p-2">
 							<Alert
 								color={proofReqSuccess ? 'success' : 'failure'}
-								onDismiss={() => setErrMsg(null)}
+								onDismiss={() => setErrMsg('')}
 							>
 								<span>
 									<p>{proofReqSuccess || errMsg}</p>

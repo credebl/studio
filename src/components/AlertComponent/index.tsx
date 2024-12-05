@@ -1,4 +1,3 @@
-import React from 'react';
 import type { IAlertComponent } from './interface';
 
 export const AlertComponent = ({
@@ -22,7 +21,7 @@ export const AlertComponent = ({
 	};
 
 	return (
-		message !== null && (
+		message && (
 			<div className="w-full">
 				<div
 					className={`flex flex-col gap-2 p-4 text-sm rounded-lg mb-4 ${getAlertClass()}`}

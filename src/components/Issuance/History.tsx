@@ -20,6 +20,7 @@ import {
 import { ToastContainer, toast } from 'react-toastify';
 import SortDataTable from '../../commonComponents/datatable/SortDataTable';
 import type { IConnectionListAPIParameter } from '../../api/connection';
+import React from 'react';
 
 const HistoryBulkIssuance = () => {
 	const initialPageState = {
@@ -32,8 +33,8 @@ const HistoryBulkIssuance = () => {
 	const [listAPIParameter, setListAPIParameter] = useState(initialPageState);
 	const [connectionList, setConnectionList] = useState<TableData[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
-	const [failure, setFailure] = useState<string | null>(null);
-	const [success, setSuccess] = useState<string | null>(null);
+	const [failure, setFailure] = useState<string>('');
+	const [success, setSuccess] = useState<string>('');
 	const [totalItem, setTotalItem] = useState(0);
 	const [pageInfo, setPageInfo] = useState({
 		totalItem: '',
@@ -65,7 +66,7 @@ const HistoryBulkIssuance = () => {
 			setLoading(false);
 			setFailure(retryIssunace as string);
 			setTimeout(() => {
-				setFailure(null);
+				setFailure('');
 			}, 4000);
 		}
 	};
@@ -81,7 +82,7 @@ const HistoryBulkIssuance = () => {
 	useEffect(() => {
 		SOCKET.emit('bulk-connection');
 		SOCKET.on('bulk-issuance-process-retry-completed', () => {
-			setSuccess(null);
+			setSuccess('');
 			console.log(`bulk-issuance-process-retry-completed`);
 			toast.success('Issuance process completed', {
 				position: 'top-right',
@@ -97,7 +98,7 @@ const HistoryBulkIssuance = () => {
 		});
 
 		SOCKET.on('error-in-bulk-issuance-retry-process', () => {
-			setFailure(null);
+			setFailure('');
 			console.log(`error-in-bulk-issuance-retry-process-initiated`);
 			toast.error('Issuance process failed. Please retry', {
 				position: 'top-right',
@@ -313,8 +314,8 @@ const HistoryBulkIssuance = () => {
 					message={success ?? failure}
 					type={success ? 'success' : 'failure'}
 					onAlertClose={() => {
-						setSuccess(null);
-						setFailure(null);
+						setSuccess('');
+						setFailure('');
 					}}
 				/>
 			)}

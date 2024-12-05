@@ -2,6 +2,7 @@ import { Button, Label, Modal } from 'flowbite-react';
 import { Field, Form, Formik } from 'formik';
 import * as yup from 'yup';
 import { useRef } from 'react';
+import React from 'react';
 
 const EditModal = (props: {
 	openModal: boolean;

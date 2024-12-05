@@ -12,9 +12,9 @@ import { Roles } from "../../../utils/enums/roles"
 
 const DIDList = () => {
     const [didList, setDidList] = useState<IDidList[]>([]);
-    const [showPopup, setShowPopup] = useState(false);
-    const [erroMsg, setErrMsg] = useState<string | null>(null);
-    const [successMsg, setSuccessMsg] = useState<string | null>(null);
+    const [showPopup, setShowPopup] = useState<boolean>(false);
+    const [erroMsg, setErrMsg] = useState<string>('');
+    const [successMsg, setSuccessMsg] = useState<string>('');
 	const [userRoles, setUserRoles] = useState<string[]>([]);
     const setPrimaryDid = async (id: string, did: string) => {
         try {
@@ -71,8 +71,8 @@ const DIDList = () => {
 					message={successMsg ?? erroMsg}
 					type={successMsg ? 'success' : 'failure'}
 					onAlertClose={() => {
-						setErrMsg(null);
-						setSuccessMsg(null);
+						setErrMsg('');
+						setSuccessMsg('');
 					}}
 				/>
                 <div className="flex justify-between items-center mb-6 mr-10">
