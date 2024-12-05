@@ -226,38 +226,93 @@ export const passwordEncryption = (password: string): string => {
     return encryptedPassword
 }
 
-export const encryptData = (value: any): string => {
+// export const encryptData = (value: any): string => {
  
-    const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`
+//     const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`
+
+//     try {
+//         // if (typeof (value) !== 'string') {
+//             value = JSON.stringify(value)
+//         // }
+//         return CryptoJS.AES.encrypt(value, CRYPTO_PRIVATE_KEY).toString();
+//     } catch (error) {
+//         // Handle encryption error
+//         console.error('Encryption error:', error);
+//         return '';
+//     }
+// }
+
+export const encryptData = (value: any): string => {
+    const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`;
 
     try {
-        if (typeof (value) !== 'string') {
-            value = JSON.stringify(value)
+        value = JSON.stringify(value);
+        const iv = CryptoJS.lib.WordArray.random(16); // Generate a random IV
+        const encrypted = CryptoJS.AES.encrypt(value, CryptoJS.enc.Utf8.parse(CRYPTO_PRIVATE_KEY), {
+            iv: iv,
+            mode: CryptoJS.mode.CBC,
+            padding: CryptoJS.pad.Pkcs7,
+        });
+
+        // Return the encrypted value along with the IV
+        return JSON.stringify({
+            ciphertext: encrypted.ciphertext.toString(CryptoJS.enc.Base64),
+            iv: iv.toString(CryptoJS.enc.Base64),
+        });
+    } catch (error) {
+        return ''; // Handle encryption error by returning an empty string
+    }
+};
+
+// export const decryptData =(value: any , isUserProfile?: boolean):string => {
+//     const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`
+
+//     try {
+//         let bytes = CryptoJS.AES.decrypt(value, CRYPTO_PRIVATE_KEY);
+//         if(isUserProfile){
+//             const convertedData = bytes.toString(CryptoJS.enc.Utf8)
+//         console.log(bytes , 'bytes........................')}
+//         return bytes.toString(CryptoJS.enc.Utf8);
+        
+//     } catch (error) {
+//         // Handle decryption error or invalid input
+//         console.error('Decryption error:kkkkkkk', error);
+//         return '';
+//     }
+// }
+
+export const decryptData = (value: string, isUserProfile?: boolean): string => {
+    const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`;
+
+    try {
+        // Parse the encrypted value to extract ciphertext and IV
+        const { ciphertext, iv } = JSON.parse(value);
+
+        // Create a CipherParams object
+        const cipherParams = CryptoJS.lib.CipherParams.create({
+            ciphertext: CryptoJS.enc.Base64.parse(ciphertext),
+        });
+
+        const decrypted = CryptoJS.AES.decrypt(
+            cipherParams,
+            CryptoJS.enc.Utf8.parse(CRYPTO_PRIVATE_KEY),
+            {
+                iv: CryptoJS.enc.Base64.parse(iv),
+                mode: CryptoJS.mode.CBC,
+                padding: CryptoJS.pad.Pkcs7,
+            }
+        );
+
+        if (isUserProfile) {
+           console.log('decrypted4567::::::..............', decrypted)
         }
-        return CryptoJS.AES.encrypt(value, CRYPTO_PRIVATE_KEY).toString();
+        return decrypted.toString(CryptoJS.enc.Utf8); // Return the decrypted value
     } catch (error) {
-        // Handle encryption error
-        console.error('Encryption error:', error);
-        return '';
+        console.error('Decryption error:', error); // Log the error for debugging
+        return ''; // Handle decryption error by returning an empty string
     }
-}
+};
 
-export const decryptData = (value: any , isUserProfile?: boolean): string => {
-    const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`
-
-    try {
-        let bytes = CryptoJS.AES.decrypt(value, CRYPTO_PRIVATE_KEY);
-        if(isUserProfile){
-            const convertedData = bytes.toString(CryptoJS.enc.Utf8)
-            console.log()
-        console.log(bytes , 'bytes........................')}
-        return bytes.toString(CryptoJS.enc.Utf8);
-    } catch (error) {
-        // Handle decryption error or invalid input
-        console.error('Decryption error:kkkkkkk', error);
-        return '';
-    }
-}
 
 export const setToLocalStorage = async (key: string, value: any , isUserProfile?: boolean) =>{
     // If passed value is object then checked empty object
