@@ -299,10 +299,10 @@ export const getFromLocalStorage = async (key: string) => {
             return null;
         }
 
-        const decryptedValue = decryptData(encryptedValue);
+        const decryptedValue = encryptedValue ? decryptData(encryptedValue) : '';
         console.log(`Decrypted value for [${key}]:`, decryptedValue);
 
-        return decryptedValue ? JSON.parse(decryptedValue) : null;
+        return decryptedValue;
     } catch (error) {
         console.error(`Error getting localStorage [${key}]:`, error);
         return null;
