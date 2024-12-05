@@ -106,77 +106,68 @@ const ConnectionList = (props: {
 		);
 	  };
 
-	
-	const selectOrganization = async (
-		item: IConnectionList,
-		checked: boolean,
-	) => {
-		try {
-			const index =
-				localOrgs?.length > 0
-					? localOrgs.findIndex((ele) => ele.connectionId === item.connectionId)
-					: -1;
+const extractConnectionFields = (item: IConnectionList) => {
+	const connectionId = item?.connectionId || 'Not available';
+	const theirLabel = item?.theirLabel || 'Not available';
+	const createDateTime = item?.createDateTime || 'Not available';
+	return { connectionId, theirLabel, createDateTime };
+  };
+  
+  const isConnectionChecked = (connectionId: string) =>
+	localOrgs.map((item) => item.connectionId).includes(connectionId);
 
-			const { connectionId, theirLabel, createDateTime } = item || {};
-			if (index === -1) {
-				setLocalOrgs((prev: LocalOrgs[]) => [
-					...prev,
-					{
-						connectionId,
-						theirLabel,
-						createDateTime,
-					},
-				]);
-			} else {
-				const updateLocalOrgs = [...localOrgs];
-				if (!checked) {
-					updateLocalOrgs.splice(index, 1);
-				}
-				setLocalOrgs(updateLocalOrgs);
-			}
-		} catch (error) {
-			console.error('SELECTED ORGANIZATION:::', error);
-		}
-	};
+  
+  const selectOrganization = async (item: IConnectionList, checked: boolean) => {
+	try {
+	  const { connectionId, theirLabel, createDateTime } = extractConnectionFields(item);
+	  const index = localOrgs?.findIndex((ele) => ele.connectionId === connectionId) ?? -1;
+  
+	  if (index === -1) {
+		setLocalOrgs((prev: LocalOrgs[]) => [
+		  ...prev,
+		  { connectionId, theirLabel, createDateTime },
+		]);
+	  } else if (!checked) {
+		const updateLocalOrgs = [...localOrgs];
+		updateLocalOrgs.splice(index, 1);
+		setLocalOrgs(updateLocalOrgs);
+	  }
+	} catch (error) {
+	  console.error('SELECTED ORGANIZATION:::', error);
+	}
+  };
 
 
-	const generateTable = async (connections: IConnectionList[]) => {
-		try {
-			const connectionsData =
-				connections?.length > 0 &&
-				connections?.map((ele: IConnectionList) => {
-					const createdOn = ele?.createDateTime
-						? ele?.createDateTime
-						: 'Not available';
-					const connectionId = ele.connectionId
-						? ele.connectionId
-						: 'Not available';
-					const userName = ele?.theirLabel ? ele.theirLabel : 'Not available';
+  const generateTable = async (connections: IConnectionList[]) => {
+	try {
+	  const connectionsData =
+		connections?.length > 0 &&
+		connections.map((ele: IConnectionList) => {
+		  const { connectionId, theirLabel, createDateTime } = extractConnectionFields(ele);
+		  const isChecked = isConnectionChecked(connectionId);
+  
+		  return {
+			data: [
+			  { data: renderCheckbox(ele, isChecked, connections) },
+			  { data: theirLabel },
+			  { data: connectionId },
+			  {
+				data: (
+				  <DateTooltip date={createDateTime} id="verification_connecetion_list">
+					{dateConversion(createDateTime)}
+				  </DateTooltip>
+				),
+			  },
+			],
+		  };
+		});
+  
+	  setTableData(connectionsData);
+	} catch (err) {
+	  console.error('Error generating table:', err);
+	}
+  };
 
-					const isChecked = localOrgs
-						.map((item) => item.connectionId)
-						.includes(ele.connectionId);
-
-					return {
-						data: [
-							{ data: renderCheckbox(ele, isChecked, connections) },
-							{ data: userName },
-							{ data: connectionId },
-							{
-								data: (
-									<DateTooltip date={createdOn} id="verification_connecetion_list">
-										{' '}
-										{dateConversion(createdOn)}{' '}
-									</DateTooltip>
-								),
-							},
-						],
-					};
-				});
-
-			setTableData(connectionsData);
-		} catch (err) {}
-	};
 	useEffect(() => {
 		props.selectConnection(localOrgs);
 	}, [localOrgs]);
