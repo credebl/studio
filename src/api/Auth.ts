@@ -286,7 +286,6 @@ export const setToLocalStorage = async (key: string, value: any) =>{
 export const getFromLocalStorage = async (key: string) => {
     try {
         const encryptedValue = localStorage.getItem(key);
-        console.log(`Retrieved from localStorage [${key}]:`, encryptedValue);
 
         if (!encryptedValue) {
             console.warn(`No value found in localStorage for key: ${key}`);
@@ -294,7 +293,6 @@ export const getFromLocalStorage = async (key: string) => {
         }
 
         const decryptedValue = encryptedValue ? decryptData(encryptedValue) : '';
-        console.log(`Decrypted value for [${key}]:`, decryptedValue);
 
         return decryptedValue;
     } catch (error) {
