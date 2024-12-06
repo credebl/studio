@@ -267,82 +267,38 @@ export const decryptData = (value: string): string => {
 };
 
 
-// export const setToLocalStorage = async (key: string, value: any) =>{
-//     // If passed value is object then checked empty object
-// 	if (typeof value === 'object' && Boolean(Object.keys(value).length <= 0)) {
-// 		return;
-// 	}
+export const setToLocalStorage = async (key: string, value: any) =>{
+    // If passed value is object then checked empty object
+	if (typeof value === 'object' && Boolean(Object.keys(value).length <= 0)) {
+		return;
+	}
 
-// 	// If passed value is string then checked if value is falsy
-// 	if (typeof value === 'string' && !value?.trim()) {
-// 		return;
-// 	}
+	// If passed value is string then checked if value is falsy
+	if (typeof value === 'string' && !value?.trim()) {
+		return;
+	}
 
-//     const convertedValue = await encryptData(value)
-//     const setValue = await localStorage.setItem(key, convertedValue as string)
-//     return true
-// }
+    const convertedValue = await encryptData(value)
+    const setValue = await localStorage.setItem(key, convertedValue as string)
+    return true
+}
 
-export const setToLocalStorage = (value: any): Promise<void> => {
-
-    const key: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`;
-
-    const setPromise = new Promise<void>((resolve) => {
-        const stringValue = JSON.stringify(value);
-        const encryptedValue = CryptoJS.AES.encrypt(stringValue, key).toString();
-        localStorage.setItem(key, encryptedValue);
-        resolve();
-    });
-
-    storageOperations.set(key, setPromise);
-
-    return setPromise.finally(() => {
-        storageOperations.delete(key); // Clean up after setting
-    });
-};
-
-// export const getFromLocalStorage = async (key: string) =>{
-//     const value = await localStorage.getItem(key)
-//     const convertedValue = value ? await decryptData(value) : ''
-//     return convertedValue
-// }
-
-// export const getFromLocalStorage = async (key: string) => {
-//     try {
-//         const encryptedValue = localStorage.getItem(key);
-//         console.log(`Retrieved from localStorage [${key}]:`, encryptedValue);
-
-//         if (!encryptedValue) {
-//             console.warn(`No value found in localStorage for key: ${key}`);
-//             return null;
-//         }
-
-//         const decryptedValue = encryptedValue ? decryptData(encryptedValue) : '';
-//         console.log(`Decrypted value for [${key}]:`, decryptedValue);
-
-//         return decryptedValue;
-//     } catch (error) {
-//         console.error(`Error getting localStorage [${key}]:`, error);
-//         return null;
-//     }
-// };
-
-export const getFromLocalStorage = async (value: string): Promise<string | null> => {
-    const pendingSet = storageOperations.get(value);
-
-    if (pendingSet) {
-        console.log(`Waiting for pending set operation on key: ${value}`);
-        await pendingSet; // Wait for the set operation to complete
-    }
-
-    const encryptedValue = localStorage.getItem(value);
-    if (!encryptedValue) return null;
-
+export const getFromLocalStorage = async (key: string) => {
     try {
-        const decryptedValue = CryptoJS.AES.decrypt(encryptedValue, envConfig.PUBLIC_CRYPTO_PRIVATE_KEY).toString(CryptoJS.enc.Utf8);
+        const encryptedValue = localStorage.getItem(key);
+        console.log(`Retrieved from localStorage [${key}]:`, encryptedValue);
+
+        if (!encryptedValue) {
+            console.warn(`No value found in localStorage for key: ${key}`);
+            return null;
+        }
+
+        const decryptedValue = encryptedValue ? decryptData(encryptedValue) : '';
+        console.log(`Decrypted value for [${key}]:`, decryptedValue);
+
         return decryptedValue;
     } catch (error) {
-        console.error(`Decryption error for key: ${value}`, error);
+        console.error(`Decryption error for key [${key}]:`, error);
         return null;
     }
 };
