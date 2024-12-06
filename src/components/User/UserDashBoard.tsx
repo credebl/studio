@@ -267,6 +267,7 @@ const UserDashBoard = () => {
 	const fetchOrganizationDetails = async () => {
 		setWalletLoading(true);
 		let orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+		
 		if (!orgId && organizationsList) {
 			orgId = organizationsList[0].id;
 		}
