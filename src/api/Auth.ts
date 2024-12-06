@@ -226,46 +226,61 @@ export const passwordEncryption = (password: string): string => {
     return encryptedPassword
 }
 
-export const encryptData = (value: any): string => {
+// export const encryptData = (value: any): string => {
  
+//     const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`
+
+//     try {
+//         if (typeof (value) !== 'string') {
+//             value = JSON.stringify(value)
+//         }
+//         return CryptoJS.AES.encrypt(value, CRYPTO_PRIVATE_KEY).toString();
+//     } catch (error) {
+//         // Handle encryption error
+//         console.error('Encryption error:', error);
+//         return '';
+//     }
+// }
+
+  export const encryptData = (value: any): string => {
     const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`
 
-    try {
-        if (typeof (value) !== 'string') {
-            value = JSON.stringify(value)
-        }
-        return CryptoJS.AES.encrypt(value, CRYPTO_PRIVATE_KEY).toString();
-    } catch (error) {
-        // Handle encryption error
-        console.error('Encryption error:', error);
-        return '';
-    }
+    let encJson = CryptoJS.AES.encrypt(JSON.stringify((value) !== 'string'),CRYPTO_PRIVATE_KEY).toString()
+    let encData = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(encJson))
+    return encData
 }
+
+// export const decryptData = (value: string): string => {
+//     const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`;
+
+//     try {
+//         // Ensure input is valid and not empty
+//         if (!value || typeof value !== "string") {
+//             throw new Error("Invalid input for decryption");
+//         }
+
+//         const bytes = CryptoJS.AES.decrypt(value, CRYPTO_PRIVATE_KEY);
+//         const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
+
+//         // Ensure the output is valid UTF-8
+//         if (!decryptedText) {
+//             throw new Error("Decryption failed or returned empty result");
+//         }
+
+//         return decryptedText;
+//     } catch (error) {
+//         console.error("Decryption error:", error);
+//         return ''; // Return a fallback value to prevent crashes
+//     }
+// };
 
 export const decryptData = (value: string): string => {
     const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`;
 
-    try {
-        // Ensure input is valid and not empty
-        if (!value || typeof value !== "string") {
-            throw new Error("Invalid input for decryption");
-        }
-
-        const bytes = CryptoJS.AES.decrypt(value, CRYPTO_PRIVATE_KEY);
-        const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
-
-        // Ensure the output is valid UTF-8
-        if (!decryptedText) {
-            throw new Error("Decryption failed or returned empty result");
-        }
-
-        return decryptedText;
-    } catch (error) {
-        console.error("Decryption error:", error);
-        return ''; // Return a fallback value to prevent crashes
-    }
-};
-
+    let decData = CryptoJS.enc.Base64.parse(value).toString(CryptoJS.enc.Utf8)
+    let bytes = CryptoJS.AES.decrypt(decData, CRYPTO_PRIVATE_KEY).toString(CryptoJS.enc.Utf8)
+    return bytes;
+}
 
 export const setToLocalStorage = async (key: string, value: any) =>{
     // If passed value is object then checked empty object
