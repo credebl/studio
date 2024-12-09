@@ -268,6 +268,7 @@ export const decryptData = (value: string): string => {
 
 
 export const setToLocalStorage = async (key: string, value: any) =>{
+    await delay(1000); // 2-second delay
 
     // If passed value is object then checked empty object
 	if (typeof value === 'object' && Boolean(Object.keys(value).length <= 0)) {
