@@ -170,14 +170,17 @@ const CredentialList = () => {
 		const response = await getOrganizationById(orgId);
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			const did = data?.data?.org_agents?.[0]?.orgDid;
-
-			await setToLocalStorage(storageKeys.ORG_DID, did)
-			if (did.includes(DidMethod.POLYGON) || did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
-				setW3CSchema(true);
-			}
-			if (did.includes(DidMethod.INDY)) {
-				setW3CSchema(false);
+			const orgAgentsList =  data?.data?.org_agents;
+			if (orgAgentsList && orgAgentsList.length > 0) {
+				const did = orgAgentsList[0].orgDid;
+				
+				await setToLocalStorage(storageKeys.ORG_DID, did)
+				if (did.includes(DidMethod.POLYGON) || did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
+					setW3CSchema(true);
+				}
+				if (did.includes(DidMethod.INDY)) {
+					setW3CSchema(false);
+				}
 			}
 		}
 		setLoading(false);
