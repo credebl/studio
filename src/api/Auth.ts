@@ -268,7 +268,6 @@ export const decryptData = (value: string): string => {
 
 
 export const setToLocalStorage = async (key: string, value: any) =>{
-    await delay(1000); // 2-second delay
 
     // If passed value is object then checked empty object
 	if (typeof value === 'object' && Boolean(Object.keys(value).length <= 0)) {
@@ -285,10 +284,7 @@ export const setToLocalStorage = async (key: string, value: any) =>{
     return true
 }
 
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
 export const getFromLocalStorage = async (key: string) => {
-    await delay(1000); // 2-second delay
 
     try {
         const encryptedValue = localStorage.getItem(key);
