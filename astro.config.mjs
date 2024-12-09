@@ -1,4 +1,4 @@
-import deno from '@deno/astro-adapter';
+import deno from "@deno/astro-adapter";
 import { defineConfig } from 'astro/config';
 import react from "@astrojs/react";
 import sitemap from '@astrojs/sitemap';
