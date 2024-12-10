@@ -53,7 +53,12 @@
       }
     }
   },
+  "redirects": {
+    "https://cdn.skypack.dev/@astrojs/markdown-remark": "https://cdn.skypack.dev/new/@astrojs/markdown-remark@v6.0.0/dist=es2019",
+    "https://cdn.skypack.dev/new/@astrojs/markdown-remark@v6.0.0/dist=es2019": "https://cdn.skypack.dev/error/build:@astrojs/markdown-remark@v6.0.0-CDSf8dxnNg1QUEdUzdHP"
+  },
   "remote": {
+    "https://cdn.skypack.dev/error/build:@astrojs/markdown-remark@v6.0.0-CDSf8dxnNg1QUEdUzdHP": "d1289bb71c4969e67e9622c7780e3d654ffb420055d2fd6c4655355553ed48a1",
     "https://deno.land/std@0.197.0/collections/filter_values.ts": "16e1fc456a7969e770ec5b89edf5ac97b295ca534b47c1a83f061b409aad7814",
     "https://deno.land/std@0.197.0/collections/without_all.ts": "1e3cccb1ed0659455b473c0766d9414b7710d8cef48862c899f445178f66b779",
     "https://deno.land/std@0.197.0/dotenv/load.ts": "0636983549b98f29ab75c9a22a42d9723f0a389ece5498fe971e7bb2556a12e2",
@@ -62,9 +67,10 @@
   "workspace": {
     "packageJson": {
       "dependencies": [
+        "npm:@astrojs/markdown-remark@^6.0.1",
         "npm:@astrojs/react@^4.0.0",
         "npm:@astrojs/sitemap@^3.2.1",
-        "npm:@astrojs/starlight@^0.22.4",
+        "npm:@astrojs/starlight@^0.29.2",
         "npm:@astrojs/tailwind@^5.1.3",
         "npm:@babel/runtime-corejs3@^7.24.5",
         "npm:@babel/runtime@^7.24.5",
@@ -88,7 +94,7 @@
         "npm:@typescript-eslint/parser@^7.9.0",
         "npm:apexcharts@^3.49.1",
         "npm:astro-eslint-parser@^1.0.2",
-        "npm:astro@^4.16.17",
+        "npm:astro@^5.0.0",
         "npm:autoprefixer@^10.4.19",
         "npm:axios@^1.6.8",
         "npm:babel-eslint@^10.1.0",
