@@ -92,7 +92,7 @@ const IssueCred = () => {
 				}
 			}
 		} catch(error){
-			console.log('Error in getSchemaAndUsers:', error);
+			console.error('Error in getSchemaAndUsers:', error);
 			setFailure('Error fetching schema and users');
 		}
 		
@@ -117,15 +117,16 @@ const IssueCred = () => {
 			if (w3cSchema) {
 				const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 				const getW3cSchemaDetails = await getFromLocalStorage(storageKeys.W3C_SCHEMA_DETAILS);		
-				const parsedW3cSchemaDetails = JSON.parse(getW3cSchemaDetails);
+				console.log("🚀 ~ getSchemaAndU00000000sers ~ getW3cSchemaDetails:", getW3cSchemaDetails)
+				// const parsedW3cSchemaDetails = JSON.parse(getW3cSchemaDetails);
 
-				const schemaId = parsedW3cSchemaDetails?.schemaId;
-				createW3cSchemaPayload(schemaId, parsedW3cSchemaDetails);
+				const schemaId = getW3cSchemaDetails?.schemaId;
+				createW3cSchemaPayload(schemaId, getW3cSchemaDetails);
 				
 				setUserLoader(true);
 				const selectedUsers = await getSelectedUsers();
 
-				const attributes = parsedW3cSchemaDetails?.attributes;
+				const attributes = getW3cSchemaDetails?.attributes;
 				
 				if (attributes && attributes?.length) {
 					createW3cIssuanceForm(selectedUsers, attributes, orgId);
@@ -247,7 +248,7 @@ const IssueCred = () => {
 			let parsedSchemaAttributes = [];
 			if (schemaAttributes) {
 			  try {
-				parsedSchemaAttributes = JSON.parse(schemaAttributes);
+				parsedSchemaAttributes = (schemaAttributes);
 			  } catch (e) {
 			  }
 			}
@@ -290,7 +291,7 @@ const getSelectedUsers = async (): Promise<SelectedUsers[]> => {
 		  if (!selectedUsers) {
 			return [];
 		  }
-		  return JSON.parse(selectedUsers);
+		  return selectedUsers;
 		} catch (error) {
 		  console.error("Error parsing selectedUsers:", error);
 		  return [];

@@ -56,13 +56,13 @@ const CredDefSelection = () => {
 	const getSchemaDetails = async (schemaId: string) => {
 		setSchemaLoader(true);
 		const schemaDid = await getFromLocalStorage(storageKeys.SCHEMA_ATTR);
-		const schemaDidObject = JSON.parse(schemaDid);
-		if (schemaDidObject) {
+		// const schemaDidObject = JSON.parse(schemaDid);
+		if (schemaDid) {
 			setSchemaDetailsState({
 				schemaId: schemaId,
-				issuerDid: schemaDidObject?.issuerDid,
-				attributes: schemaDidObject?.attribute,
-				createdDateTime: schemaDidObject?.createdDate,
+				issuerDid: schemaDid?.issuerDid,
+				attributes: schemaDid?.attribute,
+				createdDateTime: schemaDid?.createdDate,
 			});
 		}
 		setSchemaLoader(false);

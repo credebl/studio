@@ -4,6 +4,7 @@
     "strictNullChecks": true,
     "jsx": "react-jsx",
     "jsxImportSource": "react",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "lib": ["ESNext", "DOM"]
   }
 }

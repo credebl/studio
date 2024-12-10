@@ -34,6 +34,7 @@ const CredDefSelection = () => {
 
 	const getSchemaAndCredDef = async () => {
 		const schemaId = await getFromLocalStorage(storageKeys.SCHEMA_ID)
+		console.log("🚀 ~ getSchemaAndCredDef ~ schemaId:", schemaId)
 		if (schemaId) {
 			getSchemaDetails(schemaId)
 			getCredDefs(schemaId)
@@ -49,9 +50,9 @@ const CredDefSelection = () => {
 	const getSchemaDetails = async (schemaId: string) => {
 		setSchemaLoader(true)
 		const schemaDid = await getFromLocalStorage(storageKeys.SCHEMA_ATTR)
-		const schemaDidObject = JSON.parse(schemaDid)
-		if (schemaDidObject) {
-			setSchemaDetailsState({ schemaId: schemaId, issuerDid: schemaDidObject?.issuerDid, attributes: schemaDidObject?.attribute, createdDateTime: schemaDidObject?.createdDate })
+		// const schemaDidObject = JSON.parse(schemaDid)
+		if (schemaDid) {
+			setSchemaDetailsState({ schemaId: schemaId, issuerDid: schemaDid?.issuerDid, attributes: schemaDid?.attribute, createdDateTime: schemaDid?.createdDate })
 		}
 		setSchemaLoader(false)
 	}
@@ -107,10 +108,6 @@ const CredDefSelection = () => {
 		setLoading(false)
 	}
 
-	const schemaSelectionCallback = () => {
-
-	}
-
 	const selectConnection = async (credDefId: string, checked: boolean) => {
 		if (credDefId && checked) {
 			await setToLocalStorage(storageKeys.CRED_DEF_ID, credDefId)
@@ -139,11 +136,8 @@ const CredDefSelection = () => {
 					: <div className="m-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap4">
 						<SchemaCard className="col-span-1 sm:col-span-2 md:col-span-1" schemaName={schemaState?.schemaName} version={schemaState?.version} schemaId={schemaDetailsState.schemaId} issuerDid={schemaDetailsState.issuerDid} attributes={schemaDetailsState.attributes} created={schemaDetailsState.createdDateTime} 
 						showCheckbox={false}
-
-
-							onClickCallback={schemaSelectionCallback} isClickable={false} />
+						isClickable={false} />
 					</div>}
-
 			</div>
 
 			<div className="mb-4 col-span-full xl:mb-2 pt-5">

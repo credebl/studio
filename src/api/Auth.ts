@@ -5,7 +5,125 @@ import { envConfig } from '../config/envConfig'
 import { storageKeys } from '../config/CommonConstant'
 import type { AddPassword } from '../components/Profile/interfaces'
 import type { AstroCookies } from 'astro'
-const storageOperations = new Map<string, Promise<void>>();
+
+// import { TextEncoder, TextDecoder } from 'util'; // For encoding/decoding text to/from Uint8Array
+
+const ENCODER = new TextEncoder();
+const DECODER = new TextDecoder();
+
+// Utility function to convert a base64 string to a Uint8Array
+const base64ToUint8Array = (base64: string) => Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+
+// Utility function to convert a Uint8Array to a base64 string
+const uint8ArrayToBase64 = (buffer: Uint8Array) => btoa(String.fromCharCode(...buffer));
+
+// Utility function to generate an AES-GCM key (128 or 256 bits)
+const getAesKey = async (key: string) => {
+    const keyBuffer = ENCODER.encode(key.padEnd(32, '0')).slice(0, 32); // Pad key to 32 bytes for AES-256
+    return await crypto.subtle.importKey(
+        'raw', 
+        keyBuffer, 
+        { name: 'AES-GCM' }, 
+        false, 
+        ['encrypt', 'decrypt']
+    );
+};
+
+// **Encrypt Data** using AES-GCM with WebCrypto
+export const encryptData = async (value: any): Promise<string> => {
+    try {
+        const CRYPTO_PRIVATE_KEY = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`;
+        const key = await getAesKey(CRYPTO_PRIVATE_KEY);
+
+        if (typeof value !== 'string') {
+            value = JSON.stringify(value);
+        }
+
+        const iv = crypto.getRandomValues(new Uint8Array(12)); // 12-byte random initialization vector
+        const encodedData = ENCODER.encode(value);
+
+        const encryptedData = await crypto.subtle.encrypt(
+            { name: 'AES-GCM', iv }, 
+            key, 
+            encodedData
+        );
+
+        // Concatenate IV and encrypted data and convert to base64
+        const ivBase64 = uint8ArrayToBase64(iv);
+        const encryptedBase64 = uint8ArrayToBase64(new Uint8Array(encryptedData));
+
+        return `${ivBase64}:${encryptedBase64}`;
+    } catch (error) {
+        console.error('Encryption error:', error);
+        return '';
+    }
+};
+
+// **Decrypt Data** using AES-GCM with WebCrypto
+export const decryptData = async (value: string): Promise<string> => {
+    try {
+        const CRYPTO_PRIVATE_KEY = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`;
+        const key = await getAesKey(CRYPTO_PRIVATE_KEY);
+
+        const [ivBase64, encryptedBase64] = value.split(':');
+
+        const iv = base64ToUint8Array(ivBase64);
+        const encryptedData = base64ToUint8Array(encryptedBase64);
+
+        const decryptedData = await crypto.subtle.decrypt(
+            { name: 'AES-GCM', iv }, 
+            key, 
+            encryptedData
+        );
+
+        return DECODER.decode(new Uint8Array(decryptedData));
+    } catch (error) {
+        console.error('Decryption error:', error);
+        return ''; // Return an empty string to avoid app crashes
+    }
+};
+
+// **Set to Local Storage** (Encrypt and Save)
+export const setToLocalStorage = async (key: string, value: any): Promise<boolean> => {
+    try {
+        if (typeof value === 'object' && Boolean(Object.keys(value).length <= 0)) {
+            return false;
+        }
+
+        if (typeof value === 'string' && !value.trim()) {
+            return false;
+        }
+
+        const encryptedValue = await encryptData(value);
+        localStorage.setItem(key, encryptedValue);
+        return true;
+    } catch (error) {
+        console.error('Error setting to localStorage:', error);
+        return false;
+    }
+};
+
+// **Get from Local Storage** (Decrypt and Return)
+export const getFromLocalStorage = async (key: string): Promise<any> => {
+    try {
+        const encryptedValue = localStorage.getItem(key);
+        if (!encryptedValue) {
+            console.warn(`No value found in localStorage for key: ${key}`);
+            return null;
+        }
+
+        const decryptedValue = await decryptData(encryptedValue);
+        try {
+            return JSON.parse(decryptedValue);
+        } catch {
+            return decryptedValue;
+        }
+    } catch (error) {
+        console.error(`Decryption error for key [${key}]:`, error);
+        return null;
+    }
+};
+
 export interface UserSignUpData {
     email: string,
     clientId: string,
@@ -226,82 +344,81 @@ export const passwordEncryption = (password: string): string => {
     return encryptedPassword
 }
 
-export const encryptData = (value: any): string => {
+// export const encryptData = (value: any): string => {
  
-    const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`
+//     const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`
 
-    try {
-        if (typeof (value) !== 'string') {
-            value = JSON.stringify(value)
-        }
-        return CryptoJS.AES.encrypt(value, CRYPTO_PRIVATE_KEY).toString();
-    } catch (error) {
-        // Handle encryption error
-        console.error('Encryption error:', error);
-        return '';
-    }
-}
+//     try {
+//         if (typeof (value) !== 'string') {
+//             value = JSON.stringify(value)
+//         }
+//         return CryptoJS.AES.encrypt(value, CRYPTO_PRIVATE_KEY).toString();
+//     } catch (error) {
+//         // Handle encryption error
+//         console.error('Encryption error:', error);
+//         return '';
+//     }
+// }
 
-export const decryptData = (value: string): string => {
-    const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`;
+// export const decryptData = (value: string): string => {
+//     const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`;
 
-    try {
-        // Ensure input is valid and not empty
-        if (!value || typeof value !== "string") {
-            throw new Error("Invalid input for decryption");
-        }
+//     try {
+//         // Ensure input is valid and not empty
+//         if (!value || typeof value !== "string") {
+//             throw new Error("Invalid input for decryption");
+//         }
 
-        const bytes = CryptoJS.AES.decrypt(value, CRYPTO_PRIVATE_KEY);
-        const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
+//         const bytes = CryptoJS.AES.decrypt(value, CRYPTO_PRIVATE_KEY);
+//         const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
 
-        // Ensure the output is valid UTF-8
-        if (!decryptedText) {
-            throw new Error("Decryption failed or returned empty result");
-        }
+//         // Ensure the output is valid UTF-8
+//         if (!decryptedText) {
+//             throw new Error("Decryption failed or returned empty result");
+//         }
 
-        return decryptedText;
-    } catch (error) {
-        console.error("Decryption error:", error);
-        return ''; // Return a fallback value to prevent crashes
-    }
-};
+//         return decryptedText;
+//     } catch (error) {
+//         console.error("Decryption error:", error);
+//         return ''; // Return a fallback value to prevent crashes
+//     }
+// };
 
+// export const setToLocalStorage = async (key: string, value: any) =>{
 
-export const setToLocalStorage = async (key: string, value: any) =>{
+//     // If passed value is object then checked empty object
+// 	if (typeof value === 'object' && Boolean(Object.keys(value).length <= 0)) {
+// 		return;
+// 	}
 
-    // If passed value is object then checked empty object
-	if (typeof value === 'object' && Boolean(Object.keys(value).length <= 0)) {
-		return;
-	}
+// 	// If passed value is string then checked if value is falsy
+// 	if (typeof value === 'string' && !value?.trim()) {
+// 		return;
+// 	}
 
-	// If passed value is string then checked if value is falsy
-	if (typeof value === 'string' && !value?.trim()) {
-		return;
-	}
+//     const convertedValue = await encryptData(value)
+//     const setValue = await localStorage.setItem(key, convertedValue as string)
+//     return true
+// }
 
-    const convertedValue = await encryptData(value)
-    const setValue = await localStorage.setItem(key, convertedValue as string)
-    return true
-}
+// export const getFromLocalStorage = async (key: string) => {
 
-export const getFromLocalStorage = async (key: string) => {
+//     try {
+//         const encryptedValue = localStorage.getItem(key);
 
-    try {
-        const encryptedValue = localStorage.getItem(key);
+//         if (!encryptedValue) {
+//             console.warn(`No value found in localStorage for key: ${key}`);
+//             return null;
+//         }
 
-        if (!encryptedValue) {
-            console.warn(`No value found in localStorage for key: ${key}`);
-            return null;
-        }
+//         const decryptedValue = encryptedValue ? decryptData(encryptedValue) : '';
 
-        const decryptedValue = encryptedValue ? decryptData(encryptedValue) : '';
-
-        return decryptedValue;
-    } catch (error) {
-        console.error(`Decryption error for key [${key}]:`, error);
-        return null;
-    }
-};
+//         return decryptedValue;
+//     } catch (error) {
+//         console.error(`Decryption error for key [${key}]:`, error);
+//         return null;
+//     }
+// };
 
 export const setToCookies = (cookies: AstroCookies, key: string, value: any, option: {[key: string]: any }) =>{
     // If passed value is object then checked empty object

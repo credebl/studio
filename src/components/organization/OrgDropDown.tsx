@@ -74,7 +74,8 @@ const OrgDropDown = () => {
 	const handleActiveOrg = async (organizations: Organisation[]) => {
 		let activeOrgDetails;
 		const orgInfoDetails = await getFromLocalStorage(storageKeys.ORG_INFO);
-		activeOrgDetails = orgInfoDetails ? JSON.parse(orgInfoDetails) : null;
+		// activeOrgDetails = orgInfoDetails ? JSON.parse(orgInfoDetails) : null;
+		activeOrgDetails = orgInfoDetails;
 
 		if (activeOrgDetails && Object.keys(activeOrgDetails)?.length > 0) {
 			setActiveOrg(activeOrgDetails);

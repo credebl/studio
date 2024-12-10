@@ -34,10 +34,10 @@ const EmailCredDefSelection = () => {
     const getSchemaAndCredDef = async () => {
         try {
             const schemaIdsJSON = await getFromLocalStorage(storageKeys.SCHEMA_IDS);
-            const schemaIds = schemaIdsJSON ? JSON.parse(schemaIdsJSON) : [];
+            // const schemaIds = schemaIdsJSON ? JSON.parse(schemaIdsJSON) : [];
 
-            if (schemaIds && schemaIds.length > 0) {
-                getCredDefs(schemaIds);
+            if (schemaIdsJSON && schemaIdsJSON.length > 0) {
+                getCredDefs(schemaIdsJSON);
             }
         } catch (error) {
             console.error('Error fetching schema details:', error);
@@ -113,9 +113,9 @@ const EmailCredDefSelection = () => {
         if (!credDefId) return;
     
         const getRawCredDefs = await getFromLocalStorage(storageKeys.SCHEMA_CRED_DEFS);
-        const parsedRawCredDefs = JSON.parse(getRawCredDefs);
+        // const parsedRawCredDefs = JSON.parse(getRawCredDefs);
     
-        const selectedCredDef = parsedRawCredDefs.find(
+        const selectedCredDef = getRawCredDefs.find(
             (credDef: CredDefData) => credDef.credentialDefinitionId === credDefId
         );
     
@@ -125,7 +125,7 @@ const EmailCredDefSelection = () => {
                     const isAlreadySelected = prevSelected.some(
                         (credDef) => credDef.credentialDefinitionId === selectedCredDef.credentialDefinitionId
                     );
-    
+
                     if (!isAlreadySelected) {
                         const newSelected = [...prevSelected, selectedCredDef];
                         setToLocalStorage(storageKeys.CRED_DEF_DATA, JSON.stringify(newSelected));
@@ -142,10 +142,7 @@ const EmailCredDefSelection = () => {
                 return prevSelected;
             });
         }
-    };
-    
-    
-    
+    }; 
     return (
         <div className="px-4 pt-2">
             <div className="mb-4 col-span-full xl:mb-2">

@@ -109,7 +109,7 @@ const BulkIssuance = () => {
 
 			let dropDownOptions;
 			setSchemaType(currentSchemaType); 
-			if ((currentSchemaType === SchemaTypes.schema_INDY &&  isAllSchema) || (currentSchemaType && orgId && !isAllSchema)) {
+			if ((currentSchemaType === SchemaTypes.schema_INDY &&  isAllSchemaSelectedFlag) || (currentSchemaType && orgId && !isAllSchemaSelectedFlag)) {
 				const response = await getSchemaCredDef(currentSchemaType); 
 				const { data } = response as AxiosResponse;
 
@@ -144,7 +144,7 @@ const BulkIssuance = () => {
 				}
 				setLoading(false);
 			}
-			else if (currentSchemaType === SchemaTypes.schema_W3C && orgId && isAllSchema) {
+			else if (currentSchemaType === SchemaTypes.schema_W3C && orgId && isAllSchemaSelectedFlag) {
 
 				
 				const response = await getAllSchemas(schemaListAPIParameters,currentSchemaType); 

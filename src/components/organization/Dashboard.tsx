@@ -77,10 +77,10 @@ const Dashboard = () => {
 			
 			setOrgData(data?.data);
 				
-			const organizationData = orgInfoData ? JSON.parse(orgInfoData) : {};
+			// const organizationData = orgInfoData ? JSON.parse(orgInfoData) : {};
 			const {id, name, description, logoUrl} = data?.data || {};
 			const orgInfo = {
-				...organizationData,
+				...orgInfoData,
 				...id && { id },
 				...name && { name },
 				...description && { description },

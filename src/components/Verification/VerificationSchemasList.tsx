@@ -207,14 +207,16 @@ const VerificationSchemasList = () => {
 
 	const handleW3CSchemaDetails = async () => {
 		const w3cSchemaDetails = await getFromLocalStorage(storageKeys.SELECTED_SCHEMAS)
+		console.log("🚀 ~ handleW3CSchemaDetails ~ w3cSchemaDetails:", w3cSchemaDetails)
 
-		const parsedSchemaDetails = JSON.parse(w3cSchemaDetails);
+		// const parsedSchemaDetails = JSON.parse(w3cSchemaDetails);
 
-		const w3cSchemaAttributes = parsedSchemaDetails.map(schema => ({
+		const w3cSchemaAttributes = w3cSchemaDetails.map(schema => ({
 			schemaId: schema.schemaId,
 			attributes: schema.attributes,
 			schemaName: schema.schemaName
 		}))
+		console.log("🚀 ~ w3cSchemaAttributes ~ w3cSchemaAttributes:", w3cSchemaAttributes)
 		await setToLocalStorage(storageKeys.W3C_SCHEMA_ATTRIBUTES, w3cSchemaAttributes);
 
 		window.location.href = `${pathRoutes.organizations.verification.w3cAttributes}`;

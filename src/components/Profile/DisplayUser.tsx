@@ -11,13 +11,15 @@ const DisplayUser = () => {
     let timer:any= null
     const getUserDetails = async () => {
         const userProfile = await getFromLocalStorage(storageKeys.USER_PROFILE)
+        console.log("🚀 ~ getUserDetails ~ userProfile11111111111:", userProfile)
         const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES)
-        const parsedUser = userProfile ? JSON.parse(userProfile) : null
+        // const parsedUser = userProfile ? JSON.parse(userProfile) : null
+        // console.log("🚀 ~ getUserDetails ~ parsedUser:", parsedUser)
 
-         if (parsedUser) {
-            parsedUser.roles = orgRoles;
-            setUserObj(parsedUser);
-        }
+        //  if (parsedUser) {
+            userProfile.roles = orgRoles;
+            setUserObj(userProfile);
+        // }
     }
     useEffect(() => {
 			const fetchData = async () => {
@@ -31,7 +33,6 @@ const DisplayUser = () => {
 					timer = null;
 			};
 	}, [userObj]);
-
 
     return (
         <div className="px-4 py-3" role="none">

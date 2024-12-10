@@ -79,7 +79,7 @@ const EmailIssuance = () => {
 			const orgDid = await getFromLocalStorage(storageKeys.ORG_DID);
 
 			const allSchemaSelectedFlag = await getFromLocalStorage(storageKeys.ALL_SCHEMAS)
-			if (allSchemaSelectedFlag === `false` || !allSchemaSelectedFlag) {
+			if (allSchemaSelectedFlag === false || !allSchemaSelectedFlag) {
 				setIsAllSchemaFlagSelected(false)
 			}
 			else if (allSchemaSelectedFlag === 'true') {
@@ -107,7 +107,7 @@ const EmailIssuance = () => {
 
 			//FIXME:  Logic of API call as per schema selection
 			if((currentSchemaType === SchemaTypes.schema_INDY && orgId 
-			 ) || (currentSchemaType ===SchemaTypes.schema_W3C && isAllSchemaFlagSelected === false)){
+			 ) || (currentSchemaType ===SchemaTypes.schema_W3C && allSchemaSelectedFlag === false)){
 				const response = await getSchemaCredDef(currentSchemaType);
 				const { data } = response as AxiosResponse;
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {

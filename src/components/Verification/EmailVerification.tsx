@@ -69,8 +69,8 @@ const EmailVerification = () => {
             if (w3cSchema) {
                 const getSelectedW3CSchemaDetails = await getFromLocalStorage(storageKeys.ATTRIBUTE_DATA);
 
-                const parsedW3CSchemaDetails = JSON.parse(getSelectedW3CSchemaDetails);
-                const groupedAttributes = parsedW3CSchemaDetails
+                // const parsedW3CSchemaDetails = JSON.parse(getSelectedW3CSchemaDetails);
+                const groupedAttributes = getSelectedW3CSchemaDetails
                     .filter(attribute => attribute.isChecked)
                     .reduce((acc, attribute) => {
                         const schemaUri = attribute.schemaId;
@@ -116,10 +116,10 @@ const EmailVerification = () => {
             } else {
 
                 const selectedAttributes = await getFromLocalStorage(storageKeys.ATTRIBUTE_DATA);
-                const parsedSelectedAttributes = JSON.parse(selectedAttributes) || [];
+                // const parsedSelectedAttributes = JSON.parse(selectedAttributes) || [];
 
-                const selectedAttributesDetails = parsedSelectedAttributes.filter((attr: ISelectedAttributes) => attr.isChecked && attr.dataType !== 'number') || [];
-                const selectedPredicatesDetails = parsedSelectedAttributes.filter(attr => attr.isChecked && attr.dataType === 'number') || [];
+                const selectedAttributesDetails = selectedAttributes.filter((attr: ISelectedAttributes) => attr.isChecked && attr.dataType !== 'number') || [];
+                const selectedPredicatesDetails = selectedAttributes.filter(attr => attr.isChecked && attr.dataType === 'number') || [];
 
                 const requestedAttributes: Record<string, IRequestedAttributes> = {};
                 const requestedPredicates: Record<string, IPredicate> = {};

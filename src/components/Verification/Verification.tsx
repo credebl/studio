@@ -219,7 +219,7 @@ const VerificationCred = () => {
 	
 				if (!w3cSchema) { 
 					verifyCredentialPayload = {
-							connectionId: JSON.parse(userData)[0]?.connectionId,
+							connectionId: userData[0]?.connectionId,
 							comment: 'string',
 							orgId: orgId,
 							proofFormats: {
@@ -236,7 +236,7 @@ const VerificationCred = () => {
 						(attr) => `$.credentialSubject['${attr.attributeName}']`
 					  );
 					verifyCredentialPayload = {
-						connectionId: JSON.parse(userData)[0]?.connectionId,
+						connectionId: userData[0]?.connectionId,
 						comment: 'proof request',
 						presentationDefinition: {
 						  id: uuidv4(),
@@ -291,8 +291,8 @@ const VerificationCred = () => {
 			
 			if(!w3cSchema){
 			
-				const parsedSchemaDetails = JSON.parse(schemaAttributes) || [];
-				const inputArray: SelectedUsers[] = parsedSchemaDetails.attribute.map(
+				// const parsedSchemaDetails = JSON.parse(schemaAttributes) || [];
+				const inputArray: SelectedUsers[] = schemaAttributes.attribute.map(
 					(attribute: IAttribute) => {
 						return {
 							displayName: attribute.displayName,
@@ -320,9 +320,9 @@ const VerificationCred = () => {
 
 				const getW3cAttributes = await getFromLocalStorage(storageKeys.W3C_SCHEMA_DATA);
 					
-				const parsedSchemaAttributes = JSON.parse(getW3cAttributes) || [];
+				// const parsedSchemaAttributes = JSON.parse(getW3cAttributes) || [];
 				
-				const w3cInputArray: SelectedUsers[] = parsedSchemaAttributes.attributes.map(
+				const w3cInputArray: SelectedUsers[] = getW3cAttributes.attributes.map(
 					(attribute: IAttribute) => {
 						return {
 							displayName: attribute.displayName,
@@ -355,6 +355,7 @@ const VerificationCred = () => {
 		const attributes =
 			attributeData &&
 			attributeData.map((attribute: ISelectedUser, index: number) => {
+				console.log("🚀 ~ attributeData.map ~ attribute:", attribute)
 				return {
 					data: [
 						{
@@ -448,6 +449,7 @@ const VerificationCred = () => {
 					],
 				};
 			});
+			console.log('attributes11111999999999::::', attributes)
 			
 			setAttributeList(attributes);			
 			
@@ -470,10 +472,11 @@ const VerificationCred = () => {
 		if(isW3c){
 			const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 			const getW3cSchemaDetails = await getFromLocalStorage(storageKeys.W3C_SCHEMA_DATA);
+			console.log("🚀 ~ getSchemaAndUsers ~ getW3cSchemaDetails:", getW3cSchemaDetails)
 			
-		const parsedW3cSchemaDetails = JSON.parse(getW3cSchemaDetails);
-		const schemaId = parsedW3cSchemaDetails?.schemaId
-		createW3cSchemaPayload(schemaId,parsedW3cSchemaDetails)
+		// const parsedW3cSchemaDetails = JSON.parse(getW3cSchemaDetails);
+		const schemaId = getW3cSchemaDetails?.schemaId
+		createW3cSchemaPayload(schemaId,getW3cSchemaDetails)
 		}
 	};
 

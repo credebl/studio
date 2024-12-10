@@ -153,10 +153,10 @@ const EmailAttributesSelection = () => {
 	
 			if (w3cSchema) {
 				const getW3CSchemaDetails = await getFromLocalStorage(storageKeys.SELECTED_SCHEMAS);
-				const parsedW3CSchemaDetails = JSON.parse(getW3CSchemaDetails || '[]');
+				// const parsedW3CSchemaDetails = JSON.parse(getW3CSchemaDetails || '[]');
 		
-				if (Array.isArray(parsedW3CSchemaDetails) && parsedW3CSchemaDetails.length > 0) {
-					const allAttributes = parsedW3CSchemaDetails.flatMap(schema => {
+				if (Array.isArray(getW3CSchemaDetails) && getW3CSchemaDetails.length > 0) {
+					const allAttributes = getW3CSchemaDetails.flatMap(schema => {
 						if (schema.attributes && Array.isArray(schema.attributes)) {
 							return schema.attributes.map(attribute => ({
 								...attribute,
@@ -193,17 +193,17 @@ const EmailAttributesSelection = () => {
 	
 			} else {
 				const getSelectedCredDefData = await getFromLocalStorage(storageKeys.CRED_DEF_DATA);
-				const selectedCredDefs = JSON.parse(getSelectedCredDefData || '[]');
+				// const selectedCredDefs = JSON.parse(getSelectedCredDefData || '[]');
 	
 				const schemaAttributes = await getFromLocalStorage(storageKeys.SCHEMA_ATTRIBUTES);
-				const parsedSchemaDetails = JSON.parse(schemaAttributes || '[]');
+				// const parsedSchemaDetails = JSON.parse(schemaAttributes || '[]');
 	
 	
-				if (Array.isArray(parsedSchemaDetails) && parsedSchemaDetails.length > 0) {
-					const allAttributes = parsedSchemaDetails.flatMap(schema => {
+				if (Array.isArray(schemaAttributes) && schemaAttributes.length > 0) {
+					const allAttributes = schemaAttributes.flatMap(schema => {
 						if (schema.attributes && Array.isArray(schema.attributes)) {
 							return schema.attributes.flatMap(attribute => {
-								const matchingCredDefs = selectedCredDefs.filter(
+								const matchingCredDefs = getSelectedCredDefData.filter(
 									credDef => credDef.schemaLedgerId === schema.schemaId
 								);
 	

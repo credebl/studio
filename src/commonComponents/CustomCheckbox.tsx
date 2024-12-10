@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { setToLocalStorage } from '../api/Auth';
+import { getFromLocalStorage, setToLocalStorage } from '../api/Auth';
 import { storageKeys } from '../config/CommonConstant';
 import type { ICustomCheckboxProps, ISchemaData } from './interface';
 
@@ -25,16 +25,20 @@ const CustomCheckbox: React.FC<ICustomCheckboxProps> = ({ showCheckbox, isVerifi
 
     try {
       const selectedSchemas = JSON.parse(localStorage.getItem('selectedSchemas') ?? '[]');
-      
+      // const selectedSchemas = await getFromLocalStorage(storageKeys.SELECTED_SCHEMAS);
+      console.log("🚀 ~ handleCheckboxChange ~ selectedSchemas:", selectedSchemas)
+
+      const filteredSchemas = selectedSchemas.filter((schema: ISchemaData | null) => schema !== null);
+
       if (newChecked) {
-        selectedSchemas.push(schemaData);
+        filteredSchemas.push(schemaData);
       } else {
-        const index = selectedSchemas.findIndex((schema: ISchemaData) => schema.schemaId === schemaData?.schemaId);
+        const index = filteredSchemas.findIndex((schema: ISchemaData) => schema.schemaId === schemaData?.schemaId);
         if (index > -1) {
-          selectedSchemas.splice(index, 1);
+          filteredSchemas.splice(index, 1);
         }
       }
-      await setToLocalStorage(storageKeys.SELECTED_SCHEMAS, JSON.stringify(selectedSchemas));
+      await setToLocalStorage(storageKeys.SELECTED_SCHEMAS, JSON.stringify(filteredSchemas));
     } catch (error) {
       console.error('Error updating localStorage:', error);
     }

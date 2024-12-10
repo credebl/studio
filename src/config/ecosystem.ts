@@ -53,38 +53,64 @@ const getOwnerAdminRole = async (props?: string) => {
 	}
 };
 
-const getOrgDetails = async (): Promise<IOrgDetails> => {
+const getOrgDetails = async (): Promise<IOrgDetails | null> => {
 	const orgId = await getOrgId();
-	const org = await getOrgData();
-	const orgData: IOrgDetails = org && JSON.parse(org);
-	const isOrgData = Object.keys(orgData).length > 0;
-	const isOrgDid = orgData?.orgDid;
-	if (!isOrgData || !isOrgDid) {
-		try {
-			if (orgId) {
-				const { data } = (await getOrganizationById(orgId)) as AxiosResponse;
-
-				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-					const orgData: IOrgDetails = {
-						orgName: data?.data?.name,
-						orgDid:
-							data?.data && data?.data?.org_agents?.length > 0
-								? data?.data?.org_agents[0]?.orgDid
-								: '',
-					};
-					await setToLocalStorage(
-						storageKeys.ORG_DETAILS,
-						JSON.stringify(orgData),
-					);
-					return orgData;
-				}
-			}
-		} catch (err) {
-			console.log('ERROR-Get ORG Details', err);
-		}
+	if (!orgId) {
+		console.log('🚀 No orgId found');
+		return null; // Explicitly return null if orgId is not found
 	}
-	return orgData;
+
+	const { data } = (await getOrganizationById(orgId)) as AxiosResponse;
+
+	if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+		const orgData = {
+			orgName: data?.data?.name,
+			orgDid: data?.data && data?.data?.org_agents?.length > 0 ? data?.data?.org_agents[0]?.orgDid : '',
+		};
+		console.log('🚀 ~ getOrgDetails ~ orgData:', orgData);
+
+		await setToLocalStorage(storageKeys.ORG_DETAILS, JSON.stringify(orgData));
+		return orgData;
+	}
+
+	// Return null or an empty object if the condition is not met
+	return null; 
 };
+
+
+// const getOrgDetails = async (): Promise<IOrgDetails> => {
+// 	const orgId = await getOrgId();
+// 	const org = await getOrgData();
+// 	const orgData: IOrgDetails = org && JSON.parse(org);
+// 	const isOrgData = Object.keys(orgData).length > 0;
+// 	const isOrgDid = orgData?.orgDid;
+// 	if (!isOrgData || !isOrgDid) {
+// 		try {
+// 			if (orgId) {
+// 				const { data } = (await getOrganizationById(orgId)) as AxiosResponse;
+
+// 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+// 					const orgData: IOrgDetails = {
+// 						orgName: data?.data?.name,
+// 						orgDid:
+// 							data?.data && data?.data?.org_agents?.length > 0
+// 								? data?.data?.org_agents[0]?.orgDid
+// 								: '',
+// 					};
+// 					await setToLocalStorage(
+// 						storageKeys.ORG_DETAILS,
+// 						JSON.stringify(orgData),
+// 					);
+// 					return orgData;
+// 				}
+// 			}
+// 		} catch (err) {
+// 			console.log('ERROR-Get ORG Details', err);
+// 		}
+// 	}
+// 	return orgData;
+// };
+
 const checkEcosystem = async (): Promise<ICheckEcosystem> => {
 	await getEcosystemId();
 

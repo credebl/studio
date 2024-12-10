@@ -171,10 +171,10 @@ const EditUserProfile = ({ toggleEditProfile, userProfileInfo, updateProfile }: 
 
     const { data } = resUpdateUserDetails as AxiosResponse
 
-    const updatedUser = JSON.parse(existingUser)
+    // const updatedUser = JSON.parse(existingUser)
 
     const updatedUserData = {
-      ...updatedUser,
+      ...existingUser,
       ...userData
     }
 

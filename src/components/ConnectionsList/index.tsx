@@ -40,7 +40,7 @@ const ConnectionList = () => {
 	const getConnections = async (apiParameter: IConnectionListAPIParameter) => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		const orgData = await getOrgDetails();
-		const checkWalletCreated = Boolean(orgData.orgDid);
+		const checkWalletCreated = Boolean(orgData?.orgDid);
 
 		if (orgId && checkWalletCreated) {
 			setLoading(true);

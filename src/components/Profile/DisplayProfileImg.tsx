@@ -9,13 +9,17 @@ const DisplayProfileImg = () => {
     const [userObj, setUserObj] = useState<IUserProfile | null>(null)
     const getUserDetails = async () => {
         const userProfile = await getFromLocalStorage(storageKeys.USER_PROFILE)
+        console.log("🚀 ~ getUserDetails ~ userProfile: type of:::::::", typeof userProfile)
+        console.log("🚀 ~ getUserDetails ~ userProfile22222222222:", userProfile)
         const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES)
-        const parsedUser = userProfile ? JSON.parse(userProfile) : null;
+        // const parsedUser = userProfile ? JSON.parse(userProfile) : null;
+        // console.log("🚀 ~ getUserDetails ~ parsedUser type of:", typeof parsedUser)
+        // console.log("🚀 ~ getUserDetails ~ parsedUser:", parsedUser)
 
-        if (parsedUser) {
-            parsedUser.roles = orgRoles;
-            setUserObj(parsedUser);
-        }
+        // if (parsedUser) {
+            userProfile.roles = orgRoles;
+            setUserObj(userProfile);
+        // }
     }
 
     useEffect(() => {
