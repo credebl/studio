@@ -60,19 +60,51 @@ export const encryptData = async (value: any): Promise<string> => {
 };
 
 // **Decrypt Data** using AES-GCM with WebCrypto
+// export const decryptData = async (value: string): Promise<string> => {
+//     try {
+//         const CRYPTO_PRIVATE_KEY = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`;
+//         const key = await getAesKey(CRYPTO_PRIVATE_KEY);
+
+//         const [ivBase64, encryptedBase64] = value.split(':');
+
+//         const iv = base64ToUint8Array(ivBase64);
+//         const encryptedData = base64ToUint8Array(encryptedBase64);
+
+//         const decryptedData = await crypto.subtle.decrypt(
+//             { name: 'AES-GCM', iv }, 
+//             key, 
+//             encryptedData
+//         );
+
+//         return DECODER.decode(new Uint8Array(decryptedData));
+//     } catch (error) {
+//         console.error('Decryption error:', error);
+//         return ''; // Return an empty string to avoid app crashes
+//     }
+// };
+
 export const decryptData = async (value: string): Promise<string> => {
     try {
         const CRYPTO_PRIVATE_KEY = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`;
         const key = await getAesKey(CRYPTO_PRIVATE_KEY);
 
+        if (!value) {
+            console.error('No value to decrypt.');
+            return '';
+        }
+
         const [ivBase64, encryptedBase64] = value.split(':');
+        if (!ivBase64 || !encryptedBase64) {
+            console.error('Invalid encrypted data format.');
+            return '';
+        }
 
         const iv = base64ToUint8Array(ivBase64);
         const encryptedData = base64ToUint8Array(encryptedBase64);
 
         const decryptedData = await crypto.subtle.decrypt(
-            { name: 'AES-GCM', iv }, 
-            key, 
+            { name: 'AES-GCM', iv },
+            key,
             encryptedData
         );
 
@@ -104,6 +136,27 @@ export const setToLocalStorage = async (key: string, value: any): Promise<boolea
 };
 
 // **Get from Local Storage** (Decrypt and Return)
+// export const getFromLocalStorage = async (key: string): Promise<any> => {
+//     try {
+//         const encryptedValue = localStorage.getItem(key);
+//         if (!encryptedValue) {
+//             console.warn(`No value found in localStorage for key: ${key}`);
+//             return null;
+//         }
+
+//         const decryptedValue = await decryptData(encryptedValue);
+//         try {
+//             return JSON.parse(decryptedValue);
+//         } catch {
+//             return decryptedValue;
+//         }
+//     } catch (error) {
+//         console.error(`Decryption error for key [${key}]:`, error);
+//         return null;
+//     }
+// };
+
+
 export const getFromLocalStorage = async (key: string): Promise<any> => {
     try {
         const encryptedValue = localStorage.getItem(key);
@@ -112,10 +165,13 @@ export const getFromLocalStorage = async (key: string): Promise<any> => {
             return null;
         }
 
+        console.log(`Encrypted value retrieved from localStorage: ${encryptedValue}`);
         const decryptedValue = await decryptData(encryptedValue);
+
         try {
             return JSON.parse(decryptedValue);
         } catch {
+            console.warn('Decrypted value is not valid JSON.');
             return decryptedValue;
         }
     } catch (error) {
@@ -123,7 +179,6 @@ export const getFromLocalStorage = async (key: string): Promise<any> => {
         return null;
     }
 };
-
 export interface UserSignUpData {
     email: string,
     clientId: string,
