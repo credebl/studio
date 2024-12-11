@@ -352,7 +352,7 @@ const UserDashBoard = () => {
 
 	const setOrgRoleDetails = async (org: Organisation) => {
 		await setToLocalStorage(storageKeys.ORG_ID, org.id.toString());
-		const roles: string[] = org?.userOrgRoles.map((role) => role.orgRole.name);
+		const roles: string[] = org?.userOrgRoles?.map((role) => role.orgRole.name);
 
 		await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
 

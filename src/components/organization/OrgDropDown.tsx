@@ -82,7 +82,7 @@ const OrgDropDown = () => {
 		} else if (organizations?.[0]) {
 			activeOrgDetails = organizations?.[0];
 			const roles: string[] = activeOrgDetails?.userOrgRoles?.map(
-				(role: { orgRole: { name: string } }) => role.orgRole.name,
+				(role: { orgRole: { name: string } }) => role?.orgRole?.name,
 			);
 			const { id, name, description, logoUrl } = organizations[0] || {};
 			const orgInfo = {

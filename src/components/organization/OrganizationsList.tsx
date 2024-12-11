@@ -116,7 +116,7 @@ const OrganizationsList = () => {
 
 		await setToLocalStorage(storageKeys.ORG_ID, activeOrg.id.toString());
 		const roles: string[] = activeOrg?.userOrgRoles.map(
-			(role) => role.orgRole.name,
+			(role) => role?.orgRole?.name,
 		);
 		const { id, name, description, logoUrl } = activeOrg || {};
 		const orgInfo = {

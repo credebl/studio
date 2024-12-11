@@ -11,7 +11,6 @@ const DisplayUser = () => {
     let timer:any= null
     const getUserDetails = async () => {
         const userProfile = await getFromLocalStorage(storageKeys.USER_PROFILE)
-        console.log("🚀 ~ getUserDetails ~ userProfile11111111111:", userProfile)
         const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES)
             userProfile.roles = orgRoles;
             setUserObj(userProfile);
