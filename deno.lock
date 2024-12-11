@@ -80,7 +80,7 @@
         "npm:@typescript-eslint/parser@^7.9.0",
         "npm:apexcharts@^3.49.1",
         "npm:astro-eslint-parser@^1.0.2",
-        "npm:astro@^4.16.17",
+        "npm:astro@^5.0.5",
         "npm:autoprefixer@^10.4.19",
         "npm:axios@^1.6.8",
         "npm:babel-eslint@^10.1.0",
