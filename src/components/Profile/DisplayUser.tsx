@@ -12,9 +12,15 @@ const DisplayUser = () => {
     const getUserDetails = async () => {
         const userProfile = await getFromLocalStorage(storageKeys.USER_PROFILE)
         const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES)
+
+        if (orgRoles) {
             userProfile.roles = orgRoles;
             setUserObj(userProfile);
+        } else {
+            console.error('');
+        }          
     }
+
     useEffect(() => {
 			const fetchData = async () => {
 					await getUserDetails();
@@ -46,7 +52,7 @@ const DisplayUser = () => {
                         className="text-base font-medium text-gray-900 truncate dark:text-gray-300"
                         role="none"
                     >
-                        {TextTittlecase(userObj['roles'])}
+                        {TextTittlecase(userObj?.['roles'])}
                     </p>
                 </>
             }
