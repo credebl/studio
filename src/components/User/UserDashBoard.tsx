@@ -126,7 +126,7 @@ const UserDashBoard = () => {
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			setOrgCount(data?.data?.totalCount);
-			const orgList = data?.data?.organizations.filter(
+			const orgList = data?.data?.organizations?.filter(
 				(userOrg: Organisation, index: number) => index < 3,
 			);
 			setOrganizationList(orgList);			
@@ -152,7 +152,7 @@ const UserDashBoard = () => {
 				data?.data?.invitations?.filter((invitation: { status: string }) => {
 					return invitation.status === 'pending';
 				});
-			if (invitationPendingList && invitationPendingList.length > 0) {
+			if (invitationPendingList && invitationPendingList?.length > 0) {
 				setEcoMessage(`You have received invitation to join ecosystem `);
 				setViewButton(true);
 			}
@@ -274,7 +274,7 @@ const UserDashBoard = () => {
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const orgAgentsList =  data?.data?.org_agents;
-			if (orgAgentsList && orgAgentsList.length > 0) {
+			if (orgAgentsList && orgAgentsList?.length > 0) {
 				const orgDid = orgAgentsList[0].orgDid;
 				setWalletData(data?.data?.org_agents);
 				
@@ -352,7 +352,7 @@ const UserDashBoard = () => {
 
 	const setOrgRoleDetails = async (org: Organisation) => {
 		await setToLocalStorage(storageKeys.ORG_ID, org.id.toString());
-		const roles: string[] = org?.userOrgRoles?.map((role) => role.orgRole.name);
+		const roles: string[] = org?.userOrgRoles?.map((role) => role?.orgRole?.name);
 
 		await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
 
@@ -637,10 +637,10 @@ const UserDashBoard = () => {
 															<span className="flex items-center space-x-2 ml-3 text-lg font-bold text-gray-500 dark:text-white text-start truncate">
 																<span className="truncate">{org?.name}</span>
 																<span>
-																	{org.roles.includes(
+																	{org?.roles?.includes(
 																		OrganizationRoles.organizationOwner,
 																	) ? (
-																		<span  title={org.roles.join(", ")}>
+																		<span  title={org?.roles?.join(", ")}>
 																			<svg
 																				width="24"
 																				height="24"
@@ -654,14 +654,14 @@ const UserDashBoard = () => {
 																				/>
 																			</svg>
 																		</span>
-																	) : org.roles.includes(
+																	) : org?.roles?.includes(
 																			OrganizationRoles.organizationVerifier,
 																	  ) ||
-																	  org.roles.includes(
+																	  org?.roles?.includes(
 																			OrganizationRoles.organizationIssuer,
 																	  ) ? (
 																		<span
-																		title={org.roles.slice(0, org.roles.length - 1).join(", ")}
+																		title={org?.roles?.slice(0, org.roles.length - 1).join(", ")}
 																		>
 																			<svg
 																				width="24"
@@ -676,7 +676,7 @@ const UserDashBoard = () => {
 																				/>
 																			</svg>
 																		</span>
-																	) : org.roles.includes(
+																	) : org?.roles?.includes(
 																			OrganizationRoles.organizationAdmin,
 																	  ) ? (
 																		<span
@@ -740,10 +740,10 @@ const UserDashBoard = () => {
 																className={`p-1 rounded-md ${
 																	!(
 																		organizationsList[index].userOrgRoles[0]
-																			.orgRole.name ===
+																			.orgRole?.name ===
 																			OrganizationRoles.organizationOwner ||
 																		organizationsList[index].userOrgRoles[0]
-																			.orgRole.name ===
+																			.orgRole?.name ===
 																			OrganizationRoles.organizationAdmin
 																	)
 																		? 'cursor-not-allowed opacity-50'
@@ -752,10 +752,10 @@ const UserDashBoard = () => {
 																disabled={
 																	!(
 																		organizationsList[index].userOrgRoles[0]
-																			.orgRole.name ===
+																			.orgRole?.name ===
 																			OrganizationRoles.organizationOwner ||
 																		organizationsList[index].userOrgRoles[0]
-																			.orgRole.name ===
+																			.orgRole?.name ===
 																			OrganizationRoles.organizationAdmin
 																	)
 																}
@@ -784,7 +784,7 @@ const UserDashBoard = () => {
 														>
 															<button
 																onClick={() => {
-																	goToOrgCredDef(org, org.id, org.roles);
+																	goToOrgCredDef(org, org?.id, org?.roles);
 																}}
 																className="p-1 rounded-md"
 														    	>
@@ -813,7 +813,7 @@ const UserDashBoard = () => {
 															{' '}
 															<button
 																onClick={() => {
-																	goToOrgIssuance(org, org.id, org.roles);
+																	goToOrgIssuance(org, org?.id, org?.roles);
 																}}
 																className="p-1 rounded-md"
 															 >
@@ -855,8 +855,8 @@ const UserDashBoard = () => {
 																onClick={() => {
 																	goToOrgCredVerification(
 																		org,
-																		org.id,
-																		org.roles,
+																		org?.id,
+																		org?.roles,
 																	);
 																}}
 																className="p-1 rounded-md"
@@ -1055,7 +1055,7 @@ const UserDashBoard = () => {
 
 						{!credDefLoading ? (
 							<>
-								{credDefList && credDefList.length > 0 ? (
+								{credDefList && credDefList?.length > 0 ? (
 									<>
 										{' '}
 										{credDefList?.map((cred: ICredDef) => {
@@ -1111,18 +1111,18 @@ const UserDashBoard = () => {
 							{activityList && activityList?.length > 0 ? (
 								<ol className="relative border-l pl-8 border-gray-200 dark:border-gray-700">
 									{activityList.map((activity) => (
-										<li className="mb-10 ml-4" key={activity.id}>
+										<li className="mb-10 ml-4" key={activity?.id}>
 											<div className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -left-1.5 border border-white dark:border-gray-800 dark:bg-gray-700"></div>
 											<time className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
-												<DateTooltip date={activity.createDateTime}>
-													{dateConversion(activity.createDateTime)}
+												<DateTooltip date={activity?.createDateTime}>
+													{dateConversion(activity?.createDateTime)}
 												</DateTooltip>
 											</time>
 											<h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-												{activity.action}
+												{activity?.action}
 											</h3>
 											<p className="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
-												{activity.details}
+												{activity?.details}
 											</p>
 										</li>
 									))}
