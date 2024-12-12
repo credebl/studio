@@ -64,7 +64,7 @@ const OrgDropDown = () => {
 			await setToLocalStorage(storageKeys.ORG_ID, org.id.toString());
 		}
 		const roles: string[] = org?.userOrgRoles?.length > 0
-			? org?.userOrgRoles.map((role) => role?.orgRole?.name)
+			? org?.userOrgRoles?.map((role) => role?.orgRole?.name)
 			: [];
 		if (roles?.length > 0) { // Added check
 			await setToLocalStorage(storageKeys.ORG_ROLES, roles?.toString());

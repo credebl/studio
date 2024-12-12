@@ -53,7 +53,7 @@ const Dashboard = () => {
 
 	const getUserRoles = async () => {
 		const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES);
-		const roles = orgRoles.split(',');
+		const roles = orgRoles?.split(',');
 		setUserRoles(roles);
 	};
 	

@@ -60,9 +60,11 @@ export const encryptData = async (value: any): Promise<string> => {
 };
 
 export const decryptData = async (value: string): Promise<string> => {
+    console.log("🚀 ~ decryptData ~ value:", value)
     try {
         const CRYPTO_PRIVATE_KEY = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`;
         const key = await getAesKey(CRYPTO_PRIVATE_KEY);
+        console.log("🚀 ~ decryptData ~ key:", key)
 
         if (!value) {
             console.error('No value to decrypt.');
@@ -77,12 +79,14 @@ export const decryptData = async (value: string): Promise<string> => {
 
         const iv = base64ToUint8Array(ivBase64);
         const encryptedData = base64ToUint8Array(encryptedBase64);
+        console.log("🚀 ~ decryptData ~ encryptedData:", encryptedData)
 
         const decryptedData = await crypto.subtle.decrypt(
             { name: 'AES-GCM', iv },
             key,
             encryptedData
         );
+        console.log("🚀 ~ decryptData ~ decryptedData:", decryptedData)
 
         return DECODER.decode(new Uint8Array(decryptedData));
     } catch (error) {
@@ -114,12 +118,14 @@ export const setToLocalStorage = async (key: string, value: any): Promise<boolea
 export const getFromLocalStorage = async (key: string): Promise<any> => {
     try {
         const encryptedValue = localStorage.getItem(key);
+        console.log("🚀 ~ getFromLocalStorage ~ encryptedValue:", encryptedValue)
         if (!encryptedValue) {
             console.warn(`No value found in localStorage for key: ${key}`);
             return null;
         }
 
         const decryptedValue = await decryptData(encryptedValue);
+        console.log("🚀 ~ getFromLocalStorage ~ decryptedValue:", decryptedValue)
 
         try {
             return JSON.parse(decryptedValue);
