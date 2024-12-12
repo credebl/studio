@@ -60,22 +60,8 @@ export const encryptData = async (value: any): Promise<string> => {
     }
 };
 
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-const waitForEnvConfig = async (maxWaitTime = 5000) => {
-    const startTime = Date.now();
-    while (!envConfig.PUBLIC_CRYPTO_PRIVATE_KEY) {
-        if (Date.now() - startTime > maxWaitTime) {
-            throw new Error('Timeout waiting for envConfig to load');
-        }
-        await delay(100); // Check every 100ms
-    }
-    return envConfig;
-};
-
 export const decryptData = async (value: string): Promise<string> => {
     try {
-        await waitForEnvConfig(); // Ensure envConfig is ready
 
         const CRYPTO_PRIVATE_KEY = envConfig.PUBLIC_CRYPTO_PRIVATE_KEY;
         console.log("🚀 ~ decryptData ~ envConfig:", envConfig)
