@@ -21,7 +21,9 @@ const DisplayProfileImg = () => {
     })
     const getUserDetails = async () => {
         const userProfile = await getFromLocalStorage(storageKeys.USER_PROFILE)
+        console.log("🚀 ~ getUserDetails ~ userProfile:", userProfile)
         const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES)
+        console.log("🚀 ~ getUserDetails ~ orgRoles:", orgRoles)
 
         if (orgRoles) {
             userProfile.roles = orgRoles;
