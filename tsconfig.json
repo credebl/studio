@@ -1,10 +1,12 @@
 {
   "extends": "astro/tsconfigs/strict",
+  "include": ["src", "vite-env.d.ts"],
   "compilerOptions": {
     "strictNullChecks": true,
     "jsx": "react-jsx",
     "jsxImportSource": "react",
     "esModuleInterop": true,
-    "lib": ["ESNext", "DOM"]
+    "lib": ["ESNext", "DOM"],
+    "types": ["vite/client"]
   }
 }

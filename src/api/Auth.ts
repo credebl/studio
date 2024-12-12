@@ -63,7 +63,7 @@ export const encryptData = async (value: any): Promise<string> => {
 export const decryptData = async (value: string): Promise<string> => {
     try {
 
-        const CRYPTO_PRIVATE_KEY = envConfig.PUBLIC_CRYPTO_PRIVATE_KEY;
+        const CRYPTO_PRIVATE_KEY = import.meta.env.PUBLIC_CRYPTO_PRIVATE_KEY;
         console.log("🚀 ~ decryptData ~ envConfig:", envConfig)
         console.log("🚀 ~ decryptData ~ envConfig.PUBLIC_CRYPTO_PRIVATE_KEY;:", envConfig.PUBLIC_CRYPTO_PRIVATE_KEY)
 
