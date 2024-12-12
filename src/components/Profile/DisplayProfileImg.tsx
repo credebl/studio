@@ -6,20 +6,27 @@ import { getFromLocalStorage } from "../../api/Auth.ts";
 import { storageKeys } from "../../config/CommonConstant.ts";
 
 const DisplayProfileImg = () => {
-    const [userObj, setUserObj] = useState<IUserProfile | null>(null)
+    const [userObj, setUserObj] = useState<IUserProfile>({
+        id: '',
+        profileImg: '',
+        username: '',
+        email: '',
+        firstName: '',
+        lastName: '',
+        isEmailVerified: false,
+        keycloakUserId: '',
+        publicProfile: false,
+        isPublic: false,
+        roles: ''
+    })
     const getUserDetails = async () => {
         const userProfile = await getFromLocalStorage(storageKeys.USER_PROFILE)
-        console.log("🚀 ~ getUserDetails ~ userProfile: type of:::::::", typeof userProfile)
-        console.log("🚀 ~ getUserDetails ~ userProfile22222222222:", userProfile)
         const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES)
-        // const parsedUser = userProfile ? JSON.parse(userProfile) : null;
-        // console.log("🚀 ~ getUserDetails ~ parsedUser type of:", typeof parsedUser)
-        // console.log("🚀 ~ getUserDetails ~ parsedUser:", parsedUser)
 
-        // if (parsedUser) {
+        if (orgRoles) {
             userProfile.roles = orgRoles;
             setUserObj(userProfile);
-        // }
+        }
     }
 
     useEffect(() => {

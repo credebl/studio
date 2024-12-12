@@ -60,14 +60,14 @@ const OrgDropDown = () => {
 	};
 
 	const setOrgRoleDetails = async (org: Organisation) => {
-		if (org && org.id !== undefined && org.id !== null) { // Added check
+		if (org && org?.id !== undefined && org?.id !== null) { // Added check
 			await setToLocalStorage(storageKeys.ORG_ID, org.id.toString());
 		}
 		const roles: string[] = org?.userOrgRoles?.length > 0
 			? org?.userOrgRoles.map((role) => role?.orgRole?.name)
 			: [];
-		if (roles.length > 0) { // Added check
-			await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
+		if (roles?.length > 0) { // Added check
+			await setToLocalStorage(storageKeys.ORG_ROLES, roles?.toString());
 		}
 	};
 
@@ -161,8 +161,8 @@ const OrgDropDown = () => {
 						</div>
 						{orgList?.length > 0 ? (
 							orgList?.map((org) => {
-								const roles: string[] = org.userOrgRoles.map(
-									(role) => role.orgRole.name,
+								const roles: string[] = org?.userOrgRoles?.map(
+									(role) => role?.orgRole?.name,
 								);
 								org.roles = roles;
 								return (
@@ -175,7 +175,7 @@ const OrgDropDown = () => {
 												href="#"
 												className="flex items-center w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
 											>
-												{org.logoUrl ? (
+												{org?.logoUrl ? (
 													<CustomAvatar
 														className="dark:text-white max-w-[100%] w-full h-full rounded-full font-sm"
 														size="35px"

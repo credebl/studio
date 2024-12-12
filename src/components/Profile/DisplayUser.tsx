@@ -3,11 +3,24 @@ import { useEffect, useState } from "react";
 import { TextTittlecase } from "../../utils/TextTransform.ts";
 import { getFromLocalStorage } from "../../api/Auth.ts";
 import { storageKeys } from "../../config/CommonConstant.ts";
+import type { IUserProfile } from "./interfaces/index.ts";
 
 const DisplayUser = () => {
 
-    const [userObj, setUserObj] = useState(null)
-		
+    const [userObj, setUserObj] = useState<IUserProfile>({
+        id: '',
+        profileImg: '',
+        username: '',
+        email: '',
+        firstName: '',
+        lastName: '',
+        isEmailVerified: false,
+        keycloakUserId: '',
+        publicProfile: false,
+        isPublic: false,
+        roles: ''
+    })	
+    	
     let timer:any= null
     const getUserDetails = async () => {
         const userProfile = await getFromLocalStorage(storageKeys.USER_PROFILE)
@@ -43,16 +56,16 @@ const DisplayUser = () => {
                         className="text-xl font-medium text-gray-900 truncate dark:text-gray-300 mb-1"
                         role="none"
                     >
-                        {userObj?.['firstName']}
+                        {userObj?.firstName}
                     </p>
                     <p className="text-sm text-gray-900 dark:text-white mb-1" role="none">
-                        {userObj?.['email']}
+                        {userObj?.email}
                     </p>
                     <p
                         className="text-base font-medium text-gray-900 truncate dark:text-gray-300"
                         role="none"
                     >
-                        {TextTittlecase(userObj?.['roles'])}
+                        {TextTittlecase(userObj?.roles)}
                     </p>
                 </>
             }

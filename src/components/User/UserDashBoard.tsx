@@ -99,7 +99,7 @@ const UserDashBoard = () => {
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			const totalPages = data?.data?.totalPages;
 			const invitationList = data?.data?.invitations;
-			if (invitationList.length > 0) {
+			if (invitationList?.length > 0) {
 				setMessage(`You have received invitations to join organization`);
 				setViewButton(true);
 			}
@@ -150,7 +150,7 @@ const UserDashBoard = () => {
 			const invitationPendingList =
 				data?.data?.invitations &&
 				data?.data?.invitations?.filter((invitation: { status: string }) => {
-					return invitation.status === 'pending';
+					return invitation?.status === 'pending';
 				});
 			if (invitationPendingList && invitationPendingList?.length > 0) {
 				setEcoMessage(`You have received invitation to join ecosystem `);
@@ -248,7 +248,7 @@ const UserDashBoard = () => {
 				const { data } = response as AxiosResponse;
 
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-					setCredDefCount(data.data.totalItems);
+					setCredDefCount(data?.data?.totalItems);
 					const credentialDefs = data?.data?.data?.filter(
 						(ecosystem: Organisation, index: number) => index < 3,
 					);
@@ -481,7 +481,7 @@ const UserDashBoard = () => {
 				
 			</div>
 			<div className="cursor-pointer">
-			{ecoMessage && ecoMessage.length > 0 &&
+			{ecoMessage && ecoMessage?.length > 0 &&
         <AlertComponent
             message={ecoMessage} 
             type={ecoMessage ? 'warning' : 'failure'}  
@@ -495,7 +495,7 @@ const UserDashBoard = () => {
 }
     
 			</div>
-			{walletData && walletData.length > 0 ? (
+			{walletData && walletData?.length > 0 ? (
 				<></>
 			) : (
 				<div
@@ -599,8 +599,8 @@ const UserDashBoard = () => {
 								{organizationsList && organizationsList?.length > 0 ? (
 									<>
 										{organizationsList?.map((org, index) => {
-											const roles: string[] = org.userOrgRoles.map(
-												(role) => role.orgRole.name,
+											const roles: string[] = org?.userOrgRoles?.map(
+												(role) => role?.orgRole?.name,
 											);
 											org.roles = roles;
 											return (
@@ -618,7 +618,7 @@ const UserDashBoard = () => {
 															href="#"
 															className="flex items-center py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-md mr-2"
 														 >
-															{org.logoUrl ? (
+															{org?.logoUrl ? (
 																<CustomAvatar
 																	className="dark:text-white dark:text-white max-w-[100%] w-full h-full rounded-full"
 																	size="40px"
@@ -661,7 +661,7 @@ const UserDashBoard = () => {
 																			OrganizationRoles.organizationIssuer,
 																	  ) ? (
 																		<span
-																		title={org?.roles?.slice(0, org.roles.length - 1).join(", ")}
+																		title={org?.roles?.slice(0, org?.roles?.length - 1).join(", ")}
 																		>
 																			<svg
 																				width="24"
@@ -735,7 +735,7 @@ const UserDashBoard = () => {
 														>
 															<button
 																onClick={() => {
-																	goToOrgSchema(org, org.id, org.roles);
+																	goToOrgSchema(org, org?.id, org?.roles);
 																}}
 																className={`p-1 rounded-md ${
 																	!(
