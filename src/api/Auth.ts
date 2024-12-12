@@ -34,6 +34,7 @@ const getAesKey = async (key: string) => {
 export const encryptData = async (value: any): Promise<string> => {
     try {
         const CRYPTO_PRIVATE_KEY = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`;
+        
         const key = await getAesKey(CRYPTO_PRIVATE_KEY);
 
         if (typeof value !== 'string') {
@@ -63,7 +64,11 @@ export const encryptData = async (value: any): Promise<string> => {
 export const decryptData = async (value: string): Promise<string> => {
     console.log("🚀 ~ decryptData ~ value:", value)
     try {
-        const CRYPTO_PRIVATE_KEY = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`;
+        const CRYPTO_PRIVATE_KEY = envConfig.PUBLIC_CRYPTO_PRIVATE_KEY;
+        console.log("🚀 ~ decryptData ~ envConfig:", envConfig)
+        console.log("🚀 ~ decryptData ~ envConfig.PUBLIC_CRYPTO_PRIVATE_KEY;:", envConfig.PUBLIC_CRYPTO_PRIVATE_KEY;)
+        console.log("🚀 ~ decryptData ~ CRYPTO_PRIVATE_KEY:", CRYPTO_PRIVATE_KEY)
+
         const key = await getAesKey(CRYPTO_PRIVATE_KEY);
         console.log("🚀 ~ decryptData ~ key:", key)
 
