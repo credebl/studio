@@ -19,6 +19,7 @@ const uint8ArrayToBase64 = (buffer: Uint8Array) => btoa(String.fromCharCode(...b
 
 // Utility function to generate an AES-GCM key (128 or 256 bits)
 const getAesKey = async (key: string) => {
+    console.log("🚀 ~ getAesKey ~ key:", key)
     const keyBuffer = ENCODER.encode(key.padEnd(32, '0')).slice(0, 32); // Pad key to 32 bytes for AES-256
     return await crypto.subtle.importKey(
         'raw', 
