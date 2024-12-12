@@ -1,6 +1,7 @@
 let envVariables = globalThis || {}
 try {
 	if (process?.env) {
+		console.log('process?.env45:::', process?.env)
 		envVariables = {
 			...envVariables,
 			...process?.env
