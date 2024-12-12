@@ -1,4 +1,4 @@
-let envVariables = globalThis || {}
+let envVariables = {};
 try {
 	if (process?.env) {
 		envVariables = {
@@ -7,7 +7,7 @@ try {
 		}
 	}
 } catch (error) {
-	
+	console.error('Error accessing process.env:', error);
 }
 
 if (import.meta.env) {
