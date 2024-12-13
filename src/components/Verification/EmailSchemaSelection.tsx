@@ -1,9 +1,9 @@
+import React from "react";
 import VerificationSchemasList from "./VerificationSchemasList";
 
-const EmailSchemaSelection = () => {
-
+const EmailSchemaSelection = ({ routeType }: { routeType: string }) => {
 	return (
-		<VerificationSchemasList/>
+		<VerificationSchemasList routeType={routeType} />
 	)
 }
 
