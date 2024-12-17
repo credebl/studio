@@ -34,6 +34,11 @@ export default defineConfig({
     /* Dev. server only */
     port: DEV_PORT,
   },
+  vite: {
+    define: {
+      'process.env': process.env
+    }
+  },
   integrations: [
   //
   sitemap(), tailwind(), react()],
