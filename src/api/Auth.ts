@@ -229,7 +229,7 @@ export const passwordEncryption = (password: string): string => {
 
 export const encryptData = (value: any): string => {
  
-    console.log("All env variables:", import.meta.env);
+    console.log("All env variables:", envConfig);
 
         const CRYPTO_PRIVATE_KEY: string = `${envConfig.PUBLIC_CRYPTO_PRIVATE_KEY}`;
     console.log("🚀 ~ encryptData ~ CRYPTO_PRIVATE_KEY:", CRYPTO_PRIVATE_KEY)
