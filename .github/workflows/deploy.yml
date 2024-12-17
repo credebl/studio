@@ -1,9 +1,9 @@
 name: Deploy
 on:
   push:
-    branches: develop-fixed-dco
+    branches: fix/env-variables-expose
   pull_request:
-    branches: develop-fixed-dco
+    branches: fix/env-variables-expose
 
 jobs:
   deploy:
