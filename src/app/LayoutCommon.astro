@@ -15,7 +15,7 @@ const excludeKeys = ['PUBLIC_CRYPTO_PRIVATE_KEY', 'PUBLIC_KEYCLOAK_MANAGEMENT_CL
 const envKeys = allEnvKeys.filter((key) => !excludeKeys.includes(key));
 
 envKeys.forEach((item) => {
-	initData[item] = process.env[item] || import.meta.env[item];
+    initData[item] = process.env[item] || import.meta.env[item];
 });
 
 const sessionToken = getFromCookies(Astro.cookies, 'session');
