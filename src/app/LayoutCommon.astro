@@ -8,7 +8,12 @@ const { class: clazz, metaData } = Astro.props;
 
 const initData: any = {};
 
-const envKeys = [...Object.keys(process.env), ...Object.keys(import.meta.env)];
+const allEnvKeys = [...Object.keys(process.env), ...Object.keys(import.meta.env)];
+
+const excludeKeys = ['PUBLIC_CRYPTO_PRIVATE_KEY', 'PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_ID', 'PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_SECRET'];
+
+const envKeys = allEnvKeys.filter((key) => !excludeKeys.includes(key));
+
 envKeys.forEach((item) => {
 	initData[item] = process.env[item] || import.meta.env[item];
 });
