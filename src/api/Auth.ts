@@ -222,6 +222,7 @@ export const addPasskeyUserDetails = async(payload: AddPassword, email:string) =
 
 export const passwordEncryption = (password: string): string => {
     const CRYPTO_PRIVATE_KEY: string = process.env.PUBLIC_CRYPTO_PRIVATE_KEY || import.meta.env.PUBLIC_CRYPTO_PRIVATE_KEY;
+    console.log("🚀 ~ passwordEncryption ~ CRYPTO_PRIVATE_KEY:", CRYPTO_PRIVATE_KEY)
     const encryptedPassword: string = CryptoJS.AES.encrypt(JSON.stringify(password), CRYPTO_PRIVATE_KEY).toString()
     return encryptedPassword
 }
@@ -229,6 +230,7 @@ export const passwordEncryption = (password: string): string => {
 export const encryptData = (value: any): string => {
  
     const CRYPTO_PRIVATE_KEY: string = process.env.PUBLIC_CRYPTO_PRIVATE_KEY || import.meta.env.PUBLIC_CRYPTO_PRIVATE_KEY;
+    console.log("🚀 ~ encryptData ~ CRYPTO_PRIVATE_KEY:", CRYPTO_PRIVATE_KEY)
 
     try {
         if (typeof (value) !== 'string') {
@@ -244,6 +246,7 @@ export const encryptData = (value: any): string => {
 
 export const decryptData = (value: any): string => {
     const CRYPTO_PRIVATE_KEY: string = process.env.PUBLIC_CRYPTO_PRIVATE_KEY || import.meta.env.PUBLIC_CRYPTO_PRIVATE_KEY;
+    console.log("🚀 ~ decryptData ~ CRYPTO_PRIVATE_KEY:", CRYPTO_PRIVATE_KEY)
 
     try {
         let bytes = CryptoJS.AES.decrypt(value, CRYPTO_PRIVATE_KEY);
