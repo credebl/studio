@@ -8,14 +8,25 @@ const { class: clazz, metaData } = Astro.props;
 
 const initData: any = {};
 
-const allEnvKeys = [...Object.keys(process.env), ...Object.keys(import.meta.env)];
-
+// Step 1: List of keys that should NOT be exposed to the frontend
 const excludeKeys = ['PUBLIC_CRYPTO_PRIVATE_KEY', 'PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_ID', 'PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_SECRET'];
 
-const envKeys = allEnvKeys.filter((key) => !excludeKeys.includes(key));
+// Step 2: Get all environment keys (from `process.env` and `import.meta.env`)
+const allEnvKeys = [...Object.keys(process.env), ...Object.keys(import.meta.env)];
 
-envKeys.forEach((item) => {
+// Step 3: Separate "exposed" keys and "excluded" keys
+const exposedEnvKeys = allEnvKeys.filter((key) => !excludeKeys.includes(key));
+const excludedEnvKeys = allEnvKeys.filter((key) => excludeKeys.includes(key));
+
+// Step 4: Store values for all keys in `initData`
+exposedEnvKeys.forEach((item) => {
     initData[item] = process.env[item] || import.meta.env[item];
+});
+
+// Step 5: Store **excluded keys** in a separate object (only for server-side use)
+const excludedEnvData: any = {};
+excludedEnvKeys.forEach((item) => {
+    excludedEnvData[item] = process.env[item] || import.meta.env[item];
 });
 
 const sessionToken = getFromCookies(Astro.cookies, 'session');
@@ -73,9 +84,9 @@ const refreshToken = getFromCookies(Astro.cookies, 'refresh');
 
 		<script
 			id="global"
-			define:vars={{ initData, envKeys, sessionToken, refreshToken }}
+			define:vars={{ initData, exposedEnvKeys, sessionToken, refreshToken }}
 		>
-			envKeys.forEach((item) => {
+			exposedEnvKeys.forEach((item) => {
 				globalThis[item] = initData[item];
 			});
 
