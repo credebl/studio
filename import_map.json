@@ -1,0 +1,6 @@
+{
+    "imports": {
+      "@astrojs/markdown-remark": "https://cdn.skypack.dev/@astrojs/markdown-remark"
+    }
+  }
+  

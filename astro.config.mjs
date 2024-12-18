@@ -1,4 +1,4 @@
-import deno from '@deno/astro-adapter';
+import deno from "@deno/astro-adapter";
 import { defineConfig } from 'astro/config';
 import react from "@astrojs/react";
 import sitemap from '@astrojs/sitemap';
@@ -6,7 +6,6 @@ import tailwind from '@astrojs/tailwind';
 
 const DEV_PORT = 3000;
 
-// https://astro.build/config
 export default defineConfig({
 	// experimental: {
     
