@@ -60,7 +60,7 @@ const env = import.meta.env || process.env;
 							</p>
 							<div class="justify-center flex">
 								<a
-									href="https://docs.credebl.id/en/intro/what-is-credebl/"
+									href=`${envConfig.PLATFORM_DATA.docs}`
 									class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900"
 								>
 									Get Started
@@ -1113,7 +1113,7 @@ const env = import.meta.env || process.env;
 									clip-rule="evenodd"></path>
 							</svg>
 						</a>
-						<a href="https://discord.gg/w4hnQT7NJG" class="hover:opacity-50" target="_blank">
+						<a href=`${envConfig.PUBLIC_PLATFROM_DISCORD_SUPPORT}` class="hover:opacity-50" target="_blank">
 							<svg
 								class="w-6 h-6 text-gray-700 hover:text-gray-900 dark:text-white"
 								aria-hidden="true"
@@ -1127,7 +1127,7 @@ const env = import.meta.env || process.env;
 							</svg>
 						</a>
 						<a
-							href="https://twitter.com/i/flow/login?redirect_after_login=%2Fcredebl"
+							href=`${envConfig.PLATFORM_DATA.twitter}`
 							class="dark:text:white hover:opacity-50"
 						>
 							<svg
