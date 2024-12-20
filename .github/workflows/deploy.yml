@@ -33,7 +33,7 @@ jobs:
 
       - name: Create .env file
         run: |
-         echo "PUBLIC_MODE=DEV" >> .env
+         echo "PUBLIC_MODE=DEV" > .env
          echo "PUBLIC_BASE_URL=https://devapi.credebl.id" >> .env
          echo "PUBLIC_SHOW_NAME_AS_LOGO=true" >> .env
          echo "PUBLIC_PLATFORM_NAME=CREDEBL" >> .env
