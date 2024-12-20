@@ -5,8 +5,8 @@ export const onRequest = async (context: any, next: any) => {
   const response = await next();
   const html = await response.text();
  
-  const domains = envConfig.PUBLIC_ALLOW_DOMAIN;
-  
+  const domains = import.meta.env.PUBLIC_ALLOW_DOMAIN;
+    
   const allowedDomain = `${context.url.origin} ${domains}`
   
   const nonce = "dynamicNONCE" + new Date().getTime().toString();
