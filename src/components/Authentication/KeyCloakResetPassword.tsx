@@ -15,8 +15,8 @@ import CustomSpinner from '../CustomSpinner/index.js';
 
 const KeyClockResetPassword = (props: IProps) => {
 	const [loading, setLoading] = useState(false);
-	const [success, setSuccess] = useState<string | null>(null);
-	const [error, setError] = useState<string | null>(null);
+	const [success, setSuccess] = useState<string>('');
+	const [error, setError] = useState<string>('');
 	const [passwordVisibility, setPasswordVisibility] = useState<IPassword>({
 		currentPassword: false,
 		newPassword: false,
@@ -78,8 +78,8 @@ const KeyClockResetPassword = (props: IProps) => {
 							message={ success ?? error}
 							type={success ? 'success' : 'failure'}
 							onAlertClose={() => {
-								setError(null);
-								setSuccess(null);
+								setError('');
+								setSuccess('');
 							}}
 						/>
 				<Formik
@@ -111,6 +111,7 @@ const KeyClockResetPassword = (props: IProps) => {
 					onSubmit={(values: IValues) => submitUpdatePassword(values)}
 				>
 					{(formikHandlers): JSX.Element => (
+						<>
 						<Form className="space-y-6" onSubmit={formikHandlers.handleSubmit}>
 							<div className="text-primary-700 font-inter text-base font-medium leading-5">
 								<div className="block mb-2 text-sm font-medium  dark:text-white">
@@ -241,6 +242,8 @@ const KeyClockResetPassword = (props: IProps) => {
 								</Button>
 							</div>
 						</Form>
+						</>
+						
 					)}
 				</Formik>
 			</Modal.Body>

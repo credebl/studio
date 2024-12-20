@@ -13,14 +13,14 @@ import { setToLocalStorage } from '../../api/Auth';
 import { Tooltip } from 'flowbite-react';
 import DIDList from './configuration-settings/DidList';
 
-const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
+const OrganizationDetails = ({ orgData }: { orgData: Organisation }) => {
 	
 	const { org_agents } = orgData as Organisation;
 	const agentData: OrgAgent | null =
 	org_agents.length > 0 ? org_agents[0] : null;
 		
 	const [loading, setLoading] = useState<boolean>(true);
-	const [connectionData, setConnectionData] = useState<Connection | null>(null);
+	const [connectionData, setConnectionData] = useState<Connection>();
 
 	const createQrConnection = async () => {
 		setLoading(true);

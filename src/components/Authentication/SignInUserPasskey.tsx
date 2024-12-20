@@ -32,8 +32,8 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 	const [showSignInUserPassword, setShowSignInUserPassword] = useState(false);
 	const [fidoLoader, setFidoLoader] = useState<boolean>(false);
 	const [fidoUserError, setFidoUserError] = useState('');
-	const [failure, setFailure] = useState<string | null>(null);
-	const [success, setSuccess] = useState<string | null>(null);
+	const [failure, setFailure] = useState<string>('');
+	const [success, setSuccess] = useState<string>('');
     const [isDevice, setIsDevice] = useState<boolean>(false);
 
 	const handleSvgClick = () => {
@@ -202,8 +202,8 @@ const SignInUserPasskey = (signInUserProps: signInUserProps) => {
 										className='mb-4'
 										color={success ? 'success' : 'failure'}
 										onDismiss={() => {
-											setSuccess(null);
-											setFailure(null);
+											setSuccess('');
+											setFailure('');
 											setFidoUserError('');
 										}}
 									>

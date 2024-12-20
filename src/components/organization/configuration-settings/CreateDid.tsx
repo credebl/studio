@@ -16,6 +16,7 @@ import { getFromLocalStorage } from '../../../api/Auth';
 import { ethers } from 'ethers';
 import { envConfig } from '../../../config/envConfig';
 import { CommonConstants, Network, DidMethod } from '../../../common/enums';
+import React from 'react';
 
 interface IPolygonKeys {
 	privateKey: string;
@@ -26,17 +27,17 @@ interface IPolygonKeys {
 const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [errMsg, setErrMsg] = useState<string | null>(null);
-	const [successMsg, setSuccessMsg] = useState<string | null>(null);
+	const [errMsg, setErrMsg] = useState<string>('');
+	const [successMsg, setSuccessMsg] = useState<string>('');
 	const [seed, setSeed] = useState('');
 	const [generatedKeys, setGeneratedKeys] = useState<IPolygonKeys | null>(null);
-	const [ledgerValue, setLedgerValue] = useState<string | null>(null);
-	const [method, setMethod] = useState<string | null>(null);
-	const [networkValue, setNetworkValue] = useState<string | null>(null);
-	const [completeDidMethodValue, setCompleteDidMethodValue] = useState<string | null>(null);
+	const [ledgerValue, setLedgerValue] = useState<string>('');
+	const [method, setMethod] = useState<string>('');
+	const [networkValue, setNetworkValue] = useState<string>('');
+	const [completeDidMethodValue, setCompleteDidMethodValue] = useState<string>('');
 	const [havePrivateKey, setHavePrivateKey] = useState(false);
 	const [privateKeyValue, setPrivateKeyValue] = useState<string>('');
-	const [walletErrorMessage, setWalletErrorMessage] = useState<string | null>(null);
+	const [walletErrorMessage, setWalletErrorMessage] = useState<string>('');
 
 	const formikRef = useRef<FormikProps<IFormikValues>>(null);
 
@@ -114,7 +115,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 			if (parseFloat(etherBalance) < CommonConstants.BALANCELIMIT) {
 				setWalletErrorMessage('You have insufficient funds.');
 			} else {
-				setWalletErrorMessage(null);
+				setWalletErrorMessage('');
 			}
 
 
@@ -129,7 +130,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 		if (privateKeyValue && privateKeyValue.length === 64) {
 			checkBalance(privateKeyValue, Network.TESTNET);
 		} else {
-			setWalletErrorMessage(null);
+			setWalletErrorMessage('');
 		}
 
 	}, [privateKeyValue]);
@@ -204,11 +205,11 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 	useEffect(() => {
 		if (havePrivateKey) {
 			setPrivateKeyValue('');
-			setWalletErrorMessage(null);
+			setWalletErrorMessage('');
 			setGeneratedKeys(null);
 		} else {
 			setPrivateKeyValue('');
-			setWalletErrorMessage(null);
+			setWalletErrorMessage('');
 		}
 	}, [havePrivateKey]);
 
@@ -221,7 +222,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 		<Modal
 			show={props.openModal}
 			onClose={() => {
-				setErrMsg(null);
+				setErrMsg('');
 				setGeneratedKeys(null);
 				setHavePrivateKey(false);
 				props.setOpenModal(false);
@@ -234,8 +235,8 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 					message={successMsg ?? errMsg}
 					type={successMsg ? 'success' : 'failure'}
 					onAlertClose={() => {
-						setErrMsg(null);
-						setSuccessMsg(null);
+						setErrMsg('');
+						setSuccessMsg('');
 					}}
 				/>
 				<Formik
@@ -469,7 +470,7 @@ const CreateDIDModal = (props: EditOrgdetailsModalProps) => {
 															value={formikHandlers.values.privatekey}
 															onChange={(e) => {
 																formikHandlers.setFieldValue('privatekey', e.target.value);
-																setWalletErrorMessage(null);
+																setWalletErrorMessage('');
 																checkBalance(e.target.value, Network.TESTNET);
 															}}
 															placeholder="Enter private key" />

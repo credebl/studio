@@ -15,15 +15,16 @@ import CustomCheckbox from '../../commonComponents/CustomCheckbox';
 import { getOrganizationById } from '../../api/organization';
 import type { AxiosResponse } from 'axios';
 import { DidMethod } from '../../common/enums';
+import React from 'react';
 
 const EmailAttributesSelection = () => {
 	const [attributeList, setAttributeList] = useState<TableData[]>([]);
-	const [proofReqSuccess, setProofReqSuccess] = useState<string | null>(null);
-	const [errMsg, setErrMsg] = useState<string | null>(null);
+	const [proofReqSuccess, setProofReqSuccess] = useState<string>('');
+	const [errMsg, setErrMsg] = useState<string>('');
 	const [display, setDisplay] = useState<boolean | undefined>(false);
 	const [loading, setLoading] = useState<boolean>(true);
-	const [attributeData, setAttributeData] = useState<ISelectedAttributes[] | null>(
-		null,
+	const [attributeData, setAttributeData] = useState<ISelectedAttributes[]>(
+		[],
 	);
 	const [w3cSchema, setW3cSchema] = useState<boolean>(false);
 
@@ -95,7 +96,7 @@ const EmailAttributesSelection = () => {
 
 
 	const handleSubmit = () => {
-		setErrMsg(null);
+		setErrMsg('');
 	
 		if (w3cSchema) {
 			redirectToAppropriatePage();
@@ -358,8 +359,8 @@ const EmailAttributesSelection = () => {
 					<Alert
 						color={proofReqSuccess ? 'success' : 'failure'}
 						onDismiss={() => {
-							setProofReqSuccess(null);
-							setErrMsg(null);
+							setProofReqSuccess('');
+							setErrMsg('');
 						}}
 					>
 						{proofReqSuccess ?? errMsg}

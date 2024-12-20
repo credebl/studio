@@ -21,6 +21,7 @@ import {
 import { EmptyListMessage } from '../EmptyListComponent';
 import CustomSpinner from '../CustomSpinner';
 import CreateOrgModal from '../CreateOrgModal';
+import React from 'react';
 
 const initialPageState = {
 	pageNumber: 1,
@@ -32,8 +33,8 @@ const initialPageState = {
 const OrganizationsList = () => {
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(true);
-	const [message, setMessage] = useState<string | null>(null);
-	const [error, setError] = useState<string | null>(null);
+	const [message, setMessage] = useState<string>('');
+	const [error, setError] = useState<string>('');
 	const [currentPage, setCurrentPage] = useState(initialPageState);
 	const onPageChange = (page: number) => {
 		setCurrentPage({
@@ -43,8 +44,7 @@ const OrganizationsList = () => {
 	};
 	const [searchText, setSearchText] = useState('');
 
-	const [organizationsList, setOrganizationsList] =
-		useState<Array<Organisation> | null>(null);
+	const [organizationsList, setOrganizationsList] =useState<Organisation[]>([]);
 
 	const props = { openModal, setOpenModal };
 
@@ -53,6 +53,7 @@ const OrganizationsList = () => {
 	};
 
 	const getAllOrganizations = async () => {
+		try {
 		setLoading(true);
 		const response = await getOrganizations(
 			currentPage.pageNumber,
@@ -78,10 +79,14 @@ const OrganizationsList = () => {
 				totalCount: totalCount,
 			});
 		} else {
-			setError(response as string);
-		}
-		setLoading(false);
-	};
+            setError(data?.message || 'Unable to fetch organizations');
+        }
+    } catch (err) {
+        setError('An error occurred while fetching organizations');
+    } finally {
+        setLoading(false);
+    }
+};
 
 	useEffect(() => {
 		let getData: NodeJS.Timeout;
@@ -232,8 +237,8 @@ const OrganizationsList = () => {
 			/>
 		);
 	}
-
 	return (
+
 		<div className="px-4 pt-2">
 			<div className="mb-2 col-span-full xl:mb-2">
 				<BreadCrumbs />
@@ -281,8 +286,8 @@ const OrganizationsList = () => {
 						message={message || error}
 						type={message ? 'success' : 'failure'}
 						onAlertClose={() => {
-							setMessage(null);
-							setError(null);
+							setMessage('');
+							setError('');
 						}}
 					/>
 

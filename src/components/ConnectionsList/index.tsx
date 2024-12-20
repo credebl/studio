@@ -16,6 +16,7 @@ import { getFromLocalStorage } from '../../api/Auth';
 import { getOrgDetails } from '../../config/ecosystem';
 import type { IConnectionList } from '../../components/Issuance/interface';
 import SortDataTable from '../../commonComponents/datatable/SortDataTable';
+import React from 'react';
 
 const initialPageState = {
 	itemPerPage: 10,
@@ -29,7 +30,7 @@ const ConnectionList = () => {
 	const [listAPIParameter, setListAPIParameter] = useState(initialPageState);
 	const [connectionList, setConnectionList] = useState<TableData[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<string>('');
 	const [totalItem, setTotalItem] = useState(0);
 	const [pageInfo, setPageInfo] = useState({
 		totalItem: '',
@@ -80,7 +81,7 @@ const ConnectionList = () => {
 						};
 					});
 					setConnectionList(connections);
-					setError(null);
+					setError('');
 				} else {
 					setConnectionList([]);
 				}
@@ -143,7 +144,7 @@ const ConnectionList = () => {
 					message={error}
 					type={'failure'}
 					onAlertClose={() => {
-						setError(null);
+						setError('');
 					}}
 				/>
 			)}
