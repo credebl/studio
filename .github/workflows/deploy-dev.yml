@@ -1,9 +1,9 @@
 name: Deploy develop branch to Deno
 on:
   push:
-    branches: develop
+    branches: develop-fixed-dco
   pull_request:
-    branches: develop
+    branches: develop-fixed-dco
 
 jobs:
   deploy:
