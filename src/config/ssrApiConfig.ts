@@ -20,7 +20,7 @@ const API = async ({ token, url, method, payload }: IProps) => {
 			method,
 			body: JSON.stringify(payload),
 		};
-		const baseURL = globalThis.baseUrl || envConfig.PUBLIC_BASE_URL || process.env.PUBLIC_BASE_URL;
+		const baseURL = globalThis.baseUrl || import.meta.env.PUBLIC_BASE_URL || process.env.PUBLIC_BASE_URL;
 		const apiURL = baseURL + url;
 		const res = await fetch(apiURL, {
 			...config,

@@ -5,7 +5,7 @@ import { envConfig } from '../../config/envConfig';
 import { pathRoutes } from '../../config/pathRoutes';
 
 const { user } = Astro.params;
-const baseUrl = process.env.PUBLIC_BASE_URL || envConfig.PUBLIC_BASE_URL
+const baseUrl = process.env.PUBLIC_BASE_URL || import.meta.env.PUBLIC_BASE_URL
 const response = await fetch(`${baseUrl}/users/public-profiles/${user}`);
 const data = await response.json();
 const userData = data?.data;
