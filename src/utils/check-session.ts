@@ -33,7 +33,7 @@ export const checkUserSession = async ({
 
 	try {
 		const baseURL =
-			import.meta.env.PUBLIC_BASE_URL ||
+			envConfig.PUBLIC_BASE_URL ||
 			process.env.PUBLIC_BASE_URL;
 		const config = {
 			headers: {
