@@ -4,7 +4,8 @@ import domtoimage from 'dom-to-image';
 
 const CustomQRCode = ({ value, size }: { value: string, size: number }) => {
 
-	const inputRef = useRef<HTMLInputElement>(null);
+	const node = document.createTextNode('');
+	const inputRef = useRef<Node>(node);
 	const [isCopied, setIsCopied] = useState(false);
 
 	function copyTextVal(e: React.MouseEvent<HTMLButtonElement>) {
@@ -24,7 +25,7 @@ const CustomQRCode = ({ value, size }: { value: string, size: number }) => {
 	}
 
 	const drawHtmlToCanvas = () => {
-		domtoimage.toJpeg(inputRef.current, { quality: 0.95 })
+			domtoimage.toJpeg(inputRef.current, { quality: 0.95 })
 			.then(function (dataUrl) {
 				var link = document.createElement('a');
 				link.download = 'my-image-name.jpeg';
