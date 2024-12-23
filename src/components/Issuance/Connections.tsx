@@ -38,6 +38,7 @@ useEffect(() => {
 }, []);
 
 	const selectConnection = (connections: IConnectionList[]) => {
+		console.log("🚀 ~ selectConnection ~ connections: iiii", connections)
 		try {
 			const connectionsData = connections?.length > 0 && connections?.map((ele: IConnectionList) => {
 				const createdOn = ele?.createDateTime
@@ -63,12 +64,13 @@ useEffect(() => {
 					],
 				};
 			})
+			// console.log("🚀 ~ connectionsData ~ connectionsData:", connectionsData)
 			setSelectedConnections(connectionsData);
 		} catch (error) {
 			console.log("ERROR IN TABLE GENERATION::", error);
 		}
 	};
-
+//continue to issue
 	const continueToIssue = async () => {
 		const selectedConnectionData = selectedConnections.map((ele) => {
 			return { userName: ele.data[0].data, connectionId: ele.data[1].data };
@@ -82,6 +84,7 @@ useEffect(() => {
 				window.location.href = `${pathRoutes.organizations.Issuance.issuance}`;
 			}
 	};
+// console.log("selectedConnectionsselectedConnections",selectedConnections);
 
 	return (
 		<div className="px-4 pt-2">
