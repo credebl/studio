@@ -15,7 +15,7 @@ import React from "react";
 import type { IConnectionList } from "./interface";
 import DateTooltip from "../Tooltip";
 import { dateConversion } from "../../utils/DateConversion";
-import { verifyCredential } from '../../api/verification';
+import { verifyCredential, verifyCredentialV2 } from '../../api/verification';
 import type { AxiosResponse } from "axios";
 import { v4 as uuidv4 } from 'uuid';
 import { getOrganizationById } from "../../api/organization";
@@ -165,7 +165,7 @@ const Connections = () => {
 
 						verifyCredentialPayload = {
 							
-							  connectionId: connectionIds, 
+                              connectionId: connectionIds.length === 1 ? connectionIds[0] : connectionIds,
 							  orgId,
 							  proofFormats: {
 								indy: {
@@ -198,7 +198,7 @@ const Connections = () => {
 				  
 					verifyCredentialPayload = {
 						
-						connectionId: connectionIds,
+						connectionId: connectionIds.length === 1 ? connectionIds[0] : connectionIds, 
 						comment: 'proof request',
 						presentationDefinition: {
 							id: uuidv4(),
@@ -232,9 +232,15 @@ const Connections = () => {
 	}
 	}
 					  
-				if (attributes && verifyCredentialPayload) {
+				if (attributes && verifyCredentialPayload ) {
 					const requestType = isW3cDid ? RequestType.PRESENTATION_EXCHANGE : RequestType.INDY;
-					const response = await verifyCredential(verifyCredentialPayload, requestType);
+					let response;
+					if (typeof verifyCredentialPayload.connectionId === 'string') {
+						response = await verifyCredential(verifyCredentialPayload, requestType);
+					} else if (Array.isArray(verifyCredentialPayload.connectionId)) {
+						response = await verifyCredentialV2(verifyCredentialPayload, requestType);
+					}				
+
 					const { data } = response as AxiosResponse;
 					if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 						await removeFromLocalStorage(storageKeys.ATTRIBUTE_DATA);
