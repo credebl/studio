@@ -6,7 +6,7 @@ import { getFromLocalStorage, setToLocalStorage } from '../api/Auth';
 import { apiStatusCodes, storageKeys } from '../config/CommonConstant';
 
 const instance = axios.create({
-	baseURL: envConfig.PUBLIC_BASE_URL,
+	baseURL: import.meta.env.PUBLIC_BASE_URL,
 });
 
 const EcosystemInstance = axios.create({
@@ -16,7 +16,7 @@ const EcosystemInstance = axios.create({
 const checkAuthentication = async (sessionCookie: string, request: AxiosRequestConfig) => {
 	const isAuthPage = window.location.href.includes('/authentication/sign-in') || window.location.href.includes('/authentication/sign-up')
 	try {
-		const baseURL = envConfig.PUBLIC_BASE_URL || process.env.PUBLIC_BASE_URL;
+		const baseURL = import.meta.env.PUBLIC_BASE_URL || process.env.PUBLIC_BASE_URL;
 		const config = {
 			headers: {
 				'Content-Type': 'application/json',
@@ -48,7 +48,7 @@ const checkAuthentication = async (sessionCookie: string, request: AxiosRequestC
 		}
 	} catch (error) { }
 };
-const { PUBLIC_BASE_URL, PUBLIC_ECOSYSTEM_BASE_URL }: any = globalThis
+const { PUBLIC_BASE_URL, PUBLIC_ECOSYSTEM_BASE_URL }: any = import.meta.env
 
 instance.interceptors.request.use(async config => {
 	config.baseURL = PUBLIC_BASE_URL;
