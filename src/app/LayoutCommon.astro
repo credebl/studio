@@ -23,9 +23,7 @@ allEnvKeys.forEach((key) => {
   
   if (!value) return; 
   
-  if (excludeKeys.includes(key)) {
-    excludedEnvData[key] = value;
-  } else {
+  if (!excludeKeys.includes(key)) {
     initData[key] = value;
   }
 });
