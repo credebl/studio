@@ -69,9 +69,7 @@ jobs:
          echo "PUBLIC_REDIRECT_FROM_URL=https://dev.credebl.id" >> .env
 
       - name: Build step
-        run: |
-         npm install && npm run build # 📝 Update the build command(s)
-         cat .env
+        run: npm install && npm run build # 📝 Update the build command(s)
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
