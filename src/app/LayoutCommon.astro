@@ -16,7 +16,6 @@ if (allEnvKeys.length === 0) {
 const exposedEnvKeys = allEnvKeys.filter((key) => !excludeKeys.includes(key));
 
 const initData: Record<string, any> = {};
-const excludedEnvData: Record<string, any> = {};
 
 allEnvKeys.forEach((key) => {
   const value = process.env[key] || import.meta.env[key];
