@@ -28,7 +28,7 @@ jobs:
 
          echo "PUBLIC_MODE=DEV" > .env
 
-         echo "PUBLIC_BASE_URL=https://devapi.credebl.id" >> .env
+         echo "PUBLIC_BASE_URL=${{ secrets.DEV_PUBLIC_BASE_URL }}" >> .env
 
          echo "PUBLIC_SHOW_NAME_AS_LOGO=true" >> .env
 
@@ -38,7 +38,7 @@ jobs:
 
          echo "PUBLIC_POWERED_BY=Blockster Labs Pvt. Ltd" >> .env
 
-         echo "PUBLIC_PLATFORM_DOCS_URL=https://docs.credebl.id/en/intro/what-is-credebl/" >> .env
+         echo "PUBLIC_PLATFORM_DOCS_URL=https://docs.credebl.id/docs" >> .env
 
          echo "PUBLIC_PLATFORM_GIT=https://github.com/credebl" >> .env
 
