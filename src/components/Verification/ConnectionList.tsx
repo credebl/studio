@@ -6,7 +6,7 @@ import {
 	getConnectionsByOrg,
 } from '../../api/connection';
 import type { IConnectionListAPIParameter } from '../../api/connection';
-import type { TableData } from '../../commonComponents/datatable/interface';
+import type { ITableData } from '../../commonComponents/datatable/interface';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';
 import { dateConversion } from '../../utils/DateConversion';
@@ -33,12 +33,12 @@ type LocalOrgs = {
 const ConnectionList = (props: {
 	selectConnection: (connections: IConnectionList[]) => void;
 }) => {
-	const [connectionList, setConnectionList] = useState<TableData[]>([]);
-	const [tableData, setTableData] = useState<TableData[]>([]);
+	const [connectionList, setConnectionList] = useState<ITableData[]>([]);
+	const [connectionsTableData, setConnectionsTableData] = useState<ITableData[]>([]);
 	const [localOrgs, setLocalOrgs] = useState<LocalOrgs[]>([]);
 
 	const [selectedConnectionList, setSelectedConnectionList] = useState<
-		TableData[]
+	ITableData[]
 	>([]);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [listAPIParameter, setListAPIParameter] =
@@ -52,17 +52,17 @@ const ConnectionList = (props: {
 	});
 
 	useEffect(() => {
-		let getData: NodeJS.Timeout;
+		let getConnectionsData: NodeJS.Timeout;
 
 		if (listAPIParameter?.search?.length >= 1) {
-			getData = setTimeout(() => {
+			getConnectionsData = setTimeout(() => {
 				getConnectionsVerification(listAPIParameter);
 			}, 1000);
-			return () => clearTimeout(getData);
+			return () => clearTimeout(getConnectionsData);
 		} else {
 			getConnectionsVerification(listAPIParameter);
 		}
-		return () => clearTimeout(getData);
+		return () => clearTimeout(getConnectionsData);
 	}, [listAPIParameter]);
 	
 	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -162,7 +162,7 @@ const extractConnectionFields = (item: IConnectionList) => {
 		  };
 		});
   
-	  setTableData(connectionsData);
+	  setConnectionsTableData(connectionsData);
 	} catch (err) {
 	  console.error('Error generating table:', err);
 	}
@@ -204,17 +204,17 @@ const extractConnectionFields = (item: IConnectionList) => {
 
 
 	useEffect(() => {
-		let getData: NodeJS.Timeout;
+		let getConnectionsData: NodeJS.Timeout;
 		updateLocalOrgs();
 		if (listAPIParameter?.search?.length >= 1) {
-			getData = setTimeout(() => {
+			getConnectionsData = setTimeout(() => {
 				getConnectionsVerification(listAPIParameter);
 			}, 1000);
-			return () => clearTimeout(getData);
+			return () => clearTimeout(getConnectionsData);
 		} else {
 			getConnectionsVerification(listAPIParameter);
 		}
-		return () => clearTimeout(getData);
+		return () => clearTimeout(getConnectionsData);
 	}, [listAPIParameter]);
 
 	useEffect(() => {
@@ -237,8 +237,8 @@ const extractConnectionFields = (item: IConnectionList) => {
 					nextPage: nextPage,
 					lastPage: lastPage,
 				});
-				
-				setConnectionList(data?.data?.data);
+				const connectionsDataByOrgId = data?.data?.data
+				setConnectionList(connectionsDataByOrgId);
 				setError(null);
 			} else {
 				setConnectionList([]);
@@ -301,7 +301,7 @@ const extractConnectionFields = (item: IConnectionList) => {
 				onInputChange={searchInputChange}
 				refresh={refreshPage}
 				header={verification_header}
-				data={tableData}
+				data={connectionsTableData}
 				loading={loading}
 				currentPage={listAPIParameter?.page}
 				onPageChange={(page: number) => {
