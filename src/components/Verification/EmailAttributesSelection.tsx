@@ -5,7 +5,7 @@ import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { apiStatusCodes, predicatesConditions, storageKeys } from '../../config/CommonConstant';
 import BreadCrumbs from '../BreadCrumbs';
 import DataTable from '../../commonComponents/datatable';
-import type { TableData } from '../../commonComponents/datatable/interface';
+import type { ITableData } from '../../commonComponents/datatable/interface';
 import { pathRoutes } from '../../config/pathRoutes';
 import BackButton from '../../commonComponents/backbutton';
 import type {
@@ -18,7 +18,7 @@ import { DidMethod } from '../../common/enums';
 import React from 'react';
 
 const EmailAttributesSelection = () => {
-	const [attributeList, setAttributeList] = useState<TableData[]>([]);
+	const [attributeList, setAttributeList] = useState<ITableData[]>([]);
 	const [proofReqSuccess, setProofReqSuccess] = useState<string | null>(null);
 	const [errMsg, setErrMsg] = useState<string | null>(null);
 	const [display, setDisplay] = useState<boolean | undefined>(false);

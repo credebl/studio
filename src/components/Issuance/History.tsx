@@ -2,7 +2,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import type { AxiosResponse } from 'axios';
 import { useEffect, useState } from 'react';
 import type { ChangeEvent } from 'react';
-import type { TableData } from '../../commonComponents/datatable/interface';
+import type { ITableData } from '../../commonComponents/datatable/interface';
 import { apiStatusCodes } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';
 import { dateConversion } from '../../utils/DateConversion';
@@ -30,7 +30,7 @@ const HistoryBulkIssuance = () => {
 		sortingOrder: 'desc',
 	};
 	const [listAPIParameter, setListAPIParameter] = useState(initialPageState);
-	const [connectionList, setConnectionList] = useState<TableData[]>([]);
+	const [connectionList, setConnectionList] = useState<ITableData[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [failure, setFailure] = useState<string | null>(null);
 	const [success, setSuccess] = useState<string | null>(null);
