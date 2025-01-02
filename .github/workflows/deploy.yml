@@ -1,9 +1,9 @@
 name: Deploy
 on:
   push:
-    branches: main
+    branches: improve-application-performance
   pull_request:
-    branches: main
+    branches: improve-application-performance
 
 jobs:
   deploy:
@@ -40,3 +40,5 @@ jobs:
           project: "credebl-dev-ui"
           entrypoint: "server/entry.mjs"
           root: "dist"
+          
+          
