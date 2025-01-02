@@ -46,8 +46,8 @@ const SignUpUser = () => {
 		try {
 			const payload = {
 				email: email,
-				clientId: passwordEncryption(envConfig.PLATFORM_DATA.clientId),
-				clientSecret:passwordEncryption(envConfig.PLATFORM_DATA.clientSecret)		
+				clientId: passwordEncryption(import.meta.env.PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_ID),
+				clientSecret:passwordEncryption(import.meta.env.PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_SECRET)		
 			}
 			
 			setVerifyLoader(true)
