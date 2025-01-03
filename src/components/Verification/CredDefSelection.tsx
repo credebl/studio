@@ -9,18 +9,19 @@ import { pathRoutes } from "../../config/pathRoutes";
 import BreadCrumbs from "../BreadCrumbs";
 import { AlertComponent } from "../AlertComponent";
 import type { SchemaState, CredDefData } from "./interface";
-import type { TableData } from "../../commonComponents/datatable/interface";
+import type { ITableData } from "../../commonComponents/datatable/interface";
 import DataTable from "../../commonComponents/datatable";
 import { getCredentialDefinitionsForVerification } from "../../api/verification";
 import CustomSpinner from "../CustomSpinner";
 import BackButton from  '../../commonComponents/backbutton'
+import React from "react";
 
 const CredDefSelection = () => {
 	const [schemaState, setSchemaState] = useState({ schemaName: '', version: '' })
 	const [loading, setLoading] = useState<boolean>(true)
 	const [schemaLoader, setSchemaLoader] = useState<boolean>(true)
 	const [error, setError] = useState<string | null>(null)
-	const [credDefList, setCredDefList] = useState<TableData[]>([])
+	const [credDefList, setCredDefList] = useState<ITableData[]>([])
 	const [schemaDetailsState, setSchemaDetailsState] = useState<SchemaState>({ schemaId: '', issuerDid: '', attributes: [], createdDateTime: '' })
 
 	useEffect(() => {

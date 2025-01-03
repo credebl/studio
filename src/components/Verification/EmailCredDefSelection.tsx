@@ -6,7 +6,7 @@ import { pathRoutes } from "../../config/pathRoutes";
 import BreadCrumbs from "../BreadCrumbs";
 import { AlertComponent } from "../AlertComponent";
 import type { CredDefData } from "./interface";
-import type { TableData } from "../../commonComponents/datatable/interface";
+import type { ITableData } from "../../commonComponents/datatable/interface";
 import DataTable from "../../commonComponents/datatable";
 import { getCredentialDefinitionsForVerification } from "../../api/verification";
 import BackButton from '../../commonComponents/backbutton';
@@ -18,7 +18,7 @@ import CustomCheckbox from "../../commonComponents/CustomCheckbox";
 const EmailCredDefSelection = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [credDefList, setCredDefList] = useState<TableData[]>([]);
+    const [credDefList, setCredDefList] = useState<ITableData[]>([]);
     const [searchValue, setSearchValue] = useState('');
     const [selectedCredDefs, setSelectedCredDefs] = useState<CredDefData[]>([]);
 
@@ -51,7 +51,7 @@ const EmailCredDefSelection = () => {
     const getCredDefs = async (schemaIds: string[]) => {
         setLoading(true);
         const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-        let allCredDefs: TableData[] = [];
+        let allCredDefs: ITableData[] = [];
         let rawCredDefs: CredDefData[] = []; 
 
         for (const schemaId of schemaIds) {

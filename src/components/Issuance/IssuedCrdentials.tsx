@@ -9,7 +9,7 @@ import BreadCrumbs from '../BreadCrumbs';
 import { Button, Pagination } from 'flowbite-react';
 import DateTooltip from '../Tooltip';
 import { EmptyListMessage } from '../EmptyListComponent';
-import type { TableData } from '../../commonComponents/datatable/interface';
+import type { ITableData } from '../../commonComponents/datatable/interface';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { dateConversion } from '../../utils/DateConversion';
 import { getIssuedCredentials } from '../../api/issuance';
@@ -35,7 +35,7 @@ const initialPageState = {
 const CredentialList = () => {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
-	const [issuedCredList, setIssuedCredList] = useState<TableData[]>([]);
+	const [issuedCredList, setIssuedCredList] = useState<ITableData[]>([]);
 	const [walletCreated, setWalletCreated] = useState(false);
 	const [listAPIParameter, setListAPIParameter] =
 		useState<IConnectionListAPIParameter>(initialPageState);

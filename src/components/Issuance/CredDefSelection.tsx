@@ -11,7 +11,7 @@ import { Button } from 'flowbite-react';
 import CustomSpinner from '../CustomSpinner';
 import DataTable from '../../commonComponents/datatable';
 import SchemaCard from '../../commonComponents/SchemaCard';
-import type { TableData } from '../../commonComponents/datatable/interface';
+import type { ITableData } from '../../commonComponents/datatable/interface';
 import { dateConversion } from '../../utils/DateConversion';
 import { getCredentialDefinitions } from '../../api/issuance';
 import { pathRoutes } from '../../config/pathRoutes';
@@ -26,7 +26,7 @@ const CredDefSelection = () => {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [schemaLoader, setSchemaLoader] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
-	const [credDefList, setCredDefList] = useState<TableData[]>([]);
+	const [credDefList, setCredDefList] = useState<ITableData[]>([]);
 	const [schemaDetailsState, setSchemaDetailsState] = useState<SchemaState>({
 		schemaId: '',
 		issuerDid: '',
