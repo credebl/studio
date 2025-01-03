@@ -32,9 +32,7 @@ const CustomCheckbox: React.FC<ICustomCheckboxProps> = ({ showCheckbox, isVerifi
     try {
       const storedSchemaData = await getFromLocalStorage(storageKeys.SELECTED_SCHEMAS);
       if(storedSchemaData){
-
         const selectedSchemas = JSON.parse(storedSchemaData);
-        
         if (newChecked) {
           selectedSchemas.push(schemaData);
         } else {
@@ -44,6 +42,9 @@ const CustomCheckbox: React.FC<ICustomCheckboxProps> = ({ showCheckbox, isVerifi
           }
         }
         await setToLocalStorage(storageKeys.SELECTED_SCHEMAS, JSON.stringify(selectedSchemas));
+      } else {
+        throw new Error('Schema data is empty.');
+
       }
     } catch (error) {
       console.error('Error updating localStorage:', error);
