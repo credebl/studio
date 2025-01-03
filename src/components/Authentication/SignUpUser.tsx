@@ -73,17 +73,18 @@ const SignUpUser = () => {
 		const userRsp = await checkUserExist(values?.email)
 		const { data } = userRsp as AxiosResponse
 		setLoading(false)
+		const { isEmailVerified, isRegistrationCompleted } = data?.data;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			if (data.data.isEmailVerified && data?.data?.isRegistrationCompleted) {
+			if (isEmailVerified && isRegistrationCompleted) {
 				setErrMsg(data?.data?.message)
 			}
-			else if (data.data.isEmailVerified && !data?.data?.isRegistrationCompleted) {
+			else if (isEmailVerified && !isRegistrationCompleted) {
 				setEmail(values?.email)
 				await setToLocalStorage(storageKeys.USER_EMAIL, values?.email)
 				setNextFlag(true)
 				setEnableName(true)
 			}
-			else if (!data?.data?.isRegistrationCompleted && !data.data.isEmailVerified) {
+			else if (!isRegistrationCompleted && !isEmailVerified) {
 				setEmail(values?.email)
 				await VerifyMail(values?.email)
 			}
