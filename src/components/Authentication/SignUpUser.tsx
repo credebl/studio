@@ -75,21 +75,26 @@ const SignUpUser = () => {
 		setLoading(false)
 		const { isEmailVerified, isRegistrationCompleted } = data?.data;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			if (isEmailVerified && isRegistrationCompleted) {
-				setErrMsg(data?.data?.message)
-			}
-			else if (isEmailVerified && !isRegistrationCompleted) {
-				setEmail(values?.email)
-				await setToLocalStorage(storageKeys.USER_EMAIL, values?.email)
-				setNextFlag(true)
-				setEnableName(true)
-			}
-			else if (!isRegistrationCompleted && !isEmailVerified) {
-				setEmail(values?.email)
-				await VerifyMail(values?.email)
-			}
 			
+			if (isEmailVerified){
+				if(isRegistrationCompleted){
+					setErrMsg(data?.data?.message)
+				}
+				else {
+					setEmail(values?.email)
+					await setToLocalStorage(storageKeys.USER_EMAIL, values?.email)
+					setNextFlag(true)
+					setEnableName(true)
+				}
+			}
+			else {
+					setEmail(values?.email)
+					await VerifyMail(values?.email)
+			}
 		} 
+		else {
+			setErrMsg(data?.data?.message)
+	} 
 	}
 
 	const redirectLandingPage = () => {
