@@ -74,9 +74,8 @@ const SignUpUser = () => {
 		const { data } = userRsp as AxiosResponse
 		setLoading(false)
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			if (data?.data?.isRegistrationCompleted === false && data.data.isEmailVerified === false) {
-				setEmail(values?.email)
-				await VerifyMail(values?.email)
+			if (data.data.isEmailVerified === true && data?.data?.isRegistrationCompleted === true) {
+				setErrMsg(data?.data?.message)
 			}
 			else if (data.data.isEmailVerified === true && data?.data?.isRegistrationCompleted !== true) {
 				setEmail(values?.email)
@@ -84,9 +83,12 @@ const SignUpUser = () => {
 				setNextFlag(true)
 				setEnableName(true)
 			}
-		} else {
-			setErrMsg(userRsp as string)
-		}
+			else if (data?.data?.isRegistrationCompleted === false && data.data.isEmailVerified === false) {
+				setEmail(values?.email)
+				await VerifyMail(values?.email)
+			}
+			
+		} 
 	}
 
 	const redirectLandingPage = () => {
