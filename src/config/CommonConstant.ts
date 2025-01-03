@@ -54,6 +54,7 @@ export const storageKeys = {
     ALL_SCHEMAS:'allSchemaFlag',
     ECOSYSTEM_ID: "ecosystem_id",
     ECOSYSTEM_ROLE: "ecosystem_role",
+    VERIFICATION_ROUTE_TYPE:"routeType"
 
 
 }
@@ -63,6 +64,8 @@ export const emailCredDefHeaders = [
     { columnName: 'Schema name' },
     { columnName: 'Revocable' },
 ];
+
+export const excludeKeys = ['PUBLIC_BASE_URL', 'PUBLIC_CRYPTO_PRIVATE_KEY', 'PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_ID', 'PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_SECRET', 'PUBLIC_ALLOW_DOMAIN'];
 
 export const predicatesConditions = [
     { value: '', label: 'Select' },

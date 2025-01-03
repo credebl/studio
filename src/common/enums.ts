@@ -157,3 +157,7 @@ export enum Environment {
 	DEV = 'DEV',
 	QA = 'QA'
 }
+
+export enum APIVersion {
+	version_v2 = '/v2'
+}

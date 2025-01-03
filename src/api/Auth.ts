@@ -229,7 +229,7 @@ export const passwordEncryption = (password: string): string => {
 export const encryptData = (value: any): string => {
  
     const CRYPTO_PRIVATE_KEY: string = import.meta.env.PUBLIC_CRYPTO_PRIVATE_KEY;
-
+    
     try {
         if (typeof (value) !== 'string') {
             value = JSON.stringify(value)

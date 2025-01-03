@@ -6,7 +6,7 @@ export interface TableHeader {
 	width?: string;
 }
 
-export interface TableData {
+export interface ITableData {
 	clickId?: string | null;
 	data: Data[];
 }
@@ -20,7 +20,7 @@ export interface Data {
 
 export interface IDataTable {
 	header: TableHeader[];
-	data: TableData[];
+	data: ITableData[];
 	loading: boolean;
 	onInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
 	refresh: () => void;
