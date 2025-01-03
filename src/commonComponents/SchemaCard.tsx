@@ -11,6 +11,7 @@ import { limitedAttributesLength, storageKeys } from '../config/CommonConstant';
 import type { IAttribute, ISchemaCardProps, ISchemaData } from './interface';
 import CustomCheckbox from './CustomCheckbox';
 import { Ledgers, Network, PolygonNetworks } from '../common/enums';
+import React from 'react';
 
 const SchemaCard = (props: ISchemaCardProps) => {
   const orgDidDetails = async () => {
@@ -65,16 +66,14 @@ const handleCheckboxChange = (checked: boolean, schemaData?: ISchemaData) => {
   }
 };
 
+const SchemaData = {
+  schemaId: props.schemaId,
+  attributes: props.attributes,
+  issuerDid: props.issuerDid,
+  created: props.created,
+};
 
-  return (
-    <Card onClick={() => {
-
-      if (!props.w3cSchema) {
-        props.onClickCallback(props.schemaId, props.attributes, props.issuerDid, props.created)
-      }
-
-     if (props.w3cSchema) {
-    const W3CSchemaData = {
+ const W3CSchemaData = {
       schemaId: props.schemaId,
       schemaName: props.schemaName,
       version: props.version,
@@ -83,6 +82,12 @@ const handleCheckboxChange = (checked: boolean, schemaData?: ISchemaData) => {
       created: props.created,
   };
 
+  return (
+    <Card onClick={() => {
+      if (!props.w3cSchema && props.onClickCallback) {
+        props.onClickCallback(SchemaData);
+      }
+     if (props.w3cSchema && props.onClickW3CCallback) {
   props.onClickW3CCallback(W3CSchemaData);
 }
     }}

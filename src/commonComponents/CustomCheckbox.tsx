@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { setToLocalStorage } from '../api/Auth';
+import { getFromLocalStorage, setToLocalStorage } from '../api/Auth';
 import { storageKeys } from '../config/CommonConstant';
 import type { ICustomCheckboxProps, ISchemaData } from './interface';
 
@@ -7,15 +7,21 @@ const CustomCheckbox: React.FC<ICustomCheckboxProps> = ({ showCheckbox, isVerifi
   const [checked, setChecked] = useState<boolean>(false);
 
   useEffect(() => {
-    if (schemaData) {
-      try {
-        const selectedSchemas = JSON.parse(localStorage.getItem('selectedSchemas') ?? '[]');
-        const isChecked = selectedSchemas.some((schema: ISchemaData) => schema.schemaId === schemaData.schemaId);
-        setChecked(isChecked);
-      } catch (error) {
-        console.error('Error parsing JSON from localStorage:', error);
+  const fetchSelectedSchemas = async () => {
+      if (schemaData) {
+        try {
+          const storedSchemaData = await getFromLocalStorage(storageKeys.SELECTED_SCHEMAS);
+          if(storedSchemaData){
+            const selectedSchemas= JSON.parse(storedSchemaData);
+            const isChecked = selectedSchemas.some((schema: ISchemaData) => schema.schemaId === schemaData.schemaId);
+            setChecked(isChecked);
+          }
+        } catch (error) {
+          console.error('Error parsing JSON from localStorage:', error);
+        }
       }
-    }
+    };
+    fetchSelectedSchemas();
   }, [schemaData]);
 
   const handleCheckboxChange = async () => {
@@ -24,17 +30,22 @@ const CustomCheckbox: React.FC<ICustomCheckboxProps> = ({ showCheckbox, isVerifi
     onChange(newChecked, schemaData);
 
     try {
-      const selectedSchemas = JSON.parse(localStorage.getItem('selectedSchemas') ?? '[]');
-      
-      if (newChecked) {
-        selectedSchemas.push(schemaData);
-      } else {
-        const index = selectedSchemas.findIndex((schema: ISchemaData) => schema.schemaId === schemaData?.schemaId);
-        if (index > -1) {
-          selectedSchemas.splice(index, 1);
+      const storedSchemaData = await getFromLocalStorage(storageKeys.SELECTED_SCHEMAS);
+      if(storedSchemaData){
+        const selectedSchemas = JSON.parse(storedSchemaData);
+        if (newChecked) {
+          selectedSchemas.push(schemaData);
+        } else {
+          const index = selectedSchemas.findIndex((schema: ISchemaData) => schema.schemaId === schemaData?.schemaId);
+          if (index > -1) {
+            selectedSchemas.splice(index, 1);
+          }
         }
+        await setToLocalStorage(storageKeys.SELECTED_SCHEMAS, JSON.stringify(selectedSchemas));
+      } else {
+        throw new Error('Schema data is empty.');
+
       }
-      await setToLocalStorage(storageKeys.SELECTED_SCHEMAS, JSON.stringify(selectedSchemas));
     } catch (error) {
       console.error('Error updating localStorage:', error);
     }

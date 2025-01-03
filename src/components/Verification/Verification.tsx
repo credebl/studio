@@ -6,7 +6,7 @@ import { getFromLocalStorage } from '../../api/Auth';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import BreadCrumbs from '../BreadCrumbs';
 import DataTable from '../../commonComponents/datatable';
-import type { TableData } from '../../commonComponents/datatable/interface';
+import type { ITableData } from '../../commonComponents/datatable/interface';
 import { verifyCredential } from '../../api/verification';
 import { pathRoutes } from '../../config/pathRoutes';
 import CustomSpinner from '../CustomSpinner';
@@ -25,7 +25,7 @@ import { getOrganizationById } from '../../api/organization';
 import { DidMethod, RequestType } from '../../common/enums';
 
 const VerificationCred = () => {
-	const [attributeList, setAttributeList] = useState<TableData[]>([]);
+	const [attributeList, setAttributeList] = useState<ITableData[]>([]);
 	const [proofReqSuccess, setProofReqSuccess] = useState<string | null>(null);
 	const [errMsg, setErrMsg] = useState<string | null>(null);
 	const [display, setDisplay] = useState<boolean | undefined>(false);

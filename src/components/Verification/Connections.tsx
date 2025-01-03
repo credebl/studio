@@ -3,7 +3,7 @@ import { Alert, Button } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { getFromLocalStorage, removeFromLocalStorage, setToLocalStorage } from "../../api/Auth";
 import DataTable from "../../commonComponents/datatable";
-import type { TableData } from "../../commonComponents/datatable/interface";
+import type { ITableData } from "../../commonComponents/datatable/interface";
 import { apiStatusCodes, storageKeys } from "../../config/CommonConstant";
 import { pathRoutes } from "../../config/pathRoutes";
 import BreadCrumbs from "../BreadCrumbs";
@@ -22,7 +22,7 @@ import { getOrganizationById } from "../../api/organization";
 
 const Connections = () => {
 	const [isW3cDid, setIsW3cDid] = useState<boolean>(false);
-	const [selectedConnectionList, setSelectedConnectionList] = useState<TableData[]>([])
+	const [selectedConnectionList, setSelectedConnectionList] = useState<ITableData[]>([])
 	const [proofReqSuccess, setProofReqSuccess] = useState<string | null>(null);
 	const [errMsg, setErrMsg] = useState<string | null>(null);
 	const [requestLoader, setRequestLoader] = useState<boolean>(false);
