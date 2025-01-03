@@ -73,7 +73,7 @@ const SignUpUser = () => {
 		const userRsp = await checkUserExist(values?.email)
 		const { data } = userRsp as AxiosResponse
 		setLoading(false)
-		const { isEmailVerified, isRegistrationCompleted } = data?.data;
+		const { isEmailVerified, isRegistrationCompleted } = data?.data || {};
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			
 			if (isEmailVerified){
