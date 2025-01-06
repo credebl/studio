@@ -1,9 +1,9 @@
-import type { TableData, TableHeader } from './interface';
+import type { ITableData, TableHeader } from './interface';
 import CustomSpinner from '../../components/CustomSpinner';
 
 interface DataTableProps {
 	header: TableHeader[];
-	data: TableData[];
+	data: ITableData[];
 	loading: boolean;
 	callback?: (clickId: string | null | undefined) => void;
 	displaySelect?: boolean;

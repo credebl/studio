@@ -5,7 +5,7 @@ import type { ChangeEvent } from 'react';
 import {getConnectionsByOrg,
 } from '../../api/connection';
 import type {IConnectionListAPIParameter} from '../../api/connection'
-import type { TableData } from '../../commonComponents/datatable/interface';
+import type { ITableData } from '../../commonComponents/datatable/interface';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';
 import { dateConversion } from '../../utils/DateConversion';
@@ -37,7 +37,7 @@ const ConnectionList = (props: {
 	selectConnection: (connections: IConnectionList[]) => void;
 }) => {
 	const [listAPIParameter, setListAPIParameter] = useState(initialPageState);
-	const [tableData, setTableData] = useState<TableData[]>([]);
+	const [tableData, setTableData] = useState<ITableData[]>([]);
 	const [connectionList, setConnectionList] = useState([]);
 	const [localOrgs, setLocalOrgs] = useState<LocalOrgs[]>([]);
 

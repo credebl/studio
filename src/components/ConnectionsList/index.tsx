@@ -6,7 +6,7 @@ import {
 	getConnectionsByOrg,
 } from '../../api/connection';
 import type { IConnectionListAPIParameter } from '../../api/connection';
-import type { TableData } from '../../commonComponents/datatable/interface';
+import type { ITableData } from '../../commonComponents/datatable/interface';
 import { apiStatusCodes, storageKeys } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';
 import { dateConversion } from '../../utils/DateConversion';
@@ -16,6 +16,7 @@ import { getFromLocalStorage } from '../../api/Auth';
 import { getOrgDetails } from '../../config/ecosystem';
 import type { IConnectionList } from '../../components/Issuance/interface';
 import SortDataTable from '../../commonComponents/datatable/SortDataTable';
+import React from 'react';
 
 const initialPageState = {
 	itemPerPage: 10,
@@ -27,7 +28,7 @@ const initialPageState = {
 };
 const ConnectionList = () => {
 	const [listAPIParameter, setListAPIParameter] = useState(initialPageState);
-	const [connectionList, setConnectionList] = useState<TableData[]>([]);
+	const [connectionList, setConnectionList] = useState<ITableData[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
 	const [totalItem, setTotalItem] = useState(0);

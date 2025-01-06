@@ -21,7 +21,7 @@ import { Features } from '../../utils/enums/features';
 import ProofRequest from './ProofRequestPopup';
 import type { RequestProof } from './interface';
 import RoleViewButton from '../RoleViewButton';
-import type { TableData } from '../../commonComponents/datatable/interface';
+import type { ITableData } from '../../commonComponents/datatable/interface';
 import { dateConversion } from '../../utils/DateConversion';
 import { pathRoutes } from '../../config/pathRoutes';
 import { getFromLocalStorage } from '../../api/Auth';
@@ -40,7 +40,7 @@ const initialPageState = {
 
 const VerificationCredentialList = () => {
 	const [loading, setLoading] = useState<boolean>(true);
-	const [verificationList, setVerificationList] = useState<TableData[]>([]);
+	const [verificationList, setVerificationList] = useState<ITableData[]>([]);
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [requestId, setRequestId] = useState<string>('');
 	const [errMsg, setErrMsg] = useState<string | null>(null);
