@@ -65,8 +65,6 @@ export const emailCredDefHeaders = [
     { columnName: 'Revocable' },
 ];
 
-export const excludeKeys = ['PUBLIC_BASE_URL', 'PUBLIC_CRYPTO_PRIVATE_KEY', 'PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_ID', 'PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_SECRET', 'PUBLIC_ALLOW_DOMAIN'];
-
 export const predicatesConditions = [
     { value: '', label: 'Select' },
     { value: '>', label: 'Greater than' },
