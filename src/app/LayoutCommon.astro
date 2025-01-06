@@ -1,34 +1,10 @@
 ---
 import pkg from '../../package.json' assert { type: 'json' };
-import { getFromCookies } from '../api/Auth';
 import { SITE_TITLE } from './constants.js';
 import { envConfig } from '../config/envConfig';
-import { excludeKeys } from '../config/CommonConstant';
 
 const { class: clazz, metaData } = Astro.props;
 
-const allEnvKeys = [...Object.keys(process.env), ...Object.keys(import.meta.env)];
-
-if (allEnvKeys.length === 0) {
-  throw new Error('No environment keys were found in process.env or import.meta.env.');
-}
-
-const exposedEnvKeys = allEnvKeys.filter((key) => !excludeKeys.includes(key));
-
-const initData: Record<string, any> = {};
-
-allEnvKeys.forEach((key) => {
-  const value = process.env[key] || import.meta.env[key];
-  
-  if (!value) return; 
-  
-  if (!excludeKeys.includes(key)) {
-    initData[key] = value;
-  }
-});
-
-const sessionToken = getFromCookies(Astro.cookies, 'session');
-const refreshToken = getFromCookies(Astro.cookies, 'refresh');
 ---
 
 <!DOCTYPE html>
@@ -49,7 +25,7 @@ const refreshToken = getFromCookies(Astro.cookies, 'refresh');
 		<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-		<meta property="og:image" content={initData.PUBLIC_PLATFORM_LOGO} />
+		<meta property="og:image" content={envConfig.PLATFORM_DATA.logo} />
 		<script is:inline id="theme">
 			if (
 				localStorage.getItem('color-theme') === 'dark' ||
@@ -65,8 +41,7 @@ const refreshToken = getFromCookies(Astro.cookies, 'refresh');
 
 	<body
 		class:list={[
-			,
-			// clazz, 'bg-gray-50 dark:bg-gray-800'
+			// clazz, 'bg-gray-50 dark:bg-gray-800',
 			'scrollbar scrollbar-w-3 scrollbar-thumb-rounded-[0.25rem]',
 			'scrollbar-track-slate-200  scrollbar-thumb-gray-400',
 			'dark:scrollbar-track-gray-900 dark:scrollbar-thumb-gray-700',
@@ -75,18 +50,6 @@ const refreshToken = getFromCookies(Astro.cookies, 'refresh');
 	>
 		<slot />
 		<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.0/flowbite.min.js"></script>
-
-		<script
-			id="global"
-			define:vars={{ initData, exposedEnvKeys, sessionToken, refreshToken }}
-		>
-			exposedEnvKeys.forEach((item) => {
-				globalThis[item] = initData[item];
-			});
-
-			globalThis.access_token = sessionToken;
-			globalThis.refresh_token = refreshToken;
-		</script>
 
 		<style is:global>
 			body {
