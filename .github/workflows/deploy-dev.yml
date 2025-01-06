@@ -56,7 +56,7 @@ jobs:
 
          echo "PUBLIC_CREDEBL_FRONT_END_URL=https://dev.credebl.id" >> .env
 
-         echo "PUBLIC_ECOSYSTEM_BASE_URL=https://devecosystem-api.credebl.id" >> .env
+         echo "PUBLIC_ECOSYSTEM_BASE_URL=${{ secrets.DEV_PUBLIC_ECOSYSTEM_BASE_URL }}" >> .env
 
          echo "PUBLIC_PLATFORM_DISCORD_URL=https://discord.gg/w4hnQT7NJG" >> .env
 

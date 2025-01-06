@@ -10,7 +10,7 @@ const instance = axios.create({
 });
 
 const EcosystemInstance = axios.create({
-	baseURL: envConfig.PUBLIC_ECOSYSTEM_BASE_URL,
+	baseURL: import.meta.env.PUBLIC_ECOSYSTEM_BASE_URL,
 });
 
 const checkAuthentication = async (sessionCookie: string, request: AxiosRequestConfig) => {
