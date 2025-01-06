@@ -6,7 +6,6 @@ interface ImportMetaEnv {
 	readonly SITE: string;
 	readonly PUBLIC_BASE_URL:string;
 	readonly PUBLIC_CRYPTO_PRIVATE_KEY: string;
-	readonly PUBLIC_ECOSYSTEM_BASE_URL: string;
 	readonly PUBLIC_REDIRECT_FROM_URL: string;
 	readonly PUBLIC_POLYGON_TESTNET_URL: string;
 	readonly PUBLIC_POLYGON_MAINNET_URL: string;
