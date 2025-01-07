@@ -1,4 +1,4 @@
-const SearchInput = ({ onInputChange, value }: any) => {
+const SearchInput = ({ onInputChange, value = '' }: { onInputChange?: (e: React.ChangeEvent<HTMLInputElement>) => void; value?: string }) => {
 	return (
 		<div>
 			<label className="sr-only">Search</label>
