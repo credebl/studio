@@ -16,7 +16,7 @@ interface ColorPair {
     background: string
 }
 
-const getColorPair = (name: string | undefined): ColorPair => {
+const getColorPair = (name: string): ColorPair => {
     if (!name) return avatarColorPairs[0];
     const index = name
         .split('')
@@ -25,7 +25,7 @@ const getColorPair = (name: string | undefined): ColorPair => {
 };
 
 const CustomAvatar = ({ name, src, className, textSizeRatio = 2.5, round = false, size = '45px' }: Props): JSX.Element => {
-    const colorPair = getColorPair(name);
+    const colorPair = name ? getColorPair(name) : avatarColorPairs[0];
     const fontSize = `calc(${size} / ${textSizeRatio})`;
 
     return (
