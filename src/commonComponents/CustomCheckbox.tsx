@@ -5,39 +5,10 @@ import type { ICustomCheckboxProps, ISchemaData } from './interface';
 
 const CustomCheckbox: React.FC<ICustomCheckboxProps> = ({ showCheckbox, isVerificationUsingEmail, onChange, schemaData }) => {
   const [checked, setChecked] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (schemaData) {
-      try {
-        const selectedSchemas = JSON.parse(localStorage.getItem('selectedSchemas') ?? '[]');
-        const isChecked = selectedSchemas.some((schema: ISchemaData) => schema.schemaId === schemaData.schemaId);
-        setChecked(isChecked);
-      } catch (error) {
-        console.error('Error parsing JSON from localStorage:', error);
-      }
-    }
-  }, [schemaData]);
-
   const handleCheckboxChange = async () => {
     const newChecked = !checked;
     setChecked(newChecked);
     onChange(newChecked, schemaData);
-
-    try {
-      const selectedSchemas = JSON.parse(localStorage.getItem('selectedSchemas') ?? '[]');
-      
-      if (newChecked) {
-        selectedSchemas.push(schemaData);
-      } else {
-        const index = selectedSchemas.findIndex((schema: ISchemaData) => schema.schemaId === schemaData?.schemaId);
-        if (index > -1) {
-          selectedSchemas.splice(index, 1);
-        }
-      }
-      await setToLocalStorage(storageKeys.SELECTED_SCHEMAS, JSON.stringify(selectedSchemas));
-    } catch (error) {
-      console.error('Error updating localStorage:', error);
-    }
   };
 
   return (
