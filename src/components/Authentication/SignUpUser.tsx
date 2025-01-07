@@ -69,6 +69,7 @@ const SignUpUser = () => {
 	};
 
 	const ValidateEmail = async (values: emailValue) => {
+		setVerificationSuccess('')
 		setLoading(true)
 		const userRsp = await checkUserExist(values?.email)
 		const { data } = userRsp as AxiosResponse
