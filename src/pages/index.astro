@@ -60,8 +60,9 @@ const env = import.meta.env || process.env;
 							</p>
 							<div class="justify-center flex">
 								<a
-									href="https://docs.credebl.id/en/intro/what-is-credebl/"
+									href=`${envConfig.PLATFORM_DATA.docs}`
 									class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900"
+									target="_blank"
 								>
 									Get Started
 									<svg
@@ -1100,7 +1101,11 @@ const env = import.meta.env || process.env;
 					</span>
 
 					<div class="flex mt-4 space-x-6 justify-center items-center">
-						<a href="https://github.com/credebl" class="hover:opacity-50">
+						<a 
+						href=`${envConfig.PLATFORM_DATA.git}` 
+						class="hover:opacity-50"
+						target="_blank"
+						>
 							<svg
 								class="w-6 h-[1.2rem] text-gray-700 hover:text-gray-900 dark:text-white"
 								xmlns="http://www.w3.org/2000/svg"
@@ -1113,7 +1118,11 @@ const env = import.meta.env || process.env;
 									clip-rule="evenodd"></path>
 							</svg>
 						</a>
-						<a href="https://discord.gg/w4hnQT7NJG" class="hover:opacity-50" target="_blank">
+						<a 
+						href=`${envConfig.PLATFORM_DATA.discord}` 
+						class="hover:opacity-50" 
+						target="_blank"
+						>
 							<svg
 								class="w-6 h-6 text-gray-700 hover:text-gray-900 dark:text-white"
 								aria-hidden="true"
@@ -1127,8 +1136,9 @@ const env = import.meta.env || process.env;
 							</svg>
 						</a>
 						<a
-							href="https://twitter.com/i/flow/login?redirect_after_login=%2Fcredebl"
+							href=`${envConfig.PLATFORM_DATA.twitter}`
 							class="dark:text:white hover:opacity-50"
+							target="_blank"
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
