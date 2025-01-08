@@ -41,7 +41,7 @@
 		"@types/react": "^18.3.2",
 		"@types/react-dom": "^18.3.0",
 		"apexcharts": "^3.49.1",
-		"astro": "^4.8.4",
+		"astro": "^4.16.18",
 		"axios": "^1.6.8",
 		"cookie": "^0.6.0",
 		"crypto-js": "^4.2.0",
