@@ -1,6 +1,5 @@
 {
-	"name": "credebl-studio",
-	"version": "2.0.0",
+	"name": "studio",
 	"description": "An open-source Self-Sovereign Identity Platform",
 	"keywords": [
 		"self-sovereign identity",
