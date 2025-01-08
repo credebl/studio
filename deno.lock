@@ -55,10 +55,10 @@
   "workspace": {
     "packageJson": {
       "dependencies": [
-        "npm:@astrojs/react@^4.1.2",
-        "npm:@astrojs/sitemap@^3.2.1",
-        "npm:@astrojs/starlight@~0.30.4",
-        "npm:@astrojs/tailwind@^5.1.4",
+        "npm:@astrojs/react@^3.3.4",
+        "npm:@astrojs/sitemap@^3.1.4",
+        "npm:@astrojs/starlight@~0.30.5",
+        "npm:@astrojs/tailwind@^5.1.0",
         "npm:@babel/runtime-corejs3@^7.24.5",
         "npm:@babel/runtime@^7.24.5",
         "npm:@deno/astro-adapter@0.2",
