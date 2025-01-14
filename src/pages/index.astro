@@ -788,7 +788,10 @@ const env = import.meta.env || process.env;
 												class="h-10 w-10 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300 sm:h-12 sm:w-12 lg:h-16 lg:w-16"
 											/></a
 										>
-									</div>
+									</div>              class="dark:text:white hover:opacity-50"
+1149
+ 
+
 									<div
 										data-testid="flowbite-tooltip"
 										tabindex="-1"
@@ -1010,7 +1013,10 @@ const env = import.meta.env || process.env;
 										</div>
 									</div>
 
-								</div>
+								</div>              class="dark:text:white hover:opacity-50"
+1149
+ 
+
 							</div>
 							<div
 								class="flex w-full max-w-5xl flex-row items-center justify-between lg:px-4"
@@ -1101,7 +1107,10 @@ const env = import.meta.env || process.env;
 					</span>
 
 					<div class="flex mt-4 space-x-6 justify-center items-center">
-						<a href="https://github.com/credebl" class="hover:opacity-50">
+						<a 
+						href=`${envConfig.PLATFORM_DATA.git}` 
+						class="hover:opacity-50" 
+						target="_blank">
 							<svg
 								class="w-6 h-[1.2rem] text-gray-700 hover:text-gray-900 dark:text-white"
 								xmlns="http://www.w3.org/2000/svg"
