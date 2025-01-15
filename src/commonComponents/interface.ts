@@ -1,3 +1,5 @@
+import type { ISchema } from "../components/Verification/interface";
+
 export interface IProps {
 	openModal: boolean;
 	closeModal: (flag: boolean) => void;
@@ -24,6 +26,7 @@ export interface ISchemaData {
 }
 
 export interface ICustomCheckboxProps {
+	isSelectedSchema: boolean;
 	showCheckbox: boolean;
 	isVerificationUsingEmail?: boolean;
 	onChange: (checked: boolean, schemaData?: ISchemaData) => void;
@@ -33,6 +36,7 @@ export interface ICustomCheckboxProps {
 export interface ISchemaCardProps {
 	className?: string;
 	schemaName: string;
+	selectedSchemas:ISchema[];
 	version: string;
 	schemaId: string;
 	issuerDid: string;
