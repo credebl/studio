@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import type { ChangeEvent } from 'react';
-import type { TableData } from '../../commonComponents/datatable/interface';
+import type { ITableData } from '../../commonComponents/datatable/interface';
 import { apiStatusCodes } from '../../config/CommonConstant';
 import { AlertComponent } from '../AlertComponent';
 import BreadCrumbs from '../BreadCrumbs';
@@ -27,7 +27,7 @@ const HistoryDetails = ({ requestId }: IProps) => {
 	};
 
 	const [listAPIParameter, setListAPIParameter] = useState(initialPageState);
-	const [historyList, setHistoryList] = useState<TableData[]>([]);
+	const [historyList, setHistoryList] = useState<ITableData[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
 	const [totalItem, setTotalItem] = useState(0);

@@ -5,7 +5,7 @@ import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import { apiStatusCodes, predicatesConditions, storageKeys } from '../../config/CommonConstant';
 import BreadCrumbs from '../BreadCrumbs';
 import DataTable from '../../commonComponents/datatable';
-import type { TableData } from '../../commonComponents/datatable/interface';
+import type { ITableData } from '../../commonComponents/datatable/interface';
 import { pathRoutes } from '../../config/pathRoutes';
 import BackButton from '../../commonComponents/backbutton';
 import type {
@@ -15,9 +15,10 @@ import CustomCheckbox from '../../commonComponents/CustomCheckbox';
 import { getOrganizationById } from '../../api/organization';
 import type { AxiosResponse } from 'axios';
 import { DidMethod } from '../../common/enums';
+import React from 'react';
 
 const EmailAttributesSelection = () => {
-	const [attributeList, setAttributeList] = useState<TableData[]>([]);
+	const [attributeList, setAttributeList] = useState<ITableData[]>([]);
 	const [proofReqSuccess, setProofReqSuccess] = useState<string | null>(null);
 	const [errMsg, setErrMsg] = useState<string | null>(null);
 	const [display, setDisplay] = useState<boolean | undefined>(false);
@@ -26,6 +27,20 @@ const EmailAttributesSelection = () => {
 		null,
 	);
 	const [w3cSchema, setW3cSchema] = useState<boolean>(false);
+	const [isConnectionProof, setIsConnectionProof] = useState<boolean>(false);
+
+	const ConnectionVerification = async () => {
+		const conn = await getFromLocalStorage(storageKeys.VERIFICATION_ROUTE_TYPE)
+		if(conn === 'Connection'){
+			setIsConnectionProof(true)
+		}else{
+			setIsConnectionProof(false)
+		}
+	  }
+	  useEffect(() => {
+		ConnectionVerification();
+	  }, []);
+	
 
 	const handleAttributeChange = async (
 		attributeName: string,
@@ -73,6 +88,7 @@ const EmailAttributesSelection = () => {
 
 	const getOrgDetails = async () => {
 		setLoading(true);
+
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 		const response = await getOrganizationById(orgId);
 		const { data } = response as AxiosResponse;
@@ -94,20 +110,25 @@ const EmailAttributesSelection = () => {
 	}, []);
 
 
-	const handleSubmit = () => {
-		setErrMsg(null);
-	
-		if (w3cSchema) {
+		const handleSubmit = () => {
+			setErrMsg(null);
+
+			if(isConnectionProof){
+				redirectToConnections();
+				return;
+			}
+		
+			if (w3cSchema ) {
+				redirectToAppropriatePage();
+				return;
+			}
+		
+			if (hasInvalidNumberAttributes()) {
+				return;
+			}
+		
 			redirectToAppropriatePage();
-			return;
-		}
-	
-		if (hasInvalidNumberAttributes()) {
-			return;
-		}
-	
-		redirectToAppropriatePage();
-	};
+		};
 	
 	const hasInvalidNumberAttributes = (): boolean => {
 		const numberAttributes = attributeData?.filter(
@@ -143,6 +164,12 @@ const EmailAttributesSelection = () => {
 			? `${pathRoutes.organizations.verification.w3cEmailVerification}`
 			: `${pathRoutes.organizations.verification.emailVerification}`;
 	};
+
+	const redirectToConnections = () => {
+		window.location.href = w3cSchema
+			? `${pathRoutes.organizations.verification.W3CConnections}`
+			: `${pathRoutes.organizations.verification.connections}`;
+	}
 	
 	const loadAttributesData = async () => {
 	

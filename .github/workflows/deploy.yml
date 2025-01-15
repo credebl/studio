@@ -1,9 +1,9 @@
 name: Deploy
 on:
   push:
-    branches: qa-fixed-dco
+    branches: main
   pull_request:
-    branches: qa-fixed-dco
+    branches: main
 
 jobs:
   deploy:

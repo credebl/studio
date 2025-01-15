@@ -1,20 +1,10 @@
 ---
 import pkg from '../../package.json' assert { type: 'json' };
-import { getFromCookies } from '../api/Auth';
 import { SITE_TITLE } from './constants.js';
 import { envConfig } from '../config/envConfig';
 
 const { class: clazz, metaData } = Astro.props;
 
-const initData: any = {};
-
-const envKeys = [...Object.keys(process.env), ...Object.keys(import.meta.env)];
-envKeys.forEach((item) => {
-	initData[item] = process.env[item] || import.meta.env[item];
-});
-
-const sessionToken = getFromCookies(Astro.cookies, 'session');
-const refreshToken = getFromCookies(Astro.cookies, 'refresh');
 ---
 
 <!DOCTYPE html>
@@ -34,12 +24,8 @@ const refreshToken = getFromCookies(Astro.cookies, 'refresh');
 
 		<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
-			rel="stylesheet"
-		/>
 
-		<meta property="og:image" content={initData.PUBLIC_PLATFORM_LOGO} />
+		<meta property="og:image" content={envConfig.PLATFORM_DATA.logo} />
 		<script is:inline id="theme">
 			if (
 				localStorage.getItem('color-theme') === 'dark' ||
@@ -55,8 +41,7 @@ const refreshToken = getFromCookies(Astro.cookies, 'refresh');
 
 	<body
 		class:list={[
-			,
-			// clazz, 'bg-gray-50 dark:bg-gray-800'
+			// clazz, 'bg-gray-50 dark:bg-gray-800',
 			'scrollbar scrollbar-w-3 scrollbar-thumb-rounded-[0.25rem]',
 			'scrollbar-track-slate-200  scrollbar-thumb-gray-400',
 			'dark:scrollbar-track-gray-900 dark:scrollbar-thumb-gray-700',
@@ -65,18 +50,6 @@ const refreshToken = getFromCookies(Astro.cookies, 'refresh');
 	>
 		<slot />
 		<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.0/flowbite.min.js"></script>
-
-		<script
-			id="global"
-			define:vars={{ initData, envKeys, sessionToken, refreshToken }}
-		>
-			envKeys.forEach((item) => {
-				globalThis[item] = initData[item];
-			});
-
-			globalThis.access_token = sessionToken;
-			globalThis.refresh_token = refreshToken;
-		</script>
 
 		<style is:global>
 			body {

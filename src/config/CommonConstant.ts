@@ -54,6 +54,7 @@ export const storageKeys = {
     ALL_SCHEMAS:'allSchemaFlag',
     ECOSYSTEM_ID: "ecosystem_id",
     ECOSYSTEM_ROLE: "ecosystem_role",
+    VERIFICATION_ROUTE_TYPE:"routeType"
 
 
 }
@@ -70,4 +71,31 @@ export const predicatesConditions = [
     { value: '<', label: 'Less than' },
     { value: '>=', label: 'Greater than or equal to' },
     { value: '<=', label: 'Less than or equal to' }
+]
+
+export const avatarColorPairs = [
+    {
+        text: '#ea5455',
+        background: '#fceaea'
+    },
+    {
+        text: '#b8b2f7',
+        background: '#eeecfe'
+    },
+    {
+        text: '#c1c2c5',
+        background: '#f0f0f1'
+    },
+    {
+        text: '#82ddaa',
+        background: '#e5f8ed'
+    },
+    {   
+        text: '#f4a651',
+        background: '#fdf3e8'
+    },
+    {
+        text: '#76ddef',
+        background: '#e0f9fd'
+    }
 ]

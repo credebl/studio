@@ -50,13 +50,13 @@ export interface IProofRrquestDetails {
 	view: boolean;
 	userRoles?: string[];
 }
-
 export interface IConnectionList {
 	theirLabel: string;
 	connectionId: string;
 	createDateTime: string;
-}
+	checked?: boolean;
 
+}
 export interface SchemaDetail {
 	schemaName: string;
 	version: string;

@@ -3,7 +3,7 @@ import { Button } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
 import DataTable from '../../commonComponents/datatable';
-import type { TableData } from '../../commonComponents/datatable/interface';
+import type { ITableData } from '../../commonComponents/datatable/interface';
 import { storageKeys } from '../../config/CommonConstant';
 import { pathRoutes } from '../../config/pathRoutes';
 import BreadCrumbs from '../BreadCrumbs';
@@ -17,7 +17,7 @@ import { DidMethod } from '../../common/enums';
 
 const Connections = () => {
 	const [selectedConnections, setSelectedConnections] = useState<
-		TableData[]
+		ITableData[]
 	>([]);
 
 	const selectedConnectionHeader = [

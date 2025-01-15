@@ -69,24 +69,33 @@ const SignUpUser = () => {
 	};
 
 	const ValidateEmail = async (values: emailValue) => {
+		setVerificationSuccess('')
 		setLoading(true)
 		const userRsp = await checkUserExist(values?.email)
 		const { data } = userRsp as AxiosResponse
 		setLoading(false)
+		const { isEmailVerified, isRegistrationCompleted } = data?.data || {};
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			if (data?.data?.isRegistrationCompleted === false && data.data.isEmailVerified === false) {
-				setEmail(values?.email)
-				await VerifyMail(values?.email)
+			
+			if (isEmailVerified){
+				if(isRegistrationCompleted){
+					setErrMsg(data?.data?.message)
+				}
+				else {
+					setEmail(values?.email)
+					await setToLocalStorage(storageKeys.USER_EMAIL, values?.email)
+					setNextFlag(true)
+					setEnableName(true)
+				}
 			}
-			else if (data.data.isEmailVerified === true && data?.data?.isRegistrationCompleted !== true) {
-				setEmail(values?.email)
-				await setToLocalStorage(storageKeys.USER_EMAIL, values?.email)
-				setNextFlag(true)
-				setEnableName(true)
+			else {
+					setEmail(values?.email)
+					await VerifyMail(values?.email)
 			}
-		} else {
-			setErrMsg(userRsp as string)
-		}
+		} 
+		else {
+			setErrMsg(data?.data?.message)
+	} 
 	}
 
 	const redirectLandingPage = () => {
