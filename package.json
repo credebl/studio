@@ -27,7 +27,7 @@
 	"dependencies": {
 		"@astrojs/react": "^3.3.4",
 		"@astrojs/sitemap": "^3.1.4",
-		"@astrojs/starlight": "^0.22.3",
+		"@astrojs/starlight": "^0.31.0",
 		"@astrojs/tailwind": "^5.1.0",
 		"@babel/runtime": "^7.24.5",
 		"@babel/runtime-corejs3": "^7.24.5",
@@ -41,7 +41,7 @@
 		"@types/react": "^18.3.2",
 		"@types/react-dom": "^18.3.0",
 		"apexcharts": "^3.49.1",
-		"astro": "^4.8.4",
+		"astro": "^5.1.7",
 		"axios": "^1.6.8",
 		"cookie": "^0.6.0",
 		"crypto-js": "^4.2.0",
