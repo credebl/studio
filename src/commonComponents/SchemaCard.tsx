@@ -22,7 +22,7 @@ const SchemaCard = (props: ISchemaCardProps) => {
   }, []);
 
   const isSelected = props.selectedSchemas?.some(
-    (selectedSchema) => selectedSchema.schemaId === props.schemaId || selectedSchema?.schemaLedgerId === props.schemaId
+    (selectedSchema) => selectedSchema.schemaId === props.schemaId || selectedSchema.schemaLedgerId === props.schemaId
   );
 
   const attributes = props.limitedAttributes !== false ? props?.attributes?.slice(0, 3) : props?.attributes
