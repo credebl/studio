@@ -21,6 +21,10 @@ const SchemaCard = (props: ISchemaCardProps) => {
     orgDidDetails();
   }, []);
 
+  const isSelected = props.selectedSchemas?.some(
+    (selectedSchema) => selectedSchema.schemaId === props.schemaId || selectedSchema.schemaLedgerId === props.schemaId
+  );
+
   const attributes = props.limitedAttributes !== false ? props?.attributes?.slice(0, 3) : props?.attributes
 
   const AttributesList: React.FC<{ attributes: IAttribute[], limitedAttributes?: boolean }> = ({ attributes, limitedAttributes }) => {
@@ -193,6 +197,7 @@ const SchemaData = {
 
        {props.showCheckbox && (
         <CustomCheckbox
+          isSelectedSchema={isSelected}
           onChange={handleCheckboxChange}
           showCheckbox={props.showCheckbox}
           schemaData={{ schemaId: props.schemaId, schemaName: props.schemaName, attributes: props.attributes }}

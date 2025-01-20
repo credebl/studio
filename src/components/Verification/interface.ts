@@ -201,6 +201,7 @@ export interface ISchemaData {
 }
 
 export interface ISchema {
+    schemaLedgerId?: string;
     schemaId: string;
     attributes: IAttributesDetails[];
     issuerId: string;

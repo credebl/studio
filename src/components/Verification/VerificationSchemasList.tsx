@@ -334,6 +334,7 @@ const [schemasList, setSchemasList] = useState([]);
 								schemasList.map((element) => (
 									<div className="px-0 sm:px-2" key={element['schemaLedgerId']}>
 										<SchemaCard
+										    selectedSchemas={selectedSchemas}
 											schemaName={element['name']}
 											version={element['version']}
 											schemaId={element['schemaLedgerId']}
