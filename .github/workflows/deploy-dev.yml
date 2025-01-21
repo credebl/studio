@@ -28,7 +28,7 @@ jobs:
 
          echo "PUBLIC_MODE=DEV" > .env
 
-         echo "PUBLIC_BASE_URL=${{ secrets.QA_PUBLIC_BASE_URL }}" >> .env
+         echo "PUBLIC_BASE_URL=${{ secrets.DEV_PUBLIC_BASE_URL }}" >> .env
 
          echo "PUBLIC_SHOW_NAME_AS_LOGO=true" >> .env
 
@@ -46,29 +46,29 @@ jobs:
 
          echo "PUBLIC_PLATFROM_DISCORD_SUPPORT=https://discord.gg/w4hnQT7NJG" >> .env
 
-         echo "PUBLIC_ALLOW_DOMAIN=${{ secrets.QA_PUBLIC_ALLOW_DOMAIN }}" >> .env
+         echo "PUBLIC_ALLOW_DOMAIN=${{ secrets.DEV_PUBLIC_ALLOW_DOMAIN }}" >> .env
 
          echo "PUBLIC_POLYGON_MAINNET_URL=https://polygon-rpc.com/" >> .env
 
          echo "PUBLIC_POLYGON_TESTNET_URL=https://rpc-amoy.polygon.technology" >> .env
 
-         echo "PUBLIC_ECOSYSTEM_FRONT_END_URL=https://qa-ecosystem.credebl.id" >> .env
+         echo "PUBLIC_ECOSYSTEM_FRONT_END_URL=https://dev-ecosystem.sovio.id" >> .env
 
-         echo "PUBLIC_CREDEBL_FRONT_END_URL=https://qa.credebl.id" >> .env
+         echo "PUBLIC_CREDEBL_FRONT_END_URL=https://dev.sovio.id" >> .env
 
-         echo "PUBLIC_ECOSYSTEM_BASE_URL=${{ secrets.QA_PUBLIC_ECOSYSTEM_BASE_URL }}" >> .env
+         echo "PUBLIC_ECOSYSTEM_BASE_URL=${{ secrets.DEV_PUBLIC_ECOSYSTEM_BASE_URL }}" >> .env
 
          echo "PUBLIC_PLATFORM_DISCORD_URL=https://discord.gg/w4hnQT7NJG" >> .env
 
-         echo "PUBLIC_REDIRECTION_TARGET_URL=https://social-share.credebl.id" >> .env
+         echo "PUBLIC_REDIRECTION_TARGET_URL=https://social-share.sovio.id" >> .env
 
-         echo "PUBLIC_CRYPTO_PRIVATE_KEY=${{ secrets.QA_PUBLIC_CRYPTO_PRIVATE_KEY }}" >> .env
+         echo "PUBLIC_CRYPTO_PRIVATE_KEY=${{ secrets.DEV_PUBLIC_CRYPTO_PRIVATE_KEY }}" >> .env
 
-         echo "PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_ID=${{ secrets.QA_PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_ID }}" >> .env
+         echo "PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_ID=${{ secrets.DEV_PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_ID }}" >> .env
 
-         echo "PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_SECRET=${{ secrets.DEV_PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_SECRET }}" >> .
+         echo "PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_SECRET=${{ secrets.DEV_PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_SECRET }}" >> .env
 
-         echo "PUBLIC_REDIRECT_FROM_URL=https://qa.credebl.id" >> .env
+         echo "PUBLIC_REDIRECT_FROM_URL=https://dev.sovio.id" >> .env
 
       - name: Build step
         run: npm install && npm run build # 📝 Update the build command(s)
