@@ -112,12 +112,7 @@ const EmailAttributesSelection = () => {
 
 		const handleSubmit = () => {
 			setErrMsg(null);
-
-			if(isConnectionProof){
-				redirectToConnections();
-				return;
-			}
-		
+			
 			if (w3cSchema ) {
 				redirectToAppropriatePage();
 				return;
@@ -131,6 +126,7 @@ const EmailAttributesSelection = () => {
 		};
 	
 	const hasInvalidNumberAttributes = (): boolean => {
+
 		const numberAttributes = attributeData?.filter(
 			(attr) => attr.dataType === 'number' && attr.isChecked
 		);
@@ -155,22 +151,26 @@ const EmailAttributesSelection = () => {
 			setErrMsg('Condition is required');
 			return true;
 		}
-	
 		return false;
 	};
 	
 	const redirectToAppropriatePage = () => {
-		window.location.href = w3cSchema
-			? `${pathRoutes.organizations.verification.w3cEmailVerification}`
-			: `${pathRoutes.organizations.verification.emailVerification}`;
-	};
+		switch (true) {
+			case w3cSchema && isConnectionProof:
+				window.location.href = pathRoutes.organizations.verification.W3CConnections;
+				break;
+			case !w3cSchema && isConnectionProof:
+				window.location.href = pathRoutes.organizations.verification.connections;
+				break;
+			case w3cSchema && !isConnectionProof:
+				window.location.href = pathRoutes.organizations.verification.w3cEmailVerification;
+				break;
+			default:
+				window.location.href = pathRoutes.organizations.verification.emailVerification;
+				break;
+		}
+	};	
 
-	const redirectToConnections = () => {
-		window.location.href = w3cSchema
-			? `${pathRoutes.organizations.verification.W3CConnections}`
-			: `${pathRoutes.organizations.verification.connections}`;
-	}
-	
 	const loadAttributesData = async () => {
 	
 		setLoading(true);
