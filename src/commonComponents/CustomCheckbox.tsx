@@ -3,13 +3,16 @@ import { setToLocalStorage } from '../api/Auth';
 import { storageKeys } from '../config/CommonConstant';
 import type { ICustomCheckboxProps, ISchemaData } from './interface';
 
-const CustomCheckbox: React.FC<ICustomCheckboxProps> = ({ showCheckbox, isVerificationUsingEmail, onChange, schemaData }) => {
+const CustomCheckbox: React.FC<ICustomCheckboxProps> = ({ showCheckbox, isSelectedSchema, isVerificationUsingEmail, onChange, schemaData }) => {
   const [checked, setChecked] = useState<boolean>(false);
   const handleCheckboxChange = async () => {
     const newChecked = !checked;
     setChecked(newChecked);
     onChange(newChecked, schemaData);
   };
+  useEffect(() => {
+    setChecked(isSelectedSchema);
+  }, [isSelectedSchema]);
 
   return (
     <>

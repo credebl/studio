@@ -64,7 +64,7 @@ const Connections = () => {
 			})
 			setSelectedConnectionList(connectionsData);
 		} catch (error) {
-			console.log("ERROR IN TABLE GENERATION::", error);
+			console.error("ERROR IN TABLE GENERATION::", error);
 		}
 	};
 
@@ -114,11 +114,10 @@ const Connections = () => {
 
       await setToLocalStorage(storageKeys.SELECTED_USER, selectedConnections);
 
-      const [attributeData, userData, orgId, attributes] = await Promise.all([
+      const [attributeData, userData, orgId] = await Promise.all([
         getFromLocalStorage(storageKeys.ATTRIBUTE_DATA),
         getFromLocalStorage(storageKeys.SELECTED_USER),
         getFromLocalStorage(storageKeys.ORG_ID),
-        getFromLocalStorage(storageKeys.SCHEMA_ATTRIBUTES),		
       ]);
 
 	const attr= JSON.parse(attributeData)
@@ -159,6 +158,7 @@ const Connections = () => {
 				});
 				let verifyCredentialPayload;
 
+
 				if (!isW3cDid) {
 						const parsedUserData = JSON.parse(userData); 
 						const connectionIds = parsedUserData.map((connection: { connectionId: string | string[]; }) => connection.connectionId);
@@ -185,7 +185,7 @@ const Connections = () => {
 						schemaId: attr.schemaId,
 						schemaName: attr.schemaName,
 					}));
-				  
+
 					const groupedAttributes = checkedW3CAttributes.reduce((acc: any, curr: any) => {
 						const schemaName = curr.schemaName;
 						if (!acc[schemaName]) {
@@ -194,7 +194,6 @@ const Connections = () => {
 						acc[schemaName].push(curr);
 						return acc;
 					}, {});
-					
 				  
 					verifyCredentialPayload = {
 						
@@ -231,8 +230,8 @@ const Connections = () => {
 		
 	}
 	}
-					  
-				if (attributes && verifyCredentialPayload ) {
+  
+				if (verifyCredentialPayload ) {
 					const requestType = isW3cDid ? RequestType.PRESENTATION_EXCHANGE : RequestType.INDY;
 					let response;
 					if (typeof verifyCredentialPayload.connectionId === 'string') {
