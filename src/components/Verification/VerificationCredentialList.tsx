@@ -58,6 +58,7 @@ const VerificationCredentialList = () => {
 		nextPage: '',
 		lastPage: '',
 	});
+    const [searchText, setSearchText] = useState("");
 
 	const getProofPresentationData = async (proofId: string) => {
 		try {
@@ -85,6 +86,7 @@ const VerificationCredentialList = () => {
 	};
 
 	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setSearchText(e.target.value)
 		setListAPIParameter({
 			...listAPIParameter,
 			search: e.target.value,
@@ -410,6 +412,7 @@ const VerificationCredentialList = () => {
 								>
 									<SortDataTable
 										pageInfo={pageInfo}
+										searchValue={searchText}
 										searchSortByValue={searchSortByValue}
 										isHeader={true}
 										isSearch={true}

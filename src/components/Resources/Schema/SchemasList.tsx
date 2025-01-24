@@ -123,7 +123,7 @@ const SchemaList = (props: {
 	): Promise<void> => {
 		event.preventDefault();
 		const inputValue = event.target.value;
-        setSearchValue(inputValue);
+        setSearchValue(inputValue.toLowerCase());
 
 		getSchemaList(
 			{

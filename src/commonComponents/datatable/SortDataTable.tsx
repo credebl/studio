@@ -8,6 +8,7 @@ import { EmptyListMessage } from '../../components/EmptyListComponent';
 
 const SortDataTable: React.FC<IDataTable> = ({
 	header,
+	searchValue,
 	displaySelect,
 	data,
 	loading,
@@ -91,7 +92,7 @@ const SortDataTable: React.FC<IDataTable> = ({
 												</svg>
 											</div>
 											{isSearch && (
-												<SearchInput onInputChange={onInputChange} />
+												<SearchInput onInputChange={onInputChange} value={searchValue}/>
 											)}
 										</div>
 									</form>

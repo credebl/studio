@@ -122,6 +122,7 @@ const Invitations = () => {
                 <div className="flex items-end justify-end mb-4 gap-4">
                     <SearchInput
                         onInputChange={searchInputChange}
+                        value={searchText}
                     />
                     <RoleViewButton
                         buttonTitle='Invite'
