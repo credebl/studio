@@ -46,7 +46,7 @@ const CredentialList = () => {
 		lastPage: '',
 	});
 	const [w3cSchema, setW3CSchema]= useState<boolean>(false);
-
+    const [searchText, setSearchText] = useState("");
 
 	const getIssuedCredDefs = async (
 		listAPIParameter: IConnectionListAPIParameter,
@@ -204,6 +204,7 @@ const CredentialList = () => {
 
 	//onChange of Search input text
 	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setSearchText(e.target.value)
 		setListAPIParameter({
 			...listAPIParameter,
 			search: e.target.value,
@@ -301,6 +302,7 @@ const CredentialList = () => {
 								>
 									<SortDataTable
 										onInputChange={searchInputChange}
+										searchValue={searchText}
 										refresh={refreshPage}
 										header={header}
 										data={issuedCredList}
