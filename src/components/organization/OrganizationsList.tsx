@@ -1,4 +1,5 @@
 
+import React from 'react';
 import  type {ChangeEvent } from 'react';
 import { Card, Pagination } from 'flowbite-react';
 import { useEffect, useState } from 'react';
@@ -206,7 +207,7 @@ const OrganizationsList = () => {
 				</div>
 			</div>
 		);
-	} else if (organizationsList) {
+	} else {
 		content = (
 			<EmptyListMessage
 				message={'No Organization'}
@@ -277,7 +278,7 @@ const OrganizationsList = () => {
 						setOpenModal={props.setOpenModal}
 						isorgModal={true}
 					/>
-					<AlertComponent
+					{ organizationsList && <AlertComponent
 						message={message || error}
 						type={message ? 'success' : 'failure'}
 						onAlertClose={() => {
@@ -285,6 +286,7 @@ const OrganizationsList = () => {
 							setError(null);
 						}}
 					/>
+					}
 
 					{loading ? (
 						<div className="flex items-center justify-center mb-4 ">
