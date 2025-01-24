@@ -20,6 +20,7 @@ export interface Data {
 
 export interface IDataTable {
 	header: TableHeader[];
+	searchValue?: string;
 	data: ITableData[];
 	loading: boolean;
 	onInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
