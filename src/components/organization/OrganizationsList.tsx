@@ -174,6 +174,30 @@ const OrganizationsList = () => {
 									<p className="text-base tracking-tight text-gray-900 dark:text-white truncate">
 										{org?.description}
 									</p>
+									<div className="flow-root h-auto">
+										<ul className="divide-y divide-gray-200 dark:divide-gray-700">
+											<li className="pt-2 sm:pt-3 overflow-auto">
+												<div className="flex items-center space-x-4">
+													<div className="inline-flex flex-wrap items-center text-base font-semibold text-gray-900 dark:text-white">
+														Role(s):
+														{org.roles &&
+															org.roles.length > 0 &&
+															org.roles.map((role: string, index: number) => {
+																return (
+																	<span
+																		key={index}
+																		className="m-1 bg-primary-50 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
+																	>
+																		{role.charAt(0).toUpperCase() +
+																			role.slice(1)}
+																	</span>
+																);
+															})}
+													</div>
+												</div>
+											</li>
+										</ul>
+									</div>
 								</div>
 							</div>
 						</Card>
