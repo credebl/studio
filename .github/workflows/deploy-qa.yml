@@ -52,15 +52,15 @@ jobs:
 
          echo "PUBLIC_POLYGON_TESTNET_URL=https://rpc-amoy.polygon.technology" >> .env
 
-         echo "PUBLIC_ECOSYSTEM_FRONT_END_URL=https://qa-ecosystem.credebl.id" >> .env
+         echo "PUBLIC_ECOSYSTEM_FRONT_END_URL=https://qa-ecosystem.sovio.id" >> .env
 
-         echo "PUBLIC_CREDEBL_FRONT_END_URL=https://qa.credebl.id" >> .env
+         echo "PUBLIC_CREDEBL_FRONT_END_URL=https://qa.sovio.id" >> .env
 
          echo "PUBLIC_ECOSYSTEM_BASE_URL=${{ secrets.QA_PUBLIC_ECOSYSTEM_BASE_URL }}" >> .env
 
          echo "PUBLIC_PLATFORM_DISCORD_URL=https://discord.gg/w4hnQT7NJG" >> .env
 
-         echo "PUBLIC_REDIRECTION_TARGET_URL=https://social-share.credebl.id" >> .env
+         echo "PUBLIC_REDIRECTION_TARGET_URL=https://social-share.sovio.id" >> .env
 
          echo "PUBLIC_CRYPTO_PRIVATE_KEY=${{ secrets.QA_PUBLIC_CRYPTO_PRIVATE_KEY }}" >> .env
 
@@ -68,7 +68,7 @@ jobs:
 
          echo "PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_SECRET=${{ secrets.QA_PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_SECRET }}" >> .env
 
-         echo "PUBLIC_REDIRECT_FROM_URL=https://qa.credebl.id" >> .env
+         echo "PUBLIC_REDIRECT_FROM_URL=https://qa.sovio.id" >> .env
 
       - name: Build step
         run: npm install && npm run build # 📝 Update the build command(s)
