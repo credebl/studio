@@ -40,7 +40,7 @@ const ConnectionList = (props: {
 	const [tableData, setTableData] = useState<ITableData[]>([]);
 	const [connectionList, setConnectionList] = useState([]);
 	const [localOrgs, setLocalOrgs] = useState<LocalOrgs[]>([]);
-
+	const [searchText, setSearchText] = useState("");
 	const [loading, setLoading] = useState<boolean>(false);
 	const [totalItem, setTotalItem] = useState(0);
 	const [error, setError] = useState<string | null>(null);
@@ -188,6 +188,7 @@ const ConnectionList = (props: {
 
 	//onChange of Search input text
 	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setSearchText(e.target.value)
 		setListAPIParameter({
 			...listAPIParameter,
 			search: e.target.value,
@@ -278,6 +279,7 @@ const ConnectionList = (props: {
 			/>
 			<NewDataTable
 				isHeader={true}
+				searchValue={searchText}
 				isSearch={true}
 				isRefresh={true}
 				isSort={true}

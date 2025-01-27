@@ -36,7 +36,7 @@ const ConnectionList = (props: {
 	const [connectionList, setConnectionList] = useState<ITableData[]>([]);
 	const [connectionsTableData, setConnectionsTableData] = useState<ITableData[]>([]);
 	const [localOrgs, setLocalOrgs] = useState<LocalOrgs[]>([]);
-
+	const [searchText, setSearchText] = useState("");
 	const [selectedConnectionList, setSelectedConnectionList] = useState<
 	ITableData[]
 	>([]);
@@ -66,6 +66,7 @@ const ConnectionList = (props: {
 	}, [listAPIParameter]);
 	
 	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setSearchText(e.target.value)
 		setListAPIParameter({
 			...listAPIParameter,
 			search: e.target.value,
@@ -299,6 +300,7 @@ const extractConnectionFields = (item: IConnectionList) => {
 			/>
 			<SortDataTable
 				onInputChange={searchInputChange}
+				searchValue={searchText}
 				refresh={refreshPage}
 				header={verification_header}
 				data={connectionsTableData}
