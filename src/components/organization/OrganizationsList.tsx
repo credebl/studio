@@ -127,12 +127,18 @@ const OrganizationsList = () => {
 		await setToLocalStorage(storageKeys.ORG_ROLES, roles.toString());
 		window.location.href = pathRoutes.organizations.dashboard;
 	};
+
+	const filteredOrganizations = organizationsList?.filter((org) =>
+		org.name.toLowerCase().includes(searchText.toLowerCase())
+	);
+
 	let content: React.JSX.Element = <></>;
-	if (organizationsList && organizationsList?.length > 0) {
+	
+	if (filteredOrganizations && filteredOrganizations.length > 0) {
 		content = (
 			<div>
 				<div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
-					{organizationsList.map((org) => (
+					{filteredOrganizations.map((org) => (
 						<Card
 							key={org.id}
 							onClick={() => redirectOrgDashboard(org)}
@@ -142,23 +148,26 @@ const OrganizationsList = () => {
 								maxWidth: '100%',
 								overflow: 'auto',
 							}}
-						 >
+						>
 							<div className="flex items-center min-[401px]:flex-nowrap flex-wrap">
-								
 								{org.logoUrl ? (
 									<CustomAvatar
-									textSizeRatio={2.5}
+										textSizeRatio={2.5}
 										className="min-w-[80px] text-violet11 leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium "
 										size="80px"
 										src={org?.logoUrl}
 										round
-										
-									/>	
+									/>
 								) : (
-									<CustomAvatar textSizeRatio={2.5} className='text-violet11 leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium ' size="80px" name={org.name} round/>
+									<CustomAvatar
+										textSizeRatio={2.5}
+										className="text-violet11 leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium "
+										size="80px"
+										name={org.name}
+										round
+									/>
 								)}
-
-								<div className="ml-4 w-100/6rem line-clamp-4 ">
+								<div className="ml-4 w-100/6rem line-clamp-4">
 									<h5 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
 										{org?.name}
 									</h5>
@@ -194,25 +203,33 @@ const OrganizationsList = () => {
 						</Card>
 					))}
 				</div>
-				<div>
-					{currentPage.total > 1 && (
-						<div className="flex items-center justify-end mb-4">
-							<Pagination
-								currentPage={currentPage.pageNumber}
-								onPageChange={onPageChange}
-								totalPages={currentPage.total}
-							/>
-						</div>
-					)}
-				</div>
+				{currentPage.total > 1 && (
+					<div className="flex items-center justify-end mb-4">
+						<Pagination
+							currentPage={currentPage.pageNumber}
+							onPageChange={onPageChange}
+							totalPages={currentPage.total}
+						/>
+					</div>
+				)}
 			</div>
 		);
-	} else {
+	} else if (searchText && filteredOrganizations?.length === 0) {
 		content = (
 			<EmptyListMessage
-				message={'No Organization'}
-				description={'Get started by creating a new Organization'}
-				buttonContent={'Create Organization'}
+				message="No organizations found"
+				description="Get started by creating a new Organization"
+				buttonContent="Create Organization"
+				onClick={createOrganizationModel}
+				feature={Features.CRETAE_ORG}
+			/>
+		);
+	} else if (!searchText && (!organizationsList || organizationsList.length === 0)) {
+		content = (
+			<EmptyListMessage
+				message="No Organization"
+				description="Get started by creating a new Organization"
+				buttonContent="Create Organization"
 				onClick={createOrganizationModel}
 				feature={Features.CRETAE_ORG}
 				svgComponent={
@@ -233,6 +250,7 @@ const OrganizationsList = () => {
 			/>
 		);
 	}
+	
 
 	return (
 		<div className="px-4 pt-2">
@@ -245,7 +263,7 @@ const OrganizationsList = () => {
 					Organizations
 				</h1>
 				<div className="ml-auto">
-					<SearchInput onInputChange={searchInputChange} />
+					<SearchInput onInputChange={searchInputChange} value={searchText}/>
 				</div>
 				<RoleViewButton
 					disabled={currentPage.totalCount >= 10}
@@ -278,15 +296,6 @@ const OrganizationsList = () => {
 						setOpenModal={props.setOpenModal}
 						isorgModal={true}
 					/>
-					{ organizationsList && <AlertComponent
-						message={message || error}
-						type={message ? 'success' : 'failure'}
-						onAlertClose={() => {
-							setMessage(null);
-							setError(null);
-						}}
-					/>
-					}
 
 					{loading ? (
 						<div className="flex items-center justify-center mb-4 ">
