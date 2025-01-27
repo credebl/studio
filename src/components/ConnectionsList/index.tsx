@@ -37,6 +37,7 @@ const ConnectionList = () => {
 		nextPage: '',
 		lastPage: '',
 	});
+	const [searchText, setSearchText] = useState("");
 
 	const getConnections = async (apiParameter: IConnectionListAPIParameter) => {
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -105,6 +106,7 @@ const ConnectionList = () => {
 
 	//onChange of Search input text
 	const searchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setSearchText(e.target.value)
 		setListAPIParameter({
 			...listAPIParameter,
 			search: e.target.value,
@@ -150,6 +152,7 @@ const ConnectionList = () => {
 			)}
 			<SortDataTable
 				onInputChange={searchInputChange}
+				searchValue={searchText}
 				refresh={refreshPage}
 				header={header}
 				data={connectionList}
