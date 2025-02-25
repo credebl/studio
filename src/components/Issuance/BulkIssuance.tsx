@@ -594,6 +594,7 @@ const BulkIssuance = () => {
 										{
 											mounted ?
 											<Select
+											id='bulk-issuance'
 											placeholder="Select Schema - Credential definition"
 											className="basic-single "
 											classNamePrefix="select"

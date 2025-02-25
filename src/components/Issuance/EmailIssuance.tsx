@@ -408,7 +408,7 @@ const EmailIssuance = () => {
 										{
 											mounted ?
 											<Select
-									        
+											id='email-issuance'
 											placeholder="Select Schema-Credential definition"
 											className="basic-single"
 											classNamePrefix="select"
