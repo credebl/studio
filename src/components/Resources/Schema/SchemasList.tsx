@@ -118,32 +118,29 @@ const SchemaList = (props: {
 		getSchemaList(schemaListAPIParameter, false);
 	}, [schemaListAPIParameter, allSchemaFlag]);
 
-	const onSearch = async (
-		event: ChangeEvent<HTMLInputElement>,
-	): Promise<void> => {
+	const onSearch = async (event: ChangeEvent<HTMLInputElement>): Promise<void> => {
 		event.preventDefault();
 		const inputValue = event.target.value;
-        setSearchValue(inputValue.toLowerCase());
-
-		getSchemaList(
-			{
-				...schemaListAPIParameter,
-				search: inputValue,
-			},
-			false,
-		);
-
-		if (allSchemaFlag) {
+		setSearchValue(inputValue);
+	
+		setSchemaListAPIParameter(prev => ({
+			...prev,
+			search: allSchemaFlag ? '' : inputValue,  // Use 'search' only for organization schemas
+			allSearch: allSchemaFlag ? inputValue : '', // Use 'allSearch' only for all schemas
+		}));
+	
+		setTimeout(() => {
 			getSchemaList(
 				{
 					...schemaListAPIParameter,
-					allSearch: inputValue,
+					search: allSchemaFlag ? '' : inputValue,
+					allSearch: allSchemaFlag ? inputValue : '',
 				},
-				false,
+				false
 			);
-		}
+		}, 100);
 	};
-
+	
 	const schemaSelectionCallback = (
 		{
 			schemaId,
@@ -213,25 +210,17 @@ const SchemaList = (props: {
 	  };
 
 	const handleFilter = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-
-		setSchemaListAPIParameter((prevState) => ({
-			...prevState,
-			page: 1,
-		}));
-		setSelectedValue(e.target.value)
-		console.log('Handle filter', e.target.value);
-		if (e.target.value === 'All schemas') {
-			setAllSchemaFlag(true);
-			await setToLocalStorage (storageKeys.ALL_SCHEMAS, `true`);
-			
-		} else {
-			setAllSchemaFlag(false);
-			await setToLocalStorage (storageKeys.ALL_SCHEMAS, `false`);
-			getSchemaList(schemaListAPIParameter, false);
-		}
-
+		setSelectedValue(e.target.value);
+	
+		const isAllSchemas = e.target.value === 'All schemas';
+		setAllSchemaFlag(isAllSchemas);
+		await setToLocalStorage(storageKeys.ALL_SCHEMAS, isAllSchemas ? `true` : `false`);
 	};
-
+	
+	useEffect(() => {
+		getSchemaList(schemaListAPIParameter, allSchemaFlag);
+}, [allSchemaFlag]);
+	
 	const fetchOrganizationDetails = async () => {
 		setLoading(true);
 		const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
@@ -277,7 +266,6 @@ const SchemaList = (props: {
 		(async () => {
 			await setToLocalStorage (storageKeys.ALL_SCHEMAS, `false`);
 				})();
-		setSearchValue('');
 	}, []);
 
 
@@ -358,7 +346,7 @@ const SchemaList = (props: {
 						className="Flex-wrap"
 						style={{ display: 'flex', flexDirection: 'column' }}
 					>
-						<div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-3">
+						<div className="mt-1 grid w-full grid-cols-1 gap-4 mt-0 mb-4 xl:grid-cols-2 2xl:grid-cols-2">
 							{schemaList &&
 								schemaList.length > 0 &&
 								schemaList.map((element, key) => (

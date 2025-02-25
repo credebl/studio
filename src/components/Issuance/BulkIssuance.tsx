@@ -552,11 +552,11 @@ const BulkIssuance = () => {
 							viewBox="0 0 18 18"
 							>
 							<path
-								fill="#1F4EAD"
+								fill="#4174DD"
 								d="M15.483 18H2.518A2.518 2.518 0 0 1 0 15.482V2.518A2.518 2.518 0 0 1 2.518 0h12.965a2.518 2.518 0 0 1 2.518 2.518v12.964A2.518 2.518 0 0 1 15.483 18ZM2.518 1.007a1.51 1.51 0 0 0-1.51 1.51v12.965a1.51 1.51 0 0 0 1.51 1.51h12.965a1.51 1.51 0 0 0 1.51-1.51V2.518a1.51 1.51 0 0 0-1.51-1.51H2.518Z"
 							/>
 							<path
-								fill="#1F4EAD"
+								fill="#4174DD"
 								d="M3.507 5.257a.504.504 0 0 1 0-1.007h5.495a.504.504 0 1 1 0 1.007H3.507ZM6.254 9.5a.504.504 0 1 1 0-1.008h5.492a.504.504 0 0 1 0 1.007H6.254ZM9 13.757a.503.503 0 1 1 0-1.007h5.493a.504.504 0 0 1 0 1.007H9Z"
 								/>
 						</svg>
@@ -602,11 +602,37 @@ const BulkIssuance = () => {
 											isRtl={false}
 											isSearchable={true}
 											name="color"
-											options={ credentialOptionsData}
+											options={ credentialOptionsData?.map((option) => ({
+												...option,
+												isDisabled: (option.schemaAttributes || option.attributes || [])?.some(attr => attr.schemaDataType === "array")
+											}))}											
 											onInputChange={onInputChange}
 											onChange={onSelectChange}
-											value={credentialOptionsData.find(option => option.value === searchValue)}
+											value={credentialOptionsData.find((option) => option.value === searchValue)}											
 											ref={selectInputRef}
+											styles={{
+												control: (base, state) => ({
+													...base,
+													border: state.isFocused ? '2px solid #4174DD' : '1px solid #9CA3AF',
+													boxShadow: state.isFocused ? '0 0 2px rgba(79, 70, 229, 0.5)' : 'none',
+													'&:hover': {
+														border: '2px solid #4174DD'
+													}
+												}),
+												menu: (base) => ({
+													...base,
+													backgroundColor: '#DCE6F9'
+												}),
+												option: (base, { isFocused, isSelected, isDisabled }) => ({
+													...base,
+													backgroundColor: isDisabled ? '#E5E7EB' : isSelected ? 'white' : isFocused ? '#DCE6F9' : 'white',
+													color: isDisabled ? '#9CA3AF' : isSelected ? '#4174DD' : '#1F4EAD',
+													cursor: isDisabled ? 'not-allowed' : 'pointer',
+													'&:hover': {
+														backgroundColor: isDisabled ? '#E5E7EB' : '#DCE6F9'
+													}
+													})
+											}}
 										/>:
 										null
 										}
@@ -941,7 +967,7 @@ const BulkIssuance = () => {
 									viewBox="0 0 20 20"
 								>
 									<path
-										fill="#1F4EAD"
+										fill="#4174DD"
 										d="M19.414 9.414a.586.586 0 0 0-.586.586c0 4.868-3.96 8.828-8.828 8.828-4.868 0-8.828-3.96-8.828-8.828 0-4.868 3.96-8.828 8.828-8.828 1.96 0 3.822.635 5.353 1.807l-1.017.18a.586.586 0 1 0 .204 1.153l2.219-.392a.586.586 0 0 0 .484-.577V1.124a.586.586 0 0 0-1.172 0v.928A9.923 9.923 0 0 0 10 0a9.935 9.935 0 0 0-7.071 2.929A9.935 9.935 0 0 0 0 10a9.935 9.935 0 0 0 2.929 7.071A9.935 9.935 0 0 0 10 20a9.935 9.935 0 0 0 7.071-2.929A9.935 9.935 0 0 0 20 10a.586.586 0 0 0-.586-.586Z"
 									/>
 								</svg>

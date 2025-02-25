@@ -9,7 +9,7 @@ export const CREDENTIAL_CONTEXT_VALUE = 'https://www.w3.org/2018/credentials/v1'
 export const schemaVersionRegex = /^\d{1,5}(?=.*[0-9])(?:\.\d{1,5})?(?:\.\d{1,5})?$/gm
 export const proofPurpose = 'assertionMethod'
 export const limitedAttributesLength = 3
-export const itemPerPage = 9
+export const itemPerPage = 10
 
 export const apiStatusCodes = {
     API_STATUS_SUCCESS : 200,

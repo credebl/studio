@@ -12,6 +12,7 @@ import type { IAttribute, ISchemaCardProps, ISchemaData } from './interface';
 import CustomCheckbox from './CustomCheckbox';
 import { Ledgers, Network, PolygonNetworks } from '../common/enums';
 import React from 'react';
+import type { IAttributes } from '../components/Issuance/interface';
 
 const SchemaCard = (props: ISchemaCardProps) => {
   const orgDidDetails = async () => {
@@ -86,6 +87,8 @@ const SchemaData = {
       created: props.created,
   };
 
+  const hasNestedAttributes = props.attributes?.some((attr:IAttributes) => attr.schemaDataType === "array");
+
   return (
     <Card onClick={() => {
       if (!props.w3cSchema && props.onClickCallback) {
@@ -96,8 +99,21 @@ const SchemaData = {
 }
     }}
       id="schema-cards"
-      className={`transform transition duration-500 ${props.w3cSchema ? "" : (props.isClickable !== false) ? "hover:scale-105 hover:bg-gray-50 cursor-pointer" : "hover:!cursor-default"} h-full w-full overflow-hidden`}
+      className={`relative transform transition duration-500 ${props.w3cSchema ? "" : (props.isClickable !== false) ? "hover:scale-105 hover:bg-gray-50 cursor-pointer" : "hover:!cursor-default"} h-full w-full overflow-hidden ${hasNestedAttributes ? "opacity-80 pointer-events-none" : ""}`}
       >
+
+      {hasNestedAttributes && (
+          <div className="absolute inset-0 bg-custom-800/80 pointer-events-none"></div>
+        )}
+
+      {hasNestedAttributes && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="bg-secondary-100 text-lg text-center text-custom-900 rounded-md font-semibold px-4 py-4 shadow-md">
+              This schema can only be used through the API as it contains nested objects.
+            </div>
+          </div>
+        )}
+
       <div className="flex justify-between items-baseline">
         <div className='min-w-[8rem] max-w-100/10rem'>
           <h5 className="text-xl font-bold leading-[1.1] text-gray-900 dark:text-white break-words truncate line-clamp-2 max-h-[43px] whitespace-normal" style={{ display: "-webkit-box" }}>
@@ -158,7 +174,7 @@ const SchemaData = {
         {props.w3cSchema ? (
           <DataTooltip
             data={props.attributes}
-            renderItem={(attribute) => attribute.attributeName}
+            renderItem={(attribute: IAttribute) => attribute.attributeName}
           >
                         <AttributesList attributes={props.attributes} limitedAttributes={props.limitedAttributes} />
 
@@ -195,7 +211,7 @@ const SchemaData = {
           </div>
        </div>
 
-       {props.showCheckbox && (
+       {props.showCheckbox && !hasNestedAttributes && (
         <CustomCheckbox
           isSelectedSchema={isSelected}
           onChange={handleCheckboxChange}
