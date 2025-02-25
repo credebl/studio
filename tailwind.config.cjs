@@ -47,6 +47,11 @@ module.exports = {
 					950: '#65DADA',
 					disabled: '#d6f5f589'
 				},
+
+				custom: {
+					800: '#111827',
+					900: '#000000'
+				}
 			},
 			extend: {
 				textColor: ['hover', 'group-hover'],

@@ -157,7 +157,6 @@ const EmailCredDefSelection = () => {
                     <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
                         Credential-definition
                     </h1>
-                    <SearchInput value={searchValue} onInputChange={(e: ChangeEvent<HTMLInputElement>) => setSearchValue(e.target.value)} />
                 </div>
             </div>
 

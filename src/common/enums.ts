@@ -161,3 +161,11 @@ export enum Environment {
 export enum APIVersion {
 	version_v2 = '/v2'
 }
+
+export enum DataType {
+    NUMBER = 'number',
+    INTEGER = 'integer',
+    STRING = 'string',
+    DATE_TIME = 'datetime-local',
+    ARRAY= 'array',
+  }
