@@ -4,7 +4,7 @@ import React, {  useEffect, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
 import type { GetAllSchemaListParameter } from './interfaces';
-import { apiStatusCodes, itemPerPage, storageKeys } from '../../../config/CommonConstant';
+import { allSchemas, apiStatusCodes, itemPerPage, storageKeys } from '../../../config/CommonConstant';
 import { getAllSchemas, getAllSchemasByOrgId } from '../../../api/Schema';
 import { checkEcosystem } from '../../../config/ecosystem';
 import type { ICheckEcosystem } from '../../../config/ecosystem';
@@ -125,8 +125,8 @@ const SchemaList = (props: {
 	
 		setSchemaListAPIParameter(prev => ({
 			...prev,
-			search: allSchemaFlag ? '' : inputValue,  // Use 'search' only for organization schemas
-			allSearch: allSchemaFlag ? inputValue : '', // Use 'allSearch' only for all schemas
+			search: allSchemaFlag ? '' : inputValue,
+			allSearch: allSchemaFlag ? inputValue : '',
 		}));
 	
 		setTimeout(() => {
@@ -212,7 +212,7 @@ const SchemaList = (props: {
 	const handleFilter = async (e: React.ChangeEvent<HTMLSelectElement>) => {
 		setSelectedValue(e.target.value);
 	
-		const isAllSchemas = e.target.value === 'All schemas';
+		const isAllSchemas = e.target.value === allSchemas;
 		setAllSchemaFlag(isAllSchemas);
 		await setToLocalStorage(storageKeys.ALL_SCHEMAS, isAllSchemas ? `true` : `false`);
 	};

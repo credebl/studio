@@ -10,7 +10,7 @@ import { getFromLocalStorage } from '../api/Auth';
 import { limitedAttributesLength, storageKeys } from '../config/CommonConstant';
 import type { IAttribute, ISchemaCardProps, ISchemaData } from './interface';
 import CustomCheckbox from './CustomCheckbox';
-import { Ledgers, Network, PolygonNetworks } from '../common/enums';
+import { DataType, Ledgers, Network, PolygonNetworks } from '../common/enums';
 import React from 'react';
 import type { IAttributes } from '../components/Issuance/interface';
 
@@ -87,7 +87,7 @@ const SchemaData = {
       created: props.created,
   };
 
-  const hasNestedAttributes = props.attributes?.some((attr:IAttributes) => attr.schemaDataType === "array");
+  const hasNestedAttributes = props.attributes?.some((attr:IAttributes) => attr.schemaDataType === DataType.ARRAY);
 
   return (
     <Card onClick={() => {

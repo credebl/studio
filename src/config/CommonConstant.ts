@@ -10,6 +10,7 @@ export const schemaVersionRegex = /^\d{1,5}(?=.*[0-9])(?:\.\d{1,5})?(?:\.\d{1,5}
 export const proofPurpose = 'assertionMethod'
 export const limitedAttributesLength = 3
 export const itemPerPage = 10
+export const allSchemas = 'All schemas'
 
 export const apiStatusCodes = {
     API_STATUS_SUCCESS : 200,
