@@ -139,15 +139,16 @@ const EmailAttributesSelection = () => {
 	
 		return false;
 	};
-	
+
 	const isInvalidNumberAttribute = (attribute: any): boolean => {
-		if (attribute.selectedOption === 'Select' && !attribute.value) {
-			setErrMsg('Condition and value are required');
-			return true;
-		} else if (!attribute.value) {
+		
+		const isOptionInvalid = attribute.selectedOption === null || attribute.selectedOption === "" || attribute.selectedOption === 'Select';
+		const isValueInvalid = attribute.value === null || attribute.value === "";
+	
+		if (!isOptionInvalid && isValueInvalid) {
 			setErrMsg('Value is required');
 			return true;
-		} else if (!attribute.selectedOption) {
+		} else if (!isValueInvalid && isOptionInvalid) {
 			setErrMsg('Condition is required');
 			return true;
 		}

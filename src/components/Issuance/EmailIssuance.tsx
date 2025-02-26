@@ -25,6 +25,7 @@ import { Create } from './Constant';
 import { DidMethod, SchemaTypes, CredentialType, SchemaTypeValue, ProofType, SchemaType } from '../../common/enums';
 import { getAllSchemas } from '../../api/Schema';
 import type { GetAllSchemaListParameter } from '../Resources/Schema/interfaces';
+import CustomSelect from '../../commonComponents/CustomSelect';
 
 const EmailIssuance = () => {
 	const [formData, setFormData] = useState();
@@ -407,23 +408,13 @@ const EmailIssuance = () => {
 									<div className="search-dropdown text-primary-700 drak:text-primary-700">
 										{
 											mounted ?
-											<Select
-									        
-											placeholder="Select Schema-Credential definition"
-											className="basic-single "
-											classNamePrefix="select"
-											isDisabled={false}
-											isClearable={true}
-											isRtl={false}
-											isSearchable={true}
-											id="long-value-select"
-											instanceId="long-value-select"
-											name="color"
-											options={credentialOptions}
-											onInputChange={handleInputChange}
-											onChange={handleSelectChange}
-											value={credentialOptions.find(option => option.value === searchValue)}
-											ref={selectInputRef}
+
+										<CustomSelect
+											credentialOptions={credentialOptions}
+											handleInputChange={handleInputChange}
+											handleSelectChange={handleSelectChange}
+											searchValue={searchValue}
+											selectInputRef={selectInputRef}
 										/>
 										:
 										null
