@@ -18,6 +18,7 @@ import type { IConnectionList } from '../../components/Issuance/interface';
 import SortDataTable from '../../commonComponents/datatable/SortDataTable';
 import React from 'react';
 
+
 const initialPageState = {
 	itemPerPage: 10,
 	page: 1,
