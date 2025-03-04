@@ -132,11 +132,17 @@ const Connections = () => {
 					};
 					
 					if (attribute.dataType === "number" && attribute.selectedOption !== "Select") {
-						return {
-							...basePayload,
-							condition: attribute.selectedOption,
-							value: attribute.value, 
-						};
+						if (attribute?.selectedOption !== "" && attribute?.value !== "" ) {
+							return {
+								...basePayload,
+								condition: attribute.selectedOption,
+								value: attribute.value, 
+							};
+						} else {
+							return {
+								...basePayload
+							};
+						}	
 					}
 					if (attribute.dataType === "string") {
 						return basePayload;

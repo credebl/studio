@@ -729,14 +729,18 @@ const UserDashBoard = () => {
 													</button>
 													<div className="hidden sm:flex space-x-3 items-center">
 														<Tooltip
-															content={'Create Schema'}
-															placement="bottom"
+															content={
+																org.org_agents && org.org_agents.length > 0
+																? 'Create Schema'
+																: 'Wallet is not created, first create a wallet, then create schema'
+															}															placement="bottom"
 															className="items-center text-center dark:text-white"
 														>
 															<button
 																onClick={() => {
-																	goToOrgSchema(org, org.id, org.roles);
-																}}
+																	org.org_agents && org.org_agents.length > 0
+																	? goToOrgSchema(org, org.id, org.roles)
+																	: window.location.href = pathRoutes.organizations.dashboard;																}}
 																className={`p-1 rounded-md ${
 																	!(
 																		organizationsList[index].userOrgRoles[0]
