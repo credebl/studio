@@ -153,17 +153,30 @@ const EmailVerification = () => {
 
                 selectedPredicatesDetails.forEach(attr => {
                     if (attr.isChecked && attr.dataType === 'number') {
-                        requestedPredicates[attr.attributeName] = {
-                            name: attr.attributeName,
-                            p_type: attr.selectedOption,
-                            p_value: Number(attr.value),
-                            restrictions: [
-                                {
-                                    schema_id: attr.schemaId,
-                                    cred_def_id: attr.credDefId,
-                                },
-                            ],
-                        };
+                        if (attr.selectedOption !== "" && Number(attr.value) !== 0) {
+                            requestedPredicates[attr.attributeName] = {
+                                name: attr.attributeName,
+                                p_type: attr.selectedOption,
+                                p_value: Number(attr.value),
+                                restrictions: [
+                                    {
+                                        schema_id: attr.schemaId,
+                                        cred_def_id: attr.credDefId,
+                                    },
+                                ],
+                            };
+                        } else {
+                            if (!requestedAttributes[attr.attributeName]) {
+                                requestedAttributes[attr.attributeName] = {
+                                    name: attr.attributeName,
+                                    restrictions: [],
+                                };
+                            }
+                            requestedAttributes[attr.attributeName].restrictions.push({
+                                schema_id: attr.schemaId,
+                                cred_def_id: attr.credDefId,
+                            });
+                        }   
                     }
                 });
 
