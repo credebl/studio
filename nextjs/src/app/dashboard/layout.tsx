@@ -6,8 +6,8 @@ import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 
 export const metadata: Metadata = {
-  title: 'CREDEBLE',
-  description: 'Basic dashboard with Next.js and Shadcn'
+  title: 'CREDEBL - Studio',
+  description: 'CREDEBL - Studio with Next.js and Shadcn'
 };
 
 export default async function DashboardLayout({

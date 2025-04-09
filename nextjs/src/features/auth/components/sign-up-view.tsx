@@ -1,18 +1,16 @@
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { SignUp as ClerkSignUpForm } from '@clerk/nextjs';
-import { GitHubLogoIcon } from '@radix-ui/react-icons';
-import { IconStar } from '@tabler/icons-react';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Authentication',
-  description: 'Authentication forms built using the components.'
+ title: 'CREDEBL - Studio',
+  description: 'CREDEBL - Studio with Next.js and Shadcn'
 };
 
-export default function SignUpViewPage({ stars }: { stars: number }) {
+export default function SignUpViewPage() {
   return (
     <div className='relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0'>
       <Link
@@ -57,7 +55,7 @@ export default function SignUpViewPage({ stars }: { stars: number }) {
         <div className='flex w-full max-w-md flex-col items-center justify-center space-y-6'>
           <ClerkSignUpForm
             initialValues={{
-              emailAddress: 'your_mail+clerk_test@example.com'
+              emailAddress: 'test@example.com'
             }}
           />
           <p className='text-muted-foreground px-8 text-center text-sm'>
