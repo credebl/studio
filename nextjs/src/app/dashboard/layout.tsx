@@ -1,32 +1,38 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import KBar from '@/components/kbar';
 import AppSidebar from '@/components/layout/app-sidebar';
 import Header from '@/components/layout/header';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
-import type { Metadata } from 'next';
-import { cookies } from 'next/headers';
 
-export const metadata: Metadata = {
-  title: 'CREDEBLE',
-  description: 'Basic dashboard with Next.js and Shadcn'
-};
-
-export default async function DashboardLayout({
+export default function DashboardLayout({
   children
 }: {
   children: React.ReactNode;
 }) {
-  // Persisting the sidebar state in the cookie.
-  const cookieStore = await cookies();
-  const defaultOpen = cookieStore.get('sidebar:state')?.value === 'true';
+  const router = useRouter();
+  // const token = useSelector((state: RootState) => state.user.token);
+  const token = process.env.NEXT_PUBLIC_ACCESS_TOKEN;
+  const [clientReady, setClientReady] = useState(false);
+
+  useEffect(() => {
+    setClientReady(true);
+    if (!token) {
+      router.push('/');
+    }
+  }, [token]);
+
+  if (!clientReady || !token) return null;
+
   return (
     <KBar>
-      <SidebarProvider defaultOpen={defaultOpen}>
+      <SidebarProvider defaultOpen={true}>
         <AppSidebar />
         <SidebarInset>
           <Header />
-          {/* page main content */}
           {children}
-          {/* page main content ends */}
         </SidebarInset>
       </SidebarProvider>
     </KBar>

@@ -1,14 +1,16 @@
+import { auth } from '@/lib/auth';
 import Providers from '@/components/layout/providers';
 import { Toaster } from '@/components/ui/sonner';
-import { fontVariables } from '@/lib/font';
-import ThemeProvider from '@/components/layout/ThemeToggle/theme-provider';
-import { cn } from '@/lib/utils';
 import type { Metadata, Viewport } from 'next';
-import { cookies } from 'next/headers';
-import NextTopLoader from 'nextjs-toploader';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
+import NextTopLoader from 'nextjs-toploader';
+import { cookies } from 'next/headers';
+import { cn } from '@/lib/utils';
+import { fontVariables } from '@/lib/font';
 import './globals.css';
 import './theme.css';
+import StoreProvider from './StoreProvider';
+import SessionCheck from '@/features/auth/components/SessionCheck';
 
 const META_THEME_COLORS = {
   light: '#ffffff',
@@ -29,6 +31,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const session = await auth();
   const cookieStore = await cookies();
   const activeThemeValue = cookieStore.get('active_theme')?.value;
   const isScaled = activeThemeValue?.endsWith('-scaled');
@@ -58,18 +61,17 @@ export default async function RootLayout({
       >
         <NextTopLoader showSpinner={false} />
         <NuqsAdapter>
-          <ThemeProvider
-            attribute='class'
-            defaultTheme='system'
-            enableSystem
-            disableTransitionOnChange
-            enableColorScheme
-          >
-            <Providers activeThemeValue={activeThemeValue as string}>
-              <Toaster />
-              {children}
-            </Providers>
-          </ThemeProvider>
+          <StoreProvider>
+            <SessionCheck>
+              <Providers
+                session={session}
+                activeThemeValue={activeThemeValue as string}
+              >
+                <Toaster />
+                {children}
+              </Providers>
+            </SessionCheck>
+          </StoreProvider>
         </NuqsAdapter>
       </body>
     </html>
