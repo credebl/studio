@@ -14,16 +14,18 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Key } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useAppSelector } from '@/lib/hooks';
 
 
 const CredentialDefinition = () => {
   const [loading, setLoading] = useState(true);
   const [credentialDefinition, setCredentialDefinition] = useState([]);
 
+  const orgId = useAppSelector((state) => state.organization.orgId);
   const fetchCredentialDefinitionById = async () => {
     setLoading(true);
     try {
-      const response = await getAllCredDef();
+      const response = await getAllCredDef(orgId as string);
       if (typeof response !== 'string' && response?.data?.data?.data) {
         setCredentialDefinition(response.data.data.data);
       } else {
@@ -82,8 +84,11 @@ const CredentialDefinition = () => {
                   <div className='bg-background flex h-10 w-10 items-center justify-center rounded-md border'>
                     <Key className='h-5 w-5 text-amber-500' />
                   </div>
-                  <div className='flex-1 truncate font-medium'>
-                    <span className='text-amber-500'>{cred.tag} </span> {cred.credentialDefinitionId}
+                  <div className='flex-1 font-medium'>
+                    <div className='text-amber-500'>{cred.tag}</div>
+                    <div className='text-muted-foreground truncate text-sm break-all'>
+                      {cred.credentialDefinitionId}
+                    </div>
                   </div>
                 </div>
               </div>

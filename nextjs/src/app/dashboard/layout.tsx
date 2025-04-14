@@ -6,6 +6,7 @@ import KBar from '@/components/kbar';
 import AppSidebar from '@/components/layout/app-sidebar';
 import Header from '@/components/layout/header';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { useAppSelector } from '@/lib/hooks';
 
 export default function DashboardLayout({
   children
@@ -13,8 +14,9 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  // const token = useSelector((state: RootState) => state.user.token);
-  const token = process.env.NEXT_PUBLIC_ACCESS_TOKEN;
+
+  const token = useAppSelector((state) => state.auth.token);
+
   const [clientReady, setClientReady] = useState(false);
 
   useEffect(() => {

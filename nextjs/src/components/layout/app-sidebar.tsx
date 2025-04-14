@@ -1,25 +1,14 @@
 'use client';
-// import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger
 } from '@/components/ui/collapsible';
-// import {
-//   DropdownMenu,
-//   DropdownMenuContent,
-//   DropdownMenuGroup,
-//   DropdownMenuItem,
-//   DropdownMenuLabel,
-//   DropdownMenuSeparator,
-//   DropdownMenuTrigger
-// } from '@/components/ui/dropdown-menu';
+
 import {
   Sidebar,
   SidebarContent,
-  // SidebarFooter,
   SidebarGroup,
-  // SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -30,62 +19,102 @@ import {
   SidebarRail
 } from '@/components/ui/sidebar';
 import { navItems } from '@/constants/data';
-import {
-  // IconCircleCheck,
-  // IconBell,
-  IconChevronRight,
-  // IconChevronsDown,
-  // IconCreditCard,
-  IconPhotoUp,
-  // IconLogout
-} from '@tabler/icons-react';
-import { signOut, useSession } from 'next-auth/react';
+import { IconChevronRight, IconPhotoUp } from '@tabler/icons-react';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import * as React from 'react';
 import { Icons } from '../icons';
 import { OrgSwitcher } from '../org-switcher';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { useEffect, useState } from 'react';
+import { getOrganizations } from '@/app/api/organization';
+import { useAppDispatch } from '@/lib/hooks';
+import { setOrgId } from '@/lib/orgSlice';
 
-export const company = {
-  name: 'AyanWorks',
-  logo: IconPhotoUp,
-  plan: 'Enterprise'
-};
+// export const company = {
+//   name: 'AyanWorks',
+//   logo: IconPhotoUp,
+//   plan: 'Enterprise'
+// };
 
-const tenants = [
-  { id: '1', name: 'AyanWorks' },
-  { id: '2', name: 'Beta Corp' },
-  { id: '3', name: 'Gamma Ltd' }
-];
+// const tenants = [
+//   { id: '1', name: 'AyanWorks' },
+//   { id: '2', name: 'Beta Corp' },
+//   { id: '3', name: 'Gamma Ltd' }
+// ];
 
 export default function AppSidebar() {
   const { data: session } = useSession();
   const pathname = usePathname();
-  const { isOpen } = useMediaQuery();
+  // const { isOpen } = useMediaQuery();
+  const dispatch = useAppDispatch();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(10);
+  const [searchTerm] = useState('');
+  const [orgList, setOrgList] = useState<any[]>([]);
+  const [selectedOrg, setSelectedOrg] = useState<any | null>(null);
 
-  const handleSwitchTenant = (_tenantId: string) => {
-    // Tenant switching functionality would be implemented here
+  useEffect(() => {
+    const fetchOrganizations = async () => {
+      try {
+        const response = await getOrganizations(
+          currentPage,
+          pageSize,
+          searchTerm,
+          ''
+        );
+        if (
+          typeof response !== 'string' &&
+          response?.data?.data?.organizations
+        ) {
+          const orgs = response.data.data.organizations;
+          setOrgList(orgs);
+          setSelectedOrg(orgs[0]);
+        } else {
+          setOrgList([]);
+        }
+      } catch (err) {
+        console.error('Error fetching organizations:', err);
+      }
+    };
+
+    fetchOrganizations();
+  }, []);
+
+  const handleSwitchTenant = (orgId: string) => {
+    const selected = orgList.find((org) => org.id === orgId);
+    if (selected) {
+      setSelectedOrg(selected);
+      dispatch(setOrgId(selected.id));
+    }
   };
 
-  const activeTenant = tenants[0];
+  const activeTenant = orgList[0];
 
-  React.useEffect(() => {
-    // Side effects based on sidebar state changes
-  }, [isOpen]);
+  // useEffect(() => {
+  //   // Side effects based on sidebar state changes
+  // }, [isOpen]);
+
+  // useEffect(() => {
+  //   console.log('orgList', orgList);
+  //   // Side effects based on sidebar state changes
+  // }, [orgList]);
 
   return (
     <Sidebar collapsible='icon'>
       <SidebarHeader>
         <OrgSwitcher
-          tenants={tenants}
+          // tenants={tenants}
+          tenants={orgList.map((org) => ({
+            id: org.id,
+            name: org.name,
+          }))}
           defaultTenant={activeTenant}
           onTenantSwitch={handleSwitchTenant}
         />
       </SidebarHeader>
       <SidebarContent className='overflow-x-hidden'>
         <SidebarGroup>
-          {/* <SidebarGroupLabel>Overview</SidebarGroupLabel> */}
           <SidebarMenu>
             {navItems.map((item) => {
               const Icon = item.icon ? Icons[item.icon] : Icons.logo;
@@ -143,90 +172,7 @@ export default function AppSidebar() {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
-      {/* <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton
-                  size='lg'
-                  className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
-                >
-                  <Avatar className='h-8 w-8 rounded-lg'>
-                    <AvatarImage
-                      src={session?.user?.image || ''}
-                      alt={session?.user?.name || ''}
-                    />
-                    <AvatarFallback className='rounded-lg'>
-                      {session?.user?.name?.slice(0, 2)?.toUpperCase() || 'CN'}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className='grid flex-1 text-left text-sm leading-tight'>
-                    <span className='truncate font-semibold'>
-                      {session?.user?.name || ''}
-                    </span>
-                    <span className='truncate text-xs'>
-                      {session?.user?.email || ''}
-                    </span>
-                  </div>
-                  <IconChevronsDown className='ml-auto size-4' />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className='w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg'
-                side='bottom'
-                align='end'
-                sideOffset={4}
-              >
-                <DropdownMenuLabel className='p-0 font-normal'>
-                  <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
-                    <Avatar className='h-8 w-8 rounded-lg'>
-                      <AvatarImage
-                        src={session?.user?.image || ''}
-                        alt={session?.user?.name || ''}
-                      />
-                      <AvatarFallback className='rounded-lg'>
-                        {session?.user?.name?.slice(0, 2)?.toUpperCase() ||
-                          'CN'}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className='grid flex-1 text-left text-sm leading-tight'>
-                      <span className='truncate font-semibold'>
-                        {session?.user?.name || ''}
-                      </span>
-                      <span className='truncate text-xs'>
-                        {' '}
-                        {session?.user?.email || ''}
-                      </span>
-                    </div>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
 
-                <DropdownMenuGroup>
-                  <DropdownMenuItem>
-                    <IconCircleCheck className='mr-2 h-4 w-4' />
-                    Account
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <IconCreditCard className='mr-2 h-4 w-4' />
-                    Billing
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <IconBell className='mr-2 h-4 w-4' />
-                    Notifications
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => signOut()}>
-                  <IconLogout className='mr-2 h-4 w-4' />
-                  Log out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter> */}
       <SidebarRail />
     </Sidebar>
   );

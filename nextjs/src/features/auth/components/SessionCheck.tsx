@@ -15,7 +15,8 @@ const dashboardPath = '/dashboard/overview';
 const SessionCheck: React.FC<SessionProps> = ({ children }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const token = useAppSelector((state) => state.user.token);
+
+  const token = useAppSelector((state) => (state as any).auth.token);
 
   const checkSession = (): void => {
     const isExcluded = sessionExcludedPaths.some((path) =>

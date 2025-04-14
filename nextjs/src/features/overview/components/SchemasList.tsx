@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getAllSchemasByOrgId } from '@/app/api/schema';
 import { Calendar, Plus } from 'lucide-react';
+import { useAppSelector } from '@/lib/hooks';
 
 const SchemasList = () => {
   const [loading, setLoading] = useState(true);
@@ -22,7 +23,9 @@ const SchemasList = () => {
   const [searchTerm] = useState('');
   const [schemas, setSchemas] = useState([]);
 
-  const orgId = '8cc5e6ed-54fa-41ed-9a61-2503899e72fe';
+const orgId = useAppSelector(
+    (state) => state.organization.orgId
+  );
 
   const fetchSchemas = async () => {
     setLoading(true);
@@ -34,7 +37,7 @@ const SchemasList = () => {
           itemPerPage: pageSize,
           page: currentPage
         },
-        orgId
+        orgId as string
       );
 
       if (typeof response !== 'string' && response?.data?.data?.data) {

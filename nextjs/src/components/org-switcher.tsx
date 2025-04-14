@@ -40,9 +40,6 @@ export function OrgSwitcher({
     }
   };
 
-  if (!selectedTenant) {
-    return null;
-  }
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -57,7 +54,7 @@ export function OrgSwitcher({
               </div>
               <div className='flex flex-col gap-0.5 leading-none'>
                 <span className='font-semibold'>Select Organization</span>
-                <span className=''>{selectedTenant.name}</span>
+                <span className=''>{selectedTenant?.name || tenants[0]?.name}</span>
               </div>
               <ChevronsUpDown className='ml-auto' />
             </SidebarMenuButton>
@@ -72,7 +69,7 @@ export function OrgSwitcher({
                 onSelect={() => handleTenantSwitch(tenant)}
               >
                 {tenant.name}{' '}
-                {tenant.id === selectedTenant.id && (
+                {tenant.id === selectedTenant?.id && (
                   <Check className='ml-auto' />
                 )}
               </DropdownMenuItem>

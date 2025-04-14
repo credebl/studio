@@ -20,9 +20,23 @@ import {
 
 import { Mail, Lock, KeyRound, Loader2, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
-import { loginUser, passwordEncryption, UserSignInData } from '@/app/api/Auth';
+import {
+  getUserProfile,
+  loginUser,
+  passwordEncryption,
+  UserSignInData
+} from '@/app/api/Auth';
 import { useDispatch } from 'react-redux';
-import { setUser } from '@/lib/userSlice';
+import { setRefreshToken, setToken } from '@/lib/authSlice';
+import { AxiosResponse } from 'axios';
+import { setProfile } from '@/lib/profileSlice';
+import { setOrgId } from '@/lib/orgSlice';
+import {
+  generateAuthenticationOption,
+  verifyAuthentication
+} from '@/app/api/Fido';
+import { apiStatusCodes } from '@/config/CommonConstant';
+import { startAuthentication } from '@simplewebauthn/browser';
 
 const signInSchema = z.object({
   email: z.string().email('Enter a valid email'),
@@ -31,10 +45,17 @@ const signInSchema = z.object({
 
 type SignInFormValues = z.infer<typeof signInSchema>;
 
+enum PlatformRoles {
+  platformAdmin = 'platform_admin'
+}
+
 export default function SignInViewPage() {
   const [isPasswordTab, setIsPasswordTab] = useState(true);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const [fidoLoader, setFidoLoader] = useState<boolean>(false);
+  const [fidoUserError, setFidoUserError] = useState('');
 
   const dispatch = useDispatch();
   const route = useRouter();
@@ -45,6 +66,52 @@ export default function SignInViewPage() {
       password: ''
     }
   });
+
+  const getUserDetails = async (access_token: string) => {
+    try {
+      const response = await getUserProfile(access_token);
+
+      const { data } = response as AxiosResponse;
+
+      if (data?.data?.userOrgRoles?.length > 0) {
+        const role = data?.data?.userOrgRoles.find(
+          (item: { orgRole: { name: PlatformRoles } }) =>
+            item.orgRole.name === PlatformRoles.platformAdmin
+        );
+
+        const permissionArray: string[] = [];
+        data?.data?.userOrgRoles?.forEach(
+          (element: { orgRole: { name: string } }) =>
+            permissionArray.push(element?.orgRole?.name)
+        );
+
+        const { id, profileImg, firstName, lastName, email } = data?.data || {};
+        const userProfile = {
+          id,
+          profileImg,
+          firstName,
+          lastName,
+          email
+        };
+        dispatch(setProfile(userProfile));
+
+        const orgWithValidId = data?.data?.userOrgRoles.find(
+          (item: { orgId: string | null }) => item.orgId !== null
+        );
+        const orgId = orgWithValidId?.orgId ?? null;
+
+        dispatch(setOrgId(orgId));
+        return {
+          role: role?.orgRole ?? '',
+          orgId
+        };
+      } else {
+        console.error('No roles found for the user');
+      }
+    } catch (error) {
+      console.error('Error fetching user details', error);
+    }
+  };
 
   const handleSignIn = async (values: { email: string; password?: string }) => {
     try {
@@ -74,11 +141,14 @@ export default function SignInViewPage() {
         return;
       }
 
-      if (response?.data?.status !== 'success') {
+      if (response?.data?.statusCode == 200) {
         const token = response?.data?.data?.access_token;
-        const email = values?.email || '';
+        const refreshToken = response?.data?.data?.refresh_token;
 
-        dispatch(setUser({ email, token }));
+        dispatch(setRefreshToken(refreshToken));
+        dispatch(setToken(token));
+
+        getUserDetails(token);
         route.push('/dashboard/overview');
       }
     } catch (error) {
@@ -87,11 +157,106 @@ export default function SignInViewPage() {
     }
   };
 
+  // const verifyAuthenticationMethod = async (
+  //   verifyAuthenticationObj: unknown,
+  //   userData: { userName: string }
+  // ): Promise<string | AxiosResponse> => {
+  //   try {
+  //     const res = verifyAuthentication(verifyAuthenticationObj, userData);
+  //     return await res;
+  //   } catch (error) {
+  //     setFidoLoader(false);
+  //     throw error;
+  //   }
+  // };
+
+  // const authenticateWithPasskey = async (email: string): Promise<void> => {
+  //   try {
+  //     setLoading(true);
+  //     setFidoLoader(true);
+  //     setFidoUserError('');
+
+  //     const obj = {
+  //       userName: email?.trim()?.toLowerCase()
+  //     };
+
+  //     const generateAuthenticationResponse: any =
+  //       await generateAuthenticationOption(obj);
+  //     const challengeId: string =
+  //       generateAuthenticationResponse?.data?.data?.challenge;
+
+  //     if (generateAuthenticationResponse?.data?.error) {
+  //       setFidoUserError(generateAuthenticationResponse?.data?.error);
+  //       return;
+  //     }
+
+  //     const opts = generateAuthenticationResponse?.data?.data;
+
+  //     const attResp = await startAuthentication(opts);
+
+  //     const verifyAuthenticationObj = {
+  //       ...attResp,
+  //       challangeId: challengeId
+  //     };
+
+  //     const verificationResp = await verifyAuthenticationMethod(
+  //       verifyAuthenticationObj,
+  //       obj
+  //     );
+  //     const { data } = verificationResp as AxiosResponse;
+
+  //     if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+  //       const token = data?.data?.access_token;
+  //       const refreshToken = data?.data?.refresh_token;
+
+  //       dispatch(setToken(token));
+  //       dispatch(setRefreshToken(refreshToken));
+
+  //       const userRole = await getUserDetails(token);
+
+  //       if (!userRole?.role?.name) {
+  //         toast.error('Invalid user role');
+  //         return;
+  //       }
+
+  //       route.push(
+  //         userRole?.role?.name === PlatformRoles.platformAdmin
+  //           ? '/dashboard/settings'
+  //           : '/dashboard/overview'
+  //       );
+  //     } else if (data?.error) {
+  //       setFidoUserError(data?.error);
+  //     } else {
+  //       setFidoUserError('Something went wrong during verification');
+  //     }
+  //   } catch (error) {
+  //     if (error instanceof DOMException) {
+  //       setFidoUserError('The operation either timed out or was not allowed.');
+  //     } else {
+  //       setFidoUserError('Authentication failed. Please try again.');
+  //       console.error('FIDO Authentication Error:', error);
+  //     }
+  //   } finally {
+  //     setFidoLoader(false);
+  //     setLoading(false);
+  //   }
+  // };
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (isPasswordTab) {
+      signInForm.handleSubmit(handleSignIn)();
+    } else {
+      const email = signInForm.getValues('email');
+      // authenticateWithPasskey(email);
+    }
+  };
+
   return (
-    <div className='relative flex h-screen w-full items-center justify-center bg-gradient-to-b from-yellow-100 to-white'>
+    <div className='relative flex h-screen w-full items-center justify-center bg-gradient-to-t from-yellow-100 to-white'>
       <div className='relative z-10 w-full max-w-md rounded-xl border bg-white p-8 shadow-lg'>
         <div className='mb-6 text-center'>
-          <h1 className='mt-2 text-2xl font-semibold'>Welcome Back</h1>
           <p className='text-muted-foreground text-sm'>
             Sign in to your account to continue
           </p>
@@ -128,7 +293,8 @@ export default function SignInViewPage() {
 
         <Form {...signInForm}>
           <form
-            onSubmit={signInForm.handleSubmit(handleSignIn)}
+            // onSubmit={signInForm.handleSubmit(handleSignIn)}
+            onSubmit={handleFormSubmit}
             className='space-y-4'
           >
             <FormField
@@ -208,6 +374,15 @@ export default function SignInViewPage() {
               {loading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
               {isPasswordTab ? 'Sign in' : 'Continue with passkey'}
             </Button>
+
+            <div className='mt-4 text-center text-sm'>
+              <span className='text-muted-foreground'>
+                Don’t have an account?{' '}
+              </span>
+              <Link href='/signup' passHref legacyBehavior>
+                <a className='text-yellow-600 hover:underline'>Create one</a>
+              </Link>
+            </div>
           </form>
         </Form>
       </div>

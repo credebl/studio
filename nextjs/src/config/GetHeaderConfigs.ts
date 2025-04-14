@@ -1,8 +1,4 @@
-// import { getFromLocalStorage } from '../api/Auth';
-// import { storageKeys } from './CommonConstant';
-
-// const allowedDomains = import.meta.env.PUBLIC_ALLOW_DOMAIN;
-const allowedDomains = process.env.PUBLIC_ALLOW_DOMAIN ;
+const allowedDomains = process.env.PUBLIC_ALLOW_DOMAIN;
 
 const commonHeaders = {
     'Content-Security-Policy': `default-src 'self'; script-src 'unsafe-inline' ${allowedDomains}; style-src 'unsafe-inline' ${allowedDomains}; font-src ${allowedDomains}; img-src 'self' ${allowedDomains}; frame-src 'self' ${allowedDomains}; object-src 'none'; media-src 'self'; connect-src 'self' ${allowedDomains}; form-action 'self'; frame-ancestors 'self'; `,
@@ -18,28 +14,18 @@ const commonHeaders = {
 }
 
 export const getHeaderConfigs = async (tokenVal?: string) => {
-    // const token = await getFromLocalStorage(storageKeys.TOKEN) || (typeof tokenVal === "string" ? tokenVal : "")
-    const token = process.env.NEXT_PUBLIC_ACCESS_TOKEN || '';
-    
-    return {
-        headers: {
-            ...commonHeaders,
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-        }
+  return {
+    headers: {
+      ...commonHeaders,
+      'Content-Type': 'application/json'
     }
-
-}
+  };
+};
 export const getHeaderConfigsForFormData = async () => {
-    // const token = await getFromLocalStorage(storageKeys.TOKEN)
-    const token = process.env.NEXT_PUBLIC_ACCESS_TOKEN || '';
-
-    return {
-        headers: {
-            ...commonHeaders,
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`
-        }
+  return {
+    headers: {
+      ...commonHeaders,
+      'Content-Type': 'multipart/form-data'
     }
-
-}
+  };
+};
