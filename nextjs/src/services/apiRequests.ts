@@ -187,7 +187,7 @@ const HandleResponse = (responseData: any): Promise<AxiosResponse> => {
           ));
           
 
-    } else {
+    } 
         return Promise.reject(new Error("Please check your internet connectivity and try again"))
-    }
+    
 }

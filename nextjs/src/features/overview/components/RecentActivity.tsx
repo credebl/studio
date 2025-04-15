@@ -12,6 +12,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getUserActivity } from '@/app/api/users';
+import { Badge } from '@/components/ui/badge';
 
 const RecentActivity = () => {
   const [activityList, setActivityList] = useState<any[]>([]);
@@ -72,7 +73,10 @@ const RecentActivity = () => {
     <Card>
       <CardHeader className='flex flex-row items-center justify-between pb-2'>
         <div className='space-y-1'>
-          <CardTitle>Recent Activity</CardTitle>
+          <div className='flex items-center gap-x-2'>
+            <CardTitle>Recent Activity</CardTitle>
+            <Badge>{activityList.length}</Badge>
+          </div>
           <CardDescription>Latest actions in your account</CardDescription>
         </div>
       </CardHeader>

@@ -14,7 +14,7 @@ const EcosystemInstance = axios.create({
 
 const refreshAccessToken = async () => {
   const state = store.getState();
-  const refreshToken = state.auth.refreshToken;
+  const {refreshToken} = state.auth;
 
   try {
     const response = await axios.post(
@@ -42,7 +42,7 @@ const refreshAccessToken = async () => {
 instance.interceptors.request.use(
   async (config) => {
     const state = store.getState();
-    const token = state.auth.token;
+    const {token} = state.auth;
 
     if (token) {
       config.headers.set('Authorization', `Bearer ${token}`);
@@ -66,12 +66,12 @@ instance.interceptors.response.use(
       const newAccessToken = await refreshAccessToken();
 
       if (newAccessToken) {
-        originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return axios(originalRequest);
-      } else {
+      } 
         const route = useRouter();
         route.push('/auth/sign-in');
-      }
+      
     }
 
     return Promise.reject(error);

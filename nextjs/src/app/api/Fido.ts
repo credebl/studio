@@ -4,7 +4,6 @@ import {
   axiosPost,
   axiosPut
 } from '@/services/apiRequests';
-import apiRoutes from './apiRoutes';
 import {
   DeviceDetails,
   IdeviceBody,
@@ -12,6 +11,7 @@ import {
   UserEmail,
   VerifyRegistrationObjInterface
 } from '@/components/profile/interfaces';
+import apiRoutes from './apiRoutes';
 
 export const generateRegistrationOption = async (
   payload: RegistrationOptionInterface
@@ -60,7 +60,7 @@ export const verifyRegistration = async (
 };
 
 export const addDeviceDetails = async (payload: IdeviceBody) => {
-  const credentialId = payload.credentialId;
+  const {credentialId} = payload;
   const details = {
     url: `${apiRoutes.auth.userUpdate}/${credentialId}`,
     payload,
