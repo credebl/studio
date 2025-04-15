@@ -5,7 +5,7 @@
 // import { envConfig } from '../config/envConfig'
 // import { storageKeys } from '../config/CommonConstant'
 // import type { AddPassword } from '../components/Profile/interfaces'
-import type { AstroCookies } from 'astro'
+// import type { AstroCookies } from 'astro'
 import { apiRoutes } from "@/config/apiRoutes"
 import { axiosGet, axiosPost, axiosPut } from "@/services/apiRequests"
 
