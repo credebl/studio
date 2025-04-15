@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 // import {axiosGet, axiosPost, axiosPut} from '../services/apiRequests'
-import CryptoJS from "crypto-js"
+// import CryptoJS from "crypto-js"
 // import { apiRoutes } from '../config/apiRoutes'
 // import { envConfig } from '../config/envConfig'
 // import { storageKeys } from '../config/CommonConstant'
@@ -7,6 +8,9 @@ import CryptoJS from "crypto-js"
 import type { AstroCookies } from 'astro'
 import { apiRoutes } from "@/config/apiRoutes"
 import { axiosGet, axiosPost, axiosPut } from "@/services/apiRequests"
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+const CryptoJS = require("crypto-js")
 
 export interface UserSignUpData {
     email: string,
