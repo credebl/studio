@@ -23,7 +23,7 @@ export const navItems: NavItem[] = [
   },
   {
     title: 'Organizations',
-    url: '/dashboard/organizations',
+    url: '/organizations',
     icon: 'organization',
     shortcut: ['p', 'p'],
     isActive: false,

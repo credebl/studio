@@ -41,7 +41,7 @@ const RecentActivity = () => {
 
   const renderActivity = () => {
     if (!activityList?.length) {
-      return <p className='text-sm'>No recent activity found.</p>;
+      return <p>No recent activity found.</p>;
     }
 
     return (
@@ -50,15 +50,15 @@ const RecentActivity = () => {
           <div key={index} className='flex gap-3'>
             <div className='relative mt-1'>
               <div className='flex h-2 w-2 items-center justify-center'>
-                <div className='absolute h-2 w-2 rounded-full bg-amber-500' />
+                <div className='absolute h-2 w-2 rounded-full' />
               </div>
-              <div className='bg-border ml-1 h-full w-px' />
+              <div className='ml-1 h-full w-px' />
             </div>
             <div className='space-y-1'>
               <div className='max-w-[400px] truncate font-medium'>
                 {activity.action || 'Performed an action'}
               </div>
-              <div className='text-muted-foreground text-sm'>
+              <div className='text-muted-foreground'>
                 {new Date(activity.createDateTime).toLocaleString()}
               </div>
             </div>
@@ -72,7 +72,7 @@ const RecentActivity = () => {
     <Card>
       <CardHeader className='flex flex-row items-center justify-between pb-2'>
         <div className='space-y-1'>
-          <CardTitle className='text-xl'>Recent Activity</CardTitle>
+          <CardTitle>Recent Activity</CardTitle>
           <CardDescription>Latest actions in your account</CardDescription>
         </div>
       </CardHeader>
@@ -100,10 +100,10 @@ const RecentActivity = () => {
           renderActivity()
         )}
       </CardContent>
-      <CardFooter className='pt-2'>
+      <CardFooter className='mt-auto justify-end pt-2'>
         <Button
-          variant='ghost'
-          className='ml-auto text-amber-600 hover:bg-amber-50 hover:text-amber-700'
+        // variant='ghost'
+        // className='ml-auto text-amber-600 hover:bg-amber-50 hover:text-amber-700'
         >
           View all
         </Button>

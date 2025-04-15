@@ -2,6 +2,7 @@ import { apiRoutes } from '@/config/apiRoutes';
 import axios from 'axios';
 import { store } from '@/lib/store';
 import { setRefreshToken, setToken } from '@/lib/authSlice';
+import { useRouter } from 'next/navigation';
 
 const instance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL
@@ -26,7 +27,6 @@ const refreshAccessToken = async () => {
     if (response.status === 200) {
       const { accessToken, refreshToken: newRefreshToken } = response.data;
 
-      // Update Redux store
       store.dispatch(setToken(accessToken));
       store.dispatch(setRefreshToken(newRefreshToken));
 
@@ -69,7 +69,8 @@ instance.interceptors.response.use(
         originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
         return axios(originalRequest);
       } else {
-        window.location.assign('/');
+        const route = useRouter();
+        route.push('/auth/sign-in');
       }
     }
 

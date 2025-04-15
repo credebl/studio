@@ -30,7 +30,7 @@ export default function RecentActivityStepper() {
       {steps.map((step, index) => {
         const isLast = index === steps.length - 1
         const isActive = index === 0
-        const isCompleted = index < 0 // For dynamic logic later
+        const isCompleted = index < 0
 
         return (
           <div key={step.step} className='relative flex items-start gap-6'>
@@ -40,7 +40,7 @@ export default function RecentActivityStepper() {
             )}
 
             {/* Icon */}
-            <div className='z-10 shrink-0 rounded-full border border-muted-foreground p-1 bg-background'>
+            <div className='z-10 shrink-0 rounded-full p-1 bg-background'>
               {isCompleted ? (
                 <Check className='w-5 h-5 text-primary' />
               ) : isActive ? (

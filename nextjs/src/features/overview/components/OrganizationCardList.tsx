@@ -59,12 +59,12 @@ const OrganizationCardList = () => {
       <CardHeader className='flex flex-row items-center justify-between pb-2'>
         <div className='space-y-1'>
           <div className='flex items-center gap-x-2'>
-            <CardTitle className='text-xl'>Organizations</CardTitle>
+            <CardTitle>Organizations</CardTitle>
             <Badge
-              variant='secondary'
-              className='bg-amber-100 text-amber-800 hover:bg-amber-100'
+            // variant='secondary'
+            // className='bg-amber-100 text-amber-800 hover:bg-amber-100'
             >
-              {loading ? <Skeleton className='h-4 w-6' /> : orgList.length}
+              {orgList.length}
             </Badge>
           </div>
           <CardDescription>Manage your organizations</CardDescription>
@@ -73,14 +73,14 @@ const OrganizationCardList = () => {
           <Plus className='mr-2 h-4 w-4' /> New Organization
         </Button>
       </CardHeader>
-      
+
       <CardContent className='pb-2'>
         {loading ? (
           <div className='space-y-4'>
             {Array.from({ length: 2 }).map((_, index) => (
               <div
                 key={index}
-                className='flex items-center justify-between rounded-lg border p-3'
+                className='flex items-center justify-between rounded-lg p-3'
               >
                 <div className='flex items-center gap-3'>
                   <Skeleton className='h-10 w-10 rounded-full' />
@@ -104,10 +104,10 @@ const OrganizationCardList = () => {
           </div>
         ) : (
           <div className='space-y-4'>
-            {orgList.map((org) => (
+            {orgList.slice(0, 5).map((org) => (
               <div
                 key={org.id}
-                className='hover:bg-muted/50 flex items-center justify-between rounded-lg border p-3 transition-colors'
+                className='hover:bg-muted/50 flex items-center justify-between p-3 transition-colors'
               >
                 <div className='flex items-center gap-3'>
                   {org.logoUrl ? (
@@ -117,13 +117,13 @@ const OrganizationCardList = () => {
                       className='h-10 w-10 rounded-full object-cover'
                     />
                   ) : (
-                    <div className='flex h-10 w-10 items-center justify-center rounded-full bg-amber-500 text-white'>
+                    <div className='flex h-10 w-10 items-center justify-center rounded-full'>
                       {org.name?.[0]?.toUpperCase() || 'O'}
                     </div>
                   )}
                   <div>
                     <div className='font-medium'>{org.name}</div>
-                    <div className='text-muted-foreground text-sm'>
+                    <div className='text-muted-foreground'>
                       {org.userOrgRoles?.map((role, index) => (
                         <span key={index}>
                           {role.orgRole.name}
@@ -166,8 +166,8 @@ const OrganizationCardList = () => {
 
       <CardFooter className='mt-auto justify-end pt-2'>
         <Button
-          variant='ghost'
-          className='text-amber-600 hover:bg-amber-50 hover:text-amber-700'
+        // variant='ghost'
+        // className='text-amber-600 hover:bg-amber-50 hover:text-amber-700'
         >
           View all
         </Button>

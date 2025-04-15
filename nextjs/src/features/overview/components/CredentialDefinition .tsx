@@ -16,7 +16,6 @@ import { Key } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAppSelector } from '@/lib/hooks';
 
-
 const CredentialDefinition = () => {
   const [loading, setLoading] = useState(true);
   const [credentialDefinition, setCredentialDefinition] = useState([]);
@@ -47,15 +46,17 @@ const CredentialDefinition = () => {
     <Card>
       <CardHeader className='flex flex-row items-center justify-between pb-2'>
         <div className='space-y-1'>
-          <CardTitle className='text-xl'>Credential Definitions</CardTitle>
+          <div className='flex items-center gap-x-2'>
+            <CardTitle>Credential Definitions</CardTitle>
+            <Badge
+            // variant='secondary'
+            // className='bg-amber-100 text-amber-800 hover:bg-amber-100'
+            >
+              {credentialDefinition.length}
+            </Badge>
+          </div>
           <CardDescription>Manage your credential definitions</CardDescription>
         </div>
-        <Badge
-          variant='secondary'
-          className='bg-amber-100 text-amber-800 hover:bg-amber-100'
-        >
-          {credentialDefinition.length}
-        </Badge>
       </CardHeader>
 
       <CardContent className='pb-2'>
@@ -64,7 +65,7 @@ const CredentialDefinition = () => {
             {Array.from({ length: 2 }).map((_, i) => (
               <div
                 key={i}
-                className='flex items-center justify-between rounded-lg border p-3'
+                className='flex items-center justify-between rounded-lg p-3'
               >
                 <div className='flex items-center gap-3'>
                   <Skeleton className='h-10 w-10 rounded-md' />
@@ -78,15 +79,15 @@ const CredentialDefinition = () => {
             {credentialDefinition.map((cred: any, index: number) => (
               <div
                 key={index}
-                className='hover:bg-muted/50 flex items-center justify-between rounded-lg border p-3 transition-colors'
+                className='hover:bg-muted/50 flex items-center justify-between rounded-lg p-3 transition-colors'
               >
                 <div className='flex items-center gap-3'>
-                  <div className='bg-background flex h-10 w-10 items-center justify-center rounded-md border'>
-                    <Key className='h-5 w-5 text-amber-500' />
+                  <div className='bg-background flex h-10 w-10 items-center justify-center rounded-md'>
+                    <Key />
                   </div>
                   <div className='flex-1 font-medium'>
-                    <div className='text-amber-500'>{cred.tag}</div>
-                    <div className='text-muted-foreground truncate text-sm break-all'>
+                    <div>{cred.tag}</div>
+                    <div className='text-muted-foreground truncate break-all'>
                       {cred.credentialDefinitionId}
                     </div>
                   </div>
@@ -95,16 +96,18 @@ const CredentialDefinition = () => {
             ))}
           </div>
         ) : (
-          <p className='text-muted-foreground text-sm'>
-            No credential definitions found.
-          </p>
+          <div className='flex h-40 items-center justify-center'>
+            <p className='text-muted-foreground'>
+              No credential definitions found.
+            </p>
+          </div>
         )}
       </CardContent>
 
       <CardFooter className='mt-auto justify-end pt-2'>
         <Button
-          variant='ghost'
-          className='text-amber-600 hover:bg-amber-50 hover:text-amber-700'
+        // variant='ghost'
+        // className='text-amber-600 hover:bg-amber-50 hover:text-amber-700'
         >
           View all
         </Button>

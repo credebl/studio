@@ -1,4 +1,4 @@
-body {
+/* body {
   @apply overscroll-none bg-transparent;
 }
 
@@ -102,4 +102,4 @@ body {
   [data-slot='toggle-group-item'] {
     @apply !rounded-none !shadow-none;
   }
-}
+} */

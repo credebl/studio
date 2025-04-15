@@ -302,7 +302,7 @@ export default function SignInViewPage() {
               name='email'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email address</FormLabel>
+                  <FormLabel>Email</FormLabel>
                   <FormControl>
                     <div className='relative'>
                       <Mail className='text-muted-foreground absolute top-2.5 left-3 h-4 w-4' />
@@ -359,18 +359,12 @@ export default function SignInViewPage() {
             {isPasswordTab && (
               <div className='text-right text-sm'>
                 <Link href='/forgot-password' passHref legacyBehavior>
-                  <a className='text-yellow-600 hover:underline'>
-                    Forgot password?
-                  </a>
+                  <a>Forgot password?</a>
                 </Link>
               </div>
             )}
 
-            <Button
-              type='submit'
-              disabled={loading}
-              className='w-full bg-yellow-600 transition-colors hover:bg-yellow-700'
-            >
+            <Button type='submit' disabled={loading} className='w-full'>
               {loading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
               {isPasswordTab ? 'Sign in' : 'Continue with passkey'}
             </Button>
@@ -379,8 +373,8 @@ export default function SignInViewPage() {
               <span className='text-muted-foreground'>
                 Don’t have an account?{' '}
               </span>
-              <Link href='/signup' passHref legacyBehavior>
-                <a className='text-yellow-600 hover:underline'>Create one</a>
+              <Link href='/auth/sign-up' passHref legacyBehavior>
+                <a>Create one</a>
               </Link>
             </div>
           </form>

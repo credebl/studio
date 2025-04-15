@@ -1,10 +1,10 @@
 import { NextAuthConfig } from 'next-auth';
 import CredentialProvider from 'next-auth/providers/credentials';
-import GithubProvider from 'next-auth/providers/github';
+// import GithubProvider from 'next-auth/providers/github';
 
 const authConfig = {
   providers: [
-    GithubProvider({}),
+    // GithubProvider({}),
     CredentialProvider({
       credentials: {
         email: {
@@ -16,8 +16,8 @@ const authConfig = {
       },
       async authorize(credentials) {
         const user = {
-          id: '1',
-          name: 'John',
+          id: '',
+          name: '',
           email: credentials?.email as string
         };
         if (user) {
@@ -33,7 +33,7 @@ const authConfig = {
     })
   ],
   pages: {
-    signIn: '/' //sigin page
+    signIn: '/auth/sign-in', 
   }
 } satisfies NextAuthConfig;
 

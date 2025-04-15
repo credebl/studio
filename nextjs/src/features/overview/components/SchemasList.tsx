@@ -23,9 +23,7 @@ const SchemasList = () => {
   const [searchTerm] = useState('');
   const [schemas, setSchemas] = useState([]);
 
-const orgId = useAppSelector(
-    (state) => state.organization.orgId
-  );
+  const orgId = useAppSelector((state) => state.organization.orgId);
 
   const fetchSchemas = async () => {
     setLoading(true);
@@ -63,10 +61,10 @@ const orgId = useAppSelector(
         <div className='w-full space-y-1'>
           <div className='flex items-center justify-between'>
             <div className='flex items-center gap-2'>
-              <CardTitle className='text-xl'>Schemas</CardTitle>
+              <CardTitle>Schemas</CardTitle>
               <Badge
-                variant='secondary'
-                className='bg-amber-100 text-amber-800 hover:bg-amber-100'
+                // variant='secondary'
+                // className='bg-amber-100 text-amber-800 hover:bg-amber-100'
               >
                 {schemas.length}
               </Badge>
@@ -85,7 +83,7 @@ const orgId = useAppSelector(
             {Array.from({ length: 2 }).map((_, i) => (
               <div
                 key={i}
-                className='flex items-center justify-between rounded-lg border p-3'
+                className='flex items-center justify-between rounded-lg p-3'
               >
                 <div className='flex items-center gap-3'>
                   <Skeleton className='h-10 w-10 rounded-md' />
@@ -96,32 +94,32 @@ const orgId = useAppSelector(
           </div>
         ) : schemas.length > 0 ? (
           <div className='space-y-4'>
-            {schemas.map((schema: any, index: number) => (
+            {schemas.slice(0, 5).map((schema: any, index: number) => (
               <div
                 key={index}
-                className='hover:bg-muted/50 flex items-center justify-between rounded-lg border p-3 transition-colors'
+                className='hover:bg-muted/50 flex items-center justify-between rounded-lg p-3 transition-colors'
               >
                 <div className='flex items-center gap-3'>
-                  <div className='bg-background flex h-10 w-10 items-center justify-center rounded-md border'>
-                    <Calendar className='h-5 w-5 text-amber-500' />
+                  <div className='bg-background flex h-10 w-10 items-center justify-center rounded-md'>
+                    {/* <Calendar className='h-5 w-5 text-amber-500' /> */}
+                    <Calendar />
                   </div>
                   <div className='flex-1 truncate font-medium'>
-                    <span className='text-amber-500'>{schema.name} </span> :
-                    {schema.version}
+                    <span>{schema.name} </span> :{schema.version}
                   </div>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <p className='text-muted-foreground text-sm'>No schemas found.</p>
+          <p className='text-muted-foreground'>No schemas found.</p>
         )}
       </CardContent>
 
       <CardFooter className='mt-auto justify-end pt-2'>
         <Button
-          variant='ghost'
-          className='text-amber-600 hover:bg-amber-50 hover:text-amber-700'
+          // variant='ghost'
+          // className='text-amber-600 hover:bg-amber-50 hover:text-amber-700'
         >
           View all
         </Button>

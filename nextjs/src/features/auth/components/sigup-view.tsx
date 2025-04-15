@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
-import UserAuthForm from './user-auth-form';
 import Image from 'next/image';
+import SignUpUser from './SignUpUser';
 
 export const metadata: Metadata = {
   title: 'Authentication',
@@ -38,7 +38,7 @@ export default function SignUpViewPage() {
       </div>
 
       <div className='relative flex h-screen w-full items-center justify-center bg-gradient-to-b from-yellow-100 to-white'>
-        <UserAuthForm />
+        <SignUpUser />
       </div>
     </div>
   );

@@ -22,7 +22,7 @@ export default function DashboardLayout({
   useEffect(() => {
     setClientReady(true);
     if (!token) {
-      router.push('/');
+      router.push('/auth/sign-in');
     }
   }, [token]);
 

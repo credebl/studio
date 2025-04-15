@@ -8,8 +8,8 @@ interface SessionProps {
   children: ReactNode;
 }
 
-const sessionExcludedPaths = ['/'];
-const signInPath = '/';
+const sessionExcludedPaths = ['/auth/sign-in', '/auth/sign-up'];
+const signInPath = '/auth/sign-in';
 const dashboardPath = '/dashboard/overview';
 
 const SessionCheck: React.FC<SessionProps> = ({ children }) => {
