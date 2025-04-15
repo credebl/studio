@@ -255,14 +255,14 @@ export default function SignInViewPage() {
 
   return (
     <div className='relative flex h-screen w-full items-center justify-center bg-gradient-to-t from-yellow-100 to-white'>
-      <div className='relative z-10 w-full max-w-md rounded-xl border bg-white p-8 shadow-lg'>
+      <div className='relative z-10 w-full max-w-md rounded-xl bg-white p-8 shadow-lg'>
         <div className='mb-6 text-center'>
           <p className='text-muted-foreground text-sm'>
             Sign in to your account to continue
           </p>
         </div>
 
-        <div className='bg-muted mb-4 flex overflow-hidden rounded-md border text-sm font-medium'>
+        <div className='bg-muted mb-4 flex overflow-hidden rounded-md text-sm font-medium'>
           <Button
             type='button'
             variant='ghost'
