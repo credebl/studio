@@ -69,6 +69,7 @@
     "date-fns": "^4.1.0",
     "eslint": "8.48.0",
     "eslint-config-next": "15.1.0",
+    "formik": "^2.4.6",
     "input-otp": "^1.4.2",
     "kbar": "^0.1.0-beta.45",
     "lucide-react": "^0.476.0",
@@ -97,6 +98,7 @@
     "typescript": "5.7.2",
     "uuid": "^11.0.3",
     "vaul": "^1.1.2",
+    "yup": "^1.6.1",
     "zod": "^3.24.1",
     "zustand": "^5.0.2"
   },

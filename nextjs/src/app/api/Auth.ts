@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-var-requires */
 // import {axiosGet, axiosPost, axiosPut} from '../services/apiRequests'
 // import CryptoJS from "crypto-js"
@@ -7,7 +10,7 @@
 // import type { AddPassword } from '../components/Profile/interfaces'
 // import type { AstroCookies } from 'astro'
 import { apiRoutes } from "@/config/apiRoutes"
-import { axiosGet, axiosPost, axiosPut } from "@/services/apiRequests"
+import { axiosGet, axiosPost } from "@/services/apiRequests"
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const CryptoJS = require("crypto-js")
