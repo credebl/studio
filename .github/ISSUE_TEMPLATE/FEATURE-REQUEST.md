@@ -39,6 +39,6 @@ _Add any other context, references, mockups, or screenshots here._
 
 _List specific tasks or outcomes that define when this request is complete._
 
-- A new endpoint `/v1/...` is added
+- A new component/page/route (if applicable) 
 - Docs updated
 - Tests written and passing
