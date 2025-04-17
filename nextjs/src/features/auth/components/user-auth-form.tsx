@@ -157,90 +157,92 @@ export default function SignInViewPage() {
     }
   };
 
-  // const verifyAuthenticationMethod = async (
-  //   verifyAuthenticationObj: unknown,
-  //   userData: { userName: string }
-  // ): Promise<string | AxiosResponse> => {
-  //   try {
-  //     const res = verifyAuthentication(verifyAuthenticationObj, userData);
-  //     return await res;
-  //   } catch (error) {
-  //     setFidoLoader(false);
-  //     throw error;
-  //   }
-  // };
+	const verifyAuthenticationMethod = async (
+		verifyAuthenticationObj: any,
+		userData: { userName: string },
+	): Promise<string | AxiosResponse> => {
+		try {
+			console.log("🚀 ~ SignInViewPage ~ verifyAuthenticationObj:", verifyAuthenticationObj)
+			console.log("🚀 ~ SignInViewPage ~ userData:", userData)
+			const res = verifyAuthentication(verifyAuthenticationObj, userData);
+			return await res;
+		} catch (error) {
+			setFidoLoader(false);
+			throw error;
+		}
+	};
 
-  // const authenticateWithPasskey = async (email: string): Promise<void> => {
-  //   try {
-  //     setLoading(true);
-  //     setFidoLoader(true);
-  //     setFidoUserError('');
+  const authenticateWithPasskey = async (email: string): Promise<void> => {
+    try {
+      setLoading(true);
+      setFidoLoader(true);
+      setFidoUserError('');
 
-  //     const obj = {
-  //       userName: email?.trim()?.toLowerCase()
-  //     };
+      const obj = {
+        userName: email?.trim()?.toLowerCase()
+      };
 
-  //     const generateAuthenticationResponse: any =
-  //       await generateAuthenticationOption(obj);
-  //     const challengeId: string =
-  //       generateAuthenticationResponse?.data?.data?.challenge;
+      const generateAuthenticationResponse: any =
+        await generateAuthenticationOption(obj);
+      const challengeId: string =
+        generateAuthenticationResponse?.data?.data?.challenge;
 
-  //     if (generateAuthenticationResponse?.data?.error) {
-  //       setFidoUserError(generateAuthenticationResponse?.data?.error);
-  //       return;
-  //     }
+      if (generateAuthenticationResponse?.data?.error) {
+        setFidoUserError(generateAuthenticationResponse?.data?.error);
+        return;
+      }
 
-  //     const opts = generateAuthenticationResponse?.data?.data;
+      const opts = generateAuthenticationResponse?.data?.data;
 
-  //     const attResp = await startAuthentication(opts);
+      const attResp = await startAuthentication(opts);
 
-  //     const verifyAuthenticationObj = {
-  //       ...attResp,
-  //       challangeId: challengeId
-  //     };
+      const verifyAuthenticationObj = {
+        ...attResp,
+        challangeId: challengeId
+      };
 
-  //     const verificationResp = await verifyAuthenticationMethod(
-  //       verifyAuthenticationObj,
-  //       obj
-  //     );
-  //     const { data } = verificationResp as AxiosResponse;
+      const verificationResp = await verifyAuthenticationMethod(
+        verifyAuthenticationObj,
+        obj
+      );
+      const { data } = verificationResp as AxiosResponse;
 
-  //     if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-  //       const token = data?.data?.access_token;
-  //       const refreshToken = data?.data?.refresh_token;
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        const token = data?.data?.access_token;
+        const refreshToken = data?.data?.refresh_token;
 
-  //       dispatch(setToken(token));
-  //       dispatch(setRefreshToken(refreshToken));
+        dispatch(setToken(token));
+        dispatch(setRefreshToken(refreshToken));
 
-  //       const userRole = await getUserDetails(token);
+        const userRole = await getUserDetails(token);
 
-  //       if (!userRole?.role?.name) {
-  //         toast.error('Invalid user role');
-  //         return;
-  //       }
+        if (!userRole?.role?.name) {
+          toast.error('Invalid user role');
+          return;
+        }
 
-  //       route.push(
-  //         userRole?.role?.name === PlatformRoles.platformAdmin
-  //           ? '/dashboard/settings'
-  //           : '/dashboard/overview'
-  //       );
-  //     } else if (data?.error) {
-  //       setFidoUserError(data?.error);
-  //     } else {
-  //       setFidoUserError('Something went wrong during verification');
-  //     }
-  //   } catch (error) {
-  //     if (error instanceof DOMException) {
-  //       setFidoUserError('The operation either timed out or was not allowed.');
-  //     } else {
-  //       setFidoUserError('Authentication failed. Please try again.');
-  //       console.error('FIDO Authentication Error:', error);
-  //     }
-  //   } finally {
-  //     setFidoLoader(false);
-  //     setLoading(false);
-  //   }
-  // };
+        route.push(
+          userRole?.role?.name === PlatformRoles.platformAdmin
+            ? '/dashboard/settings'
+            : '/dashboard/overview'
+        );
+      } else if (data?.error) {
+        setFidoUserError(data?.error);
+      } else {
+        setFidoUserError('Something went wrong during verification');
+      }
+    } catch (error) {
+      if (error instanceof DOMException) {
+        setFidoUserError('The operation either timed out or was not allowed.');
+      } else {
+        setFidoUserError('Authentication failed. Please try again.');
+        console.error('FIDO Authentication Error:', error);
+      }
+    } finally {
+      setFidoLoader(false);
+      setLoading(false);
+    }
+  };
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -249,7 +251,7 @@ export default function SignInViewPage() {
       signInForm.handleSubmit(handleSignIn)();
     } else {
       const email = signInForm.getValues('email');
-      // authenticateWithPasskey(email);
+      authenticateWithPasskey(email);
     }
   };
 
