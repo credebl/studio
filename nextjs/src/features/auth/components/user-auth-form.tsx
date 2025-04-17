@@ -254,7 +254,7 @@ export default function SignInViewPage() {
   };
 
   return (
-    <div className='relative flex h-screen w-full items-center justify-center bg-gradient-to-t from-yellow-100 to-white'>
+    <div className='relative flex h-screen w-full items-center justify-center'>
       <div className='relative z-10 w-full max-w-md rounded-xl bg-white p-8 shadow-lg'>
         <div className='mb-6 text-center'>
           <p className='text-muted-foreground text-sm'>

@@ -57,13 +57,13 @@ export default function EmailVerificationForm({
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
         setShowEmailVerification({
-          message: 'Verification email sent. Please check your inbox.',
+          message: data?.message,
           isError: false,
           type: 'success'
         });
       } else {
         setShowEmailVerification({
-          message: data?.message || 'The verification link has already been sent to your email address.',
+          message: data?.message,
           isError: true,
           type: 'danger'
         });
@@ -128,52 +128,60 @@ export default function EmailVerificationForm({
       onSubmit={async (values) => {
         await handleVerifyEmail(values.email);
       }}
-      validateOnBlur
       validateOnChange
+      validateOnBlur
     >
-      {({ errors, touched, handleChange, handleBlur, values }) => (
-        <FormikForm>
-          {showEmailVerification.message && (
-            <Alert
-              variant={
-                showEmailVerification.type === 'success'
-                  ? 'default'
-                  : 'destructive'
-              }
-              className='mb-4'
-            >
-              <AlertDescription>
-                {showEmailVerification.message}
-              </AlertDescription>
-            </Alert>
-          )}
-          <div className='h-12'>
-            <Input
-              placeholder='Enter your email'
-              type='email'
-              name='email'
-              value={values.email}
-              onChange={(e) => {
-                handleChange(e);
-                setEmail(e.target.value);
-              }}
-              onBlur={handleBlur}
-            />
+      {({ errors, touched, handleChange, handleBlur, values }) => {
+        const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+          handleChange(e);
+          setEmail(e.target.value);
+        };
 
-            {touched.email && errors.email && (
-              <div className='text-destructive text-left'>{errors.email}</div>
+        return (
+          <FormikForm className='space-y-4'>
+            {showEmailVerification.message && (
+              <Alert
+                variant={
+                  showEmailVerification.type === 'success'
+                    ? 'default'
+                    : 'destructive'
+                }
+                className='mb-4'
+              >
+                <AlertDescription>
+                  {showEmailVerification.message}
+                </AlertDescription>
+              </Alert>
             )}
-          </div>
 
-          <Button
-            type='submit'
-            className='mt-6 w-full'
-            disabled={loading || verifyLoader}
-          >
-            {loading || verifyLoader ? 'Processing...' : 'Continue with email'}
-          </Button>
-        </FormikForm>
-      )}
+            <div className='h-12'>
+              <Input
+                placeholder='Enter your email'
+                type='email'
+                name='email'
+                value={values.email}
+                onChange={handleEmailChange}
+                onBlur={handleBlur}
+              />
+              {touched.email && errors.email && (
+                <div className='text-destructive mt-1 text-sm'>
+                  {errors.email}
+                </div>
+              )}
+            </div>
+
+            <Button
+              type='submit'
+              className='mt-6 w-full'
+              disabled={loading || verifyLoader}
+            >
+              {loading || verifyLoader
+                ? 'Processing...'
+                : 'Continue with email'}
+            </Button>
+          </FormikForm>
+        );
+      }}
     </Formik>
   );
 }

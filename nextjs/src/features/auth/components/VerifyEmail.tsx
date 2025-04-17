@@ -1,12 +1,12 @@
 'use client';
-
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { EmailVerifyData, verifyUserMail } from '@/app/api/Auth';
 import { apiStatusCodes } from '@/config/CommonConstant';
 import { validEmail } from '@/utils/TextTransform';
 import { Button } from '@/components/ui/button';
-import { useRouter } from 'next/navigation';
 import { AxiosResponse } from 'axios';
+import { CheckCircle, ArrowRight } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 
 export default function VerifyEmailPage() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -14,25 +14,35 @@ export default function VerifyEmailPage() {
   const [error, setError] = useState<boolean>(false);
   const [email, setEmail] = useState<string>('');
 
-  const router = useRouter();
+  const hasVerifiedRef = useRef(false);
 
   const verifyEmailSuccess = async (payload: EmailVerifyData) => {
-    const response = await verifyUserMail(payload);
-    const { data } = response as AxiosResponse;
+    try {
+      const response = await verifyUserMail(payload);
+      const { data } = response as AxiosResponse;
 
-    if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-      setError(false);
-      setMessage(data?.message);
-    } else {
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        setError(false);
+        setMessage(data?.message);
+      } else {
+        setError(true);
+        setMessage(data?.message || 'Verification failed. Please try again.');
+      }
+    } catch (err) {
       setError(true);
-      setMessage(response as string);
+      setMessage(
+        'An error occurred during verification. Please try again later.'
+      );
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   useEffect(() => {
-    const queryParameters = new URLSearchParams(window?.location?.search);
+    if (hasVerifiedRef.current) return;
+    hasVerifiedRef.current = true;
+
+    const queryParameters = new URLSearchParams(window.location.search);
     const payload: EmailVerifyData = {
       verificationCode: queryParameters.get('verificationCode') || '',
       email: validEmail(queryParameters.get('email') || '')
@@ -42,19 +52,38 @@ export default function VerifyEmailPage() {
   }, []);
 
   const handleRedirect = () => {
-    router.push(`/auth/sign-up?email=${email}`);
+    window.location.href = `/auth/sign-up?email=${email}`;
   };
 
   return (
-    <div className='flex min-h-screen items-center justify-center p-6'>
-      <div className='text-center'>
-        <h1>Congratulations!</h1>
-        <h1 className='mb-4 text-3xl font-bold'>Email verified successfully</h1>
-        <p className='mb-6'>{message}</p>
-        <Button onClick={handleRedirect} className='bg-yellow-500 text-black'>
-          Go to Sign Up
-        </Button>
-      </div>
+    <div className='flex min-h-screen items-center justify-center bg-gradient-to-t from-yellow-100 to-white'>
+      <Card className='animate-fade-in rounded-xlp-0 w-full max-w-md shadow-md'>
+        <CardContent className='p-8'>
+          <div className='text-center'>
+            <div className='space-y-6'>
+              <div className='flex justify-center'>
+                <div className='inline-block rounded-full p-3'>
+                  <CheckCircle
+                    className='h-16 w-16 text-green-500'
+                    strokeWidth={1.5}
+                  />
+                </div>
+              </div>
+              <h1 className='text-2xl font-bold'>Congratulations!</h1>
+              <h2 className='text-xl text-gray-700'>
+                Email verified successfully
+              </h2>
+              <Button
+                onClick={handleRedirect}
+                className='flex w-full items-center justify-center gap-2 rounded-md px-5 py-2.5 font-medium'
+              >
+                Continue to Sign Up
+                <ArrowRight className='h-4 w-4' />
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

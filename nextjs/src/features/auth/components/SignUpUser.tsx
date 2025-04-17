@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import EmailVerificationForm from './EmailVerificationForm';
 import UserInfoForm from './UserInfoForm';
 import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
 
 export default function SignUpUser() {
   const [step, setStep] = useState(1);
@@ -10,7 +11,17 @@ export default function SignUpUser() {
 
   return (
     <div className='flex min-h-screen flex-col items-center justify-center'>
-      <div className='w-[480px] rounded-xl border border-gray-200 bg-white p-6 shadow-md'>
+      <div className='relative w-[480px] rounded-xl border border-gray-200 bg-white p-6 shadow-md'>
+        {/* {step === 2 && (
+          <button
+            onClick={() => setStep(1)}
+            className='absolute top-6 left-6 flex items-center gap-2 text-gray-600 hover:text-gray-800'
+          >
+            <ArrowLeft className='h-5 w-5' />
+            Back
+          </button>
+        )} */}
+
         <h2 className='mb-2 text-center text-xl font-semibold'>
           Create an account
         </h2>
@@ -50,7 +61,7 @@ export default function SignUpUser() {
         <div className='mt-4 text-center text-sm'>
           Already have an account?{' '}
           <Link href='/auth/sign-in'>
-            <span className='text-yellow-600 hover:underline'>Sign in</span>
+            <span className='hover:underline'>Sign in</span>
           </Link>
         </div>
       </div>

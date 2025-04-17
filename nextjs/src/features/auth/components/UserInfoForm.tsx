@@ -3,12 +3,12 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Lock, KeyRound, CheckCircle, ArrowLeft } from 'lucide-react';
+import { Lock, KeyRound, CheckCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { passwordEncryption, addPasswordDetails } from '@/app/api/Auth';
 import { apiStatusCodes } from '@/config/CommonConstant';
 import { AxiosResponse } from 'axios';
-import { Formik, Form as FormikForm, Field } from 'formik';
+import { Formik, Form as FormikForm } from 'formik';
 import * as Yup from 'yup';
 
 interface StepUserInfoProps {
@@ -199,20 +199,10 @@ export default function UserInfoForm({ email, goBack }: StepUserInfoProps) {
             <div className='text-center text-destructive'>{serverError}</div>
           )}
 
-          <div className='flex justify-between gap-2'>
-            <Button
-              type='button'
-              variant='ghost'
-              onClick={goBack}
-              className='flex items-center gap-1'
-            >
-              <ArrowLeft className='h-4 w-4' />
-              Back
-            </Button>
-
+          <div className='flex justify-center gap-2'>
+        
             <Button
               type='submit'
-              className='bg-yellow-500 text-black hover:bg-yellow-600'
               disabled={loading}
             >
               {loading ? 'Creating account...' : 'Create account'}

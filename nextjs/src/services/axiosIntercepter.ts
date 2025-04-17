@@ -1,3 +1,5 @@
+'use client'
+
 import { apiRoutes } from '@/config/apiRoutes';
 import axios from 'axios';
 import { store } from '@/lib/store';

@@ -37,7 +37,7 @@ export default function SignUpViewPage() {
         </footer>
       </div>
 
-      <div className='relative flex h-screen w-full items-center justify-center bg-gradient-to-b from-yellow-100 to-white'>
+      <div className='relative flex h-screen w-full items-center justify-center bg-gradient-to-t from-yellow-100 to-white'>
         <SignUpUser />
       </div>
     </div>
