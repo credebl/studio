@@ -10,7 +10,7 @@
 // import type { AddPassword } from '../components/Profile/interfaces'
 // import type { AstroCookies } from 'astro'
 import { apiRoutes } from "@/config/apiRoutes"
-import { axiosGet, axiosPost } from "@/services/apiRequests"
+import { axiosGet, axiosPost, axiosPut } from "@/services/apiRequests"
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const CryptoJS = require("crypto-js")
@@ -137,31 +137,29 @@ export const getUserProfile = async(accessToken: string) => {
     }
 }    
 
-// export const updateUserProfile = async(data: object ) => {
-//     const url = apiRoutes.users.update
-//     const payload = data
-//     const token = await getFromLocalStorage(storageKeys.TOKEN)
+export const updateUserProfile = async(data: object ) => {
+    const url = apiRoutes.users.update
+    const payload = data
 
-//     const config = {
-//         headers: {
-//             'Content-Type': 'application/json',
-//             Authorization: `Bearer ${token}`
-//         }
-//     }
-//     const axiosPayload = {
-//         url,
-//         payload,
-//         config
-//     }
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    }
+    const axiosPayload = {
+        url,
+        payload,
+        config
+    }
 
-//     try {
-//         return await axiosPut(axiosPayload);
-//     }
-//     catch (error) {
-//         const err = error as Error
-//         return err?.message
-//     }
-// }  
+    try {
+        return await axiosPut(axiosPayload);
+    }
+    catch (error) {
+        const err = error as Error
+        return err?.message
+    }
+}  
 
 export const verifyUserMail = async(payload: EmailVerifyData ) => {
     const details ={

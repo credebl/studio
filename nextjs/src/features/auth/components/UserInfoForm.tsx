@@ -124,7 +124,9 @@ export default function UserInfoForm({ email, goBack }: StepUserInfoProps) {
                 onBlur={handleBlur}
               />
               {errors.firstName && touched.firstName && (
-                <p className='mt-1 text-sm text-destructive'>{errors.firstName}</p>
+                <p className='text-destructive mt-1 text-sm'>
+                  {errors.firstName}
+                </p>
               )}
             </div>
             <div className='flex-1'>
@@ -136,7 +138,9 @@ export default function UserInfoForm({ email, goBack }: StepUserInfoProps) {
                 onBlur={handleBlur}
               />
               {errors.lastName && touched.lastName && (
-                <p className='mt-1 text-sm text-destructive'>{errors.lastName}</p>
+                <p className='text-destructive mt-1 text-sm'>
+                  {errors.lastName}
+                </p>
               )}
             </div>
           </div>
@@ -165,46 +169,51 @@ export default function UserInfoForm({ email, goBack }: StepUserInfoProps) {
             </Button>
           </div>
 
-          <div>
-            <Input
-              type='password'
-              placeholder='Create password'
-              name='password'
-              value={values.password}
-              onChange={handleChange}
-              onBlur={handleBlur}
-            />
-            {errors.password && touched.password && (
-              <p className='mt-1 text-sm text-destructive'>{errors.password}</p>
-            )}
-          </div>
+          {usePassword ? (
+            <>
+              <div>
+                <Input
+                  type='password'
+                  placeholder='Create password'
+                  name='password'
+                  value={values.password}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+                {errors.password && touched.password && (
+                  <p className='text-destructive mt-1 text-sm'>
+                    {errors.password}
+                  </p>
+                )}
+              </div>
 
-          <div>
-            <Input
-              type='password'
-              placeholder='Confirm password'
-              name='confirmPassword'
-              value={values.confirmPassword}
-              onChange={handleChange}
-              onBlur={handleBlur}
-            />
-            {errors.confirmPassword && touched.confirmPassword && (
-              <p className='mt-1 text-sm text-destructive'>
-                {errors.confirmPassword}
-              </p>
-            )}
-          </div>
+              <div>
+                <Input
+                  type='password'
+                  placeholder='Confirm password'
+                  name='confirmPassword'
+                  value={values.confirmPassword}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+                {errors.confirmPassword && touched.confirmPassword && (
+                  <p className='text-destructive mt-1 text-sm'>
+                    {errors.confirmPassword}
+                  </p>
+                )}
+              </div>
+            </>
+          ) : (
+            <div className='text-muted-foreground text-center'>
+            </div>
+          )}
 
           {serverError && (
-            <div className='text-center text-destructive'>{serverError}</div>
+            <div className='text-destructive text-center'>{serverError}</div>
           )}
 
           <div className='flex justify-center gap-2'>
-        
-            <Button
-              type='submit'
-              disabled={loading}
-            >
+            <Button type='submit' disabled={loading}>
               {loading ? 'Creating account...' : 'Create account'}
             </Button>
           </div>
