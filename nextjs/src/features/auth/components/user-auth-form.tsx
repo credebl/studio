@@ -30,7 +30,6 @@ import { useDispatch } from 'react-redux';
 import { setRefreshToken, setToken } from '@/lib/authSlice';
 import { AxiosResponse } from 'axios';
 import { setProfile } from '@/lib/profileSlice';
-import { setOrgId } from '@/lib/orgSlice';
 import {
   generateAuthenticationOption,
   verifyAuthentication
@@ -100,15 +99,16 @@ export default function SignInViewPage() {
         );
         const orgId = orgWithValidId?.orgId ?? null;
 
-        dispatch(setOrgId(orgId));
         return {
           role: role?.orgRole ?? '',
           orgId
         };
       } else {
+        // eslint-disable-next-line no-console
         console.error('No roles found for the user');
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error fetching user details', error);
     }
   };
@@ -149,28 +149,25 @@ export default function SignInViewPage() {
         dispatch(setToken(token));
 
         getUserDetails(token);
-        route.push('/dashboard/overview');
+        route.push('/dashboard');
       }
     } catch (error) {
-      console.error('Error signing in', error);
       toast.error('Error signing in');
     }
   };
 
-	const verifyAuthenticationMethod = async (
-		verifyAuthenticationObj: any,
-		userData: { userName: string },
-	): Promise<string | AxiosResponse> => {
-		try {
-			console.log("🚀 ~ SignInViewPage ~ verifyAuthenticationObj:", verifyAuthenticationObj)
-			console.log("🚀 ~ SignInViewPage ~ userData:", userData)
-			const res = verifyAuthentication(verifyAuthenticationObj, userData);
-			return await res;
-		} catch (error) {
-			setFidoLoader(false);
-			throw error;
-		}
-	};
+  const verifyAuthenticationMethod = async (
+    verifyAuthenticationObj: any,
+    userData: { userName: string }
+  ): Promise<string | AxiosResponse> => {
+    try {
+      const res = verifyAuthentication(verifyAuthenticationObj, userData);
+      return await res;
+    } catch (error) {
+      setFidoLoader(false);
+      throw error;
+    }
+  };
 
   const authenticateWithPasskey = async (email: string): Promise<void> => {
     try {
@@ -224,7 +221,7 @@ export default function SignInViewPage() {
         route.push(
           userRole?.role?.name === PlatformRoles.platformAdmin
             ? '/dashboard/settings'
-            : '/dashboard/overview'
+            : '/dashboard'
         );
       } else if (data?.error) {
         setFidoUserError(data?.error);
@@ -236,6 +233,7 @@ export default function SignInViewPage() {
         setFidoUserError('The operation either timed out or was not allowed.');
       } else {
         setFidoUserError('Authentication failed. Please try again.');
+        // eslint-disable-next-line no-console
         console.error('FIDO Authentication Error:', error);
       }
     } finally {

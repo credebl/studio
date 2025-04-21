@@ -19,7 +19,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { getOrganizations } from '@/app/api/organization';
-import { Organization } from '@/features/overview/type/organization';
+import { Organization } from '@/features/dashboard/type/organization';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const OrganizationCardList = () => {
@@ -60,12 +60,7 @@ const OrganizationCardList = () => {
         <div className='space-y-1'>
           <div className='flex items-center gap-x-2'>
             <CardTitle>Organizations</CardTitle>
-            <Badge
-            // variant='secondary'
-            // className='bg-amber-100 text-amber-800 hover:bg-amber-100'
-            >
-              {orgList.length}
-            </Badge>
+            <Badge>{orgList.length}</Badge>
           </div>
           <CardDescription>Manage your organizations</CardDescription>
         </div>
@@ -166,12 +161,7 @@ const OrganizationCardList = () => {
       </CardContent>
 
       <CardFooter className='mt-auto justify-end pt-2'>
-        <Button
-        // variant='ghost'
-        // className='text-amber-600 hover:bg-amber-50 hover:text-amber-700'
-        >
-          View all
-        </Button>
+        <Button>View all</Button>
       </CardFooter>
     </Card>
   );

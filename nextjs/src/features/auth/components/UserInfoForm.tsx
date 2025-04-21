@@ -5,18 +5,32 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Lock, KeyRound, CheckCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { passwordEncryption, addPasswordDetails, getUserProfile } from '@/app/api/Auth';
+import {
+  passwordEncryption,
+  addPasswordDetails,
+  getUserProfile
+} from '@/app/api/Auth';
 import { apiStatusCodes, passwordRegex } from '@/config/CommonConstant';
 import { AxiosError, AxiosResponse } from 'axios';
 import { Formik, Form as FormikForm } from 'formik';
 import * as Yup from 'yup';
 import { useAppDispatch } from '@/lib/hooks';
-import { addDeviceDetails, generateRegistrationOption, getUserDeviceDetails, verifyAuthentication, verifyRegistration } from '@/app/api/Fido';
+import {
+  addDeviceDetails,
+  generateRegistrationOption,
+  getUserDeviceDetails,
+  verifyAuthentication,
+  verifyRegistration
+} from '@/app/api/Fido';
 import { setProfile } from '@/lib/profileSlice';
 import { setOrgId } from '@/lib/orgSlice';
 
 import { startRegistration } from '@simplewebauthn/browser';
-import { IdeviceBody, IDeviceData, VerifyRegistrationObjInterface } from '@/components/profile/interfaces';
+import {
+  IdeviceBody,
+  IDeviceData,
+  VerifyRegistrationObjInterface
+} from '@/components/profile/interfaces';
 
 interface StepUserInfoProps {
   email: string;
@@ -24,9 +38,8 @@ interface StepUserInfoProps {
 }
 
 export interface RegistrationOptionInterface {
-  userName: string,
-  deviceFlag: boolean
-
+  userName: string;
+  deviceFlag: boolean;
 }
 
 enum PlatformRoles {
@@ -35,7 +48,7 @@ enum PlatformRoles {
 
 export enum Devices {
   Linux = 'linux'
-  }
+}
 
 const validationSchema = Yup.object().shape({
   firstName: Yup.string()
@@ -73,18 +86,18 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
   const [deviceList, setDeviceList] = useState<IDeviceData[]>([]);
 
   const [usePassword, setUsePassword] = useState(true);
-	const [disableFlag, setDisableFlag] = useState<boolean>(false);
-	const [addfailure, setAddFailure] = useState<string | null>(null);
+  const [disableFlag, setDisableFlag] = useState<boolean>(false);
+  const [addfailure, setAddFailure] = useState<string | null>(null);
 
   const [addSuccess, setAddSuccess] = useState<string | null>(null);
-  const [erroMsg, setErrMsg] = useState<string | null>(null)
+  const [erroMsg, setErrMsg] = useState<string | null>(null);
 
   const router = useRouter();
   const [fidoLoader, setFidoLoader] = useState<boolean>(false);
   const [fidoUserError, setFidoUserError] = useState('');
   const [fidoError, setFidoError] = useState('');
 
-const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
   const onSubmit = async (values: {
     firstName: string;
     lastName: string;
@@ -141,15 +154,14 @@ const dispatch = useAppDispatch();
   };
 
   const addDevice = async (): Promise<void> => {
-    console.log('addDevice');
-		try {
-			if(deviceList?.length > 0){
-				registerWithPasskey(true)
-			}
-		} catch (error) {
-			setFidoLoader(false);
-		}
-	};
+    try {
+      if (deviceList?.length > 0) {
+        registerWithPasskey(true);
+      }
+    } catch (error) {
+      setFidoLoader(false);
+    }
+  };
 
   const getUserDetails = async (access_token: string) => {
     try {
@@ -200,180 +212,177 @@ const dispatch = useAppDispatch();
   const showFidoError = (error: unknown): void => {
     const err = error as AxiosError;
     if (
-        err.message.includes('The operation either timed out or was not allowed')
+      err.message.includes('The operation either timed out or was not allowed')
     ) {
-        const [errorMsg] = err.message.split('.');
-        setFidoError(errorMsg);
+      const [errorMsg] = err.message.split('.');
+      setFidoError(errorMsg);
     } else {
-        setFidoError(err.message);
+      setFidoError(err.message);
     }
-};
-
+  };
 
   const registerWithPasskey = async (flag: boolean): Promise<void> => {
     try {
-      
       // const userEmail = await getFromLocalStorage(storageKeys.USER_EMAIL)
       const RegistrationOption: RegistrationOptionInterface = {
         userName: email,
         deviceFlag: flag
-      }
-      const generateRegistrationResponse = await generateRegistrationOption(RegistrationOption)
-      console.log("inside register with paskey function");
-        const { data } = generateRegistrationResponse as AxiosResponse
-        console.log("🚀 ~ registerWithPasskey ~ data5555555555:", data)
-        if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-            const opts = data?.data
-            const challangeId = opts?.challenge
-            console.log("🚀 ~ registerWithPasskey ~ challangeId:", challangeId)
+      };
+      const generateRegistrationResponse =
+        await generateRegistrationOption(RegistrationOption);
+      const { data } = generateRegistrationResponse as AxiosResponse;
+      if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+        const opts = data?.data;
+        const challangeId = opts?.challenge;
 
-            if (opts) {
-                opts.authenticatorSelection = {
-                    residentKey: "preferred",
-                    requireResidentKey: false,
-                    userVerification: "preferred"
-                }
-                console.log("🚀 ~ registerWithPasskey ~   opts.authenticatorSelection:",   opts.authenticatorSelection)
-            }
-            setLoading(false)
-            console.log("🚀 ~ registerWithPasskey ~ opts:", opts)
-            
-            const attResp = await startRegistration(opts)
-            console.log("🚀 ~ registerWithPasskey ~ attResp:", attResp)
-            const verifyRegistrationObj: VerifyRegistrationObjInterface = {
-                ...attResp,
-                challangeId
-            }
-            console.log("🚀 ~ registerWithPasskey ~ verifyRegistrationObj:", verifyRegistrationObj)
-
-            await verifyRegistrationMethod(verifyRegistrationObj, email);
-        } else {
-            setErrMsg(generateRegistrationResponse as string)
+        if (opts) {
+          opts.authenticatorSelection = {
+            residentKey: 'preferred',
+            requireResidentKey: false,
+            userVerification: 'preferred'
+          };
         }
+        setLoading(false);
+
+        const attResp = await startRegistration(opts);
+        const verifyRegistrationObj: VerifyRegistrationObjInterface = {
+          ...attResp,
+          challangeId
+        };
+
+        await verifyRegistrationMethod(verifyRegistrationObj, email);
+      } else {
+        setErrMsg(generateRegistrationResponse as string);
+      }
     } catch (error) {
-        showFidoError(error)
+      showFidoError(error);
     }
-}
+  };
 
   // const registerWithPasskey = async (flag: boolean): Promise<void> => {
-	// 	try {
-	// 		const RegistrationOption: RegistrationOptionInterface = {
-	// 			userName: email,
-	// 			deviceFlag: flag,
-	// 		};
-	// 		// Generate Registration Option
-	// 		const generateRegistrationResponse = await generateRegistrationOption(
-	// 			RegistrationOption,
-	// 		);
-	// 		const { data } = generateRegistrationResponse as AxiosResponse;
-	// 		const opts = data?.data;
-	// 		const challangeId = data?.data?.challenge;
-	// 		if (opts) {
-	// 			opts.authenticatorSelection = {
-	// 				residentKey: 'preferred',
-	// 				requireResidentKey: false,
-	// 				userVerification: 'preferred',
-	// 			};
-	// 		}
-	// 		const attResp = await startRegistration(opts);
+  // 	try {
+  // 		const RegistrationOption: RegistrationOptionInterface = {
+  // 			userName: email,
+  // 			deviceFlag: flag,
+  // 		};
+  // 		// Generate Registration Option
+  // 		const generateRegistrationResponse = await generateRegistrationOption(
+  // 			RegistrationOption,
+  // 		);
+  // 		const { data } = generateRegistrationResponse as AxiosResponse;
+  // 		const opts = data?.data;
+  // 		const challangeId = data?.data?.challenge;
+  // 		if (opts) {
+  // 			opts.authenticatorSelection = {
+  // 				residentKey: 'preferred',
+  // 				requireResidentKey: false,
+  // 				userVerification: 'preferred',
+  // 			};
+  // 		}
+  // 		const attResp = await startRegistration(opts);
 
-	// 		const verifyRegistrationObj = {
-	// 			...attResp,
-	// 			challangeId,
-	// 		};
-	// 		await verifyRegistrationMethod(verifyRegistrationObj, email);
-	// 	} catch (error) {
-	// 	}
-	// };
+  // 		const verifyRegistrationObj = {
+  // 			...attResp,
+  // 			challangeId,
+  // 		};
+  // 		await verifyRegistrationMethod(verifyRegistrationObj, email);
+  // 	} catch (error) {
+  // 	}
+  // };
 
   let credentialID = '';
-    const verifyRegistrationMethod = async (verifyRegistrationObj: VerifyRegistrationObjInterface, OrgUserEmail: string) => {
-        try {
-            const verificationRegisterResp = await verifyRegistration(verifyRegistrationObj, OrgUserEmail)
-            const { data } = verificationRegisterResp as AxiosResponse
-            credentialID = encodeURIComponent(data?.data?.newDevice?.credentialID)
-            if (data?.data?.verified) {
-                let platformDeviceName = ''
+  const verifyRegistrationMethod = async (
+    verifyRegistrationObj: VerifyRegistrationObjInterface,
+    OrgUserEmail: string
+  ) => {
+    try {
+      const verificationRegisterResp = await verifyRegistration(
+        verifyRegistrationObj,
+        OrgUserEmail
+      );
+      const { data } = verificationRegisterResp as AxiosResponse;
+      credentialID = encodeURIComponent(data?.data?.newDevice?.credentialID);
+      if (data?.data?.verified) {
+        let platformDeviceName = '';
 
-                if (verifyRegistrationObj?.authenticatorAttachment === "cross-platform") {
-                    platformDeviceName = 'Passkey'
-                } else {
-                    platformDeviceName = navigator.platform
-                }
-
-                const deviceBody: IdeviceBody = {
-                    userName: OrgUserEmail,
-                    credentialId: credentialID,
-                    deviceFriendlyName: platformDeviceName
-                }
-                await addDeviceDetailsMethod(deviceBody)
-            }
-        } catch (error) {
-            showFidoError(error)
+        if (
+          verifyRegistrationObj?.authenticatorAttachment === 'cross-platform'
+        ) {
+          platformDeviceName = 'Passkey';
+        } else {
+          platformDeviceName = navigator.platform;
         }
-    }
 
-
-    const addDeviceDetailsMethod = async (deviceBody: IdeviceBody) => {
-      console.log("add API called");
-      
-      try {
-          const deviceDetailsResp = await addDeviceDetails(deviceBody)
-          const { data } = deviceDetailsResp as AxiosResponse
-          if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-      console.log("a2200000000000");
-
-          router.push('/auth/sign-in')         
-          } 
-          setTimeout(() => {
-              setAddSuccess('')
-              setAddFailure('')
-          });
-      } catch (error) {
-          showFidoError(error)
+        const deviceBody: IdeviceBody = {
+          userName: OrgUserEmail,
+          credentialId: credentialID,
+          deviceFriendlyName: platformDeviceName
+        };
+        await addDeviceDetailsMethod(deviceBody);
       }
-  }
-	//userDeviceDetails on page reload
-	const userDeviceDetails = async (): Promise<void> => {
-		try {
-			setFidoLoader(true);
+    } catch (error) {
+      showFidoError(error);
+    }
+  };
 
-			const userDeviceDetailsResp = await getUserDeviceDetails(email);
-			const { data } = userDeviceDetailsResp as AxiosResponse;
-			setFidoLoader(false);
-			if (userDeviceDetailsResp) {
-				const deviceDetails =
-					Object.keys(data)?.length > 0
-						? userDeviceDetailsResp?.data?.data.map((data: { lastChangedDateTime: any; }) => {
-								data.lastChangedDateTime = data.lastChangedDateTime
-									? data.lastChangedDateTime
-									: '-';
-								return data;
-						  })
-						: [];
-				if (data?.data?.length === 1) {
-					setDisableFlag(true);
-				} else {
-					setDisableFlag(false);
-				}
-				setDeviceList(deviceDetails);
-			}
-		} catch (error) {
-			setAddFailure('Error while fetching the device details');
-			setFidoLoader(false);
-		}
-	};
-	useEffect(() => {
-		// if (email) {
-			userDeviceDetails();
-		// } else {
-		// 	setProfile();
-		// }
-		const platform = navigator.platform.toLowerCase();
-        if (platform.includes(Devices.Linux)) {
-            setIsDevice(true);
+  const addDeviceDetailsMethod = async (deviceBody: IdeviceBody) => {
+    try {
+      const deviceDetailsResp = await addDeviceDetails(deviceBody);
+      const { data } = deviceDetailsResp as AxiosResponse;
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        router.push('/auth/sign-in');
+      }
+      setTimeout(() => {
+        setAddSuccess('');
+        setAddFailure('');
+      });
+    } catch (error) {
+      showFidoError(error);
+    }
+  };
+  //userDeviceDetails on page reload
+  const userDeviceDetails = async (): Promise<void> => {
+    try {
+      setFidoLoader(true);
+
+      const userDeviceDetailsResp = await getUserDeviceDetails(email);
+      const { data } = userDeviceDetailsResp as AxiosResponse;
+      setFidoLoader(false);
+      if (userDeviceDetailsResp) {
+        const deviceDetails =
+          Object.keys(data)?.length > 0
+            ? userDeviceDetailsResp?.data?.data.map(
+                (data: { lastChangedDateTime: any }) => {
+                  data.lastChangedDateTime = data.lastChangedDateTime
+                    ? data.lastChangedDateTime
+                    : '-';
+                  return data;
+                }
+              )
+            : [];
+        if (data?.data?.length === 1) {
+          setDisableFlag(true);
+        } else {
+          setDisableFlag(false);
         }
-	}, [email]);
+        setDeviceList(deviceDetails);
+      }
+    } catch (error) {
+      setAddFailure('Error while fetching the device details');
+      setFidoLoader(false);
+    }
+  };
+  useEffect(() => {
+    // if (email) {
+    userDeviceDetails();
+    // } else {
+    // 	setProfile();
+    // }
+    const platform = navigator.platform.toLowerCase();
+    if (platform.includes(Devices.Linux)) {
+      setIsDevice(true);
+    }
+  }, [email]);
 
   return (
     <Formik
@@ -457,20 +466,20 @@ const dispatch = useAppDispatch();
               Password
             </Button>
 
-              <Button
-                type='button'
-                className={`flex-1 rounded-none ${
-                  !usePassword
-                    ? 'bg-[var(--color-bg-button-selected)] text-[var(--color-text-button-selected)]'
-                    : 'bg-[var(--color-bg-button-unselected)] text-[var(--color-text-button-unselected)]'
-                }`}
-                onClick={() => {
-                  registerWithPasskey(true)   
+            <Button
+              type='button'
+              className={`flex-1 rounded-none ${
+                !usePassword
+                  ? 'bg-[var(--color-bg-button-selected)] text-[var(--color-text-button-selected)]'
+                  : 'bg-[var(--color-bg-button-unselected)] text-[var(--color-text-button-unselected)]'
+              }`}
+              onClick={() => {
+                registerWithPasskey(true);
               }}
-              >
-                <KeyRound className='mr-2 h-4 w-4' />
-                Passkey
-              </Button>
+            >
+              <KeyRound className='mr-2 h-4 w-4' />
+              Passkey
+            </Button>
           </div>
 
           {usePassword ? (
@@ -508,8 +517,7 @@ const dispatch = useAppDispatch();
               </div>
             </>
           ) : (
-            <div className='text-muted-foreground text-center'>
-            </div>
+            <div className='text-muted-foreground text-center'></div>
           )}
 
           {serverError && (

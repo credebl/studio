@@ -28,7 +28,7 @@ import { OrgSwitcher } from '../org-switcher';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useEffect, useState } from 'react';
 import { getOrganizations } from '@/app/api/organization';
-import { useAppDispatch } from '@/lib/hooks';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { setOrgId } from '@/lib/orgSlice';
 
 // export const company = {
@@ -48,6 +48,7 @@ export default function AppSidebar() {
   const pathname = usePathname();
   // const { isOpen } = useMediaQuery();
   const dispatch = useAppDispatch();
+  const token = useAppSelector((state) => state.auth.token);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
   const [searchTerm] = useState('');
@@ -70,6 +71,7 @@ export default function AppSidebar() {
           const orgs = response.data.data.organizations;
           setOrgList(orgs);
           setSelectedOrg(orgs[0]);
+          dispatch(setOrgId(orgs[0]?.id));
         } else {
           setOrgList([]);
         }
@@ -104,10 +106,9 @@ export default function AppSidebar() {
     <Sidebar collapsible='icon'>
       <SidebarHeader>
         <OrgSwitcher
-          // tenants={tenants}
           tenants={orgList.map((org) => ({
             id: org.id,
-            name: org.name,
+            name: org.name
           }))}
           defaultTenant={activeTenant}
           onTenantSwitch={handleSwitchTenant}

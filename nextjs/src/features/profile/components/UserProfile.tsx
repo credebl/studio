@@ -28,6 +28,7 @@ export default function UserProfile() {
           setPrePopulatedUserProfile(response.data.data);
         }
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error('Error fetching user profile:', error);
       }
     }

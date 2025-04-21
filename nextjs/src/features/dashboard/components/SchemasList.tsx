@@ -15,6 +15,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { getAllSchemasByOrgId } from '@/app/api/schema';
 import { Calendar, Plus } from 'lucide-react';
 import { useAppSelector } from '@/lib/hooks';
+import Link from 'next/link';
 
 const SchemasList = () => {
   const [loading, setLoading] = useState(true);
@@ -52,8 +53,10 @@ const SchemasList = () => {
   };
 
   useEffect(() => {
-    fetchSchemas();
-  }, [currentPage, pageSize, searchTerm]);
+    if (orgId) {
+      fetchSchemas();
+    }
+  }, [currentPage, pageSize, orgId]);
 
   return (
     <Card className='flex h-full flex-col'>
@@ -62,12 +65,7 @@ const SchemasList = () => {
           <div className='flex items-center justify-between'>
             <div className='flex items-center gap-2'>
               <CardTitle>Schemas</CardTitle>
-              <Badge
-                // variant='secondary'
-                // className='bg-amber-100 text-amber-800 hover:bg-amber-100'
-              >
-                {schemas.length}
-              </Badge>
+              <Badge>{schemas.length}</Badge>
             </div>
             <Button>
               <Plus className='mr-2 h-4 w-4' /> New Schemas
@@ -117,12 +115,7 @@ const SchemasList = () => {
       </CardContent>
 
       <CardFooter className='mt-auto justify-end pt-2'>
-        <Button
-          // variant='ghost'
-          // className='text-amber-600 hover:bg-amber-50 hover:text-amber-700'
-        >
-          View all
-        </Button>
+        <Link href='#'>View all</Link>
       </CardFooter>
     </Card>
   );

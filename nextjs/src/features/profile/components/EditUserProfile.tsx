@@ -162,12 +162,10 @@ export default function EditUserProfile({
                 value={formik.values.firstName}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                className='w-full rounded-md border p-2'
+                className='w-full rounded-md p-2'
               />
               {formik.errors.firstName && formik.touched.firstName && (
-                <div className='mt-1 text-sm text-red-500'>
-                  {formik.errors.firstName}
-                </div>
+                <div className='mt-1 text-sm'>{formik.errors.firstName}</div>
               )}
             </div>
 
@@ -181,12 +179,10 @@ export default function EditUserProfile({
                 value={formik.values.lastName}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                className='w-full rounded-md border p-2'
+                className='w-full rounded-md p-2'
               />
               {formik.errors.lastName && formik.touched.lastName && (
-                <div className='mt-1 text-sm text-red-500'>
-                  {formik.errors.lastName}
-                </div>
+                <div className='mt-1 text-sm'>{formik.errors.lastName}</div>
               )}
             </div>
 
@@ -222,11 +218,9 @@ export default function EditUserProfile({
                     type='file'
                     accept='image/*'
                     onChange={handleImageChange}
-                    className='file:bg-primary hover:file:bg-primary-dark text-sm text-gray-500 file:mr-4 file:rounded-md file:border-0 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white'
+                    className='file:bg-primary hover:file:bg-primary-dark text-sm file:mr-4 file:rounded-md file:px-4 file:py-2 file:text-sm file:font-semibold'
                   />
-                  {imgError && (
-                    <div className='text-sm text-red-500'>{imgError}</div>
-                  )}
+                  {imgError && <div className='text-sm'>{imgError}</div>}
                 </div>
               </div>
             </div>
@@ -239,9 +233,7 @@ export default function EditUserProfile({
               >
                 Cancel
               </Button>
-              <Button type='submit'>
-                Save Changes
-              </Button>
+              <Button type='submit'>Save Changes</Button>
             </div>
           </Form>
         )}

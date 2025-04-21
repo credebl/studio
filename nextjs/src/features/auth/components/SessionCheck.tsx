@@ -10,7 +10,7 @@ interface SessionProps {
 
 const sessionExcludedPaths = ['/auth/sign-in', '/auth/sign-up','/auth/verify-email-success'];
 const signInPath = '/auth/sign-in';
-const dashboardPath = '/dashboard/overview';
+const dashboardPath = '/dashboard';
 
 const SessionCheck: React.FC<SessionProps> = ({ children }) => {
   const router = useRouter();

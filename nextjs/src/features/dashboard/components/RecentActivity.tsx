@@ -105,12 +105,7 @@ const RecentActivity = () => {
         )}
       </CardContent>
       <CardFooter className='mt-auto justify-end pt-2'>
-        <Button
-        // variant='ghost'
-        // className='ml-auto text-amber-600 hover:bg-amber-50 hover:text-amber-700'
-        >
-          View all
-        </Button>
+        <Button>View all</Button>
       </CardFooter>
     </Card>
   );

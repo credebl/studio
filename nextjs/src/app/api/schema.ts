@@ -1,5 +1,5 @@
 import { axiosGet, axiosPost } from '@/services/apiRequests';
-import { GetAllSchemaListParameter } from '@/features/overview/type/schema';
+import { GetAllSchemaListParameter } from '@/features/dashboard/type/schema';
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs';
 import apiRoutes from './apiRoutes';
 

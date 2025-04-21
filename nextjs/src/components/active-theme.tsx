@@ -9,7 +9,7 @@ import {
 } from 'react';
 
 const COOKIE_NAME = 'active_theme';
-const DEFAULT_THEME = 'default';
+const CREDEBL_THEMES = 'credebl';
 
 function setThemeCookie(theme: string) {
   if (typeof window === 'undefined') return;
@@ -32,7 +32,7 @@ export function ActiveThemeProvider({
   initialTheme?: string;
 }) {
   const [activeTheme, setActiveTheme] = useState<string>(
-    () => initialTheme || DEFAULT_THEME
+    () => initialTheme || CREDEBL_THEMES
   );
 
   useEffect(() => {

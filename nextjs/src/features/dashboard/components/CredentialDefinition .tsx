@@ -39,8 +39,10 @@ const CredentialDefinition = () => {
   };
 
   useEffect(() => {
-    fetchCredentialDefinitionById();
-  }, []);
+    if (orgId) {
+      fetchCredentialDefinitionById();
+    }
+  }, [orgId]);
 
   return (
     <Card>
@@ -48,12 +50,7 @@ const CredentialDefinition = () => {
         <div className='space-y-1'>
           <div className='flex items-center gap-x-2'>
             <CardTitle>Credential Definitions</CardTitle>
-            <Badge
-            // variant='secondary'
-            // className='bg-amber-100 text-amber-800 hover:bg-amber-100'
-            >
-              {credentialDefinition.length}
-            </Badge>
+            <Badge>{credentialDefinition.length}</Badge>
           </div>
           <CardDescription>Manage your credential definitions</CardDescription>
         </div>
@@ -105,12 +102,7 @@ const CredentialDefinition = () => {
       </CardContent>
 
       <CardFooter className='mt-auto justify-end pt-2'>
-        <Button
-        // variant='ghost'
-        // className='text-amber-600 hover:bg-amber-50 hover:text-amber-700'
-        >
-          View all
-        </Button>
+        <Button>View all</Button>
       </CardFooter>
     </Card>
   );
