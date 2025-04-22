@@ -1,6 +1,14 @@
 import { Metadata } from 'next';
 import Image from 'next/image';
 import SignUpUser from './SignUpUser';
+import {
+  CredeblLogo,
+  CredeblLogoHeight,
+  CredeblLogoWidth,
+  signInHeight,
+  signInImg,
+  signInWidth
+} from '@/config/CommonConstant';
 
 export const metadata: Metadata = {
   title: 'Authentication',
@@ -14,18 +22,18 @@ export default function SignUpViewPage() {
         <div className='absolute inset-0 bg-[#ffffff]' />
         <div className='relative z-20 flex items-center text-lg font-medium'>
           <Image
-            src='/images/CREDEBL_Logo_Web.svg'
+            src={CredeblLogo}
             alt='Logo'
-            width={170}
-            height={140}
+            width={CredeblLogoWidth}
+            height={CredeblLogoHeight}
           />
         </div>
         <div className='relative z-10 flex flex-1 items-center justify-center'>
           <Image
-            src='/images/signin.svg'
+            src={signInImg}
             alt='Sign In Illustration'
-            width={500}
-            height={500}
+            width={signInWidth}
+            height={signInHeight}
             className='h-auto max-w-full object-contain'
           />
         </div>

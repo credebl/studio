@@ -1,5 +1,5 @@
 export const passwordRegex =
-  /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[-!@$%^*])(?=.*[!"$%*,./:;=@^_])[A-Za-z\d!"$%*,./:;=@^_]{8,}$/;
+  /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[!"$%*,./:;=@^_\-!@$%^*])[A-Za-z\d!"$%*,./:;=@^_\-!@$%^*]{8,}$/;
 export const allowedPasswordChars = /[^a-zA-Z0-9!"$%*,-.:;=@^_]/g;
 export const phoneRegExp = /^[+]?(\d{1,4})?[-\s./\d]*$/;
 export const imageSizeAccepted = 1; // mb
@@ -8,8 +8,7 @@ export const IMG_MAX_HEIGHT = 291;
 export const emailRegex = /(\.[a-zA-Z]{2,})$/;
 export const CREDENTIAL_CONTEXT_VALUE =
   'https://www.w3.org/2018/credentials/v1';
-export const schemaVersionRegex =
-  /^\d{1,5}(?=.*[0-9])(?:\.\d{1,5})?(?:\.\d{1,5})?$/gm;
+export const schemaVersionRegex = /^\d{1,5}(?:\.\d{1,5})?(?:\.\d{1,5})?$/;
 export const proofPurpose = 'assertionMethod';
 export const limitedAttributesLength = 3;
 export const itemPerPage = 10;
@@ -107,3 +106,14 @@ export const sessionExcludedPaths = [
   '/auth/sign-up',
   '/auth/verify-email-success'
 ];
+
+const imageBasePath = '/images/CREDEBL_Logo_Web.svg';
+
+export const CredeblLogo = `${imageBasePath}/CREDEBL_Logo_Web.svg`;
+export const signInImg = `${imageBasePath}/signin.svg`;
+
+export const CredeblLogoWidth = 170;
+export const CredeblLogoHeight = 140;
+
+export const signInWidth = 500;
+export const signInHeight = 500;
