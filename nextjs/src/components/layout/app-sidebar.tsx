@@ -37,7 +37,7 @@ export default function AppSidebar() {
   const [pageSize] = useState(10);
   const [searchTerm] = useState('');
   const [orgList, setOrgList] = useState<any[]>([]);
-  const [setSelectedOrg] = useState<any | null>(null);
+  const [, setSelectedOrg] = useState<any | null>(null);
 
   useEffect(() => {
     const fetchOrganizations = async () => {

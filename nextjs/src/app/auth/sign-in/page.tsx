@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import SignInViewPage from '@/features/auth/components/sigin-view';
+import SignIn from '@/features/auth/components/sigin-view';
 
 export const metadata: Metadata = {
   title: 'Authentication | Sign In',
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 
 export default async function Page() {
 
-  return <SignInViewPage  />;
+  return <SignIn  />;
 }
