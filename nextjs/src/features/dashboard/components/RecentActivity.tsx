@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getUserActivity } from '@/app/api/users';
 import { Badge } from '@/components/ui/badge';
+import Link from 'next/link';
 
 const RecentActivity = () => {
   const [activityList, setActivityList] = useState<any[]>([]);
@@ -105,7 +106,7 @@ const RecentActivity = () => {
         )}
       </CardContent>
       <CardFooter className='mt-auto justify-end pt-2'>
-        <Button>View all</Button>
+      <Link href='#'>View all</Link>
       </CardFooter>
     </Card>
   );

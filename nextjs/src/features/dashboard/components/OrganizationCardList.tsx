@@ -21,6 +21,7 @@ import { Button } from '@/components/ui/button';
 import { getOrganizations } from '@/app/api/organization';
 import { Organization } from '@/features/dashboard/type/organization';
 import { Skeleton } from '@/components/ui/skeleton';
+import Link from 'next/link';
 
 const OrganizationCardList = () => {
   const [orgList, setOrgList] = useState<Organization[]>([]);
@@ -161,7 +162,7 @@ const OrganizationCardList = () => {
       </CardContent>
 
       <CardFooter className='mt-auto justify-end pt-2'>
-        <Button>View all</Button>
+      <Link href='#'>View all</Link>
       </CardFooter>
     </Card>
   );

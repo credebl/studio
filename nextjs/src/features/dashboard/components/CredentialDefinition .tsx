@@ -15,6 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { Key } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAppSelector } from '@/lib/hooks';
+import Link from 'next/link';
 
 const CredentialDefinition = () => {
   const [loading, setLoading] = useState(true);
@@ -102,7 +103,7 @@ const CredentialDefinition = () => {
       </CardContent>
 
       <CardFooter className='mt-auto justify-end pt-2'>
-        <Button>View all</Button>
+        <Link href='#'>View all</Link>
       </CardFooter>
     </Card>
   );
