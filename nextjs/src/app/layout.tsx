@@ -19,8 +19,8 @@ const META_THEME_COLORS = {
 };
 
 export const metadata: Metadata = {
-  title: 'Next Shadcn',
-  description: 'Basic dashboard with Next.js and Shadcn'
+  title: 'CREDEBL - Studio',
+  description: 'CREDEBL - Studio with Next.js and Shadcn'
 };
 
 export const viewport: Viewport = {
