@@ -120,12 +120,10 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
       .withDefault(initialState?.pagination?.pageSize ?? 10)
   );
 
-  const pagination: PaginationState = React.useMemo(() => {
-    return {
+  const pagination: PaginationState = React.useMemo(() => ({
       pageIndex: page - 1, // zero-based index -> one-based index
       pageSize: perPage
-    };
-  }, [page, perPage]);
+    }), [page, perPage]);
 
   const onPaginationChange = React.useCallback(
     (updaterOrValue: Updater<PaginationState>) => {
@@ -141,11 +139,9 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
     [pagination, setPage, setPerPage]
   );
 
-  const columnIds = React.useMemo(() => {
-    return new Set(
+  const columnIds = React.useMemo(() => new Set(
       columns.map((column) => column.id).filter(Boolean) as string[]
-    );
-  }, [columns]);
+    ), [columns]);
 
   const [sorting, setSorting] = useQueryState(
     SORT_KEY,

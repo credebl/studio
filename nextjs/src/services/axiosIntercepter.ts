@@ -1,91 +1,109 @@
+'use client';
+
+import axios, { AxiosError, AxiosRequestConfig } from 'axios';
+import { useRouter } from 'next/navigation';
 import { apiRoutes } from '@/config/apiRoutes';
+import { store } from '@/lib/store';
+import { setRefreshToken, setToken } from '@/lib/authSlice';
 import { apiStatusCodes } from '@/config/CommonConstant';
-import axios, { AxiosRequestConfig } from 'axios';
-// import type { AxiosRequestConfig } from 'axios';
-// import { envConfig } from '../config/envConfig';
-// import { apiRoutes } from '../config/apiRoutesOld';
-// import { getFromLocalStorage, setToLocalStorage } from '../api/Auth';
-// import { apiStatusCodes, storageKeys } from '../config/CommonConstant';
 
 const instance = axios.create({
-	// baseURL: import.meta.env.NEXT_PUBLIC_BASE_URL,
-	baseURL: process.env.NEXT_PUBLIC_BASE_URL,
+  baseURL: process.env.NEXT_PUBLIC_BASE_URL
 });
 
 const EcosystemInstance = axios.create({
-	// baseURL: import.meta.env.PUBLIC_ECOSYSTEM_BASE_URL,
-	baseURL: process.env.PUBLIC_ECOSYSTEM_BASE_URL,
+  baseURL: process.env.PUBLIC_ECOSYSTEM_BASE_URL
 });
 
-const checkAuthentication = async (sessionCookie: string, request: AxiosRequestConfig) => {
-	const isAuthPage = window.location.href.includes('/authentication/sign-in') || window.location.href.includes('/authentication/sign-up')
-	try {
-		// const baseURL = import.meta.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_BASE_URL;
-		const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
-		const config = {
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${sessionCookie}`,
-			},
-			method: 'GET',
-		};
-		const res = await fetch(`${baseURL + apiRoutes.users.userProfile}`, {
-			...config,
-		});
-		const userData = await res.json();
-		console.log('Check Authorized User-interceptor:::', {
-			status: userData.statusCode,
-			message: userData.message,
-		});
-		if (
-			userData.statusCode === apiStatusCodes.API_STATUS_UNAUTHORIZED
-		) {
-			if (sessionCookie && !isAuthPage) {
-				const { access_token, refresh_token }: any = globalThis;
+// Refresh Token Function
+const refreshAccessToken = async () => {
+  const state = store.getState();
+  const refreshToken = state?.auth?.refreshToken;
 
-				// await setToLocalStorage(storageKeys.TOKEN, access_token);
-				// await setToLocalStorage(storageKeys.REFRESH_TOKEN, refresh_token);
+  if (!refreshToken) {
+    // eslint-disable-next-line no-console
+    console.error('No refresh token available');
+    return null;
+  }
 
-				window.location.reload();
-			} else {
-				window.location.assign('/authentication/sign-in')
-			}
-		}
-	} catch (error) { }
+  try {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_BASE_URL}${apiRoutes.auth.refreshToken}`,
+      { refreshToken }
+    );
+
+    if (
+      response?.status === apiStatusCodes.API_STATUS_CREATED &&
+      response.data?.data
+    ) {
+      const { access_token, refresh_token } = response.data.data;
+
+      if (access_token && refresh_token) {
+        store.dispatch(setToken(access_token));
+        store.dispatch(setRefreshToken(refresh_token));
+        return access_token;
+      }
+    }
+    return null;
+  } catch (error) {
+    console.error('Token refresh failed:', error);
+    return null;
+  }
 };
-// const { NEXT_PUBLIC_BASE_URL, PUBLIC_ECOSYSTEM_BASE_URL }: any = process.env;
 
-instance.interceptors.request.use(async config => {
-	config.baseURL = process.env.NEXT_PUBLIC_BASE_URL;
-	return config;
-}, error => Promise.reject(error));
+// REQUEST INTERCEPTOR
+instance.interceptors.request.use(
+  (config) => {
+    const state = store.getState();
+    const token = state?.auth?.token;
 
-EcosystemInstance.interceptors.request.use(async config => {
-	config.baseURL = process.env.PUBLIC_ECOSYSTEM_BASE_URL;
-	return config;
-}, error => Promise.reject(error));
+    if (token) {
+      config.headers = config.headers || {};
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
 
-
-// Add a response interceptor
-instance.interceptors.response.use(
-	function (response) {
-		// Any status code that lie within the range of 2xx cause this function to trigger
-		return response;
-	},
-	async function (error) {
-		// Any status codes that falls outside the range of 2xx cause this function to trigger		
-		const isAuthPage = window.location.href.includes('/authentication/sign-in') || window.location.href.includes('/authentication/sign-up')
-		const errorRes = error?.response;
-		const originalRequest = error.config;
-		// const token = await getFromLocalStorage(storageKeys.TOKEN);
-		const token = process.env.NEXT_PUBLIC_ACCESS_TOKEN || '';
-		if (errorRes?.status === 401 && !isAuthPage) {
-			await checkAuthentication(token, originalRequest);
-		}
-
-		return Promise.reject(error);
-	
-	},
+    return config;
+  },
+  (error) => Promise.reject(error)
 );
 
-export {instance, EcosystemInstance};
+// RESPONSE INTERCEPTOR
+instance.interceptors.response.use(
+  (response) => response,
+  async (error: AxiosError) => {
+    const originalRequest = error.config as AxiosRequestConfig & {
+      _retry?: boolean;
+    };
+
+    if (
+      error.response?.status === apiStatusCodes.API_STATUS_NOT_FOUND &&
+      !originalRequest?._retry
+    ) {
+      originalRequest._retry = true;
+
+      const newAccessToken = await refreshAccessToken();
+      if (newAccessToken && originalRequest.headers) {
+        originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+        return instance(originalRequest);
+      }
+
+      if (typeof window !== 'undefined') {
+        const router = useRouter();
+        router.push('/auth/sign-in');
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+// Optional: Attach baseURL in EcosystemInstance too
+EcosystemInstance.interceptors.request.use(
+  (config) => {
+    config.baseURL = process.env.PUBLIC_ECOSYSTEM_BASE_URL;
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+export { instance, EcosystemInstance };

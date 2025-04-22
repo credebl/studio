@@ -19,48 +19,72 @@ import {
   SidebarRail
 } from '@/components/ui/sidebar';
 import { navItems } from '@/constants/data';
-import { useMediaQuery } from '@/hooks/use-media-query';
-import { useUser } from '@clerk/nextjs';
-import {
-  IconChevronRight,
-  IconPhotoUp,
-} from '@tabler/icons-react';
+import { IconChevronRight } from '@tabler/icons-react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import * as React from 'react';
+import { usePathname } from 'next/navigation';
 import { Icons } from '../icons';
 import { OrgSwitcher } from '../org-switcher';
-export const company = {
-  name: 'AyanWorks',
-  logo: IconPhotoUp,
-  plan: 'Enterprise'
-};
-
-const tenants = [
-  { id: '1', name: 'AyanWorks' },
-  { id: '2', name: 'Beta Corp' },
-  { id: '3', name: 'Gamma Ltd' }
-];
+import { useEffect, useState } from 'react';
+import { getOrganizations } from '@/app/api/organization';
+import { useAppDispatch } from '@/lib/hooks';
+import { setOrgId } from '@/lib/orgSlice';
 
 export default function AppSidebar() {
+
   const pathname = usePathname();
-  const { isOpen } = useMediaQuery();
-  
-  const handleSwitchTenant = (_tenantId: string) => {
-    // Tenant switching functionality would be implemented here
+  const dispatch = useAppDispatch();
+  const [currentPage] = useState(1);
+  const [pageSize] = useState(10);
+  const [searchTerm] = useState('');
+  const [orgList, setOrgList] = useState<any[]>([]);
+  const [, setSelectedOrg] = useState<any | null>(null);
+
+  useEffect(() => {
+    const fetchOrganizations = async () => {
+      try {
+        const response = await getOrganizations(
+          currentPage,
+          pageSize,
+          searchTerm,
+          ''
+        );
+        if (
+          typeof response !== 'string' &&
+          response?.data?.data?.organizations
+        ) {
+          const orgs = response.data.data.organizations;
+          setOrgList(orgs);
+          setSelectedOrg(orgs[0]);
+          dispatch(setOrgId(orgs[0]?.id));
+        } else {
+          setOrgList([]);
+        }
+      } catch (err) {
+        console.error('Error fetching organizations:', err);
+      }
+    };
+
+    fetchOrganizations();
+  }, []);
+
+  const handleSwitchTenant = (orgId: string) => {
+    const selected = orgList.find((org) => org.id === orgId);
+    if (selected) {
+      setSelectedOrg(selected);
+      dispatch(setOrgId(selected.id));
+    }
   };
 
-  const activeTenant = tenants[0];
-
-  React.useEffect(() => {
-    // Side effects based on sidebar state changes
-  }, [isOpen]);
+  const activeTenant = orgList[0];
 
   return (
     <Sidebar collapsible='icon'>
       <SidebarHeader>
         <OrgSwitcher
-          tenants={tenants}
+          tenants={orgList.map((org) => ({
+            id: org.id,
+            name: org.name
+          }))}
           defaultTenant={activeTenant}
           onTenantSwitch={handleSwitchTenant}
         />
@@ -124,6 +148,7 @@ export default function AppSidebar() {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
+
       <SidebarRail />
     </Sidebar>
   );

@@ -1,4 +1,4 @@
-import { NavItem } from '@/types';
+import { NavItem } from 'types';
 
 export type Product = {
   photo_url: string;
@@ -11,11 +11,11 @@ export type Product = {
   updated_at: string;
 };
 
-//Info: The following data is used for the sidebar navigation and Cmd K bar.
+// Info: The following data is used for the sidebar navigation and Cmd K bar.
 export const navItems: NavItem[] = [
   {
     title: 'Dashboard',
-    url: '/dashboard/overview',
+    url: '/dashboard',
     icon: 'dashboard',
     isActive: false,
     shortcut: ['d', 'd'],
@@ -23,7 +23,7 @@ export const navItems: NavItem[] = [
   },
   {
     title: 'Organizations',
-    url: '/dashboard/organizations',
+    url: '/organizations',
     icon: 'organization',
     shortcut: ['p', 'p'],
     isActive: false,
@@ -31,7 +31,7 @@ export const navItems: NavItem[] = [
   },
   {
     title: 'Users',
-    url: '/dashboard/kanban',
+    url: '/users',
     icon: 'user',
     shortcut: ['k', 'k'],
     isActive: false,
@@ -39,7 +39,7 @@ export const navItems: NavItem[] = [
   },
   {
     title: 'Connections',
-    url: '/dashboard/connections',
+    url: '/connections',
     icon: 'connections',
     shortcut: ['k', 'k'],
     isActive: false,
@@ -54,14 +54,14 @@ export const navItems: NavItem[] = [
     items: [
       {
         title: 'Issue',
-        url: '/dashboard/issue',
+        url: '/issue',
         icon: 'userPen',
         shortcut: ['m', 'm']
       },
       {
         title: 'Verify',
         shortcut: ['l', 'l'],
-        url: '/',
+        url: '/verify',
         icon: 'login'
       }
     ]

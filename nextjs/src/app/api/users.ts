@@ -1,7 +1,7 @@
 
 import { getHeaderConfigs } from "@/config/GetHeaderConfigs";
-import apiRoutes from "./apiRoutes";
 import { axiosGet, axiosPut } from "@/services/apiRequests";
+import apiRoutes from "./apiRoutes";
 
 export interface IPlatformSetting {
 	externalIp: string;

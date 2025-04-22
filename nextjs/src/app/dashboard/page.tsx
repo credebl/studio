@@ -1,12 +1,9 @@
-import { auth } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
+import OverViewPage from '@/features/dashboard/components/dashboard';
 
-export default async function Dashboard() {
-  const { userId } = await auth();
+export const metadata = {
+  title: 'Dashboard'
+};
 
-  if (!userId) {
-    return redirect('/auth/sign-in');
-  } else {
-    redirect('/dashboard/overview');
-  }
+export default async function DashboardPage() {
+  return <OverViewPage />;
 }

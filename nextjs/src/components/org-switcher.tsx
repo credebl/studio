@@ -14,6 +14,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from '@/components/ui/sidebar';
+import { useAppDispatch } from '@/lib/hooks';
+import { setOrgId } from '@/lib/orgSlice';
 
 interface Tenant {
   id: string;
@@ -31,18 +33,17 @@ export function OrgSwitcher({
 }) {
   const [selectedTenant, setSelectedTenant] = React.useState<
     Tenant | undefined
-  >(defaultTenant || (tenants.length > 0 ? tenants[0] : undefined));
+  >(defaultTenant ?? (tenants.length > 0 ? tenants[0] : undefined));
+  const dispatch = useAppDispatch();
 
   const handleTenantSwitch = (tenant: Tenant) => {
     setSelectedTenant(tenant);
+    dispatch(setOrgId(tenant.id));
     if (onTenantSwitch) {
       onTenantSwitch(tenant.id);
     }
   };
 
-  if (!selectedTenant) {
-    return null;
-  }
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -57,7 +58,7 @@ export function OrgSwitcher({
               </div>
               <div className='flex flex-col gap-0.5 leading-none'>
                 <span className='font-semibold'>Select Organization</span>
-                <span className=''>{selectedTenant.name}</span>
+                <span>{selectedTenant?.name ?? tenants[0]?.name}</span>
               </div>
               <ChevronsUpDown className='ml-auto' />
             </SidebarMenuButton>
@@ -71,8 +72,8 @@ export function OrgSwitcher({
                 key={tenant.id}
                 onSelect={() => handleTenantSwitch(tenant)}
               >
-                {tenant.name}{' '}
-                {tenant.id === selectedTenant.id && (
+                {tenant.name}
+                {tenant.id === selectedTenant?.id && (
                   <Check className='ml-auto' />
                 )}
               </DropdownMenuItem>

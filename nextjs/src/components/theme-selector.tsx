@@ -7,18 +7,16 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectSeparator,
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
 
-const DEFAULT_THEMES = [
- 
+const CREDEBL_THEMES = [
   {
-    name: 'Amber',
-    value: 'amber'
-  }
+    name: 'CREDEBL',
+    value: 'credebl'
+  },
 ];
 
 // const SCALED_THEMES = [
@@ -26,18 +24,15 @@ const DEFAULT_THEMES = [
 //     name: 'Default',
 //     value: 'default-scaled'
 //   },
-//   {
-//     name: 'Blue',
-//     value: 'blue-scaled'
-//   }
+  
 // ];
 
-// const MONO_THEMES = [
-//   {
-//     name: 'Mono',
-//     value: 'mono-scaled'
-//   }
-// ];
+const SOVIO_THEMES = [
+  {
+    name: 'SOVIO',
+    value: 'sovio'
+  }
+];
 
 export function ThemeSelector() {
   const { activeTheme, setActiveTheme } = useThemeConfig();
@@ -53,21 +48,21 @@ export function ThemeSelector() {
           className='justify-start *:data-[slot=select-value]:w-12'
         >
           <span className='text-muted-foreground hidden sm:block'>
-            Select a theme:
+            Select theme:
           </span>
           <span className='text-muted-foreground block sm:hidden'>Theme</span>
-          <SelectValue placeholder='Select a theme' />
+          <SelectValue placeholder='Select theme' />
         </SelectTrigger>
         <SelectContent align='end'>
           <SelectGroup>
-            <SelectLabel>Default</SelectLabel>
-            {DEFAULT_THEMES.map((theme) => (
+            {/* <SelectLabel>Default</SelectLabel> */}
+            {CREDEBL_THEMES.map((theme) => (
               <SelectItem key={theme.name} value={theme.value}>
                 {theme.name}
               </SelectItem>
             ))}
           </SelectGroup>
-          {/* <SelectSeparator /> */}
+          <SelectSeparator />
           {/* <SelectGroup>
             <SelectLabel>Scaled</SelectLabel>
             {SCALED_THEMES.map((theme) => (
@@ -76,14 +71,14 @@ export function ThemeSelector() {
               </SelectItem>
             ))}
           </SelectGroup> */}
-          {/* <SelectGroup>
-            <SelectLabel>Monospaced</SelectLabel>
-            {MONO_THEMES.map((theme) => (
+          <SelectGroup>
+            {/* <SelectLabel>Monospaced</SelectLabel> */}
+            {SOVIO_THEMES.map((theme) => (
               <SelectItem key={theme.name} value={theme.value}>
                 {theme.name}
               </SelectItem>
             ))}
-          </SelectGroup> */}
+          </SelectGroup>
         </SelectContent>
       </Select>
     </div>
