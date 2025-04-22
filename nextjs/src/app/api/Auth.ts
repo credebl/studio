@@ -1,19 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-var-requires */
-// import {axiosGet, axiosPost, axiosPut} from '../services/apiRequests'
-// import CryptoJS from "crypto-js"
-// import { apiRoutes } from '../config/apiRoutes'
-// import { envConfig } from '../config/envConfig'
-// import { storageKeys } from '../config/CommonConstant'
-// import type { AddPassword } from '../components/Profile/interfaces'
-// import type { AstroCookies } from 'astro'
+import CryptoJS from "crypto-js"
 import { apiRoutes } from "@/config/apiRoutes"
 import { axiosGet, axiosPost, axiosPut } from "@/services/apiRequests"
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-const CryptoJS = require("crypto-js")
 
 export interface UserSignUpData {
     email: string,
@@ -207,113 +195,10 @@ export const addPasswordDetails = async(payload: AddPasswordDetails) => {
     }  
 }
 
-// export const addPasskeyUserDetails = async(payload: AddPassword, email:string) => {
-//     const token = await getFromLocalStorage(storageKeys.TOKEN)
-//     const details ={
-//         url: `${apiRoutes.auth.passkeyUserDetails}${email}`,
-//         payload,
-//         config: { headers: {
-//             'Content-type': 'application/json',
-//             'Authorization': `Bearer ${token}`,
-//           }, }
-//     }
-//     try{
-//         const response = await axiosPut(details)
-//         return response
-//     }
-//     catch(error){
-//         const err = error as Error
-//         return err?.message
-//     }  
-// }
+
 
 export const passwordEncryption = (password: string): string => {
-    // const CRYPTO_PRIVATE_KEY: string = import.meta.env.PUBLIC_CRYPTO_PRIVATE_KEY;
     const CRYPTO_PRIVATE_KEY: string = process.env.NEXT_PUBLIC_CRYPTO_PRIVATE_KEY!;
     const encryptedPassword: string = CryptoJS.AES.encrypt(JSON.stringify(password), CRYPTO_PRIVATE_KEY).toString()
     return encryptedPassword
 }
-
-// export const encryptData = (value: any): string => {
- 
-//     const CRYPTO_PRIVATE_KEY: string = import.meta.env.PUBLIC_CRYPTO_PRIVATE_KEY;
-    
-//     try {
-//         if (typeof (value) !== 'string') {
-//             value = JSON.stringify(value)
-//         }
-//         return CryptoJS.AES.encrypt(value, CRYPTO_PRIVATE_KEY).toString();
-//     } catch (error) {
-//         // Handle encryption error
-//         console.error('Encryption error:', error);
-//         return '';
-//     }
-// }
-
-// export const decryptData = (value: any): string => {
-//     const CRYPTO_PRIVATE_KEY: string = import.meta.env.PUBLIC_CRYPTO_PRIVATE_KEY;
-
-//     try {
-//         let bytes = CryptoJS.AES.decrypt(value, CRYPTO_PRIVATE_KEY);
-//         return bytes.toString(CryptoJS.enc.Utf8);
-//     } catch (error) {
-//         // Handle decryption error or invalid input
-//         console.error('Decryption error:', error);
-//         return '';
-//     }
-// }
-
-// export const setToLocalStorage = async (key: string, value: any) =>{
-//     // If passed value is object then checked empty object
-// 	if (typeof value === 'object' && Boolean(Object.keys(value).length <= 0)) {
-// 		return;
-// 	}
-
-// 	// If passed value is string then checked if value is falsy
-// 	if (typeof value === 'string' && !value?.trim()) {
-// 		return;
-// 	}
-
-//     const convertedValue = await encryptData(value)
-//     const setValue = await localStorage.setItem(key, convertedValue as string)
-//     return true
-// }
-
-// export const getFromLocalStorage = async (key: string) =>{
-//     const value = await localStorage.getItem(key)
-//     const convertedValue = value ? await decryptData(value) : ''
-//     return convertedValue
-// }
-
-// export const setToCookies = (cookies: AstroCookies, key: string, value: any, option: {[key: string]: any }) =>{
-//     // If passed value is object then checked empty object
-// 	if (typeof value === 'object' && Boolean(Object.keys(value).length <= 0)) {
-// 		return;
-// 	}
-
-// 	// If passed value is string then checked if value is falsy
-// 	if (typeof value === 'string' && !value?.trim()) {
-// 		return;
-// 	}
-    
-//     // Set HttpOnly, Secure, and SameSite attributes in the options
-//     const updatedOption: { [key: string]: any }= {
-//         ...option,
-//         httpOnly: true,
-//         secure: true, // Set to true if using HTTPS
-//         sameSite: 'strict', 
-//       };
-//     cookies.set(key, value as string, updatedOption)
-
-//     return true
-// }
-
-// export const getFromCookies = (cookies: AstroCookies, key: string) =>{
-//     const value = cookies.get(key)?.value
-//     return value
-// }
-
-// export const removeFromLocalStorage = async (key: string) => {
-// 	await localStorage.removeItem(key);
-// 	return true;
-// };
