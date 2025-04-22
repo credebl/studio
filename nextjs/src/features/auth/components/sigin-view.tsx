@@ -15,19 +15,19 @@ export default function SignInPage() {
       <div className='absolute inset-0 bg-[#ffffff]' />
         <div className='relative z-20 flex items-center text-lg font-medium'>
           <Image
-            src={CredeblLogo}
-            alt='Logo'
-            width={CredeblLogoWidth}
             height={CredeblLogoHeight}
+            width={CredeblLogoWidth}
+            alt='Logo'
+            src={CredeblLogo}
           />
         </div>
         <div className='relative z-10 flex flex-1 items-center justify-center'>
           <Image
-            src={signInImg}
-            alt='Sign In Illustration'
-            width={signInWidth}
-            height={signInHeight}
             className='h-auto max-w-full object-contain'
+            height={signInHeight}
+            alt='Sign In Illustration'
+            src={signInImg}
+            width={signInWidth}
           />
         </div>
         <footer className='relative z-20 text-center'>
