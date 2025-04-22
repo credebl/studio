@@ -10,7 +10,6 @@ import {
   CardTitle,
   CardDescription
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Key } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';

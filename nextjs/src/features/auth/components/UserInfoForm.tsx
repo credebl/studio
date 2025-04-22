@@ -8,22 +8,18 @@ import { useRouter } from 'next/navigation';
 import {
   passwordEncryption,
   addPasswordDetails,
-  getUserProfile
 } from '@/app/api/Auth';
 import { apiStatusCodes, passwordRegex } from '@/config/CommonConstant';
 import { AxiosError, AxiosResponse } from 'axios';
 import { Formik, Form as FormikForm } from 'formik';
 import * as Yup from 'yup';
-import { useAppDispatch } from '@/lib/hooks';
 import {
   addDeviceDetails,
   generateRegistrationOption,
   getUserDeviceDetails,
-  verifyAuthentication,
   verifyRegistration
 } from '@/app/api/Fido';
-import { setProfile } from '@/lib/profileSlice';
-import { setOrgId } from '@/lib/orgSlice';
+
 
 import { startRegistration } from '@simplewebauthn/browser';
 import {
@@ -75,29 +71,26 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
   const [loading, setLoading] = useState(false);
 
   const [serverError, setServerError] = useState('');
-  const [isDevice, setIsDevice] = useState<boolean>(false);
+  const [, setIsDevice] = useState<boolean>(false);
   const [showEmailVerification, setShowEmailVerification] = useState({
     message: '',
     isError: false,
     type: ''
   });
-  const [editFailure, setEditFailure] = useState<string | null>(null);
 
-  const [deviceList, setDeviceList] = useState<IDeviceData[]>([]);
+  const [setDeviceList] = useState<IDeviceData[]>([]);
 
   const [usePassword, setUsePassword] = useState(true);
-  const [disableFlag, setDisableFlag] = useState<boolean>(false);
-  const [addfailure, setAddFailure] = useState<string | null>(null);
+  const [setDisableFlag] = useState<boolean>(false);
+  const [setAddFailure] = useState<string | null>(null);
 
-  const [addSuccess, setAddSuccess] = useState<string | null>(null);
-  const [erroMsg, setErrMsg] = useState<string | null>(null);
+  const [setAddSuccess] = useState<string | null>(null);
+  const [setErrMsg] = useState<string | null>(null);
 
   const router = useRouter();
-  const [fidoLoader, setFidoLoader] = useState<boolean>(false);
-  const [fidoUserError, setFidoUserError] = useState('');
-  const [fidoError, setFidoError] = useState('');
+  const [setFidoLoader] = useState<boolean>(false);
+  const [setFidoError] = useState('');
 
-  const dispatch = useAppDispatch();
   const onSubmit = async (values: {
     firstName: string;
     lastName: string;
@@ -140,74 +133,8 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
       setLoading(false);
     }
   };
-  const verifyAuthenticationMethod = async (
-    verifyAuthenticationObj: any,
-    userData: { userName: string }
-  ): Promise<string | AxiosResponse> => {
-    try {
-      const res = verifyAuthentication(verifyAuthenticationObj, userData);
-      return await res;
-    } catch (error) {
-      setFidoLoader(false);
-      throw error;
-    }
-  };
 
-  const addDevice = async (): Promise<void> => {
-    try {
-      if (deviceList?.length > 0) {
-        registerWithPasskey(true);
-      }
-    } catch (error) {
-      setFidoLoader(false);
-    }
-  };
 
-  const getUserDetails = async (access_token: string) => {
-    try {
-      const response = await getUserProfile(access_token);
-
-      const { data } = response as AxiosResponse;
-
-      if (data?.data?.userOrgRoles?.length > 0) {
-        const role = data?.data?.userOrgRoles.find(
-          (item: { orgRole: { name: PlatformRoles } }) =>
-            item.orgRole.name === PlatformRoles.platformAdmin
-        );
-
-        const permissionArray: string[] = [];
-        data?.data?.userOrgRoles?.forEach(
-          (element: { orgRole: { name: string } }) =>
-            permissionArray.push(element?.orgRole?.name)
-        );
-
-        const { id, profileImg, firstName, lastName, email } = data?.data || {};
-        const userProfile = {
-          id,
-          profileImg,
-          firstName,
-          lastName,
-          email
-        };
-        dispatch(setProfile(userProfile));
-
-        const orgWithValidId = data?.data?.userOrgRoles.find(
-          (item: { orgId: string | null }) => item.orgId !== null
-        );
-        const orgId = orgWithValidId?.orgId ?? null;
-
-        dispatch(setOrgId(orgId));
-        return {
-          role: role?.orgRole ?? '',
-          orgId
-        };
-      } else {
-        console.error('No roles found for the user');
-      }
-    } catch (error) {
-      console.error('Error fetching user details', error);
-    }
-  };
 
   const showFidoError = (error: unknown): void => {
     const err = error as AxiosError;

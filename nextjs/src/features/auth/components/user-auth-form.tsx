@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -53,8 +53,8 @@ export default function SignInViewPage() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const [fidoLoader, setFidoLoader] = useState<boolean>(false);
-  const [fidoUserError, setFidoUserError] = useState('');
+  const [setFidoLoader] = useState<boolean>(false);
+  const [setFidoUserError] = useState('');
 
   const dispatch = useDispatch();
   const route = useRouter();

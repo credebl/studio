@@ -84,11 +84,6 @@ export default function UserProfile() {
           </>
         )}
 
-        {/* {activeTab === 'passkey' && (
-          <AddPasskey
-            responseMessages={() => ({ type: 'success', message: '' })}
-          />
-        )} */}
       </div>
     </div>
   );
