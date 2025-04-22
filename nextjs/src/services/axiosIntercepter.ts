@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { apiRoutes } from '@/config/apiRoutes';
 import { store } from '@/lib/store';
 import { setRefreshToken, setToken } from '@/lib/authSlice';
+import { apiStatusCodes } from '@/config/CommonConstant';
 
 const instance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL
@@ -26,7 +27,8 @@ const refreshAccessToken = async () => {
       }
     );
 
-    if (response.status === 200) {
+    if (response.status === apiStatusCodes.API_STATUS_CREATED) {
+      
       const { access_token, refresh_token } = response?.data?.data;
 
       const accessToken = access_token;
@@ -65,7 +67,7 @@ instance.interceptors.response.use(
     const originalRequest = error.config;
     const errorRes = error.response;
 
-    if (errorRes?.status === 404 && !originalRequest._retry) {
+    if (errorRes?.status === apiStatusCodes.API_STATUS_NOT_FOUND && !originalRequest._retry) {
       originalRequest._retry = true;
 
       const newAccessToken = await refreshAccessToken();
