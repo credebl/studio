@@ -11,6 +11,7 @@ import './globals.css';
 import './theme.css';
 import StoreProvider from './StoreProvider';
 import SessionCheck from '@/features/auth/components/SessionCheck';
+import PageLayout from '@/components/PageLayout';
 
 const META_THEME_COLORS = {
   light: '#ffffff',
@@ -68,7 +69,7 @@ export default async function RootLayout({
                 activeThemeValue={activeThemeValue as string}
               >
                 <Toaster />
-                {children}
+                <PageLayout>{children}</PageLayout>
               </Providers>
             </SessionCheck>
           </StoreProvider>

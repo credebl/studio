@@ -1,9 +1,10 @@
 'use client';
+
 import React, { useState } from 'react';
 import EmailVerificationForm from './EmailVerificationForm';
 import UserInfoForm from './UserInfoForm';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+// import { ArrowLeft } from 'lucide-react';
 
 export default function SignUpUser() {
   const [step, setStep] = useState(1);
@@ -11,13 +12,13 @@ export default function SignUpUser() {
 
   return (
     <div className='flex min-h-screen flex-col items-center justify-center'>
-      <div className='relative w-[480px] rounded-xl border border-gray-200 bg-white p-6 shadow-md'>
+      <div className='bg-card relative w-[480px] rounded-xl p-6 shadow'>
         {/* {step === 2 && (
           <button
             onClick={() => setStep(1)}
-            className='absolute top-6 left-6 flex items-center gap-2 text-gray-600 hover:text-gray-800'
+            className="absolute left-6 top-6 flex items-center gap-2 text-muted-foreground hover:text-foreground"
           >
-            <ArrowLeft className='h-5 w-5' />
+            <ArrowLeft className="h-5 w-5" />
             Back
           </button>
         )} */}
@@ -30,18 +31,14 @@ export default function SignUpUser() {
           {[1, 2].map((s, i) => (
             <React.Fragment key={s}>
               <div
-                className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold ${
-                  step === s
-                    ? 'bg-yellow-500 text-white'
-                    : 'bg-gray-200 text-gray-600'
-                }`}
+                className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold ${step === s ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'} `}
               >
                 {s}
               </div>
               {i < 1 && (
                 <div
                   className={`h-1 w-6 rounded-full ${
-                    step > s ? 'bg-yellow-500' : 'bg-gray-200'
+                    step > s ? 'bg-primary' : 'bg-muted'
                   }`}
                 />
               )}
@@ -58,10 +55,10 @@ export default function SignUpUser() {
         )}
         {step === 2 && <UserInfoForm email={email} goBack={() => setStep(1)} />}
 
-        <div className='mt-4 text-center text-sm'>
+        <div className='text-muted-foreground mt-4 text-center text-sm'>
           Already have an account?{' '}
           <Link href='/auth/sign-in'>
-            <span className='hover:underline'>Sign in</span>
+            <span className='text-primary hover:underline'>Sign in</span>
           </Link>
         </div>
       </div>

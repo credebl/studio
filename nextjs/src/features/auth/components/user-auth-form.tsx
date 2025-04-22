@@ -255,7 +255,7 @@ export default function SignInViewPage() {
 
   return (
     <div className='relative flex h-screen w-full items-center justify-center'>
-      <div className='relative z-10 w-full max-w-md rounded-xl bg-white p-8 shadow-lg'>
+      <div className='bg-card relative z-10 w-full max-w-md rounded-xl p-8 shadow'>
         <div className='mb-6 text-center'>
           <p className='text-muted-foreground text-sm'>
             Sign in to your account to continue
@@ -268,7 +268,7 @@ export default function SignInViewPage() {
             variant='ghost'
             className={`flex flex-1 items-center justify-center gap-1 px-4 py-2 ${
               isPasswordTab
-                ? 'bg-white text-black'
+                ? 'bg-card text-foreground'
                 : 'bg-muted text-muted-foreground'
             }`}
             onClick={() => setIsPasswordTab(true)}
@@ -281,7 +281,7 @@ export default function SignInViewPage() {
             variant='ghost'
             className={`flex flex-1 items-center justify-center gap-1 px-4 py-2 ${
               !isPasswordTab
-                ? 'bg-white text-black'
+                ? 'bg-card text-foreground'
                 : 'bg-muted text-muted-foreground'
             }`}
             onClick={() => setIsPasswordTab(false)}
@@ -292,11 +292,7 @@ export default function SignInViewPage() {
         </div>
 
         <Form {...signInForm}>
-          <form
-            // onSubmit={signInForm.handleSubmit(handleSignIn)}
-            onSubmit={handleFormSubmit}
-            className='space-y-4'
-          >
+          <form onSubmit={handleFormSubmit} className='space-y-4'>
             <FormField
               control={signInForm.control}
               name='email'
@@ -358,8 +354,11 @@ export default function SignInViewPage() {
 
             {isPasswordTab && (
               <div className='text-right text-sm'>
-                <Link href='/forgot-password' passHref legacyBehavior>
-                  <a>Forgot password?</a>
+                <Link
+                  href='/forgot-password'
+                  className='text-primary hover:underline'
+                >
+                  Forgot password?
                 </Link>
               </div>
             )}
@@ -373,8 +372,11 @@ export default function SignInViewPage() {
               <span className='text-muted-foreground'>
                 Don’t have an account?{' '}
               </span>
-              <Link href='/auth/sign-up' passHref legacyBehavior>
-                <a>Create one</a>
+              <Link
+                href='/auth/sign-up'
+                className='text-primary hover:underline'
+              >
+                Create one
               </Link>
             </div>
           </form>

@@ -22,6 +22,7 @@ import { apiStatusCodes } from '@/config/CommonConstant';
 import { useEffect, useState } from 'react';
 import { IUserProfile } from '../profile/interfaces';
 import { clearOrgId } from '@/lib/orgSlice';
+import { persistor } from '@/lib/store';
 
 export function UserNav() {
   const dispatch = useDispatch();
@@ -52,6 +53,12 @@ export function UserNav() {
 
   if (!token) return null;
 
+  const handleLogout = async () => {
+    dispatch(logout());
+    await persistor.purge();
+    router.push('/auth/sign-in');
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -75,7 +82,9 @@ export function UserNav() {
             <p className='mb-5 text-sm leading-none font-medium'>
               {userProfile?.firstName} {userProfile?.lastName}
             </p>
-            <p className='text-sm leading-none font-medium'>{userProfile?.email}</p>
+            <p className='text-sm leading-none font-medium'>
+              {userProfile?.email}
+            </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -91,13 +100,7 @@ export function UserNav() {
           <DropdownMenuItem>Developer Settings</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={() => {
-            dispatch(logout());
-            clearOrgId()
-            router.push('/auth/sign-in');
-          }}
-        >
+        <DropdownMenuItem onClick={handleLogout}>
           Log out
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
         </DropdownMenuItem>

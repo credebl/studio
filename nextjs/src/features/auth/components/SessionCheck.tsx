@@ -3,12 +3,13 @@
 import React, { ReactNode, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAppSelector } from '@/lib/hooks';
+import { sessionExcludedPaths } from '@/config/CommonConstant';
 
 interface SessionProps {
   children: ReactNode;
 }
 
-const sessionExcludedPaths = ['/auth/sign-in', '/auth/sign-up','/auth/verify-email-success'];
+
 const signInPath = '/auth/sign-in';
 const dashboardPath = '/dashboard';
 

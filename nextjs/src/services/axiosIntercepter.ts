@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import { apiRoutes } from '@/config/apiRoutes';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
+import { apiRoutes } from '@/config/apiRoutes';
 import { store } from '@/lib/store';
 import { setRefreshToken, setToken } from '@/lib/authSlice';
-import { useRouter } from 'next/navigation';
 
 const instance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL
@@ -16,7 +16,7 @@ const EcosystemInstance = axios.create({
 
 const refreshAccessToken = async () => {
   const state = store.getState();
-  const {refreshToken} = state.auth;
+  const { refreshToken } = state.auth;
 
   try {
     const response = await axios.post(
@@ -27,10 +27,13 @@ const refreshAccessToken = async () => {
     );
 
     if (response.status === 200) {
-      const { accessToken, refreshToken: newRefreshToken } = response.data;
+      const { access_token, refresh_token } = response?.data?.data;
+
+      const accessToken = access_token;
+      const refreshToken = refresh_token;
 
       store.dispatch(setToken(accessToken));
-      store.dispatch(setRefreshToken(newRefreshToken));
+      store.dispatch(setRefreshToken(refreshToken));
 
       return accessToken;
     }
@@ -44,7 +47,7 @@ const refreshAccessToken = async () => {
 instance.interceptors.request.use(
   async (config) => {
     const state = store.getState();
-    const {token} = state.auth;
+    const { token } = state.auth;
 
     if (token) {
       config.headers.set('Authorization', `Bearer ${token}`);
@@ -62,7 +65,7 @@ instance.interceptors.response.use(
     const originalRequest = error.config;
     const errorRes = error.response;
 
-    if (errorRes?.status === 401 && !originalRequest._retry) {
+    if (errorRes?.status === 404 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       const newAccessToken = await refreshAccessToken();
@@ -70,10 +73,9 @@ instance.interceptors.response.use(
       if (newAccessToken) {
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return axios(originalRequest);
-      } 
-        const route = useRouter();
-        route.push('/auth/sign-in');
-      
+      }
+      const route = useRouter();
+      route.push('/auth/sign-in');
     }
 
     return Promise.reject(error);

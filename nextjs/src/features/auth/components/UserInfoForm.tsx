@@ -373,11 +373,7 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
     }
   };
   useEffect(() => {
-    // if (email) {
     userDeviceDetails();
-    // } else {
-    // 	setProfile();
-    // }
     const platform = navigator.platform.toLowerCase();
     if (platform.includes(Devices.Linux)) {
       setIsDevice(true);
