@@ -5,16 +5,16 @@ import {
   axiosPut
 } from '@/services/apiRequests';
 import {
-  DeviceDetails,
+  IDeviceDetails,
   IdeviceBody,
-  RegistrationOptionInterface,
-  UserEmail,
-  VerifyRegistrationObjInterface
+  IRegistrationOption,
+  IUserEmail,
+  IVerifyRegistrationObj
 } from '@/components/profile/interfaces';
 import apiRoutes from './apiRoutes';
 
 export const generateRegistrationOption = async (
-  payload: RegistrationOptionInterface
+  payload: IRegistrationOption
 ) => {
   const email = payload.userName;
   const details = {
@@ -37,7 +37,7 @@ export const generateRegistrationOption = async (
 };
 
 export const verifyRegistration = async (
-  payload: VerifyRegistrationObjInterface,
+  payload: IVerifyRegistrationObj,
   email: string
 ) => {
   const details = {
@@ -118,7 +118,7 @@ export const deleteDeviceById = async (credentialId: string) => {
   }
 };
 
-export const generateAuthenticationOption = async (payload: UserEmail) => {
+export const generateAuthenticationOption = async (payload: IUserEmail) => {
   const details = {
     url: `${apiRoutes.auth.fidoAuthentication}`,
     payload,
@@ -139,7 +139,7 @@ export const generateAuthenticationOption = async (payload: UserEmail) => {
 };
 
 export const verifyAuthentication = async (
-  payload: VerifyRegistrationObjInterface,
+  payload: IVerifyRegistrationObj,
   email: { userName: string }
 ) => {
   const details = {
@@ -161,7 +161,7 @@ export const verifyAuthentication = async (
   }
 };
 
-export const editDeviceDetails = async (payload: DeviceDetails) => {
+export const editDeviceDetails = async (payload: IDeviceDetails) => {
   const details = {
     url: `${apiRoutes.auth.updateDeviceName}/${payload.enCodedUrl}?deviceName=${payload.updatedDeviceName}`,
     payload,

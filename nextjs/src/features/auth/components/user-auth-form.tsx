@@ -24,7 +24,7 @@ import {
   getUserProfile,
   loginUser,
   passwordEncryption,
-  UserSignInData
+  IUserSignInData
 } from '@/app/api/Auth';
 import { useDispatch } from 'react-redux';
 import { setRefreshToken, setToken } from '@/lib/authSlice';
@@ -115,7 +115,7 @@ export default function SignInViewPage() {
 
   const handleSignIn = async (values: { email: string; password?: string }) => {
     try {
-      let entityData: UserSignInData;
+      let entityData: IUserSignInData;
 
       if (isPasswordTab) {
         const encryptedPassword = await passwordEncryption(

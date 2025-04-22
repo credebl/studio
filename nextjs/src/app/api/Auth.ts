@@ -3,35 +3,35 @@ import { apiRoutes } from "@/config/apiRoutes"
 import { axiosGet, axiosPost, axiosPut } from "@/services/apiRequests"
 
 
-export interface UserSignUpData {
+export interface IUserSignUpData {
     email: string,
     clientId: string,
     clientSecret: string
 }
-export interface AddPasswordDetails {
+export interface IAddPasswordDetails {
     email:string
     password:string 
     isPasskey:boolean
     firstName: string|null
     lastName: string|null
 }
-export interface UserSignInData {
+export interface IUserSignInData {
     email: string | undefined, 
     isPasskey:boolean, 
     password?: string
 }
-export interface EmailVerifyData {
+export interface IEmailVerifyData {
     verificationCode: string,
     email: string
 }
 
-export interface KeyCloakData {
+export interface IKeyCloakData {
 	email: string,
 	oldPassword: string,
 	newPassword: string
 }
 
-export const sendVerificationMail = async(payload:UserSignUpData) => {
+export const sendVerificationMail = async(payload:IUserSignUpData) => {
     const details ={
         url: apiRoutes.auth.sendMail,
         payload,
@@ -77,7 +77,7 @@ export const forgotPassword = async(payload: {email: string}) => {
 	} 
 }
 
-export const loginUser = async(payload: UserSignInData) => {
+export const loginUser = async(payload: IUserSignInData) => {
     const details = {
         url: apiRoutes.auth.sinIn,
         payload,
@@ -93,7 +93,7 @@ export const loginUser = async(payload: UserSignInData) => {
     } 
 }
 
-export const resetPasswordKeyCloak = async(payload: KeyCloakData) => {
+export const resetPasswordKeyCloak = async(payload: IKeyCloakData) => {
 	
 	const details = {
 			url: apiRoutes.auth.keyClockResetPassword,
@@ -149,7 +149,7 @@ export const updateUserProfile = async(data: object ) => {
     }
 }  
 
-export const verifyUserMail = async(payload: EmailVerifyData ) => {
+export const verifyUserMail = async(payload: IEmailVerifyData ) => {
     const details ={
         url:`${apiRoutes.auth.verifyEmail}?verificationCode=${payload?.verificationCode}&email=${payload?.email}`,
         config: { headers: { "Content-type": "application/json" } }
@@ -179,7 +179,7 @@ export const checkUserExist = async(payload: string) => {
     } 
 }
 
-export const addPasswordDetails = async(payload: AddPasswordDetails) => {
+export const addPasswordDetails = async(payload: IAddPasswordDetails) => {
     const details ={
         url: `${apiRoutes.auth.addDetails}`,
         payload,

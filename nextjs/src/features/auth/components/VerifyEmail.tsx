@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { EmailVerifyData, verifyUserMail } from '@/app/api/Auth';
+import { IEmailVerifyData, verifyUserMail } from '@/app/api/Auth';
 import { apiStatusCodes } from '@/config/CommonConstant';
 import { validEmail } from '@/utils/TextTransform';
 import { Button } from '@/components/ui/button';
@@ -16,7 +16,7 @@ export default function VerifyEmailPage() {
 
   const hasVerifiedRef = useRef(false);
 
-  const verifyEmailSuccess = async (payload: EmailVerifyData) => {
+  const verifyEmailSuccess = async (payload: IEmailVerifyData) => {
     try {
       const response = await verifyUserMail(payload);
       const { data } = response as AxiosResponse;
@@ -43,7 +43,7 @@ export default function VerifyEmailPage() {
     hasVerifiedRef.current = true;
 
     const queryParameters = new URLSearchParams(window.location.search);
-    const payload: EmailVerifyData = {
+    const payload: IEmailVerifyData = {
       verificationCode: queryParameters.get('verificationCode') || '',
       email: validEmail(queryParameters.get('email') || '')
     };

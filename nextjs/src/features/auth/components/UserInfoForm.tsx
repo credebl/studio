@@ -21,7 +21,7 @@ import { startRegistration } from '@simplewebauthn/browser';
 import {
   IdeviceBody,
   IDeviceData,
-  VerifyRegistrationObjInterface
+  IVerifyRegistrationObj
 } from '@/components/profile/interfaces';
 
 interface StepUserInfoProps {
@@ -161,7 +161,7 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
         setLoading(false);
 
         const attResp = await startRegistration(opts);
-        const verifyRegistrationObj: VerifyRegistrationObjInterface = {
+        const verifyRegistrationObj: IVerifyRegistrationObj = {
           ...attResp,
           challangeId
         };
@@ -177,7 +177,7 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
 
   let credentialID = '';
   const verifyRegistrationMethod = async (
-    verifyRegistrationObj: VerifyRegistrationObjInterface,
+    verifyRegistrationObj: IVerifyRegistrationObj,
     OrgUserEmail: string
   ) => {
     try {

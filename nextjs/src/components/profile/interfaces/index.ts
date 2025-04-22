@@ -1,13 +1,13 @@
-export interface RegistrationOptionInterface {
+export interface IRegistrationOption {
   userName: string,
   deviceFlag: boolean
 
 }
 
-export interface AddPassword {
+export interface IAddPassword {
   password: string,
 }
-export interface VerifyRegistrationObjInterface{
+export interface IVerifyRegistrationObj{
   id: string;
   rawId: string;
   response: object;
@@ -29,12 +29,12 @@ export interface IdeviceBody {
   credentialId: string,
   deviceFriendlyName: string
 }
-export interface DeviceDetails {
+export interface IDeviceDetails {
   enCodedUrl: string,
   updatedDeviceName: string
 }
 
-export interface UserEmail {
+export interface IUserEmail {
   email: string
 }
 
@@ -52,7 +52,7 @@ export interface IUserProfile {
   roles: string
 }
 
-export interface DisplayUserProfileProps {
+export interface IDisplayUserProfileProps {
 	toggleEditProfile: () => void;
 	userProfileInfo: IUserProfile | null;
 }
