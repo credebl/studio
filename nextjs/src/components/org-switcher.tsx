@@ -33,7 +33,7 @@ export function OrgSwitcher({
 }) {
   const [selectedTenant, setSelectedTenant] = React.useState<
     Tenant | undefined
-  >(defaultTenant || (tenants.length > 0 ? tenants[0] : undefined));
+  >(defaultTenant ?? (tenants.length > 0 ? tenants[0] : undefined));
   const dispatch = useAppDispatch();
 
   const handleTenantSwitch = (tenant: Tenant) => {
@@ -58,9 +58,7 @@ export function OrgSwitcher({
               </div>
               <div className='flex flex-col gap-0.5 leading-none'>
                 <span className='font-semibold'>Select Organization</span>
-                <span className=''>
-                  {selectedTenant?.name || tenants[0]?.name}
-                </span>
+                <span>{selectedTenant?.name ?? tenants[0]?.name}</span>
               </div>
               <ChevronsUpDown className='ml-auto' />
             </SidebarMenuButton>
@@ -74,7 +72,7 @@ export function OrgSwitcher({
                 key={tenant.id}
                 onSelect={() => handleTenantSwitch(tenant)}
               >
-                {tenant.name}{' '}
+                {tenant.name}
                 {tenant.id === selectedTenant?.id && (
                   <Check className='ml-auto' />
                 )}

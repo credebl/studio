@@ -18,8 +18,8 @@ function setThemeCookie(theme: string) {
 }
 
 type ThemeContextType = {
-  activeTheme: string;
-  setActiveTheme: (theme: string) => void;
+  readonly activeTheme: string;
+  readonly setActiveTheme: (theme: string) => void;
 };
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -28,11 +28,11 @@ export function ActiveThemeProvider({
   children,
   initialTheme
 }: {
-  children: ReactNode;
-  initialTheme?: string;
+  readonly children: ReactNode;
+  readonly initialTheme?: string;
 }) {
   const [activeTheme, setActiveTheme] = useState<string>(
-    () => initialTheme || CREDEBL_THEMES
+    () => initialTheme ?? CREDEBL_THEMES
   );
 
   useEffect(() => {

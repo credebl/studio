@@ -5,10 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Lock, KeyRound, CheckCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import {
-  passwordEncryption,
-  addPasswordDetails,
-} from '@/app/api/Auth';
+import { passwordEncryption, addPasswordDetails } from '@/app/api/Auth';
 import { apiStatusCodes, passwordRegex } from '@/config/CommonConstant';
 import { AxiosError, AxiosResponse } from 'axios';
 import { Formik, Form as FormikForm } from 'formik';
@@ -19,7 +16,6 @@ import {
   getUserDeviceDetails,
   verifyRegistration
 } from '@/app/api/Fido';
-
 
 import { startRegistration } from '@simplewebauthn/browser';
 import {
@@ -69,7 +65,6 @@ const validationSchema = Yup.object().shape({
 
 export default function UserInfoForm({ email }: StepUserInfoProps) {
   const [loading, setLoading] = useState(false);
-
   const [serverError, setServerError] = useState('');
   const [, setIsDevice] = useState<boolean>(false);
   const [showEmailVerification, setShowEmailVerification] = useState({
@@ -79,14 +74,11 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
   });
 
   const [setDeviceList] = useState<IDeviceData[]>([]);
-
   const [usePassword, setUsePassword] = useState(true);
   const [setDisableFlag] = useState<boolean>(false);
   const [setAddFailure] = useState<string | null>(null);
-
   const [setAddSuccess] = useState<string | null>(null);
   const [setErrMsg] = useState<string | null>(null);
-
   const router = useRouter();
   const [setFidoLoader] = useState<boolean>(false);
   const [setFidoError] = useState('');
@@ -134,8 +126,6 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
     }
   };
 
-
-
   const showFidoError = (error: unknown): void => {
     const err = error as AxiosError;
     if (
@@ -150,7 +140,6 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
 
   const registerWithPasskey = async (flag: boolean): Promise<void> => {
     try {
-      // const userEmail = await getFromLocalStorage(storageKeys.USER_EMAIL)
       const RegistrationOption: RegistrationOptionInterface = {
         userName: email,
         deviceFlag: flag
@@ -185,37 +174,6 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
       showFidoError(error);
     }
   };
-
-  // const registerWithPasskey = async (flag: boolean): Promise<void> => {
-  // 	try {
-  // 		const RegistrationOption: RegistrationOptionInterface = {
-  // 			userName: email,
-  // 			deviceFlag: flag,
-  // 		};
-  // 		// Generate Registration Option
-  // 		const generateRegistrationResponse = await generateRegistrationOption(
-  // 			RegistrationOption,
-  // 		);
-  // 		const { data } = generateRegistrationResponse as AxiosResponse;
-  // 		const opts = data?.data;
-  // 		const challangeId = data?.data?.challenge;
-  // 		if (opts) {
-  // 			opts.authenticatorSelection = {
-  // 				residentKey: 'preferred',
-  // 				requireResidentKey: false,
-  // 				userVerification: 'preferred',
-  // 			};
-  // 		}
-  // 		const attResp = await startRegistration(opts);
-
-  // 		const verifyRegistrationObj = {
-  // 			...attResp,
-  // 			challangeId,
-  // 		};
-  // 		await verifyRegistrationMethod(verifyRegistrationObj, email);
-  // 	} catch (error) {
-  // 	}
-  // };
 
   let credentialID = '';
   const verifyRegistrationMethod = async (
@@ -267,7 +225,7 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
       showFidoError(error);
     }
   };
-  //userDeviceDetails on page reload
+
   const userDeviceDetails = async (): Promise<void> => {
     try {
       setFidoLoader(true);
@@ -299,6 +257,7 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
       setFidoLoader(false);
     }
   };
+
   useEffect(() => {
     userDeviceDetails();
     const platform = navigator.platform.toLowerCase();

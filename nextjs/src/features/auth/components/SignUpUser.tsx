@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import EmailVerificationForm from './EmailVerificationForm';
 import UserInfoForm from './UserInfoForm';
 import Link from 'next/link';
-// import { ArrowLeft } from 'lucide-react';
 
 export default function SignUpUser() {
   const [step, setStep] = useState(1);
@@ -13,16 +12,7 @@ export default function SignUpUser() {
   return (
     <div className='flex min-h-screen flex-col items-center justify-center'>
       <div className='bg-card relative w-[480px] rounded-xl p-6 shadow'>
-        {/* {step === 2 && (
-          <button
-            onClick={() => setStep(1)}
-            className="absolute left-6 top-6 flex items-center gap-2 text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="h-5 w-5" />
-            Back
-          </button>
-        )} */}
-
+    
         <h2 className='mb-2 text-center text-xl font-semibold'>
           Create an account
         </h2>

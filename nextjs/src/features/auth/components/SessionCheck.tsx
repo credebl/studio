@@ -9,7 +9,6 @@ interface SessionProps {
   children: ReactNode;
 }
 
-
 const signInPath = '/auth/sign-in';
 const dashboardPath = '/dashboard';
 
@@ -17,7 +16,7 @@ const SessionCheck: React.FC<SessionProps> = ({ children }) => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const token = useAppSelector((state) => (state as any).auth.token);
+  const token = useAppSelector((state) => state.auth.token);
 
   const checkSession = (): void => {
     const isExcluded = sessionExcludedPaths.some((path) =>
@@ -33,7 +32,7 @@ const SessionCheck: React.FC<SessionProps> = ({ children }) => {
 
   useEffect(() => {
     checkSession();
-  }, [pathname]);
+  }, [pathname, token]);
 
   return <>{children}</>;
 };

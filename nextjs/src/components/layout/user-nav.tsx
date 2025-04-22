@@ -21,7 +21,6 @@ import { getUserProfile } from '@/app/api/Auth';
 import { apiStatusCodes } from '@/config/CommonConstant';
 import { useEffect, useState } from 'react';
 import { IUserProfile } from '../profile/interfaces';
-import { clearOrgId } from '@/lib/orgSlice';
 import { persistor } from '@/lib/store';
 
 export function UserNav() {
@@ -29,7 +28,7 @@ export function UserNav() {
   const router = useRouter();
 
   const [userProfile, setUserProfile] = useState<IUserProfile | null>(null);
-  const token = useAppSelector((state) => (state as any).auth.token);
+  const token = useAppSelector((state) => state.auth.token);
 
   useEffect(() => {
     async function fetchProfile() {
@@ -43,7 +42,6 @@ export function UserNav() {
           setUserProfile(response.data.data);
         }
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.error('Error fetching user profile:', error);
       }
     }
@@ -66,7 +64,7 @@ export function UserNav() {
           <Avatar className='h-8 w-8'>
             <AvatarImage src={userProfile?.profileImg} alt='profileImg' />
             <AvatarFallback>
-              {userProfile?.email?.[0]?.toUpperCase() || '?'}
+              {userProfile?.email?.[0]?.toUpperCase() ?? '?'}
             </AvatarFallback>
           </Avatar>
         </Button>

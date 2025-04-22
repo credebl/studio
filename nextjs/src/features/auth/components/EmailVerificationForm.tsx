@@ -16,9 +16,9 @@ import * as Yup from 'yup';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface StepEmailProps {
-  email: string;
-  setEmail: (value: string) => void;
-  goToNext: () => void;
+  readonly email: string;
+  readonly setEmail: (value: string) => void;
+  readonly goToNext: () => void;
 }
 
 export default function EmailVerificationForm({
@@ -69,6 +69,8 @@ export default function EmailVerificationForm({
         });
       }
     } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('Error during sending verification email:', err);
       setShowEmailVerification({
         message: 'An error occurred while sending verification email.',
         isError: true,
@@ -86,7 +88,7 @@ export default function EmailVerificationForm({
     try {
       const userRsp = await checkUserExist(emailValue);
       const { data } = userRsp as AxiosResponse;
-      const { isEmailVerified, isRegistrationCompleted } = data?.data || {};
+      const { isEmailVerified, isRegistrationCompleted } = data?.data ?? {};
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         if (isEmailVerified) {
@@ -105,12 +107,14 @@ export default function EmailVerificationForm({
         }
       } else {
         setShowEmailVerification({
-          message: data?.data?.message || 'Something went wrong.',
+          message: data?.data?.message ?? 'Something went wrong.',
           isError: true,
           type: 'danger'
         });
       }
     } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('Unexpected error during email verification:', err);
       setShowEmailVerification({
         message: 'An unexpected error occurred. Please try again.',
         isError: true,

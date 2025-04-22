@@ -19,41 +19,25 @@ import {
   SidebarRail
 } from '@/components/ui/sidebar';
 import { navItems } from '@/constants/data';
-import { IconChevronRight, IconPhotoUp } from '@tabler/icons-react';
-import { useSession } from 'next-auth/react';
+import { IconChevronRight } from '@tabler/icons-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Icons } from '../icons';
 import { OrgSwitcher } from '../org-switcher';
-import { useMediaQuery } from '@/hooks/use-media-query';
 import { useEffect, useState } from 'react';
 import { getOrganizations } from '@/app/api/organization';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { useAppDispatch } from '@/lib/hooks';
 import { setOrgId } from '@/lib/orgSlice';
 
-// export const company = {
-//   name: 'AyanWorks',
-//   logo: IconPhotoUp,
-//   plan: 'Enterprise'
-// };
-
-// const tenants = [
-//   { id: '1', name: 'AyanWorks' },
-//   { id: '2', name: 'Beta Corp' },
-//   { id: '3', name: 'Gamma Ltd' }
-// ];
-
 export default function AppSidebar() {
-  const { data: session } = useSession();
+
   const pathname = usePathname();
-  // const { isOpen } = useMediaQuery();
   const dispatch = useAppDispatch();
-  const token = useAppSelector((state) => state.auth.token);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage] = useState(1);
   const [pageSize] = useState(10);
   const [searchTerm] = useState('');
   const [orgList, setOrgList] = useState<any[]>([]);
-  const [selectedOrg, setSelectedOrg] = useState<any | null>(null);
+  const [setSelectedOrg] = useState<any | null>(null);
 
   useEffect(() => {
     const fetchOrganizations = async () => {
@@ -92,15 +76,6 @@ export default function AppSidebar() {
   };
 
   const activeTenant = orgList[0];
-
-  // useEffect(() => {
-  //   // Side effects based on sidebar state changes
-  // }, [isOpen]);
-
-  // useEffect(() => {
-  //   console.log('orgList', orgList);
-  //   // Side effects based on sidebar state changes
-  // }, [orgList]);
 
   return (
     <Sidebar collapsible='icon'>
