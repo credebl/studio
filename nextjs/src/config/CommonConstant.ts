@@ -1,5 +1,5 @@
 export const passwordRegex =
-  /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[!"$%*,./:;=@^_\-!@$%^*])[A-Za-z\d!"$%*,./:;=@^_\-!@$%^*]{8,}$/;
+  /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[!"$%*,./:;=@^_\-])[A-Za-z\d!"$%*,./:;=@^_\-]{8,}$/;
 export const allowedPasswordChars = /[^a-zA-Z0-9!"$%*,-.:;=@^_]/g;
 export const phoneRegExp = /^[+]?(\d{1,4})?[-\s./\d]*$/;
 export const imageSizeAccepted = 1; // mb
