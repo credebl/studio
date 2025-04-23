@@ -4,7 +4,6 @@ import { Separator } from '../ui/separator';
 import { Breadcrumbs } from '../breadcrumbs';
 import SearchInput from '../search-input';
 import { UserNav } from './user-nav';
-import { ThemeSelector } from '../theme-selector';
 import { ModeToggle } from './ThemeToggle/theme-toggle';
 
 export default function Header() {
@@ -17,14 +16,29 @@ export default function Header() {
       </div>
 
       <div className='flex items-center gap-2 px-4'>
-        {/* <CtaGithub /> */}
         <div className='hidden md:flex'>
           <SearchInput />
         </div>
         <ModeToggle />
         <UserNav />
-        <ThemeSelector />
+        {/* <ThemeSelector /> */}
       </div>
     </header>
+    // <header className='relative flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12'>
+    //   <div className='flex items-center gap-2 px-4'>
+    //     <SidebarTrigger className='-ml-1' />
+    //     <Separator orientation='vertical' className='mr-2 h-4' />
+    //     <Breadcrumbs />
+    //   </div>
+
+    //   <div className='absolute top-1/2 left-1/2 hidden -translate-x-1/2 -translate-y-1/2 md:flex'>
+    //     <SearchInput />
+    //   </div>
+
+    //   <div className='flex items-center gap-2 px-4'>
+    //     <ModeToggle />
+    //     <UserNav />
+    //   </div>
+    // </header>
   );
 }

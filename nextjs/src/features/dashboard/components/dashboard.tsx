@@ -1,56 +1,114 @@
+'use client';
+
 import PageContainer from '@/components/layout/page-container';
 import OrganizationCardList from './OrganizationCardList';
 import SchemasList from './SchemasList';
 import RecentActivity from './RecentActivity';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useState, useEffect } from 'react';
+import { useAppSelector } from '@/lib/hooks';
+import { getOrganizationById } from '@/app/api/organization';
+import { apiStatusCodes } from '@/config/CommonConstant';
+import { AxiosResponse } from 'axios';
 import CredentialDefinition from './CredentialDefinition ';
 
-export default function OverViewPage() {
+export default function Dashboard() {
+  const [walletData, setWalletData] = useState<any[]>([]);
+  const [walletLoading, setWalletLoading] = useState(true);
+  const orgId = useAppSelector((state) => state.organization.orgId);
+
+  const fetchOrganizationDetails = async () => {
+    if (!orgId) return;
+    try {
+      setWalletLoading(true);
+      const response = await getOrganizationById(orgId);
+      const { data } = response as AxiosResponse;
+
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        const orgAgentsList = data?.data?.org_agents;
+        if (orgAgentsList && orgAgentsList.length > 0) {
+          setWalletData(orgAgentsList);
+        } else {
+          setWalletData([]);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching organization:', error);
+    } finally {
+      setWalletLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (orgId) {
+      fetchOrganizationDetails();
+    }
+  }, [orgId]);
+
+  const handleCreateWallet = () => {
+    // redirect or open wallet creation
+  };
+
   return (
     <PageContainer>
-      <div className='flex flex-1 flex-col space-y-2'>
-        <div className='flex items-center justify-between space-y-2'>
+      <div className='flex flex-1 flex-col space-y-6'>
+        <div className='flex items-center justify-between'>
           <h2 className='text-2xl font-bold tracking-tight'>
             Hi, Welcome back 👋
           </h2>
         </div>
 
-        <div className='grid grid-cols-1 gap-4 lg:grid-cols-[50%_50%]'>
+        {walletLoading ? (
+          <div className='bg-muted relative flex min-h-[150px] flex-col justify-between overflow-hidden rounded-md p-6 shadow-sm'>
+            <Skeleton className='mb-2 h-6 w-2/3' />
+            <Skeleton className='mb-4 h-4 w-1/2' />
+            <Skeleton className='h-10 w-[180px]' />
+          </div>
+        ) : (
+          walletData.length === 0 && (
+            <div className="relative flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
+              <div className='flex flex-col items-center justify-between gap-4 sm:flex-row sm:items-center'>
+                <div className='flex flex-col items-start'>
+                  <h3 className='text-xl font-semibold'>
+                    Wallet lets you create schemas and credential definitions
+                  </h3>
+                  <p className='mt-2 text-sm'>
+                    Please create wallet for your organization which would help
+                    you to issue and verify credentials for your users.
+                  </p>
+                </div>
+                <Button onClick={handleCreateWallet} className='min-w-[180px]'>
+                  Create Wallet
+                  <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    width='24'
+                    height='24'
+                    viewBox='0 0 24 24'
+                    fill='none'
+                    className='ml-2'
+                  >
+                    <path
+                      d='M9.99984 6L8.58984 7.41L13.1698 12L8.58984 16.59L9.99984 18L15.9998 12L9.99984 6Z'
+                      fill='currentColor'
+                    />
+                  </svg>
+                </Button>
+              </div>
+            </div>
+          )
+        )}
+
+        <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
           <OrganizationCardList />
           <SchemasList />
         </div>
 
-        <div className='grid grid-cols-1 gap-4 lg:grid-cols-[50%_50%]'>
+        <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
           <CredentialDefinition />
           <RecentActivity />
         </div>
       </div>
     </PageContainer>
-
-    // <PageContainer>
-    //   <div className='flex flex-1 flex-col space-y-2'>
-    //     <div className='flex items-center justify-between space-y-2'>
-    //       <h2 className='text-2xl font-bold tracking-tight'>
-    //         Hi, Welcome back 👋
-    //       </h2>
-    //     </div>
-    //     <div className='mb-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4'>
-    //       <StatsData />
-    //     </div>
-
-    //     <div className='mb-8 grid gap-6 md:grid-cols-1 lg:grid-cols-2'>
-    //       <OrganizationsChart />
-    //       <OrganizationCardList />
-    //     </div>
-
-    //     <div className='mb-8 grid gap-6 md:grid-cols-1 lg:grid-cols-2'>
-    //       <SchemasList />
-    //       <CredentialDefinition />
-    //     </div>
-
-    //     <div className='mb-8 grid gap-6 md:grid-cols-1 lg:grid-cols-1'>
-    //       <RecentActivity />
-    //     </div>
-    //   </div>
-    // </PageContainer>
   );
 }
