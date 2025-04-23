@@ -99,7 +99,6 @@ const SchemasList = () => {
               >
                 <div className='flex items-center gap-3'>
                   <div className='bg-background flex h-10 w-10 items-center justify-center rounded-md'>
-                    {/* <Calendar className='h-5 w-5 text-amber-500' /> */}
                     <Calendar />
                   </div>
                   <div className='flex-1 truncate font-medium'>

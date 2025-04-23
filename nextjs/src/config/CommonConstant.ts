@@ -107,7 +107,7 @@ export const sessionExcludedPaths = [
   '/auth/verify-email-success'
 ];
 
-const imageBasePath = '/images/CREDEBL_Logo_Web.svg';
+const imageBasePath = '/images';
 
 export const CredeblLogo = `${imageBasePath}/CREDEBL_Logo_Web.svg`;
 export const signInImg = `${imageBasePath}/signin.svg`;

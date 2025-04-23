@@ -57,7 +57,7 @@ export function OrgSwitcher({
                 <GalleryVerticalEnd className='size-4' />
               </div>
               <div className='flex flex-col gap-0.5 leading-none'>
-                <span className='font-semibold'>Select Organization</span>
+                {/* <span className='font-semibold'>Select Organization</span> */}
                 <span>{selectedTenant?.name ?? tenants[0]?.name}</span>
               </div>
               <ChevronsUpDown className='ml-auto' />

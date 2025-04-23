@@ -10,6 +10,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 
@@ -22,6 +25,7 @@ import { apiStatusCodes } from '@/config/CommonConstant';
 import { useEffect, useState } from 'react';
 import { IUserProfile } from '../profile/interfaces';
 import { persistor } from '@/lib/store';
+import { ThemeSelector } from '../theme-selector';
 
 export function UserNav() {
   const dispatch = useDispatch();
@@ -64,11 +68,12 @@ export function UserNav() {
           <Avatar className='h-8 w-8'>
             <AvatarImage src={userProfile?.profileImg} alt='profileImg' />
             <AvatarFallback>
-              {userProfile?.email?.[0]?.toUpperCase() ?? '?'}
+              {userProfile?.email?.[0]?.toUpperCase() ?? ''}
             </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
+
       <DropdownMenuContent
         className='w-56'
         align='end'
@@ -77,7 +82,7 @@ export function UserNav() {
       >
         <DropdownMenuLabel className='font-normal'>
           <div className='flex flex-col space-y-1'>
-            <p className='mb-5 text-sm leading-none font-medium'>
+            <p className='text-sm leading-none font-medium'>
               {userProfile?.firstName} {userProfile?.lastName}
             </p>
             <p className='text-sm leading-none font-medium'>
@@ -85,19 +90,26 @@ export function UserNav() {
             </p>
           </div>
         </DropdownMenuLabel>
+
         <DropdownMenuSeparator />
+
         <DropdownMenuGroup>
-          <DropdownMenuItem
-            onClick={() => {
-              router.push('/profile');
-            }}
-          >
+          <DropdownMenuItem onClick={() => router.push('/profile')}>
             Profile
           </DropdownMenuItem>
-          <DropdownMenuSeparator />
+
           <DropdownMenuItem>Developer Settings</DropdownMenuItem>
+
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>Theme</DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <ThemeSelector />
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
         </DropdownMenuGroup>
+
         <DropdownMenuSeparator />
+
         <DropdownMenuItem onClick={handleLogout}>
           Log out
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
