@@ -5,7 +5,6 @@ type Props = {
 }
 
 const Page = ({ params: { orgId } }: Props) => {
-  console.log("inside page", orgId);
 
   return (
     <div>
