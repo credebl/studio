@@ -62,7 +62,7 @@ export default function SignInViewPage() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const [fidoLoader, setFidoLoader] = useState<boolean>(false);
+  const [fidoError, setFidoLoader] = useState<boolean>(false);
   const [fidoUserError, setFidoUserError] = useState('');
 
   const dispatch = useDispatch();
@@ -165,20 +165,24 @@ export default function SignInViewPage() {
     }
   };
 
-  const verifyAuthenticationMethod = async (
-    verifyAuthenticationObj: any,
-    userData: { userName: string }
-  ): Promise<string | AxiosResponse> => {
-    try {
-      const res = verifyAuthentication(verifyAuthenticationObj, userData);
-      return await res;
-    } catch (error) {
-      setFidoLoader(false);
-      throw error;
-    }
-  };
+	const verifyAuthenticationMethod = async (
+		verifyAuthenticationObj: any,
+		userData: { userName: string },
+	): Promise<string | AxiosResponse> => {
+		try {
+			// console.log("🚀 ~ SignInViewPage ~ verifyAuthenticationObj:", verifyAuthenticationObj)
+			// console.log("🚀 ~ SignInViewPage ~ userData:", userData)
+			const res = verifyAuthentication(verifyAuthenticationObj, userData);
+			return await res;
+		} catch (error) {
+			setFidoLoader(false);
+			throw error;
+		}
+	};
 
   const authenticateWithPasskey = async (email: string): Promise<void> => {
+    console.log("inside the authenticate with passkey function 1111");
+    
     try {
       setLoading(true);
       setFidoLoader(true);
@@ -192,15 +196,19 @@ export default function SignInViewPage() {
         await generateAuthenticationOption(obj);
       const challengeId: string =
         generateAuthenticationResponse?.data?.data?.challenge;
+      console.log("🚀 ~ authenticateWithPasskey ~ challengeId:-----------", challengeId)
+console.log("generateAuthenticationResponse 22222", generateAuthenticationResponse);
 
       if (generateAuthenticationResponse?.data?.error) {
         setFidoUserError(generateAuthenticationResponse?.data?.error);
         return;
       }
-
+      
       const opts = generateAuthenticationResponse?.data?.data;
+      console.log("🚀 ~ authenticateWithPasskey ~ opts:", opts)
 
       const attResp = await startAuthentication(opts);
+      console.log("🚀 ~ authenticateWithPasskey ~ attResp: 333333", attResp)
 
       const verifyAuthenticationObj = {
         ...attResp,
@@ -211,16 +219,19 @@ export default function SignInViewPage() {
         verifyAuthenticationObj,
         obj
       );
+      console.log("🚀 ~ authenticateWithPasskey ~ verificationResp: 4444444", verificationResp)
       const { data } = verificationResp as AxiosResponse;
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         const token = data?.data?.access_token;
         const refreshToken = data?.data?.refresh_token;
+        console.log("🚀 ~ authenticateWithPasskey ~ token:", token)
 
         dispatch(setToken(token));
         dispatch(setRefreshToken(refreshToken));
 
         const userRole = await getUserDetails(token);
+        console.log("🚀 ~ authenticateWithPasskey ~ userRole:", userRole)
 
         if (!userRole?.role?.name) {
           toast.error('Invalid user role');

@@ -41,7 +41,7 @@ export const apiRoutes = {
 		create: '/orgs',
 		update: '/orgs',
 		getAll: '/orgs',
-		getById: '/orgs',
+			getById: '/orgs',
 		getOrgDashboard: '/orgs/dashboard',
 		invitations: '/invitations',
 		orgRoles: '/orgs/roles',
