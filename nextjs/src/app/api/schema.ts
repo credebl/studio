@@ -3,6 +3,29 @@ import { GetAllSchemaListParameter } from '@/features/dashboard/type/schema';
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs';
 import apiRoutes from './apiRoutes';
 
+export const getAllSchemas = async (
+  { itemPerPage, page, allSearch }: GetAllSchemaListParameter,
+  schemaType: string,
+  ledgerId:string
+) => {
+  const axiosPayload = {
+    url: `${apiRoutes.Platform.getAllSchemaFromPlatform}?pageSize=${itemPerPage}&searchByText=${allSearch}&pageNumber=${page}&ledgerId=${ledgerId}&schemaType=${schemaType}`,
+    config: {
+      headers: {
+        'Content-type': 'application/json'
+      }
+    }
+  };
+
+  try {
+    const response = await axiosGet(axiosPayload);
+    return response;
+  } catch (error) {
+    const err = error as Error;
+    return err?.message;
+  }
+};
+
 export const getAllSchemasByOrgId = async (
   { search, itemPerPage, page }: GetAllSchemaListParameter,
   orgId: string

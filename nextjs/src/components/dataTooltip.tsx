@@ -1,0 +1,36 @@
+'use client';
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@/components/ui/tooltip';
+
+import React from 'react';
+
+interface TooltipProps<Type> {
+  data: Type[];
+  renderItem: (item: Type) => string;
+  id?: string;
+  children: React.ReactNode;
+}
+
+const DataTooltip = <Type,>({
+  data,
+  renderItem,
+  children
+}: TooltipProps<Type>) => {
+  const content = data.map(renderItem).join(', ');
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>{children}</TooltipTrigger>
+        <TooltipContent side='top'>{content}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};
+
+export default DataTooltip;

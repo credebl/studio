@@ -1,23 +1,34 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface OrgState {
-  orgId: string | null;
+  orgId: string;
+  ledgerId: string;
 }
 
 const initialState: OrgState = {
-  orgId: null
+  orgId: '',
+  ledgerId: ''
 };
 
 const orgSlice = createSlice({
   name: 'organization',
   initialState,
   reducers: {
-    setOrgId: (state, action: PayloadAction<string | null>) => {
+    setOrgId: (state, action: PayloadAction<string>) => {
       state.orgId = action.payload;
     },
-    clearOrgId: () => initialState
+    setLedgerId: (state, action: PayloadAction<string>) => {
+      state.ledgerId = action.payload;
+    },
+    clearOrgId: (state) => {
+      state.orgId = '';
+    },
+    clearLedgerId: (state) => {
+      state.ledgerId = '';
+    }
   }
 });
 
-export const { setOrgId, clearOrgId } = orgSlice.actions;
+export const { setOrgId, clearOrgId, setLedgerId, clearLedgerId } =
+  orgSlice.actions;
 export default orgSlice.reducer;
