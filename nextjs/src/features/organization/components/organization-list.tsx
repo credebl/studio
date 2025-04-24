@@ -50,7 +50,6 @@ export const OrganizationList = () => {
 
         const orgList = data?.data?.organizations.map((userOrg: Organization) => {
           const roles: string[] = userOrg.userOrgRoles.map(role => role.orgRole.name);
-          console.log("🚀 ~ orgList ~ roles:", roles)
           return {
             ...userOrg,
             roles,
@@ -88,7 +87,6 @@ export const OrganizationList = () => {
 
   useEffect(() => {
     getAllOrganizations();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage.pageNumber, currentPage.pageSize, searchText]);
 
   return (

@@ -35,16 +35,12 @@ export const OrganizationDashboard = ({ orgId }: OrganizationDashboardProps) => 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {			
         
         setOrgData(data?.data);
-				
-        console.log("orggggggggggggg", orgId);
-			
 
 		} else {
 			setError(response as string);
 		}
 		setLoading(false);
 	};
-  console.log("🚀 ~ OrganizationDashboard ~ orgData:666", orgData)
 
   const handleEditOrg = () => {
     setOpen(true)

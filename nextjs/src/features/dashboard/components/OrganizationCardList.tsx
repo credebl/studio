@@ -21,47 +21,26 @@ import { Button } from '@/components/ui/button';
 import { getOrganizations } from '@/app/api/organization';
 import { Organization } from '@/features/dashboard/type/organization';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useRouter } from 'next/navigation';
-
-
-const initialPageState = {
-  pageNumber: 1,
-  pageSize: 10,
-  total: 1,
-  totalCount: 0
-};
+import Link from 'next/link';
 
 const OrganizationCardList = () => {
   const [orgList, setOrgList] = useState<Organization[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(initialPageState);
-  
-  const router = useRouter();
 
-  const onPageChange = (page: number) => {
-    setCurrentPage({
-      ...currentPage,
-      pageNumber: page,
-    });
-  };
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(10);
+  const [searchTerm] = useState('');
 
   const fetchOrganizations = async () => {
     try {
-      setLoading(true);
       const response = await getOrganizations(
-        currentPage.pageNumber,
-        currentPage.pageSize,
+        currentPage,
+        pageSize,
         searchTerm,
         ''
       );
       if (typeof response !== 'string' && response?.data?.data?.organizations) {
         setOrgList(response.data.data.organizations);
-        setCurrentPage({
-          ...currentPage,
-          total: response.data.data.totalPages || 1,
-          totalCount: response.data.data.totalCount || 0
-        });
       } else {
         setOrgList([]);
       }
@@ -74,7 +53,7 @@ const OrganizationCardList = () => {
 
   useEffect(() => {
     fetchOrganizations();
-  }, [currentPage.pageNumber, currentPage.pageSize, searchTerm]);
+  }, [currentPage, pageSize, searchTerm]);
 
   return (
     <Card>
@@ -82,9 +61,7 @@ const OrganizationCardList = () => {
         <div className='space-y-1'>
           <div className='flex items-center gap-x-2'>
             <CardTitle>Organizations</CardTitle>
-            <Badge>
-              {currentPage.totalCount}
-            </Badge>
+            <Badge>{orgList.length}</Badge>
           </div>
           <CardDescription>Manage your organizations</CardDescription>
         </div>
@@ -123,7 +100,7 @@ const OrganizationCardList = () => {
           </div>
         ) : (
           <div className='space-y-4'>
-            {orgList.map((org) => (
+            {orgList.slice(0, 5).map((org) => (
               <div
                 key={org.id}
                 className='hover:bg-muted/50 flex items-center justify-between p-3 transition-colors'
@@ -184,22 +161,8 @@ const OrganizationCardList = () => {
         )}
       </CardContent>
 
-      {currentPage.total > 1 && (
-        <div className="flex items-center justify-end px-6 py-4">
-          {/* <Pagination
-            currentPage={currentPage.pageNumber}
-            onPageChange={onPageChange}
-            totalPages={currentPage.total}
-          /> */}
-        </div>
-      )}
-
       <CardFooter className='mt-auto justify-end pt-2'>
-        <Button
-          onClick={() => router.push('/organizations')}
-        >
-          View all
-        </Button>
+      <Link href='#'>View all</Link>
       </CardFooter>
     </Card>
   );

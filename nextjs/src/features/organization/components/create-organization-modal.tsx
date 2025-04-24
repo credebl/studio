@@ -80,7 +80,6 @@ export default function OrganizationModal({
       
       try {
         if (mode === 'create') {
-          // Create organization logic
           const orgData = {
             name: values.name,
             description: values.description,
@@ -101,7 +100,6 @@ export default function OrganizationModal({
             setErrMsg(response as string || "Failed to create organization");
           }
         } else if (mode === 'edit') {
-          // Edit organization logic
           const updateData = {
             orgId: orgData?.id,
             name: values.name,
@@ -110,7 +108,6 @@ export default function OrganizationModal({
             isPublic: values.isPublic,
           };
   
-          // Only include logo if it's a data URL (new or changed logo)
           const logo = logoImage?.imagePreviewUrl || '';
           if (logo && (logo.includes('data:image/') && logo.includes(';base64'))) {
             updateData['logo'] = logo;
@@ -139,9 +136,7 @@ export default function OrganizationModal({
     },
   });
 
-  // Effect to initialize form data when modal opens
   useEffect(() => {
-    // When opening the modal in edit mode with existing data
     if (open && mode === 'edit' && orgData) {
       console.log("Setting form values for edit mode:", orgData);
       
@@ -157,7 +152,6 @@ export default function OrganizationModal({
         fileName: orgData.logoUrl ? 'Current logo' : '',
       });
     } 
-    // When opening the modal in create mode
     else if (open && mode === 'create') {
       formik.resetForm();
       setLogoImage({
@@ -167,7 +161,6 @@ export default function OrganizationModal({
     }
   }, [open, mode, orgData]);
 
-  // Effect to clean up when modal closes
   useEffect(() => {
     if (!open) {
       setErrMsg(null);
@@ -228,7 +221,7 @@ export default function OrganizationModal({
         )}
 
         <form onSubmit={formik.handleSubmit} className="space-y-4">
-          <div className="p-4 border rounded-lg flex flex-col sm:flex-row items-center gap-4">
+          <div className="p-4 rounded-lg flex flex-col sm:flex-row items-center gap-4">
             {logoImage.imagePreviewUrl ? (
               <Image
                 src={logoImage.imagePreviewUrl}
@@ -238,7 +231,7 @@ export default function OrganizationModal({
                 className="rounded-lg object-cover"
               />
             ) : (
-              <div className="w-20 h-20 bg-muted rounded-lg flex items-center justify-center text-sm text-gray-500">
+              <div className="w-20 h-20 rounded-lg flex items-center justify-center text-sm text-gray-500">
                 No Logo
               </div>
             )}
@@ -246,7 +239,7 @@ export default function OrganizationModal({
               <h3 className="font-medium mb-1">Organization Logo</h3>
               <p className="text-xs text-muted-foreground mb-2">JPG, JPEG and PNG. Max size of 1MB</p>
               <div>
-                <Label htmlFor="organizationlogo" className="bg-primary text-white px-4 py-2 rounded-lg cursor-pointer">
+                <Label htmlFor="organizationlogo" className="text-white px-4 py-2 rounded-lg cursor-pointer">
                   Choose file
                 </Label>
                 <Input
@@ -307,7 +300,6 @@ export default function OrganizationModal({
             )}
           </div>
 
-          {/* Organization visibility - only show in edit mode */}
           {mode === 'edit' && (
             <div className="space-y-3">
               <Label>Organization Visibility</Label>
