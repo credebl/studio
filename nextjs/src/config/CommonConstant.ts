@@ -111,6 +111,7 @@ const imageBasePath = '/images';
 
 export const CredeblLogo = `${imageBasePath}/CREDEBL_Logo_Web.svg`;
 export const signInImg = `${imageBasePath}/signin.svg`;
+export const personSvg = `${imageBasePath}/person_24dp_FILL0_wght400_GRAD0_opsz24 (2).svg`
 
 export const CredeblLogoWidth = 170;
 export const CredeblLogoHeight = 140;

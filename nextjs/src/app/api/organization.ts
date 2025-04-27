@@ -1,6 +1,8 @@
+/* eslint-disable max-lines */
 import { apiRoutes } from '@/config/apiRoutes';
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs';
-import { axiosGet, axiosPost, axiosPut, ecosystemAxiosPost } from '@/services/apiRequests';
+import {   axiosDelete, axiosGet, axiosPost, axiosPut, ecosystemAxiosPost } from '@/services/apiRequests';
+
 
 // TODO: Uncomment the following lines when the API is ready
 export const createOrganization = async (data: object) => {
@@ -206,6 +208,107 @@ export const getOrganizationRoles = async () => {
 
   try {
     return await axiosGet(axiosPayload);
+  } catch (error) {
+    const err = error as Error;
+    return err?.message;
+  }
+};
+
+export const getOrganizationReferences = async (orgId: string) => {
+  const url = `${apiRoutes.organizations.root}${apiRoutes.organizations.getOrgReferences}/${orgId}`;
+
+  const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  const axiosPayload = {
+    url,
+    config
+  };
+  try {
+    return await axiosGet(axiosPayload);
+  } catch (error) {
+    const err = error as Error;
+    return err?.message;
+  }
+};
+
+export const deleteVerificationRecords = async (orgId: string) => {
+  // const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+
+  const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.deleteVerifications}`;
+
+  const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  const axiosPayload = {
+    url,
+    config
+  };
+  try {
+    return await axiosDelete(axiosPayload);
+  } catch (error) {
+    const err = error as Error;
+    return err?.message;
+  }
+};
+
+export const deleteIssuanceRecords = async (orgId: string) => {
+  const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.deleteIssaunce}`;
+
+  const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  const axiosPayload = {
+    url,
+    config
+  };
+  try {
+    return await axiosDelete(axiosPayload);
+  } catch (error) {
+    const err = error as Error;
+    return err?.message;
+  }
+};
+
+export const deleteOrganizationWallet = async (orgId: string) => {
+  const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.deleteWallet}`;
+
+  const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  const axiosPayload = {
+    url,
+    config
+  };
+  try {
+    return await axiosDelete(axiosPayload);
+  } catch (error) {
+    const err = error as Error;
+    return err?.message;
+  }
+};
+
+export const deleteOrganization = async (orgId:string) => {
+  const url = `${apiRoutes.organizations.root}/${orgId}`;
+  const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  const axiosPayload = {
+    url,
+    config
+  };
+  try {
+    return await axiosDelete(axiosPayload);
   } catch (error) {
     const err = error as Error;
     return err?.message;
@@ -421,44 +524,8 @@ export const getOrganizationRoles = async () => {
 // 	}
 // };
 
-// export const getOrganizationReferences = async () => {
-// 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-// 	const url = `${apiRoutes.organizations.root}${apiRoutes.organizations.getOrgReferences}/${orgId}`;
-
-// 	const token = await getFromLocalStorage(storageKeys.TOKEN);
-
-// 	const config = {
-// 		headers: {
-// 			'Content-Type': 'application/json',
-// 			Authorization: `Bearer ${token}`,
-// 		},
-// 	};
-// 	const axiosPayload = {
-// 		url,
-// 		config,
-// 	};
-
 // 	try {
 // 		return await axiosGet(axiosPayload);
-// 	} catch (error) {
-// 		const err = error as Error;
-// 		return err?.message;
-// 	}
-// };
-
-// export const deleteOrganization = async (
-// ) => {
-// 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-
-// 	const url = `${apiRoutes.organizations.root}/${orgId}`;
-
-// 	const axiosPayload = {
-// 		url,
-// 		config: await getHeaderConfigs(),
-// 	};
-
-// 	try {
-// 		return await axiosDelete(axiosPayload);
 // 	} catch (error) {
 // 		const err = error as Error;
 // 		return err?.message;

@@ -8,7 +8,7 @@ const Page = ({ params: { orgId } }: Props) => {
 
   return (
     <div>
-      <OrganizationDashboard orgId={orgId} />
+      <OrganizationDashboard orgId={orgId} orgData={null} />
     </div>
   )
 }

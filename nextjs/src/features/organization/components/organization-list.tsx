@@ -26,7 +26,7 @@ export const OrganizationList = () => {
 
   const [currentPage, setCurrentPage] = useState({
     pageNumber: 1,
-    pageSize: 6,
+    pageSize: 9,
     total: 0,
     totalCount: 0,
   });
