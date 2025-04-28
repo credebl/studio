@@ -1,18 +1,18 @@
 import { Button, Card } from 'flowbite-react';
-import { dateConversion } from '../utils/DateConversion';
-import DateTooltip from '../components/Tooltip';
-import DataTooltip from '../components/Tooltip/dataTooltip'
+import { DataType, Ledgers, Network, PolygonNetworks } from '../common/enums';
+import type { IAttribute, ISchemaCardProps, ISchemaData } from './interface';
+import { limitedAttributesLength, storageKeys } from '../config/CommonConstant';
 
 import CopyDid from './CopyDid';
-import { useEffect } from 'react';
-import { pathRoutes } from '../config/pathRoutes';
-import { getFromLocalStorage } from '../api/Auth';
-import { limitedAttributesLength, storageKeys } from '../config/CommonConstant';
-import type { IAttribute, ISchemaCardProps, ISchemaData } from './interface';
 import CustomCheckbox from './CustomCheckbox';
-import { DataType, Ledgers, Network, PolygonNetworks } from '../common/enums';
-import React from 'react';
+import DataTooltip from '../components/Tooltip/dataTooltip'
+import DateTooltip from '../components/Tooltip';
 import type { IAttributes } from '../components/Issuance/interface';
+import React from 'react';
+import { dateConversion } from '../utils/DateConversion';
+import { getFromLocalStorage } from '../api/Auth';
+import { pathRoutes } from '../config/pathRoutes';
+import { useEffect } from 'react';
 
 const SchemaCard = (props: ISchemaCardProps) => {
   const orgDidDetails = async () => {
@@ -87,7 +87,7 @@ const SchemaData = {
       created: props.created,
   };
 
-  const hasNestedAttributes = props.attributes?.some((attr:IAttributes) => attr.schemaDataType === DataType.ARRAY);
+  const hasNestedAttributes = props.attributes?.some((attr:IAttributes) => attr.schemaDataType === DataType.ARRAY || attr.schemaDataType === DataType.OBJECT);
 
   return (
     <Card onClick={() => {
