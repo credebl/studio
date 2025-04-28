@@ -19,10 +19,13 @@ export function Breadcrumbs() {
     <Breadcrumb>
       <BreadcrumbList>
         {items.map((item, index) => (
-          <Fragment key={item.title}>
+          <Fragment key={item.link ? item.link : `${item.title}-${index}`}>
+
             {index !== items.length - 1 && (
               <BreadcrumbItem className='hidden md:block'>
-                <BreadcrumbLink href={item.link}>{item.title}</BreadcrumbLink>
+                <BreadcrumbLink href={item.link || `/schemas/${item.title}`}>
+                  {item.title}
+                </BreadcrumbLink>
               </BreadcrumbItem>
             )}
             {index < items.length - 1 && (

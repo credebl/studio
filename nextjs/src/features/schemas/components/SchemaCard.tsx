@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ShieldCheck } from 'lucide-react';
@@ -10,16 +11,18 @@ import {
 } from '../type/schemas-interface';
 import { DataType, Ledgers, Network, PolygonNetworks } from '@/common/enums';
 import { limitedAttributesLength } from '@/config/CommonConstant';
-import { pathRoutes } from '@/config/pathRoutes';
 import CopyDid from '@/config/CopyDid';
 import DataTooltip from '@/components/dataTooltip';
 import DateTooltip from '@/components/DateTooltip';
 import { dateConversion } from '@/utils/DateConversion';
 import CustomCheckbox from '@/components/CustomCheckbox';
+import { useRouter } from 'next/navigation';
 
 const SchemaCard = (props: ISchemaCardProps) => {
+  const [isSelected, setIsSelected] = useState(false);
+  const router = useRouter();
 
-  const isSelected = props.selectedSchemas?.some(
+  const isSelectedSchema = props.selectedSchemas?.some(
     (selectedSchema) =>
       selectedSchema.schemaId === props.schemaId ||
       selectedSchema.schemaLedgerId === props.schemaId
@@ -37,11 +40,11 @@ const SchemaCard = (props: ISchemaCardProps) => {
     return (
       <div className='text-foreground text-base font-semibold'>
         Attributes:
-        <div className='mt-1 flex flex-wrap'>
+        <div className='mt-1 flex flex-wrap gap-1'>
           {displayedAttributes.map((element) => (
             <span
               key={element.attributeName}
-              className='bg-primary/10 text-primary m-1 rounded px-2 py-0.5 text-sm font-medium'
+              className='bg-primary/10 text-primary rounded px-2 py-0.5 text-sm font-medium'
             >
               {element.attributeName}
             </span>
@@ -53,20 +56,19 @@ const SchemaCard = (props: ISchemaCardProps) => {
   };
 
   const handleButtonClick = () => {
-    if (props.onClickW3cIssue) {
-      props.onClickW3cIssue(props.schemaId, props.schemaName, props.version, props.issuerDid, props.attributes, props.created);
-    }
+    props.onClickW3cIssue?.(
+      props.schemaId,
+      props.schemaName,
+      props.version,
+      props.issuerDid,
+      props.attributes,
+      props.created
+    );
   };
 
   const handleCheckboxChange = (checked: boolean, schemaData?: ISchemaData) => {
-
-    if (props.onChange) {
-        if (schemaData) {
-            props.onChange(checked, [schemaData]);
-        } else {
-            props.onChange(checked, []);
-        }
-    }
+    setIsSelected(checked);
+    props.onChange?.(checked, schemaData ? [schemaData] : []);
   };
 
   const SchemaData = {
@@ -88,37 +90,60 @@ const SchemaCard = (props: ISchemaCardProps) => {
   const hasNestedAttributes = props.attributes?.some(
     (attr: IAttributes) => attr.schemaDataType === DataType.ARRAY
   );
- 
-  
+
+  const handleCardClick = () => {
+    // Only navigate if schema is non-W3C and doesn't have nested attributes
+    if (!props.w3cSchema && !hasNestedAttributes && props.schemaId) {
+      router.push(`/organizations/schemas/${props.schemaId}`);
+    }
+    // Execute existing onClick if defined
+    if (props.onClickCallback) {
+      props.onClickCallback(SchemaData);
+    }
+    if (props.w3cSchema && props.onClickW3CCallback) {
+      props.onClickW3CCallback(W3CSchemaData);
+    }
+  };
+
   return (
+    // <Card
+    //   className={`relative h-full w-full overflow-hidden transition-transform duration-300 ${
+    //     props.w3cSchema || props.isClickable === false
+    //       ? 'cursor-default'
+    //       : 'hover:bg-muted/20 cursor-pointer hover:scale-[1.02]'
+    //   } ${hasNestedAttributes ? 'pointer-events-none opacity-80' : ''}`}
+    //   onClick={() => {
+    //     console.log("clicked")
+    //     if (!props.w3cSchema && props.onClickCallback) {
+    //       props.onClickCallback(SchemaData);
+    //     }
+    //     if (props.w3cSchema && props.onClickW3CCallback) {
+    //       props.onClickW3CCallback(W3CSchemaData);
+    //     }
+    //   }}
+    // >
+
     <Card
-      className={`relative h-full w-full transition-transform duration-300 ${
+      className={`relative h-full w-full overflow-hidden transition-transform duration-300 ${
         props.w3cSchema || props.isClickable === false
           ? 'cursor-default'
           : 'hover:bg-muted/20 cursor-pointer hover:scale-[1.02]'
       } ${hasNestedAttributes ? 'pointer-events-none opacity-80' : ''}`}
-      onClick={() => {
-        if (!props.w3cSchema && props.onClickCallback) {
-          props.onClickCallback(SchemaData);
-        }
-        if (props.w3cSchema && props.onClickW3CCallback) {
-          props.onClickW3CCallback(W3CSchemaData);
-        }
-      }}
+      onClick={handleCardClick}
     >
       {hasNestedAttributes && (
         <div className='bg-background/80 absolute inset-0 z-10 flex items-center justify-center'>
-          <div className='bg-secondary text-primary rounded-md p-4 text-center shadow-lg'>
+          <div className='bg-secondary text-primary rounded-md p-4 text-center text-sm shadow-lg'>
             This schema can only be used through the API as it contains nested
             objects.
           </div>
         </div>
       )}
 
-      <CardContent className='space-y-4'>
-        <div className='flex items-start justify-between'>
-          <div className='max-w-[10rem] min-w-[8rem]'>
-            <h3 className='text-foreground line-clamp-2 text-xl font-bold break-words'>
+      <CardContent className='space-y-4 p-4 sm:p-6'>
+        <div className='flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between'>
+          <div className='w-full sm:max-w-[60%]'>
+            <h3 className='text-foreground text-xl font-bold break-words'>
               {props.schemaName}
             </h3>
             <p className='text-muted-foreground text-sm'>
@@ -126,52 +151,62 @@ const SchemaCard = (props: ISchemaCardProps) => {
             </p>
           </div>
 
-          <div className='flex items-start gap-2'>
+          <div className='flex flex-wrap items-center gap-2 text-sm sm:flex-nowrap sm:justify-end sm:text-right'>
             {props.w3cSchema && (
               <span className='bg-primary/10 text-primary rounded px-2 py-0.5 text-xs font-medium'>
                 W3C
               </span>
             )}
             <DateTooltip date={props.created}>
-              <span className='text-muted-foreground text-sm'>
+              <span className='text-muted-foreground'>
                 Created: {dateConversion(props.created)}
               </span>
             </DateTooltip>
           </div>
         </div>
 
-        <div className='text-foreground space-y-1 text-sm'>
-          <div className='flex break-all'>
-            <strong className='mr-2'>Schema ID:</strong>
-            <CopyDid
-              value={props.schemaId || ''}
-              className='truncate font-mono'
-            />
+        <div className='min-w-0 space-y-1 text-sm'>
+          <div className='flex items-start sm:items-center'>
+            <strong className='mr-2 shrink-0'>Schema ID:</strong>
+            <div className='min-w-0 truncate'>
+              <CopyDid
+                value={props.schemaId || ''}
+                className='text-foreground truncate font-mono text-sm'
+              />
+            </div>
           </div>
-          <div className='flex break-all'>
-            <strong className='mr-2'>Issuer DID:</strong>
-            <CopyDid
-              value={props.issuerDid || ''}
-              className='truncate font-mono'
-            />
+
+          <div className='flex items-start sm:items-center'>
+            <strong className='mr-2 shrink-0'>Issuer DID:</strong>
+            <div className='min-w-0 truncate'>
+              <CopyDid
+                value={props.issuerDid || ''}
+                className='text-foreground truncate font-mono text-sm'
+              />
+            </div>
           </div>
+
           {!props.noLedger && (
-            <div>
-              <strong className='mr-2'>Ledger:</strong>
-              {props.issuerDid?.includes(Ledgers.POLYGON)
-                ? props.issuerDid.includes(Network.TESTNET)
-                  ? PolygonNetworks.TESTNET
-                  : PolygonNetworks.MAINNET
-                : props.issuerDid?.split(':')[2]}
+            <div className='flex items-center'>
+              <strong className='mr-2 shrink-0'>Ledger:</strong>
+              <span className='text-foreground truncate text-sm'>
+                {props.issuerDid?.includes(Ledgers.POLYGON)
+                  ? props.issuerDid?.includes(Network.TESTNET)
+                    ? PolygonNetworks.TESTNET
+                    : PolygonNetworks.MAINNET
+                  : props?.issuerDid?.split(':')[2]}
+              </span>
             </div>
           )}
         </div>
 
-        <div className='flex items-end justify-between'>
+        <div className='flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between'>
           {props.w3cSchema ? (
             <DataTooltip
               data={props.attributes}
-              renderItem={(attribute: IAttributes) => attribute.attributeName}
+              renderItem={(attribute: IAttributes) => {
+                return attribute.attributeName;
+              }}
             >
               <AttributesList
                 attributes={props.attributes}
@@ -190,7 +225,7 @@ const SchemaCard = (props: ISchemaCardProps) => {
             !props.isVerificationUsingEmail && (
               <Button
                 onClick={handleButtonClick}
-                className='bg-secondary hover:bg-primary h-6 w-auto'
+                className='h-8 w-full sm:w-auto'
                 variant='outline'
               >
                 <ShieldCheck className='mr-1 h-4 w-4' />
@@ -201,7 +236,7 @@ const SchemaCard = (props: ISchemaCardProps) => {
 
         {props.showCheckbox && !hasNestedAttributes && (
           <CustomCheckbox
-            isSelectedSchema={isSelected}
+            isSelectedSchema={isSelectedSchema}
             onChange={handleCheckboxChange}
             showCheckbox={props.showCheckbox}
             schemaData={{

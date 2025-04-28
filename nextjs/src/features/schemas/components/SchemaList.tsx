@@ -1,10 +1,7 @@
 'use client';
 
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import {
-  apiStatusCodes,
-  itemPerPage
-} from '../../../config/CommonConstant';
+import { apiStatusCodes, itemPerPage } from '../../../config/CommonConstant';
 import { pathRoutes } from '../../../config/pathRoutes';
 import { useAppSelector } from '@/lib/hooks';
 import { getAllSchemas, getAllSchemasByOrgId } from '@/app/api/schema';
@@ -28,6 +25,7 @@ import { AxiosResponse } from 'axios';
 import { getOrganizationById } from '@/app/api/organization';
 import { DidMethod, SchemaTypes } from '@/common/enums';
 import { IW3cSchemaDetails, SchemaDetails } from '../type/schemas-interface';
+import { useRouter } from 'next/navigation';
 
 const SchemaList = (props: {
   schemaSelectionCallback: (
@@ -45,19 +43,22 @@ const SchemaList = (props: {
   const verificationFlag = props.verificationFlag ?? false;
   const organizationId = useAppSelector((state) => state.organization.orgId);
   const ledgerId = useAppSelector((state) => state.organization.ledgerId);
-  const [schemaList, setSchemaList] = useState([]);
+  const [schemaList, setSchemaList] = useState<any[]>([]);
   const [schemaListErr, setSchemaListErr] = useState<string | null>('');
   const [loading, setLoading] = useState<boolean>(true);
   const [allSchemaFlag, setAllSchemaFlag] = useState<boolean>(false);
   const [schemaType, setSchemaType] = useState('');
   const [walletStatus, setWalletStatus] = useState(false);
   const [totalItem, setTotalItem] = useState(0);
+  const [lastPage, setLastPage] = useState(0);
   const [searchValue, setSearchValue] = useState('');
   const [selectedValue, setSelectedValue] = useState<string>(
     `Organization's schema`
   );
   const [w3cSchema, setW3CSchema] = useState<boolean>(false);
   const [isNoLedger, setIsNoLedger] = useState<boolean>(false);
+
+  const route = useRouter();
 
   const [schemaListAPIParameter, setSchemaListAPIParameter] = useState({
     itemPerPage: itemPerPage,
@@ -68,8 +69,6 @@ const SchemaList = (props: {
     allSearch: ''
   });
 
-
-
   const getSchemaList = async (
     schemaListAPIParameter: GetAllSchemaListParameter,
     flag: boolean
@@ -78,7 +77,7 @@ const SchemaList = (props: {
       setLoading(true);
       let schemaResponse;
 
-      if (allSchemaFlag) {
+      if (flag) {
         schemaResponse = await getAllSchemas(
           schemaListAPIParameter,
           schemaType,
@@ -93,7 +92,7 @@ const SchemaList = (props: {
 
       const { data } = schemaResponse as AxiosResponse;
 
-      if (schemaResponse === 'Schema records not found') {
+      if (data === 'Schema records not found') {
         setSchemaList([]);
         setLoading(false);
         return;
@@ -101,8 +100,9 @@ const SchemaList = (props: {
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         if (data?.data?.data) {
-          setTotalItem(data?.data?.lastPage);
-          setSchemaList(data?.data?.data);
+          setLastPage(data?.data?.lastPage);
+          setTotalItem(data?.data?.totalItems);
+          setSchemaList([...data?.data?.data]);
         } else {
           setSchemaListErr(schemaResponse as string);
         }
@@ -117,7 +117,7 @@ const SchemaList = (props: {
     }
   };
 
-  const fetchOrganizationDetails = async () => {
+  const fetchOrganizationDetails = async (organizationId: string) => {
     setLoading(true);
     const response = await getOrganizationById(organizationId);
     const { data } = response as AxiosResponse;
@@ -125,27 +125,28 @@ const SchemaList = (props: {
     if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
       const did = data?.data?.org_agents?.[0]?.orgDid;
 
-      // await setToLocalStorage(storageKeys.ORG_DID, did)
       if (data?.data?.org_agents && data?.data?.org_agents.length > 0) {
         setWalletStatus(true);
       }
 
-      if (
-        did.includes(DidMethod.POLYGON) ||
-        did.includes(DidMethod.KEY) ||
-        did.includes(DidMethod.WEB)
-      ) {
-        setW3CSchema(true);
-        setSchemaType(SchemaTypes.schema_W3C);
-      }
+      if (did) {
+        if (
+          did.includes(DidMethod.POLYGON) ||
+          did.includes(DidMethod.KEY) ||
+          did.includes(DidMethod.WEB)
+        ) {
+          setW3CSchema(true);
+          setSchemaType(SchemaTypes.schema_W3C);
+        }
 
-      if (did.includes(DidMethod.INDY)) {
-        setW3CSchema(false);
-        setSchemaType(SchemaTypes.schema_INDY);
-      }
+        if (did.includes(DidMethod.INDY)) {
+          setW3CSchema(false);
+          setSchemaType(SchemaTypes.schema_INDY);
+        }
 
-      if (did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
-        setIsNoLedger(true);
+        if (did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
+          setIsNoLedger(true);
+        }
       }
     }
 
@@ -153,13 +154,17 @@ const SchemaList = (props: {
   };
 
   useEffect(() => {
-    setSelectedValue(`Organization's schema`);
-    fetchOrganizationDetails();
-  }, []);
-
-  useEffect(() => {
-    getSchemaList(schemaListAPIParameter, false);
-  }, [schemaListAPIParameter, allSchemaFlag]);
+    if (organizationId) {
+      setLoading(true);
+      fetchOrganizationDetails(organizationId)
+        .then(() => {
+          getSchemaList(schemaListAPIParameter, allSchemaFlag);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [organizationId, schemaListAPIParameter, allSchemaFlag]);
 
   const onSearch = (event: ChangeEvent<HTMLInputElement>): void => {
     const inputValue = event.target.value;
@@ -181,7 +186,6 @@ const SchemaList = (props: {
     setSelectedValue(value);
     setAllSchemaFlag(isAllSchemas);
 
-    // await setToLocalStorage(storageKeys.ALL_SCHEMAS, isAllSchemas ? `true` : `false`);
     setSchemaListAPIParameter((prev) => ({ ...prev, page: 1 }));
   };
 
@@ -228,7 +232,6 @@ const SchemaList = (props: {
       created
     };
     props.W3CSchemaSelectionCallback(schemaId, w3cSchemaDetails);
-    // await setToLocalStorage(storageKeys.W3C_SCHEMA_DATA, w3cSchemaDetails);
   };
 
   const handleW3CIssue = async (
@@ -247,18 +250,17 @@ const SchemaList = (props: {
       attributes,
       created
     };
-    // await setToLocalStorage(storageKeys.W3C_SCHEMA_DETAILS, schemaDetails);
   };
 
   return (
     <PageContainer>
       <div className='px-4 pt-2'>
-        <div className='mb-4 flex flex-wrap items-center justify-between gap-4'>
+        <div className='mb-4 grid gap-4 sm:flex sm:flex-wrap sm:items-center sm:justify-between'>
           <h1 className='mr-auto ml-1 text-xl font-semibold sm:text-2xl'>
             Schemas
           </h1>
 
-          <div className='relative w-full max-w-sm'>
+          <div className='relative w-full sm:max-w-sm'>
             <Input
               type='text'
               placeholder='Search...'
@@ -272,110 +274,114 @@ const SchemaList = (props: {
           <select
             onChange={handleFilterChange}
             value={allSchemaFlag ? 'all' : 'org'}
-            className='bg-background text-foreground h-full min-h-[42px] rounded-lg border p-2.5 sm:text-sm'
+            className='bg-background text-foreground h-10 w-full rounded-lg border p-2.5 sm:w-auto sm:text-sm'
           >
             <option value='org'>Organization&apos;s schema</option>
             <option value='all'>All schemas</option>
           </select>
 
-          <Button>
+          <Button
+            onClick={() => route.push('/organizations/schemas/create')}
+            className='w-full sm:w-auto'
+          >
             <Plus /> Create
           </Button>
         </div>
-
-        {schemaListErr && (
-          <div className='text-destructive mb-2'>{schemaListErr}</div>
-        )}
 
         {loading ? (
           <p>Loading.......</p>
         ) : schemaList.length ? (
           <>
-            <div className='grid grid-cols-1 gap-4 xl:grid-cols-2'>
-              {schemaList &&
-                schemaList.length > 0 &&
-                schemaList.map((element, key) => (
-                  <div className='px-0 sm:px-2' key={`SchemaList-${key}`}>
-                    <SchemaCard
-                      schemaName={element['name']}
-                      version={element['version']}
-                      schemaId={element['schemaLedgerId']}
-                      issuerDid={element['issuerId']}
-                      attributes={element['attributes']}
-                      created={element['createDateTime']}
-                      showCheckbox={false}
-                      onClickCallback={schemaSelectionCallback}
-                      onClickW3CCallback={W3CSchemaSelectionCallback}
-                      onClickW3cIssue={handleW3CIssue}
-                      w3cSchema={w3cSchema}
-                      noLedger={isNoLedger}
-                      isVerification={verificationFlag}
-                    />
-                  </div>
-                ))}
+            <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2'>
+              {schemaList.map((element) => (
+                <div
+                  className='px-0 sm:px-2'
+                  key={`SchemaList-${element.schemaLedgerId}`}
+                >
+                  <SchemaCard
+                    schemaName={element['name']}
+                    version={element['version']}
+                    schemaId={element['schemaLedgerId']}
+                    issuerDid={element['issuerId']}
+                    attributes={element['attributes']}
+                    created={element['createDateTime']}
+                    showCheckbox={false}
+                    selectedSchemas={[]}
+                    onClickCallback={schemaSelectionCallback}
+                    onClickW3CCallback={W3CSchemaSelectionCallback}
+                    w3cSchema={w3cSchema}
+                    noLedger={isNoLedger}
+                    isVerification={verificationFlag}
+                  />
+                </div>
+              ))}
             </div>
-
-            <div className='mt-6 flex justify-end'>
-              <Pagination>
-                <PaginationContent>
-                  {schemaListAPIParameter.page > 1 && (
-                    <PaginationItem>
-                      <PaginationPrevious
-                        href='#'
-                        onClick={() =>
-                          setSchemaListAPIParameter((prev) => ({
-                            ...prev,
-                            page: prev.page - 1
-                          }))
-                        }
-                      />
-                    </PaginationItem>
-                  )}
-
-                  {Array.from({ length: totalItem }).map((_, index) => {
-                    const page = index + 1;
-                    const isActive = page === schemaListAPIParameter.page;
-                    return (
-                      <PaginationItem key={page}>
-                        <PaginationLink
-                          isActive={isActive}
+            {totalItem > itemPerPage && (
+              <div className='mt-6 flex justify-end'>
+                <Pagination>
+                  <PaginationContent>
+                    {schemaListAPIParameter.page > 1 && (
+                      <PaginationItem>
+                        <PaginationPrevious
                           href='#'
                           onClick={() =>
                             setSchemaListAPIParameter((prev) => ({
                               ...prev,
-                              page
+                              page: prev.page - 1
                             }))
                           }
-                        >
-                          {page}
-                        </PaginationLink>
+                        />
                       </PaginationItem>
-                    );
-                  })}
+                    )}
 
-                  {schemaListAPIParameter.page < totalItem && (
-                    <PaginationItem>
-                      <PaginationNext
-                        href='#'
-                        onClick={() =>
-                          setSchemaListAPIParameter((prev) => ({
-                            ...prev,
-                            page: prev.page + 1
-                          }))
-                        }
-                      />
-                    </PaginationItem>
-                  )}
-                </PaginationContent>
-              </Pagination>
-            </div>
+                    {Array.from({ length: lastPage }).map((_, index) => {
+                      const page = index + 1;
+                      const isActive = page === schemaListAPIParameter.page;
+                      return (
+                        <PaginationItem key={page}>
+                          <PaginationLink
+                            className={`${
+                              isActive
+                                ? 'bg-primary text-white'
+                                : 'bg-background text-muted-foreground'
+                            } rounded-lg px-4 py-2`}
+                            href='#'
+                            onClick={() =>
+                              setSchemaListAPIParameter((prev) => ({
+                                ...prev,
+                                page
+                              }))
+                            }
+                          >
+                            {page}
+                          </PaginationLink>
+                        </PaginationItem>
+                      );
+                    })}
+
+                    {schemaListAPIParameter.page < lastPage && (
+                      <PaginationItem>
+                        <PaginationNext
+                          href='#'
+                          onClick={() =>
+                            setSchemaListAPIParameter((prev) => ({
+                              ...prev,
+                              page: prev.page + 1
+                            }))
+                          }
+                        />
+                      </PaginationItem>
+                    )}
+                  </PaginationContent>
+                </Pagination>
+              </div>
+            )}
           </>
         ) : (
           <EmptyMessage
             title='No Schemas'
             description='Get started by creating a new Schema'
             buttonContent='Create Schema'
-            svgComponent='Create'
             onClick={() => {
               window.location.href = `${pathRoutes.organizations.createSchema}`;
             }}

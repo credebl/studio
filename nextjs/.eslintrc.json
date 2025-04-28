@@ -5,7 +5,7 @@
     "@typescript-eslint/no-unused-vars": "warn",
     "import/no-unresolved": "off",
     "import/named": "off",
-    "no-console": "warn",
+    "no-console": ["warn", { "allow": ["error","info"] }],
     "react-hooks/exhaustive-deps": "warn",
     "no-param-reassign": [
       "error",

@@ -30,7 +30,7 @@ export default function Dashboard() {
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         const orgAgentsList = data?.data?.org_agents;
-        if(response?.data?.data?.org_agents[0]?.ledgers?.id){
+        if (typeof response !== 'string' && response?.data?.data?.org_agents[0]?.ledgers?.id) {
           dispatch(setLedgerId(response?.data?.data?.org_agents[0]?.ledgers?.id))
         }
         if (orgAgentsList && orgAgentsList.length > 0) {

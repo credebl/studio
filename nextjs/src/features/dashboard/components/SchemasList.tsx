@@ -23,6 +23,7 @@ import { getAllSchemasByOrgId } from '@/app/api/schema';
 import { useAppSelector } from '@/lib/hooks';
 import { dateConversion } from '@/utils/DateConversion';
 import { Plus } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 const SchemasList = () => {
   const [loading, setLoading] = useState(true);
@@ -33,6 +34,8 @@ const SchemasList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const orgId = useAppSelector((state) => state.organization.orgId);
+
+  const route = useRouter();
 
   const fetchSchemas = async () => {
     setLoading(true);
@@ -67,9 +70,12 @@ const SchemasList = () => {
   const renderSchema = (schema: any, index: number) => (
     <div
       key={index}
-      className='hover:bg-muted/70 flex items-center justify-between rounded-lg p-3 transition-colors'
+      className='hover:bg-muted/70 flex items-center justify-between rounded-lg p-3 transition-colors hover:cursor-pointer'
     >
-      <div className='flex items-center gap-3'>
+      <div
+        className='flex items-center gap-3'
+        onClick={() => route.push('/organizations/schemas')}
+      >
         <div className='bg-muted text-muted-foreground flex h-10 w-10 items-center justify-center rounded-md'>
           <svg
             xmlns='http://www.w3.org/2000/svg'
@@ -140,24 +146,23 @@ const SchemasList = () => {
         </CardContent>
 
         <CardFooter className='mt-auto justify-end pt-2'>
-          {schemas.length > 3 && (
-            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  variant='link'
-                  className='h-auto p-0 text-sm font-medium'
-                >
-                  View all
-                </Button>
-              </DialogTrigger>
-              <DialogContent className='max-h-[80vh] w-full max-w-3xl overflow-y-auto'>
-                <DialogHeader>
-                  <DialogTitle>All Schemas</DialogTitle>
-                </DialogHeader>
-                <div className='space-y-4'>{schemas.map(renderSchema)}</div>
-              </DialogContent>
-            </Dialog>
-          )}
+          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+            <DialogTrigger asChild>
+              <Button
+                variant='link'
+                className={`h-auto p-0 text-sm font-medium ${schemas.length <= 3 ? 'cursor-not-allowed opacity-50' : ''}`}
+                disabled={schemas.length <= 3}
+              >
+                View all
+              </Button>
+            </DialogTrigger>
+            <DialogContent className='max-h-[80vh] w-full max-w-3xl overflow-y-auto'>
+              <DialogHeader>
+                <DialogTitle>All Schemas</DialogTitle>
+              </DialogHeader>
+              <div className='space-y-4'>{schemas.map(renderSchema)}</div>
+            </DialogContent>
+          </Dialog>
         </CardFooter>
       </Card>
     </>

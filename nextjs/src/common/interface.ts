@@ -18,3 +18,12 @@ export interface ICustomCheckboxProps {
   onChange: (checked: boolean, schemaData?: ISchemaData) => void;
   schemaData?: ISchemaData;
 }
+
+export interface IAlertComponent {
+	message: string | null;
+	type: string;
+	viewButton?: boolean;
+	path?: string;
+	onAlertClose: () => void;
+}
+

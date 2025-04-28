@@ -39,3 +39,22 @@ export enum Features {
     schema_INDY = 'indy',
     schema_W3C = 'w3c'
 }
+
+export enum SchemaType {
+  INDY = 'indy',
+  W3C = 'json'
+}
+
+export enum SchemaTypeValue {
+	INDY = 'indy',
+	POLYGON = 'polygon',
+	NO_LEDGER = 'no_ledger'
+}
+
+export enum Roles {
+  OWNER = 'owner',
+  ADMIN = 'admin',
+  ISSUER =  'issuer',
+  VERIFIER = 'verifier',
+  MEMBER = 'member'
+};

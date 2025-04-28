@@ -1,9 +1,4 @@
-export interface IAttributes {
-  attributeName: string;
-  schemaDataType: string;
-  displayName: string;
-  isRequired?: boolean;
-}
+import { SchemaTypeValue } from '@/common/enums';
 
 export interface ISchemaData {
   schemaId: string;
@@ -71,28 +66,62 @@ export interface ISchemaCardProps {
   isVerificationUsingEmail?: boolean;
 }
 
-
 export interface IW3cSchemaDetails {
-	schemaName: string;
-	version: string;
-	schemaId: string;
-	w3cAttributes?: IAttributesData[];
-	issuerDid?:string;
-	created?:string;
+  schemaName: string;
+  version: string;
+  schemaId: string;
+  w3cAttributes?: IAttributesData[];
+  issuerDid?: string;
+  created?: string;
 }
 
 export interface IAttributesData {
-	isRequired: boolean;
-	name: string;
-	value: string;
-	dataType: string;
+  isRequired: boolean;
+  name: string;
+  value: string;
+  dataType: string;
 }
 
 export interface SchemaDetails {
-	attribute: string[];
-	issuerDid: string;
-	createdDate: string;
-	schemaName?: string;
-	version?: string;
-	schemaId?: string;
+  attribute: string[];
+  issuerDid: string;
+  createdDate: string;
+  schemaName?: string;
+  version?: string;
+  schemaId?: string;
+}
+
+export interface SchemaDetail {
+  schemaName: string;
+  schemaVersion?: string;
+  schemaType?: SchemaTypeValue;
+  attributes: IAttributes[];
+  description?: string;
+  orgId: string;
+}
+export interface FieldName {
+  type: string;
+  schemaPayload: SchemaDetail;
+}
+
+export interface IAttributes {
+  id?: string;
+  attributeName: string;
+  schemaDataType: string;
+  displayName: string;
+  isRequired?: boolean;
+}
+export interface IFormData {
+  schemaName: string;
+  schemaVersion?: string;
+  schemaType?: SchemaTypeValue;
+  description?: string;
+  attribute: IAttributes[];
+}
+
+export interface CredDeffFieldNameType {
+  tag: string;
+  revocable: boolean;
+  orgId: string;
+  schemaLedgerId: string;
 }
