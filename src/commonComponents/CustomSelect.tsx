@@ -1,5 +1,6 @@
 import React from "react";
 import Select, { type SingleValue } from "react-select";
+import { DataType } from "../common/enums";
 
 interface OptionType {
   value: string;
@@ -38,7 +39,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
       options={credentialOptions?.map((option) => ({
         ...option,
         isDisabled: (option.schemaAttributes || option.attributes || []).some(
-          (attr) => attr.schemaDataType === "array"
+          (attr) => attr.schemaDataType === DataType.ARRAY || attr.schemaDataType === DataType.OBJECT
         ),
       }))}
       onInputChange={handleInputChange}
