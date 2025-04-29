@@ -6,12 +6,10 @@ import { AxiosResponse } from 'axios';
 
 import { getOrganizations } from '@/app/api/organization';
 import { Organization } from '@/features/dashboard/type/organization';
-
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
-import CreateOrganizationModal from './create-organization-modal';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { apiStatusCodes } from '@/config/CommonConstant';
 
@@ -19,9 +17,7 @@ export const OrganizationList = () => {
   const [organizationsList, setOrganizationsList] = useState<Organization[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [open, setOpen] = useState(false);
   const [searchText, setSearchText] = useState('');
-  const [mode, setMode] = useState('');
 
 
   const [currentPage, setCurrentPage] = useState({
@@ -81,8 +77,7 @@ export const OrganizationList = () => {
   };
 
   const handleCreateOrg = () => {
-    setOpen(true)
-    setMode('create')
+   router.push ('organizations/create-organization')
   };
 
   useEffect(() => {
@@ -187,9 +182,6 @@ export const OrganizationList = () => {
     </div>
   )}
 </div>
-
-
-      <CreateOrganizationModal open={open} setOpen={setOpen} setMessage={setError} mode={mode}/>
     </div>
   );
 };

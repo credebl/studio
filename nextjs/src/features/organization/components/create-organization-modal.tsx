@@ -1,413 +1,581 @@
 'use client';
 
-import { useState, ChangeEvent, useEffect } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import * as yup from 'yup';
+import { Formik, Form, Field } from 'formik';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { createOrganization, updateOrganization } from '@/app/api/organization';
-import Image from 'next/image';
-import * as Yup from 'yup';
-import { useFormik } from 'formik';
-import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+
+import Stepper from '@/features/common/stepperComponent';
+import {
+  createOrganization,
+  getAllCities,
+  getAllCountries,
+  getAllStates,
+  getOrganizationById,
+  updateOrganization,
+} from '@/app/api/organization';
+import { processImage } from '@/utils/ProcessImage';
 import { AxiosResponse } from 'axios';
-import { AlertCircle } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { personSvg } from '@/config/CommonConstant';
-import { Organisation } from './organization-dashboard';
+import { apiStatusCodes } from '@/config/CommonConstant';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
-interface OrganizationModalProps {
-  open: boolean;
-  setOpen: (flag: boolean) => void;
-  setMessage?: (msg: string) => void;
-  mode: string;
-  orgData?: Organisation | null;
-  onSuccess?: () => void;
+interface OrgFormValues {
+  name: string;
+  description: string;
+  countryId?: number | null;
+  stateId?: number | null;
+  cityId?: number | null;
+  website: string;
+  logoFile?: File | null;
+  logoPreview?: string;
 }
 
-interface ILogoImage {
-  imagePreviewUrl: string | null;
-  fileName: string;
-}
+export default function OrganizationOnboarding() {
+  const [step, setStep] = useState<number>(1);
+  const [isPublic, setIsPublic] = useState<boolean>();
+  const totalSteps = 4;
+  const [countries, setCountries] = useState<any[]>([]);
+  const [states, setStates] = useState<any[]>([]);
+  const [cities, setCities] = useState<any[]>([]);
+  const [logoPreview, setLogoPreview] = useState<string>('');
+  const [imgError, setImgError] = useState<string>('');
+  const [selectedCountryId, setSelectedCountryId] = useState<number | null>(
+    null
+  );
+  const [selectedStateId, setSelectedStateId] = useState<number | null>(null);
+  const [orgData, setOrgData] = useState<OrgFormValues | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [failure, setFailure] = useState<string | null>(null);
+  const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+const [message, setMessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
-export default function OrganizationModal({
-  open,
-  setOpen,
-  setMessage,
-  mode,
-  orgData,
-  onSuccess
-}: OrganizationModalProps) {
-  const [logoImage, setLogoImage] = useState<ILogoImage>({
-    imagePreviewUrl: null,
-    fileName: ''
-  });
-  const [loading, setLoading] = useState(false);
-  const [errMsg, setErrMsg] = useState<string | null>(null);
-  const [imgError, setImgError] = useState('');
+  const searchParams = useSearchParams();
   const router = useRouter();
+  const currentOrgId = searchParams.get('orgId');
+  const stepParam = searchParams.get('step');
 
-  const imageSizeAccepted = 1; // 1MB
-
-  const formik = useFormik({
-    initialValues: {
-      name: '',
-      description: '',
-      website: '',
-      isPublic: false
-    },
-    validationSchema: Yup.object().shape({
-      name: Yup.string()
-        .min(2, 'Organization name must be at least 2 characters')
-        .max(200, 'Max 200 characters')
-        .required('Organization name is required'),
-      description: Yup.string()
-        .min(2, 'Description must be at least 2 characters')
-        .max(500, 'Max 500 characters')
-        .required('Description is required'),
-      website: Yup.string().url('Please enter a valid URL').nullable()
-    }),
-    onSubmit: async (values) => {
-      setLoading(true);
-
-      try {
-        if (mode === 'create') {
-          const orgData = {
-            name: values.name,
-            description: values.description,
-            logo: logoImage.imagePreviewUrl || '',
-            website: values.website || '',
-            isPublic: values.isPublic
-          };
-
-          const response = await createOrganization(orgData);
-          const { data } = response as AxiosResponse;
-
-          if (data?.statusCode === 201) {
-            setMessage?.(data.message || 'Organization created successfully');
-            setOpen(false);
-            router.refresh();
-            if (onSuccess) onSuccess();
-          } else {
-            setErrMsg((response as string) || 'Failed to create organization');
-          }
-        } else if (mode === 'edit') {
-          const updateData = {
-            orgId: orgData?.id,
-            name: values.name,
-            description: values.description,
-            website: values.website || '',
-            isPublic: values.isPublic
-          };
-
-          const logo = logoImage?.imagePreviewUrl || '';
-          if (
-            logo &&
-            logo.includes('data:image/') &&
-            logo.includes(';base64')
-          ) {
-            updateData['logo'] = logo;
-          }
-
-          const response = await updateOrganization(
-            updateData,
-            orgData?.id as string
-          );
-          const { data } = response as AxiosResponse;
-
-          if (data?.statusCode === 200) {
-            setMessage?.(data.message || 'Organization updated successfully');
-            setOpen(false);
-            if (onSuccess) onSuccess();
-
-            window.location.reload();
-          } else {
-            setErrMsg((response as string) || 'Failed to update organization');
-          }
-        }
-      } catch (error) {
-        console.error('Organization operation failed:', error);
-        setErrMsg('An error occurred. Please try again.');
-      } finally {
-        setLoading(false);
+  const fetchOrganizationDetails = async () => {
+    setLoading(true);
+    const response = await getOrganizationById(currentOrgId as string);
+    const { data } = response as AxiosResponse;
+    setLoading(false);
+    if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+      const org = data?.data;
+      setOrgData(org);
+      setIsPublic(org.publicProfile);
+      if (org?.countryId) {
+        setSelectedCountryId(org.countryId);
+        fetchStates(org.countryId);
       }
-    }
-  });
 
-  useEffect(() => {
-    if (open && mode === 'edit' && orgData) {
-      console.log('Setting form values for edit mode:', orgData);
-
-      formik.setValues({
-        name: orgData.name || '',
-        description: orgData.description || '',
-        website: orgData.website || '',
-        isPublic: orgData.publicProfile || false
-      });
-
-      setLogoImage({
-        imagePreviewUrl: orgData.logoUrl || null,
-        fileName: orgData.logoUrl ? 'Current logo' : ''
-      });
-    } else if (open && mode === 'create') {
-      formik.resetForm();
-      setLogoImage({
-        imagePreviewUrl: null,
-        fileName: ''
-      });
-    }
-  }, [open, mode, orgData]);
-
-  useEffect(() => {
-    if (!open) {
-      setErrMsg(null);
-      setImgError('');
-    }
-  }, [open]);
-
-  const processImage = (
-    event: ChangeEvent<HTMLInputElement>,
-    callback: (result: string | null, error?: string) => void
-  ) => {
-    const reader = new FileReader();
-    const file = event.target.files;
-    if (file && file[0]) {
-      const fileSize = Number((file[0].size / 1024 / 1024).toFixed(2));
-      const extension = file[0].name.split('.').pop()?.toLowerCase();
-      if (
-        ['png', 'jpeg', 'jpg'].includes(extension!) &&
-        fileSize <= imageSizeAccepted
-      ) {
-        reader.onloadend = () => callback(reader.result as string);
-        reader.readAsDataURL(file[0]);
-      } else {
-        callback(
-          null,
-          extension ? 'Please check image size (max 1MB)' : 'Invalid image type'
-        );
+      if (org?.stateId && org?.countryId) {
+        setSelectedStateId(org.stateId);
+        fetchCities(org.countryId, org.stateId);
       }
+    } else {
+      setFailure(data?.message as string);
     }
+    setLoading(false);
   };
 
-  const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    getCountries();
+  }, []);
+
+  useEffect(() => {
+    // Check if we're in edit mode
+    if (currentOrgId) {
+      setIsEditMode(true);
+      fetchOrganizationDetails();
+      getCountries();
+    } else {
+          if (stepParam) setStep(Number(stepParam));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (selectedCountryId) fetchStates(selectedCountryId);
+  }, [selectedCountryId]);
+
+  useEffect(() => {
+    if (selectedStateId && selectedCountryId)
+      fetchCities(selectedCountryId, selectedStateId);
+  }, [selectedStateId]);
+
+
+  const getCountries = async () => {
+    const response = await getAllCountries();
+    const { data } = response as AxiosResponse
+
+    if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+      setCountries(data?.data || []);
+        setError(null)
+        setMessage(data?.message)
+
+    } else {
+        setError(error)
+        setMessage(response as string)
+    }
+}
+
+const fetchStates = async (countryId: number) => {
+  try {
+    const response = await getAllStates(countryId);
+    const { data } = response as AxiosResponse;
+    if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+      setStates(data.data || []);
+    } else {
+      setStates([]);
+    }
+  } catch (err) {
+    console.error('Error fetching states:', err);
+    setStates([]);
+  }
+};
+
+const fetchCities = async (countryId: number, stateId: number) => {
+  try {
+    const response = await getAllCities(countryId, stateId);
+    const { data } = response as AxiosResponse;
+    if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+      setCities(data.data || []);
+    } else {
+      setCities([]);
+    }
+  } catch (err) {
+    console.error('Error fetching cities:', err);
+    setCities([]);
+  }
+};
+
+  const validationSchema = yup.object().shape({
+    name: yup
+      .string()
+      .min(2)
+      .max(200)
+      .required('Organization name is required'),
+    description: yup
+      .string()
+      .min(2)
+      .max(500)
+      .required('Description is required'),
+    website: yup.string().url('Enter a valid URL').nullable(),
+    countryId: yup.number().nullable(),
+    stateId: yup.number().nullable(),
+    cityId: yup.number().nullable()
+  });
+
+  const handleImageChange = (e: any, setFieldValue: any) => {
     setImgError('');
-    processImage(event, (result, error) => {
+    processImage(e, (result: any, error: any) => {
       if (result) {
-        setLogoImage({
-          imagePreviewUrl: result,
-          fileName: event.target.files?.[0].name || ''
-        });
+        setLogoPreview(result);
+        setFieldValue('logoFile', e.target.files[0]);
       } else {
-        setImgError(error || 'Image processing failed.');
+        setImgError(error || 'Image processing failed');
       }
     });
   };
 
+  const handleSubmit = (values: OrgFormValues) => {
+    setOrgData(values);
+    setStep(2); // Move to wallet setup
+  };
+
+  const handleUpdateOrganization = async (values: OrgFormValues) => {
+    setLoading(true);
+
+    try {
+      setSuccess(null);
+      setFailure(null);
+
+      const orgData = {
+        name: values.name,
+        description: values.description,
+        logo: values.logoFile ? values.logoFile : null,
+        website: values.website || '',
+        countryId: values.countryId,
+        stateId: values.stateId,
+        cityId: values.cityId,
+        isPublic: isPublic,
+      };
+
+      const resCreateOrg = await updateOrganization(orgData, currentOrgId as string);
+      const { data } = resCreateOrg as AxiosResponse;
+
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        setSuccess(data?.message as string);
+        setLoading(false);
+        router.push('/organizations');
+      } else {
+        setFailure(data?.message as string);
+
+        return null;
+      }
+    } catch (error) {
+      console.error('Error creating organization:', error);
+      // setFailure( error as string);
+      return null;
+    }
+  };
+
+
+  const handleCreateOrganization = async (values: OrgFormValues) => {
+    try {
+      setSuccess(null);
+      setFailure(null);
+
+      const orgData = {
+        name: values.name,
+        description: values.description,
+        logo: values.logoFile ? values.logoFile : null,
+        website: values.website || '',
+        countryId: values.countryId,
+        stateId: values.stateId,
+        cityId: values.cityId
+      };
+
+      const resCreateOrg = await createOrganization(orgData);
+      const { data } = resCreateOrg as AxiosResponse;
+
+      if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+        const orgId = data?.data?.id || data?.data?._id;
+        setSuccess(data.message as string);
+        // Redirect to organizations page or wherever needed after creation
+        router.push('/organizations');
+        return orgId;
+      } else {
+        setFailure(data?.message as string);
+
+        return null;
+      }
+    } catch (error) {
+      console.error('Error creating organization:', error);
+      // setFailure(error as string);
+      return null;
+    }
+  };
+
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(isOpen) => {
-        if (!isOpen) {
-          setErrMsg(null);
-          setImgError('');
-        }
-        setOpen(isOpen);
-      }}
-    >
-      <DialogContent className='max-w-2xl'>
-        <DialogHeader>
-          <DialogTitle>
-            {mode === 'create' ? 'Create Organization' : 'Edit Organization'}
-          </DialogTitle>
-        </DialogHeader>
-
-        {errMsg && (
-          <Alert variant='destructive'>
-            <AlertCircle className='h-4 w-4' />
-            <AlertDescription>{errMsg}</AlertDescription>
-          </Alert>
-        )}
-
-        <form onSubmit={formik.handleSubmit} className='space-y-4'>
-          <div className='flex flex-col items-center gap-4 rounded-lg p-4 sm:flex-row'>
-            {logoImage.imagePreviewUrl ? (
-              <Image
-                src={logoImage.imagePreviewUrl}
-                alt={logoImage.fileName}
-                width={80}
-                height={80}
-                className='rounded-lg object-cover'
-              />
-            ) : (
-              <Image
-              src={personSvg}
-              alt={personSvg}
-              width={80}
-              height={80}
-              className='rounded-lg object-cover'
-            />
-            )}
-            <div className='flex-1'>
-              <h3 className='mb-1 font-medium'>Organization Logo</h3>
-              <p className='text-muted-foreground mb-2 text-xs'>
-                JPG, JPEG and PNG. Max size of 1MB
-              </p>
-              <div>
-              <label htmlFor="organizationlogo">
-             
-													<input
-														type="file"
-														accept="image/*"
-														name="file"
-														className=""
-														id="organizationlogo"
-														title=""
-														onChange={(event): void => handleImageChange(event)}
-													/>
-                <p className='text-muted-foreground mt-1 text-xs'>
-                  {logoImage.fileName || ''}
-                </p>
-                {imgError && <p className='text-xs text-red-500'>{imgError}</p>}
-                </label>
-              </div>
+    <div className='bg-background flex min-h-screen items-center justify-center p-6'>
+      {step === 1 ? (
+        <div className='w-full max-w-3xl rounded-lg p-6 shadow-md'>
+          {/* Header */}
+          <div className='mb-6 flex items-center justify-between'>
+            <div>
+              <h1 className='text-2xl font-semibold'>{isEditMode ? 'Edit Organization' : 'Organization Setup'}</h1>
+              <p className='text-gray-600'>{isEditMode ? 'Edit your organization details' : 'Tell us about your organization'}</p>
             </div>
+            {!isEditMode && 
+            <div className='text-muted-foreground text-sm'>
+              Step {step} of {totalSteps}
+            </div>}
+            
           </div>
 
-          <div>
-            <Label htmlFor='name'>
-              Name <span className='text-red-500'>*</span>
-            </Label>
-            <Input
-              id='name'
-              name='name'
-              value={formik.values.name}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              placeholder='Your organization name'
-            />
-            {formik.touched.name && formik.errors.name && (
-              <p className='mt-1 text-xs text-red-500'>{formik.errors.name}</p>
-            )}
-          </div>
+          {/* Stepper */}
+          {
+            !isEditMode && 
+          <Stepper currentStep={step} totalSteps={totalSteps} />
+          }
 
-          <div>
-            <Label htmlFor='description'>
-              Description <span className='text-red-500'>*</span>
-            </Label>
-            <Textarea
-              id='description'
-              name='description'
-              value={formik.values.description}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              placeholder='Description of your organization'
-            />
-            {formik.touched.description && formik.errors.description && (
-              <p className='mt-1 text-xs text-red-500'>
-                {formik.errors.description}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <Label htmlFor='website'>Website URL</Label>
-            <Input
-              id='website'
-              name='website'
-              value={formik.values.website || ''}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              placeholder='Add org URL'
-            />
-            {formik.touched.website && formik.errors.website && (
-              <p className='mt-1 text-xs text-red-500'>
-                {formik.errors.website}
-              </p>
-            )}
-          </div>
-
-          {mode === 'edit' && (
-            <div className='space-y-3'>
-              <Label>Organization Visibility</Label>
-              <RadioGroup
-                value={formik.values.isPublic ? 'public' : 'private'}
-                onValueChange={(value) => {
-                  formik.setFieldValue('isPublic', value === 'public');
-                }}
-              >
-                <div className='flex items-start space-x-2'>
-                  <RadioGroupItem value='private' id='private' />
-                  <div className='grid gap-1'>
-                    <Label htmlFor='private'>Private</Label>
-                    <p className='text-muted-foreground text-sm'>
-                      Only the connected organization can see your organization
-                      details
-                    </p>
-                  </div>
-                </div>
-                <div className='flex items-start space-x-2'>
-                  <RadioGroupItem value='public' id='public' />
-                  <div className='grid gap-1'>
-                    <Label htmlFor='public'>Public</Label>
-                    <p className='text-muted-foreground text-sm'>
-                      Your profile and organization details can be seen by
-                      everyone
-                    </p>
-                  </div>
-                </div>
-              </RadioGroup>
+          {/* Success/Error Messages */}
+          {success && (
+            <div className='text-success text-success mb-4 rounded px-4 py-3'>
+              {success}
             </div>
           )}
+          {failure && (
+            <div className='text-destructive mb-4 rounded px-4 py-3'>
+              {failure}
+            </div>
+          )}
+          <Formik
+            enableReinitialize
+            initialValues={{
+              name: orgData?.name || '',
+              description: orgData?.description || '',
+              countryId: orgData?.countryId ?? null,
+              stateId: orgData?.stateId ?? null,
+              cityId: orgData?.cityId ?? null,
+              website: orgData?.website || '',
+              logoFile: null,
+              logoPreview: ''
+            }}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+          >
+            {({ errors, touched, setFieldValue, values, isValid, dirty }) => (
+              <Form className='space-y-6'>
+                {/* Logo Upload */}
+                <div>
+                  <Label className='mb-2 block'>Organization Logo</Label>
+                  <div className='border-input flex items-center gap-4 rounded-md border p-4'>
+                    {logoPreview ? (
+                      <Avatar className='h-24 w-24'>
+                        <AvatarImage
+                          src={logoPreview}
+                          alt='Logo Preview'
+                          className='object-cover'
+                        />
+                        <AvatarFallback>Logo</AvatarFallback>
+                      </Avatar>
+                    ) : (
+                      <Avatar className='h-24 w-24'>
+                       <AvatarImage
+  src={logoPreview || orgData?.logoPreview || '/images/person_24dp_FILL0_wght400_GRAD0_opsz24 (2).svg'}
+  alt='Logo Preview'
+/>
 
-          <div className='flex justify-end gap-2'>
-            <Button
-              type='button'
-              variant='outline'
-              onClick={() => setOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button type='submit' disabled={loading}>
-              {loading ? (
-                <span className='flex items-center gap-2'>
-                  <svg
-                    className='mr-2 -ml-1 h-4 w-4 animate-spin text-white'
-                    xmlns='http://www.w3.org/2000/svg'
-                    fill='none'
-                    viewBox='0 0 24 24'
+                        {/* <AvatarFallback>No Logo</AvatarFallback> */}
+                      </Avatar>
+                    )}
+
+                    <div className='flex flex-col'>
+                      <Input
+                        type='file'
+                        accept='image/*'
+                        onChange={(e) => handleImageChange(e, setFieldValue)}
+                      />
+                      {imgError && (
+                        <p className='mt-1 text-sm text-red-500'>{imgError}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Organization Name */}
+                <div>
+                  <Label>
+                    Organization Name <span className='text-red-500'>*</span>
+                  </Label>
+                  <Field
+                    as={Input}
+                    name='name'
+                    placeholder='Enter organization name'
+                  />
+                  {errors.name && touched.name && (
+                    <p className='mt-1 text-xs text-red-500'>{errors.name}</p>
+                  )}
+                </div>
+
+                {/* Description */}
+                <div>
+                  <Label>
+                    Description <span className='text-red-500'>*</span>
+                  </Label>
+                  <Field
+                    as={Textarea}
+                    name='description'
+                    placeholder='Enter organization description'
+                  />
+                  {errors.description && touched.description && (
+                    <p className='mt-1 text-xs text-red-500'>
+                      {errors.description}
+                    </p>
+                  )}
+                </div>
+
+                <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
+                  <div>
+                    <Label>Country</Label>
+                    <select
+                      name='countryId'
+                      value={values.countryId || ''}
+                      className='w-full rounded-md border p-2'
+                      onChange={(e) => {
+                        const countryId = e.target.value ? Number(e.target.value) : null;
+                        setSelectedCountryId(countryId);
+                        setSelectedStateId(null);
+                        setCities([]);
+                        setStates([]);
+                        setFieldValue('countryId', countryId);
+                        setFieldValue('stateId', null);
+                        setFieldValue('cityId', null);
+                      }}
+                    >
+                      <option value=''>Select country</option>
+                      {countries.map((country) => (
+                        <option key={country.id} value={country.id}>
+                          {country.name}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.countryId && touched.countryId && (
+                      <p className='mt-1 text-xs text-red-500'>{errors.countryId}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <Label>State</Label>
+                    <select
+                      name='stateId'
+                      value={values.stateId || ''}
+                      className='w-full rounded-md border p-2'
+                      onChange={(e) => {
+                        const stateId = e.target.value ? Number(e.target.value) : null;
+                        setSelectedStateId(stateId);
+                        setFieldValue('stateId', stateId);
+                        setFieldValue('cityId', null);
+                      }}
+                      disabled={!values.countryId}
+                    >
+                      <option value=''>Select state</option>
+                      {states.map((state) => (
+                        <option key={state.id} value={state.id}>
+                          {state.name}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.stateId && touched.stateId && (
+                      <p className='mt-1 text-xs text-red-500'>{errors.stateId}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <Label>City</Label>
+                    <select
+                      name='cityId'
+                      value={values.cityId || ''}
+                      className='w-full rounded-md border p-2'
+                      onChange={(e) => {
+                        const cityId = e.target.value;
+                        setFieldValue('cityId', cityId);
+                      }}
+                      disabled={!values.stateId}
+                    >
+                      <option value=''>Select city</option>
+                      {cities.map((city) => (
+                        <option key={city.id} value={city.id}>
+                          {city.name}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.cityId && touched.cityId && (
+                      <p className='mt-1 text-xs text-red-500'>{errors.cityId}</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Website */}
+                <div>
+                  <Label>Website URL</Label>
+                  <Field
+                    as={Input}
+                    name='website'
+                    placeholder='https://example.com'
+                  />
+                  {errors.website && touched.website && (
+                    <p className='mt-1 text-xs text-red-500'>
+                      {errors.website}
+                    </p>
+                  )}
+                </div>
+
+                <div className="mx-2 grid ">
+								<div>
+									<div className="block mb-2 mt-2 text-sm font-medium text-gray-900 dark:text-white">
+										<Label htmlFor="name" />
+									</div>
+									<Field
+										type="radio"
+										checked={isPublic === false}
+										onChange={() => setIsPublic(false)}
+										id="private"
+										name="private"
+									/>
+									<span className="ml-2 text-gray-900 dark:text-white">
+										Private
+										<span className="block pl-6 text-gray-500 text-sm">
+											Only the connected organization can see your organization
+											details
+										</span>
+									</span>
+								</div>
+								<div>
+									<div className="block mb-2 mt-2 text-sm font-medium text-gray-900 dark:text-white">
+										<Label htmlFor="name"/>
+									</div>
+									<Field
+										type="radio"
+										onChange={() => setIsPublic(true)}
+										checked={isPublic === true}
+										id="public"
+										name="public"
+									/>
+									<span className="ml-2 text-gray-900 dark:text-white">
+										Public
+										<span className="block pl-6 text-gray-500 text-sm">
+											Your profile and organization details can be seen by
+											everyone
+										</span>
+									</span>
+								</div>
+							</div>
+
+                {/* Actions */}
+                <div className='mt-6 flex justify-between'>
+                  <Button
+                    variant='outline'
+                    onClick={() => router.push('/organizations')}
                   >
-                    <circle
-                      className='opacity-25'
-                      cx='12'
-                      cy='12'
-                      r='10'
-                      stroke='currentColor'
-                      strokeWidth='4'
-                    ></circle>
-                    <path
-                      className='opacity-75'
-                      fill='currentColor'
-                      d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
-                    ></path>
-                  </svg>
-                  {mode === 'create' ? 'Creating...' : 'Saving...'}
-                </span>
-              ) : (
-                <span className='flex items-center gap-2'>
-                  {mode === 'create' ? 'Create' : 'Save'}
-                </span>
-              )}
-            </Button>
+                    Back
+                  </Button>
+                  {
+                    !isEditMode ? 
+                    (
+                    <><Button
+                      type='button'
+                      onClick={() => handleCreateOrganization(values)}
+                      disabled={!isValid || !dirty}
+                    >
+                      Setup Wallet Later
+                    </Button><Button type='submit' disabled={!isValid || !dirty}>
+                        Continue to Agent Setup
+                      </Button></>)
+                      :
+                      (
+                        <>
+                        <Button
+                      type='button'
+                      onClick={() => handleUpdateOrganization(values)}
+                      // disabled={!isValid || !dirty}
+                    >
+                      Save
+                    </Button>
+                        </>
+                      )
+                  }
+                  
+                </div>
+              </Form>
+            )}
+          </Formik>
+        </div>
+      ) : step === 2 ? (
+        <div className='w-full max-w-3xl rounded-lg bg-white p-6 shadow-md'>
+          <h1 className='mb-4 text-2xl font-semibold'>Wallet Configuration</h1>
+          <Stepper currentStep={step} totalSteps={totalSteps} />
+
+          {/* Wallet configuration UI here */}
+          <div className='mt-4 rounded-md p-4'>
+            <p>Wallet configuration page content will go here</p>
           </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+
+          <div className='mt-6 flex justify-between'>
+            <Button variant='outline' onClick={() => setStep(1)}>
+              Back
+            </Button>
+            <Button onClick={() => setStep(3)}>Continue</Button>
+          </div>
+        </div>
+      ) : null}
+    </div>
   );
 }

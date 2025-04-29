@@ -58,6 +58,12 @@ export const apiRoutes = {
 	connection: {
 		create: '/connections',
 	},
+	geolocation : {
+		root:'/geolocation',
+		countries:'/countries',
+		state:'/states',
+		cities:'/cities'
+	 },
 	schema: {
 		create: '/schemas',
 		getAll: '/schemas',

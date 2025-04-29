@@ -8,10 +8,7 @@ import { getOrganizationById } from '@/app/api/organization';
 import { apiStatusCodes } from '@/config/CommonConstant';
 import { Card, CardContent } from '@/components/ui/card';
 import { Edit, Trash2 } from 'lucide-react';
-import { HomeIcon, ChevronRight } from 'lucide-react';
 import { AxiosResponse } from 'axios';
-import CreateOrganizationModal from './create-organization-modal';
-import DeleteOrganization from './delete-organization';
 
 type OrganizationDashboardProps = {
   orgId: string;
@@ -84,12 +81,9 @@ export const OrganizationDashboard = ({
 }: OrganizationDashboardProps) => {
   const router = useRouter();
   const [orgData, setOrgData] = useState<Organisation | null>(null);
-  const [openEditModal, setOpenEditModal] = useState(false);
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [mode, setMode] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  
   const fetchOrganizationDetails = async () => {
     setLoading(true);
     const response = await getOrganizationById(orgId as string);
@@ -102,10 +96,10 @@ export const OrganizationDashboard = ({
     }
     setLoading(false);
   };
+  console.log("🚀 ~ orgData:", orgData)
 
   const handleEditOrg = () => {
-    setOpenEditModal(true);
-    setMode('edit');
+    router.push(`/organizations/create-organization?orgId=${orgId}`);
   };
 
   const handleDeleteOrg = () => {
@@ -236,13 +230,13 @@ export const OrganizationDashboard = ({
           </CardContent>
         </Card>
       </div>
-      <CreateOrganizationModal
+      {/* <CreateOrganizationModal
         open={openEditModal}
         setOpen={setOpenEditModal}
         setMessage={setError}
         mode={mode}
         orgData={orgData}
-      />
+      /> */}
        
     </div>
   );
