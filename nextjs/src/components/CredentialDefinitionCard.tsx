@@ -2,6 +2,7 @@ import { Roles } from '@/common/enums';
 import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import CopyDid from '@/config/CopyDid';
+import { useRouter } from 'next/navigation';
 interface IProps {
   credDeffName: string;
   userRoles?: string[];
@@ -12,19 +13,22 @@ interface IProps {
 }
 
 const CredentialDefinitionCard = (props: IProps) => {
+  const router = useRouter();
+
   const redirectToIssuance = () => {
     if (
       props?.userRoles?.includes(Roles.OWNER) ||
       props?.userRoles?.includes(Roles.ADMIN) ||
       props?.userRoles?.includes(Roles.ISSUER)
     ) {
-      props.onClickCallback(props.schemaId, props.credentialDefinitionId);
+      // props.onClickCallback(props.schemaId, props.credentialDefinitionId);
+      router.push('/issue');
     }
   };
 
   return (
     <Card
-      className='h-full overflow-hidden overflow-ellipsis'
+      className='h-full overflow-hidden p-4 overflow-ellipsis'
       style={{ maxHeight: '100%', maxWidth: '100%', overflow: 'auto' }}
     >
       <div className='mb-1 flex flex-wrap items-center justify-between'>
@@ -40,10 +44,8 @@ const CredentialDefinitionCard = (props: IProps) => {
           <Button
             onClick={redirectToIssuance}
             type='submit'
-            color='bg-primary-800'
             title='Initiate Credential Issuance'
-            className='bg-secondary-700 ring-primary-700 bg-white-700 hover:bg-secondary-700 dark:hover:bg-primary-50 mr-2 ml-auto rounded-lg text-sm font-medium ring-2'
-            style={{ height: '1.5rem', width: '100%', minWidth: '2rem' }}
+            className='mr-2 ml-auto rounded-lg text-sm font-medium'
             disabled={
               !(
                 props.userRoles &&
@@ -97,7 +99,7 @@ const CredentialDefinitionCard = (props: IProps) => {
 
         <div className='mt-auto inline-flex items-center overflow-hidden text-base font-semibold overflow-ellipsis'>
           Revocable:
-          <span className='m-1 mr-2 rounded px-2.5 py-0.5 text-sm font-medium'>
+          <span className='bg-primary/10 text-primary m-1 mr-2 rounded px-2.5 py-0.5 text-sm font-medium'>
             {props?.revocable ? 'Yes' : 'No'}
           </span>
         </div>

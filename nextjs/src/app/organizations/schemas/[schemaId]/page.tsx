@@ -6,13 +6,12 @@ interface SchemaPageProps {
   };
 }
 
-export default function SchemaPage({ params }: SchemaPageProps) {
-  const { schemaId } = params;
+export default async function SchemaPage({ params }: SchemaPageProps) {
+  const { schemaId } = await params;
 
   return (
     <div className="p-4">
       <ViewSchemas schemaId={schemaId} />
-      {/* View Scheams Page */}
     </div>
-  )
+  );
 }

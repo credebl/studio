@@ -116,7 +116,7 @@ const SchemasList = () => {
               <CardTitle className='text-xl'>Schemas</CardTitle>
               <Badge>{schemas.length}</Badge>
             </div>
-            <Button>
+            <Button onClick={() => route.push('/organizations/schemas/create')}>
               <Plus className='mr-2 h-4 w-4' /> New Schema
             </Button>
           </div>

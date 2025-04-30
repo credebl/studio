@@ -1,10 +1,10 @@
-import SchemaList from '@/features/schemas/components/SchemaList';
+import SchemaSelection from '@/features/schemas/components/SchemaSelection';
 import React from 'react';
 
 const page = () => {
   return (
     <div>
-      <SchemaList />
+      <SchemaSelection />
     </div>
   );
 };

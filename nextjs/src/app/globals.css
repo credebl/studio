@@ -11,6 +11,7 @@
   --foreground: #00264d;
   --card: #fffffe;
   --card-foreground: #00264d;
+  --card-gradient: linear-gradient(to top, #fef9c3, #ffffff);
   --popover: #fffffe;
   --popover-foreground: #00264d;
   --primary: #f6d308;
@@ -62,6 +63,7 @@
   --foreground: #fefeff;
   --card: #001c3a;
   --card-foreground: #fefeff;
+  --card-gradient: linear-gradient(to top, #1e293b, #0f172a);
   --popover: #001c3a;
   --popover-foreground: #fefeff;
   --primary: #fcd816;
@@ -159,4 +161,11 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
+}
+
+/* Cursor pointer globally for buttons */
+button:not(:disabled),
+[role='button']:not(:disabled),
+a[href] {
+  cursor: pointer;
 }

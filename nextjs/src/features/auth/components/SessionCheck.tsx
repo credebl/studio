@@ -4,6 +4,7 @@ import React, { ReactNode, useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAppSelector } from '@/lib/hooks';
 import { sessionExcludedPaths } from '@/config/CommonConstant';
+import Loader from '@/components/Loader';
 
 interface SessionProps {
   children: ReactNode;
@@ -36,7 +37,7 @@ const SessionCheck: React.FC<SessionProps> = ({ children }) => {
   if (checkingSession) {
     return (
       <div className='flex min-h-screen items-center justify-center'>
-        <p>Loading...</p>
+        <Loader height='2rem' width='2rem' />
       </div>
     );
   }

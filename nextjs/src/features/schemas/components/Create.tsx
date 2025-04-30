@@ -151,7 +151,10 @@ const CreateSchema = () => {
       }
     };
 
-    const createSchema = await createSchemas(schemaFieldName as unknown as Record<string, unknown>, orgId);
+    const createSchema = await createSchemas(
+      schemaFieldName as unknown as Record<string, unknown>,
+      orgId
+    );
     const { data } = createSchema as AxiosResponse;
 
     if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
@@ -243,7 +246,9 @@ const CreateSchema = () => {
     const attributeTouched = formikHandlers?.touched?.attribute;
     const attributeValue = formikHandlers?.values?.attribute;
 
-    const isError = (attributeError as FormikErrors<IAttributes>[] | undefined)?.[index]?.[field];
+    const isError = (
+      attributeError as FormikErrors<IAttributes>[] | undefined
+    )?.[index]?.[field];
     const isTouched = attributeTouched?.[index]?.[field];
     const value = attributeValue?.[index]?.[field];
 
@@ -291,6 +296,7 @@ const CreateSchema = () => {
 
   return (
     <div className='pt-2'>
+      <h1 className='text-foreground text-xl font-semibold ml-10'>Create Schema</h1>
       <Card className='m-0 md:m-6' id='createSchemaCard'>
         <div>
           <Formik
@@ -353,10 +359,10 @@ const CreateSchema = () => {
                 />
                 <div className='items-center space-x-4 md:flex'>
                   <div className='flex-col pr-0 sm:w-full md:flex md:w-96 md:pr-4'>
-                    <div className='mb-2 block text-sm font-medium text-muted-foreground dark:text-destructive-foreground'>
+                    <div className='text-muted-foreground dark:text-destructive-foreground mb-2 block text-sm font-medium'>
                       <label
                         htmlFor='schema'
-                        className='mb-2 block text-sm font-medium text-muted-foreground dark:text-destructive-foreground'
+                        className='text-muted-foreground dark:text-destructive-foreground mb-2 block text-sm font-medium'
                       >
                         Schema<span className='text-destructive'>*</span>
                       </label>
@@ -367,16 +373,16 @@ const CreateSchema = () => {
                         id='schemaName'
                         name='schemaName'
                         placeholder='Schema Name eg. PAN CARD'
-                        className='focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-muted-foreground sm:text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-destructive-foreground dark:placeholder-gray-400'
+                        className='focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 text-muted-foreground dark:text-destructive-foreground block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 sm:text-sm dark:border-gray-600 dark:bg-gray-700 dark:placeholder-gray-400'
                       />
                       {formikHandlers.errors &&
                       formikHandlers.touched.schemaName &&
                       formikHandlers.errors.schemaName ? (
-                        <label className='h-5 text-xs text-destructive'>
+                        <label className='text-destructive h-5 text-xs'>
                           {formikHandlers.errors.schemaName}
                         </label>
                       ) : (
-                        <label className='h-5 text-xs text-destructive'></label>
+                        <label className='text-destructive h-5 text-xs'></label>
                       )}
                     </div>
                   </div>
@@ -385,10 +391,10 @@ const CreateSchema = () => {
                       className='flex-col sm:w-full md:flex md:w-96'
                       style={{ marginLeft: 0 }}
                     >
-                      <div className='mb-2 block text-sm font-medium text-muted-foreground dark:text-destructive-foreground'>
+                      <div className='text-muted-foreground dark:text-destructive-foreground mb-2 block text-sm font-medium'>
                         <label
                           htmlFor='Version'
-                          className='mb-2 block text-sm font-medium text-muted-foreground dark:text-destructive-foreground'
+                          className='text-muted-foreground dark:text-destructive-foreground mb-2 block text-sm font-medium'
                         >
                           Schema<span className='text-destructive'>*</span>
                         </label>
@@ -400,16 +406,16 @@ const CreateSchema = () => {
                           id='schemaVersion'
                           name='schemaVersion'
                           placeholder='eg. 0.1 or 0.0.1'
-                          className='focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-muted-foreground sm:text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-destructive-foreground dark:placeholder-gray-400'
+                          className='focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 text-muted-foreground dark:text-destructive-foreground block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 sm:text-sm dark:border-gray-600 dark:bg-gray-700 dark:placeholder-gray-400'
                         />
                         {formikHandlers.errors &&
                         formikHandlers.touched.schemaVersion &&
                         formikHandlers.errors.schemaVersion ? (
-                          <label className='h-5 text-xs text-destructive'>
+                          <label className='text-destructive h-5 text-xs'>
                             {formikHandlers.errors.schemaVersion}
                           </label>
                         ) : (
-                          <label className='h-5 text-xs text-destructive'></label>
+                          <label className='text-destructive h-5 text-xs'></label>
                         )}
                       </div>
                     </div>
@@ -463,14 +469,14 @@ const CreateSchema = () => {
                                             true
                                           );
                                         }}
-                                        className='focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-muted-foreground sm:text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-destructive-foreground dark:placeholder-gray-400'
+                                        className='focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 text-muted-foreground dark:text-destructive-foreground block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 sm:text-sm dark:border-gray-600 dark:bg-gray-700 dark:placeholder-gray-400'
                                       />
                                       {validSameAttribute(
                                         formikHandlers,
                                         index,
                                         'attributeName'
                                       ) && (
-                                        <label className='h-5 text-xs text-destructive'>
+                                        <label className='text-destructive h-5 text-xs'>
                                           Attribute name already exists
                                         </label>
                                       )}
@@ -482,10 +488,15 @@ const CreateSchema = () => {
                                       ] &&
                                       formikHandlers?.touched?.attribute[index]
                                         ?.attributeName &&
-                                      formikHandlers?.errors?.attribute[index]
-                                        && typeof formikHandlers.errors.attribute[index] === 'object' &&
-                                        formikHandlers.errors.attribute[index]?.attributeName ? (
-                                        <label className='h-5 text-xs text-destructive'>
+                                      formikHandlers?.errors?.attribute[
+                                        index
+                                      ] &&
+                                      typeof formikHandlers.errors.attribute[
+                                        index
+                                      ] === 'object' &&
+                                      formikHandlers.errors.attribute[index]
+                                        ?.attributeName ? (
+                                        <label className='text-destructive h-5 text-xs'>
                                           {
                                             formikHandlers?.errors?.attribute[
                                               index
@@ -493,7 +504,7 @@ const CreateSchema = () => {
                                           }
                                         </label>
                                       ) : (
-                                        <label className='h-5 text-xs text-destructive'></label>
+                                        <label className='text-destructive h-5 text-xs'></label>
                                       )}
                                     </div>
 
@@ -504,7 +515,7 @@ const CreateSchema = () => {
                                         name={`attribute.${index}.schemaDataType`}
                                         placeholder='Select'
                                         disabled={!areFirstInputsSelected}
-                                        className='focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-muted-foreground sm:text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-destructive-foreground dark:placeholder-gray-400'
+                                        className='focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 text-muted-foreground dark:text-destructive-foreground block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 sm:text-sm dark:border-gray-600 dark:bg-gray-700 dark:placeholder-gray-400'
                                       >
                                         {filteredOptions.map((opt) => {
                                           return (
@@ -526,10 +537,15 @@ const CreateSchema = () => {
                                       ] &&
                                       formikHandlers?.touched?.attribute[index]
                                         ?.schemaDataType &&
-                                      formikHandlers?.errors?.attribute[index]
-                                        && typeof formikHandlers.errors.attribute[index] === 'object' 
-                                        && formikHandlers.errors.attribute[index]?.schemaDataType ? (
-                                        <label className='h-5 text-xs text-destructive'>
+                                      formikHandlers?.errors?.attribute[
+                                        index
+                                      ] &&
+                                      typeof formikHandlers.errors.attribute[
+                                        index
+                                      ] === 'object' &&
+                                      formikHandlers.errors.attribute[index]
+                                        ?.schemaDataType ? (
+                                        <label className='text-destructive h-5 text-xs'>
                                           {
                                             formikHandlers?.errors?.attribute[
                                               index
@@ -537,7 +553,7 @@ const CreateSchema = () => {
                                           }
                                         </label>
                                       ) : (
-                                        <label className='h-5 text-xs text-destructive'></label>
+                                        <label className='text-destructive h-5 text-xs'></label>
                                       )}
                                     </div>
                                     <div className='relative flex max-w-[411px] flex-col items-start gap-x-4 p-2'>
@@ -546,14 +562,14 @@ const CreateSchema = () => {
                                         name={`attribute.${index}.displayName`}
                                         placeholder='Display Name'
                                         disabled={!areFirstInputsSelected}
-                                        className='focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-muted-foreground sm:text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-destructive-foreground dark:placeholder-gray-400'
+                                        className='focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 text-muted-foreground dark:text-destructive-foreground block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 sm:text-sm dark:border-gray-600 dark:bg-gray-700 dark:placeholder-gray-400'
                                       />
                                       {validSameAttribute(
                                         formikHandlers,
                                         index,
                                         'displayName'
                                       ) && (
-                                        <label className='h-5 text-xs text-destructive'>
+                                        <label className='text-destructive h-5 text-xs'>
                                           Display name of attribute already
                                           exists
                                         </label>
@@ -566,10 +582,15 @@ const CreateSchema = () => {
                                       ] &&
                                       formikHandlers?.touched?.attribute[index]
                                         ?.displayName &&
-                                      formikHandlers?.errors?.attribute[index]
-                                        && typeof formikHandlers.errors.attribute[index] === 'object' 
-                                        && formikHandlers.errors.attribute[index]?.displayName ? (
-                                        <label className='h-5 text-xs text-destructive'>
+                                      formikHandlers?.errors?.attribute[
+                                        index
+                                      ] &&
+                                      typeof formikHandlers.errors.attribute[
+                                        index
+                                      ] === 'object' &&
+                                      formikHandlers.errors.attribute[index]
+                                        ?.displayName ? (
+                                        <label className='text-destructive h-5 text-xs'>
                                           {
                                             formikHandlers?.errors?.attribute[
                                               index
@@ -577,7 +598,7 @@ const CreateSchema = () => {
                                           }
                                         </label>
                                       ) : (
-                                        <label className='h-5 text-xs text-destructive'></label>
+                                        <label className='text-destructive h-5 text-xs'></label>
                                       )}
                                     </div>
                                   </div>
@@ -671,16 +692,21 @@ const CreateSchema = () => {
                                       formikHandlers?.errors?.attribute[
                                         index
                                       ] &&
-                                      formikHandlers?.touched?.attribute[index]
-                                        && typeof formikHandlers.errors.attribute[index] === 'object' 
-                                        && formikHandlers.errors.attribute[index]?.isRequired &&
+                                      formikHandlers?.touched?.attribute[
+                                        index
+                                      ] &&
+                                      typeof formikHandlers.errors.attribute[
+                                        index
+                                      ] === 'object' &&
+                                      formikHandlers.errors.attribute[index]
+                                        ?.isRequired &&
                                       formikHandlers?.errors?.attribute[index]
                                         ?.isRequired &&
                                       !attribute.some(
                                         (item: { isRequired: boolean }) =>
                                           item.isRequired === true
                                       ) ? (
-                                        <label className='h-5 text-xs text-destructive'>
+                                        <label className='text-destructive h-5 text-xs'>
                                           {
                                             formikHandlers?.errors?.attribute[
                                               index
@@ -760,7 +786,7 @@ const CreateSchema = () => {
                     <svg
                       xmlns='http://www.w3.org/2000/svg'
                       className='dark:group-hover:text-primary-700 mr-2'
-                      width='18'
+                      width='10'
                       height='18'
                       fill='none'
                       viewBox='0 0 20 20'
@@ -780,7 +806,7 @@ const CreateSchema = () => {
                       inValidAttributes(formikHandlers, 'attributeName') ||
                       inValidAttributes(formikHandlers, 'displayName')
                     }
-                    className='ml-auto rounded-lg text-center text-base font-medium ring-2 focus:ring-4 sm:w-auto'
+                    className='ml-auto rounded-lg text-center text-base font-medium  sm:w-auto'
                     style={{
                       height: '2.6rem',
                       width: 'auto',

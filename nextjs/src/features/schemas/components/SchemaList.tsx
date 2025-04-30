@@ -26,14 +26,15 @@ import { getOrganizationById } from '@/app/api/organization';
 import { DidMethod, SchemaTypes } from '@/common/enums';
 import { IW3cSchemaDetails, SchemaDetails } from '../type/schemas-interface';
 import { useRouter } from 'next/navigation';
+import Loader from '@/components/Loader';
 
 const SchemaList = (props: {
-  schemaSelectionCallback: (
+  schemaSelectionCallback?: (
     schemaId: string,
     schemaDetails: SchemaDetails
   ) => void;
 
-  W3CSchemaSelectionCallback: (
+  W3CSchemaSelectionCallback?: (
     schemaId: string,
     w3cSchemaDetails: IW3cSchemaDetails
   ) => void;
@@ -205,7 +206,7 @@ const SchemaList = (props: {
       issuerDid,
       createdDate: created
     };
-    props.schemaSelectionCallback(schemaId, schemaDetails);
+    props.schemaSelectionCallback?.(schemaId, schemaDetails);
   };
 
   const W3CSchemaSelectionCallback = ({
@@ -231,25 +232,7 @@ const SchemaList = (props: {
       attributes,
       created
     };
-    props.W3CSchemaSelectionCallback(schemaId, w3cSchemaDetails);
-  };
-
-  const handleW3CIssue = async (
-    schemaId: string,
-    schemaName: string,
-    version: string,
-    issuerDid: string,
-    attributes: [],
-    created: string
-  ) => {
-    const schemaDetails = {
-      schemaId,
-      schemaName,
-      version,
-      issuerDid,
-      attributes,
-      created
-    };
+    props.W3CSchemaSelectionCallback?.(schemaId, w3cSchemaDetails);
   };
 
   return (
@@ -289,7 +272,7 @@ const SchemaList = (props: {
         </div>
 
         {loading ? (
-          <p>Loading.......</p>
+          <Loader height='2rem' width='2rem' />
         ) : schemaList.length ? (
           <>
             <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2'>
