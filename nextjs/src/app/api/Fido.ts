@@ -32,7 +32,7 @@ export const generateRegistrationOption = async (
     return response;
   } catch (error) {
     const err = error as Error;
-    return err?.message;
+    throw new Error(err?.message);
   }
 };
 
@@ -55,12 +55,12 @@ export const verifyRegistration = async (
     return response;
   } catch (error) {
     const err = error as Error;
-    return err?.message;
+    throw new Error(err?.message);
   }
 };
 
 export const addDeviceDetails = async (payload: IdeviceBody) => {
-  const {credentialId} = payload;
+  const { credentialId } = payload;
   const details = {
     url: `${apiRoutes.auth.userUpdate}/${credentialId}`,
     payload,
@@ -76,7 +76,7 @@ export const addDeviceDetails = async (payload: IdeviceBody) => {
     return response;
   } catch (error) {
     const err = error as Error;
-    return err?.message;
+    throw new Error(err?.message);
   }
 };
 
@@ -95,7 +95,7 @@ export const getUserDeviceDetails = async (email: string) => {
     return response;
   } catch (error) {
     const err = error as Error;
-    throw err?.message;
+    throw new Error(err?.message);
   }
 };
 
@@ -114,7 +114,7 @@ export const deleteDeviceById = async (credentialId: string) => {
     return response;
   } catch (error) {
     const err = error as Error;
-    throw err?.message;
+    throw new Error(err?.message);
   }
 };
 
@@ -134,7 +134,7 @@ export const generateAuthenticationOption = async (payload: IUserEmail) => {
     return response;
   } catch (error) {
     const err = error as Error;
-    return err?.message;
+    throw new Error(err?.message);
   }
 };
 
@@ -157,7 +157,7 @@ export const verifyAuthentication = async (
     return response;
   } catch (error) {
     const err = error as Error;
-    return err?.message;
+    throw new Error(err?.message);
   }
 };
 
@@ -177,6 +177,6 @@ export const editDeviceDetails = async (payload: IDeviceDetails) => {
     return response;
   } catch (error) {
     const err = error as Error;
-    return err?.message;
+    throw new Error(err?.message);
   }
 };

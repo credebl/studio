@@ -7,26 +7,32 @@ import RecentActivity from './RecentActivity';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useState, useEffect } from 'react';
-import { useAppSelector } from '@/lib/hooks';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { getOrganizationById } from '@/app/api/organization';
 import { apiStatusCodes } from '@/config/CommonConstant';
 import { AxiosResponse } from 'axios';
 import CredentialDefinition from './CredentialDefinition ';
+import { setLedgerId } from '@/lib/orgSlice';
 
 export default function Dashboard() {
   const [walletData, setWalletData] = useState<any[]>([]);
   const [walletLoading, setWalletLoading] = useState(true);
   const orgId = useAppSelector((state) => state.organization.orgId);
 
+  const dispatch = useAppDispatch();
   const fetchOrganizationDetails = async () => {
     if (!orgId) return;
     try {
       setWalletLoading(true);
       const response = await getOrganizationById(orgId);
+      
       const { data } = response as AxiosResponse;
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         const orgAgentsList = data?.data?.org_agents;
+        if (typeof response !== 'string' && response?.data?.data?.org_agents[0]?.ledgers?.id) {
+          dispatch(setLedgerId(response?.data?.data?.org_agents[0]?.ledgers?.id))
+        }
         if (orgAgentsList && orgAgentsList.length > 0) {
           setWalletData(orgAgentsList);
         } else {

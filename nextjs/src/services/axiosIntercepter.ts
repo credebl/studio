@@ -1,7 +1,6 @@
 'use client';
 
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
-import { useRouter } from 'next/navigation';
 import { apiRoutes } from '@/config/apiRoutes';
 import { store } from '@/lib/store';
 import { setRefreshToken, setToken } from '@/lib/authSlice';
@@ -15,19 +14,25 @@ const EcosystemInstance = axios.create({
   baseURL: process.env.PUBLIC_ECOSYSTEM_BASE_URL
 });
 
-// Refresh Token Function
+interface RefreshTokenResponse {
+  data: {
+    access_token: string;
+    refresh_token: string;
+  };
+}
+
+// Refresh Token
 const refreshAccessToken = async () => {
   const state = store.getState();
   const refreshToken = state?.auth?.refreshToken;
 
   if (!refreshToken) {
-    // eslint-disable-next-line no-console
     console.error('No refresh token available');
     return null;
   }
 
   try {
-    const response = await axios.post(
+    const response = await axios.post<RefreshTokenResponse>(
       `${process.env.NEXT_PUBLIC_BASE_URL}${apiRoutes.auth.refreshToken}`,
       { refreshToken }
     );
@@ -36,17 +41,22 @@ const refreshAccessToken = async () => {
       response?.status === apiStatusCodes.API_STATUS_CREATED &&
       response.data?.data
     ) {
-      const { access_token, refresh_token } = response.data.data;
+      const AccessToken = response.data.data.access_token;
+      const RefreshToken = response.data.data.refresh_token;
 
-      if (access_token && refresh_token) {
-        store.dispatch(setToken(access_token));
-        store.dispatch(setRefreshToken(refresh_token));
-        return access_token;
+      if (AccessToken && RefreshToken) {
+        store.dispatch(setToken(AccessToken));
+        store.dispatch(setRefreshToken(RefreshToken));
+        return AccessToken;
       }
     }
     return null;
   } catch (error) {
-    console.error('Token refresh failed:', error);
+    if (axios.isAxiosError(error)) {
+      console.error('Token refresh failed:', error.response || error.message);
+    } else {
+      console.error('Token refresh failed:', error);
+    }
     return null;
   }
 };
@@ -58,8 +68,14 @@ instance.interceptors.request.use(
     const token = state?.auth?.token;
 
     if (token) {
-      config.headers = config.headers || {};
-      config.headers['Authorization'] = `Bearer ${token}`;
+      const updatedConfig = {
+        ...config,
+        headers: new axios.AxiosHeaders({
+          ...config.headers,
+          Authorization: `Bearer ${token}`
+        })
+      };
+      return updatedConfig;
     }
 
     return config;
@@ -72,38 +88,28 @@ instance.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     const originalRequest = error.config as AxiosRequestConfig & {
-      _retry?: boolean;
+      retry?: boolean;
     };
 
     if (
-      error.response?.status === apiStatusCodes.API_STATUS_NOT_FOUND &&
-      !originalRequest?._retry
+      error.response?.status === apiStatusCodes.API_STATUS_UNAUTHORIZED &&
+      !originalRequest?.retry
     ) {
-      originalRequest._retry = true;
+      originalRequest.retry = true;
 
       const newAccessToken = await refreshAccessToken();
       if (newAccessToken && originalRequest.headers) {
-        originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return instance(originalRequest);
       }
 
       if (typeof window !== 'undefined') {
-        const router = useRouter();
-        router.push('/auth/sign-in');
+        window.location.href = '/auth/sign-in';
       }
     }
 
     return Promise.reject(error);
   }
-);
-
-// Optional: Attach baseURL in EcosystemInstance too
-EcosystemInstance.interceptors.request.use(
-  (config) => {
-    config.baseURL = process.env.PUBLIC_ECOSYSTEM_BASE_URL;
-    return config;
-  },
-  (error) => Promise.reject(error)
 );
 
 export { instance, EcosystemInstance };

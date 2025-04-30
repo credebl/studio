@@ -32,6 +32,7 @@ body {
   --foreground: #333333;
   --card: #ffffff;
   --card-foreground: #333333;
+  --card-gradient: linear-gradient(to top, #dbeafe, #ffffff);
   --popover: #ffffff;
   --popover-foreground: #333333;
   --primary: #3b82f6;
@@ -80,6 +81,7 @@ body {
   --foreground: #e5e5e5;
   --card: #262626;
   --card-foreground: #e5e5e5;
+  --card-gradient: linear-gradient(to top, #1e3a8a, #0f172a);
   --popover: #262626;
   --popover-foreground: #e5e5e5;
   --primary: #3b82f6;
