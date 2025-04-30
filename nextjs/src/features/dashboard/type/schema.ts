@@ -7,3 +7,10 @@ export interface GetAllSchemaListParameter {
   allSearch?: string
 }
 
+
+export interface CreateCredDeffFieldName {
+  tag: string;
+  revocable: boolean;
+  orgId: string;
+  schemaLedgerId: string;
+}

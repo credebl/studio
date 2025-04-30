@@ -1,5 +1,6 @@
 import { apiRoutes } from '@/config/apiRoutes';
-import { axiosGet, axiosPost, axiosPut } from '@/services/apiRequests';
+import { getHeaderConfigs } from '@/config/GetHeaderConfigs';
+import { axiosGet, axiosPost, axiosPut, ecosystemAxiosPost } from '@/services/apiRequests';
 
 // TODO: Uncomment the following lines when the API is ready
 export const createOrganization = async (data: object) => {
@@ -484,23 +485,24 @@ export const getOrganizationRoles = async () => {
 // 	}
 // };
 
-// export const createSchemaRequest = async (
-// 	data: object,
-// 	endorsementId: string,
-// 	orgId: string,
-// ) => {
-// 	const url = `${apiRoutes.Ecosystem.root}/${endorsementId}/${orgId}${apiRoutes.Ecosystem.endorsements.createSchemaRequest}`;
-// 	const payload = data;
-// 	const axiosPayload = {
-// 		url,
-// 		payload,
-// 		config: await getHeaderConfigs(),
-// 	};
+export const createSchemaRequest = async (
+	data: object,
+	// endorsementId: string,
+	orgId: string,
+) => {
+	// const url = `${apiRoutes.Ecosystem.root}/${endorsementId}/${orgId}${apiRoutes.Ecosystem.endorsements.createSchemaRequest}`;
+	const url = `${apiRoutes.Ecosystem.root}/${orgId}${apiRoutes.Ecosystem.endorsements.createSchemaRequest}`;
+	const payload = data;
+	const axiosPayload = {
+		url,
+		payload,
+		config: await getHeaderConfigs(),
+	};
 
-// 	try {
-// 		return await ecosystemAxiosPost(axiosPayload);
-// 	} catch (error) {
-// 		const err = error as Error;
-// 		return err?.message;
-// 	}
-// };
+	try {
+		return await ecosystemAxiosPost(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};

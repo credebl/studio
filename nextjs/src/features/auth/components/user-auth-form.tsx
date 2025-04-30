@@ -18,7 +18,15 @@ import {
   FormMessage
 } from '@/components/ui/form';
 
-import { Mail, Lock, KeyRound, Loader2, Eye, EyeOff } from 'lucide-react';
+import {
+  Mail,
+  KeyRound,
+  Loader2,
+  Eye,
+  EyeOff,
+  LockKeyhole,
+  Github
+} from 'lucide-react';
 import Link from 'next/link';
 import {
   getUserProfile,
@@ -36,6 +44,7 @@ import {
 } from '@/app/api/Fido';
 import { apiStatusCodes } from '@/config/CommonConstant';
 import { startAuthentication } from '@simplewebauthn/browser';
+import Image from 'next/image';
 
 const signInSchema = z.object({
   email: z.string().email('Enter a valid email'),
@@ -53,8 +62,8 @@ export default function SignInViewPage() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const [setFidoLoader] = useState<boolean>(false);
-  const [setFidoUserError] = useState('');
+  const [fidoLoader, setFidoLoader] = useState<boolean>(false);
+  const [fidoUserError, setFidoUserError] = useState('');
 
   const dispatch = useDispatch();
   const route = useRouter();
@@ -176,9 +185,9 @@ export default function SignInViewPage() {
       setFidoUserError('');
 
       const obj = {
-        userName: email?.trim()?.toLowerCase()
+        userName: email?.trim()?.toLowerCase(),
+        email: email?.trim()?.toLowerCase()
       };
-
       const generateAuthenticationResponse: any =
         await generateAuthenticationOption(obj);
       const challengeId: string =
@@ -273,7 +282,7 @@ export default function SignInViewPage() {
             }`}
             onClick={() => setIsPasswordTab(true)}
           >
-            <Mail className='h-4 w-4' />
+            <LockKeyhole className='h-4 w-4' />
             Password
           </Button>
           <Button
@@ -325,7 +334,7 @@ export default function SignInViewPage() {
                     <FormLabel>Password</FormLabel>
                     <FormControl>
                       <div className='relative'>
-                        <Lock className='text-muted-foreground absolute top-2.5 left-3 h-4 w-4' />
+                        <LockKeyhole className='text-muted-foreground absolute top-2.5 left-3 h-4 w-4' />
                         <Input
                           {...field}
                           type={showPassword ? 'text' : 'password'}
@@ -367,6 +376,37 @@ export default function SignInViewPage() {
               {loading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
               {isPasswordTab ? 'Sign in' : 'Continue with passkey'}
             </Button>
+
+            <div className='my-6 flex items-center justify-center gap-4'>
+              <hr className='border-border flex-grow border-t' />
+              <span className='text-muted-foreground text-sm'>OR</span>
+              <hr className='border-border flex-grow border-t' />
+            </div>
+
+            <div className='mt-6 flex flex-col gap-3'>
+              <Button
+                type='button'
+                className='flex w-full items-center justify-center gap-3 rounded-md border border-gray-300 bg-white py-2 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-gray-50 hover:shadow-sm'
+                onClick={() => route.push('#')}
+              >
+                <Image
+                  src='https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg'
+                  alt='Google'
+                  width={15}
+                  height={15}
+                />
+                Sign in with Google
+              </Button>
+
+              <Button
+                type='button'
+                className='flex w-full items-center justify-center gap-2 rounded-md bg-black text-white transition-transform duration-200 hover:-translate-y-0.5 hover:bg-gray-800 active:scale-95'
+                onClick={() => route.push('#')}
+              >
+                <Github className='h-5 w-5' />
+                <span className='text-sm font-medium'>Sign in with GitHub</span>
+              </Button>
+            </div>
 
             <div className='mt-4 text-center text-sm'>
               <span className='text-muted-foreground'>

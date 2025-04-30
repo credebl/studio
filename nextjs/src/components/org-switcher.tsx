@@ -25,14 +25,14 @@ interface Tenant {
 export function OrgSwitcher({
   tenants,
   defaultTenant,
-  onTenantSwitch
+  onTenantSwitch,
 }: {
   tenants: Tenant[];
   defaultTenant: Tenant;
   onTenantSwitch?: (tenantId: string) => void;
 }) {
   const [selectedTenant, setSelectedTenant] = React.useState<
-    Tenant | undefined
+  Tenant | undefined
   >(defaultTenant ?? (tenants.length > 0 ? tenants[0] : undefined));
   const dispatch = useAppDispatch();
 
