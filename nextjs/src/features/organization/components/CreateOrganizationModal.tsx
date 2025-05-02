@@ -22,6 +22,7 @@ import { processImage } from '@/utils/ProcessImage';
 import { AxiosResponse } from 'axios';
 import { apiStatusCodes } from '@/config/CommonConstant';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import WalletSpinup from '@/features/wallet/WalletSpinUp';
 
 interface OrgFormValues {
   name: string;
@@ -59,6 +60,7 @@ const [message, setMessage] = useState<string | null>(null);
   const router = useRouter();
   const currentOrgId = searchParams.get('orgId');
   const stepParam = searchParams.get('step');
+  console.log("🚀 ~ OrganizationOnboarding ~ stepParam:", stepParam)
 
   const fetchOrganizationDetails = async () => {
     setLoading(true);
@@ -186,6 +188,7 @@ const fetchCities = async (countryId: number, stateId: number) => {
   const handleSubmit = (values: OrgFormValues) => {
     setOrgData(values);
     setStep(2); // Move to wallet setup
+    // router.push('/organization/agent-configuration?step=2');
   };
 
   const handleUpdateOrganization = async (values: OrgFormValues) => {
@@ -262,10 +265,11 @@ const fetchCities = async (countryId: number, stateId: number) => {
     }
   };
 
+
   return (
-    <div className='bg-background flex min-h-screen items-center justify-center p-6'>
+    <div className='bg-background flex min-h-screen items-start justify-center p-6'>
       {step === 1 ? (
-        <div className='w-full max-w-3xl rounded-lg p-6 shadow-md'>
+        <div className='max-w-4xl rounded-lg p-6 shadow-md'>
           {/* Header */}
           <div className='mb-6 flex items-center justify-between'>
             <div>
@@ -329,9 +333,9 @@ const fetchCities = async (countryId: number, stateId: number) => {
                     ) : (
                       <Avatar className='h-24 w-24'>
                        <AvatarImage
-  src={logoPreview || orgData?.logoPreview || '/images/person_24dp_FILL0_wght400_GRAD0_opsz24 (2).svg'}
-  alt='Logo Preview'
-/>
+                        src={logoPreview || orgData?.logoPreview || '/images/person_24dp_FILL0_wght400_GRAD0_opsz24 (2).svg'}
+                        alt='Logo Preview'
+                      />
 
                         {/* <AvatarFallback>No Logo</AvatarFallback> */}
                       </Avatar>
@@ -479,50 +483,50 @@ const fetchCities = async (countryId: number, stateId: number) => {
                 </div>
 
                 <div className="mx-2 grid ">
-								<div>
-									<div className="block mb-2 mt-2 text-sm font-medium text-gray-900 dark:text-white">
-										<Label htmlFor="name" />
-									</div>
-									<Field
-										type="radio"
-										checked={isPublic === false}
-										onChange={() => setIsPublic(false)}
-										id="private"
-										name="private"
-									/>
-									<span className="ml-2 text-gray-900 dark:text-white">
-										Private
-										<span className="block pl-6 text-gray-500 text-sm">
-											Only the connected organization can see your organization
-											details
-										</span>
-									</span>
-								</div>
-								<div>
-									<div className="block mb-2 mt-2 text-sm font-medium text-gray-900 dark:text-white">
-										<Label htmlFor="name"/>
-									</div>
-									<Field
-										type="radio"
-										onChange={() => setIsPublic(true)}
-										checked={isPublic === true}
-										id="public"
-										name="public"
-									/>
-									<span className="ml-2 text-gray-900 dark:text-white">
-										Public
-										<span className="block pl-6 text-gray-500 text-sm">
-											Your profile and organization details can be seen by
-											everyone
-										</span>
-									</span>
-								</div>
+                  {isEditMode && 
+                  <><div>
+                      <div className="block mb-2 mt-2 text-sm font-medium text-gray-900 dark:text-white">
+                        <Label htmlFor="name" />
+                      </div>
+                      <Field
+                        type="radio"
+                        checked={isPublic === false}
+                        onChange={() => setIsPublic(false)}
+                        id="private"
+                        name="private" />
+                      <span className="ml-2 text-gray-900 dark:text-white">
+                        Private
+                        <span className="block pl-6 text-gray-500 text-sm">
+                          Only the connected organization can see your organization
+                          details
+                        </span>
+                      </span>
+                    </div><div>
+                        <div className="block mb-2 mt-2 text-sm font-medium text-gray-900 dark:text-white">
+                          <Label htmlFor="name" />
+                        </div>
+                        <Field
+                          type="radio"
+                          onChange={() => setIsPublic(true)}
+                          checked={isPublic === true}
+                          id="public"
+                          name="public" />
+                        <span className="ml-2 text-gray-900 dark:text-white">
+                          Public
+                          <span className="block pl-6 text-gray-500 text-sm">
+                            Your profile and organization details can be seen by
+                            everyone
+                          </span>
+                        </span>
+                      </div></>
+                  }
+								
 							</div>
 
                 {/* Actions */}
                 <div className='mt-6 flex justify-between'>
                   <Button
-                    variant='outline'
+                    
                     onClick={() => router.push('/organizations')}
                   >
                     Back
@@ -536,7 +540,8 @@ const fetchCities = async (countryId: number, stateId: number) => {
                       disabled={!isValid || !dirty}
                     >
                       Setup Wallet Later
-                    </Button><Button type='submit' disabled={!isValid || !dirty}>
+                    </Button>
+                    <Button type='submit' disabled={!isValid || !dirty}>
                         Continue to Agent Setup
                       </Button></>)
                       :
@@ -552,30 +557,20 @@ const fetchCities = async (countryId: number, stateId: number) => {
                         </>
                       )
                   }
-                  
                 </div>
               </Form>
             )}
           </Formik>
         </div>
-      ) : step === 2 ? (
-        <div className='w-full max-w-3xl rounded-lg bg-white p-6 shadow-md'>
-          <h1 className='mb-4 text-2xl font-semibold'>Wallet Configuration</h1>
-          <Stepper currentStep={step} totalSteps={totalSteps} />
-
-          {/* Wallet configuration UI here */}
-          <div className='mt-4 rounded-md p-4'>
-            <p>Wallet configuration page content will go here</p>
-          </div>
-
-          <div className='mt-6 flex justify-between'>
-            <Button variant='outline' onClick={() => setStep(1)}>
-              Back
-            </Button>
-            <Button onClick={() => setStep(3)}>Continue</Button>
-          </div>
-        </div>
-      ) : null}
+      ) : <div>
+      <WalletSpinup
+          step={step}
+          formData={orgData}
+          orgId={currentOrgId ? currentOrgId : null}
+          orgName={orgData?.name || ''}
+          setWalletSpinupStatus={(flag: boolean) => setWalletSpinupStatus(flag)} ledgerConfig={false}							/>
+      </div>}
+       
     </div>
   );
 }

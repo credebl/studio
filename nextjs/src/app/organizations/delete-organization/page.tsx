@@ -1,4 +1,4 @@
-import DeleteOrganizationPage from '@/features/organization/components/delete-organization';
+import DeleteOrganizationPage from '@/features/organization/components/DeleteOrganization';
 import React from 'react'
 
 const page = () => {

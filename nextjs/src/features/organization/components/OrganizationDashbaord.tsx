@@ -9,6 +9,8 @@ import { apiStatusCodes } from '@/config/CommonConstant';
 import { Card, CardContent } from '@/components/ui/card';
 import { Edit, Trash2 } from 'lucide-react';
 import { AxiosResponse } from 'axios';
+import OrganizationDetails from './OrganizationDetails';
+import { O } from '@faker-js/faker/dist/airline-BUL6NtOJ';
 
 type OrganizationDashboardProps = {
   orgId: string;
@@ -82,6 +84,7 @@ export const OrganizationDashboard = ({
   const router = useRouter();
   const [orgData, setOrgData] = useState<Organisation | null>(null);
   const [loading, setLoading] = useState(true);
+  const [walletStatus, setWalletStatus] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   
   const fetchOrganizationDetails = async () => {
@@ -90,14 +93,16 @@ export const OrganizationDashboard = ({
     const { data } = response as AxiosResponse;
     setLoading(false);
     if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+      if (data?.data?.org_agents?.length > 0 && data?.data?.org_agents[0]?.orgDid) {
+				setWalletStatus(true);
+			}
       setOrgData(data?.data);
     } else {
       setError(response as string);
     }
     setLoading(false);
   };
-  console.log("🚀 ~ orgData:", orgData)
-
+  
   const handleEditOrg = () => {
     router.push(`/organizations/create-organization?orgId=${orgId}`);
   };
@@ -237,7 +242,10 @@ export const OrganizationDashboard = ({
         mode={mode}
         orgData={orgData}
       /> */}
-       
+   {
+    walletStatus === true && 	
+    <OrganizationDetails orgData={orgData}  />
+  } 
     </div>
   );
 };

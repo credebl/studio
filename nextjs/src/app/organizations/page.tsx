@@ -1,4 +1,4 @@
-import { OrganizationList } from '@/features/organization/components/organization-list'
+import { OrganizationList } from '@/features/organization/components/OrganizationList'
 import React from 'react'
 
 const page = () => {

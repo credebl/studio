@@ -1,4 +1,4 @@
-import { OrganizationDashboard } from "@/features/organization/components/organization-dashboard";
+import { OrganizationDashboard } from "@/features/organization/components/OrganizationDashbaord";
 
 type Props = {
   params: { orgId: string }
