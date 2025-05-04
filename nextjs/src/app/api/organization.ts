@@ -1,6 +1,9 @@
+/* eslint-disable max-lines */
 import { apiRoutes } from '@/config/apiRoutes';
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs';
-import { axiosGet, axiosPost, axiosPut, ecosystemAxiosPost } from '@/services/apiRequests';
+import { IDedicatedAgentConfig } from '@/features/organization/components/interfaces/organization';
+import {   axiosDelete, axiosGet, axiosPost, axiosPut, ecosystemAxiosPost } from '@/services/apiRequests';
+
 
 // TODO: Uncomment the following lines when the API is ready
 export const createOrganization = async (data: object) => {
@@ -141,30 +144,31 @@ export const spinupDedicatedAgent = async (data: object, orgId: string) => {
   }
 };
 
-// export const setAgentConfigDetails = async (data: IDedicatedAgentConfig, orgId: string) => {
-// 	const url =`${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.setAgentConfig}`
-// 	const payload = data;
+export const setAgentConfigDetails = async (data: IDedicatedAgentConfig, orgId: string) => {
+	const url =`${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.setAgentConfig}`
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+	const payload = data;
 
-// 	// const token = await getFromLocalStorage(storageKeys.TOKEN);
+	// const token = await getFromLocalStorage(storageKeys.TOKEN);
 
-// 	const config = {
-// 		headers: {
-// 			'Content-Type': 'application/json',
-// 		},
-// 	};
-// 	const axiosPayload = {
-// 		url,
-// 		payload,
-// 		config,
-// 	};
+	const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  const axiosPayload = {
+    url,
+    payload,
+    config
+  };
 
-// 	try {
-// 		return await axiosPost(axiosPayload);
-// 	} catch (error) {
-// 		const err = error as Error;
-// 		return err?.message;
-// 	}
-// };
+  try {
+    return await axiosPost(axiosPayload);
+  } catch (error) {
+    const err = error as Error;
+    return err?.message;
+  }
+};
 
 export const spinupSharedAgent = async (data: object, orgId: string) => {
   const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.agentSharedSpinup}`;
@@ -212,6 +216,282 @@ export const getOrganizationRoles = async () => {
   }
 };
 
+export const getOrganizationReferences = async (orgId: string) => {
+  const url = `${apiRoutes.organizations.root}${apiRoutes.organizations.getOrgReferences}/${orgId}`;
+
+  const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  const axiosPayload = {
+    url,
+    config
+  };
+  try {
+    return await axiosGet(axiosPayload);
+  } catch (error) {
+    const err = error as Error;
+    return err?.message;
+  }
+};
+
+export const deleteVerificationRecords = async (orgId: string) => {
+  // const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+
+  const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.deleteVerifications}`;
+
+  const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  const axiosPayload = {
+    url,
+    config
+  };
+  try {
+    return await axiosDelete(axiosPayload);
+  } catch (error) {
+    const err = error as Error;
+    return err?.message;
+  }
+};
+
+export const deleteIssuanceRecords = async (orgId: string) => {
+  const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.deleteIssaunce}`;
+
+  const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  const axiosPayload = {
+    url,
+    config
+  };
+  try {
+    return await axiosDelete(axiosPayload);
+  } catch (error) {
+    const err = error as Error;
+    return err?.message;
+  }
+};
+
+export const deleteOrganizationWallet = async (orgId: string) => {
+  const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.deleteWallet}`;
+
+  const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  const axiosPayload = {
+    url,
+    config
+  };
+  try {
+    return await axiosDelete(axiosPayload);
+  } catch (error) {
+    const err = error as Error;
+    return err?.message;
+  }
+};
+
+export const deleteOrganization = async (orgId:string) => {
+  const url = `${apiRoutes.organizations.root}/${orgId}`;
+  const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  const axiosPayload = {
+    url,
+    config
+  };
+  try {
+    return await axiosDelete(axiosPayload);
+  } catch (error) {
+    const err = error as Error;
+    return err?.message;
+  }
+};
+
+  export const getAllCountries = async () => {
+    const url = `${apiRoutes.geolocation.countries}`;
+  
+    const config = {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    };
+    const axiosPayload = {
+      url,
+      config
+    };
+  
+    try {
+      return await axiosGet(axiosPayload);
+    } catch (error) {
+      const err = error as Error;
+      return err?.message;
+    }
+  };
+  
+
+export const getAllStates = async(countryId:number | null) => {
+	const url = `${apiRoutes.geolocation.countries}/${countryId}${apiRoutes.geolocation.state}`;
+  
+    const config = {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    };
+    const axiosPayload = {
+      url,
+      config
+    };
+  
+    try {
+      return await axiosGet(axiosPayload);
+    } catch (error) {
+      const err = error as Error;
+      return err?.message;
+    }
+  };
+
+export const getAllCities = async(countryId:number | null, stateId:number | null) => {
+	const url = `${apiRoutes.geolocation.countries}/${countryId}${apiRoutes.geolocation.state}/${stateId}${apiRoutes.geolocation.cities}`;
+  
+    const config = {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    };
+    const axiosPayload = {
+      url,
+      config
+    };
+  
+    try {
+      return await axiosGet(axiosPayload);
+    } catch (error) {
+      const err = error as Error;
+      return err?.message;
+    }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  export const createDid = async (orgId:string, payload: any) => {
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.createDid}`;
+
+  const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  const axiosPayload = {
+    url,
+    config
+  };
+
+  try {
+    return await axiosPost(axiosPayload);
+  } catch (error) {
+    const err = error as Error;
+    return err?.message;
+  }
+};
+
+
+export const getLedgerConfig = async () => {
+    const url = `${apiRoutes.organizations.root}${apiRoutes.Agent.getLedgerConfig}`;
+    const config = {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    };
+    const axiosPayload = {
+      url,
+      config
+    };
+  
+    try {
+      return await axiosGet(axiosPayload);
+    } catch (error) {
+      const err = error as Error;
+      return err?.message;
+    }
+  };
+  
+  
+
+export const getLedgers = async () => {
+     const  url = `${apiRoutes.Platform.getLedgers}`;
+      const config = {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      };
+      const axiosPayload = {
+        url,
+        config
+      };
+    
+      try {
+        return await axiosGet(axiosPayload);
+      } catch (error) {
+        const err = error as Error;
+        return err?.message;
+      }
+    };
+    
+    export const createPolygonKeyValuePair = async (orgId:string) => {
+       const url =`${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.createPolygonKeys}`;
+        const config = {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        };
+        const axiosPayload = {
+          url,
+          config
+        };
+      
+        try {
+          return await axiosPost(axiosPayload);
+        } catch (error) {
+          const err = error as Error;
+          return err?.message;
+        }
+      };
+      
+
+      // export const createConnection = async (orgName: string) => {
+      //   const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.connection.create}`;
+      
+      //   const data = {
+      //     label: orgName,
+      //     multiUseInvitation: true,
+      //     autoAcceptConnection: true,
+      //     orgId: orgId,
+      //   };
+      //   const payload = data;
+      
+      //   const axiosPayload = {
+      //     url,
+      //     payload,
+      //     config: await getHeaderConfigs(),
+      //   };
+      
+      //   try {
+      //     return await axiosPost(axiosPayload);
+      //   } catch (error) {
+      //     const err = error as Error;
+      //     return err?.message;
+      //   }
+      // };
+      
 // //Get users of the organization
 // export const getOrganizationUsers = async (
 // 	pageNumber: number,
@@ -386,23 +666,7 @@ export const getOrganizationRoles = async () => {
 // 	}
 // };
 
-// export const createDid = async (payload: any) => {
-// 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-// 	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.createDid}`;
 
-// 	const axiosPayload = {
-// 		url,
-// 		payload,
-// 		config: await getHeaderConfigs(),
-// 	};
-
-// 	try {
-// 		return await axiosPost(axiosPayload);
-// 	} catch (error) {
-// 		const err = error as Error;
-// 		return err?.message;
-// 	}
-// };
 
 // export const updatePrimaryDid = async (orgId: string, payload: IUpdatePrimaryDid) => {
 // 	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.primaryDid}`;
@@ -421,44 +685,8 @@ export const getOrganizationRoles = async () => {
 // 	}
 // };
 
-// export const getOrganizationReferences = async () => {
-// 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-// 	const url = `${apiRoutes.organizations.root}${apiRoutes.organizations.getOrgReferences}/${orgId}`;
-
-// 	const token = await getFromLocalStorage(storageKeys.TOKEN);
-
-// 	const config = {
-// 		headers: {
-// 			'Content-Type': 'application/json',
-// 			Authorization: `Bearer ${token}`,
-// 		},
-// 	};
-// 	const axiosPayload = {
-// 		url,
-// 		config,
-// 	};
-
 // 	try {
 // 		return await axiosGet(axiosPayload);
-// 	} catch (error) {
-// 		const err = error as Error;
-// 		return err?.message;
-// 	}
-// };
-
-// export const deleteOrganization = async (
-// ) => {
-// 	const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
-
-// 	const url = `${apiRoutes.organizations.root}/${orgId}`;
-
-// 	const axiosPayload = {
-// 		url,
-// 		config: await getHeaderConfigs(),
-// 	};
-
-// 	try {
-// 		return await axiosDelete(axiosPayload);
 // 	} catch (error) {
 // 		const err = error as Error;
 // 		return err?.message;

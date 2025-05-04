@@ -162,7 +162,7 @@ const OrganizationCardList = () => {
       </CardContent>
 
       <CardFooter className='mt-auto justify-end pt-2'>
-      <Link href='#'>View all</Link>
+      <Link href='/organizations'>View all</Link>
       </CardFooter>
     </Card>
   );
