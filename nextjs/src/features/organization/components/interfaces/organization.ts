@@ -72,3 +72,9 @@ export interface Connection {
     lastChangedBy?: string;
     deletedAt?: any;
   }
+
+  export interface IDedicatedAgentConfig {
+    walletName: string;
+    agentEndpoint: string;
+    apiKey: string;
+  }
