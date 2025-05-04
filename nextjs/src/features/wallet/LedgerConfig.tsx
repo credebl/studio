@@ -193,11 +193,13 @@ const LedgerConfig = ({
   };
 
   const handleMethodChange = (method) => {
+
     setSelectedMethod(method);
     setSelectedDid('');
   };
 
   const handleNetworkChange = (network, didMethod) => {
+
     setSelectedNetwork(network);
     setSelectedDid(didMethod);
   };
@@ -607,7 +609,7 @@ const LedgerConfig = ({
 
            <div className="flex justify-between mt-8">
            <Button
-                    variant='outline'
+                   
                     onClick={() => router.push('/organizations/create-organization')}
                   >
                     Back

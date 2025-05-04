@@ -86,7 +86,7 @@ const DIDList = () => {
 
   return (
     <div>
-        Here Create did component will go
+        {/* Here Create did component will go */}
     </div>
     // <div className="w-full space-y-4">
     //   {successMsg && (

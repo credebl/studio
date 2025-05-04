@@ -183,7 +183,7 @@ const CreateOrgModal = (props: IProps) => {
 		const popupName = 'Organization'
 		return (
 			<Modal
-			className="bg-gray-900 bg-opacity-50 dark:bg-opacity-80"
+			// className="bg-gray-900 bg-opacity-50 dark:bg-opacity-80"
 				size={'2xl'}
 				show={props.openModal}
 				onClose={() => {
@@ -234,7 +234,8 @@ const CreateOrgModal = (props: IProps) => {
 								className="space-y-6"
 								onSubmit={formikHandlers.handleSubmit}
 							>
-								<div className="mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-2 dark:bg-gray-800">
+								<div className="mb-4 rounded-lg shadow-sm 2xl:col-span-2 sm:p-2">
+									{/* <div className="mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-2 dark:bg-gray-800"> */}
 									<div className="flex flex-col items-center sm:flex-row 2xl:flex-row p-2 gap-0 sm:gap-4">
 										{logoImage?.imagePreviewUrl ? (
 											<img
@@ -261,7 +262,7 @@ const CreateOrgModal = (props: IProps) => {
 											<div className="flex items-center justify-center sm:justify-start space-x-4">
 												<div>
 													<label htmlFor="organizationlogo">
-														<div className="px-4 py-2 bg-primary-700 hover:bg-primary-800 text-white text-center rounded-lg">
+														<div className="px-4 py-2 text-center rounded-lg">
 															Choose file
 														</div>
 														<input
@@ -299,7 +300,8 @@ const CreateOrgModal = (props: IProps) => {
 										id="name"
 										name="name"
 										value={formikHandlers.values.name}
-										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+										// className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+										className="sm:text-sm rounded-lg block w-full p-2.5"
 										placeholder={`Enter ${popupName} Name`}
 										onChange={(e) => {
 											const value = e.target.value;
@@ -333,7 +335,8 @@ const CreateOrgModal = (props: IProps) => {
 										name="description"
 										value={formikHandlers.values.description}
 										as="textarea"
-										className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+										// className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+										className="sm:text-sm rounded-lg block w-full p-2.5"
 										placeholder={`Enter ${popupName} Description`}
 										onChange={(e) => {
 											const value = e.target.value;

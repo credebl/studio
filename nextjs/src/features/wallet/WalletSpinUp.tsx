@@ -17,10 +17,12 @@ import DedicatedAgentForm from './DedicatedAgentForm';
 import WalletSteps from './WalletSteps';
 import SharedAgentForm from './SharedAagentForm';
 import Stepper from '../common/stepperComponent';
+import PageContainer from '@/components/layout/page-container';
+import { useRouter } from 'next/navigation';
 
 // Define types and interfaces
 export interface IValuesShared {
-  keyType: string;
+  keyType?: string;
   seed: string;
   method: string;
   network?: string;
@@ -145,8 +147,8 @@ const WalletSpinup = (props: WalletSpinupProps) => {
   // Add state to store the created organization ID
   const [createdOrgId, setCreatedOrgId] = useState<string | null>(null);
   const [orgIdOfCurrentOrg, setOrgIdOfCurrentOrg] = useState<string | null>(null);
-
-  
+const alreadyCreatedOrgId = props.orgId
+  const router = useRouter();
 
   const [agentConfig, setAgentConfig] = useState({
     walletName: '',
@@ -157,7 +159,7 @@ const WalletSpinup = (props: WalletSpinupProps) => {
   const maskSeeds = (seed: string) => {
     const visiblePart = seed.slice(0, -10);
     const maskedPart = seed.slice(-10).replace(/./g, '*');
-    return visiblePart + maskedPart;
+    return visiblePart + maskedPart
   };
   
   useEffect(() => {
@@ -179,22 +181,114 @@ const WalletSpinup = (props: WalletSpinupProps) => {
   const redirectUrl = getRedirectUrl();
 
   // Unified organization creation function
-  const createOrganizationOnce = async () => {
-    // If we already created an org, use that ID
-    console.log("innn org create functionnnnnn");
+  // const createOrganizationOnce = async () => {
+  //   // If we already created an org, use that ID
+  //   console.log("innn org create functionnnnnn");
 
-    if (props.orgId) {
-      // Org ID already provided via props (existing org), skip creation
-      setCreatedOrgId(props.orgId);
+  //   if (alreadyCreatedOrgId) {
+  //     // Org ID already provided via props (existing org), skip creation
+  //     setCreatedOrgId(alreadyCreatedOrgId);
+      
+  //     try {
+  //       const response = await getOrganizationById(props.orgId as string);
+  //       const { data } = response as AxiosResponse;
+  //       console.log("🚀 ~ here i am .....", data)
+  //       setLoading(false);
+  
+  //       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+  //         const org = data.data;
+
+  //         const orgData = {
+  //           name: org.name || '',
+  //           description: org.description || '',
+  //           countryId: org.countryId || null,
+  //           stateId: org.stateId || null,
+  //           cityId: org.cityId || null,
+  //           website: org.website || '',
+  //           logoUrl: org.logoUrl || null,
+  //         };
+  
+  //         // Optional: Save to localStorage
+  //         // await setToLocalStorage(storageKeys.ORG_ID, props.orgId);
+  
+  //         // ✅ Set form state with fetched org values
+  //         setOrgFormData(orgData);
+  
+  //         return props.orgId;
+  //       } else {
+  //         setFailure("Failed to fetch organization details");
+  //         return null;
+  //       }
+  //     } catch (err) {
+  //       setFailure("Error fetching organization details");
+  //       console.error(err);
+  //       setLoading(false);
+  //       return null;
+  //     }
+  //   }
+
+  //   console.log("🚀 ~ createOrganizationOnce ~ createdOrgId:", createdOrgId)
+    
+  //   // if (createdOrgId) {
+  //   //   return createdOrgId;
+  //   // }
+    
+  //   if (!props.formData) {
+  //     setFailure("Organization data is missing");
+  //     return null;
+  //   }
+
+  //   setLoading(true);
+  //   try {
+  //     const orgData = {
+  //       name: props.formData.name,
+  //       description: props.formData.description,
+  //       logo: props.formData.logoUrl ? URL.createObjectURL(props.formData.logoUrl) : '',
+  //       website: props.formData.website || '',
+  //       countryId: props.formData.countryId,
+  //       stateId: props.formData.stateId,
+  //       cityId: props.formData.cityId,
+  //     };
+
+  //     const resCreateOrg = await createOrganization(orgData);
+  //     const { data } = resCreateOrg as AxiosResponse;
+
+  //     if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+  //       const orgId = data?.data?.id || data?.data?._id;
+  //       console.log("🚀 ~ createOrganizationOnce ~ orgId:", orgId)
+  //       setOrgIdOfCurrentOrg(orgId)
+  //       setCreatedOrgId(orgId); // Store the ID in state
+  //       setSuccess("Organization created successfully");
+  //       return orgId;
+  //     } else {
+  //       setFailure(typeof resCreateOrg === 'string' ? resCreateOrg : "Failed to create organization");
+  //       return null;
+  //     }
+  //   } catch (error: any) {
+  //     setFailure("Error creating organization");
+  //     console.error("Error creating organization:", error);
+  //     return null;
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const createOrganizationOnce = async () => {
+    console.log("In org create function");
+  
+    // If we have an existing org ID from props, fetch its details
+    if (alreadyCreatedOrgId) {
+      console.log("Using existing org ID from props:", alreadyCreatedOrgId);
+      setCreatedOrgId(alreadyCreatedOrgId);
       
       try {
-        const response = await getOrganizationById(props.orgId as string);
+        const response = await getOrganizationById(alreadyCreatedOrgId as string);
         const { data } = response as AxiosResponse;
-        setLoading(false);
-  
+        
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
           const org = data.data;
-
+  
+          // Store the org details in state
           const orgData = {
             name: org.name || '',
             description: org.description || '',
@@ -205,13 +299,8 @@ const WalletSpinup = (props: WalletSpinupProps) => {
             logoUrl: org.logoUrl || null,
           };
   
-          // Optional: Save to localStorage
-          // await setToLocalStorage(storageKeys.ORG_ID, props.orgId);
-  
-          // ✅ Set form state with fetched org values
           setOrgFormData(orgData);
-  
-          return props.orgId;
+          return alreadyCreatedOrgId;
         } else {
           setFailure("Failed to fetch organization details");
           return null;
@@ -219,23 +308,17 @@ const WalletSpinup = (props: WalletSpinupProps) => {
       } catch (err) {
         setFailure("Error fetching organization details");
         console.error(err);
-        setLoading(false);
         return null;
       }
     }
-
-    console.log("🚀 ~ createOrganizationOnce ~ createdOrgId:", createdOrgId)
-
-    
-    if (createdOrgId) {
-      return createdOrgId;
-    }
-    
+  
+    // If we don't have an existing org ID, check if we have form data to create one
     if (!props.formData) {
       setFailure("Organization data is missing");
       return null;
     }
-
+  
+    // Create new organization
     setLoading(true);
     try {
       const orgData = {
@@ -247,15 +330,15 @@ const WalletSpinup = (props: WalletSpinupProps) => {
         stateId: props.formData.stateId,
         cityId: props.formData.cityId,
       };
-
+  
       const resCreateOrg = await createOrganization(orgData);
       const { data } = resCreateOrg as AxiosResponse;
-
+  
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
         const orgId = data?.data?.id || data?.data?._id;
-        console.log("🚀 ~ createOrganizationOnce ~ orgId:", orgId)
-        setOrgIdOfCurrentOrg(orgId)
-        setCreatedOrgId(orgId); // Store the ID in state
+        console.log("Created new org with ID:", orgId);
+        setOrgIdOfCurrentOrg(orgId);
+        setCreatedOrgId(orgId);
         setSuccess("Organization created successfully");
         return orgId;
       } else {
@@ -278,15 +361,27 @@ const WalletSpinup = (props: WalletSpinupProps) => {
   
   const fetchOrganizationDetails = async () => {
     setLoading(true);
-    const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
+    const orgId = alreadyCreatedOrgId;
     // const orgInfoData = await getFromLocalStorage(storageKeys.ORG_INFO);
     const response = await getOrganizationById(orgId as string);
     const { data } = response as AxiosResponse;
     setLoading(false);
     
     if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-      const agentData = data?.data?.org_agents;
 
+      const org = data.data;
+
+      const orgData = {
+        name: org.name || '',
+        description: org.description || '',
+        countryId: org.countryId || null,
+        stateId: org.stateId || null,
+        cityId: org.cityId || null,
+        website: org.website || '',
+        logoUrl: org.logoUrl || null,
+      };
+      const agentData = data?.data?.org_agents;
+      setOrgFormData(orgData);
       if (data?.data?.org_agents && data?.data?.org_agents[0]?.org_agent_type?.agent?.toLowerCase() === AgentType.DEDICATED) {
         setIsConfiguredDedicated(true);
         setAgentType(AgentType.DEDICATED);
@@ -333,6 +428,7 @@ const WalletSpinup = (props: WalletSpinupProps) => {
     
     try {
       const spinupRes = await setAgentConfigDetails(agentPayload, orgId);
+      console.log("spinupRes++++++++++++++", spinupRes)
       const { data: agentData } = spinupRes as AxiosResponse;
     
       if (agentData?.statusCode !== apiStatusCodes.API_STATUS_CREATED) {
@@ -370,6 +466,7 @@ const WalletSpinup = (props: WalletSpinupProps) => {
     
     const spinupRes = await createDid(orgId as string, didData);
     const { data } = spinupRes as AxiosResponse;
+    console.log("🚀dedicated agent crate did+++++++++++++++++:", data)
     
     if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
       setAgentSpinupCall(true);
@@ -490,7 +587,7 @@ const WalletSpinup = (props: WalletSpinupProps) => {
           props.setWalletSpinupStatus(true);
         }, 1000);
         console.log('createdOrgId::', createdOrgId)
-        window.location.href = redirectUrl ? redirectUrl : `/organizations`;
+        router.push('/organizations')
         console.log(`invitation-url-creation-success`, JSON.stringify(data));
       });
       
@@ -583,7 +680,7 @@ const WalletSpinup = (props: WalletSpinupProps) => {
 
 
   return (
-    <div className="">
+<div className="">
       <div className="mx-auto mt-4">
         <Card>
           <CardContent className="p-6">
@@ -725,6 +822,7 @@ const WalletSpinup = (props: WalletSpinupProps) => {
         </Card>
       </div>
     </div>
+
   );
 };
 

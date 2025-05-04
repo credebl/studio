@@ -23,6 +23,7 @@ import { AxiosResponse } from 'axios';
 import { apiStatusCodes } from '@/config/CommonConstant';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import WalletSpinup from '@/features/wallet/WalletSpinUp';
+import PageContainer from '@/components/layout/page-container';
 
 interface OrgFormValues {
   name: string;
@@ -36,7 +37,6 @@ interface OrgFormValues {
 }
 
 export default function OrganizationOnboarding() {
-  const [step, setStep] = useState<number>(1);
   const [isPublic, setIsPublic] = useState<boolean>();
   const totalSteps = 4;
   const [countries, setCountries] = useState<any[]>([]);
@@ -61,6 +61,9 @@ const [message, setMessage] = useState<string | null>(null);
   const currentOrgId = searchParams.get('orgId');
   const stepParam = searchParams.get('step');
   console.log("🚀 ~ OrganizationOnboarding ~ stepParam:", stepParam)
+
+  const [step, setStep] = useState<number>(1);
+
 
   const fetchOrganizationDetails = async () => {
     setLoading(true);
@@ -91,15 +94,16 @@ const [message, setMessage] = useState<string | null>(null);
   }, []);
 
   useEffect(() => {
-    // Check if we're in edit mode
     if (currentOrgId) {
       setIsEditMode(true);
       fetchOrganizationDetails();
       getCountries();
     } else {
-          if (stepParam) setStep(Number(stepParam));
+      if (stepParam) {
+        setStep(Number(stepParam));
+      }
     }
-  }, []);
+  }, [stepParam]);
 
   useEffect(() => {
     if (selectedCountryId) fetchStates(selectedCountryId);
@@ -187,8 +191,7 @@ const fetchCities = async (countryId: number, stateId: number) => {
 
   const handleSubmit = (values: OrgFormValues) => {
     setOrgData(values);
-    setStep(2); // Move to wallet setup
-    // router.push('/organization/agent-configuration?step=2');
+    setStep(2); 
   };
 
   const handleUpdateOrganization = async (values: OrgFormValues) => {
@@ -250,7 +253,6 @@ const fetchCities = async (countryId: number, stateId: number) => {
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
         const orgId = data?.data?.id || data?.data?._id;
         setSuccess(data.message as string);
-        // Redirect to organizations page or wherever needed after creation
         router.push('/organizations');
         return orgId;
       } else {
@@ -267,10 +269,11 @@ const fetchCities = async (countryId: number, stateId: number) => {
 
 
   return (
+    <PageContainer>
+
     <div className='bg-background flex min-h-screen items-start justify-center p-6'>
       {step === 1 ? (
-        <div className='max-w-4xl rounded-lg p-6 shadow-md'>
-          {/* Header */}
+        <div className='rounded-lg p-6 shadow-md'>
           <div className='mb-6 flex items-center justify-between'>
             <div>
               <h1 className='text-2xl font-semibold'>{isEditMode ? 'Edit Organization' : 'Organization Setup'}</h1>
@@ -283,13 +286,11 @@ const fetchCities = async (countryId: number, stateId: number) => {
             
           </div>
 
-          {/* Stepper */}
           {
             !isEditMode && 
           <Stepper currentStep={step} totalSteps={totalSteps} />
           }
 
-          {/* Success/Error Messages */}
           {success && (
             <div className='text-success text-success mb-4 rounded px-4 py-3'>
               {success}
@@ -572,5 +573,6 @@ const fetchCities = async (countryId: number, stateId: number) => {
       </div>}
        
     </div>
+    </PageContainer>
   );
 }

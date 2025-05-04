@@ -27,6 +27,7 @@ import Link from "next/link";
 // You'll need to create these components separately using Shadcn UI
 import SetDomainValueInput from './SetDomainValueInput';
 import SetPrivateKeyValueInput from './SetPrivateKeyValue';
+import { useRouter } from "next/navigation";
 
 interface IDetails {
   [key: string]: string | { [subKey: string]: string };
@@ -84,7 +85,7 @@ const DedicatedLedgerConfig = ({
   const [privateKeyValue, setPrivateKeyValue] = useState<string>('');
   const [networks, setNetworks] = useState([]);
   const [formikInstance, setFormikInstance] = useState(null);
-
+const router = useRouter();
   const fetchLedgerConfig = async () => {
     try {
       const { data } = await getLedgerConfig() as AxiosResponse;
@@ -157,11 +158,14 @@ const DedicatedLedgerConfig = ({
   };
 
   const handleMethodChange = (method: React.SetStateAction<string>) => {
+    console.log("🚀 ~ handleMethodChange ~ method:vv>>>>==================", method)
     setSelectedMethod(method);
     setSelectedDid('');
   };
 
   const handleNetworkChange = (network: React.SetStateAction<string>, didMethod: React.SetStateAction<string>) => {
+    console.log("🚀 ~ handlenetworkChange ~ network:vv>>>>==================", network)
+
     setSelectedNetwork(network);
     setSelectedDid(didMethod);
   };
@@ -354,7 +358,7 @@ const DedicatedLedgerConfig = ({
 
         {/* Generated Seed Field */}
         {!haveDidShared && (
-          <Card className="mb-6 bg-muted/50">
+          <Card className="mb-6">
             <CardContent className="p-4">
               <Label className="block text-sm font-medium mb-2">Generated Seed</Label>
               <div className="flex items-center">
@@ -475,7 +479,7 @@ const DedicatedLedgerConfig = ({
                       <Label className="block mb-2 text-sm font-medium">
                         Generated DID Method
                       </Label>
-                      <div className="bg-muted p-3 rounded-lg text-foreground">
+                      <div className="p-3 rounded-lg text-foreground">
                         {selectedDid}
                       </div>
                     </div>
@@ -538,9 +542,12 @@ const DedicatedLedgerConfig = ({
             {/* Action buttons */}
             <div className="flex justify-between mt-8">
               <Link href="/organizations" legacyBehavior>
-                <Button variant="outline">
-                  Back
-                </Button>
+              <Button
+                   
+                   onClick={() => router.push('/organizations/create-organization')}
+                 >
+                   Back
+                 </Button>
               </Link>
               <Button
                 onClick={() => {

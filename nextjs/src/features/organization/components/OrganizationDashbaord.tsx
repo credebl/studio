@@ -111,6 +111,7 @@ export const OrganizationDashboard = ({
     router.push(`/organizations/delete-organization?orgId=${orgId}`);
   };
 
+
   useEffect(() => {
     fetchOrganizationDetails();
   }, []);
@@ -181,7 +182,7 @@ export const OrganizationDashboard = ({
           </CardContent>
         </Card>
 
-        <Card className='shadow-md'>
+        <Card className='shadow-md' onClick={()=> router.push('/organizations/schemas')}>
           <CardContent className='flex items-center justify-between p-6'>
             <div>
               <p className='font-medium text-black'>Schemas</p>
@@ -243,8 +244,17 @@ export const OrganizationDashboard = ({
         orgData={orgData}
       /> */}
    {
-    walletStatus === true && 	
+    walletStatus === true ? (
+
     <OrganizationDetails orgData={orgData}  />
+
+    ): (
+<Button 
+      onClick={() => router.push('/organizations/create-organization?step=2')}
+    >
+      You have to set up your wallet first
+    </Button>
+    )	
   } 
     </div>
   );

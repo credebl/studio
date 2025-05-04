@@ -19,7 +19,7 @@ export interface IDedicatedAgentForm {
 }
 
 export interface IValuesShared {
-	keyType: string;
+	keyType?: string;
 	seed: string;
 	method: string;
 	network?: string;
@@ -126,7 +126,7 @@ const DedicatedAgentForm = ({
                 </Button>
               <Button
                 type="submit"
-                className="px-6 py-3 text-white rounded-md focus:outline-none"
+                
               >
                 Continue to Ledger Setup
               </Button>
