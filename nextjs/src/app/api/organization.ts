@@ -149,8 +149,6 @@ export const setAgentConfigDetails = async (data: IDedicatedAgentConfig, orgId: 
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 	const payload = data;
 
-	// const token = await getFromLocalStorage(storageKeys.TOKEN);
-
 	const config = {
     headers: {
       'Content-Type': 'application/json'
@@ -194,7 +192,6 @@ export const spinupSharedAgent = async (data: object, orgId: string) => {
 };
 
 export const getOrganizationRoles = async () => {
-  // const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
   const orgId = '';
   const url = `${apiRoutes.organizations.root}/${orgId}/roles`;
 
@@ -237,7 +234,6 @@ export const getOrganizationReferences = async (orgId: string) => {
 };
 
 export const deleteVerificationRecords = async (orgId: string) => {
-  // const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
 
   const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.deleteVerifications}`;
 

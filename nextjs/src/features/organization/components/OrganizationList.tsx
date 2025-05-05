@@ -85,9 +85,12 @@ export const OrganizationList = () => {
   };
 
   const handleCardClick = (orgId: string) => {
+    if (!orgId) {
+      console.error('Invalid organization ID');
+      return;
+    }
     router.push(`/organizations/dashboard/${orgId}`);
   };
-
   const handleCreateOrg = () => {
     router.push('organizations/create-organization');
   };
@@ -116,7 +119,7 @@ export const OrganizationList = () => {
 
       <div className='mx-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
         {loading ? (
-          <div className='text-gray-500'>Loading organizations...</div>
+          <div className=''>Loading organizations...</div>
         ) : organizationsList.length > 0 ? (
           organizationsList.map((org) => (
             <Card
@@ -129,7 +132,7 @@ export const OrganizationList = () => {
                   {org.logoUrl ? (
                     <AvatarImage src={org.logoUrl} alt={org.name} />
                   ) : (
-                    <AvatarFallback className='text-2xl font-bold text-gray-800'>
+                    <AvatarFallback className='text-2xl font-bold'>
                       {org.name.substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   )}
@@ -137,7 +140,7 @@ export const OrganizationList = () => {
 
                 <div className='flex-1'>
                   <h3 className='text-lg font-semibold'>{org.name}</h3>
-                  <p className='text-gray-500'>{org.name}</p>
+                  <p className=''>{org.description}</p>
                   <div className='mt-2 text-sm'>
                     Role(s):{' '}
                     <span className='rounded-full px-2 py-1 text-xs'>
@@ -149,7 +152,7 @@ export const OrganizationList = () => {
             </Card>
           ))
         ) : (
-          <div className='text-gray-500'>No organizations found.</div>
+          <div className=''>No organizations found.</div>
         )}
       </div>
 

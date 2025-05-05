@@ -82,7 +82,7 @@ const OrganizationDetails = ({ orgData }: { orgData: IOrganisation | null }) => 
       <Card className="p-6">
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="flex-1">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+            <h3 className="text-xl font-bold mb-4">
               Web Wallet Details
             </h3>
 
@@ -90,7 +90,7 @@ const OrganizationDetails = ({ orgData }: { orgData: IOrganisation | null }) => 
               <div className="flex items-center">
                 <span className="w-40 text-gray-500 dark:text-gray-400">Wallet Name</span>
                 <span className="mx-2 text-gray-500 dark:text-gray-400">:</span>
-                <span className="font-semibold text-gray-900 dark:text-white">
+                <span className="font-semibold">
                   {agentData?.walletName}
                 </span>
               </div>
@@ -113,7 +113,7 @@ const OrganizationDetails = ({ orgData }: { orgData: IOrganisation | null }) => 
               <div className="flex items-center">
                 <span className="w-40 text-gray-500 dark:text-gray-400">Network</span>
                 <span className="mx-2 text-gray-500 dark:text-gray-400">:</span>
-                <span className="font-semibold text-gray-900 dark:text-white">
+                <span className="font-semibold">
                   {agentData?.ledgers?.name || '-'}
                 </span>
               </div>
@@ -121,7 +121,7 @@ const OrganizationDetails = ({ orgData }: { orgData: IOrganisation | null }) => 
               <div className="flex items-center">
                 <span className="w-40 text-gray-500 dark:text-gray-400">Agent Type</span>
                 <span className="mx-2 text-gray-500 dark:text-gray-400">:</span>
-                <span className="font-semibold text-gray-900 dark:text-white">
+                <span className="font-semibold">
                   {agentData?.org_agent_type?.agent
                     ? agentData.org_agent_type.agent.charAt(0).toUpperCase() + 
                       agentData.org_agent_type.agent.slice(1).toLowerCase()
@@ -132,7 +132,7 @@ const OrganizationDetails = ({ orgData }: { orgData: IOrganisation | null }) => 
               <div className="flex items-center">
                 <span className="w-40 text-gray-500 dark:text-gray-400">Created On</span>
                 <span className="mx-2 text-gray-500 dark:text-gray-400">:</span>
-                <span className="font-semibold text-gray-900 dark:text-white">
+                <span className="font-semibold">
                   {agentData?.createDateTime ? (
                     <DateTooltip date={agentData.createDateTime}>
                       {dateConversion(agentData.createDateTime)}
@@ -167,29 +167,29 @@ const OrganizationDetails = ({ orgData }: { orgData: IOrganisation | null }) => 
           </div>
         </div>
 
-        <div className="mt-6">
+        {/* <div className="mt-6">
           <DIDList />
-        </div>
+        </div> */}
       </Card>
 
       {agentData?.orgDid?.startsWith('did:web') && (
         <Card className="p-6">
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+          <h3 className="text-2xl font-bold mb-4">
             DID Document
           </h3>
 
           <div className="space-y-4">
             <div>
-              <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              <h4 className="text-lg font-semibold mb-2">
                 Instructions:
               </h4>
-              <ul className="space-y-1 text-gray-900 dark:text-white">
+              <ul className="space-y-1">
                 <li>1. Kindly provide the DID document for hosting purposes in order to facilitate its publication</li>
                 <li>2. Failure to host the DID document will result in the inability to publish your DID</li>
               </ul>
             </div>
 
-            <div className="bg-gray-200 dark:bg-gray-700 rounded-md p-4">
+            <div className="rounded-md p-4">
               <div className="flex justify-between items-start">
                 <pre className="overflow-x-auto">
                   <code className="text-sm">

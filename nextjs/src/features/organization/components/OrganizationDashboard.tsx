@@ -66,7 +66,7 @@ export const OrganizationDashboard = ({
                 {orgData?.logoUrl ? (
                   <AvatarImage src={orgData?.logoUrl} alt={orgData?.name} />
                 ) : (
-                  <AvatarFallback className='text-2xl font-bold text-gray-800'>
+                  <AvatarFallback className='text-2xl font-bold'>
                     {orgData?.name.substring(0, 2).toUpperCase()}
                   </AvatarFallback>
                 )}
@@ -100,7 +100,7 @@ export const OrganizationDashboard = ({
         <Card className='shadow-md'>
           <CardContent className='flex items-center justify-between p-6'>
             <div>
-              <p className='font-medium text-black'>Users</p>
+              <p className='font-medium'>Users</p>
               <h3 className='mt-2 text-4xl font-bold'>1</h3>
             </div>
             <div className='opacity-30'>
@@ -125,7 +125,7 @@ export const OrganizationDashboard = ({
         <Card className='shadow-md' onClick={()=> router.push('/organizations/schemas')}>
           <CardContent className='flex items-center justify-between p-6'>
             <div>
-              <p className='font-medium text-black'>Schemas</p>
+              <p className='font-medium'>Schemas</p>
               <h3 className='mt-2 text-4xl font-bold'>7</h3>
             </div>
             <div className='opacity-30'>
@@ -151,7 +151,7 @@ export const OrganizationDashboard = ({
         <Card className='shadow-md'>
           <CardContent className='flex items-center justify-between p-6'>
             <div>
-              <p className='font-medium text-black'>Credentials</p>
+              <p className='font-medium'>Credentials</p>
               <h3 className='mt-2 text-4xl font-bold'>35</h3>
             </div>
             <div className='opacity-20'>
