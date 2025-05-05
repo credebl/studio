@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import type { AxiosResponse } from 'axios';
 // import { createConnection } from '../../api/organization';
 
-// Components
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
