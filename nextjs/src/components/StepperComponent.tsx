@@ -1,5 +1,6 @@
 'use client';
 
+import { stepLabels } from '@/config/CommonConstant';
 import React from 'react';
 
 interface StepperProps {
@@ -8,7 +9,6 @@ interface StepperProps {
 }
 
 const Stepper: React.FC<StepperProps> = ({ currentStep, totalSteps }) => {
-  const stepLabels = ['Organization', 'Agent Config', 'Ledger Config', 'Processing'];
 
   return (
     <div className="mb-6">
