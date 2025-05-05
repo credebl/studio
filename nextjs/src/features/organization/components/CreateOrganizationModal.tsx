@@ -43,7 +43,6 @@ export default function OrganizationOnboarding() {
   const [success, setSuccess] = useState<string | null>(null);
   const [failure, setFailure] = useState<string | null>(null);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -109,10 +108,10 @@ export default function OrganizationOnboarding() {
 
     if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
       setCountries(data?.data || []);
-      setError(null);
+      setFailure(null);
       setMessage(data?.message);
     } else {
-      setError(error);
+      setFailure(data?.message as string);
       setMessage(response as string);
     }
   };
