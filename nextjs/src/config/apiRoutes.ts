@@ -53,6 +53,14 @@ export const apiRoutes = {
     createCredentialDefinition: '/cred-defs',
     getCredDefBySchemaId: '/schemas'
   },
+  Verification: {
+    getAllRequestList: '/credentials/proofs',
+    verifyCredential: '/proofs',
+    oobProofRequest: '/proofs/oob',
+    presentationVerification: '/proofs',
+    proofRequestAttributesVerification: '/verified-proofs',
+    verificationCredDef: '/verifiation/cred-defs'
+  },
 
   organizations: {
     root: '/orgs',
@@ -93,13 +101,16 @@ export const apiRoutes = {
     },
     download: '/credentials/bulk/template'
   },
-  Verification: {
-    getAllRequestList: '/credentials/proofs',
-    verifyCredential: '/proofs',
-    oobProofRequest: '/proofs/oob',
-    presentationVerification: '/proofs',
-    proofRequestAttributesVerification: '/verified-proofs',
-    verificationCredDef: '/verifiation/cred-defs'
+
+ 
+  Platform: {
+    getAllSchemaFromPlatform: '/platform/schemas',
+    getLedgers: '/platform/ledgers',
+    getLedgerPlatformUrl: '/platform/network/url/'
+  },
+  Public: {
+    organizations: '/orgs/public-profile',
+    organizationDetails: '/orgs/public-profiles'
   },
   Agent: {
     checkAgentHealth: '/agents/health',
@@ -109,15 +120,6 @@ export const apiRoutes = {
     createPolygonKeys: '/agents/polygon/create-keys',
     setAgentConfig: '/agents/configure',
     deleteWallet: '/agents/wallet'
-  },
-  Platform: {
-    getAllSchemaFromPlatform: '/platform/schemas',
-    getLedgers: '/platform/ledgers',
-    getLedgerPlatformUrl: '/platform/network/url/'
-  },
-  Public: {
-    organizations: '/orgs/public-profile',
-    organizationDetails: '/orgs/public-profiles'
   },
 
   setting: {
