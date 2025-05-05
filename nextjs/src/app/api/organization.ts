@@ -1,6 +1,8 @@
+import { axiosGet, axiosPost, axiosPut, ecosystemAxiosPost } from '@/services/apiRequests';
+
+import { AxiosResponse } from 'axios';
 import { apiRoutes } from '@/config/apiRoutes';
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs';
-import { axiosGet, axiosPost, axiosPut, ecosystemAxiosPost } from '@/services/apiRequests';
 
 // TODO: Uncomment the following lines when the API is ready
 export const createOrganization = async (data: object) => {
@@ -76,7 +78,7 @@ export const getOrganizations = async (
   }
 };
 
-export const getOrganizationById = async (orgId: string) => {
+export const getOrganizationById = async (orgId: string):Promise<AxiosResponse|string> => {
   const url = `${apiRoutes.organizations.getById}/${orgId}`;
 
   const config = {
