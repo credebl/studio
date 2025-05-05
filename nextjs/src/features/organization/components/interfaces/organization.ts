@@ -8,7 +8,7 @@ export interface UserOrgRole {
   orgRole: OrgRole
 }
 
-export interface Organisation {
+export interface IOrganisation {
   logoFile: string
   id: string
   createDateTime: string
@@ -24,7 +24,7 @@ export interface Organisation {
   website: string
   roles: string[]
   userOrgRoles: UserOrgRole[]
-  org_agents: OrgAgent[]
+  org_agents: IOrgAgent[]
   publicProfile: boolean
   checked?: boolean | undefined
   error?: string;
@@ -41,7 +41,7 @@ export interface OrgRole {
   deletedAt?: any
 }
 
-export interface OrgAgent {
+export interface IOrgAgent {
   id: string
   createDateTime: string
   createdBy: string
@@ -60,12 +60,12 @@ export interface OrgAgent {
   agentsTypeId: string
   orgId: string
   orgAgentTypeId: string
-  ledgers: ledgers
-  org_agent_type: org_agent_type 
-  agents_type: AgentsType
+  ledgers: ILedgers
+  org_agent_type: IOrgAgentType
+  agents_type: IAgentsType
 }
 
-export interface AgentsType {
+export interface IAgentsType {
   id: string
   createDateTime: string
   createdBy: string
@@ -74,7 +74,7 @@ export interface AgentsType {
   agent: string
 }
 
-export interface org_agent_type {
+export interface IOrgAgentType{
 id: string
 createDateTime: string
 createdBy: string
@@ -84,7 +84,7 @@ agent: string
 
 }
 
-export interface ledgers{
+export interface ILedgers{
 createDateTime: string
 createdBy: string
 id: string
@@ -97,14 +97,14 @@ networkType: string
 poolConfig: string
 registerDIDEndpoint: string
 }
-export interface OrgDashboard {
+export interface IOrgDashboard {
   usersCount: number
   schemasCount: number
   credentialsCount: number
   presentationsCount: number
 }
 
-export interface Connection {
+export interface IConnection {
   id: string
   orgId: string
   agentId: string
@@ -116,18 +116,18 @@ export interface Connection {
   lastChangedBy: string
 }
 
-export interface OrgInterface {
+export interface IOrgInterface {
   name: string;
   website: string;
   logoUrl: string;
   description: string;
 }
 
-export interface OrgDataInterface {
-  orgData: OrgInterface
+export interface IOrgDataInterface {
+  orgData: IOrgInterface
 }
 
-export interface OrgWalletDetailsObject {
+export interface IOrgWalletDetailsObject {
 orgDid:string
 ledgers:{
   name:string
@@ -138,7 +138,7 @@ walletName:string
 createDateTime:string
 }
 
-export interface UserDetails {
+export interface IUserDetails {
   profileImg: string;
   lastName: string;
   firstName: string;
@@ -179,12 +179,12 @@ logoFile: string | File;
 imagePreviewUrl: string | ArrayBuffer | null | File;
 fileName: string;
 }
-export interface EditOrgdetailsModalProps {
+export interface IEditOrgdetailsModalProps {
 // openModal: boolean;
 // setMessage: (message: string) => void;
 // setOpenModal: (flag: boolean) => void;
 // onEditSucess?: () => void;
-orgData: Organisation | null;
+orgData: IOrganisation | null;
 }
 export interface IOrgInfo {
 name: string;

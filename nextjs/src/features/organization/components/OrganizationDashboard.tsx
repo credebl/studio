@@ -10,11 +10,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Edit, Trash2 } from 'lucide-react';
 import { AxiosResponse } from 'axios';
 import OrganizationDetails from './OrganizationDetails';
-import { Organisation } from './interfaces/organization';
+import { IOrganisation } from './interfaces/organization';
 
 type OrganizationDashboardProps = {
   orgId: string;
-  orgData: Organisation | null;
+  orgData: IOrganisation | null;
 };
 
 
@@ -22,7 +22,7 @@ export const OrganizationDashboard = ({
   orgId
 }: OrganizationDashboardProps) => {
   const router = useRouter();
-  const [orgData, setOrgData] = useState<Organisation | null>(null);
+  const [orgData, setOrgData] = useState<IOrganisation | null>(null);
   const [loading, setLoading] = useState(true);
   const [walletStatus, setWalletStatus] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);

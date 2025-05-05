@@ -9,20 +9,19 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { Copy } from 'lucide-react';
 // import CustomQRCode from '../../commonComponents/QRcode';
 // import DIDList from './configuration-settings/DidList';
-import { Connection, OrgAgent, Organisation } from './interfaces/organization';
+import { IConnection, IOrgAgent, IOrganisation } from './interfaces/organization';
 import { dateConversion } from '@/utils/DateConversion';
 import { apiStatusCodes, storageKeys } from '@/config/CommonConstant';
 // import { createConnection } from '@/app/api/organization';
 // import CustomQRCode from '@/features/wallet/CustomQRCode';
 // import DIDList from '@/features/wallet/DidListComponent';
 
-const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
-  console.log("🚀 ~ OrganizationDetails ~ orgData:", orgData)
-  const { org_agents } = orgData as Organisation;
-  const agentData: OrgAgent | null = org_agents.length > 0 ? org_agents[0] : null;
+const OrganizationDetails = ({ orgData }: { orgData: IOrganisation | null }) => {
+  const { org_agents } = orgData as IOrganisation;
+  const agentData: IOrgAgent | null = org_agents.length > 0 ? org_agents[0] : null;
 
   const [loading, setLoading] = useState<boolean>(true);
-  const [connectionData, setConnectionData] = useState<Connection | null>(null);
+  const [connectionData, setConnectionData] = useState<IConnection | null>(null);
 
 //   const createQrConnection = async () => {
 //     setLoading(true);
