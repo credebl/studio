@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 import { apiRoutes } from '@/config/apiRoutes';
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs';
-import { IDedicatedAgentConfig } from '@/features/organization/components/interfaces/organization';
+import { IDedicatedAgentConfiguration } from '@/features/organization/components/interfaces/organization';
 import {   axiosDelete, axiosGet, axiosPost, axiosPut, ecosystemAxiosPost } from '@/services/apiRequests';
 
 
@@ -144,7 +144,7 @@ export const spinupDedicatedAgent = async (data: object, orgId: string) => {
   }
 };
 
-export const setAgentConfigDetails = async (data: IDedicatedAgentConfig, orgId: string) => {
+export const setAgentConfigDetails = async (data: IDedicatedAgentConfiguration, orgId: string) => {
 	const url =`${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.setAgentConfig}`
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 	const payload = data;

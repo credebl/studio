@@ -147,7 +147,7 @@ export interface IUserDetails {
   username: string;
 }
 
-export interface IWalletData {
+export interface IWalletDetails {
   agent_invitations: {
       connectionInvitation: string
   }[]
@@ -158,22 +158,22 @@ export interface IWalletData {
   }
 }
 
-export interface IOrgData {
-  org_agents: IWalletData[]
+export interface IOrgDetails {
+  org_agents: IWalletDetails[]
   logoUrl: string
   name: string
   website: string
   description: string
 }
 export interface IExploreOrg {
-  orgData: IOrgData
+  orgData: IOrgDetails
 }
 export interface Values {
 website: any;
 name: string;
 description: string;
 }
-export interface ILogoImage {
+export interface ILogoImages {
 logoFile: string | File;
 imagePreviewUrl: string | ArrayBuffer | null | File;
 fileName: string;
@@ -185,7 +185,7 @@ export interface IEditOrgdetailsModalProps {
 // onEditSucess?: () => void;
 orgData: IOrganisation | null;
 }
-export interface IOrgInfo {
+export interface IOrgInformation {
 name: string;
 logoUrl: string;
   description: string;
@@ -198,7 +198,7 @@ export interface IUpdatePrimaryDid {
   did: string;
 }
 
-export interface IDidList {
+export interface IDidListData {
   id: string;
   did: string;
   isPrimaryDid: boolean;
@@ -206,7 +206,7 @@ export interface IDidList {
   lastChangedDateTime: string;
 }
 
-export interface IFormikValues {
+export interface IFormikValue {
 ledger: string;
 method: string;
   keyType:string;
@@ -217,7 +217,7 @@ privatekey: string;
 endorserDid: string;
 }
 
-export interface IDedicatedAgentConfig {
+export interface IDedicatedAgentConfiguration {
 walletName: string;
 agentEndpoint: string;
 apiKey: string;
@@ -225,7 +225,7 @@ apiKey: string;
 interface IndySubDetails {
   [key: string]: string;
 }
-export interface ILedgerDetails {
+export interface ILedgerDetail {
   bcovrin?: IndySubDetails;
   indicio?: IndySubDetails;
   mainnet?: string;
@@ -236,7 +236,7 @@ export interface ILedgerDetails {
 export interface ILedgerItem {
   id: string;
   name: string;
-  details: ILedgerDetails;
+  details: ILedgerDetail;
   createDateTime: string;
   createdBy: string;
   lastChangedDateTime: string;
@@ -245,7 +245,7 @@ export interface ILedgerItem {
 }
 
 
-export interface IOrgCount {
+export interface IOrgCountData {
   verificationRecordsCount: number;
   connectionRecordsCount: number;
   issuanceRecordsCount: number;
@@ -253,7 +253,7 @@ export interface IOrgCount {
   orgUsersCount: number;
 }
 
-export interface IEcosystemOrganizations {
+export interface IEcosystemOrganization {
   id: string;
   orgId: string;
   status: string;
@@ -261,9 +261,9 @@ export interface IEcosystemOrganizations {
   lastChangedDateTime: string;
   ecosystemId: string;
   ecosystemRoleId: string;
-  ecosystemRole: IEcosystemRole;
+  ecosystemRole: IEcosystemRoles;
 }
-export interface IEcosystemRole {
+export interface IEcosystemRoles {
   id: string;
   name: string;
   description: string;
