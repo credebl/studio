@@ -272,7 +272,7 @@ export default function DeleteOrganizationPage() {
     );
   }
 
-  const cardData = [
+  const deleteCardData = [
     {
       title: 'Verifications',
       description: 'Verifications is the list of verification records',
@@ -339,7 +339,7 @@ export default function DeleteOrganizationPage() {
 
       {organizationData && (
         <div className='space-y-4'>
-          {cardData.map((card) => (
+          {deleteCardData.map((card) => (
             <DeleteOrganizationCard
               key={card.title}
               title={card.title}
