@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface UserOrgRole {
   id: string
@@ -6,7 +7,6 @@ export interface UserOrgRole {
   orgId: string
   orgRole: OrgRole
 }
-
 export interface IOrganisation {
   logoFile: string
   id: string
@@ -28,7 +28,6 @@ export interface IOrganisation {
   checked?: boolean | undefined
   error?: string;
 }
-
 export interface OrgRole {
   id: string
   name: string
@@ -39,7 +38,6 @@ export interface OrgRole {
   lastChangedBy?: string
   deletedAt?: any
 }
-
 export interface IOrgAgent {
   id: string
   createDateTime: string
@@ -63,7 +61,6 @@ export interface IOrgAgent {
   org_agent_type: IOrgAgentType
   agents_type: IAgentsType
 }
-
 export interface IAgentsType {
   id: string
   createDateTime: string
@@ -72,7 +69,6 @@ export interface IAgentsType {
   lastChangedBy: string
   agent: string
 }
-
 export interface IOrgAgentType{
 id: string
 createDateTime: string
@@ -80,9 +76,7 @@ createdBy: string
 lastChangedDateTime: string
 lastChangedBy: string
 agent: string
-
 }
-
 export interface ILedgers{
 createDateTime: string
 createdBy: string
@@ -102,7 +96,6 @@ export interface IOrgDashboard {
   credentialsCount: number
   presentationsCount: number
 }
-
 export interface IConnection {
   id: string
   orgId: string
@@ -114,18 +107,15 @@ export interface IConnection {
   lastChangedDateTime: string
   lastChangedBy: string
 }
-
 export interface IOrgInterface {
   name: string;
   website: string;
   logoUrl: string;
   description: string;
 }
-
 export interface IOrgDataInterface {
   orgData: IOrgInterface
 }
-
 export interface IOrgWalletDetailsObject {
 orgDid:string
 ledgers:{
@@ -136,7 +126,6 @@ networkType:string
 walletName:string
 createDateTime:string
 }
-
 export interface IUserDetails {
   profileImg: string;
   lastName: string;
@@ -146,7 +135,6 @@ export interface IUserDetails {
   id: string;
   username: string;
 }
-
 export interface IWalletDetails {
   agent_invitations: {
       connectionInvitation: string
@@ -157,7 +145,6 @@ export interface IWalletDetails {
       networkType: string
   }
 }
-
 export interface IOrgDetails {
   org_agents: IWalletDetails[]
   logoUrl: string
@@ -179,10 +166,6 @@ imagePreviewUrl: string | ArrayBuffer | null | File;
 fileName: string;
 }
 export interface IEditOrgdetailsModalProps {
-// openModal: boolean;
-// setMessage: (message: string) => void;
-// setOpenModal: (flag: boolean) => void;
-// onEditSucess?: () => void;
 orgData: IOrganisation | null;
 }
 export interface IOrgInformation {
@@ -270,4 +253,15 @@ export interface IEcosystemRoles {
   createDateTime: string;
   lastChangedDateTime: string;
   deletedAt: string | null;
+}
+
+export interface IOrgFormValues {
+  name: string;
+  description: string;
+  countryId?: number | null;
+  stateId?: number | null;
+  cityId?: number | null;
+  website: string;
+  logoFile?: File | null;
+  logoPreview?: string;
 }

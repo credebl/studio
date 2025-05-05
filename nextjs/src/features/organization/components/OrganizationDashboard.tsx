@@ -14,7 +14,7 @@ import { IOrganisation } from './interfaces/organization';
 
 type OrganizationDashboardProps = {
   orgId: string;
-  orgData: IOrganisation | null;
+  orgData?: IOrganisation;
 };
 
 
