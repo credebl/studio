@@ -10,72 +10,13 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Edit, Trash2 } from 'lucide-react';
 import { AxiosResponse } from 'axios';
 import OrganizationDetails from './OrganizationDetails';
+import { Organisation } from './interfaces/organization';
 
 type OrganizationDashboardProps = {
   orgId: string;
   orgData: Organisation | null;
 };
 
-export interface Organisation {
-  logoFile: string;
-  id: string;
-  createDateTime: string;
-  createdBy: string;
-  lastChangedDateTime: string;
-  lastChangedBy: string;
-  name: string;
-  description: string;
-  logoUrl: string;
-  website: string;
-  roles: string[];
-  userOrgRoles: UserOrgRole[];
-  org_agents: OrgAgent[];
-  publicProfile: boolean;
-  checked?: boolean | undefined;
-  error?: string;
-}
-export interface UserOrgRole {
-  id: string;
-  userId: string;
-  orgRoleId: string;
-  orgId: string;
-  orgRole: OrgRole;
-}
-
-export interface OrgRole {
-  id: string;
-  name: string;
-  description: string;
-  createDateTime?: string;
-  createdBy?: string;
-  lastChangedDateTime?: string;
-  lastChangedBy?: string;
-  deletedAt?: any;
-}
-
-export interface OrgAgent {
-  id: string;
-  createDateTime: string;
-  createdBy: string;
-  lastChangedDateTime: string;
-  lastChangedBy: string;
-  orgDid: string;
-  didDocument: string;
-  verkey: string;
-  agentEndPoint: string;
-  agentId: any;
-  isDidPublic: boolean;
-  agentSpinUpStatus: number;
-  agentOptions: any;
-  walletName: string;
-  tenantId: any;
-  agentsTypeId: string;
-  orgId: string;
-  orgAgentTypeId: string;
-  // ledgers: ledgers
-  // org_agent_type: org_agent_type
-  // agents_type: AgentsType
-}
 
 export const OrganizationDashboard = ({
   orgId
