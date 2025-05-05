@@ -3,7 +3,7 @@ import {
 	imageSizeAccepted,
 } from '../config/CommonConstant';
 
-export const processImage = (event: ChangeEvent<HTMLInputElement>, callback:any) => {
+export const processImageFile = (event: ChangeEvent<HTMLInputElement>, callback:any) => {
   const reader = new FileReader();
   const file = event?.target?.files;
 if(file){

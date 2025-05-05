@@ -18,7 +18,7 @@ import {
   getOrganizationById,
   updateOrganization
 } from '@/app/api/organization';
-import { processImage } from '@/components/ProcessImage';
+import { processImageFile } from '@/components/ProcessImage';
 import { AxiosResponse } from 'axios';
 import { apiStatusCodes } from '@/config/CommonConstant';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -169,7 +169,7 @@ export default function OrganizationOnboarding() {
   ) => {
     setImgError('');
 
-    processImage(e, (result: string | null, error: string | null) => {
+    processImageFile(e, (result: string | null, error: string | null) => {
       if (result) {
         setLogoPreview(result);
         setFieldValue('logoPreview', result);
