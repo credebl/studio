@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface UserOrgRole {
   id: string
@@ -179,10 +180,6 @@ imagePreviewUrl: string | ArrayBuffer | null | File;
 fileName: string;
 }
 export interface IEditOrgdetailsModalProps {
-// openModal: boolean;
-// setMessage: (message: string) => void;
-// setOpenModal: (flag: boolean) => void;
-// onEditSucess?: () => void;
 orgData: IOrganisation | null;
 }
 export interface IOrgInformation {
