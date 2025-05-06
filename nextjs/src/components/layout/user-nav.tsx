@@ -1,7 +1,6 @@
 'use client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,17 +14,18 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+import { useEffect, useState } from 'react';
 
+import { Button } from '@/components/ui/button';
+import { IUserProfile } from '../profile/interfaces';
+import { ThemeSelector } from '../theme-selector';
+import { apiStatusCodes } from '@/config/CommonConstant';
+import { getUserProfile } from '@/app/api/Auth';
+import { logout } from '@/lib/authSlice';
+import { persistor } from '@/lib/store';
+import { useAppSelector } from '@/lib/hooks';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/navigation';
-import { useAppSelector } from '@/lib/hooks';
-import { logout } from '@/lib/authSlice';
-import { getUserProfile } from '@/app/api/Auth';
-import { apiStatusCodes } from '@/config/CommonConstant';
-import { useEffect, useState } from 'react';
-import { IUserProfile } from '../profile/interfaces';
-import { persistor } from '@/lib/store';
-import { ThemeSelector } from '../theme-selector';
 
 export function UserNav() {
   const dispatch = useDispatch();

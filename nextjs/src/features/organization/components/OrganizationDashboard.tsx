@@ -1,16 +1,19 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { getOrganizationById } from '@/app/api/organization';
-import { apiStatusCodes } from '@/config/CommonConstant';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Edit, Trash2 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+
 import { AxiosResponse } from 'axios';
-import OrganizationDetails from './OrganizationDetails';
+import { Button } from '@/components/ui/button';
 import { IOrganisation } from './interfaces/organization';
+import OrganizationDetails from './OrganizationDetails';
+import { apiStatusCodes } from '@/config/CommonConstant';
+import { getOrganizationById } from '@/app/api/organization';
+import { useAppSelector } from '@/lib/hooks';
+import { useDispatch } from 'react-redux';
+import { useRouter } from 'next/navigation';
 
 type OrganizationDashboardProps = {
   orgId: string;
@@ -27,7 +30,14 @@ export const OrganizationDashboard = ({
   const [walletStatus, setWalletStatus] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  
+  const selecteDropdownOrgId = useAppSelector((state) => state.organization.orgId);
+
+  const activeOrgId = selecteDropdownOrgId || orgId;
+
   const fetchOrganizationDetails = async () => {
+    if (!orgId) return;
+
     setLoading(true);
     const response = await getOrganizationById(orgId as string);
     const { data } = response as AxiosResponse;
@@ -54,7 +64,7 @@ export const OrganizationDashboard = ({
 
   useEffect(() => {
     fetchOrganizationDetails();
-  }, []);
+  }, [activeOrgId]);
 
   return (
     <div className='container mx-auto space-y-6 px-4 py-6'>

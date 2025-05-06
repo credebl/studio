@@ -1,14 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { AxiosResponse } from 'axios';
-
-import { getOrganizations } from '@/app/api/organization';
-import { Organization } from '@/features/dashboard/type/organization';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Pagination,
   PaginationContent,
@@ -16,9 +8,19 @@ import {
   PaginationNext,
   PaginationPrevious
 } from '@/components/ui/pagination';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { apiStatusCodes } from '@/config/CommonConstant';
+import { setOrgId, setOrgInfo } from '@/lib/orgSlice';
+import { useEffect, useState } from 'react';
+
+import { AxiosResponse } from 'axios';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Organization } from '@/features/dashboard/type/organization';
 import { Plus } from 'lucide-react';
+import { apiStatusCodes } from '@/config/CommonConstant';
+import { getOrganizations } from '@/app/api/organization';
+import { useAppDispatch } from '@/lib/hooks';
+import { useRouter } from 'next/navigation';
 
 export const OrganizationList = () => {
   const [organizationsList, setOrganizationsList] = useState<Organization[]>(
@@ -36,6 +38,7 @@ export const OrganizationList = () => {
   });
 
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
   const getAllOrganizations = async () => {
     setLoading(true);
@@ -89,6 +92,25 @@ export const OrganizationList = () => {
       console.error('Invalid organization ID');
       return;
     }
+
+    const selectedOrg = organizationsList.find(org => org.id === orgId);
+  
+  if (selectedOrg) {
+    dispatch(setOrgId(selectedOrg.id));
+
+    const orgRoles = selectedOrg?.userOrgRoles;
+    
+    dispatch(
+      setOrgInfo({
+        id: selectedOrg.id,
+        name: selectedOrg.name,
+        description: selectedOrg.description,
+        logoUrl: selectedOrg.logoUrl,
+        roles: orgRoles?.map((item) => item?.orgRole?.name) || [],
+      })
+    );
+  }
+  
     router.push(`/organizations/dashboard/${orgId}`);
   };
   const handleCreateOrg = () => {
