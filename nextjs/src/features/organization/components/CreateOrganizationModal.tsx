@@ -182,6 +182,11 @@ export default function OrganizationOnboarding() {
     });
   };
 
+  const setWalletSpinupStatus = (status: boolean) => {
+		setSuccess('Wallet created successfully');
+		fetchOrganizationDetails();
+	};
+
   const handleSubmit = (values: IOrgFormValues) => {
     setOrgData(values);
     setStep(2);
