@@ -21,7 +21,7 @@ export interface IPolygonKeys {
 
 interface IProps {
   setPrivateKeyValue: (val: string) => void;
-  orgId:string;
+  orgId?:string;
   privateKeyValue: string | undefined;
   formikHandlers: {
     handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;

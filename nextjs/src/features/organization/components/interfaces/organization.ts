@@ -265,3 +265,81 @@ export interface IOrgFormValues {
   logoFile?: File | null;
   logoPreview?: string;
 }
+
+export interface ISharedAgentForm {
+  seeds: string;
+  orgId:string;
+  maskedSeeds: string;
+  isCopied: boolean;
+  orgName: string;
+  loading: boolean;
+  ledgerConfig: boolean;
+  setLedgerConfig: (value: boolean) => void;
+  submitSharedWallet: (
+    values: IValuesShared,
+    domain: string
+  ) => void;
+}
+
+
+export interface ILedgerConfigProps {
+  orgName: string;
+  orgId:string;
+  maskedSeeds: string;
+  seeds: string;
+  submitSharedWallet: (values: IValuesShared, domainValue: string) => void;
+  walletName: string;
+}
+
+
+export interface IValuesShared {
+  keyType: string;
+  seed: string;
+  method: string;
+  network?: string;
+  did?: string;
+  endorserDid?: string;
+  privatekey?: string;
+  endpoint?: string;
+  domain?: string;
+  role?: string;
+  ledger: string;
+  label?: string;
+}
+
+interface IDetails {
+  [key: string]: string | { [subKey: string]: string };
+}
+
+export interface ILedgerItems {
+  name: string;
+  details: IDetails;
+}
+
+export interface ILedgerConfigData {
+  indy: {
+    'did:indy': {
+      [key: string]: string;
+    };
+  };
+  polygon: {
+    'did:polygon': {
+      [key: string]: string;
+    };
+  };
+  noLedger: {
+    [key: string]: string;
+  };
+}
+
+export interface IDedicatedAgentForm {
+  ledgerConfig:boolean;
+  maskedSeeds: string;
+  setLedgerConfig: (value: boolean) => void;	seeds: string;
+  loading: boolean;
+  setAgentConfig:any
+  submitDedicatedWallet: (values: IValuesShared, privatekey: string,
+    domain: string) => void;
+    onConfigureDedicated:() => void,
+}
+

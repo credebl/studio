@@ -5,20 +5,17 @@ import type { AxiosResponse } from 'axios';
 import { nanoid } from 'nanoid';
 import React from 'react';
 import { createDid, createOrganization, getOrganizationById, setAgentConfigDetails, spinupSharedAgent } from '@/app/api/organization';
-import { apiStatusCodes, storageKeys } from '@/config/CommonConstant';
+import { apiStatusCodes } from '@/config/CommonConstant';
 import { DidMethod } from '../common/enum';
 import SOCKET from '@/config/SocketConfig';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CheckCircle, AlertCircle, User, Users } from "lucide-react";
-// import DedicatedAgentForm from './DedicatedAgentForm';
 import WalletStepsComponent from './WalletSteps';
 import SharedAgentForm from './SharedAgentForm';
 import Stepper from '@/components/StepperComponent';
-import PageContainer from '@/components/layout/page-container';
 import { useRouter } from 'next/navigation';
+import DedicatedAgentForm from './DedicatedAgentForm';
 
 // Define types and interfaces
 export interface IValuesShared {
@@ -493,24 +490,21 @@ const WalletSpinup = (props: WalletSpinupProps) => {
           loading={loading}
           submitSharedWallet={submitSharedWallet}
           isCopied={false}
-          orgId={orgIdOfCurrentOrg}
+          orgId={orgIdOfCurrentOrg ? orgIdOfCurrentOrg : ''}
         />
       );
     } else {
       formComponent = (
-        <div>
-          dedicated agent form will be here.....
-        </div>
-        // <DedicatedAgentForm
-        //   ledgerConfig={showLedgerConfig}
-        //   setLedgerConfig={setShowLedgerConfig}
-        //   seeds={seeds}
-        //   maskedSeeds={maskedSeeds}
-        //   loading={loading}
-        //   onConfigureDedicated={configureDedicatedWallet}
-        //   submitDedicatedWallet={submitDedicatedWallet}
-        //   setAgentConfig={setAgentConfig}
-        // />
+        <DedicatedAgentForm
+          ledgerConfig={showLedgerConfig}
+          setLedgerConfig={setShowLedgerConfig}
+          seeds={seeds}
+          maskedSeeds={maskedSeeds}
+          loading={loading}
+          onConfigureDedicated={configureDedicatedWallet}
+          submitDedicatedWallet={submitDedicatedWallet}
+          setAgentConfig={setAgentConfig}
+        />
       );
     }
   } else {
