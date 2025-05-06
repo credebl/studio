@@ -192,7 +192,7 @@ export const OrganizationDashboard = ({
 <Button 
       onClick={() => router.push('/organizations/create-organization?step=2')}
     >
-      You have to set up your wallet first
+      Setup Your Wallet
     </Button>
     )	
   } 
