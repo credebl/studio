@@ -166,7 +166,7 @@ const EditUserRoleModal = (props: { openModal: boolean; user: User; setMessage: 
                             <div className="mt-8 w-full">
                                 <div className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     Roles
-                                    <span className="text-desctructive text-xs">*</span>
+                                    <span className="text-red-500 text-xs">*</span>
                                 </div>
                                 {
 

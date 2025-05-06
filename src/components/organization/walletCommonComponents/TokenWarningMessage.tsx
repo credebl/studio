@@ -1,5 +1,5 @@
 const TokenWarningMessage = () => (
-    <span className="inline-flex items-center mt-2 text-xs font-medium mr-2 px-2 py-2 rounded-sm">
+    <span className="inline-flex items-center bg-amber-200 mt-2 text-amber-800 text-xs font-medium mr-2 px-2 py-2 rounded-sm dark:bg-amber-200 dark:text-amber-800">
         <svg
             width="20"
             height="17"
