@@ -23,6 +23,7 @@ import { apiStatusCodes } from '@/config/CommonConstant';
 import { getUserProfile } from '@/app/api/Auth';
 import { logout } from '@/lib/authSlice';
 import { persistor } from '@/lib/store';
+import { setUserProfileDetails } from '@/lib/userSlice';
 import { useAppSelector } from '@/lib/hooks';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/navigation';
@@ -44,6 +45,7 @@ export function UserNav() {
           response?.data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS
         ) {
           setUserProfile(response.data.data);
+          dispatch(setUserProfileDetails(response.data.data))
         }
       } catch (error) {
         console.error('Error fetching user profile:', error);

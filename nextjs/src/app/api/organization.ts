@@ -614,24 +614,24 @@ export const getOrganizationUsers = async (
 // };
 
 // // Edit user roles
-// export const deleteOrganizationInvitation = async (
-// 	orgId: string,
-// 	invitationId: string,
-// ) => {
-// 	const url = `${apiRoutes.organizations.root}/${orgId}/invitations/${invitationId}`;
+export const deleteOrganizationInvitation = async (
+	orgId: string,
+	invitationId: string,
+) => {
+	const url = `${apiRoutes.organizations.root}/${orgId}/invitations/${invitationId}`;
 
-// 	const axiosPayload = {
-// 		url,
-// 		config: await getHeaderConfigs(),
-// 	};
+	const axiosPayload = {
+		url,
+		config: await getHeaderConfigs(),
+	};
 
-// 	try {
-// 		return await axiosDelete(axiosPayload);
-// 	} catch (error) {
-// 		const err = error as Error;
-// 		return err?.message;
-// 	}
-// };
+	try {
+		return await axiosDelete(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};
 
 // export const getDids = async (orgId: string) => {
 // 	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.didList}`;
