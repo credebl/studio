@@ -179,7 +179,7 @@ const WalletSpinup = (props: WalletSpinupProps) => {
       }
     }
   
-    if (!props.formData || !alreadyCreatedOrgId) {
+    if (!props.formData) {
       setFailure("Organization data is missing");
       return null;
     }
