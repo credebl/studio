@@ -98,7 +98,6 @@ const LedgerConfig = ({
   const fetchLedgerConfig = async () => {
     try {
       const { data } = await getLedgerConfig() as AxiosResponse;
-      console.log("🚀 ~ fetchLedgerConfig ~ data:22222222222", data)
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         const ledgerConfigData: ILedgerConfigData = {
@@ -150,7 +149,6 @@ const LedgerConfig = ({
   const fetchNetworks = async () => {
     try {
       const { data } = (await getLedgers()) as AxiosResponse;
-      console.log("🚀 ~ fetchNetworks ~ data11111111111111111111:", data)
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setNetworks(data?.data || []);
         return data?.data;
@@ -240,13 +238,13 @@ const LedgerConfig = ({
     
     return (
       <div className="relative w-full">
-        <label htmlFor="network" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-          Network <span className="text-red-500 text-xs">*</span>
+        <label htmlFor="network" className="block mb-2 text-sm font-medium">
+          Network <span className="text-destructive text-xs">*</span>
         </label>
         <select
           id="network"
           name="network"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          className="border text-sm rounded-lg block w-full p-2.5"
           value={selectedNetwork}
           onChange={(e) => {
             formikHandlers.setFieldValue('network', e.target.value);
@@ -267,7 +265,7 @@ const LedgerConfig = ({
           ))}
         </select>
         {formikHandlers.errors.network && formikHandlers.touched.network && (
-          <div className="text-red-500 text-xs mt-1">{formikHandlers.errors.network}</div>
+          <div className="text-destructive text-xs mt-1">{formikHandlers.errors.network}</div>
         )}
       </div>
     );
@@ -286,13 +284,13 @@ const LedgerConfig = ({
   
     return (
       <div className="relative w-full">
-        <label htmlFor="method" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-          Method <span className="text-red-500 text-xs">*</span>
+        <label htmlFor="method" className="block mb-2 text-sm font-medium">
+          Method <span className="text-destructive text-xs">*</span>
         </label>
         <select
           id="method"
           name="method"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          className="text-sm rounded-lg block w-full p-2.5"
           value={formikHandlers.values.method || ''} 
           onChange={(e) => {
             const value = e.target.value;
@@ -309,7 +307,7 @@ const LedgerConfig = ({
           ))}
         </select>
         {formikHandlers.errors.method && formikHandlers.touched.method && (
-          <div className="text-red-500 text-xs mt-1">{formikHandlers.errors.method}</div>
+          <div className="text-destructive text-xs mt-1">{formikHandlers.errors.method}</div>
         )}
       </div>
     );
@@ -333,17 +331,17 @@ const LedgerConfig = ({
   const LedgerCard = ({ ledger, title, description, icon }) => {
     return (
       <div 
-        className={`border ${selectedLedger === ledger ? 'border-yellow-500 shadow-lg' : 'border-gray-200'} rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:shadow-md transition-all`}
+        className={`border ${selectedLedger === ledger ? 'shadow-lg' : ''} rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:shadow-md transition-all`}
         onClick={() => handleLedgerSelect(ledger)}
       >
         <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${
-          ledger === Ledgers.INDY ? 'bg-blue-100' : 
-          ledger === Ledgers.POLYGON ? 'bg-purple-100' : 'bg-gray-100'
+          ledger === Ledgers.INDY ? '' : 
+          ledger === Ledgers.POLYGON ? '' : ''
         }`}>
           {icon}
         </div>
         <h3 className="text-lg font-semibold mb-1">{title}</h3>
-        <p className="text-sm text-gray-500 text-center">{description}</p>
+        <p className="text-sm text-center">{description}</p>
       </div>
     );
   };
@@ -352,7 +350,7 @@ const LedgerConfig = ({
     <div className="">
       <div className="mb-6">
         <h2 className="text-xl font-semibold mb-1">Ledger Configuration</h2>
-        <p className="text-sm text-gray-500">Choose your ledger and DID method</p>
+        <p className="text-sm">Choose your ledger and DID method</p>
       </div>
       <Stepper currentStep={3} totalSteps={4} />
       <div className="flex items-center gap-4 mb-6 mt-6">
@@ -361,11 +359,11 @@ const LedgerConfig = ({
             id="createNewDid"
             type="radio"
             name="didOption"
-            className="w-4 h-4 text-yellow-600 bg-gray-100 border-gray-300 focus:ring-yellow-500"
+            className="w-4 h-4 focus:ring-yellow-500"
             checked={!haveDidShared}
             onChange={() => setHaveDidShared(false)}
           />
-          <label htmlFor="createNewDid" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+          <label htmlFor="createNewDid" className="ml-2 text-sm font-medium ">
             Create a new DID
           </label>
         </div>
@@ -374,33 +372,33 @@ const LedgerConfig = ({
             id="haveDidShared"
             type="radio"
             name="didOption"
-            className="w-4 h-4 text-yellow-600 bg-gray-100 border-gray-300 focus:ring-yellow-500"
+            className="w-4 h-4 "
             checked={haveDidShared}
             onChange={() => setHaveDidShared(true)}
           />
-          <label htmlFor="haveDidShared" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+          <label htmlFor="haveDidShared" className="ml-2 text-sm font-medium">
             I already have a DID
           </label>
         </div>
       </div>
 
       {!haveDidShared && (
-        <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-          <div className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+        <div className="mb-6 p-4 rounded-lg">
+          <div className="block text-sm font-medium mb-2">
             <Label value="Generated Seed" />
           </div>
           <div className="flex items-center">
-          <div className="flex-1 p-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white break-all">
+          <div className="flex-1 p-3 bg-white rounded-lg break-all">
             {maskedSeedVal}
           </div>
           <CopyDid
-            className="ml-2 text-blue-600 dark:text-blue-500"
+            className="ml-2"
             onCopy={() => navigator.clipboard.writeText(seedVal)}
           />
         </div>
 
 
-          <div className="mt-2 text-sm text-yellow-600 dark:text-yellow-500 flex items-center">
+          <div className="mt-2 text-sm flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
@@ -412,26 +410,26 @@ const LedgerConfig = ({
       {haveDidShared && (
         <div className="mb-6 space-y-4">
           <div className="relative">
-            <label htmlFor="seed" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-              Seed <span className="text-red-500 text-xs">*</span>
+            <label htmlFor="seed" className="block mb-2 text-sm font-medium">
+              Seed <span className="text-destructive text-xs">*</span>
             </label>
             <input
               id="seed"
               name="seed"
               type="text"
-              className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+              className="sm:text-sm rounded-lg block w-full p-2.5"
               placeholder="Enter your seed"
             />
           </div>
           <div className="relative">
-            <label htmlFor="did" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-              DID <span className="text-red-500 text-xs">*</span>
+            <label htmlFor="did" className="block mb-2 text-sm font-medium">
+              DID <span className="text-destructive text-xs">*</span>
             </label>
             <input
               id="did"
               name="did"
               type="text"
-              className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+              className="sm:text-sm rounded-lg block w-full p-2.5"
               placeholder="Enter your DID"
             />
           </div>
@@ -507,7 +505,7 @@ const LedgerConfig = ({
         {(formikHandlers) => (
           <Form className="space-y-6">
             {selectedLedger && (
-              <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow">
+              <div className="p-6 rounded-lg shadow">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {renderMethodOptions(formikHandlers)}
                   
@@ -518,10 +516,10 @@ const LedgerConfig = ({
                 
                 {selectedDid && (
                   <div className="mt-6">
-                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    <label className="block mb-2 text-sm font-medium">
                       Generated DID Method
                     </label>
-                    <div className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg text-gray-900 dark:text-white">
+                    <div className="p-3 rounded-lg">
                       {selectedDid}
                     </div>
                   </div>
@@ -539,22 +537,22 @@ const LedgerConfig = ({
 
                 <div className="mt-6">
                   <label htmlFor="label" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    Wallet Label <span className="text-red-500 text-xs">*</span>
+                    Wallet Label <span className="text-destructive text-xs">*</span>
                   </label>
                   <Field
                     id="label"
                     value={walletLabel}
                     name="label"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    className="sm:text-sm rounded-lg block w-full p-2.5"
                     type="text"
                   />
                   {formikHandlers.errors.label && formikHandlers.touched.label && (
-                    <div className="text-red-500 text-xs mt-1">{formikHandlers.errors.label}</div>
+                    <div className="text-destructive text-xs mt-1">{formikHandlers.errors.label}</div>
                   )}
                 </div>
 
                 {selectedMethod === DidMethod.POLYGON && (
-                  <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <div className="mt-6 p-4 rounded-lg">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <SetPrivateKeyValueInput 
@@ -572,7 +570,7 @@ const LedgerConfig = ({
                             <div>
                               Copy the address and get the free tokens for the testnet.
                               <div className="mt-1">
-                                For eg. use <a href='https://faucet.polygon.technology/' className='text-blue-600 dark:text-blue-500 underline'>https://faucet.polygon.technology/</a> to get free tokens
+                                For eg. use <a href='https://faucet.polygon.technology/' className='underline'>https://faucet.polygon.technology/</a> to get free tokens
                               </div>
                             </div>
                           </li>
@@ -581,7 +579,7 @@ const LedgerConfig = ({
                             <div>
                               Check that you have received the tokens.
                               <div className="mt-1">
-                                For eg. copy the address and check the balance on <a href='https://mumbai.polygonscan.com/' className='text-blue-600 dark:text-blue-500 underline'>https://mumbai.polygonscan.com/</a>
+                                For eg. copy the address and check the balance on <a href='https://mumbai.polygonscan.com/' className='underline'>https://mumbai.polygonscan.com/</a>
                               </div>
                             </div>
                           </li>

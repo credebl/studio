@@ -147,11 +147,9 @@ const WalletSpinup = (props: WalletSpinupProps) => {
   const redirectUrl = getRedirectUrl();
 
   const createOrganizationOnce = async () => {
-    console.log("In org create function");
   
     // If we have an existing org ID from props, fetch its details
     if (alreadyCreatedOrgId) {
-      console.log("Using existing org ID from props:", alreadyCreatedOrgId);
       setCreatedOrgId(alreadyCreatedOrgId);
       
       try {
@@ -161,7 +159,6 @@ const WalletSpinup = (props: WalletSpinupProps) => {
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
           const org = data.data;
   
-          // Store the org details in state
           const orgData = {
             name: org.name || '',
             description: org.description || '',
@@ -208,7 +205,6 @@ const WalletSpinup = (props: WalletSpinupProps) => {
   
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
         const orgId = data?.data?.id || data?.data?._id;
-        console.log("Created new org with ID:", orgId);
         setOrgIdOfCurrentOrg(orgId);
         setCreatedOrgId(orgId);
         setSuccess("Organization created successfully");
@@ -330,13 +326,9 @@ const WalletSpinup = (props: WalletSpinupProps) => {
       isPrimaryDid: true,
       clientSocketId: SOCKET.id,
     };
-    
-    console.log("111111111111111111111111111111", didData)
-    // setLoading(true);
-    
+        
     const spinupRes = await createDid(orgId as string, didData);
     const { data } = spinupRes as AxiosResponse;
-    console.log("🚀dedicated agent crate did+++++++++++++++++:", data)
     
     if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
       setAgentSpinupCall(true);
@@ -344,9 +336,7 @@ const WalletSpinup = (props: WalletSpinupProps) => {
       setWalletSpinStep(1); 
 
       setTimeout(() => {
-        // setWalletSpinStep(6);
-        // props.setWalletSpinupStatus(true);
-        window.location.href = redirectUrl ? redirectUrl : '/organizations';  // Add this redirection
+        window.location.href = redirectUrl ? redirectUrl : '/organizations';  
       }, 1000);
     } else {
       setShowProgressUI(false);
@@ -359,13 +349,11 @@ const WalletSpinup = (props: WalletSpinupProps) => {
     values: IValuesShared,
     domain: string,
   ) => {
-    console.log(" we are here");
 
     // Use the unified organization creation function
     const orgId = await createOrganizationOnce();
     setCreatedOrgId(orgId)
-    console.log("🚀 ~ WalletSpinup ~ orgId:44444444", orgId)
-    if (!orgId) return; // Stop if organization creation failed
+    if (!orgId) return; 
     
     setLoading(true);
     const ledgerName = values?.network?.split(":")[2];
@@ -389,21 +377,16 @@ const WalletSpinup = (props: WalletSpinupProps) => {
       endorserDid: values?.endorserDid ?? '',
       clientSocketId: SOCKET.id,
     };
-    console.log("🚀 ~ WalletSpinup ~ payload.SOCKET.id:", SOCKET.id)
     
     try {
-      console.log("🚀 ~ WalletSpinup ~ payload:555555", payload)
-      // Use the orgId directly - we know it exists at this point
       const spinupRes = await spinupSharedAgent(payload, orgId);
       
       const { data } = spinupRes as AxiosResponse;
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-        // Don't setLoading(false) here because we'll wait for socket events to complete
         
         if (data?.data['agentSpinupStatus'] === 1) {
           setAgentSpinupCall(true);
           setIsShared(true);
-          // Success will be shown through socket events
         } else {
           setLoading(false);
           setFailure(spinupRes as string);
@@ -419,9 +402,7 @@ const WalletSpinup = (props: WalletSpinupProps) => {
     }
   };
 
-  // Setup socket event listeners with cleanup
   useEffect(() => {
-    // Socket event listeners
     const setupSocketListeners = () => {
       SOCKET.on('agent-spinup-process-initiated', () => {
         console.log(`agent-spinup-process-initiated`);
@@ -550,9 +531,6 @@ const WalletSpinup = (props: WalletSpinupProps) => {
     }
   }
 
-  console.log("🚀 ~ SOCKET.on ~ createdOrgId--------:", createdOrgId)
-
-
   return (
 <div className="">
       <div className="mx-auto mt-4">
@@ -599,7 +577,7 @@ const WalletSpinup = (props: WalletSpinupProps) => {
               <div className="w-full">
               {!showLedgerConfig && !agentSpinupCall && (
 						<div className="mb-6">
-							<h3 className="text-lg font-medium text-gray-900 mb-2 dark:text-white">Agent Type</h3>
+							<h3 className="text-lg font-medium mb-2">Agent Type</h3>
 							
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 								{/* Dedicated Agent Card */}
@@ -619,27 +597,27 @@ const WalletSpinup = (props: WalletSpinupProps) => {
 											checked={agentType === AgentType.DEDICATED}
 											onChange={() => onRadioSelect(AgentType.DEDICATED)}
 											name="agent-type"
-											className="w-4 h-4 mt-1 text-yellow-500 bg-gray-100 border-gray-300"
+											className="w-4 h-4 mt-1"
 										/>
 										<div className="ml-3 flex justify-end w-full">
 											
 											<div className="bg-yellow-100 rounded-full p-2">
-												<svg className="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+												<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
 													<path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"></path>
 												</svg>
 											</div>
 										</div>
 									</div>
-									<label htmlFor="dedicated-agent-radio" className="text-lg font-bold text-gray-900 dark:text-white">
+									<label htmlFor="dedicated-agent-radio" className="text-lg font-bold">
 										Dedicated Agent
 									</label>
-									<p className="dark:text-white ml-7 text-sm text-gray-600 my-2">
+									<p className="dark:text-white ml-7 text-sm my-2">
 										Private agent instance exclusively for your <br></br> organization
 									</p>
 									<ul className="ml-7 space-y-1">
-										<li className="text-sm text-gray-600 dark:text-white">• Higher performance and reliability</li>
-										<li className="text-sm text-gray-600 dark:text-white">• Enhanced privacy and security</li>
-										<li className="text-sm text-gray-600 dark:text-white">• Full control over the agent infrastructure</li>
+										<li className="text-sm ">• Higher performance and reliability</li>
+										<li className="text-sm ">• Enhanced privacy and security</li>
+										<li className="text-sm ">• Full control over the agent infrastructure</li>
 									</ul>
 								</div>
 	
@@ -647,8 +625,8 @@ const WalletSpinup = (props: WalletSpinupProps) => {
 								<div 
 									className={`border rounded-lg p-5 cursor-pointer ${
 										agentType === AgentType.SHARED 
-											? 'border-yellow-500' 
-											: 'border-gray-200 hover:border-gray-300'
+											? '' 
+											: ''
 									}`}
 									onClick={() => onRadioSelect(AgentType.SHARED)}
 								>
@@ -661,7 +639,7 @@ const WalletSpinup = (props: WalletSpinupProps) => {
 											disabled={agentType === AgentType.DEDICATED}
 											onChange={() => onRadioSelect(AgentType.SHARED)}
 											name="agent-type"
-											className="w-4 h-4 mt-1 text-yellow-500 disabled:opacity-50"
+											className="w-4 h-4 mt-1"
 										/>
 										<div className="ml-3 flex justify-end w-full">
 									
@@ -672,16 +650,16 @@ const WalletSpinup = (props: WalletSpinupProps) => {
 											</div>
 										</div>
 									</div>
-									<label htmlFor="shared-agent-radio" className="text-lg font-bold text-gray-900 dark:text-white">
+									<label htmlFor="shared-agent-radio" className="text-lg font-bold">
 										Shared Agent
 									</label>
-									<p className="dark:text-white ml-7 text-sm text-gray-600 my-2">
+									<p className="ml-7 text-sm  my-2">
 										Use our cloud-hosted shared agent infrastructure
 									</p>
 									<ul className="ml-7 space-y-1">
-										<li className="text-sm text-gray-600 dark:text-white">• Cost-effective solution</li>
-										<li className="text-sm text-gray-600 dark:text-white">• Managed infrastructure</li>
-										<li className="text-sm text-gray-600 dark:text-white">• Quick setup with no maintenance</li>
+										<li className="text-sm ">• Cost-effective solution</li>
+										<li className="text-sm ">• Managed infrastructure</li>
+										<li className="text-sm ">• Quick setup with no maintenance</li>
 									</ul>
 								</div>
 							</div>
