@@ -188,11 +188,10 @@ export default function OrganizationOnboarding() {
 
   const handleUpdateOrganization = async (values: IOrgFormValues) => {
     setLoading(true);
-
     try {
       setSuccess(null);
       setFailure(null);
-
+  
       const orgData = {
         name: values.name,
         description: values.description,
@@ -203,25 +202,29 @@ export default function OrganizationOnboarding() {
         cityId: values.cityId,
         isPublic: isPublic
       };
-
+  
       const resCreateOrg = await updateOrganization(
         orgData,
         currentOrgId as string
       );
+  
       const { data } = resCreateOrg as AxiosResponse;
-
+  
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setSuccess(data?.message as string);
-        setLoading(false);
-        router.push('/organizations');
+        setTimeout(() => {
+          setSuccess(null);
+          setLoading(true); 
+          router.push('/organizations'); 
+        }, 3000);
       } else {
         setFailure(data?.message as string);
-
-        return null;
       }
     } catch (error) {
-      console.error('Error creating organization:', error);
-      return null;
+      console.error('Error updating organization:', error);
+      setFailure('An unexpected error occurred. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -252,7 +255,7 @@ export default function OrganizationOnboarding() {
           setSuccess(null);
           setLoading(true); 
           router.push('/organizations'); 
-        }, 5000);
+        }, 3000);
 
         return orgId;
       } else {
@@ -572,6 +575,7 @@ export default function OrganizationOnboarding() {
                           type="button"
                           onClick={() => handleUpdateOrganization(values)}
                         >
+                         {loading ? <Loader colorClass="animate-spin" height='1.5rem' width='1.5rem' /> : null} 
                           Save
                         </Button>
                       </div>
