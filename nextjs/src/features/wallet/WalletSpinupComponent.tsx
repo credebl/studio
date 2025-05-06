@@ -14,7 +14,7 @@ import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CheckCircle, AlertCircle, User, Users } from "lucide-react";
 // import DedicatedAgentForm from './DedicatedAgentForm';
-import WalletSteps from './WalletSteps';
+import WalletStepsComponent from './WalletSteps';
 import SharedAgentForm from './SharedAgentForm';
 import Stepper from '@/components/StepperComponent';
 import PageContainer from '@/components/layout/page-container';
@@ -537,14 +537,14 @@ const WalletSpinup = (props: WalletSpinupProps) => {
       formComponent = (
         <>
           <Stepper currentStep={4} totalSteps={4} />
-          <WalletSteps steps={walletSpinStep} />
+          <WalletStepsComponent steps={walletSpinStep} />
         </>
       );
     } else {
       formComponent = (
         <>
           <Stepper currentStep={4} totalSteps={4} />
-          <WalletSteps steps={walletSpinStep} />
+          <WalletStepsComponent steps={walletSpinStep} />
         </>
       );
     }
