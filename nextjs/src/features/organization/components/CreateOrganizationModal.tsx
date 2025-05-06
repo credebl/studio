@@ -22,7 +22,7 @@ import { processImageFile } from '@/components/ProcessImage';
 import { AxiosResponse } from 'axios';
 import { apiStatusCodes } from '@/config/CommonConstant';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-// import WalletSpinup from '@/features/wallet/WalletSpinUp';
+import WalletSpinup from '@/features/wallet/WalletSpinupComponent';
 import PageContainer from '@/components/layout/page-container';
 import { IOrgFormValues } from './interfaces/organization';
 import { Card } from '@/components/ui/card';
@@ -587,12 +587,12 @@ export default function OrganizationOnboarding() {
           </Card>
         ) : (
           <div>
-            {/* <WalletSpinup
+            <WalletSpinup
           step={step}
           formData={orgData}
           orgId={currentOrgId ? currentOrgId : null}
           orgName={orgData?.name || ''}
-          setWalletSpinupStatus={(flag: boolean) => setWalletSpinupStatus(flag)} ledgerConfig={false}							/> */}
+          setWalletSpinupStatus={(flag: boolean) => setWalletSpinupStatus(flag)} ledgerConfig={false}							/>
           </div>
         )}
       </div>
