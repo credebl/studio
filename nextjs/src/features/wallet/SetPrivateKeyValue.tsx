@@ -140,14 +140,14 @@ const SetPrivateKeyValueInput = ({
               </div>
 
               {errorMessage && (
-                <span className="static bottom-0 text-red-500 text-xs">{errorMessage}</span>
+                <span className="static bottom-0 text-destructive text-xs">{errorMessage}</span>
               )}
 
               <TokenWarningMessage />
 
               <div className="my-3 relative">
                 <p className="text-sm truncate">
-                  <span className="font-semibold text-gray-900 dark:text-white">Address:</span>
+                  <span className="font-semibold">Address:</span>
                   <div className="flex">
                     <CopyDid value={generatedKeys.address} />
                   </div>
@@ -175,13 +175,13 @@ const SetPrivateKeyValueInput = ({
             <CopyDid value={privateKeyValue || ''} />
           </div>
 
-          <span className="static bottom-0 text-red-500 text-xs">
+          <span className="static bottom-0 text-destructive text-xs">
             {formikHandlers.errors?.privatekey &&
               formikHandlers.touched?.privatekey &&
               formikHandlers.errors.privatekey}
           </span>
 
-          {errorMessage && <span className="static bottom-0 text-red-500 text-xs">{errorMessage}</span>}
+          {errorMessage && <span className="static bottom-0 text-destructive text-xs">{errorMessage}</span>}
 
           <TokenWarningMessage />
         </>

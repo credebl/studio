@@ -27,15 +27,15 @@ const SetDomainValueInput = ({
   <div className="mb-3 relative">
     <div>
       <Label htmlFor="webdomain">Enter Domain</Label>
-      <span className="text-red-500 text-xs">*</span>
+      <span className="text-desctructive text-xs">*</span>
     </div>
     <Field
       as={Input}
       id="webdomain"
       name="domain"
       className={cn(
-        "truncate bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-450 focus:border-primary-450 block w-full p-2.5 h-11",
-        "dark:bg-gray-700 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-450 dark:focus:border-primary-450"
+        "truncate text-sm rounded-lg block w-full p-2.5 h-11",
+        ""
       )}
       value={domainValue}
       onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -46,7 +46,7 @@ const SetDomainValueInput = ({
       placeholder="Please enter domain"
     />
     {formikHandlers.errors?.domain && formikHandlers.touched?.domain && (
-      <span className="static bottom-0 text-red-500 text-xs">
+      <span className="static bottom-0 text-destructive text-xs">
         {formikHandlers.errors?.domain}
       </span>
     )}
