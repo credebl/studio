@@ -11,6 +11,7 @@ import { Edit, Trash2 } from 'lucide-react';
 import { AxiosResponse } from 'axios';
 import OrganizationDetails from './OrganizationDetails';
 import { IOrganisation } from './interfaces/organization';
+import PageContainer from '@/components/layout/page-container';
 
 type OrganizationDashboardProps = {
   orgId: string;
@@ -26,11 +27,13 @@ export const OrganizationDashboard = ({
   const [loading, setLoading] = useState(true);
   const [walletStatus, setWalletStatus] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [organizationId, setOrganizationId] = useState<string>()
 
   const fetchOrganizationDetails = async () => {
     setLoading(true);
     const response = await getOrganizationById(orgId as string);
     const { data } = response as AxiosResponse;
+    setOrganizationId(data?.data?.id)
     setLoading(false);
     if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
       if (data?.data?.org_agents?.length > 0 && data?.data?.org_agents[0]?.orgDid) {
@@ -57,7 +60,8 @@ export const OrganizationDashboard = ({
   }, []);
 
   return (
-    <div className='container mx-auto space-y-6 px-4 py-6'>
+    <PageContainer>
+ <div className='container mx-auto space-y-6 px-4 py-6'>
       <Card className='shadow-md'>
         <CardContent className='p-6'>
           <div className='flex items-center justify-between'>
@@ -189,13 +193,14 @@ export const OrganizationDashboard = ({
     <OrganizationDetails orgData={orgData}  />
 
     ): (
-<Button 
-      onClick={() => router.push('/organizations/create-organization?step=2')}
+    <Button 
+      onClick={() => router.push(`/organizations/create-organization?step=2&organizationId=${organizationId}`)}
     >
       You have to set up your wallet first
     </Button>
     )	
   } 
     </div>
+    </PageContainer>
   );
 };

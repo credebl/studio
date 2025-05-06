@@ -111,12 +111,10 @@ const WalletSpinup = (props: WalletSpinupProps) => {
   const [showLedgerConfig, setShowLedgerConfig] = useState(false);
   const [logoImage, setLogoImage] = useState<{ imagePreviewUrl: string | null }>({ imagePreviewUrl: null });
   const [errMsg, setErrMsg] = useState('');
-
-  // Add state to store the created organization ID
   const [createdOrgId, setCreatedOrgId] = useState<string | null>(null);
   const [orgIdOfCurrentOrg, setOrgIdOfCurrentOrg] = useState<string | null>(null);
-const alreadyCreatedOrgId = props.orgId
   const router = useRouter();
+  const alreadyCreatedOrgId = props.orgId
 
   const [agentConfig, setAgentConfig] = useState({
     walletName: '',
@@ -187,7 +185,6 @@ const alreadyCreatedOrgId = props.orgId
       }
     }
   
-    // If we don't have an existing org ID, check if we have form data to create one
     if (!props.formData || !alreadyCreatedOrgId) {
       setFailure("Organization data is missing");
       return null;
