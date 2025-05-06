@@ -106,7 +106,7 @@ export const OrganizationList = () => {
         name: selectedOrg.name,
         description: selectedOrg.description,
         logoUrl: selectedOrg.logoUrl,
-        roles: orgRoles?.map((item) => item?.orgRole?.name) || [],
+        roles: orgRoles?.map((item) => item?.orgRole?.name) ?? [],
       })
     );
   }

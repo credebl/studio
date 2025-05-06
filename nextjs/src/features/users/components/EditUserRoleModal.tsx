@@ -115,7 +115,7 @@ const EditUserRoleModal = ({ openModal, user, setMessage, setOpenModal }: EditUs
           return { ...r, checked: false };
         }
       });
-      setRoles(updatedRoles || null);
+      setRoles(updatedRoles ?? null);
     } 
     else if (role.name === 'admin' && checked === true) {
       const updatedRoles = roles?.map(r => {
@@ -127,7 +127,7 @@ const EditUserRoleModal = ({ openModal, user, setMessage, setOpenModal }: EditUs
           return { ...r, checked: false };
         }
       });
-      setRoles(updatedRoles || null);
+      setRoles(updatedRoles ?? null);
     } 
     else {
       const updatedRoles = roles?.map(r => {
@@ -136,7 +136,7 @@ const EditUserRoleModal = ({ openModal, user, setMessage, setOpenModal }: EditUs
         }
         return r;
       });
-      setRoles(updatedRoles || null);
+      setRoles(updatedRoles ?? null);
     }
   };
   

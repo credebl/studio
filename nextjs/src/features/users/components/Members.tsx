@@ -33,7 +33,6 @@ export default function Members() {
   const [loading, setLoading] = useState<boolean>(true);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [userRoles, setUserRoles] = useState<string[]>([]);
   const [pageState, setPageState] = useState(initialPageState);
   const [searchText, setSearchText] = useState('');
   const [usersList, setUsersList] = useState<Array<User> | null>(null);
@@ -79,12 +78,12 @@ export default function Members() {
         
         // Set pagination info
         setPaginationInfo({
-          totalItems: data?.data?.totalItems || 0,
-          hasNextPage: data?.data?.hasNextPage || false,
-          hasPreviousPage: data?.data?.hasPreviousPage || false,
-          nextPage: data?.data?.nextPage || 1,
-          previousPage: data?.data?.previousPage || 0,
-          lastPage: data?.data?.totalPages || 1
+          totalItems: data?.data?.totalItems ?? 0,
+          hasNextPage: data?.data?.hasNextPage ?? false,
+          hasPreviousPage: data?.data?.hasPreviousPage ?? false,
+          nextPage: data?.data?.nextPage ?? 1,
+          previousPage: data?.data?.previousPage ?? 0,
+          lastPage: data?.data?.totalPages ?? 1
         });
       }
     } catch (err) {
@@ -146,7 +145,7 @@ export default function Members() {
         </div>
         
         <AlertComponent
-          message={message ? message : error}
+          message={message ?? error}
           type={message ? 'success' : 'failure'}
           onAlertClose={() => {
             setMessage(null);

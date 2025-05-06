@@ -12,7 +12,6 @@ import OrganizationDetails from './OrganizationDetails';
 import { apiStatusCodes } from '@/config/CommonConstant';
 import { getOrganizationById } from '@/app/api/organization';
 import { useAppSelector } from '@/lib/hooks';
-import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/navigation';
 
 type OrganizationDashboardProps = {
@@ -33,7 +32,7 @@ export const OrganizationDashboard = ({
   
   const selecteDropdownOrgId = useAppSelector((state) => state.organization.orgId);
 
-  const activeOrgId = selecteDropdownOrgId || orgId;
+  const activeOrgId = selecteDropdownOrgId ?? orgId;
 
   const fetchOrganizationDetails = async () => {
     if (!orgId) return;

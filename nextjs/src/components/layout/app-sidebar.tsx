@@ -42,7 +42,7 @@ export default function AppSidebar() {
   
   const selectedOrgId = useAppSelector((state) => state.organization.orgId);
   
-  const selectedOrg = orgList.find(org => org.id === selectedOrgId) || null;
+  const selectedOrg = orgList.find(org => org.id === selectedOrgId) ?? null;
 
   useEffect(() => {
     const fetchOrganizations = async () => {
