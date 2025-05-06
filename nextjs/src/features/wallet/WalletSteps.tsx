@@ -1,4 +1,4 @@
-const WalletSteps = (props: { steps: number}) => {
+const WalletStepsComponent = (props: { steps: number}) => {
 	return (
 		<div className="mt-4 ml-4">
 			<ol className="relative text-gray-500 border-l border-gray-200 dark:border-gray-700 dark:text-gray-400">
@@ -233,4 +233,4 @@ const WalletSteps = (props: { steps: number}) => {
 	);
 };
 
-export default WalletSteps;
+export default WalletStepsComponent;
