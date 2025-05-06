@@ -12,25 +12,6 @@ export enum IssueCredential {
 	abandoned = 'abandoned',
 }
 
-export enum ProofRequestState {
-	presentationReceived = 'presentation-received',
-	offerReceived = 'offer-received',
-	declined = 'decliend',
-	requestSent = 'request-sent',
-	requestReceived = 'request-received',
-	credentialIssued = 'credential-issued',
-	credentialReceived = 'credential-received',
-	done = 'done',
-	abandoned = 'abandoned',
-}
-
-export enum ProofRequestStateUserText {
-	requestSent = 'Requested',
-	requestReceived = 'Received',
-	done = 'Verified',
-	abandoned = 'Declined',
-}
-
 export enum SchemaType {
     INDY = 'indy',
     W3C = 'json'
@@ -39,15 +20,6 @@ export enum SchemaType {
 export enum EcosystemRoles {
 	ecosystemMember = "Ecosystem Member",
 	ecosystemLead = "Ecosystem Lead",
-}
-
-export enum IssueCredentialUserText {
-	offerSent = 'Offered',
-	done = 'Accepted',
-	abandoned = 'Declined',
-	received = 'Pending',
-	proposalReceived= 'Proposal Received',
-	credIssued = 'Credential Issued'
 }
 
 export enum OrganizationRoles {
@@ -82,6 +54,22 @@ export enum BulkIssuanceHistoryData {
 export enum BulkIssuanceStatus {
 	successful= 'Successful',
 	failed= 'Failed'
+}
+
+export enum IssueCredentialUserText {
+	offerSent = 'Offered',
+	done = 'Accepted',
+	abandoned = 'Declined',
+	received = 'Pending',
+	proposalReceived= 'Proposal Received',
+	credIssued = 'Credential Issued'
+}
+
+export enum ProofRequestStateUserText {
+	requestSent = 'Requested',
+	requestReceived = 'Received',
+	done = 'Verified',
+	abandoned = 'Declined',
 }
 
 export enum DidMethod {
@@ -169,3 +157,15 @@ export enum DataType {
     DATE_TIME = 'datetime-local',
     ARRAY= 'array',
   }
+
+export enum ProofRequestState {
+	presentationReceived = 'presentation-received',
+	offerReceived = 'offer-received',
+	declined = 'decliend',
+	requestSent = 'request-sent',
+	requestReceived = 'request-received',
+	credentialIssued = 'credential-issued',
+	credentialReceived = 'credential-received',
+	done = 'done',
+	abandoned = 'abandoned',
+}
