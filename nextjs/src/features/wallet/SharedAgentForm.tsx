@@ -6,36 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 import LedgerConfig from './LedgerConfig';
-
-export interface ISharedAgentForm {
-  seeds: string;
-  orgId:string;
-  maskedSeeds: string;
-  isCopied: boolean;
-  orgName: string;
-  loading: boolean;
-  ledgerConfig: boolean;
-  setLedgerConfig: (value: boolean) => void;
-  submitSharedWallet: (
-    values: IValuesShared,
-    domain: string
-  ) => void;
-}
-
-export interface IValuesShared {
-  keyType: string;
-  seed: string;
-  method: string;
-  network?: string;
-  did?: string;
-  endorserDid?: string;
-  privatekey?: string;
-  endpoint?: string;
-  domain?: string;
-  role?: string;
-  ledger: string;
-  label?: string;
-}
+import { ISharedAgentForm } from '../organization/components/interfaces/organization';
 
 const SharedAgentForm = ({
   orgName,

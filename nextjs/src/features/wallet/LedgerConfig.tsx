@@ -7,71 +7,15 @@ import type { AxiosResponse } from 'axios';
 import { DidMethod, Environment, Ledgers, Network } from "../common/enum";
 import { envConfig } from "@/config/envConfig";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import Link from "next/link";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, Key, NetworkIcon, Server } from "lucide-react";
 import CopyDid from "./CopyDid";
 import SetDomainValueInput from "./SetDomainValueInput";
 import SetPrivateKeyValueInput from "./SetPrivateKeyValue";
-import router from "next/router";
 import { useRouter } from "next/navigation";
 import Stepper from "@/components/StepperComponent";
-import { setOrgId } from "@/lib/orgSlice";
-
-interface ILedgerConfigProps {
-  orgName: string;
-  orgId:string;
-  maskedSeeds: string;
-  seeds: string;
-  submitSharedWallet: (values: IValuesShared, domainValue: string) => void;
-  walletName: string;
-}
+import { ILedgerConfigData, ILedgerConfigProps, ILedgerItem, IValuesShared } from "../organization/components/interfaces/organization";
 
 
-export interface IValuesShared {
-	keyType: string;
-	seed: string;
-	method: string;
-	network?: string;
-	did?: string;
-	endorserDid?: string;
-	privatekey?: string;
-	endpoint?: string;
-	domain?: string;
-	role?: string;
-	ledger: string;
-	label?: string;
-}
-
-interface IDetails {
-  [key: string]: string | { [subKey: string]: string };
-}
-
-interface ILedgerItem {
-  name: string;
-  details: IDetails;
-}
-
-interface ILedgerConfigData {
-  indy: {
-    'did:indy': {
-      [key: string]: string;
-    };
-  };
-  polygon: {
-    'did:polygon': {
-      [key: string]: string;
-    };
-  };
-  noLedger: {
-    [key: string]: string;
-  };
-}
 
 const LedgerConfig = ({
   maskedSeeds,
