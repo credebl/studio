@@ -180,17 +180,16 @@ const router = useRouter();
     setMaskedSeedVal(maskedSeeds);
   }, [seeds]);
 
-  const validations = {
-    ledger: yup.string().required('Ledger is required'),
-    method: yup.string().required('Method is required'),
-    ...(haveDidShared) && {
-      seed: yup.string().required('Seed is required'),
-      did: yup.string().required('DID is required'),
-    },
-    ...(DidMethod.INDY === selectedMethod || DidMethod.POLYGON === selectedMethod) && { network: yup.string().required('Network is required') },
-    ...(DidMethod.WEB === selectedMethod) && { domain: yup.string().required('Domain is required') },
-  };
-
+   const validations = {
+     method: yup.string().required('Method is required'),
+     ledger: yup.string().required('Ledger is required'),
+     ...(haveDidShared) && {
+       seed: yup.string().required('Seed is required'),
+       did: yup.string().required('DID is required'),
+     },
+     ...(DidMethod.INDY === selectedMethod || DidMethod.POLYGON === selectedMethod) && { network: yup.string().required('Network is required') },
+     ...(DidMethod.WEB === selectedMethod) && { domain: yup.string().required('Domain is required') },
+   };
   const renderNetworkOptions = (formikHandlers) => {
     if (!selectedLedger || !selectedMethod || !mappedData) {
       return null;
@@ -549,14 +548,14 @@ const router = useRouter();
                    Back
                  </Button>
               </Link>
+              
               <Button
-                onClick={() => {
-                  formikHandlers.handleSubmit();
-                }}
+              onClick={() => {
+                formikHandlers.handleSubmit();
+              }}
                 disabled={isSubmitDisabled()}
                 type="submit"
-                variant="default"
-                className="bg-yellow-600 hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              
               >
                 Create Identity
               </Button>

@@ -84,21 +84,6 @@ interface WalletSpinupProps {
   orgName?: string;
 }
 
-// Helper functions
-const setToLocalStorage = async (key: string, value: any) => {
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(key, value);
-  }
-  return Promise.resolve();
-};
-
-const getFromLocalStorage = async (key: string) => {
-  if (typeof window !== 'undefined') {
-    return localStorage.getItem(key);
-  }
-  return null;
-};
-
 // // Stepper component using shadcn/ui Progress
 // const Stepper = ({ currentStep, totalSteps }: { currentStep: number; totalSteps: number }) => {
 //   const progress = (currentStep / totalSteps) * 100;
@@ -462,7 +447,8 @@ const alreadyCreatedOrgId = props.orgId
       clientSocketId: SOCKET.id,
     };
     
-    setLoading(true);
+    console.log("111111111111111111111111111111", didData)
+    // setLoading(true);
     
     const spinupRes = await createDid(orgId as string, didData);
     const { data } = spinupRes as AxiosResponse;

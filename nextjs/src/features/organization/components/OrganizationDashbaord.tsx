@@ -102,6 +102,7 @@ export const OrganizationDashboard = ({
     }
     setLoading(false);
   };
+  console.log("🚀 ~ orgData:444444444444444444444444444", orgData)
   
   const handleEditOrg = () => {
     router.push(`/organizations/create-organization?orgId=${orgId}`);
@@ -246,7 +247,7 @@ export const OrganizationDashboard = ({
    {
     walletStatus === true ? (
 
-    <OrganizationDetails orgData={orgData}  />
+    <OrganizationDetails orgData={orgData}/>
 
     ): (
 <Button 

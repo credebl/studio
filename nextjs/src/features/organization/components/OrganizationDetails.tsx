@@ -1,48 +1,38 @@
 import { useEffect, useState } from 'react';
 import type { AxiosResponse } from 'axios';
-// import { createConnection } from '../../api/organization';
-
-// Components
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Copy } from 'lucide-react';
-// import CustomQRCode from '../../commonComponents/QRcode';
-// import DIDList from './configuration-settings/DidList';
+import CustomQRCode from '@/features/wallet/CustomQRCode';
+import DIDList from '@/features/wallet/DidListComponent';
+import { createConnection } from '@/app/api/organization';
 import { Connection, OrgAgent, Organisation } from './interfaces/organization';
 import { dateConversion } from '@/utils/DateConversion';
 import { apiStatusCodes, storageKeys } from '@/config/CommonConstant';
-// import { createConnection } from '@/app/api/organization';
-import CustomQRCode from '@/features/wallet/CustomQRCode';
-import DIDList from '@/features/wallet/DidListComponent';
 
 const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
-  console.log("🚀 ~ OrganizationDetails ~ orgData:", orgData)
+  const orgId = orgData ? orgData?.id : '';
   const { org_agents } = orgData as Organisation;
   const agentData: OrgAgent | null = org_agents.length > 0 ? org_agents[0] : null;
   
   const [loading, setLoading] = useState<boolean>(true);
   const [connectionData, setConnectionData] = useState<Connection | null>(null);
 
-//   const createQrConnection = async () => {
-//     setLoading(true);
-//     const response = await createConnection(orgData?.name as string);
-//     const { data } = response as AxiosResponse;
+  const createQrConnection = async () => {
+    setLoading(true);
+    const response = await createConnection(orgId, orgData?.name as string);
+    const { data } = response as AxiosResponse;
 
-//     if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-//       setConnectionData(data?.data);
-//     }
-//     setLoading(false);
-//   };
+    if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+      setConnectionData(data?.data);
+    }
+    setLoading(false);
+  };
 
-//   const storeLedgerDetails = async () => {
-//     await setToLocalStorage(storageKeys.LEDGER_ID, agentData?.ledgers.id);
-//   };
-
-//   useEffect(() => {
-//     createQrConnection();
-//     // storeLedgerDetails();
-//   }, []);
+  useEffect(() => {
+    createQrConnection();
+  }, []);
 
   const CopyDid = ({ value, className, hideValue = false }: { value: string, className?: string, hideValue?: boolean }) => (
     <Tooltip>
@@ -80,13 +70,12 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
 
   return (
     <div className="space-y-4">
+      <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Wallet Details</h2>
+      
       <Card className="p-6">
-        <div className="flex flex-col lg:flex-row gap-6">
+        <div className="flex flex-col lg:flex-row gap-6 items-center">
+          {/* Wallet Details */}
           <div className="flex-1">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-              Web Wallet Details
-            </h3>
-            
             <div className="space-y-4">
               <div className="flex items-center">
                 <span className="w-40 text-gray-500 dark:text-gray-400">Wallet Name</span>
@@ -148,31 +137,36 @@ const OrganizationDetails = ({ orgData }: { orgData: Organisation | null }) => {
             </div>
           </div>
 
-          <div className="flex justify-center">
+          {/* QR Code - aligned inline with details */}
+          <div className="lg:ml-8">
             {loading ? (
               <div className="flex justify-center items-center h-48 w-48">
                 {/* Loading spinner can be added here */}
               </div>
             ) : (
               connectionData && (
-                <CustomQRCode
-                  value={connectionData.connectionInvitation as string}
-                  size={180}
-                />
-                
+                <div className="flex flex-col items-center">
+                  <CustomQRCode
+                    value={connectionData.connectionInvitation as string}
+                    size={180}
+                  />
+                  <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                    Scan to connect
+                  </p>
+                </div>
               )
             )}
           </div>
         </div>
 
         <div className="mt-6">
-          <DIDList />
+          <DIDList orgId={orgId}/>
         </div>
       </Card>
 
       {agentData?.orgDid?.startsWith('did:web') && (
         <Card className="p-6">
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
             DID Document
           </h3>
 

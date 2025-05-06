@@ -189,6 +189,11 @@ const fetchCities = async (countryId: number, stateId: number) => {
     });
   };
 
+  const setWalletSpinupStatus = (status: boolean) => {
+		setSuccess('Wallet created successfully');
+		fetchOrganizationDetails();
+	};
+
   const handleSubmit = (values: OrgFormValues) => {
     setOrgData(values);
     setStep(2); 
