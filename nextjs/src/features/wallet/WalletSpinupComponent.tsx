@@ -578,7 +578,7 @@ const WalletSpinup = (props: WalletSpinupProps) => {
 								<div 
 									className={` rounded-lg p-5 cursor-pointer ${
 										agentType === AgentType.DEDICATED 
-											? 'border-yellow-500' 
+											? 'ring' 
 											: 'border-gray-200 hover:border-gray-300'
 									}`}
 									onClick={() => onRadioSelect(AgentType.DEDICATED)}
@@ -617,9 +617,9 @@ const WalletSpinup = (props: WalletSpinupProps) => {
 	
 								{/* Shared Agent Card */}
 								<div 
-									className={`border rounded-lg p-5 cursor-pointer ${
+									className={`rounded-lg p-5 cursor-pointer ${
 										agentType === AgentType.SHARED 
-											? '' 
+											? 'ring' 
 											: ''
 									}`}
 									onClick={() => onRadioSelect(AgentType.SHARED)}

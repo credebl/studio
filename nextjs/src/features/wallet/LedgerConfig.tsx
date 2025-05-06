@@ -14,6 +14,7 @@ import SetPrivateKeyValueInput from "./SetPrivateKeyValue";
 import { useRouter } from "next/navigation";
 import Stepper from "@/components/StepperComponent";
 import { ILedgerConfigData, ILedgerConfigProps, ILedgerItem, IValuesShared } from "../organization/components/interfaces/organization";
+import { ArrowLeft } from "lucide-react";
 
 
 
@@ -536,12 +537,15 @@ const LedgerConfig = ({
             )}
 
            <div className="flex justify-between mt-8">
-           <Button
-                   
-                    onClick={() => router.push('/organizations/create-organization')}
-                  >
-                    Back
-                  </Button>
+           
+                  <Button
+                    variant='secondary'
+                    onClick={() => router.push('/organizations/create-organization?step=2')}
+                    className='flex items-center gap-2'
+                    >
+                    <ArrowLeft className='h-4 w-4' />
+                    Back to Agent Config                   
+            </Button>
           
               <Button
                 disabled={isSubmitDisabled()}

@@ -88,11 +88,11 @@ const DedicatedAgentForm = ({
               <Button
                     variant='secondary'
                     onClick={() => router.push('/organizations/create-organization?step=1')}
-                    className='mb-4 flex items-center gap-2'
+                    className='flex items-center gap-2'
                     >
                     <ArrowLeft className='h-4 w-4' />
-                    Back to Create
-                    </Button>
+                    Back to Create Organization                   
+            </Button>
             
               <Button
                 type="submit"
