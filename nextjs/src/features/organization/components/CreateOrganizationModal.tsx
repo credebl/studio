@@ -50,6 +50,7 @@ export default function OrganizationOnboarding() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const currentOrgId = searchParams.get('orgId');
+  const OrganizationsId = searchParams.get('organizationId')
   const stepParam = searchParams.get('step');
 
   const [step, setStep] = useState<number>(1);
@@ -590,7 +591,7 @@ export default function OrganizationOnboarding() {
             <WalletSpinup
           step={step}
           formData={orgData}
-          orgId={currentOrgId ? currentOrgId : null}
+          orgId={OrganizationsId ? OrganizationsId : null}
           orgName={orgData?.name || ''}
           setWalletSpinupStatus={(flag: boolean) => setWalletSpinupStatus(flag)} ledgerConfig={false}							/>
           </div>
