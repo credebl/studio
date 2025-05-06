@@ -7,6 +7,8 @@ import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 import LedgerConfig from './LedgerConfig';
 import { ISharedAgentForm } from '../organization/components/interfaces/organization';
+import { useRouter } from 'next/navigation';
+import { ArrowLeft } from 'lucide-react';
 
 const SharedAgentForm = ({
   orgName,
@@ -20,6 +22,7 @@ const SharedAgentForm = ({
   isCopied,
 }: ISharedAgentForm) => {
   const [walletName, setWalletName] = useState('');
+  const router = useRouter();
 
   return (
     <div className="mt-4 flex-col gap-4">
@@ -52,9 +55,16 @@ const SharedAgentForm = ({
                 )}
               </div>
               <div className="flex items-center justify-between pt-4">
-                <Button asChild variant="outline">
-                  <Link href="/dashboard">Back</Link>
-                </Button>
+
+              <Button
+                    variant='secondary'
+                    onClick={() => router.push('/organizations/create-organization?step=1')}
+                    className='flex items-center gap-2'
+                    >
+                    <ArrowLeft className='h-4 w-4' />
+                    Back to Create Organization                   
+            </Button>
+            
                 <Button type="submit">Continue to Ledger Setup</Button>
               </div>
             </Form>
