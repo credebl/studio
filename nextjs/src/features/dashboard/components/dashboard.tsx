@@ -1,25 +1,78 @@
 'use client';
 
-import PageContainer from '@/components/layout/page-container';
-import OrganizationCardList from './OrganizationCardList';
-import SchemasList from './SchemasList';
-import RecentActivity from './RecentActivity';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useState, useEffect } from 'react';
+import { getUserEcosystemInvitations, getUserInvitations } from '@/app/api/Invitation';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { getOrganizationById } from '@/app/api/organization';
-import { apiStatusCodes } from '@/config/CommonConstant';
+import { useEffect, useState } from 'react';
+
+import { AlertComponent } from '@/components/AlertComponent';
 import { AxiosResponse } from 'axios';
+import { Button } from '@/components/ui/button';
 import CredentialDefinition from './CredentialDefinition ';
+import OrganizationCardList from './OrganizationCardList';
+import PageContainer from '@/components/layout/page-container';
+import RecentActivity from './RecentActivity';
+import SchemasList from './SchemasList';
+import { Skeleton } from '@/components/ui/skeleton';
+import { apiStatusCodes } from '@/config/CommonConstant';
+import { envConfig } from '@/config/envConfig';
+import { getOrganizationById } from '@/app/api/organization';
+import { pathRoutes } from '@/config/pathRoutes';
 import { setLedgerId } from '@/lib/orgSlice';
+
+const initialPageState = {
+	pageNumber: 1,
+	pageSize: 10,
+	total: 0,
+};
 
 export default function Dashboard() {
   const [walletData, setWalletData] = useState<any[]>([]);
   const [walletLoading, setWalletLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(initialPageState);
+	const [informativeMessage, setInformativeMessage] = useState<string | null>('');
+	const [viewButton, setViewButton] = useState<boolean>(false);
+	const [error, setError] = useState<string | null>('');
+	const [ecoMessage, setEcoMessage] = useState<string | null>('');
+
   const orgId = useAppSelector((state) => state.organization.orgId);
 
   const dispatch = useAppDispatch();
+
+  const getAllInvitations = async () => {
+		try {
+		const response = await getUserInvitations(
+			currentPage.pageNumber,
+			currentPage.pageSize,
+			'',
+		);
+		const { data } = response as AxiosResponse;
+
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			const totalPages = data?.data?.totalPages;
+			const invitationList = data?.data?.invitations;
+			if (invitationList.length > 0) {
+				setInformativeMessage(`You have received invitations to join organization`);
+				setViewButton(true);
+			}
+			setCurrentPage({
+				...currentPage,
+				total: totalPages,
+			});
+		} else {
+			setError(response as string);
+		}
+	} catch(err) {
+		setError('An unexpected error occurred');
+	}
+	};
+  
+
+  useEffect(() => {
+		getAllInvitations();
+    getAllEcosystemInvitations()
+	}, []);
+  
+  
   const fetchOrganizationDetails = async () => {
     if (!orgId) return;
     try {
@@ -46,6 +99,43 @@ export default function Dashboard() {
     }
   };
 
+
+  const getAllEcosystemInvitations = async () => {
+		try {
+		const response = await getUserEcosystemInvitations(
+      orgId,
+			currentPage.pageNumber,
+			currentPage.pageSize,
+			'',
+		);
+		const { data } = response as AxiosResponse;
+
+		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			const totalPages = data?.data?.totalPages;
+			const invitationPendingList =
+				data?.data?.invitations &&
+				data?.data?.invitations?.filter((invitation: { status: string }) => {
+					return invitation.status === 'pending';
+				});
+			if (invitationPendingList && invitationPendingList.length > 0) {
+				setEcoMessage(`You have received invitation to join ecosystem `);
+				setViewButton(true);
+			}
+			setCurrentPage({
+				...currentPage,
+				total: totalPages,
+			});
+		} else {
+			setError(response as string);
+		}
+	}
+	catch(err){
+		setError('An unexpected error occurred.');
+	}
+	};
+
+  
+  
   useEffect(() => {
     if (orgId) {
       fetchOrganizationDetails();
@@ -59,6 +149,37 @@ export default function Dashboard() {
   return (
     <PageContainer>
       <div className='flex flex-1 flex-col space-y-6'>
+
+      <div className="cursor-pointer">
+			  {informativeMessage && informativeMessage.length > 0 &&
+
+					<AlertComponent
+					message={informativeMessage}  
+					type={informativeMessage ? 'warning' : 'failure'} 
+					viewButton={viewButton}
+					path={pathRoutes.users.orgInvitations}
+					onAlertClose={() => {
+						setInformativeMessage(''); 
+						setError('');   
+					}}
+					/>
+			  }				
+			</div>
+			<div className="cursor-pointer">
+			{ecoMessage && ecoMessage.length > 0 &&
+        <AlertComponent
+            message={ecoMessage} 
+            type={ecoMessage ? 'warning' : 'failure'}  
+            viewButton={viewButton}
+            path={`${envConfig.PUBLIC_ECOSYSTEM_FRONT_END_URL}${pathRoutes.users.dashboard}`}
+            onAlertClose={() => {
+                setEcoMessage('');
+                setError('');    
+            }}
+        />
+      }
+    
+			</div>
         <div className='flex items-center justify-between'>
           <h2 className='text-2xl font-bold tracking-tight'>
             Hi, Welcome back 👋
