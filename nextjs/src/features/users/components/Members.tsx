@@ -3,6 +3,7 @@
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { PlusIcon, RotateCcwIcon, XCircleIcon } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { apiStatusCodes, confirmationMessages } from "@/config/CommonConstant";
 import { deleteOrganizationInvitation, getOrganizationUsers } from "@/app/api/organization";
 import { useEffect, useState } from "react";
 
@@ -21,7 +22,6 @@ import SendInvitationModal from "@/features/invitations/components/sendInvitatio
 import { Skeleton } from "@/components/ui/skeleton";
 import { TextTitlecase } from "@/utils/TextTransform";
 import { User } from "./users-interface";
-import { apiStatusCodes } from "@/config/CommonConstant";
 import { dateConversion } from "@/utils/DateConversion";
 import { getOrganizationInvitations } from "@/app/api/Invitation";
 import { useAppSelector } from "@/lib/hooks";
@@ -75,8 +75,22 @@ export default function Members() {
     lastPage: 1
   });
 
+  const [orgUserRole, setOrgUserRole] = useState<string[]>([]);
+
   const orgId = useAppSelector((state) => state.organization.orgId);
-  const orgInfo = useAppSelector((state) => state.organization.orgInfo);
+  const orgInfo = useAppSelector((state) => state.organization.orgInfo)
+
+  const getOrgUserRole = async () => {
+		const orgRoles = orgInfo?.roles;
+
+    if (orgRoles) {
+      setOrgUserRole(orgRoles);
+    }
+	};
+
+	useEffect(() => {
+		getOrgUserRole();
+	},[])
 
   // Users tab functions
   const getAllUsers = async () => {
@@ -100,9 +114,6 @@ export default function Members() {
         });        
         
         setUsersList(users);
-
-        const uniqueRoles = users.flatMap(item => item.roles);
-        setOrgRoles(uniqueRoles);
         
         // Set pagination info
         setUsersPaginationInfo({
@@ -148,18 +159,20 @@ export default function Members() {
         invitationsPageState.search
       );
       
-      if (response?.data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        const invitationList = response.data?.data?.invitations;
+      const { data } = response as AxiosResponse;
+
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        const invitationList = data?.data?.invitations;
         setInvitationsList(invitationList);
         
         // Set pagination info
         setInvitationsPaginationInfo({
-          totalItems: response.data?.data?.totalItems ?? 0,
-          hasNextPage: response.data?.data?.hasNextPage ?? false,
-          hasPreviousPage: response.data?.data?.hasPreviousPage ?? false,
-          nextPage: response.data?.data?.nextPage ?? 1,
-          previousPage: response.data?.data?.previousPage ?? 0,
-          lastPage: response.data?.data?.totalPages ?? 1
+          totalItems: data?.data?.totalItems ?? 0,
+          hasNextPage: data?.data?.hasNextPage ?? false,
+          hasPreviousPage: data?.data?.hasPreviousPage ?? false,
+          nextPage: data?.data?.nextPage ?? 1,
+          previousPage: data?.data?.previousPage ?? 0,
+          lastPage: data?.data?.totalPages ?? 1
         });
       }
     } catch (err) {
@@ -177,10 +190,6 @@ export default function Members() {
     }));
   };
 
-  const createInvitationsModel = () => {
-    setInviteModalOpen(true);
-  };
-
   const deleteInvitation = async () => {
     try {
       setDeleteLoading(true);
@@ -188,9 +197,11 @@ export default function Members() {
       
       const response = await deleteOrganizationInvitation(orgId, invitationId);
       
-      if (response?.data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+      const { data } = response as AxiosResponse;
+      
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         await getAllInvitations();
-        setMessage(response.data?.message || 'Invitation deleted successfully');
+        setMessage(data?.message || 'Invitation deleted successfully');
         setShowDeletePopup(false);
       } else {
         setError(response as string);
@@ -227,14 +238,6 @@ export default function Members() {
     return () => clearTimeout(timer);
   };
 
-  const handleRefresh = () => {
-    if (activeTab === 'users') {
-      getAllUsers();
-    } else {
-      getAllInvitations();
-    }
-  };
-
   // Effects
   useEffect(() => {
     if (activeTab === 'users') {
@@ -253,7 +256,7 @@ export default function Members() {
   }, [invitationsPageState.pageNumber, invitationsPageState.search, inviteModalOpen]);
 
 
-  const getStatusClass = (status) => {
+  const getStatusClass = (status: string) => {
     switch(status) {
       case 'pending':
         return 'bg-orange-100 text-orange-800';
@@ -263,35 +266,12 @@ export default function Members() {
         return 'bg-red-100 text-red-800';
     }
   };
-  
-  function setShowPopup(arg0: boolean) {
-    throw new Error("Function not implemented.");
-  }
 
   return (
     <div className="p-5">
       <div className="mb-6">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">Organization Members</h1>
-          <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              size="icon" 
-              onClick={handleRefresh} 
-              className="h-9 w-9"
-            >
-              <RotateCcwIcon className="h-5 w-5" />
-            </Button>
-            {activeTab === 'invitations' && (orgRoles?.includes(Roles.ADMIN) || orgRoles?.includes(Roles.OWNER)) && (
-              <Button 
-                onClick={createInvitationsModel}
-                className="flex items-center gap-2"
-              >
-                <PlusIcon className="h-4 w-4" />
-                Invite
-              </Button>
-            )}
-          </div>
         </div>
         
         <AlertComponent
@@ -320,18 +300,29 @@ export default function Members() {
           </TabsTrigger>
         </TabsList>
         
-        <div className="relative w-full max-w-sm mb-6">
-          <Input
-            type="text"
-            placeholder={activeTab === 'users' ? "Search members..." : "Search invitations..."}
-            value={searchText}
-            onChange={handleSearchChange}
-            className="bg-background pr-4 pl-10 h-10 rounded-lg text-sm shadow-sm focus-visible:ring-1 focus-visible:ring-primary"
-          />
-          <IconSearch className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+        <div className="flex items-center justify-between mb-6 w-full">
+          <div className="relative flex-grow max-w-xs">
+            <Input
+              type="text"
+              placeholder={activeTab === 'users' ? "Search members..." : "Search invitations..."}
+              value={searchText}
+              onChange={handleSearchChange}
+              className="w-full bg-background pr-4 pl-10 h-10 rounded-lg text-sm shadow-sm focus-visible:ring-1 focus-visible:ring-primary"
+            />
+            <IconSearch className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+          </div>
+
+          {activeTab === 'invitations' && (orgRoles?.includes(Roles.ADMIN) || orgRoles?.includes(Roles.OWNER)) && (
+            <Button 
+              onClick={() => setInviteModalOpen(true)}
+              className="ml-auto flex items-center gap-2 h-10 px-4 text-sm font-semibold rounded-lg bg-primary text-primary-foreground"
+            >
+              <PlusIcon className="h-4 w-4" />
+              Invite
+            </Button>
+          )}
         </div>
-        
-        {/* Users Tab Content */}
+
         <TabsContent value="users" className="space-y-4 mt-0">
           {usersLoading ? (
             Array.from({ length: 3 }).map((_, index) => (
@@ -360,10 +351,11 @@ export default function Members() {
             usersList.map((user) => (
               <div 
                 key={user.id} 
-                className="p-4 border rounded-lg shadow-sm bg-background hover:bg-muted/50 transition-colors"
+
+                className="p-4 border border-gray-200 rounded-lg shadow-sm bg-background"
               >
-                <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
-                  <div>
+                <div className="flex items-center justify-between">
+                  <div className="flex-shrink-0 w-1/3">
                     <h3 className="text-base font-semibold">
                       {user.firstName} {user.lastName}
                     </h3>
@@ -387,14 +379,16 @@ export default function Members() {
                       }
                     </div>
                   </div>
-                  
-                  <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
+
+                  <div className="flex-grow text-start">
                     <span className="text-sm text-primary font-medium truncate max-w-xs">
                       {user.email}
                     </span>
+                  </div>
 
-                    {(orgRoles?.includes(Roles.OWNER) || orgRoles?.includes(Roles.ADMIN)) &&
-                      user.roles?.includes(Roles.MEMBER) && (
+                  <div className="flex-shrink-0 mr-24">
+                    {(orgUserRole?.includes(Roles.OWNER) || orgUserRole?.includes(Roles.ADMIN)) && 
+                      !user.roles?.includes(Roles.OWNER) && (
                         <Button onClick={() => editUserRole(user)}>
                           <svg
                             width="16"
@@ -419,6 +413,7 @@ export default function Members() {
             ))
           )}
 
+          
           {usersList && usersList.length > 0 && usersPaginationInfo.lastPage > 1 && (
             <div className="mt-6">
               <Pagination className="justify-center">
@@ -492,74 +487,73 @@ export default function Members() {
               title="No Invitations"
               description="Get started by inviting a user"
               buttonContent="Invite"
-              onClick={(orgRoles?.includes(Roles.ADMIN) || orgRoles?.includes(Roles.OWNER)) ? createInvitationsModel : undefined}
+              onClick={(orgRoles?.includes(Roles.ADMIN) || orgRoles?.includes(Roles.OWNER)) ? () => setInviteModalOpen(true) : undefined}
               height="250px"
             />
           ) : (
             <div className="space-y-4">
-             
-        {invitationsList.map((invitation) => (
-            <div 
-              key={invitation.id} 
-              className="p-4 border border-gray-200 rounded-lg shadow-sm bg-background hover:bg-muted/50 transition-colors"
-            >
-              <div className="flex justify-between items-center">
-                <div className="flex flex-col">
-                  <h3 className="text-base font-medium">
-                    {invitation.email}
-                  </h3>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-sm text-muted-foreground">
-                      Role:
-                    </span>
-                    <div className="flex gap-1">
-                      {invitation.orgRoles &&
-                        invitation.orgRoles.length > 0 &&
-                        invitation.orgRoles.map((role, index) => (
-                          <span
-                            key={index}
-                            className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-yellow-100 text-yellow-800"
-                          >
-                            {TextTitlecase(role.name)}
-                          </span>
-                        ))}
+              {invitationsList.map((invitation) => (
+                <div 
+                  key={invitation.id} 
+                  className="p-4 border border-gray-200 rounded-lg shadow-sm bg-background hover:bg-muted/50 transition-colors"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex flex-col w-1/3">
+                      <h3 className="text-base font-medium truncate">
+                        {invitation.email}
+                      </h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-sm text-muted-foreground">
+                          Role:
+                        </span>
+                        <div className="flex gap-1">
+                          {invitation.orgRoles &&
+                            invitation.orgRoles.length > 0 &&
+                            invitation.orgRoles.map((role, index) => (
+                              <span
+                                key={index}
+                                className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-yellow-100 text-yellow-800"
+                              >
+                                {TextTitlecase(role.name)}
+                              </span>
+                            ))}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-center items-center w-1/3">
+                      <span className={`text-xs font-medium px-2.5 py-0.5 rounded-md ${getStatusClass(invitation.status)}`}>
+                        {TextTitlecase(invitation.status)}
+                      </span>
+                    </div>
+                    
+                    <div className="flex flex-col items-end w-1/3 mr-16">
+                      {invitation.status === 'pending' && (orgRoles?.includes(Roles.ADMIN) || orgRoles?.includes(Roles.OWNER)) && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedInvitation(invitation.id);
+                            setShowDeletePopup(true);
+                            setError(null);
+                            setMessage(null);
+                          }}
+                          className="border border-blue-400 bg-gray-50 hover:bg-blue-50 rounded-md px-3 py-1 text-sm mb-2"
+                        >
+                          <XCircleIcon className="h-4 w-4 mr-1" />
+                          Delete Invitation
+                        </Button>
+                      )}
+                      
+                      <div className="text-sm text-muted-foreground">
+                        <DateTooltip date={invitation.createDateTime}>
+                          <span>Invited on {dateConversion(invitation.createDateTime)}</span>
+                        </DateTooltip>
+                      </div>
                     </div>
                   </div>
                 </div>
-                
-                <div className="flex items-center">
-                  <div className="flex justify-center items-center flex-col items-end mr-32">
-                    <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${getStatusClass(invitation.status)}`}>
-                      {TextTitlecase(invitation.status)}
-                    </span>
-                    <div className="text-xs text-muted-foreground mt-1">
-                    <DateTooltip date={invitation.createDateTime}>
-                            <span>Invited on {dateConversion(invitation.createDateTime)}</span>
-                          </DateTooltip>
-                    </div>
-                  </div>
-                  
-                  {invitation.status === 'pending' && (orgRoles?.includes(Roles.ADMIN) || orgRoles?.includes(Roles.OWNER)) && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedInvitation(invitation.id);
-                        setShowPopup(true);
-                        setError(null);
-                        setMessage(null);
-                      }}
-                      className="border border-yellow-400 hover:bg-yellow-50 rounded-md px-3 py-1"
-                    >
-                      <XCircleIcon className="h-4 w-4 mr-1" />
-                      Delete Invitation
-                    </Button>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-          
+              ))}         
             </div>
           )}
 
@@ -634,8 +628,8 @@ export default function Members() {
         openModal={showDeletePopup}
         closeModal={() => setShowDeletePopup(false)}
         onSuccess={() => deleteInvitation()}
-        message={'Would you like to proceed? Keep in mind that this action cannot be undone.'}
-        buttonTitles={["No, cancel", "Yes, I'm sure"]}
+        message={confirmationMessages.deletePendingInvitationConfirmation}
+        buttonTitles={[confirmationMessages.cancelConfirmation, confirmationMessages.sureConfirmation]}
         isProcessing={deleteLoading}
         setFailure={setError}
         setSuccess={setMessage}

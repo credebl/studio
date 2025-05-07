@@ -1,6 +1,6 @@
 'use client';
 
-import * as z from 'zod';
+import * as Yup from 'yup';
 
 import {
   Dialog,
@@ -8,8 +8,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { ErrorMessage, Field, Form, Formik } from 'formik';
 import { MailIcon, PlusIcon, SendIcon, TrashIcon } from 'lucide-react';
+import { RoleI, SendInvitationModalProps } from '../interfaces/invitation-interface';
 import { useEffect, useState } from 'react';
 
 import { AlertComponent } from '@/components/AlertComponent';
@@ -20,21 +21,6 @@ import { apiStatusCodes } from '@/config/CommonConstant';
 import { createInvitations } from '@/app/api/Invitation';
 import { getOrganizationRoles } from '@/app/api/organization';
 import { useAppSelector } from '@/lib/hooks';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-
-interface SendInvitationModalProps {
-  getAllSentInvitations?: () => void;
-  flag?: boolean;
-  openModal: boolean;
-  setMessage: (message: string) => void;
-  setOpenModal: (flag: boolean) => void;
-}
-
-interface RoleI {
-  id: string;
-  name: string;
-}
 
 interface Invitation {
   email: string;
@@ -42,13 +28,12 @@ interface Invitation {
   roleId: string;
 }
 
-// Form schema
-const formSchema = z.object({
-  email: z.string()
+// Validation schema using Yup
+const validationSchema = Yup.object({
+  email: Yup.string()
     .email('Email is invalid')
-    .refine(email => email.trim() !== '', {
-      message: 'Email is required',
-    })
+    .required('Email is required')
+    .trim()
 });
 
 export default function SendInvitationModal({
@@ -64,36 +49,7 @@ export default function SendInvitationModal({
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const selectedOrgId = useAppSelector((state) => state.organization.orgId);
-  const userProfileDetails = useAppSelector((state) => state.user.userInfo)
-  // Initialize form
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: '',
-    },
-  });
-
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    // Check if email is the user's own email
-    if (values.email.trim() === selfEmail.trim()) {
-      form.setError('email', { 
-        message: "You can't send invitation to yourself"
-      });
-      return;
-    }
-    
-    // Check if email already exists in invitations
-    if (invitations.some(inv => inv.email === values.email)) {
-      form.setError('email', { 
-        message: "This email has already been added"
-      });
-      return;
-    }
-
-    // Add invitation
-    await includeInvitation(values.email);
-    form.reset();
-  };
+  const userProfileDetails = useAppSelector((state) => state.user.userInfo);
 
   const getRoles = async () => {
     try {
@@ -119,12 +75,11 @@ export default function SendInvitationModal({
     };
 
     if (openModal) {
-      form.reset();
       setInvitations([]);
       getRoles();
       getEmail();
     }
-  }, [openModal, form]);
+  }, [openModal, userProfileDetails?.email]);
 
   const includeInvitation = async (email: string) => {
     setInvitations([
@@ -170,6 +125,21 @@ export default function SendInvitationModal({
     }
   };
 
+  const validateAndAddEmail = (values, { resetForm, setFieldError }) => {
+    if (values.email.trim() === selfEmail.trim()) {
+      setFieldError('email', "You can't send invitation to yourself");
+      return;
+    }
+    
+    if (invitations.some(inv => inv.email === values.email)) {
+      setFieldError('email', "This email has already been added");
+      return;
+    }
+
+    includeInvitation(values.email);
+    resetForm();
+  };
+
   return (
     <Dialog open={openModal} onOpenChange={setOpenModal}>
       <DialogContent className="sm:max-w-2xl">
@@ -185,41 +155,47 @@ export default function SendInvitationModal({
           />
         )}
         
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-            <div className="flex items-end gap-4">
-              <div className="flex-1">
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Email <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input 
-                          {...field} 
-                          placeholder="example@email.com" 
-                          className="bg-background focus-visible:ring-1 focus-visible:ring-primary"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+        <Formik
+          initialValues={{ email: '' }}
+          validationSchema={validationSchema}
+          onSubmit={validateAndAddEmail}
+        >
+          {({ errors, touched }) => (
+            <Form className="space-y-2">
+              <div className="flex items-end gap-4">
+                <div className="flex-1">
+                  <div>
+                    <label htmlFor="email" className="text-sm font-medium">
+                      Email <span className="text-red-500">*</span>
+                    </label>
+                    <Field
+                      as={Input}
+                      id="email"
+                      name="email"
+                      placeholder="example@email.com"
+                      className={`bg-background focus-visible:ring-1 focus-visible:ring-primary ${
+                        errors.email && touched.email ? 'border-red-500' : ''
+                      }`}
+                    />
+                    <ErrorMessage
+                      name="email"
+                      component="div"
+                      className="text-sm text-red-500 mt-1"
+                    />
+                  </div>
+                </div>
+                
+                <Button 
+                  type="submit" 
+                  className="flex items-center gap-2"
+                >
+                  <PlusIcon className="h-5 w-5" />
+                  Add
+                </Button>
               </div>
-              
-              <Button 
-                type="submit" 
-                className="flex items-center gap-2"
-              >
-                <PlusIcon className="h-5 w-5" />
-                Add
-              </Button>
-            </div>
-          </form>
-        </Form>
+            </Form>
+          )}
+        </Formik>
 
         {invitations.length > 0 && (
           <div className="mt-4 space-y-2">
