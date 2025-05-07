@@ -272,7 +272,7 @@ export default function ReceivedInvitations() {
                           <Button
                             onClick={() => respondToInvitations(invitation, 'rejected')}
                             variant="outline"
-                            className="w-full md:w-auto"
+                            className="md:w-auto text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-md font-medium px-5 py-3 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
                           >
                             <XIcon className="mr-2 h-4 w-4" />
                             Reject
