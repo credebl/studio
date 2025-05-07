@@ -43,7 +43,7 @@ const ConfirmationModal = ({
 }: IProps) => {
   return (
     <Dialog open={openModal} onOpenChange={(open) => closeModal(!open)}>
-      <DialogContent className="relative w-full max-w-xl max-h-[450px]">
+      <DialogContent className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-xl max-h-[450px] overflow-auto">
         <DialogHeader>
           <button
             type="button"
@@ -53,11 +53,11 @@ const ConfirmationModal = ({
             }}
           >
             <Image
-            height={3}
-            width={3}
-            alt='Logo'
-            src={closeIconImg}
-          />
+              height={3}
+              width={3}
+              alt='Logo'
+              src={closeIconImg}
+            />
             <span className="sr-only">Close modal</span>
           </button>
         </DialogHeader>
