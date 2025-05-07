@@ -75,8 +75,22 @@ export default function Members() {
     lastPage: 1
   });
 
+  const [orgUserRole, setOrgUserRole] = useState<string[]>([]);
+
   const orgId = useAppSelector((state) => state.organization.orgId);
-  const orgInfo = useAppSelector((state) => state.organization.orgInfo);
+  const orgInfo = useAppSelector((state) => state.organization.orgInfo)
+
+  const getOrgUserRole = async () => {
+		const orgRoles = orgInfo?.roles;
+
+    if (orgRoles) {
+      setOrgUserRole(orgRoles);
+    }
+	};
+
+	useEffect(() => {
+		getOrgUserRole();
+	},[])
 
   // Users tab functions
   const getAllUsers = async () => {
@@ -100,9 +114,6 @@ export default function Members() {
         });        
         
         setUsersList(users);
-
-        const uniqueRoles = users.flatMap(item => item.roles);
-        setOrgRoles(uniqueRoles);
         
         // Set pagination info
         setUsersPaginationInfo({
@@ -148,18 +159,20 @@ export default function Members() {
         invitationsPageState.search
       );
       
-      if (response?.data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        const invitationList = response.data?.data?.invitations;
+      const { data } = response as AxiosResponse;
+
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        const invitationList = data?.data?.invitations;
         setInvitationsList(invitationList);
         
         // Set pagination info
         setInvitationsPaginationInfo({
-          totalItems: response.data?.data?.totalItems ?? 0,
-          hasNextPage: response.data?.data?.hasNextPage ?? false,
-          hasPreviousPage: response.data?.data?.hasPreviousPage ?? false,
-          nextPage: response.data?.data?.nextPage ?? 1,
-          previousPage: response.data?.data?.previousPage ?? 0,
-          lastPage: response.data?.data?.totalPages ?? 1
+          totalItems: data?.data?.totalItems ?? 0,
+          hasNextPage: data?.data?.hasNextPage ?? false,
+          hasPreviousPage: data?.data?.hasPreviousPage ?? false,
+          nextPage: data?.data?.nextPage ?? 1,
+          previousPage: data?.data?.previousPage ?? 0,
+          lastPage: data?.data?.totalPages ?? 1
         });
       }
     } catch (err) {
@@ -184,9 +197,11 @@ export default function Members() {
       
       const response = await deleteOrganizationInvitation(orgId, invitationId);
       
-      if (response?.data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+      const { data } = response as AxiosResponse;
+      
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         await getAllInvitations();
-        setMessage(response.data?.message || 'Invitation deleted successfully');
+        setMessage(data?.message || 'Invitation deleted successfully');
         setShowDeletePopup(false);
       } else {
         setError(response as string);
@@ -241,7 +256,7 @@ export default function Members() {
   }, [invitationsPageState.pageNumber, invitationsPageState.search, inviteModalOpen]);
 
 
-  const getStatusClass = (status) => {
+  const getStatusClass = (status: string) => {
     switch(status) {
       case 'pending':
         return 'bg-orange-100 text-orange-800';
@@ -336,7 +351,8 @@ export default function Members() {
             usersList.map((user) => (
               <div 
                 key={user.id} 
-                className="p-4 border rounded-lg shadow-sm bg-background hover:bg-muted/50 transition-colors"
+
+                className="p-4 border border-gray-200 rounded-lg shadow-sm bg-background"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex-shrink-0 w-1/3">
@@ -370,9 +386,9 @@ export default function Members() {
                     </span>
                   </div>
 
-                  <div className="flex-shrink-0 mr-16">
-                    {(orgRoles?.includes(Roles.OWNER) || orgRoles?.includes(Roles.ADMIN)) &&
-                      user.roles?.includes(Roles.MEMBER) && (
+                  <div className="flex-shrink-0 mr-24">
+                    {(orgUserRole?.includes(Roles.OWNER) || orgUserRole?.includes(Roles.ADMIN)) && 
+                      !user.roles?.includes(Roles.OWNER) && (
                         <Button onClick={() => editUserRole(user)}>
                           <svg
                             width="16"

@@ -106,7 +106,7 @@ export const OrganizationDashboard = ({
 
       {/* Dashboard Cards */}
       <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
-        <Card className='shadow-md'>
+        <Card className='shadow-md' onClick={()=> router.push('/users')}>
           <CardContent className='flex items-center justify-between p-6'>
             <div>
               <p className='font-medium'>Users</p>
