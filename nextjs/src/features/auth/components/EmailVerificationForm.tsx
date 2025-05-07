@@ -145,14 +145,16 @@ export default function EmailVerificationForm({
           <FormikForm className='space-y-4'>
             {showEmailVerification.message && (
               <Alert
-                variant={
-                  showEmailVerification.type === 'success'
-                    ? 'default'
-                    : 'destructive'
-                }
-                className='mb-4'
-              >
-                <AlertDescription>
+              variant={showEmailVerification.type === 'success' ? 'default' : 'destructive'}
+              className={`mb-4 ${
+                showEmailVerification.type === 'success' ? 'bg-success' : 'bg-error'
+              }`}
+            >
+                <AlertDescription
+                  className={
+                    showEmailVerification.type === 'success' ? 'text-success' : 'text-error'
+                  }
+                >
                   {showEmailVerification.message}
                 </AlertDescription>
               </Alert>

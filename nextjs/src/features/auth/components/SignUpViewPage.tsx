@@ -3,13 +3,8 @@ import { Metadata } from 'next';
 import Image from 'next/image';
 import SignUpUser from './SignUpUser';
 import {
-  CredeblLogo,
   CredeblLogoHeight,
-  CredeblLogoWidth,
-  signInHeight,
-  signInImg,
-  signInWidth
-} from '@/config/CommonConstant';
+  CredeblLogoWidth} from '@/config/CommonConstant';
 import { useThemeConfig } from '@/components/active-theme';
 
 export const metadata: Metadata = {
@@ -36,7 +31,7 @@ export default function SignInPage() {
         />
       </div>
 
-      <div className='flex flex-1 items-center justify-center px-4'>
+      <div className='relative flex h-screen w-full items-center justify-center bg-[image:var(--card-gradient)]'>
         <SignUpUser />
       </div>
 

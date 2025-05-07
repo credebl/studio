@@ -4,10 +4,14 @@ import React, { useState } from 'react';
 import EmailVerificationForm from './EmailVerificationForm';
 import UserInfoForm from './UserInfoForm';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 export default function SignUpUser() {
   const [step, setStep] = useState(1);
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState<string>('');
+  const searchParam = useSearchParams();
+  const userEmail = searchParam.get('email');
+
   return (
     <div className='flex flex-col items-center justify-center'>
       <div className='bg-card border-border relative z-10 h-full w-[480px] max-w-md overflow-hidden rounded-xl border p-8 shadow-xl transition-transform duration-300'>
@@ -36,12 +40,14 @@ export default function SignUpUser() {
 
         {step === 1 && (
           <EmailVerificationForm
-            email={email}
+            email={userEmail ?? ''}
             setEmail={setEmail}
             goToNext={() => setStep(2)}
           />
         )}
-        {step === 2 && <UserInfoForm email={email} goBack={() => setStep(1)} />}
+        {step === 2 && (
+          <UserInfoForm email={userEmail ?? ''} goBack={() => setStep(1)} />
+        )}
 
         <div className='text-muted-foreground mt-4 text-center text-sm'>
           Already have an account?{' '}
