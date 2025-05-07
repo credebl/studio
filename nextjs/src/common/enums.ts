@@ -58,3 +58,11 @@ export enum Roles {
   VERIFIER = 'verifier',
   MEMBER = 'member'
 };
+
+export enum OrganizationRoles {
+	organizationMember = "member",
+	organizationOwner = "owner",
+	organizationIssuer = "issuer",
+	organizationVerifier = "verifier",
+	organizationAdmin= 'admin'
+}

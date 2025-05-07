@@ -21,7 +21,6 @@ const CredentialDefinitionCard = (props: IProps) => {
       props?.userRoles?.includes(Roles.ADMIN) ||
       props?.userRoles?.includes(Roles.ISSUER)
     ) {
-      // props.onClickCallback(props.schemaId, props.credentialDefinitionId);
       router.push('/issue');
     }
   };
@@ -45,7 +44,8 @@ const CredentialDefinitionCard = (props: IProps) => {
             onClick={redirectToIssuance}
             type='submit'
             title='Initiate Credential Issuance'
-            className='mr-2 ml-auto rounded-lg text-sm font-medium'
+            variant='ghost'
+            className='border-ring hover:bg-primary flex items-center rounded-xl border px-4 py-2 transition-colors'
             disabled={
               !(
                 props.userRoles &&
@@ -99,7 +99,9 @@ const CredentialDefinitionCard = (props: IProps) => {
 
         <div className='mt-auto inline-flex items-center overflow-hidden text-base font-semibold overflow-ellipsis'>
           Revocable:
-          <span className='bg-primary/10 text-primary m-1 mr-2 rounded px-2.5 py-0.5 text-sm font-medium'>
+          <span
+            className='bg-secondary text-secondary-foreground hover:bg-secondary/80 m-1 mr-2 rounded px-2.5 py-0.5 text-sm font-medium shadow-sm'
+          >
             {props?.revocable ? 'Yes' : 'No'}
           </span>
         </div>

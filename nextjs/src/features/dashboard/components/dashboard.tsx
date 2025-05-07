@@ -18,6 +18,7 @@ export default function Dashboard() {
   const [walletData, setWalletData] = useState<any[]>([]);
   const [walletLoading, setWalletLoading] = useState(true);
   const orgId = useAppSelector((state) => state.organization.orgId);
+  const [userOrg, setUserOrg] = useState<any>(null);
 
   const dispatch = useAppDispatch();
   const fetchOrganizationDetails = async () => {
@@ -25,13 +26,24 @@ export default function Dashboard() {
     try {
       setWalletLoading(true);
       const response = await getOrganizationById(orgId);
-      
+
       const { data } = response as AxiosResponse;
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         const orgAgentsList = data?.data?.org_agents;
-        if (typeof response !== 'string' && response?.data?.data?.org_agents[0]?.ledgers?.id) {
-          dispatch(setLedgerId(response?.data?.data?.org_agents[0]?.ledgers?.id))
+        const userOrgRoles = data?.data?.userOrgRoles;
+
+        if (userOrgRoles && userOrgRoles.length > 0) {
+          setUserOrg(userOrgRoles[0]);
+        }
+
+        if (
+          typeof response !== 'string' &&
+          response?.data?.data?.org_agents[0]?.ledgers?.id
+        ) {
+          dispatch(
+            setLedgerId(response?.data?.data?.org_agents[0]?.ledgers?.id)
+          );
         }
         if (orgAgentsList && orgAgentsList.length > 0) {
           setWalletData(orgAgentsList);
@@ -106,8 +118,8 @@ export default function Dashboard() {
         )}
 
         <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
-          <OrganizationCardList />
-          <SchemasList />
+        <OrganizationCardList userOrg={userOrg} walletData={walletData} />
+        <SchemasList />
         </div>
 
         <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>

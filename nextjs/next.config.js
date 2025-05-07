@@ -12,6 +12,11 @@ const nextConfig = {
         hostname: 'api.slingacademy.com',
         port: ''
       }
+    ],
+    domains: [
+      'dev-org-logo.s3.ap-south-1.amazonaws.com',
+      'prod-org-logo.s3.ap-south-1.amazonaws.com',
+      'load-test-educred.s3.amazonaws.com',
     ]
   },
   transpilePackages: ['geist']

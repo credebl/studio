@@ -34,10 +34,6 @@ export interface RegistrationOptionInterface {
   deviceFlag: boolean;
 }
 
-enum PlatformRoles {
-  platformAdmin = 'platform_admin'
-}
-
 export enum Devices {
   Linux = 'linux'
 }
@@ -73,15 +69,15 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
     type: ''
   });
 
-  const [setDeviceList] = useState<IDeviceData[]>([]);
+  const [, setDeviceList] = useState<IDeviceData[]>([]);
   const [usePassword, setUsePassword] = useState(true);
-  const [setDisableFlag] = useState<boolean>(false);
-  const [setAddFailure] = useState<string | null>(null);
-  const [setAddSuccess] = useState<string | null>(null);
-  const [setErrMsg] = useState<string | null>(null);
+  const [, setDisableFlag] = useState<boolean>(false);
+  const [, setAddFailure] = useState<string | null>(null);
+  const [, setAddSuccess] = useState<string | null>(null);
+  const [, setErrMsg] = useState<string | null>(null);
   const router = useRouter();
-  const [setFidoLoader] = useState<boolean>(false);
-  const [setFidoError] = useState('');
+  const [, setFidoLoader] = useState<boolean>(false);
+  const [, setFidoError] = useState('');
 
   const onSubmit = async (values: {
     firstName: string;
@@ -168,7 +164,10 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
 
         await verifyRegistrationMethod(verifyRegistrationObj, email);
       } else {
-        setErrMsg(generateRegistrationResponse as string);
+        setErrMsg(
+          (generateRegistrationResponse as AxiosResponse)?.data?.message ||
+            'An error occurred'
+        );
       }
     } catch (error) {
       showFidoError(error);
@@ -238,10 +237,12 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
           Object.keys(data)?.length > 0
             ? userDeviceDetailsResp?.data?.data.map(
                 (data: { lastChangedDateTime: any }) => {
-                  data.lastChangedDateTime = data.lastChangedDateTime
-                    ? data.lastChangedDateTime
-                    : '-';
-                  return data;
+                  return {
+                    ...data,
+                    lastChangedDateTime: data.lastChangedDateTime
+                      ? data.lastChangedDateTime
+                      : '-'
+                  };
                 }
               )
             : [];
@@ -283,8 +284,8 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
             <div
               className={`mb-4 rounded-md p-3 text-sm ${
                 showEmailVerification.type === 'danger'
-                  ? 'bg-[var(--color-text-error)] text-white'
-                  : 'bg-[var(--color-bg-success)] text-white'
+                  ? 'bg-[var(--color-text-error)] text-[var(--color-white)]'
+                  : 'bg-[var(--color-bg-success)] text-[var(--color-white)]'
               }`}
             >
               {showEmailVerification.message}

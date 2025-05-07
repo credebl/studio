@@ -11,15 +11,15 @@ import {
   CardDescription
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Key } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAppSelector } from '@/lib/hooks';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-
 const CredentialDefinition = () => {
   const [loading, setLoading] = useState(true);
   const [credentialDefinition, setCredentialDefinition] = useState([]);
 
+  const router = useRouter();
   const orgId = useAppSelector((state) => state.organization.orgId);
   const fetchCredentialDefinitionById = async () => {
     setLoading(true);
@@ -44,8 +44,13 @@ const CredentialDefinition = () => {
     }
   }, [orgId]);
 
+ 
+  const handleClickCredDef = (schemaId: string) => {
+    router.push(`/organizations/schemas/${schemaId}`);
+  };
+
   return (
-    <Card>
+    <Card className='border-border relative h-full w-full overflow-hidden rounded-xl border py-4 shadow-xl transition-transform duration-300'>
       <CardHeader className='flex flex-row items-center justify-between pb-2'>
         <div className='space-y-1'>
           <div className='flex items-center gap-x-2'>
@@ -73,10 +78,13 @@ const CredentialDefinition = () => {
           </div>
         ) : credentialDefinition.length > 0 ? (
           <div className='space-y-4'>
-            {credentialDefinition.map((cred: any, index: number) => (
+            {credentialDefinition.slice(0,3).map((cred: any, index: number) => (
               <div
                 key={index}
-                className='hover:bg-muted/50 flex items-center justify-between rounded-lg p-3 transition-colors hover:cursor-pointer'
+                className='hover:bg-muted/50 border-border/50 relative flex h-full w-full items-center justify-between overflow-hidden rounded-xl border p-3 shadow-xl transition-transform duration-300 hover:cursor-pointer'
+                onClick={() =>
+                  handleClickCredDef(encodeURIComponent(cred.schemaLedgerId))
+                }
               >
                 <div className='flex items-center gap-3'>
                   <div className='bg-background flex h-10 w-10 items-center justify-center rounded-md'>
@@ -116,7 +124,7 @@ const CredentialDefinition = () => {
       </CardContent>
 
       <CardFooter className='mt-auto justify-end pt-2'>
-        <Link href='#'>View all</Link>
+        {/* <Link href='#'>View all</Link> */}
       </CardFooter>
     </Card>
   );

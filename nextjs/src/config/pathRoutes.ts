@@ -70,7 +70,7 @@ export const pathRoutes = {
 		},
 	},
 	documentation: {
-		root: envConfig.PLATFORM_DATA.docs
+		root: envConfig.PLATFORM_DATA.docs as string
 	},
 	schema: {
 		create: '/schemas',
