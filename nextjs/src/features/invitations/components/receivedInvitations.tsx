@@ -259,7 +259,7 @@ export default function ReceivedInvitations() {
                               <span className="text-sm text-muted-foreground">Roles:</span>
                               {invitation.orgRoles?.map((role: OrgRole) => (
                                 <span
-                                  key={role.id || role.name} 
+                                  key={role.id ?? role.name} 
                                   className="bg-primary-50 text-primary-700 px-2 py-1 rounded-md text-xs font-medium"
                                 >
                                   {role.name.charAt(0).toUpperCase() + role.name.slice(1)}

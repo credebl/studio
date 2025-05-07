@@ -28,7 +28,6 @@ interface Invitation {
   roleId: string;
 }
 
-// Validation schema using Yup
 const validationSchema = Yup.object({
   email: Yup.string()
     .email('Email is invalid')

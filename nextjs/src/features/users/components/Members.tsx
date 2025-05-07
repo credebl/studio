@@ -8,7 +8,6 @@ import {
   PaginationNext,
   PaginationPrevious
 } from "@/components/ui/pagination";
-// Icons
 import { PlusIcon, XCircleIcon } from "lucide-react";
 import {
   Tabs,
@@ -16,19 +15,15 @@ import {
   TabsList,
   TabsTrigger
 } from "@/components/ui/tabs";
-// Constants and Types
 import { apiStatusCodes, confirmationMessages } from "@/config/CommonConstant";
-// API and Utils
 import { deleteOrganizationInvitation, getOrganizationUsers } from "@/app/api/organization";
 import { useCallback, useEffect, useState } from "react";
 
 import { AlertComponent } from "@/components/AlertComponent";
 import { AxiosResponse } from "axios";
-// UI Components
 import { Button } from "@/components/ui/button";
 import ConfirmationModal from "@/components/confirmation-modal";
 import DateTooltip from "@/components/DateTooltip";
-// Components
 import EditUserRoleModal from "./EditUserRoleModal";
 import { EmptyMessage } from "@/components/EmptyMessage";
 import { IconSearch } from "@tabler/icons-react";
@@ -84,7 +79,6 @@ export default function Members() {
   const [selectedInvitation, setSelectedInvitation] = useState<string>('');
   const [showDeletePopup, setShowDeletePopup] = useState<boolean>(false);
   
-  const [orgRoles, setOrgRoles] = useState<string[]>([]);
   const [orgUserRole, setOrgUserRole] = useState<string[]>([]);
   
   const orgId = useAppSelector((state) => state.organization.orgId);
@@ -143,9 +137,6 @@ export default function Members() {
     setInvitationsLoading(true);
     
     try {
-      if (orgInfo?.roles) {
-        setOrgRoles(orgInfo.roles);
-      }
       
       const response = await getOrganizationInvitations(
         orgId,
@@ -343,7 +334,7 @@ export default function Members() {
     );
   };
 
-  const hasAdminRights = orgUserRole?.includes(Roles.ADMIN) || orgUserRole?.includes(Roles.OWNER);
+  const hasAdminRights = orgUserRole?.includes(Roles.ADMIN) ?? orgUserRole?.includes(Roles.OWNER);
 
   return (
     <div className="p-5">
