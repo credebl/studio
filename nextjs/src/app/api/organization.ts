@@ -2,6 +2,7 @@
 /* eslint-disable max-lines */
 import { apiRoutes } from '@/config/apiRoutes';
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs';
+import { SchemaTypes } from '@/features/common/enum';
 import { IDedicatedAgentConfig, IUpdatePrimaryDid } from '@/features/organization/components/interfaces/organization';
 import {   axiosDelete, axiosGet, axiosPost, axiosPut, ecosystemAxiosPost } from '@/services/apiRequests';
 
@@ -530,7 +531,25 @@ export const getLedgers = async () => {
           }
         };
 
-
+        export const getSchemaCredDef = async (schemaType: SchemaTypes, orgId:string) => {
+          const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.bulk.credefList}?schemaType=${schemaType}`;
+          const config = {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          };
+          const axiosPayload = {
+            url,
+            config
+          };
+        
+          try {
+            return await axiosGet(axiosPayload);
+          } catch (error) {
+            const err = error as Error;
+            return err?.message;
+          }
+        };
 // //Get users of the organization
 // export const getOrganizationUsers = async (
 // 	pageNumber: number,

@@ -115,7 +115,7 @@ const EmailIssuance = () => {
 					const credentialDefs = data.data;
 
 					options = credentialDefs.map(({
-						schemaName,
+						schemaName,	
 						schemaVersion,
 						credentialDefinition,
 						credentialDefinitionId,
