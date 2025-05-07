@@ -12,7 +12,6 @@ import { EmptyMessage } from "@/components/EmptyMessage";
 import { IconSearch } from "@tabler/icons-react";
 import { Input } from "@/components/ui/input";
 import { Roles } from "@/common/enums";
-import { RotateCcwIcon } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { User } from "./users-interface";
 import { apiStatusCodes } from "@/config/CommonConstant";
@@ -38,7 +37,7 @@ export default function Members() {
   const [usersList, setUsersList] = useState<Array<User> | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [activeTab, setActiveTab] = useState('users');
-  const [orgRoles, setOrgRoles] = useState<string[]>([])
+  const [orgUserRole, setOrgUserRole] = useState<string[]>([]);
   const [paginationInfo, setPaginationInfo] = useState({
     totalItems: 0,
     hasNextPage: false,
@@ -49,7 +48,19 @@ export default function Members() {
   });
 
   const orgId = useAppSelector((state) => state.organization.orgId);
-  // const userInfo = userAppSelector((state) => state.organization.org)
+  const orgInfo = useAppSelector((state) => state.organization.orgInfo)
+
+  const getOrgUserRole = async () => {
+		const orgRoles = orgInfo?.roles;
+
+    if (orgRoles) {
+      setOrgUserRole(orgRoles);
+    }
+	};
+
+	useEffect(() => {
+		getOrgUserRole();
+	},[])
 
   const getAllUsers = async () => {
     setLoading(true);
@@ -72,9 +83,6 @@ export default function Members() {
         });        
         
         setUsersList(users);
-
-       const uniqueRoles = users.flatMap(item => item.roles);
-        setOrgRoles(uniqueRoles);
         
         // Set pagination info
         setPaginationInfo({
@@ -197,7 +205,8 @@ export default function Members() {
             usersList.map((user) => (
               <div 
                 key={user.id} 
-                className="p-4 border rounded-lg shadow-sm bg-background hover:bg-muted/50 transition-colors"
+
+                className="p-4 border border-gray-200 rounded-lg shadow-sm bg-background"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex-shrink-0 w-1/3">
@@ -232,8 +241,8 @@ export default function Members() {
                   </div>
 
                   <div className="flex-shrink-0 mr-24">
-                    {(orgRoles?.includes(Roles.OWNER) || orgRoles?.includes(Roles.ADMIN)) &&
-                      user.roles?.includes(Roles.MEMBER) && (
+                    {(orgUserRole?.includes(Roles.OWNER) || orgUserRole?.includes(Roles.ADMIN)) && 
+                      !user.roles?.includes(Roles.OWNER) && (
                         <Button onClick={() => editUserRole(user)}>
                           <svg
                             width="16"
