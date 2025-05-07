@@ -113,10 +113,6 @@ export default function Members() {
     return () => clearTimeout(timer);
   };
 
-  const handleRefresh = () => {
-    getAllUsers();
-  };
-
   const onPageChange = (page: number) => {
     setPageState((prev) => ({
       ...prev,
@@ -134,14 +130,6 @@ export default function Members() {
       <div className="mb-6">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">Organization Members</h1>
-          <Button 
-            variant="outline" 
-            size="icon" 
-            onClick={handleRefresh} 
-            className="h-9 w-9"
-          >
-            <RotateCcwIcon className="h-5 w-5" />
-          </Button>
         </div>
         
         <AlertComponent
@@ -211,8 +199,8 @@ export default function Members() {
                 key={user.id} 
                 className="p-4 border rounded-lg shadow-sm bg-background hover:bg-muted/50 transition-colors"
               >
-                <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
-                  <div>
+                <div className="flex items-center justify-between">
+                  <div className="flex-shrink-0 w-1/3">
                     <h3 className="text-base font-semibold">
                       {user.firstName} {user.lastName}
                     </h3>
@@ -237,11 +225,13 @@ export default function Members() {
                     </div>
                   </div>
                   
-                  <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
+                  <div className="flex-grow text-start">
                     <span className="text-sm text-primary font-medium truncate max-w-xs">
                       {user.email}
                     </span>
+                  </div>
 
+                  <div className="flex-shrink-0 mr-24">
                     {(orgRoles?.includes(Roles.OWNER) || orgRoles?.includes(Roles.ADMIN)) &&
                       user.roles?.includes(Roles.MEMBER) && (
                         <Button onClick={() => editUserRole(user)}>
