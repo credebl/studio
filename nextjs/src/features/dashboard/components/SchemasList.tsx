@@ -99,53 +99,44 @@ const SchemasList = () => {
     const isIndySchema = schemaTypeValues === SchemaTypeValue.INDY;
 
     return (
-      <div
+      <button
         key={index}
-        className={`hover:bg-muted/70 flex items-center justify-between rounded-lg transition-colors ${
-          isIndySchema ? 'hover:cursor-pointer' : 'cursor-not-allowed'
+        type='button'
+        onClick={() => isIndySchema && handleClickSchema(schema.schemaLedgerId)}
+        disabled={!isIndySchema}
+        aria-disabled={!isIndySchema}
+        className={`border-border/50 hover:bg-muted/50 flex w-full items-center justify-between gap-5 rounded-xl border p-3 text-left shadow-xl transition-transform duration-300 ${
+          isIndySchema ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'
         }`}
       >
-        <div
-          onClick={() => {
-            if (isIndySchema) {
-              handleClickSchema(schema.schemaLedgerId);
-            }
-          }}
-          className={`border-border/50 relative flex h-full w-full items-center justify-between gap-5 overflow-hidden rounded-xl border p-3 shadow-xl transition-transform duration-300 ${
-            isIndySchema ? 'hover:bg-muted/50' : ''
-          }`}
-        >
-          <div className='bg-muted text-muted-foreground flex h-10 w-10 items-center justify-center rounded-md'>
-            <div className='bg-muted text-muted-foreground flex h-10 w-10 items-center justify-center rounded-md'>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                width='24'
-                height='24'
-                viewBox='0 0 24 24'
-                fill='none'
-              >
-                <path
-                  d='M7 9H18.75M7 12H18.75M7 15H13M4.5 19.5H19.5C20.0967 19.5 20.669 19.2629 21.091 18.841C21.5129 18.419 21.75 17.8467 21.75 17.25V6.75C21.75 6.15326 21.5129 5.58097 21.091 5.15901C20.669 4.73705 20.0967 4.5 19.5 4.5H4.5C3.90326 4.5 3.33097 4.73705 2.90901 5.15901C2.48705 5.58097 2.25 6.15326 2.25 6.75V17.25C2.25 17.8467 2.48705 18.419 2.90901 18.841C3.33097 19.2629 3.90326 19.5 4.5 19.5Z'
-                  stroke='#6B7280'
-                  strokeWidth='1.8'
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                />
-              </svg>
-            </div>
-          </div>
-          <div className='flex-1 space-y-1 truncate text-sm'>
-            <p className='font-semibold'>{schema.name}</p>
-            <p className='text-muted-foreground'>Version: {schema.version}</p>
-            <p className='text-muted-foreground'>
-              Created: {dateConversion(schema.createDateTime)}
-            </p>
-            <p className='text-muted-foreground'>
-              Organization: {schema.organizationName}
-            </p>
-          </div>
+        <div className='bg-muted text-muted-foreground flex h-10 w-10 items-center justify-center rounded-md'>
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            width='24'
+            height='24'
+            viewBox='0 0 24 24'
+            fill='none'
+          >
+            <path
+              d='M7 9H18.75M7 12H18.75M7 15H13M4.5 19.5H19.5C20.0967 19.5 20.669 19.2629 21.091 18.841C21.5129 18.419 21.75 17.8467 21.75 17.25V6.75C21.75 6.15326 21.5129 5.58097 21.091 5.15901C20.669 4.73705 20.0967 4.5 19.5 4.5H4.5C3.90326 4.5 3.33097 4.73705 2.90901 5.15901C2.48705 5.58097 2.25 6.15326 2.25 6.75V17.25C2.25 17.8467 2.48705 18.419 2.90901 18.841C3.33097 19.2629 3.90326 19.5 4.5 19.5Z'
+              stroke='#6B7280'
+              strokeWidth='1.8'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+            />
+          </svg>
         </div>
-      </div>
+        <div className='flex-1 space-y-1 truncate text-sm'>
+          <p className='font-semibold'>{schema.name}</p>
+          <p className='text-muted-foreground'>Version: {schema.version}</p>
+          <p className='text-muted-foreground'>
+            Created: {dateConversion(schema.createDateTime)}
+          </p>
+          <p className='text-muted-foreground'>
+            Organization: {schema.organizationName}
+          </p>
+        </div>
+      </button>
     );
   };
 

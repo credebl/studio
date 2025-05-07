@@ -130,7 +130,7 @@ const OrganizationCardList = ({ userOrg }: OrganizationCardListProps) => {
                   key={org.id}
                   className='hover:bg-muted/50 border-border/50 relative flex h-full w-full items-center justify-between overflow-hidden rounded-xl border p-3 shadow-xl transition-transform duration-300 hover:shadow-lg'
                 >
-                  <div
+                  <button
                     className='flex items-center gap-3 hover:cursor-pointer'
                     onClick={() => route.push('/organizations/dashboard')}
                   >
@@ -239,7 +239,7 @@ const OrganizationCardList = ({ userOrg }: OrganizationCardListProps) => {
                         )}
                       </span>
                     </span>
-                  </div>
+                  </button>
                   <div className='flex items-center gap-2'>
                     <Tooltip>
                       <TooltipTrigger asChild>
