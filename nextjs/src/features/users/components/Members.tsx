@@ -1,6 +1,7 @@
 'use client';
 
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { PlusIcon, RotateCcwIcon, XCircleIcon } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { deleteOrganizationInvitation, getOrganizationUsers } from "@/app/api/organization";
 import { useEffect, useState } from "react";
@@ -20,7 +21,6 @@ import SendInvitationModal from "@/features/invitations/components/sendInvitatio
 import { Skeleton } from "@/components/ui/skeleton";
 import { TextTitlecase } from "@/utils/TextTransform";
 import { User } from "./users-interface";
-import { XCircleIcon } from "lucide-react";
 import { apiStatusCodes } from "@/config/CommonConstant";
 import { dateConversion } from "@/utils/DateConversion";
 import { getOrganizationInvitations } from "@/app/api/Invitation";
@@ -273,6 +273,16 @@ export default function Members() {
       <div className="mb-6">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">Organization Members</h1>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              size="icon" 
+              onClick={handleRefresh} 
+              className="h-9 w-9"
+            >
+              <RotateCcwIcon className="h-5 w-5" />
+            </Button>
+          </div>
         </div>
         
         <AlertComponent
@@ -301,18 +311,29 @@ export default function Members() {
           </TabsTrigger>
         </TabsList>
         
-        <div className="relative w-full max-w-sm mb-6">
-          <Input
-            type="text"
-            placeholder={activeTab === 'users' ? "Search members..." : "Search invitations..."}
-            value={searchText}
-            onChange={handleSearchChange}
-            className="bg-background pr-4 pl-10 h-10 rounded-lg text-sm shadow-sm focus-visible:ring-1 focus-visible:ring-primary"
-          />
-          <IconSearch className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+        <div className="flex items-center justify-between mb-6 w-full">
+          <div className="relative flex-grow max-w-xs">
+            <Input
+              type="text"
+              placeholder={activeTab === 'users' ? "Search members..." : "Search invitations..."}
+              value={searchText}
+              onChange={handleSearchChange}
+              className="w-full bg-background pr-4 pl-10 h-10 rounded-lg text-sm shadow-sm focus-visible:ring-1 focus-visible:ring-primary"
+            />
+            <IconSearch className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+          </div>
+
+          {activeTab === 'invitations' && (orgRoles?.includes(Roles.ADMIN) || orgRoles?.includes(Roles.OWNER)) && (
+            <Button 
+              onClick={createInvitationsModel}
+              className="ml-auto flex items-center gap-2 h-10 px-4 text-sm font-semibold rounded-lg bg-primary text-primary-foreground"
+            >
+              <PlusIcon className="h-4 w-4" />
+              Invite
+            </Button>
+          )}
         </div>
-        
-        {/* Users Tab Content */}
+
         <TabsContent value="users" className="space-y-4 mt-0">
           {usersLoading ? (
             Array.from({ length: 3 }).map((_, index) => (
@@ -343,8 +364,8 @@ export default function Members() {
                 key={user.id} 
                 className="p-4 border rounded-lg shadow-sm bg-background hover:bg-muted/50 transition-colors"
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex-shrink-0 w-1/3">
+                <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                  <div>
                     <h3 className="text-base font-semibold">
                       {user.firstName} {user.lastName}
                     </h3>
@@ -369,13 +390,11 @@ export default function Members() {
                     </div>
                   </div>
                   
-                  <div className="flex-grow text-start">
+                  <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
                     <span className="text-sm text-primary font-medium truncate max-w-xs">
                       {user.email}
                     </span>
-                  </div>
 
-                  <div className="flex-shrink-0 mr-24">
                     {(orgRoles?.includes(Roles.OWNER) || orgRoles?.includes(Roles.ADMIN)) &&
                       user.roles?.includes(Roles.MEMBER) && (
                         <Button onClick={() => editUserRole(user)}>
@@ -480,69 +499,68 @@ export default function Members() {
             />
           ) : (
             <div className="space-y-4">
-             
-        {invitationsList.map((invitation) => (
-            <div 
-              key={invitation.id} 
-              className="p-4 border border-gray-200 rounded-lg shadow-sm bg-background hover:bg-muted/50 transition-colors"
-            >
-              <div className="flex justify-between items-center">
-                <div className="flex flex-col">
-                  <h3 className="text-base font-medium">
-                    {invitation.email}
-                  </h3>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-sm text-muted-foreground">
-                      Role:
-                    </span>
-                    <div className="flex gap-1">
-                      {invitation.orgRoles &&
-                        invitation.orgRoles.length > 0 &&
-                        invitation.orgRoles.map((role, index) => (
-                          <span
-                            key={index}
-                            className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-yellow-100 text-yellow-800"
-                          >
-                            {TextTitlecase(role.name)}
-                          </span>
-                        ))}
+              {invitationsList.map((invitation) => (
+                <div 
+                  key={invitation.id} 
+                  className="p-4 border border-gray-200 rounded-lg shadow-sm bg-background hover:bg-muted/50 transition-colors"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex flex-col w-1/3">
+                      <h3 className="text-base font-medium truncate">
+                        {invitation.email}
+                      </h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-sm text-muted-foreground">
+                          Role:
+                        </span>
+                        <div className="flex gap-1">
+                          {invitation.orgRoles &&
+                            invitation.orgRoles.length > 0 &&
+                            invitation.orgRoles.map((role, index) => (
+                              <span
+                                key={index}
+                                className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-yellow-100 text-yellow-800"
+                              >
+                                {TextTitlecase(role.name)}
+                              </span>
+                            ))}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-center items-center w-1/3">
+                      <span className={`text-xs font-medium px-2.5 py-0.5 rounded-md ${getStatusClass(invitation.status)}`}>
+                        {TextTitlecase(invitation.status)}
+                      </span>
+                    </div>
+                    
+                    <div className="flex flex-col items-end w-1/3 mr-16">
+                      {invitation.status === 'pending' && (orgRoles?.includes(Roles.ADMIN) || orgRoles?.includes(Roles.OWNER)) && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedInvitation(invitation.id);
+                            setShowDeletePopup(true);
+                            setError(null);
+                            setMessage(null);
+                          }}
+                          className="border border-blue-400 bg-gray-50 hover:bg-blue-50 rounded-md px-3 py-1 text-sm mb-2"
+                        >
+                          <XCircleIcon className="h-4 w-4 mr-1" />
+                          Delete Invitation
+                        </Button>
+                      )}
+                      
+                      <div className="text-sm text-muted-foreground">
+                        <DateTooltip date={invitation.createDateTime}>
+                          <span>Invited on {dateConversion(invitation.createDateTime)}</span>
+                        </DateTooltip>
+                      </div>
                     </div>
                   </div>
                 </div>
-                
-                <div className="flex items-center">
-                  <div className="flex justify-center items-center flex-col items-end mr-32">
-                    <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${getStatusClass(invitation.status)}`}>
-                      {TextTitlecase(invitation.status)}
-                    </span>
-                    <div className="text-xs text-muted-foreground mt-1">
-                    <DateTooltip date={invitation.createDateTime}>
-                            <span>Invited on {dateConversion(invitation.createDateTime)}</span>
-                          </DateTooltip>
-                    </div>
-                  </div>
-                  
-                  {invitation.status === 'pending' && (orgRoles?.includes(Roles.ADMIN) || orgRoles?.includes(Roles.OWNER)) && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedInvitation(invitation.id);
-                        setShowPopup(true);
-                        setError(null);
-                        setMessage(null);
-                      }}
-                      className="border border-yellow-400 hover:bg-yellow-50 rounded-md px-3 py-1"
-                    >
-                      <XCircleIcon className="h-4 w-4 mr-1" />
-                      Delete Invitation
-                    </Button>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-          
+              ))}         
             </div>
           )}
 
