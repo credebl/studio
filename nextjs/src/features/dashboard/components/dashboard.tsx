@@ -45,6 +45,7 @@ export default function Dashboard() {
 			currentPage.pageSize,
 			'',
 		);
+    
 		const { data } = response as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -108,23 +109,29 @@ export default function Dashboard() {
 			'',
       orgId
 		);
+    
 		const { data } = response as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+      
 			const totalPages = data?.data?.totalPages;
+      
 			const invitationPendingList =
 				data?.data?.invitations &&
 				data?.data?.invitations?.filter((invitation: { status: string }) => {
 					return invitation.status === 'pending';
 				});
+        
 			if (invitationPendingList && invitationPendingList.length > 0) {
 				setEcoMessage(`You have received invitation to join ecosystem `);
 				setViewButton(true);
 			}
+      
 			setCurrentPage({
 				...currentPage,
 				total: totalPages,
 			});
+      
 		} else {
 			setError(response as string);
 		}
