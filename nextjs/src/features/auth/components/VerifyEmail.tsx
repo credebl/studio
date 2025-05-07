@@ -56,7 +56,7 @@ export default function VerifyEmailPage() {
   };
 
   return (
-    <div className='flex min-h-screen items-center justify-center bg-gradient-to-t from-yellow-100 to-white'>
+    <div className='flex min-h-screen items-center justify-center bg-[image:var(--card-gradient)]'>
       <Card className='animate-fade-in rounded-xlp-0 w-full max-w-md shadow-md'>
         <CardContent className='p-8'>
           <div className='text-center'>

@@ -117,3 +117,11 @@ export const CredeblLogoHeight = 140;
 
 export const signInWidth = 500;
 export const signInHeight = 500;
+
+export const stepLabels = [
+  'Organization', 
+  'Agent Config', 
+  'Ledger Config', 
+  'Processing'
+];
+

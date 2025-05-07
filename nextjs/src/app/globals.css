@@ -56,6 +56,10 @@
   --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1),
     0 8px 10px -1px hsl(0 0% 0% / 0.1);
   --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+  --success: #C8F5D8;
+  --error: #f8b0b0;
+  --success-text: #339b59;
+  --error-text: #dc0425;
 }
 
 .dark {
@@ -168,4 +172,23 @@ button:not(:disabled),
 [role='button']:not(:disabled),
 a[href] {
   cursor: pointer;
+}
+
+
+.bg-success {
+  background-color: var(--success);
+  color: white;
+}
+
+.bg-error {
+  background-color: var(--error);
+  color: white;
+}
+
+.text-success {
+  color: var(--success-text);
+}
+
+.text-error {
+  color: var(--error-text);
 }
