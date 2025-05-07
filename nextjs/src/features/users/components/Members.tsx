@@ -3,6 +3,7 @@
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { PlusIcon, RotateCcwIcon, XCircleIcon } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { apiStatusCodes, confirmationMessages } from "@/config/CommonConstant";
 import { deleteOrganizationInvitation, getOrganizationUsers } from "@/app/api/organization";
 import { useEffect, useState } from "react";
 
@@ -21,7 +22,6 @@ import SendInvitationModal from "@/features/invitations/components/sendInvitatio
 import { Skeleton } from "@/components/ui/skeleton";
 import { TextTitlecase } from "@/utils/TextTransform";
 import { User } from "./users-interface";
-import { apiStatusCodes } from "@/config/CommonConstant";
 import { dateConversion } from "@/utils/DateConversion";
 import { getOrganizationInvitations } from "@/app/api/Invitation";
 import { useAppSelector } from "@/lib/hooks";
@@ -177,10 +177,6 @@ export default function Members() {
     }));
   };
 
-  const createInvitationsModel = () => {
-    setInviteModalOpen(true);
-  };
-
   const deleteInvitation = async () => {
     try {
       setDeleteLoading(true);
@@ -303,7 +299,7 @@ export default function Members() {
 
           {activeTab === 'invitations' && (orgRoles?.includes(Roles.ADMIN) || orgRoles?.includes(Roles.OWNER)) && (
             <Button 
-              onClick={createInvitationsModel}
+              onClick={() => setInviteModalOpen(true)}
               className="ml-auto flex items-center gap-2 h-10 px-4 text-sm font-semibold rounded-lg bg-primary text-primary-foreground"
             >
               <PlusIcon className="h-4 w-4" />
@@ -342,8 +338,8 @@ export default function Members() {
                 key={user.id} 
                 className="p-4 border rounded-lg shadow-sm bg-background hover:bg-muted/50 transition-colors"
               >
-                <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
-                  <div>
+                <div className="flex items-center justify-between">
+                  <div className="flex-shrink-0 w-1/3">
                     <h3 className="text-base font-semibold">
                       {user.firstName} {user.lastName}
                     </h3>
@@ -367,12 +363,14 @@ export default function Members() {
                       }
                     </div>
                   </div>
-                  
-                  <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
+
+                  <div className="flex-grow text-start">
                     <span className="text-sm text-primary font-medium truncate max-w-xs">
                       {user.email}
                     </span>
+                  </div>
 
+                  <div className="flex-shrink-0 mr-16">
                     {(orgRoles?.includes(Roles.OWNER) || orgRoles?.includes(Roles.ADMIN)) &&
                       user.roles?.includes(Roles.MEMBER) && (
                         <Button onClick={() => editUserRole(user)}>
@@ -399,6 +397,7 @@ export default function Members() {
             ))
           )}
 
+          
           {usersList && usersList.length > 0 && usersPaginationInfo.lastPage > 1 && (
             <div className="mt-6">
               <Pagination className="justify-center">
@@ -472,7 +471,7 @@ export default function Members() {
               title="No Invitations"
               description="Get started by inviting a user"
               buttonContent="Invite"
-              onClick={(orgRoles?.includes(Roles.ADMIN) || orgRoles?.includes(Roles.OWNER)) ? createInvitationsModel : undefined}
+              onClick={(orgRoles?.includes(Roles.ADMIN) || orgRoles?.includes(Roles.OWNER)) ? () => setInviteModalOpen(true) : undefined}
               height="250px"
             />
           ) : (
@@ -613,8 +612,8 @@ export default function Members() {
         openModal={showDeletePopup}
         closeModal={() => setShowDeletePopup(false)}
         onSuccess={() => deleteInvitation()}
-        message={'Would you like to proceed? Keep in mind that this action cannot be undone.'}
-        buttonTitles={["No, cancel", "Yes, I'm sure"]}
+        message={confirmationMessages.deletePendingInvitationConfirmation}
+        buttonTitles={[confirmationMessages.cancelConfirmation, confirmationMessages.sureConfirmation]}
         isProcessing={deleteLoading}
         setFailure={setError}
         setSuccess={setMessage}

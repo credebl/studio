@@ -14,3 +14,18 @@ export interface Invitation {
     email: string
     organisation: IOrganisation
 }
+
+export interface SendInvitationModalProps {
+    getAllSentInvitations?: () => void;
+    flag?: boolean;
+    openModal: boolean;
+    setMessage: (message: string) => void;
+    setOpenModal: (flag: boolean) => void;
+  }
+  
+ export interface RoleI {
+    id: string;
+    name: string;
+  }
+
+  
