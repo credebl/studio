@@ -1,4 +1,4 @@
-import { axiosGet, axiosPost } from "@/services/apiRequests";
+import { axiosGet, axiosPost, ecosystemAxiosGet } from "@/services/apiRequests";
 
 import { apiRoutes } from "@/config/apiRoutes";
 
@@ -112,7 +112,7 @@ export const acceptRejectInvitations = async (invitationId: string, orgId: strin
 
 
 // Fetch ecosystem invitations
-export const getUserEcosystemInvitations = async (orgId: string, pageNumber: number, pageSize: number, search: string) => {
+export const getUserEcosystemInvitations = async (pageNumber: number, pageSize: number, search: string, orgId: string) => {
 
 	const url = `${apiRoutes.Ecosystem.root}/${orgId}${apiRoutes.Ecosystem.usersInvitation}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
 

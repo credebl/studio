@@ -103,10 +103,10 @@ export default function Dashboard() {
   const getAllEcosystemInvitations = async () => {
 		try {
 		const response = await getUserEcosystemInvitations(
-      orgId,
 			currentPage.pageNumber,
 			currentPage.pageSize,
 			'',
+      orgId
 		);
 		const { data } = response as AxiosResponse;
 
@@ -134,8 +134,6 @@ export default function Dashboard() {
 	}
 	};
 
-  
-  
   useEffect(() => {
     if (orgId) {
       fetchOrganizationDetails();
