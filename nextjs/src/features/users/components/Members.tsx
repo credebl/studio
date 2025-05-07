@@ -227,14 +227,6 @@ export default function Members() {
     return () => clearTimeout(timer);
   };
 
-  const handleRefresh = () => {
-    if (activeTab === 'users') {
-      getAllUsers();
-    } else {
-      getAllInvitations();
-    }
-  };
-
   // Effects
   useEffect(() => {
     if (activeTab === 'users') {
@@ -263,26 +255,12 @@ export default function Members() {
         return 'bg-red-100 text-red-800';
     }
   };
-  
-  function setShowPopup(arg0: boolean) {
-    throw new Error("Function not implemented.");
-  }
 
   return (
     <div className="p-5">
       <div className="mb-6">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">Organization Members</h1>
-          <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              size="icon" 
-              onClick={handleRefresh} 
-              className="h-9 w-9"
-            >
-              <RotateCcwIcon className="h-5 w-5" />
-            </Button>
-          </div>
         </div>
         
         <AlertComponent
