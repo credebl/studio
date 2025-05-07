@@ -7,11 +7,14 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { Github } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function SignUpUser() {
   const [step, setStep] = useState(1);
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState<string>('');
+  const searchParam = useSearchParams();
+  const userEmail = searchParam.get('email')
+
   const route = useRouter();
   return (
     <div className='flex min-h-screen flex-col items-center justify-center'>
@@ -42,13 +45,12 @@ export default function SignUpUser() {
 
         {step === 1 && (
           <EmailVerificationForm
-            email={email}
+            email={userEmail ?? ''}
             setEmail={setEmail}
             goToNext={() => setStep(2)}
           />
         )}
-        {step === 2 && <UserInfoForm email={email} goBack={() => setStep(1)} />}
-
+        {step === 2 && <UserInfoForm email={userEmail ?? ''} goBack={() => setStep(1)} />}
         <div className='my-6 flex items-center justify-center gap-4'>
           <hr className='border-border flex-grow border-t' />
           <span className='text-muted-foreground text-sm'>OR</span>

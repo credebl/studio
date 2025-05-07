@@ -26,6 +26,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import PageContainer from '@/components/layout/page-container';
 import { IOrgFormValues } from './interfaces/organization';
 import { Card } from '@/components/ui/card';
+import Loader from '@/components/Loader';
 
 export default function OrganizationOnboarding() {
   const [isPublic, setIsPublic] = useState<boolean>();
@@ -187,11 +188,10 @@ export default function OrganizationOnboarding() {
 
   const handleUpdateOrganization = async (values: IOrgFormValues) => {
     setLoading(true);
-
     try {
       setSuccess(null);
       setFailure(null);
-
+  
       const orgData = {
         name: values.name,
         description: values.description,
@@ -202,25 +202,29 @@ export default function OrganizationOnboarding() {
         cityId: values.cityId,
         isPublic: isPublic
       };
-
+  
       const resCreateOrg = await updateOrganization(
         orgData,
         currentOrgId as string
       );
+  
       const { data } = resCreateOrg as AxiosResponse;
-
+  
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setSuccess(data?.message as string);
-        setLoading(false);
-        router.push('/organizations');
+        setTimeout(() => {
+          setSuccess(null);
+          setLoading(true); 
+          router.push('/organizations'); 
+        }, 3000);
       } else {
         setFailure(data?.message as string);
-
-        return null;
       }
     } catch (error) {
-      console.error('Error creating organization:', error);
-      return null;
+      console.error('Error updating organization:', error);
+      setFailure('An unexpected error occurred. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -228,6 +232,7 @@ export default function OrganizationOnboarding() {
     try {
       setSuccess(null);
       setFailure(null);
+      setLoading(true);
 
       const orgData = {
         name: values.name,
@@ -245,24 +250,29 @@ export default function OrganizationOnboarding() {
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
         const orgId = data?.data?.id || data?.data?._id;
         setSuccess(data.message as string);
-        router.push('/organizations');
+
+        setTimeout(() => {
+          setSuccess(null);
+          setLoading(true); 
+          router.push('/organizations'); 
+        }, 3000);
+
         return orgId;
       } else {
         setFailure(data?.message as string);
-
         return null;
       }
     } catch (error) {
       console.error('Error creating organization:', error);
+      setLoading(false);
       return null;
     }
   };
-
   return (
     <PageContainer>
       <div className='bg-background flex min-h-screen items-start justify-center p-6'>
         {step === 1 ? (
-          <Card className='p-8 py-12 border-border relative overflow-hidden rounded-xl border shadow-xl transition-transform duration-300 py-4'>
+          <Card className='p-8 py-12 border-border relative overflow-hidden rounded-xl border shadow-xl transition-transform duration-300 min-w-[700px] max-w-[800px] w-full'>
             <div className='mb-6 flex items-center justify-between'>
               <div>
                 <h1 className='text-2xl font-semibold'>
@@ -286,12 +296,12 @@ export default function OrganizationOnboarding() {
             )}
 
             {success && (
-              <div className='text-success text-success mb-4 rounded px-4 py-3'>
+              <div className='bg-success text-success text-success mb-4 rounded px-4 py-3'>
                 {success}
               </div>
             )}
             {failure && (
-              <div className='text-destructive mb-4 rounded px-4 py-3'>
+              <div className='bg-error text-destructive mb-4 rounded px-4 py-3'>
                 {failure}
               </div>
             )}
@@ -538,32 +548,37 @@ export default function OrganizationOnboarding() {
                   </div>
 
                   {/* Actions */}
-                  <div className='mt-6 flex justify-between'>
-                    <Button onClick={() => router.push('/organizations')}>
+                  <div className="mt-6 flex justify-between items-center">
+                    <Button variant="secondary" onClick={() => router.push('/organizations')}>
                       Back
                     </Button>
+
+                    {/* Right side: Conditional buttons */}
                     {!isEditMode ? (
-                      <>
+                      <div className="flex space-x-4">
                         <Button
-                          type='button'
+                          type="button"
+                          variant="secondary"
                           onClick={() => handleCreateOrganization(values)}
                           disabled={!isValid || !dirty}
                         >
+                          {loading ? <Loader colorClass="animate-spin" height='1.5rem' width='1.5rem' /> : null} 
                           Setup Wallet Later
                         </Button>
-                        <Button type='submit' disabled={!isValid || !dirty}>
+                        <Button type="submit" disabled={!isValid || !dirty}>
                           Continue to Agent Setup
                         </Button>
-                      </>
+                      </div>
                     ) : (
-                      <>
+                      <div className="flex">
                         <Button
-                          type='button'
+                          type="button"
                           onClick={() => handleUpdateOrganization(values)}
                         >
+                         {loading ? <Loader colorClass="animate-spin" height='1.5rem' width='1.5rem' /> : null} 
                           Save
                         </Button>
-                      </>
+                      </div>
                     )}
                   </div>
                 </Form>
