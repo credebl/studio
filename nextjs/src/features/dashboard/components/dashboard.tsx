@@ -31,7 +31,6 @@ export default function Dashboard() {
   const [currentPage, setCurrentPage] = useState(initialPageState);
 	const [informativeMessage, setInformativeMessage] = useState<string | null>('');
 	const [viewButton, setViewButton] = useState<boolean>(false);
-	const [error, setError] = useState<string | null>('');
 	const [ecoMessage, setEcoMessage] = useState<string | null>('');
 
   const orgId = useAppSelector((state) => state.organization.orgId);
@@ -60,10 +59,10 @@ export default function Dashboard() {
 				total: totalPages,
 			});
 		} else {
-			setError(response as string);
+			console.error(response as string);
 		}
 	} catch(err) {
-		setError('An unexpected error occurred');
+		console.error('An unexpected error occurred');
 	}
 	};
   
@@ -133,11 +132,11 @@ export default function Dashboard() {
 			});
       
 		} else {
-			setError(response as string);
+			console.error(response as string);
 		}
 	}
 	catch(err){
-		setError('An unexpected error occurred.');
+		console.error('An unexpected error occurred.');
 	}
 	};
 
@@ -165,7 +164,6 @@ export default function Dashboard() {
 					path={pathRoutes.users.orgInvitations}
 					onAlertClose={() => {
 						setInformativeMessage(''); 
-						setError('');   
 					}}
 					/>
 			  }				
@@ -179,7 +177,6 @@ export default function Dashboard() {
             path={`${envConfig.PUBLIC_ECOSYSTEM_FRONT_END_URL}${pathRoutes.users.dashboard}`}
             onAlertClose={() => {
                 setEcoMessage('');
-                setError('');    
             }}
         />
       }

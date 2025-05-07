@@ -36,13 +36,11 @@ const initialPageState = {
 };
 
 export default function Members() {
-  // Common state
   const [activeTab, setActiveTab] = useState('users');
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [searchText, setSearchText] = useState('');
   
-  // Users tab state
   const [userModalOpen, setUserModalOpen] = useState<boolean>(false);
   const [usersLoading, setUsersLoading] = useState<boolean>(true);
   const [usersPageState, setUsersPageState] = useState(initialPageState);
@@ -58,7 +56,6 @@ export default function Members() {
     lastPage: 1
   });
 
-  // Invitations tab state
   const [inviteModalOpen, setInviteModalOpen] = useState<boolean>(false);
   const [invitationsLoading, setInvitationsLoading] = useState<boolean>(true);
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
@@ -92,7 +89,6 @@ export default function Members() {
 		getOrgUserRole();
 	},[])
 
-  // Users tab functions
   const getAllUsers = async () => {
     setUsersLoading(true);
 
@@ -115,7 +111,6 @@ export default function Members() {
         
         setUsersList(users);
         
-        // Set pagination info
         setUsersPaginationInfo({
           totalItems: data?.data?.totalItems ?? 0,
           hasNextPage: data?.data?.hasNextPage ?? false,
@@ -145,11 +140,10 @@ export default function Members() {
     setUserModalOpen(true);
   };
 
-  // Invitations tab functions
   const getAllInvitations = async () => {
     try {
       const roles = orgInfo?.roles;
-      setOrgRoles(roles || []);
+      setOrgRoles(roles ?? []);
       setInvitationsLoading(true);
       
       const response = await getOrganizationInvitations(
@@ -165,7 +159,6 @@ export default function Members() {
         const invitationList = data?.data?.invitations;
         setInvitationsList(invitationList);
         
-        // Set pagination info
         setInvitationsPaginationInfo({
           totalItems: data?.data?.totalItems ?? 0,
           hasNextPage: data?.data?.hasNextPage ?? false,
@@ -201,7 +194,7 @@ export default function Members() {
       
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         await getAllInvitations();
-        setMessage(data?.message || 'Invitation deleted successfully');
+        setMessage(data?.message ?? 'Invitation deleted successfully');
         setShowDeletePopup(false);
       } else {
         setError(response as string);
@@ -238,7 +231,6 @@ export default function Members() {
     return () => clearTimeout(timer);
   };
 
-  // Effects
   useEffect(() => {
     if (activeTab === 'users') {
       getAllUsers();

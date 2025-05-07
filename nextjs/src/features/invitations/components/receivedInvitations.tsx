@@ -3,7 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChangeEvent, useEffect, useState } from "react";
-import { CheckIcon, XIcon } from "lucide-react";
+import { CheckIcon, RotateCcwIcon, XIcon } from "lucide-react";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { acceptRejectInvitations, getUserInvitations } from '@/app/api/Invitation';
 
@@ -16,7 +16,6 @@ import { Input } from "@/components/ui/input";
 import { Invitation } from "../interfaces/invitation-interface";
 import Loader from "@/components/Loader";
 import { OrgRole } from "@/features/users/components/users-interface";
-import { RotateCcwIcon } from "lucide-react";
 import { apiStatusCodes } from "@/config/CommonConstant";
 import { pathRoutes } from "@/config/pathRoutes";
 
@@ -27,7 +26,6 @@ const initialPageState = {
 };
 
 export default function ReceivedInvitations() {
-  const [openModal, setOpenModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -89,7 +87,7 @@ export default function ReceivedInvitations() {
     }
 
     return () => clearTimeout(getData);
-  }, [searchText, openModal, currentPage.pageNumber]);
+  }, [searchText, currentPage.pageNumber]);
 
   // onChange of Search input text
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -207,7 +205,7 @@ export default function ReceivedInvitations() {
 
           {(message || error) && (
             <AlertComponent
-              message={message ? message : error}
+              message={message ?? error}
               type={message ? 'success' : 'destructive'}
               onAlertClose={() => {
                 setMessage(null);
@@ -230,7 +228,7 @@ export default function ReceivedInvitations() {
             ) : (
               <div className="space-y-4">
                 {invitationsList.map((invitation, index) => (
-                  <Card key={invitation.id || index} className="overflow-hidden">
+                  <Card key={invitation.id ?? index} className="overflow-hidden">
                     <CardContent className="p-6">
                       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div className="flex items-start gap-4">
