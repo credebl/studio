@@ -113,9 +113,7 @@ export default function Dashboard() {
 		const { data } = response as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-      
-			const totalPages = data?.data?.totalPages;
-      
+            
 			const invitationPendingList =
 				data?.data?.invitations &&
 				data?.data?.invitations?.filter((invitation: { status: string }) => {
@@ -127,6 +125,8 @@ export default function Dashboard() {
 				setViewButton(true);
 			}
       
+      const totalPages = data?.data?.totalPages;
+
 			setCurrentPage({
 				...currentPage,
 				total: totalPages,
