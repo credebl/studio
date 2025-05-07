@@ -15,6 +15,7 @@ import { AxiosResponse } from 'axios';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import Loader from '@/components/Loader';
 import { Organization } from '@/features/dashboard/type/organization';
 import { Plus } from 'lucide-react';
 import { apiStatusCodes } from '@/config/CommonConstant';
@@ -138,16 +139,18 @@ export const OrganizationList = () => {
     </Button>
         </div>
       </div>
-
+    
       <div className='mx-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
-        {loading ? (
-          <div className=''>Loading organizations...</div>
+      {loading ? (
+                <div className='mb-4 flex items-center justify-center'>
+                  <Loader height='2rem' width='2rem' />
+                </div>
         ) : organizationsList.length > 0 ? (
           organizationsList.map((org) => (
             <Card
               key={org.id}
               onClick={() => handleCardClick(org.id)}
-              className='cursor-pointer p-6 transition-all hover:shadow-md'
+              className='cursor-pointer p-6 transition-all border-border relative h-full w-full overflow-hidden rounded-xl border shadow-xl transition-transform duration-300 py-4'
             >
                <div className="flex items-start gap-4">
                 <Avatar className='h-16 w-16 rounded-md'>
@@ -163,9 +166,10 @@ export const OrganizationList = () => {
                 <div className='flex-1'>
                   <h3 className='text-lg font-semibold'>{org.name}</h3>
                   <p className=''>{org.description}</p>
-                  <div className='mt-2 text-sm'>
-                    Role(s):{' '}
-                    <span className='rounded-full px-2 py-1 text-xs'>
+                  <div className='mt-2 text-md flex items-center gap-1'>
+                    <span className='font-bold'>Role(s):</span>
+                    <span>{' '}</span>
+                    <span className='rounded-md px-3 py-1 bg-secondary text-secondary-foreground'>
                       {org.userOrgRoles[0].orgRole.name || 'No Role'}
                     </span>
                   </div>
