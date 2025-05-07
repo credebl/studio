@@ -64,6 +64,7 @@ export default function SendInvitationModal({
         setErrorMsg(resRoles as string);
       }
     } catch (error) {
+      console.error('Failed to fetch roles', error);
       setErrorMsg('Failed to fetch roles');
     }
   };
@@ -119,6 +120,7 @@ export default function SendInvitationModal({
         setErrorMsg(resCreateOrg as string);
       }
     } catch (error) {
+      console.error('Failed to send invitations', error);
       setErrorMsg('Failed to send invitations');
     } finally {
       setLoading(false);

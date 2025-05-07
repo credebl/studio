@@ -1,17 +1,34 @@
 'use client';
 
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
-import { PlusIcon, RotateCcwIcon, XCircleIcon } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious
+} from "@/components/ui/pagination";
+// Icons
+import { PlusIcon, XCircleIcon } from "lucide-react";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger
+} from "@/components/ui/tabs";
+// Constants and Types
 import { apiStatusCodes, confirmationMessages } from "@/config/CommonConstant";
+// API and Utils
 import { deleteOrganizationInvitation, getOrganizationUsers } from "@/app/api/organization";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { AlertComponent } from "@/components/AlertComponent";
 import { AxiosResponse } from "axios";
+// UI Components
 import { Button } from "@/components/ui/button";
 import ConfirmationModal from "@/components/confirmation-modal";
 import DateTooltip from "@/components/DateTooltip";
+// Components
 import EditUserRoleModal from "./EditUserRoleModal";
 import { EmptyMessage } from "@/components/EmptyMessage";
 import { IconSearch } from "@tabler/icons-react";
@@ -35,63 +52,55 @@ const initialPageState = {
   total: 0,
 };
 
+const initialPaginationInfo = {
+  totalItems: 0,
+  hasNextPage: false,
+  hasPreviousPage: false,
+  nextPage: 1,
+  previousPage: 0,
+  lastPage: 1
+};
+
 export default function Members() {
   const [activeTab, setActiveTab] = useState('users');
+  
   const [message, setMessage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null); 
   const [searchText, setSearchText] = useState('');
   
-  const [userModalOpen, setUserModalOpen] = useState<boolean>(false);
   const [usersLoading, setUsersLoading] = useState<boolean>(true);
-  const [usersPageState, setUsersPageState] = useState(initialPageState);
   const [usersList, setUsersList] = useState<Array<User> | null>(null);
+  const [usersPageState, setUsersPageState] = useState(initialPageState);
+  const [usersPaginationInfo, setUsersPaginationInfo] = useState(initialPaginationInfo);
+  const [userModalOpen, setUserModalOpen] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [orgRoles, setOrgRoles] = useState<string[]>([]);
-  const [usersPaginationInfo, setUsersPaginationInfo] = useState({
-    totalItems: 0,
-    hasNextPage: false,
-    hasPreviousPage: false,
-    nextPage: 1,
-    previousPage: 0,
-    lastPage: 1
-  });
-
-  const [inviteModalOpen, setInviteModalOpen] = useState<boolean>(false);
+  
   const [invitationsLoading, setInvitationsLoading] = useState<boolean>(true);
+  const [invitationsList, setInvitationsList] = useState<Array<Invitation> | null>(null);
+  const [invitationsPageState, setInvitationsPageState] = useState(initialPageState);
+  const [invitationsPaginationInfo, setInvitationsPaginationInfo] = useState(initialPaginationInfo);
+  const [inviteModalOpen, setInviteModalOpen] = useState<boolean>(false);
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
   const [selectedInvitation, setSelectedInvitation] = useState<string>('');
   const [showDeletePopup, setShowDeletePopup] = useState<boolean>(false);
-  const [invitationsPageState, setInvitationsPageState] = useState(initialPageState);
-  const [invitationsList, setInvitationsList] = useState<Array<Invitation> | null>(null);
-  const [invitationsPaginationInfo, setInvitationsPaginationInfo] = useState({
-    totalItems: 0,
-    hasNextPage: false,
-    hasPreviousPage: false,
-    nextPage: 1,
-    previousPage: 0,
-    lastPage: 1
-  });
-
+  
+  const [orgRoles, setOrgRoles] = useState<string[]>([]);
   const [orgUserRole, setOrgUserRole] = useState<string[]>([]);
-
+  
   const orgId = useAppSelector((state) => state.organization.orgId);
-  const orgInfo = useAppSelector((state) => state.organization.orgInfo)
+  const orgInfo = useAppSelector((state) => state.organization.orgInfo);
 
-  const getOrgUserRole = async () => {
-		const orgRoles = orgInfo?.roles;
-
-    if (orgRoles) {
-      setOrgUserRole(orgRoles);
+  const getOrgUserRole = useCallback(() => {
+    if (orgInfo?.roles) {
+      setOrgUserRole(orgInfo.roles);
     }
-	};
+  }, [orgInfo?.roles]);
 
-	useEffect(() => {
-		getOrgUserRole();
-	},[])
-
-  const getAllUsers = async () => {
+  const getAllUsers = useCallback(async () => {
+    if (!orgId) return;
+    
     setUsersLoading(true);
-
+    
     try {
       const response = await getOrganizationUsers(
         orgId,
@@ -99,18 +108,18 @@ export default function Members() {
         usersPageState.pageSize,
         usersPageState.search
       );
+      
       const { data } = response as AxiosResponse;
-
+      
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         const users = data?.data?.users.map((userOrg: User) => {
           const roles: string[] = userOrg.userOrgRoles.map(
             (role) => role.orgRole.name
           );
           return { ...userOrg, roles };
-        });        
+        });
         
         setUsersList(users);
-        
         setUsersPaginationInfo({
           totalItems: data?.data?.totalItems ?? 0,
           hasNextPage: data?.data?.hasNextPage ?? false,
@@ -126,39 +135,29 @@ export default function Members() {
     } finally {
       setUsersLoading(false);
     }
-  };
+  }, [orgId, usersPageState.pageNumber, usersPageState.pageSize, usersPageState.search]);
 
-  const handleUsersPageChange = (page: number) => {
-    setUsersPageState((prev) => ({
-      ...prev,
-      pageNumber: page
-    }));
-  };
-
-  const editUserRole = (user: User) => {
-    setSelectedUser(user);
-    setUserModalOpen(true);
-  };
-
-  const getAllInvitations = async () => {
+  const getAllInvitations = useCallback(async () => {
+    if (!orgId) return;
+    
+    setInvitationsLoading(true);
+    
     try {
-      const roles = orgInfo?.roles;
-      setOrgRoles(roles ?? []);
-      setInvitationsLoading(true);
+      if (orgInfo?.roles) {
+        setOrgRoles(orgInfo.roles);
+      }
       
       const response = await getOrganizationInvitations(
-        orgId, 
-        invitationsPageState.pageNumber, 
-        invitationsPageState.pageSize, 
+        orgId,
+        invitationsPageState.pageNumber,
+        invitationsPageState.pageSize,
         invitationsPageState.search
       );
       
       const { data } = response as AxiosResponse;
-
+      
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        const invitationList = data?.data?.invitations;
-        setInvitationsList(invitationList);
-        
+        setInvitationsList(data?.data?.invitations);
         setInvitationsPaginationInfo({
           totalItems: data?.data?.totalItems ?? 0,
           hasNextPage: data?.data?.hasNextPage ?? false,
@@ -174,22 +173,51 @@ export default function Members() {
     } finally {
       setInvitationsLoading(false);
     }
-  };
+  }, [orgId, orgInfo?.roles, invitationsPageState.pageNumber, invitationsPageState.pageSize, invitationsPageState.search]);
 
-  const handleInvitationsPageChange = (page: number) => {
-    setInvitationsPageState((prev) => ({
-      ...prev,
-      pageNumber: page
-    }));
-  };
+  const handleUsersPageChange = useCallback((page: number) => {
+    setUsersPageState(prev => ({ ...prev, pageNumber: page }));
+  }, []);
 
-  const deleteInvitation = async () => {
+  const handleInvitationsPageChange = useCallback((page: number) => {
+    setInvitationsPageState(prev => ({ ...prev, pageNumber: page }));
+  }, []);
+
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchText(value);
+    
+    const timer = setTimeout(() => {
+      if (activeTab === 'users') {
+        setUsersPageState(prev => ({
+          ...prev,
+          search: value,
+          pageNumber: 1
+        }));
+      } else {
+        setInvitationsPageState(prev => ({
+          ...prev,
+          search: value,
+          pageNumber: 1
+        }));
+      }
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, [activeTab]);
+
+  const editUserRole = useCallback((user: User) => {
+    setSelectedUser(user);
+    setUserModalOpen(true);
+  }, []);
+
+  const deleteInvitation = useCallback(async () => {
+    if (!orgId || !selectedInvitation) return;
+    
+    setDeleteLoading(true);
+    
     try {
-      setDeleteLoading(true);
-      const invitationId = selectedInvitation;
-      
-      const response = await deleteOrganizationInvitation(orgId, invitationId);
-      
+      const response = await deleteOrganizationInvitation(orgId, selectedInvitation);
       const { data } = response as AxiosResponse;
       
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -205,50 +233,9 @@ export default function Members() {
     } finally {
       setDeleteLoading(false);
     }
-  };
+  }, [orgId, selectedInvitation, getAllInvitations]);
 
-  // Common functions
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchText(value);
-    
-    const timer = setTimeout(() => {
-      if (activeTab === 'users') {
-        setUsersPageState((prev) => ({
-          ...prev,
-          search: value,
-          pageNumber: 1
-        }));
-      } else {
-        setInvitationsPageState((prev) => ({
-          ...prev,
-          search: value,
-          pageNumber: 1
-        }));
-      }
-    }, 500);
-    
-    return () => clearTimeout(timer);
-  };
-
-  useEffect(() => {
-    if (activeTab === 'users') {
-      getAllUsers();
-    } else {
-      getAllInvitations();
-    }
-  }, [activeTab]);
-
-  useEffect(() => {
-    getAllUsers();
-  }, [usersPageState.pageNumber, usersPageState.search, usersPageState.sortingOrder]);
-
-  useEffect(() => {
-    getAllInvitations();
-  }, [invitationsPageState.pageNumber, invitationsPageState.search, inviteModalOpen]);
-
-
-  const getStatusClass = (status: string) => {
+  const getStatusClass = useCallback((status: string) => {
     switch(status) {
       case 'pending':
         return 'bg-orange-100 text-orange-800';
@@ -257,7 +244,106 @@ export default function Members() {
       default:
         return 'bg-red-100 text-red-800';
     }
+  }, []);
+
+  useEffect(() => {
+    getOrgUserRole();
+  }, [getOrgUserRole]);
+
+  useEffect(() => {
+    if (activeTab === 'users') {
+      getAllUsers();
+    } else {
+      getAllInvitations();
+    }
+  }, [activeTab, getAllUsers, getAllInvitations]);
+
+  useEffect(() => {
+    if (activeTab === 'users') {
+      getAllUsers();
+    }
+  }, [usersPageState.pageNumber, usersPageState.search, usersPageState.sortingOrder, activeTab, getAllUsers]);
+
+  useEffect(() => {
+    if (activeTab === 'invitations') {
+      getAllInvitations();
+    }
+  }, [invitationsPageState.pageNumber, invitationsPageState.search, inviteModalOpen, activeTab, getAllInvitations]);
+
+  useEffect(() => {
+    setSearchText('');
+  }, [activeTab]);
+
+  const renderSkeletons = () => (
+    Array.from({ length: 3 }).map((_, index) => (
+      <div key={index} className="p-4 border rounded-lg shadow-sm bg-background animate-pulse">
+        <div className="flex justify-between items-center">
+          <div>
+            <Skeleton className="h-6 w-40 mb-2" />
+            <div className="flex items-center space-x-2">
+              <Skeleton className="h-5 w-20" />
+            </div>
+          </div>
+          <div className="flex items-center space-x-3">
+            <Skeleton className="h-5 w-40" />
+            <Skeleton className="h-8 w-8 rounded-full" />
+          </div>
+        </div>
+      </div>
+    ))
+  );
+
+  const renderPagination = (
+    currentPage: number, 
+    totalPages: number, 
+    hasPrevPage: boolean,
+    hasNextPage: boolean,
+    prevPage: number,
+    nextPage: number,
+    onPageChange: (page: number) => void
+  ) => {
+    if (totalPages <= 1) return null;
+    
+    return (
+      <div className="mt-6">
+        <Pagination className="justify-center">
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => hasPrevPage && onPageChange(prevPage)}
+                className={!hasPrevPage ? "pointer-events-none opacity-50" : ""}
+              />
+            </PaginationItem>
+
+            {Array.from({ length: totalPages }, (_, index) => {
+              const page = index + 1;
+              const isActive = page === currentPage;
+
+              return (
+                <PaginationItem key={page}>
+                  <PaginationLink
+                    onClick={() => onPageChange(page)}
+                    className={isActive ? 'bg-primary text-primary-foreground hover:bg-primary/90' : ''}
+                  >
+                    {page}
+                  </PaginationLink>
+                </PaginationItem>
+              );
+            })}
+
+            <PaginationItem>
+              <PaginationNext
+                onClick={() => hasNextPage && onPageChange(nextPage)}
+                className={!hasNextPage ? "pointer-events-none opacity-50" : ""}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </div>
+    );
   };
+
+  const hasAdminRights = orgUserRole?.includes(Roles.ADMIN) || orgUserRole?.includes(Roles.OWNER);
 
   return (
     <div className="p-5">
@@ -266,14 +352,16 @@ export default function Members() {
           <h1 className="text-2xl font-bold">Organization Members</h1>
         </div>
         
-        <AlertComponent
-          message={message ?? error}
-          type={message ? 'success' : 'failure'}
-          onAlertClose={() => {
-            setMessage(null);
-            setError(null);
-          }}
-        />
+        {(message ?? error) && (
+          <AlertComponent
+            message={message ?? error}
+            type={message ? 'success' : 'failure'}
+            onAlertClose={() => {
+              setMessage(null);
+              setError(null);
+            }}
+          />
+        )}
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -304,7 +392,7 @@ export default function Members() {
             <IconSearch className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
           </div>
 
-          {activeTab === 'invitations' && (orgRoles?.includes(Roles.ADMIN) || orgRoles?.includes(Roles.OWNER)) && (
+          {activeTab === 'invitations' && hasAdminRights && (
             <Button 
               onClick={() => setInviteModalOpen(true)}
               className="ml-auto flex items-center gap-2 h-10 px-4 text-sm font-semibold rounded-lg bg-primary text-primary-foreground"
@@ -317,22 +405,7 @@ export default function Members() {
 
         <TabsContent value="users" className="space-y-4 mt-0">
           {usersLoading ? (
-            Array.from({ length: 3 }).map((_, index) => (
-              <div key={index} className="p-4 border rounded-lg shadow-sm bg-background animate-pulse">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <Skeleton className="h-6 w-40 mb-2" />
-                    <div className="flex items-center space-x-2">
-                      <Skeleton className="h-5 w-20" />
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <Skeleton className="h-5 w-40" />
-                    <Skeleton className="h-8 w-8 rounded-full" />
-                  </div>
-                </div>
-              </div>
-            ))
+            renderSkeletons()
           ) : !usersList || usersList.length === 0 ? (
             <EmptyMessage
               title="No Members"
@@ -342,8 +415,7 @@ export default function Members() {
           ) : (
             usersList.map((user) => (
               <div 
-                key={user.id} 
-
+                key={user.id}
                 className="p-4 border border-gray-200 rounded-lg shadow-sm bg-background"
               >
                 <div className="flex items-center justify-between">
@@ -379,25 +451,24 @@ export default function Members() {
                   </div>
 
                   <div className="flex-shrink-0 mr-24">
-                    {(orgUserRole?.includes(Roles.OWNER) || orgUserRole?.includes(Roles.ADMIN)) && 
-                      !user.roles?.includes(Roles.OWNER) && (
-                        <Button onClick={() => editUserRole(user)}>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            strokeWidth="2"
-                            stroke="currentColor"
-                            fill="none"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path stroke="none" d="M0 0h24v24H0z" />
-                            <path d="M9 7 h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3" />
-                            <path d="M9 15h3l8.5 -8.5a1.5 1.5 0 0 0 -3 -3l-8.5 8.5v3" />
-                            <line x1="16" y1="5" x2="19" y2="8" />
-                          </svg>
-                        </Button>
+                    {hasAdminRights && !user.roles?.includes(Roles.OWNER) && (
+                      <Button onClick={() => editUserRole(user)}>
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          strokeWidth="2"
+                          stroke="currentColor"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" />
+                          <path d="M9 7 h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3" />
+                          <path d="M9 15h3l8.5 -8.5a1.5 1.5 0 0 0 -3 -3l-8.5 8.5v3" />
+                          <line x1="16" y1="5" x2="19" y2="8" />
+                        </svg>
+                      </Button>
                     )}
                   </div>
                 </div>
@@ -405,81 +476,26 @@ export default function Members() {
             ))
           )}
 
-          
-          {usersList && usersList.length > 0 && usersPaginationInfo.lastPage > 1 && (
-            <div className="mt-6">
-              <Pagination className="justify-center">
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious
-                      onClick={() =>
-                        usersPaginationInfo.hasPreviousPage &&
-                        handleUsersPageChange(usersPaginationInfo.previousPage)
-                      }
-                      className={!usersPaginationInfo.hasPreviousPage ? "pointer-events-none opacity-50" : ""}
-                    />
-                  </PaginationItem>
-
-                  {Array.from({ length: usersPaginationInfo.lastPage }, (_, index) => {
-                    const page = index + 1;
-                    const isActive = page === usersPageState.pageNumber;
-
-                    return (
-                      <PaginationItem key={page}>
-                        <PaginationLink
-                          onClick={() => handleUsersPageChange(page)}
-                          className={
-                            isActive
-                              ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-                              : ''
-                          }
-                        >
-                          {page}
-                        </PaginationLink>
-                      </PaginationItem>
-                    );
-                  })}
-
-                  <PaginationItem>
-                    <PaginationNext
-                      onClick={() =>
-                        usersPaginationInfo.hasNextPage &&
-                        handleUsersPageChange(usersPaginationInfo.nextPage)
-                      }
-                      className={!usersPaginationInfo.hasNextPage ? "pointer-events-none opacity-50" : ""}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            </div>
+          {renderPagination(
+            usersPageState.pageNumber,
+            usersPaginationInfo.lastPage,
+            usersPaginationInfo.hasPreviousPage,
+            usersPaginationInfo.hasNextPage,
+            usersPaginationInfo.previousPage,
+            usersPaginationInfo.nextPage,
+            handleUsersPageChange
           )}
         </TabsContent>
         
-        {/* Invitations Tab Content */}
         <TabsContent value="invitations" className="mt-0 space-y-4">
           {invitationsLoading ? (
-            Array.from({ length: 3 }).map((_, index) => (
-              <div key={index} className="p-4 border rounded-lg shadow-sm bg-background animate-pulse mb-4">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <Skeleton className="h-6 w-40 mb-2" />
-                    <div className="flex items-center space-x-2">
-                      <Skeleton className="h-5 w-20" />
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <Skeleton className="h-5 w-40" />
-                    <Skeleton className="h-8 w-8 rounded-full" />
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : !invitationsList || invitationsList?.length === 0 ? (
+            renderSkeletons()
+          ) : !invitationsList || invitationsList.length === 0 ? (
             <EmptyMessage
               title="No Invitations"
               description="Get started by inviting a user"
               buttonContent="Invite"
-              onClick={(orgRoles?.includes(Roles.ADMIN) || orgRoles?.includes(Roles.OWNER)) ? () => setInviteModalOpen(true) : undefined}
+              onClick={hasAdminRights ? () => setInviteModalOpen(true) : undefined}
               height="250px"
             />
           ) : (
@@ -520,7 +536,7 @@ export default function Members() {
                     </div>
                     
                     <div className="flex flex-col items-end w-1/3 mr-16">
-                      {invitation.status === 'pending' && (orgRoles?.includes(Roles.ADMIN) || orgRoles?.includes(Roles.OWNER)) && (
+                      {invitation.status === 'pending' && hasAdminRights && (
                         <Button
                           variant="outline"
                           size="sm"
@@ -549,63 +565,27 @@ export default function Members() {
             </div>
           )}
 
-          {invitationsList && invitationsList.length > 0 && invitationsPaginationInfo.lastPage > 1 && (
-            <div className="mt-6">
-              <Pagination className="justify-center">
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious
-                      onClick={() =>
-                        invitationsPaginationInfo.hasPreviousPage &&
-                        handleInvitationsPageChange(invitationsPaginationInfo.previousPage)
-                      }
-                      className={!invitationsPaginationInfo.hasPreviousPage ? "pointer-events-none opacity-50" : ""}
-                    />
-                  </PaginationItem>
-
-                  {Array.from({ length: invitationsPaginationInfo.lastPage }, (_, index) => {
-                    const page = index + 1;
-                    const isActive = page === invitationsPageState.pageNumber;
-
-                    return (
-                      <PaginationItem key={page}>
-                        <PaginationLink
-                          onClick={() => handleInvitationsPageChange(page)}
-                          className={
-                            isActive
-                              ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-                              : ''
-                          }
-                        >
-                          {page}
-                        </PaginationLink>
-                      </PaginationItem>
-                    );
-                  })}
-
-                  <PaginationItem>
-                    <PaginationNext
-                      onClick={() =>
-                        invitationsPaginationInfo.hasNextPage &&
-                        handleInvitationsPageChange(invitationsPaginationInfo.nextPage)
-                      }
-                      className={!invitationsPaginationInfo.hasNextPage ? "pointer-events-none opacity-50" : ""}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            </div>
+          {renderPagination(
+            invitationsPageState.pageNumber,
+            invitationsPaginationInfo.lastPage,
+            invitationsPaginationInfo.hasPreviousPage,
+            invitationsPaginationInfo.hasNextPage,
+            invitationsPaginationInfo.previousPage,
+            invitationsPaginationInfo.nextPage,
+            handleInvitationsPageChange
           )}
         </TabsContent>
       </Tabs>
 
       {/* Modals */}
-      <EditUserRoleModal
-        openModal={userModalOpen}
-        user={selectedUser as User}
-        setMessage={(data) => setMessage(data)}
-        setOpenModal={setUserModalOpen}
-      />
+      {selectedUser && (
+        <EditUserRoleModal
+          openModal={userModalOpen}
+          user={selectedUser}
+          setMessage={(data) => setMessage(data)}
+          setOpenModal={setUserModalOpen}
+        />
+      )}
 
       <SendInvitationModal
         openModal={inviteModalOpen}
@@ -619,7 +599,7 @@ export default function Members() {
         failure={error}
         openModal={showDeletePopup}
         closeModal={() => setShowDeletePopup(false)}
-        onSuccess={() => deleteInvitation()}
+        onSuccess={deleteInvitation}
         message={confirmationMessages.deletePendingInvitationConfirmation}
         buttonTitles={[confirmationMessages.cancelConfirmation, confirmationMessages.sureConfirmation]}
         isProcessing={deleteLoading}

@@ -62,7 +62,7 @@ export default function Dashboard() {
 			console.error(response as string);
 		}
 	} catch(err) {
-		console.error('An unexpected error occurred');
+		console.error('An unexpected error occurred', err);
 	}
 	};
   
@@ -112,14 +112,12 @@ export default function Dashboard() {
 		const { data } = response as AxiosResponse;
 
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-            
-			const invitationPendingList =
-				data?.data?.invitations &&
-				data?.data?.invitations?.filter((invitation: { status: string }) => {
-					return invitation.status === 'pending';
-				});
+
+        const pendingInvitations = data?.data?.invitations?.filter(
+          (invitation: { status: string }) => invitation.status === 'pending'
+        );        
         
-			if (invitationPendingList && invitationPendingList.length > 0) {
+			if (pendingInvitations && pendingInvitations.length > 0) {
 				setEcoMessage(`You have received invitation to join ecosystem `);
 				setViewButton(true);
 			}
@@ -136,7 +134,7 @@ export default function Dashboard() {
 		}
 	}
 	catch(err){
-		console.error('An unexpected error occurred.');
+		console.error('An unexpected error occurred.', err);
 	}
 	};
 
