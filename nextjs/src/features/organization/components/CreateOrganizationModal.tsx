@@ -50,7 +50,6 @@ export default function OrganizationOnboarding() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const currentOrgId = searchParams.get('orgId');
-  // const OrganizationsId = searchParams.get('organizationId')
   const stepParam = searchParams.get('step');
 
   const dispatch = useDispatch();
