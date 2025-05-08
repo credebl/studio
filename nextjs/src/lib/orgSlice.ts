@@ -1,5 +1,5 @@
 // src/lib/orgSlice.ts
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 interface OrgInfo {
   id?: string;
@@ -12,13 +12,17 @@ interface OrgInfo {
 interface OrgState {
   orgId: string;
   ledgerId: string;
+  selectedOrgId: string;
   orgInfo: OrgInfo | null;
+  orgRoles: string[];
 }
 
 const initialState: OrgState = {
   orgId: '',
   ledgerId: '',
-  orgInfo: null
+  selectedOrgId: '',
+  orgInfo: null,
+  orgRoles: []
 };
 
 const orgSlice = createSlice({
@@ -33,6 +37,12 @@ const orgSlice = createSlice({
     },
     setOrgInfo: (state, action: PayloadAction<OrgInfo>) => {
       state.orgInfo = action.payload;
+    },
+    setSelectedOrgId: (state, action: PayloadAction<string>) => {
+      state.selectedOrgId = action.payload;
+    },
+    setOrgRoles: (state, action: PayloadAction<string[]>) => {
+      state.orgRoles = action.payload;
     },
     clearOrgId: (state) => {
       state.orgId = '';
@@ -50,6 +60,8 @@ export const {
   setOrgId,
   setLedgerId,
   setOrgInfo,
+  setSelectedOrgId,
+  setOrgRoles,
   clearOrgId,
   clearLedgerId,
   clearOrgInfo

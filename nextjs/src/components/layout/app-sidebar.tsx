@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { IconChevronRight } from '@tabler/icons-react';
 
 import {
@@ -26,7 +26,11 @@ import { Icons } from '../icons';
 import { navItems } from '@/constants/data';
 import { useThemeConfig } from '../active-theme';
 import Image from 'next/image';
+import { setOrgId, setOrgInfo } from '@/lib/orgSlice';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { useEffect, useState } from 'react';
 
+import { getOrganizations } from '@/app/api/organization';
 export default function AppSidebar() {
   const pathname = usePathname();
 
@@ -36,6 +40,83 @@ export default function AppSidebar() {
     activeTheme === 'credebl'
       ? '/images/CREDEBL_Logo_Web.svg'
       : '/images/sovio_logo.svg';
+
+  // export default function AppSidebar() {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
+  const [currentPage] = useState(1);
+  const [pageSize] = useState(10);
+  const [searchTerm] = useState('');
+  const [orgList, setOrgList] = useState<any[]>([]);
+
+  const selectedOrgId = useAppSelector((state) => state.organization.orgId);
+
+  const selectedOrg = orgList.find((org) => org.id === selectedOrgId) ?? null;
+
+  useEffect(() => {
+    const fetchOrganizations = async () => {
+      try {
+        const response = await getOrganizations(
+          currentPage,
+          pageSize,
+          searchTerm,
+          ''
+        );
+        if (
+          typeof response !== 'string' &&
+          response?.data?.data?.organizations
+        ) {
+          const orgs = response.data.data.organizations;
+          setOrgList(orgs);
+
+          // Only set initial organization if no organization is currently selected in Redux
+          if (!selectedOrgId && orgs.length > 0) {
+            dispatch(setOrgId(orgs[0]?.id));
+            dispatch(
+              setOrgInfo({
+                id: orgs[0]?.id,
+                name: orgs[0]?.name,
+                description: orgs[0]?.description,
+                logoUrl: orgs[0]?.logoUrl,
+                roles:
+                  orgs[0]?.userOrgRoles?.map(
+                    (role: any) => role?.orgRole?.name
+                  ) || []
+              })
+            );
+          }
+        } else {
+          setOrgList([]);
+        }
+      } catch (err) {
+        console.error('Error fetching organizations:', err);
+      }
+    };
+
+    fetchOrganizations();
+  }, [dispatch, currentPage, pageSize, searchTerm, selectedOrgId]);
+
+  const handleSwitchTenant = (orgId: string) => {
+    const selected = orgList.find((org) => org.id === orgId);
+    if (selected) {
+      dispatch(setOrgId(selected.id));
+      dispatch(
+        setOrgInfo({
+          id: selected.id,
+          name: selected.name,
+          description: selected.description,
+          logoUrl: selected.logoUrl,
+          roles:
+            selected.userOrgRoles?.map((role: any) => role?.orgRole?.name) || []
+        })
+      );
+
+      router.push(`/organizations/dashboard/${selected.id}`);
+    }
+  };
+
+  const activeTenant = selectedOrg || orgList[0];
 
   return (
     <Sidebar collapsible='icon'>

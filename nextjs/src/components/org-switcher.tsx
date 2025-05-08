@@ -15,6 +15,7 @@ import {
   SidebarMenuItem
 } from '@/components/ui/sidebar';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+
 import { setOrgId } from '@/lib/orgSlice';
 import Image from 'next/image';
 
@@ -40,9 +41,20 @@ export function OrgSwitcher({
 
   const dispatch = useAppDispatch();
 
+  const selectedOrgId = useAppSelector((state) => state.organization.orgId);
+
+  const currentTenant = React.useMemo(() => {
+    if (selectedOrgId) {
+      const found = tenants.find((tenant) => tenant.id === selectedOrgId);
+      if (found) return found;
+    }
+
+    return defaultTenant ?? (tenants.length > 0 ? tenants[0] : undefined);
+  }, [selectedOrgId, tenants, defaultTenant]);
+
   const handleTenantSwitch = (tenant: Tenant) => {
-    setSelectedTenant(tenant);
     dispatch(setOrgId(tenant.id));
+
     if (onTenantSwitch) {
       onTenantSwitch(tenant.id);
     }
@@ -97,6 +109,9 @@ export function OrgSwitcher({
                     tenants.find((t) => t.id === tenantId)?.name ??
                     'Select Organization'}
                 </span>
+                {/* <div className='flex flex-col gap-0.5 leading-none'>
+                  <span>{currentTenant?.name ?? 'Select Organization'}</span>
+                </div> */}
               </div>
 
               <ChevronsUpDown className='ml-auto shrink-0' />
@@ -129,6 +144,9 @@ export function OrgSwitcher({
                 </div>
                 <span className='truncate'>{tenant.name}</span>
                 {tenant.id === selectedTenant?.id && (
+                  <span className='truncate'>{tenant.name}</span>
+                )}
+                {tenant.id === currentTenant?.id && (
                   <Check className='ml-auto' />
                 )}
               </DropdownMenuItem>
