@@ -27,6 +27,7 @@ import { Card } from '@/components/ui/card';
 import Loader from '@/components/Loader';
 import { useDispatch } from 'react-redux';
 import { getAllCities, getAllCountries, getAllStates } from '@/app/api/geolocation';
+import { AlertComponent } from '@/components/AlertComponent';
 
 export default function OrganizationOnboarding() {
   const [isPublic, setIsPublic] = useState<boolean>();
@@ -252,20 +253,21 @@ export default function OrganizationOnboarding() {
 
       const resCreateOrg = await createOrganization(orgData);
       const { data } = resCreateOrg as AxiosResponse;
+      setLoading(false); 
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
         const orgId = data?.data?.id || data?.data?._id;
         setSuccess(data.message as string);
 
         setTimeout(() => {
-          setSuccess(null);
-          setLoading(true); 
           router.push('/organizations'); 
-        }, 3000);
+        }, 2000);
 
+        dispatch(setOrgId(orgId));
         return orgId;
+
       } else {
-        setFailure(data?.message as string);
+        setFailure(resCreateOrg as string);
         return null;
       }
     } catch (error) {
@@ -299,14 +301,26 @@ export default function OrganizationOnboarding() {
               <Stepper currentStep={1} totalSteps={totalSteps} />
             )}
 
-            {success && (
-              <div className='bg-success text-success text-success mb-4 rounded px-4 py-3'>
-                {success}
+           {success && (
+              <div className="w-full" role="alert">
+                <AlertComponent
+                  message={success}
+                  type={'success'}
+                  onAlertClose={() => {
+                    setSuccess && setSuccess(null);
+                  }}
+                />
               </div>
             )}
             {failure && (
-              <div className='bg-error text-destructive mb-4 rounded px-4 py-3'>
-                {failure}
+              <div className="w-full" role="alert">
+                <AlertComponent
+                  message={failure}
+                  type={'failure'}
+                  onAlertClose={() => {
+                    setFailure && setFailure(null);
+                  }}
+                />
               </div>
             )}
             <Formik

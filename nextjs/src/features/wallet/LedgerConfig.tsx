@@ -39,8 +39,6 @@ const LedgerConfig = ({
   const [privateKeyValue, setPrivateKeyValue] = useState<string>('');
   const [networks, setNetworks] = useState([]);
   const [walletLabel, setWalletLabel] = useState('');
-
-    const ledgerConfigDataFromRedux = useAppSelector((state) => state.wallet.sharedLedgerConfig);
   
   const fetchLedgerConfig = async () => {
     try {
@@ -112,14 +110,6 @@ const LedgerConfig = ({
     setSelectedNetwork('');
     setSelectedDid('');
     
-    // Auto-select the method based on the ledger
-    // if (ledger === Ledgers.INDY) {
-    //   setSelectedMethod(DidMethod.INDY);
-    // } else if (ledger === Ledgers.POLYGON) {
-    //   setSelectedMethod(DidMethod.POLYGON);
-    // } else if (ledger === Ledgers.NO_LEDGER) {
-    //   // We'll let user select the method for NO_LEDGER
-    // }
   };
 
   const handleMethodChange = (method) => {
@@ -295,7 +285,7 @@ const LedgerConfig = ({
 
   return (
     <div className="">
-      <div className="mb-6">
+      <div className="mb-6 ">
         <h2 className="text-xl font-semibold mb-1">Ledger Configuration</h2>
         <p className="text-sm">Choose your ledger and DID method</p>
       </div>
@@ -385,7 +375,7 @@ const LedgerConfig = ({
 
       <div className="mb-6">
         <h3 className="text-lg font-medium mb-4">Select Ledger</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <LedgerCard 
             ledger={Ledgers.INDY}
             title="Indy"
@@ -500,7 +490,7 @@ const LedgerConfig = ({
 
                 {selectedMethod === DidMethod.POLYGON && (
   <div className="mt-6 p-4 rounded-lg max-w-2xl mx-auto bg-muted">
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="">
       <div>
         <SetPrivateKeyValueInput 
           orgId={orgId}

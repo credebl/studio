@@ -14,13 +14,14 @@ import { CheckCircle, AlertCircle, User, Users } from "lucide-react";
 import WalletStepsComponent from './WalletSteps';
 import SharedAgentForm from './SharedAgentForm';
 import Stepper from '@/components/StepperComponent';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import DedicatedAgentForm from './DedicatedAgentForm';
 import { useAppSelector } from '@/lib/hooks';
 import PageContainer from '@/components/layout/page-container';
 import { createDid, setAgentConfigDetails, spinupSharedAgent } from '@/app/api/Agent';
 import { Organisation } from '../dashboard/type/organization';
 import { IValuesShared } from '../organization/components/interfaces/organization';
+import { AlertComponent } from '@/components/AlertComponent';
 
 
 enum AgentType {
@@ -59,12 +60,12 @@ const WalletSpinup = (
   const [createdOrgId, setCreatedOrgId] = useState<string | null>(null);
   const [orgIdOfCurrentOrg, setOrgIdOfCurrentOrg] = useState<string | null>(null);
   const router = useRouter();
-  
-  const alreadyCreatedOrgId = useAppSelector((state) => state.wallet.orgId);
-  const organizationFormData = useAppSelector((state) => state.wallet.formData);
+
+   const searchParams = useSearchParams();
+    const alreadyCreatedOrgId = searchParams.get('organizationId');
+    const organizationFormData = useAppSelector((state) => state.wallet.formData);
   const organizationName = useAppSelector((state) => state.wallet.orgName);
   const currentStep = useAppSelector((state) => state.wallet.step);
-
 
   const [agentConfig, setAgentConfig] = useState({
     walletName: '',
@@ -448,7 +449,8 @@ const WalletSpinup = (
           loading={loading}
           submitSharedWallet={submitSharedWallet}
           isCopied={false}
-          orgId={orgIdOfCurrentOrg ? orgIdOfCurrentOrg : ''}
+          orgId={alreadyCreatedOrgId ? alreadyCreatedOrgId : ''}
+
         />
       );
     } else {
@@ -492,16 +494,28 @@ const WalletSpinup = (
             <div className="space-y-4">
               {/* Alert Messages */}
 
-              {success && (
-              <div className='bg-success text-success text-success mb-4 rounded px-4 py-3'>
-                {success}
-              </div>
-            )}
-            {failure && (
-              <div className='bg-error text-destructive mb-4 rounded px-4 py-3'>
-                {failure}
-              </div>
-            )}
+            {success && (
+                          <div className="w-full" role="alert">
+                            <AlertComponent
+                              message={success}
+                              type={'success'}
+                              onAlertClose={() => {
+                                setSuccess && setSuccess(null);
+                              }}
+                            />
+                          </div>
+                        )}
+                        {failure && (
+                          <div className="w-full" role="alert">
+                            <AlertComponent
+                              message={failure}
+                              type={'failure'}
+                              onAlertClose={() => {
+                                setFailure && setFailure(null);
+                              }}
+                            />
+                          </div>
+                        )}
               
               {/* Header section - hide when showing ledger config */}
               {!showLedgerConfig && (
@@ -538,7 +552,7 @@ const WalletSpinup = (
 									}`}
 									onClick={() => onRadioSelect(AgentType.DEDICATED)}
 								>
-									<div className="flex items-start">
+									<div className="flex items-start mb-4">
 										<input
 											id="dedicated-agent-radio"
 											type="radio"
@@ -550,11 +564,6 @@ const WalletSpinup = (
 										/>
 										<div className="ml-3 flex justify-end w-full">
 											
-											<div className="bg-yellow-100 rounded-full p-2">
-												<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-													<path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"></path>
-												</svg>
-											</div>
 										</div>
 									</div>
 									<label htmlFor="dedicated-agent-radio" className="text-lg font-bold">
@@ -579,7 +588,7 @@ const WalletSpinup = (
 									}`}
 									onClick={() => onRadioSelect(AgentType.SHARED)}
 								>
-									<div className="flex items-start">
+									<div className="flex items-start mb-4">
 										<input
 											id="shared-agent-radio"
 											type="radio"
@@ -592,11 +601,6 @@ const WalletSpinup = (
 										/>
 										<div className="ml-3 flex justify-end w-full">
 									
-											<div className="bg-purple-100 rounded-full p-2">
-												<svg className="w-5 h-5 text-purple-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-													<path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path>
-												</svg>
-											</div>
 										</div>
 									</div>
 									<label htmlFor="shared-agent-radio" className="text-lg font-bold">

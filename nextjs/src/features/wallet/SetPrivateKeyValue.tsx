@@ -113,6 +113,7 @@ const SetPrivateKeyValueInput = ({
       <div className="flex items-center gap-2 mt-4">
         <Checkbox
           id="havePrivateKey"
+          className="border"
           onCheckedChange={(checked) => setHavePrivateKey(checked)}
         />
         <Label htmlFor="havePrivateKey">Already have a private key?</Label>
