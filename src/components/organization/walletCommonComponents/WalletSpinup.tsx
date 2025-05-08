@@ -3,8 +3,6 @@ import { getFromLocalStorage, passwordEncryption } from '../../../api/Auth';
 import {
 	createDid,
 	getOrganizationById,
-	spinupDedicatedAgent,
-	spinupSharedAgent,
 } from '../../../api/organization';
 import { useEffect, useState } from 'react';
 
@@ -20,6 +18,7 @@ import type { IValuesShared } from './interfaces';
 import React from 'react';
 import OrganizationDetails from '../OrganizationDetails';
 import type { Organisation } from '../interfaces';
+import { spinupSharedAgent } from '../../../../nextjs/src/app/api/Agent';
 
 interface Values {
 	seed: string;

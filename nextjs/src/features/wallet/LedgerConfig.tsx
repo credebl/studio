@@ -1,6 +1,8 @@
+"use client"
+
 import { Field, Form, Formik, type FormikHelpers } from "formik";
 import { useState, useEffect } from "react";
-import { getLedgerConfig, getLedgers } from "@/app/api/organization";
+import { getLedgerConfig, getLedgers } from "@/app/api/Agent";
 import { apiStatusCodes } from "@/config/CommonConstant";
 import * as yup from 'yup';
 import type { AxiosResponse } from 'axios';
@@ -14,8 +16,8 @@ import SetPrivateKeyValueInput from "./SetPrivateKeyValue";
 import { useRouter } from "next/navigation";
 import Stepper from "@/components/StepperComponent";
 import { ILedgerConfigData, ILedgerConfigProps, ILedgerItem, IValuesShared } from "../organization/components/interfaces/organization";
-import { ArrowLeft } from "lucide-react";
 
+import { useAppSelector } from "@/lib/hooks";
 
 
 const LedgerConfig = ({
@@ -38,8 +40,8 @@ const LedgerConfig = ({
   const [networks, setNetworks] = useState([]);
   const [walletLabel, setWalletLabel] = useState('');
 
-  const router = useRouter();
-
+    const ledgerConfigDataFromRedux = useAppSelector((state) => state.wallet.sharedLedgerConfig);
+  
   const fetchLedgerConfig = async () => {
     try {
       const { data } = await getLedgerConfig() as AxiosResponse;
@@ -164,7 +166,7 @@ const LedgerConfig = ({
   };
 
   const renderNetworkOptions = (formikHandlers) => {
-    if (!selectedLedger || !mappedData) {
+    if (!selectedLedger || !mappedData || selectedMethod === DidMethod.KEY) {
       return null;
     }
   
@@ -497,55 +499,56 @@ const LedgerConfig = ({
                 </div>
 
                 {selectedMethod === DidMethod.POLYGON && (
-                  <div className="mt-6 p-4 rounded-lg">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <SetPrivateKeyValueInput 
-                        orgId={orgId}
-                          setPrivateKeyValue={setPrivateKeyValue}
-                          privateKeyValue={privateKeyValue} 
-                          formikHandlers={formikHandlers} 
-                        />
-                      </div>
-                      <div>
-                        <h4 className="font-medium text-sm mb-3">Follow these instructions to generate polygon tokens:</h4>
-                        <ol className="space-y-3 text-sm">
-                          <li className='flex items-start'>
-                            <span className="font-semibold mr-2">Step 1:</span>
-                            <div>
-                              Copy the address and get the free tokens for the testnet.
-                              <div className="mt-1">
-                                For eg. use <a href='https://faucet.polygon.technology/' className='underline'>https://faucet.polygon.technology/</a> to get free tokens
-                              </div>
-                            </div>
-                          </li>
-                          <li className='flex items-start'>
-                            <span className="font-semibold mr-2">Step 2:</span>
-                            <div>
-                              Check that you have received the tokens.
-                              <div className="mt-1">
-                                For eg. copy the address and check the balance on <a href='https://mumbai.polygonscan.com/' className='underline'>https://mumbai.polygonscan.com/</a>
-                              </div>
-                            </div>
-                          </li>
-                        </ol>
-                      </div>
-                    </div>
-                  </div>
-                )}
+  <div className="mt-6 p-4 rounded-lg max-w-2xl mx-auto bg-muted">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <SetPrivateKeyValueInput 
+          orgId={orgId}
+          setPrivateKeyValue={setPrivateKeyValue}
+          privateKeyValue={privateKeyValue}
+          formikHandlers={formikHandlers}
+        />
+      </div>
+      <div>
+        <h4 className="font-medium text-sm mb-3">Follow these instructions to generate polygon tokens:</h4>
+        <ol className="space-y-3 text-sm">
+          <li className="flex items-start">
+            <span className="font-semibold mr-2">Step 1:</span>
+            <div>
+              Copy the address and get the free tokens for the testnet.
+              <div className="mt-1">
+                For example, use <a href="https://faucet.polygon.technology/" className="underline">https://faucet.polygon.technology/</a> to get free tokens.
+              </div>
+            </div>
+          </li>
+          <li className="flex items-start">
+            <span className="font-semibold mr-2">Step 2:</span>
+            <div>
+              Check that you have received the tokens.
+              <div className="mt-1">
+                For example, copy the address and check the balance on <a href="https://mumbai.polygonscan.com/" className="underline">https://mumbai.polygonscan.com/</a>.
+              </div>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+)}
+
               </div>
             )}
 
            <div className="flex justify-between mt-8">
            
-                  <Button
+                  {/* <Button
                     variant='secondary'
                     onClick={() => router.push('/organizations/create-organization?step=2')}
                     className='flex items-center gap-2'
                     >
                     <ArrowLeft className='h-4 w-4' />
                     Back to Agent Config                   
-            </Button>
+            </Button> */}
           
               <Button
                 disabled={isSubmitDisabled()}
