@@ -111,7 +111,7 @@ const imageBasePath = '/images';
 
 export const CredeblLogo = `${imageBasePath}/CREDEBL_Logo_Web.svg`;
 export const signInImg = `${imageBasePath}/signin.svg`;
-
+export const closeIconImg = `${imageBasePath}/close_icon.svg`
 export const CredeblLogoWidth = 170;
 export const CredeblLogoHeight = 140;
 
@@ -124,4 +124,10 @@ export const stepLabels = [
   'Ledger Config', 
   'Processing'
 ];
+
+export const confirmationMessages = {
+   deletePendingInvitationConfirmation : 'Would you like to proceed? Keep in mind that this action cannot be undone.',
+   sureConfirmation : `Yes, I'm sure`,
+   cancelConfirmation : 'No, cancel'
+}
 

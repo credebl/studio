@@ -1,20 +1,23 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import { persistReducer, persistStore } from 'redux-persist'
-import storage from 'redux-persist/lib/storage'
+
 import authSlice from './authSlice'
-import profileSlice from './profileSlice'
 import orgSlice from './orgSlice'
+import profileSlice from './profileSlice'
+import storage from 'redux-persist/lib/storage'
+import userSlice from './userSlice'
 
 const rootReducer = combineReducers({
   auth : authSlice,
   profile: profileSlice,
-  organization: orgSlice
+  organization: orgSlice,
+  user: userSlice,
 })
 
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth', 'profile', 'organization']
+  whitelist: ['auth', 'profile', 'organization', 'user']
 }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)

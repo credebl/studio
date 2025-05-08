@@ -18,7 +18,6 @@ import {
   ICredDefCard,
   Values
 } from '../type/schemas-interface';
-import { pathRoutes } from '@/config/pathRoutes';
 import { getLedgersPlatformUrl } from '@/app/api/Agent';
 import CopyDid from '@/config/CopyDid';
 import { Card } from '@/components/ui/card';
@@ -31,7 +30,7 @@ import { Label } from '@/components/ui/label';
 import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import PageContainer from '@/components/layout/page-container';
-import Loader from '@/components/Loader';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type SchemaData = {
   schema: {
@@ -56,7 +55,9 @@ const initialPageState = {
 
 const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
   const [schemaDetails, setSchemaDetails] = useState<SchemaData | null>(null);
+
   const [credDeffList, setCredDeffList] = useState<any>([]);
+
   const [loading, setLoading] = useState<boolean>(true);
   const [createloader, setCreateLoader] = useState<boolean>(false);
   const [credDeffloader, setCredDeffloader] = useState<boolean>(false);
@@ -163,7 +164,7 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
   };
 
   const credDefSelectionCallback = async () => {
-    window.location.href = `${pathRoutes.organizations.Issuance.issue}`;
+    router.push('/organizations/credentials/issue');
   };
 
   const fetchLedgerPlatformUrl = async (indyNamespace: string) => {
@@ -212,7 +213,7 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
             <Button
               variant='outline'
               onClick={() => router.back()}
-              className='mb-4 flex items-center gap-2'
+              className='border-ring hover:bg-primary mb-4 flex items-center gap-2 rounded-xl border px-4 py-2 transition-colors'
             >
               <ArrowLeft size={18} />
               Back
@@ -220,12 +221,31 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
           </div>
         </div>
 
-        <div className='rounded-lg p-4 shadow-sm sm:p-6 2xl:col-span-2'>
+        <div className='border-border relative h-full w-full overflow-hidden rounded-lg border p-4 shadow-xl transition-transform duration-300 sm:p-6 2xl:col-span-2'>
           <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6'>
-            <Card className='' id='viewSchemaDetailsCard'>
+            <Card
+              className='border-border relative h-full w-full overflow-hidden rounded-xl border shadow-xl transition-transform duration-300'
+              id='viewSchemaDetailsCard'
+            >
               {loading ? (
-                <div className='mb-4 flex items-center justify-center'>
-                  <Loader height='2rem' width='2rem' />
+              
+                <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
+                  {[...Array(1)].map((_, index) => (
+                    <div
+                      key={index}
+                      className='col-span-full'
+                    >
+                      <div className='w-full space-y-3 rounded-lg p-4 shadow-sm'>
+                        <Skeleton className='h-5 w-1/2 rounded-md' />
+                        <Skeleton className='h-4 w-1/3 rounded' />
+                        <Skeleton className='h-4 w-3/4 rounded' />
+                        <Skeleton className='h-4 w-2/4 rounded' />
+                        <Skeleton className='h-3 w-1/4 rounded' />
+                        <Skeleton className='h-3 w-1/4 rounded' />
+                        <Skeleton className='h-4 w-2/4 rounded' />
+                      </div>
+                    </div>
+                  ))}
                 </div>
               ) : (
                 <div
@@ -239,7 +259,6 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
                     <div className='w-fit p-2 lg:mt-0'>
                       <Button
                         type='submit'
-                        color='bg-primary-800'
                         title='View schema details on ledger'
                         onClick={() =>
                           fetchLedgerPlatformUrl(
@@ -248,6 +267,8 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
                           )
                         }
                         disabled={ledgerPlatformLoading}
+                        variant='ghost'
+                        className='border-ring hover:bg-primary flex items-center rounded-xl border px-4 py-2 transition-colors'
                       >
                         <svg
                           xmlns='http://www.w3.org/2000/svg'
@@ -318,7 +339,7 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
                                 (element: string) => (
                                   <span
                                     key={`schema-details-${element}`}
-                                    className='bg-primary/10 text-primary m-1 mr-2 rounded px-2.5 py-0.5 text-sm font-medium'
+                                    className='bg-secondary text-secondary-foreground hover:bg-secondary/80 m-1 mr-2 rounded px-2.5 py-0.5 text-sm font-medium shadow-sm'
                                   >
                                     {' '}
                                     {element}
@@ -336,7 +357,7 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
             {(userRoles.includes(Roles.OWNER) ||
               userRoles.includes(Roles.ADMIN)) && (
               <Card
-                className='overflow-hidden p-4 overflow-ellipsis'
+                className='border-border relative h-full w-full overflow-hidden rounded-xl border p-4 overflow-ellipsis shadow-xl transition-transform duration-300'
                 style={{ overflow: 'auto' }}
                 id='credentialDefinitionCard'
               >
@@ -380,7 +401,7 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
                               id='tagName'
                               name='tagName'
                               placeholder='Enter Credential definition'
-                              className='focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 sm:text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400'
+                              className='focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 block w-full rounded-lg border border-[var(--color-gray-300)] bg-[var(--color-gray-50)] p-2.5 text-[var(--color-gray-900)] sm:text-sm dark:border-[var(--color-gray-600)] dark:bg-[var(--color-gray-700)] dark:text-[var(--color-white)] dark:placeholder-[var(--color-gray-400)]'
                               disabled={createloader}
                             />
                             {formikHandlers?.errors?.tagName &&
@@ -444,19 +465,45 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
                               disabled={createloader}
                               className='flex items-center rounded-lg py-1 text-center text-base font-medium sm:w-auto'
                             >
+                              <svg
+                                xmlns='http://www.w3.org/2000/svg'
+                                width='15'
+                                height='15'
+                                viewBox='0 0 24 24'
+                                fill='currentColor'
+                                className='text-foreground mr-1'
+                              >
+                                <path
+                                  fill=''
+                                  d='M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z'
+                                />
+                              </svg>
                               Create
                             </Button>
                           </div>
                           <div className='float-right px-2 py-4'>
                             <Button
                               type='reset'
-                              color='bg-primary-800'
                               onClick={() => {
                                 setCredDefAuto('');
                               }}
                               disabled={createloader}
-                              className='flex items-center rounded-lg py-1 text-center text-base font-medium sm:w-auto'
+                              variant='ghost'
+                              className='border-ring hover:bg-primary flex items-center rounded-xl border px-4 py-2 transition-colors'
                             >
+                              <svg
+                                xmlns='http://www.w3.org/2000/svg'
+                                width='15'
+                                height='15'
+                                viewBox='0 0 20 20'
+                                fill='currentColor'
+                                className='text-foreground mr-1'
+                              >
+                                <path
+                                  fill=''
+                                  d='M19.414 9.414a.586.586 0 0 0-.586.586c0 4.868-3.96 8.828-8.828 8.828-4.868 0-8.828-3.96-8.828-8.828 0-4.868 3.96-8.828 8.828-8.828 1.96 0 3.822.635 5.353 1.807l-1.017.18a.586.586 0 1 0 .204 1.153l2.219-.392a.586.586 0 0 0 .484-.577V1.124a.586.586 0 0 0-1.172 0v.928A9.923 9.923 0 0 0 10 0a9.935 9.935 0 0 0-7.071 2.929A9.935 9.935 0 0 0 0 10a9.935 9.935 0 0 0 2.929 7.071A9.935 9.935 0 0 0 10 20a9.935 9.935 0 0 0 7.071-2.929A9.935 9.935 0 0 0 20 10a.586.586 0 0 0-.586-.586Z'
+                                />
+                              </svg>
                               Reset
                             </Button>
                           </div>
@@ -469,22 +516,34 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
             )}
           </div>
         </div>
-        <h5 className='p-4 text-xl leading-none font-bold'>
+        <h5 className='p-3 text-xl leading-none font-bold my-6'>
           Credential Definitions
         </h5>
 
         {loading ? (
-          <div className='mb-4 flex items-center justify-center'>
-            <Loader height='2rem' width='2rem' />
+          
+          <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2'>
+            {[...Array(4)].map((_, idx) => (
+              <div
+                key={idx}
+                className='space-y-3 rounded-lg p-4 shadow-xl'
+              >
+                <Skeleton className='h-5 w-1/2 rounded-md' />
+                <Skeleton className='h-4 w-1/3 rounded' />
+                <Skeleton className='h-4 w-3/4 rounded' />
+                <Skeleton className='h-4 w-2/4 rounded' />
+                <Skeleton className='h-3 w-1/4 rounded' />
+              </div>
+            ))}
           </div>
         ) : credDeffList && credDeffList.length > 0 ? (
           <div className='Flex-wrap'>
             <div className='mt-0 mb-4 grid w-full grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2'>
               {credDeffList &&
                 credDeffList.length > 0 &&
-                credDeffList.map((element: ICredDefCard, index: number) => (
+                credDeffList.map((element: ICredDefCard) => (
                   <div
-                    className='mx-2 p-2'
+                    className='border-border relative h-full w-full overflow-hidden rounded-xl border shadow-xl transition-transform duration-300'
                     key={`view-schema-cred-def-card-${element['credentialDefinitionId']}`}
                   >
                     <CredentialDefinitionCard

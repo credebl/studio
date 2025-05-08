@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { IconChevronRight } from '@tabler/icons-react';
 
 import {
@@ -23,21 +22,37 @@ import {
   SidebarMenuSubItem,
   SidebarRail
 } from '@/components/ui/sidebar';
-import { OrgSwitcher } from '../org-switcher';
 import { Icons } from '../icons';
 import { navItems } from '@/constants/data';
-import { getOrganizations } from '@/app/api/organization';
-import { useAppDispatch } from '@/lib/hooks';
+import { useThemeConfig } from '../active-theme';
+import Image from 'next/image';
 import { setOrgId, setOrgInfo } from '@/lib/orgSlice';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { useEffect, useState } from 'react';
 
+import { getOrganizations } from '@/app/api/organization';
 export default function AppSidebar() {
   const pathname = usePathname();
+
+  const { activeTheme } = useThemeConfig();
+
+  const logoImageSrc =
+    activeTheme === 'credebl'
+      ? '/images/CREDEBL_Logo_Web.svg'
+      : '/images/sovio_logo.svg';
+
+  // export default function AppSidebar() {
   const dispatch = useAppDispatch();
+  const router = useRouter();
+
   const [currentPage] = useState(1);
   const [pageSize] = useState(10);
   const [searchTerm] = useState('');
   const [orgList, setOrgList] = useState<any[]>([]);
-  const [selectedOrg, setSelectedOrg] = useState<any | null>(null);
+
+  const selectedOrgId = useAppSelector((state) => state.organization.orgId);
+
+  const selectedOrg = orgList.find((org) => org.id === selectedOrgId) ?? null;
 
   useEffect(() => {
     const fetchOrganizations = async () => {
@@ -53,23 +68,24 @@ export default function AppSidebar() {
           response?.data?.data?.organizations
         ) {
           const orgs = response.data.data.organizations;
-
           setOrgList(orgs);
-          setSelectedOrg(orgs[0]);
 
-          dispatch(setOrgId(orgs[0]?.id));
-          dispatch(
-            setOrgInfo({
-              id: orgs[0]?.id,
-              name: orgs[0]?.name,
-              description: orgs[0]?.description,
-              logoUrl: orgs[0]?.logoUrl,
-              roles:
-                orgs[0]?.userOrgRoles?.map(
-                  (role: any) => role?.orgRole?.name
-                ) || []
-            })
-          );
+          // Only set initial organization if no organization is currently selected in Redux
+          if (!selectedOrgId && orgs.length > 0) {
+            dispatch(setOrgId(orgs[0]?.id));
+            dispatch(
+              setOrgInfo({
+                id: orgs[0]?.id,
+                name: orgs[0]?.name,
+                description: orgs[0]?.description,
+                logoUrl: orgs[0]?.logoUrl,
+                roles:
+                  orgs[0]?.userOrgRoles?.map(
+                    (role: any) => role?.orgRole?.name
+                  ) || []
+              })
+            );
+          }
         } else {
           setOrgList([]);
         }
@@ -79,12 +95,11 @@ export default function AppSidebar() {
     };
 
     fetchOrganizations();
-  }, [dispatch, currentPage, pageSize, searchTerm]);
+  }, [dispatch, currentPage, pageSize, searchTerm, selectedOrgId]);
 
   const handleSwitchTenant = (orgId: string) => {
     const selected = orgList.find((org) => org.id === orgId);
     if (selected) {
-      setSelectedOrg(selected);
       dispatch(setOrgId(selected.id));
       dispatch(
         setOrgInfo({
@@ -96,6 +111,8 @@ export default function AppSidebar() {
             selected.userOrgRoles?.map((role: any) => role?.orgRole?.name) || []
         })
       );
+
+      router.push(`/organizations/dashboard/${selected.id}`);
     }
   };
 
@@ -104,14 +121,15 @@ export default function AppSidebar() {
   return (
     <Sidebar collapsible='icon'>
       <SidebarHeader>
-        <OrgSwitcher
-          tenants={orgList.map((org) => ({
-            id: org.id,
-            name: org.name
-          }))}
-          defaultTenant={activeTenant}
-          onTenantSwitch={handleSwitchTenant}
-        />
+        <div className='h-[40px] w-[150px] overflow-hidden transition-all duration-300 group-data-[collapsed=true]:h-0 group-data-[collapsed=true]:w-0'>
+          <Image
+            height={40}
+            width={150}
+            alt='Logo'
+            className='h-full w-full object-contain'
+            src={logoImageSrc}
+          />
+        </div>
       </SidebarHeader>
 
       <SidebarContent className='overflow-x-hidden'>

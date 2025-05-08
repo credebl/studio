@@ -1,16 +1,19 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { getOrganizationById } from '@/app/api/organization';
-import { apiStatusCodes } from '@/config/CommonConstant';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Edit, Trash2 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+
 import { AxiosResponse } from 'axios';
-import OrganizationDetails from './OrganizationDetails';
+import { Button } from '@/components/ui/button';
 import { IOrganisation } from './interfaces/organization';
+import OrganizationDetails from './OrganizationDetails';
+import { apiStatusCodes } from '@/config/CommonConstant';
+import { getOrganizationById } from '@/app/api/organization';
+import { useAppSelector } from '@/lib/hooks';
+import { useRouter } from 'next/navigation';
+import PageContainer from '@/components/layout/page-container';
 
 type OrganizationDashboardProps = {
   orgId: string;
@@ -26,11 +29,20 @@ export const OrganizationDashboard = ({
   const [loading, setLoading] = useState(true);
   const [walletStatus, setWalletStatus] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [organizationId, setOrganizationId] = useState<string>()
+
+  
+  const selecteDropdownOrgId = useAppSelector((state) => state.organization.orgId);
+
+  const activeOrgId = selecteDropdownOrgId ?? orgId;
 
   const fetchOrganizationDetails = async () => {
+    if (!orgId) return;
+
     setLoading(true);
     const response = await getOrganizationById(orgId as string);
     const { data } = response as AxiosResponse;
+    setOrganizationId(data?.data?.id)
     setLoading(false);
     if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
       if (data?.data?.org_agents?.length > 0 && data?.data?.org_agents[0]?.orgDid) {
@@ -54,10 +66,11 @@ export const OrganizationDashboard = ({
 
   useEffect(() => {
     fetchOrganizationDetails();
-  }, []);
+  }, [activeOrgId]);
 
   return (
-    <div className='container mx-auto space-y-6 px-4 py-6'>
+    <PageContainer>
+ <div className='container mx-auto space-y-6 px-4 py-6'>
       <Card className='shadow-md'>
         <CardContent className='p-6'>
           <div className='flex items-center justify-between'>
@@ -97,7 +110,7 @@ export const OrganizationDashboard = ({
 
       {/* Dashboard Cards */}
       <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
-        <Card className='shadow-md'>
+        <Card className='shadow-md' onClick={()=> router.push('/users')}>
           <CardContent className='flex items-center justify-between p-6'>
             <div>
               <p className='font-medium'>Users</p>
@@ -189,13 +202,14 @@ export const OrganizationDashboard = ({
     <OrganizationDetails orgData={orgData}  />
 
     ): (
-<Button 
-      onClick={() => router.push('/organizations/create-organization?step=2')}
+    <Button 
+      onClick={() => router.push(`/organizations/create-organization?step=2&organizationId=${organizationId}`)}
     >
       Setup Your Wallet
     </Button>
     )	
   } 
     </div>
+    </PageContainer>
   );
 };

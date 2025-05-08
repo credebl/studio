@@ -13,6 +13,7 @@ export const pathRoutes = {
 		dashboard: '/dashboard',
 		profile: '/profile',
 		invitations: '/invitations',
+		orgInvitations: '/organizations/invitations',
 		fetchUsers: '/users',
 		connectionList: '/connections',
 		platformSetting: '/platform-settings',
@@ -70,7 +71,7 @@ export const pathRoutes = {
 		},
 	},
 	documentation: {
-		root: envConfig.PLATFORM_DATA.docs
+		root: envConfig.PLATFORM_DATA.docs as string
 	},
 	schema: {
 		create: '/schemas',

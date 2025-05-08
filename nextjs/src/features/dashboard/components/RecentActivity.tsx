@@ -48,7 +48,7 @@ const RecentActivity = () => {
 
     return (
       <div className='space-y-4'>
-        {activityList.map((activity, index) => (
+        {activityList.slice(0,3).map((activity, index) => (
           <div key={index} className='flex gap-3'>
             <div className='relative mt-1'>
               <div className='flex h-2 w-2 items-center justify-center'>
@@ -71,7 +71,7 @@ const RecentActivity = () => {
   };
 
   return (
-    <Card>
+    <Card className='border-border relative flex h-full w-full flex-col overflow-hidden rounded-xl border py-4 shadow-xl transition-transform duration-300'>
       <CardHeader className='flex flex-row items-center justify-between pb-2'>
         <div className='space-y-1'>
           <div className='flex items-center gap-x-2'>
@@ -106,7 +106,7 @@ const RecentActivity = () => {
         )}
       </CardContent>
       <CardFooter className='mt-auto justify-end pt-2'>
-      <Link href='#'>View all</Link>
+        {/* <Link href='#'>View all</Link> */}
       </CardFooter>
     </Card>
   );

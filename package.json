@@ -48,7 +48,7 @@
 		"dom-to-image": "^2.6.0",
 		"downloadjs": "^1.4.7",
 		"eslint": "^8.57.0",
-		"ethers": "^6.12.1",
+		"ethers": "^6.13.5",
 		"flowbite": "^2.3.0",
 		"flowbite-react": "^0.4.11",
 		"flowbite-typography": "^1.0.3",

@@ -34,10 +34,6 @@ export interface RegistrationOptionInterface {
   deviceFlag: boolean;
 }
 
-enum PlatformRoles {
-  platformAdmin = 'platform_admin'
-}
-
 export enum Devices {
   Linux = 'linux'
 }
@@ -73,15 +69,15 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
     type: ''
   });
 
-  const [setDeviceList] = useState<IDeviceData[]>([]);
+  const [, setDeviceList] = useState<IDeviceData[]>([]);
   const [usePassword, setUsePassword] = useState(true);
-  const [setDisableFlag] = useState<boolean>(false);
-  const [setAddFailure] = useState<string | null>(null);
-  const [setAddSuccess] = useState<string | null>(null);
-  const [setErrMsg] = useState<string | null>(null);
+  const [, setDisableFlag] = useState<boolean>(false);
+  const [, setAddFailure] = useState<string | null>(null);
+  const [, setAddSuccess] = useState<string | null>(null);
+  const [, setErrMsg] = useState<string | null>(null);
   const router = useRouter();
-  const [setFidoLoader] = useState<boolean>(false);
-  const [setFidoError] = useState('');
+  const [, setFidoLoader] = useState<boolean>(false);
+  const [, setFidoError] = useState('');
 
   const onSubmit = async (values: {
     firstName: string;
@@ -126,6 +122,23 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
     }
   };
 
+  // const handleFormSubmit = async (
+  //   values: {
+  //     firstName: string;
+  //     lastName: string;
+  //     password: string;
+  //     confirmPassword: string;
+  //   },
+  //   { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
+  // ) => {
+  //   if (!usePassword) {
+  //     setSubmitting(false);
+  //     return;
+  //   }
+  //   await onSubmit(values);
+  //   setSubmitting(false);
+  // };
+
   const showFidoError = (error: unknown): void => {
     const err = error as AxiosError;
     if (
@@ -168,7 +181,10 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
 
         await verifyRegistrationMethod(verifyRegistrationObj, email);
       } else {
-        setErrMsg(generateRegistrationResponse as string);
+        setErrMsg(
+          (generateRegistrationResponse as AxiosResponse)?.data?.message ||
+            'An error occurred'
+        );
       }
     } catch (error) {
       showFidoError(error);
@@ -238,10 +254,12 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
           Object.keys(data)?.length > 0
             ? userDeviceDetailsResp?.data?.data.map(
                 (data: { lastChangedDateTime: any }) => {
-                  data.lastChangedDateTime = data.lastChangedDateTime
-                    ? data.lastChangedDateTime
-                    : '-';
-                  return data;
+                  return {
+                    ...data,
+                    lastChangedDateTime: data.lastChangedDateTime
+                      ? data.lastChangedDateTime
+                      : '-'
+                  };
                 }
               )
             : [];
@@ -283,8 +301,8 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
             <div
               className={`mb-4 rounded-md p-3 text-sm ${
                 showEmailVerification.type === 'danger'
-                  ? 'bg-[var(--color-text-error)] text-white'
-                  : 'bg-[var(--color-bg-success)] text-white'
+                  ? 'bg-[var(--color-text-error)] text-[var(--color-white)]'
+                  : 'bg-[var(--color-bg-success)] text-[var(--color-white)]'
               }`}
             >
               {showEmailVerification.message}
@@ -339,8 +357,8 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
               type='button'
               className={`flex-1 rounded-none ${
                 usePassword
-                  ? 'bg-[var(--color-bg-button-selected)] text-[var(--color-text-button-selected)]'
-                  : 'bg-[var(--color-bg-button-unselected)] text-[var(--color-text-button-unselected)]'
+                  ? 'bg-muted text-muted-foreground'
+                  : 'bg-card text-foreground'
               }`}
               onClick={() => setUsePassword(true)}
             >
@@ -352,10 +370,11 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
               type='button'
               className={`flex-1 rounded-none ${
                 !usePassword
-                  ? 'bg-[var(--color-bg-button-selected)] text-[var(--color-text-button-selected)]'
-                  : 'bg-[var(--color-bg-button-unselected)] text-[var(--color-text-button-unselected)]'
+                  ? 'bg-muted text-muted-foreground'
+                  : 'bg-card text-foreground'
               }`}
               onClick={() => {
+                setUsePassword(false);
                 registerWithPasskey(true);
               }}
             >
@@ -407,7 +426,7 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
           )}
 
           <div className='flex justify-center gap-2'>
-            <Button type='submit' disabled={loading}>
+            <Button type='submit' disabled={loading || !usePassword}>
               {loading ? 'Creating account...' : 'Create account'}
             </Button>
           </div>
