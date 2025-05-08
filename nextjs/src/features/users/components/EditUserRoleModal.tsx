@@ -191,7 +191,7 @@ const EditUserRoleModal = ({ openModal, user, setMessage, setOpenModal }: EditUs
                 {roles && (
                   <div className="space-y-3">
                     {roles.map((role) => (
-                      <div 
+                      <button 
                         key={role.id} 
                         className={`flex items-center p-3 rounded-md transition-all ${
                           role.checked 
@@ -199,7 +199,7 @@ const EditUserRoleModal = ({ openModal, user, setMessage, setOpenModal }: EditUs
                             : 'hover:bg-gray-50 dark:hover:bg-gray-700'
                         } ${role.checked && !role.disabled ? 'ring-2 ring-primary/20' : ''}`}
                         onClick={() => !role.disabled && handleRoleChange(!role.checked, role)}
-                      >
+                       >
                         <Checkbox
                           id={`checkbox-${role.id}`}
                           checked={role.checked}
@@ -224,7 +224,7 @@ const EditUserRoleModal = ({ openModal, user, setMessage, setOpenModal }: EditUs
                             {TextTitlecase(role.name)}
                           </span>
                         </div>
-                      </div>
+                      </button>
                     ))}
                   </div>
                 )}
