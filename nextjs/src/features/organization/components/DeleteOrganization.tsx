@@ -21,14 +21,14 @@ import {
 import { Loader2 } from 'lucide-react';
 import { DeleteOrganizationCard } from './DeleteOrganizationCard';
 import {
-  deleteIssuanceRecords,
-  deleteOrganization,
-  deleteOrganizationWallet,
-  deleteVerificationRecords,
   getOrganizationById,
-  getOrganizationReferences
 } from '@/app/api/organization';
 import { deleteConnectionRecords } from '@/app/api/connection';
+import { getOrganizationReferences, 
+  deleteVerificationRecords, 
+  deleteIssuanceRecords, 
+  deleteOrganizationWallet, 
+  deleteOrganization } from '@/app/api/deleteorganization';
 
 interface IOrgCount {
   verificationRecordsCount?: number;
@@ -318,7 +318,7 @@ export default function DeleteOrganizationPage() {
       confirmMessage: (
         <>
           Are you sure you want to delete organization{' '}
-          <span className='font-bold'>{orgData?.name}</span>?
+          <span className='font-bold text-lg'>{orgData?.name}</span>?
         </>
       ),
       isDisabled: isWalletPresent
@@ -358,7 +358,7 @@ export default function DeleteOrganizationPage() {
 <AlertDialog open={showPopup} onOpenChange={setShowPopup}>
   <AlertDialogContent>
     <AlertDialogHeader>
-      <AlertDialogTitle>Confirmation</AlertDialogTitle>
+      <AlertDialogTitle className='text-xl'>Confirmation</AlertDialogTitle>
       <AlertDialogDescription asChild>
         <div className="space-y-2">
           {confirmMessage}

@@ -8,13 +8,11 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { setStep, setFormData, setOrgId, setOrgName, setWalletSpinupStatus, setIsCreateOrgForm, setLedgerConfig } from '@/lib/walletSpinupSlice';
 
 import Stepper from '@/components/StepperComponent';
 import {
   createOrganization,
-  getAllCities,
-  getAllCountries,
-  getAllStates,
   getOrganizationById,
   updateOrganization
 } from '@/app/api/organization';
@@ -27,6 +25,8 @@ import PageContainer from '@/components/layout/page-container';
 import { IOrgFormValues } from './interfaces/organization';
 import { Card } from '@/components/ui/card';
 import Loader from '@/components/Loader';
+import { useDispatch } from 'react-redux';
+import { getAllCities, getAllCountries, getAllStates } from '@/app/api/geolocation';
 
 export default function OrganizationOnboarding() {
   const [isPublic, setIsPublic] = useState<boolean>();
@@ -50,10 +50,11 @@ export default function OrganizationOnboarding() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const currentOrgId = searchParams.get('orgId');
-  const OrganizationsId = searchParams.get('organizationId')
+  // const OrganizationsId = searchParams.get('organizationId')
   const stepParam = searchParams.get('step');
 
-  const [step, setStep] = useState<number>(1);
+  const dispatch = useDispatch();
+  dispatch(setOrgId(currentOrgId));
 
   const fetchOrganizationDetails = async () => {
     setLoading(true);
@@ -62,7 +63,9 @@ export default function OrganizationOnboarding() {
     setLoading(false);
     if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
       const org = data?.data;
-      setOrgData(org);
+      dispatch(setFormData(org));
+      dispatch(setOrgName(org?.name));
+      dispatch(setLedgerConfig(false));
       setIsPublic(org.publicProfile);
       if (org?.countryId) {
         setSelectedCountryId(org.countryId);
@@ -182,14 +185,12 @@ export default function OrganizationOnboarding() {
     });
   };
 
-  const setWalletSpinupStatus = (status: boolean) => {
-		setSuccess('Wallet created successfully');
-		fetchOrganizationDetails();
-	};
-
   const handleSubmit = (values: IOrgFormValues) => {
-    setOrgData(values);
-    setStep(2);
+    dispatch(setFormData(values));
+    dispatch(setIsCreateOrgForm(false));
+    dispatch(setStep(2));
+
+    router.push('/organizations/agent-config')
   };
 
   const handleUpdateOrganization = async (values: IOrgFormValues) => {
@@ -276,10 +277,9 @@ export default function OrganizationOnboarding() {
   };
   return (
     <PageContainer>
-      <div className='bg-background flex min-h-screen items-start justify-center p-6'>
-        {step === 1 ? (
+      <div className='bg-[image:var(--card-gradient)] flex min-h-screen items-start justify-center p-6'>
           <Card className='p-8 py-12 border-border relative overflow-hidden rounded-xl border shadow-xl transition-transform duration-300 min-w-[700px] max-w-[800px] w-full'>
-            <div className='mb-6 flex items-center justify-between'>
+            <div className='flex items-center justify-between'>
               <div>
                 <h1 className='text-2xl font-semibold'>
                   {isEditMode ? 'Edit Organization' : 'Organization Setup'}
@@ -292,13 +292,12 @@ export default function OrganizationOnboarding() {
               </div>
               {!isEditMode && (
                 <div className='text-muted-foreground text-sm'>
-                  Step {step} of {totalSteps}
+                  Step 1 of {totalSteps}
                 </div>
               )}
             </div>
-
             {!isEditMode && (
-              <Stepper currentStep={step} totalSteps={totalSteps} />
+              <Stepper currentStep={1} totalSteps={totalSteps} />
             )}
 
             {success && (
@@ -342,12 +341,12 @@ export default function OrganizationOnboarding() {
                           <AvatarFallback>Logo</AvatarFallback>
                         </Avatar>
                       ) : (
-                        <Avatar className='h-24 w-24'>
+                        <Avatar className='h-24 w-24 rounded-none'>
                           <AvatarImage
                             src={
                               logoPreview ||
                               orgData?.logoPreview ||
-                              '/images/person_24dp_FILL0_wght400_GRAD0_opsz24 (2).svg'
+                              '/images/upload_logo_file.svg'
                             }
                             alt='Logo Preview'
                           />
@@ -591,16 +590,8 @@ export default function OrganizationOnboarding() {
               )}
             </Formik>
           </Card>
-        ) : (
-          <div>
-            <WalletSpinup
-          step={step}
-          formData={orgData}
-          orgId={OrganizationsId ? OrganizationsId : null}
-          orgName={orgData?.name || ''}
-          setWalletSpinupStatus={(flag: boolean) => setWalletSpinupStatus(flag)} ledgerConfig={false}							/>
-          </div>
-        )}
+        
+      
       </div>
     </PageContainer>
   );
