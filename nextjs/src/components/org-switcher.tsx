@@ -1,8 +1,8 @@
 'use client';
 
-import { Check, ChevronsUpDown, GalleryVerticalEnd } from 'lucide-react';
 import * as React from 'react';
 
+import { Check, ChevronsUpDown, GalleryVerticalEnd } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,7 +14,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from '@/components/ui/sidebar';
-import { useAppDispatch } from '@/lib/hooks';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+
 import { setOrgId } from '@/lib/orgSlice';
 
 interface Tenant {
@@ -31,14 +32,22 @@ export function OrgSwitcher({
   defaultTenant: Tenant;
   onTenantSwitch?: (tenantId: string) => void;
 }) {
-  const [selectedTenant, setSelectedTenant] = React.useState<
-  Tenant | undefined
-  >(defaultTenant ?? (tenants.length > 0 ? tenants[0] : undefined));
   const dispatch = useAppDispatch();
+  
+  const selectedOrgId = useAppSelector((state) => state.organization.orgId);
+  
+  const currentTenant = React.useMemo(() => {
+    if (selectedOrgId) {
+      const found = tenants.find(tenant => tenant.id === selectedOrgId);
+      if (found) return found;
+    }
+    
+    return defaultTenant ?? (tenants.length > 0 ? tenants[0] : undefined);
+  }, [selectedOrgId, tenants, defaultTenant]);
 
   const handleTenantSwitch = (tenant: Tenant) => {
-    setSelectedTenant(tenant);
     dispatch(setOrgId(tenant.id));
+    
     if (onTenantSwitch) {
       onTenantSwitch(tenant.id);
     }
@@ -57,8 +66,7 @@ export function OrgSwitcher({
                 <GalleryVerticalEnd className='size-4' />
               </div>
               <div className='flex flex-col gap-0.5 leading-none'>
-                {/* <span className='font-semibold'>Select Organization</span> */}
-                <span>{selectedTenant?.name ?? tenants[0]?.name}</span>
+                <span>{currentTenant?.name ?? 'Select Organization'}</span>
               </div>
               <ChevronsUpDown className='ml-auto' />
             </SidebarMenuButton>
@@ -73,7 +81,7 @@ export function OrgSwitcher({
                 onSelect={() => handleTenantSwitch(tenant)}
               >
                 {tenant.name}
-                {tenant.id === selectedTenant?.id && (
+                {tenant.id === currentTenant?.id && (
                   <Check className='ml-auto' />
                 )}
               </DropdownMenuItem>

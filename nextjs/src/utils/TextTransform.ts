@@ -1,6 +1,6 @@
 import { emailRegex } from "../config/CommonConstant";
 
-export const TextTittlecase = (text: string): string => {
+export const TextTitlecase = (text: string): string => {
 	const roles = text.split(',');
 
 	const capitalizedWords = roles.map(
