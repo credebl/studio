@@ -1,6 +1,7 @@
 import { axiosGet, axiosPost, ecosystemAxiosGet } from "@/services/apiRequests";
 
 import { apiRoutes } from "@/config/apiRoutes";
+import { getHeaderConfigs } from "@/config/GetHeaderConfigs";
 
 // Get all organization Inviattions
 export const getOrganizationInvitations = async (orgId: string, pageNumber: number, pageSize: number, search = '') => {

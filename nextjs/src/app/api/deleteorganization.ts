@@ -3,6 +3,7 @@ import {
     axiosGet,
   } from '@/services/apiRequests';
   import { apiRoutes } from '@/config/apiRoutes';
+import { getHeaderConfigs } from '@/config/GetHeaderConfigs';
 
   export const getOrganizationReferences = async (orgId: string) => {
     const url = `${apiRoutes.organizations.root}${apiRoutes.organizations.getOrgReferences}/${orgId}`;

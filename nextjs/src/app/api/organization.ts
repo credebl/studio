@@ -7,6 +7,7 @@ import {
 } from '@/services/apiRequests';
 import { apiRoutes } from '@/config/apiRoutes';
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs';
+
 export const createOrganization = async (data: object) => {
   const url = apiRoutes.organizations.create;
   const payload = data;
