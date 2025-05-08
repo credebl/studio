@@ -18,7 +18,7 @@ export interface Data {
   data: string | JSX.Element;
   subData?: string;
 }
-export type Connection = {
+export interface Connection {
   createDateTime: string;
   createdBy: string;
   orgId: string;
@@ -36,3 +36,9 @@ export interface ConnectionResponse {
   lastPage: number;
 	data: Connection[]
 };
+
+export enum ConnectionApiSortFields {
+  CREATE_DATE_TIME = 'createDateTime',
+  THEIR_LABEL = 'theirLabel',
+  CONNECTIONID = 'connectionId'
+}

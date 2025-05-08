@@ -25,6 +25,7 @@ import { DataTablePagination } from './data-table-pagination'
 import { DataTableToolbar } from './data-table-toolbar'
 
 interface DataTableProps<TData, TValue> {
+  index: keyof TData;
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   pageIndex: number;
@@ -36,6 +37,7 @@ interface DataTableProps<TData, TValue> {
 }
 
 export function DataTable<TData, TValue>({
+	index,
   columns,
   data,
   pageIndex,
@@ -57,6 +59,7 @@ export function DataTable<TData, TValue>({
     data,
     columns,
     pageCount,
+    getRowId: (row) => String(row[index]),
     state: {
       pagination: {
         pageIndex,
