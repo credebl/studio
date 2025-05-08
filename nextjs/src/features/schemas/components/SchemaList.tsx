@@ -2,7 +2,6 @@
 
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { apiStatusCodes, itemPerPage } from '../../../config/CommonConstant';
-import { pathRoutes } from '../../../config/pathRoutes';
 import { useAppSelector } from '@/lib/hooks';
 import { getAllSchemas, getAllSchemasByOrgId } from '@/app/api/schema';
 import SchemaCard from './SchemaCard';
@@ -24,14 +23,14 @@ import { GetAllSchemaListParameter } from '@/features/dashboard/type/schema';
 import { AxiosResponse } from 'axios';
 import { getOrganizationById } from '@/app/api/organization';
 import { DidMethod, SchemaTypes } from '@/common/enums';
-import { IW3cSchemaDetails, SchemaDetails } from '../type/schemas-interface';
+import { IW3cSchemaDetails, SchemaListItem } from '../type/schemas-interface';
 import { useRouter } from 'next/navigation';
-import Loader from '@/components/Loader';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const SchemaList = (props: {
   schemaSelectionCallback?: (
     schemaId: string,
-    schemaDetails: SchemaDetails
+    schemaDetails: SchemaListItem
   ) => void;
 
   W3CSchemaSelectionCallback?: (
@@ -272,7 +271,21 @@ const SchemaList = (props: {
         </div>
 
         {loading ? (
-          <Loader height='2rem' width='2rem' />
+          
+          <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2'>
+            {[...Array(4)].map((_, idx) => (
+              <div
+                key={idx}
+                className='space-y-3 rounded-lg border p-4 shadow-sm'
+              >
+                <Skeleton className='h-5 w-1/2 rounded-md' />
+                <Skeleton className='h-4 w-1/3 rounded' />
+                <Skeleton className='h-4 w-3/4 rounded' />
+                <Skeleton className='h-4 w-2/4 rounded' />
+                <Skeleton className='h-3 w-1/4 rounded' />
+              </div>
+            ))}
+          </div>
         ) : schemaList.length ? (
           <>
             <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2'>
@@ -325,7 +338,7 @@ const SchemaList = (props: {
                           <PaginationLink
                             className={`${
                               isActive
-                                ? 'bg-primary text-white'
+                                ? 'bg-primary text-[var(--color-white)] '
                                 : 'bg-background text-muted-foreground'
                             } rounded-lg px-4 py-2`}
                             href='#'
@@ -366,7 +379,7 @@ const SchemaList = (props: {
             description='Get started by creating a new Schema'
             buttonContent='Create Schema'
             onClick={() => {
-              window.location.href = `${pathRoutes.organizations.createSchema}`;
+              route.push('/organizations/schemas/create');
             }}
           />
         )}

@@ -43,7 +43,7 @@ const CustomCheckbox: React.FC<ICustomCheckboxProps> = ({
           >
             {checked && (
               <svg
-                className='absolute top-0 left-0 h-full w-full text-white'
+                className='absolute top-0 left-0 h-full w-full text-[var(--color-white)]'
                 viewBox='0 0 24 24'
                 fill='none'
                 stroke='currentColor'

@@ -26,9 +26,9 @@ const SessionCheck: React.FC<SessionProps> = ({ children }) => {
     );
 
     if (!token && !isExcluded) {
-      router.replace(signInPath);
+      router.push(signInPath);
     } else if (token && pathname === signInPath) {
-      router.replace(dashboardPath);
+      router.push(dashboardPath);
     }
 
     setCheckingSession(false);

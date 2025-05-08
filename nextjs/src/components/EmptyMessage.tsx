@@ -33,7 +33,7 @@ export const EmptyMessage = ({
       {buttonContent && onClick && (
         <button
           onClick={onClick}
-          className='bg-primary-600 hover:bg-primary-700 mt-2 rounded-lg px-4 py-2 text-white transition-colors'
+          className='bg-primary-600 hover:bg-primary-700 mt-2 rounded-lg px-4 py-2 text-[var(--color-white)] transition-colors'
         >
           {buttonContent}
         </button>

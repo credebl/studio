@@ -38,19 +38,17 @@ const SchemaCard = (props: ISchemaCardProps) => {
     const displayedAttributes = isLimited ? attributes.slice(0, 3) : attributes;
 
     return (
-      <div className='text-foreground text-base font-semibold'>
-        Attributes:
-        <div className='mt-1 flex flex-wrap gap-1'>
-          {displayedAttributes.map((element) => (
-            <span
-              key={element.attributeName}
-              className='bg-primary/10 text-primary rounded px-2 py-0.5 text-sm font-medium'
-            >
-              {element.attributeName}
-            </span>
-          ))}
-          {isLimited && <span className='text-muted-foreground ml-2'>...</span>}
-        </div>
+      <div className='text-foreground flex flex-wrap items-center text-base font-semibold'>
+        <span className='mr-2'>Attributes:</span>
+        {displayedAttributes.map((element) => (
+          <span
+            key={element.attributeName}
+            className='bg-secondary text-secondary-foreground hover:bg-secondary/80 m-1 mr-2 rounded px-2.5 py-0.5 text-sm font-medium shadow-sm transition-colors'
+          >
+            {element.attributeName}
+          </span>
+        ))}
+        {isLimited && <span className='text-muted-foreground ml-2'>...</span>}
       </div>
     );
   };
@@ -92,11 +90,10 @@ const SchemaCard = (props: ISchemaCardProps) => {
   );
 
   const handleCardClick = () => {
-    // Only navigate if schema is non-W3C and doesn't have nested attributes
     if (!props.w3cSchema && !hasNestedAttributes && props.schemaId) {
       router.push(`/organizations/schemas/${props.schemaId}`);
     }
-    // Execute existing onClick if defined
+
     if (props.onClickCallback) {
       props.onClickCallback(SchemaData);
     }
@@ -106,34 +103,17 @@ const SchemaCard = (props: ISchemaCardProps) => {
   };
 
   return (
-    // <Card
-    //   className={`relative h-full w-full overflow-hidden transition-transform duration-300 ${
-    //     props.w3cSchema || props.isClickable === false
-    //       ? 'cursor-default'
-    //       : 'hover:bg-muted/20 cursor-pointer hover:scale-[1.02]'
-    //   } ${hasNestedAttributes ? 'pointer-events-none opacity-80' : ''}`}
-    //   onClick={() => {
-    //     console.log("clicked")
-    //     if (!props.w3cSchema && props.onClickCallback) {
-    //       props.onClickCallback(SchemaData);
-    //     }
-    //     if (props.w3cSchema && props.onClickW3CCallback) {
-    //       props.onClickW3CCallback(W3CSchemaData);
-    //     }
-    //   }}
-    // >
-
     <Card
-      className={`relative h-full w-full overflow-hidden transition-transform duration-300 ${
+      className={`border-border relative h-full w-full overflow-hidden rounded-xl border shadow-xl transition-transform duration-300 ${
         props.w3cSchema || props.isClickable === false
           ? 'cursor-default'
-          : 'hover:bg-muted/20 cursor-pointer hover:scale-[1.02]'
+          : 'cursor-pointer hover:scale-[1.02] hover:shadow-lg'
       } ${hasNestedAttributes ? 'pointer-events-none opacity-80' : ''}`}
       onClick={handleCardClick}
     >
       {hasNestedAttributes && (
         <div className='bg-background/80 absolute inset-0 z-10 flex items-center justify-center'>
-          <div className='bg-secondary text-primary rounded-md p-4 text-center text-sm shadow-lg'>
+          <div className='bg-secondary text-secondary-foreground rounded-md p-4 text-center text-sm shadow-lg'>
             This schema can only be used through the API as it contains nested
             objects.
           </div>
@@ -151,7 +131,7 @@ const SchemaCard = (props: ISchemaCardProps) => {
             </p>
           </div>
 
-          <div className='flex flex-wrap items-center gap-2 text-sm sm:flex-nowrap sm:justify-end sm:text-right'>
+          <div className='flex flex-wrap items-center gap-2 text-sm sm:justify-end sm:text-right'>
             {props.w3cSchema && (
               <span className='bg-primary/10 text-primary rounded px-2 py-0.5 text-xs font-medium'>
                 W3C

@@ -83,6 +83,23 @@ instance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+function logoutAndRedirect() {
+  const rootKey = 'persist:root';
+
+  if (localStorage.getItem(rootKey)) {
+    localStorage.removeItem(rootKey);
+
+    const interval = setInterval(() => {
+      if (!localStorage.getItem(rootKey)) {
+        clearInterval(interval);
+        window.location.href = '/auth/sign-in';
+      }
+    }, 100);
+  } else {
+    window.location.href = '/auth/sign-in';
+  }
+}
+
 // RESPONSE INTERCEPTOR
 instance.interceptors.response.use(
   (response) => response,
@@ -104,7 +121,7 @@ instance.interceptors.response.use(
       }
 
       if (typeof window !== 'undefined') {
-        window.location.href = '/auth/sign-in';
+        logoutAndRedirect();
       }
     }
 

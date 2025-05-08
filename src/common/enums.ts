@@ -167,5 +167,6 @@ export enum DataType {
     INTEGER = 'integer',
     STRING = 'string',
     DATE_TIME = 'datetime-local',
-    ARRAY= 'array',
+    ARRAY = 'array',
+	OBJECT = 'object'
   }

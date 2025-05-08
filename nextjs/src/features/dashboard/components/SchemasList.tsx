@@ -12,42 +12,65 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog';
+
 import { getAllSchemasByOrgId } from '@/app/api/schema';
 import { useAppSelector } from '@/lib/hooks';
 import { dateConversion } from '@/utils/DateConversion';
 import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
+import Link from 'next/link';
+import { DidMethod, SchemaTypeValue } from '@/common/enums';
+
+type Schema = {
+  id: string;
+  name: string;
+  version: string;
+  createDateTime: string;
+  organizationName: string;
+  schemaLedgerId: string;
+};
+
 const SchemasList = () => {
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(10);
-  const [searchTerm] = useState('');
-  const [schemas, setSchemas] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [schemas, setSchemas] = useState<Schema[]>([]);
+  const [schemaTypeValues, setSchemaTypeValues] = useState<SchemaTypeValue>();
+  
+  const currentPage = 1;
+  const pageSize = 10;
 
   const orgId = useAppSelector((state) => state.organization.orgId);
-
-  const route = useRouter();
+  const router = useRouter();
 
   const fetchSchemas = async () => {
     setLoading(true);
 
     try {
       const response = await getAllSchemasByOrgId(
-        { search: searchTerm, itemPerPage: pageSize, page: currentPage },
+        { search: '', itemPerPage: pageSize, page: currentPage },
         orgId as string
       );
 
-      if (typeof response !== 'string' && response?.data?.data?.data) {
+      if (
+        response &&
+        typeof response !== 'string' &&
+        response.data?.data?.data
+      ) {
         setSchemas(response.data.data.data);
+
+        const did = response.data.data.data[0]?.issuerId;
+        if (did) {
+          if (did.includes(DidMethod.INDY)) {
+            setSchemaTypeValues(SchemaTypeValue.INDY);
+          } else if (did.includes(DidMethod.POLYGON)) {
+            setSchemaTypeValues(SchemaTypeValue.POLYGON);
+          } else if (
+            did.includes(DidMethod.KEY) ||
+            did.includes(DidMethod.WEB)
+          ) {
+            setSchemaTypeValues(SchemaTypeValue.NO_LEDGER);
+          }
+        }
       } else {
         setSchemas([]);
       }
@@ -63,18 +86,28 @@ const SchemasList = () => {
     if (orgId) {
       fetchSchemas();
     }
-  }, [currentPage, pageSize, orgId]);
+  }, [orgId]);
 
   const previewSchemas = schemas.slice(0, 3);
 
-  const renderSchema = (schema: any, index: number) => (
-    <div
-      key={index}
-      className='hover:bg-muted/70 flex items-center justify-between rounded-lg p-3 transition-colors hover:cursor-pointer'
-    >
-      <div
-        className='flex items-center gap-3'
-        onClick={() => route.push('/organizations/schemas')}
+  const handleClickSchema = (schemaId: string) => {
+    const encodedSchemaId = encodeURIComponent(schemaId);
+    router.push(`/organizations/schemas/${encodedSchemaId}`);
+  };
+
+  const renderSchema = (schema: Schema, index: number) => {
+    const isIndySchema = schemaTypeValues === SchemaTypeValue.INDY;
+
+    return (
+      <button
+        key={index}
+        type='button'
+        onClick={() => isIndySchema && handleClickSchema(schema.schemaLedgerId)}
+        disabled={!isIndySchema}
+        aria-disabled={!isIndySchema}
+        className={`border-border/50 hover:bg-muted/50 flex w-full items-center justify-between gap-5 rounded-xl border p-3 text-left shadow-xl transition-transform duration-300 ${
+          isIndySchema ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'
+        }`}
       >
         <div className='bg-muted text-muted-foreground flex h-10 w-10 items-center justify-center rounded-md'>
           <svg
@@ -103,69 +136,52 @@ const SchemasList = () => {
             Organization: {schema.organizationName}
           </p>
         </div>
-      </div>
-    </div>
-  );
+      </button>
+    );
+  };
 
   return (
-    <>
-      <Card className='flex h-full flex-col'>
-        <CardHeader className='pb-2'>
-          <div className='flex items-center justify-between'>
-            <div className='flex items-center gap-2'>
-              <CardTitle className='text-xl'>Schemas</CardTitle>
-              <Badge>{schemas.length}</Badge>
-            </div>
-            <Button onClick={() => route.push('/organizations/schemas/create')}>
-              <Plus className='mr-2 h-4 w-4' /> New Schema
-            </Button>
+    <Card className='border-border relative flex h-full w-full flex-col overflow-hidden rounded-xl border py-4 shadow-xl transition-transform duration-300'>
+      <CardHeader className='pb-2'>
+        <div className='flex items-center justify-between'>
+          <div className='flex items-center gap-2'>
+            <CardTitle className='text-xl'>Schemas</CardTitle>
+            <Badge>{schemas.length}</Badge>
           </div>
-          <CardDescription>Manage your data schemas</CardDescription>
-        </CardHeader>
+          <Button onClick={() => router.push('/organizations/schemas/create')}>
+            <Plus className='mr-2 h-4 w-4' />
+            New Schema
+          </Button>
+        </div>
+        <CardDescription>Manage your data schemas</CardDescription>
+      </CardHeader>
 
-        <CardContent className='flex-1 space-y-4 overflow-y-auto'>
-          {loading ? (
-            Array.from({ length: 2 }).map((_, i) => (
-              <div
-                key={i}
-                className='flex items-center justify-between rounded-lg p-3'
-              >
-                <div className='flex items-center gap-3'>
-                  <Skeleton className='h-10 w-10 rounded-md' />
-                  <Skeleton className='h-4 w-[300px]' />
-                </div>
+      <CardContent className='flex-1 space-y-4 overflow-y-auto'>
+        {loading ? (
+          Array.from({ length: 2 }).map((_, i) => (
+            <div
+              key={i}
+              className='flex items-center justify-between rounded-lg p-3'
+            >
+              <div className='flex items-center gap-3'>
+                <Skeleton className='h-10 w-10 rounded-md' />
+                <Skeleton className='h-4 w-[300px]' />
               </div>
-            ))
-          ) : previewSchemas.length > 0 ? (
-            previewSchemas.map(renderSchema)
-          ) : (
-            <div className='flex h-40 items-center justify-center'>
-              <p className='text-muted-foreground text-sm'>No schemas found.</p>
             </div>
-          )}
-        </CardContent>
+          ))
+        ) : previewSchemas.length > 0 ? (
+          previewSchemas.map(renderSchema)
+        ) : (
+          <div className='flex h-40 items-center justify-center'>
+            <p className='text-muted-foreground text-sm'>No schemas found.</p>
+          </div>
+        )}
+      </CardContent>
 
-        <CardFooter className='mt-auto justify-end pt-2'>
-          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-            <DialogTrigger asChild>
-              <Button
-                variant='link'
-                className={`h-auto p-0 text-sm font-medium ${schemas.length <= 3 ? 'cursor-not-allowed opacity-50' : ''}`}
-                disabled={schemas.length <= 3}
-              >
-                View all
-              </Button>
-            </DialogTrigger>
-            <DialogContent className='max-h-[80vh] w-full max-w-3xl overflow-y-auto'>
-              <DialogHeader>
-                <DialogTitle>All Schemas</DialogTitle>
-              </DialogHeader>
-              <div className='space-y-4'>{schemas.map(renderSchema)}</div>
-            </DialogContent>
-          </Dialog>
-        </CardFooter>
-      </Card>
-    </>
+      <CardFooter className='mt-auto justify-end pt-2'>
+        <Link href='/organizations/schemas'>View all</Link>
+      </CardFooter>
+    </Card>
   );
 };
 

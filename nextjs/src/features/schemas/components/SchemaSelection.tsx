@@ -18,7 +18,6 @@ const SchemaSelection = () => {
         schemaId: schemaId
       })
     );
-    // window.location.href = `${pathRoutes.organizations.Issuance.credDef}`;
   };
 
   return <SchemaList schemaSelectionCallback={schemaSelectionCallback1} />;

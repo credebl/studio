@@ -1,14 +1,12 @@
+'use client';
+
 import { Metadata } from 'next';
 import UserAuthForm from './user-auth-form';
 import Image from 'next/image';
 import {
-  CredeblLogo,
   CredeblLogoHeight,
-  CredeblLogoWidth,
-  signInHeight,
-  signInImg,
-  signInWidth
-} from '@/config/CommonConstant';
+  CredeblLogoWidth} from '@/config/CommonConstant';
+import { useThemeConfig } from '@/components/active-theme';
 
 export const metadata: Metadata = {
   title: 'Authentication',
@@ -16,38 +14,31 @@ export const metadata: Metadata = {
 };
 
 export default function SignInPage() {
+  const { activeTheme } = useThemeConfig();
+
+  const logoImageSrc =
+    activeTheme === 'credebl'
+      ? '/images/CREDEBL_Logo_Web.svg'
+      : '/images/sovio_logo.svg';
+
   return (
-    <div className='relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0'>
-      <div className='bg-muted relative hidden h-full flex-col p-10 text-white lg:flex dark:border-r'>
-        <div className='absolute inset-0 bg-[#ffffff]' />
-        <div className='relative z-20 flex items-center text-lg font-medium'>
-          <Image
-            height={CredeblLogoHeight}
-            width={CredeblLogoWidth}
-            alt='Logo'
-            src={CredeblLogo}
-          />
-        </div>
-        <div className='relative z-10 flex flex-1 items-center justify-center'>
-          <Image
-            className='h-auto max-w-full object-contain'
-            height={signInHeight}
-            alt='Sign In Illustration'
-            src={signInImg}
-            width={signInWidth}
-          />
-        </div>
-        <footer className='relative z-20 text-center'>
-          <div className='text-sm text-gray-500'>
-            © 2019 - {new Date().getFullYear()} AYANWORKS | All rights
-            reserved.
-          </div>
-        </footer>
+    <div className='relative flex min-h-screen flex-col bg-[image:var(--card-gradient)]'>
+      <div className='absolute top-8 left-8 z-20'>
+        <Image
+          height={CredeblLogoHeight}
+          width={CredeblLogoWidth}
+          alt='Logo'
+          src={logoImageSrc}
+        />
       </div>
 
-      <div className='relative flex h-screen w-full items-center justify-center bg-[image:var(--card-gradient)]'>
+      <div className='flex flex-1 items-center justify-center px-4'>
         <UserAuthForm />
       </div>
+
+      <footer className='text-muted-foreground mb-4 text-center text-sm'>
+        © 2019 - {new Date().getFullYear()} AYANWORKS | All rights reserved.
+      </footer>
     </div>
   );
 }

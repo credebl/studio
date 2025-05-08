@@ -1,5 +1,9 @@
 'use client';
 
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { IconChevronRight } from '@tabler/icons-react';
+
 import {
   Collapsible,
   CollapsibleContent,
@@ -18,31 +22,37 @@ import {
   SidebarMenuSubItem,
   SidebarRail
 } from '@/components/ui/sidebar';
+import { Icons } from '../icons';
+import { navItems } from '@/constants/data';
+import { useThemeConfig } from '../active-theme';
+import Image from 'next/image';
 import { setOrgId, setOrgInfo } from '@/lib/orgSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { useEffect, useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
 
-import { IconChevronRight } from '@tabler/icons-react';
-import { Icons } from '../icons';
-import Link from 'next/link';
-import { OrgSwitcher } from '../org-switcher';
 import { getOrganizations } from '@/app/api/organization';
-import { navItems } from '@/constants/data';
-
 export default function AppSidebar() {
   const pathname = usePathname();
+
+  const { activeTheme } = useThemeConfig();
+
+  const logoImageSrc =
+    activeTheme === 'credebl'
+      ? '/images/CREDEBL_Logo_Web.svg'
+      : '/images/sovio_logo.svg';
+
+  // export default function AppSidebar() {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  
+
   const [currentPage] = useState(1);
   const [pageSize] = useState(10);
   const [searchTerm] = useState('');
   const [orgList, setOrgList] = useState<any[]>([]);
-  
+
   const selectedOrgId = useAppSelector((state) => state.organization.orgId);
-  
-  const selectedOrg = orgList.find(org => org.id === selectedOrgId) ?? null;
+
+  const selectedOrg = orgList.find((org) => org.id === selectedOrgId) ?? null;
 
   useEffect(() => {
     const fetchOrganizations = async () => {
@@ -59,7 +69,7 @@ export default function AppSidebar() {
         ) {
           const orgs = response.data.data.organizations;
           setOrgList(orgs);
-          
+
           // Only set initial organization if no organization is currently selected in Redux
           if (!selectedOrgId && orgs.length > 0) {
             dispatch(setOrgId(orgs[0]?.id));
@@ -101,7 +111,7 @@ export default function AppSidebar() {
             selected.userOrgRoles?.map((role: any) => role?.orgRole?.name) || []
         })
       );
-      
+
       router.push(`/organizations/dashboard/${selected.id}`);
     }
   };
@@ -111,14 +121,15 @@ export default function AppSidebar() {
   return (
     <Sidebar collapsible='icon'>
       <SidebarHeader>
-        <OrgSwitcher
-          tenants={orgList.map((org) => ({
-            id: org.id,
-            name: org.name
-          }))}
-          defaultTenant={activeTenant}
-          onTenantSwitch={handleSwitchTenant}
-        />
+        <div className='h-[40px] w-[150px] overflow-hidden transition-all duration-300 group-data-[collapsed=true]:h-0 group-data-[collapsed=true]:w-0'>
+          <Image
+            height={40}
+            width={150}
+            alt='Logo'
+            className='h-full w-full object-contain'
+            src={logoImageSrc}
+          />
+        </div>
       </SidebarHeader>
 
       <SidebarContent className='overflow-x-hidden'>

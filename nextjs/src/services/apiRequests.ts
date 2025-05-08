@@ -10,17 +10,12 @@ export interface APIParameters {
   config?: Record<string, unknown>;
 }
 
-const HandleResponse = (responseData: any): Promise<AxiosResponse> => {
+const HandleResponse = (responseData: AxiosResponse | undefined): Promise<AxiosResponse> => {
   if (responseData) {
-    return Promise.reject(
-      new Error(
-        responseData?.data?.message
-          ? responseData?.data?.message
-          : responseData?.message
-            ? responseData?.message
-            : 'Something went wrong, please try later...'
-      )
-    );
+    const errorMessage =
+      (responseData.data as { message?: string })?.message ||
+      'Something went wrong, please try later...';
+    return Promise.reject(new Error(errorMessage));
   }
   return Promise.reject(
     new Error('Please check your internet connectivity and try again')
@@ -36,7 +31,7 @@ export const axiosGet = async ({
     return response;
   } catch (error) {
     const err = error as AxiosError;
-    return HandleResponse(err.response ? err.response : err);
+    return HandleResponse(err.response);
   }
 };
 export const axiosPublicUserGet = async ({
@@ -48,7 +43,7 @@ export const axiosPublicUserGet = async ({
     return response;
   } catch (error) {
     const err = error as AxiosError;
-    return HandleResponse(err.response ? err.response : err);
+    return HandleResponse(err.response);
   }
 };
 
@@ -61,7 +56,7 @@ export const axiosPublicOrganisationGet = async ({
     return response;
   } catch (error) {
     const err = error as AxiosError;
-    return HandleResponse(err.response ? err.response : err);
+    return HandleResponse(err.response);
   }
 };
 
@@ -76,7 +71,7 @@ export const axiosPost = async ({
     return response;
   } catch (error) {
     const err = error as AxiosError;
-    return HandleResponse(err.response ? err.response : err);
+    return HandleResponse(err.response);
   }
 };
 
@@ -91,7 +86,7 @@ export const axiosPatch = async ({
     return response;
   } catch (error) {
     const err = error as AxiosError;
-    return HandleResponse(err.response ? err.response : err);
+    return HandleResponse(err.response);
   }
 };
 
@@ -106,7 +101,7 @@ export const axiosPut = async ({
     return response;
   } catch (error) {
     const err = error as AxiosError;
-    return HandleResponse(err.response ? err.response : err);
+    return HandleResponse(err.response);
   }
 };
 
@@ -120,7 +115,7 @@ export const axiosDelete = async ({
     return response;
   } catch (error) {
     const err = error as AxiosError;
-    return HandleResponse(err.response ? err.response : err);
+    return HandleResponse(err.response);
   }
 };
 
@@ -134,7 +129,7 @@ export const ecosystemAxiosGet = async ({
     return response;
   } catch (error) {
     const err = error as AxiosError;
-    return HandleResponse(err.response ? err.response : err);
+    return HandleResponse(err.response);
   }
 };
 export const ecosystemAxiosPublicUserGet = async ({
@@ -146,7 +141,7 @@ export const ecosystemAxiosPublicUserGet = async ({
     return response;
   } catch (error) {
     const err = error as AxiosError;
-    return HandleResponse(err.response ? err.response : err);
+    return HandleResponse(err.response);
   }
 };
 
@@ -159,7 +154,7 @@ export const ecosystemAxiosPublicOrganisationGet = async ({
     return response;
   } catch (error) {
     const err = error as AxiosError;
-    return HandleResponse(err.response ? err.response : err);
+    return HandleResponse(err.response);
   }
 };
 
@@ -174,7 +169,7 @@ export const ecosystemAxiosPost = async ({
     return response;
   } catch (error) {
     const err = error as AxiosError;
-    return HandleResponse(err.response ? err.response : err);
+    return HandleResponse(err.response);
   }
 };
 
@@ -189,7 +184,7 @@ export const ecosystemAxiosPatch = async ({
     return response;
   } catch (error) {
     const err = error as AxiosError;
-    return HandleResponse(err.response ? err.response : err);
+    return HandleResponse(err.response);
   }
 };
 
@@ -204,7 +199,7 @@ export const ecosystemAxiosPut = async ({
     return response;
   } catch (error) {
     const err = error as AxiosError;
-    return HandleResponse(err.response ? err.response : err);
+    return HandleResponse(err.response);
   }
 };
 
@@ -218,6 +213,6 @@ export const ecosystemAxiosDelete = async ({
     return response;
   } catch (error) {
     const err = error as AxiosError;
-    return HandleResponse(err.response ? err.response : err);
+    return HandleResponse(err.response);
   }
 };
