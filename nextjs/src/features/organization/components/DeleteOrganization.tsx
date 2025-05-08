@@ -222,7 +222,6 @@ export default function DeleteOrganizationPage() {
 
   const deleteOrganizations = async () => {
     try {
-      // Assuming deleteOrganization needs orgId
       const response = await deleteOrganization(orgId as string);
       const { data } = response as AxiosResponse;
 
@@ -231,9 +230,7 @@ export default function DeleteOrganizationPage() {
         await fetchOrganizationReferences();
         setShowPopup(false);
 
-        setTimeout(() => {
           window.location.href = pathRoutes.organizations.root;
-        }, 3000);
       } else {
         setError(response as string);
       }
