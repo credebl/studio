@@ -87,7 +87,7 @@
     "react-day-picker": "^8.10.1",
     "react-dom": "19.0.0",
     "react-dropzone": "^14.3.5",
-    "react-hook-form": "^7.54.1",
+    "react-hook-form": "^7.55.0",
     "react-redux": "^9.2.0",
     "react-qr-code": "^2.0.15",
     "react-resizable-panels": "^2.1.7",

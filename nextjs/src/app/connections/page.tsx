@@ -1,4 +1,4 @@
-import Connections from '@/features/connections/components/Connections';
+import Connections from '@/features/connections';
 import React from 'react';
 
 const page = () => {
