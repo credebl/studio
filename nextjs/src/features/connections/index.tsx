@@ -1,16 +1,18 @@
 'use client';
 import { Main } from '@/components/layout/main';
 import {
+	ColumnActionName,
   getColumns,
   IColumnData,
   ITableMetadata,
+  SortActions,
   TableStyling
 } from '../../components/ui/generic-table-component/columns';
 import { DataTable } from '../../components/ui/generic-table-component/data-table';
 import { useAppSelector } from '@/lib/hooks';
 import { getConnectionsByOrg } from '@/app/api/connection';
 import { useEffect, useState } from 'react';
-import { Connection } from './types/connections-interface';
+import { Connection, ConnectionApiSortFields } from './types/connections-interface';
 
 export default function Connections() {
   const metadata: ITableMetadata = {
@@ -30,6 +32,7 @@ export default function Connections() {
 	const [pageCount, setPageCount] = useState(1);
 	const [searchTerm, setSearchTerm] = useState('');
 	const [sortBy, setSortBy] = useState('createDateTime');
+	const [sortOrder, setsortOrder] = useState<SortActions>('desc');
 
   useEffect(() => {
     if (!orgId) return;
@@ -40,7 +43,7 @@ export default function Connections() {
           page: pageIndex + 1,
           search: searchTerm,
           sortBy: sortBy,
-          sortingOrder: 'desc',
+          sortingOrder: sortOrder,
           orgId
         });
 
@@ -58,7 +61,8 @@ export default function Connections() {
     }
 
     fetchConnections();
-  }, [orgId, pageIndex, pageSize, searchTerm]); // Rerun if orgId change
+		// Can add terms according to us
+  }, [orgId, pageIndex, pageSize, sortBy, searchTerm, sortOrder]); // Rerun if orgId change
 
 
   const columnData: IColumnData[] = [
@@ -66,33 +70,29 @@ export default function Connections() {
       id: 'theirLabel',
       title: 'Their Label',
       accessorKey: 'theirLabel',
-      columnFunction: ['hide', {
-					sortCallBack: async (order) => {
-            setSortBy('theirLabel');
-            const connections = await getConnectionsByOrg({
-              itemPerPage: pageSize,
-              page: pageIndex + 1,
-              search: searchTerm,
-              sortBy: sortBy,
-              sortingOrder: order,
-              orgId
-            });
-
-            if (connections && Array.isArray(connections.data)) {
-              setConnectionData(connections.data || []);
-            } else {
-              setConnectionData([]);
-            }
+      columnFunction: [
+        'hide',
+        {
+          sortCallBack: async (order) => {
+            setSortBy(ConnectionApiSortFields.THEIR_LABEL);
+						setsortOrder(order);
           }
         }
-      ],
+      ]
     },
     {
       id: 'connectionId',
-      title: 'connectionId',
+      title: 'Connection Id',
       accessorKey: 'connectionId',
-      columnFunction: ['hide', 'sort']
-      // cell:<div></div> // Optional if we want to send our own cell
+      columnFunction: [
+        'hide',
+        {
+          sortCallBack: async (order) => {
+            setSortBy(ConnectionApiSortFields.CONNECTIONID);
+						setsortOrder(order);
+          }
+        }
+      ]
     },
     {
       id: 'state',
@@ -121,22 +121,9 @@ export default function Connections() {
       accessorKey: 'createDateTime',
       columnFunction: [
         {
-					sortCallBack: async (order) => {
-            setSortBy('createDateTime');
-            const connections = await getConnectionsByOrg({
-              itemPerPage: pageSize,
-              page: pageIndex + 1,
-              search: searchTerm,
-              sortBy: sortBy,
-              sortingOrder: order,
-              orgId
-            });
-
-            if (connections && Array.isArray(connections.data)) {
-              setConnectionData(connections.data || []);
-            } else {
-              setConnectionData([]);
-            }
+          sortCallBack: async (order) => {
+            setSortBy(ConnectionApiSortFields.CREATE_DATE_TIME);
+						setsortOrder(order);
           }
         }
       ]
@@ -159,6 +146,7 @@ export default function Connections() {
       </div>
       <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
         <DataTable
+          index={'connectionId'}
           data={connectionData}
           columns={column}
           pageIndex={pageIndex}

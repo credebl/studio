@@ -3,16 +3,21 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { DataTableColumnHeader } from './data-table-column-header';
 import { JSX } from 'react';
 
-export type ColumnFunctionName = 'hide' | 'sort';
+export type ColumnActionName = 'hide' | 'sort';
 
-export type CallbackFunction = (order: 'asc' | 'desc', data?: any) => unknown | Promise<unknown>;
+export type SortActions = 'asc' | 'desc';
+
+export type CallbackFunction = (
+  order: SortActions,
+  data?: any
+) => unknown | Promise<unknown>;
 
 export interface ITableMetadata {
   enableSelection: Boolean;
   filterCallback?: CallbackFunction;
 }
 
-type ColumnFunctionality = ColumnFunctionName | { sortCallBack: CallbackFunction };
+type ColumnFunctionality = ColumnActionName | { sortCallBack: CallbackFunction };
 
 export interface IColumnData {
   id: string;

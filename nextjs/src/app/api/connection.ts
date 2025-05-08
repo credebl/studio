@@ -32,14 +32,16 @@ export const getConnectionsByOrg = async ({
   try {
     const connectionList = await axiosGet(axiosPayload);
     const { data } = connectionList as any;
-    let result = {};
     if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-      result = data.data ?? {};
+			if (!data.data) {
+				throw new Error("Error fetching connections", data.error)
+			}
+      return data.data;
     }
     throw new Error("Error fetching connection list");
   } catch (error) {
     const err = error as Error;
-    console.error('Error fetching connections::', err.message);
+    console.error('Error fetching connections::', err.message?? '');
   }
 }
 
