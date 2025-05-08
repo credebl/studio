@@ -3,15 +3,12 @@ import {
     axiosGet,
   } from '@/services/apiRequests';
   import { apiRoutes } from '@/config/apiRoutes';
-  
+
   export const getOrganizationReferences = async (orgId: string) => {
     const url = `${apiRoutes.organizations.root}${apiRoutes.organizations.getOrgReferences}/${orgId}`;
   
-    const config = {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    };
+const config = getHeaderConfigs()
+
     const axiosPayload = {
       url,
       config
@@ -27,11 +24,8 @@ import {
   export const deleteVerificationRecords = async (orgId: string) => {
     const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.deleteVerifications}`;
   
-    const config = {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    };
+const config = getHeaderConfigs()
+
     const axiosPayload = {
       url,
       config
@@ -47,11 +41,8 @@ import {
   export const deleteIssuanceRecords = async (orgId: string) => {
     const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.deleteIssaunce}`;
   
-    const config = {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    };
+const config = getHeaderConfigs()
+
     const axiosPayload = {
       url,
       config
@@ -67,11 +58,8 @@ import {
   export const deleteOrganizationWallet = async (orgId: string) => {
     const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.deleteWallet}`;
   
-    const config = {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    };
+const config = getHeaderConfigs()
+
     const axiosPayload = {
       url,
       config
@@ -86,11 +74,8 @@ import {
   
   export const deleteOrganization = async (orgId: string) => {
     const url = `${apiRoutes.organizations.root}/${orgId}`;
-    const config = {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    };
+const config = getHeaderConfigs()
+
     const axiosPayload = {
       url,
       config

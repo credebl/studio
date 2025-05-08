@@ -6,11 +6,8 @@ import {
   export const getAllCountries = async () => {
   const url = `${apiRoutes.geolocation.countries}`;
 
-  const config = {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  };
+  const config = getHeaderConfigs()
+
   const axiosPayload = {
     url,
     config
@@ -27,11 +24,8 @@ import {
 export const getAllStates = async (countryId: number | null) => {
   const url = `${apiRoutes.geolocation.countries}/${countryId}${apiRoutes.geolocation.state}`;
 
-  const config = {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  };
+  const config = getHeaderConfigs()
+
   const axiosPayload = {
     url,
     config
@@ -51,11 +45,8 @@ export const getAllCities = async (
 ) => {
   const url = `${apiRoutes.geolocation.countries}/${countryId}${apiRoutes.geolocation.state}/${stateId}${apiRoutes.geolocation.cities}`;
 
-  const config = {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  };
+  const config = getHeaderConfigs()
+
   const axiosPayload = {
     url,
     config

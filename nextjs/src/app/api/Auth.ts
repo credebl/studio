@@ -129,11 +129,8 @@ export const updateUserProfile = async(data: object ) => {
     const url = apiRoutes.users.update
     const payload = data
 
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    }
+    const config = getHeaderConfigs()
+    
     const axiosPayload = {
         url,
         payload,

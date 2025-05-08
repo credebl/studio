@@ -11,11 +11,8 @@ export const createOrganization = async (data: object) => {
   const url = apiRoutes.organizations.create;
   const payload = data;
 
-  const config = {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  };
+  const config = getHeaderConfigs()
+
   const axiosPayload = {
     url,
     payload,
@@ -34,11 +31,8 @@ export const updateOrganization = async (data: object, orgId: string) => {
   const url = `${apiRoutes.organizations.update}/${orgId}`;
   const payload = data;
 
-  const config = {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  };
+  const config = getHeaderConfigs()
+
   const axiosPayload = {
     url,
     payload,
@@ -62,11 +56,8 @@ export const getOrganizations = async (
   const roleQuery = role ? `&role=${role}` : '';
   const url = `${apiRoutes.organizations.getAll}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}${roleQuery}`;
 
-  const config = {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  };
+  const config = getHeaderConfigs()
+
   const axiosPayload = {
     url,
     config
@@ -83,11 +74,8 @@ export const getOrganizations = async (
 export const getOrganizationById = async (orgId: string) => {
   const url = `${apiRoutes.organizations.getById}/${orgId}`;
 
-  const config = {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  };
+  const config = getHeaderConfigs()
+
   const axiosPayload = {
     url,
     config
@@ -104,11 +92,8 @@ export const getOrganizationById = async (orgId: string) => {
 export const getOrgDashboard = async (orgId: string) => {
   const url = `${apiRoutes.organizations.getOrgDashboard}/${orgId}`;
 
-  const config = {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  };
+  const config = getHeaderConfigs()
+
   const axiosPayload = {
     url,
     config
@@ -125,11 +110,8 @@ export const getOrgDashboard = async (orgId: string) => {
 export const getOrganizationRoles = async (orgId: string) => {
   const url = `${apiRoutes.organizations.root}/${orgId}/roles`;
 
-  const config = {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  };
+  const config = getHeaderConfigs()
+
   const axiosPayload = {
     url,
     config
