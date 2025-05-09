@@ -34,6 +34,8 @@ import { nanoid } from "nanoid";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+// import { createDid, createPolygonKeyValuePair } from "@/app/api/Agent";
+
 interface IPolygonKeys {
   privateKey: string;
   publicKeyBase58: string;
@@ -58,7 +60,7 @@ interface IFormValues {
   did?: string;
 }
 
-const CreateDIDModal = (props: CreateDIDModalProps) => {
+const CreateDidComponent = (props: CreateDIDModalProps) => {
   const [loading, setLoading] = React.useState<boolean>(false);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [errMsg, setErrMsg] = React.useState<string | null>(null);
@@ -340,7 +342,6 @@ const CreateDIDModal = (props: CreateDIDModalProps) => {
 
   function onSubmit(values: IFormValues) {
     createNewDid(values).then(() => {
-      window.location.reload();
     });
   }
 
@@ -672,4 +673,4 @@ function CheckIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-export default CreateDIDModal;
+export default CreateDidComponent;

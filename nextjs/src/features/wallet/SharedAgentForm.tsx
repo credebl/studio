@@ -4,11 +4,11 @@ import * as yup from 'yup';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import Link from 'next/link';
 import LedgerConfig from './LedgerConfig';
 import { ISharedAgentForm } from '../organization/components/interfaces/organization';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
+import { useDispatch } from 'react-redux';
 
 const SharedAgentForm = ({
   orgName,
@@ -23,6 +23,7 @@ const SharedAgentForm = ({
 }: ISharedAgentForm) => {
   const [walletName, setWalletName] = useState('');
   const router = useRouter();
+  const dispatch = useDispatch();
 
   return (
     <div className="mt-4 flex-col gap-4">
@@ -40,7 +41,7 @@ const SharedAgentForm = ({
           {({ errors, touched }) => (
             <Form className="mt-4 max-w-lg space-y-4">
               <div>
-                <Label htmlFor="walletName">Wallet Name</Label>
+                <Label htmlFor="walletName" className='m-4'>Wallet Name</Label>
                 <Field
                   as={Input}
                   id="walletName"
@@ -58,7 +59,7 @@ const SharedAgentForm = ({
 
               <Button
                     variant='secondary'
-                    onClick={() => router.push('/organizations/create-organization?step=1')}
+                    onClick={() => router.push('/organizations/create-organization?createOrg=true')}
                     className='flex items-center gap-2'
                     >
                     <ArrowLeft className='h-4 w-4' />
