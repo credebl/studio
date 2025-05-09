@@ -141,33 +141,31 @@ export default function Connections() {
 
   return (
     <PageContainer>
-      <Main>
-        <div className='mb-2 flex flex-wrap items-center justify-between space-y-2 gap-x-4'>
-          <div>
-            <h2 className='text-2xl font-bold tracking-tight'>Connections</h2>
-            <p className='text-muted-foreground'>
-              Here&apos;s a list of Connection!
-            </p>
-          </div>
+      <div className='mb-2 flex flex-wrap items-center justify-between space-y-2 gap-x-4'>
+        <div>
+          <h2 className='text-2xl font-bold tracking-tight'>Connections</h2>
+          <p className='text-muted-foreground'>
+            Here&apos;s a list of Connection!
+          </p>
         </div>
-        <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
-          <DataTable
-            index={'connectionId'}
-            data={connectionData}
-            columns={column}
-            pageIndex={pageIndex}
-            pageSize={pageSize}
-            pageCount={pageCount}
-            onPageChange={setPageIndex} // Function to handle pageIndex change
-            onPageSizeChange={(size) => {
-              // Function to handle pageSize change
-              setPageSize(size);
-              setPageIndex(0);
-            }}
-            onSearchTerm={setSearchTerm} // Function to handle searchTerm change
-          />
-        </div>
-      </Main>
+      </div>
+      <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
+        <DataTable
+          index={'connectionId'}
+          data={connectionData}
+          columns={column}
+          pageIndex={pageIndex}
+          pageSize={pageSize}
+          pageCount={pageCount}
+          onPageChange={setPageIndex} // Function to handle pageIndex change
+          onPageSizeChange={(size) => {
+            // Function to handle pageSize change
+            setPageSize(size);
+            setPageIndex(0);
+          }}
+          onSearchTerm={setSearchTerm} // Function to handle searchTerm change
+        />
+      </div>
     </PageContainer>
   );
 }
