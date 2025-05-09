@@ -1,7 +1,5 @@
 'use client';
-import { Main } from '@/components/layout/main';
 import {
-  ColumnActionName,
   getColumns,
   IColumnData,
   ITableMetadata,
