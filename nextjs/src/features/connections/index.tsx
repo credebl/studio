@@ -52,8 +52,8 @@ export default function Connections() {
         });
 
         if (connectionList && Array.isArray(connectionList.data)) {
-          setConnectionData(connectionList.data || []);
-          setPageCount(connectionList.lastPage || 1);
+          setConnectionData(connectionList.data ?? []);
+          setPageCount(connectionList.lastPage ?? 1);
         } else {
           setConnectionData([]);
           setPageCount(1);
@@ -90,8 +90,8 @@ export default function Connections() {
           });
 
           if (connectionList && Array.isArray(connectionList.data)) {
-            setConnectionData(connectionList.data || []);
-            setPageCount(connectionList.lastPage || 1);
+            setConnectionData(connectionList.data ?? []);
+            setPageCount(connectionList.lastPage ?? 1);
           } else {
             setConnectionData([]);
             setPageCount(1);
