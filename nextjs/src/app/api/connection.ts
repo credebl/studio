@@ -1,5 +1,7 @@
 import { apiRoutes } from '@/config/apiRoutes';
+import { apiStatusCodes } from '@/config/CommonConstant';
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs';
+import { ConnectionResponse } from '@/features/connections/types/connections-interface';
 import { axiosDelete, axiosGet } from '@/services/apiRequests';
 
 export interface IConnectionListAPIParameter {
@@ -18,7 +20,7 @@ export const getConnectionsByOrg = async ({
   search,
   sortBy,
   sortingOrder
-}: IConnectionListAPIParameter & { orgId: string }) => {
+}: IConnectionListAPIParameter & { orgId: string }): Promise<ConnectionResponse | void> => {
   const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.getAllConnections}?pageSize=${itemPerPage}&pageNumber=${page}&searchByText=${search}&sortBy=${sortingOrder}&sortField=${sortBy}`;
 
   const axiosPayload = {
@@ -27,10 +29,18 @@ export const getConnectionsByOrg = async ({
   };
 
   try {
-    return await axiosGet(axiosPayload);
+    const connectionList = await axiosGet(axiosPayload);
+    const { data } = connectionList as any;
+    if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+			if (!data.data) {
+				throw new Error("Error fetching connections", data.error)
+			}
+      return data.data;
+    }
+    throw new Error("Error fetching connection list");
   } catch (error) {
     const err = error as Error;
-    return err?.message;
+    console.error('Error fetching connections::', err.message?? '');
   }
 };
 
