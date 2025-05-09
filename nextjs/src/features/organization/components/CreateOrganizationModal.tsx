@@ -5,7 +5,6 @@ import * as yup from 'yup'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Field, Form, Formik, FormikHelpers } from 'formik'
-import React, { useEffect, useState } from 'react'
 import {
   createOrganization,
   getOrganizationById,
@@ -16,14 +15,7 @@ import {
   getAllCountries,
   getAllStates,
 } from '@/app/api/geolocation'
-import {
-  setFormData,
-  setIsCreateOrgForm,
-  setLedgerConfig,
-  setOrgId,
-  setOrgName,
-  setStep,
-} from '@/lib/walletSpinupSlice'
+import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { AlertComponent } from '@/components/AlertComponent'
@@ -39,7 +31,6 @@ import Stepper from '@/components/StepperComponent'
 import { Textarea } from '@/components/ui/textarea'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { processImageFile } from '@/components/ProcessImage'
-import { useDispatch } from 'react-redux'
 
 type Countries = {
   id: number
@@ -74,7 +65,7 @@ export default function OrganizationOnboarding(): React.JSX.Element {
     null,
   )
   const [selectedStateId, setSelectedStateId] = useState<number | null>(null)
-  const [orgData] = useState<IOrgFormValues | null>(null)
+  const [orgData, setOrgData] = useState<IOrgFormValues | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [failure, setFailure] = useState<string | null>(null)
   const [isEditMode, setIsEditMode] = useState<boolean>(false)
@@ -83,11 +74,7 @@ export default function OrganizationOnboarding(): React.JSX.Element {
 
   const searchParams = useSearchParams()
   const router = useRouter()
-  const currentOrgId = searchParams.get('orgId')
-  const stepParam = searchParams.get('step')
-
-  const dispatch = useDispatch()
-  dispatch(setOrgId(currentOrgId))
+  const orgId = searchParams.get('orgId')
 
   const getCountries = async (): Promise<void> => {
     const response = await getAllCountries()
@@ -138,14 +125,12 @@ export default function OrganizationOnboarding(): React.JSX.Element {
 
   const fetchOrganizationDetails = async (): Promise<void> => {
     setLoading(true)
-    const response = await getOrganizationById(currentOrgId as string)
+    const response = await getOrganizationById(orgId as string)
     const { data } = response as AxiosResponse
     setLoading(false)
     if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
       const org = data?.data
-      dispatch(setFormData(org))
-      dispatch(setOrgName(org?.name))
-      dispatch(setLedgerConfig(false))
+      setOrgData(org)
       setIsPublic(org.publicProfile)
       if (org?.countryId) {
         setSelectedCountryId(org.countryId)
@@ -163,20 +148,12 @@ export default function OrganizationOnboarding(): React.JSX.Element {
   }
 
   useEffect(() => {
-    getCountries()
-  }, [])
-
-  useEffect(() => {
-    if (currentOrgId) {
+    if (orgId) {
       setIsEditMode(true)
       fetchOrganizationDetails()
       getCountries()
-    } else {
-      if (stepParam) {
-        setStep(Number(stepParam))
-      }
     }
-  }, [stepParam])
+  }, [])
 
   useEffect(() => {
     if (selectedCountryId) {
@@ -226,13 +203,13 @@ export default function OrganizationOnboarding(): React.JSX.Element {
     })
   }
 
-  const handleSubmit = (values: IOrgFormValues): void => {
-    dispatch(setFormData(values))
-    dispatch(setIsCreateOrgForm(false))
-    dispatch(setStep(2))
+  // const handleSubmit = (values: IOrgFormValues) => {
+  //   dispatch(setFormData(values));
+  //   dispatch(setIsCreateOrgForm(false));
+  //   dispatch(setStep(2));
 
-    router.push('/organizations/agent-config')
-  }
+  //   router.push('/organizations/agent-config')
+  // };
 
   const handleUpdateOrganization = async (
     values: IOrgFormValues,
@@ -253,10 +230,7 @@ export default function OrganizationOnboarding(): React.JSX.Element {
         isPublic,
       }
 
-      const resCreateOrg = await updateOrganization(
-        orgData,
-        currentOrgId as string,
-      )
+      const resCreateOrg = await updateOrganization(orgData, orgId as string)
 
       const { data } = resCreateOrg as AxiosResponse
 
@@ -278,13 +252,13 @@ export default function OrganizationOnboarding(): React.JSX.Element {
     }
   }
 
-  const handleCreateOrganization = async (
+  const handleCreateAndContinue = async (
     values: IOrgFormValues,
-  ): Promise<string | null> => {
+  ): Promise<void> => {
+    setLoading(true)
     try {
       setSuccess(null)
       setFailure(null)
-      setLoading(true)
 
       const orgData = {
         name: values.name,
@@ -298,28 +272,25 @@ export default function OrganizationOnboarding(): React.JSX.Element {
 
       const resCreateOrg = await createOrganization(orgData)
       const { data } = resCreateOrg as AxiosResponse
-      setLoading(false)
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
         const orgId = data?.data?.id || data?.data?._id
         setSuccess(data.message as string)
 
         setTimeout(() => {
-          router.push('/organizations')
-        }, 2000)
-
-        dispatch(setOrgId(orgId))
-        return orgId
+          router.push(`/organizations/agent-config?orgId=${orgId}`)
+        }, 3000)
       } else {
-        setFailure(resCreateOrg as string)
-        return null
+        setFailure(data?.message as string)
       }
     } catch (error) {
       console.error('Error creating organization:', error)
+      setFailure('An unexpected error occurred. Please try again.')
+    } finally {
       setLoading(false)
-      return null
     }
   }
+
   return (
     <PageContainer>
       <div className="flex min-h-screen items-start justify-center bg-[image:var(--card-gradient)] p-6">
@@ -382,7 +353,7 @@ export default function OrganizationOnboarding(): React.JSX.Element {
               logoPreview: orgData?.logoPreview || '',
             }}
             validationSchema={validationSchema}
-            onSubmit={handleSubmit}
+            onSubmit={handleCreateAndContinue}
           >
             {({ errors, touched, setFieldValue, values, isValid, dirty }) => (
               <Form className="space-y-6">
@@ -463,7 +434,9 @@ export default function OrganizationOnboarding(): React.JSX.Element {
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                   <div>
-                    <Label className="pb-4">Country</Label>
+                    <Label className="pb-4">
+                      Country <span className="text-destructive">*</span>
+                    </Label>
                     <select
                       name="countryId"
                       value={values.countryId || ''}
@@ -496,7 +469,9 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                   </div>
 
                   <div>
-                    <Label className="pb-4">State</Label>
+                    <Label className="pb-4">
+                      State <span className="text-destructive">*</span>
+                    </Label>
                     <select
                       name="stateId"
                       value={values.stateId || ''}
@@ -526,7 +501,9 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                   </div>
 
                   <div>
-                    <Label className="pb-4">City</Label>
+                    <Label className="pb-4">
+                      City <span className="text-destructive">*</span>
+                    </Label>
                     <select
                       name="cityId"
                       value={values.cityId || ''}
@@ -614,7 +591,6 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                   )}
                 </div>
 
-                {/* Actions */}
                 <div className="mt-6 flex items-center justify-between">
                   <Button
                     variant="secondary"
@@ -623,28 +599,21 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                     Back
                   </Button>
 
-                  {/* Right side: Conditional buttons */}
                   {!isEditMode ? (
-                    <div className="flex space-x-4">
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        onClick={() => handleCreateOrganization(values)}
-                        disabled={!isValid || !dirty}
-                      >
-                        {loading ? (
-                          <Loader
-                            colorClass="animate-spin"
-                            height="1.5rem"
-                            width="1.5rem"
-                          />
-                        ) : null}
-                        Setup Wallet Later
-                      </Button>
-                      <Button type="submit" disabled={!isValid || !dirty}>
-                        Continue to Agent Setup
-                      </Button>
-                    </div>
+                    <Button
+                      type="submit"
+                      disabled={!isValid || !dirty || loading}
+                    >
+                      {loading ? (
+                        <Loader
+                          colorClass="animate-spin"
+                          height="1.5rem"
+                          width="1.5rem"
+                        />
+                      ) : (
+                        'Create Organization'
+                      )}
+                    </Button>
                   ) : (
                     <div className="flex">
                       <Button
