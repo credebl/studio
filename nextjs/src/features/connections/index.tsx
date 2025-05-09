@@ -68,7 +68,44 @@ export default function Connections() {
 
     fetchConnections();
     // Can add terms according to us
-  }, [orgId, pageIndex, pageSize, sortBy, searchTerm, sortOrder]); // Rerun if orgId change
+  }, [pageIndex, pageSize, sortBy, searchTerm, sortOrder]);
+
+	useEffect(() => {
+    if (!orgId) return;
+      async function fetchConnections() {
+        try {
+					// Reset all params
+					setPageIndex(0);
+          setPageSize(10);
+          setPageCount(1);
+					setSortBy('createDateTime');
+					setSearchTerm('')
+					setsortOrder('desc')
+
+          const connectionList = await getConnectionsByOrg({
+            itemPerPage: pageSize,
+            page: pageIndex + 1,
+            search: searchTerm,
+            sortBy: sortBy,
+            sortingOrder: sortOrder,
+            orgId
+          });
+
+          if (connectionList && Array.isArray(connectionList.data)) {
+            setConnectionData(connectionList.data || []);
+            setPageCount(connectionList.lastPage || 1);
+          } else {
+            setConnectionData([]);
+            setPageCount(1);
+          }
+        } catch (error) {
+          console.error('Failed to fetch connections:', error);
+          setConnectionData([]);
+        }
+      }
+
+      fetchConnections();
+  }, [orgId]); // Rerun with default config on org data change
 
   const columnData: IColumnData[] = [
     {
@@ -151,15 +188,14 @@ export default function Connections() {
       </div>
       <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
         <DataTable
-          index={'connectionId'}
-          data={connectionData}
-          columns={column}
+          data={connectionData} // data to be sent according to column structure
+          columns={column} // Define the column stucture according to
+          index={'connectionId'} // Unique index for the rows
           pageIndex={pageIndex}
           pageSize={pageSize}
           pageCount={pageCount}
           onPageChange={setPageIndex} // Function to handle pageIndex change
-          onPageSizeChange={(size) => {
-            // Function to handle pageSize change
+          onPageSizeChange={(size) => { // Function to handle pageSize change
             setPageSize(size);
             setPageIndex(0);
           }}
