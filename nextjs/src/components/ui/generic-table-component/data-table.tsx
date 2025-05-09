@@ -24,22 +24,82 @@ import {
 import { DataTablePagination } from './data-table-pagination'
 import { DataTableToolbar } from './data-table-toolbar'
 
+/**
+ * Props for the DataTable component.
+ *
+ * @template TData - The shape of a single row of data.
+ * @template TValue - The value type for table columns.
+ */
 interface DataTableProps<TData, TValue> {
-  index: keyof TData;
-  columns: ColumnDef<TData, TValue>[];
+  /**
+   * Array of data objects to be rendered as rows.
+   */
   data: TData[];
+
+  /**
+   * Column definitions for rendering the table.
+   */
+  columns: ColumnDef<TData, TValue>[];
+
+	/**
+   * A key from the TData object used as the unique identifier for rows.
+   */
+  index: keyof TData;
+
+  /**
+   * Current page index for pagination (zero-based).
+   */
   pageIndex: number;
+
+  /**
+   * Number of rows per page.
+   */
   pageSize: number;
+
+  /**
+   * Total number of pages available.
+   */
   pageCount: number;
+
+  /**
+   * Callback triggered when the page index changes.
+   */
   onPageChange: (pageIndex: number) => void;
+
+  /**
+   * Callback triggered when the page size changes.
+   */
   onPageSizeChange: (pageSize: number) => void;
-  onSearchTerm: (pageSize: string) => void;
+
+  /**
+   * Callback triggered when the search term changes.
+   */
+  onSearchTerm: (searchTerm: string) => void;
 }
 
+/**
+ * A generic, paginated data table component using TanStack Table.
+ *
+ * @template {TData} data - The type of each row's data.
+ * @template {TValue} columns - The value type associated with columns.
+ *
+ * @param {Object} props The props for the DataTable component.
+ * @param {keyof TData} props.index A unique key from the data object used to identify rows.
+ * @param {ColumnDef<TData, TValue>[]} props.columns Definitions for each table column.
+ * @param {TData[]} props.data The dataset to render in the table.
+ * @param {number} props.pageIndex The current page index (zero-based).
+ * @param {number} props.pageSize Number of rows to show per page.
+ * @param {number} props.pageCount Total number of pages.
+ * @param {(pageIndex: number) => void} props.onPageChange Callback triggered when the page index changes.
+ * @param {(pageSize: number) => void} props.onPageSizeChange Callback triggered when the page size changes.
+ * @param {(searchTerm: string) => void} props.onSearchTerm Callback triggered when the search term changes.
+ * 
+ * @returns The rendered DataTable component.
+ */
 export function DataTable<TData, TValue>({
-	index,
-  columns,
   data,
+  columns,
+  index,
   pageIndex,
   pageSize,
   pageCount,
