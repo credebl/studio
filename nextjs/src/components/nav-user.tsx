@@ -8,7 +8,7 @@ import {
   IconLogout,
   IconSparkles
 } from '@tabler/icons-react';
-
+import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,

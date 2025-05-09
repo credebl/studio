@@ -23,7 +23,7 @@ export const getConnectionsByOrg = async ({
 
   const axiosPayload = {
     url,
-    config: await getHeaderConfigs()
+    config: getHeaderConfigs()
   };
 
   try {
@@ -35,12 +35,11 @@ export const getConnectionsByOrg = async ({
 };
 
 export const deleteConnectionRecords = async (orgId: string) => {
-
   const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.deleteConnections}`;
 
   const axiosPayload = {
     url,
-    config: await getHeaderConfigs()
+    config: getHeaderConfigs()
   };
 
   try {

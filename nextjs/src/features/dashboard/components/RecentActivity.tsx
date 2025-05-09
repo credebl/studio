@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Card,
   CardHeader,
@@ -48,7 +48,7 @@ const RecentActivity = () => {
 
     return (
       <div className='space-y-4'>
-        {activityList.slice(0,3).map((activity, index) => (
+        {activityList.slice(0, 3).map((activity, index) => (
           <div key={index} className='flex gap-3'>
             <div className='relative mt-1'>
               <div className='flex h-2 w-2 items-center justify-center'>

@@ -33,7 +33,7 @@ const authConfig = {
     })
   ],
   pages: {
-    signIn: '/auth/sign-in', 
+    signIn: '/auth/sign-in'
   }
 } satisfies NextAuthConfig;
 

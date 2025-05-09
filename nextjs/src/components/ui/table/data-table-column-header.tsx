@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import type { Column } from '@tanstack/react-table';
 import { EyeOff } from 'lucide-react';
 

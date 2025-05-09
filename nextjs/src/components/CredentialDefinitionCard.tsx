@@ -1,3 +1,4 @@
+import React from 'react';
 import { Roles } from '@/common/enums';
 import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
@@ -63,7 +64,6 @@ const CredentialDefinitionCard = (props: IProps) => {
                 fill='none'
                 viewBox='0 0 23 23'
               >
-                 {' '}
                 <path
                   fill='#1F4EAD'
                   fillRule='evenodd'
@@ -99,9 +99,7 @@ const CredentialDefinitionCard = (props: IProps) => {
 
         <div className='mt-auto inline-flex items-center overflow-hidden text-base font-semibold overflow-ellipsis'>
           Revocable:
-          <span
-            className='bg-secondary text-secondary-foreground hover:bg-secondary/80 m-1 mr-2 rounded px-2.5 py-0.5 text-sm font-medium shadow-sm'
-          >
+          <span className='bg-secondary text-secondary-foreground hover:bg-secondary/80 m-1 mr-2 rounded px-2.5 py-0.5 text-sm font-medium shadow-sm'>
             {props?.revocable ? 'Yes' : 'No'}
           </span>
         </div>

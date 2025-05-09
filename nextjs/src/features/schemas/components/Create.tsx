@@ -12,9 +12,7 @@ import { JSX, useEffect, useMemo, useState } from 'react';
 import type { AxiosResponse } from 'axios';
 import React from 'react';
 import { DidMethod, SchemaType, SchemaTypeValue } from '@/common/enums';
-import {
-  getOrganizationById
-} from '@/app/api/organization';
+import { getOrganizationById } from '@/app/api/organization';
 import { useAppSelector } from '@/lib/hooks';
 import { FieldName, IAttributes, IFormData } from '../type/schemas-interface';
 import { createSchemas } from '@/app/api/schema';
@@ -176,7 +174,6 @@ const CreateSchema = () => {
       setShowPopup({ type: 'create', show: false });
     }, 2000);
   };
-
 
   const submitButtonTitle = {
     title: 'Create',
@@ -394,7 +391,7 @@ const CreateSchema = () => {
                     </div>
                   )}
                 </div>
-                <p className='mt-2 text-md font-normal'>
+                <p className='text-md mt-2 font-normal'>
                   You must select at least one attribute to create schema
                 </p>
                 <div className='bg-card text-card-foreground mt-2 rounded-xl border pt-4 pb-10 shadow'>

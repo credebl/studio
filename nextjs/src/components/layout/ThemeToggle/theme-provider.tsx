@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import {
   ThemeProvider as NextThemesProvider,
   ThemeProviderProps

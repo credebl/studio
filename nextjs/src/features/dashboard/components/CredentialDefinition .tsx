@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getAllCredDef } from '@/app/api/schema';
 import {
   Card,
@@ -14,7 +14,6 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAppSelector } from '@/lib/hooks';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 const CredentialDefinition = () => {
   const [loading, setLoading] = useState(true);
   const [credentialDefinition, setCredentialDefinition] = useState([]);
@@ -44,7 +43,6 @@ const CredentialDefinition = () => {
     }
   }, [orgId]);
 
- 
   const handleClickCredDef = (schemaId: string) => {
     router.push(`/organizations/schemas/${schemaId}`);
   };

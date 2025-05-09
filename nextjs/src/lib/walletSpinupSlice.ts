@@ -1,8 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+// define type after resolving deployment issue
 interface OrgData {
   name: string;
-  [key: string]: any;
+  // [key: string]: any;
 }
 
 interface SharedLedgerConfig {
@@ -13,7 +14,6 @@ interface SharedLedgerConfig {
   seeds: string;
   submitSharedWallet?: () => void;
 }
-
 
 interface WalletSpinupState {
   step: number;
@@ -34,7 +34,7 @@ const initialState: WalletSpinupState = {
   walletSpinupStatus: false,
   ledgerConfig: false,
   createOrgForm: true,
-  sharedLedgerConfig: null,
+  sharedLedgerConfig: null
 };
 
 const walletSpinupSlice = createSlice({
@@ -62,13 +62,15 @@ const walletSpinupSlice = createSlice({
     setIsCreateOrgForm: (state, action: PayloadAction<boolean>) => {
       state.createOrgForm = action.payload;
     },
-    setSharedLedgerConfig: (state, action: PayloadAction<SharedLedgerConfig>) => {
+    setSharedLedgerConfig: (
+      state,
+      action: PayloadAction<SharedLedgerConfig>
+    ) => {
       state.sharedLedgerConfig = action.payload;
     },
     clearSharedLedgerConfig: (state) => {
       state.sharedLedgerConfig = null;
-    },
-    
+    }
   }
 });
 
@@ -80,7 +82,7 @@ export const {
   setWalletSpinupStatus,
   setLedgerConfig,
   setIsCreateOrgForm,
-  setSharedLedgerConfig,  // Fixed casing
+  setSharedLedgerConfig, // Fixed casing
   clearSharedLedgerConfig
 } = walletSpinupSlice.actions;
 

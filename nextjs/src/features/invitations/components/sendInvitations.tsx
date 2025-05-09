@@ -1,16 +1,19 @@
 'use client';
 
 import * as Yup from 'yup';
-
+import React from 'react';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '@/components/ui/dialog';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import { MailIcon, PlusIcon, SendIcon, TrashIcon } from 'lucide-react';
-import { RoleI, SendInvitationModalProps } from '../interfaces/invitation-interface';
+import {
+  RoleI,
+  SendInvitationModalProps
+} from '../interfaces/invitation-interface';
 import { useEffect, useState } from 'react';
 
 import { AlertComponent } from '@/components/AlertComponent';
@@ -87,8 +90,8 @@ export default function SendInvitationModal({
       {
         email: email,
         role: memberRole?.name as string,
-        roleId: String(memberRole?.id),
-      },
+        roleId: String(memberRole?.id)
+      }
     ]);
   };
 
@@ -103,10 +106,13 @@ export default function SendInvitationModal({
     try {
       const invitationPayload = invitations.map((invitation) => ({
         email: invitation.email,
-        orgRoleId: [invitation.roleId],
+        orgRoleId: [invitation.roleId]
       }));
 
-      const resCreateOrg = await createInvitations(selectedOrgId, invitationPayload);
+      const resCreateOrg = await createInvitations(
+        selectedOrgId,
+        invitationPayload
+      );
       const { data } = resCreateOrg as AxiosResponse;
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
@@ -126,18 +132,15 @@ export default function SendInvitationModal({
     }
   };
 
-
-  const resetForm = ()=>{
-
-  }
+  const resetForm = () => {};
   const validateAndAddEmail = (values: { email: string }) => {
     if (values.email.trim() === selfEmail.trim()) {
-      setErrorMsg( "You can't send invitation to yourself");
+      setErrorMsg("You can't send invitation to yourself");
       return;
     }
 
-    if (invitations.some(inv => inv.email === values.email)) {
-      setErrorMsg( "This email has already been added");
+    if (invitations.some((inv) => inv.email === values.email)) {
+      setErrorMsg('This email has already been added');
       return;
     }
 
@@ -147,7 +150,7 @@ export default function SendInvitationModal({
 
   return (
     <Dialog open={openModal} onOpenChange={setOpenModal}>
-      <DialogContent className="sm:max-w-2xl">
+      <DialogContent className='sm:max-w-2xl'>
         <DialogHeader>
           <DialogTitle>Send Invitation(s)</DialogTitle>
         </DialogHeader>
@@ -155,7 +158,7 @@ export default function SendInvitationModal({
         {errorMsg && (
           <AlertComponent
             message={errorMsg}
-            type="failure"
+            type='failure'
             onAlertClose={() => setErrorMsg(null)}
           />
         )}
@@ -166,34 +169,32 @@ export default function SendInvitationModal({
           onSubmit={validateAndAddEmail}
         >
           {({ errors, touched }) => (
-            <Form className="space-y-2">
-              <div className="flex items-end gap-4">
-                <div className="flex-1">
+            <Form className='space-y-2'>
+              <div className='flex items-end gap-4'>
+                <div className='flex-1'>
                   <div>
-                    <label htmlFor="email" className="text-sm font-medium">
-                      Email <span className="text-red-500">*</span>
+                    <label htmlFor='email' className='text-sm font-medium'>
+                      Email <span className='text-red-500'>*</span>
                     </label>
                     <Field
                       as={Input}
-                      id="email"
-                      name="email"
-                      placeholder="example@email.com"
-                      className={`bg-background focus-visible:ring-1 focus-visible:ring-primary ${errors.email && touched.email ? 'border-red-500' : ''
-                        }`}
+                      id='email'
+                      name='email'
+                      placeholder='example@email.com'
+                      className={`bg-background focus-visible:ring-primary focus-visible:ring-1 ${
+                        errors.email && touched.email ? 'border-red-500' : ''
+                      }`}
                     />
                     <ErrorMessage
-                      name="email"
-                      component="div"
-                      className="text-sm text-red-500 mt-1"
+                      name='email'
+                      component='div'
+                      className='mt-1 text-sm text-red-500'
                     />
                   </div>
                 </div>
 
-                <Button
-                  type="submit"
-                  className="flex items-center gap-2"
-                >
-                  <PlusIcon className="h-5 w-5" />
+                <Button type='submit' className='flex items-center gap-2'>
+                  <PlusIcon className='h-5 w-5' />
                   Add
                 </Button>
               </div>
@@ -202,25 +203,30 @@ export default function SendInvitationModal({
         </Formik>
 
         {invitations.length > 0 && (
-          <div className="mt-4 space-y-2">
-            <div className="border rounded-lg divide-y">
+          <div className='mt-4 space-y-2'>
+            <div className='divide-y rounded-lg border'>
               {invitations.map((invitation) => (
-                <div key={invitation.email} className="p-3 flex items-center justify-between">
-                  <div className="flex gap-3">
-                    <div className="flex items-center justify-center">
-                      <MailIcon className="h-9 w-9 text-muted-foreground" />
+                <div
+                  key={invitation.email}
+                  className='flex items-center justify-between p-3'
+                >
+                  <div className='flex gap-3'>
+                    <div className='flex items-center justify-center'>
+                      <MailIcon className='text-muted-foreground h-9 w-9' />
                     </div>
                     <div>
-                      <p className="font-medium">{invitation.email}</p>
-                      <p className="text-sm text-muted-foreground">Role: Member</p>
+                      <p className='font-medium'>{invitation.email}</p>
+                      <p className='text-muted-foreground text-sm'>
+                        Role: Member
+                      </p>
                     </div>
                   </div>
                   <Button
-                    variant="ghost"
-                    size="icon"
+                    variant='ghost'
+                    size='icon'
                     onClick={() => removeInvitation(invitation.email)}
                   >
-                    <TrashIcon className="h-5 w-5 text-red-500" />
+                    <TrashIcon className='h-5 w-5 text-red-500' />
                   </Button>
                 </div>
               ))}
@@ -228,13 +234,13 @@ export default function SendInvitationModal({
           </div>
         )}
 
-        <div className="flex justify-end">
+        <div className='flex justify-end'>
           <Button
             onClick={sendInvitations}
             disabled={loading ?? invitations.length === 0}
-            className="flex items-center gap-2"
+            className='flex items-center gap-2'
           >
-            <SendIcon className="h-5 w-5" />
+            <SendIcon className='h-5 w-5' />
             Send
           </Button>
         </div>

@@ -10,7 +10,9 @@ export interface APIParameters {
   config?: Record<string, unknown>;
 }
 
-const HandleResponse = (responseData: AxiosResponse | undefined): Promise<AxiosResponse> => {
+const HandleResponse = (
+  responseData: AxiosResponse | undefined
+): Promise<AxiosResponse> => {
   if (responseData) {
     const errorMessage =
       (responseData.data as { message?: string })?.message ||

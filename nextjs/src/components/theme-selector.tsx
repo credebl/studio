@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useThemeConfig } from '@/components/active-theme';
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { CheckIcon } from 'lucide-react';

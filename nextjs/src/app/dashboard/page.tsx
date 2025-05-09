@@ -1,3 +1,4 @@
+import React from 'react';
 import Dashboard from '@/features/dashboard/components/dashboard';
 
 export const metadata = {

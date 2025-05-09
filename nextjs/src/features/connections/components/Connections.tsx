@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, ChangeEvent } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -175,7 +175,7 @@ const Connections = () => {
         </div>
       </div>
 
-      <div className='overflow-hidden border border-gray-300 rounded-xl shadow-sm'>
+      <div className='overflow-hidden rounded-xl border border-gray-300 shadow-sm'>
         <Table>
           <TableHeader className='bg-muted'>
             <TableRow>

@@ -8,7 +8,7 @@ import { useSearchParams } from 'next/navigation';
 
 export default function SignUpUser() {
   const [step, setStep] = useState(1);
-  const [email, setEmail] = useState<string>('');
+  const [, setEmail] = useState<string>('');
   const searchParam = useSearchParams();
   const userEmail = searchParam.get('email');
 

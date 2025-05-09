@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { AxiosResponse } from 'axios';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,18 +11,28 @@ import { Copy } from 'lucide-react';
 import CustomQRCode from '@/features/wallet/CustomQRCode';
 import DIDList from '@/features/wallet/DidListComponent';
 import { createConnection } from '@/app/api/organization';
-import { IConnection, IOrgAgent, IOrganisation } from './interfaces/organization';
+import {
+  IConnection,
+  IOrgAgent,
+  IOrganisation
+} from './interfaces/organization';
 import { dateConversion } from '@/utils/DateConversion';
 import { apiStatusCodes } from '@/config/CommonConstant';
 
-const OrganizationDetails = ({ orgData }: { orgData: IOrganisation | null }) => {
+const OrganizationDetails = ({
+  orgData
+}: {
+  orgData: IOrganisation | null;
+}) => {
   const orgId = orgData ? orgData?.id : '';
   const { org_agents } = orgData as IOrganisation;
   const agentData: IOrgAgent | null =
     org_agents.length > 0 ? org_agents[0] : null;
 
   const [loading, setLoading] = useState<boolean>(true);
-  const [connectionData, setConnectionData] = useState<IConnection | null>(null);
+  const [connectionData, setConnectionData] = useState<IConnection | null>(
+    null
+  );
 
   const createQrConnection = async () => {
     setLoading(true);
@@ -86,31 +96,22 @@ const OrganizationDetails = ({ orgData }: { orgData: IOrganisation | null }) => 
   );
 
   return (
-    
     <div className='space-y-'>
-      <h2 className='text-2xl font-bold'>
-        Wallet Details
-      </h2>
+      <h2 className='text-2xl font-bold'>Wallet Details</h2>
 
       <Card className='p-6'>
         <div className='flex items-start gap-96'>
           {/* Wallet Details */}
           <div className='gap-y-4'>
             <div className='space-y-8'>
-              <div className='flex items-center '>
-                <span className='w-40'>
-                  Wallet Name
-                </span>
+              <div className='flex items-center'>
+                <span className='w-40'>Wallet Name</span>
                 <span className='mx-2'>:</span>
-                <span className='font-semibold'>
-                  {agentData?.walletName}
-                </span>
+                <span className='font-semibold'>{agentData?.walletName}</span>
               </div>
 
               <div className='flex items-center'>
-                <span className='w-40'>
-                  Org DID
-                </span>
+                <span className='w-40'>Org DID</span>
                 <span className='mx-2'>:</span>
                 {agentData?.orgDid ? (
                   <CopyDid
@@ -118,16 +119,12 @@ const OrganizationDetails = ({ orgData }: { orgData: IOrganisation | null }) => 
                     className='font-mono font-semibold'
                   />
                 ) : (
-                  <span className='font-semibold'>
-                    Not available
-                  </span>
+                  <span className='font-semibold'>Not available</span>
                 )}
               </div>
 
               <div className='flex items-center'>
-                <span className='w-40'>
-                  Network
-                </span>
+                <span className='w-40'>Network</span>
                 <span className='mx-2'>:</span>
                 <span className='font-semibold'>
                   {agentData?.ledgers?.name || '-'}
@@ -135,9 +132,7 @@ const OrganizationDetails = ({ orgData }: { orgData: IOrganisation | null }) => 
               </div>
 
               <div className='flex items-center'>
-                <span className='w-40'>
-                  Agent Type
-                </span>
+                <span className='w-40'>Agent Type</span>
                 <span className='mx-2'>:</span>
                 <span className='font-semibold'>
                   {agentData?.org_agent_type?.agent
@@ -148,9 +143,7 @@ const OrganizationDetails = ({ orgData }: { orgData: IOrganisation | null }) => 
               </div>
 
               <div className='flex items-center'>
-                <span className='w-40'>
-                  Created On
-                </span>
+                <span className='w-40'>Created On</span>
                 <span className='mx-2'>:</span>
                 <span className='font-semibold'>
                   {agentData?.createDateTime ? (
@@ -180,9 +173,7 @@ const OrganizationDetails = ({ orgData }: { orgData: IOrganisation | null }) => 
                     value={connectionData.connectionInvitation as string}
                     size={180}
                   />
-                  <p className='text-sm'>
-                    Scan to connect
-                  </p>
+                  <p className='text-sm'>Scan to connect</p>
                 </div>
               )
             )}
@@ -196,15 +187,11 @@ const OrganizationDetails = ({ orgData }: { orgData: IOrganisation | null }) => 
 
       {agentData?.orgDid?.startsWith('did:web') && (
         <Card className='p-6'>
-          <h3 className='mb-4 text-xl font-bold'>
-            DID Document
-          </h3>
+          <h3 className='mb-4 text-xl font-bold'>DID Document</h3>
 
           <div className='space-y-8'>
             <div>
-              <h4 className='mb-2 text-lg font-semibold'>
-                Instructions:
-              </h4>
+              <h4 className='mb-2 text-lg font-semibold'>Instructions:</h4>
               <ul className='space-y-1'>
                 <li>
                   1. Kindly provide the DID document for hosting purposes in

@@ -1,5 +1,6 @@
 'use client';
 import { useKBar } from 'kbar';
+import React from 'react';
 import { IconSearch } from '@tabler/icons-react';
 import { Button } from './ui/button';
 

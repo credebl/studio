@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { SidebarTrigger } from '../ui/sidebar';
 import { Separator } from '../ui/separator';
 import { Breadcrumbs } from '../breadcrumbs';
-import SearchInput from '../search-input';
 import { UserNav } from './user-nav';
 import { ModeToggle } from './ThemeToggle/theme-toggle';
 import { OrgSwitcher } from '../org-switcher';
@@ -99,9 +98,7 @@ export default function Header() {
           defaultTenant={activeTenant}
           onTenantSwitch={handleSwitchTenant}
         />
-        <div className='hidden md:flex'>
-          {/* <SearchInput /> */}
-        </div>
+        <div className='hidden md:flex'>{/* <SearchInput /> */}</div>
         <ModeToggle />
         <UserNav />
       </div>

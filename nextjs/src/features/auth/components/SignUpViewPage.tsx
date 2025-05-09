@@ -2,10 +2,9 @@
 import { Metadata } from 'next';
 import Image from 'next/image';
 import SignUpUser from './SignUpUser';
-import {
-  CredeblLogoHeight,
-  CredeblLogoWidth} from '@/config/CommonConstant';
+import { CredeblLogoHeight, CredeblLogoWidth } from '@/config/CommonConstant';
 import { useThemeConfig } from '@/components/active-theme';
+import React from 'react';
 
 export const metadata: Metadata = {
   title: 'Authentication',

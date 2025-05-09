@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { apiStatusCodes } from '@/config/CommonConstant';
 import type { AxiosResponse } from 'axios';
 import { toast } from 'sonner';
@@ -20,15 +20,15 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Loader2 } from 'lucide-react';
 import { DeleteOrganizationCard } from './DeleteOrganizationCard';
-import {
-  getOrganizationById,
-} from '@/app/api/organization';
+import { getOrganizationById } from '@/app/api/organization';
 import { deleteConnectionRecords } from '@/app/api/connection';
-import { getOrganizationReferences, 
-  deleteVerificationRecords, 
-  deleteIssuanceRecords, 
-  deleteOrganizationWallet, 
-  deleteOrganization } from '@/app/api/deleteorganization';
+import {
+  getOrganizationReferences,
+  deleteVerificationRecords,
+  deleteIssuanceRecords,
+  deleteOrganizationWallet,
+  deleteOrganization
+} from '@/app/api/deleteorganization';
 
 interface IOrgCount {
   verificationRecordsCount?: number;
@@ -58,7 +58,7 @@ export default function DeleteOrganizationPage() {
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [deleteAction, setDeleteAction] = useState<() => void>(() => {});
   const [confirmMessage, setConfirmMessage] = useState<
-  string | React.ReactNode
+    string | React.ReactNode
   >('');
   const [description, setDescription] = useState<string>('');
   const [orgName, setOrgName] = useState<string>('');
@@ -68,22 +68,22 @@ export default function DeleteOrganizationPage() {
       router.push(pathRoutes.organizations.root);
       return;
     }
-    
+
     try {
       setLoading(true);
       const response = await getOrganizationById(orgId);
       const { data } = response as AxiosResponse;
-      
+
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         const organizationData = data?.data;
         setOrgData(organizationData);
         const walletName = organizationData?.org_agents?.[0]?.walletName;
         const name = organizationData?.name;
-        
+
         if (name) {
           setOrgName(name);
         }
-        
+
         if (walletName) {
           setIsWalletPresent(true);
         } else {
@@ -96,8 +96,7 @@ export default function DeleteOrganizationPage() {
       setLoading(false);
     }
   };
-  
-  
+
   const fetchOrganizationReferences = async () => {
     if (!orgId) return;
 
@@ -230,7 +229,7 @@ export default function DeleteOrganizationPage() {
         await fetchOrganizationReferences();
         setShowPopup(false);
 
-          window.location.href = pathRoutes.organizations.root;
+        window.location.href = pathRoutes.organizations.root;
       } else {
         setError(response as string);
       }
@@ -315,7 +314,7 @@ export default function DeleteOrganizationPage() {
       confirmMessage: (
         <>
           Are you sure you want to delete organization{' '}
-          <span className='font-bold text-lg'>{orgData?.name}</span>?
+          <span className='text-lg font-bold'>{orgData?.name}</span>?
         </>
       ),
       isDisabled: isWalletPresent
@@ -352,44 +351,42 @@ export default function DeleteOrganizationPage() {
             />
           ))}
 
-<AlertDialog open={showPopup} onOpenChange={setShowPopup}>
-  <AlertDialogContent>
-    <AlertDialogHeader>
-      <AlertDialogTitle className='text-xl'>Confirmation</AlertDialogTitle>
-      <AlertDialogDescription asChild>
-        <div className="space-y-2">
-          {confirmMessage}
-          {description && (
-            <div className=''>
-              {description}
-            </div>
-          )}
-        </div>
-      </AlertDialogDescription>
-    </AlertDialogHeader>
-    <AlertDialogFooter>
-      <AlertDialogCancel disabled={deleteLoading}>
-        No, cancel
-      </AlertDialogCancel>
-      <AlertDialogAction
-        onClick={() =>
-          deleteHandler(deleteAction as () => Promise<void>)
-        }
-        disabled={deleteLoading}
-        className='bg-destructive text-destructive-foreground hover:bg-destructive/90'
-      >
-        {deleteLoading ? (
-          <>
-            <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-            <span>Processing...</span>
-          </>
-        ) : (
-          'Yes, delete'
-        )}
-      </AlertDialogAction>
-    </AlertDialogFooter>
-  </AlertDialogContent>
-</AlertDialog>
+          <AlertDialog open={showPopup} onOpenChange={setShowPopup}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle className='text-xl'>
+                  Confirmation
+                </AlertDialogTitle>
+                <AlertDialogDescription asChild>
+                  <div className='space-y-2'>
+                    {confirmMessage}
+                    {description && <div className=''>{description}</div>}
+                  </div>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel disabled={deleteLoading}>
+                  No, cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() =>
+                    deleteHandler(deleteAction as () => Promise<void>)
+                  }
+                  disabled={deleteLoading}
+                  className='bg-destructive text-destructive-foreground hover:bg-destructive/90'
+                >
+                  {deleteLoading ? (
+                    <>
+                      <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                      <span>Processing...</span>
+                    </>
+                  ) : (
+                    'Yes, delete'
+                  )}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       )}
     </div>

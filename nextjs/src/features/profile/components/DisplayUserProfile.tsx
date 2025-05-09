@@ -1,7 +1,7 @@
 'use client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { IDisplayUserProfileProps } from '../../../components/profile/interfaces';
 import Image from 'next/image';

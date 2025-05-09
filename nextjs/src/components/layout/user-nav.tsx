@@ -14,7 +14,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { IUserProfile } from '../profile/interfaces';
@@ -45,7 +45,7 @@ export function UserNav() {
           response?.data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS
         ) {
           setUserProfile(response.data.data);
-          dispatch(setUserProfileDetails(response.data.data))
+          dispatch(setUserProfileDetails(response.data.data));
         }
       } catch (error) {
         console.error('Error fetching user profile:', error);

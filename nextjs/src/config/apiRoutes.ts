@@ -102,7 +102,6 @@ export const apiRoutes = {
     download: '/credentials/bulk/template'
   },
 
- 
   Platform: {
     getAllSchemaFromPlatform: '/platform/schemas',
     getLedgers: '/platform/ledgers',

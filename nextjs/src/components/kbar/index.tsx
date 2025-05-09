@@ -11,7 +11,7 @@ import {
 import { NavItem } from '../../../types';
 import RenderResults from './render-result';
 import { navItems } from '@/constants/data';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function KBar({ children }: { children: React.ReactNode }) {
@@ -41,7 +41,7 @@ export default function KBar({ children }: { children: React.ReactNode }) {
 
       // Map child items into actions
       const childActions =
-        navItem.items?.map((childItem:NavItem) => ({
+        navItem.items?.map((childItem: NavItem) => ({
           id: `${childItem.title.toLowerCase()}Action`,
           name: childItem.title,
           shortcut: childItem.shortcut,
@@ -63,13 +63,12 @@ export default function KBar({ children }: { children: React.ReactNode }) {
   );
 }
 const KBarComponent = ({ children }: { children: React.ReactNode }) => {
-
   return (
     <>
       <KBarPortal>
         <KBarPositioner className='bg-background/80 fixed inset-0 z-99999 p-0! backdrop-blur-sm'>
           <KBarAnimator className='bg-card text-card-foreground relative mt-64! w-full max-w-[600px] -translate-y-12! overflow-hidden rounded-lg shadow-lg'>
-            <div className='bg-card  sticky top-0 z-10'>
+            <div className='bg-card sticky top-0 z-10'>
               <KBarSearch className='bg-card w-full px-6 py-4 outline-hidden focus:ring-0 focus:ring-offset-0 focus:outline-hidden' />
             </div>
             <div className='max-h-[400px]'>

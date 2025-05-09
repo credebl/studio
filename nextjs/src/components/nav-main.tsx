@@ -1,7 +1,7 @@
 'use client';
 
 import { IconChevronRight } from '@tabler/icons-react';
-
+import React from 'react';
 import {
   Collapsible,
   CollapsibleContent,

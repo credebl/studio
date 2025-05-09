@@ -1,5 +1,4 @@
-export const passwordRegex =
-  /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[!"$%*,./:;=@^_\-])[A-Za-z\d!"$%*,./:;=@^_\-]{8,}$/;
+export const passwordRegex = /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[!"$%*,./:;=@^_\-])[A-Za-z\d!"$%*,./:;=@^_\-]{8,}$/;
 export const allowedPasswordChars = /[^a-zA-Z0-9!"$%*,-.:;=@^_]/g;
 export const phoneRegExp = /^[+]?(\d{1,4})?[-\s./\d]*$/;
 export const imageSizeAccepted = 1; // mb
@@ -111,7 +110,7 @@ const imageBasePath = '/images';
 
 export const CredeblLogo = `${imageBasePath}/CREDEBL_Logo_Web.svg`;
 export const signInImg = `${imageBasePath}/signin.svg`;
-export const closeIconImg = `${imageBasePath}/close_icon.svg`
+export const closeIconImg = `${imageBasePath}/close_icon.svg`;
 export const CredeblLogoWidth = 170;
 export const CredeblLogoHeight = 140;
 
@@ -119,15 +118,15 @@ export const signInWidth = 500;
 export const signInHeight = 500;
 
 export const stepLabels = [
-  'Organization', 
-  'Agent Config', 
-  'Ledger Config', 
+  'Organization',
+  'Agent Config',
+  'Ledger Config',
   'Processing'
 ];
 
 export const confirmationMessages = {
-   deletePendingInvitationConfirmation : 'Would you like to proceed? Keep in mind that this action cannot be undone.',
-   sureConfirmation : `Yes, I'm sure`,
-   cancelConfirmation : 'No, cancel'
-}
-
+  deletePendingInvitationConfirmation:
+    'Would you like to proceed? Keep in mind that this action cannot be undone.',
+  sureConfirmation: `Yes, I'm sure`,
+  cancelConfirmation: 'No, cancel'
+};

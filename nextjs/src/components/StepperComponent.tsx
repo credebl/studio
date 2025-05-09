@@ -9,33 +9,37 @@ interface StepperProps {
 }
 
 const Stepper: React.FC<StepperProps> = ({ currentStep, totalSteps }) => {
-
   return (
-    <div className="mb-6">
+    <div className='mb-6'>
       {/* Progress Bar */}
-      <div className="h-2 rounded-full">
+      <div className='h-2 rounded-full'>
         <div
-          className="h-2 bg-primary rounded-full transition-all duration-300 ease-in-out"
+          className='bg-primary h-2 rounded-full transition-all duration-300 ease-in-out'
           style={{ width: `${(currentStep / totalSteps) * 100}%` }}
         />
       </div>
 
       {/* Step Circles + Labels */}
-      <div className="flex justify-between mt-4">
+      <div className='mt-4 flex justify-between'>
         {stepLabels.map((label, index) => {
           const stepNum = index + 1;
           const isActive = currentStep >= stepNum;
 
           return (
-            <div key={label} className="flex flex-col items-center text-center w-full">
+            <div
+              key={label}
+              className='flex w-full flex-col items-center text-center'
+            >
               <div
-                className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-medium ${
-                  isActive ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'
+                className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium ${
+                  isActive
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-muted-foreground'
                 }`}
               >
                 {stepNum}
               </div>
-              <span className="text-xs mt-1">{label}</span>
+              <span className='mt-1 text-xs'>{label}</span>
             </div>
           );
         })}
@@ -45,4 +49,3 @@ const Stepper: React.FC<StepperProps> = ({ currentStep, totalSteps }) => {
 };
 
 export default Stepper;
-

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { IEmailVerifyData, verifyUserMail } from '@/app/api/Auth';
 import { apiStatusCodes } from '@/config/CommonConstant';

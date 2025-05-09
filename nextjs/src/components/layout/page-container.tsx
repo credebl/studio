@@ -9,7 +9,7 @@ export default function PageContainer({
   scrollable?: boolean;
 }) {
   const Content = (
-    <div className='flex min-h-[calc(100dvh-52px)] w-full flex-col p-4 md:px-6 mb-4'>
+    <div className='mb-4 flex min-h-[calc(100dvh-52px)] w-full flex-col p-4 md:px-6'>
       {children}
     </div>
   );

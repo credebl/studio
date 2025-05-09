@@ -4,7 +4,7 @@ import { getUserProfile } from '@/app/api/Auth';
 import { IUserProfile } from '@/components/profile/interfaces';
 import { apiStatusCodes } from '@/config/CommonConstant';
 import { useAppSelector } from '@/lib/hooks';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DisplayUserProfile from './DisplayUserProfile';
 import EditUserProfile from './EditUserProfile';
 
@@ -83,7 +83,6 @@ export default function UserProfile() {
             )}
           </>
         )}
-
       </div>
     </div>
   );

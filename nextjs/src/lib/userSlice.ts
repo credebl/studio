@@ -8,15 +8,15 @@ interface UserInfo {
 }
 
 interface UserState {
-    userInfo: UserInfo
-  }
-  
+  userInfo: UserInfo;
+}
+
 const initialState: UserState = {
-    userInfo: {
-        email: '',
-        firstName: '',
-        lastName: ''
-    }
+  userInfo: {
+    email: '',
+    firstName: '',
+    lastName: ''
+  }
 };
 
 const userSlice = createSlice({
@@ -29,7 +29,5 @@ const userSlice = createSlice({
   }
 });
 
-export const {
-    setUserProfileDetails
-} = userSlice.actions;
+export const { setUserProfileDetails } = userSlice.actions;
 export default userSlice.reducer;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -264,7 +264,7 @@ export default function SignInViewPage() {
 
   return (
     <div className='relative flex w-full items-center justify-center'>
-      <div className='bg-card relative z-10 w-full max-w-md rounded-xl p-8 shadow-xl border-border h-full overflow-hidden border transition-transform duration-300'>
+      <div className='bg-card border-border relative z-10 h-full w-full max-w-md overflow-hidden rounded-xl border p-8 shadow-xl transition-transform duration-300'>
         <div className='mb-6 text-center'>
           <p className='text-muted-foreground text-sm'>
             Sign in to your account to continue

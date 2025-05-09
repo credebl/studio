@@ -1,11 +1,10 @@
 'use client';
 
+import React from 'react';
 import { Metadata } from 'next';
 import UserAuthForm from './user-auth-form';
 import Image from 'next/image';
-import {
-  CredeblLogoHeight,
-  CredeblLogoWidth} from '@/config/CommonConstant';
+import { CredeblLogoHeight, CredeblLogoWidth } from '@/config/CommonConstant';
 import { useThemeConfig } from '@/components/active-theme';
 
 export const metadata: Metadata = {

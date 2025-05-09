@@ -54,9 +54,7 @@ function ChartContainer({
       <div
         data-slot='chart'
         data-chart={chartId}
-        className={cn(
-          className
-        )}
+        className={cn(className)}
         {...props}
       >
         <ChartStyle id={chartId} config={config} />
@@ -170,11 +168,7 @@ function ChartTooltipContent({
   const nestLabel = payload.length === 1 && indicator !== 'dot';
 
   return (
-    <div
-      className={cn(
-        className
-      )}
-    >
+    <div className={cn(className)}>
       {!nestLabel ? tooltipLabel : null}
       <div className='grid gap-1.5'>
         {payload.map((item, index) => {

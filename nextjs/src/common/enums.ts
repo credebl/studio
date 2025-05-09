@@ -28,16 +28,16 @@ export enum DataType {
 }
 
 export enum Features {
-	SEND_INVITATION = 'send_invitations',
-	CRETAE_ORG = 'create_org',
-	CRETAE_SCHEMA = 'create_schema',
-	ISSUANCE = 'issuance',
-	VERIFICATION = 'verification',
-  }
+  SEND_INVITATION = 'send_invitations',
+  CRETAE_ORG = 'create_org',
+  CRETAE_SCHEMA = 'create_schema',
+  ISSUANCE = 'issuance',
+  VERIFICATION = 'verification'
+}
 
-  export enum SchemaTypes {
-    schema_INDY = 'indy',
-    schema_W3C = 'w3c'
+export enum SchemaTypes {
+  schema_INDY = 'indy',
+  schema_W3C = 'w3c'
 }
 
 export enum SchemaType {
@@ -46,23 +46,23 @@ export enum SchemaType {
 }
 
 export enum SchemaTypeValue {
-	INDY = 'indy',
-	POLYGON = 'polygon',
-	NO_LEDGER = 'no_ledger'
+  INDY = 'indy',
+  POLYGON = 'polygon',
+  NO_LEDGER = 'no_ledger'
 }
 
 export enum Roles {
   OWNER = 'owner',
   ADMIN = 'admin',
-  ISSUER =  'issuer',
+  ISSUER = 'issuer',
   VERIFIER = 'verifier',
   MEMBER = 'member'
-};
+}
 
 export enum OrganizationRoles {
-	organizationMember = "member",
-	organizationOwner = "owner",
-	organizationIssuer = "issuer",
-	organizationVerifier = "verifier",
-	organizationAdmin= 'admin'
+  organizationMember = 'member',
+  organizationOwner = 'owner',
+  organizationIssuer = 'issuer',
+  organizationVerifier = 'verifier',
+  organizationAdmin = 'admin'
 }

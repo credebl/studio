@@ -1,5 +1,8 @@
 import { axiosGet, axiosPost } from '@/services/apiRequests';
-import { CreateCredDeffFieldName, GetAllSchemaListParameter } from '@/features/dashboard/type/schema';
+import {
+  CreateCredDeffFieldName,
+  GetAllSchemaListParameter
+} from '@/features/dashboard/type/schema';
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs';
 import apiRoutes from './apiRoutes';
 
@@ -45,27 +48,29 @@ export const getSchemaById = async (schemaId: string, orgId: string) => {
   }
 };
 
-export const createCredentialDefinition = async (payload: CreateCredDeffFieldName, orgId:string) => {
+export const createCredentialDefinition = async (
+  payload: CreateCredDeffFieldName,
+  orgId: string
+) => {
   const details = {
     url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.createCredentialDefinition}`,
     payload,
     config: {
       headers: {
-        'Content-type': 'application/json',
-      },
-    },
-  }
+        'Content-type': 'application/json'
+      }
+    }
+  };
 
   try {
-    const response = await axiosPost(details)
-		
-    return response
+    const response = await axiosPost(details);
+
+    return response;
+  } catch (error) {
+    const err = error as Error;
+    return err?.message;
   }
-  catch (error) {
-    const err = error as Error
-    return err?.message
-  }
-}
+};
 
 export const getAllSchemas = async (
   { itemPerPage, page, allSearch }: GetAllSchemaListParameter,
@@ -116,7 +121,7 @@ export const getAllCredDef = async (orgId: string) => {
   const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.createCredentialDefinition}`;
   const axiosPayload = {
     url,
-    config: await getHeaderConfigs()
+    config: getHeaderConfigs()
   };
 
   try {

@@ -1,8 +1,8 @@
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
-import { Field } from "formik";
-import React, { type ChangeEvent } from "react";
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
+import { Field } from 'formik';
+import React, { type ChangeEvent } from 'react';
 
 interface IProps {
   setDomainValue: (val: string) => void;
@@ -22,31 +22,28 @@ interface IProps {
 const SetDomainValueInput = ({
   setDomainValue,
   domainValue,
-  formikHandlers,
+  formikHandlers
 }: IProps) => (
-  <div className="mb-3 relative">
+  <div className='relative mb-3'>
     <div>
-      <Label htmlFor="webdomain">Enter Domain</Label>
-      <span className="text-desctructive text-xs">*</span>
+      <Label htmlFor='webdomain'>Enter Domain</Label>
+      <span className='text-desctructive text-xs'>*</span>
     </div>
     <Field
       as={Input}
-      id="webdomain"
-      name="domain"
-      className={cn(
-        "truncate text-sm rounded-lg block w-full p-2.5 h-11",
-        ""
-      )}
+      id='webdomain'
+      name='domain'
+      className={cn('block h-11 w-full truncate rounded-lg p-2.5 text-sm', '')}
       value={domainValue}
       onChange={(e: ChangeEvent<HTMLInputElement>) => {
         setDomainValue(e.target.value);
         formikHandlers.handleChange(e);
       }}
       onBlur={formikHandlers.handleBlur}
-      placeholder="Please enter domain"
+      placeholder='Please enter domain'
     />
     {formikHandlers.errors?.domain && formikHandlers.touched?.domain && (
-      <span className="static bottom-0 text-destructive text-xs">
+      <span className='text-destructive static bottom-0 text-xs'>
         {formikHandlers.errors?.domain}
       </span>
     )}

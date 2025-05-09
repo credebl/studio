@@ -1,3 +1,5 @@
+import React from 'react';
+
 const Loader = ({
   colorClass = 'border-primary',
   height = '1.5rem',

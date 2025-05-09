@@ -20,10 +20,9 @@ export interface ICustomCheckboxProps {
 }
 
 export interface IAlertComponent {
-	message: string | null;
-	type: string;
-	viewButton?: boolean;
-	path?: string;
-	onAlertClose: () => void;
+  message: string | null;
+  type: string;
+  viewButton?: boolean;
+  path?: string;
+  onAlertClose: () => void;
 }
-

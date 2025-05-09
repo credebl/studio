@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { Check, Circle, Dot } from 'lucide-react';
 
 type Step = {

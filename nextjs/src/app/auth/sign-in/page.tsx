@@ -1,3 +1,4 @@
+import React from 'react';
 import { Metadata } from 'next';
 import SignInPage from '@/features/auth/components/sigin-view';
 
@@ -7,6 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-
-  return <SignInPage  />;
+  return <SignInPage />;
 }

@@ -1,5 +1,6 @@
 import PageContainer from '@/components/layout/page-container';
 import ProfileCreateForm from './profile-create-form';
+import React from 'react';
 
 export default function ProfileViewPage() {
   return (

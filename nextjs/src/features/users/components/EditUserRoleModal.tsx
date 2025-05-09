@@ -9,8 +9,11 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog';
-import { editOrganizationUserRole, getOrganizationRoles } from '@/app/api/organization';
-import { useEffect, useState } from 'react';
+import {
+  editOrganizationUserRole,
+  getOrganizationRoles
+} from '@/app/api/organization';
+import React, { useEffect, useState } from 'react';
 
 import { AxiosResponse } from 'axios';
 import { Button } from '@/components/ui/button';
@@ -35,7 +38,12 @@ interface EditUserRoleModalProps {
   setOpenModal: (flag: boolean) => void;
 }
 
-const EditUserRoleModal = ({ openModal, user, setMessage, setOpenModal }: EditUserRoleModalProps) => {
+const EditUserRoleModal = ({
+  openModal,
+  user,
+  setMessage,
+  setOpenModal
+}: EditUserRoleModalProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [roles, setRoles] = useState<RoleI[] | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -44,22 +52,21 @@ const EditUserRoleModal = ({ openModal, user, setMessage, setOpenModal }: EditUs
   const getRoles = async () => {
     try {
       const response = await getOrganizationRoles(orgId);
-      
-      const { data } = response as AxiosResponse
+
+      const { data } = response as AxiosResponse;
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         const fetchedRoles: Array<RoleI> = data.data;
         const filteredRoles = fetchedRoles.map((role) => {
-            if (user?.roles.includes(role.name) && role.name !== 'member') {
-              return { ...role, checked: true, disabled: false };
-            } else if (role.name === 'member') {
-              return { ...role, checked: true, disabled: true };
-            } else {
-              return { ...role, checked: false, disabled: false };
-            }
-          });
-          
-        
+          if (user?.roles.includes(role.name) && role.name !== 'member') {
+            return { ...role, checked: true, disabled: false };
+          } else if (role.name === 'member') {
+            return { ...role, checked: true, disabled: true };
+          } else {
+            return { ...role, checked: false, disabled: false };
+          }
+        });
+
         setRoles(filteredRoles);
       } else {
         setErrorMsg(response as unknown as string);
@@ -80,8 +87,14 @@ const EditUserRoleModal = ({ openModal, user, setMessage, setOpenModal }: EditUs
     setLoading(true);
 
     try {
-      const roleIds = roles?.filter(role => role.checked).map(role => role.id);
-      const response = await editOrganizationUserRole(user.id, roleIds as string[], orgId);
+      const roleIds = roles
+        ?.filter((role) => role.checked)
+        .map((role) => role.id);
+      const response = await editOrganizationUserRole(
+        user.id,
+        roleIds as string[],
+        orgId
+      );
 
       if (response?.data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setMessage(response.data.message);
@@ -99,10 +112,10 @@ const EditUserRoleModal = ({ openModal, user, setMessage, setOpenModal }: EditUs
 
   const handleRoleChange = (checked: boolean, role: RoleI) => {
     if (
-      (role.name === 'issuer' && checked === true) || 
+      (role.name === 'issuer' && checked === true) ||
       (role.name === 'verifier' && checked === true)
     ) {
-      const updatedRoles = roles?.map(r => {
+      const updatedRoles = roles?.map((r) => {
         if (r.id === role.id) {
           return { ...r, checked };
         } else if (
@@ -116,9 +129,8 @@ const EditUserRoleModal = ({ openModal, user, setMessage, setOpenModal }: EditUs
         }
       });
       setRoles(updatedRoles ?? null);
-    } 
-    else if (role.name === 'admin' && checked === true) {
-      const updatedRoles = roles?.map(r => {
+    } else if (role.name === 'admin' && checked === true) {
+      const updatedRoles = roles?.map((r) => {
         if (r.id === role.id) {
           return { ...r, checked };
         } else if (r.name === 'member' && r.checked) {
@@ -128,9 +140,8 @@ const EditUserRoleModal = ({ openModal, user, setMessage, setOpenModal }: EditUs
         }
       });
       setRoles(updatedRoles ?? null);
-    } 
-    else {
-      const updatedRoles = roles?.map(r => {
+    } else {
+      const updatedRoles = roles?.map((r) => {
         if (r.id === role.id) {
           return { ...r, checked };
         }
@@ -139,9 +150,9 @@ const EditUserRoleModal = ({ openModal, user, setMessage, setOpenModal }: EditUs
       setRoles(updatedRoles ?? null);
     }
   };
-  
+
   const getRoleColor = (roleName: string) => {
-    switch(roleName) {
+    switch (roleName) {
       case 'admin':
         return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300';
       case 'member':
@@ -157,70 +168,77 @@ const EditUserRoleModal = ({ openModal, user, setMessage, setOpenModal }: EditUs
 
   return (
     <Dialog open={openModal} onOpenChange={setOpenModal}>
-      <DialogContent className="sm:max-w-md rounded-xl shadow-lg">
-        <DialogHeader className="border-b pb-4">
-          <DialogTitle className="text-xl font-bold flex items-center text-primary">
-            <UserCircle className="mr-2 h-5 w-5" />
+      <DialogContent className='rounded-xl shadow-lg sm:max-w-md'>
+        <DialogHeader className='border-b pb-4'>
+          <DialogTitle className='text-primary flex items-center text-xl font-bold'>
+            <UserCircle className='mr-2 h-5 w-5' />
             Manage User Role
           </DialogTitle>
         </DialogHeader>
-        
-        <div className="space-y-6 pt-4">
-          <div className="bg-gradient-to-r from-slate-50 to-gray-50 rounded-lg border border-gray-200 shadow-sm p-5 dark:from-gray-800 dark:to-gray-900 dark:border-gray-700">
-            <div className="space-y-4">
-              <div className="flex items-center border-b pb-4 mb-2">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3 flex-shrink-0">
-                  <UserCircle className="h-6 w-6 text-primary" />
+
+        <div className='space-y-6 pt-4'>
+          <div className='rounded-lg border border-gray-200 bg-gradient-to-r from-slate-50 to-gray-50 p-5 shadow-sm dark:border-gray-700 dark:from-gray-800 dark:to-gray-900'>
+            <div className='space-y-4'>
+              <div className='mb-2 flex items-center border-b pb-4'>
+                <div className='bg-primary/10 mr-3 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full'>
+                  <UserCircle className='text-primary h-6 w-6' />
                 </div>
-                <div className="flex-grow">
-                  <p className="text-base font-semibold text-gray-800 dark:text-white truncate">
+                <div className='flex-grow'>
+                  <p className='truncate text-base font-semibold text-gray-800 dark:text-white'>
                     {user?.firstName} {user?.lastName}
                   </p>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                  <span className='text-sm text-gray-500 dark:text-gray-400'>
                     {user?.email}
                   </span>
                 </div>
               </div>
 
-              <div className="w-full">
-                <div className="text-sm font-medium mb-3 flex items-center">
-                  <span className="mr-1">Assigned Roles</span>
-                  <span className="text-red-500">*</span>
+              <div className='w-full'>
+                <div className='mb-3 flex items-center text-sm font-medium'>
+                  <span className='mr-1'>Assigned Roles</span>
+                  <span className='text-red-500'>*</span>
                 </div>
-                
+
                 {roles && (
-                  <div className="space-y-3">
+                  <div className='space-y-3'>
                     {roles.map((role) => (
-                      <button 
-                        key={role.id} 
-                        className={`flex items-center p-3 rounded-md transition-all ${
-                          role.checked 
-                            ? 'bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700' 
+                      <button
+                        key={role.id}
+                        className={`flex items-center rounded-md p-3 transition-all ${
+                          role.checked
+                            ? 'border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800'
                             : 'hover:bg-gray-50 dark:hover:bg-gray-700'
-                        } ${role.checked && !role.disabled ? 'ring-2 ring-primary/20' : ''}`}
-                        onClick={() => !role.disabled && handleRoleChange(!role.checked, role)}
-                       >
+                        } ${role.checked && !role.disabled ? 'ring-primary/20 ring-2' : ''}`}
+                        onClick={() =>
+                          !role.disabled &&
+                          handleRoleChange(!role.checked, role)
+                        }
+                      >
                         <Checkbox
                           id={`checkbox-${role.id}`}
                           checked={role.checked}
                           disabled={role.disabled}
-                          onCheckedChange={(checked) => 
+                          onCheckedChange={(checked) =>
                             handleRoleChange(checked as boolean, role)
                           }
                           className={`h-5 w-5 rounded border-2 ${
-                            role.checked ? 'border-primary bg-primary text-primary-foreground' : 
-                            role.disabled ? 'border-gray-300 bg-gray-100 dark:border-gray-600 dark:bg-gray-700' : 
-                            'border-gray-400 dark:border-gray-500'
+                            role.checked
+                              ? 'border-primary bg-primary text-primary-foreground'
+                              : role.disabled
+                                ? 'border-gray-300 bg-gray-100 dark:border-gray-600 dark:bg-gray-700'
+                                : 'border-gray-400 dark:border-gray-500'
                           } mr-3`}
                         />
-                        <div className="flex flex-grow items-center justify-between">
-                          <Label 
+                        <div className='flex flex-grow items-center justify-between'>
+                          <Label
                             htmlFor={`checkbox-${role.id}`}
                             className={`${role.disabled ? 'text-gray-500' : 'font-medium'} cursor-pointer`}
                           >
                             {TextTitlecase(role.name)}
                           </Label>
-                          <span className={`text-xs px-2 py-1 rounded-full ${getRoleColor(role.name)}`}>
+                          <span
+                            className={`rounded-full px-2 py-1 text-xs ${getRoleColor(role.name)}`}
+                          >
                             {TextTitlecase(role.name)}
                           </span>
                         </div>
@@ -233,32 +251,51 @@ const EditUserRoleModal = ({ openModal, user, setMessage, setOpenModal }: EditUs
           </div>
 
           {errorMsg && (
-            <Alert variant="destructive" className="border-red-200 bg-red-50 text-red-800 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800/30">
-              <AlertCircle className="h-4 w-4" />
+            <Alert
+              variant='destructive'
+              className='border-red-200 bg-red-50 text-red-800 dark:border-red-800/30 dark:bg-red-900/30 dark:text-red-300'
+            >
+              <AlertCircle className='h-4 w-4' />
               <AlertDescription>{errorMsg}</AlertDescription>
             </Alert>
           )}
 
-          <DialogFooter className="flex justify-end gap-2 sm:justify-end">
+          <DialogFooter className='flex justify-end gap-2 sm:justify-end'>
             <Button
-              variant="outline"
+              variant='outline'
               onClick={() => setOpenModal(false)}
-              className="border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+              className='border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800'
             >
               Cancel
             </Button>
             <Button
               onClick={handleSave}
               disabled={loading}
-              className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center"
+              className='bg-primary text-primary-foreground hover:bg-primary/90 flex items-center'
             >
               {loading ? (
-                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <svg
+                  className='mr-2 -ml-1 h-4 w-4 animate-spin text-white'
+                  xmlns='http://www.w3.org/2000/svg'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                >
+                  <circle
+                    className='opacity-25'
+                    cx='12'
+                    cy='12'
+                    r='10'
+                    stroke='currentColor'
+                    strokeWidth='4'
+                  ></circle>
+                  <path
+                    className='opacity-75'
+                    fill='currentColor'
+                    d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+                  ></path>
                 </svg>
               ) : (
-                <BookmarkIcon className="mr-2 h-4 w-4" />
+                <BookmarkIcon className='mr-2 h-4 w-4' />
               )}
               {loading ? 'Saving...' : 'Save Changes'}
             </Button>

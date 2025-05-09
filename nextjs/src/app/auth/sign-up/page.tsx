@@ -1,3 +1,4 @@
+import React from 'react';
 import { Metadata } from 'next';
 import SignUpViewPage from '@/features/auth/components/SignUpViewPage';
 
@@ -7,6 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-
-  return <SignUpViewPage  />;
+  return <SignUpViewPage />;
 }

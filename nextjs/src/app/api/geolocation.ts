@@ -1,13 +1,11 @@
-import {
-    axiosGet,
-  } from '@/services/apiRequests';
-  import { apiRoutes } from '@/config/apiRoutes';
+import { axiosGet } from '@/services/apiRequests';
+import { apiRoutes } from '@/config/apiRoutes';
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs';
-  
-  export const getAllCountries = async () => {
+
+export const getAllCountries = async () => {
   const url = `${apiRoutes.geolocation.countries}`;
 
-  const config = getHeaderConfigs()
+  const config = getHeaderConfigs();
 
   const axiosPayload = {
     url,
@@ -25,7 +23,7 @@ import { getHeaderConfigs } from '@/config/GetHeaderConfigs';
 export const getAllStates = async (countryId: number | null) => {
   const url = `${apiRoutes.geolocation.countries}/${countryId}${apiRoutes.geolocation.state}`;
 
-  const config = getHeaderConfigs()
+  const config = getHeaderConfigs();
 
   const axiosPayload = {
     url,
@@ -46,7 +44,7 @@ export const getAllCities = async (
 ) => {
   const url = `${apiRoutes.geolocation.countries}/${countryId}${apiRoutes.geolocation.state}/${stateId}${apiRoutes.geolocation.cities}`;
 
-  const config = getHeaderConfigs()
+  const config = getHeaderConfigs();
 
   const axiosPayload = {
     url,

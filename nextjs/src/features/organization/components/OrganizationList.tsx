@@ -9,7 +9,7 @@ import {
   PaginationPrevious
 } from '@/components/ui/pagination';
 import { setOrgId, setOrgInfo } from '@/lib/orgSlice';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { AxiosResponse } from 'axios';
 import { Button } from '@/components/ui/button';
@@ -94,24 +94,24 @@ export const OrganizationList = () => {
       return;
     }
 
-    const selectedOrg = organizationsList.find(org => org.id === orgId);
-  
-  if (selectedOrg) {
-    dispatch(setOrgId(selectedOrg.id));
+    const selectedOrg = organizationsList.find((org) => org.id === orgId);
 
-    const orgRoles = selectedOrg?.userOrgRoles;
-    
-    dispatch(
-      setOrgInfo({
-        id: selectedOrg.id,
-        name: selectedOrg.name,
-        description: selectedOrg.description,
-        logoUrl: selectedOrg.logoUrl,
-        roles: orgRoles?.map((item) => item?.orgRole?.name) ?? [],
-      })
-    );
-  }
-  
+    if (selectedOrg) {
+      dispatch(setOrgId(selectedOrg.id));
+
+      const orgRoles = selectedOrg?.userOrgRoles;
+
+      dispatch(
+        setOrgInfo({
+          id: selectedOrg.id,
+          name: selectedOrg.name,
+          description: selectedOrg.description,
+          logoUrl: selectedOrg.logoUrl,
+          roles: orgRoles?.map((item) => item?.orgRole?.name) ?? []
+        })
+      );
+    }
+
     router.push(`/organizations/dashboard/${orgId}`);
   };
   const handleCreateOrg = () => {
@@ -133,26 +133,26 @@ export const OrganizationList = () => {
             onChange={(e) => setSearchText(e.target.value)}
             className='w-64'
           />
-          <Button onClick={handleCreateOrg} className="gap-2">
-      <Plus className="h-4 w-4" />
-      Create Organization
-    </Button>
+          <Button onClick={handleCreateOrg} className='gap-2'>
+            <Plus className='h-4 w-4' />
+            Create Organization
+          </Button>
         </div>
       </div>
-    
+
       <div className='mx-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
-      {loading ? (
-                <div className='mb-4 flex items-center justify-center'>
-                  <Loader height='2rem' width='2rem' />
-                </div>
+        {loading ? (
+          <div className='mb-4 flex items-center justify-center'>
+            <Loader height='2rem' width='2rem' />
+          </div>
         ) : organizationsList.length > 0 ? (
           organizationsList.map((org) => (
             <Card
               key={org.id}
               onClick={() => handleCardClick(org.id)}
-              className='cursor-pointer p-6 transition-all border-border relative h-full w-full overflow-hidden rounded-xl border shadow-xl transition-transform duration-300 py-4'
+              className='border-border relative h-full w-full cursor-pointer overflow-hidden rounded-xl border p-6 py-4 shadow-xl transition-all transition-transform duration-300'
             >
-               <div className="flex items-start gap-4">
+              <div className='flex items-start gap-4'>
                 <Avatar className='h-16 w-16 rounded-md'>
                   {org.logoUrl ? (
                     <AvatarImage src={org.logoUrl} alt={org.name} />
@@ -166,10 +166,10 @@ export const OrganizationList = () => {
                 <div className='flex-1'>
                   <h3 className='text-lg font-semibold'>{org.name}</h3>
                   <p className=''>{org.description}</p>
-                  <div className='mt-2 text-md flex items-center gap-1'>
+                  <div className='text-md mt-2 flex items-center gap-1'>
                     <span className='font-bold'>Role(s):</span>
-                    <span>{' '}</span>
-                    <span className='rounded-md px-3 py-1 bg-secondary text-secondary-foreground'>
+                    <span> </span>
+                    <span className='bg-secondary text-secondary-foreground rounded-md px-3 py-1'>
                       {org.userOrgRoles[0].orgRole.name || 'No Role'}
                     </span>
                   </div>

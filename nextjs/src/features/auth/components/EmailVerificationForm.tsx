@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -145,14 +145,22 @@ export default function EmailVerificationForm({
           <FormikForm className='space-y-4'>
             {showEmailVerification.message && (
               <Alert
-              variant={showEmailVerification.type === 'success' ? 'default' : 'destructive'}
-              className={`mb-4 ${
-                showEmailVerification.type === 'success' ? 'bg-success' : 'bg-error'
-              }`}
-            >
+                variant={
+                  showEmailVerification.type === 'success'
+                    ? 'default'
+                    : 'destructive'
+                }
+                className={`mb-4 ${
+                  showEmailVerification.type === 'success'
+                    ? 'bg-success'
+                    : 'bg-error'
+                }`}
+              >
                 <AlertDescription
                   className={
-                    showEmailVerification.type === 'success' ? 'text-success' : 'text-error'
+                    showEmailVerification.type === 'success'
+                      ? 'text-success'
+                      : 'text-error'
                   }
                 >
                   {showEmailVerification.message}

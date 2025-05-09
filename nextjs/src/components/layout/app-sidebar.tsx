@@ -20,8 +20,8 @@ import {
 } from '@/components/ui/sidebar';
 import { setOrgId, setOrgInfo } from '@/lib/orgSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { useEffect, useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 import { IconChevronRight } from '@tabler/icons-react';
 import { Icons } from '../icons';
@@ -31,6 +31,7 @@ import { NavItem } from '../../../types';
 import { getOrganizations } from '@/app/api/organization';
 import { navItems } from '@/constants/data';
 import { useThemeConfig } from '../active-theme';
+import { Organization } from '@/features/dashboard/type/organization';
 
 export default function AppSidebar() {
   const pathname = usePathname();
@@ -42,18 +43,14 @@ export default function AppSidebar() {
       ? '/images/CREDEBL_Logo_Web.svg'
       : '/images/sovio_logo.svg';
 
-  // export default function AppSidebar() {
   const dispatch = useAppDispatch();
-  const router = useRouter();
 
   const [currentPage] = useState(1);
   const [pageSize] = useState(10);
   const [searchTerm] = useState('');
-  const [orgList, setOrgList] = useState<any[]>([]);
+  const [, setOrgList] = useState<Organization[]>([]);
 
   const selectedOrgId = useAppSelector((state) => state.organization.orgId);
-
-  const selectedOrg = orgList.find((org) => org.id === selectedOrgId) ?? null;
 
   useEffect(() => {
     const fetchOrganizations = async () => {
@@ -98,27 +95,6 @@ export default function AppSidebar() {
     fetchOrganizations();
   }, [dispatch, currentPage, pageSize, searchTerm, selectedOrgId]);
 
-  const handleSwitchTenant = (orgId: string) => {
-    const selected = orgList.find((org) => org.id === orgId);
-    if (selected) {
-      dispatch(setOrgId(selected.id));
-      dispatch(
-        setOrgInfo({
-          id: selected.id,
-          name: selected.name,
-          description: selected.description,
-          logoUrl: selected.logoUrl,
-          roles:
-            selected.userOrgRoles?.map((role: any) => role?.orgRole?.name) || []
-        })
-      );
-
-      router.push(`/organizations/dashboard/${selected.id}`);
-    }
-  };
-
-  const activeTenant = selectedOrg || orgList[0];
-
   return (
     <Sidebar collapsible='icon'>
       <SidebarHeader>
@@ -136,7 +112,7 @@ export default function AppSidebar() {
       <SidebarContent className='overflow-x-hidden'>
         <SidebarGroup>
           <SidebarMenu>
-            {navItems.map((item:NavItem) => {
+            {navItems.map((item: NavItem) => {
               const Icon = item.icon ? Icons[item.icon] : Icons.logo;
               return item?.items && item.items.length > 0 ? (
                 <Collapsible

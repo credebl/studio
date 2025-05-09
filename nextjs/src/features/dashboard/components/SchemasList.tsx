@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Card,
   CardHeader,
@@ -35,7 +35,7 @@ const SchemasList = () => {
   const [loading, setLoading] = useState(true);
   const [schemas, setSchemas] = useState<Schema[]>([]);
   const [schemaTypeValues, setSchemaTypeValues] = useState<SchemaTypeValue>();
-  
+
   const currentPage = 1;
   const pageSize = 10;
 

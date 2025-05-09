@@ -1,3 +1,4 @@
+import React from 'react';
 import ProfileViewPage from '@/features/profile/components/profile-view-page';
 
 export const metadata = {

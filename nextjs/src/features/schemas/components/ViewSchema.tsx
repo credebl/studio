@@ -4,7 +4,7 @@ import * as yup from 'yup';
 
 import { Field, Form, Formik } from 'formik';
 import { apiStatusCodes } from '../../../config/CommonConstant';
-import { JSX, useEffect, useState } from 'react';
+import React, { JSX, useEffect, useState } from 'react';
 import {
   createCredentialDefinition,
   getCredDeffById,
@@ -228,13 +228,9 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
               id='viewSchemaDetailsCard'
             >
               {loading ? (
-              
                 <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
                   {[...Array(1)].map((_, index) => (
-                    <div
-                      key={index}
-                      className='col-span-full'
-                    >
+                    <div key={index} className='col-span-full'>
                       <div className='w-full space-y-3 rounded-lg p-4 shadow-sm'>
                         <Skeleton className='h-5 w-1/2 rounded-md' />
                         <Skeleton className='h-4 w-1/3 rounded' />
@@ -516,18 +512,14 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
             )}
           </div>
         </div>
-        <h5 className='p-3 text-xl leading-none font-bold my-6'>
+        <h5 className='my-6 p-3 text-xl leading-none font-bold'>
           Credential Definitions
         </h5>
 
         {loading ? (
-          
           <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2'>
             {[...Array(4)].map((_, idx) => (
-              <div
-                key={idx}
-                className='space-y-3 rounded-lg p-4 shadow-xl'
-              >
+              <div key={idx} className='space-y-3 rounded-lg p-4 shadow-xl'>
                 <Skeleton className='h-5 w-1/2 rounded-md' />
                 <Skeleton className='h-4 w-1/3 rounded' />
                 <Skeleton className='h-4 w-3/4 rounded' />

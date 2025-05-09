@@ -1,3 +1,4 @@
+import React from 'react';
 import { auth } from '@/lib/auth';
 import Providers from '@/components/layout/providers';
 import { Toaster } from '@/components/ui/sonner';

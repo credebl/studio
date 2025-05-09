@@ -271,7 +271,6 @@ const SchemaList = (props: {
         </div>
 
         {loading ? (
-          
           <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2'>
             {[...Array(4)].map((_, idx) => (
               <div
@@ -338,7 +337,7 @@ const SchemaList = (props: {
                           <PaginationLink
                             className={`${
                               isActive
-                                ? 'bg-primary text-[var(--color-white)] '
+                                ? 'bg-primary text-[var(--color-white)]'
                                 : 'bg-background text-muted-foreground'
                             } rounded-lg px-4 py-2`}
                             href='#'
