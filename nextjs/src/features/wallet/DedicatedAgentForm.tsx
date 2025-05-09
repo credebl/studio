@@ -87,12 +87,13 @@ const DedicatedAgentForm = ({
               <div className="flex items-center justify-between mt-6">
               <Button
                     variant='secondary'
-                    onClick={() => router.push('/organizations/create-organization?step=1')}
+                    onClick={() => router.push('/organizations/create-organization?createOrg=true')}
                     className='flex items-center gap-2'
                     >
                     <ArrowLeft className='h-4 w-4' />
                     Back to Create Organization                   
             </Button>
+            
             
               <Button
                 type="submit"
@@ -114,8 +115,11 @@ const DedicatedAgentForm = ({
           maskedSeeds={maskedSeeds}
           // agentEndpoint={agentEndpoint}
           // apiKey={apiKey}
-          submitDedicatedWallet={submitDedicatedWallet}
-        />
+          submitDedicatedWallet={submitDedicatedWallet} ledgerConfig={false} setLedgerConfig={function (value: boolean): void {
+            throw new Error("Function not implemented.");
+          } } loading={false} setAgentConfig={undefined} onConfigureDedicated={function (): void {
+            throw new Error("Function not implemented.");
+          } }        />
       )}
     </div>
   );

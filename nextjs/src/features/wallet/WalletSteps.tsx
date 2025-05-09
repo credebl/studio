@@ -1,6 +1,6 @@
 const WalletStepsComponent = (props: { steps: number}) => {
 	return (
-		<div className="mt-4 ml-4">
+		<div className="mt-4 ml-4 w-full">
 			<ol className="relative text-gray-500 border-l border-gray-200 dark:border-gray-700 dark:text-gray-400">
 				<li className="mb-10 ml-6">
 					{props.steps > 1 ? (

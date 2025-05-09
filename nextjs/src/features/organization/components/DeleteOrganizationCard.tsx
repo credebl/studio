@@ -28,11 +28,11 @@ export function DeleteOrganizationCard({
   const isButtonDisabled = isDisabled || count === 0;
   
   return (
-    <Card className={isDisabled ? "opacity-75" : ""}>
+    <Card className={isDisabled ? "opacity-75" : "cursor-pointer p-6 transition-all border-border relative h-full w-full overflow-hidden rounded-xl border shadow-xl transition-transform duration-300 py-4"}>
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>{title}</CardTitle>
+            <CardTitle className="text-lg">{title}</CardTitle>
             <CardDescription className="mt-1">{description}</CardDescription>
           </div>
           

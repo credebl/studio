@@ -1,3 +1,4 @@
+
 export interface IValues {
 	seed: string;
 	walletName: string;
@@ -86,3 +87,19 @@ export interface IDedicatedAgentData {
 	network:string;
 	role:string;
 }
+
+export interface IDedicatedAgentData {
+  walletName: string;
+  agentEndpoint: string;
+  apiKey: string;
+  seed: string;
+  keyType: string;
+  method: string;
+  network: string;
+  role: string;
+}
+
+interface Organisation {
+  [key: string]: any;
+}
+

@@ -12,7 +12,7 @@ import { useState, useEffect } from "react";
 import * as yup from 'yup';
 import type { AxiosResponse } from 'axios';
 import React from "react";
-import { getLedgerConfig, getLedgers } from "@/app/api/organization";
+import { getLedgerConfig, getLedgers } from "@/app/api/Agent";
 import { apiStatusCodes } from "@/config/CommonConstant";
 import CopyDid from "./CopyDid";
 import { DidMethod, Environment, Ledgers, Network } from "../common/enum";
@@ -155,14 +155,11 @@ const router = useRouter();
   };
 
   const handleMethodChange = (method: React.SetStateAction<string>) => {
-    console.log("🚀 ~ handleMethodChange ~ method:vv>>>>==================", method)
     setSelectedMethod(method);
     setSelectedDid('');
   };
 
   const handleNetworkChange = (network: React.SetStateAction<string>, didMethod: React.SetStateAction<string>) => {
-    console.log("🚀 ~ handlenetworkChange ~ network:vv>>>>==================", network)
-
     setSelectedNetwork(network);
     setSelectedDid(didMethod);
   };
@@ -536,16 +533,7 @@ const router = useRouter();
             )}
             
             {/* Action buttons */}
-            <div className="flex justify-between mt-8">
-              <Link href="/organizations" legacyBehavior>
-              <Button
-                   
-                   onClick={() => router.push('/organizations/create-organization')}
-                 >
-                   Back
-                 </Button>
-              </Link>
-              
+            <div className="flex items-right mt-8">
               <Button
               onClick={() => {
                 formikHandlers.handleSubmit();
