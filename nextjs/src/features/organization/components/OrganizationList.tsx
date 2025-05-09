@@ -133,7 +133,7 @@ export const OrganizationList = () => {
             onChange={(e) => setSearchText(e.target.value)}
             className='w-64'
           />
-          <Button onClick={handleCreateOrg} className="gap-2">
+          <Button disabled={currentPage.totalCount >= 10} onClick={handleCreateOrg} className="gap-2">
       <Plus className="h-4 w-4" />
       Create Organization
     </Button>
