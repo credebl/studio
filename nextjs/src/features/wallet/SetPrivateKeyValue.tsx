@@ -7,7 +7,7 @@ import GenerateBtnPolygon from "./GenerateBtnPolygon";
 import { ethers } from 'ethers';
 import type { AxiosResponse } from "axios";
 import TokenWarningMessage from "./TokenWarningMessage";
-import { createPolygonKeyValuePair } from "@/app/api/organization";
+import { createPolygonKeyValuePair } from "@/app/api/Agent";
 import { apiStatusCodes } from "@/config/CommonConstant";
 import CopyDid from "./CopyDid";
 import { envConfig } from "@/config/envConfig";
@@ -113,6 +113,7 @@ const SetPrivateKeyValueInput = ({
       <div className="flex items-center gap-2 mt-4">
         <Checkbox
           id="havePrivateKey"
+          className="border"
           onCheckedChange={(checked) => setHavePrivateKey(checked)}
         />
         <Label htmlFor="havePrivateKey">Already have a private key?</Label>

@@ -12,7 +12,7 @@ import OrganizationDetails from './OrganizationDetails';
 import { apiStatusCodes } from '@/config/CommonConstant';
 import { getOrganizationById } from '@/app/api/organization';
 import { useAppSelector } from '@/lib/hooks';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import PageContainer from '@/components/layout/page-container';
 
 type OrganizationDashboardProps = {
@@ -31,18 +31,17 @@ export const OrganizationDashboard = ({
   const [error, setError] = useState<string | null>(null);
   const [organizationId, setOrganizationId] = useState<string>()
 
-  
   const selecteDropdownOrgId = useAppSelector((state) => state.organization.orgId);
-
   const activeOrgId = selecteDropdownOrgId ?? orgId;
+  const orgIdOfDashboard = orgId
 
+  
   const fetchOrganizationDetails = async () => {
     if (!orgId) return;
-
+    
     setLoading(true);
-    const response = await getOrganizationById(orgId as string);
+    const response = await getOrganizationById(orgIdOfDashboard as string);
     const { data } = response as AxiosResponse;
-    setOrganizationId(data?.data?.id)
     setLoading(false);
     if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
       if (data?.data?.org_agents?.length > 0 && data?.data?.org_agents[0]?.orgDid) {
@@ -54,7 +53,7 @@ export const OrganizationDashboard = ({
     }
     setLoading(false);
   };
-
+  
   const handleEditOrg = () => {
     router.push(`/organizations/create-organization?orgId=${orgId}`);
   };
@@ -203,7 +202,7 @@ export const OrganizationDashboard = ({
 
     ): (
     <Button 
-      onClick={() => router.push(`/organizations/create-organization?step=2&organizationId=${organizationId}`)}
+      onClick={() => router.push(`/organizations/agent-config?organizationId=${orgIdOfDashboard}`)}
     >
       Setup Your Wallet
     </Button>

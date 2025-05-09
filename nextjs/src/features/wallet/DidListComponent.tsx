@@ -6,10 +6,11 @@ import { Copy } from "lucide-react";
 import type { AxiosResponse } from "axios";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { IDidListData, IUpdatePrimaryDid } from "../organization/components/interfaces/organization";
-import { getDids, updatePrimaryDid } from "@/app/api/organization";
+import { updatePrimaryDid } from "@/app/api/Agent";
 import { apiStatusCodes } from "@/config/CommonConstant";
 import { Roles } from "@/common/enums";
 import CreateDidComponent from "./CreateDidComponent";
+import { getDids } from "@/app/api/Agent";
 
 const DIDList = ({ orgId }: { orgId: string }) => {
   const [didList, setDidList] = useState<IDidListData[]>([]);
