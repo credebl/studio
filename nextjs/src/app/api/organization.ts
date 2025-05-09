@@ -1,13 +1,14 @@
+import { IDedicatedAgentConfiguration, IUpdatePrimaryDid } from '@/features/organization/components/interfaces/organization';
 import { axiosDelete, axiosGet, axiosPost, axiosPut, ecosystemAxiosPost } from '@/services/apiRequests';
+
+import { AxiosResponse } from 'axios';
 /* eslint-disable max-lines */
 import { apiRoutes } from '@/config/apiRoutes';
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs';
-import { IDedicatedAgentConfiguration, IUpdatePrimaryDid } from '@/features/organization/components/interfaces/organization';
-
 
 // TODO: Uncomment the following lines when the API is ready
 export const createOrganization = async (data: object) => {
-  const url = apiRoutes.organizations.create;
+  const url:string = apiRoutes.organizations.create ;
   const payload = data;
 
   const config = {
@@ -144,7 +145,7 @@ export const spinupDedicatedAgent = async (data: object, orgId: string) => {
   }
 };
 
-export const setAgentConfigDetails = async (data: IDedicatedAgentConfig, orgId: string) => {
+export const setAgentConfigDetails = async (data: IDedicatedAgentConfiguration, orgId: string) => {
 	const url =`${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.setAgentConfig}`
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 	const payload = data;
@@ -555,7 +556,7 @@ export const getOrganizationUsers = async (
       userId: string,
       roles: string[],
       orgId: string,
-    ) => {
+    ):Promise<AxiosResponse> => {
 
       const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.editUserROle}/${userId}`;
       const payload = {
@@ -563,18 +564,20 @@ export const getOrganizationUsers = async (
         userId,
         orgRoleId: roles,
       };
+      const config = await getHeaderConfigs()
 
       const axiosPayload = {
         url,
         payload,
-        config: await getHeaderConfigs(),
+        config,
       };
 
       try {
-        return axiosPut(axiosPayload);
+        const response:AxiosResponse = await axiosPut(axiosPayload);
+        return response
       } catch (error) {
         const err = error as Error;
-        return err?.message;
+        throw err;
       }
     };
 

@@ -1,14 +1,15 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { DisplayUserProfileProps } from '../../../components/profile/interfaces';
-import Image from 'next/image';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
+import { Button } from '@/components/ui/button';
+import { IDisplayUserProfileProps } from '../../../components/profile/interfaces';
+import Image from 'next/image';
 
 const DisplayUserProfile = ({
   toggleEditProfile,
   userProfileInfo
-}: DisplayUserProfileProps) => {
+}: IDisplayUserProfileProps) => {
   return (
     <div className='flex h-full flex-col p-4 sm:py-6'>
       <div className='bg-background mx-auto w-full rounded-lg'>

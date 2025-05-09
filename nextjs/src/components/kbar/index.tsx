@@ -1,5 +1,5 @@
 'use client';
-import { navItems } from '@/constants/data';
+
 import {
   KBarAnimator,
   KBarPortal,
@@ -7,9 +7,12 @@ import {
   KBarProvider,
   KBarSearch
 } from 'kbar';
-import { useRouter } from 'next/navigation';
-import { useMemo } from 'react';
+
+import { NavItem } from '../../../types';
 import RenderResults from './render-result';
+import { navItems } from '@/constants/data';
+import { useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function KBar({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -38,7 +41,7 @@ export default function KBar({ children }: { children: React.ReactNode }) {
 
       // Map child items into actions
       const childActions =
-        navItem.items?.map((childItem) => ({
+        navItem.items?.map((childItem:NavItem) => ({
           id: `${childItem.title.toLowerCase()}Action`,
           name: childItem.title,
           shortcut: childItem.shortcut,

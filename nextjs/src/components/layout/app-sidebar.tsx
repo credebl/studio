@@ -1,9 +1,5 @@
 'use client';
 
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { IconChevronRight } from '@tabler/icons-react';
-
 import {
   Collapsible,
   CollapsibleContent,
@@ -22,15 +18,20 @@ import {
   SidebarMenuSubItem,
   SidebarRail
 } from '@/components/ui/sidebar';
-import { Icons } from '../icons';
-import { navItems } from '@/constants/data';
-import { useThemeConfig } from '../active-theme';
-import Image from 'next/image';
 import { setOrgId, setOrgInfo } from '@/lib/orgSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { useEffect, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 
+import { IconChevronRight } from '@tabler/icons-react';
+import { Icons } from '../icons';
+import Image from 'next/image';
+import Link from 'next/link';
+import { NavItem } from '../../../types';
 import { getOrganizations } from '@/app/api/organization';
+import { navItems } from '@/constants/data';
+import { useThemeConfig } from '../active-theme';
+
 export default function AppSidebar() {
   const pathname = usePathname();
 
@@ -135,7 +136,7 @@ export default function AppSidebar() {
       <SidebarContent className='overflow-x-hidden'>
         <SidebarGroup>
           <SidebarMenu>
-            {navItems.map((item) => {
+            {navItems.map((item:NavItem) => {
               const Icon = item.icon ? Icons[item.icon] : Icons.logo;
               return item?.items && item.items.length > 0 ? (
                 <Collapsible

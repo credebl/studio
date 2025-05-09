@@ -126,14 +126,18 @@ export default function SendInvitationModal({
     }
   };
 
-  const validateAndAddEmail = (values, { resetForm, setFieldError }) => {
+
+  const resetForm = ()=>{
+
+  }
+  const validateAndAddEmail = (values: { email: string }) => {
     if (values.email.trim() === selfEmail.trim()) {
-      setFieldError('email', "You can't send invitation to yourself");
+      setErrorMsg( "You can't send invitation to yourself");
       return;
     }
-    
+
     if (invitations.some(inv => inv.email === values.email)) {
-      setFieldError('email', "This email has already been added");
+      setErrorMsg( "This email has already been added");
       return;
     }
 
@@ -147,7 +151,7 @@ export default function SendInvitationModal({
         <DialogHeader>
           <DialogTitle>Send Invitation(s)</DialogTitle>
         </DialogHeader>
-        
+
         {errorMsg && (
           <AlertComponent
             message={errorMsg}
@@ -155,7 +159,7 @@ export default function SendInvitationModal({
             onAlertClose={() => setErrorMsg(null)}
           />
         )}
-        
+
         <Formik
           initialValues={{ email: '' }}
           validationSchema={validationSchema}
@@ -174,9 +178,8 @@ export default function SendInvitationModal({
                       id="email"
                       name="email"
                       placeholder="example@email.com"
-                      className={`bg-background focus-visible:ring-1 focus-visible:ring-primary ${
-                        errors.email && touched.email ? 'border-red-500' : ''
-                      }`}
+                      className={`bg-background focus-visible:ring-1 focus-visible:ring-primary ${errors.email && touched.email ? 'border-red-500' : ''
+                        }`}
                     />
                     <ErrorMessage
                       name="email"
@@ -185,9 +188,9 @@ export default function SendInvitationModal({
                     />
                   </div>
                 </div>
-                
-                <Button 
-                  type="submit" 
+
+                <Button
+                  type="submit"
                   className="flex items-center gap-2"
                 >
                   <PlusIcon className="h-5 w-5" />
@@ -212,9 +215,9 @@ export default function SendInvitationModal({
                       <p className="text-sm text-muted-foreground">Role: Member</p>
                     </div>
                   </div>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
+                  <Button
+                    variant="ghost"
+                    size="icon"
                     onClick={() => removeInvitation(invitation.email)}
                   >
                     <TrashIcon className="h-5 w-5 text-red-500" />

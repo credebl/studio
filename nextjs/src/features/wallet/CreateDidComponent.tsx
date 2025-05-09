@@ -1,21 +1,16 @@
 "use client";
 
 import * as React from "react";
-import { nanoid } from "nanoid";
-import { ethers } from "ethers";
 import * as z from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
+import { DidMethod, Network } from "@/common/enums";
 import {
   Form,
   FormControl,
@@ -24,13 +19,20 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { apiStatusCodes, storageKeys } from "@/config/CommonConstant";
-import { envConfig } from "@/config/envConfig";
-import {  Network, DidMethod } from "@/common/enums";
 import { createDid, createPolygonKeyValuePair, getOrganizationById } from "@/app/api/organization";
+
+import { AxiosResponse } from "axios";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { CommonConstants } from "../common/enum";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { envConfig } from "@/config/envConfig";
+import { ethers } from "ethers";
+import { nanoid } from "nanoid";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 interface IPolygonKeys {
   privateKey: string;
@@ -40,7 +42,7 @@ interface IPolygonKeys {
 
 interface CreateDIDModalProps {
   openModal: boolean;
-  orgId:string;
+  orgId: string;
   setOpenModal: (open: boolean) => void;
   setMessage: (message: string) => void;
   onEditSucess?: () => void;
@@ -121,7 +123,7 @@ const CreateDIDModal = (props: CreateDIDModalProps) => {
 
   const fetchOrganizationDetails = async () => {
     const response = await getOrganizationById(props.orgId);
-    const { data } = response;
+    const { data } = response as AxiosResponse;
     setLoading(false);
     if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
       const didMethod = data?.data?.org_agents[0]?.orgDid
@@ -241,7 +243,7 @@ const CreateDIDModal = (props: CreateDIDModalProps) => {
     };
     try {
       const response = await createDid(props.orgId, didData);
-      const { data } = response;
+      const { data } = response as AxiosResponse;
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
         if (props?.onEditSucess) {
@@ -266,7 +268,7 @@ const CreateDIDModal = (props: CreateDIDModalProps) => {
     setIsLoading(true);
     try {
       const resCreatePolygonKeys = await createPolygonKeyValuePair(props.orgId);
-      const { data } = resCreatePolygonKeys;
+      const { data } = resCreatePolygonKeys as AxiosResponse;
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
         setGeneratedKeys(data?.data);
@@ -373,7 +375,8 @@ const CreateDIDModal = (props: CreateDIDModalProps) => {
                         {...field}
                         readOnly
                         className=""
-                      />
+                        value={field.value ?? ''}
+                        />
                     </FormControl>
                   </FormItem>
                 )}
@@ -393,6 +396,7 @@ const CreateDIDModal = (props: CreateDIDModalProps) => {
                           {...field}
                           readOnly
                           className=""
+                          value={field.value ?? ''}
                         />
                       </FormControl>
                     </FormItem>
@@ -414,6 +418,7 @@ const CreateDIDModal = (props: CreateDIDModalProps) => {
                           {...field}
                           readOnly
                           className=""
+                          value={field.value ?? ''}
                         />
                       </FormControl>
                     </FormItem>
@@ -460,7 +465,7 @@ const CreateDIDModal = (props: CreateDIDModalProps) => {
                       <Checkbox
                         id="havePrivateKey"
                         checked={havePrivateKey}
-                        onCheckedChange={(checked) => 
+                        onCheckedChange={(checked) =>
                           setHavePrivateKey(checked === true)
                         }
                       />

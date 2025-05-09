@@ -9,15 +9,15 @@ import { AxiosResponse } from 'axios';
 import { Button } from '@/components/ui/button';
 import { IOrganisation } from './interfaces/organization';
 import OrganizationDetails from './OrganizationDetails';
+import PageContainer from '@/components/layout/page-container';
 import { apiStatusCodes } from '@/config/CommonConstant';
 import { getOrganizationById } from '@/app/api/organization';
 import { useAppSelector } from '@/lib/hooks';
 import { useRouter } from 'next/navigation';
-import PageContainer from '@/components/layout/page-container';
 
 type OrganizationDashboardProps = {
   orgId: string;
-  orgData?: IOrganisation;
+  // orgData?: IOrganisation;
 };
 
 

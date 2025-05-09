@@ -13,13 +13,13 @@ const commonHeaders = {
     "X-XSS-Protection": "1; mode=block"
 }
 
-export const getHeaderConfigs = async (tokenVal?: string) => ({
+export const getHeaderConfigs = (tokenVal?: string) => ({
     headers: {
       ...commonHeaders,
       'Content-Type': 'application/json'
     }
   });
-export const getHeaderConfigsForFormData = async () => ({
+export const getHeaderConfigsForFormData = () => ({
     headers: {
       ...commonHeaders,
       'Content-Type': 'multipart/form-data'

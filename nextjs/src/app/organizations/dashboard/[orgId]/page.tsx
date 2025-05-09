@@ -1,16 +1,29 @@
 import { OrganizationDashboard } from "@/features/organization/components/OrganizationDashboard";
 
-type Props = {
-  params: { orgId: string }
-}
+// type LocaleProps = {
+//   params: { locale: string }
+// }
 
-const Page = ({ params: { orgId } }: Props) => {
+// const Page = ({ params: { locale } }: LocaleProps): React.JSX.Element => {
 
+//   return (
+//     <>
+//       <OrganizationDashboard />
+//     </>
+//   )
+// }
+
+// export default Page
+
+type Params = Promise<{ orgId: string }>
+
+export default async function Page({ params }: { params: Params }): Promise<React.JSX.Element> {
+  // const { orgId } = params;
+  const { orgId } = await params;
+  console.log('orgId',params)
   return (
-    <div>
-      <OrganizationDashboard orgId={orgId} orgData={null} />
-    </div>
+    <>
+      <OrganizationDashboard orgId={orgId} />
+    </>
   )
 }
-
-export default Page

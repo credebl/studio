@@ -37,12 +37,12 @@ interface ProfileFormType {
 
 const ProfileCreateForm: React.FC<ProfileFormType> = ({ initialData }) => {
   const [loading] = useState(false);
-  const [ setOpen] = useState(false);
+  const [ ,setOpen] = useState(false);
   const title = initialData ? 'Edit product' : 'Create Your Profile';
   const description = initialData
     ? 'Edit a product.'
     : 'To create your resume, we first need some basic information about you.';
-  const [ setPreviousStep] = useState(0);
+  const [ ,setPreviousStep] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
   const [data, setData] = useState({});
 
