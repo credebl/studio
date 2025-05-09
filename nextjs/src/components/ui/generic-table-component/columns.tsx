@@ -62,7 +62,7 @@ export function getColumns<T>(tableStyling: TableStyling): ColumnDef<T>[] {
     });
   }
 
-	tableStyling.columnData.map((columnData) => {
+	tableStyling.columnData.forEach((columnData) => {
     const hasSort = columnData.columnFunction.some(
       (f) => f === 'sort' || (typeof f === 'object' && 'sortCallBack' in f)
     );
