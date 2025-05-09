@@ -66,43 +66,17 @@ export default function Connections() {
 
     fetchConnections();
     // Can add terms according to us
-  }, [pageIndex, pageSize, sortBy, searchTerm, sortOrder]);
+  }, [orgId, pageIndex, pageSize, sortBy, searchTerm, sortOrder]);
 
-	useEffect(() => {
+  useEffect(() => {
     if (!orgId) return;
-      async function fetchConnections() {
-        try {
-					// Reset all params
-					setPageIndex(0);
-          setPageSize(10);
-          setPageCount(1);
-					setSortBy('createDateTime');
-					setSearchTerm('')
-					setsortOrder('desc')
-
-          const connectionList = await getConnectionsByOrg({
-            itemPerPage: pageSize,
-            page: pageIndex + 1,
-            search: searchTerm,
-            sortBy: sortBy,
-            sortingOrder: sortOrder,
-            orgId
-          });
-
-          if (connectionList && Array.isArray(connectionList.data)) {
-            setConnectionData(connectionList.data ?? []);
-            setPageCount(connectionList.lastPage ?? 1);
-          } else {
-            setConnectionData([]);
-            setPageCount(1);
-          }
-        } catch (error) {
-          console.error('Failed to fetch connections:', error);
-          setConnectionData([]);
-        }
-      }
-
-      fetchConnections();
+    // Reset all params
+    setPageIndex(0);
+    setPageSize(10);
+    setPageCount(1);
+    setSortBy('createDateTime');
+    setSearchTerm('');
+    setsortOrder('desc');
   }, [orgId]); // Rerun with default config on org data change
 
   const columnData: IColumnData[] = [
