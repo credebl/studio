@@ -5,6 +5,8 @@ import {
   axiosPut,
   ecosystemAxiosPost
 } from '@/services/apiRequests';
+
+import { AxiosResponse } from 'axios';
 import { apiRoutes } from '@/config/apiRoutes';
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs';
 

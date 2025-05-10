@@ -257,12 +257,20 @@ export interface IEcosystemRoles {
 export interface IOrgFormValues {
   name: string;
   description: string;
-  countryId?: number | null;
-  stateId?: number | null;
-  cityId?: number | null;
+  countryId: string | null;
+  stateId: string | null;
+  cityId: string | null;
   website: string;
-  logoFile?: File | null;
-  logoPreview?: string;
+  logoFile: File | null;
+  logoPreview: string;
+// Note: Remove commented after testing
+  // description: string;
+  // countryId?: number | null;
+  // stateId?: number | null;
+  // cityId?: number | null;
+  // website: string;
+  // logoFile?: File | null;
+  // logoPreview?: string;
 }
 
 export interface ISharedAgentForm {

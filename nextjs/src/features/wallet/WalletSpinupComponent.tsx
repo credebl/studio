@@ -1,32 +1,33 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import type { AxiosResponse } from 'axios';
-import { nanoid } from 'nanoid';
-import React from 'react';
-import {
-  createOrganization,
-  getOrganizationById
-} from '@/app/api/organization';
-import { apiStatusCodes } from '@/config/CommonConstant';
-import { DidMethod } from '../common/enum';
-import SOCKET from '@/config/SocketConfig';
 import { Card, CardContent } from '@/components/ui/card';
-import WalletStepsComponent from './WalletSteps';
-import SharedAgentForm from './SharedAgentForm';
-import Stepper from '@/components/StepperComponent';
-import { useRouter, useSearchParams } from 'next/navigation';
-import DedicatedAgentForm from './DedicatedAgentForm';
-import { useAppSelector } from '@/lib/hooks';
-import PageContainer from '@/components/layout/page-container';
 import {
   createDid,
   setAgentConfigDetails,
   spinupSharedAgent
 } from '@/app/api/Agent';
-import { Organisation } from '../dashboard/type/organization';
-import { IValuesShared } from '../organization/components/interfaces/organization';
+import {
+  createOrganization,
+  getOrganizationById
+} from '@/app/api/organization';
+import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+
 import { AlertComponent } from '@/components/AlertComponent';
+import type { AxiosResponse } from 'axios';
+import DedicatedAgentForm from './DedicatedAgentForm';
+import { DidMethod } from '../common/enum';
+import { IValuesShared } from '../organization/components/interfaces/organization';
+import { Organisation } from '../dashboard/type/organization';
+import PageContainer from '@/components/layout/page-container';
+import React from 'react';
+import SOCKET from '@/config/SocketConfig';
+import SharedAgentForm from './SharedAgentForm';
+import Stepper from '@/components/StepperComponent';
+import WalletStepsComponent from './WalletSteps';
+import { apiStatusCodes } from '@/config/CommonConstant';
+import { nanoid } from 'nanoid';
+import { useAppSelector } from '@/lib/hooks';
 
 enum AgentType {
   SHARED = 'shared',
@@ -151,8 +152,8 @@ const WalletSpinup = () => {
       const orgData = {
         name: organizationFormData.name,
         description: organizationFormData.description,
-        logo: organizationFormData.logoUrl
-          ? URL.createObjectURL(organizationFormData.logoUrl)
+        logo: organizationFormData.logoFile
+          ? URL.createObjectURL(organizationFormData.logoFile as Blob | MediaSource)
           : '',
         website: organizationFormData.website || '',
         countryId: organizationFormData.countryId,

@@ -1,45 +1,47 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
 import * as yup from 'yup';
-import { Formik, Form, Field, FormikHelpers } from 'formik';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
+
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Field, Form, Formik, FormikHelpers } from 'formik';
 import {
-  setStep,
+  OrgData,
   setFormData,
+  setIsCreateOrgForm,
+  setLedgerConfig,
   setOrgId,
   setOrgName,
-  setWalletSpinupStatus,
-  setIsCreateOrgForm,
-  setLedgerConfig
+  setStep,
+  setWalletSpinupStatus
 } from '@/lib/walletSpinupSlice';
-
-import Stepper from '@/components/StepperComponent';
+import React, { useEffect, useState } from 'react';
 import {
   createOrganization,
   getOrganizationById,
   updateOrganization
 } from '@/app/api/organization';
-import { processImageFile } from '@/components/ProcessImage';
-import { AxiosResponse } from 'axios';
-import { apiStatusCodes } from '@/config/CommonConstant';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import WalletSpinup from '@/features/wallet/WalletSpinupComponent';
-import PageContainer from '@/components/layout/page-container';
-import { IOrgFormValues } from './interfaces/organization';
-import { Card } from '@/components/ui/card';
-import Loader from '@/components/Loader';
-import { useDispatch } from 'react-redux';
 import {
   getAllCities,
   getAllCountries,
   getAllStates
 } from '@/app/api/geolocation';
+import { useRouter, useSearchParams } from 'next/navigation';
+
 import { AlertComponent } from '@/components/AlertComponent';
+import { AxiosResponse } from 'axios';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { IOrgFormValues } from './interfaces/organization';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import Loader from '@/components/Loader';
+import PageContainer from '@/components/layout/page-container';
+import Stepper from '@/components/StepperComponent';
+import { Textarea } from '@/components/ui/textarea';
+import WalletSpinup from '@/features/wallet/WalletSpinupComponent';
+import { apiStatusCodes } from '@/config/CommonConstant';
+import { processImageFile } from '@/components/ProcessImage';
+import { useDispatch } from 'react-redux';
 
 export default function OrganizationOnboarding() {
   const [isPublic, setIsPublic] = useState<boolean>();

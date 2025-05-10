@@ -61,23 +61,6 @@ const DedicatedAgentForm = ({
               <div className="mb-4">
                 <label htmlFor="agentEndpoint">Agent Endpoint</label>
                 <Field
-                  id='walletName'
-                  name='walletName'
-                  className='w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 sm:text-sm dark:bg-gray-700'
-                  type='text'
-                  placeholder='Enter wallet name'
-                />
-                {formikHandlers.errors.walletName &&
-                  formikHandlers.touched.walletName && (
-                    <span className='text-xs text-red-500'>
-                      {formikHandlers.errors.walletName}
-                    </span>
-                  )}
-              </div>
-
-              <div className="mb-4">
-                <label htmlFor="apiKey">API Key</label>
-                <Field
                   id='agentEndpoint'
                   name='agentEndpoint'
                   className='w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 sm:text-sm dark:bg-gray-700'
@@ -93,7 +76,7 @@ const DedicatedAgentForm = ({
               </div>
 
               <div className='mb-4'>
-                <label htmlFor='apiKey' value='API Key' />
+                <label htmlFor='apiKey'>API Key</label>
                 <Field
                   id='apiKey'
                   name='apiKey'

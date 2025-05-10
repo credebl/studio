@@ -1,11 +1,20 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-// define type after resolving deployment issue
-interface OrgData {
+// export interface OrgData {
+//   name: string;
+//   [key: string]: string | Blob | MediaSource | null;
+// }
+
+export interface OrgData {
   name: string;
-  // [key: string]: any;
+  description: string;
+  countryId: string | null;
+  stateId: string | null;
+  cityId: string | null;
+  website: string;
+  logoFile: File | null;
+  logoPreview: string;
 }
-
 interface SharedLedgerConfig {
   orgName: string;
   orgId: string;
