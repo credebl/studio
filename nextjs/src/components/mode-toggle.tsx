@@ -8,8 +8,8 @@ import { Button } from '@/components/ui/button';
 import {
   Tooltip,
   TooltipContent,
-  TooltipTrigger,
-  TooltipProvider
+  TooltipProvider,
+  TooltipTrigger
 } from '@/components/ui/tooltip';
 
 export default function ModeToggle() {

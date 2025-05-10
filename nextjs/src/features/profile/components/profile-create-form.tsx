@@ -24,7 +24,7 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { profileSchema, type ProfileFormValues } from '../utils/form-schema';
+import { type ProfileFormValues, profileSchema } from '../utils/form-schema';
 import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IconAlertTriangle, IconTrash } from '@tabler/icons-react';
@@ -105,13 +105,15 @@ const ProfileCreateForm: React.FC<ProfileFormType> = ({ initialData }) => {
   ];
 
   const next = async () => {
-    const fields = steps[currentStep].fields;
+    const { fields } = steps[currentStep];
 
     const output = await form.trigger(fields as FieldName[], {
       shouldFocus: true
     });
 
-    if (!output) return;
+    if (!output) {
+      return;
+    }
 
     if (currentStep < steps.length - 1) {
       if (currentStep === steps.length - 2) {

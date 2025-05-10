@@ -184,9 +184,7 @@ const SchemaCard = (props: ISchemaCardProps) => {
           {props.w3cSchema ? (
             <DataTooltip
               data={props.attributes}
-              renderItem={(attribute: IAttributes) => {
-                return attribute.attributeName;
-              }}
+              renderItem={(attribute: IAttributes) => attribute.attributeName}
             >
               <AttributesList
                 attributes={props.attributes}

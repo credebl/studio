@@ -3,11 +3,11 @@
 import React, { useEffect, useState } from 'react';
 import {
   Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
   CardContent,
-  CardFooter
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';

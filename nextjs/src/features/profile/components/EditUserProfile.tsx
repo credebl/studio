@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Formik, Form } from 'formik';
+import { Form, Formik } from 'formik';
 import * as yup from 'yup';
 import {
   IMG_MAX_HEIGHT,
@@ -97,7 +97,9 @@ export default function EditUserProfile({
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setImgError('');
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      return;
+    }
 
     const fileSizeMB = file.size / 1024 / 1024;
     const extension = file.name.split('.').pop()?.toLowerCase();

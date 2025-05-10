@@ -22,7 +22,9 @@ function getIsDateRange(value: DateSelection): value is DateRange {
 }
 
 function parseAsDate(timestamp: number | string | undefined): Date | undefined {
-  if (!timestamp) return undefined;
+  if (!timestamp) {
+    return undefined;
+  }
   const numericTimestamp =
     typeof timestamp === 'string' ? Number(timestamp) : timestamp;
   const date = new Date(numericTimestamp);
@@ -109,15 +111,21 @@ export function DataTableDateFilter<TData>({
 
   const hasValue = React.useMemo(() => {
     if (multiple) {
-      if (!getIsDateRange(selectedDates)) return false;
+      if (!getIsDateRange(selectedDates)) {
+        return false;
+      }
       return selectedDates.from || selectedDates.to;
     }
-    if (!Array.isArray(selectedDates)) return false;
+    if (!Array.isArray(selectedDates)) {
+      return false;
+    }
     return selectedDates.length > 0;
   }, [multiple, selectedDates]);
 
   const formatDateRange = React.useCallback((range: DateRange) => {
-    if (!range.from && !range.to) return '';
+    if (!range.from && !range.to) {
+      return '';
+    }
     if (range.from && range.to) {
       return `${formatDate(range.from)} - ${formatDate(range.to)}`;
     }
@@ -126,7 +134,9 @@ export function DataTableDateFilter<TData>({
 
   const label = React.useMemo(() => {
     if (multiple) {
-      if (!getIsDateRange(selectedDates)) return null;
+      if (!getIsDateRange(selectedDates)) {
+        return null;
+      }
 
       const hasSelectedDates = selectedDates.from || selectedDates.to;
       const dateText = hasSelectedDates
@@ -149,7 +159,9 @@ export function DataTableDateFilter<TData>({
       );
     }
 
-    if (getIsDateRange(selectedDates)) return null;
+    if (getIsDateRange(selectedDates)) {
+      return null;
+    }
 
     const hasSelectedDate = selectedDates.length > 0;
     const dateText = hasSelectedDate

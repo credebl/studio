@@ -4,11 +4,11 @@ import React, { useEffect, useState } from 'react';
 import { getAllCredDef } from '@/app/api/schema';
 import {
   Card,
-  CardHeader,
   CardContent,
+  CardDescription,
   CardFooter,
-  CardTitle,
-  CardDescription
+  CardHeader,
+  CardTitle
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';

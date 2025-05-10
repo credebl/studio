@@ -37,7 +37,9 @@ export const OrganizationDashboard = ({
   const orgIdOfDashboard = orgId;
 
   const fetchOrganizationDetails = async () => {
-    if (!orgId) return;
+    if (!orgId) {
+      return;
+    }
 
     setLoading(true);
     const response = await getOrganizationById(orgIdOfDashboard as string);

@@ -2,9 +2,9 @@
 
 import React from 'react';
 import {
+  IconDots,
   IconFolder,
   IconShare,
-  IconDots,
   IconTrash
 } from '@tabler/icons-react';
 

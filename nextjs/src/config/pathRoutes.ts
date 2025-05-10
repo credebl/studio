@@ -27,7 +27,7 @@ export const pathRoutes = {
     root: '/organizations',
     invitations: '/organizations/invitations',
     users: '/organizations/users',
-    schemas: `/organizations/schemas`,
+    schemas: '/organizations/schemas',
     dashboard: '/organizations/dashboard',
     issuedCredentials: '/organizations/credentials',
     credentials: '/organizations/verification',

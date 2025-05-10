@@ -60,7 +60,7 @@ export default function SendInvitationModal({
       const { data } = resRoles as AxiosResponse;
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        const roles: Array<RoleI> = data?.data;
+        const roles: RoleI[] = data?.data;
         const memberRole = roles.find((role) => role.name === 'member');
         setMemberRole(memberRole as RoleI);
       } else {
@@ -89,7 +89,7 @@ export default function SendInvitationModal({
     setInvitations([
       ...invitations,
       {
-        email: email,
+        email,
         role: memberRole?.name as string,
         roleId: String(memberRole?.id)
       }
@@ -133,8 +133,6 @@ export default function SendInvitationModal({
     }
   };
 
-
-  
   const validateAndAddEmail = (values: { email: string }) => {
     if (values.email.trim() === selfEmail.trim()) {
       setErrorMsg("You can't send invitation to yourself");
@@ -167,9 +165,9 @@ export default function SendInvitationModal({
         <Formik
           initialValues={{ email: '' }}
           validationSchema={validationSchema}
-          onSubmit={(values,formikHandlers)=>{
-            formikHandlers.resetForm()
-            validateAndAddEmail(values)
+          onSubmit={(values, formikHandlers) => {
+            formikHandlers.resetForm();
+            validateAndAddEmail(values);
           }}
         >
           {({ errors, touched }) => (

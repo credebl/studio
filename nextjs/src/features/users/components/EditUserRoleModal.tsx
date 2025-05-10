@@ -53,10 +53,10 @@ const EditUserRoleModal = ({
     try {
       const response = await getOrganizationRoles(orgId);
 
-      const { data } = response as AxiosResponse
+      const { data } = response as AxiosResponse;
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        const fetchedRoles: Array<RoleI> = data.data;
+        const fetchedRoles: RoleI[] = data.data;
         const filteredRoles = fetchedRoles.map((role) => {
           if (user?.roles.includes(role.name) && role.name !== 'member') {
             return { ...role, checked: true, disabled: false };
@@ -87,8 +87,14 @@ const EditUserRoleModal = ({
     setLoading(true);
 
     try {
-      const roleIds = roles?.filter(role => role.checked).map(role => role.id);
-      const response = await editOrganizationUserRole(user.id, roleIds as string[], orgId) as AxiosResponse
+      const roleIds = roles
+        ?.filter((role) => role.checked)
+        .map((role) => role.id);
+      const response = (await editOrganizationUserRole(
+        user.id,
+        roleIds as string[],
+        orgId
+      )) as AxiosResponse;
 
       if (response?.data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setMessage(response.data.message);
@@ -123,9 +129,8 @@ const EditUserRoleModal = ({
         }
       });
       setRoles(updatedRoles ?? null);
-    }
-    else if (role.name === 'admin' && checked === true) {
-      const updatedRoles = roles?.map(r => {
+    } else if (role.name === 'admin' && checked === true) {
+      const updatedRoles = roles?.map((r) => {
         if (r.id === role.id) {
           return { ...r, checked };
         } else if (r.name === 'member' && r.checked) {
@@ -135,9 +140,8 @@ const EditUserRoleModal = ({
         }
       });
       setRoles(updatedRoles ?? null);
-    }
-    else {
-      const updatedRoles = roles?.map(r => {
+    } else {
+      const updatedRoles = roles?.map((r) => {
         if (r.id === role.id) {
           return { ...r, checked };
         }
@@ -172,12 +176,12 @@ const EditUserRoleModal = ({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6 pt-4">
-          <div className="bg-gradient-to-r from-slate-50 to-gray-50 rounded-lg border border-gray-200 shadow-sm p-5 dark:from-gray-800 dark:to-gray-900 dark:border-gray-700">
-            <div className="space-y-4">
-              <div className="flex items-center border-b pb-4 mb-2">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3 flex-shrink-0">
-                  <UserCircle className="h-6 w-6 text-primary" />
+        <div className='space-y-6 pt-4'>
+          <div className='rounded-lg border border-gray-200 bg-gradient-to-r from-slate-50 to-gray-50 p-5 shadow-sm dark:border-gray-700 dark:from-gray-800 dark:to-gray-900'>
+            <div className='space-y-4'>
+              <div className='mb-2 flex items-center border-b pb-4'>
+                <div className='bg-primary/10 mr-3 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full'>
+                  <UserCircle className='text-primary h-6 w-6' />
                 </div>
                 <div className='flex-grow'>
                   <p className='truncate text-base font-semibold text-gray-800 dark:text-white'>
@@ -200,11 +204,15 @@ const EditUserRoleModal = ({
                     {roles.map((role) => (
                       <button
                         key={role.id}
-                        className={`flex items-center p-3 rounded-md transition-all ${role.checked
-                            ? 'bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700'
+                        className={`flex items-center rounded-md p-3 transition-all ${
+                          role.checked
+                            ? 'border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800'
                             : 'hover:bg-gray-50 dark:hover:bg-gray-700'
-                          } ${role.checked && !role.disabled ? 'ring-2 ring-primary/20' : ''}`}
-                        onClick={() => !role.disabled && handleRoleChange(!role.checked, role)}
+                        } ${role.checked && !role.disabled ? 'ring-primary/20 ring-2' : ''}`}
+                        onClick={() =>
+                          !role.disabled &&
+                          handleRoleChange(!role.checked, role)
+                        }
                       >
                         <Checkbox
                           id={`checkbox-${role.id}`}
@@ -213,12 +221,15 @@ const EditUserRoleModal = ({
                           onCheckedChange={(checked) =>
                             handleRoleChange(checked as boolean, role)
                           }
-                          className={`h-5 w-5 rounded border-2 ${role.checked ? 'border-primary bg-primary text-primary-foreground' :
-                              role.disabled ? 'border-gray-300 bg-gray-100 dark:border-gray-600 dark:bg-gray-700' :
-                                'border-gray-400 dark:border-gray-500'
-                            } mr-3`}
+                          className={`h-5 w-5 rounded border-2 ${
+                            role.checked
+                              ? 'border-primary bg-primary text-primary-foreground'
+                              : role.disabled
+                                ? 'border-gray-300 bg-gray-100 dark:border-gray-600 dark:bg-gray-700'
+                                : 'border-gray-400 dark:border-gray-500'
+                          } mr-3`}
                         />
-                        <div className="flex flex-grow items-center justify-between">
+                        <div className='flex flex-grow items-center justify-between'>
                           <Label
                             htmlFor={`checkbox-${role.id}`}
                             className={`${role.disabled ? 'text-gray-500' : 'font-medium'} cursor-pointer`}

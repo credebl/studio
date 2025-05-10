@@ -144,7 +144,7 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
     const CredDeffFieldName: CredDeffFieldNameType = {
       tag: values?.tagName,
       revocable: values?.revocable,
-      orgId: orgId,
+      orgId,
       schemaLedgerId: schemaId
     };
 

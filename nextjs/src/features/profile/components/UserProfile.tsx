@@ -18,7 +18,9 @@ export default function UserProfile() {
 
   useEffect(() => {
     async function fetchProfile() {
-      if (!token) return;
+      if (!token) {
+        return;
+      }
       try {
         const response = await getUserProfile(token);
         if (

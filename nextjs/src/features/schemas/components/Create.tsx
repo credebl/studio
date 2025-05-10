@@ -91,7 +91,9 @@ const CreateSchema = () => {
     }
 
     const isAtLeastOneRequired = attribute.some((attr) => attr.isRequired);
-    if (!isAtLeastOneRequired) return false;
+    if (!isAtLeastOneRequired) {
+      return false;
+    }
 
     for (const attr of attribute) {
       if (!attr.attributeName || !attr.schemaDataType || !attr.displayName) {
@@ -237,7 +239,9 @@ const CreateSchema = () => {
     propertyName: 'attributeName' | 'displayName'
   ) => {
     const attributeValue = formikHandlers?.values?.attribute;
-    if (!attributeValue?.length) return true;
+    if (!attributeValue?.length) {
+      return true;
+    }
 
     const seen: { [key: string]: boolean } = {};
     for (const obj of attributeValue) {
@@ -304,9 +308,8 @@ const CreateSchema = () => {
                 .test({
                   name: 'at-least-one-is-required',
                   message: 'At least one attribute must be required',
-                  test: (value) => {
-                    return value.some((attr) => attr.isRequired === true);
-                  }
+                  test: (value) =>
+                    value.some((attr) => attr.isRequired === true)
                 })
             })}
             validateOnBlur
@@ -487,17 +490,15 @@ const CreateSchema = () => {
                                         disabled={!areFirstInputsSelected}
                                         className='border-input file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring rounded-lg border bg-transparent p-2.5 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm'
                                       >
-                                        {filteredOptions.map((opt) => {
-                                          return (
-                                            <option
-                                              key={opt.value}
-                                              className='py-2'
-                                              value={opt.value}
-                                            >
-                                              {opt.label}
-                                            </option>
-                                          );
-                                        })}
+                                        {filteredOptions.map((opt) => (
+                                          <option
+                                            key={opt.value}
+                                            className='py-2'
+                                            value={opt.value}
+                                          >
+                                            {opt.label}
+                                          </option>
+                                        ))}
                                       </Field>
                                       {formikHandlers?.touched?.attribute &&
                                       attribute[index] &&
@@ -592,7 +593,9 @@ const CreateSchema = () => {
                                             true
                                           );
                                         }}
-                                        className={`border-primary ring-offset-background focus-visible:ring-ring data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground dark:data-[state=checked]:bg-primary dark:data-[state=checked]:text-primary-foreground h-4 w-4 translate-y-[2px] rounded-sm border focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50`}
+                                        className={
+                                          'border-primary ring-offset-background focus-visible:ring-ring data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground dark:data-[state=checked]:bg-primary dark:data-[state=checked]:text-primary-foreground h-4 w-4 translate-y-[2px] rounded-sm border focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50'
+                                        }
                                       />
                                       <span className='text-foreground disabled:text-muted-foreground text-sm'>
                                         Required
@@ -682,7 +685,9 @@ const CreateSchema = () => {
                                   {index === values.attribute.length - 1 && (
                                     <Button
                                       key={element.id}
-                                      className={`absolute bottom-[-62px] left-[50%] m-auto flex w-max translate-x-[-50%] flex-row items-center gap-2 rounded-full py-0 disabled:opacity-100`}
+                                      className={
+                                        'absolute bottom-[-62px] left-[50%] m-auto flex w-max translate-x-[-50%] flex-row items-center gap-2 rounded-full py-0 disabled:opacity-100'
+                                      }
                                       type='button'
                                       onClick={() =>
                                         push({

@@ -16,7 +16,9 @@ interface DateProps {
 }
 
 const DateTooltip = ({ date, children }: DateProps) => {
-  if (!date) return <>{children}</>;
+  if (!date) {
+    return <>{children}</>;
+  }
 
   const updatedDate = new Date(date);
   const formattedDate = format(updatedDate, 'MMM dd, yyyy, h:mm a');

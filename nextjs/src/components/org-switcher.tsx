@@ -46,7 +46,9 @@ export function OrgSwitcher({
   const currentTenant = React.useMemo(() => {
     if (selectedOrgId) {
       const found = tenants.find((tenant) => tenant.id === selectedOrgId);
-      if (found) return found;
+      if (found) {
+        return found;
+      }
     }
 
     return defaultTenant ?? (tenants.length > 0 ? tenants[0] : undefined);

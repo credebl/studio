@@ -79,7 +79,7 @@ export default function AppSidebar() {
                 logoUrl: orgs[0]?.logoUrl,
                 roles:
                   orgs[0]?.userOrgRoles?.map(
-                    (role: { orgRole: { name: string; }; }) => role?.orgRole?.name
+                    (role: { orgRole: { name: string } }) => role?.orgRole?.name
                   ) || []
               })
             );

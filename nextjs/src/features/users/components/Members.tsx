@@ -62,7 +62,7 @@ export default function Members() {
   const [searchText, setSearchText] = useState('');
 
   const [usersLoading, setUsersLoading] = useState<boolean>(true);
-  const [usersList, setUsersList] = useState<Array<User> | null>(null);
+  const [usersList, setUsersList] = useState<User[] | null>(null);
   const [usersPageState, setUsersPageState] = useState(initialPageState);
   const [usersPaginationInfo, setUsersPaginationInfo] = useState(
     initialPaginationInfo
@@ -71,8 +71,9 @@ export default function Members() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   const [invitationsLoading, setInvitationsLoading] = useState<boolean>(true);
-  const [invitationsList, setInvitationsList] =
-    useState<Array<Invitation> | null>(null);
+  const [invitationsList, setInvitationsList] = useState<Invitation[] | null>(
+    null
+  );
   const [invitationsPageState, setInvitationsPageState] =
     useState(initialPageState);
   const [invitationsPaginationInfo, setInvitationsPaginationInfo] = useState(
@@ -95,7 +96,9 @@ export default function Members() {
   }, [orgInfo?.roles]);
 
   const getAllUsers = useCallback(async () => {
-    if (!orgId) return;
+    if (!orgId) {
+      return;
+    }
 
     setUsersLoading(true);
 
@@ -141,7 +144,9 @@ export default function Members() {
   ]);
 
   const getAllInvitations = useCallback(async () => {
-    if (!orgId) return;
+    if (!orgId) {
+      return;
+    }
 
     setInvitationsLoading(true);
 
@@ -190,7 +195,7 @@ export default function Members() {
 
   const handleSearchChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
+      const { value } = e.target;
       setSearchText(value);
 
       const timer = setTimeout(() => {
@@ -220,7 +225,9 @@ export default function Members() {
   }, []);
 
   const deleteInvitation = useCallback(async () => {
-    if (!orgId || !selectedInvitation) return;
+    if (!orgId || !selectedInvitation) {
+      return;
+    }
 
     setDeleteLoading(true);
 
@@ -327,7 +334,9 @@ export default function Members() {
     nextPage: number,
     onPageChange: (page: number) => void
   ) => {
-    if (totalPages <= 1) return null;
+    if (totalPages <= 1) {
+      return null;
+    }
 
     return (
       <div className='mt-6'>

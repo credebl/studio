@@ -78,7 +78,9 @@ function DataTableToolbarFilter<TData>({
     const columnMeta = column.columnDef.meta;
 
     const onFilterRender = React.useCallback(() => {
-      if (!columnMeta?.variant) return null;
+      if (!columnMeta?.variant) {
+        return null;
+      }
 
       switch (columnMeta.variant) {
         case 'text':

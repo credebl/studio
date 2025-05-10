@@ -30,7 +30,7 @@ export const getOrganizationInvitations = async (
 // Create Invitations
 export const createInvitations = async (
   orgId: string,
-  invitationList: Array<object>
+  invitationList: object[]
 ) => {
   const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.invitations}`;
   const payload = {

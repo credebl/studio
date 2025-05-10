@@ -7,7 +7,7 @@ import { apiStatusCodes } from '@/config/CommonConstant';
 import { validEmail } from '@/utils/TextTransform';
 import { Button } from '@/components/ui/button';
 import { AxiosResponse } from 'axios';
-import { CheckCircle, ArrowRight } from 'lucide-react';
+import { ArrowRight, CheckCircle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
 export default function VerifyEmailPage() {
@@ -22,7 +22,9 @@ export default function VerifyEmailPage() {
   const hasVerifiedRef = useRef(false);
 
   useEffect(() => {
-    if (hasVerifiedRef.current) return;
+    if (hasVerifiedRef.current) {
+      return;
+    }
     hasVerifiedRef.current = true;
 
     const verificationCode = searchParams.get('verificationCode') || '';

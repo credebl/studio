@@ -15,7 +15,9 @@ const ResultItem = React.forwardRef(
     ref: React.Ref<HTMLDivElement>
   ) => {
     const ancestors = React.useMemo(() => {
-      if (!currentRootActionId) return action.ancestors;
+      if (!currentRootActionId) {
+        return action.ancestors;
+      }
       const index = action.ancestors.findIndex(
         (ancestor) => ancestor.id === currentRootActionId
       );
@@ -25,7 +27,9 @@ const ResultItem = React.forwardRef(
     return (
       <div
         ref={ref}
-        className={`relative z-10 flex cursor-pointer items-center justify-between px-4 py-3`}
+        className={
+          'relative z-10 flex cursor-pointer items-center justify-between px-4 py-3'
+        }
       >
         {active && (
           <div

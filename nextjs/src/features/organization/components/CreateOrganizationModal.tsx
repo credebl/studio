@@ -113,12 +113,15 @@ export default function OrganizationOnboarding() {
   }, [stepParam]);
 
   useEffect(() => {
-    if (selectedCountryId) fetchStates(selectedCountryId);
+    if (selectedCountryId) {
+      fetchStates(selectedCountryId);
+    }
   }, [selectedCountryId]);
 
   useEffect(() => {
-    if (selectedStateId && selectedCountryId)
+    if (selectedStateId && selectedCountryId) {
       fetchCities(selectedCountryId, selectedStateId);
+    }
   }, [selectedStateId]);
 
   const getCountries = async () => {
@@ -189,7 +192,7 @@ export default function OrganizationOnboarding() {
     setFieldValue: FormikHelpers<ImageProcessCallback>['setFieldValue']
   ) => {
     setImgError('');
-  
+
     processImageFile(e, (result: string | null, error?: string) => {
       if (result) {
         setLogoPreview(result);
@@ -222,7 +225,7 @@ export default function OrganizationOnboarding() {
         countryId: values.countryId,
         stateId: values.stateId,
         cityId: values.cityId,
-        isPublic: isPublic
+        isPublic
       };
 
       const resCreateOrg = await updateOrganization(

@@ -58,7 +58,7 @@ export default function Dashboard() {
         const invitationList = data?.data?.invitations;
         if (invitationList.length > 0) {
           setInformativeMessage(
-            `You have received invitations to join organization`
+            'You have received invitations to join organization'
           );
           setViewButton(true);
         }
@@ -81,7 +81,9 @@ export default function Dashboard() {
   }, []);
 
   const fetchOrganizationDetails = async () => {
-    if (!orgId) return;
+    if (!orgId) {
+      return;
+    }
     try {
       setWalletLoading(true);
       const response = await getOrganizationById(orgId);
@@ -134,7 +136,7 @@ export default function Dashboard() {
         );
 
         if (pendingInvitations && pendingInvitations.length > 0) {
-          setEcoMessage(`You have received invitation to join ecosystem `);
+          setEcoMessage('You have received invitation to join ecosystem ');
           setViewButton(true);
         }
 

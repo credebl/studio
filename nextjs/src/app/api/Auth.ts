@@ -1,6 +1,7 @@
+import { axiosGet, axiosPost, axiosPut } from '@/services/apiRequests';
+
 import CryptoJS from 'crypto-js';
 import { apiRoutes } from '@/config/apiRoutes';
-import { axiosGet, axiosPost, axiosPut } from '@/services/apiRequests';
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs';
 
 export interface IUserSignUpData {

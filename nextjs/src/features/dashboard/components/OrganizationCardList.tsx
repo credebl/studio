@@ -4,11 +4,11 @@ import React, { useEffect, useState } from 'react';
 
 import {
   Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
   CardContent,
-  CardFooter
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
 } from '@/components/ui/card';
 
 import { Badge } from '@/components/ui/badge';

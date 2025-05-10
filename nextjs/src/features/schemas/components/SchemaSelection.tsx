@@ -15,7 +15,7 @@ const SchemaSelection = () => {
         attributes: attributes.attribute,
         issuerDid: attributes.issuerDid,
         createdDate: attributes.createdDate,
-        schemaId: schemaId
+        schemaId
       })
     );
   };

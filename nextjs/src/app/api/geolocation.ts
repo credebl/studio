@@ -1,5 +1,5 @@
-import { axiosGet } from '@/services/apiRequests';
 import { apiRoutes } from '@/config/apiRoutes';
+import { axiosGet } from '@/services/apiRequests';
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs';
 
 export const getAllCountries = async () => {

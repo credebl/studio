@@ -12,8 +12,8 @@ import QRCode from 'react-qr-code';
 import domtoimage from 'dom-to-image';
 
 const CustomQRCode = ({ value, size }: { value: string; size: number }) => {
- // const node = document.createTextNode('');
- const inputRef = useRef<HTMLDivElement>(null);
+  // const node = document.createTextNode('');
+  const inputRef = useRef<HTMLDivElement>(null);
   const [isCopied, setIsCopied] = useState(false);
 
   const copyTextVal = (e: React.MouseEvent<HTMLButtonElement>) => {

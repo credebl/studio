@@ -3,16 +3,16 @@ export interface Organization {
   name: string;
   description: string;
   logoUrl: string;
-  userOrgRoles: Array<{
+  userOrgRoles: {
     orgRole: {
       name: string;
     };
-  }>;
-  org_agents?: Array<{
+  }[];
+  org_agents?: {
     id: string;
     name: string;
     email: string;
-  }>;
+  }[];
 }
 
 export interface GetOrganizationsResponse {

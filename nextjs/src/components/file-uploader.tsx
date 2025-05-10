@@ -1,6 +1,6 @@
 'use client';
 
-import { IconX, IconUpload } from '@tabler/icons-react';
+import { IconUpload, IconX } from '@tabler/icons-react';
 import Image from 'next/image';
 import * as React from 'react';
 import Dropzone, {
@@ -146,7 +146,7 @@ export function FileUploader(props: FileUploaderProps) {
         updatedFiles.length <= maxFiles
       ) {
         const target =
-          updatedFiles.length > 0 ? `${updatedFiles.length} files` : `file`;
+          updatedFiles.length > 0 ? `${updatedFiles.length} files` : 'file';
 
         toast.promise(onUpload(updatedFiles), {
           loading: `Uploading ${target}...`,
@@ -163,24 +163,29 @@ export function FileUploader(props: FileUploaderProps) {
   );
 
   function onRemove(index: number) {
-    if (!files) return;
+    if (!files) {
+      return;
+    }
     const newFiles = files.filter((_, i) => i !== index);
     setFiles(newFiles);
     onValueChange?.(newFiles);
   }
 
   // Revoke preview url when component unmounts
-  React.useEffect(() => {
-    return () => {
-      if (!files) return;
+  React.useEffect(
+    () => () => {
+      if (!files) {
+        return;
+      }
       files.forEach((file) => {
         if (isFileWithPreview(file)) {
           URL.revokeObjectURL(file.preview);
         }
       });
-    };
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    []
+  );
 
   const isDisabled = disabled || (files?.length ?? 0) >= maxFiles;
 
@@ -229,7 +234,7 @@ export function FileUploader(props: FileUploaderProps) {
                 </div>
                 <div className='space-y-px'>
                   <p className='text-muted-foreground font-medium'>
-                    Drag {`'n'`} drop files here, or click to select files
+                    Drag {"'n'"} drop files here, or click to select files
                   </p>
                   <p className='text-muted-foreground/70 text-sm'>
                     You can upload

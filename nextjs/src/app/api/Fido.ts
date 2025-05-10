@@ -1,16 +1,17 @@
 import {
+  IDeviceDetails,
+  IRegistrationOption,
+  IUserEmail,
+  IVerifyRegistrationObj,
+  IdeviceBody
+} from '@/components/profile/interfaces';
+import {
   axiosDelete,
   axiosGet,
   axiosPost,
   axiosPut
 } from '@/services/apiRequests';
-import {
-  IDeviceDetails,
-  IdeviceBody,
-  IRegistrationOption,
-  IUserEmail,
-  IVerifyRegistrationObj
-} from '@/components/profile/interfaces';
+
 import apiRoutes from './apiRoutes';
 
 export const generateRegistrationOption = async (

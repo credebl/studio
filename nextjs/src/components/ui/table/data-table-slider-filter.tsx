@@ -81,13 +81,16 @@ export function DataTableSliderFilter<TData>({
     return { min: minValue, max: maxValue, step };
   }, [column, defaultRange]);
 
-  const range = React.useMemo((): RangeValue => {
-    return columnFilterValue ?? [min, max];
-  }, [columnFilterValue, min, max]);
+  const range = React.useMemo(
+    (): RangeValue => columnFilterValue ?? [min, max],
+    [columnFilterValue, min, max]
+  );
 
-  const formatValue = React.useCallback((value: number) => {
-    return value.toLocaleString(undefined, { maximumFractionDigits: 0 });
-  }, []);
+  const formatValue = React.useCallback(
+    (value: number) =>
+      value.toLocaleString(undefined, { maximumFractionDigits: 0 }),
+    []
+  );
 
   const onFromInputChange = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {

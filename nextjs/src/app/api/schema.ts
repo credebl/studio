@@ -1,9 +1,9 @@
-import { axiosGet, axiosPost } from '@/services/apiRequests';
+import { getHeaderConfigs } from '@/config/GetHeaderConfigs';
 import {
   CreateCredDeffFieldName,
   GetAllSchemaListParameter
 } from '@/features/dashboard/type/schema';
-import { getHeaderConfigs } from '@/config/GetHeaderConfigs';
+import { axiosGet, axiosPost } from '@/services/apiRequests';
 import apiRoutes from './apiRoutes';
 
 export const createSchemas = async (

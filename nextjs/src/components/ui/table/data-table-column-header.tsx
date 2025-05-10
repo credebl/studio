@@ -13,9 +13,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import {
+  CaretSortIcon,
   ChevronDownIcon,
   ChevronUpIcon,
-  CaretSortIcon,
   Cross2Icon
 } from '@radix-ui/react-icons';
 

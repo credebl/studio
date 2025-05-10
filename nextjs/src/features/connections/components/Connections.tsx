@@ -1,14 +1,14 @@
 'use client';
 
-import React, { useState, useEffect, ChangeEvent } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
-  SelectItem
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from '@/components/ui/select';
 import {
   Table,
@@ -23,14 +23,14 @@ import {
   PaginationContent,
   PaginationItem,
   PaginationLink,
-  PaginationPrevious,
-  PaginationNext
+  PaginationNext,
+  PaginationPrevious
 } from '@/components/ui/pagination';
 import { useAppSelector } from '@/lib/hooks';
 import { IConnectionList } from '../types/connections-interface';
 import {
-  getConnectionsByOrg,
-  IConnectionListAPIParameter
+  IConnectionListAPIParameter,
+  getConnectionsByOrg
 } from '@/app/api/connection';
 import { dateConversion } from '@/utils/DateConversion';
 import { apiStatusCodes } from '@/config/CommonConstant';
@@ -111,7 +111,7 @@ const Connections = () => {
   }, [listAPIParameter, orgId]);
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+    const { value } = e.target;
     setSearchText(value);
     setListAPIParameter((prev) => ({
       ...prev,

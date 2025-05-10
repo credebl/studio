@@ -48,7 +48,9 @@ export function DataTableFacetedFilter<TData, TValue>({
 
   const onItemSelect = React.useCallback(
     (option: Option, isSelected: boolean) => {
-      if (!column) return;
+      if (!column) {
+        return;
+      }
 
       if (multiple) {
         const newSelectedValues = new Set(selectedValues);

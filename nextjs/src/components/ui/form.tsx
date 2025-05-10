@@ -5,12 +5,12 @@ import * as LabelPrimitive from '@radix-ui/react-label';
 import { Slot } from '@radix-ui/react-slot';
 import {
   Controller,
-  FormProvider,
-  useFormContext,
-  useFormState,
   type ControllerProps,
   type FieldPath,
-  type FieldValues
+  type FieldValues,
+  FormProvider,
+  useFormContext,
+  useFormState
 } from 'react-hook-form';
 
 import { cn } from '@/lib/utils';
@@ -34,13 +34,11 @@ const FormField = <
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 >({
   ...props
-}: ControllerProps<TFieldValues, TName>) => {
-  return (
-    <FormFieldContext.Provider value={{ name: props.name }}>
-      <Controller {...props} />
-    </FormFieldContext.Provider>
-  );
-};
+}: ControllerProps<TFieldValues, TName>) => (
+  <FormFieldContext.Provider value={{ name: props.name }}>
+    <Controller {...props} />
+  </FormFieldContext.Provider>
+);
 
 const useFormField = () => {
   const fieldContext = React.useContext(FormFieldContext);
@@ -96,7 +94,7 @@ function FormLabel({
   return (
     <Label
       data-slot='form-label'
-      data-error={!!error}
+      data-error={Boolean(error)}
       className={cn('data-[error=true]:text-destructive', className)}
       htmlFor={formItemId}
       {...props}
@@ -117,7 +115,7 @@ function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
           ? `${formDescriptionId}`
           : `${formDescriptionId} ${formMessageId}`
       }
-      aria-invalid={!!error}
+      aria-invalid={Boolean(error)}
       {...props}
     />
   );

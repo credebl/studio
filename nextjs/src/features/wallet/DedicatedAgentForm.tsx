@@ -1,15 +1,15 @@
 import * as yup from 'yup';
 
-import { Field, Form, Formik } from "formik";
+import { Field, Form, Formik } from 'formik';
 
-import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import DedicatedLedgerConfig from "./DedicatedAgentLedgerConfig";
-import { IDedicatedAgentForm } from "../organization/components/interfaces/organization";
-import { Label } from "flowbite-react";
+import { ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import DedicatedLedgerConfig from './DedicatedAgentLedgerConfig';
+import { IDedicatedAgentForm } from '../organization/components/interfaces/organization';
+import { Label } from 'flowbite-react';
 import React from 'react';
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 const DedicatedAgentForm = ({
   ledgerConfig,
@@ -42,9 +42,9 @@ const DedicatedAgentForm = ({
           }}
         >
           {(formikHandlers) => (
-            <Form className="mt-4 max-w-lg">
-              <div className="mb-4">
-                <label htmlFor="walletName">Wallet Name</label>
+            <Form className='mt-4 max-w-lg'>
+              <div className='mb-4'>
+                <label htmlFor='walletName'>Wallet Name</label>
 
                 <Field
                   id="walletName"
@@ -119,11 +119,17 @@ const DedicatedAgentForm = ({
           maskedSeeds={maskedSeeds}
           // agentEndpoint={agentEndpoint}
           // apiKey={apiKey}
-          submitDedicatedWallet={submitDedicatedWallet} ledgerConfig={false} setLedgerConfig={function (value: boolean): void {
-            throw new Error("Function not implemented.");
-          }} loading={false} setAgentConfig={undefined} onConfigureDedicated={function (): void {
-            throw new Error("Function not implemented.");
-          }} />
+          submitDedicatedWallet={submitDedicatedWallet}
+          ledgerConfig={false}
+          setLedgerConfig={function (value: boolean): void {
+            throw new Error('Function not implemented.');
+          }}
+          loading={false}
+          setAgentConfig={undefined}
+          onConfigureDedicated={function (): void {
+            throw new Error('Function not implemented.');
+          }}
+        />
       )}
     </div>
   );

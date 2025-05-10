@@ -257,7 +257,9 @@ const WalletSpinup = () => {
     setAgentSpinupCall(true);
     setWalletSpinStep(1);
     const orgId = await createOrganizationOnce();
-    if (!orgId) return; // Stop if organization creation failed
+    if (!orgId) {
+      return;
+    } // Stop if organization creation failed
 
     const agentPayload = {
       walletName: agentConfig.walletName,
@@ -322,7 +324,9 @@ const WalletSpinup = () => {
     // Use the unified organization creation function
     const orgId = await createOrganizationOnce();
     setCreatedOrgId(orgId);
-    if (!orgId) return;
+    if (!orgId) {
+      return;
+    }
 
     setLoading(true);
     const ledgerName = values?.network?.split(':')[2];
@@ -365,7 +369,7 @@ const WalletSpinup = () => {
       console.error('Error creating shared agent:', error);
       setLoading(false);
       setFailure(
-        'Error creating shared agent: ' + (error.message || 'Unknown error')
+        `Error creating shared agent: ${error.message || 'Unknown error'}`
       );
     }
   };
@@ -373,27 +377,27 @@ const WalletSpinup = () => {
   useEffect(() => {
     const setupSocketListeners = () => {
       SOCKET.on('agent-spinup-process-initiated', () => {
-        console.log(`agent-spinup-process-initiated`);
+        console.log('agent-spinup-process-initiated');
         setWalletSpinStep(1);
       });
 
       SOCKET.on('agent-spinup-process-completed', (data: any) => {
-        console.log(`agent-spinup-process-completed`, JSON.stringify(data));
+        console.log('agent-spinup-process-completed', JSON.stringify(data));
         setWalletSpinStep(2);
       });
 
       SOCKET.on('did-publish-process-initiated', (data: any) => {
-        console.log(`did-publish-process-initiated`, JSON.stringify(data));
+        console.log('did-publish-process-initiated', JSON.stringify(data));
         setWalletSpinStep(3);
       });
 
       SOCKET.on('did-publish-process-completed', (data: any) => {
-        console.log(`did-publish-process-completed`, JSON.stringify(data));
+        console.log('did-publish-process-completed', JSON.stringify(data));
         setWalletSpinStep(4);
       });
 
       SOCKET.on('invitation-url-creation-started', (data: any) => {
-        console.log(` invitation-url-creation-started`, JSON.stringify(data));
+        console.log(' invitation-url-creation-started', JSON.stringify(data));
         setTimeout(() => {
           setWalletSpinStep(5);
         }, 1000);
@@ -406,7 +410,7 @@ const WalletSpinup = () => {
           setWalletSpinupStatus(true);
         }, 1000);
         router.push('/organizations');
-        console.log(`invitation-url-creation-success`, JSON.stringify(data));
+        console.log('invitation-url-creation-success', JSON.stringify(data));
       });
 
       SOCKET.on('error-in-wallet-creation-process', (data) => {
@@ -414,7 +418,7 @@ const WalletSpinup = () => {
         setTimeout(() => {
           setFailure('Wallet Creation Failed');
         }, 5000);
-        console.log(`error-in-wallet-creation-process`, JSON.stringify(data));
+        console.log('error-in-wallet-creation-process', JSON.stringify(data));
       });
     };
 

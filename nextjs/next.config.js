@@ -13,9 +13,7 @@ const nextConfig = {
         port: ''
       }
     ],
-    domains : [
-      'dev-org-logo.s3.ap-south-1.amazonaws.com'
-   ]
+    domains: ['dev-org-logo.s3.ap-south-1.amazonaws.com']
   },
   transpilePackages: ['geist']
 };

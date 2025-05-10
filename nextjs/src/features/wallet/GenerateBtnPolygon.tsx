@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import React from "react";
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import React from 'react';
 
 interface IProps {
   generatePolygonKeyValuePair: () => void;
@@ -18,9 +18,9 @@ const GenerateButtonPolygon = ({
     </div>
 
     <Button
-      id="generateKey"
-      type="button"
-      className=""
+      id='generateKey'
+      type='button'
+      className=''
       onClick={generatePolygonKeyValuePair}
     >
       Generate

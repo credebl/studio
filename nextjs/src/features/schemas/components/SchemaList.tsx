@@ -53,7 +53,7 @@ const SchemaList = (props: {
   const [lastPage, setLastPage] = useState(0);
   const [searchValue, setSearchValue] = useState('');
   const [selectedValue, setSelectedValue] = useState<string>(
-    `Organization's schema`
+    "Organization's schema"
   );
   const [w3cSchema, setW3CSchema] = useState<boolean>(false);
   const [isNoLedger, setIsNoLedger] = useState<boolean>(false);
@@ -61,7 +61,7 @@ const SchemaList = (props: {
   const route = useRouter();
 
   const [schemaListAPIParameter, setSchemaListAPIParameter] = useState({
-    itemPerPage: itemPerPage,
+    itemPerPage,
     page: 1,
     search: '',
     sortBy: 'id',
@@ -180,7 +180,7 @@ const SchemaList = (props: {
   };
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
+    const { value } = e.target;
     const isAllSchemas = value === 'all';
 
     setSelectedValue(value);

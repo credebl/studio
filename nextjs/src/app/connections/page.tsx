@@ -1,8 +1,6 @@
 import Connections from '@/features/connections/components/Connections';
 import React from 'react';
 
-const page = () => {
-  return <Connections />;
-};
+const page = () => <Connections />;
 
 export default page;

@@ -1,6 +1,7 @@
+import { axiosDelete, axiosGet } from '@/services/apiRequests';
+
 import { apiRoutes } from '@/config/apiRoutes';
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs';
-import { axiosDelete, axiosGet } from '@/services/apiRequests';
 
 export interface IConnectionListAPIParameter {
   itemPerPage: number;

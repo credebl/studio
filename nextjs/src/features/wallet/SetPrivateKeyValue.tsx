@@ -3,7 +3,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Field } from 'formik';
-import { useEffect, useState, type ChangeEvent } from 'react';
+import { type ChangeEvent, useEffect, useState } from 'react';
 import GenerateBtnPolygon from './GenerateBtnPolygon';
 import { ethers } from 'ethers';
 import type { AxiosResponse } from 'axios';
@@ -118,8 +118,8 @@ const SetPrivateKeyValueInput = ({
     <div className='relative mb-3'>
       <div className='mt-4 flex items-center gap-2'>
         <Checkbox
-          id="havePrivateKey"
-          className="border"
+          id='havePrivateKey'
+          className='border'
           onCheckedChange={(checked) => setHavePrivateKey(checked as boolean)}
         />
         <Label htmlFor='havePrivateKey'>Already have a private key?</Label>

@@ -23,11 +23,11 @@ import { DeleteOrganizationCard } from './DeleteOrganizationCard';
 import { getOrganizationById } from '@/app/api/organization';
 import { deleteConnectionRecords } from '@/app/api/connection';
 import {
-  getOrganizationReferences,
-  deleteVerificationRecords,
   deleteIssuanceRecords,
+  deleteOrganization,
   deleteOrganizationWallet,
-  deleteOrganization
+  deleteVerificationRecords,
+  getOrganizationReferences
 } from '@/app/api/deleteorganization';
 
 interface IOrgCount {
@@ -98,7 +98,9 @@ export default function DeleteOrganizationPage() {
   };
 
   const fetchOrganizationReferences = async () => {
-    if (!orgId) return;
+    if (!orgId) {
+      return;
+    }
 
     setLoading(true);
     try {

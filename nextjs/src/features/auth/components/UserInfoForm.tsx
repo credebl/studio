@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Lock, KeyRound, CheckCircle } from 'lucide-react';
+import { CheckCircle, KeyRound, Lock } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { passwordEncryption, addPasswordDetails } from '@/app/api/Auth';
+import { addPasswordDetails, passwordEncryption } from '@/app/api/Auth';
 import { apiStatusCodes, passwordRegex } from '@/config/CommonConstant';
 import { AxiosError, AxiosResponse } from 'axios';
 import { Formik, Form as FormikForm } from 'formik';
@@ -19,9 +19,9 @@ import {
 
 import { startRegistration } from '@simplewebauthn/browser';
 import {
-  IdeviceBody,
   IDeviceData,
-  IVerifyRegistrationObj
+  IVerifyRegistrationObj,
+  IdeviceBody
 } from '@/components/profile/interfaces';
 
 interface StepUserInfoProps {
@@ -88,7 +88,7 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
     setShowEmailVerification({ message: '', isError: false, type: '' });
 
     const payload = {
-      email: email,
+      email,
       password: passwordEncryption(values.password),
       isPasskey: false,
       firstName: values.firstName,
@@ -253,14 +253,12 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
         const deviceDetails =
           Object.keys(data)?.length > 0
             ? userDeviceDetailsResp?.data?.data.map(
-                (data: { lastChangedDateTime: any }) => {
-                  return {
-                    ...data,
-                    lastChangedDateTime: data.lastChangedDateTime
-                      ? data.lastChangedDateTime
-                      : '-'
-                  };
-                }
+                (data: { lastChangedDateTime: any }) => ({
+                  ...data,
+                  lastChangedDateTime: data.lastChangedDateTime
+                    ? data.lastChangedDateTime
+                    : '-'
+                })
               )
             : [];
         if (data?.data?.length === 1) {

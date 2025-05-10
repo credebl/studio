@@ -41,8 +41,9 @@ export default function ReceivedInvitations() {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(initialPageState);
   const [searchText, setSearchText] = useState('');
-  const [invitationsList, setInvitationsList] =
-    useState<Array<Invitation> | null>(null);
+  const [invitationsList, setInvitationsList] = useState<Invitation[] | null>(
+    null
+  );
 
   const getAllInvitations = async () => {
     setLoading(true);
@@ -75,10 +76,12 @@ export default function ReceivedInvitations() {
   };
 
   const checkSearchMatch = (
-    list: Array<Invitation> | null,
+    list: Invitation[] | null,
     query: string
   ): boolean => {
-    if (!list || list.length === 0 || !query) return true;
+    if (!list || list.length === 0 || !query) {
+      return true;
+    }
     const searchQuery = query.toLowerCase().trim();
     return list.some((invitation) =>
       invitation.organisation.name.toLowerCase().includes(searchQuery)
@@ -146,7 +149,9 @@ export default function ReceivedInvitations() {
   };
 
   const renderPagination = () => {
-    if (currentPage.total <= 1) return null;
+    if (currentPage.total <= 1) {
+      return null;
+    }
 
     const pages = [];
     const maxVisiblePages = 5;
