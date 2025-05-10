@@ -1,7 +1,7 @@
 'use client';
 
 import * as Yup from 'yup';
-import React from 'react';
+
 import {
   Dialog,
   DialogContent,
@@ -20,6 +20,7 @@ import { AlertComponent } from '@/components/AlertComponent';
 import { AxiosResponse } from 'axios';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import React from 'react';
 import { apiStatusCodes } from '@/config/CommonConstant';
 import { createInvitations } from '@/app/api/Invitation';
 import { getOrganizationRoles } from '@/app/api/organization';
@@ -132,7 +133,8 @@ export default function SendInvitationModal({
     }
   };
 
-  const resetForm = () => {};
+
+  
   const validateAndAddEmail = (values: { email: string }) => {
     if (values.email.trim() === selfEmail.trim()) {
       setErrorMsg("You can't send invitation to yourself");
@@ -145,7 +147,6 @@ export default function SendInvitationModal({
     }
 
     includeInvitation(values.email);
-    resetForm();
   };
 
   return (
@@ -166,7 +167,10 @@ export default function SendInvitationModal({
         <Formik
           initialValues={{ email: '' }}
           validationSchema={validationSchema}
-          onSubmit={validateAndAddEmail}
+          onSubmit={(values,formikHandlers)=>{
+            formikHandlers.resetForm()
+            validateAndAddEmail(values)
+          }}
         >
           {({ errors, touched }) => (
             <Form className='space-y-2'>

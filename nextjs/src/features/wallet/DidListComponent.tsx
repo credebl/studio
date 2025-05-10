@@ -1,28 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Copy } from 'lucide-react';
-import type { AxiosResponse } from 'axios';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger
-} from '@/components/ui/tooltip';
-import {
-  IDidListData,
-  IUpdatePrimaryDid
-} from '../organization/components/interfaces/organization';
-import { updatePrimaryDid } from '@/app/api/Agent';
-import { apiStatusCodes } from '@/config/CommonConstant';
-import { Roles } from '@/common/enums';
-import CreateDidComponent from './CreateDidComponent';
-import { getDids } from '@/app/api/Agent';
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { IDidListData, IUpdatePrimaryDid } from "../organization/components/interfaces/organization";
+import React, { useEffect, useState } from "react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+
+import type { AxiosResponse } from "axios";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Copy } from "lucide-react";
+import CreateDidComponent from "./CreateDidComponent";
+import { Roles } from "@/common/enums";
+import { apiStatusCodes } from "@/config/CommonConstant";
+import { getDids } from "@/app/api/Agent";
+import { updatePrimaryDid } from "@/app/api/Agent";
 
 const DIDList = ({ orgId }: { orgId: string }) => {
   const [didList, setDidList] = useState<IDidListData[]>([]);
   const [showPopup, setShowPopup] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = React.useState<string | null>(null);
+  // Note: set the roles from redux store
+  const [userRoles, setUserRoles] = useState<string[]>([]);
 
   const setPrimaryDid = async (id: string, did: string) => {
     try {
@@ -101,7 +98,8 @@ const DIDList = ({ orgId }: { orgId: string }) => {
   );
 
   return (
-    <div className='w-full space-y-4'>
+
+    <div className="w-full space-y-4">
       {successMsg && (
         <Alert variant='default' className='text-success'>
           <AlertDescription>{successMsg}</AlertDescription>
@@ -130,13 +128,19 @@ const DIDList = ({ orgId }: { orgId: string }) => {
 
       <div className='divide-y rounded-lg border'>
         {didList.map((item: IDidListData, index: number) => (
-          <div key={item.id} className={`p-4 ${item.isPrimaryDid ? '' : ''}`}>
-            <div className='flex items-center justify-between gap-4'>
-              <span className='w-16 shrink-0'>DID {index + 1}</span>
+          <div
+            key={item.id}
+            className={`p-4 ${item.isPrimaryDid ? '' : ''}`}
+          >
+            <div className="flex items-center justify-between gap-4">
+              <span className="w-16 shrink-0">DID {index + 1}</span>
               <span>:</span>
 
               {item?.did ? (
-                <CopyDid value={item.did} className='flex-1 font-mono' />
+                <CopyDid
+                  value={item.did}
+                  className="flex-1 font-mono"
+                />
               ) : (
                 <span className='flex-1 font-mono'>Not available</span>
               )}
@@ -162,19 +166,8 @@ const DIDList = ({ orgId }: { orgId: string }) => {
       <CreateDidComponent
         orgId={orgId}
         setOpenModal={(value) => setShowPopup(value)}
-        loading={false}
-        success={'message'}
-        failure={''}
         openModal={showPopup}
-        closeModal={() => setShowPopup(false)}
-        onSuccess={() => console.log('On Success')}
-        message={
-          'Would you like to proceed? Keep in mind that this action cannot be undone.'
-        }
-        buttonTitles={['No, cancel', "Yes, I'm sure"]}
-        isProcessing={false}
-        setFailure={() => console.log('SET Error')}
-        setSuccess={() => console.log('SET Success')}
+        setMessage={setSuccessMsg}
       />
     </div>
   );

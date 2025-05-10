@@ -1,25 +1,24 @@
 'use client';
 
-import { Field, Form, Formik, type FormikHelpers } from 'formik';
-import React, { useState, useEffect } from 'react';
-import { getLedgerConfig, getLedgers } from '@/app/api/Agent';
-import { apiStatusCodes } from '@/config/CommonConstant';
+import { Field, Form, Formik, FormikProps, type FormikHelpers } from "formik";
+import React, { useState, useEffect, ReactNode } from 'react';
+import { getLedgerConfig, getLedgers } from "@/app/api/Agent";
+import { apiStatusCodes } from "@/config/CommonConstant";
 import * as yup from 'yup';
 import type { AxiosResponse } from 'axios';
-import { DidMethod, Environment, Ledgers, Network } from '../common/enum';
-import { envConfig } from '@/config/envConfig';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import CopyDid from './CopyDid';
-import SetDomainValueInput from './SetDomainValueInput';
-import SetPrivateKeyValueInput from './SetPrivateKeyValue';
-import Stepper from '@/components/StepperComponent';
-import {
-  ILedgerConfigData,
-  ILedgerConfigProps,
-  ILedgerItem,
-  IValuesShared
-} from '../organization/components/interfaces/organization';
+import { DidMethod, Environment, Ledgers, Network } from "../common/enum";
+import { envConfig } from "@/config/envConfig";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import CopyDid from "./CopyDid";
+import SetDomainValueInput from "./SetDomainValueInput";
+import SetPrivateKeyValueInput from "./SetPrivateKeyValue";
+import { useRouter } from "next/navigation";
+import Stepper from "@/components/StepperComponent";
+import { ILedgerConfigData, ILedgerConfigProps, ILedgerItem, IValuesShared } from "../organization/components/interfaces/organization";
+
+import { useAppSelector } from "@/lib/hooks";
+
 
 const LedgerConfig = ({
   maskedSeeds,
@@ -35,11 +34,12 @@ const LedgerConfig = ({
   const [seedVal, setSeedVal] = useState('');
   const [maskedSeedVal, setMaskedSeedVal] = useState('');
   const [selectedDid, setSelectedDid] = useState('');
-  const [mappedData, setMappedData] = useState(null);
+  const [mappedData, setMappedData] = useState<ILedgerConfigData>();
   const [domainValue, setDomainValue] = useState<string>('');
   const [privateKeyValue, setPrivateKeyValue] = useState<string>('');
   const [networks, setNetworks] = useState([]);
   const [walletLabel, setWalletLabel] = useState('');
+  const id = React.useId();
 
   const fetchLedgerConfig = async () => {
     try {
@@ -63,12 +63,8 @@ const LedgerConfig = ({
             for (const [key, subDetails] of Object.entries(details)) {
               if (typeof subDetails === 'object' && subDetails !== null) {
                 for (const [subKey, value] of Object.entries(subDetails)) {
-                  const formattedKey = `${key}:${subKey}`.replace(
-                    `${DidMethod.INDY}:`,
-                    ''
-                  );
-                  ledgerConfigData.indy[`${DidMethod.INDY}`][formattedKey] =
-                    value;
+                  const formattedKey = `${key}:${subKey}`.replace(`${DidMethod.INDY}:`, '');
+                  ledgerConfigData.indy[`${DidMethod.INDY}`][formattedKey] = value as string;
                 }
               }
             }
@@ -76,8 +72,7 @@ const LedgerConfig = ({
             for (const [key, value] of Object.entries(details)) {
               if (typeof value === 'object' && value !== null) {
                 for (const [subKey, subValue] of Object.entries(value)) {
-                  ledgerConfigData.polygon[`${DidMethod.POLYGON}`][subKey] =
-                    subValue;
+                  ledgerConfigData.polygon[`${DidMethod.POLYGON}`][subKey] = subValue as string;
                 }
               } else if (typeof value === 'string') {
                 ledgerConfigData.polygon[`${DidMethod.POLYGON}`][key] = value;
@@ -110,19 +105,22 @@ const LedgerConfig = ({
     }
   };
 
-  const handleLedgerSelect = (ledger) => {
+  const handleLedgerSelect = (ledger: string) => {
     setSelectedLedger(ledger);
     setSelectedMethod('');
     setSelectedNetwork('');
     setSelectedDid('');
+
   };
 
-  const handleMethodChange = (method) => {
+  const handleMethodChange = (method: string) => {
+
     setSelectedMethod(method);
     setSelectedDid('');
   };
 
-  const handleNetworkChange = (network, didMethod) => {
+  const handleNetworkChange = (network: string, didMethod: string) => {
+
     setSelectedNetwork(network);
     setSelectedDid(didMethod);
   };
@@ -163,12 +161,12 @@ const LedgerConfig = ({
     })
   };
 
-  const renderNetworkOptions = (formikHandlers) => {
+  const renderNetworkOptions = (formikHandlers: FormikProps<IValuesShared>) => {
     if (!selectedLedger || !mappedData || selectedMethod === DidMethod.KEY) {
       return null;
     }
 
-    const networkOptions = mappedData[selectedLedger][selectedMethod];
+    const networkOptions = mappedData[selectedLedger as keyof ILedgerConfigData][selectedMethod as keyof ILedgerConfigData[keyof ILedgerConfigData]];
 
     if (!networkOptions) {
       return null;
@@ -206,7 +204,7 @@ const LedgerConfig = ({
             formikHandlers.setFieldValue('network', e.target.value);
             const selectedOption = e.target.options[e.target.selectedIndex];
             const didMethod = selectedOption.getAttribute('data-did');
-            handleNetworkChange(e.target.value, didMethod);
+            handleNetworkChange(e.target.value, didMethod ?? '');
           }}
         >
           <option value=''>Select Network</option>
@@ -229,12 +227,12 @@ const LedgerConfig = ({
     );
   };
 
-  const renderMethodOptions = (formikHandlers) => {
+  const renderMethodOptions = (formikHandlers:FormikProps<IValuesShared>) => {
     if (!selectedLedger || !mappedData) {
       return null;
     }
 
-    const methods = mappedData[selectedLedger];
+    const methods = mappedData[selectedLedger as keyof ILedgerConfigData];
 
     if (!methods) {
       return null;
@@ -246,9 +244,9 @@ const LedgerConfig = ({
           Method <span className='text-destructive text-xs'>*</span>
         </label>
         <select
-          id='method'
-          name='method'
-          className='block w-full rounded-lg p-2.5 text-sm'
+          id="method"
+          name="method"
+          className="text-sm rounded-lg block w-full p-2.5"
           value={formikHandlers.values.method || ''}
           onChange={(e) => {
             const value = e.target.value;
@@ -293,7 +291,7 @@ const LedgerConfig = ({
     return false;
   };
 
-  const LedgerCard = ({ ledger, title, description, icon }) => {
+  const LedgerCard = ({ ledger, title, description, icon }: { ledger: string, title: string, description: string, icon: ReactNode }) => {
     return (
       <div
         className={`border ${selectedLedger === ledger ? 'shadow-lg' : ''} flex cursor-pointer flex-col items-center justify-center rounded-lg p-6 transition-all hover:shadow-md`}
@@ -349,17 +347,20 @@ const LedgerConfig = ({
       </div>
 
       {!haveDidShared && (
-        <div className='mb-6 rounded-lg p-4'>
-          <div className='mb-2 block text-sm font-medium'>
-            <Label value='Generated Seed' />
+        <div className="mb-6 p-4 rounded-lg">
+          <div className="block text-sm font-medium mb-2">
+            {/* <Label value="Generated Seed" /> */}
+            <Label htmlFor={`${id}-to`} className='sr-only'>
+            Generated Seed
+            </Label>
           </div>
-          <div className='flex items-center'>
-            <div className='flex-1 rounded-lg bg-white p-3 break-all'>
+          <div className="flex items-center">
+            <div className="flex-1 p-3 bg-white rounded-lg break-all">
               {maskedSeedVal}
             </div>
             <CopyDid
-              className='ml-2'
-              onCopy={() => navigator.clipboard.writeText(seedVal)}
+              className="ml-2"
+              value={seedVal}
             />
           </div>
 
@@ -492,7 +493,7 @@ const LedgerConfig = ({
           privatekey: '',
           label: walletLabel,
           keyType: ''
-        }}
+        } as IValuesShared}
         enableReinitialize={true}
         validationSchema={yup.object().shape(validations)}
         onSubmit={(
@@ -516,7 +517,9 @@ const LedgerConfig = ({
                 <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
                   {renderMethodOptions(formikHandlers)}
 
-                  {renderNetworkOptions(formikHandlers)}
+                  {(
+                    renderNetworkOptions(formikHandlers)
+                  )}
                 </div>
 
                 {selectedDid && (

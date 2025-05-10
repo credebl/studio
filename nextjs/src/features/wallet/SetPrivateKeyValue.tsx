@@ -118,9 +118,9 @@ const SetPrivateKeyValueInput = ({
     <div className='relative mb-3'>
       <div className='mt-4 flex items-center gap-2'>
         <Checkbox
-          id='havePrivateKey'
-          className='border'
-          onCheckedChange={(checked) => setHavePrivateKey(checked)}
+          id="havePrivateKey"
+          className="border"
+          onCheckedChange={(checked) => setHavePrivateKey(checked as boolean)}
         />
         <Label htmlFor='havePrivateKey'>Already have a private key?</Label>
       </div>

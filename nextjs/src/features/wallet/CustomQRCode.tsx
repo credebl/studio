@@ -1,18 +1,19 @@
-import React, { useRef, useState } from 'react';
-import QRCode from 'react-qr-code';
-import domtoimage from 'dom-to-image';
-import { Button } from '@/components/ui/button';
 import { Check, Copy, Download } from 'lucide-react';
+import React, { useRef, useState } from 'react';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger
 } from '@/components/ui/tooltip';
+
+import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import QRCode from 'react-qr-code';
+import domtoimage from 'dom-to-image';
 
 const CustomQRCode = ({ value, size }: { value: string; size: number }) => {
-  const node = document.createTextNode('');
-  const inputRef = useRef<Node>(node);
+ // const node = document.createTextNode('');
+ const inputRef = useRef<HTMLDivElement>(null);
   const [isCopied, setIsCopied] = useState(false);
 
   const copyTextVal = (e: React.MouseEvent<HTMLButtonElement>) => {

@@ -1,11 +1,15 @@
-import { Button } from '@/components/ui/button';
-import { Field, Form, Formik } from 'formik';
-import React from 'react';
 import * as yup from 'yup';
-import DedicatedLedgerConfig from './DedicatedAgentLedgerConfig';
-import { useRouter } from 'next/navigation';
-import { IDedicatedAgentForm } from '../organization/components/interfaces/organization';
-import { ArrowLeft } from 'lucide-react';
+
+import { Field, Form, Formik } from "formik";
+
+import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import DedicatedLedgerConfig from "./DedicatedAgentLedgerConfig";
+import { IDedicatedAgentForm } from "../organization/components/interfaces/organization";
+import { Label } from "flowbite-react";
+import React from 'react';
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const DedicatedAgentForm = ({
   ledgerConfig,
@@ -38,10 +42,24 @@ const DedicatedAgentForm = ({
           }}
         >
           {(formikHandlers) => (
-            <Form className='mt-4 max-w-lg'>
-              <div className='mb-4'>
-                <label htmlFor='walletName' value='Wallet Name' />
+            <Form className="mt-4 max-w-lg">
+              <div className="mb-4">
+                <label htmlFor="walletName">Wallet Name</label>
 
+                <Field
+                  id="walletName"
+                  name="walletName"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg p-2.5 w-full dark:bg-gray-700"
+                  type="text"
+                  placeholder="Enter wallet name"
+                />
+                {formikHandlers.errors.walletName && formikHandlers.touched.walletName && (
+                  <span className="text-red-500 text-xs">{formikHandlers.errors.walletName}</span>
+                )}
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="agentEndpoint">Agent Endpoint</label>
                 <Field
                   id='walletName'
                   name='walletName'
@@ -57,8 +75,8 @@ const DedicatedAgentForm = ({
                   )}
               </div>
 
-              <div className='mb-4'>
-                <label htmlFor='agentEndpoint' value='Agent Endpoint' />
+              <div className="mb-4">
+                <label htmlFor="apiKey">API Key</label>
                 <Field
                   id='agentEndpoint'
                   name='agentEndpoint'
@@ -118,17 +136,11 @@ const DedicatedAgentForm = ({
           maskedSeeds={maskedSeeds}
           // agentEndpoint={agentEndpoint}
           // apiKey={apiKey}
-          submitDedicatedWallet={submitDedicatedWallet}
-          ledgerConfig={false}
-          setLedgerConfig={function (value: boolean): void {
-            throw new Error('Function not implemented.');
-          }}
-          loading={false}
-          setAgentConfig={undefined}
-          onConfigureDedicated={function (): void {
-            throw new Error('Function not implemented.');
-          }}
-        />
+          submitDedicatedWallet={submitDedicatedWallet} ledgerConfig={false} setLedgerConfig={function (value: boolean): void {
+            throw new Error("Function not implemented.");
+          }} loading={false} setAgentConfig={undefined} onConfigureDedicated={function (): void {
+            throw new Error("Function not implemented.");
+          }} />
       )}
     </div>
   );
