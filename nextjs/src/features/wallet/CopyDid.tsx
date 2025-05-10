@@ -1,8 +1,9 @@
 "use client"
 
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Check, Copy } from 'lucide-react';
+import React, { useState } from 'react';
+
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 interface IProps {

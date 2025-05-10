@@ -1,6 +1,6 @@
-import React from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import React from "react";
 
 interface IProps {
   generatePolygonKeyValuePair: () => void;
@@ -17,7 +17,6 @@ const GenerateButtonPolygon = ({ generatePolygonKeyValuePair, loading }: IProps)
     <Button
       id="generateKey"
       type="button"
-      isLoading={loading}
       className=""
       onClick={generatePolygonKeyValuePair}
     >

@@ -114,7 +114,7 @@ const SetPrivateKeyValueInput = ({
         <Checkbox
           id="havePrivateKey"
           className="border"
-          onCheckedChange={(checked) => setHavePrivateKey(checked)}
+          onCheckedChange={(checked) => setHavePrivateKey(checked as boolean)}
         />
         <Label htmlFor="havePrivateKey">Already have a private key?</Label>
       </div>

@@ -1,7 +1,7 @@
 "use client"
 
-import { Field, Form, Formik, type FormikHelpers } from "formik";
-import { useState, useEffect } from "react";
+import { Field, Form, Formik, FormikProps, type FormikHelpers } from "formik";
+import { useState, useEffect, ReactNode } from "react";
 import { getLedgerConfig, getLedgers } from "@/app/api/Agent";
 import { apiStatusCodes } from "@/config/CommonConstant";
 import * as yup from 'yup';
@@ -18,6 +18,7 @@ import Stepper from "@/components/StepperComponent";
 import { ILedgerConfigData, ILedgerConfigProps, ILedgerItem, IValuesShared } from "../organization/components/interfaces/organization";
 
 import { useAppSelector } from "@/lib/hooks";
+import * as React from 'react';
 
 
 const LedgerConfig = ({
@@ -29,17 +30,18 @@ const LedgerConfig = ({
 }: ILedgerConfigProps) => {
   const [haveDidShared, setHaveDidShared] = useState(false);
   const [selectedLedger, setSelectedLedger] = useState('');
-  const [selectedMethod, setSelectedMethod] = useState(''); 
-  const [selectedNetwork, setSelectedNetwork] = useState(''); 
+  const [selectedMethod, setSelectedMethod] = useState('');
+  const [selectedNetwork, setSelectedNetwork] = useState('');
   const [seedVal, setSeedVal] = useState('');
   const [maskedSeedVal, setMaskedSeedVal] = useState('');
   const [selectedDid, setSelectedDid] = useState('');
-  const [mappedData, setMappedData] = useState(null);
+  const [mappedData, setMappedData] = useState<ILedgerConfigData>();
   const [domainValue, setDomainValue] = useState<string>('');
   const [privateKeyValue, setPrivateKeyValue] = useState<string>('');
   const [networks, setNetworks] = useState([]);
   const [walletLabel, setWalletLabel] = useState('');
-  
+  const id = React.useId();
+
   const fetchLedgerConfig = async () => {
     try {
       const { data } = await getLedgerConfig() as AxiosResponse;
@@ -54,16 +56,16 @@ const LedgerConfig = ({
           },
           noLedger: {}
         };
-        
+
         data.data.forEach(({ name, details }: ILedgerItem) => {
           const lowerName = name.toLowerCase();
-        
+
           if (lowerName === Ledgers.INDY && details) {
             for (const [key, subDetails] of Object.entries(details)) {
               if (typeof subDetails === 'object' && subDetails !== null) {
                 for (const [subKey, value] of Object.entries(subDetails)) {
                   const formattedKey = `${key}:${subKey}`.replace(`${DidMethod.INDY}:`, '');
-                  ledgerConfigData.indy[`${DidMethod.INDY}`][formattedKey] = value;
+                  ledgerConfigData.indy[`${DidMethod.INDY}`][formattedKey] = value as string;
                 }
               }
             }
@@ -71,7 +73,7 @@ const LedgerConfig = ({
             for (const [key, value] of Object.entries(details)) {
               if (typeof value === 'object' && value !== null) {
                 for (const [subKey, subValue] of Object.entries(value)) {
-                  ledgerConfigData.polygon[`${DidMethod.POLYGON}`][subKey] = subValue;
+                  ledgerConfigData.polygon[`${DidMethod.POLYGON}`][subKey] = subValue as string;
                 }
               } else if (typeof value === 'string') {
                 ledgerConfigData.polygon[`${DidMethod.POLYGON}`][key] = value;
@@ -83,14 +85,14 @@ const LedgerConfig = ({
             }
           }
         });
-        
+
         setMappedData(ledgerConfigData);
       }
     } catch (err) {
       console.error('Fetch Network ERROR::::', err);
     }
   };
-  
+
   const fetchNetworks = async () => {
     try {
       const { data } = (await getLedgers()) as AxiosResponse;
@@ -104,21 +106,21 @@ const LedgerConfig = ({
     }
   };
 
-  const handleLedgerSelect = (ledger) => {
+  const handleLedgerSelect = (ledger: string) => {
     setSelectedLedger(ledger);
     setSelectedMethod('');
     setSelectedNetwork('');
     setSelectedDid('');
-    
+
   };
 
-  const handleMethodChange = (method) => {
+  const handleMethodChange = (method: string) => {
 
     setSelectedMethod(method);
     setSelectedDid('');
   };
 
-  const handleNetworkChange = (network, didMethod) => {
+  const handleNetworkChange = (network: string, didMethod: string) => {
 
     setSelectedNetwork(network);
     setSelectedDid(didMethod);
@@ -155,24 +157,24 @@ const LedgerConfig = ({
     ...(DidMethod.WEB === selectedMethod) && { domain: yup.string().required('Domain is required') },
   };
 
-  const renderNetworkOptions = (formikHandlers) => {
+  const renderNetworkOptions = (formikHandlers: FormikProps<IValuesShared>) => {
     if (!selectedLedger || !mappedData || selectedMethod === DidMethod.KEY) {
       return null;
     }
-  
-    const networkOptions = mappedData[selectedLedger][selectedMethod];
-  
+
+    const networkOptions = mappedData[selectedLedger as keyof ILedgerConfigData][selectedMethod as keyof ILedgerConfigData[keyof ILedgerConfigData]];
+
     if (!networkOptions) {
       return null;
     }
-  
+
     let filteredNetworks = Object.keys(networkOptions);
     if (envConfig.MODE === Environment.PROD && selectedMethod === DidMethod.POLYGON) {
       filteredNetworks = filteredNetworks.filter(network => network === Network.MAINNET);
     } else if ((envConfig.MODE === Environment.DEV || envConfig.MODE === Environment.QA) && selectedMethod === DidMethod.POLYGON) {
       filteredNetworks = filteredNetworks.filter(network => network === Network.TESTNET);
     }
-    
+
     return (
       <div className="relative w-full">
         <label htmlFor="network" className="block mb-2 text-sm font-medium">
@@ -187,13 +189,13 @@ const LedgerConfig = ({
             formikHandlers.setFieldValue('network', e.target.value);
             const selectedOption = e.target.options[e.target.selectedIndex];
             const didMethod = selectedOption.getAttribute('data-did');
-            handleNetworkChange(e.target.value, didMethod);
+            handleNetworkChange(e.target.value, didMethod ?? '');
           }}
         >
           <option value="">Select Network</option>
           {filteredNetworks.map((network) => (
-            <option 
-              key={network} 
+            <option
+              key={network}
               value={networkOptions[network]}
               data-did={networkOptions[network]}
             >
@@ -207,18 +209,18 @@ const LedgerConfig = ({
       </div>
     );
   };
-  
-  const renderMethodOptions = (formikHandlers) => {
+
+  const renderMethodOptions = (formikHandlers:FormikProps<IValuesShared>) => {
     if (!selectedLedger || !mappedData) {
       return null;
     }
-  
-    const methods = mappedData[selectedLedger];
-  
+
+    const methods = mappedData[selectedLedger as keyof ILedgerConfigData];
+
     if (!methods) {
       return null;
     }
-  
+
     return (
       <div className="relative w-full">
         <label htmlFor="method" className="block mb-2 text-sm font-medium">
@@ -228,7 +230,7 @@ const LedgerConfig = ({
           id="method"
           name="method"
           className="text-sm rounded-lg block w-full p-2.5"
-          value={formikHandlers.values.method || ''} 
+          value={formikHandlers.values.method || ''}
           onChange={(e) => {
             const value = e.target.value;
             formikHandlers.setFieldValue('method', value);
@@ -249,7 +251,7 @@ const LedgerConfig = ({
       </div>
     );
   };
-  
+
 
   const isSubmitDisabled = () => {
     if (!selectedLedger) {
@@ -258,23 +260,22 @@ const LedgerConfig = ({
     else if ((selectedLedger === Ledgers.POLYGON && !privateKeyValue) || (selectedLedger === Ledgers.INDY && (!selectedMethod || !selectedNetwork))) {
       return true;
     }
-    else if ((selectedLedger === Ledgers.NO_LEDGER && !selectedMethod) ||(selectedLedger === Ledgers.NO_LEDGER && selectedMethod === DidMethod.WEB && !domainValue)) {
+    else if ((selectedLedger === Ledgers.NO_LEDGER && !selectedMethod) || (selectedLedger === Ledgers.NO_LEDGER && selectedMethod === DidMethod.WEB && !domainValue)) {
       return true;
     }
 
     return false;
   };
 
-  const LedgerCard = ({ ledger, title, description, icon }) => {
+  const LedgerCard = ({ ledger, title, description, icon }: { ledger: string, title: string, description: string, icon: ReactNode }) => {
     return (
-      <div 
+      <div
         className={`border ${selectedLedger === ledger ? 'shadow-lg' : ''} rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:shadow-md transition-all`}
         onClick={() => handleLedgerSelect(ledger)}
       >
-        <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${
-          ledger === Ledgers.INDY ? '' : 
+        <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${ledger === Ledgers.INDY ? '' :
           ledger === Ledgers.POLYGON ? '' : ''
-        }`}>
+          }`}>
           {icon}
         </div>
         <h3 className="text-lg font-semibold mb-1">{title}</h3>
@@ -322,17 +323,20 @@ const LedgerConfig = ({
       {!haveDidShared && (
         <div className="mb-6 p-4 rounded-lg">
           <div className="block text-sm font-medium mb-2">
-            <Label value="Generated Seed" />
+            {/* <Label value="Generated Seed" /> */}
+            <Label htmlFor={`${id}-to`} className='sr-only'>
+            Generated Seed
+            </Label>
           </div>
           <div className="flex items-center">
-          <div className="flex-1 p-3 bg-white rounded-lg break-all">
-            {maskedSeedVal}
+            <div className="flex-1 p-3 bg-white rounded-lg break-all">
+              {maskedSeedVal}
+            </div>
+            <CopyDid
+              className="ml-2"
+              value={seedVal}
+            />
           </div>
-          <CopyDid
-            className="ml-2"
-            onCopy={() => navigator.clipboard.writeText(seedVal)}
-          />
-        </div>
 
 
           <div className="mt-2 text-sm flex items-center">
@@ -376,7 +380,7 @@ const LedgerConfig = ({
       <div className="mb-6">
         <h3 className="text-lg font-medium mb-4">Select Ledger</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <LedgerCard 
+          <LedgerCard
             ledger={Ledgers.INDY}
             title="Indy"
             description="Hyperledger Indy"
@@ -386,7 +390,7 @@ const LedgerConfig = ({
               </svg>
             }
           />
-          <LedgerCard 
+          <LedgerCard
             ledger={Ledgers.POLYGON}
             title="Polygon"
             description="Polygon blockchain"
@@ -396,7 +400,7 @@ const LedgerConfig = ({
               </svg>
             }
           />
-          <LedgerCard 
+          <LedgerCard
             ledger={Ledgers.NO_LEDGER}
             title="No Ledger"
             description="Local key generation"
@@ -420,7 +424,7 @@ const LedgerConfig = ({
           privatekey: '',
           label: walletLabel,
           keyType: ''
-        }}
+        } as IValuesShared}
         enableReinitialize={true}
         validationSchema={yup.object().shape(validations)}
         onSubmit={(values: IValuesShared,
@@ -445,12 +449,12 @@ const LedgerConfig = ({
               <div className="p-6 rounded-lg shadow">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {renderMethodOptions(formikHandlers)}
-                  
-                  { (
+
+                  {(
                     renderNetworkOptions(formikHandlers)
                   )}
                 </div>
-                
+
                 {selectedDid && (
                   <div className="mt-6">
                     <label className="block mb-2 text-sm font-medium">
@@ -489,49 +493,49 @@ const LedgerConfig = ({
                 </div>
 
                 {selectedMethod === DidMethod.POLYGON && (
-  <div className="mt-6 p-4 rounded-lg max-w-2xl mx-auto bg-muted">
-    <div className="">
-      <div>
-        <SetPrivateKeyValueInput 
-          orgId={orgId}
-          setPrivateKeyValue={setPrivateKeyValue}
-          privateKeyValue={privateKeyValue}
-          formikHandlers={formikHandlers}
-        />
-      </div>
-      <div>
-        <h4 className="font-medium text-sm mb-3">Follow these instructions to generate polygon tokens:</h4>
-        <ol className="space-y-3 text-sm">
-          <li className="flex items-start">
-            <span className="font-semibold mr-2">Step 1:</span>
-            <div>
-              Copy the address and get the free tokens for the testnet.
-              <div className="mt-1">
-                For example, use <a href="https://faucet.polygon.technology/" className="underline">https://faucet.polygon.technology/</a> to get free tokens.
-              </div>
-            </div>
-          </li>
-          <li className="flex items-start">
-            <span className="font-semibold mr-2">Step 2:</span>
-            <div>
-              Check that you have received the tokens.
-              <div className="mt-1">
-                For example, copy the address and check the balance on <a href="https://mumbai.polygonscan.com/" className="underline">https://mumbai.polygonscan.com/</a>.
-              </div>
-            </div>
-          </li>
-        </ol>
-      </div>
-    </div>
-  </div>
-)}
+                  <div className="mt-6 p-4 rounded-lg max-w-2xl mx-auto bg-muted">
+                    <div className="">
+                      <div>
+                        <SetPrivateKeyValueInput
+                          orgId={orgId}
+                          setPrivateKeyValue={setPrivateKeyValue}
+                          privateKeyValue={privateKeyValue}
+                          formikHandlers={formikHandlers}
+                        />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-sm mb-3">Follow these instructions to generate polygon tokens:</h4>
+                        <ol className="space-y-3 text-sm">
+                          <li className="flex items-start">
+                            <span className="font-semibold mr-2">Step 1:</span>
+                            <div>
+                              Copy the address and get the free tokens for the testnet.
+                              <div className="mt-1">
+                                For example, use <a href="https://faucet.polygon.technology/" className="underline">https://faucet.polygon.technology/</a> to get free tokens.
+                              </div>
+                            </div>
+                          </li>
+                          <li className="flex items-start">
+                            <span className="font-semibold mr-2">Step 2:</span>
+                            <div>
+                              Check that you have received the tokens.
+                              <div className="mt-1">
+                                For example, copy the address and check the balance on <a href="https://mumbai.polygonscan.com/" className="underline">https://mumbai.polygonscan.com/</a>.
+                              </div>
+                            </div>
+                          </li>
+                        </ol>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
               </div>
             )}
 
-           <div className="flex justify-between mt-8">
-           
-                  {/* <Button
+            <div className="flex justify-between mt-8">
+
+              {/* <Button
                     variant='secondary'
                     onClick={() => router.push('/organizations/create-organization?step=2')}
                     className='flex items-center gap-2'
@@ -539,11 +543,11 @@ const LedgerConfig = ({
                     <ArrowLeft className='h-4 w-4' />
                     Back to Agent Config                   
             </Button> */}
-          
+
               <Button
                 disabled={isSubmitDisabled()}
                 type="submit"
-              
+
               >
                 Create Identity
               </Button>

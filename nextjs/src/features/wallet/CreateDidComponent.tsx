@@ -20,7 +20,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { apiStatusCodes, storageKeys } from "@/config/CommonConstant";
-import { createDid, createPolygonKeyValuePair, getOrganizationById } from "@/app/api/organization";
+import { createDid, createPolygonKeyValuePair } from "@/app/api/Agent";
 
 import { AxiosResponse } from "axios";
 import { Button } from "@/components/ui/button";
@@ -30,11 +30,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { envConfig } from "@/config/envConfig";
 import { ethers } from "ethers";
+import { getOrganizationById } from "@/app/api/organization";
 import { nanoid } from "nanoid";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-// import { createDid, createPolygonKeyValuePair } from "@/app/api/Agent";
 
 interface IPolygonKeys {
   privateKey: string;

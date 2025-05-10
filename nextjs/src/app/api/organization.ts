@@ -360,7 +360,7 @@ export const editOrganizationUserRole = async (
   userId: string,
   roles: string[],
   orgId: string
-) => {
+):Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.editUserROle}/${userId}`;
   const payload = {
     orgId,

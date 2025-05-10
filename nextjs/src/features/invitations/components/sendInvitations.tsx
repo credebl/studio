@@ -127,9 +127,7 @@ export default function SendInvitationModal({
   };
 
 
-  const resetForm = ()=>{
-
-  }
+  
   const validateAndAddEmail = (values: { email: string }) => {
     if (values.email.trim() === selfEmail.trim()) {
       setErrorMsg( "You can't send invitation to yourself");
@@ -142,7 +140,6 @@ export default function SendInvitationModal({
     }
 
     includeInvitation(values.email);
-    resetForm();
   };
 
   return (
@@ -163,7 +160,10 @@ export default function SendInvitationModal({
         <Formik
           initialValues={{ email: '' }}
           validationSchema={validationSchema}
-          onSubmit={validateAndAddEmail}
+          onSubmit={(values,formikHandlers)=>{
+            formikHandlers.resetForm()
+            validateAndAddEmail(values)
+          }}
         >
           {({ errors, touched }) => (
             <Form className="space-y-2">

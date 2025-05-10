@@ -296,13 +296,13 @@ export interface IValuesShared {
   keyType: string;
   seed: string;
   method: string;
-  network?: string;
+  network: string;
   did?: string;
   endorserDid?: string;
-  privatekey?: string;
+  privatekey: string;
   endpoint?: string;
   domain?: string;
-  role?: string;
+  role: string;
   ledger: string;
   label?: string;
 }

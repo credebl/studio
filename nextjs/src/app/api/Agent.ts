@@ -1,7 +1,8 @@
+import { IDedicatedAgentConfiguration, IUpdatePrimaryDid } from '@/features/organization/components/interfaces/organization';
+import { axiosGet, axiosPost, axiosPut } from '@/services/apiRequests';
+
 import { apiRoutes } from '@/config/apiRoutes';
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs';
-import { IDedicatedAgentConfiguration, IUpdatePrimaryDid } from '@/features/organization/components/interfaces/organization';
-import { axiosGet, axiosPost } from '@/services/apiRequests';
 
 export const getLedgersPlatformUrl = async (indyNamespace: string) => {
   const details = {
