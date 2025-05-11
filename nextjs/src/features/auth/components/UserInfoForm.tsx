@@ -1,41 +1,41 @@
-'use client';
+'use client'
 
-import React, { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { CheckCircle, KeyRound, Lock } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { addPasswordDetails, passwordEncryption } from '@/app/api/Auth';
-import { apiStatusCodes, passwordRegex } from '@/config/CommonConstant';
-import { AxiosError, AxiosResponse } from 'axios';
-import { Formik, Form as FormikForm } from 'formik';
-import * as Yup from 'yup';
+import React, { useEffect, useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { CheckCircle, KeyRound, Lock } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { addPasswordDetails, passwordEncryption } from '@/app/api/Auth'
+import { apiStatusCodes, passwordRegex } from '@/config/CommonConstant'
+import { AxiosError, AxiosResponse } from 'axios'
+import { Formik, Form as FormikForm } from 'formik'
+import * as Yup from 'yup'
 import {
   addDeviceDetails,
   generateRegistrationOption,
   getUserDeviceDetails,
-  verifyRegistration
-} from '@/app/api/Fido';
+  verifyRegistration,
+} from '@/app/api/Fido'
 
-import { startRegistration } from '@simplewebauthn/browser';
+import { startRegistration } from '@simplewebauthn/browser'
 import {
   IDeviceData,
   IVerifyRegistrationObj,
-  IdeviceBody
-} from '@/components/profile/interfaces';
+  IdeviceBody,
+} from '@/components/profile/interfaces'
 
 interface StepUserInfoProps {
-  email: string;
-  goBack: () => void;
+  email: string
+  goBack: () => void
 }
 
 export interface RegistrationOptionInterface {
-  userName: string;
-  deviceFlag: boolean;
+  userName: string
+  deviceFlag: boolean
 }
 
 export enum Devices {
-  Linux = 'linux'
+  Linux = 'linux',
 }
 
 const validationSchema = Yup.object().shape({
@@ -52,75 +52,75 @@ const validationSchema = Yup.object().shape({
     .min(8, 'Password must be at least 8 characters')
     .matches(
       passwordRegex,
-      'Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character'
+      'Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character',
     ),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref('password')], 'Passwords must match')
-    .required('Confirm Password is required')
-});
+    .required('Confirm Password is required'),
+})
 
 export default function UserInfoForm({ email }: StepUserInfoProps) {
-  const [loading, setLoading] = useState(false);
-  const [serverError, setServerError] = useState('');
-  const [, setIsDevice] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false)
+  const [serverError, setServerError] = useState('')
+  const [, setIsDevice] = useState<boolean>(false)
   const [showEmailVerification, setShowEmailVerification] = useState({
     message: '',
     isError: false,
-    type: ''
-  });
+    type: '',
+  })
 
-  const [, setDeviceList] = useState<IDeviceData[]>([]);
-  const [usePassword, setUsePassword] = useState(true);
-  const [, setDisableFlag] = useState<boolean>(false);
-  const [, setAddFailure] = useState<string | null>(null);
-  const [, setAddSuccess] = useState<string | null>(null);
-  const [, setErrMsg] = useState<string | null>(null);
-  const router = useRouter();
-  const [, setFidoLoader] = useState<boolean>(false);
-  const [, setFidoError] = useState('');
+  const [, setDeviceList] = useState<IDeviceData[]>([])
+  const [usePassword, setUsePassword] = useState(true)
+  const [, setDisableFlag] = useState<boolean>(false)
+  const [, setAddFailure] = useState<string | null>(null)
+  const [, setAddSuccess] = useState<string | null>(null)
+  const [, setErrMsg] = useState<string | null>(null)
+  const router = useRouter()
+  const [, setFidoLoader] = useState<boolean>(false)
+  const [, setFidoError] = useState('')
 
   const onSubmit = async (values: {
-    firstName: string;
-    lastName: string;
-    password: string;
+    firstName: string
+    lastName: string
+    password: string
   }) => {
-    setServerError('');
-    setShowEmailVerification({ message: '', isError: false, type: '' });
+    setServerError('')
+    setShowEmailVerification({ message: '', isError: false, type: '' })
 
     const payload = {
       email,
       password: passwordEncryption(values.password),
       isPasskey: false,
       firstName: values.firstName,
-      lastName: values.lastName
-    };
+      lastName: values.lastName,
+    }
 
     try {
-      setLoading(true);
-      const userRsp = await addPasswordDetails(payload);
-      const { data } = userRsp as AxiosResponse;
+      setLoading(true)
+      const userRsp = await addPasswordDetails(payload)
+      const { data } = userRsp as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
         router.push(
-          `/auth/sign-in?signup=true&email=${email}&fidoFlag=false&method=password`
-        );
+          `/auth/sign-in?signup=true&email=${email}&fidoFlag=false&method=password`,
+        )
       } else {
         setShowEmailVerification({
           message: data?.message || 'Failed to create account.',
           isError: true,
-          type: 'danger'
-        });
+          type: 'danger',
+        })
       }
     } catch (err) {
       setShowEmailVerification({
         message: 'An unexpected error occurred.',
         isError: true,
-        type: 'danger'
-      });
+        type: 'danger',
+      })
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   // const handleFormSubmit = async (
   //   values: {
@@ -140,115 +140,115 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
   // };
 
   const showFidoError = (error: unknown): void => {
-    const err = error as AxiosError;
+    const err = error as AxiosError
     if (
       err.message.includes('The operation either timed out or was not allowed')
     ) {
-      const [errorMsg] = err.message.split('.');
-      setFidoError(errorMsg);
+      const [errorMsg] = err.message.split('.')
+      setFidoError(errorMsg)
     } else {
-      setFidoError(err.message);
+      setFidoError(err.message)
     }
-  };
+  }
 
   const registerWithPasskey = async (flag: boolean): Promise<void> => {
     try {
       const RegistrationOption: RegistrationOptionInterface = {
         userName: email,
-        deviceFlag: flag
-      };
+        deviceFlag: flag,
+      }
       const generateRegistrationResponse =
-        await generateRegistrationOption(RegistrationOption);
-      const { data } = generateRegistrationResponse as AxiosResponse;
+        await generateRegistrationOption(RegistrationOption)
+      const { data } = generateRegistrationResponse as AxiosResponse
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-        const opts = data?.data;
-        const challangeId = opts?.challenge;
+        const opts = data?.data
+        const challangeId = opts?.challenge
 
         if (opts) {
           opts.authenticatorSelection = {
             residentKey: 'preferred',
             requireResidentKey: false,
-            userVerification: 'preferred'
-          };
+            userVerification: 'preferred',
+          }
         }
-        setLoading(false);
+        setLoading(false)
 
-        const attResp = await startRegistration(opts);
+        const attResp = await startRegistration(opts)
         const verifyRegistrationObj: IVerifyRegistrationObj = {
           ...attResp,
-          challangeId
-        };
+          challangeId,
+        }
 
-        await verifyRegistrationMethod(verifyRegistrationObj, email);
+        await verifyRegistrationMethod(verifyRegistrationObj, email)
       } else {
         setErrMsg(
           (generateRegistrationResponse as AxiosResponse)?.data?.message ||
-            'An error occurred'
-        );
+            'An error occurred',
+        )
       }
     } catch (error) {
-      showFidoError(error);
+      showFidoError(error)
     }
-  };
+  }
 
-  let credentialID = '';
+  let credentialID = ''
   const verifyRegistrationMethod = async (
     verifyRegistrationObj: IVerifyRegistrationObj,
-    OrgUserEmail: string
+    OrgUserEmail: string,
   ) => {
     try {
       const verificationRegisterResp = await verifyRegistration(
         verifyRegistrationObj,
-        OrgUserEmail
-      );
-      const { data } = verificationRegisterResp as AxiosResponse;
-      credentialID = encodeURIComponent(data?.data?.newDevice?.credentialID);
+        OrgUserEmail,
+      )
+      const { data } = verificationRegisterResp as AxiosResponse
+      credentialID = encodeURIComponent(data?.data?.newDevice?.credentialID)
       if (data?.data?.verified) {
-        let platformDeviceName = '';
+        let platformDeviceName = ''
 
         if (
           verifyRegistrationObj?.authenticatorAttachment === 'cross-platform'
         ) {
-          platformDeviceName = 'Passkey';
+          platformDeviceName = 'Passkey'
         } else {
-          platformDeviceName = navigator.platform;
+          platformDeviceName = navigator.platform
         }
 
         const deviceBody: IdeviceBody = {
           userName: OrgUserEmail,
           credentialId: credentialID,
-          deviceFriendlyName: platformDeviceName
-        };
-        await addDeviceDetailsMethod(deviceBody);
+          deviceFriendlyName: platformDeviceName,
+        }
+        await addDeviceDetailsMethod(deviceBody)
       }
     } catch (error) {
-      showFidoError(error);
+      showFidoError(error)
     }
-  };
+  }
 
   const addDeviceDetailsMethod = async (deviceBody: IdeviceBody) => {
     try {
-      const deviceDetailsResp = await addDeviceDetails(deviceBody);
-      const { data } = deviceDetailsResp as AxiosResponse;
+      const deviceDetailsResp = await addDeviceDetails(deviceBody)
+      const { data } = deviceDetailsResp as AxiosResponse
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        router.push('/auth/sign-in');
+        router.push('/auth/sign-in')
       }
       setTimeout(() => {
-        setAddSuccess('');
-        setAddFailure('');
-      });
+        setAddSuccess('')
+        setAddFailure('')
+      })
     } catch (error) {
-      showFidoError(error);
+      showFidoError(error)
     }
-  };
+  }
 
   const userDeviceDetails = async (): Promise<void> => {
     try {
-      setFidoLoader(true);
+      setFidoLoader(true)
 
-      const userDeviceDetailsResp = await getUserDeviceDetails(email);
-      const { data } = userDeviceDetailsResp as AxiosResponse;
-      setFidoLoader(false);
+      const userDeviceDetailsResp = await getUserDeviceDetails(email)
+      const { data } = userDeviceDetailsResp as AxiosResponse
+      setFidoLoader(false)
       if (userDeviceDetailsResp) {
         const deviceDetails =
           Object.keys(data)?.length > 0
@@ -257,30 +257,30 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
                   ...data,
                   lastChangedDateTime: data.lastChangedDateTime
                     ? data.lastChangedDateTime
-                    : '-'
-                })
+                    : '-',
+                }),
               )
-            : [];
+            : []
         if (data?.data?.length === 1) {
-          setDisableFlag(true);
+          setDisableFlag(true)
         } else {
-          setDisableFlag(false);
+          setDisableFlag(false)
         }
-        setDeviceList(deviceDetails);
+        setDeviceList(deviceDetails)
       }
     } catch (error) {
-      setAddFailure('Error while fetching the device details');
-      setFidoLoader(false);
+      setAddFailure('Error while fetching the device details')
+      setFidoLoader(false)
     }
-  };
+  }
 
   useEffect(() => {
-    userDeviceDetails();
-    const platform = navigator.platform.toLowerCase();
+    userDeviceDetails()
+    const platform = navigator.platform.toLowerCase()
     if (platform.includes(Devices.Linux)) {
-      setIsDevice(true);
+      setIsDevice(true)
     }
-  }, [email]);
+  }, [email])
 
   return (
     <Formik
@@ -288,13 +288,13 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
         firstName: '',
         lastName: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
       }}
       validationSchema={validationSchema}
       onSubmit={onSubmit}
     >
       {({ errors, touched, handleChange, handleBlur, values }) => (
-        <FormikForm className='space-y-4'>
+        <FormikForm className="space-y-4">
           {showEmailVerification.message && (
             <div
               className={`mb-4 rounded-md p-3 text-sm ${
@@ -307,52 +307,52 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
             </div>
           )}
 
-          <div className='flex gap-3'>
-            <div className='flex-1'>
+          <div className="flex gap-3">
+            <div className="flex-1">
               <Input
-                placeholder='First name'
-                name='firstName'
+                placeholder="First name"
+                name="firstName"
                 value={values.firstName}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                className='bg-[var(--color-bg-primary)] text-[var(--color-text-primary)]'
+                className="bg-[var(--color-bg-primary)] text-[var(--color-text-primary)]"
               />
               {errors.firstName && touched.firstName && (
-                <p className='text-destructive mt-1 text-sm'>
+                <p className="text-destructive mt-1 text-sm">
                   {errors.firstName}
                 </p>
               )}
             </div>
-            <div className='flex-1'>
+            <div className="flex-1">
               <Input
-                placeholder='Last name'
-                name='lastName'
+                placeholder="Last name"
+                name="lastName"
                 value={values.lastName}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                className='bg-[var(--color-bg-primary)] text-[var(--color-text-primary)]'
+                className="bg-[var(--color-bg-primary)] text-[var(--color-text-primary)]"
               />
               {errors.lastName && touched.lastName && (
-                <p className='text-destructive mt-1 text-sm'>
+                <p className="text-destructive mt-1 text-sm">
                   {errors.lastName}
                 </p>
               )}
             </div>
           </div>
 
-          <div className='relative'>
+          <div className="relative">
             <Input
-              placeholder='Email address'
+              placeholder="Email address"
               value={email}
               readOnly
-              className='bg-[var(--color-bg-muted)] text-[var(--color-text-primary)]'
+              className="bg-[var(--color-bg-muted)] text-[var(--color-text-primary)]"
             />
-            <CheckCircle className='absolute top-3 right-3 h-5 w-5 text-[var(--color-bg-success)]' />
+            <CheckCircle className="absolute top-3 right-3 h-5 w-5 text-[var(--color-bg-success)]" />
           </div>
 
-          <div className='flex overflow-hidden rounded-md border border-[var(--color-border)]'>
+          <div className="flex overflow-hidden rounded-md border border-[var(--color-border)]">
             <Button
-              type='button'
+              type="button"
               className={`flex-1 rounded-none ${
                 usePassword
                   ? 'bg-muted text-muted-foreground'
@@ -360,23 +360,23 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
               }`}
               onClick={() => setUsePassword(true)}
             >
-              <Lock className='mr-2 h-4 w-4' />
+              <Lock className="mr-2 h-4 w-4" />
               Password
             </Button>
 
             <Button
-              type='button'
+              type="button"
               className={`flex-1 rounded-none ${
                 !usePassword
                   ? 'bg-muted text-muted-foreground'
                   : 'bg-card text-foreground'
               }`}
               onClick={() => {
-                setUsePassword(false);
-                registerWithPasskey(true);
+                setUsePassword(false)
+                registerWithPasskey(true)
               }}
             >
-              <KeyRound className='mr-2 h-4 w-4' />
+              <KeyRound className="mr-2 h-4 w-4" />
               Passkey
             </Button>
           </div>
@@ -385,15 +385,15 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
             <>
               <div>
                 <Input
-                  type='password'
-                  placeholder='Create password'
-                  name='password'
+                  type="password"
+                  placeholder="Create password"
+                  name="password"
                   value={values.password}
                   onChange={handleChange}
                   onBlur={handleBlur}
                 />
                 {errors.password && touched.password && (
-                  <p className='text-destructive mt-1 text-sm'>
+                  <p className="text-destructive mt-1 text-sm">
                     {errors.password}
                   </p>
                 )}
@@ -401,35 +401,35 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
 
               <div>
                 <Input
-                  type='password'
-                  placeholder='Confirm password'
-                  name='confirmPassword'
+                  type="password"
+                  placeholder="Confirm password"
+                  name="confirmPassword"
                   value={values.confirmPassword}
                   onChange={handleChange}
                   onBlur={handleBlur}
                 />
                 {errors.confirmPassword && touched.confirmPassword && (
-                  <p className='text-destructive mt-1 text-sm'>
+                  <p className="text-destructive mt-1 text-sm">
                     {errors.confirmPassword}
                   </p>
                 )}
               </div>
             </>
           ) : (
-            <div className='text-muted-foreground text-center'></div>
+            <div className="text-muted-foreground text-center"></div>
           )}
 
           {serverError && (
-            <div className='text-destructive text-center'>{serverError}</div>
+            <div className="text-destructive text-center">{serverError}</div>
           )}
 
-          <div className='flex justify-center gap-2'>
-            <Button type='submit' disabled={loading || !usePassword}>
+          <div className="flex justify-center gap-2">
+            <Button type="submit" disabled={loading || !usePassword}>
               {loading ? 'Creating account...' : 'Create account'}
             </Button>
           </div>
         </FormikForm>
       )}
     </Formik>
-  );
+  )
 }

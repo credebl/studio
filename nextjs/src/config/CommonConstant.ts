@@ -1,18 +1,17 @@
 export const passwordRegex =
-  /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[!"$%*,./:;=@^_\-])[A-Za-z\d!"$%*,./:;=@^_\-]{8,}$/;
-export const allowedPasswordChars = /[^a-zA-Z0-9!"$%*,-.:;=@^_]/g;
-export const phoneRegExp = /^[+]?(\d{1,4})?[-\s./\d]*$/;
-export const imageSizeAccepted = 1; // mb
-export const IMG_MAX_WIDTH = 500;
-export const IMG_MAX_HEIGHT = 291;
-export const emailRegex = /(\.[a-zA-Z]{2,})$/;
-export const CREDENTIAL_CONTEXT_VALUE =
-  'https://www.w3.org/2018/credentials/v1';
-export const schemaVersionRegex = /^\d{1,5}(?:\.\d{1,5})?(?:\.\d{1,5})?$/;
-export const proofPurpose = 'assertionMethod';
-export const limitedAttributesLength = 3;
-export const itemPerPage = 10;
-export const allSchemas = 'All schemas';
+  /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[!"$%*,./:;=@^_\-])[A-Za-z\d!"$%*,./:;=@^_\-]{8,}$/
+export const allowedPasswordChars = /[^a-zA-Z0-9!"$%*,-.:;=@^_]/g
+export const phoneRegExp = /^[+]?(\d{1,4})?[-\s./\d]*$/
+export const imageSizeAccepted = 1 // mb
+export const IMG_MAX_WIDTH = 500
+export const IMG_MAX_HEIGHT = 291
+export const emailRegex = /(\.[a-zA-Z]{2,})$/
+export const CREDENTIAL_CONTEXT_VALUE = 'https://www.w3.org/2018/credentials/v1'
+export const schemaVersionRegex = /^\d{1,5}(?:\.\d{1,5})?(?:\.\d{1,5})?$/
+export const proofPurpose = 'assertionMethod'
+export const limitedAttributesLength = 3
+export const itemPerPage = 10
+export const allSchemas = 'All schemas'
 
 export const apiStatusCodes = {
   API_STATUS_SUCCESS: 200,
@@ -21,8 +20,8 @@ export const apiStatusCodes = {
   API_STATUS_PARTIALLY_COMPLETED: 206,
   API_STATUS_BAD_REQUEST: 400,
   API_STATUS_UNAUTHORIZED: 401,
-  API_STATUS_NOT_FOUND: 404
-};
+  API_STATUS_NOT_FOUND: 404,
+}
 
 export const storageKeys = {
   TOKEN: 'access_token',
@@ -57,77 +56,77 @@ export const storageKeys = {
   ALL_SCHEMAS: 'allSchemaFlag',
   ECOSYSTEM_ID: 'ecosystem_id',
   ECOSYSTEM_ROLE: 'ecosystem_role',
-  VERIFICATION_ROUTE_TYPE: 'routeType'
-};
+  VERIFICATION_ROUTE_TYPE: 'routeType',
+}
 
 export const emailCredDefHeaders = [
   { columnName: 'Cred def name' },
   { columnName: 'Schema name' },
-  { columnName: 'Revocable' }
-];
+  { columnName: 'Revocable' },
+]
 
 export const predicatesConditions = [
   { value: '', label: 'Select' },
   { value: '>', label: 'Greater than' },
   { value: '<', label: 'Less than' },
   { value: '>=', label: 'Greater than or equal to' },
-  { value: '<=', label: 'Less than or equal to' }
-];
+  { value: '<=', label: 'Less than or equal to' },
+]
 
 export const avatarColorPairs = [
   {
     text: '#ea5455',
-    background: '#fceaea'
+    background: '#fceaea',
   },
   {
     text: '#b8b2f7',
-    background: '#eeecfe'
+    background: '#eeecfe',
   },
   {
     text: '#c1c2c5',
-    background: '#f0f0f1'
+    background: '#f0f0f1',
   },
   {
     text: '#82ddaa',
-    background: '#e5f8ed'
+    background: '#e5f8ed',
   },
   {
     text: '#f4a651',
-    background: '#fdf3e8'
+    background: '#fdf3e8',
   },
   {
     text: '#76ddef',
-    background: '#e0f9fd'
-  }
-];
+    background: '#e0f9fd',
+  },
+]
 
 export const sessionExcludedPaths = [
   '/auth/sign-in',
   '/auth/sign-up',
-  '/auth/verify-email-success'
-];
+  '/auth/verify-email-success',
+]
 
-const imageBasePath = '/images';
+const imageBasePath = '/images'
 
-export const CredeblLogo = `${imageBasePath}/CREDEBL_Logo_Web.svg`;
-export const signInImg = `${imageBasePath}/signin.svg`;
-export const closeIconImg = `${imageBasePath}/close_icon.svg`;
-export const CredeblLogoWidth = 170;
-export const CredeblLogoHeight = 140;
+export const CredeblLogo = `${imageBasePath}/CREDEBL_Logo_Web.svg`
+export const signInImg = `${imageBasePath}/signin.svg`
+export const closeIconImg = `${imageBasePath}/close_icon.svg`
+export const CredeblLogoWidth = 170
+export const CredeblLogoHeight = 140
 
-export const signInWidth = 500;
-export const signInHeight = 500;
+export const signInWidth = 500
+export const signInHeight = 500
 
 export const stepLabels = [
   'Organization',
   'Agent Config',
   'Ledger Config',
-  'Processing'
-];
+  'Processing',
+]
 
 export const confirmationMessages = {
   deletePendingInvitationConfirmation:
     'Would you like to proceed? Keep in mind that this action cannot be undone.',
   sureConfirmation: "Yes, I'm sure",
-  cancelConfirmation: 'No, cancel'
-};
+  cancelConfirmation: 'No, cancel',
+}

@@ -9,17 +9,17 @@ export enum IssueCredential {
   credentialIssued = 'credential-issued',
   credentialReceived = 'credential-received',
   done = 'done',
-  abandoned = 'abandoned'
+  abandoned = 'abandoned',
 }
 
 export enum SchemaType {
   INDY = 'indy',
-  W3C = 'json'
+  W3C = 'json',
 }
 
 export enum EcosystemRoles {
   ecosystemMember = 'Ecosystem Member',
-  ecosystemLead = 'Ecosystem Lead'
+  ecosystemLead = 'Ecosystem Lead',
 }
 
 export enum OrganizationRoles {
@@ -27,11 +27,11 @@ export enum OrganizationRoles {
   organizationOwner = 'owner',
   organizationIssuer = 'issuer',
   organizationVerifier = 'verifier',
-  organizationAdmin = 'admin'
+  organizationAdmin = 'admin',
 }
 
 export enum PlatformRoles {
-  platformAdmin = 'platform_admin'
+  platformAdmin = 'platform_admin',
 }
 
 export enum BulkIssuanceHistory {
@@ -39,7 +39,7 @@ export enum BulkIssuanceHistory {
   completed = 'PROCESS_COMPLETED',
   interrupted = 'PROCESS_INTERRUPTED',
   retry = 'PROCESS_REINITIATED',
-  partially_completed = 'PARTIALLY_COMPLETED'
+  partially_completed = 'PARTIALLY_COMPLETED',
 }
 
 export enum BulkIssuanceHistoryData {
@@ -47,12 +47,12 @@ export enum BulkIssuanceHistoryData {
   completed = 'Process Completed',
   interrupted = 'Process Interrupted',
   retry = 'Process Reinitiated',
-  partially_completed = 'Partially Completed'
+  partially_completed = 'Partially Completed',
 }
 
 export enum BulkIssuanceStatus {
   successful = 'Successful',
-  failed = 'Failed'
+  failed = 'Failed',
 }
 
 export enum IssueCredentialUserText {
@@ -61,92 +61,92 @@ export enum IssueCredentialUserText {
   abandoned = 'Declined',
   received = 'Pending',
   proposalReceived = 'Proposal Received',
-  credIssued = 'Credential Issued'
+  credIssued = 'Credential Issued',
 }
 
 export enum ProofRequestStateUserText {
   requestSent = 'Requested',
   requestReceived = 'Received',
   done = 'Verified',
-  abandoned = 'Declined'
+  abandoned = 'Declined',
 }
 
 export enum DidMethod {
   INDY = 'did:indy',
   KEY = 'did:key',
   WEB = 'did:web',
-  POLYGON = 'did:polygon'
+  POLYGON = 'did:polygon',
 }
 
 export enum Network {
   TESTNET = 'testnet',
-  MAINNET = 'mainnet'
+  MAINNET = 'mainnet',
 }
 
 export enum PolygonNetworks {
   TESTNET = 'Polygon Testnet',
-  MAINNET = 'Polygon Mainnet'
+  MAINNET = 'Polygon Mainnet',
 }
 
 export enum CommonConstants {
-  BALANCELIMIT = 0.01
+  BALANCELIMIT = 0.01,
 }
 
 export enum Devices {
-  Linux = 'linux'
+  Linux = 'linux',
 }
 
 export enum Ledgers {
   INDY = 'indy',
   POLYGON = 'polygon',
-  NO_LEDGER = 'noLedger'
+  NO_LEDGER = 'noLedger',
 }
 
 export enum SchemaTypeValue {
   INDY = 'indy',
   POLYGON = 'polygon',
-  NO_LEDGER = 'no_ledger'
+  NO_LEDGER = 'no_ledger',
 }
 
 export enum SchemaTypes {
   schema_INDY = 'indy',
-  schema_W3C = 'w3c'
+  schema_W3C = 'w3c',
 }
 
 export enum CredentialType {
   INDY = 'indy',
-  JSONLD = 'jsonld'
+  JSONLD = 'jsonld',
 }
 
 export enum ProtocolVersion {
   V1 = 'v1',
-  V2 = 'v2'
+  V2 = 'v2',
 }
 
 export enum AutoAccept {
   ALWAYS = 'always',
   CONTENT_APPROVED = 'contentApproved',
-  NEVER = 'never'
+  NEVER = 'never',
 }
 
 export enum RequestType {
   INDY = 'indy',
-  PRESENTATION_EXCHANGE = 'presentationExchange'
+  PRESENTATION_EXCHANGE = 'presentationExchange',
 }
 
 export enum ProofType {
   polygon = 'EcdsaSecp256k1Signature2019',
-  no_ledger = 'Ed25519Signature2018'
+  no_ledger = 'Ed25519Signature2018',
 }
 
 export enum Environment {
   PROD = 'PROD',
   DEV = 'DEV',
-  QA = 'QA'
+  QA = 'QA',
 }
 
 export enum APIVersion {
-  version_v2 = '/v2'
+  version_v2 = '/v2',
 }
 
 export enum DataType {
@@ -154,7 +154,7 @@ export enum DataType {
   INTEGER = 'integer',
   STRING = 'string',
   DATE_TIME = 'datetime-local',
-  ARRAY = 'array'
+  ARRAY = 'array',
 }
 
 export enum ProofRequestState {
@@ -166,5 +166,5 @@ export enum ProofRequestState {
   credentialIssued = 'credential-issued',
   credentialReceived = 'credential-received',
   done = 'done',
-  abandoned = 'abandoned'
+  abandoned = 'abandoned',
 }

@@ -17,7 +17,7 @@ export const apiRoutes = {
     keyClockResetPassword: 'auth/reset-password',
     forgotPassword: 'auth/forgot-password',
     resetPassword: 'auth/password-reset',
-    refreshToken: '/auth/refresh-token'
+    refreshToken: '/auth/refresh-token',
   },
 
   users: {
@@ -27,7 +27,7 @@ export const apiRoutes = {
     fetchUsers: '/users',
     update: '/users',
     recentActivity: '/users/activity',
-    platformSettings: '/users/platform-settings'
+    platformSettings: '/users/platform-settings',
   },
 
   Ecosystem: {
@@ -35,15 +35,15 @@ export const apiRoutes = {
     usersInvitation: '/users/invitations',
     endorsements: {
       list: '/endorsement-transactions',
-      createSchemaRequest: '/transaction/schema'
-    }
+      createSchemaRequest: '/transaction/schema',
+    },
   },
 
   geolocation: {
     root: '/geolocation',
     countries: '/countries',
     state: '/states',
-    cities: '/cities'
+    cities: '/cities',
   },
 
   schema: {
@@ -51,7 +51,7 @@ export const apiRoutes = {
     getAll: '/schemas',
     getSchemaById: '/schemas',
     createCredentialDefinition: '/cred-defs',
-    getCredDefBySchemaId: '/schemas'
+    getCredDefBySchemaId: '/schemas',
   },
   Verification: {
     getAllRequestList: '/credentials/proofs',
@@ -59,7 +59,7 @@ export const apiRoutes = {
     oobProofRequest: '/proofs/oob',
     presentationVerification: '/proofs',
     proofRequestAttributesVerification: '/verified-proofs',
-    verificationCredDef: '/verifiation/cred-defs'
+    verificationCredDef: '/verifiation/cred-defs',
   },
 
   organizations: {
@@ -79,10 +79,10 @@ export const apiRoutes = {
     deleteOrganization: '/organizations/deleteorganizations',
     deleteVerifications: '/verification-records',
     deleteIssaunce: '/issuance-records',
-    deleteConnections: '/connections'
+    deleteConnections: '/connections',
   },
   connection: {
-    create: '/connections'
+    create: '/connections',
   },
 
   Issuance: {
@@ -97,19 +97,19 @@ export const apiRoutes = {
       bulk: '/bulk',
       files: '/bulk/files',
       filesData: '/bulk/file-data',
-      retry: '/retry/bulk'
+      retry: '/retry/bulk',
     },
-    download: '/credentials/bulk/template'
+    download: '/credentials/bulk/template',
   },
 
   Platform: {
     getAllSchemaFromPlatform: '/platform/schemas',
     getLedgers: '/platform/ledgers',
-    getLedgerPlatformUrl: '/platform/network/url/'
+    getLedgerPlatformUrl: '/platform/network/url/',
   },
   Public: {
     organizations: '/orgs/public-profile',
-    organizationDetails: '/orgs/public-profiles'
+    organizationDetails: '/orgs/public-profiles',
   },
   Agent: {
     checkAgentHealth: '/agents/health',
@@ -118,10 +118,10 @@ export const apiRoutes = {
     getLedgerConfig: '/agents/ledgerConfig',
     createPolygonKeys: '/agents/polygon/create-keys',
     setAgentConfig: '/agents/configure',
-    deleteWallet: '/agents/wallet'
+    deleteWallet: '/agents/wallet',
   },
 
   setting: {
-    setting: '/client_credentials'
-  }
-};
+    setting: '/client_credentials',
+  },
+}

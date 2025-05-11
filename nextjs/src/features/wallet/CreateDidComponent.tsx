@@ -1,84 +1,84 @@
-'use client';
+'use client'
 
-import * as React from 'react';
-import * as z from 'zod';
+import * as React from 'react'
+import * as z from 'zod'
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog';
-import { DidMethod, Network } from '@/common/enums';
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { DidMethod, Network } from '@/common/enums'
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
-} from '@/components/ui/form';
-import { apiStatusCodes, storageKeys } from '@/config/CommonConstant';
-import { createDid, createPolygonKeyValuePair } from '@/app/api/Agent';
+  FormMessage,
+} from '@/components/ui/form'
+import { apiStatusCodes, storageKeys } from '@/config/CommonConstant'
+import { createDid, createPolygonKeyValuePair } from '@/app/api/Agent'
 
-import { AxiosResponse } from 'axios';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { CommonConstants } from '../common/enum';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { envConfig } from '@/config/envConfig';
-import { ethers } from 'ethers';
-import { getOrganizationById } from '@/app/api/organization';
-import { nanoid } from 'nanoid';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { AxiosResponse } from 'axios'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { CommonConstants } from '../common/enum'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { envConfig } from '@/config/envConfig'
+import { ethers } from 'ethers'
+import { getOrganizationById } from '@/app/api/organization'
+import { nanoid } from 'nanoid'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 interface IPolygonKeys {
-  privateKey: string;
-  publicKeyBase58: string;
-  address: string;
+  privateKey: string
+  publicKeyBase58: string
+  address: string
 }
 
 interface CreateDIDModalProps {
-  openModal: boolean;
-  orgId: string;
-  setOpenModal: (open: boolean) => void;
-  setMessage: (message: string) => void;
-  onEditSucess?: () => void;
+  openModal: boolean
+  orgId: string
+  setOpenModal: (open: boolean) => void
+  setMessage: (message: string) => void
+  onEditSucess?: () => void
 }
 
 interface IFormValues {
-  method: string | null;
-  ledger: string | null;
-  network: string | null;
-  domain: string;
-  privatekey: string;
-  endorserDid: string;
-  did?: string;
+  method: string | null
+  ledger: string | null
+  network: string | null
+  domain: string
+  privatekey: string
+  endorserDid: string
+  did?: string
 }
 
 const CreateDidComponent = (props: CreateDIDModalProps) => {
-  const [loading, setLoading] = React.useState<boolean>(false);
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [errMsg, setErrMsg] = React.useState<string | null>(null);
-  const [successMsg, setSuccessMsg] = React.useState<string | null>(null);
-  const [seed, setSeed] = React.useState('');
+  const [loading, setLoading] = React.useState<boolean>(false)
+  const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const [errMsg, setErrMsg] = React.useState<string | null>(null)
+  const [successMsg, setSuccessMsg] = React.useState<string | null>(null)
+  const [seed, setSeed] = React.useState('')
   const [generatedKeys, setGeneratedKeys] = React.useState<IPolygonKeys | null>(
-    null
-  );
-  const [ledgerValue, setLedgerValue] = React.useState<string | null>(null);
-  const [method, setMethod] = React.useState<string | null>(null);
-  const [networkValue, setNetworkValue] = React.useState<string | null>(null);
+    null,
+  )
+  const [ledgerValue, setLedgerValue] = React.useState<string | null>(null)
+  const [method, setMethod] = React.useState<string | null>(null)
+  const [networkValue, setNetworkValue] = React.useState<string | null>(null)
   const [completeDidMethodValue, setCompleteDidMethodValue] = React.useState<
     string | null
-  >(null);
-  const [havePrivateKey, setHavePrivateKey] = React.useState(false);
-  const [privateKeyValue, setPrivateKeyValue] = React.useState<string>('');
+  >(null)
+  const [havePrivateKey, setHavePrivateKey] = React.useState(false)
+  const [privateKeyValue, setPrivateKeyValue] = React.useState<string>('')
   const [walletErrorMessage, setWalletErrorMessage] = React.useState<
     string | null
-  >(null);
+  >(null)
 
   // Dynamically build schema based on method
   const getFormSchema = () => {
@@ -89,25 +89,25 @@ const CreateDidComponent = (props: CreateDIDModalProps) => {
       domain: z.string().optional(),
       privatekey: z.string().optional(),
       endorserDid: z.string().optional(),
-      did: z.string().optional()
-    });
+      did: z.string().optional(),
+    })
 
     // Enhance schema with conditional validation
     if (method === DidMethod.WEB) {
       return baseSchema.extend({
-        domain: z.string().min(1, 'Domain is required')
-      });
+        domain: z.string().min(1, 'Domain is required'),
+      })
     } else if (method === DidMethod.POLYGON) {
       return baseSchema.extend({
         privatekey: z
           .string()
           .min(1, 'Private key is required')
-          .length(64, 'Private key must be exactly 64 characters long')
-      });
+          .length(64, 'Private key must be exactly 64 characters long'),
+      })
     }
 
-    return baseSchema;
-  };
+    return baseSchema
+  }
 
   const form = useForm<IFormValues>({
     resolver: zodResolver(getFormSchema()),
@@ -118,52 +118,52 @@ const CreateDidComponent = (props: CreateDIDModalProps) => {
       domain: '',
       privatekey: '',
       endorserDid: '',
-      did: ''
-    }
-  });
+      did: '',
+    },
+  })
 
   const fetchOrganizationDetails = async () => {
-    const response = await getOrganizationById(props.orgId);
-    const { data } = response as AxiosResponse;
-    setLoading(false);
+    const response = await getOrganizationById(props.orgId)
+    const { data } = response as AxiosResponse
+    setLoading(false)
     if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
       const didMethod = data?.data?.org_agents[0]?.orgDid
         ?.split(':')
         .slice(0, 2)
-        .join(':');
-      setMethod(didMethod);
+        .join(':')
+      setMethod(didMethod)
 
-      let ledgerName;
+      let ledgerName
       if (didMethod === DidMethod.INDY || DidMethod.POLYGON) {
-        ledgerName = data?.data?.org_agents[0]?.orgDid.split(':')[1];
+        ledgerName = data?.data?.org_agents[0]?.orgDid.split(':')[1]
       } else {
-        ledgerName = 'No Ledger';
+        ledgerName = 'No Ledger'
       }
-      setLedgerValue(ledgerName);
+      setLedgerValue(ledgerName)
 
-      let networkName;
+      let networkName
       if (didMethod === DidMethod.INDY) {
         networkName = data?.data?.org_agents[0]?.orgDid
           .split(':')
           .slice(2, 4)
-          .join(':');
+          .join(':')
       } else if (didMethod === DidMethod.POLYGON) {
-        networkName = data?.data?.org_agents[0]?.orgDid.split(':')[2];
+        networkName = data?.data?.org_agents[0]?.orgDid.split(':')[2]
       } else {
-        networkName = '';
+        networkName = ''
       }
-      setNetworkValue(networkName);
+      setNetworkValue(networkName)
 
-      let completeDidMethod;
+      let completeDidMethod
       if (didMethod === DidMethod.INDY) {
         completeDidMethod = data?.data?.org_agents[0]?.orgDid
           .split(':')
           .slice(0, 4)
-          .join(':');
+          .join(':')
       } else {
-        completeDidMethod = didMethod;
+        completeDidMethod = didMethod
       }
-      setCompleteDidMethodValue(completeDidMethod);
+      setCompleteDidMethodValue(completeDidMethod)
 
       // Update form values
       form.reset({
@@ -172,63 +172,63 @@ const CreateDidComponent = (props: CreateDIDModalProps) => {
         network: networkName,
         domain: '',
         privatekey: generatedKeys?.privateKey.slice(2) || '',
-        endorserDid: ''
-      });
+        endorserDid: '',
+      })
     } else {
-      console.error('Error in fetching organization:::');
+      console.error('Error in fetching organization:::')
     }
-  };
+  }
 
   React.useEffect(() => {
-    fetchOrganizationDetails();
-  }, []);
+    fetchOrganizationDetails()
+  }, [])
 
   const checkBalance = async (privateKey: string, network: Network) => {
     try {
       const rpcUrls = {
         testnet: `${envConfig.PLATFORM_DATA.polygonTestnet}`,
-        mainnet: `${envConfig.PLATFORM_DATA.polygonMainnet}`
-      };
-
-      const networkUrl = rpcUrls?.[network];
-
-      const provider = new ethers.JsonRpcProvider(networkUrl);
-
-      const wallet = new ethers.Wallet(privateKey, provider);
-      const address = await wallet.getAddress();
-      const balance = await provider.getBalance(address);
-
-      const etherBalance = ethers.formatEther(balance);
-
-      if (parseFloat(etherBalance) < CommonConstants.BALANCELIMIT) {
-        setWalletErrorMessage('You have insufficient funds.');
-      } else {
-        setWalletErrorMessage(null);
+        mainnet: `${envConfig.PLATFORM_DATA.polygonMainnet}`,
       }
 
-      return etherBalance;
+      const networkUrl = rpcUrls?.[network]
+
+      const provider = new ethers.JsonRpcProvider(networkUrl)
+
+      const wallet = new ethers.Wallet(privateKey, provider)
+      const address = await wallet.getAddress()
+      const balance = await provider.getBalance(address)
+
+      const etherBalance = ethers.formatEther(balance)
+
+      if (parseFloat(etherBalance) < CommonConstants.BALANCELIMIT) {
+        setWalletErrorMessage('You have insufficient funds.')
+      } else {
+        setWalletErrorMessage(null)
+      }
+
+      return etherBalance
     } catch (error) {
-      console.error('Error checking wallet balance:', error);
-      return null;
+      console.error('Error checking wallet balance:', error)
+      return null
     }
-  };
+  }
 
   React.useEffect(() => {
     if (privateKeyValue && privateKeyValue.length === 64) {
-      checkBalance(privateKeyValue, Network.TESTNET);
+      checkBalance(privateKeyValue, Network.TESTNET)
     } else {
-      setWalletErrorMessage(null);
+      setWalletErrorMessage(null)
     }
-  }, [privateKeyValue]);
+  }, [privateKeyValue])
 
   const createNewDid = async (values: IFormValues) => {
-    setLoading(true);
+    setLoading(true)
 
-    let network = '';
+    let network = ''
     if (values.method === DidMethod.INDY) {
-      network = values?.network || '';
+      network = values?.network || ''
     } else if (values.method === DidMethod.POLYGON) {
-      network = `${values.ledger}:${values.network}`;
+      network = `${values.ledger}:${values.network}`
     }
     const didData = {
       seed: values.method === DidMethod.POLYGON ? '' : seed,
@@ -240,118 +240,118 @@ const CreateDidComponent = (props: CreateDIDModalProps) => {
       privatekey: values.method === DidMethod.POLYGON ? values.privatekey : '',
       did: values?.did ?? '',
       endorserDid: values?.endorserDid || '',
-      isPrimaryDid: false
-    };
+      isPrimaryDid: false,
+    }
     try {
-      const response = await createDid(props.orgId, didData);
-      const { data } = response as AxiosResponse;
+      const response = await createDid(props.orgId, didData)
+      const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
         if (props?.onEditSucess) {
-          props?.onEditSucess();
+          props?.onEditSucess()
         }
-        props.setOpenModal(false);
-        props.setMessage(data?.message);
-        setSuccessMsg(data?.message);
-        setLoading(true);
+        props.setOpenModal(false)
+        props.setMessage(data?.message)
+        setSuccessMsg(data?.message)
+        setLoading(true)
       } else {
-        setErrMsg(response as string);
-        setLoading(false);
-        props.setOpenModal(true);
+        setErrMsg(response as string)
+        setLoading(false)
+        props.setOpenModal(true)
       }
     } catch (error) {
-      console.error('An error occurred while creating did:', error);
-      setLoading(false);
+      console.error('An error occurred while creating did:', error)
+      setLoading(false)
     }
-  };
+  }
 
   const generatePolygonKeyValuePair = async () => {
-    setIsLoading(true);
+    setIsLoading(true)
     try {
-      const resCreatePolygonKeys = await createPolygonKeyValuePair(props.orgId);
-      const { data } = resCreatePolygonKeys as AxiosResponse;
+      const resCreatePolygonKeys = await createPolygonKeyValuePair(props.orgId)
+      const { data } = resCreatePolygonKeys as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-        setGeneratedKeys(data?.data);
-        setIsLoading(false);
-        const privateKey = data?.data?.privateKey.slice(2);
-        setPrivateKeyValue(privateKeyValue || privateKey);
-        form.setValue('privatekey', privateKey);
-        await checkBalance(privateKeyValue || privateKey, Network.TESTNET);
+        setGeneratedKeys(data?.data)
+        setIsLoading(false)
+        const privateKey = data?.data?.privateKey.slice(2)
+        setPrivateKeyValue(privateKeyValue || privateKey)
+        form.setValue('privatekey', privateKey)
+        await checkBalance(privateKeyValue || privateKey, Network.TESTNET)
       }
     } catch (err) {
-      console.error('Generate private key ERROR::::', err);
-      setIsLoading(false);
+      console.error('Generate private key ERROR::::', err)
+      setIsLoading(false)
     }
-  };
+  }
 
   React.useEffect(() => {
-    setSeed(nanoid(32));
-  }, []);
+    setSeed(nanoid(32))
+  }, [])
 
   React.useEffect(() => {
     if (havePrivateKey) {
-      setPrivateKeyValue('');
-      setWalletErrorMessage(null);
-      setGeneratedKeys(null);
-      form.setValue('privatekey', '');
+      setPrivateKeyValue('')
+      setWalletErrorMessage(null)
+      setGeneratedKeys(null)
+      form.setValue('privatekey', '')
     } else {
-      setPrivateKeyValue('');
-      setWalletErrorMessage(null);
-      form.setValue('privatekey', '');
+      setPrivateKeyValue('')
+      setWalletErrorMessage(null)
+      form.setValue('privatekey', '')
     }
-  }, [havePrivateKey, form]);
+  }, [havePrivateKey, form])
 
   function CopyDid({
     value,
-    className
+    className,
   }: {
-    value: string;
-    className?: string;
+    value: string
+    className?: string
   }) {
-    const [copied, setCopied] = React.useState(false);
+    const [copied, setCopied] = React.useState(false)
 
     const copyToClipboard = () => {
       navigator.clipboard.writeText(value).then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      });
-    };
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      })
+    }
 
     return (
       <div className={`flex items-center gap-2 ${className}`}>
-        <span className='truncate'>{value}</span>
+        <span className="truncate">{value}</span>
         <Button
-          variant='ghost'
-          size='icon'
+          variant="ghost"
+          size="icon"
           onClick={copyToClipboard}
-          className='h-8 w-8'
+          className="h-8 w-8"
         >
           {copied ? (
-            <CheckIcon className='h-4 w-4' />
+            <CheckIcon className="h-4 w-4" />
           ) : (
-            <CopyIcon className='h-4 w-4' />
+            <CopyIcon className="h-4 w-4" />
           )}
         </Button>
       </div>
-    );
+    )
   }
 
   function TokenWarningMessage() {
     return (
-      <div className='mt-3 text-xs'>
+      <div className="mt-3 text-xs">
         <p>Note: You need to have tokens in your wallet to create a DID.</p>
       </div>
-    );
+    )
   }
 
   function onSubmit(values: IFormValues) {
-    createNewDid(values).then(() => {});
+    createNewDid(values).then(() => {})
   }
 
   return (
     <Dialog open={props.openModal} onOpenChange={props.setOpenModal}>
-      <DialogContent className='sm:max-w-[500px]'>
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Create DID</DialogTitle>
         </DialogHeader>
@@ -363,21 +363,21 @@ const CreateDidComponent = (props: CreateDIDModalProps) => {
         )}
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
-            <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <FormField
                 control={form.control}
-                name='ledger'
+                name="ledger"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Ledger <span className='text-destructive text-xs'>*</span>
+                      Ledger <span className="text-destructive text-xs">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         readOnly
-                        className=''
+                        className=""
                         value={field.value ?? ''}
                       />
                     </FormControl>
@@ -388,18 +388,18 @@ const CreateDidComponent = (props: CreateDIDModalProps) => {
               {method !== DidMethod.KEY && (
                 <FormField
                   control={form.control}
-                  name='method'
+                  name="method"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
                         Method{' '}
-                        <span className='text-destructive text-xs'>*</span>
+                        <span className="text-destructive text-xs">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input
                           {...field}
                           readOnly
-                          className=''
+                          className=""
                           value={field.value ?? ''}
                         />
                       </FormControl>
@@ -411,18 +411,18 @@ const CreateDidComponent = (props: CreateDIDModalProps) => {
               {method !== DidMethod.WEB && method !== DidMethod.KEY && (
                 <FormField
                   control={form.control}
-                  name='network'
+                  name="network"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
                         Network{' '}
-                        <span className='text-destructive text-xs'>*</span>
+                        <span className="text-destructive text-xs">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input
                           {...field}
                           readOnly
-                          className=''
+                          className=""
                           value={field.value ?? ''}
                         />
                       </FormControl>
@@ -434,15 +434,15 @@ const CreateDidComponent = (props: CreateDIDModalProps) => {
               {method === DidMethod.WEB && (
                 <FormField
                   control={form.control}
-                  name='domain'
+                  name="domain"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
                         Domain{' '}
-                        <span className='text-destructive text-xs'>*</span>
+                        <span className="text-destructive text-xs">*</span>
                       </FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder='Enter Name' />
+                        <Input {...field} placeholder="Enter Name" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -452,40 +452,40 @@ const CreateDidComponent = (props: CreateDIDModalProps) => {
 
               <FormItem>
                 <FormLabel>
-                  DID Method <span className='text-destructive text-xs'>*</span>
+                  DID Method <span className="text-destructive text-xs">*</span>
                 </FormLabel>
                 <Input
                   value={completeDidMethodValue || ''}
                   readOnly
-                  className=''
+                  className=""
                 />
               </FormItem>
 
               {method === DidMethod.POLYGON && (
                 <>
-                  <div className='col-span-1 sm:col-span-2'>
-                    <div className='mb-4 flex items-center space-x-2'>
+                  <div className="col-span-1 sm:col-span-2">
+                    <div className="mb-4 flex items-center space-x-2">
                       <Checkbox
-                        id='havePrivateKey'
+                        id="havePrivateKey"
                         checked={havePrivateKey}
                         onCheckedChange={(checked) =>
                           setHavePrivateKey(checked === true)
                         }
                       />
-                      <Label htmlFor='havePrivateKey'>
+                      <Label htmlFor="havePrivateKey">
                         Already have a private key?
                       </Label>
                     </div>
 
                     {!havePrivateKey ? (
                       <>
-                        <div className='my-3 flex items-center justify-between'>
+                        <div className="my-3 flex items-center justify-between">
                           <Label>
                             Generate private key{' '}
-                            <span className='text-destructive text-xs'>*</span>
+                            <span className="text-destructive text-xs">*</span>
                           </Label>
                           <Button
-                            type='button'
+                            type="button"
                             onClick={generatePolygonKeyValuePair}
                             disabled={isLoading}
                           >
@@ -495,26 +495,26 @@ const CreateDidComponent = (props: CreateDIDModalProps) => {
 
                         {generatedKeys && (
                           <>
-                            <div className='relative mt-3'>
+                            <div className="relative mt-3">
                               <FormField
                                 control={form.control}
-                                name='privatekey'
+                                name="privatekey"
                                 render={({ field }) => (
                                   <FormItem>
                                     <FormControl>
-                                      <div className='flex items-center'>
+                                      <div className="flex items-center">
                                         <Input
                                           {...field}
-                                          className='truncate'
+                                          className="truncate"
                                           readOnly
                                           value={generatedKeys.privateKey.slice(
-                                            2
+                                            2,
                                           )}
                                         />
-                                        <div className='ml-2'>
+                                        <div className="ml-2">
                                           <CopyDid
                                             value={generatedKeys.privateKey.slice(
-                                              2
+                                              2,
                                             )}
                                           />
                                         </div>
@@ -522,7 +522,7 @@ const CreateDidComponent = (props: CreateDIDModalProps) => {
                                     </FormControl>
                                     <FormMessage />
                                     {walletErrorMessage && (
-                                      <p className='text-destructive text-sm'>
+                                      <p className="text-destructive text-sm">
                                         {walletErrorMessage}
                                       </p>
                                     )}
@@ -533,12 +533,12 @@ const CreateDidComponent = (props: CreateDIDModalProps) => {
 
                             <TokenWarningMessage />
 
-                            <div className='my-3'>
-                              <p className='text-sm'>
-                                <span className='font-semibold'>Address:</span>
+                            <div className="my-3">
+                              <p className="text-sm">
+                                <span className="font-semibold">Address:</span>
                                 <CopyDid
                                   value={generatedKeys.address}
-                                  className='mt-1'
+                                  className="mt-1"
                                 />
                               </p>
                             </div>
@@ -548,29 +548,29 @@ const CreateDidComponent = (props: CreateDIDModalProps) => {
                     ) : (
                       <FormField
                         control={form.control}
-                        name='privatekey'
+                        name="privatekey"
                         render={({ field }) => (
                           <FormItem>
                             <FormControl>
                               <Input
                                 {...field}
-                                placeholder='Enter private key'
+                                placeholder="Enter private key"
                                 onChange={(e) => {
-                                  field.onChange(e);
-                                  setPrivateKeyValue(e.target.value);
-                                  setWalletErrorMessage(null);
+                                  field.onChange(e)
+                                  setPrivateKeyValue(e.target.value)
+                                  setWalletErrorMessage(null)
                                   if (e.target.value.length === 64) {
                                     checkBalance(
                                       e.target.value,
-                                      Network.TESTNET
-                                    );
+                                      Network.TESTNET,
+                                    )
                                   }
                                 }}
                               />
                             </FormControl>
                             <FormMessage />
                             {walletErrorMessage && (
-                              <p className='text-destructive text-sm'>
+                              <p className="text-destructive text-sm">
                                 {walletErrorMessage}
                               </p>
                             )}
@@ -581,23 +581,23 @@ const CreateDidComponent = (props: CreateDIDModalProps) => {
                     )}
                   </div>
 
-                  <div className='col-span-1 sm:col-span-2'>
-                    <h3 className='mb-2 text-sm font-semibold'>
+                  <div className="col-span-1 sm:col-span-2">
+                    <h3 className="mb-2 text-sm font-semibold">
                       Follow these instructions to generate polygon tokens:
                     </h3>
-                    <ol className='space-y-2 text-sm'>
+                    <ol className="space-y-2 text-sm">
                       <li>
-                        <span className='font-semibold'>Step 1:</span>
-                        <div className='ml-4'>
+                        <span className="font-semibold">Step 1:</span>
+                        <div className="ml-4">
                           Copy the address and get the free tokens for the
                           testnet.
                           <div>
                             For eg. use{' '}
                             <a
-                              href='https://faucet.polygon.technology/'
-                              className='underline'
-                              target='_blank'
-                              rel='noopener noreferrer'
+                              href="https://faucet.polygon.technology/"
+                              className="underline"
+                              target="_blank"
+                              rel="noopener noreferrer"
                             >
                               https://faucet.polygon.technology/
                             </a>{' '}
@@ -606,16 +606,16 @@ const CreateDidComponent = (props: CreateDIDModalProps) => {
                         </div>
                       </li>
                       <li>
-                        <span className='font-semibold'>Step 2:</span>
-                        <div className='ml-4'>
+                        <span className="font-semibold">Step 2:</span>
+                        <div className="ml-4">
                           Check that you have received the tokens.
                           <div>
                             For eg. copy the address and check the balance on{' '}
                             <a
-                              href='https://mumbai.polygonscan.com/'
-                              className='underline'
-                              target='_blank'
-                              rel='noopener noreferrer'
+                              href="https://mumbai.polygonscan.com/"
+                              className="underline"
+                              target="_blank"
+                              rel="noopener noreferrer"
                             >
                               https://mumbai.polygonscan.com/
                             </a>
@@ -628,9 +628,9 @@ const CreateDidComponent = (props: CreateDIDModalProps) => {
               )}
             </div>
 
-            <div className='flex justify-end'>
+            <div className="flex justify-end">
               <Button
-                type='submit'
+                type="submit"
                 disabled={
                   loading ||
                   (method === DidMethod.POLYGON &&
@@ -644,47 +644,47 @@ const CreateDidComponent = (props: CreateDIDModalProps) => {
         </Form>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
 // Icons
 function CopyIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
-      xmlns='http://www.w3.org/2000/svg'
-      width='24'
-      height='24'
-      viewBox='0 0 24 24'
-      fill='none'
-      stroke='currentColor'
-      strokeWidth='2'
-      strokeLinecap='round'
-      strokeLinejoin='round'
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       {...props}
     >
-      <rect width='14' height='14' x='8' y='8' rx='2' ry='2' />
-      <path d='M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2' />
+      <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+      <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
     </svg>
-  );
+  )
 }
 
 function CheckIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
-      xmlns='http://www.w3.org/2000/svg'
-      width='24'
-      height='24'
-      viewBox='0 0 24 24'
-      fill='none'
-      stroke='currentColor'
-      strokeWidth='2'
-      strokeLinecap='round'
-      strokeLinejoin='round'
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       {...props}
     >
-      <polyline points='20 6 9 17 4 12' />
+      <polyline points="20 6 9 17 4 12" />
     </svg>
-  );
+  )
 }
 
-export default CreateDidComponent;
+export default CreateDidComponent

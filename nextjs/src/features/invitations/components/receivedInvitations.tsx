@@ -1,168 +1,165 @@
-'use client';
+'use client'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Card, CardContent } from '@/components/ui/card';
-import React, { ChangeEvent, useEffect, useState } from 'react';
-import { CheckIcon, RotateCcwIcon, XIcon } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Card, CardContent } from '@/components/ui/card'
+import React, { ChangeEvent, useEffect, useState } from 'react'
+import { CheckIcon, RotateCcwIcon, XIcon } from 'lucide-react'
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
   PaginationLink,
   PaginationNext,
-  PaginationPrevious
-} from '@/components/ui/pagination';
+  PaginationPrevious,
+} from '@/components/ui/pagination'
 import {
   acceptRejectInvitations,
-  getUserInvitations
-} from '@/app/api/Invitation';
+  getUserInvitations,
+} from '@/app/api/Invitation'
 
-import { AlertComponent } from '@/components/AlertComponent';
-import { AxiosResponse } from 'axios';
-import { Button } from '@/components/ui/button';
-import { EmptyMessage } from '@/components/EmptyMessage';
-import { IconSearch } from '@tabler/icons-react';
-import { Input } from '@/components/ui/input';
-import { Invitation } from '../interfaces/invitation-interface';
-import Loader from '@/components/Loader';
-import { OrgRole } from '@/features/users/components/users-interface';
-import { apiStatusCodes } from '@/config/CommonConstant';
-import { pathRoutes } from '@/config/pathRoutes';
+import { AlertComponent } from '@/components/AlertComponent'
+import { AxiosResponse } from 'axios'
+import { Button } from '@/components/ui/button'
+import { EmptyMessage } from '@/components/EmptyMessage'
+import { IconSearch } from '@tabler/icons-react'
+import { Input } from '@/components/ui/input'
+import { Invitation } from '../interfaces/invitation-interface'
+import Loader from '@/components/Loader'
+import { OrgRole } from '@/features/users/components/users-interface'
+import { apiStatusCodes } from '@/config/CommonConstant'
+import { pathRoutes } from '@/config/pathRoutes'
 
 const initialPageState = {
   pageNumber: 1,
   pageSize: 10,
-  total: 0
-};
+  total: 0,
+}
 
 export default function ReceivedInvitations() {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [message, setMessage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(initialPageState);
-  const [searchText, setSearchText] = useState('');
+  const [loading, setLoading] = useState<boolean>(false)
+  const [message, setMessage] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(initialPageState)
+  const [searchText, setSearchText] = useState('')
   const [invitationsList, setInvitationsList] = useState<Invitation[] | null>(
-    null
-  );
+    null,
+  )
 
   const getAllInvitations = async () => {
-    setLoading(true);
+    setLoading(true)
     try {
       const response = await getUserInvitations(
         currentPage.pageNumber,
         currentPage.pageSize,
-        searchText
-      );
-      const { data } = response as AxiosResponse;
+        searchText,
+      )
+      const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        const totalPages = data?.data?.totalPages;
-        const invitationList = data?.data?.invitations;
+        const totalPages = data?.data?.totalPages
+        const invitationList = data?.data?.invitations
 
-        setInvitationsList(invitationList);
+        setInvitationsList(invitationList)
         setCurrentPage({
           ...currentPage,
-          total: totalPages
-        });
+          total: totalPages,
+        })
       } else {
-        setError(response as string);
+        setError(response as string)
       }
     } catch (err) {
-      console.error('Failed to fetch invitations:', err);
-      setError('Failed to fetch invitations');
+      console.error('Failed to fetch invitations:', err)
+      setError('Failed to fetch invitations')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const checkSearchMatch = (
     list: Invitation[] | null,
-    query: string
+    query: string,
   ): boolean => {
     if (!list || list.length === 0 || !query) {
-      return true;
+      return true
     }
-    const searchQuery = query.toLowerCase().trim();
+    const searchQuery = query.toLowerCase().trim()
     return list.some((invitation) =>
-      invitation.organisation.name.toLowerCase().includes(searchQuery)
-    );
-  };
+      invitation.organisation.name.toLowerCase().includes(searchQuery),
+    )
+  }
 
   useEffect(() => {
-    let getData: NodeJS.Timeout;
+    let getData: NodeJS.Timeout
 
     if (searchText.length >= 1) {
       getData = setTimeout(() => {
         setCurrentPage((prev) => ({
           ...prev,
-          pageNumber: 1
-        }));
-        getAllInvitations();
-      }, 500);
-      return () => clearTimeout(getData);
+          pageNumber: 1,
+        }))
+        getAllInvitations()
+      }, 500)
+      return () => clearTimeout(getData)
     } else {
-      getAllInvitations();
+      getAllInvitations()
     }
 
-    return () => clearTimeout(getData);
-  }, [searchText, currentPage.pageNumber]);
+    return () => clearTimeout(getData)
+  }, [searchText, currentPage.pageNumber])
 
   // onChange of Search input text
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearchText(e.target.value);
-  };
+    setSearchText(e.target.value)
+  }
 
   // Handle page change
   const onPageChange = (page: number) => {
     setCurrentPage({
       ...currentPage,
-      pageNumber: page
-    });
-  };
+      pageNumber: page,
+    })
+  }
 
   const handleRefresh = () => {
-    getAllInvitations();
-  };
+    getAllInvitations()
+  }
 
   const respondToInvitations = async (invite: Invitation, status: string) => {
-    setLoading(true);
+    setLoading(true)
     try {
       const response = await acceptRejectInvitations(
         invite.id,
         invite.orgId,
-        status
-      );
-      const { data } = response as AxiosResponse;
+        status,
+      )
+      const { data } = response as AxiosResponse
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-        setMessage(data?.message);
-        setLoading(false);
-        window.location.href = pathRoutes.organizations.root;
+        setMessage(data?.message)
+        setLoading(false)
+        window.location.href = pathRoutes.organizations.root
       } else {
-        setError(response as string);
+        setError(response as string)
       }
     } catch (err) {
-      console.error('Failed to respond to invitation', err);
-      setError('Failed to respond to invitation');
+      console.error('Failed to respond to invitation', err)
+      setError('Failed to respond to invitation')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const renderPagination = () => {
     if (currentPage.total <= 1) {
-      return null;
+      return null
     }
 
-    const pages = [];
-    const maxVisiblePages = 5;
+    const pages = []
+    const maxVisiblePages = 5
     const startPage = Math.max(
       1,
-      currentPage.pageNumber - Math.floor(maxVisiblePages / 2)
-    );
-    const endPage = Math.min(
-      currentPage.total,
-      startPage + maxVisiblePages - 1
-    );
+      currentPage.pageNumber - Math.floor(maxVisiblePages / 2),
+    )
+    const endPage = Math.min(currentPage.total, startPage + maxVisiblePages - 1)
 
     for (let i = startPage; i <= endPage; i++) {
       pages.push(
@@ -173,12 +170,12 @@ export default function ReceivedInvitations() {
           >
             {i}
           </PaginationLink>
-        </PaginationItem>
-      );
+        </PaginationItem>,
+      )
     }
 
     return (
-      <Pagination className='mt-4'>
+      <Pagination className="mt-4">
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious
@@ -197,7 +194,7 @@ export default function ReceivedInvitations() {
             <PaginationNext
               onClick={() =>
                 onPageChange(
-                  Math.min(currentPage.total, currentPage.pageNumber + 1)
+                  Math.min(currentPage.total, currentPage.pageNumber + 1),
                 )
               }
               className={
@@ -209,34 +206,34 @@ export default function ReceivedInvitations() {
           </PaginationItem>
         </PaginationContent>
       </Pagination>
-    );
-  };
+    )
+  }
 
   return (
-    <div className='p-4 md:p-6'>
-      <div className='mb-6'>
-        <h1 className='text-foreground text-2xl font-semibold'>
+    <div className="p-4 md:p-6">
+      <div className="mb-6">
+        <h1 className="text-foreground text-2xl font-semibold">
           Received Invitations
         </h1>
       </div>
 
       <Card>
-        <CardContent className='p-6'>
-          <div className='mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between'>
-            <div className='relative w-full max-w-sm'>
+        <CardContent className="p-6">
+          <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="relative w-full max-w-sm">
               <Input
-                type='text'
-                placeholder='Search invitations...'
+                type="text"
+                placeholder="Search invitations..."
                 value={searchText}
                 onChange={handleSearchChange}
-                className='bg-background text-muted-foreground focus-visible:ring-primary h-10 rounded-lg pr-4 pl-10 text-sm shadow-sm focus-visible:ring-1'
+                className="bg-background text-muted-foreground focus-visible:ring-primary h-10 rounded-lg pr-4 pl-10 text-sm shadow-sm focus-visible:ring-1"
               />
-              <IconSearch className='text-muted-foreground absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2' />
+              <IconSearch className="text-muted-foreground absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2" />
             </div>
 
-            <div className='flex items-center gap-3'>
-              <Button variant='outline' size='icon' onClick={handleRefresh}>
-                <RotateCcwIcon className='h-5 w-5' />
+            <div className="flex items-center gap-3">
+              <Button variant="outline" size="icon" onClick={handleRefresh}>
+                <RotateCcwIcon className="h-5 w-5" />
               </Button>
             </div>
           </div>
@@ -246,38 +243,38 @@ export default function ReceivedInvitations() {
               message={message ?? error}
               type={message ? 'success' : 'destructive'}
               onAlertClose={() => {
-                setMessage(null);
-                setError(null);
+                setMessage(null)
+                setError(null)
               }}
             />
           )}
 
           {loading && (
-            <div className='flex items-center justify-center py-12'>
+            <div className="flex items-center justify-center py-12">
               <Loader />
             </div>
           )}
 
           {searchText && !checkSearchMatch(invitationsList, searchText) ? (
             <EmptyMessage
-              title='No Organization Invitation Found'
-              description='No organization invitations match your search criteria.'
-              height='250px'
+              title="No Organization Invitation Found"
+              description="No organization invitations match your search criteria."
+              height="250px"
             />
           ) : (
-            <div className='space-y-4'>
+            <div className="space-y-4">
               {invitationsList?.map((invitation, index) => (
-                <Card key={invitation.id ?? index} className='overflow-hidden'>
-                  <CardContent className='p-6'>
-                    <div className='flex flex-col items-start justify-between gap-4 md:flex-row md:items-center'>
-                      <div className='flex items-start gap-4'>
-                        <div className='shrink-0'>
-                          <Avatar className='h-16 w-16 border'>
+                <Card key={invitation.id ?? index} className="overflow-hidden">
+                  <CardContent className="p-6">
+                    <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+                      <div className="flex items-start gap-4">
+                        <div className="shrink-0">
+                          <Avatar className="h-16 w-16 border">
                             {invitation.organisation.logoUrl ? (
                               <AvatarImage
                                 src={invitation.organisation.logoUrl}
                                 alt={invitation.organisation.name}
-                                className='object-cover'
+                                className="object-cover"
                               />
                             ) : (
                               <AvatarFallback>
@@ -287,17 +284,17 @@ export default function ReceivedInvitations() {
                           </Avatar>
                         </div>
                         <div>
-                          <h3 className='text-lg font-semibold'>
+                          <h3 className="text-lg font-semibold">
                             {invitation.organisation.name}
                           </h3>
-                          <div className='mt-2 flex flex-wrap gap-2'>
-                            <span className='text-muted-foreground text-sm'>
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            <span className="text-muted-foreground text-sm">
                               Roles:
                             </span>
                             {invitation.orgRoles?.map((role: OrgRole) => (
                               <span
                                 key={role.id ?? role.name}
-                                className='bg-primary-50 text-primary-700 rounded-md px-2 py-1 text-xs font-medium'
+                                className="bg-primary-50 text-primary-700 rounded-md px-2 py-1 text-xs font-medium"
                               >
                                 {role.name.charAt(0).toUpperCase() +
                                   role.name.slice(1)}
@@ -306,24 +303,24 @@ export default function ReceivedInvitations() {
                           </div>
                         </div>
                       </div>
-                      <div className='flex w-full gap-2 md:w-auto'>
+                      <div className="flex w-full gap-2 md:w-auto">
                         <Button
                           onClick={() =>
                             respondToInvitations(invitation, 'rejected')
                           }
-                          variant='outline'
-                          className='text-md rounded-lg border border-gray-200 bg-white px-5 py-3 font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:z-10 focus:ring-4 focus:ring-gray-200 focus:outline-none md:w-auto dark:border-gray-500 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-600'
+                          variant="outline"
+                          className="text-md rounded-lg border border-gray-200 bg-white px-5 py-3 font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:z-10 focus:ring-4 focus:ring-gray-200 focus:outline-none md:w-auto dark:border-gray-500 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-600"
                         >
-                          <XIcon className='mr-2 h-4 w-4' />
+                          <XIcon className="mr-2 h-4 w-4" />
                           Reject
                         </Button>
                         <Button
                           onClick={() =>
                             respondToInvitations(invitation, 'accepted')
                           }
-                          className='w-full md:w-auto'
+                          className="w-full md:w-auto"
                         >
-                          <CheckIcon className='mr-2 h-4 w-4' />
+                          <CheckIcon className="mr-2 h-4 w-4" />
                           Accept
                         </Button>
                       </div>
@@ -336,9 +333,9 @@ export default function ReceivedInvitations() {
 
           {!loading && (
             <EmptyMessage
-              title='No Invitations'
+              title="No Invitations"
               description="You don't have any invitation"
-              height='250px'
+              height="250px"
             />
           )}
           {/* {loading ? (
@@ -427,5 +424,5 @@ export default function ReceivedInvitations() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

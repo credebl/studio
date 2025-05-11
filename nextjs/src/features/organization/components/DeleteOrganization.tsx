@@ -1,12 +1,12 @@
-'use client';
+'use client'
 
-import React, { useEffect, useState } from 'react';
-import { apiStatusCodes } from '@/config/CommonConstant';
-import type { AxiosResponse } from 'axios';
-import { toast } from 'sonner';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { pathRoutes } from '@/config/pathRoutes';
-import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useEffect, useState } from 'react'
+import { apiStatusCodes } from '@/config/CommonConstant'
+import type { AxiosResponse } from 'axios'
+import { toast } from 'sonner'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { pathRoutes } from '@/config/pathRoutes'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 import {
   AlertDialog,
@@ -16,258 +16,258 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle
-} from '@/components/ui/alert-dialog';
-import { Loader2 } from 'lucide-react';
-import { DeleteOrganizationCard } from './DeleteOrganizationCard';
-import { getOrganizationById } from '@/app/api/organization';
-import { deleteConnectionRecords } from '@/app/api/connection';
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { Loader2 } from 'lucide-react'
+import { DeleteOrganizationCard } from './DeleteOrganizationCard'
+import { getOrganizationById } from '@/app/api/organization'
+import { deleteConnectionRecords } from '@/app/api/connection'
 import {
   deleteIssuanceRecords,
   deleteOrganization,
   deleteOrganizationWallet,
   deleteVerificationRecords,
-  getOrganizationReferences
-} from '@/app/api/deleteorganization';
+  getOrganizationReferences,
+} from '@/app/api/deleteorganization'
 
 interface IOrgCount {
-  verificationRecordsCount?: number;
-  issuanceRecordsCount?: number;
-  connectionRecordsCount?: number;
+  verificationRecordsCount?: number
+  issuanceRecordsCount?: number
+  connectionRecordsCount?: number
 }
 
 interface IEcosystemOrganizations {
   ecosystemRole?: {
-    name: string;
-  };
+    name: string
+  }
 }
 
 export default function DeleteOrganizationPage() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const orgId = searchParams.get('orgId');
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const orgId = searchParams.get('orgId')
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [orgData, setOrgData] = useState<any>(null);
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [orgData, setOrgData] = useState<any>(null)
   const [organizationData, setOrganizationData] = useState<IOrgCount | null>(
-    null
-  );
-  const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
-  const [isWalletPresent, setIsWalletPresent] = useState<boolean>(false);
-  const [showPopup, setShowPopup] = useState<boolean>(false);
-  const [deleteAction, setDeleteAction] = useState<() => void>(() => {});
+    null,
+  )
+  const [deleteLoading, setDeleteLoading] = useState<boolean>(false)
+  const [isWalletPresent, setIsWalletPresent] = useState<boolean>(false)
+  const [showPopup, setShowPopup] = useState<boolean>(false)
+  const [deleteAction, setDeleteAction] = useState<() => void>(() => {})
   const [confirmMessage, setConfirmMessage] = useState<
     string | React.ReactNode
-  >('');
-  const [description, setDescription] = useState<string>('');
-  const [orgName, setOrgName] = useState<string>('');
+  >('')
+  const [description, setDescription] = useState<string>('')
+  const [orgName, setOrgName] = useState<string>('')
 
   const fetchOrganizationDetails = async () => {
     if (!orgId) {
-      router.push(pathRoutes.organizations.root);
-      return;
+      router.push(pathRoutes.organizations.root)
+      return
     }
 
     try {
-      setLoading(true);
-      const response = await getOrganizationById(orgId);
-      const { data } = response as AxiosResponse;
+      setLoading(true)
+      const response = await getOrganizationById(orgId)
+      const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        const organizationData = data?.data;
-        setOrgData(organizationData);
-        const walletName = organizationData?.org_agents?.[0]?.walletName;
-        const name = organizationData?.name;
+        const organizationData = data?.data
+        setOrgData(organizationData)
+        const walletName = organizationData?.org_agents?.[0]?.walletName
+        const name = organizationData?.name
 
         if (name) {
-          setOrgName(name);
+          setOrgName(name)
         }
 
         if (walletName) {
-          setIsWalletPresent(true);
+          setIsWalletPresent(true)
         } else {
-          setIsWalletPresent(false);
+          setIsWalletPresent(false)
         }
       }
     } catch (error) {
-      setError('Failed to fetch organization details');
+      setError('Failed to fetch organization details')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const fetchOrganizationReferences = async () => {
     if (!orgId) {
-      return;
+      return
     }
 
-    setLoading(true);
+    setLoading(true)
     try {
-      const response = await getOrganizationReferences(orgId);
-      const { data } = response as AxiosResponse;
+      const response = await getOrganizationReferences(orgId)
+      const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        const orgData = data?.data;
-        setOrganizationData(orgData);
+        const orgData = data?.data
+        setOrganizationData(orgData)
       } else {
-        setError(response as string);
+        setError(response as string)
       }
     } catch (error) {
-      console.error('An error occurred:', error);
-      setError(error as string);
+      console.error('An error occurred:', error)
+      setError(error as string)
     }
-    setLoading(false);
-  };
+    setLoading(false)
+  }
 
   useEffect(() => {
-    fetchOrganizationDetails();
-    fetchOrganizationReferences();
-  }, [orgId]);
+    fetchOrganizationDetails()
+    fetchOrganizationReferences()
+  }, [orgId])
 
   const deleteHandler = async (deleteFunc: () => Promise<void>) => {
-    setDeleteLoading(true);
+    setDeleteLoading(true)
     try {
-      await deleteFunc();
-      await fetchOrganizationReferences();
-      setShowPopup(false);
+      await deleteFunc()
+      await fetchOrganizationReferences()
+      setShowPopup(false)
     } catch (error) {
-      console.error('An error occurred:', error);
-      setError(error as string);
+      console.error('An error occurred:', error)
+      setError(error as string)
     }
-    setDeleteLoading(false);
-  };
+    setDeleteLoading(false)
+  }
 
   const deleteVerifications = async () => {
-    setDeleteLoading(true);
+    setDeleteLoading(true)
     try {
-      const response = await deleteVerificationRecords(orgId as string);
-      const { data } = response as AxiosResponse;
+      const response = await deleteVerificationRecords(orgId as string)
+      const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        toast.success(data?.message);
-        await fetchOrganizationReferences();
-        setShowPopup(false);
+        toast.success(data?.message)
+        await fetchOrganizationReferences()
+        setShowPopup(false)
       } else {
-        setError(response as string);
+        setError(response as string)
       }
     } catch (error) {
-      console.error('An error occurred:', error);
-      setError(error as string);
+      console.error('An error occurred:', error)
+      setError(error as string)
     }
-    setDeleteLoading(false);
-  };
+    setDeleteLoading(false)
+  }
 
   const deleteIssuance = async () => {
-    setDeleteLoading(true);
+    setDeleteLoading(true)
     try {
-      const response = await deleteIssuanceRecords(orgId as string);
-      const { data } = response as AxiosResponse;
+      const response = await deleteIssuanceRecords(orgId as string)
+      const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        toast.success(data?.message);
-        await fetchOrganizationReferences();
-        setShowPopup(false);
+        toast.success(data?.message)
+        await fetchOrganizationReferences()
+        setShowPopup(false)
       } else {
-        setError(response as string);
+        setError(response as string)
       }
     } catch (error) {
-      console.error('An error occurred:', error);
-      setError(error as string);
+      console.error('An error occurred:', error)
+      setError(error as string)
     }
-    setDeleteLoading(false);
-  };
+    setDeleteLoading(false)
+  }
 
   const deleteConnection = async () => {
-    setDeleteLoading(true);
+    setDeleteLoading(true)
     try {
-      const response = await deleteConnectionRecords(orgId as string);
-      const { data } = response as AxiosResponse;
+      const response = await deleteConnectionRecords(orgId as string)
+      const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        toast.success(data?.message);
-        await fetchOrganizationReferences();
-        setShowPopup(false);
+        toast.success(data?.message)
+        await fetchOrganizationReferences()
+        setShowPopup(false)
       } else {
-        setError(response as string);
+        setError(response as string)
       }
     } catch (error) {
-      console.error('An error occurred:', error);
-      setError(error as string);
+      console.error('An error occurred:', error)
+      setError(error as string)
     }
-    setDeleteLoading(false);
-  };
+    setDeleteLoading(false)
+  }
 
   const deleteOrgWallet = async () => {
     try {
       // Assuming deleteOrganizationWallet needs orgId
-      const response = await deleteOrganizationWallet(orgId as string);
-      const { data } = response as AxiosResponse;
+      const response = await deleteOrganizationWallet(orgId as string)
+      const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        toast.success(data?.message);
-        setIsWalletPresent(false);
-        await fetchOrganizationReferences();
+        toast.success(data?.message)
+        setIsWalletPresent(false)
+        await fetchOrganizationReferences()
         setTimeout(() => {
-          window.location.reload();
-        }, 3000);
-        setShowPopup(false);
+          window.location.reload()
+        }, 3000)
+        setShowPopup(false)
       } else {
-        setError(response as string);
+        setError(response as string)
       }
     } catch (error) {
-      console.error('An error occurred:', error);
-      setError(error as string);
+      console.error('An error occurred:', error)
+      setError(error as string)
     }
-  };
+  }
 
   const deleteOrganizations = async () => {
     try {
-      const response = await deleteOrganization(orgId as string);
-      const { data } = response as AxiosResponse;
+      const response = await deleteOrganization(orgId as string)
+      const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        toast.success(data?.message);
-        await fetchOrganizationReferences();
-        setShowPopup(false);
+        toast.success(data?.message)
+        await fetchOrganizationReferences()
+        setShowPopup(false)
 
-        window.location.href = pathRoutes.organizations.root;
+        window.location.href = pathRoutes.organizations.root
       } else {
-        setError(response as string);
+        setError(response as string)
       }
     } catch (error) {
-      console.error('An error occurred:', error);
-      setError(error as string);
+      console.error('An error occurred:', error)
+      setError(error as string)
     }
-  };
+  }
 
   const deleteFunctions = {
     deleteVerifications,
     deleteIssuance,
     deleteConnection,
     deleteOrgWallet,
-    deleteOrganizations
-  };
+    deleteOrganizations,
+  }
 
   if (loading && !orgData) {
     return (
-      <div className='flex h-full items-center justify-center'>
-        <Loader2 className='h-8 w-8 animate-spin' />
-        <p className='ml-2'>Loading organization data...</p>
+      <div className="flex h-full items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+        <p className="ml-2">Loading organization data...</p>
       </div>
-    );
+    )
   }
 
   if (!orgData && !loading) {
     return (
-      <div className='p-4'>
-        <Alert variant='destructive'>
+      <div className="p-4">
+        <Alert variant="destructive">
           <AlertDescription>
             Organization not found or you don`t have permission to access it.
           </AlertDescription>
         </Alert>
       </div>
-    );
+    )
   }
 
   const deleteCardData = [
@@ -277,7 +277,7 @@ export default function DeleteOrganizationPage() {
       count: organizationData?.verificationRecordsCount ?? 0,
       deleteFunc: deleteFunctions.deleteVerifications,
       confirmMessage: 'Are you sure you want to delete verification records?',
-      isDisabled: false
+      isDisabled: false,
     },
     {
       title: 'Issuance',
@@ -285,7 +285,7 @@ export default function DeleteOrganizationPage() {
       count: organizationData?.issuanceRecordsCount ?? 0,
       deleteFunc: deleteFunctions.deleteIssuance,
       confirmMessage: 'Are you sure you want to delete credential records?',
-      isDisabled: (organizationData?.verificationRecordsCount ?? 0) > 0
+      isDisabled: (organizationData?.verificationRecordsCount ?? 0) > 0,
     },
     {
       title: 'Connections',
@@ -295,7 +295,7 @@ export default function DeleteOrganizationPage() {
       confirmMessage: 'Are you sure you want to delete connection records?',
       isDisabled:
         (organizationData?.issuanceRecordsCount ?? 0) > 0 ||
-        (organizationData?.verificationRecordsCount ?? 0) > 0
+        (organizationData?.verificationRecordsCount ?? 0) > 0,
     },
     {
       title: 'Organization wallet',
@@ -306,7 +306,7 @@ export default function DeleteOrganizationPage() {
       isDisabled:
         (organizationData?.connectionRecordsCount ?? 0) > 0 ||
         (organizationData?.issuanceRecordsCount ?? 0) > 0 ||
-        (organizationData?.verificationRecordsCount ?? 0) > 0
+        (organizationData?.verificationRecordsCount ?? 0) > 0,
     },
     {
       title: 'Organization',
@@ -316,27 +316,27 @@ export default function DeleteOrganizationPage() {
       confirmMessage: (
         <>
           Are you sure you want to delete organization{' '}
-          <span className='text-lg font-bold'>{orgData?.name}</span>?
+          <span className="text-lg font-bold">{orgData?.name}</span>?
         </>
       ),
-      isDisabled: isWalletPresent
-    }
-  ];
+      isDisabled: isWalletPresent,
+    },
+  ]
 
   return (
-    <div className='px-4 pt-2'>
-      <h1 className='mt-2 mr-auto mb-4 ml-1 text-xl font-semibold sm:text-2xl'>
+    <div className="px-4 pt-2">
+      <h1 className="mt-2 mr-auto mb-4 ml-1 text-xl font-semibold sm:text-2xl">
         Delete Organization
       </h1>
 
       {error && (
-        <Alert variant='destructive' className='mb-4'>
+        <Alert variant="destructive" className="mb-4">
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
 
       {organizationData && (
-        <div className='space-y-4'>
+        <div className="space-y-4">
           {deleteCardData.map((card) => (
             <DeleteOrganizationCard
               key={card.title}
@@ -345,10 +345,10 @@ export default function DeleteOrganizationPage() {
               count={card.count}
               isDisabled={card.isDisabled}
               onDeleteClick={() => {
-                setShowPopup(true);
-                setDeleteAction(() => card.deleteFunc);
-                setConfirmMessage(card.confirmMessage);
-                setDescription(card.description);
+                setShowPopup(true)
+                setDeleteAction(() => card.deleteFunc)
+                setConfirmMessage(card.confirmMessage)
+                setDescription(card.description)
               }}
             />
           ))}
@@ -356,13 +356,13 @@ export default function DeleteOrganizationPage() {
           <AlertDialog open={showPopup} onOpenChange={setShowPopup}>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle className='text-xl'>
+                <AlertDialogTitle className="text-xl">
                   Confirmation
                 </AlertDialogTitle>
                 <AlertDialogDescription asChild>
-                  <div className='space-y-2'>
+                  <div className="space-y-2">
                     {confirmMessage}
-                    {description && <div className=''>{description}</div>}
+                    {description && <div className="">{description}</div>}
                   </div>
                 </AlertDialogDescription>
               </AlertDialogHeader>
@@ -375,11 +375,11 @@ export default function DeleteOrganizationPage() {
                     deleteHandler(deleteAction as () => Promise<void>)
                   }
                   disabled={deleteLoading}
-                  className='bg-destructive text-destructive-foreground hover:bg-destructive/90'
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 >
                   {deleteLoading ? (
                     <>
-                      <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       <span>Processing...</span>
                     </>
                   ) : (
@@ -392,5 +392,5 @@ export default function DeleteOrganizationPage() {
         </div>
       )}
     </div>
-  );
+  )
 }

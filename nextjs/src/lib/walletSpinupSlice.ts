@@ -1,4 +1,4 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 // export interface OrgData {
 //   name: string;
@@ -6,33 +6,33 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 // }
 
 export interface OrgData {
-  name: string;
-  description: string;
-  countryId: string | null;
-  stateId: string | null;
-  cityId: string | null;
-  website: string;
-  logoFile: File | null;
-  logoPreview: string;
+  name: string
+  description: string
+  countryId: string | null
+  stateId: string | null
+  cityId: string | null
+  website: string
+  logoFile: File | null
+  logoPreview: string
 }
 interface SharedLedgerConfig {
-  orgName: string;
-  orgId: string;
-  walletName: string;
-  maskedSeeds: string;
-  seeds: string;
-  submitSharedWallet?: () => void;
+  orgName: string
+  orgId: string
+  walletName: string
+  maskedSeeds: string
+  seeds: string
+  submitSharedWallet?: () => void
 }
 
 interface WalletSpinupState {
-  step: number;
-  formData: OrgData | null;
-  orgId: string | null;
-  orgName: string;
-  walletSpinupStatus: boolean;
-  ledgerConfig: boolean;
-  createOrgForm: boolean;
-  sharedLedgerConfig: SharedLedgerConfig | null;
+  step: number
+  formData: OrgData | null
+  orgId: string | null
+  orgName: string
+  walletSpinupStatus: boolean
+  ledgerConfig: boolean
+  createOrgForm: boolean
+  sharedLedgerConfig: SharedLedgerConfig | null
 }
 
 const initialState: WalletSpinupState = {
@@ -43,45 +43,45 @@ const initialState: WalletSpinupState = {
   walletSpinupStatus: false,
   ledgerConfig: false,
   createOrgForm: true,
-  sharedLedgerConfig: null
-};
+  sharedLedgerConfig: null,
+}
 
 const walletSpinupSlice = createSlice({
   name: 'walletSpinup',
   initialState,
   reducers: {
     setStep: (state, action: PayloadAction<number>) => {
-      state.step = action.payload;
+      state.step = action.payload
     },
     setFormData: (state, action: PayloadAction<OrgData>) => {
-      state.formData = action.payload;
+      state.formData = action.payload
     },
     setOrgId: (state, action: PayloadAction<string | null>) => {
-      state.orgId = action.payload;
+      state.orgId = action.payload
     },
     setOrgName: (state, action: PayloadAction<string>) => {
-      state.orgName = action.payload;
+      state.orgName = action.payload
     },
     setWalletSpinupStatus: (state, action: PayloadAction<boolean>) => {
-      state.walletSpinupStatus = action.payload;
+      state.walletSpinupStatus = action.payload
     },
     setLedgerConfig: (state, action: PayloadAction<boolean>) => {
-      state.ledgerConfig = action.payload;
+      state.ledgerConfig = action.payload
     },
     setIsCreateOrgForm: (state, action: PayloadAction<boolean>) => {
-      state.createOrgForm = action.payload;
+      state.createOrgForm = action.payload
     },
     setSharedLedgerConfig: (
       state,
-      action: PayloadAction<SharedLedgerConfig>
+      action: PayloadAction<SharedLedgerConfig>,
     ) => {
-      state.sharedLedgerConfig = action.payload;
+      state.sharedLedgerConfig = action.payload
     },
     clearSharedLedgerConfig: (state) => {
-      state.sharedLedgerConfig = null;
-    }
-  }
-});
+      state.sharedLedgerConfig = null
+    },
+  },
+})
 
 export const {
   setStep,
@@ -92,7 +92,7 @@ export const {
   setLedgerConfig,
   setIsCreateOrgForm,
   setSharedLedgerConfig, // Fixed casing
-  clearSharedLedgerConfig
-} = walletSpinupSlice.actions;
+  clearSharedLedgerConfig,
+} = walletSpinupSlice.actions
 
-export default walletSpinupSlice.reducer;
+export default walletSpinupSlice.reducer

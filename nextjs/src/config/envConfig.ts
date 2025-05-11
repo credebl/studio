@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-let envVariables = globalThis || {};
+let envVariables = globalThis || {}
 try {
   if (process?.env) {
     envVariables = {
       ...envVariables,
-      ...process?.env
-    };
+      ...process?.env,
+    }
   }
 } catch (error) {
   // Handle the error if needed
@@ -14,8 +14,8 @@ try {
 if (process?.env) {
   envVariables = {
     ...envVariables,
-    ...process?.env
-  };
+    ...process?.env,
+  }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -41,8 +41,8 @@ const {
   PUBLIC_ECOSYSTEM_BASE_URL,
   PUBLIC_MODE,
   PUBLIC_REDIRECT_FROM_URL,
-  PUBLIC_REDIRECTION_TARGET_URL
-}: any = envVariables;
+  PUBLIC_REDIRECTION_TARGET_URL,
+}: any = envVariables
 
 export const envConfig = {
   NEXT_PUBLIC_BASE_URL:
@@ -80,7 +80,7 @@ export const envConfig = {
       process.env.NEXT_PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_ID,
     clientSecret:
       NEXT_PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_SECRET ||
-      process.env.NEXT_PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_SECRET
+      process.env.NEXT_PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_SECRET,
   },
   PUBLIC_ALLOW_DOMAIN: PUBLIC_ALLOW_DOMAIN || process.env.PUBLIC_ALLOW_DOMAIN,
   PUBLIC_PLATFROM_DISCORD_SUPPORT:
@@ -90,5 +90,5 @@ export const envConfig = {
   PUBLIC_REDIRECT_FROM_URL:
     PUBLIC_REDIRECT_FROM_URL || process.env.PUBLIC_REDIRECT_FROM_URL,
   PUBLIC_REDIRECTION_TARGET_URL:
-    PUBLIC_REDIRECTION_TARGET_URL || process.env.PUBLIC_REDIRECTION_TARGET_URL
-};
+    PUBLIC_REDIRECTION_TARGET_URL || process.env.PUBLIC_REDIRECTION_TARGET_URL,
+}

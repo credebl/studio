@@ -1,13 +1,13 @@
-import { envConfig } from './envConfig';
+import { envConfig } from './envConfig'
 
 export const pathRoutes = {
   landingPage: {
-    landingPage: '/'
+    landingPage: '/',
   },
   auth: {
     signUp: '/authentication/sign-up',
     sinIn: '/authentication/sign-in',
-    verifyEmail: '/auth/verify'
+    verifyEmail: '/auth/verify',
   },
   users: {
     dashboard: '/dashboard',
@@ -17,11 +17,11 @@ export const pathRoutes = {
     fetchUsers: '/users',
     connectionList: '/connections',
     platformSetting: '/platform-settings',
-    setting: '/setting'
+    setting: '/setting',
   },
   ecosystem: {
     root: '/ecosystems',
-    ecosystemLogin: '/authentication/sign-in'
+    ecosystemLogin: '/authentication/sign-in',
   },
   organizations: {
     root: '/organizations',
@@ -49,7 +49,7 @@ export const pathRoutes = {
       details: '/organizations/credentials/issue/bulk-issuance/history/details',
       bulkIssuance: '/organizations/credentials/issue/bulk-issuance',
       email: '/organizations/credentials/issue/email',
-      emailHistory: '/organizations/credentials/issue/email/history'
+      emailHistory: '/organizations/credentials/issue/email/history',
     },
     verification: {
       requestProof: '/organizations/verification/verify-credentials',
@@ -75,35 +75,35 @@ export const pathRoutes = {
       verify:
         '/organizations/verification/verify-credentials/schemas/cred-defs/connections/verification',
       W3CVerification:
-        '/organizations/verification/verify-credentials/schemas/connections/verification'
-    }
+        '/organizations/verification/verify-credentials/schemas/connections/verification',
+    },
   },
   documentation: {
-    root: envConfig.PLATFORM_DATA.docs as string
+    root: envConfig.PLATFORM_DATA.docs as string,
   },
   schema: {
     create: '/schemas',
     getAll: '/schemas',
     getSchemaById: '/schemas/id',
     createCredentialDefinition: '/credential-definitions',
-    getCredDeffBySchemaId: '/schemas/credential-definitions'
+    getCredDeffBySchemaId: '/schemas/credential-definitions',
   },
   back: {
     schema: {
-      schemas: '/organizations/schemas'
+      schemas: '/organizations/schemas',
     },
     verification: {
       credDef:
         '/organizations/verification/verify-credentials/schemas/cred-defs',
       schemas: '/organizations/verification/verify-credentials/schemas',
       verification:
-        '/organizations/verification/verify-credentials/schemas/cred-defs/connections'
+        '/organizations/verification/verify-credentials/schemas/cred-defs/connections',
     },
     issuance: {
       credDef: '/organizations/credentials/issue/schemas/cred-defs',
       schemas: '/organizations/credentials/issue/schemas',
       connections:
-        '/organizations/credentials/issue/schemas/cred-defs/connections'
-    }
-  }
-};
+        '/organizations/credentials/issue/schemas/cred-defs/connections',
+    },
+  },
+}

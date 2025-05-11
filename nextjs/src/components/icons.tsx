@@ -32,10 +32,10 @@ import {
   IconUserCircle,
   IconUserEdit,
   IconUserX,
-  IconX
-} from '@tabler/icons-react';
+  IconX,
+} from '@tabler/icons-react'
 
-export type Icon = React.ComponentType<IconProps>;
+export type Icon = React.ComponentType<IconProps>
 
 export const Icons = {
   dashboard: IconLayoutDashboard,
@@ -70,5 +70,5 @@ export const Icons = {
   twitter: IconBrandTwitter,
   check: IconCheck,
   connections: IconTopologyStar,
-  organization: IconBuildingSkyscraper
-};
+  organization: IconBuildingSkyscraper,
+}

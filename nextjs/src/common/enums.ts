@@ -2,21 +2,21 @@ export enum DidMethod {
   INDY = 'did:indy',
   KEY = 'did:key',
   WEB = 'did:web',
-  POLYGON = 'did:polygon'
+  POLYGON = 'did:polygon',
 }
 
 export enum Network {
   TESTNET = 'testnet',
-  MAINNET = 'mainnet'
+  MAINNET = 'mainnet',
 }
 export enum PolygonNetworks {
   TESTNET = 'Polygon Testnet',
-  MAINNET = 'Polygon Mainnet'
+  MAINNET = 'Polygon Mainnet',
 }
 export enum Ledgers {
   INDY = 'indy',
   POLYGON = 'polygon',
-  NO_LEDGER = 'noLedger'
+  NO_LEDGER = 'noLedger',
 }
 
 export enum DataType {
@@ -24,7 +24,7 @@ export enum DataType {
   INTEGER = 'integer',
   STRING = 'string',
   DATE_TIME = 'datetime-local',
-  ARRAY = 'array'
+  ARRAY = 'array',
 }
 
 export enum Features {
@@ -32,23 +32,23 @@ export enum Features {
   CRETAE_ORG = 'create_org',
   CRETAE_SCHEMA = 'create_schema',
   ISSUANCE = 'issuance',
-  VERIFICATION = 'verification'
+  VERIFICATION = 'verification',
 }
 
 export enum SchemaTypes {
   schema_INDY = 'indy',
-  schema_W3C = 'w3c'
+  schema_W3C = 'w3c',
 }
 
 export enum SchemaType {
   INDY = 'indy',
-  W3C = 'json'
+  W3C = 'json',
 }
 
 export enum SchemaTypeValue {
   INDY = 'indy',
   POLYGON = 'polygon',
-  NO_LEDGER = 'no_ledger'
+  NO_LEDGER = 'no_ledger',
 }
 
 export enum Roles {
@@ -56,7 +56,7 @@ export enum Roles {
   ADMIN = 'admin',
   ISSUER = 'issuer',
   VERIFIER = 'verifier',
-  MEMBER = 'member'
+  MEMBER = 'member',
 }
 
 export enum OrganizationRoles {
@@ -64,5 +64,5 @@ export enum OrganizationRoles {
   organizationOwner = 'owner',
   organizationIssuer = 'issuer',
   organizationVerifier = 'verifier',
-  organizationAdmin = 'admin'
+  organizationAdmin = 'admin',
 }

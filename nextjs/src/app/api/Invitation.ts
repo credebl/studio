@@ -1,131 +1,131 @@
-import { axiosGet, axiosPost, ecosystemAxiosGet } from '@/services/apiRequests';
+import { axiosGet, axiosPost, ecosystemAxiosGet } from '@/services/apiRequests'
 
-import { apiRoutes } from '@/config/apiRoutes';
-import { getHeaderConfigs } from '@/config/GetHeaderConfigs';
+import { apiRoutes } from '@/config/apiRoutes'
+import { getHeaderConfigs } from '@/config/GetHeaderConfigs'
 
 // Get all organization Inviattions
 export const getOrganizationInvitations = async (
   orgId: string,
   pageNumber: number,
   pageSize: number,
-  search = ''
+  search = '',
 ) => {
-  const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.invitations}?&pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`;
+  const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.invitations}?&pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
 
-  const config = getHeaderConfigs();
+  const config = getHeaderConfigs()
 
   const axiosPayload = {
     url,
-    config
-  };
+    config,
+  }
 
   try {
-    return await axiosGet(axiosPayload);
+    return await axiosGet(axiosPayload)
   } catch (error) {
-    const err = error as Error;
-    return err?.message;
+    const err = error as Error
+    return err?.message
   }
-};
+}
 
 // Create Invitations
 export const createInvitations = async (
   orgId: string,
-  invitationList: object[]
+  invitationList: object[],
 ) => {
-  const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.invitations}`;
+  const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.invitations}`
   const payload = {
     invitations: invitationList,
-    orgId
-  };
+    orgId,
+  }
 
-  const config = getHeaderConfigs();
+  const config = getHeaderConfigs()
 
   const axiosPayload = {
     url,
     payload,
-    config
-  };
+    config,
+  }
 
   try {
-    return await axiosPost(axiosPayload);
+    return await axiosPost(axiosPayload)
   } catch (error) {
-    const err = error as Error;
-    return err?.message;
+    const err = error as Error
+    return err?.message
   }
-};
+}
 
 // Received Invitations by User
 export const getUserInvitations = async (
   pageNumber: number,
   pageSize: number,
-  search = ''
+  search = '',
 ) => {
-  const url = `${apiRoutes.users.invitations}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`;
+  const url = `${apiRoutes.users.invitations}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
 
-  const config = getHeaderConfigs();
+  const config = getHeaderConfigs()
 
   const axiosPayload = {
     url,
-    config
-  };
+    config,
+  }
 
   try {
-    return await axiosGet(axiosPayload);
+    return await axiosGet(axiosPayload)
   } catch (error) {
-    const err = error as Error;
-    return err?.message;
+    const err = error as Error
+    return err?.message
   }
-};
+}
 
 // Accept and Reject Invitations
 export const acceptRejectInvitations = async (
   invitationId: string,
   orgId: string,
-  status: string
+  status: string,
 ) => {
-  const url = `${apiRoutes.users.invitations}/${invitationId}`;
+  const url = `${apiRoutes.users.invitations}/${invitationId}`
 
   const payload = {
     orgId,
-    status
-  };
+    status,
+  }
 
-  const config = getHeaderConfigs();
+  const config = getHeaderConfigs()
 
   const axiosPayload = {
     url,
     payload,
-    config
-  };
+    config,
+  }
 
   try {
-    return await axiosPost(axiosPayload);
+    return await axiosPost(axiosPayload)
   } catch (error) {
-    const err = error as Error;
-    return err?.message;
+    const err = error as Error
+    return err?.message
   }
-};
+}
 
 // Fetch ecosystem invitations
 export const getUserEcosystemInvitations = async (
   pageNumber: number,
   pageSize: number,
   search: string,
-  orgId: string
+  orgId: string,
 ) => {
-  const url = `${apiRoutes.Ecosystem.root}/${orgId}${apiRoutes.Ecosystem.usersInvitation}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`;
+  const url = `${apiRoutes.Ecosystem.root}/${orgId}${apiRoutes.Ecosystem.usersInvitation}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
 
-  const config = getHeaderConfigs();
+  const config = getHeaderConfigs()
 
   const axiosPayload = {
     url,
-    config
-  };
+    config,
+  }
 
   try {
-    return await ecosystemAxiosGet(axiosPayload);
+    return await ecosystemAxiosGet(axiosPayload)
   } catch (error) {
-    const err = error as Error;
-    return err?.message;
+    const err = error as Error
+    return err?.message
   }
-};
+}

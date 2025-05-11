@@ -1,114 +1,114 @@
-'use client';
+'use client'
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, BookmarkIcon, UserCircle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { AlertCircle, BookmarkIcon, UserCircle } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog';
-import React, { useEffect, useState } from 'react';
+  DialogTitle,
+} from '@/components/ui/dialog'
+import React, { useEffect, useState } from 'react'
 import {
   editOrganizationUserRole,
-  getOrganizationRoles
-} from '@/app/api/organization';
+  getOrganizationRoles,
+} from '@/app/api/organization'
 
-import { AxiosResponse } from 'axios';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
-import { TextTitlecase } from '@/utils/TextTransform';
-import { User } from './users-interface';
-import { apiStatusCodes } from '@/config/CommonConstant';
-import { useAppSelector } from '@/lib/hooks';
+import { AxiosResponse } from 'axios'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Label } from '@/components/ui/label'
+import { TextTitlecase } from '@/utils/TextTransform'
+import { User } from './users-interface'
+import { apiStatusCodes } from '@/config/CommonConstant'
+import { useAppSelector } from '@/lib/hooks'
 
 interface RoleI {
-  id: string;
-  name: string;
-  checked: boolean;
-  disabled: boolean;
+  id: string
+  name: string
+  checked: boolean
+  disabled: boolean
 }
 
 interface EditUserRoleModalProps {
-  openModal: boolean;
-  user: User;
-  setMessage: (message: string) => void;
-  setOpenModal: (flag: boolean) => void;
+  openModal: boolean
+  user: User
+  setMessage: (message: string) => void
+  setOpenModal: (flag: boolean) => void
 }
 
 const EditUserRoleModal = ({
   openModal,
   user,
   setMessage,
-  setOpenModal
+  setOpenModal,
 }: EditUserRoleModalProps) => {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [roles, setRoles] = useState<RoleI[] | null>(null);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false)
+  const [roles, setRoles] = useState<RoleI[] | null>(null)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
-  const orgId = useAppSelector((state) => state.organization.orgId);
+  const orgId = useAppSelector((state) => state.organization.orgId)
   const getRoles = async () => {
     try {
-      const response = await getOrganizationRoles(orgId);
+      const response = await getOrganizationRoles(orgId)
 
-      const { data } = response as AxiosResponse;
+      const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        const fetchedRoles: RoleI[] = data.data;
+        const fetchedRoles: RoleI[] = data.data
         const filteredRoles = fetchedRoles.map((role) => {
           if (user?.roles.includes(role.name) && role.name !== 'member') {
-            return { ...role, checked: true, disabled: false };
+            return { ...role, checked: true, disabled: false }
           } else if (role.name === 'member') {
-            return { ...role, checked: true, disabled: true };
+            return { ...role, checked: true, disabled: true }
           } else {
-            return { ...role, checked: false, disabled: false };
+            return { ...role, checked: false, disabled: false }
           }
-        });
+        })
 
-        setRoles(filteredRoles);
+        setRoles(filteredRoles)
       } else {
-        setErrorMsg(response as unknown as string);
+        setErrorMsg(response as unknown as string)
       }
     } catch (error) {
-      console.error('Error fetching roles:', error);
-      setErrorMsg('Failed to fetch roles');
+      console.error('Error fetching roles:', error)
+      setErrorMsg('Failed to fetch roles')
     }
-  };
+  }
 
   useEffect(() => {
     if (openModal) {
-      getRoles();
+      getRoles()
     }
-  }, [openModal, user]);
+  }, [openModal, user])
 
   const handleSave = async () => {
-    setLoading(true);
+    setLoading(true)
 
     try {
       const roleIds = roles
         ?.filter((role) => role.checked)
-        .map((role) => role.id);
+        .map((role) => role.id)
       const response = (await editOrganizationUserRole(
         user.id,
         roleIds as string[],
-        orgId
-      )) as AxiosResponse;
+        orgId,
+      )) as AxiosResponse
 
       if (response?.data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        setMessage(response.data.message);
-        setOpenModal(false);
+        setMessage(response.data.message)
+        setOpenModal(false)
       } else {
-        setErrorMsg(response as unknown as string);
+        setErrorMsg(response as unknown as string)
       }
     } catch (error) {
-      console.error('Error updating user role:', error);
-      setErrorMsg('Failed to update user role');
+      console.error('Error updating user role:', error)
+      setErrorMsg('Failed to update user role')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handleRoleChange = (checked: boolean, role: RoleI) => {
     if (
@@ -117,90 +117,90 @@ const EditUserRoleModal = ({
     ) {
       const updatedRoles = roles?.map((r) => {
         if (r.id === role.id) {
-          return { ...r, checked };
+          return { ...r, checked }
         } else if (
           (r.name === 'verifier' && r.checked) ||
           (r.name === 'issuer' && r.checked) ||
           (r.name === 'member' && r.checked)
         ) {
-          return { ...r, checked: true };
+          return { ...r, checked: true }
         } else {
-          return { ...r, checked: false };
+          return { ...r, checked: false }
         }
-      });
-      setRoles(updatedRoles ?? null);
+      })
+      setRoles(updatedRoles ?? null)
     } else if (role.name === 'admin' && checked === true) {
       const updatedRoles = roles?.map((r) => {
         if (r.id === role.id) {
-          return { ...r, checked };
+          return { ...r, checked }
         } else if (r.name === 'member' && r.checked) {
-          return { ...r, checked: true };
+          return { ...r, checked: true }
         } else {
-          return { ...r, checked: false };
+          return { ...r, checked: false }
         }
-      });
-      setRoles(updatedRoles ?? null);
+      })
+      setRoles(updatedRoles ?? null)
     } else {
       const updatedRoles = roles?.map((r) => {
         if (r.id === role.id) {
-          return { ...r, checked };
+          return { ...r, checked }
         }
-        return r;
-      });
-      setRoles(updatedRoles ?? null);
+        return r
+      })
+      setRoles(updatedRoles ?? null)
     }
-  };
+  }
 
   const getRoleColor = (roleName: string) => {
     switch (roleName) {
       case 'admin':
-        return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300';
+        return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300'
       case 'member':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
       case 'issuer':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
+        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
       case 'verifier':
-        return 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300';
+        return 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300'
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
     }
-  };
+  }
 
   return (
     <Dialog open={openModal} onOpenChange={setOpenModal}>
-      <DialogContent className='rounded-xl shadow-lg sm:max-w-md'>
-        <DialogHeader className='border-b pb-4'>
-          <DialogTitle className='text-primary flex items-center text-xl font-bold'>
-            <UserCircle className='mr-2 h-5 w-5' />
+      <DialogContent className="rounded-xl shadow-lg sm:max-w-md">
+        <DialogHeader className="border-b pb-4">
+          <DialogTitle className="text-primary flex items-center text-xl font-bold">
+            <UserCircle className="mr-2 h-5 w-5" />
             Manage User Role
           </DialogTitle>
         </DialogHeader>
 
-        <div className='space-y-6 pt-4'>
-          <div className='rounded-lg border border-gray-200 bg-gradient-to-r from-slate-50 to-gray-50 p-5 shadow-sm dark:border-gray-700 dark:from-gray-800 dark:to-gray-900'>
-            <div className='space-y-4'>
-              <div className='mb-2 flex items-center border-b pb-4'>
-                <div className='bg-primary/10 mr-3 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full'>
-                  <UserCircle className='text-primary h-6 w-6' />
+        <div className="space-y-6 pt-4">
+          <div className="rounded-lg border border-gray-200 bg-gradient-to-r from-slate-50 to-gray-50 p-5 shadow-sm dark:border-gray-700 dark:from-gray-800 dark:to-gray-900">
+            <div className="space-y-4">
+              <div className="mb-2 flex items-center border-b pb-4">
+                <div className="bg-primary/10 mr-3 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full">
+                  <UserCircle className="text-primary h-6 w-6" />
                 </div>
-                <div className='flex-grow'>
-                  <p className='truncate text-base font-semibold text-gray-800 dark:text-white'>
+                <div className="flex-grow">
+                  <p className="truncate text-base font-semibold text-gray-800 dark:text-white">
                     {user?.firstName} {user?.lastName}
                   </p>
-                  <span className='text-sm text-gray-500 dark:text-gray-400'>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
                     {user?.email}
                   </span>
                 </div>
               </div>
 
-              <div className='w-full'>
-                <div className='mb-3 flex items-center text-sm font-medium'>
-                  <span className='mr-1'>Assigned Roles</span>
-                  <span className='text-red-500'>*</span>
+              <div className="w-full">
+                <div className="mb-3 flex items-center text-sm font-medium">
+                  <span className="mr-1">Assigned Roles</span>
+                  <span className="text-red-500">*</span>
                 </div>
 
                 {roles && (
-                  <div className='space-y-3'>
+                  <div className="space-y-3">
                     {roles.map((role) => (
                       <button
                         key={role.id}
@@ -229,7 +229,7 @@ const EditUserRoleModal = ({
                                 : 'border-gray-400 dark:border-gray-500'
                           } mr-3`}
                         />
-                        <div className='flex flex-grow items-center justify-between'>
+                        <div className="flex flex-grow items-center justify-between">
                           <Label
                             htmlFor={`checkbox-${role.id}`}
                             className={`${role.disabled ? 'text-gray-500' : 'font-medium'} cursor-pointer`}
@@ -252,50 +252,50 @@ const EditUserRoleModal = ({
 
           {errorMsg && (
             <Alert
-              variant='destructive'
-              className='border-red-200 bg-red-50 text-red-800 dark:border-red-800/30 dark:bg-red-900/30 dark:text-red-300'
+              variant="destructive"
+              className="border-red-200 bg-red-50 text-red-800 dark:border-red-800/30 dark:bg-red-900/30 dark:text-red-300"
             >
-              <AlertCircle className='h-4 w-4' />
+              <AlertCircle className="h-4 w-4" />
               <AlertDescription>{errorMsg}</AlertDescription>
             </Alert>
           )}
 
-          <DialogFooter className='flex justify-end gap-2 sm:justify-end'>
+          <DialogFooter className="flex justify-end gap-2 sm:justify-end">
             <Button
-              variant='outline'
+              variant="outline"
               onClick={() => setOpenModal(false)}
-              className='border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800'
+              className="border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
             >
               Cancel
             </Button>
             <Button
               onClick={handleSave}
               disabled={loading}
-              className='bg-primary text-primary-foreground hover:bg-primary/90 flex items-center'
+              className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center"
             >
               {loading ? (
                 <svg
-                  className='mr-2 -ml-1 h-4 w-4 animate-spin text-white'
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
+                  className="mr-2 -ml-1 h-4 w-4 animate-spin text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
                 >
                   <circle
-                    className='opacity-25'
-                    cx='12'
-                    cy='12'
-                    r='10'
-                    stroke='currentColor'
-                    strokeWidth='4'
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
                   ></circle>
                   <path
-                    className='opacity-75'
-                    fill='currentColor'
-                    d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   ></path>
                 </svg>
               ) : (
-                <BookmarkIcon className='mr-2 h-4 w-4' />
+                <BookmarkIcon className="mr-2 h-4 w-4" />
               )}
               {loading ? 'Saving...' : 'Save Changes'}
             </Button>
@@ -303,7 +303,7 @@ const EditUserRoleModal = ({
         </div>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default EditUserRoleModal;
+export default EditUserRoleModal

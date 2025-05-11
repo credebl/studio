@@ -1,14 +1,14 @@
-import { Field, Form, Formik } from 'formik';
-import React, { useState } from 'react';
-import * as yup from 'yup';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import LedgerConfig from './LedgerConfig';
-import { ISharedAgentForm } from '../organization/components/interfaces/organization';
-import { useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
-import { useDispatch } from 'react-redux';
+import { Field, Form, Formik } from 'formik'
+import React, { useState } from 'react'
+import * as yup from 'yup'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import LedgerConfig from './LedgerConfig'
+import { ISharedAgentForm } from '../organization/components/interfaces/organization'
+import { useRouter } from 'next/navigation'
+import { ArrowLeft } from 'lucide-react'
+import { useDispatch } from 'react-redux'
 
 const SharedAgentForm = ({
   orgName,
@@ -19,59 +19,59 @@ const SharedAgentForm = ({
   setLedgerConfig,
   loading,
   submitSharedWallet,
-  isCopied
+  isCopied,
 }: ISharedAgentForm) => {
-  const [walletName, setWalletName] = useState('');
-  const router = useRouter();
-  const dispatch = useDispatch();
+  const [walletName, setWalletName] = useState('')
+  const router = useRouter()
+  const dispatch = useDispatch()
 
   return (
-    <div className='mt-4 flex-col gap-4'>
+    <div className="mt-4 flex-col gap-4">
       {!ledgerConfig && (
         <Formik
           initialValues={{ walletName: '' }}
           validationSchema={yup.object().shape({
-            walletName: yup.string().required('Wallet name is required')
+            walletName: yup.string().required('Wallet name is required'),
           })}
           onSubmit={(values) => {
-            setWalletName(values.walletName);
-            setLedgerConfig(true);
+            setWalletName(values.walletName)
+            setLedgerConfig(true)
           }}
         >
           {({ errors, touched }) => (
-            <Form className='mt-4 max-w-lg space-y-4'>
+            <Form className="mt-4 max-w-lg space-y-4">
               <div>
-                <Label htmlFor='walletName' className='m-4'>
+                <Label htmlFor="walletName" className="m-4">
                   Wallet Name
                 </Label>
                 <Field
                   as={Input}
-                  id='walletName'
-                  name='walletName'
-                  type='text'
-                  placeholder='Enter wallet name'
+                  id="walletName"
+                  name="walletName"
+                  type="text"
+                  placeholder="Enter wallet name"
                 />
                 {errors.walletName && touched.walletName && (
-                  <p className='text-destructive text-sm font-medium'>
+                  <p className="text-destructive text-sm font-medium">
                     {errors.walletName}
                   </p>
                 )}
               </div>
-              <div className='flex items-center justify-between pt-4'>
+              <div className="flex items-center justify-between pt-4">
                 <Button
-                  variant='secondary'
+                  variant="secondary"
                   onClick={() =>
                     router.push(
-                      '/organizations/create-organization?createOrg=true'
+                      '/organizations/create-organization?createOrg=true',
                     )
                   }
-                  className='flex items-center gap-2'
+                  className="flex items-center gap-2"
                 >
-                  <ArrowLeft className='h-4 w-4' />
+                  <ArrowLeft className="h-4 w-4" />
                   Back to Create Organization
                 </Button>
 
-                <Button type='submit'>Continue to Ledger Setup</Button>
+                <Button type="submit">Continue to Ledger Setup</Button>
               </div>
             </Form>
           )}
@@ -89,7 +89,7 @@ const SharedAgentForm = ({
         />
       )}
     </div>
-  );
-};
+  )
+}
 
-export default SharedAgentForm;
+export default SharedAgentForm

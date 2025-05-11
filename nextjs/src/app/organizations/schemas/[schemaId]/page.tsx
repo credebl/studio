@@ -1,5 +1,5 @@
-import React from 'react';
-import ViewSchemas from '@/features/schemas/components/ViewSchema';
+import React from 'react'
+import ViewSchemas from '@/features/schemas/components/ViewSchema'
 
 // interface SchemaPageProps {
 //   params: {
@@ -16,18 +16,18 @@ import ViewSchemas from '@/features/schemas/components/ViewSchema';
 //     </div>
 //   );
 // }
-type Params = Promise<{ schemaId: string }>;
+type Params = Promise<{ schemaId: string }>
 
 export default async function SchemaPage({
-  params
+  params,
 }: {
-  params: Params;
+  params: Params
 }): Promise<React.JSX.Element> {
-  const { schemaId } = await params;
+  const { schemaId } = await params
 
   return (
-    <div className='p-4'>
+    <div className="p-4">
       <ViewSchemas schemaId={schemaId} />
     </div>
-  );
+  )
 }

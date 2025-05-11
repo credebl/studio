@@ -1,10 +1,10 @@
-import WalletSpinup from '@/features/wallet/WalletSpinupComponent';
-import React from 'react';
+import WalletSpinup from '@/features/wallet/WalletSpinupComponent'
+import React from 'react'
 
 const page = () => (
   <div>
     <WalletSpinup />
   </div>
-);
+)
 
-export default page;
+export default page
