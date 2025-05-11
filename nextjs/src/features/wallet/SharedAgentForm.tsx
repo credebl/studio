@@ -3,13 +3,11 @@ import * as yup from 'yup'
 import { Field, Form, Formik } from 'formik'
 import React, { useState } from 'react'
 
-import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ISharedAgentForm } from '../organization/components/interfaces/organization'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import LedgerConfig from './LedgerConfig'
-import { useRouter } from 'next/navigation'
 
 const SharedAgentForm = ({
   orgName,
@@ -21,7 +19,6 @@ const SharedAgentForm = ({
   submitSharedWallet,
 }: ISharedAgentForm): React.JSX.Element => {
   const [walletName, setWalletName] = useState('')
-  const router = useRouter()
 
   return (
     <div className="mt-4 flex-col gap-4">
@@ -56,19 +53,6 @@ const SharedAgentForm = ({
                 )}
               </div>
               <div className="flex items-center justify-between pt-4">
-                <Button
-                  variant="secondary"
-                  onClick={() =>
-                    router.push(
-                      '/organizations/create-organization?createOrg=true',
-                    )
-                  }
-                  className="flex items-center gap-2"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  Back to Create Organization
-                </Button>
-
                 <Button type="submit">Continue to Ledger Setup</Button>
               </div>
             </Form>
