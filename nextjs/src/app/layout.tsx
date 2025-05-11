@@ -1,18 +1,20 @@
-import React from 'react'
-import { auth } from '@/lib/auth'
-import Providers from '@/components/layout/providers'
-import { Toaster } from '@/components/ui/sonner'
-import type { Metadata, Viewport } from 'next'
-import { NuqsAdapter } from 'nuqs/adapters/next/app'
-import NextTopLoader from 'nextjs-toploader'
-import { cookies } from 'next/headers'
-import { cn } from '@/lib/utils'
-import { fontVariables } from '@/lib/font'
 import './globals.css'
 import './theme.css'
-import StoreProvider from './StoreProvider'
-import SessionCheck from '@/features/auth/components/SessionCheck'
+
+import type { Metadata, Viewport } from 'next'
+
+import NextTopLoader from 'nextjs-toploader'
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import PageLayout from '@/components/PageLayout'
+import Providers from '@/components/layout/providers'
+import React from 'react'
+import SessionCheck from '@/features/auth/components/SessionCheck'
+import StoreProvider from './StoreProvider'
+import { Toaster } from '@/components/ui/sonner'
+import { auth } from '@/lib/auth'
+import { cn } from '@/lib/utils'
+import { cookies } from 'next/headers'
+import { fontVariables } from '@/lib/font'
 
 const META_THEME_COLORS = {
   light: '#ffffff',
@@ -37,7 +39,7 @@ export default async function RootLayout({
   const cookieStore = await cookies()
   const activeThemeValue = cookieStore.get('active_theme')?.value
   const isScaled = activeThemeValue?.endsWith('-scaled')
-
+  console.log('inside layout file')
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
