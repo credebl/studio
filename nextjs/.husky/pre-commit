@@ -1,5 +1,2 @@
 #!/bin/sh
-. "$(git rev-parse --show-toplevel)/node_modules/husky/husky.sh"
-
 npx lint-staged
-
