@@ -1,4 +1,4 @@
-import IssueDashboard from '@/features/organization/components/IssueDashboard';
+import IssueDashboard from '@/features/organization/connectionIssuance/components/IssueDashboard';
 import React from 'react';
 
 const page = () => {

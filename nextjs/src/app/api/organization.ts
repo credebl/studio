@@ -1,6 +1,7 @@
 import { axiosGet, axiosPost, axiosPut, ecosystemAxiosPost } from '@/services/apiRequests';
 
 import { AxiosResponse } from 'axios';
+import { GetAllSchemaListParameter } from '@/features/organization/connectionIssuance/type/SchemaCard';
 import { apiRoutes } from '@/config/apiRoutes';
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs';
 
@@ -508,3 +509,21 @@ export const createSchemaRequest = async (
 		return err?.message;
 	}
 };
+
+export const getCredentialDefinitions = async (schemaId: string, orgId: string) => {
+	
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.getCredDefBySchemaId}/${schemaId}/cred-defs`;
+
+	const axiosPayload = {
+		url,
+		config: await getHeaderConfigs(),
+	};
+
+	try {
+		return await axiosGet(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};
+

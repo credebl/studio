@@ -1,5 +1,5 @@
 // src/lib/orgSlice.ts
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 interface OrgInfo {
   id?: string;
@@ -7,12 +7,18 @@ interface OrgInfo {
   description?: string;
   logoUrl?: string;
   roles: string[];
+  activeOrgAgent?: Ledgers
 }
-
+export interface Ledgers {
+  id:          string;
+  name:        string;
+  networkType: string;
+}
 interface OrgState {
   orgId: string;
   ledgerId: string;
   orgInfo: OrgInfo | null;
+  
 }
 
 const initialState: OrgState = {
@@ -34,6 +40,9 @@ const orgSlice = createSlice({
     setOrgInfo: (state, action: PayloadAction<OrgInfo>) => {
       state.orgInfo = action.payload;
     },
+    // setActiveOrgAgent: (state, action: PayloadAction<Ledgers>) => {
+    //   state.orgInfo = action.payload;
+    // },
     clearOrgId: (state) => {
       state.orgId = '';
     },

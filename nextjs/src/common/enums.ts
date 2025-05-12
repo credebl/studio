@@ -35,7 +35,7 @@ export enum Features {
 	VERIFICATION = 'verification',
   }
 
-  export enum SchemaTypes {
+export enum SchemaTypes {
     schema_INDY = 'indy',
     schema_W3C = 'w3c'
 }
@@ -58,3 +58,34 @@ export enum Roles {
   VERIFIER = 'verifier',
   MEMBER = 'member'
 };
+
+export enum CredentialType {
+    INDY = 'indy',
+    JSONLD = 'jsonld',
+}
+export enum ProofType {
+	polygon = 'EcdsaSecp256k1Signature2019',
+	no_ledger = 'Ed25519Signature2018'
+}
+
+export enum IssueCredential {
+	proposalSent = 'proposal-sent',
+	proposalReceived = 'proposal-received',
+	offerSent = 'offer-sent',
+	offerReceived = 'offer-received',
+	declined = 'decliend',
+	requestSent = 'request-sent',
+	requestReceived = 'request-received',
+	credentialIssued = 'credential-issued',
+	credentialReceived = 'credential-received',
+	done = 'done',
+	abandoned = 'abandoned',
+}
+export enum IssueCredentialUserText {
+	offerSent = 'Offered',
+	done = 'Accepted',
+	abandoned = 'Declined',
+	received = 'Pending',
+	proposalReceived= 'Proposal Received',
+	credIssued = 'Credential Issued'
+}
