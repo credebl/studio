@@ -10,12 +10,9 @@ import {
 } from '../../../config/CommonConstant';
 import { JSX, useEffect, useMemo, useState } from 'react';
 import type { AxiosResponse } from 'axios';
-import { pathRoutes } from '../../../config/pathRoutes';
 import React from 'react';
-import { envConfig } from '../../../config/envConfig';
 import { DidMethod, SchemaType, SchemaTypeValue } from '@/common/enums';
 import {
-  createSchemaRequest,
   getOrganizationById
 } from '@/app/api/organization';
 import { useAppSelector } from '@/lib/hooks';
@@ -24,6 +21,8 @@ import { createSchemas } from '@/app/api/schema';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import ConfirmationModal from './ConfirmationModal';
+import { useRouter } from 'next/navigation';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const options = [
   {
@@ -60,7 +59,9 @@ const CreateSchema = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [schemaTypeValues, setSchemaTypeValues] = useState<SchemaTypeValue>();
   const [type, setType] = useState<SchemaType>();
-  const orgId = useAppSelector((state) => state.organization.orgId); // Only use this once
+  const orgId = useAppSelector((state) => state.organization.orgId);
+
+  const route = useRouter();
 
   const initFormData: IFormData = {
     schemaName: '',
@@ -163,7 +164,7 @@ const CreateSchema = () => {
       setLoading(true);
       setTimeout(() => {
         setSuccess(null);
-        window.location.href = pathRoutes.organizations.schemas;
+        route.push('/organizations/schemas');
       }, 1500);
     } else {
       setFailure(createSchema as string);
@@ -176,36 +177,6 @@ const CreateSchema = () => {
     }, 2000);
   };
 
-  const submitSchemaCreationRequest = async (values: IFormData) => {
-    setCreateLoader(true);
-    const schemaFieldName = {
-      endorse: true,
-      type: SchemaType.INDY,
-      schemaPayload: {
-        schemaVersion: values.schemaVersion,
-        schemaName: values.schemaName,
-        attributes: values.attribute
-      }
-    };
-
-    const createSchema = await createSchemaRequest(schemaFieldName, orgId);
-    const { data } = createSchema as AxiosResponse;
-
-    if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-      setSuccess(data?.message);
-      setCreateLoader(false);
-      window.location.href = `${envConfig.PUBLIC_ECOSYSTEM_FRONT_END_URL}${pathRoutes.organizations.createSchema}`;
-      setTimeout(() => setSuccess(null), 2000);
-    } else {
-      setFailure(createSchema as string);
-      setCreateLoader(false);
-      setTimeout(() => setFailure(null), 2000);
-    }
-
-    setTimeout(() => {
-      setShowPopup({ type: 'create', show: false });
-    }, 2000);
-  };
 
   const submitButtonTitle = {
     title: 'Create',
@@ -296,7 +267,9 @@ const CreateSchema = () => {
 
   return (
     <div className='pt-2'>
-      <h1 className='text-foreground text-xl font-semibold ml-10'>Create Schema</h1>
+      <h1 className='text-foreground ml-10 text-xl font-semibold'>
+        Create Schema
+      </h1>
       <Card className='m-0 md:m-6' id='createSchemaCard'>
         <div>
           <Formik
@@ -359,10 +332,10 @@ const CreateSchema = () => {
                 />
                 <div className='items-center space-x-4 md:flex'>
                   <div className='flex-col pr-0 sm:w-full md:flex md:w-96 md:pr-4'>
-                    <div className='text-muted-foreground dark:text-destructive-foreground mb-2 block text-sm font-medium'>
+                    <div>
                       <label
                         htmlFor='schema'
-                        className='text-muted-foreground dark:text-destructive-foreground mb-2 block text-sm font-medium'
+                        className='text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
                       >
                         Schema<span className='text-destructive'>*</span>
                       </label>
@@ -373,7 +346,7 @@ const CreateSchema = () => {
                         id='schemaName'
                         name='schemaName'
                         placeholder='Schema Name eg. PAN CARD'
-                        className='focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 text-muted-foreground dark:text-destructive-foreground block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 sm:text-sm dark:border-gray-600 dark:bg-gray-700 dark:placeholder-gray-400'
+                        className='border-input file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring rounded-lg border bg-transparent p-2.5 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm'
                       />
                       {formikHandlers.errors &&
                       formikHandlers.touched.schemaName &&
@@ -391,12 +364,12 @@ const CreateSchema = () => {
                       className='flex-col sm:w-full md:flex md:w-96'
                       style={{ marginLeft: 0 }}
                     >
-                      <div className='text-muted-foreground dark:text-destructive-foreground mb-2 block text-sm font-medium'>
+                      <div>
                         <label
                           htmlFor='Version'
-                          className='text-muted-foreground dark:text-destructive-foreground mb-2 block text-sm font-medium'
+                          className='text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
                         >
-                          Schema<span className='text-destructive'>*</span>
+                          Version<span className='text-destructive'>*</span>
                         </label>
                       </div>
 
@@ -406,7 +379,7 @@ const CreateSchema = () => {
                           id='schemaVersion'
                           name='schemaVersion'
                           placeholder='eg. 0.1 or 0.0.1'
-                          className='focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 text-muted-foreground dark:text-destructive-foreground block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 sm:text-sm dark:border-gray-600 dark:bg-gray-700 dark:placeholder-gray-400'
+                          className='border-input file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring rounded-lg border bg-transparent p-2.5 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm'
                         />
                         {formikHandlers.errors &&
                         formikHandlers.touched.schemaVersion &&
@@ -421,10 +394,10 @@ const CreateSchema = () => {
                     </div>
                   )}
                 </div>
-                <p className='mt-2 text-sm font-normal text-gray-700 dark:text-gray-200'>
+                <p className='mt-2 text-md font-normal'>
                   You must select at least one attribute to create schema
                 </p>
-                <div className='mt-2 rounded-lg border border-gray-200 pt-4 pb-10'>
+                <div className='bg-card text-card-foreground mt-2 rounded-xl border pt-4 pb-10 shadow'>
                   <FieldArray name='attribute'>
                     {(fieldArrayProps: any): JSX.Element => {
                       const { form, remove, push } = fieldArrayProps;
@@ -436,7 +409,7 @@ const CreateSchema = () => {
                           ? values.schemaName && values.schemaVersion
                           : values.schemaName;
                       return (
-                        <div className='relative flex flex-col dark:bg-gray-800'>
+                        <div className='relative flex flex-col'>
                           {attribute?.map(
                             (element: IAttributes, index: number) => (
                               <div
@@ -469,7 +442,7 @@ const CreateSchema = () => {
                                             true
                                           );
                                         }}
-                                        className='focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 text-muted-foreground dark:text-destructive-foreground block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 sm:text-sm dark:border-gray-600 dark:bg-gray-700 dark:placeholder-gray-400'
+                                        className='border-input file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring rounded-lg border bg-transparent p-2.5 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm'
                                       />
                                       {validSameAttribute(
                                         formikHandlers,
@@ -515,7 +488,7 @@ const CreateSchema = () => {
                                         name={`attribute.${index}.schemaDataType`}
                                         placeholder='Select'
                                         disabled={!areFirstInputsSelected}
-                                        className='focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 text-muted-foreground dark:text-destructive-foreground block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 sm:text-sm dark:border-gray-600 dark:bg-gray-700 dark:placeholder-gray-400'
+                                        className='border-input file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring rounded-lg border bg-transparent p-2.5 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm'
                                       >
                                         {filteredOptions.map((opt) => {
                                           return (
@@ -562,7 +535,7 @@ const CreateSchema = () => {
                                         name={`attribute.${index}.displayName`}
                                         placeholder='Display Name'
                                         disabled={!areFirstInputsSelected}
-                                        className='focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 text-muted-foreground dark:text-destructive-foreground block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 sm:text-sm dark:border-gray-600 dark:bg-gray-700 dark:placeholder-gray-400'
+                                        className='border-input file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring rounded-lg border bg-transparent p-2.5 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm'
                                       />
                                       {validSameAttribute(
                                         formikHandlers,
@@ -606,34 +579,25 @@ const CreateSchema = () => {
                                   <div className='absolute bottom-[-8px] left-6'>
                                     <label
                                       className='flex items-center space-x-2'
-                                      title='This will make the field required when issuing a credential '
+                                      title='This will make the field required when issuing a credential'
                                     >
-                                      <Field
-                                        type='checkbox'
+                                      <Checkbox
                                         name={`attribute[${index}].isRequired`}
-                                        className='h-4 w-4'
-                                        disabled={!areFirstInputsSelected}
                                         checked={
                                           formikHandlers.values.attribute[index]
                                             ?.isRequired || false
                                         }
-                                        onChange={(e: any) => {
-                                          formikHandlers.handleChange(e);
+                                        disabled={!areFirstInputsSelected}
+                                        onCheckedChange={(checked) => {
                                           formikHandlers.setFieldValue(
                                             `attribute[${index}].isRequired`,
-                                            e.target.checked,
+                                            checked,
                                             true
                                           );
                                         }}
+                                        className={`border-primary ring-offset-background focus-visible:ring-ring data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground dark:data-[state=checked]:bg-primary dark:data-[state=checked]:text-primary-foreground h-4 w-4 translate-y-[2px] rounded-sm border focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50`}
                                       />
-                                      <span
-                                        className={`${
-                                          !areFirstInputsSelected
-                                            ? 'text-gray-400'
-                                            : 'text-gray-700 dark:text-gray-200'
-                                        } text-sm`}
-                                      >
-                                        {' '}
+                                      <span className='text-foreground disabled:text-muted-foreground text-sm'>
                                         Required
                                       </span>
                                     </label>
@@ -806,7 +770,7 @@ const CreateSchema = () => {
                       inValidAttributes(formikHandlers, 'attributeName') ||
                       inValidAttributes(formikHandlers, 'displayName')
                     }
-                    className='ml-auto rounded-lg text-center text-base font-medium  sm:w-auto'
+                    className='ml-auto rounded-lg text-center text-base font-medium sm:w-auto'
                     style={{
                       height: '2.6rem',
                       width: 'auto',

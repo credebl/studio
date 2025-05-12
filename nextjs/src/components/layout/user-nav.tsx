@@ -1,7 +1,6 @@
 'use client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,17 +14,19 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+import { useEffect, useState } from 'react';
 
+import { Button } from '@/components/ui/button';
+import { IUserProfile } from '../profile/interfaces';
+import { ThemeSelector } from '../theme-selector';
+import { apiStatusCodes } from '@/config/CommonConstant';
+import { getUserProfile } from '@/app/api/Auth';
+import { logout } from '@/lib/authSlice';
+import { persistor } from '@/lib/store';
+import { setUserProfileDetails } from '@/lib/userSlice';
+import { useAppSelector } from '@/lib/hooks';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/navigation';
-import { useAppSelector } from '@/lib/hooks';
-import { logout } from '@/lib/authSlice';
-import { getUserProfile } from '@/app/api/Auth';
-import { apiStatusCodes } from '@/config/CommonConstant';
-import { useEffect, useState } from 'react';
-import { IUserProfile } from '../profile/interfaces';
-import { persistor } from '@/lib/store';
-import { ThemeSelector } from '../theme-selector';
 
 export function UserNav() {
   const dispatch = useDispatch();
@@ -44,6 +45,7 @@ export function UserNav() {
           response?.data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS
         ) {
           setUserProfile(response.data.data);
+          dispatch(setUserProfileDetails(response.data.data))
         }
       } catch (error) {
         console.error('Error fetching user profile:', error);

@@ -17,10 +17,11 @@ import { getFromLocalStorage } from '../../../api/Auth';
 import CopyDid from '../../../commonComponents/CopyDid';
 import SetDomainValueInput from './SetDomainValueInput';
 import SetPrivateKeyValueInput from './SetPrivateKeyValue';
-import { getOrganizationById, setAgentConfigDetails } from '../../../api/organization';
+import { getOrganizationById } from '../../../api/organization';
 import type { IDedicatedAgentConfig} from '../interfaces';
 import React from 'react';
 import { envConfig } from '../../../config/envConfig';
+import { setAgentConfigDetails } from '../../../../nextjs/src/app/api/Agent';
 
 const RequiredAsterisk = () => <span className="text-xs text-red-500">*</span>
 

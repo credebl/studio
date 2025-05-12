@@ -82,7 +82,7 @@ export interface IAttributesData {
   dataType: string;
 }
 
-export interface SchemaDetails {
+export interface SchemaListItem {
   attribute: string[];
   issuerDid: string;
   createdDate: string;
@@ -126,26 +126,10 @@ export interface CredDeffFieldNameType {
   schemaLedgerId: string;
 }
 
-
 export interface Values {
   tagName: string;
   revocable: boolean;
 }
-
-type SchemaData = {
-  schema: {
-    attrNames: string[];
-    name: string;
-    version: string;
-    issuerId: string;
-  };
-  schemaId: string;
-  resolutionMetadata: Record<string, unknown>;
-  schemaMetadata: {
-    didIndyNamespace: string;
-    indyLedgerSeqNo: number;
-  };
-};
 
 export interface ICredDefCard {
   tag: string;

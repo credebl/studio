@@ -73,6 +73,11 @@ body {
   --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 4px 6px -1px hsl(0 0% 0% / 0.10);
   --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 8px 10px -1px hsl(0 0% 0% / 0.10);
   --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+  --page-bg-gradient: linear-gradient(to top, #fef9c3, #ffffff);
+  --success: #C8F5D8;
+  --error: #f8b0b0;
+  --success-text: #1d5833;
+  --error-text: #dc0425;
 }
 
 /* Dark mode for credebl */
@@ -122,4 +127,28 @@ body {
   --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 4px 6px -1px hsl(0 0% 0% / 0.10);
   --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 8px 10px -1px hsl(0 0% 0% / 0.10);
   --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+  --page-bg-gradient: linear-gradient(to top, #acaaff, #6e82db);
+
+}
+
+.bg-page-gradient {
+  background: var(--page-bg-gradient);
+}
+
+.bg-success {
+  background-color: var(--success);
+  color: #42c773;
+}
+
+.bg-error {
+  background-color: var(--error);
+  color: white;
+}
+
+.text-success {
+  color: var(--success-text);
+}
+
+.text-error {
+  color: var(--error-text);
 }

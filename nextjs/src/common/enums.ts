@@ -89,3 +89,10 @@ export enum IssueCredentialUserText {
 	proposalReceived= 'Proposal Received',
 	credIssued = 'Credential Issued'
 }
+export enum OrganizationRoles {
+	organizationMember = "member",
+	organizationOwner = "owner",
+	organizationIssuer = "issuer",
+	organizationVerifier = "verifier",
+	organizationAdmin= 'admin'
+}

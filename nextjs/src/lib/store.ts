@@ -6,18 +6,22 @@ import authSlice from './authSlice'
 import orgSlice from './orgSlice'
 import profileSlice from './profileSlice'
 import storageReducer from './storageKeys'
+import userSlice from './userSlice'
+import walletSpinupSlice from './walletSpinupSlice'
 
 const rootReducer = combineReducers({
   auth : authSlice,
   profile: profileSlice,
   organization: orgSlice,
-  storageKeys: storageReducer
+  storageKeys: storageReducer,
+  user: userSlice,
+  wallet:walletSpinupSlice
 })
 
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth', 'profile', 'organization','storageKeys']
+  whitelist: ['auth', 'profile', 'organization','storageKeys', 'user', 'wallet']
 }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)

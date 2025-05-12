@@ -1,4 +1,5 @@
 'use client';
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -13,31 +14,35 @@ import { Fragment } from 'react';
 
 export function Breadcrumbs() {
   const items = useBreadcrumbs();
+
   if (items.length === 0) return null;
 
   return (
     <Breadcrumb>
       <BreadcrumbList>
-        {items.map((item, index) => (
-          <Fragment key={item.link ? item.link : `${item.title}-${index}`}>
+        {items.map((item, index) => {
+          const decodedTitle = decodeURIComponent(item.title);
 
-            {index !== items.length - 1 && (
-              <BreadcrumbItem className='hidden md:block'>
-                <BreadcrumbLink href={item.link || `/schemas/${item.title}`}>
-                  {item.title}
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-            )}
-            {index < items.length - 1 && (
-              <BreadcrumbSeparator className='hidden md:block'>
-                <IconSlash />
-              </BreadcrumbSeparator>
-            )}
-            {index === items.length - 1 && (
-              <BreadcrumbPage>{item.title}</BreadcrumbPage>
-            )}
-          </Fragment>
-        ))}
+          return (
+            <Fragment key={item.link ? item.link : `${item.title}-${index}`}>
+              {index !== items.length - 1 && (
+                <BreadcrumbItem className='hidden md:block'>
+                  <BreadcrumbLink href={item.link || `/schemas/${item.title}`}>
+                    {decodedTitle}
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+              )}
+              {index < items.length - 1 && (
+                <BreadcrumbSeparator className='hidden md:block'>
+                  <IconSlash />
+                </BreadcrumbSeparator>
+              )}
+              {index === items.length - 1 && (
+                <BreadcrumbPage>{decodedTitle}</BreadcrumbPage>
+              )}
+            </Fragment>
+          );
+        })}
       </BreadcrumbList>
     </Breadcrumb>
   );

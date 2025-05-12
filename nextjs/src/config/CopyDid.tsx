@@ -43,7 +43,7 @@ const CopyDid: React.FC<IProps> = ({
       >
         {copied ? (
           <svg
-            className='h-5 w-5 text-green-500'
+            className='h-5 w-5 text-[var(--color-green)]'
             viewBox='0 0 24 24'
             strokeWidth={2}
             stroke='green'
@@ -56,7 +56,7 @@ const CopyDid: React.FC<IProps> = ({
           </svg>
         ) : (
           <svg
-            className='h-5 w-5 text-black dark:text-white'
+            className='h-5 w-5 text-[var(--color-black)] dark:text-[var(--color-white)]'
             viewBox='0 0 24 24'
             strokeWidth={2}
             stroke='currentColor'

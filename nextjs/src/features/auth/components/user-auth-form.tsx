@@ -263,8 +263,8 @@ export default function SignInViewPage() {
   };
 
   return (
-    <div className='relative flex h-screen w-full items-center justify-center'>
-      <div className='bg-card relative z-10 w-full max-w-md rounded-xl p-8 shadow'>
+    <div className='relative flex w-full items-center justify-center'>
+      <div className='bg-card relative z-10 w-full max-w-md rounded-xl p-8 shadow-xl border-border h-full overflow-hidden border transition-transform duration-300'>
         <div className='mb-6 text-center'>
           <p className='text-muted-foreground text-sm'>
             Sign in to your account to continue
@@ -277,8 +277,8 @@ export default function SignInViewPage() {
             variant='ghost'
             className={`flex flex-1 items-center justify-center gap-1 px-4 py-2 ${
               isPasswordTab
-                ? 'bg-card text-foreground'
-                : 'bg-muted text-muted-foreground'
+                ? 'bg-muted text-muted-foreground'
+                : 'bg-card text-foreground'
             }`}
             onClick={() => setIsPasswordTab(true)}
           >
@@ -290,8 +290,8 @@ export default function SignInViewPage() {
             variant='ghost'
             className={`flex flex-1 items-center justify-center gap-1 px-4 py-2 ${
               !isPasswordTab
-                ? 'bg-card text-foreground'
-                : 'bg-muted text-muted-foreground'
+                ? 'bg-muted text-muted-foreground'
+                : 'bg-card text-foreground'
             }`}
             onClick={() => setIsPasswordTab(false)}
           >
@@ -365,7 +365,7 @@ export default function SignInViewPage() {
               <div className='text-right text-sm'>
                 <Link
                   href='/forgot-password'
-                  className='text-primary hover:underline'
+                  className='text-secondary-foreground hover:underline'
                 >
                   Forgot password?
                 </Link>
@@ -386,7 +386,7 @@ export default function SignInViewPage() {
             <div className='mt-6 flex flex-col gap-3'>
               <Button
                 type='button'
-                className='flex w-full items-center justify-center gap-3 rounded-md border border-gray-300 bg-white py-2 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-gray-50 hover:shadow-sm'
+                className='flex w-full items-center justify-center gap-3 rounded-md border border-[var(--color-gray-300)] bg-[var(--color-white)] py-2 text-sm font-medium text-[var(--color-gray-700)] transition-all duration-200 hover:bg-[var(--color-gray-50)] hover:shadow-sm'
                 onClick={() => route.push('#')}
               >
                 <Image
@@ -400,7 +400,7 @@ export default function SignInViewPage() {
 
               <Button
                 type='button'
-                className='flex w-full items-center justify-center gap-2 rounded-md bg-black text-white transition-transform duration-200 hover:-translate-y-0.5 hover:bg-gray-800 active:scale-95'
+                className='flex w-full items-center justify-center gap-2 rounded-md bg-[var(--color-black)] text-[var(--color-white)] transition-transform duration-200 hover:-translate-y-0.5 hover:bg-[var(--color-gray-800)] active:scale-95'
                 onClick={() => route.push('#')}
               >
                 <Github className='h-5 w-5' />
@@ -414,7 +414,7 @@ export default function SignInViewPage() {
               </span>
               <Link
                 href='/auth/sign-up'
-                className='text-primary hover:underline'
+                className='text-secondary-foreground hover:underline'
               >
                 Create one
               </Link>
