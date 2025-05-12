@@ -12,6 +12,7 @@ export const getLedgersPlatformUrl = async (indyNamespace: string) => {
     url: `${apiRoutes.Platform.getLedgerPlatformUrl}${indyNamespace}`,
     config: getHeaderConfigs(),
   }
+console.log('Agent file')
 
   try {
     const response = await axiosGet(details)
