@@ -1,38 +1,39 @@
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Field } from "formik";
-import { useEffect, useState, type ChangeEvent } from "react";
-import GenerateBtnPolygon from "./GenerateBtnPolygon";
-import { ethers } from 'ethers';
-import type { AxiosResponse } from "axios";
-import TokenWarningMessage from "./TokenWarningMessage";
-import { createPolygonKeyValuePair } from "@/app/api/Agent";
-import { apiStatusCodes } from "@/config/CommonConstant";
-import CopyDid from "./CopyDid";
-import { envConfig } from "@/config/envConfig";
-import { CommonConstants, Network } from "../common/enum";
+import React from 'react'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { Field } from 'formik'
+import { type ChangeEvent, useEffect, useState } from 'react'
+import GenerateBtnPolygon from './GenerateBtnPolygon'
+import { ethers } from 'ethers'
+import type { AxiosResponse } from 'axios'
+import TokenWarningMessage from './TokenWarningMessage'
+import { createPolygonKeyValuePair } from '@/app/api/Agent'
+import { apiStatusCodes } from '@/config/CommonConstant'
+import CopyDid from './CopyDid'
+import { envConfig } from '@/config/envConfig'
+import { CommonConstants, Network } from '../common/enum'
 
 export interface IPolygonKeys {
-	privateKey: string;
-	publicKeyBase58: string;
-	address: string;
+  privateKey: string
+  publicKeyBase58: string
+  address: string
 }
 
 interface IProps {
-  setPrivateKeyValue: (val: string) => void;
-  orgId?:string;
-  privateKeyValue: string | undefined;
+  setPrivateKeyValue: (val: string) => void
+  orgId?: string
+  privateKeyValue: string | undefined
   formikHandlers: {
-    handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    handleBlur: (e: React.FocusEvent<HTMLInputElement>) => void;
+    handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+    handleBlur: (e: React.FocusEvent<HTMLInputElement>) => void
     errors: {
-      privatekey?: string;
-    };
+      privatekey?: string
+    }
     touched: {
-      privatekey?: boolean;
-    };
-  };
+      privatekey?: boolean
+    }
+  }
 }
 
 const SetPrivateKeyValueInput = ({
@@ -41,80 +42,82 @@ const SetPrivateKeyValueInput = ({
   privateKeyValue,
   formikHandlers,
 }: IProps) => {
-  const [havePrivateKey, setHavePrivateKey] = useState(false);
-  const [generatedKeys, setGeneratedKeys] = useState<IPolygonKeys | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [havePrivateKey, setHavePrivateKey] = useState(false)
+  const [generatedKeys, setGeneratedKeys] = useState<IPolygonKeys | null>(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
   const checkWalletBalance = async (privateKey: string, network: Network) => {
     try {
       const rpcUrls = {
         testnet: envConfig.PLATFORM_DATA.polygonTestnet,
         mainnet: envConfig.PLATFORM_DATA.polygonMainnet,
-      };
+      }
 
-      const provider = new ethers.JsonRpcProvider(rpcUrls[network]);
-      const wallet = new ethers.Wallet(privateKey, provider);
-      const balance = await provider.getBalance(await wallet.getAddress());
-      const etherBalance = ethers.formatEther(balance);
+      const provider = new ethers.JsonRpcProvider(rpcUrls[network])
+      const wallet = new ethers.Wallet(privateKey, provider)
+      const balance = await provider.getBalance(await wallet.getAddress())
+      const etherBalance = ethers.formatEther(balance)
 
       setErrorMessage(
         parseFloat(etherBalance) < CommonConstants.BALANCELIMIT
-          ? "You have insufficient funds."
-          : null
-      );
+          ? 'You have insufficient funds.'
+          : null,
+      )
 
-      return etherBalance;
+      return etherBalance
     } catch (error) {
-      console.error("Error checking wallet balance:", error);
-      return null;
+      console.error('Error checking wallet balance:', error)
+      return null
     }
-  };
+  }
 
   useEffect(() => {
     if (privateKeyValue && privateKeyValue.length === 64) {
-      checkWalletBalance(privateKeyValue, Network.TESTNET);
+      checkWalletBalance(privateKeyValue, Network.TESTNET)
     } else {
-      setErrorMessage(null);
+      setErrorMessage(null)
     }
-  }, [privateKeyValue]);
+  }, [privateKeyValue])
 
   useEffect(() => {
     if (havePrivateKey) {
-      setPrivateKeyValue("");
-      setErrorMessage(null);
-      setGeneratedKeys(null);
+      setPrivateKeyValue('')
+      setErrorMessage(null)
+      setGeneratedKeys(null)
     } else {
-      setPrivateKeyValue("");
-      setErrorMessage(null);
+      setPrivateKeyValue('')
+      setErrorMessage(null)
     }
-  }, [havePrivateKey]);
+  }, [havePrivateKey])
 
   const generatePolygonKeyValuePair = async () => {
-    setLoading(true);
+    setLoading(true)
     try {
-      const resCreatePolygonKeys = await createPolygonKeyValuePair(orgId as string);
-      const { data } = resCreatePolygonKeys as AxiosResponse;
+      const resCreatePolygonKeys = await createPolygonKeyValuePair(
+        orgId as string,
+      )
+      const { data } = resCreatePolygonKeys as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-        setGeneratedKeys(data?.data);
-        setLoading(false);
-        const privateKey = data?.data?.privateKey.slice(2);
-        setPrivateKeyValue(privateKey || privateKeyValue);
-        await checkWalletBalance(privateKey || privateKeyValue, Network.TESTNET);
+        setGeneratedKeys(data?.data)
+        setLoading(false)
+        const privateKey = data?.data?.privateKey.slice(2)
+        setPrivateKeyValue(privateKey || privateKeyValue)
+        await checkWalletBalance(privateKey || privateKeyValue, Network.TESTNET)
       }
     } catch (err) {
-      console.error("Generate private key ERROR::::", err);
+      console.error('Generate private key ERROR::::', err)
     }
-  };
+  }
 
   return (
-    <div className="mb-3 relative">
-      <div className="flex items-center gap-2 mt-4">
+    <div className="relative mb-3">
+      <div className="mt-4 flex items-center gap-2">
         <Checkbox
           id="havePrivateKey"
           className="border"
-          onCheckedChange={(checked) => setHavePrivateKey(checked)}
+          onCheckedChange={(checked) => setHavePrivateKey(checked as boolean)}
         />
         <Label htmlFor="havePrivateKey">Already have a private key?</Label>
       </div>
@@ -127,12 +130,12 @@ const SetPrivateKeyValueInput = ({
 
           {generatedKeys && (
             <>
-              <div className="mt-3 relative flex items-center">
+              <div className="relative mt-3 flex items-center">
                 <Field
                   as={Input}
                   id="privatekey"
                   name="privatekey"
-                  className="truncate w-[480px]"
+                  className="w-[480px] truncate"
                   value={generatedKeys.privateKey.slice(2)}
                   placeholder="Generated private key"
                   readOnly
@@ -141,13 +144,15 @@ const SetPrivateKeyValueInput = ({
               </div>
 
               {errorMessage && (
-                <span className="static bottom-0 text-destructive text-xs">{errorMessage}</span>
+                <span className="text-destructive static bottom-0 text-xs">
+                  {errorMessage}
+                </span>
               )}
 
               <TokenWarningMessage />
 
-              <div className="my-3 relative">
-                <p className="text-sm truncate">
+              <div className="relative my-3">
+                <p className="truncate text-sm">
                   <span className="font-semibold">Address:</span>
                   <div className="flex">
                     <CopyDid value={generatedKeys.address} />
@@ -159,7 +164,7 @@ const SetPrivateKeyValueInput = ({
         </>
       ) : (
         <>
-          <div className="mt-3 relative flex items-center">
+          <div className="relative mt-3 flex items-center">
             <Field
               as={Input}
               id="privatekey"
@@ -167,8 +172,8 @@ const SetPrivateKeyValueInput = ({
               className="w-[480px]"
               value={privateKeyValue}
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                setPrivateKeyValue(e.target.value);
-                formikHandlers.handleChange(e);
+                setPrivateKeyValue(e.target.value)
+                formikHandlers.handleChange(e)
               }}
               onBlur={formikHandlers.handleBlur}
               placeholder="Enter private key"
@@ -176,19 +181,23 @@ const SetPrivateKeyValueInput = ({
             <CopyDid value={privateKeyValue || ''} />
           </div>
 
-          <span className="static bottom-0 text-destructive text-xs">
+          <span className="text-destructive static bottom-0 text-xs">
             {formikHandlers.errors?.privatekey &&
               formikHandlers.touched?.privatekey &&
               formikHandlers.errors.privatekey}
           </span>
 
-          {errorMessage && <span className="static bottom-0 text-destructive text-xs">{errorMessage}</span>}
+          {errorMessage && (
+            <span className="text-destructive static bottom-0 text-xs">
+              {errorMessage}
+            </span>
+          )}
 
           <TokenWarningMessage />
         </>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default SetPrivateKeyValueInput;
+export default SetPrivateKeyValueInput

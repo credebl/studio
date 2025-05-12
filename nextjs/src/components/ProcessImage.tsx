@@ -1,29 +1,36 @@
-import type { ChangeEvent } from 'react';
-import {
-	imageSizeAccepted,
-} from '../config/CommonConstant';
+import type { ChangeEvent } from 'react'
+import { imageSizeAccepted } from '../config/CommonConstant'
 
-export const processImageFile = (event: ChangeEvent<HTMLInputElement>, callback:any) => {
-  const reader = new FileReader();
-  const file = event?.target?.files;
-if(file){
-  const fileSize = Number((file[0]?.size / 1024 / 1024)?.toFixed(2));
-  const extension = file[0]?.name
-    ?.substring(file[0]?.name?.lastIndexOf('.') + 1)
-    ?.toLowerCase();
+type ImageProcessCallback = (result: string | null, error?: string) => void
 
-  if (
-    (extension === 'png' || extension === 'jpeg' || extension === 'jpg') &&
-    fileSize <= imageSizeAccepted
-  ) {
-    reader.onloadend = () => {
-      callback(reader.result);
-    };
-    reader.readAsDataURL(file[0]);
-    event.preventDefault();
-  } else {
-    callback(null, extension === 'png' || extension === 'jpeg' || extension === 'jpg' ? 'Please check image size' : 'Invalid image type');
+export const processImageFile = (
+  event: ChangeEvent<HTMLInputElement>,
+  callback: ImageProcessCallback,
+) => {
+  const reader = new FileReader()
+  const file = event?.target?.files
+  if (file) {
+    const fileSize = Number((file[0]?.size / 1024 / 1024)?.toFixed(2))
+    const extension = file[0]?.name
+      ?.substring(file[0]?.name?.lastIndexOf('.') + 1)
+      ?.toLowerCase()
+
+    if (
+      (extension === 'png' || extension === 'jpeg' || extension === 'jpg') &&
+      fileSize <= imageSizeAccepted
+    ) {
+      reader.onloadend = () => {
+        callback(reader.result as string)
+      }
+      reader.readAsDataURL(file[0])
+      event.preventDefault()
+    } else {
+      callback(
+        null,
+        extension === 'png' || extension === 'jpeg' || extension === 'jpg'
+          ? 'Please check image size'
+          : 'Invalid image type',
+      )
+    }
   }
 }
-
-};

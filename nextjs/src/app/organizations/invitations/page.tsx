@@ -1,12 +1,10 @@
 import React from 'react'
-import ReceivedInvitations from '@/features/invitations/components/receivedInvitations';
+import ReceivedInvitations from '@/features/invitations/components/receivedInvitations'
 
-const page = () => {
-  return (
-    <div>
-      <ReceivedInvitations />
-    </div>
-  )
-}
+const page = () => (
+  <div>
+    <ReceivedInvitations />
+  </div>
+)
 
-export default page;
+export default page

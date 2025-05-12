@@ -1,23 +1,23 @@
-'use client';
+'use client'
 
-import React from 'react';
-import ThemeProvider from './ThemeToggle/theme-provider';
-import { SessionProvider, SessionProviderProps } from 'next-auth/react';
-import { ActiveThemeProvider } from '../active-theme';
+import React from 'react'
+import ThemeProvider from './ThemeToggle/theme-provider'
+import { SessionProvider, SessionProviderProps } from 'next-auth/react'
+import { ActiveThemeProvider } from '../active-theme'
 
 export default function Providers({
   session,
   activeThemeValue,
-  children
+  children,
 }: Readonly<{
-  session: SessionProviderProps['session'];
-  activeThemeValue: string;
-  children: React.ReactNode;
+  session: SessionProviderProps['session']
+  activeThemeValue: string
+  children: React.ReactNode
 }>) {
   return (
     <ThemeProvider
-      attribute='class'
-      defaultTheme='system'
+      attribute="class"
+      defaultTheme="system"
       enableSystem
       disableTransitionOnChange
       enableColorScheme
@@ -26,5 +26,5 @@ export default function Providers({
         <SessionProvider session={session}>{children}</SessionProvider>
       </ActiveThemeProvider>
     </ThemeProvider>
-  );
+  )
 }

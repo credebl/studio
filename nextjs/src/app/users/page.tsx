@@ -1,8 +1,6 @@
-import Members from '@/features/users/components/Members';
-import React from 'react';
+import Members from '@/features/users/components/Members'
+import React from 'react'
 
-const page = () => {
-  return <Members />
-};
+const page = () => <Members />
 
-export default page;
+export default page

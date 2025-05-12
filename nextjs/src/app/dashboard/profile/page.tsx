@@ -1,9 +1,10 @@
-import ProfileViewPage from '@/features/profile/components/profile-view-page';
+import React from 'react'
+import ProfileViewPage from '@/features/profile/components/profile-view-page'
 
 export const metadata = {
-  title: 'Dashboard : Profile'
-};
+  title: 'Dashboard : Profile',
+}
 
 export default async function Page() {
-  return <ProfileViewPage />;
+  return <ProfileViewPage />
 }

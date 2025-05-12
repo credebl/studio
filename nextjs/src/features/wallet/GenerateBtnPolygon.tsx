@@ -1,14 +1,17 @@
-import React from "react";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import React from 'react'
 
 interface IProps {
-  generatePolygonKeyValuePair: () => void;
-  loading: boolean;
+  generatePolygonKeyValuePair: () => void
+  loading: boolean
 }
 
-const GenerateButtonPolygon = ({ generatePolygonKeyValuePair, loading }: IProps) => (
-  <div className="my-3 relative grid grid-cols-2 gap-x-9 md:gap-56 w-fit">
+const GenerateButtonPolygon = ({
+  generatePolygonKeyValuePair,
+  loading,
+}: IProps) => (
+  <div className="relative my-3 grid w-fit grid-cols-2 gap-x-9 md:gap-56">
     <div className="mt-4">
       <Label htmlFor="generateKey">Generate private key</Label>
       <span className="text-destructive text-xs">*</span>
@@ -17,13 +20,12 @@ const GenerateButtonPolygon = ({ generatePolygonKeyValuePair, loading }: IProps)
     <Button
       id="generateKey"
       type="button"
-      isLoading={loading}
       className=""
       onClick={generatePolygonKeyValuePair}
     >
       Generate
     </Button>
   </div>
-);
+)
 
-export default GenerateButtonPolygon;
+export default GenerateButtonPolygon

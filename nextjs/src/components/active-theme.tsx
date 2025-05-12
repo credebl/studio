@@ -1,67 +1,68 @@
-'use client';
+'use client'
 
+import React from 'react'
 import {
   ReactNode,
   createContext,
   useContext,
   useEffect,
-  useState
-} from 'react';
+  useState,
+} from 'react'
 
-const COOKIE_NAME = 'active_theme';
-const CREDEBL_THEMES = 'credebl';
+const COOKIE_NAME = 'active_theme'
+const CREDEBL_THEMES = 'credebl'
 
 function setThemeCookie(theme: string) {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') {
+    return
+  }
 
-  document.cookie = `${COOKIE_NAME}=${theme}; path=/; max-age=31536000; SameSite=Lax; ${window.location.protocol === 'https:' ? 'Secure;' : ''}`;
+  document.cookie = `${COOKIE_NAME}=${theme}; path=/; max-age=31536000; SameSite=Lax; ${window.location.protocol === 'https:' ? 'Secure;' : ''}`
 }
 
 type ThemeContextType = {
-  readonly activeTheme: string;
-  readonly setActiveTheme: (theme: string) => void;
-};
+  readonly activeTheme: string
+  readonly setActiveTheme: (theme: string) => void
+}
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ActiveThemeProvider({
   children,
-  initialTheme
+  initialTheme,
 }: {
-  readonly children: ReactNode;
-  readonly initialTheme?: string;
+  readonly children: ReactNode
+  readonly initialTheme?: string
 }) {
   const [activeTheme, setActiveTheme] = useState<string>(
-    () => initialTheme ?? CREDEBL_THEMES
-  );
+    () => initialTheme ?? CREDEBL_THEMES,
+  )
 
   useEffect(() => {
-    setThemeCookie(activeTheme);
+    setThemeCookie(activeTheme)
 
     Array.from(document.body.classList)
       .filter((className) => className.startsWith('theme-'))
       .forEach((className) => {
-        document.body.classList.remove(className);
-      });
-    document.body.classList.add(`theme-${activeTheme}`);
+        document.body.classList.remove(className)
+      })
+    document.body.classList.add(`theme-${activeTheme}`)
     if (activeTheme.endsWith('-scaled')) {
-      document.body.classList.add('theme-scaled');
+      document.body.classList.add('theme-scaled')
     }
-  }, [activeTheme]);
+  }, [activeTheme])
 
   return (
     <ThemeContext.Provider value={{ activeTheme, setActiveTheme }}>
       {children}
     </ThemeContext.Provider>
-  );
+  )
 }
 
 export function useThemeConfig() {
-  const context = useContext(ThemeContext);
+  const context = useContext(ThemeContext)
   if (context === undefined) {
-    throw new Error(
-      'useThemeConfig must be used within an ActiveThemeProvider'
-    );
+    throw new Error('useThemeConfig must be used within an ActiveThemeProvider')
   }
-  return context;
+  return context
 }

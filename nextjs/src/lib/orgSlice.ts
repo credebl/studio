@@ -1,25 +1,19 @@
 // src/lib/orgSlice.ts
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 interface OrgInfo {
-  id?: string;
-  name?: string;
-  description?: string;
-  logoUrl?: string;
-  roles: string[];
-  activeOrgAgent?: Ledgers
-}
-export interface Ledgers {
-  id:          string;
-  name:        string;
-  networkType: string;
+  id?: string
+  name?: string
+  description?: string
+  logoUrl?: string
+  roles: string[]
 }
 interface OrgState {
-  orgId: string;
-  ledgerId: string;
-  selectedOrgId: string;
-  orgInfo: OrgInfo | null;
-  orgRoles: string[];
+  orgId: string
+  ledgerId: string
+  selectedOrgId: string
+  orgInfo: OrgInfo | null
+  orgRoles: string[]
 }
 
 const initialState: OrgState = {
@@ -27,39 +21,39 @@ const initialState: OrgState = {
   ledgerId: '',
   selectedOrgId: '',
   orgInfo: null,
-  orgRoles: []
-};
+  orgRoles: [],
+}
 
 const orgSlice = createSlice({
   name: 'organization',
   initialState,
   reducers: {
     setOrgId: (state, action: PayloadAction<string>) => {
-      state.orgId = action.payload;
+      state.orgId = action.payload
     },
     setLedgerId: (state, action: PayloadAction<string>) => {
-      state.ledgerId = action.payload;
+      state.ledgerId = action.payload
     },
     setOrgInfo: (state, action: PayloadAction<OrgInfo>) => {
-      state.orgInfo = action.payload;
+      state.orgInfo = action.payload
     },
     setSelectedOrgId: (state, action: PayloadAction<string>) => {
-      state.selectedOrgId = action.payload;
+      state.selectedOrgId = action.payload
     },
     setOrgRoles: (state, action: PayloadAction<string[]>) => {
-      state.orgRoles = action.payload;
+      state.orgRoles = action.payload
     },
     clearOrgId: (state) => {
-      state.orgId = '';
+      state.orgId = ''
     },
     clearLedgerId: (state) => {
-      state.ledgerId = '';
+      state.ledgerId = ''
     },
     clearOrgInfo: (state) => {
-      state.orgInfo = null;
-    }
-  }
-});
+      state.orgInfo = null
+    },
+  },
+})
 
 export const {
   setOrgId,
@@ -69,6 +63,6 @@ export const {
   setOrgRoles,
   clearOrgId,
   clearLedgerId,
-  clearOrgInfo
-} = orgSlice.actions;
-export default orgSlice.reducer;
+  clearOrgInfo,
+} = orgSlice.actions
+export default orgSlice.reducer

@@ -1,5 +1,5 @@
-import { NextAuthConfig } from 'next-auth';
-import CredentialProvider from 'next-auth/providers/credentials';
+import { NextAuthConfig } from 'next-auth'
+import CredentialProvider from 'next-auth/providers/credentials'
 // import GithubProvider from 'next-auth/providers/github';
 // import GoogleProvider from 'next-auth/providers/google';
 
@@ -13,28 +13,28 @@ const authConfig = {
     CredentialProvider({
       credentials: {
         email: {
-          type: 'email'
+          type: 'email',
         },
         password: {
-          type: 'password'
-        }
+          type: 'password',
+        },
       },
       async authorize(credentials) {
         const user = {
           id: '',
           name: '',
-          email: credentials?.email as string
-        };
-        if (user) {
-          return user;
+          email: credentials?.email as string,
         }
-        return null;
-      }
-    })
+        if (user) {
+          return user
+        }
+        return null
+      },
+    }),
   ],
   pages: {
-    signIn: '/auth/sign-in', 
-  }
-} satisfies NextAuthConfig;
+    signIn: '/auth/sign-in',
+  },
+} satisfies NextAuthConfig
 
-export default authConfig;
+export default authConfig

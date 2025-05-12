@@ -1,44 +1,46 @@
-import { auth } from '@/lib/auth';
-import Providers from '@/components/layout/providers';
-import { Toaster } from '@/components/ui/sonner';
-import type { Metadata, Viewport } from 'next';
-import { NuqsAdapter } from 'nuqs/adapters/next/app';
-import NextTopLoader from 'nextjs-toploader';
-import { cookies } from 'next/headers';
-import { cn } from '@/lib/utils';
-import { fontVariables } from '@/lib/font';
-import './globals.css';
-import './theme.css';
-import StoreProvider from './StoreProvider';
-import SessionCheck from '@/features/auth/components/SessionCheck';
-import PageLayout from '@/components/PageLayout';
+import './globals.css'
+import './theme.css'
+
+import type { Metadata, Viewport } from 'next'
+
+import NextTopLoader from 'nextjs-toploader'
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
+import PageLayout from '@/components/PageLayout'
+import Providers from '@/components/layout/providers'
+import React from 'react'
+import SessionCheck from '@/features/auth/components/SessionCheck'
+import StoreProvider from './StoreProvider'
+import { Toaster } from '@/components/ui/sonner'
+import { auth } from '@/lib/auth'
+import { cn } from '@/lib/utils'
+import { cookies } from 'next/headers'
+import { fontVariables } from '@/lib/font'
 
 const META_THEME_COLORS = {
   light: '#ffffff',
-  dark: '#09090b'
-};
+  dark: '#09090b',
+}
 
 export const metadata: Metadata = {
   title: 'CREDEBL - Studio',
-  description: 'CREDEBL - Studio with Next.js and Shadcn'
-};
+  description: 'CREDEBL - Studio with Next.js and Shadcn',
+}
 
 export const viewport: Viewport = {
-  themeColor: META_THEME_COLORS.light
-};
+  themeColor: META_THEME_COLORS.light,
+}
 
 export default async function RootLayout({
-  children
+  children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
-  const session = await auth();
-  const cookieStore = await cookies();
-  const activeThemeValue = cookieStore.get('active_theme')?.value;
-  const isScaled = activeThemeValue?.endsWith('-scaled');
-
+  const session = await auth()
+  const cookieStore = await cookies()
+  const activeThemeValue = cookieStore.get('active_theme')?.value
+  const isScaled = activeThemeValue?.endsWith('-scaled')
   return (
-    <html lang='en' suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -48,7 +50,7 @@ export default async function RootLayout({
                   document.querySelector('meta[name="theme-color"]').setAttribute('content', '${META_THEME_COLORS.dark}')
                 }
               } catch (_) {}
-            `
+            `,
           }}
         />
       </head>
@@ -57,7 +59,7 @@ export default async function RootLayout({
           'bg-background overflow-hidden overscroll-none font-sans antialiased',
           activeThemeValue ? `theme-${activeThemeValue}` : '',
           isScaled ? 'theme-scaled' : '',
-          fontVariables
+          fontVariables,
         )}
       >
         <NextTopLoader showSpinner={false} />
@@ -76,5 +78,5 @@ export default async function RootLayout({
         </NuqsAdapter>
       </body>
     </html>
-  );
+  )
 }
