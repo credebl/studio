@@ -334,7 +334,7 @@ export default function Members() {
     );
   };
 
-  const hasAdminRights = orgUserRole?.includes(Roles.ADMIN) ?? orgUserRole?.includes(Roles.OWNER);
+  const hasAdminRights = orgUserRole?.includes(Roles.ADMIN) || orgUserRole?.includes(Roles.OWNER);
 
   return (
     <div className="p-5">
