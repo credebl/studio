@@ -30,7 +30,7 @@ export const viewport: Viewport = {
   themeColor: META_THEME_COLORS.light,
 }
 
-export default async function RootLayout ({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
