@@ -14,7 +14,7 @@ interface IProps {
 
 const SummaryCard = ({ schemaName, version, credDefId, schemaId, hideCredDefId, schemaAttributes }: Readonly<IProps>) => {
 	return (
-		<Card className='my-6'>
+		<Card className='my-6 bg-background'>
 			<CardContent className='p-6'>
 				<div className="flex justify-between items-start">
 					<div>

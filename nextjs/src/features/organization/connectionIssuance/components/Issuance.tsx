@@ -445,7 +445,7 @@ const IssueCred = () => {
 						Issuance
 					</h1>
 				</div>
-				<Card>
+				<Card className='dark:bg-gray-800 dark:border-gray-700'>
 					<CardContent className='p-4'>
 						<p className="text-xl pb-6 font-semibold dark:text-white">
 							Select Schema and credential definition
@@ -489,7 +489,7 @@ const IssueCred = () => {
 							</div>
 						) : (
 							<>
-								<div className="mt-6 p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800 gap-6">
+								<div className="mt-6 p-4 bg-white border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800 gap-6">
 									<Formik
 										initialValues={{
 											...issuanceFormPayload,
@@ -523,7 +523,7 @@ const IssueCred = () => {
 																return (
 																	<div key={user.connectionId}>
 																		<Card
-																			className="my-5 px-4 py-8"
+																			className="my-5 px-4 py-8 bg-background"
 																			style={{
 																				maxWidth: '100%',
 																				maxHeight: '100%',
