@@ -14,7 +14,6 @@ import { EmptyMessage } from "@/components/EmptyMessage";
 import { IconSearch } from "@tabler/icons-react";
 import { Input } from "@/components/ui/input";
 import { Invitation } from "../interfaces/invitation-interface";
-import Loader from "@/components/Loader";
 import { OrgRole } from "@/features/users/components/users-interface";
 import { apiStatusCodes } from "@/config/CommonConstant";
 import { pathRoutes } from "@/config/pathRoutes";
@@ -215,14 +214,7 @@ export default function ReceivedInvitations() {
               }}
             />
           )}
-
-              {loading && (
-                <div className="flex items-center justify-center py-12">
-                <Loader />
-              </div>
-              )}
-
-
+          
               {searchText && !checkSearchMatch(invitationsList, searchText) ? (
               <EmptyMessage
                 title="No Organization Invitation Found"
@@ -292,95 +284,6 @@ export default function ReceivedInvitations() {
                 ))}
               </div>
             )}
-
-            {!loading && (
-              <EmptyMessage
-              title="No Invitations"
-              description="You don't have any invitation"
-              height="250px"
-            />
-            )}
-          {/* {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader />
-            </div>
-          ) : invitationsList && invitationsList?.length > 0 ? (
-            searchText && !checkSearchMatch(invitationsList, searchText) ? (
-              <EmptyMessage
-                title="No Organization Invitation Found"
-                description="No organization invitations match your search criteria."
-                height="250px"
-              />
-            ) : (
-              <div className="space-y-4">
-                {invitationsList.map((invitation, index) => (
-                  <Card key={invitation.id ?? index} className="overflow-hidden">
-                    <CardContent className="p-6">
-                      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <div className="flex items-start gap-4">
-                          <div className="shrink-0">
-                          <Avatar className="h-16 w-16 border">
-                              {invitation.organisation.logoUrl ? (
-                                <AvatarImage
-                                  src={invitation.organisation.logoUrl}
-                                  alt={invitation.organisation.name}
-                                  className="object-cover"
-                                />
-                              ) : (
-                                <AvatarFallback>
-                                  {invitation.organisation.logoUrl}
-                                </AvatarFallback>
-                              )}
-                            </Avatar>
-                          </div>
-                          <div>
-                            <h3 className="text-lg font-semibold">
-                              {invitation.organisation.name}
-                            </h3>
-                            <div className="mt-2 flex flex-wrap gap-2">
-                              <span className="text-sm text-muted-foreground">Roles:</span>
-                              {invitation.orgRoles?.map((role: OrgRole) => (
-                                <span
-                                  key={role.id || role.name} 
-                                  className="bg-primary-50 text-primary-700 px-2 py-1 rounded-md text-xs font-medium"
-                                >
-                                  {role.name.charAt(0).toUpperCase() + role.name.slice(1)}
-                                </span>
-                              ))}
-
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex gap-2 w-full md:w-auto">
-                          <Button
-                            onClick={() => respondToInvitations(invitation, 'rejected')}
-                            variant="outline"
-                            className="md:w-auto text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-md font-medium px-5 py-3 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
-                          >
-                            <XIcon className="mr-2 h-4 w-4" />
-                            Reject
-                          </Button>
-                          <Button
-                            onClick={() => respondToInvitations(invitation, 'accepted')}
-                            className="w-full md:w-auto"
-                          >
-                            <CheckIcon className="mr-2 h-4 w-4" />
-                            Accept
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )
-          ) : (
-            <EmptyMessage
-              title="No Invitations"
-              description="You don't have any invitation"
-              height="250px"
-            />
-          )} */}
 
           {renderPagination()}
         </CardContent>
