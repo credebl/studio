@@ -11,12 +11,12 @@ import {
   axiosPost,
   axiosPut,
 } from '@/services/apiRequests'
-
+import { AxiosResponse } from 'axios'
 import apiRoutes from './apiRoutes'
 
 export const generateRegistrationOption = async (
   payload: IRegistrationOption,
-) => {
+): Promise<AxiosResponse | string> => {
   const email = payload.userName
   const details = {
     url: `${apiRoutes.auth.generateRegistration}/${email}`,
@@ -40,7 +40,7 @@ export const generateRegistrationOption = async (
 export const verifyRegistration = async (
   payload: IVerifyRegistrationObj,
   email: string,
-) => {
+): Promise<AxiosResponse | string> => {
   const details = {
     url: `${apiRoutes.auth.verifyRegistration}${email}`,
     payload,
@@ -60,7 +60,9 @@ export const verifyRegistration = async (
   }
 }
 
-export const addDeviceDetails = async (payload: IdeviceBody) => {
+export const addDeviceDetails = async (
+  payload: IdeviceBody,
+): Promise<AxiosResponse | string> => {
   const { credentialId } = payload
   const details = {
     url: `${apiRoutes.auth.userUpdate}/${credentialId}`,
@@ -81,7 +83,9 @@ export const addDeviceDetails = async (payload: IdeviceBody) => {
   }
 }
 
-export const getUserDeviceDetails = async (email: string) => {
+export const getUserDeviceDetails = async (
+  email: string,
+): Promise<AxiosResponse | string> => {
   const details = {
     url: `${apiRoutes.auth.getDeviceList}${email}`,
     config: {
@@ -100,7 +104,9 @@ export const getUserDeviceDetails = async (email: string) => {
   }
 }
 
-export const deleteDeviceById = async (credentialId: string) => {
+export const deleteDeviceById = async (
+  credentialId: string,
+): Promise<AxiosResponse | string> => {
   const details = {
     url: `${apiRoutes.auth.fidoDevice}/${credentialId}`,
     config: {
@@ -119,7 +125,9 @@ export const deleteDeviceById = async (credentialId: string) => {
   }
 }
 
-export const generateAuthenticationOption = async (payload: IUserEmail) => {
+export const generateAuthenticationOption = async (
+  payload: IUserEmail,
+): Promise<AxiosResponse | string> => {
   const details = {
     url: `${apiRoutes.auth.fidoAuthentication}`,
     payload,
@@ -142,7 +150,7 @@ export const generateAuthenticationOption = async (payload: IUserEmail) => {
 export const verifyAuthentication = async (
   payload: IVerifyRegistrationObj,
   email: { userName: string },
-) => {
+): Promise<AxiosResponse | string> => {
   const details = {
     url: `${apiRoutes.auth.fidoVerifyAuthentication}${email.userName}`,
     payload,
@@ -162,7 +170,9 @@ export const verifyAuthentication = async (
   }
 }
 
-export const editDeviceDetails = async (payload: IDeviceDetails) => {
+export const editDeviceDetails = async (
+  payload: IDeviceDetails,
+): Promise<AxiosResponse | string> => {
   const details = {
     url: `${apiRoutes.auth.updateDeviceName}/${payload.enCodedUrl}?deviceName=${payload.updatedDeviceName}`,
     payload,

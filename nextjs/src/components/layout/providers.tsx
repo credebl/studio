@@ -1,9 +1,9 @@
 'use client'
 
-import React from 'react'
-import ThemeProvider from './ThemeToggle/theme-provider'
 import { SessionProvider, SessionProviderProps } from 'next-auth/react'
 import { ActiveThemeProvider } from '../active-theme'
+import React from 'react'
+import ThemeProvider from './ThemeToggle/theme-provider'
 
 export default function Providers({
   session,
@@ -13,7 +13,7 @@ export default function Providers({
   session: SessionProviderProps['session']
   activeThemeValue: string
   children: React.ReactNode
-}>) {
+}>): JSX.Element {
   return (
     <ThemeProvider
       attribute="class"

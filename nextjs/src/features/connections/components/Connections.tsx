@@ -1,8 +1,18 @@
 'use client'
 
+import {
+  IConnectionListAPIParameter,
+  getConnectionsByOrg,
+} from '@/app/api/connection'
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination'
 import React, { ChangeEvent, useEffect, useState } from 'react'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
 import {
   Select,
   SelectContent,
@@ -18,27 +28,19 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui/pagination'
-import { useAppSelector } from '@/lib/hooks'
-import { IConnectionList } from '../types/connections-interface'
-import {
-  IConnectionListAPIParameter,
-  getConnectionsByOrg,
-} from '@/app/api/connection'
-import { dateConversion } from '@/utils/DateConversion'
-import { apiStatusCodes } from '@/config/CommonConstant'
-import { RotateCcwIcon } from 'lucide-react'
-import { IconSearch } from '@tabler/icons-react'
-import { Skeleton } from '@/components/ui/skeleton'
-import { EmptyMessage } from '@/components/EmptyMessage'
+
+import { AxiosResponse } from 'axios'
+import { Button } from '@/components/ui/button'
 import DateTooltip from '@/components/DateTooltip'
+import { EmptyMessage } from '@/components/EmptyMessage'
+import { IConnectionList } from '../types/connections-interface'
+import { IconSearch } from '@tabler/icons-react'
+import { Input } from '@/components/ui/input'
+import { RotateCcwIcon } from 'lucide-react'
+import { Skeleton } from '@/components/ui/skeleton'
+import { apiStatusCodes } from '@/config/CommonConstant'
+import { dateConversion } from '@/utils/DateConversion'
+import { useAppSelector } from '@/lib/hooks'
 
 const initialPageState = {
   itemPerPage: 10,
@@ -49,7 +51,7 @@ const initialPageState = {
   allSearch: '',
 }
 
-const Connections = () => {
+const Connections = (): JSX.Element => {
   const orgId = useAppSelector((state) => state.organization.orgId)
   const [listAPIParameter, setListAPIParameter] = useState(initialPageState)
   const [connectionList, setConnectionList] = useState<IConnectionList[]>([])
@@ -65,7 +67,9 @@ const Connections = () => {
     lastPage: 1,
   })
 
-  const getConnections = async (apiParameter: IConnectionListAPIParameter) => {
+  const getConnections = async (
+    apiParameter: IConnectionListAPIParameter,
+  ): Promise<void> => {
     try {
       setLoading(true)
 
@@ -79,7 +83,7 @@ const Connections = () => {
           sortingOrder: apiParameter.sortingOrder,
         })
 
-        const { data } = response as any
+        const { data } = response as AxiosResponse
 
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
           setConnectionList(data.data.data || [])
@@ -98,6 +102,7 @@ const Connections = () => {
         setConnectionList([])
       }
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error(err)
     } finally {
       setLoading(false)
@@ -110,7 +115,7 @@ const Connections = () => {
     }
   }, [listAPIParameter, orgId])
 
-  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { value } = e.target
     setSearchText(value)
     setListAPIParameter((prev) => ({
@@ -120,7 +125,7 @@ const Connections = () => {
     }))
   }
 
-  const handleSortChange = (value: string) => {
+  const handleSortChange = (value: string): void => {
     setListAPIParameter((prev) => ({
       ...prev,
       sortingOrder: value,
@@ -128,11 +133,11 @@ const Connections = () => {
     }))
   }
 
-  const handleRefresh = () => {
+  const handleRefresh = (): void => {
     getConnections(listAPIParameter)
   }
 
-  const onPageChange = (page: number) => {
+  const onPageChange = (page: number): void => {
     setListAPIParameter((prev) => ({
       ...prev,
       page,

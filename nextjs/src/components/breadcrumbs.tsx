@@ -8,11 +8,11 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
-import { useBreadcrumbs } from '@/hooks/use-breadcrumbs'
-import { IconSlash } from '@tabler/icons-react'
 import React, { Fragment } from 'react'
+import { IconSlash } from '@tabler/icons-react'
+import { useBreadcrumbs } from '@/hooks/use-breadcrumbs'
 
-export function Breadcrumbs() {
+export function Breadcrumbs(): JSX.Element | null {
   const items = useBreadcrumbs()
 
   if (items.length === 0) {

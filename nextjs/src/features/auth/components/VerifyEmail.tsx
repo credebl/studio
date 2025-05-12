@@ -1,22 +1,23 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { IEmailVerifyData, verifyUserMail } from '@/app/api/Auth'
-import { apiStatusCodes } from '@/config/CommonConstant'
-import { validEmail } from '@/utils/TextTransform'
-import { Button } from '@/components/ui/button'
-import { AxiosResponse } from 'axios'
 import { ArrowRight, CheckCircle } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
+import { IEmailVerifyData, verifyUserMail } from '@/app/api/Auth'
+import React, { useEffect, useRef, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 
-export default function VerifyEmailPage() {
+import { AxiosResponse } from 'axios'
+import { Button } from '@/components/ui/button'
+import { apiStatusCodes } from '@/config/CommonConstant'
+import { validEmail } from '@/utils/TextTransform'
+
+export default function VerifyEmailPage(): JSX.Element {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  const [loading, setLoading] = useState<boolean>(true)
-  const [message, setMessage] = useState<string>('')
-  const [error, setError] = useState<boolean>(false)
+  const [, setLoading] = useState<boolean>(true)
+  const [, setMessage] = useState<string>('')
+  const [, setError] = useState<boolean>(false)
   const [email, setEmail] = useState<string>('')
 
   const hasVerifiedRef = useRef(false)
@@ -38,7 +39,7 @@ export default function VerifyEmailPage() {
 
     setEmail(validatedEmail)
 
-    const verifyEmail = async () => {
+    const verifyEmail = async (): Promise<void> => {
       try {
         const response = await verifyUserMail(payload)
         const { data } = response as AxiosResponse
@@ -63,7 +64,7 @@ export default function VerifyEmailPage() {
     verifyEmail()
   }, [searchParams])
 
-  const handleRedirect = () => {
+  const handleRedirect = (): void => {
     router.push(`/auth/sign-up?email=${email}`)
   }
 

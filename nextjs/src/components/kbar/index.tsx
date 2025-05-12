@@ -8,19 +8,23 @@ import {
   KBarSearch,
 } from 'kbar'
 
+import React, { useMemo } from 'react'
 import { NavItem } from '../../../types'
 import RenderResults from './render-result'
 import { navItems } from '@/constants/data'
-import React, { useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 
-export default function KBar({ children }: { children: React.ReactNode }) {
+export default function KBar({
+  children,
+}: {
+  children: React.ReactNode
+}): JSX.Element {
   const router = useRouter()
 
   // These action are for the navigation
   const actions = useMemo(() => {
     // Define navigateTo inside the useMemo callback to avoid dependency array issues
-    const navigateTo = (url: string) => {
+    const navigateTo = (url: string): void => {
       router.push(url)
     }
 
@@ -35,7 +39,7 @@ export default function KBar({ children }: { children: React.ReactNode }) {
               keywords: navItem.title.toLowerCase(),
               section: 'Navigation',
               subtitle: `Go to ${navItem.title}`,
-              perform: () => navigateTo(navItem.url),
+              perform: (): void => navigateTo(navItem.url),
             }
           : null
 
@@ -48,7 +52,7 @@ export default function KBar({ children }: { children: React.ReactNode }) {
           keywords: childItem.title.toLowerCase(),
           section: navItem.title,
           subtitle: `Go to ${childItem.title}`,
-          perform: () => navigateTo(childItem.url),
+          perform: (): void => navigateTo(childItem.url),
         })) ?? []
 
       // Return only valid actions (ignoring null base actions for containers)
@@ -56,26 +60,30 @@ export default function KBar({ children }: { children: React.ReactNode }) {
     })
   }, [router])
 
+  const KBarComponent = ({
+    children,
+  }: {
+    children: React.ReactNode
+  }): JSX.Element => (
+    <>
+      <KBarPortal>
+        <KBarPositioner className="bg-background/80 fixed inset-0 z-99999 p-0! backdrop-blur-sm">
+          <KBarAnimator className="bg-card text-card-foreground relative mt-64! w-full max-w-[600px] -translate-y-12! overflow-hidden rounded-lg shadow-lg">
+            <div className="bg-card sticky top-0 z-10">
+              <KBarSearch className="bg-card w-full px-6 py-4 outline-hidden focus:ring-0 focus:ring-offset-0 focus:outline-hidden" />
+            </div>
+            <div className="max-h-[400px]">
+              <RenderResults />
+            </div>
+          </KBarAnimator>
+        </KBarPositioner>
+      </KBarPortal>
+      {children}
+    </>
+  )
   return (
     <KBarProvider actions={actions}>
       <KBarComponent>{children}</KBarComponent>
     </KBarProvider>
   )
 }
-const KBarComponent = ({ children }: { children: React.ReactNode }) => (
-  <>
-    <KBarPortal>
-      <KBarPositioner className="bg-background/80 fixed inset-0 z-99999 p-0! backdrop-blur-sm">
-        <KBarAnimator className="bg-card text-card-foreground relative mt-64! w-full max-w-[600px] -translate-y-12! overflow-hidden rounded-lg shadow-lg">
-          <div className="bg-card sticky top-0 z-10">
-            <KBarSearch className="bg-card w-full px-6 py-4 outline-hidden focus:ring-0 focus:ring-offset-0 focus:outline-hidden" />
-          </div>
-          <div className="max-h-[400px]">
-            <RenderResults />
-          </div>
-        </KBarAnimator>
-      </KBarPositioner>
-    </KBarPortal>
-    {children}
-  </>
-)

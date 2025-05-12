@@ -1,14 +1,13 @@
 'use client'
 
 import { Check, ChevronsUpDown } from 'lucide-react'
-import React, { useEffect } from 'react'
-
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import React, { useEffect } from 'react'
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -16,8 +15,8 @@ import {
 } from '@/components/ui/sidebar'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
-import { setOrgId } from '@/lib/orgSlice'
 import Image from 'next/image'
+import { setOrgId } from '@/lib/orgSlice'
 
 interface Tenant {
   id: string
@@ -33,7 +32,7 @@ export function OrgSwitcher({
   tenants: Tenant[]
   defaultTenant: Tenant
   onTenantSwitch?: (tenantId: string) => void
-}) {
+}): React.ReactElement {
   const tenantId = useAppSelector((state) => state.organization.orgId)
   const [selectedTenant, setSelectedTenant] = React.useState<
     Tenant | undefined
@@ -54,7 +53,7 @@ export function OrgSwitcher({
     return defaultTenant ?? (tenants.length > 0 ? tenants[0] : undefined)
   }, [selectedOrgId, tenants, defaultTenant])
 
-  const handleTenantSwitch = (tenant: Tenant) => {
+  const handleTenantSwitch = (tenant: Tenant): void => {
     dispatch(setOrgId(tenant.id))
 
     if (onTenantSwitch) {
@@ -62,7 +61,7 @@ export function OrgSwitcher({
     }
   }
 
-  function getInitials(name: string = '') {
+  function getInitials(name: string = ''): string {
     return name
       .split(' ')
       .map((n) => n[0])

@@ -1,7 +1,7 @@
 import React from 'react'
 import UserProfile from '@/features/profile/components/UserProfile'
 
-const page = () => (
+const page = (): JSX.Element => (
   <div>
     <UserProfile />
   </div>

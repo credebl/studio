@@ -1,7 +1,7 @@
-import SchemaSelection from '@/features/schemas/components/SchemaSelection'
 import React from 'react'
+import SchemaSelection from '@/features/schemas/components/SchemaSelection'
 
-const page = () => (
+const page = (): JSX.Element => (
   <div>
     <SchemaSelection />
   </div>

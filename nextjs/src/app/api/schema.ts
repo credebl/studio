@@ -1,15 +1,16 @@
-import { getHeaderConfigs } from '@/config/GetHeaderConfigs'
 import {
   CreateCredDeffFieldName,
   GetAllSchemaListParameter,
 } from '@/features/dashboard/type/schema'
 import { axiosGet, axiosPost } from '@/services/apiRequests'
+import { AxiosResponse } from 'axios'
 import apiRoutes from './apiRoutes'
+import { getHeaderConfigs } from '@/config/GetHeaderConfigs'
 
 export const createSchemas = async (
   payload: Record<string, unknown>,
   orgId: string,
-) => {
+): Promise<AxiosResponse | string> => {
   const details = {
     url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.create}`,
     payload,
@@ -29,7 +30,10 @@ export const createSchemas = async (
   }
 }
 
-export const getSchemaById = async (schemaId: string, orgId: string) => {
+export const getSchemaById = async (
+  schemaId: string,
+  orgId: string,
+): Promise<AxiosResponse | string> => {
   const details = {
     url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.getSchemaById}/${schemaId}`,
     config: {
@@ -51,7 +55,7 @@ export const getSchemaById = async (schemaId: string, orgId: string) => {
 export const createCredentialDefinition = async (
   payload: CreateCredDeffFieldName,
   orgId: string,
-) => {
+): Promise<AxiosResponse | string> => {
   const details = {
     url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.createCredentialDefinition}`,
     payload,
@@ -76,7 +80,7 @@ export const getAllSchemas = async (
   { itemPerPage, page, allSearch }: GetAllSchemaListParameter,
   schemaType: string,
   ledgerId: string,
-) => {
+): Promise<AxiosResponse | string> => {
   const axiosPayload = {
     url: `${apiRoutes.Platform.getAllSchemaFromPlatform}?pageSize=${itemPerPage}&searchByText=${allSearch}&pageNumber=${page}&ledgerId=${ledgerId}&schemaType=${schemaType}`,
     config: {
@@ -98,7 +102,7 @@ export const getAllSchemas = async (
 export const getAllSchemasByOrgId = async (
   { search, itemPerPage, page }: GetAllSchemaListParameter,
   orgId: string,
-) => {
+): Promise<AxiosResponse | string> => {
   const details = {
     url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.getAll}?pageNumber=${page}&pageSize=${itemPerPage}&searchByText=${search}`,
     config: {
@@ -117,7 +121,9 @@ export const getAllSchemasByOrgId = async (
   }
 }
 
-export const getAllCredDef = async (orgId: string) => {
+export const getAllCredDef = async (
+  orgId: string,
+): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.createCredentialDefinition}`
   const axiosPayload = {
     url,
@@ -132,7 +138,10 @@ export const getAllCredDef = async (orgId: string) => {
   }
 }
 
-export const getCredDeffById = async (schemaId: string, orgId: string) => {
+export const getCredDeffById = async (
+  schemaId: string,
+  orgId: string,
+): Promise<AxiosResponse | string> => {
   const details = {
     url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.getCredDefBySchemaId}/${schemaId}/cred-defs`,
     config: {
@@ -154,7 +163,7 @@ export const getCredDeffById = async (schemaId: string, orgId: string) => {
 export const getCredDefDetailsByCredDefId = async (
   credDefId: string,
   orgId: string,
-) => {
+): Promise<AxiosResponse | string> => {
   const details = {
     url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.createCredentialDefinition}/${credDefId}`,
     config: {

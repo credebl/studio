@@ -1,6 +1,6 @@
 import Connections from '@/features/connections/components/Connections'
 import React from 'react'
 
-const page = () => <Connections />
+const page = (): JSX.Element => <Connections />
 
 export default page

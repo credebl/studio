@@ -1,7 +1,5 @@
 'use client'
-
-import React from 'react'
-import {
+import React, {
   ReactNode,
   createContext,
   useContext,
@@ -12,7 +10,7 @@ import {
 const COOKIE_NAME = 'active_theme'
 const CREDEBL_THEMES = 'credebl'
 
-function setThemeCookie(theme: string) {
+function setThemeCookie(theme: string): void {
   if (typeof window === 'undefined') {
     return
   }

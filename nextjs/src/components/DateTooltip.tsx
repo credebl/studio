@@ -1,12 +1,12 @@
 'use client'
 
-import React from 'react'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import React from 'react'
 import { format } from 'date-fns'
 
 interface DateProps {
@@ -15,7 +15,7 @@ interface DateProps {
   children: React.ReactNode
 }
 
-const DateTooltip = ({ date, children }: DateProps) => {
+const DateTooltip = ({ date, children }: DateProps): React.ReactElement => {
   if (!date) {
     return <>{children}</>
   }

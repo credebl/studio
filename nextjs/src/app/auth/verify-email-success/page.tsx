@@ -1,7 +1,7 @@
-import VerifyEmailPage from '@/features/auth/components/VerifyEmail'
 import React from 'react'
+import VerifyEmailPage from '@/features/auth/components/VerifyEmail'
 
-const page = () => (
+const page = (): JSX.Element => (
   <div>
     <VerifyEmailPage />
   </div>

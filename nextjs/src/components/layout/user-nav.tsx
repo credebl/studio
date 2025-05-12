@@ -28,7 +28,7 @@ import { useAppSelector } from '@/lib/hooks'
 import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/navigation'
 
-export function UserNav() {
+export function UserNav(): JSX.Element | null {
   const dispatch = useDispatch()
   const router = useRouter()
 
@@ -36,7 +36,7 @@ export function UserNav() {
   const token = useAppSelector((state) => state.auth.token)
 
   useEffect(() => {
-    async function fetchProfile() {
+    async function fetchProfile(): Promise<void> {
       if (!token) {
         return
       }
@@ -50,6 +50,7 @@ export function UserNav() {
           dispatch(setUserProfileDetails(response.data.data))
         }
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error('Error fetching user profile:', error)
       }
     }
@@ -61,7 +62,7 @@ export function UserNav() {
     return null
   }
 
-  const handleLogout = async () => {
+  const handleLogout = async (): Promise<void> => {
     dispatch(logout())
     await persistor.purge()
     router.push('/auth/sign-in')

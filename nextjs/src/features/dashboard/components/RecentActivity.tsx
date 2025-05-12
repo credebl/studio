@@ -1,6 +1,5 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
 import {
   Card,
   CardContent,
@@ -9,11 +8,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import React, { useEffect, useState } from 'react'
+import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getUserActivity } from '@/app/api/users'
-import { Badge } from '@/components/ui/badge'
-import Link from 'next/link'
 
 const RecentActivity = () => {
   const [activityList, setActivityList] = useState<any[]>([])

@@ -34,7 +34,7 @@ export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
-}) {
+}): Promise<JSX.Element> {
   const session = await auth()
   const cookieStore = await cookies()
   const activeThemeValue = cookieStore.get('active_theme')?.value

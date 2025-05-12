@@ -1,18 +1,17 @@
 'use client'
 
 import * as React from 'react'
-import { useTheme } from 'next-themes'
 import { MoonIcon, SunIcon } from '@radix-ui/react-icons'
-
-import { Button } from '@/components/ui/button'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { Button } from '@/components/ui/button'
+import { useTheme } from 'next-themes'
 
-export default function ModeToggle() {
+export default function ModeToggle(): JSX.Element {
   const { setTheme, theme } = useTheme()
 
   return (

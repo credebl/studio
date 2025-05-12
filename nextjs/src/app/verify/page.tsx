@@ -1,5 +1,5 @@
 import React from 'react'
 
-const page = () => <div>Verify</div>
+const page = (): JSX.Element => <div>Verify</div>
 
 export default page

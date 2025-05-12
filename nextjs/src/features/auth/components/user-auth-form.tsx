@@ -1,22 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
-
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
 
 import {
   Eye,
@@ -27,24 +11,40 @@ import {
   LockKeyhole,
   Mail,
 } from 'lucide-react'
-import Link from 'next/link'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
 import {
   IUserSignInData,
   getUserProfile,
   loginUser,
   passwordEncryption,
 } from '@/app/api/Auth'
-import { useDispatch } from 'react-redux'
-import { setRefreshToken, setToken } from '@/lib/authSlice'
-import { AxiosResponse } from 'axios'
-import { setProfile } from '@/lib/profileSlice'
+import React, { useState } from 'react'
 import {
   generateAuthenticationOption,
   verifyAuthentication,
 } from '@/app/api/Fido'
-import { apiStatusCodes } from '@/config/CommonConstant'
-import { startAuthentication } from '@simplewebauthn/browser'
+import { setRefreshToken, setToken } from '@/lib/authSlice'
+
+import { AxiosResponse } from 'axios'
+import { Button } from '@/components/ui/button'
 import Image from 'next/image'
+import { Input } from '@/components/ui/input'
+import Link from 'next/link'
+import { apiStatusCodes } from '@/config/CommonConstant'
+import { setProfile } from '@/lib/profileSlice'
+import { startAuthentication } from '@simplewebauthn/browser'
+import { toast } from 'sonner'
+import { useDispatch } from 'react-redux'
+import { useForm } from 'react-hook-form'
+import { useRouter } from 'next/navigation'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 const signInSchema = z.object({
   email: z.string().email('Enter a valid email'),
@@ -57,13 +57,13 @@ enum PlatformRoles {
   platformAdmin = 'platform_admin',
 }
 
-export default function SignInViewPage() {
+export default function SignInViewPage(): JSX.Element {
   const [isPasswordTab, setIsPasswordTab] = useState(true)
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
-  const [fidoLoader, setFidoLoader] = useState<boolean>(false)
-  const [fidoUserError, setFidoUserError] = useState('')
+  const [, setFidoLoader] = useState<boolean>(false)
+  const [, setFidoUserError] = useState('')
 
   const dispatch = useDispatch()
   const route = useRouter()
@@ -75,7 +75,13 @@ export default function SignInViewPage() {
     },
   })
 
-  const getUserDetails = async (access_token: string) => {
+  const getUserDetails = async (
+    // eslint-disable-next-line camelcase
+    access_token: string,
+  ): Promise<{
+    role: string
+    orgId: string | null
+  } | void> => {
     try {
       const response = await getUserProfile(access_token)
 
@@ -150,7 +156,7 @@ export default function SignInViewPage() {
         return
       }
 
-      if (response?.data?.statusCode == 200) {
+      if (response?.data?.statusCode === 200) {
         const token = response?.data?.data?.access_token
         const refreshToken = response?.data?.data?.refresh_token
 
@@ -251,7 +257,7 @@ export default function SignInViewPage() {
     }
   }
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = (e: React.FormEvent): void => {
     e.preventDefault()
 
     if (isPasswordTab) {

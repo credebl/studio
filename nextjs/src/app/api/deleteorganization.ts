@@ -1,9 +1,12 @@
 import { axiosDelete, axiosGet } from '@/services/apiRequests'
 
+import { AxiosResponse } from 'axios'
 import { apiRoutes } from '@/config/apiRoutes'
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs'
 
-export const getOrganizationReferences = async (orgId: string) => {
+export const getOrganizationReferences = async (
+  orgId: string,
+): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.organizations.root}${apiRoutes.organizations.getOrgReferences}/${orgId}`
 
   const config = getHeaderConfigs()
@@ -20,7 +23,9 @@ export const getOrganizationReferences = async (orgId: string) => {
   }
 }
 
-export const deleteVerificationRecords = async (orgId: string) => {
+export const deleteVerificationRecords = async (
+  orgId: string,
+): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.deleteVerifications}`
 
   const config = getHeaderConfigs()
@@ -37,7 +42,9 @@ export const deleteVerificationRecords = async (orgId: string) => {
   }
 }
 
-export const deleteIssuanceRecords = async (orgId: string) => {
+export const deleteIssuanceRecords = async (
+  orgId: string,
+): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.deleteIssaunce}`
 
   const config = getHeaderConfigs()
@@ -54,7 +61,9 @@ export const deleteIssuanceRecords = async (orgId: string) => {
   }
 }
 
-export const deleteOrganizationWallet = async (orgId: string) => {
+export const deleteOrganizationWallet = async (
+  orgId: string,
+): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.deleteWallet}`
 
   const config = getHeaderConfigs()
@@ -71,7 +80,9 @@ export const deleteOrganizationWallet = async (orgId: string) => {
   }
 }
 
-export const deleteOrganization = async (orgId: string) => {
+export const deleteOrganization = async (
+  orgId: string,
+): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.organizations.root}/${orgId}`
   const config = getHeaderConfigs()
 

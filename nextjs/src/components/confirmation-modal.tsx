@@ -1,14 +1,14 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { AlertComponent } from '@/components/AlertComponent'
-import React, { type ReactElement } from 'react'
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
 } from '@/components/ui/dialog'
+import React, { type ReactElement } from 'react'
+import { AlertComponent } from '@/components/AlertComponent'
+import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import { closeIconImg } from '@/config/CommonConstant'
 
@@ -40,7 +40,7 @@ const ConfirmationModal = ({
   buttonTitles,
   loading,
   warning,
-}: IProps) => (
+}: IProps): JSX.Element => (
   <Dialog open={openModal} onOpenChange={(open) => closeModal(!open)}>
     <DialogContent className="fixed top-1/2 left-1/2 max-h-[450px] w-full max-w-xl -translate-x-1/2 -translate-y-1/2 transform overflow-auto">
       <DialogHeader>
@@ -91,7 +91,9 @@ const ConfirmationModal = ({
                 message={success}
                 type={'success'}
                 onAlertClose={() => {
-                  setSuccess && setSuccess(null)
+                  if (setSuccess) {
+                    setSuccess(null)
+                  }
                 }}
               />
             </div>
@@ -102,7 +104,9 @@ const ConfirmationModal = ({
                 message={failure}
                 type={'failure'}
                 onAlertClose={() => {
-                  setFailure && setFailure(null)
+                  if (setFailure) {
+                    setFailure(null)
+                  }
                 }}
               />
             </div>

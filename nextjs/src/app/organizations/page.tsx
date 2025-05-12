@@ -1,7 +1,7 @@
 import { OrganizationList } from '@/features/organization/components/OrganizationList'
 import React from 'react'
 
-const page = () => (
+const page = (): JSX.Element => (
   <div>
     <OrganizationList />
   </div>

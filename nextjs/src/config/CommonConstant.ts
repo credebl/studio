@@ -1,4 +1,5 @@
 export const passwordRegex =
+  // eslint-disable-next-line no-useless-escape
   /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[!"$%*,./:;=@^_\-])[A-Za-z\d!"$%*,./:;=@^_\-]{8,}$/
 export const allowedPasswordChars = /[^a-zA-Z0-9!"$%*,-.:;=@^_]/g
 export const phoneRegExp = /^[+]?(\d{1,4})?[-\s./\d]*$/
@@ -127,6 +128,6 @@ export const stepLabels = [
 export const confirmationMessages = {
   deletePendingInvitationConfirmation:
     'Would you like to proceed? Keep in mind that this action cannot be undone.',
-  sureConfirmation: "Yes, I'm sure",
+  sureConfirmation: 'Yes, I am sure',
   cancelConfirmation: 'No, cancel',
 }

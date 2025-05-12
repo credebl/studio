@@ -1,10 +1,11 @@
 'use client'
-import { useKBar } from 'kbar'
-import React from 'react'
-import { IconSearch } from '@tabler/icons-react'
-import { Button } from './ui/button'
 
-export default function SearchInput() {
+import { Button } from './ui/button'
+import { IconSearch } from '@tabler/icons-react'
+import React from 'react'
+import { useKBar } from 'kbar'
+
+export default function SearchInput(): JSX.Element {
   const { query } = useKBar()
   return (
     <div className="w-full space-y-2">

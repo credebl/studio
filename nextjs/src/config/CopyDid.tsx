@@ -15,7 +15,9 @@ const CopyDid: React.FC<IProps> = ({
 }) => {
   const [copied, setCopied] = useState(false)
 
-  const copyTextVal = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const copyTextVal = async (
+    e: React.MouseEvent<HTMLButtonElement>,
+  ): Promise<void> => {
     e.preventDefault()
     e.stopPropagation()
 
@@ -24,6 +26,7 @@ const CopyDid: React.FC<IProps> = ({
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error('Failed to copy: ', err)
     }
   }

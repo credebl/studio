@@ -18,7 +18,6 @@ if (process?.env) {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const {
   NEXT_PUBLIC_BASE_URL,
   PUBLIC_ECOSYSTEM_FRONT_END_URL,
@@ -42,6 +41,7 @@ const {
   PUBLIC_MODE,
   PUBLIC_REDIRECT_FROM_URL,
   PUBLIC_REDIRECTION_TARGET_URL,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }: any = envVariables
 
 export const envConfig = {

@@ -1,3 +1,5 @@
+// we are using enums from this file still EsLint is giving issues. For now disabling eslint rule for this file.
+
 export enum DidMethod {
   INDY = 'did:indy',
   KEY = 'did:key',

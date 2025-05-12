@@ -1,5 +1,5 @@
-import React from 'react'
 import { OrganizationDashboard } from '@/features/organization/components/OrganizationDashboard'
+import React from 'react'
 
 // type LocaleProps = {
 //   params: { locale: string }

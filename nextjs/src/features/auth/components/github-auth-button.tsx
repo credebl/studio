@@ -1,12 +1,12 @@
 'use client'
 
-import React from 'react'
-import { useSearchParams } from 'next/navigation'
-import { signIn } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/icons'
+import React from 'react'
+import { signIn } from 'next-auth/react'
+import { useSearchParams } from 'next/navigation'
 
-export default function GithubSignInButton() {
+export default function GithubSignInButton(): JSX.Element {
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get('callbackUrl')
 

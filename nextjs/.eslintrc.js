@@ -20,8 +20,8 @@ module.exports = {
     'next/core-web-vitals',
     'plugin:@typescript-eslint/recommended',
     'plugin:react/recommended',
-    'plugin:prettier/recommended',
     'plugin:react-hooks/recommended',
+    'plugin:prettier/recommended',
   ],
   plugins: ['prettier', '@typescript-eslint', 'react', 'react-hooks'],
   rules: {
@@ -72,10 +72,7 @@ module.exports = {
       'error',
       { max: 450, skipComments: true, skipBlankLines: true },
     ],
-    'no-unused-vars': [
-      'error',
-      { varsIgnorePattern: 'Props', argsIgnorePattern: '^Props' },
-    ],
+    'no-unused-vars': 'off',
     'no-console': 'error',
     'template-curly-spacing': 'error',
 
@@ -84,7 +81,15 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'error',
     '@typescript-eslint/explicit-module-boundary-types': 'warn',
     '@typescript-eslint/no-explicit-any': 'error',
-    '@typescript-eslint/no-unused-vars': 'error',
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      {
+        vars: 'all',
+        args: 'after-used',
+        ignoreRestSiblings: true,
+        // varsIgnorePattern: '^_', // Ignores variables like _myVar
+      },
+    ],
     '@typescript-eslint/no-use-before-define': 'error',
     complexity: ['error', 65],
     'array-callback-return': 'error',

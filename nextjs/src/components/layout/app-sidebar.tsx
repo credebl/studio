@@ -1,10 +1,13 @@
 'use client'
 
+// React and Next.js
+
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
+import React, { useEffect, useState } from 'react'
 import {
   Sidebar,
   SidebarContent,
@@ -20,20 +23,18 @@ import {
 } from '@/components/ui/sidebar'
 import { setOrgId, setOrgInfo } from '@/lib/orgSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
-import React, { useEffect, useState } from 'react'
-import { usePathname } from 'next/navigation'
-
 import { IconChevronRight } from '@tabler/icons-react'
 import { Icons } from '../icons'
 import Image from 'next/image'
 import Link from 'next/link'
 import { NavItem } from '../../../types'
+import { Organization } from '@/features/dashboard/type/organization'
 import { getOrganizations } from '@/app/api/organization'
 import { navItems } from '@/constants/data'
+import { usePathname } from 'next/navigation'
 import { useThemeConfig } from '../active-theme'
-import { Organization } from '@/features/dashboard/type/organization'
 
-export default function AppSidebar() {
+export default function AppSidebar(): JSX.Element {
   const pathname = usePathname()
 
   const { activeTheme } = useThemeConfig()
@@ -53,7 +54,7 @@ export default function AppSidebar() {
   const selectedOrgId = useAppSelector((state) => state.organization.orgId)
 
   useEffect(() => {
-    const fetchOrganizations = async () => {
+    const fetchOrganizations = async (): Promise<void> => {
       try {
         const response = await getOrganizations(
           currentPage,
@@ -89,6 +90,7 @@ export default function AppSidebar() {
           setOrgList([])
         }
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.error('Error fetching organizations:', err)
       }
     }

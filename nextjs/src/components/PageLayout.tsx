@@ -2,11 +2,11 @@
 
 import React, { ReactNode } from 'react'
 
-import { usePathname } from 'next/navigation'
-import KBar from './kbar'
 import { SidebarInset, SidebarProvider } from './ui/sidebar'
 import AppSidebar from './layout/app-sidebar'
 import Header from './layout/header'
+import KBar from './kbar'
+import { usePathname } from 'next/navigation'
 
 interface PageLayoutProps {
   children: ReactNode

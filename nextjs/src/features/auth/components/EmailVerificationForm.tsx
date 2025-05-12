@@ -1,19 +1,21 @@
 'use client'
 
+import * as Yup from 'yup'
+
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Formik, Form as FormikForm } from 'formik'
 import React, { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { apiStatusCodes, emailRegex } from '@/config/CommonConstant'
 import {
   checkUserExist,
   passwordEncryption,
   sendVerificationMail,
 } from '@/app/api/Auth'
-import { apiStatusCodes, emailRegex } from '@/config/CommonConstant'
-import { envConfig } from '@/config/envConfig'
+
 import { AxiosResponse } from 'axios'
-import { Formik, Form as FormikForm } from 'formik'
-import * as Yup from 'yup'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { envConfig } from '@/config/envConfig'
 
 interface StepEmailProps {
   readonly email: string
@@ -25,7 +27,7 @@ export default function EmailVerificationForm({
   email,
   setEmail,
   goToNext,
-}: StepEmailProps) {
+}: StepEmailProps): React.ReactElement {
   const [loading, setLoading] = useState(false)
   const [verifyLoader, setVerifyLoader] = useState(false)
 
@@ -42,7 +44,7 @@ export default function EmailVerificationForm({
       .matches(emailRegex, 'Invalid email address'),
   })
 
-  const handleSendVerificationEmail = async (email: string) => {
+  const handleSendVerificationEmail = async (email: string): Promise<void> => {
     try {
       setVerifyLoader(true)
 
@@ -81,7 +83,7 @@ export default function EmailVerificationForm({
     }
   }
 
-  const handleVerifyEmail = async (emailValue: string) => {
+  const handleVerifyEmail = async (emailValue: string): Promise<void> => {
     setLoading(true)
     setShowEmailVerification({ message: '', isError: false, type: '' })
 
@@ -136,7 +138,9 @@ export default function EmailVerificationForm({
       validateOnBlur
     >
       {({ errors, touched, handleChange, handleBlur, values }) => {
-        const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const handleEmailChange = (
+          e: React.ChangeEvent<HTMLInputElement>,
+        ): void => {
           handleChange(e)
           setEmail(e.target.value)
         }

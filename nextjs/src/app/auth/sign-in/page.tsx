@@ -1,5 +1,5 @@
-import React from 'react'
 import { Metadata } from 'next'
+import React from 'react'
 import SignInPage from '@/features/auth/components/sigin-view'
 
 export const metadata: Metadata = {
@@ -7,6 +7,6 @@ export const metadata: Metadata = {
   description: 'Sign In page for authentication.',
 }
 
-export default async function Page() {
+export default function Page(): JSX.Element {
   return <SignInPage />
 }
