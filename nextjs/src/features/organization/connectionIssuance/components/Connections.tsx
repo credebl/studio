@@ -91,7 +91,7 @@ const Connections = () => {
 		<div className=" pt-2">
 			<div className="mb-4 col-span-full xl:mb-2">
 				<div className="flex justify-end items-center px-4">
-					<Button onClick={() => router.push("credentials/connections/issuance")} ><ArrowLeft />Back</Button >
+					<Button onClick={() => router.push(pathRoutes.back.credentials.credentials)} ><ArrowLeft />Back</Button >
 				</div>
 			</div>
 			<div className="mb-4 border-b border-gray-200 dark:border-gray-700">

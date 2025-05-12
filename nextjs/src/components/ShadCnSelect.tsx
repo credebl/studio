@@ -58,8 +58,8 @@ export function SearchableSelect({
           aria-expanded={open}
           className={cn(
             "w-full justify-between",
-            "border-yellow-300 focus:ring-yellow-500 focus-visible:ring-yellow-500",
-            "data-[state=open]:border-yellow-500",
+            "bg-popover/60 focus:bg-popover focus-visible:bg-popover",
+            "data-[state=open]:secondary-foreground",
             className,
           )}
           disabled={disabled}
@@ -69,8 +69,8 @@ export function SearchableSelect({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
-        <Command className="bg-white">
-          <CommandInput placeholder="Search..." className="h-9 text-yellow-900" />
+        <Command className="bg-popover">
+          <CommandInput placeholder="Search..." className="h-9 text-accent-foreground" />
           <CommandList>
             <CommandEmpty>{emptyMessage}</CommandEmpty>
             <CommandGroup className="max-h-64 overflow-auto">
@@ -85,13 +85,13 @@ export function SearchableSelect({
                   }}
                   className={cn(
                     "cursor-pointer",
-                    "aria-selected:bg-yellow-100 aria-selected:text-yellow-900",
-                    "data-[selected=true]:bg-yellow-100 data-[selected=true]:text-yellow-900",
+                    "aria-selected:bg-primary/60 aria-selected:text-accent-foreground",
+                    "data-[selected=true]:foreground data-[selected=true]:text-accent-foreground",
                   )}
                   data-selected={selected?.value === option.value}
                 >
                   {option.label}
-                  {selected?.value === option.value && <Check className="ml-auto h-4 w-4 text-yellow-600" />}
+                  {selected?.value === option.value && <Check className="ml-auto h-4 w-4 text-accent-foreground" />}
                 </CommandItem>
               ))}
             </CommandGroup>

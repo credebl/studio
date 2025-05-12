@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import { ArrowLeft, CircleArrowRight } from 'lucide-react';
 import { CREDENTIAL_CONTEXT_VALUE, apiStatusCodes, itemPerPage, proofPurpose, storageKeys } from '@/config/CommonConstant';
 import { Card, CardContent } from '@/components/ui/card';
-import { CredentialType, DidMethod, ProofType, SchemaTypeValue, SchemaTypes } from '@/common/enums';
+import { CredentialType, DidMethod, ProofType, SchemaType, SchemaTypeValue, SchemaTypes } from '@/common/enums';
 import type {
 	DataTypeAttributes,
 	IAttribute,
@@ -359,7 +359,9 @@ const IssueCred = () => {
 		};
 
 		setIssuanceLoader(true);
-		const issueCredRes = await issueCredential(convertedAttributesValues, credentialType, orgId);
+		const schemaTypeValue = w3cSchema?SchemaType.W3C:SchemaType.INDY
+		const issueCredRes = await issueCredential(convertedAttributesValues, schemaTypeValue, orgId);
+			
 
 		const { data } = issueCredRes as AxiosResponse;
 
@@ -444,7 +446,7 @@ const IssueCred = () => {
 					</h1>
 				</div>
 				<Card>
-					<CardContent>
+					<CardContent className='p-4'>
 						<p className="text-xl pb-6 font-semibold dark:text-white">
 							Select Schema and credential definition
 						</p>

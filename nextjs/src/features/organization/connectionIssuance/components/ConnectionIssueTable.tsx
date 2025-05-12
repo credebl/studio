@@ -33,15 +33,15 @@ const DataTable: React.FC<DataTableProps> = ({
 					<div className="inline-block min-w-full align-middle">
 						<div className="overflow-hidden shadow sm:rounded-lg">
 							<Table>
-								<TableHeader className="bg-gray-50">
-									<TableRow className="bg-gray-50">
+								<TableHeader className="bg-gray-50 dark:bg-gray-700">
+									<TableRow >
 										{header &&
 											header.length > 0 &&
 											header.map((ele, id) => (
 												<TableHead
 													key={id}
 													scope="col"
-													className={`bg-gray-50 p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white ${ele.width} ${id === 0 && isEmailVerification ? 'pl-12' : ''}`}
+													className={` p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white ${ele.width} ${id === 0 && isEmailVerification ? 'pl-12' : ''}`}
 												>
 													<div className="h-full w-full flex flex-col justify-center">
 														<div>{ele.columnName}</div>
