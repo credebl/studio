@@ -16,7 +16,7 @@ interface TooltipProps<Type> {
   children: React.ReactNode
 }
 
-const DataTooltip = <Type,>({
+const DataTooltip = <Type, >({
   data,
   renderItem,
   children,

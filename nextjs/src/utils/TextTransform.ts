@@ -12,7 +12,7 @@ export const TextTitlecase = (text: string): string => {
   return result
 }
 
-export const copyText = (copiedText: string | undefined) => {
+export const copyText = (copiedText: string | undefined): void => {
   if (copiedText) {
     navigator.clipboard.writeText(copiedText).catch((error) => {
       console.error('Failed to copy text: ', error)
@@ -22,4 +22,4 @@ export const copyText = (copiedText: string | undefined) => {
 
 // To check validity of email
 export const validEmail = (email: string): string =>
-  emailRegex.test(email) ? email : ''
+  (emailRegex.test(email) ? email : '')

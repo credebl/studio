@@ -73,7 +73,7 @@ module.exports = {
       { max: 450, skipComments: true, skipBlankLines: true },
     ],
     'no-unused-vars': 'off',
-    'no-console': 'error',
+    'no-console': ['error', { allow: ['warn', 'error'] }],
     'template-curly-spacing': 'error',
 
     'arrow-parens': 'warn',

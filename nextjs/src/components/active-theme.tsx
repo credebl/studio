@@ -1,4 +1,5 @@
 'use client'
+
 import React, {
   ReactNode,
   createContext,
@@ -31,7 +32,7 @@ export function ActiveThemeProvider({
 }: {
   readonly children: ReactNode
   readonly initialTheme?: string
-}) {
+}): React.JSX.Element {
   const [activeTheme, setActiveTheme] = useState<string>(
     () => initialTheme ?? CREDEBL_THEMES,
   )
@@ -57,7 +58,7 @@ export function ActiveThemeProvider({
   )
 }
 
-export function useThemeConfig() {
+export function useThemeConfig(): ThemeContextType | undefined {
   const context = useContext(ThemeContext)
   if (context === undefined) {
     throw new Error('useThemeConfig must be used within an ActiveThemeProvider')

@@ -1,7 +1,7 @@
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
-export function cn(...inputs: ClassValue[]) {
+export function cn(...inputs: ClassValue[]): string {
   return twMerge(clsx(inputs))
 }
 
@@ -11,7 +11,7 @@ export function formatBytes(
     decimals?: number
     sizeType?: 'accurate' | 'normal'
   } = {},
-) {
+): string {
   const { decimals = 0, sizeType = 'normal' } = opts
 
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
