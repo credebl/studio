@@ -88,7 +88,7 @@ const storageKeys = createSlice({
 		setSelectedUser: (state, action: PayloadAction<SelectedUsers[]>) => {
 			state.SELECTED_USER = action.payload;;
 		},
-		clearStorage: () => initialState
+clearStorage: () => initialState
 	}
 });
 
