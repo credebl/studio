@@ -8,3 +8,4 @@ next.config.ts
 yarn.lock
 pnpm-lock.yaml
 src/components/ui/**
+/src/hooks/*

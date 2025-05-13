@@ -1,25 +1,26 @@
+/* eslint-disable max-lines */
 'use client'
 
-import { Field, Form, Formik, type FormikHelpers, FormikProps } from 'formik'
-import React, { ReactNode, useEffect, useState } from 'react'
-import { getLedgerConfig, getLedgers } from '@/app/api/Agent'
-import { apiStatusCodes } from '@/config/CommonConstant'
 import * as yup from 'yup'
-import type { AxiosResponse } from 'axios'
 import { DidMethod, Environment, Ledgers, Network } from '../common/enum'
-import { envConfig } from '@/config/envConfig'
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import CopyDid from './CopyDid'
-import SetDomainValueInput from './SetDomainValueInput'
-import SetPrivateKeyValueInput from './SetPrivateKeyValue'
-import Stepper from '@/components/StepperComponent'
+import { Field, Form, Formik, type FormikHelpers, FormikProps } from 'formik'
 import {
   ILedgerConfigData,
   ILedgerConfigProps,
   ILedgerItem,
   IValuesShared,
 } from '../organization/components/interfaces/organization'
+import React, { ReactNode, useEffect, useState } from 'react'
+import { getLedgerConfig, getLedgers } from '@/app/api/Agent'
+import type { AxiosResponse } from 'axios'
+import { Button } from '@/components/ui/button'
+import CopyDid from './CopyDid'
+import { Label } from '@/components/ui/label'
+import SetDomainValueInput from './SetDomainValueInput'
+import SetPrivateKeyValueInput from './SetPrivateKeyValue'
+import Stepper from '@/components/StepperComponent'
+import { apiStatusCodes } from '@/config/CommonConstant'
+import { envConfig } from '@/config/envConfig'
 
 const LedgerConfig = ({
   maskedSeeds,

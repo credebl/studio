@@ -24,7 +24,7 @@ const OrganizationDetails = ({
   orgData,
 }: {
   orgData: IOrganisation | null
-}): JSX.Element => {
+}): React.JSX.Element => {
   const orgId = orgData ? orgData?.id : ''
   // eslint-disable-next-line camelcase
   const { org_agents } = orgData as IOrganisation
@@ -58,7 +58,7 @@ const OrganizationDetails = ({
     value: string
     className?: string
     hideValue?: boolean
-  }): JSX.Element => (
+  }): React.JSX.Element => (
     <Tooltip>
       <TooltipTrigger asChild>
         <div className={`flex items-center gap-2 ${className}`}>
@@ -85,7 +85,7 @@ const OrganizationDetails = ({
   }: {
     date: string
     children: React.ReactNode
-  }): JSX.Element => (
+  }): React.JSX.Element => (
     <Tooltip>
       <TooltipTrigger asChild>
         <span>{children}</span>

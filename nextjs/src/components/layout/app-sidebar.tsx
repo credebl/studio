@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/sidebar'
 import { setOrgId, setOrgInfo } from '@/lib/orgSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
+
 import { IconChevronRight } from '@tabler/icons-react'
 import { Icons } from '../icons'
 import Image from 'next/image'
@@ -34,7 +35,7 @@ import { navItems } from '@/constants/data'
 import { usePathname } from 'next/navigation'
 import { useThemeConfig } from '../active-theme'
 
-export default function AppSidebar(): JSX.Element {
+export default function AppSidebar(): React.JSX.Element {
   const pathname = usePathname()
 
   const { activeTheme } = useThemeConfig()

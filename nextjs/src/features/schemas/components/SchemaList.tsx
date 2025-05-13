@@ -28,6 +28,26 @@ import { getOrganizationById } from '@/app/api/organization'
 import { useAppSelector } from '@/lib/hooks'
 import { useRouter } from 'next/navigation'
 
+interface IAttributesDetails {
+  attributeName: string
+  schemaDataType: string
+  displayName: string
+  isRequired: boolean
+}
+export interface ISchemaData {
+  createDateTime: string
+  name: string
+  version: string
+  attributes: IAttributesDetails[]
+  schemaLedgerId: string
+  createdBy: string
+  publisherDid: string
+  orgId: string
+  issuerId: string
+  organizationName: string
+  userName: string
+}
+
 const SchemaList = (props: {
   schemaSelectionCallback?: (
     schemaId: string,
@@ -44,7 +64,9 @@ const SchemaList = (props: {
   const verificationFlag = props.verificationFlag ?? false
   const organizationId = useAppSelector((state) => state.organization.orgId)
   const ledgerId = useAppSelector((state) => state.organization.ledgerId)
-  const [schemaList, setSchemaList] = useState<any[]>([])
+  // const [schemaList, setSchemaList] = useState<SetStateAction<never[]>>([])
+  const [schemaList, setSchemaList] = useState<ISchemaData[]>([])
+
   const [, setSchemaListErr] = useState<string | null>('')
   const [loading, setLoading] = useState<boolean>(true)
   const [allSchemaFlag, setAllSchemaFlag] = useState<boolean>(false)
@@ -98,10 +120,11 @@ const SchemaList = (props: {
       }
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        const schemaData = data?.data?.data
         if (data?.data?.data) {
           setLastPage(data?.data?.lastPage)
           setTotalItem(data?.data?.totalItems)
-          setSchemaList([...data?.data?.data])
+          setSchemaList([...schemaData])
         } else {
           setSchemaListErr(schemaResponse as string)
         }
@@ -294,10 +317,10 @@ const SchemaList = (props: {
               {schemaList.map((element) => (
                 <div
                   className="px-0 sm:px-2"
-                  key={`SchemaList-${element.schemaLedgerId}`}
+                  key={`SchemaList-${element?.schemaLedgerId}`}
                 >
                   <SchemaCard
-                    schemaName={element['name']}
+                    schemaName={element?.name}
                     version={element['version']}
                     schemaId={element['schemaLedgerId']}
                     issuerDid={element['issuerId']}

@@ -43,7 +43,7 @@ export default function SendInvitationModal({
   openModal,
   setMessage,
   setOpenModal,
-}: SendInvitationModalProps): JSX.Element {
+}: SendInvitationModalProps): React.JSX.Element {
   const [loading, setLoading] = useState<boolean>(false)
   const [selfEmail, setSelfEmail] = useState<string>('')
   const [invitations, setInvitations] = useState<Invitation[]>([])

@@ -17,6 +17,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
+
 import { Icon } from '@/components/icons'
 import React from 'react'
 
@@ -28,7 +29,7 @@ export function NavProjects({
     url: string
     icon: Icon
   }[]
-}): JSX.Element {
+}): React.JSX.Element {
   const { isMobile } = useSidebar()
 
   return (

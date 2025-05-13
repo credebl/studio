@@ -58,7 +58,7 @@ enum PlatformRoles {
   platformAdmin = 'platform_admin',
 }
 
-export default function SignInViewPage(): JSX.Element {
+export default function SignInViewPage(): React.JSX.Element {
   const [isPasswordTab, setIsPasswordTab] = useState(true)
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
@@ -79,10 +79,13 @@ export default function SignInViewPage(): JSX.Element {
   const getUserDetails = async (
     // eslint-disable-next-line camelcase
     access_token: string,
-  ): Promise<{
-    role: string
-    orgId: string | null
-  } | void> => {
+  ): Promise<
+    | {
+        role: { name: string }
+        orgId: string
+      }
+    | undefined
+  > => {
     try {
       const response = await getUserProfile(access_token)
 
@@ -190,6 +193,8 @@ export default function SignInViewPage(): JSX.Element {
         userName: email?.trim()?.toLowerCase(),
         email: email?.trim()?.toLowerCase(),
       }
+      // Fix this later
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const generateAuthenticationResponse: any =
         await generateAuthenticationOption(obj)
       const challengeId: string =

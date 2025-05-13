@@ -22,7 +22,7 @@ type OrganizationDashboardProps = {
 
 export const OrganizationDashboard = ({
   orgId,
-}: OrganizationDashboardProps): JSX.Element => {
+}: OrganizationDashboardProps): React.JSX.Element => {
   const router = useRouter()
   const [orgData, setOrgData] = useState<IOrganisation | null>(null)
   const [, setLoading] = useState(true)

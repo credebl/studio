@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 'use client'
 
 import { Card, CardContent } from '@/components/ui/card'
@@ -360,38 +361,45 @@ const WalletSpinup = (): React.JSX.Element => {
         setLoading(false)
         setFailure(spinupRes as string)
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error creating shared agent:', error)
       setLoading(false)
-      setFailure(
-        `Error creating shared agent: ${error.message || 'Unknown error'}`,
-      )
+      if (error instanceof Error) {
+        setFailure(`Error creating shared agent: ${error.message}`)
+      } else {
+        setFailure('Error creating shared agent: Unknown error')
+      }
     }
   }
 
   useEffect(() => {
     const setupSocketListeners = (): void => {
       SOCKET.on('agent-spinup-process-initiated', () => {
+        // eslint-disable-next-line no-console
         console.log('agent-spinup-process-initiated')
         setWalletSpinStep(1)
       })
 
       SOCKET.on('agent-spinup-process-completed', (data) => {
+        // eslint-disable-next-line no-console
         console.log('agent-spinup-process-completed', JSON.stringify(data))
         setWalletSpinStep(2)
       })
 
       SOCKET.on('did-publish-process-initiated', (data) => {
+        // eslint-disable-next-line no-console
         console.log('did-publish-process-initiated', JSON.stringify(data))
         setWalletSpinStep(3)
       })
 
       SOCKET.on('did-publish-process-completed', (data) => {
+        // eslint-disable-next-line no-console
         console.log('did-publish-process-completed', JSON.stringify(data))
         setWalletSpinStep(4)
       })
 
       SOCKET.on('invitation-url-creation-started', (data) => {
+        // eslint-disable-next-line no-console
         console.log(' invitation-url-creation-started', JSON.stringify(data))
         setTimeout(() => {
           setWalletSpinStep(5)
@@ -405,6 +413,7 @@ const WalletSpinup = (): React.JSX.Element => {
           setWalletSpinupStatus()
         }, 1000)
         router.push('/organizations')
+        // eslint-disable-next-line no-console
         console.log('invitation-url-creation-success', JSON.stringify(data))
       })
 
@@ -413,6 +422,7 @@ const WalletSpinup = (): React.JSX.Element => {
         setTimeout(() => {
           setFailure('Wallet Creation Failed')
         }, 5000)
+        // eslint-disable-next-line no-console
         console.log('error-in-wallet-creation-process', JSON.stringify(data))
       })
     }

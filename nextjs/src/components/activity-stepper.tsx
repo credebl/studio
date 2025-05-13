@@ -1,6 +1,7 @@
 'use client'
 
 import { Check, Circle, Dot } from 'lucide-react'
+
 import React from 'react'
 
 type Step = {
@@ -25,7 +26,7 @@ const steps: Step[] = [
   },
 ]
 
-export default function RecentActivityStepper(): JSX.Element {
+export default function RecentActivityStepper(): React.JSX.Element {
   return (
     <div className="mx-auto flex w-full max-w-md flex-col gap-10">
       {steps.map((step, index) => {

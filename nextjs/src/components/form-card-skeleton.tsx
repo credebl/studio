@@ -1,8 +1,9 @@
 import { Card, CardContent, CardHeader } from './ui/card'
+
 import React from 'react'
 import { Skeleton } from './ui/skeleton'
 
-export default function FormCardSkeleton(): JSX.Element {
+export default function FormCardSkeleton(): React.JSX.Element {
   return (
     <Card className="mx-auto w-full">
       <CardHeader>

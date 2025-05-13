@@ -97,7 +97,16 @@ module.exports = {
     'default-case': 'error',
     'default-case-last': 'error',
     'default-param-last': 'error',
-    camelcase: ['error', { properties: 'always', ignoreImports: true }],
+    camelcase: [
+      'error',
+      {
+        properties: 'always',
+        ignoreImports: true,
+        allow: ['server_tokens'],
+        ignoreDestructuring: true,
+        ignoreGlobals: true,
+      },
+    ],
 
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     // Best Practices
@@ -153,7 +162,7 @@ module.exports = {
     'computed-property-spacing': 'error',
     'func-call-spacing': 'error',
     'keyword-spacing': 'error',
-    'no-mixed-operators': 'error',
+    'no-mixed-operators': 'warn',
     'no-multiple-empty-lines': ['error', { max: 2, maxEOF: 1 }],
     'no-tabs': 'error',
     'no-unneeded-ternary': 'error',

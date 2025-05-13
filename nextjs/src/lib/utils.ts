@@ -20,6 +20,7 @@ export function formatBytes(
     return '0 Byte'
   }
   const i = Math.floor(Math.log(bytes) / Math.log(1024))
+  // eslint-disable-next-line prettier/prettier
   return `${(bytes / 1024 ** i).toFixed(decimals)} ${
     sizeType === 'accurate'
       ? (accurateSizes[i] ?? 'Bytest')

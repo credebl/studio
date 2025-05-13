@@ -64,7 +64,7 @@ export interface User {
 //   // walletData?: any[]
 // }
 
-const OrganizationCardList = (): JSX.Element => {
+const OrganizationCardList = (): React.JSX.Element => {
   const [orgList, setOrgList] = useState<Organisation[]>([])
   const [loading, setLoading] = useState(true)
 

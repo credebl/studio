@@ -7,7 +7,7 @@ import {
   ISchemaCardProps,
   ISchemaData,
 } from '../type/schemas-interface'
-import React, { JSX, useState } from 'react'
+import React, { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import CopyDid from '@/config/CopyDid'
@@ -19,7 +19,7 @@ import { dateConversion } from '@/utils/DateConversion'
 import { limitedAttributesLength } from '@/config/CommonConstant'
 import { useRouter } from 'next/navigation'
 
-const SchemaCard = (props: ISchemaCardProps): JSX.Element => {
+const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
   const [, setIsSelected] = useState(false)
   const router = useRouter()
 

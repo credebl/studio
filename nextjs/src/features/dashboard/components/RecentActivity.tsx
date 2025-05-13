@@ -27,7 +27,7 @@ export interface UserActivity {
   deletedAt: Date | string
 }
 
-const RecentActivity = (): JSX.Element => {
+const RecentActivity = (): React.JSX.Element => {
   const [activityList, setActivityList] = useState<UserActivity[]>([])
   const [loading, setLoading] = useState(true)
   const [limit] = useState(5)
@@ -53,7 +53,7 @@ const RecentActivity = (): JSX.Element => {
     fetchRecentActivity()
   }, [])
 
-  const renderActivity = (): JSX.Element => {
+  const renderActivity = (): React.JSX.Element => {
     if (!activityList?.length) {
       return <p>No recent activity found.</p>
     }

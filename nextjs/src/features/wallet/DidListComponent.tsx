@@ -52,7 +52,7 @@ const DIDList = ({ orgId }: { orgId: string }): React.JSX.Element => {
       const { data } = response as AxiosResponse
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         const sortedDids = data?.data.sort(
-          (a: { isPrimaryDid: any }, b: { isPrimaryDid: any }) => {
+          (a: { isPrimaryDid: boolean }, b: { isPrimaryDid: boolean }) => {
             if (a.isPrimaryDid && !b.isPrimaryDid) {
               return -1
             }

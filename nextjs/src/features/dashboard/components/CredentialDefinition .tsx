@@ -23,7 +23,7 @@ interface CredentialDefinitionType {
   // Add other properties if they exist
 }
 
-const CredentialDefinition = (): JSX.Element => {
+const CredentialDefinition = (): React.JSX.Element => {
   const [loading, setLoading] = useState(true)
   const [credentialDefinition, setCredentialDefinition] = useState<
     CredentialDefinitionType[]

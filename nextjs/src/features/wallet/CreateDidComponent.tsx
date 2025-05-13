@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 'use client'
 
 import * as React from 'react'
@@ -117,7 +118,7 @@ const CreateDidComponent = (props: CreateDIDModalProps): React.JSX.Element => {
   >(null)
 
   // Dynamically build schema based on method
-  const getFormSchema = () => {
+  const getFormSchema = (): Zod.AnyZodObject => {
     const baseSchema = z.object({
       method: z.string(),
       ledger: z.string(),

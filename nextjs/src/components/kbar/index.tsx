@@ -7,8 +7,8 @@ import {
   KBarProvider,
   KBarSearch,
 } from 'kbar'
-
 import React, { useMemo } from 'react'
+
 import { NavItem } from '../../../types'
 import RenderResults from './render-result'
 import { navItems } from '@/constants/data'
@@ -18,7 +18,7 @@ export default function KBar({
   children,
 }: {
   children: React.ReactNode
-}): JSX.Element {
+}): React.JSX.Element {
   const router = useRouter()
 
   // These action are for the navigation
@@ -64,7 +64,7 @@ export default function KBar({
     children,
   }: {
     children: React.ReactNode
-  }): JSX.Element => (
+  }): React.JSX.Element => (
     <>
       <KBarPortal>
         <KBarPositioner className="bg-background/80 fixed inset-0 z-99999 p-0! backdrop-blur-sm">

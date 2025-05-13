@@ -62,7 +62,7 @@ type City = {
   countryCode: string
 }
 
-export default function OrganizationOnboarding(): JSX.Element {
+export default function OrganizationOnboarding(): React.JSX.Element {
   const [isPublic, setIsPublic] = useState<boolean>()
   const totalSteps = 4
   const [countries, setCountries] = useState<Countries[]>([])

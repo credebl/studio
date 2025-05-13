@@ -7,7 +7,7 @@ export const AlertComponent = ({
   viewButton,
   onAlertClose,
   path = '',
-}: IAlertComponent): JSX.Element | boolean => {
+}: IAlertComponent): React.JSX.Element | boolean => {
   const getAlertClass = (): string => {
     switch (type) {
       case 'warning':

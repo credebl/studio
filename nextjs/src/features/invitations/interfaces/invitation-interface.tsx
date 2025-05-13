@@ -9,7 +9,7 @@ export interface Invitation {
   createdBy: string
   lastChangedDateTime: string
   lastChangedBy: string
-  deletedAt: any
+  deletedAt: Date | string
   userId: string
   orgId: string
   status: string

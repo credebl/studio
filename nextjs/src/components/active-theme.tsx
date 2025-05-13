@@ -58,7 +58,7 @@ export function ActiveThemeProvider({
   )
 }
 
-export function useThemeConfig(): ThemeContextType | undefined {
+export function useThemeConfig(): ThemeContextType {
   const context = useContext(ThemeContext)
   if (context === undefined) {
     throw new Error('useThemeConfig must be used within an ActiveThemeProvider')

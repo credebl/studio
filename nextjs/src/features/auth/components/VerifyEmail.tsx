@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { validEmail } from '@/utils/TextTransform'
 
-export default function VerifyEmailPage(): JSX.Element {
+export default function VerifyEmailPage(): React.JSX.Element {
   const router = useRouter()
   const searchParams = useSearchParams()
 

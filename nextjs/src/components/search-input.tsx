@@ -5,7 +5,7 @@ import { IconSearch } from '@tabler/icons-react'
 import React from 'react'
 import { useKBar } from 'kbar'
 
-export default function SearchInput(): JSX.Element {
+export default function SearchInput(): React.JSX.Element {
   const { query } = useKBar()
   return (
     <div className="w-full space-y-2">

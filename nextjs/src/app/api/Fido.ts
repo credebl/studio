@@ -11,9 +11,12 @@ import {
   axiosPost,
   axiosPut,
 } from '@/services/apiRequests'
+
 import { AxiosResponse } from 'axios'
 import apiRoutes from './apiRoutes'
+import { getHeaderConfigs } from '@/config/GetHeaderConfigs'
 
+const config = getHeaderConfigs()
 export const generateRegistrationOption = async (
   payload: IRegistrationOption,
 ): Promise<AxiosResponse | string> => {
@@ -21,11 +24,7 @@ export const generateRegistrationOption = async (
   const details = {
     url: `${apiRoutes.auth.generateRegistration}/${email}`,
     payload,
-    config: {
-      headers: {
-        'Content-type': 'application/json',
-      },
-    },
+    config,
   }
 
   try {
@@ -44,11 +43,7 @@ export const verifyRegistration = async (
   const details = {
     url: `${apiRoutes.auth.verifyRegistration}${email}`,
     payload,
-    config: {
-      headers: {
-        'Content-type': 'application/json',
-      },
-    },
+    config,
   }
 
   try {
@@ -67,11 +62,7 @@ export const addDeviceDetails = async (
   const details = {
     url: `${apiRoutes.auth.userUpdate}/${credentialId}`,
     payload,
-    config: {
-      headers: {
-        'Content-type': 'application/json',
-      },
-    },
+    config,
   }
 
   try {
@@ -85,14 +76,10 @@ export const addDeviceDetails = async (
 
 export const getUserDeviceDetails = async (
   email: string,
-): Promise<AxiosResponse | string> => {
+): Promise<AxiosResponse> => {
   const details = {
     url: `${apiRoutes.auth.getDeviceList}${email}`,
-    config: {
-      headers: {
-        'Content-type': 'application/json',
-      },
-    },
+    config,
   }
 
   try {
@@ -109,11 +96,7 @@ export const deleteDeviceById = async (
 ): Promise<AxiosResponse | string> => {
   const details = {
     url: `${apiRoutes.auth.fidoDevice}/${credentialId}`,
-    config: {
-      headers: {
-        'Content-type': 'application/json',
-      },
-    },
+    config,
   }
 
   try {
@@ -131,11 +114,7 @@ export const generateAuthenticationOption = async (
   const details = {
     url: `${apiRoutes.auth.fidoAuthentication}`,
     payload,
-    config: {
-      headers: {
-        'Content-type': 'application/json',
-      },
-    },
+    config,
   }
 
   try {
@@ -154,11 +133,7 @@ export const verifyAuthentication = async (
   const details = {
     url: `${apiRoutes.auth.fidoVerifyAuthentication}${email.userName}`,
     payload,
-    config: {
-      headers: {
-        'Content-type': 'application/json',
-      },
-    },
+    config,
   }
 
   try {
@@ -176,11 +151,7 @@ export const editDeviceDetails = async (
   const details = {
     url: `${apiRoutes.auth.updateDeviceName}/${payload.enCodedUrl}?deviceName=${payload.updatedDeviceName}`,
     payload,
-    config: {
-      headers: {
-        'Content-type': 'application/json',
-      },
-    },
+    config,
   }
 
   try {

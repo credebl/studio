@@ -10,7 +10,7 @@ const themes = [
   { name: 'SOVIO', value: 'sovio' },
 ]
 
-export function ThemeSelector(): JSX.Element {
+export function ThemeSelector(): React.JSX.Element {
   const { activeTheme, setActiveTheme } = useThemeConfig()
 
   return (

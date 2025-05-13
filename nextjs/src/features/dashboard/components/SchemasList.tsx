@@ -30,7 +30,7 @@ type Schema = {
   schemaLedgerId: string
 }
 
-const SchemasList = (): JSX.Element => {
+const SchemasList = (): React.JSX.Element => {
   const [loading, setLoading] = useState(true)
   const [schemas, setSchemas] = useState<Schema[]>([])
   const [schemaTypeValues, setSchemaTypeValues] = useState<SchemaTypeValue>()
@@ -94,7 +94,7 @@ const SchemasList = (): JSX.Element => {
     router.push(`/organizations/schemas/${encodedSchemaId}`)
   }
 
-  const renderSchema = (schema: Schema, index: number): JSX.Element => {
+  const renderSchema = (schema: Schema, index: number): React.JSX.Element => {
     const isIndySchema = schemaTypeValues === SchemaTypeValue.INDY
 
     return (

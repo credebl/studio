@@ -28,7 +28,7 @@ import { useAppSelector } from '@/lib/hooks'
 import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/navigation'
 
-export function UserNav(): JSX.Element | null {
+export function UserNav(): React.JSX.Element | null {
   const dispatch = useDispatch()
   const router = useRouter()
 

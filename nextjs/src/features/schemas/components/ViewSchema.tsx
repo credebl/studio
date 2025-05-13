@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 'use client'
 
 import * as yup from 'yup'
@@ -9,7 +10,7 @@ import {
   Values,
 } from '../type/schemas-interface'
 import { Field, Form, Formik } from 'formik'
-import React, { JSX, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   createCredentialDefinition,
   getCredDeffById,
@@ -57,7 +58,7 @@ const initialPageState = {
 const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
   const [schemaDetails, setSchemaDetails] = useState<SchemaData | null>(null)
 
-  const [credDeffList, setCredDeffList] = useState<any>([])
+  const [credDeffList, setCredDeffList] = useState([])
 
   const [loading, setLoading] = useState<boolean>(true)
   const [createloader, setCreateLoader] = useState<boolean>(false)
@@ -392,7 +393,7 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
                       formikHandlers.resetForm()
                     }}
                   >
-                    {(formikHandlers): JSX.Element => (
+                    {(formikHandlers): React.JSX.Element => (
                       <Form onSubmit={formikHandlers.handleSubmit}>
                         <div className="flex items-center space-x-4">
                           <div className="w-full">

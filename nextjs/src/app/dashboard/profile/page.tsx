@@ -5,6 +5,6 @@ export const metadata = {
   title: 'Dashboard : Profile',
 }
 
-export default function Page(): JSX.Element {
+export default function Page(): React.JSX.Element {
   return <ProfileViewPage />
 }

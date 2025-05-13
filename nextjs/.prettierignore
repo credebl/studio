@@ -49,3 +49,4 @@ ico
 
 # Ignore Shadcn UI auto-generated components
 components/ui/*
+/src/hooks/*

@@ -6,13 +6,14 @@ import { DidMethod, SchemaType, SchemaTypeValue } from '@/common/enums'
 import {
   Field,
   FieldArray,
+  FieldArrayRenderProps,
   Form,
   Formik,
   type FormikErrors,
   type FormikProps,
 } from 'formik'
 import { FieldName, IAttributes, IFormData } from '../type/schemas-interface'
-import React, { JSX, useEffect, useMemo, useState } from 'react'
+import React, { ChangeEvent, useEffect, useMemo, useState } from 'react'
 import {
   apiStatusCodes,
   schemaVersionRegex,
@@ -52,7 +53,7 @@ interface IPopup {
   type: 'reset' | 'create'
 }
 
-const CreateSchema = (): JSX.Element => {
+const CreateSchema = (): React.JSX.Element => {
   const [failure, setFailure] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [createLoader, setCreateLoader] = useState<boolean>(false)
@@ -202,7 +203,7 @@ const CreateSchema = (): JSX.Element => {
     ),
   }
   const confirmCreateSchema = (): void => {
-    formData.attribute.forEach((element: any) => {
+    formData.attribute.forEach((element: IAttributes) => {
       if (!element.schemaDataType) {
         const updatedElement = { ...element, schemaDataType: 'string' }
         Object.assign(element, updatedElement)
@@ -228,7 +229,7 @@ const CreateSchema = (): JSX.Element => {
     const value = attributeValue?.[index]?.[field]
 
     if (!(isTouched && isError) && value) {
-      const matchCount = attributeValue.filter((item, index) => {
+      const matchCount = attributeValue.filter((item) => {
         const itemAttr = item[field]?.trim()?.toLowerCase()
         const enteredAttr = value?.trim()?.toLowerCase()
         return itemAttr === enteredAttr
@@ -328,7 +329,7 @@ const CreateSchema = (): JSX.Element => {
               })
             }}
           >
-            {(formikHandlers): JSX.Element => (
+            {(formikHandlers): React.JSX.Element => (
               <Form onSubmit={formikHandlers.handleSubmit} className="mx-4">
                 <input
                   type="hidden"
@@ -404,7 +405,9 @@ const CreateSchema = (): JSX.Element => {
                 </p>
                 <div className="bg-card text-card-foreground mt-2 rounded-xl border pt-4 pb-10 shadow">
                   <FieldArray name="attribute">
-                    {(fieldArrayProps: any): JSX.Element => {
+                    {(
+                      fieldArrayProps: FieldArrayRenderProps,
+                    ): React.JSX.Element => {
                       const { form, remove, push } = fieldArrayProps
                       const { values } = form
                       const { attribute } = values
@@ -439,7 +442,9 @@ const CreateSchema = (): JSX.Element => {
                                         name={`attribute.${index}.attributeName`}
                                         placeholder="Attribute eg. NAME, ID"
                                         disabled={!areFirstInputsSelected}
-                                        onChange={(e: any) => {
+                                        onChange={(
+                                          e: ChangeEvent<HTMLInputElement>,
+                                        ) => {
                                           formikHandlers.handleChange(e)
                                           formikHandlers.setFieldValue(
                                             `attribute[${index}].displayName`,

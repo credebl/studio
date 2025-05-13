@@ -93,7 +93,7 @@ interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
   disabled?: boolean
 }
 
-export function FileUploader(props: FileUploaderProps): JSX.Element {
+export function FileUploader(props: FileUploaderProps): React.JSX.Element {
   const {
     value: valueProp,
     onValueChange,
@@ -117,7 +117,11 @@ export function FileUploader(props: FileUploaderProps): JSX.Element {
     return 'preview' in file && typeof file.preview === 'string'
   }
 
-  function FileCard({ file, progress, onRemove }: FileCardProps): JSX.Element {
+  function FileCard({
+    file,
+    progress,
+    onRemove,
+  }: FileCardProps): React.JSX.Element {
     return (
       <div className="relative flex items-center space-x-4">
         <div className="flex flex-1 space-x-4">

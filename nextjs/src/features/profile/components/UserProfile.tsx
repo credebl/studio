@@ -9,7 +9,7 @@ import { apiStatusCodes } from '@/config/CommonConstant'
 import { getUserProfile } from '@/app/api/Auth'
 import { useAppSelector } from '@/lib/hooks'
 
-export default function UserProfile(): JSX.Element {
+export default function UserProfile(): React.JSX.Element {
   const token = useAppSelector((state) => state.auth.token)
 
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false)

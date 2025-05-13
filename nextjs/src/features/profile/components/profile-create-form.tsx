@@ -35,7 +35,7 @@ import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 interface ProfileFormType {
-  initialData: any | null
+  initialData: null
 }
 
 const ProfileCreateForm: React.FC<ProfileFormType> = ({ initialData }) => {
@@ -298,7 +298,6 @@ const ProfileCreateForm: React.FC<ProfileFormType> = ({ initialData }) => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {/* @ts-ignore  */}
                           {countries.map((country) => (
                             <SelectItem key={country.id} value={country.id}>
                               {country.name}
@@ -331,7 +330,6 @@ const ProfileCreateForm: React.FC<ProfileFormType> = ({ initialData }) => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {/* @ts-ignore  */}
                           {cities.map((city) => (
                             <SelectItem key={city.id} value={city.id}>
                               {city.name}

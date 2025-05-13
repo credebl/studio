@@ -1,7 +1,7 @@
 import OrganizationModal from '@/features/organization/components/CreateOrganizationModal'
 import React from 'react'
 
-const page = (): JSX.Element => (
+const page = (): React.JSX.Element => (
   <div>
     <OrganizationModal />
   </div>

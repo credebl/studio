@@ -40,7 +40,7 @@ const ConfirmationModal = ({
   buttonTitles,
   loading,
   warning,
-}: IProps): JSX.Element => (
+}: IProps): React.JSX.Element => (
   <Dialog open={openModal} onOpenChange={(open) => closeModal(!open)}>
     <DialogContent className="fixed top-1/2 left-1/2 max-h-[450px] w-full max-w-xl -translate-x-1/2 -translate-y-1/2 transform overflow-auto">
       <DialogHeader>

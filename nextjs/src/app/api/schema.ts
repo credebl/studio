@@ -3,10 +3,12 @@ import {
   GetAllSchemaListParameter,
 } from '@/features/dashboard/type/schema'
 import { axiosGet, axiosPost } from '@/services/apiRequests'
+
 import { AxiosResponse } from 'axios'
 import apiRoutes from './apiRoutes'
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs'
 
+const config = getHeaderConfigs()
 export const createSchemas = async (
   payload: Record<string, unknown>,
   orgId: string,
@@ -14,11 +16,7 @@ export const createSchemas = async (
   const details = {
     url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.create}`,
     payload,
-    config: {
-      headers: {
-        'Content-type': 'application/json',
-      },
-    },
+    config,
   }
 
   try {
@@ -36,11 +34,7 @@ export const getSchemaById = async (
 ): Promise<AxiosResponse | string> => {
   const details = {
     url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.getSchemaById}/${schemaId}`,
-    config: {
-      headers: {
-        'Content-type': 'application/json',
-      },
-    },
+    config,
   }
 
   try {
@@ -59,11 +53,7 @@ export const createCredentialDefinition = async (
   const details = {
     url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.createCredentialDefinition}`,
     payload,
-    config: {
-      headers: {
-        'Content-type': 'application/json',
-      },
-    },
+    config,
   }
 
   try {
@@ -83,11 +73,7 @@ export const getAllSchemas = async (
 ): Promise<AxiosResponse | string> => {
   const axiosPayload = {
     url: `${apiRoutes.Platform.getAllSchemaFromPlatform}?pageSize=${itemPerPage}&searchByText=${allSearch}&pageNumber=${page}&ledgerId=${ledgerId}&schemaType=${schemaType}`,
-    config: {
-      headers: {
-        'Content-type': 'application/json',
-      },
-    },
+    config,
   }
 
   try {
@@ -105,11 +91,7 @@ export const getAllSchemasByOrgId = async (
 ): Promise<AxiosResponse | string> => {
   const details = {
     url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.getAll}?pageNumber=${page}&pageSize=${itemPerPage}&searchByText=${search}`,
-    config: {
-      headers: {
-        'Content-type': 'application/json',
-      },
-    },
+    config,
   }
 
   try {
@@ -144,11 +126,7 @@ export const getCredDeffById = async (
 ): Promise<AxiosResponse | string> => {
   const details = {
     url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.getCredDefBySchemaId}/${schemaId}/cred-defs`,
-    config: {
-      headers: {
-        'Content-type': 'application/json',
-      },
-    },
+    config,
   }
 
   try {
@@ -166,11 +144,7 @@ export const getCredDefDetailsByCredDefId = async (
 ): Promise<AxiosResponse | string> => {
   const details = {
     url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.createCredentialDefinition}/${credDefId}`,
-    config: {
-      headers: {
-        'Content-type': 'application/json',
-      },
-    },
+    config,
   }
 
   try {

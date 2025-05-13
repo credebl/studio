@@ -7,7 +7,7 @@ import Link from 'next/link'
 import UserInfoForm from './UserInfoForm'
 import { useSearchParams } from 'next/navigation'
 
-export default function SignUpUser(): JSX.Element {
+export default function SignUpUser(): React.JSX.Element {
   const [step, setStep] = useState(1)
   const [, setEmail] = useState<string>('')
   const searchParam = useSearchParams()

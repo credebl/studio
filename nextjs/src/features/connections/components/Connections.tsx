@@ -51,7 +51,7 @@ const initialPageState = {
   allSearch: '',
 }
 
-const Connections = (): JSX.Element => {
+const Connections = (): React.JSX.Element => {
   const orgId = useAppSelector((state) => state.organization.orgId)
   const [listAPIParameter, setListAPIParameter] = useState(initialPageState)
   const [connectionList, setConnectionList] = useState<IConnectionList[]>([])

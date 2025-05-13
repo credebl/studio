@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 'use client'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -23,7 +24,7 @@ import { getOrganizations } from '@/app/api/organization'
 import { useAppDispatch } from '@/lib/hooks'
 import { useRouter } from 'next/navigation'
 
-export const OrganizationList = (): JSX.Element => {
+export const OrganizationList = (): React.JSX.Element => {
   const [organizationsList, setOrganizationsList] = useState<Organization[]>([])
   const [loading, setLoading] = useState(true)
   const [, setError] = useState<string | null>(null)

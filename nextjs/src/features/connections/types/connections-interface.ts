@@ -1,5 +1,3 @@
-import { JSX } from 'react'
-
 export interface IConnectionList {
   theirLabel: string
   connectionId: string
@@ -15,6 +13,6 @@ export interface ITableData {
 export interface Data {
   handleChange(value: string): void
   inputType: string
-  data: string | JSX.Element
+  data: string | React.JSX.Element
   subData?: string
 }

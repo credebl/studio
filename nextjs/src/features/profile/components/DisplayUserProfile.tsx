@@ -10,7 +10,7 @@ import React from 'react'
 const DisplayUserProfile = ({
   toggleEditProfile,
   userProfileInfo,
-}: IDisplayUserProfileProps): JSX.Element => (
+}: IDisplayUserProfileProps): React.JSX.Element => (
   <div className="flex h-full flex-col p-4 sm:py-6">
     <div className="bg-background mx-auto w-full rounded-lg">
       <div className="px-6 py-6">

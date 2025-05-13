@@ -6,7 +6,7 @@ import React from 'react'
 import { signIn } from 'next-auth/react'
 import { useSearchParams } from 'next/navigation'
 
-export default function GithubSignInButton(): JSX.Element {
+export default function GithubSignInButton(): React.JSX.Element {
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get('callbackUrl')
 

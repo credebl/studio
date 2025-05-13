@@ -8,7 +8,7 @@ const Loader = ({
   colorClass?: string
   height?: string
   width?: string
-}): JSX.Element => (
+}): React.JSX.Element => (
   <div className="flex h-full w-full items-center justify-center">
     <div className="relative" style={{ height, width }}>
       <div

@@ -26,7 +26,7 @@ export function DeleteOrganizationCard({
   count,
   isDisabled = false,
   onDeleteClick,
-}: DeleteOrganizationCardProps): JSX.Element {
+}: DeleteOrganizationCardProps): React.JSX.Element {
   const isButtonDisabled = isDisabled || count === 0
 
   return (

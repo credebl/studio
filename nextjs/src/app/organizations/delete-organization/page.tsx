@@ -1,7 +1,7 @@
 import DeleteOrganizationPage from '@/features/organization/components/DeleteOrganization'
 import React from 'react'
 
-const page = (): JSX.Element => (
+const page = (): React.JSX.Element => (
   <div>
     <DeleteOrganizationPage />
   </div>

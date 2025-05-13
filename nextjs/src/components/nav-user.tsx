@@ -35,7 +35,7 @@ export function NavUser({
     email: string
     avatar: string
   }
-}): JSX.Element {
+}): React.JSX.Element {
   const { isMobile } = useSidebar()
 
   return (

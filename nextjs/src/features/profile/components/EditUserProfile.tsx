@@ -39,7 +39,7 @@ export default function EditUserProfile({
   toggleEditProfile,
   userProfileInfo,
   updateProfile,
-}: EditUserProfileProps): JSX.Element {
+}: EditUserProfileProps): React.JSX.Element {
   const [, setLoading] = useState(false)
   const [logoImage, setLogoImage] = useState<ILogoImage>({
     logoFile: '',

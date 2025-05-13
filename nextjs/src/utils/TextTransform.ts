@@ -21,5 +21,6 @@ export const copyText = (copiedText: string | undefined): void => {
 }
 
 // To check validity of email
-export const validEmail = (email: string): string =>
-  (emailRegex.test(email) ? email : '')
+export function validEmail(email: string): string {
+  return emailRegex.test(email) ? email : ''
+}

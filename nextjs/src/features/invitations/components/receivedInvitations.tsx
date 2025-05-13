@@ -35,7 +35,7 @@ const initialPageState = {
   total: 0,
 }
 
-export default function ReceivedInvitations(): JSX.Element {
+export default function ReceivedInvitations(): React.JSX.Element {
   const [loading, setLoading] = useState<boolean>(false)
   const [message, setMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -155,7 +155,7 @@ export default function ReceivedInvitations(): JSX.Element {
     }
   }
 
-  const renderPagination = (): JSX.Element | null => {
+  const renderPagination = (): React.JSX.Element | null => {
     if (currentPage.total <= 1) {
       return null
     }

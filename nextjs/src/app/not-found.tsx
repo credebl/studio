@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import React from 'react'
 import { useRouter } from 'next/navigation'
 
-export default function NotFound(): JSX.Element {
+export default function NotFound(): React.JSX.Element {
   const router = useRouter()
 
   return (

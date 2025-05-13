@@ -7,6 +7,6 @@ export const metadata: Metadata = {
   description: 'Sign In page for authentication.',
 }
 
-export default function Page(): JSX.Element {
+export default function Page(): React.JSX.Element {
   return <SignInPage />
 }

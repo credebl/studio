@@ -16,6 +16,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar'
+
 import { Icon } from '@/components/icons'
 import { IconChevronRight } from '@tabler/icons-react'
 import React from 'react'
@@ -33,7 +34,7 @@ export function NavMain({
       url: string
     }[]
   }[]
-}): JSX.Element {
+}): React.JSX.Element {
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>

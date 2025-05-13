@@ -1,6 +1,7 @@
 'use client'
 
 import { CredeblLogoHeight, CredeblLogoWidth } from '@/config/CommonConstant'
+
 import Image from 'next/image'
 import { Metadata } from 'next'
 import React from 'react'
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
   description: 'Authentication forms built using the components.',
 }
 
-export default function SignInPage(): JSX.Element {
+export default function SignInPage(): React.JSX.Element {
   const { activeTheme } = useThemeConfig()
 
   const logoImageSrc =

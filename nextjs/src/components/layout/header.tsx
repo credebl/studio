@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { setOrgId, setOrgInfo } from '@/lib/orgSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
+
 import { Breadcrumbs } from '../breadcrumbs'
 import { ModeToggle } from './ThemeToggle/theme-toggle'
 import { OrgSwitcher } from '../org-switcher'
@@ -10,7 +11,7 @@ import { SidebarTrigger } from '../ui/sidebar'
 import { UserNav } from './user-nav'
 import { getOrganizations } from '@/app/api/organization'
 
-export default function Header(): JSX.Element {
+export default function Header(): React.JSX.Element {
   const dispatch = useAppDispatch()
   const [currentPage] = useState(1)
   const [pageSize] = useState(10)
@@ -93,15 +94,17 @@ export default function Header(): JSX.Element {
       </div>
 
       <div className="flex items-center gap-2 px-4">
-        <OrgSwitcher
-          tenants={orgList.map((org) => ({
-            id: org.id,
-            name: org.name,
-            logoUrl: org.logoUrl,
-          }))}
-          defaultTenant={activeTenant}
-          onTenantSwitch={handleSwitchTenant}
-        />
+        {activeTenant && (
+          <OrgSwitcher
+            tenants={orgList.map((org) => ({
+              id: org.id,
+              name: org.name,
+              logoUrl: org.logoUrl,
+            }))}
+            defaultTenant={activeTenant}
+            onTenantSwitch={handleSwitchTenant}
+          />
+        )}
         <div className="hidden md:flex">{/* <SearchInput /> */}</div>
         <ModeToggle />
         <UserNav />

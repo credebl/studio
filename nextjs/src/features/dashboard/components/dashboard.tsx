@@ -28,7 +28,7 @@ const initialPageState = {
   total: 0,
 }
 
-export default function Dashboard(): JSX.Element {
+export default function Dashboard(): React.JSX.Element {
   const [walletData, setWalletData] = useState<[]>([])
   const [walletLoading, setWalletLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(initialPageState)
@@ -39,7 +39,7 @@ export default function Dashboard(): JSX.Element {
   const [ecoMessage, setEcoMessage] = useState<string | null>('')
 
   const orgId = useAppSelector((state) => state.organization.orgId)
-  const [userOrg, setUserOrg] = useState(null)
+  const [, setUserOrg] = useState(null)
 
   const dispatch = useAppDispatch()
 
@@ -102,7 +102,6 @@ export default function Dashboard(): JSX.Element {
       console.error('An unexpected error occurred.', err)
     }
   }
-
 
   useEffect(() => {
     getAllInvitations()
@@ -234,7 +233,7 @@ export default function Dashboard(): JSX.Element {
         )}
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <OrganizationCardList userOrg={userOrg} walletData={walletData} />
+          <OrganizationCardList />
           <SchemasList />
         </div>
 

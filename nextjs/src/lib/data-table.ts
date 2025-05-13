@@ -59,7 +59,7 @@ export function getFilterOperators(filterVariant: FilterVariant): {
   return operatorMap[filterVariant] ?? dataTableConfig.textOperators
 }
 
-export function getDefaultFilterOperator(filterVariant: FilterVariant) {
+export function getDefaultFilterOperator(filterVariant: FilterVariant): string {
   const operators = getFilterOperators(filterVariant)
 
   return operators[0]?.value ?? (filterVariant === 'text' ? 'iLike' : 'eq')

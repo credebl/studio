@@ -37,7 +37,7 @@ interface IOrgCount {
   connectionRecordsCount?: number
 }
 
-export default function DeleteOrganizationPage(): JSX.Element {
+export default function DeleteOrganizationPage(): React.JSX.Element {
   const router = useRouter()
   const searchParams = useSearchParams()
   const orgId = searchParams.get('orgId')
@@ -51,7 +51,7 @@ export default function DeleteOrganizationPage(): JSX.Element {
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false)
   const [isWalletPresent, setIsWalletPresent] = useState<boolean>(false)
   const [showPopup, setShowPopup] = useState<boolean>(false)
-  const [deleteAction, setDeleteAction] = useState<() => void>(() => {})
+  const [deleteAction, setDeleteAction] = useState<() => void>()
   const [confirmMessage, setConfirmMessage] = useState<
     string | React.ReactNode
   >('')

@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 'use client'
 
 import * as yup from 'yup'
@@ -20,7 +21,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { getLedgerConfig, getLedgers } from '@/app/api/Agent'
 
 import type { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
@@ -32,6 +32,7 @@ import SetPrivateKeyValueInput from './SetPrivateKeyValue'
 import Stepper from '@/components/StepperComponent'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { envConfig } from '@/config/envConfig'
+import { getLedgerConfig } from '@/app/api/Agent'
 
 interface IDetails {
   [key: string]: string | { [subKey: string]: string }
@@ -88,7 +89,6 @@ const DedicatedLedgerConfig = ({
   const [mappedData, setMappedData] = useState<ILedgerConfigData | null>(null)
   const [domainValue, setDomainValue] = useState<string>('')
   const [privateKeyValue, setPrivateKeyValue] = useState<string>('')
-  const [, setNetworks] = useState([])
   const fetchLedgerConfig = async (): Promise<void> => {
     try {
       const { data } = (await getLedgerConfig()) as AxiosResponse
@@ -145,17 +145,6 @@ const DedicatedLedgerConfig = ({
     }
   }
 
-  const fetchNetworks = async (): Promise<void> => {
-    try {
-      const { data } = (await getLedgers()) as AxiosResponse
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        setNetworks(data?.data || [])
-      }
-    } catch (err) {
-      console.error('Fetch Network ERROR::::', err)
-    }
-  }
-
   const handleLedgerSelect = (ledger: string): void => {
     setSelectedLedger(ledger)
     setSelectedMethod('')
@@ -177,7 +166,6 @@ const DedicatedLedgerConfig = ({
   }
 
   useEffect(() => {
-    fetchNetworks()
     fetchLedgerConfig()
   }, [])
 
