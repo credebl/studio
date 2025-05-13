@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import type { AxiosResponse } from 'axios';
 import { nanoid } from 'nanoid';
 import React from 'react';
-import { createDid, createOrganization, getOrganizationById, setAgentConfigDetails, spinupSharedAgent } from '@/app/api/organization';
+import { createOrganization, getOrganizationById } from '@/app/api/organization';
 import { apiStatusCodes } from '@/config/CommonConstant';
 import { DidMethod } from '../common/enum';
 import SOCKET from '@/config/SocketConfig';
@@ -14,75 +14,24 @@ import { CheckCircle, AlertCircle, User, Users } from "lucide-react";
 import WalletStepsComponent from './WalletSteps';
 import SharedAgentForm from './SharedAgentForm';
 import Stepper from '@/components/StepperComponent';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import DedicatedAgentForm from './DedicatedAgentForm';
+import { useAppSelector } from '@/lib/hooks';
+import PageContainer from '@/components/layout/page-container';
+import { createDid, setAgentConfigDetails, spinupSharedAgent } from '@/app/api/Agent';
+import { Organisation } from '../dashboard/type/organization';
+import { IValuesShared } from '../organization/components/interfaces/organization';
+import { AlertComponent } from '@/components/AlertComponent';
 
-// Define types and interfaces
-export interface IValuesShared {
-  keyType?: string;
-  seed: string;
-  method: string;
-  network?: string;
-  did?: string;
-  endorserDid?: string;
-  privatekey?: string;
-  endpoint?: string;
-  domain?: string;
-  role?: string;
-  ledger: string;
-  label?: string;
-}
-
-interface Values {
-  seed: string;
-  walletName: string;
-  password: string;
-  did: string;
-  network: string;
-}
-
-export interface IDedicatedAgentData {
-  walletName: string;
-  agentEndpoint: string;
-  apiKey: string;
-  seed: string;
-  keyType: string;
-  method: string;
-  network: string;
-  role: string;
-}
-
-interface Organisation {
-  [key: string]: any;
-}
-
-interface OrganizationFormDetails {
-  name: string;
-  description: string;
-  countryId?: number | null;
-  stateId?: number | null;
-  cityId?: number | null;
-  website: string;
-  logoUrl?: File | null;
-}
 
 enum AgentType {
   SHARED = 'shared',
   DEDICATED = 'dedicated',
 }
 
-interface WalletSpinupProps {
-  step: number;
-  orgId?: string | null;
-  formData: OrganizationFormDetails | null;
-  setWalletSpinupStatus: (flag: boolean) => void;
-  ledgerConfig: boolean;
-  setAgentConfigDetails?: IDedicatedAgentData;
-  orgName?: string;
-}
 
-
-const WalletSpinup = (props: WalletSpinupProps) => {
+const WalletSpinup = (
+) => {
   const [agentType, setAgentType] = useState<string>(AgentType.DEDICATED);
   const [loading, setLoading] = useState<boolean>(false);
   const [walletSpinStep, setWalletSpinStep] = useState<number>(0);
@@ -111,7 +60,12 @@ const WalletSpinup = (props: WalletSpinupProps) => {
   const [createdOrgId, setCreatedOrgId] = useState<string | null>(null);
   const [orgIdOfCurrentOrg, setOrgIdOfCurrentOrg] = useState<string | null>(null);
   const router = useRouter();
-  const alreadyCreatedOrgId = props.orgId
+
+   const searchParams = useSearchParams();
+    const alreadyCreatedOrgId = searchParams.get('organizationId');
+    const organizationFormData = useAppSelector((state) => state.wallet.formData);
+  const organizationName = useAppSelector((state) => state.wallet.orgName);
+  const currentStep = useAppSelector((state) => state.wallet.step);
 
   const [agentConfig, setAgentConfig] = useState({
     walletName: '',
@@ -179,22 +133,21 @@ const WalletSpinup = (props: WalletSpinupProps) => {
       }
     }
   
-    if (!props.formData) {
+    if (!organizationFormData) {
       setFailure("Organization data is missing");
       return null;
     }
   
-    // Create new organization
     setLoading(true);
     try {
       const orgData = {
-        name: props.formData.name,
-        description: props.formData.description,
-        logo: props.formData.logoUrl ? URL.createObjectURL(props.formData.logoUrl) : '',
-        website: props.formData.website || '',
-        countryId: props.formData.countryId,
-        stateId: props.formData.stateId,
-        cityId: props.formData.cityId,
+        name: organizationFormData.name,
+        description: organizationFormData.description,
+        logo: organizationFormData.logoUrl ? URL.createObjectURL(organizationFormData.logoUrl) : '',
+        website: organizationFormData.website || '',
+        countryId: organizationFormData.countryId,
+        stateId: organizationFormData.stateId,
+        cityId: organizationFormData.cityId,
       };
   
       const resCreateOrg = await createOrganization(orgData);
@@ -223,12 +176,17 @@ const WalletSpinup = (props: WalletSpinupProps) => {
     setIsConfiguredDedicated(true);
     setShowLedgerConfig(true); // Show ledger config when dedicated wallet is configured
   };
+
+  const setWalletSpinupStatus = (status: boolean) => {
+		setSuccess('Wallet created successfully');
+		fetchOrganizationDetails();
+	};
   
   const fetchOrganizationDetails = async () => {
     setLoading(true);
     // const orgId = props.orgId;
     // const orgInfoData = await getFromLocalStorage(storageKeys.ORG_INFO);
-    const response = await getOrganizationById(props.orgId as string);
+    const response = await getOrganizationById(orgIdOfCurrentOrg as string);
     const { data } = response as AxiosResponse;
     setLoading(false);
     
@@ -260,7 +218,7 @@ const WalletSpinup = (props: WalletSpinupProps) => {
 
   useEffect(() => {
     const shouldFetchOrg = async () => {
-      if (!createdOrgId && !props.orgId && orgIdOfCurrentOrg) {
+      if (!createdOrgId && alreadyCreatedOrgId && orgIdOfCurrentOrg) {
         await fetchOrganizationDetails();
       }
     };
@@ -399,6 +357,8 @@ const WalletSpinup = (props: WalletSpinupProps) => {
     }
   };
 
+  
+
   useEffect(() => {
     const setupSocketListeners = () => {
       SOCKET.on('agent-spinup-process-initiated', () => {
@@ -432,9 +392,8 @@ const WalletSpinup = (props: WalletSpinupProps) => {
         setLoading(false);
         setTimeout(() => {
           setWalletSpinStep(6);
-          props.setWalletSpinupStatus(true);
+          setWalletSpinupStatus(true);
         }, 1000);
-        console.log('createdOrgId::', createdOrgId)
         router.push('/organizations')
         console.log(`invitation-url-creation-success`, JSON.stringify(data));
       });
@@ -462,8 +421,8 @@ const WalletSpinup = (props: WalletSpinupProps) => {
     };
   }, []);
 
-  const generateAlphaNumeric = props?.orgName
-    ? props?.orgName
+  const generateAlphaNumeric = organizationName
+    ? organizationName
         ?.split(' ')
         .reduce(
           (s, c) =>
@@ -490,7 +449,8 @@ const WalletSpinup = (props: WalletSpinupProps) => {
           loading={loading}
           submitSharedWallet={submitSharedWallet}
           isCopied={false}
-          orgId={orgIdOfCurrentOrg ? orgIdOfCurrentOrg : ''}
+          orgId={alreadyCreatedOrgId ? alreadyCreatedOrgId : ''}
+
         />
       );
     } else {
@@ -526,27 +486,36 @@ const WalletSpinup = (props: WalletSpinupProps) => {
   }
 
   return (
-<div className="">
+        <PageContainer>
+          <div className="bg-[image:var(--card-gradient)] flex min-h-screen items-start justify-center p-6">
       <div className="mx-auto mt-4">
         <Card>
           <CardContent className="p-6">
             <div className="space-y-4">
               {/* Alert Messages */}
-              {success && (
-                <Alert variant="default" className="bg-background text-muted-foreground">
-                  <CheckCircle className="h-4 w-4" />
-                  <AlertTitle>Success</AlertTitle>
-                  <AlertDescription>{success}</AlertDescription>
-                </Alert>
-              )}
-              
-              {failure && (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertTitle>Error</AlertTitle>
-                  <AlertDescription>{failure}</AlertDescription>
-                </Alert>
-              )}
+
+            {success && (
+                          <div className="w-full" role="alert">
+                            <AlertComponent
+                              message={success}
+                              type={'success'}
+                              onAlertClose={() => {
+                                setSuccess && setSuccess(null);
+                              }}
+                            />
+                          </div>
+                        )}
+                        {failure && (
+                          <div className="w-full" role="alert">
+                            <AlertComponent
+                              message={failure}
+                              type={'failure'}
+                              onAlertClose={() => {
+                                setFailure && setFailure(null);
+                              }}
+                            />
+                          </div>
+                        )}
               
               {/* Header section - hide when showing ledger config */}
               {!showLedgerConfig && (
@@ -559,12 +528,12 @@ const WalletSpinup = (props: WalletSpinupProps) => {
 
                     {/* Step X of Y at Top Right */}
                     <div className="text-muted-foreground text-sm font-medium">
-                      Step {props.step} of 4
+                      Step {currentStep} of 4
                     </div>
                   </div>
 
                   {/* Stepper Progress Bar */}
-                  <Stepper currentStep={props.step} totalSteps={4} />
+                  <Stepper currentStep={currentStep} totalSteps={4} />
                 </>
               )}
         
@@ -583,7 +552,7 @@ const WalletSpinup = (props: WalletSpinupProps) => {
 									}`}
 									onClick={() => onRadioSelect(AgentType.DEDICATED)}
 								>
-									<div className="flex items-start">
+									<div className="flex items-start mb-4">
 										<input
 											id="dedicated-agent-radio"
 											type="radio"
@@ -595,11 +564,6 @@ const WalletSpinup = (props: WalletSpinupProps) => {
 										/>
 										<div className="ml-3 flex justify-end w-full">
 											
-											<div className="bg-yellow-100 rounded-full p-2">
-												<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-													<path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"></path>
-												</svg>
-											</div>
 										</div>
 									</div>
 									<label htmlFor="dedicated-agent-radio" className="text-lg font-bold">
@@ -624,7 +588,7 @@ const WalletSpinup = (props: WalletSpinupProps) => {
 									}`}
 									onClick={() => onRadioSelect(AgentType.SHARED)}
 								>
-									<div className="flex items-start">
+									<div className="flex items-start mb-4">
 										<input
 											id="shared-agent-radio"
 											type="radio"
@@ -637,11 +601,6 @@ const WalletSpinup = (props: WalletSpinupProps) => {
 										/>
 										<div className="ml-3 flex justify-end w-full">
 									
-											<div className="bg-purple-100 rounded-full p-2">
-												<svg className="w-5 h-5 text-purple-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-													<path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path>
-												</svg>
-											</div>
 										</div>
 									</div>
 									<label htmlFor="shared-agent-radio" className="text-lg font-bold">
@@ -668,6 +627,8 @@ const WalletSpinup = (props: WalletSpinupProps) => {
         </Card>
       </div>
     </div>
+    </PageContainer>
+
 
   );
 };

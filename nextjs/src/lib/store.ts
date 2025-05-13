@@ -8,6 +8,7 @@ import profileSlice from './profileSlice';
 import userSlice from './userSlice';
 import schemaSlice from './schemaSlice';
 import verificationSlice from './verificationSlice';
+import walletSpinupSlice from './walletSpinupSlice';
 
 const rootReducer = combineReducers({
   auth: authSlice,
@@ -16,12 +17,21 @@ const rootReducer = combineReducers({
   user: userSlice,
   schemas: schemaSlice,
   verification: verificationSlice,
+  wallet: walletSpinupSlice
 });
 
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth', 'profile', 'organization', 'user', 'schemas','verification']
+  whitelist: [
+    'auth',
+    'profile',
+    'organization',
+    'user',
+    'wallet',
+    'schemas',
+    'verification'
+  ]
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -29,8 +29,9 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { apiStatusCodes, storageKeys } from "@/config/CommonConstant";
 import { envConfig } from "@/config/envConfig";
 import {  Network, DidMethod } from "@/common/enums";
-import { createDid, createPolygonKeyValuePair, getOrganizationById } from "@/app/api/organization";
+import { getOrganizationById } from "@/app/api/organization";
 import { CommonConstants } from "../common/enum";
+import { createDid, createPolygonKeyValuePair } from "@/app/api/Agent";
 
 interface IPolygonKeys {
   privateKey: string;
@@ -56,7 +57,7 @@ interface IFormValues {
   did?: string;
 }
 
-const CreateDIDModal = (props: CreateDIDModalProps) => {
+const CreateDidComponent = (props: CreateDIDModalProps) => {
   const [loading, setLoading] = React.useState<boolean>(false);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [errMsg, setErrMsg] = React.useState<string | null>(null);
@@ -338,7 +339,6 @@ const CreateDIDModal = (props: CreateDIDModalProps) => {
 
   function onSubmit(values: IFormValues) {
     createNewDid(values).then(() => {
-      window.location.reload();
     });
   }
 
@@ -667,4 +667,4 @@ function CheckIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-export default CreateDIDModal;
+export default CreateDidComponent;

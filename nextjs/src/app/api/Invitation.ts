@@ -1,17 +1,15 @@
 import { axiosGet, axiosPost, ecosystemAxiosGet } from "@/services/apiRequests";
 
 import { apiRoutes } from "@/config/apiRoutes";
+import { getHeaderConfigs } from "@/config/GetHeaderConfigs";
 
 // Get all organization Inviattions
 export const getOrganizationInvitations = async (orgId: string, pageNumber: number, pageSize: number, search = '') => {
 
 	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.invitations}?&pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
 
-	const config = {
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	}
+	const config = getHeaderConfigs()
+
 	const axiosPayload = {
 		url,
 		config
@@ -36,11 +34,8 @@ export const createInvitations = async (orgId: string, invitationList: Array<obj
 		orgId
 	}
 	
-	const config = {
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	}
+	const config = getHeaderConfigs()
+
 	const axiosPayload = {
 		url,
 		payload,
@@ -61,11 +56,8 @@ export const createInvitations = async (orgId: string, invitationList: Array<obj
 export const getUserInvitations = async (pageNumber: number, pageSize: number, search = '') => {
 	const url = `${apiRoutes.users.invitations}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
 
-	const config = {
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	}
+	const config = getHeaderConfigs()
+
 	const axiosPayload = {
 		url,
 		config
@@ -90,11 +82,8 @@ export const acceptRejectInvitations = async (invitationId: string, orgId: strin
 		status
 	}
 
-	const config = {
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	}
+	const config = getHeaderConfigs()
+
 	const axiosPayload = {
 		url,
 		payload,
@@ -116,11 +105,8 @@ export const getUserEcosystemInvitations = async (pageNumber: number, pageSize: 
 
 	const url = `${apiRoutes.Ecosystem.root}/${orgId}${apiRoutes.Ecosystem.usersInvitation}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
 
-	const config = {
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	}
+	const config = getHeaderConfigs()
+
 	const axiosPayload = {
 		url,
 		config
