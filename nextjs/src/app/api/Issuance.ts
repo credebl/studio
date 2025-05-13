@@ -1,8 +1,8 @@
+import { CredentialType, SchemaType } from '@/common/enums';
 import { axiosGet, axiosPost, axiosPut, ecosystemAxiosPost } from '@/services/apiRequests';
 
 import { AxiosResponse } from 'axios';
 import { GetAllSchemaListParameter } from '@/features/organization/connectionIssuance/type/SchemaCard';
-import { SchemaType } from '@/common/enums';
 import { apiRoutes } from '@/config/apiRoutes';
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs';
 
@@ -16,7 +16,7 @@ export interface IConnectionListAPIParameter {
 	filter?: string;
 }
 
-export const issueCredential = async (data: object, credentialType: SchemaType,orgId:string) => {
+export const issueCredential = async (data: object, credentialType: CredentialType|SchemaType,orgId:string) => {
 	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.issueCredential}?credentialType=${credentialType}`;
 	const payload = data;
 

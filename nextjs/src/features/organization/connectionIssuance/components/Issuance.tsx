@@ -359,7 +359,7 @@ const IssueCred = () => {
 		};
 
 		setIssuanceLoader(true);
-		const schemaTypeValue = w3cSchema?SchemaType.W3C:SchemaType.INDY
+		const schemaTypeValue = w3cSchema?CredentialType.JSONLD:CredentialType.INDY
 		const issueCredRes = await issueCredential(convertedAttributesValues, schemaTypeValue, orgId);
 			
 

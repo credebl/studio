@@ -34,7 +34,7 @@ const Credentials = () => {
 
 	const [w3cSchema, setW3CSchema] = useState<boolean>(false);
 	const schemeSelection = async () => {
-		router.push(pathRoutes.organizations.Issuance.connections)
+		router.push(pathRoutes.organizations.Issuance.issue)
 	};
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
