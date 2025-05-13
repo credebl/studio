@@ -154,8 +154,9 @@ export default function UserInfoForm({
     }
   }
 
-
-  const addDeviceDetailsMethod = async (deviceBody: IdeviceBody) => {
+  const addDeviceDetailsMethod = async (
+    deviceBody: IdeviceBody,
+  ): Promise<void> => {
     try {
       const deviceDetailsResp = await addDeviceDetails(deviceBody)
       const { data } = deviceDetailsResp as AxiosResponse
@@ -258,7 +259,7 @@ export default function UserInfoForm({
         const deviceDetails =
           Object.keys(data)?.length > 0
             ? userDeviceDetailsResp?.data?.data.map(
-                (data: { lastChangedDateTime: any }) => ({
+                (data: { lastChangedDateTime: string }) => ({
                   ...data,
                   lastChangedDateTime: data.lastChangedDateTime
                     ? data.lastChangedDateTime

@@ -15,8 +15,9 @@ interface TooltipProps<Type> {
   id?: string
   children: React.ReactNode
 }
-
-const DataTooltip = <Type, >({
+// Fix this later
+// eslint-disable-next-line comma-spacing
+const DataTooltip = <Type,>({
   data,
   renderItem,
   children,

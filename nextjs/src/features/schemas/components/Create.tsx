@@ -2,25 +2,31 @@
 
 import * as yup from 'yup'
 
-import { Field, FieldArray, Form, Formik } from 'formik'
-import type { FormikErrors, FormikProps } from 'formik'
+import { DidMethod, SchemaType, SchemaTypeValue } from '@/common/enums'
+import type {
+  Field,
+  FieldArray,
+  Form,
+  Formik,
+  FormikErrors,
+  FormikProps,
+} from 'formik'
+import { FieldName, IAttributes, IFormData } from '../type/schemas-interface'
+import React, { JSX, useEffect, useMemo, useState } from 'react'
 import {
   apiStatusCodes,
   schemaVersionRegex,
 } from '../../../config/CommonConstant'
-import { JSX, useEffect, useMemo, useState } from 'react'
+
 import type { AxiosResponse } from 'axios'
-import React from 'react'
-import { DidMethod, SchemaType, SchemaTypeValue } from '@/common/enums'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
+import ConfirmationModal from './ConfirmationModal'
+import { createSchemas } from '@/app/api/schema'
 import { getOrganizationById } from '@/app/api/organization'
 import { useAppSelector } from '@/lib/hooks'
-import { FieldName, IAttributes, IFormData } from '../type/schemas-interface'
-import { createSchemas } from '@/app/api/schema'
-import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import ConfirmationModal from './ConfirmationModal'
 import { useRouter } from 'next/navigation'
-import { Checkbox } from '@/components/ui/checkbox'
 
 const options = [
   {
@@ -73,38 +79,7 @@ const CreateSchema = () => {
       },
     ],
   }
-
-  const [formData, setFormData] = useState(initFormData)
-
-  useEffect(() => {
-    fetchOrganizationDetails()
-  }, [])
-
-  const filledInputs = (formData: IFormData) => {
-    const { schemaName, schemaVersion, attribute } = formData
-
-    if (
-      (type === SchemaType.INDY && (!schemaName || !schemaVersion)) ||
-      (type === SchemaType.W3C && !schemaName)
-    ) {
-      return false
-    }
-
-    const isAtLeastOneRequired = attribute.some((attr) => attr.isRequired)
-    if (!isAtLeastOneRequired) {
-      return false
-    }
-
-    for (const attr of attribute) {
-      if (!attr.attributeName || !attr.schemaDataType || !attr.displayName) {
-        return false
-      }
-    }
-
-    return true
-  }
-
-  const fetchOrganizationDetails = async () => {
+  const fetchOrganizationDetails = async (): Promise<void> => {
     setLoading(true)
     const response = await getOrganizationById(orgId as string)
     const { data } = response as AxiosResponse
@@ -130,7 +105,38 @@ const CreateSchema = () => {
     setLoading(false)
   }
 
-  const submit = async (values: IFormData) => {
+
+  const [formData, setFormData] = useState(initFormData)
+
+  useEffect(() => {
+    fetchOrganizationDetails()
+  }, [])
+
+  const filledInputs = (formData: IFormData): boolean => {
+    const { schemaName, schemaVersion, attribute } = formData
+
+    if (
+      (type === SchemaType.INDY && (!schemaName || !schemaVersion)) ||
+      (type === SchemaType.W3C && !schemaName)
+    ) {
+      return false
+    }
+
+    const isAtLeastOneRequired = attribute.some((attr) => attr.isRequired)
+    if (!isAtLeastOneRequired) {
+      return false
+    }
+
+    for (const attr of attribute) {
+      if (!attr.attributeName || !attr.schemaDataType || !attr.displayName) {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  const submit = async (values: IFormData): Promise<void> => {
     setCreateLoader(true)
     if (!type) {
       setFailure('Schema type not determined.')
@@ -237,7 +243,7 @@ const CreateSchema = () => {
   const inValidAttributes = (
     formikHandlers: FormikProps<IFormData>,
     propertyName: 'attributeName' | 'displayName',
-  ) => {
+  ): boolean => {
     const attributeValue = formikHandlers?.values?.attribute
     if (!attributeValue?.length) {
       return true

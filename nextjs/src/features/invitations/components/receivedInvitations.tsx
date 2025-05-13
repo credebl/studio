@@ -2,7 +2,6 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Card, CardContent } from '@/components/ui/card'
-import React, { ChangeEvent, useEffect, useState } from 'react'
 import { CheckIcon, RotateCcwIcon, XIcon } from 'lucide-react'
 import {
   Pagination,
@@ -12,6 +11,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import {
   acceptRejectInvitations,
   getUserInvitations,
@@ -35,7 +35,7 @@ const initialPageState = {
   total: 0,
 }
 
-export default function ReceivedInvitations() {
+export default function ReceivedInvitations(): JSX.Element {
   const [loading, setLoading] = useState<boolean>(false)
   const [message, setMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -45,7 +45,7 @@ export default function ReceivedInvitations() {
     null,
   )
 
-  const getAllInvitations = async () => {
+  const getAllInvitations = async (): Promise<void> => {
     setLoading(true)
     try {
       const response = await getUserInvitations(
@@ -89,7 +89,7 @@ export default function ReceivedInvitations() {
   }
 
   useEffect(() => {
-    let getData: NodeJS.Timeout
+    let getData: NodeJS.Timeout | undefined = undefined
 
     if (searchText.length >= 1) {
       getData = setTimeout(() => {
@@ -99,32 +99,39 @@ export default function ReceivedInvitations() {
         }))
         getAllInvitations()
       }, 500)
-      return () => clearTimeout(getData)
+      return (): void => clearTimeout(getData)
     } else {
       getAllInvitations()
     }
 
-    return () => clearTimeout(getData)
+    return (): void => {
+      if (getData) {
+        clearTimeout(getData)
+      }
+    }
   }, [searchText, currentPage.pageNumber])
 
   // onChange of Search input text
-  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>): void => {
     setSearchText(e.target.value)
   }
 
   // Handle page change
-  const onPageChange = (page: number) => {
+  const onPageChange = (page: number): void => {
     setCurrentPage({
       ...currentPage,
       pageNumber: page,
     })
   }
 
-  const handleRefresh = () => {
+  const handleRefresh = (): void => {
     getAllInvitations()
   }
 
-  const respondToInvitations = async (invite: Invitation, status: string) => {
+  const respondToInvitations = async (
+    invite: Invitation,
+    status: string,
+  ): Promise<void> => {
     setLoading(true)
     try {
       const response = await acceptRejectInvitations(
@@ -148,7 +155,7 @@ export default function ReceivedInvitations() {
     }
   }
 
-  const renderPagination = () => {
+  const renderPagination = (): JSX.Element | null => {
     if (currentPage.total <= 1) {
       return null
     }

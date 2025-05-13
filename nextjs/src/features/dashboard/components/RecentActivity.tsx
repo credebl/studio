@@ -9,16 +9,30 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import React, { useEffect, useState } from 'react'
+
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getUserActivity } from '@/app/api/users'
 
-const RecentActivity = () => {
-  const [activityList, setActivityList] = useState<any[]>([])
+export interface UserActivity {
+  id: number
+  userId: string
+  orgId: string
+  action: string
+  details: string
+  createDateTime: string
+  createdBy: string
+  lastChangedDateTime: string
+  lastChangedBy: string
+  deletedAt: Date | string
+}
+
+const RecentActivity = (): JSX.Element => {
+  const [activityList, setActivityList] = useState<UserActivity[]>([])
   const [loading, setLoading] = useState(true)
   const [limit] = useState(5)
 
-  const fetchRecentActivity = async () => {
+  const fetchRecentActivity = async (): Promise<void> => {
     setLoading(true)
 
     try {
@@ -39,7 +53,7 @@ const RecentActivity = () => {
     fetchRecentActivity()
   }, [])
 
-  const renderActivity = () => {
+  const renderActivity = (): JSX.Element => {
     if (!activityList?.length) {
       return <p>No recent activity found.</p>
     }

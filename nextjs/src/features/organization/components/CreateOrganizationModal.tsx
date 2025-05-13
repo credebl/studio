@@ -1,19 +1,10 @@
+/* eslint-disable max-lines */
 'use client'
 
 import * as yup from 'yup'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Field, Form, Formik, FormikHelpers } from 'formik'
-import {
-  OrgData,
-  setFormData,
-  setIsCreateOrgForm,
-  setLedgerConfig,
-  setOrgId,
-  setOrgName,
-  setStep,
-  setWalletSpinupStatus,
-} from '@/lib/walletSpinupSlice'
 import React, { useEffect, useState } from 'react'
 import {
   createOrganization,
@@ -25,6 +16,14 @@ import {
   getAllCountries,
   getAllStates,
 } from '@/app/api/geolocation'
+import {
+  setFormData,
+  setIsCreateOrgForm,
+  setLedgerConfig,
+  setOrgId,
+  setOrgName,
+  setStep,
+} from '@/lib/walletSpinupSlice'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { AlertComponent } from '@/components/AlertComponent'
@@ -38,28 +37,48 @@ import Loader from '@/components/Loader'
 import PageContainer from '@/components/layout/page-container'
 import Stepper from '@/components/StepperComponent'
 import { Textarea } from '@/components/ui/textarea'
-import WalletSpinup from '@/features/wallet/WalletSpinupComponent'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { processImageFile } from '@/components/ProcessImage'
 import { useDispatch } from 'react-redux'
 
-export default function OrganizationOnboarding() {
+type Countries = {
+  id: number
+  name: string
+}
+
+type State = {
+  id: number
+  name: string
+  countryId: number
+  countryCode: string
+}
+
+type City = {
+  id: number
+  name: string
+  stateId: number
+  stateCode: string
+  countryId: number
+  countryCode: string
+}
+
+export default function OrganizationOnboarding(): JSX.Element {
   const [isPublic, setIsPublic] = useState<boolean>()
   const totalSteps = 4
-  const [countries, setCountries] = useState<any[]>([])
-  const [states, setStates] = useState<any[]>([])
-  const [cities, setCities] = useState<any[]>([])
+  const [countries, setCountries] = useState<Countries[]>([])
+  const [states, setStates] = useState<State[]>([])
+  const [cities, setCities] = useState<City[]>([])
   const [logoPreview, setLogoPreview] = useState<string>('')
   const [imgError, setImgError] = useState<string>('')
   const [selectedCountryId, setSelectedCountryId] = useState<number | null>(
     null,
   )
   const [selectedStateId, setSelectedStateId] = useState<number | null>(null)
-  const [orgData, setOrgData] = useState<IOrgFormValues | null>(null)
+  const [orgData] = useState<IOrgFormValues | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [failure, setFailure] = useState<string | null>(null)
   const [isEditMode, setIsEditMode] = useState<boolean>(false)
-  const [message, setMessage] = useState<string | null>(null)
+  const [, setMessage] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
 
   const searchParams = useSearchParams()
@@ -70,7 +89,54 @@ export default function OrganizationOnboarding() {
   const dispatch = useDispatch()
   dispatch(setOrgId(currentOrgId))
 
-  const fetchOrganizationDetails = async () => {
+  const getCountries = async (): Promise<void> => {
+    const response = await getAllCountries()
+    const { data } = response as AxiosResponse
+
+    if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+      setCountries(data?.data || [])
+      setFailure(null)
+      setMessage(data?.message)
+    } else {
+      setFailure(data?.message as string)
+      setMessage(response as string)
+    }
+  }
+
+  const fetchStates = async (countryId: number): Promise<void> => {
+    try {
+      const response = await getAllStates(countryId)
+      const { data } = response as AxiosResponse
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        setStates(data.data || [])
+      } else {
+        setStates([])
+      }
+    } catch (err) {
+      console.error('Error fetching states:', err)
+      setStates([])
+    }
+  }
+
+  const fetchCities = async (
+    countryId: number,
+    stateId: number,
+  ): Promise<void> => {
+    try {
+      const response = await getAllCities(countryId, stateId)
+      const { data } = response as AxiosResponse
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        setCities(data.data || [])
+      } else {
+        setCities([])
+      }
+    } catch (err) {
+      console.error('Error fetching cities:', err)
+      setCities([])
+    }
+  }
+
+  const fetchOrganizationDetails = async (): Promise<void> => {
     setLoading(true)
     const response = await getOrganizationById(currentOrgId as string)
     const { data } = response as AxiosResponse
@@ -124,50 +190,6 @@ export default function OrganizationOnboarding() {
     }
   }, [selectedStateId])
 
-  const getCountries = async () => {
-    const response = await getAllCountries()
-    const { data } = response as AxiosResponse
-
-    if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-      setCountries(data?.data || [])
-      setFailure(null)
-      setMessage(data?.message)
-    } else {
-      setFailure(data?.message as string)
-      setMessage(response as string)
-    }
-  }
-
-  const fetchStates = async (countryId: number) => {
-    try {
-      const response = await getAllStates(countryId)
-      const { data } = response as AxiosResponse
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        setStates(data.data || [])
-      } else {
-        setStates([])
-      }
-    } catch (err) {
-      console.error('Error fetching states:', err)
-      setStates([])
-    }
-  }
-
-  const fetchCities = async (countryId: number, stateId: number) => {
-    try {
-      const response = await getAllCities(countryId, stateId)
-      const { data } = response as AxiosResponse
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        setCities(data.data || [])
-      } else {
-        setCities([])
-      }
-    } catch (err) {
-      console.error('Error fetching cities:', err)
-      setCities([])
-    }
-  }
-
   const validationSchema = yup.object().shape({
     name: yup
       .string()
@@ -190,7 +212,7 @@ export default function OrganizationOnboarding() {
   const handleImageChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
     setFieldValue: FormikHelpers<ImageProcessCallback>['setFieldValue'],
-  ) => {
+  ): Promise<void> => {
     setImgError('')
 
     processImageFile(e, (result: string | null, error?: string) => {
@@ -203,7 +225,8 @@ export default function OrganizationOnboarding() {
       }
     })
   }
-  const handleSubmit = (values: IOrgFormValues) => {
+
+  const handleSubmit = (values: IOrgFormValues): void => {
     dispatch(setFormData(values))
     dispatch(setIsCreateOrgForm(false))
     dispatch(setStep(2))
@@ -211,7 +234,9 @@ export default function OrganizationOnboarding() {
     router.push('/organizations/agent-config')
   }
 
-  const handleUpdateOrganization = async (values: IOrgFormValues) => {
+  const handleUpdateOrganization = async (
+    values: IOrgFormValues,
+  ): Promise<void> => {
     setLoading(true)
     try {
       setSuccess(null)
@@ -253,7 +278,9 @@ export default function OrganizationOnboarding() {
     }
   }
 
-  const handleCreateOrganization = async (values: IOrgFormValues) => {
+  const handleCreateOrganization = async (
+    values: IOrgFormValues,
+  ): Promise<string | null> => {
     try {
       setSuccess(null)
       setFailure(null)
@@ -322,7 +349,9 @@ export default function OrganizationOnboarding() {
                 message={success}
                 type={'success'}
                 onAlertClose={() => {
-                  setSuccess && setSuccess(null)
+                  if (setSuccess) {
+                    setSuccess(null)
+                  }
                 }}
               />
             </div>
@@ -333,7 +362,9 @@ export default function OrganizationOnboarding() {
                 message={failure}
                 type={'failure'}
                 onAlertClose={() => {
-                  setFailure && setFailure(null)
+                  if (setFailure) {
+                    setFailure(null)
+                  }
                 }}
               />
             </div>
