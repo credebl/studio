@@ -1,13 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import { apiStatusCodes } from '@/config/CommonConstant'
-import type { AxiosResponse } from 'axios'
-import { toast } from 'sonner'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { pathRoutes } from '@/config/pathRoutes'
-import { useRouter, useSearchParams } from 'next/navigation'
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,10 +11,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { Loader2 } from 'lucide-react'
-import { DeleteOrganizationCard } from './DeleteOrganizationCard'
-import { getOrganizationById } from '@/app/api/organization'
-import { deleteConnectionRecords } from '@/app/api/connection'
+import React, { useEffect, useState } from 'react'
 import {
   deleteIssuanceRecords,
   deleteOrganization,
@@ -29,6 +19,17 @@ import {
   deleteVerificationRecords,
   getOrganizationReferences,
 } from '@/app/api/deleteorganization'
+import { useRouter, useSearchParams } from 'next/navigation'
+
+import type { AxiosResponse } from 'axios'
+import { DeleteOrganizationCard } from './DeleteOrganizationCard'
+import { IOrganisation } from './interfaces/organization'
+import { Loader2 } from 'lucide-react'
+import { apiStatusCodes } from '@/config/CommonConstant'
+import { deleteConnectionRecords } from '@/app/api/connection'
+import { getOrganizationById } from '@/app/api/organization'
+import { pathRoutes } from '@/config/pathRoutes'
+import { toast } from 'sonner'
 
 interface IOrgCount {
   verificationRecordsCount?: number
@@ -36,20 +37,14 @@ interface IOrgCount {
   connectionRecordsCount?: number
 }
 
-interface IEcosystemOrganizations {
-  ecosystemRole?: {
-    name: string
-  }
-}
-
-export default function DeleteOrganizationPage() {
+export default function DeleteOrganizationPage(): JSX.Element {
   const router = useRouter()
   const searchParams = useSearchParams()
   const orgId = searchParams.get('orgId')
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [orgData, setOrgData] = useState<any>(null)
+  const [orgData, setOrgData] = useState<IOrganisation | null>(null)
   const [organizationData, setOrganizationData] = useState<IOrgCount | null>(
     null,
   )
@@ -61,9 +56,9 @@ export default function DeleteOrganizationPage() {
     string | React.ReactNode
   >('')
   const [description, setDescription] = useState<string>('')
-  const [orgName, setOrgName] = useState<string>('')
+  const [, setOrgName] = useState<string>('')
 
-  const fetchOrganizationDetails = async () => {
+  const fetchOrganizationDetails = async (): Promise<void> => {
     if (!orgId) {
       router.push(pathRoutes.organizations.root)
       return
@@ -97,7 +92,7 @@ export default function DeleteOrganizationPage() {
     }
   }
 
-  const fetchOrganizationReferences = async () => {
+  const fetchOrganizationReferences = async (): Promise<void> => {
     if (!orgId) {
       return
     }
@@ -125,7 +120,9 @@ export default function DeleteOrganizationPage() {
     fetchOrganizationReferences()
   }, [orgId])
 
-  const deleteHandler = async (deleteFunc: () => Promise<void>) => {
+  const deleteHandler = async (
+    deleteFunc: () => Promise<void>,
+  ): Promise<void> => {
     setDeleteLoading(true)
     try {
       await deleteFunc()
@@ -138,7 +135,7 @@ export default function DeleteOrganizationPage() {
     setDeleteLoading(false)
   }
 
-  const deleteVerifications = async () => {
+  const deleteVerifications = async (): Promise<void> => {
     setDeleteLoading(true)
     try {
       const response = await deleteVerificationRecords(orgId as string)
@@ -158,7 +155,7 @@ export default function DeleteOrganizationPage() {
     setDeleteLoading(false)
   }
 
-  const deleteIssuance = async () => {
+  const deleteIssuance = async (): Promise<void> => {
     setDeleteLoading(true)
     try {
       const response = await deleteIssuanceRecords(orgId as string)
@@ -178,7 +175,7 @@ export default function DeleteOrganizationPage() {
     setDeleteLoading(false)
   }
 
-  const deleteConnection = async () => {
+  const deleteConnection = async (): Promise<void> => {
     setDeleteLoading(true)
     try {
       const response = await deleteConnectionRecords(orgId as string)
@@ -198,7 +195,7 @@ export default function DeleteOrganizationPage() {
     setDeleteLoading(false)
   }
 
-  const deleteOrgWallet = async () => {
+  const deleteOrgWallet = async (): Promise<void> => {
     try {
       // Assuming deleteOrganizationWallet needs orgId
       const response = await deleteOrganizationWallet(orgId as string)
@@ -221,7 +218,7 @@ export default function DeleteOrganizationPage() {
     }
   }
 
-  const deleteOrganizations = async () => {
+  const deleteOrganizations = async (): Promise<void> => {
     try {
       const response = await deleteOrganization(orgId as string)
       const { data } = response as AxiosResponse

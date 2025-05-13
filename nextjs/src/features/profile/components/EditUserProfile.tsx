@@ -1,18 +1,20 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
-import { Form, Formik } from 'formik'
 import * as yup from 'yup'
+
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Form, Formik } from 'formik'
 import {
   IMG_MAX_HEIGHT,
   IMG_MAX_WIDTH,
   imageSizeAccepted,
 } from '@/config/CommonConstant'
+import React, { useEffect, useRef, useState } from 'react'
+import { calculateSize, dataURItoBlob } from '@/utils/CompressImage'
+
 import { Button } from '@/components/ui/button'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import type { IUserProfile } from '@/components/profile/interfaces'
 import { updateUserProfile } from '@/app/api/Auth'
-import { calculateSize, dataURItoBlob } from '@/utils/CompressImage'
 
 interface Values {
   profileImg: string
@@ -37,8 +39,8 @@ export default function EditUserProfile({
   toggleEditProfile,
   userProfileInfo,
   updateProfile,
-}: EditUserProfileProps) {
-  const [loading, setLoading] = useState(false)
+}: EditUserProfileProps): JSX.Element {
+  const [, setLoading] = useState(false)
   const [logoImage, setLogoImage] = useState<ILogoImage>({
     logoFile: '',
     imagePreviewUrl: userProfileInfo.profileImg || '',
@@ -58,13 +60,13 @@ export default function EditUserProfile({
     lastName: yup.string().required('Last name is required').min(2).max(50),
   })
 
-  const processImage = (file: File) => {
+  const processImage = (file: File): void => {
     const reader = new FileReader()
     reader.readAsDataURL(file)
-    reader.onload = (event) => {
+    reader.onload = (event): void => {
       const imgElement = document.createElement('img')
       imgElement.src = event.target?.result as string
-      imgElement.onload = (e) => {
+      imgElement.onload = (e): void => {
         const { width, height, ev } = calculateSize(
           imgElement,
           IMG_MAX_WIDTH,
@@ -94,7 +96,7 @@ export default function EditUserProfile({
     }
   }
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setImgError('')
     const file = e.target.files?.[0]
     if (!file) {
@@ -116,7 +118,7 @@ export default function EditUserProfile({
     processImage(file)
   }
 
-  const handleSubmit = async (values: Values) => {
+  const handleSubmit = async (values: Values): Promise<void> => {
     setLoading(true)
     try {
       const updatedData: IUserProfile = {

@@ -62,7 +62,7 @@ const validationSchema = Yup.object().shape({
 
 export default function UserInfoForm({
   email,
-}: StepUserInfoProps): JSX.Element {
+}: StepUserInfoProps): React.JSX.Element {
   const [loading, setLoading] = useState(false)
   const [serverError, setServerError] = useState('')
   const [, setIsDevice] = useState<boolean>(false)
@@ -154,7 +154,9 @@ export default function UserInfoForm({
     }
   }
 
-  const addDeviceDetailsMethod = async (deviceBody: IdeviceBody) => {
+  const addDeviceDetailsMethod = async (
+    deviceBody: IdeviceBody,
+  ): Promise<void> => {
     try {
       const deviceDetailsResp = await addDeviceDetails(deviceBody)
       const { data } = deviceDetailsResp as AxiosResponse
@@ -257,7 +259,7 @@ export default function UserInfoForm({
         const deviceDetails =
           Object.keys(data)?.length > 0
             ? userDeviceDetailsResp?.data?.data.map(
-                (data: { lastChangedDateTime: any }) => ({
+                (data: { lastChangedDateTime: string }) => ({
                   ...data,
                   lastChangedDateTime: data.lastChangedDateTime
                     ? data.lastChangedDateTime

@@ -8,8 +8,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination'
-import { setOrgId, setOrgInfo } from '@/lib/orgSlice'
 import React, { useEffect, useState } from 'react'
+import { setOrgId, setOrgInfo } from '@/lib/orgSlice'
 
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
@@ -23,10 +23,10 @@ import { getOrganizations } from '@/app/api/organization'
 import { useAppDispatch } from '@/lib/hooks'
 import { useRouter } from 'next/navigation'
 
-export const OrganizationList = () => {
+export const OrganizationList = (): JSX.Element => {
   const [organizationsList, setOrganizationsList] = useState<Organization[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [, setError] = useState<string | null>(null)
   const [searchText, setSearchText] = useState('')
 
   const [currentPage, setCurrentPage] = useState({
@@ -39,7 +39,7 @@ export const OrganizationList = () => {
   const router = useRouter()
   const dispatch = useAppDispatch()
 
-  const getAllOrganizations = async () => {
+  const getAllOrganizations = async (): Promise<void> => {
     setLoading(true)
     try {
       const response = await getOrganizations(
@@ -82,11 +82,11 @@ export const OrganizationList = () => {
     }
   }
 
-  const handlePageChange = (newPage: number) => {
+  const handlePageChange = (newPage: number): void => {
     setCurrentPage((prev) => ({ ...prev, pageNumber: newPage }))
   }
 
-  const handleCardClick = (orgId: string) => {
+  const handleCardClick = (orgId: string): void => {
     if (!orgId) {
       console.error('Invalid organization ID')
       return
@@ -112,7 +112,7 @@ export const OrganizationList = () => {
 
     router.push(`/organizations/dashboard/${orgId}`)
   }
-  const handleCreateOrg = () => {
+  const handleCreateOrg = (): void => {
     router.push('organizations/create-organization')
   }
 

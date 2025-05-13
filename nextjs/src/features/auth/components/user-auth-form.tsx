@@ -34,6 +34,7 @@ import { setRefreshToken, setToken } from '@/lib/authSlice'
 
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
+import { IVerifyRegistrationObj } from '@/components/profile/interfaces'
 import Image from 'next/image'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
@@ -128,26 +129,21 @@ export default function SignInViewPage(): JSX.Element {
     }
   }
 
-  const handleSignIn = async (values: { email: string; password?: string }) => {
+  const handleSignIn = async (values: {
+    email: string
+    password?: string
+  }): Promise<void> => {
     try {
-      let entityData: IUserSignInData
-
-      if (isPasswordTab) {
-        const encryptedPassword = await passwordEncryption(
-          values.password || '',
-        )
-
-        entityData = {
-          email: values.email,
-          password: encryptedPassword,
-          isPasskey: false,
-        }
-      } else {
-        entityData = {
-          email: values.email,
-          isPasskey: true,
-        }
-      }
+      const entityData: IUserSignInData = isPasswordTab
+        ? {
+            email: values.email,
+            password: await passwordEncryption(values.password || ''),
+            isPasskey: false,
+          }
+        : {
+            email: values.email,
+            isPasskey: true,
+          }
 
       const response = await loginUser(entityData)
 
@@ -172,7 +168,7 @@ export default function SignInViewPage(): JSX.Element {
   }
 
   const verifyAuthenticationMethod = async (
-    verifyAuthenticationObj: any,
+    verifyAuthenticationObj: IVerifyRegistrationObj,
     userData: { userName: string },
   ): Promise<string | AxiosResponse> => {
     try {
