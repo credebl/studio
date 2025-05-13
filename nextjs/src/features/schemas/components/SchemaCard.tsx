@@ -16,17 +16,13 @@ import DataTooltip from '@/components/dataTooltip';
 import DateTooltip from '@/components/DateTooltip';
 import { dateConversion } from '@/utils/DateConversion';
 import CustomCheckbox from '@/components/CustomCheckbox';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 const SchemaCard = (props: ISchemaCardProps) => {
   const [isSelected, setIsSelected] = useState(false);
   const router = useRouter();
-
-  const isSelectedSchema = props.selectedSchemas?.some(
-    (selectedSchema) =>
-      selectedSchema.schemaId === props.schemaId ||
-      selectedSchema.schemaLedgerId === props.schemaId
-  );
+  const pathname = usePathname();
+  const isVerificationPage = pathname.includes('verification');
 
   const AttributesList: React.FC<{
     attributes: IAttributes[];
@@ -90,6 +86,8 @@ const SchemaCard = (props: ISchemaCardProps) => {
   );
 
   const handleCardClick = () => {
+    if (isVerificationPage) return;
+
     if (!props.w3cSchema && !hasNestedAttributes && props.schemaId) {
       router.push(`/organizations/schemas/${props.schemaId}`);
     }
@@ -105,7 +103,7 @@ const SchemaCard = (props: ISchemaCardProps) => {
   return (
     <Card
       className={`border-border relative h-full w-full overflow-hidden rounded-xl border shadow-xl transition-transform duration-300 ${
-        props.w3cSchema || props.isClickable === false
+        props.w3cSchema || props.isClickable === false || isVerificationPage
           ? 'cursor-default'
           : 'cursor-pointer hover:scale-[1.02] hover:shadow-lg'
       } ${hasNestedAttributes ? 'pointer-events-none opacity-80' : ''}`}
@@ -216,7 +214,7 @@ const SchemaCard = (props: ISchemaCardProps) => {
 
         {props.showCheckbox && !hasNestedAttributes && (
           <CustomCheckbox
-            isSelectedSchema={isSelectedSchema}
+            isSelectedSchema={isSelected}
             onChange={handleCheckboxChange}
             showCheckbox={props.showCheckbox}
             schemaData={{

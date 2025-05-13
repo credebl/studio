@@ -29,7 +29,7 @@ const CopyDid: React.FC<IProps> = ({
   };
 
   return (
-    <div className='flex items-center gap-1'>
+    <div className='flex items-center gap-1 relative'>
       {!hideValue && (
         <span title={value} className={className}>
           {value}
@@ -37,7 +37,7 @@ const CopyDid: React.FC<IProps> = ({
       )}
       <button
         type='button'
-        className='shrink-0'
+        className='shrink-0 relative z-50'
         onClick={(e) => !copied && copyTextVal(e)}
         aria-label='Copy DID'
       >

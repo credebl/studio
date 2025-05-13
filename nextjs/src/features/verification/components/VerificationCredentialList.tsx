@@ -8,9 +8,12 @@ import { apiStatusCodes } from '@/config/CommonConstant';
 import { dateConversion } from '@/utils/DateConversion';
 import DateTooltip from '@/components/DateTooltip';
 import { Button } from '@/components/ui/button';
-import { Alert } from '@/components/ui/alert';
 import ProofRequest from './ProofRequestPopup';
-import { ProofRequestState, ProofRequestStateUserText } from '@/common/enums';
+import {
+  Features,
+  ProofRequestState,
+  ProofRequestStateUserText
+} from '@/common/enums';
 import {
   getVerificationList,
   getVerifiedProofDetails,
@@ -22,6 +25,8 @@ import { useAppSelector } from '@/lib/hooks';
 import SortDataTable from './SortDataTable';
 import { useRouter } from 'next/navigation';
 import { getOrganizationById } from '@/app/api/organization';
+import RoleViewButton from '@/components/RoleViewButton';
+import PageContainer from '@/components/layout/page-container';
 
 const initialPageState = {
   itemPerPage: 10,
@@ -79,8 +84,10 @@ const VerificationCredentialList = () => {
   };
 
   useEffect(() => {
-    if (isWalletCreated) getproofRequestList(orgId, listAPIParameter);
-  }, [isWalletCreated,orgId]);
+    if (isWalletCreated && orgId) {
+      getproofRequestList(orgId, listAPIParameter);
+    }
+  }, [isWalletCreated, orgId, listAPIParameter]);
 
   const fetchOrganizationDetails = async () => {
     if (!orgId) return;
@@ -174,7 +181,7 @@ const VerificationCredentialList = () => {
                         } ${
                           requestProof?.state ===
                             ProofRequestState.presentationReceived &&
-                          'bg-secondary-700 text-primary-600 border-secondary-100 dark:border-secondary-700 dark:text-secondary-800 border dark:bg-gray-700'
+                          'bg-secondary text-primary border-secondary dark:border-secondary dark:text-secondary border'
                         } flex justify-center rounded-md py-0.5 text-xs font-medium min-[320]:w-full min-[320]:px-1 sm:mr-0 sm:px-0 md:mr-2 lg:px-0.5 2xl:w-8/12`}
                       >
                         {requestProof?.state === ProofRequestState.requestSent
@@ -199,7 +206,6 @@ const VerificationCredentialList = () => {
                             ProofRequestState.presentationReceived &&
                           requestProof?.state !== 'done'
                         }
-                        // className='bg-primary-700 hover:!bg-primary-800 hover:bg-primary-800 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800" rounded-lg text-center text-base font-medium text-white focus:ring-4 sm:w-auto'
                         style={{ height: '2.5rem', minWidth: '4rem' }}
                         onClick={() => {
                           openProofRequestModel(
@@ -282,7 +288,7 @@ const VerificationCredentialList = () => {
 
   const presentProofById = async (id: string) => {
     try {
-      const response = await verifyPresentation(id);
+      const response = await verifyPresentation(id, orgId);
       const { data } = response as AxiosResponse;
 
       if (data?.statusCode === apiStatusCodes?.API_STATUS_CREATED) {
@@ -372,115 +378,130 @@ const VerificationCredentialList = () => {
   ];
 
   return (
-    <div className='px-4 pt-2'>
-      <div className='mb-4 flex flex-wrap justify-between gap-4'>
-        <h1 className='mr-auto ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white'>
-          Verification List
-        </h1>
-        <div>
-          {isWalletCreated && (
-            <Button
-              variant='default'
-              className='flex items-center justify-center'
-              onClick={schemeSelection}
-            >
-              <svg
-                className='mt-1 mr-2'
-                xmlns='http://www.w3.org/2000/svg'
-                width='20'
-                height='20'
-                fill='none'
-                viewBox='0 0 25 25'
-              >
-                <path
-                  fill='#fff'
-                  d='M21.094 0H3.906A3.906 3.906 0 0 0 0 3.906v12.5a3.906 3.906 0 0 0 3.906 3.907h.781v3.906a.781.781 0 0 0 1.335.553l4.458-4.46h10.614A3.906 3.906 0 0 0 25 16.407v-12.5A3.907 3.907 0 0 0 21.094 0Zm2.343 16.406a2.343 2.343 0 0 1-2.343 2.344H10.156a.782.782 0 0 0-.553.228L6.25 22.333V19.53a.781.781 0 0 0-.781-.781H3.906a2.344 2.344 0 0 1-2.344-2.344v-12.5a2.344 2.344 0 0 1 2.344-2.344h17.188a2.343 2.343 0 0 1 2.343 2.344v12.5Zm-3.184-5.951a.81.81 0 0 1-.17.254l-3.125 3.125a.781.781 0 0 1-1.105-1.106l1.792-1.79h-7.489a2.343 2.343 0 0 0-2.344 2.343.781.781 0 1 1-1.562 0 3.906 3.906 0 0 1 3.906-3.906h7.49l-1.793-1.79a.78.78 0 0 1 .254-1.277.781.781 0 0 1 .852.17l3.125 3.125a.79.79 0 0 1 .169.852Z'
-                />
-              </svg>
-              schema selection
-            </Button>
-          )}
-        </div>
-      </div>
-      <div>
-        <div className='rounded-lg border border-gray-200 bg-white shadow-sm 2xl:col-span-2 dark:border-gray-700 dark:bg-gray-800'>
-          {(proofReqSuccess || errMsg) && (
-            <div className='p-2'>
-              <Alert
-                color={proofReqSuccess ? 'success' : 'failure'}
-                // onDismiss={() => setErrMsg(null)}
-              >
-                <span>
-                  <p>{proofReqSuccess || errMsg}</p>
-                </span>
-              </Alert>
-            </div>
-          )}
-
-          {!isWalletCreated && !loading ? (
-            <div className='flex items-center justify-center'>
-              <EmptyMessage
-                title='No Wallet Details Found'
-                description={'The owner is required to create a wallet'}
-                buttonContent={''}
+    <PageContainer>
+      <div className='px-4 pt-2'>
+        <div className='mb-4 flex flex-wrap justify-between gap-4'>
+          <h1 className='text-primary-foreground mr-auto ml-1 text-xl font-semibold sm:text-2xl'>
+            Verification List
+          </h1>
+          <div className='bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-medium shadow'>
+            {isWalletCreated && (
+              <RoleViewButton
+                buttonTitle='Request'
+                feature={Features.VERIFICATION}
+                svgComponent={
+                  <svg
+                    className='mt-1 mr-2'
+                    xmlns='http://www.w3.org/2000/svg'
+                    width='20'
+                    height='20'
+                    fill='none'
+                    viewBox='0 0 25 25'
+                  >
+                    <path
+                      fill='#fff'
+                      d='M21.094 0H3.906A3.906 3.906 0 0 0 0 3.906v12.5a3.906 3.906 0 0 0 3.906 3.907h.781v3.906a.781.781 0 0 0 1.335.553l4.458-4.46h10.614A3.906 3.906 0 0 0 25 16.407v-12.5A3.907 3.907 0 0 0 21.094 0Zm2.343 16.406a2.343 2.343 0 0 1-2.343 2.344H10.156a.782.782 0 0 0-.553.228L6.25 22.333V19.53a.781.781 0 0 0-.781-.781H3.906a2.344 2.344 0 0 1-2.344-2.344v-12.5a2.344 2.344 0 0 1 2.344-2.344h17.188a2.343 2.343 0 0 1 2.343 2.344v12.5Zm-3.184-5.951a.81.81 0 0 1-.17.254l-3.125 3.125a.781.781 0 0 1-1.105-1.106l1.792-1.79h-7.489a2.343 2.343 0 0 0-2.344 2.343.781.781 0 1 1-1.562 0 3.906 3.906 0 0 1 3.906-3.906h7.49l-1.793-1.79a.78.78 0 0 1 .254-1.277.781.781 0 0 1 .852.17l3.125 3.125a.79.79 0 0 1 .169.852Z'
+                    />
+                  </svg>
+                }
+                onClickEvent={schemeSelection}
               />
-            </div>
-          ) : (
-            <div>
-              {verificationList && (
+            )}
+          </div>
+        </div>
+        <div>
+          <div className='rounded-sm border shadow-sm 2xl:col-span-2'>
+            {(proofReqSuccess || errMsg) && (
+              <div className='p-2'>
                 <div
-                  className='Flex-wrap'
-                  style={{ display: 'flex', flexDirection: 'column' }}
+                  className={`flex items-start gap-2 rounded-md border px-4 py-3 ${
+                    proofReqSuccess
+                      ? 'bg-success text-success border-success'
+                      : 'bg-error text-error border-error'
+                  }`}
                 >
-                  <SortDataTable
-                    pageInfo={pageInfo}
-                    searchValue={searchText}
-                    searchSortByValue={searchSortByValue}
-                    isHeader={true}
-                    isSearch={true}
-                    isRefresh={true}
-                    isSort={true}
-                    isPagination={true}
-                    message={'No Verification Records'}
-                    discription={'You have no verification record yet'}
-                    onInputChange={searchInputChange}
-                    refresh={refreshPage}
-                    header={header}
-                    data={verificationList}
-                    loading={loading}
-                    currentPage={listAPIParameter?.page}
-                    onPageChange={(page: number) => {
-                      setListAPIParameter((prevState) => ({
-                        ...prevState,
-                        page
-                      }));
+                  <div className='flex-1 text-sm'>
+                    {proofReqSuccess || errMsg}
+                  </div>
+                  <button
+                    onClick={() => {
+                      setProofReqSuccess('');
+                      setErrMsg(null);
                     }}
-                    totalPages={Math.ceil(
-                      totalItem / listAPIParameter?.itemPerPage
-                    )}
-                  ></SortDataTable>
+                    className='text-lg font-semibold focus:outline-none'
+                    aria-label='Close'
+                  >
+                    ×
+                  </button>
                 </div>
-              )}
-            </div>
-          )}
+              </div>
+            )}
 
-          {userData && (
-            <ProofRequest
-              openModal={openModal}
-              closeModal={() => {
-                openProofRequestModel(false, '', '');
-              }}
-              onSucess={requestProof}
-              requestId={requestId}
-              userData={userData}
-              view={view}
-              verifyLoading={verifyLoading}
-              userRoles={userRoles}
-            />
-          )}
+            {!isWalletCreated && !loading ? (
+              <div className='flex items-center justify-center'>
+                <EmptyMessage
+                  title='No Wallet Details Found'
+                  description={'The owner is required to create a wallet'}
+                  buttonContent={''}
+                />
+              </div>
+            ) : (
+              <div>
+                {verificationList && (
+                  <div
+                    className='Flex-wrap'
+                    style={{ display: 'flex', flexDirection: 'column' }}
+                  >
+                    <SortDataTable
+                      pageInfo={pageInfo}
+                      searchValue={searchText}
+                      searchSortByValue={searchSortByValue}
+                      isHeader={true}
+                      isSearch={true}
+                      isRefresh={true}
+                      isSort={true}
+                      isPagination={true}
+                      message={'No Verification Records'}
+                      discription={'You have no verification record yet'}
+                      onInputChange={searchInputChange}
+                      refresh={refreshPage}
+                      header={header}
+                      data={verificationList}
+                      loading={loading}
+                      currentPage={listAPIParameter?.page}
+                      onPageChange={(page: number) => {
+                        setListAPIParameter((prevState) => ({
+                          ...prevState,
+                          page
+                        }));
+                      }}
+                      totalPages={Math.ceil(
+                        totalItem / listAPIParameter?.itemPerPage
+                      )}
+                    ></SortDataTable>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {userData && (
+              <ProofRequest
+                openModal={openModal}
+                closeModal={() => {
+                  openProofRequestModel(false, '', '');
+                }}
+                onSucess={requestProof}
+                requestId={requestId}
+                userData={userData}
+                view={view}
+                verifyLoading={verifyLoading}
+                userRoles={userRoles}
+              />
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 };
 

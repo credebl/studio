@@ -12,7 +12,7 @@ export interface ISchemaData {
 }
 
 export interface ICustomCheckboxProps {
-  isSelectedSchema: boolean;
+  isSelectedSchema?: boolean;
   showCheckbox: boolean;
   isVerificationUsingEmail?: boolean;
   onChange: (checked: boolean, schemaData?: ISchemaData) => void;

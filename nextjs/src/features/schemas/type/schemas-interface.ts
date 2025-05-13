@@ -32,14 +32,14 @@ export interface ISchemaCardProps {
   created: string;
   isClickable?: boolean;
   showCheckbox?: boolean;
-  onClickCallback: (SchemaData: {
+  onClickCallback?: (SchemaData: {
     schemaId: string;
     attributes: string[];
     issuerDid: string;
     created: string;
   }) => void;
 
-  onClickW3CCallback: (W3CSchemaData: {
+  onClickW3CCallback?: (W3CSchemaData: {
     schemaId: string;
     schemaName: string;
     version: string;

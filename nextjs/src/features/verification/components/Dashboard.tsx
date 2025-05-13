@@ -1,70 +1,82 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { IDashboard } from '../type/interface';
+import { useDispatch } from 'react-redux';
+import { setVerificationRouteType } from '@/lib/verificationSlice';
+import { cn } from '@/lib/utils';
+import BackButton from '@/components/BackButton';
 
-const Dashboard = ({ title, options, backButtonPath }: IDashboard) => {
+const Dashboard = ({
+  title,
+  options,
+  backButtonPath
+}: IDashboard): JSX.Element => {
   const router = useRouter();
+  const dispatch = useDispatch();
+
+  const handleCardClick = (option: {
+    heading: string;
+    path: string | null;
+  }) => {
+    if (option.path) {
+      dispatch(setVerificationRouteType(option.heading));
+      router.push(option.path);
+    }
+  };
+
   return (
     <div className='h-[700px] px-4 pt-2'>
       <div className='relative mb-2 flex items-center justify-between'>
-        <h1 className='text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white'>
+        <h1 className='text-primary-foreground text-xl font-semibold sm:text-2xl'>
           {title}
         </h1>
-        <Button
-          title={title}
-          onClick={() => router.push(backButtonPath)}
-          className='text-base'
-        >
-          Back
-        </Button>
+        <BackButton path={backButtonPath} />
       </div>
-      <div className='rounded-lg border border-gray-200 bg-white px-6 pt-6 shadow-sm 2xl:col-span-2 dark:border-gray-700 dark:bg-gray-800'>
-        <p className='text-start text-xl font-medium text-gray-900 dark:text-white'>
+
+      <div className='border/95 rounded-lg px-6 pt-6 shadow-2xl 2xl:col-span-2'>
+        <p className='text-primary-foreground text-start text-xl font-medium'>
           Select the appropriate action
         </p>
+
         <div className='grid grid-cols-1 gap-8 pt-12 pb-16 lg:grid-cols-3'>
           {options.map((option) => (
             <Card
               key={option.heading}
-              className={`${
+              onClick={() => handleCardClick(option)}
+              className={cn(
+                'border-border relative h-full w-full overflow-hidden rounded-xl border py-4 shadow-xl transition-transform duration-300',
                 option.path
-                  ? 'custom-card group dark:hover:bg-primary hover:bg-primary grid transform cursor-pointer items-center overflow-hidden border border-gray-200 p-6 overflow-ellipsis shadow-md transition duration-500 ease-in-out hover:scale-105'
-                  : 'grid cursor-not-allowed items-center bg-gray-300 p-6 text-gray-500 dark:border-gray-600 dark:bg-gray-700'
-              }`}
-              style={{
-                maxHeight: '100%',
-                overflow: 'auto',
-                height: '168px',
-                color: 'inherit'
-              }}
-              onClick={() => option.path && router.push(option.path)}
+                  ? 'group hover:bg-primary dark:hover:bg-primary transform cursor-pointer p-6 hover:scale-105'
+                  : 'cursor-not-allowed p-6'
+              )}
             >
               <div
-                className={`flex flex-wrap items-center overflow-hidden min-[401px]:flex-nowrap ${
-                  option.path ? 'group-hover:text-white' : ''
-                }`}
-                style={{ color: 'inherit' }}
+                className={cn(
+                  'flex flex-wrap items-center min-[401px]:flex-nowrap',
+                  option.path && 'group-hover:text-white'
+                )}
               >
                 <div className='ml-4'>
                   <h5
-                    className={`text-2xl font-semibold ${
+                    className={cn(
+                      'pb-2 text-2xl font-semibold',
                       option.path
                         ? 'text-primary group-hover:text-white dark:text-white'
-                        : 'text-gray-500'
-                    } pb-2`}
+                        : 'text-gray'
+                    )}
                   >
                     {option.heading}
                   </h5>
                   <p
-                    className={`text-base ${
+                    className={cn(
+                      'text-base',
                       option.path
-                        ? 'text-gray-700 group-hover:text-white dark:text-white'
-                        : 'text-gray-500'
-                    }`}
+                        ? 'text-gray group-hover:text-white dark:text-white'
+                        : 'text-gray'
+                    )}
                   >
                     {option.description}
                   </p>

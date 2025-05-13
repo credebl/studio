@@ -1,9 +1,17 @@
 import { EmptyMessage } from '@/components/EmptyMessage';
 import Loader from '@/components/Loader';
-import SearchInput from '@/components/search-input';
 import { Button } from '@/components/ui/button';
-import { Pagination } from 'flowbite-react';
+import { Input } from '@/components/ui/input';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink
+} from '@/components/ui/pagination';
+import { cn } from '@/lib/utils';
+import { Search } from 'lucide-react';
 import { ChangeEvent, useState } from 'react';
+import { ITableHtml } from '../type/interface';
 
 export interface TableHeader {
   columnName: string;
@@ -25,7 +33,7 @@ export interface ITableData {
 export interface IDataTable {
   header: TableHeader[];
   searchValue?: string;
-  data: ITableData[];
+  data: ITableData[] | ITableHtml[];
   loading: boolean;
   onInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
   refresh: () => void;
@@ -77,7 +85,6 @@ const SortDataTable: React.FC<IDataTable> = ({
   isHeader,
   message,
   discription,
-  noExtraHeight,
   sortOrder,
   itemPerPage
 }) => {
@@ -125,29 +132,19 @@ const SortDataTable: React.FC<IDataTable> = ({
                       name='_csrf'
                       value={new Date().getTime()}
                     />
-                    <label htmlFor='simple-search' className='sr-only'>
-                      Search
-                    </label>
                     <div className='relative w-full'>
-                      <div className='pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3'>
-                        <svg
-                          aria-hidden='true'
-                          className='h-5 w-5 text-gray-500 dark:text-gray-400'
-                          fill='currentColor'
-                          viewBox='0 0 20 20'
-                          xmlns='http://www.w3.org/2000/svg'
-                        >
-                          <path
-                            fillRule='evenodd'
-                            d='M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z'
-                            clipRule='evenodd'
-                          />
-                        </svg>
-                      </div>
-                      {isSearch && (
-                        // <SearchInput onInputChange={onInputChange} value={searchValue}/>
-                        <SearchInput />
-                      )}
+                      <Search
+                        className='text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2'
+                        aria-hidden='true'
+                      />
+                      <Input
+                        type='search'
+                        id='simple-search'
+                        placeholder='Search'
+                        className='pl-9'
+                        value={searchValue}
+                        onChange={onInputChange}
+                      />
                     </div>
                   </form>
                 )}
@@ -198,7 +195,7 @@ const SortDataTable: React.FC<IDataTable> = ({
           )}
           <div className='overflow-x-auto'>
             <table className='w-full divide-y divide-gray-200 dark:divide-gray-600'>
-              <thead className='bg-gray-50 dark:bg-gray-700'>
+              <thead className='bg-secondary text-secondary-foreground'>
                 <tr>
                   {header &&
                     header.length > 0 &&
@@ -258,7 +255,7 @@ const SortDataTable: React.FC<IDataTable> = ({
                             onClick={() =>
                               callback ? callback(ele?.clickId) : ''
                             }
-                            className='bg-primary hover:bg-primary-800 mt-2 mr-2 mb-2 rounded-lg px-5 py-2.5 text-center text-sm font-medium text-white focus:ring-4 focus:ring-blue-300 focus:outline-none dark:focus:ring-blue-800'
+                            className='bg-primary hover:bg-primary-800 mt-2 mr-2 mb-2 rounded-lg px-5 py-2.5 text-center text-sm font-medium focus:ring-4 focus:outline-none'
                           >
                             Select
                           </Button>
@@ -275,7 +272,6 @@ const SortDataTable: React.FC<IDataTable> = ({
                         <EmptyMessage
                           title={message}
                           description={discription}
-                          // noExtraHeight={noExtraHeight}
                         />
                       </div>
                     </td>
@@ -306,13 +302,74 @@ const SortDataTable: React.FC<IDataTable> = ({
                 </span>
               )}
               {lastPage > 1 && data?.length > 0 && (
-                <div className='items-center'>
-                  {/* <Pagination
-										currentPage={currentPage}
-										onPageChange={onPageChange}
-										totalPages={totalPages}
-									/> */}
-                </div>
+                <Pagination className='flex items-center justify-end'>
+                  <PaginationContent className='justify-end'>
+                    <PaginationItem>
+                      <PaginationLink
+                        onClick={() =>
+                          currentPage > 1 ? onPageChange(currentPage - 1) : null
+                        }
+                        isActive={false}
+                        className='bg-muted text-muted-foreground hover:bg-muted/80 mr-4 cursor-pointer rounded-md px-4 py-2 transition-colors'
+                      >
+                        Prev
+                      </PaginationLink>
+                    </PaginationItem>
+
+                    {Array.from({ length: totalPages })
+                      .map((_, idx) => idx + 1)
+                      .filter((page) => {
+                        return (
+                          page === 1 ||
+                          page === totalPages ||
+                          Math.abs(page - currentPage) <= 1
+                        );
+                      })
+                      .map((page, index, array) => {
+                        const isCurrent = currentPage === page;
+                        const prevPage = array[index - 1];
+                        const showEllipsis = index > 0 && page - prevPage > 1;
+
+                        return (
+                          <div key={page} className='flex items-center'>
+                            {showEllipsis && (
+                              <span className='text-muted-foreground px-2'>
+                                ...
+                              </span>
+                            )}
+                            <PaginationItem>
+                              <PaginationLink
+                                onClick={() => onPageChange(page)}
+                                isActive={isCurrent}
+                                className={cn(
+                                  'cursor-pointer rounded-md px-4 py-2 transition-colors',
+                                  isCurrent
+                                    ? 'bg-primary text-primary-foreground'
+                                    : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                                )}
+                              >
+                                {page}
+                              </PaginationLink>
+                            </PaginationItem>
+                          </div>
+                        );
+                      })}
+
+                    <PaginationItem>
+                      <PaginationLink
+                        onClick={() =>
+                          currentPage < totalPages
+                            ? onPageChange(currentPage + 1)
+                            : null
+                        }
+                        isActive={false}
+                        className='bg-muted text-muted-foreground hover:bg-muted/80 cursor-pointer rounded-md px-4 py-2 transition-colors'
+                      >
+                        Next
+                      </PaginationLink>
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
               )}
             </nav>
           )}

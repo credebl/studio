@@ -36,18 +36,18 @@ const AttributesListData = ({
     <div>
       {mergedData.map((item, index) => (
         <Card key={`${item.schemaId}-${index}`} className='mb-4'>
-          <div className='flex flex-col gap-2 p-4'>
+          <div className='flex flex-col gap-2 p-4 items-start'>
             <div className='mb-2 text-xl font-semibold text-gray-900 dark:text-white'>
               {`Credential ${index + 1}`}
             </div>
 
             <div className='mb-4 flex flex-col gap-0'>
               <div className='flex border-b'>
-                <div className='text-primary-700 w-5/12 text-lg font-semibold'>
+                <div className='text-primary-700 w-5/12 text-lg font-semibold text-left'>
                   Attributes
                 </div>
                 <div className='w-1/12'></div>
-                <div className='text-primary-700 w-6/12 text-lg font-semibold'>
+                <div className='text-primary-700 w-6/12 text-lg font-semibold text-left'>
                   Values
                 </div>
               </div>
@@ -56,31 +56,29 @@ const AttributesListData = ({
                 .filter(([key]) => key !== 'credDefId' && key !== 'schemaId')
                 .map(([key, value]) => (
                   <div key={key} className='flex items-center text-lg'>
-                    <div className='text-primary-700 m-1 w-3/12 p-1 text-start font-semibold'>
-                      {key}
+                    <div className='text-primary-700 m-1 min-w-40 p-1 text-start font-semibold '>
+                      {key} :
                     </div>
-                    <div className='m-1 w-1/12 p-1'>:</div>
-                    <div className='m-1 w-9/12 overflow-auto text-start text-gray-600 dark:text-white'>
+                    <div className='m-1  overflow-auto text-start text-gray-600 dark:text-white'>
                       {value}
                     </div>
                   </div>
                 ))}
-            </div>
-
             <div className='flex items-center text-lg'>
-              <div className='text-primary-700 m-1 w-3/12 p-1 text-start font-semibold'>
-                schemaId
+              <div className='text-primary-700 m-1 min-w-40 p-1 text-start font-semibold'>
+                schemaId :
               </div>
-              <div className='m-1 p-1'>:</div>
-              <div className='m-1 w-9/12 overflow-auto text-start text-gray-600 dark:text-white'>
-                <div className='flex items-center'>
+              <div className='m-1  text-start text-gray-600 dark:text-white'>
+                <div className='flex max-w-full items-center overflow-hidden text-ellipsis whitespace-nowrap '>
                   <CopyDid
                     value={item.schemaId}
-                    className='font-courier mt-2 truncate'
+                    className={'truncate w-full whitespace-nowrap overflow-hidden text-ellipsis lg:max-w-md sm:max-w-x  s max-w-[10rem]'}
                   />
                 </div>
               </div>
             </div>
+            </div>
+
 
             {item.credDefId && (
               <div className='flex items-center text-lg'>
@@ -88,11 +86,11 @@ const AttributesListData = ({
                   credDefId
                 </div>
                 <div className='m-1 p-1'>:</div>
-                <div className='m-1 w-9/12 overflow-auto text-start text-gray-600 dark:text-white'>
-                  <div className='flex items-center'>
+                <div className='m-1 w-9/12 text-start text-gray-600 dark:text-white'>
+                  <div className='flex max-w-full items-center overflow-hidden text-ellipsis whitespace-nowrap '>
                     <CopyDid
                       value={item.credDefId}
-                      className='font-courier mt-2 truncate'
+                      className='font-courier truncate'
                     />
                   </div>
                 </div>
