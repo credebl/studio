@@ -12,10 +12,14 @@ interface IProps {
   hideValue?: boolean
 }
 
-const CopyDid = ({ value, className, hideValue }: IProps) => {
+const CopyDid = ({
+  value,
+  className,
+  hideValue,
+}: IProps): React.JSX.Element => {
   const [copied, setCopied] = useState(false)
 
-  function copyTextVal(e: React.MouseEvent<HTMLButtonElement>) {
+  function copyTextVal(e: React.MouseEvent<HTMLButtonElement>): void {
     e.preventDefault()
     e.stopPropagation()
 

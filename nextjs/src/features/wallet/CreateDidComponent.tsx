@@ -19,7 +19,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { apiStatusCodes, storageKeys } from '@/config/CommonConstant'
 import { createDid, createPolygonKeyValuePair } from '@/app/api/Agent'
 
 import { AxiosResponse } from 'axios'
@@ -28,6 +27,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { CommonConstants } from '../common/enum'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { apiStatusCodes } from '@/config/CommonConstant'
 import { envConfig } from '@/config/envConfig'
 import { ethers } from 'ethers'
 import { getOrganizationById } from '@/app/api/organization'
@@ -58,8 +58,46 @@ interface IFormValues {
   endorserDid: string
   did?: string
 }
+// Icons
+function CopyIcon(props: React.SVGProps<SVGSVGElement>): React.JSX.Element {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+      <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+    </svg>
+  )
+}
 
-const CreateDidComponent = (props: CreateDIDModalProps) => {
+function CheckIcon(props: React.SVGProps<SVGSVGElement>): React.JSX.Element {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  )
+}
+const CreateDidComponent = (props: CreateDIDModalProps): React.JSX.Element => {
   const [loading, setLoading] = React.useState<boolean>(false)
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [errMsg, setErrMsg] = React.useState<string | null>(null)
@@ -68,9 +106,7 @@ const CreateDidComponent = (props: CreateDIDModalProps) => {
   const [generatedKeys, setGeneratedKeys] = React.useState<IPolygonKeys | null>(
     null,
   )
-  const [ledgerValue, setLedgerValue] = React.useState<string | null>(null)
   const [method, setMethod] = React.useState<string | null>(null)
-  const [networkValue, setNetworkValue] = React.useState<string | null>(null)
   const [completeDidMethodValue, setCompleteDidMethodValue] = React.useState<
     string | null
   >(null)
@@ -122,7 +158,7 @@ const CreateDidComponent = (props: CreateDIDModalProps) => {
     },
   })
 
-  const fetchOrganizationDetails = async () => {
+  const fetchOrganizationDetails = async (): Promise<void> => {
     const response = await getOrganizationById(props.orgId)
     const { data } = response as AxiosResponse
     setLoading(false)
@@ -133,15 +169,14 @@ const CreateDidComponent = (props: CreateDIDModalProps) => {
         .join(':')
       setMethod(didMethod)
 
-      let ledgerName
+      let ledgerName: string | null = ''
       if (didMethod === DidMethod.INDY || DidMethod.POLYGON) {
         ledgerName = data?.data?.org_agents[0]?.orgDid.split(':')[1]
       } else {
         ledgerName = 'No Ledger'
       }
-      setLedgerValue(ledgerName)
 
-      let networkName
+      let networkName: string | null = ''
       if (didMethod === DidMethod.INDY) {
         networkName = data?.data?.org_agents[0]?.orgDid
           .split(':')
@@ -152,9 +187,8 @@ const CreateDidComponent = (props: CreateDIDModalProps) => {
       } else {
         networkName = ''
       }
-      setNetworkValue(networkName)
 
-      let completeDidMethod
+      let completeDidMethod: string | null = ''
       if (didMethod === DidMethod.INDY) {
         completeDidMethod = data?.data?.org_agents[0]?.orgDid
           .split(':')
@@ -183,7 +217,10 @@ const CreateDidComponent = (props: CreateDIDModalProps) => {
     fetchOrganizationDetails()
   }, [])
 
-  const checkBalance = async (privateKey: string, network: Network) => {
+  const checkBalance = async (
+    privateKey: string,
+    network: Network,
+  ): Promise<string | null> => {
     try {
       const rpcUrls = {
         testnet: `${envConfig.PLATFORM_DATA.polygonTestnet}`,
@@ -221,7 +258,7 @@ const CreateDidComponent = (props: CreateDIDModalProps) => {
     }
   }, [privateKeyValue])
 
-  const createNewDid = async (values: IFormValues) => {
+  const createNewDid = async (values: IFormValues): Promise<void> => {
     setLoading(true)
 
     let network = ''
@@ -265,7 +302,7 @@ const CreateDidComponent = (props: CreateDIDModalProps) => {
     }
   }
 
-  const generatePolygonKeyValuePair = async () => {
+  const generatePolygonKeyValuePair = async (): Promise<void> => {
     setIsLoading(true)
     try {
       const resCreatePolygonKeys = await createPolygonKeyValuePair(props.orgId)
@@ -308,10 +345,10 @@ const CreateDidComponent = (props: CreateDIDModalProps) => {
   }: {
     value: string
     className?: string
-  }) {
+  }): React.JSX.Element {
     const [copied, setCopied] = React.useState(false)
 
-    const copyToClipboard = () => {
+    const copyToClipboard = (): void => {
       navigator.clipboard.writeText(value).then(() => {
         setCopied(true)
         setTimeout(() => setCopied(false), 2000)
@@ -337,7 +374,7 @@ const CreateDidComponent = (props: CreateDIDModalProps) => {
     )
   }
 
-  function TokenWarningMessage() {
+  function TokenWarningMessage(): React.JSX.Element {
     return (
       <div className="mt-3 text-xs">
         <p>Note: You need to have tokens in your wallet to create a DID.</p>
@@ -345,8 +382,8 @@ const CreateDidComponent = (props: CreateDIDModalProps) => {
     )
   }
 
-  function onSubmit(values: IFormValues) {
-    createNewDid(values).then(() => {})
+  function onSubmit(values: IFormValues): void {
+    createNewDid(values)
   }
 
   return (
@@ -644,46 +681,6 @@ const CreateDidComponent = (props: CreateDIDModalProps) => {
         </Form>
       </DialogContent>
     </Dialog>
-  )
-}
-
-// Icons
-function CopyIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
-    >
-      <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
-      <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
-    </svg>
-  )
-}
-
-function CheckIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
-    >
-      <polyline points="20 6 9 17 4 12" />
-    </svg>
   )
 }
 

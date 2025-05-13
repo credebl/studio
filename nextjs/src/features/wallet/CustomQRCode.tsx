@@ -11,19 +11,25 @@ import { Card } from '@/components/ui/card'
 import QRCode from 'react-qr-code'
 import domtoimage from 'dom-to-image'
 
-const CustomQRCode = ({ value, size }: { value: string; size: number }) => {
+const CustomQRCode = ({
+  value,
+  size,
+}: {
+  value: string
+  size: number
+}): React.JSX.Element => {
   // const node = document.createTextNode('');
   const inputRef = useRef<HTMLDivElement>(null)
   const [isCopied, setIsCopied] = useState(false)
 
-  const copyTextVal = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const copyTextVal = (e: React.MouseEvent<HTMLButtonElement>): void => {
     e.preventDefault()
     setIsCopied(true)
     navigator.clipboard.writeText(value)
     setTimeout(() => setIsCopied(false), 2000)
   }
 
-  const downloadQRCode = () => {
+  const downloadQRCode = (): void => {
     if (inputRef.current) {
       domtoimage
         .toJpeg(inputRef.current, { quality: 0.95 })

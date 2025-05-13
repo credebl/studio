@@ -77,7 +77,7 @@ const DedicatedLedgerConfig = ({
   seeds,
   maskedSeeds,
   submitDedicatedWallet,
-}: IDedicatedAgentForm):React.JSX.Element => {
+}: IDedicatedAgentForm): React.JSX.Element => {
   const [haveDidShared, setHaveDidShared] = useState(false)
   const [selectedLedger, setSelectedLedger] = useState('')
   const [selectedMethod, setSelectedMethod] = useState('')
@@ -89,7 +89,7 @@ const DedicatedLedgerConfig = ({
   const [domainValue, setDomainValue] = useState<string>('')
   const [privateKeyValue, setPrivateKeyValue] = useState<string>('')
   const [, setNetworks] = useState([])
-  const fetchLedgerConfig = async ():Promise<void> => {
+  const fetchLedgerConfig = async (): Promise<void> => {
     try {
       const { data } = (await getLedgerConfig()) as AxiosResponse
 
@@ -145,27 +145,25 @@ const DedicatedLedgerConfig = ({
     }
   }
 
-  const fetchNetworks = async () => {
+  const fetchNetworks = async (): Promise<void> => {
     try {
       const { data } = (await getLedgers()) as AxiosResponse
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setNetworks(data?.data || [])
-        return data?.data
       }
-      return []
     } catch (err) {
       console.error('Fetch Network ERROR::::', err)
     }
   }
 
-  const handleLedgerSelect = (ledger: string) => {
+  const handleLedgerSelect = (ledger: string): void => {
     setSelectedLedger(ledger)
     setSelectedMethod('')
     setSelectedNetwork('')
     setSelectedDid('')
   }
 
-  const handleMethodChange = (method: React.SetStateAction<string>) => {
+  const handleMethodChange = (method: React.SetStateAction<string>): void => {
     setSelectedMethod(method)
     setSelectedDid('')
   }
@@ -173,7 +171,7 @@ const DedicatedLedgerConfig = ({
   const handleNetworkChange = (
     network: React.SetStateAction<string>,
     didMethod: React.SetStateAction<string>,
-  ) => {
+  ): void => {
     setSelectedNetwork(network)
     setSelectedDid(didMethod)
   }
@@ -203,7 +201,9 @@ const DedicatedLedgerConfig = ({
       domain: yup.string().required('Domain is required'),
     }),
   }
-  const renderNetworkOptions = (formikHandlers: FormikProps<IValuesShared>) => {
+  const renderNetworkOptions = (
+    formikHandlers: FormikProps<IValuesShared>,
+  ): React.JSX.Element | null => {
     if (!selectedLedger || !selectedMethod || !mappedData) {
       return null
     }
@@ -246,7 +246,7 @@ const DedicatedLedgerConfig = ({
             formikHandlers.setFieldValue('network', value)
             // Find the didMethod for the selected network
             const didMethod = Object.entries(networkOptions).find(
-              ([network, did]) => did === value,
+              ([did]) => did === value,
             )?.[0]
             handleNetworkChange(
               value,
@@ -274,7 +274,9 @@ const DedicatedLedgerConfig = ({
     )
   }
 
-  const renderMethodOptions = (formikHandlers: FormikProps<IValuesShared>) => {
+  const renderMethodOptions = (
+    formikHandlers: FormikProps<IValuesShared>,
+  ): React.JSX.Element | null => {
     if (!selectedLedger || !mappedData) {
       return null
     }
@@ -318,7 +320,7 @@ const DedicatedLedgerConfig = ({
     )
   }
 
-  const isSubmitDisabled = () => {
+  const isSubmitDisabled = (): boolean => {
     if (!selectedLedger) {
       return true
     } else if (
@@ -348,7 +350,7 @@ const DedicatedLedgerConfig = ({
     title: string
     description: string
     icon: React.ReactNode
-  }) => (
+  }): React.JSX.Element => (
     <Card
       className={`cursor-pointer transition-all hover:shadow-md ${selectedLedger === ledger ? 'border-yellow-500 shadow-lg' : 'border-border'}`}
       onClick={() => handleLedgerSelect(ledger)}

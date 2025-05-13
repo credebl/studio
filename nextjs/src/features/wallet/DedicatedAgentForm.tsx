@@ -16,7 +16,7 @@ const DedicatedAgentForm = ({
   seeds,
   submitDedicatedWallet,
   setAgentConfig,
-}: IDedicatedAgentForm) => {
+}: IDedicatedAgentForm): React.JSX.Element => {
   const router = useRouter()
 
   return (
@@ -121,7 +121,7 @@ const DedicatedAgentForm = ({
           // apiKey={apiKey}
           submitDedicatedWallet={submitDedicatedWallet}
           ledgerConfig={false}
-          setLedgerConfig={function (value: boolean): void {
+          setLedgerConfig={function (): void {
             throw new Error('Function not implemented.')
           }}
           setAgentConfig={undefined}

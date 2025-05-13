@@ -9,13 +9,13 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination'
 import { PlusIcon, XCircleIcon } from 'lucide-react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { apiStatusCodes, confirmationMessages } from '@/config/CommonConstant'
 import {
   deleteOrganizationInvitation,
   getOrganizationUsers,
 } from '@/app/api/organization'
-import React, { useCallback, useEffect, useState } from 'react'
 
 import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
@@ -54,7 +54,7 @@ const initialPaginationInfo = {
   lastPage: 1,
 }
 
-export default function Members() {
+export default function Members(): React.JSX.Element {
   const [activeTab, setActiveTab] = useState('users')
 
   const [message, setMessage] = useState<string | null>(null)
@@ -304,7 +304,7 @@ export default function Members() {
     setSearchText('')
   }, [activeTab])
 
-  const renderSkeletons = () =>
+  const renderSkeletons = (): React.JSX.Element[] =>
     Array.from({ length: 3 }).map((_, index) => (
       <div
         key={index}
@@ -333,7 +333,7 @@ export default function Members() {
     prevPage: number,
     nextPage: number,
     onPageChange: (page: number) => void,
-  ) => {
+  ): React.JSX.Element | null => {
     if (totalPages <= 1) {
       return null
     }
@@ -541,7 +541,9 @@ export default function Members() {
               description="Get started by inviting a user"
               buttonContent="Invite"
               onClick={
-                hasAdminRights ? () => setInviteModalOpen(true) : undefined
+                hasAdminRights
+                  ? (): void => setInviteModalOpen(true)
+                  : undefined
               }
               height="250px"
             />

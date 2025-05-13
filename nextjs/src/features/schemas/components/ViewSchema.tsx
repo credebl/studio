@@ -2,35 +2,36 @@
 
 import * as yup from 'yup'
 
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import {
+  CredDeffFieldNameType,
+  ICredDefCard,
+  Values,
+} from '../type/schemas-interface'
 import { Field, Form, Formik } from 'formik'
-import { apiStatusCodes } from '../../../config/CommonConstant'
 import React, { JSX, useEffect, useState } from 'react'
 import {
   createCredentialDefinition,
   getCredDeffById,
   getSchemaById,
 } from '@/app/api/schema'
+
+import { ArrowLeft } from 'lucide-react'
 import { AxiosResponse } from 'axios'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import CopyDid from '@/config/CopyDid'
+import CredentialDefinitionCard from '@/components/CredentialDefinitionCard'
+import { EmptyMessage } from '@/components/EmptyMessage'
+import { Label } from '@/components/ui/label'
+import PageContainer from '@/components/layout/page-container'
+import { Roles } from '@/common/enums'
+import { Skeleton } from '@/components/ui/skeleton'
+import { apiStatusCodes } from '../../../config/CommonConstant'
+import { getLedgersPlatformUrl } from '@/app/api/Agent'
 import { nanoid } from 'nanoid'
 import { useAppSelector } from '@/lib/hooks'
-import {
-  CredDeffFieldNameType,
-  ICredDefCard,
-  Values,
-} from '../type/schemas-interface'
-import { getLedgersPlatformUrl } from '@/app/api/Agent'
-import CopyDid from '@/config/CopyDid'
-import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { EmptyMessage } from '@/components/EmptyMessage'
-import CredentialDefinitionCard from '@/components/CredentialDefinitionCard'
-import { Roles } from '@/common/enums'
-import { Label } from '@/components/ui/label'
-import { ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import PageContainer from '@/components/layout/page-container'
-import { Skeleton } from '@/components/ui/skeleton'
 
 type SchemaData = {
   schema: {
@@ -53,20 +54,20 @@ const initialPageState = {
   total: 0,
 }
 
-const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
+const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
   const [schemaDetails, setSchemaDetails] = useState<SchemaData | null>(null)
 
   const [credDeffList, setCredDeffList] = useState<any>([])
 
   const [loading, setLoading] = useState<boolean>(true)
   const [createloader, setCreateLoader] = useState<boolean>(false)
-  const [credDeffloader, setCredDeffloader] = useState<boolean>(false)
+  const [, setCredDeffloader] = useState<boolean>(false)
   const [success, setSuccess] = useState<string | null>(null)
-  const [credDefListErr, setCredDefListErr] = useState<string | null>(null)
-  const [schemaDetailErr, setSchemaDetailErr] = useState<string | null>(null)
+  const [, setCredDefListErr] = useState<string | null>(null)
+  const [, setSchemaDetailErr] = useState<string | null>(null)
   const [failure, setFailure] = useState<string | null>(null)
   const [orgId, setOrgId] = useState<string>('')
-  const [credDefAuto, setCredDefAuto] = useState<string>('')
+  const [, setCredDefAuto] = useState<string>('')
   const [ledgerPlatformLoading, setLedgerPlatformLoading] = useState(false)
   const [currentPage, setCurrentPage] = useState(initialPageState)
 
@@ -77,7 +78,10 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
   const organizationId = useAppSelector((state) => state.organization.orgId)
   const orgInfo = useAppSelector((state) => state.organization.orgInfo)
 
-  const getSchemaDetails = async (SchemaId: string, organizationId: string) => {
+  const getSchemaDetails = async (
+    SchemaId: string,
+    organizationId: string,
+  ): Promise<void> => {
     try {
       setLoading(true)
       const SchemaDetails = await getSchemaById(SchemaId, organizationId)
@@ -98,7 +102,10 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
     }
   }
 
-  const getCredentialDefinitionList = async (id: string, orgId: string) => {
+  const getCredentialDefinitionList = async (
+    id: string,
+    orgId: string,
+  ): Promise<void> => {
     try {
       setCredDeffloader(true)
       const credentialDefinitions = await getCredDeffById(id, orgId)
@@ -120,7 +127,7 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
       setCredDeffloader(false)
     }
   }
-  const fetchData = async () => {
+  const fetchData = async (): Promise<void> => {
     setOrgId(String(organizationId))
     await getSchemaDetails(schemaId, String(organizationId))
     await getCredentialDefinitionList(schemaId, String(organizationId))
@@ -138,7 +145,7 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
     }
   }, [orgInfo?.roles])
 
-  const submit = async (values: Values) => {
+  const submit = async (values: Values): Promise<void> => {
     setCreateLoader(true)
     const schemaId = schemaDetails?.schemaId || ''
     const CredDeffFieldName: CredDeffFieldNameType = {
@@ -163,11 +170,13 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }) => {
     getCredentialDefinitionList(schemaId, orgId)
   }
 
-  const credDefSelectionCallback = async () => {
+  const credDefSelectionCallback = async (): Promise<void> => {
     router.push('/organizations/credentials/issue')
   }
 
-  const fetchLedgerPlatformUrl = async (indyNamespace: string) => {
+  const fetchLedgerPlatformUrl = async (
+    indyNamespace: string,
+  ): Promise<void> => {
     setLedgerPlatformLoading(true)
     try {
       const response = await getLedgersPlatformUrl(indyNamespace)
