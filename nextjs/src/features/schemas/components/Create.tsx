@@ -1,15 +1,15 @@
+/* eslint-disable max-lines */
 'use client'
 
 import * as yup from 'yup'
-
 import { DidMethod, SchemaType, SchemaTypeValue } from '@/common/enums'
-import type {
+import {
   Field,
   FieldArray,
   Form,
   Formik,
-  FormikErrors,
-  FormikProps,
+  type FormikErrors,
+  type FormikProps,
 } from 'formik'
 import { FieldName, IAttributes, IFormData } from '../type/schemas-interface'
 import React, { JSX, useEffect, useMemo, useState } from 'react'
@@ -52,7 +52,7 @@ interface IPopup {
   type: 'reset' | 'create'
 }
 
-const CreateSchema = () => {
+const CreateSchema = (): JSX.Element => {
   const [failure, setFailure] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [createLoader, setCreateLoader] = useState<boolean>(false)
@@ -104,7 +104,6 @@ const CreateSchema = () => {
 
     setLoading(false)
   }
-
 
   const [formData, setFormData] = useState(initFormData)
 
@@ -202,7 +201,7 @@ const CreateSchema = () => {
       </div>
     ),
   }
-  const confirmCreateSchema = () => {
+  const confirmCreateSchema = (): void => {
     formData.attribute.forEach((element: any) => {
       if (!element.schemaDataType) {
         const updatedElement = { ...element, schemaDataType: 'string' }
@@ -217,7 +216,7 @@ const CreateSchema = () => {
     formikHandlers: FormikProps<IFormData>,
     index: number,
     field: 'attributeName' | 'displayName',
-  ) => {
+  ): boolean => {
     const attributeError = formikHandlers?.errors?.attribute
     const attributeTouched = formikHandlers?.touched?.attribute
     const attributeValue = formikHandlers?.values?.attribute
@@ -818,7 +817,7 @@ const CreateSchema = () => {
                       </div>
                     )
                   }
-                  buttonTitles={['No, cancel', "Yes, I'm sure"]}
+                  buttonTitles={['No, cancel', 'Yes, I am sure']}
                   isProcessing={createLoader}
                   setFailure={setFailure}
                   setSuccess={setSuccess}

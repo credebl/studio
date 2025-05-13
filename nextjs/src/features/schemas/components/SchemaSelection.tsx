@@ -1,15 +1,15 @@
 'use client'
 
-import { useAppDispatch } from '@/lib/hooks'
 import SchemaList from './SchemaList'
 import { setSelectedSchema } from '@/lib/schemaSlice'
+import { useAppDispatch } from '@/lib/hooks'
 
-const SchemaSelection = () => {
+const SchemaSelection = (): JSX.Element => {
   const dispatch = useAppDispatch()
   const schemaSelectionCallback1 = async (
     schemaId: string,
     attributes: any,
-  ) => {
+  ): Promise<void> => {
     dispatch(
       setSelectedSchema({
         attributes: attributes.attribute,
