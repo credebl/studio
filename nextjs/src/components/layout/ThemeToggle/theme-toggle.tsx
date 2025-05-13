@@ -1,27 +1,27 @@
-'use client';
+'use client'
 
-import { IconBrightness } from '@tabler/icons-react';
-import { useTheme } from 'next-themes';
-import * as React from 'react';
+import * as React from 'react'
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/button'
+import { IconBrightness } from '@tabler/icons-react'
+import { useTheme } from 'next-themes'
 
-export function ModeToggle() {
-  const { setTheme, resolvedTheme } = useTheme();
+export function ModeToggle(): React.JSX.Element {
+  const { setTheme, resolvedTheme } = useTheme()
 
   const toggleTheme = React.useCallback(() => {
-    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
-  }, [resolvedTheme, setTheme]);
+    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
+  }, [resolvedTheme, setTheme])
 
   return (
     <Button
-      variant='secondary'
-      size='icon'
-      className='group/toggle size-8'
+      variant="secondary"
+      size="icon"
+      className="group/toggle size-8"
       onClick={toggleTheme}
     >
       <IconBrightness />
-      <span className='sr-only'>Toggle theme</span>
+      <span className="sr-only">Toggle theme</span>
     </Button>
-  );
+  )
 }

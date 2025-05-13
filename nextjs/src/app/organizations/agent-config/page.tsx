@@ -1,13 +1,10 @@
-import WalletSpinup from '@/features/wallet/WalletSpinupComponent';
 import React from 'react'
+import WalletSpinup from '@/features/wallet/WalletSpinupComponent'
 
-const page = () => {
-  return (
-    <div>
+const page = (): React.JSX.Element => (
+  <div>
+    <WalletSpinup />
+  </div>
+)
 
-      <WalletSpinup />
-    </div>
-  )
-}
-
-export default page;
+export default page
