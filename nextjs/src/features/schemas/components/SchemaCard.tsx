@@ -1,25 +1,26 @@
 'use client'
 
-import React, { useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { ShieldCheck } from 'lucide-react'
+import { DataType, Ledgers, Network, PolygonNetworks } from '@/common/enums'
 import {
   IAttributes,
   ISchemaCardProps,
   ISchemaData,
 } from '../type/schemas-interface'
-import { DataType, Ledgers, Network, PolygonNetworks } from '@/common/enums'
-import { limitedAttributesLength } from '@/config/CommonConstant'
+import React, { JSX, useState } from 'react'
+
+import { Button } from '@/components/ui/button'
 import CopyDid from '@/config/CopyDid'
+import CustomCheckbox from '@/components/CustomCheckbox'
 import DataTooltip from '@/components/dataTooltip'
 import DateTooltip from '@/components/DateTooltip'
+import { ShieldCheck } from 'lucide-react'
 import { dateConversion } from '@/utils/DateConversion'
-import CustomCheckbox from '@/components/CustomCheckbox'
+import { limitedAttributesLength } from '@/config/CommonConstant'
 import { useRouter } from 'next/navigation'
 
-const SchemaCard = (props: ISchemaCardProps) => {
-  const [isSelected, setIsSelected] = useState(false)
+const SchemaCard = (props: ISchemaCardProps): JSX.Element => {
+  const [, setIsSelected] = useState(false)
   const router = useRouter()
 
   const isSelectedSchema = props.selectedSchemas?.some(
@@ -52,7 +53,7 @@ const SchemaCard = (props: ISchemaCardProps) => {
     )
   }
 
-  const handleButtonClick = () => {
+  const handleButtonClick = (): void => {
     props.onClickW3cIssue?.(
       props.schemaId,
       props.schemaName,
@@ -63,7 +64,10 @@ const SchemaCard = (props: ISchemaCardProps) => {
     )
   }
 
-  const handleCheckboxChange = (checked: boolean, schemaData?: ISchemaData) => {
+  const handleCheckboxChange = (
+    checked: boolean,
+    schemaData?: ISchemaData,
+  ): void => {
     setIsSelected(checked)
     props.onChange?.(checked, schemaData ? [schemaData] : [])
   }
@@ -88,7 +92,7 @@ const SchemaCard = (props: ISchemaCardProps) => {
     (attr: IAttributes) => attr.schemaDataType === DataType.ARRAY,
   )
 
-  const handleCardClick = () => {
+  const handleCardClick = (): void => {
     if (!props.w3cSchema && !hasNestedAttributes && props.schemaId) {
       router.push(`/organizations/schemas/${props.schemaId}`)
     }
