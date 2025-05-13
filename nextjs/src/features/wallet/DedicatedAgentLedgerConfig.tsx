@@ -6,12 +6,13 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { ArrowLeft, Database, Key, Zap } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { DidMethod, Environment, Ledgers, Network } from '../common/enum'
-import { Field, Form, Formik, FormikHelpers, FormikProps } from 'formik'
+import { Form, Formik, FormikHelpers, FormikProps } from 'formik'
 import {
   IDedicatedAgentForm,
   IValuesShared,
 } from '../organization/components/interfaces/organization'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import React, { useEffect, useState } from 'react'
 import {
   Select,
   SelectContent,
@@ -20,20 +21,17 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { getLedgerConfig, getLedgers } from '@/app/api/Agent'
-import { useEffect, useState } from 'react'
 
 import type { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import CopyDid from './CopyDid'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import React from 'react'
 import SetDomainValueInput from './SetDomainValueInput'
 import SetPrivateKeyValueInput from './SetPrivateKeyValue'
 import Stepper from '@/components/StepperComponent'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { envConfig } from '@/config/envConfig'
-import { useRouter } from 'next/navigation'
 
 interface IDetails {
   [key: string]: string | { [subKey: string]: string }
@@ -71,16 +69,15 @@ interface ILedgerConfigData {
 //   [key: string]: string;
 // }
 
-const RequiredAsterisk = () => (
+const RequiredAsterisk = (): React.JSX.Element => (
   <span className="text-destructive text-xs">*</span>
 )
 
 const DedicatedLedgerConfig = ({
-  loading,
   seeds,
   maskedSeeds,
   submitDedicatedWallet,
-}: IDedicatedAgentForm) => {
+}: IDedicatedAgentForm):React.JSX.Element => {
   const [haveDidShared, setHaveDidShared] = useState(false)
   const [selectedLedger, setSelectedLedger] = useState('')
   const [selectedMethod, setSelectedMethod] = useState('')
@@ -91,10 +88,8 @@ const DedicatedLedgerConfig = ({
   const [mappedData, setMappedData] = useState<ILedgerConfigData | null>(null)
   const [domainValue, setDomainValue] = useState<string>('')
   const [privateKeyValue, setPrivateKeyValue] = useState<string>('')
-  const [networks, setNetworks] = useState([])
-  const [formikInstance, setFormikInstance] = useState(null)
-  const router = useRouter()
-  const fetchLedgerConfig = async () => {
+  const [, setNetworks] = useState([])
+  const fetchLedgerConfig = async ():Promise<void> => {
     try {
       const { data } = (await getLedgerConfig()) as AxiosResponse
 
@@ -509,7 +504,7 @@ const DedicatedLedgerConfig = ({
           actions.resetForm()
         }}
       >
-        {(formikHandlers: FormikProps<IValuesShared>): JSX.Element => (
+        {(formikHandlers: FormikProps<IValuesShared>): React.JSX.Element => (
           <Form>
             {/* Form fields based on selected ledger */}
             {selectedLedger && (

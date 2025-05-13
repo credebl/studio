@@ -13,7 +13,6 @@ import { Label } from '@/components/ui/label'
 import CopyDid from './CopyDid'
 import SetDomainValueInput from './SetDomainValueInput'
 import SetPrivateKeyValueInput from './SetPrivateKeyValue'
-import { useRouter } from 'next/navigation'
 import Stepper from '@/components/StepperComponent'
 import {
   ILedgerConfigData,
@@ -22,15 +21,13 @@ import {
   IValuesShared,
 } from '../organization/components/interfaces/organization'
 
-import { useAppSelector } from '@/lib/hooks'
-
 const LedgerConfig = ({
   maskedSeeds,
   orgId,
   seeds,
   submitSharedWallet,
   walletName,
-}: ILedgerConfigProps) => {
+}: ILedgerConfigProps): React.JSX.Element => {
   const [haveDidShared, setHaveDidShared] = useState(false)
   const [selectedLedger, setSelectedLedger] = useState('')
   const [selectedMethod, setSelectedMethod] = useState('')
@@ -41,11 +38,11 @@ const LedgerConfig = ({
   const [mappedData, setMappedData] = useState<ILedgerConfigData>()
   const [domainValue, setDomainValue] = useState<string>('')
   const [privateKeyValue, setPrivateKeyValue] = useState<string>('')
-  const [networks, setNetworks] = useState([])
+  const [, setNetworks] = useState([])
   const [walletLabel, setWalletLabel] = useState('')
   const id = React.useId()
 
-  const fetchLedgerConfig = async () => {
+  const fetchLedgerConfig = async (): Promise<void> => {
     try {
       const { data } = (await getLedgerConfig()) as AxiosResponse
 
@@ -101,32 +98,30 @@ const LedgerConfig = ({
     }
   }
 
-  const fetchNetworks = async () => {
+  const fetchNetworks = async (): Promise<void> => {
     try {
       const { data } = (await getLedgers()) as AxiosResponse
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setNetworks(data?.data || [])
-        return data?.data
       }
-      return []
     } catch (err) {
       console.error('Fetch Network ERROR::::', err)
     }
   }
 
-  const handleLedgerSelect = (ledger: string) => {
+  const handleLedgerSelect = (ledger: string): void => {
     setSelectedLedger(ledger)
     setSelectedMethod('')
     setSelectedNetwork('')
     setSelectedDid('')
   }
 
-  const handleMethodChange = (method: string) => {
+  const handleMethodChange = (method: string): void => {
     setSelectedMethod(method)
     setSelectedDid('')
   }
 
-  const handleNetworkChange = (network: string, didMethod: string) => {
+  const handleNetworkChange = (network: string, didMethod: string): void => {
     setSelectedNetwork(network)
     setSelectedDid(didMethod)
   }
@@ -167,7 +162,9 @@ const LedgerConfig = ({
     }),
   }
 
-  const renderNetworkOptions = (formikHandlers: FormikProps<IValuesShared>) => {
+  const renderNetworkOptions = (
+    formikHandlers: FormikProps<IValuesShared>,
+  ): React.JSX.Element | null => {
     if (!selectedLedger || !mappedData || selectedMethod === DidMethod.KEY) {
       return null
     }
@@ -236,7 +233,9 @@ const LedgerConfig = ({
     )
   }
 
-  const renderMethodOptions = (formikHandlers: FormikProps<IValuesShared>) => {
+  const renderMethodOptions = (
+    formikHandlers: FormikProps<IValuesShared>,
+  ): React.JSX.Element | null => {
     if (!selectedLedger || !mappedData) {
       return null
     }
@@ -280,7 +279,7 @@ const LedgerConfig = ({
     )
   }
 
-  const isSubmitDisabled = () => {
+  const isSubmitDisabled = (): boolean => {
     if (!selectedLedger) {
       return true
     } else if (
@@ -310,7 +309,7 @@ const LedgerConfig = ({
     title: string
     description: string
     icon: ReactNode
-  }) => (
+  }): React.JSX.Element => (
     <div
       className={`border ${selectedLedger === ledger ? 'shadow-lg' : ''} flex cursor-pointer flex-col items-center justify-center rounded-lg p-6 transition-all hover:shadow-md`}
       onClick={() => handleLedgerSelect(ledger)}

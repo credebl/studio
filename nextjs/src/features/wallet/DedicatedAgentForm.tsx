@@ -6,17 +6,14 @@ import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import DedicatedLedgerConfig from './DedicatedAgentLedgerConfig'
 import { IDedicatedAgentForm } from '../organization/components/interfaces/organization'
-import { Label } from 'flowbite-react'
 import React from 'react'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
 
 const DedicatedAgentForm = ({
   ledgerConfig,
   maskedSeeds,
   setLedgerConfig,
   seeds,
-  loading,
   submitDedicatedWallet,
   setAgentConfig,
 }: IDedicatedAgentForm) => {
@@ -127,7 +124,6 @@ const DedicatedAgentForm = ({
           setLedgerConfig={function (value: boolean): void {
             throw new Error('Function not implemented.')
           }}
-          loading={false}
           setAgentConfig={undefined}
           onConfigureDedicated={function (): void {
             throw new Error('Function not implemented.')

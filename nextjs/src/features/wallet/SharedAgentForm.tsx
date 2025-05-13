@@ -1,14 +1,15 @@
+import * as yup from 'yup'
+
 import { Field, Form, Formik } from 'formik'
 import React, { useState } from 'react'
-import * as yup from 'yup'
+
+import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ISharedAgentForm } from '../organization/components/interfaces/organization'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import LedgerConfig from './LedgerConfig'
-import { ISharedAgentForm } from '../organization/components/interfaces/organization'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft } from 'lucide-react'
-import { useDispatch } from 'react-redux'
 
 const SharedAgentForm = ({
   orgName,
@@ -17,13 +18,10 @@ const SharedAgentForm = ({
   seeds,
   ledgerConfig,
   setLedgerConfig,
-  loading,
   submitSharedWallet,
-  isCopied,
-}: ISharedAgentForm) => {
+}: ISharedAgentForm): React.JSX.Element => {
   const [walletName, setWalletName] = useState('')
   const router = useRouter()
-  const dispatch = useDispatch()
 
   return (
     <div className="mt-4 flex-col gap-4">

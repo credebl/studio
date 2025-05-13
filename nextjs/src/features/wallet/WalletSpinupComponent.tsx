@@ -1,13 +1,13 @@
 'use client'
 
 import { Card, CardContent } from '@/components/ui/card'
+import React, { useEffect, useState } from 'react'
 import {
   createDid,
   setAgentConfigDetails,
   spinupSharedAgent,
 } from '@/app/api/Agent'
 import { createOrganization, getOrganizationById } from '@/app/api/organization'
-import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { AlertComponent } from '@/components/AlertComponent'
@@ -17,7 +17,6 @@ import { DidMethod } from '../common/enum'
 import { IValuesShared } from '../organization/components/interfaces/organization'
 import { Organisation } from '../dashboard/type/organization'
 import PageContainer from '@/components/layout/page-container'
-import React from 'react'
 import SOCKET from '@/config/SocketConfig'
 import SharedAgentForm from './SharedAgentForm'
 import Stepper from '@/components/StepperComponent'
@@ -31,7 +30,7 @@ enum AgentType {
   DEDICATED = 'dedicated',
 }
 
-const WalletSpinup = () => {
+const WalletSpinup = (): React.JSX.Element => {
   const [agentType, setAgentType] = useState<string>(AgentType.DEDICATED)
   const [loading, setLoading] = useState<boolean>(false)
   const [walletSpinStep, setWalletSpinStep] = useState<number>(0)
@@ -40,8 +39,8 @@ const WalletSpinup = () => {
   const [failure, setFailure] = useState<string | null>(null)
   const [seeds, setSeeds] = useState<string>('')
   const [maskedSeeds, setMaskedSeeds] = useState('')
-  const [orgData, setOrgData] = useState<Organisation | null>(null)
-  const [orgFormData, setOrgFormData] = useState({
+  const [, setOrgData] = useState<Organisation | null>(null)
+  const [, setOrgFormData] = useState({
     name: '',
     description: '',
     countryId: null,
@@ -51,15 +50,10 @@ const WalletSpinup = () => {
     logoUrl: null,
   })
 
-  const [showProgressUI, setShowProgressUI] = useState(false)
-  const [isShared, setIsShared] = useState<boolean>(false)
-  const [isConfiguredDedicated, setIsConfiguredDedicated] =
-    useState<boolean>(false)
+  const [, setShowProgressUI] = useState(false)
+  const [, setIsShared] = useState<boolean>(false)
+  const [, setIsConfiguredDedicated] = useState<boolean>(false)
   const [showLedgerConfig, setShowLedgerConfig] = useState(false)
-  const [logoImage, setLogoImage] = useState<{
-    imagePreviewUrl: string | null
-  }>({ imagePreviewUrl: null })
-  const [errMsg, setErrMsg] = useState('')
   const [createdOrgId, setCreatedOrgId] = useState<string | null>(null)
   const [orgIdOfCurrentOrg, setOrgIdOfCurrentOrg] = useState<string | null>(
     null,
@@ -78,7 +72,7 @@ const WalletSpinup = () => {
     apiKey: '',
   })
 
-  const maskSeeds = (seed: string) => {
+  const maskSeeds = (seed: string): string => {
     const visiblePart = seed.slice(0, -10)
     const maskedPart = seed.slice(-10).replace(/./g, '*')
     return visiblePart + maskedPart
@@ -92,7 +86,7 @@ const WalletSpinup = () => {
   }, [])
 
   // Get redirect URL param
-  const getRedirectUrl = () => {
+  const getRedirectUrl = (): string | null => {
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search)
       return urlParams.get('redirectTo')
@@ -102,7 +96,7 @@ const WalletSpinup = () => {
 
   const redirectUrl = getRedirectUrl()
 
-  const createOrganizationOnce = async () => {
+  const createOrganizationOnce = async (): Promise<string | null> => {
     // If we have an existing org ID from props, fetch its details
     if (alreadyCreatedOrgId) {
       setCreatedOrgId(alreadyCreatedOrgId)
@@ -177,7 +171,7 @@ const WalletSpinup = () => {
         )
         return null
       }
-    } catch (error: any) {
+    } catch (error) {
       setFailure('Error creating organization')
       console.error('Error creating organization:', error)
       return null
@@ -186,17 +180,12 @@ const WalletSpinup = () => {
     }
   }
 
-  const configureDedicatedWallet = () => {
+  const configureDedicatedWallet = (): void => {
     setIsConfiguredDedicated(true)
     setShowLedgerConfig(true) // Show ledger config when dedicated wallet is configured
   }
 
-  const setWalletSpinupStatus = (status: boolean) => {
-    setSuccess('Wallet created successfully')
-    fetchOrganizationDetails()
-  }
-
-  const fetchOrganizationDetails = async () => {
+  const fetchOrganizationDetails = async (): Promise<void> => {
     setLoading(true)
     // const orgId = props.orgId;
     // const orgInfoData = await getFromLocalStorage(storageKeys.ORG_INFO);
@@ -233,8 +222,12 @@ const WalletSpinup = () => {
     }
   }
 
+  const setWalletSpinupStatus = (): void => {
+    setSuccess('Wallet created successfully')
+    fetchOrganizationDetails()
+  }
   useEffect(() => {
-    const shouldFetchOrg = async () => {
+    const shouldFetchOrg = async (): Promise<void> => {
       if (!createdOrgId && alreadyCreatedOrgId && orgIdOfCurrentOrg) {
         await fetchOrganizationDetails()
       }
@@ -243,7 +236,7 @@ const WalletSpinup = () => {
     fetchOrganizationDetails()
   }, [])
 
-  const onRadioSelect = (type: string) => {
+  const onRadioSelect = (type: string): void => {
     setAgentType(type)
   }
 
@@ -251,7 +244,7 @@ const WalletSpinup = () => {
     values: IValuesShared,
     privatekey: string,
     domain: string,
-  ) => {
+  ): Promise<void> => {
     setShowProgressUI(true)
     setAgentSpinupCall(true)
     setWalletSpinStep(1)
@@ -319,7 +312,10 @@ const WalletSpinup = () => {
     }
   }
 
-  const submitSharedWallet = async (values: IValuesShared, domain: string) => {
+  const submitSharedWallet = async (
+    values: IValuesShared,
+    domain: string,
+  ): Promise<void> => {
     // Use the unified organization creation function
     const orgId = await createOrganizationOnce()
     setCreatedOrgId(orgId)
@@ -374,39 +370,39 @@ const WalletSpinup = () => {
   }
 
   useEffect(() => {
-    const setupSocketListeners = () => {
+    const setupSocketListeners = (): void => {
       SOCKET.on('agent-spinup-process-initiated', () => {
         console.log('agent-spinup-process-initiated')
         setWalletSpinStep(1)
       })
 
-      SOCKET.on('agent-spinup-process-completed', (data: any) => {
+      SOCKET.on('agent-spinup-process-completed', (data) => {
         console.log('agent-spinup-process-completed', JSON.stringify(data))
         setWalletSpinStep(2)
       })
 
-      SOCKET.on('did-publish-process-initiated', (data: any) => {
+      SOCKET.on('did-publish-process-initiated', (data) => {
         console.log('did-publish-process-initiated', JSON.stringify(data))
         setWalletSpinStep(3)
       })
 
-      SOCKET.on('did-publish-process-completed', (data: any) => {
+      SOCKET.on('did-publish-process-completed', (data) => {
         console.log('did-publish-process-completed', JSON.stringify(data))
         setWalletSpinStep(4)
       })
 
-      SOCKET.on('invitation-url-creation-started', (data: any) => {
+      SOCKET.on('invitation-url-creation-started', (data) => {
         console.log(' invitation-url-creation-started', JSON.stringify(data))
         setTimeout(() => {
           setWalletSpinStep(5)
         }, 1000)
       })
 
-      SOCKET.on('invitation-url-creation-success', (data: any) => {
+      SOCKET.on('invitation-url-creation-success', (data) => {
         setLoading(false)
         setTimeout(() => {
           setWalletSpinStep(6)
-          setWalletSpinupStatus(true)
+          setWalletSpinupStatus()
         }, 1000)
         router.push('/organizations')
         console.log('invitation-url-creation-success', JSON.stringify(data))
@@ -449,7 +445,7 @@ const WalletSpinup = () => {
 
   const orgName = generateAlphaNumeric.slice(0, 19)
 
-  let formComponent
+  let formComponent: React.JSX.Element = <></>
 
   if (!agentSpinupCall) {
     if (agentType === AgentType.SHARED) {
@@ -473,7 +469,6 @@ const WalletSpinup = () => {
           setLedgerConfig={setShowLedgerConfig}
           seeds={seeds}
           maskedSeeds={maskedSeeds}
-          loading={loading}
           onConfigureDedicated={configureDedicatedWallet}
           submitDedicatedWallet={submitDedicatedWallet}
           setAgentConfig={setAgentConfig}
@@ -513,7 +508,7 @@ const WalletSpinup = () => {
                       message={success}
                       type={'success'}
                       onAlertClose={() => {
-                        setSuccess && setSuccess(null)
+                        setSuccess(null)
                       }}
                     />
                   </div>
@@ -524,7 +519,7 @@ const WalletSpinup = () => {
                       message={failure}
                       type={'failure'}
                       onAlertClose={() => {
-                        setFailure && setFailure(null)
+                        setFailure(null)
                       }}
                     />
                   </div>

@@ -1,9 +1,8 @@
-import React from 'react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Field } from 'formik'
-import { type ChangeEvent, useEffect, useState } from 'react'
+import React, { type ChangeEvent, useEffect, useState } from 'react'
 import GenerateBtnPolygon from './GenerateBtnPolygon'
 import { ethers } from 'ethers'
 import type { AxiosResponse } from 'axios'
@@ -41,13 +40,16 @@ const SetPrivateKeyValueInput = ({
   orgId,
   privateKeyValue,
   formikHandlers,
-}: IProps) => {
+}: IProps): React.JSX.Element => {
   const [havePrivateKey, setHavePrivateKey] = useState(false)
   const [generatedKeys, setGeneratedKeys] = useState<IPolygonKeys | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  const checkWalletBalance = async (privateKey: string, network: Network) => {
+  const checkWalletBalance = async (
+    privateKey: string,
+    network: Network,
+  ): Promise<string | null> => {
     try {
       const rpcUrls = {
         testnet: envConfig.PLATFORM_DATA.polygonTestnet,
@@ -91,7 +93,7 @@ const SetPrivateKeyValueInput = ({
     }
   }, [havePrivateKey])
 
-  const generatePolygonKeyValuePair = async () => {
+  const generatePolygonKeyValuePair = async (): Promise<void> => {
     setLoading(true)
     try {
       const resCreatePolygonKeys = await createPolygonKeyValuePair(

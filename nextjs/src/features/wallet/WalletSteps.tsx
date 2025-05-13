@@ -1,5 +1,5 @@
 import React from 'react'
-const WalletStepsComponent = (props: { steps: number }) => (
+const WalletStepsComponent = (props: { steps: number }): React.JSX.Element => (
   <div className="mt-4 ml-4 w-full">
     <ol className="relative border-l border-gray-200 text-gray-500 dark:border-gray-700 dark:text-gray-400">
       <li className="mb-10 ml-6">

@@ -20,7 +20,7 @@ const DataTooltip = <Type, >({
   data,
   renderItem,
   children,
-}: TooltipProps<Type>): JSX.Element => {
+}: TooltipProps<Type>): React.JSX.Element => {
   const content = data.map(renderItem).join(', ')
 
   return (

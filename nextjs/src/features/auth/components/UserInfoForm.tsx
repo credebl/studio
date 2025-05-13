@@ -154,7 +154,6 @@ export default function UserInfoForm({
     }
   }
 
-
   const addDeviceDetailsMethod = async (deviceBody: IdeviceBody) => {
     try {
       const deviceDetailsResp = await addDeviceDetails(deviceBody)
