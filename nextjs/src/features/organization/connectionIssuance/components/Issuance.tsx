@@ -38,6 +38,7 @@ import { getSchemaCredDef } from '@/app/api/schema';
 import { issueCredential } from '@/app/api/Issuance';
 import { pathRoutes } from '@/config/pathRoutes';
 import { useRouter } from 'next/navigation';
+import PageContainer from '@/components/layout/page-container';
 
 const IssueCred = () => {
 	const [schemaLoader, setSchemaLoader] = useState<boolean>(true);
@@ -428,6 +429,7 @@ const IssueCred = () => {
 
 	return (
 		<>
+		<PageContainer>
 			<div className="px-4 pt-2">
 				<div className="mb-4 col-span-full xl:mb-2">
 					<div className="flex justify-end items-center px-4">
@@ -672,6 +674,7 @@ const IssueCred = () => {
 					</div>
 				}
 			</div>
+			</PageContainer>
 		</>
 	);
 };
