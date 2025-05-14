@@ -46,3 +46,7 @@ node_modules
 build
 dist
 ico
+
+# Ignore Shadcn UI auto-generated components
+components/ui/*
+/src/hooks/*

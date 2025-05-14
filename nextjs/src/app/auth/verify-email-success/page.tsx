@@ -1,12 +1,10 @@
-import VerifyEmailPage from '@/features/auth/components/VerifyEmail'
 import React from 'react'
+import VerifyEmailPage from '@/features/auth/components/VerifyEmail'
 
-const page = () => {
-  return (
-    <div>
-      <VerifyEmailPage />
-    </div>
-  )
-}
+const page = (): React.JSX.Element => (
+  <div>
+    <VerifyEmailPage />
+  </div>
+)
 
 export default page

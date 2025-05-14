@@ -1,13 +1,10 @@
-import DeleteOrganizationPage from '@/features/organization/components/DeleteOrganization';
+import DeleteOrganizationPage from '@/features/organization/components/DeleteOrganization'
 import React from 'react'
 
-const page = () => {
-  return (
-    <div>
+const page = (): React.JSX.Element => (
+  <div>
+    <DeleteOrganizationPage />
+  </div>
+)
 
-      <DeleteOrganizationPage />
-    </div>
-  )
-}
-
-export default page;
+export default page

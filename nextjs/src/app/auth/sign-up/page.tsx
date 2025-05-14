@@ -1,12 +1,12 @@
-import { Metadata } from 'next';
-import SignUpViewPage from '@/features/auth/components/SignUpViewPage';
+import { Metadata } from 'next'
+import React from 'react'
+import SignUpViewPage from '@/features/auth/components/SignUpViewPage'
 
 export const metadata: Metadata = {
   title: 'Authentication | Sign In',
-  description: 'Sign In page for authentication.'
-};
+  description: 'Sign In page for authentication.',
+}
 
-export default async function Page() {
-
-  return <SignUpViewPage  />;
+export default function Page(): React.JSX.Element {
+  return <SignUpViewPage />
 }

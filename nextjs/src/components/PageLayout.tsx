@@ -1,26 +1,26 @@
-'use client';
+'use client'
 
-import React, { ReactNode } from 'react';
+import React, { ReactNode } from 'react'
 
-import { usePathname } from 'next/navigation';
-import KBar from './kbar';
-import { SidebarInset, SidebarProvider } from './ui/sidebar';
-import AppSidebar from './layout/app-sidebar';
-import Header from './layout/header';
+import { SidebarInset, SidebarProvider } from './ui/sidebar'
+import AppSidebar from './layout/app-sidebar'
+import Header from './layout/header'
+import KBar from './kbar'
+import { usePathname } from 'next/navigation'
 
 interface PageLayoutProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
 const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
-  const pathname = usePathname();
+  const pathname = usePathname()
 
   // Define routes where PageLayout should be excluded
   const excludeLayoutRoutes = [
     '/auth/sign-in',
     '/auth/sign-up',
-    '/auth/verify-email-success'
-  ];
+    '/auth/verify-email-success',
+  ]
   return (
     <>
       {excludeLayoutRoutes.includes(pathname) ? (
@@ -37,7 +37,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
         </KBar>
       )}
     </>
-  );
-};
+  )
+}
 
-export default PageLayout;
+export default PageLayout

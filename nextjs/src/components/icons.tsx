@@ -1,42 +1,41 @@
 import {
   IconAlertTriangle,
   IconArrowRight,
+  IconBrandGithub,
+  IconBrandTwitter,
+  IconBuildingSkyscraper,
   IconCheck,
   IconChevronLeft,
   IconChevronRight,
   IconCommand,
   IconCreditCard,
+  IconDeviceLaptop,
+  IconDotsVertical,
   IconFile,
   IconFileText,
   IconHelpCircle,
-  IconPhoto,
-  IconDeviceLaptop,
   IconLayoutDashboard,
+  IconLayoutKanban,
   IconLoader2,
   IconLogin,
-  IconProps,
-  IconShoppingBag,
   IconMoon,
-  IconDotsVertical,
+  IconPhoto,
   IconPizza,
   IconPlus,
+  IconProps,
   IconSettings,
+  IconShoppingBag,
   IconSun,
+  IconTopologyStar,
   IconTrash,
-  IconBrandTwitter,
   IconUser,
   IconUserCircle,
   IconUserEdit,
   IconUserX,
   IconX,
-  IconLayoutKanban,
-  IconBrandGithub,
-  IconTopologyStar,
-  IconBuildingSkyscraper,
-  
-} from '@tabler/icons-react';
+} from '@tabler/icons-react'
 
-export type Icon = React.ComponentType<IconProps>;
+export type Icon = React.ComponentType<IconProps>
 
 export const Icons = {
   dashboard: IconLayoutDashboard,
@@ -72,4 +71,4 @@ export const Icons = {
   check: IconCheck,
   connections: IconTopologyStar,
   organization: IconBuildingSkyscraper,
-};
+}

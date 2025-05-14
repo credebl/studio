@@ -1,13 +1,10 @@
-import OrganizationModal from '@/features/organization/components/CreateOrganizationModal';
+import OrganizationModal from '@/features/organization/components/CreateOrganizationModal'
 import React from 'react'
 
-const page = () => {
-  return (
-    <div>
+const page = (): React.JSX.Element => (
+  <div>
+    <OrganizationModal />
+  </div>
+)
 
-      <OrganizationModal />
-    </div>
-  )
-}
-
-export default page;
+export default page

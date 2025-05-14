@@ -30,7 +30,6 @@ This is a starter template using the following stack:
 - Pre-commit Hooks - [Husky](https://typicode.github.io/husky/)
 - Formatting - [Prettier](https://prettier.io)
 
-
 ## Pages
 
 | Pages                                                                                 | Specifications                                                                                                                                                 |

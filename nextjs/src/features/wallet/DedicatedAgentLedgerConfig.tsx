@@ -1,112 +1,122 @@
-"use client";
+/* eslint-disable max-lines */
+'use client'
 
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent } from "@/components/ui/card";
-import { Formik, Form, Field, FormikHelpers } from "formik";
-import { useState, useEffect } from "react";
-import * as yup from 'yup';
-import type { AxiosResponse } from 'axios';
-import React from "react";
-import { getLedgerConfig, getLedgers } from "@/app/api/Agent";
-import { apiStatusCodes } from "@/config/CommonConstant";
-import CopyDid from "./CopyDid";
-import { DidMethod, Environment, Ledgers, Network } from "../common/enum";
-import { envConfig } from "@/config/envConfig";
-import Stepper from "@/components/StepperComponent";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ArrowLeft, Database, Zap, Key } from "lucide-react";
-import Link from "next/link";
-import SetDomainValueInput from './SetDomainValueInput';
-import SetPrivateKeyValueInput from './SetPrivateKeyValue';
-import { useRouter } from "next/navigation";
-import { IDedicatedAgentForm } from "../organization/components/interfaces/organization";
+import * as yup from 'yup'
+
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { ArrowLeft, Database, Key, Zap } from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
+import { DidMethod, Environment, Ledgers, Network } from '../common/enum'
+import { Form, Formik, FormikHelpers, FormikProps } from 'formik'
+import {
+  IDedicatedAgentForm,
+  IValuesShared,
+} from '../organization/components/interfaces/organization'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import React, { useEffect, useState } from 'react'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+
+import type { AxiosResponse } from 'axios'
+import { Button } from '@/components/ui/button'
+import CopyDid from './CopyDid'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import SetDomainValueInput from './SetDomainValueInput'
+import SetPrivateKeyValueInput from './SetPrivateKeyValue'
+import Stepper from '@/components/StepperComponent'
+import { apiStatusCodes } from '@/config/CommonConstant'
+import { envConfig } from '@/config/envConfig'
+import { getLedgerConfig } from '@/app/api/Agent'
 
 interface IDetails {
-  [key: string]: string | { [subKey: string]: string };
+  [key: string]: string | { [subKey: string]: string }
 }
 
 interface ILedgerItem {
-  name: string;
-  details: IDetails;
+  name: string
+  details: IDetails
 }
 
 interface ILedgerConfigData {
   indy: {
     'did:indy': {
-      [key: string]: string;
-    };
-  };
+      [key: string]: string
+    }
+  }
   polygon: {
     'did:polygon': {
-      [key: string]: string;
-    };
-  };
+      [key: string]: string
+    }
+  }
   noLedger: {
-    [key: string]: string;
-  };
+    [key: string]: string
+  }
 }
 
-interface IValuesShared {
-  seed: string;
-  keyType: string;
-  method: string;
-  network: string;
-  role: string;
-  ledger: string;
-  privatekey: string;
-  [key: string]: string;
-}
+// interface IValuesShared {
+//   seed: string;
+//   keyType: string;
+//   method: string;
+//   network: string;
+//   role: string;
+//   ledger: string;
+//   privatekey: string;
+//   [key: string]: string;
+// }
 
-const RequiredAsterisk = () => <span className="text-xs text-destructive">*</span>
+const RequiredAsterisk = (): React.JSX.Element => (
+  <span className="text-destructive text-xs">*</span>
+)
 
 const DedicatedLedgerConfig = ({
-  loading,
   seeds,
   maskedSeeds,
   submitDedicatedWallet,
-}: IDedicatedAgentForm) => {
-  const [haveDidShared, setHaveDidShared] = useState(false);
-  const [selectedLedger, setSelectedLedger] = useState('');
-  const [selectedMethod, setSelectedMethod] = useState(''); 
-  const [selectedNetwork, setSelectedNetwork] = useState(''); 
-  const [seedVal, setSeedVal] = useState('');
-  const [maskedSeedVal, setMaskedSeedVal] = useState('');
-  const [selectedDid, setSelectedDid] = useState('');
-  const [mappedData, setMappedData] = useState<ILedgerConfigData | null>(null);
-  const [domainValue, setDomainValue] = useState<string>('');
-  const [privateKeyValue, setPrivateKeyValue] = useState<string>('');
-  const [networks, setNetworks] = useState([]);
-  const [formikInstance, setFormikInstance] = useState(null);
-const router = useRouter();
-  const fetchLedgerConfig = async () => {
+}: IDedicatedAgentForm): React.JSX.Element => {
+  const [haveDidShared, setHaveDidShared] = useState(false)
+  const [selectedLedger, setSelectedLedger] = useState('')
+  const [selectedMethod, setSelectedMethod] = useState('')
+  const [selectedNetwork, setSelectedNetwork] = useState('')
+  const [seedVal, setSeedVal] = useState('')
+  const [maskedSeedVal, setMaskedSeedVal] = useState('')
+  const [selectedDid, setSelectedDid] = useState('')
+  const [mappedData, setMappedData] = useState<ILedgerConfigData | null>(null)
+  const [domainValue, setDomainValue] = useState<string>('')
+  const [privateKeyValue, setPrivateKeyValue] = useState<string>('')
+  const fetchLedgerConfig = async (): Promise<void> => {
     try {
-      const { data } = await getLedgerConfig() as AxiosResponse;
+      const { data } = (await getLedgerConfig()) as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         const ledgerConfigData: ILedgerConfigData = {
           indy: {
-            [`${DidMethod.INDY}`]: {}
+            [`${DidMethod.INDY}`]: {},
           },
           polygon: {
-            [`${DidMethod.POLYGON}`]: {}
+            [`${DidMethod.POLYGON}`]: {},
           },
-          noLedger: {}
-        };
-        
+          noLedger: {},
+        }
+
         data.data.forEach(({ name, details }: ILedgerItem) => {
-          const lowerName = name.toLowerCase();
-        
+          const lowerName = name.toLowerCase()
+
           if (lowerName === Ledgers.INDY && details) {
             for (const [key, subDetails] of Object.entries(details)) {
               if (typeof subDetails === 'object' && subDetails !== null) {
                 for (const [subKey, value] of Object.entries(subDetails)) {
-                  const formattedKey = `${key}:${subKey}`.replace(`${DidMethod.INDY}:`, '');
-                  ledgerConfigData.indy[`${DidMethod.INDY}`][formattedKey] = value;
+                  const formattedKey = `${key}:${subKey}`.replace(
+                    `${DidMethod.INDY}:`,
+                    '',
+                  )
+                  ledgerConfigData.indy[`${DidMethod.INDY}`][formattedKey] =
+                    value
                 }
               }
             }
@@ -114,94 +124,105 @@ const router = useRouter();
             for (const [key, value] of Object.entries(details)) {
               if (typeof value === 'object' && value !== null) {
                 for (const [subKey, subValue] of Object.entries(value)) {
-                  ledgerConfigData.polygon[`${DidMethod.POLYGON}`][subKey] = subValue;
+                  ledgerConfigData.polygon[`${DidMethod.POLYGON}`][subKey] =
+                    subValue
                 }
               } else if (typeof value === 'string') {
-                ledgerConfigData.polygon[`${DidMethod.POLYGON}`][key] = value;
+                ledgerConfigData.polygon[`${DidMethod.POLYGON}`][key] = value
               }
             }
           } else if (lowerName === Ledgers.NO_LEDGER.toLowerCase() && details) {
             for (const [key, value] of Object.entries(details)) {
-              ledgerConfigData.noLedger[key] = value as string;
+              ledgerConfigData.noLedger[key] = value as string
             }
           }
-        });
-        
-        setMappedData(ledgerConfigData);
+        })
+
+        setMappedData(ledgerConfigData)
       }
     } catch (err) {
-      console.error('Fetch Network ERROR::::', err);
+      console.error('Fetch Network ERROR::::', err)
     }
-  };
-  
-  const fetchNetworks = async () => {
-    try {
-      const { data } = (await getLedgers()) as AxiosResponse;
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        setNetworks(data?.data || []);
-        return data?.data;
-      }
-      return [];
-    } catch (err) {
-      console.error('Fetch Network ERROR::::', err);
-    }
-  };
+  }
 
-  const handleLedgerSelect = (ledger: string) => {
-    setSelectedLedger(ledger);
-    setSelectedMethod('');
-    setSelectedNetwork('');
-    setSelectedDid('');
-  };
+  const handleLedgerSelect = (ledger: string): void => {
+    setSelectedLedger(ledger)
+    setSelectedMethod('')
+    setSelectedNetwork('')
+    setSelectedDid('')
+  }
 
-  const handleMethodChange = (method: React.SetStateAction<string>) => {
-    setSelectedMethod(method);
-    setSelectedDid('');
-  };
+  const handleMethodChange = (method: React.SetStateAction<string>): void => {
+    setSelectedMethod(method)
+    setSelectedDid('')
+  }
 
-  const handleNetworkChange = (network: React.SetStateAction<string>, didMethod: React.SetStateAction<string>) => {
-    setSelectedNetwork(network);
-    setSelectedDid(didMethod);
-  };
+  const handleNetworkChange = (
+    network: React.SetStateAction<string>,
+    didMethod: React.SetStateAction<string>,
+  ): void => {
+    setSelectedNetwork(network)
+    setSelectedDid(didMethod)
+  }
 
   useEffect(() => {
-    fetchNetworks();
-    fetchLedgerConfig();
-  }, []);
+    fetchLedgerConfig()
+  }, [])
 
   useEffect(() => {
-    setSeedVal(seeds);
-    setMaskedSeedVal(maskedSeeds);
-  }, [seeds]);
+    setSeedVal(seeds)
+    setMaskedSeedVal(maskedSeeds)
+  }, [seeds])
 
-   const validations = {
-     method: yup.string().required('Method is required'),
-     ledger: yup.string().required('Ledger is required'),
-     ...(haveDidShared) && {
-       seed: yup.string().required('Seed is required'),
-       did: yup.string().required('DID is required'),
-     },
-     ...(DidMethod.INDY === selectedMethod || DidMethod.POLYGON === selectedMethod) && { network: yup.string().required('Network is required') },
-     ...(DidMethod.WEB === selectedMethod) && { domain: yup.string().required('Domain is required') },
-   };
-  const renderNetworkOptions = (formikHandlers) => {
+  const validations = {
+    method: yup.string().required('Method is required'),
+    ledger: yup.string().required('Ledger is required'),
+    ...(haveDidShared && {
+      seed: yup.string().required('Seed is required'),
+      did: yup.string().required('DID is required'),
+    }),
+    ...((DidMethod.INDY === selectedMethod ||
+      DidMethod.POLYGON === selectedMethod) && {
+      network: yup.string().required('Network is required'),
+    }),
+    ...(DidMethod.WEB === selectedMethod && {
+      domain: yup.string().required('Domain is required'),
+    }),
+  }
+  const renderNetworkOptions = (
+    formikHandlers: FormikProps<IValuesShared>,
+  ): React.JSX.Element | null => {
     if (!selectedLedger || !selectedMethod || !mappedData) {
-      return null;
+      return null
     }
-  
-    const networkOptions = mappedData[selectedLedger][selectedMethod];
-  
+
+    const networkOptions =
+      mappedData[selectedLedger as keyof ILedgerConfigData][
+        selectedMethod as keyof ILedgerConfigData[keyof ILedgerConfigData]
+      ]
+
     if (!networkOptions) {
-      return null;
+      return null
     }
-  
-    let filteredNetworks = Object.keys(networkOptions);
-    if (envConfig.MODE === Environment.PROD && selectedMethod === DidMethod.POLYGON) {
-      filteredNetworks = filteredNetworks.filter(network => network === Network.MAINNET);
-    } else if ((envConfig.MODE === Environment.DEV || envConfig.MODE === Environment.QA) && selectedMethod === DidMethod.POLYGON) {
-      filteredNetworks = filteredNetworks.filter(network => network === Network.TESTNET);
+
+    let filteredNetworks = Object.keys(networkOptions)
+    if (
+      envConfig.MODE === Environment.PROD &&
+      selectedMethod === DidMethod.POLYGON
+    ) {
+      filteredNetworks = filteredNetworks.filter(
+        (network) => network === Network.MAINNET,
+      )
+    } else if (
+      (envConfig.MODE === Environment.DEV ||
+        envConfig.MODE === Environment.QA) &&
+      selectedMethod === DidMethod.POLYGON
+    ) {
+      filteredNetworks = filteredNetworks.filter(
+        (network) => network === Network.TESTNET,
+      )
     }
-    
+
     return (
       <div className="space-y-2">
         <Label htmlFor="network" className="text-sm font-medium">
@@ -210,12 +231,15 @@ const router = useRouter();
         <Select
           value={selectedNetwork || undefined}
           onValueChange={(value) => {
-            formikHandlers.setFieldValue('network', value);
+            formikHandlers.setFieldValue('network', value)
             // Find the didMethod for the selected network
             const didMethod = Object.entries(networkOptions).find(
-              ([network, did]) => did === value
-            )?.[0];
-            handleNetworkChange(value, networkOptions[didMethod] || '');
+              ([did]) => did === value,
+            )?.[0]
+            handleNetworkChange(
+              value,
+              networkOptions[didMethod as string] || '',
+            )
           }}
         >
           <SelectTrigger className="w-full">
@@ -230,23 +254,27 @@ const router = useRouter();
           </SelectContent>
         </Select>
         {formikHandlers.errors.network && formikHandlers.touched.network && (
-          <div className="text-destructive text-xs mt-1">{formikHandlers.errors.network}</div>
+          <div className="text-destructive mt-1 text-xs">
+            {formikHandlers.errors.network as string}
+          </div>
         )}
       </div>
-    );
-  };
+    )
+  }
 
-  const renderMethodOptions = (formikHandlers) => {
+  const renderMethodOptions = (
+    formikHandlers: FormikProps<IValuesShared>,
+  ): React.JSX.Element | null => {
     if (!selectedLedger || !mappedData) {
-      return null;
+      return null
     }
-  
-    const methods = mappedData[selectedLedger];
-  
+
+    const methods = mappedData[selectedLedger as keyof ILedgerConfigData]
+
     if (!methods) {
-      return null;
+      return null
     }
-  
+
     return (
       <div className="space-y-2">
         <Label htmlFor="method" className="text-sm font-medium">
@@ -255,9 +283,9 @@ const router = useRouter();
         <Select
           value={formikHandlers.values.method || undefined}
           onValueChange={(value) => {
-            formikHandlers.setFieldValue('method', value);
-            handleMethodChange(value);
-            setDomainValue('');
+            formikHandlers.setFieldValue('method', value)
+            handleMethodChange(value)
+            setDomainValue('')
           }}
         >
           <SelectTrigger className="w-full">
@@ -272,70 +300,93 @@ const router = useRouter();
           </SelectContent>
         </Select>
         {formikHandlers.errors.method && formikHandlers.touched.method && (
-          <div className="text-destructive text-xs mt-1">{formikHandlers.errors.method}</div>
+          <div className="text-destructive mt-1 text-xs">
+            {formikHandlers.errors.method as string}
+          </div>
         )}
       </div>
-    );
-  };
+    )
+  }
 
-  const isSubmitDisabled = () => {
+  const isSubmitDisabled = (): boolean => {
     if (!selectedLedger) {
-      return true;
-    }
-    else if ((selectedLedger === Ledgers.POLYGON && !privateKeyValue) || (selectedLedger === Ledgers.INDY && (!selectedMethod || !selectedNetwork))) {
-      return true;
-    }
-    else if ((selectedLedger === Ledgers.NO_LEDGER && !selectedMethod) ||(selectedLedger === Ledgers.NO_LEDGER && selectedMethod === DidMethod.WEB && !domainValue)) {
-      return true;
+      return true
+    } else if (
+      (selectedLedger === Ledgers.POLYGON && !privateKeyValue) ||
+      (selectedLedger === Ledgers.INDY && (!selectedMethod || !selectedNetwork))
+    ) {
+      return true
+    } else if (
+      (selectedLedger === Ledgers.NO_LEDGER && !selectedMethod) ||
+      (selectedLedger === Ledgers.NO_LEDGER &&
+        selectedMethod === DidMethod.WEB &&
+        !domainValue)
+    ) {
+      return true
     }
 
-    return false;
-  };
+    return false
+  }
 
-  const LedgerCard = ({ ledger, title, description, icon }: { ledger: string, title: string, description: string, icon: React.ReactNode }) => {
-    return (
-      <Card 
-        className={`cursor-pointer transition-all hover:shadow-md ${selectedLedger === ledger ? 'border-yellow-500 shadow-lg' : 'border-border'}`}
-        onClick={() => handleLedgerSelect(ledger)}
-      >
-        <CardContent className="p-6 flex flex-col items-center justify-center">
-          <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${
-            ledger === Ledgers.INDY ? 'bg-blue-100' : 
-            ledger === Ledgers.POLYGON ? 'bg-purple-100' : 'bg-gray-100'
-          }`}>
-            {icon}
-          </div>
-          <h3 className="text-lg font-semibold mb-1">{title}</h3>
-          <p className="text-sm text-muted-foreground text-center">{description}</p>
-        </CardContent>
-      </Card>
-    );
-  };
+  const LedgerCard = ({
+    ledger,
+    title,
+    description,
+    icon,
+  }: {
+    ledger: string
+    title: string
+    description: string
+    icon: React.ReactNode
+  }): React.JSX.Element => (
+    <Card
+      className={`cursor-pointer transition-all hover:shadow-md ${selectedLedger === ledger ? 'border-yellow-500 shadow-lg' : 'border-border'}`}
+      onClick={() => handleLedgerSelect(ledger)}
+    >
+      <CardContent className="flex flex-col items-center justify-center p-6">
+        <div
+          className={`mb-4 flex h-16 w-16 items-center justify-center rounded-full ${
+            ledger === Ledgers.INDY
+              ? 'bg-blue-100'
+              : ledger === Ledgers.POLYGON
+                ? 'bg-purple-100'
+                : 'bg-gray-100'
+          }`}
+        >
+          {icon}
+        </div>
+        <h3 className="mb-1 text-lg font-semibold">{title}</h3>
+        <p className="text-muted-foreground text-center text-sm">
+          {description}
+        </p>
+      </CardContent>
+    </Card>
+  )
 
   return (
-    <div className="max-w-4xl mx-auto bg-background p-6 rounded-lg shadow-sm">
+    <div className="bg-background mx-auto max-w-4xl rounded-lg p-6 shadow-sm">
       {/* Header with back button */}
-      <div className="flex items-center mb-4">
+      <div className="mb-4 flex items-center">
         <Button variant="ghost" size="icon" className="mr-3">
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div>
           <h2 className="text-xl font-medium">Ledger Configuration</h2>
-          <p className="text-sm text-muted-foreground">Choose your ledger and DID method</p>
+          <p className="text-muted-foreground text-sm">
+            Choose your ledger and DID method
+          </p>
         </div>
-        <div className="ml-auto text-sm text-muted-foreground">
-          Step 3 of 4
-        </div>
+        <div className="text-muted-foreground ml-auto text-sm">Step 3 of 4</div>
       </div>
 
       {/* Progress bar */}
       <Stepper currentStep={3} totalSteps={4} />
-      
+
       <div className="mb-6">
-        <div className="flex items-center gap-4 mb-6 mt-6">
+        <div className="mt-6 mb-6 flex items-center gap-4">
           <RadioGroup
-            defaultValue={haveDidShared ? "have" : "create"}
-            onValueChange={(value) => setHaveDidShared(value === "have")}
+            defaultValue={haveDidShared ? 'have' : 'create'}
+            onValueChange={(value) => setHaveDidShared(value === 'have')}
             className="flex space-x-6"
           >
             <div className="flex items-center space-x-2">
@@ -353,19 +404,19 @@ const router = useRouter();
         {!haveDidShared && (
           <Card className="mb-6">
             <CardContent className="p-4">
-              <Label className="block text-sm font-medium mb-2">Generated Seed</Label>
+              <Label className="mb-2 block text-sm font-medium">
+                Generated Seed
+              </Label>
               <div className="flex items-center">
-                <div className="flex-1 p-3 bg-background border rounded-lg break-all">
+                <div className="bg-background flex-1 rounded-lg border p-3 break-all">
                   {maskedSeedVal}
                 </div>
-                <CopyDid
-                  className="ml-2 text-primary"
-                  onCopy={() => navigator.clipboard.writeText(seedVal)}
-                />
+                <CopyDid className="text-primary ml-2" value={seedVal} />
               </div>
-              <Alert variant="warning" className="mt-2">
-                <AlertDescription className="text-sm flex items-center">
-                  Save this seed securely. It will be required to recover your wallet.
+              <Alert variant="default" className="mt-2">
+                <AlertDescription className="flex items-center text-sm">
+                  Save this seed securely. It will be required to recover your
+                  wallet.
                 </AlertDescription>
               </Alert>
             </CardContent>
@@ -379,21 +430,13 @@ const router = useRouter();
               <Label htmlFor="seed" className="text-sm font-medium">
                 Seed <RequiredAsterisk />
               </Label>
-              <Input
-                id="seed"
-                name="seed"
-                placeholder="Enter your seed"
-              />
+              <Input id="seed" name="seed" placeholder="Enter your seed" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="did" className="text-sm font-medium">
                 DID <RequiredAsterisk />
               </Label>
-              <Input
-                id="did"
-                name="did"
-                placeholder="Enter your DID"
-              />
+              <Input id="did" name="did" placeholder="Enter your DID" />
             </div>
           </div>
         )}
@@ -401,21 +444,21 @@ const router = useRouter();
 
       {/* Selection section */}
       <div className="mb-6">
-        <h3 className="text-lg font-medium mb-4">Select Ledger</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <LedgerCard 
+        <h3 className="mb-4 text-lg font-medium">Select Ledger</h3>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <LedgerCard
             ledger={Ledgers.INDY}
             title="Indy"
             description="Hyperledger Indy"
             icon={<Database className="h-8 w-8 text-blue-600" />}
           />
-          <LedgerCard 
+          <LedgerCard
             ledger={Ledgers.POLYGON}
             title="Polygon"
             description="Polygon blockchain"
             icon={<Zap className="h-8 w-8 text-purple-600" />}
           />
-          <LedgerCard 
+          <LedgerCard
             ledger={Ledgers.NO_LEDGER}
             title="No Ledger"
             description="Local key generation"
@@ -433,51 +476,50 @@ const router = useRouter();
           network: selectedNetwork || '',
           role: '',
           ledger: selectedLedger,
-          privatekey: ''
+          privatekey: '',
         }}
         enableReinitialize={true}
         validationSchema={yup.object().shape(validations)}
-        onSubmit={async (values: IValuesShared, actions: FormikHelpers<IValuesShared>) => {
-          values.ledger = selectedLedger;
-          values.method = selectedMethod;
-          values.network = selectedNetwork;
+        onSubmit={async (
+          values: IValuesShared,
+          actions: FormikHelpers<IValuesShared>,
+        ) => {
+          values.ledger = selectedLedger
+          values.method = selectedMethod
+          values.network = selectedNetwork
           if (!values.privatekey) {
-            values.privatekey = privateKeyValue;
+            values.privatekey = privateKeyValue
           }
-          submitDedicatedWallet(
-            values,
-            privateKeyValue,
-            domainValue
-          );
-          actions.resetForm();
+          submitDedicatedWallet(values, privateKeyValue, domainValue)
+          actions.resetForm()
         }}
       >
-        {(formikHandlers): JSX.Element => (
+        {(formikHandlers: FormikProps<IValuesShared>): React.JSX.Element => (
           <Form>
             {/* Form fields based on selected ledger */}
             {selectedLedger && (
-              <Card className="p-6 bg-background">
+              <Card className="bg-background p-6">
                 <CardContent className="p-0">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     {renderMethodOptions(formikHandlers)}
-                    
-                    {(selectedMethod === DidMethod.INDY || selectedMethod === DidMethod.POLYGON) && (
-                      renderNetworkOptions(formikHandlers)
-                    )}
+
+                    {(selectedMethod === DidMethod.INDY ||
+                      selectedMethod === DidMethod.POLYGON) &&
+                      renderNetworkOptions(formikHandlers)}
                   </div>
-                
+
                   {/* Generated DID Method field */}
                   {selectedDid && (
                     <div className="mt-6">
-                      <Label className="block mb-2 text-sm font-medium">
+                      <Label className="mb-2 block text-sm font-medium">
                         Generated DID Method
                       </Label>
-                      <div className="p-3 rounded-lg text-foreground">
+                      <div className="text-foreground rounded-lg p-3">
                         {selectedDid}
                       </div>
                     </div>
                   )}
-                  
+
                   {/* Domain value for WEB method */}
                   {selectedMethod === DidMethod.WEB && (
                     <div className="mt-6">
@@ -488,37 +530,59 @@ const router = useRouter();
                       />
                     </div>
                   )}
-                  
+
                   {/* Private key for Polygon */}
                   {selectedMethod === DidMethod.POLYGON && (
-                    <Card className="mt-6 bg-muted/50">
+                    <Card className="bg-muted/50 mt-6">
                       <CardContent className="p-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                           <div>
-                            <SetPrivateKeyValueInput 
+                            <SetPrivateKeyValueInput
                               setPrivateKeyValue={setPrivateKeyValue}
-                              privateKeyValue={privateKeyValue} 
-                              formikHandlers={formikHandlers} 
+                              privateKeyValue={privateKeyValue}
+                              formikHandlers={formikHandlers}
                             />
                           </div>
                           <div>
-                            <h4 className="font-medium text-sm mb-3">Follow these instructions to generate polygon tokens:</h4>
+                            <h4 className="mb-3 text-sm font-medium">
+                              Follow these instructions to generate polygon
+                              tokens:
+                            </h4>
                             <ol className="space-y-3 text-sm">
-                              <li className='flex items-start'>
-                                <span className="font-semibold mr-2">Step 1:</span>
+                              <li className="flex items-start">
+                                <span className="mr-2 font-semibold">
+                                  Step 1:
+                                </span>
                                 <div>
-                                  Copy the address and get the free tokens for the testnet.
+                                  Copy the address and get the free tokens for
+                                  the testnet.
                                   <div className="mt-1">
-                                    For eg. use <a href='https://faucet.polygon.technology/' className='text-primary underline'>https://faucet.polygon.technology/</a> to get free tokens
+                                    For eg. use{' '}
+                                    <a
+                                      href="https://faucet.polygon.technology/"
+                                      className="text-primary underline"
+                                    >
+                                      https://faucet.polygon.technology/
+                                    </a>{' '}
+                                    to get free tokens
                                   </div>
                                 </div>
                               </li>
-                              <li className='flex items-start'>
-                                <span className="font-semibold mr-2">Step 2:</span>
+                              <li className="flex items-start">
+                                <span className="mr-2 font-semibold">
+                                  Step 2:
+                                </span>
                                 <div>
                                   Check that you have received the tokens.
                                   <div className="mt-1">
-                                    For eg. copy the address and check the balance on <a href='https://mumbai.polygonscan.com/' className='text-primary underline'>https://mumbai.polygonscan.com/</a>
+                                    For eg. copy the address and check the
+                                    balance on{' '}
+                                    <a
+                                      href="https://mumbai.polygonscan.com/"
+                                      className="text-primary underline"
+                                    >
+                                      https://mumbai.polygonscan.com/
+                                    </a>
                                   </div>
                                 </div>
                               </li>
@@ -531,16 +595,15 @@ const router = useRouter();
                 </CardContent>
               </Card>
             )}
-            
+
             {/* Action buttons */}
-            <div className="flex items-right mt-8">
+            <div className="items-right mt-8 flex">
               <Button
-              onClick={() => {
-                formikHandlers.handleSubmit();
-              }}
+                onClick={() => {
+                  formikHandlers.handleSubmit()
+                }}
                 disabled={isSubmitDisabled()}
                 type="submit"
-              
               >
                 Create Identity
               </Button>
@@ -549,7 +612,7 @@ const router = useRouter();
         )}
       </Formik>
     </div>
-  );
-};
+  )
+}
 
-export default DedicatedLedgerConfig;
+export default DedicatedLedgerConfig

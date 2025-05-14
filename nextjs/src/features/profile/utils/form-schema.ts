@@ -1,4 +1,4 @@
-import * as z from 'zod';
+import * as z from 'zod'
 
 export const profileSchema = z.object({
   firstname: z
@@ -27,13 +27,13 @@ export const profileSchema = z.object({
       startdate: z
         .string()
         .refine((value) => /^\d{4}-\d{2}-\d{2}$/.test(value), {
-          message: 'Start date should be in the format YYYY-MM-DD'
+          message: 'Start date should be in the format YYYY-MM-DD',
         }),
       enddate: z.string().refine((value) => /^\d{4}-\d{2}-\d{2}$/.test(value), {
-        message: 'End date should be in the format YYYY-MM-DD'
-      })
-    })
-  )
-});
+        message: 'End date should be in the format YYYY-MM-DD',
+      }),
+    }),
+  ),
+})
 
-export type ProfileFormValues = z.infer<typeof profileSchema>;
+export type ProfileFormValues = z.infer<typeof profileSchema>

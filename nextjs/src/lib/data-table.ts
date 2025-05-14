@@ -1,24 +1,24 @@
 import type {
   ExtendedColumnFilter,
   FilterOperator,
-  FilterVariant
-} from '@/types/data-table';
-import type { Column } from '@tanstack/react-table';
+  FilterVariant,
+} from '@/types/data-table'
 
-import { dataTableConfig } from '@/config/data-table';
+import type { Column } from '@tanstack/react-table'
+import { dataTableConfig } from '@/config/data-table'
 
 export function getCommonPinningStyles<TData>({
   column,
-  withBorder = false
+  withBorder = false,
 }: {
-  column: Column<TData>;
-  withBorder?: boolean;
+  column: Column<TData>
+  withBorder?: boolean
 }): React.CSSProperties {
-  const isPinned = column.getIsPinned();
+  const isPinned = column.getIsPinned()
   const isLastLeftPinnedColumn =
-    isPinned === 'left' && column.getIsLastColumn('left');
+    isPinned === 'left' && column.getIsLastColumn('left')
   const isFirstRightPinnedColumn =
-    isPinned === 'right' && column.getIsFirstColumn('right');
+    isPinned === 'right' && column.getIsFirstColumn('right')
 
   return {
     boxShadow: withBorder
@@ -34,11 +34,14 @@ export function getCommonPinningStyles<TData>({
     position: isPinned ? 'sticky' : 'relative',
     background: isPinned ? 'hsl(var(--background))' : 'hsl(var(--background))',
     width: column.getSize(),
-    zIndex: isPinned ? 1 : 0
-  };
+    zIndex: isPinned ? 1 : 0,
+  }
 }
 
-export function getFilterOperators(filterVariant: FilterVariant) {
+export function getFilterOperators(filterVariant: FilterVariant): {
+  label: string
+  value: FilterOperator
+}[] {
   const operatorMap: Record<
     FilterVariant,
     { label: string; value: FilterOperator }[]
@@ -50,20 +53,20 @@ export function getFilterOperators(filterVariant: FilterVariant) {
     dateRange: dataTableConfig.dateOperators,
     boolean: dataTableConfig.booleanOperators,
     select: dataTableConfig.selectOperators,
-    multiSelect: dataTableConfig.multiSelectOperators
-  };
+    multiSelect: dataTableConfig.multiSelectOperators,
+  }
 
-  return operatorMap[filterVariant] ?? dataTableConfig.textOperators;
+  return operatorMap[filterVariant] ?? dataTableConfig.textOperators
 }
 
-export function getDefaultFilterOperator(filterVariant: FilterVariant) {
-  const operators = getFilterOperators(filterVariant);
+export function getDefaultFilterOperator(filterVariant: FilterVariant): string {
+  const operators = getFilterOperators(filterVariant)
 
-  return operators[0]?.value ?? (filterVariant === 'text' ? 'iLike' : 'eq');
+  return operators[0]?.value ?? (filterVariant === 'text' ? 'iLike' : 'eq')
 }
 
 export function getValidFilters<TData>(
-  filters: ExtendedColumnFilter<TData>[]
+  filters: ExtendedColumnFilter<TData>[],
 ): ExtendedColumnFilter<TData>[] {
   return filters.filter(
     (filter) =>
@@ -73,6 +76,6 @@ export function getValidFilters<TData>(
         ? filter.value.length > 0
         : filter.value !== '' &&
           filter.value !== null &&
-          filter.value !== undefined)
-  );
+          filter.value !== undefined),
+  )
 }

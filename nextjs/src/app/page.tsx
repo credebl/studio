@@ -1,7 +1,7 @@
-'use client';
+'use client'
 
-import { redirect } from 'next/navigation';
+import { redirect } from 'next/navigation'
 
-export default function Home() {
-  redirect('/auth/sign-in');
+export default function Home(): void {
+  redirect('/auth/sign-in')
 }

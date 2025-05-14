@@ -4,40 +4,40 @@ import {
   Instrument_Sans,
   Inter,
   Mulish,
-  Noto_Sans_Mono
-} from 'next/font/google';
+  Noto_Sans_Mono,
+} from 'next/font/google'
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils'
 
 const fontSans = Geist({
   subsets: ['latin'],
-  variable: '--font-sans'
-});
+  variable: '--font-sans',
+})
 
 const fontMono = Geist_Mono({
   subsets: ['latin'],
-  variable: '--font-mono'
-});
+  variable: '--font-mono',
+})
 
 const fontInstrument = Instrument_Sans({
   subsets: ['latin'],
-  variable: '--font-instrument'
-});
+  variable: '--font-instrument',
+})
 
 const fontNotoMono = Noto_Sans_Mono({
   subsets: ['latin'],
-  variable: '--font-noto-mono'
-});
+  variable: '--font-noto-mono',
+})
 
 const fontMullish = Mulish({
   subsets: ['latin'],
-  variable: '--font-mullish'
-});
+  variable: '--font-mullish',
+})
 
 const fontInter = Inter({
   subsets: ['latin'],
-  variable: '--font-inter'
-});
+  variable: '--font-inter',
+})
 
 export const fontVariables = cn(
   fontSans.variable,
@@ -45,5 +45,5 @@ export const fontVariables = cn(
   fontInstrument.variable,
   fontNotoMono.variable,
   fontMullish.variable,
-  fontInter.variable
-);
+  fontInter.variable,
+)

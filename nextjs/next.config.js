@@ -5,19 +5,17 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'utfs.io',
-        port: ''
+        port: '',
       },
       {
         protocol: 'https',
         hostname: 'api.slingacademy.com',
-        port: ''
-      }
+        port: '',
+      },
     ],
-    domains : [
-      'dev-org-logo.s3.ap-south-1.amazonaws.com'
-   ]
+    domains: ['dev-org-logo.s3.ap-south-1.amazonaws.com'],
   },
-  transpilePackages: ['geist']
-};
+  transpilePackages: ['geist'],
+}
 
-module.exports = nextConfig;
+module.exports = nextConfig
