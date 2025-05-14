@@ -50,6 +50,7 @@ import { pathRoutes } from "@/config/pathRoutes";
 import { setSocketId } from "@/lib/socketSlice";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
+import { SearchableSelect } from "@/components/ShadCnSelect";
 
 export interface SelectRef {
 	clearValue(): void;
@@ -122,8 +123,11 @@ const BulkIssuance = () => {
 			setLoading(true);
 
 			let orgDid = ''
+			let ledgerId = ''
 
 			const response = await getOrganizationById(orgId)
+
+			console.log("response",response)
 
 			if (typeof response === 'string') {
 				// handle the error message
@@ -131,6 +135,7 @@ const BulkIssuance = () => {
 			} else {
 				const { data } = response;
 				orgDid = data?.data?.org_agents[0]?.orgDid
+				ledgerId = data.data.org_agents[0].ledgers.id
 				// proceed with data
 			}
 
@@ -167,9 +172,10 @@ const BulkIssuance = () => {
 							credentialDefinitionId,
 							schemaIdentifier,
 							schemaAttributes
-						}: ICredentials) => ({
+						}: ICredentials,index:number) => ({
 							value: schemaType === SchemaTypes.schema_INDY ? credentialDefinitionId : schemaVersion,
 							label: `${schemaName} [${schemaVersion}]${currentSchemaType === SchemaTypes.schema_INDY ? ` - (${credentialDefinition})` : ''}`,
+							id:index,
 							schemaName: schemaName,
 							schemaVersion: schemaVersion,
 							credentialDefinition: credentialDefinition,
@@ -190,7 +196,7 @@ const BulkIssuance = () => {
 			else if (currentSchemaType === SchemaTypes.schema_W3C && orgId && isAllSchema) {
 
 
-				const response = await getAllSchemas(schemaListAPIParameters, currentSchemaType);
+				const response = await getAllSchemas(schemaListAPIParameters, currentSchemaType,ledgerId);
 				const { data } = response as AxiosResponse;
 
 
@@ -228,6 +234,9 @@ const BulkIssuance = () => {
 		}
 	};
 
+	const handleSelect = (value)=>{
+		console.log("value",value)
+	}
 
 	const onSelectChange = (newValue: SingleValue<ICredentials | undefined>) => {
 		const value = newValue as ICredentials | undefined;
@@ -623,6 +632,11 @@ const BulkIssuance = () => {
 									<div>
 										{
 											// mounted ?
+											<SearchableSelect className='max-w-lg border-2 border-primary'
+												options={credentialOptionsData}
+												value={''}
+												onValueChange={handleSelect}
+												placeholder="Select Schema Credential Definition" />
 											// 	<Select
 											// 		placeholder="Select Schema - Credential definition"
 											// 		className="basic-single"
@@ -709,8 +723,8 @@ const BulkIssuance = () => {
 											id="signinsubmit"
 											// isProcessing={process}
 											// type="submit"
-											 variant="ghost"
-                              className="border-ring hover:bg-primary flex items-center rounded-xl border px-4 py-2 transition-colors"
+											variant="ghost"
+											className="border-ring hover:bg-primary flex items-center rounded-xl border px-4 py-2 transition-colors"
 											style={{ height: '2.4rem', minWidth: '2rem' }}
 											disabled={!isCredSelected}
 											onClick={DownloadSchemaTemplate}
@@ -945,19 +959,19 @@ const BulkIssuance = () => {
 								style={{ height: '2.6rem', width: '6rem', minWidth: '2rem' }}
 							>
 								<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="27"
-								height="18"
-								fill="none"
-								viewBox="0 0 27 18"
-								className="mr-1"
-								style={{ height: '20px', width: '30px' }}
-							>
-								<path
-									fill="currentColor"
-									d="M26.82 6.288 20.469.173a.632.632 0 0 0-.87 0l-2.256 2.172H9.728c-1.754 0-3.424.77-4.53 2.073h-1.2V3.53a.604.604 0 0 0-.614-.592H.615A.604.604 0 0 0 0 3.53c0 .327.275.592.615.592h2.153v8.293H.615a.604.604 0 0 0-.615.592c0 .327.275.592.615.592h2.769c.34 0 .615-.265.615-.592v-1.481h1.2c1.105 1.304 2.775 2.073 4.53 2.073h.715l4.391 4.227c.12.116.278.174.435.174a.626.626 0 0 0 .435-.174l11.115-10.7a.581.581 0 0 0 .18-.419.581.581 0 0 0-.18-.419ZM5.998 10.585a.623.623 0 0 0-.498-.244H4V5.603h1.5c.197 0 .382-.09.498-.243.867-1.146 2.262-1.83 3.73-1.83h6.384l-3.65 3.514a6.103 6.103 0 0 1-1.355-1.31.63.63 0 0 0-.86-.131.578.578 0 0 0-.135.827c1.167 1.545 2.89 2.56 4.85 2.857a.67.67 0 0 1 .575.762.69.69 0 0 1-.791.555 8.905 8.905 0 0 1-4.534-2.08.632.632 0 0 0-.869.04.577.577 0 0 0 .043.837c.11.096.223.19.337.28l-1.24 1.193a.582.582 0 0 0-.18.419c0 .157.066.308.18.419l.698.67a4.675 4.675 0 0 1-3.183-1.797Zm9.272 5.985-5.48-5.277.942-.907a10.27 10.27 0 0 0 3.823 1.388c.101.015.201.022.3.022.93 0 1.75-.651 1.899-1.562.165-1.009-.553-1.958-1.6-2.117a6.411 6.411 0 0 1-1.592-.456l6.473-6.231 5.48 5.277L15.27 16.57Z"
-								/>
-							</svg>
+									xmlns="http://www.w3.org/2000/svg"
+									width="27"
+									height="18"
+									fill="none"
+									viewBox="0 0 27 18"
+									className="mr-1"
+									style={{ height: '20px', width: '30px' }}
+								>
+									<path
+										fill="currentColor"
+										d="M26.82 6.288 20.469.173a.632.632 0 0 0-.87 0l-2.256 2.172H9.728c-1.754 0-3.424.77-4.53 2.073h-1.2V3.53a.604.604 0 0 0-.614-.592H.615A.604.604 0 0 0 0 3.53c0 .327.275.592.615.592h2.153v8.293H.615a.604.604 0 0 0-.615.592c0 .327.275.592.615.592h2.769c.34 0 .615-.265.615-.592v-1.481h1.2c1.105 1.304 2.775 2.073 4.53 2.073h.715l4.391 4.227c.12.116.278.174.435.174a.626.626 0 0 0 .435-.174l11.115-10.7a.581.581 0 0 0 .18-.419.581.581 0 0 0-.18-.419ZM5.998 10.585a.623.623 0 0 0-.498-.244H4V5.603h1.5c.197 0 .382-.09.498-.243.867-1.146 2.262-1.83 3.73-1.83h6.384l-3.65 3.514a6.103 6.103 0 0 1-1.355-1.31.63.63 0 0 0-.86-.131.578.578 0 0 0-.135.827c1.167 1.545 2.89 2.56 4.85 2.857a.67.67 0 0 1 .575.762.69.69 0 0 1-.791.555 8.905 8.905 0 0 1-4.534-2.08.632.632 0 0 0-.869.04.577.577 0 0 0 .043.837c.11.096.223.19.337.28l-1.24 1.193a.582.582 0 0 0-.18.419c0 .157.066.308.18.419l.698.67a4.675 4.675 0 0 1-3.183-1.797Zm9.272 5.985-5.48-5.277.942-.907a10.27 10.27 0 0 0 3.823 1.388c.101.015.201.022.3.022.93 0 1.75-.651 1.899-1.562.165-1.009-.553-1.958-1.6-2.117a6.411 6.411 0 0 1-1.592-.456l6.473-6.231 5.48 5.277L15.27 16.57Z"
+									/>
+								</svg>
 								<span className='text-custom-900'>Issue</span>
 							</Button>
 							<Button
