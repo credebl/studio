@@ -426,7 +426,6 @@ export default function ReceivedInvitations(): React.JSX.Element {
               height="250px"
             />
           )} */}
-
           {renderPagination()}
         </CardContent>
       </Card>
