@@ -72,39 +72,41 @@ export const pathRoutes = {
       W3CConnections:
         '/organizations/verification/verify-credentials/schemas/connections',
 
-			verify:
-				'/organizations/verification/verify-credentials/schemas/cred-defs/connections/verification',
-				W3CVerification:
-				'/organizations/verification/verify-credentials/schemas/connections/verification',
-		},
-	},
-	documentation: {
-		root: envConfig.PLATFORM_DATA.docs as string
-	},
-	schema: {
-		create: '/schemas',
-		getAll: '/schemas',
-		getSchemaById: '/schemas/id',
-		createCredentialDefinition: '/credential-definitions',
-		getCredDeffBySchemaId: '/schemas/credential-definitions',
-	},
-	back: {
-		schema: {
-			schemas: '/organizations/schemas',
-		},
-		verification: {
-			credDef: '/organizations/verification/verify-credentials/schemas/cred-defs',
-			schemas: '/organizations/verification/verify-credentials/schemas',
-			verification: '/organizations/verification/verify-credentials/schemas/cred-defs/connections',
-		},
-		issuance: {
-			credDef: '/organizations/credentials/issue/schemas/cred-defs',
-			schemas: '/organizations/credentials/issue/schemas',
-			connections:
-				'/organizations/credentials/connections',
-		},
-		credentials:{
+      verify:
+        '/organizations/verification/verify-credentials/schemas/cred-defs/connections/verification',
+      W3CVerification:
+        '/organizations/verification/verify-credentials/schemas/connections/verification',
+    },
+  },
+  documentation: {
+    root: envConfig.PLATFORM_DATA.docs as string,
+  },
+  schema: {
+    create: '/schemas',
+    getAll: '/schemas',
+    getSchemaById: '/schemas/id',
+    createCredentialDefinition: '/credential-definitions',
+    getCredDeffBySchemaId: '/schemas/credential-definitions',
+  },
+  back: {
+    schema: {
+      schemas: '/organizations/schemas',
+    },
+    verification: {
+      credDef:
+        '/organizations/verification/verify-credentials/schemas/cred-defs',
+      schemas: '/organizations/verification/verify-credentials/schemas',
+      verification:
+        '/organizations/verification/verify-credentials/schemas/cred-defs/connections',
+    },
+    issuance: {
+      credDef: '/organizations/credentials/issue/schemas/cred-defs',
+      schemas: '/organizations/credentials/issue/schemas',
+      connections:
+        '/organizations/credentials/issue/schemas/cred-defs/connections',
+    },
+    credentials:{
 			credentials:'/organizations/credentials'
 		}
-	},
-};
+  },
+}
