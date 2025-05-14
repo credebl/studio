@@ -16,9 +16,9 @@ export interface IOrganisation {
   lastChangedBy: string
   name: string
   description: string
-  countryId:number
-  stateId:number
-  cityId:number   
+  countryId: number
+  stateId: number
+  cityId: number
   logoUrl: string
   website: string
   roles: string[]
@@ -26,7 +26,7 @@ export interface IOrganisation {
   org_agents: IOrgAgent[]
   publicProfile: boolean
   checked?: boolean | undefined
-  error?: string;
+  error?: string
 }
 export interface OrgRole {
   id: string
@@ -69,26 +69,26 @@ export interface IAgentsType {
   lastChangedBy: string
   agent: string
 }
-export interface IOrgAgentType{
-id: string
-createDateTime: string
-createdBy: string
-lastChangedDateTime: string
-lastChangedBy: string
-agent: string
+export interface IOrgAgentType {
+  id: string
+  createDateTime: string
+  createdBy: string
+  lastChangedDateTime: string
+  lastChangedBy: string
+  agent: string
 }
-export interface ILedgers{
-createDateTime: string
-createdBy: string
-id: string
-isActive: boolean
-lastChangedBy: string
-lastChangedDateTime: string
-name: string
-networkString: string
-networkType: string
-poolConfig: string
-registerDIDEndpoint: string
+export interface ILedgers {
+  createDateTime: string
+  createdBy: string
+  id: string
+  isActive: boolean
+  lastChangedBy: string
+  lastChangedDateTime: string
+  name: string
+  networkString: string
+  networkType: string
+  poolConfig: string
+  registerDIDEndpoint: string
 }
 export interface IOrgDashboard {
   usersCount: number
@@ -108,41 +108,41 @@ export interface IConnection {
   lastChangedBy: string
 }
 export interface IOrgInterface {
-  name: string;
-  website: string;
-  logoUrl: string;
-  description: string;
+  name: string
+  website: string
+  logoUrl: string
+  description: string
 }
 export interface IOrgDataInterface {
   orgData: IOrgInterface
 }
 export interface IOrgWalletDetailsObject {
-orgDid:string
-ledgers:{
-  name:string
-  networkType:string
-}
-networkType:string
-walletName:string
-createDateTime:string
+  orgDid: string
+  ledgers: {
+    name: string
+    networkType: string
+  }
+  networkType: string
+  walletName: string
+  createDateTime: string
 }
 export interface IUserDetails {
-  profileImg: string;
-  lastName: string;
-  firstName: string;
-  email: string;
-  publicProfile: boolean;
-  id: string;
-  username: string;
+  profileImg: string
+  lastName: string
+  firstName: string
+  email: string
+  publicProfile: boolean
+  id: string
+  username: string
 }
 export interface IWalletDetails {
   agent_invitations: {
-      connectionInvitation: string
+    connectionInvitation: string
   }[]
   orgDid: string
   ledgers: {
-      name: string
-      networkType: string
+    name: string
+    networkType: string
   }
 }
 export interface IOrgDetails {
@@ -156,190 +156,194 @@ export interface IExploreOrg {
   orgData: IOrgDetails
 }
 export interface Values {
-website: any;
-name: string;
-description: string;
+  website: any
+  name: string
+  description: string
 }
 export interface ILogoImages {
-logoFile: string | File;
-imagePreviewUrl: string | ArrayBuffer | null | File;
-fileName: string;
+  logoFile: string | File
+  imagePreviewUrl: string | ArrayBuffer | null | File
+  fileName: string
 }
 export interface IEditOrgdetailsModalProps {
-orgData: IOrganisation | null;
+  orgData: IOrganisation | null
 }
 export interface IOrgInformation {
-name: string;
-logoUrl: string;
-  description: string;
-  id: string;
+  name: string
+  logoUrl: string
+  description: string
+  id: string
   roles: string[]
 }
 
 export interface IUpdatePrimaryDid {
-  id: string;
-  did: string;
+  id: string
+  did: string
 }
 
 export interface IDidListData {
-  id: string;
-  did: string;
-  isPrimaryDid: boolean;
-  createDateTime: string;
-  lastChangedDateTime: string;
+  id: string
+  did: string
+  isPrimaryDid: boolean
+  createDateTime: string
+  lastChangedDateTime: string
 }
 
 export interface IFormikValue {
-ledger: string;
-method: string;
-  keyType:string;
-network: string;
-  did: string;
-domain: string;
-privatekey: string;
-endorserDid: string;
+  ledger: string
+  method: string
+  keyType: string
+  network: string
+  did: string
+  domain: string
+  privatekey: string
+  endorserDid: string
 }
 
 export interface IDedicatedAgentConfiguration {
-walletName: string;
-agentEndpoint: string;
-apiKey: string;
+  walletName: string
+  agentEndpoint: string
+  apiKey: string
 }
 interface IndySubDetails {
-  [key: string]: string;
+  [key: string]: string
 }
 export interface ILedgerDetail {
-  bcovrin?: IndySubDetails;
-  indicio?: IndySubDetails;
-  mainnet?: string;
-  testnet?: string;
-  key?: string;
-  web?: string;
+  bcovrin?: IndySubDetails
+  indicio?: IndySubDetails
+  mainnet?: string
+  testnet?: string
+  key?: string
+  web?: string
 }
 export interface ILedgerItem {
-  id: string;
-  name: string;
-  details: ILedgerDetail;
-  createDateTime: string;
-  createdBy: string;
-  lastChangedDateTime: string;
-  lastChangedBy: string;
-  deletedAt: string | null;
+  id: string
+  name: string
+  details: ILedgerDetail
+  createDateTime: string
+  createdBy: string
+  lastChangedDateTime: string
+  lastChangedBy: string
+  deletedAt: string | null
 }
 
-
 export interface IOrgCountData {
-  verificationRecordsCount: number;
-  connectionRecordsCount: number;
-  issuanceRecordsCount: number;
-  orgInvitationsCount: number;
-  orgUsersCount: number;
+  verificationRecordsCount: number
+  connectionRecordsCount: number
+  issuanceRecordsCount: number
+  orgInvitationsCount: number
+  orgUsersCount: number
 }
 
 export interface IEcosystemOrganization {
-  id: string;
-  orgId: string;
-  status: string;
-  createDateTime: string;
-  lastChangedDateTime: string;
-  ecosystemId: string;
-  ecosystemRoleId: string;
-  ecosystemRole: IEcosystemRoles;
+  id: string
+  orgId: string
+  status: string
+  createDateTime: string
+  lastChangedDateTime: string
+  ecosystemId: string
+  ecosystemRoleId: string
+  ecosystemRole: IEcosystemRoles
 }
 export interface IEcosystemRoles {
-  id: string;
-  name: string;
-  description: string;
-  createDateTime: string;
-  lastChangedDateTime: string;
-  deletedAt: string | null;
+  id: string
+  name: string
+  description: string
+  createDateTime: string
+  lastChangedDateTime: string
+  deletedAt: string | null
 }
 
 export interface IOrgFormValues {
-  name: string;
-  description: string;
-  countryId?: number | null;
-  stateId?: number | null;
-  cityId?: number | null;
-  website: string;
-  logoFile?: File | null;
-  logoPreview?: string;
+  name: string
+  description: string
+  countryId: string | null
+  stateId: string | null
+  cityId: string | null
+  website: string
+  logoFile: File | null
+  logoPreview: string
+  // Note: Remove commented after testing
+  // description: string;
+  // countryId?: number | null;
+  // stateId?: number | null;
+  // cityId?: number | null;
+  // website: string;
+  // logoFile?: File | null;
+  // logoPreview?: string;
 }
 
 export interface ISharedAgentForm {
-  seeds: string;
-  orgId:string;
-  maskedSeeds: string;
-  isCopied: boolean;
-  orgName: string;
-  loading: boolean;
-  ledgerConfig: boolean;
-  setLedgerConfig: (value: boolean) => void;
-  submitSharedWallet: (
-    values: IValuesShared,
-    domain: string
-  ) => void;
+  seeds: string
+  orgId: string
+  maskedSeeds: string
+  isCopied: boolean
+  orgName: string
+  loading: boolean
+  ledgerConfig: boolean
+  setLedgerConfig: (value: boolean) => void
+  submitSharedWallet: (values: IValuesShared, domain: string) => void
 }
-
 
 export interface ILedgerConfigProps {
-  orgName: string;
-  orgId:string;
-  maskedSeeds: string;
-  seeds: string;
-  submitSharedWallet: (values: IValuesShared, domainValue: string) => void;
-  walletName: string;
+  orgName: string
+  orgId: string
+  maskedSeeds: string
+  seeds: string
+  submitSharedWallet: (values: IValuesShared, domainValue: string) => void
+  walletName: string
 }
 
-
 export interface IValuesShared {
-  keyType: string;
-  seed: string;
-  method: string;
-  network?: string;
-  did?: string;
-  endorserDid?: string;
-  privatekey?: string;
-  endpoint?: string;
-  domain?: string;
-  role?: string;
-  ledger: string;
-  label?: string;
+  keyType: string
+  seed: string
+  method: string
+  network: string
+  did?: string
+  endorserDid?: string
+  privatekey: string
+  endpoint?: string
+  domain?: string
+  role: string
+  ledger: string
+  label?: string
 }
 
 interface IDetails {
-  [key: string]: string | { [subKey: string]: string };
+  [key: string]: string | { [subKey: string]: string }
 }
 
 export interface ILedgerItems {
-  name: string;
-  details: IDetails;
+  name: string
+  details: IDetails
 }
 
 export interface ILedgerConfigData {
   indy: {
     'did:indy': {
-      [key: string]: string;
-    };
-  };
+      [key: string]: string
+    }
+  }
   polygon: {
     'did:polygon': {
-      [key: string]: string;
-    };
-  };
+      [key: string]: string
+    }
+  }
   noLedger: {
-    [key: string]: string;
-  };
+    [key: string]: string
+  }
 }
 
 export interface IDedicatedAgentForm {
-  ledgerConfig:boolean;
-  maskedSeeds: string;
-  setLedgerConfig: (value: boolean) => void;	seeds: string;
-  loading: boolean;
-  setAgentConfig:any
-  submitDedicatedWallet: (values: IValuesShared, privatekey: string,
-    domain: string) => void;
-    onConfigureDedicated:() => void,
+  ledgerConfig: boolean
+  maskedSeeds: string
+  setLedgerConfig: (value: boolean) => void
+  seeds: string
+  setAgentConfig: any
+  submitDedicatedWallet: (
+    values: IValuesShared,
+    privatekey: string,
+    domain: string,
+  ) => void
+  onConfigureDedicated: () => void
 }
-

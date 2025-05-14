@@ -22,7 +22,8 @@
 		"start": "astro dev",
 		"build": "astro build",
 		"preview": "deno run --allow-net --allow-read --allow-env ./dist/server/entry.mjs",
-		"astro": "astro"
+		"astro": "astro",
+		"prepare": "husky install"
 	},
 	"dependencies": {
 		"@astrojs/react": "^3.3.4",
@@ -97,6 +98,7 @@
 		"eslint-plugin-import": "^2.29.1",
 		"eslint-plugin-prettier": "^5.1.3",
 		"eslint-plugin-tsdoc": "^0.2.17",
+		"husky": "^9.1.7",
 		"postcss": "^8.4.38"
 	}
 }

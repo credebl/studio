@@ -1,91 +1,99 @@
-import {
-    axiosDelete,
-    axiosGet,
-  } from '@/services/apiRequests';
-  import { apiRoutes } from '@/config/apiRoutes';
-import { getHeaderConfigs } from '@/config/GetHeaderConfigs';
+import { axiosDelete, axiosGet } from '@/services/apiRequests'
 
-  export const getOrganizationReferences = async (orgId: string) => {
-    const url = `${apiRoutes.organizations.root}${apiRoutes.organizations.getOrgReferences}/${orgId}`;
-  
-const config = getHeaderConfigs()
+import { AxiosResponse } from 'axios'
+import { apiRoutes } from '@/config/apiRoutes'
+import { getHeaderConfigs } from '@/config/GetHeaderConfigs'
 
-    const axiosPayload = {
-      url,
-      config
-    };
-    try {
-      return await axiosGet(axiosPayload);
-    } catch (error) {
-      const err = error as Error;
-      return err?.message;
-    }
-  };
-  
-  export const deleteVerificationRecords = async (orgId: string) => {
-    const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.deleteVerifications}`;
-  
-const config = getHeaderConfigs()
+export const getOrganizationReferences = async (
+  orgId: string,
+): Promise<AxiosResponse | string> => {
+  const url = `${apiRoutes.organizations.root}${apiRoutes.organizations.getOrgReferences}/${orgId}`
 
-    const axiosPayload = {
-      url,
-      config
-    };
-    try {
-      return await axiosDelete(axiosPayload);
-    } catch (error) {
-      const err = error as Error;
-      return err?.message;
-    }
-  };
-  
-  export const deleteIssuanceRecords = async (orgId: string) => {
-    const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.deleteIssaunce}`;
-  
-const config = getHeaderConfigs()
+  const config = getHeaderConfigs()
 
-    const axiosPayload = {
-      url,
-      config
-    };
-    try {
-      return await axiosDelete(axiosPayload);
-    } catch (error) {
-      const err = error as Error;
-      return err?.message;
-    }
-  };
-  
-  export const deleteOrganizationWallet = async (orgId: string) => {
-    const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.deleteWallet}`;
-  
-const config = getHeaderConfigs()
+  const axiosPayload = {
+    url,
+    config,
+  }
+  try {
+    return await axiosGet(axiosPayload)
+  } catch (error) {
+    const err = error as Error
+    return err?.message
+  }
+}
 
-    const axiosPayload = {
-      url,
-      config
-    };
-    try {
-      return await axiosDelete(axiosPayload);
-    } catch (error) {
-      const err = error as Error;
-      return err?.message;
-    }
-  };
-  
-  export const deleteOrganization = async (orgId: string) => {
-    const url = `${apiRoutes.organizations.root}/${orgId}`;
-const config = getHeaderConfigs()
+export const deleteVerificationRecords = async (
+  orgId: string,
+): Promise<AxiosResponse | string> => {
+  const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.deleteVerifications}`
 
-    const axiosPayload = {
-      url,
-      config
-    };
-    try {
-      return await axiosDelete(axiosPayload);
-    } catch (error) {
-      const err = error as Error;
-      return err?.message;
-    }
-  };
-  
+  const config = getHeaderConfigs()
+
+  const axiosPayload = {
+    url,
+    config,
+  }
+  try {
+    return await axiosDelete(axiosPayload)
+  } catch (error) {
+    const err = error as Error
+    return err?.message
+  }
+}
+
+export const deleteIssuanceRecords = async (
+  orgId: string,
+): Promise<AxiosResponse | string> => {
+  const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.deleteIssaunce}`
+
+  const config = getHeaderConfigs()
+
+  const axiosPayload = {
+    url,
+    config,
+  }
+  try {
+    return await axiosDelete(axiosPayload)
+  } catch (error) {
+    const err = error as Error
+    return err?.message
+  }
+}
+
+export const deleteOrganizationWallet = async (
+  orgId: string,
+): Promise<AxiosResponse | string> => {
+  const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.deleteWallet}`
+
+  const config = getHeaderConfigs()
+
+  const axiosPayload = {
+    url,
+    config,
+  }
+  try {
+    return await axiosDelete(axiosPayload)
+  } catch (error) {
+    const err = error as Error
+    return err?.message
+  }
+}
+
+export const deleteOrganization = async (
+  orgId: string,
+): Promise<AxiosResponse | string> => {
+  const url = `${apiRoutes.organizations.root}/${orgId}`
+  const config = getHeaderConfigs()
+
+  const axiosPayload = {
+    url,
+    config,
+  }
+  try {
+    return await axiosDelete(axiosPayload)
+  } catch (error) {
+    const err = error as Error
+    return err?.message
+  }
+}
