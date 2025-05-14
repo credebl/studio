@@ -43,7 +43,7 @@ const IssueDashboard = () => {
 			description:
 				'Issue credential(s) by selecting connection from existing users',
 			// path: isW3cDid ? pathRoutes.organizations.Issuance.connection : pathRoutes.organizations.Issuance.schema
-			path: '/organizations/credentials/connections'
+			path: pathRoutes.organizations.Issuance.connection
 		},
 		{
 			heading: 'Email',

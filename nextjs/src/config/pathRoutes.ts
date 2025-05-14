@@ -39,7 +39,7 @@ export const pathRoutes = {
       issue: '/organizations/credentials/issue',
       schema: '/organizations/credentials/issue/schemas',
       credDef: '/organizations/credentials/issue/schemas/cred-defs',
-      connection: '/organizations/credentials/issue/connections',
+      connection: '/organizations/credentials/connections',
       connections:
         '/organizations/credentials/connections',
       issuance:
