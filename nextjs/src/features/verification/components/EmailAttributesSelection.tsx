@@ -21,6 +21,11 @@ import { pathRoutes } from '@/config/pathRoutes'
 import { setSelectedAttributeData } from '@/lib/verificationSlice'
 import { useRouter } from 'next/navigation'
 
+interface NumberAttribute {
+  selectedOption: string | null
+  value: string | number | null
+}
+
 const EmailAttributesSelection = (): JSX.Element => {
   const [attributeList, setAttributeList] = useState<ITableData[]>([])
   const [proofReqSuccess, setProofReqSuccess] = useState<string | null>(null)
@@ -46,7 +51,7 @@ const EmailAttributesSelection = (): JSX.Element => {
   const selectedSchemaAttributes = useAppSelector(
     (state) => state.verification.selectedSchemas,
   )
-  const ConnectionVerification = async (): Promise => {
+  const ConnectionVerification = async (): Promise<void> => {
     if (verificationRouteType === 'Connection') {
       setIsConnectionProof(true)
     } else {
@@ -63,7 +68,7 @@ const EmailAttributesSelection = (): JSX.Element => {
     value: string | boolean,
     schemaId?: string | undefined,
     credDefId?: string | undefined,
-  ): Promise => {
+  ): Promise<void> => {
     const updatedAttributes =
       attributeData?.map((attribute) => {
         if (
@@ -105,7 +110,7 @@ const EmailAttributesSelection = (): JSX.Element => {
     dispatch(setSelectedAttributeData(updatedAttributes))
   }
 
-  const getOrgDetails = async (): Promise => {
+  const getOrgDetails = async (): Promise<void> => {
     setLoading(true)
 
     const response = await getOrganizationById(orgId)
@@ -131,7 +136,7 @@ const EmailAttributesSelection = (): JSX.Element => {
     getOrgDetails()
   }, [])
 
-  const isInvalidNumberAttribute = (attribute: any): boolean => {
+  const isInvalidNumberAttribute = (attribute: NumberAttribute): boolean => {
     const isOptionInvalid =
       attribute.selectedOption === null ||
       attribute.selectedOption === '' ||
@@ -192,7 +197,7 @@ const EmailAttributesSelection = (): JSX.Element => {
     redirectToAppropriatePage()
   }
 
-  const loadAttributesData = async (): Promise => {
+  const loadAttributesData = async (): Promise<void> => {
     setLoading(true)
 
     try {
@@ -295,7 +300,7 @@ const EmailAttributesSelection = (): JSX.Element => {
     loadAttributesData()
   }, [w3cSchema])
 
-  const attributeFunction = async (): Promise => {
+  const attributeFunction = async (): Promise<void> => {
     if (!attributeData) {
       return
     }
@@ -425,7 +430,7 @@ const EmailAttributesSelection = (): JSX.Element => {
   }
 
   useEffect(() => {
-    const fetchAttributes = async (): Promise => {
+    const fetchAttributes = async (): Promise<void> => {
       if (attributeData) {
         await attributeFunction()
       }

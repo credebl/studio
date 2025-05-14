@@ -1,6 +1,11 @@
 /* eslint-disable max-lines */
 'use client'
-import { ChangeEvent, JSX, useEffect, useState } from 'react'
+import { Create, SchemaEndorsement } from '@/config/Constant'
+import { DidMethod, Features, SchemaTypes } from '@/common/enums'
+import { IAttributesDetails, ISchema, ISchemaData } from '../type/interface'
+import { type ICheckEcosystem, checkEcosystem } from '@/config/ecosystem'
+import { JSX, useEffect, useState } from 'react'
+
 import {
   Pagination,
   PaginationContent,
@@ -16,32 +21,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+
+import { apiStatusCodes, itemPerPage } from '@/config/CommonConstant'
+
+import { getAllSchemas, getAllSchemasByOrgId } from '@/app/api/schema'
+
 import {
   setSchemaAttributes,
   setSchemaId,
   setSelectedSchemasData,
   setW3CSchemaAttributes,
 } from '@/lib/verificationSlice'
-import { Create, SchemaEndorsement } from '@/config/Constant'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
-import { getAllSchemas, getAllSchemasByOrgId } from '@/app/api/schema'
-import { AxiosResponse } from 'axios'
-import { IAttributesDetails, ISchema, ISchemaData } from '../type/interface'
-import { apiStatusCodes, itemPerPage } from '@/config/CommonConstant'
-import { getOrganizationById } from '@/app/api/organization'
-import { DidMethod, Features, SchemaTypes } from '@/common/enums'
-import { pathRoutes } from '@/config/pathRoutes'
-import { Button } from '@/components/ui/button'
-import Loader from '@/components/Loader'
-import { EmptyMessage } from '@/components/EmptyMessage'
-import SchemaCard from '@/features/schemas/components/SchemaCard'
-import RoleViewButton from '@/components/RoleViewButton'
-import { Input } from '@/components/ui/input'
-import { IconSearch } from '@tabler/icons-react'
-import { useRouter } from 'next/navigation'
-import { type ICheckEcosystem, checkEcosystem } from '@/config/ecosystem'
 import { Alert } from '@/components/ui/alert'
+import { AxiosResponse } from 'axios'
+import { Button } from '@/components/ui/button'
+import { EmptyMessage } from '@/components/EmptyMessage'
+import { IconSearch } from '@tabler/icons-react'
+import { Input } from '@/components/ui/input'
+import Loader from '@/components/Loader'
 import PageContainer from '@/components/layout/page-container'
+import RoleViewButton from '@/components/RoleViewButton'
+import SchemaCard from '@/features/schemas/components/SchemaCard'
+import { getOrganizationById } from '@/app/api/organization'
+import { pathRoutes } from '@/config/pathRoutes'
+import { useRouter } from 'next/navigation'
 
 const VerificationSchemasList = (): JSX.Element => {
   const [schemasList, setSchemasList] = useState([])
@@ -72,10 +76,10 @@ const VerificationSchemasList = (): JSX.Element => {
   const organizationId = useAppSelector((state) => state.organization.orgId)
   const ledgerId = useAppSelector((state) => state.organization.ledgerId)
 
-  const getSchemaListDetails = async () => {
+  const getSchemaListDetails = async ():Promise<void> => {
     try {
       setLoading(true)
-      let schemasList
+      let schemasList = null
       if (allSchemasFlag) {
         schemasList = await getAllSchemas(
           schemasListParameter,
@@ -126,23 +130,18 @@ const VerificationSchemasList = (): JSX.Element => {
     getSchemaListDetails()
   }, [schemasListParameter, allSchemasFlag])
 
-  const onSchemaListParameterSearch = async (event: ChangeEvent): Promise => {
+  const onSchemaListParameterSearch = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): Promise<void> => {
     event.preventDefault()
     const inputValue = event.target.value
     setSearchValue(inputValue)
-    if (allSchemasFlag) {
-      setSchemasListParameter((prevParams) => ({
-        ...prevParams,
-        allSearch: inputValue,
-        page: 1,
-      }))
-    } else {
-      setSchemasListParameter((prevParams) => ({
-        ...prevParams,
-        search: inputValue,
-        page: 1,
-      }))
-    }
+
+    setSchemasListParameter((prevParams) => ({
+      ...prevParams,
+      ...(allSchemasFlag ? { allSearch: inputValue } : { search: inputValue }),
+      page: 1,
+    }))
   }
 
   const handleSchemaSelection = (
@@ -151,7 +150,7 @@ const VerificationSchemasList = (): JSX.Element => {
     issuerId: string,
     created: string,
     checked: boolean,
-  ) => {
+  ): void => {
     const schemaDetails = {
       schemaId,
       attributes,
@@ -174,7 +173,7 @@ const VerificationSchemasList = (): JSX.Element => {
   const handleW3cSchemas = async (
     checked: boolean,
     schemaData?: ISchemaData,
-  ) => {
+  ): Promise<void> => {
     if (!schemaData) {
       return
     }
@@ -185,13 +184,13 @@ const VerificationSchemasList = (): JSX.Element => {
       createdDate: schemaData.createDateTime,
     }
 
-    const updateSchemas = (prevSchemas: ISchema[]) => {
+    const updateSchemas = (prevSchemas: ISchema[]): ISchema[] => {
       let updatedSchemas = [...prevSchemas]
       if (checked) {
         updatedSchemas = [...updatedSchemas, schema]
       } else {
         updatedSchemas = updatedSchemas.filter(
-          (schema) => schema?.schemaLedgerId !== schema?.schemaLedgerId,
+          (schemas) => schemas?.schemaLedgerId !== schema?.schemaLedgerId,
         )
       }
 
@@ -267,7 +266,7 @@ const VerificationSchemasList = (): JSX.Element => {
   }
 
   const options = ['All schemas']
-  const optionsWithDefault = ["Organization's schema", ...options]
+  const optionsWithDefault = ['Organization\'s schema', ...options]
 
   const handleFilter = async (value: string): Promise<void> => {
     const selectedFilter = value
@@ -483,7 +482,7 @@ const VerificationSchemasList = (): JSX.Element => {
                             return acc
                           }, [])
                           .map((page, idx) =>
-                            page === '...' ? (
+                            (page === '...' ? (
                               <span
                                 key={`ellipsis-${idx}`}
                                 className="text-muted-foreground px-2"
@@ -510,7 +509,7 @@ const VerificationSchemasList = (): JSX.Element => {
                                   {page}
                                 </PaginationLink>
                               </PaginationItem>
-                            ),
+                            )),
                           )}
 
                         {schemasListParameter.page < totalItems && (

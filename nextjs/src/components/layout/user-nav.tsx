@@ -62,8 +62,15 @@ export function UserNav(): React.JSX.Element | null {
     return null
   }
 
+  // const handleLogout = async (): Promise<void> => {
+  //   dispatch(logout())
+  //   await persistor.purge()
+  //   router.push('/auth/sign-in')
+  // }
+
   const handleLogout = async (): Promise<void> => {
     dispatch(logout())
+    await persistor.flush()
     await persistor.purge()
     router.push('/auth/sign-in')
   }

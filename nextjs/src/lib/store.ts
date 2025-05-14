@@ -1,4 +1,4 @@
-import { combineReducers, configureStore } from '@reduxjs/toolkit'
+import { Reducer, combineReducers, configureStore } from '@reduxjs/toolkit'
 import { persistReducer, persistStore } from 'redux-persist'
 
 import authSlice from './authSlice'
@@ -10,7 +10,7 @@ import userSlice from './userSlice'
 import verificationSlice from './verificationSlice'
 import walletSpinupSlice from './walletSpinupSlice'
 
-const rootReducer = combineReducers({
+const appReducer = combineReducers({
   auth: authSlice,
   profile: profileSlice,
   organization: orgSlice,
@@ -19,6 +19,13 @@ const rootReducer = combineReducers({
   verification: verificationSlice,
   wallet: walletSpinupSlice,
 })
+
+const rootReducer: Reducer = (state, action) => {
+  if (action.type === 'auth/logout') {
+    return appReducer(undefined, action)
+  }
+  return appReducer(state, action)
+}
 
 const persistConfig = {
   key: 'root',

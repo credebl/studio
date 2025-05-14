@@ -130,15 +130,11 @@ const EmailVerification = (): JSX.Element => {
               purpose: string
             }),
             constraints: {
-              fields: [
-                {
-                  path: (
-                    descriptor as {
-                      constraints: { fields: { path: string }[] }
-                    }
-                  ).constraints.fields.map((field) => field.path),
-                },
-              ],
+              fields: (
+                descriptor as {
+                  constraints: { fields: { path: string }[] }
+                }
+              ).constraints.fields,
             },
           }),
         )
@@ -149,7 +145,7 @@ const EmailVerification = (): JSX.Element => {
           protocolVersion: ProtocolVersion.V2,
           presentationDefinition: {
             id: '32f54163-7166-48f1-93d8-ff217bdb0653',
-            input_descriptors: inputDescriptors,
+            inputDescriptors,
           },
           comment: 'proof request',
           autoAcceptProof: AutoAccept.NEVER,

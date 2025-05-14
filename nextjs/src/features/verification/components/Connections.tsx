@@ -4,7 +4,8 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { IConnectionList, ITableHtml } from '../type/interface'
 import { JSX, useEffect, useState } from 'react'
 import {
-  resetVerificationState,
+  resetAttributeData,
+  resetSelectedConnections,
   setSelectedUser,
 } from '@/lib/verificationSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
@@ -127,6 +128,7 @@ const Connections = (): JSX.Element => {
       }))
 
       dispatch(setSelectedUser(selectedConnections))
+      dispatch(resetSelectedConnections())
 
       const checkedAttributes = attributeData
         .filter((attribute: any) => attribute.isChecked)
@@ -211,9 +213,11 @@ const Connections = (): JSX.Element => {
           connectionId:
             connectionIds.length === 1 ? connectionIds[0] : connectionIds,
           comment: 'proof request',
+
           presentationDefinition: {
             id: uuidv4(),
-            inputDescriptors: Object.keys(groupedAttributes).map(
+            purpose: 'proof request',
+            input_descriptors: Object.keys(groupedAttributes).map(
               (schemaName) => {
                 const attributesForSchema = groupedAttributes[schemaName]
 
@@ -269,7 +273,8 @@ const Connections = (): JSX.Element => {
 
         const { data } = response as AxiosResponse
         if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-          dispatch(resetVerificationState()) // reset attribute data
+          dispatch(resetAttributeData())
+
           setProofReqSuccess(data?.message)
           route.push(`${pathRoutes.organizations.credentials}`)
         } else {
@@ -360,7 +365,7 @@ const Connections = (): JSX.Element => {
                 className="mt-2 ml-auto flex items-center gap-2"
               >
                 {requestLoader ? (
-                  <span className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  <span className="h-5 w-5 animate-spin rounded-full border-2 border-t-transparent" />
                 ) : (
                   <svg
                     className="h-5 w-5"

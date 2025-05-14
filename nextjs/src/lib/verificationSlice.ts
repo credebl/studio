@@ -74,6 +74,33 @@ const verificationSlice = createSlice({
       state.selectedUser = []
       state.w3cSchemaAttributes = []
     },
+    resetAttributeData(state) {
+      state.attributeData = []
+    },
+    resetSelectedSchemas(state) {
+      state.selectedSchemas = []
+    },
+    resetSchemaAttributes(state) {
+      state.schemaAttributes = []
+    },
+    resetSelectedConnections(state) {
+      state.selectedConnections = []
+    },
+    resetSelectedUser(state) {
+      state.selectedUser = []
+    },
+    resetW3CSchemaAttributes(state) {
+      state.w3cSchemaAttributes = []
+    },
+    resetSchemaId(state) {
+      state.schemaId = null
+    },
+    resetOrgId(state) {
+      state.orgId = ''
+    },
+    resetRouteType(state) {
+      state.routeType = ''
+    },
   },
 })
 
@@ -86,8 +113,17 @@ export const {
   setSelectedAttributeData,
   setSelectedConnections,
   setSelectedUser,
-  resetVerificationState,
   setW3CSchemaAttributes,
+  resetVerificationState,
+  resetAttributeData,
+  resetSelectedSchemas,
+  resetSchemaAttributes,
+  resetSelectedConnections,
+  resetSelectedUser,
+  resetW3CSchemaAttributes,
+  resetSchemaId,
+  resetOrgId,
+  resetRouteType,
 } = verificationSlice.actions
 
 export default verificationSlice.reducer

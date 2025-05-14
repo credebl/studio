@@ -1,5 +1,7 @@
 'use client'
 
+import { JSX, useState } from 'react'
+
 import AttributesListData from './AttributesListData'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
@@ -10,17 +12,16 @@ import { Roles } from '@/common/enums'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { pathRoutes } from '@/config/pathRoutes'
 import { useAppSelector } from '@/lib/hooks'
-import { useState } from 'react'
 import { verifyPresentation } from '@/app/api/verification'
 
-const ProofRequest = (props: IProofRrquestDetails) => {
+const ProofRequest = (props: IProofRrquestDetails): JSX.Element => {
   const [buttonLoader, setButtonLoader] = useState<boolean>(false)
   const [navigation, setNavigation] = useState(false)
   const [succesMsg, setSuccesMsg] = useState('')
   const [error, setError] = useState('')
   const orgId = useAppSelector((state) => state.organization.orgId)
 
-  const handleConfirmClick = async (id: string) => {
+  const handleConfirmClick = async (id: string): Promise<void> => {
     try {
       setButtonLoader(true)
       const response = await verifyPresentation(id, orgId)
@@ -39,8 +40,9 @@ const ProofRequest = (props: IProofRrquestDetails) => {
 
   const aggregatedData: { entity: string; properties: any[] }[] = []
 
-  props?.userData?.forEach((item: { [key: string]: any } = {}) => {
-    const entity = Object.keys(item)[0]
+  props?.userData?.forEach((item: { [key: string]: any } = {}): void => {
+    const [entity] = Object.keys(item)
+
     const propertyValue = item[entity]
 
     const existingEntry = aggregatedData.find(

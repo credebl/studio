@@ -137,7 +137,8 @@ const DIDList = ({ orgId }: { orgId: string }): React.JSX.Element => {
 
       <div className="divide-y rounded-lg border">
         {didList.map((item: IDidListData, index: number) => (
-          <div key={item.id} className={`p-4 ${item.isPrimaryDid ? '' : ''}`}>
+          // <div key={item.id} className={`p-4 ${item.isPrimaryDid ? '' : ''}`}>
+          <div key={item.id} className="p-4">
             <div className="flex items-center justify-between gap-4">
               <span className="w-16 shrink-0">DID {index + 1}</span>
               <span>:</span>

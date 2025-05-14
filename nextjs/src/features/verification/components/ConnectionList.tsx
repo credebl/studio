@@ -7,8 +7,9 @@ import {
   getConnectionsByOrg,
 } from '@/app/api/connection'
 import {
+  resetSelectedConnections,
+  resetSelectedUser,
   setSelectedConnections,
-  setSelectedUser,
 } from '@/lib/verificationSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
@@ -39,7 +40,7 @@ const ConnectionList = (props: {
   const [localOrgs, setLocalOrgs] = useState<LocalOrgs[]>([])
   const [searchText, setSearchText] = useState('')
   const [selectedConnectionList, setSelectedConnectionList] = useState<
-    IConnectionList[]
+  IConnectionList[]
   >([])
 
   const [loading, setLoading] = useState<boolean>(false)
@@ -292,7 +293,8 @@ const ConnectionList = (props: {
   useEffect(() => {
     const clearStorageAndRefresh = async (): Promise<void> => {
       refreshPage()
-      dispatch(setSelectedUser([]))
+      dispatch(resetSelectedConnections())
+      dispatch(resetSelectedUser())
     }
 
     clearStorageAndRefresh()

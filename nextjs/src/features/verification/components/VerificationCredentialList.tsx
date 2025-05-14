@@ -348,14 +348,11 @@ const VerificationCredentialList = (): JSX.Element => {
     getproofRequestList(orgId, listAPIParameter)
   }
 
-  useEffect(() => {
-    // TODO: Handle changes in verificationList
-  }, [verificationList])
 
   useEffect(() => {
     getUserRoles()
     fetchOrganizationDetails()
-  }, [])
+  }, [verificationList, orgId])
 
   const header = [
     { columnName: 'Request Id' },
