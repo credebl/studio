@@ -20,15 +20,10 @@ export const issueCredential = async (data: object, credentialType: CredentialTy
 	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.issueCredential}?credentialType=${credentialType}`;
 	const payload = data;
 
-  const config = {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  };
 	const axiosPayload = {
 		url,
 		payload,
-		config	
+		config: await getHeaderConfigs(),	
 	};
 
 	try {

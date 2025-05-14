@@ -1,3 +1,5 @@
+import { JSX } from "react";
+
 export interface ITableData {
 	clickId?: string | null;
 	data: Data[];

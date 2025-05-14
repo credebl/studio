@@ -1,3 +1,4 @@
+import { JSX } from "react";
 import { ITableHtml } from "./Connections";
 
 export interface DataTableProps {

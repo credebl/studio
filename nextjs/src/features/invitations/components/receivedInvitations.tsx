@@ -426,10 +426,6 @@ export default function ReceivedInvitations(): React.JSX.Element {
               height="250px"
             />
           )} */}
-<<<<<<< HEAD
-
-=======
->>>>>>> 0d64de2fb3d9b4cc29eae62caa11a7f558035247
           {renderPagination()}
         </CardContent>
       </Card>

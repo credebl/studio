@@ -1,17 +1,9 @@
-<<<<<<< HEAD
-import { CreateCredDeffFieldName, GetAllSchemaListParameter } from '@/features/dashboard/type/schema';
-import { axiosGet, axiosPost } from '@/services/apiRequests';
-
-import type { SchemaTypes } from '@/common/enums';
-import apiRoutes from './apiRoutes';
-import { getHeaderConfigs } from '@/config/GetHeaderConfigs';
-=======
 import {
   CreateCredDeffFieldName,
   GetAllSchemaListParameter,
 } from '@/features/dashboard/type/schema'
+import type { SchemaTypes } from '@/common/enums';
 import { axiosGet, axiosPost } from '@/services/apiRequests'
->>>>>>> 0d64de2fb3d9b4cc29eae62caa11a7f558035247
 
 import { AxiosResponse } from 'axios'
 import apiRoutes from './apiRoutes'

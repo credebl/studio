@@ -79,15 +79,10 @@ export const getOrganizations = async (
   }
 }
 
-<<<<<<< HEAD
-export const getOrganizationById = async (orgId: string):Promise<AxiosResponse|string> => {
-  const url = `${apiRoutes.organizations.getById}/${orgId}`;
-=======
 export const getOrganizationById = async (
   orgId: string,
 ): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.organizations.getById}/${orgId}`
->>>>>>> 0d64de2fb3d9b4cc29eae62caa11a7f558035247
 
   const config = getHeaderConfigs()
 
