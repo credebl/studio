@@ -51,6 +51,7 @@ import { setSocketId } from "@/lib/socketSlice";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { SearchableSelect } from "@/components/ShadCnSelect";
+import { DownloadCsvTemplate } from "@/app/api/BulkIssuance";
 
 export interface SelectRef {
 	clearValue(): void;
@@ -235,6 +236,7 @@ const BulkIssuance = () => {
 	};
 
 	const handleSelect = (value)=>{
+		onSelectChange(value)
 		console.log("value",value)
 	}
 
@@ -270,10 +272,10 @@ const BulkIssuance = () => {
 
 	const DownloadSchemaTemplate = async () => {
 		setProcess(true);
-		if (credentialSelected) {
+		if (credentialSelected ) {
 			try {
 				setProcess(true);
-				const response = await DownloadCsvTemplate(selectedTemplate, schemaType);
+				const response = await DownloadCsvTemplate(selectedTemplate, schemaType, orgId);
 				const { data } = response as AxiosResponse;
 
 				if (data) {
@@ -683,7 +685,7 @@ const BulkIssuance = () => {
 									</div>
 									<div className="mt-4">
 										{credentialSelected && (
-											<Card className='max-w-[30rem]'>
+											<Card className='max-w-[30rem] p-5'>
 												<div>
 													<p className="text-black dark:text-white pb-2">
 														<span className="font-semibold">Schema: </span>
@@ -706,7 +708,7 @@ const BulkIssuance = () => {
 														{attributes?.map(
 															(element: IAttributes) => (
 																<div key={element.attributeName}>
-																	<span className="m-1 bg-primary-50 text-custom-900 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-primary-50 dark:text-custom-900">
+																	<span className="bg-secondary text-secondary-foreground hover:bg-secondary/80 m-1 mr-2 rounded px-2.5 py-0.5 text-sm font-medium shadow-sm transition-colors">
 																		{element.attributeName}
 																	</span>
 																</div>
