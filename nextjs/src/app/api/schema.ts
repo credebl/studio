@@ -3,7 +3,7 @@ import {
   GetAllSchemaListParameter,
 } from '@/features/dashboard/type/schema'
 import { axiosGet, axiosPost } from '@/services/apiRequests'
-
+import type { SchemaTypes } from '@/common/enums';
 import { AxiosResponse } from 'axios'
 import apiRoutes from './apiRoutes'
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs'
@@ -155,3 +155,18 @@ export const getCredDefDetailsByCredDefId = async (
     return err?.message
   }
 }
+
+export const getSchemaCredDef = async (schemaType: SchemaTypes,orgId:string) => {
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.bulk.credefList}?schemaType=${schemaType}`;
+	const axiosPayload = {
+		url,
+		config: await getHeaderConfigs(),
+	};
+
+	try {
+		return await axiosGet(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};
