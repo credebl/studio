@@ -9,6 +9,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { getDids, updatePrimaryDid } from '@/app/api/Agent'
 
 import type { AxiosResponse } from 'axios'
 import { Badge } from '@/components/ui/badge'
@@ -17,18 +18,16 @@ import { Copy } from 'lucide-react'
 import CreateDidComponent from './CreateDidComponent'
 import { Roles } from '@/common/enums'
 import { apiStatusCodes } from '@/config/CommonConstant'
-import { getDids } from '@/app/api/Agent'
-import { updatePrimaryDid } from '@/app/api/Agent'
 
-const DIDList = ({ orgId }: { orgId: string }) => {
+const DIDList = ({ orgId }: { orgId: string }): React.JSX.Element => {
   const [didList, setDidList] = useState<IDidListData[]>([])
   const [showPopup, setShowPopup] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [successMsg, setSuccessMsg] = React.useState<string | null>(null)
   // Note: set the roles from redux store
-  const [userRoles, setUserRoles] = useState<string[]>([])
+  const [userRoles] = useState<string[]>([])
 
-  const setPrimaryDid = async (id: string, did: string) => {
+  const setPrimaryDid = async (id: string, did: string): Promise<void> => {
     try {
       const payload: IUpdatePrimaryDid = {
         id,
@@ -47,13 +46,13 @@ const DIDList = ({ orgId }: { orgId: string }) => {
     }
   }
 
-  const getData = async () => {
+  const getData = async (): Promise<void> => {
     try {
       const response = await getDids(orgId)
       const { data } = response as AxiosResponse
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         const sortedDids = data?.data.sort(
-          (a: { isPrimaryDid: any }, b: { isPrimaryDid: any }) => {
+          (a: { isPrimaryDid: boolean }, b: { isPrimaryDid: boolean }) => {
             if (a.isPrimaryDid && !b.isPrimaryDid) {
               return -1
             }
@@ -87,7 +86,7 @@ const DIDList = ({ orgId }: { orgId: string }) => {
   }: {
     value: string
     className?: string
-  }) => (
+  }): React.JSX.Element => (
     <Tooltip>
       <TooltipTrigger asChild>
         <div className={`flex items-center gap-2 ${className}`}>

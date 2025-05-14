@@ -1,7 +1,8 @@
 'use client'
 
-import React from 'react'
 import { Check, Circle, Dot } from 'lucide-react'
+
+import React from 'react'
 
 type Step = {
   step: number
@@ -25,22 +26,13 @@ const steps: Step[] = [
   },
 ]
 
-export default function RecentActivityStepper() {
+export default function RecentActivityStepper(): React.JSX.Element {
   return (
     <div className="mx-auto flex w-full max-w-md flex-col gap-10">
       {steps.map((step, index) => {
         const isLast = index === steps.length - 1
         const isActive = index === 0
         const isCompleted = index < 0
-
-        let Icon
-        if (isCompleted) {
-          Icon = <Check className="text-primary h-5 w-5" />
-        } else if (isActive) {
-          Icon = <Circle className="text-primary h-5 w-5" />
-        } else {
-          Icon = <Dot className="text-muted-foreground h-5 w-5" />
-        }
 
         return (
           <div key={step.step} className="relative flex items-start gap-6">
@@ -50,8 +42,15 @@ export default function RecentActivityStepper() {
             )}
 
             {/* Icon */}
+            {/* Icon */}
             <div className="bg-background z-10 shrink-0 rounded-full p-1">
-              {Icon}
+              {isCompleted ? (
+                <Check className="text-primary h-5 w-5" />
+              ) : isActive ? (
+                <Circle className="text-primary h-5 w-5" />
+              ) : (
+                <Dot className="text-muted-foreground h-5 w-5" />
+              )}
             </div>
 
             {/* Content */}

@@ -1,8 +1,5 @@
 'use client'
 
-import React from 'react'
-import { IconDots, IconFolder, IconShare, IconTrash } from '@tabler/icons-react'
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,6 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { IconDots, IconFolder, IconShare, IconTrash } from '@tabler/icons-react'
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -19,7 +17,9 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
+
 import { Icon } from '@/components/icons'
+import React from 'react'
 
 export function NavProjects({
   projects,
@@ -29,7 +29,7 @@ export function NavProjects({
     url: string
     icon: Icon
   }[]
-}) {
+}): React.JSX.Element {
   const { isMobile } = useSidebar()
 
   return (

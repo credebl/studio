@@ -1,7 +1,5 @@
 'use client'
 
-import { AlertComponent } from '@/components/AlertComponent'
-import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -9,6 +7,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+
+import { AlertComponent } from '@/components/AlertComponent'
+import { Button } from '@/components/ui/button'
 import React from 'react'
 
 interface IProps {
@@ -39,7 +40,7 @@ const ConfirmationModal = ({
   buttonTitles,
   loading,
   warning,
-}: IProps) => (
+}: IProps): React.JSX.Element => (
   <Dialog open={openModal} onOpenChange={closeModal}>
     <DialogContent className="max-h-[90vh] max-w-xl overflow-y-auto dark:bg-gray-800">
       <DialogHeader>

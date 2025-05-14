@@ -1,7 +1,7 @@
-import WalletSpinup from '@/features/wallet/WalletSpinupComponent'
 import React from 'react'
+import WalletSpinup from '@/features/wallet/WalletSpinupComponent'
 
-const page = () => (
+const page = (): React.JSX.Element => (
   <div>
     <WalletSpinup />
   </div>

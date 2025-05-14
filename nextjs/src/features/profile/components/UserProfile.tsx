@@ -1,14 +1,15 @@
 'use client'
 
-import { getUserProfile } from '@/app/api/Auth'
-import { IUserProfile } from '@/components/profile/interfaces'
-import { apiStatusCodes } from '@/config/CommonConstant'
-import { useAppSelector } from '@/lib/hooks'
 import React, { useEffect, useState } from 'react'
+
 import DisplayUserProfile from './DisplayUserProfile'
 import EditUserProfile from './EditUserProfile'
+import { IUserProfile } from '@/components/profile/interfaces'
+import { apiStatusCodes } from '@/config/CommonConstant'
+import { getUserProfile } from '@/app/api/Auth'
+import { useAppSelector } from '@/lib/hooks'
 
-export default function UserProfile() {
+export default function UserProfile(): React.JSX.Element {
   const token = useAppSelector((state) => state.auth.token)
 
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false)
@@ -17,7 +18,7 @@ export default function UserProfile() {
   const [activeTab, setActiveTab] = useState<'profile' | 'passkey'>('profile')
 
   useEffect(() => {
-    async function fetchProfile() {
+    async function fetchProfile(): Promise<void> {
       if (!token) {
         return
       }
@@ -38,11 +39,11 @@ export default function UserProfile() {
     fetchProfile()
   }, [token])
 
-  const toggleEditProfile = () => {
+  const toggleEditProfile = (): void => {
     setIsEditProfileOpen((prev) => !prev)
   }
 
-  const updateProfile = (updatedProfile: IUserProfile) => {
+  const updateProfile = (updatedProfile: IUserProfile): void => {
     setPrePopulatedUserProfile(updatedProfile)
   }
 

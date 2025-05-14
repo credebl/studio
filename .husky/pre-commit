@@ -1,3 +1,4 @@
 #!/bin/sh
-cd nextjs
+cd "$(dirname "$0")/.."  # Move to project root (outer folder)
+cd nextjs                # Move into Next.js folder
 npx lint-staged

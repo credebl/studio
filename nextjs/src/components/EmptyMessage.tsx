@@ -16,7 +16,7 @@ export const EmptyMessage = ({
   buttonContent,
   svgComponent,
   onClick,
-}: EmptyStateProps) => (
+}: EmptyStateProps): React.JSX.Element => (
   <div
     className="flex flex-col items-center justify-center space-y-4 text-center"
     style={{ height }}

@@ -3,8 +3,8 @@ import type {
   FilterOperator,
   FilterVariant,
 } from '@/types/data-table'
-import type { Column } from '@tanstack/react-table'
 
+import type { Column } from '@tanstack/react-table'
 import { dataTableConfig } from '@/config/data-table'
 
 export function getCommonPinningStyles<TData>({
@@ -38,7 +38,10 @@ export function getCommonPinningStyles<TData>({
   }
 }
 
-export function getFilterOperators(filterVariant: FilterVariant) {
+export function getFilterOperators(filterVariant: FilterVariant): {
+  label: string
+  value: FilterOperator
+}[] {
   const operatorMap: Record<
     FilterVariant,
     { label: string; value: FilterOperator }[]
@@ -56,7 +59,7 @@ export function getFilterOperators(filterVariant: FilterVariant) {
   return operatorMap[filterVariant] ?? dataTableConfig.textOperators
 }
 
-export function getDefaultFilterOperator(filterVariant: FilterVariant) {
+export function getDefaultFilterOperator(filterVariant: FilterVariant): string {
   const operators = getFilterOperators(filterVariant)
 
   return operators[0]?.value ?? (filterVariant === 'text' ? 'iLike' : 'eq')

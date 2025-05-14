@@ -20,8 +20,8 @@ module.exports = {
     'next/core-web-vitals',
     'plugin:@typescript-eslint/recommended',
     'plugin:react/recommended',
-    'plugin:prettier/recommended',
     'plugin:react-hooks/recommended',
+    'plugin:prettier/recommended',
   ],
   plugins: ['prettier', '@typescript-eslint', 'react', 'react-hooks'],
   rules: {
@@ -72,11 +72,8 @@ module.exports = {
       'error',
       { max: 450, skipComments: true, skipBlankLines: true },
     ],
-    'no-unused-vars': [
-      'error',
-      { varsIgnorePattern: 'Props', argsIgnorePattern: '^Props' },
-    ],
-    'no-console': 'error',
+    'no-unused-vars': 'off',
+    'no-console': ['error', { allow: ['warn', 'error'] }],
     'template-curly-spacing': 'error',
 
     'arrow-parens': 'warn',
@@ -84,7 +81,15 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'error',
     '@typescript-eslint/explicit-module-boundary-types': 'warn',
     '@typescript-eslint/no-explicit-any': 'error',
-    '@typescript-eslint/no-unused-vars': 'error',
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      {
+        vars: 'all',
+        args: 'after-used',
+        ignoreRestSiblings: true,
+        // varsIgnorePattern: '^_', // Ignores variables like _myVar
+      },
+    ],
     '@typescript-eslint/no-use-before-define': 'error',
     complexity: ['error', 65],
     'array-callback-return': 'error',
@@ -92,7 +97,16 @@ module.exports = {
     'default-case': 'error',
     'default-case-last': 'error',
     'default-param-last': 'error',
-    camelcase: ['error', { properties: 'always', ignoreImports: true }],
+    camelcase: [
+      'error',
+      {
+        properties: 'always',
+        ignoreImports: true,
+        allow: ['server_tokens'],
+        ignoreDestructuring: true,
+        ignoreGlobals: true,
+      },
+    ],
 
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     // Best Practices
@@ -148,7 +162,7 @@ module.exports = {
     'computed-property-spacing': 'error',
     'func-call-spacing': 'error',
     'keyword-spacing': 'error',
-    'no-mixed-operators': 'error',
+    'no-mixed-operators': 'warn',
     'no-multiple-empty-lines': ['error', { max: 2, maxEOF: 1 }],
     'no-tabs': 'error',
     'no-unneeded-ternary': 'error',

@@ -1,15 +1,16 @@
 'use client'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import React from 'react'
+
 import { Button } from '@/components/ui/button'
 import { IDisplayUserProfileProps } from '../../../components/profile/interfaces'
 import Image from 'next/image'
+import React from 'react'
 
 const DisplayUserProfile = ({
   toggleEditProfile,
   userProfileInfo,
-}: IDisplayUserProfileProps) => (
+}: IDisplayUserProfileProps): React.JSX.Element => (
   <div className="flex h-full flex-col p-4 sm:py-6">
     <div className="bg-background mx-auto w-full rounded-lg">
       <div className="px-6 py-6">

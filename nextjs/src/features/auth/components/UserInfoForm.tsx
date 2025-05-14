@@ -1,28 +1,29 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { CheckCircle, KeyRound, Lock } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { addPasswordDetails, passwordEncryption } from '@/app/api/Auth'
-import { apiStatusCodes, passwordRegex } from '@/config/CommonConstant'
-import { AxiosError, AxiosResponse } from 'axios'
-import { Formik, Form as FormikForm } from 'formik'
 import * as Yup from 'yup'
+
+import { AxiosError, AxiosResponse } from 'axios'
+import { CheckCircle, KeyRound, Lock } from 'lucide-react'
+import { Formik, Form as FormikForm } from 'formik'
+import {
+  IDeviceData,
+  IVerifyRegistrationObj,
+  IdeviceBody,
+} from '@/components/profile/interfaces'
+import React, { useEffect, useState } from 'react'
 import {
   addDeviceDetails,
   generateRegistrationOption,
   getUserDeviceDetails,
   verifyRegistration,
 } from '@/app/api/Fido'
+import { addPasswordDetails, passwordEncryption } from '@/app/api/Auth'
+import { apiStatusCodes, passwordRegex } from '@/config/CommonConstant'
 
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { startRegistration } from '@simplewebauthn/browser'
-import {
-  IDeviceData,
-  IVerifyRegistrationObj,
-  IdeviceBody,
-} from '@/components/profile/interfaces'
+import { useRouter } from 'next/navigation'
 
 interface StepUserInfoProps {
   email: string
@@ -59,7 +60,9 @@ const validationSchema = Yup.object().shape({
     .required('Confirm Password is required'),
 })
 
-export default function UserInfoForm({ email }: StepUserInfoProps) {
+export default function UserInfoForm({
+  email,
+}: StepUserInfoProps): React.JSX.Element {
   const [loading, setLoading] = useState(false)
   const [serverError, setServerError] = useState('')
   const [, setIsDevice] = useState<boolean>(false)
@@ -83,7 +86,7 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
     firstName: string
     lastName: string
     password: string
-  }) => {
+  }): Promise<void> => {
     setServerError('')
     setShowEmailVerification({ message: '', isError: false, type: '' })
 
@@ -151,6 +154,60 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
     }
   }
 
+  const addDeviceDetailsMethod = async (
+    deviceBody: IdeviceBody,
+  ): Promise<void> => {
+    try {
+      const deviceDetailsResp = await addDeviceDetails(deviceBody)
+      const { data } = deviceDetailsResp as AxiosResponse
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        router.push('/auth/sign-in')
+      }
+      setTimeout(() => {
+        setAddSuccess('')
+        setAddFailure('')
+      })
+    } catch (error) {
+      showFidoError(error)
+    }
+  }
+
+  const verifyRegistrationMethod = async (
+    verifyRegistrationObj: IVerifyRegistrationObj,
+    OrgUserEmail: string,
+  ): Promise<void> => {
+    try {
+      const verificationRegisterResp = await verifyRegistration(
+        verifyRegistrationObj,
+        OrgUserEmail,
+      )
+      const { data } = verificationRegisterResp as AxiosResponse
+      let credentialID = ''
+
+      credentialID = encodeURIComponent(data?.data?.newDevice?.credentialID)
+      if (data?.data?.verified) {
+        let platformDeviceName = ''
+
+        if (
+          verifyRegistrationObj?.authenticatorAttachment === 'cross-platform'
+        ) {
+          platformDeviceName = 'Passkey'
+        } else {
+          platformDeviceName = navigator.platform
+        }
+
+        const deviceBody: IdeviceBody = {
+          userName: OrgUserEmail,
+          credentialId: credentialID,
+          deviceFriendlyName: platformDeviceName,
+        }
+        await addDeviceDetailsMethod(deviceBody)
+      }
+    } catch (error) {
+      showFidoError(error)
+    }
+  }
+
   const registerWithPasskey = async (flag: boolean): Promise<void> => {
     try {
       const RegistrationOption: RegistrationOptionInterface = {
@@ -191,57 +248,6 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
     }
   }
 
-  let credentialID = ''
-  const verifyRegistrationMethod = async (
-    verifyRegistrationObj: IVerifyRegistrationObj,
-    OrgUserEmail: string,
-  ) => {
-    try {
-      const verificationRegisterResp = await verifyRegistration(
-        verifyRegistrationObj,
-        OrgUserEmail,
-      )
-      const { data } = verificationRegisterResp as AxiosResponse
-      credentialID = encodeURIComponent(data?.data?.newDevice?.credentialID)
-      if (data?.data?.verified) {
-        let platformDeviceName = ''
-
-        if (
-          verifyRegistrationObj?.authenticatorAttachment === 'cross-platform'
-        ) {
-          platformDeviceName = 'Passkey'
-        } else {
-          platformDeviceName = navigator.platform
-        }
-
-        const deviceBody: IdeviceBody = {
-          userName: OrgUserEmail,
-          credentialId: credentialID,
-          deviceFriendlyName: platformDeviceName,
-        }
-        await addDeviceDetailsMethod(deviceBody)
-      }
-    } catch (error) {
-      showFidoError(error)
-    }
-  }
-
-  const addDeviceDetailsMethod = async (deviceBody: IdeviceBody) => {
-    try {
-      const deviceDetailsResp = await addDeviceDetails(deviceBody)
-      const { data } = deviceDetailsResp as AxiosResponse
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        router.push('/auth/sign-in')
-      }
-      setTimeout(() => {
-        setAddSuccess('')
-        setAddFailure('')
-      })
-    } catch (error) {
-      showFidoError(error)
-    }
-  }
-
   const userDeviceDetails = async (): Promise<void> => {
     try {
       setFidoLoader(true)
@@ -253,7 +259,7 @@ export default function UserInfoForm({ email }: StepUserInfoProps) {
         const deviceDetails =
           Object.keys(data)?.length > 0
             ? userDeviceDetailsResp?.data?.data.map(
-                (data: { lastChangedDateTime: any }) => ({
+                (data: { lastChangedDateTime: string }) => ({
                   ...data,
                   lastChangedDateTime: data.lastChangedDateTime
                     ? data.lastChangedDateTime

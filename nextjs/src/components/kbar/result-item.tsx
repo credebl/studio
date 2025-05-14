@@ -1,5 +1,5 @@
-import type { ActionId, ActionImpl } from 'kbar'
 import * as React from 'react'
+import type { ActionId, ActionImpl } from 'kbar'
 
 const ResultItem = React.forwardRef(
   (

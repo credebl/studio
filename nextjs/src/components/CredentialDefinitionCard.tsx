@@ -1,8 +1,8 @@
+import { Button } from '../components/ui/button'
+import { Card } from '../components/ui/card'
+import CopyDid from '@/config/CopyDid'
 import React from 'react'
 import { Roles } from '@/common/enums'
-import { Card } from '../components/ui/card'
-import { Button } from '../components/ui/button'
-import CopyDid from '@/config/CopyDid'
 import { useRouter } from 'next/navigation'
 interface IProps {
   credDeffName: string
@@ -13,10 +13,10 @@ interface IProps {
   onClickCallback: (schemaId: string, credentialDefinitionId: string) => void
 }
 
-const CredentialDefinitionCard = (props: IProps) => {
+const CredentialDefinitionCard = (props: IProps): React.ReactElement => {
   const router = useRouter()
 
-  const redirectToIssuance = () => {
+  const redirectToIssuance = (): void => {
     if (
       props?.userRoles?.includes(Roles.OWNER) ||
       props?.userRoles?.includes(Roles.ADMIN) ||

@@ -7,7 +7,7 @@ export default function PageContainer({
 }: {
   children: React.ReactNode
   scrollable?: boolean
-}) {
+}): React.ReactElement {
   const Content = (
     <div className="mb-4 flex min-h-[calc(100dvh-52px)] w-full flex-col p-4 md:px-6">
       {children}

@@ -1,19 +1,20 @@
 'use client'
 
-import { IconUpload, IconX } from '@tabler/icons-react'
-import Image from 'next/image'
 import * as React from 'react'
 import Dropzone, {
   type DropzoneProps,
   type FileRejection,
 } from 'react-dropzone'
+import { IconUpload, IconX } from '@tabler/icons-react'
+import { cn, formatBytes } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import Image from 'next/image'
+import { Progress } from '@/components/ui/progress'
+
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { toast } from 'sonner'
 
-import { Button } from '@/components/ui/button'
-import { Progress } from '@/components/ui/progress'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { useControllableState } from '@/hooks/use-controllable-state'
-import { cn, formatBytes } from '@/lib/utils'
 
 interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
@@ -92,7 +93,7 @@ interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
   disabled?: boolean
 }
 
-export function FileUploader(props: FileUploaderProps) {
+export function FileUploader(props: FileUploaderProps): React.JSX.Element {
   const {
     value: valueProp,
     onValueChange,
@@ -111,6 +112,57 @@ export function FileUploader(props: FileUploaderProps) {
     prop: valueProp,
     onChange: onValueChange,
   })
+
+  function isFileWithPreview(file: File): file is File & { preview: string } {
+    return 'preview' in file && typeof file.preview === 'string'
+  }
+
+  function FileCard({
+    file,
+    progress,
+    onRemove,
+  }: FileCardProps): React.JSX.Element {
+    return (
+      <div className="relative flex items-center space-x-4">
+        <div className="flex flex-1 space-x-4">
+          {isFileWithPreview(file) ? (
+            <Image
+              src={file.preview}
+              alt={file.name}
+              width={48}
+              height={48}
+              loading="lazy"
+              className="aspect-square shrink-0 rounded-md object-cover"
+            />
+          ) : null}
+          <div className="flex w-full flex-col gap-2">
+            <div className="space-y-px">
+              <p className="text-foreground/80 line-clamp-1 text-sm font-medium">
+                {file.name}
+              </p>
+              <p className="text-muted-foreground text-xs">
+                {formatBytes(file.size)}
+              </p>
+            </div>
+            {progress ? <Progress value={progress} /> : null}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={onRemove}
+            disabled={progress !== undefined && progress < 100}
+            className="size-8 rounded-full"
+          >
+            <IconX className="text-muted-foreground" />
+            <span className="sr-only">Remove file</span>
+          </Button>
+        </div>
+      </div>
+    )
+  }
 
   const onDrop = React.useCallback(
     (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
@@ -162,7 +214,7 @@ export function FileUploader(props: FileUploaderProps) {
     [files, maxFiles, multiple, onUpload, setFiles],
   )
 
-  function onRemove(index: number) {
+  function onRemove(index: number): void {
     if (!files) {
       return
     }
@@ -173,7 +225,7 @@ export function FileUploader(props: FileUploaderProps) {
 
   // Revoke preview url when component unmounts
   React.useEffect(
-    () => () => {
+    (): (() => void) => () => {
       if (!files) {
         return
       }
@@ -234,7 +286,7 @@ export function FileUploader(props: FileUploaderProps) {
                 </div>
                 <div className="space-y-px">
                   <p className="text-muted-foreground font-medium">
-                    Drag {"'n'"} drop files here, or click to select files
+                    Drag {'n'} drop files here, or click to select files
                   </p>
                   <p className="text-muted-foreground/70 text-sm">
                     You can upload
@@ -271,51 +323,4 @@ interface FileCardProps {
   file: File
   onRemove: () => void
   progress?: number
-}
-
-function FileCard({ file, progress, onRemove }: FileCardProps) {
-  return (
-    <div className="relative flex items-center space-x-4">
-      <div className="flex flex-1 space-x-4">
-        {isFileWithPreview(file) ? (
-          <Image
-            src={file.preview}
-            alt={file.name}
-            width={48}
-            height={48}
-            loading="lazy"
-            className="aspect-square shrink-0 rounded-md object-cover"
-          />
-        ) : null}
-        <div className="flex w-full flex-col gap-2">
-          <div className="space-y-px">
-            <p className="text-foreground/80 line-clamp-1 text-sm font-medium">
-              {file.name}
-            </p>
-            <p className="text-muted-foreground text-xs">
-              {formatBytes(file.size)}
-            </p>
-          </div>
-          {progress ? <Progress value={progress} /> : null}
-        </div>
-      </div>
-      <div className="flex items-center gap-2">
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          onClick={onRemove}
-          disabled={progress !== undefined && progress < 100}
-          className="size-8 rounded-full"
-        >
-          <IconX className="text-muted-foreground" />
-          <span className="sr-only">Remove file</span>
-        </Button>
-      </div>
-    </div>
-  )
-}
-
-function isFileWithPreview(file: File): file is File & { preview: string } {
-  return 'preview' in file && typeof file.preview === 'string'
 }

@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 'use client'
 
 import {
@@ -54,7 +55,7 @@ const initialPaginationInfo = {
   lastPage: 1,
 }
 
-export default function Members() {
+export default function Members(): React.JSX.Element {
   const [activeTab, setActiveTab] = useState('users')
 
   const [message, setMessage] = useState<string | null>(null)
@@ -304,7 +305,7 @@ export default function Members() {
     setSearchText('')
   }, [activeTab])
 
-  const renderSkeletons = () =>
+  const renderSkeletons = (): React.JSX.Element[] =>
     Array.from({ length: 3 }).map((_, index) => (
       <div
         key={index}
@@ -333,7 +334,7 @@ export default function Members() {
     prevPage: number,
     nextPage: number,
     onPageChange: (page: number) => void,
-  ) => {
+  ): React.JSX.Element | null => {
     if (totalPages <= 1) {
       return null
     }
@@ -383,6 +384,10 @@ export default function Members() {
 
   const hasAdminRights =
     orgUserRole?.includes(Roles.ADMIN) ?? orgUserRole?.includes(Roles.OWNER)
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0d64de2fb3d9b4cc29eae62caa11a7f558035247
 
   return (
     <div className="p-5">
@@ -541,7 +546,9 @@ export default function Members() {
               description="Get started by inviting a user"
               buttonContent="Invite"
               onClick={
-                hasAdminRights ? () => setInviteModalOpen(true) : undefined
+                hasAdminRights
+                  ? (): void => setInviteModalOpen(true)
+                  : undefined
               }
               height="250px"
             />

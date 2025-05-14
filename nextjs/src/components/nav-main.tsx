@@ -1,12 +1,10 @@
 'use client'
 
-import { IconChevronRight } from '@tabler/icons-react'
-import React from 'react'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@/components/ui/collapsible'
+} from '@radix-ui/react-collapsible'
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -18,7 +16,10 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar'
+
 import { Icon } from '@/components/icons'
+import { IconChevronRight } from '@tabler/icons-react'
+import React from 'react'
 
 export function NavMain({
   items,
@@ -33,7 +34,7 @@ export function NavMain({
       url: string
     }[]
   }[]
-}) {
+}): React.JSX.Element {
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>

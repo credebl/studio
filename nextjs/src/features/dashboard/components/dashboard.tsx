@@ -1,11 +1,11 @@
 'use client'
 
+import React, { useEffect, useState } from 'react'
 import {
   getUserEcosystemInvitations,
   getUserInvitations,
 } from '@/app/api/Invitation'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
-import React, { useEffect, useState } from 'react'
 
 import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
@@ -28,8 +28,8 @@ const initialPageState = {
   total: 0,
 }
 
-export default function Dashboard() {
-  const [walletData, setWalletData] = useState<any[]>([])
+export default function Dashboard(): React.JSX.Element {
+  const [walletData, setWalletData] = useState<[]>([])
   const [walletLoading, setWalletLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(initialPageState)
   const [informativeMessage, setInformativeMessage] = useState<string | null>(
@@ -39,18 +39,17 @@ export default function Dashboard() {
   const [ecoMessage, setEcoMessage] = useState<string | null>('')
 
   const orgId = useAppSelector((state) => state.organization.orgId)
-  const [userOrg, setUserOrg] = useState<any>(null)
+  const [, setUserOrg] = useState(null)
 
   const dispatch = useAppDispatch()
 
-  const getAllInvitations = async () => {
+  const getAllInvitations = async (): Promise<void> => {
     try {
       const response = await getUserInvitations(
         currentPage.pageNumber,
         currentPage.pageSize,
         '',
       )
-
       const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -67,11 +66,40 @@ export default function Dashboard() {
           total: totalPages,
         })
       }
-      // else {
-      // 	console.error(response as string);
-      // }
     } catch (err) {
       console.error('An unexpected error occurred', err)
+    }
+  }
+  const getAllEcosystemInvitations = async (): Promise<void> => {
+    try {
+      const response = await getUserEcosystemInvitations(
+        currentPage.pageNumber,
+        currentPage.pageSize,
+        '',
+        orgId,
+      )
+
+      const { data } = response as AxiosResponse
+
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        const pendingInvitations = data?.data?.invitations?.filter(
+          (invitation: { status: string }) => invitation.status === 'pending',
+        )
+
+        if (pendingInvitations && pendingInvitations.length > 0) {
+          setEcoMessage('You have received invitation to join ecosystem ')
+          setViewButton(true)
+        }
+
+        const totalPages = data?.data?.totalPages
+
+        setCurrentPage({
+          ...currentPage,
+          total: totalPages,
+        })
+      }
+    } catch (err) {
+      console.error('An unexpected error occurred.', err)
     }
   }
 
@@ -80,7 +108,7 @@ export default function Dashboard() {
     getAllEcosystemInvitations()
   }, [])
 
-  const fetchOrganizationDetails = async () => {
+  const fetchOrganizationDetails = async (): Promise<void> => {
     if (!orgId) {
       return
     }
@@ -119,49 +147,13 @@ export default function Dashboard() {
     }
   }
 
-  const getAllEcosystemInvitations = async () => {
-    try {
-      const response = await getUserEcosystemInvitations(
-        currentPage.pageNumber,
-        currentPage.pageSize,
-        '',
-        orgId,
-      )
-
-      const { data } = response as AxiosResponse
-
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        const pendingInvitations = data?.data?.invitations?.filter(
-          (invitation: { status: string }) => invitation.status === 'pending',
-        )
-
-        if (pendingInvitations && pendingInvitations.length > 0) {
-          setEcoMessage('You have received invitation to join ecosystem ')
-          setViewButton(true)
-        }
-
-        const totalPages = data?.data?.totalPages
-
-        setCurrentPage({
-          ...currentPage,
-          total: totalPages,
-        })
-      }
-      // else {
-      // 	console.error(response as string);
-      // }
-    } catch (err) {
-      console.error('An unexpected error occurred.', err)
-    }
-  }
-
   useEffect(() => {
     if (orgId) {
       fetchOrganizationDetails()
     }
   }, [orgId])
 
-  const handleCreateWallet = () => {
+  const handleCreateWallet = (): void => {
     // redirect or open wallet creation
   }
 
@@ -241,7 +233,7 @@ export default function Dashboard() {
         )}
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <OrganizationCardList userOrg={userOrg} walletData={walletData} />
+          <OrganizationCardList />
           <SchemasList />
         </div>
 

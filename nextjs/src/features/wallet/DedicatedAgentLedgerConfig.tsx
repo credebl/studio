@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 'use client'
 
 import * as yup from 'yup'
@@ -6,12 +7,13 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { ArrowLeft, Database, Key, Zap } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { DidMethod, Environment, Ledgers, Network } from '../common/enum'
-import { Field, Form, Formik, FormikHelpers, FormikProps } from 'formik'
+import { Form, Formik, FormikHelpers, FormikProps } from 'formik'
 import {
   IDedicatedAgentForm,
   IValuesShared,
 } from '../organization/components/interfaces/organization'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import React, { useEffect, useState } from 'react'
 import {
   Select,
   SelectContent,
@@ -19,21 +21,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { getLedgerConfig, getLedgers } from '@/app/api/Agent'
-import { useEffect, useState } from 'react'
 
 import type { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import CopyDid from './CopyDid'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import React from 'react'
 import SetDomainValueInput from './SetDomainValueInput'
 import SetPrivateKeyValueInput from './SetPrivateKeyValue'
 import Stepper from '@/components/StepperComponent'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { envConfig } from '@/config/envConfig'
-import { useRouter } from 'next/navigation'
+import { getLedgerConfig } from '@/app/api/Agent'
 
 interface IDetails {
   [key: string]: string | { [subKey: string]: string }
@@ -71,16 +70,15 @@ interface ILedgerConfigData {
 //   [key: string]: string;
 // }
 
-const RequiredAsterisk = () => (
+const RequiredAsterisk = (): React.JSX.Element => (
   <span className="text-destructive text-xs">*</span>
 )
 
 const DedicatedLedgerConfig = ({
-  loading,
   seeds,
   maskedSeeds,
   submitDedicatedWallet,
-}: IDedicatedAgentForm) => {
+}: IDedicatedAgentForm): React.JSX.Element => {
   const [haveDidShared, setHaveDidShared] = useState(false)
   const [selectedLedger, setSelectedLedger] = useState('')
   const [selectedMethod, setSelectedMethod] = useState('')
@@ -91,10 +89,7 @@ const DedicatedLedgerConfig = ({
   const [mappedData, setMappedData] = useState<ILedgerConfigData | null>(null)
   const [domainValue, setDomainValue] = useState<string>('')
   const [privateKeyValue, setPrivateKeyValue] = useState<string>('')
-  const [networks, setNetworks] = useState([])
-  const [formikInstance, setFormikInstance] = useState(null)
-  const router = useRouter()
-  const fetchLedgerConfig = async () => {
+  const fetchLedgerConfig = async (): Promise<void> => {
     try {
       const { data } = (await getLedgerConfig()) as AxiosResponse
 
@@ -150,27 +145,14 @@ const DedicatedLedgerConfig = ({
     }
   }
 
-  const fetchNetworks = async () => {
-    try {
-      const { data } = (await getLedgers()) as AxiosResponse
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        setNetworks(data?.data || [])
-        return data?.data
-      }
-      return []
-    } catch (err) {
-      console.error('Fetch Network ERROR::::', err)
-    }
-  }
-
-  const handleLedgerSelect = (ledger: string) => {
+  const handleLedgerSelect = (ledger: string): void => {
     setSelectedLedger(ledger)
     setSelectedMethod('')
     setSelectedNetwork('')
     setSelectedDid('')
   }
 
-  const handleMethodChange = (method: React.SetStateAction<string>) => {
+  const handleMethodChange = (method: React.SetStateAction<string>): void => {
     setSelectedMethod(method)
     setSelectedDid('')
   }
@@ -178,13 +160,12 @@ const DedicatedLedgerConfig = ({
   const handleNetworkChange = (
     network: React.SetStateAction<string>,
     didMethod: React.SetStateAction<string>,
-  ) => {
+  ): void => {
     setSelectedNetwork(network)
     setSelectedDid(didMethod)
   }
 
   useEffect(() => {
-    fetchNetworks()
     fetchLedgerConfig()
   }, [])
 
@@ -208,7 +189,9 @@ const DedicatedLedgerConfig = ({
       domain: yup.string().required('Domain is required'),
     }),
   }
-  const renderNetworkOptions = (formikHandlers: FormikProps<IValuesShared>) => {
+  const renderNetworkOptions = (
+    formikHandlers: FormikProps<IValuesShared>,
+  ): React.JSX.Element | null => {
     if (!selectedLedger || !selectedMethod || !mappedData) {
       return null
     }
@@ -251,7 +234,7 @@ const DedicatedLedgerConfig = ({
             formikHandlers.setFieldValue('network', value)
             // Find the didMethod for the selected network
             const didMethod = Object.entries(networkOptions).find(
-              ([network, did]) => did === value,
+              ([did]) => did === value,
             )?.[0]
             handleNetworkChange(
               value,
@@ -279,7 +262,9 @@ const DedicatedLedgerConfig = ({
     )
   }
 
-  const renderMethodOptions = (formikHandlers: FormikProps<IValuesShared>) => {
+  const renderMethodOptions = (
+    formikHandlers: FormikProps<IValuesShared>,
+  ): React.JSX.Element | null => {
     if (!selectedLedger || !mappedData) {
       return null
     }
@@ -323,7 +308,7 @@ const DedicatedLedgerConfig = ({
     )
   }
 
-  const isSubmitDisabled = () => {
+  const isSubmitDisabled = (): boolean => {
     if (!selectedLedger) {
       return true
     } else if (
@@ -353,7 +338,7 @@ const DedicatedLedgerConfig = ({
     title: string
     description: string
     icon: React.ReactNode
-  }) => (
+  }): React.JSX.Element => (
     <Card
       className={`cursor-pointer transition-all hover:shadow-md ${selectedLedger === ledger ? 'border-yellow-500 shadow-lg' : 'border-border'}`}
       onClick={() => handleLedgerSelect(ledger)}
@@ -509,7 +494,7 @@ const DedicatedLedgerConfig = ({
           actions.resetForm()
         }}
       >
-        {(formikHandlers: FormikProps<IValuesShared>): JSX.Element => (
+        {(formikHandlers: FormikProps<IValuesShared>): React.JSX.Element => (
           <Form>
             {/* Form fields based on selected ledger */}
             {selectedLedger && (

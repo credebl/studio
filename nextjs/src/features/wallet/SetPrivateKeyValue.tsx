@@ -1,18 +1,17 @@
-import React from 'react'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
-import { Field } from 'formik'
-import { type ChangeEvent, useEffect, useState } from 'react'
-import GenerateBtnPolygon from './GenerateBtnPolygon'
-import { ethers } from 'ethers'
-import type { AxiosResponse } from 'axios'
-import TokenWarningMessage from './TokenWarningMessage'
-import { createPolygonKeyValuePair } from '@/app/api/Agent'
-import { apiStatusCodes } from '@/config/CommonConstant'
-import CopyDid from './CopyDid'
-import { envConfig } from '@/config/envConfig'
 import { CommonConstants, Network } from '../common/enum'
+import React, { type ChangeEvent, useEffect, useState } from 'react'
+import type { AxiosResponse } from 'axios'
+import { Checkbox } from '@/components/ui/checkbox'
+import CopyDid from './CopyDid'
+import { Field } from 'formik'
+import GenerateBtnPolygon from './GenerateBtnPolygon'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import TokenWarningMessage from './TokenWarningMessage'
+import { apiStatusCodes } from '@/config/CommonConstant'
+import { createPolygonKeyValuePair } from '@/app/api/Agent'
+import { envConfig } from '@/config/envConfig'
+import { ethers } from 'ethers'
 
 export interface IPolygonKeys {
   privateKey: string
@@ -41,13 +40,16 @@ const SetPrivateKeyValueInput = ({
   orgId,
   privateKeyValue,
   formikHandlers,
-}: IProps) => {
+}: IProps): React.JSX.Element => {
   const [havePrivateKey, setHavePrivateKey] = useState(false)
   const [generatedKeys, setGeneratedKeys] = useState<IPolygonKeys | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  const checkWalletBalance = async (privateKey: string, network: Network) => {
+  const checkWalletBalance = async (
+    privateKey: string,
+    network: Network,
+  ): Promise<string | null> => {
     try {
       const rpcUrls = {
         testnet: envConfig.PLATFORM_DATA.polygonTestnet,
@@ -91,7 +93,7 @@ const SetPrivateKeyValueInput = ({
     }
   }, [havePrivateKey])
 
-  const generatePolygonKeyValuePair = async () => {
+  const generatePolygonKeyValuePair = async (): Promise<void> => {
     setLoading(true)
     try {
       const resCreatePolygonKeys = await createPolygonKeyValuePair(

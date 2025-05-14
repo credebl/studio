@@ -1,7 +1,7 @@
 import CreateSchema from '@/features/schemas/components/Create'
 import React from 'react'
 
-const page = () => (
+const page = (): React.JSX.Element => (
   <div>
     <CreateSchema />
   </div>

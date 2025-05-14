@@ -1,10 +1,11 @@
 'use client'
 
 import axios, { AxiosError, AxiosRequestConfig } from 'axios'
-import { apiRoutes } from '@/config/apiRoutes'
-import { store } from '@/lib/store'
 import { setRefreshToken, setToken } from '@/lib/authSlice'
+
+import { apiRoutes } from '@/config/apiRoutes'
 import { apiStatusCodes } from '@/config/CommonConstant'
+import { store } from '@/lib/store'
 
 const instance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL,
@@ -22,7 +23,7 @@ interface RefreshTokenResponse {
 }
 
 // Refresh Token
-const refreshAccessToken = async () => {
+const refreshAccessToken = async (): Promise<string | null> => {
   const state = store.getState()
   const refreshToken = state?.auth?.refreshToken
 
@@ -83,7 +84,7 @@ instance.interceptors.request.use(
   (error) => Promise.reject(error),
 )
 
-function logoutAndRedirect() {
+function logoutAndRedirect(): void {
   const rootKey = 'persist:root'
 
   if (localStorage.getItem(rootKey)) {

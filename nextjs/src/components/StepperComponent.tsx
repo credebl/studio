@@ -1,7 +1,7 @@
 'use client'
 
-import { stepLabels } from '@/config/CommonConstant'
 import React from 'react'
+import { stepLabels } from '@/config/CommonConstant'
 
 interface StepperProps {
   currentStep: number

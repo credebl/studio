@@ -4,10 +4,12 @@ import {
   EcosystemInstance as ecosystemAxiosUser,
 } from './axiosIntercepter'
 
+import { HeaderConfig } from '@/config/GetHeaderConfigs'
+
 export interface APIParameters {
   url: string
   payload?: Record<never, unknown>
-  config?: Record<string, unknown>
+  config?: HeaderConfig
 }
 
 const HandleResponse = (

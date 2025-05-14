@@ -4,10 +4,13 @@ import {
 } from '@/features/organization/components/interfaces/organization'
 import { axiosGet, axiosPost, axiosPut } from '@/services/apiRequests'
 
+import { AxiosResponse } from 'axios'
 import { apiRoutes } from '@/config/apiRoutes'
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs'
 
-export const getLedgersPlatformUrl = async (indyNamespace: string) => {
+export const getLedgersPlatformUrl = async (
+  indyNamespace: string,
+): Promise<AxiosResponse | string> => {
   const details = {
     url: `${apiRoutes.Platform.getLedgerPlatformUrl}${indyNamespace}`,
     config: getHeaderConfigs(),
@@ -22,7 +25,10 @@ export const getLedgersPlatformUrl = async (indyNamespace: string) => {
   }
 }
 
-export const spinupDedicatedAgent = async (data: object, orgId: string) => {
+export const spinupDedicatedAgent = async (
+  data: object,
+  orgId: string,
+): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.agentDedicatedSpinup}`
   const payload = data
 
@@ -44,7 +50,7 @@ export const spinupDedicatedAgent = async (data: object, orgId: string) => {
 export const setAgentConfigDetails = async (
   data: IDedicatedAgentConfiguration,
   orgId: string,
-) => {
+): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.setAgentConfig}`
   const payload = data
 
@@ -63,7 +69,10 @@ export const setAgentConfigDetails = async (
   }
 }
 
-export const spinupSharedAgent = async (data: object, orgId: string) => {
+export const spinupSharedAgent = async (
+  data: object,
+  orgId: string,
+): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.agentSharedSpinup}`
   const payload = data
 
@@ -82,7 +91,10 @@ export const spinupSharedAgent = async (data: object, orgId: string) => {
   }
 }
 
-export const createDid = async (orgId: string, data: object) => {
+export const createDid = async (
+  orgId: string,
+  data: object,
+): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.createDid}`
   const payload = data
 
@@ -101,7 +113,7 @@ export const createDid = async (orgId: string, data: object) => {
   }
 }
 
-export const getLedgerConfig = async () => {
+export const getLedgerConfig = async (): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.organizations.root}${apiRoutes.Agent.getLedgerConfig}`
   const config = getHeaderConfigs()
   const axiosPayload = {
@@ -117,7 +129,7 @@ export const getLedgerConfig = async () => {
   }
 }
 
-export const getLedgers = async () => {
+export const getLedgers = async (): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.Platform.getLedgers}`
   const config = getHeaderConfigs()
   const axiosPayload = {
@@ -133,7 +145,9 @@ export const getLedgers = async () => {
   }
 }
 
-export const createPolygonKeyValuePair = async (orgId: string) => {
+export const createPolygonKeyValuePair = async (
+  orgId: string,
+): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.createPolygonKeys}`
   const config = getHeaderConfigs()
   const axiosPayload = {
@@ -149,7 +163,9 @@ export const createPolygonKeyValuePair = async (orgId: string) => {
   }
 }
 
-export const getDids = async (orgId: string) => {
+export const getDids = async (
+  orgId: string,
+): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.didList}`
   const config = getHeaderConfigs()
   const axiosPayload = {
@@ -168,7 +184,7 @@ export const getDids = async (orgId: string) => {
 export const updatePrimaryDid = async (
   orgId: string,
   payload: IUpdatePrimaryDid,
-) => {
+): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.primaryDid}`
 
   const axiosPayload = {

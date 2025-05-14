@@ -5,6 +5,7 @@ import {
   type PaginationState,
   type RowSelectionState,
   type SortingState,
+  Table,
   type TableOptions,
   type TableState,
   type Updater,
@@ -64,7 +65,12 @@ interface UseDataTableProps<TData>
   startTransition?: React.TransitionStartFunction
 }
 
-export function useDataTable<TData>(props: UseDataTableProps<TData>) {
+export function useDataTable<TData>(props: UseDataTableProps<TData>): {
+  table: Table<TData>
+  shallow: boolean
+  debounceMs: number
+  throttleMs: number
+} {
   const {
     columns,
     pageCount = -1,

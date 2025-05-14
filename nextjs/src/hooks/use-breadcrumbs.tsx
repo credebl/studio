@@ -1,7 +1,7 @@
 'use client'
 
-import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
+import { usePathname } from 'next/navigation'
 
 type BreadcrumbItem = {
   title: string
@@ -22,7 +22,7 @@ const routeMapping: Record<string, BreadcrumbItem[]> = {
   // Add more custom mappings as needed
 }
 
-export function useBreadcrumbs() {
+export function useBreadcrumbs(): BreadcrumbItem[] {
   const pathname = usePathname()
 
   const breadcrumbs = useMemo(() => {

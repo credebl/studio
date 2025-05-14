@@ -339,7 +339,6 @@ export interface IDedicatedAgentForm {
   maskedSeeds: string
   setLedgerConfig: (value: boolean) => void
   seeds: string
-  loading: boolean
   setAgentConfig: any
   submitDedicatedWallet: (
     values: IValuesShared,

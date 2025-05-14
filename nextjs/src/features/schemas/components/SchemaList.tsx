@@ -1,13 +1,7 @@
 'use client'
 
-import React, { ChangeEvent, useEffect, useState } from 'react'
-import { apiStatusCodes, itemPerPage } from '../../../config/CommonConstant'
-import { useAppSelector } from '@/lib/hooks'
-import { getAllSchemas, getAllSchemasByOrgId } from '@/app/api/schema'
-import SchemaCard from './SchemaCard'
-import { EmptyMessage } from '@/components/EmptyMessage'
-import { Input } from '@/components/ui/input'
-import { IconSearch } from '@tabler/icons-react'
+import { DidMethod, SchemaTypes } from '@/common/enums'
+import { IW3cSchemaDetails, SchemaListItem } from '../type/schemas-interface'
 import {
   Pagination,
   PaginationContent,
@@ -16,16 +10,43 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination'
-import { Button } from '@/components/ui/button'
-import { Plus } from 'lucide-react'
-import PageContainer from '@/components/layout/page-container'
-import { GetAllSchemaListParameter } from '@/features/dashboard/type/schema'
+import React, { ChangeEvent, useEffect, useState } from 'react'
+import { apiStatusCodes, itemPerPage } from '../../../config/CommonConstant'
+import { getAllSchemas, getAllSchemasByOrgId } from '@/app/api/schema'
+
 import { AxiosResponse } from 'axios'
-import { getOrganizationById } from '@/app/api/organization'
-import { DidMethod, SchemaTypes } from '@/common/enums'
-import { IW3cSchemaDetails, SchemaListItem } from '../type/schemas-interface'
-import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { EmptyMessage } from '@/components/EmptyMessage'
+import { GetAllSchemaListParameter } from '@/features/dashboard/type/schema'
+import { IconSearch } from '@tabler/icons-react'
+import { Input } from '@/components/ui/input'
+import PageContainer from '@/components/layout/page-container'
+import { Plus } from 'lucide-react'
+import SchemaCard from './SchemaCard'
 import { Skeleton } from '@/components/ui/skeleton'
+import { getOrganizationById } from '@/app/api/organization'
+import { useAppSelector } from '@/lib/hooks'
+import { useRouter } from 'next/navigation'
+
+interface IAttributesDetails {
+  attributeName: string
+  schemaDataType: string
+  displayName: string
+  isRequired: boolean
+}
+export interface ISchemaData {
+  createDateTime: string
+  name: string
+  version: string
+  attributes: IAttributesDetails[]
+  schemaLedgerId: string
+  createdBy: string
+  publisherDid: string
+  orgId: string
+  issuerId: string
+  organizationName: string
+  userName: string
+}
 
 const SchemaList = (props: {
   schemaSelectionCallback?: (
@@ -39,22 +60,22 @@ const SchemaList = (props: {
   ) => void
 
   verificationFlag?: boolean
-}) => {
+}): React.ReactElement => {
   const verificationFlag = props.verificationFlag ?? false
   const organizationId = useAppSelector((state) => state.organization.orgId)
   const ledgerId = useAppSelector((state) => state.organization.ledgerId)
-  const [schemaList, setSchemaList] = useState<any[]>([])
-  const [schemaListErr, setSchemaListErr] = useState<string | null>('')
+  // const [schemaList, setSchemaList] = useState<SetStateAction<never[]>>([])
+  const [schemaList, setSchemaList] = useState<ISchemaData[]>([])
+
+  const [, setSchemaListErr] = useState<string | null>('')
   const [loading, setLoading] = useState<boolean>(true)
   const [allSchemaFlag, setAllSchemaFlag] = useState<boolean>(false)
   const [schemaType, setSchemaType] = useState('')
-  const [walletStatus, setWalletStatus] = useState(false)
+  const [, setWalletStatus] = useState(false)
   const [totalItem, setTotalItem] = useState(0)
   const [lastPage, setLastPage] = useState(0)
   const [searchValue, setSearchValue] = useState('')
-  const [selectedValue, setSelectedValue] = useState<string>(
-    "Organization's schema",
-  )
+  const [, setSelectedValue] = useState<string>('Organizations schema')
   const [w3cSchema, setW3CSchema] = useState<boolean>(false)
   const [isNoLedger, setIsNoLedger] = useState<boolean>(false)
 
@@ -72,10 +93,10 @@ const SchemaList = (props: {
   const getSchemaList = async (
     schemaListAPIParameter: GetAllSchemaListParameter,
     flag: boolean,
-  ) => {
+  ): Promise<void> => {
     try {
       setLoading(true)
-      let schemaResponse
+      let schemaResponse = undefined
 
       if (flag) {
         schemaResponse = await getAllSchemas(
@@ -99,10 +120,11 @@ const SchemaList = (props: {
       }
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        const schemaData = data?.data?.data
         if (data?.data?.data) {
           setLastPage(data?.data?.lastPage)
           setTotalItem(data?.data?.totalItems)
-          setSchemaList([...data?.data?.data])
+          setSchemaList([...schemaData])
         } else {
           setSchemaListErr(schemaResponse as string)
         }
@@ -117,7 +139,9 @@ const SchemaList = (props: {
     }
   }
 
-  const fetchOrganizationDetails = async (organizationId: string) => {
+  const fetchOrganizationDetails = async (
+    organizationId: string,
+  ): Promise<void> => {
     setLoading(true)
     const response = await getOrganizationById(organizationId)
     const { data } = response as AxiosResponse
@@ -179,7 +203,9 @@ const SchemaList = (props: {
     setSchemaListAPIParameter(updatedParams)
   }
 
-  const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleFilterChange = (
+    e: React.ChangeEvent<HTMLSelectElement>,
+  ): void => {
     const { value } = e.target
     const isAllSchemas = value === 'all'
 
@@ -199,7 +225,7 @@ const SchemaList = (props: {
     attributes: string[]
     issuerDid: string
     created: string
-  }) => {
+  }): void => {
     const schemaDetails = {
       attribute: attributes,
       issuerDid,
@@ -222,7 +248,7 @@ const SchemaList = (props: {
     issuerDid: string
     attributes: []
     created: string
-  }) => {
+  }): void => {
     const w3cSchemaDetails = {
       schemaId,
       schemaName,
@@ -291,10 +317,10 @@ const SchemaList = (props: {
               {schemaList.map((element) => (
                 <div
                   className="px-0 sm:px-2"
-                  key={`SchemaList-${element.schemaLedgerId}`}
+                  key={`SchemaList-${element?.schemaLedgerId}`}
                 >
                   <SchemaCard
-                    schemaName={element['name']}
+                    schemaName={element?.name}
                     version={element['version']}
                     schemaId={element['schemaLedgerId']}
                     issuerDid={element['issuerId']}

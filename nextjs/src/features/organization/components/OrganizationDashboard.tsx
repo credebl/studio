@@ -4,7 +4,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Card, CardContent } from '@/components/ui/card'
 import { Edit, Trash2 } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
@@ -14,6 +13,7 @@ import PageContainer from '@/components/layout/page-container'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { getOrganizationById } from '@/app/api/organization'
 import { useAppSelector } from '@/lib/hooks'
+import { useRouter } from 'next/navigation'
 
 type OrganizationDashboardProps = {
   orgId: string
@@ -22,13 +22,12 @@ type OrganizationDashboardProps = {
 
 export const OrganizationDashboard = ({
   orgId,
-}: OrganizationDashboardProps) => {
+}: OrganizationDashboardProps): React.JSX.Element => {
   const router = useRouter()
   const [orgData, setOrgData] = useState<IOrganisation | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [, setLoading] = useState(true)
   const [walletStatus, setWalletStatus] = useState<boolean>(false)
-  const [error, setError] = useState<string | null>(null)
-  const [organizationId, setOrganizationId] = useState<string>()
+  const [, setError] = useState<string | null>(null)
 
   const selecteDropdownOrgId = useAppSelector(
     (state) => state.organization.orgId,
@@ -36,7 +35,7 @@ export const OrganizationDashboard = ({
   const activeOrgId = selecteDropdownOrgId ?? orgId
   const orgIdOfDashboard = orgId
 
-  const fetchOrganizationDetails = async () => {
+  const fetchOrganizationDetails = async (): Promise<void> => {
     if (!orgId) {
       return
     }
@@ -59,11 +58,11 @@ export const OrganizationDashboard = ({
     setLoading(false)
   }
 
-  const handleEditOrg = () => {
+  const handleEditOrg = (): void => {
     router.push(`/organizations/create-organization?orgId=${orgId}`)
   }
 
-  const handleDeleteOrg = () => {
+  const handleDeleteOrg = (): void => {
     router.push(`/organizations/delete-organization?orgId=${orgId}`)
   }
 
@@ -197,13 +196,6 @@ export const OrganizationDashboard = ({
             </CardContent>
           </Card>
         </div>
-        {/* <CreateOrganizationModal
-        open={openEditModal}
-        setOpen={setOpenEditModal}
-        setMessage={setError}
-        mode={mode}
-        orgData={orgData}
-      /> */}
         {walletStatus === true ? (
           <OrganizationDetails orgData={orgData} />
         ) : (

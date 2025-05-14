@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 'use client'
 import {
   Accordion,
@@ -5,7 +6,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
-import { Button } from '@/components/ui/button'
 import {
   Form,
   FormControl,
@@ -14,8 +14,9 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { Heading } from '@/components/ui/heading'
-import { Input } from '@/components/ui/input'
+import { IconAlertTriangle, IconTrash } from '@tabler/icons-react'
+import { type ProfileFormValues, profileSchema } from '../utils/form-schema'
+import React, { useState } from 'react'
 import {
   Select,
   SelectContent,
@@ -23,16 +24,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+
+import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form'
+import { Button } from '@/components/ui/button'
+import { Heading } from '@/components/ui/heading'
+import { Input } from '@/components/ui/input'
+
 import { Separator } from '@/components/ui/separator'
-import { type ProfileFormValues, profileSchema } from '../utils/form-schema'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { IconAlertTriangle, IconTrash } from '@tabler/icons-react'
-import React, { useState } from 'react'
-import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form'
 
 interface ProfileFormType {
-  initialData: any | null
+  initialData: null
 }
 
 const ProfileCreateForm: React.FC<ProfileFormType> = ({ initialData }) => {
@@ -111,7 +114,7 @@ const ProfileCreateForm: React.FC<ProfileFormType> = ({ initialData }) => {
     { id: 'Step 3', name: 'Complete' },
   ]
 
-  const next = async () => {
+  const next = async (): Promise<void> => {
     const { fields } = steps[currentStep]
 
     const output = await form.trigger(fields as FieldName[], {
@@ -131,7 +134,7 @@ const ProfileCreateForm: React.FC<ProfileFormType> = ({ initialData }) => {
     }
   }
 
-  const prev = () => {
+  const prev = (): void => {
     if (currentStep > 0) {
       setPreviousStep(currentStep)
       setCurrentStep((step) => step - 1)
@@ -295,7 +298,6 @@ const ProfileCreateForm: React.FC<ProfileFormType> = ({ initialData }) => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {/* @ts-ignore  */}
                           {countries.map((country) => (
                             <SelectItem key={country.id} value={country.id}>
                               {country.name}
@@ -328,7 +330,6 @@ const ProfileCreateForm: React.FC<ProfileFormType> = ({ initialData }) => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {/* @ts-ignore  */}
                           {cities.map((city) => (
                             <SelectItem key={city.id} value={city.id}>
                               {city.name}

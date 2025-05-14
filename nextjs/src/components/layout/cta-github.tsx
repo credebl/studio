@@ -1,8 +1,8 @@
-import React from 'react'
 import { Button } from '@/components/ui/button'
 import { IconBrandGithub } from '@tabler/icons-react'
+import React from 'react'
 
-export default function CtaGithub() {
+export default function CtaGithub(): React.JSX.Element {
   return (
     <Button variant="ghost" asChild size="sm" className="hidden sm:flex">
       <a

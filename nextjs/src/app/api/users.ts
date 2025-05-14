@@ -1,6 +1,7 @@
-import { getHeaderConfigs } from '@/config/GetHeaderConfigs'
 import { axiosGet, axiosPut } from '@/services/apiRequests'
+import { AxiosResponse } from 'axios'
 import apiRoutes from './apiRoutes'
+import { getHeaderConfigs } from '@/config/GetHeaderConfigs'
 
 export interface IPlatformSetting {
   externalIp: string
@@ -10,7 +11,9 @@ export interface IPlatformSetting {
   apiEndPoint: string
 }
 
-export const getUserActivity = async (limit: number) => {
+export const getUserActivity = async (
+  limit: number,
+): Promise<AxiosResponse | string> => {
   // const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
   const url = `${apiRoutes.users.recentActivity}?limit=${limit}`
   const axiosPayload = {
@@ -26,7 +29,9 @@ export const getUserActivity = async (limit: number) => {
   }
 }
 
-export const getPlatformSettings = async () => {
+export const getPlatformSettings = async (): Promise<
+  AxiosResponse | string
+> => {
   const url = `${apiRoutes.users.platformSettings}`
   const axiosPayload = {
     url,
@@ -41,7 +46,9 @@ export const getPlatformSettings = async () => {
   }
 }
 
-export const updatePlatformSettings = async (payload: IPlatformSetting) => {
+export const updatePlatformSettings = async (
+  payload: IPlatformSetting,
+): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.users.platformSettings}`
   const axiosPayload = {
     url,

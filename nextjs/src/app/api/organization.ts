@@ -10,7 +10,9 @@ import { AxiosResponse } from 'axios'
 import { apiRoutes } from '@/config/apiRoutes'
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs'
 
-export const createOrganization = async (data: object) => {
+export const createOrganization = async (
+  data: object,
+): Promise<AxiosResponse | string> => {
   const url = apiRoutes.organizations.create
   const payload = data
 
@@ -30,7 +32,10 @@ export const createOrganization = async (data: object) => {
   }
 }
 
-export const updateOrganization = async (data: object, orgId: string) => {
+export const updateOrganization = async (
+  data: object,
+  orgId: string,
+): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.organizations.update}/${orgId}`
   const payload = data
 
@@ -55,7 +60,7 @@ export const getOrganizations = async (
   pageSize: number,
   search = '',
   role = '',
-) => {
+): Promise<AxiosResponse | string> => {
   const roleQuery = role ? `&role=${role}` : ''
   const url = `${apiRoutes.organizations.getAll}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}${roleQuery}`
 
@@ -74,8 +79,15 @@ export const getOrganizations = async (
   }
 }
 
+<<<<<<< HEAD
 export const getOrganizationById = async (orgId: string):Promise<AxiosResponse|string> => {
   const url = `${apiRoutes.organizations.getById}/${orgId}`;
+=======
+export const getOrganizationById = async (
+  orgId: string,
+): Promise<AxiosResponse | string> => {
+  const url = `${apiRoutes.organizations.getById}/${orgId}`
+>>>>>>> 0d64de2fb3d9b4cc29eae62caa11a7f558035247
 
   const config = getHeaderConfigs()
 
@@ -92,7 +104,9 @@ export const getOrganizationById = async (orgId: string):Promise<AxiosResponse|s
   }
 }
 
-export const getOrgDashboard = async (orgId: string) => {
+export const getOrgDashboard = async (
+  orgId: string,
+): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.organizations.getOrgDashboard}/${orgId}`
 
   const config = getHeaderConfigs()
@@ -110,7 +124,9 @@ export const getOrgDashboard = async (orgId: string) => {
   }
 }
 
-export const getOrganizationRoles = async (orgId: string) => {
+export const getOrganizationRoles = async (
+  orgId: string,
+): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.organizations.root}/${orgId}/roles`
 
   const config = getHeaderConfigs()
@@ -128,7 +144,10 @@ export const getOrganizationRoles = async (orgId: string) => {
   }
 }
 
-export const createConnection = async (orgId: string, orgName: string) => {
+export const createConnection = async (
+  orgId: string,
+  orgName: string,
+): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.connection.create}`
 
   const data = {
@@ -158,7 +177,7 @@ export const getOrganizationUsers = async (
   pageNumber: number,
   pageSize: number,
   search = '',
-) => {
+): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.users.fetchUsers}?&pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
 
   const axiosPayload = {
@@ -203,7 +222,7 @@ export const editOrganizationUserRole = async (
 export const deleteOrganizationInvitation = async (
   orgId: string,
   invitationId: string,
-) => {
+): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.organizations.root}/${orgId}/invitations/${invitationId}`
 
   const axiosPayload = {
@@ -223,7 +242,7 @@ export const createSchemaRequest = async (
   data: object,
   // endorsementId: string,
   orgId: string,
-) => {
+): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.Ecosystem.root}/${orgId}${apiRoutes.Ecosystem.endorsements.createSchemaRequest}`
   const payload = data
   const axiosPayload = {

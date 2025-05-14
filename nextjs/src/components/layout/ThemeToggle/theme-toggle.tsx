@@ -1,12 +1,12 @@
 'use client'
 
-import { IconBrightness } from '@tabler/icons-react'
-import { useTheme } from 'next-themes'
 import * as React from 'react'
 
 import { Button } from '@/components/ui/button'
+import { IconBrightness } from '@tabler/icons-react'
+import { useTheme } from 'next-themes'
 
-export function ModeToggle() {
+export function ModeToggle(): React.JSX.Element {
   const { setTheme, resolvedTheme } = useTheme()
 
   const toggleTheme = React.useCallback(() => {

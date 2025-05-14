@@ -1,5 +1,3 @@
-// components/organization/delete-organization-card.tsx
-import { Trash2 } from 'lucide-react'
 import {
   Card,
   CardContent,
@@ -7,9 +5,12 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import React from 'react'
+// components/organization/delete-organization-card.tsx
+import { Trash2 } from 'lucide-react'
 
 interface DeleteOrganizationCardProps {
   title?: string
@@ -25,7 +26,7 @@ export function DeleteOrganizationCard({
   count,
   isDisabled = false,
   onDeleteClick,
-}: DeleteOrganizationCardProps) {
+}: DeleteOrganizationCardProps): React.JSX.Element {
   const isButtonDisabled = isDisabled || count === 0
 
   return (

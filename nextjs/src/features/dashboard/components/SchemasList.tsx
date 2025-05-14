@@ -1,6 +1,5 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
 import {
   Card,
   CardContent,
@@ -9,18 +8,18 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Skeleton } from '@/components/ui/skeleton'
+import { DidMethod, SchemaTypeValue } from '@/common/enums'
+import React, { useEffect, useState } from 'react'
 
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import Link from 'next/link'
+import { Plus } from 'lucide-react'
+import { Skeleton } from '@/components/ui/skeleton'
+import { dateConversion } from '@/utils/DateConversion'
 import { getAllSchemasByOrgId } from '@/app/api/schema'
 import { useAppSelector } from '@/lib/hooks'
-import { dateConversion } from '@/utils/DateConversion'
-import { Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-
-import Link from 'next/link'
-import { DidMethod, SchemaTypeValue } from '@/common/enums'
 
 type Schema = {
   id: string
@@ -31,7 +30,7 @@ type Schema = {
   schemaLedgerId: string
 }
 
-const SchemasList = () => {
+const SchemasList = (): React.JSX.Element => {
   const [loading, setLoading] = useState(true)
   const [schemas, setSchemas] = useState<Schema[]>([])
   const [schemaTypeValues, setSchemaTypeValues] = useState<SchemaTypeValue>()
@@ -42,7 +41,7 @@ const SchemasList = () => {
   const orgId = useAppSelector((state) => state.organization.orgId)
   const router = useRouter()
 
-  const fetchSchemas = async () => {
+  const fetchSchemas = async (): Promise<void> => {
     setLoading(true)
 
     try {
@@ -90,12 +89,12 @@ const SchemasList = () => {
 
   const previewSchemas = schemas.slice(0, 3)
 
-  const handleClickSchema = (schemaId: string) => {
+  const handleClickSchema = (schemaId: string): void => {
     const encodedSchemaId = encodeURIComponent(schemaId)
     router.push(`/organizations/schemas/${encodedSchemaId}`)
   }
 
-  const renderSchema = (schema: Schema, index: number) => {
+  const renderSchema = (schema: Schema, index: number): React.JSX.Element => {
     const isIndySchema = schemaTypeValues === SchemaTypeValue.INDY
 
     return (

@@ -1,16 +1,16 @@
 'use client'
 
+import { CheckIcon } from 'lucide-react'
+import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import React from 'react'
 import { useThemeConfig } from '@/components/active-theme'
-import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
-import { CheckIcon } from 'lucide-react'
 
 const themes = [
   { name: 'CREDEBL', value: 'credebl' },
   { name: 'SOVIO', value: 'sovio' },
 ]
 
-export function ThemeSelector() {
+export function ThemeSelector(): React.JSX.Element {
   const { activeTheme, setActiveTheme } = useThemeConfig()
 
   return (

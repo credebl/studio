@@ -1,24 +1,26 @@
 import React, { useEffect, useState } from 'react'
-import { SidebarTrigger } from '../ui/sidebar'
-import { Separator } from '../ui/separator'
+import { setOrgId, setOrgInfo } from '@/lib/orgSlice'
+import { useAppDispatch, useAppSelector } from '@/lib/hooks'
+
 import { Breadcrumbs } from '../breadcrumbs'
-import { UserNav } from './user-nav'
 import { ModeToggle } from './ThemeToggle/theme-toggle'
 import { OrgSwitcher } from '../org-switcher'
-import { useAppDispatch, useAppSelector } from '@/lib/hooks'
+import { Organisation } from '@/features/dashboard/type/organization'
+import { Separator } from '../ui/separator'
+import { SidebarTrigger } from '../ui/sidebar'
+import { UserNav } from './user-nav'
 import { getOrganizations } from '@/app/api/organization'
-import { setOrgId, setOrgInfo } from '@/lib/orgSlice'
 
-export default function Header() {
+export default function Header(): React.JSX.Element {
   const dispatch = useAppDispatch()
   const [currentPage] = useState(1)
   const [pageSize] = useState(10)
   const [searchTerm] = useState('')
-  const [orgList, setOrgList] = useState<any[]>([])
+  const [orgList, setOrgList] = useState<Organisation[]>([])
   const tenantId = useAppSelector((state) => state.organization.orgId)
 
   useEffect(() => {
-    const fetchOrganizations = async () => {
+    const fetchOrganizations = async (): Promise<void> => {
       try {
         const response = await getOrganizations(
           currentPage,
@@ -45,7 +47,7 @@ export default function Header() {
               logoUrl: defaultOrg.logoUrl,
               roles:
                 defaultOrg.userOrgRoles?.map(
-                  (role: any) => role?.orgRole?.name,
+                  (role: { orgRole: { name: string } }) => role?.orgRole?.name,
                 ) || [],
             }),
           )
@@ -53,6 +55,7 @@ export default function Header() {
           setOrgList([])
         }
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.error('Error fetching organizations:', err)
       }
     }
@@ -60,7 +63,7 @@ export default function Header() {
     fetchOrganizations()
   }, [dispatch, currentPage, pageSize, searchTerm, tenantId])
 
-  const handleSwitchTenant = (orgId: string) => {
+  const handleSwitchTenant = (orgId: string): void => {
     const selected = orgList.find((org) => org.id === orgId)
     if (selected) {
       dispatch(setOrgId(selected.id))
@@ -71,8 +74,9 @@ export default function Header() {
           description: selected.description,
           logoUrl: selected.logoUrl,
           roles:
-            selected.userOrgRoles?.map((role: any) => role?.orgRole?.name) ||
-            [],
+            selected.userOrgRoles?.map(
+              (role: { orgRole: { name: string } }) => role?.orgRole?.name,
+            ) || [],
         }),
       )
     }
@@ -90,15 +94,17 @@ export default function Header() {
       </div>
 
       <div className="flex items-center gap-2 px-4">
-        <OrgSwitcher
-          tenants={orgList.map((org) => ({
-            id: org.id,
-            name: org.name,
-            logoUrl: org.logoUrl,
-          }))}
-          defaultTenant={activeTenant}
-          onTenantSwitch={handleSwitchTenant}
-        />
+        {activeTenant && (
+          <OrgSwitcher
+            tenants={orgList.map((org) => ({
+              id: org.id,
+              name: org.name,
+              logoUrl: org.logoUrl,
+            }))}
+            defaultTenant={activeTenant}
+            onTenantSwitch={handleSwitchTenant}
+          />
+        )}
         <div className="hidden md:flex">{/* <SearchInput /> */}</div>
         <ModeToggle />
         <UserNav />

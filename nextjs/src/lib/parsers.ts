@@ -1,12 +1,11 @@
-import { createParser } from 'nuqs/server'
-import { z } from 'zod'
-
-import { dataTableConfig } from '@/config/data-table'
-
 import type {
   ExtendedColumnFilter,
   ExtendedColumnSort,
 } from '@/types/data-table'
+import { ParserBuilder, createParser } from 'nuqs/server'
+
+import { dataTableConfig } from '@/config/data-table'
+import { z } from 'zod'
 
 const sortingItemSchema = z.object({
   id: z.string(),
@@ -15,7 +14,7 @@ const sortingItemSchema = z.object({
 
 export const getSortingStateParser = <TData>(
   columnIds?: string[] | Set<string>,
-) => {
+): ParserBuilder<ExtendedColumnSort<TData>[]> => {
   const validKeys = columnIds
     ? columnIds instanceof Set
       ? columnIds
@@ -63,7 +62,7 @@ export type FilterItemSchema = z.infer<typeof filterItemSchema>
 
 export const getFiltersStateParser = <TData>(
   columnIds?: string[] | Set<string>,
-) => {
+): ParserBuilder<ExtendedColumnFilter<TData>[]> => {
   const validKeys = columnIds
     ? columnIds instanceof Set
       ? columnIds

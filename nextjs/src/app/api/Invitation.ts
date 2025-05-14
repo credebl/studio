@@ -1,5 +1,6 @@
 import { axiosGet, axiosPost, ecosystemAxiosGet } from '@/services/apiRequests'
 
+import { AxiosResponse } from 'axios'
 import { apiRoutes } from '@/config/apiRoutes'
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs'
 
@@ -9,7 +10,7 @@ export const getOrganizationInvitations = async (
   pageNumber: number,
   pageSize: number,
   search = '',
-) => {
+): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.invitations}?&pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
 
   const config = getHeaderConfigs()
@@ -31,7 +32,7 @@ export const getOrganizationInvitations = async (
 export const createInvitations = async (
   orgId: string,
   invitationList: object[],
-) => {
+): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.invitations}`
   const payload = {
     invitations: invitationList,
@@ -59,7 +60,7 @@ export const getUserInvitations = async (
   pageNumber: number,
   pageSize: number,
   search = '',
-) => {
+): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.users.invitations}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
 
   const config = getHeaderConfigs()
@@ -82,7 +83,7 @@ export const acceptRejectInvitations = async (
   invitationId: string,
   orgId: string,
   status: string,
-) => {
+): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.users.invitations}/${invitationId}`
 
   const payload = {
@@ -112,7 +113,7 @@ export const getUserEcosystemInvitations = async (
   pageSize: number,
   search: string,
   orgId: string,
-) => {
+): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.Ecosystem.root}/${orgId}${apiRoutes.Ecosystem.usersInvitation}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
 
   const config = getHeaderConfigs()

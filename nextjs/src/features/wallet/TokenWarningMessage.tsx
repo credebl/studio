@@ -1,8 +1,8 @@
-import React from 'react'
 import { AlertTriangle } from 'lucide-react'
+import React from 'react'
 import { cn } from '@/lib/utils'
 
-const TokenWarningMessage = () => (
+const TokenWarningMessage = (): React.JSX.Element => (
   <span
     className={cn(
       'mt-2 mr-2 inline-flex items-center rounded-sm px-2 py-2 text-xs font-medium',

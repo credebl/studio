@@ -1,14 +1,5 @@
 'use client'
 
-import {
-  IconBell,
-  IconChevronsDown,
-  IconCircleCheck,
-  IconCreditCard,
-  IconLogout,
-  IconSparkles,
-} from '@tabler/icons-react'
-import React from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
@@ -20,11 +11,21 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
+  IconBell,
+  IconChevronsDown,
+  IconCircleCheck,
+  IconCreditCard,
+  IconLogout,
+  IconSparkles,
+} from '@tabler/icons-react'
+import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
+
+import React from 'react'
 
 export function NavUser({
   user,
@@ -34,7 +35,7 @@ export function NavUser({
     email: string
     avatar: string
   }
-}) {
+}): React.JSX.Element {
   const { isMobile } = useSidebar()
 
   return (

@@ -1,5 +1,6 @@
 import { axiosDelete, axiosGet } from '@/services/apiRequests'
 
+import { AxiosResponse } from 'axios'
 import { apiRoutes } from '@/config/apiRoutes'
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs'
 
@@ -19,7 +20,9 @@ export const getConnectionsByOrg = async ({
   search,
   sortBy,
   sortingOrder,
-}: IConnectionListAPIParameter & { orgId: string }) => {
+}: IConnectionListAPIParameter & { orgId: string }): Promise<
+  AxiosResponse | string
+> => {
   const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.getAllConnections}?pageSize=${itemPerPage}&pageNumber=${page}&searchByText=${search}&sortBy=${sortingOrder}&sortField=${sortBy}`
 
   const axiosPayload = {
@@ -35,7 +38,9 @@ export const getConnectionsByOrg = async ({
   }
 }
 
-export const deleteConnectionRecords = async (orgId: string) => {
+export const deleteConnectionRecords = async (
+  orgId: string,
+): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.deleteConnections}`
 
   const axiosPayload = {

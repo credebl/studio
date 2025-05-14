@@ -15,12 +15,13 @@ interface TooltipProps<Type> {
   id?: string
   children: React.ReactNode
 }
-
+// Fix this later
+// eslint-disable-next-line comma-spacing
 const DataTooltip = <Type,>({
   data,
   renderItem,
   children,
-}: TooltipProps<Type>) => {
+}: TooltipProps<Type>): React.JSX.Element => {
   const content = data.map(renderItem).join(', ')
 
   return (

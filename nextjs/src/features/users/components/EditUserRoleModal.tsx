@@ -43,13 +43,13 @@ const EditUserRoleModal = ({
   user,
   setMessage,
   setOpenModal,
-}: EditUserRoleModalProps) => {
+}: EditUserRoleModalProps): React.JSX.Element => {
   const [loading, setLoading] = useState<boolean>(false)
   const [roles, setRoles] = useState<RoleI[] | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
   const orgId = useAppSelector((state) => state.organization.orgId)
-  const getRoles = async () => {
+  const getRoles = async (): Promise<void> => {
     try {
       const response = await getOrganizationRoles(orgId)
 
@@ -83,7 +83,7 @@ const EditUserRoleModal = ({
     }
   }, [openModal, user])
 
-  const handleSave = async () => {
+  const handleSave = async (): Promise<void> => {
     setLoading(true)
 
     try {
@@ -110,7 +110,7 @@ const EditUserRoleModal = ({
     }
   }
 
-  const handleRoleChange = (checked: boolean, role: RoleI) => {
+  const handleRoleChange = (checked: boolean, role: RoleI): void => {
     if (
       (role.name === 'issuer' && checked === true) ||
       (role.name === 'verifier' && checked === true)
@@ -151,7 +151,7 @@ const EditUserRoleModal = ({
     }
   }
 
-  const getRoleColor = (roleName: string) => {
+  const getRoleColor = (roleName: string): string => {
     switch (roleName) {
       case 'admin':
         return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300'

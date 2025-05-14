@@ -1,7 +1,5 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
-
 import {
   Card,
   CardContent,
@@ -10,39 +8,73 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { getOrganizations } from '@/app/api/organization'
-import { Skeleton } from '@/components/ui/skeleton'
-import Link from 'next/link'
+import React, { useEffect, useState } from 'react'
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { useRouter } from 'next/navigation'
-import { Plus } from 'lucide-react'
-import Image from 'next/image'
-import { OrganizationRoles } from '@/common/enums'
-import { Organisation } from '../type/organization'
 
-interface OrganizationCardListProps {
-  userOrg?: any
-  walletData: any[]
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import Image from 'next/image'
+import Link from 'next/link'
+import { Organisation } from '../type/organization'
+import { OrganizationRoles } from '@/common/enums'
+import { Plus } from 'lucide-react'
+import { Skeleton } from '@/components/ui/skeleton'
+import { getOrganizations } from '@/app/api/organization'
+import { useRouter } from 'next/navigation'
+
+export interface UserOrgRole {
+  id: string
+  userId: string
+  orgRoleId: string
+  orgId: string
+  orgRole: OrgRole
 }
 
-const OrganizationCardList = ({ userOrg }: OrganizationCardListProps) => {
+export interface OrgRole {
+  id: string
+  name: string
+  description: string
+  createDateTime?: string
+  createdBy?: string
+  lastChangedDateTime?: string
+  lastChangedBy?: string
+  deletedAt?: Date | null
+}
+
+export interface User {
+  id: string
+  username: string
+  email: string
+  firstName: string
+  lastName: string
+  isEmailVerified: boolean
+  clientId: string
+  clientSecret: string
+  keycloakUserId: string
+  userOrgRoles: UserOrgRole[]
+  roles: string[]
+}
+
+// interface OrganizationCardListProps {
+//   userOrg?: UserOrgRole
+//   // walletData?: any[]
+// }
+
+const OrganizationCardList = (): React.JSX.Element => {
   const [orgList, setOrgList] = useState<Organisation[]>([])
   const [loading, setLoading] = useState(true)
 
   const route = useRouter()
 
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage] = useState(1)
   const [pageSize] = useState(10)
   const [searchTerm] = useState('')
 
-  const fetchOrganizations = async () => {
+  const fetchOrganizations = async (): Promise<void> => {
     try {
       const response = await getOrganizations(
         currentPage,
@@ -114,7 +146,7 @@ const OrganizationCardList = ({ userOrg }: OrganizationCardListProps) => {
           </div>
         ) : (
           <div className="space-y-4">
-            {orgList.slice(0, 3).map((org, index) => {
+            {orgList.slice(0, 3).map((org) => {
               const roles: string[] = org.userOrgRoles.map(
                 (role) => role.orgRole.name,
               )

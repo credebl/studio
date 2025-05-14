@@ -1,8 +1,8 @@
+import React, { type ChangeEvent } from 'react'
+import { Field } from 'formik'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
-import { Field } from 'formik'
-import React, { type ChangeEvent } from 'react'
 
 interface IProps {
   setDomainValue: (val: string) => void
@@ -23,7 +23,7 @@ const SetDomainValueInput = ({
   setDomainValue,
   domainValue,
   formikHandlers,
-}: IProps) => (
+}: IProps): React.JSX.Element => (
   <div className="relative mb-3">
     <div>
       <Label htmlFor="webdomain">Enter Domain</Label>

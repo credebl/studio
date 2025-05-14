@@ -6,7 +6,7 @@ type ImageProcessCallback = (result: string | null, error?: string) => void
 export const processImageFile = (
   event: ChangeEvent<HTMLInputElement>,
   callback: ImageProcessCallback,
-) => {
+): void => {
   const reader = new FileReader()
   const file = event?.target?.files
   if (file) {
@@ -19,7 +19,7 @@ export const processImageFile = (
       (extension === 'png' || extension === 'jpeg' || extension === 'jpg') &&
       fileSize <= imageSizeAccepted
     ) {
-      reader.onloadend = () => {
+      reader.onloadend = (): void => {
         callback(reader.result as string)
       }
       reader.readAsDataURL(file[0])

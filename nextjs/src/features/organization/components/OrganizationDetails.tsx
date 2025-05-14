@@ -1,38 +1,41 @@
-import React, { useEffect, useState } from 'react'
-import type { AxiosResponse } from 'axios'
-import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
-import { Copy } from 'lucide-react'
-import CustomQRCode from '@/features/wallet/CustomQRCode'
-import DIDList from '@/features/wallet/DidListComponent'
-import { createConnection } from '@/app/api/organization'
 import {
   IConnection,
   IOrgAgent,
   IOrganisation,
 } from './interfaces/organization'
-import { dateConversion } from '@/utils/DateConversion'
+import React, { useEffect, useState } from 'react'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+
+import type { AxiosResponse } from 'axios'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Copy } from 'lucide-react'
+import CustomQRCode from '@/features/wallet/CustomQRCode'
+import DIDList from '@/features/wallet/DidListComponent'
 import { apiStatusCodes } from '@/config/CommonConstant'
+import { createConnection } from '@/app/api/organization'
+import { dateConversion } from '@/utils/DateConversion'
 
 const OrganizationDetails = ({
   orgData,
 }: {
   orgData: IOrganisation | null
-}) => {
+}): React.JSX.Element => {
   const orgId = orgData ? orgData?.id : ''
+  // eslint-disable-next-line camelcase
   const { org_agents } = orgData as IOrganisation
   const agentData: IOrgAgent | null =
+    // eslint-disable-next-line camelcase
     org_agents.length > 0 ? org_agents[0] : null
 
   const [loading, setLoading] = useState<boolean>(true)
   const [connectionData, setConnectionData] = useState<IConnection | null>(null)
 
-  const createQrConnection = async () => {
+  const createQrConnection = async (): Promise<void> => {
     setLoading(true)
     const response = await createConnection(orgId, orgData?.name as string)
     const { data } = response as AxiosResponse
@@ -55,7 +58,7 @@ const OrganizationDetails = ({
     value: string
     className?: string
     hideValue?: boolean
-  }) => (
+  }): React.JSX.Element => (
     <Tooltip>
       <TooltipTrigger asChild>
         <div className={`flex items-center gap-2 ${className}`}>
@@ -82,7 +85,7 @@ const OrganizationDetails = ({
   }: {
     date: string
     children: React.ReactNode
-  }) => (
+  }): React.JSX.Element => (
     <Tooltip>
       <TooltipTrigger asChild>
         <span>{children}</span>

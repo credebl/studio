@@ -21,6 +21,13 @@ export interface ISchema {
   createdDate: string
 }
 
+export interface IAttributesDetails {
+  attributeName: string
+  schemaDataType: string
+  displayName: string
+  isRequired: boolean
+}
+
 export interface ISchemaCardProps {
   className?: string
   schemaName: string
@@ -28,7 +35,8 @@ export interface ISchemaCardProps {
   version: string
   schemaId: string
   issuerDid: string
-  attributes: []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  attributes: any
   created: string
   isClickable?: boolean
   showCheckbox?: boolean

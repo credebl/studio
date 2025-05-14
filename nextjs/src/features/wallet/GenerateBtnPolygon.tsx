@@ -9,8 +9,7 @@ interface IProps {
 
 const GenerateButtonPolygon = ({
   generatePolygonKeyValuePair,
-  loading,
-}: IProps) => (
+}: IProps): React.JSX.Element => (
   <div className="relative my-3 grid w-fit grid-cols-2 gap-x-9 md:gap-56">
     <div className="mt-4">
       <Label htmlFor="generateKey">Generate private key</Label>

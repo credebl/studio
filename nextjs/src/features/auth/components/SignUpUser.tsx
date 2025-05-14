@@ -1,12 +1,13 @@
 'use client'
 
 import React, { useState } from 'react'
+
 import EmailVerificationForm from './EmailVerificationForm'
-import UserInfoForm from './UserInfoForm'
 import Link from 'next/link'
+import UserInfoForm from './UserInfoForm'
 import { useSearchParams } from 'next/navigation'
 
-export default function SignUpUser() {
+export default function SignUpUser(): React.JSX.Element {
   const [step, setStep] = useState(1)
   const [, setEmail] = useState<string>('')
   const searchParam = useSearchParams()

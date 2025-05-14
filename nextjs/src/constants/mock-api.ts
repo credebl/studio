@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+/* eslint-disable camelcase */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 /// /////////////////////////////////////////////////////////////////////////////
 // 🛑 Nothing in here has anything to do with Nextjs, it's just a fake database
 /// /////////////////////////////////////////////////////////////////////////////

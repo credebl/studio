@@ -1,5 +1,6 @@
 import { axiosGet, axiosPost, axiosPut } from '@/services/apiRequests'
 
+import { AxiosResponse } from 'axios'
 import CryptoJS from 'crypto-js'
 import { apiRoutes } from '@/config/apiRoutes'
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs'
@@ -32,11 +33,15 @@ export interface IKeyCloakData {
   newPassword: string
 }
 
-export const sendVerificationMail = async (payload: IUserSignUpData) => {
+export const sendVerificationMail = async (
+  payload: IUserSignUpData,
+): Promise<AxiosResponse | string> => {
+  const config = getHeaderConfigs()
+
   const details = {
     url: apiRoutes.auth.sendMail,
     payload,
-    config: { headers: { 'Content-type': 'application/json' } },
+    config,
   }
   try {
     const response = await axiosPost(details)
@@ -50,7 +55,7 @@ export const sendVerificationMail = async (payload: IUserSignUpData) => {
 export const resetPassword = async (
   payload: { password: string; token: string | null },
   email: string | null,
-) => {
+): Promise<AxiosResponse | string> => {
   const details = {
     url: `${apiRoutes.auth.resetPassword}/${email}`,
     payload,
@@ -64,7 +69,9 @@ export const resetPassword = async (
   }
 }
 
-export const forgotPassword = async (payload: { email: string }) => {
+export const forgotPassword = async (payload: {
+  email: string
+}): Promise<AxiosResponse | string> => {
   const details = {
     url: apiRoutes.auth.forgotPassword,
     payload,
@@ -78,11 +85,15 @@ export const forgotPassword = async (payload: { email: string }) => {
   }
 }
 
-export const loginUser = async (payload: IUserSignInData) => {
+export const loginUser = async (
+  payload: IUserSignInData,
+): Promise<AxiosResponse | string> => {
+  const config = getHeaderConfigs()
+
   const details = {
     url: apiRoutes.auth.sinIn,
     payload,
-    config: { headers: { 'Content-type': 'application/json' } },
+    config,
   }
   try {
     const response = await axiosPost(details)
@@ -93,11 +104,15 @@ export const loginUser = async (payload: IUserSignInData) => {
   }
 }
 
-export const resetPasswordKeyCloak = async (payload: IKeyCloakData) => {
+export const resetPasswordKeyCloak = async (
+  payload: IKeyCloakData,
+): Promise<AxiosResponse | string> => {
+  const config = getHeaderConfigs()
+
   const details = {
     url: apiRoutes.auth.keyClockResetPassword,
     payload,
-    config: { headers: { 'Content-type': 'application/json' } },
+    config,
   }
   try {
     const response = await axiosPost(details)
@@ -108,10 +123,14 @@ export const resetPasswordKeyCloak = async (payload: IKeyCloakData) => {
   }
 }
 
-export const getUserProfile = async (accessToken: string) => {
+export const getUserProfile = async (
+  accessToken: string,
+): Promise<AxiosResponse | string> => {
+  const config = getHeaderConfigs()
+
   const details = {
     url: apiRoutes.users.userProfile,
-    config: { headers: { Authorization: `Bearer ${accessToken}` } },
+    config: { ...config, Authorization: `Bearer ${accessToken}` },
   }
   try {
     const response = await axiosGet(details)
@@ -122,7 +141,9 @@ export const getUserProfile = async (accessToken: string) => {
   }
 }
 
-export const updateUserProfile = async (data: object) => {
+export const updateUserProfile = async (
+  data: object,
+): Promise<AxiosResponse | string> => {
   const url = apiRoutes.users.update
   const payload = data
 
@@ -142,10 +163,13 @@ export const updateUserProfile = async (data: object) => {
   }
 }
 
-export const verifyUserMail = async (payload: IEmailVerifyData) => {
+export const verifyUserMail = async (
+  payload: IEmailVerifyData,
+): Promise<AxiosResponse | string> => {
+  const config = getHeaderConfigs()
   const details = {
     url: `${apiRoutes.auth.verifyEmail}?verificationCode=${payload?.verificationCode}&email=${payload?.email}`,
-    config: { headers: { 'Content-type': 'application/json' } },
+    config,
   }
   try {
     const response = await axiosGet(details)
@@ -156,10 +180,14 @@ export const verifyUserMail = async (payload: IEmailVerifyData) => {
   }
 }
 
-export const checkUserExist = async (payload: string) => {
+export const checkUserExist = async (
+  payload: string,
+): Promise<AxiosResponse | string> => {
+  const config = getHeaderConfigs()
+
   const details = {
     url: `${apiRoutes.users.checkUser}${payload}`,
-    config: { headers: { 'Content-type': 'application/json' } },
+    config,
   }
   try {
     const response = await axiosGet(details)
@@ -170,11 +198,15 @@ export const checkUserExist = async (payload: string) => {
   }
 }
 
-export const addPasswordDetails = async (payload: IAddPasswordDetails) => {
+export const addPasswordDetails = async (
+  payload: IAddPasswordDetails,
+): Promise<AxiosResponse | string> => {
+  const config = getHeaderConfigs()
+
   const details = {
     url: `${apiRoutes.auth.addDetails}`,
     payload,
-    config: { headers: { 'Content-type': 'application/json' } },
+    config,
   }
   try {
     const response = await axiosPost(details)

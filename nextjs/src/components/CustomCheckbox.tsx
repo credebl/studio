@@ -1,6 +1,6 @@
 'use client'
-import { ICustomCheckboxProps } from '@/common/interface'
 import React, { useEffect, useState } from 'react'
+import { ICustomCheckboxProps } from '@/common/interface'
 
 const CustomCheckbox: React.FC<ICustomCheckboxProps> = ({
   showCheckbox,
@@ -10,7 +10,7 @@ const CustomCheckbox: React.FC<ICustomCheckboxProps> = ({
   schemaData,
 }) => {
   const [checked, setChecked] = useState<boolean>(false)
-  const handleCheckboxChange = async () => {
+  const handleCheckboxChange = async (): Promise<void> => {
     const newChecked = !checked
     setChecked(newChecked)
     onChange(newChecked, schemaData)

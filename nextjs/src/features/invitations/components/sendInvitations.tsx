@@ -10,17 +10,16 @@ import {
 } from '@/components/ui/dialog'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import { MailIcon, PlusIcon, SendIcon, TrashIcon } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
 import {
   RoleI,
   SendInvitationModalProps,
 } from '../interfaces/invitation-interface'
-import { useEffect, useState } from 'react'
 
 import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import React from 'react'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { createInvitations } from '@/app/api/Invitation'
 import { getOrganizationRoles } from '@/app/api/organization'
@@ -44,7 +43,7 @@ export default function SendInvitationModal({
   openModal,
   setMessage,
   setOpenModal,
-}: SendInvitationModalProps) {
+}: SendInvitationModalProps): React.JSX.Element {
   const [loading, setLoading] = useState<boolean>(false)
   const [selfEmail, setSelfEmail] = useState<string>('')
   const [invitations, setInvitations] = useState<Invitation[]>([])
@@ -54,7 +53,7 @@ export default function SendInvitationModal({
   const selectedOrgId = useAppSelector((state) => state.organization.orgId)
   const userProfileDetails = useAppSelector((state) => state.user.userInfo)
 
-  const getRoles = async () => {
+  const getRoles = async (): Promise<void> => {
     try {
       const resRoles = await getOrganizationRoles(selectedOrgId)
       const { data } = resRoles as AxiosResponse
@@ -73,7 +72,7 @@ export default function SendInvitationModal({
   }
 
   useEffect(() => {
-    const getEmail = async () => {
+    const getEmail = async (): Promise<void> => {
       const email = userProfileDetails?.email
       setSelfEmail(email)
     }
@@ -85,7 +84,7 @@ export default function SendInvitationModal({
     }
   }, [openModal, userProfileDetails?.email])
 
-  const includeInvitation = async (email: string) => {
+  const includeInvitation = async (email: string): Promise<void> => {
     setInvitations([
       ...invitations,
       {
@@ -96,12 +95,12 @@ export default function SendInvitationModal({
     ])
   }
 
-  const removeInvitation = (email: string) => {
+  const removeInvitation = (email: string): void => {
     const invitationList = invitations.filter((item) => email !== item.email)
     setInvitations(invitationList)
   }
 
-  const sendInvitations = async () => {
+  const sendInvitations = async (): Promise<void> => {
     setLoading(true)
 
     try {
@@ -133,9 +132,9 @@ export default function SendInvitationModal({
     }
   }
 
-  const validateAndAddEmail = (values: { email: string }) => {
+  const validateAndAddEmail = (values: { email: string }): void => {
     if (values.email.trim() === selfEmail.trim()) {
-      setErrorMsg("You can't send invitation to yourself")
+      setErrorMsg('You can not send invitation to yourself')
       return
     }
 

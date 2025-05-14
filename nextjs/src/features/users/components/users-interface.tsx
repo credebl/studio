@@ -6,7 +6,7 @@ export interface OrgRole {
   createdBy?: string
   lastChangedDateTime?: string
   lastChangedBy?: string
-  deletedAt?: any
+  deletedAt?: Date | null
 }
 
 export interface UserOrgRole {

@@ -1,10 +1,10 @@
 'use client'
 
+import { Button } from '@/components/ui/button'
 import React from 'react'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
 
-export default function NotFound() {
+export default function NotFound(): React.JSX.Element {
   const router = useRouter()
 
   return (
