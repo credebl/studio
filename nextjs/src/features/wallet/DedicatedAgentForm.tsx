@@ -92,19 +92,6 @@ const DedicatedAgentForm = ({
                   )}
               </div>
               <div className="mt-6 flex items-center justify-between">
-                <Button
-                  variant="secondary"
-                  onClick={() =>
-                    router.push(
-                      '/organizations/create-organization?createOrg=true',
-                    )
-                  }
-                  className="flex items-center gap-2"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  Back to Create Organization
-                </Button>
-
                 <Button type="submit">Continue to Ledger Setup</Button>
               </div>
             </Form>
