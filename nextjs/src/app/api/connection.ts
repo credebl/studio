@@ -41,7 +41,7 @@ export const getConnectionsByOrg = async ({
     throw new Error("Error fetching connection list");
   } catch (error) {
     const err = error as Error;
-    console.error('Error fetching connections::', err.message?? '');
+    console.log('Error fetching connections::', err.message?? '');
   }
 }
 
