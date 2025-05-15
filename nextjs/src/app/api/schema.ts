@@ -7,6 +7,7 @@ import { axiosGet, axiosPost } from '@/services/apiRequests'
 import { AxiosResponse } from 'axios'
 import apiRoutes from './apiRoutes'
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs'
+import { SchemaTypes } from '@/common/enums'
 
 const config = getHeaderConfigs()
 export const createSchemas = async (
@@ -155,3 +156,18 @@ export const getCredDefDetailsByCredDefId = async (
     return err?.message
   }
 }
+
+export const getSchemaCredDef = async (schemaType: SchemaTypes,orgId:string) => {
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.bulk.credefList}?schemaType=${schemaType}`;
+	const axiosPayload = {
+		url,
+		config: await getHeaderConfigs(),
+	};
+
+	try {
+		return await axiosGet(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};
