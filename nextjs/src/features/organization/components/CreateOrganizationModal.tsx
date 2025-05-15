@@ -203,14 +203,6 @@ export default function OrganizationOnboarding(): React.JSX.Element {
     })
   }
 
-  // const handleSubmit = (values: IOrgFormValues) => {
-  //   dispatch(setFormData(values));
-  //   dispatch(setIsCreateOrgForm(false));
-  //   dispatch(setStep(2));
-
-  //   router.push('/organizations/agent-config')
-  // };
-
   const handleUpdateOrganization = async (
     values: IOrgFormValues,
   ): Promise<void> => {
@@ -222,7 +214,7 @@ export default function OrganizationOnboarding(): React.JSX.Element {
       const orgData = {
         name: values.name,
         description: values.description,
-        logo: logoPreview || '',
+        logo: logoPreview || values?.logoUrl || '',
         website: values.website || '',
         countryId: values.countryId,
         stateId: values.stateId,
@@ -350,14 +342,14 @@ export default function OrganizationOnboarding(): React.JSX.Element {
               cityId: orgData?.cityId ?? null,
               website: orgData?.website || '',
               logoFile: null,
-              logoPreview: orgData?.logoPreview || '',
+              logoPreview: orgData?.logoUrl || '',
+              logoUrl: orgData?.logoPreview || '',
             }}
             validationSchema={validationSchema}
             onSubmit={handleCreateAndContinue}
           >
             {({ errors, touched, setFieldValue, values, isValid, dirty }) => (
               <Form className="space-y-6">
-                {/* Logo Upload */}
                 <div>
                   <Label className="mb-2 block pb-4">Organization Logo</Label>
                   <div className="border-input flex items-center gap-4 rounded-md border p-4">
@@ -375,7 +367,7 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                         <AvatarImage
                           src={
                             logoPreview ||
-                            orgData?.logoPreview ||
+                            orgData?.logoUrl ||
                             '/images/upload_logo_file.svg'
                           }
                           alt="Logo Preview"
