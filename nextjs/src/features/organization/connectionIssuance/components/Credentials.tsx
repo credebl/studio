@@ -232,7 +232,7 @@ const Credentials = () => {
 				Credentials
 			</h1>
 			<div className="flex gap-4 items-center">
-				{true && (
+				{walletCreated && (
 					<RoleViewButton
 						buttonTitle="Issue"
 						feature={Features.ISSUANCE}

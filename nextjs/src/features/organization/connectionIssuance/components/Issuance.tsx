@@ -101,7 +101,7 @@ const IssueCred = () => {
 	useEffect(() => {
 		const execute = async () => {
 			const response = await fetchOrganizationDetails();
-			if (typeof response !== null) {
+			if (response !== null) {
 				const schemaValue = response ? SchemaTypes.schema_W3C : SchemaTypes.schema_INDY
 				const credentials = await getSchemaCredDef(schemaValue, orgId) as AxiosResponse;
 				setCredentialOptions(credentials.data.data.map((value:ICredentials, index:number) => {
