@@ -51,7 +51,16 @@ import { setSocketId } from "@/lib/socketSlice";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { SearchableSelect } from "@/components/ShadCnSelect";
-import { DownloadCsvTemplate } from "@/app/api/BulkIssuance";
+import { DownloadCsvTemplate, getCsvFileData, issueBulkCredential, uploadCsvFile } from "@/app/api/BulkIssuance";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 
 export interface SelectRef {
 	clearValue(): void;
@@ -404,7 +413,7 @@ const BulkIssuance = () => {
 			setUploadedFileName(file?.name);
 			setUploadedFile(file);
 
-			const response = await uploadCsvFile(payload, selectedTemplate, schemaType);
+			const response = await uploadCsvFile(payload, selectedTemplate, schemaType, orgId);
 			const { data } = response as AxiosResponse;
 
 			if (data?.statusCode === apiStatusCodes?.API_STATUS_CREATED) {
@@ -453,6 +462,7 @@ const BulkIssuance = () => {
 					currentPage.pageNumber,
 					currentPage.pageSize,
 					searchText,
+					orgId
 				);
 				const { data } = response as AxiosResponse;
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -465,6 +475,7 @@ const BulkIssuance = () => {
 					});
 				}
 			} catch (err) {
+				console.error("Error in bulk issuance",err)
 				setLoading(false);
 			}
 		}
@@ -535,7 +546,7 @@ const BulkIssuance = () => {
 
 	const confirmCredentialIssuance = async () => {
 		setLoading(true);
-		const response = await issueBulkCredential(requestId, SOCKET.id);
+		const response = await issueBulkCredential(requestId, SOCKET.id,orgId);
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 
@@ -573,6 +584,7 @@ const BulkIssuance = () => {
 	const createSchemaTitle = { title: 'Create Schema', svg: <Create /> };
 
 	return (
+		
 		<div className="px-4 pt-2">
 			<div className="mb-4 col-span-full xl:mb-2">
 				<div className="flex justify-end items-center">
@@ -608,7 +620,7 @@ const BulkIssuance = () => {
 							feature={Features.CRETAE_SCHEMA}
 							svgComponent={<Plus />}
 							onClickEvent={() => {
-								window.location.href = `${pathRoutes.organizations.createSchema}`;
+								router.push(`${pathRoutes.organizations.createSchema}`);
 							}}
 							isPadding={createSchemaTitle.title !== 'Create Schema'}
 						/>
@@ -784,9 +796,9 @@ const BulkIssuance = () => {
 												<div className="w-fit">
 													<label htmlFor="organizationlogo">
 														<div
-															className={`px-4 py-2 mt-4 rounded-md text-center border text-custom-100 ${!isCredSelected
-																? 'opacity-50 bg-gray-400 dark:bg-transparent dark:text-gray-400 border-gray-400'
-																: 'bg-custom-900 dark:bg-transparent dark:hover:bg-primary-500 dark:text-custom-100 dark:hover:text-custom-900'
+															className={`px-4 py-2 mt-4 rounded-md text-center border text-white ${!isCredSelected
+																? 'opacity-50 bg-black/50 dark:bg-transparent dark:text-gray-400 border-gray-400'
+																: 'bg-black dark:bg-transparent dark:hover:bg-primary-500 dark:text-custom-100 dark:hover:text-custom-900'
 																}`}
 														>
 															Choose file
@@ -902,11 +914,24 @@ const BulkIssuance = () => {
 							</div>
 							{currentPage.total > 1 && (
 								<div className="flex items-center justify-end mb-4">
-									<Pagination
+									<Pagination>
+									<PaginationContent>
+										<PaginationItem>
+											<PaginationPrevious href="#" />
+										</PaginationItem>
+										 <PaginationItem>
+											<PaginationEllipsis />
+										</PaginationItem>
+										<PaginationItem>
+											<PaginationNext href="#" />
+										</PaginationItem>
+									</PaginationContent>
+									</Pagination>
+									{/* <Pagination
 										currentPage={currentPage.pageNumber}
 										onPageChange={onPageChange}
 										totalPages={currentPage.total}
-									/>
+									/> */}
 								</div>
 							)}
 						</Card>
@@ -956,15 +981,14 @@ const BulkIssuance = () => {
 								onClick={handleOpenConfirmation}
 								disabled={!isFileUploaded}
 								type="reset"
-								color="bg-primary-800"
-								className="float-right py-2 mb-4 bg-primary ring-primary hover:bg-primary-800 ring-2 text-white font-medium rounded-lg text-sm px-4 lg:px-5 lg:py-2.5 mr-0 ml-auto dark:text-white dark:hover:text-white dark:hover:bg-primary mx-4"
+								className="float-right py-2 mb-4 bg-primary ring-primary hover:bg-primary/90 ring-2 font-medium rounded-lg text-sm px-4 lg:px-5 lg:py-2.5 mr-0 ml-auto dark:text-white dark:hover:text-white dark:hover:bg-primary mx-4"
 								style={{ height: '2.6rem', width: '6rem', minWidth: '2rem' }}
 							>
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									width="27"
 									height="18"
-									fill="none"
+									fill="current"
 									viewBox="0 0 27 18"
 									className="mr-1"
 									style={{ height: '20px', width: '30px' }}

@@ -65,7 +65,7 @@ const Credentials = () => {
 			if (orgId && isWalletCreated) {
 				const response = await getIssuedCredentials({...listAPIParameter,orgId});
 				const { data } = response as AxiosResponse;
-
+				console.log("resp",response)
 				if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 					setTotalItem(data?.data.totalItems);
 					const { totalItems, nextPage, lastPage } = data.data;

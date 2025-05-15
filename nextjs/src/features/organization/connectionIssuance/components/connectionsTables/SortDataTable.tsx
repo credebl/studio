@@ -3,6 +3,16 @@ import type { IDataTable } from '../../type/Connections';
 import Loader from '@/components/Loader';
 import SearchInput from '@/components/SearchInput';
 import { useState } from 'react';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
+import { cn } from '@/lib/utils';
 
 const SortDataTable: React.FC<IDataTable> = ({
 	header,
@@ -61,6 +71,7 @@ const SortDataTable: React.FC<IDataTable> = ({
 	];
 
 	return (
+									<Pagination>
 		<section className="bg-gray-50 dark:bg-gray-900 w-full">
 			<div className="mx-auto min-h-80">
 				<div className="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
@@ -248,6 +259,38 @@ const SortDataTable: React.FC<IDataTable> = ({
 							)}
 							{lastPage > 1 && data?.length > 0 && (
 								<div className="items-center">
+										<PaginationContent>
+											<PaginationItem>
+													<PaginationPrevious
+													href="#"
+													onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
+													className={`bg-primary/50 px-3 py-1 rounded ${
+														currentPage === 1 ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''
+														}`}
+													/>
+												</PaginationItem>
+												{Array.from({length:lastPage},(_,index)=>{
+												return  <PaginationItem key={index} >
+																<PaginationLink 
+																className={` ${currentPage === index+1?'bg-primary':'bg-primary/50'}`}
+ 																isActive={currentPage === index+1} 
+																onClick={()=>onPageChange(index+1)} >
+																	{index+1}
+																</PaginationLink>
+														</PaginationItem>
+											})}
+											<PaginationItem>
+												<PaginationEllipsis />
+											</PaginationItem>
+											<PaginationItem>
+												<PaginationNext
+													onClick={() => currentPage < lastPage && onPageChange(currentPage + 1)}
+													aria-disabled={currentPage === lastPage}
+													tabIndex={currentPage === lastPage ? -1 : 0}
+													className="bg-primary/50 aria-disabled:opacity-50 aria-disabled:cursor-not-allowed"
+													/>
+											</PaginationItem>
+										</PaginationContent>
 									{/*								<Pagination
 										currentPage={currentPage}
 										onPageChange={onPageChange}
@@ -260,6 +303,7 @@ const SortDataTable: React.FC<IDataTable> = ({
 				</div>
 			</div>
 		</section>
+</Pagination>
 	);
 };
 

@@ -60,6 +60,7 @@
   --error: #f8b0b0;
   --success-text: #339b59;
   --error-text: #dc0425;
+  --dark-yellow: #A57300;
 }
 
 .dark {
@@ -207,7 +208,7 @@ ul.timelinestatic > li:before {
 	font-weight: bold;
 	height: 45px;
 	color: #000000;
-	background: #F7D999;
+	background: var(--primary);
 }
 
 ul.timelinestatic {
@@ -217,7 +218,7 @@ ul.timelinestatic {
 
 ul.timelinestatic:before {
 	content: ' ';
-	background: #F7D999;
+	background: var(--primary);
 	display: inline-block;
 	position: absolute;
 	left: 29px;
