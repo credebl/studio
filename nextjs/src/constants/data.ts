@@ -54,7 +54,7 @@ export const navItems: NavItem[] = [
     items: [
       {
         title: 'Issue',
-        url: '/issue',
+        url: '/organizations/credentials',
         icon: 'userPen',
         shortcut: ['m', 'm'],
       },
