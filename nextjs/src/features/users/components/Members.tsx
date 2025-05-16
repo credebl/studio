@@ -381,9 +381,8 @@ export default function Members(): React.JSX.Element {
       </div>
     )
   }
-
   const hasAdminRights =
-    orgUserRole?.includes(Roles.ADMIN) ?? orgUserRole?.includes(Roles.OWNER)
+  [Roles.ADMIN, Roles.OWNER].some(role => orgUserRole?.includes(role));
 
   return (
     <div className="p-5">
