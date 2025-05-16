@@ -34,8 +34,7 @@ export const getConnectionsByOrg = async ({
 
   try {
     const connectionList = await axiosGet(axiosPayload)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data } = connectionList as any
+    const { data } = connectionList as AxiosResponse
     if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
       if (!data.data) {
         throw new Error('Error fetching connections', data.error)
