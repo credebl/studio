@@ -2,7 +2,11 @@
 
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AxiosError, AxiosResponse } from 'axios'
-import { IDeviceData, IVerifyRegistrationObj, IdeviceBody } from '@/components/profile/interfaces'
+import {
+  IDeviceData,
+  IVerifyRegistrationObj,
+  IdeviceBody,
+} from '@/components/profile/interfaces'
 import React, { useEffect, useState } from 'react'
 import {
   addDeviceDetails,
@@ -10,18 +14,19 @@ import {
   getUserDeviceDetails,
   verifyRegistration,
 } from '@/app/api/Fido'
-import { apiStatusCodes, storageKeys } from '@/config/CommonConstant'
 
 import { Button } from '@/components/ui/button'
-import DeviceDetails from '@/components/profile/DeviceDetails'
-import { Devices } from './UserInfoForm'
-import PasskeyAddDevice from '@/components/profile/PasskeyAddDevice'
-import PasskeyAlert from '@/components/common/PasskeyAlert'
-import { getFromLocalStorage } from '@/utils/localStorage'
+import DeviceDetails from './DeviceDetails'
+import { Devices } from '../auth/components/UserInfoForm'
+import PasskeyAddDevice from './PassKeyAddDevice'
+import PasskeyAlert from './PasskeyAlert'
+import { RootState } from '@/lib/store'
+import { apiStatusCodes } from '@/config/CommonConstant'
 import { startRegistration } from '@simplewebauthn/browser'
+import { useSelector } from 'react-redux'
 
 interface RegistrationOptionInterface {
-  userName: string
+  userName: string | null
   deviceFlag: boolean
 }
 
@@ -30,10 +35,10 @@ interface AlertResponseType {
   message: string
 }
 
-const AddPasskey = () => {
+const AddPasskey = (): React.JSX.Element => {
   const [fidoError, setFidoError] = useState('')
   const [fidoLoader, setFidoLoader] = useState(true)
-  const [OrgUserEmail, setOrgUserEmail] = useState<string>('')
+  const [OrgUserEmail, setOrgUserEmail] = useState<string | null>('')
   const [deviceList, setDeviceList] = useState<IDeviceData[]>([])
   const [addSuccess, setAddSuccess] = useState<string | null>(null)
   const [editSuccess, setEditSuccess] = useState<string | null>(null)
@@ -42,13 +47,9 @@ const AddPasskey = () => {
   const [disableFlag, setDisableFlag] = useState<boolean>(false)
   const [isDevice, setIsDevice] = useState<boolean>(false)
   const [openModel, setOpenModel] = useState<boolean>(false)
-  const [errMsg, setErrMsg] = useState<string | null>(null)
+  const [, setErrMsg] = useState<string | null>(null)
 
-  const setProfile = async () => {
-    const UserEmail = await getFromLocalStorage(storageKeys.USER_EMAIL)
-    setOrgUserEmail(UserEmail)
-    return UserEmail
-  }
+  const userEmail = useSelector((state: RootState) => state.profile.email)
 
   const showFidoError = (error: unknown): void => {
     const err = error as AxiosError
@@ -62,16 +63,100 @@ const AddPasskey = () => {
     }
   }
 
-  const addDevice = async (): Promise<void> => {
+  useEffect(() => {
+    if (userEmail) {
+      setOrgUserEmail(userEmail)
+    }
+  }, [userEmail])
+
+  const userDeviceDetails = async (): Promise<void> => {
     try {
-      if (deviceList?.length > 0) {
-        registerWithPasskey(true)
-        setOpenModel(false)
-      } else {
-        setOpenModel(true)
+      setFidoLoader(true)
+
+      const userDeviceDetailsResp = await getUserDeviceDetails(
+        OrgUserEmail as string,
+      )
+      const { data } = userDeviceDetailsResp as AxiosResponse
+      setFidoLoader(false)
+      if (userDeviceDetailsResp) {
+        const deviceDetails =
+          Object.keys(data)?.length > 0
+            ? userDeviceDetailsResp?.data?.data.map(
+                (data: { lastChangedDateTime: string }) => ({
+                  ...data,
+                  lastChangedDateTime: data.lastChangedDateTime
+                    ? data.lastChangedDateTime
+                    : '-',
+                }),
+              )
+            : []
+        if (data?.data?.length === 1) {
+          setDisableFlag(true)
+        } else {
+          setDisableFlag(false)
+        }
+        setDeviceList(deviceDetails)
       }
     } catch (error) {
+      setAddFailure('Error while fetching the device details')
       setFidoLoader(false)
+    }
+  }
+
+  const addDeviceDetailsMethod = async (
+    deviceBody: IdeviceBody,
+  ): Promise<void> => {
+    try {
+      const deviceDetailsResp = await addDeviceDetails(deviceBody)
+      const { data } = deviceDetailsResp as AxiosResponse
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        setAddSuccess('Device added successfully')
+        userDeviceDetails()
+      } else {
+        setAddFailure(deviceDetailsResp as string)
+      }
+      setTimeout(() => {
+        setAddSuccess('')
+        setAddFailure('')
+      }, 3000)
+    } catch (error) {
+      showFidoError(error)
+    }
+  }
+
+  const verifyRegistrationMethod = async (
+    verifyRegistrationObj: IVerifyRegistrationObj,
+    OrgUserEmail: string,
+  ): Promise<void> => {
+    try {
+      const verificationRegisterResp = await verifyRegistration(
+        verifyRegistrationObj,
+        OrgUserEmail,
+      )
+      const { data } = verificationRegisterResp as AxiosResponse
+      let credentialID = ''
+
+      credentialID = encodeURIComponent(data?.data?.newDevice?.credentialID)
+      if (data?.data?.verified) {
+        let platformDeviceName = ''
+
+        if (
+          verifyRegistrationObj?.authenticatorAttachment === 'cross-platform'
+        ) {
+          platformDeviceName = 'Passkey'
+        } else {
+          platformDeviceName = navigator.platform
+        }
+
+        const deviceBody: IdeviceBody = {
+          userName: OrgUserEmail,
+          credentialId: credentialID,
+          deviceFriendlyName: platformDeviceName,
+        }
+        await addDeviceDetailsMethod(deviceBody)
+      }
+    } catch (error) {
+      showFidoError(error)
     }
   }
 
@@ -116,89 +201,15 @@ const AddPasskey = () => {
     }
   }
 
-  const verifyRegistrationMethod = async (
-    verifyRegistrationObj: IVerifyRegistrationObj,
-    OrgUserEmail: string,
-  ): Promise<void> => {
+  const addDevice = async (): Promise<void> => {
     try {
-      const verificationRegisterResp = await verifyRegistration(
-        verifyRegistrationObj,
-        OrgUserEmail,
-      )
-      const { data } = verificationRegisterResp as AxiosResponse
-      let credentialID = ''
-
-      credentialID = encodeURIComponent(data?.data?.newDevice?.credentialID)
-      if (data?.data?.verified) {
-        let platformDeviceName = ''
-
-        if (
-          verifyRegistrationObj?.authenticatorAttachment === 'cross-platform'
-        ) {
-          platformDeviceName = 'Passkey'
-        } else {
-          platformDeviceName = navigator.platform
-        }
-
-        const deviceBody: IdeviceBody = {
-          userName: OrgUserEmail,
-          credentialId: credentialID,
-          deviceFriendlyName: platformDeviceName,
-        }
-        await addDeviceDetailsMethod(deviceBody)
-      }
-    } catch (error) {
-      showFidoError(error)
-    }
-  }
-
-  const addDeviceDetailsMethod = async (deviceBody: IdeviceBody): Promise<void> => {
-    try {
-      const deviceDetailsResp = await addDeviceDetails(deviceBody)
-      const { data } = deviceDetailsResp as AxiosResponse
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        setAddSuccess('Device added successfully')
-        userDeviceDetails()
+      if (deviceList?.length > 0) {
+        registerWithPasskey(true)
+        setOpenModel(false)
       } else {
-        setAddFailure(deviceDetailsResp as string)
-      }
-      setTimeout(() => {
-        setAddSuccess('')
-        setAddFailure('')
-      }, 3000)
-    } catch (error) {
-      showFidoError(error)
-    }
-  }
-
-  const userDeviceDetails = async (): Promise<void> => {
-    try {
-      setFidoLoader(true)
-
-      const userDeviceDetailsResp = await getUserDeviceDetails(OrgUserEmail)
-      const { data } = userDeviceDetailsResp as AxiosResponse
-      setFidoLoader(false)
-      if (userDeviceDetailsResp) {
-        const deviceDetails =
-          Object.keys(data)?.length > 0
-            ? userDeviceDetailsResp?.data?.data.map(
-                (data: { lastChangedDateTime: string }) => ({
-                  ...data,
-                  lastChangedDateTime: data.lastChangedDateTime
-                    ? data.lastChangedDateTime
-                    : '-',
-                }),
-              )
-            : []
-        if (data?.data?.length === 1) {
-          setDisableFlag(true)
-        } else {
-          setDisableFlag(false)
-        }
-        setDeviceList(deviceDetails)
+        setOpenModel(true)
       }
     } catch (error) {
-      setAddFailure('Error while fetching the device details')
       setFidoLoader(false)
     }
   }
@@ -206,8 +217,6 @@ const AddPasskey = () => {
   useEffect(() => {
     if (OrgUserEmail) {
       userDeviceDetails()
-    } else {
-      setProfile()
     }
     const platform = navigator.platform.toLowerCase()
     if (platform.includes(Devices.Linux)) {
@@ -215,7 +224,7 @@ const AddPasskey = () => {
     }
   }, [OrgUserEmail])
 
-  const handleResponseMessages = (value: AlertResponseType) => {
+  const handleResponseMessages = (value: AlertResponseType): void => {
     if (value.type === 'success') {
       setEditSuccess(value.message)
     } else {
@@ -231,7 +240,7 @@ const AddPasskey = () => {
     <div className="h-full">
       {(addSuccess || addFailure || fidoError) && (
         <div className="p-2">
-          <Alert variant={addSuccess ? "default" : "destructive"}>
+          <Alert variant={addSuccess ? 'default' : 'destructive'}>
             <AlertDescription>
               {addSuccess || addFailure || fidoError}
             </AlertDescription>
@@ -243,7 +252,7 @@ const AddPasskey = () => {
           <div className="px-6 py-6">
             {fidoLoader ? (
               <div className="mb-4 flex items-center justify-center">
-                <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent"></div>
+                <div className="border-primary h-8 w-8 animate-spin rounded-full border-4 border-solid border-t-transparent"></div>
               </div>
             ) : (
               <div>
@@ -258,7 +267,7 @@ const AddPasskey = () => {
                   </div>
 
                   {(editSuccess || editFailure) && (
-                    <Alert variant={editSuccess ? "default" : "destructive"}>
+                    <Alert variant={editSuccess ? 'default' : 'destructive'}>
                       <AlertDescription>
                         {editSuccess || editFailure}
                       </AlertDescription>

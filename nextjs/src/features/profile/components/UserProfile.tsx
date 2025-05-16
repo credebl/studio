@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 
-import AddPasskey from '@/features/auth/components/AddPasskey'
+import AddPasskey from '@/features/passkey/AddPasskey'
 import DisplayUserProfile from './DisplayUserProfile'
 import EditUserProfile from './EditUserProfile'
 import { IUserProfile } from '@/components/profile/interfaces'
