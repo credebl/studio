@@ -1,4 +1,5 @@
 import {
+  IAddPassword,
   IDeviceDetails,
   IRegistrationOption,
   IUserEmail,
@@ -160,5 +161,23 @@ export const editDeviceDetails = async (
   } catch (error) {
     const err = error as Error
     throw new Error(err?.message)
+  }
+}
+
+export const addPasskeyUserDetails = async (
+  payload: IAddPassword,
+  email: string | null,
+): Promise<AxiosResponse | string> => {
+  const details = {
+    url: `${apiRoutes.auth.passkeyUserDetails}${email}`,
+    payload,
+    config,
+  }
+  try {
+    const response = await axiosPut(details)
+    return response
+  } catch (error) {
+    const err = error as Error
+    return err?.message
   }
 }

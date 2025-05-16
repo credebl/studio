@@ -1,6 +1,8 @@
+import * as yup from 'yup';
+
 import { Button, Label, Modal } from 'flowbite-react';
 import { Field, Form, Formik } from 'formik';
-import * as yup from 'yup';
+
 import { useRef } from 'react';
 
 const EditModal = (props: {

@@ -1,5 +1,5 @@
 export interface IRegistrationOption {
-  userName: string
+  userName: string | null
   deviceFlag: boolean
 }
 
