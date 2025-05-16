@@ -36,10 +36,10 @@ interface AlertResponseType {
 }
 
 const AddPasskey = (): React.JSX.Element => {
-  const [fidoError, setFidoError] = useState('')
-  const [fidoLoader, setFidoLoader] = useState(true)
+  const [error, setError] = useState('')
+  const [loader, setLoader] = useState(true)
   const [OrgUserEmail, setOrgUserEmail] = useState<string | null>('')
-  const [deviceList, setDeviceList] = useState<IDeviceData[]>([])
+  const [deviceList, setDeviceListData] = useState<IDeviceData[]>([])
   const [addSuccess, setAddSuccess] = useState<string | null>(null)
   const [editSuccess, setEditSuccess] = useState<string | null>(null)
   const [editFailure, setEditFailure] = useState<string | null>(null)
@@ -57,9 +57,9 @@ const AddPasskey = (): React.JSX.Element => {
       err.message.includes('The operation either timed out or was not allowed')
     ) {
       const [errorMsg] = err.message.split('.')
-      setFidoError(errorMsg)
+      setError(errorMsg)
     } else {
-      setFidoError(err.message)
+      setError(err.message)
     }
   }
 
@@ -69,15 +69,15 @@ const AddPasskey = (): React.JSX.Element => {
     }
   }, [userEmail])
 
-  const userDeviceDetails = async (): Promise<void> => {
+  const userDeviceData = async (): Promise<void> => {
     try {
-      setFidoLoader(true)
+      setLoader(true)
 
       const userDeviceDetailsResp = await getUserDeviceDetails(
         OrgUserEmail as string,
       )
       const { data } = userDeviceDetailsResp as AxiosResponse
-      setFidoLoader(false)
+      setLoader(false)
       if (userDeviceDetailsResp) {
         const deviceDetails =
           Object.keys(data)?.length > 0
@@ -95,11 +95,11 @@ const AddPasskey = (): React.JSX.Element => {
         } else {
           setDisableFlag(false)
         }
-        setDeviceList(deviceDetails)
+        setDeviceListData(deviceDetails)
       }
     } catch (error) {
       setAddFailure('Error while fetching the device details')
-      setFidoLoader(false)
+      setLoader(false)
     }
   }
 
@@ -111,7 +111,7 @@ const AddPasskey = (): React.JSX.Element => {
       const { data } = deviceDetailsResp as AxiosResponse
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setAddSuccess('Device added successfully')
-        userDeviceDetails()
+        userDeviceData()
       } else {
         setAddFailure(deviceDetailsResp as string)
       }
@@ -125,23 +125,23 @@ const AddPasskey = (): React.JSX.Element => {
   }
 
   const verifyRegistrationMethod = async (
-    verifyRegistrationObj: IVerifyRegistrationObj,
+    verifyRegistrationObject: IVerifyRegistrationObj,
     OrgUserEmail: string,
   ): Promise<void> => {
     try {
-      const verificationRegisterResp = await verifyRegistration(
-        verifyRegistrationObj,
+      const verificationRegisterResponse = await verifyRegistration(
+        verifyRegistrationObject,
         OrgUserEmail,
       )
-      const { data } = verificationRegisterResp as AxiosResponse
-      let credentialID = ''
+      const { data } = verificationRegisterResponse as AxiosResponse
+      let credentialsID = ''
 
-      credentialID = encodeURIComponent(data?.data?.newDevice?.credentialID)
+      credentialsID = encodeURIComponent(data?.data?.newDevice?.credentialID)
       if (data?.data?.verified) {
         let platformDeviceName = ''
 
         if (
-          verifyRegistrationObj?.authenticatorAttachment === 'cross-platform'
+          verifyRegistrationObject?.authenticatorAttachment === 'cross-platform'
         ) {
           platformDeviceName = 'Passkey'
         } else {
@@ -150,7 +150,7 @@ const AddPasskey = (): React.JSX.Element => {
 
         const deviceBody: IdeviceBody = {
           userName: OrgUserEmail,
-          credentialId: credentialID,
+          credentialId: credentialsID,
           deviceFriendlyName: platformDeviceName,
         }
         await addDeviceDetailsMethod(deviceBody)
@@ -210,13 +210,13 @@ const AddPasskey = (): React.JSX.Element => {
         setOpenModel(true)
       }
     } catch (error) {
-      setFidoLoader(false)
+      setLoader(false)
     }
   }
 
   useEffect(() => {
     if (OrgUserEmail) {
-      userDeviceDetails()
+      userDeviceData()
     }
     const platform = navigator.platform.toLowerCase()
     if (platform.includes(Devices.Linux)) {
@@ -238,11 +238,11 @@ const AddPasskey = (): React.JSX.Element => {
 
   return (
     <div className="h-full">
-      {(addSuccess || addFailure || fidoError) && (
+      {(addSuccess || addFailure || error) && (
         <div className="p-2">
           <Alert variant={addSuccess ? 'default' : 'destructive'}>
             <AlertDescription>
-              {addSuccess || addFailure || fidoError}
+              {addSuccess || addFailure || error}
             </AlertDescription>
           </Alert>
         </div>
@@ -250,7 +250,7 @@ const AddPasskey = (): React.JSX.Element => {
       <div className="relative flex h-full flex-auto flex-col p-3 sm:p-4">
         <div className="mx-auto w-full rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
           <div className="px-6 py-6">
-            {fidoLoader ? (
+            {loader ? (
               <div className="mb-4 flex items-center justify-center">
                 <div className="border-primary h-8 w-8 animate-spin rounded-full border-4 border-solid border-t-transparent"></div>
               </div>
@@ -282,7 +282,7 @@ const AddPasskey = (): React.JSX.Element => {
                           deviceFriendlyName={element.deviceFriendlyName}
                           createDateTime={element.createDateTime}
                           credentialID={element.credentialId}
-                          refreshList={userDeviceDetails}
+                          refreshList={userDeviceData}
                           disableRevoke={disableFlag}
                           responseMessages={handleResponseMessages}
                         />
