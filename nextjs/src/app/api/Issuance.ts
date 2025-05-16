@@ -59,3 +59,21 @@ filter}: IConnectionListAPIParameter) => {
 		return err?.message;
 	}
 };
+
+export const issueOobEmailCredential = async (data: object, credentialType:CredentialType,orgId:string) => {
+	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.issueOobEmailCredential}?credentialType=${credentialType}`;
+	const payload = data;
+
+	const axiosPayload = {
+		url,
+		payload,
+		config: await getHeaderConfigs(),
+	};
+
+	try {
+		return await axiosPost(axiosPayload);
+	} catch (error) {
+		const err = error as Error;
+		return err?.message;
+	}
+};

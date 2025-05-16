@@ -87,7 +87,7 @@ export function SearchableSelect({
 					<CommandList>
 						<CommandEmpty>{emptyMessage}</CommandEmpty>
 						<CommandGroup className="max-h-64 overflow-auto">
-							{options.map((option, index) => (
+							{options && options.map((option, index) => (
 								<CommandItem
 									key={index}
 									value={option.label}
