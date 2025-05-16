@@ -1,9 +1,10 @@
+import { axiosDelete, axiosGet } from '@/services/apiRequests'
+
 import { AxiosResponse } from 'axios'
-import { apiRoutes } from '@/config/apiRoutes';
-import { apiStatusCodes } from '@/config/CommonConstant';
-import { getHeaderConfigs } from '@/config/GetHeaderConfigs';
-import { ConnectionResponse } from '@/features/connections/types/connections-interface';
-import { axiosDelete, axiosGet } from '@/services/apiRequests';
+import { ConnectionResponse } from '@/features/connections/types/connections-interface'
+import { apiRoutes } from '@/config/apiRoutes'
+import { apiStatusCodes } from '@/config/CommonConstant'
+import { getHeaderConfigs } from '@/config/GetHeaderConfigs'
 
 export interface IConnectionListAPIParameter {
   itemPerPage: number
@@ -20,9 +21,11 @@ export const getConnectionsByOrg = async ({
   itemPerPage,
   search,
   sortBy,
-  sortingOrder
-}: IConnectionListAPIParameter & { orgId: string }): Promise<ConnectionResponse | void> => {
-  const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.getAllConnections}?pageSize=${itemPerPage}&pageNumber=${page}&searchByText=${search}&sortBy=${sortingOrder}&sortField=${sortBy}`;
+  sortingOrder,
+}: IConnectionListAPIParameter & {
+  orgId: string
+}): Promise<ConnectionResponse | void> => {
+  const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.getAllConnections}?pageSize=${itemPerPage}&pageNumber=${page}&searchByText=${search}&sortBy=${sortingOrder}&sortField=${sortBy}`
 
   const axiosPayload = {
     url,
@@ -30,18 +33,20 @@ export const getConnectionsByOrg = async ({
   }
 
   try {
-    const connectionList = await axiosGet(axiosPayload);
-    const { data } = connectionList as any;
+    const connectionList = await axiosGet(axiosPayload)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data } = connectionList as any
     if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-			if (!data.data) {
-				throw new Error("Error fetching connections", data.error)
-			}
-      return data.data;
+      if (!data.data) {
+        throw new Error('Error fetching connections', data.error)
+      }
+      return data.data
     }
-    throw new Error("Error fetching connection list");
+    throw new Error('Error fetching connection list')
   } catch (error) {
-    const err = error as Error;
-    console.log('Error fetching connections::', err.message?? '');
+    const err = error as Error
+    // eslint-disable-next-line no-console
+    console.log('Error fetching connections::', err.message ?? '')
   }
 }
 

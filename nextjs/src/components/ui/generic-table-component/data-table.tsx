@@ -34,47 +34,47 @@ interface DataTableProps<TData, TValue> {
   /**
    * Array of data objects to be rendered as rows.
    */
-  data: TData[];
+  data: TData[]
 
   /**
    * Column definitions for rendering the table.
    */
-  columns: ColumnDef<TData, TValue>[];
+  columns: ColumnDef<TData, TValue>[]
 
-	/**
+  /**
    * A key from the TData object used as the unique identifier for rows.
    */
-  index: keyof TData;
+  index: keyof TData
 
   /**
    * Current page index for pagination (zero-based).
    */
-  pageIndex: number;
+  pageIndex: number
 
   /**
    * Number of rows per page.
    */
-  pageSize: number;
+  pageSize: number
 
   /**
    * Total number of pages available.
    */
-  pageCount: number;
+  pageCount: number
 
   /**
    * Callback triggered when the page index changes.
    */
-  onPageChange: (pageIndex: number) => void;
+  onPageChange: (pageIndex: number) => void
 
   /**
    * Callback triggered when the page size changes.
    */
-  onPageSizeChange: (pageSize: number) => void;
+  onPageSizeChange: (pageSize: number) => void
 
   /**
    * Callback triggered when the search term changes.
    */
-  onSearchTerm: (searchTerm: string) => void;
+  onSearchTerm: (searchTerm: string) => void
 }
 
 /**
@@ -93,7 +93,7 @@ interface DataTableProps<TData, TValue> {
  * @param {(pageIndex: number) => void} props.onPageChange Callback triggered when the page index changes.
  * @param {(pageSize: number) => void} props.onPageSizeChange Callback triggered when the page size changes.
  * @param {(searchTerm: string) => void} props.onSearchTerm Callback triggered when the search term changes.
- * 
+ *
  * @returns The rendered DataTable component.
  */
 export function DataTable<TData, TValue>({
@@ -105,15 +105,15 @@ export function DataTable<TData, TValue>({
   pageCount,
   onPageChange,
   onPageSizeChange,
-  onSearchTerm
+  onSearchTerm,
 }: DataTableProps<TData, TValue>) {
-  const [rowSelection, setRowSelection] = React.useState({});
+  const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+    React.useState<VisibilityState>({})
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+    [],
+  )
+  const [sorting, setSorting] = React.useState<SortingState>([])
 
   const table = useReactTable({
     data,
@@ -123,26 +123,26 @@ export function DataTable<TData, TValue>({
     state: {
       pagination: {
         pageIndex,
-        pageSize
+        pageSize,
       },
       sorting,
       columnVisibility,
       rowSelection,
-      columnFilters
+      columnFilters,
     },
     manualPagination: true,
     onPaginationChange: (updater) => {
       const newState =
         typeof updater === 'function'
           ? updater({ pageIndex, pageSize })
-          : updater;
+          : updater
       if (newState.pageSize !== pageSize) {
-        onPageChange(0); //reset to first page on page size change
+        onPageChange(0) //reset to first page on page size change
       } else {
-        onPageChange(newState.pageIndex);
+        onPageChange(newState.pageIndex)
       }
       if (pageSize !== newState.pageSize) {
-        onPageSizeChange(newState.pageSize);
+        onPageSizeChange(newState.pageSize)
       }
     },
     enableRowSelection: true,
@@ -155,13 +155,13 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues()
-  });
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+  })
 
   return (
-    <div className='space-y-4'>
+    <div className="space-y-4">
       <DataTableToolbar table={table} onSearchTermChange={onSearchTerm} />
-      <div className='rounded-md border'>
+      <div className="rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -173,10 +173,10 @@ export function DataTable<TData, TValue>({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
-                  );
+                  )
                 })}
               </TableRow>
             ))}
@@ -192,7 +192,7 @@ export function DataTable<TData, TValue>({
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -202,7 +202,7 @@ export function DataTable<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className='h-24 text-center'
+                  className="h-24 text-center"
                 >
                   No results.
                 </TableCell>
@@ -213,5 +213,5 @@ export function DataTable<TData, TValue>({
       </div>
       <DataTablePagination table={table} />
     </div>
-  );
+  )
 }

@@ -1,39 +1,39 @@
-import { ColumnDef } from '@tanstack/react-table';
-import { Checkbox } from '@/components/ui/checkbox';
-import { DataTableColumnHeader } from './data-table-column-header';
-import { JSX } from 'react';
+import { ColumnDef } from '@tanstack/react-table'
+import { Checkbox } from '@/components/ui/checkbox'
+import { DataTableColumnHeader } from './data-table-column-header'
+import { JSX } from 'react'
 
-export type ColumnActionName = 'hide' | 'sort';
+export type ColumnActionName = 'hide' | 'sort'
 
-export type SortActions = 'asc' | 'desc';
+export type SortActions = 'asc' | 'desc'
 
 export type CallbackFunction = (
   order: SortActions,
-  data?: any
-) => unknown | Promise<unknown>;
+  data?: any,
+) => unknown | Promise<unknown>
 
 export interface ITableMetadata {
-  enableSelection: Boolean;
-  filterCallback?: CallbackFunction;
+  enableSelection: Boolean
+  filterCallback?: CallbackFunction
 }
 
-type ColumnFunctionality = ColumnActionName | { sortCallBack: CallbackFunction };
+type ColumnFunctionality = ColumnActionName | { sortCallBack: CallbackFunction }
 
 export interface IColumnData {
-  id: string;
-  title: string;
-  accessorKey: string;
-  columnFunction: ColumnFunctionality[];
-  cell?: JSX.Element;
+  id: string
+  title: string
+  accessorKey: string
+  columnFunction: ColumnFunctionality[]
+  cell?: JSX.Element
 }
 
 export interface TableStyling {
-  metadata: ITableMetadata;
-  columnData: IColumnData[];
+  metadata: ITableMetadata
+  columnData: IColumnData[]
 }
 
 export function getColumns<T>(tableStyling: TableStyling): ColumnDef<T>[] {
-  const columns: ColumnDef<T>[] = [];
+  const columns: ColumnDef<T>[] = []
 
   if (tableStyling.metadata.enableSelection) {
     columns.push({
@@ -45,34 +45,34 @@ export function getColumns<T>(tableStyling: TableStyling): ColumnDef<T>[] {
             (table.getIsSomePageRowsSelected() && 'indeterminate')
           }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label='Select all'
-          className='translate-y-[2px]'
+          aria-label="Select all"
+          className="translate-y-[2px]"
         />
       ),
       cell: ({ row }) => (
         <Checkbox
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label='Select row'
-          className='translate-y-[2px]'
+          aria-label="Select row"
+          className="translate-y-[2px]"
         />
       ),
       enableSorting: false,
-      enableHiding: false
-    });
+      enableHiding: false,
+    })
   }
 
-	tableStyling.columnData.forEach((columnData) => {
+  tableStyling.columnData.forEach((columnData) => {
     const hasSort = columnData.columnFunction.some(
-      (f) => f === 'sort' || (typeof f === 'object' && 'sortCallBack' in f)
-    );
+      (f) => f === 'sort' || (typeof f === 'object' && 'sortCallBack' in f),
+    )
 
-    const hasHide = columnData.columnFunction.some((f) => f === 'hide');
+    const hasHide = columnData.columnFunction.some((f) => f === 'hide')
 
     const sortCallback = columnData.columnFunction.find(
       (f): f is { sortCallBack: CallbackFunction } =>
-        typeof f === 'object' && 'sortCallBack' in f
-    )?.sortCallBack;
+        typeof f === 'object' && 'sortCallBack' in f,
+    )?.sortCallBack
 
     columns.push({
       accessorKey: columnData.accessorKey,
@@ -87,16 +87,16 @@ export function getColumns<T>(tableStyling: TableStyling): ColumnDef<T>[] {
         columnData.cell ? (
           columnData.cell
         ) : (
-          <div className='flex space-x-2'>
-            <span className='max-w-32 truncate font-medium sm:max-w-72 md:max-w-[31rem]'>
+          <div className="flex space-x-2">
+            <span className="max-w-32 truncate font-medium sm:max-w-72 md:max-w-[31rem]">
               {row.getValue(columnData.id)}
             </span>
           </div>
         ),
       enableSorting: hasSort,
-      enableHiding: hasHide
-    });
-  });
+      enableHiding: hasHide,
+    })
+  })
 
-  return columns;
-};
+  return columns
+}
