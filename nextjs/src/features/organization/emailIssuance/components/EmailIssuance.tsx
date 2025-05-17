@@ -3,7 +3,7 @@ import * as Yup from 'yup';
 import React, { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { apiStatusCodes, CREDENTIAL_CONTEXT_VALUE, itemPerPage, proofPurpose } from '@/config/CommonConstant';
-import { IAttributes, ICredentials, IEmailCredentialData, IIssueAttributes, ITransformedData } from '../../connectionIssuance/type/Issuance';
+import { IAttributes, ICredentialOffer, ICredentials, IEmailCredentialData, IIssueAttributes, ITransformedData } from '../../connectionIssuance/type/Issuance';
 import { CredentialType, DidMethod, Features, ProofType, SchemaTypes, SchemaTypeValue } from '@/common/enums';
 import { GetAllSchemaListParameter } from '../../connectionIssuance/type/SchemaCard';
 import { useRouter } from 'next/navigation';
@@ -22,40 +22,17 @@ import { Button } from '@/components/ui/button';
 import { AlertComponent } from '@/components/AlertComponent';
 import RoleViewButton from '@/components/RoleViewButton';
 import { Card } from '@/components/ui/card';
-import { SearchableSelect } from '@/components/ShadCnSelect';
+import { Option, SearchableSelect } from '@/components/ShadCnSelect';
 import Loader from '@/components/Loader';
-import { Field, FieldArray, Form, Formik } from 'formik';
+import { Field, FieldArray, FieldArrayRenderProps, Form, Formik } from 'formik';
 import IssuancePopup from '../../bulkIssuance/components/IssuancePopup';
 import { EmptyListMessage } from '@/components/EmptyListComponent';
 import PageContainer from '@/components/layout/page-container';
-// import { pathRoutes } from '../../config/pathRoutes';
-// import BreadCrumbs from '../BreadCrumbs';
-// import BackButton from '../../commonComponents/backbutton';
-// import { Button, Card } from 'flowbite-react';
-// import Select, { type SingleValue } from 'react-select';
-// import { AlertComponent } from '../AlertComponent';
-// import IssuancePopup from './IssuancePopup';
-// import type { AxiosResponse } from 'axios';
-// import { getFromLocalStorage } from '../../api/Auth';
-// import { getSchemaCredDef } from '../../api/BulkIssuance';
-// import { storageKeys, apiStatusCodes, CREDENTIAL_CONTEXT_VALUE, proofPurpose, itemPerPage } from '../../config/CommonConstant';
-// import type { IAttributes, ICredentials, IEmailCredentialData, IIssueAttributes, ITransformedData } from './interface';
-// import { Field, FieldArray, Form, Formik } from 'formik';
-// import CustomSpinner from '../CustomSpinner';
-// import { issueOobEmailCredential } from '../../api/issuance';
-// import { EmptyListMessage } from '../EmptyListComponent';
-// import ResetPopup from './ResetPopup';
-// import type { SelectRef } from './BulkIssuance';
-// import RoleViewButton from '../RoleViewButton';
-// import { Features } from '../../utils/enums/features';
-// import { Create } from './Constant';
-// import { DidMethod, SchemaTypes, CredentialType, SchemaTypeValue, ProofType, SchemaType, DataType } from '../../common/enums';
-// import { getAllSchemas } from '../../api/Schema';
-// import type { GetAllSchemaListParameter } from '../Resources/Schema/interfaces';
+import { Attribute, FormDatum, UserData, IAttributesData, FromDataFromik, ICredentialOption} from '../type/EmailIssuance';
 
 const EmailIssuance = () => {
-	const [formData, setFormData] = useState();
-	const [userData, setUserData] = useState();
+	const [formData, setFormData] = useState<FromDataFromik>();
+	const [userData, setUserData] = useState<UserData>()
 	const [loading, setLoading] = useState<boolean>(true);
 	const [credentialOptions, setCredentialOptions] = useState([]);
 	const [schemaListAPIParameter, setSchemaListAPIParameter] = useState({
@@ -77,7 +54,6 @@ const EmailIssuance = () => {
 	const [failure, setFailure] = useState<string | null>(null);
 	const [isEditing, setIsEditing] = useState(false);
 	const [issueLoader, setIssueLoader] = useState(false);
-	const inputRef = useRef(null);
 	const [mounted, setMounted] = useState<boolean>(false)
 	const [schemaType, setSchemaType] = useState<SchemaTypes>();
 	const [credentialType, setCredentialType] = useState<CredentialType>();
@@ -164,9 +140,9 @@ const EmailIssuance = () => {
 						schemaIdentifier,
 						schemaAttributes
 					}: ICredentials, id: number) => ({
-						value: schemaType === SchemaTypes.schema_INDY ? credentialDefinitionId : schemaVersion,
+						value: (schemaType === SchemaTypes.schema_INDY ? credentialDefinitionId : schemaVersion) || '',
 						label: `${schemaName} [${schemaVersion}]${currentSchemaType === SchemaTypes.schema_INDY ? ` - (${credentialDefinition})` : ''}`,
-						schemaName: schemaName,
+						schemaName: schemaName || '',
 						schemaVersion: schemaVersion,
 						credentialDefinition: credentialDefinition,
 						schemaIdentifier: schemaIdentifier,
@@ -225,7 +201,7 @@ const EmailIssuance = () => {
 	};
 
 
-	const handleSelectChange = (newValue: SingleValue<ICredentials> | null) => {
+	const handleSelectChange = (newValue: ICredentials | null) => {
 		const value = newValue as ICredentials | null;
 		setBatchName(value?.label ?? '');
 		if (schemaType === SchemaTypes.schema_INDY) {
@@ -244,11 +220,6 @@ const EmailIssuance = () => {
 		setMounted(true);
 	}, []);
 
-	useEffect(() => {
-		if (isEditing && inputRef.current) {
-			inputRef.current.focus();
-		}
-	}, [isEditing]);
 
 	useEffect(() => {
 		getSchemaCredentials(schemaListAPIParameter);
@@ -258,22 +229,22 @@ const EmailIssuance = () => {
 		setIssueLoader(true);
 
 		const existingData = userData;
-
+		console.log("existinData",JSON.stringify(existingData,null,2))
 
 		let transformedData: ITransformedData = { credentialOffer: [] };
 
-		if (existingData && existingData.formData) {
+		if (existingData?.formData) {
 			if (schemaType === SchemaTypes.schema_INDY) {
-				existingData.formData.forEach((entry: { email: string; attributes: IIssueAttributes[] }) => {
+				existingData.formData.forEach((entry: FormDatum) => {
 
-					const transformedEntry = { emailId: entry.email, attributes: [] };
+					const transformedEntry:ICredentialOffer = { emailId: entry.email, attributes: [] };
 					entry.attributes.forEach((attribute) => {
 						const transformedAttribute = {
 							value: String(attribute.value || ''),
-							name: attribute.name || '',
-							isRequired: attribute.isRequired,
+							name: (attribute.name || '' ) as string,
+							isRequired: attribute.isRequired as boolean,
 						};
-						transformedEntry.attributes.push(transformedAttribute);
+						transformedEntry?.attributes?.push(transformedAttribute);
 					});
 					transformedData.credentialOffer.push(transformedEntry);
 				});
@@ -282,18 +253,16 @@ const EmailIssuance = () => {
 
 			} else if (schemaType === SchemaTypes.schema_W3C) {
 
-				existingData.formData.forEach((entry: { email: string; credentialData: IEmailCredentialData; attributes: IIssueAttributes[] }) => {
+				
+				existingData.formData.forEach((entry:FormDatum) => {
+
 					const credentialOffer = {
 						emailId: entry.email,
 						credential: {
-							"@context": [
-								CREDENTIAL_CONTEXT_VALUE,
-								schemasIdentifier
-							],
-							"type": [
-								"VerifiableCredential",
-								credentialSelected?.schemaName
-							],
+							"@context": [CREDENTIAL_CONTEXT_VALUE, schemasIdentifier].filter((v): v is string => typeof v === 'string'),
+
+							"type": ["VerifiableCredential", credentialSelected?.schemaName].filter((v): v is string => typeof v === 'string'),
+
 							"issuer": {
 								"id": orgId
 							},
@@ -302,14 +271,14 @@ const EmailIssuance = () => {
 							//FIXME: Logic for passing default value as 0 for empty value of number dataType attributes.
 							credentialSubject: entry?.attributes?.reduce((acc, attr) => {
 								if (attr.schemaDataType === 'number' && (attr.value === '' || attr.value === null)) {
-									acc[attr.name] = 0;
+									return {...acc,[attr.name as string]:0};
 								} else if (attr.schemaDataType === 'string' && attr.value === '') {
-									acc[attr.name] = '';
+									return {...acc,[attr.name as string]:''};
 								} else if (attr.value !== null) {
-									acc[attr.name] = attr.value;
+									return {...acc,[attr.name as string]:attr.value};
 								}
 								return acc;
-							}, {}),
+							}),
 						},
 						options: {
 							proofType: schemaTypeValue === SchemaTypeValue.POLYGON ? ProofType.polygon : ProofType.no_ledger,
@@ -317,7 +286,7 @@ const EmailIssuance = () => {
 						}
 					};
 
-					transformedData.credentialOffer.push(credentialOffer);
+					transformedData.credentialOffer.push(credentialOffer as ICredentialOffer);
 				});
 
 				transformedData.protocolVersion = "v2";
@@ -327,6 +296,7 @@ const EmailIssuance = () => {
 
 
 			const transformedJson = JSON.stringify(transformedData, null, 2);
+			if(!credentialType)return
 			const response = await issueOobEmailCredential(transformedJson, credentialType, orgId);
 			const { data } = response as AxiosResponse;
 
@@ -406,9 +376,15 @@ const EmailIssuance = () => {
 		setOpenResetModal(true);
 	};
 
-	const handleSelect = (value) => {
+	const handleSelect = (value:ICredentialOption) => {
 		console.log("value")
-		handleSelectChange(value)
+		const fullValue: ICredentials = {
+		...value,
+		schemaName: value.schemaName ?? '',
+		schemaVersion: value.schemaVersion ?? '',
+		schemaIdentifier: value.schemaIdentifier ?? '',
+	}
+	handleSelectChange(fullValue)
 	}
 
 	const createSchemaTitle = { title: 'Create Schema', svg: <Create /> };
@@ -455,7 +431,7 @@ const EmailIssuance = () => {
 										<div className="text-primary-900">
 											{
 												// mounted ?
-												<SearchableSelect className='max-w-lg border-2 border-primary'
+												<SearchableSelect<ICredentialOption> className='max-w-lg border-2 border-primary'
 													options={credentialOptions}
 													value={''}
 													onValueChange={handleSelect}
@@ -581,7 +557,7 @@ const EmailIssuance = () => {
 														<div className="m-0" id="createSchemaCard">
 															<div>
 																<Formik
-																	initialValues={formData}
+																	initialValues={formData ?? { formData: [] }}
 																	validationSchema={Yup.object().shape({
 																		formData: Yup.array().of(
 																			Yup.object().shape({
@@ -605,7 +581,8 @@ const EmailIssuance = () => {
 																	validateOnBlur
 																	validateOnChange
 																	enableReinitialize
-																	onSubmit={async (values): Promise<void> => {
+																	onSubmit={async (values:UserData): Promise<void> => {
+																		console.log("values",values)
 																		setUserData(values);
 																		handleOpenConfirmation();
 																	}}
@@ -616,18 +593,7 @@ const EmailIssuance = () => {
 																		>
 																			<FieldArray
 																				name="formData"
-																				render={(arrayHelpers: {
-																					form: { values: { formData: any[] } };
-																					remove: (arg0: any) => any;
-																					values: { attribute: string | any[] };
-																					push: (arg0: {
-																						email: string;
-																						attributes: {
-																							value: string;
-																							name: any;
-																						}[];
-																					}) => void;
-																				}) => {
+																				render={(arrayHelpers: FieldArrayRenderProps) =>{
 																					return (
 																						<div className="pb-4">
 																							<div className="">
@@ -636,7 +602,23 @@ const EmailIssuance = () => {
 																									arrayHelpers.form.values
 																										.formData.length > 0 &&
 																									arrayHelpers.form.values.formData.map(
-																										(formData1, index) => {
+																										(formData1: {
+																												attributes: {
+																													isRequired: boolean; displayName: ReactNode |
+																														string; attributeName: ReactNode |
+																														string; name: string |
+																														number |
+																														boolean |
+																														React.ReactElement<
+																															any, string |
+																															React.JSXElementConstructor<any>
+																														> |
+																														Iterable<React.ReactNode> |
+																														React.ReactPortal |
+																														null |
+																														undefined; schemaDataType: any;
+																												}[];
+																											}, index: React.Key | null | undefined) => {
 																											return (
 																												<div
 																													key={index}
@@ -664,39 +646,33 @@ const EmailIssuance = () => {
 																																type="email"
 																																className="w-full md:w-5/12 bg-gray-50 border border-gray-300 text-gray-900 sm:text-md rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 																															/>
+
 																															<div className="absolute top-11 left-24">
-																																{formikHandlers
-																																	?.touched
-																																	?.formData &&
-																																	formikHandlers
-																																		?.touched
-																																		?.formData[
-																																		index
-																																	]?.email &&
-																																	formikHandlers
-																																		?.errors
-																																		?.formData &&
-																																	formikHandlers
-																																		?.errors
-																																		?.formData[
-																																		index
-																																	]?.email && (
-																																		<label
-																																			style={{
-																																				color:
-																																					'red',
-																																			}}
-																																			className="text-sm"
-																																		>
-																																			{
-																																				formikHandlers
-																																					?.errors
-																																					?.formData[
-																																					index
-																																				]?.email
-																																			}
-																																		</label>
-																																	)}
+																																{(() => {
+																																		const errorItem = formikHandlers?.errors?.formData?.[index as number];
+																																		const touchedItem = formikHandlers?.touched?.formData?.[index as number];
+
+																																		if (
+																																			errorItem &&
+																																			typeof errorItem === "object" &&   // narrow to object
+																																			"email" in errorItem &&             // ensure 'email' exists in error
+																																			touchedItem &&
+																																			typeof touchedItem === "object" &&
+																																			"email" in touchedItem &&
+																																			touchedItem.email                    // check that email field was touched
+																																		) {
+																																			return (
+																																			<label
+																																				style={{ color: "red" }}
+																																				className="text-sm"
+																																			>
+																																				{errorItem.email}
+																																			</label>
+																																			);
+																																		}
+																																		return null;
+																																		})()}
+
 																															</div>
 																														</div>
 
@@ -704,7 +680,7 @@ const EmailIssuance = () => {
 																															.values.formData
 																															.length > 1 && (
 																																<div
-																																	key={index}
+																																	key={index as number}
 																																	className="sm:w-2/12 text-red-600 flex justify-end"
 																																>
 																																	<Button
@@ -713,7 +689,7 @@ const EmailIssuance = () => {
 																																		color="danger"
 																																		onClick={() =>
 																																			arrayHelpers.remove(
-																																				index,
+																																				index as number,
 																																			)
 																																		}
 																																		disabled={
@@ -809,56 +785,42 @@ const EmailIssuance = () => {
 																																					name={`formData[${index}].attributes.${attIndex}.value`}
 																																					className="w-full bg-gray-50 border border-gray-300 text-gray-900 sm:text-md rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 																																				/>
-																																				{formikHandlers
-																																					?.touched
-																																					?.formData &&
-																																					formikHandlers
-																																						?.touched
-																																						?.formData[
-																																						index
-																																					]
-																																						?.attributes &&
-																																					formikHandlers
-																																						?.touched
-																																						?.formData[
-																																						index
-																																					]
-																																						?.attributes[
-																																						attIndex
-																																					]
-																																						?.value &&
-																																					formikHandlers
-																																						?.errors
-																																						?.formData &&
-																																					formikHandlers
-																																						?.errors
-																																						?.formData[
-																																						index
-																																					]
-																																						?.attributes &&
-																																					formikHandlers
-																																						?.errors
-																																						?.formData[
-																																						index
-																																					]
-																																						?.attributes[
-																																						attIndex
-																																					]
-																																						?.value && (
-																																						<label className="text-xs text-red-500 absolute">
-																																							{
-																																								formikHandlers
-																																									?.errors
-																																									?.formData[
-																																									index
-																																								]
-																																									?.attributes[
-																																									attIndex
-																																								]
-																																									?.value
+																																				{(() => {
+																																						const errorAtIndex = formikHandlers?.errors?.formData?.[index as number];
+																																						const touchedAtIndex = formikHandlers?.touched?.formData?.[index as number];
+
+																																						if (
+																																							errorAtIndex &&
+																																							typeof errorAtIndex === 'object' &&
+																																							'attributes' in errorAtIndex &&
+																																							touchedAtIndex &&
+																																							typeof touchedAtIndex === 'object' &&
+																																							'attributes' in touchedAtIndex
+																																						) {
+																																							const errorAttr = errorAtIndex.attributes?.[attIndex];
+																																							const touchedAttr = touchedAtIndex.attributes?.[attIndex];
+
+																																							// Narrow the errorAttr: it must be an object with 'value' prop
+																																							if (
+																																							errorAttr &&
+																																							typeof errorAttr === 'object' &&
+																																							'value' in errorAttr &&
+																																							touchedAttr &&
+																																							typeof touchedAttr === 'object' &&
+																																							'value' in touchedAttr &&
+																																							touchedAttr.value // touchedAttr.value must be truthy
+																																							) {
+																																							return (
+																																								<label className="text-xs text-red-500 absolute">
+																																								{errorAttr.value}
+																																								</label>
+																																							);
 																																							}
-																																						</label>
-																																					)}
+																																						}
+
+																																						return null;
+																																						})()}
+
 																																			</div>
 																																		</div>
 																																	</div>

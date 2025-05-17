@@ -60,7 +60,7 @@ filter}: IConnectionListAPIParameter) => {
 	}
 };
 
-export const issueOobEmailCredential = async (data: object, credentialType:CredentialType,orgId:string) => {
+export const issueOobEmailCredential = async (data: object|string, credentialType:CredentialType,orgId:string) => {
 	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.issueOobEmailCredential}?credentialType=${credentialType}`;
 	const payload = data;
 

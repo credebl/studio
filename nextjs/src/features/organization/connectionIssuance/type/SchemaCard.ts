@@ -81,6 +81,6 @@ export interface GetAllSchemaListParameter {
 	search?: string,
 	sortBy?: string,
 	allSearch?: string,
-	token:string,
-	ledgerId:string,
+	token?:string,
+	ledgerId?:string,
   }

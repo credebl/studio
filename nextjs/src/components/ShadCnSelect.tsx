@@ -9,15 +9,17 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { IAttribute } from "@/common/interface"
+import { ICredentialOption } from "@/features/organization/emailIssuance/type/EmailIssuance"
 
 export type Option = {
 	value: string
 	label: string
 	id: string
-	schemaName?: string
+	schemaName: string
 	schemaVersion?: string
 	schemaId?: string
 	credentialId?: string
+	schemaIdentifier?:string
 }
 
 export type OptionBulk = {
@@ -32,17 +34,22 @@ export type OptionBulk = {
 	schemaAttributes?: IAttribute[]
 }
 
-interface SearchableSelectProps {
-	options: Option[] | OptionBulk
+interface SearchableSelectProps<T extends BaseOption = Option> {
+	options: Option[] | OptionBulk | T[]
 	value?: string
-	onValueChange?: (value: Option) => void
+	onValueChange?: (value: Option | ICredentialOption) => void
 	placeholder?: string
 	emptyMessage?: string
 	className?: string
 	disabled?: boolean
 }
+export interface BaseOption {
+	id?: string
+	label?: string
+	value?: string
+}
 
-export function SearchableSelect({
+export function SearchableSelect<T extends BaseOption = Option>({
 	options,
 	value,
 	onValueChange,
@@ -50,7 +57,7 @@ export function SearchableSelect({
 	emptyMessage = "No results found.",
 	className,
 	disabled = false,
-}: SearchableSelectProps) {
+}: Readonly<SearchableSelectProps<T>>) {
 	const [open, setOpen] = React.useState(false)
 	const [selected, setSelected] = React.useState<Option | undefined>(
 		value ? options.find((option) => option.id === value) : undefined,

@@ -107,7 +107,7 @@ export interface IAttributesData {
 	isRequired: boolean;
 	name: string;
 	value: string;
-	dataType: string;
+	dataType?: string;
 }
 
 export interface ICredentialdata {
@@ -135,7 +135,7 @@ export interface IW3cPayload {
 }
 
 export interface ICredentialSubjectData {
-	id: string;
+	id?: string;
 	[key: string]: string | number | boolean | null | undefined;
 };
 export interface IIssuerData {
@@ -165,7 +165,7 @@ export interface IIssueAttributes {
 	isRequired: boolean;
 	name: string;
 	value: string;
-	dataType: string;
+	dataType?: string;
 }
 
 export interface ICredentialOffer {
