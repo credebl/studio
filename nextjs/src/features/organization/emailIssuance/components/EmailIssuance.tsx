@@ -270,15 +270,17 @@ const EmailIssuance = () => {
 
 							//FIXME: Logic for passing default value as 0 for empty value of number dataType attributes.
 							credentialSubject: entry?.attributes?.reduce((acc, attr) => {
-								if (attr.schemaDataType === 'number' && (attr.value === '' || attr.value === null)) {
-									return {...acc,[attr.name as string]:0};
-								} else if (attr.schemaDataType === 'string' && attr.value === '') {
-									return {...acc,[attr.name as string]:''};
-								} else if (attr.value !== null) {
-									return {...acc,[attr.name as string]:attr.value};
+								if (typeof attr.name === 'string') {
+									if (attr.schemaDataType === 'number' && (attr.value === '' || attr.value === null)) {
+										acc[attr.name] = 0;
+									} else if (attr.schemaDataType === 'string' && attr.value === '') {
+										acc[attr.name] = '';
+									} else if (attr.value !== null) {
+										acc[attr.name] = attr.value;
+									}
 								}
 								return acc;
-							}),
+							}, {} as Record<string, any>),
 						},
 						options: {
 							proofType: schemaTypeValue === SchemaTypeValue.POLYGON ? ProofType.polygon : ProofType.no_ledger,
