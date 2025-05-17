@@ -20,24 +20,6 @@ import { useRouter } from 'next/navigation';
 import SortDataTable from '../../connectionIssuance/components/connectionsTables/SortDataTable';
 import { AlertComponent } from '@/components/AlertComponent';
 import { ArrowLeft, Eye } from 'lucide-react';
-// import type { ITableData } from '../../commonComponents/datatable/interface';
-// import { apiStatusCodes } from '../../config/CommonConstant';
-// import { AlertComponent } from '../AlertComponent';
-// import { dateConversion } from '../../utils/DateConversion';
-// import DateTooltip from '../Tooltip';
-// import BreadCrumbs from '../BreadCrumbs';
-// import BackButton from '../../commonComponents/backbutton';
-// import { pathRoutes } from '../../config/pathRoutes';
-// import { Button } from 'flowbite-react';
-// import { getFilesHistory, retryBulkIssuance } from '../../api/BulkIssuance';
-// import SOCKET from '../../config/SocketConfig';
-// import {
-// 	BulkIssuanceHistory,
-// 	BulkIssuanceHistoryData,
-// } from '../../common/enums';
-// import { ToastContainer, toast } from 'react-toastify';
-// import SortDataTable from '../../commonComponents/datatable/SortDataTable';
-// import type { IConnectionListAPIParameter } from '../../api/connection';
 
 const HistoryBulkIssuance = () => {
 	const initialPageState = {
@@ -54,9 +36,9 @@ const HistoryBulkIssuance = () => {
 	const [success, setSuccess] = useState<string | null>(null);
 	const [totalItem, setTotalItem] = useState(0);
 	const [pageInfo, setPageInfo] = useState({
-		totalItem: '',
-		nextPage: '',
-		lastPage: '',
+		totalItem: 0,
+		nextPage: 0,
+		lastPage: 0,
 	});
     const socketId = useAppSelector((state:RootState)=>state.socket.SOCKET_ID)
 	const orgId = useAppSelector((state:RootState)=>state.organization.orgId)

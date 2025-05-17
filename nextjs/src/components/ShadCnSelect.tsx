@@ -18,6 +18,7 @@ export type Option = {
 	schemaVersion?: string
 	schemaId?: string
 	credentialId?: string
+	schemaIdentifier?:string
 }
 
 export type OptionBulk = {
@@ -53,12 +54,12 @@ export function SearchableSelect({
 }: SearchableSelectProps) {
 	const [open, setOpen] = React.useState(false)
 	const [selected, setSelected] = React.useState<Option | undefined>(
-		value ? options.find((option) => option.id === value) : undefined,
+		value && Array.isArray(options)  ? options.find((option) => option.id === value) : undefined,
 	)
 
 	React.useEffect(() => {
 		if (value) {
-			setSelected(options.find((option) => option.id === value))
+			setSelected(Array.isArray(options)?options.find((option) => option.id === value) : undefined)
 		}
 	}, [value, options])
 
@@ -87,7 +88,7 @@ export function SearchableSelect({
 					<CommandList>
 						<CommandEmpty>{emptyMessage}</CommandEmpty>
 						<CommandGroup className="max-h-64 overflow-auto">
-							{options.map((option, index) => (
+							{Array.isArray(options) && options.map((option, index) => (
 								<CommandItem
 									key={index}
 									value={option.label}

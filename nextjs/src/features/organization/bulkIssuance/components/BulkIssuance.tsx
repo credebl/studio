@@ -1,29 +1,4 @@
 'use client'
-// import { Button, Card, Pagination } from '';
-// import React, { useEffect, useState } from 'react';
-// import Select, { type SingleValue } from 'react-select';
-// import {
-// 	DownloadCsvTemplate, getSchemaCredDef, getCsvFileData,
-// 	issueBulkCredential,
-// 	uploadCsvFile,
-// } from '../../api/BulkIssuance';
-// import { getFromLocalStorage, setToLocalStorage } from '../../api/Auth';
-// import { apiStatusCodes, itemPerPage, storageKeys } from '../../config/CommonConstant';
-// import { AlertComponent } from '../AlertComponent';
-// import type { AxiosResponse } from 'axios';
-// import { pathRoutes } from '../../config/pathRoutes';
-// import IssuancePopup from './IssuancePopup';
-// import SOCKET from '../../config/SocketConfig';
-// import { ToastContainer, toast } from 'react-toastify';
-// import BreadCrumbs from '../BreadCrumbs';
-// import BackButton from '../../commonComponents/backbutton'
-// import type { ICredentials, IAttributes, IUploadMessage } from './interface';
-// import RoleViewButton from '../RoleViewButton';
-// import { Features } from '../../utils/enums/features';
-// import { Create } from './Constant';
-// import { DataType, DidMethod, SchemaTypes } from '../../common/enums';
-// import type { GetAllSchemaListParameter } from '../Resources/Schema/interfaces';
-// import { getAllSchemas } from '../../api/Schema';
 
 import { ArrowLeft, Download, History, Plus } from "lucide-react";
 import { DidMethod, Features, SchemaTypes } from "@/common/enums";
@@ -39,7 +14,6 @@ import { AxiosResponse } from "axios";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Create from "@/features/schemas/components/Create";
-import { GetAllSchemaListParameter } from "../../connectionIssuance/type/SchemaCard";
 import IssuancePopup from "./IssuancePopup";
 import React from "react";
 import RoleViewButton from "@/components/RoleViewButton";
@@ -50,7 +24,7 @@ import { pathRoutes } from "@/config/pathRoutes";
 import { setSocketId } from "@/lib/socketSlice";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
-import { SearchableSelect } from "@/components/ShadCnSelect";
+import { Option, SearchableSelect } from "@/components/ShadCnSelect";
 import { DownloadCsvTemplate, getCsvFileData, issueBulkCredential, uploadCsvFile } from "@/app/api/BulkIssuance";
 import {
   Pagination,
@@ -61,6 +35,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
+import { GetAllSchemaListParameter } from "../type/BulkIssuance";
 
 export interface SelectRef {
 	clearValue(): void;
@@ -115,6 +90,8 @@ const BulkIssuance = () => {
 	const dispatch = useAppDispatch()
 
 	const router = useRouter()
+
+	const socketId = useAppSelector((state:RootState)=> state.socket.SOCKET_ID)
 
 	const onInputChange = (inputValue: string) => {
 		setSearchValue(inputValue);
@@ -244,12 +221,17 @@ const BulkIssuance = () => {
 		}
 	};
 
-	const handleSelect = (value)=>{
-		onSelectChange(value)
-		console.log("value",value)
+	const handleSelect = (value:Option)=>{
+		const safeValue = {
+			...value,
+			schemaIdentifier: value?.schemaIdentifier ?? '',
+			schemaName: value.schemaName ?? '',
+			schemaVersion: value.schemaVersion ?? '',
+		};
+		onSelectChange(safeValue);		console.log("value",value)
 	}
 
-	const onSelectChange = (newValue: SingleValue<ICredentials | undefined>) => {
+	const onSelectChange = (newValue: ICredentials | undefined) => {
 		const value = newValue as ICredentials | undefined;
 		if (schemaType === SchemaTypes.schema_INDY) {
 			setSelectedTemplate(value?.credentialDefinitionId);
@@ -284,6 +266,7 @@ const BulkIssuance = () => {
 		if (credentialSelected ) {
 			try {
 				setProcess(true);
+				if (!schemaType)return
 				const response = await DownloadCsvTemplate(selectedTemplate, schemaType, orgId);
 				const { data } = response as AxiosResponse;
 
@@ -412,6 +395,7 @@ const BulkIssuance = () => {
 
 			setUploadedFileName(file?.name);
 			setUploadedFile(file);
+			if (!schemaType)return
 
 			const response = await uploadCsvFile(payload, selectedTemplate, schemaType, orgId);
 			const { data } = response as AxiosResponse;
@@ -490,10 +474,7 @@ const BulkIssuance = () => {
 		setUploadMessage(null)
 	};
 
-	const handleDrop = (e: {
-		preventDefault: () => void;
-		dataTransfer: { files: any[] };
-	}) => {
+	const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
 		e.preventDefault();
 		if (isCredSelected) {
 			const file = e.dataTransfer.files[0];
@@ -507,13 +488,15 @@ const BulkIssuance = () => {
 		e.preventDefault();
 	};
 
-	const handleInputChange = (e: { target: { files: any[] } }) => {
-		const file = e.target.files[0];
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const files = e.target.files;
 
-		if (file) {
+		if (files && files.length > 0) {
+			const file = files[0];
 			handleFileUpload(file);
 		}
 	};
+
 	const clearError = () => {
 		setUploadMessage(null);
 	};
@@ -546,7 +529,7 @@ const BulkIssuance = () => {
 
 	const confirmCredentialIssuance = async () => {
 		setLoading(true);
-		const response = await issueBulkCredential(requestId, SOCKET.id,orgId);
+		const response = await issueBulkCredential(requestId, socketId,orgId);
 		const { data } = response as AxiosResponse;
 		if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
 
@@ -578,7 +561,7 @@ const BulkIssuance = () => {
 	const selectedCred: ICredentials | boolean | undefined = credentialOptionsData && credentialOptionsData.length > 0 && credentialOptionsData.find(
 		(item: { value: string }) =>
 			item.value &&
-			item.value === credentialSelected,
+			item.value === credentialSelected?.value
 	);
 
 	const createSchemaTitle = { title: 'Create Schema', svg: <Create /> };
@@ -749,8 +732,12 @@ const BulkIssuance = () => {
 									</div>
 								</div>
 								{/* ---------------- */}
-								<div onDrop={handleDrop} onDragOver={handleDragOver}>
-									<div className="lg:flex h-full">
+										<div
+										onDrop={handleDrop}
+										onDragOver={handleDragOver}
+										role="region"
+										tabIndex={0}
+										>									<div className="lg:flex h-full">
 										<div>
 											<label
 												htmlFor="csv-file"
@@ -813,8 +800,7 @@ const BulkIssuance = () => {
 															onChange={handleInputChange}
 															title=""
 															onClick={(event) => {
-																event.target.value = null
-															}} />
+															(event.target as HTMLInputElement).value = '';															}} />
 													</label>
 												</div>
 											</div>
