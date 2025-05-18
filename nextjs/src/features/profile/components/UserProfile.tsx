@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 
+import AddPasskey from '@/features/passkey/AddPasskey'
 import DisplayUserProfile from './DisplayUserProfile'
 import EditUserProfile from './EditUserProfile'
 import { IUserProfile } from '@/components/profile/interfaces'
@@ -69,7 +70,7 @@ export default function UserProfile(): React.JSX.Element {
       </div>
 
       <div className="bg-card rounded-lg p-6">
-        {activeTab === 'profile' && (
+        {activeTab === 'profile' ? (
           <>
             {!isEditProfileOpen && prePopulatedUserProfile && (
               <DisplayUserProfile
@@ -85,6 +86,8 @@ export default function UserProfile(): React.JSX.Element {
               />
             )}
           </>
+        ) : (
+          <AddPasskey />
         )}
       </div>
     </div>
