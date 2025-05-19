@@ -1,57 +1,61 @@
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card'
 
-import CopyDid from '@/config/CopyDid';
-import { DataTypeAttributes } from '@/features/organization/connectionIssuance/type/Issuance';
+import CopyDid from '@/config/CopyDid'
+import { DataTypeAttributes } from '@/features/organization/connectionIssuance/type/Issuance'
+import { JSX } from 'react'
 
 interface IProps {
-	schemaName: string;
-	version: string;
-	credDefId?: string;
-	schemaId: string;
-	hideCredDefId?: boolean;
-	schemaAttributes?:DataTypeAttributes[] | undefined;
+  schemaName: string
+  version: string
+  credDefId?: string
+  schemaId: string
+  hideCredDefId?: boolean
+  schemaAttributes?: DataTypeAttributes[] | undefined
 }
 
-const SummaryCard = ({ schemaName, version, credDefId, schemaId, hideCredDefId, schemaAttributes }: Readonly<IProps>) => {
-	return (
-		<Card className='my-6 bg-background'>
-			<CardContent className='p-6'>
-				<div className="flex justify-between items-start">
-					<div>
-						<h5 className="text-xl font-bold leading-none dark:text-white">
-							{schemaName}
-						</h5>
-						<div className="dark:text-white mb-4">
-							<b>Version</b>: {version}
-						</div>
-					</div>
-				</div>
-				<div className="min-w-0 flex-1 issuance">
-					<div className="truncate dark:text-white break-all flex relative items-center">
-						<span className="font-semibold mr-2"><b>Schema ID:</b> </span>
-						<span className=''>
-							<CopyDid value={schemaId || ""}  />
-						</span>
-					</div>
-					<span className="font-semibold mr-2">
-						<b>Attributes:</b>
-					</span>
+const SummaryCard = ({
+  schemaName,
+  version,
+  schemaId,
+  schemaAttributes,
+}: Readonly<IProps>): JSX.Element => (
+  <Card className="bg-background my-6">
+    <CardContent className="p-6">
+      <div className="flex items-start justify-between">
+        <div>
+          <h5 className="text-xl leading-none font-bold dark:text-white">
+            {schemaName}
+          </h5>
+          <div className="mb-4 dark:text-white">
+            <b>Version</b>: {version}
+          </div>
+        </div>
+      </div>
+      <div className="issuance min-w-0 flex-1">
+        <div className="relative flex items-center truncate break-all dark:text-white">
+          <span className="mr-2 font-semibold">
+            <b>Schema ID:</b>{' '}
+          </span>
+          <span className="">
+            <CopyDid value={schemaId || ''} />
+          </span>
+        </div>
+        <span className="mr-2 font-semibold">
+          <b>Attributes:</b>
+        </span>
 
-					<div className="flex flex-wrap overflow-hidden">
-						{
-							schemaAttributes?.map((element: {attributeName:string}) => (
-								<div key={element.attributeName} className="truncate">
-									<span className="m-1 bg-primary text-custom-900 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-primary-50 dark:text-custom-900">
-										{element.attributeName}
-									</span>
-								</div>
-							))
-						}
-					</div>
-				</div>
-			</CardContent>
-		</Card>
-	);
-};
+        <div className="flex flex-wrap overflow-hidden">
+          {schemaAttributes?.map((element: { attributeName: string }) => (
+            <div key={element.attributeName} className="truncate">
+              <span className="bg-primary text-custom-900 dark:bg-primary-50 dark:text-custom-900 m-1 mr-2 rounded px-2.5 py-0.5 text-sm font-medium">
+                {element.attributeName}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+)
 
-export default SummaryCard;
+export default SummaryCard
