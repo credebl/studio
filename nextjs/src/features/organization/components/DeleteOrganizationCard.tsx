@@ -1,21 +1,23 @@
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import React from 'react'
 // components/organization/delete-organization-card.tsx
-import { Trash2 } from "lucide-react";
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Trash2 } from 'lucide-react'
 
 interface DeleteOrganizationCardProps {
-  title?: string;
-  description?: string;
-  count?: number;
-  isDisabled?: boolean;
-  onDeleteClick: () => void;
+  title?: string
+  description?: string
+  count?: number
+  isDisabled?: boolean
+  onDeleteClick: () => void
 }
 
 export function DeleteOrganizationCard({
@@ -23,25 +25,31 @@ export function DeleteOrganizationCard({
   description,
   count,
   isDisabled = false,
-  onDeleteClick
-}: DeleteOrganizationCardProps) {
-  const isButtonDisabled = isDisabled || count === 0;
-  
+  onDeleteClick,
+}: DeleteOrganizationCardProps): React.JSX.Element {
+  const isButtonDisabled = isDisabled || count === 0
+
   return (
-    <Card className={isDisabled ? "opacity-75" : ""}>
+    <Card
+      className={
+        isDisabled
+          ? 'opacity-75'
+          : 'border-border relative h-full w-full cursor-pointer overflow-hidden rounded-xl border p-6 py-4 shadow-xl transition-all transition-transform duration-300'
+      }
+    >
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>{title}</CardTitle>
+            <CardTitle className="text-lg">{title}</CardTitle>
             <CardDescription className="mt-1">{description}</CardDescription>
           </div>
-          
-          <Button 
-            variant="destructive" 
+
+          <Button
+            variant="destructive"
             size="icon"
             onClick={onDeleteClick}
             disabled={isButtonDisabled}
-            className={isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""}
+            className={isButtonDisabled ? 'cursor-not-allowed opacity-50' : ''}
           >
             <Trash2 className="h-5 w-5" />
           </Button>
@@ -49,12 +57,12 @@ export function DeleteOrganizationCard({
       </CardHeader>
       <CardContent>
         {count !== undefined && (
-          <div className="flex items-center mt-1">
-            <span className="text-sm text-muted-foreground mr-2">Total:</span>
+          <div className="mt-1 flex items-center">
+            <span className="text-muted-foreground mr-2 text-sm">Total:</span>
             <Badge variant="secondary">{count}</Badge>
           </div>
         )}
       </CardContent>
     </Card>
-  );
+  )
 }

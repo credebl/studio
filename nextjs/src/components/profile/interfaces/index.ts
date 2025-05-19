@@ -1,21 +1,20 @@
 export interface IRegistrationOption {
-  userName: string,
+  userName: string | null
   deviceFlag: boolean
-
 }
 
 export interface IAddPassword {
-  password: string,
+  password: string
 }
-export interface IVerifyRegistrationObj{
-  id: string;
-  rawId: string;
-  response: object;
-  authenticatorAttachment?: AuthenticatorAttachment;
-  clientExtensionResults: AuthenticationExtensionsClientOutputs;
-  type: PublicKeyCredentialType;
-  challangeId: string;
-};
+export interface IVerifyRegistrationObj {
+  id: string
+  rawId: string
+  response: object
+  authenticatorAttachment?: AuthenticatorAttachment
+  clientExtensionResults: AuthenticationExtensionsClientOutputs
+  type: PublicKeyCredentialType
+  challangeId: string
+}
 
 export interface IDeviceData {
   createDateTime: string
@@ -25,12 +24,12 @@ export interface IDeviceData {
 }
 
 export interface IdeviceBody {
-  userName: string,
-  credentialId: string,
+  userName: string
+  credentialId: string
   deviceFriendlyName: string
 }
 export interface IDeviceDetails {
-  enCodedUrl: string,
+  enCodedUrl: string
   updatedDeviceName: string
 }
 
@@ -48,11 +47,11 @@ export interface IUserProfile {
   isEmailVerified?: boolean
   keycloakUserId?: string
   publicProfile?: boolean
-  isPublic?:boolean
+  isPublic?: boolean
   roles: string
 }
 
 export interface IDisplayUserProfileProps {
-	toggleEditProfile: () => void;
-	userProfileInfo: IUserProfile | null;
+  toggleEditProfile: () => void
+  userProfileInfo: IUserProfile | null
 }

@@ -1,56 +1,60 @@
-'use client';
+'use client'
 
-import { getUserProfile } from '@/app/api/Auth';
-import { IUserProfile } from '@/components/profile/interfaces';
-import { apiStatusCodes } from '@/config/CommonConstant';
-import { useAppSelector } from '@/lib/hooks';
-import { useEffect, useState } from 'react';
-import DisplayUserProfile from './DisplayUserProfile';
-import EditUserProfile from './EditUserProfile';
+import React, { useEffect, useState } from 'react'
 
-export default function UserProfile() {
-  const token = useAppSelector((state) => state.auth.token);
+import AddPasskey from '@/features/passkey/AddPasskey'
+import DisplayUserProfile from './DisplayUserProfile'
+import EditUserProfile from './EditUserProfile'
+import { IUserProfile } from '@/components/profile/interfaces'
+import { apiStatusCodes } from '@/config/CommonConstant'
+import { getUserProfile } from '@/app/api/Auth'
+import { useAppSelector } from '@/lib/hooks'
 
-  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+export default function UserProfile(): React.JSX.Element {
+  const token = useAppSelector((state) => state.auth.token)
+
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false)
   const [prePopulatedUserProfile, setPrePopulatedUserProfile] =
-    useState<IUserProfile | null>(null);
-  const [activeTab, setActiveTab] = useState<'profile' | 'passkey'>('profile');
+    useState<IUserProfile | null>(null)
+  const [activeTab, setActiveTab] = useState<'profile' | 'passkey'>('profile')
 
   useEffect(() => {
-    async function fetchProfile() {
-      if (!token) return;
+    async function fetchProfile(): Promise<void> {
+      if (!token) {
+        return
+      }
       try {
-        const response = await getUserProfile(token);
+        const response = await getUserProfile(token)
         if (
           typeof response !== 'string' &&
           response?.data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS
         ) {
-          setPrePopulatedUserProfile(response.data.data);
+          setPrePopulatedUserProfile(response.data.data)
         }
       } catch (error) {
         // eslint-disable-next-line no-console
-        console.error('Error fetching user profile:', error);
+        console.error('Error fetching user profile:', error)
       }
     }
 
-    fetchProfile();
-  }, [token]);
+    fetchProfile()
+  }, [token])
 
-  const toggleEditProfile = () => {
-    setIsEditProfileOpen((prev) => !prev);
-  };
+  const toggleEditProfile = (): void => {
+    setIsEditProfileOpen((prev) => !prev)
+  }
 
-  const updateProfile = (updatedProfile: IUserProfile) => {
-    setPrePopulatedUserProfile(updatedProfile);
-  };
+  const updateProfile = (updatedProfile: IUserProfile): void => {
+    setPrePopulatedUserProfile(updatedProfile)
+  }
 
   return (
-    <div className='mx-auto p-6'>
-      <h1 className='text-foreground mb-6 text-2xl font-semibold'>
+    <div className="mx-auto p-6">
+      <h1 className="text-foreground mb-6 text-2xl font-semibold">
         User Profile
       </h1>
 
-      <div className='mb-6 flex gap-4'>
+      <div className="mb-6 flex gap-4">
         <button
           onClick={() => setActiveTab('profile')}
           className={`rounded-md px-4 py-2 ${activeTab === 'profile' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}
@@ -65,8 +69,8 @@ export default function UserProfile() {
         </button>
       </div>
 
-      <div className='bg-card rounded-lg p-6'>
-        {activeTab === 'profile' && (
+      <div className="bg-card rounded-lg p-6">
+        {activeTab === 'profile' ? (
           <>
             {!isEditProfileOpen && prePopulatedUserProfile && (
               <DisplayUserProfile
@@ -82,9 +86,10 @@ export default function UserProfile() {
               />
             )}
           </>
+        ) : (
+          <AddPasskey />
         )}
-
       </div>
     </div>
-  );
+  )
 }

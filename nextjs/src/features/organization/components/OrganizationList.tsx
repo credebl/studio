@@ -1,175 +1,174 @@
-'use client';
+/* eslint-disable prettier/prettier */
+'use client'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
   PaginationNext,
-  PaginationPrevious
-} from '@/components/ui/pagination';
-import { setOrgId, setOrgInfo } from '@/lib/orgSlice';
-import { useEffect, useState } from 'react';
+  PaginationPrevious,
+} from '@/components/ui/pagination'
+import React, { useEffect, useState } from 'react'
+import { setOrgId, setOrgInfo } from '@/lib/orgSlice'
 
-import { AxiosResponse } from 'axios';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import Loader from '@/components/Loader';
-import { Organization } from '@/features/dashboard/type/organization';
-import { Plus } from 'lucide-react';
-import { apiStatusCodes } from '@/config/CommonConstant';
-import { getOrganizations } from '@/app/api/organization';
-import { useAppDispatch } from '@/lib/hooks';
-import { useRouter } from 'next/navigation';
+import { AxiosResponse } from 'axios'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import Loader from '@/components/Loader'
+import { Organization } from '@/features/dashboard/type/organization'
+import { Plus } from 'lucide-react'
+import { apiStatusCodes } from '@/config/CommonConstant'
+import { getOrganizations } from '@/app/api/organization'
+import { useAppDispatch } from '@/lib/hooks'
+import { useRouter } from 'next/navigation'
 
-export const OrganizationList = () => {
-  const [organizationsList, setOrganizationsList] = useState<Organization[]>(
-    []
-  );
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [searchText, setSearchText] = useState('');
+export const OrganizationList = (): React.JSX.Element => {
+  const [organizationsList, setOrganizationsList] = useState<Organization[]>([])
+  const [loading, setLoading] = useState(true)
+  const [, setError] = useState<string | null>(null)
+  const [searchText, setSearchText] = useState('')
 
   const [currentPage, setCurrentPage] = useState({
     pageNumber: 1,
     pageSize: 9,
     total: 0,
-    totalCount: 0
-  });
+    totalCount: 0,
+  })
 
-  const router = useRouter();
-  const dispatch = useAppDispatch();
+  const router = useRouter()
+  const dispatch = useAppDispatch()
 
-  const getAllOrganizations = async () => {
-    setLoading(true);
+  const getAllOrganizations = async (): Promise<void> => {
+    setLoading(true)
     try {
       const response = await getOrganizations(
         currentPage.pageNumber,
         currentPage.pageSize,
-        searchText
-      );
+        searchText,
+      )
 
-      const { data } = response as AxiosResponse;
+      const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        const totalPages = data?.data?.totalPages;
-        const totalCount = data?.data?.totalCount;
+        const totalPages = data?.data?.totalPages
+        const totalCount = data?.data?.totalCount
 
         const orgList = data?.data?.organizations.map(
           (userOrg: Organization) => {
             const roles: string[] = userOrg.userOrgRoles.map(
-              (role) => role.orgRole.name
-            );
+              (role) => role.orgRole.name,
+            )
             return {
               ...userOrg,
-              roles
-            };
-          }
-        );
+              roles,
+            }
+          },
+        )
 
-        setOrganizationsList(orgList);
+        setOrganizationsList(orgList)
         setCurrentPage((prev) => ({
           ...prev,
           total: totalPages,
-          totalCount
-        }));
+          totalCount,
+        }))
       } else {
-        setError(response as string);
+        setError(response as string)
       }
     } catch (err) {
-      console.error('Error fetching organizations:', err);
+      console.error('Error fetching organizations:', err)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
-
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage((prev) => ({ ...prev, pageNumber: newPage }));
-  };
-
-  const handleCardClick = (orgId: string) => {
-    if (!orgId) {
-      console.error('Invalid organization ID');
-      return;
-    }
-
-    const selectedOrg = organizationsList.find(org => org.id === orgId);
-  
-  if (selectedOrg) {
-    dispatch(setOrgId(selectedOrg.id));
-
-    const orgRoles = selectedOrg?.userOrgRoles;
-    
-    dispatch(
-      setOrgInfo({
-        id: selectedOrg.id,
-        name: selectedOrg.name,
-        description: selectedOrg.description,
-        logoUrl: selectedOrg.logoUrl,
-        roles: orgRoles?.map((item) => item?.orgRole?.name) ?? [],
-      })
-    );
   }
-  
-    router.push(`/organizations/dashboard/${orgId}`);
-  };
-  const handleCreateOrg = () => {
-    router.push('organizations/create-organization');
-  };
+
+  const handlePageChange = (newPage: number): void => {
+    setCurrentPage((prev) => ({ ...prev, pageNumber: newPage }))
+  }
+
+  const handleCardClick = (orgId: string): void => {
+    if (!orgId) {
+      console.error('Invalid organization ID')
+      return
+    }
+
+    const selectedOrg = organizationsList.find((org) => org.id === orgId)
+
+    if (selectedOrg) {
+      dispatch(setOrgId(selectedOrg.id))
+
+      const orgRoles = selectedOrg?.userOrgRoles
+
+      dispatch(
+        setOrgInfo({
+          id: selectedOrg.id,
+          name: selectedOrg.name,
+          description: selectedOrg.description,
+          logoUrl: selectedOrg.logoUrl,
+          roles: orgRoles?.map((item) => item?.orgRole?.name) ?? [],
+        }),
+      )
+    }
+
+    router.push(`/organizations/dashboard/${orgId}`)
+  }
+  const handleCreateOrg = (): void => {
+    router.push('organizations/create-organization')
+  }
 
   useEffect(() => {
-    getAllOrganizations();
-  }, [currentPage.pageNumber, currentPage.pageSize, searchText]);
+    getAllOrganizations()
+  }, [currentPage.pageNumber, currentPage.pageSize, searchText])
 
   return (
-    <div className='space-y-6'>
-      <div className='mx-8 mb-6 flex items-center justify-between'>
-        <h1 className='text-2xl font-bold'>Organizations</h1>
-        <div className='flex items-center gap-4'>
+    <div className="space-y-6">
+      <div className="mx-8 mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Organizations</h1>
+        <div className="flex items-center gap-4">
           <Input
-            placeholder='Search'
+            placeholder="Search"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
-            className='w-64'
+            className="w-64"
           />
-          <Button onClick={handleCreateOrg} className="gap-2">
+          <Button disabled={currentPage.totalCount >= 10} onClick={handleCreateOrg} className="gap-2">
       <Plus className="h-4 w-4" />
       Create Organization
     </Button>
         </div>
       </div>
-    
-      <div className='mx-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
-      {loading ? (
-                <div className='mb-4 flex items-center justify-center'>
-                  <Loader height='2rem' width='2rem' />
-                </div>
+
+      <div className="mx-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {loading ? (
+          <div className="mb-4 flex items-center justify-center">
+            <Loader height="2rem" width="2rem" />
+          </div>
         ) : organizationsList.length > 0 ? (
           organizationsList.map((org) => (
             <Card
               key={org.id}
               onClick={() => handleCardClick(org.id)}
-              className='cursor-pointer p-6 transition-all border-border relative h-full w-full overflow-hidden rounded-xl border shadow-xl transition-transform duration-300 py-4'
+              className="border-border relative h-full w-full cursor-pointer overflow-hidden rounded-xl border p-6 py-4 shadow-xl transition-all transition-transform duration-300"
             >
-               <div className="flex items-start gap-4">
-                <Avatar className='h-16 w-16 rounded-md'>
+              <div className="flex items-start gap-4">
+                <Avatar className="h-16 w-16 rounded-md">
                   {org.logoUrl ? (
                     <AvatarImage src={org.logoUrl} alt={org.name} />
                   ) : (
-                    <AvatarFallback className='text-2xl font-bold'>
+                    <AvatarFallback className="text-2xl font-bold">
                       {org.name.substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   )}
                 </Avatar>
 
-                <div className='flex-1'>
-                  <h3 className='text-lg font-semibold'>{org.name}</h3>
-                  <p className=''>{org.description}</p>
-                  <div className='mt-2 text-md flex items-center gap-1'>
-                    <span className='font-bold'>Role(s):</span>
-                    <span>{' '}</span>
-                    <span className='rounded-md px-3 py-1 bg-secondary text-secondary-foreground'>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold">{org.name}</h3>
+                  <p className="">{org.description}</p>
+                  <div className="text-md mt-2 flex items-center gap-1">
+                    <span className="font-bold">Role(s):</span>
+                    <span> </span>
+                    <span className="bg-secondary text-secondary-foreground rounded-md px-3 py-1">
                       {org.userOrgRoles[0].orgRole.name || 'No Role'}
                     </span>
                   </div>
@@ -178,16 +177,16 @@ export const OrganizationList = () => {
             </Card>
           ))
         ) : (
-          <div className=''>No organizations found.</div>
+          <div className="">No organizations found.</div>
         )}
       </div>
 
-      <div className='mt-6 flex items-center justify-between px-8'>
-        <div className='text-muted-foreground text-sm'>
+      <div className="mt-6 flex items-center justify-between px-8">
+        <div className="text-muted-foreground text-sm">
           Showing {(currentPage.pageNumber - 1) * currentPage.pageSize + 1} to{' '}
           {Math.min(
             currentPage.pageNumber * currentPage.pageSize,
-            currentPage.totalCount
+            currentPage.totalCount,
           )}{' '}
           of {currentPage.totalCount} entries
         </div>
@@ -195,7 +194,7 @@ export const OrganizationList = () => {
         {organizationsList && organizationsList.length > 0 && (
           <div>
             <Pagination>
-              <PaginationContent className='gap-1'>
+              <PaginationContent className="gap-1">
                 <PaginationItem>
                   <PaginationPrevious
                     onClick={() =>
@@ -218,7 +217,7 @@ export const OrganizationList = () => {
                           ? 'default'
                           : 'outline'
                       }
-                      size='sm'
+                      size="sm"
                       onClick={() => handlePageChange(index + 1)}
                     >
                       {index + 1}
@@ -245,5 +244,5 @@ export const OrganizationList = () => {
         )}
       </div>
     </div>
-  );
-};
+  )
+}
