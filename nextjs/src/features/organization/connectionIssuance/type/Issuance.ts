@@ -1,199 +1,198 @@
 export interface SchemaState {
-	schemaId: string;
-	issuerDid: string;
-	attributes: string[];
-	createdDateTime: string;
+  schemaId: string
+  issuerDid: string
+  attributes: string[]
+  createdDateTime: string
 }
 
 export interface CredDefData {
-	createDateTime: string;
-	credentialDefinitionId: string;
-	revocable: boolean;
-	schemaLedgerId: string;
-	tag: string;
+  createDateTime: string
+  credentialDefinitionId: string
+  revocable: boolean
+  schemaLedgerId: string
+  tag: string
 }
 
 export interface IAttributes {
-	attributeName: string
-	schemaDataType: string
-	displayName: string
-	isRequired?: boolean
+  attributeName: string
+  schemaDataType: string
+  displayName: string
+  isRequired?: boolean
 }
 
 export interface ICredentials {
-	name?: string;
-	version?: string;
-	type?: string;
-	attributes?: IAttributes[];
-	schemaLedgerId?: string;
-	value?: string;
-	label?: string;
-	credentialDefinitionId?: string;
-	schemaCredDefName?: string;
-	schemaName: string;
-	schemaVersion: string;
-	schemaIdentifier: string;
-	schemaAttributes?: IAttributes[];
-	credentialDefinition?: string;
+  name?: string
+  version?: string
+  type?: string
+  attributes?: IAttributes[]
+  schemaLedgerId?: string
+  value?: string
+  label?: string
+  credentialDefinitionId?: string
+  schemaCredDefName?: string
+  schemaName: string
+  schemaVersion: string
+  schemaIdentifier: string
+  schemaAttributes?: IAttributes[]
+  credentialDefinition?: string
 }
 
 export interface IUploadMessage {
-	message: string
-	type: "success" | "failure"
+  message: string
+  type: 'success' | 'failure'
 }
 
 export interface IssuedCredential {
-	metadata: { [x: string]: { schemaId: string } };
-	connectionId: string;
-	createDateTime: string;
-	state: string;
-	isRevocable: boolean;
-	schemaId: string;
-	schemaName: string;
+  metadata: { [x: string]: { schemaId: string } }
+  connectionId: string
+  createDateTime: string
+  state: string
+  isRevocable: boolean
+  schemaId: string
+  schemaName: string
 }
 
 export interface IProps {
-	openModal: boolean;
-	closeModal: (flag: boolean) => void;
-	onSuccess: (flag: boolean) => void;
-	isProcessing: boolean;
+  openModal: boolean
+  closeModal: (flag: boolean) => void
+  onSuccess: (flag: boolean) => void
+  isProcessing: boolean
 }
 
 export interface IConnectionList {
-	theirLabel: string;
-	connectionId: string;
-	createDateTime: string;
-	checked?: boolean;
+  theirLabel: string
+  connectionId: string
+  createDateTime: string
+  checked?: boolean
 }
 
 export interface SchemaDetails {
-	schemaName: string;
-	version: string;
-	schemaId: string;
-	credDefId: string;
-	schemaAttributes?: DataTypeAttributes[];
+  schemaName: string
+  version: string
+  schemaId: string
+  credDefId: string
+  schemaAttributes?: DataTypeAttributes[]
 }
 
 export interface W3cSchemaDetails {
-	schemaName: string;
-	version: string;
-	schemaId: string;
-	w3cAttributes?: IAttributesData[];
-	issuerDid?: string;
+  schemaName: string
+  version: string
+  schemaId: string
+  w3cAttributes?: IAttributesData[]
+  issuerDid?: string
 }
 
 export interface IGetSchemaData {
-	schemaId: string;
-	schemaName: string;
-	version: string;
-	issuerDid: string;
-	attributes: IAttribute[];
-	created: string;
+  schemaId: string
+  schemaName: string
+  version: string
+  issuerDid: string
+  attributes: IAttribute[]
+  created: string
 }
 
 export interface IAttribute {
-	attributeName: string;
-	schemaDataType: string;
-	displayName: string;
-	isRequired: boolean;
+  attributeName: string
+  schemaDataType: string
+  displayName: string
+  isRequired: boolean
 }
 
 export interface SelectedUsers {
-	userName: string;
-	connectionId: string;
+  userName: string
+  connectionId: string
 }
 
 export interface IAttributesData {
-	isRequired: boolean;
-	name: string;
-	value: string;
-	dataType: string;
+  isRequired: boolean
+  name: string
+  value: string
+  dataType: string
 }
 
 export interface ICredentialdata {
-	connectionId: string;
-	options?: IOptions;
-	attributes?: IAttributesData[];
-	credential?: IW3cPayload;
+  connectionId: string
+  options?: IOptions
+  attributes?: IAttributesData[]
+  credential?: IW3cPayload
 }
 export interface IOptions {
-	proofType: string;
-	proofPurpose: string;
+  proofType: string
+  proofPurpose: string
 }
 
 export interface IEmailCredentialData {
-	attributes?: IAttributesData[];
-	credential?: IW3cPayload;
+  attributes?: IAttributesData[]
+  credential?: IW3cPayload
 }
 
 export interface IW3cPayload {
-	"@context": string[];
-	type: string[];
-	issuer: IIssuerData;
-	issuanceDate: string;
-	credentialSubject: ICredentialSubjectData;
+  '@context': string[]
+  type: string[]
+  issuer: IIssuerData
+  issuanceDate: string
+  credentialSubject: ICredentialSubjectData
 }
 
 export interface ICredentialSubjectData {
-	id: string;
-	[key: string]: string | number | boolean | null | undefined;
-};
+  id: string
+  [key: string]: string | number | boolean | null | undefined
+}
 export interface IIssuerData {
-	id: string;
+  id: string
 }
 export interface IssuanceFormPayload {
-	userName?: string;
-	credentialData: ICredentialdata[];
-	credentialDefinitionId?: string;
-	orgId: string;
+  userName?: string
+  credentialData: ICredentialdata[]
+  credentialDefinitionId?: string
+  orgId: string
 }
 
-
 export interface W3cIssuanceFormPayload {
-	userName?: string;
-	credentialData: ICredentialdata[];
-	orgId: string;
+  userName?: string
+  credentialData: ICredentialdata[]
+  orgId: string
 }
 
 export interface DataTypeAttributes {
-	isRequired: boolean;
-	schemaDataType: string;
-	attributeName: string
+  isRequired: boolean
+  schemaDataType: string
+  attributeName: string
 }
 
 export interface IIssueAttributes {
-	isRequired: boolean;
-	name: string;
-	value: string;
-	dataType: string;
+  isRequired: boolean
+  name: string
+  value: string
+  dataType: string
 }
 
 export interface ICredentialOffer {
-	emailId: string;
-	attributes?: IAttributesData[];
-	credential?: IW3cPayload;
-	options?: IOptionData;
+  emailId: string
+  attributes?: IAttributesData[]
+  credential?: IW3cPayload
+  options?: IOptionData
 }
 
 export interface IOptionData {
-	proofType: string;
-	proofPurpose: string;
-};
+  proofType: string
+  proofPurpose: string
+}
 
 export interface ITransformedData {
-	credentialOffer: ICredentialOffer[];
-	credentialDefinitionId?: string;
-	protocolVersion?: string;
-	isReuseConnection?: boolean;
-	credentialType?: string;
+  credentialOffer: ICredentialOffer[]
+  credentialDefinitionId?: string
+  protocolVersion?: string
+  isReuseConnection?: boolean
+  credentialType?: string
 }
 
 export type Option = {
-	value: string
-	label: string
-	id: string
-	schemaName:string
-	schemaVersion:string
-	schemaId:string
-	credentialId:string
-  }
+  value: string
+  label: string
+  id: string
+  schemaName: string
+  schemaVersion: string
+  schemaId: string
+  credentialId: string
+}
