@@ -1,8 +1,11 @@
-import Credentials from '@/features/organization/connectionIssuance/components/Credentials';
-import React from 'react';
+import React, { JSX } from 'react'
 
-const page = () => {
-	return <div><Credentials /></div>;
-};
+import Credentials from '@/features/organization/connectionIssuance/components/Credentials'
 
-export default page;
+const page = (): JSX.Element => (
+  <div>
+    <Credentials />
+  </div>
+)
+
+export default page

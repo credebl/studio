@@ -1,8 +1,7 @@
-import IssueDashboard from '@/features/organization/connectionIssuance/components/IssueDashboard';
-import React from 'react';
+import React, { JSX } from 'react'
 
-const page = () => {
-	return <IssueDashboard/>;
-};
+import IssueDashboard from '@/features/organization/connectionIssuance/components/IssueDashboard'
 
-export default page;
+const page = (): JSX.Element => <IssueDashboard />
+
+export default page

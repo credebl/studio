@@ -70,32 +70,32 @@ export enum OrganizationRoles {
 }
 
 export enum IssueCredential {
-	proposalSent = 'proposal-sent',
-	proposalReceived = 'proposal-received',
-	offerSent = 'offer-sent',
-	offerReceived = 'offer-received',
-	declined = 'decliend',
-	requestSent = 'request-sent',
-	requestReceived = 'request-received',
-	credentialIssued = 'credential-issued',
-	credentialReceived = 'credential-received',
-	done = 'done',
-	abandoned = 'abandoned',
+  proposalSent = 'proposal-sent',
+  proposalReceived = 'proposal-received',
+  offerSent = 'offer-sent',
+  offerReceived = 'offer-received',
+  declined = 'decliend',
+  requestSent = 'request-sent',
+  requestReceived = 'request-received',
+  credentialIssued = 'credential-issued',
+  credentialReceived = 'credential-received',
+  done = 'done',
+  abandoned = 'abandoned',
 }
 export enum IssueCredentialUserText {
-	offerSent = 'Offered',
-	done = 'Accepted',
-	abandoned = 'Declined',
-	received = 'Pending',
-	proposalReceived= 'Proposal Received',
-	credIssued = 'Credential Issued'
+  offerSent = 'Offered',
+  done = 'Accepted',
+  abandoned = 'Declined',
+  received = 'Pending',
+  proposalReceived = 'Proposal Received',
+  credIssued = 'Credential Issued',
 }
 
 export enum CredentialType {
-    INDY = 'indy',
-    JSONLD = 'jsonld',
+  INDY = 'indy',
+  JSONLD = 'jsonld',
 }
 export enum ProofType {
-	polygon = 'EcdsaSecp256k1Signature2019',
-	no_ledger = 'Ed25519Signature2018'
+  polygon = 'EcdsaSecp256k1Signature2019',
+  no_ledger = 'Ed25519Signature2018',
 }

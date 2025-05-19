@@ -1,10 +1,6 @@
-import React from 'react';
-// import SchemaList from '@/features/organization/components/SchemasList';
-import SchemaSelection from '@/features/organization/connectionIssuance/components/SchemaSelection';
-// import SchemaSelection from '@/features/schemas/components/SchemaSelection';
+import React from 'react'
+import SchemaSelection from '@/features/organization/connectionIssuance/components/SchemaSelection'
 
-const page = () => {
-	return <SchemaSelection/>;
-};
+const page = (): React.JSX.Element => <SchemaSelection />
 
-export default page;
+export default page

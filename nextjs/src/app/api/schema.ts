@@ -5,9 +5,9 @@ import {
 import { axiosGet, axiosPost } from '@/services/apiRequests'
 
 import { AxiosResponse } from 'axios'
+import { SchemaTypes } from '@/common/enums'
 import apiRoutes from './apiRoutes'
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs'
-import { SchemaTypes } from '@/common/enums'
 
 const config = getHeaderConfigs()
 export const createSchemas = async (
@@ -157,17 +157,20 @@ export const getCredDefDetailsByCredDefId = async (
   }
 }
 
-export const getSchemaCredDef = async (schemaType: SchemaTypes,orgId:string) => {
-	const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.bulk.credefList}?schemaType=${schemaType}`;
-	const axiosPayload = {
-		url,
-		config: await getHeaderConfigs(),
-	};
+export const getSchemaCredDef = async (
+  schemaType: SchemaTypes,
+  orgId: string,
+): Promise<AxiosResponse | string> => {
+  const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.bulk.credefList}?schemaType=${schemaType}`
+  const axiosPayload = {
+    url,
+    config: getHeaderConfigs(),
+  }
 
-	try {
-		return await axiosGet(axiosPayload);
-	} catch (error) {
-		const err = error as Error;
-		return err?.message;
-	}
-};
+  try {
+    return await axiosGet(axiosPayload)
+  } catch (error) {
+    const err = error as Error
+    return err?.message
+  }
+}

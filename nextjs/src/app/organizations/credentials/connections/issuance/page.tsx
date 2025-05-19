@@ -1,8 +1,6 @@
-import IssueCred from '@/features/organization/connectionIssuance/components/Issuance';
-import React from 'react';
+import IssueCred from '@/features/organization/connectionIssuance/components/Issuance'
+import React from 'react'
 
-const page = () => {
-	return <IssueCred/>;
-};
+const page = (): React.JSX.Element => <IssueCred />
 
-export default page;
+export default page
