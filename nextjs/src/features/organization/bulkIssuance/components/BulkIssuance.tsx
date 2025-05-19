@@ -114,7 +114,6 @@ const BulkIssuance = () => {
 
 			const response = await getOrganizationById(orgId)
 
-			console.log("response",response)
 
 			if (typeof response === 'string') {
 				// handle the error message
@@ -228,7 +227,7 @@ const BulkIssuance = () => {
 			schemaName: value.schemaName ?? '',
 			schemaVersion: value.schemaVersion ?? '',
 		};
-		onSelectChange(safeValue);		console.log("value",value)
+		onSelectChange(safeValue);	
 	}
 
 	const onSelectChange = (newValue: ICredentials | undefined) => {

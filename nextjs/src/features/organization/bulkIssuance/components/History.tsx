@@ -137,7 +137,6 @@ const HistoryBulkIssuance = () => {
 		if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
 			setTotalItem(data?.data.totalItems);
 			const { totalItems, nextPage, lastPage } = data.data;
-			console.log('page',totalItem,nextPage,lastPage)
 			setPageInfo({
 				totalItem: totalItems,
 				nextPage: nextPage,
