@@ -38,7 +38,7 @@ interface AlertResponseType {
 const AddPasskey = (): React.JSX.Element => {
   const [error, setError] = useState('')
   const [loader, setLoader] = useState(true)
-  const [OrgUserEmail, setOrgUserEmail] = useState<string | null>('')
+  const [OrgUserEmail, setOrgUserEmail] = useState<string>('')
   const [deviceList, setDeviceListData] = useState<IDeviceData[]>([])
   const [addSuccess, setAddSuccess] = useState<string | null>(null)
   const [editSuccess, setEditSuccess] = useState<string | null>(null)
