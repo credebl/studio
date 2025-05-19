@@ -39,30 +39,21 @@ const RoleViewButton = ({
   }, [])
 
   const isRoleAccess = (): boolean => {
+    const isOwnerOrAdmin =
+      userRoles.includes(Roles.OWNER) || userRoles.includes(Roles.ADMIN)
     if (feature === Features.CRETAE_ORG) {
       return true
     } else if (feature === Features.ISSUANCE) {
-      if (
-        userRoles.includes(Roles.OWNER) ||
-        userRoles.includes(Roles.ADMIN) ||
-        userRoles.includes(Roles.ISSUER)
-      ) {
+      if (isOwnerOrAdmin || userRoles.includes(Roles.ISSUER)) {
         return true
       }
       return false
     } else if (feature === Features.VERIFICATION) {
-      if (
-        userRoles.includes(Roles.OWNER) ||
-        userRoles.includes(Roles.ADMIN) ||
-        userRoles.includes(Roles.VERIFIER)
-      ) {
+      if (isOwnerOrAdmin || userRoles.includes(Roles.VERIFIER)) {
         return true
       }
       return false
-    } else if (
-      userRoles.includes(Roles.OWNER) ||
-      userRoles.includes(Roles.ADMIN)
-    ) {
+    } else if (isOwnerOrAdmin) {
       return true
     } else {
       return false
