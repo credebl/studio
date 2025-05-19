@@ -28,6 +28,13 @@ export interface IOrganisation {
   checked?: boolean | undefined
   error?: string
 }
+
+export interface IOrgDashboard {
+  usersCount: number
+  schemasCount: number
+  credentialsCount: number
+  presentationsCount: number
+}
 export interface OrgRole {
   id: string
   name: string
@@ -262,15 +269,8 @@ export interface IOrgFormValues {
   cityId: string | null
   website: string
   logoFile: File | null
-  logoPreview: string
-  // Note: Remove commented after testing
-  // description: string;
-  // countryId?: number | null;
-  // stateId?: number | null;
-  // cityId?: number | null;
-  // website: string;
-  // logoFile?: File | null;
-  // logoPreview?: string;
+  logoPreview?: string
+  logoUrl: string | null
 }
 
 export interface ISharedAgentForm {
