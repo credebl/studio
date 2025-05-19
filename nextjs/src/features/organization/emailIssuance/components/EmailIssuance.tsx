@@ -85,7 +85,6 @@ const EmailIssuance = () => {
 
 			const response = await getOrganizationById(orgId)
 
-			console.log("response", response)
 
 			if (typeof response === 'string') {
 				// handle the error message
@@ -229,7 +228,6 @@ const EmailIssuance = () => {
 		setIssueLoader(true);
 
 		const existingData = userData;
-		console.log("existinData",JSON.stringify(existingData,null,2))
 
 		let transformedData: ITransformedData = { credentialOffer: [] };
 
@@ -243,6 +241,8 @@ const EmailIssuance = () => {
 							value: String(attribute.value || ''),
 							name: (attribute.name || '' ) as string,
 							isRequired: attribute.isRequired as boolean,
+						    dataType: '',
+
 						};
 						transformedEntry?.attributes?.push(transformedAttribute);
 					});
@@ -346,7 +346,6 @@ const EmailIssuance = () => {
 			}),
 		};
 
-		console.log("init form data", initFormData)
 		setFormData({ formData: [initFormData] });
 	}, [attributes]);
 
@@ -379,7 +378,6 @@ const EmailIssuance = () => {
 	};
 
 	const handleSelect = (value:ICredentialOption) => {
-		console.log("value")
 		const fullValue: ICredentials = {
 		...value,
 		schemaName: value.schemaName ?? '',
@@ -584,7 +582,6 @@ const EmailIssuance = () => {
 																	validateOnChange
 																	enableReinitialize
 																	onSubmit={async (values:UserData): Promise<void> => {
-																		console.log("values",values)
 																		setUserData(values);
 																		handleOpenConfirmation();
 																	}}

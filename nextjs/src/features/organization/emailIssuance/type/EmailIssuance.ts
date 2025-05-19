@@ -50,29 +50,6 @@ export interface FromData{
         displayName: string;
     }[];
 }
-// export interface IEmailCredentialData {
-//     attributes?: IAttributesData[];
-//     credential?: IW3cEmailPayload;
-// }
-// export interface IW3cEmailPayload {
-//     "@context": string[];
-//     type: string[];
-//     issuer: IIssuerData;
-//     issuanceDate: string;
-//     credentialSubject: ICredentialSubjectData;
-// }
-
-
-
-
-// export interface IEmailCredentialOffer {
-//     emailId: string;
-//     attributes?: IAttributesData[];
-//     credential?: IW3cEmailPayload;
-//     options?: IOptionData;
-//     issuer?:{id:string};
-//     credentialSubject?:Attribute | ICredentialSubjectData;
-// }
 
 export interface IAttributesData {
 	isRequired: boolean;
@@ -100,36 +77,10 @@ export interface ICredentialOption {
     credentialDefinition?: string;
 }
 
-// export interface IOptionData {
-// 	proofType: string;
-// 	proofPurpose: string;
-// };
-
-// export interface IIssuerData {
-// 	id: string;
-// }
-
 export interface ICredentialSubjectData {
 	id?: string;
 	[key: string]: string | number | boolean | null | undefined;
 };
-
-// export interface ICredentials {
-//     name?: string;
-//     version?: string;
-//     type?: string;
-//     attributes?: IAttributes[];
-//     schemaLedgerId?: string;
-//     value?: string;
-//     label?: string;
-//     credentialDefinitionId?: string;
-//     schemaCredDefName?: string;
-//     schemaName: string;
-//     schemaVersion: string;
-//     schemaIdentifier: string;
-//     schemaAttributes?: IAttributes[];
-//     credentialDefinition?: string;
-// }
 
 export interface IAttributes {
 	attributeName: string
@@ -137,3 +88,13 @@ export interface IAttributes {
 	displayName: string
 	isRequired?: boolean
 }
+
+export interface GetAllSchemaListParameter {
+	itemPerPage?: number,
+	page?: number,
+	search?: string,
+	sortBy?: string,
+	allSearch?: string,
+	token?:string,
+	ledgerId?:string,
+  }
