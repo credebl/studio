@@ -1,295 +1,186 @@
 'use client'
 
 import {
-  IConnectionListAPIParameter,
-  getConnectionsByOrg,
-} from '@/app/api/connection'
+  Connection,
+  ConnectionApiSortFields,
+} from '../types/connections-interface'
 import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui/pagination'
-import React, { ChangeEvent, useEffect, useState } from 'react'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+  IColumnData,
+  ITableMetadata,
+  SortActions,
+  TableStyling,
+  getColumns,
+} from '../../../components/ui/generic-table-component/columns'
+import { JSX, useEffect, useState } from 'react'
 
-import { AxiosResponse } from 'axios'
-import { Button } from '@/components/ui/button'
-import DateTooltip from '@/components/DateTooltip'
-import { EmptyMessage } from '@/components/EmptyMessage'
-import { IConnectionList } from '../types/connections-interface'
-import { IconSearch } from '@tabler/icons-react'
-import { Input } from '@/components/ui/input'
-import { RotateCcwIcon } from 'lucide-react'
-import { Skeleton } from '@/components/ui/skeleton'
-import { apiStatusCodes } from '@/config/CommonConstant'
-import { dateConversion } from '@/utils/DateConversion'
+import { DataTable } from '../../../components/ui/generic-table-component/data-table'
+import PageContainer from '@/components/layout/page-container'
+import { getConnectionsByOrg } from '@/app/api/connection'
 import { useAppSelector } from '@/lib/hooks'
 
-const initialPageState = {
-  itemPerPage: 10,
-  page: 1,
-  search: '',
-  sortBy: 'createDateTime',
-  sortingOrder: 'desc',
-  allSearch: '',
-}
-
-const Connections = (): React.JSX.Element => {
-  const orgId = useAppSelector((state) => state.organization.orgId)
-  const [listAPIParameter, setListAPIParameter] = useState(initialPageState)
-  const [connectionList, setConnectionList] = useState<IConnectionList[]>([])
-  const [loading, setLoading] = useState(true)
-  const [searchText, setSearchText] = useState('')
-
-  const [paginationInfo, setPaginationInfo] = useState({
-    totalItems: 0,
-    hasNextPage: false,
-    hasPreviousPage: false,
-    nextPage: 1,
-    previousPage: 0,
-    lastPage: 1,
-  })
-
-  const getConnections = async (
-    apiParameter: IConnectionListAPIParameter,
-  ): Promise<void> => {
-    try {
-      setLoading(true)
-
-      if (orgId) {
-        const response = await getConnectionsByOrg({
-          orgId,
-          page: apiParameter.page,
-          itemPerPage: apiParameter.itemPerPage,
-          search: apiParameter.search,
-          sortBy: apiParameter.sortBy,
-          sortingOrder: apiParameter.sortingOrder,
-        })
-
-        const { data } = response as AxiosResponse
-
-        if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-          setConnectionList(data.data.data || [])
-          setPaginationInfo({
-            totalItems: data.data.totalItems,
-            hasNextPage: data.data.hasNextPage,
-            hasPreviousPage: data.data.hasPreviousPage,
-            nextPage: data.data.nextPage,
-            previousPage: data.data.previousPage,
-            lastPage: data.data.lastPage,
-          })
-        } else {
-          setConnectionList([])
-        }
-      } else {
-        setConnectionList([])
-      }
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
+export default function Connections(): JSX.Element {
+  const metadata: ITableMetadata = {
+    enableSelection: true,
   }
+  const orgId = useAppSelector((state) => state.organization.orgId)
+  const [connectionData, setConnectionData] = useState<Connection[]>([
+    {
+      createDateTime: '',
+      createdBy: '',
+      orgId: '',
+      state: '',
+      theirLabel: '',
+      connectionId: '',
+    },
+  ])
+  const [pageIndex, setPageIndex] = useState(0)
+  const [pageSize, setPageSize] = useState(10)
+  const [pageCount, setPageCount] = useState(1)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [sortBy, setSortBy] = useState('createDateTime')
+  const [sortOrder, setsortOrder] = useState<SortActions>('desc')
 
   useEffect(() => {
-    if (orgId) {
-      getConnections(listAPIParameter)
+    if (!orgId) {
+      return
     }
-  }, [listAPIParameter, orgId])
+    async function fetchConnections(): Promise<void> {
+      try {
+        const connectionList = await getConnectionsByOrg({
+          itemPerPage: pageSize,
+          page: pageIndex + 1,
+          search: searchTerm,
+          sortBy,
+          sortingOrder: sortOrder,
+          orgId,
+        })
 
-  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const { value } = e.target
-    setSearchText(value)
-    setListAPIParameter((prev) => ({
-      ...prev,
-      search: value,
-      page: 1,
-    }))
-  }
+        if (connectionList && Array.isArray(connectionList.data)) {
+          setConnectionData(connectionList.data ?? [])
+          setPageCount(connectionList.lastPage ?? 1)
+        } else {
+          setConnectionData([])
+          setPageCount(1)
+        }
+      } catch (error) {
+        console.error('Failed to fetch connections:', error)
+        setConnectionData([])
+      }
+    }
 
-  const handleSortChange = (value: string): void => {
-    setListAPIParameter((prev) => ({
-      ...prev,
-      sortingOrder: value,
-      page: 1,
-    }))
-  }
+    fetchConnections()
+    // Can add terms according to us
+  }, [orgId, pageIndex, pageSize, sortBy, searchTerm, sortOrder])
 
-  const handleRefresh = (): void => {
-    getConnections(listAPIParameter)
-  }
+  useEffect(() => {
+    if (!orgId) {
+      return
+    }
+    // Reset all params
+    setPageIndex(0)
+    setPageSize(10)
+    setPageCount(1)
+    setSortBy('createDateTime')
+    setSearchTerm('')
+    setsortOrder('desc')
+  }, [orgId]) // Rerun with default config on org data change
 
-  const onPageChange = (page: number): void => {
-    setListAPIParameter((prev) => ({
-      ...prev,
-      page,
-    }))
-  }
+  const columnData: IColumnData[] = [
+    {
+      id: 'theirLabel',
+      title: 'Their Label',
+      accessorKey: 'theirLabel',
+      columnFunction: [
+        'hide',
+        {
+          sortCallBack: async (order): Promise<void> => {
+            setSortBy(ConnectionApiSortFields.THEIR_LABEL)
+            setsortOrder(order)
+          },
+        },
+      ],
+    },
+    {
+      id: 'connectionId',
+      title: 'Connection Id',
+      accessorKey: 'connectionId',
+      columnFunction: [
+        'hide',
+        {
+          sortCallBack: async (order): Promise<void> => {
+            setSortBy(ConnectionApiSortFields.CONNECTIONID)
+            setsortOrder(order)
+          },
+        },
+      ],
+    },
+    {
+      id: 'state',
+      title: 'state',
+      accessorKey: 'state',
+      columnFunction: ['hide'],
+      // cell:<div></div> // Optional if we want to send our own cell
+    },
+    {
+      id: 'orgId',
+      title: 'orgId',
+      accessorKey: 'orgId',
+      columnFunction: ['hide'],
+      // cell:<div></div> // Optional if we want to send our own cell
+    },
+    {
+      id: 'createdBy',
+      title: 'createdBy',
+      accessorKey: 'createdBy',
+      columnFunction: ['hide'],
+      // cell:<div></div> // Optional if we want to send our own cell
+    },
+    {
+      id: 'createDateTime',
+      title: 'createDateTime',
+      accessorKey: 'createDateTime',
+      columnFunction: [
+        {
+          sortCallBack: async (order): Promise<void> => {
+            setSortBy(ConnectionApiSortFields.CREATE_DATE_TIME)
+            setsortOrder(order)
+          },
+        },
+      ],
+      // cell:<div></div> // Optional if we want to send our own cell
+    },
+  ]
+
+  const tableStyling: TableStyling = { metadata, columnData }
+  const column = getColumns<Connection>(tableStyling)
 
   return (
-    <div className="p-6">
-      <h1 className="mb-6 text-2xl font-bold">Connections</h1>
-
-      <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="relative w-full max-w-sm">
-          <Input
-            type="text"
-            placeholder="Search..."
-            value={searchText}
-            onChange={handleSearchChange}
-            className="bg-background text-muted-foreground focus-visible:ring-primary h-10 rounded-lg pr-4 pl-10 text-sm shadow-sm focus-visible:ring-1"
-          />
-          <IconSearch className="text-muted-foreground absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2" />
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Button variant="outline" size="icon" onClick={handleRefresh}>
-            <RotateCcwIcon className="h-5 w-5" />
-          </Button>
-
-          <Select
-            value={listAPIParameter.sortingOrder}
-            onValueChange={handleSortChange}
-          >
-            <SelectTrigger className="bg-background w-[140px] rounded-lg px-3 py-2 text-sm shadow-sm">
-              <SelectValue placeholder="Sort" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="desc">Descending</SelectItem>
-              <SelectItem value="asc">Ascending</SelectItem>
-            </SelectContent>
-          </Select>
+    <PageContainer>
+      <div className="mb-2 flex flex-wrap items-center justify-between space-y-2 gap-x-4">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Connections</h2>
+          <p className="text-muted-foreground">
+            Here&apos;s a list of Connection!
+          </p>
         </div>
       </div>
-
-      <div className="overflow-hidden rounded-xl border border-gray-300 shadow-sm">
-        <Table>
-          <TableHeader className="bg-muted">
-            <TableRow>
-              <TableHead className="text-muted-foreground">USER</TableHead>
-              <TableHead className="text-muted-foreground">
-                CONNECTION ID
-              </TableHead>
-              <TableHead className="text-muted-foreground">
-                CREATED ON
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody>
-            {loading ? (
-              Array.from({ length: 3 }).map((_, index) => (
-                <TableRow key={index}>
-                  <TableCell>
-                    <Skeleton className="h-4 w-24" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-32" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-20" />
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : connectionList.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={3} className="p-6 text-center">
-                  <EmptyMessage
-                    title="No Connections"
-                    description="You don't have any connections yet."
-                    height="250px"
-                  />
-                </TableCell>
-              </TableRow>
-            ) : (
-              connectionList.map((connection) => (
-                <TableRow
-                  key={connection.connectionId}
-                  className="hover:bg-muted/100"
-                >
-                  <TableCell>
-                    {connection.theirLabel || 'Not available'}
-                  </TableCell>
-                  <TableCell>{connection.connectionId}</TableCell>
-                  <TableCell>
-                    <DateTooltip date={connection.createDateTime}>
-                      <span className="cursor-default">
-                        {dateConversion(connection.createDateTime)}
-                      </span>
-                    </DateTooltip>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+      <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
+        <DataTable
+          data={connectionData} // data to be sent according to column structure
+          columns={column} // Define the column stucture according to
+          index={'connectionId'} // Unique index for the rows
+          pageIndex={pageIndex}
+          pageSize={pageSize}
+          pageCount={pageCount}
+          onPageChange={setPageIndex} // Function to handle pageIndex change
+          onPageSizeChange={(size) => {
+            // Function to handle pageSize change
+            setPageSize(size)
+            setPageIndex(0)
+          }}
+          onSearchTerm={setSearchTerm} // Function to handle searchTerm change
+        />
       </div>
-
-      {connectionList.length > 0 && (
-        <div className="mt-6">
-          <Pagination className="justify-end">
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() =>
-                    paginationInfo.hasPreviousPage &&
-                    onPageChange(paginationInfo.previousPage)
-                  }
-                />
-              </PaginationItem>
-
-              {Array.from({ length: paginationInfo.lastPage }, (_, index) => {
-                const page = index + 1
-                const isActive = page === listAPIParameter.page
-
-                return (
-                  <PaginationItem key={page}>
-                    <PaginationLink
-                      onClick={() => onPageChange(page)}
-                      className={
-                        isActive
-                          ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-                          : ''
-                      }
-                    >
-                      {page}
-                    </PaginationLink>
-                  </PaginationItem>
-                )
-              })}
-
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() =>
-                    paginationInfo.hasNextPage &&
-                    onPageChange(paginationInfo.nextPage)
-                  }
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </div>
-      )}
-    </div>
+    </PageContainer>
   )
 }
-
-export default Connections

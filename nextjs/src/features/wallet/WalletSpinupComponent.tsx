@@ -8,7 +8,6 @@ import {
   setAgentConfigDetails,
   spinupSharedAgent,
 } from '@/app/api/Agent'
-import { createOrganization, getOrganizationById } from '@/app/api/organization'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { AlertComponent } from '@/components/AlertComponent'
@@ -23,8 +22,8 @@ import SharedAgentForm from './SharedAgentForm'
 import Stepper from '@/components/StepperComponent'
 import WalletStepsComponent from './WalletSteps'
 import { apiStatusCodes } from '@/config/CommonConstant'
+import { getOrganizationById } from '@/app/api/organization'
 import { nanoid } from 'nanoid'
-import { useAppSelector } from '@/lib/hooks'
 
 enum AgentType {
   SHARED = 'shared',
@@ -40,32 +39,23 @@ const WalletSpinup = (): React.JSX.Element => {
   const [failure, setFailure] = useState<string | null>(null)
   const [seeds, setSeeds] = useState<string>('')
   const [maskedSeeds, setMaskedSeeds] = useState('')
-  const [, setOrgData] = useState<Organisation | null>(null)
-  const [, setOrgFormData] = useState({
-    name: '',
-    description: '',
-    countryId: null,
-    stateId: null,
-    cityId: null,
-    website: '',
-    logoUrl: null,
-  })
-
+  const [orgData, setOrgData] = useState<Organisation | null>(null)
   const [, setShowProgressUI] = useState(false)
+  const [, setCurrentOrgId] = useState<string>('')
   const [, setIsShared] = useState<boolean>(false)
   const [, setIsConfiguredDedicated] = useState<boolean>(false)
   const [showLedgerConfig, setShowLedgerConfig] = useState(false)
-  const [createdOrgId, setCreatedOrgId] = useState<string | null>(null)
-  const [orgIdOfCurrentOrg, setOrgIdOfCurrentOrg] = useState<string | null>(
-    null,
-  )
+  const [walletStatus, setWalletStatus] = useState<boolean>(false)
+
   const router = useRouter()
 
   const searchParams = useSearchParams()
-  const alreadyCreatedOrgId = searchParams.get('organizationId')
-  const organizationFormData = useAppSelector((state) => state.wallet.formData)
-  const organizationName = useAppSelector((state) => state.wallet.orgName)
-  const currentStep = useAppSelector((state) => state.wallet.step)
+  const orgId = searchParams.get('orgId')
+  useEffect(() => {
+    if (orgId) {
+      setCurrentOrgId(orgId)
+    }
+  }, [orgId])
 
   const [agentConfig, setAgentConfig] = useState({
     walletName: '',
@@ -78,8 +68,52 @@ const WalletSpinup = (): React.JSX.Element => {
     const maskedPart = seed.slice(-10).replace(/./g, '*')
     return visiblePart + maskedPart
   }
+  const fetchOrganizationDetails = async (): Promise<void> => {
+    if (!orgId) {
+      return
+    }
+    if (walletStatus) {
+      router.push(`/organizations/${orgId}`)
+    }
+
+    setLoading(true)
+    try {
+      const response = await getOrganizationById(orgId)
+      const { data } = response as AxiosResponse
+
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        const agentData = data?.data?.org_agents
+
+        if (
+          data?.data?.org_agents?.length > 0 &&
+          data?.data?.org_agents[0]?.orgDid
+        ) {
+          setWalletStatus(true)
+        }
+
+        if (
+          data?.data?.org_agents &&
+          data?.data?.org_agents[0]?.org_agent_type?.agent?.toLowerCase() ===
+            AgentType.DEDICATED
+        ) {
+          setIsConfiguredDedicated(true)
+          setAgentType(AgentType.DEDICATED)
+        }
+
+        if (agentData && agentData.length > 0 && data?.data?.orgDid) {
+          setOrgData(data?.data)
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching organization details:', error)
+      setFailure('Failed to fetch organization details')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
+    fetchOrganizationDetails()
     const generatedSeeds = nanoid(32)
     const masked = maskSeeds(generatedSeeds)
     setSeeds(generatedSeeds)
@@ -97,145 +131,14 @@ const WalletSpinup = (): React.JSX.Element => {
 
   const redirectUrl = getRedirectUrl()
 
-  const createOrganizationOnce = async (): Promise<string | null> => {
-    // If we have an existing org ID from props, fetch its details
-    if (alreadyCreatedOrgId) {
-      setCreatedOrgId(alreadyCreatedOrgId)
-
-      try {
-        const response = await getOrganizationById(
-          alreadyCreatedOrgId as string,
-        )
-        const { data } = response as AxiosResponse
-
-        if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-          const org = data.data
-
-          const orgData = {
-            name: org.name || '',
-            description: org.description || '',
-            countryId: org.countryId || null,
-            stateId: org.stateId || null,
-            cityId: org.cityId || null,
-            website: org.website || '',
-            logoUrl: org.logoUrl || null,
-          }
-
-          setOrgFormData(orgData)
-          return alreadyCreatedOrgId
-        } else {
-          setFailure('Failed to fetch organization details')
-          return null
-        }
-      } catch (err) {
-        setFailure('Error fetching organization details')
-        console.error(err)
-        return null
-      }
-    }
-
-    if (!organizationFormData) {
-      setFailure('Organization data is missing')
-      return null
-    }
-
-    setLoading(true)
-    try {
-      const orgData = {
-        name: organizationFormData.name,
-        description: organizationFormData.description,
-        logo: organizationFormData.logoFile
-          ? URL.createObjectURL(
-              organizationFormData.logoFile as Blob | MediaSource,
-            )
-          : '',
-        website: organizationFormData.website || '',
-        countryId: organizationFormData.countryId,
-        stateId: organizationFormData.stateId,
-        cityId: organizationFormData.cityId,
-      }
-
-      const resCreateOrg = await createOrganization(orgData)
-      const { data } = resCreateOrg as AxiosResponse
-
-      if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-        const orgId = data?.data?.id || data?.data?._id
-        setOrgIdOfCurrentOrg(orgId)
-        setCreatedOrgId(orgId)
-        setSuccess('Organization created successfully')
-        return orgId
-      } else {
-        setFailure(
-          typeof resCreateOrg === 'string'
-            ? resCreateOrg
-            : 'Failed to create organization',
-        )
-        return null
-      }
-    } catch (error) {
-      setFailure('Error creating organization')
-      console.error('Error creating organization:', error)
-      return null
-    } finally {
-      setLoading(false)
-    }
-  }
-
   const configureDedicatedWallet = (): void => {
     setIsConfiguredDedicated(true)
-    setShowLedgerConfig(true) // Show ledger config when dedicated wallet is configured
+    setShowLedgerConfig(true)
   }
-
-  const fetchOrganizationDetails = async (): Promise<void> => {
-    setLoading(true)
-    // const orgId = props.orgId;
-    // const orgInfoData = await getFromLocalStorage(storageKeys.ORG_INFO);
-    const response = await getOrganizationById(orgIdOfCurrentOrg as string)
-    const { data } = response as AxiosResponse
-    setLoading(false)
-
-    if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-      const org = data.data
-
-      const orgData = {
-        name: org.name || '',
-        description: org.description || '',
-        countryId: org.countryId || null,
-        stateId: org.stateId || null,
-        cityId: org.cityId || null,
-        website: org.website || '',
-        logoUrl: org.logoUrl || null,
-      }
-      const agentData = data?.data?.org_agents
-      setOrgFormData(orgData)
-      if (
-        data?.data?.org_agents &&
-        data?.data?.org_agents[0]?.org_agent_type?.agent?.toLowerCase() ===
-          AgentType.DEDICATED
-      ) {
-        setIsConfiguredDedicated(true)
-        setAgentType(AgentType.DEDICATED)
-      }
-
-      if (agentData && agentData.length > 0 && data?.data?.orgDid) {
-        setOrgData(data?.data)
-      }
-    }
-  }
-
   const setWalletSpinupStatus = (): void => {
     setSuccess('Wallet created successfully')
     fetchOrganizationDetails()
   }
-  useEffect(() => {
-    const shouldFetchOrg = async (): Promise<void> => {
-      if (!createdOrgId && alreadyCreatedOrgId && orgIdOfCurrentOrg) {
-        await fetchOrganizationDetails()
-      }
-    }
-    shouldFetchOrg()
-    fetchOrganizationDetails()
-  }, [])
 
   const onRadioSelect = (type: string): void => {
     setAgentType(type)
@@ -246,14 +149,13 @@ const WalletSpinup = (): React.JSX.Element => {
     privatekey: string,
     domain: string,
   ): Promise<void> => {
+    if (!orgId) {
+      setFailure('Organization ID is missing')
+      return
+    }
     setShowProgressUI(true)
     setAgentSpinupCall(true)
     setWalletSpinStep(1)
-    const orgId = await createOrganizationOnce()
-    if (!orgId) {
-      return
-    } // Stop if organization creation failed
-
     const agentPayload = {
       walletName: agentConfig.walletName,
       apiKey: agentConfig.apiKey,
@@ -295,21 +197,28 @@ const WalletSpinup = (): React.JSX.Element => {
       clientSocketId: SOCKET.id,
     }
 
-    const spinupRes = await createDid(orgId as string, didData)
-    const { data } = spinupRes as AxiosResponse
+    try {
+      const spinupRes = await createDid(orgId, didData)
+      const { data } = spinupRes as AxiosResponse
 
-    if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-      setAgentSpinupCall(true)
-      setSuccess(spinupRes as string)
-      setWalletSpinStep(1)
+      if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+        setAgentSpinupCall(true)
+        setSuccess(spinupRes as string)
+        setWalletSpinStep(1)
 
-      setTimeout(() => {
-        window.location.href = redirectUrl ? redirectUrl : '/organizations'
-      }, 1000)
-    } else {
+        setTimeout(() => {
+          window.location.href = redirectUrl ? redirectUrl : '/organizations'
+        }, 1000)
+      } else {
+        setShowProgressUI(false)
+        setLoading(false)
+        setFailure(spinupRes as string)
+      }
+    } catch (error) {
       setShowProgressUI(false)
       setLoading(false)
-      setFailure(spinupRes as string)
+      setFailure('Error creating DID')
+      console.error(error)
     }
   }
 
@@ -317,10 +226,8 @@ const WalletSpinup = (): React.JSX.Element => {
     values: IValuesShared,
     domain: string,
   ): Promise<void> => {
-    // Use the unified organization creation function
-    const orgId = await createOrganizationOnce()
-    setCreatedOrgId(orgId)
     if (!orgId) {
+      setFailure('Organization ID is missing')
       return
     }
 
@@ -347,8 +254,8 @@ const WalletSpinup = (): React.JSX.Element => {
 
     try {
       const spinupRes = await spinupSharedAgent(payload, orgId)
-
       const { data } = spinupRes as AxiosResponse
+
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
         if (data?.data['agentSpinupStatus'] === 1) {
           setAgentSpinupCall(true)
@@ -412,7 +319,7 @@ const WalletSpinup = (): React.JSX.Element => {
           setWalletSpinStep(6)
           setWalletSpinupStatus()
         }, 1000)
-        router.push('/organizations')
+        router.push(`/organizations/dashboard/${orgId}`)
         // eslint-disable-next-line no-console
         console.log('invitation-url-creation-success', JSON.stringify(data))
       })
@@ -441,19 +348,17 @@ const WalletSpinup = (): React.JSX.Element => {
     }
   }, [])
 
-  const generateAlphaNumeric = organizationName
-    ? organizationName
-        ?.split(' ')
-        .reduce(
-          (s, c) =>
-            s.charAt(0).toUpperCase() +
-            s.slice(1) +
-            (c.charAt(0).toUpperCase() + c.slice(1)),
-          '',
-        )
-    : ''
+  // const generateAlphaNumeric = organizationName ? organizationName ?.split(' ')
+  //       .reduce(
+  //         (s, c) =>
+  //           s.charAt(0).toUpperCase() +
+  //           s.slice(1) +
+  //           (c.charAt(0).toUpperCase() + c.slice(1)),
+  //         '',
+  //       )
+  //   : '';
 
-  const orgName = generateAlphaNumeric.slice(0, 19)
+  // const orgName = generateAlphaNumeric.slice(0, 19);
 
   let formComponent: React.JSX.Element = <></>
 
@@ -465,11 +370,11 @@ const WalletSpinup = (): React.JSX.Element => {
           setLedgerConfig={setShowLedgerConfig}
           maskedSeeds={maskedSeeds}
           seeds={seeds}
-          orgName={orgName}
+          orgName={orgData?.name || ''}
           loading={loading}
           submitSharedWallet={submitSharedWallet}
           isCopied={false}
-          orgId={alreadyCreatedOrgId ? alreadyCreatedOrgId : ''}
+          orgId={orgId || ''}
         />
       )
     } else {
@@ -486,21 +391,12 @@ const WalletSpinup = (): React.JSX.Element => {
       )
     }
   } else {
-    if (agentType === AgentType.SHARED) {
-      formComponent = (
-        <>
-          <Stepper currentStep={4} totalSteps={4} />
-          <WalletStepsComponent steps={walletSpinStep} />
-        </>
-      )
-    } else {
-      formComponent = (
-        <>
-          <Stepper currentStep={4} totalSteps={4} />
-          <WalletStepsComponent steps={walletSpinStep} />
-        </>
-      )
-    }
+    formComponent = (
+      <>
+        <Stepper currentStep={4} totalSteps={4} />
+        <WalletStepsComponent steps={walletSpinStep} />
+      </>
+    )
   }
 
   return (
@@ -510,8 +406,6 @@ const WalletSpinup = (): React.JSX.Element => {
           <Card>
             <CardContent className="p-6">
               <div className="space-y-4">
-                {/* Alert Messages */}
-
                 {success && (
                   <div className="w-full" role="alert">
                     <AlertComponent
@@ -535,7 +429,6 @@ const WalletSpinup = (): React.JSX.Element => {
                   </div>
                 )}
 
-                {/* Header section - hide when showing ledger config */}
                 {!showLedgerConfig && (
                   <>
                     <div className="mb-6 flex items-center justify-between">
@@ -545,15 +438,7 @@ const WalletSpinup = (): React.JSX.Element => {
                           Configure your digital agent
                         </p>
                       </div>
-
-                      {/* Step X of Y at Top Right */}
-                      <div className="text-muted-foreground text-sm font-medium">
-                        Step {currentStep} of 4
-                      </div>
                     </div>
-
-                    {/* Stepper Progress Bar */}
-                    <Stepper currentStep={currentStep} totalSteps={4} />
                   </>
                 )}
 
@@ -584,7 +469,6 @@ const WalletSpinup = (): React.JSX.Element => {
                               name="agent-type"
                               className="mt-1 h-4 w-4"
                             />
-                            <div className="ml-3 flex w-full justify-end"></div>
                           </div>
                           <label
                             htmlFor="dedicated-agent-radio"
@@ -622,12 +506,10 @@ const WalletSpinup = (): React.JSX.Element => {
                               type="radio"
                               value={AgentType.SHARED}
                               checked={agentType === AgentType.SHARED}
-                              disabled={agentType === AgentType.DEDICATED}
                               onChange={() => onRadioSelect(AgentType.SHARED)}
                               name="agent-type"
                               className="mt-1 h-4 w-4"
                             />
-                            <div className="ml-3 flex w-full justify-end"></div>
                           </div>
                           <label
                             htmlFor="shared-agent-radio"

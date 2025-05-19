@@ -327,6 +327,19 @@ const LedgerConfig = ({
     </div>
   )
 
+  const initialValues: IValuesShared = {
+    seed: seedVal || '',
+    method: selectedMethod || '',
+    network: selectedNetwork || '',
+    did: '',
+    ledger: selectedLedger || '',
+    domain: '',
+    privatekey: '',
+    label: walletLabel,
+    keyType: '',
+    role: '',
+  }
+
   return (
     <div className="">
       <div className="mb-6">
@@ -495,21 +508,8 @@ const LedgerConfig = ({
           />
         </div>
       </div>
-
       <Formik
-        initialValues={
-          {
-            seed: seedVal || '',
-            method: selectedMethod || '',
-            network: selectedNetwork || '',
-            did: '',
-            ledger: selectedLedger || '',
-            domain: '',
-            privatekey: '',
-            label: walletLabel,
-            keyType: '',
-          } as IValuesShared
-        }
+        initialValues={initialValues}
         enableReinitialize={true}
         validationSchema={yup.object().shape(validations)}
         onSubmit={(
@@ -594,7 +594,7 @@ const LedgerConfig = ({
                           Follow these instructions to generate polygon tokens:
                         </h4>
                         <ol className="space-y-3 text-sm">
-                          <li className="flex items-start">
+                          <li className="">
                             <span className="mr-2 font-semibold">Step 1:</span>
                             <div>
                               Copy the address and get the free tokens for the
@@ -611,7 +611,7 @@ const LedgerConfig = ({
                               </div>
                             </div>
                           </li>
-                          <li className="flex items-start">
+                          <li className="">
                             <span className="mr-2 font-semibold">Step 2:</span>
                             <div>
                               Check that you have received the tokens.
@@ -637,15 +637,6 @@ const LedgerConfig = ({
             )}
 
             <div className="mt-8 flex justify-between">
-              {/* <Button
-                    variant='secondary'
-                    onClick={() => router.push('/organizations/create-organization?step=2')}
-                    className='flex items-center gap-2'
-                    >
-                    <ArrowLeft className='h-4 w-4' />
-                    Back to Agent Config                   
-            </Button> */}
-
               <Button disabled={isSubmitDisabled()} type="submit">
                 Create Identity
               </Button>
