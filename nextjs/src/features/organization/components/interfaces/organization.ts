@@ -28,6 +28,13 @@ export interface IOrganisation {
   checked?: boolean | undefined
   error?: string
 }
+
+export interface IOrgDashboard {
+  usersCount: number
+  schemasCount: number
+  credentialsCount: number
+  presentationsCount: number
+}
 export interface OrgRole {
   id: string
   name: string

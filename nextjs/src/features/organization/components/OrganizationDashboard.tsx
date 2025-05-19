@@ -3,15 +3,15 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Card, CardContent } from '@/components/ui/card'
 import { Edit, Trash2 } from 'lucide-react'
+import { IOrgDashboard, IOrganisation } from './interfaces/organization'
 import React, { useEffect, useState } from 'react'
+import { getOrgDashboard, getOrganizationById } from '@/app/api/organization'
 
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
-import { IOrganisation } from './interfaces/organization'
 import OrganizationDetails from './OrganizationDetails'
 import PageContainer from '@/components/layout/page-container'
 import { apiStatusCodes } from '@/config/CommonConstant'
-import { getOrganizationById } from '@/app/api/organization'
 import { useAppSelector } from '@/lib/hooks'
 import { useRouter } from 'next/navigation'
 
@@ -25,6 +25,7 @@ export const OrganizationDashboard = ({
 }: OrganizationDashboardProps): React.JSX.Element => {
   const router = useRouter()
   const [orgData, setOrgData] = useState<IOrganisation | null>(null)
+  const [orgDashboard, setOrgDashboard] = useState<IOrgDashboard | null>(null)
   const [, setLoading] = useState(true)
   const [walletStatus, setWalletStatus] = useState<boolean>(false)
   const [, setError] = useState<string | null>(null)
@@ -43,6 +44,7 @@ export const OrganizationDashboard = ({
     setLoading(true)
     const response = await getOrganizationById(orgIdOfDashboard as string)
     const { data } = response as AxiosResponse
+
     setLoading(false)
     if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
       if (
@@ -58,6 +60,22 @@ export const OrganizationDashboard = ({
     setLoading(false)
   }
 
+  const fetchOrganizationDashboardDetails = async (): Promise<void> => {
+    setLoading(true)
+    if (orgId) {
+      const response = await getOrgDashboard(orgIdOfDashboard as string)
+      const { data } = response as AxiosResponse
+      setLoading(false)
+
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        setOrgDashboard(data?.data)
+      } else {
+        setError(response as string)
+      }
+    }
+    setLoading(false)
+  }
+
   const handleEditOrg = (): void => {
     router.push(`/organizations/create-organization?orgId=${orgId}`)
   }
@@ -68,6 +86,7 @@ export const OrganizationDashboard = ({
 
   useEffect(() => {
     fetchOrganizationDetails()
+    fetchOrganizationDashboardDetails()
   }, [activeOrgId])
 
   return (
@@ -118,7 +137,9 @@ export const OrganizationDashboard = ({
             <CardContent className="flex items-center justify-between p-6">
               <div>
                 <p className="font-medium">Users</p>
-                <h3 className="mt-2 text-4xl font-bold">1</h3>
+                <h3 className="mt-2 text-4xl font-bold">
+                  {orgDashboard?.usersCount ?? 0}
+                </h3>
               </div>
               <div className="opacity-30">
                 <svg
@@ -145,7 +166,7 @@ export const OrganizationDashboard = ({
           >
             <CardContent className="flex items-center justify-between p-6">
               <div>
-                <p className="font-medium">Schemas</p>
+                <p className="font-medium">{orgDashboard?.schemasCount ?? 0}</p>
                 <h3 className="mt-2 text-4xl font-bold">7</h3>
               </div>
               <div className="opacity-30">
@@ -171,7 +192,9 @@ export const OrganizationDashboard = ({
           <Card className="shadow-md">
             <CardContent className="flex items-center justify-between p-6">
               <div>
-                <p className="font-medium">Credentials</p>
+                <p className="font-medium">
+                  {orgDashboard?.credentialsCount ?? 0}
+                </p>
                 <h3 className="mt-2 text-4xl font-bold">35</h3>
               </div>
               <div className="opacity-20">
@@ -202,7 +225,7 @@ export const OrganizationDashboard = ({
           <Button
             onClick={() =>
               router.push(
-                `/organizations/agent-config?organizationId=${orgIdOfDashboard}`,
+                `/organizations/agent-config?orgId=${orgIdOfDashboard}`,
               )
             }
           >

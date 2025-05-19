@@ -148,10 +148,10 @@ export default function OrganizationOnboarding(): React.JSX.Element {
   }
 
   useEffect(() => {
+    getCountries()
     if (orgId) {
       setIsEditMode(true)
       fetchOrganizationDetails()
-      getCountries()
     }
   }, [])
 
@@ -179,9 +179,9 @@ export default function OrganizationOnboarding(): React.JSX.Element {
       .max(500)
       .required('Description is required'),
     website: yup.string().url('Enter a valid URL').nullable(),
-    countryId: yup.number().nullable(),
-    stateId: yup.number().nullable(),
-    cityId: yup.number().nullable(),
+    countryId: yup.number().required('Country is required'),
+    stateId: yup.number().required('State is required'),
+    cityId: yup.number().required('City is required'),
   })
 
   type ImageProcessCallback = (result: string | null, error?: string) => void
