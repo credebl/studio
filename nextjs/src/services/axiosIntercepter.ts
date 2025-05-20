@@ -63,6 +63,23 @@ const refreshAccessToken = async (): Promise<string | null> => {
   }
 }
 
+export function logoutAndRedirect(): void {
+  const rootKey = 'persist:root'
+
+  if (localStorage.getItem(rootKey)) {
+    localStorage.removeItem(rootKey)
+
+    const interval = setInterval(() => {
+      if (!localStorage.getItem(rootKey)) {
+        clearInterval(interval)
+        void signOut({ callbackUrl: '/auth/sign-in' })
+      }
+    }, 100)
+  } else {
+    void signOut({ callbackUrl: '/auth/sign-in' })
+  }
+}
+
 // REQUEST INTERCEPTOR
 instance.interceptors.request.use(
   (config) => {
@@ -107,7 +124,7 @@ instance.interceptors.response.use(
       }
 
       if (typeof window !== 'undefined') {
-        await signOut({ callbackUrl: '/auth/sign-in' })
+        logoutAndRedirect()
       }
     }
 

@@ -28,6 +28,7 @@ const authSlice = createSlice({
     logout: (state) => {
       state.token = ''
       state.refreshToken = ''
+      state.authToken = ''
     },
   },
 })

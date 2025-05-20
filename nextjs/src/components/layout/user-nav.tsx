@@ -15,7 +15,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import React, { useEffect, useState } from 'react'
-import { signOut, useSession } from 'next-auth/react'
 
 import { Button } from '@/components/ui/button'
 import { IUserProfile } from '../profile/interfaces'
@@ -23,10 +22,12 @@ import { ThemeSelector } from '../theme-selector'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { getUserProfile } from '@/app/api/Auth'
 import { logout } from '@/lib/authSlice'
+import { logoutAndRedirect } from '@/services/axiosIntercepter'
 import { persistor } from '@/lib/store'
 import { setUserProfileDetails } from '@/lib/userSlice'
 import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 
 export function UserNav(): React.JSX.Element | null {
   const dispatch = useDispatch()
@@ -66,7 +67,7 @@ export function UserNav(): React.JSX.Element | null {
   const handleLogout = async (): Promise<void> => {
     dispatch(logout())
     await persistor.purge()
-    await signOut({ callbackUrl: '/auth/sign-in' })
+    logoutAndRedirect()
   }
 
   return (

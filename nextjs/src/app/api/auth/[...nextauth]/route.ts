@@ -126,7 +126,7 @@ export const authOptions: MyAuthOptions = {
   },
 
   pages: {
-    signIn: '/auth/signin',
+    signIn: '/auth/sign-in',
   },
 }
 
