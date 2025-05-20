@@ -1,5 +1,5 @@
 import React from 'react'
-import SchemaSelection from '@/features/organization/connectionIssuance/components/SchemaSelection'
+import SchemaSelection from '@/features/schemas/components/SchemaSelection'
 
 const page = (): React.JSX.Element => <SchemaSelection />
 

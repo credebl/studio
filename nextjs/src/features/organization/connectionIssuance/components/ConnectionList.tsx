@@ -18,12 +18,10 @@ import {
 } from '@/lib/storageKeys'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { AlertComponent } from '@/components/AlertComponent'
-import type { AxiosResponse } from 'axios'
 import DateTooltip from '@/components/DateTooltip'
 
 import NewDataTable from './connectionsTables/SortDataTable'
 import { RootState } from '@/lib/store'
-import { apiStatusCodes } from '@/config/CommonConstant'
 import { dateConversion } from '@/utils/DateConversion'
 
 const initialPageState = {
@@ -180,17 +178,19 @@ const ConnectionList = (props: {
     setLoading(true)
     try {
       const response = await getConnectionsByOrg({ ...apiParameter, orgId })
-      const { data } = response as AxiosResponse
-
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        const { totalItems, nextPage, lastPage } = data.data
-        setTotalItem(data?.data.totalItems)
+      if (!response) {
+        return
+      }
+      const { data } = response
+      if (Array.isArray(data)) {
+        const { totalItems, nextPage, lastPage } = response
+        setTotalItem(totalItems)
         setPageInfo({
           totalItem: Number(totalItems),
           nextPage: Number(nextPage),
           lastPage: Number(lastPage),
         })
-        setConnectionList(data?.data?.data)
+        setConnectionList(data)
         setError(null)
       } else {
         setConnectionList([])
@@ -281,13 +281,15 @@ const ConnectionList = (props: {
           Connection List
         </h1>
       </div>
-      <AlertComponent
-        message={error}
-        type={'failure'}
-        onAlertClose={() => {
-          setError(null)
-        }}
-      />
+      {error && (
+        <AlertComponent
+          message={JSON.stringify(error)}
+          type={'failure'}
+          onAlertClose={() => {
+            setError(null)
+          }}
+        />
+      )}
       <NewDataTable
         isHeader={true}
         searchValue={searchText}
