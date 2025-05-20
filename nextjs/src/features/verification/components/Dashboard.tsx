@@ -44,7 +44,7 @@ const Dashboard = ({ title, options }: IDashboard): JSX.Element => {
               className={cn(
                 'border-border relative h-full w-full overflow-hidden rounded-xl border py-4 shadow-xl transition-transform duration-300',
                 option.path
-                  ? 'group hover:bg-accent dark:hover:bg-secondary transform cursor-pointer p-6 hover:scale-105'
+                  ? 'group hover:bg-accent dark:hover:bg-accent transform cursor-pointer p-6 hover:scale-105'
                   : 'cursor-not-allowed p-6',
               )}
             >

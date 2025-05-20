@@ -6,16 +6,15 @@ export interface TableHeader {
   width?: string
 }
 
-export interface ITableData {
-  clickId?: string | null
-  data: Data[]
-}
-
 export interface Data {
   handleChange?(value: string): void
   inputType?: string
   data: string | JSX.Element
   subData?: string
+}
+export interface ITableData {
+  clickId?: string | null
+  data: Data[]
 }
 
 export interface IDataTable {

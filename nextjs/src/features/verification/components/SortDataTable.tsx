@@ -90,7 +90,9 @@ const SortDataTable: React.FC<IDataTable> = ({
 }) => {
   const [selectedValue, setSelectedValue] = useState(sortOrder ?? '')
 
-  const handleSortByValues = (event: React.ChangeEvent<HTMLSelectElement>): void => {
+  const handleSortByValues = (
+    event: React.ChangeEvent<HTMLSelectElement>,
+  ): void => {
     const newSelectedValue = event.target.value
     setSelectedValue(newSelectedValue)
     if (searchSortByValue) {
@@ -107,7 +109,7 @@ const SortDataTable: React.FC<IDataTable> = ({
     nextPage?: number
     lastPage?: number
   }
-  const startItem = ((nextPage - 2) * (itemPerPage || 10)) + 1
+  const startItem = (nextPage - 2) * (itemPerPage || 10) + 1
   const endItem = Math.min((nextPage - 1) * (itemPerPage || 10), totalItem)
 
   const sortValues = [
@@ -221,7 +223,6 @@ const SortDataTable: React.FC<IDataTable> = ({
                       colSpan={header.length}
                     >
                       <div>
-                        {' '}
                         <div className="mb-4 flex w-full items-center justify-center text-center">
                           <Loader />
                         </div>
@@ -293,12 +294,10 @@ const SortDataTable: React.FC<IDataTable> = ({
                 <span className="mt-2 text-sm font-normal text-gray-500 dark:text-gray-400">
                   Showing
                   <span className="font-semibold text-gray-900 dark:text-white">
-                    {' '}
                     {startItem}-{endItem}{' '}
                   </span>
                   of
                   <span className="font-semibold text-gray-900 dark:text-white">
-                    {' '}
                     {totalItem}
                   </span>
                 </span>

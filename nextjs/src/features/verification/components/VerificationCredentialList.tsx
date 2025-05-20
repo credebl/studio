@@ -52,13 +52,13 @@ const VerificationCredentialList = (): JSX.Element => {
     useState<IConnectionListAPIParameter>(initialPageState)
   const [totalItem, setTotalItem] = useState(0)
   const [verifyLoading, setVerifyLoading] = useState(true)
-  const [isWalletCreated, setWalletStatus] = useState(false)
   const [userRoles, setUserRoles] = useState<string[]>([])
   const [pageInfo, setPageInfo] = useState({
     totalItem: '',
     nextPage: '',
     lastPage: '',
   })
+  const [isWalletCreated, setWalletStatus] = useState(false)
   const [searchText, setSearchText] = useState('')
   const route = useRouter()
 
@@ -172,12 +172,13 @@ const VerificationCredentialList = (): JSX.Element => {
                     <span
                       className={`${
                         requestProof?.state === ProofRequestState.requestSent &&
-                        ''
+                        'text-done border'
                       } ${
-                        requestProof?.state === ProofRequestState.done && ''
+                        requestProof?.state === ProofRequestState.done &&
+                        'text-success border'
                       } ${
                         requestProof?.state === ProofRequestState.abandoned &&
-                        ''
+                        'text-destructive border'
                       } ${
                         requestProof?.state ===
                           ProofRequestState.presentationReceived &&

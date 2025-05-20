@@ -82,25 +82,19 @@ const ProofRequest = (props: IProofRrquestDetails): JSX.Element => {
           onClose={() => props.closeModal(false, '', false)}
           title="Verification Details"
         >
-          <div className="relative m-5 rounded-lg bg-white p-4 text-center shadow sm:p-5 dark:bg-gray-800">
+          <div className="relative m-5 rounded-lg p-4 text-center shadow sm:p-5">
             <div className="m-4 sm:p-2 lg:p-6">
-              <p className="flex-start flex pb-2 text-xl font-semibold text-gray-700 dark:bg-gray-800 dark:text-white">
+              <p className="flex-start flex pb-2 text-xl font-semibold">
                 {' '}
                 Verification Details
               </p>
               {succesMsg && (
-                <div
-                  className="mb-4 rounded-lg border-green-500 bg-green-100 p-4 text-sm text-green-800 dark:bg-green-200 dark:text-green-800"
-                  role="alert"
-                >
+                <div className="mb-4 rounded-lg p-4 text-sm" role="alert">
                   {succesMsg}
                 </div>
               )}
               {error && (
-                <div
-                  className="mb-4 rounded-lg border-red-500 bg-red-100 p-4 text-sm text-red-700 dark:bg-red-200 dark:text-red-800"
-                  role="alert"
-                >
+                <div className="mb-4 rounded-lg p-4 text-sm" role="alert">
                   {error}
                 </div>
               )}
