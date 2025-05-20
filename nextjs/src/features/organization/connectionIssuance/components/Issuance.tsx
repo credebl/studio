@@ -19,6 +19,7 @@ import {
 } from '@/common/enums'
 import type {
   DataTypeAttributes,
+  IAttributesData,
   ICredentialdata,
   ICredentials,
   IssuanceFormPayload,
@@ -168,6 +169,7 @@ const IssueCred = (): React.JSX.Element => {
         }
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error in getSchemaAndUsers:', error)
       setFailure('Error fetching schema and users')
     }
@@ -215,6 +217,7 @@ const IssueCred = (): React.JSX.Element => {
         }
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.log('Error in getSchemaAndUsers:', error)
       setFailure('Error fetching schema and users')
     }
@@ -325,14 +328,7 @@ const IssueCred = (): React.JSX.Element => {
             issuanceDate: new Date().toISOString(),
             //FIXME: Logic for passing default value as 0 for empty value of number dataType attributes.
             credentialSubject: item?.attributes?.reduce(
-              (
-                acc: Record<string, string>,
-                attr: {
-                  name: string
-                  dataType: string | number
-                  value: string
-                },
-              ) => {
+              (acc, attr) => {
                 if (
                   attr.dataType === 'number' &&
                   (attr.value === '' || attr.value === null)
@@ -544,13 +540,7 @@ const IssueCred = (): React.JSX.Element => {
                           <>
                             {values?.credentialData?.length > 0 &&
                               values?.credentialData?.map(
-                                (
-                                  user: {
-                                    attributes: string
-                                    connectionId: string
-                                  },
-                                  index: number,
-                                ) => {
+                                (user, index: number) => {
                                   const attributes = w3cSchema
                                     ? issuanceFormPayload?.credentialData?.[0]
                                         .attributes
@@ -618,94 +608,95 @@ const IssueCred = (): React.JSX.Element => {
                                         </h3>
                                         <div className="container mx-auto pr-2">
                                           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2">
-                                            {attributes?.map(
-                                              (
-                                                attr: IAttributesData,
-                                                attrIndex: number,
-                                              ) => (
-                                                <div
-                                                  key={`${user.connectionId}-${attr.name}-${attrIndex}`}
-                                                >
+                                            {Array.isArray(attributes) &&
+                                              attributes?.map(
+                                                (
+                                                  attr: IAttributesData,
+                                                  attrIndex: number,
+                                                ) => (
                                                   <div
-                                                    key={attr?.name}
-                                                    className="flex"
+                                                    key={`${user.connectionId}-${attr.name}-${attrIndex}`}
                                                   >
-                                                    <label
-                                                      htmlFor={`credentialData.${index}.attributes.${attrIndex}.value`}
-                                                      className="flex w-2/5 items-center justify-end pr-3 font-light dark:text-white"
+                                                    <div
+                                                      key={attr?.name}
+                                                      className="flex"
                                                     >
-                                                      <div className="word-break-word flex items-center text-end">
-                                                        <Name
-                                                          attr={attr?.name}
-                                                        />
-                                                        {attr.isRequired && (
-                                                          <span className="text-red-500">
-                                                            *
-                                                          </span>
-                                                        )}{' '}
-                                                        :
-                                                      </div>
-                                                    </label>
-                                                    <div className="w-3/5">
-                                                      <Field
-                                                        type={
-                                                          attr?.dataType ===
-                                                          'date'
-                                                            ? 'date'
-                                                            : attr?.dataType
-                                                        }
-                                                        id={`credentialData.${index}.attributes.${attrIndex}.value`}
-                                                        name={`credentialData.${index}.attributes.${attrIndex}.value`}
-                                                        className="focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 relative block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 sm:text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
-                                                        validate={(
-                                                          value: string,
-                                                        ) => {
-                                                          try {
-                                                            const schema =
-                                                              Yup.reach(
-                                                                validationSchema,
-                                                                `credentialData.${index}.attributes.${attrIndex}.value`,
-                                                              )
-
-                                                            // Check if schema is an actual Yup schema with validateSync
-                                                            if (
-                                                              'validateSync' in
-                                                                schema &&
-                                                              typeof schema.validateSync ===
-                                                                'function'
-                                                            ) {
-                                                              schema.validateSync(
-                                                                value,
-                                                                {
-                                                                  abortEarly:
-                                                                    false,
-                                                                },
-                                                              )
-                                                            }
-
-                                                            return undefined // No error
-                                                          } catch (error) {
-                                                            if (
-                                                              error instanceof
-                                                              Yup.ValidationError
-                                                            ) {
-                                                              return error.message
-                                                            }
-                                                            return 'Validation failed'
+                                                      <label
+                                                        htmlFor={`credentialData.${index}.attributes.${attrIndex}.value`}
+                                                        className="flex w-2/5 items-center justify-end pr-3 font-light dark:text-white"
+                                                      >
+                                                        <div className="word-break-word flex items-center text-end">
+                                                          <Name
+                                                            attr={attr?.name}
+                                                          />
+                                                          {attr.isRequired && (
+                                                            <span className="text-red-500">
+                                                              *
+                                                            </span>
+                                                          )}{' '}
+                                                          :
+                                                        </div>
+                                                      </label>
+                                                      <div className="w-3/5">
+                                                        <Field
+                                                          type={
+                                                            attr?.dataType ===
+                                                            'date'
+                                                              ? 'date'
+                                                              : attr?.dataType
                                                           }
-                                                        }}
-                                                      />
-                                                      {showErrors(
-                                                        errors,
-                                                        touched,
-                                                        index,
-                                                        attrIndex,
-                                                      )}{' '}
+                                                          id={`credentialData.${index}.attributes.${attrIndex}.value`}
+                                                          name={`credentialData.${index}.attributes.${attrIndex}.value`}
+                                                          className="focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 relative block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 sm:text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                                                          validate={(
+                                                            value: string,
+                                                          ) => {
+                                                            try {
+                                                              const schema =
+                                                                Yup.reach(
+                                                                  validationSchema,
+                                                                  `credentialData.${index}.attributes.${attrIndex}.value`,
+                                                                )
+
+                                                              // Check if schema is an actual Yup schema with validateSync
+                                                              if (
+                                                                'validateSync' in
+                                                                  schema &&
+                                                                typeof schema.validateSync ===
+                                                                  'function'
+                                                              ) {
+                                                                schema.validateSync(
+                                                                  value,
+                                                                  {
+                                                                    abortEarly:
+                                                                      false,
+                                                                  },
+                                                                )
+                                                              }
+
+                                                              return undefined // No error
+                                                            } catch (error) {
+                                                              if (
+                                                                error instanceof
+                                                                Yup.ValidationError
+                                                              ) {
+                                                                return error.message
+                                                              }
+                                                              return 'Validation failed'
+                                                            }
+                                                          }}
+                                                        />
+                                                        {showErrors(
+                                                          errors,
+                                                          touched,
+                                                          index,
+                                                          attrIndex,
+                                                        )}{' '}
+                                                      </div>
                                                     </div>
                                                   </div>
-                                                </div>
-                                              ),
-                                            )}
+                                                ),
+                                              )}
                                           </div>
                                         </div>
                                       </Card>

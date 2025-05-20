@@ -9,7 +9,6 @@ import {
 
 import { Button } from '@/components/ui/button'
 import { DataTableProps } from '../type/ConnectionIssueTable'
-import { JSX } from 'react'
 import Loader from '@/components/Loader'
 
 const DataTable: React.FC<DataTableProps> = ({
@@ -35,105 +34,75 @@ const DataTable: React.FC<DataTableProps> = ({
                 <TableRow>
                   {header &&
                     header.length > 0 &&
-                    header.map(
-                      (
-                        ele: {
-                          columnName: string
-                          subColumnName: string
-                          width: number | string
-                        },
-                        id: number,
-                      ) => (
-                        <TableHead
-                          key={id}
-                          scope="col"
-                          className={`p-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-white ${ele.width} ${id === 0 && isEmailVerification ? 'pl-12' : ''}`}
-                        >
-                          <div className="flex h-full w-full flex-col justify-center">
-                            <div>{ele.columnName}</div>
-                            {ele.subColumnName && (
-                              <div className="text-gray-500">
-                                {ele.subColumnName}
-                              </div>
-                            )}
-                          </div>
-                        </TableHead>
-                      ),
-                    )}
+                    header.map((ele, id: number) => (
+                      <TableHead
+                        key={id}
+                        scope="col"
+                        className={`p-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-white ${ele.width} ${id === 0 && isEmailVerification ? 'pl-12' : ''}`}
+                      >
+                        <div className="flex h-full w-full flex-col justify-center">
+                          <div>{ele.columnName}</div>
+                          {ele.subColumnName && (
+                            <div className="text-gray-500">
+                              {ele.subColumnName}
+                            </div>
+                          )}
+                        </div>
+                      </TableHead>
+                    ))}
                   <TableHead></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {data.length ? (
-                  data.map(
-                    (
-                      ele: {
-                        data: {
-                          data: string | JSX.Element
-                          subData: string
-                        }[]
-                        clickId: string
-                      },
-                      id: number,
-                    ) => (
-                      <TableRow
-                        key={id}
-                        className={`${
-                          id % 2 !== 0 ? 'bg-gray-50 dark:bg-gray-700' : ''
-                        }`}
-                      >
-                        {ele.data.map(
-                          (
-                            subEle: {
-                              data: string | JSX.Element
-                              subData: string
-                            },
-                            id: number,
-                          ) => (
-                            <TableCell
-                              key={id}
-                              className={
-                                'p-4 align-middle text-sm font-normal whitespace-nowrap text-gray-900 dark:text-white'
-                              }
-                            >
-                              <div>
-                                <div>
-                                  {typeof subEle.data === 'string' ||
-                                  typeof subEle.data === 'number' ? (
-                                    <span>{subEle.data}</span>
-                                  ) : (
-                                    subEle.data
-                                  )}
-                                </div>
-                                <div>
-                                  {typeof subEle.subData === 'string' ||
-                                  typeof subEle.subData === 'number' ? (
-                                    <span>{subEle.subData}</span>
-                                  ) : (
-                                    subEle.subData
-                                  )}
-                                </div>
-                              </div>
-                            </TableCell>
-                          ),
-                        )}
-                        <TableCell className="p-4 align-middle text-sm font-normal whitespace-nowrap text-gray-900 dark:text-white">
-                          {displaySelect ||
-                            (showBtn && (
-                              <Button
-                                key={id}
-                                onClick={() =>
-                                  callback ?? callback(ele?.clickId)
-                                }
-                                className="w-full sm:w-auto"
-                              >
-                                Select
-                              </Button>
-                            ))}
+                  data.map((ele, id: number) => (
+                    <TableRow
+                      key={id}
+                      className={`${
+                        id % 2 !== 0 ? 'bg-gray-50 dark:bg-gray-700' : ''
+                      }`}
+                    >
+                      {ele.data.map((subEle, id: number) => (
+                        <TableCell
+                          key={id}
+                          className={
+                            'p-4 align-middle text-sm font-normal whitespace-nowrap text-gray-900 dark:text-white'
+                          }
+                        >
+                          <div>
+                            <div>
+                              {typeof subEle.data === 'string' ||
+                              typeof subEle.data === 'number' ? (
+                                <span>{subEle.data}</span>
+                              ) : (
+                                subEle.data
+                              )}
+                            </div>
+                            <div>
+                              {typeof subEle.subData === 'string' ||
+                              typeof subEle.subData === 'number' ? (
+                                <span>{subEle.subData}</span>
+                              ) : (
+                                subEle.subData
+                              )}
+                            </div>
+                          </div>
                         </TableCell>
-                      </TableRow>
-                    ),
-                  )
+                      ))}
+                      <TableCell className="p-4 align-middle text-sm font-normal whitespace-nowrap text-gray-900 dark:text-white">
+                        {displaySelect ||
+                          (showBtn && (
+                            <Button
+                              key={id}
+                              onClick={() => callback && callback(ele?.clickId)}
+                              className="w-full sm:w-auto"
+                            >
+                              Select
+                            </Button>
+                          ))}
+                      </TableCell>
+                    </TableRow>
+                  ))
                 ) : (
                   <TableRow className="text-center">
                     <TableCell
