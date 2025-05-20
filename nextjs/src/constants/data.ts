@@ -61,7 +61,7 @@ export const navItems: NavItem[] = [
       {
         title: 'Verify',
         shortcut: ['l', 'l'],
-        url: '/verify',
+        url: '/organizations/verification',
         icon: 'login',
       },
     ],

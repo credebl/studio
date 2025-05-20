@@ -7,6 +7,7 @@ import profileSlice from './profileSlice'
 import storage from 'redux-persist/lib/storage'
 import storageReducer from './storageKeys'
 import userSlice from './userSlice'
+import verificationSlice from './verificationSlice'
 import walletSpinupSlice from './walletSpinupSlice'
 
 const rootReducer = combineReducers({
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   storageKeys: storageReducer,
   user: userSlice,
   wallet: walletSpinupSlice,
+  verification: verificationSlice,
 })
 
 const persistConfig = {
