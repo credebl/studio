@@ -34,13 +34,13 @@ const LedgerConfig = ({
   const [selectedMethod, setSelectedMethod] = useState('')
   const [selectedNetwork, setSelectedNetwork] = useState('')
   const [seedVal, setSeedVal] = useState('')
-  const [maskedSeedVal, setMaskedSeedVal] = useState('')
+  const [, setMaskedSeedVal] = useState('')
   const [selectedDid, setSelectedDid] = useState('')
   const [mappedData, setMappedData] = useState<ILedgerConfigData>()
   const [domainValue, setDomainValue] = useState<string>('')
   const [privateKeyValue, setPrivateKeyValue] = useState<string>('')
   const [, setNetworks] = useState([])
-  const [walletLabel, setWalletLabel] = useState('')
+  const [walletLabel, setWalletLabel] = useState(walletName)
   const id = React.useId()
 
   const fetchLedgerConfig = async (): Promise<void> => {
@@ -384,11 +384,9 @@ const LedgerConfig = ({
               Generated Seed
             </Label>
           </div>
+          <div className="mb-4">Seed</div>
           <div className="flex items-center">
-            <div className="flex-1 rounded-lg bg-white p-3 break-all">
-              {maskedSeedVal}
-            </div>
-            <CopyDid className="ml-2" value={seedVal} />
+            <CopyDid className="ml-2 rounded-xl border p-2" value={seedVal} />
           </div>
 
           <div className="mt-2 flex items-center text-sm">
@@ -565,8 +563,11 @@ const LedgerConfig = ({
                   </label>
                   <Field
                     id="label"
-                    value={walletLabel}
                     name="label"
+                    value={walletLabel}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setWalletLabel(e.target.value)
+                    }
                     className="block w-full rounded-lg p-2.5 sm:text-sm"
                     type="text"
                   />
