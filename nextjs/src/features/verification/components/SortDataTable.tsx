@@ -230,41 +230,45 @@ const SortDataTable: React.FC<IDataTable> = ({
                     </td>
                   </tr>
                 ) : data?.length ? (
-                  data?.map((ele, index) => (
-                    <tr
-                      key={ele.clickId}
-                      className={`${
-                        index % 2 !== 0 ? 'bg-gray-50 dark:bg-gray-700' : ''
-                      }`}
-                    >
-                      {ele.data.map((subEle, subIndex) => (
-                        <td
-                          key={`${subEle.data}-${subEle.subData}-${subIndex}`}
-                          className={
-                            'p-4 align-middle text-sm font-normal whitespace-nowrap text-gray-900 dark:text-white'
-                          }
-                        >
-                          <div>
-                            <div>{subEle.data}</div>
-                            {subEle.subData}
-                          </div>
-                        </td>
-                      ))}
-                      {displaySelect ||
-                        (showBtn && (
-                          <Button
-                            onClick={() => {
-                              if (callback) {
-                                callback(ele?.clickId)
-                              }
-                            }}
-                            className="bg-primary hover:bg-primary-800 mt-2 mr-2 mb-2 rounded-lg px-5 py-2.5 text-center text-sm font-medium focus:ring-4 focus:outline-none"
+                  data.map((ele, index) => {
+                    const showSelectButton = showBtn && !displaySelect
+
+                    return (
+                      <tr
+                        key={ele.clickId}
+                        className={`${
+                          index % 2 !== 0 ? 'bg-gray-50 dark:bg-gray-700' : ''
+                        }`}
+                      >
+                        {ele.data.map((subEle, subIndex) => (
+                          <td
+                            key={`${subEle.data}-${subEle.subData}-${subIndex}`}
+                            className="p-4 align-middle text-sm font-normal whitespace-nowrap text-gray-900 dark:text-white"
                           >
-                            Select
-                          </Button>
+                            <div>
+                              <div>{subEle.data}</div>
+                              {subEle.subData}
+                            </div>
+                          </td>
                         ))}
-                    </tr>
-                  ))
+
+                        {showSelectButton && (
+                          <td>
+                            <Button
+                              onClick={() => {
+                                if (callback) {
+                                  callback(ele?.clickId)
+                                }
+                              }}
+                              className="bg-primary hover:bg-primary-800 mt-2 mr-2 mb-2 rounded-lg px-5 py-2.5 text-center text-sm font-medium focus:ring-4 focus:outline-none"
+                            >
+                              Select
+                            </Button>
+                          </td>
+                        )}
+                      </tr>
+                    )
+                  })
                 ) : (
                   <tr className="text-center">
                     <td
@@ -292,11 +296,11 @@ const SortDataTable: React.FC<IDataTable> = ({
             >
               {!loading && data?.length > 0 && (
                 <span className="mt-2 text-sm font-normal text-gray-500 dark:text-gray-400">
-                  Showing
+                  Showing{' '}
                   <span className="font-semibold text-gray-900 dark:text-white">
-                    {startItem}-{endItem}&nbsp;
-                  </span>
-                  of
+                    {startItem}-{endItem}
+                  </span>{' '}
+                  of{' '}
                   <span className="font-semibold text-gray-900 dark:text-white">
                     {totalItem}
                   </span>

@@ -136,7 +136,7 @@ const ProofRequest = (props: IProofRrquestDetails): JSX.Element => {
               <Button
                 onClick={() => handleConfirmClick(props.requestId)}
                 disabled={
-                  navigation ||
+                  navigation ??
                   (props?.userRoles ?? []).every((role) =>
                     [Roles.MEMBER, Roles.ISSUER].includes(role as Roles),
                   )

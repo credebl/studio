@@ -18,22 +18,22 @@ export interface IDataTableData {
   data: ITableData[]
   loading: boolean
   onInputChange: (e: ChangeEvent) => void
-  refresh: () => void
-  currentPage: number
-  onPageChange: (page: number) => void
-  totalPages: number
-  searchSortByValue?: (value: string) => void
-  isPagination?: boolean
   isSearch: boolean
   isRefresh: boolean
   isSort: boolean
   isHeader: boolean
   message: string
-  discription: string
-  noExtraHeight?: boolean
+  refresh: () => void
+  currentPage: number
+  onPageChange: (page: number) => void
+  totalPages: number
+  searchSortByValue?: (value: string) => void
   callback?: (clickId: string | null | undefined) => void
   displaySelect?: boolean
   showBtn?: boolean
+  isPagination?: boolean
+  discription: string
+  noExtraHeight?: boolean
   pageInfo?: {
     totalItem: number | undefined
     nextPage: number | undefined
