@@ -178,7 +178,7 @@ importers:
         version: 15.2.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       next-auth:
         specifier: ^5.0.0-beta.25
-        version: 5.0.0-beta.25(@simplewebauthn/browser@9.0.1)(next@15.2.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)
+        version: 5.0.0-beta.28(@simplewebauthn/browser@9.0.1)(next@15.2.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -202,7 +202,7 @@ importers:
         version: 14.3.8(react@19.0.0)
       react-hook-form:
         specifier: ^7.55.0
-        version: 7.55.0(react@19.0.0)
+        version: 7.56.4(react@19.0.0)
       react-qr-code:
         specifier: ^2.0.15
         version: 2.0.15(react@19.0.0)
@@ -3775,7 +3775,12 @@ snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
 
-  '@auth/core@0.37.2(@simplewebauthn/browser@9.0.1)':
+  '@ampproject/remapping@2.3.0':
+    dependencies:
+      '@jridgewell/gen-mapping': 0.3.8
+      '@jridgewell/trace-mapping': 0.3.25
+
+  '@auth/core@0.39.1(@simplewebauthn/browser@9.0.1)':
     dependencies:
       '@panva/hkdf': 1.2.1
       '@types/cookie': 0.6.0
@@ -5559,8 +5564,8 @@ snapshots:
       '@typescript-eslint/parser': 8.30.1(eslint@8.48.0)(typescript@5.7.2)
       eslint: 8.48.0
       eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.10.0(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.30.1(eslint@8.48.0)(typescript@5.7.2))(eslint@8.48.0))(eslint@8.48.0)
-      eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.30.1(eslint@8.48.0)(typescript@5.7.2))(eslint-import-resolver-typescript@3.10.0(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.30.1(eslint@8.48.0)(typescript@5.7.2))(eslint@8.48.0))(eslint@8.48.0))(eslint@8.48.0)
+      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.32.1(eslint@8.48.0)(typescript@5.7.2))(eslint@8.48.0))(eslint@8.48.0)
+      eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.32.1(eslint@8.48.0)(typescript@5.7.2))(eslint-import-resolver-typescript@3.10.1)(eslint@8.48.0)
       eslint-plugin-jsx-a11y: 6.10.2(eslint@8.48.0)
       eslint-plugin-react: 7.37.5(eslint@8.48.0)
       eslint-plugin-react-hooks: 5.2.0(eslint@8.48.0)
@@ -5594,7 +5599,7 @@ snapshots:
       tinyglobby: 0.2.12
       unrs-resolver: 1.5.0
     optionalDependencies:
-      eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.30.1(eslint@8.48.0)(typescript@5.7.2))(eslint-import-resolver-typescript@3.10.0(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.30.1(eslint@8.48.0)(typescript@5.7.2))(eslint@8.48.0))(eslint@8.48.0))(eslint@8.48.0)
+      eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.32.1(eslint@8.48.0)(typescript@5.7.2))(eslint-import-resolver-typescript@3.10.1)(eslint@8.48.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -5609,7 +5614,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.30.1(eslint@8.48.0)(typescript@5.7.2))(eslint-import-resolver-typescript@3.10.0(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.30.1(eslint@8.48.0)(typescript@5.7.2))(eslint@8.48.0))(eslint@8.48.0))(eslint@8.48.0):
+  eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.32.1(eslint@8.48.0)(typescript@5.7.2))(eslint-import-resolver-typescript@3.10.1)(eslint@8.48.0):
     dependencies:
       '@rtsao/scc': 1.1.0
       array-includes: 3.1.8
@@ -6398,9 +6403,9 @@ snapshots:
 
   natural-compare@1.4.0: {}
 
-  next-auth@5.0.0-beta.25(@simplewebauthn/browser@9.0.1)(next@15.2.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0):
+  next-auth@5.0.0-beta.28(@simplewebauthn/browser@9.0.1)(next@15.2.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0):
     dependencies:
-      '@auth/core': 0.37.2(@simplewebauthn/browser@9.0.1)
+      '@auth/core': 0.39.1(@simplewebauthn/browser@9.0.1)
       next: 15.2.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       react: 19.0.0
     optionalDependencies:
