@@ -109,7 +109,7 @@ const ProofRequest = (props: IProofRrquestDetails): JSX.Element => {
                     <AttributesListData
                       attributeDataList={props?.userData?.map(
                         (item: UserDataItem) => ({
-                          schemaId: item.schemaId || '',
+                          schemaId: item.schemaId ?? '',
                           ...item,
                         }),
                       )}
@@ -190,7 +190,7 @@ const ProofRequest = (props: IProofRrquestDetails): JSX.Element => {
                     <AttributesListData
                       attributeDataList={props?.userData?.map(
                         (item: UserDataItem) => ({
-                          schemaId: item.schemaId || '',
+                          schemaId: item.schemaId ?? '',
                           ...item,
                         }),
                       )}

@@ -324,11 +324,19 @@ const VerificationCredentialList = (): JSX.Element => {
       getData = setTimeout(() => {
         getproofRequestList(orgId, listAPIParameter)
       }, 1000)
-      return (): void => clearTimeout(getData!)
+      return (): void => {
+        if (getData !== null) {
+          clearTimeout(getData)
+        }
+      }
     } else {
       getproofRequestList(orgId, listAPIParameter)
     }
-    return (): void => clearTimeout(getData!)
+    return (): void => {
+      if (getData !== null) {
+        clearTimeout(getData)
+      }
+    }
   }, [listAPIParameter])
 
   const schemeSelection = (): void => {
@@ -394,7 +402,7 @@ const VerificationCredentialList = (): JSX.Element => {
                   }`}
                 >
                   <div className="flex-1 text-sm">
-                    {proofReqSuccess || errMsg}
+                    {proofReqSuccess ?? errMsg}
                   </div>
                   <button
                     onClick={() => {

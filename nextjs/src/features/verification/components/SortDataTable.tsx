@@ -230,16 +230,16 @@ const SortDataTable: React.FC<IDataTable> = ({
                     </td>
                   </tr>
                 ) : data?.length ? (
-                  data?.map((ele, ind) => (
+                  data?.map((ele, index) => (
                     <tr
-                      key={ind}
+                      key={ele.clickId}
                       className={`${
-                        ind % 2 !== 0 ? 'bg-gray-50 dark:bg-gray-700' : ''
+                        index % 2 !== 0 ? 'bg-gray-50 dark:bg-gray-700' : ''
                       }`}
                     >
-                      {ele.data.map((subEle, ind) => (
+                      {ele.data.map((subEle, subIndex) => (
                         <td
-                          key={ind}
+                          key={`${subEle.data}-${subEle.subData}-${subIndex}`}
                           className={
                             'p-4 align-middle text-sm font-normal whitespace-nowrap text-gray-900 dark:text-white'
                           }
@@ -294,7 +294,7 @@ const SortDataTable: React.FC<IDataTable> = ({
                 <span className="mt-2 text-sm font-normal text-gray-500 dark:text-gray-400">
                   Showing
                   <span className="font-semibold text-gray-900 dark:text-white">
-                    {startItem}-{endItem}{' '}
+                    {startItem}-{endItem}&nbsp;
                   </span>
                   of
                   <span className="font-semibold text-gray-900 dark:text-white">
