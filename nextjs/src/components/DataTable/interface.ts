@@ -12,7 +12,7 @@ export interface Data {
   data: string | JSX.Element
   subData?: string
 }
-export interface IDataTable {
+export interface IDataTableData {
   header: TableHeader[]
   searchValue?: string
   data: ITableData[]

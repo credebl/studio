@@ -104,13 +104,13 @@ const SortDataTable: React.FC<IDataTable> = ({
     totalItem = 0,
     nextPage = 0,
     lastPage = 0,
-  } = (pageInfo || {}) as {
+  } = (pageInfo ?? {}) as {
     totalItem?: number
     nextPage?: number
     lastPage?: number
   }
-  const startItem = (nextPage - 2) * (itemPerPage || 10) + 1
-  const endItem = Math.min((nextPage - 1) * (itemPerPage || 10), totalItem)
+  const startItem = (nextPage - 2) * (itemPerPage ?? 10) + 1
+  const endItem = Math.min((nextPage - 1) * (itemPerPage ?? 10), totalItem)
 
   const sortValues = [
     {
