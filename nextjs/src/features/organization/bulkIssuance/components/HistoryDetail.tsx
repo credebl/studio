@@ -42,108 +42,9 @@ const HistoryDetails = ({ requestId }: IProps): JSX.Element => {
   })
   const orgId = useAppSelector((state: RootState) => state.organization.orgId)
   const router = useRouter()
-
-  useEffect(() => {
-    let getData: NodeJS.Timeout | null = null
-    const getHistoryDetails = async (
-      apiParameter: IConnectionListAPIParameter,
-    ): Promise<void> => {
-      setLoading(true)
-      const response = await getFilesDataHistory(
-        requestId,
-        apiParameter.itemPerPage,
-        apiParameter.page,
-        apiParameter.search,
-        apiParameter.sortBy,
-        apiParameter.sortingOrder,
-        orgId,
-      )
-
-      const { data } = response as AxiosResponse
-
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        setTotalItem(data?.data.totalItems)
-        const { totalItems, nextPage, lastPage } = data.data
-
-        setPageInfo({
-          totalItem: Number(totalItems),
-          nextPage: Number(nextPage),
-          lastPage: Number(lastPage),
-        })
-        const historyData = data?.data?.data?.map(
-          (history: {
-            isError: boolean
-            referenceId: string
-            status: string
-            email: string
-            error: string
-          }) => ({
-            data: [
-              {
-                data: history?.referenceId
-                  ? history?.referenceId
-                  : 'Not available',
-              },
-              {
-                data: (
-                  <p
-                    className={`${
-                      history?.isError === false
-                        ? 'border border-green-100 bg-green-100 text-green-800 dark:border-green-500 dark:bg-gray-700 dark:text-green-400'
-                        : 'border border-red-100 bg-red-100 text-red-800 dark:border-red-400 dark:bg-gray-700 dark:text-red-400'
-                    } text-md flex w-fit justify-center rounded-md px-2 py-0.5 font-medium min-[320]:px-3 sm:mr-0 sm:px-3 md:mr-2 lg:px-3`}
-                  >
-                    {history?.isError === false
-                      ? BulkIssuanceStatus.successful
-                      : BulkIssuanceStatus.failed}
-                  </p>
-                ),
-              },
-              {
-                data: history?.error
-                  ? history?.error === 'Http Exception'
-                    ? 'Credential Issuance failed due to error in Wallet Agent'
-                    : history?.error?.replace(/[[\]"{},]/g, ' ')
-                  : '-',
-              },
-            ],
-          }),
-        )
-        setHistoryList(historyData)
-      } else {
-        setError(response as string)
-      }
-      setLoading(false)
-    }
-    if (listAPIParameter.search.length >= 1) {
-      getData = setTimeout(() => {
-        getHistoryDetails(listAPIParameter)
-      }, 1000)
-      return () => clearTimeout(getData ?? undefined)
-    } else {
-      getHistoryDetails(listAPIParameter)
-    }
-
-    return () => clearTimeout(getData ?? undefined)
-  }, [listAPIParameter])
-  const searchInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    setListAPIParameter({
-      ...listAPIParameter,
-      search: e.target.value,
-      page: 1,
-    })
-  }
-
-  const searchSortByValue = (value: string): void => {
-    setListAPIParameter({
-      ...listAPIParameter,
-      page: 1,
-      sortingOrder: value,
-    })
-  }
   const getHistoryDetails = async (
     apiParameter: IConnectionListAPIParameter,
-  ):Promise<void> => {
+  ): Promise<void> => {
     setLoading(true)
     const response = await getFilesDataHistory(
       requestId,
@@ -211,6 +112,36 @@ const HistoryDetails = ({ requestId }: IProps): JSX.Element => {
     }
     setLoading(false)
   }
+  useEffect(() => {
+    let getData: NodeJS.Timeout | null = null
+
+    if (listAPIParameter.search.length >= 1) {
+      getData = setTimeout(() => {
+        getHistoryDetails(listAPIParameter)
+      }, 1000)
+      return () => clearTimeout(getData ?? undefined)
+    } else {
+      getHistoryDetails(listAPIParameter)
+    }
+
+    return () => clearTimeout(getData ?? undefined)
+  }, [listAPIParameter])
+  const searchInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setListAPIParameter({
+      ...listAPIParameter,
+      search: e.target.value,
+      page: 1,
+    })
+  }
+
+  const searchSortByValue = (value: string): void => {
+    setListAPIParameter({
+      ...listAPIParameter,
+      page: 1,
+      sortingOrder: value,
+    })
+  }
+
   const refreshPage = (): void => {
     getHistoryDetails(listAPIParameter)
   }
