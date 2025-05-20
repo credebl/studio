@@ -33,17 +33,26 @@ import { Organization } from '@/features/dashboard/type/organization'
 import { getOrganizations } from '@/app/api/organization'
 import { navItems } from '@/constants/data'
 import { usePathname } from 'next/navigation'
+import { useTheme } from 'next-themes'
 import { useThemeConfig } from '../active-theme'
 
 export default function AppSidebar(): React.JSX.Element {
   const pathname = usePathname()
 
   const { activeTheme } = useThemeConfig()
+  const { resolvedTheme } = useTheme()
 
-  const logoImageSrc =
-    activeTheme === 'credebl'
-      ? '/images/CREDEBL_Logo_Web.svg'
-      : '/images/sovio_logo.svg'
+  const logoImageSrc = ((): string => {
+    if (activeTheme === 'credebl') {
+      return resolvedTheme === 'dark'
+        ? '/images/CREDEBL_Logo_Web_Dark.svg'
+        : '/images/CREDEBL_Logo_Web.svg'
+    } else {
+      return resolvedTheme === 'dark'
+        ? '/images/sovio_dark_theme_logo.svg'
+        : '/images/sovio_logo.svg'
+    }
+  })()
 
   const dispatch = useAppDispatch()
 

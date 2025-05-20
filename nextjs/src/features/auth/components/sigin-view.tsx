@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { Metadata } from 'next'
 import React from 'react'
 import UserAuthForm from './user-auth-form'
+import { useTheme } from 'next-themes'
 import { useThemeConfig } from '@/components/active-theme'
 
 export const metadata: Metadata = {
@@ -16,10 +17,19 @@ export const metadata: Metadata = {
 export default function SignInPage(): React.JSX.Element {
   const { activeTheme } = useThemeConfig()
 
-  const logoImageSrc =
-    activeTheme === 'credebl'
-      ? '/images/CREDEBL_Logo_Web.svg'
-      : '/images/sovio_logo.svg'
+  const { resolvedTheme } = useTheme()
+
+  const logoImageSrc = ((): string => {
+    if (activeTheme === 'credebl') {
+      return resolvedTheme === 'dark'
+        ? '/images/CREDEBL_Logo_Web_Dark.svg'
+        : '/images/CREDEBL_Logo_Web.svg'
+    } else {
+      return resolvedTheme === 'dark'
+        ? '/images/sovio_dark_theme_logo.svg'
+        : '/images/sovio_logo.svg'
+    }
+  })()
 
   return (
     <div className="relative flex min-h-screen flex-col bg-[image:var(--card-gradient)]">

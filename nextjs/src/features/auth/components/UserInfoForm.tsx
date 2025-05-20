@@ -3,7 +3,7 @@
 import * as Yup from 'yup'
 
 import { AxiosError, AxiosResponse } from 'axios'
-import { CheckCircle, KeyRound, Lock } from 'lucide-react'
+import { CheckCircle, Eye, EyeOff, KeyRound, Lock } from 'lucide-react'
 import { Formik, Form as FormikForm } from 'formik'
 import {
   IDeviceData,
@@ -20,6 +20,7 @@ import {
 import { addPasswordDetails, passwordEncryption } from '@/app/api/Auth'
 import { apiStatusCodes, passwordRegex } from '@/config/CommonConstant'
 
+import { AlertComponent } from '@/components/AlertComponent'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { startRegistration } from '@simplewebauthn/browser'
@@ -66,7 +67,7 @@ export default function UserInfoForm({
   const [loading, setLoading] = useState(false)
   const [serverError, setServerError] = useState('')
   const [, setIsDevice] = useState<boolean>(false)
-  const [showEmailVerification, setShowEmailVerification] = useState({
+  const [, setShowEmailVerification] = useState({
     message: '',
     isError: false,
     type: '',
@@ -81,6 +82,10 @@ export default function UserInfoForm({
   const router = useRouter()
   const [, setFidoLoader] = useState<boolean>(false)
   const [, setFidoError] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [success, setSuccess] = useState<string | null>(null)
+  const [failure, setFailure] = useState<string | null>(null)
 
   const onSubmit = async (values: {
     firstName: string
@@ -88,6 +93,8 @@ export default function UserInfoForm({
     password: string
   }): Promise<void> => {
     setServerError('')
+    setSuccess(null)
+    setFailure(null)
     setShowEmailVerification({ message: '', isError: false, type: '' })
 
     const payload = {
@@ -104,43 +111,21 @@ export default function UserInfoForm({
       const { data } = userRsp as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-        router.push(
-          `/auth/sign-in?signup=true&email=${email}&fidoFlag=false&method=password`,
-        )
+        setSuccess(data?.message || 'Account created successfully!')
+        setTimeout(() => {
+          router.push(
+            `/auth/sign-in?signup=true&email=${email}&fidoFlag=false&method=password`,
+          )
+        }, 2000)
       } else {
-        setShowEmailVerification({
-          message: data?.message || 'Failed to create account.',
-          isError: true,
-          type: 'danger',
-        })
+        setFailure(data?.message || 'Failed to create account.')
       }
     } catch (err) {
-      setShowEmailVerification({
-        message: 'An unexpected error occurred.',
-        isError: true,
-        type: 'danger',
-      })
+      setFailure('An unexpected error occurred.')
     } finally {
       setLoading(false)
     }
   }
-
-  // const handleFormSubmit = async (
-  //   values: {
-  //     firstName: string;
-  //     lastName: string;
-  //     password: string;
-  //     confirmPassword: string;
-  //   },
-  //   { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
-  // ) => {
-  //   if (!usePassword) {
-  //     setSubmitting(false);
-  //     return;
-  //   }
-  //   await onSubmit(values);
-  //   setSubmitting(false);
-  // };
 
   const showFidoError = (error: unknown): void => {
     const err = error as AxiosError
@@ -301,18 +286,24 @@ export default function UserInfoForm({
     >
       {({ errors, touched, handleChange, handleBlur, values }) => (
         <FormikForm className="space-y-4">
-          {showEmailVerification.message && (
-            <div
-              className={`mb-4 rounded-md p-3 text-sm ${
-                showEmailVerification.type === 'danger'
-                  ? 'bg-[var(--color-text-error)] text-[var(--color-white)]'
-                  : 'bg-[var(--color-bg-success)] text-[var(--color-white)]'
-              }`}
-            >
-              {showEmailVerification.message}
+          {success && (
+            <div className="w-full" role="alert">
+              <AlertComponent
+                message={success}
+                type={'success'}
+                onAlertClose={() => setSuccess(null)}
+              />
             </div>
           )}
-
+          {failure && (
+            <div className="w-full" role="alert">
+              <AlertComponent
+                message={failure}
+                type={'failure'}
+                onAlertClose={() => setFailure(null)}
+              />
+            </div>
+          )}
           <div className="flex gap-3">
             <div className="flex-1">
               <Input
@@ -389,15 +380,26 @@ export default function UserInfoForm({
 
           {usePassword ? (
             <>
-              <div>
+              <div className="relative">
                 <Input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   placeholder="Create password"
                   name="password"
                   value={values.password}
                   onChange={handleChange}
                   onBlur={handleBlur}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="text-muted-foreground absolute top-2.5 right-3 focus:outline-none"
+                >
+                  {showPassword ? (
+                    <Eye className="h-4 w-4" />
+                  ) : (
+                    <EyeOff className="h-4 w-4" />
+                  )}
+                </button>
                 {errors.password && touched.password && (
                   <p className="text-destructive mt-1 text-sm">
                     {errors.password}
@@ -405,15 +407,26 @@ export default function UserInfoForm({
                 )}
               </div>
 
-              <div>
+              <div className="relative">
                 <Input
-                  type="password"
+                  type={showConfirmPassword ? 'text' : 'password'}
                   placeholder="Confirm password"
                   name="confirmPassword"
                   value={values.confirmPassword}
                   onChange={handleChange}
                   onBlur={handleBlur}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="text-muted-foreground absolute top-2.5 right-3 focus:outline-none"
+                >
+                  {showConfirmPassword ? (
+                    <Eye className="h-4 w-4" />
+                  ) : (
+                    <EyeOff className="h-4 w-4" />
+                  )}
+                </button>
                 {errors.confirmPassword && touched.confirmPassword && (
                   <p className="text-destructive mt-1 text-sm">
                     {errors.confirmPassword}
