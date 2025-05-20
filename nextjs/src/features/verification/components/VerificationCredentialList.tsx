@@ -58,7 +58,7 @@ const VerificationCredentialList = (): JSX.Element => {
     nextPage: '',
     lastPage: '',
   })
-  const [isWalletCreated, setWalletStatus] = useState(false)
+  const [isWalletCreated, setIsWalletCreated] = useState(false)
   const [searchText, setSearchText] = useState('')
   const route = useRouter()
 
@@ -98,7 +98,7 @@ const VerificationCredentialList = (): JSX.Element => {
         data?.data?.org_agents?.length > 0 &&
         data?.data?.org_agents[0]?.orgDid
       ) {
-        setWalletStatus(true)
+        setIsWalletCreated(true)
       }
     } else {
       setErrMsg(response as string)

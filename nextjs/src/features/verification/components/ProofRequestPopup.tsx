@@ -65,7 +65,7 @@ const ProofRequest = (props: IProofRrquestDetails): JSX.Element => {
       (entry) => entry.entity === entity,
     )
     if (existingEntry) {
-      existingEntry.properties.push(propertyValue as string)
+      existingEntry.properties.push(propertyValue)
     } else {
       aggregatedData.push({
         entity,

@@ -12,11 +12,6 @@ export interface Data {
   data: string | JSX.Element
   subData?: string
 }
-export interface ITableData {
-  clickId?: string | null
-  data: Data[]
-}
-
 export interface IDataTable {
   header: TableHeader[]
   searchValue?: string
@@ -47,4 +42,8 @@ export interface IDataTable {
 
   sortOrder?: string
   itemPerPage?: number
+}
+export interface ITableData {
+  clickId?: string | null
+  data: Data[]
 }

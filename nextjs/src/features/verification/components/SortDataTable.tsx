@@ -230,16 +230,16 @@ const SortDataTable: React.FC<IDataTable> = ({
                     </td>
                   </tr>
                 ) : data?.length ? (
-                  data?.map((ele, index) => (
+                  data?.map((ele, ind) => (
                     <tr
-                      key={index}
+                      key={ind}
                       className={`${
-                        index % 2 !== 0 ? 'bg-gray-50 dark:bg-gray-700' : ''
+                        ind % 2 !== 0 ? 'bg-gray-50 dark:bg-gray-700' : ''
                       }`}
                     >
-                      {ele.data.map((subEle, index) => (
+                      {ele.data.map((subEle, ind) => (
                         <td
-                          key={index}
+                          key={ind}
                           className={
                             'p-4 align-middle text-sm font-normal whitespace-nowrap text-gray-900 dark:text-white'
                           }
