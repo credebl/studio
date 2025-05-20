@@ -5,22 +5,22 @@ import type {
   ITableData,
   ITableHtml,
 } from '../type/Connections'
+
+import {
+  type IConnectionListAPIParameter,
+  getConnectionsByOrg,
+} from '@/app/api/connection'
 import React, { ChangeEvent, JSX, useEffect, useState } from 'react'
 import {
   clearSelectedConnection,
   clearSelectedUser,
   setSelectedConnection,
 } from '@/lib/storageKeys'
-import { useDispatch, useSelector } from 'react-redux'
-
+import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { AlertComponent } from '@/components/AlertComponent'
-// eslint-disable-next-line sort-imports
-import {
-  type IConnectionListAPIParameter,
-  getConnectionsByOrg,
-} from '@/app/api/connection'
 import type { AxiosResponse } from 'axios'
 import DateTooltip from '@/components/DateTooltip'
+
 import NewDataTable from './connectionsTables/SortDataTable'
 import { RootState } from '@/lib/store'
 import { apiStatusCodes } from '@/config/CommonConstant'
@@ -56,8 +56,8 @@ const ConnectionList = (props: {
     nextPage: 0,
     lastPage: 0,
   })
-  const dispatch = useDispatch()
-  const orgId = useSelector((state: RootState) => state.organization.orgId)
+  const dispatch = useAppDispatch()
+  const orgId = useAppSelector((state: RootState) => state.organization.orgId)
   useEffect(() => {
     setTableData([])
   }, [])
