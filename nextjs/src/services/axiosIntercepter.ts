@@ -1,10 +1,11 @@
 'use client'
 
 import axios, { AxiosError, AxiosRequestConfig } from 'axios'
-import { setRefreshToken, setToken } from '@/lib/authSlice'
+import { setAuthToken, setRefreshToken } from '@/lib/authSlice'
 
 import { apiRoutes } from '@/config/apiRoutes'
 import { apiStatusCodes } from '@/config/CommonConstant'
+import { signOut } from 'next-auth/react'
 import { store } from '@/lib/store'
 
 const instance = axios.create({
@@ -22,7 +23,7 @@ interface RefreshTokenResponse {
   }
 }
 
-// Refresh Token
+//Refresh Token
 const refreshAccessToken = async (): Promise<string | null> => {
   const state = store.getState()
   const refreshToken = state?.auth?.refreshToken
@@ -46,7 +47,7 @@ const refreshAccessToken = async (): Promise<string | null> => {
       const RefreshToken = response.data.data.refresh_token
 
       if (AccessToken && RefreshToken) {
-        store.dispatch(setToken(AccessToken))
+        store.dispatch(setAuthToken(AccessToken))
         store.dispatch(setRefreshToken(RefreshToken))
         return AccessToken
       }
@@ -66,7 +67,7 @@ const refreshAccessToken = async (): Promise<string | null> => {
 instance.interceptors.request.use(
   (config) => {
     const state = store.getState()
-    const token = state?.auth?.token
+    const token = state?.auth?.authToken
 
     if (token) {
       const updatedConfig = {
@@ -84,36 +85,20 @@ instance.interceptors.request.use(
   (error) => Promise.reject(error),
 )
 
-function logoutAndRedirect(): void {
-  const rootKey = 'persist:root'
-
-  if (localStorage.getItem(rootKey)) {
-    localStorage.removeItem(rootKey)
-
-    const interval = setInterval(() => {
-      if (!localStorage.getItem(rootKey)) {
-        clearInterval(interval)
-        window.location.href = '/auth/sign-in'
-      }
-    }, 100)
-  } else {
-    window.location.href = '/auth/sign-in'
-  }
-}
-
 // RESPONSE INTERCEPTOR
 instance.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     const originalRequest = error.config as AxiosRequestConfig & {
-      retry?: boolean
+      _retry?: boolean
     }
 
+    // Automatically logout on 401
     if (
       error.response?.status === apiStatusCodes.API_STATUS_UNAUTHORIZED &&
-      !originalRequest?.retry
+      !originalRequest?._retry
     ) {
-      originalRequest.retry = true
+      originalRequest._retry = true
 
       const newAccessToken = await refreshAccessToken()
       if (newAccessToken && originalRequest.headers) {
@@ -122,7 +107,7 @@ instance.interceptors.response.use(
       }
 
       if (typeof window !== 'undefined') {
-        logoutAndRedirect()
+        await signOut({ callbackUrl: '/auth/sign-in' })
       }
     }
 

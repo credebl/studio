@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import React, { useEffect, useState } from 'react'
+import { signOut, useSession } from 'next-auth/react'
 
 import { Button } from '@/components/ui/button'
 import { IUserProfile } from '../profile/interfaces'
@@ -24,7 +25,6 @@ import { getUserProfile } from '@/app/api/Auth'
 import { logout } from '@/lib/authSlice'
 import { persistor } from '@/lib/store'
 import { setUserProfileDetails } from '@/lib/userSlice'
-import { useAppSelector } from '@/lib/hooks'
 import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/navigation'
 
@@ -33,15 +33,16 @@ export function UserNav(): React.JSX.Element | null {
   const router = useRouter()
 
   const [userProfile, setUserProfile] = useState<IUserProfile | null>(null)
-  const token = useAppSelector((state) => state.auth.token)
+  // const token = useAppSelector((state) => state.auth.token)
 
+  const { data: session } = useSession()
   useEffect(() => {
     async function fetchProfile(): Promise<void> {
-      if (!token) {
+      if (!session?.accessToken) {
         return
       }
       try {
-        const response = await getUserProfile(token)
+        const response = await getUserProfile(session?.accessToken)
         if (
           typeof response !== 'string' &&
           response?.data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS
@@ -56,16 +57,16 @@ export function UserNav(): React.JSX.Element | null {
     }
 
     fetchProfile()
-  }, [token])
+  }, [session?.accessToken])
 
-  if (!token) {
+  if (!session?.accessToken) {
     return null
   }
 
   const handleLogout = async (): Promise<void> => {
     dispatch(logout())
     await persistor.purge()
-    router.push('/auth/sign-in')
+    await signOut({ callbackUrl: '/auth/sign-in' })
   }
 
   return (
