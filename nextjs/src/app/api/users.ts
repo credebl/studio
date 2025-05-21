@@ -1,4 +1,5 @@
 import { axiosGet, axiosPut } from '@/services/apiRequests'
+
 import { AxiosResponse } from 'axios'
 import apiRoutes from './apiRoutes'
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs'
@@ -14,7 +15,6 @@ export interface IPlatformSetting {
 export const getUserActivity = async (
   limit: number,
 ): Promise<AxiosResponse | string> => {
-  // const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
   const url = `${apiRoutes.users.recentActivity}?limit=${limit}`
   const axiosPayload = {
     url,

@@ -13,10 +13,13 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
+import { setOrgId, setOrgRoles, setSelectedOrgId } from '@/lib/orgSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
+import { AxiosResponse } from 'axios'
 import Image from 'next/image'
-import { setOrgId } from '@/lib/orgSlice'
+import { apiStatusCodes } from '@/config/CommonConstant'
+import { getOrganizationRoles } from '@/app/api/organization'
 
 interface Tenant {
   id: string
@@ -33,7 +36,6 @@ export function OrgSwitcher({
   defaultTenant: Tenant
   onTenantSwitch?: (tenantId: string) => void
 }): React.ReactElement {
-  const tenantId = useAppSelector((state) => state.organization.orgId)
   const [selectedTenant, setSelectedTenant] = React.useState<
     Tenant | undefined
   >(defaultTenant ?? (tenants.length > 0 ? tenants[0] : undefined))
@@ -53,9 +55,25 @@ export function OrgSwitcher({
     return defaultTenant ?? (tenants.length > 0 ? tenants[0] : undefined)
   }, [selectedOrgId, tenants, defaultTenant])
 
+  const getRoles = async (orgId: string): Promise<void> => {
+    try {
+      const res = await getOrganizationRoles(orgId)
+      const { data } = res as AxiosResponse
+
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        const roles = data?.data ?? []
+        dispatch(setOrgRoles(roles))
+      }
+    } catch (error) {
+      console.error('Error fetching roles:', error)
+    }
+  }
+
   const handleTenantSwitch = (tenant: Tenant): void => {
     dispatch(setOrgId(tenant.id))
-
+    dispatch(setSelectedOrgId(tenant.id))
+    setSelectedTenant(tenant)
+    getRoles(tenant.id)
     if (onTenantSwitch) {
       onTenantSwitch(tenant.id)
     }
@@ -71,13 +89,19 @@ export function OrgSwitcher({
   }
 
   useEffect(() => {
-    if (tenantId && tenants.length > 0) {
-      const item = tenants.find((item) => item.id === tenantId)
-      if (item) {
-        setSelectedTenant(item)
+    if (selectedOrgId) {
+      getRoles(selectedOrgId)
+    }
+  }, [selectedOrgId])
+
+  useEffect(() => {
+    if (selectedOrgId && tenants.length > 0) {
+      const found = tenants.find((item) => item.id === selectedOrgId)
+      if (found) {
+        setSelectedTenant(found)
       }
     }
-  }, [tenantId, tenants])
+  }, [selectedOrgId, tenants])
 
   return (
     <SidebarMenu>
@@ -107,12 +131,9 @@ export function OrgSwitcher({
               <div className="flex max-w-[200px] flex-col gap-0.5 overflow-hidden leading-none font-semibold">
                 <span className="truncate">
                   {selectedTenant?.name ??
-                    tenants.find((t) => t.id === tenantId)?.name ??
+                    tenants.find((t) => t.id === selectedOrgId)?.name ??
                     'Select Organization'}
                 </span>
-                {/* <div className='flex flex-col gap-0.5 leading-none'>
-                  <span>{currentTenant?.name ?? 'Select Organization'}</span>
-                </div> */}
               </div>
 
               <ChevronsUpDown className="ml-auto shrink-0" />
@@ -144,9 +165,6 @@ export function OrgSwitcher({
                   )}
                 </div>
                 <span className="truncate">{tenant.name}</span>
-                {tenant.id === selectedTenant?.id && (
-                  <span className="truncate">{tenant.name}</span>
-                )}
                 {tenant.id === currentTenant?.id && (
                   <Check className="ml-auto" />
                 )}
