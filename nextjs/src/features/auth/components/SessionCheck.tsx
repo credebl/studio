@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation'
 
 import Loader from '@/components/Loader'
 import { sessionExcludedPaths } from '@/config/CommonConstant'
-import { useAppSelector } from '@/lib/hooks'
+import { useSession } from 'next-auth/react'
 
 interface SessionProps {
   children: ReactNode
@@ -17,7 +17,8 @@ const dashboardPath = '/dashboard'
 const SessionCheck: React.FC<SessionProps> = ({ children }) => {
   const router = useRouter()
   const pathname = usePathname()
-  const token = useAppSelector((state) => state.auth.token)
+  const { data: session } = useSession()
+  const token = session?.accessToken
 
   const [checkingSession, setCheckingSession] = useState(true)
 

@@ -3,18 +3,24 @@ import './theme.css'
 
 import type { Metadata, Viewport } from 'next'
 
+import { Session as NextAuthSession } from 'next-auth'
 import NextTopLoader from 'nextjs-toploader'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import PageLayout from '@/components/PageLayout'
 import Providers from '@/components/layout/providers'
 import React from 'react'
 import SessionCheck from '@/features/auth/components/SessionCheck'
+import { SessionSyncer } from '@/features/auth/components/sessionSyncher'
 import StoreProvider from './StoreProvider'
 import { Toaster } from '@/components/ui/sonner'
-import { auth } from '@/lib/auth'
+import { authOptions } from './api/auth/[...nextauth]/route'
 import { cn } from '@/lib/utils'
 import { cookies } from 'next/headers'
 import { fontVariables } from '@/lib/font'
+import { getServerSession } from 'next-auth/next'
+
+// Create a new type extending Session to guarantee expires is defined
+type SessionWithExpires = NextAuthSession & { expires: string }
 
 const META_THEME_COLORS = {
   light: '#ffffff',
@@ -35,10 +41,24 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }): Promise<React.JSX.Element> {
-  const session = await auth()
+  // Get the session raw
+  const sessionRaw = (await getServerSession(
+    authOptions,
+  )) as SessionWithExpires | null
+
+  const session: SessionWithExpires | null = sessionRaw
+    ? {
+        ...sessionRaw,
+        expires:
+          sessionRaw.expires ??
+          new Date(Date.now() + 1000 * 60 * 30).toISOString(),
+      }
+    : null
+
   const cookieStore = await cookies()
   const activeThemeValue = cookieStore.get('active_theme')?.value
   const isScaled = activeThemeValue?.endsWith('-scaled')
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -65,15 +85,17 @@ export default async function RootLayout({
         <NextTopLoader showSpinner={false} />
         <NuqsAdapter>
           <StoreProvider>
-            <SessionCheck>
-              <Providers
-                session={session}
-                activeThemeValue={activeThemeValue as string}
-              >
-                <Toaster />
-                <PageLayout>{children}</PageLayout>
-              </Providers>
-            </SessionCheck>
+            <Providers
+              session={session}
+              activeThemeValue={activeThemeValue as string}
+            >
+              <SessionSyncer>
+                <SessionCheck>
+                  <Toaster />
+                  <PageLayout>{children}</PageLayout>
+                </SessionCheck>
+              </SessionSyncer>
+            </Providers>
           </StoreProvider>
         </NuqsAdapter>
       </body>
