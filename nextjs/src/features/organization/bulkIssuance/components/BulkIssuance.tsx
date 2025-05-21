@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 'use client'
 
 import { ArrowLeft, Download, History, Plus } from 'lucide-react'
@@ -14,7 +13,7 @@ import {
   IUploadMessage,
 } from '../../connectionIssuance/type/Issuance'
 import { Option, SearchableSelect } from '@/components/ShadCnSelect'
-import React, { JSX, useEffect, useState } from 'react'
+import React, { JSX, useEffect, useRef, useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify'
 import { apiStatusCodes, itemPerPage } from '@/config/CommonConstant'
 
@@ -82,7 +81,7 @@ const BulkIssuance = (): JSX.Element => {
 
   const router = useRouter()
 
-  const socketId = useAppSelector((state: RootState) => state.socket.SOCKET_ID)
+  const socketId = SOCKET.id || ''
 
   const onSelectChange = (newValue: ICredentials | undefined): void => {
     const value = newValue
@@ -110,22 +109,30 @@ const BulkIssuance = (): JSX.Element => {
     setMounted(true)
   }, [])
 
+  const allow = useRef<boolean>(true)
+
   useEffect(() => {
     SOCKET.emit('bulk-connection')
     SOCKET.on('bulk-issuance-process-completed', () => {
       setSuccess(null)
       // eslint-disable-next-line no-console
       console.log('bulk-issuance-process-completed')
-      toast.success('Issuance process completed', {
-        position: 'top-right',
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: 'colored',
-      })
+      setTimeout(() => {
+        allow.current = true
+      }, 2000)
+      if (allow.current) {
+        toast.success('Issuance process completed', {
+          position: 'top-right',
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'colored',
+        })
+      }
+      allow.current = false
     })
 
     SOCKET.on('error-in-bulk-issuance-process', () => {
@@ -368,7 +375,6 @@ const BulkIssuance = (): JSX.Element => {
                     </Button>
                   </div>
                 </div>
-                {/* ---------------- */}
                 <DragAndDrop context={context} />
               </div>
             </div>
