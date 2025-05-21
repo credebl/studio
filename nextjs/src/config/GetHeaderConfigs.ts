@@ -12,6 +12,10 @@ type SecurityHeaders = {
   'Strict-Transport-Security': string
   'X-XSS-Protection': string
   'Content-Type'?: string
+  Authorization?: string
+  Referer?: string
+  'Cache-Control'?: string
+  Pragma?: string
 }
 export interface HeaderConfig {
   headers: SecurityHeaders

@@ -1,11 +1,8 @@
-'use client'
+import { Features, Roles } from '@/common/enums'
+import { JSX, ReactElement, useEffect, useState } from 'react'
 
-import { Features, Roles } from '../common/enums'
-import { ReactElement, useEffect, useState } from 'react'
-
-import { Button } from '@/components/ui/button'
-import { RootState } from '@/lib/store'
-import { useSelector } from 'react-redux'
+import { Button } from './ui/button'
+import { useAppSelector } from '@/lib/hooks'
 
 interface RoleViewButtonProps {
   title?: string
@@ -24,14 +21,15 @@ const RoleViewButton = ({
   svgComponent,
   onClickEvent,
   feature,
+  isOutline,
   disabled,
-}: RoleViewButtonProps): ReactElement => {
+}: RoleViewButtonProps): JSX.Element => {
   const [userRoles, setUserRoles] = useState<string[]>([])
-  const roles =
-    useSelector((state: RootState) => state.organization.orgInfo?.roles) || []
+
+  const role = useAppSelector((state) => state.organization.orgInfo?.roles[0])
 
   const getUserOrgRoles = async (): Promise<void> => {
-    setUserRoles(roles)
+    setUserRoles(role ? [role] : [])
   }
 
   useEffect(() => {
@@ -39,21 +37,30 @@ const RoleViewButton = ({
   }, [])
 
   const isRoleAccess = (): boolean => {
-    const isOwnerOrAdmin =
-      userRoles.includes(Roles.OWNER) || userRoles.includes(Roles.ADMIN)
     if (feature === Features.CRETAE_ORG) {
       return true
     } else if (feature === Features.ISSUANCE) {
-      if (isOwnerOrAdmin || userRoles.includes(Roles.ISSUER)) {
+      if (
+        userRoles.includes(Roles.OWNER) ||
+        userRoles.includes(Roles.ADMIN) ||
+        userRoles.includes(Roles.ISSUER)
+      ) {
         return true
       }
       return false
     } else if (feature === Features.VERIFICATION) {
-      if (isOwnerOrAdmin || userRoles.includes(Roles.VERIFIER)) {
+      if (
+        userRoles.includes(Roles.OWNER) ||
+        userRoles.includes(Roles.ADMIN) ||
+        userRoles.includes(Roles.VERIFIER)
+      ) {
         return true
       }
       return false
-    } else if (isOwnerOrAdmin) {
+    } else if (
+      userRoles.includes(Roles.OWNER) ||
+      userRoles.includes(Roles.ADMIN)
+    ) {
       return true
     } else {
       return false
@@ -63,8 +70,9 @@ const RoleViewButton = ({
   return (
     <Button
       title={title}
+      data-outline={Boolean(isOutline)}
       onClick={isRoleAccess() ? onClickEvent : undefined}
-      className="text-base"
+      // color={isOutline ? 'bg-primary' : 'bg-primary'}
       disabled={disabled || !isRoleAccess()}
     >
       {svgComponent}

@@ -8,6 +8,7 @@ import socketReducer from './socketSlice'
 import storage from 'redux-persist/lib/storage'
 import storageReducer from './storageKeys'
 import userSlice from './userSlice'
+import verificationSlice from './verificationSlice'
 import walletSpinupSlice from './walletSpinupSlice'
 
 const rootReducer = combineReducers({
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   user: userSlice,
   wallet: walletSpinupSlice,
   socket: socketReducer,
+  verification: verificationSlice,
 })
 
 const persistConfig = {

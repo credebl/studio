@@ -1,13 +1,28 @@
 import { DefaultSession } from 'next-auth'
 
 declare module 'next-auth' {
-  type UserSession = DefaultSession['user']
-  interface Session {
-    user: UserSession
+  interface Session extends DefaultSession {
+    accessToken?: string
+    refreshToken?: string
+    expiresAt?: number
+    user: User
   }
 
-  interface CredentialsInputs {
+  interface User {
+    id: string
     email: string
-    password: string
+    accessToken?: string
+    refreshToken?: string
+    expiresAt?: number
+  }
+}
+
+declare module 'next-auth/jwt' {
+  interface JWT {
+    id?: string
+    email?: string
+    accessToken?: string
+    refreshToken?: string
+    expiresAt?: number
   }
 }
