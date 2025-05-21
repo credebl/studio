@@ -39,11 +39,9 @@ export const pathRoutes = {
       issue: '/organizations/credentials/issue',
       schema: '/organizations/credentials/issue/schemas',
       credDef: '/organizations/credentials/issue/schemas/cred-defs',
-      connection: '/organizations/credentials/issue/connections',
-      connections:
-        '/organizations/credentials/issue/schemas/cred-defs/connections',
-      issuance:
-        '/organizations/credentials/issue/schemas/cred-defs/connections/issuance',
+      connection: '/organizations/credentials/connections',
+      connections: '/organizations/credentials/connections',
+      issuance: '/organizations/credentials/connections/issuance',
       w3cIssuance: '/organizations/credentials/issue/connections/issuance',
       history: '/organizations/credentials/issue/bulk-issuance/history',
       details: '/organizations/credentials/issue/bulk-issuance/history/details',
@@ -104,6 +102,9 @@ export const pathRoutes = {
       schemas: '/organizations/credentials/issue/schemas',
       connections:
         '/organizations/credentials/issue/schemas/cred-defs/connections',
+    },
+    credentials: {
+      credentials: '/organizations/credentials',
     },
   },
 }

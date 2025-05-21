@@ -5,6 +5,7 @@ import authSlice from './authSlice'
 import orgSlice from './orgSlice'
 import profileSlice from './profileSlice'
 import storage from 'redux-persist/lib/storage'
+import storageReducer from './storageKeys'
 import userSlice from './userSlice'
 import walletSpinupSlice from './walletSpinupSlice'
 
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
   auth: authSlice,
   profile: profileSlice,
   organization: orgSlice,
+  storageKeys: storageReducer,
   user: userSlice,
   wallet: walletSpinupSlice,
 })
@@ -19,7 +21,14 @@ const rootReducer = combineReducers({
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth', 'profile', 'organization', 'user', 'wallet'],
+  whitelist: [
+    'auth',
+    'profile',
+    'organization',
+    'storageKeys',
+    'user',
+    'wallet',
+  ],
 }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)

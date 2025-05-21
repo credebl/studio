@@ -166,8 +166,10 @@ export const OrganizationDashboard = ({
           >
             <CardContent className="flex items-center justify-between p-6">
               <div>
-                <p className="font-medium">{orgDashboard?.schemasCount ?? 0}</p>
-                <h3 className="mt-2 text-4xl font-bold">7</h3>
+                <p className="font-medium">Schemas</p>
+                <h3 className="mt-2 text-4xl font-bold">
+                  {orgDashboard?.schemasCount ?? 0}
+                </h3>
               </div>
               <div className="opacity-30">
                 <svg
@@ -192,10 +194,10 @@ export const OrganizationDashboard = ({
           <Card className="shadow-md">
             <CardContent className="flex items-center justify-between p-6">
               <div>
-                <p className="font-medium">
+                <p className="font-medium">Credentials</p>
+                <h3 className="mt-2 text-4xl font-bold">
                   {orgDashboard?.credentialsCount ?? 0}
-                </p>
-                <h3 className="mt-2 text-4xl font-bold">35</h3>
+                </h3>
               </div>
               <div className="opacity-20">
                 <svg
