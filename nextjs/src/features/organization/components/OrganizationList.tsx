@@ -132,10 +132,14 @@ export const OrganizationList = (): React.JSX.Element => {
             onChange={(e) => setSearchText(e.target.value)}
             className="w-64"
           />
-          <Button disabled={currentPage.totalCount >= 10} onClick={handleCreateOrg} className="gap-2">
-      <Plus className="h-4 w-4" />
-      Create Organization
-    </Button>
+          <Button
+            disabled={currentPage.totalCount >= 10}
+            onClick={handleCreateOrg}
+            className="gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            Create Organization
+          </Button>
         </div>
       </div>
 
@@ -177,7 +181,12 @@ export const OrganizationList = (): React.JSX.Element => {
             </Card>
           ))
         ) : (
-          <div className="">No organizations found.</div>
+          <div className="text-muted-foreground col-span-full flex min-h-[300px] flex-col items-center justify-center gap-2 text-center">
+            <p className="text-lg font-semibold">No organizations found.</p>
+            <p className="text-sm">
+              Get started by creating a new organization.
+            </p>
+          </div>
         )}
       </div>
 
