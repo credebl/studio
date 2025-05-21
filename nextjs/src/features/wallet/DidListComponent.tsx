@@ -68,7 +68,7 @@ const DIDList = ({ orgId }: { orgId: string }): React.JSX.Element => {
       console.error('Error fetching DIDs:', error)
     }
   }
-
+  // This is for reference if we need some operation regarding org roles
   // const getUserOrgRoles = async () => {
   //   const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES);
   //   const roles = orgRoles.split(',');
@@ -109,17 +109,6 @@ const DIDList = ({ orgId }: { orgId: string }): React.JSX.Element => {
 
   return (
     <div className="w-full space-y-4">
-      {/* {successMsg && (
-        <Alert variant="default" className="text-success">
-          <AlertDescription>{successMsg}</AlertDescription>
-        </Alert>
-      )}
-      {errorMsg && (
-        <Alert variant="destructive">
-          <AlertDescription>{errorMsg}</AlertDescription>
-        </Alert>
-      )} */}
-
       {successMsg && (
         <div className="w-full" role="alert">
           <AlertComponent

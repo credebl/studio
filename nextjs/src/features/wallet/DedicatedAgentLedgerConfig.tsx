@@ -76,7 +76,6 @@ const RequiredAsterisk = (): React.JSX.Element => (
 
 const DedicatedLedgerConfig = ({
   seeds,
-  maskedSeeds,
   submitDedicatedWallet,
 }: IDedicatedAgentForm): React.JSX.Element => {
   const [haveDidShared, setHaveDidShared] = useState(false)
@@ -84,7 +83,6 @@ const DedicatedLedgerConfig = ({
   const [selectedMethod, setSelectedMethod] = useState('')
   const [selectedNetwork, setSelectedNetwork] = useState('')
   const [seedVal, setSeedVal] = useState('')
-  const [, setMaskedSeedVal] = useState('')
   const [selectedDid, setSelectedDid] = useState('')
   const [mappedData, setMappedData] = useState<ILedgerConfigData | null>(null)
   const [domainValue, setDomainValue] = useState<string>('')
@@ -171,7 +169,6 @@ const DedicatedLedgerConfig = ({
 
   useEffect(() => {
     setSeedVal(seeds)
-    setMaskedSeedVal(maskedSeeds)
   }, [seeds])
 
   const validations = {
