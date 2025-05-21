@@ -174,7 +174,6 @@ const OrganizationDetails = ({
                     value={connectionData.connectionInvitation as string}
                     size={180}
                   />
-                  <p className="text-sm">Scan to connect</p>
                 </div>
               )
             )}

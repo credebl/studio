@@ -292,6 +292,9 @@ const CreateDidComponent = (props: CreateDIDModalProps): React.JSX.Element => {
         props.setMessage(data?.message)
         setSuccessMsg(data?.message)
         setLoading(true)
+        setTimeout(() => {
+          window.location.reload()
+        }, 2000)
       } else {
         setErrMsg(response as string)
         setLoading(false)

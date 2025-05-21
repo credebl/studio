@@ -84,7 +84,7 @@ const DedicatedLedgerConfig = ({
   const [selectedMethod, setSelectedMethod] = useState('')
   const [selectedNetwork, setSelectedNetwork] = useState('')
   const [seedVal, setSeedVal] = useState('')
-  const [maskedSeedVal, setMaskedSeedVal] = useState('')
+  const [, setMaskedSeedVal] = useState('')
   const [selectedDid, setSelectedDid] = useState('')
   const [mappedData, setMappedData] = useState<ILedgerConfigData | null>(null)
   const [domainValue, setDomainValue] = useState<string>('')
@@ -408,10 +408,7 @@ const DedicatedLedgerConfig = ({
                 Generated Seed
               </Label>
               <div className="flex items-center">
-                <div className="bg-background flex-1 rounded-lg border p-3 break-all">
-                  {maskedSeedVal}
-                </div>
-                <CopyDid className="text-primary ml-2" value={seedVal} />
+                <CopyDid className="ml-2" value={seedVal} />
               </div>
               <Alert variant="default" className="mt-2">
                 <AlertDescription className="flex items-center text-sm">

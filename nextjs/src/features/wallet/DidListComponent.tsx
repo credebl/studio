@@ -1,4 +1,3 @@
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import {
   IDidListData,
   IUpdatePrimaryDid,
@@ -11,6 +10,7 @@ import {
 } from '@/components/ui/tooltip'
 import { getDids, updatePrimaryDid } from '@/app/api/Agent'
 
+import { AlertComponent } from '@/components/AlertComponent'
 import type { AxiosResponse } from 'axios'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -109,7 +109,7 @@ const DIDList = ({ orgId }: { orgId: string }): React.JSX.Element => {
 
   return (
     <div className="w-full space-y-4">
-      {successMsg && (
+      {/* {successMsg && (
         <Alert variant="default" className="text-success">
           <AlertDescription>{successMsg}</AlertDescription>
         </Alert>
@@ -118,6 +118,33 @@ const DIDList = ({ orgId }: { orgId: string }): React.JSX.Element => {
         <Alert variant="destructive">
           <AlertDescription>{errorMsg}</AlertDescription>
         </Alert>
+      )} */}
+
+      {successMsg && (
+        <div className="w-full" role="alert">
+          <AlertComponent
+            message={successMsg}
+            type={'success'}
+            onAlertClose={() => {
+              if (setSuccessMsg) {
+                setSuccessMsg(null)
+              }
+            }}
+          />
+        </div>
+      )}
+      {errorMsg && (
+        <div className="w-full" role="alert">
+          <AlertComponent
+            message={errorMsg}
+            type={'failure'}
+            onAlertClose={() => {
+              if (setErrorMsg) {
+                setErrorMsg(null)
+              }
+            }}
+          />
+        </div>
       )}
 
       <div className="flex items-center justify-between">
