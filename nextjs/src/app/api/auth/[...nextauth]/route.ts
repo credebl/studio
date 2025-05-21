@@ -1,24 +1,30 @@
 // src/app/api/auth/[...nextauth]/route.ts
 
 import { JwtPayload, jwtDecode } from 'jwt-decode'
+import { Session, SessionOptions, User } from 'next-auth'
 
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { JWT } from 'next-auth/jwt'
 import NextAuth from 'next-auth/next'
 import { Provider } from 'next-auth/providers/index'
-import { User } from 'next-auth'
 import { apiRoutes } from '@/config/apiRoutes'
 import { envConfig } from '@/config/envConfig'
 
 interface MyAuthOptions {
   providers: Provider[]
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  callbacks?: any
+  callbacks?: {
+    jwt({ token, user }: { token: JWT; user?: User }): Promise<JWT>,
+    session({
+      session,
+      token,
+    }: {
+      session: Session
+      token: JWT
+    }): Promise<Session>
+  }
   secret?: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  session?: any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  pages?: any
+  session?: Partial<SessionOptions> | undefined
+  pages?: { signIn: string }
 }
 
 interface jwtDataPayload extends JwtPayload {
@@ -95,7 +101,7 @@ export const authOptions: MyAuthOptions = {
   ],
 
   callbacks: {
-    async jwt({ token, user }: { token: JWT; user?: User }) {
+    async jwt({ token, user }: { token: JWT; user?: User }): Promise<JWT> {
       if (user) {
         token.id = user.id
         token.email = user.email
@@ -106,8 +112,13 @@ export const authOptions: MyAuthOptions = {
       return token
     },
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async session({ session, token }: { session: any; token: JWT }) {
+    async session({
+      session,
+      token,
+    }: {
+      session: Session
+      token: JWT
+    }): Promise<Session> {
       session.user = {
         id: token.id as string,
         email: token.email as string,
