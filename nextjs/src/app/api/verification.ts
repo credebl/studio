@@ -45,7 +45,10 @@ export const getVerificationList = async (
   }
 }
 
-export const verifyPresentation = async (proofId: string, orgId: string): Promise<AxiosResponse | string> => {
+export const verifyPresentation = async (
+  proofId: string,
+  orgId: string,
+): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Verification.presentationVerification}/${proofId}/verify`
   const axiosPayload = {
     url,
@@ -123,7 +126,6 @@ export const verifyCredentialV2 = async (
 export const getCredentialDefinitionsForVerification = async (
   schemaId: string,
 ): Promise<AxiosResponse | string> => {
-  // const orgId = await getFromLocalStorage(storageKeys.ORG_ID);
   const url = `${apiRoutes.Verification.verificationCredDef}/${schemaId}`
 
   const axiosPayload = {
