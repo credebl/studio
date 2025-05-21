@@ -34,6 +34,7 @@ import { ethers } from 'ethers'
 import { getOrganizationById } from '@/app/api/organization'
 import { nanoid } from 'nanoid'
 import { useForm } from 'react-hook-form'
+import { useRouter } from 'next/navigation'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 interface IPolygonKeys {
@@ -116,6 +117,8 @@ const CreateDidComponent = (props: CreateDIDModalProps): React.JSX.Element => {
   const [walletErrorMessage, setWalletErrorMessage] = React.useState<
     string | null
   >(null)
+
+  const router = useRouter()
 
   // Dynamically build schema based on method
   const getFormSchema = (): Zod.AnyZodObject => {
@@ -293,7 +296,7 @@ const CreateDidComponent = (props: CreateDIDModalProps): React.JSX.Element => {
         setSuccessMsg(data?.message)
         setLoading(true)
         setTimeout(() => {
-          window.location.reload()
+          router.refresh()
         }, 2000)
       } else {
         setErrMsg(response as string)
