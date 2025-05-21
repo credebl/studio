@@ -68,16 +68,9 @@ const DIDList = ({ orgId }: { orgId: string }): React.JSX.Element => {
       console.error('Error fetching DIDs:', error)
     }
   }
-  // This is for reference if we need some operation regarding org roles
-  // const getUserOrgRoles = async () => {
-  //   const orgRoles = await getFromLocalStorage(storageKeys.ORG_ROLES);
-  //   const roles = orgRoles.split(',');
-  //   setUserRoles(roles);
-  // }
 
   useEffect(() => {
     getData()
-    // getUserOrgRoles();
   }, [])
 
   const CopyDid = ({
