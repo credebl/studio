@@ -124,7 +124,10 @@ export const OrganizationDashboard = ({
                   <Edit className="h-4 w-4" />
                 </Button>
                 <Button variant="outline" size="icon" onClick={handleDeleteOrg}>
-                  <Trash2 className="h-4 w-4" />
+                  <Trash2
+                    className="h-4 w-4"
+                    style={{ color: 'var(--destructive)' }}
+                  />
                 </Button>
               </div>
             </div>

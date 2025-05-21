@@ -586,6 +586,7 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                 <div className="mt-6 flex items-center justify-between">
                   <Button
                     variant="secondary"
+                    type="button"
                     onClick={() => router.push('/organizations')}
                   >
                     Back
