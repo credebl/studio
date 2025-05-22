@@ -1,5 +1,7 @@
 'use client'
+
 import React, { useEffect, useState } from 'react'
+
 import { ICustomCheckboxProps } from '@/common/interface'
 
 const CustomCheckbox: React.FC<ICustomCheckboxProps> = ({

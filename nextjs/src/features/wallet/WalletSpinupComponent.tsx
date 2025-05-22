@@ -245,8 +245,8 @@ const WalletSpinup = (): React.JSX.Element => {
       seed: values.method === DidMethod.POLYGON ? '' : values?.seed || seeds,
       network: values.method === DidMethod.POLYGON ? polygonNetwork : network,
       domain: values.method === DidMethod.WEB ? domain : '',
-      role:
-        values.method === DidMethod.INDY ? (values?.role ?? 'endorser') : '',
+      role: values.method === DidMethod.INDY ? values?.role || 'endorser' : '',
+
       did: values?.did ?? '',
       endorserDid: values?.endorserDid ?? '',
       clientSocketId: SOCKET.id,

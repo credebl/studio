@@ -25,7 +25,7 @@ export type Option = {
   label: string
   id: string
   schemaName: string
-
+  schemaIdentifier?:string
   schemaVersion: string
   schemaId: string
   credentialId: string

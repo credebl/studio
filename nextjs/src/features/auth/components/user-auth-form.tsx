@@ -22,7 +22,6 @@ import {
 import {
   IUserSignInData,
   getUserProfile,
-  loginUser,
   passwordEncryption,
 } from '@/app/api/Auth'
 import React, { useState } from 'react'
@@ -40,6 +39,7 @@ import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { setProfile } from '@/lib/profileSlice'
+import { signIn } from 'next-auth/react'
 import { startAuthentication } from '@simplewebauthn/browser'
 import { toast } from 'sonner'
 import { useDispatch } from 'react-redux'
@@ -148,22 +148,16 @@ export default function SignInViewPage(): React.JSX.Element {
             isPasskey: true,
           }
 
-      const response = await loginUser(entityData)
+      const response = await signIn('credentials', {
+        ...entityData,
+        redirect: false,
+        callbackUrl: '/dashboard',
+      })
 
-      if (typeof response === 'string') {
-        toast.error(response)
-        return
-      }
-
-      if (response?.data?.statusCode === 200) {
-        const token = response?.data?.data?.access_token
-        const refreshToken = response?.data?.data?.refresh_token
-
-        dispatch(setRefreshToken(refreshToken))
-        dispatch(setToken(token))
-
-        getUserDetails(token)
-        route.push('/dashboard')
+      if (response?.ok && typeof response.url === 'string') {
+        route.push(response.url)
+      } else {
+        console.error('Sign in failed:', response?.error)
       }
     } catch (error) {
       toast.error('Error signing in')
