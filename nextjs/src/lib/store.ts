@@ -4,6 +4,7 @@ import { persistReducer, persistStore } from 'redux-persist'
 import authSlice from './authSlice'
 import orgSlice from './orgSlice'
 import profileSlice from './profileSlice'
+import socketReducer from './socketSlice'
 import storage from 'redux-persist/lib/storage'
 import storageReducer from './storageKeys'
 import userSlice from './userSlice'
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
   storageKeys: storageReducer,
   user: userSlice,
   wallet: walletSpinupSlice,
+  socket: socketReducer,
   verification: verificationSlice,
 })
 
@@ -30,6 +32,7 @@ const persistConfig = {
     'storageKeys',
     'user',
     'wallet',
+    'socket',
   ],
 }
 

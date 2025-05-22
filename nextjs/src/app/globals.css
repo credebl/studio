@@ -191,3 +191,51 @@ a[href] {
 .text-error {
   color: var(--error-text);
 }
+
+ul.timelinestatic > li:before {
+	content: counter(step);
+	counter-increment: step;
+	display: inline-block;
+	position: absolute;
+	border-radius: 50%;
+	left: 9px;
+	font-size: 20px;
+	padding: 0.5rem 0;
+	z-index: 1;
+	vertical-align: middle;
+	text-align: center;
+	width: 45px;
+	font-weight: bold;
+	height: 45px;
+	color: #000000;
+	background: var(--primary);
+}
+
+ul.timelinestatic {
+	list-style-type: none;
+	position: relative;
+  counter-reset: step;
+
+}
+
+ul.timelinestatic:before {
+	content: ' ';
+	background: var(--primary);
+	display: inline-block;
+	position: absolute;
+	left: 29px;
+	width: 6px;
+	height: 90%;
+	z-index: 1;
+}
+
+ul.timelinestatic > li:last-child {
+	height: auto;
+}
+
+ul.timelinestatic > li {
+	margin-left: 64px;
+	padding-left: 20px;
+	height: 100px;
+}
+

@@ -2,6 +2,8 @@
 'use client'
 
 import * as yup from 'yup'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Card, CardContent } from '@/components/ui/card'
 import { DidMethod, Environment, Ledgers, Network } from '../common/enum'
 import { Field, Form, Formik, type FormikHelpers, FormikProps } from 'formik'
 import {
@@ -41,7 +43,6 @@ const LedgerConfig = ({
   const [privateKeyValue, setPrivateKeyValue] = useState<string>('')
   const [, setNetworks] = useState([])
   const [walletLabel, setWalletLabel] = useState(walletName)
-  const id = React.useId()
 
   const fetchLedgerConfig = async (): Promise<void> => {
     try {
@@ -377,36 +378,22 @@ const LedgerConfig = ({
       </div>
 
       {!haveDidShared && (
-        <div className="mb-6 rounded-lg p-4">
-          <div className="mb-2 block text-sm font-medium">
-            {/* <Label value="Generated Seed" /> */}
-            <Label htmlFor={`${id}-to`} className="sr-only">
+        <Card className="mb-6">
+          <CardContent className="p-4">
+            <Label className="mb-2 block text-sm font-medium">
               Generated Seed
             </Label>
-          </div>
-          <div className="mb-4">Seed</div>
-          <div className="flex items-center">
-            <CopyDid className="ml-2 rounded-xl border p-2" value={seedVal} />
-          </div>
-
-          <div className="mt-2 flex items-center text-sm">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="mr-1 h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-              />
-            </svg>
-            Save this seed securely. It will be required to recover your wallet.
-          </div>
-        </div>
+            <div className="flex items-center">
+              <CopyDid className="ml-2" value={seedVal} />
+            </div>
+            <Alert variant="default" className="mt-2">
+              <AlertDescription className="flex items-center text-sm">
+                Save this seed securely. It will be required to recover your
+                wallet.
+              </AlertDescription>
+            </Alert>
+          </CardContent>
+        </Card>
       )}
 
       {haveDidShared && (
