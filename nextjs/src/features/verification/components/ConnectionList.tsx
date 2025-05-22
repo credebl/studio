@@ -14,11 +14,9 @@ import {
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
 import { AlertComponent } from '@/components/AlertComponent'
-import { AxiosResponse } from 'axios'
 import DateTooltip from '@/components/DateTooltip'
 import { ITableData } from '@/components/DataTable/interface'
 import SortDataTable from './SortDataTable'
-import { apiStatusCodes } from '@/config/CommonConstant'
 import { dateConversion } from '@/utils/DateConversion'
 
 const initialPageState = {
@@ -49,9 +47,9 @@ const ConnectionList = (props: {
   const [totalItem, setTotalItem] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [pageInfo, setPageInfo] = useState({
-    totalItem: '',
-    nextPage: '',
-    lastPage: '',
+    totalItem: 0,
+    nextPage: 0,
+    lastPage: 0,
   })
 
   const dispatch = useAppDispatch()
@@ -133,7 +131,7 @@ const ConnectionList = (props: {
           })
           setConnectionList(updateConnectionList)
         }}
-        className="h-4 w-4 cursor-pointer rounded-lg border-gray-300 bg-gray-100 text-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800"
+        className="h-4 w-4 cursor-pointer rounded-lg"
       />
     </div>
   )
@@ -153,13 +151,11 @@ const ConnectionList = (props: {
                   { data: renderCheckbox(ele, isChecked, connections) },
                   { data: theirLabel },
                   { data: connectionId },
+
                   {
                     data: (
-                      <DateTooltip
-                        date={createDateTime}
-                        id="verification_connecetion_list"
-                      >
-                        {dateConversion(createDateTime)}
+                      <DateTooltip date={createDateTime}>
+                        <div> {dateConversion(createDateTime)}</div>
                       </DateTooltip>
                     ),
                   },
@@ -203,26 +199,31 @@ const ConnectionList = (props: {
         orgId,
       })
 
-      const { data } = response as unknown as AxiosResponse
-
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        setTotalItem(data?.data.totalItems)
-        const { totalItems, nextPage, lastPage } = data.data
+      if (response && typeof response === 'object') {
+        const {
+          totalItems,
+          nextPage,
+          lastPage,
+          data: connectionsDataByOrgId,
+        } = response
 
         setPageInfo({
           totalItem: totalItems,
           nextPage,
           lastPage,
         })
-        const connectionsDataByOrgId = data?.data?.data
+
         setConnectionList(connectionsDataByOrgId)
+        setTotalItem(totalItems)
         setError(null)
       } else {
+        // If API returned void or unexpected structure
         setConnectionList([])
+        setError('Failed to fetch connections.')
       }
-    } catch {
+    } catch (error) {
       setConnectionList([])
-      setError(error as string)
+      setError((error as Error).message)
     } finally {
       setLoading(false)
     }
@@ -341,7 +342,7 @@ const ConnectionList = (props: {
         isSort={true}
         isPagination={true}
         message={'No Connections'}
-        discription={'You don\'t have any connections yet'}
+        discription={'You dont have any connections yet'}
       ></SortDataTable>
     </div>
   )

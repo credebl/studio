@@ -31,7 +31,7 @@ export interface IAttributesDetails {
 export interface ISchemaCardProps {
   className?: string
   schemaName: string
-  selectedSchemas: ISchema[]
+  selectedSchemas?: ISchema[]
   version: string
   schemaId: string
   issuerDid: string
@@ -40,14 +40,14 @@ export interface ISchemaCardProps {
   created: string
   isClickable?: boolean
   showCheckbox?: boolean
-  onClickCallback: (SchemaData: {
+  onClickCallback?: (SchemaData: {
     schemaId: string
     attributes: string[]
     issuerDid: string
     created: string
   }) => void
 
-  onClickW3CCallback: (W3CSchemaData: {
+  onClickW3CCallback?: (W3CSchemaData: {
     schemaId: string
     schemaName: string
     version: string
