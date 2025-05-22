@@ -109,7 +109,7 @@ export interface ISelectedAttributes {
   selectError: string
 }
 
-interface IEmailData {
+export interface IEmailData {
   email: string
 }
 export interface IEmailValues {

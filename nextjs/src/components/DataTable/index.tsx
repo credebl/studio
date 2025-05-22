@@ -33,11 +33,11 @@ const DataTable: React.FC<DataTableProps> = ({
             <table className="divide-muted dark:divide-muted min-w-full divide-y">
               <thead className="bg-muted dark:bg-muted">
                 <tr>
-                  {header.map((ele:TableHeader, index:number) => (
+                  {header.map((ele: TableHeader, index: number) => (
                     <th
                       key={index}
                       scope="col"
-                      className={`text-muted-foreground p-4 text-left text-xs font-medium tracking-wider uppercase dark:text-white ${ele.width ?? ''} ${
+                      className={`text-muted-foreground p-4 text-left text-xs font-medium tracking-wider uppercase ${ele.width ?? ''} ${
                         index === 0 && isEmailVerification ? 'pl-12' : ''
                       }`}
                     >
@@ -50,7 +50,7 @@ const DataTable: React.FC<DataTableProps> = ({
                     </th>
                   ))}
                   {(displaySelect || showBtn) && (
-                    <th className="text-muted-foreground p-4 text-left text-xs font-medium tracking-wider uppercase dark:text-white">
+                    <th className="text-muted-foreground p-4 text-left text-xs font-medium tracking-wider uppercase">
                       Action
                     </th>
                   )}
@@ -69,7 +69,7 @@ const DataTable: React.FC<DataTableProps> = ({
                         (cell: TableCellData, cellIndex: number) => (
                           <td
                             key={cellIndex}
-                            className="text-foreground p-4 align-middle text-sm font-normal whitespace-nowrap dark:text-white"
+                            className="text-foreground p-4 align-middle text-sm font-normal whitespace-nowrap"
                           >
                             <div>{cell.data}</div>
                             {cell.subData && (
@@ -81,7 +81,7 @@ const DataTable: React.FC<DataTableProps> = ({
                         ),
                       )}
                       {(displaySelect || showBtn) && (
-                        <td className="text-foreground p-4 align-middle text-sm font-normal whitespace-nowrap dark:text-white">
+                        <td className="text-foreground p-4 align-middle text-sm font-normal whitespace-nowrap">
                           {showBtn && (
                             <button
                               onClick={() => callback?.(row.clickId)}

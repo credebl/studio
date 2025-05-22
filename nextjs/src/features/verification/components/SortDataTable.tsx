@@ -121,9 +121,9 @@ const SortDataTable: React.FC<IDataTable> = ({
   ]
 
   return (
-    <section className="w-full bg-gray-50 dark:bg-gray-900">
+    <section className="w-full">
       <div className="mx-auto min-h-80">
-        <div className="relative overflow-hidden bg-white shadow-md sm:rounded-lg dark:bg-gray-800">
+        <div className="relative overflow-hidden shadow-md sm:rounded-lg">
           {isHeader && (
             <div className="flex flex-col items-center justify-between space-y-3 p-3 sm:flex-row sm:space-y-0 sm:space-x-4">
               <div className="w-full sm:w-1/2">
@@ -177,7 +177,7 @@ const SortDataTable: React.FC<IDataTable> = ({
                   <div className="flex w-full items-center space-x-3 sm:w-auto">
                     <select
                       id="small"
-                      className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                      className="block w-full rounded-lg border p-2 text-sm"
                       name="selectedValue"
                       value={selectedValue}
                       onChange={handleSortByValues}
@@ -194,7 +194,7 @@ const SortDataTable: React.FC<IDataTable> = ({
             </div>
           )}
           <div className="overflow-x-auto">
-            <table className="w-full divide-y divide-gray-200 dark:divide-gray-600">
+            <table className="w-full divide-y">
               <thead className="bg-secondary text-secondary-foreground">
                 <tr>
                   {header &&
@@ -203,29 +203,22 @@ const SortDataTable: React.FC<IDataTable> = ({
                       <th
                         key={ele.columnName}
                         scope="col"
-                        className={`p-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-white ${ele.width}`}
+                        className={`text-muted-foreground p-4 text-left text-xs font-medium tracking-wider uppercase ${ele.width}`}
                       >
                         <div>{ele.columnName}</div>
                         {ele.subColumnName && (
-                          <div className="flex text-gray-500">
-                            {ele.subColumnName}{' '}
-                          </div>
+                          <div className="flex">{ele.subColumnName} </div>
                         )}
                       </th>
                     ))}
                 </tr>
               </thead>
-              <tbody className="bg-white dark:bg-gray-800">
+              <tbody className="">
                 {loading ? (
-                  <tr className="text-center">
-                    <td
-                      className="p-2 text-center text-gray-500"
-                      colSpan={header.length}
-                    >
-                      <div>
-                        <div className="mb-4 flex w-full items-center justify-center text-center">
-                          <Loader />
-                        </div>
+                  <tr key="loading-row" className="text-center">
+                    <td className="p-2 text-center" colSpan={header.length}>
+                      <div className="mb-4 flex w-full items-center justify-center text-center">
+                        <Loader />
                       </div>
                     </td>
                   </tr>
@@ -235,15 +228,15 @@ const SortDataTable: React.FC<IDataTable> = ({
 
                     return (
                       <tr
-                        key={ele.clickId}
+                        key={index}
                         className={`${
                           index % 2 !== 0 ? 'bg-gray-50 dark:bg-gray-700' : ''
                         }`}
                       >
                         {ele.data.map((subEle, subIndex) => (
                           <td
-                            key={`${subEle.data}-${subEle.subData}-${subIndex}`}
-                            className="p-4 align-middle text-sm font-normal whitespace-nowrap text-gray-900 dark:text-white"
+                            key={`row-${ele.clickId}-col-${subIndex}`}
+                            className="p-4 align-middle text-sm font-normal whitespace-nowrap"
                           >
                             <div>
                               <div>{subEle.data}</div>
@@ -255,11 +248,7 @@ const SortDataTable: React.FC<IDataTable> = ({
                         {showSelectButton && (
                           <td>
                             <Button
-                              onClick={() => {
-                                if (callback) {
-                                  callback(ele?.clickId)
-                                }
-                              }}
+                              onClick={() => callback?.(ele?.clickId)}
                               className="bg-primary hover:bg-primary-800 mt-2 mr-2 mb-2 rounded-lg px-5 py-2.5 text-center text-sm font-medium focus:ring-4 focus:outline-none"
                             >
                               Select
@@ -270,11 +259,8 @@ const SortDataTable: React.FC<IDataTable> = ({
                     )
                   })
                 ) : (
-                  <tr className="text-center">
-                    <td
-                      className="p-2 text-center text-gray-500"
-                      colSpan={header.length}
-                    >
+                  <tr key="empty-row" className="text-center">
+                    <td className="p-2 text-center" colSpan={header.length}>
                       <div className="mx-auto flex h-full w-full items-center justify-center">
                         <EmptyMessage
                           title={message}
@@ -295,15 +281,12 @@ const SortDataTable: React.FC<IDataTable> = ({
               aria-label="Table navigation"
             >
               {!loading && data?.length > 0 && (
-                <span className="mt-2 text-sm font-normal text-gray-500 dark:text-gray-400">
+                <span className="mt-2 text-sm font-normal">
                   Showing{' '}
-                  <span className="font-semibold text-gray-900 dark:text-white">
+                  <span className="font-semibold">
                     {startItem}-{endItem}
                   </span>{' '}
-                  of{' '}
-                  <span className="font-semibold text-gray-900 dark:text-white">
-                    {totalItem}
-                  </span>
+                  of <span className="font-semibold">{totalItem}</span>
                 </span>
               )}
               {lastPage > 1 && data?.length > 0 && (

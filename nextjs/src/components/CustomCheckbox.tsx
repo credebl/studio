@@ -32,12 +32,12 @@ const CustomCheckbox: React.FC<ICustomCheckboxProps> = ({
           {' '}
           <input
             type="checkbox"
-            checked={checked}
+            checked={Boolean(checked)}
             onChange={handleCheckboxChange}
             className="hidden"
           />
           <div
-            className={`h-full w-full border-2 ${checked ? 'bg-primary-700' : ''}`}
+            className={`h-full w-full border-2 ${checked ? 'bg-primary' : ''}`}
             style={{
               borderColor: 'rgb(31 78 173 / var(--tw-bg-opacity))',
               position: 'relative',
@@ -45,7 +45,7 @@ const CustomCheckbox: React.FC<ICustomCheckboxProps> = ({
           >
             {checked && (
               <svg
-                className="absolute top-0 left-0 h-full w-full text-[var(--color-white)]"
+                className="absolute top-0 left-0 h-full w-full"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
