@@ -185,12 +185,8 @@ const EmailAttributesSelection = (): JSX.Element => {
   const handleSubmit = (): void => {
     setErrMsg(null)
 
-    if (w3cSchema) {
-      redirectToAppropriatePage()
-      return
-    }
-
     if (hasInvalidNumberAttributes()) {
+      setErrMsg('Please check the number fields.')
       return
     }
 
