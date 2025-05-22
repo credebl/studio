@@ -1,4 +1,5 @@
-import { ColumnDef } from '@tanstack/react-table'
+import { CellContext, ColumnDef } from '@tanstack/react-table'
+
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from './data-table-column-header'
 import { JSX } from 'react'
@@ -24,7 +25,7 @@ export interface IColumnData {
   title: string
   accessorKey: string
   columnFunction: ColumnFunctionality[]
-  cell?: JSX.Element
+  cell?: (cell: CellContext<any, unknown>) => JSX.Element
 }
 
 export interface TableStyling {
@@ -83,13 +84,13 @@ export function getColumns<T>(tableStyling: TableStyling): ColumnDef<T>[] {
           sortCallBack={sortCallback}
         />
       ),
-      cell: ({ row }) =>
+      cell: (cellContext) =>
         columnData.cell ? (
-          columnData.cell
+          columnData.cell(cellContext)
         ) : (
           <div className="flex space-x-2">
             <span className="max-w-32 truncate font-medium sm:max-w-72 md:max-w-[31rem]">
-              {row.getValue(columnData.id)}
+              {cellContext.row.getValue(columnData.id)}
             </span>
           </div>
         ),

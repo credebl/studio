@@ -43,13 +43,15 @@ export interface IUploadMessage {
 }
 
 export interface IssuedCredential {
-  metadata: { [x: string]: { schemaId: string } }
   connectionId: string
   createDateTime: string
+  createdBy: string
   state: string
   isRevocable: boolean
+  credentialExchangeId: string
   schemaId: string
   schemaName: string
+  orgId: string
 }
 
 export interface IProps {
