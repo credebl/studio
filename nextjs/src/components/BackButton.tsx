@@ -5,13 +5,25 @@ import { Button } from './ui/button'
 import { JSX } from 'react'
 import { useRouter } from 'next/navigation'
 
-const BackButton = (): JSX.Element => {
+interface BackButtonProps {
+  path?: string
+}
+
+const BackButton = ({ path }: BackButtonProps): JSX.Element => {
   const router = useRouter()
+
+  const handleClick = (): void => {
+    if (path) {
+      router.push(path)
+    } else {
+      router.back()
+    }
+  }
 
   return (
     <Button
       variant="outline"
-      onClick={() => router.back()}
+      onClick={handleClick}
       className="border-ring hover:bg-primary mb-4 flex items-center gap-2 rounded-xl border px-4 py-2 transition-colors"
     >
       <ArrowLeft size={18} />

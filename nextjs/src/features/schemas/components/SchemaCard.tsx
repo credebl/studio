@@ -8,6 +8,7 @@ import {
   ISchemaData,
 } from '../type/schemas-interface'
 import React, { useState } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
 import CopyDid from '@/config/CopyDid'
@@ -17,25 +18,32 @@ import DateTooltip from '@/components/DateTooltip'
 import { ShieldCheck } from 'lucide-react'
 import { dateConversion } from '@/utils/DateConversion'
 import { limitedAttributesLength } from '@/config/CommonConstant'
-import { useRouter } from 'next/navigation'
 
 const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
-  const [, setIsSelected] = useState(false)
+  const [isSelected, setIsSelected] = useState(false)
   const router = useRouter()
 
-  const isSelectedSchema = props.selectedSchemas?.some(
-    (selectedSchema) =>
-      selectedSchema.schemaId === props.schemaId ||
-      selectedSchema.schemaLedgerId === props.schemaId,
-  )
+  const pathname = usePathname()
+  const isVerificationPage = pathname.includes('verification')
+
+  // const isSelectedSchema = props.selectedSchemas?.some(
+  //   (selectedSchema) =>
+  //     selectedSchema.schemaId === props.schemaId ||
+  //     selectedSchema.schemaLedgerId === props.schemaId,
+  // )
 
   const AttributesList: React.FC<{
     attributes: IAttributes[]
     limitedAttributes?: boolean
   }> = ({ attributes, limitedAttributes }) => {
     const isLimited =
-      limitedAttributes !== false && attributes.length > limitedAttributesLength
-    const displayedAttributes = isLimited ? attributes.slice(0, 3) : attributes
+      limitedAttributes !== false &&
+      Array.isArray(attributes) &&
+      attributes.length > limitedAttributesLength
+
+    const displayedAttributes = isLimited
+      ? attributes.slice(0, 3)
+      : (attributes ?? [])
 
     return (
       <div className="text-foreground flex flex-wrap items-center text-base font-semibold">
@@ -93,6 +101,10 @@ const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
   )
 
   const handleCardClick = (): void => {
+    if (isVerificationPage) {
+      return
+    }
+
     if (!props.w3cSchema && !hasNestedAttributes && props.schemaId) {
       router.push(`/organizations/schemas/${props.schemaId}`)
     }
@@ -108,7 +120,7 @@ const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
   return (
     <Card
       className={`border-border relative h-full w-full overflow-hidden rounded-xl border shadow-xl transition-transform duration-300 ${
-        props.w3cSchema || props.isClickable === false
+        props.w3cSchema || props.isClickable === false || isVerificationPage
           ? 'cursor-default'
           : 'cursor-pointer hover:scale-[1.02] hover:shadow-lg'
       } ${hasNestedAttributes ? 'pointer-events-none opacity-80' : ''}`}
@@ -217,7 +229,8 @@ const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
 
         {props.showCheckbox && !hasNestedAttributes && (
           <CustomCheckbox
-            isSelectedSchema={isSelectedSchema}
+            // isSelectedSchema={Boolean(isSelectedSchema)}
+            isSelectedSchema={Boolean(isSelected)}
             onChange={handleCheckboxChange}
             showCheckbox={props.showCheckbox}
             schemaData={{

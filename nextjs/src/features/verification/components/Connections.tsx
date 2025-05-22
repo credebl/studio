@@ -216,17 +216,16 @@ const Connections = (): JSX.Element => {
           }),
         )
 
-        const groupedAttributes = checkedW3CAttributes.reduce<Record<string, CheckedW3CAttribute[]>>(
-          (acc, curr) => {
-            const { schemaName } = curr
-            if (!acc[schemaName]) {
-              acc[schemaName] = []
-            }
-            acc[schemaName].push(curr)
-            return acc
-          },
-          {},
-        )
+        const groupedAttributes = checkedW3CAttributes.reduce<
+          Record<string, CheckedW3CAttribute[]>
+        >((acc, curr) => {
+          const { schemaName } = curr
+          if (!acc[schemaName]) {
+            acc[schemaName] = []
+          }
+          acc[schemaName].push(curr)
+          return acc
+        }, {})
 
         verifyCredentialPayload = {
           connectionId:
@@ -317,7 +316,7 @@ const Connections = (): JSX.Element => {
           </div>
         </div>
 
-        <div className="mb-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="mb-4 border-b">
           <ul
             className="-mb-px flex flex-wrap text-center text-sm font-medium"
             id="myTab"
@@ -358,7 +357,7 @@ const Connections = (): JSX.Element => {
             </div>
           )}
           <div
-            className="rounded-lg bg-gray-50 dark:bg-gray-900"
+            className="rounded-lg"
             id="profile"
             role="tabpanel"
             aria-labelledby="profile-tab"
@@ -367,11 +366,11 @@ const Connections = (): JSX.Element => {
           </div>
         </div>
         <div className="mb-4 flex items-center justify-between pt-3">
-          <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
+          <h1 className="ml-1 text-xl font-semibold sm:text-2xl">
             Selected Users
           </h1>
         </div>
-        <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6 2xl:col-span-2 dark:border-gray-700 dark:bg-gray-800">
+        <div className="rounded-lg border p-4 shadow-sm sm:p-6 2xl:col-span-2">
           <DataTable
             header={selectedConnectionHeader}
             data={selectedConnectionList}

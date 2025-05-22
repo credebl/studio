@@ -1,4 +1,5 @@
 import {
+  CredDefData,
   ISchema,
   ISchemaAttributeData,
   ISelectedAttributes,
@@ -18,6 +19,9 @@ interface VerificationState {
   selectedConnections: LocalOrgs[]
   selectedUser: SelectedUsers[]
   w3cSchemaAttributes: IW3CSchemaAttributeItem[]
+  CRED_DEF_ID: string
+  CredDefData: CredDefData[]
+  SCHEMA_CRED_DEFS: CredDefData[]
 }
 
 const initialState: VerificationState = {
@@ -30,6 +34,9 @@ const initialState: VerificationState = {
   selectedConnections: [],
   selectedUser: [],
   w3cSchemaAttributes: [],
+  CRED_DEF_ID: '',
+  CredDefData: [],
+  SCHEMA_CRED_DEFS: [],
 }
 
 const verificationSlice = createSlice({
@@ -51,7 +58,10 @@ const verificationSlice = createSlice({
     setSchemaId(state, action: PayloadAction<string[] | null>) {
       state.schemaId = action.payload
     },
-    setSelectedAttributeData(state, action: PayloadAction<ISelectedAttributes[]>) {
+    setSelectedAttributeData(
+      state,
+      action: PayloadAction<ISelectedAttributes[]>,
+    ) {
       state.attributeData = action.payload
     },
     setSelectedConnections(state, action: PayloadAction<LocalOrgs[]>) {
@@ -60,8 +70,20 @@ const verificationSlice = createSlice({
     setSelectedUser(state, action: PayloadAction<SelectedUsers[]>) {
       state.selectedUser = action.payload
     },
-    setW3CSchemaAttributes(state, action: PayloadAction<IW3CSchemaAttributeItem[]>) {
+    setW3CSchemaAttributes(
+      state,
+      action: PayloadAction<IW3CSchemaAttributeItem[]>,
+    ) {
       state.w3cSchemaAttributes = action.payload
+    },
+    setCredDefId: (state, action: PayloadAction<string>) => {
+      state.CRED_DEF_ID = action.payload
+    },
+    setCredDefData: (state, action: PayloadAction<CredDefData[]>) => {
+      state.CredDefData = action.payload
+    },
+    setSchemaCredDefs: (state, action: PayloadAction<CredDefData[]>) => {
+      state.SCHEMA_CRED_DEFS = action.payload
     },
     resetVerificationState(state) {
       state.schemaAttributes = []
@@ -73,6 +95,9 @@ const verificationSlice = createSlice({
       state.selectedConnections = []
       state.selectedUser = []
       state.w3cSchemaAttributes = []
+      state.CRED_DEF_ID = ''
+      state.CredDefData = []
+      state.SCHEMA_CRED_DEFS = []
     },
     resetAttributeData(state) {
       state.attributeData = []
@@ -101,6 +126,15 @@ const verificationSlice = createSlice({
     resetRouteType(state) {
       state.routeType = ''
     },
+    resetCredDefId(state) {
+      state.CRED_DEF_ID = ''
+    },
+    resetCredDefData(state) {
+      state.CredDefData = []
+    },
+    resetSchemaCredDefs(state) {
+      state.SCHEMA_CRED_DEFS = []
+    },
   },
 })
 
@@ -114,6 +148,9 @@ export const {
   setSelectedConnections,
   setSelectedUser,
   setW3CSchemaAttributes,
+  setCredDefId,
+  setCredDefData,
+  setSchemaCredDefs,
   resetVerificationState,
   resetAttributeData,
   resetSelectedSchemas,
@@ -124,6 +161,9 @@ export const {
   resetSchemaId,
   resetOrgId,
   resetRouteType,
+  resetCredDefId,
+  resetCredDefData,
+  resetSchemaCredDefs,
 } = verificationSlice.actions
 
 export default verificationSlice.reducer
