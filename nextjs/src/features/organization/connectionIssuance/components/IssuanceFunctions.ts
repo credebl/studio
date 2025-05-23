@@ -55,19 +55,22 @@ export const handleSubmit = async ({
             id: orgDid,
           },
           issuanceDate: new Date().toISOString(),
-          //FIXME: Logic for passing default value as 0 for empty value of number dataType attributes.
           credentialSubject: item?.attributes?.reduce(
             (acc, attr) => {
-              if (
-                attr.dataType === 'number' &&
-                (attr.value === '' || attr.value === null)
-              ) {
-                return { ...acc, [attr.name]: 0 }
-              } else if (attr.dataType === 'string' && attr.value === '') {
-                return { ...acc, [attr.name]: '' }
-              } else if (attr.value !== null) {
-                return { ...acc, [attr.name]: attr.value }
+              const { value } = attr
+
+              if (attr.dataType === 'number') {
+                const num = Number(value)
+                acc[attr.name] = isNaN(num) ? 0 : num
+              } else if (attr.dataType === 'boolean') {
+                acc[attr.name] = value === 'true'
+              } else if (attr.dataType === 'date') {
+                acc[attr.name] = value ? new Date(value).toISOString() : null
+              } else {
+                // assume string or fallback
+                acc[attr.name] = value ?? ''
               }
+
               return acc
             },
             {} as Record<string, string | number | boolean | null>,
