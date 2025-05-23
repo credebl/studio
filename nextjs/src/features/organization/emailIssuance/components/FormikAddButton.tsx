@@ -2,7 +2,9 @@ import { FieldArrayRenderProps, FormikProps } from 'formik'
 import { IAttributes, UserData } from '../type/EmailIssuance'
 import React, { JSX } from 'react'
 
+import { AddAnotherButton } from '@/config/svgs'
 import { Button } from '@/components/ui/button'
+import { formikAddButtonStyles } from '@/config/CommonConstant'
 
 interface IFormikAddButton {
   arrayHelpers: FieldArrayRenderProps
@@ -37,26 +39,9 @@ const FormikAddButton = ({
       className="border-ring hover:bg-primary flex items-center rounded-xl border px-4 py-2 transition-colors disabled:cursor-not-allowed"
       variant={'ghost'}
       type="button"
-      style={{
-        height: '2rem',
-        width: '10rem',
-        minWidth: '2rem',
-      }}
+      style={formikAddButtonStyles}
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth="1.5"
-        stroke="currentColor"
-        className="h-6 w-6"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
-      </svg>
+      <AddAnotherButton />
       <span className="my-0.5 ml-1">Add another</span>
     </Button>
   </div>

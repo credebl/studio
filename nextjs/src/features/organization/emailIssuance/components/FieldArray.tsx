@@ -1,8 +1,10 @@
 import { Field, FieldArrayRenderProps, FormikProps } from 'formik'
 import React, { JSX, ReactNode } from 'react'
+import { fieldArrayLabelStyles, labelRed } from '@/config/CommonConstant'
 
 import { Button } from '@/components/ui/button'
 import { UserData } from '../type/EmailIssuance'
+import delSvg from '@/../public/svgs/del.svg'
 
 interface IFormikAddButton {
   arrayHelpers: FieldArrayRenderProps
@@ -23,15 +25,8 @@ function FieldArrayData({
                 isRequired: boolean
                 displayName: ReactNode | string
                 attributeName: ReactNode | string
-                name:
-                  | string
-                  | number
-                  | boolean
-                  | React.ReactElement
-                  | Iterable<React.ReactNode>
-                  | React.ReactPortal
-                  | null
-                  | undefined
+                name: string
+
                 schemaDataType: string
               }[]
             },
@@ -45,9 +40,7 @@ function FieldArrayData({
                 <div className="relative mb-4 flex w-10/12 items-center gap-2">
                   <label
                     className="text-base font-semibold dark:text-white"
-                    style={{
-                      minWidth: '80px',
-                    }}
+                    style={fieldArrayLabelStyles}
                   >
                     Email ID <span className="text-red-500">*</span>
                   </label>
@@ -75,12 +68,7 @@ function FieldArrayData({
                         touchedItem.email // check that email field was touched
                       ) {
                         return (
-                          <label
-                            style={{
-                              color: 'red',
-                            }}
-                            className="text-sm"
-                          >
+                          <label style={labelRed} className="text-sm">
                             {errorItem.email}
                           </label>
                         )
@@ -98,27 +86,18 @@ function FieldArrayData({
                     <Button
                       data-testid="deleteBtn"
                       type="button"
-                      color="danger"
+                      variant={'default'}
                       onClick={() => arrayHelpers.remove(index as number)}
                       disabled={arrayHelpers.form.values.formData.length === 1}
                       className={
-                        'flex justify-end focus:ring-0 dark:bg-gray-700'
+                        'flex justify-center border-none bg-transparent shadow-none hover:bg-transparent focus:ring-0 dark:bg-gray-700'
                       }
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="h-6 w-6"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                        />
-                      </svg>
+                      <img
+                        src={delSvg.src}
+                        alt="delete"
+                        className="mx-auto h-6 w-6"
+                      />
                     </Button>
                   </div>
                 )}
@@ -136,15 +115,7 @@ function FieldArrayData({
                         isRequired: boolean
                         displayName: ReactNode | string
                         attributeName: ReactNode | string
-                        name:
-                          | string
-                          | number
-                          | boolean
-                          | React.ReactElement
-                          | Iterable<React.ReactNode>
-                          | React.ReactPortal
-                          | null
-                          | undefined
+                        name: string
                         schemaDataType: string
                       },
                       attIndex: number,
