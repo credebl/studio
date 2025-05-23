@@ -1,20 +1,63 @@
 import * as Yup from 'yup'
 
+import { Field, FieldArray, FormikErrors, FormikTouched } from 'formik'
 import {
-  Field,
-  FieldArray,
-  Form,
-  Formik,
-  FormikErrors,
-  FormikTouched,
-} from 'formik'
+  IAttributesData,
+  ICredentialdata,
+  IFieldArrayProps,
+} from '../type/Issuance'
 import React, { JSX } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { IAttributesData } from '../type/Issuance'
 
-const FieldArrayData = ({arrayHelpers,values,w3cSchema,issuanceFormPayload}): JSX.Element => {
+const FieldArrayData = ({
+  values,
+  w3cSchema,
+  issuanceFormPayload,
+  errors,
+  touched,
+  validationSchema,
+}: IFieldArrayProps): JSX.Element => {
+  function showErrors(
+    errors: FormikErrors<{
+      userName?: string
+      credentialData: ICredentialdata[]
+      credentialDefinitionId?: string
+      orgId: string
+    }>,
+    touched: FormikTouched<{
+      userName?: string
+      credentialData: ICredentialdata[]
+      credentialDefinitionId?: string
+      orgId: string
+    }>,
+    index: number,
+    attrIndex: number,
+  ): JSX.Element | null {
+    const attrErrors = errors?.credentialData?.[index]
+    const attrTouched = Array.isArray(touched?.credentialData)
+      ? touched.credentialData[index]
+      : undefined
+    const error =
+      typeof attrErrors === 'object' && Array.isArray(attrErrors.attributes)
+        ? attrErrors.attributes[attrIndex]?.value
+        : undefined
+
+    const touchedField =
+      typeof attrTouched === 'object' && Array.isArray(attrTouched.attributes)
+        ? attrTouched.attributes[attrIndex]?.value
+        : undefined
+
+    if (error && touchedField) {
+      return (
+        <div className="text-xs break-words text-red-500">{error}</div>
+      )
+    }
+
+    return null
+  }
+
   const Name = (attr: { attr: string }): JSX.Element => (
     <>
       {attr?.attr

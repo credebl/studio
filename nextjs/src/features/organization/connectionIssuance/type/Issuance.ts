@@ -1,4 +1,7 @@
+import * as Yup from 'yup'
+
 import { Dispatch, SetStateAction } from 'react'
+import { FormikErrors, FormikTouched } from 'formik'
 
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 
@@ -212,4 +215,47 @@ export type IHandleSubmit = {
   setSuccess: Dispatch<SetStateAction<string | null>>
   router: AppRouterInstance
   setFailure: (msg: string | null) => void
+}
+
+export interface IFormikValues {
+  userName?: string
+  credentialData: ICredentialdata[]
+  credentialDefinitionId?: string
+  orgId: string
+}
+
+export interface IFieldArrayProps {
+  values: IFormikValues
+  w3cSchema: boolean
+  issuanceFormPayload: IssuanceFormPayload | W3cIssuanceFormPayload
+  errors: FormikErrors<{
+    userName?: string
+    credentialData: ICredentialdata[]
+    credentialDefinitionId?: string
+    orgId: string
+  }>
+  touched: FormikTouched<{
+    userName?: string
+    credentialData: ICredentialdata[]
+    credentialDefinitionId?: string
+    orgId: string
+  }>
+  validationSchema: Yup.ObjectSchema<
+    {
+      credentialData:
+        | {
+            attributes?:
+              | {
+                  value?: string | undefined
+                }[]
+              | undefined
+          }[]
+        | undefined
+    },
+    Yup.AnyObject,
+    {
+      credentialData: ''
+    },
+    ''
+  >
 }
