@@ -21,11 +21,12 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 export type Option = {
+  clear?: boolean
   value: string
   label: string
   id: string
   schemaName: string
-  schemaIdentifier?:string
+  schemaIdentifier?: string
   schemaVersion: string
   schemaId: string
   credentialId: string
@@ -34,6 +35,8 @@ export type Option = {
 interface SearchableSelectProps {
   options: Option[]
   value?: string
+  clear?: boolean
+
   onValueChange?: (value: Option) => void
   placeholder?: string
   emptyMessage?: string
@@ -49,6 +52,7 @@ export function SearchableSelect({
   emptyMessage = 'No results found.',
   className,
   disabled = false,
+  clear = undefined,
 }: SearchableSelectProps): React.JSX.Element {
   const [open, setOpen] = React.useState(false)
   const [selected, setSelected] = React.useState<Option | undefined>(
@@ -56,10 +60,10 @@ export function SearchableSelect({
   )
 
   React.useEffect(() => {
-    if (value) {
-      setSelected(options.find((option) => option.id === value))
+    if (clear !== undefined) {
+      setSelected(undefined)
     }
-  }, [value, options])
+  }, [clear])
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

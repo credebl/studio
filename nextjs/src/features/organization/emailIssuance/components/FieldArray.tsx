@@ -1,0 +1,194 @@
+import { Field, FieldArrayRenderProps, FormikProps } from 'formik'
+import React, { JSX, ReactNode } from 'react'
+import { fieldArrayLabelStyles, labelRed } from '@/config/CommonConstant'
+
+import { Button } from '@/components/ui/button'
+import { UserData } from '../type/EmailIssuance'
+import delSvg from '@/../public/svgs/del.svg'
+
+interface IFormikAddButton {
+  arrayHelpers: FieldArrayRenderProps
+  formikHandlers?: FormikProps<UserData>
+}
+function FieldArrayData({
+  arrayHelpers,
+  formikHandlers,
+}: IFormikAddButton): JSX.Element {
+  return (
+    <div className="">
+      {arrayHelpers.form.values.formData &&
+        arrayHelpers.form.values.formData.length > 0 &&
+        arrayHelpers.form.values.formData.map(
+          (
+            formData1: {
+              attributes: {
+                isRequired: boolean
+                displayName: ReactNode | string
+                attributeName: ReactNode | string
+                name: string
+
+                schemaDataType: string
+              }[]
+            },
+            index: React.Key | null | undefined,
+          ) => (
+            <div
+              key={index}
+              className="mb-4 rounded-lg border border-gray-200 px-4 pt-8 pb-10"
+            >
+              <div className="flex justify-between">
+                <div className="relative mb-4 flex w-10/12 items-center gap-2">
+                  <label
+                    className="text-base font-semibold dark:text-white"
+                    style={fieldArrayLabelStyles}
+                  >
+                    Email ID <span className="text-red-500">*</span>
+                  </label>
+                  <Field
+                    name={`formData[${index}].email`}
+                    placeholder={'email'}
+                    type="email"
+                    className="sm:text-md focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 md:w-5/12 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                  />
+
+                  <div className="absolute top-11 left-24">
+                    {((): JSX.Element | null => {
+                      const errorItem =
+                        formikHandlers?.errors?.formData?.[index as number]
+                      const touchedItem =
+                        formikHandlers?.touched?.formData?.[index as number]
+
+                      if (
+                        errorItem &&
+                        typeof errorItem === 'object' && // narrow to object
+                        'email' in errorItem && // ensure 'email' exists in error
+                        touchedItem &&
+                        typeof touchedItem === 'object' &&
+                        'email' in touchedItem &&
+                        touchedItem.email // check that email field was touched
+                      ) {
+                        return (
+                          <label style={labelRed} className="text-sm">
+                            {errorItem.email}
+                          </label>
+                        )
+                      }
+                      return null
+                    })()}
+                  </div>
+                </div>
+
+                {arrayHelpers.form.values.formData.length > 1 && (
+                  <div
+                    key={index as number}
+                    className="flex justify-end text-red-600 sm:w-2/12"
+                  >
+                    <Button
+                      data-testid="deleteBtn"
+                      type="button"
+                      variant={'default'}
+                      onClick={() => arrayHelpers.remove(index as number)}
+                      disabled={arrayHelpers.form.values.formData.length === 1}
+                      className={
+                        'flex justify-center border-none bg-transparent shadow-none hover:bg-transparent focus:ring-0 dark:bg-gray-700'
+                      }
+                    >
+                      <img
+                        src={delSvg.src}
+                        alt="delete"
+                        className="mx-auto h-6 w-6"
+                      />
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              <label className="w-20 text-base font-semibold dark:text-white">
+                Credential data:
+              </label>
+              <div className="grid w-full grid-cols-1 gap-2 gap-8 md:grid-cols-2">
+                {formData1.attributes &&
+                  formData1?.attributes.length > 0 &&
+                  formData1?.attributes.map(
+                    (
+                      item: {
+                        isRequired: boolean
+                        displayName: ReactNode | string
+                        attributeName: ReactNode | string
+                        name: string
+                        schemaDataType: string
+                      },
+                      attIndex: number,
+                    ) => (
+                      <div className="mt-3" key={attIndex}>
+                        <div className="relative flex w-full items-center gap-2">
+                          <label className="word-break-word w-[300px] text-base text-gray-800 dark:text-white">
+                            {item?.displayName}
+                            {item.isRequired && (
+                              <span className="text-red-500">*</span>
+                            )}
+                          </label>
+                          <div className="w-8/12">
+                            <Field
+                              type={item.schemaDataType}
+                              placeholder={item.name}
+                              name={`formData[${index}].attributes.${attIndex}.value`}
+                              className="sm:text-md focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                            />
+                            {((): JSX.Element | null => {
+                              const errorAtIndex =
+                                formikHandlers?.errors?.formData?.[
+                                  index as number
+                                ]
+                              const touchedAtIndex =
+                                formikHandlers?.touched?.formData?.[
+                                  index as number
+                                ]
+
+                              if (
+                                errorAtIndex &&
+                                typeof errorAtIndex === 'object' &&
+                                'attributes' in errorAtIndex &&
+                                touchedAtIndex &&
+                                typeof touchedAtIndex === 'object' &&
+                                'attributes' in touchedAtIndex
+                              ) {
+                                const errorAttr =
+                                  errorAtIndex.attributes?.[attIndex]
+                                const touchedAttr =
+                                  touchedAtIndex.attributes?.[attIndex]
+
+                                // Narrow the errorAttr: it must be an object with 'value' prop
+                                if (
+                                  errorAttr &&
+                                  typeof errorAttr === 'object' &&
+                                  'value' in errorAttr &&
+                                  touchedAttr &&
+                                  typeof touchedAttr === 'object' &&
+                                  'value' in touchedAttr &&
+                                  touchedAttr.value // touchedAttr.value must be truthy
+                                ) {
+                                  return (
+                                    <label className="absolute text-xs text-red-500">
+                                      {errorAttr.value}
+                                    </label>
+                                  )
+                                }
+                              }
+
+                              return null
+                            })()}
+                          </div>
+                        </div>
+                      </div>
+                    ),
+                  )}
+              </div>
+            </div>
+          ),
+        )}
+    </div>
+  )
+}
+
+export default FieldArrayData
