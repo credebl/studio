@@ -19,7 +19,7 @@ import {
   IAttributes,
   ICredentials,
 } from '../../connectionIssuance/type/Issuance'
-import { Issue, Reset } from '@/config/svgs'
+import { Issue, Reset } from '@/config/svgs/EmailIssuance'
 import React, { JSX, useEffect, useState } from 'react'
 import {
   confirmOOBCredentialIssuance,
