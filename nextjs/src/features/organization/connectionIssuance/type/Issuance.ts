@@ -1,3 +1,7 @@
+import { Dispatch, SetStateAction } from 'react'
+
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
+
 export interface SchemaState {
   schemaId: string
   issuerDid: string
@@ -195,4 +199,17 @@ export type Option = {
   schemaVersion: string
   schemaId: string
   credentialId: string
+}
+
+export type IHandleSubmit = {
+  values: IssuanceFormPayload
+  w3cSchema: boolean
+  schemaDetails: SchemaDetails
+  orgDid: string
+  schemaType: string | undefined
+  setIssuanceLoader: (flag: boolean) => void
+  orgId: string
+  setSuccess: Dispatch<SetStateAction<string | null>>
+  router: AppRouterInstance
+  setFailure: (msg: string | null) => void
 }
