@@ -212,7 +212,6 @@ export const getSchemaCredentials = async ({
     const response = await getOrganizationById(orgId)
 
     if (typeof response === 'string') {
-      // eslint-disable-next-line no-console
       console.error('Error fetching organization:', response)
     } else {
       const { data } = response
