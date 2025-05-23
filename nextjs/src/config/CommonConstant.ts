@@ -131,3 +131,17 @@ export const confirmationMessages = {
   sureConfirmation: 'Yes, I am sure',
   cancelConfirmation: 'No, cancel',
 }
+
+export const formikAddButtonStyles = {
+  height: '2rem',
+  width: '10rem',
+  minWidth: '2rem',
+}
+
+export const fieldArrayLabelStyles = {
+  minWidth: '80px',
+}
+
+export const labelRed = {
+  color: 'red',
+}
