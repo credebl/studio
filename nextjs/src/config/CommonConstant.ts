@@ -145,3 +145,9 @@ export const fieldArrayLabelStyles = {
 export const labelRed = {
   color: 'red',
 }
+
+export const fieldCardStyles = {
+  maxWidth: '100%',
+  maxHeight: '100%',
+  overflow: 'auto',
+}
