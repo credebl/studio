@@ -32,7 +32,8 @@ module.exports = {
     'no-var': 'error',
     'object-shorthand': 'error',
     'quote-props': ['error', 'as-needed'],
-    quotes: ['error', 'single'], // Add this line
+    quotes: ['error', 'single', { avoidEscape: true }],
+
     // TypeScript rules
     '@typescript-eslint/array-type': [
       'warn',

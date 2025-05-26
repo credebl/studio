@@ -124,7 +124,7 @@ const VerificationSchemasList = (): JSX.Element => {
 
   useEffect(() => {
     getSchemaListDetails()
-  }, [schemasListParameter, allSchemasFlag])
+  }, [schemasListParameter, allSchemasFlag, organizationId])
 
   const onSchemaListParameterSearch = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -216,20 +216,25 @@ const VerificationSchemasList = (): JSX.Element => {
       if (data?.data?.org_agents && data?.data?.org_agents?.length > 0) {
         setWalletStatus(true)
       }
-      if (
-        did.includes(DidMethod.POLYGON) ||
-        did.includes(DidMethod.KEY) ||
-        did.includes(DidMethod.WEB)
-      ) {
-        setW3cSchema(true)
-        setSchemaType(SchemaTypes.schema_W3C)
-      }
-      if (did.includes(DidMethod.INDY)) {
-        setW3cSchema(false)
-        setSchemaType(SchemaTypes.schema_INDY)
-      }
-      if (did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
-        setIsNoLedger(true)
+      if (typeof did === 'string') {
+        const isPolygon = did.includes(DidMethod.POLYGON)
+        const isKey = did.includes(DidMethod.KEY)
+        const isWeb = did.includes(DidMethod.WEB)
+        const isIndy = did.includes(DidMethod.INDY)
+
+        if (isPolygon || isKey || isWeb) {
+          setW3cSchema(true)
+          setSchemaType(SchemaTypes.schema_W3C)
+        }
+
+        if (isIndy) {
+          setW3cSchema(false)
+          setSchemaType(SchemaTypes.schema_INDY)
+        }
+
+        if (isKey || isWeb) {
+          setIsNoLedger(true)
+        }
       }
     }
     setLoading(false)
@@ -262,7 +267,7 @@ const VerificationSchemasList = (): JSX.Element => {
   }
 
   const options = ['All schemas']
-  const optionsWithDefault = ['Organizations schema', ...options]
+  const optionsWithDefault = ["Organization's schema", ...options]
 
   const handleFilter = async (value: string): Promise<void> => {
     const selectedFilter = value

@@ -153,6 +153,8 @@ export interface SelectedUsers {
 
 export interface ISchemaAttributeData {
   schemaId: string
+  schemaLedgerId?: string
+  name?: string
   attributes: IAttributesDetails[]
 }
 

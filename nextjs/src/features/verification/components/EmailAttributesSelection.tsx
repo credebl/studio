@@ -46,10 +46,12 @@ const EmailAttributesSelection = (): JSX.Element => {
     (state) => state.verification.routeType,
   )
 
-  const getSelectedCredDefData = '[]'
+  const getSelectedCredDefData = useAppSelector(
+    (state) => state.verification.CredDefData,
+  )
 
   const selectedSchemaAttributes = useAppSelector(
-    (state) => state.verification.selectedSchemas,
+    (state) => state.verification.schemaAttributes,
   )
   const ConnectionVerification = async (): Promise<void> => {
     if (verificationRouteType === 'Connection') {
@@ -198,10 +200,8 @@ const EmailAttributesSelection = (): JSX.Element => {
 
     try {
       setAttributeData([])
-
       if (w3cSchema) {
         const parsedW3CSchemaDetails = selectedSchemaAttributes
-
         if (
           Array.isArray(parsedW3CSchemaDetails) &&
           parsedW3CSchemaDetails.length > 0
@@ -244,6 +244,7 @@ const EmailAttributesSelection = (): JSX.Element => {
         const selectedCredDefs = getSelectedCredDefData || []
 
         const parsedSchemaDetails = selectedSchemaAttributes || []
+
         if (
           Array.isArray(parsedSchemaDetails) &&
           parsedSchemaDetails.length > 0
@@ -253,11 +254,9 @@ const EmailAttributesSelection = (): JSX.Element => {
               return schema.attributes.flatMap((attribute) => {
                 const matchingCredDefs = Array.isArray(selectedCredDefs)
                   ? selectedCredDefs.filter(
-                      (credDef) =>
-                        credDef.schemaLedgerId === schema.schemaLedgerId,
+                      (credDef) => credDef.schemaLedgerId === schema.schemaId,
                     )
                   : []
-
                 return matchingCredDefs.map((credDef) => ({
                   displayName: attribute.displayName,
                   attributeName: attribute.attributeName,
@@ -278,7 +277,6 @@ const EmailAttributesSelection = (): JSX.Element => {
             }
             return []
           })
-
           setAttributeData(allAttributes)
         } else {
           console.error('Parsed schema details are not in the expected format.')
@@ -302,8 +300,6 @@ const EmailAttributesSelection = (): JSX.Element => {
 
     const attributes: ITableData[] = attributeData.map((attribute) => {
       const commonCellProps = {
-        // eslint-disable-next-line no-empty-function
-        handleChange: (): void => {},
         inputType: 'custom',
       }
 
@@ -396,7 +392,7 @@ const EmailAttributesSelection = (): JSX.Element => {
                       !attribute?.isChecked
                         ? 'cursor-not-allowed opacity-50'
                         : 'cursor-pointer'
-                    } rounded-md border border-black p-1 dark:border-gray-300 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400`}
+                    } rounded-md border p-1`}
                   />
                 )}
                 {attribute?.inputError && (
