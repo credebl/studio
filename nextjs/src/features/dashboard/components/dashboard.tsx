@@ -159,48 +159,45 @@ export default function Dashboard(): React.JSX.Element {
 
   return (
     <PageContainer>
-      <div className="flex flex-1 flex-col space-y-6">
-        <div className="cursor-pointer">
-          {informativeMessage && informativeMessage.length > 0 && (
-            <AlertComponent
-              message={informativeMessage}
-              type={informativeMessage ? 'warning' : 'failure'}
-              viewButton={viewButton}
-              path={pathRoutes.users.orgInvitations}
-              onAlertClose={() => {
-                setInformativeMessage('')
-              }}
-            />
-          )}
-        </div>
-        <div className="cursor-pointer">
-          {ecoMessage && ecoMessage.length > 0 && (
-            <AlertComponent
-              message={ecoMessage}
-              type={ecoMessage ? 'warning' : 'failure'}
-              viewButton={viewButton}
-              path={`${envConfig.PUBLIC_ECOSYSTEM_FRONT_END_URL}${pathRoutes.users.dashboard}`}
-              onAlertClose={() => {
-                setEcoMessage('')
-              }}
-            />
-          )}
-        </div>
-        <div className="flex items-center justify-between">
+      <div className="flex flex-1 flex-col">
+        {(informativeMessage || ecoMessage) && (
+          <div className="mb-4 flex flex-col space-y-4">
+            {informativeMessage && (
+              <AlertComponent
+                message={informativeMessage}
+                type="warning"
+                viewButton={viewButton}
+                path={pathRoutes.users.orgInvitations}
+                onAlertClose={() => setInformativeMessage('')}
+              />
+            )}
+            {ecoMessage && (
+              <AlertComponent
+                message={ecoMessage}
+                type="warning"
+                viewButton={viewButton}
+                path={`${envConfig.PUBLIC_ECOSYSTEM_FRONT_END_URL}${pathRoutes.users.dashboard}`}
+                onAlertClose={() => setEcoMessage('')}
+              />
+            )}
+          </div>
+        )}
+
+        <div className="mb-6 flex items-center justify-between">
           <h2 className="text-2xl font-bold tracking-tight">
             Hi, Welcome back 👋
           </h2>
         </div>
 
         {walletLoading ? (
-          <div className="bg-muted relative flex min-h-[150px] flex-col justify-between overflow-hidden rounded-md p-6 shadow-sm">
+          <div className="bg-muted relative mb-6 flex min-h-[150px] flex-col justify-between overflow-hidden rounded-md p-6 shadow-sm">
             <Skeleton className="mb-2 h-6 w-2/3" />
             <Skeleton className="mb-4 h-4 w-1/2" />
             <Skeleton className="h-10 w-[180px]" />
           </div>
         ) : (
           walletData.length === 0 && (
-            <div className="relative flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
+            <div className="relative mb-6 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
               <div className="flex flex-col items-center justify-between gap-4 sm:flex-row sm:items-center">
                 <div className="flex flex-col items-start">
                   <h3 className="text-xl font-semibold">
@@ -232,7 +229,7 @@ export default function Dashboard(): React.JSX.Element {
           )
         )}
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
           <OrganizationCardList />
           <SchemasList />
         </div>

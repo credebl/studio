@@ -22,7 +22,7 @@ const CredentialDefinitionCard = (props: IProps): React.ReactElement => {
       props?.userRoles?.includes(Roles.ADMIN) ||
       props?.userRoles?.includes(Roles.ISSUER)
     ) {
-      router.push('/issue')
+      router.push('/organizations/credentials/issue')
     }
   }
 

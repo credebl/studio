@@ -3,7 +3,6 @@ import { setOrgId, setOrgInfo } from '@/lib/orgSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
 import { Breadcrumbs } from '../breadcrumbs'
-import { ModeToggle } from './ThemeToggle/theme-toggle'
 import { OrgSwitcher } from '../org-switcher'
 import { Organisation } from '@/features/dashboard/type/organization'
 import { Separator } from '../ui/separator'
@@ -105,8 +104,9 @@ export default function Header(): React.JSX.Element {
             onTenantSwitch={handleSwitchTenant}
           />
         )}
+        {/* NOTE: Currently disabling search and mode toggle */}
         <div className="hidden md:flex">{/* <SearchInput /> */}</div>
-        <ModeToggle />
+        {/* <ModeToggle /> */}
         <UserNav />
       </div>
     </header>

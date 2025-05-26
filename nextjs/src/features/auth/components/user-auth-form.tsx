@@ -415,7 +415,7 @@ export default function SignInViewPage(): React.JSX.Element {
               </span>
               <Link
                 href="/auth/sign-up"
-                className="text-secondary-foreground hover:underline"
+                className="text-secondary hover:underline"
               >
                 Create one
               </Link>

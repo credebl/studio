@@ -9,7 +9,7 @@ export default function PageContainer({
   scrollable?: boolean
 }): React.ReactElement {
   const Content = (
-    <div className="mb-4 flex min-h-[calc(100dvh-52px)] w-full flex-col p-4 md:px-6">
+    <div className="bg-background mb-4 flex min-h-[calc(100dvh-52px)] w-full flex-col p-4 md:px-6">
       {children}
     </div>
   )
