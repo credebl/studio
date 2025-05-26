@@ -58,3 +58,25 @@ export const getIssuedCredentials = async ({
     return err?.message
   }
 }
+
+export const issueOobEmailCredential = async (
+  data: object | string,
+  credentialType: CredentialType,
+  orgId: string,
+): Promise<string | AxiosResponse> => {
+  const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Issuance.issueOobEmailCredential}?credentialType=${credentialType}`
+  const payload = data
+
+  const axiosPayload = {
+    url,
+    payload,
+    config: getHeaderConfigs(),
+  }
+
+  try {
+    return await axiosPost(axiosPayload)
+  } catch (error) {
+    const err = error as Error
+    return err?.message
+  }
+}
