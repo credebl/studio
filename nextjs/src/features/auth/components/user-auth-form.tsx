@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/form'
 import {
   IUserSignInData,
+  forgotPassword,
   getUserProfile,
   passwordEncryption,
 } from '@/app/api/Auth'
@@ -263,6 +264,27 @@ export default function SignInViewPage(): React.JSX.Element {
     }
   }
 
+  const forgotUserPassword = async (): Promise<void> => {
+    setLoading(true)
+    try {
+      const response = await forgotPassword({
+        email: signInForm.getValues('email'),
+      })
+      const { data } = response as AxiosResponse
+
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        toast.success(data.message)
+        setLoading(false)
+      } else {
+        toast.error(response as string)
+        setLoading(false)
+      }
+    } catch (error) {
+      console.error('An error occurred:', error)
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="relative flex w-full items-center justify-center">
       <div className="bg-card border-border relative z-10 h-full w-full max-w-md overflow-hidden rounded-xl border p-8 shadow-xl transition-transform duration-300">
@@ -364,12 +386,14 @@ export default function SignInViewPage(): React.JSX.Element {
 
             {isPasswordTab && (
               <div className="text-right text-sm">
-                <Link
-                  href="/forgot-password"
-                  className="text-secondary-foreground hover:underline"
+                <Button
+                  type="button"
+                  onClick={forgotUserPassword}
+                  variant={'secondary'}
+                  className="text-secondary-foreground cursor-pointer bg-transparent shadow-none hover:bg-transparent hover:underline"
                 >
                   Forgot password?
-                </Link>
+                </Button>
               </div>
             )}
 
