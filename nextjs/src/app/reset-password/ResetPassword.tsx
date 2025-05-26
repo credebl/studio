@@ -13,6 +13,7 @@ import {
 import { Eye, EyeOff } from 'lucide-react'
 import { Form, Formik } from 'formik'
 import { JSX, useState } from 'react'
+import { ToastContainer, toast } from 'react-toastify'
 import { passwordEncryption, resetPassword } from '../api/Auth'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -28,7 +29,6 @@ import { RootState } from '@/lib/store'
 import { SubmitIcon } from '@/config/svgs/ResetPassword'
 import { pathRoutes } from '@/config/pathRoutes'
 import { setToken } from '@/lib/authSlice'
-import { toast } from 'react-toastify'
 import { useTheme } from 'next-themes'
 import { useThemeConfig } from '@/components/active-theme'
 
@@ -95,6 +95,7 @@ const ResetPassword = (): JSX.Element => {
   })()
   return (
     <div className="relative flex min-h-screen flex-col bg-[image:var(--card-gradient)]">
+      <ToastContainer position="top-center" />
       <div className="absolute top-4 left-4 z-20">
         <Image
           height={CredeblLogoHeight}
@@ -108,7 +109,7 @@ const ResetPassword = (): JSX.Element => {
         <div className="w-full">
           <div className="flex flex-col">
             <div className="flex flex-1 flex-col justify-center md:flex-row">
-              <div className="bg-primary-450 bg-opacity-10 hidden w-full md:w-3/5 md:p-4 lg:block lg:p-4">
+              <div className=" bg-opacity-10 hidden w-full md:w-3/5 md:p-4 lg:block lg:p-4">
                 <div className="flex items-center justify-center">
                   <img
                     className="max-h-100/10rem"
@@ -124,7 +125,7 @@ const ResetPassword = (): JSX.Element => {
                       <div className="text-custom-900 dark:text-custom-100 font-inter flex justify-center text-center text-3xl leading-10 font-bold">
                         Reset Password
                       </div>
-                      <div className="font-inter h-5.061 flex w-84 w-full flex-shrink-0 flex-col items-center justify-center text-base leading-5 font-medium text-gray-500">
+                      <div className="font-inter h-5.061 text-secondary-foreground flex w-84 w-full flex-shrink-0 flex-col items-center justify-center text-base leading-5 font-medium">
                         Please set new password
                       </div>
                     </div>
@@ -168,14 +169,16 @@ const ResetPassword = (): JSX.Element => {
                                   htmlFor="password"
                                 />
                                 New Password
-                                <span className="text-xs text-red-500">*</span>
+                                <span className="text-destructive text-xs">
+                                  *
+                                </span>
                               </div>
                               <div className="relative">
                                 <Input
                                   {...formikHandlers.getFieldProps('password')}
                                   type={passwordVisible ? 'text' : 'password'}
                                   placeholder="Please enter password"
-                                  className="dark:text-custom-100 focus:border-primary-900 focus:ring-primary-650 w-full truncate rounded-md border bg-gray-200 py-2 pr-10 pl-4 text-sm text-gray-700 focus:ring-1 focus:outline-none dark:bg-gray-800"
+                                  className="bg-accent w-full truncate rounded-md border py-2 pr-10 pl-4 text-sm text-gray-700 focus:ring-1 focus:outline-none dark:bg-gray-800"
                                   disabled={loading}
                                   onFocus={() => setShowSuggestion(true)}
                                   onBlur={(e) => {
@@ -190,7 +193,7 @@ const ResetPassword = (): JSX.Element => {
                                       (prevVisible) => !prevVisible,
                                     )
                                   }
-                                  className="absolute top-1/2 right-2 -translate-y-1/2 transform bg-transparent text-gray-500 hover:text-gray-800 dark:text-white dark:hover:text-white"
+                                  className="text-secondary-foreground absolute top-1/2 right-2 -translate-y-1/2 transform bg-transparent hover:text-gray-800 dark:text-white dark:hover:text-white"
                                 >
                                   {passwordVisible ? (
                                     <EyeOff className="h-4 w-4" />
@@ -210,19 +213,18 @@ const ResetPassword = (): JSX.Element => {
 
                               {formikHandlers?.errors?.password &&
                                 formikHandlers?.touched?.password && (
-                                  <span className="absolute mt-1 text-xs text-red-500">
+                                  <span className="text-destructive absolute mt-1 text-xs">
                                     {formikHandlers?.errors?.password}
                                   </span>
                                 )}
                             </div>
                             <div className="mt-8 mb-6 text-base leading-5 font-medium">
                               <div className="mb-2 block text-sm font-medium dark:text-white">
-                                <Label
-                                  className="text-custom-900"
-                                  htmlFor="confirmPassword"
-                                />
+                                <Label className="" htmlFor="confirmPassword" />
                                 Confirm New Password
-                                <span className="text-xs text-red-500">*</span>
+                                <span className="text-destructive text-xs">
+                                  *
+                                </span>
                               </div>
                               <div className="relative">
                                 <Input
@@ -233,7 +235,7 @@ const ResetPassword = (): JSX.Element => {
                                     confirmPasswordVisible ? 'text' : 'password'
                                   }
                                   placeholder="Please re-enter password"
-                                  className="dark:text-custom-100 focus:border-primary-900 focus:ring-primary-650 w-full truncate rounded-md border bg-gray-200 py-2 pr-10 pl-4 text-sm text-gray-700 focus:ring-1 focus:outline-none dark:bg-gray-800"
+                                  className="bg-accent w-full truncate rounded-md border py-2 pr-10 pl-4 text-sm text-gray-700 focus:ring-1 focus:outline-none dark:bg-gray-800"
                                   disabled={loading}
                                   onFocus={() => setShowSuggestion(true)}
                                   onBlur={(e) => {
@@ -248,7 +250,7 @@ const ResetPassword = (): JSX.Element => {
                                       (prevVisible) => !prevVisible,
                                     )
                                   }
-                                  className="absolute top-1/2 right-2 -translate-y-1/2 transform bg-transparent text-gray-500 hover:text-gray-800 dark:text-white dark:hover:text-white"
+                                  className="text-secondary-foreground absolute top-1/2 right-2 -translate-y-1/2 transform bg-transparent hover:text-gray-800 dark:text-white dark:hover:text-white"
                                 >
                                   {confirmPasswordVisible ? (
                                     <EyeOff className="h-4 w-4" />
@@ -259,7 +261,7 @@ const ResetPassword = (): JSX.Element => {
                               </div>
                               {formikHandlers?.errors?.confirmPassword &&
                                 formikHandlers?.touched?.confirmPassword && (
-                                  <span className="text-xs text-red-500">
+                                  <span className="text-destructive text-xs">
                                     {formikHandlers?.errors?.confirmPassword}
                                   </span>
                                 )}
@@ -285,7 +287,6 @@ const ResetPassword = (): JSX.Element => {
               </div>
             </div>
           </div>
-          {/* <FooterBar /> */}
         </div>
       </div>
 

@@ -2,7 +2,12 @@
 module.exports = {
   content: [],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'gray-700': 'oklch(37% 0.013 285.805)',
+        'gray-800': 'oklch(27.4% 0.006 286.033)',
+      },
+    },
   },
   plugins: [],
 }
