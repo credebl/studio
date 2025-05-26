@@ -1,0 +1,299 @@
+'use client'
+
+import 'react-toastify/dist/ReactToastify.css'
+
+import * as yup from 'yup'
+
+import {
+  CredeblLogoHeight,
+  CredeblLogoWidth,
+  apiStatusCodes,
+  passwordRegex,
+} from '@/config/CommonConstant'
+import { Eye, EyeOff } from 'lucide-react'
+import { Form, Formik } from 'formik'
+import { JSX, useState } from 'react'
+import { passwordEncryption, resetPassword } from '../api/Auth'
+import { useAppDispatch, useAppSelector } from '@/lib/hooks'
+import { useRouter, useSearchParams } from 'next/navigation'
+
+import { AxiosResponse } from 'axios'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import Image from 'next/image'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import PasswordSuggestionBox from './PasswordSuggestionBox'
+import { RootState } from '@/lib/store'
+import { SubmitIcon } from '@/config/svgs/ResetPassword'
+import { pathRoutes } from '@/config/pathRoutes'
+import { setToken } from '@/lib/authSlice'
+import { toast } from 'react-toastify'
+import { useTheme } from 'next-themes'
+import { useThemeConfig } from '@/components/active-theme'
+
+interface passwordValues {
+  password: string
+  confirmPassword: string
+}
+
+const ResetPassword = (): JSX.Element => {
+  const [loading, setLoading] = useState<boolean>(false)
+  const [passwordVisible, setPasswordVisible] = useState(false)
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false)
+  //   const [userToken, setUserToken] = useState<string>('')
+  const userToken = useAppSelector((state: RootState) => state.auth.authToken)
+  // const [field, meta, helpers] = useField(name)
+
+  const [showSuggestion, setShowSuggestion] = useState(false)
+  const dispatch = useAppDispatch()
+  const searchParams = useSearchParams()
+  const { activeTheme } = useThemeConfig()
+  const { resolvedTheme } = useTheme()
+  const router = useRouter()
+
+  const submit = async (passwordDetails: passwordValues): Promise<void> => {
+    try {
+      setLoading(true)
+      dispatch(setToken(userToken))
+      const verificationCode = searchParams.get('verificationCode')
+      const email = searchParams.get('email')
+      const payload = {
+        password: passwordEncryption(passwordDetails?.password),
+        token: verificationCode,
+      }
+
+      const response = await resetPassword(payload, email)
+      const { data } = response as AxiosResponse
+
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        toast.success(data.message)
+        setLoading(false)
+        router.push(pathRoutes.auth.sinIn)
+      } else {
+        toast.error(response as string)
+        setLoading(false)
+      }
+    } catch (error) {
+      console.error('An error occurred:', error)
+      toast.error('An error occurred while updating password.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const logoImageSrc = ((): string => {
+    if (activeTheme === 'credebl') {
+      return resolvedTheme === 'dark'
+        ? '/images/CREDEBL_Logo_Web_Dark.svg'
+        : '/images/CREDEBL_Logo_Web.svg'
+    } else {
+      return resolvedTheme === 'dark'
+        ? '/images/sovio_dark_theme_logo.svg'
+        : '/images/sovio_logo.svg'
+    }
+  })()
+  return (
+    <div className="relative flex min-h-screen flex-col bg-[image:var(--card-gradient)]">
+      <div className="absolute top-4 left-4 z-20">
+        <Image
+          height={CredeblLogoHeight}
+          width={CredeblLogoWidth}
+          alt="Logo"
+          src={logoImageSrc}
+        />
+      </div>
+
+      <div className="relative flex h-screen w-full items-center justify-center bg-[image:var(--card-gradient)]">
+        <div className="w-full">
+          <div className="flex flex-col">
+            <div className="flex flex-1 flex-col justify-center md:flex-row">
+              <div className="bg-primary-450 bg-opacity-10 hidden w-full md:w-3/5 md:p-4 lg:block lg:p-4">
+                <div className="flex items-center justify-center">
+                  <img
+                    className="max-h-100/10rem"
+                    src="/images/signin.svg"
+                    alt="img"
+                  />
+                </div>
+              </div>
+              <div className="flex grow-1 p-10">
+                <div className="flex w-full justify-center">
+                  <Card className="bg-card border-border relative z-10 w-full max-w-lg overflow-hidden rounded-xl border p-8 p-10 shadow-xl transition-transform duration-300 lg:max-w-md">
+                    <div className="flex w-full flex-col gap-4 lg:mt-8">
+                      <div className="text-custom-900 dark:text-custom-100 font-inter flex justify-center text-center text-3xl leading-10 font-bold">
+                        Reset Password
+                      </div>
+                      <div className="font-inter h-5.061 flex w-84 w-full flex-shrink-0 flex-col items-center justify-center text-base leading-5 font-medium text-gray-500">
+                        Please set new password
+                      </div>
+                    </div>
+                    <Formik
+                      initialValues={{
+                        password: '',
+                        confirmPassword: '',
+                      }}
+                      validationSchema={yup.object().shape({
+                        password: yup
+                          .string()
+                          .required('Password is required')
+                          .matches(passwordRegex, ' '),
+                        confirmPassword: yup
+                          .string()
+                          .required('Confirm Password is required')
+                          .oneOf([yup.ref('password')], 'Passwords must match'),
+                      })}
+                      validateOnBlur
+                      validateOnChange
+                      enableReinitialize
+                      onSubmit={(values: passwordValues) => {
+                        submit(values)
+                      }}
+                    >
+                      {(formikHandlers): JSX.Element => (
+                        <Form
+                          className="mt-12 space-y-6"
+                          onSubmit={formikHandlers.handleSubmit}
+                        >
+                          <input
+                            type="hidden"
+                            name="_csrf"
+                            value={new Date().getTime()}
+                          />
+                          <div>
+                            <div className="text-base leading-5 font-medium">
+                              <div className="mb-2 block text-sm font-medium dark:text-white">
+                                <Label
+                                  className="text-custom-900"
+                                  htmlFor="password"
+                                />
+                                New Password
+                                <span className="text-xs text-red-500">*</span>
+                              </div>
+                              <div className="relative">
+                                <Input
+                                  {...formikHandlers.getFieldProps('password')}
+                                  type={passwordVisible ? 'text' : 'password'}
+                                  placeholder="Please enter password"
+                                  className="dark:text-custom-100 focus:border-primary-900 focus:ring-primary-650 w-full truncate rounded-md border bg-gray-200 py-2 pr-10 pl-4 text-sm text-gray-700 focus:ring-1 focus:outline-none dark:bg-gray-800"
+                                  disabled={loading}
+                                  onFocus={() => setShowSuggestion(true)}
+                                  onBlur={(e) => {
+                                    setShowSuggestion(false)
+                                    formikHandlers.handleBlur(e)
+                                  }}
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setPasswordVisible(
+                                      (prevVisible) => !prevVisible,
+                                    )
+                                  }
+                                  className="absolute top-1/2 right-2 -translate-y-1/2 transform bg-transparent text-gray-500 hover:text-gray-800 dark:text-white dark:hover:text-white"
+                                >
+                                  {passwordVisible ? (
+                                    <EyeOff className="h-4 w-4" />
+                                  ) : (
+                                    <Eye className="h-4 w-4" />
+                                  )}
+                                </button>
+                              </div>
+                              {showSuggestion &&
+                                formikHandlers?.errors?.password &&
+                                formikHandlers.values.password && (
+                                  <PasswordSuggestionBox
+                                    show={true}
+                                    value={formikHandlers?.values?.password}
+                                  />
+                                )}
+
+                              {formikHandlers?.errors?.password &&
+                                formikHandlers?.touched?.password && (
+                                  <span className="absolute mt-1 text-xs text-red-500">
+                                    {formikHandlers?.errors?.password}
+                                  </span>
+                                )}
+                            </div>
+                            <div className="mt-8 mb-6 text-base leading-5 font-medium">
+                              <div className="mb-2 block text-sm font-medium dark:text-white">
+                                <Label
+                                  className="text-custom-900"
+                                  htmlFor="confirmPassword"
+                                />
+                                Confirm New Password
+                                <span className="text-xs text-red-500">*</span>
+                              </div>
+                              <div className="relative">
+                                <Input
+                                  {...formikHandlers.getFieldProps(
+                                    'confirmPassword',
+                                  )}
+                                  type={
+                                    confirmPasswordVisible ? 'text' : 'password'
+                                  }
+                                  placeholder="Please re-enter password"
+                                  className="dark:text-custom-100 focus:border-primary-900 focus:ring-primary-650 w-full truncate rounded-md border bg-gray-200 py-2 pr-10 pl-4 text-sm text-gray-700 focus:ring-1 focus:outline-none dark:bg-gray-800"
+                                  disabled={loading}
+                                  onFocus={() => setShowSuggestion(true)}
+                                  onBlur={(e) => {
+                                    setShowSuggestion(false)
+                                    formikHandlers.handleBlur(e)
+                                  }}
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setConfirmPasswordVisible(
+                                      (prevVisible) => !prevVisible,
+                                    )
+                                  }
+                                  className="absolute top-1/2 right-2 -translate-y-1/2 transform bg-transparent text-gray-500 hover:text-gray-800 dark:text-white dark:hover:text-white"
+                                >
+                                  {confirmPasswordVisible ? (
+                                    <EyeOff className="h-4 w-4" />
+                                  ) : (
+                                    <Eye className="h-4 w-4" />
+                                  )}
+                                </button>
+                              </div>
+                              {formikHandlers?.errors?.confirmPassword &&
+                                formikHandlers?.touched?.confirmPassword && (
+                                  <span className="text-xs text-red-500">
+                                    {formikHandlers?.errors?.confirmPassword}
+                                  </span>
+                                )}
+                            </div>
+
+                            <div className="mt-12 flex justify-end">
+                              <Button
+                                id="signupbutton"
+                                type="submit"
+                                disabled={loading || !formikHandlers.isValid}
+                                className=""
+                              >
+                                <SubmitIcon />
+                                <span className="ml-2">Submit</span>
+                              </Button>
+                            </div>
+                          </div>
+                        </Form>
+                      )}
+                    </Formik>
+                  </Card>
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* <FooterBar /> */}
+        </div>
+      </div>
+
+      <footer className="text-muted-foreground fixed right-0 bottom-0 left-0 mb-4 text-center text-sm">
+        © 2019 - {new Date().getFullYear()} AYANWORKS | All rights reserved.
+      </footer>
+    </div>
+  )
+}
+
+export default ResetPassword
