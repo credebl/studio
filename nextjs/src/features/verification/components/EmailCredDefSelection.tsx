@@ -160,7 +160,7 @@ const EmailCredDefSelection = (): JSX.Element => {
   const getSchemaAndCredDef = async (): Promise<void> => {
     try {
       if (schemaIds && schemaIds.length > 0) {
-        getCredDefs(schemaIds)
+        await getCredDefs(schemaIds)
       }
     } catch (error) {
       console.error('Error fetching schema details:', error)
