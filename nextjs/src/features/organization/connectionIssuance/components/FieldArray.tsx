@@ -52,7 +52,7 @@ const FieldArrayData = ({
         : undefined
 
     if (error && touchedField) {
-      return <div className="text-xs break-words text-red-500">{error}</div>
+      return <div className="text-xs break-words text-destructive">{error}</div>
     }
 
     return null
@@ -100,7 +100,7 @@ const FieldArrayData = ({
                       {values.credentialData.length > 1 && (
                         <div
                           key={index}
-                          className="flex justify-end text-red-600 sm:w-2/12"
+                          className="flex justify-end text-destructive sm:w-2/12"
                         >
                           <Button
                             data-testid="deleteBtn"
@@ -140,7 +140,7 @@ const FieldArrayData = ({
                                     <div className="word-break-word flex items-center text-end">
                                       <Name attr={attr?.name} />
                                       {attr.isRequired && (
-                                        <span className="text-red-500">*</span>
+                                        <span className="text-destructive">*</span>
                                       )}{' '}
                                       :
                                     </div>
@@ -154,7 +154,7 @@ const FieldArrayData = ({
                                       }
                                       id={`credentialData.${index}.attributes.${attrIndex}.value`}
                                       name={`credentialData.${index}.attributes.${attrIndex}.value`}
-                                      className="focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 relative block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 sm:text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                                      className="relative block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 sm:text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
                                       validate={(value: string) => {
                                         try {
                                           const schema = Yup.reach(

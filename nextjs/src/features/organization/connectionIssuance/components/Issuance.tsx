@@ -408,7 +408,7 @@ const IssueCred = (): React.JSX.Element => {
                           className=""
                         >
                           <CircleArrowRight />
-                          <span className="text-custom-900">Issue</span>
+                          <span className="">Issue</span>
                         </Button>
                       </div>
                     </Form>
