@@ -153,6 +153,8 @@ export interface SelectedUsers {
 
 export interface ISchemaAttributeData {
   schemaId: string
+  schemaLedgerId?: string
+  name?: string
   attributes: IAttributesDetails[]
 }
 
@@ -166,4 +168,8 @@ export type LocalOrgs = {
   connectionId: string
   theirLabel: string
   createDateTime: string
+}
+export interface NumberAttribute {
+  selectedOption: string | null
+  value: string | number | null
 }
