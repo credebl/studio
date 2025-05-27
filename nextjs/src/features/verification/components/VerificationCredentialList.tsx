@@ -1,6 +1,10 @@
 'use client'
 
 import {
+  ConnectionIdCell,
+  DateCell,
+} from '@/features/organization/connectionIssuance/components/CredentialTableCells'
+import {
   IColumnData,
   ITableMetadata,
   SortActions,
@@ -23,7 +27,6 @@ import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { ConnectionApiSortFields } from '@/features/connections/types/connections-interface'
 import { DataTable } from '../../../components/ui/generic-table-component/data-table'
-import DateTooltip from '@/components/DateTooltip'
 import { EmptyListMessage } from '@/components/EmptyListComponent'
 import { Features } from '@/common/enums'
 import PageContainer from '@/components/layout/page-container'
@@ -31,7 +34,6 @@ import ProofRequest from './ProofRequestPopup'
 import { RequestProof } from '../type/interface'
 import RoleViewButton from '@/components/RoleViewButton'
 import { apiStatusCodes } from '@/config/CommonConstant'
-import { dateConversion } from '@/utils/DateConversion'
 import { getOrganizationById } from '@/app/api/organization'
 import { useAppSelector } from '@/lib/hooks'
 import { useRouter } from 'next/navigation'
@@ -265,14 +267,9 @@ const VerificationCredentialList = (): JSX.Element => {
           },
         },
       ],
-      cell: ({ row }): JSX.Element => {
-        const { connectionId } = row.original
-        return (
-          <span className="text-muted-foreground text-sm">
-            {connectionId ?? 'Not Available'}
-          </span>
-        )
-      },
+      cell: ({ row }) => (
+        <ConnectionIdCell connectionId={row.original.connectionId} />
+      ),
     },
     {
       id: 'createDateTime',
@@ -289,18 +286,7 @@ const VerificationCredentialList = (): JSX.Element => {
           },
         },
       ],
-      cell: ({ row }): JSX.Element => {
-        const rawDate: string = row.original.createDateTime
-        const safeDate = rawDate || new Date().toISOString()
-
-        return (
-          <DateTooltip date={safeDate}>
-            <span className="text-muted-foreground text-sm">
-              {dateConversion(safeDate)}
-            </span>
-          </DateTooltip>
-        )
-      },
+      cell: ({ row }) => <DateCell date={row.original.createDateTime} />,
     },
     {
       id: 'state',

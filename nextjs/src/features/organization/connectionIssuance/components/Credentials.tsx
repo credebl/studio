@@ -1,10 +1,11 @@
 'use client'
 
 import {
-  Features,
-  IssueCredential,
-  IssueCredentialUserText,
-} from '@/common/enums'
+  ConnectionIdCell,
+  DateCell,
+  SchemaNameCell,
+  StatusCellForCredential,
+} from './CredentialTableCells'
 import {
   IColumnData,
   ITableMetadata,
@@ -18,14 +19,13 @@ import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { ConnectionApiSortFields } from '@/features/connections/types/connections-interface'
 import { DataTable } from '../../../../components/ui/generic-table-component/data-table'
-import DateTooltip from '@/components/DateTooltip'
 import { DidMethod } from '@/features/common/enum'
 import { EmptyListMessage } from '@/components/EmptyListComponent'
+import { Features } from '@/common/enums'
 import { IssuedCredential } from '../type/Issuance'
 import PageContainer from '@/components/layout/page-container'
 import RoleViewButton from '@/components/RoleViewButton'
 import { apiStatusCodes } from '@/config/CommonConstant'
-import { dateConversion } from '@/utils/DateConversion'
 import { getIssuedCredentials } from '@/app/api/Issuance'
 import { getOrganizationById } from '@/app/api/organization'
 import { issuanceSvgComponent } from '@/config/issuanceSvgComponent'
@@ -64,92 +64,6 @@ const Credentials = (): JSX.Element => {
   const schemeSelection = async (): Promise<void> => {
     router.push(pathRoutes.organizations.Issuance.issue)
   }
-
-  const ConnectionIdCell = ({
-    connectionId,
-  }: {
-    connectionId: string
-  }): React.JSX.Element => (
-    <span className="text-muted-foreground text-sm">
-      {connectionId ?? 'Not Available'}
-    </span>
-  )
-
-  interface SchemaNameCellProps {
-    schemaName: string
-    schemaId: string
-    isW3C: boolean
-  }
-
-  const SchemaNameCell = ({
-    schemaName,
-    schemaId,
-    isW3C,
-  }: SchemaNameCellProps): React.JSX.Element => {
-    const router = useRouter()
-
-    if (!schemaName) {
-      return (
-        <span className="text-muted-foreground text-sm">Not Available</span>
-      )
-    }
-
-    return (
-      <button
-        onClick={() => {
-          if (schemaId && !isW3C) {
-            router.push(`/organizations/schemas/${schemaId}`)
-          } else {
-            router.push('/organizations/schemas')
-          }
-        }}
-        className="text-primary-600 cursor-pointer border-none bg-transparent p-0 text-sm hover:underline"
-      >
-        {schemaName}
-      </button>
-    )
-  }
-
-  const DateCell = ({ date }: { date: string }): React.JSX.Element => {
-    const safeDate = date || new Date().toISOString()
-    return (
-      <DateTooltip date={safeDate}>
-        <span className="text-muted-foreground text-sm">
-          {dateConversion(safeDate)}
-        </span>
-      </DateTooltip>
-    )
-  }
-
-  const StatusCell = ({ state }: { state: string }): React.JSX.Element => (
-    <span
-      className={`${
-        state === IssueCredential.offerSent
-          ? 'badges-warning text-foreground'
-          : state === IssueCredential.done
-            ? 'badges-success text-foreground'
-            : state === IssueCredential.abandoned
-              ? 'badges-error text-foreground'
-              : state === IssueCredential.requestReceived
-                ? 'bg-primary text-foreground'
-                : state === IssueCredential.proposalReceived
-                  ? 'status-proposal-received'
-                  : 'badges-secondary text-foreground'
-      } mr-0.5 flex w-fit items-center justify-center rounded-md px-2 py-0.5 text-xs font-medium`}
-    >
-      {state === IssueCredential.offerSent
-        ? IssueCredentialUserText.offerSent
-        : state === IssueCredential.done
-          ? IssueCredentialUserText.done
-          : state === IssueCredential.abandoned
-            ? IssueCredentialUserText.abandoned
-            : state === IssueCredential.requestReceived
-              ? IssueCredentialUserText.received
-              : state === IssueCredential.proposalReceived
-                ? IssueCredentialUserText.proposalReceived
-                : IssueCredentialUserText.credIssued}
-    </span>
-  )
 
   const getIssuedCredDefs = async (): Promise<void> => {
     setLoading(true)
@@ -323,7 +237,7 @@ const Credentials = (): JSX.Element => {
           },
         },
       ],
-      cell: ({ row }) => <StatusCell state={row.original.state} />,
+      cell: ({ row }) => <StatusCellForCredential state={row.original.state} />,
     },
   ]
 

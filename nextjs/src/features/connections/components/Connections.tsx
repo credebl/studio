@@ -17,7 +17,7 @@ import { JSX, useEffect, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { DataTable } from '../../../components/ui/generic-table-component/data-table'
-import DateTooltip from '@/components/DateTooltip'
+import { DateCell } from '@/features/organization/connectionIssuance/components/CredentialTableCells'
 import PageContainer from '@/components/layout/page-container'
 import SidePanelComponent from '@/config/SidePanelCommon'
 import { dateConversion } from '@/utils/DateConversion'
@@ -178,18 +178,7 @@ export default function Connections(): JSX.Element {
           },
         },
       ],
-      cell: ({ row }): JSX.Element => {
-        const rawDate: string = row.original.createDateTime
-        const safeDate = rawDate || new Date().toISOString()
-
-        return (
-          <DateTooltip date={safeDate}>
-            <span className="text-muted-foreground text-sm">
-              {dateConversion(safeDate)}
-            </span>
-          </DateTooltip>
-        )
-      },
+      cell: ({ row }) => <DateCell date={row.original.createDateTime} />,
     },
 
     {
