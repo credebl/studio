@@ -5,6 +5,7 @@ import authSlice from './authSlice'
 import orgSlice from './orgSlice'
 import profileSlice from './profileSlice'
 import schemaSlice from './schemaSlice'
+import sidebarSlice from './sidebarSlice'
 import socketReducer from './socketSlice'
 import storage from 'redux-persist/lib/storage'
 import storageReducer from './storageKeys'
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
   wallet: walletSpinupSlice,
   socket: socketReducer,
   verification: verificationSlice,
+  sidebar: sidebarSlice,
   schema: schemaSlice,
 })
 

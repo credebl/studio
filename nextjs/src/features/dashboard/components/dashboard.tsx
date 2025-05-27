@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
+import { CreateWalletIcon } from '@/components/iconsSvg'
 import CredentialDefinition from './CredentialDefinition '
 import OrganizationCardList from './OrganizationCardList'
 import PageContainer from '@/components/layout/page-container'
@@ -37,6 +38,7 @@ export default function Dashboard(): React.JSX.Element {
   )
   const [viewButton, setViewButton] = useState<boolean>(false)
   const [ecoMessage, setEcoMessage] = useState<string | null>('')
+  const [walletExists, setWalletExists] = useState(false)
 
   const orgId = useAppSelector((state) => state.organization.orgId)
   const [, setUserOrg] = useState(null)
@@ -136,8 +138,10 @@ export default function Dashboard(): React.JSX.Element {
         }
         if (orgAgentsList && orgAgentsList.length > 0) {
           setWalletData(orgAgentsList)
+          setWalletExists(true)
         } else {
           setWalletData([])
+          setWalletExists(false)
         }
       }
     } catch (error) {
@@ -159,48 +163,45 @@ export default function Dashboard(): React.JSX.Element {
 
   return (
     <PageContainer>
-      <div className="flex flex-1 flex-col space-y-6">
-        <div className="cursor-pointer">
-          {informativeMessage && informativeMessage.length > 0 && (
-            <AlertComponent
-              message={informativeMessage}
-              type={informativeMessage ? 'warning' : 'failure'}
-              viewButton={viewButton}
-              path={pathRoutes.users.orgInvitations}
-              onAlertClose={() => {
-                setInformativeMessage('')
-              }}
-            />
-          )}
-        </div>
-        <div className="cursor-pointer">
-          {ecoMessage && ecoMessage.length > 0 && (
-            <AlertComponent
-              message={ecoMessage}
-              type={ecoMessage ? 'warning' : 'failure'}
-              viewButton={viewButton}
-              path={`${envConfig.PUBLIC_ECOSYSTEM_FRONT_END_URL}${pathRoutes.users.dashboard}`}
-              onAlertClose={() => {
-                setEcoMessage('')
-              }}
-            />
-          )}
-        </div>
-        <div className="flex items-center justify-between">
+      <div className="flex flex-1 flex-col">
+        {(informativeMessage || ecoMessage) && (
+          <div className="mb-4 flex flex-col space-y-4">
+            {informativeMessage && (
+              <AlertComponent
+                message={informativeMessage}
+                type="warning"
+                viewButton={viewButton}
+                path={pathRoutes.users.orgInvitations}
+                onAlertClose={() => setInformativeMessage('')}
+              />
+            )}
+            {ecoMessage && (
+              <AlertComponent
+                message={ecoMessage}
+                type="warning"
+                viewButton={viewButton}
+                path={`${envConfig.PUBLIC_ECOSYSTEM_FRONT_END_URL}${pathRoutes.users.dashboard}`}
+                onAlertClose={() => setEcoMessage('')}
+              />
+            )}
+          </div>
+        )}
+
+        <div className="mb-6 flex items-center justify-between">
           <h2 className="text-2xl font-bold tracking-tight">
             Hi, Welcome back 👋
           </h2>
         </div>
 
         {walletLoading ? (
-          <div className="bg-muted relative flex min-h-[150px] flex-col justify-between overflow-hidden rounded-md p-6 shadow-sm">
+          <div className="bg-muted relative mb-6 flex min-h-[150px] flex-col justify-between overflow-hidden rounded-md p-6 shadow-sm">
             <Skeleton className="mb-2 h-6 w-2/3" />
             <Skeleton className="mb-4 h-4 w-1/2" />
             <Skeleton className="h-10 w-[180px]" />
           </div>
         ) : (
           walletData.length === 0 && (
-            <div className="relative flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
+            <div className="relative mb-6 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
               <div className="flex flex-col items-center justify-between gap-4 sm:flex-row sm:items-center">
                 <div className="flex flex-col items-start">
                   <h3 className="text-xl font-semibold">
@@ -213,28 +214,16 @@ export default function Dashboard(): React.JSX.Element {
                 </div>
                 <Button onClick={handleCreateWallet} className="min-w-[180px]">
                   Create Wallet
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    className="ml-2"
-                  >
-                    <path
-                      d="M9.99984 6L8.58984 7.41L13.1698 12L8.58984 16.59L9.99984 18L15.9998 12L9.99984 6Z"
-                      fill="currentColor"
-                    />
-                  </svg>
+                  <CreateWalletIcon />
                 </Button>
               </div>
             </div>
           )
         )}
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
           <OrganizationCardList />
-          <SchemasList />
+          <SchemasList walletExists={walletExists} />
         </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">

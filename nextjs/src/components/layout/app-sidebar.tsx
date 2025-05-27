@@ -32,6 +32,7 @@ import { NavItem } from '../../../types'
 import { Organization } from '@/features/dashboard/type/organization'
 import { getOrganizations } from '@/app/api/organization'
 import { navItems } from '@/constants/data'
+import { setSidebarCollapsed } from '@/lib/sidebarSlice'
 import { usePathname } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import { useThemeConfig } from '../active-theme'
@@ -54,6 +55,11 @@ export default function AppSidebar(): React.JSX.Element {
     }
   })()
 
+  const collapsedLogoImageSrc =
+    activeTheme === 'credebl'
+      ? '/images/CREDEBL_favicon.ico'
+      : '/images/SOVIO_favicon.ico'
+
   const dispatch = useAppDispatch()
 
   const [currentPage] = useState(1)
@@ -62,6 +68,12 @@ export default function AppSidebar(): React.JSX.Element {
   const [, setOrgList] = useState<Organization[]>([])
 
   const selectedOrgId = useAppSelector((state) => state.organization.orgId)
+
+  const isCollapsed = useAppSelector((state) => state.sidebar.isCollapsed)
+
+  useEffect(() => {
+    dispatch(setSidebarCollapsed(true))
+  }, [])
 
   useEffect(() => {
     const fetchOrganizations = async (): Promise<void> => {
@@ -110,15 +122,29 @@ export default function AppSidebar(): React.JSX.Element {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader>
-        <div className="h-[40px] w-[150px] overflow-hidden transition-all duration-300 group-data-[collapsed=true]:h-0 group-data-[collapsed=true]:w-0">
-          <Image
-            height={40}
-            width={150}
-            alt="Logo"
-            className="h-full w-full object-contain"
-            src={logoImageSrc}
-          />
+      <SidebarHeader className="group" data-collapsed>
+        <div className="relative transition-all duration-300">
+          {isCollapsed ? (
+            <div className="h-[40px] w-[150px] overflow-hidden">
+              <Image
+                height={40}
+                width={150}
+                alt="Full Logo"
+                className="h-full w-full object-contain"
+                src={logoImageSrc}
+              />
+            </div>
+          ) : (
+            <div className="hidden h-[40px] w-[40px] group-data-[collapsed=true]:block">
+              <Image
+                height={40}
+                width={40}
+                alt="Collapsed Logo"
+                className="h-full w-full object-contain"
+                src={collapsedLogoImageSrc}
+              />
+            </div>
+          )}
         </div>
       </SidebarHeader>
 

@@ -35,16 +35,20 @@ type Schema = {
   createDateTime: string
   organizationName: string
   schemaLedgerId: string
+  issuerId?: string
 }
 
-const SchemasList = (): React.JSX.Element => {
+const SchemasList = ({
+  walletExists,
+}: {
+  walletExists: boolean
+}): React.JSX.Element => {
   const [loading, setLoading] = useState(true)
   const [schemas, setSchemas] = useState<Schema[]>([])
   const [schemaTypeValues, setSchemaTypeValues] = useState<SchemaTypeValue>()
-
   const currentPage = 1
   const pageSize = 10
-
+  const [showTooltip, setShowTooltip] = useState(false)
   const orgId = useAppSelector((state) => state.organization.orgId)
   const router = useRouter()
 
@@ -146,6 +150,15 @@ const SchemasList = (): React.JSX.Element => {
     )
   }
 
+  const handleCreateSchemaClick = (): void => {
+    if (!orgId || !walletExists) {
+      setShowTooltip(true)
+      setTimeout(() => setShowTooltip(false), 3000)
+    } else {
+      router.push('/organizations/schemas/create')
+    }
+  }
+
   return (
     <Card className="border-border relative flex h-full w-full flex-col overflow-hidden rounded-xl border py-4 shadow-xl transition-transform duration-300">
       <CardHeader className="pb-2">
@@ -163,10 +176,17 @@ const SchemasList = (): React.JSX.Element => {
             </TooltipProvider>
             <Badge>{schemas.length}</Badge>
           </div>
-          <Button onClick={() => router.push('/organizations/schemas/create')}>
-            <Plus className="mr-2 h-4 w-4" />
-            New Schema
-          </Button>
+
+          <Tooltip open={showTooltip}>
+            <TooltipTrigger asChild>
+              <Button onClick={handleCreateSchemaClick}>
+                <Plus className="mr-2 h-4 w-4" /> New Schema
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              Create an organization and a wallet first.
+            </TooltipContent>
+          </Tooltip>
         </div>
         <CardDescription>Manage your data schemas</CardDescription>
       </CardHeader>
