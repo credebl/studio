@@ -21,7 +21,9 @@ import {
 import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
+import { ConnectionApiSortFields } from '@/features/connections/types/connections-interface'
 import { DataTable } from '../../../components/ui/generic-table-component/data-table'
+import DateTooltip from '@/components/DateTooltip'
 import { EmptyListMessage } from '@/components/EmptyListComponent'
 import { Features } from '@/common/enums'
 import PageContainer from '@/components/layout/page-container'
@@ -29,9 +31,20 @@ import ProofRequest from './ProofRequestPopup'
 import { RequestProof } from '../type/interface'
 import RoleViewButton from '@/components/RoleViewButton'
 import { apiStatusCodes } from '@/config/CommonConstant'
+import { dateConversion } from '@/utils/DateConversion'
 import { getOrganizationById } from '@/app/api/organization'
 import { useAppSelector } from '@/lib/hooks'
 import { useRouter } from 'next/navigation'
+import { verificationSvgComponent } from '@/config/verificationSvgComponent'
+
+interface PaginationState {
+  pageIndex: number
+  pageSize: number
+  pageCount: number
+  searchTerm: string
+  sortBy: string
+  sortOrder: SortActions
+}
 
 const VerificationCredentialList = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -48,17 +61,18 @@ const VerificationCredentialList = (): JSX.Element => {
   const [verifyLoading, setVerifyLoading] = useState(true)
   const [userRoles, setUserRoles] = useState<string[]>([])
 
-  // Table state
-  const [pageIndex, setPageIndex] = useState(0)
-  const [pageSize, setPageSize] = useState(10)
-  const [pageCount, setPageCount] = useState(1)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [sortBy, setSortBy] = useState('createDateTime')
-  const [sortOrder, setsortOrder] = useState<SortActions>('desc')
+  // Consolidated pagination state
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+    pageCount: 1,
+    searchTerm: '',
+    sortBy: 'createDateTime',
+    sortOrder: 'desc',
+  })
+
   const router = useRouter()
-
   const orgId = useAppSelector((state) => state.organization.orgId)
-
   const orgRoles = useAppSelector((state) => state.organization.orgRoles)
 
   const fetchOrganizationDetails = async (): Promise<void> => {
@@ -108,18 +122,21 @@ const VerificationCredentialList = (): JSX.Element => {
         return
       }
       const response = await getVerificationList(orgId, {
-        itemPerPage: pageSize,
-        page: pageIndex + 1,
-        search: searchTerm,
-        sortBy,
-        sortingOrder: sortOrder,
+        itemPerPage: pagination.pageSize,
+        page: pagination.pageIndex + 1,
+        search: pagination.searchTerm,
+        sortBy: pagination.sortBy,
+        sortingOrder: pagination.sortOrder,
       })
 
       const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setVerificationList(data?.data?.data ?? [])
-        setPageCount(data?.data.lastPage ?? 1)
+        setPagination((prev) => ({
+          ...prev,
+          pageCount: data?.data.lastPage ?? 1,
+        }))
       } else {
         setVerificationList([])
       }
@@ -181,16 +198,25 @@ const VerificationCredentialList = (): JSX.Element => {
     if (orgId) {
       getVerificationListData()
     }
-  }, [orgId, pageIndex, pageSize, sortBy, searchTerm, sortOrder])
+  }, [
+    orgId,
+    pagination.pageIndex,
+    pagination.pageSize,
+    pagination.sortBy,
+    pagination.searchTerm,
+    pagination.sortOrder,
+  ])
 
   useEffect(() => {
     if (orgId) {
-      setPageIndex(0)
-      setPageSize(10)
-      setPageCount(1)
-      setSortBy('createDateTime')
-      setSearchTerm('')
-      setsortOrder('desc')
+      setPagination({
+        pageIndex: 0,
+        pageSize: 10,
+        pageCount: 1,
+        searchTerm: '',
+        sortBy: 'createDateTime',
+        sortOrder: 'desc',
+      })
     }
   }, [orgId])
 
@@ -211,8 +237,11 @@ const VerificationCredentialList = (): JSX.Element => {
         'hide',
         {
           sortCallBack: async (order): Promise<void> => {
-            setSortBy('presentationId')
-            setsortOrder(order)
+            setPagination((prev) => ({
+              ...prev,
+              sortBy: 'presentationId',
+              sortOrder: order,
+            }))
           },
         },
       ],
@@ -228,8 +257,11 @@ const VerificationCredentialList = (): JSX.Element => {
       columnFunction: [
         {
           sortCallBack: async (order): Promise<void> => {
-            setSortBy('connectionId')
-            setsortOrder(order)
+            setPagination((prev) => ({
+              ...prev,
+              sortBy: 'connectionId',
+              sortOrder: order,
+            }))
           },
         },
       ],
@@ -244,18 +276,31 @@ const VerificationCredentialList = (): JSX.Element => {
     },
     {
       id: 'createDateTime',
-      title: 'Requested on',
+      title: 'Created On',
       accessorKey: 'createDateTime',
       columnFunction: [
-        'hide',
         {
           sortCallBack: async (order): Promise<void> => {
-            setSortBy('createDateTime')
-            setsortOrder(order)
+            setPagination((prev) => ({
+              ...prev,
+              sortBy: ConnectionApiSortFields.CREATE_DATE_TIME,
+              sortOrder: order,
+            }))
           },
         },
       ],
-      // cell:<div></div> // Optional if we want to send our own cell
+      cell: ({ row }): JSX.Element => {
+        const rawDate: string = row.original.createDateTime
+        const safeDate = rawDate || new Date().toISOString()
+
+        return (
+          <DateTooltip date={safeDate}>
+            <span className="text-muted-foreground text-sm">
+              {dateConversion(safeDate)}
+            </span>
+          </DateTooltip>
+        )
+      },
     },
     {
       id: 'state',
@@ -264,8 +309,11 @@ const VerificationCredentialList = (): JSX.Element => {
       columnFunction: [
         {
           sortCallBack: async (order): Promise<void> => {
-            setSortBy('state')
-            setsortOrder(order)
+            setPagination((prev) => ({
+              ...prev,
+              sortBy: 'state',
+              sortOrder: order,
+            }))
           },
         },
       ],
@@ -343,27 +391,14 @@ const VerificationCredentialList = (): JSX.Element => {
             Verification List
           </h2>
           <p className="text-muted-foreground">
-            Here&apos;s a list of verification requests!
+            Here&apos;s a list of verification requests
           </p>
         </div>
         {isWalletCreated && (
           <RoleViewButton
             buttonTitle="Request"
             feature={Features.VERIFICATION}
-            svgComponent={
-              <svg
-                className="mt-1 mr-2"
-                xmlns="http://www.w3.org/2000/svg"
-                style={{ height: '20px', width: '30px' }}
-                fill="none"
-                viewBox="0 0 25 25"
-              >
-                <path
-                  fill="currentColor"
-                  d="M21.094 0H3.906A3.906 3.906 0 0 0 0 3.906v12.5a3.906 3.906 0 0 0 3.906 3.907h.781v3.906a.781.781 0 0 0 1.335.553l4.458-4.46h10.614A3.906 3.906 0 0 0 25 16.407v-12.5A3.907 3.907 0 0 0 21.094 0Zm2.343 16.406a2.343 2.343 0 0 1-2.343 2.344H10.156a.782.782 0 0 0-.553.228L6.25 22.333V19.53a.781.781 0 0 0-.781-.781H3.906a2.344 2.344 0 0 1-2.344-2.344v-12.5a2.344 2.344 0 0 1 2.344-2.344h17.188a2.343 2.343 0 0 1 2.343 2.344v12.5Zm-3.184-5.951a.81.81 0 0 1-.17.254l-3.125 3.125a.781.781 0 0 1-1.105-1.106l1.792-1.79h-7.489a2.343 2.343 0 0 0-2.344 2.343.781.781 0 1 1-1.562 0 3.906 3.906 0 0 1 3.906-3.906h7.49l-1.793-1.79a.78.78 0 0 1 .254-1.277.781.781 0 0 1 .852.17l3.125 3.125a.79.79 0 0 1 .169.852Z"
-                />
-              </svg>
-            }
+            svgComponent={verificationSvgComponent()}
             onClickEvent={schemeSelection}
           />
         )}
@@ -405,18 +440,26 @@ const VerificationCredentialList = (): JSX.Element => {
       ) : (
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
           <DataTable
+            placeHolder="Filter by Connection Id and Schema Name"
             data={verificationList}
             columns={column}
             index={'presentationId'}
-            pageIndex={pageIndex}
-            pageSize={pageSize}
-            pageCount={pageCount}
-            onPageChange={setPageIndex}
+            pageIndex={pagination.pageIndex}
+            pageSize={pagination.pageSize}
+            pageCount={pagination.pageCount}
+            onPageChange={(index) =>
+              setPagination((prev) => ({ ...prev, pageIndex: index }))
+            }
             onPageSizeChange={(size) => {
-              setPageSize(size)
-              setPageIndex(0)
+              setPagination((prev) => ({
+                ...prev,
+                pageSize: size,
+                pageIndex: 0,
+              }))
             }}
-            onSearchTerm={setSearchTerm}
+            onSearchTerm={(term) =>
+              setPagination((prev) => ({ ...prev, searchTerm: term }))
+            }
           />
         </div>
       )}

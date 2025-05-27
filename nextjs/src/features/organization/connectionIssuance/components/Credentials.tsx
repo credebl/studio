@@ -16,17 +16,31 @@ import React, { JSX, useEffect, useState } from 'react'
 
 import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
+import { ConnectionApiSortFields } from '@/features/connections/types/connections-interface'
 import { DataTable } from '../../../../components/ui/generic-table-component/data-table'
+import DateTooltip from '@/components/DateTooltip'
+import { DidMethod } from '@/features/common/enum'
 import { EmptyListMessage } from '@/components/EmptyListComponent'
 import { IssuedCredential } from '../type/Issuance'
 import PageContainer from '@/components/layout/page-container'
 import RoleViewButton from '@/components/RoleViewButton'
 import { apiStatusCodes } from '@/config/CommonConstant'
+import { dateConversion } from '@/utils/DateConversion'
 import { getIssuedCredentials } from '@/app/api/Issuance'
 import { getOrganizationById } from '@/app/api/organization'
+import { issuanceSvgComponent } from '@/config/issuanceSvgComponent'
 import { pathRoutes } from '@/config/pathRoutes'
 import { useAppSelector } from '@/lib/hooks'
 import { useRouter } from 'next/navigation'
+
+interface PaginationState {
+  pageIndex: number
+  pageSize: number
+  pageCount: number
+  searchTerm: string
+  sortBy: string
+  sortOrder: SortActions
+}
 
 const Credentials = (): JSX.Element => {
   const router = useRouter()
@@ -35,14 +49,17 @@ const Credentials = (): JSX.Element => {
   const [error, setError] = useState<string | null>(null)
   const [issuedCredList, setIssuedCredList] = useState<IssuedCredential[]>([])
   const [walletCreated, setWalletCreated] = useState(false)
+  const [isW3C, setIsW3C] = useState(false)
 
-  // Table state
-  const [pageIndex, setPageIndex] = useState(0)
-  const [pageSize, setPageSize] = useState(10)
-  const [pageCount, setPageCount] = useState(1)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [sortBy, setSortBy] = useState('createDateTime')
-  const [sortOrder, setsortOrder] = useState<SortActions>('desc')
+  // Consolidated pagination state
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+    pageCount: 1,
+    searchTerm: '',
+    sortBy: 'createDateTime',
+    sortOrder: 'desc',
+  })
 
   const schemeSelection = async (): Promise<void> => {
     router.push(pathRoutes.organizations.Issuance.issue)
@@ -57,13 +74,23 @@ const Credentials = (): JSX.Element => {
       const isWalletCreated = Boolean(orgDid)
       setWalletCreated(isWalletCreated)
 
+      if (
+        orgDid.includes(DidMethod.POLYGON) ||
+        orgDid.includes(DidMethod.KEY) ||
+        orgDid.includes(DidMethod.WEB)
+      ) {
+        setIsW3C(true)
+      } else {
+        setIsW3C(false)
+      }
+
       if (orgId && isWalletCreated) {
         const response = await getIssuedCredentials({
-          itemPerPage: pageSize,
-          page: pageIndex + 1,
-          search: searchTerm,
-          sortBy,
-          sortingOrder: sortOrder,
+          itemPerPage: pagination.pageSize,
+          page: pagination.pageIndex + 1,
+          search: pagination.searchTerm,
+          sortBy: pagination.sortBy,
+          sortingOrder: pagination.sortOrder,
           orgId,
         })
 
@@ -71,7 +98,10 @@ const Credentials = (): JSX.Element => {
 
         if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
           setIssuedCredList(data?.data?.data ?? [])
-          setPageCount(data?.data.lastPage ?? 1)
+          setPagination((prev) => ({
+            ...prev,
+            pageCount: data?.data.lastPage ?? 1,
+          }))
           setError(null)
         } else {
           setIssuedCredList([])
@@ -90,31 +120,60 @@ const Credentials = (): JSX.Element => {
       return
     }
     getIssuedCredDefs()
-  }, [orgId, pageIndex, pageSize, sortBy, searchTerm, sortOrder])
+  }, [
+    orgId,
+    pagination.pageIndex,
+    pagination.pageSize,
+    pagination.sortBy,
+    pagination.searchTerm,
+    pagination.sortOrder,
+  ])
 
   useEffect(() => {
     if (!orgId) {
       return
     }
     // Reset all params when org changes
-    setPageIndex(0)
-    setPageSize(10)
-    setPageCount(1)
-    setSortBy('createDateTime')
-    setSearchTerm('')
-    setsortOrder('desc')
+    setPagination({
+      pageIndex: 0,
+      pageSize: 10,
+      pageCount: 1,
+      searchTerm: '',
+      sortBy: 'createDateTime',
+      sortOrder: 'desc',
+    })
   }, [orgId])
 
   const columnData: IColumnData[] = [
     {
+      id: 'credentialExchangeId',
+      title: 'credential Exchange Id',
+      accessorKey: 'credentialExchangeId',
+      columnFunction: [
+        'hide',
+        {
+          sortCallBack: async (order): Promise<void> => {
+            setPagination((prev) => ({
+              ...prev,
+              sortBy: 'credentialExchangeId',
+              sortOrder: order,
+            }))
+          },
+        },
+      ],
+    },
+    {
       id: 'connectionId',
-      title: 'Connection Id',
+      title: 'Issued to',
       accessorKey: 'connectionId',
       columnFunction: [
         {
           sortCallBack: async (order): Promise<void> => {
-            setSortBy('connectionId')
-            setsortOrder(order)
+            setPagination((prev) => ({
+              ...prev,
+              sortBy: 'connectionId',
+              sortOrder: order,
+            }))
           },
         },
       ],
@@ -128,36 +187,41 @@ const Credentials = (): JSX.Element => {
       },
     },
     {
-      id: 'credentialExchangeId',
-      title: 'credentialExchange Id',
-      accessorKey: 'credentialExchangeId',
-      columnFunction: [
-        'hide',
-        {
-          sortCallBack: async (order): Promise<void> => {
-            setSortBy('credentialExchangeId')
-            setsortOrder(order)
-          },
-        },
-      ],
-    },
-    {
       id: 'schemaName',
       title: 'Schema Name',
       accessorKey: 'schemaName',
       columnFunction: [
         {
           sortCallBack: async (order): Promise<void> => {
-            setSortBy('schemaName')
-            setsortOrder(order)
+            setPagination((prev) => ({
+              ...prev,
+              sortBy: 'schemaName',
+              sortOrder: order,
+            }))
           },
         },
       ],
       cell: ({ row }): JSX.Element => {
-        const { schemaName } = row.original
+        const { schemaName, schemaId } = row.original
+
+        if (!schemaName) {
+          return (
+            <span className="text-muted-foreground text-sm">Not Available</span>
+          )
+        }
+
         return (
-          <span className="text-muted-foreground text-sm">
-            {schemaName || 'Not Available'}
+          <span
+            onClick={() => {
+              if (schemaId && !isW3C) {
+                router.push(`/organization/schema/${schemaId}`)
+              } else {
+                router.push('/organizations/schemas')
+              }
+            }}
+            className="text-primary-600 cursor-pointer text-sm hover:underline"
+          >
+            {schemaName}
           </span>
         )
       },
@@ -165,18 +229,31 @@ const Credentials = (): JSX.Element => {
 
     {
       id: 'createDateTime',
-      title: 'createDateTime',
+      title: 'Created On',
       accessorKey: 'createDateTime',
       columnFunction: [
-        'hide',
         {
           sortCallBack: async (order): Promise<void> => {
-            setSortBy('createDateTime')
-            setsortOrder(order)
+            setPagination((prev) => ({
+              ...prev,
+              sortBy: ConnectionApiSortFields.CREATE_DATE_TIME,
+              sortOrder: order,
+            }))
           },
         },
       ],
-      // cell:<div></div> // Optional if we want to send our own cell
+      cell: ({ row }): JSX.Element => {
+        const rawDate: string = row.original.createDateTime
+        const safeDate = rawDate || new Date().toISOString()
+
+        return (
+          <DateTooltip date={safeDate}>
+            <span className="text-muted-foreground text-sm">
+              {dateConversion(safeDate)}
+            </span>
+          </DateTooltip>
+        )
+      },
     },
     {
       id: 'state',
@@ -185,8 +262,11 @@ const Credentials = (): JSX.Element => {
       columnFunction: [
         {
           sortCallBack: async (order): Promise<void> => {
-            setSortBy('state')
-            setsortOrder(order)
+            setPagination((prev) => ({
+              ...prev,
+              sortBy: 'state',
+              sortOrder: order,
+            }))
           },
         },
       ],
@@ -194,25 +274,19 @@ const Credentials = (): JSX.Element => {
         const { state } = row.original
         return (
           <span
-            className={` ${
-              state === IssueCredential.offerSent &&
-              'border border-orange-100 bg-orange-100 text-orange-800 dark:border-orange-300 dark:bg-gray-700 dark:text-orange-300'
-            } ${
-              state === IssueCredential.done &&
-              'border border-green-100 bg-green-100 text-green-800 dark:border-green-500 dark:bg-gray-700 dark:text-green-400'
-            } ${
-              state === IssueCredential.abandoned &&
-              'border border-red-100 bg-red-100 text-red-800 dark:border-red-400 dark:bg-gray-700 dark:text-red-400'
-            } ${
-              state === IssueCredential.requestReceived &&
-              'bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300 mr-2 rounded px-2.5 py-0.5 text-sm font-medium'
-            } ${
-              state === IssueCredential.proposalReceived &&
-              'bg-secondary-700 text-primary-600 border-secondary-100 dark:border-secondary-700 dark:text-secondary-800 border dark:bg-gray-700'
-            } ${
-              state === IssueCredential.credentialIssued &&
-              'text-primary-900 border border-sky-100 bg-sky-300 dark:border-sky-700 dark:bg-gray-700 dark:text-sky-500'
-            } mr-0.5 flex w-fit items-center justify-center rounded-md border px-0.5 px-2 py-0.5 text-xs font-medium`}
+            className={`${
+              state === IssueCredential.offerSent
+                ? 'status-offer-sent'
+                : state === IssueCredential.done
+                  ? 'status-done'
+                  : state === IssueCredential.abandoned
+                    ? 'status-abandoned'
+                    : state === IssueCredential.requestReceived
+                      ? 'status-request-received'
+                      : state === IssueCredential.proposalReceived
+                        ? 'status-proposal-received'
+                        : 'status-credential-issued'
+            } mr-0.5 flex w-fit items-center justify-center rounded-md px-2 py-0.5 text-xs font-medium`}
           >
             {state === IssueCredential.offerSent
               ? IssueCredentialUserText.offerSent
@@ -244,29 +318,14 @@ const Credentials = (): JSX.Element => {
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Credentials</h2>
           <p className="text-muted-foreground">
-            Here&apos;s a list of issued credentials!
+            Here&apos;s a list of issued credentials
           </p>
         </div>
         {walletCreated && (
           <RoleViewButton
             buttonTitle="Issue"
             feature={Features.ISSUANCE}
-            svgComponent={
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="27"
-                height="18"
-                fill="none"
-                viewBox="0 0 27 18"
-                className="mr-1"
-                style={{ height: '20px', width: '30px' }}
-              >
-                <path
-                  fill="currentColor"
-                  d="M26.82 6.288 20.469.173a.632.632 0 0 0-.87 0l-2.256 2.172H9.728c-1.754 0-3.424.77-4.53 2.073h-1.2V3.53a.604.604 0 0 0-.614-.592H.615A.604.604 0 0 0 0 3.53c0 .327.275.592.615.592h2.153v8.293H.615a.604.604 0 0 0-.615.592c0 .327.275.592.615.592h2.769c.34 0 .615-.265.615-.592v-1.481h1.2c1.105 1.304 2.775 2.073 4.53 2.073h.715l4.391 4.227c.12.116.278.174.435.174a.626.626 0 0 0 .435-.174l11.115-10.7a.581.581 0 0 0 .18-.419.581.581 0 0 0-.18-.419ZM5.998 10.585a.623.623 0 0 0-.498-.244H4V5.603h1.5c.197 0 .382-.09.498-.243.867-1.146 2.262-1.83 3.73-1.83h6.384l-3.65 3.514a6.103 6.103 0 0 1-1.355-1.31.63.63 0 0 0-.86-.131.578.578 0 0 0-.135.827c1.167 1.545 2.89 2.56 4.85 2.857a.67.67 0 0 1 .575.762.69.69 0 0 1-.791.555 8.905 8.905 0 0 1-4.534-2.08.632.632 0 0 0-.869.04.577.577 0 0 0 .043.837c.11.096.223.19.337.28l-1.24 1.193a.582.582 0 0 0-.18.419c0 .157.066.308.18.419l.698.67a4.675 4.675 0 0 1-3.183-1.797Zm9.272 5.985-5.48-5.277.942-.907a10.27 10.27 0 0 0 3.823 1.388c.101.015.201.022.3.022.93 0 1.75-.651 1.899-1.562.165-1.009-.553-1.958-1.6-2.117a6.411 6.411 0 0 1-1.592-.456l6.473-6.231 5.48 5.277L15.27 16.57Z"
-                />
-              </svg>
-            }
+            svgComponent={issuanceSvgComponent()}
             onClickEvent={schemeSelection}
           />
         )}
@@ -291,18 +350,26 @@ const Credentials = (): JSX.Element => {
       ) : (
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
           <DataTable
+            placeHolder="Filter by Connection Id and Schema Name"
             data={issuedCredList}
             columns={column}
             index={'credentialExchangeId'}
-            pageIndex={pageIndex}
-            pageSize={pageSize}
-            pageCount={pageCount}
-            onPageChange={setPageIndex}
+            pageIndex={pagination.pageIndex}
+            pageSize={pagination.pageSize}
+            pageCount={pagination.pageCount}
+            onPageChange={(index) =>
+              setPagination((prev) => ({ ...prev, pageIndex: index }))
+            }
             onPageSizeChange={(size) => {
-              setPageSize(size)
-              setPageIndex(0)
+              setPagination((prev) => ({
+                ...prev,
+                pageSize: size,
+                pageIndex: 0,
+              }))
             }}
-            onSearchTerm={setSearchTerm}
+            onSearchTerm={(term) =>
+              setPagination((prev) => ({ ...prev, searchTerm: term }))
+            }
           />
         </div>
       )}

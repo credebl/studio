@@ -3,6 +3,8 @@
 import {
   Connection,
   ConnectionApiSortFields,
+  ConnectionState,
+  ConnectionStateUserText,
 } from '../types/connections-interface'
 import {
   IColumnData,
@@ -13,16 +15,21 @@ import {
 } from '../../../components/ui/generic-table-component/columns'
 import { JSX, useEffect, useState } from 'react'
 
+import { Button } from '@/components/ui/button'
 import { DataTable } from '../../../components/ui/generic-table-component/data-table'
+import DateTooltip from '@/components/DateTooltip'
 import PageContainer from '@/components/layout/page-container'
+import SidePanelComponent from '@/config/SidePanelCommon'
+import { dateConversion } from '@/utils/DateConversion'
 import { getConnectionsByOrg } from '@/app/api/connection'
 import { useAppSelector } from '@/lib/hooks'
 
 export default function Connections(): JSX.Element {
   const metadata: ITableMetadata = {
-    enableSelection: true,
+    enableSelection: false,
   }
   const orgId = useAppSelector((state) => state.organization.orgId)
+
   const [connectionData, setConnectionData] = useState<Connection[]>([
     {
       createDateTime: '',
@@ -33,19 +40,48 @@ export default function Connections(): JSX.Element {
       connectionId: '',
     },
   ])
-  const [pageIndex, setPageIndex] = useState(0)
-  const [pageSize, setPageSize] = useState(10)
-  const [pageCount, setPageCount] = useState(1)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [sortBy, setSortBy] = useState('createDateTime')
-  const [sortOrder, setsortOrder] = useState<SortActions>('desc')
+
+  const [paginationState, setPaginationState] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+    pageCount: 1,
+    searchTerm: '',
+    sortBy: 'createDateTime',
+    sortOrder: 'desc' as SortActions,
+  })
+
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [selectedConnection, setSelectedConnection] =
+    useState<Connection | null>(null)
+
+  const openDrawer = (connection: Connection): void => {
+    setSelectedConnection(connection)
+    setIsDrawerOpen(true)
+  }
+
+  const fields = selectedConnection
+    ? [
+        { label: 'Their Label', value: selectedConnection.theirLabel },
+        { label: 'Connection ID', value: selectedConnection.connectionId },
+        { label: 'Created By', value: selectedConnection.createdBy },
+        { label: 'Status', value: selectedConnection.state },
+        {
+          label: 'Created At',
+          value: dateConversion(selectedConnection.createDateTime),
+        },
+      ]
+    : []
 
   useEffect(() => {
     if (!orgId) {
       return
     }
+
     async function fetchConnections(): Promise<void> {
       try {
+        const { pageIndex, pageSize, searchTerm, sortBy, sortOrder } =
+          paginationState
+
         const connectionList = await getConnectionsByOrg({
           itemPerPage: pageSize,
           page: pageIndex + 1,
@@ -57,33 +93,46 @@ export default function Connections(): JSX.Element {
 
         if (connectionList && Array.isArray(connectionList.data)) {
           setConnectionData(connectionList.data ?? [])
-          setPageCount(connectionList.lastPage ?? 1)
+          setPaginationState((prev) => ({
+            ...prev,
+            pageCount: connectionList.lastPage ?? 1,
+          }))
         } else {
           setConnectionData([])
-          setPageCount(1)
+          setPaginationState((prev) => ({
+            ...prev,
+            pageCount: 1,
+          }))
         }
       } catch (error) {
         console.error('Failed to fetch connections:', error)
         setConnectionData([])
       }
     }
-
     fetchConnections()
-    // Can add terms according to us
-  }, [orgId, pageIndex, pageSize, sortBy, searchTerm, sortOrder])
+  }, [
+    orgId,
+    paginationState.pageIndex,
+    paginationState.pageSize,
+    paginationState.sortBy,
+    paginationState.sortOrder,
+    paginationState.searchTerm,
+  ])
 
   useEffect(() => {
     if (!orgId) {
       return
     }
-    // Reset all params
-    setPageIndex(0)
-    setPageSize(10)
-    setPageCount(1)
-    setSortBy('createDateTime')
-    setSearchTerm('')
-    setsortOrder('desc')
-  }, [orgId]) // Rerun with default config on org data change
+
+    setPaginationState({
+      pageIndex: 0,
+      pageSize: 10,
+      pageCount: 1,
+      sortBy: 'createDateTime',
+      searchTerm: '',
+      sortOrder: 'desc',
+    })
+  }, [orgId])
 
   const columnData: IColumnData[] = [
     {
@@ -91,63 +140,77 @@ export default function Connections(): JSX.Element {
       title: 'Their Label',
       accessorKey: 'theirLabel',
       columnFunction: [
-        'hide',
         {
           sortCallBack: async (order): Promise<void> => {
-            setSortBy(ConnectionApiSortFields.THEIR_LABEL)
-            setsortOrder(order)
+            setPaginationState((prev) => ({
+              ...prev,
+              sortBy: ConnectionApiSortFields.THEIR_LABEL,
+              sortOrder: order,
+            }))
           },
         },
       ],
-    },
-    {
-      id: 'connectionId',
-      title: 'Connection Id',
-      accessorKey: 'connectionId',
-      columnFunction: [
-        'hide',
-        {
-          sortCallBack: async (order): Promise<void> => {
-            setSortBy(ConnectionApiSortFields.CONNECTIONID)
-            setsortOrder(order)
-          },
-        },
-      ],
-    },
-    {
-      id: 'state',
-      title: 'state',
-      accessorKey: 'state',
-      columnFunction: ['hide'],
-      // cell:<div></div> // Optional if we want to send our own cell
-    },
-    {
-      id: 'orgId',
-      title: 'orgId',
-      accessorKey: 'orgId',
-      columnFunction: ['hide'],
-      // cell:<div></div> // Optional if we want to send our own cell
-    },
-    {
-      id: 'createdBy',
-      title: 'createdBy',
-      accessorKey: 'createdBy',
-      columnFunction: ['hide'],
-      // cell:<div></div> // Optional if we want to send our own cell
+      cell: ({ row }): JSX.Element => {
+        const connection = row.original
+        return (
+          <Button
+            variant="link"
+            className="text-foreground p-0 text-left"
+            onClick={() => openDrawer(connection)}
+          >
+            {connection.theirLabel || 'N/A'}
+          </Button>
+        )
+      },
     },
     {
       id: 'createDateTime',
-      title: 'createDateTime',
+      title: 'Created On',
       accessorKey: 'createDateTime',
       columnFunction: [
         {
           sortCallBack: async (order): Promise<void> => {
-            setSortBy(ConnectionApiSortFields.CREATE_DATE_TIME)
-            setsortOrder(order)
+            setPaginationState((prev) => ({
+              ...prev,
+              sortBy: ConnectionApiSortFields.CREATE_DATE_TIME,
+              sortOrder: order,
+            }))
           },
         },
       ],
-      // cell:<div></div> // Optional if we want to send our own cell
+      cell: ({ row }): JSX.Element => {
+        const rawDate: string = row.original.createDateTime
+        const safeDate = rawDate || new Date().toISOString()
+
+        return (
+          <DateTooltip date={safeDate}>
+            <span className="text-muted-foreground text-sm">
+              {dateConversion(safeDate)}
+            </span>
+          </DateTooltip>
+        )
+      },
+    },
+
+    {
+      id: 'state',
+      title: 'Status',
+      accessorKey: 'state',
+      columnFunction: [],
+      cell: ({ row }): JSX.Element => {
+        const { state } = row.original
+        return (
+          <span
+            className={` ${
+              state === ConnectionState.completed &&
+              'bg-success text-foreground'
+            } mr-0.5 flex w-fit items-center justify-center rounded-md border px-0.5 px-2 py-0.5 text-xs font-medium`}
+          >
+            {state === ConnectionState.completed &&
+              ConnectionStateUserText.completed}
+          </span>
+        )
+      },
     },
   ]
 
@@ -160,25 +223,41 @@ export default function Connections(): JSX.Element {
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Connections</h2>
           <p className="text-muted-foreground">
-            Here&apos;s a list of Connection!
+            Here&apos;s a list of Connection
           </p>
         </div>
       </div>
-      <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
+      <div className="-mx-4 flex-1 overflow-auto rounded-lg px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
         <DataTable
-          data={connectionData} // data to be sent according to column structure
-          columns={column} // Define the column stucture according to
-          index={'connectionId'} // Unique index for the rows
-          pageIndex={pageIndex}
-          pageSize={pageSize}
-          pageCount={pageCount}
-          onPageChange={setPageIndex} // Function to handle pageIndex change
-          onPageSizeChange={(size) => {
-            // Function to handle pageSize change
-            setPageSize(size)
-            setPageIndex(0)
-          }}
-          onSearchTerm={setSearchTerm} // Function to handle searchTerm change
+          placeHolder="Filter by wallet name"
+          data={connectionData}
+          columns={column}
+          index={'connectionId'}
+          pageIndex={paginationState.pageIndex}
+          pageSize={paginationState.pageSize}
+          pageCount={paginationState.pageCount}
+          onPageChange={(index) =>
+            setPaginationState((prev) => ({ ...prev, pageIndex: index }))
+          }
+          onPageSizeChange={(size) =>
+            setPaginationState((prev) => ({
+              ...prev,
+              pageSize: size,
+              pageIndex: 0,
+            }))
+          }
+          onSearchTerm={(term) =>
+            setPaginationState((prev) => ({
+              ...prev,
+              searchTerm: term,
+              pageIndex: 0,
+            }))
+          }
+        />
+        <SidePanelComponent
+          open={isDrawerOpen}
+          onOpenChange={setIsDrawerOpen}
+          fields={fields}
         />
       </div>
     </PageContainer>
