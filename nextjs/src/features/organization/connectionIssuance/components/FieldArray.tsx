@@ -52,7 +52,7 @@ const FieldArrayData = ({
         : undefined
 
     if (error && touchedField) {
-      return <div className="text-xs break-words text-destructive">{error}</div>
+      return <div className="text-destructive text-xs break-words">{error}</div>
     }
 
     return null
@@ -100,7 +100,7 @@ const FieldArrayData = ({
                       {values.credentialData.length > 1 && (
                         <div
                           key={index}
-                          className="flex justify-end text-destructive sm:w-2/12"
+                          className="text-destructive flex justify-end sm:w-2/12"
                         >
                           <Button
                             data-testid="deleteBtn"
@@ -140,7 +140,9 @@ const FieldArrayData = ({
                                     <div className="word-break-word flex items-center text-end">
                                       <Name attr={attr?.name} />
                                       {attr.isRequired && (
-                                        <span className="text-destructive">*</span>
+                                        <span className="text-destructive">
+                                          *
+                                        </span>
                                       )}{' '}
                                       :
                                     </div>

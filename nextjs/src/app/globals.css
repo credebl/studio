@@ -190,8 +190,8 @@ a[href] {
   color: var(--success-text);
 }
 
-.green-text{
-  color: #339b59
+.green-text {
+  color: #339b59;
 }
 
 .text-error {
@@ -244,18 +244,25 @@ ul.timelinestatic > li {
   height: 100px;
 }
 
-.badges-warning {
-  background-color: #ffedd5;
+.text-revocable-yes {
+  color: var(--color-revocable-yes, #1d4ed8);
 }
 
-.badges-success {
-  background-color: #dcfce7;
-}
+.text-revocable-no {
+  color: var(--color-revocable-no, #06b6d4);
+  .badges-warning {
+    background-color: #ffedd5;
+  }
 
-.badges-error {
-  background-color: #fee2e2;
-}
+  .badges-success {
+    background-color: #dcfce7;
+  }
 
-.badges-secondary {
-  background-color: #7dd3fc;
+  .badges-error {
+    background-color: #fee2e2;
+  }
+
+  .badges-secondary {
+    background-color: #7dd3fc;
+  }
 }

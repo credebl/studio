@@ -109,7 +109,7 @@ const ResetPassword = (): JSX.Element => {
         <div className="w-full">
           <div className="flex flex-col">
             <div className="flex flex-1 flex-col justify-center md:flex-row">
-              <div className=" bg-opacity-10 hidden w-full md:w-3/5 md:p-4 lg:block lg:p-4">
+              <div className="bg-opacity-10 hidden w-full md:w-3/5 md:p-4 lg:block lg:p-4">
                 <div className="flex items-center justify-center">
                   <img
                     className="max-h-100/10rem"

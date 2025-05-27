@@ -2,7 +2,7 @@ import { JSX } from 'react'
 
 export const GreenIndicator = (): JSX.Element => (
   <svg
-    className={'mr-2 h-4 w-4 green-text dark:text-white'}
+    className={'green-text mr-2 h-4 w-4 dark:text-white'}
     aria-hidden="true"
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
@@ -20,7 +20,7 @@ export const GreenIndicator = (): JSX.Element => (
 
 export const RedIndicator = (): JSX.Element => (
   <svg
-    className="mr-2 h-4 w-4 text-destructive dark:text-white"
+    className="text-destructive mr-2 h-4 w-4 dark:text-white"
     aria-hidden="true"
     xmlns="http://www.w3.org/2000/svg"
     fill="none"

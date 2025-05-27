@@ -147,6 +147,12 @@ export const labelRed = {
   color: 'red',
 }
 
+export const credDefHeader = [
+  { columnName: 'Name' },
+  { columnName: 'Credential definition Id' },
+  { columnName: 'Revocable' },
+  { columnName: 'Select' },
+]
 export const fieldCardStyles = {
   maxWidth: '100%',
   maxHeight: '100%',
