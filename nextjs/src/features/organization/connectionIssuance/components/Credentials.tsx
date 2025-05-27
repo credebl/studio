@@ -211,7 +211,7 @@ const Credentials = (): JSX.Element => {
         }
 
         return (
-          <a
+          <button
             onClick={() => {
               if (schemaId && !isW3C) {
                 router.push(`/organizations/schemas/${schemaId}`)
@@ -219,11 +219,10 @@ const Credentials = (): JSX.Element => {
                 router.push('/organizations/schemas')
               }
             }}
-            className="text-primary-600 cursor-pointer text-sm hover:underline"
-            role="button"
+            className="text-primary-600 cursor-pointer border-none bg-transparent p-0 text-sm hover:underline"
           >
             {schemaName}
-          </a>
+          </button>
         )
       },
     },

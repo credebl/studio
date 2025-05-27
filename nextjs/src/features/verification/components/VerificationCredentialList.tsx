@@ -318,37 +318,26 @@ const VerificationCredentialList = (): JSX.Element => {
         },
       ],
       cell: ({ row }): JSX.Element => {
-        const { state } = row.original
+        const state = row.original.state as ProofRequestState
+
+        let badgeClass = ''
+        if (state === ProofRequestState.requestSent) {
+          badgeClass = 'badges-warning'
+        } else if (state === ProofRequestState.done) {
+          badgeClass = 'badges-success'
+        } else if (state === ProofRequestState.abandoned) {
+          badgeClass = 'badges-error'
+        } else if (state === ProofRequestState.requestReceived) {
+          badgeClass = 'badges-primary'
+        } else if (state === ProofRequestState.presentationReceived) {
+          badgeClass = 'badges-secondary'
+        }
+
         return (
           <span
-            className={` ${
-              state === ProofRequestState.requestSent &&
-              'badges-warning text-foreground'
-            } ${
-              state === ProofRequestState.done &&
-              'badges-success text-foreground'
-            } ${
-              state === ProofRequestState.abandoned &&
-              'badges-error text-foreground'
-            } ${
-              state === ProofRequestState.requestReceived &&
-              'badges-primary text-foreground'
-            } ${
-              state === ProofRequestState.presentationReceived &&
-              'badges-secondary text-foreground'
-            } mr-0.5 flex w-fit items-center justify-center rounded-md px-0.5 px-2 py-0.5 text-xs font-medium`}
+            className={`${badgeClass} text-foreground mr-0.5 flex w-fit items-center justify-center rounded-md px-0.5 px-2 text-xs font-medium`}
           >
-            {state === ProofRequestState.requestSent
-              ? ProofRequestStateUserText.requestSent
-              : state === ProofRequestState.done
-                ? ProofRequestStateUserText.done
-                : state === ProofRequestState.abandoned
-                  ? ProofRequestStateUserText.abandoned
-                  : state === ProofRequestState.requestReceived
-                    ? ProofRequestStateUserText.requestReceived
-                    : state === ProofRequestState.presentationReceived
-                      ? ProofRequestStateUserText.requestReceived
-                      : ProofRequestStateUserText.requestReceived}
+            {ProofRequestStateUserText[state] ?? state}
           </span>
         )
       },
