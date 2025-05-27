@@ -42,3 +42,12 @@ export enum ConnectionApiSortFields {
   THEIR_LABEL = 'theirLabel',
   CONNECTIONID = 'connectionId',
 }
+export enum ConnectionState {
+  completed = 'completed',
+  abandoned = 'abandoned',
+}
+
+export const ConnectionStateUserText: Record<ConnectionState, string> = {
+  [ConnectionState.completed]: 'Completed',
+  [ConnectionState.abandoned]: 'Abandoned',
+}

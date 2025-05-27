@@ -1,13 +1,15 @@
-import { Cross2Icon } from '@radix-ui/react-icons'
-import { Table } from '@tanstack/react-table'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { DataTableViewOptions } from './data-table-view-options'
-import { DataTableFacetedFilter } from './data-table-faceted-filter'
 import { useEffect, useState } from 'react'
+
+import { Button } from '@/components/ui/button'
+import { Cross2Icon } from '@radix-ui/react-icons'
+import { DataTableFacetedFilter } from './data-table-faceted-filter'
+import { DataTableViewOptions } from './data-table-view-options'
+import { Input } from '@/components/ui/input'
+import { Table } from '@tanstack/react-table'
 
 interface TableFilterOptions {
   name: string
+  placeHolder: string
   options: {
     label: string
     value: string
@@ -19,12 +21,14 @@ interface DataTableToolbarProps<TData> {
   table: Table<TData>
   tableFilterOptions?: TableFilterOptions[]
   onSearchTermChange: (term: string) => void
+  searchPlaceholder?: string
 }
 
 export function DataTableToolbar<TData>({
   table,
   tableFilterOptions,
   onSearchTermChange,
+  searchPlaceholder,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0
 
@@ -46,12 +50,12 @@ export function DataTableToolbar<TData>({
     <div className="flex items-center justify-between">
       <div className="flex flex-1 flex-col-reverse items-start gap-y-2 sm:flex-row sm:items-center sm:space-x-2">
         <Input
-          placeholder="Filter data..."
+          placeholder={searchPlaceholder}
           value={localValue}
           onChange={(e) => {
             setLocalValue(e.target.value)
           }}
-          className="h-8 w-[150px] lg:w-[250px]"
+          className="h-8 w-[250px] lg:w-[350px]"
         />
         <div className="flex gap-x-2">
           {tableFilterOptions ? (

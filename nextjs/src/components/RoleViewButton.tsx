@@ -7,7 +7,7 @@ import { useAppSelector } from '@/lib/hooks'
 interface RoleViewButtonProps {
   title?: string
   buttonTitle?: string
-  svgComponent?: ReactElement
+  svgComponent?: ReactElement | JSX.Element
   onClickEvent?: () => void
   feature: string
   isOutline?: boolean
