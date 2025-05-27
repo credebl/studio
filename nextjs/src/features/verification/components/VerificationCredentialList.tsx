@@ -13,10 +13,6 @@ import {
 } from '@/components/ui/generic-table-component/columns'
 import { JSX, useEffect, useState } from 'react'
 import {
-  ProofRequestState,
-  ProofRequestStateUserText,
-} from '@/features/common/enum'
-import {
   getVerificationList,
   getVerifiedProofDetails,
   verifyPresentation,
@@ -31,6 +27,7 @@ import { EmptyListMessage } from '@/components/EmptyListComponent'
 import { Features } from '@/common/enums'
 import PageContainer from '@/components/layout/page-container'
 import ProofRequest from './ProofRequestPopup'
+import { ProofRequestState } from '@/features/common/enum'
 import { RequestProof } from '../type/interface'
 import RoleViewButton from '@/components/RoleViewButton'
 import { apiStatusCodes } from '@/config/CommonConstant'
@@ -303,26 +300,42 @@ const VerificationCredentialList = (): JSX.Element => {
         },
       ],
       cell: ({ row }): JSX.Element => {
-        const state = row.original.state as ProofRequestState
+        const state = row.original.state as string
 
         let badgeClass = ''
-        if (state === ProofRequestState.requestSent) {
-          badgeClass = 'badges-warning'
-        } else if (state === ProofRequestState.done) {
-          badgeClass = 'badges-success'
-        } else if (state === ProofRequestState.abandoned) {
-          badgeClass = 'badges-error'
-        } else if (state === ProofRequestState.requestReceived) {
-          badgeClass = 'badges-primary'
-        } else if (state === ProofRequestState.presentationReceived) {
-          badgeClass = 'badges-secondary'
+        let userText = state
+
+        switch (state) {
+          case 'request-sent':
+            badgeClass = 'badges-warning'
+            userText = 'Requested'
+            break
+          case 'request-received':
+            badgeClass = 'badges-primary'
+            userText = 'Received'
+            break
+          case 'done':
+            badgeClass = 'badges-success'
+            userText = 'Verified'
+            break
+          case 'abandoned':
+            badgeClass = 'badges-error'
+            userText = 'Declined'
+            break
+          case 'presentation-received':
+            badgeClass = 'badges-secondary'
+            userText = 'Presentation Received'
+            break
+          default:
+            badgeClass = ''
+            userText = state
         }
 
         return (
           <span
             className={`${badgeClass} text-foreground mr-0.5 flex w-fit items-center justify-center rounded-md px-0.5 px-2 text-xs font-medium`}
           >
-            {ProofRequestStateUserText[state] ?? state}
+            {userText}
           </span>
         )
       },

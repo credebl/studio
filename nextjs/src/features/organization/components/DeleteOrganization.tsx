@@ -25,6 +25,7 @@ import type { AxiosResponse } from 'axios'
 import { DeleteOrganizationCard } from './DeleteOrganizationCard'
 import { IOrganisation } from './interfaces/organization'
 import { Loader2 } from 'lucide-react'
+import PageContainer from '@/components/layout/page-container'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { deleteConnectionRecords } from '@/app/api/connection'
 import { getOrganizationById } from '@/app/api/organization'
@@ -321,73 +322,75 @@ export default function DeleteOrganizationPage(): React.JSX.Element {
   ]
 
   return (
-    <div className="px-4 pt-2">
-      <h1 className="mt-2 mr-auto mb-4 ml-1 text-xl font-semibold sm:text-2xl">
-        Delete Organization
-      </h1>
+    <PageContainer>
+      <div className="px-4 pt-2">
+        <h1 className="mt-2 mr-auto mb-4 ml-1 text-xl font-semibold sm:text-2xl">
+          Delete Organization
+        </h1>
 
-      {error && (
-        <Alert variant="destructive" className="mb-4">
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
+        {error && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
 
-      {organizationData && (
-        <div className="space-y-4">
-          {deleteCardData.map((card) => (
-            <DeleteOrganizationCard
-              key={card.title}
-              title={card.title}
-              description={card.description}
-              count={card.count}
-              isDisabled={card.isDisabled}
-              onDeleteClick={() => {
-                setShowPopup(true)
-                setDeleteAction(() => card.deleteFunc)
-                setConfirmMessage(card.confirmMessage)
-                setDescription(card.description)
-              }}
-            />
-          ))}
+        {organizationData && (
+          <div className="space-y-4">
+            {deleteCardData.map((card) => (
+              <DeleteOrganizationCard
+                key={card.title}
+                title={card.title}
+                description={card.description}
+                count={card.count}
+                isDisabled={card.isDisabled}
+                onDeleteClick={() => {
+                  setShowPopup(true)
+                  setDeleteAction(() => card.deleteFunc)
+                  setConfirmMessage(card.confirmMessage)
+                  setDescription(card.description)
+                }}
+              />
+            ))}
 
-          <AlertDialog open={showPopup} onOpenChange={setShowPopup}>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle className="text-xl">
-                  Confirmation
-                </AlertDialogTitle>
-                <AlertDialogDescription asChild>
-                  <div className="space-y-2">
-                    {confirmMessage}
-                    {description && <div className="">{description}</div>}
-                  </div>
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel disabled={deleteLoading}>
-                  No, cancel
-                </AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() =>
-                    deleteHandler(deleteAction as () => Promise<void>)
-                  }
-                  disabled={deleteLoading}
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                >
-                  {deleteLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      <span>Processing...</span>
-                    </>
-                  ) : (
-                    'Yes, delete'
-                  )}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
-      )}
-    </div>
+            <AlertDialog open={showPopup} onOpenChange={setShowPopup}>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="text-xl">
+                    Confirmation
+                  </AlertDialogTitle>
+                  <AlertDialogDescription asChild>
+                    <div className="space-y-2">
+                      {confirmMessage}
+                      {description && <div className="">{description}</div>}
+                    </div>
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel disabled={deleteLoading}>
+                    No, cancel
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() =>
+                      deleteHandler(deleteAction as () => Promise<void>)
+                    }
+                    disabled={deleteLoading}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    {deleteLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <span>Processing...</span>
+                      </>
+                    ) : (
+                      'Yes, delete'
+                    )}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        )}
+      </div>
+    </PageContainer>
   )
 }
