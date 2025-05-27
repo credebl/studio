@@ -64,7 +64,7 @@ const VerificationCredentialList = (): JSX.Element => {
   const [userRoles, setUserRoles] = useState<string[]>([])
 
   // Consolidated pagination state
-  const [pagination, setPagination] = useState<PaginationState>({
+  const [proofPagination, setProofPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
     pageCount: 1,
@@ -124,18 +124,18 @@ const VerificationCredentialList = (): JSX.Element => {
         return
       }
       const response = await getVerificationList(orgId, {
-        itemPerPage: pagination.pageSize,
-        page: pagination.pageIndex + 1,
-        search: pagination.searchTerm,
-        sortBy: pagination.sortBy,
-        sortingOrder: pagination.sortOrder,
+        itemPerPage: proofPagination.pageSize,
+        page: proofPagination.pageIndex + 1,
+        search: proofPagination.searchTerm,
+        sortBy: proofPagination.sortBy,
+        sortingOrder: proofPagination.sortOrder,
       })
 
       const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setVerificationList(data?.data?.data ?? [])
-        setPagination((prev) => ({
+        setProofPagination((prev) => ({
           ...prev,
           pageCount: data?.data.lastPage ?? 1,
         }))
@@ -143,8 +143,7 @@ const VerificationCredentialList = (): JSX.Element => {
         setVerificationList([])
       }
     } catch (error) {
-      setVerificationList([])
-      setError('An error occurred while fetching the verification list.')
+      setError(error as string)
     } finally {
       setLoading(false)
     }
@@ -202,16 +201,16 @@ const VerificationCredentialList = (): JSX.Element => {
     }
   }, [
     orgId,
-    pagination.pageIndex,
-    pagination.pageSize,
-    pagination.sortBy,
-    pagination.searchTerm,
-    pagination.sortOrder,
+    proofPagination.pageIndex,
+    proofPagination.pageSize,
+    proofPagination.sortBy,
+    proofPagination.searchTerm,
+    proofPagination.sortOrder,
   ])
 
   useEffect(() => {
     if (orgId) {
-      setPagination({
+      setProofPagination({
         pageIndex: 0,
         pageSize: 10,
         pageCount: 1,
@@ -239,7 +238,7 @@ const VerificationCredentialList = (): JSX.Element => {
         'hide',
         {
           sortCallBack: async (order): Promise<void> => {
-            setPagination((prev) => ({
+            setProofPagination((prev) => ({
               ...prev,
               sortBy: 'presentationId',
               sortOrder: order,
@@ -259,7 +258,7 @@ const VerificationCredentialList = (): JSX.Element => {
       columnFunction: [
         {
           sortCallBack: async (order): Promise<void> => {
-            setPagination((prev) => ({
+            setProofPagination((prev) => ({
               ...prev,
               sortBy: 'connectionId',
               sortOrder: order,
@@ -278,7 +277,7 @@ const VerificationCredentialList = (): JSX.Element => {
       columnFunction: [
         {
           sortCallBack: async (order): Promise<void> => {
-            setPagination((prev) => ({
+            setProofPagination((prev) => ({
               ...prev,
               sortBy: ConnectionApiSortFields.CREATE_DATE_TIME,
               sortOrder: order,
@@ -295,7 +294,7 @@ const VerificationCredentialList = (): JSX.Element => {
       columnFunction: [
         {
           sortCallBack: async (order): Promise<void> => {
-            setPagination((prev) => ({
+            setProofPagination((prev) => ({
               ...prev,
               sortBy: 'state',
               sortOrder: order,
@@ -419,21 +418,21 @@ const VerificationCredentialList = (): JSX.Element => {
             data={verificationList}
             columns={column}
             index={'presentationId'}
-            pageIndex={pagination.pageIndex}
-            pageSize={pagination.pageSize}
-            pageCount={pagination.pageCount}
+            pageIndex={proofPagination.pageIndex}
+            pageSize={proofPagination.pageSize}
+            pageCount={proofPagination.pageCount}
             onPageChange={(index) =>
-              setPagination((prev) => ({ ...prev, pageIndex: index }))
+              setProofPagination((prev) => ({ ...prev, pageIndex: index }))
             }
             onPageSizeChange={(size) => {
-              setPagination((prev) => ({
+              setProofPagination((prev) => ({
                 ...prev,
                 pageSize: size,
                 pageIndex: 0,
               }))
             }}
             onSearchTerm={(term) =>
-              setPagination((prev) => ({ ...prev, searchTerm: term }))
+              setProofPagination((prev) => ({ ...prev, searchTerm: term }))
             }
           />
         </div>
