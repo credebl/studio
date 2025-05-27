@@ -13,6 +13,10 @@ import {
 } from '@/components/ui/generic-table-component/columns'
 import { JSX, useEffect, useState } from 'react'
 import {
+  ProofRequestState,
+  ProofRequestStateUserText,
+} from '@/features/common/enum'
+import {
   getVerificationList,
   getVerifiedProofDetails,
   verifyPresentation,
@@ -27,7 +31,6 @@ import { EmptyListMessage } from '@/components/EmptyListComponent'
 import { Features } from '@/common/enums'
 import PageContainer from '@/components/layout/page-container'
 import ProofRequest from './ProofRequestPopup'
-import { ProofRequestState } from '@/features/common/enum'
 import { RequestProof } from '../type/interface'
 import RoleViewButton from '@/components/RoleViewButton'
 import { apiStatusCodes } from '@/config/CommonConstant'
@@ -313,23 +316,23 @@ const VerificationCredentialList = (): JSX.Element => {
         switch (state) {
           case ProofRequestState.requestSent:
             badgeClass = 'badges-warning'
-            userText = 'Requested'
+            userText = ProofRequestStateUserText.requestSent
             break
           case ProofRequestState.requestReceived:
             badgeClass = 'badges-primary'
-            userText = 'Received'
+            userText = ProofRequestStateUserText.requestReceived
             break
           case ProofRequestState.done:
             badgeClass = 'badges-success'
-            userText = 'Verified'
+            userText = ProofRequestStateUserText.done
             break
           case ProofRequestState.abandoned:
             badgeClass = 'badges-error'
-            userText = 'Declined'
+            userText = ProofRequestStateUserText.abandoned
             break
           case ProofRequestState.presentationReceived:
             badgeClass = 'badges-secondary'
-            userText = 'Presentation Received'
+            userText = ProofRequestStateUserText.presentationReceived
             break
           default:
             badgeClass = ''
