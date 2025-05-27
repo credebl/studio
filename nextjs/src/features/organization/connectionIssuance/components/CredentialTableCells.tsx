@@ -64,32 +64,40 @@ export const StatusCellForCredential = ({
   state,
 }: {
   state: string
-}): React.JSX.Element => (
-  <span
-    className={`${
-      state === IssueCredential.offerSent
-        ? 'badges-warning text-foreground'
-        : state === IssueCredential.done
-          ? 'badges-success text-foreground'
-          : state === IssueCredential.abandoned
-            ? 'badges-error text-foreground'
-            : state === IssueCredential.requestReceived
-              ? 'bg-primary text-foreground'
-              : state === IssueCredential.proposalReceived
-                ? 'status-proposal-received'
-                : 'badges-secondary text-foreground'
-    } mr-0.5 flex w-fit items-center justify-center rounded-md px-2 py-0.5 text-xs font-medium`}
-  >
-    {state === IssueCredential.offerSent
-      ? IssueCredentialUserText.offerSent
-      : state === IssueCredential.done
-        ? IssueCredentialUserText.done
-        : state === IssueCredential.abandoned
-          ? IssueCredentialUserText.abandoned
-          : state === IssueCredential.requestReceived
-            ? IssueCredentialUserText.received
-            : state === IssueCredential.proposalReceived
-              ? IssueCredentialUserText.proposalReceived
-              : IssueCredentialUserText.credIssued}
-  </span>
-)
+}): React.JSX.Element => {
+  let className = 'badges-secondary text-foreground'
+  let text = IssueCredentialUserText.credIssued
+
+  switch (state) {
+    case IssueCredential.offerSent:
+      className = 'badges-warning text-foreground'
+      text = IssueCredentialUserText.offerSent
+      break
+    case IssueCredential.done:
+      className = 'badges-success text-foreground'
+      text = IssueCredentialUserText.done
+      break
+    case IssueCredential.abandoned:
+      className = 'badges-error text-foreground'
+      text = IssueCredentialUserText.abandoned
+      break
+    case IssueCredential.requestReceived:
+      className = 'bg-primary text-foreground'
+      text = IssueCredentialUserText.received
+      break
+    case IssueCredential.proposalReceived:
+      className = 'status-proposal-received'
+      text = IssueCredentialUserText.proposalReceived
+      break
+    default:
+      console.warn(`Unknown credential state: ${state}`)
+  }
+
+  return (
+    <span
+      className={`${className} mr-0.5 flex w-fit items-center justify-center rounded-md px-2 py-0.5 text-xs font-medium`}
+    >
+      {text}
+    </span>
+  )
+}
