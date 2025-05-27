@@ -35,6 +35,11 @@ const validationSchema = Yup.object({
   email: Yup.string()
     .email('Email is invalid')
     .required('Email is required')
+    .matches(
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+      'Email must include a valid domain with a dot',
+    )
+    .required('Email is required')
     .trim(),
 })
 
@@ -169,11 +174,11 @@ export default function SendInvitationModal({
             validateAndAddEmail(values)
           }}
         >
-          {({ errors, touched }) => (
+          {({ errors, touched, isValid, dirty }) => (
             <Form className="space-y-2">
               <div className="flex items-end gap-4">
-                <div className="flex-1">
-                  <div>
+                <div className="flex flex-1 items-end gap-4">
+                  <div className="grow">
                     <label htmlFor="email" className="text-sm font-medium">
                       Email <span className="text-red-500">*</span>
                     </label>
@@ -186,17 +191,28 @@ export default function SendInvitationModal({
                         errors.email && touched.email ? 'border-red-500' : ''
                       }`}
                     />
-                    <ErrorMessage
-                      name="email"
-                      component="div"
-                      className="mt-1 text-sm text-red-500"
-                    />
                   </div>
+                  <Button type="submit" className="flex items-center gap-2">
+                    <PlusIcon className="h-5 w-5" />
+                    Add
+                  </Button>
                 </div>
-
-                <Button type="submit" className="flex items-center gap-2">
-                  <PlusIcon className="h-5 w-5" />
-                  Add
+              </div>
+              <ErrorMessage
+                name="email"
+                component="div"
+                className="mt-1 text-sm text-red-500"
+              />
+              <div className="flex justify-end">
+                <Button
+                  onClick={sendInvitations}
+                  disabled={
+                    (!dirty || !isValid || loading) ?? invitations.length === 0
+                  }
+                  className="flex items-center gap-2"
+                >
+                  <SendIcon className="h-5 w-5" />
+                  Send
                 </Button>
               </div>
             </Form>
@@ -234,17 +250,6 @@ export default function SendInvitationModal({
             </div>
           </div>
         )}
-
-        <div className="flex justify-end">
-          <Button
-            onClick={sendInvitations}
-            disabled={loading ?? invitations.length === 0}
-            className="flex items-center gap-2"
-          >
-            <SendIcon className="h-5 w-5" />
-            Send
-          </Button>
-        </div>
       </DialogContent>
     </Dialog>
   )
