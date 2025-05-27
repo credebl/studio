@@ -299,11 +299,16 @@ const VerificationCredentialList = (): JSX.Element => {
           },
         },
       ],
-      cell: ({ row }): JSX.Element => {
-        const state = row.original.state as string
+
+      cell: ({
+        row,
+      }: {
+        row: { original: { state: string } }
+      }): JSX.Element => {
+        const state = row.original.state as ProofRequestState
 
         let badgeClass = ''
-        let userText = state
+        let userText: string = state
 
         switch (state) {
           case 'request-sent':
