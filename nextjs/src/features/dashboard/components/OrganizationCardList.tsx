@@ -12,6 +12,7 @@ import React, { useEffect, useState } from 'react'
 import {
   Tooltip,
   TooltipContent,
+  TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 
@@ -23,6 +24,7 @@ import { Organisation } from '../type/organization'
 import { OrganizationRoles } from '@/common/enums'
 import { Plus } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
+import { ToolTipDataForOrganization } from './TooltipData'
 import { getOrganizations } from '@/app/api/organization'
 import { useRouter } from 'next/navigation'
 
@@ -103,7 +105,16 @@ const OrganizationCardList = (): React.JSX.Element => {
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div className="space-y-1">
           <div className="flex items-center gap-x-2">
-            <CardTitle>Organizations</CardTitle>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <CardTitle>Organizations</CardTitle>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" sideOffset={4}>
+                  <ToolTipDataForOrganization />
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <Badge>{orgList.length}</Badge>
           </div>
           <CardDescription>Manage your organizations</CardDescription>

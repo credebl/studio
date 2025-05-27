@@ -9,9 +9,16 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import React, { useEffect, useState } from 'react'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
+import { ToolTipDataForCredDef } from './TooltipData'
 import { getAllCredDef } from '@/app/api/schema'
 import { useAppSelector } from '@/lib/hooks'
 import { useRouter } from 'next/navigation'
@@ -63,7 +70,16 @@ const CredentialDefinition = (): React.JSX.Element => {
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div className="space-y-1">
           <div className="flex items-center gap-x-2">
-            <CardTitle>Credential Definitions</CardTitle>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <CardTitle>Credential Definitions</CardTitle>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" sideOffset={4}>
+                  <ToolTipDataForCredDef />
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <Badge>{credentialDefinition.length}</Badge>
           </div>
           <CardDescription>Manage your credential definitions</CardDescription>
