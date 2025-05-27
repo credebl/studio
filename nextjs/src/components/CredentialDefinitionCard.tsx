@@ -3,6 +3,7 @@ import { Card } from '../components/ui/card'
 import CopyDid from '@/config/CopyDid'
 import React from 'react'
 import { Roles } from '@/common/enums'
+import { pathRoutes } from '@/config/pathRoutes'
 import { useRouter } from 'next/navigation'
 interface IProps {
   credDeffName: string
@@ -22,7 +23,7 @@ const CredentialDefinitionCard = (props: IProps): React.ReactElement => {
       props?.userRoles?.includes(Roles.ADMIN) ||
       props?.userRoles?.includes(Roles.ISSUER)
     ) {
-      router.push('/organizations/credentials/issue')
+      router.push(pathRoutes.organizations.Issuance.issue)
     }
   }
 
