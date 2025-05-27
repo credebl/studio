@@ -1,5 +1,4 @@
 /* eslint-disable max-lines */
-/* eslint-disable camelcase */
 'use client'
 
 import * as Yup from 'yup'
@@ -151,6 +150,7 @@ const EmailVerification = (): JSX.Element => {
           protocolVersion: ProtocolVersion.V2,
           presentationDefinition: {
             id: '32f54163-7166-48f1-93d8-ff217bdb0653',
+            // eslint-disable-next-line camelcase
             input_descriptors: inputDescriptors,
           },
           comment: 'proof request',
@@ -199,7 +199,9 @@ const EmailVerification = (): JSX.Element => {
           }
           requestedAttributes[attributeName].restrictions.push(
             ...attributeGroups[key].map((credDefId) => ({
+              // eslint-disable-next-line camelcase
               schema_id: schemaId,
+              // eslint-disable-next-line camelcase
               cred_def_id: credDefId,
             })),
           )
@@ -214,11 +216,15 @@ const EmailVerification = (): JSX.Element => {
             ) {
               requestedPredicates[attr.attributeName] = {
                 name: attr.attributeName,
+                // eslint-disable-next-line camelcase
                 p_type: attr.selectedOption,
+                // eslint-disable-next-line camelcase
                 p_value: Number(attr.value),
                 restrictions: [
                   {
+                    // eslint-disable-next-line camelcase
                     schema_id: attr.schemaId,
+                    // eslint-disable-next-line camelcase
                     cred_def_id: attr.credDefId,
                   },
                 ],
@@ -232,7 +238,9 @@ const EmailVerification = (): JSX.Element => {
                   }
                 }
                 requestedAttributes[attr.attributeName].restrictions.push({
+                  // eslint-disable-next-line camelcase
                   schema_id: attr.schemaId,
+                  // eslint-disable-next-line camelcase
                   cred_def_id: attr.credDefId,
                 })
               }
@@ -244,7 +252,9 @@ const EmailVerification = (): JSX.Element => {
           indy: {
             name: 'proof-request',
             version: '1.0',
+            // eslint-disable-next-line camelcase
             requested_attributes: requestedAttributes,
+            // eslint-disable-next-line camelcase
             requested_predicates: requestedPredicates,
           },
         }
