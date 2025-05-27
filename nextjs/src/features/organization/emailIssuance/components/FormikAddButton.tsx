@@ -2,7 +2,7 @@ import { FieldArrayRenderProps, FormikProps } from 'formik'
 import { IAttributes, UserData } from '../type/EmailIssuance'
 import React, { JSX } from 'react'
 
-import { AddAnotherButton } from '@/config/svgs'
+import { AddAnotherButton } from '@/config/svgs/EmailIssuance'
 import { Button } from '@/components/ui/button'
 import { formikAddButtonStyles } from '@/config/CommonConstant'
 
