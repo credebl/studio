@@ -37,6 +37,7 @@ export default function Dashboard(): React.JSX.Element {
   )
   const [viewButton, setViewButton] = useState<boolean>(false)
   const [ecoMessage, setEcoMessage] = useState<string | null>('')
+  const [walletExists, setWalletExists] = useState(false)
 
   const orgId = useAppSelector((state) => state.organization.orgId)
   const [, setUserOrg] = useState(null)
@@ -136,8 +137,10 @@ export default function Dashboard(): React.JSX.Element {
         }
         if (orgAgentsList && orgAgentsList.length > 0) {
           setWalletData(orgAgentsList)
+          setWalletExists(true)
         } else {
           setWalletData([])
+          setWalletExists(false)
         }
       }
     } catch (error) {
@@ -231,7 +234,7 @@ export default function Dashboard(): React.JSX.Element {
 
         <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
           <OrganizationCardList />
-          <SchemasList />
+          <SchemasList walletExists={walletExists} />
         </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">

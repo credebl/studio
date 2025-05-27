@@ -109,7 +109,7 @@ const OrganizationCardList = (): React.JSX.Element => {
           <CardDescription>Manage your organizations</CardDescription>
         </div>
         <Button
-          onClick={() => route.push('/organizations')}
+          onClick={() => route.push('/organizations/create-organization')}
           className="text-primary-foreground bg-primary"
         >
           <Plus className="mr-2 h-4 w-4" /> New Organization

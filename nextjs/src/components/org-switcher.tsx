@@ -1,10 +1,11 @@
 'use client'
 
-import { Check, ChevronsUpDown } from 'lucide-react'
+import { Check, ChevronsUpDown, Plus } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import React, { useEffect } from 'react'
@@ -20,6 +21,7 @@ import { AxiosResponse } from 'axios'
 import Image from 'next/image'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { getOrganizationRoles } from '@/app/api/organization'
+import { useRouter } from 'next/navigation'
 
 interface Tenant {
   id: string
@@ -33,14 +35,15 @@ export function OrgSwitcher({
   onTenantSwitch,
 }: {
   tenants: Tenant[]
-  defaultTenant: Tenant
+  defaultTenant?: Tenant
   onTenantSwitch?: (tenantId: string) => void
 }): React.ReactElement {
   const [selectedTenant, setSelectedTenant] = React.useState<
     Tenant | undefined
-  >(defaultTenant ?? (tenants.length > 0 ? tenants[0] : undefined))
+  >(defaultTenant ?? tenants[0])
 
   const dispatch = useAppDispatch()
+  const router = useRouter()
 
   const selectedOrgId = useAppSelector((state) => state.organization.orgId)
 
@@ -112,27 +115,29 @@ export function OrgSwitcher({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground border-ring w-[200px] justify-start gap-2 border"
             >
-              <div className="bg-muted border-muted flex size-8 items-center justify-center overflow-hidden rounded-full border">
-                {selectedTenant?.logoUrl ? (
-                  <Image
-                    src={selectedTenant.logoUrl}
-                    alt={selectedTenant.name}
-                    width={32}
-                    height={32}
-                    className="object-cover"
-                  />
-                ) : (
-                  <span className="text-sm font-bold">
-                    {getInitials(selectedTenant?.name)}
-                  </span>
-                )}
-              </div>
+              {tenants.length > 0 && (
+                <div className="bg-muted border-muted flex size-8 items-center justify-center overflow-hidden rounded-full border">
+                  {selectedTenant?.logoUrl ? (
+                    <Image
+                      src={selectedTenant.logoUrl}
+                      alt={selectedTenant.name}
+                      width={32}
+                      height={32}
+                      className="object-cover"
+                    />
+                  ) : (
+                    <span className="text-sm font-bold">
+                      {getInitials(selectedTenant?.name)}
+                    </span>
+                  )}
+                </div>
+              )}
 
               <div className="flex max-w-[200px] flex-col gap-0.5 overflow-hidden leading-none font-semibold">
                 <span className="truncate">
-                  {selectedTenant?.name ??
-                    tenants.find((t) => t.id === selectedOrgId)?.name ??
-                    'Select Organization'}
+                  {tenants.length > 0
+                    ? (selectedTenant?.name ?? 'Select Organization')
+                    : 'Select Organization'}
                 </span>
               </div>
 
@@ -143,33 +148,53 @@ export function OrgSwitcher({
             className="w-[--radix-dropdown-menu-trigger-width]"
             align="start"
           >
-            {tenants.map((tenant) => (
-              <DropdownMenuItem
-                key={tenant.id}
-                onSelect={() => handleTenantSwitch(tenant)}
-                className="flex items-center gap-2"
-              >
-                <div className="bg-muted text-foreground flex size-6 items-center justify-center rounded-md">
-                  {tenant.logoUrl ? (
-                    <Image
-                      src={tenant.logoUrl}
-                      alt={tenant.name}
-                      width={24}
-                      height={24}
-                      className="rounded object-cover"
-                    />
-                  ) : (
-                    <span className="text-xs font-semibold">
-                      {getInitials(tenant.name)}
-                    </span>
+            {tenants.length > 0 ? (
+              tenants.map((tenant) => (
+                <DropdownMenuItem
+                  key={tenant.id}
+                  onSelect={() => handleTenantSwitch(tenant)}
+                  className="flex items-center gap-2"
+                >
+                  <div className="bg-muted text-foreground flex size-6 items-center justify-center rounded-md">
+                    {tenant.logoUrl ? (
+                      <Image
+                        src={tenant.logoUrl}
+                        alt={tenant.name}
+                        width={24}
+                        height={24}
+                        className="rounded object-cover"
+                      />
+                    ) : (
+                      <span className="text-xs font-semibold">
+                        {getInitials(tenant.name)}
+                      </span>
+                    )}
+                  </div>
+                  <span className="truncate">{tenant.name}</span>
+                  {tenant.id === currentTenant?.id && (
+                    <Check className="ml-auto" />
                   )}
-                </div>
-                <span className="truncate">{tenant.name}</span>
-                {tenant.id === currentTenant?.id && (
-                  <Check className="ml-auto" />
-                )}
-              </DropdownMenuItem>
-            ))}
+                </DropdownMenuItem>
+              ))
+            ) : (
+              <>
+                <DropdownMenuItem className="text-muted-foreground">
+                  No organization found
+                </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
+
+                <DropdownMenuItem
+                  onSelect={() =>
+                    router.push('/organizations/create-organization')
+                  }
+                  className="text-primary-foreground flex cursor-pointer items-center gap-2"
+                >
+                  <Plus size={16} />
+                  Create Organization
+                </DropdownMenuItem>
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
