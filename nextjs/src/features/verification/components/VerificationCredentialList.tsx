@@ -109,7 +109,7 @@ const VerificationCredentialList = (): JSX.Element => {
         setError(response as string)
       }
     } catch (error) {
-      setError('An error occurred while fetching proof details')
+      setError(error as string)
     } finally {
       setVerifyLoading(false)
     }
@@ -245,7 +245,7 @@ const VerificationCredentialList = (): JSX.Element => {
           },
         },
       ],
-      cell: ({ row }): JSX.Element => {
+      cell: ({ row }): React.JSX.Element => {
         const { presentationId } = row.original
         return <span>{presentationId || 'Not available'}</span>
       },
