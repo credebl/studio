@@ -36,8 +36,8 @@ const validationSchema = Yup.object({
     .email('Email is invalid')
     .required('Email is required')
     .matches(
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-      'Email must include a valid domain with a dot',
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+      'Email is invalid',
     )
     .required('Email is required')
     .trim(),
