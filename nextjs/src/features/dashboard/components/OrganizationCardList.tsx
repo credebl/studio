@@ -164,7 +164,9 @@ const OrganizationCardList = (): React.JSX.Element => {
                 >
                   <button
                     className="flex items-center gap-3 hover:cursor-pointer"
-                    onClick={() => route.push('/organizations/dashboard')}
+                    onClick={() =>
+                      route.push(`/organizations/dashboard/${org.id}`)
+                    }
                   >
                     {org.logoUrl ? (
                       <div className="border-border relative h-10 w-10 overflow-hidden rounded-full border">
@@ -297,7 +299,9 @@ const OrganizationCardList = (): React.JSX.Element => {
                               }
                               hasWallet
                                 ? route.push('/organizations/schemas/create')
-                                : route.push('/organizations/dashboard')
+                                : route.push(
+                                    `/organizations/dashboard/${org.id}`,
+                                  )
                             }}
                             disabled={!isAdmin}
                             className="rounded-md p-1"
@@ -337,7 +341,7 @@ const OrganizationCardList = (): React.JSX.Element => {
                               if (hasWallet) {
                                 route.push('/organizations/schemas')
                               } else {
-                                route.push('/organization/dashboard')
+                                route.push(`/organization/dashboard/${org.id}`)
                               }
                             }}
                             className="rounded-md p-1"
@@ -374,7 +378,7 @@ const OrganizationCardList = (): React.JSX.Element => {
                             if (hasWallet) {
                               route.push('/organizations/credentials')
                             } else {
-                              route.push('/organization/dashboard')
+                              route.push(`/organization/dashboard/${org.id}`)
                             }
                           }}
                         >
@@ -420,7 +424,7 @@ const OrganizationCardList = (): React.JSX.Element => {
                             if (hasWallet) {
                               route.push('/organizations/verification')
                             } else {
-                              route.push('/organization/dashboard')
+                              route.push(`/organization/dashboard/${org.id}`)
                             }
                           }}
                         >
