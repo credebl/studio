@@ -69,6 +69,7 @@ export enum ProofRequestStateUserText {
   requestReceived = 'Received',
   done = 'Verified',
   abandoned = 'Declined',
+  presentationReceived = 'presentationReceived',
 }
 
 export enum DidMethod {

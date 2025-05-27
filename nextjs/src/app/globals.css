@@ -6,23 +6,17 @@
 
 @import './theme.css';
 
-/* --card-gradient: linear-gradient(to top, #fef9c3, #ffffff);
---success: #c8f5d8;
-  --error: #f8b0b0;
-  --success-text: #339b59;
-  --error-text: #dc0425;
-  --done: #c2410c; */
-
 :root {
   --background: #ffffff;
   --foreground: #0f1419;
   --card: #f3f4f6;
   --card-foreground: #0f1419;
+  --card-gradient: linear-gradient(to top, #fef9c3, #ffffff);
   --popover: #ffffff;
   --popover-foreground: #0f1419;
   --primary: #f6d308;
   --primary-foreground: #012f7b;
-  --secondary: #0f1419;
+  --secondary: #012f7b;
   --secondary-foreground: #ffffff;
   --muted: #e5e5e6;
   --muted-foreground: #0f1419;
@@ -50,20 +44,19 @@
   --font-serif: Georgia, serif;
   --font-mono: Menlo, monospace;
   --radius: 0.375rem;
-  --shadow-2xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow-xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow-sm: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow-md: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 2px 4px -1px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow-lg: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 4px 6px -1px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow-xl: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 8px 10px -1px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow-2xl: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0);
-  --card-gradient: linear-gradient(to top, #fef9c3, #ffffff);
+  --shadow-2xs: 0px 2px 3px 0px hsl(217.377 98.3871% 24.3137% / 0.03);
+  --shadow-xs: 0px 2px 3px 0px hsl(217.377 98.3871% 24.3137% / 0.03);
+  --shadow-sm: 0px 2px 3px 0px hsl(217.377 98.3871% 24.3137% / 0.05),
+    0px 1px 2px -1px hsl(217.377 98.3871% 24.3137% / 0.05);
+  --shadow: 0px 2px 3px 0px hsl(217.377 98.3871% 24.3137% / 0.05),
+    0px 1px 2px -1px hsl(217.377 98.3871% 24.3137% / 0.05);
+  --shadow-md: 0px 2px 3px 0px hsl(217.377 98.3871% 24.3137% / 0.05),
+    0px 2px 4px -1px hsl(217.377 98.3871% 24.3137% / 0.05);
+  --shadow-lg: 0px 2px 3px 0px hsl(217.377 98.3871% 24.3137% / 0.05),
+    0px 4px 6px -1px hsl(217.377 98.3871% 24.3137% / 0.05);
+  --shadow-xl: 0px 2px 3px 0px hsl(217.377 98.3871% 24.3137% / 0.05),
+    0px 8px 10px -1px hsl(217.377 98.3871% 24.3137% / 0.05);
+  --shadow-2xl: 0px 2px 3px 0px hsl(217.377 98.3871% 24.3137% / 0.13);
   --success: #c8f5d8;
   --error: #f8b0b0;
   --success-text: #339b59;
@@ -108,19 +101,19 @@
   --font-serif: Georgia, serif;
   --font-mono: Menlo, monospace;
   --radius: 0.375rem;
-  --shadow-2xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow-xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow-sm: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow-md: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 2px 4px -1px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow-lg: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 4px 6px -1px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow-xl: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 8px 10px -1px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow-2xl: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0);
+  --shadow-2xs: 0px 2px 3px 0px hsl(202.8169 89.1213% 53.1373% / 0.03);
+  --shadow-xs: 0px 2px 3px 0px hsl(202.8169 89.1213% 53.1373% / 0.03);
+  --shadow-sm: 0px 2px 3px 0px hsl(202.8169 89.1213% 53.1373% / 0.05),
+    0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0.05);
+  --shadow: 0px 2px 3px 0px hsl(202.8169 89.1213% 53.1373% / 0.05),
+    0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0.05);
+  --shadow-md: 0px 2px 3px 0px hsl(202.8169 89.1213% 53.1373% / 0.05),
+    0px 2px 4px -1px hsl(202.8169 89.1213% 53.1373% / 0.05);
+  --shadow-lg: 0px 2px 3px 0px hsl(202.8169 89.1213% 53.1373% / 0.05),
+    0px 4px 6px -1px hsl(202.8169 89.1213% 53.1373% / 0.05);
+  --shadow-xl: 0px 2px 3px 0px hsl(202.8169 89.1213% 53.1373% / 0.05),
+    0px 8px 10px -1px hsl(202.8169 89.1213% 53.1373% / 0.05);
+  --shadow-2xl: 0px 2px 3px 0px hsl(202.8169 89.1213% 53.1373% / 0.13);
 }
 
 @theme inline {
@@ -249,4 +242,20 @@ ul.timelinestatic > li {
   margin-left: 64px;
   padding-left: 20px;
   height: 100px;
+}
+
+.badges-warning {
+  background-color: #ffedd5;
+}
+
+.badges-success {
+  background-color: #dcfce7;
+}
+
+.badges-error {
+  background-color: #fee2e2;
+}
+
+.badges-secondary {
+  background-color: #7dd3fc;
 }
