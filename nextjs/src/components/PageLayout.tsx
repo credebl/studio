@@ -1,8 +1,8 @@
 'use client'
 
 import React, { ReactNode } from 'react'
-
 import { SidebarInset, SidebarProvider } from './ui/sidebar'
+
 import AppSidebar from './layout/app-sidebar'
 import Header from './layout/header'
 import KBar from './kbar'
@@ -20,6 +20,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
     '/auth/sign-in',
     '/auth/sign-up',
     '/auth/verify-email-success',
+    '/reset-password',
   ]
   return (
     <>

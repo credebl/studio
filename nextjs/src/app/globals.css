@@ -197,6 +197,10 @@ a[href] {
   color: var(--success-text);
 }
 
+.green-text {
+  color: #339b59;
+}
+
 .text-error {
   color: var(--error-text);
 }
