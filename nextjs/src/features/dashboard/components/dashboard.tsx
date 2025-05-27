@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
+import { CreateWalletIcon } from '@/components/iconsSvg'
 import CredentialDefinition from './CredentialDefinition '
 import OrganizationCardList from './OrganizationCardList'
 import PageContainer from '@/components/layout/page-container'
@@ -213,19 +214,7 @@ export default function Dashboard(): React.JSX.Element {
                 </div>
                 <Button onClick={handleCreateWallet} className="min-w-[180px]">
                   Create Wallet
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    className="ml-2"
-                  >
-                    <path
-                      d="M9.99984 6L8.58984 7.41L13.1698 12L8.58984 16.59L9.99984 18L15.9998 12L9.99984 6Z"
-                      fill="currentColor"
-                    />
-                  </svg>
+                  <CreateWalletIcon />
                 </Button>
               </div>
             </div>

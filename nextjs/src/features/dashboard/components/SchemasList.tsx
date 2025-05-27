@@ -174,33 +174,6 @@ const SchemasList = ({
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  fill="none"
-                  viewBox="0 0 20 20"
-                  className="text-primary-700 ml-3"
-                >
-                  <path
-                    fill="currentColor"
-                    d="M9.168 14.167h1.667v-5H9.168v5Zm.833-6.667c.236 0 .434-.08.594-.24a.803.803 0 0 0 .24-.593.806.806 0 0 0-.24-.594.807.807 0 0 0-.594-.24.806.806 0 0 0-.593.24.806.806 0 0 0-.24.594c0 .236.08.434.24.594.16.16.357.24.593.24Zm0 10.834a8.115 8.115 0 0 1-3.25-.657 8.415 8.415 0 0 1-2.646-1.78 8.416 8.416 0 0 1-1.78-2.647A8.115 8.115 0 0 1 1.667 10c0-1.152.219-2.236.656-3.25a8.416 8.416 0 0 1 1.781-2.646 8.415 8.415 0 0 1 2.646-1.78A8.115 8.115 0 0 1 10 1.667c1.153 0 2.236.219 3.25.656a8.415 8.415 0 0 1 2.646 1.781 8.416 8.416 0 0 1 1.781 2.646 8.115 8.115 0 0 1 .657 3.25 8.115 8.115 0 0 1-.657 3.25 8.416 8.416 0 0 1-1.78 2.646 8.415 8.415 0 0 1-2.647 1.781 8.115 8.115 0 0 1-3.25.657Zm0-1.667c1.861 0 3.438-.646 4.73-1.938 1.291-1.291 1.937-2.868 1.937-4.729 0-1.86-.646-3.437-1.938-4.729-1.291-1.292-2.868-1.937-4.729-1.937-1.86 0-3.437.645-4.729 1.937-1.292 1.292-1.937 2.868-1.937 4.73 0 1.86.645 3.437 1.937 4.729 1.292 1.291 2.868 1.937 4.73 1.937Z"
-                  />
-                </svg>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                <div className="text-left text-xs">
-                  <p className="text-base">What is Schema?</p> Schema is a
-                  machine-readable semantic <br /> structure, a predefined data
-                  template <br /> that provides a standard format for the <br />{' '}
-                  digital credential contents. Schemas <br /> define attributes
-                  that are used in one <br /> or more Credential Definitions.{' '}
-                  <br /> Schemas are stored on the ledger.{' '}
-                </div>
-              </TooltipContent>
-            </Tooltip>
             <Badge>{schemas.length}</Badge>
           </div>
 
