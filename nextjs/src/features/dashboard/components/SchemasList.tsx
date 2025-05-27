@@ -10,12 +10,19 @@ import {
 } from '@/components/ui/card'
 import { DidMethod, SchemaTypeValue } from '@/common/enums'
 import React, { useEffect, useState } from 'react'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Plus } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
+import { ToolTipDataForSchema } from './TooltipData'
 import { dateConversion } from '@/utils/DateConversion'
 import { getAllSchemasByOrgId } from '@/app/api/schema'
 import { useAppSelector } from '@/lib/hooks'
@@ -144,7 +151,16 @@ const SchemasList = (): React.JSX.Element => {
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <CardTitle className="text-xl">Schemas</CardTitle>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <CardTitle className="text-xl">Schemas</CardTitle>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" sideOffset={4}>
+                  <ToolTipDataForSchema />
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <Badge>{schemas.length}</Badge>
           </div>
           <Button onClick={() => router.push('/organizations/schemas/create')}>

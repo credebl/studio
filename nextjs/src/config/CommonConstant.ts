@@ -105,6 +105,7 @@ export const sessionExcludedPaths = [
   '/auth/sign-in',
   '/auth/sign-up',
   '/auth/verify-email-success',
+  '/reset-password',
 ]
 
 const imageBasePath = '/images'
@@ -152,3 +153,8 @@ export const credDefHeader = [
   { columnName: 'Revocable' },
   { columnName: 'Select' },
 ]
+export const fieldCardStyles = {
+  maxWidth: '100%',
+  maxHeight: '100%',
+  overflow: 'auto',
+}

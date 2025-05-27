@@ -1,3 +1,10 @@
+import * as Yup from 'yup'
+
+import { Dispatch, SetStateAction } from 'react'
+import { FormikErrors, FormikTouched } from 'formik'
+
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
+
 export interface SchemaState {
   schemaId: string
   issuerDid: string
@@ -43,13 +50,15 @@ export interface IUploadMessage {
 }
 
 export interface IssuedCredential {
-  metadata: { [x: string]: { schemaId: string } }
   connectionId: string
   createDateTime: string
+  createdBy: string
   state: string
   isRevocable: boolean
+  credentialExchangeId: string
   schemaId: string
   schemaName: string
+  orgId: string
 }
 
 export interface IProps {
@@ -195,4 +204,60 @@ export type Option = {
   schemaVersion: string
   schemaId: string
   credentialId: string
+}
+
+export type IHandleSubmit = {
+  values: IssuanceFormPayload
+  w3cSchema: boolean
+  schemaDetails: SchemaDetails
+  orgDid: string
+  schemaType: string | undefined
+  setIssuanceLoader: (flag: boolean) => void
+  orgId: string
+  setSuccess: Dispatch<SetStateAction<string | null>>
+  router: AppRouterInstance
+  setFailure: (msg: string | null) => void
+}
+
+export interface IFormikValues {
+  userName?: string
+  credentialData: ICredentialdata[]
+  credentialDefinitionId?: string
+  orgId: string
+}
+
+export interface IFieldArrayProps {
+  values: IFormikValues
+  w3cSchema: boolean
+  issuanceFormPayload: IssuanceFormPayload | W3cIssuanceFormPayload
+  errors: FormikErrors<{
+    userName?: string
+    credentialData: ICredentialdata[]
+    credentialDefinitionId?: string
+    orgId: string
+  }>
+  touched: FormikTouched<{
+    userName?: string
+    credentialData: ICredentialdata[]
+    credentialDefinitionId?: string
+    orgId: string
+  }>
+  validationSchema: Yup.ObjectSchema<
+    {
+      credentialData:
+        | {
+            attributes?:
+              | {
+                  value?: string | undefined
+                }[]
+              | undefined
+          }[]
+        | undefined
+    },
+    Yup.AnyObject,
+    {
+      credentialData: ''
+    },
+    ''
+  >
 }

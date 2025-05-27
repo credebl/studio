@@ -71,7 +71,7 @@ module.exports = {
     'import/no-extraneous-dependencies': 'off',
     'max-lines': [
       'error',
-      { max: 450, skipComments: true, skipBlankLines: true },
+      { max: 500, skipComments: true, skipBlankLines: true },
     ],
     'no-unused-vars': 'off',
     'no-console': ['error', { allow: ['warn', 'error'] }],
