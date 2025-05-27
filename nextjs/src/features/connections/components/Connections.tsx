@@ -203,8 +203,8 @@ export default function Connections(): JSX.Element {
           <span
             className={` ${
               state === ConnectionState.completed &&
-              'bg-success text-foreground'
-            } mr-0.5 flex w-fit items-center justify-center rounded-md border px-0.5 px-2 py-0.5 text-xs font-medium`}
+              'badges-success text-foreground'
+            } mr-0.5 flex w-fit items-center justify-center rounded-md px-0.5 px-2 py-0.5 text-xs font-medium`}
           >
             {state === ConnectionState.completed &&
               ConnectionStateUserText.completed}

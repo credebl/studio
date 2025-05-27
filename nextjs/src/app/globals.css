@@ -239,3 +239,18 @@ ul.timelinestatic > li {
 	height: 100px;
 }
 
+.badges-warning {
+  background-color: #ffedd5;
+}
+
+.badges-success {
+  background-color: #dcfce7;
+}
+
+.badges-error {
+  background-color: #fee2e2;
+}
+
+.badges-secondary {
+  background-color: #7dd3fc;
+}

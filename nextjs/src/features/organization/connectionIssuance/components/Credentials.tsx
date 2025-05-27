@@ -211,7 +211,7 @@ const Credentials = (): JSX.Element => {
         }
 
         return (
-          <span
+          <a
             onClick={() => {
               if (schemaId && !isW3C) {
                 router.push(`/organization/schema/${schemaId}`)
@@ -222,7 +222,7 @@ const Credentials = (): JSX.Element => {
             className="text-primary-600 cursor-pointer text-sm hover:underline"
           >
             {schemaName}
-          </span>
+          </a>
         )
       },
     },
@@ -276,16 +276,16 @@ const Credentials = (): JSX.Element => {
           <span
             className={`${
               state === IssueCredential.offerSent
-                ? 'status-offer-sent'
+                ? 'badges-warning text-foreground'
                 : state === IssueCredential.done
-                  ? 'status-done'
+                  ? 'badges-success text-foreground'
                   : state === IssueCredential.abandoned
-                    ? 'status-abandoned'
+                    ? 'badges-error text-foreground'
                     : state === IssueCredential.requestReceived
-                      ? 'status-request-received'
+                      ? 'bg-primary text-foreground'
                       : state === IssueCredential.proposalReceived
                         ? 'status-proposal-received'
-                        : 'status-credential-issued'
+                        : 'badges-secondary text-foreground'
             } mr-0.5 flex w-fit items-center justify-center rounded-md px-2 py-0.5 text-xs font-medium`}
           >
             {state === IssueCredential.offerSent

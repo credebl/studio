@@ -323,20 +323,20 @@ const VerificationCredentialList = (): JSX.Element => {
           <span
             className={` ${
               state === ProofRequestState.requestSent &&
-              'border border-orange-100 bg-orange-100 text-orange-800 dark:border-orange-300 dark:bg-gray-700 dark:text-orange-300'
+              'badges-warning text-foreground'
             } ${
               state === ProofRequestState.done &&
-              'border border-green-100 bg-green-100 text-green-800 dark:border-green-500 dark:bg-gray-700 dark:text-green-400'
+              'badges-success text-foreground'
             } ${
               state === ProofRequestState.abandoned &&
-              'border border-red-100 bg-red-100 text-red-800 dark:border-red-400 dark:bg-gray-700 dark:text-red-400'
+              'badges-error text-foreground'
             } ${
               state === ProofRequestState.requestReceived &&
-              'bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300 mr-2 rounded px-2.5 py-0.5 text-sm font-medium'
+              'badges-primary text-foreground'
             } ${
               state === ProofRequestState.presentationReceived &&
-              'text-primary-900 border border-sky-100 bg-sky-300 dark:border-sky-700 dark:bg-gray-700 dark:text-sky-500'
-            } mr-0.5 flex w-fit items-center justify-center rounded-md border px-0.5 px-2 py-0.5 text-xs font-medium`}
+              'badges-secondary text-foreground'
+            } mr-0.5 flex w-fit items-center justify-center rounded-md px-0.5 px-2 py-0.5 text-xs font-medium`}
           >
             {state === ProofRequestState.requestSent
               ? ProofRequestStateUserText.requestSent
