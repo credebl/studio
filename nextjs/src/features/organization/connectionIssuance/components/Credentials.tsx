@@ -214,12 +214,13 @@ const Credentials = (): JSX.Element => {
           <a
             onClick={() => {
               if (schemaId && !isW3C) {
-                router.push(`/organization/schema/${schemaId}`)
+                router.push(`/organizations/schemas/${schemaId}`)
               } else {
                 router.push('/organizations/schemas')
               }
             }}
             className="text-primary-600 cursor-pointer text-sm hover:underline"
+            role="button"
           >
             {schemaName}
           </a>
@@ -229,7 +230,7 @@ const Credentials = (): JSX.Element => {
 
     {
       id: 'createDateTime',
-      title: 'Created On',
+      title: 'Issued On',
       accessorKey: 'createDateTime',
       columnFunction: [
         {

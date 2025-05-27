@@ -276,7 +276,7 @@ const VerificationCredentialList = (): JSX.Element => {
     },
     {
       id: 'createDateTime',
-      title: 'Created On',
+      title: 'Requested On',
       accessorKey: 'createDateTime',
       columnFunction: [
         {
