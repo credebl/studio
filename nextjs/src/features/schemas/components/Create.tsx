@@ -277,7 +277,7 @@ const CreateSchema = (): React.JSX.Element => {
       <h1 className="text-foreground ml-10 text-xl font-semibold">
         Create Schema
       </h1>
-      <Card className="m-0 md:m-6" id="createSchemaCard">
+      <Card className="m-0 px-4 py-8 md:m-6" id="createSchemaCard">
         <div>
           <Formik
             initialValues={formData}
@@ -503,7 +503,7 @@ const CreateSchema = (): React.JSX.Element => {
                                         {filteredOptions.map((opt) => (
                                           <option
                                             key={opt.value}
-                                            className="py-2"
+                                            className="py-2 bg-popover"
                                             value={opt.value}
                                           >
                                             {opt.label}
@@ -638,15 +638,15 @@ const CreateSchema = (): React.JSX.Element => {
                                             values.attribute.length === 1
                                               ? 'hidden'
                                               : 'block'
-                                          } flex justify-end focus:ring-0`}
+                                          } flex justify-end bg-transparent p-0 shadow-none hover:bg-transparent focus:ring-0 mt-2`}
                                         >
                                           <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             fill="none"
                                             viewBox="0 0 24 24"
                                             strokeWidth={1.5}
-                                            stroke="currentColor"
-                                            className="h-6 w-6"
+                                            stroke="red"
+                                            className="!h-6 !w-6"
                                           >
                                             <path
                                               strokeLinecap="round"

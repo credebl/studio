@@ -65,7 +65,7 @@ const CredentialDefinitionCard = (props: IProps): React.ReactElement => {
                 viewBox="0 0 23 23"
               >
                 <path
-                  fill="#1F4EAD"
+                  fill="currentColor"
                   fillRule="evenodd"
                   d="M21 21H2V2h9.5V0H2.556A2.563 2.563 0 0 0 0 2.556v17.888A2.563 2.563 0 0 0 2.556 23h17.888A2.563 2.563 0 0 0 23 20.444V11.5h-2V21ZM14.056 0v2H19.5l-13 13 1 1.5L21 3v5.944h2V0h-8.944Z"
                   clipRule="evenodd"
