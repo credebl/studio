@@ -169,3 +169,7 @@ export type LocalOrgs = {
   theirLabel: string
   createDateTime: string
 }
+export interface NumberAttribute {
+  selectedOption: string | null
+  value: string | number | null
+}

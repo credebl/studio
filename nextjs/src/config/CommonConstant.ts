@@ -145,3 +145,10 @@ export const fieldArrayLabelStyles = {
 export const labelRed = {
   color: 'red',
 }
+
+export const credDefHeader = [
+  { columnName: 'Name' },
+  { columnName: 'Credential definition Id' },
+  { columnName: 'Revocable' },
+  { columnName: 'Select' },
+]
