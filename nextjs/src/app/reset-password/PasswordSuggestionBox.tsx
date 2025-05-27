@@ -1,5 +1,6 @@
 'use client'
 
+import { GreenIndicator, RedIndicator } from '@/config/svgs/PasswordSuggestion'
 import React, { JSX, useEffect, useState } from 'react'
 
 import { allowedPasswordChars } from '../../config/CommonConstant'
@@ -82,217 +83,51 @@ const PasswordSuggestionBox = ({
                     <div
                       className={
                         minChar
-                          ? 'flex items-center p-0.5 text-green-500'
-                          : 'flex items-center p-0.5 text-red-500'
+                          ? 'green-text flex items-center p-0.5'
+                          : 'text-destructive flex items-center p-0.5'
                       }
                     >
-                      {minChar ? (
-                        <svg
-                          className={
-                            'mr-2 h-4 w-4 text-green-500 dark:text-white'
-                          }
-                          aria-hidden="true"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="m7 10 2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                          />
-                        </svg>
-                      ) : (
-                        <svg
-                          className="mr-2 h-4 w-4 text-red-500 dark:text-white"
-                          aria-hidden="true"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="m13 7-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                          />
-                        </svg>
-                      )}
+                      {minChar ? <GreenIndicator /> : <RedIndicator />}
                       Minimum of 8 characters.
                     </div>
                     <div
                       className={
                         capsAlpha
-                          ? 'flex items-center p-0.5 text-green-500'
-                          : 'flex items-center p-0.5 text-red-500'
+                          ? 'green-text flex items-center p-0.5'
+                          : 'text-destructive flex items-center p-0.5'
                       }
                     >
-                      {capsAlpha ? (
-                        <svg
-                          className={
-                            'mr-2 h-4 w-4 text-green-500 dark:text-white'
-                          }
-                          aria-hidden="true"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="m7 10 2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                          />
-                        </svg>
-                      ) : (
-                        <svg
-                          className="mr-2 h-4 w-4 text-red-500 dark:text-white"
-                          aria-hidden="true"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="m13 7-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                          />
-                        </svg>
-                      )}
+                      {capsAlpha ? <GreenIndicator /> : <RedIndicator />}
                       At least 1 uppercase letter.
                     </div>
                     <div
                       className={
                         smallAlpha
-                          ? 'flex items-center p-0.5 text-green-500'
-                          : 'flex items-center p-0.5 text-red-500'
+                          ? 'green-text flex items-center p-0.5'
+                          : 'text-destructive flex items-center p-0.5'
                       }
                     >
-                      {smallAlpha ? (
-                        <svg
-                          className="mr-2 h-4 w-4 text-green-500 dark:text-white"
-                          aria-hidden="true"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="m7 10 2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                          />
-                        </svg>
-                      ) : (
-                        <svg
-                          className="mr-2 h-4 w-4 text-red-500 dark:text-white"
-                          aria-hidden="true"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="m13 7-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                          />
-                        </svg>
-                      )}
+                      {smallAlpha ? <GreenIndicator /> : <RedIndicator />}
                       At least 1 lowercase letter.
                     </div>
                     <div
                       className={
                         number
-                          ? 'flex items-center p-0.5 text-green-500'
-                          : 'flex items-center p-0.5 text-red-500'
+                          ? 'green-text flex items-center p-0.5'
+                          : 'text-destructive flex items-center p-0.5'
                       }
                     >
-                      {number ? (
-                        <svg
-                          className={
-                            'mr-2 h-4 w-4 text-green-500 dark:text-white'
-                          }
-                          aria-hidden="true"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="m7 10 2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                          />
-                        </svg>
-                      ) : (
-                        <svg
-                          className="mr-2 h-4 w-4 text-red-500 dark:text-white"
-                          aria-hidden="true"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="m13 7-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                          />
-                        </svg>
-                      )}
+                      {number ? <GreenIndicator /> : <RedIndicator />}
                       At least 1 numeric character.
                     </div>
                     <div
                       className={
                         splChar
-                          ? 'flex items-center p-0.5 text-green-500'
-                          : 'flex items-center p-0.5 text-red-500'
+                          ? 'green-text flex items-center p-0.5'
+                          : 'text-destructive flex items-center p-0.5'
                       }
                     >
-                      {splChar ? (
-                        <svg
-                          className="mr-2 h-4 w-4 text-green-500 dark:text-white"
-                          aria-hidden="true"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="m7 10 2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                          />
-                        </svg>
-                      ) : (
-                        <svg
-                          className="mr-2 h-4 w-4 text-red-500 dark:text-white"
-                          aria-hidden="true"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="m13 7-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                          />
-                        </svg>
-                      )}
+                      {splChar ? <GreenIndicator /> : <RedIndicator />}
                       At least 1 special character.
                     </div>
                   </div>
