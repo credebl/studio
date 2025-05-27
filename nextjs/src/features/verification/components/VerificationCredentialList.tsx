@@ -311,23 +311,23 @@ const VerificationCredentialList = (): JSX.Element => {
         let userText: string = state
 
         switch (state) {
-          case 'request-sent':
+          case ProofRequestState.requestSent:
             badgeClass = 'badges-warning'
             userText = 'Requested'
             break
-          case 'request-received':
+          case ProofRequestState.requestReceived:
             badgeClass = 'badges-primary'
             userText = 'Received'
             break
-          case 'done':
+          case ProofRequestState.done:
             badgeClass = 'badges-success'
             userText = 'Verified'
             break
-          case 'abandoned':
+          case ProofRequestState.abandoned:
             badgeClass = 'badges-error'
             userText = 'Declined'
             break
-          case 'presentation-received':
+          case ProofRequestState.presentationReceived:
             badgeClass = 'badges-secondary'
             userText = 'Presentation Received'
             break
