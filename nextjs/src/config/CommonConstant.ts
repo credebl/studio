@@ -105,6 +105,7 @@ export const sessionExcludedPaths = [
   '/auth/sign-in',
   '/auth/sign-up',
   '/auth/verify-email-success',
+  '/reset-password',
 ]
 
 const imageBasePath = '/images'
