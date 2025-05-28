@@ -302,27 +302,48 @@ const VerificationCredentialList = (): JSX.Element => {
           },
         },
       ],
-      cell: ({ row }): JSX.Element => {
+
+      cell: ({
+        row,
+      }: {
+        row: { original: { state: string } }
+      }): JSX.Element => {
         const state = row.original.state as ProofRequestState
 
         let badgeClass = ''
-        if (state === ProofRequestState.requestSent) {
-          badgeClass = 'badges-warning'
-        } else if (state === ProofRequestState.done) {
-          badgeClass = 'badges-success'
-        } else if (state === ProofRequestState.abandoned) {
-          badgeClass = 'badges-error'
-        } else if (state === ProofRequestState.requestReceived) {
-          badgeClass = 'badges-primary'
-        } else if (state === ProofRequestState.presentationReceived) {
-          badgeClass = 'badges-secondary'
+        let userText: string = state
+
+        switch (state) {
+          case ProofRequestState.requestSent:
+            badgeClass = 'badges-warning'
+            userText = ProofRequestStateUserText.requestSent
+            break
+          case ProofRequestState.requestReceived:
+            badgeClass = 'badges-primary'
+            userText = ProofRequestStateUserText.requestReceived
+            break
+          case ProofRequestState.done:
+            badgeClass = 'badges-success'
+            userText = ProofRequestStateUserText.done
+            break
+          case ProofRequestState.abandoned:
+            badgeClass = 'badges-error'
+            userText = ProofRequestStateUserText.abandoned
+            break
+          case ProofRequestState.presentationReceived:
+            badgeClass = 'badges-secondary'
+            userText = ProofRequestStateUserText.presentationReceived
+            break
+          default:
+            badgeClass = ''
+            userText = state
         }
 
         return (
           <span
             className={`${badgeClass} text-foreground mr-0.5 flex w-fit items-center justify-center rounded-md px-0.5 px-2 text-xs font-medium`}
           >
-            {ProofRequestStateUserText[state] ?? state}
+            {userText}
           </span>
         )
       },

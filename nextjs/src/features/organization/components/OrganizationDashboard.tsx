@@ -105,9 +105,11 @@ export const OrganizationDashboard = ({
                     </AvatarFallback>
                   )}
                 </Avatar>
-                <div>
-                  <h2 className="text-2xl font-bold">{orgData?.name}</h2>
-                  <p className="text-muted-foreground">
+                <div className="min-w-0 space-y-1">
+                  <h2 className="text-2xl font-bold break-all">
+                    {orgData?.name}
+                  </h2>
+                  <p className="text-muted-foreground break-all">
                     {orgData?.description}
                   </p>
                   <p className="mt-1 text-sm">

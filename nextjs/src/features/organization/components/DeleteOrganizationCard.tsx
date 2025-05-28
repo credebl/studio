@@ -31,11 +31,9 @@ export function DeleteOrganizationCard({
 
   return (
     <Card
-      className={
-        isDisabled
-          ? 'opacity-75'
-          : 'border-border relative h-full w-full cursor-pointer overflow-hidden rounded-xl border p-6 py-4 shadow-xl transition-all transition-transform duration-300'
-      }
+      className={`border-border relative h-full w-full overflow-hidden rounded-xl border p-6 py-4 shadow-xl transition-all transition-transform duration-300 ${
+        isDisabled ? 'cursor-not-allowed opacity-75' : 'cursor-pointer'
+      }`}
     >
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
