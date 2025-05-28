@@ -47,7 +47,7 @@ const SummaryCard = ({
         <div className="flex flex-wrap overflow-hidden">
           {schemaAttributes?.map((element: { attributeName: string }) => (
             <div key={element.attributeName} className="truncate">
-              <span className="bg-primary text-custom-900 dark:bg-primary-50 dark:text-custom-900 m-1 mr-2 rounded px-2.5 py-0.5 text-sm font-medium">
+              <span className="bg-secondary text-secondary-foreground hover:bg-secondary/80 m-1 mr-2 rounded px-2.5 py-0.5 text-sm font-medium shadow-sm transition-colors">
                 {element.attributeName}
               </span>
             </div>
