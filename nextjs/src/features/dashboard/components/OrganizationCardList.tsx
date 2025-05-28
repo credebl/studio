@@ -144,31 +144,32 @@ const OrganizationCardList = (): React.JSX.Element => {
                   className="hover:bg-muted/50 border-border/50 relative flex h-full w-full items-center justify-between overflow-hidden rounded-xl border p-3 shadow-xl transition-transform duration-300 hover:shadow-lg"
                 >
                   <button
-                    className="flex items-center gap-3 hover:cursor-pointer"
+                    className="flex min-w-0 items-center gap-3 hover:cursor-pointer"
                     onClick={() =>
-                      route.push(`/organizations/dashboard/${org.id}`)
+                      route.push(`/organizations/dashboard?orgId=${org.id}`)
                     }
                   >
-                    {org.logoUrl ? (
-                      <div className="border-border relative h-10 w-10 overflow-hidden rounded-full border">
-                        <Image
-                          src={org.logoUrl}
-                          alt="Org Logo"
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                    ) : (
-                      <div className="border-border bg-muted text-foreground flex h-10 w-10 items-center justify-center rounded-full border text-sm font-semibold">
-                        {org.name
-                          ?.split(' ')
-                          .map((word) => word[0])
-                          .slice(0, 2)
-                          .join('')
-                          .toUpperCase() || 'O'}
-                      </div>
-                    )}
-
+                    <div className="flex-shrink-0">
+                      {org.logoUrl ? (
+                        <div className="border-border relative h-10 w-10 overflow-hidden rounded-full border">
+                          <Image
+                            src={org.logoUrl}
+                            alt="Org Logo"
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="border-border bg-muted text-foreground flex h-10 w-10 items-center justify-center rounded-full border text-sm font-semibold">
+                          {org.name
+                            ?.split(' ')
+                            .map((word) => word[0])
+                            .slice(0, 2)
+                            .join('')
+                            .toUpperCase() || 'O'}
+                        </div>
+                      )}
+                    </div>
                     <span className="ml-3 flex items-center space-x-2 truncate">
                       <span className="truncate">{org?.name}</span>
                       <span>
@@ -253,7 +254,7 @@ const OrganizationCardList = (): React.JSX.Element => {
                               hasWallet
                                 ? route.push('/organizations/schemas/create')
                                 : route.push(
-                                    `/organizations/dashboard/${org.id}`,
+                                    `/organizations/dashboard?orgId=${org.id}`,
                                   )
                             }}
                             disabled={!isAdmin}

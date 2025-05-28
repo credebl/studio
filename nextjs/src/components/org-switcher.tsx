@@ -116,7 +116,7 @@ export function OrgSwitcher({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground border-ring w-[200px] justify-start gap-2 border"
             >
               {tenants.length > 0 && (
-                <div className="bg-muted border-muted flex size-8 items-center justify-center overflow-hidden rounded-full border">
+                <div className="bg-muted border-muted flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full border">
                   {selectedTenant?.logoUrl ? (
                     <Image
                       src={selectedTenant.logoUrl}
@@ -133,7 +133,7 @@ export function OrgSwitcher({
                 </div>
               )}
 
-              <div className="flex max-w-[200px] flex-col gap-0.5 overflow-hidden leading-none font-semibold">
+              <div className="flex max-w-[200px] min-w-0 flex-col gap-0.5 overflow-hidden leading-none font-semibold">
                 <span className="truncate">
                   {tenants.length > 0
                     ? (selectedTenant?.name ?? 'Select Organization')
@@ -155,7 +155,7 @@ export function OrgSwitcher({
                   onSelect={() => handleTenantSwitch(tenant)}
                   className="flex items-center gap-2"
                 >
-                  <div className="bg-muted text-foreground flex size-6 items-center justify-center rounded-md">
+                  <div className="bg-muted text-foreground flex size-6 shrink-0 items-center justify-center rounded-md">
                     {tenant.logoUrl ? (
                       <Image
                         src={tenant.logoUrl}
@@ -170,9 +170,12 @@ export function OrgSwitcher({
                       </span>
                     )}
                   </div>
-                  <span className="truncate">{tenant.name}</span>
+                  <div className="max-w-[200px] min-w-0 flex-1 truncate">
+                    {tenant.name}
+                  </div>
+
                   {tenant.id === currentTenant?.id && (
-                    <Check className="ml-auto" />
+                    <Check className="ml-auto shrink-0" />
                   )}
                 </DropdownMenuItem>
               ))
