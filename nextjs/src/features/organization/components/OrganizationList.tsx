@@ -111,7 +111,7 @@ export const OrganizationList = (): React.JSX.Element => {
       )
     }
 
-    router.push(`/organizations/dashboard?orgId=${orgId}`)
+    router.push(`/organizations/dashboard/${orgId}`)
   }
   const handleCreateOrg = (): void => {
     router.push('organizations/create-organization')

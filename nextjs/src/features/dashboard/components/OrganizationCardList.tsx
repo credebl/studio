@@ -146,7 +146,7 @@ const OrganizationCardList = (): React.JSX.Element => {
                   <button
                     className="flex min-w-0 items-center gap-3 hover:cursor-pointer"
                     onClick={() =>
-                      route.push(`/organizations/dashboard?orgId=${org.id}`)
+                      route.push(`/organizations/dashboard/${org.id}`)
                     }
                   >
                     <div className="flex-shrink-0">
@@ -254,7 +254,7 @@ const OrganizationCardList = (): React.JSX.Element => {
                               hasWallet
                                 ? route.push('/organizations/schemas/create')
                                 : route.push(
-                                    `/organizations/dashboard?orgId=${org.id}`,
+                                    `/organizations/dashboard/${org.id}`,
                                   )
                             }}
                             disabled={!isAdmin}
