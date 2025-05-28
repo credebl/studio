@@ -111,7 +111,7 @@ export const OrganizationList = (): React.JSX.Element => {
       )
     }
 
-    router.push(`/organizations/dashboard/${orgId}`)
+    router.push(`/organizations/dashboard?orgId=${orgId}`)
   }
   const handleCreateOrg = (): void => {
     router.push('organizations/create-organization')
@@ -166,12 +166,21 @@ export const OrganizationList = (): React.JSX.Element => {
                   )}
                 </Avatar>
 
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold">{org.name}</h3>
-                  <p className="">{org.description}</p>
+                <div className="min-w-0 flex-1">
+                  <h3
+                    className="text-foreground mb-1 truncate text-base font-semibold"
+                    title={org.name}
+                  >
+                    {org.name}
+                  </h3>
+                  <p
+                    className="text-foreground mb-2 truncate overflow-hidden text-sm"
+                    title={org.description}
+                  >
+                    {org.description}
+                  </p>
                   <div className="text-md mt-2 flex items-center gap-1">
                     <span className="font-bold">Role(s):</span>
-                    <span> </span>
                     <span className="bg-secondary text-secondary-foreground rounded-md px-3 py-1">
                       {org.userOrgRoles[0].orgRole.name || 'No Role'}
                     </span>

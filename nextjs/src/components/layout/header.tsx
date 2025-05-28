@@ -3,7 +3,6 @@ import { setOrgId, setOrgInfo } from '@/lib/orgSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
 import { Breadcrumbs } from '../breadcrumbs'
-import { ModeToggle } from './ThemeToggle/theme-toggle'
 import { OrgSwitcher } from '../org-switcher'
 import { Organisation } from '@/features/dashboard/type/organization'
 import { Separator } from '../ui/separator'
@@ -35,27 +34,29 @@ export default function Header(): React.JSX.Element {
           const orgs = response.data.data.organizations
           setOrgList(orgs)
 
-          const defaultOrg =
-            orgs.find((org: { id: string }) => org.id === tenantId) || orgs[0]
+          if (orgs.length > 0) {
+            const defaultOrg =
+              orgs.find((org: { id: string }) => org.id === tenantId) || orgs[0]
 
-          dispatch(setOrgId(defaultOrg.id))
-          dispatch(
-            setOrgInfo({
-              id: defaultOrg.id,
-              name: defaultOrg.name,
-              description: defaultOrg.description,
-              logoUrl: defaultOrg.logoUrl,
-              roles:
-                defaultOrg.userOrgRoles?.map(
-                  (role: { orgRole: { name: string } }) => role?.orgRole?.name,
-                ) || [],
-            }),
-          )
+            dispatch(setOrgId(defaultOrg.id))
+            dispatch(
+              setOrgInfo({
+                id: defaultOrg.id,
+                name: defaultOrg.name,
+                description: defaultOrg.description,
+                logoUrl: defaultOrg.logoUrl,
+                roles:
+                  defaultOrg.userOrgRoles?.map(
+                    (role: { orgRole: { name: string } }) =>
+                      role?.orgRole?.name,
+                  ) || [],
+              }),
+            )
+          }
         } else {
           setOrgList([])
         }
       } catch (err) {
-        // eslint-disable-next-line no-console
         console.error('Error fetching organizations:', err)
       }
     }
@@ -82,9 +83,6 @@ export default function Header(): React.JSX.Element {
     }
   }
 
-  const activeTenant = tenantId
-    ? orgList.find((item) => item.id === tenantId)
-    : orgList[0]
   return (
     <header className="flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
       <div className="flex items-center gap-2 px-4">
@@ -94,19 +92,18 @@ export default function Header(): React.JSX.Element {
       </div>
 
       <div className="flex items-center gap-2 px-4">
-        {activeTenant && (
-          <OrgSwitcher
-            tenants={orgList.map((org) => ({
-              id: org.id,
-              name: org.name,
-              logoUrl: org.logoUrl,
-            }))}
-            defaultTenant={activeTenant}
-            onTenantSwitch={handleSwitchTenant}
-          />
-        )}
+        <OrgSwitcher
+          tenants={orgList.map((org) => ({
+            id: org.id,
+            name: org.name,
+            logoUrl: org.logoUrl,
+          }))}
+          defaultTenant={orgList.length > 0 ? orgList[0] : undefined}
+          onTenantSwitch={handleSwitchTenant}
+        />
+        {/* NOTE: Currently disabling search and mode toggle */}
         <div className="hidden md:flex">{/* <SearchInput /> */}</div>
-        <ModeToggle />
+        {/* <ModeToggle /> */}
         <UserNav />
       </div>
     </header>

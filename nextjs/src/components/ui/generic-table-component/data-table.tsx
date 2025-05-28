@@ -1,4 +1,5 @@
 import * as React from 'react'
+
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -21,6 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+
 import { DataTablePagination } from './data-table-pagination'
 import { DataTableToolbar } from './data-table-toolbar'
 
@@ -62,6 +64,11 @@ interface DataTableProps<TData, TValue> {
   pageCount: number
 
   /**
+   * Place holder for search input.
+   */
+  placeHolder?: string
+
+  /**
    * Callback triggered when the page index changes.
    */
   onPageChange: (pageIndex: number) => void
@@ -97,6 +104,7 @@ interface DataTableProps<TData, TValue> {
  * @returns The rendered DataTable component.
  */
 export function DataTable<TData, TValue>({
+  placeHolder,
   data,
   columns,
   index,
@@ -160,15 +168,23 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
-      <DataTableToolbar table={table} onSearchTermChange={onSearchTerm} />
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
+      <DataTableToolbar
+        searchPlaceholder={placeHolder}
+        table={table}
+        onSearchTermChange={onSearchTerm}
+      />
+      <div className="overflow-hidden rounded-lg">
+        <Table className="divide-muted rounded-lg">
+          <TableHeader className="bg-muted border">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} className="border-0">
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} colSpan={header.colSpan}>
+                    <TableHead
+                      className="p-4"
+                      key={header.id}
+                      colSpan={header.colSpan}
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -183,13 +199,14 @@ export function DataTable<TData, TValue>({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map((row, index) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
+                  className="border-0"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell className="p-4" key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),

@@ -167,7 +167,12 @@ const LedgerConfig = ({
   const renderNetworkOptions = (
     formikHandlers: FormikProps<IValuesShared>,
   ): React.JSX.Element | null => {
-    if (!selectedLedger || !mappedData || selectedMethod === DidMethod.KEY) {
+    if (
+      !selectedLedger ||
+      !mappedData ||
+      selectedMethod === DidMethod.KEY ||
+      selectedMethod === DidMethod.WEB
+    ) {
       return null
     }
 

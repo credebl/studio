@@ -9,7 +9,7 @@ import { useSearchParams } from 'next/navigation'
 
 export default function SignUpUser(): React.JSX.Element {
   const [step, setStep] = useState(1)
-  const [, setEmail] = useState<string>('')
+  const [email, setEmail] = useState<string>('')
   const searchParam = useSearchParams()
   const userEmail = searchParam.get('email')
 
@@ -46,16 +46,18 @@ export default function SignUpUser(): React.JSX.Element {
             goToNext={() => setStep(2)}
           />
         )}
+
         {step === 2 && (
-          <UserInfoForm email={userEmail ?? ''} goBack={() => setStep(1)} />
+          <UserInfoForm
+            email={email || userEmail || ''}
+            goBack={() => setStep(1)}
+          />
         )}
 
         <div className="text-muted-foreground mt-4 text-center text-sm">
           Already have an account?{' '}
           <Link href="/auth/sign-in">
-            <span className="text-secondary-foreground hover:underline">
-              Sign in
-            </span>
+            <span className="text-secondary hover:underline">Sign in</span>
           </Link>
         </div>
       </div>

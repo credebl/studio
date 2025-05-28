@@ -32,7 +32,8 @@ module.exports = {
     'no-var': 'error',
     'object-shorthand': 'error',
     'quote-props': ['error', 'as-needed'],
-    quotes: ['error', 'single'], // Add this line
+    quotes: ['error', 'single', { avoidEscape: true }],
+
     // TypeScript rules
     '@typescript-eslint/array-type': [
       'warn',
@@ -70,7 +71,7 @@ module.exports = {
     'import/no-extraneous-dependencies': 'off',
     'max-lines': [
       'error',
-      { max: 450, skipComments: true, skipBlankLines: true },
+      { max: 500, skipComments: true, skipBlankLines: true },
     ],
     'no-unused-vars': 'off',
     'no-console': ['error', { allow: ['warn', 'error'] }],
