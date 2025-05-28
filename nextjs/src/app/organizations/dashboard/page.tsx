@@ -9,8 +9,7 @@ export default function Page({
   const { orgId } = searchParams
 
   if (!orgId) {
-    // optionally redirect or show an error
-    redirect('/organizations') // or render a fallback component
+    redirect('/organizations')
   }
 
   return <OrganizationDashboard orgId={orgId} />
