@@ -3,8 +3,8 @@
 
 import * as yup from 'yup'
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { ArrowLeft, PlusIcon } from 'lucide-react'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { ArrowLeft, PlusIcon, X } from 'lucide-react'
 import {
   CredDeffFieldNameType,
   ICredDefCard,
@@ -223,7 +223,7 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
             <Button
               variant="outline"
               onClick={() => router.back()}
-              className="border-ring hover:bg-primary mb-4 flex items-center gap-2 rounded-xl border px-4 py-2 transition-colors"
+              className="border-ring hover:bg-primary hover:text-primary-foreground mb-4 flex items-center gap-2 rounded-xl border px-4 py-2 transition-colors"
             >
               <ArrowLeft size={18} />
               Back
@@ -274,7 +274,7 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
                         }
                         disabled={ledgerPlatformLoading}
                         variant="ghost"
-                        className="border-ring hover:bg-primary flex items-center rounded-xl border px-4 py-2 transition-colors"
+                        className="border-ring hover:bg-primary hover:text-primary-foreground flex items-center rounded-xl border px-4 py-2 transition-colors"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -452,10 +452,28 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
                           <div className="py-3">
                             <Alert
                               variant={failure ? 'destructive' : 'default'}
+                              className={`relative ${
+                                success ? 'success-alert' : 'failure-alert'
+                              }`}
                             >
-                              <AlertTitle>
-                                {failure ? 'Error' : 'Success'}
-                              </AlertTitle>
+                              <div>
+                                <Button
+                                  className="absolute top-3.5 right-5 m-0! h-fit w-fit border-none bg-transparent p-0! shadow-none hover:bg-transparent"
+                                  onClick={() => {
+                                    setSuccess(null)
+                                    setFailure(null)
+                                  }}
+                                >
+                                  <X
+                                    className={`${
+                                      success
+                                        ? 'success-alert'
+                                        : 'failure-alert'
+                                    }`}
+                                    size={18}
+                                  />
+                                </Button>
+                              </div>
                               <AlertDescription>
                                 {success || failure}
                               </AlertDescription>
@@ -483,7 +501,7 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
                               }}
                               disabled={createloader}
                               variant="ghost"
-                              className="border-ring hover:bg-primary flex items-center rounded-xl border px-4 py-2 transition-colors"
+                              className="border-ring hover:bg-primary hover:text-primary-foreground flex items-center rounded-xl border px-4 py-2 transition-colors"
                             >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -491,10 +509,10 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
                                 height="15"
                                 viewBox="0 0 20 20"
                                 fill="currentColor"
-                                className="text-foreground mr-1"
+                                className="text-shadow-primary-foregroundforeground mr-1"
                               >
                                 <path
-                                  fill=""
+                                  fill="currentColor"
                                   d="M19.414 9.414a.586.586 0 0 0-.586.586c0 4.868-3.96 8.828-8.828 8.828-4.868 0-8.828-3.96-8.828-8.828 0-4.868 3.96-8.828 8.828-8.828 1.96 0 3.822.635 5.353 1.807l-1.017.18a.586.586 0 1 0 .204 1.153l2.219-.392a.586.586 0 0 0 .484-.577V1.124a.586.586 0 0 0-1.172 0v.928A9.923 9.923 0 0 0 10 0a9.935 9.935 0 0 0-7.071 2.929A9.935 9.935 0 0 0 0 10a9.935 9.935 0 0 0 2.929 7.071A9.935 9.935 0 0 0 10 20a9.935 9.935 0 0 0 7.071-2.929A9.935 9.935 0 0 0 20 10a.586.586 0 0 0-.586-.586Z"
                                 />
                               </svg>

@@ -751,7 +751,7 @@ const CreateSchema = (): React.JSX.Element => {
                         formikHandlers.values.schemaVersion
                       )
                     }
-                    className="ml-auto rounded-lg text-base font-medium"
+                    className="ml-auto rounded-lg text-base font-medium hover:text-primary-foreground"
                     style={{
                       height: '2.6rem',
                       width: '6rem',

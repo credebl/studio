@@ -46,7 +46,7 @@ const CredentialDefinitionCard = (props: IProps): React.ReactElement => {
             type="submit"
             title="Initiate Credential Issuance"
             variant="ghost"
-            className="border-ring hover:bg-primary flex items-center rounded-xl border px-4 py-2 transition-colors"
+            className="border-ring hover:bg-primary flex items-center rounded-xl border px-4 py-2 transition-colors hover:text-primary-foreground"
             disabled={
               !(
                 props.userRoles &&

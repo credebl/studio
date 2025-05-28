@@ -139,7 +139,7 @@ const Connections = (): JSX.Element => {
               <div className="flex justify-end pt-3">
                 <Button
                   onClick={continueToIssue}
-                  className="bg-primary hover:!bg-primary/90 hover:bg-accent-00 rounded-lg text-center text-base text-black focus:ring focus:ring-4 sm:w-auto"
+                  className="bg-primary hover:!bg-primary/90 hover:bg-accent-00 rounded-lg text-center text-base focus:ring focus:ring-4 sm:w-auto"
                 >
                   <div className="pr-3">
                     <svg
@@ -150,11 +150,11 @@ const Connections = (): JSX.Element => {
                       viewBox="0 0 24 24"
                     >
                       <path
-                        fill="#000"
+                        fill="currentColor"
                         d="M12.516 6.444a.556.556 0 1 0-.787.787l4.214 4.214H4.746a.558.558 0 0 0 0 1.117h11.191l-4.214 4.214a.556.556 0 0 0 .396.95.582.582 0 0 0 .397-.163l5.163-5.163a.553.553 0 0 0 .162-.396.576.576 0 0 0-.162-.396l-5.163-5.164Z"
                       />
                       <path
-                        fill="#000"
+                        fill="currentColor"
                         d="M12.001 0a12 12 0 0 0-8.484 20.485c4.686 4.687 12.283 4.687 16.969 0 4.686-4.685 4.686-12.282 0-16.968A11.925 11.925 0 0 0 12.001 0Zm0 22.886c-6 0-10.884-4.884-10.884-10.885C1.117 6.001 6 1.116 12 1.116s10.885 4.885 10.885 10.885S18.001 22.886 12 22.886Z"
                       />
                     </svg>

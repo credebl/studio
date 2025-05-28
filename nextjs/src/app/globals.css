@@ -192,6 +192,22 @@ a[href] {
   color: #339b59
 }
 
+.success-alert{
+  background-color: #dcfce7;
+  color: green;
+}
+.success-alert div{
+  color: green;
+}
+
+.failure-alert{
+background-color : #fae8e8;
+  color: var(--destructive);
+}
+.failure-alert div{
+  color: var(--destructive);
+}
+
 .text-error {
   color: var(--error-text);
 }
