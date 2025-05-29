@@ -70,15 +70,6 @@ export function SearchableSelect({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          // className={cn(
-          //   'w-full justify-between',
-          //   'bg-background border-border hover:text-accent-foreground',
-          //   'focus:text-accent-foreground focus-visible:ring-ring focus:ring focus-visible:ring-2',
-          //   'data-[state=open]:text-accent-foreground',
-          //   'transition-colors duration-200',
-          //   disabled && 'cursor-not-allowed opacity-50',
-          //   className,
-          // )}
           disabled={disabled}
         >
           <span className="truncate">
@@ -128,9 +119,6 @@ export function SearchableSelect({
                   data-selected={selected?.value === option.value}
                 >
                   <span className="flex-1 truncate">{option.label}</span>
-                  {/* {selected?.value === option.value && (
-                    <Check className="ml-2 h-4 w-4 flex-shrink-0" />
-                  )} */}
                 </CommandItem>
               ))}
             </CommandGroup>

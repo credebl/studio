@@ -12,7 +12,7 @@ import {
   ICredentials,
   IUploadMessage,
 } from '../../connectionIssuance/type/Issuance'
-import { Option, SearchableSelect } from '@/components/ShadCnSelect'
+import { Option, SearchableSelect } from '@/components/SearchableSelect'
 import React, { JSX, useEffect, useRef, useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify'
 import { apiStatusCodes, itemPerPage } from '@/config/CommonConstant'

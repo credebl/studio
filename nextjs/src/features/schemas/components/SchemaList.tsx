@@ -283,25 +283,6 @@ const SchemaList = (props: {
             />
             <IconSearch className="text-muted-foreground absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2" />
           </div>
-
-          {/* <Select
-            onChange={handleFilterChange}
-            value={allSchemaFlag ? 'all' : 'org'}
-            className="bg-background text-foreground h-10 w-full rounded-lg p-2.5 shadow sm:w-auto sm:text-sm"
-          >
-            <option value="org">Organization&apos;s schema</option>
-            <option value="all">All schemas</option>
-          </Select> */}
-          {/* <Select
-            value={allSchemaFlag ? 'all' : 'org'}
-            onValueChange={handleFilterChange}
-          >
-            <SelectTrigger className="w-[80px] w-full gap-2 md:w-[180px]"></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="org">Organization&apos;s schema</SelectItem>
-              <SelectItem value="all">All schemas</SelectItem>
-            </SelectContent>
-          </Select> */}
           <Select
             defaultValue="Organization's schema"
             onValueChange={handleFilterChange}
