@@ -72,6 +72,8 @@ jobs:
 
       - name: Build step
         run: npm install && npm run build # 📝 Update the build command(s)
+        working-directory: nextjs
+
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
