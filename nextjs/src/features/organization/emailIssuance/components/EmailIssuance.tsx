@@ -189,7 +189,7 @@ const EmailIssuance = (): JSX.Element => {
                       </div>
                       {mounted && (
                         <SearchableSelect
-                          className="border-primary max-w-lg border-2"
+                          className="max-w-lg border-1 border-muted"
                           options={
                             Array.isArray(credentialOptions)
                               ? credentialOptions
@@ -310,7 +310,7 @@ const EmailIssuance = (): JSX.Element => {
                                         render={(
                                           arrayHelpers: FieldArrayRenderProps,
                                         ) => (
-                                          <div className="pb-4">
+                                          <div className="pb-4 relative">
                                             <FieldArrayData
                                               arrayHelpers={arrayHelpers}
                                               formikHandlers={formikHandlers}
@@ -351,8 +351,8 @@ const EmailIssuance = (): JSX.Element => {
                                         <Button
                                           type="button"
                                           disabled={loading}
-                                          variant={'ghost'}
-                                          className="border-ring hover:bg-primary flex items-center rounded-xl border px-4 py-2 transition-colors disabled:cursor-not-allowed"
+                                          variant={'outline'}
+                                          className=""
                                           onClick={() =>
                                             handleReset({
                                               setCredentialSelected,
@@ -370,7 +370,7 @@ const EmailIssuance = (): JSX.Element => {
                                           disabled={!formikHandlers?.isValid}
                                         >
                                           <Issue />
-                                          <span className="text-custom-900 pl-2">
+                                          <span>
                                             Issue
                                           </span>
                                         </Button>

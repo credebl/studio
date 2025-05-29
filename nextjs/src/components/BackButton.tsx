@@ -22,9 +22,9 @@ const BackButton = ({ path }: BackButtonProps): JSX.Element => {
 
   return (
     <Button
-      variant="outline"
+      variant="default"
       onClick={handleClick}
-      className="border-ring hover:bg-primary mb-4 flex items-center gap-2 rounded-xl border px-4 py-2 transition-colors"
+      className="mb-4 flex items-center gap-2 rounded-xl px-4 py-2 transition-colors"
     >
       <ArrowLeft size={18} />
       Back

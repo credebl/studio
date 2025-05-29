@@ -221,9 +221,9 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
           <div className="flex items-center justify-between">
             <h1 className="ml-1 text-xl font-semibold">Schemas</h1>
             <Button
-              variant="outline"
+              variant="default"
               onClick={() => router.back()}
-              className="border-ring hover:bg-primary hover:text-primary-foreground mb-4 flex items-center gap-2 rounded-xl border px-4 py-2 transition-colors"
+              className="mb-4 flex items-center gap-2 rounded-xl border px-4 py-2 transition-colors"
             >
               <ArrowLeft size={18} />
               Back
@@ -234,7 +234,7 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
         {/* <div className="border-border relative h-full w-full overflow-hidden rounded-lg border p-4 shadow-xl transition-transform duration-300 sm:p-6 2xl:col-span-2"> */}
         <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
           <Card
-            className="border-border relative h-full w-full overflow-hidden rounded-xl border shadow-xl transition-transform duration-300"
+            className="relative h-full w-full overflow-hidden rounded-xl transition-transform duration-300"
             id="viewSchemaDetailsCard"
           >
             {loading ? (
@@ -272,8 +272,8 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
                         )
                       }
                       disabled={ledgerPlatformLoading}
-                      variant="ghost"
-                      className="border-ring hover:bg-primary hover:text-primary-foreground flex items-center rounded-xl border px-4 py-2 transition-colors"
+                      variant="outline"
+                      className="flex items-center rounded-xl px-4 py-2 transition-colors"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -367,12 +367,12 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
           {(userRoles.includes(Roles.OWNER) ||
             userRoles.includes(Roles.ADMIN)) && (
             <Card
-              className="border-border relative h-full w-full overflow-hidden rounded-xl border p-4 overflow-ellipsis shadow-xl transition-transform duration-300"
+              className="relative h-full w-full overflow-hidden rounded-xl border p-4 overflow-ellipsis transition-transform duration-300"
               style={{ overflow: 'auto' }}
               id="credentialDefinitionCard"
             >
               <div>
-                <h5 className="text-xl leading-none font-bold">
+                <h5 className="mb-2 text-xl leading-none font-bold">
                   Create Credential Definition
                 </h5>
               </div>
@@ -412,7 +412,7 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
                             id="tagName"
                             name="tagName"
                             placeholder="Enter Credential definition"
-                            className="focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 block w-full rounded-lg border border-[var(--color-gray-300)] bg-[var(--color-gray-50)] p-2.5 text-[var(--color-gray-900)] sm:text-sm dark:border-[var(--color-gray-600)] dark:bg-[var(--color-gray-700)] dark:text-[var(--color-white)] dark:placeholder-[var(--color-gray-400)]"
+                            className="border-input file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                             disabled={createloader}
                           />
                           {formikHandlers?.errors?.tagName &&
@@ -503,8 +503,8 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
                               setCredDefAuto('')
                             }}
                             disabled={createloader}
-                            variant="ghost"
-                            className="border-ring hover:bg-primary hover:text-primary-foreground flex items-center rounded-xl border px-4 py-2 transition-colors"
+                            variant="outline"
+                            className="flex items-center rounded-xl border px-4 py-2 transition-colors"
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -512,7 +512,7 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
                               height="15"
                               viewBox="0 0 20 20"
                               fill="currentColor"
-                              className=" mr-1"
+                              className="mr-1"
                             >
                               <path
                                 fill="currentColor"
@@ -555,7 +555,7 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
                 credDeffList.length > 0 &&
                 credDeffList.map((element: ICredDefCard) => (
                   <div
-                    className="border-border relative h-full w-full overflow-hidden rounded-xl border shadow-xl transition-transform duration-300"
+                    className="relative h-full w-full overflow-hidden rounded-xl transition-transform duration-300"
                     key={`view-schema-cred-def-card-${element['credentialDefinitionId']}`}
                   >
                     <CredentialDefinitionCard

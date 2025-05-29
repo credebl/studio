@@ -17,7 +17,7 @@ const FormikAddButton = ({
   attributes,
   formikHandlers,
 }: IFormikAddButton): JSX.Element => (
-  <div className="absolute flex w-full justify-center">
+  <div className="absolute bottom-[17px] flex w-full justify-center">
     <Button
       onClick={() =>
         arrayHelpers.push({
@@ -36,8 +36,8 @@ const FormikAddButton = ({
         arrayHelpers.form.values.formData.length >= 10 ||
         !formikHandlers?.isValid
       }
-      className="border-ring hover:bg-primary flex items-center rounded-xl border px-4 py-2 transition-colors disabled:cursor-not-allowed"
-      variant={'ghost'}
+      className="border-ring hover:bg-primary/90 flex items-center rounded-full border px-4 py-2 transition-colors disabled:cursor-not-allowed disabled:opacity-100"
+      variant={'default'}
       type="button"
       style={formikAddButtonStyles}
     >

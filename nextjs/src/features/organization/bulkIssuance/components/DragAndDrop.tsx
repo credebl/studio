@@ -78,10 +78,10 @@ export default function DragAndDrop({
             <div className="w-fit">
               <label htmlFor="organizationlogo">
                 <div
-                  className={`mt-4 rounded-md border px-4 py-2 text-center text-white ${
+                  className={`border-input bg-background hover:bg-accent hover:text-accent-foreground border shadow-sm mt-4 py-2 px-4 rounded-md${
                     !context.isCredSelected
-                      ? 'border-gray-400 bg-black/50 opacity-50 dark:bg-transparent dark:text-gray-400'
-                      : 'dark:hover:bg-primary-500 dark:textselectedTemplate-custom-100 dark:hover:text-custom-900 bg-black dark:bg-transparent'
+                      ? 'disabled:pointer-events-none disabled:opacity-50'
+                      : ''
                   }`}
                 >
                   Choose file

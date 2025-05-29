@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button'
 import DateTooltip from '@/components/DateTooltip'
 import { IConnectionListAPIParameter } from '@/app/api/connection'
 import { ITableData } from '@/features/connections/types/connections-interface'
+import PageContainer from '@/components/layout/page-container'
 import { RootState } from '@/lib/store'
 import SOCKET from '@/config/SocketConfig'
 import SortDataTable from '../../connectionIssuance/components/connectionsTables/SortDataTable'
@@ -280,6 +281,7 @@ const HistoryBulkIssuance = (): JSX.Element => {
   }
 
   return (
+    <PageContainer>
     <div className="p-4" id="connection_list">
       <ToastContainer />
       <div className="flex items-center justify-end">
@@ -342,6 +344,7 @@ const HistoryBulkIssuance = (): JSX.Element => {
         discription={'You don"t have any activities yet'}
       ></SortDataTable>
     </div>
+    </PageContainer>
   )
 }
 

@@ -42,16 +42,16 @@ function FieldArrayData({
                     className="text-base font-semibold dark:text-white"
                     style={fieldArrayLabelStyles}
                   >
-                    Email ID <span className="text-red-500">*</span>
+                    Email ID <span className="text-destructive">*</span>
                   </label>
                   <Field
                     name={`formData[${index}].email`}
                     placeholder={'email'}
                     type="email"
-                    className="sm:text-md focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 md:w-5/12 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                    className="border-input file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 rounded-md border bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:w-5/12 md:text-sm"
                   />
 
-                  <div className="absolute top-11 left-24">
+                  <div className="absolute top-8 left-24">
                     {((): JSX.Element | null => {
                       const errorItem =
                         formikHandlers?.errors?.formData?.[index as number]
@@ -81,7 +81,7 @@ function FieldArrayData({
                 {arrayHelpers.form.values.formData.length > 1 && (
                   <div
                     key={index as number}
-                    className="flex justify-end text-red-600 sm:w-2/12"
+                    className="flex justify-end text-destructive sm:w-2/12"
                   >
                     <Button
                       data-testid="deleteBtn"
@@ -90,7 +90,7 @@ function FieldArrayData({
                       onClick={() => arrayHelpers.remove(index as number)}
                       disabled={arrayHelpers.form.values.formData.length === 1}
                       className={
-                        'flex justify-center border-none bg-transparent shadow-none hover:bg-transparent focus:ring-0 dark:bg-gray-700'
+                        'flex justify-center border-none bg-transparent shadow-none hover:bg-transparent focus:ring-0'
                       }
                     >
                       <img
@@ -103,10 +103,10 @@ function FieldArrayData({
                 )}
               </div>
 
-              <label className="w-20 text-base font-semibold dark:text-white">
+              <label className="w-20 text-base font-semibold mt-8">
                 Credential data:
               </label>
-              <div className="grid w-full grid-cols-1 gap-2 gap-8 md:grid-cols-2">
+              <div className="grid w-full grid-cols-1 gap-8 md:grid-cols-2">
                 {formData1.attributes &&
                   formData1?.attributes.length > 0 &&
                   formData1?.attributes.map(
@@ -122,10 +122,10 @@ function FieldArrayData({
                     ) => (
                       <div className="mt-3" key={attIndex}>
                         <div className="relative flex w-full items-center gap-2">
-                          <label className="word-break-word w-[300px] text-base text-gray-800 dark:text-white">
+                          <label className="word-break-word w-[300px] text-base">
                             {item?.displayName}
                             {item.isRequired && (
-                              <span className="text-red-500">*</span>
+                              <span className="text-destructive">*</span>
                             )}
                           </label>
                           <div className="w-8/12">
@@ -133,7 +133,7 @@ function FieldArrayData({
                               type={item.schemaDataType}
                               placeholder={item.name}
                               name={`formData[${index}].attributes.${attIndex}.value`}
-                              className="sm:text-md focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                              className="border-input file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                             />
                             {((): JSX.Element | null => {
                               const errorAtIndex =
@@ -169,7 +169,7 @@ function FieldArrayData({
                                   touchedAttr.value // touchedAttr.value must be truthy
                                 ) {
                                   return (
-                                    <label className="absolute text-xs text-red-500">
+                                    <label className="absolute text-xs text-destructive">
                                       {errorAttr.value}
                                     </label>
                                   )
