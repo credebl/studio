@@ -319,7 +319,7 @@ const WalletSpinup = (): React.JSX.Element => {
           setWalletSpinStep(6)
           setWalletSpinupStatus()
         }, 1000)
-        router.push(`/organizations/dashboard?orgId=${orgId}`)
+        router.push(`/organizations/dashboard/${orgId}`)
         // eslint-disable-next-line no-console
         console.log('invitation-url-creation-success', JSON.stringify(data))
       })
