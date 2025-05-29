@@ -23,17 +23,17 @@ const SummaryCard = ({
     <CardContent className="p-6">
       <div className="flex items-start justify-between">
         <div>
-          <h5 className="text-xl leading-none font-bold dark:text-white">
+          <h5 className="text-xl leading-none font-bold mb-2">
             {schemaName}
           </h5>
-          <div className="mb-4 dark:text-white">
+          <div className="mb-4 ">
             <b>Version</b>: {version}
           </div>
         </div>
       </div>
       <div className="issuance min-w-0 flex-1">
-        <div className="relative flex items-center truncate break-all dark:text-white">
-          <span className="mr-2 font-semibold">
+        <div className="relative flex items-center truncate break-all mb-2">
+          <span className="mr-2 font-semibold ">
             <b>Schema ID:</b>{' '}
           </span>
           <span className="">
@@ -44,10 +44,10 @@ const SummaryCard = ({
           <b>Attributes:</b>
         </span>
 
-        <div className="flex flex-wrap overflow-hidden">
+        <div className="mt-2 flex flex-wrap overflow-hidden">
           {schemaAttributes?.map((element: { attributeName: string }) => (
             <div key={element.attributeName} className="truncate">
-              <span className="bg-primary text-custom-900 dark:bg-primary-50 dark:text-custom-900 m-1 mr-2 rounded px-2.5 py-0.5 text-sm font-medium">
+              <span className="bg-secondary text-secondary-foreground hover:bg-secondary/80 m-1 mr-2 rounded px-2.5 py-0.5 text-sm font-medium shadow-sm transition-colors">
                 {element.attributeName}
               </span>
             </div>

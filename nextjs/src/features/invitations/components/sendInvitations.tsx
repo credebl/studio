@@ -174,7 +174,7 @@ export default function SendInvitationModal({
             validateAndAddEmail(values)
           }}
         >
-          {({ errors, touched, isValid, dirty }) => (
+          {({ errors, touched }) => (
             <Form className="space-y-2">
               <div className="flex items-end gap-4">
                 <div className="flex flex-1 items-end gap-4">
@@ -206,9 +206,7 @@ export default function SendInvitationModal({
               <div className="flex justify-end">
                 <Button
                   onClick={sendInvitations}
-                  disabled={
-                    (!dirty || !isValid || loading) ?? invitations.length === 0
-                  }
+                  disabled={loading || !(invitations.length > 0)}
                   className="flex items-center gap-2"
                 >
                   <SendIcon className="h-5 w-5" />

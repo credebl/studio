@@ -100,8 +100,7 @@ export const pathRoutes = {
     issuance: {
       credDef: '/organizations/credentials/issue/schemas/cred-defs',
       schemas: '/organizations/credentials/issue/schemas',
-      connections:
-        '/organizations/credentials/issue/schemas/cred-defs/connections',
+      connections: '/organizations/credentials/connections',
     },
     credentials: {
       credentials: '/organizations/credentials',

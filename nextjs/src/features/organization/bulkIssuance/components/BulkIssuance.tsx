@@ -12,7 +12,7 @@ import {
   ICredentials,
   IUploadMessage,
 } from '../../connectionIssuance/type/Issuance'
-import { Option, SearchableSelect } from '@/components/ShadCnSelect'
+import { Option, SearchableSelect } from '@/components/SearchableSelect'
 import React, { JSX, useEffect, useRef, useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify'
 import { apiStatusCodes, itemPerPage } from '@/config/CommonConstant'
@@ -21,6 +21,7 @@ import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+// import Combobox from '@/components/ui/combobox'
 import Create from '@/features/schemas/components/Create'
 import DragAndDrop from './DragAndDrop'
 import { ICredentialOptions } from '../type/BulkIssuance'
@@ -244,26 +245,22 @@ const BulkIssuance = (): JSX.Element => {
         <ToastContainer />
         <div className="mb-4 ml-1 flex items-center justify-between">
           <div>
-            <p className="text-2xl font-semibold dark:text-white">
-              Bulk Issuance
-            </p>
-            <span className="text-sm text-gray-400">
+            <p className="text-2xl font-semibold">Bulk Issuance</p>
+            <span className="text-muted-foreground text-sm">
               Upload a .CSV file for bulk issuance
             </span>
           </div>
           <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-2">
             <Button
-              color="bg-primary-800"
-              className="group bg-secondary-700 ring-primary-900 bg-white-700 hover:bg-secondary-700 text-primary-600 border-primary-650 hover:text-primary-600 dark:text-custom-100 dark:border-blue-450 dark:hover:text-primary-700 dark:hover:bg-secondary-700 ml-auto flex shrink-0 rounded-md px-2 py-2 text-lg font-medium ring-2 lg:px-3 lg:py-2.5"
-              style={{ height: '2rem', minWidth: '2rem' }}
+              // className="group border-ring hover:bg-primary hover:text-primary-foreground ml-auto flex shrink-0 items-center rounded-lg border px-4 py-1 transition-colors"
+              className="h-[2.2rem] min-w-[2rem]"
+              variant={'outline'}
               onClick={() => {
                 router.push(pathRoutes.organizations.Issuance.history)
               }}
             >
               <History />
-              <span className="text-custom-900 dark:text-custom-100 group-hover:text-custom-900">
-                View History
-              </span>
+              <span className="">View History</span>
             </Button>
 
             <RoleViewButton
@@ -294,14 +291,14 @@ const BulkIssuance = (): JSX.Element => {
           />
         )}
         <div className="min-h-100/21rem flex flex-col justify-between">
-          <Card className="p-5">
+          <Card className="bg-transparent p-5 p-8">
             <div>
               <div className="grid w-[980px] grid-cols-1 gap-6 sm:grid-cols-2">
                 <div className="flex flex-col justify-between">
                   <div>
                     {mounted && (
                       <SearchableSelect
-                        className="border-primary max-w-lg border-2"
+                        className="border-muted max-w-lg border-1"
                         options={
                           Array.isArray(credentialOptionsData)
                             ? credentialOptionsData
@@ -315,15 +312,15 @@ const BulkIssuance = (): JSX.Element => {
                   </div>
                   <div className="mt-4">
                     {credentialSelected && (
-                      <Card className="max-w-[30rem] p-5">
+                      <Card className="max-w-[30rem] border p-5">
                         <div>
-                          <p className="pb-2 text-black dark:text-white">
+                          <p className="pb-2">
                             <span className="font-semibold">Schema: </span>
                             {credentialSelected?.schemaName || ''}{' '}
                             <span>[{credentialSelected?.schemaVersion}]</span>
                           </p>
                           {schemaType === SchemaTypes.schema_INDY && (
-                            <p className="pb-2 text-black dark:text-white">
+                            <p className="pb-2">
                               {' '}
                               <span className="font-semibold">
                                 Credential Definition:
@@ -332,13 +329,11 @@ const BulkIssuance = (): JSX.Element => {
                             </p>
                           )}
 
-                          <span className="font-semibold text-black dark:text-white">
-                            Attributes:
-                          </span>
-                          <div className="flex flex-wrap overflow-hidden">
+                          <span className="font-semibold">Attributes:</span>
+                          <div className="mt-2 flex flex-wrap overflow-hidden">
                             {attributes?.map((element: IAttributes) => (
                               <div key={element.attributeName}>
-                                <span className="bg-secondary text-secondary-foreground hover:bg-secondary/80 m-1 mr-2 rounded px-2.5 py-0.5 text-sm font-medium shadow-sm transition-colors">
+                                <span className="bg-secondary text-secondary-foreground hover:bg-secondary/80 m-1 mr-2 rounded-lg px-2.5 py-2 text-sm font-medium shadow-sm transition-colors">
                                   {element.attributeName}
                                 </span>
                               </div>
@@ -352,9 +347,8 @@ const BulkIssuance = (): JSX.Element => {
                     <Button
                       id="signinsubmit"
                       type="submit"
-                      variant="ghost"
-                      className="border-ring hover:bg-primary flex items-center rounded-xl border px-4 py-2 transition-colors"
-                      style={{ height: '2.4rem', minWidth: '2rem' }}
+                      variant="outline"
+                      className="min-w-[2rem] rounded-xl"
                       disabled={!isCredSelected}
                       onClick={() =>
                         schemaType &&

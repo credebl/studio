@@ -11,6 +11,13 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination'
 import React, { ChangeEvent, useEffect, useState } from 'react'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { apiStatusCodes, itemPerPage } from '../../../config/CommonConstant'
 import { getAllSchemas, getAllSchemasByOrgId } from '@/app/api/schema'
 
@@ -89,7 +96,8 @@ const SchemaList = (props: {
     sortingOrder: 'desc',
     allSearch: '',
   })
-
+  const options = ['All schemas']
+  const optionsWithDefault = ["Organization's schema", ...options]
   const getSchemaList = async (
     schemaListAPIParameter: GetAllSchemaListParameter,
     flag: boolean,
@@ -203,10 +211,7 @@ const SchemaList = (props: {
     setSchemaListAPIParameter(updatedParams)
   }
 
-  const handleFilterChange = (
-    e: React.ChangeEvent<HTMLSelectElement>,
-  ): void => {
-    const { value } = e.target
+  const handleFilterChange = async (value: string): Promise<void> => {
     const isAllSchemas = value === 'all'
 
     setSelectedValue(value)
@@ -274,20 +279,25 @@ const SchemaList = (props: {
               placeholder="Search..."
               value={searchValue}
               onChange={onSearch}
-              className="bg-background text-muted-foreground focus-visible:ring-primary h-10 rounded-lg pr-4 pl-10 text-sm shadow-sm focus-visible:ring-1"
+              className="h-10 rounded-lg pr-4 pl-10"
             />
             <IconSearch className="text-muted-foreground absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2" />
           </div>
-
-          <select
-            onChange={handleFilterChange}
-            value={allSchemaFlag ? 'all' : 'org'}
-            className="bg-background text-foreground h-10 w-full rounded-lg border p-2.5 sm:w-auto sm:text-sm"
+          <Select
+            defaultValue="Organization's schema"
+            onValueChange={handleFilterChange}
           >
-            <option value="org">Organization&apos;s schema</option>
-            <option value="all">All schemas</option>
-          </select>
-
+            <SelectTrigger className="min-h-[42px] w-[230px] rounded-lg border p-2.5 text-sm">
+              <SelectValue placeholder="Select schema type" />
+            </SelectTrigger>
+            <SelectContent>
+              {optionsWithDefault.map((opt) => (
+                <SelectItem key={opt} value={opt}>
+                  {opt}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Button
             onClick={() => route.push('/organizations/schemas/create')}
             className="w-full sm:w-auto"
@@ -299,10 +309,7 @@ const SchemaList = (props: {
         {loading ? (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2">
             {[...Array(4)].map((_, idx) => (
-              <div
-                key={idx}
-                className="space-y-3 rounded-lg border p-4 shadow-sm"
-              >
+              <div key={idx} className="space-y-3 rounded-lg p-4 shadow-sm">
                 <Skeleton className="h-5 w-1/2 rounded-md" />
                 <Skeleton className="h-4 w-1/3 rounded" />
                 <Skeleton className="h-4 w-3/4 rounded" />

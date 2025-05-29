@@ -9,7 +9,7 @@
 :root {
   --background: #ffffff;
   --foreground: #0f1419;
-  --card: #f3f4f6;
+  --card: #ffffff;
   --card-foreground: #0f1419;
   --card-gradient: linear-gradient(to top, #fef9c3, #ffffff);
   --popover: #ffffff;
@@ -24,8 +24,8 @@
   --accent-foreground: #1e9df1;
   --destructive: #f4212e;
   --destructive-foreground: #ffffff;
-  --border: #e1eaef;
-  --input: #f7f9fa;
+  --border: #b0b8c1;
+  --input: #e5e5e6;
   --ring: #1da1f2;
   --chart-1: #1e9df1;
   --chart-2: #00b87a;
@@ -265,4 +265,23 @@ ul.timelinestatic > li {
   .badges-secondary {
     background-color: #7dd3fc;
   }
+}
+
+.status-pending {
+  background-color: #ffedd5;
+  color: #c2410c;
+}
+
+.status-accepted {
+  background-color: #dcfce7;
+  color: #065f46;
+}
+
+.status-rejected {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+* {
+  border-color: var(--color-border);
 }

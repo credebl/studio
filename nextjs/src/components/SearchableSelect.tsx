@@ -2,7 +2,6 @@
 
 import * as React from 'react'
 
-import { Check, ChevronsUpDown } from 'lucide-react'
 import {
   Command,
   CommandEmpty,
@@ -18,6 +17,7 @@ import {
 } from '@/components/ui/popover'
 
 import { Button } from '@/components/ui/button'
+import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export type Option = {
@@ -36,7 +36,6 @@ interface SearchableSelectProps {
   options: Option[]
   value?: string
   clear?: boolean
-
   onValueChange?: (value: Option) => void
   placeholder?: string
   emptyMessage?: string
@@ -50,7 +49,6 @@ export function SearchableSelect({
   onValueChange,
   placeholder = 'Select an option',
   emptyMessage = 'No results found.',
-  className,
   disabled = false,
   clear = undefined,
 }: SearchableSelectProps): React.JSX.Element {
@@ -72,27 +70,35 @@ export function SearchableSelect({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn(
-            'w-full justify-between',
-            'bg-popover/60 focus:bg-popover focus-visible:bg-popover',
-            'data-[state=open]:secondary-foreground',
-            className,
-          )}
           disabled={disabled}
         >
-          {selected ? selected.label : placeholder}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <span className="truncate">
+            {selected ? selected.label : placeholder}
+          </span>
+          <ChevronDown className="text-muted-foreground" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
-        <Command className="bg-popover">
+      <PopoverContent
+        className={cn(
+          'w-[var(--radix-popover-trigger-width)] p-0',
+          'bg-popover border-border shadow-md',
+        )}
+        align="start"
+      >
+        <Command className="bg-transparent">
           <CommandInput
             placeholder="Search..."
-            className="text-accent-foreground h-9"
+            className={cn(
+              'h-9 border-0 bg-transparent',
+              'text-foreground placeholder:text-muted-foreground',
+              'focus:ring-0 focus:outline-none',
+            )}
           />
-          <CommandList>
-            <CommandEmpty>{emptyMessage}</CommandEmpty>
-            <CommandGroup className="max-h-64 overflow-auto">
+          <CommandList className="max-h-64">
+            <CommandEmpty className="text-muted-foreground py-6 text-center text-sm">
+              {emptyMessage}
+            </CommandEmpty>
+            <CommandGroup className="p-1">
               {options.map((option, index) => (
                 <CommandItem
                   key={index}
@@ -103,16 +109,16 @@ export function SearchableSelect({
                     onValueChange?.(option)
                   }}
                   className={cn(
-                    'cursor-pointer',
-                    'aria-selected:bg-primary/60 aria-selected:text-accent-foreground',
-                    'data-[selected=true]:foreground data-[selected=true]:text-accent-foreground',
+                    'relative flex cursor-pointer items-center rounded-sm px-2 py-1.5 text-sm select-none',
+                    'text-foreground hover:bg-accent hover:text-accent-foreground',
+                    'focus:bg-accent focus:text-accent-foreground',
+                    'data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground',
+                    'transition-colors duration-150',
+                    'outline-none',
                   )}
                   data-selected={selected?.value === option.value}
                 >
-                  {option.label}
-                  {selected?.value === option.value && (
-                    <Check className="text-accent-foreground ml-auto h-4 w-4" />
-                  )}
+                  <span className="flex-1 truncate">{option.label}</span>
                 </CommandItem>
               ))}
             </CommandGroup>
