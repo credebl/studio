@@ -15,6 +15,11 @@ export enum PolygonNetworks {
   TESTNET = 'Polygon Testnet',
   MAINNET = 'Polygon Mainnet',
 }
+
+export enum CommonConstants {
+  BALANCELIMIT = 0.01,
+}
+
 export enum Ledgers {
   INDY = 'indy',
   POLYGON = 'polygon',

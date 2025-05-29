@@ -2,30 +2,22 @@
 'use client'
 
 import * as React from 'react'
-import * as z from 'zod'
+import * as Yup from 'yup'
 
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { CommonConstants, DidMethod, Network } from '@/common/enums'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { DidMethod, Network } from '@/common/enums'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
+import { ErrorMessage, Field, Form, Formik, FormikHelpers } from 'formik'
 import { createDid, createPolygonKeyValuePair } from '@/app/api/Agent'
 
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { CommonConstants } from '../common/enum'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { apiStatusCodes } from '@/config/CommonConstant'
@@ -33,9 +25,7 @@ import { envConfig } from '@/config/envConfig'
 import { ethers } from 'ethers'
 import { getOrganizationById } from '@/app/api/organization'
 import { nanoid } from 'nanoid'
-import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
-import { zodResolver } from '@hookform/resolvers/zod'
 
 interface IPolygonKeys {
   privateKey: string
@@ -117,50 +107,52 @@ const CreateDidComponent = (props: CreateDIDModalProps): React.JSX.Element => {
   const [walletErrorMessage, setWalletErrorMessage] = React.useState<
     string | null
   >(null)
+  const [initialValues, setInitialValues] = React.useState<IFormValues>({
+    method: '',
+    ledger: '',
+    network: '',
+    domain: '',
+    privatekey: '',
+    endorserDid: '',
+    did: '',
+  })
 
   const router = useRouter()
 
-  // Dynamically build schema based on method
-  const getFormSchema = (): Zod.AnyZodObject => {
-    const baseSchema = z.object({
-      method: z.string(),
-      ledger: z.string(),
-      network: z.string().optional(),
-      domain: z.string().optional(),
-      privatekey: z.string().optional(),
-      endorserDid: z.string().optional(),
-      did: z.string().optional(),
+  // Dynamic validation schema based on method
+  const getValidationSchema = (): Yup.ObjectSchema<{
+    method: string
+    ledger: string
+    network?: string
+    domain?: string
+    privatekey?: string
+    endorserDid?: string
+    did?: string
+  }> => {
+    let schema = Yup.object().shape({
+      method: Yup.string().required('Method is required'),
+      ledger: Yup.string().required('Ledger is required'),
+      network: Yup.string(),
+      domain: Yup.string(),
+      privatekey: Yup.string(),
+      endorserDid: Yup.string(),
+      did: Yup.string(),
     })
 
-    // Enhance schema with conditional validation
     if (method === DidMethod.WEB) {
-      return baseSchema.extend({
-        domain: z.string().min(1, 'Domain is required'),
+      schema = schema.shape({
+        domain: Yup.string().required('Domain is required'),
       })
     } else if (method === DidMethod.POLYGON) {
-      return baseSchema.extend({
-        privatekey: z
-          .string()
-          .min(1, 'Private key is required')
+      schema = schema.shape({
+        privatekey: Yup.string()
+          .required('Private key is required')
           .length(64, 'Private key must be exactly 64 characters long'),
       })
     }
 
-    return baseSchema
+    return schema
   }
-
-  const form = useForm<IFormValues>({
-    resolver: zodResolver(getFormSchema()),
-    defaultValues: {
-      method: '',
-      ledger: '',
-      network: '',
-      domain: '',
-      privatekey: '',
-      endorserDid: '',
-      did: '',
-    },
-  })
 
   const fetchOrganizationDetails = async (): Promise<void> => {
     const response = await getOrganizationById(props.orgId)
@@ -204,13 +196,14 @@ const CreateDidComponent = (props: CreateDIDModalProps): React.JSX.Element => {
       setCompleteDidMethodValue(completeDidMethod)
 
       // Update form values
-      form.reset({
+      setInitialValues({
         method: didMethod,
         ledger: ledgerName,
         network: networkName,
         domain: '',
         privatekey: generatedKeys?.privateKey.slice(2) || '',
         endorserDid: '',
+        did: '',
       })
     } else {
       console.error('Error in fetching organization:::')
@@ -309,7 +302,9 @@ const CreateDidComponent = (props: CreateDIDModalProps): React.JSX.Element => {
     }
   }
 
-  const generatePolygonKeyValuePair = async (): Promise<void> => {
+  const generatePolygonKeyValuePair = async (
+    setFieldValue: FormikHelpers<IFormValues>['setFieldValue'],
+  ): Promise<void> => {
     setIsLoading(true)
     try {
       const resCreatePolygonKeys = await createPolygonKeyValuePair(props.orgId)
@@ -320,7 +315,7 @@ const CreateDidComponent = (props: CreateDIDModalProps): React.JSX.Element => {
         setIsLoading(false)
         const privateKey = data?.data?.privateKey.slice(2)
         setPrivateKeyValue(privateKeyValue || privateKey)
-        form.setValue('privatekey', privateKey)
+        setFieldValue('privatekey', privateKey)
         await checkBalance(privateKeyValue || privateKey, Network.TESTNET)
       }
     } catch (err) {
@@ -338,13 +333,11 @@ const CreateDidComponent = (props: CreateDIDModalProps): React.JSX.Element => {
       setPrivateKeyValue('')
       setWalletErrorMessage(null)
       setGeneratedKeys(null)
-      form.setValue('privatekey', '')
     } else {
       setPrivateKeyValue('')
       setWalletErrorMessage(null)
-      form.setValue('privatekey', '')
     }
-  }, [havePrivateKey, form])
+  }, [havePrivateKey])
 
   function CopyDid({
     value,
@@ -389,10 +382,6 @@ const CreateDidComponent = (props: CreateDIDModalProps): React.JSX.Element => {
     )
   }
 
-  function onSubmit(values: IFormValues): void {
-    createNewDid(values)
-  }
-
   return (
     <Dialog open={props.openModal} onOpenChange={props.setOpenModal}>
       <DialogContent className="sm:max-w-[500px]">
@@ -406,286 +395,275 @@ const CreateDidComponent = (props: CreateDIDModalProps): React.JSX.Element => {
           </Alert>
         )}
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="ledger"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Ledger <span className="text-destructive text-xs">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        readOnly
-                        className=""
-                        value={field.value ?? ''}
-                      />
-                    </FormControl>
-                  </FormItem>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={getValidationSchema()}
+          enableReinitialize={true}
+          onSubmit={(values) => createNewDid(values)}
+        >
+          {({ values, setFieldValue }) => (
+            <Form className="space-y-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <Label htmlFor="ledger">
+                    Ledger <span className="text-destructive text-xs">*</span>
+                  </Label>
+                  <Field
+                    as={Input}
+                    id="ledger"
+                    name="ledger"
+                    readOnly
+                    value={values.ledger}
+                  />
+                  <ErrorMessage
+                    name="ledger"
+                    component="div"
+                    className="text-destructive mt-1 text-sm"
+                  />
+                </div>
+
+                {method !== DidMethod.KEY && (
+                  <div>
+                    <Label htmlFor="method">
+                      Method <span className="text-destructive text-xs">*</span>
+                    </Label>
+                    <Field
+                      as={Input}
+                      id="method"
+                      name="method"
+                      readOnly
+                      value={values.method}
+                    />
+                    <ErrorMessage
+                      name="method"
+                      component="div"
+                      className="text-destructive mt-1 text-sm"
+                    />
+                  </div>
                 )}
-              />
 
-              {method !== DidMethod.KEY && (
-                <FormField
-                  control={form.control}
-                  name="method"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Method{' '}
-                        <span className="text-destructive text-xs">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          readOnly
-                          className=""
-                          value={field.value ?? ''}
+                {method !== DidMethod.WEB && method !== DidMethod.KEY && (
+                  <div>
+                    <Label htmlFor="network">
+                      Network{' '}
+                      <span className="text-destructive text-xs">*</span>
+                    </Label>
+                    <Field
+                      as={Input}
+                      id="network"
+                      name="network"
+                      readOnly
+                      value={values.network}
+                    />
+                    <ErrorMessage
+                      name="network"
+                      component="div"
+                      className="text-destructive mt-1 text-sm"
+                    />
+                  </div>
+                )}
+
+                {method === DidMethod.WEB && (
+                  <div>
+                    <Label htmlFor="domain">
+                      Domain <span className="text-destructive text-xs">*</span>
+                    </Label>
+                    <Field
+                      as={Input}
+                      id="domain"
+                      name="domain"
+                      placeholder="Enter Name"
+                    />
+                    <ErrorMessage
+                      name="domain"
+                      component="div"
+                      className="text-destructive mt-1 text-sm"
+                    />
+                  </div>
+                )}
+
+                <div>
+                  <Label>
+                    DID Method{' '}
+                    <span className="text-destructive text-xs">*</span>
+                  </Label>
+                  <Input value={completeDidMethodValue || ''} readOnly />
+                </div>
+
+                {method === DidMethod.POLYGON && (
+                  <>
+                    <div className="col-span-1 sm:col-span-2">
+                      <div className="mb-4 flex items-center space-x-2">
+                        <Checkbox
+                          id="havePrivateKey"
+                          checked={havePrivateKey}
+                          onCheckedChange={(checked) =>
+                            setHavePrivateKey(checked === true)
+                          }
                         />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              )}
+                        <Label htmlFor="havePrivateKey">
+                          Already have a private key?
+                        </Label>
+                      </div>
 
-              {method !== DidMethod.WEB && method !== DidMethod.KEY && (
-                <FormField
-                  control={form.control}
-                  name="network"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Network{' '}
-                        <span className="text-destructive text-xs">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          readOnly
-                          className=""
-                          value={field.value ?? ''}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              )}
+                      {!havePrivateKey ? (
+                        <>
+                          <div className="my-3 flex items-center justify-between">
+                            <Label>
+                              Generate private key{' '}
+                              <span className="text-destructive text-xs">
+                                *
+                              </span>
+                            </Label>
+                            <Button
+                              type="button"
+                              onClick={() =>
+                                generatePolygonKeyValuePair(setFieldValue)
+                              }
+                              disabled={isLoading}
+                            >
+                              {isLoading ? 'Generating...' : 'Generate'}
+                            </Button>
+                          </div>
 
-              {method === DidMethod.WEB && (
-                <FormField
-                  control={form.control}
-                  name="domain"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Domain{' '}
-                        <span className="text-destructive text-xs">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="Enter Name" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
+                          {generatedKeys && (
+                            <>
+                              <div className="relative mt-3">
+                                <div className="flex items-center">
+                                  <Field
+                                    as={Input}
+                                    name="privatekey"
+                                    className="truncate"
+                                    readOnly
+                                    value={generatedKeys.privateKey.slice(2)}
+                                  />
+                                  <div className="ml-2">
+                                    <CopyDid
+                                      value={generatedKeys.privateKey.slice(2)}
+                                    />
+                                  </div>
+                                </div>
+                                <ErrorMessage
+                                  name="privatekey"
+                                  component="div"
+                                  className="text-destructive mt-1 text-sm"
+                                />
+                                {walletErrorMessage && (
+                                  <p className="text-destructive text-sm">
+                                    {walletErrorMessage}
+                                  </p>
+                                )}
+                              </div>
 
-              <FormItem>
-                <FormLabel>
-                  DID Method <span className="text-destructive text-xs">*</span>
-                </FormLabel>
-                <Input
-                  value={completeDidMethodValue || ''}
-                  readOnly
-                  className=""
-                />
-              </FormItem>
+                              <TokenWarningMessage />
 
-              {method === DidMethod.POLYGON && (
-                <>
-                  <div className="col-span-1 sm:col-span-2">
-                    <div className="mb-4 flex items-center space-x-2">
-                      <Checkbox
-                        id="havePrivateKey"
-                        checked={havePrivateKey}
-                        onCheckedChange={(checked) =>
-                          setHavePrivateKey(checked === true)
-                        }
-                      />
-                      <Label htmlFor="havePrivateKey">
-                        Already have a private key?
-                      </Label>
+                              <div className="my-3">
+                                <p className="text-sm">
+                                  <span className="font-semibold">
+                                    Address:
+                                  </span>
+                                  <CopyDid
+                                    value={generatedKeys.address}
+                                    className="mt-1"
+                                  />
+                                </p>
+                              </div>
+                            </>
+                          )}
+                        </>
+                      ) : (
+                        <div>
+                          <Field
+                            as={Input}
+                            name="privatekey"
+                            placeholder="Enter private key"
+                            onChange={(
+                              e: React.ChangeEvent<HTMLInputElement>,
+                            ) => {
+                              setFieldValue('privatekey', e.target.value)
+                              setPrivateKeyValue(e.target.value)
+                              setWalletErrorMessage(null)
+                              if (e.target.value.length === 64) {
+                                checkBalance(e.target.value, Network.TESTNET)
+                              }
+                            }}
+                          />
+                          <ErrorMessage
+                            name="privatekey"
+                            component="div"
+                            className="text-destructive mt-1 text-sm"
+                          />
+                          {walletErrorMessage && (
+                            <p className="text-destructive text-sm">
+                              {walletErrorMessage}
+                            </p>
+                          )}
+                          <TokenWarningMessage />
+                        </div>
+                      )}
                     </div>
 
-                    {!havePrivateKey ? (
-                      <>
-                        <div className="my-3 flex items-center justify-between">
-                          <Label>
-                            Generate private key{' '}
-                            <span className="text-destructive text-xs">*</span>
-                          </Label>
-                          <Button
-                            type="button"
-                            onClick={generatePolygonKeyValuePair}
-                            disabled={isLoading}
-                          >
-                            {isLoading ? 'Generating...' : 'Generate'}
-                          </Button>
-                        </div>
-
-                        {generatedKeys && (
-                          <>
-                            <div className="relative mt-3">
-                              <FormField
-                                control={form.control}
-                                name="privatekey"
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormControl>
-                                      <div className="flex items-center">
-                                        <Input
-                                          {...field}
-                                          className="truncate"
-                                          readOnly
-                                          value={generatedKeys.privateKey.slice(
-                                            2,
-                                          )}
-                                        />
-                                        <div className="ml-2">
-                                          <CopyDid
-                                            value={generatedKeys.privateKey.slice(
-                                              2,
-                                            )}
-                                          />
-                                        </div>
-                                      </div>
-                                    </FormControl>
-                                    <FormMessage />
-                                    {walletErrorMessage && (
-                                      <p className="text-destructive text-sm">
-                                        {walletErrorMessage}
-                                      </p>
-                                    )}
-                                  </FormItem>
-                                )}
-                              />
+                    <div className="col-span-1 sm:col-span-2">
+                      <h3 className="mb-2 text-sm font-semibold">
+                        Follow these instructions to generate polygon tokens:
+                      </h3>
+                      <ol className="space-y-2 text-sm">
+                        <li>
+                          <span className="font-semibold">Step 1:</span>
+                          <div className="ml-4">
+                            Copy the address and get the free tokens for the
+                            testnet.
+                            <div>
+                              For eg. use{' '}
+                              <a
+                                href="https://faucet.polygon.technology/"
+                                className="underline"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                https://faucet.polygon.technology/
+                              </a>{' '}
+                              to get free token
                             </div>
-
-                            <TokenWarningMessage />
-
-                            <div className="my-3">
-                              <p className="text-sm">
-                                <span className="font-semibold">Address:</span>
-                                <CopyDid
-                                  value={generatedKeys.address}
-                                  className="mt-1"
-                                />
-                              </p>
+                          </div>
+                        </li>
+                        <li>
+                          <span className="font-semibold">Step 2:</span>
+                          <div className="ml-4">
+                            Check that you have received the tokens.
+                            <div>
+                              For eg. copy the address and check the balance on{' '}
+                              <a
+                                href="https://mumbai.polygonscan.com/"
+                                className="underline"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                https://mumbai.polygonscan.com/
+                              </a>
                             </div>
-                          </>
-                        )}
-                      </>
-                    ) : (
-                      <FormField
-                        control={form.control}
-                        name="privatekey"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <Input
-                                {...field}
-                                placeholder="Enter private key"
-                                onChange={(e) => {
-                                  field.onChange(e)
-                                  setPrivateKeyValue(e.target.value)
-                                  setWalletErrorMessage(null)
-                                  if (e.target.value.length === 64) {
-                                    checkBalance(
-                                      e.target.value,
-                                      Network.TESTNET,
-                                    )
-                                  }
-                                }}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                            {walletErrorMessage && (
-                              <p className="text-destructive text-sm">
-                                {walletErrorMessage}
-                              </p>
-                            )}
-                            <TokenWarningMessage />
-                          </FormItem>
-                        )}
-                      />
-                    )}
-                  </div>
-
-                  <div className="col-span-1 sm:col-span-2">
-                    <h3 className="mb-2 text-sm font-semibold">
-                      Follow these instructions to generate polygon tokens:
-                    </h3>
-                    <ol className="space-y-2 text-sm">
-                      <li>
-                        <span className="font-semibold">Step 1:</span>
-                        <div className="ml-4">
-                          Copy the address and get the free tokens for the
-                          testnet.
-                          <div>
-                            For eg. use{' '}
-                            <a
-                              href="https://faucet.polygon.technology/"
-                              className="underline"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              https://faucet.polygon.technology/
-                            </a>{' '}
-                            to get free token
                           </div>
-                        </div>
-                      </li>
-                      <li>
-                        <span className="font-semibold">Step 2:</span>
-                        <div className="ml-4">
-                          Check that you have received the tokens.
-                          <div>
-                            For eg. copy the address and check the balance on{' '}
-                            <a
-                              href="https://mumbai.polygonscan.com/"
-                              className="underline"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              https://mumbai.polygonscan.com/
-                            </a>
-                          </div>
-                        </div>
-                      </li>
-                    </ol>
-                  </div>
-                </>
-              )}
-            </div>
+                        </li>
+                      </ol>
+                    </div>
+                  </>
+                )}
+              </div>
 
-            <div className="flex justify-end">
-              <Button
-                type="submit"
-                disabled={
-                  loading ||
-                  (method === DidMethod.POLYGON &&
-                    !form.getValues('privatekey'))
-                }
-              >
-                {loading ? 'Submitting...' : 'Submit'}
-              </Button>
-            </div>
-          </form>
-        </Form>
+              <div className="flex justify-end">
+                <Button
+                  type="submit"
+                  disabled={
+                    loading ||
+                    (method === DidMethod.POLYGON && !values.privatekey)
+                  }
+                >
+                  {loading ? 'Submitting...' : 'Submit'}
+                </Button>
+              </div>
+            </Form>
+          )}
+        </Formik>
       </DialogContent>
     </Dialog>
   )
