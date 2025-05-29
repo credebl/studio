@@ -1,9 +1,9 @@
 name: Deploy main branch to Deno
 on:
-  push:
-    branches: main
-  pull_request:
-    branches: main
+ push:
+    branches: develop-nextjs
+ pull_request:
+    branches: develop-nextjs
 
 jobs:
   deploy:
@@ -72,6 +72,8 @@ jobs:
 
       - name: Build step
         run: npm install && npm run build # 📝 Update the build command(s)
+        working-directory: nextjs
+
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
