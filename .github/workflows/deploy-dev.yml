@@ -78,6 +78,6 @@ jobs:
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
         with:
-          project: "credebl-ui"             # Project name in Deno Deploy
+          project: "studio-nextjs"          # Project name in Deno Deploy
           entrypoint: "server/entry.mjs" # 📝 Update the entrypoint
           root: "dist"
