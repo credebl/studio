@@ -1,7 +1,7 @@
 'use client'
 
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { AlertCircle, BookmarkIcon, UserCircle } from 'lucide-react'
+import { AlertCircle, BookmarkIcon } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import React, { useEffect, useState } from 'react'
+import { RoleNames, apiStatusCodes } from '@/config/CommonConstant'
 import {
   editOrganizationUserRole,
   getOrganizationRoles,
@@ -21,7 +22,6 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { TextTitlecase } from '@/utils/TextTransform'
 import { User } from './users-interface'
-import { apiStatusCodes } from '@/config/CommonConstant'
 import { useAppSelector } from '@/lib/hooks'
 
 interface RoleI {
@@ -36,6 +36,7 @@ interface EditUserRoleModalProps {
   user: User
   setMessage: (message: string) => void
   setOpenModal: (flag: boolean) => void
+  getAllUsersFun: () => void
 }
 
 const EditUserRoleModal = ({
@@ -43,6 +44,7 @@ const EditUserRoleModal = ({
   user,
   setMessage,
   setOpenModal,
+  getAllUsersFun,
 }: EditUserRoleModalProps): React.JSX.Element => {
   const [loading, setLoading] = useState<boolean>(false)
   const [roles, setRoles] = useState<RoleI[] | null>(null)
@@ -57,15 +59,25 @@ const EditUserRoleModal = ({
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         const fetchedRoles: RoleI[] = data.data
-        const filteredRoles = fetchedRoles.map((role) => {
-          if (user?.roles.includes(role.name) && role.name !== 'member') {
-            return { ...role, checked: true, disabled: false }
-          } else if (role.name === 'member') {
-            return { ...role, checked: true, disabled: true }
-          } else {
-            return { ...role, checked: false, disabled: false }
-          }
-        })
+        const filteredRoles = fetchedRoles
+          .filter(
+            (role) =>
+              !([RoleNames.OWNER, RoleNames.HOLDER] as string[]).includes(
+                role.name,
+              ),
+          )
+          .map((role) => {
+            if (
+              user?.roles.includes(role.name) &&
+              role.name !== RoleNames.MEMBER
+            ) {
+              return { ...role, checked: true, disabled: false }
+            } else if (role.name === RoleNames.MEMBER) {
+              return { ...role, checked: true, disabled: true }
+            } else {
+              return { ...role, checked: false, disabled: false }
+            }
+          })
 
         setRoles(filteredRoles)
       } else {
@@ -98,6 +110,7 @@ const EditUserRoleModal = ({
 
       if (response?.data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setMessage(response.data.message)
+        getAllUsersFun()
         setOpenModal(false)
       } else {
         setErrorMsg(response as unknown as string)
@@ -151,68 +164,50 @@ const EditUserRoleModal = ({
     }
   }
 
-  const getRoleColor = (roleName: string): string => {
-    switch (roleName) {
-      case 'admin':
-        return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300'
-      case 'member':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
-      case 'issuer':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
-      case 'verifier':
-        return 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300'
-      default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
-    }
-  }
-
   return (
     <Dialog open={openModal} onOpenChange={setOpenModal}>
-      <DialogContent className="rounded-xl shadow-lg sm:max-w-md">
+      <DialogContent className="max-w-2xl! rounded-xl shadow-lg">
         <DialogHeader className="border-b pb-4">
-          <DialogTitle className="text-primary flex items-center text-xl font-bold">
-            <UserCircle className="mr-2 h-5 w-5" />
+          <DialogTitle className="text-muted-foreground flex items-center text-xl font-medium">
             Manage User Role
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6 pt-4">
-          <div className="rounded-lg border border-gray-200 bg-gradient-to-r from-slate-50 to-gray-50 p-5 shadow-sm dark:border-gray-700 dark:from-gray-800 dark:to-gray-900">
+          <div className="rounded-lg border p-5 shadow-sm">
             <div className="space-y-4">
-              <div className="mb-2 flex items-center border-b pb-4">
-                <div className="bg-primary/10 mr-3 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full">
-                  <UserCircle className="text-primary h-6 w-6" />
-                </div>
+              <div className="mb-2 flex items-center pb-4">
                 <div className="flex-grow">
-                  <p className="truncate text-base font-semibold text-gray-800 dark:text-white">
+                  <p className="truncate text-base font-semibold">
                     {user?.firstName} {user?.lastName}
                   </p>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">
-                    {user?.email}
-                  </span>
+                  <span className="text-sm">{user?.email}</span>
                 </div>
               </div>
 
               <div className="w-full">
                 <div className="mb-3 flex items-center text-sm font-medium">
-                  <span className="mr-1">Assigned Roles</span>
-                  <span className="text-red-500">*</span>
+                  <span className="mr-1">Roles</span>
+                  <span className="text-destructive">*</span>
                 </div>
 
                 {roles && (
-                  <div className="space-y-3">
+                  <div className="grid grid-cols-2 space-y-3">
                     {roles.map((role) => (
-                      <button
+                      <div
                         key={role.id}
-                        className={`flex items-center rounded-md p-3 transition-all ${
-                          role.checked
-                            ? 'border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800'
-                            : 'hover:bg-gray-50 dark:hover:bg-gray-700'
-                        } ${role.checked && !role.disabled ? 'ring-primary/20 ring-2' : ''}`}
+                        className="flex items-center rounded-md p-3 transition-all"
                         onClick={() =>
                           !role.disabled &&
                           handleRoleChange(!role.checked, role)
                         }
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            handleRoleChange(!role.checked, role)
+                          }
+                        }}
                       >
                         <Checkbox
                           id={`checkbox-${role.id}`}
@@ -221,28 +216,23 @@ const EditUserRoleModal = ({
                           onCheckedChange={(checked) =>
                             handleRoleChange(checked as boolean, role)
                           }
-                          className={`h-5 w-5 rounded border-2 ${
+                          className={`h-5 w-5 rounded border ${
                             role.checked
-                              ? 'border-primary bg-primary text-primary-foreground'
+                              ? 'border'
                               : role.disabled
-                                ? 'border-gray-300 bg-gray-100 dark:border-gray-600 dark:bg-gray-700'
-                                : 'border-gray-400 dark:border-gray-500'
+                                ? 'text-muted'
+                                : ''
                           } mr-3`}
                         />
                         <div className="flex flex-grow items-center justify-between">
                           <Label
                             htmlFor={`checkbox-${role.id}`}
-                            className={`${role.disabled ? 'text-gray-500' : 'font-medium'} cursor-pointer`}
+                            className={`${role.disabled ? 'text-muted-foreground/60' : 'font-light'} cursor-pointer`}
                           >
                             {TextTitlecase(role.name)}
                           </Label>
-                          <span
-                            className={`rounded-full px-2 py-1 text-xs ${getRoleColor(role.name)}`}
-                          >
-                            {TextTitlecase(role.name)}
-                          </span>
                         </div>
-                      </button>
+                      </div>
                     ))}
                   </div>
                 )}
@@ -251,10 +241,7 @@ const EditUserRoleModal = ({
           </div>
 
           {errorMsg && (
-            <Alert
-              variant="destructive"
-              className="border-red-200 bg-red-50 text-red-800 dark:border-red-800/30 dark:bg-red-900/30 dark:text-red-300"
-            >
+            <Alert variant="destructive" className="text-destructive">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>{errorMsg}</AlertDescription>
             </Alert>
@@ -262,20 +249,13 @@ const EditUserRoleModal = ({
 
           <DialogFooter className="flex justify-end gap-2 sm:justify-end">
             <Button
-              variant="outline"
-              onClick={() => setOpenModal(false)}
-              className="border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
-            >
-              Cancel
-            </Button>
-            <Button
               onClick={handleSave}
               disabled={loading}
               className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center"
             >
               {loading ? (
                 <svg
-                  className="mr-2 -ml-1 h-4 w-4 animate-spin text-white"
+                  className="mr-2 -ml-1 h-4 w-4 animate-spin"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -297,7 +277,7 @@ const EditUserRoleModal = ({
               ) : (
                 <BookmarkIcon className="mr-2 h-4 w-4" />
               )}
-              {loading ? 'Saving...' : 'Save Changes'}
+              {loading ? 'Saving...' : 'Save'}
             </Button>
           </DialogFooter>
         </div>

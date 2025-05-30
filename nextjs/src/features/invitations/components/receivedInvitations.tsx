@@ -233,7 +233,7 @@ export default function ReceivedInvitations(): React.JSX.Element {
                 placeholder="Search invitations..."
                 value={searchText}
                 onChange={handleSearchChange}
-                className="bg-background text-muted-foreground focus-visible:ring-primary h-10 rounded-lg pr-4 pl-10 text-sm shadow-sm focus-visible:ring-1"
+                className="border-input file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border bg-transparent px-3 py-1 pr-4 pl-10 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
               />
               <IconSearch className="text-muted-foreground absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2" />
             </div>
@@ -248,7 +248,7 @@ export default function ReceivedInvitations(): React.JSX.Element {
           {(message || error) && (
             <AlertComponent
               message={message ?? error}
-              type={message ? 'success' : 'destructive'}
+              type={message ? 'success' : 'failure'}
               onAlertClose={() => {
                 setMessage(null)
                 setError(null)
@@ -285,7 +285,11 @@ export default function ReceivedInvitations(): React.JSX.Element {
                               />
                             ) : (
                               <AvatarFallback>
-                                {invitation.organisation.logoUrl}
+                                {invitation.organisation.name
+                                  .split(' ')
+                                  .map((word) => word.charAt(0))
+                                  .join('')
+                                  .toUpperCase()}
                               </AvatarFallback>
                             )}
                           </Avatar>
@@ -301,7 +305,7 @@ export default function ReceivedInvitations(): React.JSX.Element {
                             {invitation.orgRoles?.map((role: OrgRole) => (
                               <span
                                 key={role.id ?? role.name}
-                                className="bg-primary-50 text-primary-700 rounded-md px-2 py-1 text-xs font-medium"
+                                className="bg-primary text-primary-foreground rounded-md px-2 py-1 text-xs font-medium"
                               >
                                 {role.name.charAt(0).toUpperCase() +
                                   role.name.slice(1)}
@@ -316,7 +320,7 @@ export default function ReceivedInvitations(): React.JSX.Element {
                             respondToInvitations(invitation, 'rejected')
                           }
                           variant="outline"
-                          className="text-md rounded-lg border border-gray-200 bg-white px-5 py-3 font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:z-10 focus:ring-4 focus:ring-gray-200 focus:outline-none md:w-auto dark:border-gray-500 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-600"
+                          className="text-md rounded-lg border px-5 py-3 font-medium focus:z-10 focus:ring-4 focus:outline-none md:w-auto"
                         >
                           <XIcon className="mr-2 h-4 w-4" />
                           Reject

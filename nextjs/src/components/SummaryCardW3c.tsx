@@ -23,17 +23,15 @@ const SummaryCard = ({
     <CardContent className="p-6">
       <div className="flex items-start justify-between">
         <div>
-          <h5 className="text-xl leading-none font-bold mb-2">
-            {schemaName}
-          </h5>
-          <div className="mb-4 ">
+          <h5 className="mb-2 text-xl leading-none font-bold">{schemaName}</h5>
+          <div className="mb-4">
             <b>Version</b>: {version}
           </div>
         </div>
       </div>
       <div className="issuance min-w-0 flex-1">
-        <div className="relative flex items-center truncate break-all mb-2">
-          <span className="mr-2 font-semibold ">
+        <div className="relative mb-2 flex items-center truncate break-all">
+          <span className="mr-2 font-semibold">
             <b>Schema ID:</b>{' '}
           </span>
           <span className="">
