@@ -146,7 +146,7 @@ const DIDList = ({ orgId }: { orgId: string }): React.JSX.Element => {
 
       <div className="divide-y rounded-lg border">
         {didList.map((item: IDidListData, index: number) => (
-          <div key={item.id} className={`p-4 ${item.isPrimaryDid ? '' : ''} h-20 grid items-center `}>
+          <div key={item.id} className={'grid h-20 items-center p-4'}>
             <div className="flex items-center justify-between gap-4">
               <span className="w-16 shrink-0">DID {index + 1}</span>
               <span>:</span>
@@ -158,7 +158,10 @@ const DIDList = ({ orgId }: { orgId: string }): React.JSX.Element => {
               )}
 
               {item.isPrimaryDid ? (
-                <Badge variant="default" className="ml-auto h-9 w-34 text-sm">
+                <Badge
+                  variant="default"
+                  className="ml-auto h-9 w-34 cursor-default text-sm"
+                >
                   Primary DID
                 </Badge>
               ) : (
