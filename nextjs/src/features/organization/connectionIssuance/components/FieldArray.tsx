@@ -123,7 +123,9 @@ const FieldArrayData = ({
                       )}
                     </div>
 
-                    <h3 className="dark:text-white">Attributes</h3>
+                    <h3 className="mb-2 leading-none font-semibold tracking-tight">
+                      Attributes :
+                    </h3>
                     <div className="container mx-auto pr-2">
                       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2">
                         {Array.isArray(attributes) &&
@@ -134,11 +136,11 @@ const FieldArrayData = ({
                               >
                                 <div
                                   key={attr?.name}
-                                  className="flex items-center"
+                                  className="relative grid w-full grid-cols-[1fr_3fr] items-center gap-2"
                                 >
                                   <label
                                     htmlFor={`credentialData.${index}.attributes.${attrIndex}.value`}
-                                    className="flex w-2/5 items-center justify-end pr-3 font-light dark:text-white"
+                                    className="word-break-word text-base"
                                   >
                                     <div className="word-break-word flex items-center text-end">
                                       <Name attr={attr?.name} />
@@ -157,9 +159,10 @@ const FieldArrayData = ({
                                           ? 'date'
                                           : attr?.dataType
                                       }
+                                      placeholder={attr?.name}
                                       id={`credentialData.${index}.attributes.${attrIndex}.value`}
                                       name={`credentialData.${index}.attributes.${attrIndex}.value`}
-                                      className="border-input file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                                      className="border-input file:text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-ring flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                                       validate={(value: string) => {
                                         try {
                                           const schema = Yup.reach(

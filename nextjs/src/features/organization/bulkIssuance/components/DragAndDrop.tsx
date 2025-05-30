@@ -26,6 +26,7 @@ export default function DragAndDrop({
       onDragOver={handleDragOver}
       role="region"
       tabIndex={0}
+      className="w-fit px-8"
     >
       {' '}
       <div className="h-full lg:flex">

@@ -121,7 +121,7 @@ function FieldArrayData({
                       attIndex: number,
                     ) => (
                       <div className="mt-3" key={attIndex}>
-                        <div className="relative grid grid-cols-[1fr_3fr] w-full items-center gap-2">
+                        <div className="relative grid w-full grid-cols-[1fr_3fr] items-center gap-2">
                           <label className="word-break-word text-base">
                             {item?.displayName}
                             {item.isRequired && (
