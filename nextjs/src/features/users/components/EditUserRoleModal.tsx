@@ -187,13 +187,18 @@ const EditUserRoleModal = ({
                     {roles.map((role) => (
                       <div
                         key={role.id}
-                        className={
-                          'flex items-center rounded-md p-3 transition-all'
-                        }
+                        className="flex items-center rounded-md p-3 transition-all"
                         onClick={() =>
                           !role.disabled &&
                           handleRoleChange(!role.checked, role)
                         }
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            handleRoleChange(!role.checked, role)
+                          }
+                        }}
                       >
                         <Checkbox
                           id={`checkbox-${role.id}`}
