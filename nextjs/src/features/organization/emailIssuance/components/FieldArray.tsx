@@ -81,7 +81,7 @@ function FieldArrayData({
                 {arrayHelpers.form.values.formData.length > 1 && (
                   <div
                     key={index as number}
-                    className="flex justify-end text-destructive sm:w-2/12"
+                    className="text-destructive flex justify-end sm:w-2/12"
                   >
                     <Button
                       data-testid="deleteBtn"
@@ -103,7 +103,7 @@ function FieldArrayData({
                 )}
               </div>
 
-              <label className="w-20 text-base font-semibold mt-8">
+              <label className="mt-8 w-20 text-base font-semibold">
                 Credential data:
               </label>
               <div className="grid w-full grid-cols-1 gap-8 md:grid-cols-2">
@@ -169,7 +169,7 @@ function FieldArrayData({
                                   touchedAttr.value // touchedAttr.value must be truthy
                                 ) {
                                   return (
-                                    <label className="absolute text-xs text-destructive">
+                                    <label className="text-destructive absolute text-xs">
                                       {errorAttr.value}
                                     </label>
                                   )
