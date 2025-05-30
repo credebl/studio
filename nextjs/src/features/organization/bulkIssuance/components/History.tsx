@@ -341,7 +341,7 @@ const HistoryBulkIssuance = (): JSX.Element => {
           totalPages={Math.ceil(totalItem / listAPIParameter?.itemPerPage)}
           pageInfo={pageInfo}
           message={'No History'}
-          discription={'You don"t have any activities yet'}
+          discription={"You don't have any activities yet"}
         ></SortDataTable>
       </div>
     </PageContainer>

@@ -159,3 +159,9 @@ export const fieldCardStyles = {
   maxHeight: '100%',
   overflow: 'auto',
 }
+
+export enum RoleNames {
+  OWNER = 'owner',
+  HOLDER = 'holder',
+  MEMBER = 'member',
+}

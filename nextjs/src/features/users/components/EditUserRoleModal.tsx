@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import React, { useEffect, useState } from 'react'
+import { RoleNames, apiStatusCodes } from '@/config/CommonConstant'
 import {
   editOrganizationUserRole,
   getOrganizationRoles,
@@ -21,7 +22,6 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { TextTitlecase } from '@/utils/TextTransform'
 import { User } from './users-interface'
-import { apiStatusCodes } from '@/config/CommonConstant'
 import { useAppSelector } from '@/lib/hooks'
 
 interface RoleI {
@@ -60,17 +60,23 @@ const EditUserRoleModal = ({
         const filteredRoles = fetchedRoles
           .filter(
             (role) =>
-              !role.name.includes('owner') && !role.name.includes('holder'),
+              !([RoleNames.OWNER, RoleNames.HOLDER] as string[]).includes(
+                role.name,
+              ),
           )
           .map((role) => {
-            if (user?.roles.includes(role.name) && role.name !== 'member') {
+            if (
+              user?.roles.includes(role.name) &&
+              role.name !== RoleNames.MEMBER
+            ) {
               return { ...role, checked: true, disabled: false }
-            } else if (role.name === 'member') {
+            } else if (role.name === RoleNames.MEMBER) {
               return { ...role, checked: true, disabled: true }
             } else {
               return { ...role, checked: false, disabled: false }
             }
           })
+
         setRoles(filteredRoles)
       } else {
         setErrorMsg(response as unknown as string)
