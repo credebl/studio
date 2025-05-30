@@ -9,7 +9,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination'
-import { PlusIcon, XCircleIcon } from 'lucide-react'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { apiStatusCodes, confirmationMessages } from '@/config/CommonConstant'
@@ -28,11 +27,14 @@ import { EmptyMessage } from '@/components/EmptyMessage'
 import { IconSearch } from '@tabler/icons-react'
 import { Input } from '@/components/ui/input'
 import { Invitation } from '@/features/invitations/interfaces/invitation-interface'
+import { InviteEmailIcon } from '@/components/iconsSvg'
+import PageContainer from '@/components/layout/page-container'
 import { Roles } from '@/common/enums'
 import SendInvitationModal from '@/features/invitations/components/sendInvitations'
 import { Skeleton } from '@/components/ui/skeleton'
 import { TextTitlecase } from '@/utils/TextTransform'
 import { User } from './users-interface'
+import { XCircleIcon } from 'lucide-react'
 import { dateConversion } from '@/utils/DateConversion'
 import { getOrganizationInvitations } from '@/app/api/Invitation'
 import { useAppSelector } from '@/lib/hooks'
@@ -257,11 +259,11 @@ export default function Members(): React.JSX.Element {
   const getStatusClass = useCallback((status: string) => {
     switch (status) {
       case 'pending':
-        return 'bg-orange-100 text-orange-800'
+        return 'status-pending'
       case 'accepted':
-        return 'bg-green-100 text-green-800'
+        return 'status-accepted'
       default:
-        return 'bg-red-100 text-red-800'
+        return 'status-rejected'
     }
   }, [])
 
@@ -309,7 +311,7 @@ export default function Members(): React.JSX.Element {
     Array.from({ length: 3 }).map((_, index) => (
       <div
         key={index}
-        className="bg-background animate-pulse rounded-lg border p-4 shadow-sm"
+        className="bg-background animate-pulse rounded-lg p-4 shadow-sm"
       >
         <div className="flex items-center justify-between">
           <div>
@@ -386,284 +388,290 @@ export default function Members(): React.JSX.Element {
   )
 
   return (
-    <div className="p-5">
-      <div className="mb-6">
-        <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Organization Members</h1>
-        </div>
-
-        {(message ?? error) && (
-          <AlertComponent
-            message={message ?? error}
-            type={message ? 'success' : 'failure'}
-            onAlertClose={() => {
-              setMessage(null)
-              setError(null)
-            }}
-          />
-        )}
-      </div>
-
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="mb-6 h-12 w-full max-w-md">
-          <TabsTrigger
-            value="users"
-            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground h-full flex-1 rounded-l-md text-sm font-medium"
-          >
-            Users
-          </TabsTrigger>
-          <TabsTrigger
-            value="invitations"
-            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground h-full flex-1 rounded-r-md text-sm font-medium"
-          >
-            Invitations
-          </TabsTrigger>
-        </TabsList>
-
-        <div className="mb-6 flex w-full items-center justify-between">
-          <div className="relative max-w-xs flex-grow">
-            <Input
-              type="text"
-              placeholder={
-                activeTab === 'users'
-                  ? 'Search members...'
-                  : 'Search invitations...'
-              }
-              value={searchText}
-              onChange={handleSearchChange}
-              className="bg-background focus-visible:ring-primary h-10 w-full rounded-lg pr-4 pl-10 text-sm shadow-sm focus-visible:ring-1"
-            />
-            <IconSearch className="text-muted-foreground absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2" />
+    <PageContainer>
+      <div className="p-5">
+        <div className="mb-6">
+          <div className="mb-6 flex items-center justify-between">
+            <h1 className="text-2xl font-bold">Organization Members</h1>
           </div>
 
-          {activeTab === 'invitations' && hasAdminRights && (
-            <Button
-              onClick={() => setInviteModalOpen(true)}
-              className="bg-primary text-primary-foreground ml-auto flex h-10 items-center gap-2 rounded-lg px-4 text-sm font-semibold"
-            >
-              <PlusIcon className="h-4 w-4" />
-              Invite
-            </Button>
+          {(message ?? error) && (
+            <AlertComponent
+              message={message ?? error}
+              type={message ? 'success' : 'failure'}
+              onAlertClose={() => {
+                setMessage(null)
+                setError(null)
+              }}
+            />
           )}
         </div>
 
-        <TabsContent value="users" className="mt-0 space-y-4">
-          {usersLoading ? (
-            renderSkeletons()
-          ) : !usersList || usersList.length === 0 ? (
-            <EmptyMessage
-              title="No Members"
-              description="You don't have any members yet."
-              height="250px"
-            />
-          ) : (
-            usersList.map((user) => (
-              <div
-                key={user.id}
-                className="bg-background rounded-lg border border-gray-200 p-4 shadow-sm"
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="mb-6 h-12 w-full max-w-sm">
+            <TabsTrigger
+              value="users"
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground h-full flex-1 rounded-l-md text-sm font-medium"
+            >
+              Users
+            </TabsTrigger>
+            <TabsTrigger
+              value="invitations"
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground h-full flex-1 rounded-r-md text-sm font-medium"
+            >
+              Invitations
+            </TabsTrigger>
+          </TabsList>
+
+          <div className="mb-6 flex w-full items-center justify-end">
+            <div className="relative max-w-xs flex-grow">
+              <Input
+                type="text"
+                placeholder={
+                  activeTab === 'users'
+                    ? 'Search members...'
+                    : 'Search invitations...'
+                }
+                value={searchText}
+                onChange={handleSearchChange}
+                className="w-full pl-8"
+              />
+              <IconSearch className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
+            </div>
+
+            {activeTab === 'invitations' && hasAdminRights && (
+              <Button
+                onClick={() => setInviteModalOpen(true)}
+                className="bg-primary text-primary-foreground ml-10 flex h-10 items-center gap-2 rounded-lg px-4 text-sm font-semibold"
               >
-                <div className="flex items-center justify-between">
-                  <div className="w-1/3 flex-shrink-0">
-                    <h3 className="text-base font-semibold">
-                      {user.firstName} {user.lastName}
-                    </h3>
-                    <div className="mt-1 flex flex-wrap items-center gap-1">
-                      <span className="text-muted-foreground text-sm">
-                        Role:
-                      </span>
-                      {user.roles &&
-                        user.roles.length > 0 &&
-                        user.roles.map((role, index) => (
-                          <span
-                            key={index}
-                            className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                              role === Roles.OWNER
-                                ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300'
-                                : role === Roles.ADMIN
-                                  ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
-                                  : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
-                            }`}
-                          >
-                            {role.charAt(0).toUpperCase() + role.slice(1)}
-                          </span>
-                        ))}
-                    </div>
-                  </div>
+                <InviteEmailIcon />
+                Invite
+              </Button>
+            )}
+          </div>
 
-                  <div className="flex-grow text-start">
-                    <span className="text-primary max-w-xs truncate text-sm font-medium">
-                      {user.email}
-                    </span>
-                  </div>
-
-                  <div className="mr-24 flex-shrink-0">
-                    {hasAdminRights && !user.roles?.includes(Roles.OWNER) && (
-                      <Button onClick={() => editUserRole(user)}>
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          strokeWidth="2"
-                          stroke="currentColor"
-                          fill="none"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path stroke="none" d="M0 0h24v24H0z" />
-                          <path d="M9 7 h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3" />
-                          <path d="M9 15h3l8.5 -8.5a1.5 1.5 0 0 0 -3 -3l-8.5 8.5v3" />
-                          <line x1="16" y1="5" x2="19" y2="8" />
-                        </svg>
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
-
-          {renderPagination(
-            usersPageState.pageNumber,
-            usersPaginationInfo.lastPage,
-            usersPaginationInfo.hasPreviousPage,
-            usersPaginationInfo.hasNextPage,
-            usersPaginationInfo.previousPage,
-            usersPaginationInfo.nextPage,
-            handleUsersPageChange,
-          )}
-        </TabsContent>
-
-        <TabsContent value="invitations" className="mt-0 space-y-4">
-          {invitationsLoading ? (
-            renderSkeletons()
-          ) : !invitationsList || invitationsList.length === 0 ? (
-            <EmptyMessage
-              title="No Invitations"
-              description="Get started by inviting a user"
-              buttonContent="Invite"
-              onClick={
-                hasAdminRights
-                  ? (): void => setInviteModalOpen(true)
-                  : undefined
-              }
-              height="250px"
-            />
-          ) : (
-            <div className="space-y-4">
-              {invitationsList.map((invitation) => (
+          <TabsContent
+            value="users"
+            className="mt-0 space-y-4 rounded-md border"
+          >
+            {usersLoading ? (
+              renderSkeletons()
+            ) : !usersList || usersList.length === 0 ? (
+              <EmptyMessage
+                title="No Members"
+                description="You don't have any members yet."
+                height="250px"
+              />
+            ) : (
+              usersList.map((user) => (
                 <div
-                  key={invitation.id}
-                  className="bg-background hover:bg-muted/50 rounded-lg border border-gray-200 p-4 shadow-sm transition-colors"
+                  key={user.id}
+                  className="bg-background rounded-lg p-4 shadow-sm"
                 >
                   <div className="flex items-center justify-between">
-                    <div className="flex w-1/3 flex-col">
-                      <h3 className="truncate text-base font-medium">
-                        {invitation.email}
+                    <div className="w-1/3 flex-shrink-0">
+                      <h3 className="text-base font-semibold">
+                        {user.firstName} {user.lastName}
                       </h3>
-                      <div className="mt-1 flex items-center gap-2">
+                      <div className="mt-1 flex flex-wrap items-center gap-1">
                         <span className="text-muted-foreground text-sm">
                           Role:
                         </span>
-                        <div className="flex gap-1">
-                          {invitation.orgRoles &&
-                            invitation.orgRoles.length > 0 &&
-                            invitation.orgRoles.map((role, index) => (
-                              <span
-                                key={index}
-                                className="rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800"
-                              >
-                                {TextTitlecase(role.name)}
-                              </span>
-                            ))}
-                        </div>
+                        {user.roles &&
+                          user.roles.length > 0 &&
+                          user.roles.map((role, index) => (
+                            <span
+                              key={index}
+                              className="bg-secondary text-secondary-foreground rounded-md px-2.5 py-0.5 text-xs font-medium"
+                            >
+                              {role.charAt(0).toUpperCase() + role.slice(1)}
+                            </span>
+                          ))}
                       </div>
                     </div>
 
-                    <div className="flex w-1/3 items-center justify-center">
-                      <span
-                        className={`rounded-md px-2.5 py-0.5 text-xs font-medium ${getStatusClass(invitation.status)}`}
-                      >
-                        {TextTitlecase(invitation.status)}
+                    <div className="flex-grow text-start">
+                      <span className="text-muted-foreground max-w-xs truncate text-sm font-medium">
+                        {user.email}
                       </span>
                     </div>
 
-                    <div className="mr-16 flex w-1/3 flex-col items-end">
-                      {invitation.status === 'pending' && hasAdminRights && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            setSelectedInvitation(invitation.id)
-                            setShowDeletePopup(true)
-                            setError(null)
-                            setMessage(null)
-                          }}
-                          className="mb-2 rounded-md border border-blue-400 bg-gray-50 px-3 py-1 text-sm hover:bg-blue-50"
-                        >
-                          <XCircleIcon className="mr-1 h-4 w-4" />
-                          Delete Invitation
+                    <div className="mr-24 flex-shrink-0">
+                      {hasAdminRights && !user.roles?.includes(Roles.OWNER) && (
+                        <Button onClick={() => editUserRole(user)}>
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            strokeWidth="2"
+                            stroke="currentColor"
+                            fill="none"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path stroke="none" d="M0 0h24v24H0z" />
+                            <path d="M9 7 h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3" />
+                            <path d="M9 15h3l8.5 -8.5a1.5 1.5 0 0 0 -3 -3l-8.5 8.5v3" />
+                            <line x1="16" y1="5" x2="19" y2="8" />
+                          </svg>
                         </Button>
                       )}
-
-                      <div className="text-muted-foreground text-sm">
-                        <DateTooltip date={invitation.createDateTime}>
-                          <span>
-                            Invited on{' '}
-                            {dateConversion(invitation.createDateTime)}
-                          </span>
-                        </DateTooltip>
-                      </div>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
+              ))
+            )}
 
-          {renderPagination(
-            invitationsPageState.pageNumber,
-            invitationsPaginationInfo.lastPage,
-            invitationsPaginationInfo.hasPreviousPage,
-            invitationsPaginationInfo.hasNextPage,
-            invitationsPaginationInfo.previousPage,
-            invitationsPaginationInfo.nextPage,
-            handleInvitationsPageChange,
-          )}
-        </TabsContent>
-      </Tabs>
+            {renderPagination(
+              usersPageState.pageNumber,
+              usersPaginationInfo.lastPage,
+              usersPaginationInfo.hasPreviousPage,
+              usersPaginationInfo.hasNextPage,
+              usersPaginationInfo.previousPage,
+              usersPaginationInfo.nextPage,
+              handleUsersPageChange,
+            )}
+          </TabsContent>
 
-      {/* Modals */}
-      {selectedUser && (
-        <EditUserRoleModal
-          openModal={userModalOpen}
-          user={selectedUser}
+          <TabsContent value="invitations" className="mt-0 space-y-4">
+            {invitationsLoading ? (
+              renderSkeletons()
+            ) : !invitationsList || invitationsList.length === 0 ? (
+              <EmptyMessage
+                title="No Invitations"
+                description="Get started by inviting a user"
+                buttonContent="Invite"
+                onClick={
+                  hasAdminRights
+                    ? (): void => setInviteModalOpen(true)
+                    : undefined
+                }
+                height="250px"
+              />
+            ) : (
+              <div className="rounded-lg border">
+                {invitationsList.map((invitation, index) => (
+                  <React.Fragment key={invitation.id}>
+                    <div
+                      key={invitation.id}
+                      className="bg-background hover:bg-muted/50 p-4 transition-colors"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex w-1/3 flex-col">
+                          <h3 className="truncate text-base font-medium">
+                            {invitation.email}
+                          </h3>
+                          <div className="mt-1 flex items-center gap-2">
+                            <span className="text-muted-foreground text-sm">
+                              Role:
+                            </span>
+                            <div className="flex gap-1">
+                              {invitation.orgRoles &&
+                                invitation.orgRoles.length > 0 &&
+                                invitation.orgRoles.map((role, index) => (
+                                  <span
+                                    key={index}
+                                    className="bg-secondary text-secondary-foreground rounded-md px-2.5 py-0.5 text-xs font-medium"
+                                  >
+                                    {TextTitlecase(role.name)}
+                                  </span>
+                                ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex w-1/3 items-center justify-center">
+                          <span
+                            className={`rounded-md px-2.5 py-0.5 text-xs font-medium ${getStatusClass(invitation.status)}`}
+                          >
+                            {TextTitlecase(invitation.status)}
+                          </span>
+                        </div>
+
+                        <div className="mr-16 flex w-1/3 flex-col items-end">
+                          <div className="grid w-[50%] justify-start">
+                            <div className="text-muted-foreground mb-3 text-sm">
+                              <DateTooltip date={invitation.createDateTime}>
+                                <span>
+                                  Invited on:{' '}
+                                  {dateConversion(invitation.createDateTime)}
+                                </span>
+                              </DateTooltip>
+                            </div>
+                            {invitation.status === 'pending' &&
+                              hasAdminRights && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => {
+                                    setSelectedInvitation(invitation.id)
+                                    setShowDeletePopup(true)
+                                    setError(null)
+                                    setMessage(null)
+                                  }}
+                                  className="mb-2 rounded-md border px-3 py-1 text-sm"
+                                >
+                                  <XCircleIcon className="mr-1 h-4 w-4" />
+                                  Delete Invitation
+                                </Button>
+                              )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {index < invitationsList.length - 1 && (
+                      <hr className="border" />
+                    )}
+                  </React.Fragment>
+                ))}
+              </div>
+            )}
+
+            {renderPagination(
+              invitationsPageState.pageNumber,
+              invitationsPaginationInfo.lastPage,
+              invitationsPaginationInfo.hasPreviousPage,
+              invitationsPaginationInfo.hasNextPage,
+              invitationsPaginationInfo.previousPage,
+              invitationsPaginationInfo.nextPage,
+              handleInvitationsPageChange,
+            )}
+          </TabsContent>
+        </Tabs>
+
+        {/* Modals */}
+        {selectedUser && (
+          <EditUserRoleModal
+            openModal={userModalOpen}
+            user={selectedUser}
+            setMessage={(data) => setMessage(data)}
+            setOpenModal={setUserModalOpen}
+          />
+        )}
+
+        <SendInvitationModal
+          openModal={inviteModalOpen}
           setMessage={(data) => setMessage(data)}
-          setOpenModal={setUserModalOpen}
+          setOpenModal={setInviteModalOpen}
         />
-      )}
 
-      <SendInvitationModal
-        openModal={inviteModalOpen}
-        setMessage={(data) => setMessage(data)}
-        setOpenModal={setInviteModalOpen}
-      />
-
-      <ConfirmationModal
-        loading={deleteLoading}
-        success={message}
-        failure={error}
-        openModal={showDeletePopup}
-        closeModal={() => setShowDeletePopup(false)}
-        onSuccess={deleteInvitation}
-        message={confirmationMessages.deletePendingInvitationConfirmation}
-        buttonTitles={[
-          confirmationMessages.cancelConfirmation,
-          confirmationMessages.sureConfirmation,
-        ]}
-        isProcessing={deleteLoading}
-        setFailure={setError}
-        setSuccess={setMessage}
-      />
-    </div>
+        <ConfirmationModal
+          loading={deleteLoading}
+          success={message}
+          failure={error}
+          openModal={showDeletePopup}
+          closeModal={() => setShowDeletePopup(false)}
+          onSuccess={deleteInvitation}
+          message={confirmationMessages.deletePendingInvitationConfirmation}
+          buttonTitles={[
+            confirmationMessages.cancelConfirmation,
+            confirmationMessages.sureConfirmation,
+          ]}
+          isProcessing={deleteLoading}
+          setFailure={setError}
+          setSuccess={setMessage}
+        />
+      </div>
+    </PageContainer>
   )
 }

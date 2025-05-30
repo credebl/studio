@@ -5,12 +5,11 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
+  DialogTitle,
 } from '@/components/ui/dialog'
 import React, { type ReactElement } from 'react'
 import { AlertComponent } from '@/components/AlertComponent'
 import { Button } from '@/components/ui/button'
-import Image from 'next/image'
-import { closeIconImg } from '@/config/CommonConstant'
 
 interface IProps {
   openModal: boolean
@@ -42,16 +41,16 @@ const ConfirmationModal = ({
   warning,
 }: IProps): React.JSX.Element => (
   <Dialog open={openModal} onOpenChange={(open) => closeModal(!open)}>
+    <DialogTitle></DialogTitle>
     <DialogContent className="fixed top-1/2 left-1/2 max-h-[450px] w-full max-w-xl -translate-x-1/2 -translate-y-1/2 transform overflow-auto">
       <DialogHeader>
         <button
           type="button"
-          className="absolute top-3 right-2.5 ml-auto inline-flex h-8 w-8 items-center justify-center rounded-lg bg-transparent text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white"
+          className="text-muted-foreground absolute top-3 right-2.5 ml-auto inline-flex h-8 w-8 items-center justify-center rounded-lg bg-transparent text-sm"
           onClick={() => {
             closeModal(false)
           }}
         >
-          <Image height={3} width={3} alt="Logo" src={closeIconImg} />
           <span className="sr-only">Close modal</span>
         </button>
       </DialogHeader>
@@ -63,7 +62,7 @@ const ConfirmationModal = ({
           height="22"
           fill="none"
           viewBox="0 0 22 22"
-          className="mx-auto mb-4 h-12 w-12 text-yellow-300 dark:text-yellow-300"
+          className="text-primary mx-auto mb-4 h-12 w-12"
         >
           <path
             fill="currentColor"
@@ -78,11 +77,11 @@ const ConfirmationModal = ({
             d="M9.989 15.875c1.013-.78 2.34-.282 2.54.94.133.817-.438 1.586-1.29 1.736-.785.138-1.588-.419-1.738-1.208-.108-.572.056-1.057.488-1.468Z"
           />
         </svg>
-        <h3 className="mb-4 py-2 text-lg font-normal text-gray-500 dark:text-gray-200">
+        <h3 className="text-muted-foreground mb-4 py-2 text-lg font-normal">
           {message}
         </h3>
 
-        {warning && <h4 className="text-[#C27803]">{warning}</h4>}
+        {warning && <h4 className="text-done">{warning}</h4>}
 
         <div className="w-full">
           {success && (
@@ -117,7 +116,7 @@ const ConfirmationModal = ({
       <DialogFooter className="mt-4 flex items-center justify-around gap-4">
         <Button
           variant="outline"
-          className="text-md rounded-lg border border-gray-200 bg-white px-5 py-2 font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:z-10 focus:ring-4 focus:ring-gray-200 focus:outline-none sm:min-w-[197px] dark:border-gray-500 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-600"
+          className="text-md text-muted-foreground rounded-lg border px-5 py-2 font-medium focus:z-10 focus:ring-4 focus:outline-none sm:min-w-[197px]"
           onClick={() => {
             closeModal(false)
           }}
@@ -135,7 +134,7 @@ const ConfirmationModal = ({
           {isProcessing ? (
             <span className="flex items-center">
               <svg
-                className="mr-2 -ml-1 h-4 w-4 animate-spin text-white"
+                className="mr-2 -ml-1 h-4 w-4 animate-spin"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
