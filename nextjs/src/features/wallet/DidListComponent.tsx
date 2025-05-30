@@ -72,29 +72,27 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
   const [didList, setDidList] = useState<IDidListData[]>([])
   const [showPopup, setShowPopup] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
-  const [successMsg, setSuccessMsg] = React.useState<string | null>(null)
+  const [successMsg, setSuccessMsg] = useState<string | null>(null)
   const [userRoles] = useState<string[]>([])
   const [isMethodLoading, setIsMethodLoading] = useState(false)
 
   // State for Create DID modal
-  const [loading, setLoading] = React.useState<boolean>(false)
-  const [isLoading, setIsLoading] = React.useState<boolean>(false)
-  const [errMsg, setErrMsg] = React.useState<string | null>(null)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [errMsg, setErrMsg] = useState<string | null>(null)
   const [isCreatingDid, setIsCreatingDid] = useState(false)
-  const [seed, setSeed] = React.useState('')
-  const [generatedKeys, setGeneratedKeys] = React.useState<IPolygonKeys | null>(
+  const [seed, setSeed] = useState('')
+  const [generatedKeys, setGeneratedKeys] = useState<IPolygonKeys | null>(null)
+  const [method, setMethod] = useState<DidMethod>()
+  const [completeDidMethodValue, setCompleteDidMethodValue] = useState<
+    string | null
+  >(null)
+  const [havePrivateKey, setHavePrivateKey] = useState(false)
+  const [privateKeyValue, setPrivateKeyValue] = useState<string>('')
+  const [walletErrorMessage, setWalletErrorMessage] = useState<string | null>(
     null,
   )
-  const [method, setMethod] = React.useState<string | null>(null)
-  const [completeDidMethodValue, setCompleteDidMethodValue] = React.useState<
-    string | null
-  >(null)
-  const [havePrivateKey, setHavePrivateKey] = React.useState(false)
-  const [privateKeyValue, setPrivateKeyValue] = React.useState<string>('')
-  const [walletErrorMessage, setWalletErrorMessage] = React.useState<
-    string | null
-  >(null)
-  const [initialValues, setInitialValues] = React.useState<IFormValues>({
+  const [initialValues, setInitialValues] = useState<IFormValues>({
     method: '',
     ledger: '',
     network: '',
@@ -106,7 +104,6 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
 
   const router = useRouter()
 
-  // DID List functions
   const setPrimaryDid = async (id: string, did: string): Promise<void> => {
     try {
       const payload: IUpdatePrimaryDid = {
@@ -192,7 +189,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
       setMethod(didMethod)
 
       let ledgerName: string = ''
-      if (didMethod === DidMethod.INDY || DidMethod.POLYGON) {
+      if (didMethod === DidMethod.INDY || didMethod === DidMethod.POLYGON) {
         ledgerName = data?.data?.org_agents[0]?.orgDid.split(':')[1]
       } else {
         ledgerName = 'No Ledger'
@@ -335,7 +332,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
   }
 
   const generatePolygonKeyValuePair = async (
-    setFieldValue: FormikHelpers<string>['setFieldValue'],
+    setFieldValue: FormikHelpers<IFormValues>['setFieldValue'],
   ): Promise<void> => {
     setIsLoading(true)
     try {
@@ -381,7 +378,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
     className?: string
     showCheck?: boolean
   }): React.JSX.Element => {
-    const [copied, setCopied] = React.useState(false)
+    const [copied, setCopied] = useState(false)
 
     const copyToClipboard = (): void => {
       navigator.clipboard.writeText(value).then(() => {
@@ -581,72 +578,6 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
                         className="text-destructive mt-1 text-sm"
                       />
                     </div>
-
-                    {method !== DidMethod.KEY && (
-                      <div>
-                        <Label htmlFor="method">
-                          Method{' '}
-                          <span className="text-destructive text-xs">*</span>
-                        </Label>
-                        <Field
-                          as={Input}
-                          id="method"
-                          name="method"
-                          readOnly
-                          tabIndex={-1}
-                          className="bg-muted cursor-default select-none"
-                          value={values.method}
-                        />
-                        <ErrorMessage
-                          name="method"
-                          component="div"
-                          className="text-destructive mt-1 text-sm"
-                        />
-                      </div>
-                    )}
-
-                    {method !== DidMethod.WEB && method !== DidMethod.KEY && (
-                      <div>
-                        <Label htmlFor="network">
-                          Network{' '}
-                          <span className="text-destructive text-xs">*</span>
-                        </Label>
-                        <Field
-                          as={Input}
-                          id="network"
-                          name="network"
-                          readOnly
-                          tabIndex={-1}
-                          className="bg-muted cursor-default select-none"
-                          value={values.network}
-                        />
-                        <ErrorMessage
-                          name="network"
-                          component="div"
-                          className="text-destructive mt-1 text-sm"
-                        />
-                      </div>
-                    )}
-
-                    {method === DidMethod.WEB && (
-                      <div>
-                        <Label htmlFor="domain">
-                          Domain{' '}
-                          <span className="text-destructive text-xs">*</span>
-                        </Label>
-                        <Field
-                          as={Input}
-                          id="domain"
-                          name="domain"
-                          placeholder="Enter Name"
-                        />
-                        <ErrorMessage
-                          name="domain"
-                          component="div"
-                          className="text-destructive mt-1 text-sm"
-                        />
-                      </div>
-                    )}
 
                     <div>
                       <Label>
