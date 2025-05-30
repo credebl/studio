@@ -132,7 +132,10 @@ const FieldArrayData = ({
                               <div
                                 key={`${user.connectionId}-${attr.name}-${attrIndex}`}
                               >
-                                <div key={attr?.name} className="flex">
+                                <div
+                                  key={attr?.name}
+                                  className="flex items-center"
+                                >
                                   <label
                                     htmlFor={`credentialData.${index}.attributes.${attrIndex}.value`}
                                     className="flex w-2/5 items-center justify-end pr-3 font-light dark:text-white"
@@ -156,7 +159,7 @@ const FieldArrayData = ({
                                       }
                                       id={`credentialData.${index}.attributes.${attrIndex}.value`}
                                       name={`credentialData.${index}.attributes.${attrIndex}.value`}
-                                      className="relative block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 sm:text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                                      className="border-input file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                                       validate={(value: string) => {
                                         try {
                                           const schema = Yup.reach(

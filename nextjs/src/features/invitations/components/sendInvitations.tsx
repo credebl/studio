@@ -209,7 +209,7 @@ export default function SendInvitationModal({
               <div className="flex justify-end">
                 <Button
                   onClick={sendInvitations}
-                  disabled={loading || invitations.length === 0}
+                  disabled={loading || !(invitations.length > 0)}
                   className="flex items-center gap-2"
                 >
                   <SendIcon className="h-5 w-5" />

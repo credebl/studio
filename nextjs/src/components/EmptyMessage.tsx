@@ -1,3 +1,4 @@
+import { Button } from './ui/button'
 import React from 'react'
 
 interface EmptyStateProps {
@@ -30,12 +31,12 @@ export const EmptyMessage = ({
     )}
 
     {buttonContent && onClick && (
-      <button
+      <Button
         onClick={onClick}
-        className="bg-primary-600 hover:bg-primary-700 mt-2 rounded-lg px-4 py-2 text-[var(--color-white)] transition-colors"
+        className="bg-primary hover:bg-primary/90 mt-2 rounded-lg px-4 py-2"
       >
         {buttonContent}
-      </button>
+      </Button>
     )}
   </div>
 )

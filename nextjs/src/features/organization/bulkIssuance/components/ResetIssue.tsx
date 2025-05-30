@@ -17,7 +17,7 @@ export default function ResetIssue({ context }: IResetIssueProps): JSX.Element {
         onClick={handleOpenConfirmation}
         disabled={!context.isFileUploaded}
         type="reset"
-        className="bg-primary ring-primary hover:bg-primary/90 dark:hover:bg-primary float-right mx-4 mr-0 mb-4 ml-4 rounded-lg px-4 py-2 text-sm font-medium ring-2 lg:px-5 lg:py-2.5 dark:text-white dark:hover:text-white"
+        className="bg-primary ring-primary hover:bg-primary/90 dark:hover:bg-primary float-right mx-4 mr-0 mb-4 ml-4 rounded-lg px-4 py-2 text-sm font-medium ring-2 lg:px-5 lg:py-2.5"
         style={{ height: '2.6rem', width: '6rem', minWidth: '2rem' }}
       >
         <svg
@@ -39,13 +39,12 @@ export default function ResetIssue({ context }: IResetIssueProps): JSX.Element {
       <Button
         onClick={() => handleReset(context)}
         type="reset"
-        color="bg-primary-800"
-        className="group bg-secondary-700 ring-primary-900 bg-white-700 hover:bg-secondary-700 text-primary-600 border-primary-650 hover:text-primary-600 dark:text-custom-100 dark:border-blue-450 dark:hover:text-primary-700 dark:hover:bg-secondary-700 ml-auto flex shrink-0 rounded-md px-2 py-2 text-lg font-medium ring-2 lg:px-3 lg:py-2.5"
-        style={{ height: '2.6rem', width: '6rem', minWidth: '2rem' }}
+        variant={'outline'}
+        className="group ml-auto flex h-[2.6rem] w-[6rem] min-w-[2rem] shrink-0 rounded-lg"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="text-custom-900 dark:text-custom-100 group-hover:dark:text-custom-900 mr-2"
+          className=""
           width="18"
           height="18"
           fill="currentColor"
