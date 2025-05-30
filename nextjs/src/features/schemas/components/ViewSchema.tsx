@@ -54,10 +54,10 @@ const initialPageState = {
 const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
   const [schemaDetails, setSchemaDetails] = useState<SchemaData | null>(null)
 
-  const [credDeffList, setCredDeffList] = useState([])
+  const [credDefList, setCredDefList] = useState([])
 
   const [loading, setLoading] = useState<boolean>(true)
-  const [createloader, setCreateLoader] = useState<boolean>(false)
+  const [createLoader, setCreateLoader] = useState<boolean>(false)
   const [, setCredDeffloader] = useState<boolean>(false)
   const [success, setSuccess] = useState<string | null>(null)
   const [, setCredDefListErr] = useState<string | null>(null)
@@ -67,7 +67,7 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
   const [, setCredDefAuto] = useState<string>('')
   const [ledgerPlatformLoading, setLedgerPlatformLoading] = useState(false)
   const [currentPage, setCurrentPage] = useState(initialPageState)
-  const [isOpenCreatCredDef, setIsOpenCreateCredDef] = useState<boolean>(false)
+  const [isOpenCreateCredDef, setIsOpenCreateCredDef] = useState<boolean>(false)
 
   const router = useRouter()
 
@@ -110,7 +110,7 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
       const { data } = credentialDefinitions as AxiosResponse
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         const totalPages = data?.data?.totalPages
-        setCredDeffList(data?.data?.data)
+        setCredDefList(data?.data?.data)
         setCredDeffloader(false)
         setCurrentPage({
           ...currentPage,
@@ -367,7 +367,7 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
                   <h1 className="ml-1 text-xl font-semibold">
                     Credential Definitions
                   </h1>
-                  {credDeffList && credDeffList.length > 0 && (
+                  {credDefList && credDefList.length > 0 && (
                     <Button
                       variant="default"
                       title={submitButtonTitle.tooltip}
@@ -385,11 +385,10 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
                 </div>
               </div>
               <CreateCredDefPopup
-                openModal={isOpenCreatCredDef}
+                openModal={isOpenCreateCredDef}
                 closeModal={() => setIsOpenCreateCredDef(false)}
                 onSuccess={(values) => submit(values)}
-                isProcessing={false}
-                createloader={createloader}
+                createLoader={createLoader}
                 success={success}
                 failure={failure}
                 closeAlert={() => {
@@ -412,12 +411,12 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
               </div>
             ))}
           </div>
-        ) : credDeffList && credDeffList.length > 0 ? (
+        ) : credDefList && credDefList.length > 0 ? (
           <div className="Flex-wrap">
             <div className="mt-0 mb-4 grid w-full grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2">
-              {credDeffList &&
-                credDeffList.length > 0 &&
-                credDeffList.map((element: ICredDefCard) => (
+              {credDefList &&
+                credDefList.length > 0 &&
+                credDefList.map((element: ICredDefCard) => (
                   <div
                     className="relative h-full w-full overflow-hidden rounded-xl transition-transform duration-300"
                     key={`view-schema-cred-def-card-${element['credentialDefinitionId']}`}
