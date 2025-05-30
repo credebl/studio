@@ -13,6 +13,7 @@ export const proofPurpose = 'assertionMethod'
 export const limitedAttributesLength = 3
 export const itemPerPage = 10
 export const allSchemas = 'All schemas'
+export const polygonScan = 'https://mumbai.polygonscan.com/'
 
 export const apiStatusCodes = {
   API_STATUS_SUCCESS: 200,
@@ -157,4 +158,10 @@ export const fieldCardStyles = {
   maxWidth: '100%',
   maxHeight: '100%',
   overflow: 'auto',
+}
+
+export enum RoleNames {
+  OWNER = 'owner',
+  HOLDER = 'holder',
+  MEMBER = 'member',
 }

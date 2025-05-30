@@ -78,7 +78,7 @@ export default function DragAndDrop({
             <div className="w-fit">
               <label htmlFor="organizationlogo">
                 <div
-                  className={`border-input bg-background hover:bg-accent hover:text-accent-foreground border shadow-sm mt-4 py-2 px-4 rounded-md${
+                  className={`border-input bg-background hover:bg-accent hover:text-accent-foreground mt-4 border px-4 py-2 shadow-sm rounded-md${
                     !context.isCredSelected
                       ? 'disabled:pointer-events-none disabled:opacity-50'
                       : ''

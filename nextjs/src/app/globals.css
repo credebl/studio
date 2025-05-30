@@ -250,21 +250,22 @@ ul.timelinestatic > li {
 
 .text-revocable-no {
   color: var(--color-revocable-no, #06b6d4);
-  .badges-warning {
-    background-color: #ffedd5;
-  }
+}
 
-  .badges-success {
-    background-color: #dcfce7;
-  }
+.badges-warning {
+  background-color: #ffedd5;
+}
 
-  .badges-error {
-    background-color: #fee2e2;
-  }
+.badges-success {
+  background-color: #dcfce7;
+}
 
-  .badges-secondary {
-    background-color: #7dd3fc;
-  }
+.badges-error {
+  background-color: #fee2e2;
+}
+
+* {
+  border-color: var(--color-border);
 }
 
 .status-pending {
