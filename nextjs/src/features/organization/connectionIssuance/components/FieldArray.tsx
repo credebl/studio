@@ -140,7 +140,7 @@ const FieldArrayData = ({
                                 >
                                   <label
                                     htmlFor={`credentialData.${index}.attributes.${attrIndex}.value`}
-                                    className="break words text-base"
+                                    className="break-words text-base"
                                   >
                                     <div className="word-break-word flex items-center text-end">
                                       <Name attr={attr?.name} />
