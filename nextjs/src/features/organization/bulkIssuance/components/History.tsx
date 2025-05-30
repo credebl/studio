@@ -282,68 +282,66 @@ const HistoryBulkIssuance = (): JSX.Element => {
 
   return (
     <PageContainer>
-    <div className="p-4" id="connection_list">
-      <ToastContainer />
-      <div className="flex items-center justify-end">
+      <div className="p-4" id="connection_list">
+        <ToastContainer />
         <div className="flex items-center justify-end">
-          <Button
-            onClick={() =>
-              router.push(pathRoutes.organizations.Issuance.bulkIssuance)
-            }
-          >
-            <ArrowLeft />
-            Back
-          </Button>
+          <div className="flex items-center justify-end">
+            <Button
+              onClick={() =>
+                router.push(pathRoutes.organizations.Issuance.bulkIssuance)
+              }
+            >
+              <ArrowLeft />
+              Back
+            </Button>
+          </div>
         </div>
-      </div>
-      <div
-        className="mb-4 flex items-center justify-between"
-        id="connection-list"
-      >
-        <h1 className="ml-1">
-          <p className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-            History
-          </p>
-          <p className="text-sm text-gray-400">Bulk Issuance History</p>
-        </h1>
-      </div>
+        <div
+          className="mb-4 flex items-center justify-between"
+          id="connection-list"
+        >
+          <h1 className="ml-1">
+            <p className="text-xl font-semibold sm:text-2xl">History</p>
+            <p className="text-sm">Bulk Issuance History</p>
+          </h1>
+        </div>
 
-      {(success || failure) && (
-        <AlertComponent
-          message={success ?? failure}
-          type={success ? 'success' : 'failure'}
-          onAlertClose={() => {
-            setSuccess(null)
-            setFailure(null)
+        {(success || failure) && (
+          <AlertComponent
+            message={success ?? failure}
+            type={success ? 'success' : 'failure'}
+            onAlertClose={() => {
+              setSuccess(null)
+              setFailure(null)
+            }}
+          />
+        )}
+
+        <SortDataTable
+          isHeader={true}
+          isSearch={true}
+          isRefresh={true}
+          isSort={true}
+          onInputChange={searchInputChange}
+          refresh={refreshPage}
+          header={header}
+          data={connectionList}
+          loading={loading}
+          currentPage={listAPIParameter?.page}
+          onPageChange={(page: number) => {
+            setListAPIParameter((prevState) => ({
+              ...prevState,
+              page,
+            }))
           }}
-        />
-      )}
-
-      <SortDataTable
-        isHeader={true}
-        isSearch={true}
-        isRefresh={true}
-        isSort={true}
-        onInputChange={searchInputChange}
-        refresh={refreshPage}
-        header={header}
-        data={connectionList}
-        loading={loading}
-        currentPage={listAPIParameter?.page}
-        onPageChange={(page: number) => {
-          setListAPIParameter((prevState) => ({
-            ...prevState,
-            page,
-          }))
-        }}
-        searchValue={listAPIParameter?.search}
-        searchSortByValue={searchSortByValue}
-        totalPages={Math.ceil(totalItem / listAPIParameter?.itemPerPage)}
-        pageInfo={pageInfo}
-        message={'No History'}
-        discription={'You don"t have any activities yet'}
-      ></SortDataTable>
-    </div>
+          searchValue={listAPIParameter?.search}
+          searchSortByValue={searchSortByValue}
+          totalPages={Math.ceil(totalItem / listAPIParameter?.itemPerPage)}
+          pageInfo={pageInfo}
+          message={'No History'}
+          discription={"You don't have any activities yet"}
+        ></SortDataTable>
+      </div>
     </PageContainer>
   )
 }

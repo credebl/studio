@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
-import { MailIcon, PlusIcon, SendIcon, TrashIcon } from 'lucide-react'
+import { MailIcon, PlusIcon, SendIcon } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import {
   RoleI,
@@ -22,6 +22,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { createInvitations } from '@/app/api/Invitation'
+import delSvg from '@/../public/svgs/del.svg'
 import { getOrganizationRoles } from '@/app/api/organization'
 import { useAppSelector } from '@/lib/hooks'
 
@@ -180,15 +181,17 @@ export default function SendInvitationModal({
                 <div className="flex flex-1 items-end gap-4">
                   <div className="grow">
                     <label htmlFor="email" className="text-sm font-medium">
-                      Email <span className="text-red-500">*</span>
+                      Email <span className="text-destructive">*</span>
                     </label>
                     <Field
                       as={Input}
                       id="email"
                       name="email"
                       placeholder="example@email.com"
-                      className={`bg-background focus-visible:ring-primary focus-visible:ring-1 ${
-                        errors.email && touched.email ? 'border-red-500' : ''
+                      className={`bg-background placeholder:text-muted-foreground/50 focus-visible:ring-1 ${
+                        errors.email && touched.email
+                          ? 'border-destructive'
+                          : ''
                       }`}
                     />
                   </div>
@@ -201,7 +204,7 @@ export default function SendInvitationModal({
               <ErrorMessage
                 name="email"
                 component="div"
-                className="mt-1 text-sm text-red-500"
+                className="text-destructive mt-1 text-sm"
               />
               <div className="flex justify-end">
                 <Button
@@ -241,7 +244,11 @@ export default function SendInvitationModal({
                     size="icon"
                     onClick={() => removeInvitation(invitation.email)}
                   >
-                    <TrashIcon className="h-5 w-5 text-red-500" />
+                    <img
+                      src={delSvg.src}
+                      alt="delete"
+                      className="mx-auto h-4 w-4"
+                    />
                   </Button>
                 </div>
               ))}

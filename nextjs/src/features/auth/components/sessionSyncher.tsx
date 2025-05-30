@@ -1,7 +1,7 @@
 'use client'
 
 import { JSX, useEffect } from 'react'
-import { setAuthToken, setRefreshToken } from '@/lib/authSlice'
+import { setAuthToken, setRefreshToken, setToken } from '@/lib/authSlice'
 
 import { useAppDispatch } from '@/lib/hooks'
 import { useSession } from 'next-auth/react'
@@ -17,6 +17,7 @@ export const SessionSyncer = ({
   useEffect(() => {
     if (session && session?.accessToken) {
       dispatch(setAuthToken(session?.accessToken))
+      dispatch(setToken(session?.accessToken))
     }
 
     if (session && session?.refreshToken) {

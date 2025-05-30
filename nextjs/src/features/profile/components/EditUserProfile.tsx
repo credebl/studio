@@ -216,15 +216,25 @@ export default function EditUserProfile({
                   </Avatar>
                 )}
                 <div>
+                  <label
+                    htmlFor="profileImg"
+                    className="border-input bg-background hover:bg-accent hover:text-accent-foreground mt-4 cursor-pointer rounded-md border px-4 py-2 shadow-sm"
+                  >
+                    Upload Profile Image
+                  </label>
                   <input
                     id="profileImg"
                     name="profileImg"
                     type="file"
                     accept="image/*"
                     onChange={handleImageChange}
-                    className="file:bg-primary hover:file:bg-primary-dark text-sm file:mr-4 file:rounded-md file:px-4 file:py-2 file:text-sm file:font-semibold"
+                    className="hidden"
                   />
-                  {imgError && <div className="text-sm">{imgError}</div>}
+                  {imgError && (
+                    <div className="text-destructive mt-2 text-sm">
+                      {imgError}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -232,8 +242,9 @@ export default function EditUserProfile({
             <div className="flex justify-end space-x-4">
               <Button
                 type="button"
-                variant="secondary"
+                variant="outline"
                 onClick={toggleEditProfile}
+                className="flex items-center px-4 py-2 transition-colors"
               >
                 Cancel
               </Button>

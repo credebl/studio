@@ -1,7 +1,7 @@
 'use client'
 
 import axios, { AxiosError, AxiosRequestConfig } from 'axios'
-import { setAuthToken, setRefreshToken } from '@/lib/authSlice'
+import { setAuthToken, setRefreshToken, setToken } from '@/lib/authSlice'
 
 import { apiRoutes } from '@/config/apiRoutes'
 import { apiStatusCodes } from '@/config/CommonConstant'
@@ -47,6 +47,7 @@ const refreshAccessToken = async (): Promise<string | null> => {
       const RefreshToken = response.data.data.refresh_token
 
       if (AccessToken && RefreshToken) {
+        store.dispatch(setToken(AccessToken))
         store.dispatch(setAuthToken(AccessToken))
         store.dispatch(setRefreshToken(RefreshToken))
         return AccessToken

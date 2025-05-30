@@ -189,7 +189,7 @@ const EmailIssuance = (): JSX.Element => {
                       </div>
                       {mounted && (
                         <SearchableSelect
-                          className="max-w-lg border-1 border-muted"
+                          className="border-muted max-w-lg border-1"
                           options={
                             Array.isArray(credentialOptions)
                               ? credentialOptions
@@ -253,7 +253,7 @@ const EmailIssuance = (): JSX.Element => {
                       <p className="text-xl font-semibold dark:text-white">
                         Issue Credential(s) to the email
                       </p>
-                      <span className="text-sm text-gray-400">
+                      <span className="text-muted-foreground text-sm">
                         Please enter an email address to issue the credential to
                       </span>
                     </div>
@@ -310,7 +310,7 @@ const EmailIssuance = (): JSX.Element => {
                                         render={(
                                           arrayHelpers: FieldArrayRenderProps,
                                         ) => (
-                                          <div className="pb-4 relative">
+                                          <div className="relative pb-4">
                                             <FieldArrayData
                                               arrayHelpers={arrayHelpers}
                                               formikHandlers={formikHandlers}
@@ -370,9 +370,7 @@ const EmailIssuance = (): JSX.Element => {
                                           disabled={!formikHandlers?.isValid}
                                         >
                                           <Issue />
-                                          <span>
-                                            Issue
-                                          </span>
+                                          <span>Issue</span>
                                         </Button>
                                       </div>
                                     </Form>

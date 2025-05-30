@@ -285,7 +285,7 @@ export default function OrganizationOnboarding(): React.JSX.Element {
 
   return (
     <PageContainer>
-      <div className="flex min-h-screen items-start justify-center bg-[image:var(--card-gradient)] p-6">
+      <div className="flex min-h-screen items-start justify-center p-6">
         <Card className="border-border relative w-full max-w-[800px] min-w-[700px] overflow-hidden rounded-xl border p-8 py-12 shadow-xl transition-transform duration-300">
           <div className="flex items-center justify-between">
             <div>

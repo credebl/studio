@@ -305,17 +305,15 @@ const IssueCred = (): React.JSX.Element => {
               setSuccess(null)
             }}
           />
-          <h1 className="ml-1 text-xl font-semibold  sm:text-2xl ">
-            Issuance
-          </h1>
+          <h1 className="ml-1 text-xl font-semibold sm:text-2xl">Issuance</h1>
         </div>
         <Card className="bg-background">
           <CardContent className="p-4">
-            <p className="pb-6 text-xl font-semibold ">
+            <p className="pb-6 text-xl font-semibold">
               Select Schema and credential definition
             </p>
             <SearchableSelect
-              className="max-w-lg border-1 border-muted"
+              className="border-muted max-w-lg border-1"
               options={credentialOptions}
               value={''}
               onValueChange={handleSelect}
@@ -352,7 +350,7 @@ const IssueCred = (): React.JSX.Element => {
                 <Loader />
               </div>
             ) : (
-              <Card className="mt-6 gap-6 rounded-lg p-4 shadow-sm sm:p-6 ">
+              <Card className="mt-6 gap-6 rounded-lg p-4 shadow-sm sm:p-6">
                 <Formik
                   initialValues={{
                     ...issuanceFormPayload,

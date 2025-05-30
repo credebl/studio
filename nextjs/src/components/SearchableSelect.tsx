@@ -71,6 +71,7 @@ export function SearchableSelect({
           role="combobox"
           aria-expanded={open}
           disabled={disabled}
+          className="flex min-w-lg justify-between"
         >
           <span className="truncate">
             {selected ? selected.label : placeholder}
