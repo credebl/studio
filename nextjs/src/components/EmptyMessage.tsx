@@ -8,6 +8,7 @@ interface EmptyStateProps {
   buttonContent?: string
   svgComponent?: React.ReactNode
   onClick?: () => void
+  buttonIcon?: React.ReactNode
 }
 
 export const EmptyMessage = ({
@@ -17,6 +18,7 @@ export const EmptyMessage = ({
   buttonContent,
   svgComponent,
   onClick,
+  buttonIcon,
 }: EmptyStateProps): React.JSX.Element => (
   <div
     className="flex flex-col items-center justify-center space-y-4 text-center"
@@ -35,6 +37,7 @@ export const EmptyMessage = ({
         onClick={onClick}
         className="bg-primary hover:bg-primary/90 mt-2 rounded-lg px-4 py-2"
       >
+        {buttonIcon}
         {buttonContent}
       </Button>
     )}
