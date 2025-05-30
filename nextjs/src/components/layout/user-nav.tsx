@@ -24,6 +24,7 @@ import { getUserProfile } from '@/app/api/Auth'
 import { logout } from '@/lib/authSlice'
 import { logoutAndRedirect } from '@/services/axiosIntercepter'
 import { persistor } from '@/lib/store'
+import { resetVerificationState } from '@/lib/verificationSlice'
 import { setUserProfileDetails } from '@/lib/userSlice'
 import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/navigation'
@@ -66,6 +67,7 @@ export function UserNav(): React.JSX.Element | null {
 
   const handleLogout = async (): Promise<void> => {
     dispatch(logout())
+    dispatch(resetVerificationState())
     await persistor.purge()
     logoutAndRedirect()
   }

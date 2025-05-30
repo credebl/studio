@@ -77,7 +77,7 @@ export function SearchableSelect({
             {selected ? selected.label : placeholder}
           </span>
           <ChevronDown className="text-muted-foreground" />
-        </Button> 
+        </Button>
       </PopoverTrigger>
       <PopoverContent
         className={cn(

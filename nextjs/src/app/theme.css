@@ -138,8 +138,10 @@ body {
   --page-bg-gradient: linear-gradient(to top, #acaaff, #6e82db);
 }
 
-.bg-page-gradient {
-  background: var(--page-bg-gradient);
+button:not(:disabled),
+[role='button']:not(:disabled),
+a[href] {
+  cursor: pointer;
 }
 
 .bg-success {
@@ -156,6 +158,95 @@ body {
   color: var(--success-text);
 }
 
+.green-text {
+  color: #339b59;
+}
+
 .text-error {
   color: var(--error-text);
+}
+
+ul.timelinestatic > li:before {
+  content: counter(step);
+  counter-increment: step;
+  display: inline-block;
+  position: absolute;
+  border-radius: 50%;
+  left: 9px;
+  font-size: 20px;
+  padding: 0.5rem 0;
+  z-index: 1;
+  vertical-align: middle;
+  text-align: center;
+  width: 45px;
+  font-weight: bold;
+  height: 45px;
+  color: #000000;
+  background: var(--primary);
+}
+
+ul.timelinestatic {
+  list-style-type: none;
+  position: relative;
+  counter-reset: step;
+}
+
+ul.timelinestatic:before {
+  content: ' ';
+  background: var(--primary);
+  display: inline-block;
+  position: absolute;
+  left: 29px;
+  width: 6px;
+  height: 90%;
+  z-index: 1;
+}
+
+ul.timelinestatic > li:last-child {
+  height: auto;
+}
+
+ul.timelinestatic > li {
+  margin-left: 64px;
+  padding-left: 20px;
+  height: 100px;
+}
+
+.text-revocable-yes {
+  color: var(--color-revocable-yes, #1d4ed8);
+}
+
+.text-revocable-no {
+  color: var(--color-revocable-no, #06b6d4);
+}
+
+.badges-warning {
+  background-color: #ffedd5;
+}
+
+.badges-success {
+  background-color: #dcfce7;
+}
+
+.badges-error {
+  background-color: #fee2e2;
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+.status-pending {
+  background-color: #ffedd5;
+  color: #c2410c;
+}
+
+.status-accepted {
+  background-color: #dcfce7;
+  color: #065f46;
+}
+
+.status-rejected {
+  background-color: #fee2e2;
+  color: #b91c1c;
 }

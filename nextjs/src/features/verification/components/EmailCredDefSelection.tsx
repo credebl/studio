@@ -18,6 +18,7 @@ import { CredDefData } from '../type/interface'
 import CustomCheckbox from '@/components/CustomCheckbox'
 import DataTable from '@/components/DataTable'
 import { ITableData } from './SortDataTable'
+import PageContainer from '@/components/layout/page-container'
 import { getCredentialDefinitionsForVerification } from '@/app/api/verification'
 import { getSchemaById } from '@/app/api/schema'
 import { pathRoutes } from '@/config/pathRoutes'
@@ -182,44 +183,46 @@ const EmailCredDefSelection = (): JSX.Element => {
   }, [])
 
   return (
-    <div className="px-4 pt-2">
-      <div className="col-span-full mb-4 xl:mb-2">
-        <div className="flex items-center justify-end">
-          <BackButton path={pathRoutes.organizations.verification.email} />
+    <PageContainer>
+      <div className="px-4 pt-2">
+        <div className="col-span-full mb-4 xl:mb-2">
+          <div className="flex items-center justify-end">
+            <BackButton path={pathRoutes.organizations.verification.email} />
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <h1 className="mb-2 ml-1 text-xl font-semibold sm:text-2xl">
+              Credential-definition
+            </h1>
+          </div>
         </div>
-        <div className="mt-2 flex flex-wrap items-center justify-between gap-4">
-          <h1 className="ml-1 text-xl font-semibold sm:text-2xl">
-            Credential-definition
-          </h1>
-        </div>
-      </div>
 
-      {error && (
-        <AlertComponent
-          message={error}
-          type={'failure'}
-          onAlertClose={() => {
-            setError(null)
-          }}
+        {error && (
+          <AlertComponent
+            message={error}
+            type={'failure'}
+            onAlertClose={() => {
+              setError(null)
+            }}
+          />
+        )}
+        <DataTable
+          header={emailCredDefHeaders}
+          data={credDefList}
+          loading={loading}
+          isEmailVerification={true}
         />
-      )}
-      <DataTable
-        header={emailCredDefHeaders}
-        data={credDefList}
-        loading={loading}
-        isEmailVerification={true}
-      />
-      <div className="flex items-center justify-end">
-        <Button
-          onClick={handleContinue}
-          disabled={selectedCredDefs.length === 0}
-          className="flex items-center gap-2 rounded-lg px-4 py-4 text-base font-medium sm:w-auto"
-        >
-          <ContinueIcon />
-          Continue
-        </Button>
+        <div className="mt-4 flex items-center justify-end">
+          <Button
+            onClick={handleContinue}
+            disabled={selectedCredDefs.length === 0}
+            className="flex items-center gap-2 rounded-lg px-4 py-4 text-base font-medium sm:w-auto"
+          >
+            <ContinueIcon />
+            Continue
+          </Button>
+        </div>
       </div>
-    </div>
+    </PageContainer>
   )
 }
 

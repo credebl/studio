@@ -30,7 +30,7 @@ const DataTable: React.FC<DataTableProps> = ({
       <div className="overflow-x-auto rounded-lg">
         <div className="inline-block min-w-full align-middle">
           <div className="overflow-hidden shadow sm:rounded-lg">
-            <table className="divide-muted dark:divide-muted min-w-full divide-y">
+            <table className="divide-muted dark:divide-muted min-w-full divide-y border">
               <thead className="bg-muted dark:bg-muted">
                 <tr>
                   {header.map((ele: TableHeader, index: number) => (
@@ -61,9 +61,7 @@ const DataTable: React.FC<DataTableProps> = ({
                   data.map((row, rowIndex: number) => (
                     <tr
                       key={rowIndex}
-                      className={
-                        rowIndex % 2 !== 0 ? 'bg-muted/30 dark:bg-muted/40' : ''
-                      }
+                      className="hover:bg-muted/30 border border-b"
                     >
                       {row.data.map(
                         (cell: TableCellData, cellIndex: number) => (

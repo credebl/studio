@@ -743,7 +743,6 @@ const CreateSchema = (): React.JSX.Element => {
                 <div className="float-right mt-16 ml-4 flex gap-4">
                   <Button
                     type="button"
-                    color="bg-primary-800"
                     disabled={
                       createLoader ||
                       !(

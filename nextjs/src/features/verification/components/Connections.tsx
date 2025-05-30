@@ -371,7 +371,7 @@ const Connections = (): JSX.Element => {
             Selected Users
           </h1>
         </div>
-        <div className="rounded-lg border p-4 shadow-sm sm:p-6 2xl:col-span-2">
+        <div className="pt-2">
           <DataTable
             header={selectedConnectionHeader}
             data={selectedConnectionList}

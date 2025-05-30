@@ -37,7 +37,7 @@ const CustomCheckbox: React.FC<ICustomCheckboxProps> = ({
             className="hidden"
           />
           <div
-            className={`h-full w-full border-2 ${checked ? 'bg-primary' : ''}`}
+            className={`h-full w-full border ${checked ? 'bg-primary' : ''}`}
             style={{
               borderColor: 'rgb(31 78 173 / var(--tw-bg-opacity))',
               position: 'relative',
@@ -49,7 +49,7 @@ const CustomCheckbox: React.FC<ICustomCheckboxProps> = ({
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="5"
+                strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >

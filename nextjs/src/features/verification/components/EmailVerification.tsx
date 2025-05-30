@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 'use client'
 
 import * as Yup from 'yup'
@@ -16,6 +15,7 @@ import {
   ISelectedAttributes,
 } from '../type/interface'
 import { JSX, useEffect, useState } from 'react'
+import { PlusIcon, RequestProofIcon, ResetIcon } from '@/components/iconsSvg'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
 import { AlertComponent } from '@/components/AlertComponent'
@@ -26,6 +26,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { createOobProofRequest } from '@/app/api/verification'
+import delSvg from '@/../public/svgs/del.svg'
 import { getOrganizationById } from '@/app/api/organization'
 import { pathRoutes } from '@/config/pathRoutes'
 import { resetAttributeData } from '@/lib/verificationSlice'
@@ -295,7 +296,7 @@ const EmailVerification = (): JSX.Element => {
     <div className="px-4 pt-2">
       <div className="col-span-full mb-4 xl:mb-2">
         <div>
-          <h1 className="text-primary-foreground mt-4 ml-1 text-xl font-semibold sm:text-2xl">
+          <h1 className="mt-4 ml-1 text-xl font-semibold sm:text-2xl">
             Request Proof(s) to Email ID
           </h1>
           <span className="text-md text-muted-foreground">
@@ -415,28 +416,26 @@ const EmailVerification = (): JSX.Element => {
                                   </div>
 
                                   {values.emailData.length > 1 && (
-                                    <Button
-                                      data-testid="deleteBtn"
-                                      type="button"
-                                      color="danger"
-                                      onClick={() => handleDeleteInput(index)}
-                                      className="text-destructive flex justify-end focus:outline-none"
+                                    <div
+                                      key={index}
+                                      className="text-destructive flex justify-end sm:w-2/12"
                                     >
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        strokeWidth={1.5}
-                                        stroke="currentColor"
-                                        className="h-6 w-6"
+                                      <Button
+                                        data-testid="deleteBtn"
+                                        color="danger"
+                                        type="button"
+                                        className={
+                                          'flex justify-center border-none bg-transparent shadow-none hover:bg-transparent focus:ring-0'
+                                        }
+                                        onClick={() => handleDeleteInput(index)}
                                       >
-                                        <path
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"
-                                          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                                        <img
+                                          src={delSvg.src}
+                                          alt="delete"
+                                          className="mx-auto h-6 w-6"
                                         />
-                                      </svg>
-                                    </Button>
+                                      </Button>
+                                    </div>
                                   )}
                                 </div>
                               </div>
@@ -447,27 +446,10 @@ const EmailVerification = (): JSX.Element => {
                               type="button"
                               onClick={handleAddInput}
                               disabled={disableAddAnother}
-                              className={
-                                'focus:ring-ring text-primary dark:disabled:text-secondary-disabled disabled:text-primary-disabled hover:enabled:bg-primary border-primary disabled:border-primary-disabled group dark:border-gray dark:bg-gray dark:focus:ring-gray dark:hover:enabled:!bg-gray dark:hover:enabled:!text-gray absolute bottom-0 left-[50%] m-auto flex w-max translate-x-[-50%] flex-row items-center rounded-full border bg-white hover:text-white focus:ring-2 disabled:opacity-100'
-                              }
+                              className="border-ring hover:bg-primary/90 absolute bottom-0 left-[50%] m-auto flex w-max translate-x-[-50%] flex-row items-center rounded-full border px-4 py-2 transition-colors disabled:cursor-not-allowed disabled:opacity-100"
                             >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth="1.5"
-                                stroke="currentColor"
-                                className="h-6 w-6"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                                />
-                              </svg>
-                              <span className="text-primary-foreground my-0.5 ml-1">
-                                Add another
-                              </span>
+                              <PlusIcon />
+                              <span className="my-0.5 ml-1">Add another</span>
                             </Button>
                           </div>
                         </div>
@@ -481,40 +463,16 @@ const EmailVerification = (): JSX.Element => {
                               setEmailInputs([{ value: '' }])
                             }}
                             disabled={loading}
-                            className="border-ring hover:bg-primary mb-4 flex items-center gap-2 rounded-xl border px-4 py-2 transition-colors"
+                            className="mb-4 flex items-center rounded-xl px-4 py-2"
                           >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="dark:group-hover:text-primary mr-2 dark:text-white"
-                              width="18"
-                              height="18"
-                              fill="none"
-                              viewBox="0 0 20 20"
-                            >
-                              <path
-                                fill="currentColor"
-                                d="M19.414 9.414a.586.586 0 0 0-.586.586c0 4.868-3.96 8.828-8.828 8.828-4.868 0-8.828-3.96-8.828-8.828 0-4.868 3.96-8.828 8.828-8.828 1.96 0 3.822.635 5.353 1.807l-1.017.18a.586.586 0 1 0 .204 1.153l2.219-.392a.586.586 0 0 0 .484-.577V1.124a.586.586 0 0 0-1.172 0v.928A9.923 9.923 0 0 0 10 0a9.935 9.935 0 0 0-7.071 2.929A9.935 9.935 0 0 0 0 10a9.935 9.935 0 0 0 2.929 7.071A9.935 9.935 0 0 0 10 20a9.935 9.935 0 0 0 7.071-2.929A9.935 9.935 0 0 0 20 10a.586.586 0 0 0-.586-.586Z"
-                              />
-                            </svg>
+                            <ResetIcon />
                             Reset
                           </Button>
                           <Button
                             type="submit"
                             className="bg-primary focus:ring-primary text-primary-foreground items-center justify-center rounded-lg py-1 text-center text-sm font-medium focus:ring-4 focus:outline-none"
                           >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="18"
-                              height="18"
-                              fill="none"
-                              viewBox="0 0 20 20"
-                              className="dark:group-hover:text-primary mr-2 dark:text-white"
-                            >
-                              <path
-                                fill="currentColor"
-                                d="M8.828 12.171a.75.75 0 0 0 1.06 0l7-7a.75.75 0 0 0-1.06-1.06L9.358 10.44l-3.56-3.56a.75.75 0 0 0-1.06 1.06l4 4Z"
-                              />
-                            </svg>
+                            <RequestProofIcon />
                             Request Proof
                           </Button>
                         </div>
