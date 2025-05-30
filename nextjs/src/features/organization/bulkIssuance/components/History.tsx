@@ -301,10 +301,8 @@ const HistoryBulkIssuance = (): JSX.Element => {
           id="connection-list"
         >
           <h1 className="ml-1">
-            <p className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-              History
-            </p>
-            <p className="text-sm text-gray-400">Bulk Issuance History</p>
+            <p className="text-xl font-semibold sm:text-2xl">History</p>
+            <p className="text-sm">Bulk Issuance History</p>
           </h1>
         </div>
 
