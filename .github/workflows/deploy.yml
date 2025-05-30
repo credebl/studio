@@ -21,7 +21,7 @@ jobs:
       - name: Install Deno
         uses: denoland/setup-deno@v2
         with:
-          deno-version: v1.x
+          deno-version: v2.x
 
       - name: Install Node.js
         uses: actions/setup-node@v4
@@ -38,7 +38,7 @@ jobs:
         uses: denoland/deployctl@v1
         with:
           project: "studio-nextjs"
-          entrypoint: ""
-          root: "nextjs"
+          entrypoint: "jsr:@deno/nextjs-start/v15"
+          root: "./nextjs"
           
           
