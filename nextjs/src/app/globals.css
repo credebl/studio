@@ -264,6 +264,10 @@ ul.timelinestatic > li {
   background-color: #fee2e2;
 }
 
+.badges-secondary {
+  background-color: #7dd3fc;
+}
+
 * {
   border-color: var(--color-border);
 }

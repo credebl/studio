@@ -401,7 +401,7 @@ const WalletSpinup = (): React.JSX.Element => {
 
   return (
     <PageContainer>
-      <div className="flex min-h-screen items-start justify-center bg-[image:var(--card-gradient)] p-6">
+      <div className="flex min-h-screen items-start justify-center p-6">
         <div className="mx-auto mt-4">
           <Card>
             <CardContent className="p-6">

@@ -26,6 +26,7 @@ import { ethers } from 'ethers'
 import { getOrganizationById } from '@/app/api/organization'
 import { nanoid } from 'nanoid'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 interface IPolygonKeys {
   privateKey: string
@@ -90,24 +91,22 @@ function CheckIcon(props: React.SVGProps<SVGSVGElement>): React.JSX.Element {
   )
 }
 const CreateDidComponent = (props: CreateDIDModalProps): React.JSX.Element => {
-  const [loading, setLoading] = React.useState<boolean>(false)
-  const [isLoading, setIsLoading] = React.useState<boolean>(false)
-  const [errMsg, setErrMsg] = React.useState<string | null>(null)
-  const [successMsg, setSuccessMsg] = React.useState<string | null>(null)
-  const [seed, setSeed] = React.useState('')
-  const [generatedKeys, setGeneratedKeys] = React.useState<IPolygonKeys | null>(
+  const [loading, setLoading] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [errMsg, setErrMsg] = useState<string | null>(null)
+  const [successMsg, setSuccessMsg] = useState<string | null>(null)
+  const [seed, setSeed] = useState('')
+  const [generatedKeys, setGeneratedKeys] = useState<IPolygonKeys | null>(null)
+  const [method, setMethod] = useState<string | null>(null)
+  const [completeDidMethodValue, setCompleteDidMethodValue] = useState<
+    string | null
+  >(null)
+  const [havePrivateKey, setHavePrivateKey] = useState(false)
+  const [privateKeyValue, setPrivateKeyValue] = useState<string>('')
+  const [walletErrorMessage, setWalletErrorMessage] = useState<string | null>(
     null,
   )
-  const [method, setMethod] = React.useState<string | null>(null)
-  const [completeDidMethodValue, setCompleteDidMethodValue] = React.useState<
-    string | null
-  >(null)
-  const [havePrivateKey, setHavePrivateKey] = React.useState(false)
-  const [privateKeyValue, setPrivateKeyValue] = React.useState<string>('')
-  const [walletErrorMessage, setWalletErrorMessage] = React.useState<
-    string | null
-  >(null)
-  const [initialValues, setInitialValues] = React.useState<IFormValues>({
+  const [initialValues, setInitialValues] = useState<IFormValues>({
     method: '',
     ledger: '',
     network: '',
@@ -346,7 +345,7 @@ const CreateDidComponent = (props: CreateDIDModalProps): React.JSX.Element => {
     value: string
     className?: string
   }): React.JSX.Element {
-    const [copied, setCopied] = React.useState(false)
+    const [copied, setCopied] = useState(false)
 
     const copyToClipboard = (): void => {
       navigator.clipboard.writeText(value).then(() => {
@@ -413,6 +412,8 @@ const CreateDidComponent = (props: CreateDIDModalProps): React.JSX.Element => {
                     id="ledger"
                     name="ledger"
                     readOnly
+                    tabIndex={-1}
+                    className="bg-muted cursor-default select-none"
                     value={values.ledger}
                   />
                   <ErrorMessage
@@ -432,6 +433,8 @@ const CreateDidComponent = (props: CreateDIDModalProps): React.JSX.Element => {
                       id="method"
                       name="method"
                       readOnly
+                      tabIndex={-1}
+                      className="bg-muted cursor-default select-none"
                       value={values.method}
                     />
                     <ErrorMessage
@@ -453,6 +456,8 @@ const CreateDidComponent = (props: CreateDIDModalProps): React.JSX.Element => {
                       id="network"
                       name="network"
                       readOnly
+                      tabIndex={-1}
+                      className="bg-muted cursor-default select-none"
                       value={values.network}
                     />
                     <ErrorMessage
@@ -487,7 +492,12 @@ const CreateDidComponent = (props: CreateDIDModalProps): React.JSX.Element => {
                     DID Method{' '}
                     <span className="text-destructive text-xs">*</span>
                   </Label>
-                  <Input value={completeDidMethodValue || ''} readOnly />
+                  <Input
+                    value={completeDidMethodValue || ''}
+                    readOnly
+                    tabIndex={-1}
+                    className="bg-muted cursor-default select-none"
+                  />
                 </div>
 
                 {method === DidMethod.POLYGON && (
