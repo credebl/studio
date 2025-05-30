@@ -115,16 +115,16 @@ export const OrganizationDashboard = ({
                   <h2 className="text-2xl font-bold break-all">
                     {orgData?.name}
                   </h2>
-                  <p className="text-muted-foreground break-all">
+                  <div className="text-muted-foreground break-all">
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div>
+                          <p>
                             {typeof orgData?.description === 'string' &&
                             orgData?.description?.length > 150
                               ? `${orgData?.description.substring(0, 150)}...`
                               : orgData?.description}{' '}
-                          </div>
+                          </p>
                         </TooltipTrigger>
                         <TooltipContent
                           side="bottom"
@@ -135,7 +135,7 @@ export const OrganizationDashboard = ({
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                  </p>
+                  </div>
                   <p className="mt-2 text-sm">
                     Profile view:{' '}
                     <span className="font-semibold">
