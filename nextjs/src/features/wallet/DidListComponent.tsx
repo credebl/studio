@@ -482,7 +482,8 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
             userRoles.includes(Roles.MEMBER) ||
             userRoles.includes(Roles.ISSUER) ||
             userRoles.includes(Roles.VERIFIER) ||
-            isMethodLoading
+            isMethodLoading ||
+            isCreatingDid
           }
         >
           {isMethodLoading ? (
