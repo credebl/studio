@@ -104,37 +104,6 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
 
   const router = useRouter()
 
-  // State for Create DID modal
-  const [loading, setLoading] = React.useState<boolean>(false)
-  const [isLoading, setIsLoading] = React.useState<boolean>(false)
-  const [errMsg, setErrMsg] = React.useState<string | null>(null)
-  const [isCreatingDid, setIsCreatingDid] = useState(false)
-  const [seed, setSeed] = React.useState('')
-  const [generatedKeys, setGeneratedKeys] = React.useState<IPolygonKeys | null>(
-    null,
-  )
-  const [method, setMethod] = React.useState<string | null>(null)
-  const [completeDidMethodValue, setCompleteDidMethodValue] = React.useState<
-    string | null
-  >(null)
-  const [havePrivateKey, setHavePrivateKey] = React.useState(false)
-  const [privateKeyValue, setPrivateKeyValue] = React.useState<string>('')
-  const [walletErrorMessage, setWalletErrorMessage] = React.useState<
-    string | null
-  >(null)
-  const [initialValues, setInitialValues] = React.useState<IFormValues>({
-    method: '',
-    ledger: '',
-    network: '',
-    domain: '',
-    privatekey: '',
-    endorserDid: '',
-    did: '',
-  })
-
-  const router = useRouter()
-
-  // DID List functions
   const setPrimaryDid = async (id: string, did: string): Promise<void> => {
     try {
       const payload: IUpdatePrimaryDid = {
