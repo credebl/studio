@@ -44,7 +44,7 @@ jobs:
 
          echo "PUBLIC_PLATFORM_TWITTER_URL=https://twitter.com/i/flow/login?redirect_after_login=%2Fcredebl" >> .env
 
-         echo "PUBLIC_PLATFROM_DISCORD_SUPPORT=https://discord.gg/w4hnQT7NJG" >> .env
+         echo "PUBLIC_PLATFORM_DISCORD_SUPPORT=https://discord.gg/w4hnQT7NJG" >> .env
 
          echo "PUBLIC_ALLOW_DOMAIN=${{ secrets.PUBLIC_ALLOW_DOMAIN }}" >> .env
 
