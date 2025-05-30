@@ -36,6 +36,7 @@ interface EditUserRoleModalProps {
   user: User
   setMessage: (message: string) => void
   setOpenModal: (flag: boolean) => void
+  getAllUsersFun: () => void
 }
 
 const EditUserRoleModal = ({
@@ -43,6 +44,7 @@ const EditUserRoleModal = ({
   user,
   setMessage,
   setOpenModal,
+  getAllUsersFun,
 }: EditUserRoleModalProps): React.JSX.Element => {
   const [loading, setLoading] = useState<boolean>(false)
   const [roles, setRoles] = useState<RoleI[] | null>(null)
@@ -108,6 +110,7 @@ const EditUserRoleModal = ({
 
       if (response?.data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setMessage(response.data.message)
+        getAllUsersFun()
         setOpenModal(false)
       } else {
         setErrorMsg(response as unknown as string)

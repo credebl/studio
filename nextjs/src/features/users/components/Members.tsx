@@ -269,7 +269,7 @@ export default function Members(): React.JSX.Element {
 
   useEffect(() => {
     getOrgUserRole()
-  }, [getOrgUserRole])
+  }, [])
 
   useEffect(() => {
     if (activeTab === 'users') {
@@ -277,30 +277,22 @@ export default function Members(): React.JSX.Element {
     } else {
       getAllInvitations()
     }
-  }, [activeTab, getAllUsers, getAllInvitations])
+  }, [activeTab])
 
   useEffect(() => {
-    if (activeTab === 'users') {
-      getAllUsers()
-    }
+    getAllUsers()
   }, [
     usersPageState.pageNumber,
     usersPageState.search,
     usersPageState.sortingOrder,
-    activeTab,
-    getAllUsers,
   ])
 
   useEffect(() => {
-    if (activeTab === 'invitations') {
-      getAllInvitations()
-    }
+    getAllInvitations()
   }, [
     invitationsPageState.pageNumber,
     invitationsPageState.search,
     inviteModalOpen,
-    activeTab,
-    getAllInvitations,
   ])
 
   useEffect(() => {
@@ -646,6 +638,7 @@ export default function Members(): React.JSX.Element {
             user={selectedUser}
             setMessage={(data) => setMessage(data)}
             setOpenModal={setUserModalOpen}
+            getAllUsersFun={getAllUsers}
           />
         )}
 

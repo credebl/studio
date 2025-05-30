@@ -277,7 +277,7 @@ const ConnectionList = (props: {
         className="mb-4 flex items-center justify-between"
         id="issued-credentials-list"
       >
-        <h1 className="ml-1 text-xl font-semibold text-black sm:text-2xl dark:text-white">
+        <h1 className="ml-1 text-xl font-semibold sm:text-2xl">
           Connection List
         </h1>
       </div>
