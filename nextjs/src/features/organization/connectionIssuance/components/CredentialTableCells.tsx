@@ -65,7 +65,7 @@ export const StatusCellForCredential = ({
 }: {
   state: string
 }): React.JSX.Element => {
-  let className = 'badges-secondary text-foreground'
+  let className = 'text-revocable-no text-foreground'
   let text = IssueCredentialUserText.credIssued
 
   switch (state) {
