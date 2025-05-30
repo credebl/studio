@@ -13,6 +13,7 @@ import {
   IValuesShared,
 } from '../organization/components/interfaces/organization'
 import React, { ReactNode, useEffect, useState } from 'react'
+import { apiStatusCodes, polygonScan } from '@/config/CommonConstant'
 import { getLedgerConfig, getLedgers } from '@/app/api/Agent'
 import type { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
@@ -21,7 +22,6 @@ import { Label } from '@/components/ui/label'
 import SetDomainValueInput from './SetDomainValueInput'
 import SetPrivateKeyValueInput from './SetPrivateKeyValue'
 import Stepper from '@/components/StepperComponent'
-import { apiStatusCodes } from '@/config/CommonConstant'
 import { envConfig } from '@/config/envConfig'
 
 const LedgerConfig = ({
@@ -611,11 +611,8 @@ const LedgerConfig = ({
                               <div className="mt-1">
                                 For example, copy the address and check the
                                 balance on{' '}
-                                <a
-                                  href="https://mumbai.polygonscan.com/"
-                                  className="underline"
-                                >
-                                  https://mumbai.polygonscan.com/
+                                <a href={polygonScan} className="underline">
+                                  {polygonScan}
                                 </a>
                                 .
                               </div>
