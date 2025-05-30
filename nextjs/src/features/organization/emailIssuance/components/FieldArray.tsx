@@ -48,7 +48,7 @@ function FieldArrayData({
                     name={`formData[${index}].email`}
                     placeholder={'email'}
                     type="email"
-                    className="border-input file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 rounded-md border bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:w-5/12 md:text-sm"
+                    className="border-input file:text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-ring flex h-9 rounded-md border bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:w-5/12 md:text-sm"
                   />
 
                   <div className="absolute top-8 left-24">
@@ -121,8 +121,8 @@ function FieldArrayData({
                       attIndex: number,
                     ) => (
                       <div className="mt-3" key={attIndex}>
-                        <div className="relative flex w-full items-center gap-2">
-                          <label className="word-break-word w-[300px] text-base">
+                        <div className="relative grid w-full grid-cols-[1fr_3fr] items-center gap-2">
+                          <label className="word-break-word text-base">
                             {item?.displayName}
                             {item.isRequired && (
                               <span className="text-destructive">*</span>
@@ -133,7 +133,7 @@ function FieldArrayData({
                               type={item.schemaDataType}
                               placeholder={item.name}
                               name={`formData[${index}].attributes.${attIndex}.value`}
-                              className="border-input file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                              className="border-input file:text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-ring flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                             />
                             {((): JSX.Element | null => {
                               const errorAtIndex =
