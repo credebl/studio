@@ -54,7 +54,7 @@ const initialPageState = {
 const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
   const [schemaDetails, setSchemaDetails] = useState<SchemaData | null>(null)
 
-  const [credDefList, setCredDefList] = useState([])
+  const [credDefList, setCredDefList] = useState<ICredDefCard[]>([])
 
   const [loading, setLoading] = useState<boolean>(true)
   const [createLoader, setCreateLoader] = useState<boolean>(false)
