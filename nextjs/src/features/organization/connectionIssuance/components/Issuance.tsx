@@ -212,7 +212,7 @@ const IssueCred = (): React.JSX.Element => {
           orgId,
         )) as AxiosResponse
         setCredentialOptions(
-          credentials.data.data.map((value: ICredentials, index: number) => ({
+          credentials.data?.data.map((value: ICredentials, index: number) => ({
             schemaVersion: value.schemaVersion,
             value: index,
             label: value.schemaCredDefName,

@@ -100,7 +100,7 @@ export function SearchableSelect({
               {emptyMessage}
             </CommandEmpty>
             <CommandGroup className="p-1">
-              {options.map((option, index) => (
+              {(options || []).map((option, index) => (
                 <CommandItem
                   key={`${option.schemaIdentifier ?? index}-${option.label}`}
                   value={option.id}
