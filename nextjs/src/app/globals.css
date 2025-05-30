@@ -282,7 +282,3 @@ ul.timelinestatic > li {
   background-color: #fee2e2;
   color: #b91c1c;
 }
-
-* {
-  border-color: var(--color-border);
-}

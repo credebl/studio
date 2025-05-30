@@ -15,6 +15,7 @@ import CustomCheckbox from '@/components/CustomCheckbox'
 import DataTable from '@/components/DataTable'
 import { DidMethod } from '@/common/enums'
 import { ITableData } from '@/components/DataTable/interface'
+import PageContainer from '@/components/layout/page-container'
 import { TableHeader } from './SortDataTable'
 import { X } from 'lucide-react'
 import { getOrganizationById } from '@/app/api/organization'
@@ -439,71 +440,73 @@ const EmailAttributesSelection = (): JSX.Element => {
   ]
 
   return (
-    <div className="px-4 pt-2">
-      <div className="col-span-full mb-4 xl:mb-2">
-        <div className="flex w-full items-center justify-end">
-          <BackButton
-            path={
-              w3cSchema
-                ? pathRoutes.organizations.verification.email
-                : pathRoutes.organizations.verification.emailCredDef
-            }
-          />
+    <PageContainer>
+      <div className="px-2 pt-2">
+        <div className="col-span-full mb-4 xl:mb-2">
+          <div className="flex w-full items-center justify-end">
+            <BackButton
+              path={
+                w3cSchema
+                  ? pathRoutes.organizations.verification.email
+                  : pathRoutes.organizations.verification.emailCredDef
+              }
+            />
+          </div>
         </div>
-      </div>
 
-      {(proofReqSuccess || errMsg) && (
-        <div className="relative p-2">
-          <Alert
-            className={`pr-10 ${
-              proofReqSuccess ? 'text-success' : 'text-error'
-            }`}
-          >
-            <AlertTitle className="font-semibold">
-              {proofReqSuccess ? 'Success' : 'Error'}
-            </AlertTitle>
-            <AlertDescription>{proofReqSuccess ?? errMsg}</AlertDescription>
-            <Button
-              className="text-muted-foreground hover:text-foreground absolute top-3 right-3"
-              onClick={() => {
-                setProofReqSuccess(null)
-                setErrMsg(null)
-              }}
-              aria-label="Dismiss"
+        {(proofReqSuccess || errMsg) && (
+          <div className="relative p-2">
+            <Alert
+              className={`pr-10 ${
+                proofReqSuccess ? 'text-success' : 'text-error'
+              }`}
             >
-              <X className="h-4 w-4" />
-            </Button>
-          </Alert>
-        </div>
-      )}
-      <div
-        className={
-          'font-montserrat flex flex-col p-2 text-left text-base leading-6 font-semibold tracking-normal sm:flex-row sm:justify-between sm:space-x-2'
-        }
-      >
-        <h1 className="mr-auto ml-1 text-xl font-semibold sm:text-2xl">
-          Attributes
-        </h1>
-      </div>
-      <div className="rounded-lg border p-6 shadow-sm sm:p-6 2xl:col-span-2">
-        <DataTable
-          header={header.filter(Boolean) as TableHeader[]}
-          data={attributeList}
-          loading={loading}
-        ></DataTable>
-      </div>
-
-      <div className="flex w-full items-center justify-end">
-        <Button
-          onClick={handleSubmit}
-          disabled={!attributeData?.some((ele) => ele.isChecked)}
-          className="mt-2 ml-auto rounded-lg text-center text-base font-medium sm:w-auto"
+              <AlertTitle className="font-semibold">
+                {proofReqSuccess ? 'Success' : 'Error'}
+              </AlertTitle>
+              <AlertDescription>{proofReqSuccess ?? errMsg}</AlertDescription>
+              <Button
+                className="text-muted-foreground hover:text-foreground absolute top-3 right-3"
+                onClick={() => {
+                  setProofReqSuccess(null)
+                  setErrMsg(null)
+                }}
+                aria-label="Dismiss"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </Alert>
+          </div>
+        )}
+        <div
+          className={
+            'font-montserrat flex flex-col text-left text-base leading-6 font-semibold tracking-normal sm:flex-row sm:justify-between sm:space-x-2'
+          }
         >
-          <ContinueIcon />
-          Continue
-        </Button>
+          <h1 className="mr-auto ml-1 text-xl font-semibold sm:text-2xl">
+            Attributes
+          </h1>
+        </div>
+        <div className="mt-2 pt-2">
+          <DataTable
+            header={header.filter(Boolean) as TableHeader[]}
+            data={attributeList}
+            loading={loading}
+          ></DataTable>
+        </div>
+
+        <div className="flex w-full items-center justify-end">
+          <Button
+            onClick={handleSubmit}
+            disabled={!attributeData?.some((ele) => ele.isChecked)}
+            className="mt-2 ml-auto rounded-lg text-center text-base font-medium sm:w-auto"
+          >
+            <ContinueIcon />
+            Continue
+          </Button>
+        </div>
       </div>
-    </div>
+    </PageContainer>
   )
 }
 

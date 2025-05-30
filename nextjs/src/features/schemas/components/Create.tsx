@@ -452,7 +452,7 @@ const CreateSchema = (): React.JSX.Element => {
                                             true,
                                           )
                                         }}
-                                        className="border-input file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring rounded-lg border bg-transparent p-2.5 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm w-full"
+                                        className="border-input file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-lg border bg-transparent p-2.5 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                                       />
                                       {validSameAttribute(
                                         formikHandlers,
@@ -498,12 +498,12 @@ const CreateSchema = (): React.JSX.Element => {
                                         name={`attribute.${index}.schemaDataType`}
                                         placeholder="Select"
                                         disabled={!areFirstInputsSelected}
-                                        className="border-input file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring rounded-lg border bg-transparent p-2.5 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm w-full"
+                                        className="border-input file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-lg border bg-transparent p-2.5 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                                       >
                                         {filteredOptions.map((opt) => (
                                           <option
                                             key={opt.value}
-                                            className="py-2 bg-popover"
+                                            className="bg-popover py-2"
                                             value={opt.value}
                                           >
                                             {opt.label}
@@ -543,7 +543,7 @@ const CreateSchema = (): React.JSX.Element => {
                                         name={`attribute.${index}.displayName`}
                                         placeholder="Display Name"
                                         disabled={!areFirstInputsSelected}
-                                        className="border-input file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring rounded-lg border bg-transparent p-2.5 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm w-full"
+                                        className="border-input file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-lg border bg-transparent p-2.5 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                                       />
                                       {validSameAttribute(
                                         formikHandlers,
@@ -607,7 +607,7 @@ const CreateSchema = (): React.JSX.Element => {
                                           'border-primary ring-offset-background focus-visible:ring-ring data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground dark:data-[state=checked]:bg-primary dark:data-[state=checked]:text-primary-foreground h-4 w-4 translate-y-[2px] rounded-sm border focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50'
                                         }
                                       />
-                                      <span className="text-foreground disabled:text-muted-foreground text-sm mt-1">
+                                      <span className="text-foreground disabled:text-muted-foreground mt-1 text-sm">
                                         Required
                                       </span>
                                     </label>
@@ -638,7 +638,7 @@ const CreateSchema = (): React.JSX.Element => {
                                             values.attribute.length === 1
                                               ? 'hidden'
                                               : 'block'
-                                          } flex justify-end bg-transparent p-0 shadow-none hover:bg-transparent focus:ring-0 mt-2`}
+                                          } mt-2 flex justify-end bg-transparent p-0 shadow-none hover:bg-transparent focus:ring-0`}
                                         >
                                           <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -743,7 +743,6 @@ const CreateSchema = (): React.JSX.Element => {
                 <div className="float-right mt-16 ml-4 flex gap-4">
                   <Button
                     type="button"
-                    color="bg-primary-800"
                     disabled={
                       createLoader ||
                       !(
@@ -751,7 +750,7 @@ const CreateSchema = (): React.JSX.Element => {
                         formikHandlers.values.schemaVersion
                       )
                     }
-                    className="ml-auto rounded-lg text-base font-medium hover:text-primary-foreground"
+                    className="ml-auto rounded-lg text-base font-medium"
                     style={{
                       height: '2.6rem',
                       width: '6rem',

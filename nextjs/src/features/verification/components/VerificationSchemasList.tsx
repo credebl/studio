@@ -29,7 +29,7 @@ import {
 } from '@/lib/verificationSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
-import { Alert } from '@/components/ui/alert'
+import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { Create } from '@/config/Constant'
@@ -298,10 +298,20 @@ const VerificationSchemasList = (): JSX.Element => {
   return (
     <PageContainer>
       <div className="px-4 pt-2">
+        {schemasDetailsErr && (
+          <div className="mb-4 flex flex-col space-y-4">
+            <AlertComponent
+              message={schemasDetailsErr}
+              type="failure"
+              onAlertClose={() => setSchemasDetailsErr('')}
+            />
+          </div>
+        )}
+
         <div>
           <div>
             <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
-              <h1 className="text-primary-foreground mr-auto ml-1 text-xl font-semibold sm:text-2xl">
+              <h1 className="text-muted-foreground mr-auto ml-1 text-xl font-semibold sm:text-2xl">
                 Schemas
               </h1>
               <div className="relative w-full sm:max-w-sm">
@@ -310,7 +320,7 @@ const VerificationSchemasList = (): JSX.Element => {
                   placeholder="Search..."
                   value={searchValue}
                   onChange={onSchemaListParameterSearch}
-                  className="bg-background text-muted-foreground focus-visible:ring-primary h-10 rounded-lg pr-4 pl-10 text-sm shadow-sm focus-visible:ring-1"
+                  className="border-input file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border bg-transparent px-3 py-1 pr-4 pl-10 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                 />
                 <IconSearch className="text-muted-foreground absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2" />
               </div>
@@ -319,7 +329,7 @@ const VerificationSchemasList = (): JSX.Element => {
                 defaultValue="Organization's schema"
                 onValueChange={handleFilter}
               >
-                <SelectTrigger className="focus:border-primary focus:ring-primary dark:focus:border-primary dark:focus:ring-primary min-h-[42px] w-[230px] rounded-lg border p-2.5 text-sm">
+                <SelectTrigger className="min-h-[42px] w-[230px] rounded-lg border p-2.5 text-sm">
                   <SelectValue placeholder="Select schema type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -354,13 +364,6 @@ const VerificationSchemasList = (): JSX.Element => {
               </div>
             </div>
           </div>
-          {schemasDetailsErr !== '' && (
-            <Alert color="failure">
-              <span>
-                <p>{schemasDetailsErr}</p>
-              </span>
-            </Alert>
-          )}
 
           {schemasList && schemasList.length > 0 ? (
             <div
