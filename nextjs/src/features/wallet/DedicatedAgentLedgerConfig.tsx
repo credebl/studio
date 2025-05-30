@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { apiStatusCodes, polygonScan } from '@/config/CommonConstant'
 
 import type { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
@@ -30,7 +31,6 @@ import { Label } from '@/components/ui/label'
 import SetDomainValueInput from './SetDomainValueInput'
 import SetPrivateKeyValueInput from './SetPrivateKeyValue'
 import Stepper from '@/components/StepperComponent'
-import { apiStatusCodes } from '@/config/CommonConstant'
 import { envConfig } from '@/config/envConfig'
 import { getLedgerConfig } from '@/app/api/Agent'
 
@@ -572,10 +572,10 @@ const DedicatedLedgerConfig = ({
                                     For eg. copy the address and check the
                                     balance on{' '}
                                     <a
-                                      href="https://mumbai.polygonscan.com/"
+                                      href={polygonScan}
                                       className="text-primary underline"
                                     >
-                                      https://mumbai.polygonscan.com/
+                                      {polygonScan}
                                     </a>
                                   </div>
                                 </div>

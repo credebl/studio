@@ -13,6 +13,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from 'formik'
+import { apiStatusCodes, polygonScan } from '@/config/CommonConstant'
 import { createDid, createPolygonKeyValuePair } from '@/app/api/Agent'
 
 import { AxiosResponse } from 'axios'
@@ -20,7 +21,6 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { apiStatusCodes } from '@/config/CommonConstant'
 import { envConfig } from '@/config/envConfig'
 import { ethers } from 'ethers'
 import { getOrganizationById } from '@/app/api/organization'
@@ -634,12 +634,12 @@ const CreateDidComponent = (props: CreateDIDModalProps): React.JSX.Element => {
                             <div>
                               For eg. copy the address and check the balance on{' '}
                               <a
-                                href="https://mumbai.polygonscan.com/"
+                                href={polygonScan}
                                 className="underline"
                                 target="_blank"
                                 rel="noopener noreferrer"
                               >
-                                https://mumbai.polygonscan.com/
+                                {polygonScan}
                               </a>
                             </div>
                           </div>
