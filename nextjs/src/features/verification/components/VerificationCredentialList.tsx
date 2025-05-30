@@ -331,7 +331,7 @@ const VerificationCredentialList = (): JSX.Element => {
             userText = ProofRequestStateUserText.abandoned
             break
           case ProofRequestState.presentationReceived:
-            badgeClass = 'badges-secondary'
+            badgeClass = 'text-revocable-no'
             userText = ProofRequestStateUserText.presentationReceived
             break
           default:

@@ -173,11 +173,11 @@ export function DataTable<TData, TValue>({
         table={table}
         onSearchTermChange={onSearchTerm}
       />
-      <div className="overflow-hidden rounded-lg">
-        <Table className="divide-muted rounded-lg">
-          <TableHeader className="bg-muted border">
+      <div className="overflow-hidden rounded-lg border">
+        <Table className="divide-muted">
+          <TableHeader className="bg-muted">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="border-0">
+              <TableRow key={headerGroup.id} className="">
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead
@@ -203,7 +203,7 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className="border-0"
+                  className=""
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell className="p-4" key={cell.id}>

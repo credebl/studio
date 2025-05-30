@@ -78,6 +78,6 @@ jobs:
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
         with:
-          project: "studio-nextjs"          # Project name in Deno Deploy
-          entrypoint: "server/entry.mjs" # 📝 Update the entrypoint
-          root: "dist"
+          project: "studio-nextjs"
+          entrypoint: "jsr:@deno/nextjs-start/v15"
+          root: "nextjs"
