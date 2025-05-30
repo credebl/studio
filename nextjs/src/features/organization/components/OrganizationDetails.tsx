@@ -97,11 +97,11 @@ const OrganizationDetails = ({
   )
 
   return (
-    <div className="space-y-">
-      <h2 className="text-2xl font-bold">Wallet Details</h2>
+    <div className="">
+      <h2 className="pb-4 text-2xl font-bold">Wallet Details</h2>
 
       <Card className="p-6">
-        <div className="flex items-start gap-96">
+        <div className="flex items-start justify-between gap-96">
           {/* Wallet Details */}
           <div className="gap-y-4">
             <div className="space-y-8">
@@ -180,7 +180,7 @@ const OrganizationDetails = ({
           </div>
         </div>
 
-        <div className="mt-6">
+        <div className="mt-10">
           <DIDList orgId={orgId} />
         </div>
       </Card>

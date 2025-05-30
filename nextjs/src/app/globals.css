@@ -286,3 +286,21 @@ ul.timelinestatic > li {
 * {
   border-color: var(--color-border);
 }
+
+.success-alert{
+  background-color: var(--success);
+  color: var(--success-text);
+}
+
+.failure-alert{
+  background-color: var(--error);
+  color: var(--error-text);
+}
+
+.success-alert div{
+  color: var(--success-text);
+}
+
+.failure-alert div{
+  color: var(--error-text);
+} 
