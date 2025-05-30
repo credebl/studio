@@ -5,6 +5,12 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Edit, Trash2 } from 'lucide-react'
 import { IOrgDashboard, IOrganisation } from './interfaces/organization'
 import React, { useEffect, useState } from 'react'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { getOrgDashboard, getOrganizationById } from '@/app/api/organization'
 
 import { AxiosResponse } from 'axios'
@@ -110,9 +116,27 @@ export const OrganizationDashboard = ({
                     {orgData?.name}
                   </h2>
                   <p className="text-muted-foreground break-all">
-                    {orgData?.description}
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            {typeof orgData?.description === 'string' &&
+                            orgData?.description?.length > 150
+                              ? `${orgData?.description.substring(0, 150)}...`
+                              : orgData?.description}{' '}
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent
+                          side="bottom"
+                          sideOffset={4}
+                          className="max-w-3xl"
+                        >
+                          <div>{orgData?.description}</div>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </p>
-                  <p className="mt-1 text-sm">
+                  <p className="mt-2 text-sm">
                     Profile view:{' '}
                     <span className="font-semibold">
                       {orgData?.publicProfile ? 'public' : 'private'}
@@ -138,7 +162,10 @@ export const OrganizationDashboard = ({
 
         {/* Dashboard Cards */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          <Card className="shadow-md" onClick={() => router.push('/users')}>
+          <Card
+            className="shadow transition-all hover:scale-102"
+            onClick={() => router.push('/users')}
+          >
             <CardContent className="flex items-center justify-between p-6">
               <div>
                 <p className="font-medium">Users</p>
@@ -166,7 +193,7 @@ export const OrganizationDashboard = ({
           </Card>
 
           <Card
-            className="shadow-md"
+            className="shadow transition-all hover:scale-102"
             onClick={() => router.push('/organizations/schemas')}
           >
             <CardContent className="flex items-center justify-between p-6">
@@ -196,7 +223,7 @@ export const OrganizationDashboard = ({
             </CardContent>
           </Card>
 
-          <Card className="shadow-md">
+          <Card className="shadow transition-all hover:scale-102">
             <CardContent className="flex items-center justify-between p-6">
               <div>
                 <p className="font-medium">Credentials</p>

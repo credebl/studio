@@ -71,12 +71,13 @@ export function SearchableSelect({
           role="combobox"
           aria-expanded={open}
           disabled={disabled}
+          className='min-w-lg flex justify-between'
         >
           <span className="truncate">
             {selected ? selected.label : placeholder}
           </span>
           <ChevronDown className="text-muted-foreground" />
-        </Button>
+        </Button> 
       </PopoverTrigger>
       <PopoverContent
         className={cn(

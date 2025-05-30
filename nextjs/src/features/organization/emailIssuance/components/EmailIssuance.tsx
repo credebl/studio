@@ -253,7 +253,7 @@ const EmailIssuance = (): JSX.Element => {
                       <p className="text-xl font-semibold dark:text-white">
                         Issue Credential(s) to the email
                       </p>
-                      <span className="text-sm text-gray-400">
+                      <span className="text-sm text-muted-foreground">
                         Please enter an email address to issue the credential to
                       </span>
                     </div>
