@@ -100,26 +100,22 @@ export function SearchableSelect({
               {emptyMessage}
             </CommandEmpty>
             <CommandGroup className="p-1">
-              {options.map((option, index) => (
+              {(options || []).map((option, index) => (
                 <CommandItem
-                  key={index}
-                  value={option.label}
+                  key={`${option.schemaIdentifier ?? index}-${option.label}`}
+                  value={option.id}
                   onSelect={() => {
                     setSelected(option)
                     setOpen(false)
                     onValueChange?.(option)
                   }}
-                  className={cn(
-                    'relative flex cursor-pointer items-center rounded-sm px-2 py-1.5 text-sm select-none',
-                    'text-foreground hover:bg-accent hover:text-accent-foreground',
-                    'focus:bg-accent focus:text-accent-foreground',
-                    'data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground',
-                    'transition-colors duration-150',
-                    'outline-none',
-                  )}
-                  data-selected={selected?.value === option.value}
+                  className={cn()}
+                  data-selected={selected?.id === option.id}
                 >
-                  <span className="flex-1 truncate">{option.label}</span>
+                  <span className="flex-1 truncate">
+                    {option.label}
+                    <span className="sr-only"> {option.schemaIdentifier}</span>
+                  </span>{' '}
                 </CommandItem>
               ))}
             </CommandGroup>
