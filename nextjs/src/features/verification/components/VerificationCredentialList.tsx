@@ -331,7 +331,7 @@ const VerificationCredentialList = (): JSX.Element => {
             userText = ProofRequestStateUserText.abandoned
             break
           case ProofRequestState.presentationReceived:
-            badgeClass = 'text-revocable-no'
+            badgeClass = 'badges-secondary'
             userText = ProofRequestStateUserText.presentationReceived
             break
           default:
@@ -362,6 +362,7 @@ const VerificationCredentialList = (): JSX.Element => {
         return (
           <Button
             disabled={!canView}
+            className="h-8 w-16 px-3 py-1 text-sm"
             onClick={() => openProofRequestModel(true, presentationId, state)}
           >
             {state === ProofRequestState.done ? 'View' : 'Verify'}

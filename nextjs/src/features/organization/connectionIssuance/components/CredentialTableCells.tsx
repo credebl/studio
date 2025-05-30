@@ -42,7 +42,7 @@ export const SchemaNameCell = ({
           router.push('/organizations/schemas')
         }
       }}
-      className="text-primary cursor-pointer border-none bg-transparent p-0 text-sm hover:underline"
+      className="cursor-pointer border-none bg-transparent p-0 text-sm hover:underline"
     >
       {schemaName}
     </button>
@@ -65,7 +65,7 @@ export const StatusCellForCredential = ({
 }: {
   state: string
 }): React.JSX.Element => {
-  let className = 'text-revocable-no text-foreground'
+  let className = 'badges-secondary text-foreground'
   let text = IssueCredentialUserText.credIssued
 
   switch (state) {
