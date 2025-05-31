@@ -5,6 +5,8 @@ import { Field, Form, Formik } from 'formik'
 import { Button } from '@/components/ui/button'
 import DedicatedLedgerConfig from './DedicatedAgentLedgerConfig'
 import { IDedicatedAgentForm } from '../organization/components/interfaces/organization'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import React from 'react'
 
 const DedicatedAgentForm = ({
@@ -36,14 +38,14 @@ const DedicatedAgentForm = ({
         {(formikHandlers) => (
           <Form className="mt-4 max-w-lg">
             <div className="mb-4">
-              <label htmlFor="walletName">Wallet Name</label>
-
+              <Label htmlFor="walletName">Wallet Name</Label>
               <Field
+                as={Input}
                 id="walletName"
                 name="walletName"
-                className="w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 sm:text-sm dark:bg-gray-700"
                 type="text"
                 placeholder="Enter wallet name"
+                className="mt-4"
               />
               {formikHandlers.errors.walletName &&
                 formikHandlers.touched.walletName && (
@@ -54,13 +56,14 @@ const DedicatedAgentForm = ({
             </div>
 
             <div className="mb-4">
-              <label htmlFor="agentEndpoint">Agent Endpoint</label>
+              <Label htmlFor="agentEndpoint">Agent Endpoint</Label>
               <Field
+                as={Input}
                 id="agentEndpoint"
                 name="agentEndpoint"
-                className="w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 sm:text-sm dark:bg-gray-700"
                 type="text"
                 placeholder="https://agent.example.com"
+                className="mt-4"
               />
               {formikHandlers.errors.agentEndpoint &&
                 formikHandlers.touched.agentEndpoint && (
@@ -71,13 +74,14 @@ const DedicatedAgentForm = ({
             </div>
 
             <div className="mb-4">
-              <label htmlFor="apiKey">API Key</label>
+              <Label htmlFor="apiKey">API Key</Label>
               <Field
+                as={Input}
                 id="apiKey"
                 name="apiKey"
-                className="w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 sm:text-sm dark:bg-gray-700"
                 type="text"
                 placeholder="Enter API key"
+                className="mt-4"
               />
               {formikHandlers.errors.apiKey &&
                 formikHandlers.touched.apiKey && (

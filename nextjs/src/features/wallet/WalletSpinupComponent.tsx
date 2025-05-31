@@ -449,12 +449,8 @@ const WalletSpinup = (): React.JSX.Element => {
 
                       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         {/* Dedicated Agent Card */}
-                        <div
-                          className={`cursor-pointer rounded-lg p-5 ${
-                            agentType === AgentType.DEDICATED
-                              ? 'ring'
-                              : 'border-gray-200 hover:border-gray-300'
-                          }`}
+                        <Card
+                          className="p-4 shadow transition-all hover:scale-102"
                           onClick={() => onRadioSelect(AgentType.DEDICATED)}
                         >
                           <div className="mb-4 flex items-start">
@@ -491,13 +487,11 @@ const WalletSpinup = (): React.JSX.Element => {
                               • Full control over the agent infrastructure
                             </li>
                           </ul>
-                        </div>
+                        </Card>
 
                         {/* Shared Agent Card */}
-                        <div
-                          className={`cursor-pointer rounded-lg p-5 ${
-                            agentType === AgentType.SHARED ? 'ring' : ''
-                          }`}
+                        <Card
+                          className="p-4 shadow transition-all hover:scale-102"
                           onClick={() => onRadioSelect(AgentType.SHARED)}
                         >
                           <div className="mb-4 flex items-start">
@@ -531,7 +525,7 @@ const WalletSpinup = (): React.JSX.Element => {
                               • Quick setup with no maintenance
                             </li>
                           </ul>
-                        </div>
+                        </Card>
                       </div>
                     </div>
                   )}

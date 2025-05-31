@@ -36,20 +36,19 @@ const SharedAgentForm = ({
           {({ errors, touched }) => (
             <Form className="mt-4 max-w-lg space-y-4">
               <div>
-                <Label htmlFor="walletName" className="m-4">
-                  Wallet Name
-                </Label>
+                <Label htmlFor="walletName">Wallet Name</Label>
                 <Field
                   as={Input}
                   id="walletName"
                   name="walletName"
                   type="text"
+                  className="mt-4"
                   placeholder="Enter wallet name"
                 />
                 {errors.walletName && touched.walletName && (
-                  <p className="text-destructive text-sm font-medium">
+                  <span className="text-destructive text-sm font-medium">
                     {errors.walletName}
-                  </p>
+                  </span>
                 )}
               </div>
               <div className="flex items-center justify-between pt-4">

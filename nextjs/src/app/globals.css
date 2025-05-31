@@ -303,7 +303,7 @@ ul.timelinestatic > li {
 
 .failure-alert div {
   color: var(--error-text);
-} 
+}
 
 .animate-text {
   animation: text 3s linear infinite;

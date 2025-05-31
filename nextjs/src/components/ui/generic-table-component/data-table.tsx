@@ -25,6 +25,7 @@ import {
 
 import { DataTablePagination } from './data-table-pagination'
 import { DataTableToolbar } from './data-table-toolbar'
+import Loader from '@/components/Loader'
 
 /**
  * Props for the DataTable component.
@@ -218,10 +219,10 @@ export function DataTable<TData, TValue>({
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length}
+                  colSpan={table.getAllColumns().length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  <Loader />
                 </TableCell>
               </TableRow>
             )}
