@@ -46,7 +46,7 @@ const SharedAgentForm = ({
                   placeholder="Enter wallet name"
                 />
                 {errors.walletName && touched.walletName && (
-                  <span className="text-xs text-red-500">
+                  <span className="text-destructive text-sm font-medium">
                     {errors.walletName}
                   </span>
                 )}
