@@ -333,9 +333,7 @@ const LedgerConfig = ({
   }): React.JSX.Element => (
     <Card
       className={`flex cursor-pointer flex-col items-center p-4 text-center shadow transition-all hover:scale-[1.02] ${
-        selectedLedger === ledger
-          ? 'bg-muted border-2'
-          : 'border border-gray-200'
+        selectedLedger === ledger ? 'bg-muted border-2' : 'border'
       }`}
       onClick={() => handleLedgerSelect(ledger)}
     >
