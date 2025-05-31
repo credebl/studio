@@ -180,7 +180,7 @@ const SchemasList = ({
           <Tooltip open={showTooltip}>
             <TooltipTrigger asChild>
               <Button onClick={handleCreateSchemaClick}>
-                <Plus className="mr-2 h-4 w-4" /> New Schema
+                <Plus className="h-4 w-4" /> New Schema
               </Button>
             </TooltipTrigger>
             <TooltipContent>

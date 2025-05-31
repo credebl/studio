@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */
 'use client'
 
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
   Pagination,
   PaginationContent,
@@ -20,6 +21,7 @@ import {
 import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
 import ConfirmationModal from '@/components/confirmation-modal'
 import DateTooltip from '@/components/DateTooltip'
 import EditUserRoleModal from './EditUserRoleModal'
@@ -34,8 +36,8 @@ import SendInvitationModal from '@/features/invitations/components/sendInvitatio
 import { Skeleton } from '@/components/ui/skeleton'
 import { TextTitlecase } from '@/utils/TextTransform'
 import { User } from './users-interface'
-import { XCircleIcon } from 'lucide-react'
 import { dateConversion } from '@/utils/DateConversion'
+import delSvg from '@/../public/svgs/del.svg'
 import { getOrganizationInvitations } from '@/app/api/Invitation'
 import { useAppSelector } from '@/lib/hooks'
 
@@ -400,19 +402,11 @@ export default function Members(): React.JSX.Element {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="mb-6 h-12 w-full max-w-sm">
-            <TabsTrigger
-              value="users"
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground h-full flex-1 rounded-l-md text-sm font-medium"
-            >
-              Users
+          <TabsList>
+            <TabsTrigger value="users" className="relative">
+              users
             </TabsTrigger>
-            <TabsTrigger
-              value="invitations"
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground h-full flex-1 rounded-r-md text-sm font-medium"
-            >
-              Invitations
-            </TabsTrigger>
+            <TabsTrigger value="invitations">invitations</TabsTrigger>
           </TabsList>
 
           <div className="mb-6 flex w-full items-center justify-end">
@@ -456,39 +450,42 @@ export default function Members(): React.JSX.Element {
               />
             ) : (
               usersList.map((user) => (
-                <div
-                  key={user.id}
-                  className="bg-background rounded-lg p-4 shadow-sm"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="w-1/3 flex-shrink-0">
-                      <h3 className="text-base font-semibold">
-                        {user.firstName} {user.lastName}
-                      </h3>
-                      <div className="mt-1 flex flex-wrap items-center gap-1">
-                        <span className="text-muted-foreground text-sm">
-                          Role:
-                        </span>
-                        {user.roles &&
-                          user.roles.length > 0 &&
-                          user.roles.map((role, index) => (
-                            <span
-                              key={index}
-                              className="bg-secondary text-secondary-foreground rounded-md px-2.5 py-0.5 text-xs font-medium"
-                            >
-                              {role.charAt(0).toUpperCase() + role.slice(1)}
-                            </span>
-                          ))}
+                <Card key={user.id} className="m-5 rounded-lg p-4 shadow-sm">
+                  <div className="grid grid-cols-3 items-center">
+                    <div className="flex items-center justify-start gap-5">
+                      <Avatar className="h-10 w-10">
+                        <AvatarFallback>
+                          {user?.email?.[0]?.toUpperCase() ?? ''}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <h3 className="text-base font-semibold">
+                          {user.firstName} {user.lastName}
+                        </h3>
+                        <div className="flex-grow text-start">
+                          <span className="text-muted-foreground max-w-xs truncate text-sm font-medium">
+                            {user.email}
+                          </span>
+                        </div>
                       </div>
                     </div>
-
-                    <div className="flex-grow text-start">
-                      <span className="text-muted-foreground max-w-xs truncate text-sm font-medium">
-                        {user.email}
+                    <div className="mt-1 flex flex-wrap items-center gap-1">
+                      <span className="text-muted-foreground text-sm">
+                        Role:
                       </span>
+                      {user.roles &&
+                        user.roles.length > 0 &&
+                        user.roles.map((role, index) => (
+                          <span
+                            key={index}
+                            className="bg-secondary text-secondary-foreground rounded-md px-2.5 py-0.5 text-xs font-medium"
+                          >
+                            {role.charAt(0).toUpperCase() + role.slice(1)}
+                          </span>
+                        ))}
                     </div>
 
-                    <div className="mr-24 flex-shrink-0">
+                    <div className="mr-10 flex justify-end">
                       {hasAdminRights && !user.roles?.includes(Roles.OWNER) && (
                         <Button onClick={() => editUserRole(user)}>
                           <svg
@@ -510,7 +507,7 @@ export default function Members(): React.JSX.Element {
                       )}
                     </div>
                   </div>
-                </div>
+                </Card>
               ))
             )}
 
@@ -542,79 +539,83 @@ export default function Members(): React.JSX.Element {
               />
             ) : (
               <div className="rounded-lg border">
-                {invitationsList.map((invitation, index) => (
-                  <React.Fragment key={invitation.id}>
-                    <div
-                      key={invitation.id}
-                      className="bg-background hover:bg-muted/50 p-4 transition-colors"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex w-1/3 flex-col">
-                          <h3 className="truncate text-base font-medium">
+                {invitationsList.map((invitation) => (
+                  <Card
+                    key={invitation.id}
+                    className="m-5 rounded-lg p-4 shadow-sm"
+                  >
+                    <div className="grid grid-cols-3 items-center">
+                      <div className="flex items-center justify-start gap-5">
+                        <Avatar className="h-10 w-10">
+                          <AvatarFallback>
+                            {invitation?.email?.[0]?.toUpperCase() ?? ''}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <h3 className="text-base font-semibold">
                             {invitation.email}
                           </h3>
-                          <div className="mt-1 flex items-center gap-2">
-                            <span className="text-muted-foreground text-sm">
-                              Role:
-                            </span>
-                            <div className="flex gap-1">
-                              {invitation.orgRoles &&
-                                invitation.orgRoles.length > 0 &&
-                                invitation.orgRoles.map((role, index) => (
-                                  <span
-                                    key={index}
-                                    className="bg-secondary text-secondary-foreground rounded-md px-2.5 py-0.5 text-xs font-medium"
-                                  >
-                                    {TextTitlecase(role.name)}
-                                  </span>
-                                ))}
-                            </div>
+                          <div className="flex-grow text-start">
+                            <DateTooltip date={invitation.createDateTime}>
+                              <span className="text-sm">
+                                Invited on:{' '}
+                                {dateConversion(invitation.createDateTime)}
+                              </span>
+                            </DateTooltip>
                           </div>
                         </div>
-
-                        <div className="flex w-1/3 items-center justify-center">
+                      </div>
+                      <div className="flex flex-wrap items-center gap-1">
+                        <span className="text-muted-foreground text-sm">
+                          Role:
+                        </span>
+                        {invitation.orgRoles &&
+                          invitation.orgRoles.length > 0 &&
+                          invitation.orgRoles.map((role, index) => (
+                            <span
+                              key={index}
+                              className="bg-secondary text-secondary-foreground rounded-md px-2.5 py-0.5 text-xs font-medium"
+                            >
+                              {TextTitlecase(role.name)}
+                            </span>
+                          ))}
+                      </div>
+                      <div className="flex items-center justify-end">
+                        <div className="text-muted-foregroundflex text-sm">
                           <span
                             className={`rounded-md px-2.5 py-0.5 text-xs font-medium ${getStatusClass(invitation.status)}`}
                           >
                             {TextTitlecase(invitation.status)}
                           </span>
                         </div>
-
-                        <div className="mr-16 flex w-1/3 flex-col items-end">
-                          <div className="grid w-[50%] justify-start">
-                            <div className="text-muted-foreground mb-3 text-sm">
-                              <DateTooltip date={invitation.createDateTime}>
-                                <span>
-                                  Invited on:{' '}
-                                  {dateConversion(invitation.createDateTime)}
-                                </span>
-                              </DateTooltip>
-                            </div>
-                            {invitation.status === 'pending' &&
-                              hasAdminRights && (
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => {
-                                    setSelectedInvitation(invitation.id)
-                                    setShowDeletePopup(true)
-                                    setError(null)
-                                    setMessage(null)
-                                  }}
-                                  className="mb-2 rounded-md border px-3 py-1 text-sm"
-                                >
-                                  <XCircleIcon className="mr-1 h-4 w-4" />
-                                  Delete Invitation
-                                </Button>
-                              )}
-                          </div>
+                        <div className="flex w-24 items-center justify-center">
+                          {invitation.status === 'pending' &&
+                            hasAdminRights && (
+                              <Button
+                                className="hover:bg-transparent"
+                                variant={'ghost'}
+                                data-testid="deleteBtn"
+                                color="danger"
+                                type="button"
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedInvitation(invitation.id)
+                                  setShowDeletePopup(true)
+                                  setError(null)
+                                  setMessage(null)
+                                }}
+                              >
+                                <img
+                                  src={delSvg.src}
+                                  alt="delete"
+                                  className="mx-auto h-6 w-6"
+                                />
+                              </Button>
+                            )}
                         </div>
                       </div>
                     </div>
-                    {index < invitationsList.length - 1 && (
-                      <hr className="border" />
-                    )}
-                  </React.Fragment>
+                  </Card>
                 ))}
               </div>
             )}

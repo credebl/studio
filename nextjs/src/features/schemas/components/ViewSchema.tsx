@@ -336,98 +336,102 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
             )}
           </Card>
         </div>
-        <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
-          {(userRoles.includes(Roles.OWNER) ||
-            userRoles.includes(Roles.ADMIN)) && (
-            <>
-              <div className="col-span-full mb-4 xl:mb-2">
-                <div className="flex items-center justify-between">
-                  <h1 className="ml-1 text-xl font-semibold">
-                    Credential Definitions
-                  </h1>
-                  {credDefList && credDefList.length > 0 && (
-                    <Button
-                      variant="default"
-                      title="Create new credential-definition"
-                      onClick={() => {
-                        setIsOpenCreateCredDef(true)
-                        setSuccess(null)
-                        setFailure(null)
-                      }}
-                      className="flex items-center rounded-lg py-1 text-center text-base font-medium sm:w-auto"
-                    >
-                      <Plus />
-                      Create
-                    </Button>
-                  )}
+        <Card className="mt-5 w-full">
+          <div className="m-5 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
+            {(userRoles.includes(Roles.OWNER) ||
+              userRoles.includes(Roles.ADMIN)) && (
+              <>
+                <div className="col-span-full xl:mb-2">
+                  <div className="flex items-center justify-between">
+                    <h1 className="text-xl font-semibold">
+                      Credential Definitions
+                    </h1>
+                    {credDefList && credDefList.length > 0 && (
+                      <Button
+                        variant="default"
+                        title="Create new credential-definition"
+                        onClick={() => {
+                          setIsOpenCreateCredDef(true)
+                          setSuccess(null)
+                          setFailure(null)
+                        }}
+                        className="flex items-center rounded-lg py-1 text-center text-base font-medium sm:w-auto"
+                      >
+                        <Plus />
+                        Create
+                      </Button>
+                    )}
+                  </div>
                 </div>
+                <CreateCredDefPopup
+                  openModal={isOpenCreateCredDef}
+                  closeModal={() => setIsOpenCreateCredDef(false)}
+                  onSuccess={(values) => submit(values)}
+                  createLoader={createLoader}
+                  success={success}
+                  failure={failure}
+                  closeAlert={() => {
+                    setSuccess(null)
+                    setFailure(null)
+                  }}
+                />
+              </>
+            )}
+          </div>
+          {loading ? (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2">
+              {[...Array(4)].map((_, idx) => (
+                <div key={idx} className="space-y-3 rounded-lg p-4 shadow-xl">
+                  <Skeleton className="h-5 w-1/2 rounded-md" />
+                  <Skeleton className="h-4 w-1/3 rounded" />
+                  <Skeleton className="h-4 w-3/4 rounded" />
+                  <Skeleton className="h-4 w-2/4 rounded" />
+                  <Skeleton className="h-3 w-1/4 rounded" />
+                </div>
+              ))}
+            </div>
+          ) : credDefList && credDefList.length > 0 ? (
+            <div className="Flex-wrap m-5">
+              <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2">
+                {credDefList &&
+                  credDefList.length > 0 &&
+                  credDefList.map((element: ICredDefCard) => (
+                    <div
+                      className="relative h-full w-full overflow-hidden rounded-xl transition-transform duration-300"
+                      key={`view-schema-cred-def-card-${element['credentialDefinitionId']}`}
+                    >
+                      <CredentialDefinitionCard
+                        credDeffName={element['tag']}
+                        credentialDefinitionId={
+                          element['credentialDefinitionId']
+                        }
+                        schemaId={element['schemaLedgerId']}
+                        revocable={element['revocable']}
+                        onClickCallback={credDefSelectionCallback}
+                        userRoles={userRoles}
+                      />
+                    </div>
+                  ))}
               </div>
-              <CreateCredDefPopup
-                openModal={isOpenCreateCredDef}
-                closeModal={() => setIsOpenCreateCredDef(false)}
-                onSuccess={(values) => submit(values)}
-                createLoader={createLoader}
-                success={success}
-                failure={failure}
-                closeAlert={() => {
+            </div>
+          ) : (
+            <>
+              <EmptyMessage
+                title={'No Credential Definition'}
+                description={
+                  'Get started by creating a new credential definition'
+                }
+                buttonIcon={<Plus />}
+                buttonContent="Create"
+                onClick={() => {
+                  setIsOpenCreateCredDef(true)
                   setSuccess(null)
                   setFailure(null)
                 }}
               />
             </>
           )}
-        </div>
-        {loading ? (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2">
-            {[...Array(4)].map((_, idx) => (
-              <div key={idx} className="space-y-3 rounded-lg p-4 shadow-xl">
-                <Skeleton className="h-5 w-1/2 rounded-md" />
-                <Skeleton className="h-4 w-1/3 rounded" />
-                <Skeleton className="h-4 w-3/4 rounded" />
-                <Skeleton className="h-4 w-2/4 rounded" />
-                <Skeleton className="h-3 w-1/4 rounded" />
-              </div>
-            ))}
-          </div>
-        ) : credDefList && credDefList.length > 0 ? (
-          <div className="Flex-wrap">
-            <div className="mt-0 mb-4 grid w-full grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2">
-              {credDefList &&
-                credDefList.length > 0 &&
-                credDefList.map((element: ICredDefCard) => (
-                  <div
-                    className="relative h-full w-full overflow-hidden rounded-xl transition-transform duration-300"
-                    key={`view-schema-cred-def-card-${element['credentialDefinitionId']}`}
-                  >
-                    <CredentialDefinitionCard
-                      credDeffName={element['tag']}
-                      credentialDefinitionId={element['credentialDefinitionId']}
-                      schemaId={element['schemaLedgerId']}
-                      revocable={element['revocable']}
-                      onClickCallback={credDefSelectionCallback}
-                      userRoles={userRoles}
-                    />
-                  </div>
-                ))}
-            </div>
-          </div>
-        ) : (
-          <>
-            <EmptyMessage
-              title={'No Credential Definition'}
-              description={
-                'Get started by creating a new credential definition'
-              }
-              buttonIcon={<Plus />}
-              buttonContent="Create"
-              onClick={() => {
-                setIsOpenCreateCredDef(true)
-                setSuccess(null)
-                setFailure(null)
-              }}
-            />
-          </>
-        )}
+        </Card>
       </div>
     </PageContainer>
   )
