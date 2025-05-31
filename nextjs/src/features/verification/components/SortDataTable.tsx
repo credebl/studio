@@ -8,9 +8,9 @@ import {
 
 import { Button } from '@/components/ui/button'
 import { EmptyMessage } from '@/components/EmptyMessage'
+import { IconSearch } from '@tabler/icons-react'
 import { Input } from '@/components/ui/input'
 import Loader from '@/components/Loader'
-import { Search } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export interface TableHeader {
@@ -125,28 +125,19 @@ const SortDataTable: React.FC<IDataTable> = ({
       <div className="mx-auto min-h-80">
         <div className="relative overflow-hidden shadow-md sm:rounded-lg">
           {isHeader && (
-            <div className="flex flex-col items-center justify-between space-y-3 p-3 sm:flex-row sm:space-y-0 sm:space-x-4">
+            <div className="flex flex-col items-center justify-between space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
               <div className="w-full sm:w-1/2">
                 {isSearch && (
-                  <form className="flex items-center">
-                    <input
-                      type="hidden"
-                      name="_csrf"
-                      value={new Date().getTime()}
-                    />
-                    <div className="relative w-full">
-                      <Search
-                        className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2"
-                        aria-hidden="true"
-                      />
+                  <form className="mb-4 flex items-center">
+                    <div className="relative m-2 max-w-xs flex-grow">
                       <Input
-                        type="search"
-                        id="simple-search"
-                        placeholder="Search"
-                        className="pl-9"
+                        type="text"
+                        placeholder="Search..."
                         value={searchValue}
                         onChange={onInputChange}
+                        className="w-full pl-8"
                       />
+                      <IconSearch className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
                     </div>
                   </form>
                 )}
@@ -156,7 +147,7 @@ const SortDataTable: React.FC<IDataTable> = ({
                 {isRefresh && (
                   <button
                     onClick={refresh}
-                    className="bg-white-700 hover:bg-secondary-700 mt-2 mr-4 items-center rounded-lg focus:z-10 sm:mt-0 sm:mr-0"
+                    className="mt-2 mr-4 items-center rounded-lg focus:z-10 sm:mt-0 sm:mr-0"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -193,9 +184,9 @@ const SortDataTable: React.FC<IDataTable> = ({
               </div>
             </div>
           )}
-          <div className="overflow-x-auto">
-            <table className="w-full divide-y">
-              <thead className="bg-secondary text-secondary-foreground">
+          <div className="overflow-hidden shadow sm:rounded-lg">
+            <table className="divide-muted dark:divide-muted min-w-full divide-y border">
+              <thead className="bg-muted dark:bg-muted">
                 <tr>
                   {header &&
                     header.length > 0 &&
@@ -215,7 +206,10 @@ const SortDataTable: React.FC<IDataTable> = ({
               </thead>
               <tbody className="">
                 {loading ? (
-                  <tr key="loading-row" className="text-center">
+                  <tr
+                    key="loading-row"
+                    className="hover:bg-muted/30 text-center"
+                  >
                     <td className="p-2 text-center" colSpan={header.length}>
                       <div className="mb-4 flex w-full items-center justify-center text-center">
                         <Loader />
@@ -229,9 +223,7 @@ const SortDataTable: React.FC<IDataTable> = ({
                     return (
                       <tr
                         key={index}
-                        className={`${
-                          index % 2 !== 0 ? 'bg-gray-50 dark:bg-gray-700' : ''
-                        }`}
+                        className={`${index % 2 !== 0 ? 'bg-muted/30' : ''}`}
                       >
                         {ele.data.map((subEle, subIndex) => (
                           <td
@@ -249,7 +241,7 @@ const SortDataTable: React.FC<IDataTable> = ({
                           <td>
                             <Button
                               onClick={() => callback?.(ele?.clickId)}
-                              className="bg-primary hover:bg-primary-800 mt-2 mr-2 mb-2 rounded-lg px-5 py-2.5 text-center text-sm font-medium focus:ring-4 focus:outline-none"
+                              className="bg-primary hover:bg-primary mt-2 mr-2 mb-2 rounded-lg px-5 py-2.5 text-center text-sm font-medium focus:ring-4 focus:outline-none"
                             >
                               Select
                             </Button>

@@ -119,7 +119,7 @@ const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
 
   return (
     <Card
-      className={`border-border relative h-full w-full overflow-hidden rounded-xl border shadow-xl transition-transform duration-300 ${
+      className={`relative h-full w-full overflow-hidden rounded-xl shadow-xl transition-transform duration-300 ${
         props.w3cSchema || props.isClickable === false || isVerificationPage
           ? 'cursor-default'
           : 'cursor-pointer hover:scale-[1.02] hover:shadow-lg'
