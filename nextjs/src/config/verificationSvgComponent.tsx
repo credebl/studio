@@ -2,7 +2,7 @@ import React, { JSX } from 'react'
 
 export const verificationSvgComponent = (): JSX.Element => (
   <svg
-    className="mt-1 mr-2"
+    className="mt-1"
     xmlns="http://www.w3.org/2000/svg"
     style={{ height: '20px', width: '30px' }}
     fill="none"

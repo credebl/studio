@@ -93,7 +93,7 @@ const OrganizationCardList = (): React.JSX.Element => {
           onClick={() => route.push('/organizations/create-organization')}
           // className="text-primary-foreground bg-primary"
         >
-          <Plus className="mr-2 h-4 w-4" /> New Organization
+          <Plus className="h-4 w-4" /> New Organization
         </Button>
       </CardHeader>
 
