@@ -25,6 +25,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { ToolTipDataForSchema } from './TooltipData'
 import { dateConversion } from '@/utils/DateConversion'
 import { getAllSchemasByOrgId } from '@/app/api/schema'
+import { pathRoutes } from '@/config/pathRoutes'
 import { useAppSelector } from '@/lib/hooks'
 import { useRouter } from 'next/navigation'
 
@@ -112,12 +113,15 @@ const SchemasList = ({
       <button
         key={index}
         type="button"
-        onClick={() => isIndySchema && handleClickSchema(schema.schemaLedgerId)}
-        disabled={!isIndySchema}
+        onClick={() =>
+          (isIndySchema
+            ? handleClickSchema(schema.schemaLedgerId)
+            : router.push(pathRoutes.organizations.schemas))
+        }
         aria-disabled={!isIndySchema}
-        className={`border-border/50 hover:bg-muted/50 flex w-full items-center justify-between gap-5 rounded-xl border p-3 text-left shadow-xl transition-transform duration-300 ${
-          isIndySchema ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'
-        }`}
+        className={
+          'border-border/50 hover:bg-muted/50 flex w-full items-center justify-between gap-5 rounded-xl border p-3 text-left shadow-xl transition-transform duration-300'
+        }
       >
         <div className="bg-muted text-muted-foreground flex h-10 w-10 items-center justify-center rounded-md">
           <svg

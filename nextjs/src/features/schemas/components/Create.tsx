@@ -15,6 +15,13 @@ import {
 import { FieldName, IAttributes, IFormData } from '../type/schemas-interface'
 import React, { ChangeEvent, useEffect, useMemo, useState } from 'react'
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
   apiStatusCodes,
   schemaVersionRegex,
 } from '../../../config/CommonConstant'
@@ -24,6 +31,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import ConfirmationModal from './ConfirmationModal'
+import { Plus } from 'lucide-react'
 import { createSchemas } from '@/app/api/schema'
 import { getOrganizationById } from '@/app/api/organization'
 import { useAppSelector } from '@/lib/hooks'
@@ -183,25 +191,6 @@ const CreateSchema = (): React.JSX.Element => {
     }, 2000)
   }
 
-  const submitButtonTitle = {
-    title: 'Create',
-    svg: (
-      <div className="pr-3">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="15"
-          height="15"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <path
-            fill="currentColor"
-            d="M21.89 9.89h-7.78V2.11a2.11 2.11 0 1 0-4.22 0v7.78H2.11a2.11 2.11 0 1 0 0 4.22h7.78v7.78a2.11 2.11 0 1 0 4.22 0v-7.78h7.78a2.11 2.11 0 1 0 0-4.22Z"
-          />
-        </svg>
-      </div>
-    ),
-  }
   const confirmCreateSchema = (): void => {
     formData.attribute.forEach((element: IAttributes) => {
       if (!element.schemaDataType) {
@@ -352,7 +341,7 @@ const CreateSchema = (): React.JSX.Element => {
                         id="schemaName"
                         name="schemaName"
                         placeholder="Schema Name eg. PAN CARD"
-                        className="border-input file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring rounded-lg border bg-transparent p-2.5 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                        className="border-input file:text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-ring flex h-9 rounded-md border bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                       />
                       {formikHandlers.errors &&
                       formikHandlers.touched.schemaName &&
@@ -385,7 +374,7 @@ const CreateSchema = (): React.JSX.Element => {
                           id="schemaVersion"
                           name="schemaVersion"
                           placeholder="eg. 0.1 or 0.0.1"
-                          className="border-input file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring rounded-lg border bg-transparent p-2.5 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                          className="border-input file:text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-ring flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                         />
                         {formikHandlers.errors &&
                         formikHandlers.touched.schemaVersion &&
@@ -403,7 +392,7 @@ const CreateSchema = (): React.JSX.Element => {
                 <p className="text-md mt-2 font-normal">
                   You must select at least one attribute to create schema
                 </p>
-                <div className="bg-card text-card-foreground mt-2 rounded-xl pt-4 pb-10 shadow">
+                <Card className="bg-card text-card-foreground mt-2 rounded-xl pt-4 pb-10 shadow">
                   <FieldArray name="attribute">
                     {(
                       fieldArrayProps: FieldArrayRenderProps,
@@ -452,7 +441,7 @@ const CreateSchema = (): React.JSX.Element => {
                                             true,
                                           )
                                         }}
-                                        className="border-input file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-lg border bg-transparent p-2.5 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                                        className="border-input file:text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-ring flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                                       />
                                       {validSameAttribute(
                                         formikHandlers,
@@ -492,24 +481,34 @@ const CreateSchema = (): React.JSX.Element => {
                                     </div>
 
                                     <div className="relative flex max-w-[411px] flex-col items-start gap-x-4 p-2">
-                                      <Field
-                                        component="select"
-                                        id={`attribute[${index}]`}
+                                      <Select
                                         name={`attribute.${index}.schemaDataType`}
-                                        placeholder="Select"
                                         disabled={!areFirstInputsSelected}
-                                        className="border-input file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-lg border bg-transparent p-2.5 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                                        value={
+                                          formikHandlers.values.attribute[index]
+                                            .schemaDataType
+                                        }
+                                        onValueChange={(val) =>
+                                          formikHandlers.setFieldValue(
+                                            `attribute.${index}.schemaDataType`,
+                                            val,
+                                          )
+                                        }
                                       >
-                                        {filteredOptions.map((opt) => (
-                                          <option
-                                            key={opt.value}
-                                            className="bg-popover py-2"
-                                            value={opt.value}
-                                          >
-                                            {opt.label}
-                                          </option>
-                                        ))}
-                                      </Field>
+                                        <SelectTrigger>
+                                          <SelectValue placeholder="Select" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          {filteredOptions.map((opt) => (
+                                            <SelectItem
+                                              key={opt.value}
+                                              value={opt.value}
+                                            >
+                                              {opt.label}
+                                            </SelectItem>
+                                          ))}
+                                        </SelectContent>
+                                      </Select>
                                       {formikHandlers?.touched?.attribute &&
                                       attribute[index] &&
                                       formikHandlers?.errors?.attribute &&
@@ -543,7 +542,7 @@ const CreateSchema = (): React.JSX.Element => {
                                         name={`attribute.${index}.displayName`}
                                         placeholder="Display Name"
                                         disabled={!areFirstInputsSelected}
-                                        className="border-input file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-lg border bg-transparent p-2.5 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                                        className="border-input file:text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-ring flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                                       />
                                       {validSameAttribute(
                                         formikHandlers,
@@ -739,10 +738,11 @@ const CreateSchema = (): React.JSX.Element => {
                       )
                     }}
                   </FieldArray>
-                </div>
+                </Card>
                 <div className="float-right mt-16 ml-4 flex gap-4">
                   <Button
                     type="button"
+                    variant={'outline'}
                     disabled={
                       createLoader ||
                       !(
@@ -750,7 +750,7 @@ const CreateSchema = (): React.JSX.Element => {
                         formikHandlers.values.schemaVersion
                       )
                     }
-                    className="hover:text-primary-foreground ml-auto rounded-lg text-base font-medium"
+                    className="ml-auto rounded-lg text-base font-medium"
                     style={{
                       height: '2.6rem',
                       width: '6rem',
@@ -788,8 +788,8 @@ const CreateSchema = (): React.JSX.Element => {
                       minWidth: '2rem',
                     }}
                   >
-                    {submitButtonTitle.svg}
-                    {submitButtonTitle.title}
+                    <Plus />
+                    Create
                   </Button>
                 </div>
                 <ConfirmationModal

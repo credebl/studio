@@ -16,6 +16,7 @@ import { Card } from '@/components/ui/card'
 import { Copy } from 'lucide-react'
 import CustomQRCode from '@/features/wallet/CustomQRCode'
 import DIDList from '@/features/wallet/DidListComponent'
+import Loader from '@/components/Loader'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { createConnection } from '@/app/api/organization'
 import { dateConversion } from '@/utils/DateConversion'
@@ -165,7 +166,7 @@ const OrganizationDetails = ({
           <div className="w-48">
             {loading ? (
               <div className="flex h-48 w-48 items-center justify-center">
-                {/* Loading spinner can be added here */}
+                <Loader />
               </div>
             ) : (
               connectionData && (

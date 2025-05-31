@@ -110,7 +110,7 @@ export function OrgSwitcher({
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger asChild className="focus:ring-ring focus:ring-1">
             <SidebarMenuButton
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground border-ring w-[200px] justify-start gap-2 border"
@@ -145,7 +145,7 @@ export function OrgSwitcher({
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width]"
+            className="w-[--radix-dropdown-menu-trigger-width] border"
             align="start"
           >
             {tenants.length > 0 ? (

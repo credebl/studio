@@ -18,6 +18,7 @@ import DateTooltip from '@/components/DateTooltip'
 import { ShieldCheck } from 'lucide-react'
 import { dateConversion } from '@/utils/DateConversion'
 import { limitedAttributesLength } from '@/config/CommonConstant'
+import { pathRoutes } from '@/config/pathRoutes'
 
 const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
   const [isSelected, setIsSelected] = useState(false)
@@ -70,6 +71,7 @@ const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
       props.attributes,
       props.created,
     )
+    router.push(pathRoutes.organizations.Issuance.issue)
   }
 
   const handleCheckboxChange = (

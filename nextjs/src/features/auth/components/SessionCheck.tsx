@@ -39,7 +39,7 @@ const SessionCheck: React.FC<SessionProps> = ({ children }) => {
   if (checkingSession) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <Loader height="2rem" width="2rem" />
+        <Loader />
       </div>
     )
   }

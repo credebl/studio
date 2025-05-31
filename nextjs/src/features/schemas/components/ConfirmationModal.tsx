@@ -10,6 +10,7 @@ import {
 
 import { AlertComponent } from '@/components/AlertComponent'
 import { Button } from '@/components/ui/button'
+import { CircleCheck } from 'lucide-react'
 import React from 'react'
 
 interface IProps {
@@ -42,29 +43,22 @@ const ConfirmationModal = ({
   warning,
 }: IProps): React.JSX.Element => (
   <Dialog open={openModal} onOpenChange={closeModal}>
-    <DialogContent className="max-h-[90vh] max-w-xl overflow-y-auto dark:bg-gray-800">
+    <DialogContent className="max-h-[90vh] max-w-xl overflow-y-auto">
       <DialogHeader>
         <DialogTitle className="text-center">
-          <div className="mx-auto mb-4 h-12 w-12 text-yellow-300 dark:text-yellow-300">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="100%"
-              height="100%"
-              fill="none"
-              viewBox="0 0 22 22"
-            >
-              <path
-                fill="currentColor"
-                d="M12.388 21.99c-.916.01-1.82.01-2.743.01-.202-.078-.397-.052-.586-.069..."
-              />
-              <path fill="#FFFFFF" d="M12.72 7.183c..." />
-              <path fill="#FFF" d="M9.989 15.875c..." />
-            </svg>
+          <div className="mx-auto mb-4 grid justify-center">
+            <div>
+              <CircleCheck size={60} className="text-primary m-auto" />
+            </div>
+            <div className="text-primary min-w-[200px]">
+              {warning ? (
+                <div className="">{warning}</div>
+              ) : (
+                <div className='text-2xl'>Confirmation</div>
+              )}
+            </div>
           </div>
-          <div className="mb-2 text-lg text-gray-700 dark:text-gray-200">
-            {message}
-          </div>
-          {warning && <div className="text-[#C27803]">{warning}</div>}
+          <div className="mb-2 text-lg">{message}</div>
         </DialogTitle>
       </DialogHeader>
 
@@ -87,11 +81,11 @@ const ConfirmationModal = ({
         </div>
       )}
 
-      <DialogFooter className="mt-6 flex flex-col justify-around gap-4 sm:flex-row">
+      <DialogFooter className="m-auto mt-6 flex flex-col gap-4 sm:flex-row">
         <Button
           variant="outline"
           onClick={() => closeModal(false)}
-          className="sm:min-w-[197px]"
+          className="text-destructive hover:text-destructive sm:min-w-[197px]"
         >
           {buttonTitles[0]}
         </Button>
