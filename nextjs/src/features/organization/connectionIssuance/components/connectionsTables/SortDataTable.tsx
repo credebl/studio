@@ -74,7 +74,7 @@ const SortDataTable: React.FC<IDataTable> = ({
   return (
     <Pagination>
       <section className="w-full bg-gray-50 dark:bg-gray-900">
-        <div className="mx-auto min-h-80">
+        <div className="mx-auto">
           <div className="relative overflow-hidden bg-white shadow-md sm:rounded-lg dark:bg-gray-800">
             {isHeader && (
               <div className="flex flex-col items-center justify-between space-y-3 p-3 sm:flex-row sm:space-y-0 sm:space-x-4">
