@@ -581,7 +581,7 @@ export default function Members(): React.JSX.Element {
                           ))}
                       </div>
                       <div className="flex items-center justify-end">
-                        <div className="text-muted-foregroundflex text-sm">
+                        <div className="text-muted-foreground flex text-sm">
                           <span
                             className={`rounded-md px-2.5 py-0.5 text-xs font-medium ${getStatusClass(invitation.status)}`}
                           >
