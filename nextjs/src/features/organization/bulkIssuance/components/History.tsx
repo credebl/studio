@@ -14,6 +14,7 @@ import { getFilesHistory, retryBulkIssuance } from '@/app/api/BulkIssuance'
 import { AlertComponent } from '@/components/AlertComponent'
 import type { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
 import DateTooltip from '@/components/DateTooltip'
 import { IConnectionListAPIParameter } from '@/app/api/connection'
 import { ITableData } from '@/features/connections/types/connections-interface'
@@ -316,31 +317,32 @@ const HistoryBulkIssuance = (): JSX.Element => {
             }}
           />
         )}
-
-        <SortDataTable
-          isHeader={true}
-          isSearch={true}
-          isRefresh={true}
-          isSort={true}
-          onInputChange={searchInputChange}
-          refresh={refreshPage}
-          header={header}
-          data={connectionList}
-          loading={loading}
-          currentPage={listAPIParameter?.page}
-          onPageChange={(page: number) => {
-            setListAPIParameter((prevState) => ({
-              ...prevState,
-              page,
-            }))
-          }}
-          searchValue={listAPIParameter?.search}
-          searchSortByValue={searchSortByValue}
-          totalPages={Math.ceil(totalItem / listAPIParameter?.itemPerPage)}
-          pageInfo={pageInfo}
-          message={'No History'}
-          discription={"You don't have any activities yet"}
-        ></SortDataTable>
+        <Card className="p-1">
+          <SortDataTable
+            isHeader={true}
+            isSearch={true}
+            isRefresh={true}
+            isSort={true}
+            onInputChange={searchInputChange}
+            refresh={refreshPage}
+            header={header}
+            data={connectionList}
+            loading={loading}
+            currentPage={listAPIParameter?.page}
+            onPageChange={(page: number) => {
+              setListAPIParameter((prevState) => ({
+                ...prevState,
+                page,
+              }))
+            }}
+            searchValue={listAPIParameter?.search}
+            searchSortByValue={searchSortByValue}
+            totalPages={Math.ceil(totalItem / listAPIParameter?.itemPerPage)}
+            pageInfo={pageInfo}
+            message={'No History'}
+            discription={"You don't have any activities yet"}
+          ></SortDataTable>
+        </Card>
       </div>
     </PageContainer>
   )

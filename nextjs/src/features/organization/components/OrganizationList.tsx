@@ -145,8 +145,8 @@ export const OrganizationList = (): React.JSX.Element => {
 
       <div className="mx-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {loading ? (
-          <div className="mb-4 flex items-center justify-center">
-            <Loader height="2rem" width="2rem" />
+           <div className="mb-4 col-span-full grid place-items-center min-h-[50vh] w-full">
+            <Loader />
           </div>
         ) : organizationsList.length > 0 ? (
           organizationsList.map((org) => (

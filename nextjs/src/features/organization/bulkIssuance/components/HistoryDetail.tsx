@@ -7,6 +7,7 @@ import { ArrowLeft } from 'lucide-react'
 import { AxiosResponse } from 'axios'
 import { BulkIssuanceStatus } from '@/features/common/enum'
 import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
 import { IConnectionListAPIParameter } from '@/app/api/connection'
 import { ITableData } from '@/features/connections/types/connections-interface'
 import { RootState } from '@/lib/store'
@@ -179,31 +180,32 @@ const HistoryDetails = ({ requestId }: IProps): JSX.Element => {
           setError(null)
         }}
       />
-
-      <SortDataTable
-        onInputChange={searchInputChange}
-        refresh={refreshPage}
-        header={header}
-        data={historyList}
-        loading={loading}
-        currentPage={listAPIParameter?.page}
-        onPageChange={(page: number) => {
-          setListAPIParameter((prevState) => ({
-            ...prevState,
-            page,
-          }))
-        }}
-        searchSortByValue={searchSortByValue}
-        totalPages={Math.ceil(totalItem / listAPIParameter?.itemPerPage)}
-        pageInfo={pageInfo}
-        isHeader={true}
-        isSearch={true}
-        isRefresh={true}
-        isSort={true}
-        message={'No History'}
-        searchValue={listAPIParameter?.search}
-        discription={'You don"t have any activities yet'}
-      ></SortDataTable>
+      <Card className="p-1">
+        <SortDataTable
+          onInputChange={searchInputChange}
+          refresh={refreshPage}
+          header={header}
+          data={historyList}
+          loading={loading}
+          currentPage={listAPIParameter?.page}
+          onPageChange={(page: number) => {
+            setListAPIParameter((prevState) => ({
+              ...prevState,
+              page,
+            }))
+          }}
+          searchSortByValue={searchSortByValue}
+          totalPages={Math.ceil(totalItem / listAPIParameter?.itemPerPage)}
+          pageInfo={pageInfo}
+          isHeader={true}
+          isSearch={true}
+          isRefresh={true}
+          isSort={true}
+          message={'No History'}
+          searchValue={listAPIParameter?.search}
+          discription={'You don"t have any activities yet'}
+        ></SortDataTable>
+      </Card>
     </div>
   )
 }

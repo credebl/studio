@@ -18,6 +18,7 @@ import {
 } from '@/lib/storageKeys'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { AlertComponent } from '@/components/AlertComponent'
+import { Card } from '@/components/ui/card'
 import DateTooltip from '@/components/DateTooltip'
 
 import NewDataTable from './connectionsTables/SortDataTable'
@@ -290,30 +291,32 @@ const ConnectionList = (props: {
           }}
         />
       )}
-      <NewDataTable
-        isHeader={true}
-        searchValue={searchText}
-        isSearch={true}
-        isRefresh={true}
-        isSort={true}
-        onInputChange={searchInputChange}
-        refresh={refreshPage}
-        header={header}
-        data={tableData}
-        loading={loading}
-        currentPage={listAPIParameter?.page}
-        onPageChange={(page: number) => {
-          setListAPIParameter((prevState) => ({
-            ...prevState,
-            page,
-          }))
-        }}
-        totalPages={Math.ceil(totalItem / listAPIParameter?.itemPerPage)}
-        pageInfo={pageInfo}
-        searchSortByValue={searchSortByValue}
-        message={'No Connections'}
-        discription={'You don"t have any connections yet'}
-      ></NewDataTable>
+      <Card className="p-1">
+        <NewDataTable
+          isHeader={true}
+          searchValue={searchText}
+          isSearch={true}
+          isRefresh={true}
+          isSort={true}
+          onInputChange={searchInputChange}
+          refresh={refreshPage}
+          header={header}
+          data={tableData}
+          loading={loading}
+          currentPage={listAPIParameter?.page}
+          onPageChange={(page: number) => {
+            setListAPIParameter((prevState) => ({
+              ...prevState,
+              page,
+            }))
+          }}
+          totalPages={Math.ceil(totalItem / listAPIParameter?.itemPerPage)}
+          pageInfo={pageInfo}
+          searchSortByValue={searchSortByValue}
+          message={'No Connections'}
+          discription={'You don"t have any connections yet'}
+        ></NewDataTable>
+      </Card>
     </div>
   )
 }

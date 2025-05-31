@@ -1,20 +1,15 @@
-import React from 'react'
+import { JSX } from 'react'
 
-const Loader = ({
-  colorClass = 'border-primary',
-  height = '1.5rem',
-  width = '1.5rem',
-}: {
-  colorClass?: string
-  height?: string
-  width?: string
-}): React.JSX.Element => (
+const Loader = ({ size = 30 }: { size?: number }): JSX.Element => (
   <div className="flex h-full w-full items-center justify-center">
-    <div className="relative" style={{ height, width }}>
-      <div
-        className={`absolute inset-0 animate-spin rounded-full border-2 border-t-transparent ${colorClass}`}
-      />
-    </div>
+    <div
+      className="border-t-primary animate-spin rounded-full border-2"
+      style={{
+        width: size,
+        height: size,
+        borderTopColor: 'var(--primary)',
+      }}
+    />
   </div>
 )
 
