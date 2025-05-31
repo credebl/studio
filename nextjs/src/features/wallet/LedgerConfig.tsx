@@ -13,11 +13,19 @@ import {
   IValuesShared,
 } from '../organization/components/interfaces/organization'
 import React, { ReactNode, useEffect, useState } from 'react'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { apiStatusCodes, polygonScan } from '@/config/CommonConstant'
 import { getLedgerConfig, getLedgers } from '@/app/api/Agent'
 import type { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import CopyDid from './CopyDid'
+import Image from 'next/image'
 import { Label } from '@/components/ui/label'
 import SetDomainValueInput from './SetDomainValueInput'
 import SetPrivateKeyValueInput from './SetPrivateKeyValue'
@@ -203,34 +211,37 @@ const LedgerConfig = ({
       )
     }
 
+    // Create a mapping of network values to didMethods
+    const networkToDidMap: Record<string, string> = {}
+    filteredNetworks.forEach((network) => {
+      networkToDidMap[networkOptions[network]] = networkOptions[network]
+    })
+
     return (
       <div className="relative w-full">
-        <label htmlFor="network" className="mb-2 block text-sm font-medium">
-          Network <span className="text-destructive text-xs">*</span>
-        </label>
-        <select
-          id="network"
-          name="network"
-          className="block w-full rounded-lg border p-2.5 text-sm"
+        <Label className="pb-2">
+          Network <span className="text-destructive">*</span>
+        </Label>
+        <Select
           value={selectedNetwork}
-          onChange={(e) => {
-            formikHandlers.setFieldValue('network', e.target.value)
-            const selectedOption = e.target.options[e.target.selectedIndex]
-            const didMethod = selectedOption.getAttribute('data-did')
-            handleNetworkChange(e.target.value, didMethod ?? '')
+          onValueChange={(value) => {
+            formikHandlers.setFieldValue('network', value)
+            const didMethod = networkToDidMap[value] || ''
+            handleNetworkChange(value, didMethod)
           }}
+          disabled={!selectedMethod}
         >
-          <option value="">Select Network</option>
-          {filteredNetworks.map((network) => (
-            <option
-              key={network}
-              value={networkOptions[network]}
-              data-did={networkOptions[network]}
-            >
-              {network}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger className="disabled:bg-muted flex h-10 w-full items-center justify-between border px-3 py-2 disabled:cursor-not-allowed disabled:opacity-50">
+            <SelectValue placeholder="Select Network" />
+          </SelectTrigger>
+          <SelectContent>
+            {filteredNetworks.map((network) => (
+              <SelectItem key={network} value={networkOptions[network]}>
+                {network}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         {formikHandlers.errors.network && formikHandlers.touched.network && (
           <div className="text-destructive mt-1 text-xs">
             {formikHandlers.errors.network}
@@ -255,28 +266,31 @@ const LedgerConfig = ({
 
     return (
       <div className="relative w-full">
-        <label htmlFor="method" className="mb-2 block text-sm font-medium">
-          Method <span className="text-destructive text-xs">*</span>
-        </label>
-        <select
-          id="method"
-          name="method"
-          className="block w-full rounded-lg p-2.5 text-sm"
+        <Label className="pb-2">
+          Method <span className="text-destructive">*</span>
+        </Label>
+        <Select
           value={formikHandlers.values.method || ''}
-          onChange={(e) => {
-            const { value } = e.target
+          onValueChange={(value) => {
             formikHandlers.setFieldValue('method', value)
             handleMethodChange(value)
             setDomainValue('')
+            // Reset network when method changes
+            formikHandlers.setFieldValue('network', '')
+            setSelectedNetwork('')
           }}
         >
-          <option value="">Select Method</option>
-          {Object.keys(methods).map((method) => (
-            <option key={method} value={method}>
-              {method}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger className="disabled:bg-muted flex h-10 w-full items-center justify-between border px-3 py-2 disabled:cursor-not-allowed disabled:opacity-50">
+            <SelectValue placeholder="Select Method" />
+          </SelectTrigger>
+          <SelectContent>
+            {Object.keys(methods).map((method) => (
+              <SelectItem key={method} value={method}>
+                {method}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         {formikHandlers.errors.method && formikHandlers.touched.method && (
           <div className="text-destructive mt-1 text-xs">
             {formikHandlers.errors.method}
@@ -317,20 +331,18 @@ const LedgerConfig = ({
     description: string
     icon: ReactNode
   }): React.JSX.Element => (
-    <div
-      className={`border ${selectedLedger === ledger ? 'shadow-lg' : ''} flex cursor-pointer flex-col items-center justify-center rounded-lg p-6 transition-all hover:shadow-md`}
+    <Card
+      className={`flex cursor-pointer flex-col items-center p-4 text-center shadow transition-all hover:scale-[1.02] ${
+        selectedLedger === ledger
+          ? 'bg-muted border-2'
+          : 'border border-gray-200'
+      }`}
       onClick={() => handleLedgerSelect(ledger)}
     >
-      <div
-        className={`mb-4 flex h-16 w-16 items-center justify-center rounded-full ${
-          ledger === Ledgers.INDY ? '' : ledger === Ledgers.POLYGON ? '' : ''
-        }`}
-      >
-        {icon}
-      </div>
+      <div className="mb-4 flex items-center justify-center">{icon}</div>
       <h3 className="mb-1 text-lg font-semibold">{title}</h3>
-      <p className="text-center text-sm">{description}</p>
-    </div>
+      <p className="text-sm">{description}</p>
+    </Card>
   )
 
   const initialValues: IValuesShared = {
@@ -435,54 +447,38 @@ const LedgerConfig = ({
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           <LedgerCard
             ledger={Ledgers.INDY}
-            title="Indy"
+            title=""
             description="Hyperledger Indy"
             icon={
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-8 w-8 text-blue-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                />
-              </svg>
+              <Image
+                src="/images/Indicio.png"
+                alt="Indy Icon"
+                width={112}
+                height={112}
+              />
             }
           />
           <LedgerCard
             ledger={Ledgers.POLYGON}
-            title="Polygon"
+            title=""
             description="Polygon blockchain"
             icon={
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-8 w-8 text-purple-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 10V3L4 14h7v7l9-11h-7z"
-                />
-              </svg>
+              <Image
+                src="/images/polygon.png"
+                alt="Indy Icon"
+                width={112}
+                height={112}
+              />
             }
           />
           <LedgerCard
             ledger={Ledgers.NO_LEDGER}
-            title="No Ledger"
+            title=""
             description="Local key generation"
             icon={
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-8 w-8 text-gray-600"
+                className="mb-4 h-8 w-8 text-gray-600"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -523,8 +519,70 @@ const LedgerConfig = ({
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                   {renderMethodOptions(formikHandlers)}
 
-                  {renderNetworkOptions(formikHandlers)}
+                  {/* This will show either the network dropdown OR the wallet label */}
+                  {!selectedMethod ||
+                  selectedMethod === DidMethod.KEY ||
+                  selectedMethod === DidMethod.WEB ? (
+                    <div className="relative w-full">
+                      <label
+                        htmlFor="label"
+                        className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                      >
+                        Wallet Label{' '}
+                        <span className="text-destructive text-xs">*</span>
+                      </label>
+                      <Field
+                        id="label"
+                        name="label"
+                        value={walletLabel}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setWalletLabel(e.target.value)
+                        }
+                        className="block w-full rounded-lg p-2.5 sm:text-sm"
+                        type="text"
+                      />
+                      {formikHandlers.errors.label &&
+                        formikHandlers.touched.label && (
+                          <div className="text-destructive mt-1 text-xs">
+                            {formikHandlers.errors.label}
+                          </div>
+                        )}
+                    </div>
+                  ) : (
+                    renderNetworkOptions(formikHandlers)
+                  )}
                 </div>
+
+                {/* Wallet label moves here when network dropdown is visible */}
+                {selectedMethod &&
+                  selectedMethod !== DidMethod.KEY &&
+                  selectedMethod !== DidMethod.WEB && (
+                    <div className="mt-6">
+                      <label
+                        htmlFor="label"
+                        className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                      >
+                        Wallet Label{' '}
+                        <span className="text-destructive text-xs">*</span>
+                      </label>
+                      <Field
+                        id="label"
+                        name="label"
+                        value={walletLabel}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setWalletLabel(e.target.value)
+                        }
+                        className="block w-full rounded-lg p-2.5 sm:text-sm"
+                        type="text"
+                      />
+                      {formikHandlers.errors.label &&
+                        formikHandlers.touched.label && (
+                          <div className="text-destructive mt-1 text-xs">
+                            {formikHandlers.errors.label}
+                          </div>
+                        )}
+                    </div>
+                  )}
 
                 {selectedDid && (
                   <div className="mt-6">
@@ -544,32 +602,6 @@ const LedgerConfig = ({
                     />
                   </div>
                 )}
-
-                <div className="mt-6">
-                  <label
-                    htmlFor="label"
-                    className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Wallet Label{' '}
-                    <span className="text-destructive text-xs">*</span>
-                  </label>
-                  <Field
-                    id="label"
-                    name="label"
-                    value={walletLabel}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setWalletLabel(e.target.value)
-                    }
-                    className="block w-full rounded-lg p-2.5 sm:text-sm"
-                    type="text"
-                  />
-                  {formikHandlers.errors.label &&
-                    formikHandlers.touched.label && (
-                      <div className="text-destructive mt-1 text-xs">
-                        {formikHandlers.errors.label}
-                      </div>
-                    )}
-                </div>
 
                 {selectedMethod === DidMethod.POLYGON && (
                   <div className="bg-muted mx-auto mt-6 max-w-2xl rounded-lg p-4">
@@ -626,7 +658,7 @@ const LedgerConfig = ({
               </div>
             )}
 
-            <div className="mt-8 flex justify-between">
+            <div className="mt-8 flex justify-end">
               <Button disabled={isSubmitDisabled()} type="submit">
                 Create Identity
               </Button>

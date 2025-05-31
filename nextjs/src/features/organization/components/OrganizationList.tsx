@@ -153,7 +153,7 @@ export const OrganizationList = (): React.JSX.Element => {
             <Card
               key={org.id}
               onClick={() => handleCardClick(org.id)}
-              className="border-border relative h-full w-full cursor-pointer overflow-hidden rounded-xl border p-6 py-4 shadow-xl transition-all transition-transform duration-300"
+              className="border-border relative h-full w-full cursor-pointer overflow-hidden rounded-xl border p-6 py-4 shadow-xl transition-all duration-300 hover:scale-[1.02]"
             >
               <div className="flex items-start gap-4">
                 <Avatar className="h-16 w-16 rounded-md">

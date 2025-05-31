@@ -4,7 +4,6 @@
 import * as yup from 'yup'
 
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { ArrowLeft, Database, Key, Zap } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { DidMethod, Environment, Ledgers, Network } from '../common/enum'
 import { Form, Formik, FormikHelpers, FormikProps } from 'formik'
@@ -23,9 +22,11 @@ import {
 } from '@/components/ui/select'
 import { apiStatusCodes, polygonScan } from '@/config/CommonConstant'
 
+import { ArrowLeft } from 'lucide-react'
 import type { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import CopyDid from './CopyDid'
+import Image from 'next/image'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import SetDomainValueInput from './SetDomainValueInput'
@@ -337,26 +338,16 @@ const DedicatedLedgerConfig = ({
     icon: React.ReactNode
   }): React.JSX.Element => (
     <Card
-      className={`cursor-pointer transition-all hover:shadow-md ${selectedLedger === ledger ? 'border-yellow-500 shadow-lg' : 'border-border'}`}
+      className={`flex cursor-pointer flex-col items-center p-4 text-center shadow transition-all hover:scale-[1.02] ${
+        selectedLedger === ledger
+          ? 'bg-muted border-2'
+          : 'border border-gray-200'
+      }`}
       onClick={() => handleLedgerSelect(ledger)}
     >
-      <CardContent className="flex flex-col items-center justify-center p-6">
-        <div
-          className={`mb-4 flex h-16 w-16 items-center justify-center rounded-full ${
-            ledger === Ledgers.INDY
-              ? 'bg-blue-100'
-              : ledger === Ledgers.POLYGON
-                ? 'bg-purple-100'
-                : 'bg-gray-100'
-          }`}
-        >
-          {icon}
-        </div>
-        <h3 className="mb-1 text-lg font-semibold">{title}</h3>
-        <p className="text-muted-foreground text-center text-sm">
-          {description}
-        </p>
-      </CardContent>
+      <div className="mb-4 flex items-center justify-center">{icon}</div>
+      <h3 className="mb-1 text-lg font-semibold">{title}</h3>
+      <p className="text-sm">{description}</p>
     </Card>
   )
 
@@ -442,21 +433,50 @@ const DedicatedLedgerConfig = ({
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <LedgerCard
             ledger={Ledgers.INDY}
-            title="Indy"
+            title=""
             description="Hyperledger Indy"
-            icon={<Database className="h-8 w-8 text-blue-600" />}
+            icon={
+              <Image
+                src="/images/Indicio.svg"
+                alt="Indy Icon"
+                width={112}
+                height={112}
+              />
+            }
           />
           <LedgerCard
             ledger={Ledgers.POLYGON}
-            title="Polygon"
+            title=""
             description="Polygon blockchain"
-            icon={<Zap className="h-8 w-8 text-purple-600" />}
+            icon={
+              <Image
+                src="/images/polygon.svg"
+                alt="Indy Icon"
+                width={112}
+                height={112}
+              />
+            }
           />
           <LedgerCard
             ledger={Ledgers.NO_LEDGER}
-            title="No Ledger"
+            title=""
             description="Local key generation"
-            icon={<Key className="h-8 w-8 text-gray-600" />}
+            icon={
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="mb-4 h-8 w-8 text-gray-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
+                />
+              </svg>
+            }
           />
         </div>
       </div>
