@@ -346,7 +346,7 @@ const SchemaList = (props: {
             </div>
             {totalItem > itemPerPage && (
               <div className="mt-6 flex justify-end">
-                <Pagination>
+                <Pagination className='w-fit m-0'>
                   <PaginationContent>
                     {schemaListAPIParameter.page > 1 && (
                       <PaginationItem>

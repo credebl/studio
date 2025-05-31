@@ -6,6 +6,13 @@ import * as yup from 'yup'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Field, Form, Formik, FormikHelpers } from 'formik'
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
   createOrganization,
   getOrganizationById,
   updateOrganization,
@@ -416,6 +423,7 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                     as={Textarea}
                     name="description"
                     placeholder="Enter organization description"
+                    className="border-input placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[60px] w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-sm focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                   />
                   {errors.description && touched.description && (
                     <p className="text-destructive mt-1 text-xs">
@@ -425,18 +433,18 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                  {/* Country Select */}
                   <div>
-                    <Label className="pb-4">
+                    <Label className="pb-2">
                       Country <span className="text-destructive">*</span>
                     </Label>
-                    <select
+                    <Select
                       name="countryId"
-                      value={values.countryId || ''}
-                      className="w-full rounded-md border p-2"
-                      onChange={(e) => {
-                        const countryId = e.target.value
-                          ? Number(e.target.value)
-                          : null
+                      value={
+                        values.countryId ? values.countryId.toString() : ''
+                      }
+                      onValueChange={(value) => {
+                        const countryId = Number(value)
                         setSelectedCountryId(countryId)
                         setSelectedStateId(null)
                         setCities([])
@@ -446,13 +454,20 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                         setFieldValue('cityId', null)
                       }}
                     >
-                      <option value="">Select country</option>
-                      {countries.map((country) => (
-                        <option key={country.id} value={country.id}>
-                          {country.name}
-                        </option>
-                      ))}
-                    </select>
+                      <SelectTrigger className="disabled:bg-muted flex h-10 w-full items-center justify-between border px-3 py-2 disabled:cursor-not-allowed disabled:opacity-50">
+                        <SelectValue placeholder="Select country" />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-[300px] overflow-scroll">
+                        {countries.map((country) => (
+                          <SelectItem
+                            key={country.id}
+                            value={country.id.toString()}
+                          >
+                            {country.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     {errors.countryId && touched.countryId && (
                       <p className="text-destructive mt-1 text-xs">
                         {errors.countryId}
@@ -460,31 +475,41 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                     )}
                   </div>
 
+                  {/* State Select */}
                   <div>
-                    <Label className="pb-4">
+                    <Label className="pb-2">
                       State <span className="text-destructive">*</span>
                     </Label>
-                    <select
-                      name="stateId"
-                      value={values.stateId || ''}
-                      className="w-full rounded-md border p-2"
-                      onChange={(e) => {
-                        const stateId = e.target.value
-                          ? Number(e.target.value)
-                          : null
+                    <Select
+                      value={values.stateId ? values.stateId.toString() : ''}
+                      onValueChange={(value) => {
+                        const stateId = Number(value)
                         setSelectedStateId(stateId)
                         setFieldValue('stateId', stateId)
                         setFieldValue('cityId', null)
                       }}
                       disabled={!values.countryId}
                     >
-                      <option value="">Select state</option>
-                      {states.map((state) => (
-                        <option key={state.id} value={state.id}>
-                          {state.name}
-                        </option>
-                      ))}
-                    </select>
+                      <SelectTrigger className="disabled:bg-muted flex h-10 w-full items-center justify-between border px-3 py-2 disabled:cursor-not-allowed disabled:opacity-50">
+                        <SelectValue placeholder="Select state" />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-[300px] overflow-scroll">
+                        {states.length > 0 ? (
+                          states.map((state) => (
+                            <SelectItem
+                              key={state.id}
+                              value={state.id.toString()}
+                            >
+                              {state.name}
+                            </SelectItem>
+                          ))
+                        ) : (
+                          <div className="text-muted-foreground px-3 py-2 text-sm">
+                            No states available
+                          </div>
+                        )}
+                      </SelectContent>
+                    </Select>
                     {errors.stateId && touched.stateId && (
                       <p className="text-destructive mt-1 text-xs">
                         {errors.stateId}
@@ -492,29 +517,39 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                     )}
                   </div>
 
+                  {/* City Select */}
                   <div>
-                    <Label className="pb-4">
+                    <Label className="pb-2">
                       City <span className="text-destructive">*</span>
                     </Label>
-                    <select
-                      name="cityId"
-                      value={values.cityId || ''}
-                      className="w-full rounded-md border p-2"
-                      onChange={(e) => {
-                        const cityId = e.target.value
-                          ? Number(e.target.value)
-                          : null
+                    <Select
+                      value={values.cityId ? values.cityId.toString() : ''}
+                      onValueChange={(value) => {
+                        const cityId = Number(value)
                         setFieldValue('cityId', cityId)
                       }}
                       disabled={!values.stateId}
                     >
-                      <option value="">Select city</option>
-                      {cities.map((city) => (
-                        <option key={city.id} value={city.id}>
-                          {city.name}
-                        </option>
-                      ))}
-                    </select>
+                      <SelectTrigger className="disabled:bg-muted flex h-10 w-full items-center justify-between border px-3 py-2 disabled:cursor-not-allowed disabled:opacity-50">
+                        <SelectValue placeholder="Select city" />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-[300px] overflow-scroll">
+                        {cities.length > 0 ? (
+                          cities.map((city) => (
+                            <SelectItem
+                              key={city.id}
+                              value={city.id.toString()}
+                            >
+                              {city.name}
+                            </SelectItem>
+                          ))
+                        ) : (
+                          <div className="text-muted-foreground px-3 py-2 text-sm">
+                            No cities available
+                          </div>
+                        )}
+                      </SelectContent>
+                    </Select>
                     {errors.cityId && touched.cityId && (
                       <p className="text-destructive mt-1 text-xs">
                         {errors.cityId}
@@ -598,11 +633,7 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                       disabled={!isValid || !dirty || loading}
                     >
                       {loading ? (
-                        <Loader
-                          colorClass="animate-spin"
-                          height="1.5rem"
-                          width="1.5rem"
-                        />
+                        <Loader/>
                       ) : (
                         'Create Organization'
                       )}
@@ -614,11 +645,7 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                         onClick={() => handleUpdateOrganization(values)}
                       >
                         {loading ? (
-                          <Loader
-                            colorClass="animate-spin"
-                            height="1.5rem"
-                            width="1.5rem"
-                          />
+                          <Loader/>
                         ) : null}
                         Save
                       </Button>

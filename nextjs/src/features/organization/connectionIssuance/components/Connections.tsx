@@ -9,6 +9,7 @@ import type {
 import React, { JSX, useEffect, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
 import ConnectionList from './ConnectionList'
 import DataTable from './ConnectionIssueTable'
 import DateTooltip from '@/components/DateTooltip'
@@ -102,42 +103,30 @@ const Connections = (): JSX.Element => {
             </Button>
           </div>
         </div>
-        <div className="mb-4 border-b border-gray-200 dark:border-gray-700">
-          <ul
-            className="-mb-px flex flex-wrap text-center text-sm font-medium"
-            id="myTab"
-            data-tabs-toggle="#myTabContent"
-            role="tablist"
+        <div className="mb-4 border-b">
+          <div
+            className="mb-4 flex items-center justify-between"
+            id="issued-credentials-list"
           >
-            <li className="mr-2" role="presentation">
-              <button
-                className="inline-block rounded-t-lg border-b-2 p-4 text-xl"
-                id="profile-tab"
-                data-tabs-target="#profile"
-                type="button"
-                role="tab"
-                aria-controls="profile"
-                aria-selected="false"
-              >
-                Connection
-              </button>
-            </li>
-          </ul>
+            <h1 className="ml-1 text-xl font-semibold sm:text-2xl">
+              Connection List
+            </h1>
+          </div>
         </div>
         <div id="myTabContent">
-          <div
-            className="rounded-lg bg-gray-50 dark:bg-gray-900"
+          <Card
+            className="rounded-lg"
             id="profile"
             role="tabpanel"
             aria-labelledby="profile-tab"
           >
             <ConnectionList selectConnection={selectConnection} />
             <div className="m-4 mb-4 flex items-center justify-between pt-6">
-              <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
+              <h1 className="ml-1 text-xl font-semibold  sm:text-2xl ">
                 Selected Users
               </h1>
             </div>
-            <div className="m-4 rounded-lg border border-gray-200 bg-white shadow-sm sm:p-4 2xl:col-span-2 dark:border-gray-700 dark:bg-gray-800">
+            <div className="m-4 rounded-lg border shadow-sm sm:p-4 2xl:col-span-2">
               <DataTable
                 header={selectedConnectionHeader}
                 data={selectedConnections}
@@ -159,7 +148,7 @@ const Connections = (): JSX.Element => {
                 ''
               )}
             </div>
-          </div>
+          </Card>
         </div>
       </div>
     </PageContainer>
