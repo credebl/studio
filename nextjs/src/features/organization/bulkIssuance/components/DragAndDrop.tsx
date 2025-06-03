@@ -33,7 +33,7 @@ export default function DragAndDrop({
         <div>
           <label
             htmlFor="csv-file"
-            className={`dark-border-gray-600 flex h-36 w-40 cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed bg-white dark:bg-gray-700 ${
+            className={`flex h-36 w-40 cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed  ${
               !context.isCredSelected
                 ? 'border-gray-200'
                 : 'border-primary-900 dark:border-white'

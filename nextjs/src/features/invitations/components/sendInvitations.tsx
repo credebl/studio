@@ -242,12 +242,13 @@ export default function SendInvitationModal({
                   <Button
                     variant="ghost"
                     size="icon"
+                    className='hover:bg-transparent'
                     onClick={() => removeInvitation(invitation.email)}
                   >
                     <img
                       src={delSvg.src}
                       alt="delete"
-                      className="mx-auto h-4 w-4"
+                      className="mx-auto h-5 w-5"
                     />
                   </Button>
                 </div>
