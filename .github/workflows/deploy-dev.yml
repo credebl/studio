@@ -28,7 +28,7 @@ jobs:
 
          echo "PUBLIC_MODE=PROD" > .env
 
-         echo "PUBLIC_BASE_URL=${{ secrets.PUBLIC_BASE_URL }}" >> .env
+         echo "NEXT_PUBLIC_BASE_URL=${{ secrets.DEV_PUBLIC_BASE_URL }}" >> .env
 
          echo "PUBLIC_SHOW_NAME_AS_LOGO=true" >> .env
 
@@ -46,7 +46,7 @@ jobs:
 
          echo "PUBLIC_PLATFORM_DISCORD_SUPPORT=https://discord.gg/w4hnQT7NJG" >> .env
 
-         echo "PUBLIC_ALLOW_DOMAIN=${{ secrets.PUBLIC_ALLOW_DOMAIN }}" >> .env
+         echo "PUBLIC_ALLOW_DOMAIN=${{ secrets.DEV_PUBLIC_ALLOW_DOMAIN }}" >> .env
 
          echo "PUBLIC_POLYGON_MAINNET_URL=https://polygon-rpc.com/" >> .env
 
@@ -56,17 +56,17 @@ jobs:
 
          echo "PUBLIC_CREDEBL_FRONT_END_URL=https://credebl.id" >> .env
 
-         echo "PUBLIC_ECOSYSTEM_BASE_URL=${{ secrets.PUBLIC_ECOSYSTEM_BASE_URL }}" >> .env
+         echo "PUBLIC_ECOSYSTEM_BASE_URL=${{ secrets.DEV_PUBLIC_ECOSYSTEM_BASE_URL }}" >> .env
 
          echo "PUBLIC_PLATFORM_DISCORD_URL=https://discord.gg/w4hnQT7NJG" >> .env
 
          echo "PUBLIC_REDIRECTION_TARGET_URL=https://social-share.credebl.id" >> .env
 
-         echo "PUBLIC_CRYPTO_PRIVATE_KEY=${{ secrets.PUBLIC_CRYPTO_PRIVATE_KEY }}" >> .env
+         echo "PUBLIC_CRYPTO_PRIVATE_KEY=${{ secrets.DEV_PUBLIC_CRYPTO_PRIVATE_KEY }}" >> .env
 
-         echo "PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_ID=${{ secrets.PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_ID }}" >> .env
+         echo "NEXT_PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_ID=${{ secrets.DEV_PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_ID }}" >> .env
 
-         echo "PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_SECRET=${{ secrets.PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_SECRET }}" >> .env
+         echo "NEXT_PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_SECRET=${{ secrets.DEV_PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_SECRET }}" >> .env
 
          echo "PUBLIC_REDIRECT_FROM_URL=https://credebl.id" >> .env
 
