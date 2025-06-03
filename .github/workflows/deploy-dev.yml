@@ -72,7 +72,7 @@ jobs:
 
       - name: Build step
         run: npm install && npm run build # 📝 Update the build command(s)
-        working-directory: nextjs
+        working-directory: ./nextjs
 
 
       - name: Upload to Deno Deploy
@@ -80,4 +80,4 @@ jobs:
         with:
           project: "studio-nextjs"
           entrypoint: "jsr:@deno/nextjs-start/v15"
-          root: "nextjs"
+          root: "./nextjs"
