@@ -19,10 +19,10 @@ import {
 import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
+import { DeleteIcon } from '@/config/svgs/DeleteIcon'
 import { Input } from '@/components/ui/input'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { createInvitations } from '@/app/api/Invitation'
-import delSvg from '@/../public/svgs/del.svg'
 import { getOrganizationRoles } from '@/app/api/organization'
 import { useAppSelector } from '@/lib/hooks'
 
@@ -240,15 +240,12 @@ export default function SendInvitationModal({
                     </div>
                   </div>
                   <Button
+                    className="bg-transparent hover:bg-transparent"
                     variant="ghost"
                     size="icon"
                     onClick={() => removeInvitation(invitation.email)}
                   >
-                    <img
-                      src={delSvg.src}
-                      alt="delete"
-                      className="mx-auto h-4 w-4"
-                    />
+                    <DeleteIcon />
                   </Button>
                 </div>
               ))}

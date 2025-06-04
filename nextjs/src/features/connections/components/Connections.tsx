@@ -30,6 +30,7 @@ export default function Connections(): JSX.Element {
   }
   const orgId = useAppSelector((state) => state.organization.orgId)
 
+  const [isLoading, setIsLoading] = useState(false)
   const [connectionData, setConnectionData] = useState<Connection[]>([
     {
       createDateTime: '',
@@ -79,6 +80,8 @@ export default function Connections(): JSX.Element {
 
     async function fetchConnections(): Promise<void> {
       try {
+        setIsLoading(true)
+
         const { pageIndex, pageSize, searchTerm, sortBy, sortOrder } =
           paginationState
 
@@ -107,6 +110,8 @@ export default function Connections(): JSX.Element {
       } catch (error) {
         console.error('Failed to fetch connections:', error)
         setConnectionData([])
+      } finally {
+        setIsLoading(false)
       }
     }
     fetchConnections()
@@ -218,6 +223,7 @@ export default function Connections(): JSX.Element {
       </div>
       <div className="-mx-4 flex-1 overflow-auto rounded-lg px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
         <DataTable
+          isLoading={isLoading}
           placeHolder="Filter by wallet name"
           data={connectionData}
           columns={column}
