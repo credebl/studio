@@ -36,21 +36,21 @@ export default function DragAndDrop({
             className={`flex h-36 w-40 cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed  ${
               !context.isCredSelected
                 ? 'border-gray-200'
-                : 'border-primary-900 dark:border-white'
+                : 'border-primary dark:border-white'
             }`}
           >
             <div
               className={`flex flex-col items-center justify-center pt-5 pb-6 ${
                 !context.isCredSelected
                   ? 'border-gray-700 text-gray-700 opacity-50 dark:text-gray-700'
-                  : 'text-primary-700 border-primary-700 dark:border-white dark:text-white'
+                  : 'text-primary border-primary dark:border-white dark:text-white'
               }`}
             >
               <svg
                 className={`h-12 w-12 ${
                   !context.isCredSelected
                     ? 'text-gray-700 dark:text-gray-400'
-                    : 'text-primary-900 dark:text-white'
+                    : 'text-primary dark:text-white'
                 }`}
                 viewBox="0 0 24 24"
                 fill="none"
