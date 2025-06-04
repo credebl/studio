@@ -86,7 +86,7 @@ export function UserNav(): React.JSX.Element | null {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
-        className="w-56"
+        className="w-56 border"
         align="end"
         sideOffset={10}
         forceMount
@@ -113,7 +113,7 @@ export function UserNav(): React.JSX.Element | null {
 
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>Theme</DropdownMenuSubTrigger>
-            <DropdownMenuSubContent>
+            <DropdownMenuSubContent className="border">
               <ThemeSelector />
             </DropdownMenuSubContent>
           </DropdownMenuSub>

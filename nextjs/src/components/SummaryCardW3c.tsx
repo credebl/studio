@@ -19,7 +19,7 @@ const SummaryCard = ({
   schemaId,
   schemaAttributes,
 }: Readonly<IProps>): JSX.Element => (
-  <Card className="bg-background my-6">
+  <Card className="my-6">
     <CardContent className="p-6">
       <div className="flex items-start justify-between">
         <div>

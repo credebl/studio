@@ -311,7 +311,7 @@ const IssueCred = (): React.JSX.Element => {
           />
           <h1 className="ml-1 text-xl font-semibold sm:text-2xl">Issuance</h1>
         </div>
-        <Card className="bg-background">
+        <Card className="">
           <CardContent className="p-4">
             <p className="pb-6 text-xl font-semibold">
               Select Schema and credential definition

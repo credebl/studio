@@ -163,7 +163,7 @@ const OrganizationDetails = ({
           </div>
 
           {/* QR Code - aligned inline with details */}
-          <div className="w-48">
+          <div className={`w-48 ${loading ? 'border' : ''}`}>
             {loading ? (
               <div className="flex h-48 w-48 items-center justify-center">
                 <Loader />

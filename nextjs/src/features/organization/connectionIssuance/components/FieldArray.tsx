@@ -81,10 +81,7 @@ const FieldArrayData = ({
 
               return (
                 <div key={user.connectionId}>
-                  <Card
-                    className="bg-background my-5 px-4 py-8"
-                    style={fieldCardStyles}
-                  >
+                  <Card className="my-5 px-4 py-8" style={fieldCardStyles}>
                     <div className="flex justify-between">
                       <div className="flex">
                         <h5 className="flex flex-wrap text-xl leading-none font-bold dark:text-white">

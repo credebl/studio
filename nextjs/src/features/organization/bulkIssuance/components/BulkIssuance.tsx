@@ -291,7 +291,7 @@ const BulkIssuance = (): JSX.Element => {
           />
         )}
         <div className="min-h-100/21rem flex flex-col justify-between">
-          <Card className="bg-transparent p-5 p-8">
+          <Card className="p-5 p-8">
             <div>
               <div className="grid w-[980px] grid-cols-1 gap-6 sm:grid-cols-2">
                 <div className="flex flex-col justify-between">
