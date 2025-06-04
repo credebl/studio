@@ -1,7 +1,11 @@
 import React, { JSX } from 'react'
 
-import IssueDashboard from '@/features/organization/connectionIssuance/components/IssueDashboard'
+import SelectionDashboardData from '@/components/SelectionDashboardData'
 
-const page = (): JSX.Element => <IssueDashboard />
+const page = (): JSX.Element => (
+  <div>
+    <SelectionDashboardData />
+  </div>
+)
 
 export default page

@@ -3,19 +3,22 @@
 import { JSX, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import Dashboard from './Dashboard'
 import { RootState } from '@/lib/store'
+import SelectionDashboard from './SelectionDashboard'
 import { getOrganizationById } from '@/app/api/organization'
 import { pathRoutes } from '@/config/pathRoutes'
 import { setLedgerId } from '@/lib/orgSlice'
+import { usePathname } from 'next/navigation'
 
-const IssueDashboard = (): JSX.Element => {
+const SelectionDashboardData = (): JSX.Element => {
+  const path = usePathname()
+
   const dispatch = useDispatch()
+  const isVerification = path.includes('/verification')
   const orgId = useSelector((state: RootState) => state.organization.orgId)
   const orgData = async (): Promise<void> => {
     const response = await getOrganizationById(orgId)
     if (typeof response === 'string') {
-      // handle the error message
       console.error('Error fetching organization:', response)
     } else {
       const { data } = response
@@ -26,7 +29,7 @@ const IssueDashboard = (): JSX.Element => {
     orgData()
   }, [])
 
-  const options = [
+  const issueOptions = [
     {
       heading: 'Connection',
       description:
@@ -45,13 +48,32 @@ const IssueDashboard = (): JSX.Element => {
     },
   ]
 
+  const verifyOptions = [
+    {
+      heading: 'Connection',
+      description: 'Verify credential(s) by selecting existing connections',
+      path: pathRoutes.organizations.verification.schema,
+    },
+    {
+      heading: 'Email',
+      description:
+        'Verify credential(s) by entering email ID for specific user',
+      path: pathRoutes.organizations.verification.email,
+    },
+    {
+      heading: 'Bulk',
+      description:
+        'Verify credential(s) in bulk by uploading .csv file records',
+      path: '',
+    },
+  ]
   return (
-    <Dashboard
-      title="Issue Credential"
-      options={options}
-      backButtonPath={pathRoutes.organizations.issuedCredentials}
+    <SelectionDashboard
+      title={isVerification ? 'Verify Credential' : 'Issue Credential'}
+      options={isVerification ? verifyOptions : issueOptions}
+      backButtonPath={''}
     />
   )
 }
 
-export default IssueDashboard
+export default SelectionDashboardData

@@ -57,6 +57,7 @@ export interface IAttributesDetails {
 
 export interface ISchemaData {
   createDateTime: string
+  createdDate?: string
   name: string
   version: string
   attributes: IAttributesDetails[]
