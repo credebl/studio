@@ -59,15 +59,6 @@ const CredDefSelection = (): JSX.Element => {
     if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
       const credDefs = (data?.data as CredentialDefinition[])?.map((ele) => ({
         data: [
-          { data: ele?.tag ?? 'Not available' },
-          { data: ele?.credentialDefinitionId ?? 'Not available' },
-          {
-            data: ele?.revocable ? (
-              <span className="text-blue-700 dark:text-white">Yes</span>
-            ) : (
-              <span className="text-cyan-500 dark:text-white">No</span>
-            ),
-          },
           {
             data: (
               <div className="flex items-center">
@@ -83,9 +74,18 @@ const CredDefSelection = (): JSX.Element => {
                       )
                     }
                   }}
-                  className="text-primary-700 focus:ring-primary-700 h-4 w-4 cursor-pointer rounded border-gray-300 bg-gray-100 focus:ring-2 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+                  className="text-primary focus:ring-primary h-4 w-4 cursor-pointer rounded"
                 />
               </div>
+            ),
+          },
+          { data: ele?.tag ?? 'Not available' },
+          { data: ele?.credentialDefinitionId ?? 'Not available' },
+          {
+            data: ele?.revocable ? (
+              <span className="text-revocable-yes">Yes</span>
+            ) : (
+              <span className="text-revocable-no">No</span>
             ),
           },
         ],
@@ -123,12 +123,10 @@ const CredDefSelection = (): JSX.Element => {
   return (
     <div className="px-4 pt-2">
       <div className="col-span-full mb-4 xl:mb-2">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-end">
           <BackButton path={pathRoutes.organizations.verification.email} />
         </div>
-        <h1 className="ml-1 text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-          Schema
-        </h1>
+        <h1 className="ml-1 text-xl font-semibold sm:text-2xl">Schema</h1>
       </div>
 
       <div className="col-span-full mb-4 pb-3 xl:mb-2">
@@ -153,8 +151,8 @@ const CredDefSelection = (): JSX.Element => {
         )}
       </div>
 
-      <div className="col-span-full mb-4 pt-5 xl:mb-2">
-        <h1 className="text-primary ml-1 text-xl font-semibold sm:text-2xl">
+      <div className="col-span-full mb-4 flex pt-5 xl:mb-2">
+        <h1 className="ml-1 text-xl font-semibold sm:text-2xl">
           Credential definitions
         </h1>
       </div>
@@ -167,7 +165,7 @@ const CredDefSelection = (): JSX.Element => {
 
       <DataTable header={credDefHeader} data={credDefList} loading={loading} />
 
-      <div>
+      <div className="mt-4 flex justify-end">
         <Button
           onClick={() => {
             router.push(`${pathRoutes.organizations.verification.connections}`)

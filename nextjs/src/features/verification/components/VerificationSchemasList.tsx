@@ -32,12 +32,13 @@ import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
-import { Create } from '@/config/Constant'
+import { ContinueIcon } from '@/components/iconsSvg'
 import { EmptyMessage } from '@/components/EmptyMessage'
 import { IconSearch } from '@tabler/icons-react'
 import { Input } from '@/components/ui/input'
 import Loader from '@/components/Loader'
 import PageContainer from '@/components/layout/page-container'
+import { Plus } from 'lucide-react'
 import RoleViewButton from '@/components/RoleViewButton'
 import SchemaCard from '@/features/schemas/components/SchemaCard'
 import { getOrganizationById } from '@/app/api/organization'
@@ -71,7 +72,9 @@ const VerificationSchemasList = (): JSX.Element => {
   const dispatch = useAppDispatch()
   const organizationId = useAppSelector((state) => state.organization.orgId)
   const ledgerId = useAppSelector((state) => state.organization.ledgerId)
-
+  const selectedSchemaState = useAppSelector(
+    (state) => state.verification.selectedSchemas,
+  )
   const getSchemaListDetails = async (): Promise<void> => {
     try {
       setLoading(true)
@@ -170,26 +173,20 @@ const VerificationSchemasList = (): JSX.Element => {
     checked: boolean,
     schemaData?: ISchemaData,
   ): Promise<void> => {
-    if (!schemaData) {
-      return
-    }
-
-    const schema: ISchema = {
-      ...schemaData,
-      schemaId: schemaData.schemaId ?? '',
-      createdDate: schemaData.createDateTime,
-    }
-
     const updateSchemas = (prevSchemas: ISchema[]): ISchema[] => {
       let updatedSchemas = [...prevSchemas]
-      if (checked) {
+      if (checked && schemaData) {
+        const schema = {
+          ...schemaData,
+          schemaId: schemaData.schemaId ?? '',
+          createdDate: schemaData.createDateTime,
+        }
         updatedSchemas = [...updatedSchemas, schema]
       } else {
         updatedSchemas = updatedSchemas.filter(
-          (schemas) => schemas?.schemaLedgerId !== schema?.schemaLedgerId,
+          (schema) => schema?.schemaLedgerId !== schemaData?.schemaLedgerId,
         )
       }
-
       return updatedSchemas
     }
 
@@ -198,13 +195,17 @@ const VerificationSchemasList = (): JSX.Element => {
         console.error('Previous schemas is not an array:', prevSchemas)
         return []
       }
-
-      const updatedSchemas = updateSchemas(prevSchemas)
-      setSelectedSchemaArray(updatedSchemas)
-      dispatch(setSelectedSchemasData(updatedSchemas))
-      return updatedSchemas
+      return updateSchemas(prevSchemas)
     })
+
+    setSelectedSchemaArray((prevSchemas) => updateSchemas(prevSchemas))
   }
+
+  useEffect(() => {
+    if (selectedSchemaArray.length > 0) {
+      dispatch(setSelectedSchemasData(selectedSchemaArray))
+    }
+  }, [selectedSchemaArray])
 
   const fetchOrganizationDetails = async (): Promise<void> => {
     setLoading(true)
@@ -254,7 +255,7 @@ const VerificationSchemasList = (): JSX.Element => {
   }
 
   const handleW3CSchemaDetails = async (): Promise<void> => {
-    const w3cSchemaAttributes = selectedSchemaArray
+    const w3cSchemaAttributes = selectedSchemaState
       .filter((schema) => schema.schemaLedgerId)
       .map((schema) => ({
         schemaId: schema.schemaLedgerId ?? '',
@@ -288,13 +289,13 @@ const VerificationSchemasList = (): JSX.Element => {
 
   const createSchemaButtonTitle = {
     title: 'Create',
-    svg: <Create />,
+    svg: <Plus />,
     toolTip: 'Create new schema',
   }
 
   const emptySchemaListTitle = 'No Schemas'
   const emptySchemaListDescription = 'Get started by creating a new Schema'
-  const emptySchemaListBtn = { title: 'Create Schema', svg: <Create /> }
+  const emptySchemaListBtn = { title: 'Create Schema', svg: <Plus /> }
   return (
     <PageContainer>
       <div className="px-4 pt-2">
@@ -340,7 +341,7 @@ const VerificationSchemasList = (): JSX.Element => {
                   ))}
                 </SelectContent>
               </Select>
-              <div className="bg-primary text-foreground flex space-x-2">
+              <div className="bg-primary text-foreground flex space-x-2 rounded-md">
                 {walletStatus ? (
                   <RoleViewButton
                     title={createSchemaButtonTitle.toolTip}
@@ -411,23 +412,9 @@ const VerificationSchemasList = (): JSX.Element => {
                 <Button
                   onClick={w3cSchema ? handleW3CSchemaDetails : handleContinue}
                   disabled={selectedSchemas.length === 0}
-                  className="flex items-center gap-2 rounded-lg px-4 py-4 text-base font-medium sm:w-auto"
+                  className="flex items-center gap-2 rounded-md px-4 py-4 text-base font-medium sm:w-auto"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-current"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      fill="currentColor"
-                      d="M12.516 6.444a.556.556 0 1 0-.787.787l4.214 4.214H4.746a.558.558 0 0 0 0 1.117h11.191l-4.214 4.214a.556.556 0 0 0 .396.95.582.582 0 0 0 .397-.163l5.163-5.163a.553.553 0 0 0 .162-.396.576.576 0 0 0-.162-.396l-5.163-5.164Z"
-                    />
-                    <path
-                      fill="currentColor"
-                      d="M12.001 0a12 12 0 0 0-8.484 20.485c4.686 4.687 12.283 4.687 16.969 0 4.686-4.685 4.686-12.282 0-16.968A11.925 11.925 0 0 0 12.001 0Zm0 22.886c-6 0-10.884-4.884-10.884-10.885C1.117 6.001 6 1.116 12 1.116s10.885 4.885 10.885 10.885S18.001 22.886 12 22.886Z"
-                    />
-                  </svg>
+                  <ContinueIcon />
                   Continue
                 </Button>
               </div>

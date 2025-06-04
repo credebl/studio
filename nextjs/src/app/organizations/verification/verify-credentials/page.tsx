@@ -1,9 +1,9 @@
 import React from 'react'
-import VerificationDashboard from '@/features/verification/components/VerificationDashboard'
+import SelectionDashboardData from '@/components/SelectionDashboardData'
 
 const page = (): React.JSX.Element => (
   <div>
-    <VerificationDashboard />
+    <SelectionDashboardData />
   </div>
 )
 

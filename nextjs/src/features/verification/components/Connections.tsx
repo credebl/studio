@@ -1,16 +1,17 @@
 'use client'
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { IConnectionList, ISelectedAttributes } from '../type/interface'
 import { JSX, useEffect, useState } from 'react'
 import {
   resetAttributeData,
   resetSelectedConnections,
+  resetVerificationState,
   setSelectedUser,
 } from '@/lib/verificationSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { verifyCredential, verifyCredentialV2 } from '@/app/api/verification'
 
+import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import BackButton from '@/components/BackButton'
 import { Button } from '@/components/ui/button'
@@ -22,7 +23,6 @@ import { ITableData } from '@/components/DataTable/interface'
 import PageContainer from '@/components/layout/page-container'
 import { RequestProofIcon } from '@/components/iconsSvg'
 import { RequestType } from '@/features/common/enum'
-import { X } from 'lucide-react'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { dateConversion } from '@/utils/DateConversion'
 import { getOrganizationById } from '@/app/api/organization'
@@ -89,7 +89,7 @@ const Connections = (): JSX.Element => {
                     date={createdOn}
                     id="verification_connection_list"
                   >
-                    {dateConversion(createdOn)}
+                    <div> {dateConversion(createdOn)} </div>
                   </DateTooltip>
                 ),
               },
@@ -306,6 +306,7 @@ const Connections = (): JSX.Element => {
       setErrMsg('An error occurred. Please try again.')
       setRequestLoader(false)
     }
+    dispatch(resetVerificationState())
   }
 
   return (
@@ -317,46 +318,20 @@ const Connections = (): JSX.Element => {
           </div>
         </div>
 
-        <div className="mb-4 border-b">
-          <ul
-            className="-mb-px flex flex-wrap text-center text-sm font-medium"
-            id="myTab"
-            data-tabs-toggle="#myTabContent"
-            role="tablist"
-          >
-            <li className="mr-2">
-              <button
-                className="inline-block rounded-t-lg border-b-2 p-4 text-xl"
-                id="profile-tab"
-                data-tabs-target="#profile"
-                type="button"
-                role="tab"
-                aria-controls="profile"
-                aria-selected="false"
-              >
-                Connection
-              </button>
-            </li>
-          </ul>
-        </div>
         <div id="myTabContent">
           {(proofReqSuccess || errMsg) && (
             <div className="p-2">
-              <Alert variant={proofReqSuccess ? 'default' : 'destructive'}>
-                <AlertTitle>{proofReqSuccess ? 'Success' : 'Error'}</AlertTitle>
-                <AlertDescription>{proofReqSuccess || errMsg}</AlertDescription>
-                <button
-                  onClick={() => {
-                    setProofReqSuccess(null)
-                    setErrMsg(null)
-                  }}
-                  className="text-muted-foreground hover:text-foreground absolute top-2 right-2"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </Alert>
+              <AlertComponent
+                message={proofReqSuccess || errMsg}
+                type={proofReqSuccess ? 'success' : 'failure'}
+                onAlertClose={() => {
+                  setProofReqSuccess(null)
+                  setErrMsg(null)
+                }}
+              />
             </div>
           )}
+
           <div
             className="rounded-lg"
             id="profile"

@@ -129,7 +129,7 @@ const SortDataTable: React.FC<IDataTable> = ({
               <div className="w-full sm:w-1/2">
                 {isSearch && (
                   <form className="mb-4 flex items-center">
-                    <div className="relative m-2 max-w-xs flex-grow">
+                    <div className="relative max-w-xs flex-grow">
                       <Input
                         type="text"
                         placeholder="Search..."

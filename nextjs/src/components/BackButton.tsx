@@ -24,7 +24,7 @@ const BackButton = ({ path }: BackButtonProps): JSX.Element => {
     <Button
       variant="default"
       onClick={handleClick}
-      className="mb-4 flex items-center gap-2 rounded-xl px-4 py-2 transition-colors"
+      className="mb-4 flex items-center gap-2 rounded-md px-4 py-2 transition-colors"
     >
       <ArrowLeft size={18} />
       Back
