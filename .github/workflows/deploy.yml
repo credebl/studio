@@ -33,6 +33,7 @@ jobs:
 
       - name: Build step
         run: "npm run build"
+        working-directory: ./nextjs
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
