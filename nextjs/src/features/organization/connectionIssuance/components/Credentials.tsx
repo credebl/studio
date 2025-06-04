@@ -72,6 +72,7 @@ const Credentials = (): JSX.Element => {
       const { data } = response
       const orgDid = data?.data?.org_agents[0]?.orgDid
       if (!orgDid) {
+        setWalletCreated(false)
         return
       }
       const isWalletCreated = Boolean(orgDid)
