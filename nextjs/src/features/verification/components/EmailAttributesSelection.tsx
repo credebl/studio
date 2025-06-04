@@ -302,7 +302,7 @@ const EmailAttributesSelection = (): JSX.Element => {
   }
 
   useEffect(() => {
-    if (w3cSchema !== null) {
+    if (w3cSchema) {
       loadAttributesData()
     }
   }, [w3cSchema])
