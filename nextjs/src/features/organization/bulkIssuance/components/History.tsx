@@ -34,7 +34,7 @@ import { useAppSelector } from '@/lib/hooks'
 import { useRouter } from 'next/navigation'
 
 const HistoryBulkIssuance = (): JSX.Element => {
-  const [, setLoading] = useState<boolean>(true)
+  const [loading, setLoading] = useState<boolean>(true)
   const [failure, setFailure] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const socketId = useAppSelector((state: RootState) => state.socket.SOCKET_ID)
@@ -292,7 +292,7 @@ const HistoryBulkIssuance = (): JSX.Element => {
             style={{ height: '2.5rem', minWidth: '4rem' }}
           >
             <Eye />
-            <p className="item-center flex justify-center pr-1 text-center">
+            <p className="flex items-center justify-center pr-1 text-center">
               <span className="pl-1">View</span>{' '}
             </p>
           </Button>
@@ -302,7 +302,7 @@ const HistoryBulkIssuance = (): JSX.Element => {
               className="hover:!bg-secondary-700 hover:bg-secondary-700 bg-secondary-700 focus:ring-primary-300 ring-primary-700 bg-white-700 text-primary-600 border-primary-650 hover:text-primary-600 dark:text-primary-450 dark:border-primary-450 dark:hover:text-primary-450 dark:hover:bg-secondary-700 mr-2 ml-4 rounded-md py-2 text-center text-base font-medium focus:ring-4 lg:px-3 lg:py-2.5 dark:bg-transparent"
               style={{ height: '2.5rem', minWidth: '4rem' }}
             >
-              <p className="item-center flex justify-center pr-1 text-center">
+              <p className="flex items-center justify-center pr-1 text-center">
                 {' '}
                 <svg
                   className="mt-0.5 flex items-center pr-1"
@@ -375,6 +375,7 @@ const HistoryBulkIssuance = (): JSX.Element => {
         )}
 
         <DataTable
+          isLoading={loading}
           placeHolder="Filter by File Name"
           data={connectionList}
           columns={column}
