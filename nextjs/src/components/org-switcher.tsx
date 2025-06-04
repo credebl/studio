@@ -110,13 +110,16 @@ export function OrgSwitcher({
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild className="focus:ring-ring focus:ring-1">
+          <DropdownMenuTrigger
+            asChild
+            className="focus:ring-ring bg-popover hover:bg-popover outline-none hover:text-inherit focus:ring-1!"
+          >
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground border-ring w-[200px] justify-start gap-2 border"
+              className="border-ring w-[200px] justify-start gap-2 border"
             >
               {tenants.length > 0 && (
-                <div className="bg-muted border-muted flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full border">
+                <div className="bg-popover border-muted flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full border">
                   {selectedTenant?.logoUrl ? (
                     <Image
                       src={selectedTenant.logoUrl}
