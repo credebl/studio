@@ -38,7 +38,7 @@ const EmailAttributesSelection = (): JSX.Element => {
   const [attributeData, setAttributeData] = useState<
     ISelectedAttributes[] | null
   >(null)
-  const [w3cSchema, setW3cSchema] = useState<boolean>(false)
+  const [w3cSchema, setW3cSchema] = useState<boolean | null>(null)
   const [isConnectionProof, setIsConnectionProof] = useState<boolean>(false)
 
   const dispatch = useAppDispatch()
@@ -302,7 +302,7 @@ const EmailAttributesSelection = (): JSX.Element => {
   }
 
   useEffect(() => {
-    if (w3cSchema) {
+    if (w3cSchema !== null) {
       loadAttributesData()
     }
   }, [w3cSchema])
