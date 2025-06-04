@@ -25,6 +25,7 @@ import {
   passwordEncryption,
 } from '@/app/api/Auth'
 import React, { useState } from 'react'
+import { ToastContainer, toast } from 'react-toastify'
 import {
   generateAuthenticationOption,
   verifyAuthentication,
@@ -41,7 +42,6 @@ import { apiStatusCodes } from '@/config/CommonConstant'
 import { setProfile } from '@/lib/profileSlice'
 import { signIn } from 'next-auth/react'
 import { startAuthentication } from '@simplewebauthn/browser'
-import { toast } from 'sonner'
 import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
@@ -286,6 +286,7 @@ export default function SignInViewPage(): React.JSX.Element {
 
   return (
     <div className="relative flex w-full items-center justify-center">
+      <ToastContainer />
       <div className="bg-card border-border relative z-10 h-full w-full max-w-md overflow-hidden rounded-xl border p-8 shadow-xl transition-transform duration-300">
         <div className="mb-6 text-center">
           <p className="text-muted-foreground text-sm">
@@ -293,14 +294,14 @@ export default function SignInViewPage(): React.JSX.Element {
           </p>
         </div>
 
-        <div className="bg-muted mb-4 flex overflow-hidden rounded-md text-sm font-medium">
+        <div className="bg-muted mb-4 flex overflow-hidden rounded-md p-1 text-sm font-medium">
           <Button
             type="button"
             variant="ghost"
-            className={`flex flex-1 items-center justify-center gap-1 px-4 py-2 ${
+            className={`flex flex-1 items-center justify-center gap-1 px-4 py-2 hover:text-inherit ${
               isPasswordTab
-                ? 'bg-muted text-muted-foreground'
-                : 'bg-card text-foreground'
+                ? 'bg-card text-foreground hover:bg-background'
+                : 'bg-muted text-muted-foreground hover:bg-transparent'
             }`}
             onClick={() => setIsPasswordTab(true)}
           >
@@ -310,10 +311,10 @@ export default function SignInViewPage(): React.JSX.Element {
           <Button
             type="button"
             variant="ghost"
-            className={`flex flex-1 items-center justify-center gap-1 px-4 py-2 ${
+            className={`flex flex-1 items-center justify-center gap-1 px-4 py-2 hover:text-inherit ${
               !isPasswordTab
-                ? 'bg-muted text-muted-foreground'
-                : 'bg-card text-foreground'
+                ? 'bg-card text-foreground hover:bg-background'
+                : 'bg-muted text-muted-foreground hover:bg-transparent'
             }`}
             onClick={() => setIsPasswordTab(false)}
           >
