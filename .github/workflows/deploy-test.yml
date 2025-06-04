@@ -1,0 +1,83 @@
+name: Deploy main branch to Deno
+on:
+ push:
+    branches: fix/deno
+ pull_request:
+    branches: fix/deno
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # Needed for auth with Deno Deploy
+      contents: read # Needed to clone the repository
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+
+      - name: Create .env file
+
+        run: |
+
+         echo "PUBLIC_MODE=PROD" > .env
+
+         echo "NEXT_PUBLIC_BASE_URL=${{ secrets.DEV_PUBLIC_BASE_URL }}" >> .env
+
+         echo "PUBLIC_SHOW_NAME_AS_LOGO=true" >> .env
+
+         echo "PUBLIC_PLATFORM_NAME=CREDEBL" >> .env
+
+         echo "PUBLIC_PLATFORM_LOGO=/images/CREDEBL_ICON.png" >> .env
+
+         echo "PUBLIC_POWERED_BY=Blockster Labs Pvt. Ltd" >> .env
+
+         echo "PUBLIC_PLATFORM_DOCS_URL=https://docs.credebl.id/docs" >> .env
+
+         echo "PUBLIC_PLATFORM_GIT=https://github.com/credebl" >> .env
+
+         echo "PUBLIC_PLATFORM_TWITTER_URL=https://twitter.com/i/flow/login?redirect_after_login=%2Fcredebl" >> .env
+
+         echo "PUBLIC_PLATFORM_DISCORD_SUPPORT=https://discord.gg/w4hnQT7NJG" >> .env
+
+         echo "PUBLIC_ALLOW_DOMAIN=${{ secrets.DEV_PUBLIC_ALLOW_DOMAIN }}" >> .env
+
+         echo "PUBLIC_POLYGON_MAINNET_URL=https://polygon-rpc.com/" >> .env
+
+         echo "PUBLIC_POLYGON_TESTNET_URL=https://rpc-amoy.polygon.technology" >> .env
+
+         echo "PUBLIC_ECOSYSTEM_FRONT_END_URL=https://ecosystem.credebl.id" >> .env
+
+         echo "PUBLIC_CREDEBL_FRONT_END_URL=https://credebl.id" >> .env
+
+         echo "PUBLIC_ECOSYSTEM_BASE_URL=${{ secrets.DEV_PUBLIC_ECOSYSTEM_BASE_URL }}" >> .env
+
+         echo "PUBLIC_PLATFORM_DISCORD_URL=https://discord.gg/w4hnQT7NJG" >> .env
+
+         echo "PUBLIC_REDIRECTION_TARGET_URL=https://social-share.credebl.id" >> .env
+
+         echo "PUBLIC_CRYPTO_PRIVATE_KEY=${{ secrets.DEV_PUBLIC_CRYPTO_PRIVATE_KEY }}" >> .env
+
+         echo "NEXT_PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_ID=${{ secrets.DEV_PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_ID }}" >> .env
+
+         echo "NEXT_PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_SECRET=${{ secrets.DEV_PUBLIC_KEYCLOAK_MANAGEMENT_CLIENT_SECRET }}" >> .env
+
+         echo "PUBLIC_REDIRECT_FROM_URL=https://credebl.id" >> .env
+
+      - name: Build step
+        run: npm install && npm run build # 📝 Update the build command(s)
+        working-directory: ./nextjs
+
+
+      - name: Upload to Deno Deploy
+        uses: denoland/deployctl@v1
+        with:
+          project: "studio-nextjs-test"
+          entrypoint: "jsr:@deno/nextjs-start/v15"
+          root: "./nextjs"
