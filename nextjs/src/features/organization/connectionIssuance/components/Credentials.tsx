@@ -71,6 +71,9 @@ const Credentials = (): JSX.Element => {
       const response = (await getOrganizationById(orgId)) as AxiosResponse
       const { data } = response
       const orgDid = data?.data?.org_agents[0]?.orgDid
+      if (!orgDid) {
+        return
+      }
       const isWalletCreated = Boolean(orgDid)
       setWalletCreated(isWalletCreated)
 
@@ -267,13 +270,15 @@ const Credentials = (): JSX.Element => {
         )}
       </div>
 
-      <AlertComponent
-        message={error}
-        type={'failure'}
-        onAlertClose={() => {
-          setError(null)
-        }}
-      />
+      {error && (
+        <AlertComponent
+          message={typeof error === 'string' ? error : 'Something Went Wrong'}
+          type={'failure'}
+          onAlertClose={() => {
+            setError(null)
+          }}
+        />
+      )}
 
       {!walletCreated && !loading ? (
         <div className="flex items-center justify-center">
